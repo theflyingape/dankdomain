@@ -1,0 +1,15 @@
+{
+    "id": "_TAX",
+    "handle": "Ira Hess",
+    "name": "Imagination",
+    "sex": "M",
+    "access": "Inactive",
+    "email": "ronhurst39@gmail.com",
+    "password": "\n",
+  	"expires": 0,
+    "pc": "Thief",
+    "level": 50,
+    "weapon": -40,
+    "armor": -20,
+    "spells": [ "Heal", "Big Blast" ]
+}

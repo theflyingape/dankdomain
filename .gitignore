@@ -1,0 +1,7 @@
+**/*.js.map
+build/*.js
+build/tty/*.js
+build/users
+node_modules/**
+src/*.js
+typings/**

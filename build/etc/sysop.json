@@ -1,0 +1,14 @@
+{
+	"id": "_SYS",
+	"handle": "Dank Domain",
+	"name": "Sysop",
+	"sex": "I",
+	"access": "Inactive",
+	"email": "theflyingape@gmail.com",
+	"password": "\n",
+ 	"expires": 100,
+	"pc": "None",
+	"level": 100,
+	"weapon": "Hands",
+	"armor": "Skin"
+}

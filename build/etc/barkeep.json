@@ -1,0 +1,15 @@
+{
+    "id": "_BAR",
+    "handle": "Tiny, the Ogre Champion barkeep",
+    "name": "Nobody",
+    "sex": "M",
+    "access": "Inactive",
+    "email": "ronhurst39@gmail.com",
+    "password": "\n",
+ 	"expires": 0,
+    "pc": "Ogre",
+    "level": 80,
+    "weapon": "Gloves of Strength",
+    "armor": -20,
+    "spells": [ "Heal", "Confusion", "Cure" ]
+}

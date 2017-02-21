@@ -1,0 +1,18 @@
+{
+	"Alley": { "cost": "0c" },
+	"Cardboard box": { "cost": "100c" },
+	"Cave": { "cost": "1000c" },
+	"Stable": { "cost": "10000c" },
+	"Shed": { "cost": "1s" },
+	"Shack": { "cost": "10s" },
+	"Barn": { "cost": "100s" },
+	"Hovel": { "cost": "1000s" },
+	"Cabin": { "cost": "1g" },
+	"Room above tavern": { "cost": "10g" },
+	"House": { "cost": "100g" },
+	"Mansion": { "cost": "1000g" },
+	"Tower": { "cost": "1p" },
+	"Castle": { "cost": "10p" },
+	"Palace": { "cost": "100p" },
+	"Fortress": { "cost": "1000p"}
+}

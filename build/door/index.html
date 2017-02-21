@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+<title>Door to Dank Domain: the return of Hack &amp; Slash</title>
+
+<link rel='stylesheet' href='http://fonts.googleapis.com/css?family=MedievalSharp' type='text/css'>
+<link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="xterm/xterm.css" />
+<link rel="stylesheet" href="xterm/addons/fullscreen/fullscreen.css" />
+<script src="xterm/xterm.js" ></script>
+<script src="xterm/addons/attach/attach.js" ></script>
+<script src="xterm/addons/fit/fit.js" ></script>
+<script src="xterm/addons/fullscreen/fullscreen.js" ></script>
+<script>
+function runTerminal() {
+  var link=document.getElementById('back');
+  var button=document.getElementById('open');
+  if (link.hidden) {
+    link.hidden = false;
+    button.click();
+  }
+}
+</script>
+</head>
+
+<body onload="setTimeout(runTerminal, 250);">
+<a id="back" href="https://robert.hurst-ri.us/games/dankdomain/" hidden>Go back</a>&nbsp;
+<button id="open">PLAY!</button>
+<p>ctrl-Z anytime to logoff</p>
+<p>Dank Domain Door served up using Node.js and <a href="https://github.com/sourcelair/xterm.js" target="_blank">xterm.js</a></p>
+
+<div id="terminal-container">
+  <img src=''>
+</div>
+
+<audio id="playsound">
+  <source src="dankdomain.wav" type="audio/wav">
+  HTML5 audio not supported
+</audio>
+<script src="main.js" defer ></script>
+</body>
+</html>

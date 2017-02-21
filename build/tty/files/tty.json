@@ -1,0 +1,43 @@
+{
+  "port": 1939,
+  "hostname": "192.168.1.254",
+  "shell": "sh",
+  "shellArgs": ["-l", "./logins.sh"],
+  "static": "/usr/local/games/dankdomain/term",
+  "limitGlobal": 1000,
+  "limitPerUser": 1,
+  "localOnly": false,
+  "cwd": "/usr/local/games/dankdomain",
+  "syncSession": false,
+  "sessionTimeout": 123456,
+  "log": true,
+  "io": { "log": false },
+  "debug": false,
+  "term": {
+    "termName": "linux",
+    "geometry": [80, 25],
+    "scrollback": 100,
+    "visualBell": true,
+    "popOnBell": false,
+    "cursorBlink": true,
+    "screenKeys": false,
+    "colors": [
+      "#2e3436",
+      "#cc0000",
+      "#4e9a06",
+      "#c4a000",
+      "#3465a4",
+      "#75507b",
+      "#06989a",
+      "#d3d7cf",
+      "#555753",
+      "#ef2929",
+      "#8ae234",
+      "#fce94f",
+      "#729fcf",
+      "#ad7fa8",
+      "#34e2e2",
+      "#eeeeec"
+    ]
+  }
+}
