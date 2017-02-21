@@ -69,14 +69,18 @@ export function loadUser(user: user): boolean {
         user.bounty = new $.coins(row[0].bounty)
 
         user.poisons = []
-        let vials = row[0].poisons.split(',')
-        for (let i = 0; i < vials.length; i++)
-            $.Poison.add(user.poisons, vials[i])
+        if (row[0].poisons.length) {
+            let vials = row[0].poisons.split(',')
+            for (let i = 0; i < vials.length; i++)
+                $.Poison.add(user.poisons, vials[i])
+        }
 
         user.spells = []
-        let spells = row[0].spells.split(',')
-        for (let i = 0; i < spells.length; i++)
-            $.Poison.add(user.spells, spells[i])
+        if (row[0].spells.length) {
+            let spells = row[0].spells.split(',')
+            for (let i = 0; i < spells.length; i++)
+                $.Poison.add(user.spells, spells[i])
+        }
         return true
     }
     else
@@ -88,7 +92,7 @@ export function saveUser(user: user, insert = false) {
     $.fs.writeFileSync(users + user.id + '.json', JSON.stringify(user, null, 2))
     let sql: string = ''
 
-    if (insert || !user.calls) {
+    if (insert) {
         sql = `INSERT INTO Players 
             ( id, handle, name, email, password
             , dob, sex, joined, expires, lastdate

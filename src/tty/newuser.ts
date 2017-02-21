@@ -126,7 +126,7 @@ function edit() {
 			$.player.id += words[i][0].toUpperCase()
 	}
 	else {
-		$.player.id = $.player.handle.slice(0,2).toUpperCase()
+		$.player.id = $.player.handle.slice(0, 3).toUpperCase()
 	}
 
 	let check: user = { id:$.player.id, handle:'' }

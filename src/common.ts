@@ -18,6 +18,8 @@ module Common
     export const Armor = new Items.Armor
     export const Magic = new Items.Magic
     export const Poison = new Items.Poison
+    export const RealEstate = new Items.RealEstate
+    export const Security = new Items.Security
     export const Weapon = new Items.Weapon
 
     export let callers: caller[] = []
@@ -193,28 +195,6 @@ module Common
                 xvt.out(' ', xvt.reset, xvt.blue, '|\n')
             }
 
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out('  Alchemy: ', xvt.white)
-            xvt.out(sprintf('%-42s', ['none', 'apprentice', 'expert', 'artisan', 'master'][profile.user.poison]))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out('   Weapon: ', this.weapon(profile).rich)
-            xvt.out(' '.repeat(42 - this.weapon(profile).text.length))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out('    Armor: ', this.armor(profile).rich)
-            xvt.out(' '.repeat(42 - this.armor(profile).text.length))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-            if (profile.user.poison && profile.user.poisons.length) {
-                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-                xvt.out('  Poisons: ', xvt.white)
-                xvt.out(sprintf('%-42s', profile.user.poisons.toString()))
-                xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-            }
-
             if (profile.user.magic && profile.user.spells.length) {
                 xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
                 xvt.out(sprintf(' %8s: ', ['Wands', 'Scrolls', 'Spells', 'Spells'][profile.user.magic - 1]), xvt.white)
@@ -251,33 +231,50 @@ module Common
                     xvt.out(' ', xvt.reset, xvt.blue, '|\n')
                 }
             }
-/*
-	if(rpc->user.Spell) {
-		strcpy(line[0], "");
-		for(i = 0; i<(NUMMAGIC < 16 ? NUMMAGIC : 16); i++)
-			if(rpc->user.Spell & (UWORD)pow(2., (double)i)) {
-				sprintf(line[1], "%s%.*s", strlen(line[0]) ? ","
- : "", strlen(MAGIC(i)->Name) < 7 ? (int)strlen(MAGIC(i)->Name) : 3, MAGIC(i)->N
-ame);
-				strcat(line[0], line[1]);
-			}
-		strcpy(line[1], "");
-		if(strlen(line[0]) > 40) {
-			for(p = line[0], i = 40; i > 0 && p[i] != ','; i--);
-			p[i] = '\0';
-			strcpy(line[1], &p[i + 1]);
-		}
-		sprintf(outbuf, "%s|%s %s%7ss:%s %-40s %s%s|", fore(BLU), back(B
-LU), fore(bg), magic[rpc->user.MyMagic - 1], fore(WHITE), line[0], back(BLK), fo
-re(BLU));
-		OUT(outbuf); NL;
-		if(strlen(line[1])) {
-			sprintf(outbuf, "%s|%s           %s%-40s %s%s|", fore(BL
-U), back(BLU), fore(WHITE), line[1], back(BLK), fore(BLU));
-			OUT(outbuf); NL;
-		}
-	}
-*/
+
+            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+            xvt.out('  Alchemy: ', xvt.white)
+            xvt.out(sprintf('%-42s', ['none', 'apprentice', 'expert', 'artisan', 'master'][profile.user.poison]))
+            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+            if (profile.user.poisons.length) {
+                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+                xvt.out('  Poisons: ', xvt.white)
+                xvt.out(sprintf('%-42s', profile.user.poisons.toString()))
+                xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+            }
+
+            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+            xvt.out('   Weapon: ', this.weapon(profile).rich)
+            xvt.out(' '.repeat(42 - this.weapon(profile).text.length))
+            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+            xvt.out('    Armor: ', this.armor(profile).rich)
+            xvt.out(' '.repeat(42 - this.armor(profile).text.length))
+            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+            xvt.out(' Lives in: ', xvt.white)
+            xvt.out(sprintf('%-42s', profile.user.realestate + ' (' + profile.user.security + ')'))
+            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+            if (xvt.validator.isNotEmpty(profile.user.gang)) {
+                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+                xvt.out('    Party: ', xvt.white)
+                xvt.out(sprintf('%-42s', profile.user.gang))
+                xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+            }
+
+            if (+profile.user.hull) {
+                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+                xvt.out('  Warship: ', xvt.white)
+                xvt.out(sprintf('%-18s', profile.hull.toString() + ':' +  profile.user.hull.toString()))
+                xvt.out(xvt.cyan, ' Cannon: ', xvt.white)
+                xvt.out(sprintf('%-15s', profile.user.cannon.toString() + ':' +  (profile.user.hull / 50).toString() + (profile.user.ram ? ' (RAM)' : '')))
+                xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+            }
+
             xvt.out(xvt.blue, '+', line, '+', xvt.reset)
         }
 
@@ -574,7 +571,7 @@ export function date2str(days: number): string {
 
 	days -= md[month++]
 	day = days
-	if((((year%4)==0) && (((year%100)!=0) || ((year%400)==0))) && month < 3)
+	if((((year % 4) == 0) && (((year % 100) != 0) || ((year % 400) == 0))) && month < 3)
 		day++
 
 	return sprintf('%04d%02d%02d', year, month, day)
@@ -593,9 +590,18 @@ export function money(level: number): number {
 }
 
 export function now(): {date: number, time: number} {
-    let today = date2days(new Date().toISOString().slice(0,10).replace(/-/g, ''))
+    let today = date2days(new Date().toLocaleString().split(',')[0])
     let now = new Date().toTimeString().slice(0,5).replace(/:/g, '')
     return {date: +today, time: +now}
+}
+
+export function newkeys(user: user) {
+    let keys = [ 'P', 'G', 'S', 'C' ]
+    user.keyseq = ''
+    while (keys.length) {
+        let k = dice(keys.length)
+        user.keyseq += keys.splice(k - 1, 1)
+    }
 }
 
 export function playerPC(points = 200) {
@@ -927,8 +933,8 @@ export function reroll(user: user, dd = 'None', level = 1) {
         user.blessed = ''
         user.cursed = ''
         user.coward = false
-        user.keyseq = 'PGSC'
         user.keyhints = []
+        newkeys(user)
     }
 
     remake(user)
@@ -952,6 +958,10 @@ export function spawn(dungeon: dungeon, level?: number): void {
 
 export function titlecase(orig: string): string {
     return titleCase(orig)
+}
+
+export function worth(n: number, p: number) {
+    return Math.trunc(n * p / 100)
 }
 
 export function bracket(item: number|string, nl = true): string {
@@ -1030,22 +1040,24 @@ export function emulator(cb:Function) {
     }
 
     xvt.out('\n', xvt.cyan, 'Which emulation / character encoding are you using?\n')
-    xvt.out(bracket('VT'), ' old terminal-VT with DEC drawing')
-    xvt.out(bracket('PC'), ' former ANSI with IBM encoding color')
-    xvt.out(bracket('XT'), ' modern ANSI with UTF-8 encoding color\n')
+    xvt.out(bracket('VT'), ' classic VT terminal with DEC drawing')
+    xvt.out(bracket('PC'), ' former ANSI color with IBM encoding')
+    xvt.out(bracket('XT'), ' modern ANSI color with UTF-8 encoding\n')
     xvt.app.focus = 'term'
 }
 
 export function logoff() {
     if (xvt.validator.isNotEmpty(player.id)) {
-	    player.expires = player.lastdate + sysop.expires
-        player.lasttime = now().time
-        require('./database').saveUser(player)
-        try { callers = require('./users/callers') } catch(e) {}
-        while (callers.length > 4)
-            callers.pop()
-        callers = [<caller>{who: player.handle, reason: reason}].concat(callers)
-        fs.writeFileSync('./users/callers.json', JSON.stringify(callers))
+        if (reason !== '') {
+            player.expires = player.lastdate + sysop.expires
+            player.lasttime = now().time
+            require('./database').saveUser(player)
+            try { callers = require('./users/callers') } catch(e) {}
+            while (callers.length > 4)
+                callers.pop()
+            callers = [<caller>{who: player.handle, reason: reason}].concat(callers)
+            fs.writeFileSync('./users/callers.json', JSON.stringify(callers))
+        }
         //  logoff banner
         xvt.out('\n')
         xvt.out(xvt.reset,  'Goodbye, please play again!  Also visit:\n')

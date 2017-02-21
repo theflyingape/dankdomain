@@ -6,6 +6,7 @@
 import nodemailer = require('nodemailer')
 import smtpTransport = require('nodemailer-smtp-transport')
 import $ = require('./common')
+import db = require('./database')
 import xvt = require('xvt')
 
 module Email
@@ -76,11 +77,15 @@ async function Message(player: user, mailOptions: nodemailer.SendMailOptions) {
             smtp.sendMail(mailOptions, (error, info) => {
                 if (error) {
                     xvt.out(xvt.reset, '\nEmail Deliver Message ', error,'\n')
-                    $.player.id = ''
+                    player.id = ''
+                    player.email = ''
+                    xvt.out('\nYour user registration was aborted.\n')
                     result = false
                 }
                 else {
                     xvt.out('\n', info.response)
+                    db.saveUser(player, true)
+                    xvt.out('\nYour user ID (', player.id, ') was saved.\n')
                     result = true
                 }
             })
@@ -91,8 +96,6 @@ async function Message(player: user, mailOptions: nodemailer.SendMailOptions) {
         xvt.out('. ')
         await xvt.wait(500)
     }
-
-    if (!result) player.email = ''
 }
 
 }

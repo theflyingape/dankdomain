@@ -91,26 +91,26 @@ function password() {
         return
     }
 
-    if ($.player.today > $.Access.name[$.player.access].calls) {
-        xvt.beep()
-        xvt.out('\nYou have already used all your calls for today.  Please call back tomorrow!\n')
-        xvt.waste(1000)
-        $.logoff()
-    }
-
     let t = $.now().time
     t = 1440 * ($.now().date - $.player.lastdate) + 60 * Math.trunc(t / 100) + (t % 100) - (60 * Math.trunc($.player.lasttime / 100) + ($.player.lasttime % 100))
     if (!$.Access.name[$.player.access].sysop && t < 2) {
+        if ($.player.cha > 20) {
+            $.player.cha--
+            db.saveUser($.player)
+        }
         xvt.beep()
         xvt.out('\nYou were last on just ', t.toString(), ' minutes ago.\n')
         xvt.out('Please wait at least 2 minutes between calls.\n')
-        xvt.waste(1000)
-        $.logoff()
+        xvt.hangup()
     }
 
-    if ($.player.lastdate != $.now().date) {
-        $.player.lastdate = $.now().date
+    if ($.player.lastdate != $.now().date)
         $.player.today = 0
+
+    if ($.player.today > $.Access.name[$.player.access].calls) {
+        xvt.beep()
+        xvt.out('\nYou have already used all your calls for today.  Please call back tomorrow!\n')
+        xvt.hangup()
     }
 
     if ($.player.level >= $.Access.name[$.player.access].promote) {
@@ -129,10 +129,6 @@ function password() {
 }
 
 function welcome() {
-    $.player.lasttime = $.now().time
-    $.player.today++
-    $.activate($.online)
-
     $.sysop.calls++
     $.sysop.today++
     db.saveUser($.sysop)
@@ -145,7 +141,11 @@ function welcome() {
     xvt.out(xvt.cyan, ' Online: ', xvt.bright, xvt.white, $.player.handle, xvt.nobright, '\n')
     xvt.out(xvt.cyan, ' Access: ', xvt.bright, xvt.white, $.player.access, xvt.nobright, ' ')
 
-    if ($.player.today < $.Access.name[$.player.access].calls && $.Access.name[$.player.access].roleplay) {
+    $.player.lastdate = $.now().date
+    $.player.lasttime = $.now().time
+    $.activate($.online)
+
+    if ($.player.today++ < $.Access.name[$.player.access].calls && $.Access.name[$.player.access].roleplay) {
         xvt.out('\n')
         xvt.sessionAllowed = $.Access.name[$.player.access].minutes * 60
         $.player.calls++

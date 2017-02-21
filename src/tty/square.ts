@@ -22,6 +22,7 @@ module Square
         'J': { description:'Jail House' },
         'G': { description:'Goto the arena' }
 	}
+
 	let bank: choices = {
 		'D': { },
 		'W': { },
@@ -30,6 +31,8 @@ module Square
 		'T': { },
 		'V': { }
 	}
+
+	let credit: $.coins
 
 export function menu(suppress = false) {
     xvt.app.form = {
@@ -48,6 +51,12 @@ function choice() {
         xvt.beep()
         suppress = false
     }
+
+	credit = new $.coins(0)
+	credit.value += $.worth(new $.coins($.RealEstate.name[$.player.realestate].cost).value, $.player.cha)
+	credit.value += $.worth(new $.coins($.Security.name[$.player.security].cost).value, $.player.cha)
+	credit.value -= $.player.loan.value
+	if (credit.value < 0) credit.value = 0
 
     switch (choice) {
 		case 'B':
@@ -75,10 +84,23 @@ function Bank() {
         xvt.beep()
         suppress = false
     }
+	xvt.app.form = {
+		'coin': { cb:amount, max:24 }
+	}
 
 	xvt.out(xvt.reset, '\n')
 
     switch (choice) {
+		case 'D':
+			xvt.app.form['coin'].prompt = xvt.attr('Deposit ', xvt.white, '[MAX=', $.player.coin.carryout(true), ']? ')
+			xvt.app.focus = 'coin'
+			return
+
+		case 'L':
+			xvt.app.form['coin'].prompt = xvt.attr('Loan ', xvt.white, '[MAX=', credit.carryout(true), ']? ')
+			xvt.app.focus = 'coin'
+			return
+
 		case 'R':
 			let c = ($.player.level / 5) * $.player.steal + 1
 			xvt.out('\nYou attempt to sneak into the vault...')
@@ -120,11 +142,64 @@ function Bank() {
 			$.player.coin.value += carry.value
 			xvt.out('\n')
 			break
+
         case 'Q':
 			menu($.player.expert)
 			return
+		
+		case 'W':
+			xvt.app.form['coin'].prompt = xvt.attr('Withdraw ', xvt.white, '[MAX=', $.player.bank.carryout(true), ']? ')
+			xvt.app.focus = 'coin'
+			return
 	}
 	menu(suppress)
+}
+
+function amount() {
+	if ((+xvt.entry).toString() === xvt.entry) xvt.entry += 'c'
+	let action = xvt.app.form['coin'].prompt.split(' ')[0]
+	let amount = new $.coins(0)
+
+	switch (action) {
+		case 'Deposit':
+			amount.value = (/max/i.test(xvt.entry)) ? $.player.coin.value : new $.coins(xvt.entry).value
+			if (amount.value > 0 && amount.value <= $.player.coin.value) {
+				$.player.coin.value -= amount.value
+				if ($.player.loan.value > 0) {
+					$.player.loan.value -= amount.value
+					if ($.player.loan.value < 0) {
+						amount.value = -$.player.loan.value
+						$.player.loan.value = 0
+					}
+					else
+						amount.value = 0
+				}
+				$.player.bank.value += amount.value
+				xvt.beep()
+			}
+			break
+
+		case 'Loan':
+			amount.value = (/max/i.test(xvt.entry)) ? credit.value : new $.coins(xvt.entry).value
+			if (amount.value > 0 && amount.value <= credit.value) {
+				$.player.loan.value += amount.value
+				$.player.coin.value += amount.value
+				xvt.beep()
+			}
+			break
+
+		case 'Withdraw':
+			amount.value = (/max/i.test(xvt.entry)) ? $.player.bank.value : new $.coins(xvt.entry).value
+			if (amount.value > 0 && amount.value <= $.player.bank.value) {
+				$.player.bank.value -= amount.value
+				$.player.coin.value += amount.value
+				xvt.beep()
+			}
+			break
+	}
+
+	xvt.entry = 'B'
+	choice()
 }
 
 }
