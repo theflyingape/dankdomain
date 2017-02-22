@@ -605,7 +605,7 @@ export function newkeys(user: user) {
 }
 
 export function playerPC(points = 200) {
-    xvt.out(xvt.reset, '\n\n')
+    xvt.out(xvt.reset, '\n')
     xvt.waste(1000)
     if (!Access.name[player.access].roleplay) return
 
@@ -967,10 +967,26 @@ export function worth(n: number, p: number) {
 export function bracket(item: number|string, nl = true): string {
     var framed: string = item.toString()
     framed = xvt.attr(xvt.white, xvt.faint, nl ? '\n' : ''
-        , framed.length == 1 ? ' ' : ''
+        , framed.length == 1 && nl ? ' ' : ''
         , '<', xvt.off, xvt.bright, xvt.white, framed, xvt.faint, '>'
         , xvt.reset)
     return framed
+}
+
+export function buff(perm: number, temp:number): string {
+    let buff = ''
+    if (perm || temp) {
+        buff = xvt.attr(xvt.nobright, xvt.magenta, ' (')
+        if (perm > 0) buff += xvt.attr(xvt.bright, xvt.yellow, '+', perm.toString())
+        else if (perm < 0) buff += xvt.attr(xvt.bright, xvt.red, perm.toString())
+        else buff += xvt.attr(xvt.nobright, xvt.white, '+0')
+        buff += xvt.attr(xvt.nobright, xvt.white, ',')
+        if (temp > 0) buff += xvt.attr(xvt.bright, xvt.yellow, '+', temp.toString())
+        else if (temp < 0) buff += xvt.attr(xvt.bright, xvt.red, temp.toString())
+        else buff += xvt.attr(xvt.nobright, xvt.white, '+0')
+        buff += xvt.attr(xvt.nobright, xvt.magenta, ')', xvt.white)
+    }
+    return buff
 }
 
 export function	cat(filename: string): boolean {

@@ -176,6 +176,7 @@ function choice() {
                         $.reroll($.player)
                         $.activate($.online)
                         $.player.coward = true
+                        xvt.out('\n')
                         db.saveUser($.player)
                         $.playerPC()
                         return

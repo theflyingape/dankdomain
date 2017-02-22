@@ -18,9 +18,20 @@ export class Access {
 export class Armor {
 
     name: armor[]
+    gift: string[] = []
+    merchant: string[] = []
+    special: string[] = []
 
     constructor () {
         this.name = require('./items/armor.json')
+        for (let i in this.name) {
+            if (this.name[i].armoury)
+                this.merchant.push(i)
+            else if (this.name[i].gift)
+                this.gift.push(i)
+            else
+                this.special.push(i)
+        }
     }
 }
 
@@ -119,27 +130,44 @@ export class Poison {
 export class Weapon {
 
     name: weapon[]
+    gift: string[] = []
+    merchant: string[] = []
+    special: string[] = []
 
     constructor () {
         this.name = require('./items/weapon.json')
+        for (let i in this.name) {
+            if (this.name[i].shoppe)
+                this.merchant.push(i)
+            else if (this.name[i].gift)
+                this.gift.push(i)
+            else
+                this.special.push(i)
+        }
     }
 }
 
 export class RealEstate {
 
     name: realestate[]
+    merchant: string[] = []
 
     constructor () {
         this.name = require('./items/realestate.json')
+        for (let i in this.name)
+            this.merchant.push(i)
     }
 }
 
 export class Security {
 
     name: security[]
+    merchant: string[] = []
 
     constructor () {
         this.name = require('./items/security.json')
+        for (let i in this.name)
+            this.merchant.push(i)
     }
 }
 
