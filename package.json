@@ -1,6 +1,6 @@
 {
   "name": "dankdomain",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "Dank Domain: the return of Hack & Slash (1990-2014)",
   "main": "dankdomain.ts",
   "scripts": {

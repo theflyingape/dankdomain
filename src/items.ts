@@ -38,23 +38,44 @@ export class Armor {
 export class Magic {
 
     spells: spell[]
+    merchant: string[] = []
+    special: string[] = []
 
     constructor () {
         this.spells = require('./items/magic.json')
+        for (let i in this.spells) {
+            if (this.spells[i].cost)
+                this.merchant.push(i)
+            else
+                this.special.push(i)
+        }
     }
 
     add(spells: number[], n:number) {
-        spells.push(n)
-        spells.sort((n1,n2) => n1 - n2)
+        if (!this.have(spells, n)) {
+            spells.push(n)
+            spells.sort((n1,n2) => n1 - n2)
+        }
     }
 
     have(spells: number[], n: number|string): boolean {
         let have = false
         if (typeof n === 'number') {
-            for (let i = 0; i < spells.length; i++) {
-                if (n == this.spells[spells[i]].cast) {
-                    have = true
-                    break
+            if (typeof this.spells[this.merchant[n - 1]] === 'undefined') {
+                for (let x = 0; x < this.special.length; x++) {
+                    if (n == this.spells[this.special[x]].cast) {
+                        have = true
+                        break
+                    }
+                }
+            }
+            else {
+                for (let i = 0; i < spells.length; i++) {
+                    if (n == spells[i]) {
+                    //  console.log('have', this.merchant[n-1], this.spells[this.merchant[n-1]])
+                        have = true
+                        break
+                    }
                 }
             }
         }

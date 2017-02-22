@@ -789,10 +789,7 @@ export function remake(user: user) {
                         if (user.steal > 2) d = 0
                         break
                 }
-            }        Object.assign(user, require('./etc/reroll'))
-        user.coin = new coins(user.coin.toString())
-        user.bank = new coins(user.bank.toString())
-        user.loan = new coins(0)
+            }
 
             switch (d) {
                 case 1:
@@ -1059,6 +1056,7 @@ export function emulator(cb:Function) {
 }
 
 export function logoff() {
+    if (reason === '') reason = (xvt.reason ? xvt.reason : 'mystery')
     if (xvt.validator.isNotEmpty(player.id)) {
         if (reason !== '') {
             player.expires = player.lastdate + sysop.expires
@@ -1072,17 +1070,17 @@ export function logoff() {
         }
         //  logoff banner
         xvt.out('\n')
-        xvt.out(xvt.reset,  'Goodbye, please play again!  Also visit:\n')
+        xvt.out(xvt.reset, 'Goodbye, please play again!  Also visit:\n')
         xvt.waste(500)
-        xvt.out(xvt.cyan,   '  ___                           ',xvt.cyan,'  ___  \n')
-        xvt.out(xvt.cyan,   '  \\_/  ',xvt.red,xvt.LGradient[xvt.emulation],xvt.bright,xvt.Red,xvt.white,'Never Program Mad',xvt.reset,xvt.red,xvt.RGradient[xvt.emulation],xvt.cyan,'  \\_/  \n')
-        xvt.out(xvt.cyan,   ' _(',xvt.bright,'-',xvt.off,')_    ',xvt.reset,'     npmjs.com        ',xvt.cyan,' _(',xvt.bright,'-',xvt.off,')_ \n')
-        xvt.out(xvt.cyan,   '(/ ',xvt.bright,':',xvt.off,' \\)                         ',xvt.cyan,'(/ ',xvt.bright,':',xvt.off,' \\)\n')
-        xvt.out(xvt.cyan,   'I\\___/I ',xvt.green,xvt.LGradient[xvt.emulation],xvt.bright,xvt.Green,xvt.white,'CommodoreServer',xvt.reset,xvt.green,xvt.RGradient[xvt.emulation],xvt.cyan,' I\\___/I\n')
-        xvt.out(xvt.cyan,   '\\/   \\/  ',xvt.reset,' commodoreserver.com   ',xvt.cyan,'\\/   \\/\n')
-        xvt.out(xvt.cyan,   ' \\ : /                          ',xvt.cyan,' \\ : / \n')
-        xvt.out(xvt.cyan,   '  I:I    ',xvt.blue,xvt.LGradient[xvt.emulation],xvt.bright,xvt.Blue,xvt.white,'Robert Hurst',xvt.reset,xvt.blue,xvt.RGradient[xvt.emulation],xvt.cyan,'     I:I  \n')
-        xvt.out(xvt.cyan,   ' .I:I.  ',xvt.reset,'  robert.hurst-ri.us    ',xvt.cyan,' .I:I. \n')
+        xvt.out(xvt.cyan, '  ___                           ', xvt.cyan, '  ___  \n')
+        xvt.out(xvt.cyan, '  \\_/  ', xvt.red, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Red, xvt.white, 'Never Program Mad', xvt.reset, xvt.red, xvt.RGradient[xvt.emulation], xvt.cyan, '  \\_/  \n')
+        xvt.out(xvt.cyan, ' _(', xvt.bright, '-', xvt.off, ')_    ', xvt.reset, '     npmjs.com        ', xvt.cyan, ' _(', xvt.bright, '-', xvt.off, ')_ \n')
+        xvt.out(xvt.cyan, '(/ ', xvt.bright, ':', xvt.off, ' \\)                         ', xvt.cyan, '(/ ', xvt.bright, ':', xvt.off, ' \\)\n')
+        xvt.out(xvt.cyan, 'I\\___/I ', xvt.green, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Green, xvt.white, 'CommodoreServer', xvt.reset, xvt.green, xvt.RGradient[xvt.emulation], xvt.cyan, ' I\\___/I\n')
+        xvt.out(xvt.cyan, '\\/   \\/  ', xvt.reset, ' commodoreserver.com   ', xvt.cyan, '\\/   \\/\n')
+        xvt.out(xvt.cyan, ' \\ : /                          ', xvt.cyan, ' \\ : / \n')
+        xvt.out(xvt.cyan, '  I:I    ', xvt.blue, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Blue, xvt.white, 'Robert Hurst', xvt.reset, xvt.blue, xvt.RGradient[xvt.emulation], xvt.cyan, '     I:I  \n')
+        xvt.out(xvt.cyan, ' .I:I.  ', xvt.reset, '  robert.hurst-ri.us    ', xvt.cyan, ' .I:I. \n')
         xvt.out('\n')
         xvt.waste(1500)
     }

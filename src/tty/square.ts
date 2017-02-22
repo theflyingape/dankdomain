@@ -36,13 +36,6 @@ module Square
 
 	let credit = new $.coins(0)
 
-	let list: xvt.iField = {
-		'start': { cb:listStart, prompt:'Start list at ', max:2 },
-		'end': { cb:listEnd, prompt:'Start list at ', max:2 },
-		'buy': { cb:buy, prompt:'\nBuy which? ', max:2 },
-		'pause': { cb:menu, pause:true }
-	}
-
 	let lo, hi, max = 0
 	let want = ''
 
@@ -66,6 +59,7 @@ function choice() {
 
     switch (choice) {
 		case 'A':
+			if ($.reason) break
 			let ac = $.Armor.name[$.player.armor].ac
 			xvt.out('You own a class ', $.bracket(ac, false), ' ', $.player.armor, $.buff($.player.toAC, $.online.toAC))
 			if (ac) {
@@ -94,16 +88,11 @@ function choice() {
 				hi < max && $.player.coin.value + credit.value >= new $.coins($.Armor.name[$.Armor.merchant[hi]].value).value;
 				hi++);
 
-			list['start'].enter = lo.toString()
-			list['start'].prompt = xvt.attr('Start list at ', $.bracket(lo, false), ': ')
-			list['end'].enter = hi.toString()
-			list['end'].prompt = xvt.attr(' End list at ', $.bracket(hi, false), ': ')
-			want = choice
-			xvt.app.form = list
-			xvt.app.focus = 'start'
+			list(choice)
 			return
 
 		case 'B':
+			if ($.reason) break
 			credit.value = $.worth(new $.coins($.RealEstate.name[$.player.realestate].value).value, $.player.cha)
 			credit.value += $.worth(new $.coins($.Security.name[$.player.security].value).value, $.player.cha)
 			credit.value -= $.player.loan.value
@@ -120,63 +109,74 @@ function choice() {
 			xvt.app.focus = 'menu'
 			return
 
+		case 'M':
+			xvt.out('The ', xvt.bright, xvt.blue, 'old mage ', xvt.reset)
+			max = $.Magic.merchant.length
+			for (lo = 1; lo < max; lo++)
+				if (!$.Magic.have($.player.spells, lo))
+					break
+			if (lo == $.Magic.merchant.length || !$.player.magic || $.reason) {
+				xvt.out('says, "Get outta here!"\n')
+				suppress = true
+				break
+			}
+			for (hi = max; hi > lo; hi--)
+				if (! $.Magic.have($.player.spells, hi)
+					&& $.player.coin.value >= (
+						$.player.magic == 1 ? new $.coins($.Magic.spells[$.Magic.merchant[hi - 1]].wand).value
+						: new $.coins($.Magic.spells[$.Magic.merchant[hi - 1]].cost).value))
+					break
+				xvt.out([ 'offers to sell you a magic wand'
+				, 'offers to make you a scroll, for a price'
+				, 'offers to teach you a spell, for a price'
+				, 'wants to endow you with a spell, for a price'
+				][$.player.magic - 1], '.\n'
+			)
+			list(choice)
+			return
+
         case 'Q':
 			require('./main').menu($.player.expert)
 			return
 
 		case 'R':
+			if ($.reason) break
 			let re = $.RealEstate.name[$.player.realestate].protection
 			xvt.out('You live in a ', $.player.realestate)
 			credit.value = $.worth(new $.coins($.RealEstate.name[$.player.realestate].value).value, $.player.cha)
 			xvt.out(' worth ', credit.carry(), '\n')
 
 			max = $.RealEstate.merchant.length - 1
-			lo = re + 1
-			for (lo > max ? max : lo;
-				lo > 1 && $.player.coin.value + credit.value < new $.coins($.RealEstate.name[$.RealEstate.merchant[lo]].value).value;
-				lo--);
-
+			lo = re - $.realestate
+			if (lo < 1) lo = 1
 			hi = lo
 			for (;
 				hi < max && $.player.coin.value + credit.value >= new $.coins($.RealEstate.name[$.RealEstate.merchant[hi]].value).value;
 				hi++);
 
-			list['start'].enter = lo.toString()
-			list['start'].prompt = xvt.attr('Start list at ', $.bracket(lo, false), ': ')
-			list['end'].enter = hi.toString()
-			list['end'].prompt = xvt.attr(' End list at ', $.bracket(hi, false), ': ')
-			want = choice
-			xvt.app.form = list
-			xvt.app.focus = 'start'
+			list(choice)
 			return
 
 		case 'S':
+			if ($.reason) break
 			let s = $.Security.name[$.player.security].protection
 			xvt.out('You are guarded by a ', $.player.security)
 			credit.value = $.worth(new $.coins($.Security.name[$.player.security].value).value, $.player.cha)
 			xvt.out(' worth ', credit.carry(), '\n')
 
 			max = $.Security.merchant.length - 1
-			lo = s + 1
-			for (lo > max ? max : lo;
-				lo > 1 && $.player.coin.value + credit.value < new $.coins($.Security.name[$.Security.merchant[lo]].value).value;
-				lo--);
-
+			lo = s - $.security
+			if (lo < 1) lo = 1
 			hi = lo
 			for (;
 				hi < max && $.player.coin.value + credit.value >= new $.coins($.Security.name[$.Security.merchant[hi]].value).value;
 				hi++);
 
-			list['start'].enter = lo.toString()
-			list['start'].prompt = xvt.attr('Start list at ', $.bracket(lo, false), ': ')
-			list['end'].enter = hi.toString()
-			list['end'].prompt = xvt.attr(' End list at ', $.bracket(hi, false), ': ')
-			want = choice
-			xvt.app.form = list
-			xvt.app.focus = 'start'
+			list(choice)
 			return
 
 		case 'W':
+			if ($.reason) break
 			let wc = $.Weapon.name[$.player.weapon].wc
 			xvt.out('You own a class ', $.bracket(wc, false), ' ', $.player.weapon, $.buff($.player.toWC, $.online.toWC))
 			if (wc) {
@@ -205,13 +205,7 @@ function choice() {
 				hi < max && $.player.coin.value + credit.value >= new $.coins($.Weapon.name[$.Weapon.merchant[hi]].value).value;
 				hi++);
 
-			list['start'].enter = lo.toString()
-			list['start'].prompt = xvt.attr('Start list at ', $.bracket(lo, false), ': ')
-			list['end'].enter = hi.toString()
-			list['end'].prompt = xvt.attr(' End list at ', $.bracket(hi, false), ': ')
-			want = choice
-			xvt.app.form = list
-			xvt.app.focus = 'start'
+			list(choice)
 			return
 	}
 	menu(suppress)
@@ -238,6 +232,11 @@ function Bank() {
 			break
 
 		case 'L':
+			if(credit.value < 1) {
+				xvt.beep()
+				xvt.app.refocus()
+				return
+			}
 			xvt.app.form['coin'].prompt = xvt.attr('Loan ', xvt.white, '[MAX=', credit.carry(), ']? ')
 			xvt.app.focus = 'coin'
 			break
@@ -356,44 +355,69 @@ function amount() {
 	choice()
 }
 
+function list(choice: string) {
+	xvt.app.form = {
+		'start': { cb:listStart, prompt:'Start list at ', max:2 },
+		'end': { cb:listEnd, prompt:'Start list at ', max:2 },
+		'buy': { cb:buy, prompt:'\nBuy which? ', max:2 },
+		'pause': { cb:menu, pause:true }
+	}
+	want = choice
+	xvt.app.form['start'].enter = lo.toString()
+	xvt.app.form['start'].prompt = xvt.attr('Start list at ', (lo < 10 && hi > 9) ? ' ' : '', $.bracket(lo, false), ': ')
+	xvt.app.form['end'].enter = hi.toString()
+	xvt.app.form['end'].prompt = xvt.attr('  End list at ', $.bracket(hi, false), ': ')
+	xvt.app.focus = 'start'
+}
+
 function listStart() {
-	lo = +xvt.entry
-	if (lo < 1 || lo > max) {
+	let n = +xvt.entry
+	if (n < lo || n > max) {
+		xvt.beep()
 		xvt.app.refocus()
 		return
 	}
+
+	lo = n
 	xvt.app.focus = 'end'
 }
 
 function listEnd() {
-	hi = +xvt.entry
-	if (hi > max) hi = max
-	if (hi < lo) {
-		xvt.app.refocus()
-		return
-	}
+	let n = +xvt.entry
+	if (n > max) n = max
+	if (n < lo) n = lo
 
+	hi = n
 	xvt.out('\n')
 	for (let i = lo; i <= hi; i++) {
-		xvt.out($.bracket(i), ' ')
 		switch (want) {
 			case 'A':
-				xvt.out(sprintf('%-24s ', $.Armor.merchant[i]))
+				xvt.out($.bracket(i), sprintf(' %-24s ', $.Armor.merchant[i]))
 				xvt.out(new $.coins($.Armor.name[$.Armor.merchant[i]].value).carry())
 				break
 
+			case 'M':
+				if (!$.Magic.have($.player.spells, i)) {
+					xvt.out($.bracket(i), sprintf(' %-24s ', $.Magic.merchant[i - 1]))
+					if ($.player.magic == 1)
+						xvt.out(new $.coins($.Magic.spells[$.Magic.merchant[i - 1]].wand).carry())
+					else
+						xvt.out(new $.coins($.Magic.spells[$.Magic.merchant[i - 1]].cost).carry())
+				}
+				break
+
 			case 'R':
-				xvt.out(sprintf('%-24s ', $.RealEstate.merchant[i]))
+				xvt.out($.bracket(i), sprintf(' %-24s ', $.RealEstate.merchant[i]))
 				xvt.out(new $.coins($.RealEstate.name[$.RealEstate.merchant[i]].value).carry())
 				break
 
 			case 'S':
-				xvt.out(sprintf('%-24s ', $.Security.merchant[i]))
+				xvt.out(sprintf($.bracket(i), ' %-24s ', $.Security.merchant[i]))
 				xvt.out(new $.coins($.Security.name[$.Security.merchant[i]].value).carry())
 				break
 
 			case 'W':
-				xvt.out(sprintf('%-24s ', $.Weapon.merchant[i]))
+				xvt.out($.bracket(i), sprintf(' %-24s ', $.Weapon.merchant[i]))
 				xvt.out(new $.coins($.Weapon.name[$.Weapon.merchant[i]].value).carry())
 				break
 		}
@@ -425,12 +449,24 @@ function buy() {
 			}
 			break
 
+		case 'M':
+			let item = buy - 1
+			cost = $.player.magic == 1 ? new $.coins($.Magic.spells[$.Magic.merchant[item]].wand)
+				:  new $.coins($.Magic.spells[$.Magic.merchant[item]].cost)
+			if ($.player.coin.value >= cost.value && !$.Magic.have($.player.spells, buy)) {
+				$.Magic.add($.player.spells, buy)
+				xvt.out(' - ', $.Magic.merchant[item], '\n')
+				$.player.coin.value -= cost.value
+			}
+			break
+
 		case 'R':
 			cost = new $.coins($.RealEstate.name[$.RealEstate.merchant[buy]].value)
 			if ($.player.coin.value + credit.value >= cost.value) {
 				$.player.realestate = $.RealEstate.merchant[buy]
 				xvt.out(' - ', $.player.realestate, '\n')
 				$.player.coin.value += credit.value - cost.value
+				if (buy == lo && $.realestate) $.realestate--
 			}
 			break
 
@@ -440,6 +476,7 @@ function buy() {
 				$.player.security = $.Security.merchant[buy]
 				xvt.out(' - ', $.player.security, '\n')
 				$.player.coin.value += credit.value - cost.value
+				if (buy == lo && $.security) $.security--
 			}
 			break
 
