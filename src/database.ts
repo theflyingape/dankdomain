@@ -89,7 +89,12 @@ export function loadUser(user: user): boolean {
 
 export function saveUser(user: user, insert = false) {
 
-    $.fs.writeFileSync(users + user.id + '.json', JSON.stringify(user, null, 2))
+    let trace = users + user.id + '.json'
+    if ($.reason === '')
+        $.fs.writeFileSync(trace, JSON.stringify(user, null, 2))
+    else
+        $.fs.removeSync(trace)
+
     let sql: string = ''
 
     if (insert) {

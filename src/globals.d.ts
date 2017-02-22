@@ -141,8 +141,7 @@ interface armor {
 interface coins {
     value: number
     amount: string
-    carry(): string[]
-    carryout(tty?,v?): string
+    carry(): string
     pouch(number): string
 }
 

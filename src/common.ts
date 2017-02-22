@@ -11,7 +11,7 @@ import Items = require('./items')
 
 module Common
 {
-    export const fs = require('fs')
+    export const fs = require('fs-extra')
 
     //  items
     export const Access = new Items.Access
@@ -159,21 +159,21 @@ module Common
             xvt.out('      Str: ', xvt.white)
             xvt.out(sprintf('%-20s', profile.str + ' (' + profile.user.str + ',' + profile.user.maxstr + ')'))
             xvt.out(xvt.cyan, ' Hand: ', xvt.white)
-            xvt.out(profile.user.coin.carryout(true), xvt.bright, ' '.repeat(15 - profile.user.coin.amount.length))
+            xvt.out(profile.user.coin.carry(), xvt.bright, ' '.repeat(15 - profile.user.coin.amount.length))
             xvt.out(' ', xvt.reset, xvt.blue, '|\n')
 
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
             xvt.out('      Int: ', xvt.white)
             xvt.out(sprintf('%-20s', profile.int + ' (' + profile.user.int + ',' + profile.user.maxint + ')'))
             xvt.out(xvt.cyan, ' Bank: ', xvt.white)
-            xvt.out(profile.user.bank.carryout(true), xvt.bright, ' '.repeat(15 - profile.user.bank.amount.length))
+            xvt.out(profile.user.bank.carry(), xvt.bright, ' '.repeat(15 - profile.user.bank.amount.length))
             xvt.out(' ', xvt.reset, xvt.blue, '|\n')
 
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
             xvt.out('      Dex: ', xvt.white)
             xvt.out(sprintf('%-20s', profile.dex + ' (' + profile.user.dex + ',' + profile.user.maxdex + ')'))
             xvt.out(xvt.cyan, ' Loan: ', xvt.white)
-            xvt.out(profile.user.loan.carryout(true), xvt.bright, ' '.repeat(15 - profile.user.loan.amount.length))
+            xvt.out(profile.user.loan.carry(), xvt.bright, ' '.repeat(15 - profile.user.loan.amount.length))
             xvt.out(' ', xvt.reset, xvt.blue, '|\n')
 
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
@@ -370,8 +370,7 @@ export class coins {
 
     //  top valued coin bag (+ a lesser)
     get amount(): string {
-        let bags = this.carry()
-        return bags.length > 1 ? bags[0] + ',' + bags[1] : bags[0]
+        return this.carry(2, true)
     }
 
     set amount(newAmount: string) {
@@ -405,39 +404,37 @@ export class coins {
         }
     }
 
-    carry(v?:number, tty?:boolean): string[] {
-        v = v ? v : this.value
-        let n = v
+    carry(max = 2, text = false): string {
+        let n = this.value
         let bags:string[] = []
 
-        if (this.pouch(n) == 'p') {
+        if (this.pouch(n) === 'p') {
             n = Math.trunc(n / 1e+13)
-            bags.push(tty ? xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.magenta, 'p', xvt.white, xvt.nobright)
-                : n + 'p')
-            n = v % 1e+13
+            bags.push(text ? n + 'p'
+                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.magenta, 'p', xvt.white, xvt.nobright)
+            )
+            n = this.value % 1e+13
         }
-        if (this.pouch(n) == 'g') {
+        if (this.pouch(n) === 'g') {
             n = Math.trunc(n / 1e+09)
-            bags.push(tty ? xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.yellow, 'g', xvt.white, xvt.nobright)
-                : n + 'g')
-            n = v % 1e+09
+            bags.push(text ? n + 'g'
+                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.yellow, 'g', xvt.white, xvt.nobright)
+            )
+            n = this.value % 1e+09
         }
-        if (this.pouch(n) == 's') {
+        if (this.pouch(n) === 's') {
             n = Math.trunc(n / 1e+05)
-            bags.push(tty ? xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.cyan, 's', xvt.white, xvt.nobright)
-                : n + 's')
-            n = v % 1e+05
+            bags.push(text ? n + 's'
+                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.cyan, 's', xvt.white, xvt.nobright)
+            )
+            n = this.value % 1e+05
         }
-        if ((n > 0 && this.pouch(n) == 'c') || bags.length == 0)
-            bags.push(tty ? xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.red, 'c', xvt.white, xvt.nobright)
-                : n + 'c')
+        if ((n > 0 && this.pouch(n) === 'c') || bags.length == 0)
+            bags.push(text ? n + 'c'
+                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.red, 'c', xvt.white, xvt.nobright)
+            )
 
-        return bags
-    }
-
-    carryout(tty?:boolean, v?: number): string {
-        let bags = tty ? this.carry(v, tty) : this.carry(v)
-        return bags.length > 1 ? bags[0] + ',' + bags[1] : bags[0]
+        return bags.slice(0, max).toString()
     }
 
     pouch(coins:number): string {
@@ -449,7 +446,6 @@ export class coins {
             return 'g'
         return 'p'
     }
-
 }
 
 export function activate(one: active) {

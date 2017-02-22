@@ -146,6 +146,7 @@ function welcome() {
     $.activate($.online)
 
     if ($.player.today++ < $.Access.name[$.player.access].calls && $.Access.name[$.player.access].roleplay) {
+        xvt.ondrop = $.logoff
         xvt.out('\n')
         xvt.sessionAllowed = $.Access.name[$.player.access].minutes * 60
         $.player.calls++
