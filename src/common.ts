@@ -1086,7 +1086,6 @@ export function logoff() {
         xvt.out('\n')
         xvt.waste(1500)
     }
-    xvt.hangup()
 }
 
 }

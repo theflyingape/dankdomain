@@ -154,7 +154,7 @@ export function saveUser(user: user, insert = false) {
         console.log(sql)
         console.log(user)
         console.log(result)
-        $.logoff()
+        xvt.hangup()
     }
 }
 

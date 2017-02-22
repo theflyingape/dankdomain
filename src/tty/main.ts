@@ -117,7 +117,7 @@ function choice() {
                     xvt.out('\n')
                     if (xvt.entry.toUpperCase() === 'Y') {
                         if (!$.reason.length) $.reason = 'logged out'
-                        $.logoff()
+                        xvt.hangup()
                     }
                     menu()
                 }, prompt:'Are you sure (Y/N)? ', cancel:'Y', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }

@@ -55,7 +55,7 @@ export async function Deliver(player: user, what: string, mailOptions: nodemaile
     await Message(player, mailOptions)
     xvt.out('\n')
     xvt.waste(1000)
-    $.logoff()
+    xvt.hangup()
 }
 
 async function Message(player: user, mailOptions: nodemailer.SendMailOptions) {

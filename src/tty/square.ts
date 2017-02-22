@@ -254,7 +254,8 @@ function Bank() {
 				xvt.out('\nYou might be released by your next call.\n\n')
 				xvt.waste(1250)
 				$.reason = 'caught getting into the vault'
-				$.logoff()
+				xvt.hangup()
+				return
 			}
 
 			let d = $.player.level + 1
@@ -277,7 +278,8 @@ function Bank() {
 				xvt.out('\nYou might be released by your next call.\n\n')
 				xvt.waste(1250)
 				$.reason = 'caught inside the vault'
-				$.logoff()
+				xvt.hangup()
+				return
 			}
 
 			$.player.coin.value += carry.value
