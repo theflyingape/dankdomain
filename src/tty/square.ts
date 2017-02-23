@@ -127,11 +127,11 @@ function choice() {
 						: new $.coins($.Magic.spells[$.Magic.merchant[hi - 1]].cost).value))
 					break
 				xvt.out([ 'offers to sell you a magic wand'
-				, 'offers to make you a scroll, for a price'
-				, 'offers to teach you a spell, for a price'
-				, 'wants to endow you with a spell, for a price'
-				][$.player.magic - 1], '.\n'
-			)
+					, 'offers to make you a scroll, for a price'
+					, 'offers to teach you a spell, for a price'
+					, 'wants to endow you with a spell, for a price'
+					][$.player.magic - 1], '.\n'
+				)
 			list(choice)
 			return
 
@@ -172,6 +172,33 @@ function choice() {
 				hi < max && $.player.coin.value + credit.value >= new $.coins($.Security.name[$.Security.merchant[hi]].value).value;
 				hi++);
 
+			list(choice)
+			return
+
+		case 'V':
+			xvt.out(xvt.faint, '[... you enter the back door of the shop ...]\n', xvt.reset)
+			xvt.out('The ', xvt.bright, xvt.magenta, 'apothecary ', xvt.reset)
+			max = $.Poison.merchant.length
+			for (lo = 1; lo < max; lo++)
+				if (!$.Poison.have($.player.poisons, lo))
+					break
+			if (lo == $.Poison.merchant.length || !$.player.poison || $.reason) {
+				xvt.out('says, "Get outta here!"\n')
+				suppress = true
+				break
+			}
+			for (hi = max; hi > lo; hi--)
+				if (! $.Poison.have($.player.poisons, hi)
+					&& $.player.coin.value >= (
+						$.player.poison == 1 ? new $.coins($.Poison.vials[$.Poison.merchant[hi - 1]].vial).value
+						: new $.coins($.Poison.vials[$.Poison.merchant[hi - 1]].cost).value))
+					break
+				xvt.out([ 'scoffs at your apparent lack of skill'
+					, 'casts a suspicious look your way'
+					, 'offers to sell you his contraband'
+					, 'admires your expert eye on his wares'
+					][$.player.poison - 1], '.\n'
+				)
 			list(choice)
 			return
 
@@ -412,8 +439,18 @@ function listEnd() {
 				break
 
 			case 'S':
-				xvt.out(sprintf($.bracket(i), ' %-24s ', $.Security.merchant[i]))
+				xvt.out($.bracket(i), sprintf(' %-24s ', $.Security.merchant[i]))
 				xvt.out(new $.coins($.Security.name[$.Security.merchant[i]].value).carry())
+				break
+
+			case 'V':
+				if (!$.Poison.have($.player.poisons, i)) {
+					xvt.out($.bracket(i), sprintf(' %-24s ', $.Poison.merchant[i - 1]))
+					if ($.player.poison == 1)
+						xvt.out(new $.coins($.Poison.vials[$.Poison.merchant[i - 1]].vial).carry())
+					else
+						xvt.out(new $.coins($.Poison.vials[$.Poison.merchant[i - 1]].cost).carry())
+				}
 				break
 
 			case 'W':
@@ -438,19 +475,20 @@ function buy() {
 		return
 	}
 	let cost: $.coins
+	let item = buy
 
 	switch (want) {
 		case 'A':
-			cost = new $.coins($.Armor.name[$.Armor.merchant[buy]].value)
+			cost = new $.coins($.Armor.name[$.Armor.merchant[item]].value)
 			if ($.player.coin.value + credit.value >= cost.value) {
-				$.player.armor = $.Armor.merchant[buy]
+				$.player.armor = $.Armor.merchant[item]
 				xvt.out(' - ', $.player.armor, '\n')
 				$.player.coin.value += credit.value - cost.value
 			}
 			break
 
 		case 'M':
-			let item = buy - 1
+			item--
 			cost = $.player.magic == 1 ? new $.coins($.Magic.spells[$.Magic.merchant[item]].wand)
 				:  new $.coins($.Magic.spells[$.Magic.merchant[item]].cost)
 			if ($.player.coin.value >= cost.value && !$.Magic.have($.player.spells, buy)) {
@@ -461,22 +499,33 @@ function buy() {
 			break
 
 		case 'R':
-			cost = new $.coins($.RealEstate.name[$.RealEstate.merchant[buy]].value)
+			cost = new $.coins($.RealEstate.name[$.RealEstate.merchant[item]].value)
 			if ($.player.coin.value + credit.value >= cost.value) {
-				$.player.realestate = $.RealEstate.merchant[buy]
+				$.player.realestate = $.RealEstate.merchant[item]
 				xvt.out(' - ', $.player.realestate, '\n')
 				$.player.coin.value += credit.value - cost.value
-				if (buy == lo && $.realestate) $.realestate--
+				if (item == lo && $.realestate) $.realestate--
 			}
 			break
 
 		case 'S':
-			cost = new $.coins($.Security.name[$.Security.merchant[buy]].value)
+			cost = new $.coins($.Security.name[$.Security.merchant[item]].value)
 			if ($.player.coin.value + credit.value >= cost.value) {
-				$.player.security = $.Security.merchant[buy]
+				$.player.security = $.Security.merchant[item]
 				xvt.out(' - ', $.player.security, '\n')
 				$.player.coin.value += credit.value - cost.value
-				if (buy == lo && $.security) $.security--
+				if (item == lo && $.security) $.security--
+			}
+			break
+
+		case 'V':
+			item--
+			cost = $.player.poison == 1 ? new $.coins($.Poison.vials[$.Poison.merchant[item]].vial)
+				:  new $.coins($.Poison.vials[$.Poison.merchant[item]].cost)
+			if ($.player.coin.value >= cost.value && !$.Poison.have($.player.poisons, buy)) {
+				$.Poison.add($.player.poisons, buy)
+				xvt.out(' - ', $.Poison.merchant[item], '\n')
+				$.player.coin.value -= cost.value
 			}
 			break
 

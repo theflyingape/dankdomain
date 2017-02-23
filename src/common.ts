@@ -185,7 +185,7 @@ module Common
 
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
             xvt.out('       HP: ', xvt.white)
-            xvt.out(sprintf('%-42s', profile.hp + '/' + profile.user.hp + ' (' + ['weak', 'normal', 'advanced', 'warrior', 'brute', 'hero'][profile.user.melee] + ' with ' + (profile.user.backstab ? profile.user.backstab + 'x' : 'no') + ' backstab)'))
+            xvt.out(sprintf('%-42s', profile.hp + '/' + profile.user.hp + ' (' + ['weak', 'normal', 'advanced', 'warrior', 'brute', 'hero'][profile.user.melee] + ', ' + ['a rare', 'occasional', 'deliberate', 'angry', 'murderous'][profile.user.backstab] + ' backstab)'))
             xvt.out(' ', xvt.reset, xvt.blue, '|\n')
 
             if (profile.user.magic > 1) {

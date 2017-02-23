@@ -96,7 +96,9 @@ function choice() {
                     xvt.out(xvt.bright, xvt.yellow)
                 else if (row[0] === $.player.id)
                     xvt.out(xvt.bright, xvt.white)
-                xvt.out(sprintf('%-4s  %-22s  %-9s  %3d  %6s  ', row[0], row[1], row[2], row[3], row[4].length ? row[4] : 'Alive!' ))
+                xvt.out(sprintf('%-4s  %-22s  %-9s  %3d  ', row[0], row[1], row[2], row[3]))
+                if (!row[4].length) xvt.out('Alive!  ')
+                else xvt.out(xvt.faint, row[4] === 'jail' ? '#jail#' : '^dead^  ', xvt.reset)
                 if (row[5] === $.player.gang) xvt.out(xvt.Red)
                 xvt.out(row[5], xvt.reset, '\n')
             }

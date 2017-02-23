@@ -70,9 +70,9 @@ function choice() {
 
             $.player.poisons = []
             if ($.player.poison) {
-                let n = $.dice(Object.keys($.Poison.name).length)
+                let n = $.dice(Object.keys($.Poison.vials).length)
                 for (let i = 0; i < n; i++) {
-                    let p = $.dice(Object.keys($.Poison.name).length)
+                    let p = $.dice(Object.keys($.Poison.vials).length)
                     let vial = $.Poison.pick(p)
                     console.log(p, vial)
                     if (!$.Poison.have($.player.poisons, vial))

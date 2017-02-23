@@ -104,22 +104,30 @@ export class Magic {
 
 export class Poison {
 
-    name: poison[]
+    vials: poison[]
+    merchant: string[] = []
 
     constructor () {
-        this.name = require('./items/poison.json')
+        this.vials = require('./items/poison.json')
+        for (let i in this.vials) {
+            if (this.vials[i].cost)
+                this.merchant.push(i)
+        }
     }
 
     add(vials: number[], n:number) {
-        vials.push(n)
-        vials.sort((n1,n2) => n1 - n2)
+        if (!this.have(vials, n)) {
+            vials.push(n)
+            vials.sort((n1,n2) => n1 - n2)
+        }
     }
 
     have(vials: number[], n: number|string): boolean {
         let have = false
         if (typeof n === 'number') {
             for (let i = 0; i < vials.length; i++) {
-                if (n == this.name[vials[i]].power) {
+                if (n == vials[i]) {
+                //  console.log('have', this.merchant[n-1], this.vials[this.merchant[n-1]])
                     have = true
                     break
                 }
@@ -138,9 +146,9 @@ export class Poison {
 
     pick(n: number): string {
         let name = ''
-        if (n > 0 && n <= Object.keys(this.name).length)
-            for (let key in this.name)
-                if (n == this.name[key].power) {
+        if (n > 0 && n <= Object.keys(this.vials).length)
+            for (let key in this.vials)
+                if (n == this.vials[key].power) {
                     name = key
                     break
                 }
