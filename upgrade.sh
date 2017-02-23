@@ -7,7 +7,8 @@ TARGET="${TARGET}/`basename ${PWD}`"
 sudo -v || exit
 
 git pull
-tsc --outDir ./build
+npm install
+npm run build
 
 sudo rsync -av --chown=root:games ./build/ ${TARGET}
 sudo chown -R root.games ${TARGET}
