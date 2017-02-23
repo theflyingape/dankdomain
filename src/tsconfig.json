@@ -3,5 +3,10 @@
     "target": "ES2016",
     "module": "commonjs",
     "moduleResolution": "node"
-  }
+  },
+  "exclude": [
+        "door",
+        "node_modules",
+        "**/*.spec.ts"
+    ]
 }

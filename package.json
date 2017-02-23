@@ -1,11 +1,17 @@
 {
   "name": "dankdomain",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "description": "Dank Domain: the return of Hack & Slash (1990-2014)",
   "main": "dankdomain.ts",
+  "publisher": "theflyingape",
+  "engines": {
+	  "vscode": "0.10.x"
+  },
   "scripts": {
-    "door": "tsc --outDir ./build; cd ./build/door; node app; cd -",
-    "start": "tsc --outDir ./build; node ./build/ttymain"
+    "build": "tsc -p ./src --outDir ./build",
+    "door": "tsc -p ./src/door --outDir ./build/door; cd ./build/door; node app; cd -",
+    "start": "npm run build && node ./build/ttymain",
+    "vscode:prepublish": "npm run build"
   },
   "repository": {
     "type": "git",

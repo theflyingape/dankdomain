@@ -3,6 +3,7 @@
  *  DOOR authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 process.chdir(__dirname);
 process.title = 'door';
 const pty = require("node-pty");
@@ -45,6 +46,7 @@ app.post('/terminals/:pid', (ws, req) => {
             wss.send(data);
         }
         catch (ex) {
+            // The WebSocket is not open, ignore
         }
     });
     ws.on('message', function (msg) {
