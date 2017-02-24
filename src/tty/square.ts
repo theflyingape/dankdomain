@@ -36,7 +36,7 @@ module Square
 
 	let credit = new $.coins(0)
 
-	let lo, hi, max = 0
+	let lo = 0, hi = 0, max = 0
 	let want = ''
 
 export function menu(suppress = false) {
@@ -109,6 +109,86 @@ function choice() {
 			xvt.app.focus = 'menu'
 			return
 
+		case 'G':
+            require('./arena').menu($.player.expert)
+            return
+
+		case 'H':
+			if ($.reason) break
+			if ($.Armor.name[$.player.armor].ac == 0 && ($.online.toAC < 0 || $.player.toAC < 0)) {
+				credit = new $.coins(($.online.toAC + $.player.toAC) + 's')
+				xvt.app.form = {
+					'skin': { cb:() => {
+						if (/Y/i.test(xvt.entry)) {
+							$.online.toAC = 0
+							$.player.toAC = 0
+							if ($.player.coin.value > 0) {
+								$.player.coin.value -= credit.value
+								if ($.player.coin.value < 0) {
+									$.player.loan.value += $.player.coin.value
+									$.player.coin.value = 0
+								}
+							}
+						}
+						menu(true)
+						return
+					}, cancel:'Y', enter:'Y', max:1, eol:false, match:/Y|N/i }
+				}
+				xvt.app.form['skin'].prompt = 'Heal your skin for ' + credit.carry() + ' (Y/N)? '
+				xvt.app.focus = 'skin'
+				return
+			}
+			if ($.Weapon.name[$.player.weapon].wc == 0 && ($.online.toWC < 0 || $.player.toWC < 0)) {
+				credit = new $.coins(($.online.toWC + $.player.toWC) + 's')
+				xvt.app.form = {
+					'hands': { cb:() => {
+						if (/Y/i.test(xvt.entry)) {
+							$.online.toWC = 0
+							$.player.toWC = 0
+							if ($.player.coin.value > 0) {
+								$.player.coin.value -= credit.value
+								if ($.player.coin.value < 0) {
+									$.player.loan.value += $.player.coin.value
+									$.player.coin.value = 0
+								}
+							}
+						}
+						menu(true)
+						return
+					}, cancel:'Y', enter:'Y', max:1, eol:false, match:/Y|N/i }
+				}
+				xvt.app.form['hands'].prompt = 'Fix your hands for ' + credit.carry() + ' (Y/N)? '
+				xvt.app.focus = 'hands'
+				return
+			}
+			hi = $.player.hp - $.online.hp
+			if (hi < 1) {
+				xvt.out('You don\'t need any hit points.\n\n')
+				suppress = true
+				break
+			}
+			xvt.out('Welcome to Butler Hospital.\n\n')
+			xvt.out('Hit points cost ', $.player.level, 'each.\n')
+			xvt.out('You need ', hi, ' hit points.\n')
+			lo = Math.trunc($.player.coin.value / $.player.level)
+			xvt.out('You can afford ', lo < hi ? lo.toString() : 'all your', ' hit points.\n')
+			if (lo < hi) {
+				if ($.player.novice)
+					xvt.out('Normally, you would be billed for the remaining ', (hi - lo).toString(), ' hit points.\n')
+				else
+					xvt.out('You can be billed for the remaining ', (hi - lo).toString(), ' hit points.\n')
+			}
+			xvt.app.form = {
+				'hp': { cb: () => {
+					//	TO DO
+					menu(true)
+					return
+				}, max:5 }
+			}
+			xvt.app.form['hp'].prompt = xvt.attr('How many do you want ', xvt.white, '[MAX=', hi.toString(), ']? ')
+			xvt.app.focus = 'hp'
+			return
+
 		case 'M':
 			xvt.out('The ', xvt.bright, xvt.blue, 'old mage ', xvt.reset)
 			max = $.Magic.merchant.length
@@ -134,6 +214,27 @@ function choice() {
 				)
 			list(choice)
 			return
+
+		case 'P':
+			if ($.reason) break
+			if (!$.Access.name[$.player.access].roleplay || $.player.novice) break
+			xvt.out('You attempt to pick a passerby\'s pocket... ')
+			xvt.waste(1000)
+			credit.value = $.dice(Math.trunc(5 *  $.money($.player.level) / $.dice(10)))
+			xvt.out('\n\nYou pick somebody\'s pocket and steal ', credit.carry(), '!\n\n')
+			xvt.waste(1000)
+			if (Math.trunc(16 * $.player.steal + $.player.level / 10 + $.player.dex / 10) < $.dice(100)) {
+				xvt.out('A guard catches you and throws you into jail!\n')
+				xvt.waste(750)
+				xvt.out('You might be released by your next call.\n\n')
+				xvt.waste(750)
+				$.player.status = 'jail'
+				$.reason = 'caught picking a pocket'
+				xvt.hangup()
+			}
+			$.player.coin.value += credit.value
+			suppress = false
+			break
 
         case 'Q':
 			require('./main').menu($.player.expert)

@@ -5,6 +5,7 @@
 
 import $ = require('../common')
 import xvt = require('xvt')
+import Battle = require('../battle')
 
 module Arena
 {
@@ -61,6 +62,13 @@ function choice() {
     }
 
     switch (choice) {
+		case 'G':
+            require('./square').menu($.player.expert)
+            return
+
+		case 'M':
+			break
+
         case 'Q':
 			require('./main').menu($.player.expert)
 			return
@@ -69,9 +77,6 @@ function choice() {
 }
 
 function CastSpell() {
-}
-
-function GotoSquare() {
 }
 
 function Joust() {
