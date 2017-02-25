@@ -666,9 +666,7 @@ export function playerPC(points = 200) {
             xvt.beep()
             xvt.app.refocus()
         }
-        let keep = player.coward
         reroll(player, classes[n])
-        player.coward = keep
         show()
         ability('str')
     }
@@ -740,7 +738,6 @@ export function playerPC(points = 200) {
                 player.cha = n
                 activate(online)
                 xvt.out('\n')
-                //db.saveUser(player)
                 require('./tty/main').menu(true)
                 return
         }

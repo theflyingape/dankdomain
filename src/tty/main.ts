@@ -177,10 +177,10 @@ function choice() {
                     if (xvt.entry.toUpperCase() === 'Y') {
                         $.reroll($.player)
                         $.activate($.online)
-                        $.player.coward = true
                         xvt.out('\n')
-                        db.saveUser($.player)
                         $.playerPC()
+                        $.player.coward = true
+                        db.saveUser($.player)
                         return
                     }
                     menu(true)
