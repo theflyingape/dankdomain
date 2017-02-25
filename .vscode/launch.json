@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceRoot}/dankdomain.ts",
+            "program": "${workspaceRoot}/build/ttymain.js",
             "cwd": "${workspaceRoot}",
             "outFiles": [],
             "sourceMaps": true

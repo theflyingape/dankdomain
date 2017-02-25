@@ -118,7 +118,7 @@ function choice() {
                 'yn': { cb: () => {
                     xvt.out('\n')
                     if (xvt.entry.toUpperCase() === 'Y') {
-                        if (!$.reason.length) $.reason = 'logged out'
+                        if (!$.reason.length) $.reason = 'logged off as a level ' + $.player.level + ' ' + $.player.pc
                         xvt.hangup()
                     }
                     menu()

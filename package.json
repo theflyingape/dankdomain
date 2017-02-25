@@ -5,7 +5,7 @@
   "main": "ttymain",
   "publisher": "theflyingape",
   "engines": {
-	  "vscode": "0.10.x"
+    "vscode": "0.10.x"
   },
   "scripts": {
     "build": "tsc -p ./src --outDir ./build",
@@ -41,7 +41,7 @@
     "tty.js": "^0.2.15",
     "ws": "^2.0.3",
     "xterm": "^2.3.2",
-    "xvt": "^1.0.10"
+    "xvt": "^1.0.11"
   },
   "devDependencies": {
     "@types/express": "^4.0.35",

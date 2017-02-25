@@ -55,28 +55,60 @@ function choice() {
     let suppress = $.player.expert
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(arena[choice]))
-        xvt.out(choice, ' - ', arena[choice].description, '\n')
+        xvt.out( ' - ', arena[choice].description, '\n')
     else {
         xvt.beep()
         suppress = false
     }
 
     switch (choice) {
+		case 'C':
+			if ($.reason) break
+			break
+
 		case 'G':
             require('./square').menu($.player.expert)
             return
 
-		case 'M':
+		case 'J':
+			if (!$.joust) {
+				xvt.out('\nYou have run out of jousts.\n')
+				suppress = true
+				break
+			}
 			break
+
+		case 'M':
+			if (!$.arena) {
+				xvt.out('\nYou have no more arena fights.\n')
+				suppress = true
+				break
+			}
+			break
+
+		case 'P':
+			if ($.reason) break
+			Battle.poison($.online, menu)
+			return
 
         case 'Q':
 			require('./main').menu($.player.expert)
 			return
+
+		case 'U':
+			if (!$.arena) {
+				xvt.out('\nYou have no more arena fights.\n')
+				suppress = true
+				break
+			}
+			break
+
+		case 'Y':
+			Battle.yourstats()
+			suppress = true
+			break
 	}
 	menu(suppress)
-}
-
-function CastSpell() {
 }
 
 function Joust() {
@@ -107,15 +139,6 @@ function MonsterFights() {
 		tty.out((+id+1).toString(), ') level ', monsters[id].level.toString() , ' ', monsters[id].name, '\n')
 	tty.pause()
 */
-}
-
-function Poison() {
-}
-
-function UserFights() {
-}
-
-function YourStatus() {
 }
 
 }

@@ -72,19 +72,14 @@ function choice() {
 			xvt.out(' worth ', credit.carry(), '\n')
 
 			if (ac == 0 && ($.player.toAC < 0 || $.online.toAC < 0)) {
-				xvt.out(xvt.yellow, 'You look like a leper; go get yourself cured.\n')
+				xvt.out(xvt.yellow, 'You look like a leper; go to the hospital for treatment.\n')
 				suppress = true
 				break
 			}
 
 			max = $.Armor.merchant.length - 1
-			lo = ac + 1
-			for (lo > max ? max : lo;
-				lo > 1 && $.player.coin.value + credit.value < new $.coins($.Armor.name[$.Armor.merchant[lo]].value).value;
-				lo--);
-
-			hi = lo
-			for (;
+			lo = 1
+			for (hi = lo;
 				hi < max && $.player.coin.value + credit.value >= new $.coins($.Armor.name[$.Armor.merchant[hi]].value).value;
 				hi++);
 
@@ -277,7 +272,7 @@ function choice() {
 			return
 
 		case 'V':
-			xvt.out(xvt.faint, '[... you enter the back door of the shop ...]\n', xvt.reset)
+			xvt.out(xvt.faint, '... you enter the back door of the shop ...\n', xvt.reset)
 			xvt.out('The ', xvt.bright, xvt.magenta, 'apothecary ', xvt.reset)
 			max = $.Poison.merchant.length
 			for (lo = 1; lo < max; lo++)
@@ -317,19 +312,14 @@ function choice() {
 			xvt.out(' worth ', credit.carry(), '\n')
 
 			if (wc == 0 && ($.player.toWC < 0 || $.online.toWC < 0)) {
-				xvt.out(xvt.yellow, 'Your hands are broken; go get them healed.\n')
+				xvt.out(xvt.yellow, 'Your hands are broken; go to the hospital for treatment.\n')
 				suppress = true
 				break
 			}
 
 			max = $.Weapon.merchant.length - 1
-			lo = wc + 1
-			for (lo > max ? max : lo;
-				lo > 1 && $.player.coin.value + credit.value < new $.coins($.Weapon.name[$.Weapon.merchant[lo]].value).value;
-				lo--);
-
-			hi = lo
-			for (;
+			lo = 1
+			for (hi = lo;
 				hi < max && $.player.coin.value + credit.value >= new $.coins($.Weapon.name[$.Weapon.merchant[hi]].value).value;
 				hi++);
 

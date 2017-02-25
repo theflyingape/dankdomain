@@ -790,23 +790,23 @@ export function remake(user: user) {
 
             switch (d) {
                 case 1:
-                    if ((user.maxstr += 10) > 100)
-                        user.maxstr = 100
+                    if ((user.maxstr += 10) > 99)
+                        user.maxstr = 99
                     xvt.out('Strength')
                     break
                 case 2:
-                    if ((user.maxint += 10) > 100)
-                        user.maxint = 100
+                    if ((user.maxint += 10) > 99)
+                        user.maxint = 99
                     xvt.out('Intellect')
                     break
                 case 3:
-                    if ((user.maxdex += 10) > 100)
-                        user.maxdex = 100
+                    if ((user.maxdex += 10) > 99)
+                        user.maxdex = 99
                     xvt.out('Dexterity')
                     break
                 case 4:
-                    if ((user.maxcha += 10) > 100)
-                        user.maxcha = 100
+                    if ((user.maxcha += 10) > 99)
+                        user.maxcha = 99
                     xvt.out('Charisma')
                     break
                 case 5:
@@ -950,6 +950,43 @@ export function titlecase(orig: string): string {
     return titleCase(orig)
 }
 
+export function what(user: user, action: string) {
+    return ' ' + action + (user.id !== player.id ? 's' : '') + ' '
+}
+
+export function who(user: user, subject = true, start = true) {
+    let pronoun = [
+            [{
+                'F': { word: 'her ' },
+                'I': { word: 'its ' },
+                'M': { word: 'his ' },
+                'U': { word: 'your ' }
+            },
+            {
+                'F': { word: 'Her ' },
+                'I': { word: 'Its ' },
+                'M': { word: 'His ' },
+                'U': { word: 'Your ' },
+            }]
+        ,
+            [{
+                'F': { word: 'her' },
+                'I': { word: 'it' },
+                'M': { word: 'him' },
+                'U': { word: 'you' }
+            },
+            {
+                'F': { word: user.handle },
+                'I': { word: 'The ' + user.handle },
+                'M': { word: user.handle },
+                'U': { word: 'You' }
+            }]
+        ]
+
+    let gender = user.id === player.id ? 'U' : user.gender
+    return pronoun[+subject][+start][gender].word
+}
+
 export function worth(n: number, p: number) {
     return Math.trunc(n * p / 100)
 }
@@ -966,7 +1003,7 @@ export function bracket(item: number|string, nl = true): string {
 export function buff(perm: number, temp:number): string {
     let buff = ''
     if (perm || temp) {
-        buff = xvt.attr(xvt.nobright, xvt.magenta, ' (')
+        buff = xvt.attr(xvt.reset, xvt.magenta, ' (')
         if (perm > 0) buff += xvt.attr(xvt.bright, xvt.yellow, '+', perm.toString())
         else if (perm < 0) buff += xvt.attr(xvt.bright, xvt.red, perm.toString())
         else buff += xvt.attr(xvt.nobright, xvt.white, '+0')

@@ -52,6 +52,7 @@ export class Magic {
     }
 
     add(spells: number[], n:number) {
+        n = +n
         if (!this.have(spells, n)) {
             spells.push(n)
             spells.sort((n1,n2) => n1 - n2)
@@ -100,6 +101,11 @@ export class Magic {
                 }
         return name
     }
+
+    remove(spells: number[], n:number) {
+        let i = spells.indexOf(n)
+        if (i >= 0) spells.splice(i, 1)
+    }
 }
 
 export class Poison {
@@ -116,6 +122,7 @@ export class Poison {
     }
 
     add(vials: number[], n:number) {
+        n = +n
         if (!this.have(vials, n)) {
             vials.push(n)
             vials.sort((n1,n2) => n1 - n2)
@@ -124,15 +131,8 @@ export class Poison {
 
     have(vials: number[], n: number|string): boolean {
         let have = false
-        if (typeof n === 'number') {
-            for (let i = 0; i < vials.length; i++) {
-                if (n == vials[i]) {
-                //  console.log('have', this.merchant[n-1], this.vials[this.merchant[n-1]])
-                    have = true
-                    break
-                }
-            }
-        }
+        if (typeof n === 'number' && vials.indexOf(n) >= 0)
+            have = true
         else {
             for (let i = 0; i < vials.length; i++) {
                 if (n === this.pick(vials[i])) {
@@ -154,10 +154,14 @@ export class Poison {
                 }
         return name
     }
+
+    remove(vials: number[], n:number) {
+        let i = vials.indexOf(n)
+        if (i >= 0) vials.splice(i, 1)
+    }
 }
 
 export class Weapon {
-
     name: weapon[]
     gift: string[] = []
     merchant: string[] = []
@@ -173,6 +177,20 @@ export class Weapon {
             else
                 this.special.push(i)
         }
+    }
+
+    baseWC(name: string): number {
+        let wc = 0
+        if (typeof this.name[name] === 'undefined')
+            wc = Math.abs(+name)
+        else
+            wc = this.name[name].wc
+        return wc
+    }
+
+    buffWC(rpc: active): number {
+        let wc = this.baseWC(rpc.user.weapon) + rpc.toWC + rpc.user.toWC
+        return wc
     }
 }
 
