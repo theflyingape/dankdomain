@@ -31,6 +31,8 @@ module Main
     }
 
 export function menu(suppress = false) {
+    if ($.online.altered) db.saveUser($.player)
+
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }
@@ -46,9 +48,8 @@ export function menu(suppress = false) {
 function choice() {
     let suppress = $.player.expert
     let choice = xvt.entry.toUpperCase()
-    if (xvt.validator.isNotEmpty(mainmenu[choice])) {
+    if (xvt.validator.isNotEmpty(mainmenu[choice]))
         if (xvt.validator.isNotEmpty(mainmenu[choice].description)) xvt.out(' - ', mainmenu[choice].description)
-    }
     else {
         xvt.beep()
         suppress = false

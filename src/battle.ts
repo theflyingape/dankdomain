@@ -49,7 +49,7 @@ export function cast(rpc: active, cb:Function) {
     }
 
     function invoke(rpc: active, spell: number) {
-
+        rpc.altered = true
     }
 }
 
@@ -92,6 +92,7 @@ export function poison(rpc: active, cb:Function) {
     }
 
     function apply(rpc: active, vial: number) {
+        rpc.altered = true
         let wc = $.Weapon.baseWC(rpc.user.weapon)
         let p = Math.trunc(rpc.user.poison / 2)
         let t = rpc.user.poison - Math.trunc(p / 2)
@@ -133,6 +134,24 @@ export function poison(rpc: active, cb:Function) {
     }
 }
 
+export function user(venue: string, cb:Function) {
+    xvt.app.form = {
+        'user': { cb: () => {
+            let rpc = <active>{}
+            rpc.user.id = xvt.entry
+            if (!db.loadUser(rpc)) {
+                rpc.user.id = ''
+                rpc.user.handle = xvt.entry
+                if(!db.loadUser(rpc)) {
+                }
+            }
+            cb(rpc)
+        }, max:22 }
+    }
+    xvt.app.form['user'].prompt = venue + ' what user (?=List)? '
+    xvt.app.focus = 'user'
+}
+
 export function yourstats() {
     xvt.out(xvt.reset, '\n')
     xvt.out(xvt.cyan, 'Str:', xvt.bright, $.online.str > $.player.str ? xvt.yellow : $.online.str < $.player.str ? xvt.red : xvt.white)
@@ -152,8 +171,10 @@ export function yourstats() {
     }
     if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry())
     xvt.out(xvt.reset, '\n')
-    xvt.out(xvt.cyan, 'Weapon: ', xvt.bright, xvt.white, $.player.weapon, $.buff($.player.toWC, $.online.toWC), xvt.nobright)
-    xvt.out(xvt.cyan, '   Armor: ', xvt.bright, xvt.white, $.player.armor, $.buff($.player.toAC, $.online.toAC), xvt.nobright)
+    xvt.out(xvt.cyan, 'Weapon: ', xvt.bright, xvt.white, $.player.weapon)
+    xvt.out($.buff($.player.toWC, $.online.toWC), xvt.nobright)
+    xvt.out(xvt.cyan, '   Armor: ', xvt.bright, xvt.white, $.player.armor)
+    xvt.out($.buff($.player.toAC, $.online.toAC), xvt.nobright)
     xvt.out(xvt.reset, '\n')
 }
 

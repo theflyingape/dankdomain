@@ -22,11 +22,12 @@ module Common
     export const Security = new Items.Security
     export const Weapon = new Items.Weapon
 
-    export let callers: caller[] = []
-    export let reason: string = ''
+    export let barkeep: active = { user: { id:'_BAR'} }
     export let online: active = { user: { id:'' } }
+    export let taxman: active = { user: { id:'_TAX'} }
     export let player: user = online.user
     export let sysop: user = { id:'_SYS' }
+
     export let arena: number = 0
     export let bail: number = 0
     export let brawl: number = 0
@@ -39,6 +40,9 @@ module Common
     export let realestate: number = 0
     export let security: number = 0
     export let tiny: number = 0
+
+    export let callers: caller[] = []
+    export let reason: string = ''
 
     //  £
     export const Cleric = {
@@ -313,35 +317,8 @@ module Common
         }
 
         weapon(profile: active): { text:string, rich:string } {
-            let text = '', rich = ''
-
-            text = profile.user.weapon
-            rich = xvt.attr(xvt.bright, xvt.white, text)
-
-            if (profile.toWC || profile.user.toWC) {
-                text += ' ('
-                rich += xvt.attr(xvt.blue, ' (')
-                if (profile.user.toWC < 0) {
-                    text += profile.user.toWC.toString()
-                    rich += xvt.attr(xvt.red, profile.user.toWC.toString())
-                }
-                else {
-                    text += '+' + profile.user.toWC.toString()
-                    rich += xvt.attr(xvt.white, '+', profile.user.toWC.toString())
-                }
-                text += ','
-                rich += xvt.attr(xvt.nobright, xvt.white, ',', xvt.bright)
-                if (profile.toWC < 0) {
-                    text += profile.toWC.toString()
-                    rich += xvt.attr(xvt.red, profile.toWC.toString())
-                }
-                else {
-                    text += '+' + profile.toWC.toString()
-                    rich += xvt.attr(xvt.white, '+', profile.toWC.toString())
-                }
-                text += ')'
-                rich += xvt.attr(xvt.blue, ')', xvt.white)
-            }
+            let text = profile.user.weapon + buff(profile.toWC, profile.user.toWC, true)
+            let rich = xvt.attr(xvt.bright, xvt.white, profile.user.weapon + buff(profile.user.toWC, profile.toWC))
             return { text:text, rich:rich }
         }
     }
@@ -616,7 +593,7 @@ export function playerPC(points = 200) {
         player.weapon = novice.weapon
         player.armor = novice.armor
         xvt.out('Since you are a new user here, you are automatically assigned a character\n')
-        xvt.out('class.  At the Main Menu, press', bracket('Y', false), ' to see all your character information.')
+        xvt.out('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.')
         show()
         activate(online)
         require('./tty/main').menu(true)
@@ -1000,10 +977,12 @@ export function bracket(item: number|string, nl = true): string {
     return framed
 }
 
-export function buff(perm: number, temp:number): string {
+export function buff(perm: number, temp:number, text = false): string {
+    let keep = xvt.emulation
+    if (text) xvt.emulation = 'dumb'
     let buff = ''
     if (perm || temp) {
-        buff = xvt.attr(xvt.reset, xvt.magenta, ' (')
+        buff = xvt.attr(xvt.nobright, xvt.magenta, ' (')
         if (perm > 0) buff += xvt.attr(xvt.bright, xvt.yellow, '+', perm.toString())
         else if (perm < 0) buff += xvt.attr(xvt.bright, xvt.red, perm.toString())
         else buff += xvt.attr(xvt.nobright, xvt.white, '+0')
@@ -1013,6 +992,7 @@ export function buff(perm: number, temp:number): string {
         else buff += xvt.attr(xvt.nobright, xvt.white, '+0')
         buff += xvt.attr(xvt.nobright, xvt.magenta, ')', xvt.white)
     }
+    if (text) xvt.emulation = keep
     return buff
 }
 

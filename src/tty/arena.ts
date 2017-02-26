@@ -55,7 +55,7 @@ function choice() {
     let suppress = $.player.expert
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(arena[choice]))
-        xvt.out( ' - ', arena[choice].description, '\n')
+        if (xvt.validator.isNotEmpty(arena[choice].description)) xvt.out(' - ', arena[choice].description, '\n\n')
     else {
         xvt.beep()
         suppress = false
@@ -73,10 +73,43 @@ function choice() {
 
 		case 'J':
 			if (!$.joust) {
-				xvt.out('\nYou have run out of jousts.\n')
+				xvt.out('You have run out of jousts.\n')
 				suppress = true
 				break
 			}
+			xvt.out('You grab a horse and prepare yourself to joust.\n\n')
+			Battle.user('Joust', (opponent: active) => {
+				if (opponent.user.id === $.player.id) {
+					xvt.out('You can\'t joust a wimp like ', $.who($.player, true, false), '.\n\n')
+					menu(true)
+					return
+				}
+				if ($.player.level - opponent.user.level > 3) {
+					xvt.out('You can only joust someone higher or up to three levels below you.\n\n')
+					menu(true)
+					return
+				}
+
+				xvt.app.form = {
+					'compete': { cb:() => {
+						if (/Y/i.test(xvt.entry)) {
+							$.joust--
+							xvt.out('The trumpets blare! You and your opponent ride into the arena. The crowd roars!\n\n')
+							xvt.app.focus = 'joust'
+							return
+						}
+						menu(true)
+						return
+					}, prompt:'Are you sure (Y/N)? ', enter:'N', eol:false, match:/Y|N/i },
+					'joust': { cb:() => {
+						if (/F/i.test(xvt.entry)) {
+							menu(true)
+							return
+						}
+						xvt.app.refocus()
+					}, prompt:xvt.attr($.bracket('J', false), xvt.bright, xvt.yellow, ' Joust ', xvt.magenta, '*', $.bracket('F'), xvt.bright, xvt.yellow, ' Forfeit: '), eol:false }
+				}
+			})
 			break
 
 		case 'M':

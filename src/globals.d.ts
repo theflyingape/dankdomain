@@ -205,6 +205,7 @@ interface character {
 
 interface active {
     user: user
+    altered?: boolean
     pc?: character
     weapon?: weapon
     armor?: armor

@@ -54,10 +54,19 @@ module db
         xvt.out('done.\n')
     }
 
+function isActive(arg: any): arg is active {
+    return (<active>arg).user !== undefined
+}
 
-export function loadUser(user: user): boolean {
+function isUser(arg: any): arg is user {
+    return (<user>arg).id !== undefined
+}
+
+export function loadUser(rpc): boolean {
+
+    let user: user = isActive(rpc) ? rpc.user : rpc
     let query = 'SELECT * FROM Players WHERE '
-    if (user.handle && user.handle[0] != '_') user.handle = $.titlecase(user.handle)
+    if (user.handle) user.handle = $.titlecase(user.handle)
     query += (user.id) ? `id = '${user.id.toUpperCase()}'` : `handle = '${user.handle}'`
 
     let row = sqlite3.run(query)
@@ -79,21 +88,26 @@ export function loadUser(user: user): boolean {
         if (row[0].spells.length) {
             let spells = row[0].spells.split(',')
             for (let i = 0; i < spells.length; i++)
-                $.Poison.add(user.spells, spells[i])
+                $.Magic.add(user.spells, spells[i])
         }
+
+        if (isActive(rpc)) $.activate(rpc)
         return true
     }
     else
         return false
 }
 
-export function saveUser(user: user, insert = false) {
+export function saveUser(rpc, insert = false) {
 
-    let trace = users + user.id + '.json'
-    if ($.reason === '')
-        $.fs.writeFileSync(trace, JSON.stringify(user, null, 2))
-    else
-        $.fs.removeSync(trace)
+    let user: user = isActive(rpc) ? rpc.user : rpc
+    if (user.id === $.player.id) {
+        let trace = users + user.id + '.json'
+        if ($.reason === '')
+            $.fs.writeFileSync(trace, JSON.stringify(user, null, 2))
+        else
+            $.fs.removeSync(trace)
+    }
 
     let sql: string = ''
 
@@ -156,6 +170,8 @@ export function saveUser(user: user, insert = false) {
         console.log(result)
         xvt.hangup()
     }
+    else
+        if (isActive(rpc)) rpc.altered = false
 }
 
 export function query(q: string): any {

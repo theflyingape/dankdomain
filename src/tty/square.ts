@@ -51,7 +51,7 @@ function choice() {
     let suppress = $.player.expert
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(square[choice]))
-        xvt.out(' - ', square[choice].description, '\n\n')
+        if (xvt.validator.isNotEmpty(square[choice].description)) xvt.out(' - ', square[choice].description, '\n\n')
     else {
         xvt.beep()
         suppress = false
@@ -124,6 +124,7 @@ function choice() {
 									$.player.coin.value = 0
 								}
 							}
+							$.online.altered = true
 						}
 						menu(true)
 						return
@@ -147,6 +148,7 @@ function choice() {
 									$.player.coin.value = 0
 								}
 							}
+							$.online.altered = true
 						}
 						menu(true)
 						return
@@ -226,6 +228,7 @@ function choice() {
 				$.player.status = 'jail'
 				$.reason = 'caught picking a pocket'
 				xvt.hangup()
+				return
 			}
 			$.player.coin.value += credit.value
 			suppress = false
@@ -446,6 +449,7 @@ function amount() {
 						amount.value = 0
 				}
 				$.player.bank.value += amount.value
+				$.online.altered = true
 				xvt.beep()
 			}
 			break
@@ -455,6 +459,7 @@ function amount() {
 			if (amount.value > 0 && amount.value <= credit.value) {
 				$.player.loan.value += amount.value
 				$.player.coin.value += amount.value
+				$.online.altered = true
 				xvt.beep()
 			}
 			break
@@ -464,6 +469,7 @@ function amount() {
 			if (amount.value > 0 && amount.value <= $.player.bank.value) {
 				$.player.bank.value -= amount.value
 				$.player.coin.value += amount.value
+				$.online.altered = true
 				xvt.beep()
 			}
 			break
@@ -575,6 +581,7 @@ function buy() {
 				$.player.armor = $.Armor.merchant[item]
 				xvt.out(' - ', $.player.armor, '\n')
 				$.player.coin.value += credit.value - cost.value
+				$.online.altered = true
 			}
 			break
 
@@ -586,6 +593,7 @@ function buy() {
 				$.Magic.add($.player.spells, buy)
 				xvt.out(' - ', $.Magic.merchant[item], '\n')
 				$.player.coin.value -= cost.value
+				$.online.altered = true
 			}
 			break
 
@@ -596,6 +604,7 @@ function buy() {
 				xvt.out(' - ', $.player.realestate, '\n')
 				$.player.coin.value += credit.value - cost.value
 				if (item == lo && $.realestate) $.realestate--
+				$.online.altered = true
 			}
 			break
 
@@ -606,6 +615,7 @@ function buy() {
 				xvt.out(' - ', $.player.security, '\n')
 				$.player.coin.value += credit.value - cost.value
 				if (item == lo && $.security) $.security--
+				$.online.altered = true
 			}
 			break
 
@@ -617,6 +627,7 @@ function buy() {
 				$.Poison.add($.player.poisons, buy)
 				xvt.out(' - ', $.Poison.merchant[item], '\n')
 				$.player.coin.value -= cost.value
+				$.online.altered = true
 			}
 			break
 
@@ -626,6 +637,7 @@ function buy() {
 				$.player.weapon = $.Weapon.merchant[buy]
 				xvt.out(' - ', $.player.weapon, '\n')
 				$.player.coin.value += credit.value - cost.value
+				$.online.altered = true
 			}
 			break
 	}

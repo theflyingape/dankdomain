@@ -93,10 +93,6 @@ function password() {
     let t = $.now().time
     t = 1440 * ($.now().date - $.player.lastdate) + 60 * Math.trunc(t / 100) + (t % 100) - (60 * Math.trunc($.player.lasttime / 100) + ($.player.lasttime % 100))
     if (!$.Access.name[$.player.access].sysop && t < 2) {
-        if ($.player.cha > 20) {
-            $.player.cha--
-            db.saveUser($.player)
-        }
         xvt.beep()
         xvt.out('\nYou were last on just ', t.toString(), ' minutes ago.\n')
         xvt.out('Please wait at least 2 minutes between calls.\n')
@@ -194,8 +190,6 @@ function welcome() {
         $.tiny = 0
         $.reason = 'visiting'
     }
-
-    db.saveUser($.player)
 
     xvt.out(xvt.cyan, '\nLast callers were: ', xvt.white)
     try {
