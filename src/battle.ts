@@ -12,11 +12,48 @@ import xvt = require('xvt')
 module Battle
 {
 
-export function poison(rpc: active, cb:Function) {
-    if (!rpc.user.poison) {
-        cb()
+export function cast(rpc: active, cb:Function) {
+    if (rpc.user.id === $.player.id) {
+        if (!$.player.spells.length) {
+            xvt.out('\nYou don\'t have any magic.\n')
+            cb(true)
+            return
+        }
+        xvt.app.form = {
+            'magic': { cb: () => {
+                xvt.out('\n')
+                if (xvt.entry === '') {
+                    cb()
+                    return
+                }
+                if (!$.Magic.have(rpc.user.spells, +xvt.entry)) {
+                	for (let i in $.player.spells) {
+                        let p = $.player.spells[i]
+                        if (xvt.validator.isNotEmpty($.Magic.merchant[p - 1]))
+    				    	xvt.out($.bracket(p), ' ', $.Magic.merchant[p - 1])
+                        else
+    				    	xvt.out($.bracket(p), ' ', $.Magic.special[p - $.Magic.merchant.length])
+                    }
+                    xvt.out('\n')
+                    xvt.app.refocus()
+                    return
+                }
+                else
+                    invoke(rpc, +xvt.entry)
+                cb(true)
+                return
+            }, prompt:'Enter ' + ['wand', 'scroll', 'spell', 'spell'][$.player.magic - 1] +' (?=list): ', max:2 }
+        }
+        xvt.app.focus = 'magic'
         return
     }
+
+    function invoke(rpc: active, spell: number) {
+
+    }
+}
+
+export function poison(rpc: active, cb:Function) {
     if (rpc.user.id === $.player.id) {
         if (!$.player.poisons.length) {
             xvt.out('\nYou don\'t have any poisons.\n')

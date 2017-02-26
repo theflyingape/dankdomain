@@ -64,7 +64,8 @@ function choice() {
     switch (choice) {
 		case 'C':
 			if ($.reason) break
-			break
+			Battle.cast($.online, menu)
+			return
 
 		case 'G':
             require('./square').menu($.player.expert)

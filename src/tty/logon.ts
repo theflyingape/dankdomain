@@ -124,14 +124,15 @@ function password() {
             }
     }
 
+    db.loadUser($.sysop)
+    $.sysop.calls++
+    $.sysop.today++
+    $.player.today++
+    db.saveUser($.sysop)
     welcome()
 }
 
 function welcome() {
-    $.sysop.calls++
-    $.sysop.today++
-    db.saveUser($.sysop)
-
     xvt.out(xvt.clear, xvt.red, '--=:))', xvt.LGradient[xvt.emulation]
         , xvt.Red, xvt.bright, xvt.white, $.sysop.handle, xvt.reset
         , xvt.red, xvt.RGradient[xvt.emulation], '((:=--')
@@ -144,7 +145,7 @@ function welcome() {
     $.player.lasttime = $.now().time
     $.activate($.online)
 
-    if ($.player.today++ < $.Access.name[$.player.access].calls && $.Access.name[$.player.access].roleplay) {
+    if ($.player.today <= $.Access.name[$.player.access].calls && $.Access.name[$.player.access].roleplay) {
         xvt.ondrop = $.logoff
         xvt.out('\n')
         xvt.sessionAllowed = $.Access.name[$.player.access].minutes * 60
@@ -163,7 +164,11 @@ function welcome() {
         $.tiny = 1
 
         if ($.player.pc === 'None') {
-            $.playerPC()
+            $.cat('intro')
+            xvt.app.form = {
+                'pause': { cb:$.playerPC, pause:true }
+            }
+            xvt.app.focus = 'pause'
             return
         }
 
@@ -213,38 +218,6 @@ function welcome() {
     xvt.app.focus = 'pause'
 }
 
-/*
-function old() {
-    //  if unknown, query this process
-    if (! xvt.emulation) {
-        //  try a remote query for terminal emulation auto-detection
-        await xvt.enquiry('\x1B[6n')
-        if (xvt.entry.length > 0 && xvt.entry[0] == '[' && xvt.entry[xvt.entry.length - 1] == 'R')
-                                                                        xvt.emulation = 'XT'
-        else {
-            await xvt.enquiry('\x05')
-            if (xvt.entry.length > 0)                                   xvt.emulation = 'VT'
-        }
-        //  else, check this process for terminal emulation auto-detection
-        if (! xvt.emulation) {
-            if (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM))  xvt.emulation = 'dumb'
-            else if (/^lisa|^ncsa|^pcvt|^vt/i.test(process.env.TERM))   xvt.emulation = 'VT'
-            else if (/ansi|cygwin|^pc/i.test(process.env.TERM))         xvt.emulation = 'PC'
-            else                                                        xvt.emulation = 'XT'
-        }
-    }
-
-    //  allow hardcopy and monochrome terminals to still play!  :)
-    if (! xvt.emulation.match('VT|PC|XT'))                              xvt.emulation = 'dumb'
-    process.stdin.setEncoding(xvt.emulation == 'XT' ? 'utf8' : 'ascii')
-    xvt.waste(500)
-
-    xvt.out(xvt.bright, xvt.cyan, xvt.emulation, ' emulation enabled\n\f', xvt.reset)
-    xvt.waste(1500)
-
-    //xvt.sessionAllowed = $.Access.name[player.access].minutes * 60 * 1000
-    xvt.idleTimeout = 2 * 60 * 10
-*/
 }
 
 export = Logon

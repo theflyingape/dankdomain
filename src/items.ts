@@ -61,25 +61,8 @@ export class Magic {
 
     have(spells: number[], n: number|string): boolean {
         let have = false
-        if (typeof n === 'number') {
-            if (typeof this.spells[this.merchant[n - 1]] === 'undefined') {
-                for (let x = 0; x < this.special.length; x++) {
-                    if (n == this.spells[this.special[x]].cast) {
-                        have = true
-                        break
-                    }
-                }
-            }
-            else {
-                for (let i = 0; i < spells.length; i++) {
-                    if (n == spells[i]) {
-                    //  console.log('have', this.merchant[n-1], this.spells[this.merchant[n-1]])
-                        have = true
-                        break
-                    }
-                }
-            }
-        }
+        if (typeof n === 'number' && spells.indexOf(n) >= 0)
+            have = true
         else {
             for (let i = 0; i < spells.length; i++) {
                 if (n === this.pick(spells[i])) {
