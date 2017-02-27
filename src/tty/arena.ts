@@ -52,14 +52,10 @@ export function menu(suppress = false) {
 }
 
 function choice() {
-    let suppress = $.player.expert
+    let suppress = true
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(arena[choice]))
-        if (xvt.validator.isNotEmpty(arena[choice].description)) xvt.out(' - ', arena[choice].description, '\n\n')
-    else {
-        xvt.beep()
-        suppress = false
-    }
+        if (xvt.validator.isNotEmpty(arena[choice].description)) xvt.out(' - ', arena[choice].description, '\n')
 
     switch (choice) {
 		case 'C':
@@ -73,23 +69,20 @@ function choice() {
 
 		case 'J':
 			if (!$.joust) {
-				xvt.out('You have run out of jousts.\n')
-				suppress = true
+				xvt.out('\nYou have run out of jousts.\n')
 				break
 			}
-			xvt.out('You grab a horse and prepare yourself to joust.\n\n')
 			Battle.user('Joust', (opponent: active) => {
 				if (opponent.user.id === $.player.id) {
-					xvt.out('You can\'t joust a wimp like ', $.who($.player, true, false), '.\n\n')
+					xvt.out('You can\'t joust a wimp like ', $.who($.player, true, false), '.\n')
 					menu(true)
 					return
 				}
 				if ($.player.level - opponent.user.level > 3) {
-					xvt.out('You can only joust someone higher or up to three levels below you.\n\n')
+					xvt.out('You can only joust someone higher or up to three levels below you.\n')
 					menu(true)
 					return
 				}
-
 				xvt.app.form = {
 					'compete': { cb:() => {
 						if (/Y/i.test(xvt.entry)) {
@@ -106,16 +99,20 @@ function choice() {
 							menu(true)
 							return
 						}
+						if (/J/i.test(xvt.entry)) {
+							xvt.out('\n')
+						}
 						xvt.app.refocus()
 					}, prompt:xvt.attr($.bracket('J', false), xvt.bright, xvt.yellow, ' Joust ', xvt.magenta, '*', $.bracket('F'), xvt.bright, xvt.yellow, ' Forfeit: '), eol:false }
 				}
+				xvt.out('You grab a horse and prepare yourself to joust.\n')
+				xvt.app.focus = 'compete'
 			})
-			break
+			return
 
 		case 'M':
 			if (!$.arena) {
 				xvt.out('\nYou have no more arena fights.\n')
-				suppress = true
 				break
 			}
 			break
@@ -132,15 +129,17 @@ function choice() {
 		case 'U':
 			if (!$.arena) {
 				xvt.out('\nYou have no more arena fights.\n')
-				suppress = true
 				break
 			}
 			break
 
 		case 'Y':
 			Battle.yourstats()
-			suppress = true
 			break
+
+		default:
+			xvt.beep()
+    	    suppress = false
 	}
 	menu(suppress)
 }

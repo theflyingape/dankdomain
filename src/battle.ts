@@ -21,7 +21,6 @@ export function cast(rpc: active, cb:Function) {
         }
         xvt.app.form = {
             'magic': { cb: () => {
-                xvt.out('\n')
                 if (xvt.entry === '') {
                     cb()
                     return
@@ -135,20 +134,69 @@ export function poison(rpc: active, cb:Function) {
 }
 
 export function user(venue: string, cb:Function) {
+    let start = $.player.level > 3 ? $.player.level - 3 : 1
+    let end = $.player.level < 97 ? $.player.level + 3 : 99
+
     xvt.app.form = {
         'user': { cb: () => {
-            let rpc = <active>{}
-            rpc.user.id = xvt.entry
+            if (xvt.entry === '?') {
+                xvt.app.form['start'].prompt = 'Starting level ' + $.bracket(start, false) + ': '
+                xvt.app.focus = 'start'
+                return
+            }
+            let rpc: active = { user: { id: xvt.entry} }
             if (!db.loadUser(rpc)) {
                 rpc.user.id = ''
                 rpc.user.handle = xvt.entry
                 if(!db.loadUser(rpc)) {
                 }
             }
+            xvt.out('\n\n')
             cb(rpc)
-        }, max:22 }
+        }, max:22 },
+        'start': { cb: () => {
+            let n = +xvt.entry
+            if (n > 0 && n < 100) start = n
+            xvt.app.form['end'].prompt = '  Ending level ' + $.bracket(end, false) + ': '
+            xvt.app.focus = 'end'
+            return
+
+        }},
+        'end': { cb: () => {
+            let n = +xvt.entry
+            if (n >= start && n < 100) end = n
+
+            xvt.out('\n', xvt.Blue, xvt.bright)
+            xvt.out(' ID   Player\'s Handle           Class    Lvl    Last On     Access Level  \n')
+            xvt.out('--------------------------------------------------------------------------')
+            xvt.out('\n', xvt.reset)
+
+            let rows = db.query(`
+                SELECT id, handle, pc, level, status, lastdate, access FROM Players
+                WHERE id NOT GLOB '_*'
+                AND level BETWEEN ${start} AND ${end}
+                ORDER BY level DESC, immortal DESC
+                `)
+
+            for (let n in rows[0].values) {
+                let row = rows[0].values[n]
+                if (row[0] === $.player.id)
+                    continue
+                if (row[4].length) xvt.out(xvt.faint)
+                else xvt.out(xvt.reset)
+                //  paint a target on any player that is winning
+                if (row[2] === $.PC.winning)
+                    xvt.out(xvt.bright, xvt.yellow)
+                xvt.out(sprintf('%-4s  %-22s  %-9s  %3d  ', row[0], row[1], row[2], row[3]))
+                xvt.out($.date2full(row[5]), '  ', row[6])
+                xvt.out(xvt.reset, '\n')
+            }
+
+            xvt.app.focus = 'user'
+            return
+        }}
     }
-    xvt.app.form['user'].prompt = venue + ' what user (?=List)? '
+    xvt.app.form['user'].prompt = venue + ' what user (?=list): '
     xvt.app.focus = 'user'
 }
 

@@ -86,7 +86,7 @@ function choice() {
             let rows = db.query(`
                 SELECT id, handle, pc, level, status, gang FROM Players
                 WHERE id NOT GLOB '_*'
-                ORDER BY immortal DESC, level DESC
+                ORDER BY level DESC, immortal DESC
                 `)
 
             for (let n in rows[0].values) {
