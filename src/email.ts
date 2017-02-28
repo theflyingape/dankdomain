@@ -52,7 +52,10 @@ function check() {
 export async function Deliver(player: user, what: string, mailOptions: nodemailer.SendMailOptions) {
     xvt.out('\n\n', xvt.magenta, xvt.bright)
     xvt.out(`The king orders the royal scribe to dispatch ${what}\nfor ${$.player.handle} `, xvt.reset)
-    await Message(player, mailOptions)
+    if ($.player.email !== $.sysop.email)
+        await Message(player, mailOptions)
+    else
+        db.saveUser(player, true)
     xvt.out('\n')
     xvt.waste(1000)
     xvt.hangup()

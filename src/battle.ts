@@ -148,10 +148,12 @@ export function user(venue: string, cb:Function) {
             if (!db.loadUser(rpc)) {
                 rpc.user.id = ''
                 rpc.user.handle = xvt.entry
-                if(!db.loadUser(rpc)) {
+                if(!db.loadUser(rpc)) { 
+                    xvt.beep()
+                    xvt.out(' ?? ')
                 }
             }
-            xvt.out('\n\n')
+            xvt.out('\n')
             cb(rpc)
         }, max:22 },
         'start': { cb: () => {

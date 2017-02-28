@@ -878,7 +878,6 @@ export function reroll(user: user, dd = 'None', level = 1) {
     }
 
     if (level == 1) {
-        let level1 = <user>{}
         Object.assign(user, require('./etc/reroll'))
         user.coin = new coins(user.coin.toString())
         user.bank = new coins(user.bank.toString())
@@ -902,6 +901,14 @@ export function reroll(user: user, dd = 'None', level = 1) {
         user.coward = false
         user.keyhints = []
         newkeys(user)
+        user.plays = 0
+        user.jl = 0
+        user.jw = 0
+        user.killed = 0
+        user.kills = 0
+        user.retreats = 0
+        user.tl = 0
+        user.tw = 0
     }
 
     remake(user)
@@ -931,13 +938,13 @@ export function what(user: user, action: string) {
     return ' ' + action + (user.id !== player.id ? 's' : '') + ' '
 }
 
-export function who(user: user, subject = true, start = true) {
+export function who(user: user, subject = true, start = true, proper = true) {
     let pronoun = [
             [{
-                'F': { word: 'her ' },
-                'I': { word: 'its ' },
-                'M': { word: 'his ' },
-                'U': { word: 'your ' }
+                'F': { word: ' her ' },
+                'I': { word: ' its ' },
+                'M': { word: ' his ' },
+                'U': { word: ' your ' }
             },
             {
                 'F': { word: 'Her ' },
@@ -947,16 +954,16 @@ export function who(user: user, subject = true, start = true) {
             }]
         ,
             [{
-                'F': { word: 'her' },
-                'I': { word: 'it' },
-                'M': { word: 'him' },
+                'F': { word: proper ? user.handle : 'her' },
+                'I': { word: proper ? 'the ' + user.handle : 'it' },
+                'M': { word: proper ? user.handle : 'him' },
                 'U': { word: 'you' }
             },
             {
-                'F': { word: user.handle },
-                'I': { word: 'The ' + user.handle },
-                'M': { word: user.handle },
-                'U': { word: 'You' }
+                'F': { word: proper ? user.handle : 'She ' },
+                'I': { word: proper ? 'The ' + user.handle : 'It ' },
+                'M': { word: proper ? user.handle : 'He ' },
+                'U': { word: 'You ' }
             }]
         ]
 
@@ -1074,8 +1081,10 @@ export function logoff() {
     if (xvt.validator.isNotEmpty(player.id)) {
         if (reason !== '') {
             player.expires = player.lastdate + sysop.expires
-            player.lasttime = now().time
-            require('./database').saveUser(player)
+            if (player.calls) {
+                player.lasttime = now().time
+                require('./database').saveUser(player)
+            }
             try { callers = require('./users/callers') } catch(e) {}
             while (callers.length > 4)
                 callers.pop()

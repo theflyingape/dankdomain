@@ -81,6 +81,15 @@ interface user {
     wins?: number
     immortal?: number
     rating?: number
+    //  per roll
+  	plays?: number
+	jl?: number
+	jw?: number
+	killed?: number
+	kills?: number
+	retreats?: number
+	tl?: number
+	tw?: number
 }
 
 interface choice {
@@ -220,6 +229,17 @@ interface active {
     hp?: number
     sp?: number
     hull?: number
+}
+
+interface track {
+  	calls: number
+	jl: number
+	jw: number
+	killed: number
+	kills: number
+	retreats: number
+	tl: number
+	tw: number
 }
 
 /*

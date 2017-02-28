@@ -3,7 +3,10 @@
  *  ARENA authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
+import {sprintf} from 'sprintf-js'
+
 import $ = require('../common')
+import db = require('../database')
 import xvt = require('xvt')
 import Battle = require('../battle')
 
@@ -73,8 +76,13 @@ function choice() {
 				break
 			}
 			Battle.user('Joust', (opponent: active) => {
+				if (opponent.user.id === '') {
+					menu(!$.player.expert)
+					return
+				}
 				if (opponent.user.id === $.player.id) {
-					xvt.out('You can\'t joust a wimp like ', $.who($.player, true, false), '.\n')
+					opponent.user.id = ''
+					xvt.out('You can\'t joust a wimp like ', $.who(opponent.user, true, false, false), '.\n')
 					menu(true)
 					return
 				}
@@ -83,11 +91,39 @@ function choice() {
 					menu(true)
 					return
 				}
+
+				let ability = $.online.dex * $.player.level / 10 + 2 * $.player.jw - $.player.jl + 10
+				let versus = opponent.dex * opponent.user.level / 10 + 2 * opponent.user.jw - opponent.user.jl + 10
+				let factor = (100 - ($.player.level > opponent.user.level ? $.player.level : opponent.user.level)) / 10 + 3
+				let jw = 0
+				let jl = 0
+				let pass = 0
+
+				if (!$.Access.name[opponent.user.access].roleplay || versus < 1 || opponent.user.level
+ > 1 && (opponent.user.jw + 3 * opponent.user.level) < opponent.user.jl) {
+					xvt.out('That knight is out practicing right now.\n')
+					menu(true)
+					return
+				}
+
+				xvt.out('\nJousting ability:\n\n', xvt.bright)
+				xvt.out(xvt.green, sprintf('%-25s', opponent.user.handle), xvt.white, sprintf('%4d', versus), '\n')
+				xvt.out(xvt.green, sprintf('%-25s', $.player.handle), xvt.white, sprintf('%4d', ability), '\n')
+				xvt.out(xvt.reset, '\n')
+				if((ability + factor * $.player.level) < (versus + 1)) {
+					xvt.out(opponent.user.handle, ' laughs rudely in your face!\n\n')
+					menu(true)
+					return
+				}
+
 				xvt.app.form = {
 					'compete': { cb:() => {
+						xvt.out('\n')
 						if (/Y/i.test(xvt.entry)) {
 							$.joust--
-							xvt.out('The trumpets blare! You and your opponent ride into the arena. The crowd roars!\n\n')
+							$.online.altered = true
+							xvt.out('\nThe trumpets blare! You and your opponent ride into the arena. The crowd roars!\n')
+							round()
 							xvt.app.focus = 'joust'
 							return
 						}
@@ -96,17 +132,64 @@ function choice() {
 					}, prompt:'Are you sure (Y/N)? ', enter:'N', eol:false, match:/Y|N/i },
 					'joust': { cb:() => {
 						if (/F/i.test(xvt.entry)) {
+							xvt.out('\n\nThe crowd throws rocks at you as you ride out of the arena.\n')
+							$.player.jl++
+							opponent.user.jw++
+							db.saveUser(opponent)
 							menu(true)
 							return
 						}
 						if (/J/i.test(xvt.entry)) {
-							xvt.out('\n')
+							xvt.out('\n\nYou spur the horse.  The tension mounts.\n')
+							xvt.waste(250)
+							let result = 0
+							while(!result)
+								result = (ability + $.dice(factor * $.player.level)) - (versus + $.dice(factor * opponent.user.level))
+							if(result > 0) {
+								xvt.out(xvt.green, '-*>', xvt.bright, xvt.white, ' Thud! ', xvt.nobright, xvt.green,'<*-  ', xvt.reset, 'A hit!  You win this pass!\n')
+								if (++jw == 3) {
+									xvt.out('\nYou have won the joust!\n')
+									xvt.waste(250)
+									xvt.out('The crowd cheers!\n')
+									xvt.waste(250)
+									let reward = new $.coins($.money(opponent.user.level))
+									xvt.out('You win ', reward.carry(), '!\n')
+									$.player.coin.value += reward.value
+									$.player.jw++
+									opponent.user.jl++
+									db.saveUser(opponent)
+									menu(true)
+									return
+								}
+							}
+							else {
+								xvt.out(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.nobright, xvt.magenta,'<^  ', xvt.reset, $.who(opponent.user, true, true, false), 'hits!  You lose this pass!\n')
+								if (++jl == 3) {
+									xvt.out('\nYou have lost the joust!\n')
+									xvt.waste(250)
+									xvt.out('The crowd boos you!\n')
+									xvt.waste(250)
+									let reward = new $.coins($.money($.player.level))
+									xvt.out(opponent.user.handle, ' spits on your face.\n')
+									$.player.jl++
+									opponent.user.coin.value += reward.value
+									opponent.user.jw++
+									db.saveUser(opponent)
+									menu(true)
+									return
+								}
+							}
+							round()
 						}
 						xvt.app.refocus()
-					}, prompt:xvt.attr($.bracket('J', false), xvt.bright, xvt.yellow, ' Joust ', xvt.magenta, '*', $.bracket('F'), xvt.bright, xvt.yellow, ' Forfeit: '), eol:false }
+					}, prompt:xvt.attr('        ', $.bracket('J', false), xvt.bright, xvt.yellow, ' Joust', xvt.magenta, ' * ', $.bracket('F', false), xvt.bright, xvt.yellow, ' Forfeit: '), cancel:'F', enter:'J', eol:false, match:/F|J/i }
 				}
 				xvt.out('You grab a horse and prepare yourself to joust.\n')
 				xvt.app.focus = 'compete'
+
+				function round() {
+					xvt.out('\n', xvt.green, '--=:)) Round ', ['I', 'II', 'III', 'IV', 'V'][pass++], ' of V: Won:', xvt.bright, xvt.white, jw.toString(), xvt.nobright, xvt.magenta, ' ^', xvt.green, ' Lost:', xvt.bright, xvt.white, jl.toString(), xvt.nobright, xvt.green, ' ((:=--')
+				}
 			})
 			return
 

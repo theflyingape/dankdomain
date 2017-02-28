@@ -17,11 +17,11 @@ module db
     let sqlite3 = require('sqlite-sync')
     sqlite3.connect(sql)
 
-    let row = sqlite3.run(`SELECT * FROM sqlite_master WHERE name='Players' and type='table'`)
+    let row = sqlite3.run(`SELECT * FROM sqlite_master WHERE name='Players' AND type='table'`)
     if (!row.length) {
         xvt.out('initializing players ... ')
 
-        sqlite3.run(`create table IF NOT EXISTS Players (
+        sqlite3.run(`CREATE TABLE IF NOT EXISTS Players (
             id text PRIMARY KEY, handle text UNIQUE NOT NULL, name text NOT NULL, email text, password text,
             dob numeric NOT NULL, sex text NOT NULL, joined numeric, expires numeric, lastdate numeric,
             lasttime numeric, calls numeric, today numeric, expert integer, emulation text NOT NULL,
@@ -34,7 +34,9 @@ module db
             maxdex numeric, cha numeric, maxcha numeric, coin numeric, bank numeric,
             loan numeric, weapon text, toWC numeric, armor text, toAC numeric,
             spells text, poisons text, realestate text, security text, hull numeric,
-            cannon numeric, ram integer, wins numeric, immortal numeric, rating numeric
+            cannon numeric, ram integer, wins numeric, immortal numeric, rating numeric,
+          	plays numeric, jl numeric, jw numeric, killed numeric, kills numeric,
+            retreats numeric, tl numeric, tw numeric
         )`)
 
         Object.assign($.sysop, require('./etc/sysop.json'))
@@ -53,6 +55,21 @@ module db
 
         xvt.out('done.\n')
     }
+
+    row = sqlite3.run(`SELECT * FROM sqlite_master WHERE name='Hall' AND type='table'`)
+    if (!row.length) {
+        xvt.out('initializing halls ... ')
+
+        //  id = fame|lame
+        sqlite3.run(`CREATE TABLE IF NOT EXISTS Hall (
+            id text, pc text, handle text, lastdate numeric,
+          	plays numeric, jl numeric, jw numeric, killed numeric, kills numeric,
+            retreats numeric, tl numeric, tw numeric
+        )`)
+
+        xvt.out('done.\n')
+    }
+
 
 function isActive(arg: any): arg is active {
     return (<active>arg).user !== undefined
@@ -94,8 +111,10 @@ export function loadUser(rpc): boolean {
         if (isActive(rpc)) $.activate(rpc)
         return true
     }
-    else
+    else {
+        user.id = ''
         return false
+    }
 }
 
 export function saveUser(rpc, insert = false) {
@@ -126,6 +145,8 @@ export function saveUser(rpc, insert = false) {
             , loan, weapon, toWC, armor, toAC
             , spells, poisons, realestate, security, hull
             , cannon, ram, wins, immortal, rating
+          	, plays, jl, jw, killed, kills
+            , retreats, tl, tw
             ) VALUES
             ('${user.id}', '${user.handle}', '${user.name}', '${user.email}', '${user.password}'
             , ${user.dob}, '${user.sex}', ${user.joined}, ${user.expires}, ${user.lastdate}
@@ -140,6 +161,8 @@ export function saveUser(rpc, insert = false) {
             , ${user.loan.value}, '${user.weapon}', ${user.toWC}, '${user.armor}', ${user.toAC}
             ,'${user.spells.toString()}', '${user.poisons.toString()}', '${user.realestate}', '${user.security}', ${user.hull}
             , ${user.cannon}, ${+user.ram}, ${user.wins}, ${user.immortal}, ${user.rating}
+          	, ${user.plays}, ${user.jl}, ${user.jw}, ${user.killed}, ${user.kills}
+            , ${user.retreats}, ${user.tl}, ${user.tw}
             )`
     }
     else {
@@ -156,7 +179,9 @@ export function saveUser(rpc, insert = false) {
             maxdex=${user.maxdex}, cha=${user.cha}, maxcha=${user.maxcha}, coin=${user.coin.value}, bank=${user.bank.value},
             loan=${user.loan.value}, weapon='${user.weapon}', toWC=${user.toWC}, armor='${user.armor}', toAC=${user.toAC},
             spells='${user.spells.toString()}', poisons='${user.poisons.toString()}', realestate='${user.realestate}', security='${user.security}', hull=${user.hull},
-            cannon=${user.cannon}, ram=${+user.ram}, wins=${user.wins}, immortal=${user.immortal}, rating=${user.rating}
+            cannon=${user.cannon}, ram=${+user.ram}, wins=${user.wins}, immortal=${user.immortal}, rating=${user.rating},
+          	plays=${user.plays}, jl=${user.jl}, jw=${user.jw}, killed=${user.killed}, kills=${user.kills},
+            retreats=${user.retreats}, tl=${user.tl}, tw=${user.tw}
             WHERE id='${user.id}'
         `
     }
