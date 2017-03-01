@@ -94,7 +94,7 @@ export function poison(rpc: active, cb:Function) {
         rpc.altered = true
         let wc = $.Weapon.baseWC(rpc.user.weapon)
         let p = Math.trunc(rpc.user.poison / 2)
-        let t = rpc.user.poison - Math.trunc(p / 2)
+        let t = rpc.user.poison - p
         p *= vial
         t *= vial
         if (p > 0 && rpc.user.toWC > 0) rpc.user.toWC = p

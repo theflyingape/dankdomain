@@ -6,6 +6,7 @@
 import $ = require('../common')
 import db = require('../database')
 import xvt = require('xvt')
+import Battle = require('../battle')
 
 module Sysop
 {
@@ -32,11 +33,15 @@ function choice() {
     let suppress = $.player.expert
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(sysop[choice]))
-        xvt.out(choice, ' - ', sysop[choice].description, '\n')
+        if (xvt.validator.isNotEmpty(sysop[choice].description)) {
+            xvt.out(' - ', sysop[choice].description)
+            suppress = true
+        }
     else {
         xvt.beep()
         suppress = false
     }
+    xvt.out('\n')
 
     switch (choice) {
         case 'Q':
@@ -62,7 +67,6 @@ function choice() {
                 for (let i = 0; i < n; i++) {
                     let p = $.dice(Object.keys($.Magic.spells).length)
                     let spell = $.Magic.pick(p)
-                    console.log(p, spell)
                     if (!$.Magic.have($.player.spells, spell))
                         $.Magic.add($.player.spells, p)
                 }
@@ -74,16 +78,20 @@ function choice() {
                 for (let i = 0; i < n; i++) {
                     let p = $.dice(Object.keys($.Poison.vials).length)
                     let vial = $.Poison.pick(p)
-                    console.log(p, vial)
                     if (!$.Poison.have($.player.poisons, vial))
                         $.Poison.add($.player.poisons, p)
                 }
             }
 
             db.saveUser($.player)
-
-            suppress = true
             break
+
+        case 'Y':
+        	Battle.user('Scout', (opponent: active) => {
+                $.PC.stats(opponent)
+                menu(true)
+            })
+            return
 	}
 	menu(suppress)
 }

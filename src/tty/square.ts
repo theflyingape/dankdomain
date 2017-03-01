@@ -51,17 +51,21 @@ function choice() {
     let suppress = $.player.expert
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(square[choice]))
-        if (xvt.validator.isNotEmpty(square[choice].description)) xvt.out(' - ', square[choice].description, '\n\n')
+        if (xvt.validator.isNotEmpty(square[choice].description)) {
+            xvt.out(' - ', square[choice].description)
+            suppress = true
+        }
     else {
         xvt.beep()
         suppress = false
     }
+    xvt.out('\n')
 
     switch (choice) {
 		case 'A':
 			if ($.reason) break
 			let ac = $.Armor.name[$.player.armor].ac
-			xvt.out('You own a class ', $.bracket(ac, false), ' ', $.player.armor, $.buff($.player.toAC, $.online.toAC))
+			xvt.out('\nYou own a class ', $.bracket(ac, false), ' ', $.player.armor, $.buff($.player.toAC, $.online.toAC))
 			if (ac) {
 				credit.value = $.worth(new $.coins($.Armor.name[$.player.armor].value).value, $.player.cha)
 				if ($.player.toAC) credit.value += Math.trunc(credit.value * (ac + $.player.toAC) / ac)
@@ -73,7 +77,6 @@ function choice() {
 
 			if (ac == 0 && ($.player.toAC < 0 || $.online.toAC < 0)) {
 				xvt.out(xvt.yellow, 'You look like a leper; go to the hospital for treatment.\n')
-				suppress = true
 				break
 			}
 
@@ -160,11 +163,10 @@ function choice() {
 			}
 			hi = $.player.hp - $.online.hp
 			if (hi < 1) {
-				xvt.out('You don\'t need any hit points.\n\n')
-				suppress = true
+				xvt.out('\nYou don\'t need any hit points.\n')
 				break
 			}
-			xvt.out('Welcome to Butler Hospital.\n\n')
+			xvt.out('\nWelcome to Butler Hospital.\n\n')
 			xvt.out('Hit points cost ', $.player.level, 'each.\n')
 			xvt.out('You need ', hi, ' hit points.\n')
 			lo = Math.trunc($.player.coin.value / $.player.level)
@@ -187,14 +189,13 @@ function choice() {
 			return
 
 		case 'M':
-			xvt.out('The ', xvt.bright, xvt.blue, 'old mage ', xvt.reset)
+			xvt.out('\nThe ', xvt.bright, xvt.blue, 'old mage ', xvt.reset)
 			max = $.Magic.merchant.length
 			for (lo = 1; lo < max; lo++)
 				if (!$.Magic.have($.player.spells, lo))
 					break
 			if (lo == $.Magic.merchant.length || !$.player.magic || $.reason) {
 				xvt.out('says, "Get outta here!"\n')
-				suppress = true
 				break
 			}
 			for (hi = max; hi > lo; hi--)
@@ -215,7 +216,7 @@ function choice() {
 		case 'P':
 			if ($.reason) break
 			if (!$.Access.name[$.player.access].roleplay || $.player.novice) break
-			xvt.out('You attempt to pick a passerby\'s pocket... ')
+			xvt.out('\nYou attempt to pick a passerby\'s pocket... ')
 			xvt.waste(1000)
 			credit.value = $.dice(Math.trunc(5 *  $.money($.player.level) / $.dice(10)))
 			xvt.out('\n\nYou pick somebody\'s pocket and steal ', credit.carry(), '!\n\n')
@@ -231,7 +232,6 @@ function choice() {
 				return
 			}
 			$.player.coin.value += credit.value
-			suppress = false
 			break
 
         case 'Q':
@@ -275,7 +275,7 @@ function choice() {
 			return
 
 		case 'V':
-			xvt.out(xvt.faint, '... you enter the back door of the shop ...\n', xvt.reset)
+			xvt.out('\n', xvt.faint, '... you enter the back door of the shop ...\n', xvt.reset)
 			xvt.out('The ', xvt.bright, xvt.magenta, 'apothecary ', xvt.reset)
 			max = $.Poison.merchant.length
 			for (lo = 1; lo < max; lo++)
@@ -283,7 +283,6 @@ function choice() {
 					break
 			if (lo == $.Poison.merchant.length || !$.player.poison || $.reason) {
 				xvt.out('says, "Get outta here!"\n')
-				suppress = true
 				break
 			}
 			for (hi = max; hi > lo; hi--)
@@ -304,7 +303,7 @@ function choice() {
 		case 'W':
 			if ($.reason) break
 			let wc = $.Weapon.name[$.player.weapon].wc
-			xvt.out('You own a class ', $.bracket(wc, false), ' ', $.player.weapon, $.buff($.player.toWC, $.online.toWC))
+			xvt.out('\nYou own a class ', $.bracket(wc, false), ' ', $.player.weapon, $.buff($.player.toWC, $.online.toWC))
 			if (wc) {
 				credit.value = $.worth(new $.coins($.Weapon.name[$.player.weapon].value).value, $.player.cha)
 				if ($.player.toWC) credit.value += Math.trunc(credit.value * (wc + $.player.toWC) / wc)
@@ -316,7 +315,6 @@ function choice() {
 
 			if (wc == 0 && ($.player.toWC < 0 || $.online.toWC < 0)) {
 				xvt.out(xvt.yellow, 'Your hands are broken; go to the hospital for treatment.\n')
-				suppress = true
 				break
 			}
 

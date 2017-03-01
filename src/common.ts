@@ -935,16 +935,16 @@ export function titlecase(orig: string): string {
 }
 
 export function what(user: user, action: string) {
-    return ' ' + action + (user.id !== player.id ? 's' : '') + ' '
+    return action + (user.id !== player.id ? 's ' : ' ')
 }
 
 export function who(user: user, subject = true, start = true, proper = true) {
     let pronoun = [
             [{
-                'F': { word: ' her ' },
-                'I': { word: ' its ' },
-                'M': { word: ' his ' },
-                'U': { word: ' your ' }
+                'F': { word: 'her ' },
+                'I': { word: 'its ' },
+                'M': { word: 'his ' },
+                'U': { word: 'your ' }
             },
             {
                 'F': { word: 'Her ' },
