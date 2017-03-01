@@ -93,12 +93,14 @@ export function poison(rpc: active, cb:Function) {
     function apply(rpc: active, vial: number) {
         rpc.altered = true
         let wc = $.Weapon.baseWC(rpc.user.weapon)
+        console.log(wc, rpc.user.poison, vial)
         let p = Math.trunc(rpc.user.poison / 2)
         let t = rpc.user.poison - p
+        console.log(p, t)
         p *= vial
         t *= vial
-        if (p > 0 && rpc.user.toWC > 0) rpc.user.toWC = p
-        if (t >= 0)
+        if (p > 0 && rpc.user.toWC >= 0) rpc.user.toWC = p
+        if (t > 0 && rpc.toWC >= 0)
             rpc.toWC = t
         else
             rpc.toWC += t

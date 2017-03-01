@@ -181,7 +181,6 @@ function choice() {
                         xvt.out('\n')
                         $.playerPC()
                         $.player.coward = true
-                        db.saveUser($.player)
                         return
                     }
                     menu(true)

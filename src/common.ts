@@ -284,35 +284,8 @@ module Common
 
 
         armor(profile: active): { text:string, rich:string } {
-            let text = '', rich = ''
-
-            text = profile.user.armor
-            rich = xvt.attr(xvt.bright, xvt.white, text)
-
-            if (profile.toAC || profile.user.toAC) {
-                text += ' ('
-                rich += xvt.attr(xvt.blue, ' (')
-                if (profile.user.toAC < 0) {
-                    text += profile.user.toAC.toString()
-                    rich += xvt.attr(xvt.red, profile.user.toAC.toString())
-                }
-                else {
-                    text += '+' + profile.user.toAC.toString()
-                    rich += xvt.attr(xvt.white, '+', profile.user.toAC.toString())
-                }
-                text += ','
-                rich += xvt.attr(xvt.nobright, xvt.white, ',', xvt.bright)
-                if (profile.toAC < 0) {
-                    text += profile.toAC.toString()
-                    rich += xvt.attr(xvt.red, profile.toAC.toString())
-                }
-                else {
-                    text += '+' + profile.toAC.toString()
-                    rich += xvt.attr(xvt.white, '+', profile.toAC.toString())
-                }
-                text += ')'
-                rich += xvt.attr(xvt.blue, ')', xvt.white)
-            }
+            let text = profile.user.armor + buff(profile.toAC, profile.user.toAC, true)
+            let rich = xvt.attr(xvt.bright, xvt.white, profile.user.armor + buff(profile.user.toAC, profile.toAC))
             return { text:text, rich:rich }
         }
 
@@ -426,6 +399,7 @@ export class coins {
 }
 
 export function activate(one: active) {
+    one.altered = true
     one.confused = false
     one.str = one.user.str
     one.int = one.user.int
@@ -457,6 +431,198 @@ export function activate(one: active) {
         if ((one.cha -= 10) < 10)
             one.cha = 10
     }
+}
+
+export function checkXP() {
+
+/*
+	const int SKILL_LEVEL = 50;
+	int a = FALSE, b = FALSE;
+	int i, m, n;
+	int ahp = 0, asp = 0, astr = rec->user.STR, aint = rec->user.INT, adex =
+ rec->user.DEX, acha = rec->user.CHA;
+
+	a = rec->user.Novice != 'Y' && (rec->user.Level < SKILL_LEVEL);
+	n = 0;
+
+	while(rec->user.Experience >= EXP(rec->user.Level) && ACCESS(acclvl)->Ro
+lePlay == 'Y') {
+		rec->user.Level++; n++;
+
+		if(a && rec->user.Level == SKILL_LEVEL)
+			b = TRUE;
+
+		if(ACCESS(rec->user.Access)->Promote == rec->user.Level) {
+			rec->user.Access++;
+			if(rec == ONLINE) {
+				NORMAL;
+				sprintf(outbuf, "%sThe king is pleased with your
+ accomplishments and makes you %s%s!", fore(YELLOW), AN(ACCESS(PLAYER.Access)->N
+ame), ACCESS(PLAYER.Access)->Name);
+				NL; Delay(5);
+				OUT(outbuf);
+				NL; Delay(5);
+			}
+        }
+		ahp += rec->user.Level + dice(rec->user.Level) + rec->user.STR /
+ 10 + (rec->user.STR > 90 ? rec->user.STR - 90 : 0);
+		if(rec->user.MyMagic > 1)
+			asp += rec->user.Level + dice(rec->user.Level) + rec->us
+er.INT / 10 + (rec->user.INT > 90 ? rec->user.INT - 90 : 0);
+
+		i = CLASS(rec)->BonusSTR;
+		if(rec->user.STR + i > rec->user.MyMaxSTR)
+			if((i = rec->user.MyMaxSTR - rec->user.STR) < 0)
+				i = 0;
+		if(i) {
+			rec->user.STR += i;
+			m = rec->user.MyMaxSTR;
+			if(strlen(rec->user.Blessed))
+				if((m += 10) > 100)
+					m = 100;
+			if(strlen(rec->user.Cursed))
+				m -= 10;
+			if(rec->STR + i > m)
+				if((i = m - rec->STR) < 0)
+					i = 0;
+			rec->STR += i;
+		}
+
+		i = CLASS(rec)->BonusINT;
+		if(rec->user.INT + i > rec->user.MyMaxINT)
+			if((i = rec->user.MyMaxINT - rec->user.INT) < 0)
+				i = 0;
+		if(i) {
+			rec->user.INT += i;
+			m = rec->user.MyMaxINT;
+			if(strlen(rec->user.Blessed))
+				if((m += 10) > 100)
+					m = 100;
+			if(strlen(rec->user.Cursed))
+				m -= 10;
+			if(rec->INT + i > m)
+				if((i = m - rec->INT) < 0)
+					i = 0;
+			rec->INT += i;
+		}
+
+		i = CLASS(rec)->BonusDEX;
+		if(rec->user.DEX + i > rec->user.MyMaxDEX)
+			if((i = rec->user.MyMaxDEX - rec->user.DEX) < 0)
+				i = 0;
+		if(i) {
+			rec->user.DEX += i;
+			m = rec->user.MyMaxDEX;
+			if(strlen(rec->user.Blessed))
+				if((m += 10) > 100)
+					m = 100;
+			if(strlen(rec->user.Cursed))
+				m -= 10;
+			if(rec->DEX + i > m)
+				if((i = m - rec->DEX) < 0)
+					i = 0;
+			rec->DEX += i;
+		}
+
+		i = CLASS(rec)->BonusCHA;
+		if(rec->user.CHA + i > rec->user.MyMaxCHA)
+			if((i = rec->user.MyMaxCHA - rec->user.CHA) < 0)
+				i = 0;
+		if(i) {
+			rec->user.CHA += i;
+			m = rec->user.MyMaxCHA;
+			if(strlen(rec->user.Blessed))
+				if((m += 10) > 100)
+					m = 100;
+			if(strlen(rec->user.Cursed))
+				m -= 10;
+			if(rec->CHA + i > m)
+				if((i = m - rec->CHA) < 0)
+					i = 0;
+			rec->CHA += i;
+		}
+	}
+
+	if(ahp || rec->user.Level > SYSREC->Level) {
+		rec->user.ExpLevel = rec->user.Level;
+		if(rec == ONLINE) {
+			sound("level", 64, 0);
+			NL; Delay(5);
+			sprintf(outbuf,"      %s-=%s>%s*%s<%s=-", fore(MAG), for
+e(BLU), fore(YELLOW), fore(BLU), fore(MAG));
+			OUT(outbuf);
+			NL; Delay(5);
+			NL; Delay(5);
+			sprintf(outbuf, "%sWelcome to level %hu!", fore(YELLOW),
+ rec->user.Level);
+			OUT(outbuf);
+			NL; Delay(5);
+			NL; Delay(5);
+		}
+		if(rec->user.Level <= SYSREC->Level) {
+			if(ahp) {
+				rec->user.HP += ahp;
+				rec->HP += ahp;
+				if(rec == ONLINE) {
+					sprintf(outbuf, "%s%+6d%s Hit points", f
+ore(WHITE), ahp, fore(GRY));
+					OUT(outbuf);
+					NL; Delay(5);
+				}
+			}
+			if(asp) {
+				rec->user.SP += asp;
+				rec->SP += asp;
+				if(rec == ONLINE) {
+					sprintf(outbuf, "%s%+6d%s Spell power", 
+fore(WHITE), asp, fore(GRY));
+					OUT(outbuf);
+					NL; Delay(5);
+				}
+			}
+			if(rec == ONLINE) {
+				if((i = PLAYER.STR - astr)) {
+					sprintf(outbuf, "%s%+6d%s Strength", for
+e(WHITE), i, fore(GRY));
+					OUT(outbuf);
+					NL; Delay(5);
+				}
+				if((i = PLAYER.INT - aint)) {
+					sprintf(outbuf, "%s%+6d%s Intellect", fo
+re(WHITE), i, fore(GRY));
+					OUT(outbuf);
+					NL; Delay(5);
+				}
+				if((i = PLAYER.DEX - adex)) {
+					sprintf(outbuf, "%s%+6d%s Dexterity", fo
+re(WHITE), i, fore(GRY));
+					OUT(outbuf);
+					NL; Delay(5);
+				}
+				if((i = PLAYER.CHA - acha)) {
+					sprintf(outbuf, "%s%+6d%s Charisma", for
+e(WHITE), i, fore(GRY));
+					OUT(outbuf);
+					NL; Delay(5);
+				}
+				NL;
+				if(a && b)
+					skillplus();
+				if(n >= 25)
+					skillplus();
+			}
+			if(strlen(rec->user.ID) && rec->user.ID[0] != '_')
+				RPGserver(SERVER_PUTUSER, (UBYTE *)&rec->user);
+			if(rec == ONLINE)
+				paused();
+		}
+		else
+			if(rec == ONLINE)
+				immortalize();
+		displayview();
+	}
+}
+*/
 }
 
 export function cuss(text: string): boolean {
@@ -592,6 +758,7 @@ export function playerPC(points = 200) {
         player.security = novice.security
         player.weapon = novice.weapon
         player.armor = novice.armor
+
         xvt.out('Since you are a new user here, you are automatically assigned a character\n')
         xvt.out('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.')
         show()

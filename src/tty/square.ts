@@ -577,6 +577,8 @@ function buy() {
 			cost = new $.coins($.Armor.name[$.Armor.merchant[item]].value)
 			if ($.player.coin.value + credit.value >= cost.value) {
 				$.player.armor = $.Armor.merchant[item]
+				$.player.toAC = 0
+				$.online.toAC = 0
 				xvt.out(' - ', $.player.armor, '\n')
 				$.player.coin.value += credit.value - cost.value
 				$.online.altered = true
@@ -633,6 +635,8 @@ function buy() {
 			cost = new $.coins($.Weapon.name[$.Weapon.merchant[buy]].value)
 			if ($.player.coin.value + credit.value >= cost.value) {
 				$.player.weapon = $.Weapon.merchant[buy]
+				$.player.toWC = 0
+				$.online.toWC = 0
 				xvt.out(' - ', $.player.weapon, '\n')
 				$.player.coin.value += credit.value - cost.value
 				$.online.altered = true

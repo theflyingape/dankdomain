@@ -159,7 +159,7 @@ function welcome() {
         $.security = 1
         $.tiny = 1
 
-        if ($.player.pc === 'None') {
+        if ($.player.pc === 'None' && $.player.novice) {
             $.cat('intro')
             xvt.app.form = {
                 'pause': { cb:$.playerPC, pause:true }
