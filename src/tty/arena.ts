@@ -227,9 +227,6 @@ function choice() {
 	menu(suppress)
 }
 
-function Joust() {
-}
-
 function MonsterFights() {
 /*
 	tty.prompt('Fight what monster', {type:'item', min:1, max:monsters.length, other:'<D> Demon', prompt:'?'})

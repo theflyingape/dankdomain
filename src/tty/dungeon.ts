@@ -4,6 +4,7 @@
 \*****************************************************************************/
 
 import $ = require('../common')
+import Battle = require('../battle')
 import xvt = require('xvt')
 
 module Dungeon
@@ -124,7 +125,7 @@ let monsters: dungeon[] = [
 
 export function menu(suppress = false) {
     xvt.app.form = {
-        'command': { cb:command, prompt:': ', enter:'?', eol:false }
+        'command': { cb:command, prompt:':', enter:'?', eol:false }
     }
     xvt.app.focus = 'command'
 }
@@ -140,9 +141,31 @@ function command() {
     }
 
     switch (choice) {
+		case 'N':
+		case 'S':
+		case 'E':
+		case 'W':
+			xvt.out(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.nobright, xvt.magenta,'<^  '
+				, 'There is a wall to the ', choice.toLowerCase(), dungeon[choice].description,'.\n')
+			xvt.waste(250)
+			if (($.player.hp -= $.dice(Math.trunc($.player.level * (110 - $.online.str) / 100) + 1)) < 1) {
+				xvt.out('You take too many hits and die.\n')
+				xvt.waste(250)
+				$.reason = 'banged head against a wall'
+				xvt.hangup()
+				return
+			}
+			break
+
         case 'Q':
-			require('./main').menu($.player.expert)
-			return
+			if ($.Access.name[$.player.access].sysop) {
+				require('./main').menu($.player.expert)
+				return
+			}
+
+		case 'Y':
+			Battle.yourstats()
+			break
 	}
 	menu(suppress)
 }
