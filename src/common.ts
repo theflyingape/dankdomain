@@ -83,6 +83,15 @@ module Common
         total: number
         winning: string
 
+        ability(current: number, delta: number, max = 100, mod = 0): number {
+            let ability = current
+            max = max + mod
+            max = max > 100 ? 100 : max < 10 ? 10 : max
+            ability += delta
+            ability = ability > max ? max : ability < 10 ? 10 : ability
+            return ability
+        }
+
         card(dd = 'None'): character {
             let rpc = <character>{}
             for (let type in this.name) {
@@ -433,196 +442,118 @@ export function activate(one: active) {
     }
 }
 
-export function checkXP() {
+export function checkXP(profile: active) {
 
-/*
-	const int SKILL_LEVEL = 50;
-	int a = FALSE, b = FALSE;
-	int i, m, n;
-	int ahp = 0, asp = 0, astr = rec->user.STR, aint = rec->user.INT, adex =
- rec->user.DEX, acha = rec->user.CHA;
+    if (!Access.name[profile.user.access]) return
+    if (profile.user.xp < explevel(profile.user.level)) return
 
-	a = rec->user.Novice != 'Y' && (rec->user.Level < SKILL_LEVEL);
-	n = 0;
+    let award = {
+        hp: profile.user.hp,
+        sp: profile.user.sp,
+        str: profile.user.str,
+        int: profile.user.int,
+        dex: profile.user.dex,
+        cha: profile.user.cha
+    }
+    let eligible = profile.user.level < sysop.level / 2
+    let bonus = false
+    let jumped = 0
+    let i: number
 
-	while(rec->user.Experience >= EXP(rec->user.Level) && ACCESS(acclvl)->Ro
-lePlay == 'Y') {
-		rec->user.Level++; n++;
+    while (profile.user.xp >= explevel(profile.user.level)) {
+        profile.user.level++
+        jumped++
 
-		if(a && rec->user.Level == SKILL_LEVEL)
-			b = TRUE;
-
-		if(ACCESS(rec->user.Access)->Promote == rec->user.Level) {
-			rec->user.Access++;
-			if(rec == ONLINE) {
-				NORMAL;
-				sprintf(outbuf, "%sThe king is pleased with your
- accomplishments and makes you %s%s!", fore(YELLOW), AN(ACCESS(PLAYER.Access)->N
-ame), ACCESS(PLAYER.Access)->Name);
-				NL; Delay(5);
-				OUT(outbuf);
-				NL; Delay(5);
-			}
+        if (profile.user.level == Access.name[profile.user.access].promote) {
+            let title = Object.keys(Access).indexOf(profile.user.access)
+            profile.user.access = Object.keys(Access)[++title]
+            xvt.waste(125)
+            xvt.out(xvt.reset, '\n')
+            xvt.waste(125)
+		    xvt.out(xvt.bright, xvt.yellow, 'The king is pleased with your accomplishments and promotes you to '
+                , profile.user.name, '!\n')
+            xvt.waste(125)
+            xvt.out(xvt.reset, '\n')
+            xvt.waste(125)
         }
-		ahp += rec->user.Level + dice(rec->user.Level) + rec->user.STR /
- 10 + (rec->user.STR > 90 ? rec->user.STR - 90 : 0);
-		if(rec->user.MyMagic > 1)
-			asp += rec->user.Level + dice(rec->user.Level) + rec->us
-er.INT / 10 + (rec->user.INT > 90 ? rec->user.INT - 90 : 0);
 
-		i = CLASS(rec)->BonusSTR;
-		if(rec->user.STR + i > rec->user.MyMaxSTR)
-			if((i = rec->user.MyMaxSTR - rec->user.STR) < 0)
-				i = 0;
-		if(i) {
-			rec->user.STR += i;
-			m = rec->user.MyMaxSTR;
-			if(strlen(rec->user.Blessed))
-				if((m += 10) > 100)
-					m = 100;
-			if(strlen(rec->user.Cursed))
-				m -= 10;
-			if(rec->STR + i > m)
-				if((i = m - rec->STR) < 0)
-					i = 0;
-			rec->STR += i;
-		}
+		profile.user.hp += profile.user.level + dice(profile.user.level) + profile.user.str /
+ 10 + (profile.user.str > 90 ? profile.user.str - 90 : 0)
 
-		i = CLASS(rec)->BonusINT;
-		if(rec->user.INT + i > rec->user.MyMaxINT)
-			if((i = rec->user.MyMaxINT - rec->user.INT) < 0)
-				i = 0;
-		if(i) {
-			rec->user.INT += i;
-			m = rec->user.MyMaxINT;
-			if(strlen(rec->user.Blessed))
-				if((m += 10) > 100)
-					m = 100;
-			if(strlen(rec->user.Cursed))
-				m -= 10;
-			if(rec->INT + i > m)
-				if((i = m - rec->INT) < 0)
-					i = 0;
-			rec->INT += i;
-		}
+		if (profile.user.magic > 1)
+			profile.user.sp += profile.user.level + dice(profile.user.level) + profile.user.int /
+ 10 + (profile.user.int > 90 ? profile.user.int - 90 : 0)
 
-		i = CLASS(rec)->BonusDEX;
-		if(rec->user.DEX + i > rec->user.MyMaxDEX)
-			if((i = rec->user.MyMaxDEX - rec->user.DEX) < 0)
-				i = 0;
-		if(i) {
-			rec->user.DEX += i;
-			m = rec->user.MyMaxDEX;
-			if(strlen(rec->user.Blessed))
-				if((m += 10) > 100)
-					m = 100;
-			if(strlen(rec->user.Cursed))
-				m -= 10;
-			if(rec->DEX + i > m)
-				if((i = m - rec->DEX) < 0)
-					i = 0;
-			rec->DEX += i;
-		}
+		profile.user.str = PC.ability(profile.user.str, PC.name[profile.user.pc].toStr, profile.user.maxstr)
+		profile.user.int = PC.ability(profile.user.int, PC.name[profile.user.pc].toInt, profile.user.maxint)
+		profile.user.dex = PC.ability(profile.user.dex, PC.name[profile.user.pc].toDex, profile.user.maxdex)
+		profile.user.cha = PC.ability(profile.user.cha, PC.name[profile.user.pc].toCha, profile.user.maxcha)
 
-		i = CLASS(rec)->BonusCHA;
-		if(rec->user.CHA + i > rec->user.MyMaxCHA)
-			if((i = rec->user.MyMaxCHA - rec->user.CHA) < 0)
-				i = 0;
-		if(i) {
-			rec->user.CHA += i;
-			m = rec->user.MyMaxCHA;
-			if(strlen(rec->user.Blessed))
-				if((m += 10) > 100)
-					m = 100;
-			if(strlen(rec->user.Cursed))
-				m -= 10;
-			if(rec->CHA + i > m)
-				if((i = m - rec->CHA) < 0)
-					i = 0;
-			rec->CHA += i;
-		}
-	}
+        if (eligible && profile.user.level == sysop.level / 2) {
+            bonus = true
+            break
+        }
+    }
 
-	if(ahp || rec->user.Level > SYSREC->Level) {
-		rec->user.ExpLevel = rec->user.Level;
-		if(rec == ONLINE) {
-			sound("level", 64, 0);
-			NL; Delay(5);
-			sprintf(outbuf,"      %s-=%s>%s*%s<%s=-", fore(MAG), for
-e(BLU), fore(YELLOW), fore(BLU), fore(MAG));
-			OUT(outbuf);
-			NL; Delay(5);
-			NL; Delay(5);
-			sprintf(outbuf, "%sWelcome to level %hu!", fore(YELLOW),
- rec->user.Level);
-			OUT(outbuf);
-			NL; Delay(5);
-			NL; Delay(5);
-		}
-		if(rec->user.Level <= SYSREC->Level) {
-			if(ahp) {
-				rec->user.HP += ahp;
-				rec->HP += ahp;
-				if(rec == ONLINE) {
-					sprintf(outbuf, "%s%+6d%s Hit points", f
-ore(WHITE), ahp, fore(GRY));
-					OUT(outbuf);
-					NL; Delay(5);
-				}
-			}
-			if(asp) {
-				rec->user.SP += asp;
-				rec->SP += asp;
-				if(rec == ONLINE) {
-					sprintf(outbuf, "%s%+6d%s Spell power", 
-fore(WHITE), asp, fore(GRY));
-					OUT(outbuf);
-					NL; Delay(5);
-				}
-			}
-			if(rec == ONLINE) {
-				if((i = PLAYER.STR - astr)) {
-					sprintf(outbuf, "%s%+6d%s Strength", for
-e(WHITE), i, fore(GRY));
-					OUT(outbuf);
-					NL; Delay(5);
-				}
-				if((i = PLAYER.INT - aint)) {
-					sprintf(outbuf, "%s%+6d%s Intellect", fo
-re(WHITE), i, fore(GRY));
-					OUT(outbuf);
-					NL; Delay(5);
-				}
-				if((i = PLAYER.DEX - adex)) {
-					sprintf(outbuf, "%s%+6d%s Dexterity", fo
-re(WHITE), i, fore(GRY));
-					OUT(outbuf);
-					NL; Delay(5);
-				}
-				if((i = PLAYER.CHA - acha)) {
-					sprintf(outbuf, "%s%+6d%s Charisma", for
-e(WHITE), i, fore(GRY));
-					OUT(outbuf);
-					NL; Delay(5);
-				}
-				NL;
-				if(a && b)
-					skillplus();
-				if(n >= 25)
-					skillplus();
-			}
-			if(strlen(rec->user.ID) && rec->user.ID[0] != '_')
-				RPGserver(SERVER_PUTUSER, (UBYTE *)&rec->user);
-			if(rec == ONLINE)
-				paused();
-		}
-		else
-			if(rec == ONLINE)
-				immortalize();
-		displayview();
-	}
-}
-*/
+	profile.user.xplevel = profile.user.level
+    award.hp = profile.user.hp - award.hp
+    award.sp = profile.user.sp - award.sp
+    profile.hp += award.hp
+    profile.sp += award.sp
+
+    i = profile.user.blessed ? 10 : profile.user.cursed ? -10 : 0
+    profile.str = PC.ability(profile.str, profile.user.str - award.str, profile.user.maxstr, i)
+    profile.int = PC.ability(profile.int, profile.user.int - award.int, profile.user.maxint, i)
+    profile.dex = PC.ability(profile.dex, profile.user.dex - award.dex, profile.user.maxdex, i)
+    profile.cha = PC.ability(profile.cha, profile.user.cha - award.cha, profile.user.maxcha, i)
+
+    if (profile.user.id === online.user.id) {
+        xvt.out('\n')
+        xvt.waste(125)
+        xvt.out('      ', xvt.magenta, '-=', xvt.blue, '>'
+            , xvt.bright, xvt.yellow, '*', xvt.nobright
+            , xvt.blue, '<', xvt.magenta, '=-\n')
+		xvt.waste(125)
+        xvt.out('\n')
+        xvt.waste(125)
+        xvt.out(xvt.bright, xvt.yellow, 'Welcome to level ', profile.user.level.toString(), '!\n', xvt.reset)
+		xvt.waste(125)
+        xvt.out('\n')
+        xvt.waste(125)
+
+        if (profile.user.level <= sysop.level) {
+            xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.hp), xvt.reset, 'Hit points\n')
+            xvt.waste(125)
+            if(award.sp) {
+                xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.sp), xvt.reset, 'Spell points\n')
+                xvt.waste(125)
+            }
+            if(award.str) {
+                xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.str), xvt.reset, 'Strength\n')
+                xvt.waste(125)
+            }
+            if(award.int) {
+                xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.int), xvt.reset, 'Intellect\n')
+                xvt.waste(125)
+            }
+            if(award.dex) {
+                xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.dex), xvt.reset, 'Dexterity\n')
+                xvt.waste(125)
+            }
+            if(award.cha) {
+                xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.cha), xvt.reset, 'Charisma\n')
+                xvt.waste(125)
+            }
+            xvt.out('\n')
+            xvt.waste(125)
+            if(eligible && bonus) {
+                xvt.out('+skill+\n')
+            }
+        }
+        else {
+            xvt.out('+immortalize+\n')
+        }
+    }
 }
 
 export function cuss(text: string): boolean {
