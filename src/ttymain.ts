@@ -27,27 +27,26 @@ module ttyMain
     if (process.argv.length < 3) {
         //  try a remote query for terminal emulation auto-detection
         xvt.enquiry('\x1B[6n')
-        if (xvt.entry.length > 0 && xvt.entry[0] == '[' && xvt.entry[xvt.entry.length - 1] == 'R')
-                                                                        xvt.emulation = 'XT'
+        if (/^\[.*R$/i.test(xvt.entry))                                 xvt.emulation = 'XT'
         else {
             xvt.enquiry('\x05')
-            if (xvt.entry.length > 0)                                   xvt.emulation = 'VT'
+            if (xvt.entry.length)                                       xvt.emulation = 'VT'
         }
-        //  else, check this process for terminal emulation auto-detection
-        if (! xvt.emulation) {
+        //  else, check host for configured terminal emulation
+        if (!xvt.emulation) {
             if (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM))  xvt.emulation = 'dumb'
             else if (/^lisa|^ncsa|^pcvt|^vt/i.test(process.env.TERM))   xvt.emulation = 'VT'
             else if (/ansi|cygwin|^pc/i.test(process.env.TERM))         xvt.emulation = 'PC'
             else                                                        xvt.emulation = 'XT'
         }
-
-        //  allow hardcopy and monochrome terminals to still play!  :)
-        if (! xvt.emulation.match('VT|PC|XT'))                          xvt.emulation = 'dumb'
     }
     else
         xvt.emulation = process.argv[2].toUpperCase()
 
-    //  initiate user login sequence: id or a new registration
+    //  allow hardcopy and monochrome terminals to still play!  :)
+    if (!xvt.emulation.match('VT|PC|XT'))                               xvt.emulation = 'dumb'
+
+    //  initiate user login sequence: id, handle, or a new registration
     require('./tty/logon')
 }
 

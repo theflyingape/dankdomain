@@ -214,7 +214,24 @@ function choice() {
 				xvt.out('\nYou have no more arena fights.\n')
 				break
 			}
-			break
+			Battle.user('Fight', (opponent: active) => {
+				if (opponent.user.id === '') {
+					menu(!$.player.expert)
+					return
+				}
+				if (opponent.user.id === $.player.id) {
+					opponent.user.id = ''
+					xvt.out('You can\'t fight a wimp like ', $.who(opponent.user, true, false, false), '.\n')
+					menu(true)
+					return
+				}
+				if ($.player.level - opponent.user.level > 3) {
+					xvt.out('You can only fight someone higher or up to three levels below you.\n')
+					menu(true)
+					return
+				}
+			})
+			return
 
 		case 'Y':
 			Battle.yourstats()

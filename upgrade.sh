@@ -19,3 +19,6 @@ echo
 echo server files that exist that are not part of this build
 echo
 sudo rsync -anv --delete --exclude node_modules ./build/ ${TARGET}
+
+sudo systemctl stop dankdomain
+sudo systemctl start dankdomain

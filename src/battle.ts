@@ -11,6 +11,17 @@ import xvt = require('xvt')
 
 module Battle
 {
+    export let volley: number
+    export let party1: active[]
+    export let party2: active[]
+
+export function engage(party: active[], mob: active[]) {
+
+}
+
+export function attack(rpc: active, enemy: active) {
+
+}
 
 export function cast(rpc: active, cb:Function) {
     if (rpc.user.id === $.player.id) {
@@ -41,7 +52,7 @@ export function cast(rpc: active, cb:Function) {
                     invoke(rpc, +xvt.entry)
                 cb(true)
                 return
-            }, prompt:'Enter ' + ['wand', 'scroll', 'spell', 'spell'][$.player.magic - 1] +' (?=list): ', max:2 }
+            }, prompt:['Use wand', 'Read scroll', 'Cast spell', 'Uti magicae'][$.player.magic - 1] + ' (?=list): ', max:2 }
         }
         xvt.app.focus = 'magic'
         return
@@ -50,6 +61,10 @@ export function cast(rpc: active, cb:Function) {
     function invoke(rpc: active, spell: number) {
         rpc.altered = true
     }
+}
+
+export function melee() {
+
 }
 
 export function poison(rpc: active, cb:Function) {
@@ -79,7 +94,7 @@ export function poison(rpc: active, cb:Function) {
                     apply(rpc, +xvt.entry)
                 cb(true)
                 return
-            }, prompt:'Enter type (?=list): ', max:2 }
+            }, prompt:['Use vial', 'Apply poison', 'Make toxic', 'Uti venenum'][$.player.poison - 1] + ' (?=list): ', max:2 }
         }
         xvt.app.focus = 'poison'
         return
@@ -93,10 +108,8 @@ export function poison(rpc: active, cb:Function) {
     function apply(rpc: active, vial: number) {
         rpc.altered = true
         let wc = $.Weapon.baseWC(rpc.user.weapon)
-        console.log(wc, rpc.user.poison, vial)
         let p = Math.trunc(rpc.user.poison / 2)
         let t = rpc.user.poison - p
-        console.log(p, t)
         p *= vial
         t *= vial
         if (p > 0 && rpc.user.toWC >= 0) rpc.user.toWC = p
@@ -229,7 +242,6 @@ export function yourstats() {
     xvt.out($.buff($.player.toAC, $.online.toAC), xvt.nobright)
     xvt.out(xvt.reset, '\n')
 }
-
 }
 
 export = Battle

@@ -625,7 +625,7 @@ function buy() {
 				:  new $.coins($.Poison.vials[$.Poison.merchant[item]].cost)
 			if ($.player.coin.value >= cost.value && !$.Poison.have($.player.poisons, buy)) {
 				$.Poison.add($.player.poisons, buy)
-				xvt.out(' - ', $.Poison.merchant[item], '\n')
+				xvt.out('\nHe slips you a vial of ', $.Poison.merchant[item], '\n')
 				$.player.coin.value -= cost.value
 				$.online.altered = true
 			}

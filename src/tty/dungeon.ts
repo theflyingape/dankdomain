@@ -145,11 +145,13 @@ function command() {
 		case 'S':
 		case 'E':
 		case 'W':
-			xvt.out(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.nobright, xvt.magenta,'<^  '
-				, 'There is a wall to the ', choice.toLowerCase(), dungeon[choice].description,'.\n')
+			xvt.out(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.nobright, xvt.magenta,'<^  ', xvt.reset
+				, 'There is a wall to the ', choice.toLowerCase(), dungeon[choice].description,'.')
 			xvt.waste(250)
 			if (($.online.hp -= $.dice(Math.trunc($.player.level * (110 - $.online.str) / 100) + 1)) < 1) {
-				xvt.out('You take too many hits and die.\n')
+				xvt.out('\n')
+				xvt.waste(250)
+				xvt.out(xvt.bright, xvt.yellow, 'You take too many hits and die.\n', xvt.reset)
 				xvt.waste(250)
 				$.reason = 'banged head against a wall'
 				xvt.hangup()
