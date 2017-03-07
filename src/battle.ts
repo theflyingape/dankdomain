@@ -14,12 +14,59 @@ module Battle
     export let volley: number
     export let party1: active[]
     export let party2: active[]
+    export let bs: number
 
 export function engage(party: active[], mob: active[]) {
 
 }
 
 export function attack(rpc: active, enemy: active) {
+
+    if (rpc.confused) {
+        let mod = rpc.user.blessed ? 10 : rpc.user.cursed ? -10 : 0
+        rpc.int = $.PC.ability(rpc.int, $.PC.name[rpc.user.pc].toInt, rpc.user.maxint, mod)
+        rpc.dex = $.PC.ability(rpc.dex, $.PC.name[rpc.user.pc].toDex, rpc.user.maxdex, mod)
+    }
+
+    if (rpc.user.id === $.player.id) {
+        xvt.app.form = {
+            'backstab': {cb:() => {
+                if (/N/i.test(xvt.entry)) bs = 1
+                melee(rpc, enemy, bs)
+            }, enter:'Y', eol:false, max:1, match:/Y|N/i},
+            'attack': {cb:() => {
+
+            }, enter:'A', eol:false, max:1 }
+        }
+        if (!volley) {
+            bs = $.player.backstab
+            let roll = $.dice(100 + bs * $.player.level / 5)
+            bs += (roll < bs) ? -1 : (roll > 99) ? +1 : 0
+            do {
+                roll = $.dice(100 + bs * $.player.backstab)
+                bs += (roll == 1) ? -1 : (roll > 99) ? $.dice($.player.backstab) : 0
+            } while (roll == 1 || roll > 99)
+            if (bs > 1) {
+
+            }
+            else
+                bs = 1
+            xvt.app.form['backstab'].prompt = 'Attempt to backstab'
+                + (bs > 2 && bs != $.player.backstab) ? ' for ' + bs.toString() + 'x' : ''
+                + ' (Y/N)? '
+            xvt.app.focus = 'backstab'
+            return
+        }
+        else {
+            xvt.app.form['attack'].prompt = '[,]'
+                + $.bracket('A', false) + ' Attack, '
+                + ($.player.magic && $.player.spells.length && rpc.sp) ? $.bracket('C', false) + ' Cast spell, ' : ''
+                + $.bracket('R', false) + ' Retreat, '
+                + $.bracket('Y', false) + ' Status: '
+            xvt.app.focus = 'attack'
+            return
+        }
+    }
 
 }
 
@@ -63,8 +110,11 @@ export function cast(rpc: active, cb:Function) {
     }
 }
 
-export function melee() {
+export function melee(rpc: active, enemy: active, blow = 1) {
+    let hit = 0
 
+    enemy.hp -= hit
+    return
 }
 
 export function poison(rpc: active, cb:Function) {
