@@ -12,11 +12,36 @@ import xvt = require('xvt')
 module Battle
 {
     export let volley: number
-    export let party1: active[]
-    export let party2: active[]
+    export let parties: [ active[] ]
     export let bs: number
+    export let retreat: boolean
 
 export function engage(party: active[], mob: active[]) {
+
+    if (!parties.length) {
+        parties.push({ ...party })
+        parties.push({ ...mob })
+        retreat = false
+        volley = 0
+    }
+
+    if (retreat || volley >= 10000) {
+
+    }
+
+    let alive: number[]
+    for (let p in parties) {
+        alive.push(parties[p].length)
+        for (let m in parties[p]) {
+            if (parties[p][m].hp < 1) {
+                alive[p]--
+            }
+        }
+    }
+
+    if (alive[0] && alive[1]) {
+
+    }
 
 }
 
