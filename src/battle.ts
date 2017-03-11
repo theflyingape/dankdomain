@@ -11,88 +11,112 @@ import xvt = require('xvt')
 
 module Battle
 {
-    export let volley: number
     export let parties: [ active[] ]
+    export let round: [ {party:number, member:number} ]
+    export let alive: number[]
     export let bs: number
     export let retreat: boolean
+    export let volley: number
 
+
+//  start a new battle engagement:
+//    do rounds: attack() with possibly backstab or poison
+//       per member: next() for cast, melee, or retreat
 export function engage(party: active[], mob: active[]) {
 
     if (!parties.length) {
         parties.push({ ...party })
         parties.push({ ...mob })
+        bs = 1
         retreat = false
         volley = 0
     }
 
-    if (retreat || volley >= 10000) {
-
-    }
-
-    let alive: number[]
-    for (let p in parties) {
-        alive.push(parties[p].length)
-        for (let m in parties[p]) {
-            if (parties[p][m].hp < 1) {
-                alive[p]--
-            }
-        }
-    }
-
-    if (alive[0] && alive[1]) {
-
-    }
-
+    attack()
 }
 
-export function attack(rpc: active, enemy: active) {
+//  new round of volleys
+export function attack() {
 
-    if (rpc.confused) {
-        let mod = rpc.user.blessed ? 10 : rpc.user.cursed ? -10 : 0
-        rpc.int = $.PC.ability(rpc.int, $.PC.name[rpc.user.pc].toInt, rpc.user.maxint, mod)
-        rpc.dex = $.PC.ability(rpc.dex, $.PC.name[rpc.user.pc].toDex, rpc.user.maxdex, mod)
+    if (retreat || ++volley > 99999) {
+        //  no more attacking
     }
 
-    if (rpc.user.id === $.player.id) {
-        xvt.app.form = {
-            'backstab': {cb:() => {
-                if (/N/i.test(xvt.entry)) bs = 1
-                melee(rpc, enemy, bs)
-            }, enter:'Y', eol:false, max:1, match:/Y|N/i},
-            'attack': {cb:() => {
-
-            }, enter:'A', eol:false, max:1 }
+    if (round.length) {
+        let n = round.shift()
+        let rpc = parties[n.party][n.member]
+        //  recovery?
+        if (rpc.confused) {
+            let mod = rpc.user.blessed ? 10 : rpc.user.cursed ? -10 : 0
+            rpc.int = $.PC.ability(rpc.int, $.PC.name[rpc.user.pc].toInt, rpc.user.maxint, mod)
+            rpc.dex = $.PC.ability(rpc.dex, $.PC.name[rpc.user.pc].toDex, rpc.user.maxdex, mod)
         }
-        if (!volley) {
-            bs = $.player.backstab
-            let roll = $.dice(100 + bs * $.player.level / 5)
-            bs += (roll < bs) ? -1 : (roll > 99) ? +1 : 0
-            do {
-                roll = $.dice(100 + bs * $.player.backstab)
-                bs += (roll == 1) ? -1 : (roll > 99) ? $.dice($.player.backstab) : 0
-            } while (roll == 1 || roll > 99)
-            if (bs > 1) {
 
+        let mob = n.party ^ 1
+        let nme: number
+        do { nme = $.dice(parties[mob].length) - 1 } while (parties[mob][nme].hp < 1)
+        let enemy = parties[mob][nme]
+
+        if (rpc.user.id === $.player.id) {
+            xvt.app.form = {
+                'backstab': {cb:() => {
+                    if (/N/i.test(xvt.entry)) bs = 1
+                    melee(rpc, enemy, bs)
+                }, enter:'Y', eol:false, max:1, match:/Y|N/i},
+                'attack': {cb:() => {
+
+                }, enter:'A', eol:false, max:1 }
             }
-            else
-                bs = 1
-            xvt.app.form['backstab'].prompt = 'Attempt to backstab'
-                + (bs > 2 && bs != $.player.backstab) ? ' for ' + bs.toString() + 'x' : ''
-                + ' (Y/N)? '
-            xvt.app.focus = 'backstab'
-            return
+            if (!volley) {
+                bs = $.player.backstab
+                let roll = $.dice(100 + bs * $.player.level / 5)
+                bs += (roll < bs) ? -1 : (roll > 99) ? +1 : 0
+                do {
+                    roll = $.dice(100 + bs * $.player.backstab)
+                    bs += (roll == 1) ? -1 : (roll > 99) ? $.dice($.player.backstab) : 0
+                } while (roll == 1 || roll > 99)
+                if (bs > 1) {
+
+                }
+                else
+                    bs = 1
+                xvt.app.form['backstab'].prompt = 'Attempt to backstab'
+                    + (bs > 2 && bs != $.player.backstab) ? ' for ' + bs.toString() + 'x' : ''
+                    + ' (Y/N)? '
+                xvt.app.focus = 'backstab'
+                return
+            }
+            else {
+                xvt.app.form['attack'].prompt = '[,]'
+                    + $.bracket('A', false) + ' Attack, '
+                    + ($.player.magic && $.player.spells.length && rpc.sp) ? $.bracket('C', false) + ' Cast spell, ' : ''
+                    + $.bracket('R', false) + ' Retreat, '
+                    + $.bracket('Y', false) + ' Status: '
+                xvt.app.focus = 'attack'
+                return
+            }
         }
-        else {
-            xvt.app.form['attack'].prompt = '[,]'
-                + $.bracket('A', false) + ' Attack, '
-                + ($.player.magic && $.player.spells.length && rpc.sp) ? $.bracket('C', false) + ' Cast spell, ' : ''
-                + $.bracket('R', false) + ' Retreat, '
-                + $.bracket('Y', false) + ' Status: '
-            xvt.app.focus = 'attack'
-            return
-        }
+
+        next(rpc, enemy)
+        return
     }
 
+    function next(rpc: active, enemy: active) {
+
+        let alive: number[]
+        for (let p in parties) {
+            alive.push(parties[p].length)
+            for (let m in parties[p]) {
+                if (parties[p][m].hp < 1) {
+                    alive[p]--
+                }
+            }
+        }
+
+        if (alive[0] && alive[1]) {
+
+        }
+    }
 }
 
 export function cast(rpc: active, cb:Function) {
