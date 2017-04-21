@@ -239,8 +239,9 @@ function choice() {
 					menu(true)
 					return
 				}
+				Battle.engage($.online[0], opponent[0])
 			})
-			return
+			break
 
 		case 'Y':
 			Battle.yourstats()
