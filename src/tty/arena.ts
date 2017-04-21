@@ -198,6 +198,15 @@ function choice() {
 				xvt.out('\nYou have no more arena fights.\n')
 				break
 			}
+			xvt.app.form = {
+				pick: { cb: () => {
+
+				}, min:1, max:2
+				}
+			}
+			xvt.app.form['pick'].prompt = 'Fight what monster (1-' + monsters.length 
+				+ ', ' + $.bracket('D', false) + ' Demon)? '
+			xvt.app.focus = 'pick'
 			break
 
 		case 'P':
