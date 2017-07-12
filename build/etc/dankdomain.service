@@ -3,6 +3,7 @@ Description=Dank Domain Door
 After=network.target httpd.service xinetd.service
 
 [Service]
+Type=simple
 ExecStart=/opt/node/bin/node ./node_modules/tty.js/bin/tty.js --config ./tty/files/tty.json
 KillMode=process
 User=nobody
