@@ -1,11 +1,12 @@
 [Unit]
 Description=Dank Domain Door
-After=network.target xinetd.service
+After=network.target httpd.service xinetd.service
 
 [Service]
-ExecStart=/usr/local/games/dankdomain/tty-startup.sh
-ExecStop=killall dankdomain tty.js
-RemainAfterExit=yes
+ExecStart=/opt/node/bin/node ./node_modules/tty.js/bin/tty.js --config ./tty/files/tty.json
+KillMode=process
+User=nobody
+WorkingDirectory=/usr/local/games/dankdomain
 
 [Install]
 WantedBy=multi-user.target

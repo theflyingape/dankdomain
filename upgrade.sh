@@ -15,9 +15,9 @@ sudo chown -R root.games ${TARGET}
 sudo chmod -R u+rw,g+rw,o-rwx ${TARGET}
 sudo find ${TARGET} -type d -exec chmod u+x,g+xs {} \;
 
-echo
-echo server files that exist that are not part of this build
-echo
+echo ''
+echo 'server files that exist that are not part of this build'
+echo '                  ~~~~~          ~~~'
 sudo rsync -anv --delete --exclude node_modules ./build/ ${TARGET}
 
 sudo systemctl stop dankdomain

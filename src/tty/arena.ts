@@ -239,7 +239,7 @@ function choice() {
 					menu(true)
 					return
 				}
-				Battle.engage($.online[0], opponent[0])
+				Battle.engage($.online[0], opponent[0], () => {})
 			})
 			break
 

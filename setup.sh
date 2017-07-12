@@ -80,8 +80,9 @@ if sudo service iptables status ; then
 	fi
 fi
 
-sudo ln -s ${TARGET}/etc/dankdomain.service /etc/systemd/system/multi-user.target.wants/dankdomain.service
+sudo cp ${TARGET}/etc/dankdomain.service /etc/systemd/system/
 sudo systemctl daemon-reload
+sudo systemctl enable dankdomain
 sudo systemctl start dankdomain
 
 exit
