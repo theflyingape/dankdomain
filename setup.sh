@@ -2,6 +2,7 @@
 
 [ -n "$1" ] && TARGET="$1" || TARGET=/usr/local/games
 TARGET="${TARGET}/`basename ${PWD}`"
+echo "Installing into ${TARGET}"
 
 # let's prompt for admin credentials now, if necessary
 sudo -v || exit
@@ -32,7 +33,7 @@ member=`sudo groupmems -g games -l | grep -c nobody`
 cat > ./build/logins.sh << EOD
 #!/bin/sh -l
 # drop to PC emulation if remote enquiry fails
-exec env TERM=ansi node ${TARGET}/ttymain
+exec node ${TARGET}/ttymain
 EOD
 
 chmod +x ./build/logins.sh
@@ -60,6 +61,7 @@ service dankdomain
 	group			= games
         server                  = `which in.telnetd`
 	server_args		= -L ${TARGET}/logins.sh
+	env			= TERM=pcansi
 	cps			= 2 5
         log_on_success          += USERID
         log_on_failure          += USERID
