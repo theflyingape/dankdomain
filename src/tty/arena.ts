@@ -12,7 +12,7 @@ import Battle = require('../battle')
 
 module Arena
 {
-	let monsters: monster[] = [
+/*	let monsters: monster[] = [
 		{ name:'Kobold', level:1, pc:'Lizard', weapon:'Dagger', armor:'Wooden Shield', money:'5c' },
 		{ name:'Orc', level:3, pc:'Beast', weapon:'Staff', armor:'Wooden Shield', money:'50c' },
 		{ name:'Ogre', level:5, pc:'Beast', weapon:'Club', armor:'Large Shield', money:'100c' },
@@ -35,7 +35,8 @@ module Arena
 		{ name:'Demogorgon', level:99, pc:'Beast', weapon:'Staff of the Magi', armor:-25, money:'1000p',
 			spells: [ 'Heal', 'Teleport', 'Blast', 'Confusion', 'Transmute', 'Cure', 'Illusion', 'Disintegrate' ] }
 	]
-
+*/
+	let monsters: monster[] = require('../etc/arena.json')
 	let arena: choices = {
 		'U': { description:'User fights' },
 		'M': { description:'Monster fights' },
@@ -200,14 +201,15 @@ function choice() {
 			}
 			xvt.app.form = {
 				pick: { cb: () => {
-
+					MonsterFights()
+					menu(suppress)
 				}, min:1, max:2
 				}
 			}
 			xvt.app.form['pick'].prompt = 'Fight what monster (1-' + monsters.length 
-				+ ', ' + $.bracket('D', false) + ' Demon)? '
+				+ ', ' + $.bracket('D', false) + 'emon)? '
 			xvt.app.focus = 'pick'
-			break
+			return
 
 		case 'P':
 			if ($.reason) break
@@ -255,30 +257,23 @@ function choice() {
 }
 
 function MonsterFights() {
-/*
-	tty.prompt('Fight what monster', {type:'item', min:1, max:monsters.length, other:'<D> Demon', prompt:'?'})
 
-	if (tty.entry == '?') {
-		for (var id in monsters) {
-			let monster = monsters[id]
-			tty.out((+id+1).toString() + ') level ' + monster.level.toString() + ' ' + monster.name)
-			if (monster.spells)
-				tty.out(' with ' + monster.spells)
-			tty.out(' carrying ' + monster.money)
-			let carry = new $.coins(monster.money)
-			tty.out(' (', carry.carryout(tty), ') \n')
+	xvt.out(xvt.reset, '\n\n')
+
+	if (/d/i.test(xvt.entry)) {
+		if ($.player.level < 50) {
+			xvt.out('You are not powerful enough to fight demons yet.  Go fight some monsters.\n')
+			return
 		}
-		tty.pause()
-		return
-	}
 
-	for (var id in monsters)
-		if (+id == +tty.entry - 1)
-			break
-	if (monsters[id] != undefined)
-		tty.out((+id+1).toString(), ') level ', monsters[id].level.toString() , ' ', monsters[id].name, '\n')
-	tty.pause()
-*/
+		let cost = new $.coins(new $.coins($.money($.player.level)).carry(1, true))
+
+		xvt.out('The ancient necromancer will summon you a demon for ', cost.carry(), '\n\n')
+		if ($.player.coin.value < cost.value) {
+			xvt.out('You don\'t have enough!\n')
+			return
+		}
+	}
 }
 
 }
