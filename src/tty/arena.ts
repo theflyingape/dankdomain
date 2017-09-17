@@ -203,8 +203,7 @@ function choice() {
 				pick: { cb: () => {
 					MonsterFights()
 					menu(suppress)
-				}, min:1, max:2
-				}
+				}, min:1, max:2 }
 			}
 			xvt.app.form['pick'].prompt = 'Fight what monster (1-' + monsters.length 
 				+ ', ' + $.bracket('D', false) + 'emon)? '
@@ -258,22 +257,174 @@ function choice() {
 
 function MonsterFights() {
 
+	let cost: $.coins
+	let monster: active
 	xvt.out(xvt.reset, '\n\n')
 
-	if (/d/i.test(xvt.entry)) {
+	if (/D/i.test(xvt.entry)) {
 		if ($.player.level < 50) {
 			xvt.out('You are not powerful enough to fight demons yet.  Go fight some monsters.\n')
 			return
 		}
 
-		let cost = new $.coins(new $.coins($.money($.player.level)).carry(1, true))
+		cost = new $.coins(new $.coins($.money($.player.level)).carry(1, true))
 
 		xvt.out('The ancient necromancer will summon you a demon for ', cost.carry(), '\n\n')
 		if ($.player.coin.value < cost.value) {
 			xvt.out('You don\'t have enough!\n')
 			return
 		}
+
+		xvt.app.form = {
+			'pay': { cb:() => {
+				xvt.out('\n')
+				if (/Y/i.test(xvt.entry)) {
+					$.player.coin.value -= cost.value
+					$.online.altered = true
+
+					monster.pc = $.PC.card(($.dice(($.online.int + $.online.cha) / 50) > 1) ? 'Demon' : $.PC.random())
+
+					monster.user.handle = 'summoned demon'
+					monster.user.gender = 'I'
+					monster.user.level = $.player.level + $.dice(7) - 4
+					if (monster.user.level > 99)
+						monster.user.level = 99
+
+					xvt.app.focus = 'fight'
+					return
+				}
+				xvt.out(xvt.cyan, 'His eyes glow ', xvt.bright, xvt.red, 'red', xvt.nobright
+					, xvt.cyan, ' and he says, "', xvt.bright, xvt.white, 'I don\'t make deals!'
+					, xvt.nobright, xvt.cyan, '"\n\n', xvt.reset)
+				menu(true)
+				return
+			}, prompt:'Will you pay (Y/N)? ', enter:'N', eol:false, match:/Y|N/i },
+			'fight': { cb:() => {
+				if (/Y/i.test(xvt.entry)) {
+					$.arena--
+					Battle.engage($.online[0], opponent[0], () => {})
+				}
+				menu(true)
+				return
+			}, prompt:'Will you fight (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
+		}
+		xvt.app.focus = 'pay'
 	}
+
+/*
+					PLAYER.Gold-=d;
+					OUT("As you hand him the money, it disappears into thin air.");NL;NL;
+					Delay(100);
+					OUT("The old necromancer summons you a demon.");NL;NL;
+					strcpy(ENEMY.Handle,"summoned demon");
+					if(dice((ONLINE->INT+ONLINE->CHA)/50)>1)
+						strcpy(ENEMY.Class, "DUNGEON.Demon");
+					else {
+						i=dice(NUMCLASS)-1;
+						sprintf(ENEMY.Class,"%s.%s",table->class[i]->Origin,table->class[i]->Character[dice(MAXCLASS(i))-1]->Name);
+					}
+					ENEMY.Level=PLAYER.Level+dice(7)-4;
+					if(ENEMY.Level>99)
+						ENEMY.Level=99;
+					ENEMY.Gender='I';
+					ENEMY.Gold=d;
+					i=MAXWEAPON(0)*ENEMY.Level/100+dice(3)-2;
+					i=(i<1) ? 1 : (i>=MAXWEAPON(0)) ? MAXWEAPON(0)-1 : i;
+					sprintf(ENEMY.Weapon,"NATURAL.%u",i);
+					ENEMY.Gold+=value(table->weapon[0]->Item[i*2/3]->Value,ONLINE->CHA);
+					i=MAXARMOR(0)*ENEMY.Level/100+dice(3)-2;
+					i=(i<1) ? 1 : (i>=MAXARMOR(0)) ? MAXARMOR(0)-1 : i;
+					sprintf(ENEMY.Armor,"NATURAL.%u",i);
+					ENEMY.Gold+=value(table->armor[0]->Item[i]->Value,ONLINE->CHA);
+					d=ENEMY.Gold;
+					if(d>1e+05) {
+						modf(d/1e+05,&d);
+						d*=1e+05;
+						if(d>1e+09) {
+							modf(d/1e+09,&d);
+							d*=1e+09;
+							if(d>1e+13) {
+								modf(d/1e+13,&d);
+								d*=1e+13;
+							}
+						}
+					}
+					ENEMY.Gold=d;
+					CreateRPC(RPC[1][0]);
+					ENEMY.Poison=(UWORD)~0;
+					ENEMY.Spell|=HEAL_SPELL | BLAST_SPELL;
+					for(i=0; i<NUMMAGIC; i++)
+						if(dice(ONLINE->CHA/2+5*i)==1) {
+							if(i<16)
+								ENEMY.Spell|=(UWORD)pow(2.,(double)i);
+							if(i>15 && i<24)
+								ENEMY.XSpell|=(UWORD)pow(2.,(double)i-16);
+						}
+				}
+				else
+					if(i) {
+						i--;
+						strcpy(ENEMY.Handle,ARENA(i)->Name);
+						strcpy(ENEMY.Class,ARENA(i)->Class);
+						ENEMY.Gender='I';
+						ENEMY.Level=ARENA(i)->Level;
+						strcpy(ENEMY.Weapon,ARENA(i)->Weapon);
+						strcpy(ENEMY.Armor,ARENA(i)->Armor);
+						ENEMY.Gold=ARENA(i)->Gold;
+						ENEMY.Spell=ARENA(i)->Spell;
+						CreateRPC(RPC[1][0]);
+					}
+				sprintf(filename,"pix/Arena/%s",ENEMY.Handle);
+				type(filename,FALSE);
+				sprintf(outbuf,"The %s is a level %u %s.",ENEMY.Handle,ENEMY.ExpLevel,CLASS(RPC[1][0])->Name);
+				OUT(outbuf);NL;NL;
+				if(RPC[1][0]->weapon_origin<NUMWEAPON) {
+					sprintf(outbuf,"%s is carrying %s%s.",RPC[1][0]->He,AN(WEAPON(RPC[1][0])->Name),WEAPON(RPC[1][0])->Name);
+					OUT(outbuf);NL;NL;
+				}
+				if(RPC[1][0]->armor_origin<NUMWEAPON) {
+					sprintf(outbuf,"%s is wearing %s%s.",RPC[1][0]->He,AN(ARMOR(RPC[1][0])->Name),ARMOR(RPC[1][0])->Name);
+					OUT(outbuf);NL;NL;
+				}
+				displayview();
+				sprintf(prompt,"%sWill you fight the %s (Y/N)? ",fore(CYN),ENEMY.Handle);
+				OUT(prompt);
+				c=inkey('N','N');
+				NL;
+				if(c=='Y') {
+					NL;
+					sprintf(outbuf,"combat%d",arena--);
+					sound2(outbuf,0);
+					Battle();
+					if(!RPC[1][0]->HP) {
+						modf(EXP(ENEMY.ExpLevel-1)/3.,&d);
+						PLAYER.Experience+=d;
+						sprintf(outbuf,"You get %.8g experience.",d);
+						OUT(outbuf);NL;
+						if(ENEMY.Gold>0.) {
+							sprintf(line[numline++],"%s got %s you were carrying.",ONLINE->He,money(ENEMY.Gold,ENEMY.Emulation));
+							PLAYER.Gold+=ENEMY.Gold;
+							sprintf(outbuf,"You get %s %s was carrying.",money(ENEMY.Gold,ANSI),RPC[1][0]->he);
+							OUT(outbuf);NL;
+						}
+						ExchangeWeapon(ONLINE,RPC[1][0]);
+						ExchangeArmor(ONLINE,RPC[1][0]);
+						note(ENEMY.ID);
+						sprintf(outbuf,"%sdefeated a level %s%u %s",fore(CYN),fore(WHITE),ENEMY.Level,ENEMY.Handle);
+						news(outbuf);
+						paws=!PLAYER.Expert;
+					}
+					if(!ONLINE->HP) {
+						if(PLAYER.Gold>0.) {
+							ENEMY.Gold+=PLAYER.Gold;
+							sprintf(outbuf,"%s takes %s you were carrying.",RPC[1][0]->He,money(PLAYER.Gold,ANSI));
+							OUT(outbuf);NL;NL;
+							PLAYER.Gold=0.;
+						}
+					}
+					break;
+				}
+*/
 }
 
 }
