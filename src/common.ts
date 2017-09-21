@@ -24,6 +24,7 @@ module Common
 
     export let barkeep: active = { user: { id:'_BAR'} }
     export let online: active = { user: { id:'' } }
+    export let seahag: active = { user: { id:'_OLD'} }
     export let taxman: active = { user: { id:'_TAX'} }
     export let player: user = online.user
     export let sysop: user = { id:'_SYS' }
@@ -948,9 +949,9 @@ export function reroll(user: user, dd = 'None', level = 1) {
 
     //  reset for new or non player
     if(xvt.validator.isEmpty(user.id) || user.id[0] === '_') {
-        user.dob = now().date
-        user.joined = user.dob
-        user.lastdate = user.joined
+        if (isNaN(user.dob)) user.dob = now().date
+        if (isNaN(user.joined)) user.joined = now().date
+        user.lastdate = now().date
         user.lasttime = now().time
         user.gender = user.sex
 

@@ -47,6 +47,42 @@ module db
         saveUser($.sysop, true)
 
         npc = <user>{}
+        Object.assign(npc, require('./etc/barkeep.json'))
+        Object.assign($.barkeep.user, npc)
+        $.reroll($.barkeep.user, $.barkeep.user.pc, $.barkeep.user.level)
+        //  customize our Master of Whisperers NPC
+        if (npc.str) $.barkeep.user.str = npc.str
+        if (npc.int) $.barkeep.user.int = npc.int
+        if (npc.dex) $.barkeep.user.dex = npc.dex
+        if (npc.cha) $.barkeep.user.cha = npc.cha
+        if (npc.hp) $.barkeep.user.hp = npc.hp
+        if (npc.sp) $.barkeep.user.sp = npc.sp
+        if (npc.melee) $.barkeep.user.melee = npc.melee
+        if (npc.poison) $.barkeep.user.poison = npc.poison
+        if (npc.magic) $.barkeep.user.magic = npc.magic
+        if (npc.poisons) $.barkeep.user.poisons = npc.poisons
+        if (npc.spells) $.barkeep.user.spells = npc.spells
+        saveUser($.barkeep, true)
+
+        npc = <user>{}
+        Object.assign(npc, require('./etc/seahag.json'))
+        Object.assign($.seahag.user, npc)
+        $.reroll($.seahag.user, $.seahag.user.pc, $.seahag.user.level)
+        //  customize our Queen Bee NPC
+        if (npc.str) $.seahag.user.str = npc.str
+        if (npc.int) $.seahag.user.int = npc.int
+        if (npc.dex) $.seahag.user.dex = npc.dex
+        if (npc.cha) $.seahag.user.cha = npc.cha
+        if (npc.hp) $.seahag.user.hp = npc.hp
+        if (npc.sp) $.seahag.user.sp = npc.sp
+        if (npc.melee) $.seahag.user.melee = npc.melee
+        if (npc.poison) $.seahag.user.poison = npc.poison
+        if (npc.magic) $.seahag.user.magic = npc.magic
+        if (npc.poisons) $.seahag.user.poisons = npc.poisons
+        if (npc.spells) $.seahag.user.spells = npc.spells
+        saveUser($.seahag, true)
+
+        npc = <user>{}
         Object.assign(npc, require('./etc/taxman.json'))
         Object.assign($.taxman.user, npc)
         $.reroll($.taxman.user, $.taxman.user.pc, $.taxman.user.level)
@@ -64,24 +100,6 @@ module db
         if (npc.spells) $.taxman.user.spells = npc.spells
         $.taxman.user.xplevel = 0
         saveUser($.taxman, true)
-
-        npc = <user>{}
-        Object.assign(npc, require('./etc/barkeep.json'))
-        Object.assign($.barkeep.user, npc)
-        $.reroll($.barkeep.user, $.barkeep.user.pc, $.barkeep.user.level)
-        //  customize our Master of Whisperers NPC
-        if (npc.str) $.barkeep.user.str = npc.str
-        if (npc.int) $.barkeep.user.int = npc.int
-        if (npc.dex) $.barkeep.user.dex = npc.dex
-        if (npc.cha) $.barkeep.user.cha = npc.cha
-        if (npc.hp) $.barkeep.user.hp = npc.hp
-        if (npc.sp) $.barkeep.user.sp = npc.sp
-        if (npc.melee) $.barkeep.user.melee = npc.melee
-        if (npc.poison) $.barkeep.user.poison = npc.poison
-        if (npc.magic) $.barkeep.user.magic = npc.magic
-        if (npc.poisons) $.barkeep.user.poisons = npc.poisons
-        if (npc.spells) $.barkeep.user.spells = npc.spells
-        saveUser($.barkeep, true)
 
         xvt.out('done.\n')
         xvt.waste(250)
