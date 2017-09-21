@@ -1,0 +1,12 @@
+{
+    "handle": "summoned demon",
+    "sex": "I",
+    "access": "Inactive",
+    "password": "\n",
+  	"expires": 0,
+    "pc": "Demon",
+    "level": 50,
+    "coin": "500g",
+    "poisons": [ 7, 8, 9, 10, 11 ],
+    "spells": [ 7, 9 ]
+}

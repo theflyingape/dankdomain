@@ -1,6 +1,6 @@
 {
   "name": "dankdomain",
-  "version": "0.3.4",
+  "version": "0.3.5",
   "description": "Dank Domain: the return of Hack & Slash (1990-2014)",
   "main": "ttymain",
   "publisher": "theflyingape",
@@ -40,7 +40,7 @@
     "title-case": "^2.1.1",
     "tty.js": "^0.2.15",
     "ws": "^2.3.1",
-    "xterm": "^2.8.1",
+    "xterm": "^2.9.2",
     "xvt": "^1.0.11"
   },
   "devDependencies": {

@@ -9,7 +9,15 @@
   	"expires": 0,
     "pc": "Thief",
     "level": 50,
-    "weapon": -40,
-    "armor": -20,
-    "spells": [ "Heal", "Big Blast" ]
+    "str": 95,
+    "int": 95,
+    "dex": 95,
+    "cha": 85,
+    "hp": 2200,
+    "sp": 2200,
+    "melee": 2,
+    "magic": 2,
+    "weapon": 44,
+    "armor": 22,
+    "spells": [ 7, 8, 19 ]
 }

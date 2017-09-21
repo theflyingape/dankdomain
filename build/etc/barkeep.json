@@ -9,7 +9,16 @@
  	"expires": 0,
     "pc": "Ogre",
     "level": 80,
+    "str": 98,
+    "int": 88,
+    "dex": 68,
+    "cha": 78,
+    "hp": 3583,
+    "sp": 5500,
+    "melee": 5,
+    "poison": 0,
+    "magic": 2,
     "weapon": "Gloves of Strength",
-    "armor": -20,
-    "spells": [ "Heal", "Confusion", "Cure" ]
+    "armor": 18,
+    "spells": [ 7, 11, 13 ]
 }

@@ -39,21 +39,52 @@ module db
             retreats numeric, tl numeric, tw numeric
         )`)
 
-        Object.assign($.sysop, require('./etc/sysop.json'))
+        let npc = <user>{}
+        Object.assign(npc, require('./etc/sysop.json'))
+        Object.assign($.sysop, npc)
         $.reroll($.sysop, $.sysop.pc, $.sysop.level)
+        $.sysop.xplevel = 0
         saveUser($.sysop, true)
 
-        let taxman = <user>{}
-        Object.assign(taxman, require('./etc/taxman.json'))
-        $.reroll(taxman, taxman.pc, taxman.level)
-        saveUser(taxman, true)
+        npc = <user>{}
+        Object.assign(npc, require('./etc/taxman.json'))
+        Object.assign($.taxman.user, npc)
+        $.reroll($.taxman.user, $.taxman.user.pc, $.taxman.user.level)
+        //  customize our Master of Coin NPC
+        if (npc.str) $.taxman.user.str = npc.str
+        if (npc.int) $.taxman.user.int = npc.int
+        if (npc.dex) $.taxman.user.dex = npc.dex
+        if (npc.cha) $.taxman.user.cha = npc.cha
+        if (npc.hp) $.taxman.user.hp = npc.hp
+        if (npc.sp) $.taxman.user.sp = npc.sp
+        if (npc.melee) $.taxman.user.melee = npc.melee
+        if (npc.poison) $.taxman.user.poison = npc.poison
+        if (npc.magic) $.taxman.user.magic = npc.magic
+        if (npc.poisons) $.taxman.user.poisons = npc.poisons
+        if (npc.spells) $.taxman.user.spells = npc.spells
+        $.taxman.user.xplevel = 0
+        saveUser($.taxman, true)
 
-        let barkeep = <user>{}
-        Object.assign(barkeep, require('./etc/barkeep.json'))
-        $.reroll(barkeep, barkeep.pc, barkeep.level)
-        saveUser(barkeep, true)
+        npc = <user>{}
+        Object.assign(npc, require('./etc/barkeep.json'))
+        Object.assign($.barkeep.user, npc)
+        $.reroll($.barkeep.user, $.barkeep.user.pc, $.barkeep.user.level)
+        //  customize our Master of Whisperers NPC
+        if (npc.str) $.barkeep.user.str = npc.str
+        if (npc.int) $.barkeep.user.int = npc.int
+        if (npc.dex) $.barkeep.user.dex = npc.dex
+        if (npc.cha) $.barkeep.user.cha = npc.cha
+        if (npc.hp) $.barkeep.user.hp = npc.hp
+        if (npc.sp) $.barkeep.user.sp = npc.sp
+        if (npc.melee) $.barkeep.user.melee = npc.melee
+        if (npc.poison) $.barkeep.user.poison = npc.poison
+        if (npc.magic) $.barkeep.user.magic = npc.magic
+        if (npc.poisons) $.barkeep.user.poisons = npc.poisons
+        if (npc.spells) $.barkeep.user.spells = npc.spells
+        saveUser($.barkeep, true)
 
         xvt.out('done.\n')
+        xvt.waste(250)
     }
 
     row = sqlite3.run(`SELECT * FROM sqlite_master WHERE name='Hall' AND type='table'`)
@@ -68,6 +99,7 @@ module db
         )`)
 
         xvt.out('done.\n')
+        xvt.waste(250)
     }
 
 
@@ -120,7 +152,7 @@ export function loadUser(rpc): boolean {
 export function saveUser(rpc, insert = false) {
 
     let user: user = isActive(rpc) ? rpc.user : rpc
-    if (user.id === $.player.id) {
+    if (user.id === $.player.id || user.id[0] === '_') {
         let trace = users + user.id + '.json'
         if ($.reason === '')
             $.fs.writeFileSync(trace, JSON.stringify(user, null, 2))

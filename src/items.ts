@@ -51,11 +51,21 @@ export class Magic {
         }
     }
 
-    add(spells: number[], n:number) {
-        n = +n
-        if (!this.have(spells, n)) {
-            spells.push(n)
-            spells.sort((n1,n2) => n1 - n2)
+    add(spells: number[], n: number|string) {
+        let m = +n
+        if (isNaN(m)) {
+            for (let i in this.spells) {
+                if (n === i) {
+                    n = this.spells[i].cast
+                    break
+                }
+            }
+        }
+        if (+n) {
+            if (!this.have(spells, n)) {
+                spells.push(+n)
+                spells.sort((n1,n2) => n1 - n2)
+            }
         }
     }
 

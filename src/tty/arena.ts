@@ -259,6 +259,7 @@ function MonsterFights() {
 
 	let cost: $.coins
 	let monster: active
+	let n: number
 	xvt.out(xvt.reset, '\n\n')
 
 	if (/D/i.test(xvt.entry)) {
@@ -281,14 +282,43 @@ function MonsterFights() {
 				if (/Y/i.test(xvt.entry)) {
 					$.player.coin.value -= cost.value
 					$.online.altered = true
+					xvt.out('As you hand him the money, it disappears into thin air.\n\n')
+					xvt.waste(500)
+					xvt.out('The old necromancer summons you a demon.\n\n')
+					xvt.waste(500)
 
-					monster.pc = $.PC.card(($.dice(($.online.int + $.online.cha) / 50) > 1) ? 'Demon' : $.PC.random())
-
-					monster.user.handle = 'summoned demon'
-					monster.user.gender = 'I'
+					monster.user = <user>{}
+					Object.assign(monster.user, require('../etc/summoned demon.json'))
 					monster.user.level = $.player.level + $.dice(7) - 4
 					if (monster.user.level > 99)
 						monster.user.level = 99
+					$.reroll(monster.user
+						, ($.dice(($.online.int + $.online.cha) / 50) > 1) ? monster.user.pc : $.PC.random()
+						, monster.user.level)
+
+					cost.value += $.money(monster.user.level)
+
+					let n = Math.trunc($.Weapon.merchant.length * monster.user.level / 100) + $.dice(3) - 2
+					n = (n >= $.Weapon.merchant.length) ? $.Weapon.merchant.length - 1 : n
+					monster.weapon.wc = n
+					cost.value += $.worth(new $.coins($.Weapon.name[$.Weapon.merchant[n]].value).value, $.player.cha)
+
+					n = Math.trunc($.Armor.merchant.length * monster.user.level / 100) + $.dice(3) - 2
+					n = (n >= $.Armor.merchant.length) ? $.Armor.merchant.length - 1 : n
+					monster.armor.ac = n
+					cost.value += $.worth(new $.coins($.Armor.name[$.Armor.merchant[n]].value).value, $.player.cha)
+
+					if (monster.user.magic) {
+						for (let i = 0; i < Object.keys($.Magic.spells).length; i++) {
+							if ($.dice($.player.cha/2 + 5*i) == 1) {
+								let spell = $.Magic.pick(i)
+								if (!$.Magic.have($.player.spells, spell))
+									$.Magic.add($.player.spells, i)
+							}
+						}
+					}
+
+					monster.user.coin.value += cost.value
 
 					xvt.app.focus = 'fight'
 					return
@@ -302,7 +332,7 @@ function MonsterFights() {
 			'fight': { cb:() => {
 				if (/Y/i.test(xvt.entry)) {
 					$.arena--
-					Battle.engage($.online[0], opponent[0], () => {})
+					Battle.engage($.online[0], monster[0], () => {})
 				}
 				menu(true)
 				return
@@ -312,56 +342,6 @@ function MonsterFights() {
 	}
 
 /*
-					PLAYER.Gold-=d;
-					OUT("As you hand him the money, it disappears into thin air.");NL;NL;
-					Delay(100);
-					OUT("The old necromancer summons you a demon.");NL;NL;
-					strcpy(ENEMY.Handle,"summoned demon");
-					if(dice((ONLINE->INT+ONLINE->CHA)/50)>1)
-						strcpy(ENEMY.Class, "DUNGEON.Demon");
-					else {
-						i=dice(NUMCLASS)-1;
-						sprintf(ENEMY.Class,"%s.%s",table->class[i]->Origin,table->class[i]->Character[dice(MAXCLASS(i))-1]->Name);
-					}
-					ENEMY.Level=PLAYER.Level+dice(7)-4;
-					if(ENEMY.Level>99)
-						ENEMY.Level=99;
-					ENEMY.Gender='I';
-					ENEMY.Gold=d;
-					i=MAXWEAPON(0)*ENEMY.Level/100+dice(3)-2;
-					i=(i<1) ? 1 : (i>=MAXWEAPON(0)) ? MAXWEAPON(0)-1 : i;
-					sprintf(ENEMY.Weapon,"NATURAL.%u",i);
-					ENEMY.Gold+=value(table->weapon[0]->Item[i*2/3]->Value,ONLINE->CHA);
-					i=MAXARMOR(0)*ENEMY.Level/100+dice(3)-2;
-					i=(i<1) ? 1 : (i>=MAXARMOR(0)) ? MAXARMOR(0)-1 : i;
-					sprintf(ENEMY.Armor,"NATURAL.%u",i);
-					ENEMY.Gold+=value(table->armor[0]->Item[i]->Value,ONLINE->CHA);
-					d=ENEMY.Gold;
-					if(d>1e+05) {
-						modf(d/1e+05,&d);
-						d*=1e+05;
-						if(d>1e+09) {
-							modf(d/1e+09,&d);
-							d*=1e+09;
-							if(d>1e+13) {
-								modf(d/1e+13,&d);
-								d*=1e+13;
-							}
-						}
-					}
-					ENEMY.Gold=d;
-					CreateRPC(RPC[1][0]);
-					ENEMY.Poison=(UWORD)~0;
-					ENEMY.Spell|=HEAL_SPELL | BLAST_SPELL;
-					for(i=0; i<NUMMAGIC; i++)
-						if(dice(ONLINE->CHA/2+5*i)==1) {
-							if(i<16)
-								ENEMY.Spell|=(UWORD)pow(2.,(double)i);
-							if(i>15 && i<24)
-								ENEMY.XSpell|=(UWORD)pow(2.,(double)i-16);
-						}
-				}
-				else
 					if(i) {
 						i--;
 						strcpy(ENEMY.Handle,ARENA(i)->Name);
