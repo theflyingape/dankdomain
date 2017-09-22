@@ -49,7 +49,7 @@ ls -lh ${TARGET}
 cat > dankdomain << EOD
 # default: on
 # description: Dank Domain TTY service allows for remote user logins to play
-#              Hack & Slash.
+#              Return of Hack & Slash.
 service dankdomain
 {
         disable = no

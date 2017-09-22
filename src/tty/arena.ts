@@ -287,6 +287,7 @@ function MonsterFights() {
 					xvt.out('The old necromancer summons you a demon.\n\n')
 					xvt.waste(500)
 
+					monster = <active>{}
 					monster.user = <user>{}
 					Object.assign(monster.user, require('../etc/summoned demon.json'))
 					monster.user.level = $.player.level + $.dice(7) - 4
@@ -295,17 +296,18 @@ function MonsterFights() {
 					$.reroll(monster.user
 						, ($.dice(($.online.int + $.online.cha) / 50) > 1) ? monster.user.pc : $.PC.random()
 						, monster.user.level)
+					console.log(monster)
 
 					cost.value += $.money(monster.user.level)
 
 					let n = Math.trunc($.Weapon.merchant.length * monster.user.level / 100) + $.dice(3) - 2
 					n = (n >= $.Weapon.merchant.length) ? $.Weapon.merchant.length - 1 : n
-					monster.weapon.wc = n
+					monster.weapon = <weapon>{wc:n}
 					cost.value += $.worth(new $.coins($.Weapon.name[$.Weapon.merchant[n]].value).value, $.player.cha)
 
 					n = Math.trunc($.Armor.merchant.length * monster.user.level / 100) + $.dice(3) - 2
 					n = (n >= $.Armor.merchant.length) ? $.Armor.merchant.length - 1 : n
-					monster.armor.ac = n
+					monster.armor = <armor>{ac:n}
 					cost.value += $.worth(new $.coins($.Armor.name[$.Armor.merchant[n]].value).value, $.player.cha)
 
 					if (monster.user.magic) {
@@ -320,6 +322,15 @@ function MonsterFights() {
 
 					monster.user.coin.value += cost.value
 
+					$.cat('arena/' + monster.user.handle)
+					xvt.out('The ', monster.user.handle, ' is a level ', monster.user.level, ' ', monster.user.pc, '.\n\n')
+					if (isNaN(+monster.user.weapon)) {
+						xvt.out($.who(monster.user, true, true, false), ' is carrying a ', monster.user.weapon, '.\n\n')
+					}
+					if (isNaN(+monster.user.armor)) {
+						xvt.out($.who(monster.user, true, true, false), ' is wearing a ', monster.user.armor, '.\n\n')
+					}
+	
 					xvt.app.focus = 'fight'
 					return
 				}
