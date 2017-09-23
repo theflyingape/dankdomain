@@ -33,6 +33,23 @@ export class Armor {
                 this.special.push(i)
         }
     }
+
+    equip(rpc: active, what: string|number, worth?: string) {
+        let armor: armor
+
+        if (typeof what === 'string') {
+            armor = this.name[what]
+            if (worth) armor.value = worth
+        }
+        else
+            armor = <armor>{ ac:what, value:worth ? worth : '0c' }
+
+        rpc.user.armor = typeof what === 'string' ? what : undefined
+        rpc.user.toAC = 0
+        rpc.armor = armor
+        rpc.toAC = 0
+        rpc.altered = true
+    }
 }
 
 export class Magic {
@@ -184,6 +201,23 @@ export class Weapon {
     buffWC(rpc: active): number {
         let wc = this.baseWC(rpc.user.weapon) + rpc.toWC + rpc.user.toWC
         return wc
+    }
+
+    equip(rpc: active, what: string|number, worth?: string) {
+        let weapon: weapon
+
+        if (typeof what === 'string') {
+            weapon = this.name[what]
+            if (worth) weapon.value = worth
+        }
+        else
+            weapon = <weapon>{ wc:what, value:worth ? worth : '0c', hit:'hit', stab:'stab', smash:'smash', plunge:'plunge' }
+
+        rpc.user.weapon = typeof what === 'string' ? what : undefined
+        rpc.user.toWC = 0
+        rpc.weapon = weapon
+        rpc.toWC = 0
+        rpc.altered = true
     }
 }
 

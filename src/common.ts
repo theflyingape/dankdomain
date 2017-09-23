@@ -23,9 +23,9 @@ module Common
     export const Weapon = new Items.Weapon
 
     export let barkeep: active = { user: { id:'_BAR'} }
-    export let online: active = { user: { id:'' } }
     export let seahag: active = { user: { id:'_OLD'} }
     export let taxman: active = { user: { id:'_TAX'} }
+    export let online: active = { user: { id:'' } }
     export let player: user = online.user
     export let sysop: user = { id:'_SYS' }
 
@@ -724,7 +724,7 @@ export function playerPC(points = 200) {
     function show() {
         xvt.out('\n')
         cat('player/' + player.pc.toLowerCase())
-        xvt.out(xvt.reset, xvt.bright, xvt.cyan)
+        xvt.out(xvt.bright, xvt.cyan)
         let rpc = PC.card(player.pc)
         for (let l = 0; l < rpc.description.length; l++)
             xvt.out(rpc.description[l], '\n')
@@ -828,7 +828,7 @@ export function remake(user: user) {
     user.xplevel = user.level
     let rpc = PC.card(user.pc)
     for (let n = 2; n < user.level; n++) {
-        if (n == 50 && user.id[0] !== '_' && user.gender != 'I') {
+        if (n == 50 && user.id[0] !== '_' && user.gender !== 'I') {
             xvt.out(xvt.reset, xvt.bright, xvt.yellow, '+', xvt.reset, ' Bonus ')
             let d: number = 0
             while (!d) {
@@ -1108,14 +1108,14 @@ export function	cat(filename: string): boolean {
 
     try {
         fs.accessSync(path, fs.F_OK)
-        xvt.out(fs.readFileSync(path))
+        xvt.out(fs.readFileSync(path), xvt.reset)
         return true
     } catch (e) {
         if (xvt.emulation.match('PC|XT')) {
             let path = folder + filename + '.txt'
             try {
                 fs.accessSync(path, fs.F_OK)
-                xvt.out(fs.readFileSync(path))
+                xvt.out(fs.readFileSync(path), xvt.reset)
                 return true
             } catch (e) {
                 return false

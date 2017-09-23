@@ -12,30 +12,6 @@ import Battle = require('../battle')
 
 module Arena
 {
-/*	let monsters: monster[] = [
-		{ name:'Kobold', level:1, pc:'Lizard', weapon:'Dagger', armor:'Wooden Shield', money:'5c' },
-		{ name:'Orc', level:3, pc:'Beast', weapon:'Staff', armor:'Wooden Shield', money:'50c' },
-		{ name:'Ogre', level:5, pc:'Beast', weapon:'Club', armor:'Large Shield', money:'100c' },
-		{ name:'Gnoll', level:7, pc:'Beast', weapon:'Mace', armor:'Leather', money:'500c' },
-		{ name:'Troglodyte', level:9, pc:'Beast', weapon:'Spear', armor:'Padded Leather', money:'1000c' },
-		{ name:'Gargoyle', level:12, pc:'Demon', weapon:'Axe', armor:-6, money:'10000c',
-			spells: [ 'Teleport' ] },
-		{ name:'Troll', level:23, pc:'Beast', weapon:'Heavy Crossbow', armor:-12, money:'1s',
-			spells:[ 'Heal' ] },
-		{ name:'Hydra', 'level':34, pc:'Dragon', weapon:-25, armor:'Dragon Scale Mail', money:'1000s',
-			spells: [ 'Heal', 'Teleport', 'Blast' ] },
-		{ name:'Nycadaemon', level:41, pc:'Demon', weapon:'Staff of Striking', armor:-18, money:'10g',
-			spells: [ 'Heal', 'Teleport', 'Blast' ] },
-		{ name:'Red Dragon', level:44, pc:'Dragon', weapon:-32, armor:-20, money:'500g',
-			spells: [ 'Heal', 'Teleport', 'Blast' ] },
-		{ name:'Lich', level:47, pc:'Undead', weapon:-35, armor:-23, money:'2500g',
-			spells: [ 'Heal', 'Teleport', 'Blast' ] },
-		{ name:'Beholder', level:50, pc:'Beast', weapon:-40, armor:-25, money:'1p',
-			spells: [ 'Heal', 'Teleport', 'Blast' ] },
-		{ name:'Demogorgon', level:99, pc:'Beast', weapon:'Staff of the Magi', armor:-25, money:'1000p',
-			spells: [ 'Heal', 'Teleport', 'Blast', 'Confusion', 'Transmute', 'Cure', 'Illusion', 'Disintegrate' ] }
-	]
-*/
 	let monsters: monster[] = require('../etc/arena.json')
 	let arena: choices = {
 		'U': { description:'User fights' },
@@ -201,9 +177,26 @@ function choice() {
 			}
 			xvt.app.form = {
 				pick: { cb: () => {
-					MonsterFights()
-					menu(suppress)
-				}, min:1, max:2 }
+					if (xvt.entry.length) {
+						let mon = +xvt.entry
+						if (isNaN(mon) && ! /D/i.test(xvt.entry)) {
+							xvt.app.refocus()
+							return
+						}
+						if (mon) {
+							mon = Math.trunc(mon)
+							if (mon < 1 || mon > monsters.length) {
+								xvt.app.refocus()
+								return
+							}
+							xvt.entry = mon.toString()
+						}
+						MonsterFights()
+					}
+					else
+						menu(true)
+					return
+				}, min:0, max:2 }
 			}
 			xvt.app.form['pick'].prompt = 'Fight what monster (1-' + monsters.length 
 				+ ', ' + $.bracket('D', false) + 'emon)? '
@@ -270,7 +263,7 @@ function MonsterFights() {
 
 		cost = new $.coins(new $.coins($.money($.player.level)).carry(1, true))
 
-		xvt.out('The ancient necromancer will summon you a demon for ', cost.carry(), '\n\n')
+		xvt.out('The ancient necromancer will summon you a demon for ', cost.carry(), '\n')
 		if ($.player.coin.value < cost.value) {
 			xvt.out('You don\'t have enough!\n')
 			return
@@ -282,7 +275,7 @@ function MonsterFights() {
 				if (/Y/i.test(xvt.entry)) {
 					$.player.coin.value -= cost.value
 					$.online.altered = true
-					xvt.out('As you hand him the money, it disappears into thin air.\n\n')
+					xvt.out('\nAs you hand him the money, it disappears into thin air.\n\n')
 					xvt.waste(500)
 					xvt.out('The old necromancer summons you a demon.\n\n')
 					xvt.waste(500)
@@ -296,18 +289,17 @@ function MonsterFights() {
 					$.reroll(monster.user
 						, ($.dice(($.online.int + $.online.cha) / 50) > 1) ? monster.user.pc : $.PC.random()
 						, monster.user.level)
-					console.log(monster)
 
 					cost.value += $.money(monster.user.level)
 
 					let n = Math.trunc($.Weapon.merchant.length * monster.user.level / 100) + $.dice(3) - 2
 					n = (n >= $.Weapon.merchant.length) ? $.Weapon.merchant.length - 1 : n
-					monster.weapon = <weapon>{wc:n}
+					$.Weapon.equip(monster, n)
 					cost.value += $.worth(new $.coins($.Weapon.name[$.Weapon.merchant[n]].value).value, $.player.cha)
 
 					n = Math.trunc($.Armor.merchant.length * monster.user.level / 100) + $.dice(3) - 2
 					n = (n >= $.Armor.merchant.length) ? $.Armor.merchant.length - 1 : n
-					monster.armor = <armor>{ac:n}
+					$.Armor.equip(monster, n)
 					cost.value += $.worth(new $.coins($.Armor.name[$.Armor.merchant[n]].value).value, $.player.cha)
 
 					if (monster.user.magic) {
@@ -321,23 +313,19 @@ function MonsterFights() {
 					}
 
 					monster.user.coin.value += cost.value
+					if ($.Access.name[$.player.access].sysop) console.log(monster)
 
 					$.cat('arena/' + monster.user.handle)
-					xvt.out('The ', monster.user.handle, ' is a level ', monster.user.level, ' ', monster.user.pc, '.\n\n')
-					if (isNaN(+monster.user.weapon)) {
-						xvt.out($.who(monster.user, true, true, false), ' is carrying a ', monster.user.weapon, '.\n\n')
-					}
-					if (isNaN(+monster.user.armor)) {
-						xvt.out($.who(monster.user, true, true, false), ' is wearing a ', monster.user.armor, '.\n\n')
-					}
-	
+					xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`, '\n\n')
+					if (monster.user.weapon) xvt.out($.who(monster.user, true, true, false), 'is carrying a ', monster.user.weapon, '.\n\n')
+					if (monster.user.armor) xvt.out($.who(monster.user, true, true, false), 'is wearing a ', monster.user.armor, '.\n\n')
+				
 					xvt.app.focus = 'fight'
 					return
 				}
 				xvt.out(xvt.cyan, 'His eyes glow ', xvt.bright, xvt.red, 'red', xvt.nobright
 					, xvt.cyan, ' and he says, "', xvt.bright, xvt.white, 'I don\'t make deals!'
 					, xvt.nobright, xvt.cyan, '"\n\n', xvt.reset)
-				menu(true)
 				return
 			}, prompt:'Will you pay (Y/N)? ', enter:'N', eol:false, match:/Y|N/i },
 			'fight': { cb:() => {
@@ -345,13 +333,30 @@ function MonsterFights() {
 					$.arena--
 					Battle.engage($.online[0], monster[0], () => {})
 				}
-				menu(true)
 				return
 			}, prompt:'Will you fight (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
 		}
 		xvt.app.focus = 'pay'
 	}
-
+	else {
+		let mon = +xvt.entry - 1
+		monster = <active>{}
+		monster.user = <user>{id: ''}
+		monster.user.handle = monsters[mon].name
+		monster.user.sex = 'I'
+		$.Weapon.equip(monster, monsters[mon].weapon)
+		$.Armor.equip(monster, monsters[mon].armor)
+		$.reroll(monster.user, monsters[mon].pc, monsters[mon].level)
+		monster.user.coin = new $.coins(monsters[mon].money)
+		if ($.Access.name[$.player.access].sysop) console.log(monster)
+		
+		$.cat('arena/' + monster.user.handle.toLowerCase())
+		xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`, '\n\n')
+		if (monster.user.weapon) xvt.out($.who(monster.user, true, true, false), 'is carrying a ', monster.user.weapon, '.\n\n')
+		if (monster.user.armor) xvt.out($.who(monster.user, true, true, false), 'is wearing a ', monster.user.armor, '.\n\n')
+		xvt.app.focus = 'fight'
+		return
+	}
 /*
 					if(i) {
 						i--;

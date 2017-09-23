@@ -1,14 +1,14 @@
 [ { "name":"Kobold", "level":1, "pc":"Lizard", "weapon":"Dagger", "armor":"Wooden Shield", "money":"5c" },
-  { "name":"Orc", "level":3, "pc":"Beast", "weapon":"Staff", "armor":"Wooden Shield", "money":"50c" },
+  { "name":"Orc", "level":3, "pc":"Beast", "weapon":"Staff", "armor":"Small Shield", "money":"50c" },
   { "name":"Ogre", "level":5, "pc":"Beast", "weapon":"Club", "armor":"Large Shield", "money":"100c" },
   { "name":"Gnoll", "level":7, "pc":"Beast", "weapon":"Mace", "armor":"Leather", "money":"500c" },
   { "name":"Troglodyte", "level":9, "pc":"Beast", "weapon":"Spear", "armor":"Padded Leather", "money":"1000c" },
-  { "name":"Gargoyle", "level":12, "pc":"Demon", "weapon":"Axe", "armor":-6, "money":"10000c", "spells": [ "Teleport" ] },
-  { "name":"Troll", "level":23, "pc":"Beast", "weapon":"Heavy Crossbow", "armor":-12, "money":"1s", "spells":[ "Heal" ] },
-  { "name":"Hydra", "level":34, "pc":"Dragon", "weapon":-25, "armor":"Dragon Scale Mail", "money":"1000s", "spells": [ "Heal", "Teleport", "Blast" ] },
-  { "name":"Nycadaemon", "level":41, "pc":"Demon", "weapon":"Staff of Striking", "armor":-18, "money":"10g", "spells": [ "Heal", "Teleport", "Blast" ] },
-  { "name":"Red Dragon", "level":44, "pc":"Dragon", "weapon":-32, "armor":-20, "money":"500g", "spells": [ "Heal", "Teleport", "Blast" ] },
-  { "name":"Lich", "level":47, "pc":"Undead", "weapon":-35, "armor":-23, "money":"2500g", "spells": [ "Heal", "Teleport", "Blast" ] },
-  { "name":"Beholder", "level":50, "pc":"Beast", "weapon":-40, "armor":-25, "money":"1p", "spells": [ "Heal", "Teleport", "Blast" ] },
-  { "name":"Demogorgon", "level":99, "pc":"Beast", "weapon":"Staff of the Magi", "armor":-25, "money":"1000p", "spells": [ "Heal", "Teleport", "Blast", "Confusion", "Transmute", "Cure", "Illusion", "Disintegrate" ] }
-] 
+  { "name":"Gargoyle", "level":12, "pc":"Demon", "weapon":"Axe", "armor":6, "money":"10000c", "spells": [ "Teleport" ] },
+  { "name":"Troll", "level":23, "pc":"Beast", "weapon":"Heavy Crossbow", "armor":12, "money":"1s", "spells":[ "Heal" ] },
+  { "name":"Hydra", "level":34, "pc":"Dragon", "weapon":25, "armor":"Dragon Scale Mail", "money":"1000s", "spells": [ "Heal", "Teleport", "Blast" ] },
+  { "name":"Nycadaemon", "level":41, "pc":"Demon", "weapon":"Staff of Striking", "armor":18, "money":"10g", "spells": [ "Heal", "Teleport", "Blast" ] },
+  { "name":"Red Dragon", "level":44, "pc":"Dragon", "weapon":32, "armor":20, "money":"500g", "spells": [ "Heal", "Teleport", "Blast" ] },
+  { "name":"Lich", "level":47, "pc":"Undead", "weapon":35, "armor":23, "money":"2500g", "spells": [ "Heal", "Teleport", "Blast" ] },
+  { "name":"Beholder", "level":50, "pc":"Beast", "weapon":40, "armor":25, "money":"1p", "spells": [ "Heal", "Teleport", "Blast" ] },
+  { "name":"Demogorgon", "level":99, "pc":"Beast", "weapon":"Staff of the Magi", "armor":25, "money":"1000p", "spells": [ "Heal", "Teleport", "Blast", "Confusion", "Transmute", "Cure", "Illusion", "Disintegrate" ] }
+]
