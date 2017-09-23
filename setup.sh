@@ -87,4 +87,40 @@ sudo systemctl daemon-reload
 sudo systemctl enable dankdomain
 sudo systemctl start dankdomain
 
+echo -n "Press RETURN to continue: "
+read n
+
+echo
+echo ... an Apache configuration example follows:
+echo
+
+cat <<-EOD
+#
+#   Apache proxy to run local Node.js apps
+#
+    SSLProxyEngine On
+    ProxyRequests Off
+    ProxyPreserveHost On
+    ProxyBadHeader Ignore
+    <Proxy *>
+        Order deny,allow
+        Allow from all
+    </Proxy>
+
+    RewriteEngine On
+    RewriteCond %{HTTP:Connection} Upgrade [NC]
+    RewriteRule "^/games/dankdomain/door/(.*)" ws://atom.home:1939/$1 [P,L]
+
+    <Location "/games/dankdomain/door/">
+        ProxyPass "http://atom.home:1939/"
+        #connectiontimeout=10 timeout=60
+        #max=20 ttl=120 retry=300
+        ProxyPassReverse "http://atom.home:1939/"
+        Order allow,deny
+        Allow from all
+    </Location>
+
+    Header edit Location ^http://atom.home:1939/ https://robert.hurst-ri.us/
+EOD
+
 exit

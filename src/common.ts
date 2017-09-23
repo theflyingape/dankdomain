@@ -1161,6 +1161,8 @@ export function emulator(cb:Function) {
             xvt.app.focus = 'rows'
         }, prompt:'Select: ', enter:player.emulation, match:/VT|PC|XT/i, max:2 },
         'rows': { cb:() => {
+            online.altered = true
+            player.emulation = xvt.emulation
             player.rows = +xvt.entry
             xvt.out(xvt.reset, '\n')
             xvt.app.focus = 'pause'
