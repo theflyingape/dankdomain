@@ -310,7 +310,7 @@ module Common
 
 export class coins {
     constructor (money: string | number) {
-        if (typeof money == 'number') {
+        if (typeof money === 'number') {
             this.value = money
         }
         else {
