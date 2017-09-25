@@ -313,13 +313,14 @@ function MonsterFights() {
 					}
 
 					monster.user.coin.value += cost.value
-					if ($.Access.name[$.player.access].sysop) console.log(monster)
 
+					if ($.Access.name[$.player.access].sysop) console.log(monster)
 					$.cat('arena/' + monster.user.handle)
+
 					xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`, '\n\n')
-					if (monster.user.weapon) xvt.out($.who(monster.user, true, true, false), 'is carrying a ', monster.user.weapon, '.\n\n')
-					if (monster.user.armor) xvt.out($.who(monster.user, true, true, false), 'is wearing a ', monster.user.armor, '.\n\n')
-				
+					if (monster.user.weapon) xvt.out($.who(monster.user, true, true, false), $.Weapon.wearing(monster), '.\n\n')
+					if (monster.user.armor) xvt.out($.who(monster.user, true, true, false), $.Armor.wearing(monster), '.\n\n')
+
 					xvt.app.focus = 'fight'
 					return
 				}
@@ -348,12 +349,13 @@ function MonsterFights() {
 		$.Armor.equip(monster, monsters[mon].armor)
 		$.reroll(monster.user, monsters[mon].pc, monsters[mon].level)
 		monster.user.coin.amount = monsters[mon].money.toString()
-		if ($.Access.name[$.player.access].sysop) console.log(monster)
 
+		if ($.Access.name[$.player.access].sysop) console.log(monster)
 		$.cat('arena/' + monster.user.handle.toLowerCase())
+
 		xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`, '\n\n')
-		if (monster.user.weapon) xvt.out($.who(monster.user, true, true, false), 'is carrying a ', monster.user.weapon, '.\n\n')
-		if (monster.user.armor) xvt.out($.who(monster.user, true, true, false), 'is wearing a ', monster.user.armor, '.\n\n')
+		if (monster.user.weapon) xvt.out($.who(monster.user, true, true, false), $.Weapon.wearing(monster), '.\n\n')
+		if (monster.user.armor) xvt.out($.who(monster.user, true, true, false), $.Armor.wearing(monster), '.\n\n')
 		xvt.app.focus = 'fight'
 		return
 	}

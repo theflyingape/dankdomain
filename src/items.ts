@@ -50,6 +50,10 @@ export class Armor {
         rpc.toAC = 0
         rpc.altered = true
     }
+
+    wearing(rpc: active): string {
+        return (typeof rpc.user.armor === 'string') ? rpc.armor.text + ' ' + rpc.user.armor : ''
+    }
 }
 
 export class Magic {
@@ -218,6 +222,10 @@ export class Weapon {
         rpc.weapon = weapon
         rpc.toWC = 0
         rpc.altered = true
+    }
+
+    wearing(rpc: active): string {
+        return (typeof rpc.user.weapon === 'string') ? rpc.weapon.text + ' ' + rpc.user.weapon : ''
     }
 }
 

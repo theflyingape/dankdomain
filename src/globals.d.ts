@@ -137,6 +137,7 @@ interface access {
 }
 
 interface armor {
+    text: string
     value: string
     ac: number
     armoury?: boolean
@@ -177,6 +178,7 @@ interface spell {
 }
 
 interface weapon {
+    text: string
     value: string
     wc: number
     hit: string

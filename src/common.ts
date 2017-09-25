@@ -557,6 +557,10 @@ export function checkXP(profile: active) {
     }
 }
 
+export function an(item: string) {
+    return /a|e|i|o|u/i.test(item[0]) ? 'an ' : 'a '
+}
+
 export function cuss(text: string): boolean {
     let words = titlecase(text).split(' ')
 
