@@ -186,6 +186,91 @@ export function cast(rpc: active, cb:Function) {
 export function melee(rpc: active, enemy: active, blow = 1) {
     let hit = 0
 
+    let n = rpc.dex + (rpc.dex - enemy.dex)
+    if (blow > 1)
+        n = Math.trunc(n / 2) + 50
+    n = (n < 5) ? 5 : (n > 99) ? 99 : n
+
+    // saving throw
+    if ($.dice(100) > n) {
+        if (blow == 1) {
+            if (rpc == $.online)
+                xvt.out('Your ', rpc.user.weapon, ' passes through thin air.')
+            else {
+                if (isNaN(+rpc.user.weapon))
+                    xvt.out(rpc.user.gender === 'I' ? 'The ' : ''
+                        , rpc.user.handle, '\'s ', rpc.user.weapon
+                        , ' whistles by '
+                        , enemy.user.gender === 'I' ? 'the ' : ''
+                        , enemy == $.online ? 'you' : rpc.user.handle
+                        , '.')
+                else
+                    xvt.out(rpc.user.gender === 'I' ? 'The ' : ''
+                    , enemy == $.online ? 'you' : rpc.user.handle
+                    , ', but misses.')
+            }
+        }
+        else {
+            xvt.out('Attempt fails!')
+            return
+        }
+    }
+
+    // melee
+    hit = Math.trunc(rpc.str / 10)
+    hit += $.dice(rpc.user.level)
+    hit += rpc.user.melee * $.dice(rpc.user.level)
+
+    // excellent
+    n = rpc.user.melee + 1
+    let period = ''
+    let smash = 0
+    while ((smash = $.dice(98 + n)) > 98) {
+        for (; smash > 98; smash--) {
+            hit += $.dice(rpc.user.level)
+        }
+        period += '!'
+		n += $.dice(rpc.user.melee)
+    }
+    if (!period) period = '.'
+    hit *= 50 + Math.trunc(rpc.user.str / 2)
+    hit = Math.trunc(hit / 100)
+
+    // my stuff vs your stuff
+    let wc = rpc.weapon.wc + rpc.user.toWC + rpc.toWC
+    let ac = enemy.armor.ac + enemy.user.toAC + enemy.toWC
+    wc = wc < 0 ? 0 : wc
+    ac = ac < 0 ? 0 : ac
+
+    hit += 2 * (wc + $.dice(wc))
+    hit *= 50 + Math.trunc(rpc.user.str / 2)
+    hit = Math.trunc(hit / 100)
+	hit -= ac + $.dice(ac)
+
+//  any ego involvement
+//  if((damage + egostat[0] + egostat[1] + egostat[2] + egostat[3]) < 1)
+//      damage = dice(2) - (egostat[0] + egostat[1] + egostat[2] + egostat[3]);
+
+    hit *= blow
+
+    let action = (blow == 1)
+        ? (period[0] === '.') ? rpc.weapon.hit : rpc.weapon.smash
+        : (period[0] === '.') ? rpc.weapon.stab : rpc.weapon.plunge
+
+    if (rpc == $.online) {
+        xvt.out('You '
+            , action, ' '
+            , enemy.user.gender === 'I' ? 'the' : '', enemy.user.handle
+            , ' for ', hit.toString(), ' hit points', period)
+    }
+    else {
+        let w = action.split(' ')
+        let s = /.*ch|.*sh|.*s/i.test(w[0]) ? 'es' : 's'
+        xvt.out('You '
+            , w[0], s, w.slice(1).join(' '), ' '
+            , enemy.user.gender === 'I' ? 'the' : '', enemy.user.handle
+            , ' for ', hit.toString(), ' hit points', period)
+    }
     enemy.hp -= hit
     return
 }

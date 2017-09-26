@@ -356,6 +356,17 @@ function MonsterFights() {
 		xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`, '\n\n')
 		if (monster.user.weapon) xvt.out($.who(monster.user, true, true, false), $.Weapon.wearing(monster), '.\n\n')
 		if (monster.user.armor) xvt.out($.who(monster.user, true, true, false), $.Armor.wearing(monster), '.\n\n')
+
+		xvt.app.form = {
+			'fight': { cb:() => {
+				if (/Y/i.test(xvt.entry)) {
+					$.arena--
+					Battle.engage($.online[0], monster[0], () => {})
+				}
+				return
+			}, prompt:'Will you fight (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
+		}
+
 		xvt.app.focus = 'fight'
 		return
 	}
@@ -372,18 +383,6 @@ function MonsterFights() {
 						ENEMY.Spell=ARENA(i)->Spell;
 						CreateRPC(RPC[1][0]);
 					}
-				sprintf(filename,"pix/Arena/%s",ENEMY.Handle);
-				type(filename,FALSE);
-				sprintf(outbuf,"The %s is a level %u %s.",ENEMY.Handle,ENEMY.ExpLevel,CLASS(RPC[1][0])->Name);
-				OUT(outbuf);NL;NL;
-				if(RPC[1][0]->weapon_origin<NUMWEAPON) {
-					sprintf(outbuf,"%s is carrying %s%s.",RPC[1][0]->He,AN(WEAPON(RPC[1][0])->Name),WEAPON(RPC[1][0])->Name);
-					OUT(outbuf);NL;NL;
-				}
-				if(RPC[1][0]->armor_origin<NUMWEAPON) {
-					sprintf(outbuf,"%s is wearing %s%s.",RPC[1][0]->He,AN(ARMOR(RPC[1][0])->Name),ARMOR(RPC[1][0])->Name);
-					OUT(outbuf);NL;NL;
-				}
 				displayview();
 				sprintf(prompt,"%sWill you fight the %s (Y/N)? ",fore(CYN),ENEMY.Handle);
 				OUT(prompt);

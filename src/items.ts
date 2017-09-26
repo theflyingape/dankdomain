@@ -224,8 +224,13 @@ export class Weapon {
         rpc.altered = true
     }
 
-    wearing(rpc: active): string {
-        return (typeof rpc.user.weapon === 'string') ? rpc.weapon.text + ' ' + rpc.user.weapon : ''
+    wearing(rpc: active, text = false): string {
+        let result = ''
+        if (typeof rpc.user.weapon === 'string') {
+            if (text) result = rpc.weapon.text + ' '
+            result = result + rpc.user.weapon
+        }
+        return result
     }
 }
 
