@@ -40,11 +40,8 @@ export function engage(party: active[], mob: active[], cb:Function) {
 //  new round of volleys
 export function attack() {
 
-    if (retreat || ++volley > 99999) {
-        //  no more attacking
-        fini()
-        return
-    }
+    //  no more attacking
+    if (retreat || ++volley > 99999) return
 
     if (!round.length) {
         if (volley > 1) xvt.out(xvt.reset, '    -=', $.bracket('*', false), '=-\n')
@@ -73,24 +70,26 @@ export function attack() {
 
     if (rpc.user.id === $.player.id) {
         xvt.app.form = {
-            'backstab': {cb:() => {
-                if (/N/i.test(xvt.entry)) bs = 1
-                melee(rpc, enemy, bs)
-                next(rpc, enemy)
-                return
-            }, enter:'Y', eol:false, max:1, match:/Y|N/i},
             'attack': {cb:() => {
                 if (/R/i.test(xvt.entry)) {
                     retreat = true
+                    return
                 }
                 if (/Y/i.test(xvt.entry)) {
                     yourstats()
                     xvt.app.refocus()
                     return
                 }
-                attack()
+                melee(rpc, enemy)
+                next(rpc, enemy)
                 return
-            }, enter:'A', eol:false, max:1 }
+            }, enter:'A', cancel:'R', eol:false, max:1 },
+            'backstab': {cb:() => {
+                if (/N/i.test(xvt.entry)) bs = 1
+                melee(rpc, enemy, bs)
+                next(rpc, enemy)
+                return
+            }, enter:'Y', eol:false, max:1, match:/Y|N/i}
         }
         //  sneaking
         if (volley == 1) {
@@ -113,17 +112,21 @@ export function attack() {
             return
         }
         else {
-            xvt.app.form['attack'].prompt = '[,]'
-                + $.bracket('A', false) + ' Attack, '
-                + ($.player.magic && $.player.spells.length && rpc.sp) ? $.bracket('C', false) + ' Cast spell, ' : ''
-                + $.bracket('R', false) + ' Retreat, '
+            xvt.app.form['attack'].prompt = '[,] '
+                + $.bracket('A', false) + 'ttack, '
+                + ($.player.magic && $.player.spells.length && rpc.sp) ? $.bracket('C', false) + 'ast spell, ' : ''
+                + $.bracket('R', false) + 'etreat, '
                 + $.bracket('Y', false) + ' Status: '
-            xvt.app.focus = 'attack'
+                xvt.app.focus = 'attack'
             return
         }
     }
+    else {
+        melee(rpc, enemy)
+    }
 
     next(rpc, enemy)
+    return
 
     function next(rpc: active, enemy: active) {
 
@@ -137,9 +140,11 @@ export function attack() {
             }
         }
 
-        if (alive[0] && alive[1]) {
+        // attack stack
+        if (alive[0] && alive[1])
+                attack()
 
-        }
+        fini()
     }
 }
 

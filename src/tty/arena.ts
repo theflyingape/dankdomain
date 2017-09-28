@@ -23,7 +23,7 @@ module Arena
 		'Y': { description:'Your status' }
 	}
 
-export function menu(suppress = false) {
+export function menu(suppress = true) {
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }
@@ -54,13 +54,13 @@ function choice() {
 			}
 			Battle.user('Joust', (opponent: active) => {
 				if (opponent.user.id === '') {
-					menu(!$.player.expert)
+					menu()
 					return
 				}
 				if (opponent.user.id === $.player.id) {
 					opponent.user.id = ''
 					xvt.out('You can\'t joust a wimp like ', $.who(opponent.user, true, false, false), '.\n')
-					menu(true)
+					menu()
 					return
 				}
 				if ($.player.level - opponent.user.level > 3) {
@@ -104,7 +104,7 @@ function choice() {
 							xvt.app.focus = 'joust'
 							return
 						}
-						menu(true)
+						menu()
 						return
 					}, prompt:'Are you sure (Y/N)? ', enter:'N', eol:false, match:/Y|N/i },
 					'joust': { cb:() => {
@@ -113,7 +113,7 @@ function choice() {
 							$.player.jl++
 							opponent.user.jw++
 							db.saveUser(opponent)
-							menu(true)
+							menu()
 							return
 						}
 						if (/J/i.test(xvt.entry)) {
@@ -135,7 +135,7 @@ function choice() {
 									$.player.jw++
 									opponent.user.jl++
 									db.saveUser(opponent)
-									menu(true)
+									menu()
 									return
 								}
 							}
@@ -152,7 +152,7 @@ function choice() {
 									opponent.user.coin.value += reward.value
 									opponent.user.jw++
 									db.saveUser(opponent)
-									menu(true)
+									menu()
 									return
 								}
 							}
@@ -191,15 +191,15 @@ function choice() {
 							}
 							xvt.entry = mon.toString()
 						}
-						MonsterFights()
+						if (!MonsterFights())
+							menu()
 					}
 					else
-						menu(true)
-					return
-				}, min:0, max:2 }
+						menu()
+				}
+				, prompt: 'Fight what monster (1-' + monsters.length + ', ' + $.bracket('D', false) + 'emon)? '
+				, min:0, max:2 }
 			}
-			xvt.app.form['pick'].prompt = 'Fight what monster (1-' + monsters.length 
-				+ ', ' + $.bracket('D', false) + 'emon)? '
 			xvt.app.focus = 'pick'
 			return
 
@@ -219,18 +219,18 @@ function choice() {
 			}
 			Battle.user('Fight', (opponent: active) => {
 				if (opponent.user.id === '') {
-					menu(!$.player.expert)
+					menu()
 					return
 				}
 				if (opponent.user.id === $.player.id) {
 					opponent.user.id = ''
 					xvt.out('You can\'t fight a wimp like ', $.who(opponent.user, true, false, false), '.\n')
-					menu(true)
+					menu()
 					return
 				}
 				if ($.player.level - opponent.user.level > 3) {
 					xvt.out('You can only fight someone higher or up to three levels below you.\n')
-					menu(true)
+					menu()
 					return
 				}
 				Battle.engage($.online[0], opponent[0], () => {})
@@ -248,7 +248,7 @@ function choice() {
 	menu(suppress)
 }
 
-function MonsterFights() {
+function MonsterFights(): boolean {
 
 	let cost: $.coins
 	let monster: active
@@ -271,14 +271,14 @@ function MonsterFights() {
 
 		xvt.app.form = {
 			'pay': { cb:() => {
-				xvt.out('\n')
+				xvt.out('\n\n')
 				if (/Y/i.test(xvt.entry)) {
 					$.player.coin.value -= cost.value
 					$.online.altered = true
-					xvt.out('\nAs you hand him the money, it disappears into thin air.\n\n')
-					xvt.waste(500)
+					xvt.out('As you hand him the money, it disappears into thin air.\n\n')
+					xvt.waste(1250)
 					xvt.out('The old necromancer summons you a demon.\n\n')
-					xvt.waste(500)
+					xvt.waste(1250)
 
 					monster = <active>{}
 					monster.user = <user>{}
@@ -314,28 +314,30 @@ function MonsterFights() {
 
 					monster.user.coin.value += cost.value
 
-					if ($.Access.name[$.player.access].sysop) console.log(monster)
+//					if ($.Access.name[$.player.access].sysop) console.log(monster)
 					$.cat('arena/' + monster.user.handle)
 
-					xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`, '\n\n')
-					if (monster.user.weapon) xvt.out($.who(monster.user, true, true, false), $.Weapon.wearing(monster), '.\n\n')
-					if (monster.user.armor) xvt.out($.who(monster.user, true, true, false), $.Armor.wearing(monster), '.\n\n')
+					xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`, '\n')
+					if (monster.user.weapon) xvt.out('\n', $.who(monster.user, true, true, false), $.Weapon.wearing(monster), '.\n')
+					if (monster.user.armor) xvt.out('\n', $.who(monster.user, true, true, false), $.Armor.wearing(monster), '.\n')
 
 					xvt.app.focus = 'fight'
 					return
 				}
 				xvt.out(xvt.cyan, 'His eyes glow ', xvt.bright, xvt.red, 'red', xvt.nobright
 					, xvt.cyan, ' and he says, "', xvt.bright, xvt.white, 'I don\'t make deals!'
-					, xvt.nobright, xvt.cyan, '"\n\n', xvt.reset)
-				return
-			}, prompt:'Will you pay (Y/N)? ', enter:'N', eol:false, match:/Y|N/i },
+					, xvt.nobright, xvt.cyan, '"\n', xvt.reset)
+				menu()
+			}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i },
 			'fight': { cb:() => {
+				xvt.out('\n')
 				if (/Y/i.test(xvt.entry)) {
 					$.arena--
-					Battle.engage($.online[0], monster[0], () => {})
+					Battle.engage($.online[0], monster[0], menu)
 				}
-				return
-			}, prompt:'Will you fight (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
+				else
+					menu(!$.player.expert)
+			}, prompt:'Will you fight (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
 		}
 		xvt.app.focus = 'pay'
 	}
@@ -350,27 +352,30 @@ function MonsterFights() {
 		$.reroll(monster.user, monsters[mon].pc, monsters[mon].level)
 		monster.user.coin.amount = monsters[mon].money.toString()
 
-		if ($.Access.name[$.player.access].sysop) console.log(monster)
+//		if ($.Access.name[$.player.access].sysop) console.log(monster)
 		$.cat('arena/' + monster.user.handle.toLowerCase())
 
-		xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`, '\n\n')
-		if (monster.user.weapon) xvt.out($.who(monster.user, true, true, false), $.Weapon.wearing(monster), '.\n\n')
-		if (monster.user.armor) xvt.out($.who(monster.user, true, true, false), $.Armor.wearing(monster), '.\n\n')
+		xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`, '\n')
+		if (monster.user.weapon) xvt.out('\n', $.who(monster.user, true, true, false), $.Weapon.wearing(monster), '.\n')
+		if (monster.user.armor) xvt.out('\n', $.who(monster.user, true, true, false), $.Armor.wearing(monster), '.\n')
 
 		xvt.app.form = {
 			'fight': { cb:() => {
+				xvt.out('\n')
 				if (/Y/i.test(xvt.entry)) {
 					$.arena--
-					Battle.engage($.online[0], monster[0], () => {})
+					Battle.engage($.online[0], monster[0], menu)
 				}
-				return
-			}, prompt:'Will you fight (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
+				else
+					menu(!$.player.expert)
+		}, prompt:'Will you fight (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
 		}
 
 		xvt.app.focus = 'fight'
-		return
 	}
-/*
+
+	return true
+	/*
 					if(i) {
 						i--;
 						strcpy(ENEMY.Handle,ARENA(i)->Name);
