@@ -23,14 +23,28 @@ module Battle
 //  start a new battle engagement:
 //    do rounds: attack() with possibly backstab or poison
 //       per member: next() for cast, melee, or retreat
-export function engage(party: active[], mob: active[], cb:Function) {
+export function engage(party: active|active[], mob: active|active[], cb:Function) {
 
+    if (xvt.validator.isArray(party))
+        parties = [ <active[]>{ ...party } ]
+    else {
+        let a:active[] = new Array(<active>party)
+        parties = [ a ]
+    }
+
+    if (xvt.validator.isArray(mob))
+        parties.push(<active[]>{ ...mob })
+    else {
+        let b:active[] = new Array(<active>mob)
+        parties.push(b)
+    }
+
+    console.log(parties)
+    
     fini = cb
-    parties = [{ ...party }, { ...mob }]
-    alive = [party.length, mob.length]
-    round = []
 
-    bs = 1
+    alive = [ parties[0].length, parties[1].length ]
+    round = []
     retreat = false
     volley = 0
 
@@ -62,15 +76,21 @@ export function attack() {
         rpc.int = $.PC.ability(rpc.int, $.PC.name[rpc.user.pc].toInt, rpc.user.maxint, mod)
         rpc.dex = $.PC.ability(rpc.dex, $.PC.name[rpc.user.pc].toDex, rpc.user.maxdex, mod)
     }
-
+    console.log(rpc)
+    
     let mob = n.party ^ 1
     let nme: number
     do { nme = $.dice(parties[mob].length) - 1 } while (parties[mob][nme].hp < 1)
     let enemy = parties[mob][nme]
+    console.log(enemy)
 
     if (rpc.user.id === $.player.id) {
         xvt.app.form = {
             'attack': {cb:() => {
+                if (/C/i.test(xvt.entry)) {
+                    Battle.cast($.online, next)
+                    return
+                }
                 if (/R/i.test(xvt.entry)) {
                     retreat = true
                     return
@@ -80,17 +100,20 @@ export function attack() {
                     xvt.app.refocus()
                     return
                 }
+                xvt.out('\n\n')
                 melee(rpc, enemy)
-                next(rpc, enemy)
+                next()
                 return
-            }, enter:'A', cancel:'R', eol:false, max:1 },
+            }, enter:'A', cancel:'R', eol:false, max:1, match:/A|C|R|Y/i },
             'backstab': {cb:() => {
                 if (/N/i.test(xvt.entry)) bs = 1
+                xvt.out('\n\n')
                 melee(rpc, enemy, bs)
-                next(rpc, enemy)
+                next()
                 return
             }, enter:'Y', eol:false, max:1, match:/Y|N/i}
         }
+
         //  sneaking
         if (volley == 1) {
             bs = $.player.backstab
@@ -101,34 +124,34 @@ export function attack() {
                 bs += (roll == 1) ? -1 : (roll > 99) ? $.dice($.player.backstab) : 0
             } while (roll == 1 || roll > 99)
             if (bs > 1) {
-
+                xvt.app.form['backstab'].prompt = 'Attempt to backstab'
+                    + (bs > 2 && bs != $.player.backstab ? ' for ' + bs.toString() + 'x' : '')
+                    + ' (Y/N)? '
+                xvt.app.focus = 'backstab'
+                return
             }
-            else
-                bs = 1
-            xvt.app.form['backstab'].prompt = 'Attempt to backstab'
-                + (bs > 2 && bs != $.player.backstab) ? ' for ' + bs.toString() + 'x' : ''
-                + ' (Y/N)? '
-            xvt.app.focus = 'backstab'
+            melee(rpc, enemy)
+            next()
             return
         }
-        else {
-            xvt.app.form['attack'].prompt = '[,] '
-                + $.bracket('A', false) + 'ttack, '
-                + ($.player.magic && $.player.spells.length && rpc.sp) ? $.bracket('C', false) + 'ast spell, ' : ''
-                + $.bracket('R', false) + 'etreat, '
-                + $.bracket('Y', false) + ' Status: '
-                xvt.app.focus = 'attack'
-            return
-        }
+
+        bs = 1
+        xvt.app.form['attack'].prompt = '[,] '
+            + $.bracket('A', false) + 'ttack, '
+            + ($.player.magic && $.player.spells.length && rpc.sp) ? $.bracket('C', false) + 'ast spell, ' : ''
+            + $.bracket('R', false) + 'etreat, '
+            + $.bracket('Y', false) + ' Status: '
+        xvt.app.focus = 'attack'
+        return
     }
+    //  NPC
     else {
         melee(rpc, enemy)
     }
 
-    next(rpc, enemy)
-    return
+    next()
 
-    function next(rpc: active, enemy: active) {
+    function next() {
 
         let alive: number[]
         for (let p in parties) {
@@ -264,17 +287,17 @@ export function melee(rpc: active, enemy: active, blow = 1) {
 
     if (rpc == $.online) {
         xvt.out('You '
-            , action, ' '
-            , enemy.user.gender === 'I' ? 'the' : '', enemy.user.handle
-            , ' for ', hit.toString(), ' hit points', period)
+            , action
+            , enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
+            , ' for ', hit.toString(), ' hit points', period, '\n')
     }
     else {
         let w = action.split(' ')
         let s = /.*ch|.*sh|.*s/i.test(w[0]) ? 'es' : 's'
         xvt.out('You '
-            , w[0], s, w.slice(1).join(' '), ' '
-            , enemy.user.gender === 'I' ? 'the' : '', enemy.user.handle
-            , ' for ', hit.toString(), ' hit points', period)
+            , w[0], s, w.slice(1).join(' ')
+            , enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
+            , ' for ', hit.toString(), ' hit points', period, '\n')
     }
     enemy.hp -= hit
     return

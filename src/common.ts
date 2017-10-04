@@ -419,6 +419,8 @@ export function activate(one: active) {
     one.sp = one.user.sp
     one.bp = Math.trunc(one.user.hp / 10)
     one.hull = one.user.hull
+    Weapon.equip(one, one.user.weapon)
+    Armor.equip(one, one.user.armor)
     one.toAC = 0
     one.toWC = 0
     if (one.user.blessed.length) {
@@ -990,7 +992,7 @@ export function reroll(user: user, dd = 'None', level = 1) {
         if (!user.novice) user.email = ''
     }
 
-    if (level == 1 || user.id[0] === '_') {
+    if (level == 1 || xvt.validator.isEmpty(user.id) || user.id[0] === '_') {
         //  no extra free or augmented stuff
         user.poisons = []
         user.spells = []

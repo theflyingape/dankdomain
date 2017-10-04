@@ -34,17 +34,32 @@ export class Armor {
         }
     }
 
+    baseAC(name: string|number): number {
+        let ac = 0
+        if (typeof this.name[name] === 'undefined')
+            ac = Math.abs(+name)
+        else
+            ac = this.name[name].ac
+        return ac
+    }
+
+    buffAC(rpc: active): number {
+        let ac = this.baseAC(rpc.user.armor) + rpc.toAC + rpc.user.toAC
+        return ac
+    }
+
     equip(rpc: active, what: string|number, worth?: string) {
         let armor: armor
 
-        if (typeof what === 'string') {
+        if (isNaN(+what)) {
+            rpc.user.armor = what
             armor = this.name[what]
             if (worth) armor.value = worth
         }
-        else
+        else {
+            rpc.user.armor = +what
             armor = <armor>{ ac:what, value:worth ? worth : '0c' }
-
-        rpc.user.armor = typeof what === 'string' ? what : undefined
+        }
         rpc.user.toAC = 0
         rpc.armor = armor
         rpc.toAC = 0
@@ -53,7 +68,7 @@ export class Armor {
 
     wearing(rpc: active, text = true): string {
         let result = ''
-        if (typeof rpc.user.armor === 'string') {
+        if (isNaN(+rpc.user.armor)) {
             if (text) result = rpc.armor.text + ' '
             result = result + rpc.user.armor
         }
@@ -198,7 +213,7 @@ export class Weapon {
         }
     }
 
-    baseWC(name: string): number {
+    baseWC(name: string|number): number {
         let wc = 0
         if (typeof this.name[name] === 'undefined')
             wc = Math.abs(+name)
@@ -215,14 +230,16 @@ export class Weapon {
     equip(rpc: active, what: string|number, worth?: string) {
         let weapon: weapon
 
-        if (typeof what === 'string') {
+        if (isNaN(+what)) {
+            rpc.user.weapon = what
             weapon = this.name[what]
             if (worth) weapon.value = worth
         }
-        else
+        else {
+            rpc.user.weapon = +what
             weapon = <weapon>{ wc:what, value:worth ? worth : '0c', hit:'hit', stab:'stab', smash:'smash', plunge:'plunge' }
+        }
 
-        rpc.user.weapon = typeof what === 'string' ? what : undefined
         rpc.user.toWC = 0
         rpc.weapon = weapon
         rpc.toWC = 0
@@ -231,7 +248,7 @@ export class Weapon {
 
     wearing(rpc: active, text = true): string {
         let result = ''
-        if (typeof rpc.user.weapon === 'string') {
+        if (isNaN(+rpc.user.weapon)) {
             if (text) result = rpc.weapon.text + ' '
             result = result + rpc.user.weapon
         }

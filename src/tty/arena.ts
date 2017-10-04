@@ -233,7 +233,7 @@ function choice() {
 					menu()
 					return
 				}
-				Battle.engage($.online[0], opponent[0], () => {})
+				Battle.engage($.online, opponent, menu)
 			})
 			break
 
@@ -286,21 +286,19 @@ function MonsterFights(): boolean {
 					monster.user.level = $.player.level + $.dice(7) - 4
 					if (monster.user.level > 99)
 						monster.user.level = 99
-					$.reroll(monster.user
-						, ($.dice(($.online.int + $.online.cha) / 50) > 1) ? monster.user.pc : $.PC.random()
-						, monster.user.level)
-
 					cost.value += $.money(monster.user.level)
-
+						
 					let n = Math.trunc($.Weapon.merchant.length * monster.user.level / 100) + $.dice(3) - 2
-					n = (n >= $.Weapon.merchant.length) ? $.Weapon.merchant.length - 1 : n
-					$.Weapon.equip(monster, n)
+					monster.user.weapon = (n >= $.Weapon.merchant.length) ? $.Weapon.merchant.length - 1 : n
 					cost.value += $.worth(new $.coins($.Weapon.name[$.Weapon.merchant[n]].value).value, $.player.cha)
 
 					n = Math.trunc($.Armor.merchant.length * monster.user.level / 100) + $.dice(3) - 2
-					n = (n >= $.Armor.merchant.length) ? $.Armor.merchant.length - 1 : n
-					$.Armor.equip(monster, n)
+					monster.user.armor = (n >= $.Armor.merchant.length) ? $.Armor.merchant.length - 1 : n	
 					cost.value += $.worth(new $.coins($.Armor.name[$.Armor.merchant[n]].value).value, $.player.cha)
+
+					$.reroll(monster.user
+						, ($.dice(($.online.int + $.online.cha) / 50) > 1) ? monster.user.pc : $.PC.random()
+						, monster.user.level)
 
 					if (monster.user.magic) {
 						for (let i = 0; i < Object.keys($.Magic.spells).length; i++) {
@@ -312,6 +310,7 @@ function MonsterFights(): boolean {
 						}
 					}
 
+					$.activate(monster)
 					monster.user.coin.value += cost.value
 
 //					if ($.Access.name[$.player.access].sysop) console.log(monster)
@@ -333,7 +332,7 @@ function MonsterFights(): boolean {
 				xvt.out('\n')
 				if (/Y/i.test(xvt.entry)) {
 					$.arena--
-					Battle.engage($.online[0], monster[0], menu)
+					Battle.engage($.online, monster, menu)
 				}
 				else
 					menu(!$.player.expert)
@@ -347,28 +346,29 @@ function MonsterFights(): boolean {
 		monster.user = <user>{id: ''}
 		monster.user.handle = monsters[mon].name
 		monster.user.sex = 'I'
-		$.Weapon.equip(monster, monsters[mon].weapon)
-		$.Armor.equip(monster, monsters[mon].armor)
 		$.reroll(monster.user, monsters[mon].pc, monsters[mon].level)
+		monster.user.weapon = monsters[mon].weapon
+		monster.user.armor = monsters[mon].armor
+		$.activate(monster)
 		monster.user.coin.amount = monsters[mon].money.toString()
 
 //		if ($.Access.name[$.player.access].sysop) console.log(monster)
 		$.cat('arena/' + monster.user.handle.toLowerCase())
 
 		xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`, '\n')
-		if (monster.user.weapon) xvt.out('\n', $.who(monster.user, true, true, false), $.Weapon.wearing(monster), '.\n')
-		if (monster.user.armor) xvt.out('\n', $.who(monster.user, true, true, false), $.Armor.wearing(monster), '.\n')
+		if (isNaN(+monster.user.weapon)) xvt.out('\n', $.who(monster.user, true, true, false), $.Weapon.wearing(monster), '.\n')
+		if (isNaN(+monster.user.armor)) xvt.out('\n', $.who(monster.user, true, true, false), $.Armor.wearing(monster), '.\n')
 
 		xvt.app.form = {
 			'fight': { cb:() => {
 				xvt.out('\n')
 				if (/Y/i.test(xvt.entry)) {
 					$.arena--
-					Battle.engage($.online[0], monster[0], menu)
+					Battle.engage($.online, monster, menu)
 				}
 				else
 					menu(!$.player.expert)
-		}, prompt:'Will you fight (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
+			}, prompt:'Will you fight (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
 		}
 
 		xvt.app.focus = 'fight'

@@ -65,9 +65,9 @@ interface user {
     coin?: coins
     bank?: coins
     loan?: coins
-    weapon?: string
+    weapon?: string|number
     toWC?: number
-    armor?: string
+    armor?: string|number
     toAC?: number
     spells?: number[]
     poisons?: number[]
