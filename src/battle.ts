@@ -39,8 +39,6 @@ export function engage(party: active|active[], mob: active|active[], cb:Function
         parties.push(b)
     }
 
-    console.log(parties)
-    
     fini = cb
 
     alive = [ parties[0].length, parties[1].length ]
@@ -76,19 +74,18 @@ export function attack() {
         rpc.int = $.PC.ability(rpc.int, $.PC.name[rpc.user.pc].toInt, rpc.user.maxint, mod)
         rpc.dex = $.PC.ability(rpc.dex, $.PC.name[rpc.user.pc].toDex, rpc.user.maxdex, mod)
     }
-    console.log(rpc)
     
     let mob = n.party ^ 1
     let nme: number
     do { nme = $.dice(parties[mob].length) - 1 } while (parties[mob][nme].hp < 1)
     let enemy = parties[mob][nme]
-    console.log(enemy)
 
     if (rpc.user.id === $.player.id) {
         xvt.app.form = {
             'attack': {cb:() => {
                 if (/C/i.test(xvt.entry)) {
                     Battle.cast($.online, next)
+                    next()
                     return
                 }
                 if (/R/i.test(xvt.entry)) {
@@ -131,18 +128,43 @@ export function attack() {
                 return
             }
             melee(rpc, enemy)
-            next()
+        }
+        else {
+            let choices = xvt.attr(xvt.reset, '\n', xvt.blue, '[')
+            choices += xvt.attr(xvt.bright
+                , $.online.hp > $.player.hp * 2 / 3 ? xvt.green
+                : $.online.hp > $.player.hp / 3 ? xvt.yellow
+                : xvt.red
+                , $.online.hp.toString()
+                , xvt.cyan, ','
+                , enemy.hp > enemy.hp * 2 / 3 ? xvt.green
+                : enemy.hp > enemy.hp / 3 ? xvt.yellow
+                : xvt.red
+            )
+            if ($.online.int < 100) {
+                let i = (100 - $.online.int) + 1
+                let est = Math.round(enemy.hp / i)
+                est *= i
+                if ($.online.int < 50 || est == 0)
+                    choices += enemy.hp > enemy.hp * 2 / 3 ? 'Healthy'
+                        : enemy.hp > enemy.hp / 3 ? 'Hurting'
+                        : 'Weak'
+                else
+                    choices += '~' + est.toString()
+            }
+            else
+                choices += enemy.hp.toString()
+            choices += xvt.attr(xvt.blue, '] ')
+            bs = 1
+
+            xvt.app.form['attack'].prompt = choices
+                + $.bracket('A', false) + 'ttack, '
+                + ($.player.magic && $.player.spells.length && rpc.sp ? $.bracket('C', false) + 'ast spell, ' : '')
+                + $.bracket('R', false) + 'etreat, '
+                + $.bracket('Y', false) + 'our status: '
+            xvt.app.focus = 'attack'
             return
         }
-
-        bs = 1
-        xvt.app.form['attack'].prompt = '[,] '
-            + $.bracket('A', false) + 'ttack, '
-            + ($.player.magic && $.player.spells.length && rpc.sp) ? $.bracket('C', false) + 'ast spell, ' : ''
-            + $.bracket('R', false) + 'etreat, '
-            + $.bracket('Y', false) + ' Status: '
-        xvt.app.focus = 'attack'
-        return
     }
     //  NPC
     else {
@@ -153,7 +175,7 @@ export function attack() {
 
     function next() {
 
-        let alive: number[]
+        alive = []
         for (let p in parties) {
             alive.push(parties[p].length)
             for (let m in parties[p]) {
@@ -165,9 +187,9 @@ export function attack() {
 
         // attack stack
         if (alive[0] && alive[1])
-                attack()
-
-        fini()
+            attack()
+        else
+            fini()
     }
 }
 
@@ -222,8 +244,11 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     // saving throw
     if ($.dice(100) > n) {
         if (blow == 1) {
-            if (rpc == $.online)
-                xvt.out('Your ', rpc.user.weapon, ' passes through thin air.')
+            if (rpc == $.online) {
+                xvt.out(xvt.bright, 'Your ', rpc.user.weapon, ' passes through thin air.\n', xvt.nobright)
+                xvt.waste(500)
+                return
+            }
             else {
                 if (isNaN(+rpc.user.weapon))
                     xvt.out(rpc.user.gender === 'I' ? 'The ' : ''
@@ -239,7 +264,8 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             }
         }
         else {
-            xvt.out('Attempt fails!')
+            xvt.out(xvt.bright, 'Attempt fails!\n', xvt.nobright)
+            xvt.waste(500)
             return
         }
     }
