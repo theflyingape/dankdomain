@@ -28,7 +28,8 @@ export function menu(suppress = true) {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }
     xvt.app.form['menu'].prompt = $.display('arena', xvt.Red, xvt.red, suppress, arena)
-    xvt.app.focus = 'menu'
+	if (!$.reason) xvt.app.focus = 'menu'
+	else require('./main').menu($.player.expert)	
 }
 
 function choice() {
@@ -336,7 +337,7 @@ function MonsterFights(): boolean {
 				}
 				else
 					menu(!$.player.expert)
-			}, prompt:'Will you fight (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
+			}, prompt:'Fight this demon (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
 		}
 		xvt.app.focus = 'pay'
 	}
@@ -361,14 +362,14 @@ function MonsterFights(): boolean {
 
 		xvt.app.form = {
 			'fight': { cb:() => {
-				xvt.out('\n')
+				xvt.out('\n\n')
 				if (/Y/i.test(xvt.entry)) {
 					$.arena--
 					Battle.engage($.online, monster, menu)
 				}
 				else
 					menu(!$.player.expert)
-			}, prompt:'Will you fight (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
+			}, prompt:'Will you fight it (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
 		}
 
 		xvt.app.focus = 'fight'

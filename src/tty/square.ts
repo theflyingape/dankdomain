@@ -228,11 +228,11 @@ function choice() {
 				xvt.waste(750)
 				$.player.status = 'jail'
 				$.reason = 'caught picking a pocket'
-				xvt.hangup()
-				return
 			}
-			$.player.coin.value += credit.value
-			break
+			else {
+				$.player.coin.value += credit.value
+				break
+			}
 
         case 'Q':
 			require('./main').menu($.player.expert)

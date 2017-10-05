@@ -32,6 +32,7 @@ module Main
 
 export function menu(suppress = false) {
     if ($.online.altered) db.saveUser($.player)
+    if ($.reason) xvt.hangup()
 
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }

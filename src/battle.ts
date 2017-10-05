@@ -137,8 +137,8 @@ export function attack() {
                 : xvt.red
                 , $.online.hp.toString()
                 , xvt.cyan, ','
-                , enemy.hp > enemy.hp * 2 / 3 ? xvt.green
-                : enemy.hp > enemy.hp / 3 ? xvt.yellow
+                , enemy.hp > enemy.user.hp * 2 / 3 ? xvt.green
+                : enemy.hp > enemy.user.hp / 3 ? xvt.yellow
                 : xvt.red
             )
             if ($.online.int < 100) {
@@ -146,8 +146,8 @@ export function attack() {
                 let est = Math.round(enemy.hp / i)
                 est *= i
                 if ($.online.int < 50 || est == 0)
-                    choices += enemy.hp > enemy.hp * 2 / 3 ? 'Healthy'
-                        : enemy.hp > enemy.hp / 3 ? 'Hurting'
+                    choices += enemy.hp > enemy.user.hp * 2 / 3 ? 'Healthy'
+                        : enemy.hp > enemy.user.hp / 3 ? 'Hurting'
                         : 'Weak'
                 else
                     choices += '~' + est.toString()
@@ -235,7 +235,8 @@ export function cast(rpc: active, cb:Function) {
 
 export function melee(rpc: active, enemy: active, blow = 1) {
     let hit = 0
-
+    xvt.out(rpc == $.online ? xvt.bright : xvt.reset)
+    
     let n = rpc.dex + (rpc.dex - enemy.dex)
     if (blow > 1)
         n = Math.trunc(n / 2) + 50
@@ -245,8 +246,8 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     if ($.dice(100) > n) {
         if (blow == 1) {
             if (rpc == $.online) {
-                xvt.out(xvt.bright, 'Your ', rpc.user.weapon, ' passes through thin air.\n', xvt.nobright)
-                xvt.waste(500)
+                xvt.out('Your ', rpc.user.weapon, ' passes through thin air.\n')
+                xvt.waste(250)
                 return
             }
             else {
@@ -264,7 +265,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             }
         }
         else {
-            xvt.out(xvt.bright, 'Attempt fails!\n', xvt.nobright)
+            xvt.out('Attempt fails!\n')
             xvt.waste(500)
             return
         }
@@ -320,12 +321,39 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     else {
         let w = action.split(' ')
         let s = /.*ch|.*sh|.*s/i.test(w[0]) ? 'es' : 's'
-        xvt.out('You '
-            , w[0], s, w.slice(1).join(' ')
-            , enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
+        xvt.out(rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle
+            , ' ', w[0], s, w.slice(1).join(' '), ' '
+            , enemy == $.online ? 'you' : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
             , ' for ', hit.toString(), ' hit points', period, '\n')
     }
+
     enemy.hp -= hit
+
+    if (enemy.hp < 1) {
+        enemy.hp = 0
+        if (enemy == $.online) {
+            $.player.killed++
+            xvt.out('\n', xvt.bright, xvt.yellow
+                , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
+                , ' killed you!\n', xvt.reset)
+            xvt.waste(500)
+            $.reason = rpc.user.id.length ? `defeated by ${rpc.user.handle}`
+                : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`
+            xvt.carrier = false
+        }
+        else {
+            if (rpc == $.online) {
+                $.player.kills++
+                xvt.out('You killed'
+                    , enemy.user.gender == 'I' ? ' the ' : ' ', enemy.user.handle
+                    , '!\n\n')
+                xvt.waste(100)
+                // rpc.user.id.length ? `defeated ${enemy.user.handle}`
+                //    : `defeated a level ${enemy.user.level} ${enemy.user.handle}`
+            }
+        }
+    }
+
     return
 }
 
