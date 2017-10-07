@@ -43,21 +43,25 @@ function check() {
         return
     }
 
-    $.player.password = String.fromCharCode(64 + $.dice(26)) + String.fromCharCode(64 + $.dice(26)) + $.dice(999)
+    $.player.password = String.fromCharCode(64 + $.dice(26)) + String.fromCharCode(96 + $.dice(26)) + $.dice(999) + '!@#$%^&*'[$.dice(8) - 1]
 
     let message = require('./etc/newuser.json')
-    Deliver($.player, 'keys to the gate', message)
+    Deliver($.player, 'secret keys to the gate', message)
 }
 
 export async function Deliver(player: user, what: string, mailOptions: nodemailer.SendMailOptions) {
     xvt.out('\n\n', xvt.magenta, xvt.bright)
-    xvt.out(`The king orders the royal scribe to dispatch ${what}\nfor ${$.player.handle} `, xvt.reset)
+    let royalty = Object.keys($.Access.name).slice($.player.gender === 'F' ? -2 : -1)[0]
+    xvt.out(`The ${royalty} orders the royal scribe to dispatch ${what}\nfor ${$.player.handle} <${$.player.email}> `, xvt.reset)
     if ($.player.email !== $.sysop.email)
         await Message(player, mailOptions)
-    else
+    else {
+        xvt.out(' ...skipping delivery... \nCheck SQLite3 table for relevant information.\n')
         db.saveUser(player, true)
+    }
     xvt.out('\n')
     xvt.waste(1000)
+    $.logoff()
     xvt.hangup()
 }
 
@@ -65,8 +69,8 @@ async function Message(player: user, mailOptions: nodemailer.SendMailOptions) {
 
 	let smtpOptions: smtpTransport.SmtpOptions = require('./etc/smtp.json')
     let smtp = nodemailer.createTransport(smtpTransport(smtpOptions))
-	mailOptions.from = $.sysop.name + '<' + $.sysop.email + '>'
-	mailOptions.to = player.email
+	mailOptions.from = `"${$.sysop.handle} @ ${$.sysop.name}" <${$.sysop.email}>`
+    mailOptions.to = `${player.name} <${player.email}>`
     mailOptions.text = eval('`' + mailOptions.text.toString() + '`')
 
     var result: boolean
@@ -82,13 +86,14 @@ async function Message(player: user, mailOptions: nodemailer.SendMailOptions) {
                     xvt.out(xvt.reset, '\nEmail Deliver Message ', error,'\n')
                     player.id = ''
                     player.email = ''
-                    xvt.out('\nYour user registration was aborted.\n')
+                    xvt.out('\nSorry -- your user registration was aborted.\n')
+                    xvt.out('Please contact the sysop with this error message.\n')
                     result = false
                 }
                 else {
                     xvt.out('\n', info.response)
                     db.saveUser(player, true)
-                    xvt.out('\nYour user ID (', player.id, ') was saved.\n')
+                    xvt.out('\nYour user ID (', xvt.bright, player.id, xvt.nobright, ') was saved.\n')
                     result = true
                 }
             })

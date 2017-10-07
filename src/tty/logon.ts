@@ -108,7 +108,7 @@ function password() {
         xvt.hangup()
     }
 
-    if ($.player.level >= $.Access.name[$.player.access].promote) {
+    if ($.Access.name[$.player.access].promote > 0 && $.player.level >= $.Access.name[$.player.access].promote) {
             let next: boolean = false
             for (let a in $.Access.name) {
                 if (next) {
@@ -123,19 +123,26 @@ function password() {
     db.loadUser($.sysop)
     $.sysop.calls++
     $.sysop.today++
-    $.player.today++
+    if (!db.loadKing()) {
+        $.player.access = Object.keys($.Access.name).slice($.player.gender === 'F' ? -2 : -1)[0]
+        $.player.novice = false
+        $.sysop.email = $.player.email
+    }
     db.saveUser($.sysop)
+    $.player.today++
+    $.online.altered = true
+    
     welcome()
 }
 
 function welcome() {
     xvt.out(xvt.clear, xvt.red, '--=:))', xvt.LGradient[xvt.emulation]
-        , xvt.Red, xvt.bright, xvt.white, $.sysop.handle, xvt.reset
+        , xvt.Red, xvt.bright, xvt.white, $.sysop.name, xvt.reset
         , xvt.red, xvt.RGradient[xvt.emulation], '((:=--')
     xvt.out('\n\n')
     xvt.out(xvt.cyan, 'Caller#: ', xvt.bright, xvt.white, $.sysop.calls.toString(), xvt.nobright, '\n')
     xvt.out(xvt.cyan, ' Online: ', xvt.bright, xvt.white, $.player.handle, xvt.nobright, '\n')
-    xvt.out(xvt.cyan, ' Access: ', xvt.bright, xvt.white, $.player.access, xvt.nobright, ' ')
+    xvt.out(xvt.cyan, ' Access: ', xvt.bright, xvt.white, $.player.access, xvt.nobright, '  ')
 
     $.player.lastdate = $.now().date
     $.player.lasttime = $.now().time
@@ -143,7 +150,7 @@ function welcome() {
 
     if ($.player.today <= $.Access.name[$.player.access].calls && $.Access.name[$.player.access].roleplay) {
         xvt.ondrop = $.logoff
-        xvt.out('\n')
+        xvt.out(xvt.bright, xvt.black, '(', xvt.nobright, xvt.white, 'Welcome back, ',  $.Access.name[$.player.access][$.player.gender], xvt.bright, xvt.black, ')\n', xvt.reset)
         xvt.sessionAllowed = $.Access.name[$.player.access].minutes * 60
         $.player.calls++
         $.arena = 3
@@ -159,12 +166,17 @@ function welcome() {
         $.security = 1
         $.tiny = 1
 
-        if ($.player.pc === 'None' && $.player.novice) {
-            $.cat('intro')
-            xvt.app.form = {
-                'pause': { cb:$.playerPC, pause:true }
+        if ($.player.pc === 'None') {
+            if ($.player.novice) {
+                xvt.out(xvt.reset, '\n', xvt.bright)
+                $.cat('intro')
+                xvt.app.form = {
+                    'pause': { cb:$.playerPC, pause:true, timeout:200 }
+                }
+                xvt.app.focus = 'pause'
+                return
             }
-            xvt.app.focus = 'pause'
+            $.playerPC()
             return
         }
 
@@ -194,16 +206,15 @@ function welcome() {
     xvt.out(xvt.cyan, '\nLast callers were: ', xvt.white)
     try {
         $.callers = require('../users/callers')
-        let n = 0
         for (let last in $.callers) {
             xvt.out(xvt.bright, $.callers[last].who, xvt.nobright, ' (', $.callers[last].reason, ')\n')
-            if (++n == 5) break
             xvt.out('                   ')
         }
     }
     catch(err) {
         xvt.out('not available (', err, ')\n')
     }
+
     xvt.app.form = {
         'pause': { cb: () => {
             require('./main').menu(true)

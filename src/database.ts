@@ -129,6 +129,26 @@ function isUser(arg: any): arg is user {
     return (<user>arg).id !== undefined
 }
 
+export function loadKing(): boolean {
+    let king = Object.keys($.Access.name).slice(-1)[0]
+    let query = `SELECT id FROM Players WHERE access = '${king}'`
+    let row = sqlite3.run(query)
+    if (row.length) {
+        $.king = <user>{ id:row[0].id }
+        return loadUser($.king)
+    }
+
+    let queen = Object.keys($.Access.name).slice(-2)[0]
+    query = `SELECT id FROM Players WHERE access = '${queen}'`
+    row = sqlite3.run(query)
+    if (row.length) {
+        $.king = <user>{ id:row[0].id }
+        return loadUser($.king)
+    }
+
+    return false
+}
+
 export function loadUser(rpc): boolean {
 
     let user: user = isActive(rpc) ? rpc.user : rpc

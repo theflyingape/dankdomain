@@ -126,6 +126,8 @@ interface monster {
 }
 
 interface access {
+    F?: string
+    M?: string
     calls: number
     minutes: number
     promote: number
@@ -228,7 +230,7 @@ interface active {
     cha?: number
     confused?: boolean
     bp?: number
-    hp?: number
+    hp?: number         //  <0=retreated, 0=killed, >0=alive
     sp?: number
     hull?: number
 }

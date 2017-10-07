@@ -3,6 +3,9 @@
  *  ITEM authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
 
+import $ = require('./common')
+import xvt = require('xvt')
+
 module Items
 {
 
@@ -14,6 +17,50 @@ export class Access {
         this.name = require('./items/access.json')
     }
 }
+
+/*
+if(ARMOR(rpc)->Class == ARMOR(enemy)->Class || rpc->user.ACmod != 0 || rpc->armor_origin || enemy->armor_origin) {
+    if(rpc == ONLINE) {
+        sprintf(prompt, "%sDo you want %s %s (Y/N)? ", fore(CYN), enemy->his, ARMOR(enemy)->Name);
+        OUT(prompt);
+        while(!strchr("YN", (c = inkey('N', 'N'))))
+            RUBOUT;
+        NL;
+        flag = (c == 'Y');
+    }
+    else {
+        if((ARMOR(rpc)->Class + rpc->user.ACmod) < ARMOR(enemy)->Class + enemy->user.ACmod / 2)
+            flag = TRUE;
+    }
+}
+else
+    flag = TRUE;
+if(flag) {
+    sprintf(line[numline++],"%s also took %s %s.",(rpc==ONLINE ? "and" : "You"),(rpc==ONLINE ? "your" : PLAYER.Gender=='M' ? "his" : PLAYER.Gender=='F' ? "her" : "its"),ARMOR(enemy)->Name);
+    sprintf(outbuf,"%s take%s %s %s.",rpc->He,(rpc!=ONLINE ? "s" : ""),enemy->his,ARMOR(enemy)->Name);
+    OUT(outbuf);NL;
+}
+if((from=='A' || from=='M' || from=='S') && rpc==ONLINE && !strlen(enemy->user.ID)) {
+    d=value(ARMOR(enemy)->Value,rpc->CHA);
+    if(enemy->user.ACmod!=0)
+        modf(d*(ARMOR(enemy)->Class+enemy->user.ACmod)/ARMOR(enemy)->Class,&d);
+    if(enemy->ToAC<0)
+        modf(d*(ARMOR(enemy)->Class+enemy->ToAC)/ARMOR(enemy)->Class,&d);
+    if(enemy->armor_origin==0 && enemy->armor_type==0)
+        d=0.;
+    if(d>0.) {
+        PLAYER.Gold+=d;
+        sprintf(outbuf,"You get %s for selling its %s",money(d,ANSI),ARMOR(enemy)->Name);
+        OUT(outbuf);
+        if(enemy->user.ACmod || enemy->ToAC) {
+            sprintf(outbuf," %s(%s%+d%s,%s%+d%s)",fore(MAG),fore(enemy->user.ACmod>0 ? YELLOW : enemy->user.ACmod<0 ? BRED : GRY),enemy->user.ACmod,fore(GRY),fore(enemy->ToAC>0 ? YELLOW : enemy->ToAC<0 ? BRED : GRY),enemy->ToAC,fore(MAG));
+            OUT(outbuf);
+            NORMAL;
+        }
+        OUT(".");NL;
+    }
+}
+*/
 
 export class Armor {
 
@@ -64,6 +111,33 @@ export class Armor {
         rpc.armor = armor
         rpc.toAC = 0
         rpc.altered = true
+    }
+
+    swap(winner: active, loser: active, sell = true): boolean {
+        // real item?
+        if (!isNaN(+winner.user.armor) || !isNaN(+loser.user.armor))
+            return false
+
+        // is common armor better?
+        if (winner.armor.armoury && loser.armor.armoury && winner.user.toAC >= 0 && winner.armor.ac > loser.armor.ac) {
+            return false
+        }
+
+        //  swap
+        [winner.armor, loser.armor] = [loser.armor, winner.armor];
+        [winner.user.armor, loser.user.armor] = [loser.user.armor, winner.user.armor];
+        [winner.user.toAC, loser.user.toAC] = [loser.user.toAC, winner.user.toAC]
+        winner.toAC = 0
+        if (winner.user.toAC > 0)
+            winner.user.toAC /= 2
+        loser.toAC = 0
+        if (loser.user.toAC > 0)
+            loser.user.toAC /= 2
+        winner.altered = true
+        loser.altered = true
+
+        //sprintf(line[numline++],"%s also took %s %s.",(rpc==ONLINE ? "and" : "You"),(rpc==ONLINE ? "your" : PLAYER.Gender=='M' ? "his" : PLAYER.Gender=='F' ? "her" : "its"),ARMOR(enemy)->Name);
+        return true
     }
 
     wearing(rpc: active, text = true): string {
@@ -195,6 +269,56 @@ export class Poison {
     }
 }
 
+/*
+if(WEAPON(rpc)->Class == WEAPON(enemy)->Class || rpc->user.WCmod != 0 || rpc->weapon_origin || enemy->weapon_origin) {
+    if(rpc == ONLINE) {
+        sprintf(prompt, "%sDo you want %s %s (Y/N)? ", fore(CYN), enemy->his, WEAPON(enemy)->Name);
+        OUT(prompt);
+        while(!strchr("YN", (c = inkey('N', 'N'))))
+            RUBOUT;
+        NL;
+        flag = (c == 'Y');
+    }
+    else {
+        if((WEAPON(rpc)->Class + rpc->user.WCmod) < WEAPON(enemy)->Class + enemy->user.WCmod / 2)
+            flag = TRUE;
+        else {
+            d = value(WEAPON(rpc)->Value, rpc->CHA);
+            if(rpc->user.WCmod)
+                modf(d * (WEAPON(rpc)->Class + rpc->user.WCmod / (rpc->user.MyPoison + 1)) / WEAPON(rpc)->Class, &d);
+            if(d < value(WEAPON(enemy)->Value, rpc->CHA))
+                flag = TRUE;
+        }
+    }
+}
+else
+    flag = TRUE;
+if(flag) {
+    sprintf(line[numline++],"%s also took %s %s.",(rpc==ONLINE ? "and" : "You"),(rpc==ONLINE ? "your" : PLAYER.Gender=='M' ? "his" : PLAYER.Gender=='F' ? "her" : "its"),WEAPON(enemy)->Name);
+    sprintf(outbuf,"%s take%s %s %s%s.",rpc->He,(rpc!=ONLINE ? "s" : ""),enemy->his,(enemy->user.Gender=='I' && enemy->user.WCmod>0 ? "super " : ""),WEAPON(enemy)->Name);
+    OUT(outbuf);NL;
+}
+if((from=='A' || from=='M' || from=='S') && rpc==ONLINE && !strlen(enemy->user.ID)) {
+    d=value(WEAPON(enemy)->Value,rpc->CHA);
+    if(enemy->user.WCmod!=0)
+        modf(d*(WEAPON(enemy)->Class+enemy->user.WCmod)/WEAPON(enemy)->Class,&d);
+    if(enemy->ToWC<0)
+        modf(d*(WEAPON(enemy)->Class+enemy->ToWC)/WEAPON(enemy)->Class,&d);
+    if(enemy->weapon_origin==0 && enemy->weapon_type==0)
+        d=0.;
+    if(d>0.) {
+        PLAYER.Gold+=d;
+        sprintf(outbuf,"You get %s for selling its %s",money(d,ANSI),WEAPON(enemy)->Name);
+        OUT(outbuf);
+        if(enemy->user.WCmod || enemy->ToWC) {
+            sprintf(outbuf," %s(%s%+d%s,%s%+d%s)",fore(MAG),fore(enemy->user.WCmod>0 ? YELLOW : enemy->user.WCmod<0 ? BRED : GRY),enemy->user.WCmod,fore(GRY),fore(enemy->ToWC>0 ? YELLOW : enemy->ToWC<0 ? BRED : GRY),enemy->ToWC,fore(MAG));
+            OUT(outbuf);
+            NORMAL;
+        }
+        OUT(".");NL;
+    }
+}
+*/
 export class Weapon {
     name: weapon[]
     gift: string[] = []
@@ -244,6 +368,33 @@ export class Weapon {
         rpc.weapon = weapon
         rpc.toWC = 0
         rpc.altered = true
+    }
+
+    swap(winner: active, loser: active, sell = true): boolean {
+        // real item?
+        if (!isNaN(+winner.user.weapon) || !isNaN(+loser.user.weapon))
+            return false
+
+        // is common weapon better?
+        if (winner.weapon.shoppe && loser.weapon.shoppe && winner.user.toAC >= 0 && winner.weapon.wc > loser.weapon.wc) {
+            return false
+        }
+
+        //  swap
+        [winner.weapon, loser.weapon] = [loser.weapon, winner.weapon];
+        [winner.user.weapon, loser.user.weapon] = [loser.user.weapon, winner.user.weapon];
+        [winner.user.toWC, loser.user.toWC] = [loser.user.toWC, winner.user.toWC];
+        winner.toWC = 0
+        if (winner.user.toWC > 0)
+            winner.user.toWC /= 2
+        loser.toWC = 0
+        if (loser.user.toWC > 0)
+            loser.user.toWC /= 2
+        winner.altered = true
+        loser.altered = true
+
+        //sprintf(line[numline++],"%s also took %s %s.",(rpc==ONLINE ? "and" : "You"),(rpc==ONLINE ? "your" : PLAYER.Gender=='M' ? "his" : PLAYER.Gender=='F' ? "her" : "its"),WEAPON(enemy)->Name);
+        return true
     }
 
     wearing(rpc: active, text = true): string {

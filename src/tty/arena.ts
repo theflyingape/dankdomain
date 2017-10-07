@@ -36,7 +36,8 @@ function choice() {
     let suppress = true
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(arena[choice]))
-        if (xvt.validator.isNotEmpty(arena[choice].description)) xvt.out(' - ', arena[choice].description, '\n')
+		if (xvt.validator.isNotEmpty(arena[choice].description)) xvt.out(' - ', arena[choice].description)
+	xvt.out('\n\n')
 
     switch (choice) {
 		case 'C':
@@ -50,7 +51,7 @@ function choice() {
 
 		case 'J':
 			if (!$.joust) {
-				xvt.out('\nYou have run out of jousts.\n')
+				xvt.out('You have run out of jousts.\n')
 				break
 			}
 			Battle.user('Joust', (opponent: active) => {
@@ -60,7 +61,7 @@ function choice() {
 				}
 				if (opponent.user.id === $.player.id) {
 					opponent.user.id = ''
-					xvt.out('You can\'t joust a wimp like ', $.who(opponent.user, true, false, false), '.\n')
+					xvt.out('You can\'t joust a wimp like ', $.who(opponent, 'him'), '.\n')
 					menu()
 					return
 				}
@@ -84,7 +85,7 @@ function choice() {
 					return
 				}
 
-				xvt.out('\nJousting ability:\n\n', xvt.bright)
+				xvt.out('Jousting ability:\n\n', xvt.bright)
 				xvt.out(xvt.green, sprintf('%-25s', opponent.user.handle), xvt.white, sprintf('%4d', versus), '\n')
 				xvt.out(xvt.green, sprintf('%-25s', $.player.handle), xvt.white, sprintf('%4d', ability), '\n')
 				xvt.out(xvt.reset, '\n')
@@ -141,7 +142,9 @@ function choice() {
 								}
 							}
 							else {
-								xvt.out(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.nobright, xvt.magenta,'<^  ', xvt.reset, $.who(opponent.user, true, true, false), 'hits!  You lose this pass!\n')
+								xvt.out(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.nobright, xvt.magenta,'<^  ', xvt.reset
+									, $.who(opponent, 'He'), 'hits!  You lose this pass!\n'
+								)
 								if (++jl == 3) {
 									xvt.out('\nYou have lost the joust!\n')
 									xvt.waste(250)
@@ -173,11 +176,12 @@ function choice() {
 
 		case 'M':
 			if (!$.arena) {
-				xvt.out('\nYou have no more arena fights.\n')
+				xvt.out('You have no more arena fights.\n')
 				break
 			}
 			xvt.app.form = {
 				pick: { cb: () => {
+					xvt.out('\n')
 					if (xvt.entry.length) {
 						let mon = +xvt.entry
 						if (isNaN(mon) && ! /D/i.test(xvt.entry)) {
@@ -215,7 +219,7 @@ function choice() {
 
 		case 'U':
 			if (!$.arena) {
-				xvt.out('\nYou have no more arena fights.\n')
+				xvt.out('You have no more arena fights.\n')
 				break
 			}
 			Battle.user('Fight', (opponent: active) => {
@@ -225,7 +229,7 @@ function choice() {
 				}
 				if (opponent.user.id === $.player.id) {
 					opponent.user.id = ''
-					xvt.out('You can\'t fight a wimp like ', $.who(opponent.user, true, false, false), '.\n')
+					xvt.out('You can\'t fight a wimp like ', $.who(opponent, 'him'), '.\n')
 					menu()
 					return
 				}
@@ -234,9 +238,10 @@ function choice() {
 					menu()
 					return
 				}
-				Battle.engage($.online, opponent, menu)
+				$.arena--
+				Battle.engage('User', $.online, opponent, menu)
 			})
-			break
+			return
 
 		case 'Y':
 			Battle.yourstats()
@@ -254,17 +259,16 @@ function MonsterFights(): boolean {
 	let cost: $.coins
 	let monster: active
 	let n: number
-	xvt.out(xvt.reset, '\n\n')
 
 	if (/D/i.test(xvt.entry)) {
 		if ($.player.level < 50) {
-			xvt.out('You are not powerful enough to fight demons yet.  Go fight some monsters.\n')
+			xvt.out('\nYou are not powerful enough to fight demons yet.  Go fight some monsters.\n')
 			return
 		}
 
 		cost = new $.coins(new $.coins($.money($.player.level)).carry(1, true))
 
-		xvt.out('The ancient necromancer will summon you a demon for ', cost.carry(), '\n')
+		xvt.out('\nThe ancient necromancer will summon you a demon for ', cost.carry(), '\n')
 		if ($.player.coin.value < cost.value) {
 			xvt.out('You don\'t have enough!\n')
 			return
@@ -318,8 +322,8 @@ function MonsterFights(): boolean {
 					$.cat('arena/' + monster.user.handle)
 
 					xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`, '\n')
-					if (monster.user.weapon) xvt.out('\n', $.who(monster.user, true, true, false), $.Weapon.wearing(monster), '.\n')
-					if (monster.user.armor) xvt.out('\n', $.who(monster.user, true, true, false), $.Armor.wearing(monster), '.\n')
+					if (monster.user.weapon) xvt.out('\n', $.who(monster, 'He'), $.Weapon.wearing(monster), '.\n')
+					if (monster.user.armor) xvt.out('\n', $.who(monster, 'He'), $.Armor.wearing(monster), '.\n')
 
 					xvt.app.focus = 'fight'
 					return
@@ -333,7 +337,7 @@ function MonsterFights(): boolean {
 				xvt.out('\n')
 				if (/Y/i.test(xvt.entry)) {
 					$.arena--
-					Battle.engage($.online, monster, menu)
+					Battle.engage('Monster', $.online, monster, menu)
 				}
 				else
 					menu(!$.player.expert)
@@ -353,19 +357,18 @@ function MonsterFights(): boolean {
 		$.activate(monster)
 		monster.user.coin.amount = monsters[mon].money.toString()
 
-//		if ($.Access.name[$.player.access].sysop) console.log(monster)
 		$.cat('arena/' + monster.user.handle.toLowerCase())
 
 		xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`, '\n')
-		if (isNaN(+monster.user.weapon)) xvt.out('\n', $.who(monster.user, true, true, false), $.Weapon.wearing(monster), '.\n')
-		if (isNaN(+monster.user.armor)) xvt.out('\n', $.who(monster.user, true, true, false), $.Armor.wearing(monster), '.\n')
+		if (isNaN(+monster.user.weapon)) xvt.out('\n', $.who(monster, 'He'), $.Weapon.wearing(monster), '.\n')
+		if (isNaN(+monster.user.armor)) xvt.out('\n', $.who(monster, 'He'), $.Armor.wearing(monster), '.\n')
 
 		xvt.app.form = {
 			'fight': { cb:() => {
 				xvt.out('\n\n')
 				if (/Y/i.test(xvt.entry)) {
 					$.arena--
-					Battle.engage($.online, monster, menu)
+					Battle.engage('Monster', $.online, monster, menu)
 				}
 				else
 					menu(!$.player.expert)
@@ -376,58 +379,6 @@ function MonsterFights(): boolean {
 	}
 
 	return true
-	/*
-					if(i) {
-						i--;
-						strcpy(ENEMY.Handle,ARENA(i)->Name);
-						strcpy(ENEMY.Class,ARENA(i)->Class);
-						ENEMY.Gender='I';
-						ENEMY.Level=ARENA(i)->Level;
-						strcpy(ENEMY.Weapon,ARENA(i)->Weapon);
-						strcpy(ENEMY.Armor,ARENA(i)->Armor);
-						ENEMY.Gold=ARENA(i)->Gold;
-						ENEMY.Spell=ARENA(i)->Spell;
-						CreateRPC(RPC[1][0]);
-					}
-				displayview();
-				sprintf(prompt,"%sWill you fight the %s (Y/N)? ",fore(CYN),ENEMY.Handle);
-				OUT(prompt);
-				c=inkey('N','N');
-				NL;
-				if(c=='Y') {
-					NL;
-					sprintf(outbuf,"combat%d",arena--);
-					sound2(outbuf,0);
-					Battle();
-					if(!RPC[1][0]->HP) {
-						modf(EXP(ENEMY.ExpLevel-1)/3.,&d);
-						PLAYER.Experience+=d;
-						sprintf(outbuf,"You get %.8g experience.",d);
-						OUT(outbuf);NL;
-						if(ENEMY.Gold>0.) {
-							sprintf(line[numline++],"%s got %s you were carrying.",ONLINE->He,money(ENEMY.Gold,ENEMY.Emulation));
-							PLAYER.Gold+=ENEMY.Gold;
-							sprintf(outbuf,"You get %s %s was carrying.",money(ENEMY.Gold,ANSI),RPC[1][0]->he);
-							OUT(outbuf);NL;
-						}
-						ExchangeWeapon(ONLINE,RPC[1][0]);
-						ExchangeArmor(ONLINE,RPC[1][0]);
-						note(ENEMY.ID);
-						sprintf(outbuf,"%sdefeated a level %s%u %s",fore(CYN),fore(WHITE),ENEMY.Level,ENEMY.Handle);
-						news(outbuf);
-						paws=!PLAYER.Expert;
-					}
-					if(!ONLINE->HP) {
-						if(PLAYER.Gold>0.) {
-							ENEMY.Gold+=PLAYER.Gold;
-							sprintf(outbuf,"%s takes %s you were carrying.",RPC[1][0]->He,money(PLAYER.Gold,ANSI));
-							OUT(outbuf);NL;NL;
-							PLAYER.Gold=0.;
-						}
-					}
-					break;
-				}
-*/
 }
 
 }

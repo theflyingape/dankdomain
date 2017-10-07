@@ -12,6 +12,7 @@ import xvt = require('xvt')
 module Battle
 {
     export let fini: Function
+    export let from: string
     export let parties: [ active[] ]
     export let alive: number[]
     export let round: { party:number, member:number }[]
@@ -23,7 +24,11 @@ module Battle
 //  start a new battle engagement:
 //    do rounds: attack() with possibly backstab or poison
 //       per member: next() for cast, melee, or retreat
-export function engage(party: active|active[], mob: active|active[], cb:Function) {
+//    until spoils()
+export function engage(module:string, party: active|active[], mob: active|active[], cb:Function) {
+
+    //  process parameters
+    from = module
 
     if (xvt.validator.isArray(party))
         parties = [ <active[]>{ ...party } ]
@@ -41,6 +46,7 @@ export function engage(party: active|active[], mob: active|active[], cb:Function
 
     fini = cb
 
+    //  initialize for first encounter in engagement
     alive = [ parties[0].length, parties[1].length ]
     round = []
     retreat = false
@@ -50,13 +56,13 @@ export function engage(party: active|active[], mob: active|active[], cb:Function
 }
 
 //  new round of volleys
-export function attack() {
+export function attack(skip = false) {
 
     //  no more attacking
     if (retreat || ++volley > 99999) return
 
     if (!round.length) {
-        if (volley > 1) xvt.out(xvt.reset, '    -=', $.bracket('*', false), '=-\n')
+        if (volley > 1) xvt.out(xvt.reset, '\n    -=', $.bracket('*', false), '=-')
         //  lame for now
         for (let p in parties) {
             for (let m in parties[p]) {
@@ -66,8 +72,10 @@ export function attack() {
         }
     }
 
-    let n = round.shift()
+    let n = round[0]
+    if (!skip) n = round.shift()
     let rpc = parties[n.party][n.member]
+
     //  recovery?
     if (rpc.confused) {
         let mod = rpc.user.blessed ? 10 : rpc.user.cursed ? -10 : 0
@@ -83,21 +91,77 @@ export function attack() {
     if (rpc.user.id === $.player.id) {
         xvt.app.form = {
             'attack': {cb:() => {
+                xvt.out('\n\n')
+
                 if (/C/i.test(xvt.entry)) {
                     Battle.cast($.online, next)
-                    next()
                     return
                 }
+/*
+n = rpc->DEX + dice(rpc->INT) / 10;
+n += ((int)rpc->DEX - (int)enemy->DEX) / 2;
+n = (n < 5) ? 5 : (n > 95) ? 95 : n;
+n += 5 * (us - them);
+n = (n < 5) ? 5 : (n > 95) ? 95 : n;
+if(dice(100) > n) {
+    switch(dice(5)) {
+        case 1:
+            sprintf(outbuf, "You trip and fail in your attempt to retreat.");
+            break;
+        case 2:
+            sprintf(outbuf, "%s%s pulls you back into the battle.", (enemy->user.Gender == 'I' ? "The " : ""), enemy->user.Handle);
+            break;
+        case 3:
+            sprintf(outbuf, "%s%s prevents your retreat and says, \"I'm not through with you yet!\"", (enemy->user.Gender == 'I' ? "The " : ""), enemy->user.Handle);
+            break;
+        case 4:
+            sprintf(outbuf, "%s%s outmaneuvers you and says, \"You started this, I'm finishing it.\"", (enemy->user.Gender == 'I' ? "The " : ""), enemy->user.Handle);
+            break;
+        case 5:
+            sprintf(outbuf, "%s%s blocks your path and says, \"Where do you want to go today?\"", (enemy->user.Gender == 'I' ? "The " : ""), enemy->user.Handle);
+            break;
+    }
+    c = 'A';
+    break;
+}
+PLAYER.Current.Retreats++;
+PLAYER.History.Retreats++;
+sprintf(line[numline++], "%s, the coward, retreated from you.", PLAYER.Handle);
+*/
                 if (/R/i.test(xvt.entry)) {
+                    if (from === 'Taxman') {
+                        xvt.out('"You can never escape the taxman!"\n')
+                        xvt.app.refocus
+                        return
+                    }
+                    if(from === 'Tiny') {
+                        xvt.out('"You try to escape, but the crowd throws you back to witness the slaughter!"\n')
+                        xvt.app.refocus
+                        return
+                    }
+
                     retreat = true
+                    $.player.retreats++
+                    let who = $.player.gender === 'F' ? 'She' : 'He'
+                    xvt.out([
+                            'You are successful in your attempt to retreat.',
+                            'You limp away from the battle.',
+                            'You decide this isn\'t worth the effort.',
+                            'You listen to the voice in your head yelling, \"Run!\"',
+                            `You say, "${who} who fights and runs away lives to fight another day!"`
+                        ][$.dice(5)]
+                        , '\n'
+                    )
+                    fini()
                     return
                 }
+
                 if (/Y/i.test(xvt.entry)) {
                     yourstats()
                     xvt.app.refocus()
                     return
                 }
-                xvt.out('\n\n')
+
                 melee(rpc, enemy)
                 next()
                 return
@@ -173,35 +237,112 @@ export function attack() {
 
     next()
 
-    function next() {
+    function next(skip = false) {
 
         alive = []
         for (let p in parties) {
             alive.push(parties[p].length)
-            for (let m in parties[p]) {
-                if (parties[p][m].hp < 1) {
+            for (let m in parties[p])
+                if (parties[p][m].hp < 1)
                     alive[p]--
-                }
-            }
         }
 
         // attack stack
-        if (alive[0] && alive[1])
+        if (alive[0] && alive[1]) {
             attack()
-        else
-            fini()
+            return
+        }
+
+        spoils()
+        fini()
+    }
+}
+
+export function spoils() {
+    let winner: active
+    let loser: active
+    let l: number
+
+    // had a little help from my friends (maybe)
+    if (from === 'Party') {
+        return
+    }
+
+    if ($.online.hp) {
+        winner = $.online
+        l = 1
+    }
+    else {
+        winner = parties[1][0]
+        loser = $.online
+        l = 0
+    }
+
+    winner.altered = true
+    if (l) {
+        // player can collect off each corpse
+        let xp: number = 0
+        let coin = new $.coins(0)
+
+        for (let m in parties[l]) {
+            // defeated?
+            if (parties[l][m].hp == 0) {
+                loser = parties[l][m]
+                if (/Monster|User/.test(from)) {
+                    loser.user.status = winner.user.id
+                    winner.user.coward = false
+                    // dungeon: modf(EXP(RPC[1][i]->user.ExpLevel - 1.) / (20. - (1.5 * (double)nest)), &d);
+                    // user: modf(EXP(ENEMY.ExpLevel - 1) /3., &d);
+                    let x = loser.user.id ? 2 : 3
+                    xp += $.experience(loser.user.xplevel, x)
+                    if (winner.user.level < loser.user.xplevel)
+                        loser.user.xplevel = winner.user.level
+                }
+                else {
+                    xp += $.experience(loser.user.xplevel, 12)
+                }
+                if (loser.user.coin.value) {
+                    coin.value += loser.user.coin.value
+                    loser.user.coin.value = 0
+                    loser.altered = true
+                }
+                if ($.Weapon.swap(winner, loser))
+                    xvt.out($.who(winner, 'He'), 'take', winner == $.online ? '' : 's', $.who(loser, 'his'), winner.user.weapon, '.\n')
+                if ($.Armor.swap(winner, loser))
+                    xvt.out($.who(winner, 'He'), 'take', winner == $.online ? '' : 's', $.who(loser, 'his'), winner.user.armor, '.\n')
+            }
+        }
+        winner.user.xp += xp
+        xvt.out('You get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
+        winner.user.coin.value += coin.value
+        xvt.out('You get ', coin.carry(), $.who(loser, 'he'), 'was carrying.\n')
+    }
+    else {
+        if (winner.user.id) {
+            if ($.Weapon.swap(winner, loser))
+                xvt.out($.who(winner, 'He'), 'take', winner == $.online ? '' : 's', $.who(loser, 'his'), winner.user.weapon, '.\n')
+            if ($.Armor.swap(winner, loser))
+                xvt.out($.who(winner, 'He'), 'take', winner == $.online ? '' : 's', $.who(loser, 'his'), winner.user.armor, '.\n')
+        }
+        if (loser.user.coin.value) {
+            winner.user.coin.value += loser.user.coin.value
+            xvt.out($.who(winner, 'He'), 'gets ', loser.user.coin.carry(), ' you were carrying.\n')
+            loser.user.coin.value = 0
+            loser.altered = true
+        }
     }
 }
 
 export function cast(rpc: active, cb:Function) {
     if (rpc.user.id === $.player.id) {
         if (!$.player.spells.length) {
-            xvt.out('\nYou don\'t have any magic.\n')
+            xvt.out('You don\'t have any magic.\n')
             cb(true)
             return
         }
         xvt.app.form = {
             'magic': { cb: () => {
+                xvt.out('\n')
                 if (xvt.entry === '') {
                     cb()
                     return
@@ -247,7 +388,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         if (blow == 1) {
             if (rpc == $.online) {
                 xvt.out('Your ', rpc.user.weapon, ' passes through thin air.\n')
-                xvt.waste(250)
+                xvt.waste(500)
                 return
             }
             else {
@@ -257,11 +398,12 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                         , ' whistles by '
                         , enemy.user.gender === 'I' ? 'the ' : ''
                         , enemy == $.online ? 'you' : rpc.user.handle
-                        , '.')
+                        , '.\n')
                 else
                     xvt.out(rpc.user.gender === 'I' ? 'The ' : ''
                     , enemy == $.online ? 'you' : rpc.user.handle
-                    , ', but misses.')
+                    , ', but misses.\n')
+                return
             }
         }
         else {
@@ -317,6 +459,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             , action
             , enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
             , ' for ', hit.toString(), ' hit points', period, '\n')
+        xvt.waste(100)
     }
     else {
         let w = action.split(' ')
@@ -330,12 +473,12 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     enemy.hp -= hit
 
     if (enemy.hp < 1) {
-        enemy.hp = 0
+        enemy.hp = 0    // killed
         if (enemy == $.online) {
             $.player.killed++
             xvt.out('\n', xvt.bright, xvt.yellow
                 , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
-                , ' killed you!\n', xvt.reset)
+                , ' killed you!\n\n', xvt.reset)
             xvt.waste(500)
             $.reason = rpc.user.id.length ? `defeated by ${rpc.user.handle}`
                 : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`
@@ -345,9 +488,9 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             if (rpc == $.online) {
                 $.player.kills++
                 xvt.out('You killed'
-                    , enemy.user.gender == 'I' ? ' the ' : ' ', enemy.user.handle
-                    , '!\n\n')
-                xvt.waste(100)
+                    , enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
+                    , '!\n\n', xvt.reset)
+                xvt.waste(200)
                 // rpc.user.id.length ? `defeated ${enemy.user.handle}`
                 //    : `defeated a level ${enemy.user.level} ${enemy.user.handle}`
             }
@@ -360,7 +503,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
 export function poison(rpc: active, cb:Function) {
     if (rpc.user.id === $.player.id) {
         if (!$.player.poisons.length) {
-            xvt.out('\nYou don\'t have any poisons.\n')
+            xvt.out('You don\'t have any poisons.\n')
             cb(true)
             return
         }
@@ -410,17 +553,17 @@ export function poison(rpc: active, cb:Function) {
 
         xvt.out(xvt.reset, '\n')
         if (!$.Poison.have(rpc.user.poisons, vial) || +rpc.user.weapon < 0) {
-            xvt.out($.who(rpc.user), $.what(rpc.user, 'secrete'), 'a caustic ooze', $.buff(p, t), '.\n')
+            xvt.out($.who(rpc, 'He'), $.what(rpc, 'secrete'), 'a caustic ooze', $.buff(p, t), '.\n')
             xvt.waste(500)
         }
         else {
-            xvt.out($.who(rpc.user), $.what(rpc.user, 'pour')
+            xvt.out($.who(rpc, 'He'), $.what(rpc, 'pour')
                 , 'some ', $.Poison.merchant[+xvt.entry - 1]
-                , ' on ', $.who(rpc.user, false, false), rpc.user.weapon, '.\n')
+                , ' on ', $.who(rpc, 'his'), rpc.user.weapon, '.\n')
             xvt.waste(500)
             if (/^[A-Z]/.test(rpc.user.id)) {
                 if ($.dice(3 * (rpc.toWC + rpc.user.toWC + 1)) / rpc.user.poison > $.Weapon.name[rpc.user.weapon].wc) {
-                    xvt.out($.who(rpc.user, false), rpc.user.weapon, ' vaporizes!\n')
+                    xvt.out($.who(rpc, 'His'), rpc.user.weapon, ' vaporizes!\n')
                     xvt.waste(500)
                     rpc.user.weapon = $.Weapon.merchant[0]
                     rpc.toWC = 0
@@ -508,21 +651,24 @@ export function user(venue: string, cb:Function) {
 }
 
 export function yourstats() {
-    xvt.out(xvt.reset, '\n')
+    xvt.out(xvt.reset)
     xvt.out(xvt.cyan, 'Str:', xvt.bright, $.online.str > $.player.str ? xvt.yellow : $.online.str < $.player.str ? xvt.red : xvt.white)
-    xvt.out(sprintf('%3d (%d,%d)    ', $.online.str , $.player.str, $.player.maxstr), xvt.nobright)
+    xvt.out(sprintf('%3d', $.online.str), xvt.reset, sprintf(' (%d,%d)    ', $.player.str, $.player.maxstr))
     xvt.out(xvt.cyan, 'Int:', xvt.bright, $.online.int > $.player.int ? xvt.yellow : $.online.int < $.player.int ? xvt.red : xvt.white)
-    xvt.out(sprintf('%3d (%d,%d)    ', $.online.int , $.player.int, $.player.maxint), xvt.nobright)
+    xvt.out(sprintf('%3d', $.online.int), xvt.reset, sprintf(' (%d,%d)    ', $.player.int, $.player.maxint))
     xvt.out(xvt.cyan, 'Dex:', xvt.bright, $.online.dex > $.player.dex ? xvt.yellow : $.online.dex < $.player.dex ? xvt.red : xvt.white)
-    xvt.out(sprintf('%3d (%d,%d)    ', $.online.dex , $.player.dex, $.player.maxdex), xvt.nobright)
+    xvt.out(sprintf('%3d', $.online.dex), xvt.reset, sprintf(' (%d,%d)    ', $.player.dex, $.player.maxdex))
     xvt.out(xvt.cyan, 'Cha:', xvt.bright, $.online.cha > $.player.cha ? xvt.yellow : $.online.cha < $.player.cha ? xvt.red : xvt.white)
-    xvt.out(sprintf('%3d (%d,%d)    ', $.online.cha , $.player.cha, $.player.maxcha))
-    xvt.out(xvt.reset, '\n')
-    xvt.out(xvt.cyan, 'Hit points: ', xvt.bright, $.online.hp > $.player.hp ? xvt.yellow : $.online.hp < $.player.hp ? xvt.red : xvt.white)
-    xvt.out(sprintf('%d/%d', $.online.hp , $.player.hp), xvt.nobright)
+    xvt.out(sprintf('%3d', $.online.cha), xvt.reset, sprintf(' (%d,%d)', $.player.cha, $.player.maxcha), '\n')
+    xvt.out(xvt.cyan, 'Hit points: '
+        , xvt.bright, $.online.hp > $.player.hp ? xvt.yellow : $.online.hp == $.player.hp ? xvt.white : xvt.red, $.online.hp.toString()
+        , xvt.reset, '/', $.player.hp.toString()
+    )
     if ($.player.sp) {
-        xvt.out(xvt.cyan, '    Spell points: ', xvt.bright, $.online.sp > $.player.sp ? xvt.yellow : $.online.sp < $.player.sp ? xvt.red : xvt.white)
-        xvt.out(sprintf('%d/%d', $.online.sp , $.player.sp), xvt.nobright)
+        xvt.out(xvt.cyan, '    Spell points: '
+            , xvt.bright, $.online.sp > $.player.sp ? xvt.yellow : $.online.sp == $.player.sp ? xvt.white : xvt.red, $.online.sp.toString()
+            , xvt.reset, '/', $.player.sp.toString()
+        )
     }
     if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry())
     xvt.out(xvt.reset, '\n')
@@ -532,6 +678,7 @@ export function yourstats() {
     xvt.out($.buff($.player.toAC, $.online.toAC), xvt.nobright)
     xvt.out(xvt.reset, '\n')
 }
+
 }
 
 export = Battle

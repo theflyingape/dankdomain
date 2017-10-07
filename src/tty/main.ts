@@ -82,7 +82,7 @@ function choice() {
             xvt.out('\n')
             xvt.out(xvt.Blue, xvt.white)
             xvt.out(' ID   Player\'s Handle           Class    Lvl  Status  Party               \n')
-            xvt.out('--------------------------------------------------------------------------\n', xvt.reset)
+            xvt.out('--------------------------------------------------------------------------', xvt.reset, '\n')
 
             let rows = db.query(`
                 SELECT id, handle, pc, level, status, gang FROM Players

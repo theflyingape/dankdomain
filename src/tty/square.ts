@@ -168,7 +168,7 @@ function choice() {
 			}
 			xvt.out('\nWelcome to Butler Hospital.\n\n')
 			xvt.out('Hit points cost ', $.player.level, 'each.\n')
-			xvt.out('You need ', hi, ' hit points.\n')
+			xvt.out('You need ', hi.toString(), ' hit points.\n')
 			lo = Math.trunc($.player.coin.value / $.player.level)
 			xvt.out('You can afford ', lo < hi ? lo.toString() : 'all your', ' hit points.\n')
 			if (lo < hi) {
@@ -179,7 +179,19 @@ function choice() {
 			}
 			xvt.app.form = {
 				'hp': { cb: () => {
-					//	TO DO
+					xvt.out('\n')
+					let buy = Math.abs(Math.trunc(/max/i.test(xvt.entry) ? hi : +xvt.entry))
+					if (buy > 0 && buy <= hi) {
+						$.player.coin.value -= buy * $.player.level
+						if ($.player.coin.value < 0) {
+							if (!$.player.novice)
+								$.player.loan.value -= $.player.coin.value
+							$.player.coin.value = 0
+						}
+						$.online.hp += buy
+						xvt.beep()
+						xvt.out('\nHit points = ', $.online.hp.toString(), '\n')
+					}
 					menu(true)
 					return
 				}, max:5 }
@@ -581,6 +593,7 @@ function buy() {
 				$.online.toAC = 0
 				xvt.out(' - ', $.player.armor, '\n')
 				$.player.coin.value += credit.value - cost.value
+				$.Armor.equip($.online, $.player.armor)
 				$.online.altered = true
 			}
 			break
@@ -639,6 +652,7 @@ function buy() {
 				$.online.toWC = 0
 				xvt.out(' - ', $.player.weapon, '\n')
 				$.player.coin.value += credit.value - cost.value
+				$.Weapon.equip($.online, $.player.weapon)
 				$.online.altered = true
 			}
 			break

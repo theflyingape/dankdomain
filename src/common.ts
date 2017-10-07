@@ -25,6 +25,7 @@ module Common
     export let barkeep: active = { user: { id:'_BAR'} }
     export let seahag: active = { user: { id:'_OLD'} }
     export let taxman: active = { user: { id:'_TAX'} }
+    export let king: user
     export let online: active = { user: { id:'' } }
     export let player: user = online.user
     export let sysop: user = { id:'_SYS' }
@@ -132,6 +133,7 @@ module Common
 
         stats(profile: active) {
             const line = '------------------------------------------------------'
+            const space = '                                                      '
             var i: number
             var n: number
 
@@ -143,6 +145,13 @@ module Common
             n = 11 + i / 2 + i % 2
             xvt.out(xvt.blue, '((:=', line.slice(0, n), '+\n')
 
+            i = 30 - Access.name[profile.user.access][profile.user.gender].length
+            n = 11 + i / 2
+            xvt.out(xvt.blue, '|', xvt.Blue, xvt.white, space.slice(0, n))
+            xvt.out('"', Access.name[profile.user.access][profile.user.gender], '"')
+            n = 11 + i / 2 + i % 2
+            xvt.out(xvt.blue, space.slice(0, n), xvt.reset, xvt.blue, '|\n')
+            
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
             xvt.out('    Title: ', xvt.white)
             xvt.out(sprintf('%-20s', profile.user.access))
@@ -163,10 +172,10 @@ module Common
             xvt.out(' Immortal: ', xvt.white)
             xvt.out(sprintf('%-20s', profile.user.immortal + '.' + profile.user.level))
             xvt.out(xvt.cyan, ' Need: ', xvt.white)
-            if (explevel(profile.user.level) < 1e+8)
-                xvt.out(sprintf('%-15f', explevel(profile.user.level)))
+            if (experience(profile.user.level, undefined, profile.user.int) < 1e+8)
+                xvt.out(sprintf('%-15f', experience(profile.user.level, undefined, profile.user.int)))
             else
-                xvt.out(sprintf('%-15.7e', explevel(profile.user.level)))
+                xvt.out(sprintf('%-15.7e', experience(profile.user.level, undefined, profile.user.int)))
             xvt.out(' ', xvt.reset, xvt.blue, '|\n')
 
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
@@ -445,72 +454,80 @@ export function activate(one: active) {
     }
 }
 
-export function checkXP(profile: active) {
+export function checkXP(rpc: active) {
 
-    if (!Access.name[profile.user.access]) return
-    if (profile.user.xp < explevel(profile.user.level)) return
+    if (!Access.name[rpc.user.access]) return
+    if (rpc.user.xp < experience(rpc.user.level, undefined, rpc.user.int)) return
 
     let award = {
-        hp: profile.user.hp,
-        sp: profile.user.sp,
-        str: profile.user.str,
-        int: profile.user.int,
-        dex: profile.user.dex,
-        cha: profile.user.cha
+        hp: rpc.user.hp,
+        sp: rpc.user.sp,
+        str: rpc.user.str,
+        int: rpc.user.int,
+        dex: rpc.user.dex,
+        cha: rpc.user.cha
     }
-    let eligible = profile.user.level < sysop.level / 2
+    let eligible = rpc.user.level < sysop.level / 2
     let bonus = false
     let jumped = 0
     let i: number
 
-    while (profile.user.xp >= explevel(profile.user.level)) {
-        profile.user.level++
+    while (rpc.user.xp >= experience(rpc.user.level, undefined, rpc.user.int)) {
+        rpc.user.level++
         jumped++
 
-        if (profile.user.level == Access.name[profile.user.access].promote) {
-            let title = Object.keys(Access).indexOf(profile.user.access)
-            profile.user.access = Object.keys(Access)[++title]
-            xvt.waste(125)
+        if (rpc.user.level == Access.name[rpc.user.access].promote) {
+            let title = Object.keys(Access.name).indexOf(rpc.user.access)
+            do {
+                rpc.user.access = Object.keys(Access.name)[++title]
+            } while (!xvt.validator.isDefined(Access.name[rpc.user.access][rpc.user.gender]))
+            xvt.waste(250)
             xvt.out(xvt.reset, '\n')
-            xvt.waste(125)
-		    xvt.out(xvt.bright, xvt.yellow, 'The king is pleased with your accomplishments and promotes you to '
-                , profile.user.name, '!\n')
-            xvt.waste(125)
+            xvt.waste(250)
+            xvt.out(xvt.bright, xvt.yellow
+                , Access.name[king.access][king.gender], ', ', king.handle
+                , ', is pleased with your accomplishments and promotes you to '
+                , rpc.user.access, '!\n')
+            xvt.waste(250)
             xvt.out(xvt.reset, '\n')
-            xvt.waste(125)
+            xvt.waste(250)
         }
 
-		profile.user.hp += profile.user.level + dice(profile.user.level) + profile.user.str /
- 10 + (profile.user.str > 90 ? profile.user.str - 90 : 0)
+		rpc.user.hp += Math.round(rpc.user.level + dice(rpc.user.level) + rpc.user.str / 10 + (rpc.user.str > 90 ? rpc.user.str - 90 : 0))
 
-		if (profile.user.magic > 1)
-			profile.user.sp += profile.user.level + dice(profile.user.level) + profile.user.int /
- 10 + (profile.user.int > 90 ? profile.user.int - 90 : 0)
+		if (rpc.user.magic > 1)
+			rpc.user.sp += Math.round(rpc.user.level + dice(rpc.user.level) + rpc.user.int / 10 + (rpc.user.int > 90 ? rpc.user.int - 90 : 0))
 
-		profile.user.str = PC.ability(profile.user.str, PC.name[profile.user.pc].toStr, profile.user.maxstr)
-		profile.user.int = PC.ability(profile.user.int, PC.name[profile.user.pc].toInt, profile.user.maxint)
-		profile.user.dex = PC.ability(profile.user.dex, PC.name[profile.user.pc].toDex, profile.user.maxdex)
-		profile.user.cha = PC.ability(profile.user.cha, PC.name[profile.user.pc].toCha, profile.user.maxcha)
+		rpc.user.str = PC.ability(rpc.user.str, PC.card(rpc.user.pc).toStr, rpc.user.maxstr)
+		rpc.user.int = PC.ability(rpc.user.int, PC.card(rpc.user.pc).toInt, rpc.user.maxint)
+		rpc.user.dex = PC.ability(rpc.user.dex, PC.card(rpc.user.pc).toDex, rpc.user.maxdex)
+		rpc.user.cha = PC.ability(rpc.user.cha, PC.card(rpc.user.pc).toCha, rpc.user.maxcha)
 
-        if (eligible && profile.user.level == sysop.level / 2) {
+        if (eligible && rpc.user.level == sysop.level / 2) {
             bonus = true
             break
         }
     }
 
-	profile.user.xplevel = profile.user.level
-    award.hp = profile.user.hp - award.hp
-    award.sp = profile.user.sp - award.sp
-    profile.hp += award.hp
-    profile.sp += award.sp
+	rpc.user.xplevel = rpc.user.level
+    award.hp = rpc.user.hp - award.hp
+    award.sp = rpc.user.sp - award.sp
+    rpc.hp += award.hp
+    rpc.sp += award.sp
 
-    i = profile.user.blessed ? 10 : profile.user.cursed ? -10 : 0
-    profile.str = PC.ability(profile.str, profile.user.str - award.str, profile.user.maxstr, i)
-    profile.int = PC.ability(profile.int, profile.user.int - award.int, profile.user.maxint, i)
-    profile.dex = PC.ability(profile.dex, profile.user.dex - award.dex, profile.user.maxdex, i)
-    profile.cha = PC.ability(profile.cha, profile.user.cha - award.cha, profile.user.maxcha, i)
-
-    if (profile.user.id === online.user.id) {
+    i = rpc.user.blessed ? 10 : 0
+    i = rpc.user.cursed ? i - 10 : i
+    rpc.str = PC.ability(rpc.str, rpc.user.str - award.str, rpc.user.maxstr, i)
+    rpc.int = PC.ability(rpc.int, rpc.user.int - award.int, rpc.user.maxint, i)
+    rpc.dex = PC.ability(rpc.dex, rpc.user.dex - award.dex, rpc.user.maxdex, i)
+    rpc.cha = PC.ability(rpc.cha, rpc.user.cha - award.cha, rpc.user.maxcha, i)
+    award.str = rpc.user.str - award.str
+    award.int = rpc.user.int - award.int
+    award.dex = rpc.user.dex - award.dex
+    award.cha = rpc.user.cha - award.cha
+    
+    if (rpc == online) {
+        online.altered = true
         xvt.out('\n')
         xvt.waste(125)
         xvt.out('      ', xvt.magenta, '-=', xvt.blue, '>'
@@ -519,32 +536,32 @@ export function checkXP(profile: active) {
 		xvt.waste(125)
         xvt.out('\n')
         xvt.waste(125)
-        xvt.out(xvt.bright, xvt.yellow, 'Welcome to level ', profile.user.level.toString(), '!\n', xvt.reset)
+        xvt.out(xvt.bright, xvt.yellow, 'Welcome to level ', player.level.toString(), '!\n', xvt.reset)
 		xvt.waste(125)
         xvt.out('\n')
         xvt.waste(125)
 
-        if (profile.user.level <= sysop.level) {
-            xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.hp), xvt.reset, 'Hit points\n')
+        if (player.level <= sysop.level) {
+            xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.hp), xvt.reset, ' Hit points\n')
             xvt.waste(125)
             if(award.sp) {
-                xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.sp), xvt.reset, 'Spell points\n')
+                xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.sp), xvt.reset, ' Spell points\n')
                 xvt.waste(125)
             }
             if(award.str) {
-                xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.str), xvt.reset, 'Strength\n')
+                xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.str), xvt.reset, ' Strength\n')
                 xvt.waste(125)
             }
             if(award.int) {
-                xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.int), xvt.reset, 'Intellect\n')
+                xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.int), xvt.reset, ' Intellect\n')
                 xvt.waste(125)
             }
             if(award.dex) {
-                xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.dex), xvt.reset, 'Dexterity\n')
+                xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.dex), xvt.reset, ' Dexterity\n')
                 xvt.waste(125)
             }
             if(award.cha) {
-                xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.cha), xvt.reset, 'Charisma\n')
+                xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.cha), xvt.reset, ' Charisma\n')
                 xvt.waste(125)
             }
             xvt.out('\n')
@@ -658,8 +675,13 @@ export function dice(faces: number): number {
     return Math.trunc(Math.random() * faces) + 1
 }
 
-export function explevel(level: number): number {
-    return 1000 * Math.pow(2, level - 1)
+export function experience(level: number, factor = 1, wisdom = 1000): number {
+    // calculate need to accrue based off PC intellect capacity
+    if (wisdom < 1000) wisdom = (1100 + level - 2 * wisdom)
+
+    return factor == 1
+        ? Math.round(wisdom * Math.pow(2, level - 1))
+        : Math.trunc(wisdom * Math.pow(2, level - 2) / factor)
 }
 
 export function money(level: number): number {
@@ -744,9 +766,10 @@ export function playerPC(points = 200) {
             xvt.app.refocus()
             return
         }
-        if (n < 1 || n > Object.keys(PC.name['player']).length) {
+        if (n < 1 || n > Object.keys(classes).length) {
             xvt.beep()
             xvt.app.refocus()
+            return
         }
         reroll(player, classes[n])
         show()
@@ -989,7 +1012,7 @@ export function reroll(user: user, dd = 'None', level = 1) {
         user.loan = new coins(0)
         user.gender = user.sex
         //  force a verify if their access allows it
-        if (!user.novice) user.email = ''
+        if (!user.novice && !Access.name[player.access].sysop) user.email = ''
     }
 
     if (level == 1 || xvt.validator.isEmpty(user.id) || user.id[0] === '_') {
@@ -1039,41 +1062,21 @@ export function titlecase(orig: string): string {
     return titleCase(orig)
 }
 
-export function what(user: user, action: string) {
-    return action + (user.id !== player.id ? 's ' : ' ')
+export function what(rpc: active, action: string): string {
+    return action + (rpc != online ? 's ' : ' ')
 }
 
-export function who(user: user, subject = true, start = true, proper = true) {
-    let pronoun = [
-            [{
-                'F': { word: 'her ' },
-                'I': { word: 'its ' },
-                'M': { word: 'his ' },
-                'U': { word: 'your ' }
-            },
-            {
-                'F': { word: 'Her ' },
-                'I': { word: 'Its ' },
-                'M': { word: 'His ' },
-                'U': { word: 'Your ' },
-            }]
-        ,
-            [{
-                'F': { word: proper ? user.handle : 'her' },
-                'I': { word: proper ? 'the ' + user.handle : 'it' },
-                'M': { word: proper ? user.handle : 'him' },
-                'U': { word: 'you' }
-            },
-            {
-                'F': { word: proper ? user.handle : 'She ' },
-                'I': { word: proper ? 'The ' + user.handle : 'It ' },
-                'M': { word: proper ? user.handle : 'He ' },
-                'U': { word: 'You ' }
-            }]
-        ]
+export function who(rpc: active, word: string): string {
+    let result = {
+        He:  { M:'He ',   F:'She ',  I:'It ',   U:'You ' },
+        His: { M:'His ',  F:'Her ',  I:'Its ',  U:'Your ' },
+        he:  { M:' he ',  F:' she ', I:' it ',  U:' you ' },
+        him: { M:' him',  F:' her',  I:' it',   U:'s you' },
+        his: { M:' his ', F:' her ', I:' its ', U:' your ' }
+    }
 
-    let gender = user.id === player.id ? 'U' : user.gender
-    return pronoun[+subject][+start][gender].word
+    let gender = rpc == online ? 'U' : rpc.user.gender
+    return result[word][gender]
 }
 
 export function worth(n: number, p: number) {
@@ -1151,6 +1154,7 @@ export function display(title:string, back:number, fore:number, suppress:boolean
             }
         }
     }
+    checkXP(online)
     return xvt.attr(fore, '[', xvt.bright, xvt.yellow, back ? titlecase(title) : 'Bank', xvt.nobright, fore, ']', xvt.cyan, ' Option (Q=Quit): ')
 }
 
@@ -1193,7 +1197,7 @@ export function logoff() {
                 require('./database').saveUser(player)
             }
             try { callers = require('./users/callers') } catch(e) {}
-            while (callers.length > 4)
+            while (callers.length > 7)
                 callers.pop()
             callers = [<caller>{who: player.handle, reason: reason}].concat(callers)
             fs.writeFileSync('./users/callers.json', JSON.stringify(callers))
