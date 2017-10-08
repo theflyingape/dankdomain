@@ -23,8 +23,6 @@ module ttyMain
     xvt.defaultTimeout = 120
     xvt.modem = true
     xvt.out('\nCARRIER DETECTED\n')
-    if (xvt.validator.isNotEmpty(process.env.npm_package_version))
-        process.title += ' ' + process.env.npm_package_version
 
     if (process.argv.length < 3) {
         //  try a remote query for terminal emulation auto-detection
@@ -47,7 +45,12 @@ module ttyMain
 
     //  allow hardcopy and monochrome terminals to still play!  :)
     if (!xvt.emulation.match('VT|PC|XT'))                               xvt.emulation = 'dumb'
-    process.title += ' (' + xvt.emulation + ')'
+
+    let title = process.title
+    if (xvt.validator.isNotEmpty(process.env.npm_package_version))
+        title += ' ' + process.env.npm_package_version
+    title += ' (' + xvt.emulation + ')'
+    xvt.out('\x1B]2;', title, '\x07')
 
     //  initiate user login sequence: id, handle, or a new registration
     require('./tty/logon')
