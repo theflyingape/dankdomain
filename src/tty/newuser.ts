@@ -149,7 +149,7 @@ function edit() {
 	}
 
 	$.reason = 'new user registration'
-	require('../email')
+	require('../email').newuser()
 }
 
 }

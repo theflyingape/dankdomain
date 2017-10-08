@@ -15,13 +15,14 @@ module Email
 
     xvt.app.form = {
         'email': { cb:email, prompt:'Enter your e-mail address now: ', min:8 },
-        'check': { cb:check, prompt:'Re-enter to verify: ' }
+        'check': { cb:check, prompt:'Re-enter email to verify: ' }
     }
 
+export function newuser() {
     xvt.beep()
     xvt.out('\n\nYour account requires a validated e-mail address.\n')
     xvt.app.focus = 'email'
-
+}
 
 function email() {
     $.player.email = xvt.entry.toLowerCase()
@@ -46,18 +47,34 @@ function check() {
     $.player.password = String.fromCharCode(64 + $.dice(26)) + String.fromCharCode(96 + $.dice(26)) + $.dice(999) + '!@#$%^&*'[$.dice(8) - 1]
 
     let message = require('./etc/newuser.json')
-    Deliver($.player, 'secret keys to the gate', message)
+    Deliver($.player, 'secret keys to the gate', false, message)
 }
 
-export async function Deliver(player: user, what: string, mailOptions: nodemailer.SendMailOptions) {
+export function resend() {
+    xvt.app.form['check'].cb = () => {
+        let check = xvt.entry.toLowerCase()
+        if ($.player.email !== check) {
+            xvt.beep()
+            xvt.out('\nYour entry does not match what is registered.\n')
+            xvt.hangup()
+        }
+        let message = require('./etc/resend.json')
+        Deliver($.player, 'secret keys (again) to the gate', true, message)
+    }
+    xvt.app.form['check'].max = $.player.email.length
+    xvt.app.focus = 'check'
+}
+
+export async function Deliver(player: user, what: string, repeat: boolean, mailOptions: nodemailer.SendMailOptions) {
     xvt.out('\n\n', xvt.magenta, xvt.bright)
     let royalty = Object.keys($.Access.name).slice($.player.gender === 'F' ? -2 : -1)[0]
-    xvt.out(`The ${royalty} orders the royal scribe to dispatch ${what}\nfor ${$.player.handle} <${$.player.email}> `, xvt.reset)
+    xvt.out(`The ${royalty} orders the royal scribe to dispatch ${what}\nfor ${$.player.handle} ` + (!repeat ? `<${$.player.email}> ` : ''), xvt.reset)
     if ($.player.email !== $.sysop.email)
         await Message(player, mailOptions)
     else {
         xvt.out(' ...skipping delivery... \nCheck SQLite3 table for relevant information.\n')
-        db.saveUser(player, true)
+        if ($.reason.length)
+            db.saveUser(player, true)
     }
     xvt.out('\n')
     xvt.waste(1000)
@@ -92,8 +109,10 @@ async function Message(player: user, mailOptions: nodemailer.SendMailOptions) {
                 }
                 else {
                     xvt.out('\n', info.response)
-                    db.saveUser(player, true)
-                    xvt.out('\nYour user ID (', xvt.bright, player.id, xvt.nobright, ') was saved, ', $.Access.name[player.access][player.gender], '.\n')
+                    if ($.reason.length) {
+                        db.saveUser(player, true)
+                        xvt.out('\nYour user ID (', xvt.bright, player.id, xvt.nobright, ') was saved, ', $.Access.name[player.access][player.gender], '.\n')
+                    }
                     result = true
                 }
             })

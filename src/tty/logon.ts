@@ -28,7 +28,7 @@ module Logon
     xvt.app.focus = 'who'
 
 
-function guards() {
+function guards(): boolean {
     xvt.beep()
     xvt.out(xvt.reset, 'Invalid response.\n\n')
     xvt.waste(500)
@@ -43,9 +43,31 @@ function guards() {
         default:
             xvt.out('The last thing you ever feel is several quarrels cutting deep into your chest.\n')
             xvt.waste(1000)
-            process.exit()
-            break
+            xvt.app.form = {
+                'forgot': { cb:() => {
+                    if (/Y/i.test(xvt.entry)) {
+                        if ($.player.lastdate != $.now().date)
+                            $.player.today = 0
+                        $.player.lastdate = $.now().date
+                        $.player.lasttime = $.now().time
+                        db.saveUser($.player)
+                        require('../email').resend()
+                        return
+                    }
+                    else {
+                        xvt.out('\n')
+                        process.exit()
+                    }
+                }, prompt:'DOH!!  Re-send the password to your email account (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i }
+            }
+            if ($.player.id && $.player.lastdate != $.now().date)
+                xvt.app.focus = 'forgot'
+            else
+                process.exit()
+            return false
     }
+
+    return true
 }
 
 function who() {
@@ -66,8 +88,8 @@ function who() {
         $.player.id = ''
         $.player.handle = xvt.entry
         if(!db.loadUser($.player)) {
-            guards()
-            xvt.app.refocus()
+            if (guards())
+                xvt.app.refocus()
             return
         }
     }
@@ -81,8 +103,8 @@ function who() {
 function password() {
     xvt.out('\n')
     if ($.player.password !== xvt.entry) {
-        guards()
-        xvt.app.refocus()
+        if (guards())
+            xvt.app.refocus()
         return
     }
 

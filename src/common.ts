@@ -1220,7 +1220,8 @@ export function logoff() {
         xvt.out(xvt.reset, '\n')
         xvt.waste(500)
         xvt.out(xvt.bright, xvt.black, process.title
-            , xvt.nobright, xvt.white, ' ', process.env.npm_package_version, ' running on ', xvt.bright, xvt.green, 'Node.js ', xvt.nobright, process.version, ' '
+            , xvt.nobright, xvt.white, xvt.validator.isNotEmpty(process.env.npm_package_version) ? ' ' + process.env.npm_package_version : ''
+            , ' running on ', xvt.bright, xvt.green, 'Node.js ', xvt.nobright, process.version, ' '
             , xvt.bright, xvt.black, '(', xvt.nobright, xvt.cyan, process.platform, xvt.bright, xvt.black, ')'
             , xvt.reset, '\n'
         )

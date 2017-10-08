@@ -153,6 +153,7 @@ function choice() {
                     if (xvt.entry.length < 4) {
                         xvt.beep()
                         menu()
+                        return
                     }
                     newpassword = xvt.entry
                     xvt.app.form['check'].max = xvt.entry.length
