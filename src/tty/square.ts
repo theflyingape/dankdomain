@@ -167,7 +167,7 @@ function choice() {
 				break
 			}
 			xvt.out('\nWelcome to Butler Hospital.\n\n')
-			xvt.out('Hit points cost ', $.player.level, 'each.\n')
+			xvt.out('Hit points cost ', $.player.level.toString(), 'each.\n')
 			xvt.out('You need ', hi.toString(), ' hit points.\n')
 			lo = Math.trunc($.player.coin.value / $.player.level)
 			xvt.out('You can afford ', lo < hi ? lo.toString() : 'all your', ' hit points.\n')
