@@ -67,7 +67,7 @@ function choice() {
 			let ac = $.Armor.name[$.player.armor].ac
 			xvt.out('\nYou own a class ', $.bracket(ac, false), ' ', $.player.armor, $.buff($.player.toAC, $.online.toAC))
 			if (ac) {
-				credit.value = $.worth(new $.coins($.Armor.name[$.player.armor].value).value, $.player.cha)
+				credit.value = $.worth(new $.coins($.Armor.name[$.player.armor].value).value, $.online.cha)
 				if ($.player.toAC) credit.value += Math.trunc(credit.value * (ac + $.player.toAC) / ac)
 				if ($.online.toAC < 0) credit.value += Math.trunc(credit.value * (ac + $.online.toAC) / ac)
 			}
@@ -91,8 +91,8 @@ function choice() {
 
 		case 'B':
 			if (!$.access.roleplay) break
-			credit.value = $.worth(new $.coins($.RealEstate.name[$.player.realestate].value).value, $.player.cha)
-			credit.value += $.worth(new $.coins($.Security.name[$.player.security].value).value, $.player.cha)
+			credit.value = $.worth(new $.coins($.RealEstate.name[$.player.realestate].value).value, $.online.cha)
+			credit.value += $.worth(new $.coins($.Security.name[$.player.security].value).value, $.online.cha)
 			credit.value -= $.player.loan.value
 			if (credit.value < 0) credit.value = 0
 
@@ -234,7 +234,10 @@ function choice() {
 
 		case 'P':
 			if (!$.access.roleplay) break
-			if (!$.Access.name[$.player.access].roleplay || $.player.novice) break
+			if ($.player.novice) {
+				xvt.out('\nNovice players cannot rob.\n')
+				break
+			}
 			xvt.out('\nYou attempt to pick a passerby\'s pocket... ')
 			xvt.waste(1000)
 			credit.value = $.dice(Math.trunc(5 *  $.money($.player.level) / $.dice(10)))
@@ -247,6 +250,8 @@ function choice() {
 				xvt.waste(750)
 				$.player.status = 'jail'
 				$.reason = 'caught picking a pocket'
+				xvt.hangup()
+				return
 			}
 			else {
 				$.player.coin.value += credit.value
@@ -261,7 +266,7 @@ function choice() {
 			if (!$.access.roleplay) break
 			let re = $.RealEstate.name[$.player.realestate].protection
 			xvt.out('You live in a ', $.player.realestate)
-			credit.value = $.worth(new $.coins($.RealEstate.name[$.player.realestate].value).value, $.player.cha)
+			credit.value = $.worth(new $.coins($.RealEstate.name[$.player.realestate].value).value, $.online.cha)
 			xvt.out(' worth ', credit.carry(), '\n')
 
 			max = $.RealEstate.merchant.length - 1
@@ -279,7 +284,7 @@ function choice() {
 			if (!$.access.roleplay) break
 			let s = $.Security.name[$.player.security].protection
 			xvt.out('You are guarded by a ', $.player.security)
-			credit.value = $.worth(new $.coins($.Security.name[$.player.security].value).value, $.player.cha)
+			credit.value = $.worth(new $.coins($.Security.name[$.player.security].value).value, $.online.cha)
 			xvt.out(' worth ', credit.carry(), '\n')
 
 			max = $.Security.merchant.length - 1
@@ -324,7 +329,7 @@ function choice() {
 			let wc = $.Weapon.name[$.player.weapon].wc
 			xvt.out('\nYou own a class ', $.bracket(wc, false), ' ', $.player.weapon, $.buff($.player.toWC, $.online.toWC))
 			if (wc) {
-				credit.value = $.worth(new $.coins($.Weapon.name[$.player.weapon].value).value, $.player.cha)
+				credit.value = $.worth(new $.coins($.Weapon.name[$.player.weapon].value).value, $.online.cha)
 				if ($.player.toWC) credit.value += Math.trunc(credit.value * (wc + $.player.toWC) / wc)
 				if ($.online.toWC < 0) credit.value += Math.trunc(credit.value * (wc + $.online.toWC) / wc)
 			}

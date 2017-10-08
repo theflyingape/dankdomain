@@ -1081,7 +1081,7 @@ export function who(rpc: active, word: string): string {
     return result[word][gender]
 }
 
-export function worth(n: number, p: number) {
+export function worth(n: number, p: number): number {
     return Math.trunc(n * p / 100)
 }
 

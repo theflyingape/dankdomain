@@ -120,7 +120,7 @@ function choice() {
             xvt.app.form = {
                 'yn': { cb: () => {
                     xvt.out('\n')
-                    if (xvt.entry.toUpperCase() === 'Y') {
+                    if (/Y/i.test(xvt.entry)) {
                         if (!$.reason.length) $.reason = 'logged off as a level ' + $.player.level + ' ' + $.player.pc
                         xvt.hangup()
                     }
@@ -130,6 +130,126 @@ function choice() {
             xvt.app.focus = 'yn'
             return
 
+        case 'R':
+            if (!$.access.roleplay) break
+            if ($.player.novice) {
+                xvt.out('\nNovice players cannot rob.\n')
+                suppress = true
+                break
+            }
+            xvt.out('\nIt is a hot, moonless night.\n')
+            xvt.out('A city guard walks down another street.\n')
+            let self = $.worth(new $.coins($.online.armor.value).value, $.online.cha)
+            self += $.worth(new $.coins($.online.weapon.value).value, $.online.cha)
+            self += $.player.coin.value + $.player.bank.value - $.player.loan.value
+            self = Math.trunc(self / (6 + $.player.steal))
+
+            Battle.user('Rob', (opponent: active) => {
+				if (opponent.user.id === $.player.id) {
+					opponent.user.id = ''
+					xvt.out('\nYou can\'t rob yourself.\n')
+				}
+				else if (opponent.user.novice) {
+					opponent.user.id = ''
+					xvt.out('\nYou can\'t rob novice players.\n')
+                }
+                else if ($.player.level - opponent.user.level > 3) {
+					opponent.user.id = ''
+					xvt.out('\nYou can only rob someone higher or up to three levels below you.\n')
+				}
+				if (opponent.user.id === '') {
+					menu(true)
+					return
+				}
+
+                xvt.out('\nYou case ', opponent.user.handle, '\'s joint out.\n')
+                xvt.waste(500)
+                let prize = $.worth(new $.coins($.Armor.name[opponent.user.armor].value).value, $.online.cha)
+                prize += $.worth(new $.coins($.Weapon.name[opponent.user.weapon].value).value, $.online.cha)
+                prize += opponent.user.coin.value
+                prize = Math.trunc(prize / (6 - $.player.steal))
+
+                if ($.dice($.online.int) > 5 && prize < self) {
+                    xvt.out('But you decide it is not worth the effort.\n')
+					menu(true)
+					return
+                }
+
+                xvt.out('The goods are in '
+                    , $.an(opponent.user.realestate), opponent.user.realestate
+                    ,  ' protected by '
+                    , $.an(opponent.user.security), opponent.user.security
+                    , '.\n'
+                )
+
+                xvt.app.form = {
+                    'yn': { cb: () => {
+                        xvt.out('\n')
+                        if (/Y/i.test(xvt.entry)) {
+							xvt.out('\nYou slide into the shadows and make your attempt ')
+                            xvt.waste(500)
+                            let lock = 5 * ($.Security.name[opponent.user.security].protection + 1) + $.RealEstate.name[opponent.user.realestate].protection
+                            let skill = Math.round($.player.steal * $.online.dex * $.online.int / 10000)
+                            for (let pick = 0; pick < $.player.steal; pick++) {
+                                xvt.out('. ')
+                                xvt.waste(500)
+                                skill += $.dice(100 + $.player.steal) < 100 ? $.dice($.player.level) : 5 * $.Security.name[opponent.user.security].protection
+                            }
+                            if ($.player.email === opponent.user.email)
+                                skill = 0
+                            xvt.waste(500)
+                            if (skill > lock) {
+                                $.player.coin.value += prize
+                                //$.player.stole++
+                                xvt.out('\nYou break in and make off with ', new $.coins(prize).carry(), ' worth of stuff!\n')
+                                xvt.waste(1000)
+
+                                opponent.user.coin.value = 0
+
+                                $.Armor.equip(opponent, opponent.user.armor)
+                                if (opponent.armor.ac > 0) {
+                                    if (opponent.armor.ac > $.Armor.merchant.length)
+                                        opponent.armor.ac = $.Armor.merchant.length
+                                    opponent.armor.ac--
+                                }
+                                else
+                                    opponent.armor.ac = 0
+                                opponent.user.armor = $.Armor.merchant[opponent.armor.ac]
+                                opponent.user.toAC = 0
+
+                                $.Weapon.equip(opponent, opponent.user.weapon)
+                                if (opponent.weapon.wc > 0) {
+                                    if (opponent.weapon.wc > $.Weapon.merchant.length)
+                                        opponent.weapon.wc = $.Weapon.merchant.length
+                                    opponent.weapon.wc--
+                                }
+                                else
+                                    opponent.weapon.wc = 0
+                                opponent.user.weapon = $.Weapon.merchant[opponent.weapon.wc]
+                                opponent.user.toWC = 0
+
+                                db.saveUser(opponent)
+								//sprintf(line[numline++], "%s robbed you!", PLAYER.Handle);
+                            }
+							else {
+								xvt.out('\nA guard catches you and throws you into jail!\n')
+								xvt.waste(750)
+								xvt.out('You might be released by your next call.\n\n')
+								xvt.waste(750)
+								//sprintf(line[numline++], "%s was caught robbing you!", PLAYER.Handle);
+                                $.reason = `caught robbing ${opponent.user.handle}`
+								$.player.status = 'jail'
+                                xvt.hangup()
+                                return
+                            }
+                        }
+                        menu(true)
+                    }, prompt:'Attempt to steal (Y/N)? ', cancel:'Y', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
+                }
+                xvt.app.focus = 'yn'
+            })
+            return
+    
         case 'S':
             require('./square').menu($.player.expert)
             return

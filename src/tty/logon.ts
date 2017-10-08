@@ -60,7 +60,7 @@ function guards(): boolean {
                     }
                 }, prompt:'DOH!!  Re-send the password to your email account (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i }
             }
-            if ($.player.id && $.player.lastdate != $.now().date)
+            if (xvt.validator.isNotEmpty($.player.id) && $.player.lastdate != $.now().date)
                 xvt.app.focus = 'forgot'
             else
                 process.exit()

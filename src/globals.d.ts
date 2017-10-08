@@ -164,11 +164,13 @@ interface poison {
 }
 
 interface realestate {
-    cost: string
+    value: string
+    protection: number
 }
 
 interface security {
-    cost: string
+    value: string
+    protection: number
 }
 
 interface spell {
