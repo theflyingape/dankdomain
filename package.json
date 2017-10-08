@@ -5,6 +5,7 @@
   "main": "ttymain",
   "publisher": "theflyingape",
   "engines": {
+    "node": ">=6.11",
     "vscode": "0.10.x"
   },
   "scripts": {

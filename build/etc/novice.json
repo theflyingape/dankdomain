@@ -1,9 +1,9 @@
 {
 	"pc": "Novice",
-	"coin": "5c",
-	"bank": "50c",
-	"realestate": "Cave",
-	"security": "Boulder",
-	"weapon": "Dagger",
+	"coin": "2c",
+	"bank": "10c",
+	"realestate": "Cardboard box",
+	"security": "Baseball bat",
+	"weapon": "Sling",
 	"armor": "Small Shield"
 }

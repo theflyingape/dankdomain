@@ -26,9 +26,11 @@ module NewUser
 		'edit': { cb:edit, row:8, col:1, prompt:'Select field # to change or <RETURN> to save: ', max:1, match:/^[1-4]*$/ },
 	}
 
-	for ($.player.access in $.Access.name)
-		if ($.Access.name[$.player.access].roleplay && $.Access.name[$.player.access].verify)
+	for (let title in $.Access.name) {
+		if ($.Access.name[title].roleplay && $.Access.name[title].verify)
 			break
+		$.player.access = title
+	}
 	$.player.expires = $.player.lastdate + $.sysop.expires
 	$.player.novice = true
 

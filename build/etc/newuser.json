@@ -1,5 +1,5 @@
 {
 	"replyTo": "Do Not Reply <no-reply@mail.com>",
-	"subject": "Your online game account information",
-	"text": "This e-mail is being sent to you because it was used in registering to play \nour online game: https://robert.hurst-ri.us/games/dankdomain \n\nYou may sign in with the following account information: \n\nYour account ID is:\t\t${player.id}  (${player.handle}) \nYour account Password is:\t${player.password} \n\nIf this e-mail was sent to you by mistake, please take no action, \nas this game account will deactivate in a few days.  \n\nThe latest developments for Dank Domain: \n\n\thttps://www.npmjs.com/package/dankdomain\n\nHappy hunting!"
+	"subject": "Verify your online game account",
+	"text": "This e-mail is being sent to you because it was used to register with \nour free game: https://robert.hurst-ri.us/games/dankdomain \n\nYou sign in using your: \n\nPlayer ID: \t${player.id}  (${player.handle}) \nPassword: \t${player.password} \n\nIf this e-mail was not sent by you having registered, please take no action, \nas this game account will automatically deactivate itself.  \n\nFor the latest developments with Dank Domain: \n\n\thttps://www.npmjs.com/package/dankdomain\n\nHappy hunting!"
 }

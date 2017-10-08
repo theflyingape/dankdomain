@@ -8,6 +8,7 @@ import {sprintf} from 'sprintf-js'
 import $ = require('../common')
 import db = require('../database')
 import xvt = require('xvt')
+import Battle = require('../battle')
 
 module Main
 {
@@ -176,7 +177,7 @@ function choice() {
         case 'X':
             xvt.app.form = {
                 'yn': { cb: () => {
-                    if (xvt.entry.toUpperCase() === 'Y') {
+                    if (/Y/i.test(xvt.entry)) {
                         $.reroll($.player)
                         $.activate($.online)
                         xvt.out('\n')
@@ -184,6 +185,7 @@ function choice() {
                         $.player.coward = true
                         return
                     }
+                    xvt.out('\n')
                     menu(true)
                 }, prompt:'Reroll (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
             }
@@ -191,9 +193,33 @@ function choice() {
             return
 
         case 'Y':
-            $.PC.stats($.online)
-            suppress = true
-            break
+            xvt.app.form = {
+                'yn': { cb: () => {
+                    if (/Y/i.test(xvt.entry)) {
+                        $.player.coin.value -= cost.value
+                        if ($.player.coin.value < 0) {
+                            $.player.bank.value += $.player.coin.value
+                            $.player.coin.value = 0
+                            if ($.player.bank.value < 0) {
+                                $.player.loan.value -= $.player.bank.value
+                                $.player.bank.value = 0
+                            }
+                        }
+                        xvt.out('\n')
+                        Battle.user('Scout', (opponent: active) => {
+                            $.PC.stats(opponent)
+                            menu(true)
+                        })
+                        return
+                    }
+                    $.PC.stats($.online)
+                    menu(true)
+                }, cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
+            }
+            let cost = new $.coins(Math.trunc($.money($.player.level) / 10))
+            xvt.app.form['yn'].prompt = 'Scout another user for ' + cost.carry() + ' (Y/N)? '
+            xvt.app.focus = 'yn'
+            return
 
         case 'Z':
             xvt.out(xvt.bright, xvt.green, '\n')

@@ -72,6 +72,7 @@ function who() {
         }
     }
 
+    $.access = $.Access.name[$.player.access]
     xvt.emulation = $.player.emulation
     xvt.app.form['password'].prompt = $.player.handle + ', enter your password: '
     xvt.app.focus = 'password'
@@ -85,41 +86,39 @@ function password() {
         return
     }
 
-    if ($.player.email === '' && $.Access.name[$.player.access].verify) {
+    if ($.player.email === '' && $.access.verify) {
         require('../email')
         return
     }
 
-    let t = $.now().time
-    t = 1440 * ($.now().date - $.player.lastdate) + 60 * Math.trunc(t / 100) + (t % 100) - (60 * Math.trunc($.player.lasttime / 100) + ($.player.lasttime % 100))
-    if (!$.Access.name[$.player.access].sysop && t < 2) {
-        xvt.beep()
-        xvt.out('\nYou were last on just ', t.toString(), ' minutes ago.\n')
-        xvt.out('Please wait at least 2 minutes between calls.\n')
-        xvt.hangup()
+    if ($.access.promote > 0 && $.player.level >= $.access.promote) {
+        let title = Object.keys($.Access.name).indexOf($.player.access)
+        do {
+            $.player.access = Object.keys($.Access.name)[++title]
+            $.access = $.Access.name[$.player.access]
+        } while (!xvt.validator.isDefined($.access[$.player.gender]))
+    }
+    else {
+        let t = $.now().time
+        t = 1440 * ($.now().date - $.player.lastdate) + 60 * Math.trunc(t / 100) + (t % 100) - (60 * Math.trunc($.player.lasttime / 100) + ($.player.lasttime % 100))
+        if (!$.access.sysop && t < 2) {
+            xvt.beep()
+            xvt.out('\nYou were last on just ', t == 1 ? 'a minute' : t.toString() + ' minutes', ' ago.\n')
+            xvt.out('Please wait at least 2 minutes between visits.\n')
+            xvt.hangup()
+        }
     }
 
     if ($.player.lastdate != $.now().date)
         $.player.today = 0
 
-    if ($.player.today > $.Access.name[$.player.access].calls) {
+    if ($.player.today > $.access.calls) {
         xvt.beep()
-        xvt.out('\nYou have already used all your calls for today.  Please call back tomorrow!\n')
+        xvt.out('\nYou have already used all ', $.access.calls.toString(), ' visits for today.  Please visit us again tomorrow!\n')
         xvt.hangup()
     }
 
-    if ($.Access.name[$.player.access].promote > 0 && $.player.level >= $.Access.name[$.player.access].promote) {
-            let next: boolean = false
-            for (let a in $.Access.name) {
-                if (next) {
-                    $.player.access = a
-                    break
-                }
-                if (a === $.player.access)
-                    next = true
-            }
-    }
-
+    xvt.ondrop = $.logoff
     db.loadUser($.sysop)
     $.sysop.calls++
     $.sysop.today++
@@ -129,30 +128,69 @@ function password() {
         $.sysop.email = $.player.email
     }
     db.saveUser($.sysop)
-    $.player.today++
-    $.online.altered = true
     
-    welcome()
-}
+    $.player.calls++
+    $.player.today++
+    $.player.lastdate = $.now().date
+    $.player.lasttime = $.now().time
+    $.activate($.online)
+    $.online.altered = true
+    $.access = $.Access.name[$.player.access]
 
-function welcome() {
     xvt.out(xvt.clear, xvt.red, '--=:))', xvt.LGradient[xvt.emulation]
-        , xvt.Red, xvt.bright, xvt.white, $.sysop.name, xvt.reset
-        , xvt.red, xvt.RGradient[xvt.emulation], '((:=--')
+    , xvt.Red, xvt.bright, xvt.white, $.sysop.name, xvt.reset
+    , xvt.red, xvt.RGradient[xvt.emulation], '((:=--')
     xvt.out('\n\n')
     xvt.out(xvt.cyan, 'Caller#: ', xvt.bright, xvt.white, $.sysop.calls.toString(), xvt.nobright, '\n')
     xvt.out(xvt.cyan, ' Online: ', xvt.bright, xvt.white, $.player.handle, xvt.nobright, '\n')
     xvt.out(xvt.cyan, ' Access: ', xvt.bright, xvt.white, $.player.access, xvt.nobright, '  ')
+    welcome()
+}
 
-    $.player.lastdate = $.now().date
-    $.player.lasttime = $.now().time
-    $.activate($.online)
+function welcome() {
 
-    if ($.player.today <= $.Access.name[$.player.access].calls && $.Access.name[$.player.access].roleplay) {
-        xvt.ondrop = $.logoff
-        xvt.out(xvt.bright, xvt.black, '(', xvt.nobright, xvt.white, 'Welcome back, ',  $.Access.name[$.player.access][$.player.gender], xvt.bright, xvt.black, ')\n', xvt.reset)
-        xvt.sessionAllowed = $.Access.name[$.player.access].minutes * 60
-        $.player.calls++
+    if ($.player.status === 'jail' || !$.Access.name[$.player.access].roleplay) {
+        xvt.out(xvt.bright, xvt.black, '(', xvt.magenta, 'PRISONER', xvt.black, ')\n')
+        xvt.out(xvt.red, '\nYou are locked-up in jail.\n', xvt.reset)
+        xvt.waste(1000)
+        if ($.access.roleplay && $.dice(2 * $.online.cha) > (10 - 2 * $.player.steal)) {
+            let bail = new $.coins(Math.round($.money($.player.level) * (101 - $.online.cha) / 100))
+            xvt.out('\nIt will cost you ', bail.carry(), ' to get bailed-out and to continue play.\n')
+            xvt.app.form = {
+                'bail': { cb:() => {
+                    xvt.out('\n\n')
+                    if (/Y/i.test(xvt.entry)) {
+                        $.player.coin.value -= bail.value
+                        if ($.player.coin.value < 0) {
+                            $.player.bank.value += $.player.coin.value
+                            $.player.coin.value = 0
+                            if ($.player.bank.value < 0) {
+                                $.player.loan.value -= $.player.bank.value
+                                $.player.bank.value = 0
+                            }
+                        }
+                        $.player.cha = $.PC.ability($.player.cha, -1)
+                        $.activate($.online)
+                        $.player.status = ''
+                    }
+                    else {
+                        xvt.out('You are left brooding with your fellow cellmates.\n')
+                        xvt.waste(1000)
+                        $.access = $.Access.name['Prisoner']
+                    }
+                    welcome()
+                }, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i }
+            }
+            xvt.app.focus = 'bail'
+            return
+        }
+    }
+
+    if ($.player.today <= $.access.calls && $.access.roleplay) {
+        xvt.out(xvt.bright, xvt.black, '(', xvt.nobright, xvt.white, 'Welcome back, ',  $.access[$.player.gender], xvt.bright, xvt.black, ')\n', xvt.reset)
+        xvt.sessionAllowed = $.access.minutes * 60
+
+        $.player.status = ''
         $.arena = 3
         $.bail = 1
         $.brawl = 3
@@ -179,28 +217,11 @@ function welcome() {
             $.playerPC()
             return
         }
-
-        if ($.player.status === 'jail') {
-            xvt.out(xvt.bright, xvt.red, '\nYou are still locked-up in jail.\n', xvt.reset)
-            xvt.waste(500)
-        }
     }
     else {
         xvt.out(xvt.bright, xvt.black, '(', xvt.yellow, 'VISITING', xvt.black, ')\n', xvt.reset)
         xvt.sessionAllowed = 5 * 60
-        $.arena = 0
-        $.bail = 0
-        $.brawl = 0
-        $.charity = 0
-        $.dungeon = 0
-        $.nest = 0
-        $.joust = 0
-        $.naval = 0
-        $.party = 0
-        $.realestate = 0
-        $.security = 0
-        $.tiny = 0
-        $.reason = 'visiting'
+        $.access.roleplay = false
     }
 
     xvt.out(xvt.cyan, '\nLast callers were: ', xvt.white)

@@ -37,11 +37,11 @@ function choice() {
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(arena[choice]))
 		if (xvt.validator.isNotEmpty(arena[choice].description)) xvt.out(' - ', arena[choice].description)
-	xvt.out('\n\n')
+	xvt.out('\n')
 
     switch (choice) {
 		case 'C':
-			if ($.reason) break
+			if (!$.access.roleplay) break
 			Battle.cast($.online, menu)
 			return
 
@@ -51,7 +51,7 @@ function choice() {
 
 		case 'J':
 			if (!$.joust) {
-				xvt.out('You have run out of jousts.\n')
+				xvt.out('\nYou have run out of jousts.\n')
 				break
 			}
 			Battle.user('Joust', (opponent: active) => {
@@ -176,7 +176,7 @@ function choice() {
 
 		case 'M':
 			if (!$.arena) {
-				xvt.out('You have no more arena fights.\n')
+				xvt.out('\nYou have no more arena fights.\n')
 				break
 			}
 			xvt.app.form = {
@@ -209,7 +209,7 @@ function choice() {
 			return
 
 		case 'P':
-			if ($.reason) break
+			if (!$.access.roleplay) break
 			Battle.poison($.online, menu)
 			return
 
@@ -219,7 +219,7 @@ function choice() {
 
 		case 'U':
 			if (!$.arena) {
-				xvt.out('You have no more arena fights.\n')
+				xvt.out('\nYou have no more arena fights.\n')
 				break
 			}
 			Battle.user('Fight', (opponent: active) => {
@@ -229,21 +229,58 @@ function choice() {
 				}
 				if (opponent.user.id === $.player.id) {
 					opponent.user.id = ''
-					xvt.out('You can\'t fight a wimp like ', $.who(opponent, 'him'), '.\n')
+					xvt.out('\nYou can\'t fight a wimp like', $.who(opponent, 'him'), '.\n')
 					menu()
 					return
 				}
 				if ($.player.level - opponent.user.level > 3) {
-					xvt.out('You can only fight someone higher or up to three levels below you.\n')
+					xvt.out('\nYou can only fight someone higher or up to three levels below you.\n')
 					menu()
 					return
 				}
-				$.arena--
-				Battle.engage('User', $.online, opponent, menu)
+
+				if (!$.cat('player/' + opponent.user.id)) $.cat('player/' + opponent.user.pc.toLowerCase())
+				xvt.out(opponent.user.handle, ' ')
+				if (opponent.user.status === 'jail') {
+					xvt.out('is locked-up in jail.\n')
+					menu()
+					return
+				}
+				if (opponent.user.status.length) {
+					xvt.out('was killed by ')
+					let rpc: active = { user: { id: opponent.user.status } }
+					if (db.loadUser(rpc)) {
+						xvt.out(rpc.user.handle, xvt.cyan, ' (', xvt.bright, xvt.white, rpc.user.xplevel.toString(), xvt.nobright, xvt.cyan, ')', xvt.reset)
+					}
+					else {
+						xvt.out(opponent.user.status)
+					}
+					xvt.out('.\n')
+					menu()
+					return
+				}
+				xvt.out(`is a level ${opponent.user.level} ${opponent.user.pc}.\n`)
+
+				if (isNaN(+opponent.user.weapon)) xvt.out('\n', $.who(opponent, 'He'), $.Weapon.wearing(opponent), '.\n')
+				if (isNaN(+opponent.user.armor)) xvt.out('\n', $.who(opponent, 'He'), $.Armor.wearing(opponent), '.\n')
+
+				xvt.app.form = {
+					'fight': { cb:() => {
+						xvt.out('\n\n')
+						if (/Y/i.test(xvt.entry)) {
+							$.arena--
+							Battle.engage('User', $.online, opponent, menu)
+						}
+						else
+							menu(!$.player.expert)
+					}, prompt:'Will you fight' + $.who(opponent, 'him') + ' (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
+				}
+				xvt.app.focus = 'fight'
 			})
 			return
 
 		case 'Y':
+			xvt.out('\n')
 			Battle.yourstats()
 			break
 
@@ -374,7 +411,6 @@ function MonsterFights(): boolean {
 					menu(!$.player.expert)
 			}, prompt:'Will you fight it (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
 		}
-
 		xvt.app.focus = 'fight'
 	}
 

@@ -30,6 +30,7 @@ module Common
     export let player: user = online.user
     export let sysop: user = { id:'_SYS' }
 
+    export let access: access
     export let arena: number = 0
     export let bail: number = 0
     export let brawl: number = 0
@@ -486,8 +487,8 @@ export function checkXP(rpc: active) {
             xvt.waste(250)
             xvt.out(xvt.bright, xvt.yellow
                 , Access.name[king.access][king.gender], ', ', king.handle
-                , ', is pleased with your accomplishments and promotes you to '
-                , rpc.user.access, '!\n')
+                , ', is pleased with your accomplishments\n'
+                , 'and promotes you to ', an(rpc.user.access), rpc.user.access, '!\n')
             xvt.waste(250)
             xvt.out(xvt.reset, '\n')
             xvt.waste(250)
@@ -527,6 +528,7 @@ export function checkXP(rpc: active) {
     award.cha = rpc.user.cha - award.cha
     
     if (rpc == online) {
+        access = Access.name[player.access]
         online.altered = true
         xvt.out('\n')
         xvt.waste(125)
@@ -1155,7 +1157,7 @@ export function display(title:string, back:number, fore:number, suppress:boolean
         }
     }
     checkXP(online)
-    return xvt.attr(fore, '[', xvt.bright, xvt.yellow, back ? titlecase(title) : 'Bank', xvt.nobright, fore, ']', xvt.cyan, ' Option (Q=Quit): ')
+    return xvt.attr(fore, '[', xvt.bright, xvt.yellow, back ? titlecase(title) : 'Iron Bank', xvt.nobright, fore, ']', xvt.cyan, ' Option (Q=Quit): ')
 }
 
 export function emulator(cb:Function) {
@@ -1215,8 +1217,14 @@ export function logoff() {
         xvt.out(xvt.cyan, ' \\ : /                          ', xvt.cyan, ' \\ : / \n')
         xvt.out(xvt.cyan, '  I:I    ', xvt.blue, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Blue, xvt.white, 'Robert Hurst', xvt.reset, xvt.blue, xvt.RGradient[xvt.emulation], xvt.cyan, '     I:I  \n')
         xvt.out(xvt.cyan, ' .I:I.  ', xvt.reset, '  robert.hurst-ri.us    ', xvt.cyan, ' .I:I. \n')
-        xvt.out('\n')
-        xvt.waste(1500)
+        xvt.out(xvt.reset, '\n')
+        xvt.waste(500)
+        xvt.out(xvt.bright, xvt.black, process.title
+            , xvt.nobright, xvt.white, ' ', process.env.npm_package_version, ' running on ', xvt.bright, xvt.green, 'Node.js ', xvt.nobright, process.version, ' '
+            , xvt.bright, xvt.black, '(', xvt.nobright, xvt.cyan, process.platform, xvt.bright, xvt.black, ')'
+            , xvt.reset, '\n'
+        )
+        xvt.waste(1000)
     }
 }
 

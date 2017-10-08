@@ -149,7 +149,7 @@ sprintf(line[numline++], "%s, the coward, retreated from you.", PLAYER.Handle);
                             'You decide this isn\'t worth the effort.',
                             'You listen to the voice in your head yelling, \"Run!\"',
                             `You say, "${who} who fights and runs away lives to fight another day!"`
-                        ][$.dice(5)]
+                        ][$.dice(5) - 1]
                         , '\n'
                     )
                     fini()
@@ -310,6 +310,7 @@ export function spoils() {
                     xvt.out($.who(winner, 'He'), 'take', winner == $.online ? '' : 's', $.who(loser, 'his'), winner.user.weapon, '.\n')
                 if ($.Armor.swap(winner, loser))
                     xvt.out($.who(winner, 'He'), 'take', winner == $.online ? '' : 's', $.who(loser, 'his'), winner.user.armor, '.\n')
+                if (loser.altered) db.saveUser(loser)
             }
         }
         winner.user.xp += xp
@@ -375,6 +376,7 @@ export function cast(rpc: active, cb:Function) {
 }
 
 export function melee(rpc: active, enemy: active, blow = 1) {
+    let action: string
     let hit = 0
     xvt.out(rpc == $.online ? xvt.bright : xvt.reset)
     
@@ -402,7 +404,10 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                 else
                     xvt.out(rpc.user.gender === 'I' ? 'The ' : ''
                     , enemy == $.online ? 'you' : rpc.user.handle
-                    , ', but misses.\n')
+                    , ' attacks '
+                    , enemy.user.gender === 'I' ? 'the ' : ''
+                    , enemy == $.online ? 'you' : rpc.user.handle
+                , ', but misses.\n')
                 return
             }
         }
@@ -442,32 +447,44 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     hit += 2 * (wc + $.dice(wc))
     hit *= 50 + Math.trunc(rpc.user.str / 2)
     hit = Math.trunc(hit / 100)
-	hit -= ac + $.dice(ac)
+    if (hit > 0) {
+        hit -= ac + $.dice(ac)
+    //  any ego involvement
+    //  if((damage + egostat[0] + egostat[1] + egostat[2] + egostat[3]) < 1)
+    //      damage = dice(2) - (egostat[0] + egostat[1] + egostat[2] + egostat[3]);
+        hit *= blow
+        action = (blow == 1)
+            ? (period[0] === '.') ? rpc.weapon.hit : rpc.weapon.smash
+            : (period[0] === '.') ? rpc.weapon.stab : rpc.weapon.plunge
 
-//  any ego involvement
-//  if((damage + egostat[0] + egostat[1] + egostat[2] + egostat[3]) < 1)
-//      damage = dice(2) - (egostat[0] + egostat[1] + egostat[2] + egostat[3]);
-
-    hit *= blow
-
-    let action = (blow == 1)
-        ? (period[0] === '.') ? rpc.weapon.hit : rpc.weapon.smash
-        : (period[0] === '.') ? rpc.weapon.stab : rpc.weapon.plunge
-
-    if (rpc == $.online) {
-        xvt.out('You '
-            , action
-            , enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
-            , ' for ', hit.toString(), ' hit points', period, '\n')
-        xvt.waste(100)
+        if (rpc == $.online) {
+            xvt.out('You '
+                , action
+                , enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
+                , ' for ', hit.toString(), ' hit points', period, '\n')
+            xvt.waste(100)
+        }
+        else {
+            let w = action.split(' ')
+            let s = /.*ch|.*sh|.*s/i.test(w[0]) ? 'es' : 's'
+            xvt.out((/Monster|User/.test(from)) ? $.who(rpc, 'He')
+                : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle + ' ' : rpc.user.handle + ' '
+                , w[0], s, w.slice(1).join(' '), ' '
+                , enemy == $.online ? 'you' : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
+                , ' for ', hit.toString(), ' hit points'
+                , period, '\n'
+            )
+        }
     }
     else {
-        let w = action.split(' ')
-        let s = /.*ch|.*sh|.*s/i.test(w[0]) ? 'es' : 's'
-        xvt.out(rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle
-            , ' ', w[0], s, w.slice(1).join(' '), ' '
+        xvt.out(
+            rpc == $.online ? 'Your ' + rpc.user.weapon
+            : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+            , ' does not even scratch '
             , enemy == $.online ? 'you' : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
-            , ' for ', hit.toString(), ' hit points', period, '\n')
+            , '.\n'
+        )
+        hit = 0
     }
 
     enemy.hp -= hit
@@ -559,7 +576,7 @@ export function poison(rpc: active, cb:Function) {
         else {
             xvt.out($.who(rpc, 'He'), $.what(rpc, 'pour')
                 , 'some ', $.Poison.merchant[+xvt.entry - 1]
-                , ' on ', $.who(rpc, 'his'), rpc.user.weapon, '.\n')
+                , ' on', $.who(rpc, 'his'), rpc.user.weapon, '.\n')
             xvt.waste(500)
             if (/^[A-Z]/.test(rpc.user.id)) {
                 if ($.dice(3 * (rpc.toWC + rpc.user.toWC + 1)) / rpc.user.poison > $.Weapon.name[rpc.user.weapon].wc) {
@@ -617,9 +634,9 @@ export function user(venue: string, cb:Function) {
             if (n >= start && n < 100) end = n
 
             xvt.out('\n', xvt.Blue, xvt.bright)
-            xvt.out(' ID   Player\'s Handle           Class    Lvl    Last On     Access Level  \n')
-            xvt.out('--------------------------------------------------------------------------')
-            xvt.out('\n', xvt.reset)
+            xvt.out(' ID   Player\'s Handle          Class     Lvl      Last On       Access Level  \n')
+            xvt.out('------------------------------------------------------------------------------')
+            xvt.out(xvt.reset, '\n')
 
             let rows = db.query(`
                 SELECT id, handle, pc, level, status, lastdate, access FROM Players
