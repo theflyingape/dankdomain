@@ -690,9 +690,9 @@ export function yourstats() {
     if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry())
     xvt.out(xvt.reset, '\n')
     xvt.out(xvt.cyan, 'Weapon: ', xvt.bright, xvt.white, $.player.weapon)
-    xvt.out($.buff($.player.toWC, $.online.toWC), xvt.nobright)
+    xvt.out($.buff($.player.toWC, $.online.toWC), xvt.normal)
     xvt.out(xvt.cyan, '   Armor: ', xvt.bright, xvt.white, $.player.armor)
-    xvt.out($.buff($.player.toAC, $.online.toAC), xvt.nobright)
+    xvt.out($.buff($.player.toAC, $.online.toAC), xvt.normal)
     xvt.out(xvt.reset, '\n')
 }
 

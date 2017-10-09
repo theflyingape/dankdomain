@@ -381,27 +381,27 @@ export class coins {
         if (this.pouch(n) === 'p') {
             n = Math.trunc(n / 1e+13)
             bags.push(text ? n + 'p'
-                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.magenta, 'p', xvt.white, xvt.nobright)
+                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.magenta, 'p', xvt.white, xvt.normal)
             )
             n = this.value % 1e+13
         }
         if (this.pouch(n) === 'g') {
             n = Math.trunc(n / 1e+09)
             bags.push(text ? n + 'g'
-                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.yellow, 'g', xvt.white, xvt.nobright)
+                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.yellow, 'g', xvt.white, xvt.normal)
             )
             n = this.value % 1e+09
         }
         if (this.pouch(n) === 's') {
             n = Math.trunc(n / 1e+05)
             bags.push(text ? n + 's'
-                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.cyan, 's', xvt.white, xvt.nobright)
+                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.cyan, 's', xvt.white, xvt.normal)
             )
             n = this.value % 1e+05
         }
         if ((n > 0 && this.pouch(n) === 'c') || bags.length == 0)
             bags.push(text ? n + 'c'
-                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.red, 'c', xvt.white, xvt.nobright)
+                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.red, 'c', xvt.white, xvt.normal)
             )
 
         return bags.slice(0, max).toString()
@@ -533,7 +533,7 @@ export function checkXP(rpc: active) {
         xvt.out('\n')
         xvt.waste(125)
         xvt.out('      ', xvt.magenta, '-=', xvt.blue, '>'
-            , xvt.bright, xvt.yellow, '*', xvt.nobright
+            , xvt.bright, xvt.yellow, '*', xvt.normal
             , xvt.blue, '<', xvt.magenta, '=-\n')
 		xvt.waste(125)
         xvt.out('\n')
@@ -780,8 +780,8 @@ export function playerPC(points = 200) {
 
     function ability(field?: string) {
         if (xvt.validator.isNotEmpty(field)) {
-            xvt.out('\n', xvt.yellow, 'You have ', xvt.bright, points.toString(), xvt.nobright, ' points to distribute between 4 abilities: Strength, Intellect,\n')
-            xvt.out('Dexterity, Charisma.  Each ability must be between ', xvt.bright, '20', xvt.nobright, ' and ', xvt.bright, '80', xvt.nobright, ' points.\n')
+            xvt.out('\n', xvt.yellow, 'You have ', xvt.bright, points.toString(), xvt.normal, ' points to distribute between 4 abilities: Strength, Intellect,\n')
+            xvt.out('Dexterity, Charisma.  Each ability must be between ', xvt.bright, '20', xvt.normal, ' and ', xvt.bright, '80', xvt.normal, ' points.\n')
             xvt.app.form[field].enter = player.str.toString()
             xvt.app.form[field].prompt = 'Enter your Strength  ' + bracket(player.str, false) + ': '
             xvt.app.focus = field
@@ -1099,15 +1099,15 @@ export function buff(perm: number, temp:number, text = false): string {
     if (text) xvt.emulation = 'dumb'
     let buff = ''
     if (perm || temp) {
-        buff = xvt.attr(xvt.nobright, xvt.magenta, ' (')
+        buff = xvt.attr(xvt.normal, xvt.magenta, ' (')
         if (perm > 0) buff += xvt.attr(xvt.bright, xvt.yellow, '+', perm.toString())
         else if (perm < 0) buff += xvt.attr(xvt.bright, xvt.red, perm.toString())
-        else buff += xvt.attr(xvt.nobright, xvt.white, '+0')
-        buff += xvt.attr(xvt.nobright, xvt.white, ',')
+        else buff += xvt.attr(xvt.normal, xvt.white, '+0')
+        buff += xvt.attr(xvt.normal, xvt.white, ',')
         if (temp > 0) buff += xvt.attr(xvt.bright, xvt.yellow, '+', temp.toString())
         else if (temp < 0) buff += xvt.attr(xvt.bright, xvt.red, temp.toString())
-        else buff += xvt.attr(xvt.nobright, xvt.white, '+0')
-        buff += xvt.attr(xvt.nobright, xvt.magenta, ')', xvt.white)
+        else buff += xvt.attr(xvt.normal, xvt.white, '+0')
+        buff += xvt.attr(xvt.normal, xvt.magenta, ')', xvt.white)
     }
     if (text) xvt.emulation = keep
     return buff
@@ -1157,7 +1157,7 @@ export function display(title:string, back:number, fore:number, suppress:boolean
         }
     }
     checkXP(online)
-    return xvt.attr(fore, '[', xvt.bright, xvt.yellow, back ? titlecase(title) : 'Iron Bank', xvt.nobright, fore, ']', xvt.cyan, ' Option (Q=Quit): ')
+    return xvt.attr(fore, '[', xvt.bright, xvt.yellow, back ? titlecase(title) : 'Iron Bank', xvt.normal, fore, ']', xvt.cyan, ' Option (Q=Quit): ')
 }
 
 export function emulator(cb:Function) {
@@ -1220,9 +1220,9 @@ export function logoff() {
         xvt.out(xvt.reset, '\n')
         xvt.waste(500)
         xvt.out(xvt.bright, xvt.black, process.title
-            , xvt.nobright, xvt.white, xvt.validator.isNotEmpty(process.env.npm_package_version) ? ' ' + process.env.npm_package_version : ''
-            , ' running on ', xvt.bright, xvt.green, 'Node.js ', xvt.nobright, process.version, ' '
-            , xvt.bright, xvt.black, '(', xvt.nobright, xvt.cyan, process.platform, xvt.bright, xvt.black, ')'
+            , xvt.normal, xvt.white, xvt.validator.isNotEmpty(process.env.npm_package_version) ? ' ' + process.env.npm_package_version : ''
+            , ' running on ', xvt.bright, xvt.green, 'Node.js ', xvt.normal, process.version, ' '
+            , xvt.bright, xvt.black, '(', xvt.normal, xvt.cyan, process.platform, xvt.bright, xvt.black, ')'
             , xvt.reset, '\n'
         )
         xvt.waste(1000)

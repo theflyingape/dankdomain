@@ -43,7 +43,7 @@
     "tty.js": "^0.2.15",
     "ws": "^2.3.1",
     "xterm": "^2.9.2",
-    "xvt": "^1.0.12"
+    "xvt": "^1.0.13"
   },
   "devDependencies": {
     "@types/express": "^4.0.37",

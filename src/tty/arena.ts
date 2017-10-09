@@ -125,7 +125,7 @@ function choice() {
 							while(!result)
 								result = (ability + $.dice(factor * $.player.level)) - (versus + $.dice(factor * opponent.user.level))
 							if(result > 0) {
-								xvt.out(xvt.green, '-*>', xvt.bright, xvt.white, ' Thud! ', xvt.nobright, xvt.green,'<*-  ', xvt.reset, 'A hit!  You win this pass!\n')
+								xvt.out(xvt.green, '-*>', xvt.bright, xvt.white, ' Thud! ', xvt.normal, xvt.green,'<*-  ', xvt.reset, 'A hit!  You win this pass!\n')
 								if (++jw == 3) {
 									xvt.out('\nYou have won the joust!\n')
 									xvt.waste(250)
@@ -142,7 +142,7 @@ function choice() {
 								}
 							}
 							else {
-								xvt.out(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.nobright, xvt.magenta,'<^  ', xvt.reset
+								xvt.out(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.normal, xvt.magenta,'<^  ', xvt.reset
 									, $.who(opponent, 'He'), 'hits!  You lose this pass!\n'
 								)
 								if (++jl == 3) {
@@ -163,13 +163,13 @@ function choice() {
 							round()
 						}
 						xvt.app.refocus()
-					}, prompt:xvt.attr('        ', $.bracket('J', false), xvt.bright, xvt.yellow, ' Joust', xvt.nobright, xvt.magenta, ' * ', $.bracket('F', false), xvt.bright, xvt.yellow, ' Forfeit: '), cancel:'F', enter:'J', eol:false, match:/F|J/i }
+					}, prompt:xvt.attr('        ', $.bracket('J', false), xvt.bright, xvt.yellow, ' Joust', xvt.normal, xvt.magenta, ' * ', $.bracket('F', false), xvt.bright, xvt.yellow, ' Forfeit: '), cancel:'F', enter:'J', eol:false, match:/F|J/i }
 				}
 				xvt.out('You grab a horse and prepare yourself to joust.\n')
 				xvt.app.focus = 'compete'
 
 				function round() {
-					xvt.out('\n', xvt.green, '--=:)) Round ', ['I', 'II', 'III', 'IV', 'V'][pass++], ' of V: Won:', xvt.bright, xvt.white, jw.toString(), xvt.nobright, xvt.magenta, ' ^', xvt.green, ' Lost:', xvt.bright, xvt.white, jl.toString(), xvt.nobright, xvt.green, ' ((:=--')
+					xvt.out('\n', xvt.green, '--=:)) Round ', ['I', 'II', 'III', 'IV', 'V'][pass++], ' of V: Won:', xvt.bright, xvt.white, jw.toString(), xvt.normal, xvt.magenta, ' ^', xvt.green, ' Lost:', xvt.bright, xvt.white, jl.toString(), xvt.normal, xvt.green, ' ((:=--')
 				}
 			})
 			return
@@ -250,7 +250,7 @@ function choice() {
 					xvt.out('was killed by ')
 					let rpc: active = { user: { id: opponent.user.status } }
 					if (db.loadUser(rpc)) {
-						xvt.out(rpc.user.handle, xvt.cyan, ' (', xvt.bright, xvt.white, rpc.user.xplevel.toString(), xvt.nobright, xvt.cyan, ')', xvt.reset)
+						xvt.out(rpc.user.handle, xvt.cyan, ' (', xvt.bright, xvt.white, rpc.user.xplevel.toString(), xvt.normal, xvt.cyan, ')', xvt.reset)
 					}
 					else {
 						xvt.out(opponent.user.status)
@@ -365,9 +365,9 @@ function MonsterFights(): boolean {
 					xvt.app.focus = 'fight'
 					return
 				}
-				xvt.out(xvt.cyan, 'His eyes glow ', xvt.bright, xvt.red, 'red', xvt.nobright
+				xvt.out(xvt.cyan, 'His eyes glow ', xvt.bright, xvt.red, 'red', xvt.normal
 					, xvt.cyan, ' and he says, "', xvt.bright, xvt.white, 'I don\'t make deals!'
-					, xvt.nobright, xvt.cyan, '"\n', xvt.reset)
+					, xvt.normal, xvt.cyan, '"\n', xvt.reset)
 				menu()
 			}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i },
 			'fight': { cb:() => {

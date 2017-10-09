@@ -163,9 +163,9 @@ function password() {
     , xvt.Red, xvt.bright, xvt.white, $.sysop.name, xvt.reset
     , xvt.red, xvt.RGradient[xvt.emulation], '((:=--')
     xvt.out('\n\n')
-    xvt.out(xvt.cyan, 'Caller#: ', xvt.bright, xvt.white, $.sysop.calls.toString(), xvt.nobright, '\n')
-    xvt.out(xvt.cyan, ' Online: ', xvt.bright, xvt.white, $.player.handle, xvt.nobright, '\n')
-    xvt.out(xvt.cyan, ' Access: ', xvt.bright, xvt.white, $.player.access, xvt.nobright, '  ')
+    xvt.out(xvt.cyan, 'Caller#: ', xvt.bright, xvt.white, $.sysop.calls.toString(), xvt.normal, '\n')
+    xvt.out(xvt.cyan, ' Online: ', xvt.bright, xvt.white, $.player.handle, xvt.normal, '\n')
+    xvt.out(xvt.cyan, ' Access: ', xvt.bright, xvt.white, $.player.access, xvt.normal, '  ')
     welcome()
 }
 
@@ -209,7 +209,7 @@ function welcome() {
     }
 
     if ($.player.today <= $.access.calls && $.access.roleplay) {
-        xvt.out(xvt.bright, xvt.black, '(', xvt.nobright, xvt.white, 'Welcome back, ',  $.access[$.player.gender], xvt.bright, xvt.black, ')\n', xvt.reset)
+        xvt.out(xvt.bright, xvt.black, '(', xvt.normal, xvt.white, 'Welcome back, ',  $.access[$.player.gender], xvt.bright, xvt.black, ')\n', xvt.reset)
         xvt.sessionAllowed = $.access.minutes * 60
 
         $.player.status = ''
@@ -250,7 +250,7 @@ function welcome() {
     try {
         $.callers = require('../users/callers')
         for (let last in $.callers) {
-            xvt.out(xvt.bright, $.callers[last].who, xvt.nobright, ' (', $.callers[last].reason, ')\n')
+            xvt.out(xvt.bright, $.callers[last].who, xvt.normal, ' (', $.callers[last].reason, ')\n')
             xvt.out('                   ')
         }
     }

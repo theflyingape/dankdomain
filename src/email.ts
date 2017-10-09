@@ -111,7 +111,7 @@ async function Message(player: user, mailOptions: nodemailer.SendMailOptions) {
                     xvt.out('\n', info.response)
                     if ($.reason.length) {
                         db.saveUser(player, true)
-                        xvt.out('\nYour user ID (', xvt.bright, player.id, xvt.nobright, ') was saved, ', $.Access.name[player.access][player.gender], '.\n')
+                        xvt.out('\nYour user ID (', xvt.bright, player.id, xvt.normal, ') was saved, ', $.Access.name[player.access][player.gender], '.\n')
                     }
                     result = true
                 }

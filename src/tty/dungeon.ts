@@ -145,7 +145,7 @@ function command() {
 		case 'S':
 		case 'E':
 		case 'W':
-			xvt.out(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.nobright, xvt.magenta,'<^  ', xvt.reset
+			xvt.out(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.normal, xvt.magenta,'<^  ', xvt.reset
 				, 'There is a wall to the ', choice.toLowerCase(), dungeon[choice].description,'.')
 			xvt.waste(250)
 			if (($.online.hp -= $.dice(Math.trunc($.player.level * (110 - $.online.str) / 100) + 1)) < 1) {
