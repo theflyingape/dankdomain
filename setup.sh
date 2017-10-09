@@ -21,7 +21,7 @@ tsc -v && sudo npm upgrade typescript -g || sudo npm install typescript -g
 sudo npm install
 
 # replace with my tweaks for bold attribute handling (still needs dark/faint)
-cp -v ./patch/term.js ./node_modules/term.js/src/
+#cp -v ./patch/term.js ./node_modules/term.js/src/
 
 # transpile and test run locally
 npm start
@@ -65,7 +65,7 @@ service dankdomain
 	cps			= 2 5
         log_on_success          += USERID
         log_on_failure          += USERID
-	instances		= 6
+	instances		= 5
 	per_source		= 1
 }
 EOD
@@ -77,6 +77,7 @@ sudo systemctl restart xinetd
 if sudo service iptables status ; then
 	hole=`sudo iptables -L INPUT -n | grep -c 'dpt:23'`
 	if [ $hole -eq 0 ]; then
+                sudo iptables -A INPUT -p tcp --syn --dport 23 -m connlimit --connlimit-above 1 -j REJECT
 		sudo iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 23 -j ACCEPT
 		sudo service iptables save
 	fi
@@ -109,18 +110,18 @@ cat <<-EOD
 
     RewriteEngine On
     RewriteCond %{HTTP:Connection} Upgrade [NC]
-    RewriteRule "^/games/dankdomain/door/(.*)" ws://atom.home:1939/$1 [P,L]
+    RewriteRule "^/games/dankdomain/door/(.*)" ws://`hostname -f`:1939/$1 [P,L]
 
     <Location "/games/dankdomain/door/">
-        ProxyPass "http://atom.home:1939/"
+        ProxyPass "http://`hostname -f`:1939/"
         #connectiontimeout=10 timeout=60
         #max=20 ttl=120 retry=300
-        ProxyPassReverse "http://atom.home:1939/"
+        ProxyPassReverse "http://`hostname -f`:1939/"
         Order allow,deny
         Allow from all
     </Location>
 
-    Header edit Location ^http://atom.home:1939/ https://robert.hurst-ri.us/
+    Header edit Location ^http://`hostname -f`:1939/ https://robert.hurst-ri.us/
 EOD
 
 exit
