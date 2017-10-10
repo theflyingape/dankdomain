@@ -15,7 +15,7 @@ module Battle
     export let from: string
     export let parties: [ active[] ]
     export let alive: number[]
-    export let round: { party:number, member:number }[]
+    export let round: { party:number, member:number, react:number }[]
     export let bs: number
     export let retreat: boolean
     export let volley: number
@@ -62,14 +62,19 @@ export function attack(skip = false) {
     if (retreat || ++volley > 99999) return
 
     if (!round.length) {
-        if (volley > 1) xvt.out(xvt.reset, '\n    -=', $.bracket('*', false), '=-')
+        if (volley > 1) xvt.out(xvt.reset, '\n    -=', $.bracket('*', false), '=-\n')
         //  lame for now
         for (let p in parties) {
             for (let m in parties[p]) {
-                if(parties[p][m].hp > 0)
-                    round.push({party:+p, member:+m})
+                if (parties[p][m].hp > 0) {
+                    let rpc = parties[p][m]
+                    let x = 4 - rpc.user.backstab / 2
+                    let s = Math.round(rpc.user.level / (x > 0 ? x : 1) + rpc.dex / 2 + $.dice(rpc.dex / 2))
+                    round.push({party:+p, member:+m, react:+s})
+                }
             }
         }
+        round.sort((n1,n2) => n2.react - n1.react)
     }
 
     let n = round[0]
@@ -83,6 +88,7 @@ export function attack(skip = false) {
         rpc.dex = $.PC.ability(rpc.dex, $.PC.name[rpc.user.pc].toDex, rpc.user.maxdex, mod)
     }
     
+    //  choose an opponent
     let mob = n.party ^ 1
     let nme: number
     do { nme = $.dice(parties[mob].length) - 1 } while (parties[mob][nme].hp < 1)
@@ -194,7 +200,7 @@ sprintf(line[numline++], "%s, the coward, retreated from you.", PLAYER.Handle);
             melee(rpc, enemy)
         }
         else {
-            let choices = xvt.attr(xvt.reset, '\n', xvt.blue, '[')
+            let choices = xvt.attr(xvt.reset, xvt.blue, '[')
             choices += xvt.attr(xvt.bright
                 , $.online.hp > $.player.hp * 2 / 3 ? xvt.green
                 : $.online.hp > $.player.hp / 3 ? xvt.yellow
