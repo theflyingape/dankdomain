@@ -14,7 +14,7 @@
   "io": { "log": false },
   "debug": false,
   "term": {
-    "termName": "linux",
+    "termName": "xterm-256color",
     "geometry": [80, 25],
     "scrollback": 100,
     "visualBell": true,
@@ -22,22 +22,22 @@
     "cursorBlink": true,
     "screenKeys": false,
     "colors": [
-      "#2e3436",
-      "#cc0000",
-      "#4e9a06",
-      "#c4a000",
-      "#3465a4",
-      "#75507b",
-      "#06989a",
-      "#d3d7cf",
-      "#555753",
-      "#ef2929",
-      "#8ae234",
-      "#fce94f",
-      "#729fcf",
-      "#ad7fa8",
-      "#34e2e2",
-      "#eeeeec"
+      "#040810",
+      "#9c0000",
+      "#009c00",
+      "#9c6600",
+      "#00009c",
+      "#9c009c",
+      "#009c9c",
+      "#a0a8b0",
+      "#404040",
+      "#ef2020",
+      "#20ef20",
+      "#efef20",
+      "#2020ef",
+      "#ef20ef",
+      "#20efef",
+      "#f0f8ff"
     ]
   }
 }
