@@ -1,2 +1,3 @@
 #!/bin/sh -l
-exec node /usr/local/games/dankdomain/ttymain
+path=`dirname $0`; cd $path
+exec node ttymain

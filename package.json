@@ -9,8 +9,9 @@
   },
   "scripts": {
     "build": "tsc -p ./src --outDir ./build",
-    "door": "tsc -p ./src/door --outDir ./build/door; cd ./build/door; node app; cd -",
-    "start": "npm run build && node ./build/ttymain"
+    "term": "cd ./build; node ./node_modules/tty.js/bin/tty.js --config ./tty/files/tty.json",
+    "test": "npm run build && ./build/logins.sh",
+    "xterm": "cd ./build; cd -"
   },
   "repository": {
     "type": "git",
@@ -39,7 +40,6 @@
     "sqlite-sync": "^0.3.6",
     "title-case": "^2.1.1",
     "tty.js": "^0.2.15",
-    "typescript": "~2.5.0",
     "ws": "^2.3.1",
     "xterm": "^2.9.2",
     "xvt": "^1.0.13"

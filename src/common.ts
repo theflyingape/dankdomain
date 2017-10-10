@@ -1089,7 +1089,7 @@ export function bracket(item: number|string, nl = true): string {
     var framed: string = item.toString()
     framed = xvt.attr(xvt.white, xvt.faint, nl ? '\n' : ''
         , framed.length == 1 && nl ? ' ' : ''
-        , '<', xvt.off, xvt.bright, xvt.white, framed, xvt.faint, '>'
+        , '<', xvt.bright, framed, xvt.faint, '>'
         , xvt.reset)
     return framed
 }
@@ -1210,8 +1210,8 @@ export function logoff() {
         xvt.waste(500)
         xvt.out(xvt.cyan, '  ___                           ', xvt.cyan, '  ___  \n')
         xvt.out(xvt.cyan, '  \\_/  ', xvt.red, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Red, xvt.white, 'Never Program Mad', xvt.reset, xvt.red, xvt.RGradient[xvt.emulation], xvt.cyan, '  \\_/  \n')
-        xvt.out(xvt.cyan, ' _(', xvt.bright, '-', xvt.off, ')_    ', xvt.reset, '     npmjs.com        ', xvt.cyan, ' _(', xvt.bright, '-', xvt.off, ')_ \n')
-        xvt.out(xvt.cyan, '(/ ', xvt.bright, ':', xvt.off, ' \\)                         ', xvt.cyan, '(/ ', xvt.bright, ':', xvt.off, ' \\)\n')
+        xvt.out(xvt.cyan, ' _(', xvt.bright, '-', xvt.normal, ')_    ', xvt.reset, '     npmjs.com        ', xvt.cyan, ' _(', xvt.bright, '-', xvt.normal, ')_ \n')
+        xvt.out(xvt.cyan, '(/ ', xvt.bright, ':', xvt.normal, ' \\)                         ', xvt.cyan, '(/ ', xvt.bright, ':', xvt.normal, ' \\)\n')
         xvt.out(xvt.cyan, 'I\\___/I ', xvt.green, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Green, xvt.white, 'CommodoreServer', xvt.reset, xvt.green, xvt.RGradient[xvt.emulation], xvt.cyan, ' I\\___/I\n')
         xvt.out(xvt.cyan, '\\/   \\/  ', xvt.reset, ' commodoreserver.com   ', xvt.cyan, '\\/   \\/\n')
         xvt.out(xvt.cyan, ' \\ : /                          ', xvt.cyan, ' \\ : / \n')

@@ -116,7 +116,7 @@ export function attack(skip = false) {
                     }
 
                     let trip = rpc.dex + $.dice(rpc.int) / 2
-                    trip += Math.round(rpc.dex - enemy.dex) / 2)
+                    trip += Math.round((rpc.dex - enemy.dex) / 2)
                     trip = trip < 5 ? 5 : trip > 95 ? 95 : trip
                     trip += 5 * (alive[0] - alive[1])
                     trip = trip < 5 ? 5 : trip > 95 ? 95 : trip

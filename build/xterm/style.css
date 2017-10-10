@@ -1,7 +1,7 @@
 /**
- * style.css (https://github.com/chjj/tty.js)
- * Copyright (c) 2012-2013, Christopher Jeffrey (MIT License)
- */
+ *  * style.css (https://github.com/chjj/tty.js)
+ *   * Copyright (c) 2012-2013, Christopher Jeffrey (MIT License)
+ *    */
 
 html, body {
   margin-right: 18%;
@@ -18,7 +18,7 @@ div {
 
 html {
   background: #fff;
-  background: url(images/background.jpg) no-repeat center center fixed; 
+  background: url(background.jpg) no-repeat center center fixed; 
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -34,15 +34,15 @@ html.maximized {
 }
 
 /* Only allow plaintext?
-[contenteditable=""],
-[contenteditable="true"] {
-  -webkit-user-modify: read-write-plaintext-only !important;
-}
-*/
+ * [contenteditable=""],
+ * [contenteditable="true"] {
+ *   -webkit-user-modify: read-write-plaintext-only !important;
+ *   }
+ *   */
 
 /**
- * Terminal
- */
+ *  * Terminal
+ *   */
 
 .window {
   padding-top: 15px;
@@ -124,3 +124,4 @@ html.maximized {
   color: #000;
   background: #f0f0f0;
 }
+
