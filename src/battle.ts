@@ -103,37 +103,6 @@ export function attack(skip = false) {
                     Battle.cast($.online, next)
                     return
                 }
-/*
-n = rpc->DEX + dice(rpc->INT) / 10;
-n += ((int)rpc->DEX - (int)enemy->DEX) / 2;
-n = (n < 5) ? 5 : (n > 95) ? 95 : n;
-n += 5 * (us - them);
-n = (n < 5) ? 5 : (n > 95) ? 95 : n;
-if(dice(100) > n) {
-    switch(dice(5)) {
-        case 1:
-            sprintf(outbuf, "You trip and fail in your attempt to retreat.");
-            break;
-        case 2:
-            sprintf(outbuf, "%s%s pulls you back into the battle.", (enemy->user.Gender == 'I' ? "The " : ""), enemy->user.Handle);
-            break;
-        case 3:
-            sprintf(outbuf, "%s%s prevents your retreat and says, \"I'm not through with you yet!\"", (enemy->user.Gender == 'I' ? "The " : ""), enemy->user.Handle);
-            break;
-        case 4:
-            sprintf(outbuf, "%s%s outmaneuvers you and says, \"You started this, I'm finishing it.\"", (enemy->user.Gender == 'I' ? "The " : ""), enemy->user.Handle);
-            break;
-        case 5:
-            sprintf(outbuf, "%s%s blocks your path and says, \"Where do you want to go today?\"", (enemy->user.Gender == 'I' ? "The " : ""), enemy->user.Handle);
-            break;
-    }
-    c = 'A';
-    break;
-}
-PLAYER.Current.Retreats++;
-PLAYER.History.Retreats++;
-sprintf(line[numline++], "%s, the coward, retreated from you.", PLAYER.Handle);
-*/
                 if (/R/i.test(xvt.entry)) {
                     if (from === 'Taxman') {
                         xvt.out('"You can never escape the taxman!"\n')
@@ -143,6 +112,26 @@ sprintf(line[numline++], "%s, the coward, retreated from you.", PLAYER.Handle);
                     if(from === 'Tiny') {
                         xvt.out('"You try to escape, but the crowd throws you back to witness the slaughter!"\n')
                         xvt.app.refocus
+                        return
+                    }
+
+                    let trip = rpc.dex + $.dice(rpc.int) / 2
+                    trip += Math.round(rpc.dex - enemy.dex) / 2)
+                    trip = trip < 5 ? 5 : trip > 95 ? 95 : trip
+                    trip += 5 * (alive[0] - alive[1])
+                    trip = trip < 5 ? 5 : trip > 95 ? 95 : trip
+                    if ($.dice(100) > trip) {
+                        let who = (enemy.user.gender === 'I' ? 'The ' : '') + enemy.user.handle
+                        xvt.out([
+                            'You trip and fail in your attempt to retreat.',
+                            `${who} pulls you back into the battle.`,
+                            `${who} prevents your retreat and says, "I'm not through with you yet!"`,
+                            `${who} outmaneuvers you and says, "You started this, I'm finishing it."`,
+                            `${who} blocks your path and says, "Where do you want to go today?"`,
+                        ][$.dice(5) - 1]
+                        , '\n'
+                        )
+                        next()
                         return
                     }
 
