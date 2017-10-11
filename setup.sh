@@ -15,13 +15,10 @@ sudo dnf update nodejs npm
 
 # add the transpiler
 # npm install typescript@next -g
-tsc -v && sudo npm upgrade typescript -g || sudo npm install typescript -g
+tsc -v && sudo npm update typescript -g || sudo npm install typescript -g
 
 # this.package install script
 sudo npm install
-
-# replace with my tweaks for bold attribute handling (still needs dark/faint)
-#cp -v ./patch/term.js ./node_modules/term.js/src/
 
 # transpile and test run locally
 npm start
@@ -30,13 +27,6 @@ npm start
 member=`sudo groupmems -g games -l | grep -c nobody`
 [ $member -eq 0 ] && sudo groupmems -g games -a nobody
 
-cat > ./build/logins.sh << EOD
-#!/bin/sh -l
-# drop to PC emulation if remote enquiry fails
-exec node ${TARGET}/ttymain
-EOD
-
-chmod +x ./build/logins.sh
 sudo rsync -a --delete ./build/ ${TARGET}
 sudo rsync -a --delete ./node_modules ${TARGET}/
 sudo chown -R root.games ${TARGET}
