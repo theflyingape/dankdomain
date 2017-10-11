@@ -81,7 +81,8 @@ function choice() {
 			}
 
 			max = $.Armor.merchant.length - 1
-			lo = 1
+			lo = $.online.armor.ac - 1
+			lo = lo < 1 ? 1 : lo > max ? max - 1 : lo
 			for (hi = lo;
 				hi < max && $.player.coin.value + credit.value >= new $.coins($.Armor.name[$.Armor.merchant[hi]].value).value;
 				hi++);
@@ -343,7 +344,8 @@ function choice() {
 			}
 
 			max = $.Weapon.merchant.length - 1
-			lo = 1
+			lo = $.online.weapon.wc - 1
+			lo = lo < 1 ? 1 : lo > max ? max - 1 : lo
 			for (hi = lo;
 				hi < max && $.player.coin.value + credit.value >= new $.coins($.Weapon.name[$.Weapon.merchant[hi]].value).value;
 				hi++);

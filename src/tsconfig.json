@@ -6,7 +6,6 @@
     "sourceMap": false
   },
   "exclude": [
-        "door",
         "node_modules",
         "**/*.spec.ts"
     ]

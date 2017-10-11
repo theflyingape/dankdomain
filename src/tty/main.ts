@@ -60,7 +60,8 @@ function choice() {
 
     switch (choice) {
         case '@':
-            require('./sysop').menu($.player.expert)
+            if ($.access.sysop)
+                require('./sysop').menu($.player.expert)
             return
 
         case 'A':

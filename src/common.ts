@@ -485,8 +485,9 @@ export function checkXP(rpc: active) {
             xvt.waste(250)
             xvt.out(xvt.reset, '\n')
             xvt.waste(250)
-            xvt.out(xvt.bright, xvt.yellow
-                , Access.name[king.access][king.gender], ', ', king.handle
+            xvt.out(xvt.bright, xvt.yellow, king.handle
+                , ', ', Access.name[king.access][king.gender].toLowerCase()
+                , ' the ', Access.name[king.access].toLowerCase()
                 , ', is pleased with your accomplishments\n'
                 , 'and promotes you to ', an(rpc.user.access), rpc.user.access, '!\n')
             xvt.waste(250)
@@ -577,6 +578,232 @@ export function checkXP(rpc: active) {
         }
     }
 }
+
+export function skillplus(rpc: active) {
+
+    //  slow-roll endowment choices for a dramatic effect  :)
+    xvt.out(xvt.reset, '\n'); xvt.waste(500)
+    xvt.out(xvt.bright, xvt.yellow,'+ You earn a gift to endow your character +\n'); xvt.waste(1000)
+    xvt.out('\n'); xvt.waste(500)
+
+    if (rpc.user.maxstr < 99 && rpc.user.maxint < 99 && rpc.user.maxdex < 99 && rpc.user.maxcha < 99) {
+        xvt.out(bracket(0, false), xvt.yellow, 'Increase ALL abilities by +2\n')
+        xvt.waste(100)
+    }
+    xvt.out(bracket(1, false), xvt.yellow, 'Increase Strength ability from ', xvt.reset
+        , rpc.user.maxstr.toString(), ' '
+        , rpc.user.maxstr < 90 ? '[WEAK]'
+        : rpc.user.maxstr < 95 ? '-Average-'
+        : rpc.user.maxstr < 99 ? '=Strong='
+        : '#MAX#'
+        , '\n'
+    ); xvt.waste(100)
+    xvt.out(bracket(2, false), xvt.yellow, 'Increase Intellect ability from ', xvt.reset
+        , rpc.user.maxint.toString(), ' '
+        , rpc.user.maxint < 90 ? '[MORON]'
+        : rpc.user.maxint < 95 ? '-Average-'
+        : rpc.user.maxint < 99 ? '=Smart='
+        : '#MAX#'
+        , '\n'
+    ); xvt.waste(100)
+    xvt.out(bracket(3, false), xvt.yellow, 'Increase Dexterity ability from ', xvt.reset
+        , rpc.user.maxdex.toString(), ' '
+        , rpc.user.maxdex < 90 ? '[SLOW]'
+        : rpc.user.maxdex < 95 ? '-Average-'
+        : rpc.user.maxdex < 99 ? '=Swift='
+        : '#MAX#'
+        , '\n'
+    ); xvt.waste(100)
+    xvt.out(bracket(4, false), xvt.yellow, 'Increase Charisma ability from ', xvt.reset
+        , rpc.user.maxcha.toString(), ' '
+        , rpc.user.maxcha < 90 ? '[SURLY]'
+        : rpc.user.maxcha < 95 ? '-Average-'
+        : rpc.user.maxcha < 99 ? '=Affable='
+        : '#MAX#'
+        , '\n'
+    ); xvt.waste(100)
+    xvt.out(bracket(5, false), xvt.yellow, 'Improve Melee skill from ', xvt.reset
+        , rpc.user.melee.toString(), 'x '
+        , [ '[RARE]', '-Average-', '+Good+', '=Masterful=', '#MAX#' ][rpc.user.melee]
+        , '\n'
+    ); xvt.waste(100)
+    xvt.out(bracket(6, false), xvt.yellow, 'Improve Backstab skill from ', xvt.reset
+        , rpc.user.backstab.toString(), 'x '
+        , [ '[RARE]', '-Average-', '+Good+', '=Masterful=', '#MAX#' ][rpc.user.backstab]
+        , '\n'
+    ); xvt.waste(100)
+    xvt.out(bracket(7, false), xvt.yellow, 'Improve Poison skill from ', xvt.reset
+        , rpc.user.poison.toString(), 'x '
+        , [ '[NONE]', '-Average-', '+Good+', '=Masterful=', '#MAX#' ][rpc.user.poison]
+        , '\n'
+    ); xvt.waste(100)
+    if (rpc.user.magic < 2) {
+        xvt.out(bracket(8, false), xvt.yellow, 'Improve Magic skill from ', xvt.reset)
+        xvt.out([ '[NONE]', '-Wands-' ][rpc.user.magic])
+    }
+    else {
+        xvt.out(bracket(8, false), xvt.yellow, 'Increase Mana power from ', xvt.reset)
+        xvt.out([ '+Scrolls+', '=Spells=', '#MAX#' ][rpc.user.magic - 2])
+    }
+    xvt.out('\n'); xvt.waste(100)
+    xvt.out(bracket(9, false), xvt.yellow, 'Improve Stealing skill from ', xvt.reset
+        , rpc.user.steal.toString(), 'x '
+        , [ '[RARE]', '-Average-', '+Good+', '=Masterful=', '#MAX#' ][rpc.user.steal]
+        , '\n'
+    ); xvt.waste(100)
+
+}
+/*
+void skillplus(void)
+{
+	i = 0;
+	while(i < 1 || i > 9) {
+		sprintf(prompt, "%sChoose which: ", fore(CYN));
+		OUT(prompt);
+		if(ins(1))
+		strcpy(inbuf, "5");
+		i = atoi(inbuf);
+		NL; Delay(5);
+	}
+	NL; Delay(5);
+	switch(i) {
+	case 1:
+		news("can get even Stronger.");
+		PLAYER.MyMaxSTR += 10;
+		if(PLAYER.MyMaxSTR > 100)
+			PLAYER.MyMaxSTR = 100;
+		sprintf(outbuf, "%sMaximum Strength is now %u.", fore(BRED), PLAYER.MyMaxSTR);
+		break;
+	case 2:
+		news("can get even Wiser.");
+		PLAYER.MyMaxINT += 10;
+		if(PLAYER.MyMaxINT > 100)
+			PLAYER.MyMaxINT = 100;
+		sprintf(outbuf, "%sMaximum Intellect is now %u.", fore(GREEN), PLAYER.MyMaxINT);
+		break;
+	case 3:
+		news("can get even Quicker.");
+		PLAYER.MyMaxDEX += 10;
+		if(PLAYER.MyMaxDEX > 100)
+			PLAYER.MyMaxDEX = 100;
+		sprintf(outbuf, "%sMaximum Dexterity is now %u.", fore(MAGENTA), PLAYER.MyMaxDEX);
+		break;
+	case 4:
+		news("can get even Nicer.");
+		PLAYER.MyMaxCHA += 10;
+		if(PLAYER.MyMaxCHA > 100)
+			PLAYER.MyMaxCHA = 100;
+		sprintf(outbuf, "%sMaximum Charisma is now %u.", fore(YELLOW), PLAYER.MyMaxCHA);
+		break;
+	case 5:
+		news("got more Powerful.");
+		switch(++PLAYER.MyMelee) {
+		case 1:
+			sprintf(outbuf, "%sYou can finally enter through Tiny's front door.", fore(CYAN));
+			break;
+		case 2:
+			sprintf(outbuf, "%sSo you want to be a hero, eh?", fore(BLUE));
+			break;
+		case 3:
+			sprintf(outbuf, "%sJust what this world needs, another fighter.", fore(BRED));
+			break;
+		case 4:
+			sprintf(outbuf, "%sWatch out for blasts, you brute!", fore(BRN));
+			break;
+		case 5:
+			sprintf(outbuf, "%sYou and Tiny can go out work-out together.", fore(BLACK));
+			break;
+		default:
+			sprintf(outbuf, "%sThere is none more powerful than you.", fore(BLACK));
+			break;
+		}
+		break;
+	case 6:
+		news("watch your Back now.");
+		switch(++PLAYER.MyBackstab) {
+		case 1:
+			sprintf(outbuf, "%sA backstab is in your future.", fore(CYAN));
+			break;
+		case 2:
+			sprintf(outbuf, "%sYou will be given a backstab more regularly now.", fore(CYAN));
+			break;
+		case 3:
+			sprintf(outbuf, "%sYou will deal a more significant, first blow.", fore(YELLOW));
+			break;
+		case 4:
+			sprintf(outbuf, "%sEveryone will be watching over their backs now.", fore(BRED));
+			break;
+		default:
+			sprintf(outbuf, "%sDropping any opponent on the first shot is possible.", fore(BLACK));
+			break;
+		}
+		break;
+	case 7:
+		news("Apothecary visits have more meaning.");
+		switch(++PLAYER.MyPoison) {
+		case 1:
+			sprintf(outbuf, "%sThe Apothecary will see you now, bring money.", fore(CYAN));
+			break;
+		case 2:
+			sprintf(outbuf, "%sYour poisons can achieve 2x its potency now.", fore(CYAN));
+			break;
+		case 3:
+			sprintf(outbuf, "%sYour poisons can achieve 3x its potency now.", fore(YELLOW));
+			break;
+		case 4:
+			sprintf(outbuf, "%sYour poisons can achieve 4x its potency now.", fore(BRED));
+			break;
+		default:
+			sprintf(outbuf, "%sYou have the ability to vaporize your weapon.", fore(BLACK));
+			break;
+
+		}
+		break;
+	case 8:
+		news("became more friendly with the old mage.");
+		switch(PLAYER.MyMagic) {
+		case 0:
+			PLAYER.MyMagic++;
+			sprintf(outbuf, "%sThe old mage will see you now, bring money.", fore(CYAN));
+			break;
+		case 1:
+			PLAYER.MyMagic++;
+			sprintf(outbuf, "%sYour wands have turned into scrolls.", fore(CYAN));
+			PLAYER.SP += 15 + dice(500);
+			ONLINE->SP = PLAYER.SP;
+			break;
+		default:
+			sprintf(outbuf, "%sMore mana is better.", fore(BLACK));
+			PLAYER.SP += 512;
+			ONLINE->SP += 512;
+			PLAYER.SP += dice(3583 / PLAYER.MyMagic);
+			break;
+		}
+		break;
+	case 9:
+		news("try to avoid in the Square.");
+		switch(++PLAYER.MySteal) {
+		case 1:
+			sprintf(outbuf, "%sYour fingers are starting to itch.", fore(CYAN));
+			break;
+		case 2:
+			sprintf(outbuf, "%sYour eyes widen at the chance for unearned loot.", fore(CYAN));
+			break;
+		case 3:
+			sprintf(outbuf, "%sWelcome to the Thieves guild: go pick a pocket or two!", fore(BLUE));
+			break;
+		default:
+			sprintf(outbuf, "%sYou convince yourself that no lock cannot be picked.", fore(BLACK));
+			break;
+		}
+		break;
+	}
+	OUT(outbuf);
+	NL; Delay(5);
+	NORMAL;
+	NL; Delay(5);
+}
+*/
 
 export function an(item: string) {
     return /a|e|i|o|u/i.test(item[0]) ? 'an ' : 'a '
