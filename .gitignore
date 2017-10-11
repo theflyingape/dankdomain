@@ -1,6 +1,8 @@
 **/*.js.map
 build/*.js
+build/images/**
 build/node_modules/**
+build/sounds/**
 build/tty/*.js
 build/users
 node_modules/**
