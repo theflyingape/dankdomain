@@ -5,7 +5,12 @@
 <link href='http://fonts.googleapis.com/css?family=MedievalSharp' rel='stylesheet' type='text/css'>
 <style>
   body {
-    text-align: "center";
+    text-align: center;
+    background: gray;  /*  older browsers  */
+    background: -webkit-linear-gradient(left top, gray, white);  /*  safari 5.1 to 6.0  */
+    background: -o-linear-gradient(bottom right, gray, white);  /*  opera 11.1 to 12.0  */
+    background: -moz-linear-gradient(bottom right, gray, white);  /*  firefox 3.6 to 15  */
+    background: linear-gradient(to bottom right, lightgray, white);  /*  standard syntax (must be last)  */
   }
 </style>
 </head>
@@ -41,10 +46,10 @@ function rotateImage() {
 var t = setInterval(rotateImage, 60000);
 </script>
 <body>
-<img id="artwork" src="images/default.png" height="80%" width="80%"/>
+<img id="artwork" src="images/default.png" height="50%" width="50%" />
 <audio autoplay>
   <source src="sounds/dankdomain.wav" type="audio/wav">
-  Welcome to my domain
+  Welcome to my domain!
 </audio>
 </body>
 </html>

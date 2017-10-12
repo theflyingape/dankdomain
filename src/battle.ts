@@ -513,7 +513,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
 export function poison(rpc: active, cb:Function) {
     if (rpc.user.id === $.player.id) {
         if (!$.player.poisons.length) {
-            xvt.out('You don\'t have any poisons.\n')
+            xvt.out('\nYou don\'t have any poisons.\n')
             cb(true)
             return
         }
