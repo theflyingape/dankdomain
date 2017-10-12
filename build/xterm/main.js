@@ -1,14 +1,13 @@
 var cols=80,
     rows=25;
- 
-var terminalContainer = document.getElementById('terminal-container'),
+
+var terminalContainer = document.getElementById('terminal'),
     term = new Terminal({ cursorBlink:true, rows:rows, cols:cols }),
     socket,
     termid;
 
 term.open(terminalContainer, true);
-//term.focus();
-//term.resize(90, 30);
+term.focus();
 term.fit();
 
 if (document.location.pathname) {
@@ -29,8 +28,8 @@ socket.emit('create', cols, rows, function(err, data) {
   term.emit('open tab', self);
 });
  
-//term.writeln('Welcome to xterm.js');
-//term.writeln('Connecting to websocket...');
+term.writeln('\x1B[36mWelcome to \x1B[1mDank Domain\x1B[22m!');
+term.write('\x1B[34mConnecting to terminal WebSocket ... \x1B[m');
  
 term.on('data', function(data) {
   socket.emit('data', termid, data);
@@ -41,8 +40,7 @@ term.on('resize', function(data) {
 });
  
 socket.on('connect', function() {
-//  term.writeln('Connected.');
-//  term.writeln('');
+  term.writeln('');
 });
 
 socket.on('data', function(id, data) {

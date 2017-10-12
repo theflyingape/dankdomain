@@ -36,9 +36,9 @@
  */
 
 .terminal {
-    background-color: #000;
-    color: #fff;
-    font-family: courier-new, courier, monospace;
+    background-color: #248;
+    color: #f2f4f8;
+    font-family: "DejaVu Sans Mono", "Liberation Mono", monospace;
     font-feature-settings: "liga" 0;
     position: relative;
     user-select: none;

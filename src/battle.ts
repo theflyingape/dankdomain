@@ -453,21 +453,19 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             : (period[0] === '.') ? rpc.weapon.stab : rpc.weapon.plunge
 
         if (rpc == $.online) {
-            xvt.out('You '
-                , action
-                , enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
-                , ' for ', hit.toString(), ' hit points', period, '\n')
+            xvt.out('You ', action, enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
+                , ' for ', hit.toString(), ' hit points', period, '\n'
+            )
             xvt.waste(100)
         }
         else {
             let w = action.split(' ')
-            let s = /.*ch|.*sh|.*s/i.test(w[0]) ? 'es' : 's'
+            let s = /.*ch$|.*sh$|.*s$/i.test(w[0]) ? 'es' : 's'
             xvt.out((/Monster|User/.test(from)) ? $.who(rpc, 'He')
                 : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle + ' ' : rpc.user.handle + ' '
                 , w[0], s, w.slice(1).join(' '), ' '
                 , enemy == $.online ? 'you' : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
-                , ' for ', hit.toString(), ' hit points'
-                , period, '\n'
+                , ' for ', hit.toString(), ' hit points', period, '\n'
             )
         }
     }

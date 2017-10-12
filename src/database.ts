@@ -22,7 +22,7 @@ module db
         xvt.out('initializing players ... ')
 
         sqlite3.run(`CREATE TABLE IF NOT EXISTS Players (
-            id text PRIMARY KEY, handle text UNIQUE NOT NULL, name text NOT NULL, email text, password text,
+            id text PRIMARY KEY, handle text UNIQUE NOT NULL, name text NOT NULL, email text, password text NOT NULL,
             dob numeric NOT NULL, sex text NOT NULL, joined numeric, expires numeric, lastdate numeric,
             lasttime numeric, calls numeric, today numeric, expert integer, emulation text NOT NULL,
             rows numeric, access text NOT NULL, remote text, pc text, gender text,
@@ -105,15 +105,13 @@ module db
         xvt.waste(250)
     }
 
-    row = sqlite3.run(`SELECT * FROM sqlite_master WHERE name='Hall' AND type='table'`)
+    row = sqlite3.run(`SELECT * FROM sqlite_master WHERE name='Gangs' AND type='table'`)
     if (!row.length) {
-        xvt.out('initializing halls ... ')
+        xvt.out('initializing gangs ... ')
 
-        //  id = fame|lame
-        sqlite3.run(`CREATE TABLE IF NOT EXISTS Hall (
-            id text, pc text, handle text, lastdate numeric,
-          	plays numeric, jl numeric, jw numeric, killed numeric, kills numeric,
-            retreats numeric, tl numeric, tw numeric
+        sqlite3.run(`CREATE TABLE IF NOT EXISTS Gangs (
+            name text PRIMARY KEY, banner numeric, members text,
+            win numeric, loss numeric
         )`)
 
         xvt.out('done.\n')
