@@ -529,6 +529,7 @@ export function checkXP(rpc: active) {
     award.cha = rpc.user.cha - award.cha
     
     if (rpc == online) {
+        sound('level')
         access = Access.name[player.access]
         online.altered = true
         xvt.out('\n')
@@ -1312,6 +1313,13 @@ export function worth(n: number, p: number): number {
     return Math.trunc(n * p / 100)
 }
 
+export function beep() {
+    if (xvt.emulation === 'XT')
+        sound('max')
+    else
+        xvt.beep()
+}
+
 export function bracket(item: number|string, nl = true): string {
     var framed: string = item.toString()
     framed = xvt.attr(xvt.white, xvt.faint, nl ? '\n' : ''
@@ -1391,6 +1399,7 @@ export function emulator(cb:Function) {
     xvt.app.form = {
         'term': { cb:() => {
             if (xvt.validator.isNotEmpty(xvt.entry) && xvt.entry.length == 2) xvt.emulation = xvt.entry.toUpperCase()
+            sound('max')
             xvt.out('\n\n', xvt.reset, xvt.magenta, xvt.LGradient[xvt.emulation], xvt.reverse, 'TEST BANNER', xvt.off, xvt.RGradient[xvt.emulation], '\n')
             xvt.out(xvt.red,'R', xvt.green,'G', xvt.blue,'B', xvt.reset, xvt.bright,' bold ', xvt.off, 'normal', xvt.faint, ' dark')
             xvt.out(xvt.reset, '\n')
@@ -1420,6 +1429,7 @@ export function logoff() {
     if (reason === '') reason = (xvt.reason ? xvt.reason : 'mystery')
     if (xvt.validator.isNotEmpty(player.id)) {
         if (reason !== '') {
+            sound('goodbye')
             player.expires = player.lastdate + sysop.expires
             if (player.calls) {
                 player.lasttime = now().time
@@ -1434,7 +1444,7 @@ export function logoff() {
         //  logoff banner
         xvt.out('\n')
         xvt.out(xvt.reset, 'Goodbye, please play again!  Also visit:\n')
-        xvt.waste(500)
+        xvt.waste(750)
         xvt.out(xvt.cyan, '  ___                           ', xvt.cyan, '  ___  \n')
         xvt.out(xvt.cyan, '  \\_/  ', xvt.red, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Red, xvt.white, 'Never Program Mad', xvt.reset, xvt.red, xvt.RGradient[xvt.emulation], xvt.cyan, '  \\_/  \n')
         xvt.out(xvt.cyan, ' _(', xvt.bright, '-', xvt.normal, ')_    ', xvt.reset, '     npmjs.com        ', xvt.cyan, ' _(', xvt.bright, '-', xvt.normal, ')_ \n')
@@ -1452,8 +1462,19 @@ export function logoff() {
             , xvt.bright, xvt.black, '(', xvt.normal, xvt.cyan, process.platform, xvt.bright, xvt.black, ')'
             , xvt.reset, '\n'
         )
-        xvt.waste(1000)
+        xvt.waste(2000)
+        music(online.hp > 0 ? 'logoff' : 'death')
     }
+}
+
+export function music(tune: string) {
+    if (xvt.validator.isEmpty(process.env.npm_package_version))
+        xvt.out('@[{', tune, '}')
+}
+
+export function sound(effect: string, sync = false) {
+    if (xvt.emulation === 'XT')
+        xvt.out(xvt.validator.isEmpty(process.env.npm_package_version) ? '@[[' + effect + ';' + (+sync).toString() + ']' : ' {{ ' + effect + ' }}\n')
 }
 
 }

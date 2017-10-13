@@ -11,13 +11,14 @@ module NewUser
 {
 	let editmode: boolean = false
 
+	$.music('newuser')
 	xvt.out(xvt.clear)
 	xvt.out(xvt.yellow, '     --=:) ', xvt.bright, 'New User Registration', xvt.off, ' (:=--\n')
 	xvt.out($.bracket(1), xvt.cyan, ' Player\'s Handle:')
 	xvt.out($.bracket(2), xvt.cyan, ' Your REAL Name.:')
 	xvt.out($.bracket(3), xvt.cyan, ' Date of Birth..:')
 	xvt.out($.bracket(4), xvt.cyan, ' Gender (M/F)...:')
-
+	
 	xvt.app.form = {
 		1: { cb:handle, row:3, col:23, min:2, max:22, match:/^[A-Z][A-Z\s]*$/i },
 		2: { cb:name, row:4, col:23, min:5, max:32, match:/^[A-Z][A-Z\s]*$/i },

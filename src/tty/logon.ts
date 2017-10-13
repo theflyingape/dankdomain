@@ -227,6 +227,7 @@ function welcome() {
         $.tiny = 1
 
         if ($.player.pc === 'None') {
+            xvt.out('@[[reroll;0]')
             if ($.player.novice) {
                 xvt.out(xvt.reset, '\n', xvt.bright)
                 $.cat('intro')
@@ -238,6 +239,9 @@ function welcome() {
             }
             $.playerPC()
             return
+        }
+        else {
+            xvt.out('@[[logon;0]')
         }
     }
     else {

@@ -61,7 +61,7 @@ function choice() {
 				}
 				if (opponent.user.id === $.player.id) {
 					opponent.user.id = ''
-					xvt.out('You can\'t joust a wimp like ', $.who(opponent, 'him'), '.\n')
+					xvt.out('You can\'t joust a wimp like', $.who(opponent, 'him'), '.\n')
 					menu()
 					return
 				}
@@ -101,6 +101,7 @@ function choice() {
 						if (/Y/i.test(xvt.entry)) {
 							$.joust--
 							$.online.altered = true
+							$.music('joust')
 							xvt.out('\nThe trumpets blare! You and your opponent ride into the arena. The crowd roars!\n')
 							round()
 							xvt.app.focus = 'joust'
@@ -111,6 +112,7 @@ function choice() {
 					}, prompt:'Are you sure (Y/N)? ', enter:'N', eol:false, match:/Y|N/i },
 					'joust': { cb:() => {
 						if (/F/i.test(xvt.entry)) {
+							$.sound('boo')
 							xvt.out('\n\nThe crowd throws rocks at you as you ride out of the arena.\n')
 							$.player.jl++
 							opponent.user.jw++
@@ -125,10 +127,12 @@ function choice() {
 							while(!result)
 								result = (ability + $.dice(factor * $.player.level)) - (versus + $.dice(factor * opponent.user.level))
 							if(result > 0) {
+								$.sound('hit')
 								xvt.out(xvt.green, '-*>', xvt.bright, xvt.white, ' Thud! ', xvt.normal, xvt.green,'<*-  ', xvt.reset, 'A hit!  You win this pass!\n')
 								if (++jw == 3) {
 									xvt.out('\nYou have won the joust!\n')
 									xvt.waste(250)
+									$.sound('cheer')
 									xvt.out('The crowd cheers!\n')
 									xvt.waste(250)
 									let reward = new $.coins($.money(opponent.user.level))
@@ -142,12 +146,14 @@ function choice() {
 								}
 							}
 							else {
+								$.sound('oof')
 								xvt.out(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.normal, xvt.magenta,'<^  ', xvt.reset
 									, $.who(opponent, 'He'), 'hits!  You lose this pass!\n'
 								)
 								if (++jl == 3) {
 									xvt.out('\nYou have lost the joust!\n')
 									xvt.waste(250)
+									$.sound('boo')
 									xvt.out('The crowd boos you!\n')
 									xvt.waste(250)
 									let reward = new $.coins($.money($.player.level))

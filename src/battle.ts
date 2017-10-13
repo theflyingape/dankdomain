@@ -385,10 +385,11 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         if (blow == 1) {
             if (rpc == $.online) {
                 xvt.out('Your ', rpc.user.weapon, ' passes through thin air.\n')
-                xvt.waste(500)
+                $.sound('miss', true)
                 return
             }
             else {
+                $.sound(rpc.user.melee < 2 ? 'whoosh' : rpc.user.gender === 'I' ? 'swoosh' : 'swords')
                 if (isNaN(+rpc.user.weapon))
                     xvt.out(rpc.user.gender === 'I' ? 'The ' : ''
                         , rpc.user.handle, '\'s ', rpc.user.weapon
@@ -408,7 +409,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         }
         else {
             xvt.out('Attempt fails!\n')
-            xvt.waste(500)
+            $.sound('miss', true)
             return
         }
     }
@@ -489,7 +490,8 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             xvt.out('\n', xvt.bright, xvt.yellow
                 , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
                 , ' killed you!\n\n', xvt.reset)
-            xvt.waste(500)
+            $.sound('killed', true)
+            xvt.waste(750)
             $.reason = rpc.user.id.length ? `defeated by ${rpc.user.handle}`
                 : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`
             xvt.carrier = false
@@ -500,7 +502,12 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                 xvt.out('You killed'
                     , enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
                     , '!\n\n', xvt.reset)
-                xvt.waste(200)
+                if (enemy.user.id !== '' && enemy.user.id[0] !== '_') {
+                    $.sound('kill', true)
+                    $.music('bitedust')
+                }
+                else
+                    xvt.waste(250)
                 // rpc.user.id.length ? `defeated ${enemy.user.handle}`
                 //    : `defeated a level ${enemy.user.level} ${enemy.user.handle}`
             }
@@ -561,6 +568,7 @@ export function poison(rpc: active, cb:Function) {
         else
             rpc.toWC += t
 
+        $.sound('hone')
         xvt.out(xvt.reset, '\n')
         if (!$.Poison.have(rpc.user.poisons, vial) || +rpc.user.weapon < 0) {
             xvt.out($.who(rpc, 'He'), $.what(rpc, 'secrete'), 'a caustic ooze', $.buff(p, t), '.\n')

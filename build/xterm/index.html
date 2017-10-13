@@ -2,9 +2,57 @@
 <html lang="en-US">
 <head>
 <title>Dank Domain: the return of Hack & Slash</title>
+<link href='http://fonts.googleapis.com/css?family=MedievalSharp' rel='stylesheet' type='text/css'>
+<style>
+  body {
+    background-color: #000;
+    color: antiquewhite;
+  }
+  #terminal {
+    border: 0;
+    top: 0; left: 0;
+    width: 80%;
+    height: 100%;
+    position: fixed;
+  }
+  #profile {
+    top: 0; right: 0;
+    width: 20%;
+    height: 50%;
+    position: fixed;
+  }
+  #enemy {
+    top: 50%; right: 0;
+    width: 20%;
+    height: 25%;
+    position: fixed;
+  }
+  #action {
+    top: 75%; right: 0;
+    width: 20%;
+    height: 25%;
+    position: fixed;
+  }
+</style>
+<link rel="stylesheet" href="xterm.css">
+<script src="socket.io/socket.io.js"></script>
+<script src="xterm/dist/xterm.js"></script>
+<script src="xterm/dist/addons/fit/fit.js"></script>
+<script src="main.js" defer></script>
 </head>
-<frameset cols="*,25%">
-        <frame src="./xterm.html">
-        <frame src="./profile.html">
-</frameset>
+<body onresize="term.fit();">
+<div id="terminal"></div>
+<!--iframe id="terminal" name="terminal" src="./xterm.html"></iframe-->
+<iframe seamless id="profile" name="profile" src="./profile.html"></iframe>
+<iframe seamless id="enemy" name="enemy" src="./enemy.html"></iframe>
+<iframe seamless id="action" name="action" src="./action.html"></iframe>
+<p>Dank Domain: the return of Hack &amp; Slash</p>
+<p>&copy;2017 Robert Hurst</p>
+<audio id="audio">
+  <source id="audioSource" type="audio/wav">
+</audio>
+<audio id="music" autoplay>
+  <source id="musicSource" src="sounds/dankdomain.wav" type="audio/wav">
+</audio>
+</body>
 </html>

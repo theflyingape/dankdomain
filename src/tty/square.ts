@@ -56,7 +56,7 @@ function choice() {
             suppress = true
         }
     else {
-        xvt.beep()
+        $.beep()
         suppress = false
     }
     xvt.out('\n')
@@ -197,7 +197,7 @@ function choice() {
                             }
                         }
 						$.online.hp += buy
-						xvt.beep()
+						$.beep()
 						xvt.out('\nHit points = ', $.online.hp.toString(), '\n')
 					}
 					menu(true)
@@ -245,12 +245,12 @@ function choice() {
 			xvt.out('\n\nYou pick somebody\'s pocket and steal ', credit.carry(), '!\n\n')
 			xvt.waste(1000)
 			if (Math.trunc(16 * $.player.steal + $.player.level / 10 + $.player.dex / 10) < $.dice(100)) {
-				xvt.out('A guard catches you and throws you into jail!\n')
-				xvt.waste(750)
-				xvt.out('You might be released by your next call.\n\n')
-				xvt.waste(750)
 				$.player.status = 'jail'
 				$.reason = 'caught picking a pocket'
+				xvt.out('A guard catches you and throws you into jail!\n')
+				$.sound('arrested', true)
+				xvt.out('You might be released by your next call.\n\n')
+				xvt.waste(1000)
 				xvt.hangup()
 				return
 			}
@@ -360,7 +360,7 @@ function Bank() {
     let suppress = $.player.expert
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isEmpty(bank[choice])) {
-        xvt.beep()
+        $.beep()
 		xvt.app.refocus()
 		return
     }
@@ -378,7 +378,7 @@ function Bank() {
 
 		case 'L':
 			if(credit.value < 1) {
-				xvt.beep()
+				$.beep()
 				xvt.app.refocus()
 				return
 			}
@@ -393,11 +393,11 @@ function Bank() {
 
 			if ($.dice(100) > ++c) {
 				$.player.status = 'jail'
-				xvt.out('\n\nA guard catches you and throws you into jail!\n')
-				xvt.waste(1500)
-				xvt.out('\nYou might be released by your next call.\n\n')
-				xvt.waste(1250)
 				$.reason = 'caught getting into the vault'
+				xvt.out('\n\nA guard catches you and throws you into jail!\n')
+				$.sound('arrested', true)
+				xvt.out('\nYou might be released by your next call.\n\n')
+				xvt.waste(1000)
 				xvt.hangup()
 				return
 			}
@@ -415,13 +415,13 @@ function Bank() {
 			c /= 15 - ($.player.steal * 3)
 			if ($.dice(100) > ++c) {
 				$.player.status = 'jail'
+				$.reason = 'caught inside the vault'
 				xvt.out('something jingles!')
 				xvt.waste(1500)
 				xvt.out('\n\nA guard laughs as he closes the vault door on you!\n')
-				xvt.waste(1500)
+				$.sound('arrested', true)
 				xvt.out('\nYou might be released by your next call.\n\n')
-				xvt.waste(1250)
-				$.reason = 'caught inside the vault'
+				xvt.waste(1000)
 				xvt.hangup()
 				return
 			}
@@ -474,7 +474,7 @@ function amount() {
 				}
 				$.player.bank.value += amount.value
 				$.online.altered = true
-				xvt.beep()
+				$.beep()
 			}
 			break
 
@@ -484,7 +484,7 @@ function amount() {
 				$.player.loan.value += amount.value
 				$.player.coin.value += amount.value
 				$.online.altered = true
-				xvt.beep()
+				$.beep()
 			}
 			break
 
@@ -494,7 +494,7 @@ function amount() {
 				$.player.bank.value -= amount.value
 				$.player.coin.value += amount.value
 				$.online.altered = true
-				xvt.beep()
+				$.beep()
 			}
 			break
 	}
@@ -521,7 +521,7 @@ function list(choice: string) {
 function listStart() {
 	let n = +xvt.entry
 	if (n < lo || n > max) {
-		xvt.beep()
+		$.beep()
 		xvt.app.refocus()
 		return
 	}
