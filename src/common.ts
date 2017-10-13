@@ -485,9 +485,9 @@ export function checkXP(rpc: active) {
             xvt.waste(250)
             xvt.out(xvt.reset, '\n')
             xvt.waste(250)
-            xvt.out(xvt.bright, xvt.yellow, king.handle
-                , ', ', Access.name[king.access][king.gender].toLowerCase()
-                , ' the ', Access.name[king.access].toLowerCase()
+            xvt.out(xvt.bright, xvt.yellow
+                , Access.name[king.access][king.gender], ' the ', king.access.toLowerCase()
+                , ', ', king.handle
                 , ', is pleased with your accomplishments\n'
                 , 'and promotes you to ', an(rpc.user.access), rpc.user.access, '!\n')
             xvt.waste(250)
