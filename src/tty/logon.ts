@@ -241,7 +241,7 @@ function welcome() {
             return
         }
         else {
-            xvt.out('@[[logon;0]')
+            $.music('logon')
         }
     }
     else {

@@ -32,6 +32,7 @@ module Main
     }
 
 export function menu(suppress = false) {
+    $.music('.')
     if ($.online.altered) db.saveUser($.player)
     if ($.reason) xvt.hangup()
 
@@ -69,10 +70,12 @@ function choice() {
             return
 
         case 'D':
+            $.music('dungeon' + $.dice(9))
             require('./dungeon').menu($.player.expert)
             return
 
         case 'G':
+            $.music('casino')
             require('./gambling').menu($.player.expert)
             return
 
@@ -234,9 +237,9 @@ function choice() {
                             }
 							else {
 								xvt.out('\nA guard catches you and throws you into jail!\n')
-								xvt.waste(750)
+                                $.sound('arrested', true)
 								xvt.out('You might be released by your next call.\n\n')
-								xvt.waste(750)
+								xvt.waste(10000)
 								//sprintf(line[numline++], "%s was caught robbing you!", PLAYER.Handle);
                                 $.reason = `caught robbing ${opponent.user.handle}`
 								$.player.status = 'jail'
@@ -256,6 +259,7 @@ function choice() {
             return
 
         case 'T':
+            $.music('tavern' + $.dice(4))
             require('./tavern').menu($.player.expert)
             return
 

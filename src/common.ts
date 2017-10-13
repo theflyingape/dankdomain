@@ -1469,12 +1469,15 @@ export function logoff() {
 
 export function music(tune: string) {
     if (xvt.validator.isEmpty(process.env.npm_package_version))
-        xvt.out('@[{', tune, '}')
+        xvt.out('@tune(', tune, ')')
 }
 
 export function sound(effect: string, sync = false) {
     if (xvt.emulation === 'XT')
-        xvt.out(xvt.validator.isEmpty(process.env.npm_package_version) ? '@[[' + effect + ';' + (+sync).toString() + ']' : ' {{ ' + effect + ' }}\n')
+        xvt.out(xvt.validator.isEmpty(process.env.npm_package_version)
+            ? '@play(' + effect + ';' + (+sync).toString() + ')'
+            : ' {{ ' + effect + ' }}\n'
+        )
 }
 
 }
