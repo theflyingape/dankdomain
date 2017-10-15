@@ -18,7 +18,7 @@
   #profile {
     top: 0; right: 0;
     width: 20%;
-    height: 50%;
+    height: 100%;
     position: fixed;
   }
   #enemy {
@@ -39,20 +39,40 @@
 <script src="xterm/dist/xterm.js"></script>
 <script src="xterm/dist/addons/fit/fit.js"></script>
 <script src="main.js" defer></script>
+<script>
+if (window.addEventListener) {
+    window.addEventListener("message", receive, false);       
+}
+else {
+    if (window.attachEvent) {
+        window.attachEvent("onmessage", receive, false);
+    }
+}
+
+function receive(event) {
+    if (event.data) {
+      if (event.data.message) {
+        socket.emit('data', termid, event.data.message);
+        if (event.data.return)
+          socket.emit('data', termid, '\x0A');
+      }
+      else {
+        if (event.data.return)
+          socket.emit('data', termid, '\x0D');
+      }
+    }
+}
+</script>
 </head>
 <body onresize="term.fit();">
 <div id="terminal"></div>
 <!--iframe id="terminal" name="terminal" src="./xterm.html"></iframe-->
-<iframe seamless id="profile" name="profile" src="./profile.html"></iframe>
 <iframe seamless id="enemy" name="enemy" src="./enemy.html"></iframe>
+<iframe seamless id="profile" name="profile" src="./profile.html"></iframe>
 <iframe seamless id="action" name="action" src="./action.html"></iframe>
-<p>Dank Domain: the return of Hack &amp; Slash</p>
-<p>&copy;2017 Robert Hurst</p>
-<audio id="audio">
-  <source id="audioSource" type="audio/wav">
-</audio>
-<audio id="music" autoplay>
-  <source id="musicSource" src="sounds/dankdomain.wav" type="audio/wav">
-</audio>
+<h2>Dank Domain: the return of Hack &amp; Slash</h2>
+<h3>&copy;2017 Robert Hurst</h3>
+<h4>use REFRESH button to start over</h4>
+<input type="button" value="REFRESH" onclick="window.location.reload();">
 </body>
 </html>

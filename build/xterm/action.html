@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>Dank Domain: Action</title>
-<link href='http://fonts.googleapis.com/css?family=MedievalSharp' rel='stylesheet' type='text/css'>
+<link href='https://fonts.googleapis.com/css?family=Carter+One' rel='stylesheet'>
 <style>
   body {
     text-align: center;
@@ -10,10 +10,186 @@
     background: -webkit-linear-gradient(left top, gray, antiquewhite);  /*  safari 5.1 to 6.0  */
     background: -o-linear-gradient(bottom right, gray, antiquewhite);  /*  opera 11.1 to 12.0  */
     background: -moz-linear-gradient(bottom right, gray, antiquewhite);  /*  firefox 3.6 to 15  */
-    background: linear-gradient(to bottom right, lightgray, white);  /*  standard syntax (must be last)  */
+    background: linear-gradient(to bottom right, darkslategray, black);  /*  standard syntax (must be last)  */
+  }
+  input, button {
+    background: antiquewhite;
+    background-image: -webkit-linear-gradient(top, antiquewhite, cornsilk);
+    background-image: -moz-linear-gradient(top, antiquewhite, cornsilk);
+    background-image: -ms-linear-gradient(top, antiquewhite, cornsilk);
+    background-image: -o-linear-gradient(top, antiquewhite, cornsilk);
+    background-image: linear-gradient(to bottom, antiquewhite, cornsilk);
+    -webkit-border-radius: 12;
+    -moz-border-radius: 12;
+    border-radius: 12px;
+    text-shadow: 1px 1px 2px darkslategray;
+    -webkit-box-shadow: 0px 1px 3px darkslategray;
+    -moz-box-shadow: 0px 1px 3px darkslategray;
+    box-shadow: 0px 1px 3px darkslategray;
+    font-family: 'Carter One', cursive;
+    font-size: 18px;
+    color: midnightblue;
+    padding: 8px 16px;
+    border: solid greenyellow 3px;
+    text-decoration: none;
+  }
+    .platinum {
+        background: orchid;
+        border: darkorchid;
+        color: indigo;
+        font-size: 22px;
+    }
+    .gold {
+        background: lightgoldenrodyellow;
+        border: goldenrod;
+        color: darkgoldenrod;
+        font-size: 22px;
+    }
+    .silver {
+        background: turquoise;
+        border: darkturquoise;
+        color: steelblue;
+        font-size: 22px;
+    }
+    .copper {
+        background: crimson;
+        border: firebrick;
+        color: darkred;
+        font-size: 22px;
+    }
+  input:hover, button:hover {
+      background: gold;
+      background-image: -webkit-linear-gradient(top, gold, goldenrod);
+      background-image: -moz-linear-gradient(top, gold, goldenrod);
+      background-image: -ms-linear-gradient(top, gold, goldenrod);
+      background-image: -o-linear-gradient(top, gold, goldenrod);
+      background-image: linear-gradient(to bottom, gold, goldenrod);
+      text-decoration: none;
   }
 </style>
-<body>
-Action Buttons
+<script>
+if (window.addEventListener) {
+    window.addEventListener("message", receive, false);       
+}
+else {
+    if (window.attachEvent) {
+        window.attachEvent("onmessage", receive, false);
+    }
+}
+
+function receive(event) {
+  if (event.data) {
+    if (event.data.func) {
+      window[event.data.func].call(null);
+    }
+  }
+}
+
+cancel = `<input type="button" value="Cancel" onclick="send('\x15');">`;
+enter = `<input type="button" value="Enter" onclick="send('', true);">`;
+quit = `<input type="button" value="Quit" onclick="send('Q');">`;
+logoff = `<input type="button" value="LOGOFF" onclick="send('\x1A');">`;
+keypad = `<table align="center">
+  <tr><td><input type="button" value="7" onclick="send('7');"></td><td><input type="button" value="8" onclick="send('8');"></td><td><input type="button" value="9" onclick="send('9');">
+  </tr>
+  <tr><td><input type="button" value="4" onclick="send('4');"></td><td><input type="button" value="5" onclick="send('5');"></td><td><input type="button" value="6" onclick="send('6');">
+  </tr>
+  <tr><td><input type="button" value="1" onclick="send('1');"></td><td><input type="button" value="2" onclick="send('2');"></td><td><input type="button" value="3" onclick="send('3');">
+  </tr>
+  <tr><td><input type="button" value=" 0 " onclick="send('0');"></td><td colspan=2><input type="button" value=" MAX " onclick="send('MAX', true);"></td>
+  </tr>
+  </table>`;
+money = `<table align="center">
+  <tr><td><input type="button" value="7" onclick="send('7');"></td><td><input type="button" value="8" onclick="send('8');"></td><td><input type="button" value="9" onclick="send('9');"></td><td><input class="platinum" type="button" value="P" onclick="send('P');"></td><td><input class="gold" type="button" value="G" onclick="send('G');"></td>
+  </tr>
+  <tr><td><input type="button" value="4" onclick="send('4');"></td><td><input type="button" value="5" onclick="send('5');"></td><td><input type="button" value="6" onclick="send('6');"></td><td><input class="silver" type="button" value="S" onclick="send('S');"></td><td><input class="copper" type="button" value="C" onclick="send('C');"></td>
+  </tr>
+  <tr><td><input type="button" value="1" onclick="send('1');"></td><td><input type="button" value="2" onclick="send('2');"></td><td><input type="button" value="3" onclick="send('3');"></td><td colspan=2>${enter}</td>
+  </tr>
+  <tr><td colspan=2><input type="button" value=" 0 " onclick="send('0');"></td><td><input type="button" value="," onclick="send(',');"></td><td colspan=2><input type="button" value=" MAX " onclick="send('MAX', true);"></td>
+  </tr>
+  </table>`;
+
+function send(keystrokes, cr = false) {
+  window.parent.postMessage({ 'func':'emit', 'message':keystrokes, 'return':cr }, '*');
+}
+
+function keypress(event) {
+  var x = event.which || event.keyCode;
+  send(String.fromCharCode(x));
+}
+
+function clear() {
+  document.getElementById("command").innerHTML = '';
+}
+
+function logon() {
+  document.getElementById("command").innerHTML = `
+  <input type="button" value="NEW" onclick="send('NEW', true);">
+  <p>${enter}${logoff}</p>
+  `;
+}
+
+function menu() {
+  document.getElementById("command").innerHTML = `
+  <input type="button" value="Arena" onclick="send('A');">
+  <input type="button" value="Dungeon" onclick="send('D');">
+  <input type="button" value="Casino" onclick="send('G');"><br>
+  <input type="button" value="Halls" onclick="send('L');">
+  <input type="button" value="Most Wanted" onclick="send('M');">
+  <input type="button" value="Naval" onclick="send('N');"><br>
+  <input type="button" value="Party" onclick="send('P');">
+  <input type="button" value="Rob" onclick="send('R');">
+  <input type="button" value="Square" onclick="send('S');"><br>
+  <input type="button" value="Tavern" onclick="send('T');">
+  <input type="button" value="Reroll" onclick="send('X');">
+  <input type="button" value="Status" onclick="send('Y');"><br>
+  <input type="button" value="System" onclick="send('Z');"> ${logoff}
+  `;
+}
+
+function arena() {
+  document.getElementById("command").innerHTML = `
+  <input type="button" value="User" onclick="send('U');">
+  <input type="button" value="Monster" onclick="send('M');">
+  <input type="button" value="Joust" onclick="send('J');"><br>
+  <input type="button" value="Cast" onclick="send('C');">
+  <input type="button" value="Poison" onclick="send('P');">
+  <input type="button" value="Status" onclick="send('Y');"><br>
+  <input type="button" value="SQUARE" onclick="send('G');"> ${quit} ${logoff}
+  `;
+}
+
+function square() {
+  document.getElementById("command").innerHTML = `
+  <input type="button" value="Armoury" onclick="send('A');">
+  <input type="button" value="Weapons" onclick="send('W');">
+  <input type="button" value="Real Estate" onclick="send('R');">
+  <input type="button" value="Security" onclick="send('S');">
+  <input type="button" value="Mages Guild" onclick="send('M');">
+  <input type="button" value="Apothecary" onclick="send('V');">
+  <input type="button" value="Bank" onclick="send('B');">
+  <input type="button" value="Hospital" onclick="send('H');">
+  <input type="button" value="Pick pockets" onclick="send('P');">
+  <input type="button" value="Jail House" onclick="send('J');"><br>
+  <input type="button" value="ARENA" onclick="send('G');"> ${quit} ${logoff}
+  `;
+}
+
+function bank() {
+  document.getElementById("command").innerHTML = `
+  <input type="button" value="Deposit" onclick="send('D');">
+  <input type="button" value="Withdraw" onclick="send('W');">
+  <input type="button" value="Loan" onclick="send('L');">
+  <input type="button" value="Rob" onclick="send('R');">
+  ${money}
+  ${cancel}${quit}${logoff}
+  `;
+}
+
+</script>
+</head>
+<body onkeypress="keypress(event);">
+<div id="command"></div>
 </body>
 </html>

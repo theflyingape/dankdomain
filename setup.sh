@@ -105,8 +105,6 @@ cat <<-EOD
     <Location "/games/dankdomain/door/">
         ProxyPass "http://`hostname -f`:1939/"
         ProxyPassReverse "http://`hostname -f`:1939/"
-        #connectiontimeout=10 timeout=60
-        #max=20 ttl=120 retry=300
         Order allow,deny
         Allow from all
         Header edit Location ^http://`hostname -f`:1939/ https://robert.hurst-ri.us/

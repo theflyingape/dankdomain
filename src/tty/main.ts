@@ -32,7 +32,6 @@ module Main
     }
 
 export function menu(suppress = false) {
-    $.music('.')
     if ($.online.altered) db.saveUser($.player)
     if ($.reason) xvt.hangup()
 
@@ -141,6 +140,7 @@ function choice() {
                 suppress = true
                 break
             }
+            $.music('.')
             xvt.out('\nIt is a hot, moonless night.\n')
             xvt.out('A city guard walks down another street.\n')
             let self = $.worth(new $.coins($.online.armor.value).value, $.online.cha)
@@ -237,9 +237,9 @@ function choice() {
                             }
 							else {
 								xvt.out('\nA guard catches you and throws you into jail!\n')
-                                $.sound('arrested', true)
-								xvt.out('You might be released by your next call.\n\n')
-								xvt.waste(10000)
+                                $.sound('arrested', 20)
+                                xvt.out('You might be released by your next call.\n\n')
+                                xvt.waste(1000)
 								//sprintf(line[numline++], "%s was caught robbing you!", PLAYER.Handle);
                                 $.reason = `caught robbing ${opponent.user.handle}`
 								$.player.status = 'jail'
@@ -264,6 +264,7 @@ function choice() {
             return
 
         case 'U':
+            $.music('.')
             let newpassword: string = ''
             xvt.app.form = {
                 'yn': { cb: () => {
@@ -301,6 +302,7 @@ function choice() {
             return
 
         case 'X':
+            $.music('.')
             xvt.app.form = {
                 'yn': { cb: () => {
                     if (/Y/i.test(xvt.entry)) {

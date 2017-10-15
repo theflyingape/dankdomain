@@ -1467,17 +1467,20 @@ export function logoff() {
     }
 }
 
+export function action(menu: string) {
+    if (xvt.emulation === 'XT' && process.env.TERM !== 'linux')
+        xvt.out('@action(', menu, ')')
+}
+
 export function music(tune: string) {
-    if (xvt.validator.isEmpty(process.env.npm_package_version))
+    if (xvt.emulation === 'XT' && process.env.TERM !== 'linux')
         xvt.out('@tune(', tune, ')')
 }
 
-export function sound(effect: string, sync = false) {
-    if (xvt.emulation === 'XT')
-        xvt.out(xvt.validator.isEmpty(process.env.npm_package_version)
-            ? '@play(' + effect + ';' + (+sync).toString() + ')'
-            : ' {{ ' + effect + ' }}\n'
-        )
+export function sound(effect: string, sync = 2) {
+    if (xvt.emulation === 'XT' && process.env.TERM !== 'linux')
+        xvt.out('@play(', effect, ')')
+    xvt.waste(sync * 100)
 }
 
 }

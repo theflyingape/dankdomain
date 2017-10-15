@@ -40,6 +40,7 @@ module Square
 	let want = ''
 
 export function menu(suppress = false) {
+	$.action('square')
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }
@@ -97,6 +98,7 @@ function choice() {
 			credit.value -= $.player.loan.value
 			if (credit.value < 0) credit.value = 0
 
+			$.action('bank')
 			bank['D'] = { description: 'Money in hand: ' + $.player.coin.carry() }
 			bank['W'] = { description: 'Money in bank: ' + $.player.bank.carry() }
 			bank['L'] = { description: 'Money on loan: ' + $.player.loan.carry() }
@@ -248,13 +250,14 @@ function choice() {
 				$.player.status = 'jail'
 				$.reason = 'caught picking a pocket'
 				xvt.out('A guard catches you and throws you into jail!\n')
-				$.sound('arrested', true)
+				$.sound('arrested', 20)
 				xvt.out('You might be released by your next call.\n\n')
 				xvt.waste(1000)
 				xvt.hangup()
 				return
 			}
 			else {
+				$.beep()
 				$.player.coin.value += credit.value
 				break
 			}
@@ -395,7 +398,7 @@ function Bank() {
 				$.player.status = 'jail'
 				$.reason = 'caught getting into the vault'
 				xvt.out('\n\nA guard catches you and throws you into jail!\n')
-				$.sound('arrested', true)
+				$.sound('arrested', 20)
 				xvt.out('\nYou might be released by your next call.\n\n')
 				xvt.waste(1000)
 				xvt.hangup()
@@ -419,13 +422,14 @@ function Bank() {
 				xvt.out('something jingles!')
 				xvt.waste(1500)
 				xvt.out('\n\nA guard laughs as he closes the vault door on you!\n')
-				$.sound('arrested', true)
+				$.sound('arrested', 20)
 				xvt.out('\nYou might be released by your next call.\n\n')
 				xvt.waste(1000)
 				xvt.hangup()
 				return
 			}
 
+			$.beep()
 			$.player.coin.value += carry.value
 			xvt.out('\n')
 			break
@@ -602,6 +606,7 @@ function buy() {
 		case 'A':
 			cost = new $.coins($.Armor.name[$.Armor.merchant[item]].value)
 			if ($.player.coin.value + credit.value >= cost.value) {
+				$.sound('click')
 				$.player.armor = $.Armor.merchant[item]
 				$.player.toAC = 0
 				$.online.toAC = 0
@@ -617,6 +622,7 @@ function buy() {
 			cost = $.player.magic == 1 ? new $.coins($.Magic.spells[$.Magic.merchant[item]].wand)
 				:  new $.coins($.Magic.spells[$.Magic.merchant[item]].cost)
 			if ($.player.coin.value >= cost.value && !$.Magic.have($.player.spells, buy)) {
+				$.sound('click')
 				$.Magic.add($.player.spells, buy)
 				xvt.out(' - ', $.Magic.merchant[item], '\n')
 				$.player.coin.value -= cost.value
@@ -627,6 +633,7 @@ function buy() {
 		case 'R':
 			cost = new $.coins($.RealEstate.name[$.RealEstate.merchant[item]].value)
 			if ($.player.coin.value + credit.value >= cost.value) {
+				$.sound('click')
 				$.player.realestate = $.RealEstate.merchant[item]
 				xvt.out(' - ', $.player.realestate, '\n')
 				$.player.coin.value += credit.value - cost.value
@@ -638,6 +645,7 @@ function buy() {
 		case 'S':
 			cost = new $.coins($.Security.name[$.Security.merchant[item]].value)
 			if ($.player.coin.value + credit.value >= cost.value) {
+				$.sound('click')
 				$.player.security = $.Security.merchant[item]
 				xvt.out(' - ', $.player.security, '\n')
 				$.player.coin.value += credit.value - cost.value
@@ -651,6 +659,7 @@ function buy() {
 			cost = $.player.poison == 1 ? new $.coins($.Poison.vials[$.Poison.merchant[item]].vial)
 				:  new $.coins($.Poison.vials[$.Poison.merchant[item]].cost)
 			if ($.player.coin.value >= cost.value && !$.Poison.have($.player.poisons, buy)) {
+				$.sound('click')
 				$.Poison.add($.player.poisons, buy)
 				xvt.out('\nHe slips you a vial of ', $.Poison.merchant[item], '\n')
 				$.player.coin.value -= cost.value
@@ -661,6 +670,7 @@ function buy() {
 		case 'W':
 			cost = new $.coins($.Weapon.name[$.Weapon.merchant[buy]].value)
 			if ($.player.coin.value + credit.value >= cost.value) {
+				$.sound('click')
 				$.player.weapon = $.Weapon.merchant[buy]
 				$.player.toWC = 0
 				$.online.toWC = 0

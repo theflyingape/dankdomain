@@ -24,6 +24,7 @@ module Arena
 	}
 
 export function menu(suppress = true) {
+	$.action('arena')
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }
@@ -85,7 +86,7 @@ function choice() {
 					return
 				}
 
-				xvt.out('Jousting ability:\n\n', xvt.bright)
+				xvt.out('\nJousting ability:\n\n', xvt.bright)
 				xvt.out(xvt.green, sprintf('%-25s', opponent.user.handle), xvt.white, sprintf('%4d', versus), '\n')
 				xvt.out(xvt.green, sprintf('%-25s', $.player.handle), xvt.white, sprintf('%4d', ability), '\n')
 				xvt.out(xvt.reset, '\n')
@@ -274,7 +275,7 @@ function choice() {
 					'fight': { cb:() => {
 						xvt.out('\n\n')
 						if (/Y/i.test(xvt.entry)) {
-							$.arena--
+							$.music('combat' + $.arena--)
 							Battle.engage('User', $.online, opponent, menu)
 						}
 						else
@@ -379,7 +380,7 @@ function MonsterFights(): boolean {
 			'fight': { cb:() => {
 				xvt.out('\n')
 				if (/Y/i.test(xvt.entry)) {
-					$.arena--
+					$.music('combat' + $.arena--)
 					Battle.engage('Monster', $.online, monster, menu)
 				}
 				else
@@ -410,7 +411,7 @@ function MonsterFights(): boolean {
 			'fight': { cb:() => {
 				xvt.out('\n\n')
 				if (/Y/i.test(xvt.entry)) {
-					$.arena--
+					$.music('combat' + $.arena--)
 					Battle.engage('Monster', $.online, monster, menu)
 				}
 				else

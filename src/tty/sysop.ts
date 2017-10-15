@@ -22,6 +22,7 @@ module Sysop
 	}
 
 export function menu(suppress = false) {
+    $.music('.')
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }

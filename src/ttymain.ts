@@ -20,6 +20,10 @@ import xvt = require('xvt')
 //  classic terminal user interface entry point
 module ttyMain
 {
+    if (process.env.TERM !== 'linux') {
+        xvt.out('@play(dankdomain)\n')
+        xvt.waste(1500)
+    }
     xvt.defaultTimeout = 120
     xvt.modem = true
     xvt.out('\nCARRIER DETECTED\n')

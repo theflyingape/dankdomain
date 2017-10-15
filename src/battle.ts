@@ -385,7 +385,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         if (blow == 1) {
             if (rpc == $.online) {
                 xvt.out('Your ', rpc.user.weapon, ' passes through thin air.\n')
-                $.sound('miss', true)
+                $.sound('miss', 2)
                 return
             }
             else {
@@ -409,7 +409,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         }
         else {
             xvt.out('Attempt fails!\n')
-            $.sound('miss', true)
+            $.sound('miss', 2)
             return
         }
     }
@@ -490,8 +490,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             xvt.out('\n', xvt.bright, xvt.yellow
                 , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
                 , ' killed you!\n\n', xvt.reset)
-            $.sound('killed', true)
-            xvt.waste(750)
+            $.sound('killed', 20)
             $.reason = rpc.user.id.length ? `defeated by ${rpc.user.handle}`
                 : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`
             xvt.carrier = false
@@ -503,11 +502,11 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                     , enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
                     , '!\n\n', xvt.reset)
                 if (enemy.user.id !== '' && enemy.user.id[0] !== '_') {
-                    $.sound('kill', true)
+                    $.sound('kill', 20)
                     $.music('bitedust')
                 }
                 else
-                    xvt.waste(250)
+                    xvt.waste(500)
                 // rpc.user.id.length ? `defeated ${enemy.user.handle}`
                 //    : `defeated a level ${enemy.user.level} ${enemy.user.handle}`
             }

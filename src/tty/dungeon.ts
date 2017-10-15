@@ -97,7 +97,7 @@ let monsters: dungeon[] = [
 	{ name:"titan", pc:"Titan" },
 	{ name:"demilich", pc:"Undead", spells: [ "Heal", "Teleport", "Blast" ] },
 	{ name:"pit fiend", pc:"Beast" },
-	{ name:"lerneaen hydra", pc:"Dragon" },
+	{ name:"lernaean hydra", pc:"Dragon" },
 	{ name:"major demon", pc:"Demon" },
 	{ name:"mist dragon", pc:"Dragon", spells: [ "Teleport", "Armor Rusting", "Weapon Decay", "Big Blast", "Super Shield" ] },
 	{ name:"grey slaad", pc:"Lizard" },
