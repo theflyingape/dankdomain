@@ -11,6 +11,9 @@
     background: -o-linear-gradient(bottom right, gray, antiquewhite);  /*  opera 11.1 to 12.0  */
     background: -moz-linear-gradient(bottom right, gray, antiquewhite);  /*  firefox 3.6 to 15  */
     background: linear-gradient(to bottom right, darkslategray, black);  /*  standard syntax (must be last)  */
+    font-family: 'Carter One', cursive;
+    font-size: 20px;
+    color: aliceblue;
   }
   input, button {
     background: antiquewhite;
@@ -80,7 +83,7 @@ else {
 function receive(event) {
   if (event.data) {
     if (event.data.func) {
-      window[event.data.func].call(null);
+      window[event.data.func]();
     }
   }
 }
@@ -108,7 +111,7 @@ money = `<table align="center">
   </tr>
   <tr><td colspan=2><input type="button" value=" 0 " onclick="send('0');"></td><td><input type="button" value="," onclick="send(',');"></td><td colspan=2><input type="button" value=" MAX " onclick="send('MAX', true);"></td>
   </tr>
-  </table>`;
+</table>`;
 
 function send(keystrokes, cr = false) {
   window.parent.postMessage({ 'func':'emit', 'message':keystrokes, 'return':cr }, '*');
@@ -119,77 +122,78 @@ function keypress(event) {
   send(String.fromCharCode(x));
 }
 
+function cmd(html) {
+  document.getElementById("command").innerHTML = html;
+}
+
 function clear() {
-  document.getElementById("command").innerHTML = '';
+  cmd('');
 }
 
 function logon() {
-  document.getElementById("command").innerHTML = `
-  <input type="button" value="NEW" onclick="send('NEW', true);">
-  <p>${enter}${logoff}</p>
-  `;
+ cmd(`<input type="button" value="NEW" onclick="send('NEW', true);"><p>${enter}${logoff}</p>`);
 }
 
 function menu() {
-  document.getElementById("command").innerHTML = `
-  <input type="button" value="Arena" onclick="send('A');">
-  <input type="button" value="Dungeon" onclick="send('D');">
-  <input type="button" value="Casino" onclick="send('G');"><br>
-  <input type="button" value="Halls" onclick="send('L');">
-  <input type="button" value="Most Wanted" onclick="send('M');">
-  <input type="button" value="Naval" onclick="send('N');"><br>
-  <input type="button" value="Party" onclick="send('P');">
-  <input type="button" value="Rob" onclick="send('R');">
-  <input type="button" value="Square" onclick="send('S');"><br>
-  <input type="button" value="Tavern" onclick="send('T');">
-  <input type="button" value="Reroll" onclick="send('X');">
-  <input type="button" value="Status" onclick="send('Y');"><br>
-  <input type="button" value="System" onclick="send('Z');"> ${logoff}
-  `;
+  cmd(`
+<input type="button" value="Arena" onclick="send('A');">
+<input type="button" value="Dungeon" onclick="send('D');">
+<input type="button" value="Casino" onclick="send('G');"><br>
+<input type="button" value="Halls" onclick="send('L');">
+<input type="button" value="Most Wanted" onclick="send('M');">
+<input type="button" value="Naval" onclick="send('N');"><br>
+<input type="button" value="Party" onclick="send('P');">
+<input type="button" value="Rob" onclick="send('R');">
+<input type="button" value="Square" onclick="send('S');"><br>
+<input type="button" value="Tavern" onclick="send('T');">
+<input type="button" value="Reroll" onclick="send('X');">
+<input type="button" value="Status" onclick="send('Y');"><br>
+<input type="button" value="System" onclick="send('Z');"> ${logoff}
+  `);
 }
 
 function arena() {
-  document.getElementById("command").innerHTML = `
-  <input type="button" value="User" onclick="send('U');">
-  <input type="button" value="Monster" onclick="send('M');">
-  <input type="button" value="Joust" onclick="send('J');"><br>
-  <input type="button" value="Cast" onclick="send('C');">
-  <input type="button" value="Poison" onclick="send('P');">
-  <input type="button" value="Status" onclick="send('Y');"><br>
-  <input type="button" value="SQUARE" onclick="send('G');"> ${quit} ${logoff}
-  `;
+  cmd(`
+<input type="button" value="User" onclick="send('U');">
+<input type="button" value="Monster" onclick="send('M');">
+<input type="button" value="Joust" onclick="send('J');"><br>
+<input type="button" value="Cast" onclick="send('C');">
+<input type="button" value="Poison" onclick="send('P');">
+<input type="button" value="Status" onclick="send('Y');"><br>
+<input type="button" value="SQUARE" onclick="send('G');"> ${quit} ${logoff}
+  `);
 }
 
 function square() {
-  document.getElementById("command").innerHTML = `
-  <input type="button" value="Armoury" onclick="send('A');">
-  <input type="button" value="Weapons" onclick="send('W');">
-  <input type="button" value="Real Estate" onclick="send('R');">
-  <input type="button" value="Security" onclick="send('S');">
-  <input type="button" value="Mages Guild" onclick="send('M');">
-  <input type="button" value="Apothecary" onclick="send('V');">
-  <input type="button" value="Bank" onclick="send('B');">
-  <input type="button" value="Hospital" onclick="send('H');">
-  <input type="button" value="Pick pockets" onclick="send('P');">
-  <input type="button" value="Jail House" onclick="send('J');"><br>
-  <input type="button" value="ARENA" onclick="send('G');"> ${quit} ${logoff}
-  `;
+  cmd(`
+<input type="button" value="Armoury" onclick="send('A');">
+<input type="button" value="Weapons" onclick="send('W');">
+<input type="button" value="Real Estate" onclick="send('R');">
+<input type="button" value="Security" onclick="send('S');">
+<input type="button" value="Mages Guild" onclick="send('M');">
+<input type="button" value="Apothecary" onclick="send('V');">
+<input type="button" value="Bank" onclick="send('B');">
+<input type="button" value="Hospital" onclick="send('H');">
+<input type="button" value="Pick pockets" onclick="send('P');">
+<input type="button" value="Jail House" onclick="send('J');"><br>
+<input type="button" value="ARENA" onclick="send('G');"> ${quit} ${logoff}
+  `);
 }
 
 function bank() {
-  document.getElementById("command").innerHTML = `
-  <input type="button" value="Deposit" onclick="send('D');">
-  <input type="button" value="Withdraw" onclick="send('W');">
-  <input type="button" value="Loan" onclick="send('L');">
-  <input type="button" value="Rob" onclick="send('R');">
-  ${money}
-  ${cancel}${quit}${logoff}
-  `;
+  cmd(`
+<input type="button" value="Deposit" onclick="send('D');">
+<input type="button" value="Withdraw" onclick="send('W');">
+<input type="button" value="Loan" onclick="send('L');">
+<input type="button" value="Rob" onclick="send('R');">
+${money}
+${cancel}${quit}${logoff}
+  `);
 }
 
 </script>
 </head>
 <body onkeypress="keypress(event);">
-<div id="command"></div>
+<div id="command">Command Buttons</div>
 </body>
 </html>

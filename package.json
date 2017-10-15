@@ -1,6 +1,6 @@
 {
   "name": "dankdomain",
-  "version": "0.4.5",
+  "version": "0.5.0",
   "description": "Dank Domain: the return of Hack & Slash (1990-2014)",
   "main": "ttymain",
   "publisher": "theflyingape",
@@ -9,9 +9,8 @@
   },
   "scripts": {
     "build": "tsc -p ./src --outDir ./build",
-    "term": "cd ./build; node ./node_modules/tty.js/bin/tty.js --config ./tty/files/tty.json",
-    "test": "npm run build && ./build/logins.sh",
-    "xterm": "cd ./build; cd -"
+    "debug": "npm run build && ./debug.sh",
+    "test": "npm run build && ./build/logins.sh"
   },
   "repository": {
     "type": "git",
@@ -34,7 +33,7 @@
     "express": "^4.16.2",
     "fs-extra": "^2.1.2",
     "node-pty": "^0.6.10",
-    "nodemailer": "^4.1.3",
+    "nodemailer": "^4.2.0",
     "nodemailer-smtp-transport": "^2.7.4",
     "sprintf-js": "^1.1.1",
     "sqlite-sync": "^0.3.6",

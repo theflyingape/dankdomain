@@ -1,0 +1,43 @@
+{
+  "port": 2017,
+  "hostname": "0.0.0.0",
+  "shell": "sh",
+  "shellArgs": ["-l", "./logins.sh"],
+  "static": "/home/rhurst/src/node/dankdomain/build/xterm",
+  "limitGlobal": 1000,
+  "limitPerUser": 1,
+  "localOnly": false,
+  "cwd": "/home/rhurst/src/node/dankdomain/build",
+  "syncSession": false,
+  "sessionTimeout": 123456,
+  "log": true,
+  "io": { "log": false },
+  "debug": false,
+  "term": {
+    "termName": "xterm-256color",
+    "geometry": [80, 25],
+    "scrollback": 100,
+    "visualBell": true,
+    "popOnBell": false,
+    "cursorBlink": true,
+    "screenKeys": false,
+    "colors": [
+      "#040810",
+      "#9c0000",
+      "#009c00",
+      "#9c6600",
+      "#00009c",
+      "#9c009c",
+      "#009c9c",
+      "#a0a8b0",
+      "#404040",
+      "#ef2020",
+      "#20ef20",
+      "#efef20",
+      "#2020ef",
+      "#ef20ef",
+      "#20efef",
+      "#f0f8ff"
+    ]
+  }
+}

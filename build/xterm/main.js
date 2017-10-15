@@ -1,6 +1,5 @@
 var carrier = false;
 var hide = setInterval(checkCarrier, 10000);
-var iAction = window.frames['action'];
 
 var cols=80,
     rows=25;
@@ -56,7 +55,7 @@ term.on('data', function(data) {
       if (typeof tuneSource !== 'undefined') tuneSource.stop();
       term.writeln('\nAttempt to reconnect');
       newSession();
-      iAction.postMessage({ 'func':'logon' }, '*');
+      window.frames['Action'].postMessage({ 'func':'logon' }, location.href);
     }
   }
 });
@@ -68,7 +67,7 @@ term.on('resize', function(data) {
 socket.on('connect', function() {
   term.writeln('');
   carrier = true;
-  iAction.postMessage({ 'func':'logon' }, '*');
+  window.frames['Action'].postMessage({ 'func':'logon' }, location.href);
 });
 
 socket.on('disconnect', function() {
@@ -79,72 +78,57 @@ socket.on('disconnect', function() {
 
 socket.on('kill', function() {
   carrier = false;
-  iAction.postMessage({ 'func':'clear' }, '*');
-  io.disconnect();
+  window.frames['Action'].postMessage({ 'func':'clear' }, location.href);
 });
 
 socket.on('data', function(id, data) {
-
-  // action buttons
-  action = /(@action\(.+?\))/g;
-  text = data;
-  while (match = action.exec(data)) {
-    parts = text.split(match[1]);
-    text = parts[0] + parts[1];
-    parts = match[1].split(')');
-    actionName = parts[0].split('(')[1];
-    iAction.postMessage({ 'func':actionName }, '*');
+  // find any occurrences of @func(data), and for each: call func(data)
+  const re = '[@](?:(action|play|tune)[(](.+?)[)])';
+  search = new RegExp(re, 'g'); replace = new RegExp(re);
+  copy = data;
+  while (match = search.exec(copy)) {
+    x = replace.exec(data);
+    s = x.index; e = s + x[0].length;
+    data = data.substr(0, s) + data.substr(e);
+    window[match[1]](match[2]);
   }
-  data = text;
-
-  // sound effect
-  sound = /(@play\(.+?\))/g;
-  text = data;
-  while (match = sound.exec(data)) {
-    parts = text.split(match[1]);
-    text = parts[0] + parts[1];
-    parts = match[1].split(')');
-    fileName = parts[0].split('(')[1];
-    // Web Audio API
-    if (typeof playSource !== 'undefined') playSource.stop();
-    if (fileName !== '.') {
-      const playContext = new AudioContext();
-      window.fetch('sounds/' + fileName + '.ogg')
-        .then(response => response.arrayBuffer())
-        .then(arrayBuffer => playContext.decodeAudioData(arrayBuffer))
-        .then(audioBuffer => {
-          playSource = playContext.createBufferSource();
-          playSource.buffer = audioBuffer;
-          playSource.connect(playContext.destination);
-          playSource.start();
-        });
-    }
-  }
-  data = text;
-
-  // tune
-  sound = /(@tune\(.+?\))/g;
-  while (match = sound.exec(data)) {
-    parts = text.split(match[1]);
-    text = parts[0] + parts[1];
-    parts = match[1].split(')');
-    fileName =  parts[0].split('(')[1];
-    // Web Audio API
-    if (typeof tuneSource !== 'undefined') tuneSource.stop();
-    if (fileName !== '.') {
-      const tuneContext = new AudioContext();
-      window.fetch('sounds/' + fileName + '.mp3')
-        .then(response => response.arrayBuffer())
-        .then(arrayBuffer => tuneContext.decodeAudioData(arrayBuffer))
-        .then(audioBuffer => {
-          tuneSource = tuneContext.createBufferSource();
-          tuneSource.buffer = audioBuffer;
-          tuneSource.connect(tuneContext.destination);
-          tuneSource.start();
-        });
-    }
-  }
-  data = text;
-
   term.write(data);
 });
+
+function action(menu) {
+  window.frames['Action'].postMessage({ 'func':menu }, location.href);
+}
+
+function play(fileName) {
+  // sound effect
+  if (typeof playSource !== 'undefined') playSource.stop();
+  if (fileName !== '.') {
+    const playContext = new AudioContext();
+    window.fetch('sounds/' + fileName + '.ogg')
+      .then(response => response.arrayBuffer())
+      .then(arrayBuffer => playContext.decodeAudioData(arrayBuffer))
+      .then(audioBuffer => {
+        playSource = playContext.createBufferSource();
+        playSource.buffer = audioBuffer;
+        playSource.connect(playContext.destination);
+        playSource.start();
+      });
+    }
+}
+
+function tune(fileName) {
+  // tune
+  if (typeof tuneSource !== 'undefined') tuneSource.stop();
+  if (fileName !== '.') {
+    const tuneContext = new AudioContext();
+    window.fetch('sounds/' + fileName + '.mp3')
+      .then(response => response.arrayBuffer())
+      .then(arrayBuffer => tuneContext.decodeAudioData(arrayBuffer))
+      .then(audioBuffer => {
+        tuneSource = tuneContext.createBufferSource();
+        tuneSource.buffer = audioBuffer;
+        tuneSource.connect(tuneContext.destination);
+        tuneSource.start();
+      });
+  }
+}

@@ -32,6 +32,7 @@ module Main
     }
 
 export function menu(suppress = false) {
+    $.action('menu')
     if ($.online.altered) db.saveUser($.player)
     if ($.reason) xvt.hangup()
 
