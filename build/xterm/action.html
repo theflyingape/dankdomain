@@ -25,7 +25,6 @@
     -webkit-border-radius: 12;
     -moz-border-radius: 12;
     border-radius: 12px;
-    text-shadow: 1px 1px 2px darkslategray;
     -webkit-box-shadow: 0px 1px 3px darkslategray;
     -moz-box-shadow: 0px 1px 3px darkslategray;
     box-shadow: 0px 1px 3px darkslategray;
@@ -68,6 +67,7 @@
       background-image: -o-linear-gradient(top, gold, goldenrod);
       background-image: linear-gradient(to bottom, gold, goldenrod);
       text-decoration: none;
+      text-shadow: 1px 1px 2px darkslategray;
   }
 </style>
 <script>
@@ -122,19 +122,27 @@ function keypress(event) {
   send(String.fromCharCode(x));
 }
 
+function actionResize(profile) {
+  window.parent.postMessage({
+    'func':'size', 'message':profile }, location.href);  
+}
+
 function cmd(html) {
   document.getElementById("command").innerHTML = html;
 }
 
 function clear() {
+  actionResize('small');
   cmd('');
 }
 
 function logon() {
- cmd(`<input type="button" value="NEW" onclick="send('NEW', true);"><p>${enter}${logoff}</p>`);
+  actionResize('small');
+  cmd(`<input type="button" value="NEW" onclick="send('NEW', true);"><p>${enter}${logoff}</p>`);
 }
 
 function menu() {
+  actionResize('full');
   cmd(`
 <input type="button" value="Arena" onclick="send('A');">
 <input type="button" value="Dungeon" onclick="send('D');">
@@ -153,6 +161,7 @@ function menu() {
 }
 
 function arena() {
+  actionResize('half');
   cmd(`
 <input type="button" value="User" onclick="send('U');">
 <input type="button" value="Monster" onclick="send('M');">
@@ -165,6 +174,7 @@ function arena() {
 }
 
 function square() {
+  actionResize('full');
   cmd(`
 <input type="button" value="Armoury" onclick="send('A');">
 <input type="button" value="Weapons" onclick="send('W');">
@@ -181,6 +191,7 @@ function square() {
 }
 
 function bank() {
+  actionResize('full');
   cmd(`
 <input type="button" value="Deposit" onclick="send('D');">
 <input type="button" value="Withdraw" onclick="send('W');">

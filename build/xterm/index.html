@@ -46,14 +46,38 @@ else {
 
 function receive(event) {
     if (event.data) {
-      if (event.data.message) {
-        socket.emit('data', termid, event.data.message);
-        if (event.data.return)
-          socket.emit('data', termid, '\x0A');
-      }
-      else {
-        if (event.data.return)
-          socket.emit('data', termid, '\x0D');
+      switch(event.data.func) {
+        case 'emit':
+          if (event.data.message) {
+            socket.emit('data', termid, event.data.message);
+            if (event.data.return)
+              socket.emit('data', termid, '\x0A');
+          }
+          else {
+            if (event.data.return)
+              socket.emit('data', termid, '\x0D');
+          }
+          break;
+        case 'size':
+          var stylesheet = document.styleSheets[0];
+          for (var i in stylesheet.cssRules) {
+            css = stylesheet.cssRules[i];
+            if (css.selectorText === '#Action') {
+              break;
+            }
+          }
+          switch(event.data.message) {
+            case 'full':
+              Object.assign(css.style, { 'top':'0%', 'right':'0', 'width':'20%', 'height':'100%' });
+              break;
+            case 'half':
+              Object.assign(css.style, { 'top':'50%', 'right':'0', 'width':'20%', 'height':'50%' });
+              break;
+            case 'small':
+              Object.assign(css.style, { 'top':'75%', 'right':'0', 'width':'20%', 'height':'25%' });
+              break;
+          }
+          break;
       }
     }
 }
