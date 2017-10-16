@@ -19,19 +19,19 @@ function newSession() {
   var parts = document.location.pathname.split('/')
     , base = parts.slice(0, parts.length - 1).join('/') + '/'
     , resource = base.substring(1) + 'socket.io';
- 
+
+  term.writeln('\x1B[36mWelcome to \x1B[1mDank Domain\x1B[22m!');
+  term.write('\x1B[34mConnecting to terminal WebSocket ... ');
+   
   socket = io.connect(null, { resource: resource });
   socket.emit('create', cols, rows, function(err, data) {
     if (err) return self._destroy();
     self.pty = data.pty;
     self.id = data.id;
     termid = self.id;
+    carrier = true;
     term.emit('open tab', self);
   });
-
-  term.writeln('\x1B[36mWelcome to \x1B[1mDank Domain\x1B[22m!');
-  term.write('\x1B[34mConnecting to terminal WebSocket ... \x1B[m');
-  carrier = true;
 }
 
 // let's hava a nice value for both the player and the web server
@@ -66,8 +66,8 @@ term.on('resize', function(data) {
 });
 
 socket.on('connect', function() {
-  term.writeln('');
   carrier = true;
+  term.writeln('\x1B[m');
   window.frames['Action'].postMessage({ 'func':'logon' }, location.href);
   window.frames['Profile'].postMessage({ 'func':'logon' }, location.href);
 });
