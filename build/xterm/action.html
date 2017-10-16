@@ -31,33 +31,46 @@
     font-family: 'Carter One', cursive;
     font-size: 18px;
     color: midnightblue;
-    padding: 8px 16px;
+    padding: 8px 16px 8px 16px;
     border: solid greenyellow 3px;
     text-decoration: none;
   }
+    .tall {
+      padding: 16px 16px;
+    }
+    .wide {
+      padding: 8px 24px;
+    }
+    .numeric {
+      padding: 8px 16px 16px 8px;
+    }
     .platinum {
         background: orchid;
-        border: darkorchid;
+        border: solid darkorchid 3px;
         color: indigo;
-        font-size: 22px;
+        font-size: 24px;
+        padding: 9px 18px;
     }
     .gold {
-        background: lightgoldenrodyellow;
-        border: goldenrod;
+        background: gold;
+        border: solid brown 3px;
         color: darkgoldenrod;
-        font-size: 22px;
+        font-size: 24px;
+        padding: 9px 18px;
     }
     .silver {
         background: turquoise;
-        border: darkturquoise;
+        border: solid darkturquoise 3px;
         color: steelblue;
-        font-size: 22px;
+        font-size: 24px;
+        padding: 9px 18px;
     }
     .copper {
-        background: crimson;
-        border: firebrick;
-        color: darkred;
-        font-size: 22px;
+        background: lightcoral;
+        border: solid darkred 3px;
+        color: crimson;
+        font-size: 24px;
+        padding: 9px 18px;
     }
   input:hover, button:hover {
       background: gold;
@@ -69,6 +82,26 @@
       text-decoration: none;
       text-shadow: 1px 1px 2px darkslategray;
   }
+    .platinum:hover {
+      background: lightpink;
+      font-size: 30px;
+      padding: 10px 20px;
+    }
+    .gold:hover {
+      background: lightgoldenrodyellow;
+      font-size: 30px;
+      padding: 10px 20px;
+    }
+    .silver:hover {
+      background: lightsteelblue;
+      font-size: 30px;
+      padding: 10px 20px;
+    }
+    .copper:hover {
+      background: lightpink;
+      font-size: 32px;
+      padding: 10px 20px;
+    }
 </style>
 <script>
 if (window.addEventListener) {
@@ -90,8 +123,8 @@ function receive(event) {
 
 cancel = `<input type="button" value="Cancel" onclick="send('\x15');">`;
 enter = `<input type="button" value="Enter" onclick="send('', true);">`;
-quit = `<input type="button" value="Quit" onclick="send('Q');">`;
-logoff = `<input type="button" value="LOGOFF" onclick="send('\x1A');">`;
+quit = `<input class="tall" type="button" value="Quit" onclick="send('Q');">`;
+logoff = `<input class="tall" type="button" value="LOGOFF" onclick="send('\x1A');">`;
 keypad = `<table align="center">
   <tr><td><input type="button" value="7" onclick="send('7');"></td><td><input type="button" value="8" onclick="send('8');"></td><td><input type="button" value="9" onclick="send('9');">
   </tr>
@@ -99,19 +132,21 @@ keypad = `<table align="center">
   </tr>
   <tr><td><input type="button" value="1" onclick="send('1');"></td><td><input type="button" value="2" onclick="send('2');"></td><td><input type="button" value="3" onclick="send('3');">
   </tr>
-  <tr><td><input type="button" value=" 0 " onclick="send('0');"></td><td colspan=2><input type="button" value=" MAX " onclick="send('MAX', true);"></td>
+  <tr><td><input type="button" value=" 0 " onclick="send('0');"></td><td colspan=2><input type="button" value="MAX" onclick="send('MAX', true);"></td>
   </tr>
   </table>`;
 money = `<table align="center">
-  <tr><td><input type="button" value="7" onclick="send('7');"></td><td><input type="button" value="8" onclick="send('8');"></td><td><input type="button" value="9" onclick="send('9');"></td><td><input class="platinum" type="button" value="P" onclick="send('P');"></td><td><input class="gold" type="button" value="G" onclick="send('G');"></td>
+  <tr><td><input class="numeric" type="button" value="7" onclick="send('7');"></td><td><input class="numeric" type="button" value="8" onclick="send('8');"></td><td><input class="numeric" type="button" value="9" onclick="send('9');"></td><td class="wide" colspan=2>${cancel}</td>
   </tr>
-  <tr><td><input type="button" value="4" onclick="send('4');"></td><td><input type="button" value="5" onclick="send('5');"></td><td><input type="button" value="6" onclick="send('6');"></td><td><input class="silver" type="button" value="S" onclick="send('S');"></td><td><input class="copper" type="button" value="C" onclick="send('C');"></td>
+  <tr><td><input class="numeric" type="button" value="4" onclick="send('4');"></td><td><input class="numeric" type="button" value="5" onclick="send('5');"></td><td><input class="numeric" type="button" value="6" onclick="send('6');"></td><td><input class="platinum" type="button" value="P" onclick="send('p');"></td><td><input class="gold" type="button" value="G" onclick="send('g');"></td>
   </tr>
-  <tr><td><input type="button" value="1" onclick="send('1');"></td><td><input type="button" value="2" onclick="send('2');"></td><td><input type="button" value="3" onclick="send('3');"></td><td colspan=2>${enter}</td>
+  <tr><td><input class="numeric" type="button" value="1" onclick="send('1');"></td><td><input class="numeric" type="button" value="2" onclick="send('2');"></td><td><input class="numeric" type="button" value="3" onclick="send('3');"></td><td><input class="silver" type="button" value="S" onclick="send('s');"></td><td><input class="copper" type="button" value="C" onclick="send('c');"></td>
   </tr>
-  <tr><td colspan=2><input type="button" value=" 0 " onclick="send('0');"></td><td><input type="button" value="," onclick="send(',');"></td><td colspan=2><input type="button" value=" MAX " onclick="send('MAX', true);"></td>
+  <tr><td colspan=2><input class="wide" type="button" value=" 0 " onclick="send('0');"></td><td><input type="button" value="," onclick="send(',');"></td><td class="wide" colspan=2>${enter}</td>
   </tr>
-</table>`;
+  <tr><td colspan=5><input class="wide" type="button" value=" MAX " onclick="send('MAX', true);"></td>
+  </tr>
+  </table>`;
 
 function send(keystrokes, cr = false) {
   window.parent.postMessage({ 'func':'emit', 'message':keystrokes, 'return':cr }, '*');
@@ -138,7 +173,10 @@ function clear() {
 
 function logon() {
   actionResize('small');
-  cmd(`<input type="button" value="NEW" onclick="send('NEW', true);"><p>${enter}${logoff}</p>`);
+  cmd(`
+<input class="tall" type="button" value="NEW" onclick="send('NEW', true);"> ${logoff}
+<p>${enter}</p>
+  `);
 }
 
 function menu() {
@@ -169,7 +207,7 @@ function arena() {
 <input type="button" value="Cast" onclick="send('C');">
 <input type="button" value="Poison" onclick="send('P');">
 <input type="button" value="Status" onclick="send('Y');"><br>
-<input type="button" value="SQUARE" onclick="send('G');"> ${quit} ${logoff}
+<input class="tall" type="button" value="SQUARE" onclick="send('G');"> ${quit} ${logoff}
   `);
 }
 
@@ -180,13 +218,21 @@ function square() {
 <input type="button" value="Weapons" onclick="send('W');">
 <input type="button" value="Real Estate" onclick="send('R');">
 <input type="button" value="Security" onclick="send('S');">
-<input type="button" value="Mages Guild" onclick="send('M');">
+<input type="button" value="Mage" onclick="send('M');">
 <input type="button" value="Apothecary" onclick="send('V');">
 <input type="button" value="Bank" onclick="send('B');">
 <input type="button" value="Hospital" onclick="send('H');">
 <input type="button" value="Pick pockets" onclick="send('P');">
-<input type="button" value="Jail House" onclick="send('J');"><br>
-<input type="button" value="ARENA" onclick="send('G');"> ${quit} ${logoff}
+<input type="button" value="Jail" onclick="send('J');"><br>
+<input class="tall" type="button" value="ARENA" onclick="send('G');"> ${quit} ${logoff}
+  `);
+}
+
+function list() {
+  actionResize('half');
+  cmd(`
+  ${keypad}
+  ${cancel} ${quit} ${logoff}
   `);
 }
 
@@ -198,7 +244,7 @@ function bank() {
 <input type="button" value="Loan" onclick="send('L');">
 <input type="button" value="Rob" onclick="send('R');">
 ${money}
-${cancel}${quit}${logoff}
+${quit} ${logoff}
   `);
 }
 

@@ -56,6 +56,7 @@ term.on('data', function(data) {
       term.writeln('\nAttempt to reconnect');
       newSession();
       window.frames['Action'].postMessage({ 'func':'logon' }, location.href);
+      window.frames['Profile'].postMessage({ 'func':'logon' }, location.href);
     }
   }
 });
@@ -68,6 +69,7 @@ socket.on('connect', function() {
   term.writeln('');
   carrier = true;
   window.frames['Action'].postMessage({ 'func':'logon' }, location.href);
+  window.frames['Profile'].postMessage({ 'func':'logon' }, location.href);
 });
 
 socket.on('disconnect', function() {
@@ -79,6 +81,7 @@ socket.on('disconnect', function() {
 socket.on('kill', function() {
   carrier = false;
   window.frames['Action'].postMessage({ 'func':'clear' }, location.href);
+  window.frames['Profile'].postMessage({ 'func':'logoff' }, location.href);
 });
 
 socket.on('data', function(id, data) {
@@ -114,6 +117,10 @@ function play(fileName) {
         playSource.start();
       });
     }
+}
+
+function profile(panel) {
+  window.frames['Profile'].postMessage({ 'func':panel }, location.href);
 }
 
 function tune(fileName) {

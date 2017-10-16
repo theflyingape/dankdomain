@@ -6,14 +6,41 @@
   body {
     text-align: center;
     background: antiquewhite;  /*  older browsers  */
-    background: -webkit-linear-gradient(left top, gray, antiquewhite);  /*  safari 5.1 to 6.0  */
-    background: -o-linear-gradient(bottom right, gray, antiquewhite);  /*  opera 11.1 to 12.0  */
-    background: -moz-linear-gradient(bottom right, gray, antiquewhite);  /*  firefox 3.6 to 15  */
-    background: linear-gradient(to bottom right, skyblue, white);  /*  standard syntax (must be last)  */
+    background: -webkit-linear-gradient(left top, antiquewhite, gray);  /*  safari 5.1 to 6.0  */
+    background: -o-linear-gradient(bottom right, antiquewhite, gray );  /*  opera 11.1 to 12.0  */
+    background: -moz-linear-gradient(bottom right, antiquewhite, gray);  /*  firefox 3.6 to 15  */
+    background: linear-gradient(to bottom right, white, skyblue);  /*  standard syntax (must be last)  */
   }
 </style>
 </head>
 <script>
+if (window.addEventListener) {
+    window.addEventListener("message", receive, false);       
+}
+else {
+    if (window.attachEvent) {
+        window.attachEvent("onmessage", receive, false);
+    }
+}
+
+function receive(event) {
+  if (event.data) {
+    if (event.data.func) {
+      window[event.data.func]();
+    }
+  }
+}
+
+function logoff() {
+  artwork.src = 'images/default.png';
+  t = setInterval(rotateImage, 60000);
+}
+
+function logon() {
+  clearInterval(rotateImage);
+  artwork.src = 'images/npc/city_guard_2.png';
+}
+
 function rotateImage() {
   var images = [
     'arexielite_by_peachyco.png',
@@ -38,12 +65,13 @@ function rotateImage() {
     'yuriel_genasi_warlord_by_peachyco.png'
  ];
 
-  var artwork = document.getElementById('artwork');
+ const artwork = document.getElementById('artwork');
   var n = Math.trunc(Math.random() * images.length);
   artwork.src = 'images/' + images[n];
 }
 var t = setInterval(rotateImage, 60000);
 </script>
+</head>
 <body>
 <img id="artwork" src="images/default.png" height="90%" width="90%" style="vertical-align:bottom" />
 </body>

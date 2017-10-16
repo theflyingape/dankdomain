@@ -10,25 +10,25 @@
   #terminal {
     border: 0;
     top: 0; left: 0;
-    width: 80%;
+    width: 79%;
     height: 100%;
     position: fixed;
   }
   #Profile {
     top: 0; right: 0;
-    width: 20%;
+    width: 21%;
     height: 100%;
     position: fixed;
   }
   #Enemy {
     top: 50%; right: 0;
-    width: 20%;
+    width: 21%;
     height: 25%;
     position: fixed;
   }
   #Action {
     top: 50%; right: 0;
-    width: 20%;
+    width: 21%;
     height: 50%;
     position: fixed;
   }
@@ -68,14 +68,17 @@ function receive(event) {
           }
           switch(event.data.message) {
             case 'full':
-              Object.assign(css.style, { 'top':'0%', 'right':'0', 'width':'20%', 'height':'100%' });
+              //Object.assign(css.style, { 'top':'0%', 'right':'0', 'width':'21%', 'height':'100%' });
+              Object.assign(css.style, { 'top':'0%', 'height':'100%' });
               break;
             case 'half':
-              Object.assign(css.style, { 'top':'50%', 'right':'0', 'width':'20%', 'height':'50%' });
+              //Object.assign(css.style, { 'top':'50%', 'right':'0', 'width':'21%', 'height':'50%' });
+              Object.assign(css.style, { 'top':'50%', 'height':'50%' });
               break;
             case 'small':
-              Object.assign(css.style, { 'top':'75%', 'right':'0', 'width':'20%', 'height':'25%' });
-              break;
+              //Object.assign(css.style, { 'top':'75%', 'right':'0', 'width':'21%', 'height':'25%' });
+              Object.assign(css.style, { 'top':'75%', 'height':'25%' });
+            break;
           }
           break;
       }
