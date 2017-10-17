@@ -33,11 +33,11 @@ function receive(event) {
 
 function logoff() {
   artwork.src = 'images/default.png';
-  t = setInterval(rotateImage, 60000);
+  art = setInterval(rotateImage, 100000);
 }
 
 function logon() {
-  clearInterval(rotateImage);
+  clearInterval(art);
   artwork.src = 'images/npc/city_guard_2.png';
 }
 
@@ -59,17 +59,16 @@ function rotateImage() {
     'lucien_human_wizard_by_peachyco.png',
     'orc_pirate_by_peachyco.png',
     'paladin_by_peachyco.png',
-    'sketch_dragonborn_hexblade_by_peachyco.png',
     'thrask_goliath_fighter_by_peachyco.png',
     'warforged_fighter_and_human_wizard_by_peachyco.png',
     'yuriel_genasi_warlord_by_peachyco.png'
  ];
 
- const artwork = document.getElementById('artwork');
+  const artwork = document.getElementById('artwork');
   var n = Math.trunc(Math.random() * images.length);
   artwork.src = 'images/' + images[n];
 }
-var t = setInterval(rotateImage, 60000);
+art = setInterval(rotateImage, 100000);
 </script>
 </head>
 <body>

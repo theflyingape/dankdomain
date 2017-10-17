@@ -1477,6 +1477,15 @@ export function music(tune: string) {
         xvt.out('@tune(', tune, ')')
 }
 
+export function profile(...params) {
+    let result = { }
+    params.forEach(x => {
+        const a = x.split('=')
+        result[a[0]] = a[1]
+    })
+    xvt.out('@profile(', JSON.stringify(result), ')')
+}
+
 export function sound(effect: string, sync = 2) {
     if (xvt.emulation === 'XT' && process.env.TERM !== 'linux')
         xvt.out('@play(', effect, ')')

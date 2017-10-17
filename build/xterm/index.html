@@ -57,7 +57,9 @@ function receive(event) {
           if (event.data.return)
             socket.emit('data', termid, '\x0D');
         }
+        term.focus();
         break;
+
       case 'size':
         var stylesheet = document.styleSheets[0];
         for (var i in stylesheet.cssRules) {
@@ -75,9 +77,6 @@ function receive(event) {
             break;
           case 'small':
             Object.assign(css.style, { 'top':'75%', 'height':'25%', 'width':'20%' });
-            break;
-          case 'wider':
-            Object.assign(css.style, { 'top':'45%', 'height':'55%', 'width':'24%' });
             break;
         }
         break;

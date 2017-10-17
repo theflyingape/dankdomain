@@ -267,7 +267,7 @@ ${quit}
 function yn() {
   actionResize('small');
   cmd(`
-<p><input class="tall" type="button" value=" Yes " onclick="send('Y');"></p>
+<input class="tall" type="button" value=" Yes " onclick="send('Y');">
 <p><input class="tall" type="button" value=" No " onclick="send('N');"></p>
   `);
 }

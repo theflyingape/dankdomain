@@ -1,9 +1,5 @@
 var carrier = false;
-var hide = setInterval(checkCarrier, 10000);
-
-var cols=80,
-    rows=25;
-
+var cols = 80, rows = 25;
 var terminalContainer = document.getElementById('terminal'),
     term = new Terminal({ cursorBlink:true, rows:rows, cols:cols, scrollback:200 }),
     socket,
@@ -34,7 +30,7 @@ function newSession() {
   });
 }
 
-// let's hava a nice value for both the player and the web server
+// let's have a nice value for both the player and the web server
 function checkCarrier() {
   if (carrier || typeof checkCarrier.timeout === 'undefined') {
     checkCarrier.timeout = 0;
@@ -67,6 +63,9 @@ term.on('resize', function(data) {
 
 socket.on('connect', function() {
   carrier = true;
+  clearInterval(checkCarrier, 12000);
+  checkCarrier.timeout = 0;
+
   term.writeln('\x1B[m');
   window.frames['Action'].postMessage({ 'func':'logon' }, location.href);
   window.frames['Profile'].postMessage({ 'func':'logon' }, location.href);
@@ -80,6 +79,7 @@ socket.on('disconnect', function() {
 
 socket.on('kill', function() {
   carrier = false;
+  setInterval(checkCarrier, 12000);
   window.frames['Action'].postMessage({ 'func':'clear' }, location.href);
   window.frames['Profile'].postMessage({ 'func':'logoff' }, location.href);
 });
