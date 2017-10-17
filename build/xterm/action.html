@@ -140,13 +140,15 @@ enter = `<input class="wide" type="button" value="Enter" onclick="send('', true)
 quit = `<input class="wide" type="button" value="Quit" onclick="send('Q');">`;
 logoff = `<input type="button" value="LOGOFF" onclick="send('\x1A');">`;
 keypad = `<table align="center">
-  <tr><td><input type="button" value="7" onclick="send('7');"></td><td><input type="button" value="8" onclick="send('8');"></td><td><input type="button" value="9" onclick="send('9');">
+  <tr><td><input class="numeric" type="button" value="7" onclick="send('7');"></td><td><input class="numeric" type="button" value="8" onclick="send('8');"></td><td><input class="numeric" type="button" value="9" onclick="send('9');">
   </tr>
-  <tr><td><input type="button" value="4" onclick="send('4');"></td><td><input type="button" value="5" onclick="send('5');"></td><td><input type="button" value="6" onclick="send('6');">
+  <tr><td><input class="numeric" type="button" value="4" onclick="send('4');"></td><td><input class="numeric" type="button" value="5" onclick="send('5');"></td><td><input class="numeric" type="button" value="6" onclick="send('6');">
   </tr>
-  <tr><td><input type="button" value="1" onclick="send('1');"></td><td><input type="button" value="2" onclick="send('2');"></td><td><input type="button" value="3" onclick="send('3');">
+  <tr><td><input class="numeric" type="button" value="1" onclick="send('1');"></td><td><input class="numeric" type="button" value="2" onclick="send('2');"></td><td><input class="numeric" type="button" value="3" onclick="send('3');">
   </tr>
-  <tr><td><input type="button" value=" 0 " onclick="send('0');"></td><td colspan=2><input type="button" value="MAX" onclick="send('MAX', true);"></td>
+  <tr><td><input class="numeric" type="button" value=" 0 " onclick="send('0');"></td><td colspan=2>${enter}</td>
+  </tr>
+  <tr><td colspan=2>${cancel}</td><td><input type="button" value="MAX" onclick="send('MAX', true);"></td>
   </tr>
   </table>`;
 money = `<table align="center">
@@ -158,7 +160,7 @@ money = `<table align="center">
   </tr>
   <tr><td colspan=2>${enter}</td><td><input class="numeric" type="button" value=" 0 " onclick="send('0');"></td><td><input class="copper" type="button" value="C" onclick="send('c');"></td>
   </tr>
-  <tr><td colspan=2>${cancel}</td><td colspan=2><input class="wide" type="button" value="MAX" onclick="send(' MAX ', true);"></td>
+  <tr><td colspan=2>${cancel}</td><td colspan=2><input class="wide" type="button" value=" MAX " onclick="send('MAX', true);"></td>
   </tr>
   </table>`;
 
@@ -247,7 +249,6 @@ function list() {
   actionResize('half');
   cmd(`
   ${keypad}
-  ${cancel} ${quit} ${logoff}
   `);
 }
 

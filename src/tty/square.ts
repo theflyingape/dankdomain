@@ -383,8 +383,7 @@ function Bank() {
 			xvt.app.form['coin'].prompt = xvt.attr('Loan ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', credit.carry(), ']? ')
 			if(credit.value < 1) {
 				$.beep()
-				xvt.app.refocus()
-				return
+				menu(suppress)
 			}
 			xvt.app.focus = 'coin'
 			break
@@ -508,6 +507,7 @@ function amount() {
 }
 
 function list(choice: string) {
+	$.action('list')
 	xvt.app.form = {
 		'start': { cb:listStart, prompt:'Start list at ', max:2 },
 		'end': { cb:listEnd, prompt:'Start list at ', max:2 },
