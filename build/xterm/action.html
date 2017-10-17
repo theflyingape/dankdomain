@@ -148,7 +148,7 @@ keypad = `<table align="center">
   </tr>
   <tr><td><input class="numeric" type="button" value=" 0 " onclick="send('0');"></td><td colspan=2>${enter}</td>
   </tr>
-  <tr><td colspan=2>${cancel}</td><td><input type="button" value="MAX" onclick="send('MAX', true);"></td>
+  <tr><input class="numeric" type="button" value=" ? " onclick="send('?');"></td><td colspan=2><input class="wide" type="button" value=" MAX " onclick="send('MAX', true);"></td>
   </tr>
   </table>`;
 money = `<table align="center">
@@ -249,6 +249,7 @@ function list() {
   actionResize('half');
   cmd(`
   ${keypad}
+  ${cancel}
   `);
 }
 

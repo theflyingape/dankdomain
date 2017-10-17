@@ -381,11 +381,12 @@ function Bank() {
 
 		case 'L':
 			xvt.app.form['coin'].prompt = xvt.attr('Loan ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', credit.carry(), ']? ')
-			if(credit.value < 1) {
+			if(credit.value > 0)
+				xvt.app.focus = 'coin'
+			else {
 				$.beep()
 				menu(suppress)
 			}
-			xvt.app.focus = 'coin'
 			break
 
 		case 'R':

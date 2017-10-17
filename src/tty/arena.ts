@@ -186,6 +186,7 @@ function choice() {
 				xvt.out('\nYou have no more arena fights.\n')
 				break
 			}
+			$.action('list')
 			xvt.app.form = {
 				pick: { cb: () => {
 					xvt.out('\n')
