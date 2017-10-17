@@ -121,6 +121,7 @@ function choice() {
             return
 
         case 'Q':
+            $.action('yn')
             xvt.app.form = {
                 'yn': { cb: () => {
                     xvt.out('\n')
@@ -187,6 +188,7 @@ function choice() {
                     , '.\n'
                 )
 
+                $.action('yn')
                 xvt.app.form = {
                     'yn': { cb: () => {
                         xvt.out('\n')
@@ -266,6 +268,7 @@ function choice() {
 
         case 'U':
             $.music('.')
+            $.action('yn')
             let newpassword: string = ''
             xvt.app.form = {
                 'yn': { cb: () => {
@@ -304,6 +307,7 @@ function choice() {
 
         case 'X':
             $.music('.')
+            $.action('yn')
             xvt.app.form = {
                 'yn': { cb: () => {
                     if (/Y/i.test(xvt.entry)) {
@@ -322,6 +326,7 @@ function choice() {
             return
 
         case 'Y':
+            $.action('yn')
             xvt.app.form = {
                 'yn': { cb: () => {
                     if (/Y/i.test(xvt.entry)) {

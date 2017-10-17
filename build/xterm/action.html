@@ -148,7 +148,7 @@ keypad = `<table align="center">
   </tr>
   <tr><td><input class="numeric" type="button" value=" 0 " onclick="send('0');"></td><td colspan=2>${enter}</td>
   </tr>
-  <tr><input class="numeric" type="button" value=" ? " onclick="send('?');"></td><td colspan=2><input class="wide" type="button" value=" MAX " onclick="send('MAX', true);"></td>
+  <tr><td><input class="numeric" type="button" value=" ? " onclick="send('?');"></td><td colspan=2><input class="wide" type="button" value=" MAX " onclick="send('MAX', true);"></td>
   </tr>
   </table>`;
 money = `<table align="center">
@@ -264,6 +264,13 @@ ${quit}
   `);
 }
 
+function yn() {
+  actionResize('small');
+  cmd(`
+<p><input class="tall" type="button" value=" Yes " onclick="send('Y');"></p>
+<p><input class="tall" type="button" value=" No " onclick="send('N');"></p>
+  `);
+}
 </script>
 </head>
 <body onkeypress="keypress(event);">

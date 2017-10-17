@@ -96,6 +96,7 @@ function choice() {
 					return
 				}
 
+				$.action('yn')
 				xvt.app.form = {
 					'compete': { cb:() => {
 						xvt.out('\n')
@@ -272,6 +273,7 @@ function choice() {
 				if (isNaN(+opponent.user.weapon)) xvt.out('\n', $.who(opponent, 'He'), $.Weapon.wearing(opponent), '.\n')
 				if (isNaN(+opponent.user.armor)) xvt.out('\n', $.who(opponent, 'He'), $.Armor.wearing(opponent), '.\n')
 
+				$.action('yn')				
 				xvt.app.form = {
 					'fight': { cb:() => {
 						xvt.out('\n\n')
@@ -319,6 +321,7 @@ function MonsterFights(): boolean {
 			return
 		}
 
+		$.action('yn')		
 		xvt.app.form = {
 			'pay': { cb:() => {
 				xvt.out('\n\n')
@@ -408,6 +411,7 @@ function MonsterFights(): boolean {
 		if (isNaN(+monster.user.weapon)) xvt.out('\n', $.who(monster, 'He'), $.Weapon.wearing(monster), '.\n')
 		if (isNaN(+monster.user.armor)) xvt.out('\n', $.who(monster, 'He'), $.Armor.wearing(monster), '.\n')
 
+		$.action('yn')
 		xvt.app.form = {
 			'fight': { cb:() => {
 				xvt.out('\n\n')

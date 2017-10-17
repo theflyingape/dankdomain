@@ -43,6 +43,7 @@ function guards(): boolean {
         default:
             xvt.out('The last thing you ever feel is several quarrels cutting deep into your chest.\n')
             xvt.waste(1000)
+            $.action('yn')
             xvt.app.form = {
                 'forgot': { cb:() => {
                     if (/Y/i.test(xvt.entry)) {
@@ -170,6 +171,7 @@ function password() {
 }
 
 function welcome() {
+    $.action('yn')
 
     if ($.player.status === 'jail' || !$.Access.name[$.player.access].roleplay) {
         xvt.out(xvt.bright, xvt.black, '(', xvt.magenta, 'PRISONER', xvt.black, ')\n')

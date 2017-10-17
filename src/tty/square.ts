@@ -96,7 +96,7 @@ function choice() {
 			credit.value = $.worth(new $.coins($.RealEstate.name[$.player.realestate].value).value, $.online.cha)
 			credit.value += $.worth(new $.coins($.Security.name[$.player.security].value).value, $.online.cha)
 			credit.value -= $.player.loan.value
-			if (credit.value < 0) credit.value = 0
+			if (credit.value < 1) credit.value = 0
 
 			$.action('bank')
 			bank['D'] = { description: 'Money in hand: ' + $.player.coin.carry() }
@@ -118,6 +118,7 @@ function choice() {
 			if (!$.access.roleplay) break
 			if ($.Armor.name[$.player.armor].ac == 0 && ($.online.toAC < 0 || $.player.toAC < 0)) {
 				credit = new $.coins(($.online.toAC + $.player.toAC) + 's')
+				$.action('yn')				
 				xvt.app.form = {
 					'skin': { cb:() => {
 						if (/Y/i.test(xvt.entry)) {
@@ -144,6 +145,7 @@ function choice() {
 			}
 			if ($.Weapon.name[$.player.weapon].wc == 0 && ($.online.toWC < 0 || $.player.toWC < 0)) {
 				credit = new $.coins(($.online.toWC + $.player.toWC) + 's')
+				$.action('yn')				
 				xvt.app.form = {
 					'hands': { cb:() => {
 						if (/Y/i.test(xvt.entry)) {
@@ -184,6 +186,7 @@ function choice() {
 				else
 					xvt.out('You can be billed for the remaining ', (hi - lo).toString(), ' hit points.\n')
 			}
+			$.action('list')
 			xvt.app.form = {
 				'hp': { cb: () => {
 					xvt.out('\n')
@@ -381,12 +384,7 @@ function Bank() {
 
 		case 'L':
 			xvt.app.form['coin'].prompt = xvt.attr('Loan ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', credit.carry(), ']? ')
-			if(credit.value > 0)
-				xvt.app.focus = 'coin'
-			else {
-				$.beep()
-				menu(suppress)
-			}
+			xvt.app.focus = 'coin'
 			break
 
 		case 'R':

@@ -180,6 +180,7 @@ export function attack(skip = false) {
                 bs += (roll == 1) ? -1 : (roll > 99) ? $.dice($.player.backstab) : 0
             } while (roll == 1 || roll > 99)
             if (bs > 1) {
+                $.action('yn')
                 xvt.app.form['backstab'].prompt = 'Attempt to backstab'
                     + (bs > 2 && bs != $.player.backstab ? ' for ' + bs.toString() + 'x' : '')
                     + ' (Y/N)? '
@@ -336,6 +337,7 @@ export function cast(rpc: active, cb:Function) {
             cb(true)
             return
         }
+        $.action('list')
         xvt.app.form = {
             'magic': { cb: () => {
                 xvt.out('\n')
@@ -523,6 +525,7 @@ export function poison(rpc: active, cb:Function) {
             cb(true)
             return
         }
+        $.action('list')
         xvt.app.form = {
             'poison': { cb: () => {
                 xvt.out('\n')
