@@ -46,9 +46,9 @@ else {
 
 function receive(event) {
   if (event.data) {
+    console.log(event.data.func);
     switch(event.data.func) {
       case 'kb':
-        term.focus();
       case 'emit':
         if (event.data.message) {
           socket.emit('data', termid, event.data.message);
@@ -82,6 +82,8 @@ function receive(event) {
         }
         break;
     }
+    if (event.data.func === 'kb')
+        term.focus();
   }
 }
 </script>
