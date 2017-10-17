@@ -32,15 +32,10 @@ function newSession() {
 
 // let's have a nice value for both the player and the web server
 function checkCarrier() {
-  if (carrier || typeof checkCarrier.timeout === 'undefined') {
-    checkCarrier.timeout = 0;
-  }
-  else {
-    if(++checkCarrier.timeout == 10)
-      socket.disconnect();
-    else
-      term.write('.');
-  }
+  if(++checkCarrier.timeout == 10)
+    socket.disconnect();
+  else
+    term.write('.');
 }
 
 term.on('data', function(data) {
@@ -63,9 +58,10 @@ term.on('resize', function(data) {
 
 socket.on('connect', function() {
   carrier = true;
-  clearInterval(checkCarrier, 12000);
+  if (typeof checkCarrier.timer !== 'undefined')
+    clearInterval(checkCarrier.timer);
   checkCarrier.timeout = 0;
-
+    
   term.writeln('\x1B[m');
   window.frames['Action'].postMessage({ 'func':'logon' }, location.href);
   window.frames['Profile'].postMessage({ 'func':'logon' }, location.href);
@@ -74,12 +70,14 @@ socket.on('connect', function() {
 socket.on('disconnect', function() {
   if (typeof tuneSource !== 'undefined') tuneSource.stop();
   carrier = false;
+  clearInterval(checkCarrier.timer);
   terminalContainer.hidden = true;
 });
 
 socket.on('kill', function() {
   carrier = false;
-  setInterval(checkCarrier, 12000);
+  checkCarrier.timeout = 0;
+  checkCarrier.timer = setInterval(checkCarrier, 12000);
   window.frames['Action'].postMessage({ 'func':'clear' }, location.href);
   window.frames['Profile'].postMessage({ 'func':'logoff' }, location.href);
 });
