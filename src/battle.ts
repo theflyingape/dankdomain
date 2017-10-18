@@ -187,6 +187,9 @@ export function attack(skip = false) {
                 xvt.app.focus = 'backstab'
                 return
             }
+            else {
+                xvt.out('\n')
+            }
             melee(rpc, enemy)
         }
         else {
