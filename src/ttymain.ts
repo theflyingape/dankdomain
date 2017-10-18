@@ -20,13 +20,12 @@ import xvt = require('xvt')
 //  classic terminal user interface entry point
 module ttyMain
 {
-    if (process.env.TERM !== 'linux') {
+    xvt.defaultTimeout = 120
+    if(xvt.modem = xvt.validator.isEmpty(process.env.REMOTEHOST)) {
         xvt.out('@play(dankdomain)\n')
         xvt.waste(1500)
+        xvt.out('\nCARRIER DETECTED\n')
     }
-    xvt.defaultTimeout = 120
-    xvt.modem = true
-    xvt.out('\nCARRIER DETECTED\n')
 
     if (process.argv.length < 3) {
         //  try a remote query for terminal emulation auto-detection
@@ -46,16 +45,13 @@ module ttyMain
     }
     else
         xvt.emulation = process.argv[2].toUpperCase()
-
+    
     //  allow hardcopy and monochrome terminals to still play!  :)
     if (!xvt.emulation.match('VT|PC|XT'))                               xvt.emulation = 'dumb'
 
-    let title = process.title
-    if (xvt.validator.isNotEmpty(process.env.npm_package_version))
-        title += ' ' + process.env.npm_package_version
-    title += ' (' + xvt.emulation + ')'
+    let title = process.title + ' (' + xvt.emulation + ')'
     xvt.out('\x1B]2;', title, '\x07')
-
+    
     //  initiate user login sequence: id, handle, or a new registration
     require('./tty/logon')
 }

@@ -1468,16 +1468,17 @@ export function logoff() {
 }
 
 export function action(menu: string) {
-    if (xvt.emulation === 'XT' && process.env.TERM !== 'linux')
-        xvt.out('@action(', menu, ')')
+    if (!xvt.modem) return
+    xvt.out('@action(', menu, ')')
 }
 
 export function music(tune: string) {
-    if (xvt.emulation === 'XT' && process.env.TERM !== 'linux')
-        xvt.out('@tune(', tune, ')')
+    if (!xvt.modem) return
+    xvt.out('@tune(', tune, ')')
 }
 
 export function profile(...params) {
+    if (!xvt.modem) return
     let result = { }
     params.forEach(x => {
         const a = x.split('=')
@@ -1487,8 +1488,8 @@ export function profile(...params) {
 }
 
 export function sound(effect: string, sync = 2) {
-    if (xvt.emulation === 'XT' && process.env.TERM !== 'linux')
-        xvt.out('@play(', effect, ')')
+    if (!xvt.modem) return
+    xvt.out('@play(', effect, ')')
     xvt.waste(sync * 100)
 }
 
