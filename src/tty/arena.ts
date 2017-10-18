@@ -248,8 +248,13 @@ function choice() {
 					return
 				}
 
+				$.profile({ png:'arena/' + opponent.user.handle.toLowerCase()
+					, handle:opponent.user.handle
+					, level:opponent.user.level, pc:opponent.user.pc
+					})
 				if (!$.cat('player/' + opponent.user.id)) $.cat('player/' + opponent.user.pc.toLowerCase())
 				xvt.out(opponent.user.handle, ' ')
+
 				if (opponent.user.status === 'jail') {
 					xvt.out('is locked-up in jail.\n')
 					menu()
@@ -367,6 +372,10 @@ function MonsterFights(): boolean {
 					monster.user.coin.value += cost.value
 
 //					if ($.Access.name[$.player.access].sysop) console.log(monster)
+					$.profile({ jpg:'arena/' + monster.user.handle.toLowerCase()
+						, handle:monster.user.handle
+						, level:monster.user.level, pc:monster.user.pc
+					})
 					$.cat('arena/' + monster.user.handle)
 
 					xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`, '\n')
