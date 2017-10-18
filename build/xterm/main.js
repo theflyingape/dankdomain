@@ -1,4 +1,4 @@
-var carrier = false, timeout = 0, timer;
+var carrier = false, recheck = 0, reconnect;
 var cols = 80, rows = 25;
 var terminalContainer = document.getElementById('terminal'),
     term = new Terminal({ cursorBlink:true, rows:rows, cols:cols, scrollback:200 }),
@@ -12,13 +12,17 @@ newSession();
 
 function newSession() {
 
-  var parts = document.location.pathname.split('/')
-    , base = parts.slice(0, parts.length - 1).join('/') + '/'
-    , resource = base.substring(1) + 'socket.io';
+  carrier = true;
+  if (reconnect) clearInterval(reconnect);
+  recheck = 0;
 
   term.writeln('\x1B[36mWelcome to \x1B[1mDank Domain\x1B[22m!');
   term.write('\x1B[34mConnecting to terminal WebSocket ... ');
    
+  var parts = document.location.pathname.split('/')
+    , base = parts.slice(0, parts.length - 1).join('/') + '/'
+    , resource = base.substring(1) + 'socket.io';
+
   socket = io.connect(null, { resource: resource });
   socket.emit('create', cols, rows, function(err, data) {
     if (err) return self._destroy();
@@ -32,7 +36,7 @@ function newSession() {
 
 // let's have a nice value for both the player and the web server
 function checkCarrier() {
-  if(++timeout == 10)
+  if(++recheck == 10)
     socket.disconnect();
   else
     term.write('.');
@@ -57,26 +61,24 @@ term.on('resize', function(data) {
 });
 
 socket.on('connect', function() {
-  carrier = true;
-  if (timer) clearInterval(timer);
-  timeout = 0;
-
   term.writeln('\x1B[m');
   window.frames['Action'].postMessage({ 'func':'logon' }, location.href);
   window.frames['Profile'].postMessage({ 'func':'logon' }, location.href);
 });
 
 socket.on('disconnect', function() {
-  if (typeof tuneSource !== 'undefined') tuneSource.stop();
   carrier = false;
-  clearInterval(checkCarrier.timer);
+  clearInterval(reconnect);
   terminalContainer.hidden = true;
+  if (tuneSource) tuneSource.stop();
 });
 
 socket.on('kill', function() {
   carrier = false;
-  timeout = 0;
-  timer = setInterval(checkCarrier, 12000);
+  recheck = 0;
+  console.log('kill before', reconnect);
+  reconnect = setInterval(checkCarrier, 15000);
+  console.log('kill after', reconnect);
   window.frames['Action'].postMessage({ 'func':'clear' }, location.href);
   window.frames['Profile'].postMessage({ 'func':'logoff' }, location.href);
 });

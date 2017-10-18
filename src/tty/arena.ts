@@ -406,7 +406,10 @@ function MonsterFights(): boolean {
 		monster.user.coin.amount = monsters[mon].money.toString()
 
 		$.cat('arena/' + monster.user.handle.toLowerCase())
-		$.profile({ jpg:'arena/' + monster.user.handle.toLowerCase(), level:monster.user.level, pc:monster.user.pc })
+		$.profile({ jpg:'arena/' + monster.user.handle.toLowerCase()
+			, handle:monster.user.handle
+			, level:monster.user.level, pc:monster.user.pc
+		})
 
 		xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`, '\n')
 		if (isNaN(+monster.user.weapon)) xvt.out('\n', $.who(monster, 'He'), $.Weapon.wearing(monster), '.\n')

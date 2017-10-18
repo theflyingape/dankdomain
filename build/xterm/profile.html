@@ -27,24 +27,50 @@ function receive(event) {
   if (event.data) {
     if (event.data.func) {
       window[event.data.func]();
+      return
     }
+
+    var html = '';
     if (event.data.jpg) {
-      artwork.src = 'images/' + event.data.jpg + '.jpg'
+      html += `<img src="images/${event.data.jpg}.jpg" height="98%" width="98%">`;
     }
     if (event.data.png) {
-      artwork.src = 'images/' + event.data.png + '.png'
+      html += `<img src="images/${event.data.png}.png" height="98%" width="98%">`;
     }
+    if (event.data.handle) {
+      html += `${event.data.handle}`;
+    }
+    if (event.data.level) {
+      html += ` a level ${event.data.level} `;
+    }
+    if (event.data.pc) {
+      html += ` ${event.data.pc} `;
+    }
+    cmd(html);
   }
 }
 
+function cmd(html) {
+  document.getElementById("sheet").innerHTML = html;
+}
+
+function keypress(event) {
+  var x = event.which || event.keyCode;
+  send(String.fromCharCode(x), false, 'kb');
+}
+
 function logoff() {
-  artwork.src = 'images/default.png';
+  cmd(`
+<img src="images/default.png" height="100%" width="100%" />
+  `);
   art = setInterval(rotateImage, 100000);
 }
 
 function logon() {
   clearInterval(art);
-  artwork.src = 'images/npc/city_guard_2.png';
+  cmd(`
+<img src="images/npc/city_guard_2.png" height="96%" width="96%" />
+  `);
 }
 
 function rotateImage() {
@@ -72,12 +98,14 @@ function rotateImage() {
 
   const artwork = document.getElementById('artwork');
   var n = Math.trunc(Math.random() * images.length);
-  artwork.src = 'images/' + images[n];
+  cmd(`
+<img src="images/${images[n]}" height="95%" width="95%" />
+  `);
 }
 art = setInterval(rotateImage, 100000);
 </script>
 </head>
-<body>
-<img id="artwork" src="images/default.png" height="90%" width="90%" style="vertical-align:bottom" />
+<body onkeypress="keypress(event);">
+<div id="sheet">Profile Sheet</div>
 </body>
 </html>
