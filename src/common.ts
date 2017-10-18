@@ -1477,14 +1477,16 @@ export function music(tune: string) {
     xvt.out('@tune(', tune, ')')
 }
 
-export function profile(...params) {
+export function profile(params) {
     if (!xvt.modem) return
+/*
     let result = { }
     params.forEach(x => {
         const a = x.split('=')
         result[a[0]] = a[1]
     })
-    xvt.out('@profile(', JSON.stringify(result), ')')
+*/
+    xvt.out('@profile(', JSON.stringify(params), ')')
 }
 
 export function sound(effect: string, sync = 2) {

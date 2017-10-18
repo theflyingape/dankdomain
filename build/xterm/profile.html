@@ -28,6 +28,12 @@ function receive(event) {
     if (event.data.func) {
       window[event.data.func]();
     }
+    if (event.data.jpg) {
+      artwork.src = 'images/' + event.data.jpg + '.jpg'
+    }
+    if (event.data.png) {
+      artwork.src = 'images/' + event.data.png + '.png'
+    }
   }
 }
 

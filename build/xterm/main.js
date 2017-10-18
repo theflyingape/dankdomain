@@ -1,4 +1,4 @@
-var carrier = false;
+var carrier = false, timeout = 0, timer;
 var cols = 80, rows = 25;
 var terminalContainer = document.getElementById('terminal'),
     term = new Terminal({ cursorBlink:true, rows:rows, cols:cols, scrollback:200 }),
@@ -32,7 +32,7 @@ function newSession() {
 
 // let's have a nice value for both the player and the web server
 function checkCarrier() {
-  if(++checkCarrier.timeout == 10)
+  if(++timeout == 10)
     socket.disconnect();
   else
     term.write('.');
@@ -58,10 +58,9 @@ term.on('resize', function(data) {
 
 socket.on('connect', function() {
   carrier = true;
-  if (typeof checkCarrier.timer !== 'undefined')
-    clearInterval(checkCarrier.timer);
-  checkCarrier.timeout = 0;
-    
+  if (timer) clearInterval(timer);
+  timeout = 0;
+
   term.writeln('\x1B[m');
   window.frames['Action'].postMessage({ 'func':'logon' }, location.href);
   window.frames['Profile'].postMessage({ 'func':'logon' }, location.href);
@@ -76,15 +75,15 @@ socket.on('disconnect', function() {
 
 socket.on('kill', function() {
   carrier = false;
-  checkCarrier.timeout = 0;
-  checkCarrier.timer = setInterval(checkCarrier, 12000);
+  timeout = 0;
+  timer = setInterval(checkCarrier, 12000);
   window.frames['Action'].postMessage({ 'func':'clear' }, location.href);
   window.frames['Profile'].postMessage({ 'func':'logoff' }, location.href);
 });
 
 socket.on('data', function(id, data) {
   // find any occurrences of @func(data), and for each: call func(data)
-  const re = '[@](?:(action|play|tune)[(](.+?)[)])';
+  const re = '[@](?:(action|profile|play|tune)[(](.+?)[)])';
   search = new RegExp(re, 'g'); replace = new RegExp(re);
   copy = data;
   while (match = search.exec(copy)) {
@@ -118,7 +117,8 @@ function play(fileName) {
 }
 
 function profile(panel) {
-  window.frames['Profile'].postMessage({ 'func':panel }, location.href);
+  if (typeof panel === 'string') panel = JSON.parse(panel);
+  window.frames['Profile'].postMessage(panel, location.href);
 }
 
 function tune(fileName) {
