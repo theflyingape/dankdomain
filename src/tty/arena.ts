@@ -252,7 +252,7 @@ function choice() {
 					return
 				}
 
-				$.profile({ png:'arena/' + opponent.user.handle.toLowerCase()
+				$.profile({ png:'player/' + opponent.user.pc.toLowerCase()
 					, handle:opponent.user.handle
 					, level:opponent.user.level, pc:opponent.user.pc
 					})
