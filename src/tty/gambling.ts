@@ -21,15 +21,18 @@ module Gambling
 	let atm: choices = {
 		'D': { },
 		'W': { },
-		'L': { },
+		'L': { }
 	}
+	let pin: boolean
 
 export function menu(suppress = false) {
-    xvt.app.form = {
+	$.action('casino')
+	xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }
     xvt.app.form['menu'].prompt = $.display('casino', xvt.Blue, xvt.blue, suppress, casino)
     xvt.app.focus = 'menu'
+	pin = false
 }
 
 function choice() {
@@ -37,17 +40,21 @@ function choice() {
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isEmpty(casino[choice])) {
         xvt.beep()
-        suppress = false
+		menu(true)
+		return
     }
 
     switch (choice) {
-        case 'I':
-            if (!$.access.roleplay) break
-            xvt.out('\n', xvt.cyan, 'Enter PIN: ', xvt.white)
-            for (var i = 0; i < 6; i++) {
-                xvt.waste(19 * $.dice(39) + 77)  /*  "Empty it, Bert"  */
-                xvt.out('#')
-            }
+		case 'I':
+			if (!$.access.roleplay) break
+			if (!pin) {
+				xvt.out('\n', xvt.cyan, 'Enter PIN: ', xvt.white)
+				for (var i = 0; i < 6; i++) {
+					xvt.waste(19 * $.dice(39) + 77)  /*  "Empty it, Bert"  */
+					xvt.out('#')
+				}
+				pin = true
+			}
             $.action('bank')
             xvt.out('\n')
 
@@ -66,7 +73,13 @@ function choice() {
 			require('./main').menu($.player.expert)
 			return
 	}
-	menu(suppress)
+	if ($.access.roleplay) {
+		Bet()
+	}
+	else {
+        xvt.beep()
+		menu(true)
+	}
 }
 
 function ATM() {
@@ -102,12 +115,52 @@ function ATM() {
 	}
 }
 
+function Bet() {
+	xvt.out(xvt.reset, '\n')
+	$.action('amount')
+	xvt.app.form = {
+		'coin': { cb:amount, max:24 }
+	}
+	xvt.app.form['coin'].prompt = xvt.attr('Bet ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.player.coin.carry(), ']? ')
+	xvt.app.focus = 'coin'
+}
+
 function amount() {
 	if ((+xvt.entry).toString() === xvt.entry) xvt.entry += 'c'
 	let action = xvt.app.form['coin'].prompt.split(' ')[0]
 	let amount = new $.coins(0)
+	if (/=|max/i.test(xvt.entry)) {
+		amount.value = action === 'Withdraw' ? $.player.bank.value : $.player.coin.value
+	}
+	else {
+		amount.value = new $.coins(xvt.entry).value
+		if (amount.value > 0 && amount.value <= $.player.coin.value) {
+			$.player.coin.value -= amount.value
+		}
+	}
+
+	if (amount.value < 1) {
+		xvt.beep()
+		menu($.player.expert)
+		return
+	}
 
 	switch (action) {
+		case 'Black':
+			amount.value = (/=|max/i.test(xvt.entry)) ? $.player.coin.value : new $.coins(xvt.entry).value
+			if (amount.value > 0 && amount.value <= $.player.coin.value) {
+				$.player.coin.value -= amount.value
+			}
+			xvt.app.form = {
+				'draw': { cb: () => {
+					
+				}, max:1 }
+			}
+
+			xvt.app['draw'].prompt = '<H>it, <S>tand'
+			xvt.app.focus = 'draw'
+			return
+
 		case 'Deposit':
 			amount.value = (/=|max/i.test(xvt.entry)) ? $.player.coin.value : new $.coins(xvt.entry).value
 			if (amount.value > 0 && amount.value <= $.player.coin.value) {
@@ -125,6 +178,8 @@ function amount() {
 				$.online.altered = true
 				$.beep()
 			}
+			xvt.entry = 'I'
+			choice()
 			break
 
 		case 'Withdraw':
@@ -135,11 +190,26 @@ function amount() {
 				$.online.altered = true
 				$.beep()
 			}
+			xvt.entry = 'I'
+			choice()
 			break
 	}
+}
 
-	xvt.entry = 'I'
-	choice()
+function Shuffle() {
+	xvt.out('Shuffling new deck... ')
+	xvt.waste(250)	
+	for (let i = 0; i < 4; i++)
+		for (let j = 0; j < 13; j++)
+			deck[13*i+j] = &card[j]
+	for(let i = 0; i < 52; i++) {
+		swap = deck[i]
+		j = dice(52)-1
+		deck[i] = deck[j]
+		deck[j] = swap
+	}
+	xvt.out('Ok.\n\n')
+	xvt.waste(250)
 }
 
 }

@@ -264,6 +264,20 @@ ${quit}
   `);
 }
 
+function casino() {
+  actionResize('half');
+  cmd(`
+<input type="button" value="ATM" onclick="send('I');"><br>
+<input type="button" value="Black Jack" onclick="send('B');">
+<input type="button" value="High Card" onclick="send('H');">
+<input type="button" value="Craps" onclick="send('C');">
+<input type="button" value="Dogs" onclick="send('D');">
+<input type="button" value="Slots" onclick="send('S');">
+<input type="button" value="Keno" onclick="send('K');">
+<input type="button" value="Roulette" onclick="send('R');">
+`);
+}
+
 function yn() {
   actionResize('small');
   cmd(`
