@@ -103,6 +103,10 @@ function choice() {
 						if (/Y/i.test(xvt.entry)) {
 							$.joust--
 							$.online.altered = true
+							$.profile({ jpg:'arena/joust'
+								, handle:opponent.user.handle
+								, level:opponent.user.level, pc:opponent.user.pc
+							})
 							$.music('joust')
 							xvt.out('\nThe trumpets blare! You and your opponent ride into the arena. The crowd roars!\n')
 							round()
