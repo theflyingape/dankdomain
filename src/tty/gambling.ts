@@ -196,10 +196,10 @@ function amount() {
 	}
 }
 
-function Shuffle() {
+function shuffle() {
 	xvt.out('Shuffling new deck... ')
 	xvt.waste(250)	
-	for (let i = 0; i < 4; i++)
+/*	for (let i = 0; i < 4; i++)
 		for (let j = 0; j < 13; j++)
 			deck[13*i+j] = &card[j]
 	for(let i = 0; i < 52; i++) {
@@ -208,6 +208,7 @@ function Shuffle() {
 		deck[i] = deck[j]
 		deck[j] = swap
 	}
+*/
 	xvt.out('Ok.\n\n')
 	xvt.waste(250)
 }
