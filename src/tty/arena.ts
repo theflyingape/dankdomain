@@ -252,7 +252,7 @@ function choice() {
 					return
 				}
 
-				$.profile({ png:'player/' + opponent.user.pc.toLowerCase()
+				$.profile({ png:'player/' + opponent.user.pc.toLowerCase() + opponent.user.gender === 'F' ? '_f' : ''
 					, handle:opponent.user.handle
 					, level:opponent.user.level, pc:opponent.user.pc
 					})
