@@ -303,6 +303,7 @@ Emulation now supports any point size, not just my wife's size (8).
 * ANSI/VT220 console support for all video modes.
 * 100% event driven.
 
+--------------
 ### RPGBBS DELUXE
 > [developed](https://github.com/theflyingape/rpgbbs/tree/master/v7) using SAS/C on an Amiga 2000 using a SupraFAXModem 14400
 --------------
