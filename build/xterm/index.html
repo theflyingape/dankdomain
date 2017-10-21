@@ -4,7 +4,7 @@
 <title>Dank Domain: the return of Hack & Slash</title>
 <style>
   body {
-    background-color: #000;
+    background-color: midnightblue;
     color: antiquewhite;
   }
   #terminal {
@@ -14,6 +14,13 @@
     height: 100%;
     position: fixed;
   }
+  #Info {
+    top: 0; right: 0;
+    width: 20%;
+    height: 100%;
+    position: fixed;
+  }
+/*
   #Profile {
     top: 0; right: 0;
     width: 20%;
@@ -32,6 +39,7 @@
     height: 50%;
     position: fixed;
   }
+*/
 </style>
 <link rel="stylesheet" href="xterm.css">
 <script>
@@ -65,7 +73,7 @@ function receive(event) {
         var stylesheet = document.styleSheets[0];
         for (var i in stylesheet.cssRules) {
           css = stylesheet.cssRules[i];
-          if (css.selectorText === '#Action') {
+          if (css.selectorText === '#Info') {
             break;
           }
         }
@@ -90,9 +98,10 @@ function receive(event) {
 </head>
 <body onresize="term.fit();">
 <div id="terminal"></div>
-<iframe seamless id="Enemy" name="Enemy" src="./enemy.html"></iframe>
+<iframe seamless id="Info" name="Info" src="./info.html"></iframe>
+<!--iframe seamless id="Enemy" name="Enemy" src="./enemy.html"></iframe>
 <iframe seamless id="Profile" name="Profile" src="./profile.html"></iframe>
-<iframe seamless id="Action" name="Action" src="./action.html"></iframe>
+<iframe seamless id="Action" name="Action" src="./action.html"></iframe-->
 <h2>Dank Domain: the return of Hack &amp; Slash</h2>
 <h3>&copy;2017 Robert Hurst</h3>
 <h4>use REFRESH button to start over</h4>

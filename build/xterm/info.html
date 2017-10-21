@@ -11,7 +11,7 @@
     background: -webkit-linear-gradient(left top, gray, antiquewhite);
     background: -o-linear-gradient(bottom right, gray, antiquewhite);
     background: -moz-linear-gradient(bottom right, gray, antiquewhite);
- */
+*/
     background: linear-gradient(to bottom right, darkslategray, black);  /*  standard syntax (must be last)  */
     font-family: 'Carter One', cursive;
     font-size: 20px;
@@ -29,12 +29,79 @@ else {
 }
 
 function receive(event) {
-  if (event.data) {
-    if (event.data.func) {
-      window[event.data.func]();
+    if (event.data) {
+        if (event.data.func) {
+            window[event.data.func]();
+            return
+        }
+
+        var html = '';
+        if (event.data.jpg) {
+            html += `<img src="images/${event.data.jpg}.jpg" height="98%" width="98%">`;
+        }
+        if (event.data.png) {
+            html += `<img src="images/${event.data.png}.png" height="98%" width="98%">`;
+        }
+        if (event.data.handle) {
+            html += `${event.data.handle}`;
+        }
+        if (event.data.level) {
+        html += ` a level ${event.data.level} `;
+        }
+        if (event.data.pc) {
+            html += ` ${event.data.pc} `;
+        }
+        nme(html);
     }
-  }
 }
+
+function nme(html) {
+  document.getElementById("nme").innerHTML = html;
+}
+
+function logoff() {
+  cmd(`
+<img src="images/default.png" height="100%" width="100%" />
+  `);
+  art = setInterval(rotateImage, 100000);
+}
+
+function logon() {
+  clearInterval(art);
+  cmd(`
+<img src="images/npc/city_guard_2.png" height="96%" width="96%" />
+  `);
+}
+
+function rotateImage() {
+  var images = [
+    'arexielite_by_peachyco.png',
+    'dragonborn_dagger_sorcerer_by_peachyco.png',
+    'dragonborn_hexblade_by_peachyco.png',
+    'elf_cleric_by_peachyco.png',
+    'elf_fighter_by_peachyco.png',
+    'guild_findsman_by_peachyco.png',
+    'human_battlemage_by_peachyco.png',
+    'human_enchantress_mage_by_peachyco.png',
+    'human_warpriest_by_peachyco.png',
+    'human_wizard_by_peachyco.png',
+    'kashaw_and_zahra_by_peachyco.png',
+    'krauser_dragonborn_warlord_by_peachyco.png',
+    'lucien2_human_wizard_by_peachyco.png',
+    'lucien_human_wizard_by_peachyco.png',
+    'orc_pirate_by_peachyco.png',
+    'paladin_by_peachyco.png',
+    'thrask_goliath_fighter_by_peachyco.png',
+    'warforged_fighter_and_human_wizard_by_peachyco.png',
+    'yuriel_genasi_warlord_by_peachyco.png'
+ ];
+
+  var n = Math.trunc(Math.random() * images.length);
+  cmd(`
+<img src="images/${images[n]}" height="95%" width="95%" />
+  `);
+}
+art = setInterval(rotateImage, 100000);
 
 cancel = `<input class="wide" type="button" value="Cancel" onclick="send('\x15');">`;
 enter = `<input class="wide" type="button" value="Enter" onclick="send('', true);">`;
@@ -84,12 +151,10 @@ function cmd(html) {
 }
 
 function clear() {
-  actionResize('small');
   cmd('');
 }
 
 function logon() {
-  actionResize('small');
   cmd(`
 <input class="tall" type="button" value="NEW" onclick="send('NEW', true);"> ${enter}
 <p>${logoff}</p>
@@ -97,7 +162,6 @@ function logon() {
 }
 
 function menu() {
-  actionResize('full');
   cmd(`
 <input type="button" value="Arena" onclick="send('A');">
 <input type="button" value="Dungeon" onclick="send('D');">
@@ -117,7 +181,6 @@ function menu() {
 }
 
 function arena() {
-  actionResize('half');
   cmd(`
 <input type="button" value="Cast" onclick="send('C');">
 <input type="button" value="Poison" onclick="send('P');">
@@ -130,7 +193,6 @@ function arena() {
 }
 
 function square() {
-  actionResize('half');
   cmd(`
 <input type="button" value="Armoury" onclick="send('A');">
 <input type="button" value="Weapons" onclick="send('W');">
@@ -147,7 +209,6 @@ function square() {
 }
 
 function list() {
-  actionResize('half');
   cmd(`
   ${keypad}
   ${cancel}
@@ -155,7 +216,6 @@ function list() {
 }
 
 function bank() {
-  actionResize('half');
   cmd(`
 ${money}
 <input type="button" value="Deposit" onclick="send('D');">
@@ -166,7 +226,6 @@ ${quit}
 }
 
 function casino() {
-  actionResize('half');
   cmd(`
 <input type="button" value="ATM" onclick="send('I');"><br>
 <input type="button" value="Black Jack" onclick="send('B');">
@@ -180,7 +239,6 @@ function casino() {
 }
 
 function yn() {
-  actionResize('small');
   cmd(`
 <input class="tall" type="button" value=" Yes " onclick="send('Y');">
 <p><input class="tall" type="button" value=" No " onclick="send('N');"></p>
@@ -189,6 +247,7 @@ function yn() {
 </script>
 </head>
 <body onkeypress="keypress(event);">
-<div id="nme" hidden></div>
+<div id="nme">Profile Sheet</div>
 <div id="command">Command Buttons</div>
+</body>
 </html>

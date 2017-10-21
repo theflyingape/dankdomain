@@ -50,7 +50,7 @@ term.on('data', function(data) {
       if (typeof tuneSource !== 'undefined') tuneSource.stop();
       term.writeln('\nAttempt to reconnect');
       newSession();
-      window.frames['Action'].postMessage({ 'func':'logon' }, location.href);
+      window.frames['Info'].postMessage({ 'func':'logon' }, location.href);
       window.frames['Profile'].postMessage({ 'func':'logon' }, location.href);
     }
   }
@@ -62,7 +62,7 @@ term.on('resize', function(data) {
 
 socket.on('connect', function() {
   term.writeln('\x1B[m');
-  window.frames['Action'].postMessage({ 'func':'logon' }, location.href);
+  window.frames['Info'].postMessage({ 'func':'logon' }, location.href);
   window.frames['Profile'].postMessage({ 'func':'logon' }, location.href);
 });
 
@@ -79,7 +79,7 @@ socket.on('kill', function() {
   console.log('kill before', reconnect);
   reconnect = setInterval(checkCarrier, 15000);
   console.log('kill after', reconnect);
-  window.frames['Action'].postMessage({ 'func':'clear' }, location.href);
+  window.frames['Info'].postMessage({ 'func':'clear' }, location.href);
   window.frames['Profile'].postMessage({ 'func':'logoff' }, location.href);
 });
 
@@ -98,7 +98,7 @@ socket.on('data', function(id, data) {
 });
 
 function action(menu) {
-  window.frames['Action'].postMessage({ 'func':menu }, location.href);
+  window.frames['Info'].postMessage({ 'func':menu }, location.href);
 }
 
 function play(fileName) {
@@ -120,7 +120,7 @@ function play(fileName) {
 
 function profile(panel) {
   if (typeof panel === 'string') panel = JSON.parse(panel);
-  window.frames['Profile'].postMessage(panel, location.href);
+  window.frames['Info'].postMessage(panel, location.href);
 }
 
 function tune(fileName) {

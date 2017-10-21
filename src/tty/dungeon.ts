@@ -28,7 +28,7 @@ let monsters: dungeon[] = [
 	{ name:"lizard man", pc:"Lizard" },
 	{ name:"crabman", pc:"Beast" },
 	{ name:"mongrelman", pc:"Beast" },
-	{ name:"orgrillon", pc:"Ogre", spells: [ "Heal" ] },
+	{ name:"ogrillon", pc:"Ogre", spells: [ "Heal" ] },
 	{ name:"githzerai", pc:"Demon", spells: [ "Heal" ] },
 	{ name:"kuo-toa", pc:"Lizard", spells: [ "Heal", "Teleport" ] },
 	{ name:"bugbear" ,pc:"Beast", spells: [ "Heal" ] },
@@ -145,16 +145,54 @@ function command() {
 		case 'S':
 		case 'E':
 		case 'W':
-			xvt.out(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.normal, xvt.magenta,'<^  ', xvt.reset
-				, 'There is a wall to the ', choice.toLowerCase(), dungeon[choice].description,'.')
-			xvt.waste(250)
-			if (($.online.hp -= $.dice(Math.trunc($.player.level * (110 - $.online.str) / 100) + 1)) < 1) {
-				xvt.out('\n')
+			if ($.dice(100) == 100) {
+				require('./main').menu($.player.expert)
+				return
+			}
+			if ($.dice(10) == 1) {
+				xvt.out(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.normal, xvt.magenta,'<^  ', xvt.reset
+					, 'There is a wall to the ', choice.toLowerCase(), dungeon[choice].description,'.')
 				xvt.waste(250)
-				xvt.out(xvt.bright, xvt.yellow, 'You take too many hits and die.\n', xvt.reset)
-				xvt.waste(250)
-				$.reason = 'banged head against a wall'
-				xvt.hangup()
+				if (($.online.hp -= $.dice(Math.trunc($.player.level * (110 - $.online.str) / 100) + 1)) < 1) {
+					xvt.out('\n')
+					xvt.waste(250)
+					xvt.out(xvt.bright, xvt.yellow, 'You take too many hits and die.\n', xvt.reset)
+					xvt.waste(250)
+					$.reason = 'banged head against a wall'
+					xvt.hangup()
+					return
+				}
+			}
+			if ($.dice(3) == 1) {
+				xvt.out('\nThere\'s something lurking in here . . . \n')
+
+				let mon = $.dice(monsters.length) - 1
+				let monster = <active>{}
+				monster.user = <user>{id: ''}
+				monster.user.handle = monsters[mon].name
+				monster.user.sex = 'I'
+				$.reroll(monster.user, monsters[mon].pc, mon)
+				monster.user.weapon = Math.trunc(mon / 2)
+				monster.user.armor = Math.trunc(mon / 4)
+				$.activate(monster)
+				monster.user.coin = new $.coins($.money(mon))
+
+				$.cat('dungeon/' + monster.user.handle)
+				$.profile({ jpg:'dungeon/' + monster.user.handle
+					, handle:monster.user.handle
+					, level:monster.user.level, pc:monster.user.pc
+				})
+				
+				xvt.waste(750)
+				xvt.out(xvt.reset, '\nIt\'s a ', monster.user.handle, '!')
+				xvt.waste(500)
+				xvt.out('  And it doesn\'t look friendly.\n')
+				xvt.waste(500)
+
+				if (isNaN(+monster.user.weapon)) xvt.out('\n', $.who(monster, 'He'), $.Weapon.wearing(monster), '.\n')
+				if (isNaN(+monster.user.armor)) xvt.out('\n', $.who(monster, 'He'), $.Armor.wearing(monster), '.\n')
+
+				Battle.engage('Dungeon', $.online, monster, menu)
 				return
 			}
 			break
@@ -168,6 +206,10 @@ function command() {
 		case 'Y':
 			Battle.yourstats()
 			break
+
+		default:
+			xvt.beep()
+    	    suppress = false
 	}
 	menu(suppress)
 }
