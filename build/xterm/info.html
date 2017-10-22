@@ -7,18 +7,47 @@
 <style>
   body {
     text-align: center;
-/*  background: antiquewhite;
-    background: -webkit-linear-gradient(left top, gray, antiquewhite);
-    background: -o-linear-gradient(bottom right, gray, antiquewhite);
-    background: -moz-linear-gradient(bottom right, gray, antiquewhite);
-*/
-    background: linear-gradient(to bottom right, darkslategray, black);  /*  standard syntax (must be last)  */
+    background: antiquewhite;  /*  older browsers  */
+    background: -webkit-linear-gradient(left top, antiquewhite, gray);  /*  safari 5.1 to 6.0  */
+    background: -o-linear-gradient(bottom right, antiquewhite, gray );  /*  opera 11.1 to 12.0  */
+    background: -moz-linear-gradient(bottom right, antiquewhite, gray);  /*  firefox 3.6 to 15  */
+    background: linear-gradient(to bottom right, white, skyblue);  /*  standard syntax (must be last)  */
     font-family: 'Carter One', cursive;
     font-size: 20px;
-    color: aliceblue;
+    color: midnightblue;
   }
 </style>
 <script>
+art = null;
+cancel = `<input class="wide" type="button" value="Cancel" onclick="send('\x15');">`;
+enter = `<input class="wide" type="button" value="Enter" onclick="send('', true);">`;
+quit = `<input class="wide" type="button" value="Quit" onclick="send('Q');">`;
+logoff = `<input type="button" value="LOGOFF" onclick="send('\x1A');">`;
+keypad = `<table align="center">
+<tr><td><input class="numeric" type="button" value="7" onclick="send('7');"></td><td><input class="numeric" type="button" value="8" onclick="send('8');"></td><td><input class="numeric" type="button" value="9" onclick="send('9');">
+</tr>
+<tr><td><input class="numeric" type="button" value="4" onclick="send('4');"></td><td><input class="numeric" type="button" value="5" onclick="send('5');"></td><td><input class="numeric" type="button" value="6" onclick="send('6');">
+</tr>
+<tr><td><input class="numeric" type="button" value="1" onclick="send('1');"></td><td><input class="numeric" type="button" value="2" onclick="send('2');"></td><td><input class="numeric" type="button" value="3" onclick="send('3');">
+</tr>
+<tr><td><input class="numeric" type="button" value=" 0 " onclick="send('0');"></td><td colspan=2>${enter}</td>
+</tr>
+<tr><td><input class="numeric" type="button" value=" ? " onclick="send('?');"></td><td colspan=2><input class="wide" type="button" value=" MAX " onclick="send('MAX', true);"></td>
+</tr>
+</table>`;
+money = `<table align="center">
+<tr><td><input class="numeric" type="button" value="7" onclick="send('7');"></td><td><input class="numeric" type="button" value="8" onclick="send('8');"></td><td><input class="numeric" type="button" value="9" onclick="send('9');"></td><td><input class="platinum" type="button" value="P" onclick="send('p');"></td>
+</tr>
+<tr><td><input class="numeric" type="button" value="4" onclick="send('4');"></td><td><input class="numeric" type="button" value="5" onclick="send('5');"></td><td><input class="numeric" type="button" value="6" onclick="send('6');"></td><td><input class="gold" type="button" value="G" onclick="send('g');"></td>
+</tr>
+<tr><td><input class="numeric" type="button" value="1" onclick="send('1');"></td><td><input class="numeric" type="button" value="2" onclick="send('2');"></td><td><input class="numeric" type="button" value="3 " onclick="send('3');"></td><td><input class="silver" type="button" value="S" onclick="send('s');"></td>
+</tr>
+<tr><td colspan=2>${enter}</td><td><input class="numeric" type="button" value=" 0 " onclick="send('0');"></td><td><input class="copper" type="button" value="C" onclick="send('c');"></td>
+</tr>
+<tr><td colspan=2>${cancel}</td><td colspan=2><input class="wide" type="button" value=" MAX " onclick="send('MAX', true);"></td>
+</tr>
+</table>`;
+
 if (window.addEventListener) {
     window.addEventListener("message", receive, false);       
 }
@@ -59,18 +88,21 @@ function nme(html) {
   document.getElementById("nme").innerHTML = html;
 }
 
-function logoff() {
-  cmd(`
-<img src="images/default.png" height="100%" width="100%" />
-  `);
-  art = setInterval(rotateImage, 100000);
+function cmd(html) {
+  document.getElementById("command").innerHTML = html;
 }
 
-function logon() {
+function Logon() {
   clearInterval(art);
-  cmd(`
-<img src="images/npc/city_guard_2.png" height="96%" width="96%" />
-  `);
+  nme(`<img src="images/npc/city_guard_2.png" height="96%" width="96%" />`);
+  cmd(`<input class="tall" type="button" value="NEW" onclick="send('NEW', true);"> ${enter}
+<p>${logoff}</p>`);
+}
+
+function Logoff() {
+  art = setInterval(rotateImage, 50000);
+  rotateImage();
+  cmd(`<input class="tall" type="button" value=" CONNECT " onclick="send(' ');">`);
 }
 
 function rotateImage() {
@@ -97,40 +129,8 @@ function rotateImage() {
  ];
 
   var n = Math.trunc(Math.random() * images.length);
-  cmd(`
-<img src="images/${images[n]}" height="95%" width="95%" />
-  `);
+  nme(`<img src="images/${images[n]}" height="95%" width="95%" />`);
 }
-art = setInterval(rotateImage, 100000);
-
-cancel = `<input class="wide" type="button" value="Cancel" onclick="send('\x15');">`;
-enter = `<input class="wide" type="button" value="Enter" onclick="send('', true);">`;
-quit = `<input class="wide" type="button" value="Quit" onclick="send('Q');">`;
-logoff = `<input type="button" value="LOGOFF" onclick="send('\x1A');">`;
-keypad = `<table align="center">
-  <tr><td><input class="numeric" type="button" value="7" onclick="send('7');"></td><td><input class="numeric" type="button" value="8" onclick="send('8');"></td><td><input class="numeric" type="button" value="9" onclick="send('9');">
-  </tr>
-  <tr><td><input class="numeric" type="button" value="4" onclick="send('4');"></td><td><input class="numeric" type="button" value="5" onclick="send('5');"></td><td><input class="numeric" type="button" value="6" onclick="send('6');">
-  </tr>
-  <tr><td><input class="numeric" type="button" value="1" onclick="send('1');"></td><td><input class="numeric" type="button" value="2" onclick="send('2');"></td><td><input class="numeric" type="button" value="3" onclick="send('3');">
-  </tr>
-  <tr><td><input class="numeric" type="button" value=" 0 " onclick="send('0');"></td><td colspan=2>${enter}</td>
-  </tr>
-  <tr><td><input class="numeric" type="button" value=" ? " onclick="send('?');"></td><td colspan=2><input class="wide" type="button" value=" MAX " onclick="send('MAX', true);"></td>
-  </tr>
-  </table>`;
-money = `<table align="center">
-  <tr><td><input class="numeric" type="button" value="7" onclick="send('7');"></td><td><input class="numeric" type="button" value="8" onclick="send('8');"></td><td><input class="numeric" type="button" value="9" onclick="send('9');"></td><td><input class="platinum" type="button" value="P" onclick="send('p');"></td>
-  </tr>
-  <tr><td><input class="numeric" type="button" value="4" onclick="send('4');"></td><td><input class="numeric" type="button" value="5" onclick="send('5');"></td><td><input class="numeric" type="button" value="6" onclick="send('6');"></td><td><input class="gold" type="button" value="G" onclick="send('g');"></td>
-  </tr>
-  <tr><td><input class="numeric" type="button" value="1" onclick="send('1');"></td><td><input class="numeric" type="button" value="2" onclick="send('2');"></td><td><input class="numeric" type="button" value="3 " onclick="send('3');"></td><td><input class="silver" type="button" value="S" onclick="send('s');"></td>
-  </tr>
-  <tr><td colspan=2>${enter}</td><td><input class="numeric" type="button" value=" 0 " onclick="send('0');"></td><td><input class="copper" type="button" value="C" onclick="send('c');"></td>
-  </tr>
-  <tr><td colspan=2>${cancel}</td><td colspan=2><input class="wide" type="button" value=" MAX " onclick="send('MAX', true);"></td>
-  </tr>
-  </table>`;
 
 function send(keystrokes, cr = false, et = 'emit') {
   window.parent.postMessage({ 'func':et, 'message':keystrokes, 'return':cr }, '*');
@@ -146,22 +146,12 @@ function actionResize(profile) {
     'func':'size', 'message':profile }, location.href);  
 }
 
-function cmd(html) {
-  document.getElementById("command").innerHTML = html;
-}
-
 function clear() {
   cmd('');
 }
 
-function logon() {
-  cmd(`
-<input class="tall" type="button" value="NEW" onclick="send('NEW', true);"> ${enter}
-<p>${logoff}</p>
-  `);
-}
-
 function menu() {
+  nme('');
   cmd(`
 <input type="button" value="Arena" onclick="send('A');">
 <input type="button" value="Dungeon" onclick="send('D');">
@@ -177,7 +167,7 @@ function menu() {
 <input type="button" value="Status" onclick="send('Y');"><br>
 <input type="button" value="System" onclick="send('Z');">
 <p>${logoff}</p>
-  `);
+`);
 }
 
 function arena() {
@@ -189,10 +179,11 @@ function arena() {
 <input type="button" value="Joust" onclick="send('J');">
 <input type="button" value="Status" onclick="send('Y');"><br>
 <input class="tall" type="button" value="SQUARE" onclick="send('G');"> ${quit}
-   `);
+`);
 }
 
 function square() {
+  nme('');
   cmd(`
 <input type="button" value="Armoury" onclick="send('A');">
 <input type="button" value="Weapons" onclick="send('W');">
@@ -205,29 +196,31 @@ function square() {
 <input type="button" value="Pick pockets" onclick="send('P');">
 <input type="button" value="Jail" onclick="send('J');"><br>
 <input class="tall" type="button" value="ARENA" onclick="send('G');"> ${quit}
-  `);
+`);
 }
 
 function list() {
   cmd(`
-  ${keypad}
-  ${cancel}
-  `);
+${keypad}
+${cancel}
+`);
 }
 
 function bank() {
+  nme('');
   cmd(`
 ${money}
 <input type="button" value="Deposit" onclick="send('D');">
 <input type="button" value="Withdraw" onclick="send('W');">
 <input type="button" value="Loan" onclick="send('L');">
 ${quit}
-  `);
+`);
 }
 
 function casino() {
+  nme('');
   cmd(`
-<input type="button" value="ATM" onclick="send('I');"><br>
+<input class="wide" type="button" value="ATM" onclick="send('I');"> ${quit}<br>
 <input type="button" value="Black Jack" onclick="send('B');">
 <input type="button" value="High Card" onclick="send('H');">
 <input type="button" value="Craps" onclick="send('C');">
@@ -238,11 +231,23 @@ function casino() {
 `);
 }
 
+function dungeon() {
+  nme('');
+  cmd(`
+<input class="tall" type="button" value=" North " onclick="send('N');"><br>
+<input class="tall" type="button" value=" West " onclick="send('W');"> <input class="tall" type="button" value=" East " onclick="send('E');"><br>
+<input class="tall" type="button" value=" South " onclick="send('S');"><br>
+<p><input type="button" value="Cast" onclick="send('C');"> <input type="button" value="Poison" onclick="send('P');"></p>
+<input class="tall" type="button" value=" Your Status " onclick="send('Y');">
+`);
+}
+
 function yn() {
   cmd(`
-<input class="tall" type="button" value=" Yes " onclick="send('Y');">
-<p><input class="tall" type="button" value=" No " onclick="send('N');"></p>
-  `);
+<p><input class="tall" type="button" value=" Yes " onclick="send('Y');">
+<input class="tall" type="button" value=" No " onclick="send('N');"></p>
+${enter} ${quit}
+`);
 }
 </script>
 </head>

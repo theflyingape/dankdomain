@@ -26,10 +26,11 @@ function newSession() {
   socket = io.connect(null, { resource: resource });
   socket.emit('create', cols, rows, function(err, data) {
     if (err) return self._destroy();
+    carrier = true;
+    window.frames['Info'].postMessage({ 'func':'Logon' }, location.href);
     self.pty = data.pty;
     self.id = data.id;
     termid = self.id;
-    carrier = true;
     term.emit('open tab', self);
   });
 }
@@ -50,8 +51,6 @@ term.on('data', function(data) {
       if (typeof tuneSource !== 'undefined') tuneSource.stop();
       term.writeln('\nAttempt to reconnect');
       newSession();
-      window.frames['Info'].postMessage({ 'func':'logon' }, location.href);
-      window.frames['Profile'].postMessage({ 'func':'logon' }, location.href);
     }
   }
 });
@@ -62,8 +61,6 @@ term.on('resize', function(data) {
 
 socket.on('connect', function() {
   term.writeln('\x1B[m');
-  window.frames['Info'].postMessage({ 'func':'logon' }, location.href);
-  window.frames['Profile'].postMessage({ 'func':'logon' }, location.href);
 });
 
 socket.on('disconnect', function() {
@@ -74,13 +71,11 @@ socket.on('disconnect', function() {
 });
 
 socket.on('kill', function() {
+  console.log('kill()');
   carrier = false;
   recheck = 0;
-  console.log('kill before', reconnect);
   reconnect = setInterval(checkCarrier, 15000);
-  console.log('kill after', reconnect);
-  window.frames['Info'].postMessage({ 'func':'clear' }, location.href);
-  window.frames['Profile'].postMessage({ 'func':'logoff' }, location.href);
+  window.frames['Info'].postMessage({ 'func':'Logoff' }, location.href);
 });
 
 socket.on('data', function(id, data) {

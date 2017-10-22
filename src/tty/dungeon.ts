@@ -124,7 +124,8 @@ let monsters: dungeon[] = [
 	}
 
 export function menu(suppress = false) {
-    xvt.app.form = {
+	$.action('dungeon')
+	xvt.app.form = {
         'command': { cb:command, prompt:':', enter:'?', eol:false }
     }
     xvt.app.focus = 'command'

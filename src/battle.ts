@@ -674,6 +674,10 @@ export function user(venue: string, cb:Function) {
 }
 
 export function yourstats() {
+    $.profile({ png:'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : '')
+        , handle:$.player.handle
+        , level:$.player.level, pc:$.player.pc
+    })
     xvt.out(xvt.reset)
     xvt.out(xvt.cyan, 'Str:', xvt.bright, $.online.str > $.player.str ? xvt.yellow : $.online.str < $.player.str ? xvt.red : xvt.white)
     xvt.out(sprintf('%3d', $.online.str), xvt.reset, sprintf(' (%d,%d)    ', $.player.str, $.player.maxstr))
