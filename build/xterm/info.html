@@ -65,12 +65,6 @@ function receive(event) {
         }
 
         var html = '';
-        if (event.data.jpg) {
-            html += `<img src="images/${event.data.jpg}.jpg" height="98%" width="98%">`;
-        }
-        if (event.data.png) {
-            html += `<img src="images/${event.data.png}.png" height="98%" width="98%">`;
-        }
         if (event.data.handle) {
             html += `${event.data.handle}`;
         }
@@ -79,6 +73,12 @@ function receive(event) {
         }
         if (event.data.pc) {
             html += ` ${event.data.pc} `;
+        }
+        if (event.data.jpg) {
+            html += `<img src="images/${event.data.jpg}.jpg" height="98%" width="98%">`;
+        }
+        if (event.data.png) {
+            html += `<img src="images/${event.data.png}.png" height="98%" width="98%">`;
         }
         nme(html);
     }
@@ -252,7 +252,7 @@ ${enter} ${quit}
 </script>
 </head>
 <body onkeypress="keypress(event);">
-<div id="nme">Profile Sheet</div>
 <div id="command">Command Buttons</div>
+<div id="nme">Profile Sheet</div>
 </body>
 </html>

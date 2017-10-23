@@ -69,7 +69,7 @@ function receive(event) {
             socket.emit('data', termid, '\x0D');
         }
         break;
-
+/*
       case 'size':
         var stylesheet = document.styleSheets[0];
         for (var i in stylesheet.cssRules) {
@@ -91,13 +91,39 @@ function receive(event) {
         }
         break;
     }
+*/
     if (event.data.func === 'kb')
         term.focus();
+    }
   }
 }
+
+function resize() {
+  term.fit();
+  console.log(`resize(${termid}, ${term.cols}, ${term.rows})`)
+
+  var stylesheet = document.styleSheets[0];
+  for (var i in stylesheet.cssRules) {
+    css = stylesheet.cssRules[i];
+    if (css.selectorText === '#terminal')
+      l = css;
+    if (css.selectorText === '#Info')
+      r = css;
+  }
+
+  w = 20;
+  do {
+    w = (parseInt(w) + 2) + '%';
+    v = (100 - parseInt(w)) + '%';
+    Object.assign(l.style, { 'top':'0%', 'height':'100%', 'width':v });
+    Object.assign(r.style, { 'top':'0%', 'height':'100%', 'width':w });
+    term.fit();
+  } while(term.cols > 90 && parseInt(w) < 40);
+  console.log(`resize(${termid}, ${term.cols}, ${term.rows}) for ${l.selectorText}(${v}) & ${r.selectorText}(${w})`)
+ }
 </script>
 </head>
-<body onresize="term.fit();">
+<body onresize="resize();">
 <div id="terminal"></div>
 <iframe seamless id="Info" name="Info" src="./info.html"></iframe>
 <!--iframe seamless id="Enemy" name="Enemy" src="./enemy.html"></iframe>

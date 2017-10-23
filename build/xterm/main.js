@@ -56,6 +56,7 @@ term.on('data', function(data) {
 });
 
 term.on('resize', function(data) {
+  console.log(`term.resize(${termid}, ${term.cols}, ${term.rows})`);
   socket.emit('resize', termid, term.cols, term.rows);
 });
 
@@ -67,11 +68,10 @@ socket.on('disconnect', function() {
   carrier = false;
   clearInterval(reconnect);
   terminalContainer.hidden = true;
-  if (tuneSource) tuneSource.stop();
+  if (typeof tuneSource !== 'undefined') tuneSource.stop();
 });
 
 socket.on('kill', function() {
-  console.log('kill()');
   carrier = false;
   recheck = 0;
   reconnect = setInterval(checkCarrier, 15000);
