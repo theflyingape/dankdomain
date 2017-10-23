@@ -178,6 +178,7 @@ function command() {
 				$.activate(monster)
 				monster.user.coin = new $.coins($.money(mon))
 
+				$.action('battle')
 				$.cat('dungeon/' + monster.user.handle)
 				$.profile({ jpg:'dungeon/' + monster.user.handle
 					, handle:monster.user.handle

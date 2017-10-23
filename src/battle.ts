@@ -29,7 +29,7 @@ export function engage(module:string, party: active|active[], mob: active|active
 
     //  process parameters
     from = module
-
+    
     if (xvt.validator.isArray(party))
         parties = [ <active[]>{ ...party } ]
     else {
@@ -95,6 +95,7 @@ export function attack(skip = false) {
     let enemy = parties[mob][nme]
 
     if (rpc.user.id === $.player.id) {
+        $.action('battle')
         xvt.app.form = {
             'attack': {cb:() => {
                 xvt.out('\n\n')

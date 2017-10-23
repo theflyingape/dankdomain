@@ -15,7 +15,8 @@ function newSession() {
   carrier = true;
   if (reconnect) clearInterval(reconnect);
   recheck = 0;
-
+  tune('');
+  
   term.writeln('\x1B[36mWelcome to \x1B[1mDank Domain\x1B[22m!');
   term.write('\x1B[34mConnecting to terminal WebSocket ... ');
    
@@ -56,7 +57,6 @@ term.on('data', function(data) {
 });
 
 term.on('resize', function(data) {
-  console.log(`term.resize(${termid}, ${term.cols}, ${term.rows})`);
   socket.emit('resize', termid, term.cols, term.rows);
 });
 
@@ -97,6 +97,20 @@ function action(menu) {
 }
 
 function play(fileName) {
+  audio = document.getElementById('play');
+  if (!fileName.length) {
+    audio.pause();
+    audio.currentTime = 0;
+    return;
+  }
+  source = audio.getElementsByTagName('source');
+  source[0].src = 'sounds/' + fileName + '.ogg';
+  source[0].type = 'audio/ogg';
+  source[1].src = 'sounds/' + fileName + '.mp3';
+  source[1].type = 'audio/mp3';
+  audio.load();
+  audio.play();
+  return;
   // sound effect
   if (typeof playSource !== 'undefined') playSource.stop();
   if (fileName !== '.') {
@@ -119,6 +133,20 @@ function profile(panel) {
 }
 
 function tune(fileName) {
+  audio = document.getElementById('tune');
+  if (!fileName.length) {
+    audio.pause();
+    audio.currentTime = 0;
+    return;
+  }
+  source = audio.getElementsByTagName('source');
+  source[0].src = 'sounds/' + fileName + '.ogg';
+  source[0].type = 'audio/ogg';
+  source[1].src = 'sounds/' + fileName + '.mp3';
+  source[1].type = 'audio/mp3';
+  audio.load();
+  audio.play();
+  return;
   // tune
   if (typeof tuneSource !== 'undefined') tuneSource.stop();
   if (fileName !== '.') {

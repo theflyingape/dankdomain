@@ -54,7 +54,6 @@ else {
 
 function receive(event) {
   if (event.data) {
-    console.log(event.data.func);
     switch(event.data.func) {
       case 'kb':
       case 'emit':
@@ -100,7 +99,6 @@ function receive(event) {
 
 function resize() {
   term.fit();
-  console.log(`resize(${termid}, ${term.cols}, ${term.rows})`)
 
   var stylesheet = document.styleSheets[0];
   for (var i in stylesheet.cssRules) {
@@ -119,11 +117,10 @@ function resize() {
     Object.assign(r.style, { 'top':'0%', 'height':'100%', 'width':w });
     term.fit();
   } while(term.cols > 90 && parseInt(w) < 40);
-  console.log(`resize(${termid}, ${term.cols}, ${term.rows}) for ${l.selectorText}(${v}) & ${r.selectorText}(${w})`)
  }
 </script>
 </head>
-<body onresize="resize();">
+<body onload="resize();" onresize="resize();">
 <div id="terminal"></div>
 <iframe seamless id="Info" name="Info" src="./info.html"></iframe>
 <!--iframe seamless id="Enemy" name="Enemy" src="./enemy.html"></iframe>
@@ -132,7 +129,15 @@ function resize() {
 <h2>Dank Domain: the return of Hack &amp; Slash</h2>
 <h3>&copy;2017 Robert Hurst</h3>
 <h4>use REFRESH button to start over</h4>
-<input type="button" value="REFRESH" onclick="window.location.reload();">
+<input type="button" value="REFRESH" onclick="window.location.reload();" />
+<audio id="play">
+    <source id="oggPlay" type="audio/ogg" />
+    <source id="mp3Play" type="audio/mp3" />
+</audio>
+<audio id="tune">
+  <source id="oggTune" type="audio/ogg" />
+  <source id="mp3Tune" type="audio/mp3" />
+</audio>
 <script src="socket.io/socket.io.js"></script>
 <script src="xterm/dist/xterm.js"></script>
 <script src="xterm/dist/addons/fit/fit.js"></script>

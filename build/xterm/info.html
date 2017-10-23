@@ -16,6 +16,15 @@
     font-size: 20px;
     color: midnightblue;
   }
+  div {
+    padding: 4px;
+    margin: none;
+    border: none;
+  }
+  img {
+    max-width: 100%;
+    max-height: 100%;
+  }
 </style>
 <script>
 art = null;
@@ -64,7 +73,7 @@ function receive(event) {
             return
         }
 
-        var html = '';
+        var html = '<p>';
         if (event.data.handle) {
             html += `${event.data.handle}`;
         }
@@ -75,11 +84,12 @@ function receive(event) {
             html += ` ${event.data.pc} `;
         }
         if (event.data.jpg) {
-            html += `<img src="images/${event.data.jpg}.jpg" height="98%" width="98%">`;
+            html += `<br><img src="images/${event.data.jpg}.jpg" onload="nmeResize();">`;
         }
         if (event.data.png) {
-            html += `<img src="images/${event.data.png}.png" height="98%" width="98%">`;
+            html += `<br><img src="images/${event.data.png}.png" onload="nmeResize();">`;
         }
+        html += '</p>';
         nme(html);
     }
 }
@@ -94,15 +104,15 @@ function cmd(html) {
 
 function Logon() {
   clearInterval(art);
-  nme(`<img src="images/npc/city_guard_2.png" height="96%" width="96%" />`);
   cmd(`<input class="tall" type="button" value="NEW" onclick="send('NEW', true);"> ${enter}
 <p>${logoff}</p>`);
+nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize();">`);
 }
 
 function Logoff() {
   art = setInterval(rotateImage, 50000);
+  cmd(`<p><input class="tall" type="button" value=" CONNECT " onclick="send(' ');"></p>`);
   rotateImage();
-  cmd(`<input class="tall" type="button" value=" CONNECT " onclick="send(' ');">`);
 }
 
 function rotateImage() {
@@ -129,7 +139,7 @@ function rotateImage() {
  ];
 
   var n = Math.trunc(Math.random() * images.length);
-  nme(`<img src="images/${images[n]}" height="95%" width="95%" />`);
+  nme(`<img src="images/${images[n]}" onload="nmeResize();"/>`);
 }
 
 function send(keystrokes, cr = false, et = 'emit') {
@@ -179,6 +189,15 @@ function arena() {
 <input type="button" value="Joust" onclick="send('J');">
 <input type="button" value="Status" onclick="send('Y');"><br>
 <input class="tall" type="button" value="SQUARE" onclick="send('G');"> ${quit}
+`);
+}
+
+function battle() {
+  cmd(`
+<input type="button" value="Attack" onclick="send('A');">
+<input type="button" value="Cast" onclick="send('C');">
+<input type="button" value="Retreat" onclick="send('R');">
+<input type="button" value="Status" onclick="send('Y');">
 `);
 }
 
@@ -249,10 +268,26 @@ function yn() {
 ${enter} ${quit}
 `);
 }
+
+function nmeResize() {
+  pic = document.getElementById('nme').getElementsByTagName('img')[0];
+  ih = pic.height;
+  iw = pic.width;
+  h = Math.trunc(window.innerHeight * 0.96
+    - document.getElementById('command').clientHeight
+    - (document.getElementById('nme').clientHeight - ih));
+
+  //  too tall?
+  if (h < pic.height) {
+    w = Math.trunc(iw * h / pic.height);
+    pic.height = h;
+    pic.width = w;
+  }
+}
 </script>
 </head>
 <body onkeypress="keypress(event);">
 <div id="command">Command Buttons</div>
-<div id="nme">Profile Sheet</div>
+<div class="nme" id="nme">Profile Sheet</div>
 </body>
 </html>

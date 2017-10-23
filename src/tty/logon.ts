@@ -174,6 +174,7 @@ function welcome() {
     $.action('yn')
 
     if ($.player.status === 'jail' || !$.Access.name[$.player.access].roleplay) {
+        $.profile({ jpg:'npc/taxman', handle:$.taxman.user.handle })
         xvt.out(xvt.bright, xvt.black, '(', xvt.magenta, 'PRISONER', xvt.black, ')\n')
         xvt.out(xvt.red, '\nYou are locked-up in jail.\n', xvt.reset)
         xvt.waste(1000)
@@ -211,6 +212,10 @@ function welcome() {
     }
 
     if ($.player.today <= $.access.calls && $.access.roleplay) {
+        $.profile({ png:'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : '')
+            , handle:$.player.handle
+            , level:$.player.level, pc:$.player.pc
+        })
         xvt.out(xvt.bright, xvt.black, '(', xvt.normal, xvt.white, 'Welcome back, ',  $.access[$.player.gender], xvt.bright, xvt.black, ')\n', xvt.reset)
         xvt.sessionAllowed = $.access.minutes * 60
 
