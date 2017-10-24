@@ -69,6 +69,10 @@ socket.on('disconnect', function() {
   clearInterval(reconnect);
   terminalContainer.hidden = true;
   if (typeof tuneSource !== 'undefined') tuneSource.stop();
+  tune('');
+  var iframes = document.querySelectorAll('iframe');
+  for (var i = 0; i < iframes.length; i++)
+      iframes[i].parentNode.removeChild(iframes[i]);
 });
 
 socket.on('kill', function() {

@@ -15,14 +15,15 @@ module Logon
     process.stdin.setEncoding(xvt.emulation == 'XT' ? 'utf8' : 'ascii')
     xvt.out(xvt.bright, xvt.cyan, xvt.emulation, ' emulation enabled\n\f', xvt.reset)
 
-    db.loadUser($.sysop)
-
     $.cat('logon')
-
     xvt.app.form = {
         'who': { cb:who, prompt:'Who dares to enter my dank domain <or NEW>? ', max:22, timeout:20 },
         'password': { cb:password, echo:false, max:26, timeout:20 },
     }
+
+    db.loadUser($.sysop)
+    if ($.sysop.lastdate != $.now().date)
+        db.newDay()
 
     let retry = 3
     xvt.app.focus = 'who'
@@ -151,7 +152,7 @@ function password() {
         $.sysop.email = $.player.email
     }
     db.saveUser($.sysop)
-    
+
     $.player.calls++
     $.player.today++
     $.player.lastdate = $.now().date

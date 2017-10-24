@@ -13,9 +13,9 @@ module db
         $.fs.mkdirSync(users)
 
     //  https://github.com/JayrAlencar/sqlite-sync.js/wiki
-    const sql = users + 'dankdomain.sql'
+    const DD = users + 'dankdomain.sql'
     let sqlite3 = require('sqlite-sync')
-    sqlite3.connect(sql)
+    sqlite3.connect(DD)
 
     let row = sqlite3.run(`SELECT * FROM sqlite_master WHERE name='Players' AND type='table'`)
     if (!row.length) {
@@ -267,6 +267,32 @@ export function saveUser(rpc, insert = false) {
     }
     else
         if (isActive(rpc)) rpc.altered = false
+}
+
+export function newDay() {
+    $.sysop.lastdate = $.now().date
+    $.sysop.lasttime = $.now().time
+    db.saveUser($.sysop)
+
+    let sql = `UPDATE Players
+        SET bank=bank+coin, coin=0
+        WHERE SUBSTR(id,1,1)!='_'
+    `
+    let result = sqlite3.run(sql)
+    if (!xvt.validator.isNumber(result)) {
+        xvt.beep()
+        xvt.out('\n\nUnexpected SQL error: ', xvt.reset)
+        console.log(sql)
+        console.log(result)
+        xvt.hangup()
+    }
+
+    if (process.platform === 'linux') {
+        const exec = require('child_process').exec
+        exec(`mv ${DD}_2 ${DD}_3`)
+        exec(`mv ${DD}_1 ${DD}_2`)
+        exec(`sqlite3 ${DD} .dump > ${DD}_1`)
+    }
 }
 
 export function query(q: string): any {
