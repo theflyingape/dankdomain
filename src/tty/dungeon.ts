@@ -4,6 +4,7 @@
 \*****************************************************************************/
 
 import $ = require('../common')
+import db = require('../database')
 import Battle = require('../battle')
 import xvt = require('xvt')
 
@@ -125,6 +126,10 @@ let monsters: dungeon[] = [
 
 export function menu(suppress = false) {
 	$.action('dungeon')
+    $.checkXP($.online)
+    if ($.online.altered) db.saveUser($.player)
+    if ($.reason) xvt.hangup()
+
 	xvt.app.form = {
         'command': { cb:command, prompt:':', enter:'?', eol:false }
     }
@@ -166,34 +171,38 @@ function command() {
 			}
 			if ($.dice(3) == 1) {
 				xvt.out('\nThere\'s something lurking in here . . . \n')
+				let monster: active[] = new Array()
+				let n = 0
+				do {
+					monster.push(<active>{})
+					monster[n].user = <user>{id: ''}
+					let mon = $.player.level + $.dice(7) - 4
+					mon = mon < 0 ? 0 : mon >= monsters.length ? monsters.length - 1 : mon
+					monster[n].user.handle = monsters[mon].name
+					monster[n].user.sex = 'I'
+					$.reroll(monster[n].user, monsters[mon].pc, mon)
+					monster[n].user.weapon = Math.trunc(mon / 2)
+					monster[n].user.armor = Math.trunc(mon / 4)
+					monster[n].user.hp = Math.trunc(monster[n].user.hp / 8)
+					$.activate(monster[n])
+					monster[n].user.coin = new $.coins($.money(mon))
 
-				let mon = $.dice(monsters.length) - 1
-				let monster = <active>{}
-				monster.user = <user>{id: ''}
-				monster.user.handle = monsters[mon].name
-				monster.user.sex = 'I'
-				$.reroll(monster.user, monsters[mon].pc, mon)
-				monster.user.weapon = Math.trunc(mon / 2)
-				monster.user.armor = Math.trunc(mon / 4)
-				$.activate(monster)
-				monster.user.coin = new $.coins($.money(mon))
+					$.action('battle')
+					$.cat('dungeon/' + monster[n].user.handle)
+					$.profile({ jpg:'dungeon/' + monster[n].user.handle
+						, handle:monster[n].user.handle
+						, level:monster[n].user.level, pc:monster[n].user.pc
+					})
+					
+					xvt.waste(750)
+					xvt.out(xvt.reset, '\nIt\'s a ', monster[n].user.handle, '!')
+					xvt.waste(500)
+					xvt.out('  And it doesn\'t look friendly.\n')
+					xvt.waste(500)
 
-				$.action('battle')
-				$.cat('dungeon/' + monster.user.handle)
-				$.profile({ jpg:'dungeon/' + monster.user.handle
-					, handle:monster.user.handle
-					, level:monster.user.level, pc:monster.user.pc
-				})
-				
-				xvt.waste(750)
-				xvt.out(xvt.reset, '\nIt\'s a ', monster.user.handle, '!')
-				xvt.waste(500)
-				xvt.out('  And it doesn\'t look friendly.\n')
-				xvt.waste(500)
-
-				if (isNaN(+monster.user.weapon)) xvt.out('\n', $.who(monster, 'He'), $.Weapon.wearing(monster), '.\n')
-				if (isNaN(+monster.user.armor)) xvt.out('\n', $.who(monster, 'He'), $.Armor.wearing(monster), '.\n')
-
+					if (isNaN(+monster[n].user.weapon)) xvt.out('\n', $.who(monster[n], 'He'), $.Weapon.wearing(monster[n]), '.\n')
+					if (isNaN(+monster[n].user.armor)) xvt.out('\n', $.who(monster[n], 'He'), $.Armor.wearing(monster[n]), '.\n')
+				} while (++n < 3 && $.dice(3) == 1)
 				Battle.engage('Dungeon', $.online, monster, menu)
 				return
 			}

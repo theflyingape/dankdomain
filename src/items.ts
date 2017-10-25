@@ -129,10 +129,10 @@ export class Armor {
         [winner.user.toAC, loser.user.toAC] = [loser.user.toAC, winner.user.toAC]
         winner.toAC = 0
         if (winner.user.toAC > 0)
-            winner.user.toAC /= 2
+            winner.user.toAC >>= 1
         loser.toAC = 0
         if (loser.user.toAC > 0)
-            loser.user.toAC /= 2
+            loser.user.toAC >>= 1
         winner.altered = true
         loser.altered = true
 
@@ -386,10 +386,10 @@ export class Weapon {
         [winner.user.toWC, loser.user.toWC] = [loser.user.toWC, winner.user.toWC];
         winner.toWC = 0
         if (winner.user.toWC > 0)
-            winner.user.toWC /= 2
+            winner.user.toWC >>= 1
         loser.toWC = 0
         if (loser.user.toWC > 0)
-            loser.user.toWC /= 2
+            loser.user.toWC >>= 1
         winner.altered = true
         loser.altered = true
 

@@ -31,14 +31,14 @@ export function engage(module:string, party: active|active[], mob: active|active
     from = module
     
     if (xvt.validator.isArray(party))
-        parties = [ <active[]>{ ...party } ]
+        parties = [ <active[]>party ]
     else {
         let a:active[] = new Array(<active>party)
         parties = [ a ]
     }
 
     if (xvt.validator.isArray(mob))
-        parties.push(<active[]>{ ...mob })
+        parties.push(<active[]>mob)
     else {
         let b:active[] = new Array(<active>mob)
         parties.push(b)
@@ -80,6 +80,10 @@ export function attack(skip = false) {
     let n = round[0]
     if (!skip) n = round.shift()
     let rpc = parties[n.party][n.member]
+    if (rpc.hp < 1) {
+        next()
+        return
+    }
 
     //  recovery?
     if (rpc.confused) {
@@ -403,13 +407,13 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                         , enemy.user.gender === 'I' ? 'the ' : ''
                         , enemy == $.online ? 'you' : rpc.user.handle
                         , '.\n')
-                else
+                else {
                     xvt.out(rpc.user.gender === 'I' ? 'The ' : ''
-                    , enemy == $.online ? 'you' : rpc.user.handle
-                    , ' attacks '
-                    , enemy.user.gender === 'I' ? 'the ' : ''
-                    , enemy == $.online ? 'you' : rpc.user.handle
-                , ', but misses.\n')
+                        , rpc.user.handle, ' attacks '
+                        , enemy.user.gender === 'I' ? 'the ' : ''
+                        , enemy == $.online ? 'you' : rpc.user.handle
+                        , ', but misses.\n')
+                }
                 return
             }
         }
@@ -469,7 +473,8 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             let w = action.split(' ')
             let s = /.*ch$|.*sh$|.*s$/i.test(w[0]) ? 'es' : 's'
             xvt.out((/Monster|User/.test(from)) ? $.who(rpc, 'He')
-                : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle + ' ' : rpc.user.handle + ' '
+                : rpc.user.gender === 'I' ? 'The ' : ''
+                , rpc.user.handle, ' '
                 , w[0], s, w.slice(1).join(' '), ' '
                 , enemy == $.online ? 'you' : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
                 , ' for ', hit.toString(), ' hit points', period, '\n'
