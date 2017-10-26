@@ -97,6 +97,13 @@ function who() {
 
     $.access = $.Access.name[$.player.access]
     xvt.emulation = $.player.emulation
+    let row = $.query(`SELECT * FROM Online WHERE id = '${$.player.id}'`)
+    if (row.length) {
+        xvt.beep()
+        xvt.out('\nYou\'re in violation of the space-time continuum.  Try again tomorrow.\n')
+        xvt.hangup()
+    }
+
     xvt.app.form['password'].prompt = $.player.handle + ', enter your password: '
     xvt.app.focus = 'password'
 }
@@ -133,12 +140,21 @@ function password() {
         }
     }
 
-    if ($.player.lastdate != $.now().date)
+    if ($.player.lastdate != $.now().date) {
         $.player.today = 0
+        $.unlock($.player.id)   //  self-heal if necessary
+    }
 
     if ($.player.today > $.access.calls) {
         xvt.beep()
         xvt.out('\nYou have already used all ', $.access.calls.toString(), ' visits for today.  Please visit us again tomorrow!\n')
+        xvt.hangup()
+    }
+
+    let row = $.query(`SELECT * FROM Online WHERE id = '${$.player.id}'`)
+    if (row.length) {
+        xvt.beep()
+        xvt.out('\nYou\'re in violation of the space-time continuum.  Try again tomorrow.\n')
         xvt.hangup()
     }
 
@@ -157,6 +173,7 @@ function password() {
     $.player.today++
     $.player.lastdate = $.now().date
     $.player.lasttime = $.now().time
+    $.player.expires = $.player.lastdate + $.sysop.expires
     $.activate($.online, true)
     $.online.altered = true
     $.access = $.Access.name[$.player.access]
@@ -168,6 +185,8 @@ function password() {
     xvt.out(xvt.cyan, 'Caller#: ', xvt.bright, xvt.white, $.sysop.calls.toString(), xvt.normal, '\n')
     xvt.out(xvt.cyan, ' Online: ', xvt.bright, xvt.white, $.player.handle, xvt.normal, '\n')
     xvt.out(xvt.cyan, ' Access: ', xvt.bright, xvt.white, $.player.access, xvt.normal, '  ')
+
+    $.saveUser($.player)
     welcome()
 }
 
@@ -256,6 +275,8 @@ function welcome() {
         xvt.out(xvt.bright, xvt.black, '(', xvt.yellow, 'VISITING', xvt.black, ')\n', xvt.reset)
         xvt.sessionAllowed = 5 * 60
         $.access.roleplay = false
+        $.saveUser($.player)
+        $.unlock($.player.id)
     }
 
     xvt.out(xvt.cyan, '\nLast callers were: ', xvt.white)

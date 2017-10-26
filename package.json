@@ -30,6 +30,7 @@
   },
   "homepage": "https://robert.hurst-ri.us/games/dankdomain",
   "dependencies": {
+    "better-sqlite3": "^4.0.3",
     "express": "^4.16.2",
     "fs-extra": "^2.1.2",
     "node-pty": "^0.6.10",

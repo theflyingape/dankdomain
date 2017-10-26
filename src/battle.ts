@@ -474,11 +474,15 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         else {
             let w = action.split(' ')
             let s = /.*ch$|.*sh$|.*s$/i.test(w[0]) ? 'es' : 's'
-            xvt.out((/Monster|User/.test(from)) ? $.who(rpc, 'He')
-                : rpc.user.gender === 'I' ? 'The ' : ''
-                , rpc.user.handle, ' '
-                , w[0], s, w.slice(1).join(' '), ' '
-                , enemy == $.online ? 'you' : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
+            if (alive[1] == 1)
+                xvt.out($.who(rpc, 'He'))
+            else {
+                if(rpc.user.gender === 'I')
+                    xvt.out('The ')
+                xvt.out(rpc.user.handle, ' ')
+            }
+            xvt.out(w[0], s, w.slice(1).join(' '), ' ', enemy == $.online ? 'you'
+                : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
                 , ' for ', hit.toString(), ' hit points', period, '\n'
             )
         }
@@ -488,7 +492,8 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             rpc == $.online ? 'Your ' + rpc.user.weapon
             : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
             , ' does not even scratch '
-            , enemy == $.online ? 'you' : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
+            , enemy == $.online ? 'you'
+            : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
             , '.\n'
         )
         hit = 0

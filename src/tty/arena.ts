@@ -61,12 +61,12 @@ function choice() {
 				}
 				if (opponent.user.id === $.player.id) {
 					opponent.user.id = ''
-					xvt.out('You can\'t joust a wimp like', $.who(opponent, 'him'), '.\n')
+					xvt.out('\nYou can\'t joust a wimp like', $.who(opponent, 'him'), '.\n')
 					menu()
 					return
 				}
 				if ($.player.level - opponent.user.level > 3) {
-					xvt.out('You can only joust someone higher or up to three levels below you.\n')
+					xvt.out('\nYou can only joust someone higher or up to three levels below you.\n')
 					menu(true)
 					return
 				}

@@ -455,7 +455,7 @@ export function activate(one: active, keep = false): boolean {
     }
 
     if (keep) {
-        if (!lock(one.user.id)) {
+        if (!lock(one.user.id) && one.user.id !== player.id) {
             xvt.beep()
             xvt.out('\n', xvt.cyan, xvt.bright
                 , one.user.handle, ' is engaged elsewhere.'
@@ -1455,10 +1455,10 @@ export function logoff() {
     if (xvt.validator.isNotEmpty(player.id)) {
         if (reason !== '') {
             sound('goodbye')
-            player.expires = player.lastdate + sysop.expires
             if (player.calls) {
                 player.lasttime = now().time
-                saveUser(player)
+                if (access)
+                    saveUser(player)
                 unlock(player.id)
             }
             try { callers = require('./users/callers') } catch(e) {}
@@ -1821,17 +1821,25 @@ export function newDay() {
 }
 
 export function lock(id: string): boolean {
+    sqlite3.close()
+    sqlite3.connect(DD)
     let sql = `
         INSERT INTO Online 
         (id, pid, lockdate, locktime) VALUES
         ('${id}', ${process.pid}, ${now().date}, ${now().time})
     `
-    row = sqlite3.run(sql)
+    let row = sqlite3.run(sql)
+    console.log('row=', row, '\n', sql)
+    xvt.waste(5000)
     return xvt.validator.isNumber(row)
 }
 
 export function unlock(id: string): boolean {
+    sqlite3.close()
+    sqlite3.connect(DD)
     let row = query(`DELETE FROM Online WHERE id = '${id}'`)
+    console.log('delete row=', row, '\n')
+    xvt.waste(5000)
     return xvt.validator.isNumber(row)
 }
 
