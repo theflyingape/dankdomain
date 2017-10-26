@@ -7,7 +7,6 @@ import {sprintf} from 'sprintf-js'
 import xvt = require('xvt')
 
 import $ = require('../common')
-import db = require('../database')
 import Email = require('../email')
 
 module Logon
@@ -21,9 +20,9 @@ module Logon
         'password': { cb:password, echo:false, max:26, timeout:20 },
     }
 
-    db.loadUser($.sysop)
+    $.loadUser($.sysop)
     if ($.sysop.lastdate != $.now().date)
-        db.newDay()
+        $.newDay()
 
     let retry = 3
     xvt.app.focus = 'who'
@@ -52,7 +51,7 @@ function guards(): boolean {
                             $.player.today = 0
                         $.player.lastdate = $.now().date
                         $.player.lasttime = $.now().time
-                        db.saveUser($.player)
+                        $.saveUser($.player)
                         require('../email').resend()
                         return
                     }
@@ -86,10 +85,10 @@ function who() {
     }
 
     $.player.id = xvt.entry
-    if (!db.loadUser($.player)) {
+    if (!$.loadUser($.player)) {
         $.player.id = ''
         $.player.handle = xvt.entry
-        if(!db.loadUser($.player)) {
+        if(!$.loadUser($.player)) {
             if (guards())
                 xvt.app.refocus()
             return
@@ -123,9 +122,10 @@ function password() {
         } while (!xvt.validator.isDefined($.access[$.player.gender]))
     }
     else {
+        //  old school BBS tactic to leave an impression on new players
         let t = $.now().time
         t = 1440 * ($.now().date - $.player.lastdate) + 60 * Math.trunc(t / 100) + (t % 100) - (60 * Math.trunc($.player.lasttime / 100) + ($.player.lasttime % 100))
-        if (!$.access.sysop && t < 2) {
+        if (!$.access.sysop && $.player.novice && t < 2) {
             xvt.beep()
             xvt.out('\nYou were last on just ', t == 1 ? 'a minute' : t.toString() + ' minutes', ' ago.\n')
             xvt.out('Please wait at least 2 minutes between visits.\n')
@@ -143,21 +143,21 @@ function password() {
     }
 
     xvt.ondrop = $.logoff
-    db.loadUser($.sysop)
+    $.loadUser($.sysop)
     $.sysop.calls++
     $.sysop.today++
-    if (!db.loadKing()) {
+    if (!$.loadKing()) {
         $.player.access = Object.keys($.Access.name).slice($.player.gender === 'F' ? -2 : -1)[0]
         $.player.novice = false
         $.sysop.email = $.player.email
     }
-    db.saveUser($.sysop)
+    $.saveUser($.sysop)
 
     $.player.calls++
     $.player.today++
     $.player.lastdate = $.now().date
     $.player.lasttime = $.now().time
-    $.activate($.online)
+    $.activate($.online, true)
     $.online.altered = true
     $.access = $.Access.name[$.player.access]
 

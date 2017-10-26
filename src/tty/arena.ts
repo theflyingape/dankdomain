@@ -6,7 +6,6 @@
 import {sprintf} from 'sprintf-js'
 
 import $ = require('../common')
-import db = require('../database')
 import xvt = require('xvt')
 import Battle = require('../battle')
 
@@ -122,7 +121,7 @@ function choice() {
 							xvt.out('\n\nThe crowd throws rocks at you as you ride out of the arena.\n')
 							$.player.jl++
 							opponent.user.jw++
-							db.saveUser(opponent)
+							$.saveUser(opponent)
 							menu()
 							return
 						}
@@ -146,7 +145,7 @@ function choice() {
 									$.player.coin.value += reward.value
 									$.player.jw++
 									opponent.user.jl++
-									db.saveUser(opponent)
+									$.saveUser(opponent)
 									menu()
 									return
 								}
@@ -167,7 +166,7 @@ function choice() {
 									$.player.jl++
 									opponent.user.coin.value += reward.value
 									opponent.user.jw++
-									db.saveUser(opponent)
+									$.saveUser(opponent)
 									menu()
 									return
 								}
@@ -267,7 +266,7 @@ function choice() {
 				if (opponent.user.status.length) {
 					xvt.out('was killed by ')
 					let rpc: active = { user: { id: opponent.user.status } }
-					if (db.loadUser(rpc)) {
+					if ($.loadUser(rpc)) {
 						xvt.out(rpc.user.handle, xvt.cyan, ' (', xvt.bright, xvt.white, rpc.user.xplevel.toString(), xvt.normal, xvt.cyan, ')', xvt.reset)
 					}
 					else {
@@ -287,8 +286,10 @@ function choice() {
 					'fight': { cb:() => {
 						xvt.out('\n\n')
 						if (/Y/i.test(xvt.entry)) {
-							$.music('combat' + $.arena--)
-							Battle.engage('User', $.online, opponent, menu)
+							if ($.lock(opponent.user.id)) {
+								$.music('combat' + $.arena--)
+								Battle.engage('User', $.online, opponent, menu)
+							}
 						}
 						else
 							menu(!$.player.expert)

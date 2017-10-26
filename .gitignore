@@ -1,9 +1,11 @@
 **/*.js.map
 build/*.js
+build/*.d.ts
 build/images/**
 build/node_modules/**
 build/sounds/**
 build/tty/*.js
+build/tty/*.d.ts
 build/users
 node_modules/**
 src/*.js

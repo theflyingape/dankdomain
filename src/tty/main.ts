@@ -6,7 +6,6 @@
 import {sprintf} from 'sprintf-js'
 
 import $ = require('../common')
-import db = require('../database')
 import xvt = require('xvt')
 import Battle = require('../battle')
 
@@ -33,7 +32,7 @@ module Main
 
 export function menu(suppress = false) {
     $.action('menu')
-    if ($.online.altered) db.saveUser($.player)
+    if ($.online.altered) $.saveUser($.player)
     if ($.reason) xvt.hangup()
 
     xvt.app.form = {
@@ -90,7 +89,7 @@ function choice() {
             xvt.out(' ID   Player\'s Handle           Class    Lvl  Status  Party               \n')
             xvt.out('--------------------------------------------------------------------------', xvt.reset, '\n')
 
-            let rows = db.query(`
+            let rows = $.query(`
                 SELECT id, handle, pc, level, status, gang FROM Players
                 WHERE id NOT GLOB '_*'
                 ORDER BY level DESC, immortal DESC
@@ -236,7 +235,7 @@ function choice() {
                                 opponent.user.weapon = $.Weapon.merchant[opponent.weapon.wc]
                                 opponent.user.toWC = 0
 
-                                db.saveUser(opponent)
+                                $.saveUser(opponent)
 								//sprintf(line[numline++], "%s robbed you!", PLAYER.Handle);
                             }
 							else {
@@ -293,7 +292,7 @@ function choice() {
                 'check': { cb: () => {
                     if (xvt.entry === newpassword) {
                         $.player.password = newpassword
-                        db.saveUser($.player)
+                        $.saveUser($.player)
                         xvt.out('...saved...')
                     }
                     else {

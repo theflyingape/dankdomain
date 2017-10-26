@@ -4,7 +4,6 @@
 \*****************************************************************************/
 
 import $ = require('../common')
-import db = require('../database')
 import xvt = require('xvt')
 
 module Naval

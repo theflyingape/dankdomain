@@ -4,7 +4,6 @@
 \*****************************************************************************/
 
 import $ = require('../common')
-import db = require('../database')
 import xvt = require('xvt')
 import Battle = require('../battle')
 
@@ -84,7 +83,7 @@ function choice() {
                 }
             }
 
-            db.saveUser($.player)
+            $.saveUser($.player)
             break
 
         case 'Y':

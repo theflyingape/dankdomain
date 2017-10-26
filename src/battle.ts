@@ -6,7 +6,6 @@
 import {sprintf} from 'sprintf-js'
 
 import $ = require('./common')
-import db = require('./database')
 import xvt = require('xvt')
 
 module Battle
@@ -314,7 +313,8 @@ export function spoils() {
                     xvt.out($.who(winner, 'He'), 'take', winner == $.online ? '' : 's', $.who(loser, 'his'), winner.user.weapon, '.\n')
                 if ($.Armor.swap(winner, loser))
                     xvt.out($.who(winner, 'He'), 'take', winner == $.online ? '' : 's', $.who(loser, 'his'), winner.user.armor, '.\n')
-                if (loser.altered) db.saveUser(loser)
+                if (loser.altered) $.saveUser(loser)
+                $.unlock(loser.user.id)
             }
         }
         winner.user.xp += xp
@@ -328,6 +328,8 @@ export function spoils() {
                 xvt.out($.who(winner, 'He'), 'take', winner == $.online ? '' : 's', $.who(loser, 'his'), winner.user.weapon, '.\n')
             if ($.Armor.swap(winner, loser))
                 xvt.out($.who(winner, 'He'), 'take', winner == $.online ? '' : 's', $.who(loser, 'his'), winner.user.armor, '.\n')
+            $.saveUser(winner)
+            $.unlock(winner.user.id)
         }
         if (loser.user.coin.value) {
             winner.user.coin.value += loser.user.coin.value
@@ -622,10 +624,10 @@ export function user(venue: string, cb:Function) {
                 return
             }
             let rpc: active = { user: { id: xvt.entry} }
-            if (!db.loadUser(rpc)) {
+            if (!$.loadUser(rpc)) {
                 rpc.user.id = ''
                 rpc.user.handle = xvt.entry
-                if(!db.loadUser(rpc)) { 
+                if(!$.loadUser(rpc)) { 
                     xvt.beep()
                     xvt.out(' ?? ')
                 }
@@ -650,7 +652,7 @@ export function user(venue: string, cb:Function) {
             xvt.out('------------------------------------------------------------------------------')
             xvt.out(xvt.reset, '\n')
 
-            let rows = db.query(`
+            let rows = $.query(`
                 SELECT id, handle, pc, level, status, lastdate, access FROM Players
                 WHERE id NOT GLOB '_*'
                 AND level BETWEEN ${start} AND ${end}

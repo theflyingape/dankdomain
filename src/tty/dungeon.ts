@@ -4,7 +4,6 @@
 \*****************************************************************************/
 
 import $ = require('../common')
-import db = require('../database')
 import Battle = require('../battle')
 import xvt = require('xvt')
 
@@ -126,8 +125,9 @@ let monsters: dungeon[] = [
 
 export function menu(suppress = false) {
 	$.action('dungeon')
-    $.checkXP($.online)
-    if ($.online.altered) db.saveUser($.player)
+	if ($.player.level < $.sysop.level)
+		$.checkXP($.online)
+    if ($.online.altered) $.saveUser($.player)
     if ($.reason) xvt.hangup()
 
 	xvt.app.form = {

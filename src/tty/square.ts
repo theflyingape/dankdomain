@@ -6,7 +6,6 @@
 import {sprintf} from 'sprintf-js'
 
 import $ = require('../common')
-import db = require('../database')
 import xvt = require('xvt')
 
 module Square

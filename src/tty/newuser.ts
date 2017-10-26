@@ -4,7 +4,6 @@
 \*****************************************************************************/
 
 import $ = require('../common')
-import db = require('../database')
 import xvt = require('xvt')
 
 module NewUser
@@ -53,7 +52,7 @@ function handle() {
 
 	$.player.id = ''
 	$.player.handle = xvt.entry
-	if (db.loadUser($.player)) {
+	if ($.loadUser($.player)) {
 		xvt.beep()
 		xvt.app.refocus()
 		return
@@ -134,7 +133,7 @@ function edit() {
 
 	let check: user = { id:$.player.id, handle:'' }
 	let retry: number = 1
-	for (; retry < 9 && db.loadUser(check);) {
+	for (; retry < 9 && $.loadUser(check);) {
 		retry++
 		check.id = $.player.id + retry
 		check.handle = ''
