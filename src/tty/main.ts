@@ -89,25 +89,23 @@ function choice() {
             xvt.out(' ID   Player\'s Handle           Class    Lvl  Status  Party               \n')
             xvt.out('--------------------------------------------------------------------------', xvt.reset, '\n')
 
-            let rows = $.query(`
+            let rs = $.query(`
                 SELECT id, handle, pc, level, status, gang FROM Players
                 WHERE id NOT GLOB '_*'
                 ORDER BY level DESC, immortal DESC
-                `)
+            `)
 
-            for (let n in rows[0].values) {
-                let row = rows[0].values[n]
-
+            for (let n in rs) {
                 //  paint a target on any player that is winning
-                if (row[2] === $.PC.winning)
+                if (rs[n].pc === $.PC.winning)
                     xvt.out(xvt.bright, xvt.yellow)
-                else if (row[0] === $.player.id)
+                else if (rs[n] === $.player.id)
                     xvt.out(xvt.bright, xvt.white)
-                xvt.out(sprintf('%-4s  %-22s  %-9s  %3d  ', row[0], row[1], row[2], row[3]))
-                if (!row[4].length) xvt.out('Alive!  ')
-                else xvt.out(xvt.faint, row[4] === 'jail' ? '#jail#' : '^dead^  ', xvt.reset)
-                if (row[5] === $.player.gang) xvt.out(xvt.Red)
-                xvt.out(row[5], xvt.reset, '\n')
+                xvt.out(sprintf('%-4s  %-22s  %-9s  %3d  ', rs[n].id, rs[n].handle, rs[n].pc, rs[n].level))
+                if (!rs[n].status.length) xvt.out('Alive!  ')
+                else xvt.out(xvt.faint, rs[n].status === 'jail' ? '#jail#' : '^dead^  ', xvt.reset)
+                if (rs[n].gang === $.player.gang) xvt.out(xvt.Red)
+                xvt.out(rs[n].gang, xvt.reset, '\n')
             }
             suppress = true
             break

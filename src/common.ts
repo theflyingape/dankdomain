@@ -1530,23 +1530,21 @@ export function sound(effect: string, sync = 2) {
 
     //  https://github.com/JayrAlencar/sqlite-sync.js/wiki
     const DD = users + 'dankdomain.sql'
-    let sqlite3 = require('sqlite-sync')
-    sqlite3.connect(DD)
-
-    let row = sqlite3.run(`SELECT * FROM sqlite_master WHERE name='Online' AND type='table'`)
-    if (!row.length) {
+    let better = require('better-sqlite3')
+    let sqlite3 = new better(DD)
+    let rs = query(`SELECT * FROM sqlite_master WHERE name='Online' AND type='table'`)
+    if (!rs.length) {
         xvt.out('initializing online ... ')
+        sqlite3.exec(`CREATE TABLE IF NOT EXISTS Online (id text PRIMARY KEY, pid numeric, lockdate numeric, locktime numeric)`)
 
-        sqlite3.run(`CREATE TABLE IF NOT EXISTS Online (
-            id text PRIMARY KEY, pid numeric, lockdate numeric, locktime numeric
-        )`)
+        xvt.out('done.\n')
+        xvt.waste(250)
     }
 
-    row = sqlite3.run(`SELECT * FROM sqlite_master WHERE name='Players' AND type='table'`)
-    if (!row.length) {
+    rs = query(`SELECT * FROM sqlite_master WHERE name='Players' AND type='table'`)
+    if (!rs.length) {
         xvt.out('initializing players ... ')
-
-        sqlite3.run(`CREATE TABLE IF NOT EXISTS Players (
+        sqlite3.exec(`CREATE TABLE IF NOT EXISTS Players (
             id text PRIMARY KEY, handle text UNIQUE NOT NULL, name text NOT NULL, email text, password text NOT NULL,
             dob numeric NOT NULL, sex text NOT NULL, joined numeric, expires numeric, lastdate numeric,
             lasttime numeric, calls numeric, today numeric, expert integer, emulation text NOT NULL,
@@ -1630,11 +1628,10 @@ export function sound(effect: string, sync = 2) {
         xvt.waste(250)
     }
 
-    row = sqlite3.run(`SELECT * FROM sqlite_master WHERE name='Gangs' AND type='table'`)
-    if (!row.length) {
+    rs = query(`SELECT * FROM sqlite_master WHERE name='Gangs' AND type='table'`)
+    if (!rs.length) {
         xvt.out('initializing gangs ... ')
-
-        sqlite3.run(`CREATE TABLE IF NOT EXISTS Gangs (
+        sqlite3.exec(`CREATE TABLE IF NOT EXISTS Gangs (
             name text PRIMARY KEY, banner numeric, members text,
             win numeric, loss numeric
         )`)
@@ -1653,50 +1650,44 @@ function isUser(arg: any): arg is user {
 }
 
 export function loadKing(): boolean {
+    //  King
     let ruler = Object.keys(Access.name).slice(-1)[0]
-    let query = `SELECT id FROM Players WHERE access = '${ruler}'`
-    let row = sqlite3.run(query)
-    if (row.length) {
-        king = <user>{ id:row[0].id }
-        return loadUser(king)
-    }
-
+    rs = <user[]>query(`SELECT id FROM Players WHERE access = '${ruler}'`)
+    if (rs.length)
+        return loadUser(<user>{ id:rs[0].id })
+    //  Queen
     ruler = Object.keys(Access.name).slice(-2)[0]
-    query = `SELECT id FROM Players WHERE access = '${ruler}'`
-    row = sqlite3.run(query)
-    if (row.length) {
-        king = <user>{ id:row[0].id }
-        return loadUser(king)
-    }
+    rs = <user[]>query(`SELECT id FROM Players WHERE access = '${ruler}'`)
+    if (rs.length)
+        return loadUser(<user>{ id:rs[0].id })
 
     return false
 }
 
 export function loadUser(rpc): boolean {
-
     let user: user = isActive(rpc) ? rpc.user : rpc
-    let query = 'SELECT * FROM Players WHERE '
+    let sql = 'SELECT * FROM Players WHERE '
     if (user.handle) user.handle = titlecase(user.handle)
-    query += (user.id) ? `id = '${user.id.toUpperCase()}'` : `handle = '${user.handle}'`
+    sql += (user.id) ? `id = '${user.id.toUpperCase()}'` : `handle = '${user.handle}'`
 
-    let row = sqlite3.run(query)
-    if (row.length) {
-        Object.assign(user, row[0])
-        user.coin = new coins(row[0].coin)
-        user.bank = new coins(row[0].bank)
-        user.loan = new coins(row[0].loan)
-        user.bounty = new coins(row[0].bounty)
+    rs = query(sql)
+    if (rs.length) {
+        Object.assign(user, rs[0])
+        user.coin = new coins(rs[0].coin)
+        user.bank = new coins(rs[0].bank)
+        user.loan = new coins(rs[0].loan)
+        user.bounty = new coins(rs[0].bounty)
 
         user.poisons = []
-        if (row[0].poisons.length) {
-            let vials = row[0].poisons.split(',')
+        if (rs[0].poisons.length) {
+            let vials = rs[0].poisons.split(',')
             for (let i = 0; i < vials.length; i++)
                 Poison.add(user.poisons, vials[i])
         }
 
         user.spells = []
-        if (row[0].spells.length) {
-            let spells = row[0].spells.split(',')
+        if (rs[0].spells.length) {
+            let spells = rs[0].spells.split(',')
             for (let i = 0; i < spells.length; i++)
                 Magic.add(user.spells, spells[i])
         }
@@ -1724,7 +1715,7 @@ export function saveUser(rpc, insert = false) {
     }
 
     let sql: string = ''
-
+try {
     if (insert) {
         sql = `INSERT INTO Players 
             ( id, handle, name, email, password
@@ -1780,18 +1771,15 @@ export function saveUser(rpc, insert = false) {
             WHERE id='${user.id}'
         `
     }
-
-    let result = sqlite3.run(sql)
-    if (!xvt.validator.isNumber(result)) {
+    sqlite3.exec(sql)
+    if (isActive(rpc)) rpc.altered = false
+} catch(err) {
         xvt.beep()
-        xvt.out('\n\nUnexpected SQL error: ', xvt.reset)
-        console.log(sql)
-        console.log(user)
-        console.log(result)
+        xvt.out(xvt.reset, '\n?Unexpected error: ', String(err), '\n')
+        xvt.out(sql, '\n')
+        reason = 'defect - ' + err.code
         xvt.hangup()
     }
-    else
-        if (isActive(rpc)) rpc.altered = false
 }
 
 export function newDay() {
@@ -1799,18 +1787,7 @@ export function newDay() {
     sysop.lasttime = now().time
     saveUser(sysop)
 
-    let sql = `UPDATE Players
-        SET bank=bank+coin, coin=0
-        WHERE SUBSTR(id,1,1)!='_'
-    `
-    let result = sqlite3.run(sql)
-    if (!xvt.validator.isNumber(result)) {
-        xvt.beep()
-        xvt.out('\n\nUnexpected SQL error: ', xvt.reset)
-        console.log(sql)
-        console.log(result)
-        xvt.hangup()
-    }
+    sqlite3.exec(`UPDATE Players SET bank=bank+coin, coin=0 WHERE SUBSTR(id,1,1)!='_'`)
 
     if (process.platform === 'linux') {
         const exec = require('child_process').exec
@@ -1821,30 +1798,40 @@ export function newDay() {
 }
 
 export function lock(id: string): boolean {
-    sqlite3.close()
-    sqlite3.connect(DD)
-    let sql = `
-        INSERT INTO Online 
-        (id, pid, lockdate, locktime) VALUES
-        ('${id}', ${process.pid}, ${now().date}, ${now().time})
-    `
-    let row = sqlite3.run(sql)
-    console.log('row=', row, '\n', sql)
-    xvt.waste(5000)
-    return xvt.validator.isNumber(row)
+    try {
+        sqlite3.exec(`INSERT INTO Online (id, pid, lockdate, locktime) VALUES ('${id}', ${process.pid}, ${now().date}, ${now().time})`)
+        return true
+    }
+    catch(err) {
+        if (err.code !== 'SQLITE_CONSTRAINT_PRIMARYKEY') {
+            xvt.beep()
+            xvt.out(xvt.reset, '\n?Unexpected error: ', String(err), '\n')
+            reason = 'defect - ' + err.code
+            xvt.hangup()
+            }
+        return false
+    }
 }
 
-export function unlock(id: string): boolean {
-    sqlite3.close()
-    sqlite3.connect(DD)
-    let row = query(`DELETE FROM Online WHERE id = '${id}'`)
-    console.log('delete row=', row, '\n')
-    xvt.waste(5000)
-    return xvt.validator.isNumber(row)
+export function unlock(id: string): number {
+    return sqlite3.prepare(`DELETE FROM Online WHERE id = '${id}'`).run().changes
 }
 
-export function query(q: string): any {
-    return sqlite3.run(q)
+export function query(q: string, errOk = false): any {
+    try {
+        let cmd = sqlite3.prepare(q)
+        return cmd.all()
+    }
+    catch(err) {
+        if (!errOk) {
+            xvt.beep()
+            xvt.out(xvt.reset, '\n?Unexpected error:', String(err), '\n')
+            xvt.out(q)
+            reason = 'defect - ' + err.code
+            xvt.hangup()
+        }
+        return []
+    }
 }
 
 }

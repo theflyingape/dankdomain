@@ -97,8 +97,7 @@ function who() {
 
     $.access = $.Access.name[$.player.access]
     xvt.emulation = $.player.emulation
-    let row = $.query(`SELECT * FROM Online WHERE id = '${$.player.id}'`)
-    if (row.length) {
+    if ($.query(`SELECT id FROM Online WHERE id = '${$.player.id}'`).length) {
         xvt.beep()
         xvt.out('\nYou\'re in violation of the space-time continuum.  Try again tomorrow.\n')
         xvt.hangup()
@@ -151,8 +150,7 @@ function password() {
         xvt.hangup()
     }
 
-    let row = $.query(`SELECT * FROM Online WHERE id = '${$.player.id}'`)
-    if (row.length) {
+    if ($.query(`SELECT id FROM Online WHERE id = '${$.player.id}'`).length) {
         xvt.beep()
         xvt.out('\nYou\'re in violation of the space-time continuum.  Try again tomorrow.\n')
         xvt.hangup()
