@@ -286,10 +286,12 @@ function choice() {
 					'fight': { cb:() => {
 						xvt.out('\n\n')
 						if (/Y/i.test(xvt.entry)) {
-							if ($.lock(opponent.user.id)) {
+							if ($.activate(opponent), true) {
 								$.music('combat' + $.arena--)
 								Battle.engage('User', $.online, opponent, menu)
 							}
+							else
+								menu(!$.player.expert)
 						}
 						else
 							menu(!$.player.expert)

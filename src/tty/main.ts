@@ -70,8 +70,15 @@ function choice() {
             return
 
         case 'D':
-            $.music('dungeon' + $.dice(9))
-            require('./dungeon').menu($.player.expert)
+            if ($.dungeon) {
+                $.dungeon--
+                $.music('dungeon' + $.dice(9))
+                require('./dungeon').DeepDank($.player.expert)
+            }
+            else {
+                xvt.out('\nYou have run out of dungeon turns.\n')
+                break
+            }
             return
 
         case 'G':

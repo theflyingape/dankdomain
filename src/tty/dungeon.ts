@@ -9,7 +9,8 @@ import xvt = require('xvt')
 
 module Dungeon
 {
-
+let dank: number
+let level: number
 let monsters: dungeon[] = [
 	{ name:"goblin", pc:"Beast" },
 	{ name:"orc", pc:"Beast" },
@@ -123,6 +124,12 @@ let monsters: dungeon[] = [
 		'Y': { description:'our status' }
 	}
 
+export function DeepDank(suppress = false) {
+	dank = 0
+	level = $.player.level - 1
+	menu(suppress)
+}
+
 export function menu(suppress = false) {
 	$.action('dungeon')
 	if ($.player.level < $.sysop.level)
@@ -152,21 +159,28 @@ function command() {
 		case 'E':
 		case 'W':
 			if ($.dice(100) == 100) {
+				$.sound('teleport')
 				require('./main').menu($.player.expert)
 				return
 			}
 			if ($.dice(10) == 1) {
-				xvt.out(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.normal, xvt.magenta,'<^  ', xvt.reset
-					, 'There is a wall to the ', choice.toLowerCase(), dungeon[choice].description,'.')
-				xvt.waste(250)
-				if (($.online.hp -= $.dice(Math.trunc($.player.level * (110 - $.online.str) / 100) + 1)) < 1) {
-					xvt.out('\n')
+				if ($.dice(2) == 1) {
+					xvt.out(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.normal, xvt.magenta,'<^  ', xvt.reset
+						, 'There is a wall to the ', choice.toLowerCase(), dungeon[choice].description,'.')
 					xvt.waste(250)
-					xvt.out(xvt.bright, xvt.yellow, 'You take too many hits and die.\n', xvt.reset)
-					xvt.waste(250)
-					$.reason = 'banged head against a wall'
-					xvt.hangup()
-					return
+					if (($.online.hp -= $.dice(Math.trunc($.player.level * (110 - $.online.str) / 100) + 1)) < 1) {
+						xvt.out('\n')
+						xvt.waste(250)
+						xvt.out(xvt.bright, xvt.yellow, 'You take too many hits and die.\n', xvt.reset)
+						xvt.waste(250)
+						$.reason = 'banged head against a wall'
+						xvt.hangup()
+						return
+					}
+				}
+				else {
+					xvt.out(xvt.bright, xvt.yellow, '\nYou\'ve fallen down a level!\n', xvt.reset)
+					level++
 				}
 			}
 			if ($.dice(3) == 1) {
@@ -176,7 +190,7 @@ function command() {
 				do {
 					monster.push(<active>{})
 					monster[n].user = <user>{id: ''}
-					let mon = $.player.level + $.dice(7) - 4
+					let mon = level + $.dice(7) - 4
 					mon = mon < 0 ? 0 : mon >= monsters.length ? monsters.length - 1 : mon
 					monster[n].user.handle = monsters[mon].name
 					monster[n].user.sex = 'I'
@@ -195,7 +209,7 @@ function command() {
 					})
 					
 					xvt.waste(750)
-					xvt.out(xvt.reset, '\nIt\'s a ', monster[n].user.handle, '!')
+					xvt.out(xvt.reset, '\nIt\'s ', $.an(monster[n].user.handle), monster[n].user.handle, '!')
 					xvt.waste(500)
 					xvt.out('  And it doesn\'t look friendly.\n')
 					xvt.waste(500)

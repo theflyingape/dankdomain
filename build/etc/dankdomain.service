@@ -7,7 +7,7 @@ Type=simple
 User=nobody
 WorkingDirectory=/usr/local/games/dankdomain
 Environment=TERM=linux
-ExecStart=/opt/node/bin/node ./node_modules/tty.js/bin/tty.js --config ./tty/files/tty.json
+ExecStart=/opt/node/bin/node ./node_modules/tty.js/bin/tty.js --config ./tty/files/xterm.json
 KillMode=process
 TasksMax=100
 
