@@ -508,6 +508,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             xvt.out('\n', xvt.bright, xvt.yellow
                 , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
                 , ' killed you!\n\n', xvt.reset)
+            $.profile({ jpg:'death' })
             $.sound('killed', 20)
             $.reason = rpc.user.id.length ? `defeated by ${rpc.user.handle}`
                 : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`
@@ -657,24 +658,23 @@ export function user(venue: string, cb:Function) {
             xvt.out('------------------------------------------------------------------------------')
             xvt.out(xvt.reset, '\n')
 
-            let rows = $.query(`
+            let rs = $.query(`
                 SELECT id, handle, pc, level, status, lastdate, access FROM Players
                 WHERE id NOT GLOB '_*'
                 AND level BETWEEN ${start} AND ${end}
                 ORDER BY level DESC, immortal DESC
                 `)
 
-            for (let n in rows[0].values) {
-                let row = rows[0].values[n]
-                if (row[0] === $.player.id)
+            for (let i in rs) {
+                if (rs[i].id === $.player.id)
                     continue
-                if (row[4].length) xvt.out(xvt.faint)
+                if (rs[i].length) xvt.out(xvt.faint)
                 else xvt.out(xvt.reset)
                 //  paint a target on any player that is winning
-                if (row[2] === $.PC.winning)
+                if (rs[i].pc === $.PC.winning)
                     xvt.out(xvt.bright, xvt.yellow)
-                xvt.out(sprintf('%-4s  %-22s  %-9s  %3d  ', row[0], row[1], row[2], row[3]))
-                xvt.out($.date2full(row[5]), '  ', row[6])
+                xvt.out(sprintf('%-4s  %-22s  %-9s  %3d  ', rs[i].id, rs[i].handle, rs[i].pc, rs[i].level))
+                xvt.out($.date2full(rs[i].lastdate), '  ', rs[i].access)
                 xvt.out(xvt.reset, '\n')
             }
 
@@ -687,10 +687,14 @@ export function user(venue: string, cb:Function) {
 }
 
 export function yourstats() {
-    $.profile({ png:'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : '')
-        , handle:$.player.handle
-        , level:$.player.level, pc:$.player.pc
-    })
+    let userPNG = `images/user/${$.player.id}.png`
+    try {
+        $.fs.accessSync(userPNG, $.fs.F_OK)
+        userPNG = `user/${$.player.id}`
+    } catch(e) {
+        userPNG = 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : '')
+    }
+    $.profile({ png:userPNG, handle:$.player.handle, level:$.player.level, pc:$.player.pc })
     xvt.out(xvt.reset)
     xvt.out(xvt.cyan, 'Str:', xvt.bright, $.online.str > $.player.str ? xvt.yellow : $.online.str < $.player.str ? xvt.red : xvt.white)
     xvt.out(sprintf('%3d', $.online.str), xvt.reset, sprintf(' (%d,%d)    ', $.player.str, $.player.maxstr))

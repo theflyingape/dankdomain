@@ -49,6 +49,11 @@ function check() {
     Deliver($.player, 'secret keys to the gate', false, message)
 }
 
+export async function rejoin(player: user) {
+    let message = require('./etc/rejoin.json')
+    await Message(player, message)
+}
+
 export function resend() {
     xvt.app.form['check'].cb = () => {
         let check = xvt.entry.toLowerCase()

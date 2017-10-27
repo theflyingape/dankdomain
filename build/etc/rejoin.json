@@ -1,0 +1,5 @@
+{
+	"replyTo": "Do Not Reply <no-reply@mail.com>",
+	"subject": "Your online game account",
+	"text": "This e-mail is being sent to you, ${player.handle}, because we miss having you around!!\n Come see us and play again at https://robert.hurst-ri.us/games/dankdomain \n\nFor the latest developments with Dank Domain: \n\n\thttps://www.npmjs.com/package/dankdomain \n\nHappy hunting!"
+}

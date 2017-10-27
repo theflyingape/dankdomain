@@ -1783,6 +1783,7 @@ try {
 }
 
 export function newDay() {
+    xvt.out('\nOne moment.')
     sysop.lastdate = now().date
     sysop.lasttime = now().time
     saveUser(sysop)
@@ -1795,6 +1796,21 @@ export function newDay() {
         exec(`mv ${DD}_1 ${DD}_2`)
         exec(`sqlite3 ${DD} .dump > ${DD}_1`)
     }
+
+    let rs = sqlite3.prepare(`select id, lastdate from Players`).all()
+    for (let row in rs) {
+        if (rs[row].lastdate > 365) {
+            sqlite3.exec(`delete from Players where id = '${rs[row].id}'`)
+            continue
+        }
+        if (rs[row].lastdate % 100) {
+            player = { id:rs[row].id }
+            loadUser(player)
+            require('./email').rejoin()
+        }
+    }
+
+    xvt.out('\nAll set -- thank you!\n')
 }
 
 export function lock(id: string): boolean {

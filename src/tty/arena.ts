@@ -251,10 +251,14 @@ function choice() {
 					return
 				}
 
-				$.profile({ png:'player/' + opponent.user.pc.toLowerCase() + (opponent.user.gender === 'F' ? '_f' : '')
-					, handle:opponent.user.handle
-					, level:opponent.user.level, pc:opponent.user.pc
-					})
+				let userPNG = `images/user/${opponent.user.id}.png`
+				try {
+					$.fs.accessSync(userPNG, $.fs.F_OK)
+					userPNG = `user/${opponent.user.id}`
+				} catch(e) {
+					userPNG = 'player/' + opponent.user.pc.toLowerCase() + (opponent.user.gender === 'F' ? '_f' : '')
+				}
+				$.profile({ png:userPNG, handle:opponent.user.handle, level:opponent.user.level, pc:opponent.user.pc })
 				if (!$.cat('player/' + opponent.user.id)) $.cat('player/' + opponent.user.pc.toLowerCase())
 				xvt.out(opponent.user.handle, ' ')
 
