@@ -286,7 +286,7 @@ function choice() {
 					'fight': { cb:() => {
 						xvt.out('\n\n')
 						if (/Y/i.test(xvt.entry)) {
-							if ($.activate(opponent), true) {
+							if ($.activate(opponent, true)) {
 								$.music('combat' + $.arena--)
 								Battle.engage('User', $.online, opponent, menu)
 							}
