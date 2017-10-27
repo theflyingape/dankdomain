@@ -53,9 +53,9 @@ service dankdomain
 	server_args		= -L ${TARGET}/logins.sh
 	env			= TERM=pcansi
 	cps			= 2 5
-        log_on_success          += USERID
-        log_on_failure          += USERID
-	instances		= 5
+        log_on_success          += HOST
+        log_on_failure          = 
+	instances		= 6
 	per_source		= 1
 }
 EOD

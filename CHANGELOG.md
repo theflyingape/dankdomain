@@ -304,8 +304,8 @@ Emulation now supports any point size, not just my wife's size (8).
 * 100% event driven.
 
 --------------
-### RPGBBS DELUXE
-> [developed](https://github.com/theflyingape/rpgbbs/tree/master/v7) using SAS/C on an Amiga 2000 using a SupraFAXModem 14400
+### RPGBBS
+> [developed](https://github.com/theflyingape/rpgbbs/tree/master/v6) using SAS/C on an Amiga 2000 using a SupraFAXModem 14400
 --------------
 #### 01-Oct-1993 `v6.43`
 * Added `<T>oday` & `<Y>esterday` newspaper in Tiny's Tavern.

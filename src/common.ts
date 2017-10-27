@@ -1788,7 +1788,7 @@ export function newDay() {
     sysop.lasttime = now().time
     saveUser(sysop)
 
-    sqlite3.exec(`UPDATE Players SET bank=bank+coin, coin=0 WHERE SUBSTR(id,1,1)!='_'`)
+    sqlite3.exec(`UPDATE Players SET bank=bank+coin, coin=0 WHERE id NOT GLOB '_*'`)
 
     if (process.platform === 'linux') {
         const exec = require('child_process').exec
@@ -1797,10 +1797,10 @@ export function newDay() {
         exec(`sqlite3 ${DD} .dump > ${DD}_1`)
     }
 
-    let rs = sqlite3.prepare(`select id, lastdate from Players`).all()
+    let rs = sqlite3.prepare(`SELECT id, lastdate FROM Players`).all()
     for (let row in rs) {
         if (rs[row].lastdate > 365) {
-            sqlite3.exec(`delete from Players where id = '${rs[row].id}'`)
+            sqlite3.exec(`DELETE FROM Players WHERE id = '${rs[row].id}'`)
             continue
         }
         if (rs[row].lastdate % 100) {
@@ -1811,6 +1811,7 @@ export function newDay() {
     }
 
     xvt.out('\nAll set -- thank you!\n')
+    xvt.waste(500)
 }
 
 export function lock(id: string): boolean {
