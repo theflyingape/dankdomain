@@ -3,6 +3,7 @@
  *  COMMON authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
+import fs = require('fs')
 import {sprintf} from 'sprintf-js'
 import titleCase = require('title-case')
 
@@ -11,7 +12,7 @@ import Items = require('./items')
 
 module Common
 {
-    export const fs = require('fs-extra')
+    //export const fs = require('fs-extra')
 
     //  items
     export const Access = new Items.Access
@@ -585,7 +586,8 @@ export function checkXP(rpc: active) {
         xvt.out('\n')
         xvt.waste(125)
         if(eligible && bonus) {
-            xvt.out('+skill+\n')
+            skillplus(rpc)
+            return
         }
     }
     else {
@@ -650,7 +652,7 @@ export function skillplus(rpc: active) {
     ); xvt.waste(100)
     xvt.out(bracket(5, false), xvt.yellow, 'Improve Melee skill from ', xvt.reset
         , rpc.user.melee.toString(), 'x '
-        , [ '[RARE]', '-Average-', '+Good+', '=Masterful=', '#MAX#' ][rpc.user.melee]
+        , [ '[POOR]', '-Average-', '+Good+', '=Masterful=', '#MAX#' ][rpc.user.melee]
         , '\n'
     ); xvt.waste(100)
     xvt.out(bracket(6, false), xvt.yellow, 'Improve Backstab skill from ', xvt.reset
@@ -678,158 +680,126 @@ export function skillplus(rpc: active) {
         , '\n'
     ); xvt.waste(100)
 
-}
-/*
-void skillplus(void)
-{
-	i = 0;
-	while(i < 1 || i > 9) {
-		sprintf(prompt, "%sChoose which: ", fore(CYN));
-		OUT(prompt);
-		if(ins(1))
-		strcpy(inbuf, "5");
-		i = atoi(inbuf);
-		NL; Delay(5);
-	}
-	NL; Delay(5);
-	switch(i) {
-	case 1:
-		news("can get even Stronger.");
-		PLAYER.MyMaxSTR += 10;
-		if(PLAYER.MyMaxSTR > 100)
-			PLAYER.MyMaxSTR = 100;
-		sprintf(outbuf, "%sMaximum Strength is now %u.", fore(BRED), PLAYER.MyMaxSTR);
-		break;
-	case 2:
-		news("can get even Wiser.");
-		PLAYER.MyMaxINT += 10;
-		if(PLAYER.MyMaxINT > 100)
-			PLAYER.MyMaxINT = 100;
-		sprintf(outbuf, "%sMaximum Intellect is now %u.", fore(GREEN), PLAYER.MyMaxINT);
-		break;
-	case 3:
-		news("can get even Quicker.");
-		PLAYER.MyMaxDEX += 10;
-		if(PLAYER.MyMaxDEX > 100)
-			PLAYER.MyMaxDEX = 100;
-		sprintf(outbuf, "%sMaximum Dexterity is now %u.", fore(MAGENTA), PLAYER.MyMaxDEX);
-		break;
-	case 4:
-		news("can get even Nicer.");
-		PLAYER.MyMaxCHA += 10;
-		if(PLAYER.MyMaxCHA > 100)
-			PLAYER.MyMaxCHA = 100;
-		sprintf(outbuf, "%sMaximum Charisma is now %u.", fore(YELLOW), PLAYER.MyMaxCHA);
-		break;
-	case 5:
-		news("got more Powerful.");
-		switch(++PLAYER.MyMelee) {
-		case 1:
-			sprintf(outbuf, "%sYou can finally enter through Tiny's front door.", fore(CYAN));
-			break;
-		case 2:
-			sprintf(outbuf, "%sSo you want to be a hero, eh?", fore(BLUE));
-			break;
-		case 3:
-			sprintf(outbuf, "%sJust what this world needs, another fighter.", fore(BRED));
-			break;
-		case 4:
-			sprintf(outbuf, "%sWatch out for blasts, you brute!", fore(BRN));
-			break;
-		case 5:
-			sprintf(outbuf, "%sYou and Tiny can go out work-out together.", fore(BLACK));
-			break;
-		default:
-			sprintf(outbuf, "%sThere is none more powerful than you.", fore(BLACK));
-			break;
-		}
-		break;
-	case 6:
-		news("watch your Back now.");
-		switch(++PLAYER.MyBackstab) {
-		case 1:
-			sprintf(outbuf, "%sA backstab is in your future.", fore(CYAN));
-			break;
-		case 2:
-			sprintf(outbuf, "%sYou will be given a backstab more regularly now.", fore(CYAN));
-			break;
-		case 3:
-			sprintf(outbuf, "%sYou will deal a more significant, first blow.", fore(YELLOW));
-			break;
-		case 4:
-			sprintf(outbuf, "%sEveryone will be watching over their backs now.", fore(BRED));
-			break;
-		default:
-			sprintf(outbuf, "%sDropping any opponent on the first shot is possible.", fore(BLACK));
-			break;
-		}
-		break;
-	case 7:
-		news("Apothecary visits have more meaning.");
-		switch(++PLAYER.MyPoison) {
-		case 1:
-			sprintf(outbuf, "%sThe Apothecary will see you now, bring money.", fore(CYAN));
-			break;
-		case 2:
-			sprintf(outbuf, "%sYour poisons can achieve 2x its potency now.", fore(CYAN));
-			break;
-		case 3:
-			sprintf(outbuf, "%sYour poisons can achieve 3x its potency now.", fore(YELLOW));
-			break;
-		case 4:
-			sprintf(outbuf, "%sYour poisons can achieve 4x its potency now.", fore(BRED));
-			break;
-		default:
-			sprintf(outbuf, "%sYou have the ability to vaporize your weapon.", fore(BLACK));
-			break;
+    action('list')
+    xvt.app.form = {
+        'skill': { cb: () => {
+            xvt.out('\n', xvt.bright)
+            switch(+xvt.entry) {
+            case 1:
+                news('can get even Stronger.')
+                if ((player.maxstr += 10) > 100) player.maxstr = 100
+                xvt.out(xvt.red, `Maximum Strength is now ${player.maxstr}.`)
+                break
 
-		}
-		break;
-	case 8:
-		news("became more friendly with the old mage.");
-		switch(PLAYER.MyMagic) {
-		case 0:
-			PLAYER.MyMagic++;
-			sprintf(outbuf, "%sThe old mage will see you now, bring money.", fore(CYAN));
-			break;
-		case 1:
-			PLAYER.MyMagic++;
-			sprintf(outbuf, "%sYour wands have turned into scrolls.", fore(CYAN));
-			PLAYER.SP += 15 + dice(500);
-			ONLINE->SP = PLAYER.SP;
-			break;
-		default:
-			sprintf(outbuf, "%sMore mana is better.", fore(BLACK));
-			PLAYER.SP += 512;
-			ONLINE->SP += 512;
-			PLAYER.SP += dice(3583 / PLAYER.MyMagic);
-			break;
-		}
-		break;
-	case 9:
-		news("try to avoid in the Square.");
-		switch(++PLAYER.MySteal) {
-		case 1:
-			sprintf(outbuf, "%sYour fingers are starting to itch.", fore(CYAN));
-			break;
-		case 2:
-			sprintf(outbuf, "%sYour eyes widen at the chance for unearned loot.", fore(CYAN));
-			break;
-		case 3:
-			sprintf(outbuf, "%sWelcome to the Thieves guild: go pick a pocket or two!", fore(BLUE));
-			break;
-		default:
-			sprintf(outbuf, "%sYou convince yourself that no lock cannot be picked.", fore(BLACK));
-			break;
-		}
-		break;
-	}
-	OUT(outbuf);
-	NL; Delay(5);
-	NORMAL;
-	NL; Delay(5);
+            case 2:
+                news('can get even Wiser.')
+                if ((player.maxint += 10) > 100) player.maxint = 100
+                xvt.out(xvt.green, `Maximum Intellect is now ${player.maxint}.`)
+                break
+
+            case 3:
+                news('can get even Quicker.')
+                if ((player.maxdex += 10) > 100) player.maxdex = 100
+                xvt.out(xvt.magenta, `Maximum Dexterity is now ${player.maxdex}.`)
+                break
+
+            case 4:
+                news('can get even Nicer.')
+                if ((player.maxcha += 10) > 100) player.maxcha = 100
+                xvt.out(xvt.yellow, `Maximum Charisma is now ${player.maxcha}.`)
+                break
+
+            case 5:
+                if (player.melee > 3) {
+                    xvt.app.refocus()
+                    return
+                }
+                news('got more Powerful.')
+                xvt.out([xvt.cyan, xvt.blue, xvt.red, xvt.yellow][player.melee]
+                    , [ 'You can finally enter through Tiny\'s front door.'
+                      , 'So you want to be a hero, eh?'
+                      , 'Just what this world needs, another fighter.'
+                      , 'Watch out for blasts, you brute!' ][player.melee++]
+                )
+                break
+
+            case 6:
+                if (player.backstab > 3) {
+                    xvt.app.refocus()
+                    return
+                }
+                news('watch your Back now.')
+                xvt.out([xvt.cyan, xvt.blue, xvt.red, xvt.black][player.backstab]
+                    , [ 'A backstab is in your future.'
+                      , 'You may backstab more regularly now.'
+                      , 'You will deal a more significant, first blow.'
+                      , 'What were you doing?  Sneaking.' ][player.backstab++]
+                )
+                break
+
+            case 7:
+                if (player.poison > 3) {
+                    xvt.app.refocus()
+                    return
+                }
+                news('Apothecary visits have more meaning.')
+                xvt.out([xvt.cyan, xvt.blue, xvt.red, xvt.magenta][player.poison]
+                    , [ 'The Apothecary will see you now, bring money.'
+                      , 'Your poisons can achieve 2x its potency now.'
+                      , 'Your poisons can achieve 3x its potency now.'
+                      , 'Your poisons can achieve 4x its potency now.' ][player.poison++]
+                )
+                break
+
+            case 8:
+                if (player.magic > 3) {
+                    xvt.app.refocus()
+                    return
+                }
+                news('became more friendly with the old mage.')
+                switch(player.magic) {
+                case 0:
+                    xvt.out(xvt.cyan, 'The old mage will see you now, bring money.')
+                    player.magic++
+                    break
+                case 1:
+                    xvt.out(xvt.cyan, 'Your wands have turned into scrolls.')
+                    player.magic++
+                    player.sp += 15 + dice(500)
+                    online.sp = player.sp
+                    break
+                default:
+                    xvt.out(xvt.black, 'More mana is better.')
+                    player.sp += 512
+                    online.sp += 512
+                    player.sp += dice(Math.trunc(3583 / player.magic))
+                    break
+                }
+                break
+
+            case 9:
+                if (player.steal > 3) {
+                    xvt.app.refocus()
+                    return
+                }
+                news('try to avoid in the Square.')
+                xvt.out([xvt.cyan, xvt.blue, xvt.red, xvt.black][player.steal]
+                    , [ 'Your fingers are starting to itch.'
+                      , 'Your eyes widen at the chance for unearned loot.'
+                      , 'Welcome to the Thieves guild: go pick a pocket or two!'
+                      , 'You\'re convinced that no lock cannot be picked.' ][player.steal++]
+                )
+                break
+
+            default:
+                xvt.app.refocus()
+            }
+            xvt.out(xvt.reset, '\n')
+            xvt.waste(1000)
+        }, prompt:'Choose which: ', max:1 }
+    }
+    xvt.app.focus = 'skill'
 }
-*/
 
 export function an(item: string) {
     return /a|e|i|o|u/i.test(item[0]) ? 'an ' : 'a '
@@ -941,6 +911,13 @@ export function experience(level: number, factor = 1, wisdom = 1000): number {
 
 export function money(level: number): number {
     return Math.trunc(Math.pow(2, (level - 1) / 2) * 10 * (101 - level) / 100)
+}
+
+export function news(message: string) {
+    const log = `./tty/files/tavern/${player.id}.log`
+    fs.appendFile(log, message, (err) => {
+        if (err) xvt.out(xvt.bright, xvt.red, err.code, '-', err.message, xvt.reset, '\n')
+    })
 }
 
 export function now(): {date: number, time: number} {
@@ -1779,6 +1756,17 @@ try {
         xvt.out(sql, '\n')
         reason = 'defect - ' + err.code
         xvt.hangup()
+    }
+
+    sql = users + user.id + '.sql'
+    if (process.platform === 'linux') {
+        require('child_process').exec(`
+            sqlite3 ${DD} <<-EOD
+            .mode insert
+            .output ${sql}
+            select * from Players where id = '${user.id}';
+            EOD
+        `)
     }
 }
 

@@ -194,7 +194,7 @@ function command() {
 					mon = mon < 0 ? 0 : mon >= monsters.length ? monsters.length - 1 : mon
 					monster[n].user.handle = monsters[mon].name
 					monster[n].user.sex = 'I'
-					$.reroll(monster[n].user, monsters[mon].pc, mon)
+					$.reroll(monster[n].user, monsters[mon].pc ? monsters[mon].pc : $.player.pc, mon)
 					monster[n].user.weapon = Math.trunc(mon / 2)
 					monster[n].user.armor = Math.trunc(mon / 4)
 					monster[n].user.hp = Math.trunc(monster[n].user.hp / 8)

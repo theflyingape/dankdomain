@@ -316,11 +316,11 @@ export function spoils() {
                 if (loser.altered) $.saveUser(loser)
                 $.unlock(loser.user.id)
             }
+            winner.user.xp += xp
+            xvt.out('You get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
+            winner.user.coin.value += coin.value
+            xvt.out('You get ', coin.carry(), $.who(loser, 'he'), 'was carrying.\n')
         }
-        winner.user.xp += xp
-        xvt.out('You get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
-        winner.user.coin.value += coin.value
-        xvt.out('You get ', coin.carry(), $.who(loser, 'he'), 'was carrying.\n')
     }
     else {
         if (winner.user.id) {
@@ -444,7 +444,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     }
     if (!period) period = '.'
     hit *= 50 + Math.trunc(rpc.user.str / 2)
-    hit = Math.trunc(hit / 100)
+    hit = Math.round(hit / 100)
 
     // my stuff vs your stuff
     let wc = rpc.weapon.wc + rpc.user.toWC + rpc.toWC
@@ -454,9 +454,9 @@ export function melee(rpc: active, enemy: active, blow = 1) {
 
     hit += 2 * (wc + $.dice(wc))
     hit *= 50 + Math.trunc(rpc.user.str / 2)
-    hit = Math.trunc(hit / 100)
+    hit = Math.round(hit / 100)
+    hit -= ac + $.dice(ac)
     if (hit > 0) {
-        hit -= ac + $.dice(ac)
     //  any ego involvement
     //  if((damage + egostat[0] + egostat[1] + egostat[2] + egostat[3]) < 1)
     //      damage = dice(2) - (egostat[0] + egostat[1] + egostat[2] + egostat[3]);
