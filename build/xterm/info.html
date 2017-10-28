@@ -28,10 +28,11 @@
 </style>
 <script>
 art = null;
-cancel = `<input class="wide" type="button" value="Cancel" onclick="send('\x15');">`;
+clear = `<input class="wide" type="button" value="Clear" onclick="send('\x15');">`;
 enter = `<input class="wide" type="button" value="Enter" onclick="send('', true);">`;
-quit = `<input class="wide" type="button" value="Quit" onclick="send('Q');">`;
 logoff = `<input type="button" value="LOGOFF" onclick="send('\x1A');">`;
+max = `<input class="wide" type="button" value=" MAX " onclick="send('MAX', true);">`
+quit = `<input class="wide" type="button" value="Quit" onclick="send('Q');">`;
 keypad = `<table align="center">
 <tr><td><input class="numeric" type="button" value="7" onclick="send('7');"></td><td><input class="numeric" type="button" value="8" onclick="send('8');"></td><td><input class="numeric" type="button" value="9" onclick="send('9');">
 </tr>
@@ -41,7 +42,7 @@ keypad = `<table align="center">
 </tr>
 <tr><td><input class="numeric" type="button" value=" 0 " onclick="send('0');"></td><td colspan=2>${enter}</td>
 </tr>
-<tr><td><input class="numeric" type="button" value=" ? " onclick="send('?');"></td><td colspan=2><input class="wide" type="button" value=" MAX " onclick="send('MAX', true);"></td>
+<tr><td><input class="numeric" type="button" value=" ? " onclick="send('?', true);"></td><td colspan=2>${clear}</td>
 </tr>
 </table>`;
 money = `<table align="center">
@@ -53,7 +54,7 @@ money = `<table align="center">
 </tr>
 <tr><td colspan=2>${enter}</td><td><input class="numeric" type="button" value=" 0 " onclick="send('0');"></td><td><input class="copper" type="button" value="C" onclick="send('c');"></td>
 </tr>
-<tr><td colspan=2>${cancel}</td><td colspan=2><input class="wide" type="button" value=" MAX " onclick="send('MAX', true);"></td>
+<tr><td colspan=2>${clear}</td><td colspan=2><input class="wide" type="button" value=" MAX " onclick="send('MAX', true);"></td>
 </tr>
 </table>`;
 
@@ -218,14 +219,10 @@ function square() {
 }
 
 function list() {
-  cmd(`
-${keypad}
-${cancel}
-`);
+  cmd(`${keypad}${max}`);
 }
 
 function bank() {
-  nme('');
   cmd(`
 ${money}
 <input type="button" value="Deposit" onclick="send('D');">
@@ -233,6 +230,7 @@ ${money}
 <input type="button" value="Loan" onclick="send('L');">
 ${quit}
 `);
+  nme(`<img src="images/bank.jpg" onload="nmeResize();">`);
 }
 
 function casino() {

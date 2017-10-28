@@ -176,7 +176,7 @@ interface security {
 interface spell {
     cast: number
     mana: number
-    echanted: number
+    enchanted: number
     cost?: string
     wand?: string
 }

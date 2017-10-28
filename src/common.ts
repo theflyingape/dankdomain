@@ -507,6 +507,7 @@ export function checkXP(rpc: active) {
             xvt.waste(250)
             xvt.out(xvt.reset, '\n')
             xvt.waste(250)
+            news(`\twas promoted to ${rpc.user.access}`)
         }
 
 		rpc.user.hp += Math.round(rpc.user.level + dice(rpc.user.level) + rpc.user.str / 10 + (rpc.user.str > 90 ? rpc.user.str - 90 : 0))
@@ -1294,6 +1295,13 @@ export function spawn(dungeon: dungeon, level?: number): void {
     if (this.player.magic) this.sp = 10
 }
 
+export function time(t: number): string {
+    const ap = t < 1200 ? 'am' : 'pm'
+    const m = t % 100
+    const h = Math.trunc((t < 100 ? t + 1200 : t >= 1300 ? t - 1200 : t) / 100)
+    return sprintf('%02u:%02u%s', h, m, ap)
+}
+
 export function titlecase(orig: string): string {
     return titleCase(orig)
 }
@@ -1328,10 +1336,10 @@ export function beep() {
 
 export function bracket(item: number|string, nl = true): string {
     var framed: string = item.toString()
-    framed = xvt.attr(xvt.white, xvt.faint, nl ? '\n' : ''
+    framed = xvt.attr(xvt.reset, xvt.faint, nl ? '\n' : ''
         , framed.length == 1 && nl ? ' ' : ''
         , '<', xvt.bright, framed, xvt.faint, '>'
-        , xvt.reset)
+        , nl ? ' ' : '', xvt.reset)
     return framed
 }
 
@@ -1449,7 +1457,7 @@ export function logoff() {
             callers = [<caller>{who: player.handle, reason: reason}].concat(callers)
             fs.writeFileSync('./users/callers.json', JSON.stringify(callers))
 
-            news(`\tlogged off ${player.lasttime} as a level ${player.level} ${player.pc}`)
+            news(`\tlogged off ${time(player.lasttime)} as a level ${player.level} ${player.pc}`)
             news(`\t(${reason})\n`, true)
         }
         //  logoff banner
@@ -1789,14 +1797,14 @@ export function newDay() {
 
     sqlite3.exec(`UPDATE Players SET bank=bank+coin, coin=0 WHERE id NOT GLOB '_*'`)
 
-    let rs = sqlite3.prepare(`SELECT id, lastdate FROM Players`).all()
+    let rs = sqlite3.prepare(`SELECT id, lastdate FROM Players WHERE id NOT GLOB '_*'`).all()
     for (let row in rs) {
         if ((now().date - rs[row].lastdate) > 365) {
             sqlite3.exec(`DELETE FROM Players WHERE id = '${rs[row].id}'`)
             continue
         }
-        if ((now().date - rs[row].lastdate) % 100) {
-            player = { id:rs[row].id }
+        if ((now().date - rs[row].lastdate) % 100 == 0) {
+            player.id = rs[row].id
             loadUser(player)
             require('./email').rejoin()
         }

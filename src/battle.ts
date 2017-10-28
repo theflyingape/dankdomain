@@ -56,7 +56,7 @@ export function engage(module:string, party: active|active[], mob: active|active
 }
 
 //  new round of volleys
-export function attack(skip = false) {
+export function attack(retry = false) {
 
     //  no more attacking
     if (retreat || ++volley > 99999) return
@@ -78,7 +78,7 @@ export function attack(skip = false) {
     }
 
     let n = round[0]
-    if (!skip) n = round.shift()
+    if (!retry) n = round.shift()
     let rpc = parties[n.party][n.member]
     if (rpc.hp < 1) {
         next()
@@ -105,7 +105,7 @@ export function attack(skip = false) {
                 xvt.out('\n\n')
 
                 if (/C/i.test(xvt.entry)) {
-                    Battle.cast($.online, next)
+                    Battle.cast($.online, next, enemy)
                     return
                 }
                 if (/R/i.test(xvt.entry)) {
@@ -241,7 +241,11 @@ export function attack(skip = false) {
 
     next()
 
-    function next(skip = false) {
+    function next(retry = false) {
+        if (retry) {
+            attack(retry)
+            return
+        }
 
         alive = []
         for (let p in parties) {
@@ -349,45 +353,130 @@ export function spoils() {
     }
 }
 
-export function cast(rpc: active, cb:Function) {
-    if (rpc.user.id === $.player.id) {
-        if (!$.player.spells.length) {
+export function cast(rpc: active, cb:Function, nme?: active) {
+    if (!rpc.user.magic || !rpc.user.spells.length) {
+        if (rpc.user.id === $.player.id)
             xvt.out('You don\'t have any magic.\n')
-            cb(true)
-            return
-        }
+        cb(true)
+        return
+    }
+
+    if (rpc.user.id === $.player.id) {
         $.action('list')
         xvt.app.form = {
             'magic': { cb: () => {
                 xvt.out('\n')
                 if (xvt.entry === '') {
-                    cb()
+                    cb(true)
                     return
                 }
                 if (!$.Magic.have(rpc.user.spells, +xvt.entry)) {
                 	for (let i in $.player.spells) {
                         let p = $.player.spells[i]
-                        if (xvt.validator.isNotEmpty($.Magic.merchant[p - 1]))
-    				    	xvt.out($.bracket(p), ' ', $.Magic.merchant[p - 1])
-                        else
-    				    	xvt.out($.bracket(p), ' ', $.Magic.special[p - $.Magic.merchant.length])
+                        let spell = Object.keys($.Magic.spells)[p - 1]
+                        if (rpc.user.magic == 1) {
+                            xvt.out($.bracket(p)
+                                , sprintf('%-18s  (%d%%)'
+                                , spell
+                                , $.Magic.ability(spell, rpc, nme).fail)
+                            )
+                        }
+                        else {
+                            xvt.out($.bracket(p)
+                                , sprintf('%-18s  %4d  (%d%%)'
+                                , spell
+                                , rpc.user.magic < 4 ? $.Magic.spells[spell].mana : $.Magic.spells[spell].enchanted
+                                , $.Magic.ability(spell, rpc, nme).fail)
+                            )
+                        }
                     }
                     xvt.out('\n')
                     xvt.app.refocus()
-                    return
                 }
-                else
-                    invoke(rpc, +xvt.entry)
-                cb(true)
-                return
+                else {
+                    invoke(Object.keys($.Magic.spells)[+xvt.entry - 1])
+                }
             }, prompt:['Use wand', 'Read scroll', 'Cast spell', 'Uti magicae'][$.player.magic - 1] + ' (?=list): ', max:2 }
         }
         xvt.app.focus = 'magic'
         return
     }
 
-    function invoke(rpc: active, spell: number) {
-        rpc.altered = true
+    function invoke(name: string) {
+        let spell = $.Magic.spells[name]
+        if (rpc === $.online)
+            xvt.out('\n')
+        else
+            xvt.waste(250)
+
+        if (rpc.user.magic > 1)
+            if (rpc.sp < (rpc.user.magic < 4 ? spell.mana : spell.enchanted)) {
+                if (rpc === $.online) xvt.out('You don\'t have enough power to cast that spell!\n')
+                cb(true)
+                return
+            }
+
+        //  some sensible ground rules to avoid known muling exploits (by White Knights passing gas)
+        if (xvt.validator.isDefined(nme)) {
+            if ([ 1,2,3,4,5,6,10,23,24 ].indexOf(spell.cast) < 0) {
+                if (rpc === $.online) xvt.out('You cannot cast that spell during a battle!\n')
+                cb(true)
+                return
+            }
+            if (nme.user.novice && [ 12,16,20,21,22 ].indexOf(spell.cast) < 0) {
+                if (rpc === $.online) xvt.out('You cannot cast that spell on a novice player.\n')
+                cb(true)
+                return
+            }
+        }
+        else {
+            if ([ 9,11,12,14,15,16,17,18,19,20,21,22 ].indexOf(spell.cast) < 0) {
+                if (rpc === $.online) xvt.out('You cannot cast that spell on yourself!\n')
+                cb(true)
+                return
+            }
+        }
+
+        if (rpc.sp)
+            rpc.sp -= rpc.user.magic < 4 ? spell.mana : spell.enchanted
+
+        if (rpc.user.magic == 1 && $.dice(100) < 50 + (spell.cast < 17 ? 2 * spell.cast : 2 * spell.cast - 16)) {
+            rpc.altered = true
+            $.Magic.remove(rpc.user.spells, spell.cast)
+            xvt.out($.who(rpc, 'His'), 'wand smokes as', $.who(rpc, 'he'), $.what(rpc, 'cast'), 'the spell.\n')
+            xvt.waste(250)
+        }
+
+        //  Tigress prefers the Ranger (and Paladin) class, because it comes with a coupon and a better warranty
+        if (rpc.user.magic == 2 && $.dice(5 + +xvt.validator.isDefined($.Access.name[rpc.user.access].sysop)) == 1) {
+            rpc.altered = true
+            $.Magic.remove(rpc.user.spells, spell.cast)
+            xvt.out($.who(rpc, 'His'), 'scroll burns as', $.who(rpc, 'he'), $.what(rpc, 'cast'), 'the spell.\n')
+            xvt.waste(250)
+        }
+    
+        let backfire = false
+
+        if ($.dice(100) > $.Magic.ability(spell, rpc, nme).fail) {
+            if ((backfire = $.dice(100) > $.Magic.ability(spell, rpc, nme).backfire)) {
+                $.sound('oops', 10)
+                xvt.out('Oops!  ', ' spell backfires!\n')
+            }
+            else {
+                $.sound('fssst', 20)
+                xvt.out('Fssst!', 'spell fails!\n')
+                cb()
+                return
+            }
+        }
+
+        switch(spell) {
+            case 1:
+
+                break
+        }
+
+        cb()
     }
 }
 
@@ -532,11 +621,9 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                 if (enemy.user.id !== '' && enemy.user.id[0] !== '_') {
                     $.sound('kill', 20)
                     $.music('bitedust')
+                    $.news(`\tdefeated ${enemy.user.handle}, an experience level ${enemy.user.xplevel} ${enemy.user.pc}`)
                 }
-                else
-                    xvt.waste(500)
-                // rpc.user.id.length ? `defeated ${enemy.user.handle}`
-                //    : `defeated a level ${enemy.user.level} ${enemy.user.handle}`
+                xvt.waste(500)
             }
         }
     }
@@ -562,7 +649,7 @@ export function poison(rpc: active, cb:Function) {
                 if (!$.Poison.have(rpc.user.poisons, +xvt.entry)) {
                 	for (let i in $.player.poisons) {
                         let p = $.player.poisons[i]
-				    	xvt.out($.bracket(p), ' ', $.Poison.merchant[p - 1])
+				    	xvt.out($.bracket(p), $.Poison.merchant[p - 1])
                     }
                     xvt.out('\n')
                     xvt.app.refocus()
