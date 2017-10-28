@@ -1,0 +1,11 @@
+The Flying Ape logged in 07:30pm as a level 33 Ranger:
+	logged off 07:32pm as a level 33 Ranger
+	(logged off as a level 33 Ranger)
+
+	logged off 07:36pm as a level 33 Ranger
+	(hangup)
+
+The Flying Ape logged in 07:44pm as a level 33 Ranger:
+	logged off 07:47pm as a level 33 Ranger
+	(logged off as a level 33 Ranger)
+

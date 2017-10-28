@@ -20,7 +20,7 @@
     border: 3px solid #f1f1f1;
   }
   input[type=text], input[type=password] {
-    width: 100%;
+    width: 90%;
     padding: 12px 20px;
     margin: 8px 0;
     display: inline-block;
@@ -115,10 +115,9 @@ function cmd(html) {
 }
 
 function Logon() {
-  document.body.onkeypress = function() {};
   clearInterval(art);
   cmd(`<form onsubmit="return sendLogin();">
-<input type="text" placeholder="Enter ID or Handle" name="id" required>
+<input type="text" placeholder="Enter ID or Handle" name="id" autofocus required>
 <input type="password" placeholder="Enter password" name="password" required>
 <button type="submit">Login</button>
 </form>  
@@ -130,7 +129,6 @@ nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize();">`);
 function sendLogin() {
   setTimeout(function(){ send(document.forms[0].elements[0].value, true); }, 150);
   setTimeout(function(){ send(document.forms[0].elements[1].value, true); }, 1500);
-  document.body.onkeypress = function() {keypress(event)};
   return false;
 }
 
@@ -170,10 +168,13 @@ function send(keystrokes, cr = false, et = 'emit') {
   window.parent.postMessage({ 'func':et, 'message':keystrokes, 'return':cr }, '*');
 }
 
+/*
+<!-- onkeypress="keypress(event);" -->
 function keypress(event) {
   var x = event.which || event.keyCode;
   send(String.fromCharCode(x), false, 'kb');
 }
+*/
 
 function actionResize(profile) {
   window.parent.postMessage({
