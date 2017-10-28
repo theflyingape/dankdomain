@@ -97,10 +97,16 @@ function who() {
 
     $.access = $.Access.name[$.player.access]
     xvt.emulation = $.player.emulation
-    if ($.query(`SELECT id FROM Online WHERE id = '${$.player.id}'`).length) {
-        xvt.beep()
-        xvt.out('\nYou\'re in violation of the space-time continuum.  Try again tomorrow.\n')
-        xvt.hangup()
+    let rs = $.query(`SELECT lockdate FROM Online WHERE id = '${$.player.id}'`)
+    if (rs.length) {
+        if (rs[0].lockdate < $.now().date) {
+            $.unlock($.player.id)
+        }
+        else {
+            xvt.beep()
+            xvt.out('\nYou\'re in violation of the space-time continuum.  Try again tomorrow.\n')
+            xvt.hangup()
+        }
     }
 
     xvt.app.form['password'].prompt = $.player.handle + ', enter your password: '
@@ -236,6 +242,7 @@ function welcome() {
         })
         xvt.out(xvt.bright, xvt.black, '(', xvt.normal, xvt.white, 'Welcome back, ',  $.access[$.player.gender], xvt.bright, xvt.black, ')\n', xvt.reset)
         xvt.sessionAllowed = $.access.minutes * 60
+        $.news(`${$.player.handle} logged in ${$.player.lasttime} as a level ${$.player.level} ${$.player.pc}:`)
 
         $.player.status = ''
         $.arena = 3

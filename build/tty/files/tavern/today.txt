@@ -1,0 +1,11 @@
+The Flying Ape logged in 2312 as a level 12 Fighter.
+	logged off 2312 as a level 13 Fighter
+	(defeated by a level 12 Gargoyle)
+
+	logged off 2318 as a level 13 Fighter
+	(had something better to do)
+
+The Flying Ape logged in 2319 as a level 13 Fighter:
+	logged off 2321 as a level 13 Fighter
+	(logged off as a level 13 Fighter)
+

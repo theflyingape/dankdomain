@@ -686,25 +686,25 @@ export function skillplus(rpc: active) {
             xvt.out('\n', xvt.bright)
             switch(+xvt.entry) {
             case 1:
-                news('can get even Stronger.')
+                news('\tcan get even Stronger.')
                 if ((player.maxstr += 10) > 100) player.maxstr = 100
                 xvt.out(xvt.red, `Maximum Strength is now ${player.maxstr}.`)
                 break
 
             case 2:
-                news('can get even Wiser.')
+                news('\tcan get even Wiser.')
                 if ((player.maxint += 10) > 100) player.maxint = 100
                 xvt.out(xvt.green, `Maximum Intellect is now ${player.maxint}.`)
                 break
 
             case 3:
-                news('can get even Quicker.')
+                news('\tcan get even Quicker.')
                 if ((player.maxdex += 10) > 100) player.maxdex = 100
                 xvt.out(xvt.magenta, `Maximum Dexterity is now ${player.maxdex}.`)
                 break
 
             case 4:
-                news('can get even Nicer.')
+                news('\tcan get even Nicer.')
                 if ((player.maxcha += 10) > 100) player.maxcha = 100
                 xvt.out(xvt.yellow, `Maximum Charisma is now ${player.maxcha}.`)
                 break
@@ -714,7 +714,7 @@ export function skillplus(rpc: active) {
                     xvt.app.refocus()
                     return
                 }
-                news('got more Powerful.')
+                news('\tgot more Powerful.')
                 xvt.out([xvt.cyan, xvt.blue, xvt.red, xvt.yellow][player.melee]
                     , [ 'You can finally enter through Tiny\'s front door.'
                       , 'So you want to be a hero, eh?'
@@ -728,7 +728,7 @@ export function skillplus(rpc: active) {
                     xvt.app.refocus()
                     return
                 }
-                news('watch your Back now.')
+                news('\twatch your Back now.')
                 xvt.out([xvt.cyan, xvt.blue, xvt.red, xvt.black][player.backstab]
                     , [ 'A backstab is in your future.'
                       , 'You may backstab more regularly now.'
@@ -742,7 +742,7 @@ export function skillplus(rpc: active) {
                     xvt.app.refocus()
                     return
                 }
-                news('Apothecary visits have more meaning.')
+                news('\tApothecary visits have more meaning.')
                 xvt.out([xvt.cyan, xvt.blue, xvt.red, xvt.magenta][player.poison]
                     , [ 'The Apothecary will see you now, bring money.'
                       , 'Your poisons can achieve 2x its potency now.'
@@ -756,7 +756,7 @@ export function skillplus(rpc: active) {
                     xvt.app.refocus()
                     return
                 }
-                news('became more friendly with the old mage.')
+                news('\tbecame more friendly with the old mage.')
                 switch(player.magic) {
                 case 0:
                     xvt.out(xvt.cyan, 'The old mage will see you now, bring money.')
@@ -782,7 +782,7 @@ export function skillplus(rpc: active) {
                     xvt.app.refocus()
                     return
                 }
-                news('try to avoid in the Square.')
+                news('\ttry to avoid in the Square.')
                 xvt.out([xvt.cyan, xvt.blue, xvt.red, xvt.black][player.steal]
                     , [ 'Your fingers are starting to itch.'
                       , 'Your eyes widen at the chance for unearned loot.'
@@ -913,11 +913,15 @@ export function money(level: number): number {
     return Math.trunc(Math.pow(2, (level - 1) / 2) * 10 * (101 - level) / 100)
 }
 
-export function news(message: string) {
+export function news(message: string, commit = false) {
     const log = `./tty/files/tavern/${player.id}.log`
-    fs.appendFile(log, message, (err) => {
-        if (err) xvt.out(xvt.bright, xvt.red, err.code, '-', err.message, xvt.reset, '\n')
-    })
+    fs.appendFileSync(log, `${message}\n`)
+
+    if (commit) {
+        const paper = `./tty/files/tavern/today.txt`
+        fs.appendFileSync(paper, fs.readFileSync(log))
+        fs.unlink(log)
+    }
 }
 
 export function now(): {date: number, time: number} {
@@ -1355,14 +1359,14 @@ export function	cat(filename: string): boolean {
     let path = folder + filename + (xvt.emulation.match('PC|XT') ? '.ans' : '.txt')
 
     try {
-        fs.accessSync(path, fs.F_OK)
+        fs.accessSync(path, fs.constants.F_OK)
         xvt.out(fs.readFileSync(path), xvt.reset)
         return true
     } catch (e) {
         if (xvt.emulation.match('PC|XT')) {
             let path = folder + filename + '.txt'
             try {
-                fs.accessSync(path, fs.F_OK)
+                fs.accessSync(path, fs.constants.F_OK)
                 xvt.out(fs.readFileSync(path), xvt.reset)
                 return true
             } catch (e) {
@@ -1438,11 +1442,15 @@ export function logoff() {
                     saveUser(player)
                 unlock(player.id)
             }
+
             try { callers = require('./users/callers') } catch(e) {}
             while (callers.length > 7)
                 callers.pop()
             callers = [<caller>{who: player.handle, reason: reason}].concat(callers)
             fs.writeFileSync('./users/callers.json', JSON.stringify(callers))
+
+            news(`\tlogged off ${player.lasttime} as a level ${player.level} ${player.pc}`)
+            news(`\t(${reason})\n`, true)
         }
         //  logoff banner
         xvt.out('\n')
@@ -1688,7 +1696,7 @@ export function saveUser(rpc, insert = false) {
         if (reason === '')
             fs.writeFileSync(trace, JSON.stringify(user, null, 2))
         else
-            fs.removeSync(trace)
+            fs.unlink(trace)
     }
 
     let sql: string = ''
@@ -1798,6 +1806,8 @@ export function newDay() {
         }
     }
 
+    fs.rename('./tty/files/tavern/today.txt', './tty/files/tavern/yesterday.txt')
+    
     xvt.out('\nAll set -- thank you!\n')
     xvt.waste(500)
 }

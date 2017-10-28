@@ -3,6 +3,7 @@
  *  BATTLE authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
+import fs = require('fs')
 import {sprintf} from 'sprintf-js'
 
 import $ = require('./common')
@@ -316,11 +317,19 @@ export function spoils() {
                 if (loser.altered) $.saveUser(loser)
                 $.unlock(loser.user.id)
             }
-            winner.user.xp += xp
-            xvt.out('You get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
-            winner.user.coin.value += coin.value
-            xvt.out('You get ', coin.carry(), $.who(loser, 'he'), 'was carrying.\n')
         }
+        winner.user.xp += xp
+        xvt.out('You get'
+            , parties[l].length > 1 ? ' a total of ' : ' '
+            , sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n'
+        )
+        winner.user.coin.value += coin.value
+        xvt.out('You get'
+            , parties[l].length > 1 ? ' a total of ' : ' '
+            , coin.carry()
+            , parties[l].length > 1 ? ' they were ' : $.who(loser, 'he') + 'was '
+            , 'carrying.\n'
+        )
     }
     else {
         if (winner.user.id) {
@@ -689,7 +698,7 @@ export function user(venue: string, cb:Function) {
 export function yourstats() {
     let userPNG = `images/user/${$.player.id}.png`
     try {
-        $.fs.accessSync(userPNG, $.fs.F_OK)
+        fs.accessSync(userPNG, fs.constants.F_OK)
         userPNG = `user/${$.player.id}`
     } catch(e) {
         userPNG = 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : '')

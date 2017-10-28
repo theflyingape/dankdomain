@@ -32,13 +32,21 @@ function choice() {
     let suppress = $.player.expert
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(tavern[choice]))
-        xvt.out(choice, ' - ', tavern[choice].description, '\n')
+        xvt.out(' - ', tavern[choice].description, '\n')
     else {
         xvt.beep()
         suppress = false
     }
 
     switch (choice) {
+        case 'T':
+            $.cat('tavern/today')
+            suppress = true
+            break
+        case 'Y':
+            $.cat('tavern/yesterday')
+            suppress = true
+            break
         case 'Q':
 			require('./main').menu($.player.expert)
 			return

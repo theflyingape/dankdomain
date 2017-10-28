@@ -3,6 +3,7 @@
  *  ARENA authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
+import fs = require('fs')
 import {sprintf} from 'sprintf-js'
 
 import $ = require('../common')
@@ -253,7 +254,7 @@ function choice() {
 
 				let userPNG = `images/user/${opponent.user.id}.png`
 				try {
-					$.fs.accessSync(userPNG, $.fs.F_OK)
+					fs.accessSync(userPNG, fs.constants.F_OK)
 					userPNG = `user/${opponent.user.id}`
 				} catch(e) {
 					userPNG = 'player/' + opponent.user.pc.toLowerCase() + (opponent.user.gender === 'F' ? '_f' : '')
