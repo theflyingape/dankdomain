@@ -6,6 +6,7 @@ build/node_modules/**
 build/sounds/**
 build/tty/*.js
 build/tty/*.d.ts
+build/tty/files/tavern/**
 build/users
 node_modules/**
 src/*.js
