@@ -1,4 +1,12 @@
-[22;36mDate:[22;37m Mon 17-Feb-2014  7:26am
+[22;36mDate:[22;37m Mon 28-Oct-2017  2:25pm
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
-So far, so good.
+Reminder that this is still in an alpha development stage with an aggressive
+timeline to get it to beta by Christmas.  I appreciate your patience and
+constructive feedback.
+
+If (when) you encounter a catastrophic application exception error, it is
+better to force a LOGOFF event using a Ctrl-D or Ctrl-Z keystroke, rather
+than closing your browser window.
+
+For now, enjoy and thank you for giving it a go.

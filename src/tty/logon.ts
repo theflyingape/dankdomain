@@ -298,6 +298,18 @@ function welcome() {
 
     xvt.app.form = {
         'pause': { cb: () => {
+            xvt.out(xvt.clear, xvt.cyan, '--=:))', xvt.LGradient[xvt.emulation]
+                , xvt.Cyan, xvt.bright, xvt.white, 'Announcement', xvt.reset
+                , xvt.cyan, xvt.RGradient[xvt.emulation], '((:=--\n\n'
+            )
+            $.cat('announcement')
+
+            xvt.out('\n', xvt.green, '--=:))', xvt.LGradient[xvt.emulation]
+                , xvt.Green, xvt.bright, xvt.white, 'Auto Message', xvt.reset
+                , xvt.green, xvt.RGradient[xvt.emulation], '((:=--\n\n'
+            )
+            $.cat('auto-message')
+
             require('./main').menu(true)
         }, pause:true }
     }
