@@ -1789,22 +1789,22 @@ export function newDay() {
 
     sqlite3.exec(`UPDATE Players SET bank=bank+coin, coin=0 WHERE id NOT GLOB '_*'`)
 
-    try {
-        fs.renameSync('./tty/files/tavern/today.txt', './tty/files/tavern/yesterday.txt')
-    } catch (e) {
-    }
-
     let rs = sqlite3.prepare(`SELECT id, lastdate FROM Players`).all()
     for (let row in rs) {
-        if (rs[row].lastdate > 365) {
+        if ((now().date - rs[row].lastdate) > 365) {
             sqlite3.exec(`DELETE FROM Players WHERE id = '${rs[row].id}'`)
             continue
         }
-        if (rs[row].lastdate % 100) {
+        if ((now().date - rs[row].lastdate) % 100) {
             player = { id:rs[row].id }
             loadUser(player)
             require('./email').rejoin()
         }
+    }
+
+    try {
+        fs.renameSync('./tty/files/tavern/today.txt', './tty/files/tavern/yesterday.txt')
+    } catch (e) {
     }
     
     xvt.out('\nAll set -- thank you!\n')
