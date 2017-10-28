@@ -1790,15 +1790,8 @@ export function newDay() {
     sqlite3.exec(`UPDATE Players SET bank=bank+coin, coin=0 WHERE id NOT GLOB '_*'`)
 
     try {
-        fs.renameSync(`${DD}_2`, `${DD}_3`)
-        fs.renameSync(`${DD}_1`, `${DD}_2`)
         fs.renameSync('./tty/files/tavern/today.txt', './tty/files/tavern/yesterday.txt')
     } catch (e) {
-    }
-    
-    if (process.platform === 'linux') {
-        const exec = require('child_process').exec
-        exec(`sqlite3 ${DD} .dump > ${DD}_1`)
     }
 
     let rs = sqlite3.prepare(`SELECT id, lastdate FROM Players`).all()
