@@ -16,6 +16,17 @@
     font-size: 20px;
     color: midnightblue;
   }
+  form {
+    border: 3px solid #f1f1f1;
+  }
+  input[type=text], input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+  }
   div {
     padding: 4px;
     margin: none;
@@ -104,10 +115,23 @@ function cmd(html) {
 }
 
 function Logon() {
+  document.body.onkeypress = function() {};
   clearInterval(art);
-  cmd(`<input class="tall" type="button" value="NEW" onclick="send('NEW', true);"> ${enter}
+  cmd(`<form onsubmit="return sendLogin();">
+<input type="text" placeholder="Enter ID or Handle" name="id" required>
+<input type="password" placeholder="Enter password" name="password" required>
+<button type="submit">Login</button>
+</form>  
+<p><input class="tall" type="button" value="NEW" onclick="send('NEW', true);"> ${enter}</p>
 <p>${logoff}</p>`);
 nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize();">`);
+}
+
+function sendLogin() {
+  setTimeout(function(){ send(document.forms[0].elements[0].value, true); }, 150);
+  setTimeout(function(){ send(document.forms[0].elements[1].value, true); }, 1500);
+  document.body.onkeypress = function() {keypress(event)};
+  return false;
 }
 
 function Logoff() {
@@ -283,7 +307,7 @@ function nmeResize() {
 }
 </script>
 </head>
-<body onkeypress="keypress(event);">
+<body>
 <div id="command">Command Buttons</div>
 <div class="nme" id="nme">Profile Sheet</div>
 </body>

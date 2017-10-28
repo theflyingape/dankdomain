@@ -20,26 +20,6 @@
     height: 100%;
     position: fixed;
   }
-/*
-  #Profile {
-    top: 0; right: 0;
-    width: 20%;
-    height: 100%;
-    position: fixed;
-  }
-  #Enemy {
-    top: 50%; right: 0;
-    width: 20%;
-    height: 25%;
-    position: fixed;
-  }
-  #Action {
-    top: 50%; right: 0;
-    width: 20%;
-    height: 50%;
-    position: fixed;
-  }
-*/
 </style>
 <link rel="stylesheet" href="xterm.css">
 <script>
@@ -68,29 +48,7 @@ function receive(event) {
             socket.emit('data', termid, '\x0D');
         }
         break;
-/*
-      case 'size':
-        var stylesheet = document.styleSheets[0];
-        for (var i in stylesheet.cssRules) {
-          css = stylesheet.cssRules[i];
-          if (css.selectorText === '#Info') {
-            break;
-          }
-        }
-        switch(event.data.message) {
-          case 'full':
-            Object.assign(css.style, { 'top':'0%', 'height':'100%', 'width':'20%' });
-            break;
-          case 'half':
-            Object.assign(css.style, { 'top':'50%', 'height':'50%', 'width':'20%' });
-            break;
-          case 'small':
-            Object.assign(css.style, { 'top':'75%', 'height':'25%', 'width':'20%' });
-            break;
-        }
-        break;
-    }
-*/
+
     if (event.data.func === 'kb')
         term.focus();
     }
@@ -123,14 +81,11 @@ function resize() {
 <body onload="resize();" onresize="resize();">
 <div id="terminal"></div>
 <iframe seamless id="Info" name="Info" src="./info.html"></iframe>
-<!--iframe seamless id="Enemy" name="Enemy" src="./enemy.html"></iframe>
-<iframe seamless id="Profile" name="Profile" src="./profile.html"></iframe>
-<iframe seamless id="Action" name="Action" src="./action.html"></iframe-->
 <h2>Dank Domain: the return of Hack &amp; Slash</h2>
 <h3>&copy;2017 Robert Hurst</h3>
 <h4>use REFRESH button to start over</h4>
 <input type="button" value="REFRESH" onclick="window.location.reload();" />
-<font face="Goudy Old Style,Garamond,Big Caslon,Times New Roman,serif">
+<font face="Goudy Old Style,Garamond,Big Caslon,Times New Roman,serif" size="+1">
 <p>The Olde Tavern's <a href="./today.txt" target="_blank">news</a>.</p>
 </font>
 <audio id="play">
