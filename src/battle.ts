@@ -404,10 +404,8 @@ export function cast(rpc: active, cb:Function, nme?: active) {
 
     function invoke(name: string) {
         let spell = $.Magic.spells[name]
-        if (rpc === $.online)
-            xvt.out('\n')
-        else
-            xvt.waste(250)
+        if (rpc !== $.online)
+            xvt.waste(200)
 
         if (rpc.user.magic > 1)
             if (rpc.sp < (rpc.user.magic < 4 ? spell.mana : spell.enchanted)) {
@@ -418,19 +416,19 @@ export function cast(rpc: active, cb:Function, nme?: active) {
 
         //  some sensible ground rules to avoid known muling exploits (by White Knights passing gas)
         if (xvt.validator.isDefined(nme)) {
-            if ([ 1,2,3,4,5,6,10,23,24 ].indexOf(spell.cast) < 0) {
+            if ([ 1,2,3,4,5,6,10,23,24 ].indexOf(spell.cast) >= 0) {
                 if (rpc === $.online) xvt.out('You cannot cast that spell during a battle!\n')
                 cb(true)
                 return
             }
-            if (nme.user.novice && [ 12,16,20,21,22 ].indexOf(spell.cast) < 0) {
+            if (nme.user.novice && [ 12,16,20,21,22 ].indexOf(spell.cast) >= 0) {
                 if (rpc === $.online) xvt.out('You cannot cast that spell on a novice player.\n')
                 cb(true)
                 return
             }
         }
         else {
-            if ([ 9,11,12,14,15,16,17,18,19,20,21,22 ].indexOf(spell.cast) < 0) {
+            if ([ 9,11,12,14,15,16,17,18,19,20,21,22 ].indexOf(spell.cast) >= 0) {
                 if (rpc === $.online) xvt.out('You cannot cast that spell on yourself!\n')
                 cb(true)
                 return
@@ -457,25 +455,271 @@ export function cast(rpc: active, cb:Function, nme?: active) {
     
         let backfire = false
 
-        if ($.dice(100) > $.Magic.ability(spell, rpc, nme).fail) {
+        if ($.dice(100) > $.Magic.ability(name, rpc, nme).fail) {
             if ((backfire = $.dice(100) > $.Magic.ability(spell, rpc, nme).backfire)) {
                 $.sound('oops', 10)
-                xvt.out('Oops!  ', ' spell backfires!\n')
+                xvt.out('Oops!  ', $.who(rpc, 'His'), ' spell backfires!\n')
             }
             else {
                 $.sound('fssst', 20)
-                xvt.out('Fssst!', 'spell fails!\n')
+                xvt.out('Fssst!', $.who(rpc, 'His'), 'spell fails!\n')
                 cb()
                 return
             }
         }
 
-        switch(spell) {
-            case 1:
+        xvt.out('\n')
+        let mod = rpc.user.blessed ? 10 : 0
+        mod = rpc.user.cursed ? mod - 10 : mod
+    
+        switch(spell.cast) {
+        case 1:
+            if (backfire) {
+                rpc.str = $.PC.ability(rpc.str, -$.dice(10))
+                xvt.out(`You feel weaker (${rpc.str})\n`)
+            }
+            else {
+                if ((rpc.str = $.PC.ability(rpc.str, $.dice(10), rpc.user.maxstr, mod)) < rpc.user.maxstr)
+                    xvt.out(`You feel much more stronger (${rpc.str})\n`)
+                else
+                    xvt.out(`This game prohibits the use of steroids.\n`)
+            }
+            break
 
-                break
+        case 2:
+            if (backfire) {
+                rpc.int = $.PC.ability(rpc.int, -$.dice(10))
+                xvt.out(`You feel stupid (${rpc.int})\n`)
+            }
+            else {
+                if ((rpc.int = $.PC.ability(rpc.int, $.dice(10), rpc.user.maxint, mod)) < rpc.user.maxint)
+                    xvt.out(`You feel much more intelligent (${rpc.int})\n`)
+                else
+                    xvt.out(`Get on with it, professor!\n`)
+            }
+            break
+
+        case 3:
+            if (backfire) {
+                rpc.dex = $.PC.ability(rpc.dex, -$.dice(10))
+                xvt.out(`You feel clumsy (${rpc.dex})\n`)
+            }
+            else {
+                if ((rpc.dex = $.PC.ability(rpc.dex, $.dice(10), rpc.user.maxdex, mod)) < rpc.user.maxdex)
+                    xvt.out(`You feel much more agile (${rpc.dex})\n`)
+                else
+                    xvt.out(`Y'all shakin' and bakin'.\n`)
+            }
+            break
+
+        case 4:
+            if (backfire) {
+                rpc.cha = $.PC.ability(rpc.cha, -$.dice(10))
+                xvt.out(`You feel depressed (${rpc.cha})\n`)
+            }
+            else {
+                if ((rpc.cha = $.PC.ability(rpc.cha, $.dice(10), rpc.user.maxdex, mod)) < rpc.user.maxcha)
+                    xvt.out(`You feel much more charismatic (${rpc.cha})\n`)
+                else
+                    xvt.out(`Stop being so vain.\n`)
+            }
+            break
+
+        case 5:
+            if (backfire) {
+
+            }
+            else {
+                $.sound('shield')
+            }
+            break
+
+        case 6:
+            if (backfire) {
+
+            }
+            else {
+                $.sound('hone')
+            }
+            break
+
+        case 7:
+            if (backfire) {
+                $.sound('hurt')
+            }
+            else {
+                $.sound('heal')
+            }
+            break
+
+        case 8:
+            $.sound('teleport')
+            if (backfire) {
+
+            }
+            else {
+
+            }
+            break
+
+        case 9:
+            $.sound('blast')
+            if (backfire) {
+
+            }
+            else {
+
+            }
+            break
+
+        case 10:
+            if (backfire) {
+                xvt.out('You die by your own doing.\n')
+                rpc.hp = 0
+                $.reason = `resurrect backfired`
+            }
+            else {
+                $.sound('resurrect')
+            }
+            break
+
+        case 11:
+            $.sound('confusion')
+            if (backfire) {
+
+            }
+            else {
+
+            }
+            break
+
+        case 12:
+            $.sound('transmute')
+            if (backfire) {
+
+            }
+            else {
+
+            }
+            break
+
+        case 13:
+            $.sound('cure')
+            if (backfire) {
+
+            }
+            else {
+
+            }
+            break
+
+        case 14:
+            $.sound('illusion')
+            if (backfire) {
+
+            }
+            else {
+
+            }
+            break
+
+        case 15:
+            $.sound('disintegrate')
+            if (backfire) {
+                xvt.out($.who(rpc, 'He'), 'completely', $.what(rpc, 'atomize'), $.who(rpc,'him'),'self!\n')
+                rpc.hp = 0
+                $.reason = `disintegrate backfired`
+            }
+            else {
+                nme.hp = 0
+            }
+            break
+
+        case 16:
+            $.sound('morph')
+            if (backfire) {
+
+            }
+            else {
+
+            }
+            break
+
+        case 17:
+            if (backfire) {
+
+            }
+            else {
+
+            }
+            break
+
+        case 18:
+            if (backfire) {
+
+            }
+            else {
+
+            }
+            break
+
+        case 19:
+            $.sound('blast')
+            if (backfire) {
+
+            }
+            else {
+
+            }
+            break
+
+        case 20:
+            if (backfire) {
+
+            }
+            else {
+
+            }
+            break
+
+        case 21:
+            if (backfire) {
+
+            }
+            else {
+
+            }
+            break
+
+        case 22:
+            if (backfire) {
+
+            }
+            else {
+
+            }
+            break
+
+        case 23:
+            if (backfire) {
+
+            }
+            else {
+                $.sound('shield')
+            }
+            break
+
+        case 24:
+            if (backfire) {
+
+            }
+            else {
+                $.sound('hone')
+            }
+            break
         }
 
+        xvt.waste(150)
         cb()
     }
 }
