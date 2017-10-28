@@ -26,7 +26,7 @@ module Common
     export let barkeep: active = { user: { id:'_BAR'} }
     export let seahag: active = { user: { id:'_OLD'} }
     export let taxman: active = { user: { id:'_TAX'} }
-    export let king: user
+    export let king: user = { id:'' }
     export let online: active = { user: { id:'' } }
     export let player: user = online.user
     export let sysop: user = { id:'_SYS' }
