@@ -1638,14 +1638,17 @@ export function loadKing(): boolean {
     //  King
     let ruler = Object.keys(Access.name).slice(-1)[0]
     rs = <user[]>query(`SELECT id FROM Players WHERE access = '${ruler}'`)
-    if (rs.length)
-        return loadUser(<user>{ id:rs[0].id })
+    if (rs.length) {
+        king.id = rs[0].id
+        return loadUser(king)
+    }
     //  Queen
     ruler = Object.keys(Access.name).slice(-2)[0]
     rs = <user[]>query(`SELECT id FROM Players WHERE access = '${ruler}'`)
-    if (rs.length)
-        return loadUser(<user>{ id:rs[0].id })
-
+    if (rs.length) {
+        king.id = rs[0].id
+        return loadUser(king)
+    }
     return false
 }
 

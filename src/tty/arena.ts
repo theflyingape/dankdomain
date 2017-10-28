@@ -24,13 +24,13 @@ module Arena
 	}
 
 export function menu(suppress = true) {
+	if ($.reason) require('./main').menu($.player.expert)
 	$.action('arena')
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }
     xvt.app.form['menu'].prompt = $.display('arena', xvt.Red, xvt.red, suppress, arena)
-	if (!$.reason) xvt.app.focus = 'menu'
-	else require('./main').menu($.player.expert)	
+	xvt.app.focus = 'menu'
 }
 
 function choice() {
