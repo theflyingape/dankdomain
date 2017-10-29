@@ -969,7 +969,7 @@ export function poison(rpc: active, cb:Function) {
         else {
             xvt.out($.who(rpc, 'He'), $.what(rpc, 'pour')
                 , 'some ', $.Poison.merchant[+xvt.entry - 1]
-                , ' on', $.who(rpc, 'his'), rpc.user.weapon, '.\n')
+                , ' on ', $.who(rpc, 'his'), rpc.user.weapon, '.\n')
             xvt.waste(500)
             if (/^[A-Z]/.test(rpc.user.id)) {
                 if ($.dice(3 * (rpc.toWC + rpc.user.toWC + 1)) / rpc.user.poison > $.Weapon.name[rpc.user.weapon].wc) {

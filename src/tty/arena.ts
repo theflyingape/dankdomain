@@ -25,10 +25,8 @@ module Arena
 
 export function menu(suppress = true) {
     if ($.checkXP($.online)) return
-	if ($.reason) {
-		require('./main').menu($.player.expert)
-		return
-	}
+	if ($.online.altered) $.saveUser($.player)
+	if ($.reason) xvt.hangup()
 
 	$.action('arena')
     xvt.app.form = {

@@ -131,12 +131,11 @@ export function DeepDank(suppress = false) {
 }
 
 export function menu(suppress = false) {
-	if ($.player.level + 1 < $.sysop.level)
-		$.checkXP($.online)
+	if ($.player.level + 1 < $.sysop.level) $.checkXP($.online)
 	if ($.online.altered) $.saveUser($.player)
 	if ($.reason) xvt.hangup()
+
 	$.action('dungeon')
-	
 	xvt.app.form = {
         'command': { cb:command, prompt:':', enter:'?', eol:false }
     }
