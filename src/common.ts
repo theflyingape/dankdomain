@@ -1312,9 +1312,9 @@ export function who(rpc: active, word: string): string {
     let result = {
         He:  { M:'He ',   F:'She ',  I:'It ',   U:'You ' },
         His: { M:'His ',  F:'Her ',  I:'Its ',  U:'Your ' },
-        he:  { M:' he ',  F:' she ', I:' it ',  U:' you ' },
-        him: { M:' him',  F:' her',  I:' it',   U:'s you' },
-        his: { M:' his ', F:' her ', I:' its ', U:' your ' }
+        he:  { M:'he ',  F:'she ', I:'it ',  U:'you ' },
+        him: { M:'him ',  F:'her ',  I:'it ',   U:'you ' },
+        his: { M:'his ', F:'her ', I:'its ', U:'your ' }
     }
 
     let gender = rpc == online ? 'U' : rpc.user.gender

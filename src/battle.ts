@@ -349,8 +349,8 @@ export function spoils() {
         winner.user.coin.value += coin.value
         xvt.out('You get'
             , parties[l].length > 1 ? ' a total of ' : ' '
-            , coin.carry()
-            , parties[l].length > 1 ? ' they were ' : $.who(loser, 'he') + 'was '
+            , coin.carry(), ' '
+            , parties[l].length > 1 ? 'they were ' : $.who(loser, 'he') + 'was '
             , 'carrying.\n'
         )
     }

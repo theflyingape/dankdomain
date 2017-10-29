@@ -215,10 +215,10 @@ function choice() {
 		case 'M':
 			xvt.out('\nThe ', xvt.bright, xvt.blue, 'old mage ', xvt.reset)
 			max = $.Magic.merchant.length
-			for (lo = 1; lo < max; lo++)
+			for (lo = 1; lo <= max; lo++)
 				if (!$.Magic.have($.player.spells, lo))
 					break
-			if (lo == $.Magic.merchant.length || !$.player.magic || !$.access.roleplay) {
+			if (lo > $.Magic.merchant.length || !$.player.magic || !$.access.roleplay) {
 				xvt.out('says, "Get outta here!"\n')
 				break
 			}
@@ -308,10 +308,10 @@ function choice() {
 			xvt.out('\n', xvt.faint, '... you enter the back door of the shop ...\n', xvt.reset)
 			xvt.out('The ', xvt.bright, xvt.magenta, 'apothecary ', xvt.reset)
 			max = $.Poison.merchant.length
-			for (lo = 1; lo < max; lo++)
+			for (lo = 1; lo <= max; lo++)
 				if (!$.Poison.have($.player.poisons, lo))
 					break
-			if (lo == $.Poison.merchant.length || !$.player.poison || !$.access.roleplay) {
+			if (lo > $.Poison.merchant.length || !$.player.poison || !$.access.roleplay) {
 				xvt.out('says, "Get outta here!"\n')
 				break
 			}
@@ -522,7 +522,7 @@ function list(choice: string) {
 
 function listStart() {
 	let n = +xvt.entry
-	if (n < lo || n > max) {
+	if ((/M|R|S|V/.test(want) && n < lo) || n > max) {
 		$.beep()
 		xvt.app.refocus()
 		return
@@ -611,7 +611,6 @@ function buy() {
 				xvt.out(' - ', $.player.armor, '\n')
 				$.player.coin.value += credit.value - cost.value
 				$.Armor.equip($.online, $.player.armor)
-				$.online.altered = true
 			}
 			break
 
@@ -675,7 +674,6 @@ function buy() {
 				xvt.out(' - ', $.player.weapon, '\n')
 				$.player.coin.value += credit.value - cost.value
 				$.Weapon.equip($.online, $.player.weapon)
-				$.online.altered = true
 			}
 			break
 	}

@@ -119,8 +119,8 @@ export class Armor {
             return false
 
         // is common armor better?
-        if (winner.armor.armoury && loser.armor.armoury
-            && ((winner.toAC + winner.user.toAC) >= 0 || winner.armor.ac > loser.armor.ac)) {
+        if (winner.armor.armoury && loser.armor.armoury && (winner.armor.ac > loser.armor.ac
+            || (winner.user.toAC < 0 && winner.armor.ac + winner.user.toAC > loser.armor.ac))) {
             if (value) {
                 winner.user.coin.value += value.value
                 return value
@@ -393,8 +393,8 @@ export class Weapon {
             return false
 
         // is common weapon better?
-        if (winner.weapon.shoppe && loser.weapon.shoppe
-            && ((winner.toWC + winner.user.toWC) >= 0 || winner.weapon.wc > loser.weapon.wc)) {
+        if (winner.weapon.shoppe && loser.weapon.shoppe && (winner.weapon.wc > loser.weapon.wc
+            || (winner.user.toWC < 0 && winner.weapon.wc + winner.user.toWC > loser.weapon.wc))) {
             if (value) {
                 winner.user.coin.value += value.value
                 return value
