@@ -95,7 +95,7 @@ export class Armor {
         return ac
     }
 
-    equip(rpc: active, what: string|number, worth?: string) {
+    equip(rpc: active, what: string|number, keep = false, worth?: string) {
         let armor: armor
 
         if (isNaN(+what)) {
@@ -107,13 +107,13 @@ export class Armor {
             rpc.user.armor = +what
             armor = <armor>{ ac:what, value:worth ? worth : '0c' }
         }
-        rpc.user.toAC = 0
+        if (!keep) rpc.user.toAC = 0
         rpc.armor = armor
         rpc.toAC = 0
         rpc.altered = true
     }
 
-    swap(winner: active, loser: active, sell = true): boolean {
+    swap(winner: active, loser: active, value?: coins): boolean|coins {
         // real item?
         if (!isNaN(+winner.user.armor) || !isNaN(+loser.user.armor))
             return false
@@ -121,9 +121,9 @@ export class Armor {
         // is common armor better?
         if (winner.armor.armoury && loser.armor.armoury
             && ((winner.toAC + winner.user.toAC) >= 0 || winner.armor.ac > loser.armor.ac)) {
-            if (sell) {
-                winner.user.coin.value += $.worth(new $.coins(loser.armor.value).value, winner.cha)
-                xvt.out($.who(winner, 'He'), $.what(winner, 'get'), winner.user.coin.carry(), ' for', $.who(loser, 'his'), loser.user.armor, '.\n')
+            if (value) {
+                winner.user.coin.value += value.value
+                return value
             }
             return false
         }
@@ -368,7 +368,7 @@ export class Weapon {
         return wc
     }
 
-    equip(rpc: active, what: string|number, worth?: string) {
+    equip(rpc: active, what: string|number, keep = false, worth?: string) {
         let weapon: weapon
 
         if (isNaN(+what)) {
@@ -381,13 +381,13 @@ export class Weapon {
             weapon = <weapon>{ wc:what, value:worth ? worth : '0c', hit:'hit', stab:'stab', smash:'smash', plunge:'plunge' }
         }
 
-        rpc.user.toWC = 0
+        if (!keep) rpc.user.toWC = 0
         rpc.weapon = weapon
         rpc.toWC = 0
         rpc.altered = true
     }
 
-    swap(winner: active, loser: active, sell = true): boolean {
+    swap(winner: active, loser: active, value?: coins): boolean|coins {
         // real item?
         if (!isNaN(+winner.user.weapon) || !isNaN(+loser.user.weapon))
             return false
@@ -395,9 +395,9 @@ export class Weapon {
         // is common weapon better?
         if (winner.weapon.shoppe && loser.weapon.shoppe
             && ((winner.toWC + winner.user.toWC) >= 0 || winner.weapon.wc > loser.weapon.wc)) {
-            if (sell) {
-                winner.user.coin.value += $.worth(new $.coins(loser.weapon.value).value, winner.cha)
-                xvt.out($.who(winner, 'He'), $.what(winner, 'get'), winner.user.coin.carry(), ' for', $.who(loser, 'his'), loser.user.weapon, '.\n')
+            if (value) {
+                winner.user.coin.value += value.value
+                return value
             }
             return false
         }

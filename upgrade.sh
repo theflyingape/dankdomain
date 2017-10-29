@@ -10,6 +10,7 @@ git pull
 npm install
 npm run build
 
+sudo rm -fv ./build/tty/files/tavern/*
 sudo rsync -av --chown=root:games ./build/ ${TARGET}
 sudo chown -R root.games ${TARGET}
 sudo chmod -R u+rw,g+rw,o-rwx ${TARGET}

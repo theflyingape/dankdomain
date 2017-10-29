@@ -131,7 +131,7 @@ function Logon() {
   cmd(`<form onsubmit="return sendLogin();">
 <input type="text" placeholder="Enter ID or Handle" name="id" autofocus required>
 <input type="password" placeholder="Enter password" name="password" required>
-<button class="wide" type="submit"> Login </button> <input class="tall" type="button" value="NEW" onclick="send('NEW', true);"> ${enter}
+<button class="wide" type="submit"> Login </button> <input class="wide" type="button" value="NEW" onclick="send('NEW', true);">
 </form>`);
 nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize();">`);
 }

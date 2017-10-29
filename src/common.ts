@@ -430,10 +430,8 @@ export function activate(one: active, keep = false): boolean {
     one.sp = one.user.sp
     one.bp = Math.trunc(one.user.hp / 10)
     one.hull = one.user.hull
-    Weapon.equip(one, one.user.weapon)
-    Armor.equip(one, one.user.armor)
-    one.toAC = 0
-    one.toWC = 0
+    Weapon.equip(one, one.user.weapon, true)
+    Armor.equip(one, one.user.armor, true)
     if (one.user.blessed.length) {
         if ((one.str += 10) > 100)
             one.str = 100

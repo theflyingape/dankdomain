@@ -314,12 +314,31 @@ export function spoils() {
                     loser.user.coin.value = 0
                     loser.altered = true
                 }
-                if ($.Weapon.swap(winner, loser, from === 'Monster'))
-                    xvt.out($.who(winner, 'He'), $.what(winner, 'take'), $.who(loser, 'his'), winner.user.weapon, '.\n')
-                if ($.Armor.swap(winner, loser, from === 'Monster'))
-                    xvt.out($.who(winner, 'He'), 'also', $.what(winner, 'take'), $.who(loser, 'his'), winner.user.armor, '.\n')
+                if (from !== 'User') {
+                    let credit = new $.coins(loser.weapon.value)
+                    credit.value = $.worth(credit.value, winner.cha)
+                    let result = $.Weapon.swap(winner, loser, credit)
+                    if (xvt.validator.isBoolean(result) && result)
+                        xvt.out($.who(winner, 'He'), $.what(winner, 'take'), $.who(loser, 'his'), winner.user.weapon, '.\n')
+                    else if (result)
+                        xvt.out($.who(winner, 'He'), $.what(winner, 'get'), credit.carry(), ' for', $.who(loser, 'his'), loser.user.weapon, '.\n')
+
+                    credit = new $.coins(loser.armor.value)
+                    credit.value = $.worth(credit.value, winner.cha)
+                    result = $.Armor.swap(winner, loser, credit)
+                    if (xvt.validator.isBoolean(result) && result)
+                        xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who(loser, 'his'), winner.user.armor, '.\n')
+                    else if (result)
+                        xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'get'), credit.carry(), ' for', $.who(loser, 'his'), loser.user.armor, '.\n')
+                }
+                else {
+                    if ($.Weapon.swap(winner, loser))
+                        xvt.out($.who(winner, 'He'), $.what(winner, 'take'), $.who(loser, 'his'), winner.user.weapon, '.\n')
+                    if ($.Armor.swap(winner, loser))
+                        xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who(loser, 'his'), winner.user.armor, '.\n')
+                    $.unlock(loser.user.id)
+                }
                 if (loser.altered) $.saveUser(loser)
-                $.unlock(loser.user.id)
             }
         }
         winner.user.xp += xp
@@ -977,6 +996,7 @@ export function user(venue: string, cb:Function) {
     let start = $.player.level > 3 ? $.player.level - 3 : 1
     let end = $.player.level < 97 ? $.player.level + 3 : 99
 
+    $.action('freetext')
     xvt.app.form = {
         'user': { cb: () => {
             if (xvt.entry === '?') {
