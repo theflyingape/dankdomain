@@ -45,17 +45,29 @@ logoff = `<input type="button" value="LOGOFF" onclick="send('\x1A');">`;
 max = `<input class="wide" type="button" value=" MAX " onclick="send('MAX', true);">`
 quit = `<input class="wide" type="button" value="Quit" onclick="send('Q');">`;
 keypad = `<table align="center">
-<tr><td><input class="numeric" type="button" value="7" onclick="send('7');"></td><td><input class="numeric" type="button" value="8" onclick="send('8');"></td><td><input class="numeric" type="button" value="9" onclick="send('9');">
+<tr><td><input class="numeric" type="button" value="7" onclick="send('7');"></td><td><input class="numeric" type="button" value="8" onclick="send('8');"></td><td><input class="numeric" type="button" value="9" onclick="send('9');"></td>
 </tr>
-<tr><td><input class="numeric" type="button" value="4" onclick="send('4');"></td><td><input class="numeric" type="button" value="5" onclick="send('5');"></td><td><input class="numeric" type="button" value="6" onclick="send('6');">
+<tr><td><input class="numeric" type="button" value="4" onclick="send('4');"></td><td><input class="numeric" type="button" value="5" onclick="send('5');"></td><td><input class="numeric" type="button" value="6" onclick="send('6');"></td>
 </tr>
-<tr><td><input class="numeric" type="button" value="1" onclick="send('1');"></td><td><input class="numeric" type="button" value="2" onclick="send('2');"></td><td><input class="numeric" type="button" value="3" onclick="send('3');">
+<tr><td><input class="numeric" type="button" value="1" onclick="send('1');"></td><td><input class="numeric" type="button" value="2" onclick="send('2');"></td><td><input class="numeric" type="button" value="3" onclick="send('3');"></td>
 </tr>
 <tr><td><input class="numeric" type="button" value=" 0 " onclick="send('0');"></td><td colspan=2>${enter}</td>
 </tr>
 <tr><td><input class="numeric" type="button" value=" ? " onclick="send('?', true);"></td><td colspan=2>${clear}</td>
 </tr>
 </table>`;
+keyboard=`<input type="button" value="a" onclick="send('a');"> <input type="button" value="b" onclick="send('b');"> <input type="button" value="c" onclick="send('c');">
+<input type="button" value="d" onclick="send('d');"> <input type="button" value="e" onclick="send('e');"> <input type="button" value="f" onclick="send('f');">
+<input type="button" value="g" onclick="send('g');"> <input type="button" value="h" onclick="send('h');"> <input type="button" value="i" onclick="send('i');">
+<input type="button" value="j" onclick="send('j');"> <input type="button" value="k" onclick="send('k');"> <input type="button" value="l" onclick="send('l');">
+<input type="button" value="m" onclick="send('m');"> <input type="button" value="n" onclick="send('n');"> <input type="button" value="o" onclick="send('o');">
+<input type="button" value="p" onclick="send('p');"> <input type="button" value="q" onclick="send('q');"> <input type="button" value="r" onclick="send('r');">
+<input type="button" value="s" onclick="send('s');"> <input type="button" value="t" onclick="send('t');"> <input type="button" value="u" onclick="send('u');">
+<input type="button" value="v" onclick="send('v');"> <input type="button" value="w" onclick="send('w');"> <input type="button" value="x" onclick="send('x');">
+<input type="button" value="y" onclick="send('y');"> <input type="button" value="z" onclick="send('z');"><br>
+<input type="button" value="@" onclick="send('@');"> <input type="button" value="." onclick="send('.');"> <input class="wide" type="button" value=" SPACE BAR " onclick="send(' ');"> <input type="button" value="-" onclick="send('-');"> <input type="button" value="+" onclick="send('+');"><br>
+${keypad}
+`;
 money = `<table align="center">
 <tr><td><input class="numeric" type="button" value="7" onclick="send('7');"></td><td><input class="numeric" type="button" value="8" onclick="send('8');"></td><td><input class="numeric" type="button" value="9" onclick="send('9');"></td><td><input class="platinum" type="button" value="P" onclick="send('p');"></td>
 </tr>
@@ -119,15 +131,14 @@ function Logon() {
   cmd(`<form onsubmit="return sendLogin();">
 <input type="text" placeholder="Enter ID or Handle" name="id" autofocus required>
 <input type="password" placeholder="Enter password" name="password" required>
-<button type="submit">Login</button>
-</form>  
-<p><input class="tall" type="button" value="NEW" onclick="send('NEW', true);"> ${enter}</p>`);
+<button class="wide" type="submit"> Login </button> <input class="tall" type="button" value="NEW" onclick="send('NEW', true);"> ${enter}
+</form>`);
 nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize();">`);
 }
 
 function sendLogin() {
-  setTimeout(function(){ send(document.forms[0].elements[0].value, true); }, 150);
-  setTimeout(function(){ send(document.forms[0].elements[1].value, true); }, 1500);
+  setTimeout(function(){ send(document.forms[0].elements[0].value, true); }, 100);
+  setTimeout(function(){ send(document.forms[0].elements[1].value, true); }, 1000);
   return false;
 }
 
@@ -182,6 +193,11 @@ function actionResize(profile) {
 
 function clear() {
   cmd('');
+}
+
+function freetext() {
+  nme('');
+  cmd(`${keyboard}`);
 }
 
 function menu() {

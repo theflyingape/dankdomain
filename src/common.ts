@@ -1299,7 +1299,7 @@ export function time(t: number): string {
     const ap = t < 1200 ? 'am' : 'pm'
     const m = t % 100
     const h = Math.trunc((t < 100 ? t + 1200 : t >= 1300 ? t - 1200 : t) / 100)
-    return sprintf('%02u:%02u%s', h, m, ap)
+    return sprintf('%u:%02u%s', h, m, ap)
 }
 
 export function titlecase(orig: string): string {
@@ -1410,6 +1410,7 @@ export function display(title:string, back:number, fore:number, suppress:boolean
 }
 
 export function emulator(cb:Function) {
+    action('list')
     xvt.app.form = {
         'term': { cb:() => {
             if (xvt.validator.isNotEmpty(xvt.entry) && xvt.entry.length == 2) xvt.emulation = xvt.entry.toUpperCase()

@@ -314,10 +314,10 @@ export function spoils() {
                     loser.user.coin.value = 0
                     loser.altered = true
                 }
-                if ($.Weapon.swap(winner, loser))
-                    xvt.out($.who(winner, 'He'), 'take', winner == $.online ? '' : 's', $.who(loser, 'his'), winner.user.weapon, '.\n')
-                if ($.Armor.swap(winner, loser))
-                    xvt.out($.who(winner, 'He'), 'take', winner == $.online ? '' : 's', $.who(loser, 'his'), winner.user.armor, '.\n')
+                if ($.Weapon.swap(winner, loser, from === 'Monster'))
+                    xvt.out($.who(winner, 'He'), $.what(winner, 'take'), $.who(loser, 'his'), winner.user.weapon, '.\n')
+                if ($.Armor.swap(winner, loser, from === 'Monster'))
+                    xvt.out($.who(winner, 'He'), 'also', $.what(winner, 'take'), $.who(loser, 'his'), winner.user.armor, '.\n')
                 if (loser.altered) $.saveUser(loser)
                 $.unlock(loser.user.id)
             }
@@ -527,11 +527,25 @@ export function cast(rpc: active, cb:Function, nme?: active) {
 
         case 5:
             if (backfire) {
-                
+                if (rpc.user.magic > 2 && rpc.user.toAC > 0)
+                    rpc.user.toAC--
+                else if(rpc.toAC > 0)
+                    rpc.toAC -= $.dice(rpc.toAC)
+                else
+                    rpc.toAC--
+                xvt.out($.who(rpc, 'His'), rpc.user.armor, ' loses some of its effectiveness.\n')
             }
             else {
+                if (rpc.user.magic > 2 && rpc.user.toAC >= 0)
+                    rpc.user.toAC++
+                rpc.toAC++
                 $.sound('shield')
+                xvt.out('A magical field shimmers around', $.who(rpc, 'his'), rpc.user.armor, '.\n')
             }
+            if (-rpc.user.toAC >= rpc.armor.ac || -(rpc.user.toAC + rpc.toAC) >= rpc.armor.ac) {
+                $.Armor.equip(rpc, $.Armor.merchant[0])
+            }
+            rpc.altered = true
             break
 
         case 6:
@@ -541,6 +555,7 @@ export function cast(rpc: active, cb:Function, nme?: active) {
             else {
                 $.sound('hone')
             }
+            rpc.altered = true
             break
 
         case 7:

@@ -1,20 +1,12 @@
-The Flying Ape logged in 07:30pm as a level 33 Ranger:
-	logged off 07:32pm as a level 33 Ranger
-	(logged off as a level 33 Ranger)
+The Flying Ape logged in 07:04am as a level 99 Titan:
+	logged off 07:06am as a level 99 Titan
+	(caught picking a pocket)
 
-	logged off 07:36pm as a level 33 Ranger
-	(hangup)
+The Flying Ape logged in 8:19am as a level 99 Titan:
+	logged off 8:21am as a level 99 Titan
+	(fallen asleep)
 
-The Flying Ape logged in 07:44pm as a level 33 Ranger:
-	logged off 07:47pm as a level 33 Ranger
-	(logged off as a level 33 Ranger)
-
-The Flying Ape logged in 08:29pm as a level 33 Ranger:
-	logged off 08:31pm as a level 33 Ranger
-	(logged off as a level 33 Ranger)
-
-The Flying Ape logged in 08:36pm as a level 33 Ranger:
-The Flying Ape logged in 08:49pm as a level 33 Ranger:
-	logged off 08:53pm as a level 33 Ranger
-	(logged off as a level 33 Ranger)
+The Flying Ape logged in 8:36am as a level 99 Titan:
+	logged off 8:36am as a level 99 Titan
+	(caught picking a pocket)
 

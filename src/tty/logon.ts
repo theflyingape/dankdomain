@@ -20,7 +20,7 @@ module Logon
 
     $.cat('logon')
     xvt.app.form = {
-        'who': { cb:who, prompt:'Who dares to enter my dank domain <or NEW>? ', max:22, timeout:20 },
+        'who': { cb:who, prompt:'Who dares to enter my dank domain <or NEW>? ', max:22, timeout:40 },
         'password': { cb:password, echo:false, max:26, timeout:20 },
     }
 
@@ -41,6 +41,7 @@ function guards(): boolean {
             xvt.out('The guards aim their crossbows at you.\n')
             break
         default:
+            $.profile({ jpg:'npc/stranger' })
             xvt.out('The last thing you ever feel is several quarrels cutting deep into your chest.\n')
             xvt.waste(1000)
             $.action('yn')
@@ -198,7 +199,7 @@ function welcome() {
     $.action('yn')
 
     if ($.player.status === 'jail' || !$.Access.name[$.player.access].roleplay) {
-        $.profile({ jpg:'npc/taxman', handle:$.taxman.user.handle })
+        $.profile({ png:'npc/taxman', handle:$.taxman.user.handle })
         xvt.out(xvt.bright, xvt.black, '(', xvt.magenta, 'PRISONER', xvt.black, ')\n')
         xvt.out(xvt.red, '\nYou are locked-up in jail.\n', xvt.reset)
         xvt.waste(1000)

@@ -21,6 +21,7 @@ import xvt = require('xvt')
 module ttyMain
 {
     xvt.defaultTimeout = 120
+    xvt.pollingMS = 80
     if(xvt.modem = xvt.validator.isEmpty(process.env.REMOTEHOST)) {
         xvt.out('@play(dankdomain)\n')
         xvt.waste(1500)

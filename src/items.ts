@@ -119,7 +119,12 @@ export class Armor {
             return false
 
         // is common armor better?
-        if (winner.armor.armoury && loser.armor.armoury && winner.user.toAC >= 0 && winner.armor.ac > loser.armor.ac) {
+        if (winner.armor.armoury && loser.armor.armoury
+            && ((winner.toAC + winner.user.toAC) >= 0 || winner.armor.ac > loser.armor.ac)) {
+            if (sell) {
+                winner.user.coin.value += $.worth(new $.coins(loser.armor.value).value, winner.cha)
+                xvt.out($.who(winner, 'He'), $.what(winner, 'get'), winner.user.coin.carry(), ' for', $.who(loser, 'his'), loser.user.armor, '.\n')
+            }
             return false
         }
 
@@ -388,7 +393,12 @@ export class Weapon {
             return false
 
         // is common weapon better?
-        if (winner.weapon.shoppe && loser.weapon.shoppe && winner.user.toAC >= 0 && winner.weapon.wc > loser.weapon.wc) {
+        if (winner.weapon.shoppe && loser.weapon.shoppe
+            && ((winner.toWC + winner.user.toWC) >= 0 || winner.weapon.wc > loser.weapon.wc)) {
+            if (sell) {
+                winner.user.coin.value += $.worth(new $.coins(loser.weapon.value).value, winner.cha)
+                xvt.out($.who(winner, 'He'), $.what(winner, 'get'), winner.user.coin.carry(), ' for', $.who(loser, 'his'), loser.user.weapon, '.\n')
+            }
             return false
         }
 
