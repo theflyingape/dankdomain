@@ -470,6 +470,12 @@ export function activate(one: active, keep = false): boolean {
 export function checkXP(rpc: active) {
 
     if (!Access.name[rpc.user.access]) return
+    if (rpc.user.level >= sysop.level) {
+        rpc.user.immortal++
+        reroll(rpc.user)
+        return
+    }
+
     if (rpc.user.xp < experience(rpc.user.level, undefined, rpc.user.int)) return
 
     let award = {

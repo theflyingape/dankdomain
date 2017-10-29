@@ -321,7 +321,7 @@ export function spoils() {
                     if (xvt.validator.isBoolean(result) && result)
                         xvt.out($.who(winner, 'He'), $.what(winner, 'take'), $.who(loser, 'his'), winner.user.weapon, '.\n')
                     else if (result)
-                        xvt.out($.who(winner, 'He'), $.what(winner, 'get'), credit.carry(), ' for', $.who(loser, 'his'), loser.user.weapon, '.\n')
+                        xvt.out($.who(winner, 'He'), $.what(winner, 'get'), credit.carry(), ' for ', $.who(loser, 'his'), loser.user.weapon, '.\n')
 
                     credit = new $.coins(loser.armor.value)
                     credit.value = $.worth(credit.value, winner.cha)
@@ -329,7 +329,7 @@ export function spoils() {
                     if (xvt.validator.isBoolean(result) && result)
                         xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who(loser, 'his'), winner.user.armor, '.\n')
                     else if (result)
-                        xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'get'), credit.carry(), ' for', $.who(loser, 'his'), loser.user.armor, '.\n')
+                        xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'get'), credit.carry(), ' for ', $.who(loser, 'his'), loser.user.armor, '.\n')
                 }
                 else {
                     if ($.Weapon.swap(winner, loser))

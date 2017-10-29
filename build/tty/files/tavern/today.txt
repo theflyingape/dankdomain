@@ -32,3 +32,11 @@ The Flying Ape logged in 10:31am as a level 99 Titan:
 	logged off 10:36am as a level 99 Titan
 	(logged off as a level 99 Titan)
 
+The Flying Ape logged in 10:42am as a level 99 Titan:
+	logged off 10:49am as a level 99 Titan
+	(logged off as a level 99 Titan)
+
+The Flying Ape logged in 10:49am as a level 99 Titan:
+	logged off 10:55am as a level 100 Titan
+	(had something better to do)
+

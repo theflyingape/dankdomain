@@ -131,7 +131,7 @@ export function DeepDank(suppress = false) {
 }
 
 export function menu(suppress = false) {
-	if ($.player.level < $.sysop.level)
+	if ($.player.level + 1 < $.sysop.level)
 		$.checkXP($.online)
 	if ($.online.altered) $.saveUser($.player)
 	if ($.reason) xvt.hangup()
