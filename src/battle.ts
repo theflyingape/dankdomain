@@ -527,7 +527,7 @@ export function cast(rpc: active, cb:Function, nme?: active) {
 
         case 5:
             if (backfire) {
-
+                
             }
             else {
                 $.sound('shield')

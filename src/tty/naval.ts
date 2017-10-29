@@ -19,7 +19,8 @@ module Naval
 	}
 
 export function menu(suppress = false) {
-    xvt.app.form = {
+	$.action('naval')
+	xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }
     xvt.app.form['menu'].prompt = $.display('naval', xvt.Blue, xvt.blue, suppress, naval)

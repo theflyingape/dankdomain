@@ -21,6 +21,7 @@ module Tavern
 	}
 
 export function menu(suppress = false) {
+	$.action('tavern')
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }

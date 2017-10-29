@@ -79,31 +79,31 @@ else {
 }
 
 function receive(event) {
-    if (event.data) {
-        if (event.data.func) {
-            window[event.data.func]();
-            return
-        }
-
-        var html = '<p>';
-        if (event.data.handle) {
-            html += `${event.data.handle}`;
-        }
-        if (event.data.level) {
-        html += ` a level ${event.data.level} `;
-        }
-        if (event.data.pc) {
-            html += ` ${event.data.pc} `;
-        }
-        if (event.data.jpg) {
-            html += `<br><img src="images/${event.data.jpg}.jpg" onload="nmeResize();">`;
-        }
-        if (event.data.png) {
-            html += `<br><img src="images/${event.data.png}.png" onload="nmeResize();">`;
-        }
-        html += '</p>';
-        nme(html);
+  if (event.data) {
+    if (event.data.func) {
+      window[event.data.func]();
+      return
     }
+
+    var html = '<p>';
+    if (event.data.handle) {
+      html += `${event.data.handle}`;
+    }
+    if (event.data.level) {
+      html += ` a level ${event.data.level} `;
+    }
+    if (event.data.pc) {
+      html += ` ${event.data.pc} `;
+    }
+    if (event.data.jpg) {
+      html += `<br><img src="images/${event.data.jpg}.jpg" onload="nmeResize();">`;
+    }
+    if (event.data.png) {
+      html += `<br><img src="images/${event.data.png}.png" onload="nmeResize();">`;
+    }
+    html += '</p>';
+    nme(html);
+  }
 }
 
 function nme(html) {
@@ -121,8 +121,7 @@ function Logon() {
 <input type="password" placeholder="Enter password" name="password" required>
 <button type="submit">Login</button>
 </form>  
-<p><input class="tall" type="button" value="NEW" onclick="send('NEW', true);"> ${enter}</p>
-<p>${logoff}</p>`);
+<p><input class="tall" type="button" value="NEW" onclick="send('NEW', true);"> ${enter}</p>`);
 nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize();">`);
 }
 
@@ -260,16 +259,15 @@ ${quit}
 
 function casino() {
   nme('');
-  cmd(`
-<input class="wide" type="button" value="ATM" onclick="send('I');"> ${quit}<br>
-<input type="button" value="Black Jack" onclick="send('B');">
+  cmd(`<p><input class="wide" type="button" value=" ATM " onclick="send('I');"></p>
+<p><input type="button" value="Black Jack" onclick="send('B');">
 <input type="button" value="High Card" onclick="send('H');">
 <input type="button" value="Craps" onclick="send('C');">
 <input type="button" value="Dogs" onclick="send('D');">
 <input type="button" value="Slots" onclick="send('S');">
 <input type="button" value="Keno" onclick="send('K');">
-<input type="button" value="Roulette" onclick="send('R');">
-`);
+<input type="button" value="Roulette" onclick="send('R');"></p>
+${quit}`);
 }
 
 function dungeon() {
@@ -280,6 +278,37 @@ function dungeon() {
 <input class="tall" type="button" value=" South " onclick="send('S');"><br>
 <p><input type="button" value="Cast" onclick="send('C');"> <input type="button" value="Poison" onclick="send('P');"></p>
 <input class="tall" type="button" value=" Your Status " onclick="send('Y');">
+`);
+}
+
+function naval() {
+  nme('');
+  cmd(`<p><input class="tall" type="button" value=" Battle " onclick="send('B');"></p>
+<p><input type="button" value="Go Fishing" onclick="send('G');"> <input type="button" value="Hunt" onclick="send('H');">
+<input type="button" value="List" onclick="send('L');"> <input type="button" value="Status" onclick="send('Y');"></p>
+<input class="tall" type="button" value=" Quit " onclick="send('Q');">
+`);
+}
+
+function party() {
+  nme('');
+  cmd(`<p><input class="tall" type="button" value=" Fight " onclick="send('F');"></p>
+<p><input type="button" value="Join" onclick="send('J');"> <input type="button" value="List" onclick="send('L');">
+<input type="button" value="Most Wanted" onclick="send('M');"> <input type="button" value="Resign" onclick="send('R');">
+<input type="button" value="Start" onclick="send('S');"> <input type="button" value="Transfer" onclick="send('T');"></p>
+<input class="tall" type="button" value=" Quit " onclick="send('Q');">
+`);
+}
+
+function tavern() {
+  nme('');
+  cmd(`
+<p><input class="tall" type="button" value=" Brawl " onclick="send('B');"></p>
+<input type="button" value="Eavesdrop" onclick="send('E');"> <input type="button" value="Jump" onclick="send('J');"><br>
+<input type="button" value="Guzzle" onclick="send('G');"> <input type="button" value="Swear" onclick="send('S');"><br>
+<input type="button" value="List" onclick="send('L');"> <input type="button" value="Post" onclick="send('P');"><br>
+<p><input type="button" value="Today" onclick="send('T');"> <input type="button" value="Yesterday" onclick="send('Y');"></p>
+<input class="tall" type="button" value=" Quit " onclick="send('Q');">
 `);
 }
 

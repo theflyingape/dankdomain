@@ -20,6 +20,7 @@ module Party
 	}
 
 export function menu(suppress = false) {
+    $.action('party')
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }

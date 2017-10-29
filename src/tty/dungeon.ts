@@ -222,7 +222,15 @@ function command() {
 			}
 			break
 
-        case 'Q':
+		case 'C':
+			Battle.cast($.online, menu)
+			return
+
+		case 'P':
+			Battle.poison($.online, menu)
+			return
+
+		case 'Q':
 			if ($.Access.name[$.player.access].sysop) {
 				require('./main').menu($.player.expert)
 				return
