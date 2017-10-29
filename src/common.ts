@@ -467,15 +467,15 @@ export function activate(one: active, keep = false): boolean {
     return true
 }
 
-export function checkXP(rpc: active) {
+export function checkXP(rpc: active): boolean {
 
-    if (!Access.name[rpc.user.access]) return
+    if (!Access.name[rpc.user.access]) return false
     if (rpc.user.level >= sysop.level) {
         riddle()
-        return
+        return true
     }
 
-    if (rpc.user.xp < experience(rpc.user.level, undefined, rpc.user.int)) return
+    if (rpc.user.xp < experience(rpc.user.level, undefined, rpc.user.int)) return false
 
     let award = {
         hp: rpc.user.hp,
@@ -943,7 +943,7 @@ export function newkeys(user: user) {
     }
 }
 
-export function playerPC(points = 200) {
+export function playerPC(points = 200, immortal = false) {
     if (points > 256) points = 256
     xvt.out(xvt.reset, '\n')
     xvt.waste(1000)
@@ -977,6 +977,12 @@ export function playerPC(points = 200) {
         'cha': { cb:ability, min:2, max:2, match:/^[2-8][0-9]$/ }
     }
 
+    if (immortal) {
+        show()
+        ability('str')
+        return
+    }
+
     xvt.out('You have been rerolled.  You must pick a class.\n')
     xvt.waste(1000)
     let classes = {}
@@ -988,7 +994,7 @@ export function playerPC(points = 200) {
         }
     }
     xvt.out('\n')
-    xvt.app.form['pc'].prompt = 'Enter class (1-' + (n-2) +'): '
+    xvt.app.form['pc'].prompt = 'Enter class (1-' + (n - 2) +'): '
     xvt.app.focus = 'pc'
 
     function show() {
@@ -1255,7 +1261,7 @@ export function reroll(user: user, dd?: string, level = 1) {
         user.loan = new coins(0)
         user.gender = user.sex
         //  force a verify if their access allows it
-        if (!user.novice && !Access.name[player.access].sysop) user.email = ''
+        // if (!user.novice && !Access.name[player.access].sysop) user.email = ''
     }
 
     if (level == 1 || xvt.validator.isEmpty(user.id) || user.id[0] === '_') {
@@ -1293,11 +1299,30 @@ export function riddle() {
     let max = Object.keys(PC.name['immortal']).indexOf(player.pc) + 1
     if (max > 2 || player.pc === PC.winning) {
         player.wins++
+        saveUser(player)
+        reroll(player)
         reason = 'WON THE GAME !!'
+
+        sysop.dob = now().date + 1
+        saveUser(sysop)
+
+        xvt.out(xvt.bright, xvt.yellow, 'CONGRATULATIONS!!'
+            , xvt.reset, '  You have won the game!\n'
+        )
+        xvt.out(xvt.yellow, 'The board will now be reset... ')
+        let rs = query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
+        let user: user = { id:'' }
+        for (let row in rs) {
+            user.id = rs[row].id
+            loadUser(user)
+            reroll(user)
+            saveUser(user)
+        }
+        xvt.out('Happy Hunting!\n')
         xvt.hangup()
     }
 
-    xvt.out(`Ol' Mighty One!  Solve the Ancient Riddle of the Keys and you will become\n`)
+    xvt.out(`\nOl' Mighty One!  Solve the Ancient Riddle of the Keys and you will become\n`)
     xvt.out(`an immortal being.\n\n`)
     let slot = 0
     for (let i in player.keyhints) {
@@ -1335,18 +1360,28 @@ export function riddle() {
                 xvt.out(xvt.cyan, '{', xvt.bright, 'Click!', xvt.nobright, '}\n')
                 player.pc = Object.keys(PC.name['immortal'])[slot]
                 xvt.out(`You are now a ${player.pc}.\n`)
+                if (slot++ < max) {
+                    xvt.app.form['key'].prompt = `Insert key #${slot + 1}? `
+                    xvt.app.refocus()
+                    return
+                }
+                reroll(player, player.pc)
+                playerPC(200, true)
+                return
             }
             else {
                 sound('thunder')
                 xvt.out(xvt.bright, xvt.black, '^', xvt.white, 'Boom!', xvt.black, '^\n')
                 if (slot == 0) {
-                    player.pc = Object.keys(PC.name['player'])[0]
-                    playerPC(200 + 10 * player.wins + player.immortal>>1)
+                    reroll(player, Object.keys(PC.name['player'])[0])
+                    playerPC(200 + 10 * player.wins + (player.immortal>>1))
                 }
-                reason = 'became immortal'
-                xvt.hangup()
+                else {
+                    reroll(player, player.pc)
+                    playerPC(200, true)
+                }
+                return
             }
-            xvt.app.refocus()
         }, eol:false, match:/P|G|S|C/i }
     }
     slot = 0
@@ -1480,7 +1515,6 @@ export function display(title:string, back:number, fore:number, suppress:boolean
             }
         }
     }
-    checkXP(online)
     return xvt.attr(fore, '[', xvt.bright, xvt.yellow, back ? titlecase(title) : 'Iron Bank', xvt.normal, fore, ']', xvt.cyan, ' Option (Q=Quit): ')
 }
 
@@ -1520,10 +1554,9 @@ export function logoff() {
     if (xvt.validator.isNotEmpty(player.id)) {
         if (reason !== '') {
             sound('goodbye')
-            if (player.calls) {
-                player.lasttime = now().time
-                if (access)
-                    saveUser(player)
+            player.lasttime = now().time
+            if (access.roleplay) {
+                saveUser(player)
                 unlock(player.id)
             }
 

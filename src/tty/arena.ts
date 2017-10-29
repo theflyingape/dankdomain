@@ -24,7 +24,12 @@ module Arena
 	}
 
 export function menu(suppress = true) {
-	if ($.reason) require('./main').menu($.player.expert)
+    if ($.checkXP($.online)) return
+	if ($.reason) {
+		require('./main').menu($.player.expert)
+		return
+	}
+
 	$.action('arena')
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
