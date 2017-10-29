@@ -1,65 +1,105 @@
-The Flying Ape logged in 1:50pm as a level 100 Ranger:
-	logged off 1:50pm as a level 100 None
-	(became immortal)
+The Flying Ape logged in 5:03pm as a level 99 None:
+	rerolled as a Ranger
+	logged off 5:04pm as a level 1 Ranger
+	(logged off as a level 1 Ranger)
 
-The Flying Ape logged in 2:59pm as a level 100 Ranger:
-	logged off 2:59pm as a level 1 Paladin
-	(became immortal)
-
-The Flying Ape logged in 3:10pm as a level 100 Ranger:
-	logged off 3:10pm as a level 1 Bard
+The Flying Ape logged in 5:04pm as a level 99 Ranger:
+	logged off 5:09pm as a level 101 Ranger
 	(had something better to do)
 
-The Flying Ape logged in 3:12pm as a level 100 Ranger:
-	rerolled as a Bard
-	logged off 3:12pm as a level 1 Bard
-	(logged off as a level 1 Bard)
+The Flying Ape logged in 5:10pm as a level 99 Ranger:
+	logged off 5:10pm as a level 100 Ranger
+	(logged off as a level 100 Ranger)
 
-The Flying Ape logged in 3:27pm as a level 100 Bard:
-	logged off 3:27pm as a level 1 Paladin
-	(had something better to do)
+The Flying Ape logged in 5:11pm as a level 99 Ranger:
+	rerolled as a Thief
+	logged off 5:13pm as a level 1 Thief
+	(logged off as a level 1 Thief)
 
-The Flying Ape logged in 3:40pm as a level 100 Bard:
-	rerolled as a Alchemist
-	logged off 3:40pm as a level 1 Alchemist
-	(had something better to do)
-
-The Flying Ape logged in 3:42pm as a level 100 Alchemist:
-	logged off 3:42pm as a level 1 Paladin
-	(hangup)
-
-The Flying Ape logged in 3:52pm as a level 100 Alchemist:
-	logged off 3:52pm as a level 1 Paladin
-	(had something better to do)
-
-The Flying Ape logged in 4:03pm as a level 100 Alchemist:
+The Flying Ape logged in 5:13pm as a level 99 Thief:
 	rerolled as a Paladin
-	logged off 4:03pm as a level 1 Paladin
+	logged off 5:17pm as a level 1 Paladin
 	(logged off as a level 1 Paladin)
 
-The Flying Ape logged in 4:05pm as a level 100 Paladin:
+The Flying Ape logged in 5:20pm as a level 99 Paladin:
 	rerolled as a Titan
-	logged off 4:05pm as a level 1 Titan
-	(logged off as a level 1 Titan)
+	logged off 5:21pm as a level 1 Titan
+	(mystery)
 
-The Flying Ape logged in 4:16pm as a level 100 Titan:
+The Flying Ape logged in 5:28pm as a level 99 Titan:
 	rerolled as a God
-	logged off 4:16pm as a level 1 God
+	logged off 5:29pm as a level 1 God
+	(mystery)
+
+The Flying Ape logged in 5:32pm as a level 99 God:
+	logged off 5:32pm as a level 1 None
+	(WON THE GAME !!)
+
+	logged off 5:33pm as a level 1 None
+	(logged off as a level 1 None)
+
+The Flying Ape logged in 5:57pm as a level 99 None:
+	rerolled as a Thief
+	logged off 5:57pm as a level 1 Thief
+	(logged off as a level 1 Thief)
+
+The Flying Ape logged in 5:58pm as a level 99 Thief:
+	rerolled as a Alchemist
+	logged off 6:03pm as a level 1 Alchemist
+	(logged off as a level 1 Alchemist)
+
+The Flying Ape logged in 6:10pm as a level 99 Alchemist:
+	logged off 6:11pm as a level 100 Alchemist
+	(hangup)
+
+The Flying Ape logged in 6:12pm as a level 100 Alchemist:
+	logged off 6:15pm as a level 1 Paladin
+	(fallen asleep)
+
+The Flying Ape logged in 6:16pm as a level 1 Paladin:
+	logged off 6:16pm as a level 1 Paladin
 	(caught picking a pocket)
 
-The Flying Ape logged in 4:20pm as a level 100 God:
-	logged off 4:20pm as a level 100 God
-	(WON THE GAME !!)
+The Flying Ape logged in 6:17pm as a level 99 Paladin:
+	rerolled as a Titan
+	logged off 6:18pm as a level 1 Titan
+	(ascended to an immortal class)
 
-The Flying Ape logged in 4:20pm as a level 100 God:
-	logged off 4:20pm as a level 100 God
-	(WON THE GAME !!)
+The Flying Ape logged in 6:19pm as a level 99 Titan:
+	logged off 6:20pm as a level 1 God
+	(had something better to do)
 
-The Flying Ape logged in 4:34pm as a level 100 God:
-	logged off 4:34pm as a level 100 God
-	(WON THE GAME !!)
+The Flying Ape logged in 6:23pm as a level 99 Ranger:
+	rerolled as a Assassin
+	logged off 6:25pm as a level 1 Assassin
+	(caught picking a pocket)
 
-The Flying Ape logged in 4:36pm as a level 100 God:
-	logged off 4:36pm as a level 1 None
-	(WON THE GAME !!)
+The Flying Ape logged in 6:25pm as a level 99 Ranger:
+	rerolled as a Paladin
+	logged off 6:27pm as a level 1 Paladin
+	(ascended to an immortal class)
+
+The Flying Ape logged in 6:33pm as a level 1 Paladin:
+	logged off 6:33pm as a level 1 Paladin
+	(defeated by a level 3 Orc)
+
+The Flying Ape logged in 6:33pm as a level 99 Paladin:
+	rerolled as a Barbarian
+	logged off 6:34pm as a level 1 Barbarian
+	(logged off as a level 1 Barbarian)
+
+The Flying Ape logged in 6:34pm as a level 99 Barbarian:
+	rerolled as a Jester
+	logged off 6:35pm as a level 1 Jester
+	(logged off as a level 1 Jester)
+
+The Flying Ape logged in 6:37pm as a level 99 Jester:
+	rerolled as a Sage
+	logged off 6:38pm as a level 1 Sage
+	(logged off as a level 1 Sage)
+
+The Flying Ape logged in 6:38pm as a level 99 Sage:
+	rerolled as a Paladin
+	logged off 6:39pm as a level 1 Paladin
+	(ascended to an immortal class)
 

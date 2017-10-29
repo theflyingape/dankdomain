@@ -474,7 +474,6 @@ export function checkXP(rpc: active): boolean {
         riddle()
         return true
     }
-
     if (rpc.user.xp < experience(rpc.user.level, undefined, rpc.user.int)) return false
 
     let award = {
@@ -564,7 +563,7 @@ export function checkXP(rpc: active): boolean {
     xvt.out('\n')
     xvt.waste(125)
 
-    if (player.level <= sysop.level) {
+    if (player.level < sysop.level) {
         xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.hp), xvt.reset, ' Hit points\n')
         xvt.waste(125)
         if(award.sp) {
@@ -591,23 +590,27 @@ export function checkXP(rpc: active): boolean {
         xvt.waste(125)
         if(eligible && bonus) {
             skillplus(rpc)
-            return
+            return false
         }
     }
     else {
         if (rpc.user.novice) {
             xvt.out(xvt.reset, '\nYou are no longer a novice.  Welcome to the next level of play.\n\n')
             rpc.user.novice = false
+            xvt.waste(2000)
         }
-        xvt.out(xvt.cyan, 'Checking your statistics against All-Time Fame/Lame lists...\n')
-        xvt.out(xvt.cyan, 'Checking your statistics against the ', rpc.user.pc,' Fame/Lame lists...\n')
+        xvt.out(xvt.magenta, 'Checking your statistics against All-Time Fame/Lame lists...\n')
+        xvt.out(xvt.blue, 'Checking your statistics against the ', rpc.user.pc,' Fame/Lame lists...\n')
 
-        xvt.out('You have become so powerful that you are now immortal and you leave your \n')
+        xvt.out(xvt.bright, xvt.cyan, '\nYou have become so powerful that you are now immortal and you leave your \n')
         xvt.out('worldly possessions behind.\n')
+        loadUser(taxman)
         taxman.user.bank.value +=  rpc.user.bank.value + rpc.user.coin.value
         saveUser(taxman)
+        xvt.waste(2000)
 
-        xvt.out('+immortalize+\n')
+        riddle()
+        return true
     }
 }
 
@@ -913,6 +916,53 @@ export function experience(level: number, factor = 1, wisdom = 1000): number {
         : Math.trunc(wisdom * Math.pow(2, level - 2) / factor)
 }
 
+export function keyhint(rpc: active) {
+
+    let open = []
+    let slot: number
+    let i:number
+
+    for (let i in rpc.user.keyhints)
+        if (!rpc.user.keyhints[i]) open.push(i)
+    if (open.length) {
+        do {
+            i = open[dice(open.length) - 1]
+            slot = Math.trunc(i / 3)
+            let key = [ 'P', 'G', 'S', 'C' ][dice(4) - 1]
+            if (key !== rpc.user.keyseq[slot]) {
+                for (let n = 3 * slot; n < 3 * (slot + 1); n++)
+                    if (key === rpc.user.keyhints[n])
+                        key = ''
+                if (key) player.keyhints[i] = key
+            }
+        } while(!player.keyhints[i])
+
+        xvt.out(xvt.reset, `Key #${slot + 1} is not `, xvt.bright, xvt.reverse)
+        switch (player.keyhints[i]) {
+        case 'P':
+            xvt.out(xvt.magenta, ' Platinum ')
+            break
+        case 'G':
+            xvt.out(xvt.yellow, ' Gold ')
+            break
+        case 'S':
+            xvt.out(xvt.cyan, ' Silver ')
+            break
+        case 'C':
+            xvt.out(xvt.red, ' Copper ')
+            break
+        default:
+            xvt.out(xvt.black, `${player.keyhints[i]} from here`)
+            break
+        }
+        xvt.out(xvt.reset, '\n')
+    }
+    else {
+        xvt.out(xvt.reset, 'There are no more key hints available to you.\n')
+    }
+    rpc.altered = true
+}
+
 export function money(level: number): number {
     return Math.trunc(Math.pow(2, (level - 1) / 2) * 10 * (101 - level) / 100)
 }
@@ -959,6 +1009,8 @@ export function playerPC(points = 200, immortal = false) {
         player.security = novice.security
         player.weapon = novice.weapon
         player.armor = novice.armor
+        player.keyhints = [ '','','',  '','','',  '','','',  '','','' ]
+        newkeys(player)
 
         xvt.out('Since you are a new user here, you are automatically assigned a character\n')
         xvt.out('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.')
@@ -969,6 +1021,7 @@ export function playerPC(points = 200, immortal = false) {
         return
     }
 
+    action('list')
     xvt.app.form = {
         'pc': { cb:pick, min:1, max:2 },
         'str': { cb:ability, min:2, max:2, match:/^[2-8][0-9]$/ },
@@ -1092,6 +1145,10 @@ export function playerPC(points = 200, immortal = false) {
                 activate(online)
                 xvt.out('\n')
                 news(`\trerolled as a ${player.pc}`)
+                if (immortal) {
+                    reason = `ascended to an immortal class`
+                    xvt.hangup()
+                }
                 require('./tty/main').menu(true)
                 return
         }
@@ -1276,8 +1333,6 @@ export function reroll(user: user, dd?: string, level = 1) {
         user.blessed = ''
         user.cursed = ''
         user.coward = false
-        user.keyhints = [ '','','',  '','','',  '','','',  '','','' ]
-        newkeys(user)
         user.plays = 0
         user.jl = 0
         user.jw = 0
@@ -1322,25 +1377,26 @@ export function riddle() {
         xvt.hangup()
     }
 
-    xvt.out(`\nOl' Mighty One!  Solve the Ancient Riddle of the Keys and you will become\n`)
+    xvt.out(xvt.green, `\nOl' Mighty One!  Solve the Ancient Riddle of the Keys and you will become\n`)
     xvt.out(`an immortal being.\n\n`)
-    let slot = 0
+
+    let slot: number
     for (let i in player.keyhints) {
-        if (+i % 3 == 0) slot++
         if (player.keyhints[i]) {
-            xvt.out(`Key #${slot} is not `, xvt.bright)
+            slot = Math.trunc(+i / 3) + 1
+            xvt.out(xvt.reset, `Key #${slot} is not `, xvt.bright, xvt.reverse)
             switch (player.keyhints[i]) {
             case 'P':
-                xvt.out(xvt.magenta, 'Platinum')
+                xvt.out(xvt.magenta, ' Platinum ')
                 break
             case 'G':
-                xvt.out(xvt.magenta, 'Gold')
+                xvt.out(xvt.yellow, ' Gold ')
                 break
             case 'S':
-                xvt.out(xvt.magenta, 'Silver')
+                xvt.out(xvt.cyan, ' Silver ')
                 break
             case 'C':
-                xvt.out(xvt.magenta, 'Copper')
+                xvt.out(xvt.red, ' Copper ')
                 break
             default:
                 xvt.out(xvt.black, `${player.keyhints[i]} from here`)
@@ -1350,6 +1406,9 @@ export function riddle() {
         }
     }
 
+    for (let i = 0; i <= max; i++)
+        keyhint(online)
+
     action('riddle')
     xvt.app.form = {
         'key': { cb:() => {
@@ -1357,27 +1416,37 @@ export function riddle() {
             xvt.waste(1000)
             if (xvt.entry.toUpperCase() === player.keyseq[slot]) {
                 sound('max')
-                xvt.out(xvt.cyan, '{', xvt.bright, 'Click!', xvt.nobright, '}\n')
+                xvt.out(xvt.cyan, '{', xvt.bright, 'Click!', xvt.normal, '}\n')
                 player.pc = Object.keys(PC.name['immortal'])[slot]
-                xvt.out(`You are now a ${player.pc}.\n`)
+                profile({ png:'player/' + player.pc.toLowerCase() + (player.gender === 'F' ? '_f' : ''), pc:player.pc })
+                xvt.out(xvt.bright, [ xvt.cyan, xvt.blue, xvt.magenta ][slot], `You are now a ${player.pc}.\n`)
                 if (slot++ < max) {
                     xvt.app.form['key'].prompt = `Insert key #${slot + 1}? `
                     xvt.app.refocus()
                     return
                 }
                 reroll(player, player.pc)
+                player.keyhints = [ '','','',  '','','',  '','','',  '','','' ]
+                newkeys(player)
                 playerPC(200, true)
                 return
             }
             else {
                 sound('thunder')
                 xvt.out(xvt.bright, xvt.black, '^', xvt.white, 'Boom!', xvt.black, '^\n')
+                for (let i = 3 * slot; i < 3 * (slot + 1); i++)
+                    if (!player.keyhints[i]) {
+                        player.keyhints[i] = xvt.entry.toUpperCase()
+                        break
+                    }
                 if (slot == 0) {
                     reroll(player, Object.keys(PC.name['player'])[0])
                     playerPC(200 + 10 * player.wins + (player.immortal>>1))
                 }
                 else {
                     reroll(player, player.pc)
+                    player.keyhints = [ '','','',  '','','',  '','','',  '','','' ]
+                    newkeys(player)
                     playerPC(200, true)
                 }
                 return

@@ -21,12 +21,13 @@ tsc -v && sudo npm update typescript -g || sudo npm install typescript -g
 sudo npm install
 
 # transpile and test run locally
-npm start
+npm run build
 
 # copy build, add it as a network service, and happy hunting
 member=`sudo groupmems -g games -l | grep -c nobody`
 [ $member -eq 0 ] && sudo groupmems -g games -a nobody
 
+[ -d ./build/tty/files/tavern ] || sudo mkdir ./build/tty/files/tavern
 sudo rsync -a --delete ./build/ ${TARGET}
 sudo rsync -a --delete ./node_modules ${TARGET}/
 sudo chown -R root.games ${TARGET}
