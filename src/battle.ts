@@ -63,7 +63,6 @@ export function attack(retry = false) {
 
     if (!round.length) {
         if (volley > 1) xvt.out(xvt.reset, '\n    -=', $.bracket('*', false), '=-\n')
-        //  lame for now
         for (let p in parties) {
             for (let m in parties[p]) {
                 if (parties[p][m].hp > 0) {
@@ -78,7 +77,6 @@ export function attack(retry = false) {
     }
 
     let n = round[0]
-    if (!retry) n = round.shift()
     let rpc = parties[n.party][n.member]
     if (rpc.hp < 1) {
         next()
@@ -246,7 +244,8 @@ export function attack(retry = false) {
             attack(retry)
             return
         }
-
+        round.shift()
+        
         alive = []
         for (let p in parties) {
             alive.push(parties[p].length)

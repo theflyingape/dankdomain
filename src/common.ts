@@ -471,8 +471,7 @@ export function checkXP(rpc: active) {
 
     if (!Access.name[rpc.user.access]) return
     if (rpc.user.level >= sysop.level) {
-        rpc.user.immortal++
-        reroll(rpc.user)
+        riddle()
         return
     }
 
@@ -945,6 +944,7 @@ export function newkeys(user: user) {
 }
 
 export function playerPC(points = 200) {
+    if (points > 256) points = 256
     xvt.out(xvt.reset, '\n')
     xvt.waste(1000)
     if (!Access.name[player.access].roleplay) return
@@ -964,6 +964,7 @@ export function playerPC(points = 200) {
         xvt.out('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.')
         show()
         activate(online)
+        news(`\trerolled as a ${player.pc}`)
         require('./tty/main').menu(true)
         return
     }
@@ -1084,6 +1085,7 @@ export function playerPC(points = 200) {
                 player.cha = n
                 activate(online)
                 xvt.out('\n')
+                news(`\trerolled as a ${player.pc}`)
                 require('./tty/main').menu(true)
                 return
         }
@@ -1193,10 +1195,10 @@ export function remake(user: user) {
     }
 }
 
-export function reroll(user: user, dd = 'None', level = 1) {
+export function reroll(user: user, dd?: string, level = 1) {
     //  reset essential character attributes
     user.level = level
-    user.pc = dd
+    user.pc = dd ? dd : Object.keys(PC.name['player'])[0]
     user.status = ''
 
     let rpc = PC.card(user.pc)
@@ -1268,7 +1270,7 @@ export function reroll(user: user, dd = 'None', level = 1) {
         user.blessed = ''
         user.cursed = ''
         user.coward = false
-        user.keyhints = []
+        user.keyhints = [ '','','',  '','','',  '','','',  '','','' ]
         newkeys(user)
         user.plays = 0
         user.jl = 0
@@ -1281,6 +1283,75 @@ export function reroll(user: user, dd = 'None', level = 1) {
     }
 
     remake(user)
+}
+
+// the Ancient Riddle of the Keys
+export function riddle() {
+    player.calls = 0
+    player.immortal++
+
+    let max = Object.keys(PC.name['immortal']).indexOf(player.pc) + 1
+    if (max > 2 || player.pc === PC.winning) {
+        player.wins++
+        reason = 'WON THE GAME !!'
+        xvt.hangup()
+    }
+
+    xvt.out(`Ol' Mighty One!  Solve the Ancient Riddle of the Keys and you will become\n`)
+    xvt.out(`an immortal being.\n\n`)
+    let slot = 0
+    for (let i in player.keyhints) {
+        if (+i % 3 == 0) slot++
+        if (player.keyhints[i]) {
+            xvt.out(`Key #${slot} is not `, xvt.bright)
+            switch (player.keyhints[i]) {
+            case 'P':
+                xvt.out(xvt.magenta, 'Platinum')
+                break
+            case 'G':
+                xvt.out(xvt.magenta, 'Gold')
+                break
+            case 'S':
+                xvt.out(xvt.magenta, 'Silver')
+                break
+            case 'C':
+                xvt.out(xvt.magenta, 'Copper')
+                break
+            default:
+                xvt.out(xvt.black, `${player.keyhints[i]} from here`)
+                break
+            }
+            xvt.out(xvt.reset, '.\n')
+        }
+    }
+
+    action('riddle')
+    xvt.app.form = {
+        'key': { cb:() => {
+            xvt.out(' ...you insert and twist the key... ')
+            xvt.waste(1000)
+            if (xvt.entry.toUpperCase() === player.keyseq[slot]) {
+                sound('max')
+                xvt.out(xvt.cyan, '{', xvt.bright, 'Click!', xvt.nobright, '}\n')
+                player.pc = Object.keys(PC.name['immortal'])[slot]
+                xvt.out(`You are now a ${player.pc}.\n`)
+            }
+            else {
+                sound('thunder')
+                xvt.out(xvt.bright, xvt.black, '^', xvt.white, 'Boom!', xvt.black, '^\n')
+                if (slot == 0) {
+                    player.pc = Object.keys(PC.name['player'])[0]
+                    playerPC(200 + 10 * player.wins + player.immortal>>1)
+                }
+                reason = 'became immortal'
+                xvt.hangup()
+            }
+            xvt.app.refocus()
+        }, eol:false, match:/P|G|S|C/i }
+    }
+    slot = 0
+    xvt.app.form['key'].prompt = `Insert key #${slot + 1}? `
+    xvt.app.focus = 'key'
 }
 
 //  Player Character
@@ -1678,6 +1749,8 @@ export function loadUser(rpc): boolean {
         user.bank = new coins(rs[0].bank)
         user.loan = new coins(rs[0].loan)
         user.bounty = new coins(rs[0].bounty)
+
+        user.keyhints = rs[0].keyhints.split(',')
 
         user.poisons = []
         if (rs[0].poisons.length) {
