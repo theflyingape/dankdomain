@@ -1,0 +1,7 @@
+{
+	"service": "gmail",
+	"auth": {
+		"user": "your.game.account@gmail.com",
+		"pass": "abcdefghijklmnop"
+	}
+}
