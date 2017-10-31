@@ -217,7 +217,7 @@ export class Magic {
         }
         return have
     }
-
+        
     pick(n: number): string {
         let name = ''
         if (n > 0 && n <= Object.keys(this.spells).length)
@@ -229,6 +229,11 @@ export class Magic {
         return name
     }
 
+    power(rpc: active, n: number): number {
+        let spell = this.spells[this.pick(n)]
+        return rpc.user.magic < 2 ? 0 : rpc.user.magic < 4 ? spell.mana : spell.enchanted
+    }
+        
     remove(spells: number[], n:number) {
         let i = spells.indexOf(n)
         if (i >= 0) spells.splice(i, 1)

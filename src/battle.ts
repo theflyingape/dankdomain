@@ -232,12 +232,292 @@ export function attack(retry = false) {
             return
         }
     }
+/*
+
+if(!volley && dice((100 - rpc->user.Level) / 5 + 5) < rpc->user.MyPoison)
+    PoisonWeapon(rpc);
+c = 'A';
+if(rpc->INT >= ((70 + 30 * rpc->HP / rpc->user.HP) - 5 * rpc->user.MyMagic) || !rpc->Confused) {
+    if(nest)
+            switch(rpc->user.MyMagic) {
+                    case 1:
+                            if(dice(6) == 1)
+                                    c = 'C';
+                            break;
+                    case 2:
+                            if(dice(5) == 1)
+                                    c = 'C';
+                            break;
+                    case 3:
+                            if(dice(4) == 1)
+                                    c = 'C';
+                            break;
+                    case 4:
+                            if(dice(3) == 1)
+                                    c = 'C';
+                            break;
+            }
+    else
+    if(from == 'P')
+            switch(rpc->user.MyMagic) {
+                    case 1:
+                            if(dice(10) == 1)
+                                    c = 'C';
+                            break;
+                    case 2:
+                            if(dice(6) == 1)
+                                    c = 'C';
+                            break;
+                    case 3:
+                            if(dice(4) == 1)
+                                    c = 'C';
+                            break;
+                    case 4:
+                            if(dice(2) == 1)
+                                    c = 'C';
+                            break;
+            }
+    else
+        switch(rpc->user.MyMagic) {
+                case 1:
+                        if(dice(5) == 1)
+                                c = 'C';
+                        break;
+                case 2:
+                        if(dice(3) == 1)
+                                c = 'C';
+                        break;
+                case 3:
+                        if(dice(2) == 1)
+                                c = 'C';
+                        break;
+                case 4:
+                        if(dice(1) == 1)
+                                c = 'C';
+                        break;
+        }
+}
+
+if(c == 'C') {
+        if(!(n = Cast(rpc, enemy)))
+                c = 'A';
+        if(abs(n) == TELEPORT_SPELL)
+                c = 'r';
+}
+
+if(c == 'A') {
+        if(rpc->user.Coward && (int)rpc->user.ExpLevel - (int)enemy->user.ExpLevel > 3 && rpc->HP < rpc->user.HP / 4) {
+                memset(rpc->user.Blessed,0,sizeof(rpc->user.Blessed));
+                if(strlen(enemy->user.ID))
+                        strcpy(rpc->user.Cursed,enemy->user.ID);
+                sprintf(outbuf,"%s%s runs away from the battle!",(rpc->user.Gender=='I' ? "The " : ""),rpc->user.Handle);
+                rpc->user.Current.Retreats++;
+                rpc->user.History.Retreats++;
+                c='r';
+        }
+        else {
+                n=Melee(rpc,enemy,1);
+                rpc->user.History.HP+=n;
+                enemy->HP-=n;
+        }
+}
+
+if(enemy->HP < 1) {
+        enemy->HP = 0;
+        if(from == 'P') {
+                if(c == 'A')
+                        switch(dice(6)) {
+                                case 1:
+                                        sprintf(outbuf, "%s makes a fatal blow to %s.", rpc->user.Handle, enemy->user.Handle);
+                                        break;
+                                case 2:
+                                        sprintf(outbuf, "%s blows %s away.", rpc->user.Handle, enemy->user.Handle);
+                                        break;
+                                case 3:
+                                        sprintf(outbuf, "%s laughs, then kills %s.", rpc->user.Handle, enemy->user.Handle);
+                                        break;
+                                case 4:
+                                        sprintf(outbuf, "%s easily slays %s.", rpc->user.Handle, enemy->user.Handle);
+                                        break;
+                                case 5:
+                                        sprintf(outbuf, "%s makes minced-meat out of %s.", rpc->user.Handle, enemy->user.Handle);
+                                        break;
+                                case 6:
+                                        sprintf(outbuf, "%s runs %s through.", rpc->user.Handle, enemy->user.Handle);
+                                        break;
+                        }
+                        if(c == 'C')
+                                strcat(outbuf," {RIP}");
+                }
+
+*/
     //  NPC
     else {
+        if (volley == 1 && $.dice((100 - rpc.user.level) / 5 + 5) < rpc.user.poison)
+            poison(rpc)
+
+        //  might or magic?
+        let mm: number = 0
+        let nest: number = 0
+        if (rpc.user.magic == 1) {
+            if ($.Magic.have(rpc.user.spells, 8)
+                && rpc.hp < rpc.user.hp / 6
+                && $.dice(6 - enemy.user.melee) == 1)
+                    mm = 8
+            else if ($.Magic.have(rpc.user.spells, 7)
+                    && rpc.hp < (rpc.user.hp >>1)
+                    && $.dice(enemy.user.melee + 2) > 1)
+                    mm = 7
+            else if ($.Magic.have(rpc.user.spells, 9)
+                    && rpc.hp < (rpc.user.hp >>1)
+                    && $.dice(enemy.user.melee + 2) > 1)
+                    mm = 9
+            else if ($.Magic.have(rpc.user.spells, 11)
+                    && rpc.hp > (rpc.user.hp >>1)
+                    && $.dice(enemy.user.melee + 2) == 1)
+                    mm = 11
+            else if ($.Magic.have(rpc.user.spells, 13)
+                    && rpc.hp < (rpc.user.hp / 6)
+                    && $.dice((rpc.user.level - enemy.user.level) / 9 + 2) == 1)
+                    mm = 13
+            else if (!rpc.confused) {
+                if ($.Magic.have(rpc.user.spells, 14)
+                    && rpc.hp > (rpc.user.hp >>1)
+                    && $.dice((rpc.user.level - enemy.user.level) / 9 + 2) == 1)
+                        mm = 14
+                if ($.Magic.have(rpc.user.spells, 12)
+                    && rpc.hp > (rpc.user.hp >>1)
+                    && $.dice((rpc.user.level - enemy.user.level) / 9 + 2) == 1)
+                        mm = 12
+                if ($.Magic.have(rpc.user.spells, 15)
+                    && rpc.hp > (rpc.user.hp >>1)
+                    && $.dice(nest + (rpc.user.level - enemy.user.level) / 9 + 2) == 1)
+                        mm = 15
+                if ($.Magic.have(rpc.user.spells, 16)
+                    && rpc.hp == rpc.user.hp
+                    && $.dice(nest + (rpc.user.level - enemy.user.level) / 9 + 2) == 1)
+                    mm = 16
+            }
+        }
+        if (rpc.user.magic > 1) {
+            if (!rpc.confused) {
+                if ($.Magic.have(rpc.user.spells, 15)
+                    && rpc.sp >= $.Magic.power(rpc, 15)
+                    && $.dice((rpc.user.level - enemy.user.level) / 9 + 2) == 1)
+                        mm = 15
+/*                else
+                if((rpc->user.Spell & MORPH_SPELL) && rpc->SP >= MAGIC(14)->Power[mu] && rpc->HP == rpc->user.HP && dice((BYTE)(rpc->user.Level - enemy->user.Level) / 9 + 2) == 1) {
+                        p = MORPH_SPELL;
+                        s = 16;
+                }
+                else
+                if(rpc->HP > rpc->user.HP / 2) {
+                        if((rpc->user.Spell & CONFUSION_SPELL) && rpc->SP >= MAGIC(10)->Power[mu] && dice(5 - enemy->user.MyMagic) == 1) {
+                                p = CONFUSION_SPELL;
+                                s = 11;
+                        }
+                        else
+                        if((rpc->user.Spell & ILLUSION_SPELL) && rpc->SP >= MAGIC(13)->Power[mu] && dice((BYTE)(rpc->user.Level - enemy->user.Level) / 9 + 2) == 1) {
+                                p = ILLUSION_SPELL;
+                                s = 14;
+                        }
+                        else
+                        if((rpc->user.Spell & TRANSMUTE_SPELL) && rpc->SP >= MAGIC(11)->Power[mu] && dice((BYTE)(rpc->user.Level - enemy->user.Level) / 9 + 2) == 1) {
+                                p = TRANSMUTE_SPELL;
+                                s = 12;
+                        }
+                }
+        }
+ */           
+            }
+        }
         melee(rpc, enemy)
     }
 
     next()
+
+/*
+        if(!p) {
+                if((rpc->user.Spell & CURE_SPELL) && rpc->SP >= MAGIC(12)->Power[mu] && rpc->HP < rpc->user.HP / 5) {
+                        p = CURE_SPELL;
+                        s = 13;
+                }
+                else
+                if((rpc->user.Spell & TELEPORT_SPELL) && rpc->SP >= MAGIC(7)->Power[mu] && rpc->HP < rpc->user.HP / 6 && dice((BYTE)enemy->user.Level - rpc->user.Level / 9) == 1) {
+                        p = TELEPORT_SPELL;
+                        s = 8;
+                }
+                else
+                if((rpc->user.Spell & HEAL_SPELL) && rpc->SP >= MAGIC(6)->Power[mu] && rpc->HP < rpc->user.HP / 2 && (dice(enemy->user.MyMelee + 2) == 1 || (!(rpc->user.Spell & BLAST_SPELL) && !rpc->user.XSpell) || rpc->SP < MAGIC(8)->Power[mu])) {
+                        p = HEAL_SPELL;
+                        s = 7;
+                }
+                else
+                if((rpc->user.Spell & BLAST_SPELL) && rpc->SP >= MAGIC(8)->Power[mu]) {
+                        p = BLAST_SPELL;
+                        s = 9;
+                }
+        }
+}
+if(!p) {
+        if(rpc->user.XSpell && dice(nest + 2) > 1) {
+                i = dice(8);
+                switch(i) {
+                        case 1:
+                                if((rpc->user.XSpell & ARMOR_RUSTING_XSPELL) && AC2 > 0 && (rpc->user.MyMagic == 1 || rpc->SP >= MAGIC(16)->Power[mu])) {
+                                        p = ARMOR_RUSTING_XSPELL;
+                                        s = 17;
+                                }
+                                break;
+                        case 2:
+                                if((rpc->user.XSpell & WEAPON_DECAY_XSPELL) && WC2 > 0 && (rpc->user.MyMagic == 1 || rpc->SP >= MAGIC(17)->Power[mu])) {
+                                        p = WEAPON_DECAY_XSPELL;
+                                        s = 18;
+                                }
+                                break;
+                        case 3:
+                                if((rpc->user.XSpell & BIG_BLAST_XSPELL) && (rpc->user.MyMagic == 1 || rpc->SP >= MAGIC(18)->Power[mu])) {
+                                        p = BIG_BLAST_XSPELL;
+                                        s = 19;
+                                }
+                                break;
+                        case 4:
+                                if((rpc->user.XSpell & MANA_STEALING_XSPELL) && enemy->SP && (rpc->user.MyMagic == 1 || rpc->SP >= MAGIC(19)->Power[mu])) {
+                                        p = MANA_STEALING_XSPELL;
+                                        s = 20;
+                                }
+                                break;
+                        case 5:
+                                if((rpc->user.XSpell & LIFE_STEALING_XSPELL) && (rpc->user.MyMagic == 1 || rpc->SP >= MAGIC(20)->Power[mu])) {
+                                        p = LIFE_STEALING_XSPELL;
+                                        s = 21;
+                                }
+                                break;
+                        case 6:
+                                if((rpc->user.XSpell & LEVEL_STEALING_XSPELL) && (rpc->user.MyMagic == 1 || rpc->SP >= MAGIC(21)->Power[mu])) {
+                                        p = LEVEL_STEALING_XSPELL;
+                                        s = 22;
+                                }
+                                break;
+                        case 7:
+                                if((rpc->user.XSpell & SUPER_SHIELD_XSPELL) && (rpc->user.MyMagic == 1 || rpc->SP >= MAGIC(22)->Power[mu])) {
+                                        p = SUPER_SHIELD_XSPELL;
+                                        s = 23;
+                                }
+                                break;
+                        case 8:
+                                if((rpc->user.XSpell & SUPER_HONE_XSPELL) && (rpc->user.MyMagic == 1 || rpc->SP >= MAGIC(23)->Power[mu])) {
+                                        p = SUPER_HONE_XSPELL;
+                                        s = 24;
+                                }
+                                break;
+                }
+        }
+        if(!p)
+                return(0);
+    }
+}
+ */
 
     function next(retry = false) {
         if (retry) {
@@ -426,7 +706,7 @@ export function cast(rpc: active, cb:Function, nme?: active) {
             xvt.waste(200)
 
         if (rpc.user.magic > 1)
-            if (rpc.sp < (rpc.user.magic < 4 ? spell.mana : spell.enchanted)) {
+            if (rpc.sp < $.Magic.power(rpc, spell.cast)) {
                 if (rpc === $.online) xvt.out('You don\'t have enough power to cast that spell!\n')
                 cb(true)
                 return
@@ -908,7 +1188,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     return
 }
 
-export function poison(rpc: active, cb:Function) {
+export function poison(rpc: active, cb?:Function) {
     if (rpc.user.id === $.player.id) {
         if (!$.player.poisons.length) {
             xvt.out('\nYou don\'t have any poisons.\n')

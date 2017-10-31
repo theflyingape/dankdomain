@@ -594,21 +594,6 @@ export function checkXP(rpc: active): boolean {
         }
     }
     else {
-        if (rpc.user.novice) {
-            xvt.out(xvt.reset, '\nYou are no longer a novice.  Welcome to the next level of play.\n\n')
-            rpc.user.novice = false
-            xvt.waste(2000)
-        }
-        xvt.out(xvt.magenta, 'Checking your statistics against All-Time Fame/Lame lists...\n')
-        xvt.out(xvt.blue, 'Checking your statistics against the ', rpc.user.pc,' Fame/Lame lists...\n')
-
-        xvt.out(xvt.bright, xvt.cyan, '\nYou have become so powerful that you are now immortal and you leave your \n')
-        xvt.out('worldly possessions behind.\n')
-        loadUser(taxman)
-        taxman.user.bank.value +=  rpc.user.bank.value + rpc.user.coin.value
-        saveUser(taxman)
-        xvt.waste(2000)
-
         riddle()
         return true
     }
@@ -1348,6 +1333,21 @@ export function reroll(user: user, dd?: string, level = 1) {
 
 // the Ancient Riddle of the Keys
 export function riddle() {
+    if (player.novice) {
+        xvt.out(xvt.reset, '\nYou are no longer a novice.  Welcome to the next level of play.\n\n')
+        player.novice = false
+        xvt.waste(2000)
+    }
+    xvt.out(xvt.magenta, 'Checking your statistics against All-Time Fame/Lame lists...\n')
+    xvt.out(xvt.blue, 'Checking your statistics against the ', player.pc,' Fame/Lame lists...\n')
+
+    xvt.out(xvt.bright, xvt.cyan, '\nYou have become so powerful that you are now immortal and you leave your \n')
+    xvt.out('worldly possessions behind.\n')
+    loadUser(taxman)
+    taxman.user.bank.value +=  player.bank.value + player.coin.value
+    saveUser(taxman)
+    xvt.waste(2000)
+
     player.calls = 0
     player.immortal++
 
