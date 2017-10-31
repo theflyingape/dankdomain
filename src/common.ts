@@ -1887,7 +1887,7 @@ export function saveUser(rpc, insert = false) {
         if (reason === '')
             fs.writeFileSync(trace, JSON.stringify(user, null, 2))
         else
-            fs.unlink(trace)
+            fs.unlink(trace , () => {})
     }
 
     let sql: string = ''
