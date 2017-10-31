@@ -385,15 +385,15 @@ if(enemy->HP < 1) {
                     && rpc.hp > (rpc.user.hp >>1)
                     && $.dice((rpc.user.level - enemy.user.level) / 9 + 2) == 1)
                         mm = 14
-                if ($.Magic.have(rpc.user.spells, 12)
+                else if ($.Magic.have(rpc.user.spells, 12)
                     && rpc.hp > (rpc.user.hp >>1)
                     && $.dice((rpc.user.level - enemy.user.level) / 9 + 2) == 1)
                         mm = 12
-                if ($.Magic.have(rpc.user.spells, 15)
+                else if ($.Magic.have(rpc.user.spells, 15)
                     && rpc.hp > (rpc.user.hp >>1)
                     && $.dice(nest + (rpc.user.level - enemy.user.level) / 9 + 2) == 1)
                         mm = 15
-                if ($.Magic.have(rpc.user.spells, 16)
+                else if ($.Magic.have(rpc.user.spells, 16)
                     && rpc.hp == rpc.user.hp
                     && $.dice(nest + (rpc.user.level - enemy.user.level) / 9 + 2) == 1)
                     mm = 16
@@ -405,60 +405,53 @@ if(enemy->HP < 1) {
                     && rpc.sp >= $.Magic.power(rpc, 15)
                     && $.dice((rpc.user.level - enemy.user.level) / 9 + 2) == 1)
                         mm = 15
-/*                else
-                if((rpc->user.Spell & MORPH_SPELL) && rpc->SP >= MAGIC(14)->Power[mu] && rpc->HP == rpc->user.HP && dice((BYTE)(rpc->user.Level - enemy->user.Level) / 9 + 2) == 1) {
-                        p = MORPH_SPELL;
-                        s = 16;
-                }
-                else
-                if(rpc->HP > rpc->user.HP / 2) {
-                        if((rpc->user.Spell & CONFUSION_SPELL) && rpc->SP >= MAGIC(10)->Power[mu] && dice(5 - enemy->user.MyMagic) == 1) {
-                                p = CONFUSION_SPELL;
-                                s = 11;
-                        }
-                        else
-                        if((rpc->user.Spell & ILLUSION_SPELL) && rpc->SP >= MAGIC(13)->Power[mu] && dice((BYTE)(rpc->user.Level - enemy->user.Level) / 9 + 2) == 1) {
-                                p = ILLUSION_SPELL;
-                                s = 14;
-                        }
-                        else
-                        if((rpc->user.Spell & TRANSMUTE_SPELL) && rpc->SP >= MAGIC(11)->Power[mu] && dice((BYTE)(rpc->user.Level - enemy->user.Level) / 9 + 2) == 1) {
-                                p = TRANSMUTE_SPELL;
-                                s = 12;
-                        }
-                }
-        }
- */           
+                else if ($.Magic.have(rpc.user.spells, 16)
+                    && rpc.sp >= $.Magic.power(rpc, 16)
+                    && $.dice((rpc.user.level - enemy.user.level) / 9 + 2) == 1)
+                        mm = 16
+                else if ($.Magic.have(rpc.user.spells, 11)
+                    && rpc.sp >= $.Magic.power(rpc, 11)
+                    && $.dice(5 - enemy.user.magic) == 1)
+                        mm = 11
+                else if ($.Magic.have(rpc.user.spells, 14)
+                    && rpc.sp >= $.Magic.power(rpc, 14)
+                    && $.dice((rpc.user.level - enemy.user.level) / 9 + 2) == 1)
+                        mm = 14
+                else if ($.Magic.have(rpc.user.spells, 12)
+                    && rpc.sp >= $.Magic.power(rpc, 12)
+                    && $.dice((rpc.user.level - enemy.user.level) / 9 + 2) == 1)
+                        mm = 12
+            }
+            if (!mm) {
+                if ($.Magic.have(rpc.user.spells, 13)
+                    && rpc.sp >= $.Magic.power(rpc, 13)
+                    && rpc.hp < rpc.user.hp / 5)
+                        mm = 13
+                else if ($.Magic.have(rpc.user.spells, 8)
+                    && rpc.sp >= $.Magic.power(rpc, 8)
+                    && rpc.hp < rpc.user.hp / 6 && $.dice(enemy.user.level - rpc.user.level / 9) == 1)
+                        mm = 8
+                else if ($.Magic.have(rpc.user.spells, 7)
+                    && rpc.sp >= $.Magic.power(rpc, 7)
+                    && rpc.hp < (rpc.user.hp >>1)
+                    && ($.dice(enemy.user.melee + 2) == 1 || rpc.sp < $.Magic.power(rpc, 8)))
+                        mm = 7
+                else if ($.Magic.have(rpc.user.spells, 9)
+                    && rpc.sp >= $.Magic.power(rpc, 9)
+                    && $.dice(enemy.user.melee + 2) > 1)
+                        mm = 9
             }
         }
-        melee(rpc, enemy)
+
+        if (mm)
+            cast(rpc, next, enemy)
+        else
+            melee(rpc, enemy)
     }
 
     next()
 
 /*
-        if(!p) {
-                if((rpc->user.Spell & CURE_SPELL) && rpc->SP >= MAGIC(12)->Power[mu] && rpc->HP < rpc->user.HP / 5) {
-                        p = CURE_SPELL;
-                        s = 13;
-                }
-                else
-                if((rpc->user.Spell & TELEPORT_SPELL) && rpc->SP >= MAGIC(7)->Power[mu] && rpc->HP < rpc->user.HP / 6 && dice((BYTE)enemy->user.Level - rpc->user.Level / 9) == 1) {
-                        p = TELEPORT_SPELL;
-                        s = 8;
-                }
-                else
-                if((rpc->user.Spell & HEAL_SPELL) && rpc->SP >= MAGIC(6)->Power[mu] && rpc->HP < rpc->user.HP / 2 && (dice(enemy->user.MyMelee + 2) == 1 || (!(rpc->user.Spell & BLAST_SPELL) && !rpc->user.XSpell) || rpc->SP < MAGIC(8)->Power[mu])) {
-                        p = HEAL_SPELL;
-                        s = 7;
-                }
-                else
-                if((rpc->user.Spell & BLAST_SPELL) && rpc->SP >= MAGIC(8)->Power[mu]) {
-                        p = BLAST_SPELL;
-                        s = 9;
-                }
-        }
-}
 if(!p) {
         if(rpc->user.XSpell && dice(nest + 2) > 1) {
                 i = dice(8);
@@ -1224,7 +1217,7 @@ export function poison(rpc: active, cb?:Function) {
 
     if ((rpc.toWC + rpc.user.toWC) < Math.trunc($.Weapon.name[rpc.user.weapon].wc / (6 - rpc.user.poison))) {
         let vial = $.dice(rpc.user.poisons.length) - 1
-        if (vial) apply(rpc, vial)
+        if (vial) apply(rpc, rpc.user.poisons[vial])
     }
 
     function apply(rpc: active, vial: number) {

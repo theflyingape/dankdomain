@@ -76,7 +76,10 @@ function who() {
     xvt.out('\n')
 
     if (/new/i.test(xvt.entry)) {
+        // a bit hack for now, but...
         $.reroll($.player)
+        $.player.keyhints = [ '','','',  '','','',  '','','',  '','','' ]
+        $.newkeys($.player)
         xvt.emulation = 'dumb'
         $.emulator(() => {
             $.player.emulation = xvt.emulation
