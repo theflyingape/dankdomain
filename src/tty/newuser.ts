@@ -33,6 +33,8 @@ module NewUser
 		if ($.Access.name[title].roleplay && $.Access.name[title].verify)
 			break
 		$.player.access = title
+		$.access = $.Access.name[$.player.access]
+		$.access.roleplay = false
 	}
 	$.player.expires = $.player.lastdate + $.sysop.expires
 	$.player.novice = true
