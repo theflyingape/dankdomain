@@ -80,6 +80,7 @@ function who() {
         $.reroll($.player)
         $.player.keyhints = [ '','','',  '','','',  '','','',  '','','' ]
         $.newkeys($.player)
+        $.access.roleplay = false
         xvt.emulation = 'dumb'
         $.emulator(() => {
             $.player.emulation = xvt.emulation
