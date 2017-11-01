@@ -424,8 +424,13 @@ function MonsterFights(): boolean {
 		monster.user.handle = monsters[mon].name
 		monster.user.sex = 'I'
 		$.reroll(monster.user, monsters[mon].pc, monsters[mon].level)
+
 		monster.user.weapon = monsters[mon].weapon
 		monster.user.armor = monsters[mon].armor
+        monster.user.spells = []
+		for (let i = 0; i < monsters[mon].spells.length; i++)
+			$.Magic.add(monster.user.spells, monsters[mon].spells[i])
+
 		$.activate(monster)
 		monster.user.coin.amount = monsters[mon].money.toString()
 

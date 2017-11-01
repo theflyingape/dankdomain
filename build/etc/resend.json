@@ -1,5 +1,4 @@
 {
-	"replyTo": "Sysop <dankdomain@hurst-ri.us>",
 	"subject": "Your online game account password",
 	"text": "This e-mail is being sent to you because attempted access to your account password failed \n_and_ this re-send the password was requested: https://robert.hurst-ri.us/games/dankdomain \n\nYou sign in using your: \n\nPlayer ID: \t${player.id}  (${player.handle}) \nPassword: \t${player.password} \n\nIf this e-mail was not sent by you having registered, please take no action, \nas this game account will automatically deactivate itself.  \n\nFor the latest developments with Dank Domain: \n\n\thttps://www.npmjs.com/package/dankdomain\n\nHappy hunting!"
 }

@@ -117,12 +117,12 @@ interface dungeon {
 
 interface monster {
 	name: string
-    level: number
     pc: string
-    weapon: string|number
-    armor: string|number
-    money: string|number
     spells?: string[]
+    level?: number
+    weapon?: string|number
+    armor?: string|number
+    money?: string|number
 }
 
 interface access {

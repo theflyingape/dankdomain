@@ -52,7 +52,7 @@ export function engage(module:string, party: active|active[], mob: active|active
     retreat = false
     volley = 0
 
-    //  paint the mob or an existing art portrait
+    //  paint the mob classes or an existing art portrait
     if (from === 'Dungeon') {
         if (alive[1] > 1) {
             let m = {}
@@ -462,8 +462,10 @@ if(enemy->HP < 1) {
             }
         }
 
-        if (mm)
+        if (mm) {
             cast(rpc, next, enemy)
+            return
+        }
         else
             melee(rpc, enemy)
     }
