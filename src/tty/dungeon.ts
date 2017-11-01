@@ -202,10 +202,6 @@ function command() {
 
 					$.action('battle')
 					$.cat('dungeon/' + monster[n].user.handle)
-					$.profile({ jpg:'dungeon/' + monster[n].user.handle
-						, handle:monster[n].user.handle
-						, level:monster[n].user.level, pc:monster[n].user.pc
-					})
 					
 					xvt.waste(750)
 					xvt.out(xvt.reset, '\nIt\'s ', $.an(monster[n].user.handle), monster[n].user.handle, '!')

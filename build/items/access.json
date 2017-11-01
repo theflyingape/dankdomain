@@ -3,7 +3,7 @@
     "Prisoner": { "F":"prisoner", "M":"prisoner", "calls":1, "minutes":5, "promote":0, "verify":false, "bulletin":false, "roleplay":false },
     "Stranger": { "F":"pilgrim", "M":"pilgrim", "calls":2, "minutes":10, "promote":1, "verify":true, "bulletin":false, "roleplay":false },
     "Peasant": { "F":"peon", "M":"peon", "calls":3, "minutes":20, "promote":2, "verify":true, "bulletin":false, "roleplay":true },
-    "Serf": { "F":"serf", "M":"serf", "calls":3, "minutes":25, "promote":3, "verify":true, "bulletin":false, "roleplay":true },
+    "Serf": { "F":"serf", "M":"serf", "calls":3, "minutes":25, "promote":5, "verify":true, "bulletin":false, "roleplay":true },
     "Paige": { "F":"paige", "calls":3, "minutes":30, "promote":10, "verify":false, "bulletin":false, "roleplay":true },
     "Page": { "M":"page", "calls":3, "minutes":30, "promote":10, "verify":false, "bulletin":false, "roleplay":true },
     "Squire": { "F":"squire", "M":"squire", "calls":3, "minutes":35, "promote":20, "verify":false, "bulletin":false, "roleplay":true },

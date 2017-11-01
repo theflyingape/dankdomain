@@ -52,6 +52,25 @@ export function engage(module:string, party: active|active[], mob: active|active
     retreat = false
     volley = 0
 
+    //  paint the mob or an existing art portrait
+    if (from === 'Dungeon') {
+        if (alive[1] > 1) {
+            let m = {}
+            for (let i = 0; i < alive[1]; i++)
+                m['mob' + (i+1)] = 'monster/' + mob[i].user.pc.toLowerCase()
+            $.profile(m)
+        }
+        else {
+            let img = 'dungeon/' + mob[0].user.handle
+            try {
+                fs.accessSync('images/' + img + '.jpg', fs.constants.F_OK)
+                $.profile({ jpg:img })
+            } catch(e) {
+                $.profile({ png:'monster/' + mob[0].user.pc.toLowerCase() })
+            }
+        }
+    }
+
     attack()
 }
 
