@@ -650,9 +650,9 @@ export function spoils() {
     else {
         if (winner.user.id) {
             if ($.Weapon.swap(winner, loser))
-                xvt.out($.who(winner, 'He'), 'take', winner == $.online ? '' : 's', $.who(loser, 'his'), winner.user.weapon, '.\n')
+                xvt.out($.who(winner, 'He'), $.what(winner, 'take'), $.who(loser, 'his'), winner.user.weapon, '.\n')
             if ($.Armor.swap(winner, loser))
-                xvt.out($.who(winner, 'He'), 'take', winner == $.online ? '' : 's', $.who(loser, 'his'), winner.user.armor, '.\n')
+                xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who(loser, 'his'), winner.user.armor, '.\n')
             $.saveUser(winner)
             $.unlock(winner.user.id)
         }
