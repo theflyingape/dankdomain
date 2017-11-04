@@ -1245,8 +1245,8 @@ export function poison(rpc: active, cb?:Function) {
 
         $.sound('hone')
         xvt.out(xvt.reset, '\n')
-        if (!$.Poison.have(rpc.user.poisons, vial) || +rpc.user.weapon < 0) {
-            xvt.out($.who(rpc, 'He'), $.what(rpc, 'secrete'), 'a caustic ooze', $.buff(p, t), '.\n')
+        if (!$.Poison.have(rpc.user.poisons, vial) || +rpc.user.weapon > 0) {
+            xvt.out(xvt.bright, xvt.green, $.who(rpc, 'He'), $.what(rpc, 'secrete'), 'a caustic ooze', $.buff(p, t), xvt.reset, '.\n')
             xvt.waste(500)
         }
         else {

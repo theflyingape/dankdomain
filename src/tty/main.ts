@@ -312,7 +312,9 @@ function choice() {
             return
 
         case 'X':
+            if (!$.access.roleplay) break
             $.music('.')
+            $.sound('oops')
             $.action('yn')
             xvt.app.form = {
                 'yn': { cb: () => {
