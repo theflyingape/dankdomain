@@ -21,7 +21,7 @@ import xvt = require('xvt')
 module ttyMain
 {
     xvt.defaultTimeout = 120
-    xvt.pollingMS = 80
+    xvt.pollingMS = 75
     if(xvt.modem = xvt.validator.isEmpty(process.env.REMOTEHOST)) {
         xvt.out('@play(dankdomain)\n')
         xvt.waste(1500)
@@ -51,7 +51,8 @@ module ttyMain
     if (!xvt.emulation.match('VT|PC|XT'))                               xvt.emulation = 'dumb'
 
     let title = process.title + ' (' + xvt.emulation + ')'
-    xvt.out('\x1B]2;', title, '\x07')
+    if (xvt.emulation !== 'VT')
+        xvt.out('\x1B]2;', title, '\x07')
     
     //  initiate user login sequence: id, handle, or a new registration
     require('./tty/logon')

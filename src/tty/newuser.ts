@@ -15,7 +15,7 @@ module NewUser
 	$.profile({ png:'npc/city_guard_1' })
 	xvt.out(xvt.clear)
 
-	xvt.out(xvt.yellow, '     --=:) ', xvt.bright, 'New User Registration', xvt.off, ' (:=--\n')
+	xvt.out(xvt.yellow, '     --=:) ', xvt.bright, 'New User Registration', xvt.normal, ' (:=--\n')
 	xvt.out($.bracket(1), xvt.cyan, 'Player\'s Handle:')
 	xvt.out($.bracket(2), xvt.cyan, 'Your REAL Name.:')
 	xvt.out($.bracket(3), xvt.cyan, 'Date of Birth..:')
