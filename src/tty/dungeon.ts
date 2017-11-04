@@ -92,18 +92,12 @@ function command() {
 					let mon = level + $.dice(7) - 4
 					mon = mon < 0 ? 0 : mon >= Object.keys(monsters).length ? Object.keys(monsters).length - 1 : mon
 					let dm = Object.keys(monsters)[mon]
-					monster[n].user.handle = monsters[dm].name
+					monster[n].user.handle = dm
 					monster[n].user.sex = 'I'
 					$.reroll(monster[n].user, monsters[dm].pc ? monsters[dm].pc : $.player.pc, mon)
-					if (monsters[dm].weapon)
-						monster[n].user.weapon = monsters[dm].weapon
-					else
-						monster[n].user.weapon = mon >>1
-					if (monsters[dm].armor)
-						monster[n].user.armor = monsters[dm].armor
-					else
-						monster[n].user.armor = mon >>2
-					monster[n].user.hp = monster[n].user.hp >>3
+					monster[n].user.weapon = monsters[dm].weapon ? monsters[dm].weapon : mon >>1
+					monster[n].user.armor = monsters[dm].armor ? monsters[dm].armor : mon >>2
+					monster[n].user.hp >>= 3
 					$.activate(monster[n])
 					monster[n].user.coin = new $.coins($.money(mon))
 
