@@ -67,9 +67,12 @@ function choice() {
 			let ac = $.Armor.name[$.player.armor].ac
 			xvt.out('\nYou own a class ', $.bracket(ac, false), ' ', $.player.armor, $.buff($.player.toAC, $.online.toAC))
 			if (ac) {
-				credit.value = $.worth(new $.coins($.Armor.name[$.player.armor].value).value, $.online.cha)
-				if ($.player.toAC) credit.value += Math.trunc(credit.value * (ac + $.player.toAC) / ac)
-				if ($.online.toAC < 0) credit.value += Math.trunc(credit.value * (ac + $.online.toAC) / ac)
+				let cv = new $.coins($.Armor.name[$.player.armor].value)
+				credit.value = $.worth(cv.value, $.online.cha)
+				if ($.player.toAC) credit.value = Math.trunc(credit.value * (ac + $.player.toAC / ($.player.poison + 1)) / ac)
+				if ($.online.toAC < 0) credit.value = Math.trunc(credit.value * (ac + $.online.toAC) / ac)
+				if (credit.value > cv.value)
+					credit.value = cv.value
 			}
 			else
 				credit.value = 0
@@ -335,9 +338,12 @@ function choice() {
 			let wc = $.Weapon.name[$.player.weapon].wc
 			xvt.out('\nYou own a class ', $.bracket(wc, false), ' ', $.player.weapon, $.buff($.player.toWC, $.online.toWC))
 			if (wc) {
-				credit.value = $.worth(new $.coins($.Weapon.name[$.player.weapon].value).value, $.online.cha)
-				if ($.player.toWC) credit.value += Math.trunc(credit.value * (wc + $.player.toWC) / wc)
-				if ($.online.toWC < 0) credit.value += Math.trunc(credit.value * (wc + $.online.toWC) / wc)
+				let cv = new $.coins($.Weapon.name[$.player.weapon].value)
+				credit.value = $.worth(cv.value, $.online.cha)
+				if ($.player.toWC) credit.value = Math.trunc(credit.value * (wc + $.player.toWC / ($.player.poison + 1)) / wc)
+				if ($.online.toWC < 0) credit.value = Math.trunc(credit.value * (wc + $.online.toWC) / wc)
+				if (credit.value > cv.value)
+					credit.value = cv.value
 			}
 			else
 				credit.value = 0
