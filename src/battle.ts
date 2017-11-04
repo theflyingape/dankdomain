@@ -759,11 +759,11 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
 
         if ($.dice(100) > $.Magic.ability(name, rpc, nme).fail) {
             if ((backfire = $.dice(100) > $.Magic.ability(name, rpc, nme).backfire)) {
-                $.sound('oops', 5)
+                $.sound('oops')
                 xvt.out('Oops!  ', $.who(rpc, 'His'), ' spell backfires!\n')
             }
             else {
-                $.sound('fssst', 5)
+                $.sound('fssst')
                 xvt.out('Fssst!  ', $.who(rpc, 'His'), 'spell fails!\n')
                 cb()
                 return

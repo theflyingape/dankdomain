@@ -973,6 +973,7 @@ export function now(): {date: number, time: number} {
 
 export function newkeys(user: user) {
     let keys = [ 'P', 'G', 'S', 'C' ]
+    user.keyhints = [ '','','',  '','','',  '','','',  '','','' ]
     user.keyseq = ''
     while (keys.length) {
         let k = dice(keys.length)
@@ -996,7 +997,6 @@ export function playerPC(points = 200, immortal = false) {
         player.security = novice.security
         player.weapon = novice.weapon
         player.armor = novice.armor
-        player.keyhints = [ '','','',  '','','',  '','','',  '','','' ]
         newkeys(player)
 
         xvt.out('Since you are a new user here, you are automatically assigned a character\n')
@@ -1428,7 +1428,6 @@ export function riddle() {
                     return
                 }
                 reroll(player, player.pc)
-                player.keyhints = [ '','','',  '','','',  '','','',  '','','' ]
                 newkeys(player)
                 playerPC(200, true)
                 return
@@ -1436,18 +1435,17 @@ export function riddle() {
             else {
                 sound('thunder')
                 xvt.out(xvt.bright, xvt.black, '^', xvt.white, 'Boom!', xvt.black, '^\n')
-                for (let i = 3 * slot; i < 3 * (slot + 1); i++)
-                    if (!player.keyhints[i]) {
-                        player.keyhints[i] = xvt.entry.toUpperCase()
-                        break
-                    }
                 if (slot == 0) {
+                    for (let i = 3 * slot; i < 3 * (slot + 1); i++)
+                        if (!player.keyhints[i]) {
+                            player.keyhints[i] = xvt.entry.toUpperCase()
+                            break
+                        }
                     reroll(player, Object.keys(PC.name['player'])[0])
                     playerPC(200 + 10 * player.wins + (player.immortal>>1))
                 }
                 else {
                     reroll(player, player.pc)
-                    player.keyhints = [ '','','',  '','','',  '','','',  '','','' ]
                     newkeys(player)
                     playerPC(200, true)
                 }
