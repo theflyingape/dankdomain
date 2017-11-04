@@ -452,6 +452,8 @@ export function activate(one: active, keep = false): boolean {
         if ((one.cha -= 10) < 10)
             one.cha = 10
     }
+    if (!xvt.validator.isDefined(one.user.access))
+        one.user.access = Object.keys(Access.name)[0]
 
     if (keep) {
         if (!lock(one.user.id) && one.user.id !== player.id) {

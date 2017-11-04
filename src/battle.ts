@@ -52,25 +52,6 @@ export function engage(module:string, party: active|active[], mob: active|active
     retreat = false
     volley = 0
 
-    //  paint the mob classes or an existing art portrait
-    if (from === 'Dungeon') {
-        if (alive[1] > 1) {
-            let m = {}
-            for (let i = 0; i < alive[1]; i++)
-                m['mob' + (i+1)] = 'monster/' + mob[i].user.pc.toLowerCase()
-            $.profile(m)
-        }
-        else {
-            let img = 'dungeon/' + mob[0].user.handle
-            try {
-                fs.accessSync('images/' + img + '.jpg', fs.constants.F_OK)
-                $.profile({ jpg:img })
-            } catch(e) {
-                $.profile({ png:'monster/' + mob[0].user.pc.toLowerCase() })
-            }
-        }
-    }
-
     attack()
 }
 
@@ -463,7 +444,7 @@ if(enemy->HP < 1) {
         }
 
         if (mm) {
-            cast(rpc, next, enemy)
+            cast(rpc, next, enemy, mm)
             return
         }
         else
@@ -665,11 +646,16 @@ export function spoils() {
     }
 }
 
-export function cast(rpc: active, cb:Function, nme?: active) {
+export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
     if (!rpc.user.magic || !rpc.user.spells.length) {
-        if (rpc.user.id === $.player.id)
+        if (rpc.user.id === $.player.id) {
             xvt.out('You don\'t have any magic.\n')
-        cb(true)
+            cb(true)
+        }
+        else {
+            xvt.out('cast() failure -- ', rpc)
+            cb()
+        }
         return
     }
 
@@ -706,12 +692,16 @@ export function cast(rpc: active, cb:Function, nme?: active) {
                     xvt.app.refocus()
                 }
                 else {
+                    xvt.out('\n')
                     invoke(Object.keys($.Magic.spells)[+xvt.entry - 1])
                 }
             }, prompt:['Use wand', 'Read scroll', 'Cast spell', 'Uti magicae'][$.player.magic - 1] + ' (?=list): ', max:2 }
         }
         xvt.app.focus = 'magic'
         return
+    }
+    else {
+        invoke(Object.keys($.Magic.spells)[magic - 1])
     }
 
     function invoke(name: string) {
@@ -754,36 +744,35 @@ export function cast(rpc: active, cb:Function, nme?: active) {
             rpc.altered = true
             $.Magic.remove(rpc.user.spells, spell.cast)
             xvt.out($.who(rpc, 'His'), 'wand smokes as', $.who(rpc, 'he'), $.what(rpc, 'cast'), 'the spell.\n')
-            xvt.waste(250)
+            xvt.waste(300)
         }
 
         //  Tigress prefers the Ranger (and Paladin) class, because it comes with a coupon and a better warranty
         if (rpc.user.magic == 2 && $.dice(5 + +xvt.validator.isDefined($.Access.name[rpc.user.access].sysop)) == 1) {
             rpc.altered = true
             $.Magic.remove(rpc.user.spells, spell.cast)
-            xvt.out($.who(rpc, 'His'), 'scroll burns as', $.who(rpc, 'he'), $.what(rpc, 'cast'), 'the spell.\n')
-            xvt.waste(250)
+            xvt.out($.who(rpc, 'His'), 'scroll burns as ', $.who(rpc, 'he'), $.what(rpc, 'cast'), 'the spell.\n')
+            xvt.waste(300)
         }
     
         let backfire = false
 
         if ($.dice(100) > $.Magic.ability(name, rpc, nme).fail) {
-            if ((backfire = $.dice(100) > $.Magic.ability(spell, rpc, nme).backfire)) {
-                $.sound('oops', 10)
+            if ((backfire = $.dice(100) > $.Magic.ability(name, rpc, nme).backfire)) {
+                $.sound('oops', 5)
                 xvt.out('Oops!  ', $.who(rpc, 'His'), ' spell backfires!\n')
             }
             else {
-                $.sound('fssst', 20)
-                xvt.out('Fssst!', $.who(rpc, 'His'), 'spell fails!\n')
+                $.sound('fssst', 5)
+                xvt.out('Fssst!  ', $.who(rpc, 'His'), 'spell fails!\n')
                 cb()
                 return
             }
         }
 
-        xvt.out('\n')
         let mod = rpc.user.blessed ? 10 : 0
         mod = rpc.user.cursed ? mod - 10 : mod
-    
+
         switch(spell.cast) {
         case 1:
             if (backfire) {
@@ -1236,7 +1225,7 @@ export function poison(rpc: active, cb?:Function) {
         return
     }
 
-    if ((rpc.toWC + rpc.user.toWC) < Math.trunc($.Weapon.name[rpc.user.weapon].wc / (6 - rpc.user.poison))) {
+    if ((rpc.toWC + rpc.user.toWC) < Math.trunc(rpc.weapon.wc / (6 - rpc.user.poison))) {
         let vial = $.dice(rpc.user.poisons.length) - 1
         if (vial) apply(rpc, rpc.user.poisons[vial])
     }

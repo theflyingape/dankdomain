@@ -3,6 +3,8 @@
  *  DUNGEON authored by: Robert Hurst <theflyingape@gmail.com>               *
 \*****************************************************************************/
 
+import fs = require('fs')
+
 import $ = require('../common')
 import Battle = require('../battle')
 import xvt = require('xvt')
@@ -101,7 +103,15 @@ function command() {
 					$.activate(monster[n])
 					monster[n].user.coin = new $.coins($.money(mon))
 
-					$.action('battle')
+					if (n == 0) {
+						let img = 'dungeon/' + monster[n].user.handle
+						try {
+							fs.accessSync('images/' + img + '.jpg', fs.constants.F_OK)
+							$.profile({ jpg:img })
+						} catch(e) {
+							$.profile({ png:'monster/' + monster[n].user.pc.toLowerCase() })
+						}
+					}
 					$.cat('dungeon/' + monster[n].user.handle)
 
 					xvt.waste(750)
@@ -113,6 +123,15 @@ function command() {
 					if (isNaN(+monster[n].user.weapon)) xvt.out('\n', $.who(monster[n], 'He'), $.Weapon.wearing(monster[n]), '.\n')
 					if (isNaN(+monster[n].user.armor)) xvt.out('\n', $.who(monster[n], 'He'), $.Armor.wearing(monster[n]), '.\n')
 				} while (++n < 3 && $.dice(3) == 1)
+
+				//  paint the mob classes
+				if (n > 1) {
+					let m = {}
+					for (let i = 0; i < n; i++)
+						m['mob' + (i+1)] = 'monster/' + monster[i].user.pc.toLowerCase()
+					$.profile(m)
+				}
+
 				Battle.engage('Dungeon', $.online, monster, menu)
 				return
 			}

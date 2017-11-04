@@ -427,9 +427,10 @@ function MonsterFights(): boolean {
 
 		monster.user.weapon = monsters[mon].weapon
 		monster.user.armor = monsters[mon].armor
-        monster.user.spells = []
-		for (let i = 0; i < monsters[mon].spells.length; i++)
-			$.Magic.add(monster.user.spells, monsters[mon].spells[i])
+		monster.user.spells = []
+		if (monsters[mon].spells)
+			for (let i = 0; i < monsters[mon].spells.length; i++)
+				$.Magic.add(monster.user.spells, monsters[mon].spells[i])
 
 		$.activate(monster)
 		monster.user.coin.amount = monsters[mon].money.toString()
