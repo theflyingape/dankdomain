@@ -303,7 +303,7 @@ function choice() {
 						}
 						else
 							menu(!$.player.expert)
-					}, prompt:'Will you fight' + $.who(opponent, 'him') + ' (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
+					}, prompt:'Will you fight ' + $.who(opponent, 'him') + ' (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
 				}
 				xvt.app.focus = 'fight'
 			})
