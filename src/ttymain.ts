@@ -21,13 +21,14 @@ import xvt = require('xvt')
 module ttyMain
 {
     xvt.defaultTimeout = 120
-    xvt.pollingMS = 75
-    if(xvt.modem = xvt.validator.isEmpty(process.env.REMOTEHOST)) {
+    xvt.pollingMS = 60
+    xvt.sessionAllowed = 300
+    if (xvt.modem = xvt.validator.isEmpty(process.env.REMOTEHOST)) {
         xvt.out('@play(dankdomain)\n')
-        xvt.waste(1500)
-        xvt.out('\nCARRIER DETECTED\n')
+        xvt.waste(1000)
     }
-
+    xvt.out('\nCARRIER DETECTED\n')
+    
     if (process.argv.length < 3) {
         //  try a remote query for terminal emulation auto-detection
         xvt.enquiry('\x1B[6n')
@@ -55,6 +56,7 @@ module ttyMain
         xvt.out('\x1B]2;', title, '\x07')
     
     //  initiate user login sequence: id, handle, or a new registration
+    xvt.waste(1000)
     require('./tty/logon')
 }
 
