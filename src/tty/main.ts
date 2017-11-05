@@ -31,7 +31,7 @@ module Main
     }
 
 export function menu(suppress = false) {
-    if ($.checkXP($.online)) return
+    if ($.checkXP($.online, menu)) return
     if ($.online.altered) $.saveUser($.player)
     if ($.reason) xvt.hangup()
 

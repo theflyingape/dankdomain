@@ -24,7 +24,7 @@ module Arena
 	}
 
 export function menu(suppress = true) {
-    if ($.checkXP($.online)) return
+    if ($.checkXP($.online, menu)) return
 	if ($.online.altered) $.saveUser($.player)
 	if ($.reason) xvt.hangup()
 
@@ -377,7 +377,7 @@ function MonsterFights(): boolean {
 					monster.user.spells = [ 7, 9 ]
 					if (monster.user.magic) {
 						for (let i = 0; i < Object.keys($.Magic.spells).length; i++) {
-							if ($.dice($.player.cha>>2 + 5 * i) == 1) {
+							if ($.dice(($.player.cha >>2) + 5 * i) == 1) {
 								let spell = $.Magic.pick(i)
 								if (!$.Magic.have(monster.user.spells, spell))
 									$.Magic.add(monster.user.spells, i)
@@ -386,7 +386,7 @@ function MonsterFights(): boolean {
 					}
 					if (monster.user.poison) {
 						for (let i = 0; i < Object.keys($.Poison.vials).length; i++) {
-							if ($.dice($.player.cha>>2 + 5 * i) == 1) {
+							if ($.dice(($.player.cha >>2) + 5 * i) == 1) {
 								let vial = $.Poison.pick(i)
 								if (!$.Poison.have(monster.user.poisons, vial))
 									$.Poison.add(monster.user.poisons, i)
@@ -397,7 +397,6 @@ function MonsterFights(): boolean {
 					$.activate(monster)
 					monster.user.coin.value += cost.value
 
-//					if ($.Access.name[$.player.access].sysop) console.log(monster)
 					$.profile({ jpg:'arena/' + monster.user.handle.toLowerCase()
 						, handle:monster.user.handle
 						, level:monster.user.level, pc:monster.user.pc

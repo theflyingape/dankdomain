@@ -419,19 +419,11 @@ export class coins {
     }
 }
 
-export function activate(one: active, keep = false): boolean {
-    one.altered = true
-    one.confused = false
+export function activate(one: active, keep = false, confused = false): boolean {
     one.str = one.user.str
     one.int = one.user.int
     one.dex = one.user.dex
     one.cha = one.user.cha
-    one.hp = one.user.hp
-    one.sp = one.user.sp
-    one.bp = Math.trunc(one.user.hp / 10)
-    one.hull = one.user.hull
-    Weapon.equip(one, one.user.weapon, true)
-    Armor.equip(one, one.user.armor, true)
     if (one.user.blessed.length) {
         if ((one.str += 10) > 100)
             one.str = 100
@@ -452,6 +444,16 @@ export function activate(one: active, keep = false): boolean {
         if ((one.cha -= 10) < 10)
             one.cha = 10
     }
+    one.confused = false
+    if (confused) return true
+
+    one.altered = true
+    one.hp = one.user.hp
+    one.sp = one.user.sp
+    one.bp = Math.trunc(one.user.hp / 10)
+    one.hull = one.user.hull
+    Weapon.equip(one, one.user.weapon, true)
+    Armor.equip(one, one.user.armor, true)
     if (!xvt.validator.isDefined(one.user.access))
         one.user.access = Object.keys(Access.name)[0]
 
@@ -469,7 +471,7 @@ export function activate(one: active, keep = false): boolean {
     return true
 }
 
-export function checkXP(rpc: active): boolean {
+export function checkXP(rpc: active, cb: Function): boolean {
 
     if (!Access.name[rpc.user.access]) return false
     if (rpc.user.level >= sysop.level) {
@@ -591,88 +593,90 @@ export function checkXP(rpc: active): boolean {
         xvt.out('\n')
         xvt.waste(125)
         if(eligible && bonus) {
-            skillplus(rpc)
-            return false
+            skillplus(rpc, cb)
+            return true
         }
     }
     else {
         riddle()
         return true
     }
+
+    return false
 }
 
-export function skillplus(rpc: active) {
+export function skillplus(rpc: active, cb: Function) {
 
     //  slow-roll endowment choices for a dramatic effect  :)
-    xvt.out(xvt.reset, '\n'); xvt.waste(500)
-    xvt.out(xvt.bright, xvt.yellow,'+ You earn a gift to endow your character +\n'); xvt.waste(1000)
+    xvt.out(xvt.reset); xvt.waste(500)
+    xvt.out(xvt.bright, xvt.yellow,' + You earn a gift to endow your character +\n'); xvt.waste(1000)
     xvt.out('\n'); xvt.waste(500)
 
     if (rpc.user.maxstr < 99 && rpc.user.maxint < 99 && rpc.user.maxdex < 99 && rpc.user.maxcha < 99) {
         xvt.out(bracket(0, false), xvt.yellow, 'Increase ALL abilities by +2\n')
-        xvt.waste(100)
+        xvt.waste(200)
     }
-    xvt.out(bracket(1, false), xvt.yellow, 'Increase Strength ability from ', xvt.reset
+    xvt.out(bracket(1, false), xvt.yellow, ' Increase Strength ability from ', xvt.reset
         , rpc.user.maxstr.toString(), ' '
         , rpc.user.maxstr < 90 ? '[WEAK]'
         : rpc.user.maxstr < 95 ? '-Average-'
         : rpc.user.maxstr < 99 ? '=Strong='
         : '#MAX#'
         , '\n'
-    ); xvt.waste(100)
-    xvt.out(bracket(2, false), xvt.yellow, 'Increase Intellect ability from ', xvt.reset
+    ); xvt.waste(200)
+    xvt.out(bracket(2, false), xvt.yellow, ' Increase Intellect ability from ', xvt.reset
         , rpc.user.maxint.toString(), ' '
         , rpc.user.maxint < 90 ? '[MORON]'
         : rpc.user.maxint < 95 ? '-Average-'
         : rpc.user.maxint < 99 ? '=Smart='
         : '#MAX#'
         , '\n'
-    ); xvt.waste(100)
-    xvt.out(bracket(3, false), xvt.yellow, 'Increase Dexterity ability from ', xvt.reset
+    ); xvt.waste(200)
+    xvt.out(bracket(3, false), xvt.yellow, ' Increase Dexterity ability from ', xvt.reset
         , rpc.user.maxdex.toString(), ' '
         , rpc.user.maxdex < 90 ? '[SLOW]'
         : rpc.user.maxdex < 95 ? '-Average-'
         : rpc.user.maxdex < 99 ? '=Swift='
         : '#MAX#'
         , '\n'
-    ); xvt.waste(100)
-    xvt.out(bracket(4, false), xvt.yellow, 'Increase Charisma ability from ', xvt.reset
+    ); xvt.waste(200)
+    xvt.out(bracket(4, false), xvt.yellow, ' Increase Charisma ability from ', xvt.reset
         , rpc.user.maxcha.toString(), ' '
         , rpc.user.maxcha < 90 ? '[SURLY]'
         : rpc.user.maxcha < 95 ? '-Average-'
         : rpc.user.maxcha < 99 ? '=Affable='
         : '#MAX#'
         , '\n'
-    ); xvt.waste(100)
-    xvt.out(bracket(5, false), xvt.yellow, 'Improve Melee skill from ', xvt.reset
+    ); xvt.waste(200)
+    xvt.out(bracket(5, false), xvt.yellow, ' Improve Melee skill from ', xvt.reset
         , rpc.user.melee.toString(), 'x '
         , [ '[POOR]', '-Average-', '+Good+', '=Masterful=', '#MAX#' ][rpc.user.melee]
         , '\n'
-    ); xvt.waste(100)
-    xvt.out(bracket(6, false), xvt.yellow, 'Improve Backstab skill from ', xvt.reset
+    ); xvt.waste(200)
+    xvt.out(bracket(6, false), xvt.yellow, ' Improve Backstab skill from ', xvt.reset
         , rpc.user.backstab.toString(), 'x '
         , [ '[RARE]', '-Average-', '+Good+', '=Masterful=', '#MAX#' ][rpc.user.backstab]
         , '\n'
-    ); xvt.waste(100)
-    xvt.out(bracket(7, false), xvt.yellow, 'Improve Poison skill from ', xvt.reset
+    ); xvt.waste(200)
+    xvt.out(bracket(7, false), xvt.yellow, ' Improve Poison skill from ', xvt.reset
         , rpc.user.poison.toString(), 'x '
         , [ '[NONE]', '-Average-', '+Good+', '=Masterful=', '#MAX#' ][rpc.user.poison]
         , '\n'
-    ); xvt.waste(100)
+    ); xvt.waste(200)
     if (rpc.user.magic < 2) {
-        xvt.out(bracket(8, false), xvt.yellow, 'Improve Magic skill from ', xvt.reset)
+        xvt.out(bracket(8, false), xvt.yellow, ' Improve Magic skill from ', xvt.reset)
         xvt.out([ '[NONE]', '-Wands-' ][rpc.user.magic])
     }
     else {
-        xvt.out(bracket(8, false), xvt.yellow, 'Increase Mana power from ', xvt.reset)
+        xvt.out(bracket(8, false), xvt.yellow, ' Increase Mana power for ', xvt.reset)
         xvt.out([ '+Scrolls+', '=Spells=', '#MAX#' ][rpc.user.magic - 2])
     }
-    xvt.out('\n'); xvt.waste(100)
-    xvt.out(bracket(9, false), xvt.yellow, 'Improve Stealing skill from ', xvt.reset
+    xvt.out('\n'); xvt.waste(200)
+    xvt.out(bracket(9, false), xvt.yellow, ' Improve Stealing skill from ', xvt.reset
         , rpc.user.steal.toString(), 'x '
         , [ '[RARE]', '-Average-', '+Good+', '=Masterful=', '#MAX#' ][rpc.user.steal]
         , '\n'
-    ); xvt.waste(100)
+    ); xvt.waste(200)
 
     action('list')
     xvt.app.form = {
@@ -787,9 +791,13 @@ export function skillplus(rpc: active) {
 
             default:
                 xvt.app.refocus()
+                return
             }
+
+            online.altered = true
             xvt.out(xvt.reset, '\n')
-            xvt.waste(1000)
+            xvt.waste(2000)
+            cb()
         }, prompt:'Choose which: ', max:1 }
     }
     xvt.app.focus = 'skill'
@@ -1486,7 +1494,7 @@ export function titlecase(orig: string): string {
 }
 
 export function what(rpc: active, action: string): string {
-    return action + (rpc != online ? (/.*ch$|.*sh$|.*s$/i.test(action) ? 'es ' : 's ') : ' ')
+    return action + (rpc != online ? (/.*ch$|.*sh$|.*s|.*z$/i.test(action) ? 'es ' : 's ') : ' ')
 }
 
 export function who(rpc: active, word: string): string {

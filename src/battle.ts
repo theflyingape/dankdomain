@@ -151,6 +151,8 @@ export function attack(retry = false) {
                         ][$.dice(5) - 1]
                         , '\n'
                     )
+                    if ($.online.confused)
+                        $.activate($.online, false, true)
                     fini()
                     return
                 }
@@ -545,6 +547,9 @@ export function spoils() {
     let winner: active
     let loser: active
     let l: number
+
+    if ($.online.confused)
+        $.activate($.online, false, true)
 
     // had a little help from my friends (maybe)
     if (from === 'Party') {
@@ -1025,16 +1030,45 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             }
             else {
                 $.sound('resurrect')
+                user('Resurrect', (opponent: active) => {
+                    if (opponent.user.id === '' || opponent.user.id === $.player.id) {
+                        xvt.out('\nGo get some coffee.\n')
+                    }
+                    else {
+                        xvt.out('Now raising ', opponent.user.handle, ' from the dead...')
+                        opponent.user.status = ''
+                        $.saveUser(opponent)
+                        xvt.out('\n')
+                    }
+                    cb()
+                    return
+                })
             }
             break
 
         case 11:
             $.sound('confusion')
             if (backfire) {
-
+                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' blitz')
+                    , rpc === $.online ? 'yourself' : $.who(rpc, 'him') + '\x08self'
+                    , ' with exploding ', xvt.bright
+                    , xvt.red, 'c', xvt.yellow, 'o', xvt.green, 'l', xvt.cyan, 'o', xvt.blue, 'r', xvt.magenta, 's'
+                    , xvt.reset, '!\n')
+                rpc.confused = true
+                rpc.int >>1
+                rpc.dex >>1
             }
             else {
-
+                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' blitz')
+                    , nme === $.online ? 'you' : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
+                    , ' with exploding ', xvt.bright
+                    , xvt.red, 'c', xvt.yellow, 'o', xvt.green, 'l', xvt.cyan, 'o', xvt.blue, 'r', xvt.magenta, 's'
+                    , xvt.reset, '!\n')
+                nme.confused = true
+                nme.int >>1
+                nme.dex >>1
             }
             break
 
