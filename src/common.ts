@@ -1494,7 +1494,7 @@ export function titlecase(orig: string): string {
 }
 
 export function what(rpc: active, action: string): string {
-    return action + (rpc != online ? (/.*ch$|.*sh$|.*s|.*z$/i.test(action) ? 'es ' : 's ') : ' ')
+    return action + (rpc != online ? (/.*ch$|.*sh$|.*s$|.*z$/i.test(action) ? 'es ' : 's ') : ' ')
 }
 
 export function who(rpc: active, word: string): string {
