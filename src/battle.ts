@@ -87,8 +87,8 @@ export function attack(retry = false) {
     //  recovery?
     if (rpc.confused) {
         let mod = rpc.user.blessed ? 10 : rpc.user.cursed ? -10 : 0
-        rpc.int = $.PC.ability(rpc.int, $.PC.name[rpc.user.pc].toInt, rpc.user.maxint, mod)
-        rpc.dex = $.PC.ability(rpc.dex, $.PC.name[rpc.user.pc].toDex, rpc.user.maxdex, mod)
+        rpc.int = $.PC.ability(rpc.int, $.PC.card(rpc.user.pc).toInt, rpc.user.maxint, mod)
+        rpc.dex = $.PC.ability(rpc.dex, $.PC.card(rpc.user.pc).toDex, rpc.user.maxdex, mod)
     }
     
     //  choose an opponent
@@ -163,13 +163,14 @@ export function attack(retry = false) {
                     return
                 }
 
+                xvt.out(xvt.bright)
                 melee(rpc, enemy)
                 next()
                 return
             }, enter:'A', cancel:'R', eol:false, max:1, match:/A|C|R|Y/i },
             'backstab': {cb:() => {
                 if (/N/i.test(xvt.entry)) bs = 1
-                xvt.out('\n\n')
+                xvt.out('\n\n', xvt.bright)
                 melee(rpc, enemy, bs)
                 next()
                 return
@@ -194,7 +195,7 @@ export function attack(retry = false) {
                 return
             }
             else {
-                xvt.out('\n')
+                xvt.out('\n', xvt.bright)
             }
             melee(rpc, enemy)
         }
@@ -445,6 +446,8 @@ if(enemy->HP < 1) {
                         mm = 9
             }
         }
+
+        xvt.out(xvt.reset)
 
         if (mm) {
             cast(rpc, next, enemy, mm)
@@ -1067,8 +1070,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                     , xvt.red, 'c', xvt.yellow, 'o', xvt.green, 'l', xvt.cyan, 'o', xvt.blue, 'r', xvt.magenta, 's'
                     , xvt.reset, '!\n')
                 nme.confused = true
-                nme.int >>1
-                nme.dex >>1
+                nme.int >>= 1
+                nme.dex >>= 1
             }
             break
 
@@ -1222,7 +1225,6 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
 export function melee(rpc: active, enemy: active, blow = 1) {
     let action: string
     let hit = 0
-    xvt.out(rpc == $.online ? xvt.bright : xvt.reset)
     
     let n = rpc.dex + (rpc.dex - enemy.dex)
     if (blow > 1)
