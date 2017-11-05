@@ -1076,7 +1076,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             break
 
         case 12:
-            $.sound('transmute')
+            $.sound('transmute', 4)
             if (backfire) {
 
             }
@@ -1086,12 +1086,23 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             break
 
         case 13:
-            $.sound('cure')
+            $.sound('cure', 6)
             if (backfire) {
-
+                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' cure')
+                    , nme === $.online ? 'you' : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
+                    , '!\n')
+                nme.hp = nme.user.hp
             }
             else {
-
+                if (rpc === $.online) {
+                    xvt.out('You feel your vitality completed restored.\n')
+                }
+                else {
+                    xvt.out(rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                        , $.what(rpc, ' cure'), $.who(rpc, 'him'), '\x08self!\n')
+                }
+                rpc.hp = rpc.user.hp
             }
             break
 
