@@ -919,7 +919,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             break
 
         case 7:
-            let ha = rpc.user.magic > 2 ? rpc.user.level >>3 + 8 : 16
+            let ha = rpc.user.magic > 2 ? (rpc.user.level >>3) + 8 : 16
             let hr = 0
             for (let i = 0; i < rpc.user.level; i++)
                 hr += $.dice(ha)
@@ -943,8 +943,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 if (rpc.hp > rpc.user.hp)
                     rpc.hp = rpc.user.hp
                 xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , $.what(rpc, ' heal'), $.who(rpc, 'him'), '\x08self'
-                    , ' for ', hr.toString(), ' hit points.\n')
+                    , $.what(rpc, ' heal'), rpc !== $.online ? $.who(rpc, 'him') + '\x08self ' : ''
+                    , 'for ', hr.toString(), ' hit points.\n')
             }
             break
 
@@ -982,7 +982,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             if (backfire) {
                 xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' blast')
-                    , $.who(rpc, 'him'), '\x08self'
+                    , rpc !== $.online ? $.who(rpc, 'him') + '\x08self' : 'yourself'
                     , ' for ', br.toString(), ' hit points!\n')
                 rpc.hp -= br
                 if (rpc.hp < 1) {
@@ -995,11 +995,22 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             else {
                 xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' blast')
-                    , nme === $.online ? 'you' : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
+                    , nme === $.online ? 'you' : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
                     , ' for ', br.toString(), ' hit points!\n')
                 nme.hp -= br
-                    if (nme.hp < 1)
-                        nme.hp = 0
+                if (nme.hp < 1) {
+                    nme.hp = 0
+                    if (nme === $.online) {
+                        $.player.killed++
+                        xvt.out('\n', xvt.bright, xvt.yellow
+                            , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
+                            , ' killed you!\n\n', xvt.reset)
+                        $.profile({ jpg:'death' })
+                        $.sound('killed', 12)
+                        $.reason = rpc.user.id.length ? `defeated by ${rpc.user.handle}`
+                            : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`
+                    }
+                }
             }
             break
 
@@ -1058,14 +1069,31 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             break
 
         case 15:
-            $.sound('disintegrate')
+            $.sound('disintegrate', 6)
             if (backfire) {
-                xvt.out($.who(rpc, 'He'), 'completely', $.what(rpc, 'atomize'), $.who(rpc,'him'),'self!\n')
+                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, 'completely atomize')
+                    , $.who(rpc,'him'), '\x08self!\n')
                 rpc.hp = 0
-                $.reason = `disintegrate backfired`
+                if (rpc === $.online)
+                    $.reason = `disintegrate backfired`
             }
             else {
+                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' completely atomize')
+                    , nme === $.online ? 'you' : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
+                    , '!\n')
                 nme.hp = 0
+                if (nme === $.online) {
+                    $.player.killed++
+                    xvt.out('\n', xvt.bright, xvt.yellow
+                        , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
+                        , ' killed you!\n\n', xvt.reset)
+                    $.profile({ jpg:'death' })
+                    $.sound('killed', 12)
+                    $.reason = rpc.user.id.length ? `defeated by ${rpc.user.handle}`
+                        : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`
+                }
             }
             break
 
@@ -1286,7 +1314,6 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             $.sound('killed', 12)
             $.reason = rpc.user.id.length ? `defeated by ${rpc.user.handle}`
                 : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`
-            xvt.carrier = false
         }
         else {
             if (rpc == $.online) {

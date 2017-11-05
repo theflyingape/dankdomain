@@ -355,7 +355,7 @@ function MonsterFights(): boolean {
 					xvt.waste(1250)
 
 					monster = <active>{}
-					monster.user = <user>{}
+					monster.user = <user>{ id:'' }
 					Object.assign(monster.user, require('../etc/summoned demon.json'))
 					monster.user.level = $.player.level + $.dice(7) - 4
 					if (monster.user.level > 99)
@@ -374,12 +374,22 @@ function MonsterFights(): boolean {
 						, ($.dice(($.online.int + $.online.cha) / 50) > 1) ? monster.user.pc : $.PC.random()
 						, monster.user.level)
 
+					monster.user.spells = [ 7, 9 ]
 					if (monster.user.magic) {
 						for (let i = 0; i < Object.keys($.Magic.spells).length; i++) {
-							if ($.dice($.player.cha/2 + 5*i) == 1) {
+							if ($.dice($.player.cha>>2 + 5 * i) == 1) {
 								let spell = $.Magic.pick(i)
-								if (!$.Magic.have($.player.spells, spell))
-									$.Magic.add($.player.spells, i)
+								if (!$.Magic.have(monster.user.spells, spell))
+									$.Magic.add(monster.user.spells, i)
+							}
+						}
+					}
+					if (monster.user.poison) {
+						for (let i = 0; i < Object.keys($.Poison.vials).length; i++) {
+							if ($.dice($.player.cha>>2 + 5 * i) == 1) {
+								let vial = $.Poison.pick(i)
+								if (!$.Poison.have(monster.user.poisons, vial))
+									$.Poison.add(monster.user.poisons, i)
 							}
 						}
 					}
@@ -395,8 +405,8 @@ function MonsterFights(): boolean {
 					$.cat('arena/' + monster.user.handle)
 
 					xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`, '\n')
-					if (monster.user.weapon) xvt.out('\n', $.who(monster, 'He'), $.Weapon.wearing(monster), '.\n')
-					if (monster.user.armor) xvt.out('\n', $.who(monster, 'He'), $.Armor.wearing(monster), '.\n')
+					if (isNaN(monster.user.weapon)) xvt.out('\n', $.who(monster, 'He'), $.Weapon.wearing(monster), '.\n')
+					if (isNaN(monster.user.armor)) xvt.out('\n', $.who(monster, 'He'), $.Armor.wearing(monster), '.\n')
 
 					xvt.app.focus = 'fight'
 					return
