@@ -90,7 +90,7 @@ export class Character {
         ability(current: number, delta: number, max = 100, mod = 0): number {
             let ability = current
             max = max + mod
-            max = max > 100 ? 100 : max < 10 ? 10 : max
+            max = max > 100 ? 100 : max < 20 ? 20 : max
             ability += delta
             ability = ability > max ? max : ability < 10 ? 10 : ability
             return ability
@@ -1486,7 +1486,7 @@ export function titlecase(orig: string): string {
 }
 
 export function what(rpc: active, action: string): string {
-    return action + (rpc != online ? 's ' : ' ')
+    return action + (rpc != online ? (/.*ch$|.*sh$|.*s$/i.test(action) ? 'es ' : 's ') : ' ')
 }
 
 export function who(rpc: active, word: string): string {

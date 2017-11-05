@@ -28,7 +28,7 @@ module ttyMain
         xvt.waste(1000)
     }
     xvt.out('\nCARRIER DETECTED\n')
-    
+
     if (process.argv.length < 3) {
         //  try a remote query for terminal emulation auto-detection
         xvt.enquiry('\x1B[6n')

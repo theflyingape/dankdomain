@@ -242,6 +242,7 @@ function choice() {
                                 opponent.user.toWC = 0
 
                                 $.saveUser(opponent)
+                                $.news(`\trobbed ${opponent.user.handle}`)
 								//sprintf(line[numline++], "%s robbed you!", PLAYER.Handle);
                             }
 							else {

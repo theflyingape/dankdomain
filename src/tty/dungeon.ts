@@ -123,7 +123,6 @@ function command() {
 					}
 					$.cat('dungeon/' + monster[n].user.handle)
 
-					xvt.waste(750)
 					xvt.out(xvt.reset, '\nIt\'s ', $.an(monster[n].user.handle), monster[n].user.handle, '!')
 					xvt.waste(500)
 					xvt.out('  And it doesn\'t look friendly.\n')

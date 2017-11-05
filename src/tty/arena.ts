@@ -171,6 +171,7 @@ function choice() {
 									opponent.user.coin.value += reward.value
 									opponent.user.jw++
 									$.saveUser(opponent)
+									$.news(`\tlost to ${opponent.user.handle} in a joust`)
 									menu()
 									return
 								}

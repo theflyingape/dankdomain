@@ -18,8 +18,8 @@ module Battle
     export let round: { party:number, member:number, react:number }[]
     export let bs: number
     export let retreat: boolean
+    export let teleported: boolean
     export let volley: number
-
 
 //  start a new battle engagement:
 //    do rounds: attack() with possibly backstab or poison
@@ -50,6 +50,7 @@ export function engage(module:string, party: active|active[], mob: active|active
     alive = [ parties[0].length, parties[1].length ]
     round = []
     retreat = false
+    teleported = false
     volley = 0
 
     attack()
@@ -571,8 +572,29 @@ export function spoils() {
             if (parties[l][m].hp == 0) {
                 loser = parties[l][m]
                 if (/Monster|User/.test(from)) {
+                    loser.altered = true
                     loser.user.status = winner.user.id
                     winner.user.coward = false
+                    if (winner.user.cursed) {
+                        loser.user.cursed = winner.user.id
+                        winner.user.cursed = ''
+                        xvt.out(xvt.bright, xvt.black, 'A dark cloud has lifted and shifted.\n', xvt.reset)
+                        xvt.waste(1000)
+                        winner.str = $.PC.ability(winner.str, 10, winner.user.maxstr)
+                        winner.int = $.PC.ability(winner.int, 10, winner.user.maxint)
+                        winner.dex = $.PC.ability(winner.dex, 10, winner.user.maxdex)
+                        winner.cha = $.PC.ability(winner.cha, 10, winner.user.maxcha)
+                    }
+                    if (loser.user.blessed) {
+                        winner.user.blessed = loser.user.id
+                        loser.user.blessed = ''
+                        xvt.out(xvt.bright, xvt.yellow, 'A shining aura surrounds you.\n', xvt.reset)
+                        xvt.waste(1000)
+                        winner.str = $.PC.ability(winner.str, 10, winner.user.maxstr, 10)
+                        winner.int = $.PC.ability(winner.int, 10, winner.user.maxint, 10)
+                        winner.dex = $.PC.ability(winner.dex, 10, winner.user.maxdex, 10)
+                        winner.cha = $.PC.ability(winner.cha, 10, winner.user.maxcha, 10)
+                    }
                     // dungeon: modf(EXP(RPC[1][i]->user.ExpLevel - 1.) / (20. - (1.5 * (double)nest)), &d);
                     // user: modf(EXP(ENEMY.ExpLevel - 1) /3., &d);
                     let x = loser.user.id ? 2 : 3
@@ -594,7 +616,7 @@ export function spoils() {
                     let result = $.Weapon.swap(winner, loser, credit)
                     if (xvt.validator.isBoolean(result) && result)
                         xvt.out($.who(winner, 'He'), $.what(winner, 'take'), $.who(loser, 'his'), winner.user.weapon, '.\n')
-                    else if (result)
+                    else if (from === 'Monster' && result)
                         xvt.out($.who(winner, 'He'), $.what(winner, 'get'), credit.carry(), ' for ', $.who(loser, 'his'), loser.user.weapon, '.\n')
 
                     credit = new $.coins(loser.armor.value)
@@ -602,7 +624,7 @@ export function spoils() {
                     result = $.Armor.swap(winner, loser, credit)
                     if (xvt.validator.isBoolean(result) && result)
                         xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who(loser, 'his'), winner.user.armor, '.\n')
-                    else if (result)
+                    else if (from === 'Monster' && result)
                         xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'get'), credit.carry(), ' for ', $.who(loser, 'his'), loser.user.armor, '.\n')
                 }
                 else {
@@ -611,6 +633,7 @@ export function spoils() {
                     if ($.Armor.swap(winner, loser))
                         xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who(loser, 'his'), winner.user.armor, '.\n')
                     $.unlock(loser.user.id)
+                    xvt.out(1000)
                 }
                 if (loser.altered) $.saveUser(loser)
             }
@@ -630,12 +653,22 @@ export function spoils() {
     }
     else {
         if (winner.user.id) {
+            if (loser.user.blessed) {
+                winner.user.blessed = loser.user.id
+                loser.user.blessed = ''
+                xvt.out(xvt.bright, xvt.yellow, 'Your shining aura leaves you.\n', xvt.reset)
+                xvt.waste(1000)
+            }
             if ($.Weapon.swap(winner, loser))
                 xvt.out($.who(winner, 'He'), $.what(winner, 'take'), $.who(loser, 'his'), winner.user.weapon, '.\n')
             if ($.Armor.swap(winner, loser))
                 xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who(loser, 'his'), winner.user.armor, '.\n')
-            $.saveUser(winner)
-            $.unlock(winner.user.id)
+            if (winner.user.cursed) {
+                loser.user.cursed = winner.user.id
+                winner.user.cursed = ''
+                xvt.out(xvt.bright, xvt.black, 'A dark cloud hovers over you.\n', xvt.reset)
+                xvt.waste(1000)
+            }
         }
         if (loser.user.coin.value) {
             winner.user.coin.value += loser.user.coin.value
@@ -643,6 +676,9 @@ export function spoils() {
             loser.user.coin.value = 0
             loser.altered = true
         }
+        $.saveUser(winner)
+        $.unlock(winner.user.id)
+        xvt.out(1000)
     }
 }
 
@@ -760,11 +796,11 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
         if ($.dice(100) > $.Magic.ability(name, rpc, nme).fail) {
             if ((backfire = $.dice(100) > $.Magic.ability(name, rpc, nme).backfire)) {
                 $.sound('oops')
-                xvt.out('Oops!  ', $.who(rpc, 'His'), ' spell backfires!\n')
+                xvt.out('Oops!  ', xvt.reset, $.who(rpc, 'His'), 'spell backfires!\n')
             }
             else {
                 $.sound('fssst')
-                xvt.out('Fssst!  ', $.who(rpc, 'His'), 'spell fails!\n')
+                xvt.out('Fssst!  ', xvt.reset, $.who(rpc, 'His'), 'spell fails!\n')
                 cb()
                 return
             }
@@ -819,7 +855,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 xvt.out(`You feel depressed (${rpc.cha})\n`)
             }
             else {
-                if ((rpc.cha = $.PC.ability(rpc.cha, $.dice(10), rpc.user.maxdex, mod)) < rpc.user.maxcha)
+                if ((rpc.cha = $.PC.ability(rpc.cha, $.dice(10), rpc.user.maxcha, mod)) < rpc.user.maxcha)
                     xvt.out(`You feel much more charismatic (${rpc.cha})\n`)
                 else
                     xvt.out(`Stop being so vain.\n`)
@@ -834,16 +870,21 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                     rpc.toAC -= $.dice(rpc.toAC)
                 else
                     rpc.toAC--
-                xvt.out($.who(rpc, 'His'), rpc.user.armor, ' loses some of its effectiveness.\n')
+                xvt.out($.who(rpc, 'His'), rpc.user.armor ? rpc.user.armor : 'defense', ' loses some of its effectiveness.\n')
             }
             else {
+                $.sound('shield')
+                xvt.out('A magical field shimmers around ', rpc.user.armor ? $.who(rpc, 'his') + rpc.user.armor : $.who(rpc, 'him'), '.\n')
                 if (rpc.user.magic > 2 && rpc.user.toAC >= 0)
                     rpc.user.toAC++
                 rpc.toAC++
-                $.sound('shield')
-                xvt.out('A magical field shimmers around', $.who(rpc, 'his'), rpc.user.armor, '.\n')
             }
             if (-rpc.user.toAC >= rpc.armor.ac || -(rpc.user.toAC + rpc.toAC) >= rpc.armor.ac) {
+                xvt.out($.who(rpc, 'His'), rpc.user.armor ? rpc.user.armor : 'defense', ' crumbles!\n')
+                $.Armor.equip(rpc, $.Armor.merchant[0])
+            }
+            if ($.dice(3 * (rpc.user.toAC + rpc.toAC + 1) / rpc.user.magic) >>0 > rpc.armor.ac) {
+                xvt.out($.who(rpc, 'His'), rpc.user.armor ? rpc.user.armor : 'defense', ' vaporizes!\n')
                 $.Armor.equip(rpc, $.Armor.merchant[0])
             }
             rpc.altered = true
@@ -851,48 +892,125 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
 
         case 6:
             if (backfire) {
-
+                xvt.out($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' loses some of its effectiveness.\n')
+                if (rpc.user.magic > 2 && rpc.user.toWC > 0)
+                    rpc.user.toWC--
+                else if(rpc.toWC > 0)
+                    rpc.toWC -= $.dice(rpc.toWC)
+                else
+                    rpc.toWC--
             }
             else {
                 $.sound('hone')
+                xvt.out($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' glows with magical sharpness.\n')
+                if (rpc.user.magic > 2 && rpc.user.toWC >= 0)
+                    rpc.user.toWC++
+                rpc.toWC++
+            }
+            if (-rpc.user.toWC >= rpc.weapon.wc || -(rpc.user.toWC + rpc.toWC) >= rpc.weapon.wc) {
+                xvt.out($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' crumbles!\n')
+                $.Weapon.equip(rpc, $.Weapon.merchant[0])
+            }
+            if ($.dice(3 * (rpc.user.toWC + rpc.toWC + 1) / rpc.user.magic) >>0 > rpc.weapon.wc) {
+                xvt.out($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' vaporizes!\n')
+                $.Weapon.equip(rpc, $.Weapon.merchant[0])
             }
             rpc.altered = true
             break
 
         case 7:
+            let ha = rpc.user.magic > 2 ? rpc.user.level >>3 + 8 : 16
+            let hr = 0
+            for (let i = 0; i < rpc.user.level; i++)
+                hr += $.dice(ha)
+
             if (backfire) {
                 $.sound('hurt')
+                rpc.hp -= hr
+                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' hurt'), $.who(rpc, 'him'), '\x08self'
+                    , ' for ', hr.toString(), ' hit points!\n')
+                if (rpc.hp < 1) {
+                    xvt.out(xvt.reset, '\n')
+                    rpc.hp = 0
+                    if (rpc === $.online)
+                        $.reason = 'heal backfired'
+                }
             }
             else {
                 $.sound('heal')
+                rpc.hp += hr
+                if (rpc.hp > rpc.user.hp)
+                    rpc.hp = rpc.user.hp
+                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' heal'), $.who(rpc, 'him'), '\x08self'
+                    , ' for ', hr.toString(), ' hit points.\n')
             }
             break
 
         case 8:
             $.sound('teleport')
             if (backfire) {
-
+                nme.hp = -1
             }
             else {
-
+                if (rpc === $.online) {
+                    teleported = true
+                    retreat = true
+                    rpc.user.retreats++
+                }
+                else {
+                    rpc.hp = -1
+                }
             }
             break
 
         case 9:
             $.sound('blast')
-            if (backfire) {
+            let ba = rpc.user.magic > 2 ? (rpc.user.level >>3) - (nme.armor.ac >>2) + 16 : 17
+            if (nme.user.melee > 3)
+                ba *= nme.user.melee >>1
+            let br = rpc.int >>3
+            while ($.dice(99 + rpc.user.magic) > 99) {
+                ba += $.dice(rpc.user.magic)
+                for (let i = 0; i < ba; i++)
+                    br += $.dice(ba)
+            }
+            for (let i = 0; i < rpc.user.level; i++)
+                br += $.dice(ba)
 
+            if (backfire) {
+                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' blast')
+                    , $.who(rpc, 'him'), '\x08self'
+                    , ' for ', br.toString(), ' hit points!\n')
+                rpc.hp -= br
+                if (rpc.hp < 1) {
+                    xvt.out(xvt.reset, '\n')
+                    rpc.hp = 0
+                    if (rpc === $.online)
+                        $.reason = 'blast backfired'
+                }
             }
             else {
-
+                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' blast')
+                    , nme === $.online ? 'you' : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
+                    , ' for ', br.toString(), ' hit points!\n')
+                nme.hp -= br
+                    if (nme.hp < 1)
+                        nme.hp = 0
             }
             break
 
         case 10:
             if (backfire) {
+                $.player.killed++
+                $.profile({ jpg:'death' })
+                $.sound('killed', 20)
                 xvt.out('You die by your own doing.\n')
-                rpc.hp = 0
                 $.reason = `resurrect backfired`
+                rpc.hp = 0
             }
             else {
                 $.sound('resurrect')
@@ -1035,7 +1153,6 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             break
         }
 
-        xvt.waste(150)
         cb()
     }
 }
@@ -1055,7 +1172,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         if (blow == 1) {
             if (rpc == $.online) {
                 xvt.out('Your ', rpc.user.weapon, ' passes through thin air.\n')
-                $.sound('miss', 2)
+                $.sound('miss')
                 return
             }
             else {
@@ -1079,7 +1196,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         }
         else {
             xvt.out('Attempt fails!\n')
-            $.sound('miss', 2)
+            $.sound('miss')
             return
         }
     }
@@ -1127,11 +1244,10 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             xvt.out('You ', action, enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
                 , ' for ', hit.toString(), ' hit points', period, '\n'
             )
-            xvt.waste(100)
+            xvt.waste(200)
         }
         else {
             let w = action.split(' ')
-            let s = /.*ch$|.*sh$|.*s$/i.test(w[0]) ? 'es' : 's'
             if (alive[1] == 1)
                 xvt.out($.who(rpc, 'He'))
             else {
@@ -1139,7 +1255,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                     xvt.out('The ')
                 xvt.out(rpc.user.handle, ' ')
             }
-            xvt.out(w[0], s, w.slice(1).join(' '), ' ', enemy == $.online ? 'you'
+            xvt.out($.what(rpc, w[0]), w.slice(1).join(' '), enemy == $.online ? 'you'
                 : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
                 , ' for ', hit.toString(), ' hit points', period, '\n'
             )
@@ -1167,7 +1283,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                 , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
                 , ' killed you!\n\n', xvt.reset)
             $.profile({ jpg:'death' })
-            $.sound('killed', 20)
+            $.sound('killed', 12)
             $.reason = rpc.user.id.length ? `defeated by ${rpc.user.handle}`
                 : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`
             xvt.carrier = false
@@ -1179,7 +1295,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                     , enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
                     , '!\n\n', xvt.reset)
                 if (enemy.user.id !== '' && enemy.user.id[0] !== '_') {
-                    $.sound('kill', 20)
+                    $.sound('kill', 15)
                     $.music('bitedust')
                     $.news(`\tdefeated ${enemy.user.handle}, an experience level ${enemy.user.xplevel} ${enemy.user.pc}`)
                 }
@@ -1246,7 +1362,7 @@ export function poison(rpc: active, cb?:Function) {
         $.sound('hone')
         xvt.out(xvt.reset, '\n')
         if (!$.Poison.have(rpc.user.poisons, vial) || +rpc.user.weapon > 0) {
-            xvt.out(xvt.bright, xvt.green, $.who(rpc, 'He'), $.what(rpc, 'secrete'), 'a caustic ooze', $.buff(p, t), xvt.reset, '.\n')
+            xvt.out(xvt.bright, xvt.green, $.who(rpc, 'He'), $.what(rpc, 'secrete'), 'a caustic ooze', xvt.reset, $.buff(p, t), xvt.reset, '\n')
             xvt.waste(500)
         }
         else {
