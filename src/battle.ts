@@ -353,7 +353,7 @@ if(enemy->HP < 1) {
 */
     //  NPC
     else {
-        if (volley == 1 && $.dice((100 - rpc.user.level) / 5 + 5) < rpc.user.poison)
+        if (volley == 1 && $.dice(Math.trunc((100 - rpc.user.level) / 12) + 6) < rpc.user.poison)
             poison(rpc)
 
         //  might or magic?
@@ -743,7 +743,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
         if (rpc.user.magic == 1 && $.dice(100) < 50 + (spell.cast < 17 ? 2 * spell.cast : 2 * spell.cast - 16)) {
             rpc.altered = true
             $.Magic.remove(rpc.user.spells, spell.cast)
-            xvt.out($.who(rpc, 'His'), 'wand smokes as', $.who(rpc, 'he'), $.what(rpc, 'cast'), 'the spell.\n')
+            xvt.out($.who(rpc, 'His'), 'wand smokes as ', $.who(rpc, 'he'), $.what(rpc, 'cast'), 'the spell.\n')
             xvt.waste(300)
         }
 
