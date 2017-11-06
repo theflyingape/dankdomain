@@ -56,9 +56,11 @@ function choice() {
         suppress = false
     }
 
+    let rs: string[]
+
     switch (choice) {
         case 'L':
-            let rs = $.query(`SELECT * FROM Gangs ORDER BY name`)
+            rs = $.query(`SELECT * FROM Gangs ORDER BY name`)
             for (let i = 0; i < rs.length; i += 2) {
                 if (i + 1 < rs.length)
                     showGang(loadGang(rs[i]), loadGang(rs[i + 1]))
@@ -144,6 +146,52 @@ function choice() {
             xvt.app.focus = 'resign'
             return
 
+        case 'J':
+            if (!$.access.roleplay) break
+            if ($.player.gang) break
+
+            rs = $.query(`SELECT * FROM Gangs ORDER BY name`)
+            do {
+                g = loadGang(rs[0])
+                rs.splice(0, 1)
+                if (g.members.length < 4)
+                    break
+            } while (rs.length)
+
+            if (g.members.length < 4) {
+                showGang(g)
+
+                $.action('yn')
+                xvt.app.form = {
+                    'join': { cb:() => {
+                        xvt.out('\n')
+                        if (/Y/i.test(xvt.entry)) {
+                            $.player.gang = g.name
+                            $.online.altered = true
+                            g.members.push($.player.id)
+                            $.sqlite3.exec(`UPDATE Gangs SET members = '${g.members.join()}' WHERE name = '${g.name}'`)
+                        }
+                        else {
+                            while (rs.length) {
+                                g = loadGang(rs[0])
+                                rs.splice(0, 1)
+                                if (g.members.length < 4)
+                                    break
+                            }
+                            if (rs.length && g.members.length < 4) {
+                                showGang(g)
+                                xvt.app.refocus()
+                                return
+                            }
+                        }
+                        menu()
+                    }, prompt:'Join (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
+                }
+                xvt.app.focus = 'join'
+                return
+            }
+            break
+
         case 'Q':
 			require('./main').menu($.player.expert)
 			return
@@ -192,7 +240,7 @@ function saveGang(g: gang, insert = false) {
                     , win = ${g.win}, loss = ${g.loss}
                     , banner = ${(g.banner <<4) + g.trim}, color = ${(g.back <<4) + g.fore}
                 WHERE name = '${g.name}'
-            )`)
+            `)
         }
         catch(err) {
             xvt.beep()
