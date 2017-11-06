@@ -1710,7 +1710,7 @@ export function sound(effect: string, sync = 2) {
     //  https://github.com/JayrAlencar/sqlite-sync.js/wiki
     const DD = users + 'dankdomain.sql'
     let better = require('better-sqlite3')
-    let sqlite3 = new better(DD)
+    export let sqlite3 = new better(DD)
     let rs = query(`SELECT * FROM sqlite_master WHERE name='Online' AND type='table'`)
     if (!rs.length) {
         xvt.out('initializing online ... ')
@@ -1811,10 +1811,9 @@ export function sound(effect: string, sync = 2) {
     if (!rs.length) {
         xvt.out('initializing gangs ... ')
         sqlite3.exec(`CREATE TABLE IF NOT EXISTS Gangs (
-            name text PRIMARY KEY, banner numeric, members text,
-            win numeric, loss numeric
+            name text PRIMARY KEY, members text, win numeric, loss numeric, banner numeric, color numeric
         )`)
-
+        sqlite3.exec(`INSERT INTO Gangs VALUES ( 'Monster Mash', '_MM1,_MM2,_MM3,_MM4', 0, 0, 0, 0 )`)
         xvt.out('done.\n')
         xvt.waste(250)
     }

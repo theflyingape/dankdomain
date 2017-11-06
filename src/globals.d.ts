@@ -92,6 +92,17 @@ interface user {
 	tw?: number
 }
 
+interface gang {
+    name: string
+    members: string[]
+    win: number
+    loss: number
+    banner: number
+    trim: number
+    back: number
+    fore: number
+}
+
 interface choice {
     description?: string
 }

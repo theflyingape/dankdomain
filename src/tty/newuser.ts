@@ -145,7 +145,7 @@ function edit() {
 	}
 	if (retry > 1) $.player.id = check.id
 
-	if (retry > 8 || $.player.id === 'NEW' || $.player.id === 'OFF' || $.cuss($.player.id)) { $.player.id = '' }
+	if (retry > 8 || $.player.id === 'NEW' || $.cuss($.player.id)) { $.player.id = '' }
 
 	if ($.player.id === '') {
 		xvt.beep()
