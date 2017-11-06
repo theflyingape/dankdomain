@@ -219,7 +219,7 @@ function choice() {
 					else
 						menu()
 				}
-				, prompt: 'Fight what monster (1-' + monsters.length + ', ' + $.bracket('D', false) + 'emon)? '
+				, prompt: 'Fight what monster (1-' + monsters.length + ', ' + xvt.attr($.bracket('D', false), xvt.cyan, 'emon)? ')
 				, min:0, max:2 }
 			}
 			xvt.app.focus = 'pick'
@@ -357,11 +357,10 @@ function MonsterFights(): boolean {
 					monster = <active>{}
 					monster.user = <user>{ id:'' }
 					Object.assign(monster.user, require('../etc/summoned demon.json'))
-					monster.user.level = $.player.level + $.dice(7) - 4
-					if (monster.user.level > 99)
+					if ((monster.user.level = $.player.level + $.dice(7) - 4) > 99)
 						monster.user.level = 99
 					cost.value += $.money(monster.user.level)
-						
+
 					let n = Math.trunc($.Weapon.merchant.length * monster.user.level / 100) + $.dice(3) - 2
 					monster.user.weapon = (n >= $.Weapon.merchant.length) ? $.Weapon.merchant.length - 1 : n
 					cost.value += $.worth(new $.coins($.Weapon.name[$.Weapon.merchant[n]].value).value, $.player.cha)

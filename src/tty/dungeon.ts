@@ -100,6 +100,7 @@ function command() {
 					monster[n].user.weapon = monsters[dm].weapon ? monsters[dm].weapon : mon >>1
 					monster[n].user.armor = monsters[dm].armor ? monsters[dm].armor : mon >>2
 					monster[n].user.hp >>= 3
+					monster[n].user.sp >>= 3
 					monster[n].user.poisons = []
 					if (monsters[dm].poisons)
 						for (let vials in monsters[dm].poisons)
