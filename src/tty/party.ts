@@ -235,6 +235,53 @@ function choice() {
             })
             return
 
+        case 'E':
+            if (!$.access.roleplay) break
+            if (!$.player.gang) break
+
+            g = loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+            showGang(g)
+            if (g.members.indexOf($.player.id) != 0) {
+                xvt.beep()
+                xvt.out('\nYou are not its leader.\n')
+                break
+            }
+
+            $.action('yn')
+            xvt.app.form = {
+                'drop': { cb:() => {
+                    xvt.out('\n')
+                    if (/Y/i.test(xvt.entry)) {
+                        $.player.gang = g.name
+                        $.online.altered = true
+                        if (g.members.indexOf($.player.id) < 0)
+                            g.members.push($.player.id)
+                        $.sqlite3.exec(`UPDATE Gangs SET members = '${g.members.join()}' WHERE name = '${g.name}'`)
+                    }
+                    else {
+                        g.members = []
+                        while (rs.length) {
+                            g = loadGang(rs[0])
+                            rs.splice(0, 1)
+                            if (g.members.length < 4)
+                                break
+                        }
+                        if (g.members.length > 0 && g.members.length < 4) {
+                            showGang(g)
+                            xvt.app.refocus()
+                            return
+                        }
+                    }
+                    menu()
+                }, prompt:'Drop a member (Y/N)? ', enter:'N', eol:false, match:/Y|N/i },
+                'invite': { cb: () => {
+
+                }, prompt:'Reserve for another player (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
+            }
+            xvt.app.focus = 'drop'
+
+            return
+
         case 'Q':
 			require('./main').menu($.player.expert)
 			return
