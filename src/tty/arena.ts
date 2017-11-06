@@ -362,11 +362,13 @@ function MonsterFights(): boolean {
 					cost.value += $.money(monster.user.level)
 
 					let n = Math.trunc($.Weapon.merchant.length * monster.user.level / 100) + $.dice(3) - 2
-					monster.user.weapon = (n >= $.Weapon.merchant.length - 1) ? $.Weapon.merchant.length - 2 : n
+					n = n >= $.Weapon.merchant.length ? $.Weapon.merchant.length - 1 : n
+					monster.user.weapon = n
 					cost.value += $.worth(new $.coins($.Weapon.name[$.Weapon.merchant[n]].value).value, $.player.cha)
 
 					n = Math.trunc($.Armor.merchant.length * monster.user.level / 100) + $.dice(3) - 2
-					monster.user.armor = (n >= $.Armor.merchant.length - 1) ? $.Armor.merchant.length - 2 : n	
+					n = n >= $.Armor.merchant.length ? $.Armor.merchant.length - 1 : n
+					monster.user.armor = n
 					cost.value += $.worth(new $.coins($.Armor.name[$.Armor.merchant[n]].value).value, $.player.cha)
 
 					$.reroll(monster.user
