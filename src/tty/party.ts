@@ -217,15 +217,13 @@ function choice() {
                     xvt.out(`\n${member.user.handle} is not a member.\n`)
                 }
                 else {
-                    if ($.player.gang
-                        === $.query(`SELECT gang FROM Players WHERE id = '${member.user.id}'`)[0].gang
-                        ) {
-                            g.members[0] = member.user.id
-                            g.members[n] = $.player.id
-                            saveGang(g)
-                            showGang(g)
-                            xvt.out(xvt.bright, '\n', member.user.handle, ' is now leader of ', g.name, '.\n', xvt.reset)
-                        }
+                    if (member.user.gang === g.name) {
+                        g.members[0] = member.user.id
+                        g.members[n] = $.player.id
+                        saveGang(g)
+                        showGang(g)
+                        xvt.out(xvt.bright, '\n', member.user.handle, ' is now leader of ', g.name, '.\n', xvt.reset)
+                    }
                     else {
                         xvt.beep()
                         xvt.out(`\n${member.user.handle} has not accepted membership.\n`)
@@ -252,34 +250,53 @@ function choice() {
                 'drop': { cb:() => {
                     xvt.out('\n')
                     if (/Y/i.test(xvt.entry)) {
-                        $.player.gang = g.name
-                        $.online.altered = true
-                        if (g.members.indexOf($.player.id) < 0)
-                            g.members.push($.player.id)
-                        $.sqlite3.exec(`UPDATE Gangs SET members = '${g.members.join()}' WHERE name = '${g.name}'`)
+                        Battle.user('Drop', (member: active) => {
+                            let n = g.members.indexOf(member.user.id)
+                            if (n < 0) {
+                                xvt.beep()
+                                xvt.out(`\n${member.user.handle} is not a member.\n`)
+                            }
+                            else {
+                                if (member.user.gang === g.name) {
+                                    member.user.gang = ''
+                                    $.saveUser(member)
+                                    g.members.splice(n, 1)
+                                    saveGang(g)
+                                    showGang(g)
+                                    xvt.out(xvt.bright, '\n', member.user.handle, ' is no longer on ', g.name, '.\n', xvt.reset)
+                                }
+                            }
+                            menu(true)
+                        })
                     }
-                    else {
-                        g.members = []
-                        while (rs.length) {
-                            g = loadGang(rs[0])
-                            rs.splice(0, 1)
-                            if (g.members.length < 4)
-                                break
-                        }
-                        if (g.members.length > 0 && g.members.length < 4) {
-                            showGang(g)
-                            xvt.app.refocus()
-                            return
-                        }
-                    }
-                    menu()
+                    else
+                        xvt.app.focus = 'invite'
                 }, prompt:'Drop a member (Y/N)? ', enter:'N', eol:false, match:/Y|N/i },
                 'invite': { cb: () => {
-
-                }, prompt:'Reserve for another player (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
+                    xvt.out('\n')
+                    if (/Y/i.test(xvt.entry)) {
+                        Battle.user('Invite', (member: active) => {
+                            let n = g.members.indexOf(member.user.id)
+                            if (n >= 0) {
+                                xvt.beep()
+                                xvt.out(`\n${member.user.handle} is already a member.\n`)
+                            }
+                            else {
+                                if (!member.user.gang) {
+                                    g.members.push(member.user.id)
+                                    saveGang(g)
+                                    showGang(g)
+                                    xvt.out(xvt.bright, '\n', member.user.handle, ' is invited to join ', g.name, '.\n', xvt.reset)
+                                }
+                            }
+                            menu(true)
+                        })
+                    }
+                    else
+                        menu()
+                }, prompt:'Invite another player (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
             }
             xvt.app.focus = 'drop'
-
             return
 
         case 'Q':
