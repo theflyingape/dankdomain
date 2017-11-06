@@ -7,6 +7,7 @@ import {sprintf} from 'sprintf-js'
 
 import $ = require('../common')
 import xvt = require('xvt')
+import Battle = require('../battle')
 
 module Party
 {
@@ -100,7 +101,7 @@ function choice() {
                         $.player.gang = g.name
                         $.online.altered = true
                         saveGang(g, true)
-                        menu()
+                        menu(true)
                     }
                     else {
                         g.banner = $.dice(7)
@@ -136,11 +137,13 @@ function choice() {
                             saveGang(g)
                         }
                         else {
+                            xvt.out('Dissolving the gang... ')
                             $.sqlite3.exec(`UPDATE Players SET gang = '' WHERE gang = '${g.name}'`)
                             $.sqlite3.exec(`DELETE FROM Gangs WHERE name = '${g.name}'`)
+                            xvt.out('ok.\n')
                         }
                     }
-                    menu()
+                    menu(true)
                 }, prompt:'Resign (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
             }
             xvt.app.focus = 'resign'
@@ -194,6 +197,43 @@ function choice() {
                 return
             }
             break
+
+        case 'T':
+            if (!$.access.roleplay) break
+            if (!$.player.gang) break
+
+            g = loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+            showGang(g)
+            if (g.members.indexOf($.player.id) != 0) {
+                xvt.beep()
+                xvt.out('\nYou are not its leader.\n')
+                break
+            }
+
+            Battle.user('Transfer leadership to', (member: active) => {
+                let n = g.members.indexOf(member.user.id)
+                if (n < 0) {
+                    xvt.beep()
+                    xvt.out(`\n${member.user.handle} is not a member.\n`)
+                }
+                else {
+                    if ($.player.gang
+                        === $.query(`SELECT gang FROM Players WHERE id = '${member.user.id}'`)[0].gang
+                        ) {
+                            g.members[0] = member.user.id
+                            g.members[n] = $.player.id
+                            saveGang(g)
+                            showGang(g)
+                            xvt.out(xvt.bright, '\n', member.user.handle, ' is now leader of ', g.name, '.\n', xvt.reset)
+                        }
+                    else {
+                        xvt.beep()
+                        xvt.out(`\n${member.user.handle} has not accepted membership.\n`)
+                    }
+                }
+                menu(true)
+            })
+            return
 
         case 'Q':
 			require('./main').menu($.player.expert)
