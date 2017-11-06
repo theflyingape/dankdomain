@@ -150,6 +150,7 @@ function choice() {
             if (!$.access.roleplay) break
             if ($.player.gang) break
 
+            g.members = []
             rs = $.query(`SELECT * FROM Gangs ORDER BY name`)
             do {
                 g = loadGang(rs[0])
@@ -158,7 +159,7 @@ function choice() {
                     break
             } while (rs.length)
 
-            if (g.members.length < 4) {
+            if (g.members.length > 0 && g.members.length < 4) {
                 showGang(g)
 
                 $.action('yn')
@@ -168,17 +169,19 @@ function choice() {
                         if (/Y/i.test(xvt.entry)) {
                             $.player.gang = g.name
                             $.online.altered = true
-                            g.members.push($.player.id)
+                            if (g.members.indexOf($.player.id) < 0)
+                                g.members.push($.player.id)
                             $.sqlite3.exec(`UPDATE Gangs SET members = '${g.members.join()}' WHERE name = '${g.name}'`)
                         }
                         else {
+                            g.members = []
                             while (rs.length) {
                                 g = loadGang(rs[0])
                                 rs.splice(0, 1)
                                 if (g.members.length < 4)
                                     break
                             }
-                            if (rs.length && g.members.length < 4) {
+                            if (g.members.length > 0 && g.members.length < 4) {
                                 showGang(g)
                                 xvt.app.refocus()
                                 return
@@ -288,6 +291,69 @@ function showGang(lg: gang, rg?: gang)
         xvt.out(le[rg.trim], tb[rg.trim].repeat(26), re[rg.trim])
     }
     xvt.out(xvt.reset, '\n')
+    
+    //
+    let n = 0
+    let who: { handle:string, status:string, gang:string }[]
+    while (n < 4 && ((lg && lg.members.length) || (rg && rg.members.length))) {
+        if (lg) {
+            xvt.out(' | ')
+            if (n < lg.members.length) {
+                who = $.query(`SELECT handle, status, gang FROM Players WHERE id = '${lg.members[n]}'`)
+                if (who.length) {
+                    if (who[0].gang === lg.name) {
+                        if (who[0].status)
+                            xvt.out(xvt.faint, xvt.blue, '^ ')
+                        else
+                            xvt.out(xvt.bright, xvt.white, '  ')
+                    }
+                    else {
+                        if (who[0].gang)
+                            xvt.out(xvt.faint, xvt.red, 'x ', xvt.blue)
+                        else
+                            xvt.out(xvt.faint, xvt.yellow, '> ')
+                    }
+                    xvt.out(sprintf('%-24s ', who[0].handle))
+                }
+                else
+                    xvt.out(sprintf('{ %-22s } ', 'wired for ' + lg.members[n]))
+            }
+            else
+                xvt.out(sprintf(' -open invitation to join- '))
+        }
+        else
+            xvt.out(xvt.reset, ' '.repeat(28))
+
+        if (rg) {
+            xvt.out(xvt.reset, ' '.repeat(4), ' | ')
+
+            if (n < rg.members.length) {
+                who = $.query(`SELECT handle, status, gang FROM Players WHERE id = '${rg.members[n]}'`)
+                if (who.length) {
+                    if (who[0].gang === rg.name) {
+                        if (who[0].status)
+                            xvt.out(xvt.faint, xvt.blue, '^ ')
+                        else
+                            xvt.out(xvt.bright, xvt.white, '  ')
+                    }
+                    else {
+                        if (who[0].gang)
+                            xvt.out(xvt.faint, xvt.red, 'x ', xvt.blue)
+                        else
+                            xvt.out(xvt.faint, xvt.yellow, '> ')
+                    }
+                    xvt.out(sprintf('%-24s ', who[0].handle))
+                }
+                else
+                    xvt.out(sprintf('{ %-22s } ', 'wired for ' + rg.members[n]))
+                }
+            else
+                xvt.out(sprintf(' -open invitation to join- '))
+        }
+
+        xvt.out(xvt.reset, '\n')
+        n++
+    }
 }
 
 }
