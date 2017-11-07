@@ -355,14 +355,17 @@ function choice() {
                         }
 
                         let posse: active[] = new Array($.online)
-                        for (let i = 0; i < o.members.length; i++) {
+                        for (let i = 0; i < g.members.length; i++) {
                             if (g.members[i] !== $.player.id) {
                                 let who = $.query(`SELECT handle, status, gang FROM Players WHERE id = '${g.members[i]}'`)
                                 if (who.length) {
                                     if (who[0].gang === g.name) {
                                         let n = posse.push(<active>{ user:{ id:g.members[i]} }) - 1
                                         $.loadUser(posse[n])
-                                        $.activate(posse[n])
+                                        if (posse[n].user.status)
+                                            posse.pop()
+                                        else
+                                            $.activate(posse[n])
                                     }
                                 }
                             }
