@@ -287,6 +287,18 @@ function choice() {
 				}
 				xvt.out(`is a level ${opponent.user.level} ${opponent.user.pc}.\n`)
 
+				if ($.player.novice && !opponent.user.novice) {
+					xvt.out('You are allowed only to fight other novices.\n')
+					menu()
+					return
+				}
+
+				if (!$.player.novice && opponent.user.novice) {
+					xvt.out('You are not allowed to fight novices.\n')
+					menu()
+					return
+				}
+
 				if (isNaN(+opponent.user.weapon)) xvt.out('\n', $.who(opponent, 'He'), $.Weapon.wearing(opponent), '.\n')
 				if (isNaN(+opponent.user.armor)) xvt.out('\n', $.who(opponent, 'He'), $.Armor.wearing(opponent), '.\n')
 

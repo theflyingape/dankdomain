@@ -1346,6 +1346,7 @@ export function riddle() {
     if (player.novice) {
         xvt.out(xvt.reset, '\nYou are no longer a novice.  Welcome to the next level of play.\n\n')
         player.novice = false
+        player.expert = true
         xvt.waste(2000)
     }
     xvt.out(xvt.magenta, 'Checking your statistics against All-Time Fame/Lame lists...\n')

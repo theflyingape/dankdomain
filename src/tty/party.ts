@@ -302,6 +302,10 @@ function choice() {
         case 'Q':
 			require('./main').menu($.player.expert)
 			return
+
+        default:
+			xvt.beep()
+    	    suppress = false
 	}
 	menu(suppress)
 }
@@ -420,7 +424,8 @@ function showGang(lg: gang, rg?: gang)
                     xvt.out(sprintf('%-24s ', who[0].handle))
                 }
                 else
-                    xvt.out(sprintf('{ %-22s } ', 'wired for ' + lg.members[n]))
+                    xvt.out(sprintf('> %-22s   ', 'wired for ' + lg.members[n] + ' '
+                        + ['mashing','smashing','beatdown','pounding'][n]))
             }
             else
                 xvt.out(sprintf(' -open invitation to join- '))
