@@ -312,12 +312,13 @@ function choice() {
             for (let i = 0; i < rs.length; i ++) {
                 o = loadGang(rs[i])
                 if (o.name !== g.name)
-                    xvt.out($.bracket(i + 1), ' ', o.name)
+                    xvt.out($.bracket(i + 1), o.name)
             }
 
             $.action('list')
             xvt.app.form = {
                 'gang': { cb:() => {
+                    xvt.out('\n')
                     let i = parseInt(xvt.entry) - 1
                     if (/m|max/i.test(xvt.entry))
                         i = rs.indexOf('Monster Mash')
@@ -367,7 +368,7 @@ function choice() {
                         $.party--
                         $.music('party')
 
-                        xvt.out(nme[0].user.handle, ' grins as', $.who(nme[0], 'he'), 'pulls out', $.who(nme[0], 'his'), nme[0].user.weapon, '\n\n.')
+                        xvt.out(nme[0].user.handle, ' grins as ', $.who(nme[0], 'he'), 'pulls out ', $.who(nme[0], 'his'), nme[0].user.weapon, '.\n\n')
                         xvt.waste(1000)
 
                         Battle.engage('Party', posse, nme, menu)

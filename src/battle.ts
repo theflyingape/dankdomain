@@ -554,11 +554,6 @@ export function spoils() {
     if ($.online.confused)
         $.activate($.online, false, true)
 
-    // had a little help from my friends (maybe)
-    if (from === 'Party') {
-        return
-    }
-
     if ($.online.hp) {
         winner = $.online
         l = 1
@@ -567,6 +562,14 @@ export function spoils() {
         winner = parties[1][0]
         loser = $.online
         l = 0
+    }
+
+    // had a little help from my friends (maybe)
+    if (from === 'Party') {
+        $.news(`\t${parties[l^1][0].user.gang} defeated ${parties[l][0].user.gang}`)
+        if (loser === $.online)
+            $.reason = `defeated by ${parties[l][0].user.gang}`
+        return
     }
 
     winner.altered = true
@@ -1368,7 +1371,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                 xvt.out('You killed'
                     , enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
                     , '!\n\n', xvt.reset)
-                if (enemy.user.id !== '' && enemy.user.id[0] !== '_') {
+                if (from !== 'Party' && enemy.user.id !== '' && enemy.user.id[0] !== '_') {
                     $.sound('kill', 15)
                     $.music('bitedust')
                     $.news(`\tdefeated ${enemy.user.handle}, an experience level ${enemy.user.xplevel} ${enemy.user.pc}`)
