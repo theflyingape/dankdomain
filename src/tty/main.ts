@@ -110,8 +110,9 @@ function choice() {
                 else if (rs[n] === $.player.id)
                     xvt.out(xvt.bright, xvt.white)
                 xvt.out(sprintf('%-4s  %-22s  %-9s  %3d  ', rs[n].id, rs[n].handle, rs[n].pc, rs[n].level))
-                if (!rs[n].status.length) xvt.out('Alive!  ')
-                else xvt.out(xvt.faint, rs[n].status === 'jail' ? '#jail#' : '^dead^  ', xvt.reset)
+                if (!rs[n].status.length) xvt.out('Alive!')
+                else xvt.out(xvt.faint, rs[n].status === 'jail' ? '#jail#' : '^dead^')
+                xvt.out('  ', xvt.reset)
                 if (rs[n].gang === $.player.gang) xvt.out(xvt.Red)
                 xvt.out(rs[n].gang, xvt.reset, '\n')
             }
