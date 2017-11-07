@@ -34,7 +34,7 @@ module Party
         'T': { description:'Transfer leadership' }
 	}
 
-export function menu(suppress = false) {
+export function menu(suppress = true) {
     if ($.checkXP($.online, menu)) return
 	if ($.online.altered) $.saveUser($.player)
 	if ($.reason) xvt.hangup()
@@ -101,7 +101,7 @@ function choice() {
                         $.player.gang = g.name
                         $.online.altered = true
                         saveGang(g, true)
-                        menu(true)
+                        menu()
                     }
                     else {
                         g.banner = $.dice(7)
@@ -144,7 +144,7 @@ function choice() {
                             xvt.out('ok.\n')
                         }
                     }
-                    menu(true)
+                    menu()
                 }, prompt:'Resign (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
             }
             xvt.app.focus = 'resign'
@@ -230,7 +230,7 @@ function choice() {
                         xvt.out(`\n${member.user.handle} has not accepted membership.\n`)
                     }
                 }
-                menu(true)
+                menu()
             })
             return
 
@@ -268,7 +268,7 @@ function choice() {
                                     xvt.out(xvt.bright, '\n', member.user.handle, ' is no longer on ', g.name, '.\n', xvt.reset)
                                 }
                             }
-                            menu(true)
+                            menu()
                         })
                     }
                     else
@@ -291,7 +291,7 @@ function choice() {
                                     xvt.out(xvt.bright, '\n', member.user.handle, ' is invited to join ', g.name, '.\n', xvt.reset)
                                 }
                             }
-                            menu(true)
+                            menu()
                         })
                     }
                     else
@@ -324,7 +324,7 @@ function choice() {
                         i = rs.indexOf('Monster Mash')
                     if (i < 0 || i >= rs.length) {
                         xvt.beep()
-                        menu(true)
+                        menu()
                         return
                     }
 
@@ -373,7 +373,7 @@ function choice() {
 
                         if (!nme.length) {
                             xvt.out('That gang is not active!\n')
-                            menu(true)
+                            menu()
                         }
 
                         $.party--
@@ -385,7 +385,7 @@ function choice() {
                         Battle.engage('Party', posse, nme, menu)
                     }
                     else
-                        menu(true)
+                        menu()
             }, prompt:'Fight this gang (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
             }
             xvt.app.focus = 'gang'

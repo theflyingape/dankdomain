@@ -478,7 +478,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
         riddle()
         return true
     }
-    if (rpc.user.xp < experience(rpc.user.level, undefined, rpc.user.int)) return false
+    if (rpc.user.xp < experience(rpc.user.level, 1, rpc.user.int)) return false
 
     let award = {
         hp: rpc.user.hp,

@@ -325,35 +325,6 @@ if(c == 'A') {
                 enemy->HP-=n;
         }
 }
-
-if(enemy->HP < 1) {
-        enemy->HP = 0;
-        if(from == 'P') {
-                if(c == 'A')
-                        switch(dice(6)) {
-                                case 1:
-                                        sprintf(outbuf, "%s makes a fatal blow to %s.", rpc->user.Handle, enemy->user.Handle);
-                                        break;
-                                case 2:
-                                        sprintf(outbuf, "%s blows %s away.", rpc->user.Handle, enemy->user.Handle);
-                                        break;
-                                case 3:
-                                        sprintf(outbuf, "%s laughs, then kills %s.", rpc->user.Handle, enemy->user.Handle);
-                                        break;
-                                case 4:
-                                        sprintf(outbuf, "%s easily slays %s.", rpc->user.Handle, enemy->user.Handle);
-                                        break;
-                                case 5:
-                                        sprintf(outbuf, "%s makes minced-meat out of %s.", rpc->user.Handle, enemy->user.Handle);
-                                        break;
-                                case 6:
-                                        sprintf(outbuf, "%s runs %s through.", rpc->user.Handle, enemy->user.Handle);
-                                        break;
-                        }
-                        if(c == 'C')
-                                strcat(outbuf," {RIP}");
-                }
-
 */
     //  NPC
     else {
@@ -550,6 +521,7 @@ export function spoils() {
     let winner: active
     let loser: active
     let l: number
+    let w: number
 
     if ($.online.confused)
         $.activate($.online, false, true)
@@ -564,15 +536,75 @@ export function spoils() {
         l = 0
     }
 
+    w = l ^ 1
+    winner.altered = true
+    
     // had a little help from my friends (maybe)
     if (from === 'Party') {
-        $.news(`\t${parties[l^1][0].user.gang} defeated ${parties[l][0].user.gang}`)
+        $.sqlite3.exec(`UPDATE Gangs SET win = win + 1 WHERE name = '${parties[w][0].user.gang}'`)
+        $.sqlite3.exec(`UPDATE Gangs SET loss = loss + 1 WHERE name = '${parties[l][0].user.gang}'`)
+
+        // player(s) can collect off each corpse
+        let tl = [ 1, 1 ]
+        let take: number = 0
+        let coin = new $.coins(0)
+
+        for (let m in parties[w]) {
+            tl[w] += parties[w][m].user.xplevel
+            if (parties[w][m].hp > 0)
+                take += parties[w][m].user.xp + 1
+        }
+
+        for (let m in parties[l]) {
+            // accrue benefits off of defeated players only
+            if (parties[l][m].hp == 0) {
+                tl[l] += parties[l][m].user.xplevel
+                coin.value += parties[l][m].user.coin.value
+                parties[l][m].user.coin.value = 0
+                $.saveUser(parties[l][m])
+            }
+        }
+
+        for (let m in parties[w]) {
+            let award = 0
+
+            //  dead men get no booty
+            if (parties[w][m].hp > 0) {
+                award = Math.trunc(coin.value * parties[w][m].user.xp / take * 0.95)
+                parties[w][m].user.coin.value += award
+                coin.value -= award
+                take -= Math.trunc(parties[w][m].user.xp * 0.95)
+            }
+
+            let xp = Math.trunc($.experience(parties[w][m].user.xplevel, 1, parties[w][m].user.int) * tl[l] / tl[w])
+            parties[w][m].user.xp += xp
+
+            if (parties[w][m] == $.online) {
+                xvt.out('You get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
+                if (award)
+                    xvt.out('You get your cut worth ', new $.coins(award).carry(), '.\n')
+                xvt.waste(500)
+            }
+            else
+                $.saveUser(parties[w][m])
+        }
+
+        if (coin.value) {
+            $.loadUser($.taxman)
+            $.taxman.user.coin.value += coin.value
+            $.saveUser($.taxman)
+            xvt.out(xvt.reset, '\n')
+            xvt.waste(500)
+            xvt.out($.taxman.user.handle, ' took ', $.who($.taxman, 'his'), 'cut worth ', coin.carry(), '.\n')
+            xvt.waste(500)
+        }
+
+        $.news(`\tdefeated the gang, ${parties[l][0].user.gang}`)
         if (loser === $.online)
-            $.reason = `defeated by ${parties[l][0].user.gang}`
+            $.reason = `defeated by ${parties[w][0].user.gang}`
         return
     }
 
-    winner.altered = true
     if (l) {
         // player can collect off each corpse
         let xp: number = 0
@@ -1007,21 +1039,26 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' blast')
                     , nme === $.online ? 'you' : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
-                    , ' for ', br.toString(), ' hit points!\n')
+                    , ' for ', br.toString(), ' hit points!')
                 nme.hp -= br
+
                 if (nme.hp < 1) {
                     nme.hp = 0
-                    if (nme === $.online) {
+                    if (from === 'Party' || nme !== $.online) {
+                        xvt.out(xvt.blue, xvt.faint, ' {', xvt.bright, 'RIP', xvt.faint, '}', xvt.reset)
+                    }
+                    else {
                         $.player.killed++
                         xvt.out('\n', xvt.bright, xvt.yellow
                             , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
-                            , ' killed you!\n\n', xvt.reset)
+                            , ' killed you!\n', xvt.reset)
                         $.profile({ jpg:'death' })
                         $.sound('killed', 12)
-                        $.reason = rpc.user.id.length ? `defeated by ${rpc.user.handle}`
-                            : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`
+                        $.reason = rpc.user.id.length ? `fatal blast by ${rpc.user.handle}`
+                            : `fatal blast by a level ${rpc.user.level} ${rpc.user.handle}`
                     }
                 }
+                xvt.out('\n')
             }
             break
 
@@ -1309,14 +1346,38 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     hit *= 50 + Math.trunc(rpc.user.str / 2)
     hit = Math.round(hit / 100)
     hit -= ac + $.dice(ac)
-    if (hit > 0) {
-    //  any ego involvement
-    //  if((damage + egostat[0] + egostat[1] + egostat[2] + egostat[3]) < 1)
-    //      damage = dice(2) - (egostat[0] + egostat[1] + egostat[2] + egostat[3]);
+    if (hit <= 0) {
+        hit = 0
+    }
+    else {
+        //  any ego involvement
+        //  if((damage + egostat[0] + egostat[1] + egostat[2] + egostat[3]) < 1)
+        //      damage = dice(2) - (egostat[0] + egostat[1] + egostat[2] + egostat[3]);
         hit *= blow
+    }
+
+    enemy.hp -= hit
+
+    if (hit > 0) {
+        if (from === 'Party' && enemy.hp <= 0) {
+            enemy.hp = 0
+            xvt.out(rpc.user.handle, ' ', sprintf([
+                'makes a fatal blow to %s',
+                'blows %s away',
+                'laughs, then kills %s',
+                'easily slays %s',
+                'makes minced-meat out of %s',
+                'runs %s through'
+                ][$.dice(6)], enemy.user.handle)
+                , '.\n'
+            )
+            xvt.waste(500)
+            return
+        }
+
         action = (blow == 1)
-            ? (period[0] === '.') ? rpc.weapon.hit : rpc.weapon.smash
-            : (period[0] === '.') ? rpc.weapon.stab : rpc.weapon.plunge
+        ? (period[0] === '.') ? rpc.weapon.hit : rpc.weapon.smash
+        : (period[0] === '.') ? rpc.weapon.stab : rpc.weapon.plunge
 
         if (rpc == $.online) {
             xvt.out('You ', action, enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
@@ -1348,13 +1409,11 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
             , '.\n'
         )
-        hit = 0
     }
-
-    enemy.hp -= hit
 
     if (enemy.hp < 1) {
         enemy.hp = 0    // killed
+
         if (enemy == $.online) {
             $.player.killed++
             xvt.out('\n', xvt.bright, xvt.yellow
