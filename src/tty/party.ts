@@ -57,7 +57,7 @@ function choice() {
         suppress = false
     }
 
-    let rs: string[]
+    let rs: any[]
 
     switch (choice) {
         case 'L':
@@ -120,7 +120,8 @@ function choice() {
         case 'R':
             if (!$.access.roleplay) break
             if (!$.player.gang) break
-
+            if (!$.party) break
+            
             g = loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
             showGang(g)
 
@@ -236,7 +237,8 @@ function choice() {
         case 'E':
             if (!$.access.roleplay) break
             if (!$.player.gang) break
-
+            if (!$.party) break
+            
             g = loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
             showGang(g)
             if (g.members.indexOf($.player.id) != 0) {
@@ -297,6 +299,84 @@ function choice() {
                 }, prompt:'Invite another player (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
             }
             xvt.app.focus = 'drop'
+            return
+
+        case 'F':
+            if (!$.access.roleplay) break
+            if (!$.player.gang) break
+            if (!$.party) break
+
+            g = loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+
+            rs = $.query(`SELECT * FROM Gangs ORDER BY name`)
+            for (let i = 0; i < rs.length; i ++) {
+                o = loadGang(rs[i])
+                if (o.name !== g.name)
+                    xvt.out($.bracket(i + 1), ' ', o.name)
+            }
+
+            $.action('list')
+            xvt.app.form = {
+                'gang': { cb:() => {
+                    let i = parseInt(xvt.entry) - 1
+                    if (/m|max/i.test(xvt.entry))
+                        i = rs.indexOf('Monster Mash')
+                    if (i < 0 || i >= rs.length) {
+                        xvt.beep()
+                        menu(true)
+                        return
+                    }
+
+                    o = loadGang(rs[i])
+                    if (o.name === g.name) {
+                        xvt.app.refocus()
+                        return
+                    }
+                    showGang(g, o)
+                    xvt.app.focus = 'fight'
+                }, prompt:'\nFight which gang? ', max:3 },
+                'fight': { cb:() => {
+                    xvt.out('\n\n')
+                    if (/Y/i.test(xvt.entry)) {
+                        let nme: active[] = new Array()
+                        for (let i = 0; i < o.members.length; i++) {
+                            let who = $.query(`SELECT handle, status, gang FROM Players WHERE id = '${o.members[i]}'`)
+                            if (who.length) {
+                                if (who[0].gang === o.name) {
+                                    let n = nme.push(<active>{ user:{ id:o.members[i]} }) - 1
+                                    $.loadUser(nme[n])
+                                    $.activate(nme[n])
+                                }
+                            }
+                        }
+
+                        let posse: active[] = new Array($.online)
+                        for (let i = 0; i < o.members.length; i++) {
+                            if (g.members[i] !== $.player.id) {
+                                let who = $.query(`SELECT handle, status, gang FROM Players WHERE id = '${g.members[i]}'`)
+                                if (who.length) {
+                                    if (who[0].gang === g.name) {
+                                        let n = posse.push(<active>{ user:{ id:g.members[i]} }) - 1
+                                        $.loadUser(posse[n])
+                                        $.activate(posse[n])
+                                    }
+                                }
+                            }
+                        }
+
+                        $.party--
+                        $.music('party')
+
+                        xvt.out(nme[0].user.handle, ' grins as', $.who(nme[0], 'he'), 'pulls out', $.who(nme[0], 'his'), nme[0].user.weapon, '\n\n.')
+                        xvt.waste(1000)
+
+                        Battle.engage('Party', posse, nme, menu)
+                    }
+                    else
+                        menu(true)
+            }, prompt:'Fight this gang (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
+            }
+            xvt.app.focus = 'gang'
             return
 
         case 'Q':
