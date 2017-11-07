@@ -346,7 +346,10 @@ function choice() {
                                 if (who[0].gang === o.name) {
                                     let n = nme.push(<active>{ user:{ id:o.members[i]} }) - 1
                                     $.loadUser(nme[n])
-                                    $.activate(nme[n])
+                                    if (nme[n].user.status)
+                                        nme.pop()
+                                    else
+                                        $.activate(nme[n])
                                 }
                             }
                         }
@@ -363,6 +366,11 @@ function choice() {
                                     }
                                 }
                             }
+                        }
+
+                        if (!nme.length) {
+                            xvt.out('That gang is not active!\n')
+                            menu(true)
                         }
 
                         $.party--
