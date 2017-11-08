@@ -359,7 +359,7 @@ function choice() {
                     let monsters: monster = require('../etc/dungeon.json')
                     nme = new Array()
                     for (let i = 0; i < o.members.length; i++) {
-                        if (o.members[i][0] !== '_') {
+                        if (!/_MM.$/.test(o.members[i])) {
                             let who = $.query(`SELECT handle, status, gang FROM Players WHERE id = '${o.members[i]}'`)
                             if (who.length) {
                                 if (who[0].gang === o.name) {
@@ -421,7 +421,9 @@ function choice() {
                         $.party--
                         $.music('party')
 
-                        xvt.out(nme[0].user.handle, ' grins as ', $.who(nme[0], 'he'), 'pulls out ', $.who(nme[0], 'his'), nme[0].user.weapon, '.\n\n')
+                        xvt.out(xvt.bright, xvt.magenta, nme[0].user.handle, xvt.reset
+                            , ' grins as ', $.who(nme[0], 'he'), 'pulls out '
+                            , $.who(nme[0], 'his'), nme[0].user.weapon, '.\n\n')
                         xvt.waste(1000)
 
                         Battle.engage('Party', posse, nme, menu)

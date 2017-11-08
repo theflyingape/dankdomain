@@ -573,13 +573,13 @@ export function spoils() {
         for (let m in parties[w]) {
             let award = 0
 
-            //  dead men get no booty
+            //  dead men get no booty, taxman always gets his
             if (parties[w][m].hp > 0) {
                 award = Math.trunc(coin.value * parties[w][m].user.xp / take * 0.95)
                 parties[w][m].user.coin.value += award
                 coin.value -= award
-                take -= Math.trunc(parties[w][m].user.xp * 0.95)
             }
+            take -= Math.trunc(parties[w][m].user.xp * 0.95)
 
             let xp = Math.trunc($.experience(parties[w][m].user.xplevel, 1, parties[w][m].user.int) * tl[l] / tl[w])
             parties[w][m].user.xp += xp
@@ -596,7 +596,7 @@ export function spoils() {
 
         if (coin.value) {
             $.loadUser($.taxman)
-            $.taxman.user.coin.value += coin.value
+            $.taxman.user.bank.value += coin.value
             $.saveUser($.taxman)
             xvt.out(xvt.reset, '\n')
             xvt.waste(500)
