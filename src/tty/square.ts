@@ -598,7 +598,7 @@ function buy() {
 		return
 	}
 
-	let buy = +xvt.entry
+	let buy = +xvt.entry >>0
 	if (buy < lo || buy > hi) {
 		xvt.app.refocus()
 		return
