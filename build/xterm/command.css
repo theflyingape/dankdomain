@@ -14,20 +14,20 @@ input, button {
     -moz-box-shadow: 0px 1px 3px darkslategray;
     box-shadow: 0px 1px 3px darkslategray;
     font-family: 'Carter One', cursive;
-    font-size: 16px;
+    font-size: 15px;
     color: midnightblue;
-    padding: 8px 16px 8px 16px;
+    padding: 8px 15px 8px 15px;
     border: solid darkolivegreen 3px;
     text-decoration: none;
 }
 .tall {
-    padding: 20px 16px;
+    padding: 20px 15px;
 }
 .wide {
     padding: 8px 24px;
 }
 .numeric {
-    padding: 4px 24px 16px 6px;
+    padding: 4px 24px 15px 6px;
 }
 .platinum {
     background: orchid;
