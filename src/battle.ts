@@ -63,7 +63,12 @@ export function attack(retry = false) {
     if (retreat || teleported || ++volley > 99999) return
 
     if (!round.length) {
-        if (volley > 1) xvt.out(xvt.reset, '\n    -=', $.bracket('*', false), '=-\n')
+        if (volley > 1) {
+            xvt.out(xvt.reset, '\n')
+            if (!$.online.hp) xvt.waste(900)
+            xvt.out('    -=', $.bracket('*', false), '=-\n')
+        }
+
         for (let p in parties) {
             for (let m in parties[p]) {
                 if (parties[p][m].hp > 0) {
@@ -526,7 +531,7 @@ export function spoils() {
     if ($.online.confused)
         $.activate($.online, false, true)
 
-    if ($.online.hp) {
+    if (alive[0]) {
         winner = $.online
         l = 1
     }
