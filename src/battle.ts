@@ -1368,7 +1368,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                 'easily slays %s',
                 'makes minced-meat out of %s',
                 'runs %s through'
-                ][$.dice(6)], enemy.user.handle)
+                ][$.dice(6) - 1], enemy.user.handle)
                 , '.\n'
             )
             xvt.waste(500)
