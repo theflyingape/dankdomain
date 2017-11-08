@@ -4,6 +4,7 @@
 \*****************************************************************************/
 
 import {sprintf} from 'sprintf-js'
+import titleCase = require('title-case')
 
 import $ = require('../common')
 import xvt = require('xvt')
@@ -17,11 +18,15 @@ module Party
     const mp = [ 'M:M', ' @ ', '{#}', '($)', '[&]', '<^>', '_V_', '-X-' ]
 
     let g: gang = {
-        name:'', members:[], win:0, loss:0, banner:0, trim:0, back:0, fore:0
+        name:'', members:[], handles:[], status:[], validated:[]
+            , win:0, loss:0, banner:0, trim:0, back:0, fore:0
     }
     let o: gang = {
-        name:'', members:[], win:0, loss:0, banner:0, trim:0, back:0, fore:0
+        name:'', members:[], handles:[], status:[], validated:[]
+            , win:0, loss:0, banner:0, trim:0, back:0, fore:0
     }
+    let posse: active[]
+    let nme: active[]
 
     let party: choices = {
         'E': { description:'Edit your gang' },
@@ -61,7 +66,7 @@ function choice() {
 
     switch (choice) {
         case 'L':
-            rs = $.query(`SELECT * FROM Gangs ORDER BY name`)
+            rs = $.query(`SELECT * FROM Gangs`)
             for (let i = 0; i < rs.length; i += 2) {
                 if (i + 1 < rs.length)
                     showGang(loadGang(rs[i]), loadGang(rs[i + 1]))
@@ -319,10 +324,10 @@ function choice() {
             xvt.app.form = {
                 'gang': { cb:() => {
                     xvt.out('\n')
-                    let i = parseInt(xvt.entry) - 1
+                    let i = (+xvt.entry >>0) - 1
                     if (/m|max/i.test(xvt.entry))
                         i = rs.indexOf('Monster Mash')
-                    if (i < 0 || i >= rs.length) {
+                    if (!rs[i]) {
                         xvt.beep()
                         menu()
                         return
@@ -333,14 +338,28 @@ function choice() {
                         xvt.app.refocus()
                         return
                     }
-                    showGang(g, o)
-                    xvt.app.focus = 'fight'
-                }, prompt:'\nFight which gang? ', max:3 },
-                'fight': { cb:() => {
-                    xvt.out('\n\n')
-                    if (/Y/i.test(xvt.entry)) {
-                        let nme: active[] = new Array()
-                        for (let i = 0; i < o.members.length; i++) {
+
+                    posse = new Array($.online)
+                    for (let i = 0; i < g.members.length; i++) {
+                        if (g.members[i] !== $.player.id) {
+                            let who = $.query(`SELECT handle, status, gang FROM Players WHERE id = '${g.members[i]}'`)
+                            if (who.length) {
+                                if (who[0].gang === g.name) {
+                                    let n = posse.push(<active>{ user:{ id:g.members[i]} }) - 1
+                                    $.loadUser(posse[n])
+                                    if (posse[n].user.status)
+                                        posse.pop()
+                                    else
+                                        $.activate(posse[n])
+                                }
+                            }
+                        }
+                    }
+
+                    let monsters: monster = require('../etc/dungeon.json')
+                    nme = new Array()
+                    for (let i = 0; i < o.members.length; i++) {
+                        if (o.members[i][0] !== '_') {
                             let who = $.query(`SELECT handle, status, gang FROM Players WHERE id = '${o.members[i]}'`)
                             if (who.length) {
                                 if (who[0].gang === o.name) {
@@ -353,29 +372,52 @@ function choice() {
                                 }
                             }
                         }
+                        else {
+                            nme.push(<active>{})
+                            nme[i].user = <user>{id: ''}
 
-                        let posse: active[] = new Array($.online)
-                        for (let i = 0; i < g.members.length; i++) {
-                            if (g.members[i] !== $.player.id) {
-                                let who = $.query(`SELECT handle, status, gang FROM Players WHERE id = '${g.members[i]}'`)
-                                if (who.length) {
-                                    if (who[0].gang === g.name) {
-                                        let n = posse.push(<active>{ user:{ id:g.members[i]} }) - 1
-                                        $.loadUser(posse[n])
-                                        if (posse[n].user.status)
-                                            posse.pop()
-                                        else
-                                            $.activate(posse[n])
-                                    }
-                                }
-                            }
+                            let mon = $.dice(7) - 4 + (posse[i] ? posse[i].user.level : $.dice(100))
+                            mon = mon < 0 ? 0 : mon >= Object.keys(monsters).length ? Object.keys(monsters).length - 1 : mon
+                            let dm = Object.keys(monsters)[mon]
+                            nme[i].user.handle = dm
+                            nme[i].user.sex = 'I'
+                            $.reroll(nme[i].user, monsters[dm].pc ? monsters[dm].pc : $.player.pc, mon)
+
+                            nme[i].user.weapon = monsters[dm].weapon ? monsters[dm].weapon : $.Weapon.merchant[Math.trunc(($.Weapon.merchant.length - 1) * mon / 100) + 1]
+                            nme[i].user.armor = monsters[dm].armor ? monsters[dm].armor : $.Armor.merchant[Math.trunc(($.Armor.merchant.length - 1) * mon / 100) + 1]
+
+                            nme[i].user.poisons = []
+                            if (monsters[dm].poisons)
+                                for (let vials in monsters[dm].poisons)
+                                    $.Poison.add(nme[i].user.poisons, monsters[dm].poisons[vials])
+
+                                    nme[i].user.spells = []
+                            if (monsters[dm].spells)
+                                for (let magic in monsters[dm].spells)
+                                    $.Magic.add(nme[i].user.spells, monsters[dm].spells[magic])
+        
+                            $.activate(nme[i])
+                            nme[i].user.coin = new $.coins($.money(mon))
+
+                            nme[i].user.handle = titleCase(dm)
+                            nme[i].user.gang = 'the Monster Mash'
+                            o.handles[i] = nme[i].user.handle
+                            o.status[i] = ''
+                            o.validated[i] = true
                         }
+                    }
 
-                        if (!nme.length) {
-                            xvt.out('That gang is not active!\n')
-                            menu()
-                        }
+                    if (!nme.length) {
+                        xvt.out('That gang is not active!\n')
+                        menu()
+                    }
 
+                    showGang(g, o, true)
+                    xvt.app.focus = 'fight'
+                }, prompt:'\nFight which gang? ', max:3 },
+                'fight': { cb:() => {
+                    xvt.out('\n\n')
+                    if (/Y/i.test(xvt.entry)) {
                         $.party--
                         $.music('party')
 
@@ -402,17 +444,41 @@ function choice() {
 	menu(suppress)
 }
 
-function loadGang(rs: any, name = ''): gang
-{
-    return { name:rs.name
-        , members: rs.members.split(',')
-        , win: rs.win
-        , loss: rs.loss
-        , banner: rs.banner >>4
-        , trim: rs.banner % 8
-        , back: rs.color >>4
-        , fore: rs.color % 8
+function loadGang(rs: any): gang {
+    let gang: gang = {
+        name: rs.name,
+        members: rs.members.split(','),
+        handles: [],
+        status: [],
+        validated: [],
+        win: rs.win,
+        loss: rs.loss,
+        banner: rs.banner >>4,
+        trim: rs.banner % 8,
+        back: rs.color >>4,
+        fore: rs.color % 8
     }
+
+    for (let n = 0; n < gang.members.length; n++) {
+        let who = $.query(`SELECT handle, status, gang FROM Players WHERE id = '${gang.members[n]}'`)
+        if (who.length) {
+            gang.handles.push(who[0].handle)
+            gang.status.push(who[0].status)
+            gang.validated.push(who[0].gang ? who[0].gang === rs.name : undefined)
+        }
+        else if (gang.members[n][0] === '_') {
+            gang.handles.push('')
+            gang.status.push('')
+            gang.validated.push(true)
+        }
+        else {
+            gang.handles.push(`?unknown ${gang.members[n]}`)
+            gang.status.push('?')
+            gang.validated.push(false)
+        }
+    }
+
+    return gang
 }
 
 function saveGang(g: gang, insert = false) {
@@ -453,8 +519,7 @@ function saveGang(g: gang, insert = false) {
     }
 }
 
-function showGang(lg: gang, rg?: gang)
-{
+function showGang(lg: gang, rg?: gang, engaged = false) {
     xvt.out(xvt.reset, '\n')
 
     //
@@ -499,59 +564,83 @@ function showGang(lg: gang, rg?: gang)
         if (lg) {
             xvt.out(' | ')
             if (n < lg.members.length) {
-                who = $.query(`SELECT handle, status, gang FROM Players WHERE id = '${lg.members[n]}'`)
-                if (who.length) {
-                    if (who[0].gang === lg.name) {
-                        if (who[0].status)
-                            xvt.out(xvt.faint, xvt.blue, '^ ')
+                if (lg.handles[n]) {
+                    if (lg.validated[n]) {
+                        if (lg.status[n]) {
+                            if (engaged)
+                                xvt.out(xvt.faint, xvt.red, 'x ')
+                            else
+                                xvt.out(xvt.faint, xvt.blue, '^ ')
+                        }
                         else
                             xvt.out(xvt.bright, xvt.white, '  ')
                     }
                     else {
-                        if (who[0].gang)
-                            xvt.out(xvt.faint, xvt.red, 'x ', xvt.blue)
-                        else
-                            xvt.out(xvt.faint, xvt.yellow, '> ')
+                        if (typeof lg.validated[n] == 'undefined') {
+                            if (engaged)
+                                xvt.out(xvt.faint, xvt.red, 'x ')
+                            else
+                                xvt.out(xvt.faint, xvt.yellow, '> ')
+                        }
+                        else {
+                            if (engaged)
+                                xvt.out(xvt.faint, xvt.red, 'x ')
+                            else
+                                xvt.out(xvt.faint, xvt.red, 'x ', xvt.blue)
+                        }
                     }
-                    xvt.out(sprintf('%-24s ', who[0].handle))
+                    xvt.out(sprintf('%-24s ', lg.handles[n]))
                 }
                 else
-                    xvt.out(sprintf('> %-22s   ', 'wired for ' + lg.members[n] + ' '
+                    xvt.out(sprintf('> %-24s ', 'wired for '
                         + ['mashing','smashing','beatdown','pounding'][n]))
             }
-            else
-                xvt.out(sprintf(' -open invitation to join- '))
+            else {
+                if (engaged)
+                    xvt.out(sprintf(' '.repeat(27)))
+                else
+                    xvt.out(sprintf(' -open invitation to join- '))
+            }
         }
-        else
-            xvt.out(xvt.reset, ' '.repeat(28))
 
         if (rg) {
             xvt.out(xvt.reset, ' '.repeat(4), ' | ')
-
             if (n < rg.members.length) {
-                who = $.query(`SELECT handle, status, gang FROM Players WHERE id = '${rg.members[n]}'`)
-                if (who.length) {
-                    if (who[0].gang === rg.name) {
-                        if (who[0].status)
-                            xvt.out(xvt.faint, xvt.blue, '^ ')
+                if (rg.handles[n]) {
+                    if (rg.validated[n]) {
+                        if (rg.status[n]) {
+                            if (engaged)
+                                xvt.out(xvt.faint, xvt.red, 'x ')
+                            else
+                                xvt.out(xvt.faint, xvt.blue, '^ ')
+                        }
                         else
                             xvt.out(xvt.bright, xvt.white, '  ')
                     }
                     else {
-                        if (who[0].gang)
-                            xvt.out(xvt.faint, xvt.red, 'x ', xvt.blue)
-                        else
-                            xvt.out(xvt.faint, xvt.yellow, '> ')
+                        if (typeof rg.validated[n] == 'undefined') {
+                            if (engaged)
+                                xvt.out(xvt.faint, xvt.red, 'x ')
+                            else
+                                xvt.out(xvt.faint, xvt.yellow, '> ')
+                        }
+                        else {
+                            if (engaged)
+                                xvt.out(xvt.faint, xvt.red, 'x ')
+                            else
+                                xvt.out(xvt.faint, xvt.red, 'x ', xvt.blue)
+                        }
                     }
-                    xvt.out(sprintf('%-24s ', who[0].handle))
+                    xvt.out(sprintf('%-24s ', rg.handles[n]))
                 }
                 else
-                    xvt.out(sprintf('{ %-22s } ', 'wired for ' + rg.members[n]))
-                }
+                    xvt.out(sprintf('> %-24s ', 'wired for '
+                        + ['mashing','smashing','beatdown','pounding'][n]))
+            }
             else
-                xvt.out(sprintf(' -open invitation to join- '))
+                if (!engaged)
+                    xvt.out(sprintf(' -open invitation to join- '))
         }
-
         xvt.out(xvt.reset, '\n')
         n++
     }

@@ -60,7 +60,7 @@ export function engage(module:string, party: active|active[], mob: active|active
 export function attack(retry = false) {
 
     //  no more attacking
-    if (retreat || ++volley > 99999) return
+    if (retreat || teleported || ++volley > 99999) return
 
     if (!round.length) {
         if (volley > 1) xvt.out(xvt.reset, '\n    -=', $.bracket('*', false), '=-\n')
@@ -90,7 +90,7 @@ export function attack(retry = false) {
         rpc.int = $.PC.ability(rpc.int, $.PC.card(rpc.user.pc).toInt, rpc.user.maxint, mod)
         rpc.dex = $.PC.ability(rpc.dex, $.PC.card(rpc.user.pc).toDex, rpc.user.maxdex, mod)
     }
-    
+
     //  choose an opponent
     let mob = n.party ^ 1
     let nme: number
@@ -580,7 +580,7 @@ export function spoils() {
             parties[w][m].user.xp += xp
 
             if (parties[w][m] == $.online) {
-                xvt.out('You get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
+                xvt.out('\nYou get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
                 if (award)
                     xvt.out('You get your cut worth ', new $.coins(award).carry(), '.\n')
                 xvt.waste(500)
@@ -596,7 +596,7 @@ export function spoils() {
             xvt.out(xvt.reset, '\n')
             xvt.waste(500)
             xvt.out($.taxman.user.handle, ' took ', $.who($.taxman, 'his'), 'cut worth ', coin.carry(), '.\n')
-            xvt.waste(500)
+            xvt.waste(1000)
         }
 
         $.news(`\tdefeated the gang, ${parties[l][0].user.gang}`)
@@ -681,18 +681,22 @@ export function spoils() {
                 if (loser.altered) $.saveUser(loser)
             }
         }
-        winner.user.xp += xp
-        xvt.out('You get'
-            , parties[l].length > 1 ? ' a total of ' : ' '
-            , sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n'
-        )
-        winner.user.coin.value += coin.value
-        xvt.out('You get'
-            , parties[l].length > 1 ? ' a total of ' : ' '
-            , coin.carry(), ' '
-            , parties[l].length > 1 ? 'they were ' : $.who(loser, 'he') + 'was '
-            , 'carrying.\n'
-        )
+        if (xp) {
+            winner.user.xp += xp
+            xvt.out('You get'
+                , parties[l].length > 1 ? ' a total of ' : ' '
+                , sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n'
+            )
+        }
+        if (coin.value) {
+            winner.user.coin.value += coin.value
+            xvt.out('You get'
+                , parties[l].length > 1 ? ' a total of ' : ' '
+                , coin.carry(), ' '
+                , parties[l].length > 1 ? 'they were ' : $.who(loser, 'he') + 'was '
+                , 'carrying.\n'
+            )
+        }
     }
     else {
         if (winner.user.id) {
@@ -994,17 +998,25 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
         case 8:
             $.sound('teleport')
             if (backfire) {
-                nme.hp = -1
+                xvt.out(nme === $.online ? 'You' : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
+                    , $.what(nme, ' teleport')
+                    , 'away from the battle!\n')
+                if (nme !== $.online)
+                    nme.hp = -1
+                else
+                    teleported = true
             }
             else {
+                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' teleport')
+                    , 'away from the battle!\n')
                 if (rpc === $.online) {
                     teleported = true
                     retreat = true
                     rpc.user.retreats++
                 }
-                else {
+                else
                     rpc.hp = -1
-                }
             }
             break
 
@@ -1361,6 +1373,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     if (hit > 0) {
         if (from === 'Party' && enemy.hp <= 0) {
             enemy.hp = 0
+            xvt.out(xvt.bright, enemy == $.online ? xvt.yellow : round[0].party == 0 ? xvt.cyan : xvt.red)
             xvt.out(rpc.user.handle, ' ', sprintf([
                 'makes a fatal blow to %s',
                 'blows %s away',
@@ -1369,7 +1382,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                 'makes minced-meat out of %s',
                 'runs %s through'
                 ][$.dice(6) - 1], enemy.user.handle)
-                , '.\n'
+                , xvt.reset, '.\n'
             )
             xvt.waste(500)
             return

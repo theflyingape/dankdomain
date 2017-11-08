@@ -95,6 +95,9 @@ interface user {
 interface gang {
     name: string
     members: string[]
+    handles: string[]
+    status: string[]
+    validated: boolean[]
     win: number
     loss: number
     banner: number
