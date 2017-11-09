@@ -67,14 +67,14 @@ function resize() {
       r = css;
   }
 
-  w = 20;
+  w = 18;
   do {
     w = (parseInt(w) + 2) + '%';
     v = (100 - parseInt(w)) + '%';
     Object.assign(l.style, { 'top':'0%', 'height':'100%', 'width':v });
     Object.assign(r.style, { 'top':'0%', 'height':'100%', 'width':w });
     term.fit();
-  } while(term.cols > 88 && parseInt(w) < 40);
+  } while (term.cols > 85 && parseInt(w) < 40);
  }
 </script>
 </head>
@@ -87,10 +87,11 @@ function resize() {
 <input type="button" value="REFRESH" onclick="window.location.reload();" />
 <h4>The Olde Tavern's <a href="./today.txt" target="_blank">news</a>.</h5>
 <hr>
-<p>Works best when using <a href="https://getfedora.org/" target="_blank">Linux</a>: using the command-line or GnomeShell.</p>
-Microsoft Edge, Google / Android Chrome, and Mozilla Firefox are successfully tested.<br>
-Classic Microsoft Internet Explorer is not supported.<br>
-<a href="https://youtu.be/3LLStpReMBc" target="_blank">Other users</a> will find their mileage varies here. Happy hunting!
+<p>Works best using <a href="https://getfedora.org/" target="_blank">Linux</a>: either GnomeShell or Terminology.</p>
+<p></p>Microsoft Edge, Google / Android Chrome, and Mozilla Firefox are known to work well with broadband &amp; wifi.<br>
+Classic Microsoft Internet Explorer is not supported.</p>
+<p><a href="https://youtu.be/3LLStpReMBc" target="_blank">Other users</a> who think differently will find that mileage varies here.</p>
+Happy hunting!
 <audio id="play">
     <source id="oggPlay" type="audio/ogg" />
     <source id="mp3Play" type="audio/mp3" />
