@@ -1,0 +1,103 @@
+/*  stylesheet for dankdomain command buttons
+ */
+input, button {
+    background: antiquewhite;
+    background-image: -webkit-linear-gradient(top, cornsilk, darkkhaki);
+    background-image: -moz-linear-gradient(top, cornsilk, darkkhaki);
+    background-image: -ms-linear-gradient(top, cornsilk, darkkhaki);
+    background-image: -o-linear-gradient(top, cornsilk, darkkhaki);
+    background-image: linear-gradient(to bottom, cornsilk, darkkhaki);
+    -webkit-border-radius: 12;
+    -moz-border-radius: 12;
+    border-radius: 12px;
+    -webkit-box-shadow: 0px 1px 3px darkslategray;
+    -moz-box-shadow: 0px 1px 3px darkslategray;
+    box-shadow: 0px 1px 3px darkslategray;
+    font-family: 'Carter One', cursive;
+    font-size: 15px;
+    color: midnightblue;
+    padding: 8px 15px 8px 15px;
+    border: solid darkolivegreen 3px;
+    text-decoration: none;
+}
+.tall {
+    padding: 20px 15px;
+}
+.wide {
+    padding: 8px 24px;
+}
+.numeric {
+    padding: 4px 24px 15px 6px;
+}
+.platinum {
+    background: orchid;
+    border: solid darkorchid 3px;
+    color: indigo;
+    font-size: 18px;
+    padding: 8px 18px;
+}
+.gold {
+    background: gold;
+    border: solid darkgoldenrod 3px;
+    color: goldenrod;
+    font-size: 18px;
+    padding: 8px 18px;
+    }
+.silver {
+    background: turquoise;
+    border: solid darkturquoise 3px;
+    color: steelblue;
+    font-size: 18px;
+    padding: 8px 18px;
+    }
+.copper {
+    background: coral;
+    border: solid darkred 3px;
+    color: crimson;
+    font-size: 18px;
+    padding: 8px 18px;
+    }
+input:active, button:active {
+    transform: translateX(3px) translateY(3px);
+}
+input:hover, button:hover {
+    background: gold;
+    background-image: -webkit-linear-gradient(top, gold, goldenrod);
+    background-image: -moz-linear-gradient(top, gold, goldenrod);
+    background-image: -ms-linear-gradient(top, gold, goldenrod);
+    background-image: -o-linear-gradient(top, gold, goldenrod);
+    background-image: linear-gradient(to bottom, gold, goldenrod);
+    text-decoration: none;
+    text-shadow: 1px 1px 2px darkslategray;
+    border: solid olive 3px;
+    color: aliceblue;
+}
+.platinum:hover {
+    background: lightpink;
+    border: solid darkorchid 3px;
+    color: fuchsia;
+    font-size: 20px;
+}
+.gold:hover {
+    background: yellow;
+    border: solid darkgoldenrod 3px;
+    color: lightgoldenrodyellow;
+    font-size: 20px;
+}
+.silver:hover {
+    background: lightskyblue;
+    border: solid darkturquoise 3px;
+    color: lightsteelblue;
+    font-size: 20px;
+}
+.copper:hover {
+    background: lightcoral;
+    border: solid darkred 3px;
+    color: red;
+    font-size: 20px;
+}
+table {
+    border: none;
+    border-spacing: 0px;
+    padding: 0px;
+}

@@ -25,7 +25,7 @@ module ttyMain
     xvt.sessionAllowed = 300
     if (xvt.modem = xvt.validator.isEmpty(process.env.REMOTEHOST)) {
         xvt.out('@play(dankdomain)\n')
-        xvt.waste(1000)
+        xvt.waste(2000)
     }
     xvt.out('\nCARRIER DETECTED\n')
 

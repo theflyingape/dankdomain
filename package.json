@@ -1,6 +1,6 @@
 {
   "name": "dankdomain",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "description": "Dank Domain: the return of Hack & Slash (1990-2014)",
   "main": "ttymain",
   "publisher": "theflyingape",
@@ -18,8 +18,10 @@
   },
   "keywords": [
     "classic",
+    "door",
+    "dungeon",
     "game",
-    "online",
+    "telnet",
     "terminal",
     "text"
   ],
@@ -32,6 +34,7 @@
   "dependencies": {
     "better-sqlite3": "^4.0.3",
     "express": "^4.16.2",
+    "express-ws": "^3.0.0",
     "fs-extra": "^2.1.2",
     "node-pty": "^0.6.10",
     "nodemailer": "^4.3.1",
@@ -39,7 +42,6 @@
     "sprintf-js": "^1.1.1",
     "title-case": "^2.1.1",
     "tty.js": "^0.2.15",
-    "ws": "^2.3.1",
     "xterm": "^2.9.2",
     "xvt": "^1.0.15"
   },

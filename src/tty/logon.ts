@@ -13,6 +13,7 @@ module Logon
 {
     process.stdin.setEncoding(xvt.emulation == 'XT' ? 'utf8' : 'ascii')
     xvt.out(xvt.bright, xvt.cyan, xvt.emulation, ' emulation enabled\n\f', xvt.reset)
+    xvt.waste(500)
 
     $.loadUser($.sysop)
     if ($.sysop.lastdate != $.now().date)
