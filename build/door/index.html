@@ -43,13 +43,13 @@ function receive(event) {
       case 'emit':
       if (!carrier) newSession();
         if (event.data.message) {
-          socket.emit('data', termid, event.data.message);
+          socket.send(event.data.message);
           if (event.data.return)
-            socket.emit('data', termid, '\x0A');
+            socket.send('\x0A');
         }
         else {
           if (event.data.return)
-            socket.emit('data', termid, '\x0D');
+            socket.send('\x0D');
         }
         break;
 

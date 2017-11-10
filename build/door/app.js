@@ -18,24 +18,6 @@ var server = https.createServer(options, app);
 var expressWs = expressWs(app, server);
 var terminals = {}, logs = {};
 app.use('/', express.static(__dirname));
-//app.use('/build', express.static(__dirname + '/../build'));
-/*
-app.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
-});
-
-app.get('/info.html', function(req, res){
-  res.sendFile(__dirname + '/info.html');
-});
-
-app.get('/style.css', function(req, res){
-  res.sendFile(__dirname + '/style.css');
-});
-
-app.get('/main.js', function(req, res){
-  res.sendFile(__dirname + '/main.js');
-});
-*/
 app.post('/terminals', function (req, res) {
     var cols = parseInt(req.query.cols), rows = parseInt(req.query.rows), term = pty.spawn(process.platform === 'win32' ? 'cmd.exe' : 'sh', ["-l", "./logins.sh"], {
         name: 'xterm-256color',
@@ -71,7 +53,7 @@ app.ws('/terminals/:pid', function (ws, req) {
             ws.send(data);
         }
         catch (ex) {
-            // The WebSocket is not open, ignore
+            console.log('socket error:', ex);
         }
     });
     ws.on('message', function (msg) {

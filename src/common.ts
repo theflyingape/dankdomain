@@ -1289,7 +1289,7 @@ export function reroll(user: user, dd?: string, level = 1) {
         user.calls = 0
         user.today = 0
         user.expert = false
-        user.rows = 25
+        user.rows = process.env.LINES ? process.env.LINES : 24
         user.remote = ''
         user.novice = true
         user.gang = ''
@@ -1616,7 +1616,7 @@ export function emulator(cb:Function) {
             player.rows = +xvt.entry
             xvt.out(xvt.reset, '\n')
             xvt.app.focus = 'pause'
-        }, prompt:'Enter top visible row number: ', enter:player.rows.toString(), max:2, match:/^[2-9][0-9]$/ },
+        }, prompt:`Enter top visible row number [${player.rows}]: `, enter:player.rows.toString(), max:2, match:/^[2-9][0-9]$/ },
         'pause': { cb:cb, pause:true }
     }
 

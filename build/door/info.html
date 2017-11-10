@@ -139,8 +139,8 @@ function cmd(html) {
 function Logon() {
   clearInterval(art);
   cmd(`<form onsubmit="return sendLogin();">
-<input type="text" placeholder="Enter ID or Handle" name="id" autofocus required>
-<input type="password" placeholder="Enter password" name="password" required>
+<input type="text" placeholder="Enter ID or Handle" name="id" autofocus required><br>
+<input type="password" placeholder="Enter password" name="password" required><br>
 <button class="wide" type="submit"> Login </button> <input class="wide" type="button" value="NEW" onclick="send('NEW', true);">
 </form>`);
 nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize();">`);
@@ -185,7 +185,7 @@ function rotateImage() {
 }
 
 function send(keystrokes, cr = false, et = 'emit') {
-  window.parent.postMessage({ 'func':et, 'message':keystrokes, 'return':cr }, '*');
+  window.parent.postMessage({ 'func':et, 'message':keystrokes, 'return':cr }, location.href);
 }
 
 /*
@@ -198,7 +198,7 @@ function keypress(event) {
 
 function actionResize(profile) {
   window.parent.postMessage({
-    'func':'size', 'message':profile }, location.href);  
+    'func':'size', 'message':profile }, location.href);
 }
 
 function clear() {
