@@ -10,7 +10,7 @@
   "scripts": {
     "build": "tsc -p ./src --outDir ./build",
     "debug": "npm run build && ./debug.sh",
-    "test": "npm run build && ./build/logins.sh"
+    "test": "npm run build && env REMOTEHOST=localhost ./build/logins.sh"
   },
   "repository": {
     "type": "git",
@@ -33,8 +33,6 @@
   "homepage": "https://robert.hurst-ri.us/games/dankdomain",
   "dependencies": {
     "better-sqlite3": "^4.0.3",
-    "express": "^4.16.2",
-    "express-ws": "^3.0.0",
     "fs-extra": "^2.1.2",
     "node-pty": "^0.6.10",
     "nodemailer": "^4.3.1",

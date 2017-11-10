@@ -22,3 +22,7 @@ sudo rsync -anv --delete --exclude node_modules ./build/ ${TARGET}
 
 sudo systemctl stop dankdomain
 sudo systemctl start dankdomain
+
+# xterm.js v3
+sudo systemctl stop dankdomain-door
+sudo systemctl start dankdomain-door

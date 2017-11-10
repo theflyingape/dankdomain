@@ -28,7 +28,7 @@ app.get('/main.js', function(req, res){
 });
 */
 app.post('/terminals', function (req, res) {
-    var cols = parseInt(req.query.cols), rows = parseInt(req.query.rows), term = pty.spawn(process.platform === 'win32' ? 'cmd.exe' : 'sh', ["-l", "../logins.sh"], {
+    var cols = parseInt(req.query.cols), rows = parseInt(req.query.rows), term = pty.spawn(process.platform === 'win32' ? 'cmd.exe' : 'sh', ["-l", "./logins.sh"], {
         name: 'xterm-256color',
         cols: cols || 80,
         rows: rows || 24,
