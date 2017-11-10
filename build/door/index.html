@@ -4,18 +4,12 @@
 <title>Dank Domain: the return of Hack & Slash</title>
 <style>
   body {
-    background-color: midnightblue;
+    background-color: #020410;
     color: antiquewhite;
   }
   #terminal-container {
-    background-color: #248;
+    background-color: #010208;
     color: #f2f4f8;
-    font-family: "DejaVu Sans Mono", "Liberation Mono", monospace;
-    font-feature-settings: "liga" 0;
-    position: relative;
-    user-select: none;
-    -ms-user-select: none;
-    -webkit-user-select: none;
     border: 0;
     top: 0; left: 0;
     width: 80%;
@@ -77,20 +71,21 @@ function resize() {
       r = css;
   }
 
-  w = 18;
+  w = 20;
   do {
-    w = (parseInt(w) + 2) + '%';
+    w = (parseInt(w) + 1) + '%';
     v = (100 - parseInt(w)) + '%';
-    Object.assign(l.style, { 'top':'0%', 'height':'100%', 'width':v });
+    Object.assign(l.style, { 'top':'1%', 'height':'97%', 'width':v });
     Object.assign(r.style, { 'top':'0%', 'height':'100%', 'width':w });
-    term.fit();
-  } while (term.cols > 85 && parseInt(w) < 40);
- }
+    xy = term.proposeGeometry();
+  } while (xy.cols > 80 && parseInt(w) < 50);
+}
 </script>
 </head>
 <body onload="resize();" onresize="resize();">
 <div id="terminal-container"></div>
 <iframe seamless id="Info" name="Info" src="./info.html"></iframe>
+<div id="idle-container" hidden=true>
 <h2>Dank Domain: the return of Hack &amp; Slash</h2>
 <h3>&copy;2017 Robert Hurst</h3>
 <h4>use REFRESH button to start over</h4>
@@ -102,6 +97,7 @@ function resize() {
 Classic Microsoft Internet Explorer is not supported.</p>
 <p><a href="https://youtu.be/3LLStpReMBc" target="_blank">Other users</a> who think differently will find that mileage varies here.</p>
 Happy hunting!
+</div>
 <audio id="play">
     <source id="oggPlay" type="audio/ogg" />
     <source id="mp3Play" type="audio/mp3" />

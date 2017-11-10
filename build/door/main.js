@@ -13,18 +13,19 @@ function newSession() {
 
   carrier = true;
   recheck = 0;
-  tune('');
+  tune('dankdomain');
 
-  term = new Terminal({ cursorBlink:true, cursorStyle:'block', rows:rows, cols:cols, enableBold:true, scrollback:250,
-    foreground: '#c8c8c8', background: '#020408',
+  term = new Terminal({ cursorBlink:false, rows:rows, cols:cols, enableBold:true, scrollback:250,
+    fontFamily:'DejaVu Sans Mono',
+    foreground:'#b2b4b8', background:'#000102',
     black:'#000000', red:'#a0000', green:'#00a000', yellow:'#c8a000',
-    blue:'#0000c0', magenta:'#a000a0', cyan:'#00a0a0', white:'#c0c0c0',
+    blue:'#0000c0', magenta:'#a000a0', cyan:'#00a0a0', white:'#b1b2b4',
     brightBlack:'#808080', brightRed:'#f0000', brightGreen:'#00f000', brightYellow:'#f0f000',
     brightBlue:'#0000f0', brightMagenta:'#f000f0', brightCyan:'#00ffff', brightWhite:'#f0f0f0'
   });
 
-  term.writeln('\x1B[1;36mWelcome to \x1B[22;2mD\x1b[22mank \x1b[2mD\x1b[22momain\x1B[22m!');
-  term.write('\x1B[34mConnecting to terminal WebSocket ... ');
+  term.writeln('\x1B[1;36mW\x1B[22melcome to D\x1b[2mank \x1b[22mD\x1b[2momain\x1B[22m\n');
+  term.write('\x1B[34mConnecting terminal WebSocket ... ');
 
   protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://';
   socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + '/terminals/';
@@ -32,6 +33,8 @@ function newSession() {
   term.fit();
   term.winptyCompatInit();
   term.focus();
+  if (!term.getOption('cursorBlink'))
+    term.setOption('cursorBlink', true);
 
   term.on('data', function(data) {
     if (carrier) {
@@ -83,11 +86,11 @@ function newSession() {
           term.write(data);
         };
 
-        socket.onopen = (ev) => {
+        socket.onopen = () => {
           term.socket = socket;
+          term.writeln('open\x1B[m');
           carrier = true;
           window.frames['Info'].postMessage({ 'func':'Logon' }, location.href);
-          term.writeln('\x1B[m socket connected: ', ev, '\n');
         };
 
         socket.onclose = (ev) => {
@@ -98,7 +101,7 @@ function newSession() {
         };
 
         socket.onerror = (ev) => {
-          term.writeln('\x1B[1;31m', ev);
+          term.writeln('\x1B[1;31merror');
           carrier = false;
         };
       });
@@ -114,6 +117,7 @@ function checkCarrier() {
     carrier = false;
     clearInterval(reconnect);
     terminalContainer.hidden = true;
+    document.getElementById('idle-container').hidden = false;
     if (typeof tuneSource !== 'undefined') tuneSource.stop();
     tune('');
     var iframes = document.querySelectorAll('iframe');

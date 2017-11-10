@@ -88,7 +88,7 @@ echo
 
 cat <<-EOD
 #
-#   Apache proxy to run local Node.js apps
+#   Apache proxy to run local Node.js apps using xterm.js
 #
     SSLProxyEngine On
     ProxyRequests Off
@@ -101,9 +101,9 @@ cat <<-EOD
 
     RewriteEngine On
     RewriteCond %{HTTP:Connection} Upgrade [NC]
-    RewriteRule "^/games/dankdomain/door/(.*)" ws://`hostname -f`:1939/$1 [P,L]
+    RewriteRule "^/games/dankdomain/xterm/(.*)" ws://`hostname -f`:1939/$1 [P,L]
 
-    <Location "/games/dankdomain/door/">
+    <Location "/games/dankdomain/xterm/">
         ProxyPass "http://`hostname -f`:1939/"
         ProxyPassReverse "http://`hostname -f`:1939/"
         Order allow,deny
@@ -112,5 +112,27 @@ cat <<-EOD
     </Location>
 
 EOD
+
+# DOOR uses latest xterm.js branch v3 and node-pty and browser's WebSocket in place of tty.js / socket.io
+#
+# if https / wss is used, SSL Proxy works for me like this:
+#
+#       SSLProxyCheckPeerName off
+#       SSLProxyVerify none
+#
+#       RewriteEngine On
+#       RewriteCond %{HTTP:Upgrade} WebSocket [NC]
+#       RewriteRule "^/terminals/(.*)" wss://atom.home:1965/terminals/$1 [P,L]
+#
+#       <Location "/games/dankdomain/door/">
+#               RequestHeader set X-Forwarded-Proto "https"
+#               ProxyPass "https://atom.home:1965/"
+#               ProxyPassReverse "https://atom.home:1965/"
+#               Order allow,deny
+#               Allow from all
+#               Header edit Location ^https://atom.home:1965/ https://robert.hurst-ri.us/
+#       </Location>
+#
+# openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem
 
 exit

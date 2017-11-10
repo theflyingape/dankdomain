@@ -23,11 +23,8 @@ module ttyMain
     xvt.defaultTimeout = 120
     xvt.pollingMS = 60
     xvt.sessionAllowed = 300
-    if (xvt.modem = xvt.validator.isEmpty(process.env.REMOTEHOST)) {
-        xvt.out('@play(dankdomain)\n')
-        xvt.waste(2000)
-    }
-    xvt.out('\nCARRIER DETECTED\n')
+    if (xvt.modem = xvt.validator.isEmpty(process.env.REMOTEHOST))
+        xvt.out('\nCARRIER DETECTED\n')
 
     if (process.argv.length < 3) {
         //  try a remote query for terminal emulation auto-detection
@@ -54,9 +51,8 @@ module ttyMain
     let title = process.title + ' (' + xvt.emulation + ')'
     if (xvt.emulation !== 'VT')
         xvt.out('\x1B]2;', title, '\x07')
-    
+
     //  initiate user login sequence: id, handle, or a new registration
-    xvt.waste(1000)
     require('./tty/logon')
 }
 
