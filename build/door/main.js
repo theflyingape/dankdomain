@@ -17,24 +17,22 @@ function newSession() {
 
   term = new Terminal({ cursorBlink:false, rows:rows, cols:cols, enableBold:true, scrollback:250,
     fontFamily:'DejaVu Sans Mono',
-    foreground:'#b2b4b8', background:'#000102',
-    black:'#000000', red:'#a0000', green:'#00a000', yellow:'#c8a000',
-    blue:'#0000c0', magenta:'#a000a0', cyan:'#00a0a0', white:'#b1b2b4',
+    foreground:'#a2a4a8', background:'#000102',
+    black:'#000000', red:'#a0000', green:'#00a000', yellow:'#c0a000',
+    blue:'#0000a0', magenta:'#a000a0', cyan:'#00a0a0', white:'#a0a0a0',
     brightBlack:'#808080', brightRed:'#f0000', brightGreen:'#00f000', brightYellow:'#f0f000',
-    brightBlue:'#0000f0', brightMagenta:'#f000f0', brightCyan:'#00ffff', brightWhite:'#f0f0f0'
+    brightBlue:'#0000f0', brightMagenta:'#f000f0', brightCyan:'#00f0f0', brightWhite:'#f0f0f0'
   });
 
-  term.writeln('\x1B[1;36mW\x1B[22melcome to D\x1b[2mank \x1b[22mD\x1b[2momain\x1B[22m\n');
-  term.write('\x1B[34mConnecting terminal WebSocket ... ');
-
-  protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://';
-  socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + '/terminals/';
   term.open(terminalContainer);
   term.fit();
   term.winptyCompatInit();
-  term.focus();
-  if (!term.getOption('cursorBlink'))
-    term.setOption('cursorBlink', true);
+
+  term.writeln('\x1Bc');
+  term.writeln('\x1B[1;36mW\x1B[22melcome to D\x1b[2mank \x1b[22mD\x1b[2momain\x1B[22m\n');
+  term.write('\x1B[34mConnecting terminal WebSocket ... ');
+  protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://';
+  socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + '/terminals/';
 
   term.on('data', function(data) {
     if (carrier) {
@@ -42,9 +40,7 @@ function newSession() {
     }
     else {
       if (data === '\x0D' || data === ' ') {
-        if (typeof tuneSource !== 'undefined') tuneSource.stop();
-        if (reconnect) clearInterval(reconnect);
-        term.destroy();
+        endSession();
         newSession();
       }
     }
@@ -87,13 +83,21 @@ function newSession() {
         };
 
         socket.onopen = () => {
-          term.socket = socket;
-          term.writeln('open\x1B[m');
           carrier = true;
           window.frames['Info'].postMessage({ 'func':'Logon' }, location.href);
+
+          term.socket = socket;
+          term.focus();
+          if (!term.getOption('cursorBlink'))
+            term.setOption('cursorBlink', true);
+          term.writeln('open\x1B[m');
         };
 
         socket.onclose = (ev) => {
+          if (term.getOption('cursorBlink'))
+            term.setOption('cursorBlink', false);
+          term.writeln('\x1B[2mWebSocket close\x1B[m');
+
           carrier = false;
           recheck = 0;
           reconnect = setInterval(checkCarrier, 15000);
@@ -107,6 +111,12 @@ function newSession() {
       });
     });
   }, 0);
+}
+
+function endSession() {
+  if (typeof tuneSource !== 'undefined') tuneSource.stop();
+  if (reconnect) clearInterval(reconnect);
+  term.destroy();
 }
 
 // let's have a nice value for both the player and the web server

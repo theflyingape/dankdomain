@@ -41,7 +41,11 @@ function receive(event) {
     switch(event.data.func) {
       case 'kb':
       case 'emit':
-      if (!carrier) newSession();
+        if (!carrier) {
+          endSession();
+          newSession();
+          return;
+        }
         if (event.data.message) {
           socket.send(event.data.message);
           if (event.data.return)
