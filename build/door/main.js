@@ -61,7 +61,7 @@ function newSession() {
   // fit is called within a setTimeout, cols and rows need this.
   setTimeout(function () {
 
-    fetch('/terminals?cols=' + term.cols + '&rows=' + term.rows, {method: 'POST'}).then(function (res) {
+    fetch('/terminals/?cols=' + term.cols + '&rows=' + term.rows, {method: 'POST'}).then(function (res) {
 
       res.text().then(function (pid) {
         window.pid = pid;
@@ -87,7 +87,7 @@ function newSession() {
           term.socket = socket;
           carrier = true;
           window.frames['Info'].postMessage({ 'func':'Logon' }, location.href);
-          term.writeln('\x1B[m');
+          term.writeln('\x1B[m socket connected: ', ev, '\n');
         };
 
         socket.onclose = (ev) => {
@@ -98,6 +98,7 @@ function newSession() {
         };
 
         socket.onerror = (ev) => {
+          term.writeln('\x1B[1;31m', ev);
           carrier = false;
         };
       });

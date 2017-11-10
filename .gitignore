@@ -1,4 +1,5 @@
 **/*.js.map
+build/*.pem
 build/*.js
 build/*.d.ts
 build/door/node_modules/**

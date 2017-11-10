@@ -2,11 +2,20 @@
  *  Dank Domain: the return of Hack & Slash                                  *
  *  DOOR authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
+process.title = 'door';
+var https = require('https');
+var fs = require('fs');
 var express = require('express');
-var app = express();
-var expressWs = require('express-ws')(app);
+var expressWs = require('express-ws');
 var os = require('os');
 var pty = require('node-pty');
+var options = {
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem')
+};
+var app = express();
+var server = https.createServer(options, app);
+var expressWs = expressWs(app, server);
 var terminals = {}, logs = {};
 app.use('/', express.static(__dirname));
 //app.use('/build', express.static(__dirname + '/../build'));
@@ -77,5 +86,5 @@ app.ws('/terminals/:pid', function (ws, req) {
     });
 });
 var port = process.env.PORT || 1965, host = os.platform() === 'win32' ? '127.0.0.1' : '0.0.0.0';
-console.log('App listening to http://' + host + ':' + port);
-app.listen(port, host);
+console.log('App listening to https://' + host + ':' + port);
+server.listen(port, host);
