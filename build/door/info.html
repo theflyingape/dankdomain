@@ -244,10 +244,9 @@ function arena() {
 
 function battle() {
   cmd(`
-<input type="button" value="Attack" onclick="send('A');">
-<input type="button" value="Cast" onclick="send('C');">
-<input type="button" value="Retreat" onclick="send('R');">
-<input type="button" value="Status" onclick="send('Y');">
+<input class="tall" type="button" value=" Attack " onclick="send('A');"><br>
+<input type="button" value="Cast" onclick="send('C');"> <input type="button" value="Status" onclick="send('Y');"><br>
+<input class="wide" type="button" value=" Retreat " onclick="send('R');">
 `);
 }
 

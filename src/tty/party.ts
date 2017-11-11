@@ -29,13 +29,13 @@ module Party
     let nme: active[]
 
     let party: choices = {
-        'E': { description:'Edit your gang' },
-        'F': { description:'Fight another gang' },
-        'J': { description:'Join a gang' },
         'L': { description:'List all gangs' },
         'M': { description:'Most Wanted list' },
-        'R': { description:'Resign your membership' },
+        'J': { description:'Join a gang' },
+        'F': { description:'Fight another gang' },
         'S': { description:'Start a new gang' },
+        'E': { description:'Edit your gang' },
+        'R': { description:'Resign your membership' },
         'T': { description:'Transfer leadership' }
 	}
 
@@ -56,7 +56,10 @@ function choice() {
     let suppress = $.player.expert
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(party[choice]))
-        xvt.out(' - ', party[choice].description, '\n')
+        if (xvt.validator.isNotEmpty(party[choice].description)) {
+            xvt.out(' - ', party[choice].description, '\n')
+            suppress = true
+        }
     else {
         xvt.beep()
         suppress = false
@@ -73,6 +76,23 @@ function choice() {
                 else
                     showGang(loadGang(rs[i]))
             }
+
+            xvt.app.form = {
+                'pause': { cb:menu, pause:true }
+            }
+            xvt.app.focus = 'pause'
+            return
+
+        case 'M':
+            xvt.out(xvt.Blue, xvt.bright, '\n');
+            xvt.out('        Party            Win-Loss   Ratio \n')
+            xvt.out('------------------------------------------\n', xvt.reset)
+            rs = $.query(`SELECT * FROM Gangs ORDER BY win DESC, loss ASC`)
+            for (let i in rs) {
+                let ratio = rs[i].loss ? sprintf('%5.3f', rs[i].win / (rs[i].win + rs[i].loss)).substr(1) : 'undefeated'
+                xvt.out(sprintf('%-22s %5u-%-5u ', rs[i].name, rs[i].win, rs[i].loss), ratio, '\n')
+            }
+
             xvt.app.form = {
                 'pause': { cb:menu, pause:true }
             }
@@ -400,7 +420,7 @@ function choice() {
                             nme[i].user.coin = new $.coins($.money(mon))
 
                             nme[i].user.handle = titleCase(dm)
-                            nme[i].user.gang = 'the Monster Mash'
+                            nme[i].user.gang = o.name
                             o.handles[i] = nme[i].user.handle
                             o.status[i] = ''
                             o.validated[i] = true
@@ -412,6 +432,7 @@ function choice() {
                         menu()
                     }
 
+                    $.action('yn')
                     showGang(g, o, true)
                     xvt.app.focus = 'fight'
                 }, prompt:'\nFight which gang? ', max:3 },
