@@ -42,7 +42,9 @@ module Party
 export function menu(suppress = true) {
     if ($.checkXP($.online, menu)) return
 	if ($.online.altered) $.saveUser($.player)
-	if ($.reason) xvt.hangup()
+    if ($.player.hp < 1)
+        $.reason = 'fought bravely?'
+    if ($.reason) xvt.hangup()
 
     $.action('party')
     xvt.app.form = {

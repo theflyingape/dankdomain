@@ -1338,13 +1338,13 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                         , rpc.user.handle, '\'s ', rpc.user.weapon
                         , ' whistles by '
                         , enemy.user.gender === 'I' ? 'the ' : ''
-                        , enemy == $.online ? 'you' : rpc.user.handle
+                        , enemy == $.online ? 'you' : enemy.user.handle
                         , '.\n')
                 else {
                     xvt.out(rpc.user.gender === 'I' ? 'The ' : ''
                         , rpc.user.handle, ' attacks '
                         , enemy.user.gender === 'I' ? 'the ' : ''
-                        , enemy == $.online ? 'you' : rpc.user.handle
+                        , enemy == $.online ? 'you' : enemy.user.handle
                         , ', but misses.\n')
                 }
                 return
@@ -1431,17 +1431,15 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         }
         else {
             let w = action.split(' ')
-            if (alive[1] == 1)
+            if (alive[0] == 1 && alive[1] == 1)
                 xvt.out($.who(rpc, 'He'))
-            else {
-                if(rpc.user.gender === 'I')
-                    xvt.out('The ')
-                xvt.out(rpc.user.handle, ' ')
-            }
+            else
+                xvt.out(rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle, ' ')
             xvt.out($.what(rpc, w[0]), w.slice(1).join(' '), enemy == $.online ? 'you'
                 : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
                 , ' for ', hit.toString(), ' hit points', period, '\n'
             )
+            xvt.waste(100)
         }
     }
     else {
@@ -1453,6 +1451,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
             , '.\n'
         )
+        xvt.waste(250)
     }
 
     if (enemy.hp < 1) {
