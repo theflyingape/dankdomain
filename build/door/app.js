@@ -26,7 +26,7 @@ app.post('/terminals', function (req, res) {
         cwd: process.env.PWD,
         env: process.env
     });
-    console.log('Created terminal with PID: ' + term.pid);
+    console.log('Create terminal with PID: ' + term.pid);
     terminals[term.pid] = term;
     logs[term.pid] = '';
     term.on('data', function (data) {
@@ -37,8 +37,10 @@ app.post('/terminals', function (req, res) {
 });
 app.post('/terminals/:pid/size', function (req, res) {
     var pid = parseInt(req.params.pid), cols = parseInt(req.query.cols), rows = parseInt(req.query.rows), term = terminals[pid];
+    if (!term)
+        return;
+    console.log('resize terminal ' + pid + ' to ' + cols + ' cols and ' + rows + ' rows');
     term.resize(cols, rows);
-    console.log('Resized terminal ' + pid + ' to ' + cols + ' cols and ' + rows + ' rows.');
     res.end();
 });
 app.ws('/terminals/:pid', function (ws, req) {
@@ -53,7 +55,8 @@ app.ws('/terminals/:pid', function (ws, req) {
             ws.send(data);
         }
         catch (ex) {
-            console.log('socket error:', ex);
+            term.pid && console.log(`?fatal terminal ${term.pid} socket error:`, ex.message);
+            term.pid = undefined;
         }
     });
     ws.on('message', function (msg) {

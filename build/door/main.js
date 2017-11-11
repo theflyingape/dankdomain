@@ -1,5 +1,5 @@
 var carrier = false, recheck = 0, reconnect;
-var cols = 80, rows = 25;
+var cols = 80, rows = 25, fontSize = 20;
 var terminalContainer = document.getElementById('terminal-container'),
     term,
     protocol,
@@ -16,19 +16,19 @@ function newSession() {
   tune('dankdomain');
 
   term = new Terminal({ cursorBlink:false, rows:rows, cols:cols, enableBold:true, scrollback:250,
-    fontFamily:'DejaVu Sans Mono',
-    foreground:'#a2a4a8', background:'#000102',
-    black:'#000000', red:'#a0000', green:'#00a000', yellow:'#c0a000',
-    blue:'#0000a0', magenta:'#a000a0', cyan:'#00a0a0', white:'#a0a0a0',
-    brightBlack:'#808080', brightRed:'#f0000', brightGreen:'#00f000', brightYellow:'#f0f000',
-    brightBlue:'#0000f0', brightMagenta:'#f000f0', brightCyan:'#00f0f0', brightWhite:'#f0f0f0'
+    fontFamily:'monospace', fontSize:fontSize, theme: {
+    foreground:'#d0d2d8', background:'#010208',
+    black:'#000000', red:'#a00000', green:'#00a000', yellow:'#c8a000',
+    blue:'#0000a0', magenta:'#a000a0', cyan:'#00a0a0', white:'#d8d8d8',
+    brightBlack:'#646464', brightRed:'#fa0000', brightGreen:'#00fa00', brightYellow:'#fafa00',
+    brightBlue:'#0000fa', brightMagenta:'#fa00fa', brightCyan:'#00fafa', brightWhite:'#fafafa' }
   });
 
   term.open(terminalContainer);
   term.fit();
   term.winptyCompatInit();
 
-  term.writeln('\x1Bc');
+//  term.writeln('\x1Bc');
   term.writeln('\x1B[1;36mW\x1B[22melcome to D\x1b[2mank \x1b[22mD\x1b[2momain\x1B[22m\n');
   term.write('\x1B[34mConnecting terminal WebSocket ... ');
   protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://';

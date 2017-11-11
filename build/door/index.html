@@ -64,8 +64,6 @@ function receive(event) {
 }
 
 function resize() {
-  term.fit();
-
   var stylesheet = document.styleSheets[0];
   for (var i in stylesheet.cssRules) {
     css = stylesheet.cssRules[i];
@@ -75,6 +73,10 @@ function resize() {
       r = css;
   }
 
+  console.log('before: ', fontSize);
+  while (term.proposeGeometry().cols < 80 && (fontSize = term.getOption('fontSize')) > 9)
+    term.setOption('fontSize', --fontSize);
+
   w = 20;
   do {
     w = (parseInt(w) + 1) + '%';
@@ -82,7 +84,13 @@ function resize() {
     Object.assign(l.style, { 'top':'1%', 'height':'97%', 'width':v });
     Object.assign(r.style, { 'top':'0%', 'height':'100%', 'width':w });
     xy = term.proposeGeometry();
-  } while (xy.cols > 80 && parseInt(w) < 50);
+  } while (xy.cols > 80 && parseInt(w) < 45);
+
+  while (term.proposeGeometry().cols > 81)
+    term.setOption('fontSize', ++fontSize);
+
+  term.fit();
+  console.log('after: ', term.getOption('fontSize'));
 }
 </script>
 </head>
@@ -93,7 +101,7 @@ function resize() {
 <h2>Dank Domain: the return of Hack &amp; Slash</h2>
 <h3>&copy;2017 Robert Hurst</h3>
 <h4>use REFRESH button to start over</h4>
-<input type="button" value="REFRESH" onclick="window.location.reload();" />
+<input type="button" value="REFRESH" onclick="window.location.reload()" />
 <h4>The Olde Tavern's <a href="./today.txt" target="_blank">news</a>.</h5>
 <hr>
 <p>Works best using <a href="https://getfedora.org/" target="_blank">Linux</a>: either GnomeShell or Terminology.</p>
