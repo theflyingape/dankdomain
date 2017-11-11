@@ -106,12 +106,13 @@ export function attack(retry = false) {
         $.action('battle')
         xvt.app.form = {
             'attack': {cb:() => {
-                xvt.out('\n\n')
-
+                xvt.out('\n')
                 if (/C/i.test(xvt.entry)) {
                     Battle.cast($.online, next, enemy)
                     return
                 }
+
+                xvt.out('\n')
                 if (/R/i.test(xvt.entry)) {
                     if (from === 'Taxman') {
                         xvt.out('"You can never escape the taxman!"\n')
@@ -557,7 +558,7 @@ export function spoils() {
         for (let m in parties[w]) {
             tl[w] += parties[w][m].user.xplevel
             if (parties[w][m].hp > 0)
-                take += parties[w][m].user.xp + 1
+                take += parties[w][m].user.xp
         }
 
         for (let m in parties[l]) {
@@ -571,17 +572,15 @@ export function spoils() {
         }
 
         for (let m in parties[w]) {
-            let award = 0
+            //  dead men get far less of the booty, taxman always gets a cut
+            let cut = parties[w][m].hp > 0 ? 0.95 : 0.15
+            let award = Math.trunc(coin.value * parties[w][m].user.xp / take * cut)
+            parties[w][m].user.coin.value += award
+            coin.value -= award
+            take -= Math.trunc(parties[w][m].user.xp * cut)
 
-            //  dead men get no booty, taxman always gets his
-            if (parties[w][m].hp > 0) {
-                award = Math.trunc(coin.value * parties[w][m].user.xp / take * 0.95)
-                parties[w][m].user.coin.value += award
-                coin.value -= award
-            }
-            take -= Math.trunc(parties[w][m].user.xp * 0.95)
-
-            let xp = Math.trunc($.experience(parties[w][m].user.xplevel, 1, parties[w][m].user.int) * tl[l] / tl[w])
+            let xp = Math.trunc($.experience(parties[w][m].user.xplevel, 1, parties[w][m].user.int)
+                * tl[l] / tl[w] / (4 + parties[w].length - parties[l].length) / 2)
             parties[w][m].user.xp += xp
 
             if (parties[w][m] == $.online) {
@@ -599,7 +598,7 @@ export function spoils() {
             $.taxman.user.bank.value += coin.value
             $.saveUser($.taxman)
             xvt.out(xvt.reset, '\n')
-            xvt.waste(500)
+            $.beep()
             xvt.out($.taxman.user.handle, ' took ', $.who($.taxman, 'his'), 'cut worth ', coin.carry(), '.\n')
             xvt.waste(1000)
         }
@@ -811,7 +810,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 cb(true)
                 return
             }
-            if (nme.user.novice && [ 12,16,20,21,22 ].indexOf(spell.cast) >= 0) {
+            if (nme.user.novice && [ 12,15,16,20,21,22 ].indexOf(spell.cast) >= 0) {
                 if (rpc === $.online) xvt.out('You cannot cast that spell on a novice player.\n')
                 cb(true)
                 return
@@ -1135,11 +1134,36 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
         case 12:
             $.sound('transmute', 4)
             if (backfire) {
-
+                if (isNaN(+rpc.user.weapon))
+                    xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                        , $.what(rpc, ' transform'), $.who(rpc, 'his'), rpc.user.weapon, ' into')
+                else
+                    xvt.out('A new weapon materializes... it\'s')
+                let n = ($.dice(rpc.weapon.wc) + $.dice(rpc.weapon.wc) + $.dice($.Weapon.merchant.length)) >>1
+                if (++n > $.Weapon.merchant.length - 1)
+                    rpc.user.weapon = $.Weapon.special[$.dice($.Weapon.special.length) - 1]
+                else
+                    rpc.user.weapon = $.Weapon.merchant[n]
+                $.Weapon.equip(rpc, rpc.user.weapon)
+                xvt.out($.an(rpc.user.weapon.toString()), xvt.reset, '!\n')
+                rpc.altered = true
             }
             else {
-
+                if (isNaN(+nme.user.weapon))
+                    xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                        , $.what(rpc, ' transform'), $.who(nme, 'his'), nme.user.weapon, ' into')
+                else
+                    xvt.out('A new weapon materializes... it\'s')
+                let n = ($.dice(rpc.weapon.wc) + $.dice(rpc.weapon.wc) + $.dice($.Weapon.merchant.length)) >>1
+                if (++n > $.Weapon.merchant.length - 1)
+                    nme.user.weapon = $.Weapon.special[$.dice($.Weapon.special.length) - 1]
+                else
+                    nme.user.weapon = $.Weapon.merchant[n]
+                $.Weapon.equip(nme, nme.user.weapon)
+                xvt.out($.an(nme.user.weapon.toString()), xvt.reset, '!\n')
+                nme.altered = true
             }
+            xvt.waste(500)
             break
 
         case 13:
@@ -1378,6 +1402,8 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     if (hit > 0) {
         if (from === 'Party' && enemy.hp <= 0) {
             enemy.hp = 0
+            if (enemy == $.online)
+                $.sound('kill')
             xvt.out(xvt.bright, enemy == $.online ? xvt.yellow : round[0].party == 0 ? xvt.cyan : xvt.red)
             xvt.out(rpc.user.handle, ' ', sprintf([
                 'makes a fatal blow to %s',

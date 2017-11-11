@@ -117,7 +117,7 @@ function ATM() {
 
 function Bet() {
 	xvt.out(xvt.reset, '\n')
-	$.action('amount')
+	$.action('wager')
 	xvt.app.form = {
 		'coin': { cb:amount, max:24 }
 	}

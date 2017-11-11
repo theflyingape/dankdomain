@@ -213,20 +213,19 @@ function freetext() {
 function menu() {
   nme('');
   cmd(`
-<input type="button" value="Arena" onclick="send('A');">
-<input type="button" value="Dungeon" onclick="send('D');">
-<input type="button" value="Casino" onclick="send('G');"><br>
-<input type="button" value="Halls" onclick="send('L');">
-<input type="button" value="Most Wanted" onclick="send('M');">
-<input type="button" value="Naval" onclick="send('N');"><br>
-<input type="button" value="Party" onclick="send('P');">
-<input type="button" value="Rob" onclick="send('R');">
-<input type="button" value="Square" onclick="send('S');"><br>
-<input type="button" value="Tavern" onclick="send('T');">
-<input type="button" value="Reroll" onclick="send('X');">
-<input type="button" value="Status" onclick="send('Y');"><br>
-<input type="button" value="System" onclick="send('Z');">
-<p>${logoff}</p>
+<p><input type="button" value="Arena" onclick="send('A');">
+<input class="tall" type="button" value="Dungeon" onclick="send('D');">
+<input type="button" value="Square" onclick="send('S');"></p>
+<p><input type="button" value="Naval" onclick="send('N');">
+<input class="tall" type="button" value="Party" onclick="send('P');">
+<input type="button" value="Tavern" onclick="send('T');"></p>
+<p><input type="button" value="Casino" onclick="send('G');">
+<input class="tall" type="button" value="Most Wanted" onclick="send('M');">
+<input type="button" value="Halls" onclick="send('L');"></p>
+<p><input type="button" value="Reroll" onclick="send('X');">
+<input class="tall" type="button" value="Status" onclick="send('Y');">
+<input type="button" value="Rob" onclick="send('R');"></p>
+<input type="button" value="System" onclick="send('Z');"> ${logoff}
 `);
 }
 
@@ -244,8 +243,8 @@ function arena() {
 
 function battle() {
   cmd(`
-<input class="tall" type="button" value=" Attack " onclick="send('A');"><br>
-<input type="button" value="Cast" onclick="send('C');"> <input type="button" value="Status" onclick="send('Y');"><br>
+<p><input class="tall" type="button" value=" Attack " onclick="send('A');"></p>
+<p><input type="button" value="Cast" onclick="send('C');"> <input type="button" value="Status" onclick="send('Y');"></p>
 <input class="wide" type="button" value=" Retreat " onclick="send('R');">
 `);
 }
@@ -335,6 +334,11 @@ function party() {
 `);
 }
 
+function payment() {
+  cmd(`${money}`)
+  nme(`<img src="images/payment.png" onload="nmeResize();">`);
+}
+
 function tavern() {
   nme('');
   cmd(`
@@ -345,6 +349,11 @@ function tavern() {
 <p><input type="button" value="Today" onclick="send('T');"> <input type="button" value="Yesterday" onclick="send('Y');"></p>
 <input class="tall" type="button" value=" Quit " onclick="send('Q');">
 `);
+}
+
+function wager() {
+  cmd(`${money}`)
+  nme(`<img src="images/wager.jpg" onload="nmeResize();">`);
 }
 
 function yn() {

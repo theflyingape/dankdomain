@@ -1,5 +1,7 @@
-This fine game runs on a Red Hat Fedora Server 26 using an Intel Atom quad core
+This fine game runs on a Red Hat Fedora Server using an Intel Atom quad core
 mini with 4gb RAM on a 100mb fiber optic internet service.
 
-The software was developed for this machine using Node.js and TypeScript.
+The game has been reimagined using Node.js and TypeScript.
+The portal door uses the latest xterm.js with a node-pty implementation.
+The telnet service allows for classic old school gaming experience.
 Source: https://github.com/theflyingape/dankdomain

@@ -509,7 +509,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
                 , Access.name[king.access][king.gender], ' the ', king.access.toLowerCase()
                 , ', ', king.handle
                 , ', is pleased with your accomplishments\n'
-                , 'and promotes you to ', an(rpc.user.access), rpc.user.access, '!\n')
+                , 'and promotes you to', an(rpc.user.access), '!\n')
             xvt.waste(250)
             xvt.out(xvt.reset, '\n')
             xvt.waste(250)
@@ -804,7 +804,7 @@ export function skillplus(rpc: active, cb: Function) {
 }
 
 export function an(item: string) {
-    return /a|e|i|o|u/i.test(item[0]) ? 'an ' : 'a '
+    return ' ' + (/a|e|i|o|u/i.test(item[0]) ? 'an' : 'a') + ' ' + item
 }
 
 export function cuss(text: string): boolean {
@@ -1155,7 +1155,6 @@ export function playerPC(points = 200, immortal = false) {
 }
 
 export function remake(user: user) {
-    user.xplevel = user.level
     let rpc = PC.card(user.pc)
     for (let n = 2; n < user.level; n++) {
         if (n == 50 && user.id[0] !== '_' && user.gender !== 'I') {
@@ -1251,6 +1250,10 @@ export function remake(user: user) {
         if(user.magic > 1)
             user.sp += n + dice(n) + Math.trunc(user.int / 10)
     }
+
+    if (user.level > 1)
+        user.xp = experience(user.level - 1, 1, user.int)
+    user.xplevel = user.level
 }
 
 export function reroll(user: user, dd?: string, level = 1) {
@@ -1291,7 +1294,7 @@ export function reroll(user: user, dd?: string, level = 1) {
         user.expert = false
         user.rows = process.env.LINES ? process.env.LINES : 24
         user.remote = ''
-        user.novice = true
+        user.novice = xvt.validator.isEmpty(user.id) && user.gender !== 'I'
         user.gang = ''
         user.wins = 0
         user.immortal = 0
@@ -1467,22 +1470,6 @@ export function riddle() {
     xvt.app.focus = 'key'
 }
 
-//  Player Character
-export function spawn(dungeon: dungeon, level?: number): void {
-
-    this.name = dungeon.name
-    this.str = this.player.baseStr
-    this.int = this.player.baseInt
-    this.dex = this.player.baseDex
-    this.cha = this.player.baseCha
-
-    if (level > 0) {
-        this.level = level
-    }
-    this.hp = 10
-    if (this.player.magic) this.sp = 10
-}
-
 export function time(t: number): string {
     const ap = t < 1200 ? 'am' : 'pm'
     const m = t % 100
@@ -1517,7 +1504,7 @@ export function worth(n: number, p: number): number {
 
 export function beep() {
     if (xvt.emulation === 'XT')
-        sound('max')
+        sound('max', 5)
     else
         xvt.beep()
 }
@@ -1630,23 +1617,22 @@ export function emulator(cb:Function) {
 export function logoff() {
     if (reason === '') reason = (xvt.reason ? xvt.reason : 'mystery')
     if (xvt.validator.isNotEmpty(player.id)) {
-        if (reason !== '') {
-            sound('goodbye')
-            player.lasttime = now().time
-            if (access.roleplay) {
-                saveUser(player)
-                unlock(player.id)
-            }
-
-            try { callers = require('./users/callers') } catch(e) {}
-            while (callers.length > 7)
-                callers.pop()
-            callers = [<caller>{who: player.handle, reason: reason}].concat(callers)
-            fs.writeFileSync('./users/callers.json', JSON.stringify(callers))
-
-            news(`\tlogged off ${time(player.lasttime)} as a level ${player.level} ${player.pc}`)
-            news(`\t(${reason})\n`, true)
+        sound('goodbye')
+        player.lasttime = now().time
+        if (access.roleplay) {
+            saveUser(player)
+            unlock(player.id)
         }
+
+        try { callers = require('./users/callers') } catch(e) {}
+        while (callers.length > 7)
+            callers.pop()
+        callers = [<caller>{who: player.handle, reason: reason}].concat(callers)
+        fs.writeFileSync('./users/callers.json', JSON.stringify(callers))
+
+        news(`\tlogged off ${time(player.lasttime)} as a level ${player.level} ${player.pc}`)
+        news(`\t(${reason})\n`, true)
+
         //  logoff banner
         xvt.out('\n')
         xvt.out(xvt.reset, 'Goodbye, please play again!  Also visit:\n')

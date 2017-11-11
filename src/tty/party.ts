@@ -145,7 +145,10 @@ function choice() {
         case 'R':
             if (!$.access.roleplay) break
             if (!$.player.gang) break
-            if (!$.party) break
+            if (!$.party) {
+                xvt.beep()
+                break
+            }
             
             g = loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
             showGang(g)
@@ -262,7 +265,10 @@ function choice() {
         case 'E':
             if (!$.access.roleplay) break
             if (!$.player.gang) break
-            if (!$.party) break
+            if (!$.party) {
+                xvt.beep()
+                break
+            }
             
             g = loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
             showGang(g)
@@ -329,7 +335,10 @@ function choice() {
         case 'F':
             if (!$.access.roleplay) break
             if (!$.player.gang) break
-            if (!$.party) break
+            if (!$.party) {
+                xvt.beep()
+                break
+            }
 
             g = loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
 

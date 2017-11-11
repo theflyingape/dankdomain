@@ -610,6 +610,7 @@ function buy() {
 		case 'A':
 			cost = new $.coins($.Armor.name[$.Armor.merchant[item]].value)
 			if ($.player.coin.value + credit.value >= cost.value) {
+				$.profile({ png:'payment.png' })
 				$.sound('click')
 				$.player.armor = $.Armor.merchant[item]
 				$.player.toAC = 0
@@ -625,6 +626,7 @@ function buy() {
 			cost = $.player.magic == 1 ? new $.coins($.Magic.spells[$.Magic.merchant[item]].wand)
 				:  new $.coins($.Magic.spells[$.Magic.merchant[item]].cost)
 			if ($.player.coin.value >= cost.value && !$.Magic.have($.player.spells, buy)) {
+				$.profile({ png:'payment' })
 				$.sound('click')
 				$.Magic.add($.player.spells, buy)
 				xvt.out(' - ', $.Magic.merchant[item], '\n')
@@ -636,6 +638,7 @@ function buy() {
 		case 'R':
 			cost = new $.coins($.RealEstate.name[$.RealEstate.merchant[item]].value)
 			if ($.player.coin.value + credit.value >= cost.value) {
+				$.profile({ png:'payment' })
 				$.sound('click')
 				$.player.realestate = $.RealEstate.merchant[item]
 				xvt.out(' - ', $.player.realestate, '\n')
@@ -648,6 +651,7 @@ function buy() {
 		case 'S':
 			cost = new $.coins($.Security.name[$.Security.merchant[item]].value)
 			if ($.player.coin.value + credit.value >= cost.value) {
+				$.profile({ png:'payment' })
 				$.sound('click')
 				$.player.security = $.Security.merchant[item]
 				xvt.out(' - ', $.player.security, '\n')
@@ -662,6 +666,7 @@ function buy() {
 			cost = $.player.poison == 1 ? new $.coins($.Poison.vials[$.Poison.merchant[item]].vial)
 				:  new $.coins($.Poison.vials[$.Poison.merchant[item]].cost)
 			if ($.player.coin.value >= cost.value && !$.Poison.have($.player.poisons, buy)) {
+				$.profile({ png:'payment' })
 				$.sound('click')
 				$.Poison.add($.player.poisons, buy)
 				xvt.out('\nHe slips you a vial of ', $.Poison.merchant[item], '\n')
@@ -673,6 +678,7 @@ function buy() {
 		case 'W':
 			cost = new $.coins($.Weapon.name[$.Weapon.merchant[buy]].value)
 			if ($.player.coin.value + credit.value >= cost.value) {
+				$.profile({ png:'payment' })
 				$.sound('click')
 				$.player.weapon = $.Weapon.merchant[buy]
 				$.player.toWC = 0

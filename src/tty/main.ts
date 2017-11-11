@@ -128,17 +128,27 @@ function choice() {
             return
 
         case 'Q':
+            $.beep()
             $.action('yn')
             xvt.app.form = {
                 'yn': { cb: () => {
                     xvt.out('\n')
                     if (/Y/i.test(xvt.entry)) {
+                        let userPNG = `images/user/${$.player.id}.png`
+                        try {
+                            fs.accessSync(userPNG, fs.constants.F_OK)
+                            userPNG = `user/${$.player.id}`
+                        } catch(e) {
+                            userPNG = 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : '')
+                        }
+                        $.profile({ png:userPNG, handle:$.player.handle, level:$.player.level, pc:$.player.pc })
                         if (!$.reason.length) $.reason = 'logged off as a level ' + $.player.level + ' ' + $.player.pc
                         xvt.hangup()
                     }
                     menu()
                 }, prompt:'Are you sure (Y/N)? ', cancel:'Y', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
             }
+            $.sound('oops')
             xvt.app.focus = 'yn'
             return
 
@@ -188,12 +198,8 @@ function choice() {
 					return
                 }
 
-                xvt.out('The goods are in '
-                    , $.an(opponent.user.realestate), opponent.user.realestate
-                    ,  ' protected by '
-                    , $.an(opponent.user.security), opponent.user.security
-                    , '.\n'
-                )
+                xvt.out('The goods are in', $.an(opponent.user.realestate)
+                    ,  ' protected by', $.an(opponent.user.security), '.\n')
 
                 $.action('yn')
                 xvt.app.form = {
@@ -270,6 +276,10 @@ function choice() {
             return
 
         case 'T':
+            if (!$.brawl) {
+                xvt.beep()
+                break
+            }
             $.music('tavern' + $.dice(4))
             require('./tavern').menu($.player.expert)
             return

@@ -20,7 +20,9 @@ module Tavern
         'Y': { description:'Yesterday\'s news' }
 	}
 
-export function menu(suppress = false) {
+    $.loadUser($.barkeep)
+
+export function menu(suppress = true) {
 	$.action('tavern')
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
@@ -33,24 +35,83 @@ function choice() {
     let suppress = $.player.expert
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(tavern[choice]))
-        xvt.out(' - ', tavern[choice].description, '\n')
+        if (xvt.validator.isNotEmpty(tavern[choice].description)) {
+            xvt.out(' - ', tavern[choice].description, '\n')
+            suppress = true
+        }
     else {
         xvt.beep()
         suppress = false
     }
-
+    xvt.out('\n')
+    
     switch (choice) {
         case 'T':
             $.cat('tavern/today')
             suppress = true
             break
+
         case 'Y':
             $.cat('tavern/yesterday')
             suppress = true
             break
+
+        case 'G':
+            xvt.out(`${$.barkeep.user.handle} pours you a beer.\n`)
+            xvt.waste(500)
+
+            $.action('payment')
+            xvt.app.form = {
+                'tip': { cb:() => {
+                    xvt.out('\n\n')
+                    if ((+xvt.entry).toString() === xvt.entry) xvt.entry += 'c'
+                    let tip = (/=|max/i.test(xvt.entry)) ? $.player.coin.value : new $.coins(xvt.entry).value
+                    if (tip < 1 || tip > $.player.coin.value) {
+                        $.sound('oops')
+                        xvt.out($.who($.barkeep, 'He'), 'pours the beer on you and kicks you out of his bar.\n')
+                        xvt.waste(1000)
+                        $.brawl = 0
+                        require('./main').menu(true)
+                        return
+                    }
+                    xvt.beep()
+                    xvt.out($.who($.barkeep, 'He'), 'grunts and hands you your beer.\n')
+                    $.online.altered = true
+                    $.player.coin.value -= tip
+                    xvt.waste(1000)
+                    xvt.out($.who($.barkeep, 'He'), 'says, "', [
+                        'More stamina will yield more hit points',
+                        'More intellect will yield more spell power',
+                        'You don\'t miss as often with higher agility',
+                        'You can sell items for better items with higher charisma',
+                        'You can do more damage in battle with higher stamina',
+                        'Spells don\'t fail as often with higher intellect',
+                        'Higher agility yields higher jousting ability',
+                        'Fishing can get better results from higher charisma',
+                        'Real Estate and Security help protect your investments',
+                        'Higher baud rates yield faster screen displays',
+                        'Crying will not change the world',
+                        'Backstabs swish more than you wish',
+                        'Dungeon maps fall more into the hands of the lucky',
+                        'Higher intellect calculates opponent\'s hit points more accurately',
+                        'At least 50 Intellect points are needed to recall where you\'ve been walking',
+                        'I\'ll have more hints tomorrow.  Maybe'
+                    ][tip % 16])
+                    xvt.out('."\n')
+                    xvt.waste(1000)
+                    menu()
+                }, prompt:'How much will you tip? ', max:8 },
+            }
+            xvt.app.focus = 'tip'
+            return
+
         case 'Q':
 			require('./main').menu($.player.expert)
 			return
+
+        default:
+			xvt.beep()
+    	    suppress = false
 	}
 	menu(suppress)
 }
