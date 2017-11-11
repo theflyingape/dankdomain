@@ -1424,10 +1424,11 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         : (period[0] === '.') ? rpc.weapon.stab : rpc.weapon.plunge
 
         if (rpc == $.online) {
-            xvt.out('You ', action, enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
-                , ' for ', hit.toString(), ' hit points', period, '\n'
-            )
-            xvt.waste(200)
+            xvt.out('You ', action)
+            if (alive[0] == 1 && alive[1] == 1)
+                xvt.out($.who(rpc, 'him'))
+            else
+                xvt.out(enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle)
         }
         else {
             let w = action.split(' ')
@@ -1437,10 +1438,10 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                 xvt.out(rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle, ' ')
             xvt.out($.what(rpc, w[0]), w.slice(1).join(' '), enemy == $.online ? 'you'
                 : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
-                , ' for ', hit.toString(), ' hit points', period, '\n'
             )
-            xvt.waste(100)
         }
+        xvt.out(' for ', hit.toString(), ' hit points', period, '\n')
+        xvt.waste(150)
     }
     else {
         xvt.out(
