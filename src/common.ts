@@ -1876,13 +1876,6 @@ export function saveUser(rpc, insert = false) {
     let user: user = isActive(rpc) ? rpc.user : rpc
 
     if (xvt.validator.isEmpty(user.id)) return
-    if (user.id === player.id || user.id[0] === '_') {
-        let trace = users + user.id + '.json'
-        if (reason === '')
-            fs.writeFileSync(trace, JSON.stringify(user, null, 2))
-        else
-            fs.unlink(trace , () => {})
-    }
 
     let sql: string = ''
 try {
@@ -1947,6 +1940,14 @@ try {
         xvt.beep()
         xvt.out(xvt.reset, '\n?Unexpected error: ', String(err), '\n')
         xvt.out(sql, '\n')
+
+        if (user.id === player.id || user.id[0] === '_') {
+            let trace = users + user.id + '.json'
+            if (reason === '')
+                fs.writeFileSync(trace, JSON.stringify(user, null, 2))
+            else
+                fs.unlink(trace , () => {})
+        }
         reason = 'defect - ' + err.code
         xvt.hangup()
     }

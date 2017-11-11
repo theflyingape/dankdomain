@@ -579,8 +579,8 @@ export function spoils() {
             coin.value -= award
             take -= Math.trunc(parties[w][m].user.xp * cut)
 
-            let xp = Math.trunc($.experience(parties[w][m].user.xplevel, 1, parties[w][m].user.int)
-                * tl[l] / tl[w] / (4 + parties[w].length - parties[l].length) / 2)
+            let xp = Math.trunc($.experience(parties[w][m].user.xplevel)
+                * tl[l] / tl[w] / ((4 + parties[w].length - parties[l].length) / 2))
             parties[w][m].user.xp += xp
 
             if (parties[w][m] == $.online) {
