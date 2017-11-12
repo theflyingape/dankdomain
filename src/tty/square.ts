@@ -610,7 +610,7 @@ function buy() {
 		case 'A':
 			cost = new $.coins($.Armor.name[$.Armor.merchant[item]].value)
 			if ($.player.coin.value + credit.value >= cost.value) {
-				$.profile({ png:'payment.png' })
+				$.profile({ png:'payment' })
 				$.sound('click')
 				$.player.armor = $.Armor.merchant[item]
 				$.player.toAC = 0

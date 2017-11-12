@@ -1214,7 +1214,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 iou.hp = nme.hp
                 parties[p^1].push(iou)
                 xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , $.what(rpc, ' render'), 'an image of'
+                    , $.what(rpc, ' render'), 'an image of '
                     , nme === $.online ? 'you' : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
                     , '!\n')
             }
@@ -1223,7 +1223,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 iou.hp = rpc.hp
                 parties[p].push(iou)
                 xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , $.what(rpc, ' render'), 'an image of', $.who(rpc, 'him'), '\x08self!\n')
+                    , $.what(rpc, ' render'), 'an image of ', $.who(rpc, 'him'), '\x08self!\n')
             }
             xvt.waste(500)
             break
@@ -1232,8 +1232,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             $.sound('disintegrate', 6)
             if (backfire) {
                 xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , $.what(rpc, 'completely atomize')
-                    , $.who(rpc,'him'), '\x08self!\n')
+                    , $.what(rpc, ' completely atomize')
+                    , $.who(rpc, 'him'), '\x08self!\n')
                 rpc.hp = 0
                 if (rpc === $.online)
                     $.reason = `disintegrate backfired`
@@ -1241,7 +1241,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             else {
                 xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' completely atomize')
-                    , nme === $.online ? 'you' : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
+                    , nme === $.online ? 'you' : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
                     , '!\n')
                 nme.hp = 0
                 if (nme === $.online) {
@@ -1259,14 +1259,31 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             break
 
         case 16:
-            $.sound('morph')
+            $.sound('morph', 10)
             if (backfire) {
-
+                rpc.user.level = $.dice(98) + 1
+                $.reroll(rpc.user, $.PC.random(), rpc.user.level)
+                $.activate(rpc)
+                rpc.altered = true
+                rpc.user.gender = ['F','M'][$.dice(2) - 1]
+                $.saveUser(rpc)
+                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' morph'), $.who(rpc, 'him'), '\x08self'
+                    , ` into a level ${rpc.user.level} ${rpc.user.pc}!\n`)
             }
             else {
-
+                nme.user.level = $.dice(98) + 1
+                $.reroll(nme.user, $.PC.random(), nme.user.level)
+                $.activate(nme)
+                nme.altered = true
+                nme.user.gender = ['F','M'][$.dice(2) - 1]
+                $.saveUser(nme)
+                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' morph')
+                    , nme === $.online ? 'you' : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
+                    , ` into a level ${nme.user.level} ${nme.user.pc}!\n`)
             }
-            xvt.waste(500)
+            xvt.waste(1000)
             break
 
         case 17:

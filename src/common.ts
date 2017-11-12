@@ -147,13 +147,13 @@ export class Character {
             n = 11 + i / 2 + i % 2
             xvt.out(xvt.blue, '((:=', line.slice(0, n), '+\n')
 
-            i = 30 - Access.name[profile.user.access][profile.user.gender].length
+            i = 30 - Access.name[profile.user.access][profile.user.sex].length
             n = 11 + i / 2
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.white, space.slice(0, n))
-            xvt.out('"', Access.name[profile.user.access][profile.user.gender], '"')
+            xvt.out('"', Access.name[profile.user.access][profile.user.sex], '"')
             n = 11 + i / 2 + i % 2
             xvt.out(xvt.blue, space.slice(0, n), xvt.reset, xvt.blue, '|\n')
-            
+
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
             xvt.out('    Title: ', xvt.white)
             xvt.out(sprintf('%-20s', profile.user.access))
