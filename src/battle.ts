@@ -84,7 +84,7 @@ export function attack(retry = false) {
 
     let n = round[0]
     let rpc = parties[n.party][n.member]
-    if (rpc.hp < 1) {
+    if (rpc.hp < 1 || rpc.user.xplevel == 0) {
         next()
         return
     }
@@ -503,12 +503,12 @@ if(!p) {
             return
         }
         round.shift()
-        
+
         alive = []
         for (let p in parties) {
             alive.push(parties[p].length)
             for (let m in parties[p])
-                if (parties[p][m].hp < 1)
+                if (parties[p][m].hp < 1 || parties[p][m].user.xplevel == 0)
                     alive[p]--
         }
 
@@ -1139,7 +1139,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                         , $.what(rpc, ' transform'), $.who(rpc, 'his'), rpc.user.weapon, ' into')
                 else
                     xvt.out('A new weapon materializes... it\'s')
-                let n = ($.dice(rpc.weapon.wc) + $.dice(rpc.weapon.wc) + $.dice($.Weapon.merchant.length)) >>1
+                let n = Math.round(($.dice(rpc.weapon.wc) + $.dice(rpc.weapon.wc)
+                    + $.dice($.Weapon.merchant.length)) / 3)
                 if (++n > $.Weapon.merchant.length - 1)
                     rpc.user.weapon = $.Weapon.special[$.dice($.Weapon.special.length) - 1]
                 else
@@ -1154,7 +1155,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                         , $.what(rpc, ' transform'), $.who(nme, 'his'), nme.user.weapon, ' into')
                 else
                     xvt.out('A new weapon materializes... it\'s')
-                let n = ($.dice(rpc.weapon.wc) + $.dice(rpc.weapon.wc) + $.dice($.Weapon.merchant.length)) >>1
+                let n = Math.round(($.dice(nme.weapon.wc) + $.dice(nme.weapon.wc)
+                    + $.dice($.Weapon.merchant.length)) / 3)
                 if (++n > $.Weapon.merchant.length - 1)
                     nme.user.weapon = $.Weapon.special[$.dice($.Weapon.special.length) - 1]
                 else
@@ -1185,16 +1187,45 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 }
                 rpc.hp = rpc.user.hp
             }
+            xvt.waste(500)
             break
 
         case 14:
             $.sound('illusion')
+            let iou = <active>{}
+            iou.user = <user>{id:'', sex:'I'}
+            $.reroll(iou.user, undefined, iou.user.level)
+            $.activate(iou)
+            iou.user.xplevel = 0
+            iou.user.coin = new $.coins(0)
+            iou.user.str = 0
+            iou.user.int = 0
+            iou.user.dex = 0
+            iou.user.cha = 0
+            iou.user.sp = 0
+            iou.str = 0
+            iou.int = 0
+            iou.dex = 0
+            iou.cha = 0
+            iou.sp = 0
+            let p = round[0].party
             if (backfire) {
-
+                iou.user.handle = `image of ${nme.user.id ? nme.user.id : 'it'}`
+                iou.hp = nme.hp
+                parties[p^1].push(iou)
+                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' render'), 'an image of'
+                    , nme === $.online ? 'you' : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
+                    , '!\n')
             }
             else {
-
+                iou.user.handle = `image of ${rpc.user.id ? rpc.user.id : 'it'}`
+                iou.hp = rpc.hp
+                parties[p].push(iou)
+                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' render'), 'an image of', $.who(rpc, 'him'), '\x08self!\n')
             }
+            xvt.waste(500)
             break
 
         case 15:
@@ -1224,6 +1255,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                         : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`
                 }
             }
+            xvt.waste(500)
             break
 
         case 16:
@@ -1234,6 +1266,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             else {
 
             }
+            xvt.waste(500)
             break
 
         case 17:
@@ -1420,8 +1453,8 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         }
 
         action = (blow == 1)
-        ? (period[0] === '.') ? rpc.weapon.hit : rpc.weapon.smash
-        : (period[0] === '.') ? rpc.weapon.stab : rpc.weapon.plunge
+            ? (period[0] === '.') ? rpc.weapon.hit : rpc.weapon.smash
+            : (period[0] === '.') ? rpc.weapon.stab : rpc.weapon.plunge
 
         if (rpc == $.online) {
             xvt.out('You ', action ,' ')

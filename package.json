@@ -34,7 +34,7 @@
   "dependencies": {
     "better-sqlite3": "^4.0.3",
     "fs-extra": "^2.1.2",
-    "nodemailer": "^4.3.1",
+    "nodemailer": "^4.4.0",
     "nodemailer-smtp-transport": "^2.7.4",
     "sprintf-js": "^1.1.1",
     "title-case": "^2.1.1",
