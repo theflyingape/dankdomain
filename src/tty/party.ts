@@ -86,7 +86,7 @@ function choice() {
             return
 
         case 'M':
-            xvt.out(xvt.Blue, xvt.bright, '\n');
+            xvt.out(xvt.Blue, xvt.bright, '\n')
             xvt.out('        Party            Win-Loss   Ratio \n')
             xvt.out('------------------------------------------\n', xvt.reset)
             rs = $.query(`SELECT * FROM Gangs ORDER BY win DESC, loss ASC`)
@@ -470,10 +470,6 @@ function choice() {
         case 'Q':
 			require('./main').menu($.player.expert)
 			return
-
-        default:
-			xvt.beep()
-    	    suppress = false
 	}
 	menu(suppress)
 }
@@ -590,7 +586,7 @@ function showGang(lg: gang, rg?: gang, engaged = false) {
         xvt.out(le[rg.trim], tb[rg.trim].repeat(26), re[rg.trim])
     }
     xvt.out(xvt.reset, '\n')
-    
+
     //
     let n = 0
     let who: { handle:string, status:string, gang:string }[]

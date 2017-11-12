@@ -339,6 +339,14 @@ function payment() {
   nme(`<img src="images/payment.png" onload="nmeResize();">`);
 }
 
+function shipyard() {
+  nme('');
+  cmd(`
+<input type="button" value="Buy" onclick="send('B');"> <input type="button" value="Fix" onclick="send('F');">
+<input type="button" value="Cannon" onclick="send('C');"> <input type="button" value="Ram" onclick="send('R');">
+  `);
+}
+
 function tavern() {
   nme('');
   cmd(`
