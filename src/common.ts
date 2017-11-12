@@ -613,7 +613,7 @@ export function skillplus(rpc: active, cb: Function) {
     xvt.out('\n'); xvt.waste(500)
 
     if (rpc.user.maxstr < 99 && rpc.user.maxint < 99 && rpc.user.maxdex < 99 && rpc.user.maxcha < 99) {
-        xvt.out(bracket(0, false), xvt.yellow, 'Increase ALL abilities by +2\n')
+        xvt.out(bracket(0, false), xvt.yellow, ' Increase ALL abilities by +2\n')
         xvt.waste(200)
     }
     xvt.out(bracket(1, false), xvt.yellow, ' Increase Strength ability from ', xvt.reset
@@ -683,6 +683,22 @@ export function skillplus(rpc: active, cb: Function) {
         'skill': { cb: () => {
             xvt.out('\n', xvt.bright)
             switch(+xvt.entry) {
+            case 0:
+                news('\tgot generally better.')
+                if ((online.str += 2) > 100) online.str = 100
+                if ((online.int += 2) > 100) online.int = 100
+                if ((online.dex += 2) > 100) online.dex = 100
+                if ((online.cha += 2) > 100) online.cha = 100
+                if ((player.str += 2) > 100) player.str = 100
+                if ((player.int += 2) > 100) player.int = 100
+                if ((player.dex += 2) > 100) player.dex = 100
+                if ((player.cha += 2) > 100) player.cha = 100
+                if ((player.maxstr += 2) > 100) player.maxstr = 100
+                if ((player.maxint += 2) > 100) player.maxint = 100
+                if ((player.maxdex += 2) > 100) player.maxdex = 100
+                if ((player.maxcha += 2) > 100) player.maxcha = 100
+                break
+
             case 1:
                 news('\tcan get even Stronger.')
                 if ((player.maxstr += 10) > 100) player.maxstr = 100
@@ -770,7 +786,7 @@ export function skillplus(rpc: active, cb: Function) {
                     xvt.out(xvt.black, 'More mana is better.')
                     player.sp += 512
                     online.sp += 512
-                    player.sp += dice(Math.trunc(3583 / player.magic))
+                    player.sp += dice(3583 / player.magic)
                     break
                 }
                 break
@@ -899,6 +915,7 @@ export function date2str(days: number): string {
 }
 
 export function dice(faces: number): number {
+    faces >>= 0
     return Math.trunc(Math.random() * faces) + 1
 }
 
@@ -1513,7 +1530,7 @@ export function bracket(item: number|string, nl = true): string {
     var framed: string = item.toString()
     framed = xvt.attr(xvt.reset, xvt.faint, nl ? '\n' : ''
         , framed.length == 1 && nl ? ' ' : ''
-        , '<', xvt.bright, framed, xvt.faint, '>'
+        , '<', xvt.normal, xvt.bright, xvt.white, framed, xvt.faint, '>'
         , nl ? ' ' : '', xvt.reset)
     return framed
 }

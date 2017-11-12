@@ -139,6 +139,15 @@ interface monster {
     money?: string|number
 }
 
+interface naval {
+    name: string
+    int: number
+    hull: number
+    shot: number
+    powder: number
+    money?: string|number
+}
+
 interface access {
     F?: string
     M?: string

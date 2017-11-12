@@ -2,14 +2,12 @@
 <html lang="en-US">
 <head>
 <title>Dank Domain: the return of Hack & Slash</title>
-<style>
+<style type='text/css'>
   body {
     background-color: #020410;
     color: antiquewhite;
   }
   #terminal-container {
-    background-color: #010208;
-    color: #f2f4f8;
     border: 0;
     top: 0; left: 0;
     width: 80%;
@@ -21,6 +19,15 @@
     width: 20%;
     height: 100%;
     position: fixed;
+  }
+  a:link, a:visited {
+    background-color: black;
+    text-decoration: none;
+    display: inline-block;
+  }
+  a:hover, a:active {
+    background-color: #112266;
+    color: #ace;
   }
 </style>
 <link rel="stylesheet" href="build/xterm.css" />
@@ -99,9 +106,9 @@ function resize() {
 <iframe seamless id="Info" name="Info" src="./info.html"></iframe>
 <div id="idle-container" hidden=true>
 <h2>Dank Domain: the return of Hack &amp; Slash</h2>
-<h3>&copy;2017 Robert Hurst</h3>
+<h3>&copy;2017 <a href="https://robert.hurst-ri.us">Robert Hurst</a></h3>
 <h4>use REFRESH button to start over</h4>
-<input type="button" value="REFRESH" onclick="window.location.reload()" />
+<button onclick="window.location.reload();"> REFRESH </button> <button onclick="window.history.back();">Go Back</button>
 <h4>The Olde Tavern's <a href="./today.txt" target="_blank">news</a>.</h5>
 <hr>
 <p>Works best using <a href="https://getfedora.org/" target="_blank">Linux</a>: either GnomeShell or Terminology.</p>

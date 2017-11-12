@@ -4,5 +4,5 @@
   { "name":"Leviathan", "int":75, "hull":2000, "shot":2, "powder":500, "ram":false, "money":"50g" },
   { "name":"Kraken", "int":85, "hull":2500, "shot":2, "powder":666, "ram":true, "money":"5000g" },
   { "name":"Oceanus", "int":95, "hull":3000, "shot":2, "powder":1000, "ram":true, "money":"50p" },
-  { "name":"Poseidon", "int":99, "hull":3250, "shoy":3, "powder":750, "ram":true, "money":"1000p" }
+  { "name":"Poseidon", "int":99, "hull":3250, "shot":3, "powder":750, "ram":true, "money":"1000p" }
 ]

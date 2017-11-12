@@ -211,7 +211,7 @@ function choice() {
 					return
 				}, max:5 }
 			}
-			xvt.app.form['hp'].prompt = xvt.attr('How many do you want ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', hi.toString(), ']? ')
+			xvt.app.form['hp'].prompt = xvt.attr('How many do you want [', xvt.bright, xvt.white, xvt.uline, 'MAX', xvt.reset, '=', hi.toString(), xvt.cyan, ']? ')
 			xvt.app.focus = 'hp'
 			return
 
@@ -248,7 +248,7 @@ function choice() {
 			}
 			xvt.out('\nYou attempt to pick a passerby\'s pocket... ')
 			xvt.waste(1000)
-			credit.value = $.dice(Math.trunc(5 *  $.money($.player.level) / $.dice(10)))
+			credit.value = $.dice(5 *  $.money($.player.level) / $.dice(10))
 			xvt.out('\n\nYou pick somebody\'s pocket and steal ', credit.carry(), '!\n\n')
 			xvt.waste(1000)
 			if (Math.trunc(16 * $.player.steal + $.player.level / 10 + $.player.dex / 10) < $.dice(100)) {

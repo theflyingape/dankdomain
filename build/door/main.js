@@ -17,9 +17,9 @@ function newSession() {
 
   term = new Terminal({ cursorBlink:false, rows:rows, cols:cols, enableBold:true, scrollback:250,
     fontFamily:'monospace', fontSize:fontSize, theme: {
-    foreground:'#d0d2d8', background:'#010208',
+    foreground:'#c1c2c8', background:'#010208',
     black:'#000000', red:'#a00000', green:'#00a000', yellow:'#c8a000',
-    blue:'#0000a0', magenta:'#a000a0', cyan:'#00a0a0', white:'#d8d8d8',
+    blue:'#0000a0', magenta:'#a000a0', cyan:'#00a0a0', white:'#c8c8c8',
     brightBlack:'#646464', brightRed:'#fa0000', brightGreen:'#00fa00', brightYellow:'#fafa00',
     brightBlue:'#0000fa', brightMagenta:'#fa00fa', brightCyan:'#00fafa', brightWhite:'#fafafa' }
   });

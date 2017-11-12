@@ -180,7 +180,7 @@ export function attack(retry = false) {
                 melee(rpc, enemy, bs)
                 next()
                 return
-            }, enter:'Y', eol:false, max:1, match:/Y|N/i}
+            }, cancel:'N', enter:'Y', eol:false, max:1, match:/Y|N/i}
         }
 
         //  sneaking
@@ -334,7 +334,7 @@ if(c == 'A') {
 */
     //  NPC
     else {
-        if (volley == 1 && $.dice(Math.trunc((100 - rpc.user.level) / 12) + 6) < rpc.user.poison)
+        if (volley == 1 && $.dice((100 - rpc.user.level) / 12 + 6) < rpc.user.poison)
             poison(rpc)
 
         //  might or magic?

@@ -315,6 +315,14 @@ function dungeon() {
 `);
 }
 
+function hunt() {
+  cmd(`
+<p><input class="tall" type="button" value=" Fire! " onclick="send('F');"></p>
+<p><input type="button" value="Ram" onclick="send('R');"> <input type="button" value="Status" onclick="send('Y');"></p>
+<input class="wide" type="button" value="Sail off" onclick="send('S');">
+`);
+}
+
 function naval() {
   nme('');
   cmd(`<p><input class="tall" type="button" value=" Battle " onclick="send('B');"></p>
@@ -344,6 +352,7 @@ function shipyard() {
   cmd(`
 <input type="button" value="Buy" onclick="send('B');"> <input type="button" value="Fix" onclick="send('F');">
 <input type="button" value="Cannon" onclick="send('C');"> <input type="button" value="Ram" onclick="send('R');">
+<input class="tall" type="button" value=" Quit " onclick="send('Q');">
   `);
 }
 
