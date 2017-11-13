@@ -11,6 +11,7 @@ import xvt = require('xvt')
 
 module Dungeon
 {
+	let fini: Function
 	let dank: number
 	let level: number
 	let monsters: monster = require('../etc/dungeon.json')
@@ -26,10 +27,11 @@ module Dungeon
 		'Y': { description:'our status' }
 	}
 
-export function DeepDank(suppress = false) {
+export function DeepDank(start: number, cb: Function) {
 	dank = 0
-	level = $.player.level - 1
-	menu(suppress)
+	level = start > 99 ? 99 : start
+	fini = cb
+	menu()
 }
 
 export function menu(suppress = false) {
@@ -61,7 +63,7 @@ function command() {
 		case 'W':
 			if ($.dice(100) == 100) {
 				$.sound('teleport')
-				require('./main').menu($.player.expert)
+				fini()
 				return
 			}
 			if ($.dice(10) == 1) {
@@ -81,7 +83,7 @@ function command() {
 				}
 				else {
 					xvt.out(xvt.bright, xvt.yellow, '\nYou\'ve fallen down a level!\n', xvt.reset)
-					level++
+					level = ++level > 99 ? 99 : level
 				}
 			}
 			if ($.dice(3) == 1) {
@@ -153,12 +155,6 @@ function command() {
 		case 'P':
 			Battle.poison($.online, menu)
 			return
-
-		case 'Q':
-			if ($.Access.name[$.player.access].sysop) {
-				require('./main').menu($.player.expert)
-				return
-			}
 
 		case 'Y':
 			Battle.yourstats()

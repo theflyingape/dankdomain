@@ -7,6 +7,7 @@ import {sprintf} from 'sprintf-js'
 
 import $ = require('../common')
 import xvt = require('xvt')
+import Battle = require('../battle')
 
 module Naval
 {
@@ -45,7 +46,8 @@ function choice() {
     }
     xvt.out('\n')
 
-    let rs: any[]
+	let rs: any[]
+	let n:number
 
     switch (choice) {
 		case 'B':
@@ -58,12 +60,157 @@ function choice() {
 				xvt.out('\nYou don\'t have a ship!\n')
 				break
 			}
+			$.online.altered = true
+			xvt.out('\nIt is a fine day for sailing.  You cast your reel into the ocean and feel\n')
+			xvt.out('a gentle tug... ')
+			xvt.waste(600)
+			xvt.out('you caught a')
+			xvt.waste(600)
+			let cast = 100 * $.online.cha / $.player.maxcha
+			cast = (cast < 15) ? 15 : (cast > 100) ? 100 : cast >>0
+			let hook = $.dice(cast)
+			if (hook < 15) {
+				let l = $.dice(95)
+				let rs:any = $.query(`
+					SELECT id, status FROM Players
+					WHERE level BETWEEN ${l} AND ${l + 4} AND status != ''
+				`)
+				let r = $.dice(rs.length) - 1
+				if (r >= 0 && rs[r]) {
+					let floater = <user>{ id:rs[r].id }
+					let leftby = <user>{ id:rs[r].status }
+					if ($.loadUser(leftby)) {
+						xvt.out(' floating carcass!')
+						xvt.waste(500)
+						$.loadUser(floater)
+						xvt.out(`It is ${floater.handle}'s body in the ocean left there by ${leftby.handle}, and\n`)
+						xvt.out(`you're able to bring the player back to an Alive! state.\n`)
+						floater.status = ''
+						$.loadUser(floater)
+						menu()
+						return
+					}
+				}
+				if ($.dice($.player.level / 3 + 2) == 1) {
+					xvt.out('n old sea hag!\n')
+					xvt.waste(600)
+					xvt.out('She cackles as you are sent spinning elsewhere...\n')
+					$.sound('crone', 20)
+					require('./dungeon').DeepDank($.player.level + 3 * $.dice($.player.level), () => {
+						xvt.out(xvt.magenta, '\n"', xvt.bright, xvt.yellow
+							, 'So you have escaped my magic, mortal.  Now try me!', xvt.normal, xvt.magenta
+							, '"\n', xvt.reset)
+						$.loadUser($.seahag)
+						$.seahag.user.cursed = $.player.id
+						$.activate($.seahag)
+						$.cat(`naval/${$.seahag}`.toLowerCase())
+						if (isNaN(+$.seahag.user.weapon)) xvt.out('\n', $.who($.seahag, 'He'), $.Weapon.wearing($.seahag), '.\n')
+						if (isNaN(+$.seahag.user.armor)) xvt.out('\n', $.who($.seahag, 'He'), $.Armor.wearing($.seahag), '.\n')
+						$.sound('god', 20)
+						Battle.engage('Naval', $.online, $.seahag, menu)
+						return
+					})
+				}
+				if ($.dice($.player.level / 3 + 2) == 1) {
+					xvt.out(' titan named Neptune!\n')
+					xvt.waste(600)
+					xvt.out('He looks at you angrily as he removes a hook from his shorts!\n')
+					xvt.waste(600)
+					$.sound('neptune', 20)
+					$.loadUser($.neptune)
+					$.activate($.neptune)
+					$.cat(`naval/${$.neptune}`.toLowerCase())
+					if (isNaN(+$.neptune.user.weapon)) xvt.out('\n', $.who($.neptune, 'He'), $.Weapon.wearing($.neptune), '.\n')
+					if (isNaN(+$.neptune.user.armor)) xvt.out('\n', $.who($.neptune, 'He'), $.Armor.wearing($.neptune), '.\n')
+					Battle.engage('Naval', $.online, $.neptune, menu)
+					return
+				}
+				xvt.out(' fish and you eat it.\n')
+				xvt.waste(600)
+				xvt.out('Ugh!  You feel sick and die!\n')
+				$.reason = 'ate yesterday\'s catch of the day'
+				break
+			}
+			if (hook < 50) {
+				xvt.out(' fish and you eat it.\n')
+				xvt.waste(600)
+				$.sound('yum')
+				xvt.out('Yum!  You feel stronger and healthier.\n\n')
+				let mod = $.player.blessed ? 10 : 0
+				mod = $.player.cursed ? mod - 10 : mod
+				$.online.str = $.PC.ability($.online.str, $.dice(10), $.online.user.maxstr, mod)
+				xvt.out(`Stamina = ${$.online.str}     `)
+				$.online.hp += $.player.level + $.dice($.player.level)
+					+ Math.trunc($.player.str / 10) + ($.player.str > 90 ? $.player.str - 90 : 0)
+				xvt.out(`Hit points = ${$.online.hp}     `)
+				if ($.player.sp) {
+					$.online.sp += $.player.level + $.dice($.player.level)
+						+ Math.trunc($.player.int / 10) + ($.player.int > 90 ? $.player.int - 90 : 0)
+					xvt.out(`Spell points = ${$.online.sp}`)
+				}
+				xvt.out('\n')
+				break
+			}
+			if (hook < 75) {
+				xvt.out('n oyster and you eat it.\n')
+				xvt.waste(600)
+				n = Math.round(Math.pow(2., $.player.hull / 150.) * 7937)
+				n = Math.trunc(n / $.player.hull / 10 * $.dice($.online.hull))
+				n = Math.trunc(n * ($.player.cannon + 1) / ($.player.hull / 50))
+				n = $.worth(n, $.online.cha)
+				xvt.out(`Ouch!  You bit into a pearl and sell it for ${new $.coins(n).carry()}.\n`)
+				$.player.coin.value += n
+				break
+			}
+			if (hook < 90) {
+				xvt.out('n oyster and you eat it.\n')
+				xvt.waste(600)
+				n = Math.round(Math.pow(2., $.player.hull / 150.) * 7937)
+				n = Math.trunc(n / $.player.hull * $.dice($.online.hull))
+				n = Math.trunc(n * ($.player.cannon + 1) / ($.player.hull / 50))
+				n = $.worth(n, $.online.cha)
+				xvt.out(`Ouch!  You bit into a diamond and sell it for ${new $.coins(n).carry()}.\n`)
+				$.player.coin.value += n
+				break
+			}
+			if (hook < 95) {
+				xvt.out(' turtle and you let it go.\n')
+				xvt.waste(600)
+				$.player.toAC++
+				$.online.toAC += $.dice($.online.armor.ac / 5 + 1)
+				xvt.out('The turtle turns and smiles and enhances your ', $.player.armor)
+				xvt.out($.buff($.player.toAC, $.online.toAC), xvt.reset,'\n')
+				$.sound('shield')
+				break
+			}
+			if (hook < 100) {
+				xvt.out(' turtle and you let it go.\n')
+				xvt.waste(600)
+				$.player.toWC++
+				$.online.toWC += $.dice($.online.weapon.wc / 10 + 1)
+				xvt.out('The turtle turns and smiles and enhances your ', $.player.weapon)
+				xvt.out($.buff($.player.toWC, $.online.toWC), xvt.reset,'\n')
+				$.sound('hone')
+				break
+			}
+			xvt.out(' mermaid!\n')
+			xvt.waste(600)
 			$.profile({jpg:'naval/mermaid'})
-            xvt.app.form = {
-                'pause': { cb:menu, pause:true }
-            }
-            xvt.app.focus = 'pause'
-            return
+			$.cat('naval/mermaid')
+			if ($.player.today) {
+				xvt.out('She grants you an extra call for today!\n')
+				$.player.today--
+				$.news('\tcaught an extra call')
+			}
+			else {
+				xvt.out('She says, \"Here\'s a key hint:\"\n')
+				$.keyhint($.online)
+			}
+			xvt.app.form = {
+				'pause': { cb:menu, pause:true }
+			}
+			xvt.app.focus = 'pause'
+			return
 
 		case 'H':
 			if (!$.access.roleplay) break
@@ -129,7 +276,8 @@ function choice() {
 			Shipyard()
 			return
 
-        case 'Q':
+		case 'Q':
+			xvt.out('\n')
 			require('./main').menu($.player.expert)
 			return
 

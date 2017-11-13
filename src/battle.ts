@@ -233,11 +233,12 @@ export function attack(retry = false) {
             choices += xvt.attr(xvt.blue, '] ')
             bs = 1
 
-            xvt.app.form['attack'].prompt = choices
-                + $.bracket('A', false) + 'ttack, '
-                + ($.player.magic && $.player.spells.length && rpc.sp ? $.bracket('C', false) + 'ast spell, ' : '')
-                + $.bracket('R', false) + 'etreat, '
-                + $.bracket('Y', false) + 'our status: '
+            xvt.app.form['attack'].prompt = choices + xvt.attr(
+                $.bracket('A', false), xvt.cyan, 'ttack, ')
+            if ($.player.magic && $.player.spells.length && rpc.sp)
+                xvt.app.form['attack'].prompt += xvt.attr($.bracket('C', false), xvt.cyan, 'ast spell, ')
+            xvt.app.form['attack'].prompt += xvt.attr($.bracket('R', false), xvt.cyan, 'etreat, '
+                , $.bracket('Y', false), xvt.cyan, 'our status: ')
             xvt.app.focus = 'attack'
             return
         }

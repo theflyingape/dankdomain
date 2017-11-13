@@ -24,6 +24,7 @@ module Common
     export const Weapon = new Items.Weapon
 
     export let barkeep: active = { user: { id:'_BAR'} }
+    export let neptune: active = { user: { id:'_NEP'} }
     export let seahag: active = { user: { id:'_OLD'} }
     export let taxman: active = { user: { id:'_TAX'} }
     export let king: user = { id:'' }
@@ -1769,6 +1770,24 @@ export function sound(effect: string, sync = 2) {
         if (npc.poisons) barkeep.user.poisons = npc.poisons
         if (npc.spells) barkeep.user.spells = npc.spells
         saveUser(barkeep, true)
+
+        npc = <user>{}
+        Object.assign(npc, require('./etc/neptune.json'))
+        Object.assign(neptune.user, npc)
+        reroll(neptune.user, neptune.user.pc, neptune.user.level)
+        //  customize our big fish
+        if (npc.str) neptune.user.str = npc.str
+        if (npc.int) neptune.user.int = npc.int
+        if (npc.dex) neptune.user.dex = npc.dex
+        if (npc.cha) neptune.user.cha = npc.cha
+        if (npc.hp) neptune.user.hp = npc.hp
+        if (npc.sp) neptune.user.sp = npc.sp
+        if (npc.melee) neptune.user.melee = npc.melee
+        if (npc.poison) neptune.user.poison = npc.poison
+        if (npc.magic) neptune.user.magic = npc.magic
+        if (npc.poisons) neptune.user.poisons = npc.poisons
+        if (npc.spells) neptune.user.spells = npc.spells
+        saveUser(neptune, true)
 
         npc = <user>{}
         Object.assign(npc, require('./etc/seahag.json'))
