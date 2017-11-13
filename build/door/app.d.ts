@@ -13,3 +13,4 @@ declare var server: any;
 declare var expressWs: any;
 declare var terminals: {}, logs: {};
 declare var port: any, host: string;
+declare function unlock(pid: number): void;

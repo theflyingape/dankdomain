@@ -1712,7 +1712,6 @@ export function sound(effect: string, sync = 2) {
     if(!fs.existsSync(users))
         fs.mkdirSync(users)
 
-    //  https://github.com/JayrAlencar/sqlite-sync.js/wiki
     const DD = users + 'dankdomain.sql'
     let better = require('better-sqlite3')
     export let sqlite3 = new better(DD)

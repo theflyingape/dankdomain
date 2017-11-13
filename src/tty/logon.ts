@@ -87,6 +87,7 @@ function who() {
     }
 
     $.player.id = xvt.entry
+
     if (!$.loadUser($.player)) {
         $.player.id = ''
         $.player.handle = xvt.entry
@@ -99,14 +100,18 @@ function who() {
 
     $.access = $.Access.name[$.player.access]
     xvt.emulation = $.player.emulation
-    let rs = $.query(`SELECT lockdate FROM Online WHERE id = '${$.player.id}'`)
+
+    let rs = $.query(`SELECT lockdate, locktime FROM Online WHERE id = '${$.player.id}'`)
     if (rs.length) {
-        if (rs[0].lockdate < $.now().date) {
+        let t = $.now().time
+        if ((t = (1440 * ($.now().date - rs[0].lockdate)
+            + 60 * ((t / 100 - rs[0].locktime / 100) >>0)
+            + t % 100 - rs[0].locktime % 100)) > 90) {
             $.unlock($.player.id)
         }
         else {
             xvt.beep()
-            xvt.out('\nYou\'re in violation of the space-time continuum.  Try again tomorrow.\n')
+            xvt.out(`\nYou\'re in violation [${t}] of the space-time continuum.  Try again later.\n`)
             xvt.hangup()
         }
     }
@@ -147,10 +152,8 @@ function password() {
         }
     }
 
-    if ($.player.lastdate != $.now().date) {
+    if ($.player.lastdate != $.now().date)
         $.player.today = 0
-        $.unlock($.player.id)   //  self-heal if necessary
-    }
 
     if ($.player.today > $.access.calls) {
         xvt.beep()
@@ -160,7 +163,7 @@ function password() {
 
     if ($.query(`SELECT id FROM Online WHERE id = '${$.player.id}'`).length) {
         xvt.beep()
-        xvt.out('\nYou\'re in violation of the space-time continuum.  Try again tomorrow.\n')
+        xvt.out('\nYou\'re in violation of the space-time continuum.  Try again later.\n')
         xvt.hangup()
     }
 

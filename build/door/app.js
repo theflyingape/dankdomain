@@ -55,8 +55,11 @@ app.ws('/terminals/:pid', function (ws, req) {
             ws.send(data);
         }
         catch (ex) {
-            term.pid && console.log(`?fatal terminal ${term.pid} socket error:`, ex.message);
-            term.pid = undefined;
+            if (term.pid) {
+                console.log(`?fatal terminal ${term.pid} socket error:`, ex.message);
+                unlock(term.pid);
+                delete term.pid;
+            }
         }
     });
     ws.on('message', function (msg) {
@@ -73,3 +76,10 @@ app.ws('/terminals/:pid', function (ws, req) {
 var port = process.env.PORT || 1965, host = os.platform() === 'win32' ? '127.0.0.1' : '0.0.0.0';
 console.log('App listening to https://' + host + ':' + port);
 server.listen(port, host);
+function unlock(pid) {
+    console.log('Unlocking ' + pid);
+    const DD = './users/dankdomain.sql';
+    let better = require('better-sqlite3');
+    let sqlite3 = new better(DD);
+    sqlite3.prepare(`DELETE FROM Online WHERE pid = ${pid}`).run().changes;
+}

@@ -3,4 +3,5 @@
 cd ./build
 killall door
 node ./door/app &
-firefox https://0.0.0.0:1965 &
+google-chrome --app=https://0.0.0.0:1965 &
+
