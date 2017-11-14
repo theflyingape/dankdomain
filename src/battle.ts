@@ -60,7 +60,12 @@ export function engage(module:string, party: active|active[], mob: active|active
 export function attack(retry = false) {
 
     //  no more attacking
-    if (retreat || teleported || ++volley > 99999) return
+    if (retreat || teleported || ++volley > 99999) {
+        if ($.online.confused)
+            $.activate($.online, false, true)
+        fini()
+        return
+    }
 
     if (!round.length) {
         if (volley > 1) {
@@ -683,7 +688,9 @@ export function spoils() {
                     $.unlock(loser.user.id)
                     xvt.out(1000)
                 }
-                if (loser.altered) $.saveUser(loser)
+                if (loser.altered)
+                    if (!(loser.user.id[0] === '_' && loser.user.gender === 'I'))
+                        $.saveUser(loser)
             }
         }
         if (xp) {

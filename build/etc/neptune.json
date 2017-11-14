@@ -3,11 +3,11 @@
     "handle": "Neptune of the Sea",
     "name": "Neptune",
     "dob": 1,
-    "sex": "M",
+    "sex": "I",
     "access": "Inactive",
     "email": "nobody@mail.com",
     "password": "\n",
- 	"expires": 0,
+    "expires": 0,
     "pc": "Titan",
     "level": 20,
     "str": 60,
@@ -19,6 +19,6 @@
     "poison": 0,
     "weapon": "Trident of Titans",
     "armor": "Titanium Armor",
-    "spells": [ 7, 8, 9, 11, 12, 13, 15, 16 ],
+    "spells": [ 7, 9, 11, 12, 13, 15 ],
     "xplevel": 20
 }

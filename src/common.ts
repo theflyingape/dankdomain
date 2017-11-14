@@ -1744,17 +1744,26 @@ export function sound(effect: string, sync = 2) {
           	plays numeric, jl numeric, jw numeric, killed numeric, kills numeric,
             retreats numeric, tl numeric, tw numeric
         )`)
-
-        let npc = <user>{}
-        Object.assign(npc, require('./etc/sysop.json'))
+    }
+    
+    let npc = <user>{}
+    Object.assign(npc, require('./etc/sysop.json'))
+    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
+    if (!rs.length) {
+        xvt.out(`[${npc.id}]`)
         Object.assign(sysop, npc)
+        newkeys(sysop)
         reroll(sysop, sysop.pc, sysop.level)
         sysop.xplevel = 0
         saveUser(sysop, true)
-
-        npc = <user>{}
-        Object.assign(npc, require('./etc/barkeep.json'))
+    }
+    npc = <user>{}
+    Object.assign(npc, require('./etc/barkeep.json'))
+    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
+    if (!rs.length) {
+        xvt.out(`[${npc.id}]`)
         Object.assign(barkeep.user, npc)
+        newkeys(barkeep.user)
         reroll(barkeep.user, barkeep.user.pc, barkeep.user.level)
         //  customize our Master of Whisperers NPC
         if (npc.str) barkeep.user.str = npc.str
@@ -1769,10 +1778,14 @@ export function sound(effect: string, sync = 2) {
         if (npc.poisons) barkeep.user.poisons = npc.poisons
         if (npc.spells) barkeep.user.spells = npc.spells
         saveUser(barkeep, true)
-
-        npc = <user>{}
-        Object.assign(npc, require('./etc/neptune.json'))
+    }
+    npc = <user>{}
+    Object.assign(npc, require('./etc/neptune.json'))
+    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
+    if (!rs.length) {
+        xvt.out(`[${npc.id}]`)
         Object.assign(neptune.user, npc)
+        newkeys(neptune.user)
         reroll(neptune.user, neptune.user.pc, neptune.user.level)
         //  customize our big fish
         if (npc.str) neptune.user.str = npc.str
@@ -1787,10 +1800,14 @@ export function sound(effect: string, sync = 2) {
         if (npc.poisons) neptune.user.poisons = npc.poisons
         if (npc.spells) neptune.user.spells = npc.spells
         saveUser(neptune, true)
-
-        npc = <user>{}
-        Object.assign(npc, require('./etc/seahag.json'))
+    }
+    npc = <user>{}
+    Object.assign(npc, require('./etc/seahag.json'))
+    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
+    if (!rs.length) {
+        xvt.out(`[${npc.id}]`)
         Object.assign(seahag.user, npc)
+        newkeys(seahag.user)
         reroll(seahag.user, seahag.user.pc, seahag.user.level)
         //  customize our Queen Bee NPC
         if (npc.str) seahag.user.str = npc.str
@@ -1805,10 +1822,14 @@ export function sound(effect: string, sync = 2) {
         if (npc.poisons) seahag.user.poisons = npc.poisons
         if (npc.spells) seahag.user.spells = npc.spells
         saveUser(seahag, true)
-
-        npc = <user>{}
-        Object.assign(npc, require('./etc/taxman.json'))
+    }
+    npc = <user>{}
+    Object.assign(npc, require('./etc/taxman.json'))
+    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
+    if (!rs.length) {
+        xvt.out(`[${npc.id}]`)
         Object.assign(taxman.user, npc)
+        newkeys(taxman.user)
         reroll(taxman.user, taxman.user.pc, taxman.user.level)
         //  customize our Master of Coin NPC
         if (npc.str) taxman.user.str = npc.str
@@ -1824,14 +1845,11 @@ export function sound(effect: string, sync = 2) {
         if (npc.spells) taxman.user.spells = npc.spells
         taxman.user.xplevel = 0
         saveUser(taxman, true)
-
-        xvt.out('done.\n')
-        xvt.waste(250)
     }
 
     rs = query(`SELECT * FROM sqlite_master WHERE name='Gangs' AND type='table'`)
     if (!rs.length) {
-        xvt.out('initializing gangs ... ')
+        xvt.out('\ninitializing gangs ... ')
         sqlite3.exec(`CREATE TABLE IF NOT EXISTS Gangs (
             name text PRIMARY KEY, members text, win numeric, loss numeric, banner numeric, color numeric
         )`)

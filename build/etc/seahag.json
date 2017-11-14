@@ -3,7 +3,7 @@
     "handle": "old sea hag",
     "name": "Susan Clara Marcie",
     "dob": 716396,
-    "sex": "F",
+    "sex": "I",
     "access": "Inactive",
     "email": "nobody@mail.com",
     "password": "\n",
@@ -19,6 +19,6 @@
     "poison": 0,
     "weapon": "Sun Blade",
     "armor": "Divine Sphere",
-    "spells": [ 7, 8, 9, 11, 12, 13, 15, 16 ],
+    "spells": [ 11, 12, 13, 19 ],
     "xplevel": 90
 }

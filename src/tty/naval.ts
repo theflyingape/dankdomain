@@ -92,32 +92,38 @@ function choice() {
 					}
 				}
 				if ($.dice($.player.level / 3 + 2) == 1) {
-					xvt.out('n old sea hag!\n')
+					xvt.out('n old sea hag!\n\n')
 					xvt.waste(600)
-					xvt.out('She cackles as you are sent spinning elsewhere...\n')
-					$.sound('crone', 20)
+					xvt.out(xvt.bright, xvt.green,
+						'She cackles as you are sent spinning elsewhere...',
+						xvt.reset, '\n')
+					$.sound('crone', 24)
 					require('./dungeon').DeepDank($.player.level + 3 * $.dice($.player.level), () => {
 						xvt.out(xvt.magenta, '\n"', xvt.bright, xvt.yellow
 							, 'So you have escaped my magic, mortal.  Now try me!', xvt.normal, xvt.magenta
 							, '"\n', xvt.reset)
 						$.loadUser($.seahag)
-						$.seahag.user.cursed = $.player.id
 						$.activate($.seahag)
 						$.cat(`naval/${$.seahag}`.toLowerCase())
 						if (isNaN(+$.seahag.user.weapon)) xvt.out('\n', $.who($.seahag, 'He'), $.Weapon.wearing($.seahag), '.\n')
 						if (isNaN(+$.seahag.user.armor)) xvt.out('\n', $.who($.seahag, 'He'), $.Armor.wearing($.seahag), '.\n')
+						$.seahag.user.cursed = $.player.id
 						$.sound('god', 20)
 						Battle.engage('Naval', $.online, $.seahag, menu)
 						return
 					})
+					return
 				}
-				if ($.dice($.player.level / 3 + 2) == 1) {
-					xvt.out(' titan named Neptune!\n')
+//				if ($.dice($.player.level / 3 + 2) == 1) {
+if(1){					xvt.out(' titan named Neptune!\n\n')
 					xvt.waste(600)
-					xvt.out('He looks at you angrily as he removes a hook from his shorts!\n')
-					xvt.waste(600)
-					$.sound('neptune', 20)
+					xvt.out(xvt.bright, xvt.cyan,
+						'He looks at you angrily as he removes a hook from his shorts!',
+						xvt.reset, '\n')
+					$.sound('neptune', 32)
 					$.loadUser($.neptune)
+					if ($.player.level > $.neptune.user.level)
+						$.reroll($.neptune.user, $.neptune.user.pc, $.player.level - 1)
 					$.activate($.neptune)
 					$.cat(`naval/${$.neptune}`.toLowerCase())
 					if (isNaN(+$.neptune.user.weapon)) xvt.out('\n', $.who($.neptune, 'He'), $.Weapon.wearing($.neptune), '.\n')
@@ -566,8 +572,9 @@ function MonsterHunt() {
 						return
 					}
 					break
+
 				case 'S':
-					if ($.dice(50 + monsters[mon].int / 2) > 50 + (50 * $.online.hull / $.player.hull)) {
+					if ($.dice(50 + monsters[mon].int / 2) > 50 + (50 * sm.hull / (sm.hull +$.online.hull))) {
 						$.sound('oops')
 						xvt.out('\nIt outmaneuvers you and stops your retreat!\n')
 						xvt.waste(500)
@@ -585,7 +592,20 @@ function MonsterHunt() {
 
 				case 'R':
 					if ($.player.ram) {
-
+						if ($.dice(50 + monsters[mon].int / 2) > 100 * sm.hull / (sm.hull +$.online.hull)) {
+							xvt.out('\nIt quickly outmaneuvers your ship.\n')
+							xvt.out(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
+								[ 'Aim for the head, not the tail!'
+								, 'I said starboard, asshole, not port!'
+								, 'Whose side are you on anyways?!' ][$.dice(3) - 1]
+								, xvt.cyan, '"\n')
+							xvt.waste(600)
+						}
+						else {
+							damage = $.dice($.player.hull / 2) + $.dice($.online.hull / 2)
+							sm.hull -= damage
+							xvt.out(`\nYou ram it for ${damage} hull points of damage!\n`)
+						}
 					}
 					else {
 						$.sound('oops')
@@ -633,16 +653,13 @@ function MonsterHunt() {
 		for (let i = 0; i < sm.shot; i++)
 			damage += $.dice(sm.powder) + $.dice(sm.powder)
 
-		xvt.out(xvt.bright, xvt.blue, `The ${sm.name} attacks your ship, causing`
+		xvt.out('\n', xvt.bright, xvt.blue, `The ${sm.name} attacks your ship, causing`
 			, xvt.cyan, ` ${damage} `
 			, xvt.blue, `hull points of damage.`)
 		xvt.out(xvt.reset, '\n')
 		xvt.waste(250)
 	
-		if (($.online.hull -= damage) > 0) {
-			return false
-		}
-		else {
+		if (($.online.hull -= damage) < 1) {
 			$.online.altered = true
 			$.online.hull = 0
 			$.player.killed++
@@ -656,6 +673,7 @@ function MonsterHunt() {
 			}
 			return true
 		}
+		return false
 	}
 }
 
