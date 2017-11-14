@@ -395,18 +395,20 @@ export class Weapon {
     }
 
     swap(winner: active, loser: active, value?: coins): boolean|coins {
-        // real item?
+        // carrying a real item?
         if (!isNaN(+winner.user.weapon) || !isNaN(+loser.user.weapon))
             return false
 
-        // is common weapon better?
-        if (winner.weapon.shoppe && loser.weapon.shoppe
-            && (winner.weapon.wc > loser.weapon.wc)
-            || (winner.user.toWC + winner.toWC >= 0 && winner.weapon.wc == loser.weapon.wc)
-            || (winner.user.toWC < 0 && winner.weapon.wc + winner.user.toWC > loser.weapon.wc)) {
-            if (value) {
-                winner.user.coin.value += value.value
-                return value
+        // is weapon class better?
+        if ((winner.weapon.wc > loser.weapon.wc)
+            || (winner.weapon.wc == loser.weapon.wc && winner.user.toWC >= 0)
+            || (winner.user.toWC < 0 && winner.weapon.wc + winner.user.toWC > loser.weapon.wc + loser.user.toWC)
+        ) {
+            if (loser.weapon.shoppe) {
+                if (value) {
+                    winner.user.coin.value += value.value
+                    return value
+                }
             }
             return false
         }

@@ -22,8 +22,10 @@ module Naval
 	}
 
 export function menu(suppress = true) {
+    if ($.checkXP($.online, menu)) return
     if ($.online.altered) $.saveUser($.player)
 	if ($.reason) xvt.hangup()
+
 	$.action('naval')
 	xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
@@ -114,18 +116,22 @@ function choice() {
 					})
 					return
 				}
-//				if ($.dice($.player.level / 3 + 2) == 1) {
-if(1){					xvt.out(' titan named Neptune!\n\n')
+				if ($.dice($.player.level / 3 + 2) == 1) {
+					xvt.out(' titan named Neptune!\n\n')
 					xvt.waste(600)
+					$.loadUser($.neptune)
+					if ($.player.level > $.neptune.user.level) {
+						let keep = $.neptune.user.spells
+						$.reroll($.neptune.user, $.neptune.user.pc, $.player.level - 1)
+						$.neptune.user.spells = keep
+					}
+					$.activate($.neptune)
+					$.cat(`naval/${$.neptune.user.handle}`.toLowerCase())
 					xvt.out(xvt.bright, xvt.cyan,
 						'He looks at you angrily as he removes a hook from his shorts!',
 						xvt.reset, '\n')
 					$.sound('neptune', 32)
-					$.loadUser($.neptune)
-					if ($.player.level > $.neptune.user.level)
-						$.reroll($.neptune.user, $.neptune.user.pc, $.player.level - 1)
-					$.activate($.neptune)
-					$.cat(`naval/${$.neptune}`.toLowerCase())
+
 					if (isNaN(+$.neptune.user.weapon)) xvt.out('\n', $.who($.neptune, 'He'), $.Weapon.wearing($.neptune), '.\n')
 					if (isNaN(+$.neptune.user.armor)) xvt.out('\n', $.who($.neptune, 'He'), $.Armor.wearing($.neptune), '.\n')
 					Battle.engage('Naval', $.online, $.neptune, menu)
@@ -603,8 +609,12 @@ function MonsterHunt() {
 						}
 						else {
 							damage = $.dice($.player.hull / 2) + $.dice($.online.hull / 2)
-							sm.hull -= damage
 							xvt.out(`\nYou ram it for ${damage} hull points of damage!\n`)
+							if ((sm.hull -= damage) < 1) {
+								booty()
+								menu()
+								return
+							}
 						}
 					}
 					else {
@@ -631,21 +641,23 @@ function MonsterHunt() {
 	}
 	xvt.app.focus = 'fight'
 
+	function booty() {
+		sm.hull = 0
+		$.sound('booty', 5)
+		let coin = new $.coins(sm.money)
+		coin.value = $.worth(coin.value, $.online.cha)
+		xvt.out('You get ', coin.carry(), ' for bringing home the carcass.\n')
+		$.player.coin.value += coin.value
+		xvt.waste(500)
+	}
+
 	function you(): boolean {
 		let result = fire($.online, <active>{ hull:sm.hull, user:{ id:'', handle:sm.name, hull:-1, cannon:0, ram:false } })
-		if ((sm.hull -= result.damage) > 0) {
+		if ((sm.hull -= result.damage) > 0)
 			return false
-		}
-		else {
-			sm.hull = 0
-			$.sound('booty', 5)
-			let coin = new $.coins(sm.money)
-			coin.value = $.worth(coin.value, $.online.cha)
-			xvt.out('You get ', coin.carry(), ' for bringing home the carcass.\n')
-			$.player.coin.value += coin.value
-			xvt.waste(500)
-			return true
-		}
+
+		booty()
+		return true
 	}
 
 	function it(): boolean {

@@ -2018,7 +2018,7 @@ try {
 }
 
 export function newDay() {
-    xvt.out('\nOne moment.')
+    xvt.out('One moment.')
     sysop.lastdate = now().date
     sysop.lasttime = now().time
     saveUser(sysop)
@@ -2042,9 +2042,8 @@ export function newDay() {
         fs.renameSync('./tty/files/tavern/today.txt', './tty/files/tavern/yesterday.txt')
     } catch (e) {
     }
-    
-    xvt.out('\nAll set -- thank you!\n')
-    xvt.waste(500)
+
+    xvt.out('\nAll set -- thank you!\n\n')
 }
 
 export function lock(id: string): boolean {
