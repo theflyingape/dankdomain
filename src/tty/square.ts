@@ -467,7 +467,9 @@ function amount() {
 
 	switch (action) {
 		case 'Deposit':
-			amount.value = (/=|max/i.test(xvt.entry)) ? $.player.coin.value : new $.coins(xvt.entry).value
+			amount.value = Math.trunc(
+				(/=|max/i.test(xvt.entry)) ? $.player.coin.value : new $.coins(xvt.entry).value
+			)
 			if (amount.value > 0 && amount.value <= $.player.coin.value) {
 				$.player.coin.value -= amount.value
 				if ($.player.loan.value > 0) {
@@ -486,7 +488,9 @@ function amount() {
 			break
 
 		case 'Loan':
-			amount.value = (/=|max/i.test(xvt.entry)) ? credit.value : new $.coins(xvt.entry).value
+			amount.value = Math.trunc(
+				(/=|max/i.test(xvt.entry)) ? credit.value : new $.coins(xvt.entry).value
+			)
 			if (amount.value > 0 && amount.value <= credit.value) {
 				$.player.loan.value += amount.value
 				$.player.coin.value += amount.value
@@ -496,7 +500,9 @@ function amount() {
 			break
 
 		case 'Withdraw':
-			amount.value = (/=|max/i.test(xvt.entry)) ? $.player.bank.value : new $.coins(xvt.entry).value
+			amount.value = Math.trunc(
+				(/=|max/i.test(xvt.entry)) ? $.player.bank.value : new $.coins(xvt.entry).value
+			)
 			if (amount.value > 0 && amount.value <= $.player.bank.value) {
 				$.player.bank.value -= amount.value
 				$.player.coin.value += amount.value
