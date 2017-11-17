@@ -30,7 +30,7 @@ module Main
         'Z': { description:'System Status' }
     }
 
-export function menu(suppress = false) {
+export function menu(suppress = true) {
     if ($.checkXP($.online, menu)) return
     if ($.online.altered) $.saveUser($.player)
     if ($.reason) xvt.hangup()
@@ -181,7 +181,7 @@ function choice() {
 					xvt.out('\nYou can only rob someone higher or up to three levels below you.\n')
 				}
 				if (opponent.user.id === '') {
-					menu(true)
+					menu()
 					return
 				}
 
@@ -194,7 +194,7 @@ function choice() {
 
                 if ($.dice($.online.int) > 5 && prize < self) {
                     xvt.out('But you decide it is not worth the effort.\n')
-					menu(true)
+					menu()
 					return
                 }
 
@@ -264,7 +264,7 @@ function choice() {
                                 return
                             }
                         }
-                        menu(true)
+                        menu()
                     }, prompt:'Attempt to steal (Y/N)? ', cancel:'Y', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
                 }
                 xvt.app.focus = 'yn'
@@ -339,7 +339,7 @@ function choice() {
                         return
                     }
                     xvt.out('\n')
-                    menu(true)
+                    menu()
                 }, prompt:'Reroll (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
             }
             xvt.app.focus = 'yn'
@@ -362,13 +362,15 @@ function choice() {
                         xvt.out('\n')
                         Battle.user('Scout', (opponent: active) => {
                             $.PC.stats(opponent)
-                            menu(true)
+                            xvt.app.form['pause'] = { cb:menu, pause:true }
+                            xvt.app.focus = 'pause'
                         })
                         return
                     }
                     $.PC.stats($.online)
-                    menu(true)
-                }, cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
+                    xvt.app.focus = 'pause'
+                }, cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 },
+                'pause': { cb:menu, pause:true }
             }
             let cost = new $.coins(Math.trunc($.money($.player.level) / 10))
             xvt.app.form['yn'].prompt = 'Scout another user for ' + cost.carry() + ' (Y/N)? '

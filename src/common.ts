@@ -135,6 +135,15 @@ export class Character {
         }
 
         stats(profile: active) {
+            let userPNG = `images/user/${profile.user.id}.png`
+            try {
+                fs.accessSync(userPNG, fs.constants.F_OK)
+                userPNG = `user/${profile.user.id}`
+            } catch(e) {
+                userPNG = 'player/' + profile.user.pc.toLowerCase() + (profile.user.gender === 'F' ? '_f' : '')
+            }
+            Common.profile({ png:userPNG, handle:profile.user.handle, level:profile.user.level, pc:profile.user.pc })
+
             const line = '------------------------------------------------------'
             const space = '                                                      '
             var i: number

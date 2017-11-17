@@ -10,6 +10,7 @@
   "scripts": {
     "build": "tsc -p ./src --outDir ./build",
     "debug": "npm run build && ./door.sh",
+    "mono": "npm run build && export TERM=vt100 && env REMOTEHOST=localhost ./build/logins.sh",
     "test": "npm run build && env REMOTEHOST=localhost ./build/logins.sh"
   },
   "repository": {

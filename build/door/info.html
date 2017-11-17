@@ -324,8 +324,7 @@ function hunt() {
 }
 
 function naval() {
-  nme('');
-  cmd(`<p><input class="tall" type="button" value=" Battle " onclick="send('B');"></p>
+  cmd(`<p><input class="tall" type="button" value="Battle" onclick="send('B');"> <input class="tall" type="button" value="Shipyard" onclick="send('S');"></p>
 <p><input type="button" value="Go Fishing" onclick="send('G');"> <input type="button" value="Hunt" onclick="send('H');">
 <input type="button" value="List" onclick="send('L');"> <input type="button" value="Status" onclick="send('Y');"></p>
 <input class="tall" type="button" value=" Quit " onclick="send('Q');">
@@ -348,12 +347,12 @@ function payment() {
 }
 
 function shipyard() {
-  nme('');
   cmd(`
 <input type="button" value="Buy" onclick="send('B');"> <input type="button" value="Fix" onclick="send('F');">
 <input type="button" value="Cannon" onclick="send('C');"> <input type="button" value="Ram" onclick="send('R');">
 <input class="tall" type="button" value=" Quit " onclick="send('Q');">
   `);
+  nme('<br><img src="images/naval/shipyard.png" onload="nmeResize();">');
 }
 
 function tavern() {

@@ -1,5 +1,5 @@
 var carrier = false, recheck = 0, reconnect;
-var cols = 80, rows = 25, fontSize = 20;
+var cols = 80, rows = 25, fontSize = 16;
 var terminalContainer = document.getElementById('terminal-container'),
     term,
     protocol,

@@ -10,13 +10,13 @@
   #terminal-container {
     border: 0;
     top: 0; left: 0;
-    width: 80%;
+    width: 70%;
     height: 100%;
     position: fixed;
   }
   #Info {
     top: 0; right: 0;
-    width: 20%;
+    width: 30%;
     height: 100%;
     position: fixed;
   }
@@ -80,24 +80,28 @@ function resize() {
       r = css;
   }
 
-  console.log('before: ', fontSize);
-  while (term.proposeGeometry().cols < 80 && (fontSize = term.getOption('fontSize')) > 9)
+  Object.assign(l.style, { 'top':'1%', 'height':'97%', 'width':'70%' });
+  Object.assign(r.style, { 'top':'0%', 'height':'100%', 'width':'30%' });
+  term.setOption('fontSize', 16);
+  while ((fontSize = term.getOption('fontSize')) > 7 && term.proposeGeometry().cols < 81)
     term.setOption('fontSize', --fontSize);
 
-  w = 20;
+  w = 29;
   do {
     w = (parseInt(w) + 1) + '%';
     v = (100 - parseInt(w)) + '%';
     Object.assign(l.style, { 'top':'1%', 'height':'97%', 'width':v });
     Object.assign(r.style, { 'top':'0%', 'height':'100%', 'width':w });
     xy = term.proposeGeometry();
-  } while (xy.cols > 80 && parseInt(w) < 45);
+  } while (xy.cols > 81 && parseInt(w) < 44);
 
-  while (term.proposeGeometry().cols > 81)
+  while ((xy = term.proposeGeometry()).cols > 81)
     term.setOption('fontSize', ++fontSize);
 
-  term.fit();
-  console.log('after: ', term.getOption('fontSize'));
+  if (xy.col > 79)
+    term.fit();
+  else
+    term.resize(80, xy.rows);
 }
 </script>
 </head>
