@@ -10,7 +10,6 @@ build/sounds/**
 build/tty/*.js
 build/tty/*.d.ts
 build/tty/files/tavern
-build/tty/files/user
 build/users
 node_modules/**
 src/*.js
