@@ -214,7 +214,7 @@ function choice() {
                                 if (g.members.length < 4)
                                     break
                             }
-                            if (g.members.length > 0 && g.members.length < 4) {
+                            if (g.members.length > 0 && (g.members.length < 4 || g.members.indexOf($.player.id) > 0)) {
                                 showGang(g)
                                 xvt.app.refocus()
                                 return
