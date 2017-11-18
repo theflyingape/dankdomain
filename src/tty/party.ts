@@ -188,7 +188,7 @@ function choice() {
             do {
                 g = loadGang(rs[0])
                 rs.splice(0, 1)
-                if (g.members.length < 4)
+                if (g.members.length < 4 || g.members.indexOf($.player.id) > 0)
                     break
             } while (rs.length)
 
