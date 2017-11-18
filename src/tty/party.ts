@@ -192,7 +192,7 @@ function choice() {
                     break
             } while (rs.length)
 
-            if (g.members.length > 0 && g.members.length < 4) {
+            if (g.members.length > 0 && (g.members.length < 4 || (g.members.indexOf($.player.id) < 0))) {
                 showGang(g)
 
                 $.action('yn')
