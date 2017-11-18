@@ -47,7 +47,7 @@ function check() {
 
     let rs = $.query(`SELECT count(email) AS n FROM Players WHERE email = '${$.player.email}' GROUP BY email`)
     if (rs.length && rs[0].n > 2)
-        $.player.access = Object.keys($.Access)[1]
+        $.player.access = Object.keys($.Access.name)[1]
 
     let message = require('./etc/newuser.json')
     Deliver($.player, 'secret keys to the gate', false, message)
