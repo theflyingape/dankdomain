@@ -100,7 +100,7 @@ function choice() {
 						'She cackles as you are sent spinning elsewhere...',
 						xvt.reset, '\n')
 					$.sound('crone', 24)
-					require('./dungeon').DeepDank($.player.level + 3 * $.dice($.player.level), () => {
+					require('./alpha').DeepDank($.player.level + 3 * $.dice($.player.level), () => {
 						xvt.out(xvt.magenta, '\n"', xvt.bright, xvt.yellow
 							, 'So you have escaped my magic, mortal.  Now try me!', xvt.normal, xvt.magenta
 							, '"\n', xvt.reset)

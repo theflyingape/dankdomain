@@ -74,7 +74,7 @@ function choice() {
             if ($.dungeon) {
                 $.dungeon--
                 $.music('dungeon' + $.dice(9))
-                require('./dungeon').DeepDank($.player.level - 1, menu)
+                require('./alpha').DeepDank($.player.level - 1, menu)
             }
             else {
                 xvt.out('\nYou have run out of dungeon turns.\n')
