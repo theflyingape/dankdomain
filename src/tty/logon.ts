@@ -3,6 +3,7 @@
  *  LOGON authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
+import fs = require('fs')
 import {sprintf} from 'sprintf-js'
 import xvt = require('xvt')
 
@@ -303,6 +304,11 @@ function welcome() {
 
     xvt.app.form = {
         'pause': { cb: () => {
+            if ($.cat(`user/${$.player.id}`)) {
+                fs.unlink(`./tty/files/user/${$.player.id}.txt`, () => {})
+                xvt.app.refocus()
+                return
+            }
             xvt.out(xvt.clear, xvt.cyan, '--=:))', xvt.LGradient[xvt.emulation]
                 , xvt.Cyan, xvt.bright, xvt.white, 'Announcement', xvt.reset
                 , xvt.cyan, xvt.RGradient[xvt.emulation], '((:=--\n\n'

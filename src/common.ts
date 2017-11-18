@@ -985,6 +985,11 @@ export function keyhint(rpc: active) {
     rpc.altered = true
 }
 
+export function log(who:string, message: string) {
+    const log = `./tty/files/user/${who}.txt`
+    fs.appendFileSync(log, `${message}\n`)
+}
+
 export function money(level: number): number {
     return Math.trunc(Math.pow(2, (level - 1) / 2) * 10 * (101 - level) / 100)
 }
@@ -2008,7 +2013,7 @@ try {
             if (reason === '')
                 fs.writeFileSync(trace, JSON.stringify(user, null, 2))
             else
-                fs.unlink(trace , () => {})
+                fs.unlink(trace, () => {})
         }
         reason = 'defect - ' + err.code
         xvt.hangup()

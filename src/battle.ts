@@ -174,14 +174,14 @@ export function attack(retry = false) {
                     return
                 }
 
-                xvt.out(xvt.bright)
+                xvt.out(xvt.bright, xvt.white)
                 melee(rpc, enemy)
                 next()
                 return
             }, enter:'A', cancel:'R', eol:false, max:1, match:/A|C|R|Y/i },
             'backstab': {cb:() => {
                 if (/N/i.test(xvt.entry)) bs = 1
-                xvt.out('\n\n', xvt.bright)
+                xvt.out('\n\n', xvt.bright, xvt.white)
                 melee(rpc, enemy, bs)
                 next()
                 return
@@ -572,6 +572,9 @@ export function spoils() {
             if (parties[l][m].hp == 0) {
                 tl[l] += parties[l][m].user.xplevel
                 coin.value += parties[l][m].user.coin.value
+                $.log(parties[l][m].user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`)
+                if (parties[l][m].user.coin.value)
+                    $.log(parties[l][m].user.id, `You lost ${parties[l][m].user.coin.carry()} you were carrying.`)
                 parties[l][m].user.coin.value = 0
                 $.saveUser(parties[l][m])
             }
@@ -589,14 +592,17 @@ export function spoils() {
                 * tl[l] / tl[w] / ((4 + parties[w].length - parties[l].length) / 2))
             parties[w][m].user.xp += xp
 
-            if (parties[w][m] == $.online) {
+            if (parties[w][m] === $.online) {
                 xvt.out('\nYou get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
                 if (award)
                     xvt.out('You get your cut worth ', new $.coins(award).carry(), '.\n')
                 xvt.waste(500)
             }
-            else
+            else {
+                $.log(parties[w][m].user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`)
+                $.log(parties[w][m].user.id, `You got ${sprintf(xp < 1e+8 ? '%d' : '%.7e', xp)} experience and ${new $.coins(award).carry()}.`)
                 $.saveUser(parties[w][m])
+            }
         }
 
         if (coin.value) {
@@ -609,7 +615,8 @@ export function spoils() {
             xvt.waste(1000)
         }
 
-        $.news(`\tdefeated the gang, ${parties[l][0].user.gang}`)
+        if (winner === $.online)
+            $.news(`\tdefeated the gang, ${parties[l][0].user.gang}`)
         if (loser === $.online)
             $.reason = `defeated by ${parties[w][0].user.gang}`
         return
@@ -627,27 +634,6 @@ export function spoils() {
                 if (/Monster|User/.test(from)) {
                     loser.altered = true
                     loser.user.status = winner.user.id
-                    winner.user.coward = false
-                    if (winner.user.cursed) {
-                        loser.user.cursed = winner.user.id
-                        winner.user.cursed = ''
-                        xvt.out(xvt.bright, xvt.black, 'A dark cloud has lifted and shifted.\n', xvt.reset)
-                        xvt.waste(1000)
-                        winner.str = $.PC.ability(winner.str, 10, winner.user.maxstr)
-                        winner.int = $.PC.ability(winner.int, 10, winner.user.maxint)
-                        winner.dex = $.PC.ability(winner.dex, 10, winner.user.maxdex)
-                        winner.cha = $.PC.ability(winner.cha, 10, winner.user.maxcha)
-                    }
-                    if (loser.user.blessed) {
-                        winner.user.blessed = loser.user.id
-                        loser.user.blessed = ''
-                        xvt.out(xvt.bright, xvt.yellow, 'A shining aura surrounds you.\n', xvt.reset)
-                        xvt.waste(1000)
-                        winner.str = $.PC.ability(winner.str, 10, winner.user.maxstr, 10)
-                        winner.int = $.PC.ability(winner.int, 10, winner.user.maxint, 10)
-                        winner.dex = $.PC.ability(winner.dex, 10, winner.user.maxdex, 10)
-                        winner.cha = $.PC.ability(winner.cha, 10, winner.user.maxcha, 10)
-                    }
                     // dungeon: modf(EXP(RPC[1][i]->user.ExpLevel - 1.) / (20. - (1.5 * (double)nest)), &d);
                     // user: modf(EXP(ENEMY.ExpLevel - 1) /3., &d);
                     let x = loser.user.id ? 2 : 3
@@ -681,10 +667,15 @@ export function spoils() {
                         xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'get'), credit.carry(), ' for ', $.who(loser, 'his'), loser.user.armor, '.\n')
                 }
                 else {
-                    if ($.Weapon.swap(winner, loser))
+                    $.log(loser.user.id, `\n${$.player.handle} killed you!`)
+                    if ($.Weapon.swap(winner, loser)) {
                         xvt.out($.who(winner, 'He'), $.what(winner, 'take'), $.who(loser, 'his'), winner.user.weapon, '.\n')
-                    if ($.Armor.swap(winner, loser))
+                        $.log(loser.user.id, `... and took your ${winner.user.weapon}.`)
+                    }
+                    if ($.Armor.swap(winner, loser)) {
                         xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who(loser, 'his'), winner.user.armor, '.\n')
+                        $.log(loser.user.id, `... and took your ${winner.user.armor}.`)
+                    }
                     $.unlock(loser.user.id)
                     xvt.out(1000)
                 }
@@ -709,19 +700,45 @@ export function spoils() {
                 , 'carrying.\n'
             )
         }
+        winner.user.coward = false
+        if (winner.user.cursed) {
+            loser.user.cursed = winner.user.id
+            winner.user.cursed = ''
+            xvt.out(xvt.bright, xvt.black, 'A dark cloud has lifted and shifted.\n', xvt.reset)
+            xvt.waste(1000)
+            winner.str = $.PC.ability(winner.str, 10, winner.user.maxstr)
+            winner.int = $.PC.ability(winner.int, 10, winner.user.maxint)
+            winner.dex = $.PC.ability(winner.dex, 10, winner.user.maxdex)
+            winner.cha = $.PC.ability(winner.cha, 10, winner.user.maxcha)
+        }
+        if (loser.user.blessed) {
+            winner.user.blessed = loser.user.id
+            loser.user.blessed = ''
+            xvt.out(xvt.bright, xvt.yellow, 'A shining aura surrounds you.\n', xvt.reset)
+            xvt.waste(1000)
+            winner.str = $.PC.ability(winner.str, 10, winner.user.maxstr, 10)
+            winner.int = $.PC.ability(winner.int, 10, winner.user.maxint, 10)
+            winner.dex = $.PC.ability(winner.dex, 10, winner.user.maxdex, 10)
+            winner.cha = $.PC.ability(winner.cha, 10, winner.user.maxcha, 10)
+        }
     }
     else {
         if (winner.user.id) {
+            $.log(winner.user.id, `\nYou killed ${$.player.handle}!`)
             if (loser.user.blessed) {
                 winner.user.blessed = loser.user.id
                 loser.user.blessed = ''
                 xvt.out(xvt.bright, xvt.yellow, 'Your shining aura leaves you.\n', xvt.reset)
                 xvt.waste(1000)
             }
-            if ($.Weapon.swap(winner, loser))
+            if ($.Weapon.swap(winner, loser)) {
                 xvt.out($.who(winner, 'He'), $.what(winner, 'take'), $.who(loser, 'his'), winner.user.weapon, '.\n')
-            if ($.Armor.swap(winner, loser))
+                $.log(winner.user.id, `You took ${$.who(winner, 'his')}${winner.user.weapon}.`)
+            }
+            if ($.Armor.swap(winner, loser)) {
                 xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who(loser, 'his'), winner.user.armor, '.\n')
+                $.log(winner.user.id, `You took ${$.who(winner, 'his')}${winner.user.armor}.`)
+            }
             if (winner.user.cursed) {
                 loser.user.cursed = winner.user.id
                 winner.user.cursed = ''
@@ -1486,7 +1503,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             if (alive[0] == 1 && alive[1] == 1)
                 xvt.out($.who(enemy, 'him'))
             else
-                xvt.out(enemy.user.gender === 'I' ? 'the ' : ' ', enemy.user.handle, ' ')
+                xvt.out(enemy.user.gender === 'I' ? 'the ' : '', enemy.user.handle, ' ')
         }
         else {
             let w = action.split(' ')

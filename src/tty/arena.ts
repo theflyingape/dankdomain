@@ -149,6 +149,7 @@ function choice() {
 									$.player.coin.value += reward.value
 									$.player.jw++
 									opponent.user.jl++
+									$.log(opponent.user.id, `\n${$.player.handle} beat you in a joust and got ${reward.carry()}.`)
 									$.saveUser(opponent)
 									menu()
 									return
@@ -171,6 +172,7 @@ function choice() {
 									opponent.user.coin.value += reward.value
 									opponent.user.jw++
 									$.saveUser(opponent)
+									$.log(opponent.user.id, `\n${$.player.handle} lost to you in a joust.  You got ${reward.carry()}.`)
 									$.news(`\tlost to ${opponent.user.handle} in a joust`)
 									menu()
 									return
@@ -316,7 +318,7 @@ function choice() {
 						}
 						else
 							menu(!$.player.expert)
-					}, prompt:'Will you fight' + $.who(opponent, 'him') + ' (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
+					}, prompt:'Will you fight ' + $.who(opponent, 'him') + '(Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
 				}
 				xvt.app.focus = 'fight'
 			})
