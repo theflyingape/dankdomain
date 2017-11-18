@@ -101,9 +101,10 @@ function amount() {
 		return
 	}
 
+	$.player.coin.value -= amount.value
+
 	switch (game) {
 		case 'B':
-			$.player.coin.value -= amount.value
 			shuffle()
 
 			let player:number[] = []
@@ -215,6 +216,53 @@ function amount() {
 			}
 			xvt.app.form['draw'].prompt += ': '
 			xvt.app.focus = 'draw'
+			return
+
+		case 'H':
+			shuffle()
+
+			$.action('list')
+			xvt.app.form = {
+				'pick': { cb: () => {
+					let dealer: number
+					let pick = +xvt.entry
+					if (isNaN(pick) || pick < 1 || pick > 52) {
+						xvt.out(' ?? ')
+						xvt.app.refocus()
+						return
+					}
+					$.sound('click')
+					xvt.out(' - ', xvt.bright,
+						xvt.red, '[', xvt.white, card[deck[pick]].face, xvt.red, ']',
+						xvt.reset, '\n'
+					)
+					xvt.waste(500)
+					xvt.out('Dealer picks card #')
+					while ((dealer = $.dice(52)) == pick);
+					$.sound('click')
+					xvt.out(dealer.toString(), ' - ',
+						xvt.red, '[', xvt.white, card[deck[dealer]].face, xvt.red, ']\n'
+					)
+					xvt.waste(500)
+					if (card[deck[pick]].value > card[deck[dealer]].value) {
+						$.sound('cheer')
+						payoff.value = amount.value
+						xvt.out('You win ', payoff.carry(), '!\n')
+						$.player.coin.value += payoff.value + amount.value
+					}
+					else if (card[deck[pick]].value < card[deck[dealer]].value) {
+						$.sound('boo')
+						xvt.out('You lose.\n')
+					}
+					else {
+						xvt.out('You tie.  It\'s a push.\n')
+						$.player.coin.value += amount.value
+					}
+					xvt.waste(500)
+					menu()
+				}, prompt:'Pick a card (1-52)? ', max:2 }
+			}
+			xvt.app.focus = 'pick'
 			return
 	}
 

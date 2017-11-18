@@ -467,6 +467,7 @@ function choice() {
             return
 
         case 'Q':
+            xvt.out('\n')
 			require('./main').menu($.player.expert)
 			return
 	}

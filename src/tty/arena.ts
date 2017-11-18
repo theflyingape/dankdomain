@@ -200,26 +200,30 @@ function choice() {
 			$.action('list')
 			xvt.app.form = {
 				pick: { cb: () => {
-					xvt.out('\n')
 					if (xvt.entry.length) {
 						let mon = +xvt.entry
 						if (isNaN(mon) && ! /D/i.test(xvt.entry)) {
+							xvt.out(' ?? ')
 							xvt.app.refocus()
 							return
 						}
 						if (mon) {
 							mon = Math.trunc(mon)
 							if (mon < 1 || mon > monsters.length) {
+								xvt.out(' ?? ')
 								xvt.app.refocus()
 								return
 							}
 							xvt.entry = mon.toString()
 						}
+						xvt.out('\n')
 						if (!MonsterFights())
 							menu()
 					}
-					else
+					else {
+						xvt.out('\n')
 						menu()
+					}
 				}
 				, prompt: 'Fight what monster (' + xvt.attr(xvt.white, '1-' + monsters.length, xvt.cyan, ', ', $.bracket('D', false), xvt.cyan, 'emon)? ')
 				, min:0, max:2 }

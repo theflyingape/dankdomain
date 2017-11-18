@@ -997,12 +997,14 @@ export function money(level: number): number {
 
 export function news(message: string, commit = false) {
     const log = `./tty/files/tavern/${player.id}.log`
-    fs.appendFileSync(log, `${message}\n`)
 
-    if (commit) {
-        const paper = `./tty/files/tavern/today.txt`
-        fs.appendFileSync(paper, fs.readFileSync(log))
-        fs.unlink(log)
+    if (access.roleplay) {
+        fs.appendFileSync(log, `${message}\n`)
+        if (commit) {
+            const paper = `./tty/files/tavern/today.txt`
+            fs.appendFileSync(paper, fs.readFileSync(log))
+            fs.unlink(log)
+        }
     }
 }
 
