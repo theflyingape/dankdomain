@@ -9,6 +9,7 @@ import xvt = require('xvt')
 
 import $ = require('../common')
 import Email = require('../email')
+import { newkeys } from '../common';
 
 module Logon
 {
@@ -79,6 +80,7 @@ function who() {
     if (/new/i.test(xvt.entry)) {
         // a bit hack for now, but...
         $.reroll($.player)
+        newkeys($.player)
         xvt.emulation = 'dumb'
         $.emulator(() => {
             $.player.emulation = xvt.emulation
