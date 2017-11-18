@@ -1402,18 +1402,22 @@ export function riddle() {
 
     let max = Object.keys(PC.name['immortal']).indexOf(player.pc) + 1
     if (max > 2 || player.pc === PC.winning) {
+        music('victory')
         player.wins++
         saveUser(player)
         reroll(player)
         reason = 'WON THE GAME !!'
-
         sysop.dob = now().date + 1
         saveUser(sysop)
+        xvt.waste(5000)
 
         xvt.out(xvt.bright, xvt.yellow, 'CONGRATULATIONS!!'
             , xvt.reset, '  You have won the game!\n'
         )
-        xvt.out(xvt.yellow, 'The board will now be reset... ')
+        sound('cheer', 25)
+        xvt.out(xvt.yellow, 'The board will now reset ')
+        xvt.waste(1000)
+
         let rs = query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
         let user: user = { id:'' }
         for (let row in rs) {
@@ -1421,8 +1425,10 @@ export function riddle() {
             loadUser(user)
             reroll(user)
             saveUser(user)
+            xvt.out('.')
         }
-        xvt.out('Happy Hunting!\n')
+        xvt.out(xvt.reset, '\nHappy hunting tomorrow!\n')
+        xvt.ondrop = null
         xvt.hangup()
     }
 

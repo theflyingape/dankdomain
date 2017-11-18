@@ -45,6 +45,10 @@ function check() {
 
     $.player.password = String.fromCharCode(64 + $.dice(26)) + String.fromCharCode(96 + $.dice(26)) + $.dice(999) + '!@#$%^&*'[$.dice(8) - 1]
 
+    let rs = $.query(`SELECT count(email) AS n FROM Players WHERE email = '${$.player.email}' GROUP BY email`)
+    if (rs.length && rs[0].n > 2)
+        $.player.access = Object.keys($.Access)[1]
+
     let message = require('./etc/newuser.json')
     Deliver($.player, 'secret keys to the gate', false, message)
 }

@@ -210,6 +210,10 @@ function freetext() {
   cmd(`${keyboard}`);
 }
 
+function list() {
+  cmd(`${keypad}${max}`);
+}
+
 function menu() {
   nme('');
   cmd(`
@@ -229,6 +233,14 @@ function menu() {
 `);
 }
 
+function yn() {
+  cmd(`
+<p><input class="tall" type="button" value=" Yes " onclick="send('Y');">
+<input class="tall" type="button" value=" No " onclick="send('N');"></p>
+${enter} ${quit}
+`);
+}
+
 function arena() {
   cmd(`
 <input type="button" value="Cast" onclick="send('C');">
@@ -241,44 +253,6 @@ function arena() {
 `);
 }
 
-function battle() {
-  cmd(`
-<p><input class="tall" type="button" value=" Attack " onclick="send('A');"></p>
-<p><input type="button" value="Cast" onclick="send('C');"> <input type="button" value="Status" onclick="send('Y');"></p>
-<input class="wide" type="button" value=" Retreat " onclick="send('R');">
-`);
-}
-
-function riddle() {
-  cmd(`
-<p><input class="platinum" type="button" value=" Platinum " onclick="send('p');"></p>
-<p><input class="gold"     type="button" value="   Gold   " onclick="send('g');"></p>
-<p><input class="silver"   type="button" value="  Silver  " onclick="send('s');"></p>
-<p><input class="copper"   type="button" value="  Copper  " onclick="send('c');"></p>
-`);
-}
-
-function square() {
-  nme('');
-  cmd(`
-<input type="button" value="Armoury" onclick="send('A');">
-<input type="button" value="Weapons" onclick="send('W');">
-<input type="button" value="Real Estate" onclick="send('R');">
-<input type="button" value="Security" onclick="send('S');">
-<input type="button" value="Mage" onclick="send('M');">
-<input type="button" value="Apothecary" onclick="send('V');">
-<input type="button" value="Bank" onclick="send('B');">
-<input type="button" value="Hospital" onclick="send('H');">
-<input type="button" value="Pick pockets" onclick="send('P');">
-<input type="button" value="Jail" onclick="send('J');"><br>
-<input class="tall" type="button" value="ARENA" onclick="send('G');"> ${quit}
-`);
-}
-
-function list() {
-  cmd(`${keypad}${max}`);
-}
-
 function bank() {
   cmd(`
 ${money}
@@ -288,6 +262,14 @@ ${money}
 ${quit}
 `);
   nme(`<img src="images/bank.jpg" onload="nmeResize();">`);
+}
+
+function battle() {
+  cmd(`
+<p><input class="tall" type="button" value=" Attack " onclick="send('A');"></p>
+<p><input type="button" value="Cast" onclick="send('C');"> <input type="button" value="Status" onclick="send('Y');"></p>
+<input class="wide" type="button" value=" Retreat " onclick="send('R');">
+`);
 }
 
 function casino() {
@@ -346,6 +328,15 @@ function payment() {
   nme(`<img src="images/payment.png" onload="nmeResize();">`);
 }
 
+function riddle() {
+  cmd(`
+<p><input class="platinum" type="button" value=" Platinum " onclick="send('p');"></p>
+<p><input class="gold"     type="button" value="   Gold   " onclick="send('g');"></p>
+<p><input class="silver"   type="button" value="  Silver  " onclick="send('s');"></p>
+<p><input class="copper"   type="button" value="  Copper  " onclick="send('c');"></p>
+`);
+}
+
 function shipyard() {
   cmd(`
 <input type="button" value="Buy" onclick="send('B');"> <input type="button" value="Fix" onclick="send('F');">
@@ -353,6 +344,23 @@ function shipyard() {
 <input class="tall" type="button" value=" Quit " onclick="send('Q');">
   `);
   nme('<br><img src="images/naval/shipyard.png" onload="nmeResize();">');
+}
+
+function square() {
+  nme('');
+  cmd(`
+<input type="button" value="Armoury" onclick="send('A');">
+<input type="button" value="Weapons" onclick="send('W');">
+<input type="button" value="Real Estate" onclick="send('R');">
+<input type="button" value="Security" onclick="send('S');">
+<input type="button" value="Mage" onclick="send('M');">
+<input type="button" value="Apothecary" onclick="send('V');">
+<input type="button" value="Bank" onclick="send('B');">
+<input type="button" value="Hospital" onclick="send('H');">
+<input type="button" value="Pick pockets" onclick="send('P');">
+<input type="button" value="Jail" onclick="send('J');"><br>
+<input class="tall" type="button" value="ARENA" onclick="send('G');"> ${quit}
+`);
 }
 
 function tavern() {
@@ -370,14 +378,6 @@ function tavern() {
 function wager() {
   cmd(`${money}`)
   nme(`<img src="images/wager.jpg" onload="nmeResize();">`);
-}
-
-function yn() {
-  cmd(`
-<p><input class="tall" type="button" value=" Yes " onclick="send('Y');">
-<input class="tall" type="button" value=" No " onclick="send('N');"></p>
-${enter} ${quit}
-`);
 }
 
 function nmeResize() {

@@ -205,6 +205,7 @@ function choice() {
                             if (g.members.indexOf($.player.id) < 0)
                                 g.members.push($.player.id)
                             $.sqlite3.exec(`UPDATE Gangs SET members = '${g.members.join()}' WHERE name = '${g.name}'`)
+                            xvt.out(`\nYou are now a member of ${g.name}.\n`)
                         }
                         else {
                             g.members = []
@@ -452,10 +453,11 @@ function choice() {
                         $.party--
                         $.music('party')
 
+                        $.cat('dungeon/' + nme[0].user.handle.toLowerCase())
                         xvt.out(xvt.bright, xvt.magenta, nme[0].user.handle, xvt.reset
                             , ' grins as ', $.who(nme[0], 'he'), 'pulls out '
                             , $.who(nme[0], 'his'), nme[0].user.weapon, '.\n\n')
-                        xvt.waste(1000)
+                        xvt.waste(1200)
 
                         Battle.engage('Party', posse, nme, menu)
                     }
