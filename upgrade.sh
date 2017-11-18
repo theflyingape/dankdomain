@@ -18,7 +18,7 @@ sudo find ${TARGET} -type d -exec chmod u+x,g+xs {} \;
 echo ''
 echo 'server files that exist that are not part of this build'
 echo '                  ~~~~~          ~~~'
-sudo rsync -anv --delete --exclude node_modules ./build/ ${TARGET}
+sudo rsync -anv --delete --exclude node_modules --exclude files ./build/ ${TARGET}
 
 sudo systemctl stop dankdomain
 sudo systemctl start dankdomain

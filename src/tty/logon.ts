@@ -309,15 +309,15 @@ function welcome() {
                 xvt.app.refocus()
                 return
             }
-            xvt.out(xvt.clear, xvt.cyan, '--=:))', xvt.LGradient[xvt.emulation]
-                , xvt.Cyan, xvt.bright, xvt.white, 'Announcement', xvt.reset
-                , xvt.cyan, xvt.RGradient[xvt.emulation], '((:=--\n\n'
+            xvt.out(xvt.clear, xvt.blue, '--=:))', xvt.LGradient[xvt.emulation]
+                , xvt.Blue, xvt.bright, xvt.cyan, 'Announcement', xvt.reset
+                , xvt.blue, xvt.RGradient[xvt.emulation], '((:=--\n\n'
             )
             $.cat('announcement')
 
-            xvt.out('\n', xvt.green, '--=:))', xvt.LGradient[xvt.emulation]
-                , xvt.Green, xvt.bright, xvt.white, 'Auto Message', xvt.reset
-                , xvt.green, xvt.RGradient[xvt.emulation], '((:=--\n\n'
+            xvt.out('\n\n', xvt.cyan, '--=:))', xvt.LGradient[xvt.emulation]
+                , xvt.Cyan, xvt.bright, xvt.white, 'Auto Message', xvt.reset
+                , xvt.cyan, xvt.RGradient[xvt.emulation], '((:=--\n\n'
             )
             $.cat('auto-message')
 

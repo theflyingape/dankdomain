@@ -12,7 +12,7 @@ module Gambling
         'B': { description:'Blackjack' },
         'C': { description:'Craps' },
         'G': { description:'Greyhound race' },
-        'H': { description:'High card' },
+        'H': { description:'High Stakes Draw' },
     	'K': { description:'Keno' },
         'R': { description:'Roulette' },
         'S': { description:'One-armed Bandit' }
@@ -38,12 +38,7 @@ module Gambling
 		{ face:'Eight', value:8 }, { face:'Nine', value:9 }, { face:'Ten', value:10 },
 		{ face:'!Jack!', value:10 }, { face:'$Queen$', value:10 }, { face:'&King&', value:10 }
 	]
-	let deck:number[] = [ 0,
-		1,2,3,4,5,6,7,8,9,10,11,12,13,
-		1,2,3,4,5,6,7,8,9,10,11,12,13,
-		1,2,3,4,5,6,7,8,9,10,11,12,13,
-		1,2,3,4,5,6,7,8,9,10,11,12,13,
-		0 ]
+	let deck:number[]
 	let pile:number
 
 export function menu(suppress = true) {
@@ -219,38 +214,52 @@ function amount() {
 			return
 
 		case 'H':
-			shuffle()
+			shuffle(true)
 
 			$.action('list')
 			xvt.app.form = {
 				'pick': { cb: () => {
 					let dealer: number
 					let pick = +xvt.entry
-					if (isNaN(pick) || pick < 1 || pick > 52) {
+					if (isNaN(pick) || pick < 1 || pick > 54) {
 						xvt.out(' ?? ')
 						xvt.app.refocus()
 						return
 					}
-					$.sound('click')
+					$.sound(card[deck[--pick]].value ? 'click' : 'boom', 5)
 					xvt.out(' - ', xvt.bright,
 						xvt.red, '[', xvt.white, card[deck[pick]].face, xvt.red, ']',
 						xvt.reset, '\n'
 					)
 					xvt.waste(500)
+
 					xvt.out('Dealer picks card #')
-					while ((dealer = $.dice(52)) == pick);
-					$.sound('click')
+					while ((dealer = $.dice(54) - 1) == pick);
+					$.sound(card[deck[dealer]].value > 0 ? 'click' : 'boom', 6)
 					xvt.out(dealer.toString(), ' - ',
-						xvt.red, '[', xvt.white, card[deck[dealer]].face, xvt.red, ']\n'
+						xvt.red, '[', xvt.white, card[deck[dealer]].face, xvt.red, ']',
+						xvt.reset, '\n\n'
 					)
 					xvt.waste(500)
+
 					if (card[deck[pick]].value > card[deck[dealer]].value) {
 						$.sound('cheer')
-						payoff.value = amount.value
+						payoff.value = amount.value * (card[deck[dealer]].value > 0
+							? Math.trunc((card[deck[pick]].value - card[deck[dealer]].value - 1) / 4) + 1
+							: 25
+						)
 						xvt.out('You win ', payoff.carry(), '!\n')
 						$.player.coin.value += payoff.value + amount.value
 					}
 					else if (card[deck[pick]].value < card[deck[dealer]].value) {
+						if (card[deck[pick]].value < 0) {
+							xvt.out('The joke is on you.\n\n')
+							$.sound('oops', 12)
+							xvt.out(xvt.bright, xvt.yellow, 'You die laughing.\n', xvt.reset)
+							$.sound('laugh', 24)
+							$.reason = 'died laughing'
+							xvt.hangup()
+						}
 						$.sound('boo')
 						xvt.out('You lose.\n')
 					}
@@ -260,7 +269,7 @@ function amount() {
 					}
 					xvt.waste(500)
 					menu()
-				}, prompt:'Pick a card (1-52)? ', max:2 }
+				}, prompt:'Pick a card (1-54)? ', max:2 }
 			}
 			xvt.app.focus = 'pick'
 			return
@@ -287,15 +296,27 @@ function amount() {
 	}
 }
 
-function shuffle() {
-	xvt.out(xvt.faint, '\nShuffling the deck ')
+function shuffle(jokers = false) {
+	deck = [ 0,
+		1,2,3,4,5,6,7,8,9,10,11,12,13,
+		1,2,3,4,5,6,7,8,9,10,11,12,13,
+		1,2,3,4,5,6,7,8,9,10,11,12,13,
+		1,2,3,4,5,6,7,8,9,10,11,12,13,
+		0 ]
+	xvt.out(xvt.faint, '\nShuffling a new deck ')
 	xvt.waste(250)
 	let cut = $.dice(6) + 4
 	for (let n = 0; n < cut; n++) {
-		for(let i = 1; i < 53; i++) {
-			let j = $.dice(52)
-			;[ deck[i], deck[j] ] = [ deck[j], deck[i] ];
-		}
+		if (jokers)
+			for(let i = 0; i < 54; i++) {
+				let j = $.dice(54) - 1
+				;[ deck[i], deck[j] ] = [ deck[j], deck[i] ];
+			}
+		else
+			for(let i = 1; i < 53; i++) {
+				let j = $.dice(52)
+				;[ deck[i], deck[j] ] = [ deck[j], deck[i] ];
+			}
 		xvt.out('.')
 		xvt.waste(20)
 	}
