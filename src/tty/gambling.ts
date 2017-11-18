@@ -226,7 +226,7 @@ function amount() {
 						xvt.app.refocus()
 						return
 					}
-					$.sound(card[deck[--pick]].value ? 'click' : 'boom', 5)
+					$.sound(card[deck[--pick]].value > 0 ? 'click' : 'boom', 6)
 					xvt.out(' - ', xvt.bright,
 						xvt.red, '[', xvt.white, card[deck[pick]].face, xvt.red, ']',
 						xvt.reset, '\n'
@@ -234,8 +234,8 @@ function amount() {
 					xvt.waste(500)
 
 					xvt.out('Dealer picks card #')
-					while ((dealer = $.dice(54) - 1) == pick);
-					$.sound(card[deck[dealer]].value > 0 ? 'click' : 'boom', 6)
+					while ((dealer = $.dice(54)) - 1 == pick);
+					$.sound(card[deck[--dealer]].value > 0 ? 'click' : 'boom', 6)
 					xvt.out(dealer.toString(), ' - ',
 						xvt.red, '[', xvt.white, card[deck[dealer]].face, xvt.red, ']',
 						xvt.reset, '\n\n'
