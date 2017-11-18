@@ -544,7 +544,6 @@ export function spoils() {
     }
     else {
         winner = parties[1][0]
-        loser = $.online
         l = 0
     }
 
@@ -569,14 +568,14 @@ export function spoils() {
 
         for (let m in parties[l]) {
             // accrue benefits off of defeated players only
-            if (parties[l][m].hp == 0) {
-                tl[l] += parties[l][m].user.xplevel
-                coin.value += parties[l][m].user.coin.value
-                $.log(parties[l][m].user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`)
-                if (parties[l][m].user.coin.value)
-                    $.log(parties[l][m].user.id, `You lost ${parties[l][m].user.coin.carry()} you were carrying.`)
-                parties[l][m].user.coin.value = 0
-                $.saveUser(parties[l][m])
+            if ((loser = parties[l][m]).hp == 0) {
+                tl[l] += loser.user.xplevel
+                coin.value += loser.user.coin.value
+                $.log(loser.user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`)
+                if (loser.user.coin.value)
+                    $.log(loser.user.id, `You lost ${loser.user.coin.carry()} you were carrying.`)
+                loser.user.coin.value = 0
+                $.saveUser(loser)
             }
         }
 
@@ -617,8 +616,8 @@ export function spoils() {
 
         if (winner === $.online)
             $.news(`\tdefeated the gang, ${parties[l][0].user.gang}`)
-        if (loser === $.online)
-            $.reason = `defeated by ${parties[w][0].user.gang}`
+        else if ($.online.hp == 0)
+            $.reason = `defeated by the gang, ${parties[w][0].user.gang}`
         return
     }
 
@@ -629,8 +628,7 @@ export function spoils() {
 
         for (let m in parties[l]) {
             // defeated?
-            if (parties[l][m].hp == 0) {
-                loser = parties[l][m]
+            if ((loser = parties[l][m]).hp == 0) {
                 if (/Monster|User/.test(from)) {
                     loser.altered = true
                     loser.user.status = winner.user.id
@@ -725,32 +723,32 @@ export function spoils() {
     else {
         if (winner.user.id) {
             $.log(winner.user.id, `\nYou killed ${$.player.handle}!`)
-            if (loser.user.blessed) {
-                winner.user.blessed = loser.user.id
-                loser.user.blessed = ''
+            if ($.player.blessed) {
+                winner.user.blessed = $.player.id
+                $.player.blessed = ''
                 xvt.out(xvt.bright, xvt.yellow, 'Your shining aura leaves you.\n', xvt.reset)
                 xvt.waste(1000)
             }
-            if ($.Weapon.swap(winner, loser)) {
-                xvt.out($.who(winner, 'He'), $.what(winner, 'take'), $.who(loser, 'his'), winner.user.weapon, '.\n')
-                $.log(winner.user.id, `You took ${$.who(winner, 'his')}${winner.user.weapon}.`)
+            if ($.Weapon.swap(winner, $.online)) {
+                xvt.out($.who(winner, 'He'), $.what(winner, 'take'), $.who($.online, 'his'), winner.user.weapon, '.\n')
+                $.log(winner.user.id, `You upgraded to ${winner.user.weapon}.`)
             }
             if ($.Armor.swap(winner, loser)) {
-                xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who(loser, 'his'), winner.user.armor, '.\n')
-                $.log(winner.user.id, `You took ${$.who(winner, 'his')}${winner.user.armor}.`)
+                xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who($.online, 'his'), winner.user.armor, '.\n')
+                $.log(winner.user.id, `You upgraded to ${winner.user.armor}.`)
             }
             if (winner.user.cursed) {
-                loser.user.cursed = winner.user.id
+                $.player.cursed = winner.user.id
                 winner.user.cursed = ''
                 xvt.out(xvt.bright, xvt.black, 'A dark cloud hovers over you.\n', xvt.reset)
                 xvt.waste(1000)
             }
         }
-        if (loser.user.coin.value) {
-            winner.user.coin.value += loser.user.coin.value
-            xvt.out($.who(winner, 'He'), 'gets ', loser.user.coin.carry(), ' you were carrying.\n')
-            loser.user.coin.value = 0
-            loser.altered = true
+        if ($.player.coin.value) {
+            winner.user.coin.value += $.player.coin.value
+            xvt.out($.who(winner, 'He'), 'gets ', $.player.coin.carry(), ' you were carrying.\n')
+            $.player.coin.value = 0
+            $.online.altered = true
         }
         $.saveUser(winner)
         $.unlock(winner.user.id)

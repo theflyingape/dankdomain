@@ -987,7 +987,8 @@ export function keyhint(rpc: active) {
 
 export function log(who:string, message: string) {
     const log = `./tty/files/user/${who}.txt`
-    fs.appendFileSync(log, `${message}\n`)
+    if (who.length && who !== player.id)
+        fs.appendFileSync(log, `${message}\n`)
 }
 
 export function money(level: number): number {

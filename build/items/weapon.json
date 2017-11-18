@@ -1,5 +1,5 @@
 {
-	"hands": { "text":"has empty", "value":"0c", "wc":0, "hit":"slap", "smash":"head-butt", "stab":"punch", "plunge":"tear into", "shoppe":true }, 
+	"fist": { "text":"makes a", "value":"0c", "wc":0, "hit":"slap", "smash":"head-butt", "stab":"punch", "plunge":"tear into", "shoppe":true }, 
 	"Dart": { "text":"carries a", "value":"1c", "wc":1, "hit":"prod", "smash":"stick", "stab":"puncture", "plunge":"plunge into", "shoppe":true }, 
 	"Sling": { "text":"carries a", "value":"2c", "wc":2, "hit":"shoot", "smash":"slam", "stab":"pelt", "plunge":"plunk", "shoppe":true }, 
 	"Dagger": { "text":"carries a", "value":"5c", "wc":3, "hit":"cut", "smash":"slash", "stab":"stab", "plunge":"plunge into", "shoppe":true }, 
