@@ -49,22 +49,6 @@ module Common
     export let callers: caller[] = []
     export let reason: string = ''
 
-    //  £
-    export const Cleric = {
-        VT: '\x1B(0\x7D\x1B(B',
-        PC: '\xB8',
-        XT: '\u00A9',
-        dumb: '$'
-    }
-
-    //  ±
-    export const Teleport = {
-        VT: '\x1B(0\x67\x1B(B',
-        PC: '\xF1',
-        XT: '\u00B1',
-        dumb: '%'
-    }
-
 //  all player characters
 export class Character {
         constructor () {
