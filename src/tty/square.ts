@@ -52,15 +52,8 @@ function choice() {
     let suppress = $.player.expert
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(square[choice]))
-        if (xvt.validator.isNotEmpty(square[choice].description)) {
-            xvt.out(' - ', square[choice].description)
-            suppress = true
-        }
-    else {
-        $.beep()
-        suppress = false
-    }
-    xvt.out('\n')
+		if (xvt.validator.isNotEmpty(square[choice].description)) xvt.out(' - ', square[choice].description)
+	xvt.out('\n')
 
     switch (choice) {
 		case 'A':
@@ -234,7 +227,7 @@ function choice() {
 						menu()
 						return
 					}
-					if (opponent.user.status !== '#jail#') {
+					if (opponent.user.status !== 'jail') {
 						opponent.user.id = ''
 						xvt.out(`${opponent.user.handle} is not in jail.\n`)
 						menu()

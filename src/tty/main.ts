@@ -250,14 +250,14 @@ function choice() {
 
                                 $.saveUser(opponent)
                                 $.news(`\trobbed ${opponent.user.handle}`)
-								//sprintf(line[numline++], "%s robbed you!", PLAYER.Handle);
+                                $.log(opponent.user.id, `\n${$.player.handle} robbed you!`)
                             }
 							else {
 								xvt.out('\nA guard catches you and throws you into jail!\n')
                                 $.sound('arrested', 20)
                                 xvt.out('You might be released by your next call.\n\n')
                                 xvt.waste(1000)
-								//sprintf(line[numline++], "%s was caught robbing you!", PLAYER.Handle);
+                                $.log(opponent.user.id, `\n${$.player.handle} was caught robbing you!`)
                                 $.reason = `caught robbing ${opponent.user.handle}`
 								$.player.status = 'jail'
                                 xvt.hangup()
