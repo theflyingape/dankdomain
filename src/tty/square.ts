@@ -247,15 +247,9 @@ function choice() {
 						'pay': { cb:() => {
 							if (/Y/i.test(xvt.entry)) {
 								$.player.coin.value -= credit.value
-								if ($.player.coin.value < 0) {
-									$.player.bank.value += $.player.coin.value
-									$.player.coin.value = 0
-									if ($.player.bank.value < 0) {
-										$.player.loan.value -= $.player.bank.value
-										$.player.bank.value = 0
-									}
-								}
-								$.online.altered = true
+								opponent.user.status = ''
+								opponent.altered = true
+								$.saveUser(opponent)
 								$.bail--
 							}
 							menu()
