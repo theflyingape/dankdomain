@@ -245,11 +245,14 @@ function choice() {
 					$.action('yn')				
 					xvt.app.form = {
 						'pay': { cb:() => {
+							xvt.out('\n')
 							if (/Y/i.test(xvt.entry)) {
+								xvt.out(`${opponent.user.handle} is set free.\n`)
 								$.player.coin.value -= credit.value
 								opponent.user.status = ''
 								opponent.altered = true
 								$.saveUser(opponent)
+								$.news(`\n${$.player.handle} paid ${credit.carry()} to bail you out of jail.`)
 								$.bail--
 							}
 							menu()
@@ -261,6 +264,7 @@ function choice() {
 				})
 				return
 			}
+			xvt.out(`The jail house is closed for the day.\n`)
 			break
 
 		case 'M':

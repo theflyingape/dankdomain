@@ -277,7 +277,7 @@ function choice() {
 
         case 'T':
             if (!$.brawl) {
-                xvt.beep()
+                xvt.out(`The tavern is closed for the day.\n`)
                 break
             }
             $.music('tavern' + $.dice(4))
