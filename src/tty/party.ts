@@ -439,8 +439,9 @@ function choice() {
                     }
 
                     if (!nme.length) {
-                        xvt.out('That gang is not active!\n')
+                        xvt.out('\nThat gang is not active!\n')
                         menu()
+                        return
                     }
 
                     $.action('yn')
@@ -463,7 +464,7 @@ function choice() {
                     }
                     else
                         menu()
-            }, prompt:'Fight this gang (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
+                }, prompt:'Fight this gang (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
             }
             xvt.app.focus = 'gang'
             return

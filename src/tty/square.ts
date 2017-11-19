@@ -234,7 +234,7 @@ function choice() {
 						menu()
 						return
 					}
-					if (opponent.user.status !== '^jail^') {
+					if (opponent.user.status !== '#jail#') {
 						opponent.user.id = ''
 						xvt.out(`${opponent.user.handle} is not in jail.\n`)
 						menu()
