@@ -10,7 +10,8 @@ import Battle = require('../battle')
 module Sysop
 {
 	let sysop: choices = {
-		'B': { description:'Blessed/Cursed Users' },
+        'B': { description:'Blessed/Cursed Users' },
+        'D': { description:'Deep Dank Dungeon' },
 		'G': { description:'Gang record' },
 		'N': { description:'New record' },
 		'R': { description:'Reroll' },
@@ -46,7 +47,12 @@ function choice() {
     switch (choice) {
         case 'Q':
 			require('./main').menu($.player.expert)
-			return
+            return
+
+        case 'D':
+            $.music('dungeon' + $.dice(9))
+            require('./dungeon').DeepDank($.player.level - 1, sysop)
+            return
 
         case 'R':
             xvt.out('Alpha development phase: ')

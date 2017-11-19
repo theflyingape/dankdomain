@@ -7,6 +7,7 @@ import {sprintf} from 'sprintf-js'
 
 import $ = require('../common')
 import xvt = require('xvt')
+import Battle = require('../battle')
 
 module Square
 {
@@ -38,7 +39,7 @@ module Square
 	let lo = 0, hi = 0, max = 0
 	let want = ''
 
-export function menu(suppress = false) {
+export function menu(suppress = true) {
 	$.action('square')
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
@@ -137,7 +138,7 @@ function choice() {
 							}
 							$.online.altered = true
 						}
-						menu(true)
+						menu()
 						return
 					}, cancel:'Y', enter:'Y', max:1, eol:false, match:/Y|N/i }
 				}
@@ -164,7 +165,7 @@ function choice() {
 							}
 							$.online.altered = true
 						}
-						menu(true)
+						menu()
 						return
 					}, cancel:'Y', enter:'Y', max:1, eol:false, match:/Y|N/i }
 				}
@@ -207,13 +208,73 @@ function choice() {
 						$.beep()
 						xvt.out('\nHit points = ', $.online.hp.toString(), '\n')
 					}
-					menu(true)
+					menu()
 					return
 				}, max:5 }
 			}
 			xvt.app.form['hp'].prompt = xvt.attr('How many do you want [', xvt.bright, xvt.white, xvt.uline, 'MAX', xvt.reset, '=', hi.toString(), xvt.cyan, ']? ')
 			xvt.app.focus = 'hp'
 			return
+
+		case 'J':
+			if ($.bail) {
+				xvt.out('\nA deputy greets you in front of the County Jail.\n')
+				xvt.out('\"What ', ['cur','knave','scum','toad','villain'][$.dice(5) - 1],
+					' do you want to bail out?\"\n'
+				)
+				Battle.user('Bail', (opponent: active) => {
+					if (opponent.user.id === '') {
+						menu()
+						return
+					}
+					xvt.out('\n')
+					if (opponent.user.id === $.player.id) {
+						opponent.user.id = ''
+						xvt.out('You can\'t bail ', $.who(opponent, 'him'), 'out.\n')
+						menu()
+						return
+					}
+					if (opponent.user.status !== '^jail^') {
+						opponent.user.id = ''
+						xvt.out(`${opponent.user.handle} is not in jail.\n`)
+						menu()
+						return
+					}
+
+					credit.value = Math.trunc($.money(opponent.user.level)
+						* (100 - $.online.cha + 1) / 100 + 1)
+					xvt.out(`It will cost you ${credit.carry()} to bail out ${opponent.user.handle}.\n`)
+					if ($.player.coin.value < credit.value) {
+						menu()
+						return
+					}
+
+					$.action('yn')				
+					xvt.app.form = {
+						'pay': { cb:() => {
+							if (/Y/i.test(xvt.entry)) {
+								$.player.coin.value -= credit.value
+								if ($.player.coin.value < 0) {
+									$.player.bank.value += $.player.coin.value
+									$.player.coin.value = 0
+									if ($.player.bank.value < 0) {
+										$.player.loan.value -= $.player.bank.value
+										$.player.bank.value = 0
+									}
+								}
+								$.online.altered = true
+								$.bail--
+							}
+							menu()
+							return
+						}, prompt:'Will you pay (Y/N)? '
+						, cancel:'N', enter:'N', max:1, eol:false, match:/Y|N/i }
+					}
+					xvt.app.focus = 'pay'
+				})
+				return
+			}
+			break
 
 		case 'M':
 			xvt.out('\nThe ', xvt.bright, xvt.blue, 'old mage ', xvt.reset)

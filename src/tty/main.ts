@@ -14,7 +14,7 @@ module Main
     let mainmenu: choices = {
         '@': { description:'Sysop' },
         'A': { description:'Arena: Fight and Joust' },
-        'D': { description:'Deep Dank Dungeon' },
+        'D': { description:'ALPHA dungeon' },
         'E': { description:'Electronic Mail and Feedback' },
         'G': { description:'Gambling Casino' },
         'L': { description:'List of Top Users: Fame & Lame' },
