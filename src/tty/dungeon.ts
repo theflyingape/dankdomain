@@ -64,10 +64,10 @@ module Dungeon
 		'S': { description:'outh' },
 		'E': { description:'ast' },
 		'W': { description:'est' },
-		'M': { description:'ap' },
-		'C': { description:'ast a spell' },
-		'P': { description:'oison your weapon' },
-		'Y': { description:'our status' }
+		'M': { description:'' },
+		'C': { description:'' },
+		'P': { description:'' },
+		'Y': { description:'' }
 	}
 
 export function DeepDank(start: number, cb: Function) {
@@ -85,7 +85,7 @@ export function menu(suppress = false) {
 	if ($.reason) xvt.hangup()
 
 	drawHero()
-
+	
 	$.action('dungeon')
 	xvt.app.form = {
         'command': { cb:command, enter:'?', eol:false }
@@ -156,32 +156,32 @@ function command() {
 
 	case 'N':
 		if (Y > 0 && DL.rooms[Y][X].type !== 2 && DL.rooms[Y - 1][X].type !== 2) {
-			fromY = Y--; fromX = X; drawRoom(fromY, fromX)
-			return
+			if (!doMove(-1, 0)) return
+			break
 		}
 		oof('north')
 		break
 
 	case 'S':
 		if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 2 && DL.rooms[Y - 1][X].type !== 2) {
-			fromY = Y++; fromX = X; drawRoom(fromY, fromX)
-			return
+			if (!doMove(1, 0)) return
+			break
 		}
 		oof('south')
 		break
 
 	case 'E':
 		if (X < DL.width - 1 && DL.rooms[Y][X].type !== 1 && DL.rooms[Y][X + 1].type !== 1) {
-			fromY = Y; fromX = X++; drawRoom(fromY, fromX)
-			return
+			if (!doMove(0, 1)) return
+			break
 		}
 		oof('east')
 		break
 
 	case 'W':
 		if (X > 0 && DL.rooms[Y][X].type !== 1 && DL.rooms[Y][X - 1].type !== 1) {
-			fromY = Y; fromX = X--; drawRoom(fromY, fromX)
-			return
+			if (!doMove(0, -1)) return
+			break
 		}
 		oof('west')
 		break
@@ -199,6 +199,18 @@ function command() {
 			xvt.hangup()
 		}
 	}
+}
+
+function doMove(dy:number, dx:number): boolean {
+	drawRoom(Y, X)
+	if ($.online.int > 49)
+		ROOM.map = true
+
+	Y += dy
+	X += dx
+	ROOM = DL.rooms[Y][X]
+
+	if (!ROOM.occupant && !ROOM.monster.length) return true
 }
 
 function drawLevel() {
@@ -219,12 +231,15 @@ function drawLevel() {
 							: xvt.normal, `  ${dot}  `)
 
 					if (DL.rooms[r][x].map || DL.map) {
-						let icon = DL.rooms[r][x].monster ? xvt.attr(xvt.reset, DL.rooms[r][x].occupant ? xvt.green : xvt.red
-								, DL.rooms[r][x].monster.length == 1 ? 'Mon' : 'Mob') : ''
+						let icon = null
+						if (DL.rooms[r][x].monster.length)
+							icon = xvt.attr(xvt.reset, DL.rooms[r][x].occupant ? xvt.green : xvt.red, 
+								DL.rooms[r][x].monster.length > 1 ? 'Mob' : 'Mon')
 
 						//	0=none, 1=trap door, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard
 						switch (DL.rooms[r][x].occupant) {
 							case 0:
+								if (icon) o = ` ${icon} `
 								break
 
 							case 1:
@@ -280,8 +295,9 @@ function drawLevel() {
 
 function drawHero() {
 	xvt.plot(Y * 2 + 2, X * 6 + 2)
-	xvt.out(xvt.white, xvt.reverse, '-YOU-', xvt.reset)
+	xvt.out(xvt.white, xvt.reverse, '-YOU-')
 	xvt.plot($.player.rows, 1)
+	xvt.out(xvt.reset)
 }
 
 function drawRoom(r:number, c:number) {
@@ -299,9 +315,10 @@ function drawRoom(r:number, c:number) {
 function generateLevel() {
 	if (dd[deep][Z]) {
 		DL = dd[deep][Z]
+		renderMap()
 		Y = $.dice(DL.rooms.length) - 1
 		X = $.dice(DL.width) - 1
-		renderMap()
+		ROOM = DL.rooms[Y][X]
 		return
 	}
 
@@ -345,10 +362,11 @@ function generateLevel() {
 					result = true
 	} while (result)
 
+	renderMap()
 	Y = $.dice(DL.rooms.length) - 1
 	X = $.dice(DL.width) - 1
-	renderMap()
-
+	ROOM = DL.rooms[Y][X]
+	
 	//	populate this floor
 	let n = Math.trunc(DL.rooms.length * DL.width / 6 + $.dice(Z / 11) + (deep >>1) + $.dice(deep >>1))
 	for (let i = 0; i < n; i++)
@@ -525,7 +543,6 @@ function generateLevel() {
 	function renderMap() {
 		const box = xvt.Draw[$.player.emulation]
 		let r: number, c: number
-		let room: room
 		paper = new Array(2 * DL.rooms.length + 1)
 
 		//	draw level borders on an empty sheet of paper
@@ -537,11 +554,11 @@ function generateLevel() {
 		//	crawl each room to construct walls
 		for (r = 0; r < DL.rooms.length; r++) {
 			for (c = 0; c < DL.width; c++) {
-				room = DL.rooms[r][c]
+				ROOM = DL.rooms[r][c]
 				let row = r * 2, col = c * 6
 
 				//	north-south corridor
-				if (room.type == 1) {
+				if (ROOM.type == 1) {
 					if (paper[row][col] == ' ')
 						paper[row] = replaceAt(paper[row], col, box[10])
 					else
@@ -600,7 +617,7 @@ function generateLevel() {
 				}
 
 				//	east-west corridor
-				if (room.type == 2) {
+				if (ROOM.type == 2) {
 					if (paper[row][col] == ' ')
 						paper[row] = replaceAt(paper[row], col, box[0])
 					else
