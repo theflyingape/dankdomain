@@ -127,8 +127,10 @@ export function menu(suppress = false) {
 }
 
 function command() {
-    let suppress = $.player.expert
-    let choice = xvt.entry.toUpperCase()
+	let suppress = $.player.expert
+	let choice = xvt.entry.toUpperCase()
+	if (/\[.*\]/.test(xvt.terminator))
+		choice = 'NSEW'['UDRL'.indexOf(xvt.terminator[1])]
     if (xvt.validator.isNotEmpty(dungeon[choice]))
         xvt.out(dungeon[choice].description, '\n')
     else {
@@ -303,9 +305,10 @@ function drawHero() {
 function drawRoom(r:number, c:number) {
 	let row = r * 2 + 1, col = c * 6 + 1
 
-	if (!DL.map) {
-		xvt.plot(row, col)
-		xvt.out(xvt.Black, '       ')
+	if (!DL.map && !ROOM.map) {
+		xvt.plot(row, col + 1)
+		xvt.out(xvt.bright, xvt.Black, '     ')
+		return
 	}
 
 	xvt.plot(row, col)
@@ -368,18 +371,36 @@ function generateLevel() {
 	ROOM = DL.rooms[Y][X]
 	
 	//	populate this floor
+	//	monsters in caverns
 	let n = Math.trunc(DL.rooms.length * DL.width / 6 + $.dice(Z / 11) + (deep >>1) + $.dice(deep >>1))
 	for (let i = 0; i < n; i++)
 		putMonster()
 
-
-	/*
-	m = LEVEL(dl)->MaxRow * LEVEL(dl)->MaxCol / 6 + dice(dl / 11) + nest / 2 + dice(nest / 2);
-	for(n = 0; n < m; n++) {
-			x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
-			putmonster(x, y);
+	//	thief(s) in other spaces
+	n = $.dice(deep >>2)
+	for (let i = 0; i < n; n++) {
+		do {
+			y = $.dice(DL.rooms.length) - 1
+			x = $.dice(DL.width) - 1
+		} while (DL.rooms[y][x].type == 3)
+		DL.rooms[y][x].occupant = 5
 	}
 
+	//	a cleric in another space
+	do {
+		y = $.dice(DL.rooms.length) - 1
+		x = $.dice(DL.width) - 1
+	} while (DL.rooms[y][x].type == 3 || DL.rooms[y][x].occupant)
+	DL.rooms[y][x].occupant = 6
+
+	//	a wizard in another space
+	do {
+		y = $.dice(DL.rooms.length) - 1
+		x = $.dice(DL.width) - 1
+	} while (DL.rooms[y][x].type == 3 || DL.rooms[y][x].occupant)
+	DL.rooms[y][x].occupant = 7
+
+	/*
 	//      bonus for the more experienced player
 	if(dice(PLAYER.Immortal) > dl && dice(PLAYER.Wins) > nest && PLAYER.Novice != 'Y') {
 			x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
@@ -733,9 +754,12 @@ function putMonster(r?:number, c?:number) {
 	level = (i == 1) ? (level >>1) + $.dice(level / 2 + 1) : (i == 2) ? $.dice(level + 1) : level
 	level = (level < 1) ? 1 : (level > 99) ? 99 : level
 
+	//	add a monster level relative to this floor, including "strays"
 	let room = DL.rooms[r][c]
 	i = room.monster.push(<active>{ user:{ id: '', sex:'I', level:level } }) - 1
 	m = room.monster[i]
+
+	//	pick and generate monster class relative to its level
 	j = level + $.dice(7) - 4
 	j = j < 0 ? 0 : j >= Object.keys(monsters).length ? Object.keys(monsters).length - 1 : j
 	m.user.handle = Object.keys(monsters)[j]
