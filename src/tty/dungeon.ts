@@ -27,7 +27,7 @@ module Dungeon
 		giftItem?: string	//	potion, poison, magic, xmagic, chest, map, armor, weapon, marauder
 		giftValue?: number
 		giftID?: boolean	//	undefined, or identified?
-		monster?: monster[]
+		monster?: active[]
 	}
 
 	let fini: Function
@@ -84,6 +84,8 @@ export function menu(suppress = false) {
 	if ($.online.altered) $.saveUser($.player)
 	if ($.reason) xvt.hangup()
 
+	drawHero()
+
 	$.action('dungeon')
 	xvt.app.form = {
         'command': { cb:command, enter:'?', eol:false }
@@ -120,8 +122,8 @@ export function menu(suppress = false) {
 		xvt.app.form['command'].prompt += xvt.attr(
 			$.bracket('Y', false), xvt.cyan, 'our status: '
 		)
-		xvt.app.focus = 'command'
 	}
+	xvt.app.focus = 'command'
 }
 
 function command() {
@@ -183,10 +185,6 @@ function command() {
 		}
 		oof('west')
 		break
-
-	default:
-		xvt.beep()
-		suppress = false
 	}
 
 	menu(suppress)
@@ -211,7 +209,7 @@ function drawLevel() {
 		for (y = 0; y < paper.length; y++) {
 			if (y % 2) {
 				for (x = 0; x < DL.width; x++) {
-					xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y].substr(6 * x))
+					xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y].substr(6 * x, 1))
 
 					let r = y >>1
 					let o = '     '
@@ -280,6 +278,12 @@ function drawLevel() {
 	xvt.out(`\x1B[${paper.length + 1};${$.player.rows}r`)
 }
 
+function drawHero() {
+	xvt.plot(Y * 2 + 2, X * 6 + 2)
+	xvt.out(xvt.white, xvt.reverse, '-YOU-', xvt.reset)
+	xvt.plot($.player.rows, 1)
+}
+
 function drawRoom(r:number, c:number) {
 	let row = r * 2 + 1, col = c * 6 + 1
 
@@ -301,9 +305,9 @@ function generateLevel() {
 		return
 	}
 
+	let y:number, x:number
 	let result: boolean
 	do {
-		xvt.out(xvt.reset, '\n')
 		let maxRow = 6 + $.dice(Z / 32 + 1)
 		while (maxRow < 10 && $.dice($.online.cha / (4 * ($.player.backstab + 1))) == 1)
 			maxRow++
@@ -319,11 +323,10 @@ function generateLevel() {
 		}
 
 		DL = dd[deep][Z]
-		let y:number, x:number
 		for (y = 0; y < DL.rooms.length; y++) {
 			DL.rooms[y] = new Array(DL.width)
 				for (x = 0; x < DL.width; x++)
-					DL.rooms[y][x] = <room>{ map:true, occupant:0, type:0 }
+					DL.rooms[y][x] = <room>{ map:true, monster:[], occupant:0, type:0 }
 		}
 
 		for (y = 0; y < DL.rooms.length; y++) {
@@ -345,7 +348,164 @@ function generateLevel() {
 	Y = $.dice(DL.rooms.length) - 1
 	X = $.dice(DL.width) - 1
 	renderMap()
-	
+
+	//	populate this floor
+	let n = Math.trunc(DL.rooms.length * DL.width / 6 + $.dice(Z / 11) + (deep >>1) + $.dice(deep >>1))
+	for (let i = 0; i < n; i++)
+		putMonster()
+
+
+	/*
+	m = LEVEL(dl)->MaxRow * LEVEL(dl)->MaxCol / 6 + dice(dl / 11) + nest / 2 + dice(nest / 2);
+	for(n = 0; n < m; n++) {
+			x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
+			putmonster(x, y);
+	}
+
+	//      bonus for the more experienced player
+	if(dice(PLAYER.Immortal) > dl && dice(PLAYER.Wins) > nest && PLAYER.Novice != 'Y') {
+			x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
+			ROOM(dl, x, y)->gift_type = GIFT_DETECT;
+			if((dice(100 * dl + 1) / nest) == 1)
+					wow = LEVEL(dl)->MaxRow * LEVEL(dl)->MaxCol;
+	}
+
+	m = LEVEL(dl)->MaxRow * LEVEL(dl)->MaxCol / 10;
+	if(dice(100 - dl) > nest)
+			m += dice(dl / 16 + 2);
+	for(n = 0; n < m; n++) {
+			x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
+			ROOM(dl, x, y)->occupant = TRAP_DOOR;
+	}
+
+	if(dice((102 - dl) / 3 + nest) == 1 && PLAYER.Novice != 'Y') {
+			for(i = 0; i < wow; i++) {
+					x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
+					ROOM(dl, x, y)->occupant = WELL;
+			}
+			wow = 1;
+	}
+
+	if(dice((102 - dl) / 3 + nest) == 1 && PLAYER.Novice != 'Y') {
+			for(i = 0; i < wow; i++) {
+					x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
+					ROOM(dl, x, y)->occupant = WHEEL;
+			}
+			wow = 1;
+	}
+
+	if(nest < 10 && nest < PLAYER.Immortal && PLAYER.Novice != 'Y') {
+			x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
+			ROOM(dl, x, y)->occupant = DEEP_DANK_DUNGEON;
+	}
+
+	m = dice(nest / 4) + wow - 1;
+	for(n = 0; n < m; n++) {
+			x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
+			ROOM(dl, x, y)->occupant = THIEF;
+	}
+
+	do {
+			x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
+	} while(ROOM(dl, x, y)->occupant);
+	ROOM(dl, x, y)->occupant = CLERIC;
+
+	do {
+			x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
+	} while(ROOM(dl, x, y)->occupant);
+	ROOM(dl, x, y)->occupant = WIZARD;
+
+	wow = 1;
+	//      bonus for the more experienced player
+	if(dice(PLAYER.Immortal) > dl && PLAYER.Novice != 'Y')
+			if((dice(100 * dl + 1) / nest) == 1)
+					wow = LEVEL(dl)->MaxRow * LEVEL(dl)->MaxCol;
+
+	m = dice(dl / 33) + dice(nest / 3) + wow - 2;
+	for(n = 0; n < m; n++) {
+		x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
+		if(dice(nest + 10) > nest) {
+				ROOM(dl, x, y)->gift_id = FALSE;
+				ROOM(dl, x, y)->gift_type = GIFT_VIAL;
+				j = dice(126 + nest);
+				for(i = 0; i < 16 && j > 0; i++)
+						j -= i + 1;
+				ROOM(dl, x, y)->gift_value = 16 - i;
+				continue;
+		}
+		if(dice(nest + 5) > nest && ONLINE->user.MyPoison) {
+				ROOM(dl, x, y)->gift_type = GIFT_POISON;
+				j = dice(126 + nest);
+				for(i = 0; i < 16 && j > 0; i++)
+						j -= i + 1;
+				ROOM(dl, x, y)->gift_value = 16 - i;
+				continue;
+		}
+
+		if(dice(nest + 5) > nest && (ONLINE->user.MyMagic == 1 || ONLINE->user.MyMagic == 2)) {
+				ROOM(dl, x, y)->gift_type = GIFT_MAGIC;
+				j = dice(126 + nest);
+				for(i = 0; i < 16 && j > 0; i++)
+						j -= i + 1;
+				ROOM(dl, x, y)->gift_value = 16 - i;
+				continue;
+		}
+		if(dice(nest + 3) > nest && (ONLINE->user.MyMagic == 1 || ONLINE->user.MyMagic == 2)) {
+				ROOM(dl, x, y)->gift_type = GIFT_XMAGIC;
+				j = dice(11 + nest);
+				for(i = 0; i < 8 && j > 0; i++)
+						j -= i + 1;
+				ROOM(dl, x, y)->gift_value = 8 - i;
+				continue;
+		}
+		if(dice(nest + ONLINE->user.MyMagic + 4) > nest) {
+				ROOM(dl, x, y)->gift_type = GIFT_CHEST;
+				ROOM(dl, x, y)->gift_value = dice(nest + 6) - 1;
+				continue;
+		}
+
+		if(dice(nest * (ONLINE->user.MyMagic + 3)) - ONLINE->user.MyMagic > nest) {
+				ROOM(dl, x, y)->gift_type = GIFT_ARMOR;
+				ROOM(dl, x, y)->gift_value = dice(nest + 6) - 1;
+				continue;
+		}
+		if(dice(nest * (ONLINE->user.MyMagic + 2)) - ONLINE->user.MyMagic > nest) {
+				ROOM(dl, x, y)->gift_type = GIFT_WEAPON;
+				ROOM(dl, x, y)->gift_value = dice(nest + 6) - 1;
+				continue;
+		}
+	}
+
+	m = nest - 1;
+	for(i = 0; i < LEVEL(dl)->MaxCol; i++)
+			for(j = 0; j < LEVEL(dl)->MaxRow; j++)
+					if(ROOM(dl, i, j)->gift_type == GIFT_DETECT)
+							m = 0;
+
+	if(m) {
+			x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
+			ROOM(dl, x, y)->gift_type = GIFT_MAP;
+	}
+
+	renderdmap();
+	drawmap();
+
+	hx = dice(LEVEL(dl)->MaxCol) - 1; hy = dice(LEVEL(dl)->MaxRow) - 1;
+	fx = hx; fy = hy;
+	mymove = TRUE;
+
+	if(!logoff) {
+			sprintf(outbuf, "is entering Dungeon %s, level %d", numlev[nest], dl + 1);
+			broadcast(outbuf);
+	}
+
+	if((int)PLAYER.Level / 9 - nest > PLAYER.Security) {
+			NL;
+			OUT("The feeling of insecurity overwhelms you."); NL;
+			paused();
+	}
+*/
+
 	function spider(r:number, c:number) {
 		DL.rooms[r][c].map = false
 		if (c + 1 < DL.width)
@@ -505,6 +665,91 @@ function generateLevel() {
 			return target.substr(0, offset) + data + target.substr(offset + data.length)
 		}
 	}
+}
+
+function putMonster(r?:number, c?:number) {
+	// attempt to add one to a cavern only, but no more than 3
+	if (!r && !c) {
+		do {
+			r = $.dice(DL.rooms.length) - 1
+			c = $.dice(DL.width) - 1
+		} while (DL.rooms[r][c].type != 3)
+		if (DL.rooms[r][c].monster.length > 2)
+			return
+		//	no? add anywhere
+		r = $.dice(DL.rooms.length) - 1
+		c = $.dice(DL.width) - 1
+	}
+
+	let i:number = DL.rooms[r][c].monster.length
+	let j:number = 0
+	let dm:monster
+	let level: number = 0
+	let m:active
+
+	for (j = 0; j < 4; j++)
+		level += $.dice(7)
+	switch (level >>2) {
+		case 1:
+			level = $.dice(Z)
+			break
+		case 2:
+			level = Z - 3 - $.dice(3)
+			break
+		case 3:
+			level = Z - $.dice(3)
+			break
+		case 4:
+			level = Z
+			break
+		case 5:
+			level = Z + $.dice(3)
+			break
+		case 6:
+			level = Z + 3 + $.dice(3)
+			break
+		case 7:
+			level = Z + $.dice(100 - Z)
+			break
+	}
+	level = (level < 1) ? 1 : (level > 99) ? 99 : level
+	level = (i == 1) ? (level >>1) + $.dice(level / 2 + 1) : (i == 2) ? $.dice(level + 1) : level
+	level = (level < 1) ? 1 : (level > 99) ? 99 : level
+
+	let room = DL.rooms[r][c]
+	i = room.monster.push(<active>{ user:{ id: '', sex:'I', level:level } }) - 1
+	m = room.monster[i]
+	j = level + $.dice(7) - 4
+	j = j < 0 ? 0 : j >= Object.keys(monsters).length ? Object.keys(monsters).length - 1 : j
+	m.user.handle = Object.keys(monsters)[j]
+	dm = monsters[m.user.handle]
+	$.reroll(m.user, dm.pc ? dm.pc : $.player.pc, level)
+
+	m.user.weapon = dm.weapon ? dm.weapon : j >>1
+	m.user.armor = dm.armor ? dm.armor : j >>2
+	m.user.hp >>= 2
+	i = 5 - $.dice(deep / 3)
+	m.user.sp = Math.trunc(m.user.sp / i)
+	m.user.poisons = []
+	if (dm.poisons)
+		for (let vials in dm.poisons)
+			$.Poison.add(m.user.poisons, dm.poisons[vials])
+	m.user.spells = []
+	if (dm.spells)
+		for (let magic in dm.spells)
+			$.Magic.add(m.user.spells, dm.spells[magic])
+
+	$.activate(m)
+	i = 5 - (deep >>1)
+	m.str -= i
+	m.int -= i
+	m.dex -= i
+	m.cha -= i
+	let gold = new $.coins(1)
+	gold.value += $.worth(new $.coins(m.weapon.value).value, $.dice($.online.cha) / 5 + 5)
+	gold.value += $.worth(new $.coins(m.armor.value).value, $.dice($.online.cha) / 5 + 5)
+	gold.value *= $.dice(deep)
+	m.user.coin = new $.coins(gold.carry(1, true))
 }
 
 }

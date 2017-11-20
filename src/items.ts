@@ -101,7 +101,10 @@ export class Armor {
         if (isNaN(+what)) {
             rpc.user.armor = what
             armor = this.name[what]
-            if (worth) armor.value = worth
+            if (worth)
+                armor.value = worth
+            else if (this.merchant[armor.ac])
+                armor.value = this.name[this.merchant[armor.ac]].value
         }
         else {
             rpc.user.armor = +what
@@ -253,7 +256,7 @@ export class Poison {
         }
     }
 
-    add(vials: number[], n:number) {
+    add(vials: number[], n:number|string) {
         n = +n
         if (!this.have(vials, n)) {
             vials.push(n)
@@ -381,7 +384,10 @@ export class Weapon {
         if (isNaN(+what)) {
             rpc.user.weapon = what
             weapon = this.name[what]
-            if (worth) weapon.value = worth
+            if (worth)
+                weapon.value = worth
+            else if (this.merchant[weapon.wc])
+                weapon.value = this.name[this.merchant[weapon.wc]].value
         }
         else {
             rpc.user.weapon = +what

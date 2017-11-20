@@ -132,6 +132,7 @@ interface dungeon {
 interface monster {
 	name: string
     pc: string
+    poisons?: string[]
     spells?: string[]
     level?: number
     weapon?: string|number
@@ -176,7 +177,7 @@ interface armor {
 interface coins {
     value: number
     amount: string
-    carry(): string
+    carry(number?, boolean?): string
     pouch(number): string
 }
 
