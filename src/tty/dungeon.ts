@@ -46,8 +46,8 @@ module Dungeon
     //  £
     export const Cleric = {
         VT: '\x1B(0\x7D\x1B(B',
-        PC: '\xB8',
-        XT: '\u00A9',
+        PC: '\x9C',
+        XT: '\u00A3',
         dumb: '$'
     }
 
@@ -76,6 +76,7 @@ export function DeepDank(start: number, cb: Function) {
 	fini = cb
 	dd[deep] = new Array(100)
 	generateLevel()
+	if (!doMove(0, 0)) return
 	menu()
 }
 
@@ -85,7 +86,7 @@ export function menu(suppress = false) {
 	if ($.reason) xvt.hangup()
 
 	drawHero()
-	
+
 	$.action('dungeon')
 	xvt.app.form = {
         'command': { cb:command, enter:'?', eol:false }
@@ -102,22 +103,26 @@ export function menu(suppress = false) {
 			xvt.app.form['command'].prompt += xvt.attr(
 				$.bracket('P', false), xvt.cyan, 'oison, '
 			)
-		if (Y > 0 && DL.rooms[Y][X].type !== 2 && DL.rooms[Y - 1][X].type !== 2)
-			xvt.app.form['command'].prompt += xvt.attr(
-				$.bracket('N', false), xvt.cyan, 'orth, '
-			)
-		if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 2 && DL.rooms[Y - 1][X].type !== 2)
-			xvt.app.form['command'].prompt += xvt.attr(
-				$.bracket('S', false), xvt.cyan, 'outh, ',
-			)
-		if (X < DL.width - 1 && DL.rooms[Y][X].type !== 1 && DL.rooms[Y][X + 1].type !== 1)
-			xvt.app.form['command'].prompt += xvt.attr(
-				$.bracket('E', false), xvt.cyan, 'ast, ',
-			)
-		if (X > 0 && DL.rooms[Y][X].type !== 1 && DL.rooms[Y][X - 1].type !== 1)
-			xvt.app.form['command'].prompt += xvt.attr(
-				$.bracket('W', false), xvt.cyan, 'est, ',
-			)
+		if (Y > 0 && DL.rooms[Y][X].type !== 2)
+			if (DL.rooms[Y - 1][X].type !== 2)
+				xvt.app.form['command'].prompt += xvt.attr(
+					$.bracket('N', false), xvt.cyan, 'orth, '
+				)
+		if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 2)
+			if (DL.rooms[Y + 1][X].type !== 2)
+				xvt.app.form['command'].prompt += xvt.attr(
+					$.bracket('S', false), xvt.cyan, 'outh, ',
+				)
+		if (X < DL.width - 1 && DL.rooms[Y][X].type !== 1)
+			if (DL.rooms[Y][X + 1].type !== 1)
+				xvt.app.form['command'].prompt += xvt.attr(
+					$.bracket('E', false), xvt.cyan, 'ast, ',
+				)
+		if (X > 0 && DL.rooms[Y][X].type !== 1)
+			if (DL.rooms[Y][X - 1].type !== 1)
+				xvt.app.form['command'].prompt += xvt.attr(
+					$.bracket('W', false), xvt.cyan, 'est, ',
+				)
 
 		xvt.app.form['command'].prompt += xvt.attr(
 			$.bracket('Y', false), xvt.cyan, 'our status: '
@@ -129,10 +134,14 @@ export function menu(suppress = false) {
 function command() {
 	let suppress = $.player.expert
 	let choice = xvt.entry.toUpperCase()
-	if (/\[.*\]/.test(xvt.terminator))
+	if (/\[.*\]/.test(xvt.terminator)) {
 		choice = 'NSEW'['UDRL'.indexOf(xvt.terminator[1])]
-    if (xvt.validator.isNotEmpty(dungeon[choice]))
-        xvt.out(dungeon[choice].description, '\n')
+		xvt.out(choice)
+	}
+    if (xvt.validator.isNotEmpty(dungeon[choice])) {
+		xvt.out(dungeon[choice].description, '\n')
+		DL.moves++
+	}
     else {
         xvt.beep()
         suppress = false
@@ -157,34 +166,38 @@ function command() {
 		break
 
 	case 'N':
-		if (Y > 0 && DL.rooms[Y][X].type !== 2 && DL.rooms[Y - 1][X].type !== 2) {
-			if (!doMove(-1, 0)) return
-			break
-		}
+		if (Y > 0 && DL.rooms[Y][X].type !== 2)
+			if (DL.rooms[Y - 1][X].type !== 2) {
+				if (!doMove(-1, 0)) return
+				break
+			}
 		oof('north')
 		break
 
 	case 'S':
-		if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 2 && DL.rooms[Y - 1][X].type !== 2) {
-			if (!doMove(1, 0)) return
-			break
-		}
+		if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 2)
+			if (DL.rooms[Y + 1][X].type !== 2) {
+				if (!doMove(1, 0)) return
+				break
+			}
 		oof('south')
 		break
 
 	case 'E':
-		if (X < DL.width - 1 && DL.rooms[Y][X].type !== 1 && DL.rooms[Y][X + 1].type !== 1) {
-			if (!doMove(0, 1)) return
-			break
-		}
+		if (X < DL.width - 1 && DL.rooms[Y][X].type !== 1)
+			if (DL.rooms[Y][X + 1].type !== 1) {
+				if (!doMove(0, 1)) return
+				break
+			}
 		oof('east')
 		break
 
 	case 'W':
-		if (X > 0 && DL.rooms[Y][X].type !== 1 && DL.rooms[Y][X - 1].type !== 1) {
-			if (!doMove(0, -1)) return
-			break
-		}
+		if (X > 0 && DL.rooms[Y][X].type !== 1)
+			if (DL.rooms[Y][X - 1].type !== 1) {
+				if (!doMove(0, -1)) return
+				break
+			}
 		oof('west')
 		break
 	}
@@ -204,15 +217,64 @@ function command() {
 }
 
 function doMove(dy:number, dx:number): boolean {
-	drawRoom(Y, X)
-	if ($.online.int > 49)
-		ROOM.map = true
+	if (dy || dx) drawRoom(Y, X)
 
 	Y += dy
 	X += dx
-	ROOM = DL.rooms[Y][X]
+	drawHero()
 
-	if (!ROOM.occupant && !ROOM.monster.length) return true
+	if (!ROOM.occupant && !ROOM.monster.length && !ROOM.giftItem) return true
+	xvt.out('\n')
+
+	if (ROOM.monster.length) {
+		if (ROOM.monster.length == 1) {
+			xvt.out('There\'s something lurking in here . . . \n')
+			let img = 'dungeon/' + ROOM.monster[0].user.handle
+			try {
+				fs.accessSync('images/' + img + '.jpg', fs.constants.F_OK)
+				$.profile({ jpg:img })
+			} catch(e) {
+				$.profile({ png:'monster/' + ROOM.monster[0].user.pc.toLowerCase() })
+			}
+		}
+		else {
+			xvt.out('There\'s a party waiting for you in here . . . \n')
+			let m = {}
+			for (let i = 0; i < ROOM.monster.length; i++)
+				m['mob' + (i+1)] = 'monster/' + ROOM.monster[i].user.pc.toLowerCase()
+			$.profile(m)
+		}
+
+		for (let n = 0; n < ROOM.monster.length; n++) {
+			$.cat('dungeon/' + ROOM.monster[n].user.handle)
+			xvt.out(xvt.reset, '\nIt\'s', $.an(ROOM.monster[n].user.handle), '!')
+			xvt.waste(600)
+			xvt.out('  And it doesn\'t look friendly.\n')
+			xvt.waste(400)
+
+			if (isNaN(+ROOM.monster[n].user.weapon)) xvt.out('\n', $.who(ROOM.monster[n], 'He'), $.Weapon.wearing(ROOM.monster[n]), '.\n')
+			if (isNaN(+ROOM.monster[n].user.armor)) xvt.out('\n', $.who(ROOM.monster[n], 'He'), $.Armor.wearing(ROOM.monster[n]), '.\n')
+		}
+
+		Battle.engage('Dungeon', $.online, ROOM.monster, menu)
+		return false
+	}
+
+	menu()
+	return false
+}
+
+function drawHero() {
+	if ($.online.int > 49)
+		ROOM.map = true
+	drawRoom(Y, X)
+
+	ROOM = DL.rooms[Y][X]
+	xvt.plot(Y * 2 + 2, X * 6 + 2)
+	xvt.out(xvt.reset, xvt.reverse, '-YOU-')
+	xvt.out(`\x1B[${paper.length + 1};${$.player.rows}r`)
+	xvt.plot($.player.rows, 1)
+	xvt.out(xvt.reset)
 }
 
 function drawLevel() {
@@ -223,9 +285,12 @@ function drawLevel() {
 		for (y = 0; y < paper.length; y++) {
 			if (y % 2) {
 				for (x = 0; x < DL.width; x++) {
-					xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y].substr(6 * x, 1))
+					if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[y].substr(6 * x, 1), '\x1B(B')
+					else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y].substr(6 * x, 1))
+					xvt.out(xvt.reset)
 
 					let r = y >>1
+					let icon = null
 					let o = '     '
 					if (DL.rooms[r][x].map)
 						o = xvt.attr(xvt.reset, DL.rooms[r][x].type == 0 ? xvt.bright
@@ -233,10 +298,9 @@ function drawLevel() {
 							: xvt.normal, `  ${dot}  `)
 
 					if (DL.rooms[r][x].map || DL.map) {
-						let icon = null
 						if (DL.rooms[r][x].monster.length)
-							icon = xvt.attr(xvt.reset, DL.rooms[r][x].occupant ? xvt.green : xvt.red, 
-								DL.rooms[r][x].monster.length > 1 ? 'Mob' : 'Mon')
+							icon = xvt.attr(DL.rooms[r][x].occupant ? xvt.green : xvt.red, 
+								DL.rooms[r][x].monster.length > 1 ? 'Mob' : 'Mon', xvt.reset)
 
 						//	0=none, 1=trap door, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard
 						switch (DL.rooms[r][x].occupant) {
@@ -251,7 +315,7 @@ function drawLevel() {
 
 							case 2:
 								if (!icon) icon = xvt.attr('v', xvt.bright, xvt.blink, 'V', xvt.noblink, xvt.normal, 'v')
-								o = xvt.attr(xvt.faint, xvt.blue, 'v', xvt.normal, icon, xvt.normal, xvt.faint, 'v')
+								o = xvt.attr(xvt.faint, xvt.blue, 'v', xvt.normal, icon, xvt.faint, xvt.blue, 'v')
 								break
 
 							case 3:
@@ -261,27 +325,29 @@ function drawLevel() {
 								break
 
 							case 5:
-								if ($.player.steal == 4 || DL.map == 2)
-									o = xvt.attr(xvt.reset, xvt.faint, '  &  ', xvt.normal)
+								if (!icon && ($.player.steal == 4 || DL.map == 2))
+									o = xvt.attr(xvt.faint, '  &  ', xvt.normal)
 								break
 
 							case 6:
 								if (!icon) icon = xvt.attr(xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
-								o = xvt.attr(xvt.normal, xvt.yellow, '.', icon, xvt.yellow, '.')
+								o = xvt.attr(xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.faint, xvt.yellow, ':')
 								break
 
 							case 7:
-								if (!icon) icon = xvt.attr('v', xvt.bright, xvt.blink, Teleport[$.player.emulation], xvt.noblink, xvt.normal, 'v')
-								o = xvt.attr(xvt.faint, xvt.magenta, '^', xvt.normal, icon, xvt.normal, xvt.faint, '^')
+								if (!icon) icon = xvt.attr(xvt.uline, '_', xvt.bright, Teleport[$.player.emulation], xvt.normal, '_', xvt.nouline)
+								o = xvt.attr(xvt.faint, xvt.magenta, '<', xvt.normal, icon, xvt.faint, xvt.magenta, '>')
 								break
 						}
 					}
 					xvt.out(o)
 				}
-				xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y].substr(-1))
+				if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[y].substr(-1), '\x1B(B')
+				else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y].substr(-1))
 			}
 			else {
-				xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y])
+				if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[y], '\x1B(B')
+				else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y])
 			}
 			xvt.out(xvt.cll, '\n')
 		}
@@ -291,31 +357,89 @@ function drawLevel() {
 			for (x = 0; x < DL.width; x++)
 				drawRoom(y, x)
 	}
-
-	xvt.out(`\x1B[${paper.length + 1};${$.player.rows}r`)
-}
-
-function drawHero() {
-	xvt.plot(Y * 2 + 2, X * 6 + 2)
-	xvt.out(xvt.white, xvt.reverse, '-YOU-')
-	xvt.plot($.player.rows, 1)
-	xvt.out(xvt.reset)
 }
 
 function drawRoom(r:number, c:number) {
-	let row = r * 2 + 1, col = c * 6 + 1
-
-	if (!DL.map && !ROOM.map) {
-		xvt.plot(row, col + 1)
-		xvt.out(xvt.bright, xvt.Black, '     ')
-		return
+	ROOM = DL.rooms[r][c]
+	let row = r * 2, col = c * 6
+	if (!DL.map) {
+		xvt.plot(row + 1, col + 1)
+		if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col, 7), '\x1B(B')
+		else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[row].substr(col, 7))
 	}
 
-	xvt.plot(row, col)
+	row++
+	xvt.plot(row + 1, col + 1)
+	if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col, 1), '\x1B(B')
+	else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[row].substr(col, 1))
+	xvt.out(xvt.reset)
 
+	let icon = null
+	let o: string
+
+	if (ROOM.map)
+		o = xvt.attr(xvt.reset, ROOM.type == 0 ? xvt.bright
+			: ROOM.type == 3 ? xvt.faint
+			: xvt.normal, `  ${dot}  `)
+	else
+		o = xvt.attr(xvt.bright, xvt.reverse, xvt.black, '     ', xvt.reset)
+
+	if (ROOM.monster.length)
+		icon = xvt.attr(ROOM.occupant ? xvt.green : xvt.red, ROOM.monster.length > 1 ? 'Mob' : 'Mon', xvt.reset)
+
+	//	0=none, 1=trap door, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard
+	switch (ROOM.occupant) {
+		case 0:
+			if (icon) o = ` ${icon} `
+			break
+
+		case 1:
+			if (DL.map)
+				o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.cyan, '  ?  ', xvt.reset)
+			break
+
+		case 2:
+			if (!icon) icon = xvt.attr('v', xvt.bright, xvt.blink, 'V', xvt.noblink, xvt.normal, 'v')
+			o = xvt.attr(xvt.faint, xvt.blue, 'v', xvt.normal, icon, xvt.faint, xvt.blue, 'v')
+			break
+
+		case 3:
+			break
+
+		case 4:
+			break
+
+		case 5:
+			if (!icon && ($.player.steal == 4 || DL.map == 2))
+				o = xvt.attr(xvt.faint, '  &  ', xvt.normal)
+			break
+
+		case 6:
+			if (!icon) icon = xvt.attr(xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
+			o = xvt.attr(xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.faint, xvt.yellow, ':')
+			break
+
+		case 7:
+			if (!icon) icon = xvt.attr(xvt.uline, '_', xvt.bright, Teleport[$.player.emulation], xvt.normal, '_', xvt.nouline)
+			o = xvt.attr(xvt.faint, xvt.magenta, '<', xvt.normal, icon, xvt.faint, xvt.magenta, '>')
+			break
+	}
+	xvt.out(o)
+
+	if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col + 6, 1), '\x1B(B')
+	else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[row].substr(col + 6, 1))
+
+	if (!DL.map) {
+		row++
+		xvt.plot(row + 1, col + 1)
+		if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col, 7), '\x1B(B')
+		else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[row].substr(col, 7))
+	}
 }
 
 function generateLevel() {
+	xvt.out(xvt.reset, xvt.clear)
+
 	if (dd[deep][Z]) {
 		DL = dd[deep][Z]
 		renderMap()
@@ -375,7 +499,7 @@ function generateLevel() {
 	let n = Math.trunc(DL.rooms.length * DL.width / 6 + $.dice(Z / 11) + (deep >>1) + $.dice(deep >>1))
 	for (let i = 0; i < n; i++)
 		putMonster()
-
+/*
 	//	thief(s) in other spaces
 	n = $.dice(deep >>2)
 	for (let i = 0; i < n; n++) {
@@ -385,7 +509,7 @@ function generateLevel() {
 		} while (DL.rooms[y][x].type == 3)
 		DL.rooms[y][x].occupant = 5
 	}
-
+*/
 	//	a cleric in another space
 	do {
 		y = $.dice(DL.rooms.length) - 1
