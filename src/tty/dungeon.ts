@@ -9,6 +9,7 @@ import $ = require('../common')
 import Battle = require('../battle')
 import xvt = require('xvt')
 import { resend } from '../email';
+import { fail } from 'assert';
 
 module Dungeon
 {
@@ -270,8 +271,64 @@ function doMove(dy:number, dx:number): boolean {
 		return false
 	}
 
-	menu()
+	switch (ROOM.occupant) {
+		case 5:
+			break
+
+		case 6:
+			if ($.online.hp < $.player.hp)
+				$.cat('dungeon/cleric')
+			xvt.out('There is an old cleric in this room.\n')
+			if ($.online.hp >= $.player.hp) {
+				xvt.out('He says, "I will pray for you."\n\n')
+				break
+			}
+
+			let cost = new $.coins(Math.trunc($.money(Z) / 6 / $.player.hp * ($.player.hp - $.online.hp)))
+			if (cost.value < 1) cost.value = 1
+			cost.value *= deep
+			if ($.player.melee == 0 || $.player.magic > 2 || $.online.cha > 98)
+				cost.value = 0
+			cost = new $.coins(cost.carry(1, true))
+			xvt.out('He says, "I can heal all your wounds for '
+				, cost.value ? cost.carry() : 'you, brother'
+				, '\n')
+			if (cost.value) {
+				xvt.app.form = {
+				'pay': { cb: () => {
+						xvt.out('\n\n')
+						if (/Y/i.test(xvt.entry)) {
+							if ($.player.coin.value >= cost.value) {
+								$.player.coin.value -= cost.value
+								$.sound('shimmer', 4)
+								xvt.out('He casts a Cure spell on you.\n\n')
+								$.online.hp = $.player.hp
+							}
+							else
+								xvt.out('He says, \"Not!"\n\n')
+						}
+						look()
+					}, prompt:'Will you pay (Y/N)', cancel:'N', enter:'Y', eol:false }
+				}
+				xvt.app.focus = 'pay'
+			}
+			break
+
+		case 7:
+			xvt.out(`\x1B[1;${$.player.rows}r`)
+			xvt.plot($.player.rows, 1)
+			refresh = true
+			xvt.out(xvt.magenta, 'You encounter a wizard in this room.\n\n')
+			teleport()
+			return false
+	}
+
+	look()
 	return false
+
+	function look() {
+
+	}
 }
 
 export function doSpoils() {
@@ -969,6 +1026,51 @@ function putMonster(r?:number, c?:number) {
 	gold.value += $.worth(new $.coins(m.armor.value).value, ($.dice($.online.cha) / 5 + 5) >>0)
 	gold.value *= $.dice(deep)
 	m.user.coin = new $.coins(gold.carry(1, true))
+}
+
+export function teleport() {
+	xvt.out(xvt.bright, xvt.yellow, 'What do you wish to do?\n', xvt.reset)
+	xvt.out($.bracket('U'), 'Teleport up 1 level')
+	if (Z < 99) xvt.out($.bracket('D'), 'Teleport down 1 level')
+	xvt.out($.bracket('O'), `Teleport out of this ${deep ? 'dank' : ''} dungeon`)
+	xvt.out($.bracket('R'), 'Random teleport')
+	xvt.out(xvt.cyan, '\n\nTime Left: ', xvt.bright, xvt.white
+		, Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60).toString()
+		, xvt.normal, xvt.cyan, ' min.\n', xvt.reset)
+	xvt.app.form = {
+		'wizard': { cb:() => {
+			switch (xvt.entry.toUpperCase()) {
+				case 'D':
+					if (Z < 99) {
+						Z++
+						generateLevel()
+						break
+					}
+					xvt.app.refocus()
+					break
+
+				case 'U':
+					if (Z > 0) {
+						Z--
+						generateLevel()
+						break
+					}
+				case 'O':
+					if (deep > 0) {
+						deep--
+						generateLevel()
+					}
+					else
+						require('./main').menu($.player.expert)
+					break
+
+				case 'R':
+					generateLevel()
+					break
+			}
+		}, cancel:'O', enter:'S', eol:false, match:/UDOR/i }
+	}
+ 	xvt.app.form['wizard'].prompt = `Teleport #${deep + 1}.${Z + 1}: `
 }
 
 }
