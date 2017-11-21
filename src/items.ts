@@ -107,8 +107,10 @@ export class Armor {
                 armor.value = this.name[this.merchant[armor.ac]].value
         }
         else {
-            rpc.user.armor = +what
-            armor = <armor>{ ac:what, value:worth ? worth : '0c' }
+            if (what >= this.merchant.length)
+                what = this.merchant.length - 1
+            rpc.user.armor = what
+            armor = <armor>{ ac:what, value:worth ? worth : this.name[this.merchant[what]].value }
         }
         if (!keep) rpc.user.toAC = 0
         rpc.armor = armor
@@ -145,8 +147,6 @@ export class Armor {
             loser.user.toAC >>= 1
         winner.altered = true
         loser.altered = true
-
-        //sprintf(line[numline++],"%s also took %s %s.",(rpc==ONLINE ? "and" : "You"),(rpc==ONLINE ? "your" : PLAYER.Gender=='M' ? "his" : PLAYER.Gender=='F' ? "her" : "its"),ARMOR(enemy)->Name);
         return true
     }
 
@@ -390,8 +390,11 @@ export class Weapon {
                 weapon.value = this.name[this.merchant[weapon.wc]].value
         }
         else {
-            rpc.user.weapon = +what
-            weapon = <weapon>{ wc:what, value:worth ? worth : '0c', hit:'hit', stab:'stab', smash:'smash', plunge:'plunge' }
+            if (what >= this.merchant.length)
+                what = this.merchant.length - 1
+            rpc.user.weapon = what
+            weapon = <weapon>{ wc:what, value:worth ? worth : this.name[this.merchant[what]].value
+                , hit:'hit', stab:'stab', smash:'smash', plunge:'plunge' }
         }
 
         if (!keep) rpc.user.toWC = 0
@@ -431,8 +434,6 @@ export class Weapon {
             loser.user.toWC >>= 1
         winner.altered = true
         loser.altered = true
-
-        //sprintf(line[numline++],"%s also took %s %s.",(rpc==ONLINE ? "and" : "You"),(rpc==ONLINE ? "your" : PLAYER.Gender=='M' ? "his" : PLAYER.Gender=='F' ? "her" : "its"),WEAPON(enemy)->Name);
         return true
     }
 

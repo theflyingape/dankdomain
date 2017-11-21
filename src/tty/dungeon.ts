@@ -31,6 +31,7 @@ module Dungeon
 	}
 
 	let fini: Function
+	let refresh: boolean
 	let paper: string[]
 	let dot = xvt.Empty[$.player.emulation]
 	let dd = new Array(10)
@@ -85,6 +86,10 @@ export function menu(suppress = false) {
 	if ($.online.altered) $.saveUser($.player)
 	if ($.reason) xvt.hangup()
 
+	if (refresh) {
+		drawLevel()
+		refresh = false
+	}
 	drawHero()
 
 	$.action('dungeon')
@@ -150,7 +155,7 @@ function command() {
     switch (choice) {
 	case 'M':	//	#tbt
 		if ($.access.sysop) DL.map = 2
-		drawLevel()
+		refresh = true
 		break
 
 	case 'C':
@@ -227,6 +232,10 @@ function doMove(dy:number, dx:number): boolean {
 	xvt.out('\n')
 
 	if (ROOM.monster.length) {
+		xvt.out(`\x1B[1;${$.player.rows}r`)
+		xvt.plot($.player.rows, 1)
+		refresh = true
+
 		if (ROOM.monster.length == 1) {
 			xvt.out('There\'s something lurking in here . . . \n')
 			let img = 'dungeon/' + ROOM.monster[0].user.handle
@@ -244,11 +253,12 @@ function doMove(dy:number, dx:number): boolean {
 				m['mob' + (i+1)] = 'monster/' + ROOM.monster[i].user.pc.toLowerCase()
 			$.profile(m)
 		}
-
+		xvt.waste(600)
+		
 		for (let n = 0; n < ROOM.monster.length; n++) {
 			$.cat('dungeon/' + ROOM.monster[n].user.handle)
 			xvt.out(xvt.reset, '\nIt\'s', $.an(ROOM.monster[n].user.handle), '!')
-			xvt.waste(600)
+			xvt.waste(500)
 			xvt.out('  And it doesn\'t look friendly.\n')
 			xvt.waste(400)
 
@@ -256,12 +266,46 @@ function doMove(dy:number, dx:number): boolean {
 			if (isNaN(+ROOM.monster[n].user.armor)) xvt.out('\n', $.who(ROOM.monster[n], 'He'), $.Armor.wearing(ROOM.monster[n]), '.\n')
 		}
 
-		Battle.engage('Dungeon', $.online, ROOM.monster, menu)
+		Battle.engage('Dungeon', $.online, ROOM.monster, doSpoils)
 		return false
 	}
 
 	menu()
 	return false
+}
+
+export function doSpoils() {
+	let pause = false
+
+	//	remove any dead carcass
+	for (let n = ROOM.monster.length - 1; n >= 0; n--)
+		if (ROOM.monster[n].hp < 1) {
+			ROOM.monster.splice(n, 1)
+			pause = true
+		}
+
+	if (!ROOM.monster.length) {
+		if (DL.map < 2 && $.dice((15 - $.online.cha / 10) >>1) == 1) {
+			let m = ($.dice(Z / 33 + 2) > 1 ? 1 : 2)
+			if (DL.map < m) {
+				DL.map = m
+				xvt.out('\n', xvt.bright, xvt.yellow
+					, 'You find '
+					, m == 1 ? 'a' : 'Marauder\'s'
+					, ' map!', xvt.reset)
+				pause = true
+			}
+		}
+	}
+
+	if (pause) {
+		xvt.app.form = {
+			'pause': { cb:menu, pause:true }
+		}
+		xvt.app.focus = 'pause'
+	}
+	else
+		menu()
 }
 
 function drawHero() {
@@ -297,19 +341,20 @@ function drawLevel() {
 							: DL.rooms[r][x].type == 3 ? xvt.faint
 							: xvt.normal, `  ${dot}  `)
 
-					if (DL.rooms[r][x].map || DL.map) {
+					if (DL.rooms[r][x].map || DL.map > 1)
 						if (DL.rooms[r][x].monster.length)
 							icon = xvt.attr(DL.rooms[r][x].occupant ? xvt.green : xvt.red, 
 								DL.rooms[r][x].monster.length > 1 ? 'Mob' : 'Mon', xvt.reset)
 
-						//	0=none, 1=trap door, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard
+					//	0=none, 1=trap door, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard
+					if (DL.rooms[r][x].map || DL.map) {
 						switch (DL.rooms[r][x].occupant) {
 							case 0:
 								if (icon) o = ` ${icon} `
 								break
 
 							case 1:
-								if (DL.map)
+								if (!icon && DL.map > 1)
 									o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.cyan, '  ?  ', xvt.reset)
 								break
 
@@ -325,7 +370,7 @@ function drawLevel() {
 								break
 
 							case 5:
-								if (!icon && ($.player.steal == 4 || DL.map == 2))
+								if (!icon && ($.player.steal == 4 || DL.map > 1))
 									o = xvt.attr(xvt.faint, '  &  ', xvt.normal)
 								break
 
@@ -355,7 +400,8 @@ function drawLevel() {
 	else {
 		for (y = 0; y < DL.rooms.length; y++)
 			for (x = 0; x < DL.width; x++)
-				drawRoom(y, x)
+				if (DL.rooms[y][x].map)
+					drawRoom(y, x)
 	}
 }
 
@@ -382,7 +428,7 @@ function drawRoom(r:number, c:number) {
 			: ROOM.type == 3 ? xvt.faint
 			: xvt.normal, `  ${dot}  `)
 	else
-		o = xvt.attr(xvt.bright, xvt.reverse, xvt.black, '     ', xvt.reset)
+		o = xvt.attr('     ')
 
 	if (ROOM.monster.length)
 		icon = xvt.attr(ROOM.occupant ? xvt.green : xvt.red, ROOM.monster.length > 1 ? 'Mob' : 'Mon', xvt.reset)
@@ -438,7 +484,7 @@ function drawRoom(r:number, c:number) {
 }
 
 function generateLevel() {
-	xvt.out(xvt.reset, xvt.clear)
+	refresh = true
 
 	if (dd[deep][Z]) {
 		DL = dd[deep][Z]
@@ -890,8 +936,14 @@ function putMonster(r?:number, c?:number) {
 	dm = monsters[m.user.handle]
 	$.reroll(m.user, dm.pc ? dm.pc : $.player.pc, level)
 
-	m.user.weapon = dm.weapon ? dm.weapon : j >>1
-	m.user.armor = dm.armor ? dm.armor : j >>2
+	if (dm.weapon)
+		m.user.weapon = dm.weapon
+	else
+		m.user.weapon = Math.trunc((level + deep - 10) / 100 * ($.Weapon.merchant.length - 1))
+	if (dm.armor)
+		m.user.armor = dm.armor
+	else
+		m.user.armor = Math.trunc((level + deep - 10) / 100 * ($.Armor.merchant.length - 1))
 	m.user.hp >>= 2
 	i = 5 - $.dice(deep / 3)
 	m.user.sp = Math.trunc(m.user.sp / i)
@@ -905,14 +957,16 @@ function putMonster(r?:number, c?:number) {
 			$.Magic.add(m.user.spells, dm.spells[magic])
 
 	$.activate(m)
+
 	i = 5 - (deep >>1)
 	m.str -= i
 	m.int -= i
 	m.dex -= i
 	m.cha -= i
-	let gold = new $.coins(1)
-	gold.value += $.worth(new $.coins(m.weapon.value).value, $.dice($.online.cha) / 5 + 5)
-	gold.value += $.worth(new $.coins(m.armor.value).value, $.dice($.online.cha) / 5 + 5)
+
+	let gold = new $.coins(Math.trunc($.money(level) / 10))
+	gold.value += $.worth(new $.coins(m.weapon.value).value, ($.dice($.online.cha) / 5 + 5) >>0)
+	gold.value += $.worth(new $.coins(m.armor.value).value, ($.dice($.online.cha) / 5 + 5) >>0)
 	gold.value *= $.dice(deep)
 	m.user.coin = new $.coins(gold.carry(1, true))
 }
