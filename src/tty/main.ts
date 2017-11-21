@@ -14,7 +14,7 @@ module Main
     let mainmenu: choices = {
         '@': { description:'Sysop' },
         'A': { description:'Arena: Fight and Joust' },
-        'D': { description:'ALPHA dungeon' },
+        'D': { description:'Deep Dank Dungeon' },
         'E': { description:'Electronic Mail and Feedback' },
         'G': { description:'Gambling Casino' },
         'L': { description:'List of Top Users: Fame & Lame' },
@@ -74,7 +74,7 @@ function choice() {
             if ($.dungeon) {
                 $.dungeon--
                 $.music('dungeon' + $.dice(9))
-                require('./alpha').DeepDank($.player.level - 1, menu)
+                require('./dungeon').DeepDank($.player.level - 1, menu)
             }
             else {
                 xvt.out('\nYou have run out of dungeon turns.\n')

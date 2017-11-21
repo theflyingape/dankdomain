@@ -248,18 +248,20 @@ function doMove(dy:number, dx:number): boolean {
 			}
 		}
 		else {
-			xvt.out('There\'s a party waiting for you in here . . . \n')
+			xvt.out('There\'s a party waiting for '
+				, ['you', 'the main course', 'the entertainment', 'meat', 'a good chew'][$.dice(5) - 1]
+				, ' . . . \n')
 			let m = {}
 			for (let i = 0; i < ROOM.monster.length; i++)
 				m['mob' + (i+1)] = 'monster/' + ROOM.monster[i].user.pc.toLowerCase()
 			$.profile(m)
 		}
-		xvt.waste(600)
-		
+		xvt.waste(1000)
+
 		for (let n = 0; n < ROOM.monster.length; n++) {
 			$.cat('dungeon/' + ROOM.monster[n].user.handle)
 			xvt.out(xvt.reset, '\nIt\'s', $.an(ROOM.monster[n].user.handle), '!')
-			xvt.waste(500)
+			xvt.waste(600)
 			xvt.out('  And it doesn\'t look friendly.\n')
 			xvt.waste(400)
 
@@ -291,7 +293,7 @@ function doMove(dy:number, dx:number): boolean {
 				cost.value = 0
 			cost = new $.coins(cost.carry(1, true))
 			xvt.out('He says, "I can heal all your wounds for '
-				, cost.value ? cost.carry() : 'you, brother'
+				, cost.value ? cost.carry() : 'you, brother."'
 				, '\n')
 			if (cost.value) {
 				xvt.app.form = {
@@ -308,11 +310,18 @@ function doMove(dy:number, dx:number): boolean {
 								xvt.out('He says, \"Not!"\n\n')
 						}
 						look()
+						menu()
 					}, prompt:'Will you pay (Y/N)', cancel:'N', enter:'Y', eol:false }
 				}
 				xvt.app.focus = 'pay'
+				return false
 			}
-			break
+			else {
+				$.sound('shimmer', 4)
+				xvt.out('He casts a Cure spell on you.\n\n')
+				$.online.hp = $.player.hp
+				return true
+			}
 
 		case 7:
 			xvt.out(`\x1B[1;${$.player.rows}r`)
@@ -320,7 +329,7 @@ function doMove(dy:number, dx:number): boolean {
 			refresh = true
 			xvt.out(xvt.magenta, 'You encounter a wizard in this room.\n\n')
 			teleport()
-			return false
+			break
 	}
 
 	look()
@@ -356,6 +365,7 @@ export function doSpoils() {
 	}
 
 	if (pause) {
+		if (!doMove(0, 0)) return
 		xvt.app.form = {
 			'pause': { cb:menu, pause:true }
 		}
@@ -1039,38 +1049,41 @@ export function teleport() {
 		, xvt.normal, xvt.cyan, ' min.\n', xvt.reset)
 	xvt.app.form = {
 		'wizard': { cb:() => {
+			xvt.out('\n\n')
+			$.sound('teleport')
 			switch (xvt.entry.toUpperCase()) {
 				case 'D':
 					if (Z < 99) {
 						Z++
-						generateLevel()
 						break
 					}
 					xvt.app.refocus()
-					break
+					return
 
 				case 'U':
 					if (Z > 0) {
 						Z--
-						generateLevel()
 						break
 					}
 				case 'O':
-					if (deep > 0) {
+					if (deep > 0)
 						deep--
-						generateLevel()
-					}
-					else
+					else {
 						require('./main').menu($.player.expert)
+						return
+					}
 					break
 
 				case 'R':
-					generateLevel()
 					break
 			}
-		}, cancel:'O', enter:'S', eol:false, match:/UDOR/i }
+			generateLevel()
+			if (!doMove(0, 0)) return
+			menu()
+		}, cancel:'O', enter:'R', eol:false, match:/U|D|O|R/i }
 	}
  	xvt.app.form['wizard'].prompt = `Teleport #${deep + 1}.${Z + 1}: `
+	xvt.app.focus = 'wizard'
 }
 
 }
