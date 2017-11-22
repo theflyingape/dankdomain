@@ -101,17 +101,17 @@ export class Armor {
         if (isNaN(+what)) {
             rpc.user.armor = what
             armor = this.name[what]
-            if (worth)
-                armor.value = worth
-            else if (this.merchant[armor.ac])
-                armor.value = this.name[this.merchant[armor.ac]].value
         }
         else {
             if (what >= this.merchant.length)
                 what = this.merchant.length - 1
             rpc.user.armor = what
-            armor = <armor>{ ac:what, value:worth ? worth : this.name[this.merchant[what]].value }
+            armor = <armor>{ ac:what, value:'0c' }
         }
+        if (worth)
+            armor.value = worth
+        else if (this.merchant[armor.ac])
+            armor.value = this.name[this.merchant[armor.ac]].value
         if (!keep) rpc.user.toAC = 0
         rpc.armor = armor
         rpc.toAC = 0
@@ -384,18 +384,17 @@ export class Weapon {
         if (isNaN(+what)) {
             rpc.user.weapon = what
             weapon = this.name[what]
-            if (worth)
-                weapon.value = worth
-            else if (this.merchant[weapon.wc])
-                weapon.value = this.name[this.merchant[weapon.wc]].value
         }
         else {
             if (what >= this.merchant.length)
                 what = this.merchant.length - 1
             rpc.user.weapon = what
-            weapon = <weapon>{ wc:what, value:worth ? worth : this.name[this.merchant[what]].value
-                , hit:'hit', stab:'stab', smash:'smash', plunge:'plunge' }
+            weapon = <weapon>{ wc:what, value:'0c', hit:'hit', stab:'stab', smash:'smash', plunge:'plunge' }
         }
+        if (worth)
+            weapon.value = worth
+        else if (this.merchant[weapon.wc])
+            weapon.value = this.name[this.merchant[weapon.wc]].value
 
         if (!keep) rpc.user.toWC = 0
         rpc.weapon = weapon

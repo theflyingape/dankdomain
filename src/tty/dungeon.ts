@@ -83,15 +83,15 @@ export function DeepDank(start: number, cb: Function) {
 }
 
 export function menu(suppress = false) {
-	if ($.player.level + 1 < $.sysop.level) $.checkXP($.online, menu)
-	if ($.online.altered) $.saveUser($.player)
 	if ($.reason) xvt.hangup()
-
 	if (refresh) {
 		drawLevel()
 		refresh = false
 	}
 	drawHero()
+
+	if ($.player.level + 1 < $.sysop.level) $.checkXP($.online, menu)
+	if ($.online.altered) $.saveUser($.player)
 
 	$.action('dungeon')
 	xvt.app.form = {
