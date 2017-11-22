@@ -1,11 +1,11 @@
-[22;36mDate:[22;37m Mon 28-Oct-2017  2:25pm
+[22;36mDate:[22;37m Tue 21-Nov-2017  6:30pm
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
-Reminder that this is still in an alpha development stage with an aggressive
-timeline to get it to beta by Christmas.  I appreciate your patience and
-constructive feedback.
+Moving along, now reached the Beta stage.  More work is needed, but the core
+is in place and a Go Live kick-off party for Christmas looks reasonable.
+I sincerely appreciate your patience and constructive feedback.
 
-If (when) you encounter a catastrophic application exception error, it is
+If you do encounter a catastrophic application exception error, it is
 better to force a LOGOFF event using a Ctrl-D or Ctrl-Z keystroke, rather
 than closing your browser window.
 

@@ -283,7 +283,7 @@ function doMove(dy:number, dx:number): boolean {
 			xvt.out('There is an old cleric in this room.\n')
 			if ($.online.hp >= $.player.hp) {
 				xvt.out('He says, "I will pray for you."\n\n')
-				break
+				return true
 			}
 
 			let cost = new $.coins(Math.trunc($.money(Z) / 6 / $.player.hp * ($.player.hp - $.online.hp)))
