@@ -226,6 +226,7 @@ function command() {
 		return
 
 	case 'Y':
+		xvt.out('\n')
 		Battle.yourstats()
 		break
 
@@ -340,15 +341,21 @@ function doMove(): boolean {
 			ROOM.occupant = 0
 			let x = $.dice(DL.width) - 1, y = $.dice(DL.rooms.length) - 1
 			ROOM = DL.rooms[y][x]
-			if (ROOM.occupant || $.dice(Z * (($.player.steal >>1) + 1)) > Z + deep) {
-				xvt.out([
-					'He silently ignores you',
-					'He recognizes your skill and winks',
-					'He slaps your back, but your wallet remains',
-					'He offers you a drink, and you accept',
-					'"I\'ll be seeing you again", as he leaves'
-					][$.dice(5) - 1], '.\n')
-				if (!ROOM.occupant) ROOM.occupant = 5
+			if (ROOM.occupant || $.dice(Z * (($.player.steal >>1) + 1) + 1) > Z + deep) {
+				if (!ROOM.occupant) {
+					ROOM.occupant = 5
+					xvt.out([
+						'He silently ignores you',
+						'He recognizes your skill and winks',
+						'He slaps your back, but your wallet remains',
+						'He offers you a drink, and you accept',
+						'"I\'ll be seeing you again", as he leaves'
+						][$.dice(5) - 1], '.\n')
+				}
+				else {
+					xvt.out(xvt.magenta, 'He teleports away!\n', xvt.reset)
+					$.sound('teleport', 8)
+				}
 			}
 			else {
 				ROOM.occupant = 5
@@ -359,9 +366,8 @@ function doMove(): boolean {
 				xvt.waste(400)
 				xvt.out('\nAs he passes by, he steals your ')
 				x = $.online.cha + deep + 1
-				if ($.player.level / 9 - deep > ($.Security.name[$.player.security].protection + 1))
-					x /= $.player.level
-				x >>= 0
+				if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
+					x = Math.trunc(x / $.player.level)
 				if ($.online.weapon.wc && $.dice(x) == 1) {
 					xvt.out($.player.weapon, $.buff($.player.toWC, $.online.toWC))
 					$.Weapon.equip($.online, $.Weapon.merchant[0])
@@ -506,7 +512,7 @@ function drawHero() {
 function drawLevel() {
 	let y:number, x:number
 	xvt.out(xvt.reset, xvt.clear)
-	
+
 	if (DL.map) {
 		for (y = 0; y < paper.length; y++) {
 			if (y % 2) {
@@ -523,7 +529,8 @@ function drawLevel() {
 							: DL.rooms[r][x].type == 3 ? xvt.faint
 							: xvt.normal, `  ${dot}  `)
 
-					if (DL.rooms[r][x].map || DL.map > 1) {
+					if (DL.map > 1 || (DL.rooms[r][x].map
+						&& Math.abs(Y - r) < Math.trunc($.online.int / 20) && Math.abs(X - x) < Math.trunc($.online.int / 20))) {
 						if (DL.rooms[r][x].monster.length)
 							icon = xvt.attr(DL.rooms[r][x].occupant ? xvt.green : xvt.red, 
 								DL.rooms[r][x].monster.length > 1 ? 'Mob' : 'Mon', xvt.reset)
@@ -1142,11 +1149,10 @@ function putMonster(r?:number, c?:number): boolean {
 
 	$.activate(m)
 
-	i = 5 - (deep >>1)
-	m.str -= i
-	m.int -= i
-	m.dex -= i
-	m.cha -= i
+	m.str = $.PC.ability(m.str, deep)
+	m.int = $.PC.ability(m.int, deep)
+	m.dex = $.PC.ability(m.dex, deep)
+	m.cha = $.PC.ability(m.cha, deep)
 
 	let gold = new $.coins(Math.trunc($.money(level) / 10))
 	gold.value += $.worth(new $.coins(m.weapon.value).value, ($.dice($.online.cha) / 5 + 5) >>0)
@@ -1166,6 +1172,9 @@ export function teleport() {
 	xvt.out($.bracket('O'), `Teleport out of this ${deep ? 'dank' : ''} dungeon`)
 	xvt.out($.bracket('R'), 'Random teleport')
 	xvt.out(xvt.cyan, '\n\nTime Left: ', xvt.bright, xvt.white, min.toString(), xvt.normal, xvt.cyan, ' min.', xvt.reset)
+    if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry())
+	if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
+		xvt.out(xvt.faint, '\nThe feeling of insecurity overwhelms you.', xvt.reset)
 
 	$.action('teleport')
 	xvt.app.form = {
