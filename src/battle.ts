@@ -1393,7 +1393,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     
     let n = rpc.dex + (rpc.dex - enemy.dex)
     if (blow > 1)
-        n = Math.trunc(n / 2) + 50
+        n = Math.round(n / 2) + 50
     n = (n < 5) ? 5 : (n > 99) ? 99 : n
 
     // saving throw

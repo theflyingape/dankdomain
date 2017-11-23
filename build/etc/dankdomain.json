@@ -227,43 +227,43 @@
 
     "monster": {
         "Beast": {
-            "melee":2, "backstab":1, "poison":0, "magic":2, "steal":3,
-            "baseStr":55, "baseInt":55, "baseDex":55, "baseCha":35,
-            "toStr":1, "toInt":1, "toDex":1, "toCha":1,
-            "maxStr":90, "maxInt":90, "maxDex":90, "maxCha":70
+            "melee":2, "backstab":1, "poison":0, "magic":2, "steal":1,
+            "baseStr":65, "baseInt":50, "baseDex":65, "baseCha":20,
+            "toStr":1, "toInt":1, "toDex":1, "toCha":2,
+            "maxStr":90, "maxInt":90, "maxDex":90, "maxCha":90
         },
         "Demon": {
             "melee":3, "backstab":1, "poison":1, "magic":1, "steal":2,
-            "baseStr":70, "baseInt":45, "baseDex":55, "baseCha":30,
-            "toStr":2, "toInt":1, "toDex":1, "toCha":1,
+            "baseStr":70, "baseInt":45, "baseDex":60, "baseCha":25,
+            "toStr":1, "toInt":1, "toDex":2, "toCha":1,
             "maxStr":98, "maxInt":90, "maxDex":90, "maxCha":75
         },
         "Dragon": {
-            "melee":4, "backstab":0, "poison":0, "magic":3, "steal":1,
+            "melee":4, "backstab":0, "poison":0, "magic":3, "steal":4,
             "baseStr":55, "baseInt":50, "baseDex":60, "baseCha":35,
             "toStr":2, "toInt":1, "toDex":1, "toCha":1,
-            "maxStr":99, "maxInt":90, "maxDex":90, "maxCha":80
+            "maxStr":99, "maxInt":85, "maxDex":95, "maxCha":85
         },
         "Lizard": {
-            "melee":1, "backstab":1, "poison":3, "magic":1, "steal":2,
-            "baseStr":50, "baseInt":55, "baseDex":70, "baseCha":25,
-            "toStr":1, "toInt":1, "toDex":2, "toCha":1,
-            "maxStr":90, "maxInt":90, "maxDex":95, "maxCha":65
+            "melee":1, "backstab":1, "poison":3, "magic":1, "steal":3,
+            "baseStr":56, "baseInt":54, "baseDex":70, "baseCha":20,
+            "toStr":1, "toInt":2, "toDex":1, "toCha":1,
+            "maxStr":95, "maxInt":88, "maxDex":92, "maxCha":80
         },
         "Undead": {
-            "melee":4, "backstab":0, "poison":1, "magic":2, "steal":1, 
-            "baseStr":80, "baseInt":40, "baseDex":55, "baseCha":25, 
+            "melee":4, "backstab":0, "poison":1, "magic":2, "steal":2, 
+            "baseStr":71, "baseInt":38, "baseDex":71, "baseCha":20, 
             "toStr":2, "toInt":1, "toDex":1, "toCha":1, 
-            "maxStr":95, "maxInt":90, "maxDex":90, "maxCha":60
+            "maxStr":95, "maxInt":90, "maxDex":90, "maxCha":75
         }
     },
 
     "tavern": {
         "Ogre": {
             "melee":4, "backstab":1, "poison":1, "magic":2, "steal":1, 
-            "baseStr":65, "baseInt":45, "baseDex":45, "baseCha":45, 
+            "baseStr":65, "baseInt":55, "baseDex":55, "baseCha":25, 
             "toStr":2, "toInt":1, "toDex":1, "toCha":1, 
-            "maxStr":99, "maxInt":75, "maxDex":75, "maxCha":75, 
+            "maxStr":99, "maxInt":80, "maxDex":70, "maxCha":80, 
             "description": [
                 "Tiny, the 7'2\" barkeep"
             ]

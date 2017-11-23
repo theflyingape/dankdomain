@@ -376,27 +376,27 @@ export class coins {
         if (this.pouch(n) === 'p') {
             n = Math.trunc(n / 1e+13)
             bags.push(text ? n + 'p'
-                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.magenta, 'p', xvt.reset)
+                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.magenta, 'p', xvt.white, xvt.normal)
             )
             n = this.value % 1e+13
         }
         if (this.pouch(n) === 'g') {
             n = Math.trunc(n / 1e+09)
             bags.push(text ? n + 'g'
-                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.yellow, 'g', xvt.reset)
+                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.yellow, 'g', xvt.white, xvt.normal)
             )
             n = this.value % 1e+09
         }
         if (this.pouch(n) === 's') {
             n = Math.trunc(n / 1e+05)
             bags.push(text ? n + 's'
-                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.cyan, 's', xvt.reset)
+                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.cyan, 's', xvt.white, xvt.normal)
             )
             n = this.value % 1e+05
         }
         if ((n > 0 && this.pouch(n) === 'c') || bags.length == 0)
             bags.push(text ? n + 'c'
-                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.red, 'c', xvt.reset)
+                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.red, 'c', xvt.white, xvt.normal)
             )
 
         return bags.slice(0, max).toString()

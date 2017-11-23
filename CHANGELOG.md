@@ -1,6 +1,12 @@
 # [Dank Domain](https://robert.hurst-ri.us/games/dankdomain)
 ### the return of Hack & Slash
 > [developed](https://github.com/theflyingape/dankdomain) using Node.js on Linux served up using Verizon FiOS 100mb
+#### 23-Nov-2017
+* beta 0.8.1 release, uses xterm v3 with smarter browser layout/resizing, Happy Thanksgiving!
+* some casino tables are open
+* naval shipyard, sea monsters, and fishing
+* party fights
+* formation of the deep dank dungeon
 #### 21-Oct-2017
 * a monster set of ASCII art donated by [Johannes Pelzer](https://www.learn-sword-fighting.com/en/about-us.html)
 * reformatted legacy [ChangeLog](https://github.com/theflyingape/rpgd/blob/master/ChangeLog) file into this CHANGELOG.md
