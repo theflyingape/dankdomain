@@ -407,7 +407,7 @@ function doMove(): boolean {
 			let cost = new $.coins(Math.trunc($.money(Z) / 6 / $.player.hp * ($.player.hp - $.online.hp)))
 			if (cost.value < 1) cost.value = 1
 			cost.value *= deep
-			if ($.player.melee == 0 || $.player.magic > 2 || $.online.cha > 98)
+			if ($.online.cha > 98)
 				cost.value = 0
 			cost = new $.coins(cost.carry(1, true))
 			xvt.out('He says, "I can heal all your wounds for '
@@ -523,13 +523,11 @@ function drawLevel() {
 							: DL.rooms[r][x].type == 3 ? xvt.faint
 							: xvt.normal, `  ${dot}  `)
 
-					if (DL.rooms[r][x].map || DL.map > 1)
+					if (DL.rooms[r][x].map || DL.map > 1) {
 						if (DL.rooms[r][x].monster.length)
 							icon = xvt.attr(DL.rooms[r][x].occupant ? xvt.green : xvt.red, 
 								DL.rooms[r][x].monster.length > 1 ? 'Mob' : 'Mon', xvt.reset)
-
-					//	0=none, 1=trap door, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard
-					if (DL.rooms[r][x].map || DL.map) {
+						//	0=none, 1=trap door, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard
 						switch (DL.rooms[r][x].occupant) {
 							case 0:
 								if (icon) o = ` ${icon} `
