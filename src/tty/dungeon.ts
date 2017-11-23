@@ -219,6 +219,10 @@ function command() {
 
 	case 'C':
 		Battle.cast($.online, menu)
+		if (Battle.teleported) {
+			Battle.teleported = false
+			teleport()
+		}
 		return
 
 	case 'P':
@@ -272,23 +276,29 @@ function command() {
 	}
 
 	menu(suppress)
+}
 
-	function oof(wall:string) {
-		$.sound('wall')
-		xvt.out(xvt.bright, xvt.yellow, 'Oof!  There is a wall to the ', wall, '.\n\n', xvt.reset)
-		if (($.online.hp -= $.dice(deep + Z + 1)) < 1) {
-			xvt.out('You take too many hits and die!\n\n')
-			xvt.waste(500)
+function oof(wall:string) {
+	$.sound('wall')
+	xvt.out(xvt.bright, xvt.yellow, 'Oof!  There is a wall to the ', wall, '.\n\n', xvt.reset)
+	xvt.waste(200)
+	if (($.online.hp -= $.dice(deep + Z + 1)) < 1) {
+		xvt.out('You take too many hits and die!\n\n')
+		xvt.waste(500)
+		if (Battle.retreat)
+			$.reason = 'running into a wall'
+		else
 			$.reason = 'banged head against a wall'
-			xvt.hangup()
-		}
+		xvt.hangup()
 	}
 }
 
 function doMove(): boolean {
-	drawHero()
 
-	if (!ROOM.occupant && !ROOM.monster.length && !ROOM.giftItem) return true
+	if (!ROOM.occupant && !ROOM.monster.length && !ROOM.giftItem) {
+		drawHero()		
+		return true
+	}
 	xvt.out('\n')
 
 	if (ROOM.monster.length) {
@@ -412,7 +422,7 @@ function doMove(): boolean {
 
 			let cost = new $.coins(Math.trunc($.money(Z) / 6 / $.player.hp * ($.player.hp - $.online.hp)))
 			if (cost.value < 1) cost.value = 1
-			cost.value *= deep
+			cost.value *= (deep + 1)
 			if ($.online.cha > 98)
 				cost.value = 0
 			cost = new $.coins(cost.carry(1, true))
@@ -465,11 +475,18 @@ function doMove(): boolean {
 }
 
 export function doSpoils() {
+	if ($.reason) xvt.hangup()
 	let pause = false
 
-	//	remove any dead carcass
+	//	remove any dead carcass, displace teleported creatures
 	for (let n = ROOM.monster.length - 1; n >= 0; n--)
 		if (ROOM.monster[n].hp < 1) {
+			if (ROOM.monster[n].hp < 0) {
+				let mon: active
+				Object.assign(mon, ROOM.monster[n])
+				let y = $.dice(DL.rooms.length) - 1, x = $.dice(DL.width) - 1
+				DL.rooms[y][x].monster.push(mon)
+			}
 			ROOM.monster.splice(n, 1)
 			pause = true
 		}
@@ -486,6 +503,59 @@ export function doSpoils() {
 				pause = true
 			}
 		}
+	}
+
+	while (Battle.retreat) {
+		xvt.out(xvt.bright, xvt.red, 'You frantically look to escape . . . ')
+		xvt.out(600)
+
+		switch ('NSEW'[$.dice(4) - 1]) {
+			case 'N':
+				if (Y > 0 && DL.rooms[Y][X].type !== 2)
+					if (DL.rooms[Y - 1][X].type !== 2) {
+						Battle.retreat = false
+						Y--
+						break
+					}
+				oof('north')
+				break
+
+			case 'S':
+				if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 2)
+					if (DL.rooms[Y + 1][X].type !== 2) {
+						Battle.retreat = false
+						Y++
+						break
+					}
+				oof('south')
+				break
+
+			case 'E':
+				if (X < DL.width - 1 && DL.rooms[Y][X].type !== 1)
+					if (DL.rooms[Y][X + 1].type !== 1) {
+						Battle.retreat = false
+						X++
+						break
+					}
+				oof('east')
+				break
+
+			case 'W':
+				if (X > 0 && DL.rooms[Y][X].type !== 1)
+					if (DL.rooms[Y][X - 1].type !== 1) {
+						Battle.retreat = false
+						X--
+						break
+					}
+				oof('west')
+				break
+		}
+		xvt.out(xvt.reset, '\n')
+	}
+
+	if (Battle.teleported) {
+		Y = $.dice(DL.rooms.length) - 1
+		X = $.dice(DL.width) - 1
 	}
 
 	if (pause) {

@@ -1023,25 +1023,33 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             break
 
         case 8:
-            $.sound('teleport')
-            if (backfire) {
-                xvt.out(nme === $.online ? 'You' : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
-                    , $.what(nme, ' teleport')
-                    , 'away from the battle!\n')
-                if (nme !== $.online)
-                    nme.hp = -1
-                else
-                    teleported = true
+            if (xvt.validator.isDefined(nme)) {
+                if (backfire) {
+                    xvt.out(nme === $.online ? 'You' : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
+                        , $.what(nme, ' teleport')
+                        , 'away from the battle!\n')
+                    if (nme !== $.online)
+                        nme.hp = -1
+                    else
+                        teleported = true
+                }
+                else {
+                    xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                        , $.what(rpc, ' teleport')
+                        , 'away from the battle!\n')
+                    if (rpc === $.online) {
+                        teleported = true
+                        retreat = true
+                        rpc.user.retreats++
+                    }
+                    else
+                        rpc.hp = -1
+                }
+                $.sound('teleport', 8)
             }
             else {
-                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , $.what(rpc, ' teleport')
-                    , 'away from the battle!\n')
-                if (rpc === $.online) {
+                if (rpc === $.online)
                     teleported = true
-                    retreat = true
-                    rpc.user.retreats++
-                }
                 else
                     rpc.hp = -1
             }
