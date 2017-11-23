@@ -21,7 +21,7 @@ import xvt = require('xvt')
 module ttyMain
 {
     xvt.defaultTimeout = 120
-    xvt.pollingMS = 60
+    xvt.pollingMS = 10
     xvt.sessionAllowed = 300
     if (xvt.modem = xvt.validator.isEmpty(process.env.REMOTEHOST))
         xvt.out('\nCARRIER DETECTED\n')

@@ -1024,10 +1024,10 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
 
         case 8:
             if (xvt.validator.isDefined(nme)) {
+                xvt.out(xvt.bright, xvt.magenta)
                 if (backfire) {
                     xvt.out(nme === $.online ? 'You' : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
-                        , $.what(nme, ' teleport')
-                        , 'away from the battle!\n')
+                        , $.what(nme, ' teleport'))
                     if (nme !== $.online)
                         nme.hp = -1
                     else
@@ -1035,8 +1035,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 }
                 else {
                     xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                        , $.what(rpc, ' teleport')
-                        , 'away from the battle!\n')
+                        , $.what(rpc, ' teleport'))
                     if (rpc === $.online) {
                         teleported = true
                         retreat = true
@@ -1044,6 +1043,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                     }
                     else
                         rpc.hp = -1
+                xvt.out(xvt.normal, 'away from the battle!\n', xvt.reset)
                 }
                 $.sound('teleport', 8)
             }

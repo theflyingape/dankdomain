@@ -32,6 +32,7 @@ module Dungeon
 	}
 
 	let fini: Function
+	let looked: boolean
 	let refresh: boolean
 	let paper: string[]
 	let dot = xvt.Empty[$.player.emulation]
@@ -88,6 +89,7 @@ export function menu(suppress = false) {
 	if ($.reason) xvt.hangup()
 	if (refresh) {
 		drawLevel()
+		looked = false
 		refresh = false
 	}
 
@@ -238,6 +240,7 @@ function command() {
 		if (Y > 0 && DL.rooms[Y][X].type !== 2)
 			if (DL.rooms[Y - 1][X].type !== 2) {
 				drawRoom(Y, X)
+				looked = false
 				Y--
 				break
 			}
@@ -248,6 +251,7 @@ function command() {
 		if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 2)
 			if (DL.rooms[Y + 1][X].type !== 2) {
 				drawRoom(Y, X)
+				looked = false
 				Y++
 				break
 			}
@@ -258,6 +262,7 @@ function command() {
 		if (X < DL.width - 1 && DL.rooms[Y][X].type !== 1)
 			if (DL.rooms[Y][X + 1].type !== 1) {
 				drawRoom(Y, X)
+				looked = false
 				X++
 				break
 			}
@@ -268,6 +273,7 @@ function command() {
 		if (X > 0 && DL.rooms[Y][X].type !== 1)
 			if (DL.rooms[Y][X - 1].type !== 1) {
 				drawRoom(Y, X)
+				looked = false
 				X--
 				break
 			}
@@ -280,10 +286,10 @@ function command() {
 
 function oof(wall:string) {
 	$.sound('wall')
-	xvt.out(xvt.bright, xvt.yellow, 'Oof!  There is a wall to the ', wall, '.\n\n', xvt.reset)
-	xvt.waste(200)
+	xvt.out(xvt.bright, xvt.yellow, 'Oof!  There is a wall to the ', wall, '.\n', xvt.reset)
+	xvt.waste(600)
 	if (($.online.hp -= $.dice(deep + Z + 1)) < 1) {
-		xvt.out('You take too many hits and die!\n\n')
+		xvt.out('\nYou take too many hits and die!\n\n')
 		xvt.waste(500)
 		if (Battle.retreat)
 			$.reason = 'running into a wall'
@@ -294,12 +300,18 @@ function oof(wall:string) {
 }
 
 function doMove(): boolean {
+	ROOM = DL.rooms[Y][X]
+	if ($.online.int > 49)
+		ROOM.map = true
 
 	if (!ROOM.occupant && !ROOM.monster.length && !ROOM.giftItem) {
-		drawHero()		
+		drawHero()
 		return true
 	}
-	xvt.out('\n')
+
+	xvt.plot($.player.rows, 1)
+	xvt.out(xvt.reset, '\n')
+	if (looked) return true
 
 	if (ROOM.monster.length) {
 		xvt.out(`\x1B[1;${$.player.rows}r`)
@@ -409,23 +421,26 @@ function doMove(): boolean {
 				xvt.out(xvt.reset, '!\n')
 				xvt.waste(600)
 			}
+			looked = false
 			return true
 
 		case 6:
-			if ($.online.hp < $.player.hp)
-				$.cat('dungeon/cleric')
-			xvt.out('There is an old cleric in this room.\n')
-			if ($.online.hp >= $.player.hp) {
-				xvt.out('He says, "I will pray for you."\n\n')
-				return true
-			}
-
 			let cost = new $.coins(Math.trunc($.money(Z) / 6 / $.player.hp * ($.player.hp - $.online.hp)))
 			if (cost.value < 1) cost.value = 1
 			cost.value *= (deep + 1)
 			if ($.online.cha > 98)
 				cost.value = 0
 			cost = new $.coins(cost.carry(1, true))
+
+			xvt.out('There is an old cleric in this room.\n')
+			if ($.online.hp >= $.player.hp || cost.value > $.player.coin.value) {
+				xvt.out('He says, "I will pray for you."\n')
+				break
+			}
+
+			if ($.online.hp < $.player.hp)
+				$.cat('dungeon/cleric')
+
 			xvt.out('He says, "I can heal all your wounds for '
 				, cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
 				, '."\n')
@@ -434,18 +449,14 @@ function doMove(): boolean {
 				'pay': { cb: () => {
 						xvt.out('\n\n')
 						if (/Y/i.test(xvt.entry)) {
-							if ($.player.coin.value >= cost.value) {
-								$.player.coin.value -= cost.value
-								$.sound('shimmer', 4)
-								xvt.out('He casts a Cure spell on you.\n\n')
-								$.online.hp = $.player.hp
-							}
-							else
-								xvt.out('He says, \"Not!"\n\n')
+							$.player.coin.value -= cost.value
+							$.sound('shimmer', 4)
+							xvt.out('He casts a Cure spell on you.\n\n')
+							$.online.hp = $.player.hp
+							looked = true
 						}
-						look()
 						menu()
-					}, prompt:'Will you pay (Y/N)', cancel:'N', enter:'Y', eol:false }
+					}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false }
 				}
 				xvt.app.focus = 'pay'
 				return false
@@ -454,6 +465,7 @@ function doMove(): boolean {
 				$.sound('shimmer', 4)
 				xvt.out('He casts a Cure spell on you.\n\n')
 				$.online.hp = $.player.hp
+				looked = false
 				return true
 			}
 
@@ -463,14 +475,19 @@ function doMove(): boolean {
 			refresh = true
 			xvt.out(xvt.magenta, 'You encounter a wizard in this room.\n\n')
 			teleport()
-			break
+			return false
 	}
 
-	look()
-	return false
+	return look()
 
-	function look() {
+	function look(): boolean {
+		looked = true
 
+		xvt.app.form = {
+			'pause': { cb:menu, pause:true }
+		}
+		xvt.app.focus = 'pause'
+		return false
 	}
 }
 
@@ -482,7 +499,7 @@ export function doSpoils() {
 	for (let n = ROOM.monster.length - 1; n >= 0; n--)
 		if (ROOM.monster[n].hp < 1) {
 			if (ROOM.monster[n].hp < 0) {
-				let mon: active
+				let mon = <active>{ user:{id:''} }
 				Object.assign(mon, ROOM.monster[n])
 				let y = $.dice(DL.rooms.length) - 1, x = $.dice(DL.width) - 1
 				DL.rooms[y][x].monster.push(mon)
@@ -507,12 +524,13 @@ export function doSpoils() {
 
 	while (Battle.retreat) {
 		xvt.out(xvt.bright, xvt.red, 'You frantically look to escape . . . ')
-		xvt.out(600)
+		xvt.waste(600)
 
 		switch ('NSEW'[$.dice(4) - 1]) {
 			case 'N':
 				if (Y > 0 && DL.rooms[Y][X].type !== 2)
 					if (DL.rooms[Y - 1][X].type !== 2) {
+						looked = false
 						Battle.retreat = false
 						Y--
 						break
@@ -523,6 +541,7 @@ export function doSpoils() {
 			case 'S':
 				if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 2)
 					if (DL.rooms[Y + 1][X].type !== 2) {
+						looked = false
 						Battle.retreat = false
 						Y++
 						break
@@ -533,6 +552,7 @@ export function doSpoils() {
 			case 'E':
 				if (X < DL.width - 1 && DL.rooms[Y][X].type !== 1)
 					if (DL.rooms[Y][X + 1].type !== 1) {
+						looked = false
 						Battle.retreat = false
 						X++
 						break
@@ -543,6 +563,7 @@ export function doSpoils() {
 			case 'W':
 				if (X > 0 && DL.rooms[Y][X].type !== 1)
 					if (DL.rooms[Y][X - 1].type !== 1) {
+						looked = false
 						Battle.retreat = false
 						X--
 						break
@@ -550,7 +571,7 @@ export function doSpoils() {
 				oof('west')
 				break
 		}
-		xvt.out(xvt.reset, '\n')
+		pause = true
 	}
 
 	if (Battle.teleported) {
@@ -571,8 +592,6 @@ export function doSpoils() {
 
 function drawHero() {
 	ROOM = DL.rooms[Y][X]
-	if ($.online.int > 49)
-		ROOM.map = true
 	drawRoom(Y, X)
 	xvt.plot(Y * 2 + 2, X * 6 + 2)
 	xvt.out(xvt.reset, xvt.reverse, '-YOU-', xvt.reset)
@@ -744,6 +763,7 @@ function drawRoom(r:number, c:number) {
 }
 
 function generateLevel() {
+	looked = false
 	refresh = true
 
 	if (dd[deep][Z]) {
@@ -1230,6 +1250,7 @@ function putMonster(r?:number, c?:number): boolean {
 	gold.value *= $.dice(deep)
 	m.user.coin = new $.coins(gold.carry(1, true))
 
+	looked = false
 	return true
 }
 
