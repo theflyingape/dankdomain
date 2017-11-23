@@ -909,7 +909,7 @@ export function date2str(days: number): string {
 }
 
 export function dice(faces: number): number {
-    faces >>= 0
+    faces = faces < 1 ? 1 : faces >>0
     return Math.trunc(Math.random() * faces) + 1
 }
 
@@ -1160,7 +1160,8 @@ export function playerPC(points = 200, immortal = false) {
                 xvt.out('\n')
                 news(`\trerolled as a ${player.pc}`)
                 if (immortal) {
-                    reason = `ascended to an immortal class`
+                    reason = 'became immortal'
+                    xvt.out(`\nYou are rewarded with ${access.calls} more calls today.\n`)
                     xvt.hangup()
                 }
                 require('./tty/main').menu(true)
@@ -1466,7 +1467,7 @@ export function riddle() {
                 }
                 reroll(player, player.pc)
                 newkeys(player)
-                playerPC(200, true)
+                playerPC([210,220,240][max - 1] || 200, true)
                 return
             }
             else {
@@ -1479,12 +1480,12 @@ export function riddle() {
                             break
                         }
                     reroll(player, Object.keys(PC.name['player'])[0])
-                    playerPC(200 + 10 * player.wins + (player.immortal>>1))
+                    playerPC(200 + 10 * player.wins + player.immortal, true)
                 }
                 else {
                     reroll(player, player.pc)
                     newkeys(player)
-                    playerPC(200, true)
+                    playerPC([210,220,240][max - 1] || 200, true)
                 }
                 return
             }

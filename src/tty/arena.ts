@@ -197,7 +197,7 @@ function choice() {
 				xvt.out('\nYou have no more arena fights.\n')
 				break
 			}
-			$.action('list')
+			$.action('monster')
 			xvt.app.form = {
 				pick: { cb: () => {
 					if (xvt.entry.length) {

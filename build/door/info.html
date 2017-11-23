@@ -39,6 +39,7 @@
 </style>
 <script>
 art = null;
+currentCMD = null;
 clear = `<input class="wide" type="button" value="Clear" onclick="send('\x15');">`;
 enter = `<input class="wide" type="button" value="Enter" onclick="send('', true);">`;
 logoff = `<input type="button" value="LOGOFF" onclick="send('\x1A');">`;
@@ -94,6 +95,7 @@ function receive(event) {
   if (event.data) {
     if (event.data.func) {
       window[event.data.func]();
+      currentCMD = window[event.data.func]();
       return
     }
 
@@ -215,6 +217,7 @@ function list() {
 }
 
 function menu() {
+  if (currentCMD === 'menu') return;
   nme('');
   cmd(`
 <p><input type="button" value="Arena" onclick="send('A');">
@@ -242,6 +245,7 @@ ${enter} ${quit}
 }
 
 function arena() {
+  if (currentCMD === 'arena') return;
   cmd(`
 <input type="button" value="Cast" onclick="send('C');">
 <input type="button" value="Poison" onclick="send('P');">
@@ -265,6 +269,7 @@ ${quit}
 }
 
 function battle() {
+  if (currentCMD === 'battle') return;
   cmd(`
 <p><input class="tall" type="button" value=" Attack " onclick="send('A');"></p>
 <p><input type="button" value="Cast" onclick="send('C');"> <input type="button" value="Status" onclick="send('Y');"></p>
@@ -286,7 +291,7 @@ ${quit}`);
 }
 
 function dungeon() {
-  nme('');
+  if (currentCMD === 'dungeon') return;
   cmd(`
 <input class="tall" type="button" value=" North " onclick="send('N');"><br>
 <input class="tall" type="button" value=" West " onclick="send('W');"> <input class="tall" type="button" value=" East " onclick="send('E');"><br>
@@ -305,7 +310,15 @@ function hunt() {
 `);
 }
 
+function monster() {
+  cmd(`
+${keypad}
+<p><input class="tall" type="button" value=" Demon " onclick="send('D', true);"></p>
+`);
+}
+
 function naval() {
+  if (currentCMD === 'naval') return;
   cmd(`<p><input class="tall" type="button" value="Battle" onclick="send('B');"> <input class="tall" type="button" value="Shipyard" onclick="send('S');"></p>
 <p><input type="button" value="Go Fishing" onclick="send('G');"> <input type="button" value="Hunt" onclick="send('H');">
 <input type="button" value="List" onclick="send('L');"> <input type="button" value="Status" onclick="send('Y');"></p>
@@ -372,6 +385,15 @@ function tavern() {
 <input type="button" value="List" onclick="send('L');"> <input type="button" value="Post" onclick="send('P');"><br>
 <p><input type="button" value="Today" onclick="send('T');"> <input type="button" value="Yesterday" onclick="send('Y');"></p>
 <input class="tall" type="button" value=" Quit " onclick="send('Q');">
+`);
+}
+
+function teleport() {
+  nme('');
+  cmd(`
+<p><input class="tall" type="button" value=" Out " onclick="send('O');"></p>
+<p><input type="button" value=" Up " onclick="send('U');"> <input type="button" value="Down" onclick="send('D');"></p>
+<input class="tall" type="button" value="Random" onclick="send('R');">
 `);
 }
 

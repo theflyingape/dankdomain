@@ -240,7 +240,7 @@ export function attack(retry = false) {
 
             xvt.app.form['attack'].prompt = choices + xvt.attr(
                 $.bracket('A', false), xvt.cyan, 'ttack, ')
-            if ($.player.magic && $.player.spells.length && rpc.sp)
+            if ($.player.magic && $.player.spells.length)
                 xvt.app.form['attack'].prompt += xvt.attr($.bracket('C', false), xvt.cyan, 'ast spell, ')
             xvt.app.form['attack'].prompt += xvt.attr($.bracket('R', false), xvt.cyan, 'etreat, '
                 , $.bracket('Y', false), xvt.cyan, 'our status: ')

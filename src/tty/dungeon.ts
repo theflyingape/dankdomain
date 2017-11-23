@@ -44,6 +44,7 @@ module Dungeon
 	let X: number
 	let fromX: number
 	let fromY: number
+	let tl: number
 
     //  £
     export const Cleric = {
@@ -73,12 +74,13 @@ module Dungeon
 	}
 
 export function DeepDank(start: number, cb: Function) {
+	tl = Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
 	deep = 0
-	Z = start > 99 ? 99 : start
+	Z = start < 0 ? 0 : start > 99 ? 99 : start
 	fini = cb
 	dd[deep] = new Array(100)
 	generateLevel()
-	if (!doMove(0, 0)) return
+	if (!doMove()) return
 	menu()
 }
 
@@ -88,6 +90,61 @@ export function menu(suppress = false) {
 		drawLevel()
 		refresh = false
 	}
+
+	let x = $.dice(DL.width) - 1, y = $.dice(DL.rooms.length) - 1
+	ROOM = DL.rooms[y][x]
+	if ($.dice((ROOM.type == 0 ? 2 : ROOM.type == 3 ? 1 : 4)
+		* $.online.cha / 5 - DL.moves / 10) == 1) {
+		xvt.plot($.player.rows, 1)
+		xvt.out(xvt.reset, '\n', xvt.faint
+			, ['Your skin crawls', 'Your pulse quickens', 'You feel paranoid', 'Your grip tightens', 'You stand ready'][$.dice(5) - 1]
+			, ' when you hear a'
+		)
+		switch ($.dice(5)) {
+			case 1:
+				$.sound('creak')
+				xvt.out('n eerie, creaking noise')
+				break
+			case 2:
+				$.sound('thunder')
+				xvt.out(' clap of thunder')
+				break
+			case 3:
+				$.sound('ghostly')
+				xvt.out(' ghostly whisper')
+				break
+			case 4:
+				$.sound('growl')
+				xvt.out(' beast growl')
+				break
+			case 5:
+				$.sound('laugh')
+				xvt.out(' maniacal laugh')
+				break
+		}
+		if (Math.abs(Y - y) < 3 && Math.abs(X - x) < 3)
+			xvt.out(' nearby!\n')
+		else if (Math.abs(Y - y) < 6 && Math.abs(X - x) < 6)
+			xvt.out(' off in the distance.\n')
+		else
+			xvt.out(' as a faint echo.\n')
+
+		if (putMonster(y, x)) {
+			if (DL.map > 1)
+				drawRoom(y, x)
+			xvt.plot($.player.rows, 1)
+			if (ROOM.occupant == 6) {
+				$.sound('agony', 8)
+				xvt.out(xvt.reset, xvt.bright, xvt.yellow, 'You hear a dying cry of agony!!\n', xvt.reset)
+				xvt.waste(1000)
+				ROOM.occupant = 0
+				if (DL.map > 1)
+					drawRoom(y, x)
+			}
+		}
+	}
+
+	if (!doMove()) return
 	drawHero()
 
 	if ($.player.level + 1 < $.sysop.level) $.checkXP($.online, menu)
@@ -101,11 +158,11 @@ export function menu(suppress = false) {
 		xvt.app.form['command'].prompt = ':'
 	else {
 		xvt.app.form['command'].prompt = ''
-		if ($.player.spells.length && $.online.sp)
+		if ($.player.magic && $.player.spells.length)
 			xvt.app.form['command'].prompt += xvt.attr(
 				$.bracket('C', false), xvt.cyan, 'ast, '
 			)
-		if ($.player.poisons.length && $.online.weapon.wc)
+		if ($.player.poison && $.player.poisons.length)
 			xvt.app.form['command'].prompt += xvt.attr(
 				$.bracket('P', false), xvt.cyan, 'oison, '
 			)
@@ -145,13 +202,14 @@ function command() {
 		xvt.out(choice)
 	}
     if (xvt.validator.isNotEmpty(dungeon[choice])) {
-		xvt.out(dungeon[choice].description, '\n')
+		xvt.out(dungeon[choice].description)
 		DL.moves++
 	}
     else {
         xvt.beep()
         suppress = false
-    }
+	}
+	xvt.out('\n')
 
     switch (choice) {
 	case 'M':	//	#tbt
@@ -174,7 +232,8 @@ function command() {
 	case 'N':
 		if (Y > 0 && DL.rooms[Y][X].type !== 2)
 			if (DL.rooms[Y - 1][X].type !== 2) {
-				if (!doMove(-1, 0)) return
+				drawRoom(Y, X)
+				Y--
 				break
 			}
 		oof('north')
@@ -183,7 +242,8 @@ function command() {
 	case 'S':
 		if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 2)
 			if (DL.rooms[Y + 1][X].type !== 2) {
-				if (!doMove(1, 0)) return
+				drawRoom(Y, X)
+				Y++
 				break
 			}
 		oof('south')
@@ -192,7 +252,8 @@ function command() {
 	case 'E':
 		if (X < DL.width - 1 && DL.rooms[Y][X].type !== 1)
 			if (DL.rooms[Y][X + 1].type !== 1) {
-				if (!doMove(0, 1)) return
+				drawRoom(Y, X)
+				X++
 				break
 			}
 		oof('east')
@@ -201,7 +262,8 @@ function command() {
 	case 'W':
 		if (X > 0 && DL.rooms[Y][X].type !== 1)
 			if (DL.rooms[Y][X - 1].type !== 1) {
-				if (!doMove(0, -1)) return
+				drawRoom(Y, X)
+				X--
 				break
 			}
 		oof('west')
@@ -222,11 +284,7 @@ function command() {
 	}
 }
 
-function doMove(dy:number, dx:number): boolean {
-	if (dy || dx) drawRoom(Y, X)
-
-	Y += dy
-	X += dx
+function doMove(): boolean {
 	drawHero()
 
 	if (!ROOM.occupant && !ROOM.monster.length && !ROOM.giftItem) return true
@@ -275,7 +333,67 @@ function doMove(dy:number, dx:number): boolean {
 
 	switch (ROOM.occupant) {
 		case 5:
-			break
+			xvt.out(xvt.bright, xvt.cyan, 'There is a thief in this '
+				, ['chamber', 'hallway', 'corridor', 'cavern'][ROOM.type]
+				, '! ', xvt.reset)
+			xvt.waste(600)
+			ROOM.occupant = 0
+			let x = $.dice(DL.width) - 1, y = $.dice(DL.rooms.length) - 1
+			ROOM = DL.rooms[y][x]
+			if (ROOM.occupant || $.dice(Z * (($.player.steal >>1) + 1)) > Z + deep) {
+				xvt.out([
+					'He silently ignores you',
+					'He recognizes your skill and winks',
+					'He slaps your back, but your wallet remains',
+					'He offers you a drink, and you accept',
+					'"I\'ll be seeing you again", as he leaves'
+					][$.dice(5) - 1], '.\n')
+				if (!ROOM.occupant) ROOM.occupant = 5
+			}
+			else {
+				ROOM.occupant = 5
+				if (DL.map > 1)
+					xvt.out('You expected nothing less from this coward.')
+				else
+					xvt.out(xvt.bright, xvt.white, 'He surprises you!', xvt.reset)
+				xvt.waste(400)
+				xvt.out('\nAs he passes by, he steals your ')
+				x = $.online.cha + deep + 1
+				if ($.player.level / 9 - deep > ($.Security.name[$.player.security].protection + 1))
+					x /= $.player.level
+				x >>= 0
+				if ($.online.weapon.wc && $.dice(x) == 1) {
+					xvt.out($.player.weapon, $.buff($.player.toWC, $.online.toWC))
+					$.Weapon.equip($.online, $.Weapon.merchant[0])
+				}
+				else if (DL.map && $.dice($.online.cha / 10 + deep + 1) - 1 <= (deep >>1)) {
+					xvt.out('map')
+					DL.map = 0
+					refresh = true
+				}
+				else if ($.player.magic < 3 && $.player.spells.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= (deep >>1)) {
+					y = $.player.spells[$.dice($.player.spells.length) - 1]
+					xvt.out(['wand', 'scroll'][$.player.magic - 1], ' for ', Object.keys($.Magic.spells)[y - 1])
+					$.Magic.remove($.player.spells, y)
+				}
+				else if ($.player.poisons.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= (deep >>1)) {
+					y = $.player.poisons[$.dice($.player.poisons.length) - 1]
+					xvt.out('vial of ', Object.keys($.Poison.vials)[y - 1])
+					$.Poison.remove($.player.poisons, y)
+				}
+				else if ($.player.coin.value) {
+					let pouch = $.player.coin.amount.split(',')
+					x = $.dice(pouch.length) - 1
+					y = 'csgp'.indexOf(pouch[x].substr(-1))
+					xvt.out('pouch of ', ['copper','silver','gold','platinum'][y], ' pieces')
+					$.player.coin.value -= new $.coins(pouch[x]).value
+				}
+				else
+					xvt.out('Reese\'s pieces')
+				xvt.out(xvt.reset, '!\n')
+				xvt.waste(600)
+			}
+			return true
 
 		case 6:
 			if ($.online.hp < $.player.hp)
@@ -293,8 +411,8 @@ function doMove(dy:number, dx:number): boolean {
 				cost.value = 0
 			cost = new $.coins(cost.carry(1, true))
 			xvt.out('He says, "I can heal all your wounds for '
-				, cost.value ? cost.carry() : 'you, brother."'
-				, '\n')
+				, cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
+				, '."\n')
 			if (cost.value) {
 				xvt.app.form = {
 				'pay': { cb: () => {
@@ -365,7 +483,7 @@ export function doSpoils() {
 	}
 
 	if (pause) {
-		if (!doMove(0, 0)) return
+		if (!doMove()) return
 		xvt.app.form = {
 			'pause': { cb:menu, pause:true }
 		}
@@ -376,22 +494,19 @@ export function doSpoils() {
 }
 
 function drawHero() {
+	ROOM = DL.rooms[Y][X]
 	if ($.online.int > 49)
 		ROOM.map = true
 	drawRoom(Y, X)
-
-	ROOM = DL.rooms[Y][X]
 	xvt.plot(Y * 2 + 2, X * 6 + 2)
-	xvt.out(xvt.reset, xvt.reverse, '-YOU-')
-	xvt.out(`\x1B[${paper.length + 1};${$.player.rows}r`)
+	xvt.out(xvt.reset, xvt.reverse, '-YOU-', xvt.reset)
 	xvt.plot($.player.rows, 1)
-	xvt.out(xvt.reset)
 }
 
 function drawLevel() {
 	let y:number, x:number
 	xvt.out(xvt.reset, xvt.clear)
-
+	
 	if (DL.map) {
 		for (y = 0; y < paper.length; y++) {
 			if (y % 2) {
@@ -461,7 +576,7 @@ function drawLevel() {
 				if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[y], '\x1B(B')
 				else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y])
 			}
-			xvt.out(xvt.cll, '\n')
+			xvt.out('\n')
 		}
 	}
 	else {
@@ -470,6 +585,9 @@ function drawLevel() {
 				if (DL.rooms[y][x].map)
 					drawRoom(y, x)
 	}
+
+	xvt.out(`\x1B[${paper.length + 1};${$.player.rows}r`)
+	xvt.plot(paper.length + 1, 1)
 }
 
 function drawRoom(r:number, c:number) {
@@ -559,6 +677,7 @@ function generateLevel() {
 		Y = $.dice(DL.rooms.length) - 1
 		X = $.dice(DL.width) - 1
 		ROOM = DL.rooms[Y][X]
+		DL.moves += (Z >>3)
 		return
 	}
 
@@ -606,23 +725,23 @@ function generateLevel() {
 	Y = $.dice(DL.rooms.length) - 1
 	X = $.dice(DL.width) - 1
 	ROOM = DL.rooms[Y][X]
-	
-	//	populate this floor
-	//	monsters in caverns
+
+	//	populate this new floor with monsters only in caverns
 	let n = Math.trunc(DL.rooms.length * DL.width / 6 + $.dice(Z / 11) + (deep >>1) + $.dice(deep >>1))
-	for (let i = 0; i < n; i++)
-		putMonster()
-/*
+	while (n)
+		if (putMonster())
+			n--
+
 	//	thief(s) in other spaces
 	n = $.dice(deep >>2)
-	for (let i = 0; i < n; n++) {
+	for (let i = 0; i < n; i++) {
 		do {
 			y = $.dice(DL.rooms.length) - 1
 			x = $.dice(DL.width) - 1
 		} while (DL.rooms[y][x].type == 3)
 		DL.rooms[y][x].occupant = 5
 	}
-*/
+
 	//	a cleric in another space
 	do {
 		y = $.dice(DL.rooms.length) - 1
@@ -942,19 +1061,19 @@ function generateLevel() {
 	}
 }
 
-function putMonster(r?:number, c?:number) {
+function putMonster(r?:number, c?:number): boolean {
 	// attempt to add one to a cavern only, but no more than 3
 	if (!r && !c) {
 		do {
 			r = $.dice(DL.rooms.length) - 1
 			c = $.dice(DL.width) - 1
 		} while (DL.rooms[r][c].type != 3)
-		if (DL.rooms[r][c].monster.length > 2)
-			return
-		//	no? add anywhere
-		r = $.dice(DL.rooms.length) - 1
-		c = $.dice(DL.width) - 1
 	}
+
+	//	check for overcrowding
+	if (DL.rooms[r][c].monster.length)
+		if (DL.rooms[r][c].monster.length > 2 || DL.rooms[r][c].type == 1 || DL.rooms[r][c].type == 2)
+			return false
 
 	let i:number = DL.rooms[r][c].monster.length
 	let j:number = 0
@@ -1036,21 +1155,25 @@ function putMonster(r?:number, c?:number) {
 	gold.value += $.worth(new $.coins(m.armor.value).value, ($.dice($.online.cha) / 5 + 5) >>0)
 	gold.value *= $.dice(deep)
 	m.user.coin = new $.coins(gold.carry(1, true))
+
+	return true
 }
 
 export function teleport() {
+	let min =  Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
+
 	xvt.out(xvt.bright, xvt.yellow, 'What do you wish to do?\n', xvt.reset)
 	xvt.out($.bracket('U'), 'Teleport up 1 level')
 	if (Z < 99) xvt.out($.bracket('D'), 'Teleport down 1 level')
 	xvt.out($.bracket('O'), `Teleport out of this ${deep ? 'dank' : ''} dungeon`)
 	xvt.out($.bracket('R'), 'Random teleport')
-	xvt.out(xvt.cyan, '\n\nTime Left: ', xvt.bright, xvt.white
-		, Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60).toString()
-		, xvt.normal, xvt.cyan, ' min.\n', xvt.reset)
+	xvt.out(xvt.cyan, '\n\nTime Left: ', xvt.bright, xvt.white, min.toString(), xvt.normal, xvt.cyan, ' min.', xvt.reset)
+
+	$.action('teleport')
 	xvt.app.form = {
 		'wizard': { cb:() => {
 			xvt.out('\n\n')
-			$.sound('teleport')
+			$.sound('teleport', 8)
 			switch (xvt.entry.toUpperCase()) {
 				case 'D':
 					if (Z < 99) {
@@ -1069,6 +1192,7 @@ export function teleport() {
 					if (deep > 0)
 						deep--
 					else {
+						$.music('.')
 						require('./main').menu($.player.expert)
 						return
 					}
@@ -1078,7 +1202,11 @@ export function teleport() {
 					break
 			}
 			generateLevel()
-			if (!doMove(0, 0)) return
+			if (tl - min > 4) {
+				tl = min
+                $.music('dungeon' + $.dice(9))
+			}
+			if (!doMove()) return
 			menu()
 		}, cancel:'O', enter:'R', eol:false, match:/U|D|O|R/i }
 	}
