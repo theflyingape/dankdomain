@@ -34,6 +34,7 @@ module Dungeon
 
 	let fini: Function
 	let looked: boolean
+	let pause: boolean
 	let refresh: boolean
 	let paper: string[]
 	let dot = xvt.Empty[$.player.emulation]
@@ -76,6 +77,7 @@ module Dungeon
 	}
 
 export function DeepDank(start: number, cb: Function) {
+	pause = false
 	party = []
 	party.push($.online)
 	tl = Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
@@ -92,13 +94,25 @@ export function DeepDank(start: number, cb: Function) {
 
 export function menu(suppress = false) {
 	if ($.player.level + 1 < $.sysop.level) 
-		if ($.checkXP($.online, menu)) return
+		if ($.checkXP($.online, menu)) {
+			pause = true
+			return
+		}
 	if ($.online.altered) $.saveUser($.player)
 	if ($.reason) xvt.hangup()
 
 	if (Battle.teleported) {
 		Battle.teleported = false
 		teleport()
+		return
+	}
+
+	if (pause) {
+		pause = false
+		xvt.app.form = {
+			'pause': { cb:menu, pause:true }
+		}
+		xvt.app.focus = 'pause'
 		return
 	}
 
@@ -532,11 +546,6 @@ function doMove(): boolean {
 
 	if (!looked) {
 		looked = true
-	
-		xvt.app.form = {
-			'pause': { cb:menu, pause:true }
-		}
-		xvt.app.focus = 'pause'
 		return false
 	}
 	return true
@@ -544,7 +553,7 @@ function doMove(): boolean {
 
 export function doSpoils() {
 	if ($.reason) xvt.hangup()
-	let pause = false
+	pause = false
 
 	//	remove any dead carcass, displace teleported creatures
 	for (let n = ROOM.monster.length - 1; n >= 0; n--)
@@ -629,19 +638,13 @@ export function doSpoils() {
 	}
 
 	if (Battle.teleported) {
+		Battle.teleported = false
 		Y = $.dice(DL.rooms.length) - 1
 		X = $.dice(DL.width) - 1
+		looked = false
 	}
 
-	if (pause) {
-		if (!doMove()) return
-		xvt.app.form = {
-			'pause': { cb:menu, pause:true }
-		}
-		xvt.app.focus = 'pause'
-	}
-	else
-		menu()
+	menu()
 }
 
 function drawHero() {
