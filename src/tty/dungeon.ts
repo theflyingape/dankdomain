@@ -393,7 +393,7 @@ function doMove(): boolean {
 							party[m].user.handle, ' falls down a level!\n')
 						if (u) party.splice(m, 1)
 					}
-					xvt.waste(200)
+					xvt.waste(300)
 				}
 				if (u) {
 					xvt.out(xvt.reset, 'You manage to catch the edge and stop yourself from falling.\n')
@@ -401,7 +401,7 @@ function doMove(): boolean {
 				}
 				else {
 					xvt.out(xvt.bright, xvt.yellow, 'You fall down a level!\n')
-					xvt.waste(300)
+					xvt.waste(600)
 					Z++
 					generateLevel()
 					if (!doMove()) return false
@@ -576,7 +576,7 @@ export function doSpoils() {
 				xvt.out('\n', xvt.bright, xvt.yellow
 					, 'You find '
 					, m == 1 ? 'a' : 'Marauder\'s'
-					, ' map!', xvt.reset)
+					, ' map!\n', xvt.reset)
 				pause = true
 			}
 		}
@@ -1387,6 +1387,7 @@ export function teleport() {
 						deep--
 					else {
 						$.music('.')
+						xvt.out(`\x1B[1;${$.player.rows}r`)
 						require('./main').menu($.player.expert)
 						return
 					}

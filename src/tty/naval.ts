@@ -85,7 +85,7 @@ function choice() {
 						xvt.out(' floating carcass!')
 						xvt.waste(500)
 						$.loadUser(floater)
-						xvt.out(`It is ${floater.handle}'s body in the ocean left there by ${leftby.handle}, and\n`)
+						xvt.out(`\nIt is ${floater.handle}'s body in the ocean left there by ${leftby.handle}, and\n`)
 						xvt.out(`you're able to bring the player back to an Alive! state.\n`)
 						floater.status = ''
 						$.loadUser(floater)
