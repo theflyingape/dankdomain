@@ -96,6 +96,12 @@ export function menu(suppress = false) {
 	if ($.online.altered) $.saveUser($.player)
 	if ($.reason) xvt.hangup()
 
+	if (Battle.teleported) {
+		Battle.teleported = false
+		teleport()
+		return
+	}
+
 	if (refresh) {
 		drawLevel()
 		looked = false
@@ -228,10 +234,6 @@ function command() {
 
 	case 'C':
 		Battle.cast($.online, menu)
-		if (Battle.teleported) {
-			Battle.teleported = false
-			teleport()
-		}
 		return
 
 	case 'P':
