@@ -14,6 +14,7 @@ import { fail } from 'assert';
 module Dungeon
 {
 	let monsters: monster = require('../etc/dungeon.json')
+	let party: active[]
 	
 	interface dungeon {
 		rooms: [ room[] ]	//	7-10
@@ -23,7 +24,7 @@ module Dungeon
 	}
 	interface room {
 		map: boolean		//	explored?
-		occupant: number	//	0=none, 1=trap door, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard
+		occupant: number	//	0=none, 1=trapdoor, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard
 		type: number		//	0=Emp, 1=N-S, 2=W-E, 3=Cav
 		giftItem?: string	//	potion, poison, magic, xmagic, chest, map, armor, weapon, marauder
 		giftValue?: number
@@ -75,11 +76,15 @@ module Dungeon
 	}
 
 export function DeepDank(start: number, cb: Function) {
+	party = []
+	party.push($.online)
 	tl = Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
+
 	deep = 0
 	Z = start < 0 ? 0 : start > 99 ? 99 : start
 	fini = cb
 	dd[deep] = new Array(100)
+
 	generateLevel()
 	if (!doMove()) return
 	menu()
@@ -98,10 +103,9 @@ export function menu(suppress = false) {
 	if ($.dice((ROOM.type == 0 ? 2 : ROOM.type == 3 ? 1 : 4)
 		* $.online.cha / 5 - DL.moves / 10) == 1) {
 		xvt.plot($.player.rows, 1)
-		xvt.out(xvt.reset, '\n', xvt.faint
-			, ['Your skin crawls', 'Your pulse quickens', 'You feel paranoid', 'Your grip tightens', 'You stand ready'][$.dice(5) - 1]
-			, ' when you hear a'
-		)
+		xvt.out(xvt.reset, '\n', xvt.faint, ['Your skin crawls'
+			, 'Your pulse quickens', 'You feel paranoid', 'Your grip tightens'
+			, 'You stand ready'][$.dice(5) - 1], ' when you hear a')
 		switch ($.dice(5)) {
 			case 1:
 				$.sound('creak')
@@ -138,10 +142,12 @@ export function menu(suppress = false) {
 			if (ROOM.occupant == 6) {
 				$.sound('agony', 8)
 				xvt.out(xvt.reset, xvt.bright, xvt.yellow, 'You hear a dying cry of agony!!\n', xvt.reset)
-				xvt.waste(1000)
+				xvt.waste(800)
 				ROOM.occupant = 0
-				if (DL.map > 1)
+				if (DL.map > 1) {
 					drawRoom(y, x)
+					xvt.waste(800)
+				}
 			}
 		}
 	}
@@ -350,11 +356,47 @@ function doMove(): boolean {
 			if (isNaN(+ROOM.monster[n].user.armor)) xvt.out('\n', $.who(ROOM.monster[n], 'He'), $.Armor.wearing(ROOM.monster[n]), '.\n')
 		}
 
-		Battle.engage('Dungeon', $.online, ROOM.monster, doSpoils)
+		Battle.engage('Dungeon', party, ROOM.monster, doSpoils)
 		return false
 	}
 
 	switch (ROOM.occupant) {
+		case 1:
+			if ($.dice(100 - Z) > 1) {
+				xvt.out('You have stepped onto a trapdoor!\n\n')
+				xvt.waste(300)
+				let u = ($.dice(120) < $.online.dex)
+				for (let m = party.length - 1; m > 0; m--) {
+					if ($.dice(120) < party[m].dex) {
+						xvt.out(xvt.reset, party[m].user.handle, ' manages to catch the edge and stop',
+							$.who(party[m], 'him'), '\x08self from falling.\n')
+					}
+					else {
+						xvt.out(xvt.bright, xvt.yellow,
+							party[m].user.handle, ' falls down a level!\n')
+						if (u) party.splice(m, 1)
+					}
+					xvt.waste(200)
+				}
+				if (u) {
+					xvt.out(xvt.reset, 'You manage to catch the edge and stop yourself from falling.\n')
+					ROOM.occupant = 0
+				}
+				else {
+					xvt.out(xvt.bright, xvt.yellow, 'You fall down a level!\n')
+					xvt.waste(300)
+					Z++
+					generateLevel()
+					if (!doMove()) return false
+				}
+				return true
+			}
+			else {
+				xvt.out(xvt.bright, xvt.yellow, 'A fairie ... \n')
+				ROOM.occupant = 0
+			}
+			return true
+
 		case 5:
 			xvt.out(xvt.bright, xvt.cyan, 'There is a thief in this '
 				, ['chamber', 'hallway', 'corridor', 'cavern'][ROOM.type]
@@ -455,6 +497,11 @@ function doMove(): boolean {
 							$.online.hp = $.player.hp
 							looked = true
 						}
+						else {
+							ROOM.occupant = 0
+							xvt.out(xvt.magenta, 'He teleports away!\n', xvt.reset)
+							$.sound('teleport', 8)
+						}
 						menu()
 					}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false }
 				}
@@ -522,11 +569,13 @@ export function doSpoils() {
 		}
 	}
 
+	let d = ['N','S','E','W']
 	while (Battle.retreat) {
 		xvt.out(xvt.bright, xvt.red, 'You frantically look to escape . . . ')
-		xvt.waste(600)
+		xvt.waste(400)
 
-		switch ('NSEW'[$.dice(4) - 1]) {
+		let i = $.dice(d.length) - 1
+		switch (d[i]) {
 			case 'N':
 				if (Y > 0 && DL.rooms[Y][X].type !== 2)
 					if (DL.rooms[Y - 1][X].type !== 2) {
@@ -571,6 +620,7 @@ export function doSpoils() {
 				oof('west')
 				break
 		}
+		d.splice(i, 1)
 		pause = true
 	}
 
@@ -620,13 +670,14 @@ function drawLevel() {
 
 					if (DL.map > 1 || (DL.rooms[r][x].map
 						&& Math.abs(Y - r) < Math.trunc($.online.int / 20) && Math.abs(X - x) < Math.trunc($.online.int / 20))) {
-						if (DL.rooms[r][x].monster.length)
+						if (DL.rooms[r][x].monster.length) {
 							icon = xvt.attr(DL.rooms[r][x].occupant ? xvt.green : xvt.red, 
 								DL.rooms[r][x].monster.length > 1 ? 'Mob' : 'Mon', xvt.reset)
-						//	0=none, 1=trap door, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard
+							o = ` ${icon} `
+						}
+						//	0=none, 1=trapdoor, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard
 						switch (DL.rooms[r][x].occupant) {
 							case 0:
-								if (icon) o = ` ${icon} `
 								break
 
 							case 1:
@@ -712,7 +763,7 @@ function drawRoom(r:number, c:number) {
 	if (ROOM.monster.length)
 		icon = xvt.attr(ROOM.occupant ? xvt.green : xvt.red, ROOM.monster.length > 1 ? 'Mob' : 'Mon', xvt.reset)
 
-	//	0=none, 1=trap door, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard
+	//	0=none, 1=trapdoor, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard
 	switch (ROOM.occupant) {
 		case 0:
 			if (icon) o = ` ${icon} `
@@ -796,8 +847,8 @@ function generateLevel() {
 		DL = dd[deep][Z]
 		for (y = 0; y < DL.rooms.length; y++) {
 			DL.rooms[y] = new Array(DL.width)
-				for (x = 0; x < DL.width; x++)
-					DL.rooms[y][x] = <room>{ map:true, monster:[], occupant:0, type:0 }
+			for (x = 0; x < DL.width; x++)
+				DL.rooms[y][x] = <room>{ map:true, monster:[], occupant:0, type:0 }
 		}
 
 		for (y = 0; y < DL.rooms.length; y++) {
@@ -850,6 +901,19 @@ function generateLevel() {
 		x = $.dice(DL.width) - 1
 	} while (DL.rooms[y][x].type == 3 || DL.rooms[y][x].occupant)
 	DL.rooms[y][x].occupant = 7
+
+	//	set some trapdoors in empty corridors only
+	n = (DL.rooms.length * DL.width / 10) >>0
+	if ($.dice(100 - Z) > deep)
+		n += $.dice(Z / 16 + 2)
+	while (n) {
+		y = $.dice(DL.rooms.length) - 1
+		x = $.dice(DL.width) - 1
+		if (!DL.rooms[y][x].occupant) {
+			DL.rooms[y][x].occupant = 1
+			n--
+		}
+	}
 
 	/*
 	//      bonus for the more experienced player
@@ -1013,6 +1077,12 @@ function generateLevel() {
 	}
 
 	function renderMap() {
+		let min =  Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
+		if (tl - min > 4) {
+			tl = min
+			$.music('dungeon' + $.dice(9))
+		}
+
 		const box = xvt.Draw[$.player.emulation]
 		let r: number, c: number
 		paper = new Array(2 * DL.rooms.length + 1)
@@ -1263,7 +1333,7 @@ export function teleport() {
 	xvt.out($.bracket('O'), `Teleport out of this ${deep ? 'dank' : ''} dungeon`)
 	xvt.out($.bracket('R'), 'Random teleport')
 	xvt.out(xvt.cyan, '\n\nTime Left: ', xvt.bright, xvt.white, min.toString(), xvt.normal, xvt.cyan, ' min.', xvt.reset)
-    if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry())
+	if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry())
 	if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
 		xvt.out(xvt.faint, '\nThe feeling of insecurity overwhelms you.', xvt.reset)
 
@@ -1300,15 +1370,11 @@ export function teleport() {
 					break
 			}
 			generateLevel()
-			if (tl - min > 4) {
-				tl = min
-                $.music('dungeon' + $.dice(9))
-			}
 			if (!doMove()) return
 			menu()
 		}, cancel:'O', enter:'R', eol:false, match:/U|D|O|R/i }
 	}
- 	xvt.app.form['wizard'].prompt = `Teleport #${deep + 1}.${Z + 1}: `
+	xvt.app.form['wizard'].prompt = `Teleport #${deep + 1}.${Z + 1}: `
 	xvt.app.focus = 'wizard'
 }
 

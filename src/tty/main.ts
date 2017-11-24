@@ -361,9 +361,13 @@ function choice() {
                         }
                         xvt.out('\n')
                         Battle.user('Scout', (opponent: active) => {
-                            $.PC.stats(opponent)
-                            xvt.app.form['pause'] = { cb:menu, pause:true }
-                            xvt.app.focus = 'pause'
+                            if (opponent.user.id) {
+                                $.PC.stats(opponent)
+                                xvt.app.form['pause'] = { cb:menu, pause:true }
+                                xvt.app.focus = 'pause'
+                            }
+                            else
+                                menu()
                         })
                         return
                     }
