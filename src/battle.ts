@@ -869,12 +869,12 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
 
         if ($.dice(100) > $.Magic.ability(name, rpc, nme).fail) {
             if ((backfire = $.dice(100) > $.Magic.ability(name, rpc, nme).backfire)) {
-                $.sound('oops')
                 xvt.out('Oops!  ', xvt.reset, $.who(rpc, 'His'), 'spell backfires!\n')
+                $.sound('oops', 4)
             }
             else {
-                $.sound('fssst')
                 xvt.out('Fssst!  ', xvt.reset, $.who(rpc, 'His'), 'spell fails!\n')
+                $.sound('fssst', 4)
                 cb()
                 return
             }
@@ -1043,8 +1043,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                     }
                     else
                         rpc.hp = -1
-                xvt.out(xvt.normal, 'away from the battle!\n', xvt.reset)
                 }
+                xvt.out(xvt.normal, 'away from the ', xvt.faint, 'battle!\n', xvt.reset)
                 $.sound('teleport', 8)
             }
             else {

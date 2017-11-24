@@ -603,7 +603,7 @@ export function skillplus(rpc: active, cb: Function) {
 
     //  slow-roll endowment choices for a dramatic effect  :)
     xvt.out(xvt.reset); xvt.waste(500)
-    xvt.out(xvt.bright, xvt.yellow,' + You earn a gift to endow your character +\n'); xvt.waste(1000)
+    xvt.out(xvt.bright, xvt.yellow,` + You earn a gift to endow your ${rpc.user.pc} character +\n`); xvt.waste(1000)
     xvt.out('\n'); xvt.waste(500)
 
     if (rpc.user.maxstr < 99 && rpc.user.maxint < 99 && rpc.user.maxdex < 99 && rpc.user.maxcha < 99) {
