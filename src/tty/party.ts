@@ -89,9 +89,15 @@ function choice() {
             xvt.out('        Party            Win-Loss   Ratio \n')
             xvt.out('------------------------------------------\n', xvt.reset)
             rs = $.query(`SELECT * FROM Gangs ORDER BY win DESC, loss ASC`)
+            let crown = true
             for (let i in rs) {
-                let ratio = rs[i].loss ? sprintf('%6.3f', rs[i].win / (rs[i].win + rs[i].loss)).substr(1) : 'undefeated'
-                xvt.out(sprintf('%-22s %5u-%-5u ', rs[i].name, rs[i].win, rs[i].loss), ratio, '\n')
+                let ratio = rs[i].loss ? ' ' + (sprintf('%5.3f', rs[i].win / (rs[i].win + rs[i].loss)).substr(1)) : 'undefeated'
+                xvt.out(sprintf('%-22s %5u-%-5u ', rs[i].name, rs[i].win, rs[i].loss), ratio)
+                if (crown) {
+                    xvt.out(' ', xvt.bright, xvt.yellow, $.player.emulation === 'XT' ? '\u{1F451}' : '+', xvt.reset)
+                    crown = false
+                }
+                xvt.out('\n')
             }
 
             xvt.app.form = {

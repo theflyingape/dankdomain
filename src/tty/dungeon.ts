@@ -403,9 +403,9 @@ function doMove(): boolean {
 			return true
 
 		case 5:
-			xvt.out(xvt.bright, xvt.cyan, 'There is a thief in this '
+			xvt.out(xvt.cyan, xvt.faint, 'There is a thief in this '
 				, ['chamber', 'hallway', 'corridor', 'cavern'][ROOM.type]
-				, '! ', xvt.reset)
+				, '! ', xvt.white)
 			xvt.waste(600)
 			ROOM.occupant = 0
 			let x = $.dice(DL.width) - 1, y = $.dice(DL.rooms.length) - 1
@@ -431,9 +431,9 @@ function doMove(): boolean {
 				if (DL.map > 1)
 					xvt.out('You expected nothing less from this coward.')
 				else
-					xvt.out(xvt.bright, xvt.white, 'He surprises you!', xvt.reset)
+					xvt.out(xvt.bright, xvt.white, 'He surprises you!')
 				xvt.waste(400)
-				xvt.out('\nAs he passes by, he steals your ')
+				xvt.out(xvt.reset, '\nAs he passes by, he steals your ')
 				x = $.online.cha + deep + 1
 				if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
 					x = Math.trunc(x / $.player.level)
@@ -530,17 +530,16 @@ function doMove(): boolean {
 			return false
 	}
 
-	return look()
-
-	function look(): boolean {
+	if (!looked) {
 		looked = true
-
+	
 		xvt.app.form = {
 			'pause': { cb:menu, pause:true }
 		}
 		xvt.app.focus = 'pause'
 		return false
 	}
+	return true
 }
 
 export function doSpoils() {
@@ -655,6 +654,11 @@ function drawHero() {
 
 function drawLevel() {
 	let y:number, x:number
+	if ($.player.emulation === 'XT') {
+		xvt.plot($.player.rows, 1)
+		for (y = 0; y < $.player.rows; y++)
+			xvt.out('\n')
+	}
 	xvt.out(xvt.reset, xvt.clear)
 
 	if (DL.map) {
@@ -1294,12 +1298,26 @@ function putMonster(r?:number, c?:number): boolean {
 
 	if (dm.weapon)
 		m.user.weapon = dm.weapon
-	else
+	else {
 		m.user.weapon = Math.trunc((level + deep - 10) / 100 * ($.Weapon.merchant.length - 1))
+		m.user.weapon = (m.user.weapon + $.online.weapon.wc) >>1
+		if ($.dice($.player.level / 4 - $.online.cha / 10 + 12) == 1) {
+			i = $.online.weapon.wc + $.dice(3) - 2
+			i = i < 1 ? 1 : i >= $.Weapon.merchant.length ? $.Weapon.merchant.length - 1 : i
+			m.user.weapon = $.Weapon.merchant[i]
+		}
+	}
 	if (dm.armor)
 		m.user.armor = dm.armor
-	else
+	else {
 		m.user.armor = Math.trunc((level + deep - 10) / 100 * ($.Armor.merchant.length - 1))
+		m.user.armor = (m.user.armor + $.online.armor.ac) >>1
+		if ($.dice($.player.level / 3 - $.online.cha / 10 + 12) == 1) {
+			i = $.online.armor.ac + $.dice(3) - 2
+			i = i < 1 ? 1 : i >= $.Armor.merchant.length ? $.Armor.merchant.length - 1 : i
+			m.user.armor = $.Armor.merchant[i]
+		}
+	}
 	m.user.hp >>= 2
 	i = 5 - $.dice(deep / 3)
 	m.user.sp = Math.trunc(m.user.sp / i)
@@ -1314,10 +1332,10 @@ function putMonster(r?:number, c?:number): boolean {
 
 	$.activate(m)
 
-	m.str = $.PC.ability(m.str, deep)
-	m.int = $.PC.ability(m.int, deep)
-	m.dex = $.PC.ability(m.dex, deep)
-	m.cha = $.PC.ability(m.cha, deep)
+	m.str = $.PC.ability(m.str, deep>>1)
+	m.int = $.PC.ability(m.int, deep>>1)
+	m.dex = $.PC.ability(m.dex, deep>>1)
+	m.cha = $.PC.ability(m.cha, deep>>1)
 
 	let gold = new $.coins(Math.trunc($.money(level) / 10))
 	gold.value += $.worth(new $.coins(m.weapon.value).value, ($.dice($.online.cha) / 5 + 5) >>0)
