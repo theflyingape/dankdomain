@@ -12,8 +12,6 @@ import Items = require('./items')
 
 module Common
 {
-    //export const fs = require('fs-extra')
-
     //  items
     export const Access = new Items.Access
     export const Armor = new Items.Armor
@@ -291,6 +289,30 @@ export class Character {
                 xvt.out(sprintf('%-18s', profile.hull.toString() + ':' +  profile.user.hull.toString()))
                 xvt.out(xvt.cyan, ' Cannon: ', xvt.white)
                 xvt.out(sprintf('%-15s', profile.user.cannon.toString() + ':' +  (profile.user.hull / 50).toString() + (profile.user.ram ? ' (RAM)' : '')))
+                xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+            }
+
+            if (profile.user.blessed) {
+                let who: user = { id:profile.user.blessed }
+                if (!loadUser(who)) {
+                    if (profile.user.blessed === 'well')
+                        who.handle = 'wishing'
+                    else
+                        who.handle = profile.user.blessed
+                }
+                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+                xvt.out(' + You are blessed by ', xvt.white
+                    , sprintf('%-31s', who.handle))
+                xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+            }
+
+            if (profile.user.cursed) {
+                let who: user = { id:profile.user.cursed }
+                if (!loadUser(who))
+                    who.handle = profile.user.cursed
+                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+                xvt.out(' - You are cursed by ', xvt.white
+                    , sprintf('%-32s', who.handle))
                 xvt.out(' ', xvt.reset, xvt.blue, '|\n')
             }
 
@@ -961,6 +983,7 @@ export function keyhint(rpc: active) {
             xvt.out(xvt.black, `${player.keyhints[i]} from here`)
             break
         }
+        if (player.emulation === 'XT') xvt.out(xvt.noreverse, ' \u{1F511} ')
         xvt.out(xvt.reset, '\n')
     }
     else {
@@ -1456,6 +1479,7 @@ export function riddle() {
             xvt.waste(1000)
             if (xvt.entry.toUpperCase() === player.keyseq[slot]) {
                 sound('max')
+                if (player.emulation === 'XT') xvt.out('\u{1F513} ')
                 xvt.out(xvt.cyan, '{', xvt.bright, 'Click!', xvt.normal, '}\n')
                 player.pc = Object.keys(PC.name['immortal'])[slot]
                 profile({ png:'player/' + player.pc.toLowerCase() + (player.gender === 'F' ? '_f' : ''), pc:player.pc })
@@ -1467,7 +1491,7 @@ export function riddle() {
                 }
                 reroll(player, player.pc)
                 newkeys(player)
-                playerPC([210,220,240][max - 1] || 200, true)
+                playerPC([210,220,240][max - 1], true)
                 return
             }
             else {
@@ -1485,7 +1509,7 @@ export function riddle() {
                 else {
                     reroll(player, player.pc)
                     newkeys(player)
-                    playerPC([210,220,240][max - 1] || 200, true)
+                    playerPC([210,220,240][max - 1], true)
                 }
                 return
             }

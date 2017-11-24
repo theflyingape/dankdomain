@@ -346,43 +346,45 @@ if(c == 'A') {
         //  might or magic?
         let mm: number = 0
         let nest: number = 0
-        if (rpc.user.magic == 1) {
+        let odds: number = from === 'Party' ? 5 : from === 'Dungeon' ? 4 : from === 'Monster' ? 3 : 2
+
+        if (rpc.user.magic == 1 && $.dice(odds) > 1) {
             if ($.Magic.have(rpc.user.spells, 8)
                 && rpc.hp < rpc.user.hp / 6
                 && $.dice(6 - enemy.user.melee) == 1)
                     mm = 8
             else if ($.Magic.have(rpc.user.spells, 7)
                     && rpc.hp < (rpc.user.hp >>1)
-                    && $.dice(enemy.user.melee + 2) > 1)
+                    && $.dice(enemy.user.melee + odds) > 1)
                     mm = 7
             else if ($.Magic.have(rpc.user.spells, 9)
                     && rpc.hp < (rpc.user.hp >>1)
-                    && $.dice(enemy.user.melee + 2) > 1)
+                    && $.dice(enemy.user.melee + odds) > 1)
                     mm = 9
             else if ($.Magic.have(rpc.user.spells, 11)
                     && rpc.hp > (rpc.user.hp >>1)
-                    && $.dice(enemy.user.melee + 2) == 1)
+                    && $.dice(enemy.user.melee + odds) == 1)
                     mm = 11
             else if ($.Magic.have(rpc.user.spells, 13)
                     && rpc.hp < (rpc.user.hp / 6)
-                    && $.dice((rpc.user.level - enemy.user.level) / 9 + 2) == 1)
+                    && $.dice((rpc.user.level - enemy.user.level) / 9 + odds) == 1)
                     mm = 13
             else if (!rpc.confused) {
                 if ($.Magic.have(rpc.user.spells, 14)
                     && rpc.hp > (rpc.user.hp >>1)
-                    && $.dice((rpc.user.level - enemy.user.level) / 9 + 2) == 1)
+                    && $.dice((rpc.user.level - enemy.user.level) / 9 + odds) == 1)
                         mm = 14
                 else if ($.Magic.have(rpc.user.spells, 12)
                     && rpc.hp > (rpc.user.hp >>1)
-                    && $.dice((rpc.user.level - enemy.user.level) / 9 + 2) == 1)
+                    && $.dice((rpc.user.level - enemy.user.level) / 9 + odds) == 1)
                         mm = 12
                 else if ($.Magic.have(rpc.user.spells, 15)
                     && rpc.hp > (rpc.user.hp >>1)
-                    && $.dice(nest + (rpc.user.level - enemy.user.level) / 9 + 2) == 1)
+                    && $.dice(nest + (rpc.user.level - enemy.user.level) / 9 + odds) == 1)
                         mm = 15
                 else if ($.Magic.have(rpc.user.spells, 16)
                     && rpc.hp == rpc.user.hp
-                    && $.dice(nest + (rpc.user.level - enemy.user.level) / 9 + 2) == 1)
+                    && $.dice(nest + (rpc.user.level - enemy.user.level) / 9 + odds) == 1)
                     mm = 16
             }
         }
@@ -390,23 +392,23 @@ if(c == 'A') {
             if (!rpc.confused) {
                 if ($.Magic.have(rpc.user.spells, 15)
                     && rpc.sp >= $.Magic.power(rpc, 15)
-                    && $.dice((rpc.user.level - enemy.user.level) / 9 + 2) == 1)
+                    && $.dice((rpc.user.level - enemy.user.level) / 9 + odds) == 1)
                         mm = 15
                 else if ($.Magic.have(rpc.user.spells, 16)
                     && rpc.sp >= $.Magic.power(rpc, 16)
-                    && $.dice((rpc.user.level - enemy.user.level) / 9 + 2) == 1)
+                    && $.dice((rpc.user.level - enemy.user.level) / 9 + odds) == 1)
                         mm = 16
                 else if ($.Magic.have(rpc.user.spells, 11)
                     && rpc.sp >= $.Magic.power(rpc, 11)
-                    && $.dice(5 - enemy.user.magic) == 1)
+                    && $.dice(6 - enemy.user.magic) == 1)
                         mm = 11
                 else if ($.Magic.have(rpc.user.spells, 14)
                     && rpc.sp >= $.Magic.power(rpc, 14)
-                    && $.dice((rpc.user.level - enemy.user.level) / 9 + 2) == 1)
+                    && $.dice((rpc.user.level - enemy.user.level) / 9 + odds) == 1)
                         mm = 14
                 else if ($.Magic.have(rpc.user.spells, 12)
                     && rpc.sp >= $.Magic.power(rpc, 12)
-                    && $.dice((rpc.user.level - enemy.user.level) / 9 + 2) == 1)
+                    && $.dice((rpc.user.level - enemy.user.level) / 9 + odds) == 1)
                         mm = 12
             }
             if (!mm) {

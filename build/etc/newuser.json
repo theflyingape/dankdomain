@@ -1,4 +1,4 @@
 {
-	"subject": "Verify your online game account",
-	"text": "This e-mail is being sent to you because it was used to register with \nour free game: https://robert.hurst-ri.us/games/dankdomain \n\nYou sign in using your: \n\nPlayer ID: \t${player.id}  (${player.handle}) \nPassword: \t${player.password} \n\nIf this e-mail was not sent by you having registered, please take no action, \nas this game account will automatically deactivate itself.  \n\nFor the latest developments with Dank Domain: \n\n\thttps://www.npmjs.com/package/dankdomain\n\nHappy hunting!"
+	"subject": "Verify your online game account 🔑",
+	"text": "This e-mail is being sent to you because it was used to register with \nour free game: https://robert.hurst-ri.us/games/dankdomain \n\nYou sign in using your: \n\nPlayer ID: \t${player.id}  (${player.handle}) \nPassword: \t${player.password} \n\nIf this e-mail was not sent by you having registered, please take no action, \nas this game account will automatically deactivate itself.  \n\nFor the latest developments with 🔥 Dank Domain 🔥 \n\n\thttps://www.npmjs.com/package/dankdomain\n\nHappy hunting!"
 }
