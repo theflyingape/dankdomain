@@ -667,7 +667,7 @@ function doMove(): boolean {
 						}
 						ROOM.giftItem = ''
 						menu()
-					}, prompt:'Will you drink it (Yes/No/Toss)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N|T|/i }
+					}, prompt:'Will you drink it (Yes/No/Toss)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N|T/i }
 				}
 				xvt.app.focus = 'quaff'
 				return false
@@ -1555,66 +1555,114 @@ function quaff(v: number, it = true) {
 		switch (v) {
 	//	Vial of Slaad Secretions
 		case 0:
+			$.sound('hurt')
+			if (($.online.hp -= $.dice($.player.hp >>1)) < 1)
+				$.reason = `quaffed ${$.an(potion[v])}`
 			break
 
 	//	Potion of Cure Light Wounds
 		case 1:
+			$.sound('yum')
+			$.online.hp += $.dice($.player.hp - $.online.hp)
 			break
 
 	//	Flask of Fire Water
 		case 2:
+			if (($.online.sp -= $.dice($.online.sp >>1)) < 1)
+				$.online.sp = 0
 			break
 
 	//	Potion of Mana
 		case 3:
+			$.sound('shimmer')
+			$.online.sp += $.dice($.player.sp - $.online.sp)
 			break
 
 	//	Vial of Weakness
 		case 4:
+			$.online.str = $.PC.ability($.online.str, -$.dice(10))
 			break
 
 	//	Potion of Stamina
 		case 5:
+			$.online.str = $.PC.ability($.online.str, $.dice(10))
 			break
 
 	//	Vial of Stupidity
 		case 6:
+			$.online.int = $.PC.ability($.online.int, -$.dice(10))
 			break
 
 	//	Potion of Wisdom
 		case 7:
+			$.online.int = $.PC.ability($.online.int, $.dice(10))
 			break
 
 	//	Vial of Clumsiness
 		case 8:
+			$.online.dex = $.PC.ability($.online.dex, -$.dice(10))
 			break
 
 	//	Potion of Agility
 		case 9:
+			$.online.dex = $.PC.ability($.online.dex, $.dice(10))
 			break
 
 	//	Vile Vial
 		case 10:
+			$.online.cha = $.PC.ability($.online.cha, -$.dice(10))
 			break
 
 	//	Potion of Charm
 		case 11:
+			$.online.cha = $.PC.ability($.online.cha, $.dice(10))
 			break
 
 	//	Vial of Crack
 		case 12:
+			$.player.maxstr = $.PC.ability($.player.maxstr, $.player.maxstr > 75 ? -$.dice(5) : -1)
+			$.player.maxint = $.PC.ability($.player.maxint, $.player.maxint > 75 ? -$.dice(5) : -1)
+			$.player.maxdex = $.PC.ability($.player.maxdex, $.player.maxdex > 75 ? -$.dice(5) : -1)
+			$.player.maxcha = $.PC.ability($.player.maxcha, $.player.maxcha > 75 ? -$.dice(5) : -1)
+			$.player.str = $.PC.ability($.player.str, $.player.str > 50 ? -$.dice(5) : -1)
+			$.player.int = $.PC.ability($.player.int, $.player.int > 50 ? -$.dice(5) : -1)
+			$.player.dex = $.PC.ability($.player.dex, $.player.dex > 50 ? -$.dice(5) : -1)
+			$.player.cha = $.PC.ability($.player.cha, $.player.cha > 50 ? -$.dice(5) : -1)
+			$.online.str = $.PC.ability($.online.str, $.online.str > 25 ? -$.dice(5) : -1)
+			$.online.int = $.PC.ability($.online.int, $.online.int > 25 ? -$.dice(5) : -1)
+			$.online.dex = $.PC.ability($.online.dex, $.online.dex > 25 ? -$.dice(5) : -1)
+			$.online.cha = $.PC.ability($.online.cha, $.online.cha > 25 ? -$.dice(5) : -1)
 			break
 
 	//	Potion of Augment
 		case 13:
+			$.player.maxstr = $.PC.ability($.player.maxstr, $.player.maxstr < 95 ? $.dice(3) : 1)
+			$.player.maxint = $.PC.ability($.player.maxint, $.player.maxint < 95 ? $.dice(3) : 1)
+			$.player.maxdex = $.PC.ability($.player.maxdex, $.player.maxdex < 95 ? $.dice(3) : 1)
+			$.player.maxcha = $.PC.ability($.player.maxcha, $.player.maxcha < 95 ? $.dice(3) : 1)
+			$.player.str = $.PC.ability($.player.str, $.dice(10), $.player.maxstr)
+			$.player.int = $.PC.ability($.player.int, $.dice(10), $.player.maxint)
+			$.player.dex = $.PC.ability($.player.dex, $.dice(10), $.player.maxdex)
+			$.player.cha = $.PC.ability($.player.cha, $.dice(10), $.player.maxcha)
+			$.online.str = $.PC.ability($.online.str, $.dice(100 - $.online.str))
+			$.online.int = $.PC.ability($.online.int, $.dice(100 - $.online.int))
+			$.online.dex = $.PC.ability($.online.dex, $.dice(100 - $.online.dex))
+			$.online.cha = $.PC.ability($.online.cha, $.dice(100 - $.online.cha))
 			break
 
 	//	Beaker of Death
 		case 14:
+			$.sound('killed', 12)
+			$.online.hp = 0
+			$.online.sp = 0
+			$.reason = `quaffed ${$.an(potion[v])}`
 			break
 
 	//	Elixir of Restoration
 		case 15:
+			$.sound('cure')
+			$.online.hp = $.player.hp
+			$.online.sp = $.player.sp
 			break
 		}
 	}

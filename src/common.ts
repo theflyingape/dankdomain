@@ -1508,7 +1508,7 @@ export function riddle() {
                             break
                         }
                     reroll(player, Object.keys(PC.name['player'])[0])
-                    playerPC(200 + 10 * player.wins + player.immortal, true)
+                    playerPC(200 + 10 * player.wins + player.immortal)
                 }
                 else {
                     reroll(player, player.pc)
