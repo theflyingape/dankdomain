@@ -13,9 +13,27 @@ import { fail } from 'assert';
 
 module Dungeon
 {
-	let monsters: monster = require('../etc/dungeon.json')
+	const monsters: monster = require('../etc/dungeon.json')
+	const potion = [
+		'Vial of Slaad Secretions',
+		'Potion of Cure Light Wounds',
+		'Flask of Fire Water',
+		'Potion of Mana',
+		'Vial of Weakness',
+		'Potion of Stamina',
+		'Vial of Stupidity',
+		'Potion of Wisdom',
+		'Vial of Clumsiness',
+		'Potion of Agility',
+		'Vile Vial',
+		'Potion of Charm',
+		'Vial of Crack',
+		'Potion of Augment',
+		'Beaker of Death',
+		'Elixir of Restoration'
+	]
 	let party: active[]
-	
+
 	interface dungeon {
 		rooms: [ room[] ]	//	7-10
 		map: number			//	0=none, 1=map, 2=marauder
@@ -440,6 +458,12 @@ function doMove(): boolean {
 			}
 			break
 
+		case 3:
+			break
+
+		case 4:
+			break
+
 		case 5:
 			xvt.out(xvt.cyan, xvt.faint, 'There is a thief in this '
 				, ['chamber', 'hallway', 'corridor', 'cavern'][ROOM.type]
@@ -543,7 +567,7 @@ function doMove(): boolean {
 							$.sound('teleport', 8)
 						}
 						menu()
-					}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false }
+					}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i }
 				}
 				xvt.app.focus = 'pay'
 				return false
@@ -570,24 +594,96 @@ function doMove(): boolean {
 			break
 
 		case 'chest':
+			let gold = new $.coins($.money(Z))
+			gold.value += $.worth(new $.coins($.online.weapon.value).value, $.online.cha)
+			gold.value += $.worth(new $.coins($.online.armor.value).value, $.online.cha)
+			gold.value *= ROOM.giftValue
+			gold = new $.coins(gold.carry(1, true))
+			if (gold.value) {
+				xvt.out('\n', xvt.bright, xvt.yellow, 'You find a treasure chest holding '
+					, gold.carry(), '!\n', xvt.reset)
+				$.sound('max')
+			}
+			else
+				xvt.out('\n', xvt.yellow, 'You find an empty, treasure chest.\n', xvt.reset)
+			$.player.coin.value += gold.value
+			ROOM.giftItem = ''
 			break
 
 		case 'magic':
+			if (!$.Magic.have($.player.spells, ROOM.giftValue)) {
+				xvt.out('\n', xvt.bright, xvt.yellow, 'You find a '
+					, $.Magic.merchant[ROOM.giftValue - 1]
+					, ' ', $.player.magic == 1 ? 'wand' : 'scroll'
+					, '!\n', xvt.reset)
+				$.Magic.add($.player.spells, ROOM.giftValue)
+				ROOM.giftItem = ''
+			}
 			break
 
 		case 'map':
+			xvt.out('\n', xvt.bright, xvt.yellow, 'You find a magic map!\n', xvt.reset)
+			DL.map = 3
+			pause = true
+			refresh = true
+			ROOM.giftItem = ''
 			break
 
 		case 'poison':
+			if (!$.Poison.have($.player.poisons, ROOM.giftValue)) {
+				xvt.out('\n', xvt.bright, xvt.yellow, 'You find a vial of '
+					, $.Poison.merchant[ROOM.giftValue - 1], '!\n', xvt.reset)
+				$.Poison.add($.player.poisons, ROOM.giftValue)
+				ROOM.giftItem = ''
+			}
 			break
 
 		case 'potion':
-			break
+			$.sound('bubbles')
+			xvt.out(xvt.bright, xvt.cyan, '\nOn the ground, you find a ',
+				['bottle containing', 'flask of some', 'vial holding'][$.dice(3) - 1], ' ',
+				[ 'bubbling', 'clear', 'dark', 'sparkling', 'tainted'][$.dice(5) - 1], ' ',
+				[ 'amber', 'blue', 'crimson', 'green', 'purple'][$.dice(5) - 1], ' ',
+				'potion.\n')
+
+			if ($.dice(100) + deep < 50 + ($.online.int >>1)) {
+				xvt.app.form = {
+					'quaff': { cb: () => {
+						xvt.out('\n\n')
+						if (/N/i.test(xvt.entry)) {
+							menu()
+							return
+						}
+						if (/Y/i.test(xvt.entry))
+							xvt.out(xvt.bright)
+						else if (/T/i.test(xvt.entry))
+							xvt.out(xvt.faint)
+						quaff(ROOM.giftValue)
+						ROOM.giftItem = ''
+						menu()
+					}, prompt:'Will you drink it (Yes/No/Toss)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N|T|/i }
+				}
+				xvt.app.focus = 'quaff'
+			}
+			else {
+				xvt.out('You quaff it without hesitation.\n')
+				xvt.waste(600)
+				quaff(ROOM.giftValue)
+			}
+			return false
 
 		case 'weapon':
 			break
 
 		case 'xmagic':
+			if (!$.Magic.have($.player.spells, ROOM.giftValue)) {
+				xvt.out('\n', xvt.bright, xvt.yellow, 'You find a '
+					, $.Magic.special[ROOM.giftValue - $.Magic.merchant.length]
+					, ' ', $.player.magic == 1 ? 'wand' : 'scroll'
+					, '!\n', xvt.reset)
+				$.Magic.add($.player.spells, ROOM.giftValue)
+				ROOM.giftItem = ''
+			}
 			break
 	}
 
@@ -726,7 +822,7 @@ function drawLevel() {
 					if (DL.map > 1 || (DL.rooms[r][x].map
 						&& Math.abs(Y - r) < Math.trunc($.online.int / 20) && Math.abs(X - x) < Math.trunc($.online.int / 20))) {
 						if (DL.rooms[r][x].monster.length) {
-							icon = xvt.attr(DL.rooms[r][x].occupant ? xvt.green : xvt.red, 
+							icon = xvt.attr(DL.rooms[r][x].occupant || DL.rooms[r][x].giftItem ? xvt.green : xvt.red, 
 								DL.rooms[r][x].monster.length > 1 ? 'Mob' : 'Mon', xvt.reset)
 							o = ` ${icon} `
 						}
@@ -746,9 +842,13 @@ function drawLevel() {
 								break
 
 							case 3:
+								if (!icon && DL.map > 2)
+									o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.blue, '  *  ', xvt.reset)
 								break
 
 							case 4:
+								if (!icon && DL.map > 2)
+									o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.green, '  @  ', xvt.reset)
 								break
 
 							case 5:
@@ -788,6 +888,11 @@ function drawLevel() {
 
 	xvt.out(`\x1B[${paper.length + 1};${$.player.rows}r`)
 	xvt.plot(paper.length + 1, 1)
+
+	for (y = 0; y < DL.rooms.length; y++)
+		for (x = 0; x < DL.width; x++)
+			if (DL.rooms[y][x].giftItem)
+				console.log('[', y, ',', x, ']', DL.rooms[y][x].giftItem, DL.rooms[y][x].giftValue)
 }
 
 function drawRoom(r:number, c:number) {
@@ -835,9 +940,13 @@ function drawRoom(r:number, c:number) {
 			break
 
 		case 3:
+			if (!icon && DL.map > 2)
+				o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.blue, '  *  ', xvt.reset)
 			break
 
 		case 4:
+			if (!icon && DL.map > 2)
+				o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.green, '  @  ', xvt.reset)
 			break
 
 		case 5:
@@ -933,14 +1042,56 @@ function generateLevel() {
 		if (putMonster())
 			n--
 
+	let wow:number = 1
+
+	//	potential bonus(es) for the more experienced adventurer
+	if (!$.player.novice) {
+		//	gift map
+		if ($.dice($.player.immortal) > Z && $.dice($.player.wins) > deep) {
+			y = $.dice(DL.rooms.length) - 1
+			x = $.dice(DL.width) - 1
+			DL.rooms[y][x].giftItem = 'map'
+			if (Math.trunc($.dice(100 * (Z + 1)) / (deep + 1)) < (deep + 4))
+				wow = DL.rooms.length * DL.width
+		}
+
+		//	wishing well
+		if ($.dice((110 - Z) / 3 + deep) == 1) {
+			for (let i = 0; i < wow; i++) {
+				y = $.dice(DL.rooms.length) - 1
+				x = $.dice(DL.width) - 1
+				DL.rooms[y][x].occupant = 3
+			}
+			wow = 1
+		}
+
+		//	wheel of life
+		if ($.dice((110 - Z) / 3 + deep) == 1) {
+			for (let i = 0; i < wow; i++) {
+				y = $.dice(DL.rooms.length) - 1
+				x = $.dice(DL.width) - 1
+				DL.rooms[y][x].occupant = 4
+			}
+			wow = 1
+		}
+
+		//	deep dank dungeon portal
+		if (deep < 10 && deep < $.player.immortal) {
+			y = $.dice(DL.rooms.length) - 1
+			x = $.dice(DL.width) - 1
+			DL.rooms[y][x].occupant = 2
+		}
+	}
+
 	//	thief(s) in other spaces
-	n = $.dice(deep >>2)
+	n = $.dice(deep >>2) + wow
 	for (let i = 0; i < n; i++) {
 		do {
 			y = $.dice(DL.rooms.length) - 1
 			x = $.dice(DL.width) - 1
-		} while (DL.rooms[y][x].type == 3)
+		} while (wow == 0 && DL.rooms[y][x].type == 3)
 		DL.rooms[y][x].occupant = 5
+		wow--
 	}
 
 	//	a cleric in another space
@@ -970,150 +1121,71 @@ function generateLevel() {
 		}
 	}
 
-	/*
-	//      bonus for the more experienced player
-	if(dice(PLAYER.Immortal) > dl && dice(PLAYER.Wins) > nest && PLAYER.Novice != 'Y') {
-			x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
-			ROOM(dl, x, y)->gift_type = GIFT_DETECT;
-			if((dice(100 * dl + 1) / nest) == 1)
-					wow = LEVEL(dl)->MaxRow * LEVEL(dl)->MaxCol;
-	}
+	wow = 10
 
-	m = LEVEL(dl)->MaxRow * LEVEL(dl)->MaxCol / 10;
-	if(dice(100 - dl) > nest)
-			m += dice(dl / 16 + 2);
-	for(n = 0; n < m; n++) {
-			x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
-			ROOM(dl, x, y)->occupant = TRAP_DOOR;
-	}
+	//	potential bonus(es) for the more experienced adventurer
+	if (!$.player.novice && $.dice($.player.immortal) > Z)
+		if (Math.trunc($.dice(100 * (Z + 1)) / (deep + 1)) < (deep + 2))
+			wow = DL.rooms.length * DL.width
 
-	if(dice((102 - dl) / 3 + nest) == 1 && PLAYER.Novice != 'Y') {
-			for(i = 0; i < wow; i++) {
-					x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
-					ROOM(dl, x, y)->occupant = WELL;
-			}
-			wow = 1;
-	}
+	n = $.dice(Z / 33) + $.dice(deep / 3) + wow - 2
+	for (let i = 0; i < n; i++) {
+		y = $.dice(DL.rooms.length) - 1
+		x = $.dice(DL.width) - 1
 
-	if(dice((102 - dl) / 3 + nest) == 1 && PLAYER.Novice != 'Y') {
-			for(i = 0; i < wow; i++) {
-					x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
-					ROOM(dl, x, y)->occupant = WHEEL;
-			}
-			wow = 1;
-	}
-
-	if(nest < 10 && nest < PLAYER.Immortal && PLAYER.Novice != 'Y') {
-			x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
-			ROOM(dl, x, y)->occupant = DEEP_DANK_DUNGEON;
-	}
-
-	m = dice(nest / 4) + wow - 1;
-	for(n = 0; n < m; n++) {
-			x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
-			ROOM(dl, x, y)->occupant = THIEF;
-	}
-
-	do {
-			x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
-	} while(ROOM(dl, x, y)->occupant);
-	ROOM(dl, x, y)->occupant = CLERIC;
-
-	do {
-			x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
-	} while(ROOM(dl, x, y)->occupant);
-	ROOM(dl, x, y)->occupant = WIZARD;
-
-	wow = 1;
-	//      bonus for the more experienced player
-	if(dice(PLAYER.Immortal) > dl && PLAYER.Novice != 'Y')
-			if((dice(100 * dl + 1) / nest) == 1)
-					wow = LEVEL(dl)->MaxRow * LEVEL(dl)->MaxCol;
-
-	m = dice(dl / 33) + dice(nest / 3) + wow - 2;
-	for(n = 0; n < m; n++) {
-		x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
-		if(dice(nest + 10) > nest) {
-				ROOM(dl, x, y)->gift_id = FALSE;
-				ROOM(dl, x, y)->gift_type = GIFT_VIAL;
-				j = dice(126 + nest);
-				for(i = 0; i < 16 && j > 0; i++)
-						j -= i + 1;
-				ROOM(dl, x, y)->gift_value = 16 - i;
-				continue;
+		if ($.dice(deep + 10) > (deep + 1)) {
+			DL.rooms[y][x].giftID = false
+			DL.rooms[y][x].giftItem = 'potion'
+			n = $.dice(128 + deep)
+			for (let i = 0; i < 15 && n > 0; i++)
+				n -= i + 1
+			DL.rooms[y][x].giftValue = 16 - i
+			if ($.player.magic < 2 && DL.rooms[y][x].giftValue > 2 && DL.rooms[y][x].giftValue < 5)
+				DL.rooms[y][x].giftValue >>= 1
+			continue
 		}
-		if(dice(nest + 5) > nest && ONLINE->user.MyPoison) {
-				ROOM(dl, x, y)->gift_type = GIFT_POISON;
-				j = dice(126 + nest);
-				for(i = 0; i < 16 && j > 0; i++)
-						j -= i + 1;
-				ROOM(dl, x, y)->gift_value = 16 - i;
-				continue;
+		if ($.dice(deep + 5) > (deep + 1) && $.player.poison) {
+			DL.rooms[y][x].giftID = false
+			DL.rooms[y][x].giftItem = 'poison'
+			DL.rooms[y][x].giftValue =  $.dice($.Poison.merchant.length * Z / 100)
+			continue
 		}
 
-		if(dice(nest + 5) > nest && (ONLINE->user.MyMagic == 1 || ONLINE->user.MyMagic == 2)) {
-				ROOM(dl, x, y)->gift_type = GIFT_MAGIC;
-				j = dice(126 + nest);
-				for(i = 0; i < 16 && j > 0; i++)
-						j -= i + 1;
-				ROOM(dl, x, y)->gift_value = 16 - i;
-				continue;
-		}
-		if(dice(nest + 3) > nest && (ONLINE->user.MyMagic == 1 || ONLINE->user.MyMagic == 2)) {
-				ROOM(dl, x, y)->gift_type = GIFT_XMAGIC;
-				j = dice(11 + nest);
-				for(i = 0; i < 8 && j > 0; i++)
-						j -= i + 1;
-				ROOM(dl, x, y)->gift_value = 8 - i;
-				continue;
-		}
-		if(dice(nest + ONLINE->user.MyMagic + 4) > nest) {
-				ROOM(dl, x, y)->gift_type = GIFT_CHEST;
-				ROOM(dl, x, y)->gift_value = dice(nest + 6) - 1;
-				continue;
+		if ($.dice(deep + 5) > (deep + 1) && ($.player.magic == 1 || $.player.magic == 2)) {
+			DL.rooms[y][x].giftID = false
+			DL.rooms[y][x].giftItem = 'magic'
+			DL.rooms[y][x].giftValue =  $.dice($.Magic.merchant.length * Z / 100)
+			continue
 		}
 
-		if(dice(nest * (ONLINE->user.MyMagic + 3)) - ONLINE->user.MyMagic > nest) {
-				ROOM(dl, x, y)->gift_type = GIFT_ARMOR;
-				ROOM(dl, x, y)->gift_value = dice(nest + 6) - 1;
-				continue;
+		if ($.dice(deep + 3) > (deep + 1) && ($.player.magic == 1 || $.player.magic == 2)) {
+			DL.rooms[y][x].giftID = false
+			DL.rooms[y][x].giftItem = 'xmagic'
+			DL.rooms[y][x].giftValue =  $.Magic.merchant.length + $.dice($.Magic.special.length)
+			continue
 		}
-		if(dice(nest * (ONLINE->user.MyMagic + 2)) - ONLINE->user.MyMagic > nest) {
-				ROOM(dl, x, y)->gift_type = GIFT_WEAPON;
-				ROOM(dl, x, y)->gift_value = dice(nest + 6) - 1;
-				continue;
+
+		if ($.dice(deep + $.player.magic + 4) > (deep + 1)) {
+			DL.rooms[y][x].giftID = false
+			DL.rooms[y][x].giftItem = 'chest'
+			DL.rooms[y][x].giftValue =  $.dice(10 + deep) - 1
+			continue
+		}
+
+		if ($.dice(deep * ($.player.magic + 3)) - $.player.magic > (deep + 1)) {
+			DL.rooms[y][x].giftID = false
+			DL.rooms[y][x].giftItem = 'armor'
+			DL.rooms[y][x].giftValue =  $.dice(deep) + 2
+			continue
+		}
+
+		if ($.dice(deep * ($.player.magic + 2)) - $.player.magic > (deep + 1)) {
+			DL.rooms[y][x].giftID = false
+			DL.rooms[y][x].giftItem = 'weapon'
+			DL.rooms[y][x].giftValue =  $.dice(deep) + 2
+			continue
 		}
 	}
-
-	m = nest - 1;
-	for(i = 0; i < LEVEL(dl)->MaxCol; i++)
-			for(j = 0; j < LEVEL(dl)->MaxRow; j++)
-					if(ROOM(dl, i, j)->gift_type == GIFT_DETECT)
-							m = 0;
-
-	if(m) {
-			x = dice(LEVEL(dl)->MaxCol) - 1; y = dice(LEVEL(dl)->MaxRow) - 1;
-			ROOM(dl, x, y)->gift_type = GIFT_MAP;
-	}
-
-	renderdmap();
-	drawmap();
-
-	hx = dice(LEVEL(dl)->MaxCol) - 1; hy = dice(LEVEL(dl)->MaxRow) - 1;
-	fx = hx; fy = hy;
-	mymove = TRUE;
-
-	if(!logoff) {
-			sprintf(outbuf, "is entering Dungeon %s, level %d", numlev[nest], dl + 1);
-			broadcast(outbuf);
-	}
-
-	if((int)PLAYER.Level / 9 - nest > PLAYER.Security) {
-			NL;
-			OUT("The feeling of insecurity overwhelms you."); NL;
-			paused();
-	}
-*/
 
 	function spider(r:number, c:number) {
 		DL.rooms[r][c].map = false
@@ -1427,6 +1499,7 @@ export function teleport() {
 					else {
 						$.music('.')
 						xvt.out(`\x1B[1;${$.player.rows}r`)
+						xvt.plot($.player.rows, 1)
 						require('./main').menu($.player.expert)
 						return
 					}
@@ -1438,6 +1511,77 @@ export function teleport() {
 	}
 	xvt.app.form['wizard'].prompt = `Teleport #${deep + 1}.${Z + 1}: `
 	xvt.app.focus = 'wizard'
+}
+
+function quaff(v: number) {
+	xvt.out(v % 2 ? xvt.red : xvt.green)
+	xvt.out('It was ', $.an(potion[v]), potion[v], '.\n', xvt.reset)
+
+	switch (v) {
+	//	Vial of Slaad Secretions
+		case 1:
+			break
+
+	//	Potion of Cure Light Wounds
+		case 2:
+			break
+
+	//	Flask of Fire Water
+		case 3:
+			break
+
+	//	Potion of Mana
+		case 4:
+			break
+
+	//	Vial of Weakness
+		case 5:
+			break
+
+	//	Potion of Stamina
+		case 6:
+			break
+
+	//	Vial of Stupidity
+		case 7:
+			break
+
+	//	Potion of Wisdom
+		case 8:
+			break
+
+	//	Vial of Clumsiness
+		case 9:
+			break
+
+	//	Potion of Agility
+		case 10:
+			break
+
+	//	Vile Vial
+		case 11:
+			break
+
+	//	Potion of Charm
+		case 12:
+			break
+
+	//	Vial of Crack
+		case 13:
+			break
+
+	//	Potion of Augment
+		case 14:
+			break
+
+	//	Beaker of Death
+		case 15:
+			break
+
+	//	Elixir of Restoration
+		case 16:
+			break
+	}
 }
 
 }
