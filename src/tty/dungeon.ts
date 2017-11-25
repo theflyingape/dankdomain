@@ -14,24 +14,6 @@ import { fail } from 'assert';
 module Dungeon
 {
 	const monsters: monster = require('../etc/dungeon.json')
-	const potion = [
-		'Vial of Slaad Secretions',
-		'Potion of Cure Light Wounds',
-		'Flask of Fire Water',
-		'Potion of Mana',
-		'Vial of Weakness',
-		'Potion of Stamina',
-		'Vial of Stupidity',
-		'Potion of Wisdom',
-		'Vial of Clumsiness',
-		'Potion of Agility',
-		'Vile Vial',
-		'Potion of Charm',
-		'Vial of Crack',
-		'Potion of Augment',
-		'Beaker of Death',
-		'Elixir of Restoration'
-	]
 	let party: active[]
 
 	interface dungeon {
@@ -105,7 +87,6 @@ export function DeepDank(start: number, cb: Function) {
 	deep = 0
 	Z = start < 0 ? 0 : start > 99 ? 99 : start
 	fini = cb
-	dd[deep] = new Array(100)
 
 	generateLevel()
 	menu()
@@ -458,10 +439,32 @@ function doMove(): boolean {
 			}
 			break
 
+		case 2:
+			xvt.out(xvt.bright, xvt.blue, 'You\'ve found a portal to a deep, dank dungeon.')
+			xvt.app.form = {
+				'deep': { cb: () => {
+					ROOM.occupant = 0
+					xvt.out('\n')
+					if (/Y/i.test(xvt.entry)) {
+						xvt.out(xvt.bright, 'You vanish into the other dungeon...')
+						$.sound('teleport', 8)
+						deep++
+						generateLevel()
+					}
+					menu()
+				}, prompt:'Descend even deeper (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i }
+			}
+			xvt.app.focus = 'deep'
+			return false
+
 		case 3:
+			xvt.out(xvt.magenta, 'You have found a legendary Wishing Well.\n\n')
+			pause = true
 			break
 
 		case 4:
+			xvt.out(xvt.magenta, 'You have found a Mystical Wheel of Life.\n\n')
+			pause = true
 			break
 
 		case 5:
@@ -550,7 +553,7 @@ function doMove(): boolean {
 			xvt.out(xvt.yellow, 'There is an old cleric in this room.\n', xvt.reset)
 			xvt.out('He says, "I can heal all your wounds for '
 				, cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
-				, '."\n')
+				, '."')
 			if (cost.value) {
 				xvt.app.form = {
 				'pay': { cb: () => {
@@ -558,7 +561,7 @@ function doMove(): boolean {
 						if (/Y/i.test(xvt.entry)) {
 							$.player.coin.value -= cost.value
 							$.sound('shimmer', 4)
-							xvt.out('He casts a Cure spell on you.\n')
+							xvt.out('He casts a Cure spell on you.')
 							$.online.hp = $.player.hp
 						}
 						else {
@@ -600,19 +603,19 @@ function doMove(): boolean {
 			gold.value *= ROOM.giftValue
 			gold = new $.coins(gold.carry(1, true))
 			if (gold.value) {
-				xvt.out('\n', xvt.bright, xvt.yellow, 'You find a treasure chest holding '
+				xvt.out(xvt.bright, xvt.yellow, 'You find a treasure chest holding '
 					, gold.carry(), '!\n', xvt.reset)
 				$.sound('max')
 			}
 			else
-				xvt.out('\n', xvt.yellow, 'You find an empty, treasure chest.\n', xvt.reset)
+				xvt.out(xvt.yellow, 'You find an empty, treasure chest.\n', xvt.reset)
 			$.player.coin.value += gold.value
 			ROOM.giftItem = ''
 			break
 
 		case 'magic':
 			if (!$.Magic.have($.player.spells, ROOM.giftValue)) {
-				xvt.out('\n', xvt.bright, xvt.yellow, 'You find a '
+				xvt.out(xvt.bright, xvt.yellow, 'You find a '
 					, $.Magic.merchant[ROOM.giftValue - 1]
 					, ' ', $.player.magic == 1 ? 'wand' : 'scroll'
 					, '!\n', xvt.reset)
@@ -622,7 +625,7 @@ function doMove(): boolean {
 			break
 
 		case 'map':
-			xvt.out('\n', xvt.bright, xvt.yellow, 'You find a magic map!\n', xvt.reset)
+			xvt.out(xvt.bright, xvt.yellow, 'You find a magic map!\n', xvt.reset)
 			DL.map = 3
 			pause = true
 			refresh = true
@@ -631,7 +634,7 @@ function doMove(): boolean {
 
 		case 'poison':
 			if (!$.Poison.have($.player.poisons, ROOM.giftValue)) {
-				xvt.out('\n', xvt.bright, xvt.yellow, 'You find a vial of '
+				xvt.out(xvt.bright, xvt.yellow, 'You find a vial of '
 					, $.Poison.merchant[ROOM.giftValue - 1], '!\n', xvt.reset)
 				$.Poison.add($.player.poisons, ROOM.giftValue)
 				ROOM.giftItem = ''
@@ -640,11 +643,11 @@ function doMove(): boolean {
 
 		case 'potion':
 			$.sound('bubbles')
-			xvt.out(xvt.bright, xvt.cyan, '\nOn the ground, you find a ',
+			xvt.out(xvt.bright, xvt.cyan, 'On the ground, you find a ',
 				['bottle containing', 'flask of some', 'vial holding'][$.dice(3) - 1], ' ',
 				[ 'bubbling', 'clear', 'dark', 'sparkling', 'tainted'][$.dice(5) - 1], ' ',
 				[ 'amber', 'blue', 'crimson', 'green', 'purple'][$.dice(5) - 1], ' ',
-				'potion.\n')
+				'potion.')
 
 			if ($.dice(100) + deep < 50 + ($.online.int >>1)) {
 				xvt.app.form = {
@@ -654,30 +657,35 @@ function doMove(): boolean {
 							menu()
 							return
 						}
-						if (/Y/i.test(xvt.entry))
+						if (/Y/i.test(xvt.entry)) {
 							xvt.out(xvt.bright)
-						else if (/T/i.test(xvt.entry))
+							quaff(ROOM.giftValue)
+						}
+						else if (/T/i.test(xvt.entry)) {
 							xvt.out(xvt.faint)
-						quaff(ROOM.giftValue)
+							quaff(ROOM.giftValue, false)
+						}
 						ROOM.giftItem = ''
 						menu()
 					}, prompt:'Will you drink it (Yes/No/Toss)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N|T|/i }
 				}
 				xvt.app.focus = 'quaff'
+				return false
 			}
 			else {
-				xvt.out('You quaff it without hesitation.\n')
+				xvt.waste(600)
+				xvt.out('\nYou quaff it without hesitation.\n')
 				xvt.waste(600)
 				quaff(ROOM.giftValue)
 			}
-			return false
+			break
 
 		case 'weapon':
 			break
 
 		case 'xmagic':
 			if (!$.Magic.have($.player.spells, ROOM.giftValue)) {
-				xvt.out('\n', xvt.bright, xvt.yellow, 'You find a '
+				xvt.out(xvt.bright, xvt.yellow, 'You find a '
 					, $.Magic.special[ROOM.giftValue - $.Magic.merchant.length]
 					, ' ', $.player.magic == 1 ? 'wand' : 'scroll'
 					, '!\n', xvt.reset)
@@ -888,11 +896,11 @@ function drawLevel() {
 
 	xvt.out(`\x1B[${paper.length + 1};${$.player.rows}r`)
 	xvt.plot(paper.length + 1, 1)
-
-	for (y = 0; y < DL.rooms.length; y++)
+/*	for (y = 0; y < DL.rooms.length; y++)
 		for (x = 0; x < DL.width; x++)
 			if (DL.rooms[y][x].giftItem)
 				console.log('[', y, ',', x, ']', DL.rooms[y][x].giftItem, DL.rooms[y][x].giftValue)
+*/
 }
 
 function drawRoom(r:number, c:number) {
@@ -981,6 +989,9 @@ function generateLevel() {
 	looked = false
 	refresh = true
 
+	if (!dd[deep])
+		dd[deep] = new Array(100)
+
 	if (dd[deep][Z]) {
 		DL = dd[deep][Z]
 		renderMap()
@@ -1036,7 +1047,7 @@ function generateLevel() {
 	X = $.dice(DL.width) - 1
 	ROOM = DL.rooms[Y][X]
 
-	//	populate this new floor with monsters only in caverns
+	//	populate this new floor with monsters, no corridors or hallways
 	let n = Math.trunc(DL.rooms.length * DL.width / 6 + $.dice(Z / 11) + (deep >>1) + $.dice(deep >>1))
 	while (n)
 		if (putMonster())
@@ -1098,19 +1109,19 @@ function generateLevel() {
 	do {
 		y = $.dice(DL.rooms.length) - 1
 		x = $.dice(DL.width) - 1
-	} while (DL.rooms[y][x].type == 3 || DL.rooms[y][x].occupant)
+	} while (DL.rooms[y][x].type == 3 || DL.rooms[y][x].monster.length || DL.rooms[y][x].occupant)
 	DL.rooms[y][x].occupant = 6
 
 	//	a wizard in another space
 	do {
 		y = $.dice(DL.rooms.length) - 1
 		x = $.dice(DL.width) - 1
-	} while (DL.rooms[y][x].type == 3 || DL.rooms[y][x].occupant)
+	} while (DL.rooms[y][x].type == 3 || DL.rooms[y][x].monster.length || DL.rooms[y][x].occupant)
 	DL.rooms[y][x].occupant = 7
 
 	//	set some trapdoors in empty corridors only
 	n = (DL.rooms.length * DL.width / 10) >>0
-	if ($.dice(100 - Z) > deep)
+	if ($.dice(100 - Z) > (deep + 1))
 		n += $.dice(Z / 16 + 2)
 	while (n) {
 		y = $.dice(DL.rooms.length) - 1
@@ -1121,25 +1132,26 @@ function generateLevel() {
 		}
 	}
 
-	wow = 10
+	wow = 1
 
 	//	potential bonus(es) for the more experienced adventurer
 	if (!$.player.novice && $.dice($.player.immortal) > Z)
 		if (Math.trunc($.dice(100 * (Z + 1)) / (deep + 1)) < (deep + 2))
 			wow = DL.rooms.length * DL.width
 
-	n = $.dice(Z / 33) + $.dice(deep / 3) + wow - 2
-	for (let i = 0; i < n; i++) {
+	wow = $.dice(Z / 33) + $.dice(deep / 3) + wow - 2
+	for (let i = 0; i < wow; i++) {
 		y = $.dice(DL.rooms.length) - 1
 		x = $.dice(DL.width) - 1
 
 		if ($.dice(deep + 10) > (deep + 1)) {
 			DL.rooms[y][x].giftID = false
 			DL.rooms[y][x].giftItem = 'potion'
-			n = $.dice(128 + deep)
-			for (let i = 0; i < 15 && n > 0; i++)
+			n = $.dice(130 - deep)
+			for (let i = 0; i < 16 && n > 0; i++) {
+				DL.rooms[y][x].giftValue = 15 - i
 				n -= i + 1
-			DL.rooms[y][x].giftValue = 16 - i
+			}
 			if ($.player.magic < 2 && DL.rooms[y][x].giftValue > 2 && DL.rooms[y][x].giftValue < 5)
 				DL.rooms[y][x].giftValue >>= 1
 			continue
@@ -1353,13 +1365,13 @@ function generateLevel() {
 	}
 }
 
-function putMonster(r?:number, c?:number): boolean {
-	// attempt to add one to a cavern only, but no more than 3
-	if (!r && !c) {
+function putMonster(r = -1, c = -1): boolean {
+	// attempt to add to a room or cavern only
+	if (r < 0 && c < 0) {
 		do {
 			r = $.dice(DL.rooms.length) - 1
 			c = $.dice(DL.width) - 1
-		} while (DL.rooms[r][c].type != 3)
+		} while (DL.rooms[r][c].type != 0 && DL.rooms[r][c].type != 3)
 	}
 
 	//	check for overcrowding
@@ -1513,74 +1525,96 @@ export function teleport() {
 	xvt.app.focus = 'wizard'
 }
 
-function quaff(v: number) {
-	xvt.out(v % 2 ? xvt.red : xvt.green)
-	xvt.out('It was ', $.an(potion[v]), potion[v], '.\n', xvt.reset)
+function quaff(v: number, it = true) {
+	let potion = [
+		'Vial of Slaad Secretions',
+		'Potion of Cure Light Wounds',
+		'Flask of Fire Water',
+		'Potion of Mana',
+		'Vial of Weakness',
+		'Potion of Stamina',
+		'Vial of Stupidity',
+		'Potion of Wisdom',
+		'Vial of Clumsiness',
+		'Potion of Agility',
+		'Vile Vial',
+		'Potion of Charm',
+		'Vial of Crack',
+		'Potion of Augment',
+		'Beaker of Death',
+		'Elixir of Restoration'
+	]
 
-	switch (v) {
+	xvt.out(v % 2 ? xvt.green : xvt.red)
+	xvt.out('It was', $.an(potion[v]), '.\n', xvt.reset)
+
+	if (it) {
+		$.sound('quaff', 5)
+		switch (v) {
 	//	Vial of Slaad Secretions
-		case 1:
+		case 0:
 			break
 
 	//	Potion of Cure Light Wounds
-		case 2:
+		case 1:
 			break
 
 	//	Flask of Fire Water
-		case 3:
+		case 2:
 			break
 
 	//	Potion of Mana
-		case 4:
+		case 3:
 			break
 
 	//	Vial of Weakness
-		case 5:
+		case 4:
 			break
 
 	//	Potion of Stamina
-		case 6:
+		case 5:
 			break
 
 	//	Vial of Stupidity
-		case 7:
+		case 6:
 			break
 
 	//	Potion of Wisdom
-		case 8:
+		case 7:
 			break
 
 	//	Vial of Clumsiness
-		case 9:
+		case 8:
 			break
 
 	//	Potion of Agility
-		case 10:
+		case 9:
 			break
 
 	//	Vile Vial
-		case 11:
+		case 10:
 			break
 
 	//	Potion of Charm
-		case 12:
+		case 11:
 			break
 
 	//	Vial of Crack
-		case 13:
+		case 12:
 			break
 
 	//	Potion of Augment
-		case 14:
+		case 13:
 			break
 
 	//	Beaker of Death
-		case 15:
+		case 14:
 			break
 
 	//	Elixir of Restoration
-		case 16:
+		case 15:
 			break
+		}
 	}
 }
 
