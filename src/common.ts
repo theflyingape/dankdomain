@@ -936,6 +936,7 @@ export function dice(faces: number): number {
 }
 
 export function experience(level: number, factor = 1, wisdom = 1000): number {
+    if (level < 1) return 0
     // calculate need to accrue based off PC intellect capacity
     if (wisdom < 1000) wisdom = (1100 + level - 2 * wisdom)
 
@@ -1296,7 +1297,10 @@ export function remake(user: user) {
 
     if (user.level > 1)
         user.xp = experience(user.level - 1, 1, user.int)
-    user.xplevel = user.level
+    if (user.pc === Object.keys(PC.name['player'])[0])
+        user.xplevel = 0
+    else
+        user.xplevel = user.level
 }
 
 export function reroll(user: user, dd?: string, level = 1) {

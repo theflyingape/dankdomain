@@ -58,7 +58,7 @@ export function engage(module:string, party: active|active[], mob: active|active
 
 //  new round of volleys
 export function attack(retry = false) {
-
+//console.log('#', round, ' : attack(', retry, ')')
     //  no more attacking
     if (retreat || teleported || ++volley > 99999) {
         if ($.online.confused)
@@ -89,7 +89,7 @@ export function attack(retry = false) {
 
     let n = round[0]
     let rpc = parties[n.party][n.member]
-    if (rpc.hp < 1 || rpc.user.xplevel == 0) {
+    if (rpc.hp < 1 || rpc.user.xplevel < 1) {
         next()
         return
     }
@@ -516,7 +516,7 @@ if(!p) {
         for (let p in parties) {
             alive.push(parties[p].length)
             for (let m in parties[p])
-                if (parties[p][m].hp < 1 || parties[p][m].user.xplevel == 0)
+                if (parties[p][m].hp < 1 || parties[p][m].user.xplevel < 0)
                     alive[p]--
         }
 
@@ -594,7 +594,7 @@ export function spoils() {
             parties[w][m].user.xp += xp
 
             if (parties[w][m] === $.online) {
-                xvt.out('\nYou get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
+                if (xp) xvt.out('\nYou get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
                 if (award)
                     xvt.out('You get your cut worth ', new $.coins(award).carry(), '.\n')
                 xvt.waste(500)
@@ -813,6 +813,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
         return
     }
     else {
+//console.log('cast(', magic.toString(), ')')
         invoke(Object.keys($.Magic.spells)[magic - 1])
     }
 
@@ -1229,7 +1230,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             iou.user = <user>{id:'', sex:'I'}
             $.reroll(iou.user, undefined, iou.user.level)
             $.activate(iou)
-            iou.user.xplevel = 0
+            iou.user.xplevel = -1
             iou.user.coin = new $.coins(0)
             iou.user.str = 0
             iou.user.int = 0
@@ -1611,6 +1612,7 @@ export function poison(rpc: active, cb?:Function) {
     }
 
     function apply(rpc: active, vial: number) {
+//console.log('apply(', vial.toString(), ')')
         rpc.altered = true
         let wc = $.Weapon.baseWC(rpc.user.weapon)
         let p = Math.trunc(rpc.user.poison / 2)
@@ -1713,7 +1715,8 @@ export function user(venue: string, cb:Function) {
                 xvt.out(sprintf('%-4s  %-22s  %-9s  %3d  ', rs[i].id, rs[i].handle, rs[i].pc, rs[i].level))
                 xvt.out($.date2full(rs[i].lastdate), '  ', rs[i].access)
                 if ($.player.emulation === 'XT' && $.Access.name[rs[i].access].emoji)
-                    xvt.out(xvt.bright, $.Access.name[rs[i].access].emoji)
+                    xvt.out($.Access.name[rs[i].access].sysop ? xvt.cyan : xvt.faint
+                         , $.Access.name[rs[i].access].emoji)
                 xvt.out(xvt.reset, '\n')
             }
 
