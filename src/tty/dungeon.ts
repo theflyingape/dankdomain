@@ -708,7 +708,9 @@ export function doSpoils() {
 			if (ROOM.monster[n].hp < 0) {
 				let mon = <active>{ user:{id:''} }
 				Object.assign(mon, ROOM.monster[n])
-				let y = $.dice(DL.rooms.length) - 1, x = $.dice(DL.width) - 1
+				let y = $.dice(DL.rooms.length) - 1
+				let x = $.dice(DL.width) - 1
+				mon.hp = mon.user.hp >>3
 				DL.rooms[y][x].monster.push(mon)
 			}
 			ROOM.monster.splice(n, 1)
