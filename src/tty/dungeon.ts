@@ -1340,10 +1340,7 @@ function putMonster(r?:number, c?:number): boolean {
 	j = j < 0 ? 0 : j >= Object.keys(monsters).length ? Object.keys(monsters).length - 1 : j
 	m.user.handle = Object.keys(monsters)[j]
 	dm = monsters[m.user.handle]
-	dm.pc = 'None'
-console.log('reroll(', m.user, ',', dm.pc, ',', level, ')')
 	$.reroll(m.user, dm.pc ? dm.pc : $.player.pc, level)
-pause = true
 	if (dm.weapon)
 		m.user.weapon = dm.weapon
 	else {
