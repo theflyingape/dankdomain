@@ -75,7 +75,9 @@ function choice() {
                         return
                     }
                     xvt.beep()
-                    xvt.out($.who($.barkeep, 'He'), 'grunts and hands you your beer.\n')
+                    xvt.out($.who($.barkeep, 'He'), 'grunts and hands you your beer.')
+                    if ($.player.emulation === 'XT') xvt.out(' \u{1F37A}')
+                    xvt.out('\n')
                     $.online.altered = true
                     $.player.coin.value -= tip
                     xvt.waste(1000)

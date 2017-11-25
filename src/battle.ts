@@ -1712,6 +1712,8 @@ export function user(venue: string, cb:Function) {
                     xvt.out(xvt.bright, xvt.yellow)
                 xvt.out(sprintf('%-4s  %-22s  %-9s  %3d  ', rs[i].id, rs[i].handle, rs[i].pc, rs[i].level))
                 xvt.out($.date2full(rs[i].lastdate), '  ', rs[i].access)
+                if ($.player.emulation === 'XT' && $.Access.name[rs[i].access].emoji)
+                    xvt.out(xvt.bright, $.Access.name[rs[i].access].emoji)
                 xvt.out(xvt.reset, '\n')
             }
 

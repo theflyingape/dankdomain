@@ -198,7 +198,10 @@ function password() {
     xvt.out(xvt.cyan, ' Online: ', xvt.bright, xvt.white, $.player.handle, xvt.normal, '\n')
     if (process.env.LINES && +process.env.LINES !== $.player.rows)
         xvt.out(xvt.yellow, 'Warning: ', xvt.bright, `Your USER ROW setting ${$.player.rows} does not match detected login size: ${process.env.LINES}\n`, xvt.normal)
-    xvt.out(xvt.cyan, ' Access: ', xvt.bright, xvt.white, $.player.access, xvt.normal, '  ')
+    xvt.out(xvt.cyan, ' Access: ', xvt.bright, xvt.white, $.player.access)
+    if ($.player.emulation === 'XT' && $.access.emoji)
+        xvt.out(' ', $.access.emoji)
+    xvt.out(xvt.normal, '  ')
 
     $.saveUser($.player)
     welcome()

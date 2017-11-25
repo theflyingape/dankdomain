@@ -160,6 +160,7 @@ interface access {
     roleplay: boolean
     sysop?: boolean
     weekend?: boolean
+    emoji?: string
 }
 
 interface armor {

@@ -496,6 +496,7 @@ function doMove(): boolean {
 			xvt.out('There is an old cleric in this room.\n')
 			if ($.online.hp >= $.player.hp || cost.value > $.player.coin.value) {
 				xvt.out('He says, "I will pray for you."\n')
+				looked = true
 				break
 			}
 
