@@ -651,7 +651,7 @@ function doMove(): boolean {
 			}
 			else {
 				$.sound('shimmer', 4)
-				xvt.out('He casts a Cure spell on you.\n')
+				xvt.out('\nHe casts a Cure spell on you.\n')
 				$.online.hp = $.player.hp
 			}
 			break
@@ -1526,14 +1526,34 @@ function putMonster(r = -1, c = -1): boolean {
 	m.user.hp >>= 2
 	i = 5 - $.dice(deep / 3)
 	m.user.sp = Math.trunc(m.user.sp / i)
+
 	m.user.poisons = []
-	if (dm.poisons)
-		for (let vials in dm.poisons)
-			$.Poison.add(m.user.poisons, dm.poisons[vials])
+	if (m.user.poison) {
+		if (dm.poisons)
+			for (let vials in dm.poisons)
+				$.Poison.add(m.user.poisons, dm.poisons[vials])
+		for (let i = 0; i < Object.keys($.Poison.vials).length; i++) {
+			if ($.dice($.player.cha + (i <<3)) == 1) {
+				let vial = $.Poison.pick(i)
+				if (!$.Poison.have(m.user.poisons, vial))
+					$.Poison.add(m.user.poisons, i)
+			}
+		}
+	}
+
 	m.user.spells = []
-	if (dm.spells)
-		for (let magic in dm.spells)
-			$.Magic.add(m.user.spells, dm.spells[magic])
+	if (m.user.magic) {
+		if (dm.spells)
+			for (let magic in dm.spells)
+				$.Magic.add(m.user.spells, dm.spells[magic])
+		for (let i = 0; i < Object.keys($.Magic.spells).length; i++) {
+			if ($.dice($.player.cha + (i <<3)) == 1) {
+				let spell = $.Magic.pick(i)
+				if (!$.Magic.have(m.user.spells, spell))
+					$.Magic.add(m.user.spells, i)
+			}
+		}
+	}
 
 	$.activate(m)
 

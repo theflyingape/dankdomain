@@ -41,6 +41,10 @@ function choice() {
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(arena[choice]))
 		if (xvt.validator.isNotEmpty(arena[choice].description)) xvt.out(' - ', arena[choice].description)
+	else {
+		xvt.beep()
+		suppress = false
+	}
 	xvt.out('\n')
 
     switch (choice) {
@@ -332,10 +336,6 @@ function choice() {
 			xvt.out('\n')
 			Battle.yourstats()
 			break
-
-		default:
-			xvt.beep()
-    	    suppress = false
 	}
 	menu(suppress)
 }

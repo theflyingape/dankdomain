@@ -248,98 +248,7 @@ export function attack(retry = false) {
             return
         }
     }
-/*
-
-if(!volley && dice((100 - rpc->user.Level) / 5 + 5) < rpc->user.MyPoison)
-    PoisonWeapon(rpc);
-c = 'A';
-if(rpc->INT >= ((70 + 30 * rpc->HP / rpc->user.HP) - 5 * rpc->user.MyMagic) || !rpc->Confused) {
-    if(nest)
-            switch(rpc->user.MyMagic) {
-                    case 1:
-                            if(dice(6) == 1)
-                                    c = 'C';
-                            break;
-                    case 2:
-                            if(dice(5) == 1)
-                                    c = 'C';
-                            break;
-                    case 3:
-                            if(dice(4) == 1)
-                                    c = 'C';
-                            break;
-                    case 4:
-                            if(dice(3) == 1)
-                                    c = 'C';
-                            break;
-            }
-    else
-    if(from == 'P')
-            switch(rpc->user.MyMagic) {
-                    case 1:
-                            if(dice(10) == 1)
-                                    c = 'C';
-                            break;
-                    case 2:
-                            if(dice(6) == 1)
-                                    c = 'C';
-                            break;
-                    case 3:
-                            if(dice(4) == 1)
-                                    c = 'C';
-                            break;
-                    case 4:
-                            if(dice(2) == 1)
-                                    c = 'C';
-                            break;
-            }
-    else
-        switch(rpc->user.MyMagic) {
-                case 1:
-                        if(dice(5) == 1)
-                                c = 'C';
-                        break;
-                case 2:
-                        if(dice(3) == 1)
-                                c = 'C';
-                        break;
-                case 3:
-                        if(dice(2) == 1)
-                                c = 'C';
-                        break;
-                case 4:
-                        if(dice(1) == 1)
-                                c = 'C';
-                        break;
-        }
-}
-
-if(c == 'C') {
-        if(!(n = Cast(rpc, enemy)))
-                c = 'A';
-        if(abs(n) == TELEPORT_SPELL)
-                c = 'r';
-}
-
-if(c == 'A') {
-        if(rpc->user.Coward && (int)rpc->user.ExpLevel - (int)enemy->user.ExpLevel > 3 && rpc->HP < rpc->user.HP / 4) {
-                memset(rpc->user.Blessed,0,sizeof(rpc->user.Blessed));
-                if(strlen(enemy->user.ID))
-                        strcpy(rpc->user.Cursed,enemy->user.ID);
-                sprintf(outbuf,"%s%s runs away from the battle!",(rpc->user.Gender=='I' ? "The " : ""),rpc->user.Handle);
-                rpc->user.Current.Retreats++;
-                rpc->user.History.Retreats++;
-                c='r';
-        }
-        else {
-                n=Melee(rpc,enemy,1);
-                rpc->user.History.HP+=n;
-                enemy->HP-=n;
-        }
-}
-*/
-    //  NPC
-    else {
+    else {  //  NPC
         if (volley == 1 && $.dice((100 - rpc.user.level) / 12 + 6) < rpc.user.poison)
             poison(rpc)
 
@@ -431,6 +340,25 @@ if(c == 'A') {
                         mm = 9
             }
         }
+        if (rpc.user.magic && !mm && $.dice(odds) == 1) {
+            switch ($.dice(3)) {
+                case 1:
+                    if ($.Magic.have(rpc.user.spells, 17)
+                        && rpc.sp >= $.Magic.power(rpc, 17))
+                        mm = 17
+                    break
+                case 2:
+                    if ($.Magic.have(rpc.user.spells, 18)
+                        && rpc.sp >= $.Magic.power(rpc, 18))
+                        mm = 18
+                    break
+                case 3:
+                    if ($.Magic.have(rpc.user.spells, 19)
+                        && rpc.sp >= $.Magic.power(rpc, 19))
+                        mm = 19
+                    break
+            }
+        }
 
         xvt.out(xvt.reset)
 
@@ -443,67 +371,6 @@ if(c == 'A') {
     }
 
     next()
-
-/*
-if(!p) {
-        if(rpc->user.XSpell && dice(nest + 2) > 1) {
-                i = dice(8);
-                switch(i) {
-                        case 1:
-                                if((rpc->user.XSpell & ARMOR_RUSTING_XSPELL) && AC2 > 0 && (rpc->user.MyMagic == 1 || rpc->SP >= MAGIC(16)->Power[mu])) {
-                                        p = ARMOR_RUSTING_XSPELL;
-                                        s = 17;
-                                }
-                                break;
-                        case 2:
-                                if((rpc->user.XSpell & WEAPON_DECAY_XSPELL) && WC2 > 0 && (rpc->user.MyMagic == 1 || rpc->SP >= MAGIC(17)->Power[mu])) {
-                                        p = WEAPON_DECAY_XSPELL;
-                                        s = 18;
-                                }
-                                break;
-                        case 3:
-                                if((rpc->user.XSpell & BIG_BLAST_XSPELL) && (rpc->user.MyMagic == 1 || rpc->SP >= MAGIC(18)->Power[mu])) {
-                                        p = BIG_BLAST_XSPELL;
-                                        s = 19;
-                                }
-                                break;
-                        case 4:
-                                if((rpc->user.XSpell & MANA_STEALING_XSPELL) && enemy->SP && (rpc->user.MyMagic == 1 || rpc->SP >= MAGIC(19)->Power[mu])) {
-                                        p = MANA_STEALING_XSPELL;
-                                        s = 20;
-                                }
-                                break;
-                        case 5:
-                                if((rpc->user.XSpell & LIFE_STEALING_XSPELL) && (rpc->user.MyMagic == 1 || rpc->SP >= MAGIC(20)->Power[mu])) {
-                                        p = LIFE_STEALING_XSPELL;
-                                        s = 21;
-                                }
-                                break;
-                        case 6:
-                                if((rpc->user.XSpell & LEVEL_STEALING_XSPELL) && (rpc->user.MyMagic == 1 || rpc->SP >= MAGIC(21)->Power[mu])) {
-                                        p = LEVEL_STEALING_XSPELL;
-                                        s = 22;
-                                }
-                                break;
-                        case 7:
-                                if((rpc->user.XSpell & SUPER_SHIELD_XSPELL) && (rpc->user.MyMagic == 1 || rpc->SP >= MAGIC(22)->Power[mu])) {
-                                        p = SUPER_SHIELD_XSPELL;
-                                        s = 23;
-                                }
-                                break;
-                        case 8:
-                                if((rpc->user.XSpell & SUPER_HONE_XSPELL) && (rpc->user.MyMagic == 1 || rpc->SP >= MAGIC(23)->Power[mu])) {
-                                        p = SUPER_HONE_XSPELL;
-                                        s = 24;
-                                }
-                                break;
-                }
-        }
-        if(!p)
-                return(0);
-    }
-}
- */
 
     function next(retry = false) {
         if (retry) {
@@ -947,7 +814,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                     rpc.toAC -= $.dice(rpc.toAC)
                 else
                     rpc.toAC--
-                xvt.out($.who(rpc, 'His'), rpc.user.armor ? rpc.user.armor : 'defense', ' loses some of its effectiveness.\n')
+                xvt.out($.who(rpc, 'His'), isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' loses some of its effectiveness.\n')
             }
             else {
                 $.sound('shield')
@@ -957,11 +824,11 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 rpc.toAC++
             }
             if (-rpc.user.toAC >= rpc.armor.ac || -(rpc.user.toAC + rpc.toAC) >= rpc.armor.ac) {
-                xvt.out($.who(rpc, 'His'), rpc.user.armor ? rpc.user.armor : 'defense', ' crumbles!\n')
+                xvt.out($.who(rpc, 'His'), isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' crumbles!\n')
                 $.Armor.equip(rpc, $.Armor.merchant[0])
             }
             if ($.dice(3 * (rpc.user.toAC + rpc.toAC + 1) / rpc.user.magic) >>0 > rpc.armor.ac) {
-                xvt.out($.who(rpc, 'His'), rpc.user.armor ? rpc.user.armor : 'defense', ' vaporizes!\n')
+                xvt.out($.who(rpc, 'His'), isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' vaporizes!\n')
                 $.Armor.equip(rpc, $.Armor.merchant[0])
             }
             rpc.altered = true
@@ -1002,7 +869,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 hr += $.dice(ha)
 
             if (backfire) {
-                $.sound('hurt')
+                $.sound('hurt', 3)
                 rpc.hp -= hr
                 xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' hurt'), $.who(rpc, 'him'), '\x08self'
@@ -1015,7 +882,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 }
             }
             else {
-                $.sound('heal')
+                $.sound('heal', 3)
                 rpc.hp += hr
                 if (rpc.hp > rpc.user.hp)
                     rpc.hp = rpc.user.hp
@@ -1059,7 +926,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             break
 
         case 9:
-            $.sound('blast')
+            $.sound('blast', 3)
             let ba = rpc.user.magic > 2 ? (rpc.user.level >>3) - (nme.armor.ac >>2) + 16 : 17
             if (nme.user.melee > 3)
                 ba *= nme.user.melee >>1
@@ -1322,29 +1189,130 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
 
         case 17:
             if (backfire) {
-
+                xvt.out(xvt.yellow, rpc === $.online ? 'You'
+                    : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' get'), 'swallowed by an acid mist... ')
+                xvt.waste(600)
+                rpc.toAC -= $.dice(rpc.armor.ac / 5 + 1)
+                rpc.user.toAC -= $.dice(rpc.armor.ac / 10 + 1)
+                xvt.out(xvt.bright, rpc === $.online ? 'you'
+                    : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' damage'), 'own ', isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense'
+                    , $.buff(rpc.user.toAC, rpc.toAC), '!\n', xvt.reset)
+                xvt.waste(400)
+                if (-rpc.user.toAC >= rpc.armor.ac || -(rpc.user.toAC + rpc.toAC) >= rpc.armor.ac) {
+                    xvt.out($.who(rpc, 'His'), rpc.user.armor ? isNaN(+rpc.user.armor) : 'defense', ' crumbles!\n')
+                    $.Armor.equip(rpc, $.Armor.merchant[0])
+                }
+                rpc.altered = true
             }
             else {
-
+                xvt.out(xvt.yellow, 'An acid mist surrounds ', nme === $.online ? 'you'
+                    : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
+                    , '... ')
+                xvt.waste(600)
+                nme.toAC -= $.dice(nme.armor.ac / 5 + 1)
+                nme.user.toAC -= $.dice(nme.armor.ac / 10 + 1)
+                xvt.out(xvt.bright, $.who(nme, 'his')
+                    , isNaN(+nme.user.armor) ? nme.user.armor + ' is damaged' : 'defense is lessened'
+                    , $.buff(nme.user.toAC, nme.toAC), '!\n', xvt.reset)
+                xvt.waste(400)
+                if (-nme.user.toAC >= nme.armor.ac || -(nme.user.toAC + nme.toAC) >= nme.armor.ac) {
+                    xvt.out($.who(nme, 'His'), isNaN(+nme.user.armor) ? nme.user.armor : 'defense', ' crumbles!\n')
+                    $.Armor.equip(nme, $.Armor.merchant[0])
+                }
+                nme.altered = true
             }
+            xvt.waste(500)
             break
 
         case 18:
+            xvt.out(xvt.magenta, 'An ', xvt.faint, 'ultraviolet', xvt.normal, ' beam emits... ')
+            xvt.waste(600)
             if (backfire) {
-
+                rpc.toWC -= $.dice(rpc.weapon.wc / 5 + 1)
+                rpc.user.toWC -= $.dice(rpc.weapon.wc / 10 + 1)
+                xvt.out(xvt.bright, rpc === $.online ? 'you'
+                    : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' damage'), 'own ', isNaN(+rpc.user.weapon) ? rpc.user.weapon : 'attack'
+                    , $.buff(rpc.user.toWC, rpc.toWC), '!\n', xvt.reset)
+                xvt.waste(400)
+                if (-rpc.user.toWC >= rpc.weapon.wc || -(rpc.user.toWC + rpc.toWC) >= rpc.weapon.wc) {
+                    xvt.out($.who(rpc, 'His'), rpc.user.weapon ? isNaN(+rpc.user.weapon) : 'attack', ' crumbles!\n')
+                    $.Weapon.equip(rpc, $.Weapon.merchant[0])
+                }
+                rpc.altered = true
             }
             else {
-
+                nme.toWC -= $.dice(nme.weapon.wc / 5 + 1)
+                nme.user.toWC -= $.dice(nme.weapon.wc / 10 + 1)
+                xvt.out(xvt.bright, 'it damages ', $.who(nme, 'his')
+                    , isNaN(+nme.user.weapon) ? nme.user.weapon : 'attack'
+                    , $.buff(nme.user.toWC, nme.toWC), '!\n', xvt.reset)
+                xvt.waste(400)
+                if (-nme.user.toWC >= nme.weapon.wc || -(nme.user.toWC + nme.toWC) >= nme.weapon.wc) {
+                    xvt.out($.who(nme, 'His'), isNaN(+nme.user.weapon) ? nme.user.weapon : 'attack', ' crumbles!\n')
+                    $.Weapon.equip(nme, $.Weapon.merchant[0])
+                }
+                nme.altered = true
             }
+            xvt.waste(500)
             break
 
         case 19:
-            $.sound('blast')
-            if (backfire) {
+            xvt.out('A ', xvt.bright, xvt.white, 'blinding flash', xvt.normal, ' erupts... ')
+            $.sound('blast', 10)
+            let bba = rpc.user.magic > 2 ? (rpc.user.level >>3) - (nme.armor.ac >>2) + 31 : 32
+            if (nme.user.melee > 3)
+                bba *= nme.user.melee >>1
+            let bbr = rpc.int >>3
+            while ($.dice(99 + rpc.user.magic) > 99) {
+                bba += $.dice(rpc.user.magic)
+                for (let i = 0; i < bba; i++)
+                    bbr += $.dice(bba)
+            }
+            for (let i = 0; i < rpc.user.level; i++)
+                bbr += $.dice(bba)
 
+            if (backfire) {
+                xvt.out(rpc === $.online ? 'you'
+                    : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' BLAST')
+                    , rpc !== $.online ? $.who(rpc, 'him') + '\x08self' : 'yourself'
+                    , ' for ', bbr.toString(), ' hit points!\n')
+                rpc.hp -= bbr
+                if (rpc.hp < 1) {
+                    xvt.out(xvt.reset, '\n')
+                    rpc.hp = 0
+                    if (rpc === $.online)
+                        $.reason = 'Big Blast backfired'
+                }
             }
             else {
+                xvt.out(rpc === $.online ? 'you'
+                    : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' BLAST')
+                    , nme === $.online ? 'you' : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
+                    , ' for ', bbr.toString(), ' hit points!')
+                nme.hp -= bbr
 
+                if (nme.hp < 1) {
+                    nme.hp = 0
+                    if (from === 'Party' || nme !== $.online) {
+                        xvt.out(xvt.blue, xvt.faint, ' {', xvt.bright, 'RIP', xvt.faint, '}', xvt.reset)
+                    }
+                    else {
+                        $.player.killed++
+                        xvt.out('\n', xvt.bright, xvt.yellow
+                            , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
+                            , ' killed you!\n', xvt.reset)
+                        $.profile({ jpg:'death' })
+                        $.sound('killed', 12)
+                        $.reason = rpc.user.id.length ? `fatal Big Blast by ${rpc.user.handle}`
+                            : `fatal Big Blast by a level ${rpc.user.level} ${rpc.user.handle}`
+                    }
+                }
+                xvt.out('\n')
             }
             break
 
