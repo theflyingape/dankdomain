@@ -67,7 +67,6 @@ app.post('/terminals/:pid/wall', function (req, res) {
       term = terminals[pid];
 
   if (!term) return;
-  console.log('broadcast from terminal ' + pid + ': ' + msg);
   for (let o in terminals)
     if (+o !== pid)
       broadcasts[o] += '\x1B[1;36m' + msg + '\x1B[m\r\n';
@@ -88,7 +87,6 @@ app.ws('/terminals/:pid', function (ws, req) {
     let ack = msg.indexOf('\x06');
     if (ack >=0) {
       msg = msg.substr(0, ack) + broadcasts[term.pid] + msg.substr(ack);
-      console.log(`message to ${term.pid}: ${msg}`);
       broadcasts[term.pid] = '';
     }
     try {

@@ -630,6 +630,7 @@ function doMove(): boolean {
 				, cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
 				, '."')
 			if (cost.value) {
+				$.action('yn')
 				xvt.app.form = {
 				'pay': { cb: () => {
 						xvt.out('\n\n')
@@ -725,6 +726,7 @@ function doMove(): boolean {
 				'potion.')
 
 			if ($.dice(100) + deep < 50 + ($.online.int >>1)) {
+				$.action('potion')
 				xvt.app.form = {
 					'quaff': { cb: () => {
 						xvt.out('\n\n')

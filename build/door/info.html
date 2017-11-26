@@ -341,6 +341,14 @@ function payment() {
   nme(`<img src="images/payment.png" onload="nmeResize();">`);
 }
 
+function potion() {
+  cmd(`
+<p><input class="tall" type="button" value=" Yes " onclick="send('Y');">
+<input class="tall" type="button" value=" No " onclick="send('N');"></p>
+<input type="button" value="Toss" onclick="send('T');">
+`);
+}
+
 function riddle() {
   cmd(`
 <p><input class="platinum" type="button" value=" Platinum " onclick="send('p');"></p>
