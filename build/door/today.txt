@@ -1,1 +1,0 @@
-../tty/files/tavern/today.txt

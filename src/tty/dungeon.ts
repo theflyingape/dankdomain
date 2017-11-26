@@ -138,7 +138,7 @@ export function menu(suppress = false) {
 	}
 
 //	is a monster spawning needed?
-	let x = $.dice(DL.width) - 1, y = $.dice(DL.rooms.length) - 1
+	x = $.dice(DL.width) - 1, y = $.dice(DL.rooms.length) - 1
 	ROOM = DL.rooms[y][x]
 	if ($.dice((ROOM.type == 0 ? 2 : ROOM.type == 3 ? 1 : 4)
 		* $.online.cha / 5 - DL.moves / 10) == 1) {
@@ -200,8 +200,70 @@ export function menu(suppress = false) {
 
 //	position Hero and get user command
 	$.action('dungeon')
+	let x = $.online.cha * $.online.int / 10 + $.online.dex / (deep + 1)
+	if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
+		x /= $.player.level
+	if ($.dice(x + deep) == 1) {
+		switch ($.dice(5)) {
+			case 1:
+				xvt.out(xvt.faint, 'A bat flies by and soils your ', xvt.normal)
+				$.sound('splat', 4)
+				$.player.toAC -= $.dice(deep)
+				xvt.out($.player.armor, $.buff($.player.toAC, $.online.toAC))
+				break
+			case 2:
+				xvt.out(xvt.blue, 'A drop of acid water lands on your ')
+				$.sound('drop', 4)
+				$.player.toWC -= $.dice(deep)
+				xvt.out($.player.weapon, $.buff($.player.toWC, $.online.toWC))
+				break
+			case 3:
+				xvt.out(xvt.yellow, 'You trip on the rocky surface and hurt yourself.')
+				$.sound('hurt', 5)
+				$.online.hp -= $.dice(Z)
+				if ($.online.hp < 1) {
+					$.reason = 'fell down'
+					xvt.hangup()
+				}
+				break
+			case 4:
+				xvt.out(xvt.bright, xvt.red, 'You are attacked by a swarm of bees.')
+				$.sound('oof', 5)
+				for (let x = 0, y = $.dice(Z); x < y; x++)
+					$.online.hp -= $.dice(Z)
+				if ($.online.hp < 1) {
+					$.reason = 'killer bees'
+					xvt.hangup()
+				}
+				break
+			case 5:
+				$.music('.')
+				xvt.out(xvt.bright, xvt.white, 'A bolt of lightning strikes you.')
+				$.sound('boom', 10)
+				$.player.toAC -= $.dice($.online.armor.ac >>1)
+				$.online.toAC -= $.dice($.online.armor.ac >>1)
+				$.player.toWC -= $.dice($.online.weapon.wc >>1)
+				$.online.toWC -= $.dice($.online.weapon.wc >>1)
+				$.online.hp -= $.dice($.player.hp >>1)
+				if ($.online.hp < 1) {
+					$.reason = 'struck by lightning'
+					xvt.hangup()
+				}
+				break
+		}
+		xvt.out(xvt.reset, '\n')
+	}
+	if ($.online.weapon.wc + $.online.toWC + $.player.toWC < 0) {
+		xvt.out(`Your ${$.player.weapon} is damaged beyond repair; you toss it aside.\n`)
+		$.Weapon.equip($.online, $.Weapon.merchant[0])
+	}
+	if ($.online.armor.ac + $.online.toAC + $.player.toAC < 0) {
+		xvt.out(`Your ${$.player.armor} is damaged beyond repair; you toss it aside.\n`)
+		$.Armor.equip($.online, $.Armor.merchant[0])
+	}
 	drawHero()
 
+	//	user input
 	xvt.app.form = {
         'command': { cb:command, enter:'?', eol:false }
     }
