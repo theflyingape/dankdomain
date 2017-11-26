@@ -138,7 +138,7 @@ export function menu(suppress = false) {
 	}
 
 //	is a monster spawning needed?
-	x = $.dice(DL.width) - 1, y = $.dice(DL.rooms.length) - 1
+	let x = $.dice(DL.width) - 1, y = $.dice(DL.rooms.length) - 1
 	ROOM = DL.rooms[y][x]
 	if ($.dice((ROOM.type == 0 ? 2 : ROOM.type == 3 ? 1 : 4)
 		* $.online.cha / 5 - DL.moves / 10) == 1) {
@@ -200,7 +200,7 @@ export function menu(suppress = false) {
 
 //	position Hero and get user command
 	$.action('dungeon')
-	let x = $.online.cha * $.online.int / 10 + $.online.dex / (deep + 1)
+	x = $.online.cha * $.online.int / 10 + $.online.dex / (deep + 1)
 	if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
 		x /= $.player.level
 	if ($.dice(x + deep) == 1) {
@@ -229,7 +229,7 @@ export function menu(suppress = false) {
 			case 4:
 				xvt.out(xvt.bright, xvt.red, 'You are attacked by a swarm of bees.')
 				$.sound('oof', 5)
-				for (let x = 0, y = $.dice(Z); x < y; x++)
+				for (x = 0, y = $.dice(Z); x < y; x++)
 					$.online.hp -= $.dice(Z)
 				if ($.online.hp < 1) {
 					$.reason = 'killer bees'
@@ -487,8 +487,20 @@ function doMove(): boolean {
 					ROOM.occupant = 0
 				}
 				else {
-					xvt.out(xvt.bright, xvt.yellow, 'You fall down a level!\n')
+					xvt.out(xvt.bright, xvt.yellow, 'You fall down a level!\n', xvt.reset)
 					xvt.waste(600)
+					if ($.dice(100 + deep * Z / 10) > $.online.dex) {
+						if ($.dice($.online.cha / 10 + deep) <= (deep + 1))
+							$.player.toWC -= $.dice(deep / 3)
+						$.online.toWC -= $.dice($.online.weapon.wc / 10 + 1)
+						xvt.out(`Your ${$.player.weapon} is damaged from the fall!\n`)
+					}
+					if ($.dice(100 + deep * Z / 10) > $.online.dex) {
+						if ($.dice($.online.cha / 10 + deep) <= (deep + 1))
+							$.player.toAC -= $.dice(deep / 3)
+						$.online.toAC -= $.dice($.online.armor.ac / 10 + 1)
+						xvt.out(`Your ${$.player.armor} is damaged from the fall!\n`)
+					}
 					Z++
 					generateLevel()
 					pause = true
@@ -1619,7 +1631,7 @@ function quaff(v: number, it = true) {
 		case 0:
 			$.sound('hurt')
 			if (($.online.hp -= $.dice($.player.hp >>1)) < 1)
-				$.reason = `quaffed ${$.an(potion[v])}`
+				$.reason = `quaffed${$.an(potion[v])}`
 			break
 
 	//	Potion of Cure Light Wounds
@@ -1717,7 +1729,7 @@ function quaff(v: number, it = true) {
 			$.sound('killed', 12)
 			$.online.hp = 0
 			$.online.sp = 0
-			$.reason = `quaffed ${$.an(potion[v])}`
+			$.reason = `quaffed${$.an(potion[v])}`
 			break
 
 	//	Elixir of Restoration
@@ -1728,6 +1740,8 @@ function quaff(v: number, it = true) {
 			break
 		}
 	}
+
+	pause = true
 }
 
 }
