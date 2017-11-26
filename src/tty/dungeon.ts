@@ -203,7 +203,7 @@ export function menu(suppress = false) {
 	drawHero()
 
 	xvt.app.form = {
-        'command': { cb:command, enter:'?', eol:false }
+        'command': { cb:command, cancel:'y', enter:'?', eol:false, timeout:20 }
     }
 	if (suppress)
 		xvt.app.form['command'].prompt = ':'
@@ -430,7 +430,8 @@ function doMove(): boolean {
 					Z++
 					generateLevel()
 					pause = true
-					return true
+					menu()
+					return false
 				}
 			}
 			else {

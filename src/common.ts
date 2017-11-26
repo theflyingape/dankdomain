@@ -1741,6 +1741,11 @@ export function sound(effect: string, sync = 2) {
     xvt.waste(sync * 100)
 }
 
+export function wall(msg: string) {
+    if (!xvt.modem) return
+    xvt.out('@wall(', msg, ')')
+}
+
 /***********
  *  DATABASE support functions
  ***********/

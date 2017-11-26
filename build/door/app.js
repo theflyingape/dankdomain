@@ -43,6 +43,13 @@ app.post('/terminals/:pid/size', function (req, res) {
     term.resize(cols, rows);
     res.end();
 });
+app.post('/terminals/:pid/wall', function (req, res) {
+    var pid = parseInt(req.params.pid), msg = parseInt(req.query.msg), term = terminals[pid];
+    if (!term)
+        return;
+    console.log('broadcast from terminal ' + pid + ': ' + msg);
+    res.end();
+});
 app.ws('/terminals/:pid', function (ws, req) {
     var term = terminals[parseInt(req.params.pid)];
     console.log('Connected to terminal ' + term.pid);
@@ -73,8 +80,15 @@ app.ws('/terminals/:pid', function (ws, req) {
         delete logs[term.pid];
     });
 });
+var lurkers = [];
+app.post('/watch', function (req, res) {
+    var pid = parseInt(req.query.pid);
+    console.log('Create lurker with PID: ' + pid);
+    res.send(lurkers.push(pid));
+    res.end();
+});
 var port = process.env.PORT || 1965, host = os.platform() === 'win32' ? '127.0.0.1' : '0.0.0.0';
-console.log('App listening to https://' + host + ':' + port);
+console.log('Dank Domain Door on https://' + host + ':' + port);
 server.listen(port, host);
 function unlock(pid) {
     console.log('Unlocking ' + pid);

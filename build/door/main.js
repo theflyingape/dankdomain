@@ -57,6 +57,15 @@ function newSession() {
     fetch(url, {method: 'POST'});
   });
 
+  term.on('wall', function (msg) {
+    if (!pid)
+      return;
+
+    var url = '/terminals/' + pid + '/wall?msg=' + msg;
+
+    fetch(url, {method: 'POST'});
+  });
+
   // fit is called within a setTimeout, cols and rows need this.
   setTimeout(function () {
 
@@ -69,7 +78,7 @@ function newSession() {
 
         socket.onmessage = (ev) => {
           // find any occurrences of @func(data), and for each: call func(data)
-          const re = '[@](?:(action|profile|play|tune)[(](.+?)[)])';
+          const re = '[@](?:(action|profile|play|tune|wall)[(](.+?)[)])';
           search = new RegExp(re, 'g'); replace = new RegExp(re);
           data = ev.data;
           copy = data;
@@ -207,4 +216,8 @@ function tune(fileName) {
       });
   }
 */
+}
+
+function wall(msg) {
+  term.wall(msg)
 }
