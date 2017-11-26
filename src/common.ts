@@ -530,6 +530,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
             xvt.out(xvt.reset, '\n')
             xvt.waste(250)
             news(`\twas promoted to ${rpc.user.access}`)
+            wall(`promoted to ${rpc.user.access}`)
         }
 
 		rpc.user.hp += Math.round(rpc.user.level + dice(rpc.user.level) + rpc.user.str / 10 + (rpc.user.str > 90 ? rpc.user.str - 90 : 0))
@@ -582,6 +583,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
     xvt.waste(125)
     xvt.out('\n')
     xvt.waste(125)
+    wall(`is now a level ${player.level} ${player.pc}`)
 
     if (player.level < sysop.level) {
         xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.hp), xvt.reset, ' Hit points\n')
@@ -698,7 +700,7 @@ export function skillplus(rpc: active, cb: Function) {
     xvt.app.form = {
         'skill': { cb: () => {
             xvt.out('\n', xvt.bright)
-            switch(+xvt.entry) {
+            switch (+xvt.entry) {
             case 0:
                 news('\tgot generally better.')
                 if ((online.str += 2) > 100) online.str = 100
@@ -1055,6 +1057,7 @@ export function playerPC(points = 200, immortal = false) {
         show()
         activate(online)
         news(`\trerolled as a ${player.pc}`)
+        wall(`reroll as a ${player.pc}`)
         require('./tty/main').menu(true)
         return
     }

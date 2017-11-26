@@ -200,6 +200,8 @@ export function menu(suppress = false) {
 
 //	position Hero and get user command
 	$.action('dungeon')
+	drawHero()
+
 	x = $.online.cha * $.online.int / 10 + $.online.dex / (deep + 1)
 	if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
 		x /= $.player.level
@@ -251,17 +253,16 @@ export function menu(suppress = false) {
 				}
 				break
 		}
+		if ($.online.weapon.wc > 0 && $.online.weapon.wc + $.online.toWC + $.player.toWC < 0) {
+			xvt.out(`Your ${$.player.weapon} is damaged beyond repair; you toss it aside.\n`)
+			$.Weapon.equip($.online, $.Weapon.merchant[0])
+		}
+		if ($.online.armor.ac > 0 && $.online.armor.ac + $.online.toAC + $.player.toAC < 0) {
+			xvt.out(`Your ${$.player.armor} is damaged beyond repair; you toss it aside.\n`)
+			$.Armor.equip($.online, $.Armor.merchant[0])
+		}
 		xvt.out(xvt.reset, '\n')
 	}
-	if ($.online.weapon.wc + $.online.toWC + $.player.toWC < 0) {
-		xvt.out(`Your ${$.player.weapon} is damaged beyond repair; you toss it aside.\n`)
-		$.Weapon.equip($.online, $.Weapon.merchant[0])
-	}
-	if ($.online.armor.ac + $.online.toAC + $.player.toAC < 0) {
-		xvt.out(`Your ${$.player.armor} is damaged beyond repair; you toss it aside.\n`)
-		$.Armor.equip($.online, $.Armor.merchant[0])
-	}
-	drawHero()
 
 	//	user input
 	xvt.app.form = {

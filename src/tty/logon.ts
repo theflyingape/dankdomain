@@ -256,7 +256,7 @@ function welcome() {
         xvt.out(xvt.bright, xvt.black, '(', xvt.normal, xvt.white, 'Welcome back, ',  $.access[$.player.gender], xvt.bright, xvt.black, ')\n', xvt.reset)
         xvt.sessionAllowed = $.access.minutes * 60
         $.news(`${$.player.handle} logged in ${$.time($.player.lasttime)} as a level ${$.player.level} ${$.player.pc}:`)
-        $.wall(`, a level ${$.player.level} ${$.player.pc}, logged on`)
+        $.wall(`logged on as a level ${$.player.level} ${$.player.pc}`)
 
         $.player.status = ''
         $.arena = 3
