@@ -267,8 +267,9 @@ export function menu(suppress = false) {
 	xvt.app.form = {
         'command': { cb:command, cancel:'y', enter:'?', eol:false, timeout:20 }
     }
+	xvt.app.form['command'].prompt = '\x06'
 	if (suppress)
-		xvt.app.form['command'].prompt = ':'
+		xvt.app.form['command'].prompt += ':'
 	else {
 		xvt.app.form['command'].prompt = ''
 		if ($.player.magic && $.player.spells.length)
@@ -1078,6 +1079,8 @@ function generateLevel() {
 		DL.moves += (Z >>3) + 1
 		return
 	}
+
+	$.wall(`entering dungeon level ${deep}.${Z}`)
 
 	let y:number, x:number
 	let result: boolean

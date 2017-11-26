@@ -1634,6 +1634,7 @@ export function display(title:string, back:number, fore:number, suppress:boolean
             }
         }
     }
+    xvt.out('\x06') /* insert any wall messages here */
     return xvt.attr(fore, '[', xvt.bright, xvt.yellow, back ? titlecase(title) : 'Iron Bank', xvt.normal, fore, ']', xvt.cyan, ' Option (Q=Quit): ')
 }
 
@@ -1686,6 +1687,7 @@ export function logoff() {
 
         news(`\tlogged off ${time(player.lasttime)} as a level ${player.level} ${player.pc}`)
         news(`\t(${reason})\n`, true)
+        wall(`logged off: ${reason}`)
 
         //  logoff banner
         xvt.out('\n')
@@ -1743,7 +1745,7 @@ export function sound(effect: string, sync = 2) {
 
 export function wall(msg: string) {
     if (!xvt.modem) return
-    xvt.out('@wall(', msg, ')')
+    xvt.out(`@wall(${player.handle} ${msg})`)
 }
 
 /***********

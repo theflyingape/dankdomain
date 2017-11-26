@@ -178,6 +178,7 @@ function choice() {
 									$.saveUser(opponent)
 									$.log(opponent.user.id, `\n${$.player.handle} lost to you in a joust.  You got ${reward.carry()}.`)
 									$.news(`\tlost to ${opponent.user.handle} in a joust`)
+									$.wall(`lost to ${opponent.user.handle} in a joust`)
 									menu()
 									return
 								}

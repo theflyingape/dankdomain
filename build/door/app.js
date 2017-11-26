@@ -16,7 +16,7 @@ var options = {
 var app = express();
 var server = https.createServer(options, app);
 var expressWs = expressWs(app, server);
-var terminals = {}, logs = {};
+var terminals = {}, logs = {}, broadcasts = {};
 app.use('/', express.static(__dirname));
 app.post('/terminals', function (req, res) {
     var cols = parseInt(req.query.cols), rows = parseInt(req.query.rows), term = pty.spawn(process.platform === 'win32' ? 'cmd.exe' : 'sh', ["-l", "./logins.sh"], {
@@ -29,6 +29,7 @@ app.post('/terminals', function (req, res) {
     console.log('Create terminal with PID: ' + term.pid);
     terminals[term.pid] = term;
     logs[term.pid] = '';
+    broadcasts[term.pid] = '';
     term.on('data', function (data) {
         logs[term.pid] += data;
     });
@@ -44,10 +45,13 @@ app.post('/terminals/:pid/size', function (req, res) {
     res.end();
 });
 app.post('/terminals/:pid/wall', function (req, res) {
-    var pid = parseInt(req.params.pid), msg = parseInt(req.query.msg), term = terminals[pid];
+    var pid = parseInt(req.params.pid), msg = req.query.msg, term = terminals[pid];
     if (!term)
         return;
     console.log('broadcast from terminal ' + pid + ': ' + msg);
+    for (let o in terminals)
+        if (+o !== pid)
+            broadcasts[o] += '\x1B[1;36m' + msg + '\x1B[m\n';
     res.end();
 });
 app.ws('/terminals/:pid', function (ws, req) {
@@ -58,8 +62,15 @@ app.ws('/terminals/:pid', function (ws, req) {
         ws.close();
     });
     term.on('data', function (data) {
+        let msg = data.toString();
+        let ack = msg.indexOf('\x06');
+        if (ack >= 0) {
+            msg = msg.substr(0, ack) + broadcasts[term.pid] + msg.substr(ack);
+            console.log(`message to ${term.pid}: ${msg}`);
+            broadcasts[term.pid] = '';
+        }
         try {
-            ws.send(data);
+            ws.send(msg);
         }
         catch (ex) {
             if (term.pid) {
@@ -69,6 +80,7 @@ app.ws('/terminals/:pid', function (ws, req) {
             }
         }
     });
+    //  incoming from browser client
     ws.on('message', function (msg) {
         term.write(msg);
     });
@@ -76,8 +88,9 @@ app.ws('/terminals/:pid', function (ws, req) {
         term.kill();
         console.log('Closed terminal ' + term.pid);
         // Clean things up
-        delete terminals[term.pid];
+        delete broadcasts[term.pid];
         delete logs[term.pid];
+        delete terminals[term.pid];
     });
 });
 var lurkers = [];

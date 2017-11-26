@@ -483,8 +483,10 @@ export function spoils() {
             xvt.waste(1000)
         }
 
-        if (winner === $.online)
+        if (winner === $.online) {
             $.news(`\tdefeated the gang, ${parties[l][0].user.gang}`)
+            $.wall(`defeated the gang, ${parties[l][0].user.gang}`)
+        }
         else if ($.online.hp == 0)
             $.reason = `defeated by the gang, ${parties[w][0].user.gang}`
         return
@@ -1531,6 +1533,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                     $.sound('kill', 15)
                     $.music('bitedust')
                     $.news(`\tdefeated ${enemy.user.handle}, an experience level ${enemy.user.xplevel} ${enemy.user.pc}`)
+                    $.wall(`defeated ${enemy.user.handle}`)
                 }
                 xvt.waste(500)
             }

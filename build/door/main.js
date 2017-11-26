@@ -219,5 +219,6 @@ function tune(fileName) {
 }
 
 function wall(msg) {
-  term.wall(msg)
+console.log(msg)
+  term.emit('wall', msg)
 }

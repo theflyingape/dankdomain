@@ -11,7 +11,7 @@ declare var options: {
 declare var app: any;
 declare var server: any;
 declare var expressWs: any;
-declare var terminals: {}, logs: {};
+declare var terminals: {}, logs: {}, broadcasts: {};
 declare var lurkers: any[];
 declare var port: any, host: string;
 declare function unlock(pid: number): void;
