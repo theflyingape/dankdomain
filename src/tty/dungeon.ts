@@ -200,8 +200,70 @@ export function menu(suppress = false) {
 
 //	position Hero and get user command
 	$.action('dungeon')
+	x = $.online.cha * $.online.int / 10 + $.online.dex / (deep + 1)
+	if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
+		x /= $.player.level
+	if ($.dice(x + deep) == 1) {
+		switch ($.dice(5)) {
+			case 1:
+				xvt.out(xvt.faint, 'A bat flies by and soils your ', xvt.normal)
+				$.sound('splat', 4)
+				$.player.toAC -= $.dice(deep)
+				xvt.out($.player.armor, $.buff($.player.toAC, $.online.toAC))
+				break
+			case 2:
+				xvt.out(xvt.blue, 'A drop of acid water lands on your ')
+				$.sound('drop', 4)
+				$.player.toWC -= $.dice(deep)
+				xvt.out($.player.weapon, $.buff($.player.toWC, $.online.toWC))
+				break
+			case 3:
+				xvt.out(xvt.yellow, 'You trip on the rocky surface and hurt yourself.')
+				$.sound('hurt', 5)
+				$.online.hp -= $.dice(Z)
+				if ($.online.hp < 1) {
+					$.reason = 'fell down'
+					xvt.hangup()
+				}
+				break
+			case 4:
+				xvt.out(xvt.bright, xvt.red, 'You are attacked by a swarm of bees.')
+				$.sound('oof', 5)
+				for (x = 0, y = $.dice(Z); x < y; x++)
+					$.online.hp -= $.dice(Z)
+				if ($.online.hp < 1) {
+					$.reason = 'killer bees'
+					xvt.hangup()
+				}
+				break
+			case 5:
+				$.music('.')
+				xvt.out(xvt.bright, xvt.white, 'A bolt of lightning strikes you.')
+				$.sound('boom', 10)
+				$.player.toAC -= $.dice($.online.armor.ac >>1)
+				$.online.toAC -= $.dice($.online.armor.ac >>1)
+				$.player.toWC -= $.dice($.online.weapon.wc >>1)
+				$.online.toWC -= $.dice($.online.weapon.wc >>1)
+				$.online.hp -= $.dice($.player.hp >>1)
+				if ($.online.hp < 1) {
+					$.reason = 'struck by lightning'
+					xvt.hangup()
+				}
+				break
+		}
+		xvt.out(xvt.reset, '\n')
+	}
+	if ($.online.weapon.wc + $.online.toWC + $.player.toWC < 0) {
+		xvt.out(`Your ${$.player.weapon} is damaged beyond repair; you toss it aside.\n`)
+		$.Weapon.equip($.online, $.Weapon.merchant[0])
+	}
+	if ($.online.armor.ac + $.online.toAC + $.player.toAC < 0) {
+		xvt.out(`Your ${$.player.armor} is damaged beyond repair; you toss it aside.\n`)
+		$.Armor.equip($.online, $.Armor.merchant[0])
+	}
 	drawHero()
 
+	//	user input
 	xvt.app.form = {
         'command': { cb:command, cancel:'y', enter:'?', eol:false, timeout:20 }
     }
@@ -425,8 +487,20 @@ function doMove(): boolean {
 					ROOM.occupant = 0
 				}
 				else {
-					xvt.out(xvt.bright, xvt.yellow, 'You fall down a level!\n')
+					xvt.out(xvt.bright, xvt.yellow, 'You fall down a level!\n', xvt.reset)
 					xvt.waste(600)
+					if ($.dice(100 + deep * Z / 10) > $.online.dex) {
+						if ($.dice($.online.cha / 10 + deep) <= (deep + 1))
+							$.player.toWC -= $.dice(deep / 3)
+						$.online.toWC -= $.dice($.online.weapon.wc / 10 + 1)
+						xvt.out(`Your ${$.player.weapon} is damaged from the fall!\n`)
+					}
+					if ($.dice(100 + deep * Z / 10) > $.online.dex) {
+						if ($.dice($.online.cha / 10 + deep) <= (deep + 1))
+							$.player.toAC -= $.dice(deep / 3)
+						$.online.toAC -= $.dice($.online.armor.ac / 10 + 1)
+						xvt.out(`Your ${$.player.armor} is damaged from the fall!\n`)
+					}
 					Z++
 					generateLevel()
 					pause = true
@@ -578,7 +652,7 @@ function doMove(): boolean {
 			}
 			else {
 				$.sound('shimmer', 4)
-				xvt.out('He casts a Cure spell on you.\n')
+				xvt.out('\nHe casts a Cure spell on you.\n')
 				$.online.hp = $.player.hp
 			}
 			break
@@ -1453,14 +1527,34 @@ function putMonster(r = -1, c = -1): boolean {
 	m.user.hp >>= 2
 	i = 5 - $.dice(deep / 3)
 	m.user.sp = Math.trunc(m.user.sp / i)
+
 	m.user.poisons = []
-	if (dm.poisons)
-		for (let vials in dm.poisons)
-			$.Poison.add(m.user.poisons, dm.poisons[vials])
+	if (m.user.poison) {
+		if (dm.poisons)
+			for (let vials in dm.poisons)
+				$.Poison.add(m.user.poisons, dm.poisons[vials])
+		for (let i = 0; i < Object.keys($.Poison.vials).length; i++) {
+			if ($.dice($.player.cha + (i <<3)) == 1) {
+				let vial = $.Poison.pick(i)
+				if (!$.Poison.have(m.user.poisons, vial))
+					$.Poison.add(m.user.poisons, i)
+			}
+		}
+	}
+
 	m.user.spells = []
-	if (dm.spells)
-		for (let magic in dm.spells)
-			$.Magic.add(m.user.spells, dm.spells[magic])
+	if (m.user.magic) {
+		if (dm.spells)
+			for (let magic in dm.spells)
+				$.Magic.add(m.user.spells, dm.spells[magic])
+		for (let i = 0; i < Object.keys($.Magic.spells).length; i++) {
+			if ($.dice($.player.cha + (i <<3)) == 1) {
+				let spell = $.Magic.pick(i)
+				if (!$.Magic.have(m.user.spells, spell))
+					$.Magic.add(m.user.spells, i)
+			}
+		}
+	}
 
 	$.activate(m)
 
@@ -1558,7 +1652,7 @@ function quaff(v: number, it = true) {
 		case 0:
 			$.sound('hurt')
 			if (($.online.hp -= $.dice($.player.hp >>1)) < 1)
-				$.reason = `quaffed ${$.an(potion[v])}`
+				$.reason = `quaffed${$.an(potion[v])}`
 			break
 
 	//	Potion of Cure Light Wounds
@@ -1656,7 +1750,7 @@ function quaff(v: number, it = true) {
 			$.sound('killed', 12)
 			$.online.hp = 0
 			$.online.sp = 0
-			$.reason = `quaffed ${$.an(potion[v])}`
+			$.reason = `quaffed${$.an(potion[v])}`
 			break
 
 	//	Elixir of Restoration
@@ -1667,6 +1761,8 @@ function quaff(v: number, it = true) {
 			break
 		}
 	}
+
+	pause = true
 }
 
 }

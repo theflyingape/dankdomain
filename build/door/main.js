@@ -29,7 +29,7 @@ function newSession() {
   term.winptyCompatInit();
 
 //  term.writeln('\x1Bc');
-  term.writeln('\x1B[1;36mW\x1B[22melcome to D\x1b[2mank \x1b[22mD\x1b[2momain\x1B[22m\n');
+  term.writeln('\x1B[1;31m\uD83D\uDD25 \x1B[36mW\x1B[22melcome to D\x1b[2mank \x1b[22mD\x1b[2momain\x1B[22m \x1B[1;31m\uD83D\uDD25\x1B[1m\n');
   term.write('\x1B[34mConnecting terminal WebSocket ... ');
   protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://';
   socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + '/terminals/';
