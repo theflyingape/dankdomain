@@ -271,7 +271,6 @@ export function menu(suppress = false) {
 	if (suppress)
 		xvt.app.form['command'].prompt += ':'
 	else {
-		xvt.app.form['command'].prompt = ''
 		if ($.player.magic && $.player.spells.length)
 			xvt.app.form['command'].prompt += xvt.attr(
 				$.bracket('C', false), xvt.cyan, 'ast, '
