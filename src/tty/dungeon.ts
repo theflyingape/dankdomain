@@ -552,14 +552,66 @@ function doMove(): boolean {
 			return false
 
 		case 3:
-			xvt.out(xvt.magenta, 'You have found a legendary Wishing Well.\n\n')
+			$.music('.')
+			xvt.out(`\x1B[1;${$.player.rows}r`)
+			xvt.plot($.player.rows, 1)
+			xvt.out(xvt.reset, '\n')
+			$.sound('well', 12)
+			xvt.out(xvt.magenta, 'You have found a legendary Wishing Well.\n')
+			xvt.waste(600)
+			xvt.out(xvt.bright, xvt.yellow, '\nWhat do you wish to do?\n', xvt.reset)
+			xvt.waste(600)
+
+			xvt.out($.bracket('B'), ' Bless yourself')
+			xvt.out($.bracket('T'), ' Teleport to another level')
+			if (deep > 0) xvt.out($.bracket('O'), ' Teleport all the way out')
+			if (deep > 1) xvt.out($.bracket('D'), ' Destroy dank dungeon')
+			if (deep > 2) xvt.out($.bracket('R'), ' Resurrect all the dead players')
+			if (deep > 3) xvt.out($.bracket('G'), ' Grant another call')
+			if (deep > 4) xvt.out($.bracket('L'), ' Loot another player\'s money')
+			if (deep > 5) xvt.out($.bracket('F'), ' Fix all your damage')
+			if (deep > 6) xvt.out($.bracket('K'), ' Key hint(s)')
+			if (deep > 7) xvt.out($.bracket('M'), ' Magical spell(s) or device(s)')
+			if (deep > 8) xvt.out($.bracket('C'), ' Curse another player')
+
+			$.action('list')
+			xvt.app.form = {
+				'well': { cb: () => {
+					ROOM.occupant = 0
+					xvt.out('\n')
+					menu()
+				}, prompt:'What is thy bidding, my master? ', eol:false }
+			}
+			xvt.app.focus = 'well'
 			pause = true
-			break
+			refresh = true
+			return false
 
 		case 4:
-			xvt.out(xvt.magenta, 'You have found a Mystical Wheel of Life.\n\n')
+			$.music('.')
+			xvt.out(`\x1B[1;${$.player.rows}r`)
+			xvt.plot($.player.rows, 1)
+			xvt.out(xvt.reset, '\n')
+			$.sound('wheel', 12)
+			xvt.out(xvt.magenta, 'You have found a Mystical Wheel of Life.\n')
+			xvt.waste(600)
+			xvt.out(xvt.bright, xvt.yellow, '\nThe runes are ',
+				['cryptic', 'familiar', 'foreign', 'speaking out', 'strange'][$.dice(5) - 1],
+				' to you.\n', xvt.reset)
+			xvt.waste(600)
+
+			$.action('yn')
+			xvt.app.form = {
+				'wheel': { cb: () => {
+					ROOM.occupant = 0
+					xvt.out('\n')
+					menu()
+				}, prompt:'Will you spin it? ', eol:false }
+			}
+			xvt.app.focus = 'wheel'
 			pause = true
-			break
+			refresh = true
+			return false
 
 		case 5:
 			xvt.out(xvt.cyan, xvt.faint, 'There is a thief in this '
