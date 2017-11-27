@@ -738,7 +738,7 @@ function doMove(): boolean {
 
 		case 'potion':
 			if (typeof ROOM.giftID == 'undefined')
-				ROOM.giftID = !$.player.novice && $.dice(100) < ($.online.int / 20 * (1 << $.player.poison) + ($.online.int > 90 ? ($.online.int % 90) <<1 : 0))
+				ROOM.giftID = !$.player.novice && $.dice(100 + ROOM.giftValue) < ($.online.int / 20 * (1 << $.player.poison) + ($.online.int > 90 ? ($.online.int % 90) <<1 : 0))
 			$.sound('bubbles')
 			xvt.out(xvt.bright, xvt.cyan, 'On the ground, you find a ',
 				['bottle containing', 'flask of some', 'vial holding'][$.dice(3) - 1], ' ',
@@ -755,6 +755,7 @@ function doMove(): boolean {
 					'quaff': { cb: () => {
 						xvt.out('\n\n')
 						if (/N/i.test(xvt.entry)) {
+							looked = true
 							menu()
 							return
 						}
@@ -1763,7 +1764,6 @@ function quaff(v: number, it = true) {
 			break
 		}
 	}
-
 	pause = true
 }
 
