@@ -787,7 +787,7 @@ function doMove(): boolean {
 		case 'xmagic':
 			if (!$.Magic.have($.player.spells, ROOM.giftValue)) {
 				xvt.out(xvt.bright, xvt.yellow, 'You find a '
-					, $.Magic.special[ROOM.giftValue - $.Magic.merchant.length]
+					, $.Magic.special[ROOM.giftValue - $.Magic.merchant.length - 1]
 					, ' ', $.player.magic == 1 ? 'wand' : 'scroll'
 					, '!\n', xvt.reset)
 				$.Magic.add($.player.spells, ROOM.giftValue)
