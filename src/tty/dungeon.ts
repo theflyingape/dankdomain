@@ -10,6 +10,7 @@ import Battle = require('../battle')
 import xvt = require('xvt')
 import { resend } from '../email';
 import { fail } from 'assert';
+import { keyhint } from '../common';
 
 module Dungeon
 {
@@ -591,8 +592,7 @@ function doMove(): boolean {
 			$.music('.')
 			xvt.out(`\x1B[1;${$.player.rows}r`)
 			xvt.plot($.player.rows, 1)
-			xvt.out(xvt.reset, '\n')
-			$.sound('wheel', 12)
+			$.sound('wol', 12)
 			xvt.out(xvt.magenta, 'You have found a Mystical Wheel of Life.\n')
 			xvt.waste(600)
 			xvt.out(xvt.bright, xvt.yellow, '\nThe runes are ',
@@ -605,8 +605,144 @@ function doMove(): boolean {
 				'wheel': { cb: () => {
 					ROOM.occupant = 0
 					xvt.out('\n')
+					if (/Y/i.test(xvt.entry)) {
+						let i, m, n, t, z
+						z = (deep < 3) ? 4 : (deep < 6) ? 6 : (deep < 9) ? 8 : 9
+						t = 0
+						for (i = 0; i < 5; i++) {
+							n = ($.online.str / 5 - 5 * i + $.dice(5) + 1) >>0
+							for (m = 0; m < n; m++) {
+								t = $.dice(z)
+								xvt.out('\r', '-\\|/'[m % 4])
+								$.beep()
+							}
+						}
+						n = $.dice($.online.str / 20) + 2
+						for (i = 1; i <= n; i++) {
+							t = $.dice(z)
+							xvt.out(xvt.bright, xvt.blue, '[', xvt.cyan, [
+								' Grace ', ' Doom! ',
+								'Fortune', ' Taxes ',
+								' Power ', ' Death ',
+								' =Key= ', ' Morph '
+								, '+Skill+'][t % z],
+								xvt.blue, '] \r')
+							xvt.waste(500 * i)
+							$.beep()
+						}
+						xvt.out(xvt.reset)
+						switch (t % z) {
+						case 0:
+							if ($.player.cursed) {
+								$.player.cursed = ''
+								$.online.str = $.PC.ability($.online.str, 10, $.player.maxstr)
+								$.online.int = $.PC.ability($.online.int, 10, $.player.maxint)
+								$.online.dex = $.PC.ability($.online.dex, 10, $.player.maxdex)
+								$.online.cha = $.PC.ability($.online.cha, 10, $.player.maxcha)
+							}
+							else {
+								$.player.maxstr = $.PC.ability($.player.maxstr, 1)
+								$.player.maxint = $.PC.ability($.player.maxint, 1)
+								$.player.maxdex = $.PC.ability($.player.maxdex, 1)
+								$.player.maxcha = $.PC.ability($.player.maxcha, 1)
+								if (($.player.str = $.PC.ability($.player.str, 20, $.player.maxstr)) > $.online.str)
+									$.online.str = $.player.str
+								if (($.player.int = $.PC.ability($.player.int, 20, $.player.maxint)) > $.online.int)
+									$.online.int = $.player.int
+								if (($.player.dex = $.PC.ability($.player.dex, 20, $.player.maxdex)) > $.online.dex)
+									$.online.dex = $.player.dex
+								if (($.player.cha = $.PC.ability($.player.cha, 20, $.player.maxcha)) > $.online.cha)
+									$.online.cha = $.player.cha
+							}
+							break
+						case 1:
+							if ($.player.blessed) {
+								$.player.blessed = ''
+								$.online.str = $.PC.ability($.online.str, -10, $.player.maxstr)
+								$.online.int = $.PC.ability($.online.int, -10, $.player.maxint)
+								$.online.dex = $.PC.ability($.online.dex, -10, $.player.maxdex)
+								$.online.cha = $.PC.ability($.online.cha, -10, $.player.maxcha)
+							}
+							else {
+								$.player.maxstr--
+								$.player.maxint--
+								$.player.maxdex--
+								$.player.maxcha--
+								if (($.player.str -= 20) < $.online.str)
+									if (($.online.str = $.player.str) < 20) {
+										$.online.str = 20
+										$.player.str = 20
+									}
+								if (($.player.int -= 20) < $.online.int)
+									if (($.online.int = $.player.int) < 20) {
+										$.online.int = 20
+										$.player.int = 20
+									}
+								if (($.player.dex -= 20) < $.online.dex)
+									if (($.online.dex = $.player.dex) < 20) {
+										$.online.dex = 20
+										$.player.dex = 20
+									}
+								if (($.player.cha -= 20) < $.online.cha)
+									if (($.online.cha = $.player.cha) < 20) {
+										$.online.cha = 20
+										$.player.cha = 20
+									}
+							}
+							break
+						case 2:
+							n = new $.coins($.money(Z))
+							n.value += $.worth(new $.coins($.online.weapon.value).value, $.online.cha)
+							n.value += $.worth(new $.coins($.online.armor.value).value, $.online.cha)
+							n.value *= (Z + 1)
+							$.player.coin.value += new $.coins(n.carry(1, true)).value
+							break
+						case 3:
+							$.player.coin.value = 0
+							$.player.bank.value = 0
+							n = new $.coins($.money(Z))
+							n.value += $.worth(new $.coins($.online.weapon.value).value, $.online.cha)
+							n.value += $.worth(new $.coins($.online.armor.value).value, $.online.cha)
+							n.value *= (Z + 1)
+							$.player.loan.value += new $.coins(n.carry(1, true)).value
+							break
+						case 4:
+							$.online.hp += ($.player.hp >>1) + $.dice($.player.hp / 2)
+							$.online.sp += ($.player.sp >>1) + $.dice($.player.sp / 2)
+							$.player.toWC += $.dice($.online.weapon.wc)
+							$.online.toWC += ($.online.weapon.wc >>1) + 1
+							$.player.toAC += $.dice($.online.armor.ac)
+							$.online.toAC += ($.online.armor.ac >>1) + 1
+							$.sound('hone')
+							break
+						case 5:
+							$.online.hp = 0
+							$.online.sp = 0
+							$.sound('killed')
+							$.reason = 'Wheel of Death'
+							break
+						case 6:
+							$.keyhint($.online)
+							$.sound('shimmer', 12)
+							break
+						case 7:
+							$.sound('morph', 10)
+							$.player.level = $.dice(98) + 1
+							$.reroll($.player, $.PC.random(), $.player.level)
+							$.activate($.online)
+							$.online.altered = true
+							$.player.gender = ['F','M'][$.dice(2) - 1]
+							$.saveUser($.player)
+							xvt.out(`You morph yourself into a level ${$.player.level} ${$.player.pc}!\n`)
+							break
+						case 8:
+							$.sound('level')
+							$.skillplus($.online, menu)
+							return
+						}
+					}
 					menu()
-				}, prompt:'Will you spin it? ', eol:false }
+				}, prompt:'Will you spin it (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i }
 			}
 			xvt.app.focus = 'wheel'
 			pause = true
@@ -1158,7 +1294,7 @@ function generateLevel() {
 		return
 	}
 
-	$.wall(`entering dungeon level ${deep}.${Z}`)
+	$.wall(`is entering dungeon level ${deep + 1}.${Z + 1}`)
 
 	let y:number, x:number
 	let result: boolean

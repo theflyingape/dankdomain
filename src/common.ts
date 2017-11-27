@@ -1561,7 +1561,7 @@ export function worth(n: number, p: number): number {
 
 export function beep() {
     if (xvt.emulation === 'XT')
-        sound('max', 5)
+        sound('max')
     else
         xvt.beep()
 }
