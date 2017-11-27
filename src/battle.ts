@@ -58,7 +58,6 @@ export function engage(module:string, party: active|active[], mob: active|active
 
 //  new round of volleys
 export function attack(retry = false) {
-//console.log('#', round, ' : attack(', retry, ')')
     //  no more attacking
     if (retreat || teleported || ++volley > 99999) {
         if ($.online.confused)
@@ -681,10 +680,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
         xvt.app.focus = 'magic'
         return
     }
-    else {
-//console.log('cast(', magic.toString(), ')')
+    else
         invoke(Object.keys($.Magic.spells)[magic - 1])
-    }
 
     function invoke(name: string) {
         let spell = $.Magic.spells[name]
@@ -1583,7 +1580,6 @@ export function poison(rpc: active, cb?:Function) {
     }
 
     function apply(rpc: active, vial: number) {
-//console.log('apply(', vial.toString(), ')')
         rpc.altered = true
         let wc = $.Weapon.baseWC(rpc.user.weapon)
         let p = Math.trunc(rpc.user.poison / 2)
@@ -1604,7 +1600,7 @@ export function poison(rpc: active, cb?:Function) {
         }
         else {
             xvt.out($.who(rpc, 'He'), $.what(rpc, 'pour')
-                , 'some ', $.Poison.merchant[+xvt.entry - 1]
+                , 'some ', $.Poison.merchant[vial - 1]
                 , ' on ', $.who(rpc, 'his'), rpc.user.weapon, '.\n')
             xvt.waste(500)
             if (/^[A-Z]/.test(rpc.user.id)) {

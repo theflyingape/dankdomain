@@ -14,7 +14,24 @@ import { fail } from 'assert';
 module Dungeon
 {
 	const monsters: monster = require('../etc/dungeon.json')
-	let party: active[]
+	const potion = [
+		'Vial of Slaad Secretions',
+		'Potion of Cure Light Wounds',
+		'Flask of Fire Water',
+		'Potion of Mana',
+		'Vial of Weakness',
+		'Potion of Stamina',
+		'Vial of Stupidity',
+		'Potion of Wisdom',
+		'Vial of Clumsiness',
+		'Potion of Agility',
+		'Vile Vial',
+		'Potion of Charm',
+		'Vial of Crack',
+		'Potion of Augment',
+		'Beaker of Death',
+		'Elixir of Restoration'
+	]
 
 	interface dungeon {
 		rooms: [ room[] ]	//	7-10
@@ -33,6 +50,7 @@ module Dungeon
 	}
 
 	let fini: Function
+	let party: active[]
 	let tl: number
 
 	let looked: boolean
@@ -719,12 +737,17 @@ function doMove(): boolean {
 			break
 
 		case 'potion':
+			if (typeof ROOM.giftID == 'undefined')
+				ROOM.giftID = !$.player.novice && $.dice(100) < ($.online.int / 20 * (1 << $.player.poison) + ($.online.int > 90 ? ($.online.int % 90) <<1 : 0))
 			$.sound('bubbles')
 			xvt.out(xvt.bright, xvt.cyan, 'On the ground, you find a ',
 				['bottle containing', 'flask of some', 'vial holding'][$.dice(3) - 1], ' ',
-				[ 'bubbling', 'clear', 'dark', 'sparkling', 'tainted'][$.dice(5) - 1], ' ',
-				[ 'amber', 'blue', 'crimson', 'green', 'purple'][$.dice(5) - 1], ' ',
-				'potion.')
+				[ 'bubbling', 'clear', 'dark', 'sparkling', 'tainted'][$.dice(5) - 1], ' ')
+			if (ROOM.giftID)
+				xvt.out(potion[ROOM.giftValue], '.')
+			else
+				xvt.out([ 'amber', 'blue', 'crimson', 'green', 'purple'][$.dice(5) - 1],
+					' potion.')
 
 			if ($.dice(100) + deep < 50 + ($.online.int >>1)) {
 				$.action('potion')
@@ -1227,7 +1250,6 @@ function generateLevel() {
 		x = $.dice(DL.width) - 1
 
 		if ($.dice(deep + 10) > (deep + 1)) {
-			DL.rooms[y][x].giftID = false
 			DL.rooms[y][x].giftItem = 'potion'
 			n = $.dice(130 - deep)
 			for (let i = 0; i < 16 && n > 0; i++) {
@@ -1239,42 +1261,36 @@ function generateLevel() {
 			continue
 		}
 		if ($.dice(deep + 5) > (deep + 1) && $.player.poison) {
-			DL.rooms[y][x].giftID = false
 			DL.rooms[y][x].giftItem = 'poison'
 			DL.rooms[y][x].giftValue =  $.dice($.Poison.merchant.length * Z / 100)
 			continue
 		}
 
 		if ($.dice(deep + 5) > (deep + 1) && ($.player.magic == 1 || $.player.magic == 2)) {
-			DL.rooms[y][x].giftID = false
 			DL.rooms[y][x].giftItem = 'magic'
 			DL.rooms[y][x].giftValue =  $.dice($.Magic.merchant.length * Z / 100)
 			continue
 		}
 
 		if ($.dice(deep + 3) > (deep + 1) && ($.player.magic == 1 || $.player.magic == 2)) {
-			DL.rooms[y][x].giftID = false
 			DL.rooms[y][x].giftItem = 'xmagic'
 			DL.rooms[y][x].giftValue =  $.Magic.merchant.length + $.dice($.Magic.special.length)
 			continue
 		}
 
 		if ($.dice(deep + $.player.magic + 4) > (deep + 1)) {
-			DL.rooms[y][x].giftID = false
 			DL.rooms[y][x].giftItem = 'chest'
 			DL.rooms[y][x].giftValue =  $.dice(10 + deep) - 1
 			continue
 		}
 
 		if ($.dice(deep * ($.player.magic + 3)) - $.player.magic > (deep + 1)) {
-			DL.rooms[y][x].giftID = false
 			DL.rooms[y][x].giftItem = 'armor'
 			DL.rooms[y][x].giftValue =  $.dice(deep) + 2
 			continue
 		}
 
 		if ($.dice(deep * ($.player.magic + 2)) - $.player.magic > (deep + 1)) {
-			DL.rooms[y][x].giftID = false
 			DL.rooms[y][x].giftItem = 'weapon'
 			DL.rooms[y][x].giftValue =  $.dice(deep) + 2
 			continue
@@ -1628,25 +1644,6 @@ export function teleport() {
 }
 
 function quaff(v: number, it = true) {
-	let potion = [
-		'Vial of Slaad Secretions',
-		'Potion of Cure Light Wounds',
-		'Flask of Fire Water',
-		'Potion of Mana',
-		'Vial of Weakness',
-		'Potion of Stamina',
-		'Vial of Stupidity',
-		'Potion of Wisdom',
-		'Vial of Clumsiness',
-		'Potion of Agility',
-		'Vile Vial',
-		'Potion of Charm',
-		'Vial of Crack',
-		'Potion of Augment',
-		'Beaker of Death',
-		'Elixir of Restoration'
-	]
-
 	xvt.out(v % 2 ? xvt.green : xvt.red)
 	xvt.out('It was', $.an(potion[v]), '.\n', xvt.reset)
 
