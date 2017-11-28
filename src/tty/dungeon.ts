@@ -573,8 +573,8 @@ function doMove(): boolean {
 			if (deep > 4) xvt.out($.bracket('L'), ' Loot another player\'s money'); well += 'L'
 			if (deep > 5) xvt.out($.bracket('F'), ' Fix all your damage'); well += 'F'
 			if (deep > 6) xvt.out($.bracket('K'), ' Key hint(s)'); well += 'K'
-			if (deep > 7) xvt.out($.bracket('M'), ' Magical spell(s) or device(s)'); well += 'M'
-			if (deep > 8) xvt.out($.bracket('C'), ' Curse another player'); well += 'C'
+			if (deep > 7) xvt.out($.bracket('C'), ' Curse another player'); well += 'C'
+			if (deep > 8) xvt.out($.bracket('M'), ' Magical spell(s) or device(s)'); well += 'M'
 			xvt.out('\n')
 
 			$.action('freetext')
@@ -602,10 +602,10 @@ function doMove(): boolean {
 							xvt.out(xvt.bright, xvt.yellow, 'You feel a shining aura surround you.\n')
 							$.news(`\twished for a blessing`)
 						}
-						$.online.str = $.PC.ability($.online.str, 10, $.player.maxstr)
-						$.online.int = $.PC.ability($.online.int, 10, $.player.maxint)
-						$.online.dex = $.PC.ability($.online.dex, 10, $.player.maxdex)
-						$.online.cha = $.PC.ability($.online.cha, 10, $.player.maxcha)
+						$.online.str = $.PC.ability($.online.str, 10)
+						$.online.int = $.PC.ability($.online.int, 10)
+						$.online.dex = $.PC.ability($.online.dex, 10)
+						$.online.cha = $.PC.ability($.online.cha, 10)
 						break
 					case 'T':
 						let start = (Z * 2 / 3 - $.dice(deep)) >>0
@@ -628,9 +628,10 @@ function doMove(): boolean {
 								Z = i
 								generateLevel()
 								menu()
-							}, prompt:`Level (${start}-${end}): `, min:1, max:3}
+							}, prompt:`Level (${start}-${end}): `, min:1, max:3 }
 						}
-						break
+						xvt.app.focus = 'level'
+						return
 					case 'O':
 						$.sound('teleport')
 						xvt.out(`\x1B[1;${$.player.rows}r`)
@@ -659,6 +660,120 @@ function doMove(): boolean {
 						else {
 							xvt.out('A deep laughter bellows... ')
 							$.sound('morph', 12)
+						}
+						break
+					case 'L':
+						Battle.user('Loot', (opponent: active) => {
+							if (opponent.user.id === $.player.id) {
+								opponent.user.id = ''
+								xvt.out('\nYou can\'t loot yourself.\n')
+							}
+							else if (opponent.user.novice) {
+								opponent.user.id = ''
+								xvt.out('\nYou can\'t loot novice players.\n')
+							}
+							if (opponent.user.id) {
+								let loot = new $.coins(opponent.user.coin.value + opponent.user.bank.value)
+								$.log(opponent.user.id, `${$.player.handle} wished for your ${loot.carry()}`)
+								$.news(`\tlooted ${opponent.user.handle}`)
+								$.player.coin.value += loot.value
+								opponent.user.coin.value = 0
+								opponent.user.bank.value = 0
+								$.saveUser(opponent)
+							}
+							menu()
+							return
+						})
+						return
+					case 'F':
+						if ($.online.str < $.player.str)
+							$.online.str = $.player.str
+						if ($.online.int < $.player.int)
+							$.online.int = $.player.int
+						if ($.online.dex < $.player.dex)
+							$.online.dex = $.player.dex
+						if ($.online.cha < $.player.cha)
+							$.online.cha = $.player.cha
+						if ($.player.toAC < 0)
+							$.player.toAC = 0
+						if ($.player.toWC < 0)
+							$.player.toWC = 0
+						if ($.online.toAC < 0)
+							$.online.toAC = 0
+						if ($.online.toWC < 0)
+							$.online.toWC = 0
+						if ($.online.hp < $.player.hp)
+							$.online.hp = $.player.hp
+						if ($.online.sp < $.player.sp)
+							$.online.sp = $.player.sp
+						if ($.online.hull < $.player.hull)
+							$.online.hull = $.player.hull
+						xvt.out('You are completely healed and all damage has been repaired.\n')
+						$.sound('shimmer')
+						break
+					case 'K':
+						let k = $.dice(deep >>2)
+						for (let i = 0; i < k; i++) {
+							$.keyhint($.online)
+							$.sound("shimmer", 12)
+						}
+						break
+					case 'C':
+						Battle.user('Curse', (opponent: active) => {
+							if (opponent.user.id === $.player.id) {
+								opponent.user.id = ''
+								xvt.out('\nYou can\'t curse yourself.\n')
+							}
+							else if (opponent.user.novice) {
+								opponent.user.id = ''
+								xvt.out('\nYou can\'t curse novice players.\n')
+							}
+							if (opponent.user.id === '') {
+								$.log(opponent.user.id, `${$.player.handle} cursed you!`)
+								$.news(`\tcursed ${opponent.user.handle}`)
+								if (opponent.user.blessed)
+									opponent.user.blessed = ''
+								else
+									opponent.user.cursed = $.player.id
+								$.saveUser(opponent)
+							}
+							menu()
+							return
+						})
+						return
+					case 'M':
+						if ($.player.magic) {
+							let m = $.dice($.player.magic >>1)
+							for (let i = 0; i < m; i++) {
+								let p = $.dice(Object.keys($.Magic.spells).length)
+								let spell = $.Magic.pick(p)
+								if (!$.Magic.have($.player.spells, spell)) {
+									$.Magic.add($.player.spells, p)
+									switch ($.player.magic) {
+										case 1:
+											$.beep()
+											xvt.out(`A Wand of ${spell} appears in your hand.\n`)
+											break
+										case 2:
+											$.beep()
+											xvt.out(`A Scroll of ${spell} appears in your hand.\n`)
+											break
+										case 3:
+											$.sound('shimmer')
+											xvt.out(`The Spell of ${spell} is revealed to you.\n`)
+											break
+										case 4:
+											$.sound('shimmer')
+											xvt.out(`The Spell of ${spell} is revealed to you.\n`)
+											break
+									}
+								}
+							}
+						}
+						else {
+							$.sound('oops')
+							xvt.app.refocus()
+							return
 						}
 						break
 					}
