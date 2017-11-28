@@ -346,7 +346,7 @@ function command() {
 
     switch (choice) {
 	case 'M':	//	#tbt
-		if ($.access.sysop) DL.map = 2
+		if ($.access.sysop) DL.map = 3
 		refresh = true
 		break
 
@@ -583,7 +583,7 @@ function doMove(): boolean {
 					ROOM.occupant = 0
 					xvt.out('\n')
 					let wish = xvt.entry.toUpperCase()
-					if (well.indexOf(wish) < 0) {
+					if (wish === '' || well.indexOf(wish) < 0) {
 						$.sound('oops')
 						xvt.app.refocus()
 						return
@@ -914,7 +914,6 @@ function doMove(): boolean {
 				break
 			}
 
-			$.cat('dungeon/cleric')
 			xvt.out(xvt.yellow, 'There is an old cleric in this room.\n', xvt.reset)
 			xvt.out('He says, "I can heal all your wounds for '
 				, cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
