@@ -556,46 +556,129 @@ function doMove(): boolean {
 			$.music('.')
 			xvt.out(`\x1B[1;${$.player.rows}r`)
 			xvt.plot($.player.rows, 1)
-			xvt.out(xvt.reset, '\n')
-			$.sound('well', 12)
+			$.sound('well', 8)
 			xvt.out(xvt.magenta, 'You have found a legendary Wishing Well.\n')
 			xvt.waste(600)
-			xvt.out(xvt.bright, xvt.yellow, '\nWhat do you wish to do?\n', xvt.reset)
+			xvt.out('\n'); xvt.waste(600)			
+			xvt.out(xvt.bright, xvt.yellow, 'What do you wish to do?\n', xvt.reset)
 			xvt.waste(600)
 
+			let well = 'BT'
 			xvt.out($.bracket('B'), ' Bless yourself')
 			xvt.out($.bracket('T'), ' Teleport to another level')
-			if (deep > 0) xvt.out($.bracket('O'), ' Teleport all the way out')
-			if (deep > 1) xvt.out($.bracket('D'), ' Destroy dank dungeon')
-			if (deep > 2) xvt.out($.bracket('R'), ' Resurrect all the dead players')
-			if (deep > 3) xvt.out($.bracket('G'), ' Grant another call')
-			if (deep > 4) xvt.out($.bracket('L'), ' Loot another player\'s money')
-			if (deep > 5) xvt.out($.bracket('F'), ' Fix all your damage')
-			if (deep > 6) xvt.out($.bracket('K'), ' Key hint(s)')
-			if (deep > 7) xvt.out($.bracket('M'), ' Magical spell(s) or device(s)')
-			if (deep > 8) xvt.out($.bracket('C'), ' Curse another player')
+			if (deep > 0) xvt.out($.bracket('O'), ' Teleport all the way out'); well += 'O'
+			if (deep > 1) xvt.out($.bracket('D'), ' Destroy dank dungeon'); well += 'D'
+			if (deep > 2) xvt.out($.bracket('R'), ' Resurrect all the dead players'); well += 'R'
+			if (deep > 3) xvt.out($.bracket('G'), ' Grant another call'); well += 'G'
+			if (deep > 4) xvt.out($.bracket('L'), ' Loot another player\'s money'); well += 'L'
+			if (deep > 5) xvt.out($.bracket('F'), ' Fix all your damage'); well += 'F'
+			if (deep > 6) xvt.out($.bracket('K'), ' Key hint(s)'); well += 'K'
+			if (deep > 7) xvt.out($.bracket('M'), ' Magical spell(s) or device(s)'); well += 'M'
+			if (deep > 8) xvt.out($.bracket('C'), ' Curse another player'); well += 'C'
+			xvt.out('\n')
 
-			$.action('list')
+			$.action('freetext')
 			xvt.app.form = {
 				'well': { cb: () => {
 					ROOM.occupant = 0
 					xvt.out('\n')
+					let wish = xvt.entry.toUpperCase()
+					if (well.indexOf(wish) < 0) {
+						$.sound('oops')
+						xvt.app.refocus()
+						return
+					}
+					xvt.out('\n')
+					switch (wish) {
+					case 'B':
+						if ($.player.cursed) {
+							$.player.cursed = ''
+							xvt.out ('The ', xvt.faint, 'dark cloud', xvt.normal, ' is lifted.\n')
+							$.news(`\tlifted curse`)
+						}
+						else {
+							$.sound('shimmer')
+							$.player.blessed = 'well'
+							xvt.out(xvt.bright, xvt.yellow, 'You feel a shining aura surround you.\n')
+							$.news(`\twished for a blessing`)
+						}
+						$.online.str = $.PC.ability($.online.str, 10, $.player.maxstr)
+						$.online.int = $.PC.ability($.online.int, 10, $.player.maxint)
+						$.online.dex = $.PC.ability($.online.dex, 10, $.player.maxdex)
+						$.online.cha = $.PC.ability($.online.cha, 10, $.player.maxcha)
+						break
+					case 'T':
+						let start = (Z * 2 / 3 - $.dice(deep)) >>0
+						if (start < 1) start = 1
+						let end = (Z * 3 / 2 - $.dice(deep)) >>0
+						if (end > 100) end = 100
+						$.action('list')
+						xvt.app.form = {
+							'level': { cb: () => {
+								let i = parseInt(xvt.entry)
+								if (isNaN(i)) {
+									xvt.app.refocus()
+									return
+								}
+								if (Z < start || Z > end) {
+									xvt.app.refocus()
+									return
+								}
+								$.sound('teleport')
+								Z = i
+								generateLevel()
+								menu()
+							}, prompt:`Level (${start}-${end}): `, min:1, max:3}
+						}
+						break
+					case 'O':
+						$.sound('teleport')
+						xvt.out(`\x1B[1;${$.player.rows}r`)
+						xvt.plot($.player.rows, 1)
+						xvt.out('\n')
+						require('./main').menu($.player.expert)
+						return
+					case 'D':
+						$.sound('boom', 8)
+						for (let i in dd)
+							delete dd[i]
+						generateLevel()
+						break
+					case 'R':
+		                $.sound('resurrect')
+						$.sqlite3.exec(`UPDATE Players SET status = '' WHERE id NOT GLOB '_*' AND status != 'jail'`)
+						$.news(`\twished all the dead resurrected`)
+						break
+					case 'G':
+						if ($.player.today) {
+							$.sound('shimmer')
+							$.player.today--
+							xvt.out('\nYou are granted another call for the day.\n')
+							$.news(`\twished for an extra call`)
+						}
+						else {
+							xvt.out('A deep laughter bellows... ')
+							$.sound('morph', 12)
+						}
+						break
+					}
+					pause = true
+					refresh = true
 					menu()
 				}, prompt:'What is thy bidding, my master? ', eol:false }
 			}
 			xvt.app.focus = 'well'
-			pause = true
-			refresh = true
 			return false
 
 		case 4:
 			$.music('.')
 			xvt.out(`\x1B[1;${$.player.rows}r`)
 			xvt.plot($.player.rows, 1)
-			$.sound('wol', 12)
+			$.sound('wol', 8)
 			xvt.out(xvt.magenta, 'You have found a Mystical Wheel of Life.\n')
 			xvt.waste(600)
-			xvt.out(xvt.bright, xvt.yellow, '\nThe runes are ',
+			xvt.out('\n'); xvt.waste(600)
+			xvt.out(xvt.bright, xvt.yellow, 'The runes are ',
 				['cryptic', 'familiar', 'foreign', 'speaking out', 'strange'][$.dice(5) - 1],
 				' to you.\n', xvt.reset)
 			xvt.waste(600)
