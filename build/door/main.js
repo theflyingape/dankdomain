@@ -1,5 +1,5 @@
 var carrier = false, recheck = 0, reconnect;
-var cols = 80, rows = 25, fontSize = 16;
+var cols = 80, rows = 25, fontSize = 13;
 var terminalContainer = document.getElementById('terminal-container'),
     term,
     protocol,
@@ -219,6 +219,5 @@ function tune(fileName) {
 }
 
 function wall(msg) {
-console.log(msg)
   term.emit('wall', msg)
 }

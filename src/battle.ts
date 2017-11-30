@@ -809,10 +809,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             if (backfire) {
                 if (rpc.user.magic > 2 && rpc.user.toAC > 0)
                     rpc.user.toAC--
-                else if(rpc.toAC > 0)
-                    rpc.toAC -= $.dice(rpc.toAC)
-                else
-                    rpc.toAC--
+                rpc.toAC--
                 xvt.out($.who(rpc, 'His'), isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' loses some of its effectiveness.\n')
             }
             else {
@@ -838,10 +835,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 xvt.out($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' loses some of its effectiveness.\n')
                 if (rpc.user.magic > 2 && rpc.user.toWC > 0)
                     rpc.user.toWC--
-                else if(rpc.toWC > 0)
-                    rpc.toWC -= $.dice(rpc.toWC)
-                else
-                    rpc.toWC--
+                rpc.toWC--
             }
             else {
                 $.sound('hone')
@@ -1316,48 +1310,130 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             break
 
         case 20:
+            xvt.out(xvt.bright, xvt.cyan, 'A glowing orb radiates above'
+                , $.who(backfire ? nme : rpc, 'him'), '... ')
+            xvt.waste(600)
+            let mana = 0
             if (backfire) {
-
+                mana = Math.trunc(rpc.sp * 1. / ((5. - rpc.user.magic) + $.dice(2)))
+                xvt.out(nme === $.online ? 'You'
+                    : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
+                    , $.what(rpc, ' absorb'), 'spell power (', mana.toString(), ') '
+                    , 'from ', rpc === $.online ? 'you'
+                    : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle)
+                rpc.sp -= mana
+                if (nme.user.magic > 1)
+                    nme.sp += mana
             }
             else {
-
+                mana = Math.trunc(nme.sp * 1. / ((5. - rpc.user.magic) + $.dice(2)))
+                xvt.out(rpc === $.online ? 'You'
+                    : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' absorb'), 'spell power (', mana.toString(), ') '
+                    , 'from ', nme === $.online ? 'you'
+                    : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle)
+                nme.sp -= mana
+                if (rpc.user.magic > 1)
+                    rpc.sp += mana
             }
+            xvt.out('.\n', xvt.reset)
             break
 
         case 21:
+            xvt.out(xvt.bright, xvt.black, 'A black finger extends and touches '
+                , $.who(backfire ? rpc : nme, 'him')
+                , '... ')
+            xvt.waste(600)
+            xvt.out('\n', xvt.reset)
+            let xp = 0
             if (backfire) {
-
+                xp = Math.trunc(rpc.user.xp * 1. / ((5. - rpc.user.magic) + $.dice(2)))
+                rpc.user.xp -= xp
+                nme.user.xp += (nme.user.level > rpc.user.level) ? xp : nme.user.xp
+                xvt.out(nme === $.online ? 'You'
+                    : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
+                    , $.what(rpc, ' absorb'), 'some life experience from ', rpc === $.online ? 'you'
+                    : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
+                    , '.\n')
             }
             else {
-
+                xp = Math.trunc(nme.user.xp * 1. / ((5. - rpc.user.magic) + $.dice(2)))
+                nme.user.xp -= xp
+                rpc.user.xp += (rpc.user.level > nme.user.level) ? xp : rpc.user.xp
+                xvt.out(rpc === $.online ? 'You'
+                    : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' absorb'), 'some life experience from ', rpc === $.online ? 'you'
+                    : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
+                    , '.\n')
             }
             break
 
         case 22:
+            xvt.out(xvt.bright, xvt.black, 'A shroud of blackness engulfs '
+                , $.who(backfire ? rpc : nme, 'him')
+                , '... ')
+            xvt.waste(600)
+            xvt.out('\n', xvt.reset)
             if (backfire) {
-
+                rpc.user.xp >>= 1
+                nme.user.xp <<= 1
+                xvt.out(nme === $.online ? 'You'
+                    : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
+                    , $.what(rpc, ' gain'), 'an experience level from ', rpc === $.online ? 'you'
+                    : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
+                    , '.\n')
+                if ($.checkXP(nme, cb)) return
             }
             else {
-
+                nme.user.xp >>= 1
+                rpc.user.xp <<= 1
+                xvt.out(rpc === $.online ? 'You'
+                    : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' gain'), 'an experience level from ', rpc === $.online ? 'you'
+                    : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
+                    , '.\n')
+                if ($.checkXP(rpc, cb)) return
             }
             break
 
         case 23:
             if (backfire) {
-
+                if (rpc.user.magic > 2 && rpc.user.toAC > 0)
+                    rpc.user.toAC--
+                else if(rpc.toAC > 0)
+                    rpc.toAC -= $.dice(rpc.toAC)
+                else
+                    rpc.toAC--
+                xvt.out($.who(rpc, 'His'), isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' loses most of its effectiveness.\n')
             }
             else {
                 $.sound('shield')
+                xvt.out('A magical field glitters around ', rpc.user.armor ? $.who(rpc, 'his') + rpc.user.armor : $.who(rpc, 'him'), '.\n')
+                if (rpc.user.magic > 2 && rpc.user.toAC >= 0)
+                    rpc.user.toAC++
+                rpc.toAC += $.dice(rpc.toAC)
             }
+            rpc.altered = true
             break
 
         case 24:
             if (backfire) {
-
+                xvt.out($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' loses most of its effectiveness.\n')
+                if (rpc.user.magic > 2 && rpc.user.toWC > 0)
+                    rpc.user.toWC--
+                else if(rpc.toWC > 0)
+                    rpc.toWC -= $.dice(rpc.weapon.wc)
+                else
+                    rpc.toWC--
             }
             else {
                 $.sound('hone')
+                xvt.out($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' emanates magical sharpness.\n')
+                if (rpc.user.magic > 2 && rpc.user.toWC >= 0)
+                    rpc.user.toWC++
+                rpc.toWC += $.dice(rpc.weapon.wc)
             }
+            rpc.altered = true
             break
         }
 
