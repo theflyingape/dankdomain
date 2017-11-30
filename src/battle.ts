@@ -340,23 +340,10 @@ export function attack(retry = false) {
             }
         }
         if (rpc.user.magic && !mm && $.dice(odds) == 1) {
-            switch ($.dice(3)) {
-                case 1:
-                    if ($.Magic.have(rpc.user.spells, 17)
-                        && rpc.sp >= $.Magic.power(rpc, 17))
-                        mm = 17
-                    break
-                case 2:
-                    if ($.Magic.have(rpc.user.spells, 18)
-                        && rpc.sp >= $.Magic.power(rpc, 18))
-                        mm = 18
-                    break
-                case 3:
-                    if ($.Magic.have(rpc.user.spells, 19)
-                        && rpc.sp >= $.Magic.power(rpc, 19))
-                        mm = 19
-                    break
-            }
+            odds = $.dice(8) + 16
+            if ($.Magic.have(rpc.user.spells, odds)
+                && rpc.sp >= $.Magic.power(rpc, odds))
+                mm = odds
         }
 
         xvt.out(xvt.reset)
