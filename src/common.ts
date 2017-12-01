@@ -987,7 +987,7 @@ export function keyhint(rpc: active) {
             xvt.out(xvt.black, `${player.keyhints[i]} from here`)
             break
         }
-        if (player.emulation === 'XT') xvt.out(xvt.noreverse, ' \u{1F511} ')
+        if (player.emulation === 'XT') xvt.out(xvt.noreverse, '  \u{1F511} ')
         xvt.out(xvt.reset, '\n')
     }
     else {
@@ -1036,7 +1036,7 @@ export function newkeys(user: user) {
 }
 
 export function playerPC(points = 200, immortal = false) {
-    if (points > 256) points = 256
+    if (points > 240) points = 240
     xvt.out(xvt.reset, '\n')
     xvt.waste(1000)
     if (!Access.name[player.access].roleplay) return
@@ -1473,7 +1473,8 @@ export function riddle() {
                 xvt.out(xvt.black, `${player.keyhints[i]} from here`)
                 break
             }
-            xvt.out(xvt.reset, '.\n')
+            if (player.emulation === 'XT') xvt.out(xvt.normal, xvt.noreverse, ' \u{1F511} ')
+            xvt.out(xvt.reset, '\n')
         }
     }
 
@@ -1499,7 +1500,7 @@ export function riddle() {
                 }
                 reroll(player, player.pc)
                 newkeys(player)
-                playerPC([210,220,240][max - 1], true)
+                playerPC([200,210,220,240][slot], true)
                 return
             }
             else {
@@ -1512,12 +1513,12 @@ export function riddle() {
                             break
                         }
                     reroll(player, Object.keys(PC.name['player'])[0])
-                    playerPC(200 + 10 * player.wins + player.immortal)
+                    playerPC(200 + 4 * player.wins + (player.immortal >>2))
                 }
                 else {
                     reroll(player, player.pc)
                     newkeys(player)
-                    playerPC([210,220,240][max - 1], true)
+                    playerPC([200,210,220,240][slot], true)
                 }
                 return
             }

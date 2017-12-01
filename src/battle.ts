@@ -1340,7 +1340,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 nme.user.xp += (nme.user.level > rpc.user.level) ? xp : nme.user.xp
                 xvt.out(nme === $.online ? 'You'
                     : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
-                    , $.what(rpc, ' absorb'), 'some life experience from ', rpc === $.online ? 'you'
+                    , $.what(nme, ' absorb'), 'some life experience from ', rpc === $.online ? 'you'
                     : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
                     , '.\n')
             }
@@ -1350,8 +1350,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 rpc.user.xp += (rpc.user.level > nme.user.level) ? xp : rpc.user.xp
                 xvt.out(rpc === $.online ? 'You'
                     : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , $.what(rpc, ' absorb'), 'some life experience from ', rpc === $.online ? 'you'
-                    : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' absorb'), 'some life experience from ', nme === $.online ? 'you'
+                    : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
                     , '.\n')
             }
             break
@@ -1363,22 +1363,22 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             xvt.waste(600)
             xvt.out('\n', xvt.reset)
             if (backfire) {
-                rpc.user.xp >>= 1
-                nme.user.xp <<= 1
+                nme.user.xp *= 2
+                rpc.user.xp = Math.round(nme.user.xp / 2)
                 xvt.out(nme === $.online ? 'You'
                     : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
-                    , $.what(rpc, ' gain'), 'an experience level from ', rpc === $.online ? 'you'
+                    , $.what(nme, ' gain'), 'an experience level from ', rpc === $.online ? 'you'
                     : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
                     , '.\n')
                 if ($.checkXP(nme, cb)) return
             }
             else {
-                nme.user.xp >>= 1
-                rpc.user.xp <<= 1
+                rpc.user.xp *= 2
+                nme.user.xp = Math.round(nme.user.xp / 2)
                 xvt.out(rpc === $.online ? 'You'
                     : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , $.what(rpc, ' gain'), 'an experience level from ', rpc === $.online ? 'you'
-                    : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' gain'), 'an experience level from ', nme === $.online ? 'you'
+                    : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
                     , '.\n')
                 if ($.checkXP(rpc, cb)) return
             }
@@ -1399,7 +1399,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 xvt.out('A magical field glitters around ', rpc.user.armor ? $.who(rpc, 'his') + rpc.user.armor : $.who(rpc, 'him'), '.\n')
                 if (rpc.user.magic > 2 && rpc.user.toAC >= 0)
                     rpc.user.toAC++
-                rpc.toAC += $.dice(rpc.toAC)
+                rpc.toAC += $.dice(rpc.armor.ac)
             }
             rpc.altered = true
             break
@@ -1410,7 +1410,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 if (rpc.user.magic > 2 && rpc.user.toWC > 0)
                     rpc.user.toWC--
                 else if(rpc.toWC > 0)
-                    rpc.toWC -= $.dice(rpc.weapon.wc)
+                    rpc.toWC -= $.dice(rpc.toWC)
                 else
                     rpc.toWC--
             }
