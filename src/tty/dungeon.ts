@@ -69,7 +69,7 @@ module Dungeon
 	let X: number
 
     //  £
-    export const Cleric = {
+    const Cleric = {
         VT: '\x1B(0\x7D\x1B(B',
         PC: '\x9C',
         XT: '\u00A3',
@@ -77,7 +77,7 @@ module Dungeon
     }
 
     //  ±
-    export const Teleport = {
+    const Teleport = {
         VT: '\x1B(0\x67\x1B(B',
         PC: '\xF1',
         XT: '\u00B1',
@@ -926,6 +926,8 @@ function doMove(): boolean {
 						case 7:
 							$.sound('morph', 10)
 							$.player.level = $.dice(98) + 1
+							if ($.online.adept && $.player.level < 60 && $.player.xplevel > 40)
+								$.player.level += 10 * $.online.adept
 							$.reroll($.player, $.PC.random(), $.player.level)
 							$.activate($.online)
 							$.online.altered = true
@@ -1932,6 +1934,7 @@ function putMonster(r = -1, c = -1): boolean {
 		}
 	}
 	m.user.hp >>= 2
+	m.user.hp += (deep * Z) >>2
 	i = 5 - $.dice(deep / 3)
 	m.user.sp = Math.trunc(m.user.sp / i)
 
@@ -1965,6 +1968,7 @@ function putMonster(r = -1, c = -1): boolean {
 
 	$.activate(m)
 
+	m.adept = deep >>1
 	m.str = $.PC.ability(m.str, deep>>1)
 	m.int = $.PC.ability(m.int, deep>>1)
 	m.dex = $.PC.ability(m.dex, deep>>1)

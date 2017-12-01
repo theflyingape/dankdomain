@@ -251,6 +251,7 @@ interface active {
     armor?: armor
     toAC?: number
     toWC?: number
+    adept?: number      //  0 - 5: situational modifiers
     str?: number
     int?: number
     dex?: number

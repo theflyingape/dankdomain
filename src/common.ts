@@ -436,6 +436,7 @@ export class coins {
 }
 
 export function activate(one: active, keep = false, confused = false): boolean {
+    one.adept = one.user.wins ? 1 : 0
     one.str = one.user.str
     one.int = one.user.int
     one.dex = one.user.dex
