@@ -293,7 +293,7 @@ export function attack(retry = false) {
             }
         }
         if (rpc.user.magic > 1 && $.dice(odds + rpc.adept + 1) >= odds) {
-            if (!rpc.confused || rpc.hp < (rpc.user.hp <<3)) {
+            if (!rpc.confused || rpc.hp < (rpc.user.hp >>3)) {
                 if ($.Magic.have(rpc.user.spells, 15)
                     && rpc.sp >= $.Magic.power(rpc, 15)
                     && $.dice((rpc.user.level - enemy.user.level) / 6 + odds - rpc.adept) == 1)
