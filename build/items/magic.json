@@ -13,9 +13,8 @@
     "Transmute": { "cast":12, "mana":4000, "enchanted":3000, "cost":"100p", "wand":"1000p" },
     "Cure": { "cast":13, "mana":5000, "enchanted":4000, "cost":"500p", "wand":"2500p" },
     "Illusion": { "cast":14, "mana":6000, "enchanted":5000, "cost":"1000p", "wand":"5000p" },
-    "Disintegrate": { "cast":15, "mana":6000, "enchanted":5, "cost":"5000p", "wand":"10000p" },
+    "Disintegrate": { "cast":15, "mana":7000, "enchanted":6000, "cost":"5000p", "wand":"10000p" },
     "Morph": { "cast":16, "mana":7500, "enchanted":7000, "cost":"10000p", "wand":"25000p" },
-
     "Armor Rusting": { "cast":17, "mana":75, "enchanted":50 },
     "Weapon Decay": { "cast":18, "mana":100, "enchanted":75 },
     "Big Blast": { "cast":19, "mana":300, "enchanted":200 },

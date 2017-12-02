@@ -1190,13 +1190,13 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             else {
                 xvt.out(xvt.yellow, 'An acid mist surrounds ', nme === $.online ? 'you'
                     : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
-                    , '... ')
+                    , '... ', xvt.reset)
                 xvt.waste(600)
                 nme.toAC -= $.dice(nme.armor.ac / 5 + 1)
                 nme.user.toAC -= $.dice(nme.armor.ac / 10 + 1)
                 xvt.out(xvt.bright, $.who(nme, 'his')
                     , isNaN(+nme.user.armor) ? nme.user.armor + ' is damaged' : 'defense is lessened'
-                    , $.buff(nme.user.toAC, nme.toAC), '!\n', xvt.reset)
+                    , $.buff(nme.user.toAC, nme.toAC), '!\n')
                 xvt.waste(400)
                 if (-nme.user.toAC >= nme.armor.ac || -(nme.user.toAC + nme.toAC) >= nme.armor.ac) {
                     xvt.out($.who(nme, 'His'), isNaN(+nme.user.armor) ? nme.user.armor : 'defense', ' crumbles!\n')
@@ -1208,7 +1208,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             break
 
         case 18:
-            xvt.out(xvt.magenta, 'An ', xvt.faint, 'ultraviolet', xvt.normal, ' beam emits... ')
+            xvt.out(xvt.magenta, 'An ', xvt.faint, 'ultraviolet', xvt.normal, ' beam emits... ', xvt.reset)
             xvt.waste(600)
             if (backfire) {
                 rpc.toWC -= $.dice(rpc.weapon.wc / 5 + 1)
@@ -1216,7 +1216,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 xvt.out(xvt.bright, rpc === $.online ? 'you'
                     : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' damage'), 'own ', isNaN(+rpc.user.weapon) ? rpc.user.weapon : 'attack'
-                    , $.buff(rpc.user.toWC, rpc.toWC), '!\n', xvt.reset)
+                    , $.buff(rpc.user.toWC, rpc.toWC), '!\n')
                 xvt.waste(400)
                 if (-rpc.user.toWC >= rpc.weapon.wc || -(rpc.user.toWC + rpc.toWC) >= rpc.weapon.wc) {
                     xvt.out($.who(rpc, 'His'), rpc.user.weapon ? isNaN(+rpc.user.weapon) : 'attack', ' crumbles!\n')
