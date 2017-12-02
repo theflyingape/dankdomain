@@ -1746,6 +1746,18 @@ export function user(venue: string, cb:Function) {
                     xvt.out(' ?? ')
                 }
             }
+            //  paint profile
+            if (rpc.user.id) {
+				let userPNG = `images/user/${rpc.user.id}.png`
+				try {
+					fs.accessSync(userPNG, fs.constants.F_OK)
+					userPNG = `user/${rpc.user.id}`
+				} catch(e) {
+					userPNG = 'player/' + rpc.user.pc.toLowerCase() + (rpc.user.gender === 'F' ? '_f' : '')
+				}
+				$.profile({ png:userPNG, handle:rpc.user.handle, level:rpc.user.level, pc:rpc.user.pc })
+				if (!$.cat('player/' + rpc.user.id)) $.cat('player/' + rpc.user.pc.toLowerCase())
+            }
             xvt.out('\n')
             cb(rpc)
         }, max:22 },

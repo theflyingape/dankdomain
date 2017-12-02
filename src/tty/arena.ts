@@ -267,17 +267,7 @@ function choice() {
 					return
 				}
 
-				let userPNG = `images/user/${opponent.user.id}.png`
-				try {
-					fs.accessSync(userPNG, fs.constants.F_OK)
-					userPNG = `user/${opponent.user.id}`
-				} catch(e) {
-					userPNG = 'player/' + opponent.user.pc.toLowerCase() + (opponent.user.gender === 'F' ? '_f' : '')
-				}
-				$.profile({ png:userPNG, handle:opponent.user.handle, level:opponent.user.level, pc:opponent.user.pc })
-				if (!$.cat('player/' + opponent.user.id)) $.cat('player/' + opponent.user.pc.toLowerCase())
 				xvt.out(opponent.user.handle, ' ')
-
 				if (opponent.user.status === 'jail') {
 					xvt.out('is locked-up in jail.\n')
 					menu()
@@ -296,7 +286,10 @@ function choice() {
 					menu()
 					return
 				}
-				xvt.out(`is a level ${opponent.user.level} ${opponent.user.pc}.\n`)
+				xvt.out(`is a level ${opponent.user.level} ${opponent.user.pc}`)
+				if (opponent.user.level !== opponent.user.xplevel)
+					xvt.out(' ', $.bracket(opponent.user.xplevel, false))
+				xvt.out('\n')
 
 				if ($.player.novice && !opponent.user.novice) {
 					xvt.out('You are allowed only to fight other novices.\n')

@@ -75,7 +75,7 @@ export class Character {
             max = max + mod
             max = max > 100 ? 100 : max < 20 ? 20 : max
             ability += delta
-            ability = ability > max ? max : ability < 10 ? 10 : ability
+            ability = ability > max ? max : ability < 20 ? 20 : ability
             return ability
         }
 
@@ -442,24 +442,16 @@ export function activate(one: active, keep = false, confused = false): boolean {
     one.dex = one.user.dex
     one.cha = one.user.cha
     if (one.user.blessed.length) {
-        if ((one.str += 10) > 100)
-            one.str = 100
-        if ((one.int += 10) > 100)
-            one.int = 100
-        if ((one.dex += 10) > 100)
-            one.dex = 100
-        if ((one.cha += 10) > 100)
-            one.cha = 100
+        one.str = PC.ability(one.str, 10, one.user.maxstr, 10)
+        one.int = PC.ability(one.int, 10, one.user.maxint, 10)
+        one.dex = PC.ability(one.dex, 10, one.user.maxdex, 10)
+        one.cha = PC.ability(one.cha, 10, one.user.maxcha, 10)
     }
     if (one.user.cursed.length) {
-        if ((one.str -= 20) < 20)
-            one.str = 20
-        if ((one.int -= 20) < 20)
-            one.int = 20
-        if ((one.dex -= 20) < 20)
-            one.dex = 20
-        if ((one.cha -= 20) < 20)
-            one.cha = 20
+        one.str = PC.ability(one.str, -10, one.user.maxstr, -10)
+        one.int = PC.ability(one.int, -10, one.user.maxint, -10)
+        one.dex = PC.ability(one.dex, -10, one.user.maxdex, -10)
+        one.cha = PC.ability(one.cha, -10, one.user.maxcha, -10)
     }
     one.confused = false
     if (confused) return true
