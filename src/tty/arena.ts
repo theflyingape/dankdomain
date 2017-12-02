@@ -311,6 +311,8 @@ function choice() {
 							$.online.cha = 20
 						$.player.coward = true
 					}
+					menu()
+					return
 				}
 
 				if (!$.player.novice && opponent.user.novice) {
