@@ -1162,6 +1162,11 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' morph'), $.who(rpc, 'him'), '\x08self'
                     , ` into a level ${rpc.user.level} ${rpc.user.pc}!\n`)
+                if (rpc.user.gender !== 'I') {
+                    $.news(`\t${rpc.user.handle} morphed into a level ${rpc.user.level} ${rpc.user.pc}!`)
+                    if (rpc !== $.online)
+                        $.log(rpc.user.id, `You morphed yourself into a level ${rpc.user.level} ${rpc.user.pc}!\n`)
+                }
             }
             else {
                 nme.user.level = $.dice(98) + 1
@@ -1174,6 +1179,11 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                     , $.what(rpc, ' morph')
                     , nme === $.online ? 'you' : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
                     , ` into a level ${nme.user.level} ${nme.user.pc}!\n`)
+                if (nme.user.gender !== 'I') {
+                    $.news(`\t${nme.user.handle} got morphed into a level ${nme.user.level} ${nme.user.pc}!`)
+                    if (nme !== $.online)
+                        $.log(nme.user.id, `You got morph into a level ${nme.user.level} ${nme.user.pc} by ${rpc.user.handle}!\n`)
+                }
             }
             xvt.waste(1000)
             break
