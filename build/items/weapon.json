@@ -69,9 +69,7 @@
 	"Sword of Justice": { "text":"unleashes a", "value":"5p", "wc":42, "hit":"hit", "smash":"hack", "stab":"impale", "plunge":"thrust into", "ego_cursed":"Thief" }, 
 	"Sword of Omnipotence": { "text":"unleashes a", "value":"50000p", "wc":64, "hit":"wound", "smash":"bash", "stab":"lambaste", "plunge":"wallop", "ego_blessed":null, "vs_magic":4, "vs_melee":4 }, 
 	"Sword of Truth": { "text":"unleashes a", "value":"5p", "wc":42, "hit":"hit", "smash":"hack", "stab":"impale", "plunge":"thrust into", "ego_cursed":"Rogue" }, 
-
-	"Trident of Titans": { "text":"raises", "value":"10000p", "wc":56, "hit":"prod", "smash":"stick", "stab":"puncture", "plunge":"plunge into", "ego_blessed":"Titan" }, 
-
+	"Trident of Titans \uD83D\uDD31": { "text":"raises", "value":"10000p", "wc":56, "hit":"prod", "smash":"stick", "stab":"puncture", "plunge":"plunge into", "ego_blessed":"Titan" }, 
 	"Super Sling": { "text":"whips out a", "value":"5c", "wc":10, "hit":"shoot", "smash":"slam", "stab":"pelt", "plunge":"stone", "gift":true, "ego_blessed":null, "ego_cursed":"Lizard" }, 
 	"Double Crossbow": { "text":"takes deadly aim with a", "value":"500c", "wc":15, "hit":"shoot", "smash":"bulls-eye", "stab":"pierce", "plunge":"perforate", "gift":true, "ego_blessed":null, "ego_cursed":"Beast" }, 
 	"Scimitar of Swift": { "text":"demonstrates a", "value":"25000c", "wc":20, "hit":"hit", "smash":"hack", "stab":"slash", "plunge":"plunge into", "gift":true, "ego_blessed":null, "ego_cursed":"Ogre" }, 

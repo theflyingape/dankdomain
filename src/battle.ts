@@ -163,6 +163,8 @@ export function attack(retry = false) {
                     )
                     if ($.online.confused)
                         $.activate($.online, false, true)
+                    if (from === 'User' && enemy.user.gender !== 'I')
+                        $.log(enemy.user.id, `${$.player.handle}, the coward, retreated from you.\n`)
                     fini()
                     return
                 }
@@ -259,7 +261,7 @@ export function attack(retry = false) {
         if (rpc.user.magic == 1 && $.dice(odds + rpc.adept + 1) >= odds) {
             if ($.Magic.have(rpc.user.spells, 8)
                 && rpc.hp < rpc.user.hp / 6
-                && $.dice(6 - rpc.adept) == 1)
+                && ($.dice(6 - rpc.adept) == 1 || rpc.user.coward))
                     mm = 8
             else if ($.Magic.have(rpc.user.spells, 7)
                     && rpc.hp < (rpc.user.hp >>1)
@@ -324,7 +326,7 @@ export function attack(retry = false) {
                 else if ($.Magic.have(rpc.user.spells, 8)
                     && rpc.sp >= $.Magic.power(rpc, 8)
                     && rpc.hp < (rpc.user.hp / 6)
-                    && $.dice((enemy.user.level - rpc.user.level) / 9) == 1)
+                    && ($.dice((enemy.user.level - rpc.user.level) / 9) == 1 || rpc.user.coward))
                         mm = 8
                 else if ($.Magic.have(rpc.user.spells, 7)
                     && rpc.sp >= $.Magic.power(rpc, 7)
@@ -529,6 +531,30 @@ export function spoils() {
                         xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who(loser, 'his'), winner.user.armor, '.\n')
                         $.log(loser.user.id, `... and took your ${winner.user.armor}.`)
                     }
+                    if (winner.user.cursed) {
+                        loser.user.cursed = winner.user.id
+                        loser.altered = true
+                        winner.user.cursed = ''
+                        xvt.out(xvt.bright, xvt.black, 'A dark cloud has lifted and shifted.\n', xvt.reset)
+                        xvt.waste(1000)
+                        $.log(loser.user.id, `... and left you with a dark cloud.`)
+                        winner.str = $.PC.ability(winner.str, 10, winner.user.maxstr)
+                        winner.int = $.PC.ability(winner.int, 10, winner.user.maxint)
+                        winner.dex = $.PC.ability(winner.dex, 10, winner.user.maxdex)
+                        winner.cha = $.PC.ability(winner.cha, 10, winner.user.maxcha)
+                    }
+                    if (loser.user.blessed) {
+                        loser.user.blessed = ''
+                        loser.altered = true
+                        winner.user.blessed = loser.user.id
+                        xvt.out(xvt.bright, xvt.yellow, 'A shining aura surrounds you.\n', xvt.reset)
+                        xvt.waste(1000)
+                        $.log(loser.user.id, `... and took your blessedness.`)
+                        winner.str = $.PC.ability(winner.str, 10, winner.user.maxstr, 10)
+                        winner.int = $.PC.ability(winner.int, 10, winner.user.maxint, 10)
+                        winner.dex = $.PC.ability(winner.dex, 10, winner.user.maxdex, 10)
+                        winner.cha = $.PC.ability(winner.cha, 10, winner.user.maxcha, 10)
+                    }
                     $.unlock(loser.user.id)
                     xvt.out(1000)
                 }
@@ -552,27 +578,6 @@ export function spoils() {
                 , parties[l].length > 1 ? 'they were ' : $.who(loser, 'he') + 'was '
                 , 'carrying.\n'
             )
-        }
-        winner.user.coward = false
-        if (winner.user.cursed) {
-            loser.user.cursed = winner.user.id
-            winner.user.cursed = ''
-            xvt.out(xvt.bright, xvt.black, 'A dark cloud has lifted and shifted.\n', xvt.reset)
-            xvt.waste(1000)
-            winner.str = $.PC.ability(winner.str, 10, winner.user.maxstr)
-            winner.int = $.PC.ability(winner.int, 10, winner.user.maxint)
-            winner.dex = $.PC.ability(winner.dex, 10, winner.user.maxdex)
-            winner.cha = $.PC.ability(winner.cha, 10, winner.user.maxcha)
-        }
-        if (loser.user.blessed) {
-            winner.user.blessed = loser.user.id
-            loser.user.blessed = ''
-            xvt.out(xvt.bright, xvt.yellow, 'A shining aura surrounds you.\n', xvt.reset)
-            xvt.waste(1000)
-            winner.str = $.PC.ability(winner.str, 10, winner.user.maxstr, 10)
-            winner.int = $.PC.ability(winner.int, 10, winner.user.maxint, 10)
-            winner.dex = $.PC.ability(winner.dex, 10, winner.user.maxdex, 10)
-            winner.cha = $.PC.ability(winner.cha, 10, winner.user.maxcha, 10)
         }
     }
     else {
@@ -1432,7 +1437,21 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
 export function melee(rpc: active, enemy: active, blow = 1) {
     let action: string
     let hit = 0
-    
+
+    if (rpc !== $.online && rpc.user.coward && rpc.hp < (rpc.hp / 6)) {
+        xvt.out(xvt.bright, xvt.cyan
+            , rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle
+            , xvt.normal, ' runs away from '
+            , xvt.faint, 'the battle!'
+            , xvt.reset, '\n'
+        )
+        rpc.hp = -1
+        rpc.user.blessed = ''
+        rpc.user.cursed = $.player.id
+        $.saveUser(rpc)
+        return
+    }
+
     let n = rpc.dex + (rpc.dex - enemy.dex)
     if (blow > 1)
         n = Math.round(n / 2) + 50

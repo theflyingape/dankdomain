@@ -1397,6 +1397,12 @@ export function reroll(user: user, dd?: string, level = 1) {
 
 // the Ancient Riddle of the Keys
 export function riddle() {
+    if (player.coward) {
+        player.coward = false
+        xvt.out(xvt.reset, '\nWelcome back to play with the rest of us.\n\n')
+        xvt.waste(2000)
+    }
+
     if (player.novice) {
         xvt.out(xvt.reset, '\nYou are no longer a novice.  Welcome to the next level of play.\n\n')
         player.novice = false
@@ -2071,8 +2077,9 @@ export function newDay() {
     sysop.lasttime = now().time
     saveUser(sysop)
 
-    sqlite3.exec(`UPDATE Players SET bank=bank+coin, coin=0 WHERE id NOT GLOB '_*'`)
-
+    sqlite3.exec(`UPDATE Players SET bank=bank+coin WHERE id NOT GLOB '_*'`)
+    sqlite3.exec(`UPDATE Players SET coin=0`)
+    
     let rs = sqlite3.prepare(`SELECT id, lastdate FROM Players WHERE id NOT GLOB '_*'`).all()
     for (let row in rs) {
         if ((now().date - rs[row].lastdate) > 365) {
