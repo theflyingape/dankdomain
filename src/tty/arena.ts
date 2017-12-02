@@ -304,11 +304,13 @@ function choice() {
 					return
 				}
 
-				if (!$.Access.name[opponent.user.access].roleplay) {
+				if (!$.Access.name[opponent.user.access].roleplay || opponent.user.id[0] === '_') {
 					xvt.out('You are allowed only to fight other players.\n')
-					if (($.online.cha = $.PC.ability($.player.cha, -10)) < 20)
-						$.online.cha = 20
-					$.player.coward = true
+					if (opponent.user.id[0] === '_') {
+						if (($.online.cha = $.PC.ability($.player.cha, -10)) < 20)
+							$.online.cha = 20
+						$.player.coward = true
+					}
 				}
 
 				if (!$.player.novice && opponent.user.novice) {
