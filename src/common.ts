@@ -452,14 +452,14 @@ export function activate(one: active, keep = false, confused = false): boolean {
             one.cha = 100
     }
     if (one.user.cursed.length) {
-        if ((one.str -= 10) < 10)
-            one.str = 10
-        if ((one.int -= 10) < 10)
-            one.int = 10
-        if ((one.dex -= 10) < 10)
-            one.dex = 10
-        if ((one.cha -= 10) < 10)
-            one.cha = 10
+        if ((one.str -= 20) < 20)
+            one.str = 20
+        if ((one.int -= 20) < 20)
+            one.int = 20
+        if ((one.dex -= 20) < 20)
+            one.dex = 20
+        if ((one.cha -= 20) < 20)
+            one.cha = 20
     }
     one.confused = false
     if (confused) return true

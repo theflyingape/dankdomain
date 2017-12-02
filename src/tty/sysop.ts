@@ -94,9 +94,14 @@ function choice() {
 
         case 'Y':
         	Battle.user('Scout', (opponent: active) => {
-                $.PC.stats(opponent)
-                menu(true)
-            })
+                if (opponent.user.id) {
+                    $.PC.stats(opponent)
+                    xvt.app.form['pause'] = { cb:menu, pause:true }
+                    xvt.app.focus = 'pause'
+                }
+                else
+                    menu()
+                })
             return
 	}
 	menu(suppress)

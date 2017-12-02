@@ -21,6 +21,17 @@ module Battle
     export let teleported: boolean
     export let volley: number
 
+function end() {
+    if (from === 'User') {
+        let opponent = parties[1][0]
+        if (!(opponent.user.id === '_' || opponent.user.gender === 'I')) {
+            if (opponent.altered) $.saveUser(opponent)
+            $.unlock(opponent.user.id)
+        }
+    }
+    fini()
+}
+
 //  start a new battle engagement:
 //    do rounds: attack() with possibly backstab or poison
 //       per member: next() for cast, melee, or retreat
@@ -62,7 +73,7 @@ export function attack(retry = false) {
     if (retreat || teleported || ++volley > 99999) {
         if ($.online.confused)
             $.activate($.online, false, true)
-        fini()
+        end()
         return
     }
 
@@ -165,7 +176,7 @@ export function attack(retry = false) {
                         $.activate($.online, false, true)
                     if (from === 'User' && enemy.user.gender !== 'I')
                         $.log(enemy.user.id, `${$.player.handle}, the coward, retreated from you.\n`)
-                    fini()
+                    end()
                     return
                 }
 
@@ -380,7 +391,7 @@ export function attack(retry = false) {
         }
 
         spoils()
-        fini()
+        end()
     }
 }
 
@@ -555,12 +566,8 @@ export function spoils() {
                         winner.dex = $.PC.ability(winner.dex, 10, winner.user.maxdex, 10)
                         winner.cha = $.PC.ability(winner.cha, 10, winner.user.maxcha, 10)
                     }
-                    $.unlock(loser.user.id)
                     xvt.out(1000)
                 }
-                if (loser.altered)
-                    if (!(loser.user.id[0] === '_' && loser.user.gender === 'I'))
-                        $.saveUser(loser)
             }
         }
         if (xp) {
@@ -593,7 +600,7 @@ export function spoils() {
                 xvt.out($.who(winner, 'He'), $.what(winner, 'take'), $.who($.online, 'his'), winner.user.weapon, '.\n')
                 $.log(winner.user.id, `You upgraded to ${winner.user.weapon}.`)
             }
-            if ($.Armor.swap(winner, loser)) {
+            if ($.Armor.swap(winner, $.online)) {
                 xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who($.online, 'his'), winner.user.armor, '.\n')
                 $.log(winner.user.id, `You upgraded to ${winner.user.armor}.`)
             }
@@ -608,12 +615,10 @@ export function spoils() {
             winner.user.coin.value += $.player.coin.value
             xvt.out($.who(winner, 'He'), 'gets ', $.player.coin.carry(), ' you were carrying.\n')
             $.player.coin.value = 0
-            $.online.altered = true
         }
-        $.saveUser(winner)
-        $.unlock(winner.user.id)
         xvt.out(1000)
     }
+    $.online.altered = true
 }
 
 export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
@@ -1438,17 +1443,21 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     let action: string
     let hit = 0
 
-    if (rpc !== $.online && rpc.user.coward && rpc.hp < (rpc.hp / 6)) {
+    if (rpc !== $.online && rpc.user.coward && rpc.hp < (rpc.user.hp / 4)) {
+        rpc.hp = -1
         xvt.out(xvt.bright, xvt.cyan
             , rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle
             , xvt.normal, ' runs away from '
             , xvt.faint, 'the battle!'
             , xvt.reset, '\n'
         )
-        rpc.hp = -1
-        rpc.user.blessed = ''
-        rpc.user.cursed = $.player.id
-        $.saveUser(rpc)
+        xvt.waste(1000)
+
+        if (from === 'User') {
+            rpc.user.blessed = ''
+            rpc.user.cursed = $.player.id
+            $.saveUser(rpc)
+        }
         return
     }
 
