@@ -53,6 +53,7 @@ function choice() {
 			break
 
 		case 'G':
+			suppress = true
 			if (!$.access.roleplay) break
 			if (!$.player.hull) {
 				xvt.out('\nYou don\'t have a ship!\n')
@@ -146,7 +147,7 @@ function choice() {
 				xvt.out('Yum!  You feel stronger and healthier.\n\n')
 				let mod = $.player.blessed ? 10 : 0
 				mod = $.player.cursed ? mod - 10 : mod
-				$.online.str = $.PC.ability($.online.str, $.dice(10), $.online.user.maxstr, mod)
+				$.online.str = $.PC.ability($.online.str, $.dice(10), $.online.user.maxstr, mod + 2)
 				xvt.out(`Stamina = ${$.online.str}     `)
 				$.online.hp += $.player.level + $.dice($.player.level)
 					+ Math.trunc($.player.str / 10) + ($.player.str > 90 ? $.player.str - 90 : 0)
@@ -221,6 +222,7 @@ function choice() {
 			return
 
 		case 'H':
+			suppress = true
 			if (!$.access.roleplay) break
 			if (!$.player.hull) {
 				xvt.out('\nYou don\'t have a ship!\n')
