@@ -60,13 +60,7 @@ function choice() {
 				break
 			}
 			Battle.user('Battle', (opponent: active) => {
-				if (opponent.user.id === '') {
-					menu(true)
-					return
-				}
-				if (opponent.user.id === $.player.id) {
-					opponent.user.id = ''
-					xvt.out('\nYou can\'t fight a wimp like', $.who(opponent, 'him'), '.\n')
+				if (opponent.user.id === '' || opponent.user.id === $.player.id) {
 					menu(true)
 					return
 				}
@@ -83,7 +77,7 @@ function choice() {
 					'battle': { cb:() => {
 						xvt.out('\n\n')
 						if (/Y/i.test(xvt.entry)) {
-							if ($.activate(opponent, true)) {
+							if ($.activate(opponent)) {
 								$.naval--
 								BattleUser(opponent)
 							}
@@ -96,7 +90,7 @@ function choice() {
 				}
 				xvt.app.focus = 'battle'
 			})
-			break
+			return
 
 		case 'G':
 			suppress = true
@@ -578,7 +572,7 @@ function BattleUser(nme: active) {
 	let damage: number
 
 	if ($.dice(100) + $.online.int >= $.dice(100) + nme.int) {
-		xvt.out(`\nYou approach ${$.who(nme, 'him')} and quickly open fire.\n`)
+		xvt.out(`You approach ${$.who(nme, 'him')} and quickly open fire.\n`)
 		if (you()) {
 			menu()
 			return
@@ -587,7 +581,7 @@ function BattleUser(nme: active) {
 			return
 	}
 	else {
-		xvt.out(`\n${$.who(nme, 'He')}spots you coming and attacks.\n`)
+		xvt.out(`${$.who(nme, 'He')}spots you coming and attacks.\n`)
 		if (him()) {
 			menu()
 			return
@@ -670,31 +664,59 @@ function BattleUser(nme: active) {
 
 	function booty() {
 		nme.hull = 0
-		$.sound('booty', 5)
-		if (nme.user.coin.value) {
-			let coin = new $.coins(0)
-			coin.value = nme.user.coin.value
-			xvt.out('You get ', coin.carry(), ` ${$.who(nme, 'he')} was carrying.\n`)
-			$.player.coin.value += coin.value
+		xvt.out('\n', [
+			`You've sunk ${nme.user.handle}\'s ship!`,
+			`You've sunk ${nme.user.handle}\'s leaky, old tub!`,
+			`You've made splinters out of ${nme.user.handle}\'s ship!`,
+			`${nme.user.handle} is now sleeping with the fishes!`,
+			`${nme.user.handle} is now chum for the sharks!`
+			][$.dice(5) - 1], '!\n')
+		xvt.waste(500)
+		$.log(nme.user.id, `${$.player.handle} sank your ship!`)
+		$.news(`\tsank ${nme.user.handle}\'s ship`)
+		let booty = new $.coins(Math.trunc(Math.pow(2., $.player.hull / 150.) * 7937 / 250))
+		booty.value = Math.trunc(booty.value * $.player.hull / 50 * nme.user.cannon)
+		booty.value += nme.user.coin.value
+		if (booty.value) {
+			$.sound('booty', 5)
+			xvt.out('You get ', booty.carry(), '.\n')
+			$.log(nme.user.id, `... and got ${booty.carry()}.\n`)
+			$.player.coin.value += booty.value
 			nme.user.coin.value = 0
 			xvt.waste(500)
 		}
 		$.saveUser(nme)
+		$.online.altered = true
 	}
 
 	function you(): boolean {
 		let result = fire($.online, nme)
-		if ((nme.hull -= result.damage) > 0)
+		if (nme.hull > 0)
 			return false
 		booty()
 		return true
 	}
 
 	function him(): boolean {
+		if (!nme.user.cannon) {
+			xvt.out('They are defenseless and attempt to flee . . . ')
+			xvt.waste(1000)
+			if ($.dice(50 + $.online.int / 2) > 100 * $.online.hull / ($.online.hull + nme.hull)) {
+				xvt.out(`\nYou outmaneuver them and stop their retreat!\n`)
+				xvt.waste(500)
+				return false
+			}
+			xvt.out('\nThey sail away over the horizon.\n')
+			xvt.waste(500)
+			return true
+		}
 		let result = fire(nme, $.online)
-		if (($.online.hull -= result.damage) > 0)
-			return false
-		return true
+		if ($.online.hull < 1) {
+			xvt.out(`\n${nme.user.handle} smiles as a shark approaches you.\n`)
+			$.sound('bubbles', 10)
+			xvt.hangup()
+		}
+		return ($.online.hull < 1)
 	}
 }
 
@@ -748,7 +770,7 @@ function MonsterHunt() {
 					break
 
 				case 'S':
-					if ($.dice(50 + monsters[mon].int / 2) > 50 + (50 * sm.hull / (sm.hull +$.online.hull))) {
+					if ($.dice(50 + monsters[mon].int / 2) > 50 + (50 * sm.hull / (sm.hull + $.online.hull))) {
 						$.sound('oops')
 						xvt.out('\nIt outmaneuvers you and stops your retreat!\n')
 						xvt.waste(500)
@@ -766,7 +788,7 @@ function MonsterHunt() {
 
 				case 'R':
 					if ($.player.ram) {
-						if ($.dice(50 + monsters[mon].int / 2) > 100 * sm.hull / (sm.hull +$.online.hull)) {
+						if ($.dice(50 + monsters[mon].int / 2) > 100 * sm.hull / (sm.hull + $.online.hull)) {
 							xvt.out('\nIt quickly outmaneuvers your ship.\n')
 							xvt.out(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
 								[ 'Aim for the head, not the tail!'
@@ -931,7 +953,7 @@ function fire(a: active, d: active): {  hits:number, damage:number, hull:number,
 	}
 	xvt.out('\n')
 	xvt.waste(250)
-	
+
 	return { hits, damage, hull, cannon, ram }
 }
 

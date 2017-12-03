@@ -60,6 +60,7 @@ app.ws('/terminals/:pid', function (ws, req) {
     term.on('close', function () {
         ws.close();
     });
+    //  app output to browser client
     term.on('data', function (data) {
         let msg = data.toString();
         let ack = msg.indexOf('\x06');
@@ -91,11 +92,20 @@ app.ws('/terminals/:pid', function (ws, req) {
         delete terminals[term.pid];
     });
 });
+//  casual watching
+const DD = './users/dankdomain.sql';
+let better = require('better-sqlite3');
+let sqlite3 = new better(DD);
 var lurkers = [];
 app.post('/watch', function (req, res) {
     var pid = parseInt(req.query.pid);
-    console.log('Create lurker with PID: ' + pid);
-    res.send(lurkers.push(pid));
+    if (pid) {
+        console.log('Create lurker with PID: ' + pid);
+        res.send(lurkers.push(pid));
+    }
+    else {
+        res.send(terminals);
+    }
     res.end();
 });
 var port = process.env.PORT || 1965, host = os.platform() === 'win32' ? '127.0.0.1' : '0.0.0.0';
@@ -103,8 +113,5 @@ console.log('Dank Domain Door on https://' + host + ':' + port);
 server.listen(port, host);
 function unlock(pid) {
     console.log('Unlocking ' + pid);
-    const DD = './users/dankdomain.sql';
-    let better = require('better-sqlite3');
-    let sqlite3 = new better(DD);
     sqlite3.prepare(`DELETE FROM Online WHERE pid = ${pid}`).run().changes;
 }
