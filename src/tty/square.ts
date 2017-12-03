@@ -255,7 +255,8 @@ function choice() {
 								opponent.user.status = ''
 								opponent.altered = true
 								$.saveUser(opponent)
-								$.news(`\n${$.player.handle} paid ${credit.carry()} to bail you out of jail.`)
+								$.log(opponent.user.id, `${$.player.handle} paid ${credit.carry()} to bail you out of jail.\n`)
+								$.news(`\tpaid ${credit.carry()} to bail ${opponent.user.handle} out of jail.`)
 								$.bail--
 							}
 							menu()

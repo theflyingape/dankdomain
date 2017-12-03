@@ -475,11 +475,11 @@ export function spoils() {
 
         for (let m in parties[w]) {
             //  dead men get far less of the booty, taxman always gets a cut
-            let cut = parties[w][m].hp > 0 ? 0.95 : 0.15
+            let cut = parties[w][m].hp > 0 ? 0.95 : 0.20
             let award = Math.trunc(coin.value * parties[w][m].user.xp / take * cut)
             parties[w][m].user.coin.value += award
             coin.value -= award
-            take -= Math.trunc(parties[w][m].user.xp * cut)
+            take -= parties[w][m].user.xp
 
             let xp = Math.trunc($.experience(parties[w][m].user.xplevel)
                 * tl[l] / tl[w] / ((4 + parties[w].length - parties[l].length) / 2))
@@ -1384,7 +1384,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             xvt.out('\n', xvt.reset)
             let xp = 0
             if (backfire) {
-                xp = Math.trunc(rpc.user.xp * 1. / ((5. - rpc.user.magic) + $.dice(2)))
+                xp = Math.trunc(rpc.user.xp * 1. / ($.dice(5 - rpc.user.magic) + $.dice(2)))
                 rpc.user.xp -= xp
                 nme.user.xp += (nme.user.level > rpc.user.level) ? xp : nme.user.xp
                 xvt.out(nme === $.online ? 'You'
@@ -1424,6 +1424,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             else {
                 rpc.user.xp *= 2
                 nme.user.xp = Math.round(nme.user.xp / 2)
+                nme.user.xplevel--
                 xvt.out(rpc === $.online ? 'You'
                     : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' gain'), 'an experience level from ', nme === $.online ? 'you'
