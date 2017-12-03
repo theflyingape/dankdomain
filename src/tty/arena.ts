@@ -339,6 +339,7 @@ function choice() {
 		case 'Y':
 			xvt.out('\n')
 			Battle.yourstats()
+			suppress = true
 			break
 	}
 	menu(suppress)
