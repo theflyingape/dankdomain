@@ -1588,6 +1588,7 @@ function generateLevel() {
 	}
 
 	//	thief(s) in other spaces
+	wow--
 	n = $.dice(deep >>2) + wow
 	for (let i = 0; i < n; i++) {
 		do {
