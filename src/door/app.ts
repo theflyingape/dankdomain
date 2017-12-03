@@ -116,6 +116,7 @@ app.ws('/terminals/:pid', function (ws, req) {
   });
 });
 
+//  casual watching
 const DD = './users/dankdomain.sql'
 let better = require('better-sqlite3')
 let sqlite3 = new better(DD)
