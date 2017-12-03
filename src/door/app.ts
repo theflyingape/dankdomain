@@ -82,6 +82,7 @@ app.ws('/terminals/:pid', function (ws, req) {
     ws.close();
   });
 
+  //  app output to browser client
   term.on('data', function(data) {
     let msg = data.toString();
     let ack = msg.indexOf('\x06');
@@ -115,13 +116,21 @@ app.ws('/terminals/:pid', function (ws, req) {
   });
 });
 
+const DD = './users/dankdomain.sql'
+let better = require('better-sqlite3')
+let sqlite3 = new better(DD)
 var lurkers = [];
 
 app.post('/watch', function (req, res) {
   var pid = parseInt(req.query.pid);
 
-  console.log('Create lurker with PID: ' + pid);
-  res.send(lurkers.push(pid));
+  if (pid) {
+    console.log('Create lurker with PID: ' + pid);
+    res.send(lurkers.push(pid));
+  }
+  else {
+    res.send(terminals);
+  }
   res.end();
 });
 
@@ -133,10 +142,5 @@ server.listen(port, host);
 
 function unlock(pid: number) {
   console.log('Unlocking ' + pid)
-
-  const DD = './users/dankdomain.sql'
-  let better = require('better-sqlite3')
-  let sqlite3 = new better(DD)
-
   sqlite3.prepare(`DELETE FROM Online WHERE pid = ${pid}`).run().changes
 }

@@ -49,7 +49,53 @@ function choice() {
 
     switch (choice) {
 		case 'B':
+			suppress = true
 			if (!$.access.roleplay) break
+			if (!$.player.hull) {
+				xvt.out('\nYou don\'t have a ship!\n')
+				break
+			}
+			if (!$.naval) {
+				xvt.out('\nYou have run out of battles.\n')
+				break
+			}
+			Battle.user('Battle', (opponent: active) => {
+				if (opponent.user.id === '') {
+					menu(true)
+					return
+				}
+				if (opponent.user.id === $.player.id) {
+					opponent.user.id = ''
+					xvt.out('\nYou can\'t fight a wimp like', $.who(opponent, 'him'), '.\n')
+					menu(true)
+					return
+				}
+				if (!opponent.user.hull) {
+					xvt.out(`\n${$.who(opponent, 'He')} doesn\'t have a ship.\n`)
+					menu(true)
+					return
+				}
+				xvt.out(`\nYou sail out until you spot ${opponent.user.handle}\'s ship on the horizon.\n\n`)
+				xvt.out(`It has ${opponent.user.hull} hull points.\n`)
+
+				$.action('yn')				
+				xvt.app.form = {
+					'battle': { cb:() => {
+						xvt.out('\n\n')
+						if (/Y/i.test(xvt.entry)) {
+							if ($.activate(opponent, true)) {
+								$.naval--
+								BattleUser(opponent)
+							}
+							else
+								menu(!$.player.expert)
+						}
+						else
+							menu(!$.player.expert)
+					}, prompt:'Will you battle ' + $.who(opponent, 'him') + '(Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
+				}
+				xvt.app.focus = 'battle'
+			})
 			break
 
 		case 'G':
@@ -291,6 +337,7 @@ function choice() {
 			return
 
 		case 'Y':
+			suppress = true
 			if (!$.player.hull) {
 				xvt.out('\nYou don\'t have a ship!\n')
 				break
@@ -527,6 +574,130 @@ function Shipyard(suppress = true) {
 	}
 }
 
+function BattleUser(nme: active) {
+	let damage: number
+
+	if ($.dice(100) + $.online.int >= $.dice(100) + nme.int) {
+		xvt.out(`\nYou approach ${$.who(nme, 'him')} and quickly open fire.\n`)
+		if (you()) {
+			menu()
+			return
+		}
+		if (him())
+			return
+	}
+	else {
+		xvt.out(`\n${$.who(nme, 'He')}spots you coming and attacks.\n`)
+		if (him()) {
+			menu()
+			return
+		}
+	}
+
+	$.action('hunt')
+	xvt.app.form = {
+		'attack': { cb:() => {
+			xvt.out('\n')
+			switch (xvt.entry.toUpperCase()) {
+				case 'F':
+					if (you() || him()) {
+						menu()
+						return
+					}
+					break
+
+				case 'S':
+					if ($.dice(50 + nme.int / 2) > 50 + (50 * nme.hull / (nme.hull +$.online.hull))) {
+						$.sound('oops')
+						xvt.out(`\n${$.who(nme, 'He')}outmaneuvers you and stops your retreat!\n`)
+						xvt.waste(500)
+						if (him()) {
+							menu()
+							return
+						}
+					}
+					else {
+						xvt.out('\nYou sail away safely out of range.\n')
+						menu()
+						return
+					}
+					break
+
+				case 'R':
+					if ($.player.ram) {
+						if ($.dice(50 + nme.int / 2) > 100 * nme.hull / (nme.hull +$.online.hull)) {
+							xvt.out(`\n${$.who(nme, 'He')}quickly outmaneuvers your ship.\n`)
+							xvt.out(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
+								[ 'Aim for the head, not the tail!'
+								, 'I said port, bastards, not starboard!'
+								, 'Whose side are you on anyways?!' ][$.dice(3) - 1]
+								, xvt.cyan, '"\n')
+							xvt.waste(600)
+						}
+						else {
+							damage = $.dice($.player.hull / 2) + $.dice($.online.hull / 2)
+							xvt.out(`\nYou ram ${$.who(nme, 'him')} for ${damage} hull points of damage!\n`)
+							if ((nme.hull -= damage) < 1) {
+								booty()
+								menu()
+								return
+							}
+						}
+					}
+					else {
+						$.sound('oops')
+						xvt.out('\nYour first mate cries back, \"But we don\'t have a ram!\"\n')
+						xvt.waste(500)
+					}
+					if (him()) {
+						menu()
+						return
+					}
+					break
+
+				case 'Y':
+					xvt.out(`\nHull points: ${$.online.hull}\n`)
+					xvt.out(`Cannons: ${$.player.cannon}\n`)
+					xvt.out(`Ram: ${$.player.ram ? 'Yes' : 'No'}\n`)
+					break
+				}
+			xvt.app.refocus()
+		}, prompt:xvt.attr($.bracket('F', false), xvt.cyan, 'ire cannons, ', $.bracket('R', false), xvt.cyan, 'am, '
+			, $.bracket('S', false), xvt.cyan, 'ail off, ', $.bracket('Y', false), xvt.cyan, 'our status: ')
+			, cancel:'S', enter:'F', eol:false, match:/F|R|S|Y/i }
+	}
+	xvt.app.focus = 'attack'
+
+	function booty() {
+		nme.hull = 0
+		$.sound('booty', 5)
+		if (nme.user.coin.value) {
+			let coin = new $.coins(0)
+			coin.value = nme.user.coin.value
+			xvt.out('You get ', coin.carry(), ` ${$.who(nme, 'he')} was carrying.\n`)
+			$.player.coin.value += coin.value
+			nme.user.coin.value = 0
+			xvt.waste(500)
+		}
+		$.saveUser(nme)
+	}
+
+	function you(): boolean {
+		let result = fire($.online, nme)
+		if ((nme.hull -= result.damage) > 0)
+			return false
+		booty()
+		return true
+	}
+
+	function him(): boolean {
+		let result = fire(nme, $.online)
+		if (($.online.hull -= result.damage) > 0)
+			return false
+		return true
+	}
+}
+
 function MonsterHunt() {
 
 	let mon = +xvt.entry - 1
@@ -599,7 +770,7 @@ function MonsterHunt() {
 							xvt.out('\nIt quickly outmaneuvers your ship.\n')
 							xvt.out(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
 								[ 'Aim for the head, not the tail!'
-								, 'I said starboard, asshole, not port!'
+								, 'I said starboard, bitches, not port!'
 								, 'Whose side are you on anyways?!' ][$.dice(3) - 1]
 								, xvt.cyan, '"\n')
 							xvt.waste(600)
