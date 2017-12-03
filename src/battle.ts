@@ -27,6 +27,34 @@ function end() {
         if (!(opponent.user.id === '_' || opponent.user.gender === 'I')) {
             if (opponent.altered) $.saveUser(opponent)
             $.unlock(opponent.user.id)
+            if ($.player.hp > 0 && opponent.hp == 0) {
+                $.action('yn')
+                xvt.app.form = {
+                'yn': { cb:() => {
+                    if (/Y/i.test(xvt.entry))
+                        xvt.app.focus = 'message'
+                    else {
+                        xvt.out('\n')
+                        fini()
+                    }
+                    }, cancel:'N', enter:'Y', eol:false, match:/Y|N/i },
+                'message': { cb:() => {
+                    xvt.out('\n')
+                    if ($.cuss(xvt.entry)) {
+                        $.player.coward = true
+                        xvt.hangup()
+                    }
+                    if (xvt.entry) {
+                        $.log(opponent.user.id, `... and says,`)
+                        $.log(opponent.user.id, `"${xvt.entry}"\n`)
+                    }
+                    fini()
+                    }, prompt:'>', max:78 }
+                }
+                xvt.app.form['yn'].prompt = `Leave ${$.who(opponent, 'him')}a message (Y/N)? `
+                xvt.app.focus = 'yn'
+                return
+            }
         }
     }
     fini()
@@ -1318,9 +1346,10 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             break
 
         case 20:
-            xvt.out(xvt.bright, xvt.cyan, 'A glowing orb radiates above'
+            xvt.out(xvt.bright, xvt.cyan, 'A glowing orb radiates above '
                 , $.who(backfire ? nme : rpc, 'him'), '... ')
-            xvt.waste(600)
+            xvt.waste(800)
+            xvt.out('\n', xvt.reset)
             let mana = 0
             if (backfire) {
                 mana = Math.trunc(rpc.sp * 1. / ((5. - rpc.user.magic) + $.dice(2)))
@@ -1344,14 +1373,14 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 if (rpc.user.magic > 1)
                     rpc.sp += mana
             }
-            xvt.out('.\n', xvt.reset)
+            xvt.out('.\n')
             break
 
         case 21:
             xvt.out(xvt.bright, xvt.black, 'A black finger extends and touches '
                 , $.who(backfire ? rpc : nme, 'him')
                 , '... ')
-            xvt.waste(600)
+            xvt.waste(800)
             xvt.out('\n', xvt.reset)
             let xp = 0
             if (backfire) {
@@ -1380,7 +1409,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             xvt.out(xvt.bright, xvt.black, 'A shroud of blackness engulfs '
                 , $.who(backfire ? rpc : nme, 'him')
                 , '... ')
-            xvt.waste(600)
+            xvt.waste(800)
             xvt.out('\n', xvt.reset)
             if (backfire) {
                 nme.user.xp *= 2
@@ -1747,6 +1776,7 @@ export function user(venue: string, cb:Function) {
                 }
             }
             //  paint profile
+            xvt.out('\n')
             if (rpc.user.id) {
 				let userPNG = `images/user/${rpc.user.id}.png`
 				try {
@@ -1758,7 +1788,6 @@ export function user(venue: string, cb:Function) {
 				$.profile({ png:userPNG, handle:rpc.user.handle, level:rpc.user.level, pc:rpc.user.pc })
 				if (!$.cat('player/' + rpc.user.id)) $.cat('player/' + rpc.user.pc.toLowerCase())
             }
-            xvt.out('\n')
             cb(rpc)
         }, max:22 },
         'start': { cb: () => {
