@@ -330,7 +330,7 @@ function choice() {
 		case 'R':
 			if (!$.access.roleplay) break
 			let re = $.RealEstate.name[$.player.realestate].protection
-			xvt.out('You live in a ', $.player.realestate)
+			xvt.out('\nYou live in a ', $.player.realestate)
 			credit.value = $.worth(new $.coins($.RealEstate.name[$.player.realestate].value).value, $.online.cha)
 			xvt.out(' worth ', credit.carry(), '\n')
 
@@ -348,7 +348,7 @@ function choice() {
 		case 'S':
 			if (!$.access.roleplay) break
 			let s = $.Security.name[$.player.security].protection
-			xvt.out('You are guarded by a ', $.player.security)
+			xvt.out('\nYou are guarded by a ', $.player.security)
 			credit.value = $.worth(new $.coins($.Security.name[$.player.security].value).value, $.online.cha)
 			xvt.out(' worth ', credit.carry(), '\n')
 
@@ -577,10 +577,10 @@ function list(choice: string) {
 	xvt.app.form = {
 		'start': { cb:listStart, prompt:'Start list at ', max:2 },
 		'end': { cb:listEnd, prompt:'Start list at ', max:2 },
-		'buy': { cb:buy, prompt:'\nBuy which? ', max:2 },
+		'buy': { cb:buy, prompt:'Buy which? ', max:2 },
 		'pause': { cb:menu, pause:true }
 	}
-	want = choice
+	want = choice.toUpperCase()
 	xvt.app.form['start'].enter = lo.toString()
 	xvt.app.form['start'].prompt = xvt.attr('Start list at ', (lo < 10 && hi > 9) ? ' ' : '', $.bracket(lo, false), ': ')
 	xvt.app.form['end'].enter = hi.toString()
@@ -589,8 +589,9 @@ function list(choice: string) {
 }
 
 function listStart() {
-	let n = +xvt.entry
-	if ((/M|R|S|V/.test(want) && n < lo) || n > max) {
+	let n = +xvt.entry >>0
+	if (n < 1) n = 1
+	if ((/R|S/.test(want) && n < lo) || n > max) {
 		$.beep()
 		xvt.app.refocus()
 		return
@@ -601,9 +602,9 @@ function listStart() {
 }
 
 function listEnd() {
-	let n = +xvt.entry
-	if (n > max) n = max
+	let n = +xvt.entry >>0
 	if (n < lo) n = lo
+	if (n > max) n = max
 
 	hi = n
 	xvt.out('\n')
@@ -650,12 +651,13 @@ function listEnd() {
 				break
 		}
 	}
-
+	xvt.out('\n')
 	xvt.app.focus = 'buy'
 }
 
 function buy() {
 	if (xvt.entry === '') {
+		xvt.out('\n')
 		menu()
 		return
 	}
@@ -751,7 +753,6 @@ function buy() {
 			}
 			break
 	}
-
 	xvt.app.focus = 'pause'
 }
 

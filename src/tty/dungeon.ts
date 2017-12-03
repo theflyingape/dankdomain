@@ -36,7 +36,7 @@ module Dungeon
 
 	interface dungeon {
 		rooms: [ room[] ]	//	7-10
-		map: number			//	0=none, 1=map, 2=marauder
+		map: number			//	0=none, 1=map, 2=magic, 3=Marauder's
 		moves: number
 		width: number		//	7-13
 	}
@@ -44,7 +44,7 @@ module Dungeon
 		map: boolean		//	explored?
 		occupant: number	//	0=none, 1=trapdoor, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard
 		type: number		//	0=Emp, 1=N-S, 2=W-E, 3=Cav
-		giftItem?: string	//	potion, poison, magic, xmagic, chest, map, armor, weapon, marauder
+		giftItem?: string	//	potion, poison, magic, xmagic, chest, map, armor, weapon, Marauder's
 		giftValue?: number
 		giftID?: boolean	//	undefined, or identified?
 		monster?: active[]
@@ -979,7 +979,7 @@ function doMove(): boolean {
 					xvt.out('You expect nothing less from the coward.')
 				else
 					xvt.out(xvt.bright, xvt.white, 'He surprises you!')
-				xvt.waste(400)
+				$.sound('thief', 4)
 				xvt.out(xvt.reset, '\nAs he passes by, he steals your ')
 				x = $.online.cha + deep + 1
 				if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
@@ -1107,7 +1107,7 @@ function doMove(): boolean {
 			break
 
 		case 'map':
-			xvt.out(xvt.bright, xvt.yellow, 'You find a magic map!\n', xvt.reset)
+			xvt.out(xvt.bright, xvt.yellow, 'You find Marauder\'s map!\n', xvt.reset)
 			DL.map = 3
 			pause = true
 			refresh = true
@@ -1212,9 +1212,9 @@ export function doSpoils() {
 			if (DL.map < m) {
 				DL.map = m
 				xvt.out('\n', xvt.bright, xvt.yellow
-					, 'You find '
-					, m == 1 ? 'a' : 'Marauder\'s'
-					, ' map!\n', xvt.reset)
+					, 'You find a'
+					, m == 2 ? ' magic ' : ' '
+					, 'map!\n', xvt.reset)
 				pause = true
 			}
 		}
@@ -1321,7 +1321,7 @@ function drawLevel() {
 					if (DL.map > 1 || (DL.rooms[r][x].map
 						&& Math.abs(Y - r) < Math.trunc($.online.int / 20) && Math.abs(X - x) < Math.trunc($.online.int / 20))) {
 						if (DL.rooms[r][x].monster.length) {
-							icon = xvt.attr(DL.rooms[r][x].occupant || DL.rooms[r][x].giftItem ? xvt.green : xvt.red, 
+							icon = xvt.attr(xvt.normal, DL.rooms[r][x].occupant || DL.rooms[r][x].giftItem ? xvt.green : xvt.red, 
 								DL.rooms[r][x].monster.length > 1 ? 'Mob' : 'Mon', xvt.reset)
 							o = ` ${icon} `
 						}
@@ -1337,7 +1337,7 @@ function drawLevel() {
 
 							case 2:
 								if (!icon) icon = xvt.attr('v', xvt.bright, xvt.blink, 'V', xvt.noblink, xvt.normal, 'v')
-								o = xvt.attr(xvt.faint, xvt.blue, 'v', xvt.normal, icon, xvt.faint, xvt.blue, 'v')
+								o = xvt.attr(xvt.faint, xvt.blue, 'v', xvt.normal, icon, xvt.normal, xvt.faint, xvt.blue, 'v')
 								break
 
 							case 3:
@@ -1356,13 +1356,13 @@ function drawLevel() {
 								break
 
 							case 6:
-								if (!icon) icon = xvt.attr(xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
-								o = xvt.attr(xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.faint, xvt.yellow, ':')
+								if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
+								o = xvt.attr(xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.normal, xvt.faint, xvt.yellow, ':')
 								break
 
 							case 7:
-								if (!icon) icon = xvt.attr(xvt.uline, '_', xvt.bright, Teleport[$.player.emulation], xvt.normal, '_', xvt.nouline)
-								o = xvt.attr(xvt.faint, xvt.magenta, '<', xvt.normal, icon, xvt.faint, xvt.magenta, '>')
+								if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Teleport[$.player.emulation], xvt.normal, '_', xvt.nouline)
+								o = xvt.attr(xvt.faint, xvt.magenta, '<', xvt.normal, icon, xvt.normal, xvt.faint, xvt.magenta, '>')
 								break
 						}
 					}
@@ -1420,7 +1420,7 @@ function drawRoom(r:number, c:number) {
 		o = xvt.attr('     ')
 
 	if (ROOM.monster.length)
-		icon = xvt.attr(ROOM.occupant ? xvt.green : xvt.red, ROOM.monster.length > 1 ? 'Mob' : 'Mon', xvt.reset)
+		icon = xvt.attr(xvt.normal, ROOM.occupant ? xvt.green : xvt.red, ROOM.monster.length > 1 ? 'Mob' : 'Mon', xvt.reset)
 
 	//	0=none, 1=trapdoor, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard
 	switch (ROOM.occupant) {
@@ -1434,8 +1434,8 @@ function drawRoom(r:number, c:number) {
 			break
 
 		case 2:
-			if (!icon) icon = xvt.attr('v', xvt.bright, xvt.blink, 'V', xvt.noblink, xvt.normal, 'v')
-			o = xvt.attr(xvt.faint, xvt.blue, 'v', xvt.normal, icon, xvt.faint, xvt.blue, 'v')
+			if (!icon) icon = xvt.attr(xvt.normal, 'v', xvt.bright, xvt.blink, 'V', xvt.noblink, xvt.normal, 'v')
+			o = xvt.attr(xvt.faint, xvt.blue, 'v', xvt.normal, icon, xvt.normal, xvt.faint, xvt.blue, 'v')
 			break
 
 		case 3:
@@ -1454,13 +1454,13 @@ function drawRoom(r:number, c:number) {
 			break
 
 		case 6:
-			if (!icon) icon = xvt.attr(xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
-			o = xvt.attr(xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.faint, xvt.yellow, ':')
+			if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
+			o = xvt.attr(xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.normal, xvt.faint, xvt.yellow, ':')
 			break
 
 		case 7:
-			if (!icon) icon = xvt.attr(xvt.uline, '_', xvt.bright, Teleport[$.player.emulation], xvt.normal, '_', xvt.nouline)
-			o = xvt.attr(xvt.faint, xvt.magenta, '<', xvt.normal, icon, xvt.faint, xvt.magenta, '>')
+			if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Teleport[$.player.emulation], xvt.normal, '_', xvt.nouline)
+			o = xvt.attr(xvt.faint, xvt.magenta, '<', xvt.normal, icon, xvt.normal, xvt.faint, xvt.magenta, '>')
 			break
 	}
 	xvt.out(o)

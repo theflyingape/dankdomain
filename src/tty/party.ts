@@ -82,9 +82,11 @@ function choice() {
             return
 
         case 'M':
-            xvt.out(xvt.Blue, xvt.bright, '\n')
-            xvt.out('        Party            Win-Loss   Ratio \n')
-            xvt.out('------------------------------------------\n', xvt.reset)
+            xvt.out('\n')
+            xvt.out(xvt.Blue, xvt.bright, '        Party            Win-Loss   Ratio '
+                ,'\n', xvt.reset)
+            xvt.out(xvt.Blue, xvt.bright, '------------------------------------------'
+                , '\n', xvt.reset)
             rs = $.query(`SELECT * FROM Gangs ORDER BY win DESC, loss ASC`)
             let crown = true
             for (let i in rs) {

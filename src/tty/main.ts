@@ -92,9 +92,10 @@ function choice() {
 
         case 'M':
             xvt.out('\n')
-            xvt.out(xvt.Blue, xvt.white)
-            xvt.out(' ID   Player\'s Handle           Class    Lvl  Status  Party               \n')
-            xvt.out('--------------------------------------------------------------------------', xvt.reset, '\n')
+            xvt.out(xvt.Blue, xvt.white, ' ID   Player\'s Handle           Class    Lvl  Status  Party              '
+                , xvt.reset, '\n')
+            xvt.out(xvt.Blue, xvt.white, '--------------------------------------------------------------------------'
+                , xvt.reset, '\n')
 
             let rs = $.query(`
                 SELECT id, handle, pc, level, status, gang FROM Players
