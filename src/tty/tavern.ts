@@ -23,7 +23,10 @@ module Tavern
     $.loadUser($.barkeep)
 
 export function menu(suppress = true) {
-	$.action('tavern')
+    if ($.checkXP($.online, menu)) return
+    if ($.online.altered) $.saveUser($.online)
+
+    $.action('tavern')
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }
@@ -32,17 +35,13 @@ export function menu(suppress = true) {
 }
 
 function choice() {
-    let suppress = $.player.expert
+    let suppress = false
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(tavern[choice]))
         if (xvt.validator.isNotEmpty(tavern[choice].description)) {
-            xvt.out(' - ', tavern[choice].description, '\n')
-            suppress = true
+            xvt.out(' - ', tavern[choice].description)
+            suppress = $.player.expert
         }
-    else {
-        xvt.beep()
-        suppress = false
-    }
     xvt.out('\n')
     
     switch (choice) {

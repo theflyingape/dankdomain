@@ -32,7 +32,7 @@ module Main
 
 export function menu(suppress = true) {
     if ($.checkXP($.online, menu)) return
-    if ($.online.altered) $.saveUser($.player)
+    if ($.online.altered) $.saveUser($.online)
     if ($.reason) xvt.hangup()
 
     $.action('menu')
@@ -49,14 +49,13 @@ export function menu(suppress = true) {
 }
 
 function choice() {
-    let suppress = $.player.expert
+    let suppress = false
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(mainmenu[choice]))
-        if (xvt.validator.isNotEmpty(mainmenu[choice].description)) xvt.out(' - ', mainmenu[choice].description)
-    else {
-        xvt.beep()
-        suppress = false
-    }
+        if (xvt.validator.isNotEmpty(mainmenu[choice].description)) {
+            xvt.out(' - ', mainmenu[choice].description)
+            suppress = $.player.expert
+        }
     xvt.out('\n')
 
     switch (choice) {
@@ -101,6 +100,7 @@ function choice() {
                 SELECT id, handle, pc, level, status, gang FROM Players
                 WHERE id NOT GLOB '_*'
                 ORDER BY level DESC, immortal DESC
+                LIMIT ${$.player.rows - 5}
             `)
 
             for (let n in rs) {
@@ -270,7 +270,7 @@ function choice() {
                 xvt.app.focus = 'yn'
             })
             return
-    
+
         case 'S':
             require('./square').menu($.player.expert)
             return

@@ -1638,7 +1638,9 @@ export function display(title:string, back:number, fore:number, suppress:boolean
         }
     }
     xvt.out('\x06') /* insert any wall messages here */
-    return xvt.attr(fore, '[', xvt.bright, xvt.yellow, back ? titlecase(title) : 'Iron Bank', xvt.normal, fore, ']', xvt.cyan, ' Option (Q=Quit): ')
+    return xvt.attr(fore, '[', xvt.bright, xvt.yellow, back ? titlecase(title) : 'Iron Bank', xvt.normal, fore, ']'
+        , xvt.faint, ' Option '
+        , xvt.normal, xvt.cyan, '(Q=Quit): ')
 }
 
 export function emulator(cb:Function) {

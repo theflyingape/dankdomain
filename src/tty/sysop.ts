@@ -31,17 +31,13 @@ export function menu(suppress = false) {
 }
 
 function choice() {
-    let suppress = $.player.expert
+    let suppress = false
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(sysop[choice]))
         if (xvt.validator.isNotEmpty(sysop[choice].description)) {
             xvt.out(' - ', sysop[choice].description)
-            suppress = true
+            suppress = $.player.expert
         }
-    else {
-        xvt.beep()
-        suppress = false
-    }
     xvt.out('\n')
 
     switch (choice) {

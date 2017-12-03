@@ -42,20 +42,21 @@ module Gambling
 	let pile:number
 
 export function menu(suppress = true) {
-	if ($.online.altered) $.saveUser($.player)
+	if ($.online.altered) $.saveUser($.online)
 	if ($.reason) xvt.hangup()
 
 	$.action('casino')
 	xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }
-    xvt.app.form['menu'].prompt = $.display('casino', xvt.Blue, xvt.blue, suppress, casino)
+    xvt.app.form['menu'].prompt = $.display('casino', xvt.Green, xvt.green, suppress, casino)
     xvt.app.focus = 'menu'
 	pin = false
 }
 
 function choice() {
     if ((game = xvt.entry.toUpperCase()) === 'Q') {
+		xvt.out('\n')
 		require('./main').menu($.player.expert)
 		return
 	}

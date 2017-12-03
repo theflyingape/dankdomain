@@ -23,29 +23,25 @@ module Naval
 
 export function menu(suppress = true) {
     if ($.checkXP($.online, menu)) return
-    if ($.online.altered) $.saveUser($.player)
+    if ($.online.altered) $.saveUser($.online)
 	if ($.reason) xvt.hangup()
 
 	$.action('naval')
 	xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }
-    xvt.app.form['menu'].prompt = $.display('naval', xvt.Blue, xvt.blue, suppress, naval)
+    xvt.app.form['menu'].prompt = $.display('naval', xvt.Cyan, xvt.cyan, suppress, naval)
     xvt.app.focus = 'menu'
 }
 
 function choice() {
-    let suppress = $.player.expert
+    let suppress = false
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(naval[choice]))
         if (xvt.validator.isNotEmpty(naval[choice].description)) {
             xvt.out(' - ', naval[choice].description)
-            suppress = true
+            suppress = $.player.expert
         }
-    else {
-        xvt.beep()
-        suppress = false
-    }
     xvt.out('\n')
 
 	let rs: any[]
@@ -289,7 +285,6 @@ function choice() {
 			return
 
 		case 'Q':
-			xvt.out('\n')
 			require('./main').menu($.player.expert)
 			return
 
@@ -409,7 +404,7 @@ function Shipyard(suppress = true) {
 							$.player.ram = false
 							$.online.hull = $.player.hull
 							$.online.altered = true
-							xvt.out(`You now have a brand new ${$.player.hull} hull point ship, with no ram.\n`)
+							xvt.out(`\nYou now have a brand new ${$.player.hull} hull point ship, with no ram.\n`)
 						}
 						Shipyard()
 					}
@@ -476,7 +471,7 @@ function Shipyard(suppress = true) {
 								$.player.coin.value = 0
 							$.player.cannon += buy
 							$.beep()
-							xvt.out(`\Cannons = ${$.player.cannon}\n`)
+							xvt.out(`\nCannons = ${$.player.cannon}\n`)
 						}
 						Shipyard()
 						return

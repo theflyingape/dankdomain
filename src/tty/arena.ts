@@ -25,7 +25,7 @@ module Arena
 
 export function menu(suppress = true) {
     if ($.checkXP($.online, menu)) return
-	if ($.online.altered) $.saveUser($.player)
+	if ($.online.altered) $.saveUser($.online)
 	if ($.reason) xvt.hangup()
 
 	$.action('arena')
@@ -37,15 +37,14 @@ export function menu(suppress = true) {
 }
 
 function choice() {
-    let suppress = true
+    let suppress = false
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(arena[choice]))
-		if (xvt.validator.isNotEmpty(arena[choice].description)) xvt.out(' - ', arena[choice].description)
-	else {
-		xvt.beep()
-		suppress = false
-	}
-	xvt.out('\n')
+        if (xvt.validator.isNotEmpty(arena[choice].description)) {
+            xvt.out(' - ', arena[choice].description)
+            suppress = $.player.expert
+        }
+    xvt.out('\n')
 
     switch (choice) {
 		case 'C':

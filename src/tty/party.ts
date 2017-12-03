@@ -41,7 +41,7 @@ module Party
 
 export function menu(suppress = true) {
     if ($.checkXP($.online, menu)) return
-    if ($.online.altered) $.saveUser($.player)
+    if ($.online.altered) $.saveUser($.online)
     if (!$.reason && $.online.hp < 1) $.reason = 'fought bravely?'
     if ($.reason) xvt.hangup()
 
@@ -54,17 +54,14 @@ export function menu(suppress = true) {
 }
 
 function choice() {
-    let suppress = $.player.expert
+    let suppress = false
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(party[choice]))
         if (xvt.validator.isNotEmpty(party[choice].description)) {
-            xvt.out(' - ', party[choice].description, '\n')
-            suppress = true
+            xvt.out(' - ', party[choice].description)
+            suppress = $.player.expert
         }
-    else {
-        xvt.beep()
-        suppress = false
-    }
+    xvt.out('\n')
 
     let rs: any[]
 
@@ -476,7 +473,6 @@ function choice() {
             return
 
         case 'Q':
-            xvt.out('\n')
 			require('./main').menu($.player.expert)
 			return
 	}

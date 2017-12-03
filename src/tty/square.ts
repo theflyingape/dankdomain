@@ -49,11 +49,14 @@ export function menu(suppress = true) {
 }
 
 function choice() {
-    let suppress = $.player.expert
+    let suppress = false
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(square[choice]))
-		if (xvt.validator.isNotEmpty(square[choice].description)) xvt.out(' - ', square[choice].description)
-	xvt.out('\n')
+        if (xvt.validator.isNotEmpty(square[choice].description)) {
+            xvt.out(' - ', square[choice].description)
+            suppress = $.player.expert
+        }
+    xvt.out('\n')
 
     switch (choice) {
 		case 'A':
