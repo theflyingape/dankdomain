@@ -2073,8 +2073,24 @@ export function newDay() {
 
     sqlite3.exec(`UPDATE Players SET bank=bank+coin WHERE id NOT GLOB '_*'`)
     sqlite3.exec(`UPDATE Players SET coin=0`)
-    
-    let rs = sqlite3.prepare(`SELECT id, lastdate FROM Players WHERE id NOT GLOB '_*'`).all()
+
+    let rs = sqlite3.query(`SELECT id FROM Players WHERE id NOT GLOB '_*' AND magic > 0`)
+    let user: user = { id:'' }
+    for (let row in rs) {
+        user.id = rs[row].id
+        loadUser(user)
+        for (let item = 7; item < 16; item++) {
+            let cost = user.magic == 1 ? new coins(Magic.spells[Magic.merchant[item]].wand)
+                : new coins(Magic.spells[Magic.merchant[item]].cost)
+            if (user.bank.value >= cost.value && !Magic.have(user.spells, item)) {
+                Magic.add(user.spells, item)
+                user.bank.value -= cost.value
+            }
+        }
+        saveUser(user)
+    }
+
+    rs = sqlite3.prepare(`SELECT id, lastdate FROM Players WHERE id NOT GLOB '_*'`).all()
     for (let row in rs) {
         if ((now().date - rs[row].lastdate) > 365) {
             sqlite3.exec(`DELETE FROM Players WHERE id = '${rs[row].id}'`)
