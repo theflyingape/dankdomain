@@ -576,7 +576,7 @@ function BattleUser(nme: active) {
 	let damage: number
 
 	if ($.dice(100) + $.online.int >= $.dice(100) + nme.int) {
-		xvt.out(`You approach ${$.who(nme, 'him')} and quickly open fire.\n`)
+		xvt.out(`You approach ${$.who(nme, 'him')}and quickly open fire.\n`)
 		if (you()) {
 			menu()
 			return
@@ -681,8 +681,8 @@ function BattleUser(nme: active) {
 		$.log(nme.user.id, `${$.player.handle} sank your ship!`)
 		$.news(`\tsank ${nme.user.handle}\'s ship`)
 
-		let booty = new $.coins(Math.round(Math.pow(2, $.player.hull / 150) * 7937))
-		booty.value = Math.trunc(booty.value / $.player.hull / 50 * nme.user.cannon)
+		let booty = new $.coins(Math.round(Math.pow(2, $.player.hull / 150) * 7937 / 250))
+		booty.value = Math.trunc(booty.value * nme.user.cannon)
 		booty.value += nme.user.coin.value
 		if (booty.value) {
 			$.sound('booty', 5)
