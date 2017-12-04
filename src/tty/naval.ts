@@ -306,9 +306,13 @@ function choice() {
 			return
 
 		case 'L':
-			xvt.out(xvt.Blue, xvt.bright, '\n')
-			xvt.out(' ID             Username            Hull     Cannons     Ram\n')
-			xvt.out('----     ----------------------     ----     -------     ---\n', xvt.reset)
+			xvt.out('\n')
+			xvt.out(xvt.Blue, xvt.bright,
+				' ID             Username            Hull     Cannons     Ram'
+				, xvt.reset, '\n')
+			xvt.out(xvt.Blue, xvt.bright,
+				'----     ----------------------     ----     -------     ---'
+				, xvt.reset, '\n')
 			rs = $.query(`SELECT id,handle,hull,cannon,ram FROM Players WHERE hull > 0 ORDER BY hull DESC`)
 			for (let i in rs) {
 				xvt.out(sprintf('%-4s     %-22s     %4u     %5u        %s\n'
