@@ -612,6 +612,8 @@ function BattleUser(nme: active) {
 					}
 					else {
 						xvt.out('\nYou sail away safely out of range.\n')
+						$.saveUser(nme)
+						$.online.altered = true
 						menu()
 						return
 					}
@@ -708,9 +710,13 @@ function BattleUser(nme: active) {
 			}
 			xvt.out('\nThey sail away over the horizon.\n')
 			xvt.waste(500)
+			$.saveUser(nme)
+			$.online.altered = true
 			return true
 		}
 		let result = fire(nme, $.online)
+		$.saveUser(nme)
+		$.online.altered = true
 		if ($.online.hull < 1) {
 			xvt.out(`\n${nme.user.handle} smiles as a shark approaches you.\n`)
 			$.sound('bubbles', 10)

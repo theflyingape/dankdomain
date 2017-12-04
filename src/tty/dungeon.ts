@@ -1580,7 +1580,7 @@ function generateLevel() {
 		}
 
 		//	deep dank dungeon portal
-		if (deep < 10 && deep < $.player.immortal) {
+		if (deep < 9 && Z < $.player.immortal) {
 			y = $.dice(DL.rooms.length) - 1
 			x = $.dice(DL.width) - 1
 			DL.rooms[y][x].occupant = 2
@@ -1969,6 +1969,7 @@ function putMonster(r = -1, c = -1): boolean {
 
 	$.activate(m)
 
+	m.user.wins = deep
 	m.adept = deep >>1
 	m.str = $.PC.ability(m.str, deep>>1)
 	m.int = $.PC.ability(m.int, deep>>1)

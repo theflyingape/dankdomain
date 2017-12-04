@@ -528,16 +528,13 @@ export function spoils() {
                 if (/Monster|User/.test(from)) {
                     loser.altered = true
                     loser.user.status = winner.user.id
-                    // dungeon: modf(EXP(RPC[1][i]->user.ExpLevel - 1.) / (20. - (1.5 * (double)nest)), &d);
-                    // user: modf(EXP(ENEMY.ExpLevel - 1) /3., &d);
                     let x = loser.user.id ? 2 : 3
                     xp += $.experience(loser.user.xplevel, x)
                     if (winner.user.level < loser.user.xplevel)
                         loser.user.xplevel = winner.user.level
                 }
-                else {
-                    xp += $.experience(loser.user.xplevel, 12)
-                }
+                else
+                    xp += $.experience(loser.user.xplevel, 18 - (1.5 * loser.user.wins))
                 if (loser.user.coin.value) {
                     coin.value += loser.user.coin.value
                     loser.user.coin.value = 0

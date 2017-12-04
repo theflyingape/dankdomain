@@ -22,6 +22,7 @@ module Sysop
 	}
 
 export function menu(suppress = false) {
+    if ($.reason) xvt.hangup()
     $.music('.')
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
@@ -51,42 +52,30 @@ function choice() {
             return
 
         case 'R':
-            xvt.out('Alpha development phase: ')
-            $.player.level = $.dice(100)
-            $.player.pc = $.PC.random()
-            xvt.out('rerolling as a level ', $.player.level.toString(), ' ', $.player.pc, '\n')
-
-            $.reroll($.player, $.player.pc, $.player.level)
-            $.activate($.online)
-
-            $.player.coin = new $.coins($.money($.dice($.player.level) - 1))
-            $.player.bank = new $.coins($.money($.player.level))
-            $.player.loan = new $.coins($.money($.dice(100)))
-
-            $.player.spells = []
-            if ($.player.magic) {
-                let n = $.dice(Object.keys($.Magic.spells).length)
-                for (let i = 0; i < n; i++) {
-                    let p = $.dice(Object.keys($.Magic.spells).length)
-                    let spell = $.Magic.pick(p)
-                    if (!$.Magic.have($.player.spells, spell))
-                        $.Magic.add($.player.spells, p)
-                }
+            $.action('yn')
+            xvt.app.form = {
+                'yn': { cb:() => {
+                    if (/Y/i.test(xvt.entry)) {
+                        $.loadUser($.sysop)
+                        $.sysop.dob = $.now().date + 1
+                        $.saveUser($.sysop)
+                        let rs = $.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
+                        let user: user = { id:'' }
+                        for (let row in rs) {
+                            user.id = rs[row].id
+                            $.loadUser(user)
+                            $.reroll(user)
+                            $.saveUser(user)
+                            xvt.out('.')
+                        }
+                        $.reroll($.player)
+                        xvt.out(xvt.reset, '\nHappy hunting tomorrow!\n')
+                        $.reason = 'reroll'
+                    }
+                }, prompt:'Reroll the board (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
             }
-
-            $.player.poisons = []
-            if ($.player.poison) {
-                let n = $.dice(Object.keys($.Poison.vials).length)
-                for (let i = 0; i < n; i++) {
-                    let p = $.dice(Object.keys($.Poison.vials).length)
-                    let vial = $.Poison.pick(p)
-                    if (!$.Poison.have($.player.poisons, vial))
-                        $.Poison.add($.player.poisons, p)
-                }
-            }
-
-            $.saveUser($.player)
-            break
+            xvt.app.focus = 'yn'
+            return
 
         case 'Y':
         	Battle.user('Scout', (opponent: active) => {
