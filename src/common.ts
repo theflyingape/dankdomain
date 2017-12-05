@@ -1180,6 +1180,7 @@ export function playerPC(points = 200, immortal = false) {
                 xvt.out('\n')
                 news(`\trerolled as a ${player.pc}`)
                 if (immortal) {
+                    player.today = 0
                     reason = 'became immortal'
                     xvt.out(`\nYou are rewarded with ${access.calls} more calls today.\n`)
                     xvt.hangup()
@@ -1485,7 +1486,7 @@ export function riddle() {
             xvt.out(' ...you insert and twist the key... ')
             xvt.waste(1000)
             if (xvt.entry.toUpperCase() === player.keyseq[slot]) {
-                sound('max')
+                sound('click')
                 if (player.emulation === 'XT') xvt.out('\u{1F513} ')
                 xvt.out(xvt.cyan, '{', xvt.bright, 'Click!', xvt.normal, '}\n')
                 player.pc = Object.keys(PC.name['immortal'])[slot]
