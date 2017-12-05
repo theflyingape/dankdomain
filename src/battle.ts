@@ -1345,6 +1345,10 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             break
 
         case 20:
+            if (nme.user.magic < 2) {
+                cb(true)
+                return
+            }
             xvt.out(xvt.bright, xvt.cyan, 'A glowing orb radiates above '
                 , $.who(backfire ? nme : rpc, 'him'), '... ')
             xvt.waste(800)
@@ -1352,6 +1356,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             let mana = 0
             if (backfire) {
                 mana = Math.trunc(rpc.sp * 1. / ((5. - rpc.user.magic) + $.dice(2)))
+                if (mana + nme.sp > nme.user.sp)
+                    mana = nme.user.sp - nme.sp
                 xvt.out(nme === $.online ? 'You'
                     : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
                     , $.what(rpc, ' absorb'), 'spell power (', mana.toString(), ') '
@@ -1363,6 +1369,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             }
             else {
                 mana = Math.trunc(nme.sp * 1. / ((5. - rpc.user.magic) + $.dice(2)))
+                if (mana + rpc.sp > rpc.user.sp)
+                    mana = rpc.user.sp - rpc.sp
                 xvt.out(rpc === $.online ? 'You'
                     : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' absorb'), 'spell power (', mana.toString(), ') '
