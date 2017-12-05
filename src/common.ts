@@ -825,7 +825,7 @@ export function skillplus(rpc: active, cb: Function) {
             xvt.out(xvt.reset, '\n')
             xvt.waste(2000)
             cb()
-        }, prompt:'Choose which: ', max:1 }
+        }, prompt:'Choose which: ', min:1, max:1, match:/^[0-9]/ }
     }
     xvt.app.focus = 'skill'
 }
@@ -2075,7 +2075,7 @@ export function newDay() {
     sqlite3.exec(`UPDATE Players SET bank=bank+coin WHERE id NOT GLOB '_*'`)
     sqlite3.exec(`UPDATE Players SET coin=0`)
 
-    let rs = sqlite3.query(`SELECT id FROM Players WHERE id NOT GLOB '_*' AND magic > 0`)
+    let rs = sqlite3.prepare(`SELECT id FROM Players WHERE id NOT GLOB '_*' AND magic > 0`).all()
     let user: user = { id:'' }
     for (let row in rs) {
         user.id = rs[row].id

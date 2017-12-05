@@ -1391,9 +1391,9 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             xvt.out('\n', xvt.reset)
             let xp = 0
             if (backfire) {
-                xp = Math.trunc(rpc.user.xp * 1. / ($.dice(5 - rpc.user.magic) + $.dice(2)))
+                xp = Math.trunc(rpc.user.xp / 2)
                 rpc.user.xp -= xp
-                nme.user.xp += (nme.user.level > rpc.user.level) ? xp : nme.user.xp
+                nme.user.xp += (nme.user.level > rpc.user.level) ? xp : Math.trunc(nme.user.xp / 2)
                 xvt.out(nme === $.online ? 'You'
                     : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
                     , $.what(nme, ' absorb'), 'some life experience from ', rpc === $.online ? 'you'
@@ -1401,9 +1401,9 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                     , '.\n')
             }
             else {
-                xp = Math.trunc(nme.user.xp * 1. / ((5. - rpc.user.magic) + $.dice(2)))
+                xp = Math.trunc(nme.user.xp / 2)
                 nme.user.xp -= xp
-                rpc.user.xp += (rpc.user.level > nme.user.level) ? xp : rpc.user.xp
+                rpc.user.xp += (rpc.user.level > nme.user.level) ? xp : Math.trunc(rpc.user.xp / 2)
                 xvt.out(rpc === $.online ? 'You'
                     : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' absorb'), 'some life experience from ', nme === $.online ? 'you'
@@ -1418,26 +1418,57 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 , '... ')
             xvt.waste(800)
             xvt.out('\n', xvt.reset)
-            if (backfire) {
-                nme.user.xp *= 2
+            if (backfire && rpc.user.level > 1) {
                 rpc.user.xp = Math.round(nme.user.xp / 2)
+                rpc.user.xplevel--
+                rpc.user.level--
+                rpc.user.str = $.PC.ability(rpc.user.str, -$.PC.card(rpc.user.pc).toStr)
+                rpc.user.int = $.PC.ability(rpc.user.int, -$.PC.card(rpc.user.pc).toInt)
+                rpc.user.dex = $.PC.ability(rpc.user.dex, -$.PC.card(rpc.user.pc).toDex)
+                rpc.user.cha = $.PC.ability(rpc.user.cha, -$.PC.card(rpc.user.pc).toCha)
+                rpc.str = $.PC.ability(rpc.str, -$.PC.card(rpc.user.pc).toStr)
+                rpc.int = $.PC.ability(rpc.int, -$.PC.card(rpc.user.pc).toInt)
+                rpc.dex = $.PC.ability(rpc.dex, -$.PC.card(rpc.user.pc).toDex)
+                rpc.cha = $.PC.ability(rpc.cha, -$.PC.card(rpc.user.pc).toCha)
+                rpc.user.hp -= Math.round(rpc.user.level + $.dice(rpc.user.level) + rpc.user.str / 10 + (rpc.user.str > 90 ? rpc.user.str - 90 : 0))
+                if (rpc.user.magic > 1)
+                    rpc.user.sp -= Math.round(rpc.user.level + $.dice(rpc.user.level) + rpc.user.int / 10 + (rpc.user.int > 90 ? rpc.user.int - 90 : 0))
+
+                nme.user.xp *= 2
                 xvt.out(nme === $.online ? 'You'
                     : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
-                    , $.what(nme, ' gain'), 'an experience level from ', rpc === $.online ? 'you'
+                    , $.what(nme, ' gain'), 'an experience level off ', rpc === $.online ? 'you'
                     : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
                     , '.\n')
                 if ($.checkXP(nme, cb)) return
             }
-            else {
-                rpc.user.xp *= 2
+            else if (!backfire && nme.user.level > 1) {
                 nme.user.xp = Math.round(nme.user.xp / 2)
                 nme.user.xplevel--
+                nme.user.level--
+                nme.user.str = $.PC.ability(nme.user.str, -$.PC.card(nme.user.pc).toStr)
+                nme.user.int = $.PC.ability(nme.user.int, -$.PC.card(nme.user.pc).toInt)
+                nme.user.dex = $.PC.ability(nme.user.dex, -$.PC.card(nme.user.pc).toDex)
+                nme.user.cha = $.PC.ability(nme.user.cha, -$.PC.card(nme.user.pc).toCha)
+                nme.str = $.PC.ability(nme.str, -$.PC.card(nme.user.pc).toStr)
+                nme.int = $.PC.ability(nme.int, -$.PC.card(nme.user.pc).toInt)
+                nme.dex = $.PC.ability(nme.dex, -$.PC.card(nme.user.pc).toDex)
+                nme.cha = $.PC.ability(nme.cha, -$.PC.card(nme.user.pc).toCha)
+                nme.user.hp -= Math.round(nme.user.level + $.dice(nme.user.level) + nme.user.str / 10 + (nme.user.str > 90 ? nme.user.str - 90 : 0))
+                if (nme.user.magic > 1)
+                    nme.user.sp -= Math.round(nme.user.level + $.dice(nme.user.level) + nme.user.int / 10 + (nme.user.int > 90 ? nme.user.int - 90 : 0))
+
+                rpc.user.xp *= 2
                 xvt.out(rpc === $.online ? 'You'
                     : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , $.what(rpc, ' gain'), 'an experience level from ', nme === $.online ? 'you'
+                    , $.what(rpc, ' gain'), 'an experience level off ', nme === $.online ? 'you'
                     : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
                     , '.\n')
                 if ($.checkXP(rpc, cb)) return
+            }
+            else {
+                cb(true)
+                return
             }
             break
 
