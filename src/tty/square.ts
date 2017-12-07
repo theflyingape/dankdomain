@@ -8,6 +8,7 @@ import {sprintf} from 'sprintf-js'
 import $ = require('../common')
 import xvt = require('xvt')
 import Battle = require('../battle')
+import { retreat } from '../battle';
 
 module Square
 {
@@ -575,10 +576,9 @@ function amount() {
 function list(choice: string) {
 	$.action('list')
 	xvt.app.form = {
-		'start': { cb:listStart, prompt:'Start list at ', max:2 },
-		'end': { cb:listEnd, prompt:'Start list at ', max:2 },
-		'buy': { cb:buy, prompt:'Buy which? ', max:2 },
-		'pause': { cb:menu, pause:true }
+		'start': { cb:listStart, prompt:'Start list at ', max:3 },
+		'end': { cb:listEnd, prompt:'Start list at ', max:3 },
+		'buy': { cb:buy, prompt:'Buy which? ', max:3 }
 	}
 	want = choice.toUpperCase()
 	xvt.app.form['start'].enter = lo.toString()
@@ -589,6 +589,11 @@ function list(choice: string) {
 }
 
 function listStart() {
+	if (/=|max/i.test(xvt.entry)) {
+		buyall()
+		return
+	}
+
 	let n = +xvt.entry >>0
 	if (n < 1) n = 1
 	if ((/R|S/.test(want) && n < lo) || n > max) {
@@ -602,6 +607,11 @@ function listStart() {
 }
 
 function listEnd() {
+	if (/=|max/i.test(xvt.entry)) {
+		buyall()
+		return
+	}
+
 	let n = +xvt.entry >>0
 	if (n < lo) n = lo
 	if (n > max) n = max
@@ -656,9 +666,14 @@ function listEnd() {
 }
 
 function buy() {
+	if (/=|max/i.test(xvt.entry)) {
+		buyall()
+		return
+	}
+
 	if (xvt.entry === '') {
 		xvt.out('\n')
-		menu()
+		menu(false)
 		return
 	}
 
@@ -753,7 +768,106 @@ function buy() {
 			}
 			break
 	}
-	xvt.app.focus = 'pause'
+
+	menu()
+}
+
+function buyall() {
+	let item: number
+	let cost: $.coins
+
+	switch (want) {
+		case 'A':
+			for (item = hi; item >= lo; item--) {
+				cost = new $.coins($.Armor.name[$.Armor.merchant[item]].value)
+				if ($.player.coin.value + credit.value >= cost.value) {
+					if ($.Armor.name[$.Armor.merchant[item]].ac > $.online.armor.ac
+						|| ($.online.armor.ac == $.Armor.name[$.Armor.merchant[item]].ac
+						&& ($.online.toAC < 0 || $.player.toAC < 0))) {
+							xvt.entry = item.toString()
+							buy()
+							return
+					}
+				}
+			}
+			break
+
+		case 'M':
+			$.profile({ png:'payment' })
+			for (let spell = lo; spell <= hi; spell++) {
+				item = spell - 1
+				cost = $.player.magic == 1 ? new $.coins($.Magic.spells[$.Magic.merchant[item]].wand)
+					:  new $.coins($.Magic.spells[$.Magic.merchant[item]].cost)
+				if ($.player.coin.value >= cost.value && !$.Magic.have($.player.spells, spell)) {
+					$.sound('click')
+					$.Magic.add($.player.spells, spell)
+					xvt.out($.bracket(spell), $.Magic.merchant[item])
+					$.player.coin.value -= cost.value
+				}
+			}
+			$.online.altered = true
+			break
+
+		case 'R':
+			for (item = hi; item >= lo; item--) {
+				cost = new $.coins($.RealEstate.name[$.RealEstate.merchant[item]].value)
+				if ($.player.coin.value + credit.value >= cost.value) {
+					if ($.RealEstate.name[$.RealEstate.merchant[item]].protection > $.RealEstate.name[$.player.realestate].protection) {
+						xvt.entry = item.toString()
+						buy()
+						return
+					}
+				}
+			}
+			break
+
+		case 'S':
+			for (item = hi; item >= lo; item--) {
+				cost = new $.coins($.Security.name[$.Security.merchant[item]].value)
+				if ($.player.coin.value + credit.value >= cost.value) {
+					if ($.Security.name[$.Security.merchant[item]].protection > $.Security.name[$.player.security].protection) {
+						xvt.entry = item.toString()
+						buy()
+						return
+					}
+				}
+			}
+			break
+
+		case 'V':
+			$.profile({ png:'payment' })
+			for (let vial = lo; vial <= hi; vial++) {
+				item = vial - 1
+				cost = $.player.poison == 1 ? new $.coins($.Poison.vials[$.Poison.merchant[item]].vial)
+					:  new $.coins($.Poison.vials[$.Poison.merchant[item]].cost)
+				if ($.player.coin.value >= cost.value && !$.Poison.have($.player.poisons, vial)) {
+					$.sound('click')
+					$.Poison.add($.player.poisons, vial)
+					xvt.out('\nHe slips you a vial of ', $.Poison.merchant[item])
+					$.player.coin.value -= cost.value
+				}
+			}
+			$.online.altered = true
+			break
+
+		case 'W':
+			for (item = hi; item >= lo; item--) {
+				cost = new $.coins($.Weapon.name[$.Weapon.merchant[item]].value)
+				if ($.player.coin.value + credit.value >= cost.value) {
+					if ($.Weapon.name[$.Weapon.merchant[item]].wc > $.online.weapon.wc
+						|| ($.online.weapon.wc == $.Weapon.name[$.Weapon.merchant[item]].wc
+						&& ($.online.toWC < 0 || $.player.toWC < 0))) {
+							xvt.entry = item.toString()
+							buy()
+							return
+					}
+				}
+			}
+			break
+	}
+
+	xvt.out('\n')
+	menu()
 }
 
 }
