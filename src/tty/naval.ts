@@ -11,7 +11,9 @@ import Battle = require('../battle')
 
 module Naval
 {
+	let mon: number
 	let monsters: naval[] = require('../etc/naval.json')
+	let sm: naval
 	let naval: choices = {
 		'S': { description:'Shipyard' },
         'B': { description:'Battle other users' },
@@ -625,7 +627,7 @@ function BattleUser(nme: active) {
 
 				case 'R':
 					if ($.player.ram) {
-						if ($.dice(50 + nme.int / 2) > 100 * nme.hull / (nme.hull +$.online.hull)) {
+						if ($.dice(50 + nme.int / 2) > 100 * nme.hull / (nme.hull + $.online.hull)) {
 							xvt.out(`\n${$.who(nme, 'He')}quickly outmaneuvers your ship.\n`)
 							xvt.out(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
 								[ 'Aim for the head, not the tail!'
@@ -705,10 +707,10 @@ function BattleUser(nme: active) {
 	}
 
 	function him(): boolean {
-		if (!nme.user.cannon) {
+		if (!nme.user.cannon && !nme.user.ram) {
 			xvt.out('They are defenseless and attempt to flee . . . ')
 			xvt.waste(1000)
-			if ($.dice(50 + $.online.int / 2) > 100 * $.online.hull / ($.online.hull + nme.hull)) {
+			if ($.dice(50 + $.online.int / 2) > 50 * $.online.hull / ($.online.hull + nme.hull) + 50) {
 				xvt.out(`\nYou outmaneuver them and stop their retreat!\n`)
 				xvt.waste(500)
 				return false
@@ -719,8 +721,10 @@ function BattleUser(nme: active) {
 			$.online.altered = true
 			return true
 		}
-		let result = fire(nme, $.online)
-		$.saveUser(nme)
+		if (!nme.user.ram || (nme.user.cannon && $.dice(2 * nme.hull / (nme.hull - $.online.hull) + 4) > 1))
+			fire(nme, $.online)
+		else
+			ram(nme, $.online)
 		$.online.altered = true
 		if ($.online.hull < 1) {
 			xvt.out(`\n${nme.user.handle} smiles as a shark approaches you.\n`)
@@ -733,8 +737,8 @@ function BattleUser(nme: active) {
 
 function MonsterHunt() {
 
-	let mon = +xvt.entry - 1
-	let sm = Object.assign({}, monsters[mon])
+	mon = +xvt.entry - 1
+	sm = Object.assign({}, monsters[mon])
 	let damage: number
 
 	xvt.out(`\nYou sail out until you spot${$.an(sm.name)} on the horizon.\n\n`)
@@ -781,7 +785,7 @@ function MonsterHunt() {
 					break
 
 				case 'S':
-					if ($.dice(50 + monsters[mon].int / 2) > 50 + (50 * sm.hull / (sm.hull + $.online.hull))) {
+					if ($.dice(50 + monsters[mon].int / 2) > 50 * sm.hull / (sm.hull + $.online.hull) + 50) {
 						$.sound('oops')
 						xvt.out('\nIt outmaneuvers you and stops your retreat!\n')
 						xvt.waste(500)
@@ -853,7 +857,7 @@ function MonsterHunt() {
 	}
 
 	function you(): boolean {
-		let result = fire($.online, <active>{ hull:sm.hull, user:{ id:'', handle:sm.name, hull:-1, cannon:0, ram:false } })
+		let result = fire($.online, <active>{ hull:sm.hull, user:{ id:'', handle:monsters[mon].name, hull:monsters[mon].hull, cannon:0, ram:monsters[mon].ram } })
 		if ((sm.hull -= result.damage) > 0)
 			return false
 
@@ -863,15 +867,19 @@ function MonsterHunt() {
 
 	function it(): boolean {
 		let damage = 0
-		for (let i = 0; i < sm.shot; i++)
-			damage += $.dice(sm.powder) + $.dice(sm.powder)
 
-		xvt.out('\n', xvt.bright, xvt.blue, `The ${sm.name} attacks your ship, causing`
-			, xvt.cyan, ` ${damage} `
-			, xvt.blue, `hull points of damage.`)
-		xvt.out(xvt.reset, '\n')
-		xvt.waste(250)
-	
+		if (!sm.ram || ($.dice(sm.shot * sm.hull / (sm.hull - $.online.hull) + 3 * sm.shot) > 1)) {
+			for (let i = 0; i < sm.shot; i++)
+				damage += $.dice(sm.powder) + $.dice(sm.powder)
+			xvt.out('\n', xvt.bright, xvt.blue, `The ${sm.name} attacks your ship, causing`
+				, xvt.cyan, ` ${damage} `
+				, xvt.blue, `hull points of damage.`)
+			xvt.out(xvt.reset, '\n')
+			xvt.waste(250)
+		}
+		else
+			ram(<active>{ hull:sm.hull, user:{ id:'', handle:monsters[mon].name, hull:monsters[mon].hull, cannon:sm.shot, ram:sm.ram } }, $.online)
+
 		if (($.online.hull -= damage) < 1) {
 			$.online.altered = true
 			$.online.hull = 0
@@ -966,6 +974,24 @@ function fire(a: active, d: active): {  hits:number, damage:number, hull:number,
 	xvt.waste(250)
 
 	return { hits, damage, hull, cannon, ram }
+}
+
+function ram(a: active, d: active) {
+	if (a.user.id) xvt.out(xvt.yellow)
+	else xvt.out(xvt.bright, xvt.blue)
+	xvt.out(`\n${a.user.handle} ${$.what(a, 'ram')}${$.who(d, 'him')}for`)
+
+	let damage = $.dice(a.user.hull / 2) + $.dice(a.hull / 2)
+	if (a.user.id) xvt.out(xvt.bright)
+	else xvt.out(xvt.cyan)
+	xvt.out(` ${damage} `)
+
+	if (a.user.id) xvt.out(xvt.normal)
+	else xvt.out(xvt.blue)
+	xvt.out(`hull points of damage!\n`, xvt.reset)
+	xvt.waste(500)
+
+	d.hull -= damage
 }
 
 }

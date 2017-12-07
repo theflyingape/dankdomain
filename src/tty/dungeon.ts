@@ -1906,8 +1906,8 @@ function putMonster(r = -1, c = -1): boolean {
 	i = room.monster.push(<active>{ user:{ id: '', sex:'I', level:level } }) - 1
 	m = room.monster[i]
 
-	//	pick and generate monster class relative to its level
-	j = level + $.dice(7) - 4
+	//	pick and generate monster relative to its level
+	j = level + $.dice(3) - 2
 	j = j < 0 ? 0 : j >= Object.keys(monsters).length ? Object.keys(monsters).length - 1 : j
 	m.user.handle = Object.keys(monsters)[j]
 	dm = monsters[m.user.handle]

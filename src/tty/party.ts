@@ -412,28 +412,30 @@ function choice() {
                             nme.push(<active>{})
                             nme[i].user = <user>{id: ''}
 
-                            let mon = $.dice(7) - 4 + (posse[i] ? posse[i].user.level : $.dice(100))
+                            let mon = $.dice(7) - 4 + (posse[i] ? posse[i].user.level : $.dice(Object.keys(monsters).length))
                             mon = mon < 0 ? 0 : mon >= Object.keys(monsters).length ? Object.keys(monsters).length - 1 : mon
                             let dm = Object.keys(monsters)[mon]
+                            let ml = mon + $.dice(3) - 2
+                            ml = ml < 1 ? 1 : ml > 99 ? 99 : ml
                             nme[i].user.handle = dm
                             nme[i].user.sex = 'I'
-                            $.reroll(nme[i].user, monsters[dm].pc ? monsters[dm].pc : $.player.pc, mon)
+                            $.reroll(nme[i].user, monsters[dm].pc ? monsters[dm].pc : $.player.pc, ml)
 
-                            nme[i].user.weapon = monsters[dm].weapon ? monsters[dm].weapon : $.Weapon.merchant[Math.trunc(($.Weapon.merchant.length - 1) * mon / 100) + 1]
-                            nme[i].user.armor = monsters[dm].armor ? monsters[dm].armor : $.Armor.merchant[Math.trunc(($.Armor.merchant.length - 1) * mon / 100) + 1]
+                            nme[i].user.weapon = monsters[dm].weapon ? monsters[dm].weapon : $.Weapon.merchant[Math.trunc(($.Weapon.merchant.length - 1) * ml / 100) + 1]
+                            nme[i].user.armor = monsters[dm].armor ? monsters[dm].armor : $.Armor.merchant[Math.trunc(($.Armor.merchant.length - 1) * ml / 100) + 1]
 
                             nme[i].user.poisons = []
                             if (monsters[dm].poisons)
                                 for (let vials in monsters[dm].poisons)
                                     $.Poison.add(nme[i].user.poisons, monsters[dm].poisons[vials])
 
-                                    nme[i].user.spells = []
+                            nme[i].user.spells = []
                             if (monsters[dm].spells)
                                 for (let magic in monsters[dm].spells)
                                     $.Magic.add(nme[i].user.spells, monsters[dm].spells[magic])
         
                             $.activate(nme[i])
-                            nme[i].user.coin = new $.coins($.money(mon))
+                            nme[i].user.coin = new $.coins($.money(ml))
 
                             nme[i].user.handle = titleCase(dm)
                             nme[i].user.gang = o.name

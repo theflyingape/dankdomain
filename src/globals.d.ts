@@ -146,6 +146,7 @@ interface naval {
     hull: number
     shot: number
     powder: number
+    ram: boolean
     money?: string|number
 }
 
