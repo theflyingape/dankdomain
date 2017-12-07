@@ -456,7 +456,7 @@ export function spoils() {
 
         for (let m in parties[w]) {
             tl[w] += parties[w][m].user.xplevel
-            take += parties[w][m].user.xp
+            take += parties[w][m].user.xp + 1
         }
 
         for (let m in parties[l]) {
@@ -477,6 +477,7 @@ export function spoils() {
             let cut = parties[w][m].hp > 0 ? 0.95 : 0.25
             let max = Math.trunc(250 * $.money(parties[w][m].user.level) * cut)
             let award = Math.trunc(coin.value * parties[w][m].user.xp / take * cut)
+            award = award > coin.value ? coin.value : award
             award = award < 1 ? 0 : award > max ? max : award
             parties[w][m].user.coin.value += award
             coin.value -= award
@@ -499,6 +500,7 @@ export function spoils() {
             }
         }
 
+        //  taxman takes any leftovers, but capped at 1p
         coin.value = coin.value < 1 ? 0 : coin.value > 1e+13 ? 1e+13 : coin.value
         if (coin.value) {
             $.loadUser($.taxman)
