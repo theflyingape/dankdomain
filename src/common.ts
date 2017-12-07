@@ -352,7 +352,7 @@ export class coins {
     }
 
     set value(newValue: number) {
-        this._value = newValue < 1e+19 ? newValue : 1e+19 - 1
+        this._value = newValue < 1e+18 ? newValue : newValue == Infinity ? 1 : 1e+18 - 1
     }
 
     //  top valued coin bag (+ a lesser)
