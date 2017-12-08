@@ -475,7 +475,7 @@ export function spoils() {
         for (let m in parties[w]) {
             //  dead men get far less of the booty, taxman always gets a cut
             let cut = parties[w][m].hp > 0 ? 0.95 : 0.25
-            let max = Math.trunc(250 * $.money(parties[w][m].user.level) * cut)
+            let max = Math.trunc(1000 * $.money(parties[w][m].user.level) * cut)
             let award = Math.trunc(coin.value * parties[w][m].user.xp / take * cut)
             award = award > coin.value ? coin.value : award
             award = award < 1 ? 0 : award > max ? max : award

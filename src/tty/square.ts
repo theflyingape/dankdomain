@@ -117,8 +117,8 @@ function choice() {
 		case 'H':
 			if (!$.access.roleplay) break
 			if ($.Armor.name[$.player.armor].ac == 0 && ($.online.toAC < 0 || $.player.toAC < 0)) {
-				credit = new $.coins(($.online.toAC + $.player.toAC) + 's')
-				$.action('yn')				
+				credit = new $.coins(Math.abs($.online.toAC + $.player.toAC) * $.money($.player.level) + 1)
+				$.action('yn')
 				xvt.app.form = {
 					'skin': { cb:() => {
 						if (/Y/i.test(xvt.entry)) {
@@ -144,8 +144,8 @@ function choice() {
 				return
 			}
 			if ($.Weapon.name[$.player.weapon].wc == 0 && ($.online.toWC < 0 || $.player.toWC < 0)) {
-				credit = new $.coins(($.online.toWC + $.player.toWC) + 's')
-				$.action('yn')				
+				credit = new $.coins(Math.abs($.online.toWC + $.player.toWC) * $.money($.player.level) + 1)
+				$.action('yn')
 				xvt.app.form = {
 					'hands': { cb:() => {
 						if (/Y/i.test(xvt.entry)) {

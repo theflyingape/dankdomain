@@ -93,7 +93,7 @@ export class Character {
         random(type?: string): string {
             let pc: string = ''
             if (type) {
-                let i = dice(this.classes.find(item => item.key === type)[0].value)
+                let i = dice(Object.keys(this.name[type]).length) - 1
                 let n = i
                 for (let dd in this.name[type])
                     if (!--n) {
@@ -1895,7 +1895,6 @@ export function wall(msg: string) {
         if (npc.magic) taxman.user.magic = npc.magic
         if (npc.poisons) taxman.user.poisons = npc.poisons
         if (npc.spells) taxman.user.spells = npc.spells
-        taxman.user.xplevel = 0
         saveUser(taxman, true)
     }
 
@@ -2078,7 +2077,7 @@ export function newDay() {
     sqlite3.exec(`UPDATE Players SET bank=bank+coin WHERE id NOT GLOB '_*'`)
     sqlite3.exec(`UPDATE Players SET coin=0`)
 
-    let rs = sqlite3.prepare(`SELECT id FROM Players WHERE id NOT GLOB '_*' AND magic > 0`).all()
+    let rs = sqlite3.prepare(`SELECT id FROM Players WHERE id NOT GLOB '_*' AND status = '' AND magic > 0 AND bank > 99999`).all()
     let user: user = { id:'' }
     for (let row in rs) {
         user.id = rs[row].id

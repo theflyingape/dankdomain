@@ -8,11 +8,14 @@ import {sprintf} from 'sprintf-js'
 import xvt = require('xvt')
 
 import $ = require('../common')
+import Battle = require('../battle')
 import Email = require('../email')
-import { newkeys } from '../common';
+//import { newkeys } from '../common';
 
 module Logon
 {
+    let tax: coins = new $.coins(0)
+
     process.stdin.setEncoding(xvt.emulation == 'XT' ? 'utf8' : 'ascii')
     xvt.out(xvt.bright, xvt.cyan, xvt.emulation, ' emulation enabled\n\f', xvt.reset)
 
@@ -80,7 +83,7 @@ function who() {
     if (/new/i.test(xvt.entry)) {
         // a bit hack for now, but...
         $.reroll($.player)
-        newkeys($.player)
+        $.newkeys($.player)
         xvt.emulation = 'dumb'
         $.emulator(() => {
             $.player.emulation = xvt.emulation
@@ -327,7 +330,7 @@ function welcome() {
             )
             $.cat('auto-message')
 
-            require('./main').menu(true)
+            cityguards()
         }, pause:true }
     }
     if (process.env.LINES && +process.env.LINES !== $.player.rows)
@@ -335,6 +338,116 @@ function welcome() {
             , `Your USER ROW setting ${$.player.rows} does not match detected login size: ${process.env.LINES}`
             , xvt.reset, '\n')
     xvt.app.focus = 'pause'
+}
+
+function cityguards() {
+    let irs: active[]
+    tax.value = 1000 * $.money($.player.level)
+
+    if ($.player.coin.value + $.player.bank.value > tax.value) {
+        $.loadUser($.taxman)
+        $.profile({ png:'player/' + $.taxman.user.pc.toLowerCase() + ($.taxman.user.gender === 'F' ? '_f' : '')
+            , handle:$.taxman.user.handle
+            , level:$.taxman.user.level, pc:$.taxman.user.pc
+        })
+
+        xvt.out('\n\n', xvt.yellow, xvt.bright, $.taxman.user.handle, xvt.normal)
+        xvt.out(`, the tax collector, looks at your bulging money purse\n`)
+        xvt.out(`and says, "Ah, it is time to pay your taxes!"  You check out the burly\n`)
+        xvt.out(`guards who stand ready to enforce ${$.king.handle}'s will.\n\n`)
+        xvt.waste(1000)
+        tax.value = $.player.coin.value + $.player.bank.value - tax.value
+        xvt.out(`The tax will cost you ${tax.carry()}.\n`)
+        xvt.waste(1000)
+
+        $.action('yn')
+        xvt.app.form = {
+            'tax': { cb:() => {
+                xvt.out('\n\n')
+                if (/Y/i.test(xvt.entry)) {
+                    xvt.out('You pay the tax.\n')
+                    xvt.waste(1000)
+                    $.player.coin.value -= tax.value
+                    if ($.player.coin.value < 0) {
+                        $.player.bank.value += $.player.coin.value
+                        $.player.coin.value = 0
+                        if ($.player.bank.value < 0) {
+                            $.player.loan.value -= $.player.bank.value
+                            $.player.bank.value = 0
+                        }
+                    }
+                    require('./main').menu()
+                    return
+                }
+
+                let i = 0
+                let xhp = $.player.hp * 2 / 3
+                irs = new Array()
+                do {
+                    irs.push(<active>{ user:{ id:'' } })
+                    irs[i].user.level = $.dice($.player.level * 2 / 3)
+                    irs[i].user.handle = `City Guard #${i + 1}`
+                    irs[i].user.gender = 'M'
+                    $.reroll(irs[i].user, $.PC.random('player'), irs[i].user.level)
+
+                    let w = Math.trunc(irs[i].user.level / 100 * ($.Weapon.merchant.length - 1)) + 1
+                    w = w < 1 ? 1 : w >= $.Weapon.merchant.length ? $.Weapon.merchant.length - 1 : w
+                    irs[i].user.weapon = $.Weapon.merchant[w]
+                    irs[i].user.toWC = 2
+
+                    let a = Math.trunc(irs[i].user.level / 100 * ($.Armor.merchant.length - 1)) + 1
+                    a = a < 1 ? 1 : a >= $.Armor.merchant.length ? $.Armor.merchant.length - 1 : a
+                    irs[i].user.armor = $.Armor.merchant[a]
+                    irs[i].user.toAC = 1
+
+                    $.activate(irs[i])
+                    xhp -= irs[i++].hp
+                } while (xhp > 0)
+
+                $.music('taxman')
+                xvt.out(`The tax collector orders the guards, "Run this outlaw through!"\n`)
+                xvt.waste(1000)
+
+                Battle.engage('taxes', $.online, irs, taxman)
+            }, prompt:'Will you pay the tax (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i }
+        }
+        xvt.app.focus = 'tax'
+        return
+    }
+
+    require('./main').menu()
+}
+
+function taxman() {
+	if ($.reason) xvt.hangup()
+    if (Battle.retreat || Battle.teleported) {
+        xvt.out(xvt.bright, xvt.cyan, '\nYou got schooled, and pay the tax.\n', xvt.reset)
+        xvt.waste(1000)
+        $.player.coin.value -= tax.value
+        if ($.player.coin.value < 0) {
+            $.player.bank.value += $.player.coin.value
+            $.player.coin.value = 0
+            if ($.player.bank.value < 0) {
+                $.player.loan.value -= $.player.bank.value
+                $.player.bank.value = 0
+            }
+        }
+        require('./main').menu()
+        return
+    }
+
+    xvt.out(xvt.yellow, '\nThe tax collector ', [
+        `mutters, "Good help is hard to find these days..."`,
+        `sighs, "If you want a job done right..."`,
+        `swears, "That's gonna cost you."`
+        ][$.dice(3) - 1], '\n\n', xvt.reset)
+    xvt.waste(1000)
+
+    $.activate($.taxman)
+    $.taxman.user.id = ''
+    $.taxman.user.coin = tax
+
+    Battle.engage('Taxman', $.online, $.taxman, require('./main').menu)
 }
 
 }
