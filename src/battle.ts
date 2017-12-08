@@ -22,6 +22,23 @@ module Battle
     export let volley: number
 
 function end() {
+    if (from === 'Taxman' && $.online.hp < 1) {
+        $.player.coin.value -= $.taxman.user.coin.value
+        if ($.player.coin.value < 0) {
+            $.player.bank.value += $.player.coin.value
+            $.player.coin.value = 0
+            if ($.player.bank.value < 0) {
+                $.player.loan.value -= $.player.bank.value
+                $.player.bank.value = 0
+            }
+        }
+        xvt.out('\n')
+        $.sound('max', 8)
+        xvt.out(xvt.yellow, '"Thanks for the taxes!"\n')
+        $.sound('thief', 16)
+        $.reason = 'tax evasion'
+    }
+
     if (from === 'User') {
         let opponent = parties[1][0]
         if (!(opponent.user.id === '_' || opponent.user.gender === 'I')) {
@@ -98,7 +115,7 @@ export function engage(module:string, party: active|active[], mob: active|active
 //  new round of volleys
 export function attack(retry = false) {
     //  no more attacking
-    if (retreat || teleported || ++volley > 99999) {
+    if (retreat || teleported || ++volley > 12345) {
         if ($.online.confused)
             $.activate($.online, false, true)
         end()
@@ -159,12 +176,16 @@ export function attack(retry = false) {
                 if (/R/i.test(xvt.entry)) {
                     if (from === 'Taxman') {
                         xvt.out('"You can never escape the taxman!"\n')
-                        xvt.app.refocus
+                        $.player.coward = true
+                        $.saveUser($.player)
+                        next()
                         return
                     }
                     if(from === 'Tiny') {
                         xvt.out('"You try to escape, but the crowd throws you back to witness the slaughter!"\n')
-                        xvt.app.refocus
+                        $.player.coward = true
+                        $.saveUser($.player)
+                        next()
                         return
                     }
 
@@ -360,7 +381,7 @@ export function attack(retry = false) {
             if (!mm) {
                 if ($.Magic.have(rpc.user.spells, 13)
                     && rpc.sp >= $.Magic.power(rpc, 13)
-                    && rpc.hp < (rpc.user.hp / 5))
+                    && rpc.hp < (rpc.user.hp / 6))
                         mm = 13
                 else if ($.Magic.have(rpc.user.spells, 8)
                     && rpc.sp >= $.Magic.power(rpc, 8)
@@ -431,6 +452,9 @@ export function spoils() {
 
     if ($.online.confused)
         $.activate($.online, false, true)
+
+    if (from === 'Gates')
+        return
 
     if (alive[0]) {
         winner = $.online
@@ -521,6 +545,7 @@ export function spoils() {
         return
     }
 
+    //  the losers are them, not me
     if (l) {
         // player can collect off each corpse
         let xp: number = 0
@@ -617,7 +642,31 @@ export function spoils() {
         }
     }
     else {
-        if (winner.user.id) {
+        //  accruing money is always eligible
+        if ($.player.coin.value) {
+            winner.user.coin.value += $.player.coin.value
+            xvt.out($.who(winner, 'He'), 'gets ', $.player.coin.carry(), ' you were carrying.\n')
+            $.player.coin.value = 0
+            $.saveUser(winner)
+        }
+        xvt.out(1000)
+
+        //  manage grace modifiers, but not sticky for NPC
+        if (winner.user.cursed) {
+            if ($.player.blessed) {
+                $.player.blessed = ''
+                xvt.out(xvt.bright, xvt.yellow, 'Your shining aura leaves you.\n', xvt.reset)
+            }
+            else {
+                $.player.cursed = winner.user.id
+                winner.user.cursed = ''
+                xvt.out(xvt.bright, xvt.black, 'A dark cloud hovers over you.\n', xvt.reset)
+            }
+            xvt.waste(1000)
+        }
+
+        //  manage any asset upgrades for PC
+        if (winner.user.id && winner.user.id[0] !== '_') {
             $.log(winner.user.id, `\nYou killed ${$.player.handle}!`)
             if ($.player.blessed) {
                 winner.user.blessed = $.player.id
@@ -633,19 +682,8 @@ export function spoils() {
                 xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who($.online, 'his'), winner.user.armor, '.\n')
                 $.log(winner.user.id, `You upgraded to ${winner.user.armor}.`)
             }
-            if (winner.user.cursed) {
-                $.player.cursed = winner.user.id
-                winner.user.cursed = ''
-                xvt.out(xvt.bright, xvt.black, 'A dark cloud hovers over you.\n', xvt.reset)
-                xvt.waste(1000)
-            }
+            $.saveUser(winner)
         }
-        if ($.player.coin.value) {
-            winner.user.coin.value += $.player.coin.value
-            xvt.out($.who(winner, 'He'), 'gets ', $.player.coin.carry(), ' you were carrying.\n')
-            $.player.coin.value = 0
-        }
-        xvt.out(1000)
     }
     $.online.altered = true
 }

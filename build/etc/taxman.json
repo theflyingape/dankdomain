@@ -14,11 +14,14 @@
     "int": 95,
     "dex": 95,
     "cha": 85,
-    "hp": 2200,
-    "sp": 2200,
+    "hp": 2244,
+    "sp": 3583,
     "melee": 2,
     "magic": 2,
-    "weapon": 44,
-    "armor": 22,
-    "spells": [ 7, 8, 19 ]
+    "weapon": "Short Sword",
+    "armor": "Cloak of Wonder",
+    "spells": [ 8, 19, 20 ],
+    "toAC": 6,
+    "toWC": 13,
+    "wins": 1
 }
