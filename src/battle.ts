@@ -620,6 +620,13 @@ export function spoils() {
                         winner.dex = $.PC.ability(winner.dex, 10, winner.user.maxdex, 10)
                         winner.cha = $.PC.ability(winner.cha, 10, winner.user.maxcha, 10)
                     }
+                    if (loser.user.bounty.value) {
+                        xvt.out(`You get the ${loser.user.bounty.carry()} bounty posted by ${loser.user.who}, too.\n`)
+                        $.log(loser.user.id, `... and got paid the bounty posted by ${loser.user.who}.`)
+                        winner.user.coin.value += loser.user.bounty.value
+                        loser.user.bounty.value = 0
+                        loser.user.who = ''
+                    }
                     xvt.out(1000)
                 }
             }

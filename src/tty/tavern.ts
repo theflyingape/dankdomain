@@ -6,6 +6,7 @@
 import $ = require('../common')
 import xvt = require('xvt')
 
+import Battle = require('../battle')
 import Taxman = require('./taxman')
 
 module Tavern
@@ -65,7 +66,7 @@ function choice() {
             break
 
         case 'G':
-            xvt.out(`${$.barkeep.user.handle} pours you a beer.\n`)
+            xvt.out(`\n${$.barkeep.user.handle} pours you a beer.\n`)
             xvt.waste(500)
 
             $.action('payment')
@@ -117,6 +118,77 @@ function choice() {
             xvt.app.focus = 'tip'
             return
 
+        case 'L':
+            xvt.out(xvt.green, '\n        --=:)) Tavern Bounty List ((:=--', xvt.reset, '\n\n')
+            let rs = $.query(`SELECT handle,bounty,who FROM Players WHERE bounty > 0 ORDER BY level DESC`)
+            for (let i in rs) {
+                let adversary = <active>{ user:{ id:rs[i].who } }
+                $.loadUser(adversary)
+                let bounty = new $.coins(rs[i].bounty)
+                xvt.out(`${rs[i].handle} has a ${bounty.carry()} bounty from ${adversary.user.handle}\n`)
+            }
+            xvt.app.form = {
+                'pause': { cb:menu, pause:true }
+            }
+            xvt.app.focus = 'pause'
+            return
+
+        case 'P':
+            if (!$.access.roleplay) break
+            if ($.player.coin.value < 1) {
+                xvt.out('\nYou\'ll need some cash to post a bounty.\n')
+                xvt.waste(1000)
+                break
+            }
+            if ($.player.novice || $.player.level < 10) {
+                xvt.out('\nThe crowd laughs at your gesture.\n')
+                xvt.waste(1000)
+                xvt.out(`${$.barkeep.user.handle} snorts, "Be for real."\n`)
+                xvt.waste(1000)
+                break
+            }
+            Battle.user('Bounty', (opponent: active) => {
+                if (opponent.user.id === '' || opponent.user.id === $.player.id) {
+                    menu()
+                    return
+                }
+                xvt.out('\n')
+                if (opponent.user.bounty.value) {
+                    xvt.out(`${opponent.user.handle} already has a bounty posted.\n`)
+                    menu()
+                    return
+                }
+
+                let max = new $.coins(10 * $.money(opponent.user.level))
+                if (max.value > $.player.coin.value)
+                    max.value = $.player.coin.value
+
+                $.action('payment')
+                xvt.app.form = {
+                    'coin': { cb: () => {
+                        let post = Math.abs(Math.trunc(/=|max/i.test(xvt.entry) ? max.value : +xvt.entry))
+                        if (post > 0 && post <= max.value) {
+                            $.player.coin.value -= max.value
+                            opponent.user.bounty = max
+                            opponent.user.who = $.player.id
+                            $.sound('click')
+                            xvt.out(`\n\nYour bounty is posted for all to see.\n`)
+                            $.news(`\tposted a bounty on ${opponent.user.handle}`)
+                            $.saveUser(opponent)
+                            xvt.waste(500)
+                        }
+                    }, max:24 }
+                }
+                xvt.app.form['coin'].prompt = `Bounty [MAX=${max.carry()}]? `
+                xvt.app.focus = 'coin'
+                return
+            })
+            break
+
+        case 'S':
+			if (!$.access.roleplay) break
+            break
+        
         case 'Q':
 			require('./main').menu($.player.expert)
 			return

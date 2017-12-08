@@ -39,7 +39,7 @@ function checkpoint(): boolean {
 //  tax checkpoint at the bar
 export function bar() {
 
-    tax.value = 100 * $.money($.player.level)
+    tax.value = 10 * $.money($.player.level)
     if (checkpoint()) {
         $.sound('max', 4)
         xvt.out('You really want a drink, so you pay the tax.\n')

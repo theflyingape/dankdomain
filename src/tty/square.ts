@@ -8,7 +8,7 @@ import {sprintf} from 'sprintf-js'
 import $ = require('../common')
 import xvt = require('xvt')
 import Battle = require('../battle')
-import { retreat } from '../battle';
+//import { retreat } from '../battle';
 
 module Square
 {
