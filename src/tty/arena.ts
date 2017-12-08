@@ -32,7 +32,19 @@ export function menu(suppress = true) {
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }
-    xvt.app.form['menu'].prompt = $.display('arena', xvt.Red, xvt.red, suppress, arena)
+
+	let hints = ''
+	if (!suppress) {
+		if ($.online.hp < $.player.hp)
+			hints += `> But Hit Points!\n`
+		if ($.joust)
+			hints += `> Try jousting another player to win money.\n`
+		if ($.player.poisons.length && !$.online.toWC)
+			hints += `> Don\'t forget to poison your weapon.\n`
+		if ($.player.coin.value)
+			hints += `> Carrying money around here is not a good idea.  Spend it in the Square\n  or deposit it in the Bank for safer keeping.\n`
+	}
+	xvt.app.form['menu'].prompt = $.display('arena', xvt.Red, xvt.red, suppress, arena, hints)
 	xvt.app.focus = 'menu'
 }
 

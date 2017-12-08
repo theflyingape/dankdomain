@@ -66,7 +66,7 @@ function choice() {
             }
 
         case 'A':
-            require('./arena').menu($.player.expert)
+            require('./arena').menu(false)
             return
 
         case 'D':
@@ -83,11 +83,11 @@ function choice() {
 
         case 'G':
             $.music('casino')
-            require('./gambling').menu($.player.expert)
+            require('./gambling').menu(false)
             return
 
         case 'L':
-            require('./hall').menu($.player.expert)
+            require('./hall').menu(false)
             return
 
         case 'M':
@@ -273,7 +273,7 @@ function choice() {
             return
 
         case 'S':
-            require('./square').menu($.player.expert)
+            require('./square').menu(false)
             return
 
         case 'T':
@@ -282,7 +282,7 @@ function choice() {
                 break
             }
             $.music('tavern' + $.dice(4))
-            require('./tavern').menu($.player.expert)
+            require('./tavern').menu(false)
             return
 
         case 'U':

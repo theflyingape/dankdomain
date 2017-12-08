@@ -49,7 +49,12 @@ export function menu(suppress = true) {
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }
-    xvt.app.form['menu'].prompt = $.display('party', xvt.Magenta, xvt.magenta, suppress, party)
+
+	let hints = ''
+	if (!$.player.gang)
+        hints += `> Join an existing gang or start a new one.\n`
+
+    xvt.app.form['menu'].prompt = $.display('party', xvt.Magenta, xvt.magenta, suppress, party, hints)
     xvt.app.focus = 'menu'
 }
 

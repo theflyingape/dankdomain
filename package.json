@@ -1,6 +1,6 @@
 {
   "name": "dankdomain",
-  "version": "0.8.12",
+  "version": "0.9.0",
   "description": "Dank Domain: the return of Hack & Slash (1990-2014)",
   "main": "ttymain",
   "publisher": "theflyingape",
@@ -35,7 +35,7 @@
   "dependencies": {
     "better-sqlite3": "^4.0.3",
     "fs-extra": "^2.1.2",
-    "nodemailer": "^4.4.0",
+    "nodemailer": "^4.4.1",
     "nodemailer-smtp-transport": "^2.7.4",
     "sprintf-js": "^1.1.1",
     "title-case": "^2.1.1",

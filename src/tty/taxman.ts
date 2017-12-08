@@ -13,28 +13,54 @@ module Taxman
     let irs: active[]
     let tax: coins = new $.coins(0)
 
+function checkpoint(): boolean {
 
-//  tax checkpoint at the front gate
-export function cityguards() {
-    tax.value = 1000 * $.money($.player.level)
-
-    if ($.player.coin.value + $.player.bank.value > tax.value) {
+    if ($.player.coin.value > tax.value) {
         $.loadUser($.taxman)
         $.profile({ png:'player/' + $.taxman.user.pc.toLowerCase() + ($.taxman.user.gender === 'F' ? '_f' : '')
             , handle:$.taxman.user.handle
             , level:$.taxman.user.level, pc:$.taxman.user.pc
         })
 
-        xvt.waste(1500)
+        $.sound('oops', 8)
         xvt.out('\n\n', xvt.yellow, xvt.bright, $.taxman.user.handle, xvt.normal)
         xvt.out(`, the tax collector, looks at your bulging money purse\n`)
         xvt.out(`and says, "Ah, it is time to pay your taxes!"  You check out the burly\n`)
         xvt.out(`guards who stand ready to enforce ${$.king.handle}'s will.\n\n`)
-        xvt.waste(1500)
+        xvt.waste(2000)
         tax.value = $.player.coin.value + $.player.bank.value - tax.value
         xvt.out(`The tax will cost you ${tax.carry()}.\n`)
-        xvt.waste(1500)
+        xvt.waste(1000)
+        return true
+    }
+    return false
+}
 
+//  tax checkpoint at the bar
+export function bar() {
+
+    tax.value = 100 * $.money($.player.level)
+    if (checkpoint()) {
+        $.sound('max', 4)
+        xvt.out('You really want a drink, so you pay the tax.\n')
+        $.player.coin.value -= tax.value
+        if ($.player.coin.value < 0) {
+            $.player.bank.value += $.player.coin.value
+            $.player.coin.value = 0
+            if ($.player.bank.value < 0) {
+                $.player.loan.value -= $.player.bank.value
+                $.player.bank.value = 0
+            }
+        }
+        $.sound('thief', 12)
+    }
+}
+
+//  tax checkpoint at the front gate
+export function cityguards() {
+
+    tax.value = 1000 * $.money($.player.level)
+    if (checkpoint()) {
         $.action('yn')
         xvt.app.form = {
             'tax': { cb:() => {

@@ -621,6 +621,8 @@ export function checkXP(rpc: active, cb: Function): boolean {
 
 export function skillplus(rpc: active, cb: Function) {
 
+    rpc.user.expert = true
+
     //  slow-roll endowment choices for a dramatic effect  :)
     xvt.out(xvt.reset); xvt.waste(500)
     xvt.out(xvt.bright, xvt.yellow,` + You earn a gift to endow your ${rpc.user.pc} character +\n`); xvt.waste(1000)
@@ -1621,7 +1623,7 @@ export function	cat(filename: string): boolean {
 }
 
 //  render a menu of options and return the prompt
-export function display(title:string, back:number, fore:number, suppress:boolean, menu:choices): string {
+export function display(title:string, back:number, fore:number, suppress:boolean, menu:choices, hint?: string): string {
     menu['Q'] = {}  //  Q=Quit
     if(!suppress) {
         xvt.out(xvt.reset, xvt.clear)
@@ -1641,7 +1643,12 @@ export function display(title:string, back:number, fore:number, suppress:boolean
             }
         }
     }
+
+    if (hint && access.roleplay && dice(+player.expert * (player.immortal + 1) * player.level) == 1)
+        xvt.out('\n', xvt.bright, xvt.green, hint, xvt.reset)
+
     xvt.out('\x06') /* insert any wall messages here */
+
     return xvt.attr(fore, '[', xvt.bright, xvt.yellow, back ? titlecase(title) : 'Iron Bank', xvt.normal, fore, ']'
         , xvt.faint, ' Option '
         , xvt.normal, xvt.cyan, '(Q=Quit): ')

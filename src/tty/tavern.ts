@@ -6,6 +6,8 @@
 import $ = require('../common')
 import xvt = require('xvt')
 
+import Taxman = require('./taxman')
+
 module Tavern
 {
 	let tavern: choices = {
@@ -21,16 +23,23 @@ module Tavern
 	}
 
     $.loadUser($.barkeep)
-
+        
 export function menu(suppress = true) {
     if ($.checkXP($.online, menu)) return
     if ($.online.altered) $.saveUser($.online)
+    if (Taxman.bar()) return
 
     $.action('tavern')
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }
-    xvt.app.form['menu'].prompt = $.display('tavern', xvt.Yellow, xvt.yellow, suppress, tavern)
+
+    let hints = ''
+	if (!suppress) {
+        if ($.player.coin.value)
+            hints += '> Carrying extra money around here is only good for posting a bounty\n  on someone or buying drinks & tips from the barkeep.\n'
+    }
+    xvt.app.form['menu'].prompt = $.display('tavern', xvt.Yellow, xvt.yellow, suppress, tavern, hints)
     xvt.app.focus = 'menu'
 }
 
@@ -84,7 +93,7 @@ function choice() {
                         'More stamina will yield more hit points',
                         'More intellect will yield more spell power',
                         'You don\'t miss as often with higher agility',
-                        'You can sell items for better items with higher charisma',
+                        'You can sell items for more money with higher charisma',
                         'You can do more damage in battle with higher stamina',
                         'Spells don\'t fail as often with higher intellect',
                         'Higher agility yields higher jousting ability',
@@ -93,11 +102,13 @@ function choice() {
                         'Higher baud rates yield faster screen displays',
                         'Crying will not change the world',
                         'Backstabs swish more than you wish',
-                        'Dungeon maps fall more into the hands of the lucky',
+                        'Dungeon maps find more in the hands of the lucky',
                         'Higher intellect calculates opponent\'s hit points more accurately',
                         'At least 50 Intellect points are needed to recall where you\'ve been walking',
+                        'Become your gang\'s leader in the Arena',
+                        'Deeper dungeon portals is your key to victory',
                         'I\'ll have more hints tomorrow.  Maybe'
-                    ][tip % 16])
+                    ][tip % 18])
                     xvt.out('."\n')
                     xvt.waste(1000)
                     menu()
