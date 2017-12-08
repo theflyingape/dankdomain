@@ -1388,6 +1388,8 @@ export function reroll(user: user, dd?: string, level = 1) {
         user.retreats = 0
         user.tl = 0
         user.tw = 0
+        user.bounty = new coins(0)
+        user.who = ''
     }
 
     remake(user)
