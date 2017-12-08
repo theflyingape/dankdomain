@@ -2155,7 +2155,7 @@ function quaff(v: number, it = true) {
 			break
 		}
 	}
-	pause = true
+	if (!$.reason) pause = true
 }
 
 }
