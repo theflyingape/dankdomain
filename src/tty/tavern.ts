@@ -28,8 +28,8 @@ module Tavern
 export function menu(suppress = true) {
     if ($.checkXP($.online, menu)) return
     if ($.online.altered) $.saveUser($.online)
-    if (Taxman.bar()) return
-
+    Taxman.bar()
+    
     $.action('tavern')
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }

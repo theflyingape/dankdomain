@@ -52,7 +52,7 @@ export function bar() {
                 $.player.bank.value = 0
             }
         }
-        $.sound('thief', 12)
+        $.sound('thief', 20)
     }
 }
 
