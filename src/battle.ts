@@ -63,7 +63,7 @@ function end() {
                     }
                     if (xvt.entry) {
                         $.log(opponent.user.id, `... and says,`)
-                        $.log(opponent.user.id, `"${xvt.entry}"\n`)
+                        $.log(opponent.user.id, `"${xvt.entry}"`)
                     }
                     fini()
                     }, prompt:'>', max:78 }
@@ -224,7 +224,7 @@ export function attack(retry = false) {
                     if ($.online.confused)
                         $.activate($.online, false, true)
                     if (from === 'User' && enemy.user.gender !== 'I')
-                        $.log(enemy.user.id, `${$.player.handle}, the coward, retreated from you.\n`)
+                        $.log(enemy.user.id, `\n${$.player.handle}, the coward, retreated from you.`)
                     end()
                     return
                 }
@@ -1062,7 +1062,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                         opponent.user.status = ''
                         $.saveUser(opponent)
                         $.news(`\tresurrected ${opponent.user.handle}`)
-                        $.log(opponent.user.id, `${$.player.handle} resurrected you`)
+                        $.log(opponent.user.id, `\n${$.player.handle} resurrected you`)
                         xvt.out('\n')
                     }
                     cb()
@@ -1239,7 +1239,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 if (rpc.user.gender !== 'I') {
                     $.news(`\t${rpc.user.handle} morphed into a level ${rpc.user.level} ${rpc.user.pc}!`)
                     if (rpc !== $.online)
-                        $.log(rpc.user.id, `You morphed yourself into a level ${rpc.user.level} ${rpc.user.pc}!\n`)
+                        $.log(rpc.user.id, `\nYou morphed yourself into a level ${rpc.user.level} ${rpc.user.pc}!\n`)
                 }
             }
             else {
@@ -1256,7 +1256,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 if (nme.user.gender !== 'I') {
                     $.news(`\t${nme.user.handle} got morphed into a level ${nme.user.level} ${nme.user.pc}!`)
                     if (nme !== $.online)
-                        $.log(nme.user.id, `You got morph into a level ${nme.user.level} ${nme.user.pc} by ${rpc.user.handle}!\n`)
+                        $.log(nme.user.id, `\nYou got morph into a level ${nme.user.level} ${nme.user.pc} by ${rpc.user.handle}!\n`)
                 }
             }
             xvt.waste(1000)
@@ -1582,6 +1582,8 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             rpc.user.blessed = ''
             rpc.user.cursed = $.player.id
             $.saveUser(rpc)
+            $.news(`\tcursed ${rpc.user.handle} for running away`)
+            $.log(rpc.user.id, `\n${enemy.user.handle} curses you for running away!\n`)
         }
         return
     }
