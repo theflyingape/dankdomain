@@ -741,6 +741,7 @@ function MonsterHunt() {
 	sm = Object.assign({}, monsters[mon])
 	let damage: number
 
+	$.profile({jpg:'naval/sea monster'})
 	xvt.out(`\nYou sail out until you spot${$.an(sm.name)} on the horizon.\n\n`)
 	xvt.out(`It has ${sm.hull} hull points.\n`)
 

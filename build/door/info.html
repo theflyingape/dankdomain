@@ -139,7 +139,7 @@ function cmd(html) {
 }
 
 function Logon() {
-  clearInterval(art);
+  clearInterval(art); art = null;
   cmd(`<form onsubmit="return sendLogin();">
 <input type="text" placeholder="Enter ID or Handle" name="id" autofocus required><br>
 <input type="password" placeholder="Enter password" name="password" required><br>
@@ -149,13 +149,14 @@ nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize();">`);
 }
 
 function sendLogin() {
-  setTimeout(function(){ send(document.forms[0].elements[0].value, true); }, 100);
-  setTimeout(function(){ send(document.forms[0].elements[1].value, true); }, 1000);
+  setTimeout(function(){ send(document.forms[0].elements[0].value, true); }, 99);
+  setTimeout(function(){ send(document.forms[0].elements[1].value, true); }, 1440);
   return false;
 }
 
 function Logoff() {
-  art = setInterval(rotateImage, 45000);
+  if (!art)
+    art = setInterval(rotateImage, 45000);
   cmd(`<p><input class="tall" type="button" value=" CONNECT " onclick="send(' ');"></p>`);
 }
 
@@ -183,7 +184,7 @@ function rotateImage() {
  ];
 
   var n = Math.trunc(Math.random() * images.length);
-  nme(`<img src="images/${images[n]}" onload="nmeResize();"/>`);
+  nme(`<img src="images/connect/${images[n]}" onload="nmeResize();"/>`);
 }
 
 function send(keystrokes, cr = false, et = 'emit') {
