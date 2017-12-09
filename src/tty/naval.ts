@@ -8,6 +8,7 @@ import {sprintf} from 'sprintf-js'
 import $ = require('../common')
 import xvt = require('xvt')
 import Battle = require('../battle')
+import { bold } from 'xvt';
 
 module Naval
 {
@@ -680,20 +681,27 @@ function BattleUser(nme: active) {
 			`${nme.user.handle} is now chum for the sharks!`
 			][$.dice(5) - 1], '!\n')
 		xvt.waste(500)
-		$.log(nme.user.id, `${$.player.handle} sank your ship!`)
+		$.log(nme.user.id, `\n${$.player.handle} sank your ship!`)
 		$.news(`\tsank ${nme.user.handle}\'s ship`)
 
 		let booty = new $.coins(Math.round(Math.pow(2, $.player.hull / 150) * 7937 / 250))
 		booty.value = Math.trunc(booty.value * nme.user.cannon)
+		if (nme.user.coin.value > booty.value) {
+			$.sound('boo')
+			xvt.out(`${new $.coins(nme.user.coin.value - booty.value).carry()} of the booty has settled on the ocean floor...\n`)
+			xvt.waste(500)
+			nme.user.coin.value = booty.value
+		}
 		booty.value += nme.user.coin.value
 		if (booty.value) {
 			$.sound('booty', 5)
 			xvt.out('You get ', booty.carry(), '.\n')
 			$.log(nme.user.id, `... and got ${booty.carry()}.\n`)
 			$.player.coin.value += booty.value
-			nme.user.coin.value = 0
 			xvt.waste(500)
+			nme.user.coin.value = 0
 		}
+		booty.value += nme.user.coin.value
 		$.saveUser(nme)
 		$.online.altered = true
 	}

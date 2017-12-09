@@ -1681,9 +1681,10 @@ export function emulator(cb:Function) {
     }
 
     xvt.out('\n', xvt.cyan, 'Which emulation / character encoding are you using?\n')
-    xvt.out(bracket('VT'), ' classic VT terminal with DEC drawing')
-    xvt.out(bracket('PC'), ' former ANSI color with IBM encoding')
-    xvt.out(bracket('XT'), ' modern ANSI color with UTF-8 encoding\n')
+    xvt.out(bracket('VT'), ' classic VT terminal with DEC drawing (telnet b&w)')
+    xvt.out(bracket('PC'), ' former ANSI color with IBM encoding (telnet color)')
+    xvt.out(bracket('XT'), ' modern ANSI color with UTF-8 encoding (browser multimedia)\n')
+    xvt.app.form['term'].prompt = `Select [${player.emulation}]: `
     xvt.app.focus = 'term'
 }
 
