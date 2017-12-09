@@ -8,6 +8,7 @@ import {sprintf} from 'sprintf-js'
 import $ = require('../common')
 import xvt = require('xvt')
 import Battle = require('../battle')
+import { loadUser } from '../common';
 //import { retreat } from '../battle';
 
 module Square
@@ -511,8 +512,9 @@ function Bank() {
 			break
 
 		case 'T':
-			if (!$.Access.name[$.player.access].sysop) break
-			xvt.app.form['coin'].prompt = xvt.attr('Treasury ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.taxman.user.coin.carry(), ']? ')
+			if (!$.access.sysop) break
+			loadUser($.taxman)
+			xvt.app.form['coin'].prompt = xvt.attr('Treasury ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.taxman.user.bank.carry(), ']? ')
 			xvt.app.focus = 'coin'
 			break
 
@@ -521,8 +523,9 @@ function Bank() {
 			break
 
 		case 'V':
-			if (!$.Access.name[$.player.access].sysop) break
-			xvt.app.form['coin'].prompt = xvt.attr('Vault ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.player.coin.carry(), ']? ')
+			if (!$.access.sysop) break
+			loadUser($.taxman)
+			xvt.app.form['coin'].prompt = xvt.attr('Vault ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=1000p]? ')
 			xvt.app.focus = 'coin'
 			break
 
@@ -581,6 +584,29 @@ function amount() {
 				$.player.coin.value += amount.value
 				$.online.altered = true
 				$.beep()
+			}
+			break
+
+		case 'Treasury':
+			amount.value = Math.trunc(
+				(/=|max/i.test(xvt.entry)) ? $.taxman.user.bank.value : new $.coins(xvt.entry).value
+			)
+			if (amount.value > 0 && amount.value <= $.taxman.user.bank.value) {
+				$.taxman.user.bank.value -= amount.value
+				$.player.coin.value += amount.value
+				$.beep()
+				$.saveUser($.taxman)
+			}
+			break
+
+		case 'Vault':
+			amount.value = Math.trunc(
+				(/=|max/i.test(xvt.entry)) ? new $.coins('1000p').value : new $.coins(xvt.entry).value
+			)
+			if (amount.value > 0) {
+				$.taxman.user.bank.value += amount.value
+				$.beep()
+				$.saveUser($.taxman)
 			}
 			break
 	}
