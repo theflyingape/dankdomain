@@ -18,11 +18,11 @@ module Party
     const mp = [ 'M:M', ' @ ', '{#}', '($)', '[&]', '<^>', '_V_', '-X-' ]
 
     let g: gang = {
-        name:'', members:[], handles:[], status:[], validated:[]
+        name:'', members:[], handles:[], genders:[], melee:[], status:[], validated:[]
             , win:0, loss:0, banner:0, trim:0, back:0, fore:0
     }
     let o: gang = {
-        name:'', members:[], handles:[], status:[], validated:[]
+        name:'', members:[], handles:[], genders:[], melee:[], status:[], validated:[]
             , win:0, loss:0, banner:0, trim:0, back:0, fore:0
     }
     let posse: active[]
@@ -127,7 +127,7 @@ function choice() {
                     g.back = $.dice(7)
                     g.fore = $.dice(7)
                     showGang(g)
-
+                    xtGang($.player.gender, $.player.melee, g.banner, g.trim)
                     $.action('yn')
                     xvt.app.focus = 'accept'
                 }, prompt:'New gang name? ', min:2, max:22 },
@@ -250,6 +250,7 @@ function choice() {
                 xvt.out('\nYou are not its leader.\n')
                 break
             }
+            xtGang($.player.gender, $.player.melee, g.banner, g.trim)
 
             Battle.user('Transfer leadership to', (member: active) => {
                 let n = g.members.indexOf(member.user.id)
@@ -289,7 +290,8 @@ function choice() {
                 xvt.out('\nYou are not its leader.\n')
                 break
             }
-
+            xtGang($.player.gender, $.player.melee, g.banner, g.trim)
+            
             $.action('yn')
             xvt.app.form = {
                 'drop': { cb:() => {
@@ -458,6 +460,7 @@ function choice() {
 
                     $.action('yn')
                     showGang(g, o, true)
+                    xtGang(o.genders[0], o.melee[0], o.banner, o.trim)
                     xvt.app.focus = 'fight'
                 }, prompt:'\nFight which gang? ', max:3 },
                 'fight': { cb:() => {
@@ -493,6 +496,8 @@ function loadGang(rs: any): gang {
         name: rs.name,
         members: rs.members.split(','),
         handles: [],
+        genders: [],
+        melee: [],
         status: [],
         validated: [],
         win: rs.win,
@@ -504,19 +509,25 @@ function loadGang(rs: any): gang {
     }
 
     for (let n = 0; n < gang.members.length; n++) {
-        let who = $.query(`SELECT handle, status, gang FROM Players WHERE id = '${gang.members[n]}'`)
+        let who = $.query(`SELECT handle, gender, melee, status, gang FROM Players WHERE id = '${gang.members[n]}'`)
         if (who.length) {
             gang.handles.push(who[0].handle)
+            gang.genders.push(who[0].gender)
+            gang.melee.push(who[0].melee)
             gang.status.push(who[0].status)
             gang.validated.push(who[0].gang ? who[0].gang === rs.name : undefined)
         }
         else if (gang.members[n][0] === '_') {
             gang.handles.push('')
+            gang.genders.push('I')
+            gang.melee.push(0)
             gang.status.push('')
             gang.validated.push(true)
         }
         else {
             gang.handles.push(`?unknown ${gang.members[n]}`)
+            gang.genders.push('M')
+            gang.melee.push(3)
             gang.status.push('?')
             gang.validated.push(false)
         }
@@ -687,6 +698,25 @@ function showGang(lg: gang, rg?: gang, engaged = false) {
         }
         xvt.out(xvt.reset, '\n')
         n++
+    }
+}
+
+function xtGang(sex:string, melee:number, banner:number, coat:number) {
+
+    if ($.player.emulation == 'XT') {
+        switch(sex) {
+            case 'I':
+                $.profile({ leader:'gang/leadermm', banner:'gang/bannermm', coat:'gang/coatmm' })
+                break
+
+            case 'F':
+                $.profile({ leader:`gang/leader${melee}_f`, banner:`gang/banner${banner}`, coat:`gang/coat${coat}` })
+                break
+
+            default:
+                $.profile({ leader:`gang/leader${melee}`, banner:`gang/banner${banner}`, coat:`gang/coat${coat}` })
+                break
+        }
     }
 }
 

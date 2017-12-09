@@ -96,6 +96,8 @@ interface gang {
     name: string
     members: string[]
     handles: string[]
+    genders: string[]
+    melee: number[]
     status: string[]
     validated: boolean[]
     win: number
