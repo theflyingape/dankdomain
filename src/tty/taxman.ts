@@ -13,7 +13,7 @@ module Taxman
     let irs: active[]
     let tax: coins = new $.coins(0)
 
-function checkpoint(): boolean {
+function checkpoint(scratch: number): boolean {
 
     if ($.player.coin.value > tax.value) {
         $.loadUser($.taxman)
@@ -28,7 +28,7 @@ function checkpoint(): boolean {
         xvt.out(`and says, "Ah, it is time to pay your taxes!"  You check out the burly\n`)
         xvt.out(`guards who stand ready to enforce ${$.king.handle}'s will.\n\n`)
         xvt.waste(2000)
-        tax.value = $.player.coin.value + $.player.bank.value - tax.value
+        tax.value = scratch - tax.value
         xvt.out(`The tax will cost you ${tax.carry()}.\n`)
         xvt.waste(1000)
         return true
@@ -40,9 +40,9 @@ function checkpoint(): boolean {
 export function bar() {
 
     tax.value = 10 * $.money($.player.level)
-    if (checkpoint()) {
+    if (checkpoint($.player.coin.value)) {
+        xvt.out('\nYou really want a drink, so you pay the tax.\n')
         $.sound('max', 4)
-        xvt.out('You really want a drink, so you pay the tax.\n')
         $.player.coin.value -= tax.value
         if ($.player.coin.value < 0) {
             $.player.bank.value += $.player.coin.value
@@ -52,7 +52,7 @@ export function bar() {
                 $.player.bank.value = 0
             }
         }
-        $.sound('thief', 20)
+        $.sound('thief', 18)
     }
 }
 
@@ -60,7 +60,7 @@ export function bar() {
 export function cityguards() {
 
     tax.value = 1000 * $.money($.player.level)
-    if (checkpoint()) {
+    if (checkpoint($.player.coin.value + $.player.bank.value)) {
         $.action('yn')
         xvt.app.form = {
             'tax': { cb:() => {
