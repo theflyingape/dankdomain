@@ -8,9 +8,6 @@ import fs = require('fs')
 import $ = require('../common')
 import Battle = require('../battle')
 import xvt = require('xvt')
-import { resend } from '../email';
-import { fail } from 'assert';
-import { keyhint } from '../common';
 
 module Dungeon
 {
@@ -470,17 +467,32 @@ function doMove(): boolean {
 
 		for (let n = 0; n < ROOM.monster.length; n++) {
 			$.cat('dungeon/' + ROOM.monster[n].user.handle)
-			xvt.out(xvt.reset, '\nIt\'s', $.an(ROOM.monster[n].user.handle), '!')
-			xvt.waste(600)
-			xvt.out('  And it doesn\'t look friendly.\n')
-			xvt.waste(400)
-
-			if (isNaN(+ROOM.monster[n].user.weapon)) xvt.out('\n', $.who(ROOM.monster[n], 'He'), $.Weapon.wearing(ROOM.monster[n]), '.\n')
-			if (isNaN(+ROOM.monster[n].user.armor)) xvt.out('\n', $.who(ROOM.monster[n], 'He'), $.Armor.wearing(ROOM.monster[n]), '.\n')
+			xvt.out(xvt.reset, '\nIt\'s', $.an(ROOM.monster[n].user.handle), '... ')
+			xvt.waste(500)
+			if ($.player.novice || ($.dice(Z / 5 + 5) * (101 - $.online.cha + deep) > 1)) {
+				xvt.out('and it doesn\'t look friendly.\n')
+				xvt.waste(300)
+				if (isNaN(+ROOM.monster[n].user.weapon)) xvt.out('\n', $.who(ROOM.monster[n], 'He'), $.Weapon.wearing(ROOM.monster[n]), '.\n')
+				if (isNaN(+ROOM.monster[n].user.armor)) xvt.out('\n', $.who(ROOM.monster[n], 'He'), $.Armor.wearing(ROOM.monster[n]), '.\n')
+			}
+			else {
+				xvt.out(xvt.bright, 'and it\'s charmed by your presence!\n', xvt.reset)
+				ROOM.monster[n].user.handle = 'your ' + ROOM.monster[n].user.handle
+				ROOM.monster[n].user.gender = 'FM'[$.dice(2) - 1]
+				ROOM.monster[n].user.pc = Object.keys($.PC.name['player'])[0]
+				ROOM.monster[n].user.xplevel = 0
+				party.push(ROOM.monster[n])
+				ROOM.monster.splice(n, 1)
+			}
 		}
 
-		Battle.engage('Dungeon', party, ROOM.monster, doSpoils)
-		return false
+		if (ROOM.monster.length) {
+			Battle.engage('Dungeon', party, ROOM.monster, doSpoils)
+			return false
+		}
+
+		pause = true
+		return true
 	}
 
 	//	npc?
@@ -491,13 +503,10 @@ function doMove(): boolean {
 				xvt.waste(300)
 				let u = ($.dice(120) < $.online.dex)
 				for (let m = party.length - 1; m > 0; m--) {
-					if ($.dice(120) < party[m].dex) {
-						xvt.out(xvt.reset, party[m].user.handle, ' manages to catch the edge and stop',
-							$.who(party[m], 'him'), '\x08self from falling.\n')
-					}
+					if ($.dice(120) < party[m].dex)
+						xvt.out(xvt.reset, party[m].user.handle, ' manages to catch the edge and stop from falling.\n')
 					else {
-						xvt.out(xvt.bright, xvt.yellow,
-							party[m].user.handle, ' falls down a level!\n')
+						xvt.out(xvt.bright, xvt.yellow, $.titlecase(party[m].user.handle), ' falls down a level!\n')
 						if (u) party.splice(m, 1)
 					}
 					xvt.waste(300)
@@ -507,6 +516,8 @@ function doMove(): boolean {
 					ROOM.occupant = 0
 				}
 				else {
+					party = []
+					party.push($.online)
 					xvt.out(xvt.bright, xvt.yellow, 'You fall down a level!\n', xvt.reset)
 					xvt.waste(600)
 					if ($.dice(100 + deep * Z / 10) > $.online.dex) {

@@ -10,7 +10,6 @@ import xvt = require('xvt')
 import $ = require('../common')
 import Email = require('../email')
 import Taxman = require('./taxman')
-//import { newkeys } from '../common';
 
 module Logon
 {
