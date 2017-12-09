@@ -504,7 +504,7 @@ function doMove(): boolean {
 				let u = ($.dice(120) < $.online.dex)
 				for (let m = party.length - 1; m > 0; m--) {
 					if ($.dice(120) < party[m].dex)
-						xvt.out(xvt.reset, party[m].user.handle, ' manages to catch the edge and stop from falling.\n')
+						xvt.out(xvt.reset, $.titlecase(party[m].user.handle), ' manages to catch the edge and stop from falling.\n')
 					else {
 						xvt.out(xvt.bright, xvt.yellow, $.titlecase(party[m].user.handle), ' falls down a level!\n')
 						if (u) party.splice(m, 1)
