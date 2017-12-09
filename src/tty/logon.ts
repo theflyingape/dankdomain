@@ -337,6 +337,13 @@ function welcome() {
         xvt.out('\n', xvt.yellow, 'Warning: ', xvt.bright
             , `Your USER ROW setting ${$.player.rows} does not match detected login size: ${process.env.LINES}`
             , xvt.reset, '\n')
+    if (2 * $.player.jw < $.player.jl) {
+        xvt.out('\n', xvt.magenta, 'Helpful: ', xvt.bright
+            , `Your poor jousting stats are being reset.`
+            , xvt.reset, '\n')
+        $.player.jl = 0
+        $.player.jw = 0
+    }
     xvt.app.focus = 'pause'
 }
 
