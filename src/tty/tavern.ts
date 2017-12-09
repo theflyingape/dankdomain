@@ -183,7 +183,7 @@ function choice() {
                 xvt.app.focus = 'coin'
                 return
             })
-            break
+            return
 
         case 'S':
 			if (!$.access.roleplay) break
