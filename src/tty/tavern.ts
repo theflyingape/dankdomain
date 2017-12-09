@@ -137,14 +137,14 @@ function choice() {
             if (!$.access.roleplay) break
             if ($.player.coin.value < 1) {
                 xvt.out('\nYou\'ll need some cash to post a bounty.\n')
-                xvt.waste(1000)
+                suppress = true
                 break
             }
             if ($.player.novice || $.player.level < 10) {
                 xvt.out('\nThe crowd laughs at your gesture.\n')
                 xvt.waste(1000)
                 xvt.out(`${$.barkeep.user.handle} snorts, "Be for real."\n`)
-                xvt.waste(1000)
+                suppress = true
                 break
             }
             Battle.user('Bounty', (opponent: active) => {
