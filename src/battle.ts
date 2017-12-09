@@ -1466,17 +1466,19 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             xvt.waste(800)
             xvt.out('\n', xvt.reset)
             if (backfire && rpc.user.level > 1) {
-                rpc.user.xp = Math.round(nme.user.xp / 2)
-                rpc.user.xplevel--
-                rpc.user.level--
-                rpc.user.str = $.PC.ability(rpc.user.str, -$.PC.card(rpc.user.pc).toStr)
-                rpc.user.int = $.PC.ability(rpc.user.int, -$.PC.card(rpc.user.pc).toInt)
-                rpc.user.dex = $.PC.ability(rpc.user.dex, -$.PC.card(rpc.user.pc).toDex)
-                rpc.user.cha = $.PC.ability(rpc.user.cha, -$.PC.card(rpc.user.pc).toCha)
+                if (rpc.user.level < 80) {
+                    rpc.user.str = $.PC.ability(rpc.user.str, -$.PC.card(rpc.user.pc).toStr)
+                    rpc.user.int = $.PC.ability(rpc.user.int, -$.PC.card(rpc.user.pc).toInt)
+                    rpc.user.dex = $.PC.ability(rpc.user.dex, -$.PC.card(rpc.user.pc).toDex)
+                    rpc.user.cha = $.PC.ability(rpc.user.cha, -$.PC.card(rpc.user.pc).toCha)
+                }
                 rpc.str = $.PC.ability(rpc.str, -$.PC.card(rpc.user.pc).toStr)
                 rpc.int = $.PC.ability(rpc.int, -$.PC.card(rpc.user.pc).toInt)
                 rpc.dex = $.PC.ability(rpc.dex, -$.PC.card(rpc.user.pc).toDex)
                 rpc.cha = $.PC.ability(rpc.cha, -$.PC.card(rpc.user.pc).toCha)
+                rpc.user.xp = Math.round(nme.user.xp / 2)
+                rpc.user.xplevel--
+                rpc.user.level--
                 rpc.user.hp -= Math.round(rpc.user.level + $.dice(rpc.user.level) + rpc.user.str / 10 + (rpc.user.str > 90 ? rpc.user.str - 90 : 0))
                 if (rpc.user.magic > 1)
                     rpc.user.sp -= Math.round(rpc.user.level + $.dice(rpc.user.level) + rpc.user.int / 10 + (rpc.user.int > 90 ? rpc.user.int - 90 : 0))
