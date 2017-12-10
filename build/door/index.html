@@ -72,6 +72,8 @@ function receive(event) {
 }
 
 function resize() {
+  if (!pid) return
+
   var stylesheet = document.styleSheets[0];
   for (var i in stylesheet.cssRules) {
     css = stylesheet.cssRules[i];
@@ -98,7 +100,7 @@ function resize() {
     xy = term.proposeGeometry();
   } while (xy.cols > 81 && parseInt(w) < 46);
 
-  //  possibly upsize font without compromosing terminal width
+  //  possibly upsize font without compromising terminal width
   while ((xy = term.proposeGeometry()).cols > 81)
     term.setOption('fontSize', ++fontSize);
 
@@ -108,6 +110,104 @@ function resize() {
   else
     term.resize(80, xy.rows);
 }
+
+function lurk() {
+  if (terminalContainer.hidden) {
+    fetch('/watch', {method: 'POST'}).then(function (res) {
+      return res.json().then(function (data) {
+        var watch = document.getElementById('watch-list');
+        for (var i = watch.options.length - 1; i >= 0; i--)
+          watch.remove(i);
+        for (var i in data) {
+          var option = document.createElement("option");
+          option.text = data[i].id;
+          option.value = data[i].pid;
+          watch.add(option);
+        }
+        if (watch.options.length) {
+          play('chat');
+          watch.blur();
+        }
+        watch.selectedIndex = -1;
+      })
+    })
+  }
+}
+
+function watch() {
+  var watch = document.getElementById('watch-list');
+  var wpid = watch.options[watch.selectedIndex].value;
+  //var url = '/terminals/' + pid + '/wall?msg=a lurker is watching you';
+  //fetch(url, {method: 'POST'});
+
+  var stylesheet = document.styleSheets[0];
+  for (var i in stylesheet.cssRules) {
+    css = stylesheet.cssRules[i];
+    if (css.selectorText === '#terminal-container')
+      Object.assign(css.style, { 'top':'0%', 'left':'0%', 'height':'100%', 'width':'100%' });
+  }
+
+  terminalContainer.hidden = false;
+  term = new Terminal({ cursorBlink:false, rows:rows, cols:cols, enableBold:true, scrollback:250,
+    fontFamily:'monospace', fontSize:fontSize, theme: {
+    foreground:'#c1c2c8', background:'#010208',
+    black:'#000000', red:'#a00000', green:'#00a000', yellow:'#c8a000',
+    blue:'#0000a0', magenta:'#a000a0', cyan:'#00a0a0', white:'#c8c8c8',
+    brightBlack:'#646464', brightRed:'#fa0000', brightGreen:'#00fa00', brightYellow:'#fafa00',
+    brightBlue:'#0000fa', brightMagenta:'#fa00fa', brightCyan:'#00fafa', brightWhite:'#fafafa' }
+  });
+
+  term.open(terminalContainer);
+  term.fit();
+  term.winptyCompatInit();
+
+  term.write('\x1B[1;34mConnecting your terminal to ' + watch.options[watch.selectedIndex].text + ' WebSocket ... ');
+  protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://';
+  socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + '/watch/';
+
+  fetch('/watch/?pid=' + wpid, {method: 'POST'}).then(function (res) {
+    res.text().then(function (lurker) {
+      //window.pid = pid;
+      socketURL += lurker;
+      socket = new WebSocket(socketURL);
+
+      socket.onmessage = (ev) => {
+        // find any occurrences of @func(data), and for each: call func(data)
+        const re = '[@](?:(action|profile|play|tune|wall)[(](.+?)[)])';
+        search = new RegExp(re, 'g'); replace = new RegExp(re);
+        data = ev.data;
+        copy = data;
+        while (match = search.exec(copy)) {
+          x = replace.exec(data);
+          s = x.index; e = s + x[0].length;
+          data = data.substr(0, s) + data.substr(e);
+          //window[match[1]](match[2]);
+        }
+        term.write(data);
+      };
+
+      socket.onopen = () => {
+        term.socket = socket;
+        term.focus();
+        if (!term.getOption('cursorBlink'))
+          term.setOption('cursorBlink', false);
+        term.writeln('open\x1B[m');
+      };
+
+      socket.onclose = (ev) => {
+        term.writeln('\x1B[2mWebSocket close\x1B[m');
+        term.destroy();
+        wpid = 0;
+        terminalContainer.hidden = true;
+      };
+
+      socket.onerror = (ev) => {
+        term.writeln('\x1B[1;31merror');
+      };
+    });
+  });
+}
+
 </script>
 </head>
 <body onload="resize();" onresize="resize();">
@@ -116,9 +216,10 @@ function resize() {
 <div id="idle-container" hidden=true>
 <h2>Dank Domain: the return of Hack &amp; Slash</h2>
 <h3>&copy;2017 <a href="https://robert.hurst-ri.us">Robert Hurst</a></h3>
-<h4>use REFRESH button to start over</h4>
-<button onclick="window.location.reload();"> REFRESH </button> <button onclick="window.history.back();">Go Back</button>
-<h4>The Olde Tavern's <a href="./today.txt" target="_blank">news</a>.</h5>
+<p>use <button onclick="window.location.reload();"> REFRESH </button> to start over,
+or <button onclick="window.history.back();">Go Back</button></p>
+<p>Read The Olde Tavern's <a href="./today.txt" target="_blank">news</a></p>
+<p>Watch another online player <select id="watch-list" onchange="watch();"></select> <- list refreshes every 30-seconds</p>
 <hr>
 <p>Works best using <a href="https://getfedora.org/" target="_blank">Linux</a> with Terminology (telnet).</p>
 <p></p>Microsoft Edge, Google / Android Chrome, and Mozilla Firefox are known to work well with broadband &amp; wifi.<br>

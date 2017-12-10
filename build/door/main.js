@@ -1,4 +1,4 @@
-var carrier = false, recheck = 0, reconnect;
+var carrier = false, recheck = 0, reconnect, lurking;
 var cols = 80, rows = 25, fontSize = 13;
 var terminalContainer = document.getElementById('terminal-container'),
     term,
@@ -7,7 +7,9 @@ var terminalContainer = document.getElementById('terminal-container'),
     socket,
     pid;
 
+window.frames['Info'].postMessage({ 'func':'Logon' }, location.href);
 newSession();
+
 
 function newSession() {
 
@@ -28,7 +30,6 @@ function newSession() {
   term.fit();
   term.winptyCompatInit();
 
-//  term.writeln('\x1Bc');
   term.writeln('\x1B[1;31m\uD83D\uDD25 \x1B[36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain\x1B[22m \u2728\n');
   term.write('\x1B[1;34mConnecting terminal WebSocket ... ');
   protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://';
@@ -39,9 +40,12 @@ function newSession() {
       socket.send(data);
     }
     else {
-      if (data === '\x0D' || data === ' ') {
-        endSession();
+      endSession();
+      if (data === '\x0D' || data === ' ')
         newSession();
+      else {
+        recheck = 10;
+        checkCarrier();
       }
     }
   });
@@ -93,8 +97,9 @@ function newSession() {
 
         socket.onopen = () => {
           carrier = true;
-          window.frames['Info'].postMessage({ 'func':'Logon' }, location.href);
-
+          //window.frames['Info'].postMessage({ 'func':'Logon' }, location.href);
+          resize();
+          
           term.socket = socket;
           term.focus();
           if (!term.getOption('cursorBlink'))
@@ -126,6 +131,7 @@ function endSession() {
   if (typeof tuneSource !== 'undefined') tuneSource.stop();
   if (reconnect) clearInterval(reconnect);
   term.destroy();
+  pid = 0;
 }
 
 // let's have a nice value for both the player and the web server
@@ -142,6 +148,7 @@ function checkCarrier() {
     var iframes = document.querySelectorAll('iframe');
     for (var i = 0; i < iframes.length; i++)
         iframes[i].parentNode.removeChild(iframes[i]);
+    lurking = setInterval(lurk, 30000);
   }
 }
 

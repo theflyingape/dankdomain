@@ -940,7 +940,7 @@ function fire(a: active, d: active): {  hits:number, damage:number, hull:number,
 				n = $.dice(50)
 				damage += n
 				d.hull -= n
-				if (n < 50 || d.user.hull < 1) {
+				if (n < 50 || d.user.hull < 1 || !d.user.id) {
 					xvt.out(xvt.bright, xvt.red, '*')
 					break
 				}

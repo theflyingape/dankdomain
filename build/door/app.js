@@ -30,6 +30,7 @@ app.post('/terminals', function (req, res) {
     terminals[term.pid] = term;
     logs[term.pid] = '';
     broadcasts[term.pid] = '';
+    //  collect app outputs
     term.on('data', function (data) {
         logs[term.pid] += data;
     });
@@ -62,8 +63,10 @@ app.ws('/terminals/:pid', function (ws, req) {
     });
     //  app output to browser client
     term.on('data', function (data) {
+        //  inspect for app's ACK ...
         let msg = data.toString();
         let ack = msg.indexOf('\x06');
+        //  ... to appropriately replace it with any pending broadcast message(s)
         if (ack >= 0) {
             msg = msg.substr(0, ack) + broadcasts[term.pid] + msg.substr(ack);
             broadcasts[term.pid] = '';
@@ -100,14 +103,64 @@ var lurkers = [];
 app.post('/watch', function (req, res) {
     var pid = parseInt(req.query.pid);
     if (pid) {
-        console.log('Create lurker with PID: ' + pid);
-        res.send(lurkers.push(pid));
+        var player = '';
+        if (terminals[pid])
+            if (terminals[pid].who)
+                player = ' (' + terminals[pid].who + ')';
+        console.log('New lurker on PID: ' + pid + player);
+        res.send((lurkers.push(pid) - 1).toString());
+    }
+    else if (Object.keys(terminals).length) {
+        var who = [];
+        for (let pid in terminals) {
+            let rs = query(`SELECT id FROM Online WHERE pid = ${pid}`);
+            if (rs.length) {
+                terminals[pid].who = rs[0].id;
+                who.push({ id: rs[0].id, pid: pid });
+            }
+        }
+        res.send(JSON.stringify(who));
     }
     else {
-        res.send(terminals);
+        res.send(JSON.stringify([]));
     }
     res.end();
 });
+app.ws('/watch/:lurker', function (ws, req) {
+    var lurker = parseInt(req.params.lurker);
+    var term = terminals[lurkers[lurker]];
+    console.log('Lurker #' + (lurker + 1) + ' connected to terminal ' + term.pid);
+    term.on('close', function () {
+        ws.close();
+    });
+    //  app output to browser client
+    term.on('data', function (data) {
+        try {
+            ws.send(data);
+        }
+        catch (ex) {
+            if (term.pid) {
+                console.log(`?fatal terminal ${term.pid} socket error:`, ex.message);
+            }
+        }
+    });
+    ws.on('close', function () {
+        console.log('Closed lurker #' + (lurker + 1) + ' terminal ' + term.pid);
+        delete lurkers[lurker];
+    });
+});
+function query(q, errOk = false) {
+    try {
+        let cmd = sqlite3.prepare(q);
+        return cmd.all();
+    }
+    catch (err) {
+        if (!errOk) {
+            console.log('?Unexpected error ', err.code, '::', String(err));
+        }
+        return [];
+    }
+}
 var port = process.env.PORT || 1965, host = os.platform() === 'win32' ? '127.0.0.1' : '0.0.0.0';
 console.log('Dank Domain Door on https://' + host + ':' + port);
 server.listen(port, host);

@@ -21,6 +21,7 @@ module Common
     export const Security = new Items.Security
     export const Weapon = new Items.Weapon
 
+    //  maintain usual suspects
     export let barkeep: active = { user: { id:'_BAR'} }
     export let neptune: active = { user: { id:'_NEP'} }
     export let seahag: active = { user: { id:'_OLD'} }
@@ -30,6 +31,7 @@ module Common
     export let player: user = online.user
     export let sysop: user = { id:'_SYS' }
 
+    //  player runtime features
     export let access: access
     export let arena: number = 0
     export let bail: number = 0

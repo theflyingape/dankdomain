@@ -16,5 +16,6 @@ declare const DD = "./users/dankdomain.sql";
 declare let better: any;
 declare let sqlite3: any;
 declare var lurkers: any[];
+declare function query(q: string, errOk?: boolean): any;
 declare var port: any, host: string;
 declare function unlock(pid: number): void;

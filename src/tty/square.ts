@@ -466,6 +466,11 @@ function Bank() {
 			xvt.app.focus = 'coin'
 			break
 
+		case 'W':
+			xvt.app.form['coin'].prompt = xvt.attr('Withdraw ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.player.bank.carry(), ']? ')
+			xvt.app.focus = 'coin'
+			break
+
 		case 'R':
 			let c = ($.player.level / 5) * ($.player.steal + 1)
 			xvt.out('\nYou attempt to sneak into the vault...')
@@ -512,26 +517,23 @@ function Bank() {
 			break
 
 		case 'T':
-			if (!$.access.sysop) break
-			loadUser($.taxman)
-			xvt.app.form['coin'].prompt = xvt.attr('Treasury ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.taxman.user.bank.carry(), ']? ')
-			xvt.app.focus = 'coin'
-			break
+			if ($.access.sysop) {
+				loadUser($.taxman)
+				xvt.app.form['coin'].prompt = xvt.attr('Treasury ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.taxman.user.bank.carry(), ']? ')
+				xvt.app.focus = 'coin'
+				break
+			}
+
+		case 'V':
+			if ($.access.sysop) {
+				loadUser($.taxman)
+				xvt.app.form['coin'].prompt = xvt.attr('Vault ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=1000p]? ')
+				xvt.app.focus = 'coin'
+				break
+			}
 
         case 'Q':
 			menu(suppress)
-			break
-
-		case 'V':
-			if (!$.access.sysop) break
-			loadUser($.taxman)
-			xvt.app.form['coin'].prompt = xvt.attr('Vault ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=1000p]? ')
-			xvt.app.focus = 'coin'
-			break
-
-		case 'W':
-			xvt.app.form['coin'].prompt = xvt.attr('Withdraw ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.player.bank.carry(), ']? ')
-			xvt.app.focus = 'coin'
 			break
 	}
 }
