@@ -603,6 +603,7 @@ function doMove(): boolean {
 					switch (wish) {
 					case 'B':
 						if ($.player.cursed) {
+							$.player.coward = false
 							$.player.cursed = ''
 							xvt.out ('The ', xvt.faint, 'dark cloud', xvt.normal, ' is lifted.\n')
 							$.news(`\tlifted curse`)
@@ -843,6 +844,7 @@ function doMove(): boolean {
 						switch (t % z) {
 						case 0:
 							if ($.player.cursed) {
+								$.player.coward = false
 								$.player.cursed = ''
 								$.online.str = $.PC.ability($.online.str, 10, $.player.maxstr)
 								$.online.int = $.PC.ability($.online.int, 10, $.player.maxint)

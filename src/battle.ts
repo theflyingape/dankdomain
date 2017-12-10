@@ -599,6 +599,7 @@ export function spoils() {
                     if (winner.user.cursed) {
                         loser.user.cursed = winner.user.id
                         loser.altered = true
+                        winner.user.coward = false
                         winner.user.cursed = ''
                         xvt.out(xvt.bright, xvt.black, 'A dark cloud has lifted and shifted.\n', xvt.reset)
                         xvt.waste(1000)
@@ -666,6 +667,7 @@ export function spoils() {
             }
             else {
                 $.player.cursed = winner.user.id
+                winner.user.coward = false
                 winner.user.cursed = ''
                 xvt.out(xvt.bright, xvt.black, 'A dark cloud hovers over you.\n', xvt.reset)
             }
