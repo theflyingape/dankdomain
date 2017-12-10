@@ -197,6 +197,7 @@ function password() {
     , xvt.red, xvt.RGradient[xvt.emulation], '((:=--')
     xvt.out('\n\n')
     xvt.out(xvt.cyan, 'Caller#: ', xvt.bright, xvt.white, $.sysop.calls.toString(), xvt.normal, '\n')
+    xvt.out(xvt.cyan, 'Last on: ', xvt.bright, xvt.white, $.date2full($.player.lastdate), xvt.normal, '\n')
     xvt.out(xvt.cyan, ' Online: ', xvt.bright, xvt.white, $.player.handle, xvt.normal, '\n')
     xvt.out(xvt.cyan, ' Access: ', xvt.bright, xvt.white, $.player.access)
     if ($.player.emulation === 'XT' && $.access.emoji)
@@ -254,6 +255,7 @@ function welcome() {
             , level:$.player.level, pc:$.player.pc
         })
         xvt.out(xvt.bright, xvt.black, '(', xvt.normal, xvt.white, 'Welcome back, ',  $.access[$.player.gender], xvt.bright, xvt.black, ')\n', xvt.reset)
+        xvt.out(`\nYou have ${$.access.calls - $.player.today} calls remaining.\n`)
         xvt.sessionAllowed = $.access.minutes * 60
         $.news(`${$.player.handle} logged in ${$.time($.player.lasttime)} as a level ${$.player.level} ${$.player.pc}:`)
         $.wall(`logged on as a level ${$.player.level} ${$.player.pc}`)

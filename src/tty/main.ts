@@ -92,7 +92,7 @@ function choice() {
 
         case 'M':
             xvt.out('\n')
-            xvt.out(xvt.Blue, xvt.white, ' ID   Player\'s Handle           Class    Lvl  Status  Party              '
+            xvt.out(xvt.Blue, xvt.white, ' ID   Player\'s Handle           Class    Lvl  Status  Party               '
                 , xvt.reset, '\n')
             xvt.out(xvt.Blue, xvt.white, '--------------------------------------------------------------------------'
                 , xvt.reset, '\n')
