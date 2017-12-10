@@ -5,6 +5,7 @@
 
 import $ = require('../common')
 import xvt = require('xvt')
+import {sprintf} from 'sprintf-js'
 
 module Gambling
 {
@@ -273,6 +274,247 @@ function amount() {
 				}, prompt:'Pick a card (1-54)? ', max:2 }
 			}
 			xvt.app.focus = 'pick'
+			return
+
+		case 'K':
+			let point: number
+			let picks: number[] = []
+			$.action('list')
+			xvt.app.form = {
+				'point': { cb: () => {
+					point = +xvt.entry
+					if (point < 1 || point > 10) {
+						menu()
+						return
+					}
+					xvt.out(xvt.green, `\n\nKENO PAYOUT for a ${point} spot game:\n\n`)
+					xvt.out(xvt.bright, 'MATCH     PRIZE\n', xvt.cyan)
+					switch (point) {
+						case 1:
+							xvt.out('   1         $1\n')
+							break
+						case 2:
+							xvt.out('   2         $9\n')
+							break
+						case 3:
+							xvt.out('   3        $20\n')
+							xvt.out('   2          2\n')
+							break
+						case 4:
+							xvt.out('   4        $50\n')
+							xvt.out('   3          5\n')
+							xvt.out('   2          1\n')
+							break
+						case 5:
+							xvt.out('   5       $400\n')
+							xvt.out('   4         10\n')
+							xvt.out('   3          2\n')
+							break
+						case 6:
+							xvt.out('   6      $1000\n')
+							xvt.out('   5         50\n')
+							xvt.out('   4          5\n')
+							xvt.out('   3          1\n')
+							break
+						case 7:
+							xvt.out('   7      $4000\n')
+							xvt.out('   6         75\n')
+							xvt.out('   5         15\n')
+							xvt.out('   4          2\n')
+							xvt.out('   3          1\n')
+							break
+						case 8:
+							xvt.out('   8      10000\n')
+							xvt.out('   7        500\n')
+							xvt.out('   6         40\n')
+							xvt.out('   5         10\n')
+							xvt.out('   4          2\n')
+							break
+						case 9:
+							xvt.out('   9     $25000\n')
+							xvt.out('   8       2500\n')
+							xvt.out('   7        100\n')
+							xvt.out('   6         20\n')
+							xvt.out('   5          5\n')
+							xvt.out('   4          1\n')
+							break
+						case 10:
+							xvt.out('  10    $100000\n')
+							xvt.out('   9       4000\n')
+							xvt.out('   8        400\n')
+							xvt.out('   7         25\n')
+							xvt.out('   6         10\n')
+							xvt.out('   5          2\n')
+							xvt.out(' none         5\n')
+							break
+					}
+					xvt.out(xvt.reset, '\nodds of winning a prize in this game are 1:', 
+						`${[4, 16.6, 6.55, 3.86, 10.33, 6.19, 4.22, 9.79, 6.55, 9.04][point - 1]}\n`)
+					xvt.app.focus = 'pick'
+				}, prompt:'How many numbers (1-10)? ', max:2 },
+				'pick': { cb: () => {
+					let pick = +xvt.entry
+					if (xvt.entry === '') {
+						do {
+							pick = $.dice(80)
+						} while (picks.indexOf(pick) >= 0)
+						xvt.out(`${pick}`)
+					}
+					if (pick < 1 || pick > 80) {
+						$.beep()
+						xvt.app.refocus()
+						return
+					}
+					if (picks.indexOf(pick) >= 0) {
+						$.beep()
+						xvt.app.refocus()
+						return
+					}
+					$.sound('click')
+					picks.push(pick)
+					if (picks.length == point) {
+						xvt.out('\n\n', xvt.bright, xvt.yellow,
+							'Here comes those lucky numbers!\n', xvt.reset)
+						xvt.waste(500)
+
+						let balls: number[] = []
+						let hits = 0
+						payoff.value = 0
+
+						for (let i = 0; i < 20; i++) {
+							if (i % 5 == 0) xvt.out('\n')
+							do {
+								pick = $.dice(80)
+							} while (balls.indexOf(pick) >= 0)
+							if (picks.indexOf(pick) >= 0) {
+								hits++
+								$.sound('max')
+								xvt.out(' *', xvt.bright, xvt.blue, '[',
+									xvt.yellow, sprintf('%02d', pick),
+									xvt.blue, ']', xvt.reset, '* ')
+							}
+							else {
+								xvt.out(xvt.faint, xvt.cyan, '  [',
+									xvt.normal, sprintf('%02d', pick),
+									xvt.faint, ']  ', xvt.reset)
+							}
+							xvt.waste(250)
+						}
+
+						xvt.out('\n')
+						switch (point) {
+							case 1:
+								if (hits == 1)
+									payoff.value = 2 * amount.value
+								break
+							case 2:
+								if (hits == 2)
+									payoff.value = 9 * amount.value
+								break
+							case 3:
+								if (hits == 3)
+									payoff.value = 20 * amount.value
+								if (hits == 2)
+									payoff.value = 2 * amount.value
+								break
+							case 4:
+								if (hits == 4)
+									payoff.value = 50 * amount.value
+								if (hits == 3)
+									payoff.value = 5 * amount.value
+								if (hits == 2)
+									payoff.value = 1 * amount.value
+								break
+							case 5:
+								if (hits == 5)
+									payoff.value = 400 * amount.value
+								if (hits == 4)
+									payoff.value = 10 * amount.value
+								if (hits == 3)
+									payoff.value = 2 * amount.value
+								break
+							case 6:
+								if (hits == 6)
+									payoff.value = 1000 * amount.value
+								if (hits == 5)
+									payoff.value = 50 * amount.value
+								if (hits == 4)
+									payoff.value = 5 * amount.value
+								if (hits == 3)
+									payoff.value = 1 * amount.value
+								break
+							case 7:
+								if (hits == 7)
+									payoff.value = 4000 * amount.value
+								if (hits == 6)
+									payoff.value = 75 * amount.value
+								if (hits == 5)
+									payoff.value = 15 * amount.value
+								if (hits == 4)
+									payoff.value = 2 * amount.value
+								if (hits == 3)
+									payoff.value = 1 * amount.value
+								break
+							case 8:
+								if (hits == 8)
+									payoff.value = 10000 * amount.value
+								if (hits == 7)
+									payoff.value = 500 * amount.value
+								if (hits == 6)
+									payoff.value = 40 * amount.value
+								if (hits == 5)
+									payoff.value = 10 * amount.value
+								if (hits == 4)
+									payoff.value = 2 * amount.value
+								break
+							case 9:
+								if (hits == 9)
+									payoff.value = 25000 * amount.value
+								if (hits == 8)
+									payoff.value = 2500 * amount.value
+								if (hits == 7)
+									payoff.value = 100 * amount.value
+								if (hits == 6)
+									payoff.value = 20 * amount.value
+								if (hits == 5)
+									payoff.value = 5 * amount.value
+								if (hits == 4)
+									payoff.value = 1 * amount.value
+								break
+							case 10:
+								if (hits == 10)
+									payoff.value = 100000 * amount.value
+								if (hits == 9)
+									payoff.value = 4000 * amount.value
+								if (hits == 8)
+									payoff.value = 400 * amount.value
+								if (hits == 7)
+									payoff.value = 25 * amount.value
+								if (hits == 6)
+									payoff.value = 10 * amount.value
+								if (hits == 5)
+									payoff.value = 2 * amount.value
+								if (hits == 0)
+									payoff.value = 5 * amount.value
+								break
+						}
+						if (payoff.value) {
+							$.sound('cheer')
+							xvt.out('\nYou win ', payoff.carry(), '!\n')
+							$.player.coin.value += payoff.value
+							xvt.waste(500)
+						}
+						else
+							$.sound('boo')
+						menu()
+					}
+					else {
+						xvt.app.form['pick'].prompt = `Pick #${picks.length + 1} [1-80]: `
+						xvt.app.refocus()
+					}
+				}, prompt: 'Pick #1 [1-80]: ', max:2 }
+			}
+			xvt.app.focus = 'point'
 			return
 	}
 

@@ -10,7 +10,8 @@ module Hall
 {
 	let hall: choices = {
         'F': { description:'Hall of Fame' },
-        'L': { description:'Hall of Lame' }
+        'L': { description:'Hall of Lame' },
+        'W': { description:'Past Winners List' }
 	}
 
 export function menu(suppress = false) {
@@ -35,7 +36,13 @@ function choice() {
         case 'Q':
 			require('./main').menu($.player.expert)
 			return
-	}
+
+        case 'W':
+            xvt.out(xvt.magenta, '\n        --=:)) Past Winners List ((:=--', xvt.reset, '\n\n')
+            $.cat('winners')
+            suppress = false
+            break
+    }
 	menu(suppress)
 }
 

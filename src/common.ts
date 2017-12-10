@@ -1427,13 +1427,19 @@ export function riddle() {
     let max = Object.keys(PC.name['immortal']).indexOf(player.pc) + 1
     if (max > 2 || player.pc === PC.winning) {
         music('victory')
+
         player.wins++
         saveUser(player)
         reroll(player)
+
+        const log = `./tty/files/winners.txt`
+        fs.appendFileSync(log,
+            `${player.handle} won on ${date2full(now().date)} taking ${now().date - sysop.dob + 1} days\n`)
+
         reason = 'WON THE GAME !!'
         sysop.dob = now().date + 1
         saveUser(sysop)
-        xvt.waste(5000)
+        xvt.waste(4000)
 
         xvt.out(xvt.bright, xvt.yellow, 'CONGRATULATIONS!!'
             , xvt.reset, '  You have won the game!\n'
