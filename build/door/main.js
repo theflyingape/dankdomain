@@ -148,6 +148,7 @@ function checkCarrier() {
     var iframes = document.querySelectorAll('iframe');
     for (var i = 0; i < iframes.length; i++)
         iframes[i].parentNode.removeChild(iframes[i]);
+    lurk();
     lurking = setInterval(lurk, 30000);
   }
 }

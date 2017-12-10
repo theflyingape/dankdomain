@@ -199,6 +199,7 @@ function watch() {
         term.destroy();
         wpid = 0;
         terminalContainer.hidden = true;
+        lurk();
       };
 
       socket.onerror = (ev) => {
