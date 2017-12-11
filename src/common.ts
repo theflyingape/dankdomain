@@ -1399,20 +1399,24 @@ export function reroll(user: user, dd?: string, level = 1) {
 
 // the Ancient Riddle of the Keys
 export function riddle() {
+
+    xvt.out(xvt.reset, '\n')
+
     if (player.coward) {
         player.coward = false
-        xvt.out(xvt.reset, '\nWelcome back to play with the rest of us.\n\n')
+        xvt.out(xvt.reset, 'Welcome back to play with the rest of us.\n')
         xvt.waste(2000)
     }
 
     if (player.novice) {
-        xvt.out(xvt.reset, '\nYou are no longer a novice.  Welcome to the next level of play.\n\n')
+        xvt.out(xvt.reset, 'You are no longer a novice.  Welcome to the next level of play.\n')
         player.novice = false
         player.expert = true
         xvt.waste(2000)
     }
-    xvt.out(xvt.magenta, 'Checking your statistics against All-Time Fame/Lame lists...\n')
-    xvt.out(xvt.blue, 'Checking your statistics against the ', player.pc,' Fame/Lame lists...\n')
+
+    //xvt.out(xvt.magenta, 'Checking your statistics against All-Time Fame/Lame lists...\n')
+    //xvt.out(xvt.blue, 'Checking your statistics against the ', player.pc,' Fame/Lame lists...\n')
 
     xvt.out(xvt.bright, xvt.cyan, '\nYou have become so powerful that you are now immortal and you leave your \n')
     xvt.out('worldly possessions behind.\n')
@@ -1421,34 +1425,41 @@ export function riddle() {
     saveUser(taxman)
     xvt.waste(2000)
 
-    player.calls = 0
-    player.immortal++
-
     let max = Object.keys(PC.name['immortal']).indexOf(player.pc) + 1
-    if (max > 2 || player.pc === PC.winning) {
+    player.immortal++
+    reroll(player)
+    saveUser(player)
+    
+    if (max > 2) {
         music('victory')
 
         player.wins++
-        saveUser(player)
         reroll(player)
+        saveUser(player)
 
         const log = `./tty/files/winners.txt`
         fs.appendFileSync(log,
-            `${player.handle} won on ${date2full(now().date)} taking ${now().date - sysop.dob + 1} days\n`)
+            `${player.handle} won on ${date2full(now().date)}  -  game took ${now().date - sysop.dob + 1} days\n`)
 
         reason = 'WON THE GAME !!'
         sysop.dob = now().date + 1
         saveUser(sysop)
-        xvt.waste(4000)
+        xvt.waste(4321)
 
         xvt.out(xvt.bright, xvt.yellow, 'CONGRATULATIONS!!'
             , xvt.reset, '  You have won the game!\n'
         )
         sound('cheer', 25)
-        xvt.out(xvt.yellow, 'The board will now reset ')
-        xvt.waste(1000)
 
-        let rs = query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
+        xvt.out(xvt.yellow, 'The board will now reset ')
+        let rs = query(`SELECT pid FROM Online WHERE id != '${player.id}'`)
+        for (let row in rs) {
+            process.kill(rs[row].pid)
+            xvt.out('+')
+            xvt.waste(125)
+        }
+            
+        rs = query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
         let user: user = { id:'' }
         for (let row in rs) {
             user.id = rs[row].id
@@ -1456,10 +1467,10 @@ export function riddle() {
             reroll(user)
             saveUser(user)
             xvt.out('.')
+            xvt.waste(12)
         }
         xvt.out(xvt.reset, '\nHappy hunting tomorrow!\n')
-        xvt.ondrop = null
-        xvt.hangup()
+        logoff()
     }
 
     xvt.out(xvt.green, `\nOl' Mighty One!  Solve the Ancient Riddle of the Keys and you will become\n`)
@@ -1499,7 +1510,7 @@ export function riddle() {
     xvt.app.form = {
         'key': { cb:() => {
             xvt.out(' ...you insert and twist the key... ')
-            xvt.waste(1000)
+            xvt.waste(1234)
             if (xvt.entry.toUpperCase() === player.keyseq[slot]) {
                 sound('click')
                 if (player.emulation === 'XT') xvt.out('\u{1F513} ')
@@ -1526,7 +1537,7 @@ export function riddle() {
                             player.keyhints[i] = xvt.entry.toUpperCase()
                             break
                         }
-                    reroll(player, Object.keys(PC.name['player'])[0])
+                    reroll(player)
                     playerPC(200 + 4 * player.wins + (player.immortal >>2))
                 }
                 else {
@@ -1733,12 +1744,13 @@ export function logoff() {
         xvt.waste(500)
         xvt.out(xvt.bright, xvt.black, process.title
             , xvt.normal, xvt.white, xvt.validator.isNotEmpty(process.env.npm_package_version) ? ' ' + process.env.npm_package_version : ''
-            , ' running on ', xvt.bright, xvt.green, 'Node.js ', xvt.normal, process.version, ' '
+            , ' running on ', xvt.bright, xvt.green, 'Node.js ', xvt.normal, process.version
             , xvt.bright, xvt.black, '(', xvt.normal, xvt.cyan, process.platform, xvt.bright, xvt.black, ')'
             , xvt.reset, '\n'
         )
         xvt.waste(2000)
-        music(online.hp > 0 ? 'logoff' : 'death')
+        if (player.today)
+            music(online.hp > 0 ? 'logoff' : 'death')
     }
 }
 

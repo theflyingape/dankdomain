@@ -183,7 +183,6 @@ function password() {
     }
     $.saveUser($.sysop)
 
-    $.player.calls++
     $.player.today++
     $.player.lastdate = $.now().date
     $.player.lasttime = $.now().time
@@ -196,7 +195,9 @@ function password() {
     , xvt.Red, xvt.bright, xvt.white, $.sysop.name, xvt.reset
     , xvt.red, xvt.RGradient[xvt.emulation], '((:=--')
     xvt.out('\n\n')
-    xvt.out(xvt.cyan, 'Caller#: ', xvt.bright, xvt.white, $.sysop.calls.toString(), xvt.normal, '\n')
+    xvt.out(xvt.cyan, 'Caller#: ', xvt.bright, xvt.white, $.sysop.calls.toString(), xvt.reset
+        , '  -  ', xvt.faint, 'this game start', $.now().date >= $.sysop.dob ? 'ed' : 's', ' '
+        , $.date2full($.sysop.dob), xvt.reset, '\n')
     xvt.out(xvt.cyan, 'Last on: ', xvt.bright, xvt.white, $.date2full($.player.lastdate), xvt.normal, '\n')
     xvt.out(xvt.cyan, ' Online: ', xvt.bright, xvt.white, $.player.handle, xvt.normal, '\n')
     xvt.out(xvt.cyan, ' Access: ', xvt.bright, xvt.white, $.player.access)
@@ -260,6 +261,8 @@ function welcome() {
         $.news(`${$.player.handle} logged in ${$.time($.player.lasttime)} as a level ${$.player.level} ${$.player.pc}:`)
         $.wall(`logged on as a level ${$.player.level} ${$.player.pc}`)
 
+        $.player.calls++
+        $.player.plays++
         $.player.status = ''
         $.arena = 3
         $.bail = 1
