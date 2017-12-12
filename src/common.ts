@@ -487,7 +487,7 @@ export function activate(one: active, keep = false, confused = false): boolean {
 
 export function checkXP(rpc: active, cb: Function): boolean {
 
-    if (!Access.name[rpc.user.access]) return false
+    if (!Access.name[rpc.user.access].roleplay) return false
     if (rpc.user.level >= sysop.level) {
         riddle()
         return true
@@ -1432,19 +1432,12 @@ export function riddle() {
     
     if (max > 2) {
         music('victory')
-
-        player.wins++
-        reroll(player)
-        saveUser(player)
-
         const log = `./tty/files/winners.txt`
         fs.appendFileSync(log,
             `${player.handle} won on ${date2full(now().date)}  -  game took ${now().date - sysop.dob + 1} days\n`)
-
+        player.wins++
         reason = 'WON THE GAME !!'
-        sysop.dob = now().date + 1
-        saveUser(sysop)
-        xvt.waste(4321)
+        xvt.waste(player.emulation === 'XT' ? 4321 : 432)
 
         xvt.out(xvt.bright, xvt.yellow, 'CONGRATULATIONS!!'
             , xvt.reset, '  You have won the game!\n'
@@ -1452,11 +1445,11 @@ export function riddle() {
         sound('cheer', 25)
 
         xvt.out(xvt.yellow, 'The board will now reset ')
-        let rs = query(`SELECT pid FROM Online WHERE id != '${player.id}'`)
+        let rs = query(`SELECT id, pid FROM Online WHERE id != '${player.id}'`)
         for (let row in rs) {
             process.kill(rs[row].pid)
             xvt.out('+')
-            xvt.waste(125)
+            unlock(rs[row].id)
         }
             
         rs = query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
@@ -1469,8 +1462,12 @@ export function riddle() {
             xvt.out('.')
             xvt.waste(12)
         }
+
         xvt.out(xvt.reset, '\nHappy hunting tomorrow!\n')
-        logoff()
+        loadUser(sysop)
+        sysop.dob = now().date + 1
+        saveUser(sysop)
+        xvt.hangup()
     }
 
     xvt.out(xvt.green, `\nOl' Mighty One!  Solve the Ancient Riddle of the Keys and you will become\n`)
