@@ -304,7 +304,11 @@ function choice() {
                                 xvt.out(`\n${member.user.handle} is not a member.\n`)
                             }
                             else {
-                                if (member.user.gang === g.name) {
+                                if ($.lock(member.user.id, false)) {
+                                    $.beep()
+                                    xvt.out(`${$.who(member, 'He')}is currently engaged elsewhere and not available.\n`)
+                                }
+                                else if (member.user.gang === g.name) {
                                     member.user.gang = ''
                                     $.saveUser(member)
                                     g.members.splice(n, 1)
@@ -354,8 +358,6 @@ function choice() {
                 break
             }
 
-            g = loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
-
             rs = $.query(`SELECT * FROM Gangs ORDER BY name`)
             for (let i = 0; i < rs.length; i ++) {
                 o = loadGang(rs[i])
@@ -376,26 +378,24 @@ function choice() {
                         return
                     }
 
+                    g = loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                     o = loadGang(rs[i])
                     if (o.name === g.name) {
                         xvt.app.refocus()
                         return
                     }
-
+                    
                     posse = new Array($.online)
                     for (let i = 0; i < g.members.length; i++) {
-                        if (g.members[i] !== $.player.id) {
-                            let who = $.query(`SELECT handle, status, gang FROM Players WHERE id = '${g.members[i]}'`)
-                            if (who.length) {
-                                if (who[0].gang === g.name) {
-                                    let n = posse.push(<active>{ user:{ id:g.members[i]} }) - 1
-                                    $.loadUser(posse[n])
-                                    if (posse[n].user.status)
-                                        posse.pop()
-                                    else
-                                        $.activate(posse[n])
-                                }
-                            }
+                        if (g.members[i] !== $.player.id
+                            && (g.validated[i] || typeof g.validated[i] == 'undefined')
+                            && !g.status[i]) {
+                                let n = posse.push(<active>{ user:{ id:g.members[i]} }) - 1
+                                $.loadUser(posse[n])
+                                if (posse[n].user.status)
+                                    posse.pop()
+                                else
+                                    $.activate(posse[n])
                         }
                     }
 
@@ -403,16 +403,11 @@ function choice() {
                     nme = new Array()
                     for (let i = 0; i < o.members.length; i++) {
                         if (!/_MM.$/.test(o.members[i])) {
-                            let who = $.query(`SELECT handle, status, gang FROM Players WHERE id = '${o.members[i]}'`)
-                            if (who.length) {
-                                if (who[0].gang === o.name) {
-                                    let n = nme.push(<active>{ user:{ id:o.members[i]} }) - 1
-                                    $.loadUser(nme[n])
-                                    if (nme[n].user.status)
-                                        nme.pop()
-                                    else
-                                        $.activate(nme[n])
-                                }
+                            if ((g.validated[i] || typeof g.validated[i] == 'undefined')
+                                && !g.status[i]) {
+                                let n = nme.push(<active>{ user:{ id:o.members[i]} }) - 1
+                                $.loadUser(nme[n])
+                                $.activate(nme[n])
                             }
                         }
                         else {
@@ -514,6 +509,8 @@ function loadGang(rs: any): gang {
             gang.handles.push(who[0].handle)
             gang.genders.push(who[0].gender)
             gang.melee.push(who[0].melee)
+            if (gang.members[n] !== $.player.id && !who[0].status && $.lock(gang.members[n], false))
+                who[0].status = 'locked'
             gang.status.push(who[0].status)
             gang.validated.push(who[0].gang ? who[0].gang === rs.name : undefined)
         }
@@ -577,13 +574,11 @@ function saveGang(g: gang, insert = false) {
 function showGang(lg: gang, rg?: gang, engaged = false) {
     xvt.out(xvt.reset, '\n')
 
-    //
     xvt.out(xvt.bright, xvt.white, mp[lg.banner])
     if (rg)
         xvt.out(' '.repeat(31), mp[rg.banner])
     xvt.out(xvt.reset, '\n')
 
-    //
     xvt.out(' |', xvt.Black + lg.back, xvt.black + lg.fore, xvt.bright)
     xvt.out(le[lg.trim], tb[lg.trim].repeat(26), re[lg.trim], xvt.reset)
     if (rg) {
@@ -592,7 +587,6 @@ function showGang(lg: gang, rg?: gang, engaged = false) {
     }
     xvt.out(xvt.reset, '\n')
 
-    //
     xvt.out(' |', xvt.Black + lg.back, xvt.black + lg.fore, xvt.bright)
     let i = 26 - lg.name.length
     xvt.out(le[lg.trim], ' '.repeat(i >>1), lg.name, ' '.repeat((i >>1) + i % 2), re[lg.trim], xvt.reset)
@@ -603,7 +597,6 @@ function showGang(lg: gang, rg?: gang, engaged = false) {
     }
     xvt.out(xvt.reset, '\n')
     
-    //
     xvt.out(' |', xvt.Black + lg.back, xvt.black + lg.fore, xvt.bright)
     xvt.out(le[lg.trim], tb[lg.trim].repeat(26), re[lg.trim], xvt.reset)
     if (rg) {
@@ -612,7 +605,6 @@ function showGang(lg: gang, rg?: gang, engaged = false) {
     }
     xvt.out(xvt.reset, '\n')
 
-    //
     let n = 0
     let who: { handle:string, status:string, gang:string }[]
     while (n < 4 && ((lg && lg.members.length) || (rg && rg.members.length))) {

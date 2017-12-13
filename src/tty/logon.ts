@@ -115,8 +115,8 @@ function who() {
             $.unlock($.player.id)
         }
         else {
-            xvt.beep()
-            xvt.out(`\nYou\'re in violation [${t}] of the space-time continuum.  Try again later.\n`)
+            $.beep()
+            xvt.out(`\nYou\'re in violation of the space-time continuum: T - ${90 - t} minutes.\n`)
             xvt.hangup()
         }
     }
@@ -146,7 +146,7 @@ function password() {
         } while (!xvt.validator.isDefined($.access[$.player.gender]))
     }
     else {
-        //  old school BBS tactic to leave an impression on new players
+        //  old school BBS tactic (usually 5 minutes) for Millennials to experience
         let t = $.now().time
         t = 1440 * ($.now().date - $.player.lastdate) + 60 * Math.trunc(t / 100) + (t % 100) - (60 * Math.trunc($.player.lasttime / 100) + ($.player.lasttime % 100))
         if (!$.access.sysop && $.player.novice && t < 2) {
@@ -161,25 +161,29 @@ function password() {
         $.player.today = 0
 
     if ($.player.today > $.access.calls) {
-        xvt.beep()
-        xvt.out('\nYou have already used all ', $.access.calls.toString(), ' visits for today.  Please visit us again tomorrow!\n')
+        $.beep()
+        xvt.out('\nYou have already used all ', $.access.calls.toString(),
+         ' visits for today.  Please visit us again tomorrow!\n')
         xvt.hangup()
     }
 
-    if ($.query(`SELECT id FROM Online WHERE id = '${$.player.id}'`).length) {
-        xvt.beep()
+    if ($.lock($.player.id, false)) {
+        $.beep()
         xvt.out('\nYou\'re in violation of the space-time continuum.  Try again later.\n')
         xvt.hangup()
     }
 
     xvt.ondrop = $.logoff
     $.loadUser($.sysop)
-    $.sysop.calls++
-    $.sysop.today++
     if (!$.loadKing()) {
         $.player.access = Object.keys($.Access.name).slice($.player.gender === 'F' ? -2 : -1)[0]
         $.player.novice = false
         $.sysop.email = $.player.email
+    }
+    if ($.now().date >= $.sysop.dob) {
+        $.sysop.calls++
+        $.sysop.plays++
+        $.sysop.today++
     }
     $.saveUser($.sysop)
 
@@ -195,9 +199,13 @@ function password() {
     , xvt.Red, xvt.bright, xvt.white, $.sysop.name, xvt.reset
     , xvt.red, xvt.RGradient[xvt.emulation], '((:=--')
     xvt.out('\n\n')
-    xvt.out(xvt.cyan, 'Caller#: ', xvt.bright, xvt.white, $.sysop.calls.toString(), xvt.reset
-        , '  -  ', xvt.faint, 'this game start', $.now().date >= $.sysop.dob ? 'ed' : 's', ' '
-        , $.date2full($.sysop.dob), xvt.reset, '\n')
+    xvt.out(xvt.cyan, 'Visitor: ', xvt.bright, xvt.white, $.sysop.calls.toString()
+        , xvt.reset, '  -  ')
+    if ($.now().date >= $.sysop.dob)
+        xvt.out(xvt.faint, $.sysop.plays.toString(), ' plays since this game started')
+    else
+        xvt.out('new game starts', xvt.bright, xvt.yellow)
+    xvt.out(' ', $.date2full($.sysop.dob), xvt.reset, '\n')
     xvt.out(xvt.cyan, 'Last on: ', xvt.bright, xvt.white, $.date2full($.player.lastdate), xvt.normal, '\n')
     xvt.out(xvt.cyan, ' Online: ', xvt.bright, xvt.white, $.player.handle, xvt.normal, '\n')
     xvt.out(xvt.cyan, ' Access: ', xvt.bright, xvt.white, $.player.access)
@@ -251,17 +259,18 @@ function welcome() {
     }
 
     if ($.player.today <= $.access.calls && $.access.roleplay && $.sysop.dob <= $.now().date) {
+        $.player.calls++
         $.profile({ png:'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : '')
             , handle:$.player.handle
             , level:$.player.level, pc:$.player.pc
         })
         xvt.out(xvt.bright, xvt.black, '(', xvt.normal, xvt.white, 'Welcome back, ',  $.access[$.player.gender], xvt.bright, xvt.black, ')\n', xvt.reset)
+        xvt.out(xvt.cyan, 'Visit #: ', xvt.bright, xvt.white, $.player.calls.toString(), xvt.reset)
         xvt.out(`\nYou have ${$.access.calls - $.player.today} calls remaining.\n`)
         xvt.sessionAllowed = $.access.minutes * 60
         $.news(`${$.player.handle} logged in ${$.time($.player.lasttime)} as a level ${$.player.level} ${$.player.pc}:`)
         $.wall(`logged on as a level ${$.player.level} ${$.player.pc}`)
 
-        $.player.calls++
         $.player.plays++
         $.player.status = ''
         $.arena = 3

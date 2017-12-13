@@ -1466,6 +1466,7 @@ export function riddle() {
         xvt.out(xvt.reset, '\nHappy hunting tomorrow!\n')
         loadUser(sysop)
         sysop.dob = now().date + 1
+        sysop.plays = 0
         saveUser(sysop)
         xvt.hangup()
     }
@@ -2141,19 +2142,26 @@ export function newDay() {
     xvt.out('\nAll set -- thank you!\n\n')
 }
 
-export function lock(id: string): boolean {
-    try {
-        sqlite3.exec(`INSERT INTO Online (id, pid, lockdate, locktime) VALUES ('${id}', ${process.pid}, ${now().date}, ${now().time})`)
-        return true
+export function lock(id: string, insert = true): boolean {
+
+    if (insert) {
+        try {
+            sqlite3.exec(`INSERT INTO Online (id, pid, lockdate, locktime) VALUES ('${id}', ${process.pid}, ${now().date}, ${now().time})`)
+            return true
+        }
+        catch(err) {
+            if (err.code !== 'SQLITE_CONSTRAINT_PRIMARYKEY') {
+                xvt.beep()
+                xvt.out(xvt.reset, '\n?Unexpected error: ', String(err), '\n')
+                reason = 'defect - ' + err.code
+                xvt.hangup()
+                }
+            return false
+        }
     }
-    catch(err) {
-        if (err.code !== 'SQLITE_CONSTRAINT_PRIMARYKEY') {
-            xvt.beep()
-            xvt.out(xvt.reset, '\n?Unexpected error: ', String(err), '\n')
-            reason = 'defect - ' + err.code
-            xvt.hangup()
-            }
-        return false
+    else {
+        let rs = query(`SELECT id FROM Online WHERE id = '${id}'`)
+        return rs.length
     }
 }
 

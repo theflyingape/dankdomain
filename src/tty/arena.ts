@@ -268,7 +268,7 @@ function choice() {
 				}
 				if (opponent.user.id === $.player.id) {
 					opponent.user.id = ''
-					xvt.out('\nYou can\'t fight a wimp like', $.who(opponent, 'him'), '.\n')
+					xvt.out('\nYou can\'t fight a wimp like ', $.who(opponent, 'him'), '\n')
 					menu()
 					return
 				}
@@ -325,10 +325,17 @@ function choice() {
 					return
 				}
 
+				if ($.lock(opponent.user.id, false)) {
+					$.beep()
+					xvt.out(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
+					menu()
+					return
+				}
+
 				if (isNaN(+opponent.user.weapon)) xvt.out('\n', $.who(opponent, 'He'), $.Weapon.wearing(opponent), '.\n')
 				if (isNaN(+opponent.user.armor)) xvt.out('\n', $.who(opponent, 'He'), $.Armor.wearing(opponent), '.\n')
 
-				$.action('yn')				
+				$.action('yn')
 				xvt.app.form = {
 					'fight': { cb:() => {
 						xvt.out('\n\n')
