@@ -964,34 +964,36 @@ export function keyhint(rpc: active) {
                 for (let n = 3 * slot; n < 3 * (slot + 1); n++)
                     if (key === rpc.user.keyhints[n])
                         key = ''
-                if (key) player.keyhints[i] = key
+                if (key) rpc.user.keyhints[i] = key
             }
-        } while(!player.keyhints[i])
+        } while(!rpc.user.keyhints[i])
 
-        xvt.out(xvt.reset, `Key #${slot + 1} is not `, xvt.bright, xvt.reverse)
-        switch (player.keyhints[i]) {
-        case 'P':
-            xvt.out(xvt.magenta, ' Platinum ')
-            break
-        case 'G':
-            xvt.out(xvt.yellow, ' Gold ')
-            break
-        case 'S':
-            xvt.out(xvt.cyan, ' Silver ')
-            break
-        case 'C':
-            xvt.out(xvt.red, ' Copper ')
-            break
-        default:
-            xvt.out(xvt.black, `${player.keyhints[i]} from here`)
-            break
+        if (rpc == online) {
+            xvt.out(xvt.reset, `Key #${slot + 1} is not `, xvt.bright, xvt.reverse)
+            switch (player.keyhints[i]) {
+            case 'P':
+                xvt.out(xvt.magenta, ' Platinum ')
+                break
+            case 'G':
+                xvt.out(xvt.yellow, ' Gold ')
+                break
+            case 'S':
+                xvt.out(xvt.cyan, ' Silver ')
+                break
+            case 'C':
+                xvt.out(xvt.red, ' Copper ')
+                break
+            default:
+                xvt.out(xvt.black, `${player.keyhints[i]} from here`)
+                break
+            }
+            if (player.emulation === 'XT') xvt.out(xvt.noreverse, '  \u{1F511} ')
+            xvt.out(xvt.reset, '\n')
         }
-        if (player.emulation === 'XT') xvt.out(xvt.noreverse, '  \u{1F511} ')
-        xvt.out(xvt.reset, '\n')
     }
-    else {
+    else
         xvt.out(xvt.reset, 'There are no more key hints available to you.\n')
-    }
+
     rpc.altered = true
 }
 
@@ -1825,7 +1827,7 @@ export function wall(msg: string) {
             retreats numeric, tl numeric, tw numeric
         )`)
     }
-    
+
     let npc = <user>{}
     Object.assign(npc, require('./etc/sysop.json'))
     rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)

@@ -52,29 +52,54 @@ function choice() {
             return
 
         case 'R':
+            let pc: string
+            let kh: number
+            let k: number
             $.action('yn')
             xvt.app.form = {
+                'pc': { cb:() => {
+                    if (!xvt.entry)
+                        xvt.entry = Object.keys($.PC.name['player'])[0]
+                    pc = $.titlecase(xvt.entry)
+                    xvt.app.focus = 'kh'
+               }, prompt:'Enter starting player class? ', max:20 },
+                'kh': { cb:() => {
+                    kh = parseInt(xvt.entry)
+                    kh = kh < 1 ? 0 : kh > 6 ? 6 : kh
+                    xvt.app.focus = 'yn'
+                }, prompt:'Enter starting key hints (0-6)? ', max:1 },
                 'yn': { cb:() => {
+                    xvt.out('\n')
                     if (/Y/i.test(xvt.entry)) {
                         $.loadUser($.sysop)
                         $.sysop.dob = $.now().date + 1
                         $.saveUser($.sysop)
                         let rs = $.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
-                        let user: user = { id:'' }
+                        let rpc: active = { user:{ id:'' } }
                         for (let row in rs) {
-                            user.id = rs[row].id
-                            $.loadUser(user)
-                            $.reroll(user)
-                            $.saveUser(user)
+                            rpc.user.id = rs[row].id
+                            $.loadUser(rpc)
+                            $.reroll(rpc.user, pc)
+                            $.newkeys(rpc.user)
+                            for (k = 0; k < kh; k++)
+                                $.keyhint(rpc)
+                            rpc.user.calls = 0
+                            rpc.user.expert = false
+                            rpc.user.novice = false
+                            $.saveUser(rpc)
                             xvt.out('.')
                         }
-                        $.reroll($.player)
+                        $.reroll($.player, pc)
+                        $.newkeys($.player)
+                        for (k = 0; k < kh; k++)
+                            $.keyhint($.online)
                         xvt.out(xvt.reset, '\nHappy hunting tomorrow!\n')
                         $.reason = 'reroll'
+                        xvt.hangup()
                     }
                 }, prompt:'Reroll the board (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
             }
-            xvt.app.focus = 'yn'
+            xvt.app.focus = 'pc'
             return
 
         case 'Y':
