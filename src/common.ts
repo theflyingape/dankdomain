@@ -16,6 +16,7 @@ module Common
     //  items
     export const Access = new Items.Access
     export const Armor = new Items.Armor
+    export const Deed = new Items.Deed
     export const Magic = new Items.Magic
     export const Poison = new Items.Poison
     export const RealEstate = new Items.RealEstate
@@ -1419,9 +1420,60 @@ export function riddle() {
         xvt.waste(2000)
     }
 
-    //xvt.out(xvt.magenta, 'Checking your statistics against All-Time Fame/Lame lists...\n')
-    //xvt.out(xvt.blue, 'Checking your statistics against the ', player.pc,' Fame/Lame lists...\n')
+    let bonus = 0
+    let deeds = ['plays', 'jw', 'jl', 'killed', 'kills', 'retreats', 'tw', 'tl']
 
+    xvt.out(xvt.blue, '\nChecking your statistics against the ', player.pc,' Fame/Lame lists...\n')
+    xvt.waste(1000)
+    for (let i in deeds) {
+        let deed = mydeeds.find((x) => { return x.deed === deeds[i] })
+        if (['jl', 'killed', 'retreats'].indexOf(deeds[i])) {
+            if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, deeds[i], 100)[0]) - 1]
+            if (player[deeds[i]] <= deed.value) {
+                deed.value = player[deeds[i]]
+                saveDeed(deed)
+                bonus = 1
+                xvt.out(' +', xvt.bright, deeds[i], xvt.normal)
+                sound('click', 4)
+            }
+        }
+        else {
+            if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, deeds[i])[0]) - 1]
+            if (player[deeds[i]] >= deed.value) {
+                deed.value = player[deeds[i]]
+                saveDeed(deed)
+                bonus = 1
+                xvt.out(' +', xvt.bright, deeds[i], xvt.normal)
+                sound('click', 5)
+            }
+        }
+    }
+    xvt.out(xvt.magenta, '\nChecking your statistics against All-Time Fame/Lame lists...\n')
+    xvt.waste(1000)
+    for (let i in deeds) {
+        let deed = mydeeds.find((x) => { return x.deed === deeds[i] })
+        if (['jl', 'killed', 'retreats'].indexOf(deeds[i])) {
+            if (!deed) deed = mydeeds[mydeeds.push(loadDeed('All-Time', deeds[i], 100)[0]) - 1]
+            if (player[deeds[i]] <= deed.value) {
+                deed.value = player[deeds[i]]
+                saveDeed(deed)
+                bonus = 3
+                xvt.out(' +', xvt.bright, deeds[i], xvt.normal)
+                sound('click', 5)
+            }
+        }
+        else {
+            if (!deed) deed = mydeeds[mydeeds.push(loadDeed('All-Time', deeds[i])[0]) - 1]
+            if (player[deeds[i]] >= deed.value) {
+                deed.value = player[deeds[i]]
+                saveDeed(deed)
+                bonus = 3
+                xvt.out(' +', xvt.bright, deeds[i], xvt.normal)
+                sound('click', 4)
+            }
+        }
+    }
+    
     xvt.out(xvt.bright, xvt.cyan, '\nYou have become so powerful that you are now immortal and you leave your \n')
     xvt.out('worldly possessions behind.\n')
     loadUser(taxman)
@@ -1505,7 +1557,7 @@ export function riddle() {
         }
     }
 
-    for (let i = 0; i <= max; i++)
+    for (let i = 0; i <= max + bonus; i++)
         keyhint(online)
 
     action('riddle')
@@ -1779,14 +1831,12 @@ export function profile(params) {
 }
 
 export function sound(effect: string, sync = 2) {
-    if (!xvt.modem) return
-    xvt.out('@play(', effect, ')')
+    if (xvt.modem) xvt.out('@play(', effect, ')')
     xvt.waste(sync * 100)
 }
 
 export function wall(msg: string) {
-    if (!xvt.modem) return
-    xvt.out(`@wall(${player.handle} ${msg})`)
+    if (xvt.modem) xvt.out(`@wall(${player.handle} ${msg})`)
 }
 
 /***********
@@ -2217,7 +2267,7 @@ export function run(sql: string, errOk = false): { changes: number, lastInsertRO
     }
 }
 
-export function loadDeed(pc: string, what?: string): deed[] {
+export function loadDeed(pc: string, what?: string, start = 0): deed[] {
 
     let deed = []
     let sql = `SELECT * FROM Deeds WHERE pc='${pc}'`
@@ -2235,7 +2285,7 @@ export function loadDeed(pc: string, what?: string): deed[] {
             })
     }
     else if (what) {
-        sqlite3.exec(`INSERT INTO Deeds VALUES ('${pc}', '${what}', ${now().date}, 'Nobody', 0)`)
+        sqlite3.exec(`INSERT INTO Deeds VALUES ('${pc}', '${what}', ${now().date}, 'Nobody', ${start})`)
         deed = loadDeed(pc, what)
     }
 

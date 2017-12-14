@@ -1,0 +1,11 @@
+{
+	"big blast": { "description":"Big Blast hit", "starting":0 },
+	"blast": { "description":"Blast hit", "starting":0 },
+	"jl": { "description":"Jousts lost", "starting":100 },
+	"jw": { "description":"Jousts won", "starting":0 },
+	"killed": { "description":"Killed", "starting":100 },
+	"kills": { "description":"Kills taken", "starting":100 },
+	"melee": { "description":"Melee hit", "starting":0 },
+	"plays": { "description":"Plays used", "starting":100 },
+	"retreats": { "description":"Retreats opted", "starting":100 }
+}

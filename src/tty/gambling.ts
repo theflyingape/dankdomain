@@ -11,13 +11,15 @@ module Gambling
 {
 	let casino: choices = {
         'B': { description:'Blackjack' },
-        'C': { description:'Craps' },
-        'G': { description:'Greyhound race' },
         'H': { description:'High Stakes Draw' },
     	'K': { description:'Keno' },
+	}
+/*
+		'C': { description:'Craps' },
+		'G': { description:'Greyhound race' },
         'R': { description:'Roulette' },
         'S': { description:'One-armed Bandit' }
-	}
+*/
 	let atm: choices = {
 		'D': { },
 		'W': { },

@@ -116,6 +116,15 @@ export class Armor {
     }
 }
 
+export class Deed {
+    
+    name: deeds[]
+
+    constructor () {
+        this.name = require('./items/deed.json')
+    }
+}
+    
 export class Magic {
 
     spells: spell[]

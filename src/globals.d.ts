@@ -116,6 +116,12 @@ interface deed {
     value: number
 }
 
+interface deeds {
+    name: string
+    description: string
+    starting: number
+}
+
 interface choice {
     description?: string
 }

@@ -823,8 +823,9 @@ function doMove(): boolean {
 							n = ($.online.str / 5 - 5 * i + $.dice(5) + 1) >>0
 							for (m = 0; m < n; m++) {
 								t = $.dice(z)
-								xvt.out('\r', '-\\|/'[m % 4])
 								$.beep()
+								xvt.out('\r', '-\\|/'[m % 4])
+								xvt.waste(5 * i)
 							}
 						}
 						n = $.dice($.online.str / 20) + 2
@@ -837,8 +838,7 @@ function doMove(): boolean {
 								' =Key= ', ' Morph '
 								, '+Skill+'][t % z],
 								xvt.blue, '] \r')
-							xvt.waste(500 * i)
-							$.beep()
+							$.sound('click', 5 * i)
 						}
 						xvt.out(xvt.reset)
 						switch (t % z) {
