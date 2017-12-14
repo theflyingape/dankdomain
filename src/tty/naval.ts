@@ -73,6 +73,12 @@ function choice() {
 					return
 				}
 				xvt.out(`\nYou sail out until you spot ${opponent.user.handle}\'s ship on the horizon.\n\n`)
+				if ($.lock(opponent.user.id, false)) {
+					$.beep()
+					xvt.out(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
+					menu()
+					return
+				}
 				xvt.out(`It has ${opponent.user.hull} hull points.\n`)
 
 				$.action('yn')				

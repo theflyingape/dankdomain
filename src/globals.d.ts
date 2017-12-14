@@ -108,6 +108,14 @@ interface gang {
     fore: number
 }
 
+interface deed {
+    pc: string
+    deed: string
+    date: number
+    hero: string
+    value: number
+}
+
 interface choice {
     description?: string
 }

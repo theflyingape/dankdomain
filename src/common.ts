@@ -1934,7 +1934,17 @@ export function wall(msg: string) {
         sqlite3.exec(`CREATE TABLE IF NOT EXISTS Gangs (
             name text PRIMARY KEY, members text, win numeric, loss numeric, banner numeric, color numeric
         )`)
-        sqlite3.exec(`INSERT INTO Gangs VALUES ( 'Monster Mash', '_MM1,_MM2,_MM3,_MM4', 0, 0, 0, 0 )`)
+        run(`INSERT INTO Gangs VALUES ( 'Monster Mash', '_MM1,_MM2,_MM3,_MM4', 0, 0, 0, 0 )`)
+        xvt.out('done.\n')
+        xvt.waste(250)
+    }
+
+    rs = query(`SELECT * FROM sqlite_master WHERE name='Deeds' AND type='table'`)
+    if (!rs.length) {
+        xvt.out('\ninitializing Deeds ... ')
+        sqlite3.exec(`CREATE TABLE IF NOT EXISTS Deeds (pc text KEY,
+            deed text KEY, date numeric, hero text, value numeric
+        )`)
         xvt.out('done.\n')
         xvt.waste(250)
     }
@@ -2185,6 +2195,23 @@ export function query(q: string, errOk = false): any {
             xvt.hangup()
         }
         return []
+    }
+}
+
+export function run(sql: string, errOk = false): { changes: number, lastInsertROWID: number } {
+    try {
+        let cmd = sqlite3.prepare(sql)
+        return cmd.run()
+    }
+    catch(err) {
+        if (!errOk) {
+            xvt.beep()
+            xvt.out(xvt.reset, '\n?Unexpected error:', String(err), '\n')
+            xvt.out(sql)
+            reason = 'defect - ' + err.code
+            xvt.hangup()
+        }
+        return { changes: 0, lastInsertROWID: 0}
     }
 }
 

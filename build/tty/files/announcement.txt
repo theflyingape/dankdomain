@@ -1,12 +1,20 @@
-[22;36mDate:[22;37m Tue 21-Nov-2017  6:30pm
+[22;36mDate:[22;37m Tue 12-Dec-2017  9:35pm
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
-Moving along, now reached the Beta stage.  More work is needed, but the core
-is in place and a Go Live kick-off party for Christmas looks reasonable.
-I sincerely appreciate your patience and constructive feedback.
+The game's core is stable although not entirely feature complete.  That said,
+I am satisfied enough to schedule a 'Dress Rehearsal' for this Friday at
+12:00am midnight.
 
-If you do encounter a catastrophic application exception error, it is
-better to force a LOGOFF event using a Ctrl-D or Ctrl-Z keystroke, rather
-than closing your browser window.
+That means the game will reset, but for some fun, every player will start as
+a Paladin with 4 extra random Key hints (+1 should you roll).  This rehearsal
+will last for only one week -- as the official Go Live party will occur on
+Friday, December 22nd at 12:00am midnight.
 
-For now, enjoy and thank you for giving it a go.
+I am also promoting the game locally here in Providence, at my brother's
+store, RAH-CoCo's Collectibles with a magenetic Dank Domain promo card
+advertising this web portal.  Maybe some new players will get online and we
+can exploit the fresh meat. @play(thief) Moohahahahahaha-ha! 
+
+Thank you for enduring the rapid-fire chain of events throughout this game
+development process.
+

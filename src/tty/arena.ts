@@ -139,8 +139,10 @@ function choice() {
 							$.sound('boo')
 							xvt.out('\n\nThe crowd throws rocks at you as you ride out of the arena.\n')
 							$.player.jl++
-							opponent.user.jw++
-							$.saveUser(opponent)
+							//opponent.user.jw++
+							//$.saveUser(opponent)
+							if ($.run(`UPDATE Players set jw=jw+1 WHERE id='${opponent.user.id}'`).changes)
+								$.log(opponent.user.id, `\n${$.player.handle} forfeited to you in a joust.`)
 							menu()
 							return
 						}
@@ -163,9 +165,10 @@ function choice() {
 									xvt.out('You win ', reward.carry(), '!\n')
 									$.player.coin.value += reward.value
 									$.player.jw++
-									opponent.user.jl++
-									$.log(opponent.user.id, `\n${$.player.handle} beat you in a joust and got ${reward.carry()}.`)
-									$.saveUser(opponent)
+									//opponent.user.jl++
+									//$.saveUser(opponent)
+									if ($.run(`UPDATE Players set jl=jl+1 WHERE id='${opponent.user.id}'`).changes)
+										$.log(opponent.user.id, `\n${$.player.handle} beat you in a joust and got ${reward.carry()}.`)
 									menu()
 									return
 								}
@@ -184,10 +187,11 @@ function choice() {
 									let reward = new $.coins($.money($.player.level))
 									xvt.out(opponent.user.handle, ' spits on your face.\n')
 									$.player.jl++
-									opponent.user.coin.value += reward.value
-									opponent.user.jw++
-									$.saveUser(opponent)
-									$.log(opponent.user.id, `\n${$.player.handle} lost to you in a joust.  You got ${reward.carry()}.`)
+									//opponent.user.coin.value += reward.value
+									//opponent.user.jw++
+									//$.saveUser(opponent)
+									if ($.run(`UPDATE Players set jw=jw+1, coin=coin+${reward.value} WHERE id='${opponent.user.id}'`).changes)
+										$.log(opponent.user.id, `\n${$.player.handle} lost to you in a joust.  You got ${reward.carry()}.`)
 									$.news(`\tlost to ${opponent.user.handle} in a joust`)
 									$.wall(`lost to ${opponent.user.handle} in a joust`)
 									menu()
