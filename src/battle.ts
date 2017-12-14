@@ -1017,6 +1017,16 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 }
             }
             else {
+                if (rpc === $.online) {
+                    let deed = $.mydeeds.find((x) => { return x.deed === 'blast' })
+                    if (!deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'blast')[0]) - 1]
+                    if ((deed && br > deed.value)) {
+                        deed.value = br
+                        $.sound('outstanding')
+                        $.saveDeed(deed)
+                        xvt.out(xvt.yellow, '+', xvt.white)
+                    }
+                }
                 xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' blast')
                     , nme === $.online ? 'you' : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
@@ -1366,6 +1376,16 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 }
             }
             else {
+                if (rpc === $.online) {
+                    let deed = $.mydeeds.find((x) => { return x.deed === 'big blast' })
+                    if (!deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'big blast')[0]) - 1]
+                    if ((deed && br > deed.value)) {
+                        deed.value = br
+                        $.sound('outstanding')
+                        $.saveDeed(deed)
+                        xvt.out(xvt.yellow, '+', xvt.white)
+                    }
+                }
                 xvt.out(rpc === $.online ? 'you'
                     : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' BLAST')
@@ -1698,6 +1718,14 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             : (period[0] === '.') ? rpc.weapon.stab : rpc.weapon.plunge
 
         if (rpc == $.online) {
+            let deed = $.mydeeds.find((x) => { return x.deed === 'melee' })
+            if (!deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'melee')[0]) - 1]
+            if (hit > deed.value) {
+                deed.value = hit
+                $.sound('outstanding')
+                $.saveDeed(deed)
+                xvt.out(xvt.yellow, '+', xvt.white)
+            }
             xvt.out('You ', action ,' ')
             if (alive[0] == 1 && alive[1] == 1)
                 xvt.out($.who(enemy, 'him'))

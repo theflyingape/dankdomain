@@ -302,6 +302,7 @@ function welcome() {
         }
         else {
             $.music('logon')
+            $.mydeeds = $.loadDeed($.player.pc)
         }
     }
     else {

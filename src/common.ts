@@ -9,6 +9,7 @@ import titleCase = require('title-case')
 
 import xvt = require('xvt')
 import Items = require('./items')
+import { bold } from 'xvt';
 
 module Common
 {
@@ -47,6 +48,7 @@ module Common
     export let tiny: number = 0
 
     export let callers: caller[] = []
+    export let mydeeds: deed[]
     export let reason: string = ''
 
 //  all player characters
@@ -2213,6 +2215,37 @@ export function run(sql: string, errOk = false): { changes: number, lastInsertRO
         }
         return { changes: 0, lastInsertROWID: 0}
     }
+}
+
+export function loadDeed(pc: string, what?: string): deed[] {
+
+    let deed = []
+    let sql = `SELECT * FROM Deeds WHERE pc='${pc}'`
+    if (what) sql += ` AND deed='${what}'`
+    let rs = query(sql)
+
+    if (rs.length) {
+        for (let i = 0; i < rs.length; i++)
+            deed.push({
+                pc: rs[i].pc,
+                deed: rs[i].deed,
+                date: rs[i].date,
+                hero: rs[i].hero,
+                value: rs[i].value
+            })
+    }
+    else if (what) {
+        sqlite3.exec(`INSERT INTO Deeds VALUES ('${pc}', '${what}', ${now().date}, 'Nobody', 0)`)
+        deed = loadDeed(pc, what)
+    }
+
+    return deed
+}
+
+export function saveDeed(deed: deed) {
+    deed.date = now().date
+    deed.hero = player.handle
+    sqlite3.exec(`UPDATE Deeds set date=${deed.date}, hero='${deed.hero}', value=${deed.value} WHERE pc='${deed.pc}' AND deed='${deed.deed}'`)
 }
 
 }
