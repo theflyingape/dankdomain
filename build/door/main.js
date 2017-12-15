@@ -114,7 +114,7 @@ function newSession() {
 
           carrier = false;
           recheck = 0;
-          reconnect = setInterval(checkCarrier, 15000);
+          if (!reconnect) reconnect = setInterval(checkCarrier, 15000);
           window.frames['Info'].postMessage({ 'func':'Logoff' }, location.href);
         };
 
@@ -130,6 +130,7 @@ function newSession() {
 function endSession() {
   if (typeof tuneSource !== 'undefined') tuneSource.stop();
   if (reconnect) clearInterval(reconnect);
+  reconnect = null;
   term.destroy();
   pid = 0;
 }
@@ -141,6 +142,7 @@ function checkCarrier() {
   else {
     carrier = false;
     clearInterval(reconnect);
+    reconnect = null;
     terminalContainer.hidden = true;
     document.getElementById('idle-container').hidden = false;
     if (typeof tuneSource !== 'undefined') tuneSource.stop();

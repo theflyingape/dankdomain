@@ -101,9 +101,9 @@ function receive(event) {
 
     if (event.data.leader) {
       var html=`<table align="center">
-        <tr><td><img src="images/${event.data.banner}.png"></td><td><img src="images/${event.data.coat}.png"></td></tr>`
+        <tr><td rowspan=2><img src="images/${event.data.banner}.png"></td><td><img src="images/${event.data.leader}.png"></td></tr>`
       if (event.data.leader)
-        html += `<tr><td colspan=2><img src="images/${event.data.leader}.png"></td></tr>`
+        html += `<tr><td><img src="images/${event.data.coat}.png"></td></tr>`
       html += `</table>`
       nme(html)
       return

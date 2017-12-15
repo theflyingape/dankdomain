@@ -161,7 +161,7 @@ function watch() {
   term.fit();
   term.winptyCompatInit();
 
-  term.write('\x1B[1;34mConnecting your terminal to ' + watch.options[watch.selectedIndex].text + ' WebSocket ... ');
+  term.write('\x1B[H\x1B[J\x1B[1;34mConnecting your terminal to ' + watch.options[watch.selectedIndex].text + ' WebSocket ... ');
   protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://';
   socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + '/watch/';
 
