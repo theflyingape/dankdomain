@@ -26,7 +26,7 @@ app.post('/terminals', function (req, res) {
         cwd: process.env.PWD,
         env: process.env
     });
-    console.log('Create terminal with PID: ' + term.pid);
+    console.log('Create terminal ' + term.pid);
     terminals[term.pid] = term;
     logs[term.pid] = '';
     broadcasts[term.pid] = '';
@@ -41,7 +41,7 @@ app.post('/terminals/:pid/size', function (req, res) {
     var pid = parseInt(req.params.pid), cols = parseInt(req.query.cols), rows = parseInt(req.query.rows), term = terminals[pid];
     if (!term)
         return;
-    console.log('resize terminal ' + pid + ' to ' + cols + ' cols and ' + rows + ' rows');
+    console.log('Resize terminal ' + pid + ' (' + rows + 'x' + cols + ')');
     term.resize(cols, rows);
     res.end();
 });
@@ -56,7 +56,7 @@ app.post('/terminals/:pid/wall', function (req, res) {
 });
 app.ws('/terminals/:pid', function (ws, req) {
     var term = terminals[parseInt(req.params.pid)];
-    console.log('Connected to terminal ' + term.pid);
+    console.log('Connect terminal ' + term.pid);
     ws.send(logs[term.pid]);
     term.on('close', function () {
         ws.close();
@@ -76,7 +76,7 @@ app.ws('/terminals/:pid', function (ws, req) {
         }
         catch (ex) {
             if (term.pid) {
-                console.log(`?fatal terminal ${term.pid} socket error:`, ex.message);
+                console.log(`?FATAL terminal ${term.pid} socket error:`, ex.message);
                 unlock(term.pid);
                 delete term.pid;
             }
@@ -107,7 +107,7 @@ app.post('/watch', function (req, res) {
         if (terminals[pid])
             if (terminals[pid].who)
                 player = ' (' + terminals[pid].who + ')';
-        console.log('New lurker on PID: ' + pid + player);
+        console.log('Lurker terminal ' + pid + player + ' request');
         res.send((lurkers.push(pid) - 1).toString());
     }
     else if (Object.keys(terminals).length) {
@@ -129,7 +129,8 @@ app.post('/watch', function (req, res) {
 app.ws('/watch/:lurker', function (ws, req) {
     var lurker = parseInt(req.params.lurker);
     var term = terminals[lurkers[lurker]];
-    console.log('Lurker #' + (lurker + 1) + ' connected to terminal ' + term.pid);
+    var player = ' (' + terminals[term.pid].who + ')';
+    console.log('Lurker terminal ' + term.pid + player + ' connected ' + (lurker + 1));
     term.on('close', function () {
         ws.close();
     });
@@ -145,7 +146,7 @@ app.ws('/watch/:lurker', function (ws, req) {
         }
     });
     ws.on('close', function () {
-        console.log('Closed lurker #' + (lurker + 1) + ' terminal ' + term.pid);
+        console.log('Lurker #' + (lurker + 1) + ' closed terminal ' + term.pid);
         delete lurkers[lurker];
     });
 });

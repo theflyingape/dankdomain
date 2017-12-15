@@ -9,9 +9,9 @@
   }
   #terminal-container {
     border: 0;
-    top: 1; left: 0;
+    top: 0; left: 0;
     width: 70%;
-    height: 97%;
+    height: 100%;
     position: fixed;
   }
   #Info {
@@ -50,7 +50,8 @@ function receive(event) {
       case 'kb':
       case 'emit':
         if (!carrier) {
-          endSession();
+          term.destroy();
+          pid = 0;
           newSession();
           return;
         }
@@ -84,7 +85,7 @@ function resize() {
   }
 
   //  possibly shrink font until it can fit 80 columns
-  Object.assign(l.style, { 'top':'1%', 'height':'97%', 'width':'70%' });
+  Object.assign(l.style, { 'top':'0%', 'height':'100%', 'width':'70%' });
   Object.assign(r.style, { 'top':'0%', 'height':'100%', 'width':'30%' });
   term.setOption('fontSize', 13);
   while ((fontSize = term.getOption('fontSize')) > 7 && term.proposeGeometry().cols < 85)
@@ -95,7 +96,7 @@ function resize() {
   do {
     w = (parseInt(w) + 1) + '%';
     v = (100 - parseInt(w)) + '%';
-    Object.assign(l.style, { 'top':'1%', 'height':'97%', 'width':v });
+    Object.assign(l.style, { 'top':'0%', 'height':'100%', 'width':v });
     Object.assign(r.style, { 'top':'0%', 'height':'100%', 'width':w });
     xy = term.proposeGeometry();
   } while (xy.cols > 81 && parseInt(w) < 46);
@@ -208,7 +209,6 @@ function watch() {
     });
   });
 }
-
 </script>
 </head>
 <body onload="resize();" onresize="resize();">
