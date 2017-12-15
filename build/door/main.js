@@ -7,16 +7,15 @@ var terminalContainer = document.getElementById('terminal-container'),
     socket,
     pid;
 
-window.frames['Info'].postMessage({ 'func':'Logon' }, location.href);
 newSession();
 
-
 function newSession() {
-
   carrier = true;
   recheck = 0;
+  if (reconnect) clearInterval(reconnect);
   tune('dankdomain');
-
+  window.frames['Info'].postMessage({ 'func':'Logon' }, location.href);
+  
   term = new Terminal({ cursorBlink:false, rows:rows, cols:cols, enableBold:true, scrollback:250,
     fontFamily:'monospace', fontSize:fontSize, theme: {
     foreground:'#c1c2c8', background:'#010208',
@@ -40,7 +39,8 @@ function newSession() {
       socket.send(data);
     }
     else {
-      endSession();
+      term.destroy();
+      pid = 0;
       if (data === '\x0D' || data === ' ')
         newSession();
       else {
@@ -114,7 +114,7 @@ function newSession() {
 
           carrier = false;
           recheck = 0;
-          if (!reconnect) reconnect = setInterval(checkCarrier, 15000);
+          reconnect = setInterval(checkCarrier, 15000);
           window.frames['Info'].postMessage({ 'func':'Logoff' }, location.href);
         };
 
@@ -127,14 +127,6 @@ function newSession() {
   }, 0);
 }
 
-function endSession() {
-  if (typeof tuneSource !== 'undefined') tuneSource.stop();
-  if (reconnect) clearInterval(reconnect);
-  reconnect = null;
-  term.destroy();
-  pid = 0;
-}
-
 // let's have a nice value for both the player and the web server
 function checkCarrier() {
   if(++recheck < 10)
@@ -142,10 +134,8 @@ function checkCarrier() {
   else {
     carrier = false;
     clearInterval(reconnect);
-    reconnect = null;
     terminalContainer.hidden = true;
     document.getElementById('idle-container').hidden = false;
-    if (typeof tuneSource !== 'undefined') tuneSource.stop();
     tune('');
     var iframes = document.querySelectorAll('iframe');
     for (var i = 0; i < iframes.length; i++)
