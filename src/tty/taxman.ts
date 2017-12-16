@@ -8,6 +8,7 @@ import xvt = require('xvt')
 import $ = require('../common')
 import Battle = require('../battle')
 
+
 module Taxman
 {
     let irs: active[]

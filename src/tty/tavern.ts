@@ -9,6 +9,7 @@ import xvt = require('xvt')
 import Battle = require('../battle')
 import Taxman = require('./taxman')
 
+
 module Tavern
 {
 	let tavern: choices = {

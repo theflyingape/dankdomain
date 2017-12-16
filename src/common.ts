@@ -9,7 +9,6 @@ import titleCase = require('title-case')
 
 import xvt = require('xvt')
 import Items = require('./items')
-import { bold } from 'xvt';
 
 module Common
 {
@@ -705,7 +704,7 @@ export function skillplus(rpc: active, cb: Function) {
             xvt.out('\n', xvt.bright)
             switch (+xvt.entry) {
             case 0:
-                news('\tgot generally better.')
+                news('\tgot generally better')
                 if ((online.str += 2) > 100) online.str = 100
                 if ((online.int += 2) > 100) online.int = 100
                 if ((online.dex += 2) > 100) online.dex = 100
@@ -721,25 +720,25 @@ export function skillplus(rpc: active, cb: Function) {
                 break
 
             case 1:
-                news('\tcan get even Stronger.')
+                news('\tcan get even Stronger')
                 if ((player.maxstr += 10) > 100) player.maxstr = 100
                 xvt.out(xvt.red, `Maximum Strength is now ${player.maxstr}.`)
                 break
 
             case 2:
-                news('\tcan get even Wiser.')
+                news('\tcan get even Wiser')
                 if ((player.maxint += 10) > 100) player.maxint = 100
                 xvt.out(xvt.green, `Maximum Intellect is now ${player.maxint}.`)
                 break
 
             case 3:
-                news('\tcan get even Quicker.')
+                news('\tcan get even Quicker')
                 if ((player.maxdex += 10) > 100) player.maxdex = 100
                 xvt.out(xvt.magenta, `Maximum Dexterity is now ${player.maxdex}.`)
                 break
 
             case 4:
-                news('\tcan get even Nicer.')
+                news('\tcan get even Nicer')
                 if ((player.maxcha += 10) > 100) player.maxcha = 100
                 xvt.out(xvt.yellow, `Maximum Charisma is now ${player.maxcha}.`)
                 break
@@ -749,7 +748,7 @@ export function skillplus(rpc: active, cb: Function) {
                     xvt.app.refocus()
                     return
                 }
-                news('\tgot more Powerful.')
+                news('\tgot Milk')
                 xvt.out([xvt.cyan, xvt.blue, xvt.red, xvt.yellow][player.melee]
                     , [ 'You can finally enter through Tiny\'s front door.'
                       , 'So you want to be a hero, eh?'
@@ -763,7 +762,7 @@ export function skillplus(rpc: active, cb: Function) {
                     xvt.app.refocus()
                     return
                 }
-                news('\twatch your Back now.')
+                news('\twatch your Back now')
                 xvt.out([xvt.cyan, xvt.blue, xvt.red, xvt.black][player.backstab]
                     , [ 'A backstab is in your future.'
                       , 'You may backstab more regularly now.'
@@ -777,7 +776,7 @@ export function skillplus(rpc: active, cb: Function) {
                     xvt.app.refocus()
                     return
                 }
-                news('\tApothecary visits have more meaning.')
+                news('\tApothecary visits have more meaning')
                 xvt.out([xvt.cyan, xvt.blue, xvt.red, xvt.magenta][player.poison]
                     , [ 'The Apothecary will see you now, bring money.'
                       , 'Your poisons can achieve 2x its potency now.'
@@ -791,7 +790,7 @@ export function skillplus(rpc: active, cb: Function) {
                     xvt.app.refocus()
                     return
                 }
-                news('\tbecame more friendly with the old mage.')
+                news('\tbecame more friendly with the old mage')
                 switch(player.magic) {
                 case 0:
                     xvt.out(xvt.cyan, 'The old mage will see you now, bring money.')
@@ -800,14 +799,14 @@ export function skillplus(rpc: active, cb: Function) {
                 case 1:
                     xvt.out(xvt.cyan, 'Your wands have turned into scrolls.')
                     player.magic++
-                    player.sp += 15 + dice(500)
+                    player.sp += 15 + dice(511)
                     online.sp = player.sp
                     break
                 default:
-                    xvt.out(xvt.black, 'More mana is better.')
-                    player.sp += 512
-                    online.sp += 512
-                    player.sp += dice(3583 / player.magic)
+                    xvt.out(xvt.black, 'More mana is better')
+                    player.sp += 511
+                    online.sp += 511
+                    player.sp += dice(3583 - player.magic)
                     break
                 }
                 break
@@ -817,7 +816,7 @@ export function skillplus(rpc: active, cb: Function) {
                     xvt.app.refocus()
                     return
                 }
-                news('\ttry to avoid in the Square.')
+                news('\ttry to avoid in the Square')
                 xvt.out([xvt.cyan, xvt.blue, xvt.red, xvt.black][player.steal]
                     , [ 'Your fingers are starting to itch.'
                       , 'Your eyes widen at the chance for unearned loot.'
@@ -1789,8 +1788,8 @@ export function logoff() {
         xvt.out(xvt.cyan, '  \\_/  ', xvt.red, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Red, xvt.white, 'Never Program Mad', xvt.reset, xvt.red, xvt.RGradient[xvt.emulation], xvt.cyan, '  \\_/  \n')
         xvt.out(xvt.cyan, ' _(', xvt.bright, '-', xvt.normal, ')_    ', xvt.reset, '     npmjs.com        ', xvt.cyan, ' _(', xvt.bright, '-', xvt.normal, ')_ \n')
         xvt.out(xvt.cyan, '(/ ', xvt.bright, ':', xvt.normal, ' \\)                         ', xvt.cyan, '(/ ', xvt.bright, ':', xvt.normal, ' \\)\n')
-        xvt.out(xvt.cyan, 'I\\___/I ', xvt.green, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Green, xvt.white, 'CommodoreServer', xvt.reset, xvt.green, xvt.RGradient[xvt.emulation], xvt.cyan, ' I\\___/I\n')
-        xvt.out(xvt.cyan, '\\/   \\/  ', xvt.reset, ' commodoreserver.com   ', xvt.cyan, '\\/   \\/\n')
+        xvt.out(xvt.cyan, 'I\\___/I ', xvt.green, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Green, xvt.white, '  RAH-CoCo\'s   ', xvt.reset, xvt.green, xvt.RGradient[xvt.emulation], xvt.cyan, ' I\\___/I\n')
+        xvt.out(xvt.cyan, '\\/   \\/  ', xvt.reset, '    rahcocos.com       ', xvt.cyan, '\\/   \\/\n')
         xvt.out(xvt.cyan, ' \\ : /                          ', xvt.cyan, ' \\ : / \n')
         xvt.out(xvt.cyan, '  I:I    ', xvt.blue, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Blue, xvt.white, 'Robert Hurst', xvt.reset, xvt.blue, xvt.RGradient[xvt.emulation], xvt.cyan, '     I:I  \n')
         xvt.out(xvt.cyan, ' .I:I.  ', xvt.reset, '  robert.hurst-ri.us    ', xvt.cyan, ' .I:I. \n')
@@ -1798,8 +1797,8 @@ export function logoff() {
         xvt.waste(500)
         xvt.out(xvt.bright, xvt.black, process.title
             , xvt.normal, xvt.white, xvt.validator.isNotEmpty(process.env.npm_package_version) ? ' ' + process.env.npm_package_version : ''
-            , ' running on ', xvt.bright, xvt.green, 'Node.js ', xvt.normal, process.version
-            , xvt.bright, xvt.black, '(', xvt.normal, xvt.cyan, process.platform, xvt.bright, xvt.black, ')'
+            , ' running on ', xvt.bright, xvt.green, 'Node.js ', xvt.normal, process.version, xvt.reset
+            , xvt.faint, ' (', xvt.cyan, process.platform, xvt.white, xvt.faint, ')'
             , xvt.reset, '\n'
         )
         xvt.waste(2000)
@@ -2185,8 +2184,15 @@ export function newDay() {
         saveUser(user)
     }
 
-    rs = sqlite3.prepare(`SELECT id, lastdate FROM Players WHERE id NOT GLOB '_*'`).all()
+    rs = sqlite3.prepare(`SELECT id, lastdate, level, jl, jw FROM Players WHERE id NOT GLOB '_*'`).all()
     for (let row in rs) {
+        if ((rs[row].level == 1 || rs[row].novice) && (rs[row].jl >= (2 * rs[row].jw))) {
+            player.id = rs[row].id
+            loadUser(player)
+            player.jl = 0
+            player.jw = 0
+            saveUser(player)
+        }
         if ((now().date - rs[row].lastdate) > 365) {
             sqlite3.exec(`DELETE FROM Players WHERE id = '${rs[row].id}'`)
             continue

@@ -10,6 +10,7 @@ import $ = require('../common')
 import xvt = require('xvt')
 import Battle = require('../battle')
 
+
 module Party
 {
     const le = [ xvt.Empty[$.player.emulation], '>', '<', '(' ,')', '+', '*', ']' ]

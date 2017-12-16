@@ -3,9 +3,11 @@
  *  GAMBLING authored by: Robert Hurst <theflyingape@gmail.com>              *
 \*****************************************************************************/ 
 
+import {sprintf} from 'sprintf-js'
+
 import $ = require('../common')
 import xvt = require('xvt')
-import {sprintf} from 'sprintf-js'
+
 
 module Gambling
 {

@@ -9,6 +9,7 @@ import $ = require('../common')
 import xvt = require('xvt')
 import Battle = require('../battle')
 
+
 module Main
 {
     let mainmenu: choices = {

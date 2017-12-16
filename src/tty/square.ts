@@ -8,8 +8,7 @@ import {sprintf} from 'sprintf-js'
 import $ = require('../common')
 import xvt = require('xvt')
 import Battle = require('../battle')
-import { loadUser } from '../common';
-//import { retreat } from '../battle';
+
 
 module Square
 {
@@ -274,7 +273,7 @@ function choice() {
 								opponent.altered = true
 								$.saveUser(opponent)
 								$.log(opponent.user.id, `${$.player.handle} paid ${credit.carry()} to bail you out of jail.\n`)
-								$.news(`\t${opponent.user.handle} made bail.`)
+								$.news(`\t${opponent.user.handle} made bail`)
 								$.bail--
 							}
 							menu()
@@ -322,12 +321,28 @@ function choice() {
 			}
 			xvt.out('\nYou attempt to pick a passerby\'s pocket... ')
 			xvt.waste(1000)
-			credit.value = $.dice(5 *  $.money($.player.level) / $.dice(10))
-			xvt.out('\n\nYou pick somebody\'s pocket and steal ', credit.carry(), '!\n\n')
+
+			let pocket = <user>{ id:'', handle:'somebody' }
+			credit.value = $.dice(6 *  $.money($.player.level) / $.dice(10))
+
+			let l = $.dice(90)
+			let rs:any = $.query(`
+				SELECT id, status FROM Players
+				WHERE level BETWEEN ${l} AND ${l + 9} AND status != ''
+			`)
+			let r = $.dice(rs.length) - 1
+			if (r >= 0 && rs[r] && !rs[r].novice && !rs[r].status) {
+				pocket.id = rs[r].id
+				$.loadUser(pocket)
+				credit.value += pocket.coin.value
+				pocket.coin.value = 0
+			}
+
+			xvt.out('\n\nYou pick ${pocket.handle}\'s pocket and steal ', credit.carry(), '!\n\n')
 			xvt.waste(1000)
 			if (Math.trunc(16 * $.player.steal + $.player.level / 10 + $.player.dex / 10) < $.dice(100)) {
 				$.player.status = 'jail'
-				$.reason = 'caught picking a pocket'
+				$.reason = `caught picking ${pocket.handle}\'s pocket`
 				xvt.out('A guard catches you and throws you into jail!\n')
 				$.sound('arrested', 20)
 				xvt.out('You might be released by your next call.\n\n')
@@ -338,6 +353,7 @@ function choice() {
 			else {
 				$.beep()
 				$.player.coin.value += credit.value
+				if (pocket.id) $.saveUser(pocket)
 				break
 			}
 
@@ -518,7 +534,7 @@ function Bank() {
 
 		case 'T':
 			if ($.access.sysop) {
-				loadUser($.taxman)
+				$.loadUser($.taxman)
 				xvt.app.form['coin'].prompt = xvt.attr('Treasury ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.taxman.user.bank.carry(), ']? ')
 				xvt.app.focus = 'coin'
 				break
@@ -526,7 +542,7 @@ function Bank() {
 
 		case 'V':
 			if ($.access.sysop) {
-				loadUser($.taxman)
+				$.loadUser($.taxman)
 				xvt.app.form['coin'].prompt = xvt.attr('Vault ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=1000p]? ')
 				xvt.app.focus = 'coin'
 				break
