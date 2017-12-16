@@ -2184,7 +2184,7 @@ export function newDay() {
         saveUser(user)
     }
 
-    rs = sqlite3.prepare(`SELECT id, lastdate, level, jl, jw FROM Players WHERE id NOT GLOB '_*'`).all()
+    rs = sqlite3.prepare(`SELECT * FROM Players WHERE id NOT GLOB '_*'`).all()
     for (let row in rs) {
         if ((rs[row].level == 1 || rs[row].novice) && (rs[row].jl >= (2 * rs[row].jw))) {
             player.id = rs[row].id
