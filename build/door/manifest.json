@@ -1,0 +1,13 @@
+{
+  "name": "Dank Domain door",
+  "short_name": "door",
+  "lang": "en-US",
+  "start_url": "https://robert.hurst-ri.us/games/dankdomain/door/",
+  "display": "fullscreen",
+  "orientation": "landscape",
+  "icons": [
+    {
+      "src": "images/door.png"
+    }
+  ]
+}

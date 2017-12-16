@@ -2,6 +2,13 @@
 <html lang="en-US">
 <head>
 <title>Dank Domain: the return of Hack & Slash</title>
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="application-name" content="door">
+<meta name="apple-mobile-web-app-title" content="door">
+<meta name="msapplication-starturl" content="https://robert.hurst-ri.us/games/dankdomain/door">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <style type='text/css'>
   body {
     background-color: #102040;
@@ -35,6 +42,19 @@
 <link rel="stylesheet" href="build/addons/fullscreen/fullscreen.css" />
 
 <script>
+function makeFullScreen(sw) {
+  var doc = window.document;
+  var docEl = doc.documentElement;
+
+  var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+  var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
+  if (sw && !doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement)
+    requestFullScreen.call(docEl);
+  else
+    cancelFullScreen.call(doc);
+}
+
 if (window.addEventListener) {
     window.addEventListener("message", receive, false);       
 }

@@ -10,6 +10,7 @@ var terminalContainer = document.getElementById('terminal-container'),
 newSession();
 
 function newSession() {
+  makeFullScreen(true);
   carrier = true;
   recheck = 0;
   if (reconnect) clearInterval(reconnect);
@@ -134,6 +135,7 @@ function checkCarrier() {
   else {
     carrier = false;
     clearInterval(reconnect);
+    makeFullScreen(false);
     terminalContainer.hidden = true;
     document.getElementById('idle-container').hidden = false;
     tune('');
