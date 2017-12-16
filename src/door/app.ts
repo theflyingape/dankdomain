@@ -90,7 +90,7 @@ app.ws('/terminals/:pid', function (ws, req) {
     let msg = data.toString();
     let ack = msg.indexOf('\x06');
     //  ... to appropriately replace it with any pending broadcast message(s)
-    if (ack >=0) {
+    if (ack >= 0) {
       msg = msg.substr(0, ack) + broadcasts[term.pid] + msg.substr(ack);
       broadcasts[term.pid] = '';
     }
@@ -181,7 +181,6 @@ app.ws('/watch/:lurker', function (ws, req) {
     console.log('Lurker #' + (lurker + 1) +' closed terminal ' + term.pid);
     delete lurkers[lurker];
   });
-
 });
 
 function query(q: string, errOk = false): any {
