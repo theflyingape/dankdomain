@@ -52,7 +52,12 @@ function receive(event) {
         if (!carrier) {
           term.destroy();
           pid = 0;
-          newSession();
+          if (event.data.message == ' ')
+            newSession();
+          else {
+            recheck = 10;
+            checkCarrier();
+          }
           return;
         }
         if (event.data.message) {

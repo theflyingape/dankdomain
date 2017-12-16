@@ -167,7 +167,7 @@ function sendLogin() {
 function Logoff() {
   if (!art)
     art = setInterval(rotateImage, 45000);
-  cmd(`<p><input class="tall" type="button" value=" CONNECT " onclick="send(' ');"></p>`);
+  cmd(`<p><input class="tall" type="button" value=" CONNECT " onclick="send(' ');"> <input type="button" value="Disconnect" onclick="send('\x1B');"></p>`);
 }
 
 function rotateImage() {
