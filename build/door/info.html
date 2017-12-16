@@ -435,13 +435,9 @@ function nmeResize() {
   h = Math.trunc(window.innerHeight * 0.98
     - document.getElementById('command').clientHeight
     - (document.getElementById('nme').clientHeight - ih));
-
-  //  too tall?
-  //if (h < pic.height) {
-    w = Math.trunc(iw * h / pic.height);
-    pic.height = h;
-    pic.width = w;
-  //}
+  w = Math.trunc(iw * h / pic.height);
+  pic.height = h;
+  pic.width = w;
 }
 </script>
 </head>
