@@ -36,7 +36,7 @@ export function menu(suppress = true) {
 	let hints = ''
 	if (!suppress) {
 		if ($.online.hp < $.player.hp)
-			hints += `> But Hit Points!\n`
+			hints += `> Buy Hit Points!\n`
 		if ($.joust)
 			hints += `> Try jousting another player to win money.\n`
 		if ($.player.poisons.length && !$.online.toWC)
