@@ -39,6 +39,7 @@ function newSession() {
       socket.send(data);
     }
     else {
+      term.write('\x1Bc');
       term.destroy();
       pid = 0;
       if (data === '\x0D' || data === ' ')
