@@ -338,7 +338,7 @@ function choice() {
 				pocket.coin.value = 0
 			}
 
-			xvt.out(`\n\nYou pick ${pocket.handle}\'s pocket and steal ', credit.carry(), '!\n\n`)
+			xvt.out('\n\nYou pick ', pocket.handle, '\'s pocket and steal ', credit.carry(), '!\n\n')
 			xvt.waste(1000)
 			if (Math.trunc(16 * $.player.steal + $.player.level / 10 + $.player.dex / 10) < $.dice(100)) {
 				$.player.status = 'jail'

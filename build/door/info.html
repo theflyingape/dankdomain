@@ -308,6 +308,14 @@ function casino() {
 ${quit}`);
 }
 
+function deeds() {
+  nme('');
+  cmd(`<p><input type="button" value="Fame" onclick="send('F');">
+  <input type="button" value="Memorable" onclick="send('M');">
+  <input type="button" value="Winners" onclick="send('W');"></p>
+  ${quit}`);
+}
+
 function dungeon() {
   if (currentCMD === 'dungeon') return;
   cmd(`

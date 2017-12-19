@@ -68,7 +68,7 @@ app.ws('/terminals/:pid', function (ws, req) {
         let ack = msg.indexOf('\x06');
         //  ... to appropriately replace it with any pending broadcast message(s)
         if (ack >= 0) {
-            msg = msg.substr(0, ack) + broadcasts[term.pid] + msg.substr(ack);
+            msg = msg.substr(0, ack) + broadcasts[term.pid] + '\n' + msg.substr(ack);
             broadcasts[term.pid] = '';
         }
         try {
@@ -76,7 +76,7 @@ app.ws('/terminals/:pid', function (ws, req) {
         }
         catch (ex) {
             if (term.pid) {
-                console.log(`?FATAL terminal ${term.pid} socket error:`, ex.message);
+                console.log(`?FATAL terminal ${term.pid} pty socket error:`, ex.message);
                 unlock(term.pid);
                 delete term.pid;
             }
@@ -107,7 +107,7 @@ app.post('/watch', function (req, res) {
         if (terminals[pid])
             if (terminals[pid].who)
                 player = ' (' + terminals[pid].who + ')';
-        console.log('Lurker terminal ' + pid + player + ' request');
+        console.log(`Lurker terminal ${pid}${player} request`);
         res.send((lurkers.push(pid) - 1).toString());
     }
     else if (Object.keys(terminals).length) {
@@ -130,23 +130,29 @@ app.ws('/watch/:lurker', function (ws, req) {
     var lurker = parseInt(req.params.lurker);
     var term = terminals[lurkers[lurker]];
     var player = ' (' + terminals[term.pid].who + ')';
-    console.log('Lurker terminal ' + term.pid + player + ' connected ' + (lurker + 1));
-    term.on('close', function () {
-        ws.close();
-    });
-    //  app output to browser client
-    term.on('data', function (data) {
+    console.log(`Lurker terminal ${term.pid}${player} connected as #` + (lurker + 1));
+    const send = (data) => {
         try {
             ws.send(data);
         }
         catch (ex) {
             if (term.pid) {
-                console.log(`?fatal terminal ${term.pid} socket error:`, ex.message);
+                console.log(`?fatal terminal ${term.pid}${player} watch socket error:`, ex.message);
             }
         }
+    };
+    term.on('close', function () {
+        ws.close();
+    });
+    //  app output to browser client
+    term.on('data', send);
+    //  incoming from browser client
+    ws.on('message', function (msg) {
+        ws.close();
     });
     ws.on('close', function () {
-        console.log('Lurker #' + (lurker + 1) + ' closed terminal ' + term.pid);
+        term.removeListener('data', send);
+        console.log(`Lurker terminal ${term.pid}${player} closed #` + (lurker + 1));
         delete lurkers[lurker];
     });
 });

@@ -16,7 +16,7 @@ function newSession() {
   tune('dankdomain');
   window.frames['Info'].postMessage({ 'func':'Logon' }, location.href);
   
-  term = new Terminal({ cursorBlink:false, rows:rows, cols:cols, enableBold:true, scrollback:250,
+  term = new Terminal({ cursorBlink:false, rows:rows, cols:cols, enableBold:true, scrollback:10 * rows,
     fontFamily:'monospace', fontSize:fontSize, theme: {
     foreground:'#c1c2c8', background:'#010208',
     black:'#000000', red:'#a00000', green:'#00a000', yellow:'#c8a000',
@@ -44,10 +44,8 @@ function newSession() {
       pid = 0;
       if (data === '\x0D' || data === ' ')
         newSession();
-      else {
-        recheck = 10;
-        checkCarrier();
-      }
+      else
+        window.parent.postMessage({ 'func':'emit', 'message':'\x1B', 'return':false }, location.href);
     }
   });
 

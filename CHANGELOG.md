@@ -1,6 +1,14 @@
 # [Dank Domain](https://robert.hurst-ri.us/games/dankdomain)
 ### the return of Hack & Slash
 > [developed](https://github.com/theflyingape/dankdomain) using Node.js on Linux served up using Verizon FiOS 100mb
+#### 19-Dec-2017
+* live 0.9.6 release, Merry Christmas!
+* Keno
+* dungeon: gifts, wishing well, wheel of life
+* naval battles
+* taxman: at city gates and tavern
+* deeds: memorable hits
+* lurker mode: watch online player
 #### 23-Nov-2017
 * beta 0.8.1 release, uses xterm v3 with smarter browser layout/resizing, Happy Thanksgiving!
 * some casino tables are open

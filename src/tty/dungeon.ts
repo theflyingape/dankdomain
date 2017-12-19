@@ -577,14 +577,14 @@ function doMove(): boolean {
 			let well = 'BT'
 			xvt.out($.bracket('B'), ' Bless yourself')
 			xvt.out($.bracket('T'), ' Teleport to another level')
-			if (deep > 0) xvt.out($.bracket('O'), ' Teleport all the way out'); well += 'O'
-			if (deep > 1) xvt.out($.bracket('D'), ' Destroy dank dungeon'); well += 'D'
+			if (deep > 0) xvt.out($.bracket('D'), ' Destroy dank dungeon'); well += 'D'
+			if (deep > 1) xvt.out($.bracket('O'), ' Teleport all the way out'); well += 'O'
 			if (deep > 2) xvt.out($.bracket('R'), ' Resurrect all the dead players'); well += 'R'
-			if (deep > 3) xvt.out($.bracket('G'), ' Grant another call'); well += 'G'
+			if (deep > 3) xvt.out($.bracket('F'), ' Fix all your damage'); well += 'F'
 			if (deep > 4) xvt.out($.bracket('L'), ' Loot another player\'s money'); well += 'L'
-			if (deep > 5) xvt.out($.bracket('F'), ' Fix all your damage'); well += 'F'
-			if (deep > 6) xvt.out($.bracket('K'), ' Key hint(s)'); well += 'K'
-			if (deep > 7) xvt.out($.bracket('C'), ' Curse another player'); well += 'C'
+			if (deep > 5) xvt.out($.bracket('G'), ' Grant another call'); well += 'G'
+			if (deep > 6) xvt.out($.bracket('C'), ' Curse another player'); well += 'C'
+			if (deep > 7) xvt.out($.bracket('K'), ' Key hint(s)'); well += 'K'
 			if (deep > 8) xvt.out($.bracket('M'), ' Magical spell(s) or device(s)'); well += 'M'
 			xvt.out('\n')
 
@@ -644,6 +644,12 @@ function doMove(): boolean {
 						}
 						xvt.app.focus = 'level'
 						return
+					case 'D':
+						$.sound('boom', 8)
+						for (let i in dd)
+							delete dd[i]
+						generateLevel()
+						break
 					case 'O':
 						$.sound('teleport')
 						xvt.out(`\x1B[1;${$.player.rows}r`)
@@ -651,52 +657,11 @@ function doMove(): boolean {
 						xvt.out('\n')
 						require('./main').menu($.player.expert)
 						return
-					case 'D':
-						$.sound('boom', 8)
-						for (let i in dd)
-							delete dd[i]
-						generateLevel()
-						break
 					case 'R':
 		                $.sound('resurrect')
 						$.sqlite3.exec(`UPDATE Players SET status = '' WHERE id NOT GLOB '_*' AND status != 'jail'`)
 						$.news(`\twished all the dead resurrected`)
 						break
-					case 'G':
-						if ($.player.today) {
-							$.sound('shimmer')
-							$.player.today--
-							xvt.out('\nYou are granted another call for the day.\n')
-							$.news(`\twished for an extra call`)
-						}
-						else {
-							xvt.out('A deep laughter bellows... ')
-							$.sound('morph', 12)
-						}
-						break
-					case 'L':
-						Battle.user('Loot', (opponent: active) => {
-							if (opponent.user.id === $.player.id) {
-								opponent.user.id = ''
-								xvt.out('\nYou can\'t loot yourself.\n')
-							}
-							else if (opponent.user.novice) {
-								opponent.user.id = ''
-								xvt.out('\nYou can\'t loot novice players.\n')
-							}
-							if (opponent.user.id) {
-								let loot = new $.coins(opponent.user.coin.value + opponent.user.bank.value)
-								$.log(opponent.user.id, `${$.player.handle} wished for your ${loot.carry()}`)
-								$.news(`\tlooted ${opponent.user.handle}`)
-								$.player.coin.value += loot.value
-								opponent.user.coin.value = 0
-								opponent.user.bank.value = 0
-								$.saveUser(opponent)
-							}
-							menu()
-							return
-						})
-						return
 					case 'F':
 						if ($.online.str < $.player.str)
 							$.online.str = $.player.str
@@ -723,11 +688,39 @@ function doMove(): boolean {
 						xvt.out('You are completely healed and all damage has been repaired.\n')
 						$.sound('shimmer')
 						break
-					case 'K':
-						let k = $.dice(deep >>2)
-						for (let i = 0; i < k; i++) {
-							$.keyhint($.online)
-							$.sound("shimmer", 12)
+					case 'L':
+						Battle.user('Loot', (opponent: active) => {
+							if (opponent.user.id === $.player.id) {
+								opponent.user.id = ''
+								xvt.out('\nYou can\'t loot yourself.\n')
+							}
+							else if (opponent.user.novice) {
+								opponent.user.id = ''
+								xvt.out('\nYou can\'t loot novice players.\n')
+							}
+							if (opponent.user.id) {
+								let loot = new $.coins(opponent.user.coin.value + opponent.user.bank.value)
+								$.log(opponent.user.id, `${$.player.handle} wished for your ${loot.carry()}`)
+								$.news(`\tlooted ${opponent.user.handle}`)
+								$.player.coin.value += loot.value
+								opponent.user.coin.value = 0
+								opponent.user.bank.value = 0
+								$.saveUser(opponent)
+							}
+							menu()
+							return
+						})
+						return
+					case 'G':
+						if ($.player.today) {
+							$.sound('shimmer')
+							$.player.today--
+							xvt.out('\nYou are granted another call for the day.\n')
+							$.news(`\twished for an extra call`)
+						}
+						else {
+							xvt.out('A deep laughter bellows... ')
+							$.sound('morph', 12)
 						}
 						break
 					case 'C':
@@ -753,6 +746,13 @@ function doMove(): boolean {
 							return
 						})
 						return
+					case 'K':
+						let k = $.dice(deep >>2)
+						for (let i = 0; i < k; i++) {
+							$.keyhint($.online)
+							$.sound("shimmer", 12)
+						}
+						break
 					case 'M':
 						if ($.player.magic) {
 							let m = $.dice($.player.magic >>1)
