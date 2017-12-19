@@ -1089,6 +1089,8 @@ function doMove(): boolean {
 	//	items?
 	switch (ROOM.giftItem) {
 		case 'armor':
+			xvt.out(xvt.yellow, 'The armor shop is closed.\n', xvt.reset)
+			$.sound('boo')
 			break
 
 		case 'chest':
@@ -1102,8 +1104,10 @@ function doMove(): boolean {
 					, gold.carry(), '!\n', xvt.reset)
 				$.sound('max')
 			}
-			else
+			else {
 				xvt.out(xvt.yellow, 'You find an empty, treasure chest.\n', xvt.reset)
+				$.sound('boo')
+			}
 			$.player.coin.value += gold.value
 			ROOM.giftItem = ''
 			break
@@ -1179,10 +1183,13 @@ function doMove(): boolean {
 				xvt.out('\nYou quaff it without hesitation.\n')
 				xvt.waste(600)
 				quaff(ROOM.giftValue)
+				ROOM.giftItem = ''
 			}
 			break
 
 		case 'weapon':
+			xvt.out(xvt.yellow, 'The weapon shop is closed.\n', xvt.reset)
+			$.sound('boo')
 			break
 
 		case 'xmagic':
@@ -2138,6 +2145,7 @@ function quaff(v: number, it = true) {
 
 	//	Potion of Augment
 		case 13:
+			$.sound('power', 6)
 			$.player.maxstr = $.PC.ability($.player.maxstr, $.player.maxstr < 95 ? $.dice(3) : 1)
 			$.player.maxint = $.PC.ability($.player.maxint, $.player.maxint < 95 ? $.dice(3) : 1)
 			$.player.maxdex = $.PC.ability($.player.maxdex, $.player.maxdex < 95 ? $.dice(3) : 1)
@@ -2162,7 +2170,7 @@ function quaff(v: number, it = true) {
 
 	//	Elixir of Restoration
 		case 15:
-			$.sound('cure')
+			$.sound('cure', 12)
 			$.online.hp = $.player.hp
 			$.online.sp = $.player.sp
 			break
