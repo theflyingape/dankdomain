@@ -21,5 +21,7 @@
     "magic": 2,
     "weapon": "Gloves of Strength",
     "armor": 18,
-    "spells": [ 7, 11, 13 ]
+    "spells": [ 7, 11, 13 ],
+    "realestate": "Room above tavern",
+    "security": "Shotgun"
 }

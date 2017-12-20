@@ -10,17 +10,14 @@ import Battle = require('../battle')
 
 module Sysop
 {
-	let sysop: choices = {
-        'B': { description:'Blessed/Cursed Users' },
+    let sysop: choices = {
+        'B': { description:'Blessed/Cursed and Cowards' },
         'D': { description:'Deep Dank Dungeon' },
-		'G': { description:'Gang record' },
-		'N': { description:'New record' },
-		'R': { description:'Reroll' },
-		'S': { description:'System record' },
-		'T': { description:'Tax record' },
-		'U': { description:'User record' },
-		'Y': { description:'Your Scout' }
-	}
+        'N': { description:'Newsletter' },
+        'R': { description:'Reroll' },
+        'T': { description:'Tavern/Taxman records' },
+        'Y': { description:'Your Scout' }
+    }
 
 export function menu(suppress = false) {
     if ($.reason) xvt.hangup()
@@ -44,7 +41,30 @@ function choice() {
 
     switch (choice) {
         case 'Q':
-			require('./main').menu($.player.expert)
+            require('./main').menu($.player.expert)
+            return
+
+        case 'B':
+            xvt.out('\n')
+            xvt.out(xvt.Blue, xvt.white, ' ID   Player\'s Handle           Class    Lvl  '
+                , xvt.reset, '\n')
+            xvt.out(xvt.Blue, xvt.white, '----------------------------------------------'
+                , xvt.reset, '\n')
+            let rs = $.query(`SELECT * FROM Players WHERE blessed !='' OR cursed !='' OR coward != 0`)
+            for (let n in rs) {
+                //  paint a target on any player that is winning
+                if (rs[n].pc === $.PC.winning)
+                    xvt.out(xvt.bright, xvt.yellow)
+                else if (rs[n].id === $.player.id)
+                    xvt.out(xvt.bright, xvt.white)
+                xvt.out(sprintf('%-4s  %-22s  %-9s  %3d ', rs[n].id, rs[n].handle, rs[n].pc, rs[n].level))
+                if (rs[n].blessed) xvt.out(` blessed by ${rs[n].blessed} `)
+                if (rs[n].cursed) xvt.out(` cursed by ${rs[n].cursed} `)
+                if (rs[n].coward) xvt.out($.bracket('COWARD', false))
+                xvt.out(xvt.reset, '\n')
+            }
+            xvt.app.form['pause'] = { cb:menu, pause:true }
+            xvt.app.focus = 'pause'
             return
 
         case 'D':
@@ -101,6 +121,21 @@ function choice() {
                 }, prompt:'Reroll the board (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
             }
             xvt.app.focus = 'pc'
+            return
+
+        case 'T':
+            xvt.app.form = {
+            'taxman': { cb:() => {
+                $.loadUser($.taxman)
+                $.activate($.taxman)
+                $.PC.stats($.taxman)
+                xvt.app.focus = 'pause'
+            }, pause:true },
+            'pause': { cb:menu, pause:true } }
+            $.loadUser($.barkeep)
+            $.activate($.barkeep)
+            $.PC.stats($.barkeep)
+            xvt.app.focus = 'taxman'
             return
 
         case 'Y':

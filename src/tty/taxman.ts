@@ -25,7 +25,7 @@ function checkpoint(scratch: number): boolean {
 
         $.sound('oops', 8)
         xvt.out('\n\n', xvt.yellow, xvt.bright, $.taxman.user.handle, xvt.normal)
-        xvt.out(`, the tax collector, looks at your bulging money purse\n`)
+        xvt.out(`, our Master of Coin, looks at your bulging money purse\n`)
         xvt.out(`and says, "Ah, it is time to pay your taxes!"  You check out the burly\n`)
         xvt.out(`guards who stand ready to enforce ${$.king.handle}'s will.\n\n`)
         xvt.waste(2000)

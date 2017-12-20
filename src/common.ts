@@ -1910,6 +1910,8 @@ export function wall(msg: string) {
         if (npc.magic) barkeep.user.magic = npc.magic
         if (npc.poisons) barkeep.user.poisons = npc.poisons
         if (npc.spells) barkeep.user.spells = npc.spells
+        if (npc.realestate) barkeep.user.realestate = npc.realestate
+        if (npc.security) barkeep.user.security = npc.security
         saveUser(barkeep, true)
     }
     npc = <user>{}
@@ -1976,6 +1978,8 @@ export function wall(msg: string) {
         if (npc.magic) taxman.user.magic = npc.magic
         if (npc.poisons) taxman.user.poisons = npc.poisons
         if (npc.spells) taxman.user.spells = npc.spells
+        if (npc.realestate) taxman.user.realestate = npc.realestate
+        if (npc.security) taxman.user.security = npc.security
         saveUser(taxman, true)
     }
 

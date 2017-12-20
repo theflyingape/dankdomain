@@ -23,5 +23,7 @@
     "spells": [ 8, 19, 20 ],
     "toAC": 6,
     "toWC": 13,
+    "realestate": "Tower",
+    "security": "Security guard",
     "wins": 1
 }
