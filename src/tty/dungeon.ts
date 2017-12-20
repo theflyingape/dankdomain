@@ -281,10 +281,11 @@ export function menu(suppress = false) {
 	}
 
 	//	user input
+    xvt.out('\x06')     //  insert any wall messages here
 	xvt.app.form = {
         'command': { cb:command, cancel:'y', enter:'?', eol:false, timeout:20 }
     }
-	xvt.app.form['command'].prompt = '\x06'
+	xvt.app.form['command'].prompt = ''
 	if (suppress)
 		xvt.app.form['command'].prompt += ':'
 	else {
@@ -637,7 +638,7 @@ function doMove(): boolean {
 									return
 								}
 								$.sound('teleport')
-								Z = i
+								Z = i - 1
 								generateLevel()
 								menu()
 							}, prompt:`Level (${start}-${end}): `, min:1, max:3 }

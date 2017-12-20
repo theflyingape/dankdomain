@@ -70,7 +70,7 @@ app.post('/terminals/:pid/wall', function (req, res) {
   if (!term) return;
   for (let o in terminals)
     if (+o !== pid)
-      broadcasts[o] += '\x1B[1;36m' + msg + '\x1B[m\r\n'
+      broadcasts[o] += '\r\n\x1B[1;36m' + msg + '\x1B[m'
   res.end()
 })
 

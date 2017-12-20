@@ -1721,7 +1721,7 @@ export function display(title:string, back:number, fore:number, suppress:boolean
     if (hint && access.roleplay && dice(+player.expert * (player.immortal + 1) * player.level) == 1)
         xvt.out('\n', xvt.bright, xvt.green, hint, xvt.reset)
 
-    xvt.out('\x06') /* insert any wall messages here */
+    xvt.out('\x06')     //  insert any wall messages here
 
     return xvt.attr(fore, '[', xvt.bright, xvt.yellow, back ? titlecase(title) : 'Iron Bank', xvt.normal, fore, ']'
         , xvt.faint, ' Option '
@@ -1781,7 +1781,7 @@ export function logoff() {
         wall(`logged off: ${reason}`)
 
         //  logoff banner
-        xvt.out('\n')
+        xvt.out('\x06\n')
         xvt.out(xvt.reset, 'Goodbye, please play again!  Also visit:\n')
         xvt.waste(750)
         xvt.out(xvt.cyan, '  ___                           ', xvt.cyan, '  ___  \n')
