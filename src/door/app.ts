@@ -90,7 +90,7 @@ app.ws('/terminals/:pid', function (ws, req) {
     let msg = data.toString()
     let ack = msg.indexOf('\x06')
     //  ... to appropriately replace it with any pending broadcast message(s)
-    if (ack >= 0) {
+    if (broadcasts[term.pid] && ack >= 0) {
       msg = msg.substr(0, ack) + broadcasts[term.pid] + '\n' + msg.substr(ack)
       broadcasts[term.pid] = ''
     }
