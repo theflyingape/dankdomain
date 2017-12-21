@@ -2204,7 +2204,7 @@ export function newDay() {
         if ((now().date - rs[row].lastdate) % 100 == 0) {
             player.id = rs[row].id
             loadUser(player)
-            require('./email').rejoin()
+            require('./email').rejoin(player)
         }
     }
 

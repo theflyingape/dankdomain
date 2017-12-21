@@ -11,6 +11,7 @@ import $ = require('../common')
 import Email = require('../email')
 import Taxman = require('./taxman')
 
+
 module Logon
 {
     let tax: coins = new $.coins(0)

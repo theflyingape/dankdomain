@@ -6,6 +6,7 @@
 import $ = require('../common')
 import xvt = require('xvt')
 import Battle = require('../battle')
+import Email = require('../email')
 
 
 module Sysop
@@ -38,6 +39,9 @@ function choice() {
             suppress = $.player.expert
         }
     xvt.out('\n')
+
+    let rpc: active = { user:{ id:'' } }
+    let rs
 
     switch (choice) {
         case 'Q':
@@ -72,6 +76,16 @@ function choice() {
             require('./dungeon').DeepDank($.player.level - 1, sysop)
             return
 
+        case 'N':
+            //rs = sqlite3.prepare(`SELECT id FROM Players WHERE id NOT GLOB '_*'`).all()
+            rs = sqlite3.prepare(`SELECT id FROM Players WHERE id = 'TFA'`).all()
+            for (let row in rs) {
+                rpc.user.id = rs[row].id
+                $.loadUser(rpc)
+                require('./email').newsletter(rpc.user)
+            }
+            break
+
         case 'R':
             let pc: string
             let kh: number
@@ -95,8 +109,7 @@ function choice() {
                         $.loadUser($.sysop)
                         $.sysop.dob = $.now().date + 1
                         $.saveUser($.sysop)
-                        let rs = $.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
-                        let rpc: active = { user:{ id:'' } }
+                        rs = $.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
                         for (let row in rs) {
                             rpc.user.id = rs[row].id
                             $.loadUser(rpc)
