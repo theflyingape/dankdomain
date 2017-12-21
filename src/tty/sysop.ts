@@ -82,6 +82,7 @@ function choice() {
                 rpc.user.id = rs[row].id
                 $.loadUser(rpc)
                 Email.newsletter(rpc.user)
+                xvt.waste(6000)
             }
             break
 

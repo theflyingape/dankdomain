@@ -1738,7 +1738,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                 xvt.out($.who(rpc, 'He'))
             else
                 xvt.out(rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle, ' ')
-            xvt.out($.what(rpc, w[0]), w.slice(1).join(' '), enemy == $.online ? 'you'
+            xvt.out($.what(rpc, w[0]), w.slice(1).join(' '), ' ', enemy == $.online ? 'you'
                 : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
                 , ' '
             )

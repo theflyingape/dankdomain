@@ -11,7 +11,7 @@
 	"Spear": { "text":"carries a", "value":"500c", "wc":9, "hit":"poke", "smash":"stick", "stab":"stab", "plunge":"plunge into", "shoppe":true }, 
 	"Axe": { "text":"wields an", "value":"1000c", "wc":10, "hit":"cut", "smash":"hack", "stab":"chop", "plunge":"bury", "shoppe":true }, 
 	"Harpoon": { "text":"points a", "value":"2500c", "wc":11, "hit":"shoot", "smash":"hit the mark on", "stab":"perforate", "plunge":"whale into", "shoppe":true }, 
-	"Short Bow": { "text":"takes aim with a", "value":"5000c", "wc":12, "hit":"shoot", "smash":"shot the mark on", "stab":"pierce", "plunge":"perforate", "shoppe":true }, 
+	"Short Bow": { "text":"takes aim with a", "value":"5000c", "wc":12, "hit":"shoot", "smash":"shoot the mark on", "stab":"pierce", "plunge":"perforate", "shoppe":true }, 
 	"War Hammer": { "text":"picks up a", "value":"10000c", "wc":13, "hit":"hit", "smash":"hammer", "stab":"pummel", "plunge":"nail", "shoppe":true }, 
 	"Battle Axe": { "text":"wields a", "value":"25000c", "wc":14, "hit":"cut", "smash":"hack", "stab":"chop", "plunge":"bury", "shoppe":true }, 
 	"Light Crossbow": { "text":"takes aim with a", "value":"50000c", "wc":15, "hit":"shoot", "smash":"hit the mark on", "stab":"pierce", "plunge":"perforate", "shoppe":true }, 
