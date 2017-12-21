@@ -54,7 +54,7 @@ function choice() {
                 , xvt.reset, '\n')
             xvt.out(xvt.Blue, xvt.white, '----------------------------------------------'
                 , xvt.reset, '\n')
-            let rs = $.query(`SELECT * FROM Players WHERE blessed !='' OR cursed !='' OR coward != 0`)
+            rs = $.query(`SELECT * FROM Players WHERE blessed !='' OR cursed !='' OR coward != 0`)
             for (let n in rs) {
                 //  paint a target on any player that is winning
                 if (rs[n].pc === $.PC.winning)
