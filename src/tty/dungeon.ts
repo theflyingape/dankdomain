@@ -1154,7 +1154,7 @@ function doMove(): boolean {
 				xvt.out([ 'amber', 'blue', 'crimson', 'green', 'purple'][$.dice(5) - 1],
 					' potion.')
 
-			if ($.dice(100) + deep < 50 + ($.online.int >>1)) {
+			if (ROOM.giftID || $.dice(105 - (deep >>1)) < 50 + ($.online.int >>1)) {
 				$.action('potion')
 				xvt.app.form = {
 					'quaff': { cb: () => {
