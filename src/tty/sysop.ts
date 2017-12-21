@@ -82,7 +82,7 @@ function choice() {
             for (let row in rs) {
                 rpc.user.id = rs[row].id
                 $.loadUser(rpc)
-                require('./email').newsletter(rpc.user)
+                Email.newsletter(rpc.user)
             }
             break
 
