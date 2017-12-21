@@ -9,6 +9,7 @@ import $ = require('../common')
 import Battle = require('../battle')
 import xvt = require('xvt')
 
+
 module Dungeon
 {
 	const monsters: monster = require('../etc/dungeon.json')
@@ -1154,7 +1155,7 @@ function doMove(): boolean {
 				xvt.out([ 'amber', 'blue', 'crimson', 'green', 'purple'][$.dice(5) - 1],
 					' potion.')
 
-			if (ROOM.giftID || $.dice(105 - (deep >>1)) < 50 + ($.online.int >>1)) {
+			if (ROOM.giftID || $.dice(100) + $.dice(deep >>1) < 50 + ($.online.int >>1)) {
 				$.action('potion')
 				xvt.app.form = {
 					'quaff': { cb: () => {

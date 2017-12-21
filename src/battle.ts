@@ -318,9 +318,9 @@ export function attack(retry = false) {
         let nest: number = 0
         let odds: number = from === 'Party' ? 5 : from === 'Dungeon' ? 4 : from === 'Monster' ? 3 : 2
 
-        if (rpc.user.magic == 1 && $.dice(odds + rpc.adept + 1) >= odds) {
+        if (rpc.user.magic == 1 && $.dice(odds + rpc.adept + 1) > odds) {
             if ($.Magic.have(rpc.user.spells, 8)
-                && rpc.hp < rpc.user.hp / 6
+                && rpc.hp < rpc.user.hp / (rpc.user.level / (11 - rpc.adept)  + 1)
                 && ($.dice(6 - rpc.adept) == 1 || rpc.user.coward))
                     mm = 8
             else if ($.Magic.have(rpc.user.spells, 7)
@@ -354,7 +354,7 @@ export function attack(retry = false) {
                         mm = 16
             }
         }
-        if (rpc.user.magic > 1 && $.dice(odds + rpc.adept + 1) >= odds) {
+        if (rpc.user.magic > 1 && $.dice(odds + rpc.adept + 1) > odds) {
             if (!rpc.confused || rpc.hp < (rpc.user.hp >>3)) {
                 if ($.Magic.have(rpc.user.spells, 15)
                     && rpc.sp >= $.Magic.power(rpc, 15)
@@ -385,8 +385,8 @@ export function attack(retry = false) {
                         mm = 13
                 else if ($.Magic.have(rpc.user.spells, 8)
                     && rpc.sp >= $.Magic.power(rpc, 8)
-                    && rpc.hp < (rpc.user.hp / 6)
-                    && ($.dice((enemy.user.level - rpc.user.level) / 9) == 1 || rpc.user.coward))
+                    && rpc.hp < rpc.user.hp / (rpc.user.level / (11 - rpc.adept)  + 1)
+                    && ($.dice(5 - rpc.adept) == 1 || rpc.user.coward))
                         mm = 8
                 else if ($.Magic.have(rpc.user.spells, 7)
                     && rpc.sp >= $.Magic.power(rpc, 7)
@@ -399,6 +399,7 @@ export function attack(retry = false) {
                         mm = 9
             }
         }
+        //  if regular magic is not on the menu, perhaps an extended spell is warranted?
         if (rpc.user.magic && !mm && $.dice(odds - rpc.adept) == 1) {
             odds = $.dice(8) + 16
             if ($.Magic.have(rpc.user.spells, odds)
@@ -980,6 +981,10 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 }
                 xvt.out(xvt.normal, 'away from the ', xvt.faint, 'battle!\n', xvt.reset)
                 $.sound('teleport', 8)
+                if ($.dice(100) == 1) {
+                    xvt.out('Nearby is the Crown\'s Champion shaking his head and texting his Maker.\n')
+                    xvt.waste(1000)
+                }
             }
             else {
                 if (rpc === $.online)
@@ -1734,11 +1739,12 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         }
         else {
             let w = action.split(' ')
+            if (w.length > 1) w.push('')
             if (alive[0] == 1 && alive[1] == 1)
                 xvt.out($.who(rpc, 'He'))
             else
                 xvt.out(rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle, ' ')
-            xvt.out($.what(rpc, w[0]), w.slice(1).join(' '), ' ', enemy == $.online ? 'you'
+            xvt.out($.what(rpc, w[0]), w.slice(1).join(' '), enemy == $.online ? 'you'
                 : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
                 , ' '
             )
