@@ -41,7 +41,7 @@ function choice() {
     xvt.out('\n')
 
     let rpc: active = { user:{ id:'' } }
-    let rs
+    let rs = []
 
     switch (choice) {
         case 'Q':
