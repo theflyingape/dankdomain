@@ -1055,14 +1055,14 @@ function doMove(): boolean {
 
 			xvt.out(xvt.yellow, `There is an old cleric in this room with ${Math.trunc(100 * DL.cleric.sp / DL.cleric.user.sp)}% spell power.\n`, xvt.reset)
 			xvt.out('He says, ')
-			if ($.online.hp > ($.player.hp >>1) || 2 * cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, 13)) {
+			if ($.online.hp > ($.player.hp >>1) || ((deep >>2) + 3) * cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, 13)) {
 				xvt.out('"I can cast a heal spell on your wounds for '
 					, cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
 					, '."')
 			}
 			else if (DL.cleric.sp >= $.Magic.power(DL.cleric, 13)) {
 				cast = 13
-				cost.value *= 2
+				cost.value *= (deep >>2) + 3
 				if (cost.value > $.player.coin.value) {
 					xvt.out('"I will pray for you."\n')
 					break
