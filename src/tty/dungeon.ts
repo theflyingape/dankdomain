@@ -1700,8 +1700,8 @@ function generateLevel() {
 			n = $.dice(130 - deep)
 			for (let i = 0; i < 16 && n > 0; i++) {
 				DL.rooms[y][x].giftValue = 15 - i
-				if ($.player.magic < 2 && DL.rooms[y][x].giftValue > 2 && DL.rooms[y][x].giftValue < 5)
-					DL.rooms[y][x].giftValue >>= 1
+				if ($.player.magic < 2 && DL.rooms[y][x].giftValue > 1 && DL.rooms[y][x].giftValue < 4)
+					DL.rooms[y][x].giftValue -= 2
 				n -= i + 1
 			}
 			continue
