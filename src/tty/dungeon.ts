@@ -1048,7 +1048,7 @@ function doMove(): boolean {
 				cost.value = 0
 			cost = new $.coins(cost.carry(1, true))
 
-			if ($.online.hp >= $.player.hp || cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, 7)) {
+			if ($.online.hp >= $.player.hp || cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, cast)) {
 				xvt.out('"I will pray for you."\n')
 				break
 			}
@@ -1105,9 +1105,19 @@ function doMove(): boolean {
 				return false
 			}
 			else {
-				$.sound('shimmer', 4)
-				xvt.out('\nHe casts a Cure spell on you.\n')
-				$.online.hp = $.player.hp
+				xvt.out(`\nHe casts a ${Object.keys($.Magic.spells)[cast - 1]} spell on you.`)
+				DL.cleric.sp -= $.Magic.power(DL.cleric, cast)
+				if (cast == 7) {
+					$.sound('heal')
+					for (let i = 0; i <= Z; i++)
+						$.online.hp += $.dice(DL.cleric.user.level >>3) + $.dice((Z >>3) + (deep >>2))
+					if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
+					xvt.out(`  Your hit points: ${$.online.hp}/${$.player.hp}`)
+				}
+				else {
+					$.online.hp = $.player.hp
+					$.sound('shimmer', 4)
+				}
 			}
 			break
 
