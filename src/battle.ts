@@ -329,7 +329,7 @@ export function attack(retry = false) {
                     && $.dice(enemy.user.melee + 2) > 1)
                     mm = 7
             else if ($.Magic.have(rpc.user.spells, 9)
-                    && rpc.hp < (rpc.user.hp >>1)
+                    && (!rpc.user.id || rpc.hp < (rpc.user.hp >>1))
                     && $.dice(enemy.user.melee + 2) > 1)
                     mm = 9
             else if ($.Magic.have(rpc.user.spells, 13)
@@ -1552,7 +1552,10 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             break
 
         case 23:
-            if (volley > 1) cb(true)
+            if (volley > 1) {
+                cb(true)
+                return
+            }
             if (backfire) {
                 if (rpc.user.magic > 2 && rpc.user.toAC > 0)
                     rpc.user.toAC--
@@ -1573,7 +1576,10 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             break
 
         case 24:
-            if (volley > 1) cb(true)
+            if (volley > 1) {
+                cb(true)
+                return
+            }
             if (backfire) {
                 xvt.out($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' loses most of its effectiveness.\n')
                 if (rpc.user.magic > 2 && rpc.user.toWC > 0)
