@@ -972,7 +972,7 @@ function doMove(): boolean {
 			ROOM.occupant = 0
 			let x = $.dice(DL.width) - 1, y = $.dice(DL.rooms.length) - 1
 			ROOM = DL.rooms[y][x]
-			if (ROOM.occupant || $.dice(Z * (($.player.steal >>1) + 1) + 1) > Z + deep) {
+			if (ROOM.occupant || $.dice(Z * ($.player.steal / 2 + 1) - deep) > Z) {
 				if (!ROOM.occupant) {
 					ROOM.occupant = 5
 					xvt.out([

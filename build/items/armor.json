@@ -43,9 +43,9 @@
 	"Titanium Armor": { "text":"is armored with", "value":"50p", "ac":27, "ego_blessed":"Titan" }, 
 
 	"Trash Can Cover": { "text":"brings a", "value":"5c", "ac":5, "gift":true, "ego_blessed":null }, 
-	"Adamantite Chain Mail": { "text":"bought", "value":"500c", "gift":true, "ac":10, "ego_blessed":null }, 
+	"Adamantite Chain Mail": { "text":"shows off", "value":"500c", "gift":true, "ac":10, "ego_blessed":null }, 
 	"Super Shield": { "text":"is protected by a", "value":"10s", "ac":15, "gift":true, "ego_blessed":null }, 
-	"Red Dragon Scale Mail": { "text":"bought", "value":"5g", "ac":20, "gift":true, "ego_blessed":"Dragon" }, 
+	"Red Dragon Scale Mail": { "text":"sports", "value":"5g", "ac":20, "gift":true, "ego_blessed":"Dragon" }, 
 	"Cloak of Elvenlords": { "text":"wears a shimmering", "value":"5000g", "ac":25, "gift":true, "ego_blessed":null }, 
 	"Armodillo Husk": { "text":"covered by an", "value":"10p", "ac":30, "gift":true, "ego_blessed":"Lizard" }, 
 	"Helm of Hades": { "text":"topped with a", "value":"1000p", "ac":32, "gift":true, "ego_blessed":"Undead", "vs_magic":2, "vs_melee":2 }

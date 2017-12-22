@@ -79,10 +79,9 @@ export class Armor {
         if (!isNaN(+winner.user.armor) || !isNaN(+loser.user.armor))
             return false
 
-        // is it better than this common armor class?
+        // is it better than this armor class?
         if ((winner.user.toAC >= 0 && winner.armor.ac + (winner.user.toAC >>1) >= loser.armor.ac)
-            || (winner.user.toAC < 0 && winner.armor.ac + winner.user.toAC > loser.armor.ac)
-            || !winner.armor.armoury) {
+            || (winner.user.toAC < 0 && winner.armor.ac + winner.user.toAC > loser.armor.ac)) {
             if (value) {
                 winner.user.coin.value += value.value
                 return value
@@ -184,7 +183,7 @@ export class Magic {
         }
         return have
     }
-        
+
     pick(n: number): string {
         let name = ''
         if (n > 0 && n <= Object.keys(this.spells).length)
@@ -200,7 +199,7 @@ export class Magic {
         let spell = this.spells[this.pick(n)]
         return rpc.user.magic < 2 ? 0 : rpc.user.magic < 4 ? spell.mana : spell.enchanted
     }
-        
+
     remove(spells: number[], n:number) {
         let i = spells.indexOf(n)
         if (i >= 0) spells.splice(i, 1)
@@ -321,10 +320,9 @@ export class Weapon {
         if (!isNaN(+winner.user.weapon) || !isNaN(+loser.user.weapon))
             return false
 
-        // is it better than this common weapon class?
+        // is it better than this weapon class?
         if ((winner.user.toWC >= 0 && winner.weapon.wc + (winner.user.toWC >>1) >= loser.weapon.wc)
-            || (winner.user.toWC < 0 && winner.weapon.wc + winner.user.toWC > loser.weapon.wc)
-            || !winner.weapon.shoppe) {
+            || (winner.user.toWC < 0 && winner.weapon.wc + winner.user.toWC > loser.weapon.wc)) {
             if (value) {
                 winner.user.coin.value += value.value
                 return value

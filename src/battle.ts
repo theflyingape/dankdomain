@@ -403,9 +403,10 @@ export function attack(retry = false) {
         //  if regular magic is not on the menu, perhaps an extended spell is warranted?
         if (rpc.user.magic && !mm && $.dice(odds - rpc.adept) == 1) {
             odds = $.dice(8) + 16
-            if ($.Magic.have(rpc.user.spells, odds)
-                && rpc.sp >= $.Magic.power(rpc, odds))
-                mm = odds
+            if (odds < 23 || volley < 5)
+                if ($.Magic.have(rpc.user.spells, odds)
+                    && rpc.sp >= $.Magic.power(rpc, odds))
+                    mm = odds
         }
 
         xvt.out(xvt.reset)
@@ -469,7 +470,13 @@ export function spoils() {
 
     w = l ^ 1
     winner.altered = true
-    
+
+    // remove any lingering illusion(s) first
+    for (let i in parties)
+        for (let j = 0; j < parties[i].length; j++)
+            if (parties[i][j].user.xplevel < 0)
+                parties[i].splice(j--, 1)
+
     // had a little help from my friends (maybe)
     if (from === 'Party') {
         $.sqlite3.exec(`UPDATE Gangs SET win = win + 1 WHERE name = '${parties[w][0].user.gang}'`)
@@ -500,7 +507,7 @@ export function spoils() {
 
         for (let m in parties[w]) {
             //  dead men get far less of the booty, taxman always gets a cut
-            let cut = parties[w][m].hp > 0 ? 0.95 : 0.25
+            let cut = parties[w][m].hp > 0 ? 0.95 : 0.35
             let max = Math.trunc(1000 * $.money(parties[w][m].user.level) * cut)
             let award = Math.trunc(coin.value * parties[w][m].user.xp / take * cut)
             award = award > coin.value ? coin.value : award
@@ -1552,10 +1559,6 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             break
 
         case 23:
-            if (volley > 1) {
-                cb(true)
-                return
-            }
             if (backfire) {
                 if (rpc.user.magic > 2 && rpc.user.toAC > 0)
                     rpc.user.toAC--
@@ -1576,10 +1579,6 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             break
 
         case 24:
-            if (volley > 1) {
-                cb(true)
-                return
-            }
             if (backfire) {
                 xvt.out($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' loses most of its effectiveness.\n')
                 if (rpc.user.magic > 2 && rpc.user.toWC > 0)
