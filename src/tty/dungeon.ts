@@ -345,7 +345,7 @@ function command() {
 	xvt.out('\n')
 
 	if (DL.cleric.sp < DL.cleric.user.sp) {
-		DL.cleric.sp += Math.round(DL.cleric.user.level + $.dice(Z) + Z + deep)
+		DL.cleric.sp += Math.round(DL.cleric.user.level + $.dice(Z + deep) + Z + deep)
 		if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
 	}
 
@@ -1084,7 +1084,7 @@ function doMove(): boolean {
 							if (cast == 7) {
 								$.sound('heal')
 								for (let i = 0; i <= Z; i++)
-									$.online.hp += $.dice((DL.cleric.user.level >>3) + 8)
+									$.online.hp += $.dice((DL.cleric.user.level >>3) + (Z >>3) + (deep >>2))
 								if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
 								xvt.out(`  Your hit points: ${$.online.hp}/${$.player.hp}`)
 							}
@@ -1560,7 +1560,7 @@ function generateLevel() {
 			maxCol++
 
 		dd[deep][Z] = <dungeon>{
- 			cleric: { user:{ id:'_Clr', handle:'old cleric', pc:'Cleric', level:99, sex:'M', weapon:0, armor:0, magic:4, spells:[7,8,13] } },
+ 			cleric: { user:{ id:'_Clr', handle:'old cleric', pc:'Cleric', level:99, sex:'M', weapon:0, armor:0, magic:3, spells:[7,8,13] } },
  			rooms: new Array(maxRow),
 			map: 0,
 			moves: -1,
