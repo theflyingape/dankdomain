@@ -2170,7 +2170,9 @@ export function newDay() {
     saveUser(sysop)
 
     sqlite3.exec(`UPDATE Players SET bank=bank+coin WHERE id NOT GLOB '_*'`)
+    xvt.out('.')
     sqlite3.exec(`UPDATE Players SET coin=0`)
+    xvt.out('.')
 
     let rs = sqlite3.prepare(`SELECT id FROM Players WHERE id NOT GLOB '_*' AND status = '' AND magic > 0 AND bank > 99999`).all()
     let user: user = { id:'' }
@@ -2187,10 +2189,11 @@ export function newDay() {
         }
         saveUser(user)
     }
+    xvt.out('.')
 
-    rs = sqlite3.prepare(`SELECT * FROM Players WHERE id NOT GLOB '_*'`).all()
+    rs = sqlite3.prepare(`SELECT id, lastdate, level, novice, jl, jw FROM Players WHERE id NOT GLOB '_*'`).all()
     for (let row in rs) {
-        if ((rs[row].level == 1 || rs[row].novice) && (rs[row].jl >= (2 * rs[row].jw))) {
+        if ((rs[row].level == 1 || rs[row].novice) && (rs[row].jl > (2 * rs[row].jw))) {
             player.id = rs[row].id
             loadUser(player)
             player.jl = 0
@@ -2207,13 +2210,14 @@ export function newDay() {
             require('./email').rejoin(player)
         }
     }
+    xvt.out('.')
 
     try {
         fs.renameSync('./tty/files/tavern/today.txt', './tty/files/tavern/yesterday.txt')
     } catch (e) {
     }
 
-    xvt.out('\nAll set -- thank you!\n\n')
+    xvt.out('.\nAll set -- thank you!\n\n')
 }
 
 export function lock(id: string, insert = true): boolean {

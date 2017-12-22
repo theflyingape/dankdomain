@@ -9,6 +9,7 @@ import {sprintf} from 'sprintf-js'
 import $ = require('./common')
 import xvt = require('xvt')
 
+
 module Battle
 {
     export let fini: Function
@@ -318,7 +319,7 @@ export function attack(retry = false) {
         let nest: number = 0
         let odds: number = from === 'Party' ? 5 : from === 'Dungeon' ? 4 : from === 'Monster' ? 3 : 2
 
-        if (rpc.user.magic == 1 && $.dice(odds + rpc.adept + 1) > odds) {
+        if (rpc.user.magic == 1 && $.dice(odds + 1 + rpc.adept) > odds) {
             if ($.Magic.have(rpc.user.spells, 8)
                 && rpc.hp < rpc.user.hp / (rpc.user.level / (11 - rpc.adept)  + 1)
                 && ($.dice(6 - rpc.adept) == 1 || rpc.user.coward))
@@ -354,8 +355,8 @@ export function attack(retry = false) {
                         mm = 16
             }
         }
-        if (rpc.user.magic > 1 && $.dice(odds + rpc.adept + 1) > odds) {
-            if (!rpc.confused || rpc.hp < (rpc.user.hp >>3)) {
+        if (rpc.user.magic > 1 && $.dice(odds + (rpc.user.magic - 1) + rpc.adept) > odds) {
+            if (!rpc.confused || rpc.hp < (rpc.user.hp / 6)) {
                 if ($.Magic.have(rpc.user.spells, 15)
                     && rpc.sp >= $.Magic.power(rpc, 15)
                     && $.dice((rpc.user.level - enemy.user.level) / 6 + odds - rpc.adept) == 1)
@@ -378,7 +379,7 @@ export function attack(retry = false) {
                     && $.dice((rpc.user.level - enemy.user.level) / 6 + odds) == 1)
                         mm = 12
             }
-            if (!mm) {
+            if (!rpc.confused || !mm) {
                 if ($.Magic.have(rpc.user.spells, 13)
                     && rpc.sp >= $.Magic.power(rpc, 13)
                     && rpc.hp < (rpc.user.hp / 6))
@@ -769,7 +770,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
 
         //  some sensible ground rules to avoid known muling exploits (by White Knights passing gas)
         if (xvt.validator.isDefined(nme)) {
-            if ([ 1,2,3,4,5,6,10,23,24 ].indexOf(spell.cast) >= 0) {
+            if ([ 1,2,3,4,5,6,10 ].indexOf(spell.cast) >= 0) {
                 if (rpc === $.online) xvt.out('You cannot cast that spell during a battle!\n')
                 cb(true)
                 return
@@ -1522,10 +1523,12 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                 nme.user.xp = Math.round(nme.user.xp / 2)
                 nme.user.xplevel--
                 nme.user.level--
-                nme.user.str = $.PC.ability(nme.user.str, -$.PC.card(nme.user.pc).toStr)
-                nme.user.int = $.PC.ability(nme.user.int, -$.PC.card(nme.user.pc).toInt)
-                nme.user.dex = $.PC.ability(nme.user.dex, -$.PC.card(nme.user.pc).toDex)
-                nme.user.cha = $.PC.ability(nme.user.cha, -$.PC.card(nme.user.pc).toCha)
+                if (nme.user.level < 80) {
+                    nme.user.str = $.PC.ability(nme.user.str, -$.PC.card(nme.user.pc).toStr)
+                    nme.user.int = $.PC.ability(nme.user.int, -$.PC.card(nme.user.pc).toInt)
+                    nme.user.dex = $.PC.ability(nme.user.dex, -$.PC.card(nme.user.pc).toDex)
+                    nme.user.cha = $.PC.ability(nme.user.cha, -$.PC.card(nme.user.pc).toCha)
+                }
                 nme.str = $.PC.ability(nme.str, -$.PC.card(nme.user.pc).toStr)
                 nme.int = $.PC.ability(nme.int, -$.PC.card(nme.user.pc).toInt)
                 nme.dex = $.PC.ability(nme.dex, -$.PC.card(nme.user.pc).toDex)
@@ -1549,6 +1552,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             break
 
         case 23:
+            if (volley > 1) cb(true)
             if (backfire) {
                 if (rpc.user.magic > 2 && rpc.user.toAC > 0)
                     rpc.user.toAC--
@@ -1569,6 +1573,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             break
 
         case 24:
+            if (volley > 1) cb(true)
             if (backfire) {
                 xvt.out($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' loses most of its effectiveness.\n')
                 if (rpc.user.magic > 2 && rpc.user.toWC > 0)

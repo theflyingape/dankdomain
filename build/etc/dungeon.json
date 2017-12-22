@@ -95,8 +95,8 @@
 	"cloud dragon": { "pc":"Dragon", "spells": [ "Teleport", "Big Blast", "Mana Stealing", "Level Stealing" ] },
 	"lich": { "pc":"Undead", "spells": [ "Heal", "Teleport", "Armor Rusting", "Weapon Decay", "Life Stealing", "Level Stealing" ] },
 	"elder titan": { "pc":"Titan" },
-	"slaad lord": { "pc":"Lizard", "poisons":[ 11,12,13 ], "weapon":"Axe of Lords" },
+	"slaad lord": { "pc":"Lizard", "poisons":[ 11,12,13 ], "weapon":"Axe of Lords", "spells": [ "Super Hone" ] },
 	"demon prince": { "pc":"Demon", "spells": [ "Heal", "Super Shield" ] },
-	"arch devil": { "pc":"Demon", "spells": [ "Blast", "Super Hone" ] },
+	"arch devil": { "pc":"Demon", "spells": [ "Blast", "Big Blast" ] },
 	"elemental prince": { "pc":"God", "spells": [ "Confusion", "Cure", "Armor Rusting", "Weapon Decay", "Mana Stealing" ]  }
 }

@@ -1966,8 +1966,8 @@ function putMonster(r = -1, c = -1): boolean {
 		if (dm.poisons)
 			for (let vials in dm.poisons)
 				$.Poison.add(m.user.poisons, dm.poisons[vials])
-		for (let i = 0; i < Object.keys($.Poison.vials).length; i++) {
-			if ($.dice($.player.cha + (i <<3)) == 1) {
+		for (let i = 0; i < Object.keys($.Poison.vials).length - (9 - deep); i++) {
+			if ($.dice($.player.cha + (i <<2)) == 1) {
 				let vial = $.Poison.pick(i)
 				if (!$.Poison.have(m.user.poisons, vial))
 					$.Poison.add(m.user.poisons, i)
@@ -1980,8 +1980,8 @@ function putMonster(r = -1, c = -1): boolean {
 		if (dm.spells)
 			for (let magic in dm.spells)
 				$.Magic.add(m.user.spells, dm.spells[magic])
-		for (let i = 0; i < Object.keys($.Magic.spells).length; i++) {
-			if ($.dice($.player.cha + (i <<3)) == 1) {
+		for (let i = 0; i < Object.keys($.Magic.spells).length - (9 - deep); i++) {
+			if ($.dice($.player.cha + (i <<2)) == 1) {
 				let spell = $.Magic.pick(i)
 				if (!$.Magic.have(m.user.spells, spell))
 					$.Magic.add(m.user.spells, i)
@@ -1992,11 +1992,11 @@ function putMonster(r = -1, c = -1): boolean {
 	$.activate(m)
 
 	m.user.wins = deep
-	m.adept = deep >>1
-	m.str = $.PC.ability(m.str, deep>>1)
-	m.int = $.PC.ability(m.int, deep>>1)
-	m.dex = $.PC.ability(m.dex, deep>>1)
-	m.cha = $.PC.ability(m.cha, deep>>1)
+	m.adept = deep >>2
+	m.str = $.PC.ability(m.str, deep >>1)
+	m.int = $.PC.ability(m.int, deep >>1)
+	m.dex = $.PC.ability(m.dex, deep >>1)
+	m.cha = $.PC.ability(m.cha, deep >>1)
 
 	let gold = new $.coins(Math.trunc($.money(level) / 10))
 	gold.value += $.worth(new $.coins(m.weapon.value).value, ($.dice($.online.cha) / 5 + 5) >>0)
