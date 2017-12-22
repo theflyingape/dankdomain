@@ -286,6 +286,7 @@ function welcome() {
         $.realestate = 1
         $.security = 1
         $.tiny = 1
+        $.mydeeds = $.loadDeed($.player.pc)
 
         if ($.player.pc === 'None') {
             $.music('reroll')
@@ -301,10 +302,8 @@ function welcome() {
             $.playerPC()
             return
         }
-        else {
+        else
             $.music('logon')
-            $.mydeeds = $.loadDeed($.player.pc)
-        }
     }
     else {
         xvt.out(xvt.bright, xvt.black, '(', xvt.yellow, 'VISITING', xvt.black, ')\n', xvt.reset)
