@@ -108,6 +108,7 @@ function choice() {
                     if (/Y/i.test(xvt.entry)) {
                         $.loadUser($.sysop)
                         $.sysop.dob = $.now().date + 1
+                        $.sysop.plays = 0
                         $.saveUser($.sysop)
                         rs = $.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
                         for (let row in rs) {
@@ -117,9 +118,7 @@ function choice() {
                             $.newkeys(rpc.user)
                             for (k = 0; k < kh; k++)
                                 $.keyhint(rpc)
-                            rpc.user.calls = 0
-                            rpc.user.expert = false
-                            rpc.user.novice = false
+                            rpc.user.plays = 0
                             $.saveUser(rpc)
                             xvt.out('.')
                         }
@@ -127,6 +126,7 @@ function choice() {
                         $.newkeys($.player)
                         for (k = 0; k < kh; k++)
                             $.keyhint($.online)
+                        rpc.user.plays = 0
                         xvt.out(xvt.reset, '\nHappy hunting tomorrow!\n')
                         $.reason = 'reroll'
                         xvt.hangup()
