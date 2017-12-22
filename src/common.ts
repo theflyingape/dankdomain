@@ -1299,7 +1299,7 @@ export function remake(user: user) {
         if ((user.cha += rpc.toCha) > user.maxcha)
             user.cha = user.maxcha
         user.hp += n + dice(n) + Math.trunc(user.str / 10)
-        if(user.magic > 1)
+        if (user.magic > 1)
             user.sp += n + dice(n) + Math.trunc(user.int / 10)
     }
 

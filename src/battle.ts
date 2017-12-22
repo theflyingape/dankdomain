@@ -1570,7 +1570,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             }
             else {
                 $.sound('shield')
-                xvt.out('A magical field glitters around ', rpc.user.armor ? $.who(rpc, 'his') + rpc.user.armor : $.who(rpc, 'him'), '.\n')
+                xvt.out('A magical field glitters around ', isNaN(+rpc.user.armor) ? $.who(rpc, 'his') + rpc.user.armor : $.who(rpc, 'him'), '.\n')
                 if (rpc.user.magic > 2 && rpc.user.toAC >= 0)
                     rpc.user.toAC++
                 rpc.toAC += $.dice(rpc.armor.ac)
@@ -1580,7 +1580,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
 
         case 24:
             if (backfire) {
-                xvt.out($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' loses most of its effectiveness.\n')
+                xvt.out($.who(rpc, 'His'), isNaN(+rpc.user.weapon) ? rpc.user.weapon : 'attack', ' loses most of its effectiveness.\n')
                 if (rpc.user.magic > 2 && rpc.user.toWC > 0)
                     rpc.user.toWC--
                 else if(rpc.toWC > 0)
@@ -1590,7 +1590,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             }
             else {
                 $.sound('hone')
-                xvt.out($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' emanates magical sharpness.\n')
+                xvt.out($.who(rpc, 'His'), isNaN(+rpc.user.weapon) ? rpc.user.weapon : 'attack', ' emanates magical sharpness.\n')
                 if (rpc.user.magic > 2 && rpc.user.toWC >= 0)
                     rpc.user.toWC++
                 rpc.toWC += $.dice(rpc.weapon.wc)

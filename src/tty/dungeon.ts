@@ -33,6 +33,7 @@ module Dungeon
 	]
 
 	interface dungeon {
+		cleric: active
 		rooms: [ room[] ]	//	7-10
 		map: number			//	0=none, 1=map, 2=magic, 3=Marauder's
 		moves: number
@@ -342,6 +343,11 @@ function command() {
         suppress = false
 	}
 	xvt.out('\n')
+
+	if (DL.cleric.sp < DL.cleric.user.sp) {
+		DL.cleric.sp += Math.round(DL.cleric.user.level + $.dice(Z) + Z + deep)
+		if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
+	}
 
     switch (choice) {
 	case 'M':	//	#tbt
@@ -1034,6 +1040,7 @@ function doMove(): boolean {
 			break
 
 		case 6:
+			let cast = 7
 			let cost = new $.coins(Math.trunc($.money(Z) / 6 / $.player.hp * ($.player.hp - $.online.hp)))
 			if (cost.value < 1) cost.value = 1
 			cost.value *= (deep + 1)
@@ -1041,15 +1048,30 @@ function doMove(): boolean {
 				cost.value = 0
 			cost = new $.coins(cost.carry(1, true))
 
-			if ($.online.hp >= $.player.hp || cost.value > $.player.coin.value) {
+			if ($.online.hp >= $.player.hp || cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, 7)) {
 				xvt.out('"I will pray for you."\n')
 				break
 			}
 
-			xvt.out(xvt.yellow, 'There is an old cleric in this room.\n', xvt.reset)
-			xvt.out('He says, "I can heal all your wounds for '
-				, cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
-				, '."')
+			xvt.out(xvt.yellow, `There is an old cleric in this room with ${Math.trunc(100 * DL.cleric.sp / DL.cleric.user.sp)}% spell power.\n`, xvt.reset)
+			xvt.out('He says, ')
+			if ($.online.hp > ($.player.hp >>1) || 2 * cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, 13)) {
+				xvt.out('"I can cast a heal spell on your wounds for '
+					, cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
+					, '."')
+			}
+			else if (DL.cleric.sp >= $.Magic.power(DL.cleric, 13)) {
+				cast = 13
+				cost.value *= 2
+				if (cost.value > $.player.coin.value) {
+					xvt.out('"I will pray for you."\n')
+					break
+				}
+				xvt.out('"I can cure all your wounds for '
+					, cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
+					, '."')
+			}
+
 			if (cost.value) {
 				$.action('yn')
 				xvt.app.form = {
@@ -1057,9 +1079,19 @@ function doMove(): boolean {
 						xvt.out('\n\n')
 						if (/Y/i.test(xvt.entry)) {
 							$.player.coin.value -= cost.value
-							$.sound('shimmer', 4)
-							xvt.out('He casts a Cure spell on you.')
-							$.online.hp = $.player.hp
+							xvt.out(`He casts a ${Object.keys($.Magic.spells)[cast - 1]} spell on you.`)
+							DL.cleric.sp -= $.Magic.power(DL.cleric, cast)
+							if (cast == 7) {
+								$.sound('heal')
+								for (let i = 0; i <= Z; i++)
+									$.online.hp += $.dice((DL.cleric.user.level >>3) + 8)
+								if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
+								xvt.out(`  Your hit points: ${$.online.hp}/${$.player.hp}`)
+							}
+							else {
+								$.online.hp = $.player.hp
+								$.sound('shimmer', 4)
+							}
 						}
 						else {
 							ROOM.occupant = 0
@@ -1528,13 +1560,16 @@ function generateLevel() {
 			maxCol++
 
 		dd[deep][Z] = <dungeon>{
-			rooms: new Array(maxRow),
+ 			cleric: { user:{ id:'_Clr', handle:'old cleric', pc:'Cleric', level:99, sex:'M', weapon:0, armor:0, magic:4, spells:[7,8,13] } },
+ 			rooms: new Array(maxRow),
 			map: 0,
 			moves: -1,
 			width: maxCol
 		}
 
 		DL = dd[deep][Z]
+		$.reroll(DL.cleric.user, DL.cleric.user.pc, DL.cleric.user.level)
+		$.activate(DL.cleric)
 		for (y = 0; y < DL.rooms.length; y++) {
 			DL.rooms[y] = new Array(DL.width)
 			for (x = 0; x < DL.width; x++)
@@ -1923,86 +1958,88 @@ function putMonster(r = -1, c = -1): boolean {
 	level = (i == 1) ? (level >>1) + $.dice(level / 2 + 1) : (i == 2) ? $.dice(level + 1) : level
 	level = (level < 1) ? 1 : (level > 99) ? 99 : level
 
-	//	add a monster level relative to this floor, including "strays"
-	let room = DL.rooms[r][c]
-	i = room.monster.push(<active>{ user:{ id: '', sex:'I', level:level } }) - 1
-	m = room.monster[i]
+	do {
+		//	add a monster level relative to this floor, including "strays"
+		let room = DL.rooms[r][c]
+		i = room.monster.push(<active>{ user:{ id: '', sex:'I', level:level } }) - 1
+		m = room.monster[i]
 
-	//	pick and generate monster relative to its level
-	j = level + $.dice(3) - 2
-	j = j < 0 ? 0 : j >= Object.keys(monsters).length ? Object.keys(monsters).length - 1 : j
-	m.user.handle = Object.keys(monsters)[j]
-	dm = monsters[m.user.handle]
-	$.reroll(m.user, dm.pc ? dm.pc : $.player.pc, level)
-	if (dm.weapon)
-		m.user.weapon = dm.weapon
-	else {
-		m.user.weapon = Math.trunc((level + deep) / 100 * ($.Weapon.merchant.length - 7))
-		m.user.weapon = (m.user.weapon + $.online.weapon.wc) >>1
-		if ($.dice($.player.level / 4 - $.online.cha / 10 + 12) == 1) {
-			i = $.online.weapon.wc + $.dice(3) - 2
-			i = i < 1 ? 1 : i >= $.Weapon.merchant.length ? $.Weapon.merchant.length - 1 : i
-			m.user.weapon = $.Weapon.merchant[i]
-		}
-	}
-	if (dm.armor)
-		m.user.armor = dm.armor
-	else {
-		m.user.armor = Math.trunc((level + deep) / 100 * ($.Armor.merchant.length - 4))
-		m.user.armor = (m.user.armor + $.online.armor.ac) >>1
-		if ($.dice($.player.level / 3 - $.online.cha / 10 + 12) == 1) {
-			i = $.online.armor.ac + $.dice(3) - 2
-			i = i < 1 ? 1 : i >= $.Armor.merchant.length ? $.Armor.merchant.length - 1 : i
-			m.user.armor = $.Armor.merchant[i]
-		}
-	}
-	m.user.hp >>= 2
-	m.user.hp += (deep * Z) >>2
-	i = 5 - $.dice(deep / 3)
-	m.user.sp = Math.trunc(m.user.sp / i)
-
-	m.user.poisons = []
-	if (m.user.poison) {
-		if (dm.poisons)
-			for (let vials in dm.poisons)
-				$.Poison.add(m.user.poisons, dm.poisons[vials])
-		for (let i = 0; i < Object.keys($.Poison.vials).length - (9 - deep); i++) {
-			if ($.dice($.player.cha + (i <<2)) == 1) {
-				let vial = $.Poison.pick(i)
-				if (!$.Poison.have(m.user.poisons, vial))
-					$.Poison.add(m.user.poisons, i)
+		//	pick and generate monster relative to its level
+		j = level + $.dice(3) - 2
+		j = j < 0 ? 0 : j >= Object.keys(monsters).length ? Object.keys(monsters).length - 1 : j
+		m.user.handle = Object.keys(monsters)[j]
+		dm = monsters[m.user.handle]
+		$.reroll(m.user, dm.pc ? dm.pc : $.player.pc, level)
+		if (dm.weapon)
+			m.user.weapon = dm.weapon
+		else {
+			m.user.weapon = Math.trunc((level + deep) / 100 * ($.Weapon.merchant.length - 7))
+			m.user.weapon = (m.user.weapon + $.online.weapon.wc) >>1
+			if ($.dice($.player.level / 4 - $.online.cha / 10 + 12) == 1) {
+				i = $.online.weapon.wc + $.dice(3) - 2
+				i = i < 1 ? 1 : i >= $.Weapon.merchant.length ? $.Weapon.merchant.length - 1 : i
+				m.user.weapon = $.Weapon.merchant[i]
 			}
 		}
-	}
-
-	m.user.spells = []
-	if (m.user.magic) {
-		if (dm.spells)
-			for (let magic in dm.spells)
-				$.Magic.add(m.user.spells, dm.spells[magic])
-		for (let i = 0; i < Object.keys($.Magic.spells).length - (9 - deep); i++) {
-			if ($.dice($.player.cha + (i <<2)) == 1) {
-				let spell = $.Magic.pick(i)
-				if (!$.Magic.have(m.user.spells, spell))
-					$.Magic.add(m.user.spells, i)
+		if (dm.armor)
+			m.user.armor = dm.armor
+		else {
+			m.user.armor = Math.trunc((level + deep) / 100 * ($.Armor.merchant.length - 4))
+			m.user.armor = (m.user.armor + $.online.armor.ac) >>1
+			if ($.dice($.player.level / 3 - $.online.cha / 10 + 12) == 1) {
+				i = $.online.armor.ac + $.dice(3) - 2
+				i = i < 1 ? 1 : i >= $.Armor.merchant.length ? $.Armor.merchant.length - 1 : i
+				m.user.armor = $.Armor.merchant[i]
 			}
 		}
-	}
+		m.user.hp >>= 2
+		m.user.hp += (deep * Z) >>2
+		i = 5 - $.dice(deep / 3)
+		m.user.sp = Math.trunc(m.user.sp / i)
 
-	$.activate(m)
+		m.user.poisons = []
+		if (m.user.poison) {
+			if (dm.poisons)
+				for (let vials in dm.poisons)
+					$.Poison.add(m.user.poisons, dm.poisons[vials])
+			for (let i = 0; i < Object.keys($.Poison.vials).length - (9 - deep); i++) {
+				if ($.dice($.player.cha + (i <<2)) == 1) {
+					let vial = $.Poison.pick(i)
+					if (!$.Poison.have(m.user.poisons, vial))
+						$.Poison.add(m.user.poisons, i)
+				}
+			}
+		}
 
-	m.user.wins = deep
-	m.adept = deep >>2
-	m.str = $.PC.ability(m.str, deep >>1)
-	m.int = $.PC.ability(m.int, deep >>1)
-	m.dex = $.PC.ability(m.dex, deep >>1)
-	m.cha = $.PC.ability(m.cha, deep >>1)
+		m.user.spells = []
+		if (m.user.magic) {
+			if (dm.spells)
+				for (let magic in dm.spells)
+					$.Magic.add(m.user.spells, dm.spells[magic])
+			for (let i = 0; i < Object.keys($.Magic.spells).length - (9 - deep); i++) {
+				if ($.dice($.player.cha + (i <<2)) == 1) {
+					let spell = $.Magic.pick(i)
+					if (!$.Magic.have(m.user.spells, spell))
+						$.Magic.add(m.user.spells, i)
+				}
+			}
+		}
 
-	let gold = new $.coins(Math.trunc($.money(level) / 10))
-	gold.value += $.worth(new $.coins(m.weapon.value).value, ($.dice($.online.cha) / 5 + 5) >>0)
-	gold.value += $.worth(new $.coins(m.armor.value).value, ($.dice($.online.cha) / 5 + 5) >>0)
-	gold.value *= $.dice(deep)
-	m.user.coin = new $.coins(gold.carry(1, true))
+		$.activate(m)
+
+		m.user.wins = deep
+		m.adept = deep >>2
+		m.str = $.PC.ability(m.str, deep >>1)
+		m.int = $.PC.ability(m.int, deep >>1)
+		m.dex = $.PC.ability(m.dex, deep >>1)
+		m.cha = $.PC.ability(m.cha, deep >>1)
+
+		let gold = new $.coins(Math.trunc($.money(level) / 10))
+		gold.value += $.worth(new $.coins(m.weapon.value).value, ($.dice($.online.cha) / 5 + 5) >>0)
+		gold.value += $.worth(new $.coins(m.armor.value).value, ($.dice($.online.cha) / 5 + 5) >>0)
+		gold.value *= $.dice(deep)
+		m.user.coin = new $.coins(gold.carry(1, true))
+	} while (DL.rooms[r][c].monster.length < 10 && DL.rooms[r][c].monster.length * m.user.level < Z - 12 + deep)
 
 	return true
 }
