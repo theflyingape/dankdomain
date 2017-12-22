@@ -1420,7 +1420,7 @@ export function riddle() {
     }
 
     let bonus = 0
-    let deeds = ['plays', 'jw', 'jl', 'killed', 'kills', 'retreats', 'tw', 'tl']
+    let deeds = ['plays', 'jw', 'jl', 'killed', 'kills', 'retreats']
 
     xvt.out(xvt.blue, '\nChecking your statistics against the ', player.pc,' Fame/Lame lists...\n')
     xvt.waste(1000)
