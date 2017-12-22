@@ -79,11 +79,10 @@ export class Armor {
         if (!isNaN(+winner.user.armor) || !isNaN(+loser.user.armor))
             return false
 
-        // is common armor better?
-        if (winner.armor.armoury && loser.armor.armoury
-            && (winner.armor.ac > loser.armor.ac)
-            || (winner.user.toAC + winner.toAC >= 0 && winner.armor.ac == loser.armor.ac)
-            || (winner.user.toAC < 0 && winner.armor.ac + winner.user.toAC > loser.armor.ac)) {
+        // is it better than this common armor class?
+        if ((winner.user.toAC >= 0 && winner.armor.ac + (winner.user.toAC >>1) >= loser.armor.ac)
+            || (winner.user.toAC < 0 && winner.armor.ac + winner.user.toAC > loser.armor.ac)
+            || !winner.armor.armoury) {
             if (value) {
                 winner.user.coin.value += value.value
                 return value
@@ -322,16 +321,13 @@ export class Weapon {
         if (!isNaN(+winner.user.weapon) || !isNaN(+loser.user.weapon))
             return false
 
-        // is weapon class better?
-        if ((winner.weapon.wc > loser.weapon.wc)
-            || (winner.weapon.wc == loser.weapon.wc && winner.user.toWC >= 0)
-            || (winner.user.toWC < 0 && winner.weapon.wc + winner.user.toWC > loser.weapon.wc + loser.user.toWC)
-        ) {
-            if (loser.weapon.shoppe) {
-                if (value) {
-                    winner.user.coin.value += value.value
-                    return value
-                }
+        // is it better than this common weapon class?
+        if ((winner.user.toWC >= 0 && winner.weapon.wc + (winner.user.toWC >>1) >= loser.weapon.wc)
+            || (winner.user.toWC < 0 && winner.weapon.wc + winner.user.toWC > loser.weapon.wc)
+            || !winner.weapon.shoppe) {
+            if (value) {
+                winner.user.coin.value += value.value
+                return value
             }
             return false
         }
