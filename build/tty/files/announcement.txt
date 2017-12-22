@@ -12,5 +12,6 @@ the fresh meat. @play(thief) Moohahahahahaha-ha!
 New announcements as missing features get implemented or tweaked:
 - Deterministic spellcasting is more proportionate to level and adeptness
 - Dungeon monster set was revisited -- new surprises?
+- Dungeon Cleric is an active NPC -- may offer Heal or Cure spell
 
 Happy holidays and happy hunting!
