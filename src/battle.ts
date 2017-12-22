@@ -1185,24 +1185,16 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             $.sound('illusion')
             let iou = <active>{}
             iou.user = <user>{id:'', sex:'I'}
-            $.reroll(iou.user, undefined, iou.user.level)
+            $.reroll(iou.user, undefined, rpc.user.level)
             $.activate(iou)
             iou.user.xplevel = -1
             iou.user.coin = new $.coins(0)
-            iou.user.str = 0
-            iou.user.int = 0
-            iou.user.dex = 0
-            iou.user.cha = 0
             iou.user.sp = 0
-            iou.str = 0
-            iou.int = 0
-            iou.dex = 0
-            iou.cha = 0
             iou.sp = 0
             let p = round[0].party
             if (backfire) {
-                iou.user.handle = `image of ${nme.user.id ? nme.user.id : 'it'}`
-                iou.hp = nme.hp
+                iou.user.handle = `image of ${nme.user.handle}`
+                iou.hp = Math.trunc(nme.hp * (rpc.user.magic + 1) / 5)
                 parties[p^1].push(iou)
                 xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' render'), 'an image of '
@@ -1210,8 +1202,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
                     , '!\n')
             }
             else {
-                iou.user.handle = `image of ${rpc.user.id ? rpc.user.id : 'it'}`
-                iou.hp = rpc.hp
+                iou.user.handle = `image of ${rpc.user.handle}`
+                iou.hp = Math.trunc(rpc.hp * (rpc.user.magic + 1) / 5)
                 parties[p].push(iou)
                 xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' render'), 'an image of ', $.who(rpc, 'him'), '\x08self!\n')
@@ -1790,7 +1782,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         else {
             if (rpc == $.online) {
                 $.player.kills++
-                xvt.out('You killed'
+                xvt.out('You ', enemy.user.xplevel < 1 ? 'destroyed' : 'killed'
                     , enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
                     , '!\n\n', xvt.reset)
                 if (from !== 'Party' && enemy.user.id !== '' && enemy.user.id[0] !== '_') {

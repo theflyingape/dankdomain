@@ -1084,7 +1084,7 @@ function doMove(): boolean {
 							if (cast == 7) {
 								$.sound('heal')
 								for (let i = 0; i <= Z; i++)
-									$.online.hp += $.dice((DL.cleric.user.level >>3) + (Z >>3) + (deep >>2))
+									$.online.hp += $.dice(DL.cleric.user.level >>3) + $.dice((Z >>3) + (deep >>2))
 								if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
 								xvt.out(`  Your hit points: ${$.online.hp}/${$.player.hp}`)
 							}
