@@ -32,23 +32,6 @@ module Dungeon
 		'Elixir of Restoration'
 	]
 
-	interface dungeon {
-		cleric: active
-		rooms: [ room[] ]	//	7-10
-		map: number			//	0=none, 1=map, 2=magic, 3=Marauder's
-		moves: number
-		width: number		//	7-13
-	}
-	interface room {
-		map: boolean		//	explored?
-		occupant: number	//	0=none, 1=trapdoor, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard
-		type: number		//	0=Emp, 1=N-S, 2=W-E, 3=Cav
-		giftItem?: string	//	potion, poison, magic, xmagic, chest, map, armor, weapon, Marauder's
-		giftValue?: number
-		giftID?: boolean	//	undefined, or identified?
-		monster?: active[]
-	}
-
 	let fini: Function
 	let party: active[]
 	let tl: number
@@ -61,7 +44,7 @@ module Dungeon
 	let dot = xvt.Empty[$.player.emulation]
 	let dd = new Array(10)
 	let deep: number
-	let DL: dungeon
+	let DL: ddd
 	let ROOM: room
 	let Z: number
 	let Y: number
@@ -83,7 +66,7 @@ module Dungeon
         dumb: '%'
     }
 
-	let dungeon: choices = {
+	let crawling: choices = {
 		'N': { description:'orth' },
 		'S': { description:'outh' },
 		'E': { description:'ast' },
@@ -197,15 +180,22 @@ export function menu(suppress = false) {
 			if (DL.map > 1)
 				drawRoom(y, x)
 			xvt.plot($.player.rows, 1)
-			if (ROOM.occupant == 6) {
+			if (ROOM.occupant == 6 && DL.cleric.hp) {
 				$.sound('agony', 8)
 				xvt.out(xvt.reset, xvt.bright, xvt.yellow, 'You hear a dying cry of agony!!\n', xvt.reset)
 				xvt.waste(800)
-				ROOM.occupant = 0
+				DL.cleric.hp = 0
+				DL.cleric.sp = 0
+				DL.cleric.user.status='dead'
+				//ROOM.occupant = 0
+				ROOM.giftItem = 'chest'
+				ROOM.giftValue = 0
+				DL.cleric.user.coin.value = 0
 				if (DL.map > 1) {
 					drawRoom(y, x)
 					xvt.waste(800)
 				}
+				$.beep()
 			}
 			//	look who came for dinner?
 			if (y == Y && x == X) {
@@ -334,8 +324,8 @@ function command() {
 		choice = 'NSEW'['UDRL'.indexOf(xvt.terminator[1])]
 		xvt.out(choice)
 	}
-    if (xvt.validator.isNotEmpty(dungeon[choice])) {
-		xvt.out(dungeon[choice].description)
+    if (xvt.validator.isNotEmpty(crawling[choice])) {
+		xvt.out(crawling[choice].description)
 		DL.moves++
 	}
     else {
@@ -344,8 +334,9 @@ function command() {
 	}
 	xvt.out('\n')
 
-	if (DL.cleric.sp < DL.cleric.user.sp) {
-		DL.cleric.sp += Math.round(DL.cleric.user.level + $.dice(Z + deep) + Z + deep)
+	//	old cleric mana recovery
+	if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
+		DL.cleric.sp += $.dice(DL.cleric.user.level) + $.dice(Z) + $.dice(deep)
 		if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
 	}
 
@@ -357,7 +348,7 @@ function command() {
 
 	case 'C':
 		Battle.retreat = false
-		Battle.cast($.online, menu)
+		Battle.cast($.online, menu, undefined, undefined, DL)
 		return
 
 	case 'P':
@@ -1040,6 +1031,12 @@ function doMove(): boolean {
 			break
 
 		case 6:
+			if (!DL.cleric.hp) {
+				xvt.out(xvt.yellow, 'You find the bones of an ', xvt.faint, 'old cleric', xvt.normal, '.', xvt.reset, '\n')
+				xvt.out('You pray for him.\n')
+				break
+			}
+
 			let cast = 7
 			let cost = new $.coins(Math.trunc($.money(Z) / 6 / $.player.hp * ($.player.hp - $.online.hp)))
 			if (cost.value < 1) cost.value = 1
@@ -1049,14 +1046,17 @@ function doMove(): boolean {
 			cost = new $.coins(cost.carry(1, true))
 
 			if ($.online.hp >= $.player.hp || cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, cast)) {
-				xvt.out('"I will pray for you."\n')
+				xvt.out(xvt.yellow, '"I will pray for you."', xvt.reset, '\n')
 				break
 			}
 
-			xvt.out(xvt.yellow, `There is an old cleric in this room with ${Math.trunc(100 * DL.cleric.sp / DL.cleric.user.sp)}% spell power.\n`, xvt.reset)
+			xvt.out(xvt.yellow, 'There is an ', xvt.faint, 'old cleric', xvt.normal
+				, ` in this room with ${Math.trunc(100 * DL.cleric.sp / DL.cleric.user.sp)}% spell power.`
+				, xvt.reset, '\n')
 			xvt.out('He says, ')
 			if ($.online.hp > ($.player.hp >>1) || ((deep >>2) + 3) * cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, 13)) {
-				xvt.out('"I can cast a heal spell on your wounds for '
+				xvt.out('"I can ', DL.cleric.sp < $.Magic.power(DL.cleric, 13) ? 'only' : 'surely'
+					, ' cast a Heal spell on your wounds for '
 					, cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
 					, '."')
 			}
@@ -1079,6 +1079,7 @@ function doMove(): boolean {
 						xvt.out('\n\n')
 						if (/Y/i.test(xvt.entry)) {
 							$.player.coin.value -= cost.value
+							DL.cleric.user.coin.value += cost.value
 							xvt.out(`He casts a ${Object.keys($.Magic.spells)[cast - 1]} spell on you.`)
 							DL.cleric.sp -= $.Magic.power(DL.cleric, cast)
 							if (cast == 7) {
@@ -1420,8 +1421,14 @@ function drawLevel() {
 								break
 
 							case 6:
-								if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
-								o = xvt.attr(xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.normal, xvt.faint, xvt.yellow, ':')
+								if (DL.cleric.sp) {
+									if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.reset)
+									o = xvt.attr(xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.faint, xvt.yellow, ':')
+								}
+								else {
+									if (!icon) icon = xvt.attr(xvt.uline, '_', Cleric[$.player.emulation], '_', xvt.reset)
+									o = xvt.attr(xvt.faint, ':', icon, xvt.faint, ':')
+								}
 								break
 
 							case 7:
@@ -1518,8 +1525,14 @@ function drawRoom(r:number, c:number) {
 			break
 
 		case 6:
-			if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
-			o = xvt.attr(xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.normal, xvt.faint, xvt.yellow, ':')
+			if (DL.cleric.sp) {
+				if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.reset)
+				o = xvt.attr(xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.faint, xvt.yellow, ':')
+			}
+			else {
+				if (!icon) icon = xvt.attr(xvt.uline, '_', Cleric[$.player.emulation], '_', xvt.reset)
+				o = xvt.attr(xvt.faint, ':', icon, xvt.faint, ':')
+			}
 			break
 
 		case 7:
@@ -1569,7 +1582,7 @@ function generateLevel() {
 		while (maxCol < 13 && $.dice($.online.cha / (4 * ($.player.backstab + 1))) == 1)
 			maxCol++
 
-		dd[deep][Z] = <dungeon>{
+		dd[deep][Z] = <ddd>{
  			cleric: { user:{ id:'_Clr', handle:'old cleric', pc:'Cleric', level:99, sex:'M', weapon:0, armor:0, magic:3, spells:[7,8,13] } },
  			rooms: new Array(maxRow),
 			map: 0,

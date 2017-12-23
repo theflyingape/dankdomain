@@ -706,7 +706,7 @@ export function spoils() {
     $.online.altered = true
 }
 
-export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
+export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?: ddd) {
     if (!rpc.user.magic || !rpc.user.spells.length) {
         if (rpc.user.id === $.player.id) {
             xvt.out('You don\'t have any magic.\n')
@@ -1078,6 +1078,15 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number) {
             }
             else {
                 $.sound('resurrect')
+                if (DL) {
+                    if (DL.cleric.user.status) {
+                        DL.cleric.user.status = ''
+                        $.activate(DL.cleric)
+                        xvt.out('Now raising the ', xvt.faint, xvt.yellow, DL.cleric.user.handle, xvt.reset, ' from the dead...')
+                    }
+                    cb()
+                    return
+                }
                 user('Resurrect', (opponent: active) => {
                     if (opponent.user.id === '' || opponent.user.id === $.player.id) {
                         xvt.out('\nGo get some coffee.\n')

@@ -94,6 +94,10 @@ export class Character {
             return rpc
         }
 
+        jousting(rpc: active): number {
+            return rpc.dex * rpc.user.level / 10 + 2 * rpc.user.jw - rpc.user.jl + 10
+        }
+
         random(type?: string): string {
             let pc: string = ''
             if (type) {
@@ -296,6 +300,21 @@ export class Character {
                 xvt.out(' ', xvt.reset, xvt.blue, '|\n')
             }
 
+            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+            xvt.out(' Jousting: ', xvt.white)
+            xvt.out(sprintf('%-42s', this.jousting(profile) + ' (' + profile.user.jw + ':' + profile.user.jl) + ')')
+            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+            xvt.out('   Kills: ', xvt.white)
+            xvt.out(sprintf('%-42s', profile.user.kills + ' (' + profile.user.killed) + ')')
+            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+            xvt.out('   Kills: ', xvt.white)
+            xvt.out(sprintf('%-42s', profile.user.kills + ' (' + profile.user.killed) + ')')
+            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
             if (profile.user.blessed) {
                 let who: user = { id:profile.user.blessed }
                 if (!loadUser(who)) {
@@ -304,9 +323,9 @@ export class Character {
                     else
                         who.handle = profile.user.blessed
                 }
-                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-                xvt.out(' + You are blessed by ', xvt.white
-                    , sprintf('%-31s', who.handle))
+                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.yellow)
+                xvt.out(' + Blessed by ', xvt.white
+                    , sprintf('%-39s', who.handle))
                 xvt.out(' ', xvt.reset, xvt.blue, '|\n')
             }
 
@@ -314,9 +333,9 @@ export class Character {
                 let who: user = { id:profile.user.cursed }
                 if (!loadUser(who))
                     who.handle = profile.user.cursed
-                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-                xvt.out(' - You are cursed by ', xvt.white
-                    , sprintf('%-32s', who.handle))
+                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.black)
+                xvt.out(' - Cursed by ', xvt.white
+                    , sprintf('%-40s', who.handle))
                 xvt.out(' ', xvt.reset, xvt.blue, '|\n')
             }
 
@@ -1054,6 +1073,7 @@ export function playerPC(points = 200, immortal = false) {
         player.security = novice.security
         player.weapon = novice.weapon
         player.armor = novice.armor
+        player.plays = 1
         newkeys(player)
 
         xvt.out('Since you are a new user here, you are automatically assigned a character\n')
@@ -1422,7 +1442,7 @@ export function riddle() {
     let bonus = 0
     let deeds = ['plays', 'jw', 'jl', 'killed', 'kills', 'retreats']
 
-    xvt.out(xvt.blue, '\nChecking your statistics against the ', player.pc,' Fame/Lame lists...\n')
+    xvt.out(xvt.blue, '\nChecking your deeds for the ', xvt.bright, player.pc, xvt.normal, ' Fame/Lame lists...\n')
     xvt.waste(1000)
     for (let i in deeds) {
         let deed = mydeeds.find((x) => { return x.deed === deeds[i] })
@@ -1433,7 +1453,7 @@ export function riddle() {
                 saveDeed(deed)
                 bonus = 1
                 xvt.out(' +', xvt.bright, deeds[i], xvt.normal)
-                sound('click', 4)
+                sound('click', 5)
             }
         }
         else {
@@ -1447,7 +1467,7 @@ export function riddle() {
             }
         }
     }
-    xvt.out(xvt.magenta, '\nChecking your statistics against All-Time Fame/Lame lists...\n')
+    xvt.out(xvt.magenta, '\nChecking your deeds for the ', xvt.bright, 'All-Time', xvt.normal,' Fame/Lame lists...\n')
     xvt.waste(1000)
     for (let i in deeds) {
         let deed = mydeeds.find((x) => { return x.deed === deeds[i] })
@@ -1468,7 +1488,7 @@ export function riddle() {
                 saveDeed(deed)
                 bonus = 3
                 xvt.out(' +', xvt.bright, deeds[i], xvt.normal)
-                sound('click', 4)
+                sound('click', 5)
             }
         }
     }

@@ -183,8 +183,9 @@ function password() {
     }
     if ($.now().date >= $.sysop.dob) {
         $.sysop.calls++
-        $.sysop.plays++
         $.sysop.today++
+        if ($.player.today <= $.access.calls && $.access.roleplay)
+            $.sysop.plays++
     }
     $.saveUser($.sysop)
 
@@ -260,18 +261,40 @@ function welcome() {
     }
 
     if ($.player.today <= $.access.calls && $.access.roleplay && $.sysop.dob <= $.now().date) {
-        $.player.calls++
         $.profile({ png:'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : '')
             , handle:$.player.handle
             , level:$.player.level, pc:$.player.pc
         })
         xvt.out(xvt.bright, xvt.black, '(', xvt.normal, xvt.white, 'Welcome back, ',  $.access[$.player.gender], xvt.bright, xvt.black, ')\n', xvt.reset)
-        xvt.out(xvt.cyan, 'Visit #: ', xvt.bright, xvt.white, $.player.calls.toString(), xvt.reset)
-        xvt.out(`\nYou have ${$.access.calls - $.player.today} calls remaining.\n`)
+        xvt.out(xvt.cyan, 'Visit #: ', xvt.bright, xvt.white, $.player.calls.toString(), xvt.reset
+            , `  -  ${$.access.calls - $.player.today} calls remaining\n`)
         xvt.sessionAllowed = $.access.minutes * 60
         $.news(`${$.player.handle} logged in ${$.time($.player.lasttime)} as a level ${$.player.level} ${$.player.pc}:`)
         $.wall(`logged on as a level ${$.player.level} ${$.player.pc}`)
 
+        xvt.out(xvt.cyan, '\nLast callers were: ', xvt.white)
+        try {
+            $.callers = require('../users/callers')
+            for (let last in $.callers) {
+                xvt.out(xvt.bright, $.callers[last].who, xvt.normal, ' (', $.callers[last].reason, ')\n')
+                xvt.out('                   ')
+            }
+        }
+        catch(err) {
+            xvt.out('not available (', err, ')\n')
+        }
+
+        if (process.env.LINES && +process.env.LINES !== $.player.rows)
+            xvt.out('\n', xvt.yellow, 'Warning: ', xvt.bright
+                , `Your USER ROW setting ${$.player.rows} does not match detected login size: ${process.env.LINES}`)
+        if (2 * $.player.jw < $.player.jl) {
+            xvt.out('\n', xvt.magenta, 'Helpful: ', xvt.bright, `Your poor jousting stats are being reset.`)
+            $.player.jl = 0
+            $.player.jw = 0
+        }
+        xvt.out(xvt.reset, '\n')
+
+        $.player.calls++
         $.player.plays++
         $.player.status = ''
         $.arena = 3
@@ -313,18 +336,6 @@ function welcome() {
         $.unlock($.player.id)
     }
 
-    xvt.out(xvt.cyan, '\nLast callers were: ', xvt.white)
-    try {
-        $.callers = require('../users/callers')
-        for (let last in $.callers) {
-            xvt.out(xvt.bright, $.callers[last].who, xvt.normal, ' (', $.callers[last].reason, ')\n')
-            xvt.out('                   ')
-        }
-    }
-    catch(err) {
-        xvt.out('not available (', err, ')\n')
-    }
-
     xvt.app.form = {
         'pause': { cb: () => {
             if ($.cat(`user/${$.player.id}`)) {
@@ -346,17 +357,6 @@ function welcome() {
 
             Taxman.cityguards()
         }, pause:true }
-    }
-    if (process.env.LINES && +process.env.LINES !== $.player.rows)
-        xvt.out('\n', xvt.yellow, 'Warning: ', xvt.bright
-            , `Your USER ROW setting ${$.player.rows} does not match detected login size: ${process.env.LINES}`
-            , xvt.reset, '\n')
-    if (2 * $.player.jw < $.player.jl) {
-        xvt.out('\n', xvt.magenta, 'Helpful: ', xvt.bright
-            , `Your poor jousting stats are being reset.`
-            , xvt.reset, '\n')
-        $.player.jl = 0
-        $.player.jw = 0
     }
     xvt.app.focus = 'pause'
 }
