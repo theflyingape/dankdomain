@@ -90,15 +90,14 @@ function choice() {
 					return
 				}
 
-				let ability = $.online.dex * $.player.level / 10 + 2 * $.player.jw - $.player.jl + 10
-				let versus = opponent.dex * opponent.user.level / 10 + 2 * opponent.user.jw - opponent.user.jl + 10
+				let ability = $.PC.jousting($.online)
+				let versus = $.PC.jousting(opponent)
 				let factor = (100 - ($.player.level > opponent.user.level ? $.player.level : opponent.user.level)) / 10 + 3
 				let jw = 0
 				let jl = 0
 				let pass = 0
 
-				if (!$.Access.name[opponent.user.access].roleplay || versus < 1 || opponent.user.level
- > 1 && (opponent.user.jw + 3 * opponent.user.level) < opponent.user.jl) {
+				if (!$.Access.name[opponent.user.access].roleplay || versus < 1 || opponent.user.level > 1 && (opponent.user.jw + 3 * opponent.user.level) < opponent.user.jl) {
 					xvt.out('That knight is out practicing right now.\n')
 					menu(true)
 					return

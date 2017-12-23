@@ -967,6 +967,29 @@ function doMove(): boolean {
 				, '! ', xvt.white)
 			xvt.waste(600)
 			ROOM.occupant = 0
+
+			if ((Z + 1) == $.taxman.user.level && $.player.level < $.taxman.user.level) {
+				$.loadUser($.taxman)
+				xvt.out($.who($.taxman, 'He'), `is the Master of Coin for ${$.king.handle}!`
+					, xvt.reset, '\n')
+				$.profile({ png:'player/' + $.taxman.user.pc.toLowerCase() + ($.taxman.user.gender === 'F' ? '_f' : '')
+					, handle:$.taxman.user.handle
+					, level:$.taxman.user.level, pc:$.taxman.user.pc
+				})
+				$.sound('oops', 8)
+				$.activate($.taxman)
+				$.taxman.user.id = ''
+				$.taxman.user.coin.value = $.player.coin.value
+				if (isNaN(+$.taxman.user.weapon)) xvt.out('\n', $.who($.taxman, 'He'), $.Weapon.wearing($.taxman), '.\n')
+				xvt.waste(750)
+				if (isNaN(+$.taxman.user.armor)) xvt.out('\n', $.who($.taxman, 'He'), $.Armor.wearing($.taxman), '.\n')
+				xvt.waste(750)
+				xvt.out('\n')
+				Battle.engage('Taxman', $.online, $.taxman, doSpoils)
+				refresh = true
+				return
+			}
+
 			let x = $.dice(DL.width) - 1, y = $.dice(DL.rooms.length) - 1
 			ROOM = DL.rooms[y][x]
 			if (ROOM.occupant || $.dice(Z * ($.player.steal / 2 + 1) - deep) > Z) {

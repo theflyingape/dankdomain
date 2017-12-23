@@ -35,7 +35,8 @@ function end() {
         }
         xvt.out('\n')
         $.sound('max', 8)
-        xvt.out(xvt.yellow, '"Thanks for the taxes!"\n')
+        xvt.out(xvt.bright, xvt.blue, '"Thanks for the taxes!"'
+            , xvt.reset, '\n')
         $.sound('thief', 16)
         $.reason = 'tax evasion'
     }

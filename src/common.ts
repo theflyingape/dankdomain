@@ -95,7 +95,7 @@ export class Character {
         }
 
         jousting(rpc: active): number {
-            return rpc.dex * rpc.user.level / 10 + 2 * rpc.user.jw - rpc.user.jl + 10
+            return Math.round(rpc.dex * rpc.user.level / 10 + 2 * rpc.user.jw - rpc.user.jl + 10)
         }
 
         random(type?: string): string {
@@ -302,17 +302,14 @@ export class Character {
 
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
             xvt.out(' Jousting: ', xvt.white)
-            xvt.out(sprintf('%-42s', this.jousting(profile) + ' (' + profile.user.jw + ':' + profile.user.jl) + ')')
+            xvt.out(sprintf('%-20s', this.jousting(profile) + ' (' + profile.user.jw + ':' + profile.user.jl + ')'))
+            xvt.out(xvt.cyan, 'Plays: ', xvt.white)
+            xvt.out(sprintf('%-15s', profile.user.plays))
             xvt.out(' ', xvt.reset, xvt.blue, '|\n')
 
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out('   Kills: ', xvt.white)
-            xvt.out(sprintf('%-42s', profile.user.kills + ' (' + profile.user.killed) + ')')
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out('   Kills: ', xvt.white)
-            xvt.out(sprintf('%-42s', profile.user.kills + ' (' + profile.user.killed) + ')')
+            xvt.out('    Kills: ', xvt.white)
+            xvt.out(sprintf('%-42s', profile.user.kills + ' with ' + profile.user.retreats + ' retreats and killed ' + profile.user.killed +'x'))
             xvt.out(' ', xvt.reset, xvt.blue, '|\n')
 
             if (profile.user.blessed) {
@@ -1664,6 +1661,7 @@ export function beep() {
         sound('max')
     else
         xvt.beep()
+    xvt.waste(100)
 }
 
 export function bracket(item: number|string, nl = true): string {

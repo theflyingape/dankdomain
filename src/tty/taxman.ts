@@ -13,6 +13,7 @@ module Taxman
 {
     let irs: active[]
     let tax: coins = new $.coins(0)
+    $.loadUser($.taxman)
 
 function checkpoint(scratch: number): boolean {
 
@@ -43,7 +44,7 @@ export function bar() {
     tax.value = 10 * $.money($.player.level)
     if (checkpoint($.player.coin.value)) {
         xvt.out('\nYou really want a drink, so you pay the tax.\n')
-        $.sound('max', 4)
+        $.beep()
         $.player.coin.value -= tax.value
         if ($.player.coin.value < 0) {
             $.player.bank.value += $.player.coin.value
