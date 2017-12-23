@@ -12,10 +12,10 @@ import xvt = require('xvt')
 module Hall
 {
 	let hall: choices = {
-        'F': { description:'Hall of Fame' },
-        'L': { description:'Hall of Lame' },
+        'C': { description:'Class Champions' },
+        'H': { description:'Hall of Heroes' },
         'M': { description:'Most Memorable Hits' },
-        'W': { description:'Past Winners List' }
+        'W': { description:'Winners Only Noted' }
 	}
 
 export function menu(suppress = false) {
@@ -37,32 +37,78 @@ function choice() {
     xvt.out('\n')
 
     switch (choice) {
-        case 'M':
+        case 'C':
             xvt.out('\n')
-            xvt.out(xvt.Blue, xvt.white, '  Class      Hero                      Date      Deed       '
+            xvt.out(xvt.Red, xvt.white, '  Class      CHAMPION                  Date      BEST        Deed      '
                 , xvt.reset, '\n')
-            xvt.out(xvt.Blue, xvt.white, '------------------------------------------------------------'
-                , xvt.reset, '\n')
+            xvt.out(xvt.Red, xvt.white, '-----------------------------------------------------------------------'
+                , xvt.reset)
             for (let type in $.PC.name)
                 for (let pc in $.PC.name[type]) {
                     let deeds = $.loadDeed(pc)
-                    let melee = deeds.find((x) => { return x.deed === 'melee' })
-                    if (melee)
-                        xvt.out(sprintf('%-9s  %-22s  %-11s %6d '
-                            , melee.pc, melee.hero, $.date2full(melee.date).slice(4), melee.value)
-                            , $.Deed.name[melee.deed].description, '\n')
-                    let blast = deeds.find((x) => { return x.deed === 'blast' })
-                    if (blast)
-                        xvt.out(sprintf('%-9s  %-22s  %-11s %6d '
-                            , '', blast.hero, $.date2full(blast.date).slice(4), blast.value)
-                            , $.Deed.name[blast.deed].description, '\n')
-                    let bblast = deeds.find((x) => { return x.deed === 'big blast' })
-                    if (bblast)
-                        xvt.out(sprintf('%-9s  %-22s  %-11s %6d '
-                            , '', bblast.hero, $.date2full(bblast.date).slice(4), bblast.value)
-                            , $.Deed.name[bblast.deed].description, '\n')
-                    if (deeds.length) xvt.out('\n')
+                    if (deeds.length) {
+                        xvt.out(sprintf('\n%-9s  ', pc))
+                        let keys = ['plays', 'retreats', 'killed', 'kills', 'jw', 'jl']
+                        for (let best in keys) {
+                            let deed = deeds.find((x) => { return x.deed === keys[best] })
+                            if (deed) {
+                                xvt.out(sprintf('%-22s  %-11s %6d  '
+                                    , deed.hero, $.date2full(deed.date).slice(4), deed.value)
+                                    , $.Deed.name[deed.deed].description)
+                                xvt.out('\n           ')
+                            }
+                        }
+                    }
                 }
+            suppress = true
+            break
+
+        case 'H':
+            xvt.out('\n')
+            xvt.out(xvt.Magenta, xvt.white, '  HERO                      Date      GOAT        Deed      '
+                , xvt.reset, '\n')
+            xvt.out(xvt.Magenta, xvt.white, '------------------------------------------------------------'
+                , xvt.reset)
+            let type = 'GOAT'
+            let deeds = $.loadDeed(type)
+            if (deeds.length) {
+                let keys = ['plays', 'retreats', 'killed', 'kills', 'jw', 'jl']
+                for (let goat in keys) {
+                    let deed = deeds.find((x) => { return x.deed === keys[goat] })
+                    if (deed) {
+                        xvt.out('\n', sprintf('%-22s  %-11s %6d  '
+                            , deed.hero, $.date2full(deed.date).slice(4), deed.value)
+                            , $.Deed.name[deed.deed].description)
+                    }
+                }
+            }
+            suppress = true
+            break
+
+        case 'M':
+            xvt.out('\n')
+            xvt.out(xvt.Blue, xvt.white, '  Class      OUTSTANDING               Date      HURT               '
+                , xvt.reset, '\n')
+            xvt.out(xvt.Blue, xvt.white, '--------------------------------------------------------------------'
+                , xvt.reset)
+            for (let type in $.PC.name) {
+                for (let pc in $.PC.name[type]) {
+                    let deeds = $.loadDeed(pc)
+                    if (deeds.length) {
+                        xvt.out(sprintf('\n%-9s  ', pc))
+                        let keys = ['melee', 'blast', 'big blast']
+                        for (let hurt in keys) {
+                            let deed = deeds.find((x) => { return x.deed === keys[hurt] })
+                            if (deed) {
+                                xvt.out(sprintf('%-22s  %-11s %6d  '
+                                    , deed.hero, $.date2full(deed.date).slice(4), deed.value)
+                                    , $.Deed.name[deed.deed].description)
+                                xvt.out('\n           ')
+                            }
+                        }
+                    }
+                }
+            }
             suppress = true
             break
 
@@ -71,7 +117,7 @@ function choice() {
 			return
 
         case 'W':
-            xvt.out(xvt.magenta, '\n        --=:)) Past Winners List ((:=--', xvt.reset, '\n\n')
+            xvt.out(xvt.green, '\n        --=:)) WINNERS Only Noted ((:=--', xvt.reset, '\n\n')
             $.cat('winners')
             suppress = true
             break

@@ -1439,21 +1439,12 @@ export function riddle() {
     let bonus = 0
     let deeds = ['plays', 'jw', 'jl', 'killed', 'kills', 'retreats']
 
-    xvt.out(xvt.blue, '\nChecking your deeds for the ', xvt.bright, player.pc, xvt.normal, ' Fame/Lame lists...\n')
+    mydeeds = loadDeed(player.pc)
+    xvt.out(xvt.blue, '\nChecking your deeds for the ', xvt.bright, player.pc, xvt.normal, ' list...\n')
     xvt.waste(1000)
     for (let i in deeds) {
         let deed = mydeeds.find((x) => { return x.deed === deeds[i] })
-        if (['jl', 'killed', 'retreats'].indexOf(deeds[i])) {
-            if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, deeds[i], 100)[0]) - 1]
-            if (player[deeds[i]] <= deed.value) {
-                deed.value = player[deeds[i]]
-                saveDeed(deed)
-                bonus = 1
-                xvt.out(' +', xvt.bright, deeds[i], xvt.normal)
-                sound('click', 5)
-            }
-        }
-        else {
+        if (deeds[i] == 'jw') {
             if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, deeds[i])[0]) - 1]
             if (player[deeds[i]] >= deed.value) {
                 deed.value = player[deeds[i]]
@@ -1463,23 +1454,25 @@ export function riddle() {
                 sound('click', 5)
             }
         }
-    }
-    xvt.out(xvt.magenta, '\nChecking your deeds for the ', xvt.bright, 'All-Time', xvt.normal,' Fame/Lame lists...\n')
-    xvt.waste(1000)
-    for (let i in deeds) {
-        let deed = mydeeds.find((x) => { return x.deed === deeds[i] })
-        if (['jl', 'killed', 'retreats'].indexOf(deeds[i])) {
-            if (!deed) deed = mydeeds[mydeeds.push(loadDeed('All-Time', deeds[i], 100)[0]) - 1]
+        else {
+            if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, deeds[i], 100)[0]) - 1]
             if (player[deeds[i]] <= deed.value) {
                 deed.value = player[deeds[i]]
                 saveDeed(deed)
-                bonus = 3
+                bonus = 1
                 xvt.out(' +', xvt.bright, deeds[i], xvt.normal)
                 sound('click', 5)
             }
         }
-        else {
-            if (!deed) deed = mydeeds[mydeeds.push(loadDeed('All-Time', deeds[i])[0]) - 1]
+    }
+
+    mydeeds = loadDeed('GOAT')
+    xvt.out(xvt.magenta, '\nChecking your deeds for the ', xvt.bright, 'GOAT', xvt.normal,' list...\n')
+    xvt.waste(1000)
+    for (let i in deeds) {
+        let deed = mydeeds.find((x) => { return x.deed === deeds[i] })
+        if (deeds[i] == 'jw') {
+            if (!deed) deed = mydeeds[mydeeds.push(loadDeed('GOAT', deeds[i])[0]) - 1]
             if (player[deeds[i]] >= deed.value) {
                 deed.value = player[deeds[i]]
                 saveDeed(deed)
@@ -1488,8 +1481,18 @@ export function riddle() {
                 sound('click', 5)
             }
         }
+        else {
+            if (!deed) deed = mydeeds[mydeeds.push(loadDeed('GOAT', deeds[i], 100)[0]) - 1]
+            if (player[deeds[i]] <= deed.value) {
+                deed.value = player[deeds[i]]
+                saveDeed(deed)
+                bonus = 3
+                xvt.out(' +', xvt.bright, deeds[i], xvt.normal)
+                sound('click', 5)
+            }
+        }
     }
-    
+
     xvt.out(xvt.bright, xvt.cyan, '\nYou have become so powerful that you are now immortal and you leave your \n')
     xvt.out('worldly possessions behind.\n')
     loadUser(taxman)

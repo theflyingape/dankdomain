@@ -122,7 +122,7 @@ export class Deed {
         this.name = require('./items/deed.json')
     }
 }
-    
+
 export class Magic {
 
     spells: spell[]
