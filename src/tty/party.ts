@@ -76,9 +76,9 @@ function choice() {
             rs = $.query(`SELECT * FROM Gangs`)
             for (let i = 0; i < rs.length; i += 2) {
                 if (i + 1 < rs.length)
-                    showGang(loadGang(rs[i]), loadGang(rs[i + 1]))
+                    showGang($.loadGang(rs[i]), $.loadGang(rs[i + 1]))
                 else
-                    showGang(loadGang(rs[i]))
+                    showGang($.loadGang(rs[i]))
             }
 
             xvt.app.form = {
@@ -137,7 +137,7 @@ function choice() {
                     if (/Y/i.test(xvt.entry)) {
                         $.player.gang = g.name
                         $.online.altered = true
-                        saveGang(g, true)
+                        $.saveGang(g, true)
                         menu()
                     }
                     else {
@@ -162,7 +162,7 @@ function choice() {
                 break
             }
             
-            g = loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+            g = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
             showGang(g)
 
             $.action('yn')
@@ -175,7 +175,7 @@ function choice() {
                         let i = g.members.indexOf($.player.id)
                         if (i > 0) {
                             g.members.splice(i, 1)
-                            saveGang(g)
+                            $.saveGang(g)
                         }
                         else {
                             xvt.out('Dissolving the gang... ')
@@ -197,7 +197,7 @@ function choice() {
             g.members = []
             rs = $.query(`SELECT * FROM Gangs ORDER BY name`)
             do {
-                g = loadGang(rs[0])
+                g = $.loadGang(rs[0])
                 rs.splice(0, 1)
                 if (g.members.length < 4 || g.members.indexOf($.player.id) > 0)
                     break
@@ -221,7 +221,7 @@ function choice() {
                         else {
                             g.members = []
                             while (rs.length) {
-                                g = loadGang(rs[0])
+                                g = $.loadGang(rs[0])
                                 rs.splice(0, 1)
                                 if (g.members.length < 4)
                                     break
@@ -244,7 +244,7 @@ function choice() {
             if (!$.access.roleplay) break
             if (!$.player.gang) break
 
-            g = loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+            g = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
             showGang(g)
             if (g.members.indexOf($.player.id) != 0) {
                 xvt.beep()
@@ -263,7 +263,7 @@ function choice() {
                     if (member.user.gang === g.name) {
                         g.members[0] = member.user.id
                         g.members[n] = $.player.id
-                        saveGang(g)
+                        $.saveGang(g)
                         showGang(g)
                         xvt.out(xvt.bright, '\n', member.user.handle, ' is now leader of ', g.name, '.\n', xvt.reset)
                     }
@@ -284,7 +284,7 @@ function choice() {
                 break
             }
             
-            g = loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+            g = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
             showGang(g)
             if (g.members.indexOf($.player.id) != 0) {
                 xvt.beep()
@@ -313,7 +313,7 @@ function choice() {
                                     member.user.gang = ''
                                     $.saveUser(member)
                                     g.members.splice(n, 1)
-                                    saveGang(g)
+                                    $.saveGang(g)
                                     showGang(g)
                                     xvt.out(xvt.bright, '\n', member.user.handle, ' is no longer on ', g.name, '.\n', xvt.reset)
                                 }
@@ -336,8 +336,9 @@ function choice() {
                             else {
                                 if (!member.user.gang) {
                                     g.members.push(member.user.id)
-                                    saveGang(g)
+                                    $.saveGang(g)
                                     showGang(g)
+                                    $.log(member.user.id, `\n${$.player.handle} invites you to join ${g.name}`)
                                     xvt.out(xvt.bright, '\n', member.user.handle, ' is invited to join ', g.name, '.\n', xvt.reset)
                                 }
                             }
@@ -361,7 +362,7 @@ function choice() {
 
             rs = $.query(`SELECT * FROM Gangs ORDER BY name`)
             for (let i = 0; i < rs.length; i ++) {
-                o = loadGang(rs[i])
+                o = $.loadGang(rs[i])
                 if (o.name !== g.name)
                     xvt.out($.bracket(i + 1), o.name)
             }
@@ -379,8 +380,8 @@ function choice() {
                         return
                     }
 
-                    g = loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
-                    o = loadGang(rs[i])
+                    g = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+                    o = $.loadGang(rs[i])
                     if (o.name === g.name) {
                         xvt.app.refocus()
                         return
@@ -485,91 +486,6 @@ function choice() {
 			return
 	}
 	menu(suppress)
-}
-
-function loadGang(rs: any): gang {
-    let gang: gang = {
-        name: rs.name,
-        members: rs.members.split(','),
-        handles: [],
-        genders: [],
-        melee: [],
-        status: [],
-        validated: [],
-        win: rs.win,
-        loss: rs.loss,
-        banner: rs.banner >>4,
-        trim: rs.banner % 8,
-        back: rs.color >>4,
-        fore: rs.color % 8
-    }
-
-    for (let n = 0; n < gang.members.length; n++) {
-        let who = $.query(`SELECT handle, gender, melee, status, gang FROM Players WHERE id = '${gang.members[n]}'`)
-        if (who.length) {
-            gang.handles.push(who[0].handle)
-            gang.genders.push(who[0].gender)
-            gang.melee.push(who[0].melee)
-            if (gang.members[n] !== $.player.id && !who[0].status && $.lock(gang.members[n], false))
-                who[0].status = 'locked'
-            gang.status.push(who[0].status)
-            gang.validated.push(who[0].gang ? who[0].gang === rs.name : undefined)
-        }
-        else if (gang.members[n][0] === '_') {
-            gang.handles.push('')
-            gang.genders.push('I')
-            gang.melee.push(0)
-            gang.status.push('')
-            gang.validated.push(true)
-        }
-        else {
-            gang.handles.push(`?unknown ${gang.members[n]}`)
-            gang.genders.push('M')
-            gang.melee.push(3)
-            gang.status.push('?')
-            gang.validated.push(false)
-        }
-    }
-
-    return gang
-}
-
-function saveGang(g: gang, insert = false) {
-    if (insert) {
-        try {
-            $.sqlite3.exec(`
-                INSERT INTO Gangs (
-                    name, members, win, loss, banner, color
-                ) VALUES (
-                    '${g.name}', '${g.members.join()}',
-                    ${g.win}, ${g.loss},
-                    ${(g.banner <<4) + g.trim}, ${(g.back <<4) + g.fore}
-            )`)
-        }
-        catch(err) {
-            if (err.code !== 'SQLITE_CONSTRAINT_PRIMARYKEY') {
-                xvt.beep()
-                xvt.out(xvt.reset, '\n?Unexpected error: ', String(err), '\n')
-                xvt.waste(5000)
-            }
-        }
-    }
-    else {
-        try {
-            $.sqlite3.exec(`
-                UPDATE Gangs
-                    set members = '${g.members.join()}'
-                    , win = ${g.win}, loss = ${g.loss}
-                    , banner = ${(g.banner <<4) + g.trim}, color = ${(g.back <<4) + g.fore}
-                WHERE name = '${g.name}'
-            `)
-        }
-        catch(err) {
-            xvt.beep()
-            xvt.out(xvt.reset, '\n?Unexpected error: ', String(err), '\n')
-            xvt.waste(5000)
-        }
-    }
 }
 
 function showGang(lg: gang, rg?: gang, engaged = false) {

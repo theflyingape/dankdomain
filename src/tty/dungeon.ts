@@ -1055,7 +1055,8 @@ function doMove(): boolean {
 
 		case 6:
 			if (!DL.cleric.hp) {
-				xvt.out(xvt.yellow, 'You find the bones of an ', xvt.faint, 'old cleric', xvt.normal, '.', xvt.reset, '\n')
+				xvt.out(xvt.yellow, 'You find the ', xvt.white, 'bones'
+					, xvt.yellow, ' of an ', xvt.faint, 'old cleric', xvt.normal, '.', xvt.reset, '\n')
 				xvt.out('You pray for him.\n')
 				break
 			}
@@ -1110,7 +1111,9 @@ function doMove(): boolean {
 								for (let i = 0; i <= Z; i++)
 									$.online.hp += $.dice(DL.cleric.user.level >>3) + $.dice((Z >>3) + (deep >>2))
 								if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
-								xvt.out(`  Your hit points: ${$.online.hp}/${$.player.hp}`)
+								xvt.out('  Your hit points: '
+									, xvt.bright, $.online.hp > $.player.hp ? xvt.yellow : $.online.hp == $.player.hp ? xvt.white : xvt.red, $.online.hp.toString()
+									, xvt.reset, `/${$.player.hp}`)
 							}
 							else {
 								$.online.hp = $.player.hp
@@ -1118,9 +1121,13 @@ function doMove(): boolean {
 							}
 						}
 						else {
-							ROOM.occupant = 0
-							xvt.out(xvt.magenta, 'He teleports away!\n', xvt.reset)
-							$.sound('teleport', 8)
+							if (cast == 13) {
+								ROOM.occupant = 0
+								xvt.out(xvt.magenta, 'He teleports away!\n', xvt.reset)
+								$.sound('teleport', 8)
+							}
+							else
+								xvt.out(xvt.yellow, '"I will rest.  Go in peace."\n', xvt.reset)
 						}
 						menu()
 					}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i }
@@ -1136,7 +1143,9 @@ function doMove(): boolean {
 					for (let i = 0; i <= Z; i++)
 						$.online.hp += $.dice(DL.cleric.user.level >>3) + $.dice((Z >>3) + (deep >>2))
 					if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
-					xvt.out(`  Your hit points: ${$.online.hp}/${$.player.hp}`)
+					xvt.out('  Your hit points: '
+						, xvt.bright, $.online.hp > $.player.hp ? xvt.yellow : $.online.hp == $.player.hp ? xvt.white : xvt.red, $.online.hp.toString()
+						, xvt.reset, `/${$.player.hp}`)
 				}
 				else {
 					$.online.hp = $.player.hp
@@ -1446,7 +1455,7 @@ function drawLevel() {
 							case 6:
 								if (DL.cleric.sp) {
 									if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.reset)
-									o = xvt.attr(xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.faint, xvt.yellow, ':')
+									o = xvt.attr(xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.reset, xvt.faint, xvt.yellow, ':')
 								}
 								else {
 									if (!icon) icon = xvt.attr(xvt.uline, '_', Cleric[$.player.emulation], '_', xvt.reset)
@@ -1550,7 +1559,7 @@ function drawRoom(r:number, c:number) {
 		case 6:
 			if (DL.cleric.sp) {
 				if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.reset)
-				o = xvt.attr(xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.faint, xvt.yellow, ':')
+				o = xvt.attr(xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.reset, xvt.faint, xvt.yellow, ':')
 			}
 			else {
 				if (!icon) icon = xvt.attr(xvt.uline, '_', Cleric[$.player.emulation], '_', xvt.reset)

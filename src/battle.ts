@@ -12,15 +12,21 @@ import xvt = require('xvt')
 
 module Battle
 {
-    export let fini: Function
-    export let from: string
-    export let parties: [ active[] ]
-    export let alive: number[]
-    export let round: { party:number, member:number, react:number }[]
-    export let bs: number
     export let retreat: boolean
     export let teleported: boolean
-    export let volley: number
+
+    let fini: Function
+    let from: string
+    let gang: gang = {
+        name:'', members:[], handles:[], genders:[], melee:[], status:[], validated:[]
+            , win:0, loss:0, banner:0, trim:0, back:0, fore:0
+    }
+    let parties: [ active[] ]
+    let alive: number[]
+    let round: { party:number, member:number, react:number }[]
+    let bs: number
+    let volley: number
+
 
 function end() {
     if (from === 'Taxman' && $.online.hp < 1) {
@@ -33,6 +39,8 @@ function end() {
                 $.player.bank.value = 0
             }
         }
+        $.player.coward = false
+
         xvt.out('\n')
         $.sound('max', 8)
         xvt.out(xvt.bright, xvt.blue, '"Thanks for the taxes!"'
@@ -177,6 +185,7 @@ export function attack(retry = false) {
                 xvt.out('\n')
                 if (/R/i.test(xvt.entry)) {
                     if (from === 'Taxman') {
+                        $.sound('thief')
                         xvt.out('"You can never escape the taxman!"\n')
                         $.player.coward = true
                         $.saveUser($.player)
@@ -184,6 +193,7 @@ export function attack(retry = false) {
                         return
                     }
                     if(from === 'Tiny') {
+                        $.sound('growl')
                         xvt.out('"You try to escape, but the crowd throws you back to witness the slaughter!"\n')
                         $.player.coward = true
                         $.saveUser($.player)
@@ -631,6 +641,19 @@ export function spoils() {
                         winner.dex = $.PC.ability(winner.dex, 10, winner.user.maxdex, 10)
                         winner.cha = $.PC.ability(winner.cha, 10, winner.user.maxcha, 10)
                     }
+                    if (loser.user.gang && loser.user.gang === $.player.gang) {
+                        gang = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+                        let n = gang.members.indexOf(loser.user.id)
+                        if (n == 0) {
+                            gang.members[0] = $.player.id
+                            gang.members[n] = loser.user.id
+                            $.saveGang(gang)
+                            xvt.out(`You take over as the leader of ${gang.name}.\n`)
+                            xvt.waste(500)
+                        }
+                        else
+                            $.player.cha--
+                    }
                     if (loser.user.bounty.value) {
                         xvt.out(`You get the ${loser.user.bounty.carry()} bounty posted by ${loser.user.who}, too.\n`)
                         $.log(loser.user.id, `... and got paid the bounty posted by ${loser.user.who}.`)
@@ -700,6 +723,25 @@ export function spoils() {
             if ($.Armor.swap(winner, $.online)) {
                 xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who($.online, 'his'), winner.user.armor, '.\n')
                 $.log(winner.user.id, `You upgraded to ${winner.user.armor}.`)
+            }
+            if (winner.user.gang && winner.user.gang === $.player.gang) {
+                $.sound('laugh', 5)
+                $.player.cha--
+
+                gang = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+                let n = gang.members.indexOf(winner.user.id)
+                if (n == 0) {
+                    xvt.out($.who(winner,'He'), 'says, "Let that be a lesson to you punk!\n"')
+                    xvt.waste(500)
+                }
+                if (gang.members[0] === $.player.id) {
+                    gang.members[0] = winner.user.id
+                    gang.members[n] = $.player.id
+                    $.saveGang(gang)
+                    $.player.cha--
+                    xvt.out($.who(winner,'He'), `takes over as the leader of ${gang.name}.\n`)
+                    xvt.waste(500)
+                }
             }
             $.saveUser(winner)
         }

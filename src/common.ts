@@ -2333,6 +2333,91 @@ export function saveDeed(deed: deed) {
     sqlite3.exec(`UPDATE Deeds set date=${deed.date}, hero='${deed.hero}', value=${deed.value} WHERE pc='${deed.pc}' AND deed='${deed.deed}'`)
 }
 
+export function loadGang(rs: any): gang {
+    let gang: gang = {
+        name: rs.name,
+        members: rs.members.split(','),
+        handles: [],
+        genders: [],
+        melee: [],
+        status: [],
+        validated: [],
+        win: rs.win,
+        loss: rs.loss,
+        banner: rs.banner >>4,
+        trim: rs.banner % 8,
+        back: rs.color >>4,
+        fore: rs.color % 8
+    }
+
+    for (let n = 0; n < gang.members.length; n++) {
+        let who = $.query(`SELECT handle, gender, melee, status, gang FROM Players WHERE id = '${gang.members[n]}'`)
+        if (who.length) {
+            gang.handles.push(who[0].handle)
+            gang.genders.push(who[0].gender)
+            gang.melee.push(who[0].melee)
+            if (gang.members[n] !== $.player.id && !who[0].status && $.lock(gang.members[n], false))
+                who[0].status = 'locked'
+            gang.status.push(who[0].status)
+            gang.validated.push(who[0].gang ? who[0].gang === rs.name : undefined)
+        }
+        else if (gang.members[n][0] === '_') {
+            gang.handles.push('')
+            gang.genders.push('I')
+            gang.melee.push(0)
+            gang.status.push('')
+            gang.validated.push(true)
+        }
+        else {
+            gang.handles.push(`?unknown ${gang.members[n]}`)
+            gang.genders.push('M')
+            gang.melee.push(3)
+            gang.status.push('?')
+            gang.validated.push(false)
+        }
+    }
+
+    return gang
+}
+
+export function saveGang(g: gang, insert = false) {
+    if (insert) {
+        try {
+            $.sqlite3.exec(`
+                INSERT INTO Gangs (
+                    name, members, win, loss, banner, color
+                ) VALUES (
+                    '${g.name}', '${g.members.join()}',
+                    ${g.win}, ${g.loss},
+                    ${(g.banner <<4) + g.trim}, ${(g.back <<4) + g.fore}
+            )`)
+        }
+        catch(err) {
+            if (err.code !== 'SQLITE_CONSTRAINT_PRIMARYKEY') {
+                xvt.beep()
+                xvt.out(xvt.reset, '\n?Unexpected error: ', String(err), '\n')
+                xvt.waste(5000)
+            }
+        }
+    }
+    else {
+        try {
+            $.sqlite3.exec(`
+                UPDATE Gangs
+                    set members = '${g.members.join()}'
+                    , win = ${g.win}, loss = ${g.loss}
+                    , banner = ${(g.banner <<4) + g.trim}, color = ${(g.back <<4) + g.fore}
+                WHERE name = '${g.name}'
+            `)
+        }
+        catch(err) {
+            xvt.beep()
+            xvt.out(xvt.reset, '\n?Unexpected error: ', String(err), '\n')
+            xvt.waste(5000)
+        }
+    }
+}
+
 }
 
 export = Common
