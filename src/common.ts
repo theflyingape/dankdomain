@@ -2351,12 +2351,12 @@ export function loadGang(rs: any): gang {
     }
 
     for (let n = 0; n < gang.members.length; n++) {
-        let who = $.query(`SELECT handle, gender, melee, status, gang FROM Players WHERE id = '${gang.members[n]}'`)
+        let who = query(`SELECT handle, gender, melee, status, gang FROM Players WHERE id = '${gang.members[n]}'`)
         if (who.length) {
             gang.handles.push(who[0].handle)
             gang.genders.push(who[0].gender)
             gang.melee.push(who[0].melee)
-            if (gang.members[n] !== $.player.id && !who[0].status && $.lock(gang.members[n], false))
+            if (gang.members[n] !== player.id && !who[0].status && lock(gang.members[n], false))
                 who[0].status = 'locked'
             gang.status.push(who[0].status)
             gang.validated.push(who[0].gang ? who[0].gang === rs.name : undefined)
@@ -2383,7 +2383,7 @@ export function loadGang(rs: any): gang {
 export function saveGang(g: gang, insert = false) {
     if (insert) {
         try {
-            $.sqlite3.exec(`
+            sqlite3.exec(`
                 INSERT INTO Gangs (
                     name, members, win, loss, banner, color
                 ) VALUES (
@@ -2402,7 +2402,7 @@ export function saveGang(g: gang, insert = false) {
     }
     else {
         try {
-            $.sqlite3.exec(`
+            sqlite3.exec(`
                 UPDATE Gangs
                     set members = '${g.members.join()}'
                     , win = ${g.win}, loss = ${g.loss}
