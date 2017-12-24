@@ -1911,6 +1911,7 @@ export function wall(msg: string) {
         sysop.xplevel = 0
         saveUser(sysop, true)
     }
+    //  customize the Master of Whisperers NPC
     npc = <user>{}
     Object.assign(npc, require('./etc/barkeep.json'))
     rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
@@ -1919,22 +1920,10 @@ export function wall(msg: string) {
         Object.assign(barkeep.user, npc)
         newkeys(barkeep.user)
         reroll(barkeep.user, barkeep.user.pc, barkeep.user.level)
-        //  customize our Master of Whisperers NPC
-        if (npc.str) barkeep.user.str = npc.str
-        if (npc.int) barkeep.user.int = npc.int
-        if (npc.dex) barkeep.user.dex = npc.dex
-        if (npc.cha) barkeep.user.cha = npc.cha
-        if (npc.hp) barkeep.user.hp = npc.hp
-        if (npc.sp) barkeep.user.sp = npc.sp
-        if (npc.melee) barkeep.user.melee = npc.melee
-        if (npc.poison) barkeep.user.poison = npc.poison
-        if (npc.magic) barkeep.user.magic = npc.magic
-        if (npc.poisons) barkeep.user.poisons = npc.poisons
-        if (npc.spells) barkeep.user.spells = npc.spells
-        if (npc.realestate) barkeep.user.realestate = npc.realestate
-        if (npc.security) barkeep.user.security = npc.security
+        Object.assign(barkeep.user, npc)
         saveUser(barkeep, true)
     }
+    //  customize the Big Kahuna NPC
     npc = <user>{}
     Object.assign(npc, require('./etc/neptune.json'))
     rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
@@ -1943,20 +1932,10 @@ export function wall(msg: string) {
         Object.assign(neptune.user, npc)
         newkeys(neptune.user)
         reroll(neptune.user, neptune.user.pc, neptune.user.level)
-        //  customize our big fish
-        if (npc.str) neptune.user.str = npc.str
-        if (npc.int) neptune.user.int = npc.int
-        if (npc.dex) neptune.user.dex = npc.dex
-        if (npc.cha) neptune.user.cha = npc.cha
-        if (npc.hp) neptune.user.hp = npc.hp
-        if (npc.sp) neptune.user.sp = npc.sp
-        if (npc.melee) neptune.user.melee = npc.melee
-        if (npc.poison) neptune.user.poison = npc.poison
-        if (npc.magic) neptune.user.magic = npc.magic
-        if (npc.poisons) neptune.user.poisons = npc.poisons
-        if (npc.spells) neptune.user.spells = npc.spells
+        Object.assign(neptune.user, npc)
         saveUser(neptune, true)
     }
+    //  customize the Queen B NPC
     npc = <user>{}
     Object.assign(npc, require('./etc/seahag.json'))
     rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
@@ -1965,20 +1944,10 @@ export function wall(msg: string) {
         Object.assign(seahag.user, npc)
         newkeys(seahag.user)
         reroll(seahag.user, seahag.user.pc, seahag.user.level)
-        //  customize our Queen Bee NPC
-        if (npc.str) seahag.user.str = npc.str
-        if (npc.int) seahag.user.int = npc.int
-        if (npc.dex) seahag.user.dex = npc.dex
-        if (npc.cha) seahag.user.cha = npc.cha
-        if (npc.hp) seahag.user.hp = npc.hp
-        if (npc.sp) seahag.user.sp = npc.sp
-        if (npc.melee) seahag.user.melee = npc.melee
-        if (npc.poison) seahag.user.poison = npc.poison
-        if (npc.magic) seahag.user.magic = npc.magic
-        if (npc.poisons) seahag.user.poisons = npc.poisons
-        if (npc.spells) seahag.user.spells = npc.spells
+        Object.assign(seahag.user, npc)
         saveUser(seahag, true)
     }
+    //  customize the Master of Coin NPC
     npc = <user>{}
     Object.assign(npc, require('./etc/taxman.json'))
     rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
@@ -1987,20 +1956,7 @@ export function wall(msg: string) {
         Object.assign(taxman.user, npc)
         newkeys(taxman.user)
         reroll(taxman.user, taxman.user.pc, taxman.user.level)
-        //  customize our Master of Coin NPC
-        if (npc.str) taxman.user.str = npc.str
-        if (npc.int) taxman.user.int = npc.int
-        if (npc.dex) taxman.user.dex = npc.dex
-        if (npc.cha) taxman.user.cha = npc.cha
-        if (npc.hp) taxman.user.hp = npc.hp
-        if (npc.sp) taxman.user.sp = npc.sp
-        if (npc.melee) taxman.user.melee = npc.melee
-        if (npc.poison) taxman.user.poison = npc.poison
-        if (npc.magic) taxman.user.magic = npc.magic
-        if (npc.poisons) taxman.user.poisons = npc.poisons
-        if (npc.spells) taxman.user.spells = npc.spells
-        if (npc.realestate) taxman.user.realestate = npc.realestate
-        if (npc.security) taxman.user.security = npc.security
+        Object.assign(taxman.user, npc)
         saveUser(taxman, true)
     }
 
