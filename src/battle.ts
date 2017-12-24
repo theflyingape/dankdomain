@@ -645,14 +645,17 @@ export function spoils() {
                         gang = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                         let n = gang.members.indexOf(loser.user.id)
                         if (n == 0) {
+                            n = gang.members.indexOf($.player.id)
                             gang.members[0] = $.player.id
                             gang.members[n] = loser.user.id
                             $.saveGang(gang)
                             xvt.out(`You take over as the leader of ${gang.name}.\n`)
                             xvt.waste(500)
                         }
-                        else
+                        else {
+                            $.player.maxcha--
                             $.player.cha--
+                        }
                     }
                     if (loser.user.bounty.value) {
                         xvt.out(`You get the ${loser.user.bounty.carry()} bounty posted by ${loser.user.who}, too.\n`)
@@ -726,12 +729,15 @@ export function spoils() {
             }
             if (winner.user.gang && winner.user.gang === $.player.gang) {
                 $.sound('laugh', 5)
+                $.player.maxcha--
                 $.player.cha--
 
                 gang = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                 let n = gang.members.indexOf(winner.user.id)
                 if (n == 0) {
-                    xvt.out($.who(winner,'He'), 'says, "Let that be a lesson to you punk!\n"')
+                    xvt.out($.who(winner,'He'), 'says, "'
+                        , xvt.bright, 'Let that be a lesson to you punk!'
+                        , xvt.reset, '"\n')
                     xvt.waste(500)
                 }
                 if (gang.members[0] === $.player.id) {
@@ -1236,7 +1242,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
         case 14:
             $.sound('illusion')
             let iou = <active>{}
-            iou.user = <user>{id:'', sex:'I'}
+            iou.user = <user>{id:'', sex:'I', armor:0, weapon:0}
             $.reroll(iou.user, undefined, rpc.user.level)
             $.activate(iou)
             iou.user.xplevel = -1

@@ -264,6 +264,7 @@ function choice() {
                         g.members[0] = member.user.id
                         g.members[n] = $.player.id
                         $.saveGang(g)
+                        g = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                         showGang(g)
                         xvt.out(xvt.bright, '\n', member.user.handle, ' is now leader of ', g.name, '.\n', xvt.reset)
                     }
