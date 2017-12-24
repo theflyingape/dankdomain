@@ -1,17 +1,13 @@
-[22;36mDate:[22;37m Thu 21-Dec-2017  9:45pm
+[22;36mDate:[22;37m Thu 24-Dec-2017  9:45am
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
-The official 'Go Live' party starts:
+The official 'Go Live' party started:
     Friday, December 22nd at 12:00am midnight
 
-I am promoting the game locally here in Providence, at my brother's store,
-RAH-CoCo's Collectibles with a magnetic Dank Domain promo card advertising
-this web portal. Perhaps some new players will get online and we can exploit
-the fresh meat. @play(thief) Moohahahahahaha-ha!
-
 New announcements as missing features get implemented or tweaked:
-- Deterministic spellcasting is more proportionate to level and adeptness
-- Dungeon monster set was revisited -- new surprises?
+- Arena battle with a fellow gang member can challenge for leadership
 - Dungeon Cleric is an active NPC -- may offer Heal or Cure spell
+- Dungeon monster set was revisited -- new surprises?
+- Deterministic spellcasting is more proportionate to level and adeptness
 
 Happy holidays and happy hunting!
