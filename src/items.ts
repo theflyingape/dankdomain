@@ -80,7 +80,7 @@ export class Armor {
             return false
 
         // is it better than this armor class?
-        if ((winner.user.toAC >= 0 && winner.armor.ac + (winner.user.toAC >>1) >= loser.armor.ac)
+        if ((winner.user.toAC >= 0 && winner.armor.ac >= loser.armor.ac)
             || (winner.user.toAC < 0 && winner.armor.ac + winner.user.toAC > loser.armor.ac)) {
             if (value) {
                 winner.user.coin.value += value.value
@@ -321,7 +321,7 @@ export class Weapon {
             return false
 
         // is it better than this weapon class?
-        if ((winner.user.toWC >= 0 && winner.weapon.wc + (winner.user.toWC >>1) >= loser.weapon.wc)
+        if ((winner.user.toWC >= 0 && winner.weapon.wc >= loser.weapon.wc)
             || (winner.user.toWC < 0 && winner.weapon.wc + winner.user.toWC > loser.weapon.wc)) {
             if (value) {
                 winner.user.coin.value += value.value
