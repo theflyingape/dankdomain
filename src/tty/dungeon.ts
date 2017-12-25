@@ -181,9 +181,9 @@ export function menu(suppress = false) {
 				drawRoom(y, x)
 			xvt.plot($.player.rows, 1)
 			if (ROOM.occupant == 6 && DL.cleric.hp) {
-				$.sound('agony', 8)
+				$.sound('agony', 10)
 				xvt.out(xvt.reset, xvt.bright, xvt.yellow, 'You hear a dying cry of agony!!\n', xvt.reset)
-				xvt.waste(800)
+				xvt.waste(1000)
 				DL.cleric.hp = 0
 				DL.cleric.sp = 0
 				DL.cleric.user.status='dead'
@@ -193,7 +193,7 @@ export function menu(suppress = false) {
 				DL.cleric.user.coin.value = 0
 				if (DL.map > 1) {
 					drawRoom(y, x)
-					xvt.waste(800)
+					xvt.waste(1000)
 				}
 				$.beep()
 			}
@@ -1434,7 +1434,7 @@ function drawLevel() {
 
 							case 2:
 								if (!icon) icon = xvt.attr('v', xvt.bright, xvt.blink, 'V', xvt.noblink, xvt.normal, 'v')
-								o = xvt.attr(xvt.faint, xvt.blue, 'v', xvt.normal, icon, xvt.normal, xvt.faint, xvt.blue, 'v')
+								o = xvt.attr(xvt.faint, xvt.blue, 'v', xvt.normal, icon, xvt.reset, xvt.faint, xvt.blue, 'v')
 								break
 
 							case 3:
@@ -1454,18 +1454,18 @@ function drawLevel() {
 
 							case 6:
 								if (DL.cleric.sp) {
-									if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.reset)
+									if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_')
 									o = xvt.attr(xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.reset, xvt.faint, xvt.yellow, ':')
 								}
 								else {
-									if (!icon) icon = xvt.attr(xvt.uline, '_', Cleric[$.player.emulation], '_', xvt.reset)
-									o = xvt.attr(xvt.faint, ':', icon, xvt.faint, ':')
+									if (!icon) icon = xvt.attr(xvt.uline, '_', Cleric[$.player.emulation], '_')
+									o = xvt.attr(xvt.faint, ':', icon, xvt.reset, xvt.faint, ':')
 								}
 								break
 
 							case 7:
-								if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Teleport[$.player.emulation], xvt.normal, '_', xvt.nouline)
-								o = xvt.attr(xvt.faint, xvt.magenta, '<', xvt.normal, icon, xvt.normal, xvt.faint, xvt.magenta, '>')
+								if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Teleport[$.player.emulation], xvt.normal, '_')
+								o = xvt.attr(xvt.faint, xvt.magenta, '<', xvt.normal, icon, xvt.reset, xvt.faint, xvt.magenta, '>')
 								break
 						}
 					}
@@ -1538,7 +1538,7 @@ function drawRoom(r:number, c:number) {
 
 		case 2:
 			if (!icon) icon = xvt.attr(xvt.normal, 'v', xvt.bright, xvt.blink, 'V', xvt.noblink, xvt.normal, 'v')
-			o = xvt.attr(xvt.faint, xvt.blue, 'v', xvt.normal, icon, xvt.normal, xvt.faint, xvt.blue, 'v')
+			o = xvt.attr(xvt.faint, xvt.blue, 'v', xvt.normal, icon, xvt.reset, xvt.faint, xvt.blue, 'v')
 			break
 
 		case 3:
@@ -1558,18 +1558,18 @@ function drawRoom(r:number, c:number) {
 
 		case 6:
 			if (DL.cleric.sp) {
-				if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.reset)
+				if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_')
 				o = xvt.attr(xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.reset, xvt.faint, xvt.yellow, ':')
 			}
 			else {
-				if (!icon) icon = xvt.attr(xvt.uline, '_', Cleric[$.player.emulation], '_', xvt.reset)
-				o = xvt.attr(xvt.faint, ':', icon, xvt.faint, ':')
+				if (!icon) icon = xvt.attr(xvt.uline, '_', Cleric[$.player.emulation], '_')
+				o = xvt.attr(xvt.faint, ':', icon, xvt.reset, xvt.faint, ':')
 			}
 			break
 
 		case 7:
-			if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Teleport[$.player.emulation], xvt.normal, '_', xvt.nouline)
-			o = xvt.attr(xvt.faint, xvt.magenta, '<', xvt.normal, icon, xvt.normal, xvt.faint, xvt.magenta, '>')
+			if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Teleport[$.player.emulation], xvt.normal, '_')
+			o = xvt.attr(xvt.faint, xvt.magenta, '<', xvt.normal, icon, xvt.reset, xvt.faint, xvt.magenta, '>')
 			break
 	}
 	xvt.out(o)
