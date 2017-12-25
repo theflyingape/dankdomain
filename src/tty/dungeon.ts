@@ -1112,7 +1112,7 @@ function doMove(): boolean {
 									$.online.hp += $.dice(DL.cleric.user.level >>3) + $.dice((Z >>3) + (deep >>2))
 								if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
 								xvt.out('  Your hit points: '
-									, xvt.bright, $.online.hp > $.player.hp ? xvt.yellow : $.online.hp == $.player.hp ? xvt.white : xvt.red, $.online.hp.toString()
+									, xvt.bright, $.online.hp == $.player.hp ? xvt.white : $.online.hp > $.player.hp * 0.9 ? xvt.yellow : xvt.red, $.online.hp.toString()
 									, xvt.reset, `/${$.player.hp}`)
 							}
 							else {
@@ -1144,7 +1144,7 @@ function doMove(): boolean {
 						$.online.hp += $.dice(DL.cleric.user.level >>3) + $.dice((Z >>3) + (deep >>2))
 					if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
 					xvt.out('  Your hit points: '
-						, xvt.bright, $.online.hp > $.player.hp ? xvt.yellow : $.online.hp == $.player.hp ? xvt.white : xvt.red, $.online.hp.toString()
+						, xvt.bright, $.online.hp == $.player.hp ? xvt.white : $.online.hp > $.player.hp * 0.9 ? xvt.yellow : xvt.red, $.online.hp.toString()
 						, xvt.reset, `/${$.player.hp}`)
 				}
 				else {
