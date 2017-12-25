@@ -387,7 +387,7 @@ function choice() {
                         xvt.app.refocus()
                         return
                     }
-                    
+
                     posse = new Array($.online)
                     for (let i = 0; i < g.members.length; i++) {
                         if (g.members[i] !== $.player.id
@@ -410,7 +410,10 @@ function choice() {
                                 && !g.status[i]) {
                                 let n = nme.push(<active>{ user:{ id:o.members[i]} }) - 1
                                 $.loadUser(nme[n])
-                                $.activate(nme[n])
+                                if (nme[n].user.status)
+                                    nme.pop()
+                                else
+                                    $.activate(nme[n])
                             }
                         }
                         else {
