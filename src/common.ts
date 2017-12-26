@@ -9,6 +9,7 @@ import titleCase = require('title-case')
 
 import xvt = require('xvt')
 import Items = require('./items')
+import { NOMEM } from 'dns';
 
 module Common
 {
@@ -2306,7 +2307,7 @@ export function loadGang(rs: any): gang {
         fore: rs.color % 8
     }
 
-    for (let n = 0; n < gang.members.length; n++) {
+    for (let n = 0; n < 4 && n < gang.members.length; n++) {
         let who = query(`SELECT handle, gender, melee, status, gang FROM Players WHERE id = '${gang.members[n]}'`)
         if (who.length) {
             gang.handles.push(who[0].handle)
@@ -2357,6 +2358,7 @@ export function saveGang(g: gang, insert = false) {
         }
     }
     else {
+        if (g.members.length > 4) g.members.splice(0,4)
         try {
             sqlite3.exec(`
                 UPDATE Gangs

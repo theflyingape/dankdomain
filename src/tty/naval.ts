@@ -645,7 +645,9 @@ function BattleUser(nme: active) {
 						}
 						else {
 							damage = $.dice($.player.hull / 2) + $.dice($.online.hull / 2)
-							xvt.out(`\nYou ram ${$.who(nme, 'him')} for ${damage} hull points of damage!\n`)
+							xvt.out(xvt.green, `\nYou ram ${$.who(nme, 'him')} for `
+								, xvt.bright, `${damage}`
+								, xvt.normal, ` hull points of damage!\n`)
 							if ((nme.hull -= damage) < 1) {
 								booty()
 								menu()
@@ -829,7 +831,9 @@ function MonsterHunt() {
 						}
 						else {
 							damage = $.dice($.player.hull / 2) + $.dice($.online.hull / 2)
-							xvt.out(`\nYou ram it for ${damage} hull points of damage!\n`)
+							xvt.out(xvt.green, '\nYou ram it for '
+								, xvt.bright, `${damage}`
+								, xvt.normal, ` hull points of damage!\n`)
 							if ((sm.hull -= damage) < 1) {
 								booty()
 								menu()

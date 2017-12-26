@@ -293,30 +293,32 @@ function choice() {
                 break
             }
             xtGang($.player.gender, $.player.melee, g.banner, g.trim)
-            
+
             $.action('yn')
             xvt.app.form = {
                 'drop': { cb:() => {
                     xvt.out('\n')
                     if (/Y/i.test(xvt.entry)) {
                         Battle.user('Drop', (member: active) => {
-                            let n = g.members.indexOf(member.user.id)
-                            if (n < 0) {
-                                xvt.beep()
-                                xvt.out(`\n${member.user.handle} is not a member.\n`)
-                            }
-                            else {
-                                if ($.lock(member.user.id, false)) {
-                                    $.beep()
-                                    xvt.out(`${$.who(member, 'He')}is currently engaged elsewhere and not available.\n`)
+                            if (member.user.id !== '') {
+                                let n = g.members.indexOf(member.user.id)
+                                if (n < 0) {
+                                    xvt.beep()
+                                    xvt.out(`\n${member.user.handle} is not a member.\n`)
                                 }
-                                else if (member.user.gang === g.name) {
-                                    member.user.gang = ''
-                                    $.saveUser(member)
-                                    g.members.splice(n, 1)
-                                    $.saveGang(g)
-                                    showGang(g)
-                                    xvt.out(xvt.bright, '\n', member.user.handle, ' is no longer on ', g.name, '.\n', xvt.reset)
+                                else {
+                                    if ($.lock(member.user.id, false)) {
+                                        $.beep()
+                                        xvt.out(`${$.who(member, 'He')}is currently engaged elsewhere and not available.\n`)
+                                    }
+                                    else if (member.user.gang === g.name) {
+                                        member.user.gang = ''
+                                        $.saveUser(member)
+                                        g.members.splice(n, 1)
+                                        $.saveGang(g)
+                                        showGang(g)
+                                        xvt.out(xvt.bright, '\n', member.user.handle, ' is no longer on ', g.name, '.\n', xvt.reset)
+                                    }
                                 }
                             }
                             menu()
@@ -329,18 +331,20 @@ function choice() {
                     xvt.out('\n')
                     if (/Y/i.test(xvt.entry)) {
                         Battle.user('Invite', (member: active) => {
-                            let n = g.members.indexOf(member.user.id)
-                            if (n >= 0) {
-                                xvt.beep()
-                                xvt.out(`\n${member.user.handle} is already a member.\n`)
-                            }
-                            else {
-                                if (!member.user.gang) {
-                                    g.members.push(member.user.id)
-                                    $.saveGang(g)
-                                    showGang(g)
-                                    $.log(member.user.id, `\n${$.player.handle} invites you to join ${g.name}`)
-                                    xvt.out(xvt.bright, '\n', member.user.handle, ' is invited to join ', g.name, '.\n', xvt.reset)
+                            if (member.user.id !== '') {
+                                let n = g.members.indexOf(member.user.id)
+                                if (n >= 0) {
+                                    xvt.beep()
+                                    xvt.out(`\n${member.user.handle} is already a member.\n`)
+                                }
+                                else {
+                                    if (!member.user.gang) {
+                                        g.members.push(member.user.id)
+                                        $.saveGang(g)
+                                        showGang(g)
+                                        $.log(member.user.id, `\n${$.player.handle} invites you to join ${g.name}`)
+                                        xvt.out(xvt.bright, '\n', member.user.handle, ' is invited to join ', g.name, '.\n', xvt.reset)
+                                    }
                                 }
                             }
                             menu()
@@ -389,7 +393,7 @@ function choice() {
                     }
 
                     posse = new Array($.online)
-                    for (let i = 0; i < g.members.length; i++) {
+                    for (let i = 0; i < 4 && i < g.members.length; i++) {
                         if (g.members[i] !== $.player.id
                             && (g.validated[i] || typeof g.validated[i] == 'undefined')
                             && !g.status[i]) {
@@ -404,7 +408,7 @@ function choice() {
 
                     let monsters: monster = require('../etc/dungeon.json')
                     nme = new Array()
-                    for (let i = 0; i < o.members.length; i++) {
+                    for (let i = 0; i < 4 && i < o.members.length; i++) {
                         if (!/_MM.$/.test(o.members[i])) {
                             if ((g.validated[i] || typeof g.validated[i] == 'undefined')
                                 && !g.status[i]) {
