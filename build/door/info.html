@@ -50,7 +50,7 @@ currentCMD = null;
 clear = `<input class="wide" type="button" value="Clear" onclick="send('\x15');">`;
 enter = `<input class="wide" type="button" value="Enter" onclick="send('', true);">`;
 logoff = `<input type="button" value="LOGOFF" onclick="send('\x1A');">`;
-max = `<input class="wide" type="button" value=" MAX " onclick="send('MAX', true);">`
+max = `<input class="wide" type="button" value=" MAX " onclick="send('=', true);">`
 quit = `<input class="wide" type="button" value="Quit" onclick="send('Q');">`;
 keypad = `<table align="center">
 <tr><td><input class="numeric" type="button" value="7" onclick="send('7');"></td><td><input class="numeric" type="button" value="8" onclick="send('8');"></td><td><input class="numeric" type="button" value="9" onclick="send('9');"></td>
@@ -333,6 +333,13 @@ function hunt() {
 <p><input class="tall" type="button" value=" Fire! " onclick="send('F');"></p>
 <p><input type="button" value="Ram" onclick="send('R');"> <input type="button" value="Status" onclick="send('Y');"></p>
 <input class="wide" type="button" value="Sail off" onclick="send('S');">
+`);
+}
+
+function joust() {
+  cmd(`
+<p><input class="tall" type="button" value=" Joust " onclick="send('J');"></p>
+<input type="button" value="Forfeit" onclick="send('F');">
 `);
 }
 

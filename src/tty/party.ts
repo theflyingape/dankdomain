@@ -399,7 +399,7 @@ function choice() {
                             && !g.status[i]) {
                                 let n = posse.push(<active>{ user:{ id:g.members[i]} }) - 1
                                 $.loadUser(posse[n])
-                                if (posse[n].user.status)
+                                if (posse[n].user.gang !== g.name || posse[n].user.status)
                                     posse.pop()
                                 else
                                     $.activate(posse[n])
@@ -414,7 +414,7 @@ function choice() {
                                 && !g.status[i]) {
                                 let n = nme.push(<active>{ user:{ id:o.members[i]} }) - 1
                                 $.loadUser(nme[n])
-                                if (nme[n].user.status)
+                                if (nme[n].user.gang !== o.name || nme[n].user.status)
                                     nme.pop()
                                 else
                                     $.activate(nme[n])

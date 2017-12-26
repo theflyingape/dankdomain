@@ -121,6 +121,7 @@ function choice() {
 							$.online.altered = true
 							if ($.joust-- > 2)
 								$.music('joust')
+							$.action('joust')
 							$.profile({ jpg:'arena/joust'
 								, handle:opponent.user.handle
 								, level:opponent.user.level, pc:opponent.user.pc
