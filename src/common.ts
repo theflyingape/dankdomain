@@ -767,7 +767,7 @@ export function skillplus(rpc: active, cb: Function) {
                 }
                 news('\tgot Milk')
                 xvt.out([xvt.cyan, xvt.blue, xvt.red, xvt.yellow][player.melee]
-                    , [ 'You can finally enter through Tiny\'s front door.'
+                    , [ 'You can finally enter the Tavern without fear.'
                       , 'So you want to be a hero, eh?'
                       , 'Just what this world needs, another fighter.'
                       , 'Watch out for blasts, you brute!' ][player.melee++]

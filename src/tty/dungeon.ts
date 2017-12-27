@@ -126,7 +126,7 @@ export function menu(suppress = false) {
 	if (pause) {
 		pause = false
 		xvt.app.form = {
-			'pause': { cb:menu, pause:true }
+			'pause': { cb:menu, cancel:' ', enter:'\x0D', pause:true, timeout:10 }
 		}
 		xvt.app.focus = 'pause'
 		return
@@ -1113,7 +1113,7 @@ function doMove(): boolean {
 									$.online.hp += $.dice(DL.cleric.user.level >>3) + $.dice((Z >>3) + (deep >>2))
 								if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
 								xvt.out('  Your hit points: '
-									, xvt.bright, $.online.hp == $.player.hp ? xvt.white : $.online.hp > $.player.hp * 0.9 ? xvt.yellow : xvt.red, $.online.hp.toString()
+									, xvt.bright, $.online.hp == $.player.hp ? xvt.white : $.online.hp > $.player.hp * 0.85 ? xvt.yellow : xvt.red, $.online.hp.toString()
 									, xvt.reset, `/${$.player.hp}`)
 							}
 							else {
@@ -1127,8 +1127,10 @@ function doMove(): boolean {
 								xvt.out(xvt.magenta, 'He teleports away!\n', xvt.reset)
 								$.sound('teleport', 8)
 							}
-							else
+							else {
 								xvt.out(xvt.yellow, '"I will rest.  Go in peace."\n', xvt.reset)
+								looked = true
+							}
 						}
 						menu()
 					}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i }
