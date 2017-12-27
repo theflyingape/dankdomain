@@ -304,9 +304,8 @@ ${quit}
 function battle() {
   if (currentCMD === 'battle') return;
   cmd(`
-<p><input class="tall" type="button" value=" Attack " onclick="send('A');"></p>
-<p><input type="button" value="Cast" onclick="send('C');"> <input type="button" value="Status" onclick="send('Y');"></p>
-<input class="wide" type="button" value=" Retreat " onclick="send('R');">
+<input class="tall" type="button" value=" Attack " onclick="send('A');"> <input type="button" value=" Cast " onclick="send('C');"><br>
+<input type="button" value="Status" onclick="send('Y');"> <input class="wide" type="button" value=" Retreat " onclick="send('R');">
 `);
 }
 

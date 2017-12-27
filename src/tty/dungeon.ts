@@ -439,6 +439,7 @@ function doMove(): boolean {
 
 	//	monsters?
 	if (ROOM.monster.length) {
+        $.action('battle')
 		xvt.out(`\x1B[1;${$.player.rows}r`)
 		xvt.plot($.player.rows, 1)
 		refresh = true
