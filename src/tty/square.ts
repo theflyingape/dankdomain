@@ -202,7 +202,7 @@ function choice() {
 				else
 					xvt.out('You can be billed for the remaining ', (hi - lo).toString(), ' hit points.\n')
 			}
-			$.action('list')
+			$.action('listbest')
 			xvt.app.form = {
 				'hp': { cb: () => {
 					xvt.out('\n')
@@ -634,13 +634,16 @@ function amount() {
 }
 
 function list(choice: string) {
-	$.action('list')
+	want = choice.toUpperCase()
+	if (/M|V/.test(want))
+		$.action('listall')
+	else
+		$.action('listbest')
 	xvt.app.form = {
 		'start': { cb:listStart, prompt:'Start list at ', max:3 },
 		'end': { cb:listEnd, prompt:'Start list at ', max:3 },
 		'buy': { cb:buy, prompt:'Buy which? ', max:3 }
 	}
-	want = choice.toUpperCase()
 	xvt.app.form['start'].enter = lo.toString()
 	xvt.app.form['start'].prompt = xvt.attr('Start list at ', (lo < 10 && hi > 9) ? ' ' : '', $.bracket(lo, false), ': ')
 	xvt.app.form['end'].enter = hi.toString()

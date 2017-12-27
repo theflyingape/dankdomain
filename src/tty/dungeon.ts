@@ -623,7 +623,7 @@ function doMove(): boolean {
 						if (start < 1) start = 1
 						let end = (Z * 3 / 2 - $.dice(deep)) >>0
 						if (end > 100) end = 100
-						$.action('list')
+						$.action('keypad')
 						xvt.app.form = {
 							'level': { cb: () => {
 								let i = parseInt(xvt.entry)
@@ -937,15 +937,15 @@ function doMove(): boolean {
 							break
 						case 7:
 							$.sound('morph', 10)
-							$.player.level = $.dice(98) + 1
-							if ($.online.adept && $.player.level < 60 && $.player.xplevel > 40)
-								$.player.level += 10 * $.online.adept
+							$.player.level = $.dice(Z)
+							if ($.online.adept)
+								$.player.level += $.dice($.player.level)
 							$.reroll($.player, $.PC.random(), $.player.level)
 							$.activate($.online)
 							$.online.altered = true
 							$.player.gender = ['F','M'][$.dice(2) - 1]
 							$.saveUser($.player)
-							xvt.out(`You morph yourself into a level ${$.player.level} ${$.player.pc}!\n`)
+							xvt.out(`You got morphed into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!\n`)
 							break
 						case 8:
 							$.sound('level')
@@ -2082,7 +2082,7 @@ function putMonster(r = -1, c = -1): boolean {
 
 		$.activate(m)
 
-		m.user.wins = deep
+		m.user.immortal = deep
 		m.adept = deep >>2
 		m.str = $.PC.ability(m.str, deep >>1)
 		m.int = $.PC.ability(m.int, deep >>1)

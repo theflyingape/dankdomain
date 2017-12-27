@@ -286,7 +286,7 @@ function choice() {
 				xvt.out($.bracket(+i + 1), xvt.cyan, monsters[i].name)
 			xvt.out('\n')
 
-			$.action('list')
+			$.action('keypad')
 			xvt.app.form = {
 				pick: { cb: () => {
 					xvt.out('\n')
@@ -417,7 +417,7 @@ function Shipyard(suppress = true) {
 					cost = Math.round(Math.pow(2, max / 150) * 7937)
 				}
 
-				$.action('list')
+				$.action('listbest')
 				xvt.app.form = {
 					'size': { cb: () => {
 						xvt.out('\n')
@@ -482,7 +482,7 @@ function Shipyard(suppress = true) {
 				afford = Math.trunc($.player.coin.value / cost)
 				if (afford < max)
 					max = afford
-				$.action('list')
+				$.action('listbest')
 				xvt.app.form = {
 					'hp': { cb: () => {
 						xvt.out('\n')
@@ -516,7 +516,7 @@ function Shipyard(suppress = true) {
 				afford = Math.trunc($.player.coin.value / cost)
 				if (afford < max)
 					max = afford
-				$.action('list')
+				$.action('listbest')
 				xvt.app.form = {
 					'cannon': { cb: () => {
 						xvt.out('\n')

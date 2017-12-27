@@ -192,7 +192,7 @@ export function attack(retry = false) {
                         next()
                         return
                     }
-                    if(from === 'Tiny') {
+                    if(from === 'Barkeep') {
                         $.sound('growl')
                         xvt.out('"You try to escape, but the crowd throws you back to witness the slaughter!"\n')
                         $.player.coward = true
@@ -328,9 +328,10 @@ export function attack(retry = false) {
         //  might or magic?
         let mm: number = 0
         let nest: number = 0
-        let odds: number = from === 'Party' ? 5 : from === 'Dungeon' ? 4 : from === 'Monster' ? 3 : 2
+        let odds: number = from === 'Party' ? 6 : from === 'Dungeon' ? 5 : 4
+        let roll: number = odds + (rpc.user.magic >>1) + rpc.adept + 1
 
-        if (rpc.user.magic == 1 && $.dice(odds + 1 + rpc.adept) > odds) {
+        if (rpc.user.magic == 1 && $.dice(roll) > odds) {
             if ($.Magic.have(rpc.user.spells, 8)
                 && rpc.hp < rpc.user.hp / (rpc.user.level / (11 - rpc.adept)  + 1)
                 && ($.dice(6 - rpc.adept) == 1 || rpc.user.coward))
@@ -366,7 +367,7 @@ export function attack(retry = false) {
                         mm = 16
             }
         }
-        if (rpc.user.magic > 1 && $.dice(odds + (rpc.user.magic - 1) + rpc.adept) > odds) {
+        if (rpc.user.magic > 1 && $.dice(roll) > odds) {
             if (!rpc.confused || rpc.hp < (rpc.user.hp / 6)) {
                 if ($.Magic.have(rpc.user.spells, 15)
                     && rpc.sp >= $.Magic.power(rpc, 15)
@@ -583,7 +584,7 @@ export function spoils() {
                         loser.user.xplevel = winner.user.level
                 }
                 else
-                    xp += $.experience(loser.user.xplevel, 18 - (1.5 * loser.user.wins))
+                    xp += $.experience(loser.user.xplevel, 18 - (1.333 * loser.user.immortal))
                 if (loser.user.coin.value) {
                     coin.value += loser.user.coin.value
                     loser.user.coin.value = 0
@@ -769,7 +770,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
     }
 
     if (rpc.user.id === $.player.id) {
-        $.action('list')
+        $.action('keypad')
         xvt.app.form = {
             'magic': { cb: () => {
                 xvt.out('\n')
@@ -1864,7 +1865,7 @@ export function poison(rpc: active, cb?:Function) {
             cb(true)
             return
         }
-        $.action('list')
+        $.action('keypad')
         xvt.app.form = {
             'poison': { cb: () => {
                 xvt.out('\n')

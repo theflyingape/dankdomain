@@ -715,7 +715,7 @@ export function skillplus(rpc: active, cb: Function) {
         , '\n'
     ); xvt.waste(200)
 
-    action('list')
+    action('keypad')
     xvt.app.form = {
         'skill': { cb: () => {
             xvt.out('\n', xvt.bright)
@@ -1084,7 +1084,7 @@ export function playerPC(points = 200, immortal = false) {
         return
     }
 
-    action('list')
+    action('keypad')
     xvt.app.form = {
         'pc': { cb:pick, min:1, max:2 },
         'str': { cb:ability, min:2, max:2, match:/^[2-8][0-9]$/ },
@@ -1331,7 +1331,7 @@ export function remake(user: user) {
 
 export function reroll(user: user, dd?: string, level = 1) {
     //  reset essential character attributes
-    user.level = level
+    user.level = level > 99 ? 99 : level < 1 ? 1: level
     user.pc = dd ? dd : Object.keys(PC.name['player'])[0]
     user.status = ''
 
@@ -1751,7 +1751,7 @@ export function display(title:string, back:number, fore:number, suppress:boolean
 }
 
 export function emulator(cb:Function) {
-    action('list')
+    action('keypad')
     xvt.app.form = {
         'term': { cb:() => {
             if (xvt.validator.isNotEmpty(xvt.entry) && xvt.entry.length == 2) xvt.emulation = xvt.entry.toUpperCase()

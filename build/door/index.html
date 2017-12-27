@@ -103,7 +103,7 @@ function resize() {
   Object.assign(l.style, { 'top':'0%', 'height':'100%', 'width':'70%' });
   Object.assign(r.style, { 'top':'0%', 'height':'100%', 'width':'30%' });
   term.setOption('fontSize', 13);
-  while ((fontSize = term.getOption('fontSize')) > 7 && term.proposeGeometry().cols < 85)
+  while ((fontSize = term.getOption('fontSize')) > 7 && term.proposeGeometry().cols < 82)
     term.setOption('fontSize', --fontSize);
 
   //  possibly expand side panel without compromising terminal width 
@@ -114,17 +114,19 @@ function resize() {
     Object.assign(l.style, { 'top':'0%', 'height':'100%', 'width':v });
     Object.assign(r.style, { 'top':'0%', 'height':'100%', 'width':w });
     xy = term.proposeGeometry();
-  } while (xy.cols > 81 && parseInt(w) < 46);
+  } while (xy.cols > 81 && parseInt(w) < 40);
 
   //  possibly upsize font without compromising terminal width
-  while ((xy = term.proposeGeometry()).cols > 81)
+  while ((xy = term.proposeGeometry()).cols > 80)
     term.setOption('fontSize', ++fontSize);
 
   //  make it stick
   if (xy.col > 79)
     term.fit();
-  else
+  else {
+    //term.setOption('fontSize', --fontSize);
     term.resize(80, xy.rows);
+  }
 }
 
 function lurk() {

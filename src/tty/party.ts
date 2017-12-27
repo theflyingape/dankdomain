@@ -372,13 +372,15 @@ function choice() {
                     xvt.out($.bracket(i + 1), o.name)
             }
 
-            $.action('list')
+            $.action('listmm')
             xvt.app.form = {
                 'gang': { cb:() => {
                     xvt.out('\n')
                     let i = (+xvt.entry >>0) - 1
-                    if (/m|max/i.test(xvt.entry))
-                        i = rs.indexOf('Monster Mash')
+                    if (/M/i.test(xvt.entry)) {
+                        rs = [ rs.find((x) => { return x.name === 'Monster Mash' }) ]
+                        i = 0
+                    }
                     if (!rs[i]) {
                         xvt.beep()
                         menu()
@@ -410,8 +412,8 @@ function choice() {
                     nme = new Array()
                     for (let i = 0; i < 4 && i < o.members.length; i++) {
                         if (!/_MM.$/.test(o.members[i])) {
-                            if ((g.validated[i] || typeof g.validated[i] == 'undefined')
-                                && !g.status[i]) {
+                            if ((o.validated[i] || typeof o.validated[i] == 'undefined')
+                                && !o.status[i]) {
                                 let n = nme.push(<active>{ user:{ id:o.members[i]} }) - 1
                                 $.loadUser(nme[n])
                                 if (nme[n].user.gang !== o.name || nme[n].user.status)
@@ -467,7 +469,7 @@ function choice() {
                     showGang(g, o, true)
                     xtGang(o.genders[0], o.melee[0], o.banner, o.trim)
                     xvt.app.focus = 'fight'
-                }, prompt:'\nFight which gang? ', max:3 },
+                }, prompt:'\nFight which gang? ', max:2 },
                 'fight': { cb:() => {
                     xvt.out('\n\n')
                     if (/Y/i.test(xvt.entry)) {
@@ -521,7 +523,7 @@ function showGang(lg: gang, rg?: gang, engaged = false) {
         xvt.out(le[rg.trim], ' '.repeat(i >>1), rg.name, ' '.repeat((i >>1) + i % 2), re[rg.trim])
     }
     xvt.out(xvt.reset, '\n')
-    
+
     xvt.out(' |', xvt.Black + lg.back, xvt.black + lg.fore, xvt.bright)
     xvt.out(le[lg.trim], tb[lg.trim].repeat(26), re[lg.trim], xvt.reset)
     if (rg) {

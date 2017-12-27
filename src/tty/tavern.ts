@@ -169,8 +169,8 @@ function choice() {
                     'coin': { cb: () => {
                         let post = Math.abs(Math.trunc(/=|max/i.test(xvt.entry) ? max.value : +xvt.entry))
                         if (post > 0 && post <= max.value) {
-                            $.player.coin.value -= max.value
-                            opponent.user.bounty = max
+                            $.player.coin.value -= post
+                            opponent.user.bounty = new $.coins(post)
                             opponent.user.who = $.player.id
                             $.sound('click')
                             xvt.out(`\n\nYour bounty is posted for all to see.\n`)
@@ -188,7 +188,99 @@ function choice() {
             return
 
         case 'S':
-			if (!$.access.roleplay) break
+            if (!$.access.roleplay) break
+            xvt.out('You call to Tiny, then ')
+            $.tiny--
+            switch($.tiny) {
+                case 2:
+                    xvt.out('yell, "Freak!"\n')
+                    xvt.waste(1000)
+                    if ($.player.level < 60)
+                        xvt.out('The barkeep stares off into empty space, ignoring your wimpy comment.\n')
+                    else
+                        xvt.out('The barkeep points at his massive, flexed bicep and laughs at your jest.\n')
+                    break
+                case 1:
+                    xvt.out('thumb your nose.')
+                    xvt.waste(1000)
+                    if ($.player.level < 60)
+                        xvt.out('Annoyed, the barkeep looks down at his furry feet and counts, \"100, 99, 98,...\"\n')
+                    else
+                        xvt.out('The former Champion Ogre grunts to himself, \"Not good for business."\n')
+                    break
+                case 0:
+                    $.brawl = 0
+                    xvt.out('jest, \"What you looking at, wart-face!\"')
+                    xvt.waste(1000)
+                    xvt.out('\nUh, oh!')
+                    $.sound('oops', 8)
+                    xvt.out('  Here comes Tiny!')
+                    $.sound('tiny', 12)
+                    xvt.out('  And he doesn\'t look friendly...\n\n')
+                    xvt.out([
+                        '"When I\'m through with you, your mama won\'t be able to identify the remains."',
+                        'He lets off a heavy sigh and says, "I am getting too old for this."',
+                        '"Never rub another man\'s rhubarb!"'][$.dice(3) - 1]
+                        , '\n\n')
+                    $.loadUser($.barkeep)
+                    xvt.out(`${$.barkeep.user.handle} towels ${$.who($.barkeep,'his')}hands dry from washing the day\'s glasses, ${$.who($.barkeep,'he')}warns,\n`)
+                    xvt.out('"Another fool said something like that to me, once, and got all busted up.\n')
+                    xvt.waste(3000)
+                    let fool = <active>{ user:{ id:$.barkeep.user.status }}
+                    if ($.barkeep.user.status) {
+                        $.loadUser(fool)
+                        xvt.out(`I think it was ${fool.user.handle}, and it took me a week to clean up the blood!"`)
+                        xvt.waste(2000)
+                        xvt.out(`${$.who($.barkeep,'He')}points to a weapon hanging over the mantlepiece and says, "Lookee there, ${$.who(fool,'he')}`)
+                        xvt.out(`tried to use that ${fool.user.weapon} on me, but it wasn't good enough.\"`)
+                        xvt.waste(3000)
+                    }
+                    xvt.out('The patrons move in closer to witness the forthcoming slaughter, except for\n')
+                    xvt.out(`${$.taxman.user.handle} who is busy raiding the bar of its beer and nuts.\n\n`)
+                    xvt.waste(3000)
+                    xvt.out('You hear a cry, "I\'ll pay fifteen-to-one on the challenger!"\n')
+                    xvt.waste(1500)
+                    xvt.out('The crowd roars with laughter... ')
+                    xvt.waste(1000)
+                    xvt.out('you are not amused.\n\n')
+                    xvt.waste(1000)
+                    xvt.out(`${$.barkeep.user.handle} removes his tunic to reveal a massive, but heavily scarred chest.\n`)
+                    xvt.waste(2000)
+                    xvt.out([
+                        'You start fumbling through your pockets for that Teleport Wand...',
+                        'You unroll a parchment titled, "Teleportation is the safest way to travel."',
+                        'You try to recall the words for Teleportation...'
+                    ][$.dice(3) - 1])
+                    xvt.waste(1500)
+                    xvt.out('\n')
+                    if ($.Magic.have($.player.spells, 7)) {
+                        $.action('yn')
+                        xvt.app.form = {
+                            'teleport': { cb:() => {
+                                if (/Y/i.test(xvt.entry)) {
+                                    Object.assign(fool, $.online)
+                                    fool.user.id = ''
+                                    Battle.cast(fool, () => {
+                                        $.player.spells = fool.user.spells
+                                        if (Battle.teleported) {
+                                            menu()
+                                            return
+                                        }
+                                        Barkeep()
+                                    }, undefined, 7)
+                                }
+                            }, prompt:'Attempt to teleport (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
+                        }
+                        Battle.teleported = false
+                        xvt.app.focus = 'teleport'
+                    }
+                    else {
+                        xvt.out('You look for an exit, but there is none to be found...')
+                        xvt.waste(1500)
+                    }
+                    Barkeep()
+                    return
+            }
             break
         
         case 'Q':
@@ -200,6 +292,10 @@ function choice() {
     	    suppress = false
 	}
 	menu(suppress)
+}
+
+function Barkeep() {
+    Battle.engage('Tavern', $.online, $.barkeep, () => {})
 }
 
 }

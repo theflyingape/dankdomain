@@ -47,6 +47,8 @@
 <script>
 art = null;
 currentCMD = null;
+all = `<input class="tall" type="button" value=" ALL " onclick="send('=', true);">`
+best = `<input class="tall" type="button" value=" BEST " onclick="send('=', true);">`
 clear = `<input class="wide" type="button" value="Clear" onclick="send('\x15');">`;
 enter = `<input class="wide" type="button" value="Enter" onclick="send('', true);">`;
 logoff = `<input type="button" value="LOGOFF" onclick="send('\x1A');">`;
@@ -73,7 +75,7 @@ keyboard=`<input type="button" value="a" onclick="send('a');"> <input type="butt
 <input type="button" value="s" onclick="send('s');"> <input type="button" value="t" onclick="send('t');"> <input type="button" value="u" onclick="send('u');">
 <input type="button" value="v" onclick="send('v');"> <input type="button" value="w" onclick="send('w');"> <input type="button" value="x" onclick="send('x');">
 <input type="button" value="y" onclick="send('y');"> <input type="button" value="z" onclick="send('z');"><br>
-<input type="button" value="@" onclick="send('@');"> <input type="button" value="." onclick="send('.');"> <input class="wide" type="button" value=" SPACE BAR " onclick="send(' ');"> <input type="button" value="-" onclick="send('-');"> <input type="button" value="+" onclick="send('+');"><br>
+<input type="button" value="@" onclick="send('@');"> <input type="button" value="." onclick="send('.');"> <input class="wide" type="button" value=" SPACE BAR " onclick="send(' ');"> <input type="button" value="-" onclick="send('-');"> <input type="button" value="+" onclick="send('+');">
 ${keypad}
 `;
 money = `<table align="center">
@@ -85,7 +87,7 @@ money = `<table align="center">
 </tr>
 <tr><td colspan=2>${enter}</td><td><input class="numeric" type="button" value=" 0 " onclick="send('0');"></td><td><input class="copper" type="button" value="C" onclick="send('c');"></td>
 </tr>
-<tr><td colspan=2>${clear}</td><td colspan=2><input class="wide" type="button" value=" MAX " onclick="send('MAX', true);"></td>
+<tr><td colspan=2>${clear}</td><td colspan=2><input class="wide" type="button" value=" MAX " onclick="send('=', true);"></td>
 </tr>
 </table>`;
 
@@ -230,8 +232,21 @@ function freetext() {
   cmd(`${keyboard}`);
 }
 
-function list() {
-  cmd(`${keypad}${max}`);
+function keypad() {
+  cmd(`${keypad}`);
+}
+
+function listall() {
+  cmd(`${keypad}${all}`);
+}
+
+function listbest() {
+  cmd(`${keypad}${best}`);
+}
+
+function listmm() {
+  cmd(`${keypad}
+<p><input class="wide" type="button" value="Monster Mash" onclick="send('M', true);"></p>`);
 }
 
 function menu() {
@@ -256,8 +271,8 @@ function menu() {
 
 function yn() {
   cmd(`
-<p><input class="tall" type="button" value=" Yes " onclick="send('Y');">
-<input class="tall" type="button" value=" No " onclick="send('N');"></p>
+<input class="tall" type="button" value=" Yes " onclick="send('Y');">
+<input class="tall" type="button" value=" No " onclick="send('N');"><br>
 ${enter} ${quit}
 `);
 }
@@ -447,10 +462,11 @@ function nmeResize() {
   pic = document.getElementById('nme').getElementsByTagName('img')[0];
   ih = pic.height;
   iw = pic.width;
-  h = Math.trunc(window.innerHeight * 0.98
+  h = Math.trunc(window.innerHeight * 0.96
     - document.getElementById('command').clientHeight
     - (document.getElementById('nme').clientHeight - ih));
-  w = Math.trunc(iw * h / pic.height);
+  if (h / ih < 0.35) h = Math.trunc(ih * 0.35);
+  w = Math.trunc(iw * h / ih);
   pic.height = h;
   pic.width = w;
 }
