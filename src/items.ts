@@ -61,8 +61,8 @@ export class Armor {
         else {
             if (what >= this.merchant.length)
                 what = this.merchant.length - 1
-            rpc.user.armor = what
-            armor = <armor>{ ac:what, value:'0c' }
+            rpc.user.armor = +what
+            armor = <armor>{ ac:+what, value:'0c' }
         }
         if (worth)
             armor.value = worth
@@ -301,8 +301,8 @@ export class Weapon {
         else {
             if (what >= this.merchant.length)
                 what = this.merchant.length - 1
-            rpc.user.weapon = what
-            weapon = <weapon>{ wc:what, value:'0c', hit:'hit', stab:'stab', smash:'smash', plunge:'plunge' }
+            rpc.user.weapon = +what
+            weapon = <weapon>{ wc:+what, value:'0c', hit:'hit', stab:'stab', smash:'smash', plunge:'plunge' }
         }
         if (worth)
             weapon.value = worth

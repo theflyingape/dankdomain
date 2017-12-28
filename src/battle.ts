@@ -29,25 +29,56 @@ module Battle
 
 
 function end() {
-    if (from === 'Taxman' && $.online.hp < 1) {
-        $.player.coin.value -= $.taxman.user.coin.value
-        if ($.player.coin.value < 0) {
-            $.player.bank.value += $.player.coin.value
-            $.player.coin.value = 0
-            if ($.player.bank.value < 0) {
-                $.player.loan.value -= $.player.bank.value
-                $.player.bank.value = 0
-            }
-        }
-        $.player.coward = false
+    if (from === 'Tavern')
+        if ($.online.hp < 1) {
+            $.loadUser($.barkeep)
+            $.barkeep.user.status = $.player.id
+            $.barkeep.user.weapon = $.player.weapon
+            $.Weapon.equip($.online, $.Weapon.merchant[0])
+            $.saveUser($.barkeep)
 
-        xvt.out('\n')
-        $.sound('max', 8)
-        xvt.out(xvt.bright, xvt.blue, '"Thanks for the taxes!"'
-            , xvt.reset, '\n')
-        $.sound('thief', 16)
-        $.reason = 'tax evasion'
-    }
+            xvt.out(`He picks up your ${$.barkeep.user.weapon} and triumphantly waves it around to\n`)
+            xvt.out(`the cheering crowd.  He struts toward the mantelpiece to hang his new trophy.\n\n`)
+            $.sound('cheer', 13)
+            xvt.out(xvt.bright, xvt.green, '"Drinks are on the house!"'
+                , xvt.reset, '\n')
+            $.sound('cheer', 7)
+            $.player.coward = false
+            $.reason = `schooled by ${$.barkeep.user.handle}`
+        }
+        else {
+            $.player.coward = false
+            $.barkeep.user.status = ''
+            $.saveUser($.barkeep)
+            $.news(`\tdefeated ${$.barkeep.user.handle}`)
+            $.wall(`defeated ${$.barkeep.user.handle}`)
+        }
+
+    if (from === 'Taxman')
+        if ($.online.hp < 1) {
+            $.player.coin.value -= $.taxman.user.coin.value
+            if ($.player.coin.value < 0) {
+                $.player.bank.value += $.player.coin.value
+                $.player.coin.value = 0
+                if ($.player.bank.value < 0) {
+                    $.player.loan.value -= $.player.bank.value
+                    $.player.bank.value = 0
+                }
+            }
+
+            xvt.out('\n')
+            $.sound('max', 8)
+            xvt.out(xvt.bright, xvt.blue, '"Thanks for the taxes!"'
+                , xvt.reset, '\n')
+            $.sound('thief', 16)
+            $.player.coward = false
+            $.reason = 'tax evasion'
+        }
+        else {
+            $.player.coward = false
+            $.news(`\tdefeated ${$.taxman.user.handle}`)
+            $.wall(`defeated ${$.taxman.user.handle}`)
+        }
 
     if (from === 'User') {
         let opponent = parties[1][0]
@@ -184,17 +215,17 @@ export function attack(retry = false) {
 
                 xvt.out('\n')
                 if (/R/i.test(xvt.entry)) {
-                    if (from === 'Taxman') {
-                        $.sound('thief')
-                        xvt.out('"You can never escape the taxman!"\n')
+                    if(from === 'Tavern') {
+                        $.sound('growl')
+                        xvt.out('"You try to escape, but the crowd throws you back to witness the slaughter!"\n')
                         $.player.coward = true
                         $.saveUser($.player)
                         next()
                         return
                     }
-                    if(from === 'Barkeep') {
-                        $.sound('growl')
-                        xvt.out('"You try to escape, but the crowd throws you back to witness the slaughter!"\n')
+                    if (from === 'Taxman') {
+                        $.sound('thief')
+                        xvt.out('"You can never escape the taxman!"\n')
                         $.player.coward = true
                         $.saveUser($.player)
                         next()
@@ -815,33 +846,38 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
     function invoke(name: string) {
         let spell = $.Magic.spells[name]
-        if (rpc !== $.online)
+        if (rpc.user.id !== $.player.id)
             xvt.waste(200)
 
         if (rpc.user.magic > 1)
             if (rpc.sp < $.Magic.power(rpc, spell.cast)) {
                 if (rpc === $.online) xvt.out('You don\'t have enough power to cast that spell!\n')
-                cb(true)
+                cb(!rpc.confused)
                 return
             }
 
         //  some sensible ground rules to avoid known muling exploits (by White Knights passing gas)
         if (xvt.validator.isDefined(nme)) {
             if ([ 1,2,3,4,5,6,10 ].indexOf(spell.cast) >= 0) {
-                if (rpc === $.online) xvt.out('You cannot cast that spell during a battle!\n')
-                cb(true)
+                if (rpc.user.id === $.player.id) xvt.out('You cannot cast that spell during a battle!\n')
+                cb(!rpc.confused)
                 return
             }
             if (nme.user.novice && [ 12,15,16,20,21,22 ].indexOf(spell.cast) >= 0) {
-                if (rpc === $.online) xvt.out('You cannot cast that spell on a novice player.\n')
-                cb(true)
+                if (rpc.user.id === $.player.id) xvt.out('You cannot cast that spell on a novice player.\n')
+                cb(!rpc.confused)
+                return
+            }
+            if ((from === 'Tavern' || from === 'Taxman') && spell.cast == 8) {
+                if (rpc.user.id === $.player.id) xvt.out('You cannot cast that spell to retreat!\n')
+                cb(!rpc.confused)
                 return
             }
         }
         else {
             if ([ 9,11,12,14,15,16,17,18,19,20,21,22 ].indexOf(spell.cast) >= 0) {
-                if (rpc === $.online) xvt.out('You cannot cast that spell on yourself!\n')
-                cb(true)
+                if (rpc.user.id === $.player.id) xvt.out('You cannot cast that spell on yourself!\n')
+                cb(!rpc.confused)
                 return
             }
         }
@@ -1841,7 +1877,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         else {
             if (rpc == $.online) {
                 $.player.kills++
-                xvt.out('You ', enemy.user.xplevel < 1 ? 'destroyed' : 'killed'
+                xvt.out('You ', enemy.user.xplevel < 1 ? 'eliminated' : 'killed'
                     , enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
                     , '!\n\n', xvt.reset)
                 if (from !== 'Party' && enemy.user.id !== '' && enemy.user.id[0] !== '_') {

@@ -308,7 +308,7 @@ function welcome() {
         $.party = 1
         $.realestate = 1
         $.security = 1
-        $.tiny = 1
+        $.tiny = 3
         $.mydeeds = $.loadDeed($.player.pc)
 
         if ($.player.pc === 'None') {
