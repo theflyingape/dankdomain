@@ -134,7 +134,8 @@ function choice() {
 						xvt.out(`\nIt is ${floater.handle}'s body in the ocean left there by ${leftby.handle}, and\n`)
 						xvt.out(`you're able to bring the player back to an Alive! state.\n`)
 						floater.status = ''
-						$.loadUser(floater)
+						$.saveUser(floater)
+						$.news(`\trecovered ${floater.handle}'s body from the ocean`)
 						menu()
 						return
 					}

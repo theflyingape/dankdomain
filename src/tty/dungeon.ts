@@ -140,9 +140,19 @@ export function menu(suppress = false) {
 
 //	is a monster spawning needed?
 	let x = $.dice(DL.width) - 1, y = $.dice(DL.rooms.length) - 1
+	if ($.dice($.online.cha) < Z / (deep + 2)) {
+		let d = Math.round($.online.cha / 19) + 2
+		y = Y + ($.dice(d) - 1) - ($.dice(d) - 1)
+		if (y < 0 || y >= DL.rooms.length)
+			y = $.dice(DL.rooms.length) - 1
+		d++
+		x = X + ($.dice(d) - 1) - ($.dice(d) - 1)
+		if (x < 0 || x >= DL.width)
+			x = $.dice(DL.width) - 1
+	}
 	ROOM = DL.rooms[y][x]
-	if ($.dice((ROOM.type == 0 ? 2 : ROOM.type == 3 ? 1 : 4)
-		* $.online.cha / 5 - DL.moves / 10) == 1) {
+	if ($.dice((ROOM.type == 0 ? 2 : ROOM.type == 3 ? 1 : 3)
+		* $.online.cha / 5 - DL.moves / ((deep >>2) + 7)) == 1) {
 		xvt.plot($.player.rows, 1)
 		xvt.out(xvt.reset, '\n', xvt.faint, ['Your skin crawls'
 			, 'Your pulse quickens', 'You feel paranoid', 'Your grip tightens'
@@ -336,7 +346,7 @@ function command() {
 
 	//	old cleric mana recovery
 	if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
-		DL.cleric.sp += $.dice(DL.cleric.user.level) + $.dice(Z) + $.dice(deep)
+		DL.cleric.sp += $.dice(DL.cleric.user.level) + $.dice(Z + 10 * deep - (DL.moves >>1))
 		if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
 	}
 
@@ -1075,8 +1085,11 @@ function doMove(): boolean {
 				break
 			}
 
+			let power = Math.trunc(100 * DL.cleric.sp / DL.cleric.user.sp)
 			xvt.out(xvt.yellow, 'There is an ', xvt.faint, 'old cleric', xvt.normal
-				, ` in this room with ${Math.trunc(100 * DL.cleric.sp / DL.cleric.user.sp)}% spell power.`
+				, xvt.normal, ' in this room with '
+				, power < 40 ? xvt.faint : power < 80 ? xvt.normal : xvt.bright, `${power}`
+				, xvt.normal, '% spell power.'
 				, xvt.reset, '\n')
 			xvt.out('He says, ')
 			if ($.online.hp > ($.player.hp >>1) || ((deep >>2) + 3) * cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, 13)) {
@@ -1097,65 +1110,45 @@ function doMove(): boolean {
 					, '."')
 			}
 
-			if (cost.value) {
-				$.action('yn')
-				xvt.app.form = {
-				'pay': { cb: () => {
-						xvt.out('\n\n')
-						if (/Y/i.test(xvt.entry)) {
-							$.player.coin.value -= cost.value
-							DL.cleric.user.coin.value += cost.value
-							xvt.out(`He casts a ${Object.keys($.Magic.spells)[cast - 1]} spell on you.`)
-							DL.cleric.sp -= $.Magic.power(DL.cleric, cast)
-							if (cast == 7) {
-								$.sound('heal')
-								for (let i = 0; i <= Z; i++)
-									$.online.hp += $.dice(DL.cleric.user.level >>3) + $.dice((Z >>3) + (deep >>2))
-								if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
-								xvt.out('  Your hit points: '
-									, xvt.bright, $.online.hp == $.player.hp ? xvt.white : $.online.hp > $.player.hp * 0.85 ? xvt.yellow : xvt.red, $.online.hp.toString()
-									, xvt.reset, `/${$.player.hp}`)
-							}
-							else {
-								$.online.hp = $.player.hp
-								$.sound('shimmer', 4)
-							}
+			$.action('yn')
+			xvt.app.form = {
+			'pay': { cb: () => {
+					xvt.out('\n\n')
+					if (/Y/i.test(xvt.entry)) {
+						$.player.coin.value -= cost.value
+						DL.cleric.user.coin.value += cost.value
+						xvt.out(`He casts a ${Object.keys($.Magic.spells)[cast - 1]} spell on you.`)
+						DL.cleric.sp -= $.Magic.power(DL.cleric, cast)
+						if (cast == 7) {
+							$.sound('heal')
+							for (let i = 0; i <= Z; i++)
+								$.online.hp += $.dice(DL.cleric.user.level >>3) + $.dice((Z >>3) + (deep >>2))
+							if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
+							xvt.out('  Your hit points: '
+								, xvt.bright, $.online.hp == $.player.hp ? xvt.white : $.online.hp > $.player.hp * 0.85 ? xvt.yellow : xvt.red, $.online.hp.toString()
+								, xvt.reset, `/${$.player.hp}`)
 						}
 						else {
-							if (cast == 13) {
-								ROOM.occupant = 0
-								xvt.out(xvt.magenta, 'He teleports away!\n', xvt.reset)
-								$.sound('teleport', 8)
-							}
-							else {
-								xvt.out(xvt.yellow, '"I will rest.  Go in peace."\n', xvt.reset)
-								looked = true
-							}
+							$.online.hp = $.player.hp
+							$.sound('shimmer', 4)
 						}
-						menu()
-					}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i }
-				}
-				xvt.app.focus = 'pay'
-				return false
+					}
+					else {
+						if (cast == 13) {
+							ROOM.occupant = 0
+							xvt.out(xvt.magenta, 'He teleports away!\n', xvt.reset)
+							$.sound('teleport', 8)
+						}
+						else {
+							xvt.out(xvt.yellow, '"I will rest.  Go in peace."\n', xvt.reset)
+							looked = true
+						}
+					}
+					menu()
+				}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i }
 			}
-			else {
-				xvt.out(`\nHe casts a ${Object.keys($.Magic.spells)[cast - 1]} spell on you.`)
-				DL.cleric.sp -= $.Magic.power(DL.cleric, cast)
-				if (cast == 7) {
-					$.sound('heal')
-					for (let i = 0; i <= Z; i++)
-						$.online.hp += $.dice(DL.cleric.user.level >>3) + $.dice((Z >>3) + (deep >>2))
-					if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
-					xvt.out('  Your hit points: '
-						, xvt.bright, $.online.hp == $.player.hp ? xvt.white : $.online.hp > $.player.hp * 0.9 ? xvt.yellow : xvt.red, $.online.hp.toString()
-						, xvt.reset, `/${$.player.hp}`)
-				}
-				else {
-					$.online.hp = $.player.hp
-					$.sound('shimmer', 4)
-				}
-			}
-			break
+			xvt.app.focus = 'pay'
+			return false
 
 		case 7:
 			xvt.out(`\x1B[1;${$.player.rows}r`)
@@ -1601,7 +1594,7 @@ function generateLevel() {
 		Y = $.dice(DL.rooms.length) - 1
 		X = $.dice(DL.width) - 1
 		ROOM = DL.rooms[Y][X]
-		DL.moves += (Z >>3) + 1
+		DL.moves += (Z >>3) + deep
 		return
 	}
 
