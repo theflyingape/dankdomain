@@ -281,7 +281,7 @@ function choice() {
             return
 
         case 'T':
-            if (!$.brawl) {
+            if (!$.tiny) {
                 xvt.out(`The tavern is closed for the day.\n`)
                 break
             }

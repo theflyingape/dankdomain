@@ -3,9 +3,10 @@
  *  TAVERN authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
+import {sprintf} from 'sprintf-js'
+
 import $ = require('../common')
 import xvt = require('xvt')
-
 import Battle = require('../battle')
 import Taxman = require('./taxman')
 
@@ -263,7 +264,88 @@ function choice() {
                     return
             }
             break
-        
+
+        case 'B':
+            if (!$.brawl) break
+            $.online.bp = Math.trunc($.online.hp / 10)
+            Battle.user('Brawl', (opponent: active) => {
+                if (opponent.user.id === '') {
+                    menu(true)
+                    return
+                }
+                if (opponent.user.id === $.player.id) {
+					xvt.out('\nYou want to hit yourself?\n')
+					menu(true)
+					return
+                }
+				if ($.player.level - opponent.user.level > 3) {
+					xvt.out('\nYou can only brawl someone higher or up to three levels below you.\n')
+					menu(true)
+					return
+				}
+                xvt.out(xvt.green, 'Name: ', xvt.white, sprintf('%-22s      You:', opponent.user.handle), '\n')
+                xvt.out(xvt.green, 'Level: ', xvt.white, sprintf('%-22d     %-2d', opponent.user.level, $.player.level), '\n')
+                xvt.out(xvt.green, 'Knock out points: ', xvt.white, sprintf('%-15d %-3d', opponent.bp, $.online.bp), '\n')
+				if (!$.Access.name[opponent.user.access].roleplay || opponent.user.id[0] === '_') {
+					xvt.out('\nYou are allowed only to brawl other players.\n')
+					if (opponent.user.id[0] === '_') {
+						if (($.online.cha = $.PC.ability($.player.cha, -10)) < 20)
+							$.online.cha = 20
+						$.player.coward = true
+					}
+					menu()
+					return
+				}
+
+                $.action('yn')
+				xvt.app.form = {
+					'brawl': { cb:() => {
+						xvt.out('\n')
+						if (/Y/i.test(xvt.entry)) {
+                            $.brawl--
+                            if (($.online.dex / 2 + $.dice($.online.dex / 2)) > (opponent.dex / 2 + $.dice(opponent.dex / 2))) {
+                                xvt.out('\nYou get the first punch.\n')
+                                Battle.brawl($.online, opponent)
+                                if ($.online.bp > 0 && opponent.bp > 0)
+                                    Battle.brawl(opponent, $.online)
+                            }
+                            else {
+                                xvt.out(`\n${$.who(opponent, 'He')}gets the first punch.\n`)
+                                Battle.brawl(opponent, $.online)
+                            }
+                            if ($.online.bp > 0 && opponent.bp > 0)
+                                xvt.app.focus = 'punch'
+                            else
+                                menu($.player.expert)
+                        }
+                        else
+                            menu($.player.expert)
+					}, prompt:'Are you sure (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i },
+					'punch': { cb:() => {
+						xvt.out('\n')
+						if (/P/i.test(xvt.entry)) {
+                            Battle.brawl($.online, opponent)
+                            if ($.online.bp > 0 && opponent.bp > 0)
+                                Battle.brawl(opponent, $.online)
+                        }
+						if (/G/i.test(xvt.entry)) {
+                            xvt.out(`\nWe can't all be Rocky, eh?\n`)
+                            menu($.player.expert)
+                            return
+                        }
+						if (/Y/i.test(xvt.entry)) {
+                        }
+                        if ($.online.bp > 0 && opponent.bp > 0)
+                            xvt.app.refocus()
+                        else
+                            menu($.player.expert)
+                    }, prompt:xvt.attr($.bracket('P', false), xvt.cyan, `unch ${$.who(opponent, 'him')}`, $.bracket('G', false), xvt.cyan, 'ive it up, ', $.bracket('Y', false), xvt.cyan, 'our status: ' )
+                        , cancel:'G', enter:'P', eol:false, match:/P|G|Y/i }
+				}
+                xvt.app.focus = 'brawl'
+            })
+            return
+
         case 'Q':
 			require('./main').menu($.player.expert)
 			return

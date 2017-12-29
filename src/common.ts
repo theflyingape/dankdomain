@@ -95,6 +95,20 @@ export class Character {
             return rpc
         }
 
+        encounter(lo = 2, hi = 99, where = ''): active {
+            lo = lo < 2 ? 2 : lo > 99 ? 99 : lo
+            hi = hi < 2 ? 2 : hi > 99 ? 99 : hi
+
+            let rpc = <active>{ user:{id:''} }
+            let rs = query(`SELECT id FROM Players WHERE access != 'Inactive' AND level BETWEEN ${lo} AND ${hi} ${where} ORDER BY level`)
+            if (rs.length) {
+                let n = dice(rs.length) - 1
+                rpc.user.id = rs[n].id
+                loadUser(rpc)
+            }
+            return rpc
+        }
+
         jousting(rpc: active): number {
             return Math.round(rpc.dex * rpc.user.level / 10 + 2 * rpc.user.jw - rpc.user.jl + 10)
         }

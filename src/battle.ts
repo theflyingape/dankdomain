@@ -787,6 +787,71 @@ export function spoils() {
     $.online.altered = true
 }
 
+export function brawl(rpc:active, nme:active) {
+    if ($.dice(100) >= (50 + (rpc.dex >>1))) {
+        xvt.out(`${$.who(nme, 'He')}${$.what(nme, 'duck')}${$.who(rpc,'his')}punch.\n\n`)
+        xvt.waste(500)
+        let patron = $.PC.encounter()
+        if (patron.user.id && patron.user.id != rpc.user.id && patron.user.id != nme.user.id && !patron.user.status) {
+            xvt.out(`${$.who(nme, 'He')}${$.what(nme, 'hit')}${patron.user.handle}!\n\n`)
+            xvt.waste(500)
+            let bp = punch(rpc)
+            patron.bp -= bp
+            if (patron.bp > 0) {
+                xvt.out(`Uh oh!  Here comes ${patron.user.handle}!\n\n`)
+                xvt.waste(500)
+                this.brawl(patron, rpc)
+            }
+            else
+                knockout(rpc, patron)
+        }
+    }
+    else {
+        let bp = punch(rpc)
+        xvt.out(`\n${$.who(rpc, 'He')}${$.what(rpc, 'punch')}${$.who(nme,'him')}for ${bp} points.\n`)
+        nme.bp -= bp
+        if (nme.bp < 1)
+            knockout(rpc, nme)
+    }
+
+    function knockout(winner:active, loser:active) {
+        let xp = $.experience(loser.user.level, 9)
+        xvt.out(`\n${$.who(winner, 'He')}${$.what(winner, 'get')}`, sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
+        winner.user.xp += xp
+        if (loser.user.coin.value) {
+            xvt.out(`${$.who(loser, 'He')}was carrying ${loser.user.coin.carry()}\n`)
+            winner.user.coin.value += loser.user.coin.value
+            loser.user.coin.value = 0
+        }
+        winner.user.tw++
+        $.saveUser(winner)
+        xvt.waste(500)
+
+        loser.user.tw++
+        $.saveUser(loser)
+        if (loser.user.id === $.player.id) {
+            let m = Math.abs($.online.bp)
+            while (m > 10)
+                m >>= 1
+            xvt.out(`\nYou are unconscious for ${m} minute`, m != 1 ? 's' : '', '.')
+            while (m--) {
+                xvt.out('.')
+                xvt.waste(600)
+            }
+            xvt.out('\n')
+            $.news(`\tgot knocked out by ${winner.user.handle}`)
+        }
+        else
+            $.log(loser.user.id, `\n${winner.user.handle} knocked you out.`)
+    }
+
+    function punch(rpc: active): number {
+        let punch = (rpc.user.level + rpc.str / 10) >>1
+        punch += $.dice(punch)
+        return punch
+    }
+}
+
 export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?: ddd) {
     if (!rpc.user.magic || !rpc.user.spells.length) {
         if (rpc.user.id === $.player.id) {

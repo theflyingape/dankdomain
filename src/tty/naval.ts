@@ -118,15 +118,9 @@ function choice() {
 			cast = (cast < 15) ? 15 : (cast > 100) ? 100 : cast >>0
 			let hook = $.dice(cast)
 			if (hook < 15) {
-				let l = $.dice(95)
-				let rs:any = $.query(`
-					SELECT id, status FROM Players
-					WHERE level BETWEEN ${l} AND ${l + 4} AND status != ''
-				`)
-				let r = $.dice(rs.length) - 1
-				if (r >= 0 && rs[r]) {
-					let floater = <user>{ id:rs[r].id }
-					let leftby = <user>{ id:rs[r].status }
+				let floater = $.PC.encounter().user
+				if (floater.id && floater.status) {
+					let leftby = <user>{ id:floater.status }
 					if ($.loadUser(leftby)) {
 						xvt.out(' floating carcass!')
 						xvt.waste(500)
@@ -152,12 +146,11 @@ function choice() {
 							, 'So you have escaped my magic, mortal.  Now try me!', xvt.normal, xvt.magenta
 							, '"\n', xvt.reset)
 						$.loadUser($.seahag)
-						$.activate($.seahag)
 						$.cat(`naval/${$.seahag}`.toLowerCase())
 						if (isNaN(+$.seahag.user.weapon)) xvt.out('\n', $.who($.seahag, 'He'), $.Weapon.wearing($.seahag), '.\n')
 						if (isNaN(+$.seahag.user.armor)) xvt.out('\n', $.who($.seahag, 'He'), $.Armor.wearing($.seahag), '.\n')
 						$.seahag.user.cursed = $.player.id
-						$.sound('god', 20)
+						$.sound('god', 25)
 						Battle.engage('Naval', $.online, $.seahag, menu)
 						return
 					})

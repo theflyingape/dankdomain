@@ -114,6 +114,8 @@ function choice() {
         case 'S':
             if (!$.access.roleplay) break
             if ($.player.gang) break
+            g = { name:'', members:[], handles:[], genders:[], melee:[], status:[], validated:[]
+                , win:0, loss:0, banner:0, trim:0, back:0, fore:0 }
 
             $.action('freetext')
             xvt.app.form = {
@@ -184,6 +186,8 @@ function choice() {
                             xvt.out('ok.\n')
                         }
                     }
+                    g = { name:'', members:[], handles:[], genders:[], melee:[], status:[], validated:[]
+                        , win:0, loss:0, banner:0, trim:0, back:0, fore:0 }
                     menu()
                 }, prompt:'Resign (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
             }
@@ -544,7 +548,7 @@ function showGang(lg: gang, rg?: gang, engaged = false) {
                             if (engaged)
                                 xvt.out(xvt.faint, xvt.red, 'x ')
                             else
-                                xvt.out(xvt.faint, xvt.blue, '^ ')
+                                xvt.out(xvt.reset, xvt.faint, '^ ')
                         }
                         else
                             xvt.out(xvt.bright, xvt.white, '  ')
@@ -586,7 +590,7 @@ function showGang(lg: gang, rg?: gang, engaged = false) {
                             if (engaged)
                                 xvt.out(xvt.faint, xvt.red, 'x ')
                             else
-                                xvt.out(xvt.faint, xvt.blue, '^ ')
+                                xvt.out(xvt.reset, xvt.faint, '^ ')
                         }
                         else
                             xvt.out(xvt.bright, xvt.white, '  ')
