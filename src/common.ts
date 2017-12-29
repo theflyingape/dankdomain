@@ -1208,8 +1208,6 @@ export function playerPC(points = 200, immortal = false) {
                 activate(online)
                 xvt.out('\n')
                 news(`\trerolled as a ${player.pc}`)
-                player.today = 0
-                xvt.out(`\nYou are rewarded with ${access.calls} more calls today.\n`)
                 if (immortal) {
                     reason = 'became immortal'
                     xvt.hangup()
@@ -1547,6 +1545,9 @@ export function riddle() {
         saveUser(sysop)
         xvt.hangup()
     }
+
+    player.today = 0
+    xvt.out(xvt.bright, xvt.yellow, `\nYou are rewarded with ${access.calls} more calls today.\n`, xvt.reset)
 
     xvt.out(xvt.green, `\nOl' Mighty One!  Solve the Ancient Riddle of the Keys and you will become\n`)
     xvt.out(`an immortal being.\n\n`)
