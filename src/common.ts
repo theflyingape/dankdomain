@@ -1482,7 +1482,7 @@ export function riddle() {
             }
         }
         else {
-            if (!deed) deed = mydeeds[mydeeds.push(loadDeed('GOAT', deeds[i], 100)[0]) - 1]
+            if (!deed) deed = mydeeds[mydeeds.push(loadDeed('GOAT', deeds[i])[0]) - 1]
             if (player[deeds[i]] <= deed.value) {
                 deed.value = player[deeds[i]]
                 saveDeed(deed)
