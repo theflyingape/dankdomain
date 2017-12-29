@@ -1455,7 +1455,7 @@ export function riddle() {
             }
         }
         else {
-            if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, deeds[i], 100)[0]) - 1]
+            if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, deeds[i])[0]) - 1]
             if (player[deeds[i]] <= deed.value) {
                 deed.value = player[deeds[i]]
                 saveDeed(deed)
@@ -2261,7 +2261,7 @@ export function run(sql: string, errOk = false): { changes: number, lastInsertRO
     }
 }
 
-export function loadDeed(pc: string, what?: string, start = 0): deed[] {
+export function loadDeed(pc: string, what?: string): deed[] {
 
     let deed = []
     let sql = `SELECT * FROM Deeds WHERE pc='${pc}'`
@@ -2279,6 +2279,8 @@ export function loadDeed(pc: string, what?: string, start = 0): deed[] {
             })
     }
     else if (what) {
+        let start = 0
+        if (Deed.name[what]) start = Deed.name[what].starting
         sqlite3.exec(`INSERT INTO Deeds VALUES ('${pc}', '${what}', ${now().date}, 'Nobody', ${start})`)
         deed = loadDeed(pc, what)
     }
