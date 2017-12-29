@@ -1208,12 +1208,13 @@ export function playerPC(points = 200, immortal = false) {
                 activate(online)
                 xvt.out('\n')
                 news(`\trerolled as a ${player.pc}`)
+                player.today = 0
+                xvt.out(`\nYou are rewarded with ${access.calls} more calls today.\n`)
                 if (immortal) {
-                    player.today = 0
                     reason = 'became immortal'
-                    xvt.out(`\nYou are rewarded with ${access.calls} more calls today.\n`)
                     xvt.hangup()
                 }
+                xvt.out(`... and you get to complete any remaining parts to this play.\n`)
                 require('./tty/main').menu(true)
                 return
         }
