@@ -99,7 +99,7 @@ function choice() {
                 , xvt.reset, '\n')
 
             let rs = $.query(`
-                SELECT id, handle, pc, level, status, gang FROM Players
+                SELECT id, handle, pc, level, status, gang, access FROM Players
                 WHERE id NOT GLOB '_*'
                 ORDER BY level DESC, immortal DESC
                 LIMIT ${$.player.rows - 5}
@@ -116,7 +116,10 @@ function choice() {
                 else xvt.out(xvt.faint, rs[n].status === 'jail' ? '#jail#' : '^dead^')
                 xvt.out('  ', rs[n].id === $.player.id ? xvt.bright : xvt.normal)
                 if (rs[n].gang === $.player.gang) xvt.out(xvt.Red)
-                xvt.out(rs[n].gang, xvt.reset, '\n')
+                xvt.out(rs[n].gang, xvt.reset)
+                if ($.Access.name[rs[n].access].promote == 0)
+                    xvt.out(' ', $.Access.name[rs[n].access].emoji)
+                xvt.out('\n')
             }
             suppress = true
             break

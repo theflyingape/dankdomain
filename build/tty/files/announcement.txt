@@ -1,4 +1,4 @@
-[22;36mDate:[22;37m Thu 29-Dec-2017  7:45am
+[22;36mDate:[22;37m Fri 29-Dec-2017  7:45am
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
 The official 'Go Live' party started:
@@ -6,6 +6,7 @@ The official 'Go Live' party started:
 
 New announcements as missing features get implemented or tweaked:
 - Dungeon boss thief and the Tavern barkeep encounters
+- List of Deeds: Class Champions, Hall of Heroes, more
 - Arena battle with a fellow gang member can challenge for leadership
 - Dungeon Cleric is an active NPC -- may offer Heal or Cure spell
 - Dungeon monster set was revisited -- new surprises?
