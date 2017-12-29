@@ -82,6 +82,7 @@ function choice() {
                     }
                 }
             }
+            xvt.out('\n')
             suppress = true
             break
 
