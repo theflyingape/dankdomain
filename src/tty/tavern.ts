@@ -215,7 +215,7 @@ function choice() {
                     xvt.out('\nUh, oh!')
                     $.sound('oops', 8)
                     xvt.out('  Here comes Tiny!')
-                    $.sound('tiny', 12)
+                    $.sound('challenge', 12)
                     xvt.out('  And he doesn\'t look friendly...\n\n')
                     xvt.waste(600)
                     xvt.out(xvt.bright, xvt.green, [
@@ -226,6 +226,8 @@ function choice() {
                     xvt.waste(3000)
 
                     $.loadUser($.barkeep)
+                    $.barkeep.toWC += $.Weapon.merchant.length - $.barkeep.weapon.wc
+                    $.barkeep.toAC += $.Armor.merchant.length - $.barkeep.armor.ac
                     xvt.out(`${$.barkeep.user.handle} towels ${$.who($.barkeep,'his')}hands dry from washing the day\'s\nglasses, ${$.who($.barkeep,'he')}warns,\n\n`)
                     xvt.out(xvt.bright, xvt.green, '"Another fool said something like that to me, once, and got all busted up."'
                         , xvt.reset, '\n\n')

@@ -1,13 +1,14 @@
-[22;36mDate:[22;37m Thu 24-Dec-2017  9:45am
+[22;36mDate:[22;37m Thu 29-Dec-2017  7:45am
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
 The official 'Go Live' party started:
     Friday, December 22nd at 12:00am midnight
 
 New announcements as missing features get implemented or tweaked:
+- Dungeon boss thief and the Tavern barkeep encounters
 - Arena battle with a fellow gang member can challenge for leadership
 - Dungeon Cleric is an active NPC -- may offer Heal or Cure spell
 - Dungeon monster set was revisited -- new surprises?
 - Deterministic spellcasting is more proportionate to level and adeptness
 
-Happy holidays and happy hunting!
+Happy New Year and happy hunting!
