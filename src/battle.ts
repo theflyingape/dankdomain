@@ -815,7 +815,8 @@ export function brawl(rpc:active, nme:active) {
     }
 
     function knockout(winner:active, loser:active) {
-        xvt.out(`\n${winner.user.handle} ${$.what(winner, 'knock')}${$.who(loser, 'him')}out!\n`)
+        xvt.out('\n', winner.user.id === $.player.id ? 'You' : winner.user.handle
+            , ` ${$.what(winner, 'knock')}${$.who(loser, 'him')}out!\n`)
         xvt.waste(500)
         let xp = $.experience(loser.user.level, 9)
         xvt.out(`\n${$.who(winner, 'He')}${$.what(winner, 'get')}`, sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
@@ -847,8 +848,8 @@ export function brawl(rpc:active, nme:active) {
             $.log(loser.user.id, `\n${winner.user.handle} knocked you out.`)
     }
 
-    function punch(rpc: active): number {
-        let punch = (rpc.user.level + rpc.str / 10) >>1
+    function punch(p: active): number {
+        let punch = (p.user.level + p.str / 10) >>1
         punch += $.dice(punch)
         return punch
     }

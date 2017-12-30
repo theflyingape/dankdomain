@@ -310,13 +310,11 @@ function choice() {
                             if (($.online.dex / 2 + $.dice($.online.dex / 2)) > (opponent.dex / 2 + $.dice(opponent.dex / 2))) {
                                 xvt.out('\nYou get the first punch.\n')
                                 Battle.brawl($.online, opponent)
-                                if ($.online.bp > 0 && opponent.bp > 0)
-                                    Battle.brawl(opponent, $.online)
                             }
-                            else {
+                            else
                                 xvt.out(`\n${$.who(opponent, 'He')}gets the first punch.\n`)
+                            if ($.online.bp > 0 && opponent.bp > 0)
                                 Battle.brawl(opponent, $.online)
-                            }
                             if ($.online.bp > 0 && opponent.bp > 0)
                                 xvt.app.focus = 'punch'
                             else
