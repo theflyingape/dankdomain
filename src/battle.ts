@@ -321,7 +321,7 @@ export function attack(retry = false) {
                 : $.online.hp > $.player.hp / 3 ? xvt.yellow
                 : xvt.red
                 , $.online.hp.toString()
-                , xvt.cyan, ','
+                , xvt.normal, xvt.cyan, ',', xvt.bright
                 , enemy.hp > enemy.user.hp * 2 / 3 ? xvt.green
                 : enemy.hp > enemy.user.hp / 3 ? xvt.yellow
                 : xvt.red
@@ -339,7 +339,7 @@ export function attack(retry = false) {
             }
             else
                 choices += enemy.hp.toString()
-            choices += xvt.attr(xvt.blue, '] ')
+            choices += xvt.attr(xvt.normal, xvt.blue, '] ')
             bs = 1
 
             xvt.app.form['attack'].prompt = choices + xvt.attr(

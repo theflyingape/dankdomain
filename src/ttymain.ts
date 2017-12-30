@@ -22,39 +22,39 @@ import xvt = require('xvt')
 module ttyMain
 {
     xvt.defaultTimeout = 120
-    xvt.pollingMS = 50
+    xvt.pollingMS = 20
     xvt.sessionAllowed = 300
-    if (xvt.modem = xvt.validator.isEmpty(process.env.REMOTEHOST))
+    if ((xvt.modem = xvt.validator.isEmpty(process.env.REMOTEHOST)))
         xvt.out('\nCARRIER DETECTED\n')
+    if (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM))  xvt.emulation = 'dumb'
+    else if (/^lisa|^ncsa|^pcvt|^vt/i.test(process.env.TERM))   xvt.emulation = 'VT'
+    else if (/ansi|cygwin|^pc/i.test(process.env.TERM))         xvt.emulation = 'PC'
+    else                                                        xvt.emulation = 'XT'
 
-    if (process.argv.length < 3) {
-        //  try a remote query for terminal emulation auto-detection
-        xvt.enquiry('\x1B[6n')
-        if (/^\[.*R$/i.test(xvt.entry))                                 xvt.emulation = 'XT'
-        else {
-            xvt.enquiry('\x05')
-            if (xvt.entry.length)                                       xvt.emulation = 'VT'
-        }
-        //  else, check host for configured terminal emulation
-        if (!xvt.emulation) {
-            if (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM))  xvt.emulation = 'dumb'
-            else if (/^lisa|^ncsa|^pcvt|^vt/i.test(process.env.TERM))   xvt.emulation = 'VT'
-            else if (/ansi|cygwin|^pc/i.test(process.env.TERM))         xvt.emulation = 'PC'
-            else                                                        xvt.emulation = 'XT'
-        }
+    xvt.app.form = {
+	    'enq1': { cb:() => { 
+		    //console.log('ENQ response =', xvt.entry.split('').map((c) => { return c.charCodeAt(0) }))
+            if (/^.*\[.*R$/i.test(xvt.entry)) {
+                xvt.emulation = 'XT'
+                require('./tty/logon')
+            }
+            else xvt.app.focus = 'enq2'
+        }, prompt:'\x1B[6n', enq:true },
+	    'enq2': { cb:() => { 
+		    //console.log('ENQ response =', xvt.entry.split('').map((c) => { return c.charCodeAt(0) }))
+            if (xvt.entry.length)
+                xvt.emulation = 'VT'
+            require('./tty/logon')
+        }, prompt:'\x05', enq:true }
     }
-    else
+
+    if (process.argv.length < 3)
+        xvt.app.focus = 'enq1'
+    else {
         xvt.emulation = process.argv[2].toUpperCase()
-    
-    //  allow hardcopy and monochrome terminals to still play!  :)
-    if (!xvt.emulation.match('VT|PC|XT'))                               xvt.emulation = 'dumb'
-
-    let title = process.title + ' (' + xvt.emulation + ')'
-    if (xvt.emulation !== 'VT')
-        xvt.out('\x1B]2;', title, '\x07')
-
     //  initiate user login sequence: id, handle, or a new registration
-    require('./tty/logon')
+        require('./tty/logon')
+    }
 }
 
 export = ttyMain

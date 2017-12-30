@@ -15,6 +15,13 @@ import Taxman = require('./taxman')
 module Logon
 {
     let tax: coins = new $.coins(0)
+    
+    //  allow hardcopy and monochrome terminals to still play!  :)
+    if (!xvt.emulation.match('VT|PC|XT'))                               xvt.emulation = 'dumb'
+
+    let title = process.title + ' (' + xvt.emulation + ')'
+    if (xvt.emulation !== 'VT')
+        xvt.out('\x1B]2;', title, '\x07')
 
     process.stdin.setEncoding(xvt.emulation == 'XT' ? 'utf8' : 'ascii')
     xvt.out(xvt.bright, xvt.cyan, xvt.emulation, ' emulation enabled\n\f', xvt.reset)
