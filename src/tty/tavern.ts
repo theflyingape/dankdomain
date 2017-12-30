@@ -260,7 +260,11 @@ function choice() {
                     xvt.waste(3000)
                     xvt.out('You look for an exit, but there is none to be found... ')
                     xvt.waste(2000)
-                    Barkeep()
+                    xvt.out('\n')
+
+                    $.online.altered = true
+                    $.player.coward = true
+                    Battle.engage('Tavern', $.online, $.barkeep, require('./main').menu)
                     return
             }
             break
@@ -355,12 +359,6 @@ function choice() {
     	    suppress = false
 	}
 	menu(suppress)
-}
-
-function Barkeep() {
-    $.online.altered = true
-    $.player.coward = true
-    Battle.engage('Tavern', $.online, $.barkeep, require('./main').menu)
 }
 
 }
