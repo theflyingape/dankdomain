@@ -830,7 +830,7 @@ export function brawl(rpc:active, nme:active) {
         $.saveUser(winner)
         xvt.waste(500)
 
-        loser.user.tw++
+        loser.user.tl++
         $.saveUser(loser)
         if (loser.user.id === $.player.id) {
             let m = Math.abs($.online.bp)
