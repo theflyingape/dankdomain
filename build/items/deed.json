@@ -7,5 +7,7 @@
 	"kills": { "description":"Kills taken", "starting":500 },
 	"melee": { "description":"Melee hit", "starting":0 },
 	"plays": { "description":"Plays to roll", "starting":100 },
-	"retreats": { "description":"Retreats opted", "starting":100 }
+	"retreats": { "description":"Retreats opted", "starting":100 },
+	"tl": { "description":"Brawls lost", "starting":100 },
+	"tw": { "description":"Brawls won", "starting":0 }
 }
