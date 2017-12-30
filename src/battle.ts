@@ -789,17 +789,17 @@ export function spoils() {
 
 export function brawl(rpc:active, nme:active) {
     if ($.dice(100) >= (50 + (rpc.dex >>1))) {
-        xvt.out(`${$.who(nme, 'He')}${$.what(nme, 'duck')}${$.who(rpc,'his')}punch.\n\n`)
+        xvt.out(`\n${$.who(nme, 'He')}${$.what(nme, 'duck')}${$.who(rpc,'his')}punch.\n`)
         xvt.waste(500)
         let patron = $.PC.encounter()
         if (patron.user.id && patron.user.id != rpc.user.id && patron.user.id != nme.user.id && !patron.user.status) {
-            xvt.out(`${$.who(nme, 'He')}${$.what(nme, 'hit')}${patron.user.handle}!\n\n`)
+            xvt.out(`\n${$.who(rpc, 'He')}${$.what(rpc, 'hit')}${patron.user.handle}!\n`)
             xvt.waste(500)
             let bp = punch(rpc)
             patron.bp -= bp
             if (patron.bp > 0) {
-                xvt.out(`Uh oh!  Here comes ${patron.user.handle}!\n\n`)
-                xvt.waste(500)
+                xvt.out(`\nUh oh!  Here comes ${patron.user.handle}!\n`)
+                xvt.waste(1000)
                 this.brawl(patron, rpc)
             }
             else
@@ -815,6 +815,8 @@ export function brawl(rpc:active, nme:active) {
     }
 
     function knockout(winner:active, loser:active) {
+        xvt.out(`\n${winner.user.handle} ${$.what(winner, 'knock')}${$.who(loser, 'him')}out!\n`)
+        xvt.waste(500)
         let xp = $.experience(loser.user.level, 9)
         xvt.out(`\n${$.who(winner, 'He')}${$.what(winner, 'get')}`, sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
         winner.user.xp += xp
