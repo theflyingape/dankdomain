@@ -222,7 +222,7 @@ function amount() {
 		case 'H':
 			shuffle(true)
 
-			$.action('keypad')
+			$.action('list')
 			xvt.app.form = {
 				'pick': { cb: () => {
 					let dealer: number
@@ -283,7 +283,7 @@ function amount() {
 		case 'K':
 			let point: number
 			let picks: number[] = []
-			$.action('keypad')
+			$.action('list')
 			xvt.app.form = {
 				'point': { cb: () => {
 					point = +xvt.entry

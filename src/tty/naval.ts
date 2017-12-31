@@ -280,7 +280,7 @@ function choice() {
 				xvt.out($.bracket(+i + 1), xvt.cyan, monsters[i].name)
 			xvt.out('\n')
 
-			$.action('keypad')
+			$.action('list')
 			xvt.app.form = {
 				pick: { cb: () => {
 					xvt.out('\n')

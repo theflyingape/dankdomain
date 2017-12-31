@@ -336,6 +336,7 @@ function choice() {
                             return
                         }
 						if (/Y/i.test(xvt.entry)) {
+                            xvt.out(`\nYour knock out points: ${$.online.bp}\n`)
                         }
                         if ($.online.bp > 0 && opponent.bp > 0)
                             xvt.app.refocus()

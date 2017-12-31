@@ -869,7 +869,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
     }
 
     if (rpc.user.id === $.player.id) {
-        $.action('keypad')
+        $.action('list')
         xvt.app.form = {
             'magic': { cb: () => {
                 xvt.out('\n')
@@ -1969,7 +1969,7 @@ export function poison(rpc: active, cb?:Function) {
             cb(true)
             return
         }
-        $.action('keypad')
+        $.action('list')
         xvt.app.form = {
             'poison': { cb: () => {
                 xvt.out('\n')

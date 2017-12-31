@@ -73,7 +73,7 @@ function receive(event) {
         if (event.data.message) {
           socket.send(event.data.message);
           if (event.data.return)
-            socket.send('\x0A');
+            socket.send('\r');
         }
         else {
           if (event.data.return)

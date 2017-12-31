@@ -634,7 +634,7 @@ function doMove(): boolean {
 						if (start < 1) start = 1
 						let end = (Z * 3 / 2 - $.dice(deep)) >>0
 						if (end > 100) end = 100
-						$.action('keypad')
+						$.action('list')
 						xvt.app.form = {
 							'level': { cb: () => {
 								let i = parseInt(xvt.entry)
