@@ -2090,6 +2090,11 @@ function putMonster(r = -1, c = -1): boolean {
 		gold.value += $.worth(new $.coins(m.armor.value).value, ($.dice($.online.cha) / 5 + 5) >>0)
 		gold.value *= $.dice(deep)
 		m.user.coin = new $.coins(gold.carry(1, true))
+
+		if (+m.user.weapon) {
+			if (dm.hit) m.weapon.hit = dm.hit
+			if (dm.smash) m.weapon.smash = dm.smash
+		}
 	} while (DL.rooms[r][c].monster.length < 10 && DL.rooms[r][c].monster.length * m.user.level < Z - 12 + deep)
 
 	return true

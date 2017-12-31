@@ -148,6 +148,8 @@ interface dungeon {
 interface monster {
 	name: string
     pc: string
+    hit?: string
+    smash?: string
     poisons?: string[]
     spells?: string[]
     level?: number
