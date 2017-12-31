@@ -1799,7 +1799,10 @@ export function emulator(cb:Function) {
 }
 
 export function logoff() {
-    if (reason === '') reason = (xvt.reason ? xvt.reason : 'mystery')
+    if (!reason) {
+        if (player && player.id) player.coward = true
+        reason = (xvt.reason ? xvt.reason : 'mystery')
+    }
     if (xvt.validator.isNotEmpty(player.id)) {
         sound('goodbye')
         player.lasttime = now().time
