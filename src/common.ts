@@ -1540,7 +1540,7 @@ export function riddle() {
             xvt.out('+')
             unlock(rs[row].id)
         }
-            
+
         rs = query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
         let user: user = { id:'' }
         for (let row in rs) {

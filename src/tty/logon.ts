@@ -53,10 +53,10 @@ function guards(): boolean {
             xvt.out('The guards aim their crossbows at you.\n')
             break
         default:
+            $.action('yn')
             $.profile({ jpg:'npc/stranger' })
             xvt.out('The last thing you ever feel is several quarrels cutting deep into your chest.\n')
             xvt.waste(1000)
-            $.action('yn')
             xvt.app.form = {
                 'forgot': { cb:() => {
                     if (/Y/i.test(xvt.entry)) {
