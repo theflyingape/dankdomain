@@ -179,7 +179,7 @@ function choice() {
                             $.saveUser(opponent)
                             xvt.waste(500)
                         }
-                        menu()
+                        menu(true)
                     }, max:24 }
                 }
                 xvt.app.form['coin'].prompt = `Bounty [MAX=${max.carry()}]? `

@@ -684,13 +684,13 @@ function listEnd() {
 	for (let i = lo; i <= hi; i++) {
 		switch (want) {
 			case 'A':
-				xvt.out($.bracket(i), sprintf(' %-24s ', $.Armor.merchant[i]))
+				xvt.out($.bracket(i), sprintf('%-24s ', $.Armor.merchant[i]))
 				xvt.out(new $.coins($.Armor.name[$.Armor.merchant[i]].value).carry())
 				break
 
 			case 'M':
 				if (!$.Magic.have($.player.spells, i)) {
-					xvt.out($.bracket(i), sprintf(' %-24s ', $.Magic.merchant[i - 1]))
+					xvt.out($.bracket(i), sprintf('%-24s ', $.Magic.merchant[i - 1]))
 					if ($.player.magic == 1)
 						xvt.out(new $.coins($.Magic.spells[$.Magic.merchant[i - 1]].wand).carry())
 					else
@@ -699,18 +699,18 @@ function listEnd() {
 				break
 
 			case 'R':
-				xvt.out($.bracket(i), sprintf(' %-24s ', $.RealEstate.merchant[i]))
+				xvt.out($.bracket(i), sprintf('%-24s ', $.RealEstate.merchant[i]))
 				xvt.out(new $.coins($.RealEstate.name[$.RealEstate.merchant[i]].value).carry())
 				break
 
 			case 'S':
-				xvt.out($.bracket(i), sprintf(' %-24s ', $.Security.merchant[i]))
+				xvt.out($.bracket(i), sprintf('%-24s ', $.Security.merchant[i]))
 				xvt.out(new $.coins($.Security.name[$.Security.merchant[i]].value).carry())
 				break
 
 			case 'V':
 				if (!$.Poison.have($.player.poisons, i)) {
-					xvt.out($.bracket(i), sprintf(' %-24s ', $.Poison.merchant[i - 1]))
+					xvt.out($.bracket(i), sprintf('%-24s ', $.Poison.merchant[i - 1]))
 					if ($.player.poison == 1)
 						xvt.out(new $.coins($.Poison.vials[$.Poison.merchant[i - 1]].vial).carry())
 					else
@@ -719,7 +719,7 @@ function listEnd() {
 				break
 
 			case 'W':
-				xvt.out($.bracket(i), sprintf(' %-24s ', $.Weapon.merchant[i]))
+				xvt.out($.bracket(i), sprintf('%-24s ', $.Weapon.merchant[i]))
 				xvt.out(new $.coins($.Weapon.name[$.Weapon.merchant[i]].value).carry())
 				break
 		}

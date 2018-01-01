@@ -151,8 +151,8 @@ export function menu(suppress = false) {
 			x = $.dice(DL.width) - 1
 	}
 	ROOM = DL.rooms[y][x]
-	if ($.dice((ROOM.type == 0 ? 2 : ROOM.type == 3 ? 1 : 3)
-		* $.online.cha / 5 - DL.moves / ((deep >>2) + 7)) == 1) {
+	if ($.dice((ROOM.type == 0 ? 2 : ROOM.type == 3 ? 1 : 4)
+		* ((100 - Z + $.online.cha) >>2) - (DL.moves / ((deep >>2) + 9) >>0)) == 1) {
 		xvt.plot($.player.rows, 1)
 		xvt.out(xvt.reset, '\n', xvt.faint, ['Your skin crawls'
 			, 'Your pulse quickens', 'You feel paranoid', 'Your grip tightens'
@@ -197,7 +197,6 @@ export function menu(suppress = false) {
 				DL.cleric.hp = 0
 				DL.cleric.sp = 0
 				DL.cleric.user.status='dead'
-				//ROOM.occupant = 0
 				ROOM.giftItem = 'chest'
 				ROOM.giftValue = 0
 				DL.cleric.user.coin.value = 0
@@ -337,18 +336,17 @@ function command() {
     if (xvt.validator.isNotEmpty(crawling[choice])) {
 		xvt.out(crawling[choice].description)
 		DL.moves++
+		//	old cleric mana recovery
+		if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
+			DL.cleric.sp += 10 * $.dice(deep) + $.dice(Z >>1)
+			if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
+		}
 	}
-    else {
-        xvt.beep()
-        suppress = false
+	else {
+		xvt.beep()
+		suppress = false
 	}
 	xvt.out('\n')
-
-	//	old cleric mana recovery
-	if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
-		DL.cleric.sp += $.dice(DL.cleric.user.level) + $.dice(Z + 10 * deep - (DL.moves >>1))
-		if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
-	}
 
     switch (choice) {
 	case 'M':	//	#tbt
@@ -436,12 +434,22 @@ function oof(wall:string) {
 //	look around, return whether done or not
 function doMove(): boolean {
 	ROOM = DL.rooms[Y][X]
-	if ($.online.int > 49)
-		ROOM.map = true
+	if (!ROOM.map) {
+		if ($.online.int > 49)
+			ROOM.map = true
+	}
+	else
+		DL.moves++
 
 	//	nothing special in here, done
 	if (!ROOM.occupant && !ROOM.monster.length && !ROOM.giftItem)
 		return true
+
+	//	old cleric mana recovery
+	if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
+		DL.cleric.sp += DL.cleric.user.level + deep
+		if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
+	}
 
 	xvt.plot($.player.rows, 1)
 	xvt.out(xvt.reset, '\n')
@@ -552,6 +560,17 @@ function doMove(): boolean {
 			else {
 				xvt.out(xvt.bright, xvt.cyan, 'A fairie flies by.\n')
 				ROOM.occupant = 0
+				$.sound('heal')
+				for (let i = 0; i <= Z; i++)
+					$.online.hp += $.dice(DL.cleric.user.level >>3) + $.dice((Z >>3) + (deep >>2))
+				if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
+				for (let i = 0; i <= Z; i++)
+					$.online.sp += $.dice(DL.cleric.user.level >>3) + $.dice((Z >>3) + (deep >>2))
+				if ($.online.sp > $.player.sp) $.online.sp = $.player.sp
+				if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
+					DL.cleric.sp += $.Magic.power(DL.cleric, 7)
+					if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
+				}
 			}
 			break
 
@@ -1595,7 +1614,7 @@ function generateLevel() {
 		Y = $.dice(DL.rooms.length) - 1
 		X = $.dice(DL.width) - 1
 		ROOM = DL.rooms[Y][X]
-		DL.moves += (Z >>3) + deep
+		DL.moves += (Z >>3)
 		return
 	}
 
