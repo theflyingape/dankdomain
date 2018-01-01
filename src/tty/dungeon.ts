@@ -643,6 +643,7 @@ function doMove(): boolean {
 									return
 								}
 								if (i < start || i > end) {
+									$.player.coward = true
 									xvt.app.refocus()
 									return
 								}
