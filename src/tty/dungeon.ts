@@ -642,7 +642,7 @@ function doMove(): boolean {
 									xvt.app.refocus()
 									return
 								}
-								if (Z < start || Z > end) {
+								if (i < start || i > end) {
 									xvt.app.refocus()
 									return
 								}
