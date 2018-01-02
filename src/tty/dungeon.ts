@@ -1635,18 +1635,19 @@ function generateLevel() {
 	let result: boolean
 	do {
 		let maxRow = 6 + $.dice(Z / 32 + 1)
-		while (maxRow < 10 && $.dice($.online.cha / (4 * ($.player.backstab + 1))) == 1)
+		while (maxRow < 10 && $.dice($.online.cha / 10 >>0) == 1)
 			maxRow++
 		let maxCol = 6 + $.dice(Z / 16 + 1)
-		while (maxCol < 13 && $.dice($.online.cha / (4 * ($.player.backstab + 1))) == 1)
+		while (maxCol < 13 && $.dice($.online.cha / 10 >>0) == 1)
 			maxCol++
 
 		dd[deep][Z] = <ddd>{
- 			cleric: { user:{ id:'_Clr', handle:'old cleric', pc:'Cleric', level:99, sex:'M', weapon:0, armor:0, magic:3, spells:[7,8,13] } },
+			 cleric: { user:{ id:'_Clr', handle:'old cleric', pc:'Cleric', level:99
+			 	, sex:'M', weapon:0, armor:0, magic:3, spells:[7,8,13] } },
  			rooms: new Array(maxRow),
 			map: 0,
 			moves: 0,
-			spawn: maxCol + ($.online.cha / 10) >>0,
+			spawn: Math.trunc($.online.cha / 10) + $.dice($.online.cha / 10) + 3,
 			width: maxCol
 		}
 
