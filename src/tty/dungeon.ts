@@ -1642,7 +1642,7 @@ function generateLevel() {
  			rooms: new Array(maxRow),
 			map: 0,
 			moves: -1,
-			spawn: maxCol + 10,
+			spawn: maxCol + ($.online.cha / 10) >>0,
 			width: maxCol
 		}
 
