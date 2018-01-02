@@ -441,8 +441,11 @@ function doMove(): boolean {
 		if ($.online.int > 49)
 			ROOM.map = true
 	}
-	else
+	else {
 		DL.moves++	//	backtracking
+		if (DL.spawn > 2 && !(DL.moves % DL.width))
+			DL.spawn--
+	}
 
 	//	nothing special in here, done
 	if (!ROOM.occupant && !ROOM.monster.length && !ROOM.giftItem)
