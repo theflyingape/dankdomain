@@ -338,7 +338,7 @@ function command() {
 		DL.moves++
 		//	old cleric mana recovery
 		if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
-			if (DL.spawn > 2 && DL.moves % DL.width == DL.width)
+			if (DL.spawn > 2 && !(DL.moves % DL.width))
 				DL.spawn--
 			else
 				DL.cleric.sp += 10 * $.dice(deep) + $.dice(Z >>1)
@@ -1641,7 +1641,7 @@ function generateLevel() {
  			cleric: { user:{ id:'_Clr', handle:'old cleric', pc:'Cleric', level:99, sex:'M', weapon:0, armor:0, magic:3, spells:[7,8,13] } },
  			rooms: new Array(maxRow),
 			map: 0,
-			moves: -1,
+			moves: 0,
 			spawn: maxCol + ($.online.cha / 10) >>0,
 			width: maxCol
 		}
