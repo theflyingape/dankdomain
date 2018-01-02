@@ -211,10 +211,14 @@ function choice() {
                     break
                 default:
                     $.brawl = 0
+                    $.action('clear')
+                    $.music('.')
                     xvt.out('jest, \"What you looking at, wart-face!\"')
                     xvt.waste(1200)
                     xvt.out('\nUh, oh!')
                     $.sound('oops', 8)
+                    $.profile({ jpg:'npc/barkeep'
+                        , handle:$.barkeep.user.handle, level:$.barkeep.user.level, pc:$.barkeep.user.pc })
                     xvt.out('  Here comes Tiny!')
                     $.sound('challenge', 12)
                     xvt.out('  And he doesn\'t look friendly...\n\n')

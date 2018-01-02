@@ -31,6 +31,7 @@ module Battle
 function end() {
     if (from === 'Tavern')
         if ($.online.hp < 1) {
+            $.reason = `schooled by ${$.barkeep.user.handle}`
             $.loadUser($.barkeep)
             $.barkeep.user.status = $.player.id
             $.barkeep.user.weapon = $.player.weapon
@@ -39,12 +40,11 @@ function end() {
 
             xvt.out(`He picks up your ${$.barkeep.user.weapon} and triumphantly waves it around to\n`)
             xvt.out(`the cheering crowd.  He struts toward the mantelpiece to hang his new trophy.\n\n`)
-            $.sound('cheer', 13)
+            $.sound('cheer', 40)
             xvt.out(xvt.bright, xvt.green, '"Drinks are on the house!"'
                 , xvt.reset, '\n')
-            $.sound('cheer', 7)
+            $.sound('cheer', 30)
             $.player.coward = false
-            $.reason = `schooled by ${$.barkeep.user.handle}`
         }
         else {
             $.player.coward = false
