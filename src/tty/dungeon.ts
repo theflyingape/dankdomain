@@ -151,7 +151,7 @@ export function menu(suppress = false) {
 			x = $.dice(DL.width) - 1
 	}
 	ROOM = DL.rooms[y][x]
-	if (DL.spawn * $.dice((ROOM.type == 0 ? 2 : ROOM.type == 3 ? 1 : 4)) == 1) {
+	if ($.dice(DL.spawn * (ROOM.type == 0 ? 2 : ROOM.type == 3 ? 1 : 4)) == 1) {
 		xvt.plot($.player.rows, 1)
 		xvt.out(xvt.reset, '\n', xvt.faint, ['Your skin crawls'
 			, 'Your pulse quickens', 'You feel paranoid', 'Your grip tightens'
