@@ -266,6 +266,8 @@ export function attack(retry = false) {
                     )
                     if ($.online.confused)
                         $.activate($.online, false, true)
+                    if (from === 'Party' && $.player.gang)
+                        $.sqlite3.exec(`UPDATE Gangs SET loss = loss + 1 WHERE name = '${$.player.gang}'`)
                     if (from === 'User' && enemy.user.gender !== 'I')
                         $.log(enemy.user.id, `\n${$.player.handle}, the coward, retreated from you.`)
                     end()

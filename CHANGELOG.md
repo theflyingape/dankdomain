@@ -1,6 +1,12 @@
 # [Dank Domain](https://robert.hurst-ri.us/games/dankdomain)
 ### the return of Hack & Slash
 > [developed](https://github.com/theflyingape/dankdomain) using Node.js on Linux served up using Verizon FiOS 100mb
+#### 02-Jan-2017
+* 0.9.16 release, Happy New Year!
+* dungeon: old cleric is an active PC, fairies, monster action words
+* tavern: barkeep and brawling
+* list of deeds: champions and heroes
+* generally improved fairness and code maturity
 #### 19-Dec-2017
 * live 0.9.6 release, Merry Christmas!
 * Keno
