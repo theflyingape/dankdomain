@@ -130,12 +130,11 @@ function edit() {
 
 	let words = $.player.handle.split(' ')
 	if (words.length > 1) {
-		for (var i = 0; i < words.length; i++)
+		for (let i = 0; i < words.length && $.player.id.length < 3; i++)
 			$.player.id += words[i][0].toUpperCase()
 	}
-	else {
+	else
 		$.player.id = $.player.handle.slice(0, 3).toUpperCase()
-	}
 
 	let check: user = { id:$.player.id, handle:'' }
 	let retry: number = 1
