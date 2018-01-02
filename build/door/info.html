@@ -52,7 +52,7 @@ best = `<input class="tall" type="button" value=" BEST " onclick="send('=', true
 clear = `<input class="wide" type="button" value="Clear" onclick="send('\x15');">`;
 enter = `<input class="wide" type="button" value="Enter" onclick="send('', true);">`;
 logoff = `<input type="button" value="LOGOFF" onclick="send('\x1A');">`;
-max = `<input class="wide" type="button" value=" MAX " onclick="send('=', true);">`
+max = `<input class="wide" type="button" value=" MAX " onclick="send('MAX', true);">`
 quit = `<input class="wide" type="button" value="Quit" onclick="send('Q');">`;
 keypad = `<table align="center">
 <tr><td><input class="numeric" type="button" value="7" onclick="send('7');"></td><td><input class="numeric" type="button" value="8" onclick="send('8');"></td><td><input class="numeric" type="button" value="9" onclick="send('9');"></td>
@@ -87,7 +87,7 @@ money = `<table align="center">
 </tr>
 <tr><td colspan=2>${enter}</td><td><input class="numeric" type="button" value=" 0 " onclick="send('0');"></td><td><input class="copper" type="button" value="C" onclick="send('c');"></td>
 </tr>
-<tr><td colspan=2>${clear}</td><td colspan=2><input class="wide" type="button" value=" MAX " onclick="send('=', true);"></td>
+<tr><td colspan=2>${clear}</td><td colspan=2>${max}</td>
 </tr>
 </table>`;
 
