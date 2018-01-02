@@ -329,13 +329,6 @@ function choice() {
 					return
 				}
 
-				if ($.lock(opponent.user.id, false)) {
-					$.beep()
-					xvt.out(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
-					menu()
-					return
-				}
-
 				if (isNaN(+opponent.user.weapon)) xvt.out('\n', $.who(opponent, 'He'), $.Weapon.wearing(opponent), '.\n')
 				if (isNaN(+opponent.user.armor)) xvt.out('\n', $.who(opponent, 'He'), $.Armor.wearing(opponent), '.\n')
 
@@ -343,6 +336,11 @@ function choice() {
 				xvt.app.form = {
 					'fight': { cb:() => {
 						xvt.out('\n\n')
+						if ($.lock(opponent.user.id, false)) {
+							$.beep()
+							xvt.out(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
+							xvt.entry = ''
+						}
 						if (/Y/i.test(xvt.entry)) {
 							if ($.activate(opponent, true)) {
 								$.music('combat' + $.arena--)

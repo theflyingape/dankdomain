@@ -129,22 +129,6 @@ interface choices {
     [key: string]: choice
 }
 
-interface entry {
-    type: string
-    default?: number|string
-    min?: number
-    max?: number
-    nl?: boolean
-    other?: string
-    prompt?: string
-}
-
-interface dungeon {
-    name: string
-    pc: string
-    spells?: string[]
-}
-
 interface monster {
 	name: string
     pc: string
@@ -205,7 +189,8 @@ interface ddd {
     cleric: active
     rooms: [ room[] ]	//	7-10
     map: number			//	0=none, 1=map, 2=magic, 3=Marauder's
-    moves: number
+    moves: number       //  hero steps (2x backtracking)
+    spawn: number       //  2-23
     width: number		//	7-13
 }
 
@@ -298,17 +283,6 @@ interface active {
     hp?: number         //  <0=retreated, 0=killed, >0=alive
     sp?: number
     hull?: number
-}
-
-interface track {
-  	calls: number
-	jl: number
-	jw: number
-	killed: number
-	kills: number
-	retreats: number
-	tl: number
-	tw: number
 }
 
 /*

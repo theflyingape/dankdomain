@@ -305,6 +305,11 @@ function choice() {
 				xvt.app.form = {
 					'brawl': { cb:() => {
 						xvt.out('\n')
+						if ($.lock(opponent.user.id, false)) {
+							$.beep()
+							xvt.out(`\n${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
+							xvt.entry = ''
+						}
 						if (/Y/i.test(xvt.entry)) {
                             $.brawl--
                             if (($.online.dex / 2 + $.dice($.online.dex / 2)) > (opponent.dex / 2 + $.dice(opponent.dex / 2))) {
