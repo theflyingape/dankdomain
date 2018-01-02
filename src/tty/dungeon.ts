@@ -218,10 +218,11 @@ export function menu(suppress = false) {
 	$.action('dungeon')
 	drawHero()
 
-	x = $.online.cha * $.online.int / 10 + $.online.dex / (deep + 1)
+	x = $.online.cha * $.online.int / 10 + $.online.dex / (deep + 1) - DL.moves + deep
 	if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
 		x /= $.player.level
-	if ($.dice(x + deep) == 1) {
+	if (x < 5) x = 5
+	if ($.dice(x) == 1) {
 		switch ($.dice(5)) {
 			case 1:
 				xvt.out(xvt.faint, 'A bat flies by and soils your ', xvt.normal)
@@ -335,6 +336,8 @@ function command() {
     if (xvt.validator.isNotEmpty(crawling[choice])) {
 		xvt.out(crawling[choice].description)
 		DL.moves++
+		if (DL.spawn > 2 && DL.moves % DL.width == DL.width)
+			DL.spawn--
 		//	old cleric mana recovery
 		if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
 			DL.cleric.sp += 10 * $.dice(deep) + $.dice(Z >>1)
@@ -438,7 +441,7 @@ function doMove(): boolean {
 			ROOM.map = true
 	}
 	else
-		DL.moves++
+		DL.moves++	//	backtracking
 
 	//	nothing special in here, done
 	if (!ROOM.occupant && !ROOM.monster.length && !ROOM.giftItem)
@@ -557,18 +560,22 @@ function doMove(): boolean {
 				}
 			}
 			else {
-				xvt.out(xvt.bright, xvt.cyan, 'A fairie flies by.\n')
 				ROOM.occupant = 0
-				$.sound('heal')
-				for (let i = 0; i <= Z; i++)
-					$.online.hp += $.dice(DL.cleric.user.level >>3) + $.dice((Z >>3) + (deep >>2))
-				if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
-				for (let i = 0; i <= Z; i++)
-					$.online.sp += $.dice(DL.cleric.user.level >>3) + $.dice((Z >>3) + (deep >>2))
-				if ($.online.sp > $.player.sp) $.online.sp = $.player.sp
-				if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
-					DL.cleric.sp += $.Magic.power(DL.cleric, 7)
-					if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
+				if ($.dice(100 + deep) >= $.online.cha)
+					xvt.out(xvt.bright, xvt.cyan, 'A fairie flies by you.\n')
+				else {
+					xvt.out(xvt.bright, xvt.cyan, 'A fairie brushes by you.\n')
+					$.sound('heal')
+					for (let i = 0; i <= Z; i++)
+						$.online.hp += $.dice(DL.cleric.user.level >>3) + $.dice((Z >>3) + (deep >>2))
+					if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
+					for (let i = 0; i <= Z; i++)
+						$.online.sp += $.dice(DL.cleric.user.level >>3) + $.dice((Z >>3) + (deep >>2))
+					if ($.online.sp > $.player.sp) $.online.sp = $.player.sp
+					if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
+						DL.cleric.sp += $.Magic.power(DL.cleric, 7)
+						if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
+					}
 				}
 			}
 			break
