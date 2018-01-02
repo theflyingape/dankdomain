@@ -1641,7 +1641,7 @@ function generateLevel() {
  			rooms: new Array(maxRow),
 			map: 0,
 			moves: -1,
-			spawn: DL.width + 10,
+			spawn: maxCol + 10,
 			width: maxCol
 		}
 
