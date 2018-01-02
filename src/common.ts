@@ -187,7 +187,7 @@ export class Character {
 
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
             xvt.out(' Immortal: ', xvt.white)
-            xvt.out(sprintf('%-20s', profile.user.immortal + '.' + profile.user.level))
+            xvt.out(sprintf('%-20s', profile.user.immortal + '.' + profile.user.level + ` (${profile.user.calls})`))
             xvt.out(xvt.cyan, ' Need: ', xvt.white)
             if (experience(profile.user.level, undefined, profile.user.int) < 1e+8)
                 xvt.out(sprintf('%-15f', experience(profile.user.level, undefined, profile.user.int)))
@@ -316,8 +316,13 @@ export class Character {
             }
 
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+            xvt.out(' Brawling: ', xvt.white)
+            xvt.out(sprintf('%-42s', profile.user.tw + ':' + profile.user.tl))
+            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
             xvt.out(' Jousting: ', xvt.white)
-            xvt.out(sprintf('%-20s', this.jousting(profile) + ' (' + profile.user.jw + ':' + profile.user.jl + ')'))
+            xvt.out(sprintf('%-20s', profile.user.jw + ':' + profile.user.jl + ` (${this.jousting(profile)})`))
             xvt.out(xvt.cyan, 'Plays: ', xvt.white)
             xvt.out(sprintf('%-15s', profile.user.plays))
             xvt.out(' ', xvt.reset, xvt.blue, '|\n')
