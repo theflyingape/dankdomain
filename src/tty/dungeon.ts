@@ -493,7 +493,10 @@ function doMove(): boolean {
 			xvt.out(xvt.reset, '\nIt\'s', $.an(ROOM.monster[n].user.handle), '... ')
 			xvt.waste(500)
 			if ($.player.novice || ($.dice(Z / 5 + 5) * (101 - $.online.cha + deep) > 1)) {
-				xvt.out('and it doesn\'t look friendly.\n')
+				if (ROOM.monster[n].user.xplevel > 0)
+					xvt.out('and it doesn\'t look friendly.\n')
+				else
+					xvt.out('and it looks harmless.\n')
 				xvt.waste(300)
 				if (isNaN(+ROOM.monster[n].user.weapon)) xvt.out('\n', $.who(ROOM.monster[n], 'He'), $.Weapon.wearing(ROOM.monster[n]), '.\n')
 				if (isNaN(+ROOM.monster[n].user.armor)) xvt.out('\n', $.who(ROOM.monster[n], 'He'), $.Armor.wearing(ROOM.monster[n]), '.\n')

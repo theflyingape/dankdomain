@@ -91,8 +91,9 @@ export class Armor {
 
         //  swap
         [winner.armor, loser.armor] = [loser.armor, winner.armor];
+        [winner.toAC, loser.toAC] = [loser.toAC, winner.toAC];
         [winner.user.armor, loser.user.armor] = [loser.user.armor, winner.user.armor];
-        [winner.user.toAC, loser.user.toAC] = [loser.user.toAC, winner.user.toAC]
+        [winner.user.toAC, loser.user.toAC] = [loser.user.toAC, winner.user.toAC];
         if (loser.user.id) {
             winner.toAC = 0
             if (winner.user.toAC > 0)
@@ -336,6 +337,7 @@ export class Weapon {
 
         //  swap
         [winner.weapon, loser.weapon] = [loser.weapon, winner.weapon];
+        [winner.toWC, loser.toWC] = [loser.toWC, winner.toWC];
         [winner.user.weapon, loser.user.weapon] = [loser.user.weapon, winner.user.weapon];
         [winner.user.toWC, loser.user.toWC] = [loser.user.toWC, winner.user.toWC];
         if (loser.user.id) {

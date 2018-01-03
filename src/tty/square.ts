@@ -225,7 +225,9 @@ function choice() {
 					return
 				}, max:5 }
 			}
-			xvt.app.form['hp'].prompt = xvt.attr('How many do you want [', xvt.bright, xvt.white, xvt.uline, 'MAX', xvt.reset, '=', hi.toString(), xvt.cyan, ']? ')
+			xvt.app.form['hp'].prompt = xvt.attr('How many do you want ['
+				, xvt.white, xvt.uline, 'MAX', xvt.nouline, '=', xvt.bright, hi.toString()
+				, xvt.normal, xvt.cyan, ']? ')
 			xvt.app.focus = 'hp'
 			return
 
@@ -848,6 +850,7 @@ function buyall() {
 						|| ($.online.armor.ac == $.Armor.name[$.Armor.merchant[item]].ac
 						&& ($.online.toAC < 0 || $.player.toAC < 0))) {
 							xvt.entry = item.toString()
+							xvt.out(' ', xvt.entry)
 							buy()
 							return
 					}
@@ -877,6 +880,7 @@ function buyall() {
 				if ($.player.coin.value + credit.value >= cost.value) {
 					if ($.RealEstate.name[$.RealEstate.merchant[item]].protection > $.RealEstate.name[$.player.realestate].protection) {
 						xvt.entry = item.toString()
+						xvt.out(' ', xvt.entry)
 						buy()
 						return
 					}
@@ -890,6 +894,7 @@ function buyall() {
 				if ($.player.coin.value + credit.value >= cost.value) {
 					if ($.Security.name[$.Security.merchant[item]].protection > $.Security.name[$.player.security].protection) {
 						xvt.entry = item.toString()
+						xvt.out(' ', xvt.entry)
 						buy()
 						return
 					}
@@ -921,6 +926,7 @@ function buyall() {
 						|| ($.online.weapon.wc == $.Weapon.name[$.Weapon.merchant[item]].wc
 						&& ($.online.toWC < 0 || $.player.toWC < 0))) {
 							xvt.entry = item.toString()
+							xvt.out(' ', xvt.entry)
 							buy()
 							return
 					}
