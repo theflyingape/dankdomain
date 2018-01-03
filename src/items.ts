@@ -93,12 +93,16 @@ export class Armor {
         [winner.armor, loser.armor] = [loser.armor, winner.armor];
         [winner.user.armor, loser.user.armor] = [loser.user.armor, winner.user.armor];
         [winner.user.toAC, loser.user.toAC] = [loser.user.toAC, winner.user.toAC]
-        winner.toAC = 0
-        if (winner.user.toAC > 0)
-            winner.user.toAC >>= 1
-        loser.toAC = 0
-        if (loser.user.toAC > 0)
-            loser.user.toAC >>= 1
+        if (loser.user.id) {
+            winner.toAC = 0
+            if (winner.user.toAC > 0)
+                winner.user.toAC >>= 1
+        }
+        if (winner.user.id) {
+            loser.toAC = 0
+            if (loser.user.toAC > 0)
+                loser.user.toAC >>= 1
+        }
         winner.altered = true
         loser.altered = true
         return true
@@ -334,12 +338,16 @@ export class Weapon {
         [winner.weapon, loser.weapon] = [loser.weapon, winner.weapon];
         [winner.user.weapon, loser.user.weapon] = [loser.user.weapon, winner.user.weapon];
         [winner.user.toWC, loser.user.toWC] = [loser.user.toWC, winner.user.toWC];
-        winner.toWC = 0
-        if (winner.user.toWC > 0)
-            winner.user.toWC >>= 1
-        loser.toWC = 0
-        if (loser.user.toWC > 0)
-            loser.user.toWC >>= 1
+        if (loser.user.id) {
+            winner.toWC = 0
+            if (winner.user.toWC > 0)
+                winner.user.toWC >>= 1
+        }
+        if (winner.user.id) {
+            loser.toWC = 0
+            if (loser.user.toWC > 0)
+                loser.user.toWC >>= 1
+        }
         winner.altered = true
         loser.altered = true
         return true

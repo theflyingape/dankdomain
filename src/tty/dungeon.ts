@@ -524,7 +524,7 @@ function doMove(): boolean {
 			if ($.dice(100 - Z) > 1) {
 				xvt.out('You have stepped onto a trapdoor!\n\n')
 				xvt.waste(300)
-				let u = ($.dice(150 - 12 * $.player.backstab + deep) < $.online.dex)
+				let u = ($.dice(128 + deep - ($.player.backstab <<1) - ($.player.steal <<2) - DL.map) < $.online.dex)
 				for (let m = party.length - 1; m > 0; m--) {
 					if ($.dice(120) < party[m].dex)
 						xvt.out(xvt.reset, $.titlecase(party[m].user.handle), ' manages to catch the edge and stop from falling.\n')
@@ -1642,13 +1642,14 @@ function generateLevel() {
 			maxCol++
 
 		dd[deep][Z] = <ddd>{
-			 cleric: { user:{ id:'_Clr', handle:'old cleric', pc:'Cleric', level:99
-			 	, sex:'M', weapon:0, armor:0, magic:3, spells:[7,8,13] } },
- 			rooms: new Array(maxRow),
-			map: 0,
-			moves: 0,
-			spawn: Math.trunc($.online.cha / 10) + $.dice($.online.cha / 10) + 3,
-			width: maxCol
+			cleric:	{ user:{ id:'_Clr', handle:'old cleric', pc:'Cleric', level:99
+			 		, sex:'M', weapon:0, armor:0, magic:3, spells:[7,8,13] } },
+ 			rooms:	new Array(maxRow),
+			map:	0,
+			moves:	0,
+			spawn:	Math.trunc(deep / 3 + Z / 9 + maxRow / 3)
+					+ $.dice(Math.round($.online.cha / 20)) + 2,
+			width:	maxCol
 		}
 
 		DL = dd[deep][Z]
@@ -1721,7 +1722,7 @@ function generateLevel() {
 		}
 
 		//	deep dank dungeon portal
-		if (deep < 9 && Z < $.player.immortal) {
+		if (deep < 9 && deep < $.player.immortal && Z / 9 < $.player.immortal) {
 			y = $.dice(DL.rooms.length) - 1
 			x = $.dice(DL.width) - 1
 			DL.rooms[y][x].occupant = 2
