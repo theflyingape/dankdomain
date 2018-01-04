@@ -15,9 +15,9 @@ function newSession() {
   if (reconnect) clearInterval(reconnect);
   tune('dankdomain');
   window.frames['Info'].postMessage({ 'func':'Logon' }, location.href);
-  
+
   term = new Terminal({ cursorBlink:false, rows:rows, cols:cols, enableBold:true, scrollback:10 * rows,
-    fontFamily:'monospace', fontSize:fontSize, theme: {
+    fontFamily:'Consolas,monospace', fontSize:fontSize, theme: {
     foreground:'#c1c2c8', background:'#010208',
     black:'#000000', red:'#a00000', green:'#00a000', yellow:'#c8a000',
     blue:'#0000a0', magenta:'#a000a0', cyan:'#00a0a0', white:'#c8c8c8',

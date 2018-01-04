@@ -427,7 +427,7 @@ export function attack(retry = false) {
             if (!rpc.confused || !mm) {
                 if ($.Magic.have(rpc.user.spells, 13)
                     && rpc.sp >= $.Magic.power(rpc, 13)
-                    && rpc.hp < (rpc.user.hp / 6))
+                    && rpc.hp < (rpc.user.hp / 5))
                         mm = 13
                 else if ($.Magic.have(rpc.user.spells, 8)
                     && rpc.sp >= $.Magic.power(rpc, 8)
@@ -439,7 +439,7 @@ export function attack(retry = false) {
                     && rpc.hp < (rpc.user.hp >>1)
                     && ($.dice(enemy.user.melee + 2) == 1 || rpc.sp < $.Magic.power(rpc, 8)))
                         mm = 7
-                else if ($.Magic.have(rpc.user.spells, 9)
+                else if (!rpc.confused && $.Magic.have(rpc.user.spells, 9)
                     && rpc.sp >= $.Magic.power(rpc, 9)
                     && $.dice(enemy.user.melee + 2) > 1)
                         mm = 9
@@ -1727,7 +1727,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             }
             else {
                 $.sound('shield')
-                xvt.out('A magical field glitters around ', isNaN(+rpc.user.armor) ? $.who(rpc, 'his') + rpc.user.armor : $.who(rpc, 'him'), '.\n')
+                xvt.out('A magical field glitters around ', isNaN(+rpc.user.armor) ? $.who(rpc, 'his') + rpc.user.armor : $.who(rpc, 'him') + '\x08', '.\n')
                 if (rpc.user.magic > 2 && rpc.user.toAC >= 0)
                     rpc.user.toAC++
                 rpc.toAC += $.dice(rpc.armor.ac)
