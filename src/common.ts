@@ -971,8 +971,7 @@ export function date2str(days: number): string {
 }
 
 export function dice(faces: number): number {
-    faces = faces < 1 ? 1 : faces >>0
-    return Math.trunc(Math.random() * faces) + 1
+    return int(Math.random() * int(faces, true)) + 1
 }
 
 export function experience(level: number, factor = 1, wisdom = 1000): number {
@@ -1033,6 +1032,24 @@ export function keyhint(rpc: active) {
         xvt.out(xvt.reset, 'There are no more key hints available to you.\n')
 
     rpc.altered = true
+}
+
+//  normalize as an integer, optional as a whole number (non-negative)
+export function int(n: number|string, whole = false): number {
+    let i: number
+
+    if (isNaN(+n))
+        i = 0
+    else {
+        if (n < 1e+20) {
+            if (whole && n < 0) n = 0
+            i = parseInt(n.toString())
+        }
+        else
+            i = Math.trunc(parseFloat(n.toString()))
+    }
+
+    return i
 }
 
 export function log(who:string, message: string) {
@@ -1097,8 +1114,8 @@ export function playerPC(points = 200, immortal = false) {
         xvt.out('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.')
         show()
         activate(online)
-        news(`\trerolled as a ${player.pc}`)
-        wall(`reroll as a ${player.pc}`)
+        news(`\trerolled as${an(player.pc)}`)
+        wall(`reroll as${an(player.pc)}`)
         require('./tty/main').menu(true)
         return
     }
@@ -1633,7 +1650,7 @@ export function riddle() {
                             break
                         }
                     reroll(player)
-                    playerPC(200 + 4 * player.wins + (player.immortal >>2))
+                    playerPC(200 + 4 * player.wins + int(player.immortal / 4))
                 }
                 else {
                     reroll(player, player.pc)
@@ -2327,9 +2344,9 @@ export function loadGang(rs: any): gang {
         validated: [],
         win: rs.win,
         loss: rs.loss,
-        banner: rs.banner >>4,
+        banner: int(rs.banner / 16),
         trim: rs.banner % 8,
-        back: rs.color >>4,
+        back: int(rs.color / 16),
         fore: rs.color % 8
     }
 
