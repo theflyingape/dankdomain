@@ -108,7 +108,10 @@ export function menu(suppress = false) {
 			return
 		}
 	if ($.online.altered) $.saveUser($.player)
-	if ($.reason) xvt.hangup()
+	if ($.reason) {
+		if (deep) $.reason += ' (' + ['I','II','III','IV','V','VI','VII','VIII','IX','X'][deep] + ')'
+		xvt.hangup()
+	}
 
 //	did player cast teleport?
 	if (!Battle.retreat && Battle.teleported) {
