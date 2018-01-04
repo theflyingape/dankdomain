@@ -12,6 +12,7 @@ import xvt = require('xvt')
 
 module Dungeon
 {
+	const iii = ['I','II','III','IV','V','VI','VII','VIII','IX','X']
 	const monsters: monster = require('../etc/dungeon.json')
 	const potion = [
 		'Vial of Slaad Secretions',
@@ -108,10 +109,7 @@ export function menu(suppress = false) {
 			return
 		}
 	if ($.online.altered) $.saveUser($.player)
-	if ($.reason) {
-		if (deep) $.reason += ' (' + ['I','II','III','IV','V','VI','VII','VIII','IX','X'][deep] + ')'
-		xvt.hangup()
-	}
+	if ($.reason) xvt.hangup()
 
 //	did player cast teleport?
 	if (!Battle.retreat && Battle.teleported) {
@@ -1318,7 +1316,10 @@ function doMove(): boolean {
 }
 
 export function doSpoils() {
-	if ($.reason) xvt.hangup()
+	if ($.reason) {
+		if (deep) $.reason += ` (${iii[deep]})`
+		xvt.hangup()
+	}
 	pause = false
 
 	//	remove any dead carcass, displace teleported creatures
@@ -1635,7 +1636,7 @@ function generateLevel() {
 		return
 	}
 
-	$.wall(`is entering dungeon level ${deep + 1}.${Z + 1}`)
+	$.wall(`is entering dungeon level ${iii[deep]}.${Z + 1}`)
 
 	let y:number, x:number
 	let result: boolean
@@ -2186,7 +2187,7 @@ export function teleport() {
 			menu()
 		}, cancel:'O', enter:'R', eol:false, match:/U|D|O|R/i }
 	}
-	xvt.app.form['wizard'].prompt = `Teleport #${deep + 1}.${Z + 1}: `
+	xvt.app.form['wizard'].prompt = `Teleport #${iii[deep]}.${Z + 1}: `
 	xvt.app.focus = 'wizard'
 }
 
