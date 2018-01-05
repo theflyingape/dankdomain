@@ -19,6 +19,7 @@ module Hall
 	}
 
 export function menu(suppress = false) {
+    $.action('deeds')
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }

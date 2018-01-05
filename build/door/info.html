@@ -207,6 +207,7 @@ function rotateImage() {
 }
 
 function send(keystrokes, cr = false, et = 'emit') {
+  window.focus();
   window.parent.postMessage({ 'func':et, 'message':keystrokes, 'return':cr }, location.href);
 }
 
@@ -323,11 +324,12 @@ ${quit}`);
 }
 
 function deeds() {
-  nme('');
-  cmd(`<p><input type="button" value="Fame" onclick="send('F');">
+  cmd(`<p><input type="button" value="Champions" onclick="send('C');">
+  <input type="button" value="Heroes" onclick="send('H');">
   <input type="button" value="Memorable" onclick="send('M');">
   <input type="button" value="Winners" onclick="send('W');"></p>
   ${quit}`);
+  nme(`<img src="images/heroes.jpg" onload="nmeResize();">`);
 }
 
 function dungeon() {

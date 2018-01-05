@@ -98,7 +98,7 @@ function newSession() {
           carrier = true;
           //window.frames['Info'].postMessage({ 'func':'Logon' }, location.href);
           resize();
-          
+
           term.socket = socket;
           term.focus();
           if (!term.getOption('cursorBlink'))

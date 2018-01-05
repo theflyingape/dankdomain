@@ -57,6 +57,7 @@ function receive(event) {
   if (event.data) {
     switch(event.data.func) {
       case 'kb':
+        term.focus();
       case 'emit':
         if (!carrier) {
           term.write('\x1Bc');
@@ -80,10 +81,7 @@ function receive(event) {
             socket.send('\x0D');
         }
         break;
-
-    if (event.data.func === 'kb')
-        term.focus();
-    }
+      }
   }
 }
 

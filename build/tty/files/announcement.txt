@@ -1,14 +1,9 @@
-[22;36mDate:[22;37m Mon 01-Jan-2018  7:45am
+[22;36mDate:[22;37m Fri 05-Jan-2018  3:45pm
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
-Happy New Year!
-
 New announcements as missing features get implemented or tweaked:
-- Terminal input handling optimized for latency and type-ahead
-- Tavern brawling is available
-- New boss encounters: Dungeon Thief and the Tavern barkeep
-- List of Deeds: Class Champions, Hall of Heroes, more
-- Arena battle versus a fellow gang member can challenge for leadership
-- Dungeon Cleric is an active NPC -- may offer Heal or Cure spell
+- Dungeon tiles coded better as a "heat map" for monster spawning
+- Browser input & display improvements(?)
+- Tavern brawling is available with imposed knock-out minute(s)
 
 Happy hunting!
