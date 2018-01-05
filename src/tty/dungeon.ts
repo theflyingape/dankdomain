@@ -1208,25 +1208,28 @@ function doMove(): boolean {
 			gold.value *= ROOM.giftValue
 			gold = new $.coins(gold.carry(1, true))
 			if (gold.value) {
-				xvt.out(xvt.bright, xvt.yellow, 'You find a treasure chest holding '
-					, gold.carry(), '!\n', xvt.reset)
+				xvt.out(xvt.yellow, 'You find a ', xvt.bright, 'treasure chest'
+					, xvt.normal, ' holding ', gold.carry(), '!'
+					, xvt.reset, '\n')
 				$.sound('max')
 			}
 			else {
-				xvt.out(xvt.yellow, 'You find an empty, treasure chest.\n', xvt.reset)
+				xvt.out(xvt.faint, xvt.yellow, 'You find an empty, treasure chest.\n', xvt.reset)
 				$.sound('boo')
 			}
 			$.player.coin.value += gold.value
+			pause = true
 			ROOM.giftItem = ''
 			break
 
 		case 'magic':
 			if (!$.Magic.have($.player.spells, ROOM.giftValue)) {
 				xvt.out(xvt.bright, xvt.yellow, 'You find a '
-					, $.Magic.merchant[ROOM.giftValue - 1]
-					, ' ', $.player.magic == 1 ? 'wand' : 'scroll'
-					, '!\n', xvt.reset)
+					, xvt.cyan, $.Magic.merchant[ROOM.giftValue - 1], xvt.yellow
+					, ' ', $.player.magic == 1 ? 'wand' : 'scroll', '!'
+					, xvt.reset, '\n')
 				$.Magic.add($.player.spells, ROOM.giftValue)
+				pause = true
 				ROOM.giftItem = ''
 			}
 			break
@@ -1244,6 +1247,7 @@ function doMove(): boolean {
 				xvt.out(xvt.bright, xvt.yellow, 'You find a vial of '
 					, $.Poison.merchant[ROOM.giftValue - 1], '!\n', xvt.reset)
 				$.Poison.add($.player.poisons, ROOM.giftValue)
+				pause = true
 				ROOM.giftItem = ''
 			}
 			break
@@ -1303,10 +1307,11 @@ function doMove(): boolean {
 		case 'xmagic':
 			if (!$.Magic.have($.player.spells, ROOM.giftValue)) {
 				xvt.out(xvt.bright, xvt.yellow, 'You find a '
-					, $.Magic.special[ROOM.giftValue - $.Magic.merchant.length - 1]
-					, ' ', $.player.magic == 1 ? 'wand' : 'scroll'
-					, '!\n', xvt.reset)
+					, xvt.magenta, $.Magic.special[ROOM.giftValue - $.Magic.merchant.length - 1], xvt.yellow
+					, ' ', $.player.magic == 1 ? 'wand' : 'scroll', '!'
+					, xvt.reset, '\n')
 				$.Magic.add($.player.spells, ROOM.giftValue)
+				pause = true
 				ROOM.giftItem = ''
 			}
 			break
@@ -1524,11 +1529,6 @@ function drawLevel() {
 
 	xvt.out(`\x1B[${paper.length + 1};${$.player.rows}r`)
 	xvt.plot(paper.length + 1, 1)
-/*	for (y = 0; y < DL.rooms.length; y++)
-		for (x = 0; x < DL.width; x++)
-			if (DL.rooms[y][x].giftItem)
-				console.log('[', y, ',', x, ']', DL.rooms[y][x].giftItem, DL.rooms[y][x].giftValue)
-*/
 }
 
 function drawRoom(r:number, c:number) {
@@ -1632,7 +1632,6 @@ function generateLevel() {
 		Y = $.dice(DL.rooms.length) - 1
 		X = $.dice(DL.width) - 1
 		ROOM = DL.rooms[Y][X]
-		DL.moves += DL.width
 		return
 	}
 
@@ -2077,7 +2076,7 @@ function putMonster(r = -1, c = -1): boolean {
 			m.user.armor = dm.armor
 		else {
 			m.user.armor = $.int((level + deep) / 100 * ($.Armor.merchant.length - 4))
-			m.user.armor = $.int(m.user.armor + $.online.armor.ac) / 2)
+			m.user.armor = $.int((m.user.armor + $.online.armor.ac) / 2)
 			if ($.dice($.player.level / 3 - $.online.cha / 10 + 12) == 1) {
 				i = $.online.armor.ac + $.dice(3) - 2
 				i = i < 1 ? 1 : i >= $.Armor.merchant.length ? $.Armor.merchant.length - 1 : i
@@ -2152,7 +2151,7 @@ export function teleport() {
 	xvt.out(xvt.cyan, '\n\nTime Left: ', xvt.bright, xvt.white, min.toString(), xvt.normal, xvt.cyan, ' min.', xvt.reset)
 	if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry())
 	if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
-		xvt.out(xvt.faint, '\nThe feeling of insecurity overwhelms you.', xvt.reset)
+		xvt.out(xvt.faint, '\nThe feeling of in', xvt.normal, 'security', xvt.faint, ' overwhelms you.', xvt.reset)
 
 	$.action('teleport')
 	xvt.app.form = {

@@ -836,12 +836,14 @@ export function brawl(rpc:active, nme:active) {
         $.saveUser(loser)
         if (loser.user.id === $.player.id) {
             let m = Math.abs($.online.bp)
-            while (m > 10)
+            while (m > 9)
                 m >>= 1
-            xvt.out(`\nYou are unconscious for ${m} minute`, m != 1 ? 's' : '', '.')
+            m++
+            xvt.sessionAllowed = $.int(xvt.sessionAllowed - 60 * m, true) + 60
+            xvt.out(`\nYou are unconscious for ${m} minute`, m != 1 ? 's' : '')
             while (m--) {
                 xvt.out('.')
-                xvt.waste(600)
+                xvt.waste(400)
             }
             xvt.out('\n')
             $.news(`\tgot knocked out by ${winner.user.handle}`)
