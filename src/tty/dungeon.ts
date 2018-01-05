@@ -2076,7 +2076,7 @@ function putMonster(r = -1, c = -1): boolean {
 		else {
 			m.user.weapon = $.int((level + deep) / 100 * ($.Weapon.merchant.length - 7))
 			m.user.weapon = $.int((m.user.weapon + $.online.weapon.wc) / 2)
-			if ($.player.level < Z && $.dice($.player.level / 4 - $.online.cha / 10 + 12) == 1) {
+			if ($.player.level <= Z && $.dice($.player.level / 4 - $.online.cha / 10 + 12) == 1) {
 				i = $.online.weapon.wc + $.dice(3) - 2
 				i = i < 1 ? 1 : i >= $.Weapon.merchant.length ? $.Weapon.merchant.length - 1 : i
 				m.user.weapon = $.Weapon.merchant[i]
@@ -2087,7 +2087,7 @@ function putMonster(r = -1, c = -1): boolean {
 		else {
 			m.user.armor = $.int((level + deep) / 100 * ($.Armor.merchant.length - 4))
 			m.user.armor = $.int((m.user.armor + $.online.armor.ac) / 2)
-			if ($.player.level < Z && $.dice($.player.level / 3 - $.online.cha / 10 + 12) == 1) {
+			if ($.player.level <= Z && $.dice($.player.level / 3 - $.online.cha / 10 + 12) == 1) {
 				i = $.online.armor.ac + $.dice(3) - 2
 				i = i < 1 ? 1 : i >= $.Armor.merchant.length ? $.Armor.merchant.length - 1 : i
 				m.user.armor = $.Armor.merchant[i]
