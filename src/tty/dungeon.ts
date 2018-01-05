@@ -1670,7 +1670,7 @@ function generateLevel() {
 		for (y = 0; y < DL.rooms.length; y++) {
 			for (x = 0; x < DL.width; x++) {
 				let n:number
-				while ((n = ($.int($.dice(4) + $.dice(4)) / 2) - 1) == 3);
+				while ((n = $.int(($.dice(4) + $.dice(4)) / 2) - 1) == 3);
 				DL.rooms[y][x].type = (n == 0) ? 3 : (n == 1) ? 0 : $.dice(2)
 			}
 		}
