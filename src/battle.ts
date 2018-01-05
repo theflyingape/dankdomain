@@ -362,7 +362,7 @@ export function attack(retry = false) {
         let mm: number = 0
         let nest: number = 0
         let odds: number = from === 'Party' ? 6 : from === 'Dungeon' ? 5 : 4
-        let roll: number = odds + (rpc.user.magic >>1) + rpc.adept + 1
+        let roll: number = odds + $.int(rpc.user.magic / 2) + rpc.adept + 1
 
         if (rpc.user.magic == 1 && $.dice(roll) > odds) {
             if ($.Magic.have(rpc.user.spells, 8)
@@ -370,18 +370,18 @@ export function attack(retry = false) {
                 && ($.dice(6 - rpc.adept) == 1 || rpc.user.coward))
                     mm = 8
             else if ($.Magic.have(rpc.user.spells, 7)
-                    && rpc.hp < (rpc.user.hp >>1)
+                    && rpc.hp < $.int(rpc.user.hp / 2)
                     && $.dice(enemy.user.melee + 2) > 1)
                     mm = 7
             else if ($.Magic.have(rpc.user.spells, 9)
-                    && (!rpc.user.id || rpc.hp < (rpc.user.hp >>1))
+                    && (!rpc.user.id || rpc.hp < $.int(rpc.user.hp / 2))
                     && $.dice(enemy.user.melee + 2) > 1)
                     mm = 9
             else if ($.Magic.have(rpc.user.spells, 13)
                     && rpc.hp < (rpc.user.hp / 6)
                     && $.dice((rpc.user.level - enemy.user.level) / 6 + odds - rpc.adept) == 1)
                     mm = 13
-            else if (!rpc.confused && rpc.hp > (rpc.user.hp >>1)) {
+            else if (!rpc.confused && rpc.hp > $.int(rpc.user.hp / 2)) {
                 if ($.Magic.have(rpc.user.spells, 11)
                     && $.dice(enemy.user.magic + rpc.adept) > 1)
                         mm = 11
@@ -408,7 +408,7 @@ export function attack(retry = false) {
                         mm = 15
                 else if ($.Magic.have(rpc.user.spells, 16)
                     && rpc.sp >= $.Magic.power(rpc, 16)
-                    && rpc.hp > (rpc.user.hp >>1)
+                    && rpc.hp > $.int(rpc.user.hp / 2)
                     && $.dice((rpc.user.level - enemy.user.level) / 6 + odds - rpc.adept) == 1)
                         mm = 16
                 else if ($.Magic.have(rpc.user.spells, 11)
@@ -436,7 +436,7 @@ export function attack(retry = false) {
                         mm = 8
                 else if ($.Magic.have(rpc.user.spells, 7)
                     && rpc.sp >= $.Magic.power(rpc, 7)
-                    && rpc.hp < (rpc.user.hp >>1)
+                    && rpc.hp < $.int(rpc.user.hp / 2)
                     && ($.dice(enemy.user.melee + 2) == 1 || rpc.sp < $.Magic.power(rpc, 8)))
                         mm = 7
                 else if (!rpc.confused && $.Magic.have(rpc.user.spells, 9)
@@ -790,7 +790,7 @@ export function spoils() {
 }
 
 export function brawl(rpc:active, nme:active) {
-    if ($.dice(100) >= (50 + (rpc.dex >>1))) {
+    if ($.dice(100) >= (50 + $.int(rpc.dex / 2))) {
         xvt.out(`\n${$.who(nme, 'He')}${$.what(nme, 'duck')}${$.who(rpc,'his')}punch.\n`)
         xvt.waste(500)
         let patron = $.PC.encounter()
@@ -851,7 +851,7 @@ export function brawl(rpc:active, nme:active) {
     }
 
     function punch(p: active): number {
-        let punch = (p.user.level + p.str / 10) >>1
+        let punch = $.int((p.user.level + p.str / 10) / 2)
         punch += $.dice(punch)
         return punch
     }
@@ -1059,7 +1059,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 xvt.out($.who(rpc, 'His'), isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' crumbles!\n')
                 $.Armor.equip(rpc, $.Armor.merchant[0])
             }
-            if ($.dice(3 * (rpc.user.toAC + rpc.toAC + 1) / rpc.user.magic) >>0 > rpc.armor.ac) {
+            if ($.dice(3 * (rpc.user.toAC + rpc.toAC + 1) / rpc.user.magic) > rpc.armor.ac) {
                 xvt.out($.who(rpc, 'His'), isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' vaporizes!\n')
                 $.Armor.equip(rpc, $.Armor.merchant[0])
             }
@@ -1084,7 +1084,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 xvt.out($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' crumbles!\n')
                 $.Weapon.equip(rpc, $.Weapon.merchant[0])
             }
-            if ($.dice(3 * (rpc.user.toWC + rpc.toWC + 1) / rpc.user.magic) >>0 > rpc.weapon.wc) {
+            if ($.dice(3 * (rpc.user.toWC + rpc.toWC + 1) / rpc.user.magic) > rpc.weapon.wc) {
                 xvt.out($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' vaporizes!\n')
                 $.Weapon.equip(rpc, $.Weapon.merchant[0])
             }
@@ -1092,7 +1092,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             break
 
         case 7:
-            let ha = rpc.user.magic > 2 ? (rpc.user.level >>3) + 8 : 16
+            let ha = rpc.user.magic > 2 ? $.int(rpc.user.level / 16) + 13 : 16
             let hr = 0
             for (let i = 0; i < rpc.user.level; i++)
                 hr += $.dice(ha)
@@ -1160,10 +1160,13 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
         case 9:
             $.sound('blast', 3)
-            let ba = rpc.user.magic > 2 ? (rpc.user.level >>3) - (nme.armor.ac >>2) + 16 : 17
-            if (nme.user.melee > 3)
-                ba *= nme.user.melee >>1
-            let br = rpc.int >>3
+            let ba = rpc.user.magic > 2
+                ? 15 + $.int(rpc.user.magic / 4) + $.int(rpc.user.level / 11) - (backfire
+                    ? $.int($.int(rpc.armor.ac + rpc.user.toAC + rpc.toWC, true) / 5)
+                    : $.int($.int(nme.armor.ac + nme.user.toAC + nme.toWC, true) / 5)
+                ) : 17
+            if (nme.user.melee > 3) ba *= $.int(nme.user.melee / 2)
+            let br = $.int(rpc.int / 10)
             while ($.dice(99 + rpc.user.magic) > 99) {
                 ba += $.dice(rpc.user.magic)
                 for (let i = 0; i < ba; i++)
@@ -1271,8 +1274,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     , xvt.red, 'c', xvt.yellow, 'o', xvt.green, 'l', xvt.cyan, 'o', xvt.blue, 'r', xvt.magenta, 's'
                     , xvt.reset, '!\n')
                 rpc.confused = true
-                rpc.int >>1
-                rpc.dex >>1
+                rpc.int >>= 1
+                rpc.dex >>= 1
             }
             else {
                 xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
@@ -1519,14 +1522,17 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
         case 19:
             xvt.out('A ', xvt.bright, xvt.white, 'blinding flash', xvt.normal, ' erupts... ')
             $.sound('blast', 10)
-            let bba = rpc.user.magic > 2 ? (rpc.user.level >>3) - (nme.armor.ac >>2) + 31 : 32
-            if (nme.user.melee > 3)
-                bba *= nme.user.melee >>1
-            let bbr = rpc.int >>3
+            let bba = rpc.user.magic > 2
+                ? 30 + $.int(rpc.user.magic / 4) + $.int(rpc.user.level / 11) - (backfire
+                    ? $.int($.int(rpc.armor.ac + rpc.user.toAC + rpc.toWC, true) / 5)
+                    : $.int($.int(nme.armor.ac + nme.user.toAC + nme.toWC, true) / 5)
+                ) : 32
+            if (nme.user.melee > 3) ba *= $.int(nme.user.melee / 2)
+            let bbr = $.int(rpc.int / 10)
             while ($.dice(99 + rpc.user.magic) > 99) {
                 bba += $.dice(rpc.user.magic)
                 for (let i = 0; i < bba; i++)
-                    bbr += $.dice(bba)
+                    br += $.dice(bba)
             }
             for (let i = 0; i < rpc.user.level; i++)
                 bbr += $.dice(bba)

@@ -591,16 +591,16 @@ export function checkXP(rpc: active, cb: Function): boolean {
     rpc.hp += award.hp
     rpc.sp += award.sp
 
-    i = rpc.user.blessed ? 10 : 0
-    i = rpc.user.cursed ? i - 10 : i
-    rpc.str = PC.ability(rpc.str, rpc.user.str - award.str, rpc.user.maxstr, i)
-    rpc.int = PC.ability(rpc.int, rpc.user.int - award.int, rpc.user.maxint, i)
-    rpc.dex = PC.ability(rpc.dex, rpc.user.dex - award.dex, rpc.user.maxdex, i)
-    rpc.cha = PC.ability(rpc.cha, rpc.user.cha - award.cha, rpc.user.maxcha, i)
     award.str = rpc.user.str - award.str
     award.int = rpc.user.int - award.int
     award.dex = rpc.user.dex - award.dex
     award.cha = rpc.user.cha - award.cha
+    i = rpc.user.blessed ? 10 : 0
+    i = rpc.user.cursed ? i - 10 : i
+    rpc.str = PC.ability(rpc.str, award.str, rpc.user.maxstr, i)
+    rpc.int = PC.ability(rpc.int, award.int, rpc.user.maxint, i)
+    rpc.dex = PC.ability(rpc.dex, award.dex, rpc.user.maxdex, i)
+    rpc.cha = PC.ability(rpc.cha, award.cha, rpc.user.maxcha, i)
 
     if (rpc != online) return
 

@@ -260,11 +260,11 @@ export function menu(suppress = false) {
 				$.music('.')
 				xvt.out(xvt.bright, xvt.white, 'A bolt of lightning strikes you.')
 				$.sound('boom', 10)
-				$.player.toAC -= $.dice($.online.armor.ac >>1)
-				$.online.toAC -= $.dice($.online.armor.ac >>1)
-				$.player.toWC -= $.dice($.online.weapon.wc >>1)
-				$.online.toWC -= $.dice($.online.weapon.wc >>1)
-				$.online.hp -= $.dice($.player.hp >>1)
+				$.player.toAC -= $.dice($.online.armor.ac / 2)
+				$.online.toAC -= $.dice($.online.armor.ac / 2)
+				$.player.toWC -= $.dice($.online.weapon.wc / 2)
+				$.online.toWC -= $.dice($.online.weapon.wc / 2)
+				$.online.hp -= $.dice($.player.hp / 2)
 				if ($.online.hp < 1) {
 					$.reason = 'struck by lightning'
 					xvt.hangup()
@@ -341,7 +341,7 @@ function command() {
 			DL.spawn--
 		//	old cleric mana recovery
 		if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
-			DL.cleric.sp += 10 * $.dice(deep) + $.dice(Z >>1)
+			DL.cleric.sp += 10 * $.dice(deep) + $.dice(Z / 2)
 			if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
 		}
 	}
@@ -574,11 +574,11 @@ function doMove(): boolean {
 					xvt.out(xvt.bright, xvt.cyan, 'A fairie brushes by you.\n')
 					$.sound('heal')
 					for (let i = 0; i <= Z; i++)
-						$.online.hp += $.dice(DL.cleric.user.level >>3) + $.dice((Z >>3) + (deep >>2))
+						$.online.hp += $.dice($.int(DL.cleric.user.level / 9)) + $.dice($.int(Z / 9 + deep / 3))
 					if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
 					if ($.player.magic > 1) {
 						for (let i = 0; i <= Z; i++)
-							$.online.sp += $.dice(DL.cleric.user.level >>3) + $.dice((Z >>3) + (deep >>2))
+							$.online.sp += $.dice($.int(DL.cleric.user.level / 9)) + $.dice($.int(Z / 9 + deep / 3))
 						if ($.online.sp > $.player.sp) $.online.sp = $.player.sp
 					}
 					if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
@@ -664,9 +664,9 @@ function doMove(): boolean {
 						$.online.cha = $.PC.ability($.online.cha, 10)
 						break
 					case 'T':
-						let start = (Z * 2 / 3 - $.dice(deep)) >>0
+						let start = $.int(Z * 2 / 3 - $.dice(deep))
 						if (start < 1) start = 1
-						let end = (Z * 3 / 2 - $.dice(deep)) >>0
+						let end = $.int(Z * 3 / 2 - $.dice(deep))
 						if (end > 100) end = 100
 						$.action('list')
 						xvt.app.form = {
@@ -792,7 +792,7 @@ function doMove(): boolean {
 						})
 						return
 					case 'K':
-						let k = $.dice(deep >>2)
+						let k = $.dice(deep / 4)
 						for (let i = 0; i < k; i++) {
 							$.keyhint($.online)
 							$.sound("shimmer", 12)
@@ -800,7 +800,7 @@ function doMove(): boolean {
 						break
 					case 'M':
 						if ($.player.magic) {
-							let m = $.dice($.player.magic >>1)
+							let m = $.dice($.player.magic / 2)
 							for (let i = 0; i < m; i++) {
 								let p = $.dice(Object.keys($.Magic.spells).length)
 								let spell = $.Magic.pick(p)
@@ -865,7 +865,7 @@ function doMove(): boolean {
 						z = (deep < 3) ? 4 : (deep < 6) ? 6 : (deep < 9) ? 8 : 9
 						t = 0
 						for (i = 0; i < 5; i++) {
-							n = ($.online.str / 5 - 5 * i + $.dice(5) + 1) >>0
+							n = $.int($.online.str / 5 - 5 * i + $.dice(5) + 1)
 							for (m = 0; m < n; m++) {
 								t = $.dice(z)
 								$.beep()
@@ -963,12 +963,12 @@ function doMove(): boolean {
 							$.player.loan.value += new $.coins(n.carry(1, true)).value
 							break
 						case 4:
-							$.online.hp += ($.player.hp >>1) + $.dice($.player.hp / 2)
-							$.online.sp += ($.player.sp >>1) + $.dice($.player.sp / 2)
+							$.online.hp += $.int($.player.hp / 2) + $.dice($.player.hp / 2)
+							$.online.sp += $.int($.player.sp / 2) + $.dice($.player.sp / 2)
 							$.player.toWC += $.dice($.online.weapon.wc)
-							$.online.toWC += ($.online.weapon.wc >>1) + 1
+							$.online.toWC += $.int($.online.weapon.wc / 2) + 1
 							$.player.toAC += $.dice($.online.armor.ac)
-							$.online.toAC += ($.online.armor.ac >>1) + 1
+							$.online.toAC += $.int($.online.armor.ac / 2) + 1
 							$.sound('hone')
 							break
 						case 5:
@@ -1069,17 +1069,17 @@ function doMove(): boolean {
 					xvt.out($.player.weapon, $.buff($.player.toWC, $.online.toWC))
 					$.Weapon.equip($.online, $.Weapon.merchant[0])
 				}
-				else if (DL.map && $.dice($.online.cha / 10 + deep + 1) - 1 <= (deep >>1)) {
+				else if (DL.map && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
 					xvt.out('map')
 					DL.map = 0
 					refresh = true
 				}
-				else if ($.player.magic < 3 && $.player.spells.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= (deep >>1)) {
+				else if ($.player.magic < 3 && $.player.spells.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
 					y = $.player.spells[$.dice($.player.spells.length) - 1]
 					xvt.out(['wand', 'scroll'][$.player.magic - 1], ' for ', Object.keys($.Magic.spells)[y - 1])
 					$.Magic.remove($.player.spells, y)
 				}
-				else if ($.player.poisons.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= (deep >>1)) {
+				else if ($.player.poisons.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
 					y = $.player.poisons[$.dice($.player.poisons.length) - 1]
 					xvt.out('vial of ', Object.keys($.Poison.vials)[y - 1])
 					$.Poison.remove($.player.poisons, y)
@@ -1127,7 +1127,7 @@ function doMove(): boolean {
 				, xvt.normal, '% spell power.'
 				, xvt.reset, '\n')
 			xvt.out('He says, ')
-			if ($.online.hp > ($.player.hp >>1) || ((deep >>2) + 3) * cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, 13)) {
+			if ($.online.hp > $.int($.player.hp / 2) || ($.int(deep / 4) + 3) * cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, 13)) {
 				xvt.out('"I can ', DL.cleric.sp < $.Magic.power(DL.cleric, 13) ? 'only' : 'surely'
 					, ' cast a Heal spell on your wounds for '
 					, cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
@@ -1135,7 +1135,7 @@ function doMove(): boolean {
 			}
 			else if (DL.cleric.sp >= $.Magic.power(DL.cleric, 13)) {
 				cast = 13
-				cost.value *= (deep >>2) + 3
+				cost.value *= $.int(deep / 4) + 3
 				if (cost.value > $.player.coin.value) {
 					xvt.out('"I will pray for you."\n')
 					break
@@ -1157,7 +1157,7 @@ function doMove(): boolean {
 						if (cast == 7) {
 							$.sound('heal')
 							for (let i = 0; i <= Z; i++)
-								$.online.hp += $.dice(DL.cleric.user.level >>3) + $.dice((Z >>3) + (deep >>2))
+								$.online.hp += $.dice(DL.cleric.user.level / 9) + $.dice(Z / 9 + deep / 3)
 							if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
 							xvt.out('  Your hit points: '
 								, xvt.bright, $.online.hp == $.player.hp ? xvt.white : $.online.hp > $.player.hp * 0.85 ? xvt.yellow : xvt.red, $.online.hp.toString()
@@ -1261,7 +1261,7 @@ function doMove(): boolean {
 				xvt.out([ 'amber', 'blue', 'crimson', 'green', 'purple'][$.dice(5) - 1],
 					' potion.')
 
-			if (ROOM.giftID || $.dice(100) + $.dice(deep >>1) < 50 + ($.online.int >>1)) {
+			if (ROOM.giftID || $.dice(100) + $.dice(deep / 2) < 50 + $.int($.online.int / 2)) {
 				$.action('potion')
 				xvt.app.form = {
 					'quaff': { cb: () => {
@@ -1330,7 +1330,7 @@ export function doSpoils() {
 				Object.assign(mon, ROOM.monster[n])
 				let y = $.dice(DL.rooms.length) - 1
 				let x = $.dice(DL.width) - 1
-				mon.hp = mon.user.hp >>3
+				mon.hp = $.int(mon.user.hp / 8)
 				DL.rooms[y][x].monster.push(mon)
 			}
 			ROOM.monster.splice(n, 1)
@@ -1338,7 +1338,7 @@ export function doSpoils() {
 		}
 
 	if (!ROOM.monster.length) {
-		if (DL.map < 2 && $.dice((15 - $.online.cha / 10) >>1) == 1) {
+		if (DL.map < 2 && $.dice((15 - $.online.cha / 10) / 2) == 1) {
 			let m = ($.dice(Z / 33 + 2) > 1 ? 1 : 2)
 			if (DL.map < m) {
 				DL.map = m
@@ -1441,7 +1441,7 @@ function drawLevel() {
 					else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y].substr(6 * x, 1))
 					xvt.out(xvt.reset)
 
-					let r = y >>1
+					let r = $.int(y / 2)
 					let icon = null
 					let o = '     '
 					if (DL.rooms[r][x].map)
@@ -1642,10 +1642,10 @@ function generateLevel() {
 	let result: boolean
 	do {
 		let maxRow = 6 + $.dice(Z / 32 + 1)
-		while (maxRow < 10 && $.dice($.online.cha / 10 >>0) == 1)
+		while (maxRow < 10 && $.dice($.online.cha / 10) == 1)
 			maxRow++
 		let maxCol = 6 + $.dice(Z / 16 + 1)
-		while (maxCol < 13 && $.dice($.online.cha / 10 >>0) == 1)
+		while (maxCol < 13 && $.dice($.online.cha / 10) == 1)
 			maxCol++
 
 		dd[deep][Z] = <ddd>{
@@ -1671,7 +1671,7 @@ function generateLevel() {
 		for (y = 0; y < DL.rooms.length; y++) {
 			for (x = 0; x < DL.width; x++) {
 				let n:number
-				while ((n = (($.dice(4) + $.dice(4)) >>1) - 1) == 3);
+				while ((n = ($.int($.dice(4) + $.dice(4)) / 2) - 1) == 3);
 				DL.rooms[y][x].type = (n == 0) ? 3 : (n == 1) ? 0 : $.dice(2)
 			}
 		}
@@ -1690,7 +1690,7 @@ function generateLevel() {
 	ROOM = DL.rooms[Y][X]
 
 	//	populate this new floor with monsters, no corridors or hallways
-	let n = Math.trunc(DL.rooms.length * DL.width / 6 + $.dice(Z / 11) + (deep >>1) + $.dice(deep >>1))
+	let n = $.int(DL.rooms.length * DL.width / 6 + deep / 2 + $.dice(Z / 11) + $.dice(deep / 2))
 	while (n)
 		if (putMonster())
 			n--
@@ -1738,7 +1738,7 @@ function generateLevel() {
 
 	//	thief(s) in other spaces
 	wow--
-	n = $.dice(deep >>2) + wow
+	n = $.dice(deep / 4) + wow
 	for (let i = 0; i < n; i++) {
 		do {
 			y = $.dice(DL.rooms.length) - 1
@@ -1763,7 +1763,7 @@ function generateLevel() {
 	DL.rooms[y][x].occupant = 7
 
 	//	set some trapdoors in empty corridors only
-	n = (DL.rooms.length * DL.width / 10) >>0
+	n = $.int(DL.rooms.length * DL.width / 10)
 	if ($.dice(100 - Z) > (deep + 1))
 		n += $.dice(Z / 16 + 2)
 	while (n) {
@@ -2023,7 +2023,7 @@ function putMonster(r = -1, c = -1): boolean {
 
 	for (j = 0; j < 4; j++)
 		level += $.dice(7)
-	switch (level >>2) {
+	switch ($.int(level / 4)) {
 		case 1:
 			level = $.dice(Z)
 			break
@@ -2047,7 +2047,7 @@ function putMonster(r = -1, c = -1): boolean {
 			break
 	}
 	level = (level < 1) ? 1 : (level > 99) ? 99 : level
-	level = (i == 1) ? (level >>1) + $.dice(level / 2 + 1) : (i == 2) ? $.dice(level + 1) : level
+	level = (i == 1) ? $.int(level / 2) + $.dice(level / 2 + 1) : (i == 2) ? $.dice(level + 1) : level
 	level = (level < 1) ? 1 : (level > 99) ? 99 : level
 
 	do {
@@ -2065,8 +2065,8 @@ function putMonster(r = -1, c = -1): boolean {
 		if (dm.weapon)
 			m.user.weapon = dm.weapon
 		else {
-			m.user.weapon = Math.trunc((level + deep) / 100 * ($.Weapon.merchant.length - 7))
-			m.user.weapon = (m.user.weapon + $.online.weapon.wc) >>1
+			m.user.weapon = $.int((level + deep) / 100 * ($.Weapon.merchant.length - 7))
+			m.user.weapon = $.int((m.user.weapon + $.online.weapon.wc) / 2)
 			if ($.dice($.player.level / 4 - $.online.cha / 10 + 12) == 1) {
 				i = $.online.weapon.wc + $.dice(3) - 2
 				i = i < 1 ? 1 : i >= $.Weapon.merchant.length ? $.Weapon.merchant.length - 1 : i
@@ -2076,18 +2076,18 @@ function putMonster(r = -1, c = -1): boolean {
 		if (dm.armor)
 			m.user.armor = dm.armor
 		else {
-			m.user.armor = Math.trunc((level + deep) / 100 * ($.Armor.merchant.length - 4))
-			m.user.armor = (m.user.armor + $.online.armor.ac) >>1
+			m.user.armor = $.int((level + deep) / 100 * ($.Armor.merchant.length - 4))
+			m.user.armor = $.int(m.user.armor + $.online.armor.ac) / 2)
 			if ($.dice($.player.level / 3 - $.online.cha / 10 + 12) == 1) {
 				i = $.online.armor.ac + $.dice(3) - 2
 				i = i < 1 ? 1 : i >= $.Armor.merchant.length ? $.Armor.merchant.length - 1 : i
 				m.user.armor = $.Armor.merchant[i]
 			}
 		}
-		m.user.hp >>= 2
-		m.user.hp += (deep * Z) >>2
+		m.user.hp = $.int(m.user.hp / 4)
+		m.user.hp += $.int(deep * Z / 4)
 		i = 5 - $.dice(deep / 3)
-		m.user.sp = Math.trunc(m.user.sp / i)
+		m.user.sp = $.int(m.user.sp / i)
 
 		m.user.poisons = []
 		if (m.user.poison) {
@@ -2120,15 +2120,15 @@ function putMonster(r = -1, c = -1): boolean {
 		$.activate(m)
 
 		m.user.immortal = deep
-		m.adept = deep >>2
-		m.str = $.PC.ability(m.str, deep >>1)
-		m.int = $.PC.ability(m.int, deep >>1)
-		m.dex = $.PC.ability(m.dex, deep >>1)
-		m.cha = $.PC.ability(m.cha, deep >>1)
+		m.adept = $.int(deep / 4)
+		m.str = $.PC.ability(m.str, m.adept * 2 + 1)
+		m.int = $.PC.ability(m.int, m.adept * 2 + 1)
+		m.dex = $.PC.ability(m.dex, m.adept * 2 + 1)
+		m.cha = $.PC.ability(m.cha, m.adept * 2 + 1)
 
-		let gold = new $.coins(Math.trunc($.money(level) / 10))
-		gold.value += $.worth(new $.coins(m.weapon.value).value, ($.dice($.online.cha) / 5 + 5) >>0)
-		gold.value += $.worth(new $.coins(m.armor.value).value, ($.dice($.online.cha) / 5 + 5) >>0)
+		let gold = new $.coins($.int($.money(level) / 10))
+		gold.value += $.worth(new $.coins(m.weapon.value).value, $.int($.dice($.online.cha) / 5 + 5))
+		gold.value += $.worth(new $.coins(m.armor.value).value, $.int($.dice($.online.cha) / 5 + 5))
 		gold.value *= $.dice(deep)
 		m.user.coin = new $.coins(gold.carry(1, true))
 
@@ -2201,7 +2201,7 @@ function quaff(v: number, it = true) {
 	//	Vial of Slaad Secretions
 		case 0:
 			$.sound('hurt')
-			if (($.online.hp -= $.dice($.player.hp >>1)) < 1)
+			if (($.online.hp -= $.dice($.player.hp / 2)) < 1)
 				$.reason = `quaffed${$.an(potion[v])}`
 			break
 
@@ -2213,7 +2213,7 @@ function quaff(v: number, it = true) {
 
 	//	Flask of Fire Water
 		case 2:
-			if (($.online.sp -= $.dice($.online.sp >>1)) < 1)
+			if (($.online.sp -= $.dice($.online.sp / 2)) < 1)
 				$.online.sp = 0
 			break
 
