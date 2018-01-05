@@ -466,7 +466,11 @@ function nmeResize() {
   h = Math.trunc(window.innerHeight * 0.96
     - document.getElementById('command').clientHeight
     - (document.getElementById('nme').clientHeight - ih));
-  if (h / ih < 0.35) h = Math.trunc(ih * 0.35);
+  w = Math.trunc(window.innerWidth * 0.98);
+  if (h / ih < 0.35)
+    h = Math.trunc(ih * 0.35);
+  else if (h / ih > w / iw)
+    h = Math.trunc(ih * w / iw);
   w = Math.trunc(iw * h / ih);
   pic.height = h;
   pic.width = w;
