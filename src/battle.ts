@@ -763,14 +763,13 @@ export function spoils() {
                 $.log(winner.user.id, `You upgraded to ${winner.user.armor}.`)
             }
             if (winner.user.gang && winner.user.gang === $.player.gang) {
-                $.sound('laugh', 5)
+                $.sound('punk', 5)
                 $.player.maxcha--
                 $.player.cha--
 
                 gang = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                 let n = gang.members.indexOf(winner.user.id)
                 if (n == 0) {
-                    $.sound('punk', 5)
                     xvt.out($.who(winner,'He'), 'says, "'
                         , xvt.bright, 'Let that be a lesson to you punk!'
                         , xvt.reset, '"\n')
