@@ -160,7 +160,7 @@ export function menu(suppress = false) {
 			, 'You stand ready'][$.dice(5) - 1], ' when you hear a')
 		switch ($.dice(5)) {
 			case 1:
-				$.sound('creak')
+				$.sound('creak' + $.dice(2))
 				xvt.out('n eerie, creaking noise')
 				break
 			case 2:
@@ -603,7 +603,7 @@ function doMove(): boolean {
 					xvt.out('\n')
 					if (/Y/i.test(xvt.entry)) {
 						xvt.out(xvt.bright, 'You vanish into the other dungeon...')
-						$.sound('teleport', 8)
+						$.sound('portal', 12)
 						deep++
 						generateLevel()
 					}
@@ -696,7 +696,7 @@ function doMove(): boolean {
 						xvt.app.focus = 'level'
 						return
 					case 'D':
-						$.sound('boom', 8)
+						$.sound('destroy', 30)
 						for (let i in dd)
 							delete dd[i]
 						generateLevel()
@@ -1074,6 +1074,8 @@ function doMove(): boolean {
 				if ($.online.weapon.wc && $.dice(x) == 1) {
 					xvt.out($.player.weapon, $.buff($.player.toWC, $.online.toWC))
 					$.Weapon.equip($.online, $.Weapon.merchant[0])
+					xvt.waste(600)
+					$.sound('thief2')
 				}
 				else if (DL.map && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
 					xvt.out('map')
@@ -1214,10 +1216,10 @@ function doMove(): boolean {
 			gold.value *= ROOM.giftValue
 			gold = new $.coins(gold.carry(1, true))
 			if (gold.value) {
+				$.sound('yahoo', 10)
 				xvt.out(xvt.yellow, 'You find a ', xvt.bright, 'treasure chest'
 					, xvt.normal, ' holding ', gold.carry(), '!'
 					, xvt.reset, '\n')
-				$.sound('max')
 			}
 			else {
 				xvt.out(xvt.faint, xvt.yellow, 'You find an empty, treasure chest.\n', xvt.reset)
@@ -1364,6 +1366,7 @@ export function doSpoils() {
 
 	let d = ['N','S','E','W']
 	while (Battle.retreat) {
+		$.sound('pulse', 20)
 		xvt.out(xvt.bright, xvt.red, 'You frantically look to escape . . . ')
 		xvt.waste(400)
 
@@ -2274,6 +2277,7 @@ function quaff(v: number, it = true) {
 
 	//	Vial of Crack
 		case 12:
+			$.sound('crack', 20)
 			$.player.maxstr = $.PC.ability($.player.maxstr, $.player.maxstr > 75 ? -$.dice(5) : -1)
 			$.player.maxint = $.PC.ability($.player.maxint, $.player.maxint > 75 ? -$.dice(5) : -1)
 			$.player.maxdex = $.PC.ability($.player.maxdex, $.player.maxdex > 75 ? -$.dice(5) : -1)
@@ -2315,7 +2319,7 @@ function quaff(v: number, it = true) {
 
 	//	Elixir of Restoration
 		case 15:
-			$.sound('cure', 12)
+			$.sound('elixir', 30)
 			$.online.hp = $.player.hp
 			$.online.sp = $.player.sp
 			break

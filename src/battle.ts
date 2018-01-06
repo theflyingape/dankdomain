@@ -47,6 +47,7 @@ function end() {
             $.player.coward = false
         }
         else {
+            $.sound('barkeep')
             $.player.coward = false
             $.barkeep.user.status = ''
             $.saveUser($.barkeep)
@@ -70,7 +71,7 @@ function end() {
             $.sound('max', 8)
             xvt.out(xvt.bright, xvt.blue, '"Thanks for the taxes!"'
                 , xvt.reset, '\n')
-            $.sound('thief', 16)
+            $.sound('thief2', 16)
             $.player.coward = false
             $.reason = 'tax evasion'
         }
@@ -769,6 +770,7 @@ export function spoils() {
                 gang = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                 let n = gang.members.indexOf(winner.user.id)
                 if (n == 0) {
+                    $.sound('punk', 5)
                     xvt.out($.who(winner,'He'), 'says, "'
                         , xvt.bright, 'Let that be a lesson to you punk!'
                         , xvt.reset, '"\n')
@@ -835,6 +837,7 @@ export function brawl(rpc:active, nme:active) {
         loser.user.tl++
         $.saveUser(loser)
         if (loser.user.id === $.player.id) {
+            $.sound('ko')
             let m = Math.abs($.online.bp)
             while (m > 9)
                 m >>= 1
@@ -853,6 +856,7 @@ export function brawl(rpc:active, nme:active) {
     }
 
     function punch(p: active): number {
+        $.sound('punch' + $.dice(3))
         let punch = $.int((p.user.level + p.str / 10) / 2)
         punch += $.dice(punch)
         return punch
@@ -1523,7 +1527,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
         case 19:
             xvt.out('A ', xvt.bright, xvt.white, 'blinding flash', xvt.normal, ' erupts... ')
-            $.sound('blast', 10)
+            $.sound('bigblast', 10)
             let bba = rpc.user.magic > 2
                 ? 30 + $.int(rpc.user.magic / 4) + $.int(rpc.user.level / 11) - (backfire
                     ? $.int($.int(rpc.armor.ac + rpc.user.toAC + rpc.toWC, true) / 5)
@@ -2024,13 +2028,14 @@ export function poison(rpc: active, cb?:Function) {
         else
             rpc.toWC += t
 
-        $.sound('hone')
         xvt.out(xvt.reset, '\n')
         if (!$.Poison.have(rpc.user.poisons, vial) || +rpc.user.weapon > 0) {
+            $.sound('ooze')
             xvt.out(xvt.bright, xvt.green, $.who(rpc, 'He'), $.what(rpc, 'secrete'), 'a caustic ooze', xvt.reset, $.buff(p, t), xvt.reset, '\n')
             xvt.waste(500)
         }
         else {
+            $.sound('hone')
             xvt.out($.who(rpc, 'He'), $.what(rpc, 'pour')
                 , 'some ', $.Poison.merchant[vial - 1]
                 , ' on ', $.who(rpc, 'his'), rpc.user.weapon, '.\n')

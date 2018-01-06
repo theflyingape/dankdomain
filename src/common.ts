@@ -1553,7 +1553,7 @@ export function riddle() {
         xvt.out(xvt.bright, xvt.yellow, 'CONGRATULATIONS!!'
             , xvt.reset, '  You have won the game!\n'
         )
-        sound('cheer', 25)
+        sound('winner', 25)
 
         xvt.out(xvt.yellow, 'The board will now reset ')
         let rs = query(`SELECT id, pid FROM Online WHERE id != '${player.id}'`)

@@ -53,6 +53,7 @@ function guards(): boolean {
             xvt.out('The guards aim their crossbows at you.\n')
             break
         default:
+            $.sound('stranger')
             $.action('yn')
             $.profile({ jpg:'npc/stranger' })
             xvt.out('The last thing you ever feel is several quarrels cutting deep into your chest.\n')

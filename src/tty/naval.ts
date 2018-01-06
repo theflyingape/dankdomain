@@ -446,7 +446,7 @@ function Shipyard(suppress = true) {
 							}
 
 							$.profile({ png:'payment' })
-							$.sound('click')
+							$.sound('click', 5)
 							cost = Math.round(Math.pow(2, ship / 150) * 7937)
 							$.player.coin.value -= cost
 							$.player.hull = ship
@@ -454,6 +454,7 @@ function Shipyard(suppress = true) {
 							$.online.hull = $.player.hull
 							$.online.altered = true
 							xvt.out(`\nYou now have a brand new ${$.player.hull} hull point ship, with no ram.\n`)
+							$.sound('boat')
 						}
 						Shipyard()
 					}
@@ -917,6 +918,7 @@ function fire(a: active, d: active): {  hits:number, damage:number, hull:number,
 	let cannon: number = 0
 	let ram: boolean = false
 
+	if (a.user == $.player) $.sound('fire')
 	xvt.out(xvt.cyan, '\n', a.user == $.player ? 'Attacker: ' : 'Defender: ')
 	for (let i = 0; i < a.user.cannon && d.user.hull; i++) {
 		let n = $.dice(100)

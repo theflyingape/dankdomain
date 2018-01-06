@@ -473,7 +473,9 @@ function MonsterFights(): boolean {
 		xvt.app.focus = 'pay'
 	}
 	else {
-		let mon = +xvt.entry - 1
+		let mon = $.int(xvt.entry) - 1
+		if (mon == monsters.length - 1)
+			$.sound('demogorgon')
 		monster = <active>{}
 		monster.user = <user>{id: ''}
 		monster.user.handle = monsters[mon].name
