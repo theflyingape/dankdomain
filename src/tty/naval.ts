@@ -618,9 +618,11 @@ function BattleUser(nme: active) {
 						}
 					}
 					else {
+						$.player.retreats++
 						xvt.out('\nYou sail away safely out of range.\n')
 						$.saveUser(nme)
 						$.online.altered = true
+                        $.log(nme.user.id, `\n${$.player.handle}, the coward, sailed away from you.`)
 						menu()
 						return
 					}

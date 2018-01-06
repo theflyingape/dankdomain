@@ -362,7 +362,7 @@ export function attack(retry = false) {
         //  might or magic?
         let mm: number = 0
         let nest: number = 0
-        let odds: number = from === 'Party' ? 6 : from === 'Dungeon' ? 5 : 4
+        let odds: number = (from === 'Party' ? 6 : from === 'Dungeon' ? 5 : 4) - $.int(+enemy.user.coward)
         let roll: number = odds + $.int(rpc.user.magic / 2) + rpc.adept + 1
 
         if (rpc.user.magic == 1 && $.dice(roll) > odds) {
@@ -1777,7 +1777,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     let action: string
     let hit = 0
 
-    if (rpc !== $.online && rpc.user.coward && rpc.hp < (rpc.user.hp / 5)) {
+    if (from !== 'Party' && rpc !== $.online && rpc.user.coward && rpc.hp < (rpc.user.hp / 5)) {
         rpc.hp = -1
         xvt.out(xvt.bright, xvt.green
             , rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle
