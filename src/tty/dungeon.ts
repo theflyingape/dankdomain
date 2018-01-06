@@ -1643,9 +1643,11 @@ function generateLevel() {
 	if (dd[deep][Z]) {
 		DL = dd[deep][Z]
 		renderMap()
-		Y = $.dice(DL.rooms.length) - 1
-		X = $.dice(DL.width) - 1
-		ROOM = DL.rooms[Y][X]
+		do {
+			Y = $.dice(DL.rooms.length) - 1
+			X = $.dice(DL.width) - 1
+			ROOM = DL.rooms[Y][X]
+		} while (ROOM.type)
 		return
 	}
 
@@ -1698,9 +1700,11 @@ function generateLevel() {
 	} while (result)
 
 	renderMap()
-	Y = $.dice(DL.rooms.length) - 1
-	X = $.dice(DL.width) - 1
-	ROOM = DL.rooms[Y][X]
+	do {
+		Y = $.dice(DL.rooms.length) - 1
+		X = $.dice(DL.width) - 1
+		ROOM = DL.rooms[Y][X]
+	} while (ROOM.type)
 
 	//	populate this new floor with monsters, no corridors or hallways
 	let n = $.int(DL.rooms.length * DL.width / 6 + deep / 2 + $.dice(Z / 11) + $.dice(deep / 2))
@@ -2278,7 +2282,7 @@ function quaff(v: number, it = true) {
 
 	//	Vial of Crack
 		case 12:
-			$.sound('crack', 20)
+			$.music('crack')
 			$.player.maxstr = $.PC.ability($.player.maxstr, $.player.maxstr > 75 ? -$.dice(5) : -1)
 			$.player.maxint = $.PC.ability($.player.maxint, $.player.maxint > 75 ? -$.dice(5) : -1)
 			$.player.maxdex = $.PC.ability($.player.maxdex, $.player.maxdex > 75 ? -$.dice(5) : -1)
@@ -2320,7 +2324,7 @@ function quaff(v: number, it = true) {
 
 	//	Elixir of Restoration
 		case 15:
-			$.sound('elixir', 30)
+			$.music('elixir')
 			$.online.hp = $.player.hp
 			$.online.sp = $.player.sp
 			break
