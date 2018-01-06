@@ -793,6 +793,7 @@ export function spoils() {
 
 export function brawl(rpc:active, nme:active) {
     if ($.dice(100) >= (50 + $.int(rpc.dex / 2))) {
+        $.sound(rpc.user.id === $.player.id ? 'whoosh' : 'swoosh')
         xvt.out(`\n${$.who(nme, 'He')}${$.what(nme, 'duck')}${$.who(rpc,'his')}punch.\n`)
         xvt.waste(500)
         let patron = $.PC.encounter()

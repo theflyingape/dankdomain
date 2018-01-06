@@ -216,7 +216,7 @@ function choice() {
                     xvt.out('jest, \"What you looking at, wart-face!\"')
                     xvt.waste(1200)
                     xvt.out('\nUh, oh!')
-                    $.sound('ddd', 12)
+                    $.sound('ddd', 22)
                     $.profile({ jpg:'npc/barkeep'
                         , handle:$.barkeep.user.handle, level:$.barkeep.user.level, pc:$.barkeep.user.pc })
                     xvt.out('  Here comes Tiny!')

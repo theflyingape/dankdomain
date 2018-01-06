@@ -353,7 +353,8 @@ function command() {
 	}
 	else {
 		xvt.beep()
-		suppress = false
+		menu(false)
+		return
 	}
 	xvt.out('\n')
 
