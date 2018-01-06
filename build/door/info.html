@@ -400,11 +400,12 @@ function potion() {
 
 function riddle() {
   cmd(`
-<p><input class="platinum" type="button" value=" Platinum " onclick="send('p');"></p>
-<p><input class="gold"     type="button" value="   Gold   " onclick="send('g');"></p>
-<p><input class="silver"   type="button" value="  Silver  " onclick="send('s');"></p>
-<p><input class="copper"   type="button" value="  Copper  " onclick="send('c');"></p>
+<p><input class="platinum" type="button" value=" Platinum " onclick="send('P');"></p>
+<p><input class="gold"     type="button" value="   Gold   " onclick="send('G');"></p>
+<p><input class="silver"   type="button" value="  Silver  " onclick="send('S');"></p>
+<p><input class="copper"   type="button" value="  Copper  " onclick="send('C');"></p>
 `);
+  nme(`<img src="images/riddle.jpg" onload="nmeResize();">`);
 }
 
 function shipyard() {
