@@ -1601,6 +1601,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 cb(true)
                 return
             }
+            $.sound('mana')
             xvt.out(xvt.bright, xvt.cyan, 'A glowing orb radiates above '
                 , $.who(backfire ? nme : rpc, 'him'), '... ')
             xvt.waste(800)
@@ -1636,6 +1637,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             break
 
         case 21:
+            $.sound('life')
             xvt.out(xvt.bright, xvt.black, 'A black finger extends and touches '
                 , $.who(backfire ? rpc : nme, 'him')
                 , '... ')
@@ -1665,6 +1667,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             break
 
         case 22:
+            $.sound('lose')
             xvt.out(xvt.bright, xvt.black, 'A shroud of blackness engulfs '
                 , $.who(backfire ? rpc : nme, 'him')
                 , '... ')
