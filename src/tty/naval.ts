@@ -639,7 +639,7 @@ function BattleUser(nme: active) {
 						}
 						else {
 							damage = $.dice($.player.hull / 2) + $.dice($.online.hull / 2)
-							xvt.out(xvt.green, `\nYou ram ${$.who(nme, 'him')} for `
+							xvt.out(xvt.green, `\nYou ram ${$.who(nme, 'him')}for `
 								, xvt.bright, `${damage}`
 								, xvt.normal, ` hull points of damage!\n`)
 							if ((nme.hull -= damage) < 1) {
