@@ -1367,7 +1367,8 @@ export function doSpoils() {
 
 	let d = ['N','S','E','W']
 	while (Battle.retreat) {
-		$.sound('pulse', 20)
+		$.music('pulse')
+		xvt.waste(400)
 		xvt.out(xvt.bright, xvt.red, 'You frantically look to escape . . . ')
 		xvt.waste(400)
 
