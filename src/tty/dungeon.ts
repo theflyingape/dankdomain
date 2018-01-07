@@ -1357,9 +1357,8 @@ export function doSpoils() {
 			if (DL.map < m) {
 				DL.map = m
 				xvt.out('\n', xvt.bright, xvt.yellow
-					, 'You find a'
-					, m == 2 ? ' magic ' : ' '
-					, 'map!\n', xvt.reset)
+					, 'You find a', m == 2 ? ' magic ' : ' '
+					, 'map!', xvt.reset, '\n')
 				pause = true
 			}
 		}
