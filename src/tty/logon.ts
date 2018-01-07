@@ -115,18 +115,23 @@ function who() {
     $.access = $.Access.name[$.player.access]
     xvt.emulation = $.player.emulation
 
-    let rs = $.query(`SELECT lockdate, locktime FROM Online WHERE id = '${$.player.id}'`)
-    if (rs.length) {
+    let rs = $.query(`SELECT id, lockdate, locktime FROM Online`)
+    for (let row = 0; row < rs.length; row++) {
         let t = $.now().time
         if ((t = (1440 * ($.now().date - rs[0].lockdate)
             + 60 * ((t / 100 - rs[0].locktime / 100) >>0)
-            + t % 100 - rs[0].locktime % 100)) > 90) {
-            $.unlock($.player.id)
+            + t % 100 - rs[0].locktime % 100)) > 60) {
+            $.unlock(rs[row].id)
+            $.news(`?forced an expired player unlock: ${rs[row].id} from ${$.time(rs[row].locktime)}\n`, true)
         }
-        else {
+        else if (rs[row].id === $.player.id) {
+            $.player.id = ''
             $.beep()
-            xvt.out(`\nYou\'re in violation of the space-time continuum: T - ${90 - t} minutes.\n`)
-            xvt.hangup()
+            $.news(`?attempted player logon @ ${$.time($.now().time)}: ${rs[row].id} locked out from ${$.time(rs[row].locktime)}\n`, true)
+            xvt.out(`\nYou\'re in violation of the space-time continuum: T - ${60 - t} minutes\n`)
+            xvt.ondrop = $.logoff
+            xvt.sessionAllowed = 1
+            xvt.waste(1000)
         }
     }
 

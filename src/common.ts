@@ -1070,7 +1070,7 @@ export function news(message: string, commit = false) {
         if (commit) {
             const paper = `./tty/files/tavern/today.txt`
             fs.appendFileSync(paper, fs.readFileSync(log))
-            fs.unlink(log)
+            fs.unlink(log, () => {})
         }
     }
 }
@@ -1833,6 +1833,7 @@ export function logoff() {
             unlock(player.id)
         }
 
+        callers = []
         try { callers = require('./users/callers') } catch(e) {}
         while (callers.length > 7)
             callers.pop()
