@@ -2271,9 +2271,11 @@ export function lock(id: string, insert = true): boolean {
     }
     else {
         let rs = query(`SELECT id FROM Online WHERE id LIKE '${id}'`)
-        if (!rs.length)
+        if (!rs.length) {
             sqlite3.exec(`INSERT INTO Online (id, pid, lockdate, locktime) VALUES ('${id.toLowerCase()}', ${process.pid}, ${now().date}, ${now().time})`)
-        return rs.length
+            return true
+        }
+        return false
     }
 }
 
