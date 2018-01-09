@@ -115,26 +115,6 @@ function who() {
     $.access = $.Access.name[$.player.access]
     xvt.emulation = $.player.emulation
 
-    let rs = $.query(`SELECT id, lockdate, locktime FROM Online`)
-    for (let row = 0; row < rs.length; row++) {
-        let t = $.now().time
-        if ((t = (1440 * ($.now().date - rs[0].lockdate)
-            + 60 * ((t / 100 - rs[0].locktime / 100) >>0)
-            + t % 100 - rs[0].locktime % 100)) > 60) {
-            $.unlock(rs[row].id)
-            $.news(`?forced an expired player unlock: ${rs[row].id} from ${$.time(rs[row].locktime)}\n`, true)
-        }
-        else if (rs[row].id === $.player.id) {
-            $.player.id = ''
-            $.beep()
-            $.news(`?attempted same player logon @ ${$.time($.now().time)}: ${rs[row].id} locked out from ${$.time(rs[row].locktime)}\n`, true)
-            xvt.out(`\nYou\'re in violation of the space-time continuum: T - ${60 - t} minutes\n`)
-            xvt.ondrop = $.logoff
-            xvt.sessionAllowed = 1
-            xvt.waste(2000)
-        }
-    }
-
     xvt.app.form['password'].prompt = $.player.handle + ', enter your password: '
     xvt.app.focus = 'password'
 }
@@ -150,6 +130,28 @@ function password() {
     if ($.player.email === '' && $.access.verify) {
         require('../email')
         return
+    }
+
+    $.news(`${$.player.handle} logged in ${$.time($.now().time)} as a level ${$.player.level} ${$.player.pc}:`)
+
+    let rs = $.query(`SELECT * FROM Online`)
+    for (let row = 0; row < rs.length; row++) {
+        let t = $.now().time
+        if ((t = (1440 * ($.now().date - rs[0].lockdate)
+            + 60 * ((t / 100 - rs[0].locktime / 100) >>0)
+            + t % 100 - rs[0].locktime % 100)) > 60) {
+            $.unlock(rs[row].id)
+            $.news(`\t?forced an expired player unlock: ${rs[row].id} from ${$.time(rs[row].locktime)}`)
+        }
+        else if (rs[row].id === $.player.id) {
+            $.news(`\t?online player logon attempt: ${rs[row].id} already locked out from ${$.time(rs[row].locktime)}`)
+            process.kill(rs[row].pid, 'SIGHUP')
+            $.access.roleplay = false
+            $.beep()
+            xvt.out(`\nYou\'re in violation of the space-time continuum: T - ${60 - t} minutes\n`)
+            xvt.carrier = false
+            xvt.hangup()
+        }
     }
 
     if ($.access.promote > 0 && $.player.level >= $.access.promote) {
@@ -178,12 +180,6 @@ function password() {
         $.beep()
         xvt.out('\nYou have already used all ', $.access.calls.toString(),
          ' visits for today.  Please visit us again tomorrow!\n')
-        xvt.hangup()
-    }
-
-    if ($.lock($.player.id, false)) {
-        $.beep()
-        xvt.out('\nYou\'re in violation of the space-time continuum.  Try again later.\n')
         xvt.hangup()
     }
 
@@ -282,7 +278,6 @@ function welcome() {
         xvt.out(xvt.cyan, 'Visit #: ', xvt.bright, xvt.white, $.player.calls.toString(), xvt.reset
             , `  -  ${$.access.calls - $.player.today} calls remaining\n`)
         xvt.sessionAllowed = $.access.minutes * 60
-        $.news(`${$.player.handle} logged in ${$.time($.player.lasttime)} as a level ${$.player.level} ${$.player.pc}:`)
         $.wall(`logged on as a level ${$.player.level} ${$.player.pc}`)
 
         xvt.out(xvt.cyan, '\nLast callers were: ', xvt.white)

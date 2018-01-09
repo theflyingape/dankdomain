@@ -189,6 +189,11 @@ function choice() {
 					menu()
 					return
 				}
+                if ($.lock(opponent.user.id, false)) {
+                    $.beep()
+                    xvt.out(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
+                    xvt.entry = ''
+                }
 
                 xvt.out('\nYou case ', opponent.user.handle, '\'s joint out.\n')
                 xvt.waste(500)
@@ -253,18 +258,19 @@ function choice() {
                                 opponent.user.weapon = $.Weapon.merchant[opponent.weapon.wc]
                                 opponent.user.toWC = 0
 
-                                $.saveUser(opponent)
+                                $.saveUser(opponent, false, true)
                                 $.news(`\trobbed ${opponent.user.handle}`)
                                 $.log(opponent.user.id, `\n${$.player.handle} robbed you!`)
                             }
 							else {
+                                $.unlock(opponent.user.id.toLowerCase())
+                                $.log(opponent.user.id, `\n${$.player.handle} was caught robbing you!`)
+                                $.reason = `caught robbing ${opponent.user.handle}`
+								$.player.status = 'jail'
 								xvt.out('\nA guard catches you and throws you into jail!\n')
                                 $.sound('arrested', 20)
                                 xvt.out('You might be released by your next call.\n\n')
                                 xvt.waste(1000)
-                                $.log(opponent.user.id, `\n${$.player.handle} was caught robbing you!`)
-                                $.reason = `caught robbing ${opponent.user.handle}`
-								$.player.status = 'jail'
                                 xvt.hangup()
                                 return
                             }

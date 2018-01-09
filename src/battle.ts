@@ -84,8 +84,7 @@ function end() {
     if (from === 'User') {
         let opponent = parties[1][0]
         if (!(opponent.user.id === '_' || opponent.user.gender === 'I')) {
-            if (opponent.altered) $.saveUser(opponent)
-            $.unlock(opponent.user.id)
+            $.saveUser(opponent, false, true)
             if ($.player.hp > 0 && opponent.hp == 0) {
                 $.action('yn')
                 xvt.app.form = {

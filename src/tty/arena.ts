@@ -107,7 +107,7 @@ function choice() {
 				xvt.out(xvt.green, sprintf('%-25s', opponent.user.handle), xvt.white, sprintf('%4d', versus), '\n')
 				xvt.out(xvt.green, sprintf('%-25s', $.player.handle), xvt.white, sprintf('%4d', ability), '\n')
 				xvt.out(xvt.reset, '\n')
-				if((ability + factor * $.player.level) < (versus + 1)) {
+				if ((ability + factor * $.player.level) < (versus + 1)) {
 					xvt.out(opponent.user.handle, ' laughs rudely in your face!\n\n')
 					menu(true)
 					return
@@ -347,8 +347,10 @@ function choice() {
 								$.music('combat' + $.arena--)
 								Battle.engage('User', $.online, opponent, menu)
 							}
-							else
+							else {
+								$.unlock(opponent.user.id.toLowerCase())
 								menu(!$.player.expert)
+							}
 						}
 						else
 							menu(!$.player.expert)

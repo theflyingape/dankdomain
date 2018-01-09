@@ -342,6 +342,7 @@ function choice() {
                                 Battle.brawl(opponent, $.online)
                         }
 						if (/G/i.test(xvt.entry)) {
+                            $.unlock(opponent.user.id.toLowerCase())
                             xvt.out(`\nWe can't all be Rocky, eh?\n`)
                             menu($.player.expert)
                             return
@@ -351,8 +352,10 @@ function choice() {
                         }
                         if ($.online.bp > 0 && opponent.bp > 0)
                             xvt.app.refocus()
-                        else
+                        else {
+                            $.unlock(opponent.user.id.toLowerCase())
                             menu($.player.expert)
+                        }
                     }, prompt:xvt.attr($.bracket('P', false), xvt.cyan, `unch ${$.who(opponent, 'him')}`, $.bracket('G', false), xvt.cyan, 'ive it up, ', $.bracket('Y', false), xvt.cyan, 'our status: ' )
                         , cancel:'G', enter:'P', eol:false, match:/P|G|Y/i }
 				}

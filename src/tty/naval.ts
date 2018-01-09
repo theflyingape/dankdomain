@@ -620,7 +620,7 @@ function BattleUser(nme: active) {
 					else {
 						$.player.retreats++
 						xvt.out('\nYou sail away safely out of range.\n')
-						$.saveUser(nme)
+						$.saveUser(nme, false, true)
 						$.online.altered = true
                         $.log(nme.user.id, `\n${$.player.handle}, the coward, sailed away from you.`)
 						menu()
@@ -706,7 +706,7 @@ function BattleUser(nme: active) {
 			nme.user.coin.value = 0
 		}
 		booty.value += nme.user.coin.value
-		$.saveUser(nme)
+		$.saveUser(nme, false, true)
 		$.online.altered = true
 	}
 
@@ -729,8 +729,8 @@ function BattleUser(nme: active) {
 				return false
 			}
 			xvt.out('\nThey sail away over the horizon.\n')
+			$.saveUser(nme, false, true)
 			xvt.waste(500)
-			$.saveUser(nme)
 			return true
 		}
 		if (!nme.user.ram || (nme.user.cannon && $.dice(2 * nme.hull / (nme.hull - $.online.hull) + 4) > 1))
@@ -739,9 +739,9 @@ function BattleUser(nme: active) {
 			ram(nme, $.online)
 
 		if ($.online.hull < 1) {
-			xvt.out(`\n${nme.user.handle} smiles as a shark approaches you.\n`)
-			$.sound('bubbles', 10)
-	
+			$.log(nme.user.id, `\nYou sank ${$.player.handle}'s ship!`)
+			$.reason=`sunk by ${nme.user.handle}`
+
 			let booty = new $.coins(Math.round(Math.pow(2, nme.user.hull / 150) * 7937 / 250))
 			booty.value = Math.trunc(booty.value * $.player.cannon)
 			if ($.player.coin.value > booty.value)
@@ -750,13 +750,12 @@ function BattleUser(nme: active) {
 			if (booty.value) {
 				$.log(nme.user.id, `... and you got ${booty.carry()}.\n`)
 				nme.user.coin.value += booty.value
-				xvt.waste(500)
 				$.player.coin.value = 0
 			}
-			$.saveUser(nme)
+			$.saveUser(nme, false, true)
 
-			$.log(nme.user.id, `\nYou sank ${$.player.handle}'s ship!`)
-			$.reason=`sunk by ${nme.user.handle}`
+			xvt.out(`\n${nme.user.handle} smiles as a shark approaches you.\n`)
+			$.sound('bubbles', 10)
 			xvt.hangup()
 		}
 		return ($.online.hull < 1)

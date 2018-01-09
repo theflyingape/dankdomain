@@ -1540,7 +1540,7 @@ export function riddle() {
     player.immortal++
     reroll(player)
     saveUser(player)
-    
+
     if (max > 2) {
         music('victory')
         const log = `./tty/files/winners.txt`
@@ -1822,26 +1822,35 @@ export function emulator(cb:Function) {
 
 export function logoff() {
     if (!reason) {
-        if (player && player.id) player.coward = true
+        if (access.roleplay) {
+            player.lasttime = now().time
+            saveUser(player)
+        }
         reason = (xvt.reason ? xvt.reason : 'mystery')
+        if (player && player.id) {
+            if (run(`UPDATE Players set coward=1 WHERE id='${player.id}'`).changes)
+                news(`\tlogged off ${time(player.lasttime)} (${reason})\n`, true)
+            access.roleplay = false
+        }
     }
     if (xvt.validator.isNotEmpty(player.id)) {
         player.lasttime = now().time
         if (access.roleplay) {
             saveUser(player)
             unlock(player.id)
+            news(`\tlogged off ${time(player.lasttime)} as a level ${player.level} ${player.pc}`)
+            news(`\t(${reason})\n`, true)
+
+            callers = []
+            try { callers = require('./users/callers') } catch(e) {}
+            while (callers.length > 7)
+                callers.pop()
+            callers = [<caller>{who: player.handle, reason: reason}].concat(callers)
+            fs.writeFileSync('./users/callers.json', JSON.stringify(callers))
         }
 
-        callers = []
-        try { callers = require('./users/callers') } catch(e) {}
-        while (callers.length > 7)
-            callers.pop()
-        callers = [<caller>{who: player.handle, reason: reason}].concat(callers)
-        fs.writeFileSync('./users/callers.json', JSON.stringify(callers))
-
-        news(`\tlogged off ${time(player.lasttime)} as a level ${player.level} ${player.pc}`)
-        news(`\t(${reason})\n`, true)
         wall(`logged off: ${reason}`)
+        unlock(player.id, true)
 
         //  logoff banner
         sound('goodbye')
@@ -1865,7 +1874,7 @@ export function logoff() {
             , xvt.faint, ' (', xvt.cyan, process.platform, xvt.white, xvt.faint, ')'
             , xvt.reset, '\n'
         )
-        xvt.waste(2000)
+        xvt.waste(1965)
         if (player.today)
             music(online.hp > 0 ? 'logoff' : 'death')
     }
@@ -2090,13 +2099,14 @@ export function loadUser(rpc): boolean {
     }
 }
 
-export function saveUser(rpc, insert = false) {
+export function saveUser(rpc, insert = false, locked = false) {
 
     let user: user = isActive(rpc) ? rpc.user : rpc
 
     if (xvt.validator.isEmpty(user.id)) return
 
     let sql: string = ''
+
 try {
     if (insert) {
         sql = `INSERT INTO Players 
@@ -2169,7 +2179,9 @@ try {
         }
         reason = 'defect - ' + err.code
         xvt.hangup()
-    }
+}
+
+    if (locked) unlock(user.id.toLowerCase())
 
     sql = users + user.id + '.sql'
     if (process.platform === 'linux') {
@@ -2258,12 +2270,15 @@ export function lock(id: string, insert = true): boolean {
         }
     }
     else {
-        let rs = query(`SELECT id FROM Online WHERE id = '${id}'`)
+        let rs = query(`SELECT id FROM Online WHERE id LIKE '${id}'`)
+        if (!rs.length)
+            sqlite3.exec(`INSERT INTO Online (id, pid, lockdate, locktime) VALUES ('${id.toLowerCase()}', ${process.pid}, ${now().date}, ${now().time})`)
         return rs.length
     }
 }
 
-export function unlock(id: string): number {
+export function unlock(id: string, mine = false): number {
+    if (mine) return sqlite3.prepare(`DELETE FROM Online WHERE pid = ${process.pid}`).run().changes
     return sqlite3.prepare(`DELETE FROM Online WHERE id = '${id}'`).run().changes
 }
 
