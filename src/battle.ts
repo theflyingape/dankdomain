@@ -965,6 +965,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             rpc.altered = true
             $.Magic.remove(rpc.user.spells, spell.cast)
             xvt.out($.who(rpc, 'His'), 'wand smokes as ', $.who(rpc, 'he'), $.what(rpc, 'cast'), 'the spell.\n')
+            $.saveUser(rpc)
             xvt.waste(300)
         }
 
@@ -973,6 +974,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             rpc.altered = true
             $.Magic.remove(rpc.user.spells, spell.cast)
             xvt.out($.who(rpc, 'His'), 'scroll burns as ', $.who(rpc, 'he'), $.what(rpc, 'cast'), 'the spell.\n')
+            $.saveUser(rpc)
             xvt.waste(300)
         }
     
@@ -1312,7 +1314,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     rpc.user.weapon = $.Weapon.merchant[n]
                 $.Weapon.equip(rpc, rpc.user.weapon)
                 xvt.out($.an(rpc.user.weapon.toString()), xvt.reset, '!\n')
-                rpc.altered = true
+                $.saveUser(rpc)
             }
             else {
                 if (isNaN(+nme.user.weapon))
@@ -1328,7 +1330,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     nme.user.weapon = $.Weapon.merchant[n]
                 $.Weapon.equip(nme, nme.user.weapon)
                 xvt.out($.an(nme.user.weapon.toString()), xvt.reset, '!\n')
-                nme.altered = true
+                $.saveUser(nme)
             }
             xvt.waste(500)
             break

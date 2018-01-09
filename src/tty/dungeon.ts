@@ -684,7 +684,6 @@ function doMove(): boolean {
 									return
 								}
 								if (i < start || i > end) {
-									$.player.coward = true
 									xvt.app.refocus()
 									return
 								}
@@ -896,7 +895,6 @@ function doMove(): boolean {
 						switch (t % z) {
 						case 0:
 							if ($.player.cursed) {
-								$.player.coward = false
 								$.player.cursed = ''
 								$.online.str = $.PC.ability($.online.str, 10, $.player.maxstr)
 								$.online.int = $.PC.ability($.online.int, 10, $.player.maxint)
@@ -959,6 +957,7 @@ function doMove(): boolean {
 							n.value += $.worth(new $.coins($.online.armor.value).value, $.online.cha)
 							n.value *= (Z + 1)
 							$.player.coin.value += new $.coins(n.carry(1, true)).value
+							$.sound('yahoo')
 							break
 						case 3:
 							$.player.coin.value = 0
@@ -989,7 +988,6 @@ function doMove(): boolean {
 							$.sound('shimmer', 12)
 							break
 						case 7:
-							$.sound('morph', 10)
 							$.player.level = $.dice(Z)
 							if ($.online.adept)
 								$.player.level += $.dice($.player.level)
@@ -999,6 +997,7 @@ function doMove(): boolean {
 							$.player.gender = ['F','M'][$.dice(2) - 1]
 							$.saveUser($.player)
 							xvt.out(`You got morphed into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!\n`)
+							$.sound('morph', 10)
 							break
 						case 8:
 							$.sound('level')
@@ -2029,7 +2028,7 @@ function putMonster(r = -1, c = -1): boolean {
 
 	//	check for overcrowding
 	if (DL.rooms[r][c].monster.length)
-		if (DL.rooms[r][c].monster.length > 2 || DL.rooms[r][c].type == 1 || DL.rooms[r][c].type == 2)
+		if (DL.rooms[r][c].monster.length > 2)
 			return false
 
 	let i:number = DL.rooms[r][c].monster.length
@@ -2137,7 +2136,7 @@ function putMonster(r = -1, c = -1): boolean {
 		$.activate(m)
 
 		m.user.immortal = deep
-		m.adept = $.int(deep / 4)
+		m.adept = $.dice(Z / 30 + deep / 4) - 1
 		m.str = $.PC.ability(m.str, m.adept * 2 + 1)
 		m.int = $.PC.ability(m.int, m.adept * 2 + 1)
 		m.dex = $.PC.ability(m.dex, m.adept * 2 + 1)

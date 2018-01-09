@@ -132,6 +132,7 @@ interface choices {
 interface monster {
 	name: string
     pc: string
+    adept?: number
     hit?: string
     smash?: string
     poisons?: string[]

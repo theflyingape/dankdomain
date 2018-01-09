@@ -266,8 +266,9 @@ function choice() {
                     xvt.waste(2000)
                     xvt.out('\n')
 
-                    $.online.altered = true
                     $.player.coward = true
+                    $.saveUser($.online)
+                    $.online.altered = true
                     Battle.engage('Tavern', $.online, $.barkeep, require('./main').menu)
                     return
             }
@@ -298,7 +299,8 @@ function choice() {
 					xvt.out('\nYou are allowed only to brawl other players.\n')
 					if (opponent.user.id[0] === '_') {
 						if (($.online.cha = $.PC.ability($.player.cha, -10)) < 20)
-							$.online.cha = 20
+                            $.online.cha = 20
+                        $.online.altered = true
 						$.player.coward = true
 					}
 					menu()

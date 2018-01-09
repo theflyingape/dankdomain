@@ -127,11 +127,11 @@ function who() {
         else if (rs[row].id === $.player.id) {
             $.player.id = ''
             $.beep()
-            $.news(`?attempted player logon @ ${$.time($.now().time)}: ${rs[row].id} locked out from ${$.time(rs[row].locktime)}\n`, true)
+            $.news(`?attempted same player logon @ ${$.time($.now().time)}: ${rs[row].id} locked out from ${$.time(rs[row].locktime)}\n`, true)
             xvt.out(`\nYou\'re in violation of the space-time continuum: T - ${60 - t} minutes\n`)
             xvt.ondrop = $.logoff
             xvt.sessionAllowed = 1
-            xvt.waste(1000)
+            xvt.waste(2000)
         }
     }
 

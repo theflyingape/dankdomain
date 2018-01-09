@@ -1826,7 +1826,6 @@ export function logoff() {
         reason = (xvt.reason ? xvt.reason : 'mystery')
     }
     if (xvt.validator.isNotEmpty(player.id)) {
-        sound('goodbye')
         player.lasttime = now().time
         if (access.roleplay) {
             saveUser(player)
@@ -1845,6 +1844,7 @@ export function logoff() {
         wall(`logged off: ${reason}`)
 
         //  logoff banner
+        sound('goodbye')
         xvt.out('\x06\n')
         xvt.out(xvt.reset, 'Goodbye, please play again!  Also visit:\n')
         xvt.waste(750)

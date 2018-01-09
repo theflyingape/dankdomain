@@ -317,6 +317,7 @@ function choice() {
 					if (opponent.user.id[0] === '_') {
 						if (($.online.cha = $.PC.ability($.player.cha, -10)) < 20)
 							$.online.cha = 20
+						$.online.altered = true
 						$.player.coward = true
 					}
 					menu()
@@ -490,6 +491,7 @@ function MonsterFights(): boolean {
 				$.Magic.add(monster.user.spells, monsters[mon].spells[i])
 
 		$.activate(monster)
+		if (monsters[mon].adept) monster.adept = monsters[mon].adept
 		monster.user.coin.amount = monsters[mon].money.toString()
 
 		$.cat('arena/' + monster.user.handle.toLowerCase())
