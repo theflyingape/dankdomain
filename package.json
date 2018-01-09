@@ -40,7 +40,7 @@
     "sprintf-js": "^1.1.1",
     "title-case": "^2.1.1",
     "xterm": "^2.9.2",
-    "xvt": "^1.0.19"
+    "xvt": "^1.0.20"
   },
   "devDependencies": {
     "@types/fs-extra": "0.0.37",
