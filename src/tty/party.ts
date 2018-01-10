@@ -311,7 +311,7 @@ function choice() {
                                     xvt.out(`\n${member.user.handle} is not a member.\n`)
                                 }
                                 else {
-                                    if ($.lock(member.user.id, false)) {
+                                    if (!$.lock(member.user.id, 2)) {
                                         $.beep()
                                         xvt.out(`${$.who(member, 'He')}is currently engaged elsewhere and not available.\n`)
                                     }
@@ -408,7 +408,7 @@ function choice() {
                                 if (posse[n].user.gang !== g.name || posse[n].user.status)
                                     posse.pop()
                                 else
-                                    $.activate(posse[n])
+                                    $.activate(posse[n], true)
                         }
                     }
 
@@ -488,8 +488,10 @@ function choice() {
 
                         Battle.engage('Party', posse, nme, menu)
                     }
-                    else
+                    else {
+                        $.unlock($.player.id, true)
                         menu()
+                    }
                 }, prompt:'Fight this gang (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
             }
             xvt.app.focus = 'gang'

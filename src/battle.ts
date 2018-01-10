@@ -115,6 +115,7 @@ function end() {
             }
         }
     }
+    $.unlock($.player.id, true)
     fini()
 }
 

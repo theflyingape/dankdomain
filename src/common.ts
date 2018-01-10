@@ -510,7 +510,7 @@ export function activate(one: active, keep = false, confused = false): boolean {
         one.user.access = Object.keys(Access.name)[0]
 
     if (keep) {
-        if (!lock(one.user.id) && one.user.id !== player.id) {
+        if (!lock(one.user.id, one.user.id === player.id ? 1 : 2) && one.user.id !== player.id) {
             xvt.beep()
             xvt.out('\n', xvt.cyan, xvt.bright
                 , one.user.handle, ' is engaged elsewhere.'
@@ -1825,6 +1825,7 @@ export function logoff() {
         if (access.roleplay) {
             player.lasttime = now().time
             saveUser(player)
+            unlock(player.id)
         }
         reason = (xvt.reason ? xvt.reason : 'mystery')
         if (player && player.id) {
@@ -2252,9 +2253,9 @@ export function newDay() {
     xvt.out('.\nAll set -- thank you!\n\n')
 }
 
-export function lock(id: string, insert = true): boolean {
+export function lock(id: string, owner = 0): boolean {
 
-    if (insert) {
+    if (owner == 1) {
         try {
             sqlite3.exec(`INSERT INTO Online (id, pid, lockdate, locktime) VALUES ('${id}', ${process.pid}, ${now().date}, ${now().time})`)
             return true
@@ -2272,7 +2273,8 @@ export function lock(id: string, insert = true): boolean {
     else {
         let rs = query(`SELECT id FROM Online WHERE id LIKE '${id}'`)
         if (!rs.length) {
-            sqlite3.exec(`INSERT INTO Online (id, pid, lockdate, locktime) VALUES ('${id.toLowerCase()}', ${process.pid}, ${now().date}, ${now().time})`)
+            if (owner == 2)
+                sqlite3.exec(`INSERT INTO Online (id, pid, lockdate, locktime) VALUES ('${id.toLowerCase()}', ${process.pid}, ${now().date}, ${now().time})`)
             return true
         }
         return false
@@ -2280,7 +2282,7 @@ export function lock(id: string, insert = true): boolean {
 }
 
 export function unlock(id: string, mine = false): number {
-    if (mine) return sqlite3.prepare(`DELETE FROM Online WHERE pid = ${process.pid}`).run().changes
+    if (mine) return sqlite3.prepare(`DELETE FROM Online WHERE id != '${id}' AND pid = ${process.pid}`).run().changes
     return sqlite3.prepare(`DELETE FROM Online WHERE id = '${id}'`).run().changes
 }
 
@@ -2374,7 +2376,7 @@ export function loadGang(rs: any): gang {
             gang.handles.push(who[0].handle)
             gang.genders.push(who[0].gender)
             gang.melee.push(who[0].melee)
-            if (gang.members[n] !== player.id && !who[0].status && lock(gang.members[n], false))
+            if (gang.members[n] !== player.id && !who[0].status && !lock(gang.members[n]))
                 who[0].status = 'locked'
             gang.status.push(who[0].status)
             gang.validated.push(who[0].gang ? who[0].gang === rs.name : undefined)

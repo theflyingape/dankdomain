@@ -311,7 +311,7 @@ function choice() {
 				xvt.app.form = {
 					'brawl': { cb:() => {
 						xvt.out('\n')
-						if ($.lock(opponent.user.id, false)) {
+						if (!$.lock(opponent.user.id)) {
 							$.beep()
 							xvt.out(`\n${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
 							xvt.entry = ''
@@ -342,7 +342,7 @@ function choice() {
                                 Battle.brawl(opponent, $.online)
                         }
 						if (/G/i.test(xvt.entry)) {
-                            $.unlock(opponent.user.id.toLowerCase())
+                            $.unlock($.player.id, true)
                             xvt.out(`\nWe can't all be Rocky, eh?\n`)
                             menu($.player.expert)
                             return
@@ -353,7 +353,7 @@ function choice() {
                         if ($.online.bp > 0 && opponent.bp > 0)
                             xvt.app.refocus()
                         else {
-                            $.unlock(opponent.user.id.toLowerCase())
+                            $.unlock($.player.id, true)
                             menu($.player.expert)
                         }
                     }, prompt:xvt.attr($.bracket('P', false), xvt.cyan, `unch ${$.who(opponent, 'him')}`, $.bracket('G', false), xvt.cyan, 'ive it up, ', $.bracket('Y', false), xvt.cyan, 'our status: ' )

@@ -79,7 +79,7 @@ function choice() {
 				xvt.app.form = {
 					'battle': { cb:() => {
 						xvt.out('\n\n')
-						if ($.lock(opponent.user.id, false)) {
+						if (!$.lock(opponent.user.id, 2)) {
 							$.beep()
 							xvt.out(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
 							xvt.entry = ''

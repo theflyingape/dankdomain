@@ -337,7 +337,7 @@ function choice() {
 				xvt.app.form = {
 					'fight': { cb:() => {
 						xvt.out('\n\n')
-						if ($.lock(opponent.user.id, false)) {
+						if (!$.lock(opponent.user.id, 2)) {
 							$.beep()
 							xvt.out(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
 							xvt.entry = ''
@@ -348,7 +348,7 @@ function choice() {
 								Battle.engage('User', $.online, opponent, menu)
 							}
 							else {
-								$.unlock(opponent.user.id.toLowerCase())
+								$.unlock($.player.id, true)
 								menu(!$.player.expert)
 							}
 						}

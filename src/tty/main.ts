@@ -189,7 +189,7 @@ function choice() {
 					menu()
 					return
 				}
-                if ($.lock(opponent.user.id, false)) {
+                if (!$.lock(opponent.user.id, 2)) {
                     $.beep()
                     xvt.out(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
                     xvt.entry = ''
@@ -263,7 +263,7 @@ function choice() {
                                 $.log(opponent.user.id, `\n${$.player.handle} robbed you!`)
                             }
 							else {
-                                $.unlock(opponent.user.id.toLowerCase())
+                                $.unlock($.player.id, true)
                                 $.log(opponent.user.id, `\n${$.player.handle} was caught robbing you!`)
                                 $.reason = `caught robbing ${opponent.user.handle}`
 								$.player.status = 'jail'
