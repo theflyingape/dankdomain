@@ -1535,12 +1535,12 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     ? $.int($.int(rpc.armor.ac + rpc.user.toAC + rpc.toWC, true) / 5)
                     : $.int($.int(nme.armor.ac + nme.user.toAC + nme.toWC, true) / 5)
                 ) : 32
-            if (nme.user.melee > 3) ba *= $.int(nme.user.melee / 2)
+            if (nme.user.melee > 3) bba *= $.int(nme.user.melee / 2)
             let bbr = $.int(rpc.int / 10)
             while ($.dice(99 + rpc.user.magic) > 99) {
                 bba += $.dice(rpc.user.magic)
                 for (let i = 0; i < bba; i++)
-                    br += $.dice(bba)
+                    bbr += $.dice(bba)
             }
             for (let i = 0; i < rpc.user.level; i++)
                 bbr += $.dice(bba)
