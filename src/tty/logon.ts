@@ -141,10 +141,10 @@ function password() {
             + 60 * ((t / 100 - rs[0].locktime / 100) >>0)
             + t % 100 - rs[0].locktime % 100)) > 60) {
             $.unlock(rs[row].id)
-            $.news(`\t?forced an expired player unlock: ${rs[row].id} from ${$.time(rs[row].locktime)}`)
+            $.news(`\tremoved an expired lock: ${rs[row].id} from ${$.time(rs[row].locktime)}`)
         }
         else if (rs[row].id === $.player.id) {
-            $.news(`\t?online player logon attempt: ${rs[row].id} already locked out from ${$.time(rs[row].locktime)}`)
+            $.news(`\tkicked simultaneous player off: ${rs[row].id} lock from ${$.time(rs[row].locktime)}`)
             process.kill(rs[row].pid, 'SIGHUP')
             $.access.roleplay = false
             $.beep()

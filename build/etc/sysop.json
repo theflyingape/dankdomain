@@ -4,11 +4,11 @@
 	"name": "Dank Domain",
 	"sex": "I",
 	"access": "Inactive",
-	"email": "theflyingape@gmail.com",
+	"email": "dank.domain.game@gmail.com",
 	"password": "\n",
  	"expires": 100,
 	"pc": "None",
 	"level": 100,
-	"weapon": "fist",
-	"armor": "skin"
+	"weapon": 42,
+	"armor": 20
 }

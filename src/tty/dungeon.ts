@@ -2078,28 +2078,35 @@ function putMonster(r = -1, c = -1): boolean {
 		m.user.handle = Object.keys(monsters)[j]
 		dm = monsters[m.user.handle]
 		$.reroll(m.user, dm.pc ? dm.pc : $.player.pc, level)
+
 		if (dm.weapon)
 			m.user.weapon = dm.weapon
 		else {
-			m.user.weapon = $.int((level + deep) / 100 * ($.Weapon.merchant.length - 7))
-			m.user.weapon = $.int((m.user.weapon + $.online.weapon.wc) / 2)
 			if ($.player.level <= Z && $.dice($.player.level / 4 - $.online.cha / 10 + 12) == 1) {
 				i = $.online.weapon.wc + $.dice(3) - 2
 				i = i < 1 ? 1 : i >= $.Weapon.merchant.length ? $.Weapon.merchant.length - 1 : i
 				m.user.weapon = $.Weapon.merchant[i]
 			}
+			else {
+				m.user.weapon = $.int((level + deep) / 100 * $.int($.sysop.weapon))
+				m.user.weapon = $.int((m.user.weapon + $.online.weapon.wc) / 2)
+			}
 		}
+
 		if (dm.armor)
 			m.user.armor = dm.armor
 		else {
-			m.user.armor = $.int((level + deep) / 100 * ($.Armor.merchant.length - 4))
-			m.user.armor = $.int((m.user.armor + $.online.armor.ac) / 2)
 			if ($.player.level <= Z && $.dice($.player.level / 3 - $.online.cha / 10 + 12) == 1) {
 				i = $.online.armor.ac + $.dice(3) - 2
 				i = i < 1 ? 1 : i >= $.Armor.merchant.length ? $.Armor.merchant.length - 1 : i
 				m.user.armor = $.Armor.merchant[i]
 			}
+			else {
+				m.user.armor = $.int((level + deep) / 100 * $.int($.sysop.armor))
+				m.user.armor = $.int((m.user.armor + $.online.armor.ac) / 2)
+			}
 		}
+
 		m.user.hp = $.int(m.user.hp / 4)
 		m.user.hp += $.int(deep * Z / 4)
 		i = 5 - $.dice(deep / 3)
@@ -2143,8 +2150,8 @@ function putMonster(r = -1, c = -1): boolean {
 		m.cha = $.PC.ability(m.cha, m.adept * 2 + 1)
 
 		let gold = new $.coins($.int($.money(level) / 10))
-		gold.value += $.worth(new $.coins(m.weapon.value).value, $.int($.dice($.online.cha) / 5 + 5))
-		gold.value += $.worth(new $.coins(m.armor.value).value, $.int($.dice($.online.cha) / 5 + 5))
+		gold.value += $.worth(new $.coins(m.weapon.value).value, $.dice($.online.cha / 5) + 5)
+		gold.value += $.worth(new $.coins(m.armor.value).value, $.dice($.online.cha / 5) + 5)
 		gold.value *= $.dice(deep)
 		m.user.coin = new $.coins(gold.carry(1, true))
 

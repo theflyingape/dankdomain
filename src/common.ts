@@ -100,7 +100,7 @@ export class Character {
             hi = hi < 2 ? 2 : hi > 99 ? 99 : hi
 
             let rpc = <active>{ user:{id:''} }
-            let rs = query(`SELECT id FROM Players WHERE access != 'Inactive' AND level BETWEEN ${lo} AND ${hi} ${where} ORDER BY level`)
+            let rs = query(`SELECT id FROM Players WHERE xplevel BETWEEN ${lo} AND ${hi} ${where} ORDER BY level`)
             if (rs.length) {
                 let n = dice(rs.length) - 1
                 rpc.user.id = rs[n].id
@@ -1035,26 +1035,17 @@ export function keyhint(rpc: active) {
 }
 
 //  normalize as an integer, optional as a whole number (non-negative)
-export function int(n: number|string, whole = false): number {
-    let i: number
-
-    if (isNaN(+n))
-        i = 0
-    else {
-        if (n < 1e+20) {
-            if (whole && n < 0) n = 0
-            i = parseInt(n.toString())
-        }
-        else
-            i = Math.trunc(parseFloat(n.toString()))
-    }
-
-    return i
+export function int(n: string|number, whole = false): number {
+    n = (+n).valueOf()
+    if (isNaN(n)) n = 0
+    n = Math.trunc(n)   //  strip any fractional part
+    if (n == 0) n = 0   //  strip any negative sign (really)
+    return (whole && n < 0) ? 0 : n
 }
 
 export function log(who:string, message: string) {
     const log = `./tty/files/user/${who}.txt`
-    if (who.length && who !== player.id)
+    if (who.length && who[0] !== '_' && who !== player.id)
         fs.appendFileSync(log, `${message}\n`)
 }
 
@@ -1186,12 +1177,7 @@ export function playerPC(points = 200, immortal = false) {
             return
         }
 
-        let n: number = +xvt.entry
-        if (!xvt.validator.isInt(n)) {
-            xvt.beep()
-            xvt.app.refocus()
-            return
-        }
+        let n: number = int(xvt.entry, true)
         if (n < 20 || n > 80) {
             xvt.beep()
             xvt.app.refocus()
@@ -1695,7 +1681,7 @@ export function who(rpc: active, word: string): string {
 }
 
 export function worth(n: number, p: number): number {
-    return Math.trunc(n * p / 100)
+    return int(n * p / 100)
 }
 
 export function beep() {
