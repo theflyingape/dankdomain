@@ -29,31 +29,33 @@ module Battle
 
 
 function end() {
-    if (from === 'Tavern')
+    if (from === 'Tavern') {
         if ($.online.hp < 1) {
-            $.reason = `schooled by ${$.barkeep.user.handle}`
-            $.loadUser($.barkeep)
-            $.barkeep.user.status = $.player.id
             $.barkeep.user.weapon = $.player.weapon
             $.Weapon.equip($.online, $.Weapon.merchant[0])
-            $.saveUser($.barkeep)
+            $.saveUser($.player)
+            $.reason = `schooled by ${$.barkeep.user.handle}`
+
+            $.run(`UPDATE Players
+                set kills=kills+1, status='${$.player.id}', weapon='${$.barkeep.user.weapon}'
+                WHERE id='${$.barkeep.user.id}'`).changes
 
             xvt.out(`He picks up your ${$.barkeep.user.weapon} and triumphantly waves it around to\n`)
             xvt.out(`the cheering crowd.  He struts toward the mantelpiece to hang his new trophy.\n\n`)
             $.sound('cheer', 40)
-            xvt.out(xvt.bright, xvt.green, '"Drinks are on the house!"'
-                , xvt.reset, '\n')
+            xvt.out(xvt.bright, xvt.green, '"Drinks are on the house!"', xvt.reset, '\n')
             $.sound('cheer', 30)
-            $.player.coward = false
         }
         else {
             $.sound('barkeep')
-            $.player.coward = false
-            $.barkeep.user.status = ''
-            $.saveUser($.barkeep)
+            $.run(`UPDATE Players
+                set killed=killed+1, status='', weapon='${$.barkeep.user.weapon}'
+                WHERE id='${$.barkeep.user.id}'`).changes
             $.news(`\tdefeated ${$.barkeep.user.handle}`)
             $.wall(`defeated ${$.barkeep.user.handle}`)
         }
+        $.player.coward = false
+    }
 
     if (from === 'Taxman')
         if ($.online.hp < 1) {
@@ -216,7 +218,14 @@ export function attack(retry = false) {
 
                 xvt.out('\n')
                 if (/R/i.test(xvt.entry)) {
-                    if(from === 'Tavern') {
+                    if (from === 'Naval') {
+                        xvt.out('"You cannot escape me, mortal."\n')
+                        $.player.coward = true
+                        $.saveUser($.player)
+                        next()
+                        return
+                    }
+                    if (from === 'Tavern') {
                         $.sound('growl')
                         xvt.out('"You try to escape, but the crowd throws you back to witness the slaughter!"\n')
                         $.player.coward = true
@@ -225,7 +234,7 @@ export function attack(retry = false) {
                         return
                     }
                     if (from === 'Taxman') {
-                        $.sound('thief')
+                        $.sound('thief2')
                         xvt.out('"You can never escape the taxman!"\n')
                         $.player.coward = true
                         $.saveUser($.player)
@@ -582,11 +591,13 @@ export function spoils() {
         //  taxman takes any leftovers, but capped at 1p
         coin.value = coin.value < 1 ? 0 : coin.value > 1e+13 ? 1e+13 : coin.value
         if (coin.value) {
-            $.loadUser($.taxman)
-            $.taxman.user.bank.value += coin.value
-            $.saveUser($.taxman)
             xvt.out(xvt.reset, '\n')
             $.beep()
+            $.loadUser($.taxman)
+            $.taxman.user.bank.value += coin.value
+            $.run(`UPDATE Players
+                set bank = ${$.taxman.user.bank.value}
+                WHERE id='${$.taxman.user.id}'`).changes
             xvt.out($.taxman.user.handle, ' took ', $.who($.taxman, 'his'), 'cut worth ', coin.carry(), '.\n')
             xvt.waste(1000)
         }
@@ -726,7 +737,6 @@ export function spoils() {
             winner.user.coin.value += $.player.coin.value
             xvt.out($.who(winner, 'He'), 'gets ', $.player.coin.carry(), ' you were carrying.\n')
             $.player.coin.value = 0
-            $.saveUser(winner)
         }
         xvt.out(1000)
 
@@ -944,10 +954,20 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 cb(!rpc.confused)
                 return
             }
-            if ((from === 'Tavern' || from === 'Taxman') && spell.cast == 8) {
-                if (rpc.user.id === $.player.id) xvt.out('You cannot cast that spell to retreat!\n')
-                cb(!rpc.confused)
-                return
+            if (/Naval|Tavern|Taxman/.test(from) && [ 8,12,16,17,18,22 ].indexOf(spell.cast) >= 0) {
+                if (spell.cast == 8 && rpc.user.id === $.player.id) {
+                    xvt.out('You cannot cast that spell to retreat!\n')
+                    cb(!rpc.confused)
+                    return
+                }
+                if (spell.cast > 8) {
+                    if (rpc.user.id === $.player.id) {
+                        $.sound('oops', 4)
+                        xvt.out('You are too frantic to cast that spell!\n')
+                    }
+                    cb(!rpc.confused)
+                    return
+                }
             }
         }
         else {
@@ -965,7 +985,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             rpc.altered = true
             $.Magic.remove(rpc.user.spells, spell.cast)
             xvt.out($.who(rpc, 'His'), 'wand smokes as ', $.who(rpc, 'he'), $.what(rpc, 'cast'), 'the spell.\n')
-            $.saveUser(rpc)
+            if (!(rpc.user.id === '_' || rpc.user.gender === 'I'))
+                $.saveUser(rpc)
             xvt.waste(300)
         }
 
@@ -974,7 +995,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             rpc.altered = true
             $.Magic.remove(rpc.user.spells, spell.cast)
             xvt.out($.who(rpc, 'His'), 'scroll burns as ', $.who(rpc, 'he'), $.what(rpc, 'cast'), 'the spell.\n')
-            $.saveUser(rpc)
+            if (!(rpc.user.id === '_' || rpc.user.gender === 'I'))
+                $.saveUser(rpc)
             xvt.waste(300)
         }
     

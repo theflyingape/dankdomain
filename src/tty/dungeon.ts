@@ -882,7 +882,7 @@ function doMove(): boolean {
 						n = $.dice($.online.str / 20) + 2
 						for (i = 1; i <= n; i++) {
 							t = $.dice(z)
-							if ($.player.coward) t = 5
+							if (i == n && $.player.coward) t = 5
 							xvt.out(xvt.bright, xvt.blue, '[', xvt.cyan, [
 								' Grace ', ' Doom! ',
 								'Fortune', ' Taxes ',
@@ -2199,7 +2199,7 @@ export function teleport() {
 					if (deep > 0)
 						deep--
 					else {
-						$.music('.')
+						$.music('thief2')
 						xvt.out(`\x1B[1;${$.player.rows}r`)
 						xvt.plot($.player.rows, 1)
 						require('./main').menu($.player.expert)
@@ -2216,7 +2216,7 @@ export function teleport() {
 }
 
 function quaff(v: number, it = true) {
-	if ($.player.coward && v > 10) v -= v % 2
+	if ($.player.coward && v > 8) v -= v % 2
 	xvt.out(v % 2 ? xvt.green : xvt.red)
 	xvt.out('It was', $.an(potion[v]), '.\n', xvt.reset)
 
