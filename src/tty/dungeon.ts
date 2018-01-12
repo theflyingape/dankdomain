@@ -882,6 +882,7 @@ function doMove(): boolean {
 						n = $.dice($.online.str / 20) + 2
 						for (i = 1; i <= n; i++) {
 							t = $.dice(z)
+							if ($.player.coward) t = 5
 							xvt.out(xvt.bright, xvt.blue, '[', xvt.cyan, [
 								' Grace ', ' Doom! ',
 								'Fortune', ' Taxes ',
@@ -1261,7 +1262,7 @@ function doMove(): boolean {
 			break
 
 		case 'potion':
-			if (typeof ROOM.giftID == 'undefined')
+			if (typeof ROOM.giftID == 'undefined' && !$.player.coward)
 				ROOM.giftID = !$.player.novice && $.dice(100 + ROOM.giftValue) < ($.online.int / 20 * (1 << $.player.poison) + ($.online.int > 90 ? ($.online.int % 90) <<1 : 0))
 			$.sound('bubbles')
 			xvt.out(xvt.bright, xvt.cyan, 'On the ground, you find a ',
@@ -1273,7 +1274,7 @@ function doMove(): boolean {
 				xvt.out([ 'amber', 'blue', 'crimson', 'green', 'purple'][$.dice(5) - 1],
 					' potion.')
 
-			if (ROOM.giftID || $.dice(100) + $.dice(deep / 2) < 50 + $.int($.online.int / 2)) {
+			if (ROOM.giftID || $.dice(100 + 10 * ROOM.giftValue * +$.player.coward) + $.dice(deep / 2) < 50 + $.int($.online.int / 2)) {
 				$.action('potion')
 				xvt.app.form = {
 					'quaff': { cb: () => {
@@ -2215,11 +2216,12 @@ export function teleport() {
 }
 
 function quaff(v: number, it = true) {
+	if ($.player.coward && v > 10) v -= v % 2
 	xvt.out(v % 2 ? xvt.green : xvt.red)
 	xvt.out('It was', $.an(potion[v]), '.\n', xvt.reset)
 
 	if (it) {
-		$.sound('quaff', 5)
+		$.sound('quaff', 6)
 		switch (v) {
 	//	Vial of Slaad Secretions
 		case 0:
