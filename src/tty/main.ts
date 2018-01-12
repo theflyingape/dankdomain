@@ -204,6 +204,7 @@ function choice() {
 
                 if ($.dice($.online.int) > 5 && prize < self) {
                     xvt.out('But you decide it is not worth the effort.\n')
+                    $.unlock($.player.id, true)
 					menu()
 					return
                 }
@@ -275,6 +276,7 @@ function choice() {
                                 return
                             }
                         }
+                        $.unlock($.player.id, true)
                         menu()
                     }, prompt:'Attempt to steal (Y/N)? ', cancel:'Y', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
                 }
