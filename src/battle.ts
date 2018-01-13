@@ -160,6 +160,10 @@ export function engage(module:string, party: active|active[], mob: active|active
 export function attack(retry = false) {
     //  no more attacking
     if (retreat || teleported || ++volley > 12345) {
+        if (volley > 12345 && !retreat) {
+            retreat = true
+            $.player.coward = true
+        }
         if ($.online.confused)
             $.activate($.online, false, true)
         end()
@@ -286,6 +290,7 @@ export function attack(retry = false) {
 
                 if (/Y/i.test(xvt.entry)) {
                     yourstats()
+                    volley += 500
                     xvt.app.refocus()
                     return
                 }

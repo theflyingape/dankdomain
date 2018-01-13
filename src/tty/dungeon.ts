@@ -1294,7 +1294,7 @@ function doMove(): boolean {
 						}
 						ROOM.giftItem = ''
 						menu()
-					}, prompt:'Will you drink it (Yes/No/Toss)? ', cancel:'T', enter:'Y', eol:false, match:/Y|N|T/i, timeout:10 }
+					}, prompt:'Will you drink it (Yes/No/Toss)? ', cancel:'T', enter:'N', eol:false, match:/Y|N|T/i, timeout:10 }
 				}
 				xvt.app.focus = 'quaff'
 				return false
