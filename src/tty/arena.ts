@@ -333,7 +333,8 @@ function choice() {
 				if (!$.lock(opponent.user.id)) {
 					$.beep()
 					xvt.out(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
-					xvt.entry = ''
+					menu()
+					return
 				}
 
 				if (isNaN(+opponent.user.weapon)) xvt.out('\n', $.who(opponent, 'He'), $.Weapon.wearing(opponent), '.\n')

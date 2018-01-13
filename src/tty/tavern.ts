@@ -303,13 +303,14 @@ function choice() {
                         $.online.altered = true
 						$.player.coward = true
 					}
-					menu()
+					menu(true)
 					return
 				}
                 if (!$.lock(opponent.user.id)) {
                     $.beep()
                     xvt.out(`\n${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
-                    xvt.entry = ''
+					menu(true)
+					return
                 }
 
                 $.action('yn')
