@@ -1060,9 +1060,10 @@ export function news(message: string, commit = false) {
         if (commit) {
             const paper = `./tty/files/tavern/today.txt`
             fs.appendFileSync(paper, fs.readFileSync(log))
-            fs.unlink(log, () => {})
         }
     }
+    if (commit)
+        fs.unlink(log, () => {})
 }
 
 export function now(): {date: number, time: number} {
