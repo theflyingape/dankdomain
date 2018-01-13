@@ -277,7 +277,7 @@ export function attack(retry = false) {
                     if ($.online.confused)
                         $.activate($.online, false, true)
                     if (from === 'Party' && $.player.gang)
-                        $.sqlite3.exec(`UPDATE Gangs SET loss = loss + 1 WHERE name = '${$.player.gang}'`)
+                        $.run(`UPDATE Gangs SET loss = loss + 1 WHERE name = '${$.player.gang}'`)
                     if (from === 'User' && enemy.user.gender !== 'I')
                         $.log(enemy.user.id, `\n${$.player.handle}, the coward, retreated from you.`)
                     end()
@@ -534,8 +534,8 @@ export function spoils() {
 
     // had a little help from my friends (maybe)
     if (from === 'Party') {
-        $.sqlite3.exec(`UPDATE Gangs SET win = win + 1 WHERE name = '${parties[w][0].user.gang}'`)
-        $.sqlite3.exec(`UPDATE Gangs SET loss = loss + 1 WHERE name = '${parties[l][0].user.gang}'`)
+        $.run(`UPDATE Gangs SET win = win + 1 WHERE name = '${parties[w][0].user.gang}'`)
+        $.run(`UPDATE Gangs SET loss = loss + 1 WHERE name = '${parties[l][0].user.gang}'`)
 
         // player(s) can collect off each corpse
         let tl = [ 1, 1 ]
@@ -829,10 +829,13 @@ export function brawl(rpc:active, nme:active) {
     }
 
     function knockout(winner:active, loser:active) {
+        let xp = $.experience(loser.user.level, 9)
+        $.run(`UPDATE Players set tw=tw+1,xp=xp+${xp},coin=coin+${loser.user.coin.value} WHERE id='${winner.user.id}'`)
+        $.run(`UPDATE Players set tl=tl+1,coin=0 WHERE id='${loser.user.id}'`)
+
         xvt.out('\n', winner.user.id === $.player.id ? 'You' : winner.user.handle
             , ` ${$.what(winner, 'knock')}${$.who(loser, 'him')}out!\n`)
         xvt.waste(500)
-        let xp = $.experience(loser.user.level, 9)
         xvt.out(`\n${$.who(winner, 'He')}${$.what(winner, 'get')}`, sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
         winner.user.xp += xp
         if (loser.user.coin.value) {
@@ -841,11 +844,9 @@ export function brawl(rpc:active, nme:active) {
             loser.user.coin.value = 0
         }
         winner.user.tw++
-        $.saveUser(winner)
         xvt.waste(500)
 
         loser.user.tl++
-        $.saveUser(loser)
         if (loser.user.id === $.player.id) {
             $.sound('ko')
             let m = Math.abs($.online.bp)

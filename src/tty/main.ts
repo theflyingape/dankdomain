@@ -189,7 +189,7 @@ function choice() {
 					menu()
 					return
 				}
-                if (!$.lock(opponent.user.id, 2)) {
+                if (!$.lock(opponent.user.id)) {
                     $.beep()
                     xvt.out(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
                     xvt.entry = ''
@@ -199,18 +199,17 @@ function choice() {
                 xvt.waste(500)
                 let prize = $.worth(new $.coins($.Armor.name[opponent.user.armor].value).value, $.online.cha)
                 prize += $.worth(new $.coins($.Weapon.name[opponent.user.weapon].value).value, $.online.cha)
+                if (opponent.user.cannon) prize += $.money(opponent.user.level)
                 prize += opponent.user.coin.value
                 prize = Math.trunc(prize / (6 - $.player.steal))
 
                 if ($.dice($.online.int) > 5 && prize < self) {
                     xvt.out('But you decide it is not worth the effort.\n')
-                    $.unlock($.player.id, true)
 					menu()
 					return
                 }
 
-                xvt.out('The goods are in', $.an(opponent.user.realestate)
-                    ,  ' protected by', $.an(opponent.user.security), '.\n')
+                xvt.out('The goods are in', $.an(opponent.user.realestate),  ' protected by', $.an(opponent.user.security), '.\n')
 
                 $.action('yn')
                 xvt.app.form = {
@@ -226,12 +225,11 @@ function choice() {
                                 xvt.waste(500)
                                 skill += $.dice(100 + $.player.steal) < 100 ? $.dice($.player.level) : 5 * $.Security.name[opponent.user.security].protection
                             }
-                            if ($.player.email === opponent.user.email)
-                                skill = 0
                             xvt.waste(500)
+                            if ($.player.email === opponent.user.email || !$.lock(opponent.user.id))
+                                skill = 0
                             if (skill > lock) {
                                 $.player.coin.value += prize
-                                //$.player.stole++
                                 xvt.out('\nYou break in and make off with ', new $.coins(prize).carry(), ' worth of stuff!\n')
                                 xvt.waste(1000)
 
@@ -240,7 +238,7 @@ function choice() {
                                 $.Armor.equip(opponent, opponent.user.armor)
                                 if (opponent.armor.ac > 0) {
                                     if (opponent.armor.ac > $.Armor.merchant.length)
-                                        opponent.armor.ac = $.Armor.merchant.length
+                                        opponent.armor.ac = $.int($.Armor.merchant.length * 3 / 5)
                                     opponent.armor.ac--
                                 }
                                 else
@@ -251,7 +249,7 @@ function choice() {
                                 $.Weapon.equip(opponent, opponent.user.weapon)
                                 if (opponent.weapon.wc > 0) {
                                     if (opponent.weapon.wc > $.Weapon.merchant.length)
-                                        opponent.weapon.wc = $.Weapon.merchant.length
+                                        opponent.weapon.wc = $.int($.Weapon.merchant.length * 3 / 5)
                                     opponent.weapon.wc--
                                 }
                                 else
@@ -259,12 +257,16 @@ function choice() {
                                 opponent.user.weapon = $.Weapon.merchant[opponent.weapon.wc]
                                 opponent.user.toWC = 0
 
-                                $.saveUser(opponent, false, true)
+                                if (opponent.user.cannon) {
+                                    opponent.user.cannon--
+                                    if (opponent.user.ram) opponent.user.ram = false
+                                }
+
+                                $.saveUser(opponent)
                                 $.news(`\trobbed ${opponent.user.handle}`)
                                 $.log(opponent.user.id, `\n${$.player.handle} robbed you!`)
                             }
 							else {
-                                $.unlock($.player.id, true)
                                 $.log(opponent.user.id, `\n${$.player.handle} was caught robbing you!`)
                                 $.reason = `caught robbing ${opponent.user.handle}`
 								$.player.status = 'jail'
@@ -272,11 +274,8 @@ function choice() {
                                 $.sound('arrested', 20)
                                 xvt.out('You might be released by your next call.\n\n')
                                 xvt.waste(1000)
-                                xvt.hangup()
-                                return
                             }
                         }
-                        $.unlock($.player.id, true)
                         menu()
                     }, prompt:'Attempt to steal (Y/N)? ', cancel:'Y', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
                 }

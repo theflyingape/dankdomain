@@ -133,7 +133,7 @@ function choice() {
 						}
 						menu()
 						return
-					}, prompt:'Are you sure (Y/N)? ', enter:'N', eol:false, match:/Y|N/i },
+					}, prompt:'Are you sure (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 },
 					'joust': { cb:() => {
 						if (/F/i.test(xvt.entry)) {
 							$.sound('boo')
@@ -330,6 +330,12 @@ function choice() {
 					return
 				}
 
+				if (!$.lock(opponent.user.id)) {
+					$.beep()
+					xvt.out(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
+					xvt.entry = ''
+				}
+
 				if (isNaN(+opponent.user.weapon)) xvt.out('\n', $.who(opponent, 'He'), $.Weapon.wearing(opponent), '.\n')
 				if (isNaN(+opponent.user.armor)) xvt.out('\n', $.who(opponent, 'He'), $.Armor.wearing(opponent), '.\n')
 
@@ -337,11 +343,6 @@ function choice() {
 				xvt.app.form = {
 					'fight': { cb:() => {
 						xvt.out('\n\n')
-						if (!$.lock(opponent.user.id, 2)) {
-							$.beep()
-							xvt.out(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
-							xvt.entry = ''
-						}
 						if (/Y/i.test(xvt.entry)) {
 							if ($.activate(opponent, true)) {
 								$.music('combat' + $.arena--)
@@ -354,7 +355,7 @@ function choice() {
 						}
 						else
 							menu(!$.player.expert)
-					}, prompt:'Will you fight ' + $.who(opponent, 'him') + '(Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
+					}, prompt:'Will you fight ' + $.who(opponent, 'him') + '(Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
 				}
 				xvt.app.focus = 'fight'
 			})
@@ -462,7 +463,7 @@ function MonsterFights(): boolean {
 					, xvt.cyan, ' and he says, "', xvt.bright, xvt.white, 'I don\'t make deals!'
 					, xvt.normal, xvt.cyan, '"\n', xvt.reset)
 				menu()
-			}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i },
+			}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 },
 			'fight': { cb:() => {
 				xvt.out('\n')
 				if (/Y/i.test(xvt.entry)) {
@@ -471,7 +472,7 @@ function MonsterFights(): boolean {
 				}
 				else
 					menu(!$.player.expert)
-			}, prompt:'Fight this demon (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
+			}, prompt:'Fight this demon (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
 		}
 		xvt.app.focus = 'pay'
 	}
@@ -516,7 +517,7 @@ function MonsterFights(): boolean {
 				}
 				else
 					menu(!$.player.expert)
-			}, prompt:'Will you fight it (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
+			}, prompt:'Will you fight it (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
 		}
 		xvt.app.focus = 'fight'
 	}

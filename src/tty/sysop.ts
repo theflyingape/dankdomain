@@ -79,7 +79,7 @@ function choice() {
             return
 
         case 'N':
-            rs = $.sqlite3.prepare(`SELECT id FROM Players WHERE id NOT GLOB '_*'`).all()
+            rs = $.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
             for (let row in rs) {
                 rpc.user.id = rs[row].id
                 $.loadUser(rpc)

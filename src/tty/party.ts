@@ -181,8 +181,8 @@ function choice() {
                         }
                         else {
                             xvt.out('Dissolving the gang... ')
-                            $.sqlite3.exec(`UPDATE Players SET gang = '' WHERE gang = '${g.name}'`)
-                            $.sqlite3.exec(`DELETE FROM Gangs WHERE name = '${g.name}'`)
+                            $.run(`UPDATE Players SET gang = '' WHERE gang = '${g.name}'`)
+                            $.run(`DELETE FROM Gangs WHERE name = '${g.name}'`)
                             xvt.out('ok.\n')
                         }
                     }
@@ -219,7 +219,7 @@ function choice() {
                             $.online.altered = true
                             if (g.members.indexOf($.player.id) < 0)
                                 g.members.push($.player.id)
-                            $.sqlite3.exec(`UPDATE Gangs SET members = '${g.members.join()}' WHERE name = '${g.name}'`)
+                            $.run(`UPDATE Gangs SET members = '${g.members.join()}' WHERE name = '${g.name}'`)
                             xvt.out(`\nYou are now a member of ${g.name}.\n`)
                         }
                         else {
@@ -311,13 +311,13 @@ function choice() {
                                     xvt.out(`\n${member.user.handle} is not a member.\n`)
                                 }
                                 else {
-                                    if (!$.lock(member.user.id, 2)) {
+                                    if (!$.lock(member.user.id)) {
                                         $.beep()
                                         xvt.out(`${$.who(member, 'He')}is currently engaged elsewhere and not available.\n`)
                                     }
                                     else if (member.user.gang === g.name) {
                                         member.user.gang = ''
-                                        $.saveUser(member)
+                                        $.run(`UPDATE Players SET gang = '' WHERE id = '${member.user.id}'`)
                                         g.members.splice(n, 1)
                                         $.saveGang(g)
                                         showGang(g)
@@ -330,7 +330,7 @@ function choice() {
                     }
                     else
                         xvt.app.focus = 'invite'
-                }, prompt:'Drop a member (Y/N)? ', enter:'N', eol:false, match:/Y|N/i },
+                }, prompt:'Drop a member (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 },
                 'invite': { cb: () => {
                     xvt.out('\n')
                     if (/Y/i.test(xvt.entry)) {
@@ -356,7 +356,7 @@ function choice() {
                     }
                     else
                         menu()
-                }, prompt:'Invite another player (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
+                }, prompt:'Invite another player (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
             }
             xvt.app.focus = 'drop'
             return
@@ -416,14 +416,11 @@ function choice() {
                     nme = new Array()
                     for (let i = 0; i < 4 && i < o.members.length; i++) {
                         if (!/_MM.$/.test(o.members[i])) {
-                            if ((o.validated[i] || typeof o.validated[i] == 'undefined')
-                                && !o.status[i]) {
+                            if ((o.validated[i] || typeof o.validated[i] == 'undefined') && !o.status[i]) {
                                 let n = nme.push(<active>{ user:{ id:o.members[i]} }) - 1
                                 $.loadUser(nme[n])
-                                if (nme[n].user.gang !== o.name || nme[n].user.status)
+                                if (nme[n].user.gang !== o.name || nme[n].user.status || !$.lock(nme[n].user.id, 2))
                                     nme.pop()
-                                else
-                                    $.activate(nme[n])
                             }
                         }
                         else {
@@ -454,7 +451,6 @@ function choice() {
         
                             $.activate(nme[i])
                             nme[i].user.coin = new $.coins($.money(ml))
-
                             nme[i].user.handle = titleCase(dm)
                             nme[i].user.gang = o.name
                             o.handles[i] = nme[i].user.handle
@@ -492,7 +488,7 @@ function choice() {
                         $.unlock($.player.id, true)
                         menu()
                     }
-                }, prompt:'Fight this gang (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
+                }, prompt:'Fight this gang (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
             }
             xvt.app.focus = 'gang'
             return

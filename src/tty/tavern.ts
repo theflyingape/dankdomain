@@ -306,16 +306,16 @@ function choice() {
 					menu()
 					return
 				}
+                if (!$.lock(opponent.user.id)) {
+                    $.beep()
+                    xvt.out(`\n${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
+                    xvt.entry = ''
+                }
 
                 $.action('yn')
 				xvt.app.form = {
 					'brawl': { cb:() => {
 						xvt.out('\n')
-						if (!$.lock(opponent.user.id)) {
-							$.beep()
-							xvt.out(`\n${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
-							xvt.entry = ''
-						}
 						if (/Y/i.test(xvt.entry)) {
                             $.brawl--
                             if (($.online.dex / 2 + $.dice($.online.dex / 2)) > (opponent.dex / 2 + $.dice(opponent.dex / 2))) {
@@ -333,7 +333,7 @@ function choice() {
                         }
                         else
                             menu($.player.expert)
-					}, prompt:'Are you sure (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i },
+					}, prompt:'Are you sure (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 },
 					'punch': { cb:() => {
 						xvt.out('\n')
 						if (/P/i.test(xvt.entry)) {

@@ -95,12 +95,14 @@ export class Character {
             return rpc
         }
 
-        encounter(lo = 2, hi = 99, where = ''): active {
+        encounter(where = '', lo = 2, hi = 99): active {
             lo = lo < 2 ? 2 : lo > 99 ? 99 : lo
             hi = hi < 2 ? 2 : hi > 99 ? 99 : hi
 
             let rpc = <active>{ user:{id:''} }
-            let rs = query(`SELECT id FROM Players WHERE xplevel BETWEEN ${lo} AND ${hi} ${where} ORDER BY level`)
+            let rs = query(`SELECT id FROM Players WHERE id != '${player.id}'
+                AND status != 'jail' AND xplevel BETWEEN ${lo} AND ${hi}
+                ${where} ORDER BY level`)
             if (rs.length) {
                 let n = dice(rs.length) - 1
                 rpc.user.id = rs[n].id
@@ -512,10 +514,7 @@ export function activate(one: active, keep = false, confused = false): boolean {
     if (keep) {
         if (!lock(one.user.id, one.user.id === player.id ? 1 : 2) && one.user.id !== player.id) {
             xvt.beep()
-            xvt.out('\n', xvt.cyan, xvt.bright
-                , one.user.handle, ' is engaged elsewhere.'
-                , xvt.reset, '\n'
-            )
+            xvt.out('\n', xvt.cyan, xvt.bright, one.user.handle, ' is engaged elsewhere.', xvt.reset, '\n')
             xvt.waste(500)
             return false
         }
@@ -1911,7 +1910,7 @@ export function wall(msg: string) {
     let rs = query(`SELECT * FROM sqlite_master WHERE name='Online' AND type='table'`)
     if (!rs.length) {
         xvt.out('initializing online ... ')
-        sqlite3.exec(`CREATE TABLE IF NOT EXISTS Online (id text PRIMARY KEY, pid numeric, lockdate numeric, locktime numeric)`)
+        run(`CREATE TABLE IF NOT EXISTS Online (id text PRIMARY KEY, pid numeric, lockdate numeric, locktime numeric)`)
 
         xvt.out('done.\n')
         xvt.waste(250)
@@ -1920,7 +1919,7 @@ export function wall(msg: string) {
     rs = query(`SELECT * FROM sqlite_master WHERE name='Players' AND type='table'`)
     if (!rs.length) {
         xvt.out('initializing players ... ')
-        sqlite3.exec(`CREATE TABLE IF NOT EXISTS Players (
+        run(`CREATE TABLE IF NOT EXISTS Players (
             id text PRIMARY KEY, handle text UNIQUE NOT NULL, name text NOT NULL, email text, password text NOT NULL,
             dob numeric NOT NULL, sex text NOT NULL, joined numeric, expires numeric, lastdate numeric,
             lasttime numeric, calls numeric, today numeric, expert integer, emulation text NOT NULL,
@@ -2002,7 +2001,7 @@ export function wall(msg: string) {
     rs = query(`SELECT * FROM sqlite_master WHERE name='Gangs' AND type='table'`)
     if (!rs.length) {
         xvt.out('\ninitializing gangs ... ')
-        sqlite3.exec(`CREATE TABLE IF NOT EXISTS Gangs (
+        run(`CREATE TABLE IF NOT EXISTS Gangs (
             name text PRIMARY KEY, members text, win numeric, loss numeric, banner numeric, color numeric
         )`)
         run(`INSERT INTO Gangs VALUES ( 'Monster Mash', '_MM1,_MM2,_MM3,_MM4', 0, 0, 0, 0 )`)
@@ -2013,7 +2012,7 @@ export function wall(msg: string) {
     rs = query(`SELECT * FROM sqlite_master WHERE name='Deeds' AND type='table'`)
     if (!rs.length) {
         xvt.out('\ninitializing Deeds ... ')
-        sqlite3.exec(`CREATE TABLE IF NOT EXISTS Deeds (pc text KEY,
+        run(`CREATE TABLE IF NOT EXISTS Deeds (pc text KEY,
             deed text KEY, date numeric, hero text, value numeric
         )`)
         xvt.out('done.\n')
@@ -2094,7 +2093,6 @@ export function saveUser(rpc, insert = false, locked = false) {
 
     let sql: string = ''
 
-try {
     if (insert) {
         sql = `INSERT INTO Players 
             ( id, handle, name, email, password
@@ -2150,36 +2148,11 @@ try {
             WHERE id='${user.id}'
         `
     }
-    sqlite3.exec(sql)
+
+    run(sql)
+
     if (isActive(rpc)) rpc.altered = false
-} catch(err) {
-        xvt.beep()
-        xvt.out(xvt.reset, '\n?Unexpected error: ', String(err), '\n')
-        xvt.out(sql, '\n')
-
-        if (user.id === player.id || user.id[0] === '_') {
-            let trace = users + user.id + '.json'
-            if (reason === '')
-                fs.writeFileSync(trace, JSON.stringify(user, null, 2))
-            else
-                fs.unlink(trace, () => {})
-        }
-        reason = 'defect - ' + err.code
-        xvt.hangup()
-}
-
     if (locked) unlock(user.id.toLowerCase())
-
-    sql = users + user.id + '.sql'
-    if (process.platform === 'linux') {
-        require('child_process').exec(`
-            sqlite3 ${DD} <<-EOD
-            .mode insert
-            .output ${sql}
-            select * from Players where id = '${user.id}';
-            EOD
-        `)
-    }
 }
 
 export function newDay() {
@@ -2188,12 +2161,12 @@ export function newDay() {
     sysop.lasttime = now().time
     saveUser(sysop)
 
-    sqlite3.exec(`UPDATE Players SET bank=bank+coin WHERE id NOT GLOB '_*'`)
+    run(`UPDATE Players SET bank=bank+coin WHERE id NOT GLOB '_*'`)
     xvt.out('.')
-    sqlite3.exec(`UPDATE Players SET coin=0`)
+    run(`UPDATE Players SET coin=0`)
     xvt.out('.')
 
-    let rs = sqlite3.prepare(`SELECT id FROM Players WHERE id NOT GLOB '_*' AND status = '' AND magic > 0 AND bank > 99999`).all()
+    let rs = query(`SELECT id FROM Players WHERE id NOT GLOB '_*' AND status = '' AND magic > 0 AND bank > 99999 AND level > 19`)
     let user: user = { id:'' }
     for (let row in rs) {
         user.id = rs[row].id
@@ -2210,7 +2183,7 @@ export function newDay() {
     }
     xvt.out('.')
 
-    rs = sqlite3.prepare(`SELECT id, lastdate, level, novice, jl, jw FROM Players WHERE id NOT GLOB '_*'`).all()
+    rs = query(`SELECT id, lastdate, level, novice, jl, jw FROM Players WHERE id NOT GLOB '_*'`)
     for (let row in rs) {
         if ((rs[row].level == 1 || rs[row].novice) && (rs[row].jl > (2 * rs[row].jw))) {
             player.id = rs[row].id
@@ -2220,7 +2193,7 @@ export function newDay() {
             saveUser(player)
         }
         if ((now().date - rs[row].lastdate) > 365) {
-            sqlite3.exec(`DELETE FROM Players WHERE id = '${rs[row].id}'`)
+            run(`DELETE FROM Players WHERE id = '${rs[row].id}'`)
             continue
         }
         if ((now().date - rs[row].lastdate) % 100 == 0) {
@@ -2252,7 +2225,7 @@ export function lock(id: string, owner = 0): boolean {
                 xvt.out(xvt.reset, '\n?Unexpected error: ', String(err), '\n')
                 reason = 'defect - ' + err.code
                 xvt.hangup()
-                }
+            }
             return false
         }
     }
@@ -2260,7 +2233,7 @@ export function lock(id: string, owner = 0): boolean {
         let rs = query(`SELECT id FROM Online WHERE id LIKE '${id}'`)
         if (!rs.length) {
             if (owner == 2)
-                sqlite3.exec(`INSERT INTO Online (id, pid, lockdate, locktime) VALUES ('${id.toLowerCase()}', ${process.pid}, ${now().date}, ${now().time})`)
+                run(`INSERT INTO Online (id, pid, lockdate, locktime) VALUES ('${id.toLowerCase()}', ${process.pid}, ${now().date}, ${now().time})`)
             return true
         }
         return false
@@ -2268,8 +2241,8 @@ export function lock(id: string, owner = 0): boolean {
 }
 
 export function unlock(id: string, mine = false): number {
-    if (mine) return sqlite3.prepare(`DELETE FROM Online WHERE id != '${id}' AND pid = ${process.pid}`).run().changes
-    return sqlite3.prepare(`DELETE FROM Online WHERE id = '${id}'`).run().changes
+    if (mine) return run(`DELETE FROM Online WHERE id != '${id}' AND pid = ${process.pid}`).changes
+    return run(`DELETE FROM Online WHERE id = '${id}'`).changes
 }
 
 export function query(q: string, errOk = false): any {
@@ -2290,19 +2263,47 @@ export function query(q: string, errOk = false): any {
 }
 
 export function run(sql: string, errOk = false): { changes: number, lastInsertROWID: number } {
-    try {
-        let cmd = sqlite3.prepare(sql)
-        return cmd.run()
-    }
-    catch(err) {
-        if (!errOk) {
-            xvt.beep()
-            xvt.out(xvt.reset, '\n?Unexpected error:', String(err), '\n')
-            xvt.out(sql)
-            reason = 'defect - ' + err.code
-            xvt.hangup()
+    let retry = 3
+
+    while (retry) {
+        try {
+            let cmd = sqlite3.prepare(sql)
+            return cmd.run()
         }
-        return { changes: 0, lastInsertROWID: 0}
+        catch(err) {
+            xvt.beep()
+            xvt.out(xvt.reset, '\n?Unexpected SQL error: ', String(err))
+            if (--retry) {
+                xvt.out(' -- retrying\n')
+                continue
+            }
+            if (!errOk) {
+                xvt.out('\n?FATAL SQL operation: ', sql)
+/*
+                if (user.id === player.id || user.id[0] === '_') {
+                    let trace = users + user.id + '.json'
+                    if (reason === '')
+                        fs.writeFileSync(trace, JSON.stringify(user, null, 2))
+                    else
+                        fs.unlink(trace, () => {})
+                }
+
+                sql = users + user.id + '.sql'
+                if (process.platform === 'linux') {
+                    require('child_process').exec(`
+                        sqlite3 ${DD} <<-EOD
+                        .mode insert
+                        .output ${sql}
+                        select * from Players where id = '${user.id}';
+                        EOD
+                    `)
+                }
+*/
+                reason = 'defect - ' + err.code
+                xvt.hangup()
+            }
+            return { changes: 0, lastInsertROWID: 0}
+        }
     }
 }
 
@@ -2326,7 +2327,7 @@ export function loadDeed(pc: string, what?: string): deed[] {
     else if (what) {
         let start = 0
         if (Deed.name[what]) start = Deed.name[what].starting
-        sqlite3.exec(`INSERT INTO Deeds VALUES ('${pc}', '${what}', ${now().date}, 'Nobody', ${start})`)
+        run(`INSERT INTO Deeds VALUES ('${pc}', '${what}', ${now().date}, 'Nobody', ${start})`)
         deed = loadDeed(pc, what)
     }
 
@@ -2336,7 +2337,7 @@ export function loadDeed(pc: string, what?: string): deed[] {
 export function saveDeed(deed: deed) {
     deed.date = now().date
     deed.hero = player.handle
-    sqlite3.exec(`UPDATE Deeds set date=${deed.date}, hero='${deed.hero}', value=${deed.value} WHERE pc='${deed.pc}' AND deed='${deed.deed}'`)
+    run(`UPDATE Deeds set date=${deed.date}, hero='${deed.hero}', value=${deed.value} WHERE pc='${deed.pc}' AND deed='${deed.deed}'`)
 }
 
 export function loadGang(rs: any): gang {
@@ -2389,39 +2390,24 @@ export function loadGang(rs: any): gang {
 export function saveGang(g: gang, insert = false) {
     if (insert) {
         try {
-            sqlite3.exec(`
-                INSERT INTO Gangs (
-                    name, members, win, loss, banner, color
-                ) VALUES (
-                    '${g.name}', '${g.members.join()}',
-                    ${g.win}, ${g.loss},
-                    ${(g.banner <<4) + g.trim}, ${(g.back <<4) + g.fore}
-            )`)
+            sqlite3.exec(`INSERT INTO Gangs (name, members, win, loss, banner, color)
+                VALUES ('${g.name}', '${g.members.join()}', ${g.win}, ${g.loss},
+                ${(g.banner <<4) + g.trim}, ${(g.back <<4) + g.fore})`)
         }
         catch(err) {
             if (err.code !== 'SQLITE_CONSTRAINT_PRIMARYKEY') {
                 xvt.beep()
                 xvt.out(xvt.reset, '\n?Unexpected error: ', String(err), '\n')
-                xvt.waste(5000)
+                xvt.waste(2000)
             }
         }
     }
     else {
         if (g.members.length > 4) g.members.splice(0,4)
-        try {
-            sqlite3.exec(`
-                UPDATE Gangs
-                    set members = '${g.members.join()}'
-                    , win = ${g.win}, loss = ${g.loss}
-                    , banner = ${(g.banner <<4) + g.trim}, color = ${(g.back <<4) + g.fore}
-                WHERE name = '${g.name}'
-            `)
-        }
-        catch(err) {
-            xvt.beep()
-            xvt.out(xvt.reset, '\n?Unexpected error: ', String(err), '\n')
-            xvt.waste(5000)
-        }
+        run(`UPDATE Gangs
+                set members = '${g.members.join()}', win = ${g.win}, loss = ${g.loss}
+                , banner = ${(g.banner <<4) + g.trim}, color = ${(g.back <<4) + g.fore}
+            WHERE name = '${g.name}'`)
     }
 }
 

@@ -136,16 +136,23 @@ function edit() {
 	else
 		$.player.id = $.player.handle.slice(0, 3).toUpperCase()
 
+	if ($.player.id === 'NEW' || $.cuss($.player.id)) {
+		xvt.beep()
+		xvt.app.focus = 1
+		return
+	}
+
 	let check: user = { id:$.player.id, handle:'' }
 	let retry: number = 1
-	for (; retry < 9 && $.loadUser(check);) {
+	while (retry < 4 && $.loadUser(check)) {
 		retry++
-		check.id = $.player.id + retry
+		check.id = `${$.player.id}${retry}`
 		check.handle = ''
+		console.log(check)
+		xvt.waste(2000)
 	}
-	if (retry > 1) $.player.id = check.id
-
-	if (retry > 8 || $.player.id === 'NEW' || $.cuss($.player.id)) { $.player.id = '' }
+	if (retry > 1) $.player.id = `${$.player.id}${retry}`
+	if (retry > 3) $.player.id = ''
 
 	if ($.player.id === '') {
 		xvt.beep()

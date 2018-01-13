@@ -710,7 +710,7 @@ function doMove(): boolean {
 						return
 					case 'R':
 		                $.sound('resurrect')
-						$.sqlite3.exec(`UPDATE Players SET status = '' WHERE id NOT GLOB '_*' AND status != 'jail'`)
+						$.run(`UPDATE Players SET status = '' WHERE id NOT GLOB '_*' AND status != 'jail'`)
 						$.news(`\twished all the dead resurrected`)
 						break
 					case 'F':

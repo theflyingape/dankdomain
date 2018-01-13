@@ -68,10 +68,17 @@ function choice() {
 					return
 				}
 				if (!opponent.user.hull) {
-					xvt.out(`\n${$.who(opponent, 'He')} doesn\'t have a ship.\n`)
+					xvt.out(`\n${$.who(opponent, 'He')}doesn\'t have a ship.\n`)
 					menu(true)
 					return
 				}
+				if (!$.lock(opponent.user.id)) {
+					$.beep()
+					xvt.out(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
+					menu(true)
+					return
+				}
+
 				xvt.out(`\nYou sail out until you spot ${opponent.user.handle}\'s ship on the horizon.\n\n`)
 				xvt.out(`It has ${opponent.user.hull} hull points.\n`)
 
@@ -79,13 +86,8 @@ function choice() {
 				xvt.app.form = {
 					'battle': { cb:() => {
 						xvt.out('\n\n')
-						if (!$.lock(opponent.user.id, 2)) {
-							$.beep()
-							xvt.out(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
-							xvt.entry = ''
-						}
 						if (/Y/i.test(xvt.entry)) {
-							if ($.activate(opponent)) {
+							if ($.activate(opponent, true)) {
 								$.naval--
 								BattleUser(opponent)
 							}
@@ -94,7 +96,7 @@ function choice() {
 						}
 						else
 							menu(!$.player.expert)
-					}, prompt:'Will you battle ' + $.who(opponent, 'him') + '(Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
+					}, prompt:'Will you battle ' + $.who(opponent, 'him') + '(Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
 				}
 				xvt.app.focus = 'battle'
 			})
@@ -117,7 +119,7 @@ function choice() {
 			cast = (cast < 15) ? 15 : (cast > 100) ? 100 : cast >>0
 			let hook = $.dice(cast)
 			if (hook < 15) {
-				let floater = $.PC.encounter().user
+				let floater = $.PC.encounter(`AND id NOT GLOB '_*'`).user
 				if (floater.id && floater.status) {
 					let leftby = <user>{ id:floater.status }
 					if ($.loadUser(leftby)) {
@@ -126,8 +128,7 @@ function choice() {
 						$.loadUser(floater)
 						xvt.out(`\nIt is ${floater.handle}'s body in the ocean left there by ${leftby.handle}, and\n`)
 						xvt.out(`you're able to bring the player back to an Alive! state.\n`)
-						floater.status = ''
-						$.saveUser(floater)
+						$.run(`UPDATE Players set status='' WHERE id='${floater.id}'`)
 						$.news(`\trecovered ${floater.handle}'s body from the ocean`)
 						menu()
 						return
@@ -562,7 +563,7 @@ function Shipyard(suppress = true) {
 						}
 						Shipyard()
 						return
-					}, prompt: 'Ok (Y/N)? ', cancel:'N', enter:'Y', eol:false, max:1, match:/Y|N/i }
+					}, prompt: 'Ok (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
 				}
 				xvt.app.focus = 'ram'
 				return
@@ -801,7 +802,7 @@ function MonsterHunt() {
 
 			$.action('hunt')
 			xvt.app.focus = 'attack'
-		}, prompt:'Continue (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i },
+		}, prompt:'Continue (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 },
 		'attack': { cb:() => {
 			xvt.out('\n')
 			switch (xvt.entry.toUpperCase()) {
