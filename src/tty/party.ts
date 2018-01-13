@@ -372,7 +372,7 @@ function choice() {
             rs = $.query(`SELECT * FROM Gangs ORDER BY name`)
             for (let i = 0; i < rs.length; i ++) {
                 o = $.loadGang(rs[i])
-                if (o.name !== g.name)
+                if (o.name !== $.player.gang)
                     xvt.out($.bracket(i + 1), o.name)
             }
 
