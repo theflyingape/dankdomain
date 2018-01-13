@@ -672,7 +672,7 @@ function BattleUser(nme: active) {
 			xvt.app.refocus()
 		}, prompt:xvt.attr($.bracket('F', false), xvt.cyan, 'ire cannons, ', $.bracket('R', false), xvt.cyan, 'am, '
 			, $.bracket('S', false), xvt.cyan, 'ail off, ', $.bracket('Y', false), xvt.cyan, 'our status: ')
-			, cancel:'S', enter:'F', eol:false, match:/F|R|S|Y/i }
+			, cancel:'S', enter:'F', eol:false, match:/F|R|S|Y/i, timeout:20 }
 	}
 	xvt.app.focus = 'attack'
 
@@ -873,7 +873,7 @@ function MonsterHunt() {
 			xvt.app.refocus()
 		}, prompt:xvt.attr($.bracket('F', false), xvt.cyan, 'ire cannons, ', $.bracket('R', false), xvt.cyan, 'am it, '
 			, $.bracket('S', false), xvt.cyan, 'ail off, ', $.bracket('Y', false), xvt.cyan, 'our status: ')
-			, cancel:'S', enter:'F', eol:false, match:/F|R|S|Y/i }
+			, cancel:'S', enter:'F', eol:false, match:/F|R|S|Y/i, timeout:20 }
 	}
 	xvt.app.focus = 'fight'
 

@@ -26,7 +26,7 @@ module NewUser
 		1: { cb:handle, row:3, col:23, min:2, max:22, match:/^[A-Z][A-Z\s]*$/i },
 		2: { cb:name, row:4, col:23, min:5, max:32, match:/^[A-Z][A-Z\s]*$/i },
 		3: { cb:dob, row:5, col:23, min:6, max:16 },
-		4: { cb:sex, row:6, col:23, eol:false, cancel:'f', enter:'m', max:1, match:/F|M/i },
+		4: { cb:sex, row:6, col:23, eol:false, cancel:'f', enter:'m', max:1, match:/F|M/i, timeout:20 },
 		'edit': { cb:edit, row:8, col:1, prompt:'Select field # to change or <RETURN> to save: ', max:1, match:/^[1-4]*$/ },
 	}
 

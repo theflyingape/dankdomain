@@ -609,7 +609,7 @@ function doMove(): boolean {
 						generateLevel()
 					}
 					menu()
-				}, prompt:'Descend even deeper (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i }
+				}, prompt:'Descend even deeper (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
 			}
 			xvt.app.focus = 'deep'
 			return false
@@ -1007,7 +1007,7 @@ function doMove(): boolean {
 						}
 					}
 					menu()
-				}, prompt:'Will you spin it (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i }
+				}, prompt:'Will you spin it (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
 			}
 			xvt.app.focus = 'wheel'
 			pause = true
@@ -1189,7 +1189,7 @@ function doMove(): boolean {
 						}
 					}
 					menu()
-				}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i }
+				}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:10 }
 			}
 			xvt.app.focus = 'pay'
 			return false
@@ -1294,7 +1294,7 @@ function doMove(): boolean {
 						}
 						ROOM.giftItem = ''
 						menu()
-					}, prompt:'Will you drink it (Yes/No/Toss)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N|T/i }
+					}, prompt:'Will you drink it (Yes/No/Toss)? ', cancel:'T', enter:'Y', eol:false, match:/Y|N|T/i, timeout:10 }
 				}
 				xvt.app.focus = 'quaff'
 				return false
@@ -2209,7 +2209,7 @@ export function teleport() {
 			}
 			generateLevel()
 			menu()
-		}, cancel:'O', enter:'R', eol:false, match:/U|D|O|R/i }
+		}, cancel:'O', enter:'R', eol:false, match:/U|D|O|R/i, timeout:10 }
 	}
 	xvt.app.form['wizard'].prompt = `Teleport #${iii[deep]}.${Z + 1}: `
 	xvt.app.focus = 'wizard'

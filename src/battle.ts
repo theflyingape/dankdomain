@@ -97,7 +97,7 @@ function end() {
                         xvt.out('\n')
                         fini()
                     }
-                    }, cancel:'N', enter:'Y', eol:false, match:/Y|N/i },
+                    }, cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 },
                 'message': { cb:() => {
                     xvt.out('\n')
                     if ($.cuss(xvt.entry)) {
@@ -294,14 +294,14 @@ export function attack(retry = false) {
                 melee(rpc, enemy)
                 next()
                 return
-            }, enter:'A', cancel:'R', eol:false, max:1, match:/A|C|R|Y/i },
+            }, cancel:'R', enter:'A', eol:false, max:1, match:/A|C|R|Y/i, timeout:20 },
             'backstab': {cb:() => {
                 if (/N/i.test(xvt.entry)) bs = 1
                 xvt.out('\n\n', xvt.bright, xvt.white)
                 melee(rpc, enemy, bs)
                 next()
                 return
-            }, cancel:'N', enter:'Y', eol:false, max:1, match:/Y|N/i}
+            }, cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
         }
 
         //  sneaking

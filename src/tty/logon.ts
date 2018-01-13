@@ -73,7 +73,7 @@ function guards(): boolean {
                         xvt.out('\n')
                         process.exit()
                     }
-                }, prompt:'DOH!!  Re-send the password to your email account (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i }
+                }, prompt:'DOH!!  Re-send the password to your email account (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, timeout:10 }
             }
             if (xvt.validator.isNotEmpty($.player.id) && $.player.lastdate != $.now().date)
                 xvt.app.focus = 'forgot'
@@ -262,7 +262,7 @@ function welcome() {
                         $.access = $.Access.name['Prisoner']
                     }
                     welcome()
-                }, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i }
+                }, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, timeout:20 }
             }
             xvt.app.focus = 'bail'
             return

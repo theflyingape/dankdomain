@@ -153,7 +153,7 @@ function choice() {
 						}
 						menu()
 						return
-					}, cancel:'Y', enter:'Y', max:1, eol:false, match:/Y|N/i }
+					}, cancel:'Y', enter:'Y', max:1, eol:false, match:/Y|N/i, timeout:10 }
 				}
 				xvt.app.form['skin'].prompt = 'Heal your skin for ' + credit.carry() + ' (Y/N)? '
 				xvt.app.focus = 'skin'
@@ -180,7 +180,7 @@ function choice() {
 						}
 						menu()
 						return
-					}, cancel:'Y', enter:'Y', max:1, eol:false, match:/Y|N/i }
+					}, cancel:'Y', enter:'Y', max:1, eol:false, match:/Y|N/i, timeout:10 }
 				}
 				xvt.app.form['hands'].prompt = 'Fix your hands for ' + credit.carry() + ' (Y/N)? '
 				xvt.app.focus = 'hands'
@@ -272,8 +272,7 @@ function choice() {
 								xvt.out(`${opponent.user.handle} is set free.\n`)
 								$.player.coin.value -= credit.value
 								opponent.user.status = ''
-								opponent.altered = true
-								$.saveUser(opponent)
+								$.run(`UPDATE Players set status='' WHERE id='${opponent.user.id}'`)
 								$.log(opponent.user.id, `${$.player.handle} paid ${credit.carry()} to bail you out of jail.\n`)
 								$.news(`\t${opponent.user.handle} made bail`)
 								$.bail--
@@ -281,7 +280,7 @@ function choice() {
 							menu()
 							return
 						}, prompt:'Will you pay (Y/N)? '
-						, cancel:'N', enter:'N', max:1, eol:false, match:/Y|N/i }
+						, cancel:'N', enter:'N', max:1, eol:false, match:/Y|N/i, timeout:10 }
 					}
 					xvt.app.focus = 'pay'
 				})

@@ -192,7 +192,8 @@ function choice() {
                 if (!$.lock(opponent.user.id)) {
                     $.beep()
                     xvt.out(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
-                    xvt.entry = ''
+					menu()
+					return
                 }
 
                 xvt.out('\nYou case ', opponent.user.handle, '\'s joint out.\n')
@@ -277,7 +278,7 @@ function choice() {
                             }
                         }
                         menu()
-                    }, prompt:'Attempt to steal (Y/N)? ', cancel:'Y', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
+                    }, prompt:'Attempt to steal (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
                 }
                 xvt.app.focus = 'yn'
             })

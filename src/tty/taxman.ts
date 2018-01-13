@@ -116,7 +116,7 @@ export function cityguards() {
                 xvt.waste(1500)
 
                 Battle.engage('Gates', $.online, irs, boss)
-            }, prompt:'Will you pay the tax (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i }
+            }, prompt:'Will you pay the tax (Y/N)? ', cancel:'Y', enter:'Y', eol:false, match:/Y|N/i, timeout:20 }
         }
         xvt.app.focus = 'tax'
         return

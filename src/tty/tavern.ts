@@ -358,7 +358,7 @@ function choice() {
                             menu($.player.expert)
                         }
                     }, prompt:xvt.attr($.bracket('P', false), xvt.cyan, `unch ${$.who(opponent, 'him')}`, $.bracket('G', false), xvt.cyan, 'ive it up, ', $.bracket('Y', false), xvt.cyan, 'our status: ' )
-                        , cancel:'G', enter:'P', eol:false, match:/P|G|Y/i }
+                        , cancel:'G', enter:'P', eol:false, match:/P|G|Y/i, timeout:20 }
 				}
                 xvt.app.focus = 'brawl'
             })
