@@ -301,7 +301,7 @@ export function attack(retry = false) {
                 melee(rpc, enemy, bs)
                 next()
                 return
-            }, cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
+            }, cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:10 }
         }
 
         //  sneaking
