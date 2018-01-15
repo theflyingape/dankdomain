@@ -19,6 +19,6 @@
     "poison": 0,
     "weapon": "Sun Blade",
     "armor": "Divine Sphere",
-    "spells": [ 11, 12, 13, 19 ],
+    "spells": [ 11, 13, 19 ],
     "xplevel": 90
 }

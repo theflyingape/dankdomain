@@ -19,6 +19,6 @@
     "poison": 0,
     "weapon": "Trident of Titans \uD83D\uDD31",
     "armor": "Titanium Armor",
-    "spells": [ 7, 9, 11, 12, 13, 15 ],
+    "spells": [ 7, 9, 11, 13, 15 ],
     "xplevel": 20
 }

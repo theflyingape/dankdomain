@@ -47,7 +47,7 @@ function end() {
             $.sound('cheer', 30)
         }
         else {
-            $.sound('barkeep')
+            $.music('barkeep')
             $.run(`UPDATE Players
                 set killed=killed+1, status='', weapon='${$.barkeep.user.weapon}'
                 WHERE id='${$.barkeep.user.id}'`).changes
@@ -57,7 +57,7 @@ function end() {
         $.player.coward = false
     }
 
-    if (from === 'Taxman')
+    if (from === 'Taxman') {
         if ($.online.hp < 1) {
             $.player.coin.value -= $.taxman.user.coin.value
             if ($.player.coin.value < 0) {
@@ -74,14 +74,14 @@ function end() {
             xvt.out(xvt.bright, xvt.blue, '"Thanks for the taxes!"'
                 , xvt.reset, '\n')
             $.sound('thief2', 16)
-            $.player.coward = false
             $.reason = 'tax evasion'
         }
         else {
-            $.player.coward = false
             $.news(`\tdefeated ${$.taxman.user.handle}`)
             $.wall(`defeated ${$.taxman.user.handle}`)
         }
+        $.player.coward = false
+    }
 
     if (from === 'User') {
         let opponent = parties[1][0]
@@ -223,7 +223,7 @@ export function attack(retry = false) {
                 xvt.out('\n')
                 if (/R/i.test(xvt.entry)) {
                     if (from === 'Naval') {
-                        xvt.out('"You cannot escape me, mortal."\n')
+                        xvt.out(xvt.bright, xvt.cyan, '"You cannot escape me, mortal."\n', xvt.reset)
                         $.player.coward = true
                         $.saveUser($.player)
                         next()
@@ -231,7 +231,7 @@ export function attack(retry = false) {
                     }
                     if (from === 'Tavern') {
                         $.sound('growl')
-                        xvt.out('"You try to escape, but the crowd throws you back to witness the slaughter!"\n')
+                        xvt.out(xvt.bright, xvt.green, '"You try to escape, but the crowd throws you back to witness the slaughter!"\n', xvt.reset)
                         $.player.coward = true
                         $.saveUser($.player)
                         next()
@@ -239,7 +239,7 @@ export function attack(retry = false) {
                     }
                     if (from === 'Taxman') {
                         $.sound('thief2')
-                        xvt.out('"You can never escape the taxman!"\n')
+                        xvt.out(xvt.bright, xvt.blue, '"You can never escape the taxman!"\n', xvt.reset)
                         $.player.coward = true
                         $.saveUser($.player)
                         next()
@@ -668,6 +668,7 @@ export function spoils() {
                         $.log(loser.user.id, `... and took your ${winner.user.armor}.`)
                     }
                     if (winner.user.cursed) {
+                        loser.user.coward = false
                         loser.user.cursed = winner.user.id
                         loser.altered = true
                         winner.user.coward = false
@@ -752,6 +753,7 @@ export function spoils() {
                 xvt.out(xvt.bright, xvt.yellow, 'Your shining aura leaves you.\n', xvt.reset)
             }
             else {
+                $.player.coward = false
                 $.player.cursed = winner.user.id
                 winner.user.coward = false
                 winner.user.cursed = ''
@@ -1821,6 +1823,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
 
         if (from === 'User') {
             rpc.user.blessed = ''
+            rpc.user.coward = false
             rpc.user.cursed = $.player.id
             $.saveUser(rpc)
             $.news(`\tcursed ${rpc.user.handle} for running away`)

@@ -499,25 +499,29 @@ function doMove(): boolean {
 		for (let n = 0; n < ROOM.monster.length; n++) {
 			$.cat('dungeon/' + ROOM.monster[n].user.handle)
 			xvt.out(xvt.reset, '\nIt\'s', $.an(ROOM.monster[n].user.handle), '... ')
-			xvt.waste(500)
+			xvt.waste(400)
 			if ($.player.novice || ($.dice(ROOM.monster[n].user.xplevel / 5 + 5) * (101 - $.online.cha + deep) > 1)) {
 				if (ROOM.monster[n].user.xplevel > 0)
 					xvt.out('and it doesn\'t look friendly.\n')
 				else
 					xvt.out('and it looks harmless.\n')
-				xvt.waste(300)
 				if (isNaN(+ROOM.monster[n].user.weapon)) xvt.out('\n', $.who(ROOM.monster[n], 'He'), $.Weapon.wearing(ROOM.monster[n]), '.\n')
 				if (isNaN(+ROOM.monster[n].user.armor)) xvt.out('\n', $.who(ROOM.monster[n], 'He'), $.Armor.wearing(ROOM.monster[n]), '.\n')
 			}
 			else {
-				xvt.out(xvt.bright, 'and it\'s charmed by your presence!\n', xvt.reset)
-				ROOM.monster[n].user.handle = 'your ' + ROOM.monster[n].user.handle
+				xvt.out(xvt.bright, 'and it\'s '
+					, [ 'bewitched', 'charmed', 'dazzled', 'impressed', 'seduced' ][$.dice(5) - 1]
+					, ' by your '
+					, [ 'awesomeness', 'elegance', 'presence', $.player.armor, $.player.weapon ][$.dice(5) - 1]
+					, '!', xvt.reset, '\n')
+				ROOM.monster[n].user.handle = xvt.attr(xvt.faint, 'your ', xvt.normal, ROOM.monster[n].user.handle)
 				ROOM.monster[n].user.gender = 'FM'[$.dice(2) - 1]
 				ROOM.monster[n].user.pc = Object.keys($.PC.name['player'])[0]
 				ROOM.monster[n].user.xplevel = 0
 				party.push(ROOM.monster[n])
 				ROOM.monster.splice(n, 1)
 			}
+			xvt.waste(400)
 		}
 
 		if (ROOM.monster.length) {
