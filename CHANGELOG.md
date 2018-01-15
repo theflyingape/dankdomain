@@ -385,7 +385,7 @@ Each path can hold up to 48 subdirectories.
 * Open screen & windows with 2.0 tags for 3d look.
 * Display Neptune & Sea Hag pix, like Mermaid.
 
-#### 14-Feb-1993 `v5.12`
+#### 14-Mar-1993 `v5.12`
 * Logon is now event-driven, not `Delay()`-driven.
 * Walking into dungeon walls causes a 1-hit point loss.
 * Retreat from gang shows surviving members hit points remaining.
