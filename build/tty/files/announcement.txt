@@ -1,9 +1,9 @@
-[22;36mDate:[22;37m Fri 05-Jan-2018  3:45pm
+[22;36mDate:[22;37m Sat 20-Jan-2018  8:00pm
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
 New announcements as missing features get implemented or tweaked:
-- Dungeon tiles coded better as a "heat map" for monster spawning
-- Browser input & display improvements(?)
-- Tavern brawling is available with imposed knock-out minute(s)
+- major updates to both browser and door components, so update your browser!
+- minor dungeon monster spawning
+- if you fail to reroll as an immortal, you must choose a different class
 
 Happy hunting!

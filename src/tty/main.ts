@@ -3,6 +3,7 @@
  *  MAIN authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
 
+import fs = require('fs')
 import {sprintf} from 'sprintf-js'
 
 import $ = require('../common')
@@ -16,7 +17,6 @@ module Main
         '@': { description:'Sysop' },
         'A': { description:'Arena: Fight and Joust' },
         'D': { description:'Deep Dank Dungeon' },
-        'E': { description:'Electronic Mail and Feedback' },
         'G': { description:'Gambling Casino' },
         'L': { description:'List of Top Users: Fame & Lame' },
         'M': { description:'Most Wanted List' },

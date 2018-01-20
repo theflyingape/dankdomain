@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+<title>Dank Domain: the return of Hack & Slash</title>
+<link rel="icon" href="favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="application-name" content="door">
+<meta name="apple-mobile-web-app-title" content="door">
+<meta name="msapplication-starturl" content="https://robert.hurst-ri.us/games/dankdomain/door/">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<style type='text/css'>
+  body {
+    background-color: #102040;
+    color: antiquewhite;
+  }
+  #terminal {
+    border: 0;
+    top: 0; left: 0;
+    width: 70%;
+    height: 100%;
+    position: fixed;
+  }
+  #Info {
+    top: 0; right: 0;
+    width: 30%;
+    height: 100%;
+    position: fixed;
+  }
+  a:link, a:visited {
+    background-color: #0f1e3c;
+    color: #eca;
+    text-decoration: none;
+    display: inline-block;
+  }
+  a:hover, a:active {
+    background-color: #112244;
+    color: #ace;
+  }
+</style>
+<link rel="stylesheet" href="xterm.css" />
+</head>
+<body>
+<div id="terminal"></div>
+<iframe seamless id="Info" name="Info" src="./info.html"></iframe>
+<div id="wall" hidden=true>
+<h2>Dank Domain: the return of Hack &amp; Slash</h2>
+<h3>&copy;2017-2018 <a href="https://robert.hurst-ri.us">Robert Hurst</a></h3>
+<p>use <button onclick="window.location.reload();"> REFRESH </button> to start over,
+or <button onclick="window.history.back();">Go Back</button></p>
+<p>Read The Olde Tavern's <a href="today.txt" target="_blank">news</a></p>
+<p>Watch another online player <select id="lurker-list"></select> <- list refreshes every 30-seconds</p>
+<hr>
+<table>
+<tr><td style="vertical-align:bottom;"><img src="images/chrome.png" align="left">&nbsp; Use Google Android tablet or mobile CHROME's<br>&nbsp; <i><b>Add to Home screen</b></i> or <i><b>shelf</b></i> menu option to launch as an <b>app</b>
+</td></tr>
+<tr><td style="vertical-align:bottom;"><img src="images/desktop.png" align="left">&nbsp; Desktop Microsoft <b>Edge</b> and Mozilla <b>Firefox</b> browsers also work.<br>&nbsp; Classic Microsoft Internet Explorer is not supported.
+</td></tr>
+</table>
+<hr>
+<a href='http://www.rahcocos.com' target="_blank"><img src="images/promo.png"></a>
+</div>
+<audio id="play">
+    <source id="oggPlay" type="audio/ogg" />
+    <source id="mp3Play" type="audio/mp3" />
+</audio>
+<audio id="tune">
+  <source id="oggTune" type="audio/ogg" />
+  <source id="mp3Tune" type="audio/mp3" />
+</audio>
+<script src="bundle.js" ></script>
+</body>
+</html>

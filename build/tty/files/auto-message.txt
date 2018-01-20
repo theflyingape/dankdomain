@@ -1,5 +1,4 @@
-[22;36mDate:[22;37m Thu 04-Jan-2018 09:15am
+[22;36mDate:[22;37m Sat 20-Jan-2018  8:15pm
 [22;36mFrom:[22;37m Tigress[1;37m
 
-Earlier today, this server was upgraded to Red Hat Fedora Server 27.
-It should have no impact on teleporting nor Will O Wisp posturing.
+... and the Queen gets all your gold!  💎

@@ -114,7 +114,8 @@ cat <<-EOD
 
 EOD
 
-# DOOR uses latest xterm.js branch v3 and node-pty and browser's WebSocket in place of tty.js / socket.io
+# DOOR uses app: express + ws and node-pty
+#    for client: browser using xterm.js
 #
 # if https / wss is used, SSL Proxy works for me like this:
 #
@@ -123,17 +124,16 @@ EOD
 #
 #       RewriteEngine On
 #       RewriteCond %{HTTP:Upgrade} WebSocket [NC]
-#       RewriteRule "^/terminals/(.*)" wss://atom.home:1965/terminals/$1 [P,L]
+#       RewriteRule "^/xterm/(.*)" wss://atom.home:1939/xterm/$1 [P,L]
 #
-#       <Location "/games/dankdomain/door/">
-#               RequestHeader set X-Forwarded-Proto "https"
-#               ProxyPass "https://atom.home:1965/"
-#               ProxyPassReverse "https://atom.home:1965/"
+#       <Location "/xterm/door/">
+#               ProxyPass "https://atom.home:1965/xterm/door/"
+#               ProxyPassReverse "https://atom.home:1965/xterm/door/"
 #               Order allow,deny
 #               Allow from all
-#               Header edit Location ^https://atom.home:1965/ https://robert.hurst-ri.us/
 #       </Location>
 #
 # openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem
 
 exit
+

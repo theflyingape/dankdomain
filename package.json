@@ -1,6 +1,6 @@
 {
   "name": "dankdomain",
-  "version": "0.9.21",
+  "version": "1.0.0",
   "description": "Dank Domain: the return of Hack & Slash (1990-2014)",
   "main": "ttymain",
   "publisher": "theflyingape",
@@ -8,8 +8,8 @@
     "node": ">=6.11"
   },
   "scripts": {
-    "build": "tsc -p ./src --outDir ./build",
-    "debug": "npm run build && ./door.sh",
+    "build": "./build.sh",
+    "debug": "npm run build && ./debug.sh",
     "mono": "npm run build && export TERM=vt100 && env REMOTEHOST=localhost ./build/logins.sh",
     "test": "npm run build && env REMOTEHOST=localhost ./build/logins.sh"
   },
@@ -33,16 +33,20 @@
   },
   "homepage": "https://robert.hurst-ri.us/games/dankdomain",
   "dependencies": {
-    "better-sqlite3": "^4.0.3",
+    "better-sqlite3": "^4.1.0",
+    "express": "^4.16.2",
+    "express-ws": "^3.0.0",
     "fs-extra": "^2.1.2",
-    "nodemailer": "^4.4.1",
+    "nodemailer": "^4.4.2",
     "nodemailer-smtp-transport": "^2.7.4",
+    "node-pty": "^0.6.10",
     "sprintf-js": "^1.1.1",
     "title-case": "^2.1.1",
-    "xterm": "^2.9.2",
+    "xterm": "^3.0.2",
     "xvt": "^1.0.20"
   },
   "devDependencies": {
+    "@types/express": "^4.11.0",
     "@types/fs-extra": "0.0.37",
     "@types/node": "0.0.2",
     "@types/sprintf-js": "0.0.27"

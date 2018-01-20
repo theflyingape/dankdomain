@@ -3,11 +3,10 @@
    +                --   Dank Domain Main Command Menu   --                +
 -=[-]=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=[-]=-
    : {A} Arena: Fight and Joust            {D} Deep Dank Dungeon           :
-   : {E} Electronic Mail and Feedback      {G} Gambling Casino             :
-   : {L} List of Top Users & Winners       {M} Most Wanted List            :
-   : {N} Naval Battles/Fishing             {P} Party/Gang Wars             :
-   : {R} Rob/Burglarize other users        {S} Public Square (Shops, etc.) :
-   : {T} Tiny's Tavern                     {U} User Configuration          :
-   : {X} X-terminate: Reroll character     {Y} Your Statistics             :
-   : {Z} System Status                                                     :
+   : {G} Gambling Casino                   {L} List of Top Users & Winners :
+   : {M} Most Wanted List                  {N} Naval Battles/Fishing       :
+   : {P} Party/Gang Wars                   {R} Rob/Burglarize other users  :
+   : {S} Public Square (Shops, etc.)       {T} Tiny's Tavern               :
+   : {U} User Configuration                {X} X-terminate: Reroll         :
+   : {Y} Your Statistics                   {Z} System Status               :
 -=[-]=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=[-]=-
