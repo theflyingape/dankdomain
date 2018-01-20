@@ -22,14 +22,9 @@ module Gambling
         'R': { description:'Roulette' },
         'S': { description:'One-armed Bandit' }
 */
-	let atm: choices = {
-		'D': { },
-		'W': { },
-		'L': { }
-	}
-	let pin: boolean
 
 	let game:string
+	let max = new $.coins(0)
 	let payoff = new $.coins(0)
 
 	interface card {
@@ -56,7 +51,7 @@ export function menu(suppress = true) {
     }
     xvt.app.form['menu'].prompt = $.display('casino', xvt.Green, xvt.green, suppress, casino)
     xvt.app.focus = 'menu'
-	pin = false
+	max.value = $.worth($.player.level * $.money($.player.level), $.online.cha)
 }
 
 function choice() {
@@ -78,11 +73,14 @@ function choice() {
 }
 
 function Bet() {
+	if (max.value > $.player.coin.value)
+		max.value = $.player.coin.value
+
 	$.action('wager')
 	xvt.app.form = {
 		'coin': { cb:amount, max:24 }
 	}
-	xvt.app.form['coin'].prompt = xvt.attr('Bet ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.player.coin.carry(), ']? ')
+	xvt.app.form['coin'].prompt = xvt.attr('Bet ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', max.carry(), ']? ')
 	xvt.app.focus = 'coin'
 }
 
@@ -93,7 +91,7 @@ function amount() {
 	if ((+xvt.entry).toString() === xvt.entry) xvt.entry += 'c'
 	let amount = new $.coins(0)
 	if (/=|max/i.test(xvt.entry))
-		amount.value = $.player.coin.value
+		amount.value = max.value
 	else
 		amount.value = Math.trunc(new $.coins(xvt.entry).value)
 	if (amount.value < 1 || amount.value > $.player.coin.value) {

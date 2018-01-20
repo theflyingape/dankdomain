@@ -155,24 +155,26 @@ export function menu(suppress = false) {
 	ROOM = DL.rooms[y][x]
 	if ($.dice(DL.spawn * (ROOM.type == 0 ? 2 : ROOM.type == 3 ? 1 : 4)) == 1) {
 		xvt.plot($.player.rows, 1)
+		let s = $.dice(5) - 1
 		xvt.out(xvt.reset, '\n', xvt.faint, ['Your skin crawls'
 			, 'Your pulse quickens', 'You feel paranoid', 'Your grip tightens'
-			, 'You stand ready'][$.dice(5) - 1], ' when you hear a')
+			, 'You stand ready'][s], ' when you hear a')
+		if (s == 1) $.sound('pulse')
 		switch ($.dice(5)) {
 			case 1:
-				$.sound('creak' + $.dice(2))
+				if (s == 0) $.sound('creak' + $.dice(2))
 				xvt.out('n eerie, creaking noise')
 				break
 			case 2:
-				$.sound('thunder')
+				if (s == 2) $.sound('thunder')
 				xvt.out(' clap of thunder')
 				break
 			case 3:
-				$.sound('ghostly')
+				if (s == 3) $.sound('ghostly')
 				xvt.out(' ghostly whisper')
 				break
 			case 4:
-				$.sound('growl')
+				if (s == 4) $.sound('growl')
 				xvt.out(' beast growl')
 				break
 			case 5:
@@ -1651,7 +1653,7 @@ function generateLevel() {
 			Y = $.dice(DL.rooms.length) - 1
 			X = $.dice(DL.width) - 1
 			ROOM = DL.rooms[Y][X]
-		} while (ROOM.type)
+		} while (ROOM.type == 3)	//	cannot teleport into a cavern
 		return
 	}
 
@@ -1674,7 +1676,7 @@ function generateLevel() {
 			map:	0,
 			moves:	0,
 			spawn:	Math.trunc(deep / 3 + Z / 9 + maxRow / 3)
-					+ $.dice(Math.round($.online.cha / 20)) + 2,
+					+ $.dice(Math.round($.online.cha / 20)) + 3,
 			width:	maxCol
 		}
 
@@ -2033,7 +2035,7 @@ function putMonster(r = -1, c = -1): boolean {
 
 	//	check for overcrowding
 	if (DL.rooms[r][c].monster.length)
-		if (DL.rooms[r][c].monster.length > 2)
+		if (DL.rooms[r][c].monster.length > [2,1,1,3][DL.rooms[r][c].type])
 			return false
 
 	let i:number = DL.rooms[r][c].monster.length

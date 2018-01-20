@@ -312,7 +312,7 @@ export function attack(retry = false) {
         //  sneaking
         if (volley == 1) {
             bs = $.player.backstab
-            let roll = $.dice(100 + bs * $.player.level / 5)
+            let roll = $.dice(100 + bs * $.player.level / (2 * ($.player.melee + 2)))
             bs += (roll < bs) ? -1 : (roll > 99) ? +1 : 0
             do {
                 roll = $.dice(100 + bs * $.player.backstab)
@@ -1199,7 +1199,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
         case 9:
             $.sound('blast', 3)
             let ba = rpc.user.magic > 2
-                ? 15 + $.int(rpc.user.magic / 4) + $.int(rpc.user.level / 11) - (backfire
+                ? 17 + $.int(rpc.user.magic / 4) + $.int(rpc.user.level / 11) - (backfire
                     ? $.int($.int(rpc.armor.ac + rpc.user.toAC + rpc.toWC, true) / 5)
                     : $.int($.int(nme.armor.ac + nme.user.toAC + nme.toWC, true) / 5)
                 ) : 17
@@ -1560,11 +1560,11 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
         case 19:
             xvt.out('A ', xvt.bright, xvt.white, 'blinding flash', xvt.normal, ' erupts... ')
             $.sound('bigblast', 10)
-            let bba = rpc.user.magic > 2
-                ? 30 + $.int(rpc.user.magic / 4) + $.int(rpc.user.level / 11) - (backfire
+            let bba = 2 * (rpc.user.magic > 2
+                ? 17 + $.int(rpc.user.magic / 4) + $.int(rpc.user.level / 11) - (backfire
                     ? $.int($.int(rpc.armor.ac + rpc.user.toAC + rpc.toWC, true) / 5)
                     : $.int($.int(nme.armor.ac + nme.user.toAC + nme.toWC, true) / 5)
-                ) : 32
+                ) : 17)
             if (nme.user.melee > 3) bba *= $.int(nme.user.melee / 2)
             let bbr = $.int(rpc.int / 10)
             while ($.dice(99 + rpc.user.magic) > 99) {
@@ -1835,7 +1835,9 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     let n = rpc.dex + (rpc.dex - enemy.dex)
     if (blow == 1)
         n = Math.round(n / 2) + 50
-    n = (n < 5) ? 5 : (n > 99) ? 99 : n
+    n = (n < 10) ? 10 : (n > 99) ? 99 : n
+    if (blow > 1)
+        n -= $.player.melee * (blow - $.player.backstab + 1)
 
     // saving throw
     if ($.dice(100) > n) {

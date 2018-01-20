@@ -6,10 +6,11 @@ After=local-fs.target network-online.target
 Type=simple
 User=nobody
 WorkingDirectory=/usr/local/games/dankdomain
-Environment=TERM=linux
-ExecStart=/opt/node/bin/node ./node_modules/tty.js/bin/tty.js --config ./tty/files/xterm.json
+Environment=TERM=xterm-256color
+ExecStart=/opt/node/bin/node ./door/app
 KillMode=process
-TasksMax=100
+TasksMax=200
 
 [Install]
 WantedBy=multi-user.target
+

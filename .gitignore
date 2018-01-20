@@ -2,7 +2,7 @@
 **/*.js.map
 **/*.d.ts
 **/node_modules/**
-build/*.pem
+build/door/*.pem
 build/etc/smtp.json
 build/images/**
 build/sounds/**
