@@ -1,1 +1,0 @@
-../logins.sh

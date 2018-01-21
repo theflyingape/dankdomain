@@ -26,11 +26,11 @@ dns.lookup('localhost', (err, addr, family) => {
     console.log(`Dank Domain Door on https|wss://${addr}:${port}`);
     app.use('/xterm/door', express.static(__dirname + '/static'));
     app.post('/xterm/door/player', function (req, res) {
-        var cols = parseInt(req.query.cols), rows = parseInt(req.query.rows), term = pty.spawn('sh', ["-l", "./logins.sh"], {
+        var cols = parseInt(req.query.cols), rows = parseInt(req.query.rows), term = pty.spawn('sh', ["-l", "../logins.sh"], {
             name: 'xterm-256color',
             cols: cols || 80,
             rows: rows || 24,
-            cwd: process.env.PWD,
+            cwd: __dirname,
             env: process.env
         });
         let pid = parseInt(term.pid);
