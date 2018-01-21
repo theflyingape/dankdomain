@@ -299,14 +299,14 @@ export function attack(retry = false) {
                 melee(rpc, enemy)
                 next()
                 return
-            }, cancel:'R', enter:'A', eol:false, max:1, match:/A|C|R|Y/i, timeout:20 },
+            }, cancel:'R', enter:'A', eol:false, max:1, match:/A|C|R|Y/i, timeout:50 },
             'backstab': {cb:() => {
                 if (/N/i.test(xvt.entry)) bs = 1
                 xvt.out('\n\n', xvt.bright, xvt.white)
                 melee(rpc, enemy, bs)
                 next()
                 return
-            }, cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:10 }
+            }, cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:50 }
         }
 
         //  sneaking

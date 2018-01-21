@@ -156,7 +156,7 @@ dns.lookup('localhost', (err, addr, family) => {
       this.isAlive = true
     }
 */
-})
+  })
 
   //  Lurker API
   const DD = '../users/dankdomain.sql'

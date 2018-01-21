@@ -262,7 +262,7 @@ function welcome() {
                         $.access = $.Access.name['Prisoner']
                     }
                     welcome()
-                }, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, timeout:20 }
+                }, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, timeout:50 }
             }
             xvt.app.focus = 'bail'
             return
