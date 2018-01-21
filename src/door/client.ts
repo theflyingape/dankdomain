@@ -117,8 +117,7 @@ document.getElementById('lurker-list').onchange = () => {
 	term.open(document.getElementById('terminal'))
 	fit.fit(term)
 
-	term.reset()
-	term.write('\x1B[H\x1B[J\x1B[1;34mConnecting your terminal to ' + watch[watch.selectedIndex].text + ' WebSocket ... ')
+	term.write('\x1B[H\x1B[J\x1B[1;30mConnecting your terminal to ' + watch[watch.selectedIndex].text + ' WebSocket ... ')
 	let protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://'
 	let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/lurker/'
 
@@ -162,15 +161,15 @@ function newSession() {
 	recheck = 0
 	if (reconnect) clearInterval(reconnect)
 
+	pid = -1
 	term = new Terminal(options)
 	Terminal.applyAddon(fit)
 
 	term.open(document.getElementById('terminal'))
 	fit.fit(term)
 
-	term.reset()
 	term.writeln('\x1B[1;31m\uD83D\uDD25  \x1B[36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain\x1B[22m \u2728\n')
-	term.write(`\x1B[2mConnecting terminal WebSocket ... `)
+	term.write(`\x1B[0;2mConnecting terminal WebSocket ... `)
 	XT('@tune(dankdomain)')
 	window.frames['Info'].postMessage({ 'func':'Logon' }, location.href)
 
@@ -183,8 +182,8 @@ function newSession() {
 		}
 		else {
 			XT('@tune()')
-			term.destroy()
 			pid = 0
+			term.destroy()
 			if (data === '\x0D' || data === ' ')
 				newSession()
 			else
@@ -292,6 +291,7 @@ function XT(data) {
 	}
 
 	function profile(panel) {
+		if (!pid) return
 		if (typeof panel === 'string') panel = JSON.parse(panel)
 		if (window.frames['Info'])
 			window.frames['Info'].postMessage(panel, location.href)
@@ -299,7 +299,7 @@ function XT(data) {
 
 	function tune(fileName) {
 		let audio = <HTMLAudioElement>document.getElementById('tune')
-		if (!fileName.length) {
+		if (!fileName.length || !pid) {
 			audio.pause()
 			audio.currentTime = 0
 			return
@@ -326,8 +326,8 @@ function receive(event) {
 			case 'emit':
 				if (!carrier) {
 					XT('@tune()')
-					term.destroy()
 					pid = 0
+					term.destroy()
 					if (event.data.message == ' ')
 						newSession()
 					else {
