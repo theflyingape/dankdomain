@@ -990,7 +990,7 @@ export function keyhint(rpc: active) {
     let i:number
 
     for (let i in rpc.user.keyhints)
-        if (!rpc.user.keyhints[i]) open.push(i)
+        if (+i < 12 && !rpc.user.keyhints[i]) open.push(i)
     if (open.length) {
         do {
             i = open[dice(open.length) - 1]
@@ -1128,16 +1128,18 @@ export function playerPC(points = 200, immortal = false) {
 
     xvt.out('You have been rerolled.  You must pick a class.\n')
     xvt.waste(1000)
-    let classes = {}
+    let classes = [ '' ]
     let n = 0
     for (let pc in PC.name['player']) {
         if (++n > 2) {
-            xvt.out(bracket(n - 2), ' ', pc)
-            classes[n - 2] = pc
+            if (player.keyhints.indexOf(pc) < 0) {
+                xvt.out(bracket(classes.length), pc)
+                classes.push(pc)
+            }
         }
     }
     xvt.out('\n')
-    xvt.app.form['pc'].prompt = 'Enter class (1-' + (n - 2) +'): '
+    xvt.app.form['pc'].prompt = `Enter class (1-${(classes.length - 1)}): `
     xvt.app.focus = 'pc'
 
     function show() {
@@ -1151,14 +1153,15 @@ export function playerPC(points = 200, immortal = false) {
     }
 
     function pick() {
-        let n: number = +xvt.entry
-        if (!xvt.validator.isInt(n)) {
+        let n: number = int(xvt.entry)
+        if (n < 1 || n >= classes.length) {
             xvt.beep()
             xvt.app.refocus()
             return
         }
-        if (n < 1 || n > Object.keys(classes).length) {
+        if (player.keyhints.indexOf(classes[n]) >= 0) {
             xvt.beep()
+            xvt.out(` - you cannot re-play ${classes[n]} until after you make an immortal class.`)
             xvt.app.refocus()
             return
         }
@@ -1524,6 +1527,7 @@ export function riddle() {
 
     let max = Object.keys(PC.name['immortal']).indexOf(player.pc) + 1
     player.immortal++
+    player.keyhints.push(player.pc)
     reroll(player)
     saveUser(player)
 
@@ -1555,6 +1559,7 @@ export function riddle() {
             user.id = rs[row].id
             loadUser(user)
             reroll(user)
+            newkeys(user)
             saveUser(user)
             xvt.out('.')
             xvt.waste(12)
@@ -1576,7 +1581,7 @@ export function riddle() {
 
     let slot: number
     for (let i in player.keyhints) {
-        if (player.keyhints[i]) {
+        if (+i < 12 && player.keyhints[i]) {
             slot = Math.trunc(+i / 3) + 1
             xvt.out(xvt.reset, `Key #${slot} is not `, xvt.bright, xvt.reverse)
             switch (player.keyhints[i]) {
@@ -1630,11 +1635,14 @@ export function riddle() {
                 sound('thunder')
                 xvt.out(xvt.bright, xvt.black, '^', xvt.white, 'Boom!', xvt.black, '^\n')
                 if (slot == 0) {
-                    for (let i = 3 * slot; i < 3 * (slot + 1); i++)
+                    for (let i = 3 * slot; i < 3 * (slot + 1); i++) {
+                        if (player.keyhints[i] === xvt.entry.toUpperCase())
+                            break
                         if (!player.keyhints[i]) {
                             player.keyhints[i] = xvt.entry.toUpperCase()
                             break
                         }
+                    }
                     reroll(player)
                     playerPC(200 + 4 * player.wins + int(player.immortal / 4))
                 }
