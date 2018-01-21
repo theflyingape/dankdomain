@@ -342,6 +342,7 @@ function welcome() {
         $.access.roleplay = false
         $.saveUser($.player)
         $.unlock($.player.id)
+        $.news('', true)
     }
 
     xvt.app.form = {

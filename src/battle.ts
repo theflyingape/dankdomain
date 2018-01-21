@@ -2124,7 +2124,7 @@ export function user(venue: string, cb:Function) {
             //  paint profile
             xvt.out('\n')
             if (rpc.user.id) {
-				let userPNG = `images/user/${rpc.user.id}.png`
+				let userPNG = `door/static/images/user/${rpc.user.id}.png`
 				try {
 					fs.accessSync(userPNG, fs.constants.F_OK)
 					userPNG = `user/${rpc.user.id}`
@@ -2185,7 +2185,7 @@ export function user(venue: string, cb:Function) {
 }
 
 export function yourstats() {
-    let userPNG = `images/user/${$.player.id}.png`
+    let userPNG = `door/static/images/user/${$.player.id}.png`
     try {
         fs.accessSync(userPNG, fs.constants.F_OK)
         userPNG = `user/${$.player.id}`

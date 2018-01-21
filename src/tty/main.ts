@@ -139,7 +139,7 @@ function choice() {
                 'yn': { cb: () => {
                     xvt.out('\n')
                     if (/Y/i.test(xvt.entry)) {
-                        let userPNG = `images/user/${$.player.id}.png`
+                        let userPNG = `door/static/images/user/${$.player.id}.png`
                         try {
                             fs.accessSync(userPNG, fs.constants.F_OK)
                             userPNG = `user/${$.player.id}`

@@ -481,7 +481,7 @@ function doMove(): boolean {
 			xvt.out('There\'s something lurking in here . . . \n')
 			let img = 'dungeon/' + ROOM.monster[0].user.handle
 			try {
-				fs.accessSync('images/' + img + '.jpg', fs.constants.F_OK)
+				fs.accessSync('door/static/images/' + img + '.jpg', fs.constants.F_OK)
 				$.profile({ jpg:img })
 			} catch(e) {
 				$.profile({ png:'monster/' + ROOM.monster[0].user.pc.toLowerCase() })
@@ -2034,9 +2034,8 @@ function putMonster(r = -1, c = -1): boolean {
 	}
 
 	//	check for overcrowding
-	if (DL.rooms[r][c].monster.length)
-		if (DL.rooms[r][c].monster.length > [2,1,1,3][DL.rooms[r][c].type])
-			return false
+	if (DL.rooms[r][c].monster.length >= [2,1,1,3][DL.rooms[r][c].type])
+		return false
 
 	let i:number = DL.rooms[r][c].monster.length
 	let j:number = 0

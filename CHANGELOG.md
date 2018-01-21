@@ -5,6 +5,9 @@
 * 1.0.0 release
 * door: TypeScript app + client using xterm.js v3 release
 * brawling can include NPC participation
+* minor dungeon spawning and teleports avoid caverns
+* if you fail to reroll as an immortal, you must choose a different class
+* level with charisma table limits at the casino
 #### 02-Jan-2018
 * 0.9.16 release, Happy New Year!
 * dungeon: old cleric is an active PC, fairies, monster action words
