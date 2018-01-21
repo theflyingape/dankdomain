@@ -120,31 +120,46 @@ window.onresize = () => {
 	if (!pid) return
 
 	let t: CSSStyleRule
+	let I: CSSStyleRule
 	let stylesheet = document.styleSheets[0]
 	for (let i in stylesheet.cssRules) {
 		let css = stylesheet.cssRules[i]
 		if (css.selectorText === '#terminal')
 			t = css
+		if (css.selectorText === '#Info')
+			I = css
 	}
 
 	Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': '70%' })
+	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': '30%' })
 
 	//  client has a targeted ROWSxCOLS goal, adjust terminal within browser window
 	let fontSize = term.getOption('fontSize')
 	let xy = fit.proposeGeometry(term)
 
+	//  possibly expand side panel without compromising terminal width
+	let w = '29'
+	let v = w
+	do {
+		w = (parseInt(w) + 1) + '%'
+		v = (100 - parseInt(w)) + '%'
+		Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': v });
+		Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': w });
+		xy = fit.proposeGeometry(term)
+	} while (xy.cols > 81 && parseInt(w) < 40)
+
 	//  possibly upsize font until it fits targeted size
-	while ((xy = fit.proposeGeometry(term)).rows > (rows + 1) && xy.cols > cols) {
+	while ((xy = fit.proposeGeometry(term)).rows > 25 && xy.cols > 80) {
 		term.setOption('fontSize', ++fontSize)
 	}
 
 	//  possibly shrink font until it fits targeted size
-	while ((xy = fit.proposeGeometry(term)).cols < cols || xy.rows < rows) {
+	while ((xy = fit.proposeGeometry(term)).cols < 80 || xy.rows < 25) {
 		term.setOption('fontSize', --fontSize)
 	}
 
 	//  make it stick
-	term.resize(cols || xy.cols, rows || xy.rows)
+	term.resize(80, xy.rows)
 }
 
 // let's have a nice value for both the player and the web server
