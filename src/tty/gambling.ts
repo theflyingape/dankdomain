@@ -13,11 +13,11 @@ module Gambling
 {
 	let casino: choices = {
         'B': { description:'Blackjack' },
+		'C': { description:'Craps' },
         'H': { description:'High Stakes Draw' },
     	'K': { description:'Keno' },
 	}
 /*
-		'C': { description:'Craps' },
 		'G': { description:'Greyhound race' },
         'R': { description:'Roulette' },
         'S': { description:'One-armed Bandit' }
@@ -26,6 +26,7 @@ module Gambling
 	let game:string
 	let max = new $.coins(0)
 	let payoff = new $.coins(0)
+	let point: number
 
 	interface card {
 		face:string
@@ -217,6 +218,112 @@ function amount() {
 			xvt.app.focus = 'draw'
 			return
 
+		case 'C':
+			xvt.out('Rolling dice for your point ', xvt.faint)
+			xvt.waste(100)
+			let d1 = $.dice(6), d2 = $.dice(6)
+			for (let i = 0; i < 5 + d1; i++) {
+				$.sound('click')
+				xvt.out('.')
+			}
+			xvt.waste(200)
+			point = d1 + d2
+			xvt.out(xvt.normal, xvt.blue, '[',
+				xvt.bright, xvt.cyan, d1.toString(),
+				xvt.normal, xvt.blue, '] [',
+				xvt.bright, xvt.cyan, d2.toString(),
+				xvt.normal, xvt.blue, ']')
+			xvt.waste(300)
+			xvt.out(xvt.white, ' = ', xvt.bright, point.toString(), xvt.reset, '\n')
+			xvt.waste(400)
+			if (point == 7 || point == 11) {
+				$.sound('cheer')
+				payoff.value = 2 * amount.value
+				xvt.out('A natural!  You win ', payoff.carry(), '!\n')
+				$.player.coin.value += payoff.value + amount.value
+				xvt.waste(500)
+				break
+			}
+			if (point == 2 || point == 3 || point == 12) {
+				$.sound('boo')
+				xvt.out('Crapped out!  You lose.\n')
+				xvt.waste(500)
+				break
+			}
+
+			xvt.out(xvt.clear,
+				xvt.cyan, 'Your point to make is: ', xvt.bright, xvt.white, point,
+				xvt.normal, '\n\n',
+				'Press RETURN to roll dice and try to make your point\n',
+				'or bet on another number for additional payoffs:\n\n',
+				'  [2] or [12] pays 35:1\n',
+				'  [3] or [11] pays 17:1")\n',
+				'  [4] or [10] pays 11:1\n',
+				'  [5] or  [9] pays  8:1\n',
+				'  [6] or  [8] pays  6:1\n',
+				'  [7] to break pays 5:1\n'
+			)
+
+			$.action('craps')
+			xvt.app.form = {
+				'roll': { cb: () => {
+					xvt.out('\n', xvt.cll)
+					let baby = $.int(xvt.entry, true)
+					if (baby > 1 && baby < 13) {
+						Bet()
+					}
+					else
+						baby = 0
+					d1 = $.dice(6)
+					d2 = $.dice(6)
+					for (let i = 0; i < d1 + 2; i++)
+						$.sound('click')
+					xvt.out(xvt.normal, xvt.blue, '[',
+						xvt.bright, xvt.cyan, d1.toString(),
+						xvt.normal, xvt.blue, '] [',
+						xvt.bright, xvt.cyan, d2.toString(),
+						xvt.normal, xvt.blue, ']')
+					$.beep()
+					xvt.out(xvt.white, ' = ', xvt.bright, (d1 + d2).toString(), xvt.reset, '\n')
+					if (baby && d1 + d2 !== baby) {
+						$.sound('boo')
+						xvt.out('You lose on the side bet.\n')
+					}
+					if (d1 + d2 == baby) {
+						baby = (baby == 2 || baby == 12) ? 35
+							: (baby == 3 || baby == 11) ? 17
+							: (baby == 4 || baby == 10) ? 11
+							: (baby == 5 || baby == 9) ? 8
+							: (baby == 6 || baby == 8) ? 6
+							: 5
+						$.sound('cheer')
+						payoff.value = amount.value
+						xvt.out('You make your side bet!  You win ', payoff.carry(), '!\n')
+						$.player.coin.value += payoff.value + amount.value
+					}
+					xvt.waste(1000)
+					if (d1 + d2 == 7) {
+						$.sound('boo')
+						xvt.out('Crapped out!  You lose on your point.\n')
+						xvt.waste(500)
+						menu()
+						return
+					}
+					if (d1 + d2 == point) {
+						$.sound('cheer')
+						payoff.value = amount.value
+						xvt.out('You make your point!  You win ', payoff.carry(), '!\n')
+						$.player.coin.value += payoff.value + amount.value
+						xvt.waste(500)
+						menu()
+						return
+					}
+					xvt.app.refocus()
+				}, row:13, col:1, prompt:xvt.attr('Roll dice: ', xvt.cll), max:2 }
+			}
+			xvt.app.focus = 'roll'
+			return
+
 		case 'H':
 			shuffle(true)
 
@@ -279,7 +386,6 @@ function amount() {
 			return
 
 		case 'K':
-			let point: number
 			let picks: number[] = []
 			$.action('list')
 			xvt.app.form = {

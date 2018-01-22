@@ -620,6 +620,14 @@ export function checkXP(rpc: active, cb: Function): boolean {
     xvt.waste(125)
     wall(`is now a level ${player.level} ${player.pc}`)
 
+    let deed = mydeeds.find((x) => { return x.deed === 'levels' })
+    if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, 'levels')[0]) - 1]
+    if ((deed && jumped >= deed.value)) {
+        deed.value = jumped
+        sound('outstanding')
+        saveDeed(deed)
+    }
+
     if (player.level < sysop.level) {
         xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.hp), xvt.reset, ' Hit points\n')
         xvt.waste(125)
@@ -1250,7 +1258,7 @@ export function playerPC(points = 200, immortal = false) {
 
 export function remake(user: user) {
     let rpc = PC.card(user.pc)
-    for (let n = 2; n < user.level; n++) {
+    for (let n = 1; n < user.level; n++) {
         if (n == 50 && user.id[0] !== '_' && user.gender !== 'I') {
             xvt.out(xvt.reset, xvt.bright, xvt.yellow, '+', xvt.reset, ' Bonus ')
             let d: number = 0
@@ -1340,9 +1348,9 @@ export function remake(user: user) {
             user.dex = user.maxdex
         if ((user.cha += rpc.toCha) > user.maxcha)
             user.cha = user.maxcha
-        user.hp += n + dice(n) + Math.trunc(user.str / 10)
+        user.hp += n + dice(n) + int(user.str / 10)
         if (user.magic > 1)
-            user.sp += n + dice(n) + Math.trunc(user.int / 10)
+            user.sp += n + dice(n) + int(user.int / 10)
     }
 
     if (user.level > 1)
