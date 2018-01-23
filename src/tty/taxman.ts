@@ -17,7 +17,7 @@ module Taxman
 
 function checkpoint(scratch: number): boolean {
 
-    if ($.player.coin.value > tax.value) {
+    if (scratch > tax.value) {
         $.loadUser($.taxman)
         $.profile({ png:'player/' + $.taxman.user.pc.toLowerCase() + ($.taxman.user.gender === 'F' ? '_f' : '')
             , handle:$.taxman.user.handle

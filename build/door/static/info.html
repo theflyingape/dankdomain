@@ -302,6 +302,14 @@ ${quit}
   nme(`<img src="images/bank.jpg" onload="nmeResize();">`);
 }
 
+function blackjack() {
+  nme('');
+  cmd(`<p><input class="wide" type="button" value="Double" onclick="send('D');"></p>
+<p><input class="tall" type="button" value=" Hit me! " onclick="send('H');"></p>
+<p><input class="wide" type="button" value="Stay" onclick="send('S');"></p>
+`);
+}
+
 function battle() {
   if (currentCMD === 'battle') return;
   cmd(`
@@ -321,6 +329,13 @@ function casino() {
 <input type="button" value="Keno" onclick="send('K');">
 <input type="button" value="Roulette" onclick="send('R');"></p>
 ${quit}`);
+}
+
+function craps() {
+  nme('');
+  cmd(`<p><input class="tall" type="button" value=" Roll! " onclick="send('', true);"></p>
+${money}
+`);
 }
 
 function deeds() {

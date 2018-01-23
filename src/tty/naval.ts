@@ -585,15 +585,13 @@ function BattleUser(nme: active) {
 			menu()
 			return
 		}
-		if (him())
-			return
 	}
-	else {
+	else
 		xvt.out(`${$.who(nme, 'He')}spots you coming and attacks.\n`)
-		if (him()) {
-			menu()
-			return
-		}
+
+	if (him()) {
+		menu()
+		return
 	}
 
 	$.action('hunt')
