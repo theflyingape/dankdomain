@@ -202,7 +202,7 @@ function choice() {
                 prize += $.worth(new $.coins($.Weapon.name[opponent.user.weapon].value).value, $.online.cha)
                 if (opponent.user.cannon) prize += $.money(opponent.user.level)
                 prize += opponent.user.coin.value
-                prize = Math.trunc(prize / (6 - $.player.steal))
+                prize = $.int(prize / (6 - $.player.steal))
 
                 if ($.dice($.online.int) > 5 && prize < self) {
                     xvt.out('But you decide it is not worth the effort.\n')
@@ -219,7 +219,7 @@ function choice() {
                         if (/Y/i.test(xvt.entry)) {
 							xvt.out('\nYou slide into the shadows and make your attempt ')
                             xvt.waste(500)
-                            let lock = 5 * ($.Security.name[opponent.user.security].protection + 1) + $.RealEstate.name[opponent.user.realestate].protection
+                            let lock = 5 * ($.Security.name[opponent.user.security].protection + 1) + $.RealEstate.name[opponent.user.realestate].protection + $.steal
                             let skill = Math.round($.player.steal * $.online.dex * $.online.int / 10000)
                             for (let pick = 0; pick < $.player.steal; pick++) {
                                 xvt.out('. ')
@@ -230,6 +230,7 @@ function choice() {
                             if ($.player.email === opponent.user.email || !$.lock(opponent.user.id))
                                 skill = 0
                             if (skill > lock) {
+                                $.steal++
                                 $.player.coin.value += prize
                                 xvt.out('\nYou break in and make off with ', new $.coins(prize).carry(), ' worth of stuff!\n')
                                 xvt.waste(1000)

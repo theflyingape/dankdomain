@@ -1832,10 +1832,14 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         return
     }
 
-    let n = rpc.dex + (rpc.dex - enemy.dex)
-    n = (n < 10) ? 10 : (n > 99) ? 99 : n
-    if (blow == 1)
+    let n = rpc.dex
+    if (blow == 1) {
+        let m = (rpc.dex - enemy.dex)
+        m = (m < -10) ? -10 : (m > 10) ? 10 : m
+        n += m
+        n = (n < 10) ? 10 : (n > 99) ? 99 : n
         n = 50 + $.int(n / 2)
+    }
     else
         n -= $.player.melee * (blow - $.player.backstab + 1)
 

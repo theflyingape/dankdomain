@@ -46,6 +46,7 @@ module Common
     export let party: number = 0
     export let realestate: number = 0
     export let security: number = 0
+    export let steal: number = 0
     export let tiny: number = 0
 
     export let callers: caller[] = []

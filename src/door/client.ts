@@ -198,6 +198,12 @@ function newSession() {
 		fetch(`${app}/player/${pid}/size?cols=${cols}&rows=${rows}`, { method: 'POST' })
 	})
 
+	term.on('wall', function (msg) {
+		if (!pid) return
+		let url = `${app}/player/${pid}/wall?msg=${msg}`
+		fetch(url, {method: 'POST'})
+	  })
+	
 	// fit is called within a setTimeout, cols and rows need this
 	setTimeout(function () {
 		fetch(`${app}/player/?cols=${term.cols}&rows=${term.rows}`, { method: 'POST' }).then(function (res) {

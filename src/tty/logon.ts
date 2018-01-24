@@ -316,6 +316,7 @@ function welcome() {
         $.party = 1
         $.realestate = 1
         $.security = 1
+        $.steal = 0
         $.tiny = 3
         $.mydeeds = $.loadDeed($.player.pc)
 

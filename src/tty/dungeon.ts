@@ -153,7 +153,7 @@ export function menu(suppress = false) {
 			x = $.dice(DL.width) - 1
 	}
 	ROOM = DL.rooms[y][x]
-	if ($.dice(DL.spawn * (ROOM.type == 0 ? 2 : ROOM.type == 3 ? 1 : 4)) == 1) {
+	if ($.dice(DL.spawn * (ROOM.type == 0 ? 2 : ROOM.type == 3 ? 1 : 3)) == 1) {
 		xvt.plot($.player.rows, 1)
 		let s = $.dice(5) - 1
 		xvt.out(xvt.reset, '\n', xvt.faint, ['Your skin crawls'
@@ -544,7 +544,7 @@ function doMove(): boolean {
 				let u = ($.dice(128 + deep - ($.player.backstab <<1) - ($.player.steal <<2) - DL.map) < $.online.dex)
 				for (let m = party.length - 1; m > 0; m--) {
 					if ($.dice(120) < party[m].dex)
-						xvt.out(xvt.reset, $.titlecase(party[m].user.handle), ' manages to catch the edge and stop from falling.\n')
+						xvt.out(xvt.reset, party[m].user.handle, ' manages to catch the edge and stop from falling.\n')
 					else {
 						xvt.out(xvt.bright, xvt.yellow, $.titlecase(party[m].user.handle), ' falls down a level!\n')
 						if (u) party.splice(m, 1)
