@@ -48,10 +48,10 @@ export function menu(suppress = true) {
 
 	$.action('casino')
 	xvt.app.form = {
-        'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
-    }
-    xvt.app.form['menu'].prompt = $.display('casino', xvt.Green, xvt.green, suppress, casino)
-    xvt.app.focus = 'menu'
+		'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
+	}
+	xvt.app.form['menu'].prompt = $.display('casino', xvt.Green, xvt.green, suppress, casino)
+	xvt.app.focus = 'menu'
 	max.value = $.worth($.player.level * $.money($.player.level), $.online.cha)
 	max = new $.coins(max.carry(1, true))
 }
@@ -96,7 +96,7 @@ function amount() {
 		amount.value = max.value
 	else
 		amount.value = Math.trunc(new $.coins(xvt.entry).value)
-	if (amount.value < 1 || amount.value > $.player.coin.value) {
+	if (amount.value < 1 || amount.value > $.player.coin.value || amount.value > max.value) {
 		xvt.beep()
 		menu($.player.expert)
 		return
@@ -275,7 +275,7 @@ function amount() {
 						side.value = max.value
 					else
 						side.value = $.int(new $.coins(xvt.entry).value)
-					if (side.value < 1 || side.value > $.player.coin.value) {
+					if (side.value < 1 || side.value > $.player.coin.value || amount.value > max.value) {
 						$.beep()
 						side.value = 0
 					}

@@ -2079,10 +2079,19 @@ function putMonster(r = -1, c = -1): boolean {
 		m = room.monster[i]
 
 		//	pick and generate monster relative to its level
-		j = level + $.dice(3) - 2
-		j = j < 0 ? 0 : j >= Object.keys(monsters).length ? Object.keys(monsters).length - 1 : j
-		m.user.handle = Object.keys(monsters)[j]
-		dm = monsters[m.user.handle]
+		let v = $.dice(12)
+		v = v == 12 ? 2 : v > 1 ? 1 : 0
+		j = level + v - 1
+		if (j < 0) {
+			j = 0
+			v = 1
+		}
+		if (j >= Object.keys(monsters).length) {
+			j = Object.keys(monsters).length - 1
+			v = 1
+		}
+		dm = monsters[Object.keys(monsters)[j]]
+		m.user.handle = ['lesser ', '', 'greater '][v] + Object.keys(monsters)[j]
 		$.reroll(m.user, dm.pc ? dm.pc : $.player.pc, level)
 
 		if (dm.weapon)
@@ -2124,7 +2133,7 @@ function putMonster(r = -1, c = -1): boolean {
 				for (let vials in dm.poisons)
 					$.Poison.add(m.user.poisons, dm.poisons[vials])
 			for (let i = 0; i < Object.keys($.Poison.vials).length - (9 - deep); i++) {
-				if ($.dice($.player.cha + (i <<2)) == 1) {
+				if ($.dice($.int($.player.cha / (deep + 1)) + (i <<2)) < (+$.player.coward + 2)) {
 					let vial = $.Poison.pick(i)
 					if (!$.Poison.have(m.user.poisons, vial))
 						$.Poison.add(m.user.poisons, i)
@@ -2138,7 +2147,7 @@ function putMonster(r = -1, c = -1): boolean {
 				for (let magic in dm.spells)
 					$.Magic.add(m.user.spells, dm.spells[magic])
 			for (let i = 0; i < Object.keys($.Magic.spells).length - (9 - deep); i++) {
-				if ($.dice($.player.cha + (i <<2)) == 1) {
+				if ($.dice($.int($.player.cha / (deep + 1)) + (i <<2)) < (+$.player.coward + 2)) {
 					let spell = $.Magic.pick(i)
 					if (!$.Magic.have(m.user.spells, spell))
 						$.Magic.add(m.user.spells, i)
