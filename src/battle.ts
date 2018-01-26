@@ -378,6 +378,9 @@ export function attack(retry = false) {
         let nest: number = 0
         let odds: number = (from === 'Party' ? 6 : from === 'Dungeon' ? 5 : 4) - $.int(+enemy.user.coward)
         let roll: number = odds + $.int(rpc.user.magic / 2) + rpc.adept + 1
+        if (rpc.user.level > enemy.user.level)
+            roll += Math.round((rpc.user.level - enemy.user.level) / 4)
+        if (roll / odds > odds) roll = odds * odds
 
         if (rpc.user.magic == 1 && $.dice(roll) > odds) {
             if ($.Magic.have(rpc.user.spells, 8)

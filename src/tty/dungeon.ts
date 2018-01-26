@@ -581,7 +581,7 @@ function doMove(): boolean {
 			}
 			else {
 				ROOM.occupant = 0
-				if ($.dice(100 + deep) >= $.online.cha)
+				if ($.dice(50 + Z - deep) > $.online.cha)
 					xvt.out(xvt.bright, xvt.cyan, 'A fairie flies by you.\n')
 				else {
 					xvt.out(xvt.bright, xvt.cyan, 'A fairie brushes by you.\n')
@@ -1126,7 +1126,7 @@ function doMove(): boolean {
 			let cost = new $.coins(Math.trunc($.money(Z) / 6 / $.player.hp * ($.player.hp - $.online.hp)))
 			if (cost.value < 1) cost.value = 1
 			cost.value *= (deep + 1)
-			if ($.online.cha > 98)
+			if ($.player.cha > 98)	//	typically a Cleric and God
 				cost.value = 0
 			cost = new $.coins(cost.carry(1, true))
 
@@ -2158,11 +2158,11 @@ function putMonster(r = -1, c = -1): boolean {
 		$.activate(m)
 
 		m.user.immortal = deep
-		m.adept = $.dice(Z / 30 + deep / 4) - 1
-		m.str = $.PC.ability(m.str, m.adept * 2 + 1)
-		m.int = $.PC.ability(m.int, m.adept * 2 + 1)
-		m.dex = $.PC.ability(m.dex, m.adept * 2 + 1)
-		m.cha = $.PC.ability(m.cha, m.adept * 2 + 1)
+		m.adept = $.dice(Z / 30 + deep / 4 + 1) - 1
+		m.str = $.PC.ability(m.str, deep + 1)
+		m.int = $.PC.ability(m.int, deep + 1)
+		m.dex = $.PC.ability(m.dex, deep + 1)
+		m.cha = $.PC.ability(m.cha, deep + 1)
 
 		let gold = new $.coins($.int($.money(level) / 10))
 		gold.value += $.worth(new $.coins(m.weapon.value).value, $.dice($.online.cha / 5) + 5)

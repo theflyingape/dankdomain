@@ -579,7 +579,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
 		rpc.user.dex = PC.ability(rpc.user.dex, PC.card(rpc.user.pc).toDex, rpc.user.maxdex)
 		rpc.user.cha = PC.ability(rpc.user.cha, PC.card(rpc.user.pc).toCha, rpc.user.maxcha)
 
-        if (eligible && rpc.user.level == sysop.level / 2) {
+        if (eligible && rpc.user.level == int(sysop.level / 2)) {
             bonus = true
             break
         }
@@ -677,7 +677,7 @@ export function skillplus(rpc: active, cb: Function) {
     xvt.out('\n'); xvt.waste(500)
 
     if (rpc.user.maxstr < 99 && rpc.user.maxint < 99 && rpc.user.maxdex < 99 && rpc.user.maxcha < 99) {
-        xvt.out(bracket(0, false), xvt.yellow, ' Increase ALL abilities by +2\n')
+        xvt.out(bracket(0, false), xvt.yellow, ' Increase ALL abilities by ' ,xvt.reset, '+2\n')
         xvt.waste(200)
     }
     xvt.out(bracket(1, false), xvt.yellow, ' Increase Strength ability from ', xvt.reset
@@ -849,8 +849,7 @@ export function skillplus(rpc: active, cb: Function) {
                 default:
                     xvt.out(xvt.black, 'More mana is better')
                     player.sp += 511
-                    online.sp += 511
-                    player.sp += dice(3583 - player.magic)
+                    online.sp += dice(511)
                     break
                 }
                 break
