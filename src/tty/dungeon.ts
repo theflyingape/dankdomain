@@ -646,6 +646,7 @@ function doMove(): boolean {
 			xvt.out('\n')
 
 			$.action('freetext')
+			$.profile({ jpg:'well' })
 			xvt.app.form = {
 				'well': { cb: () => {
 					ROOM.occupant = 0
@@ -868,6 +869,7 @@ function doMove(): boolean {
 			xvt.waste(600)
 
 			$.action('yn')
+			$.profile({ jpg:'wol' })
 			xvt.app.form = {
 				'wheel': { cb: () => {
 					ROOM.occupant = 0
@@ -1059,13 +1061,14 @@ function doMove(): boolean {
 						'He recognizes your skill and winks',
 						'He slaps your back, but your wallet remains',
 						'He offers you a drink, and you accept',
-						'"I\'ll be seeing you again", as he leaves'
-						][$.dice(5) - 1], '.\n')
+						xvt.attr('"I\'ll be seeing you again"', xvt.cyan, ' as he leaves')
+						][$.dice(5) - 1], xvt.cyan, '.')
 				}
 				else {
-					xvt.out(xvt.magenta, 'He teleports away!\n', xvt.reset)
+					xvt.out(xvt.normal, xvt.magenta, 'He teleports away!')
 					$.sound('teleport', 8)
 				}
+				xvt.out(xvt.reset, '\n')
 			}
 			else {
 				ROOM.occupant = 5
