@@ -1556,8 +1556,13 @@ export function riddle() {
         xvt.out(xvt.yellow, 'The board will now reset ')
         let rs = query(`SELECT id, pid FROM Online WHERE id != '${player.id}'`)
         for (let row in rs) {
-            process.kill(rs[row].pid)
-            xvt.out('+')
+            try {
+                process.kill(rs[row].pid, 'SIGHUP')
+                xvt.out('+')
+            }
+            catch {
+                xvt.out('?')
+            }
             unlock(rs[row].id)
         }
 
@@ -1926,16 +1931,16 @@ export function wall(msg: string) {
     export let sqlite3 = new better(DD)
     let rs = query(`SELECT * FROM sqlite_master WHERE name='Online' AND type='table'`)
     if (!rs.length) {
-        xvt.out('initializing online ... ')
+        xvt.out('\ninitializing online ... ')
         run(`CREATE TABLE IF NOT EXISTS Online (id text PRIMARY KEY, pid numeric, lockdate numeric, locktime numeric)`)
 
-        xvt.out('done.\n')
+        xvt.out('done.')
         xvt.waste(250)
     }
 
     rs = query(`SELECT * FROM sqlite_master WHERE name='Players' AND type='table'`)
     if (!rs.length) {
-        xvt.out('initializing players ... ')
+        xvt.out('\ninitializing players ... ')
         run(`CREATE TABLE IF NOT EXISTS Players (
             id text PRIMARY KEY, handle text UNIQUE NOT NULL, name text NOT NULL, email text, password text NOT NULL,
             dob numeric NOT NULL, sex text NOT NULL, joined numeric, expires numeric, lastdate numeric,
@@ -2022,7 +2027,7 @@ export function wall(msg: string) {
             name text PRIMARY KEY, members text, win numeric, loss numeric, banner numeric, color numeric
         )`)
         run(`INSERT INTO Gangs VALUES ( 'Monster Mash', '_MM1,_MM2,_MM3,_MM4', 0, 0, 0, 0 )`)
-        xvt.out('done.\n')
+        xvt.out('done.')
         xvt.waste(250)
     }
 
@@ -2032,9 +2037,11 @@ export function wall(msg: string) {
         run(`CREATE TABLE IF NOT EXISTS Deeds (pc text KEY,
             deed text KEY, date numeric, hero text, value numeric
         )`)
-        xvt.out('done.\n')
+        xvt.out('done.')
         xvt.waste(250)
     }
+
+    xvt.out(xvt.reset, '\n')
 
 
 function isActive(arg: any): arg is active {

@@ -15,6 +15,7 @@ module Hall
         'C': { description:'Class Champions' },
         'H': { description:'Hall of Heroes' },
         'M': { description:'Most Memorable Hits' },
+        'T': { description:'Top Ten Tavern Thugs' },
         'W': { description:'Winners Only Noted' }
 	}
 
@@ -98,7 +99,7 @@ function choice() {
                     let deeds = $.loadDeed(pc)
                     if (deeds.length) {
                         xvt.out(sprintf('\n%-9s  ', pc))
-                        let keys = ['melee', 'blast', 'big blast']
+                        let keys = ['melee', 'blast', 'big blast', 'levels']
                         for (let hurt in keys) {
                             let deed = deeds.find((x) => { return x.deed === keys[hurt] })
                             if (deed) {
@@ -110,6 +111,28 @@ function choice() {
                         }
                     }
                 }
+            }
+            suppress = true
+            break
+
+        case 'T':
+            xvt.out('\n')
+            xvt.out(xvt.Yellow, xvt.black, ' ID   Player\'s Handle                   Class    Lvl    Brawls '
+                , xvt.reset, '\n')
+            xvt.out(xvt.Yellow, xvt.black, '---------------------------------------------------------------'
+                , xvt.reset, '\n')
+
+            let rs = $.query(`
+                SELECT id, handle, pc, level, tw FROM Players
+                WHERE tw > 0
+                ORDER BY tw DESC, level DESC, immortal DESC
+                LIMIT 10
+            `)
+
+            for (let n in rs) {
+                xvt.out(sprintf('%-4s  %-30s  %-9s  %3d  %5d'
+                    , rs[n].id[0] !== '_' ? rs[n].id : ' \u00B7 ', rs[n].handle, rs[n].pc, rs[n].level, rs[n].tw)
+                    , '\n')
             }
             suppress = true
             break

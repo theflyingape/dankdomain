@@ -145,10 +145,15 @@ function password() {
         }
         else if (rs[row].id === $.player.id) {
             $.news(`\tkicked simultaneous player off: ${rs[row].id} lock from ${$.time(rs[row].locktime)}`)
-            process.kill(rs[row].pid, 'SIGHUP')
+            try {
+                process.kill(rs[row].pid, 'SIGHUP')
+                xvt.out(`\nYou\'re in violation of the space-time continuum: T - ${60 - t} minutes\n`)
+            }
+            catch {
+                $.unlock(rs[row].id)
+            }
             $.access.roleplay = false
             $.beep()
-            xvt.out(`\nYou\'re in violation of the space-time continuum: T - ${60 - t} minutes\n`)
             xvt.carrier = false
             xvt.hangup()
         }
