@@ -149,10 +149,14 @@ export class Magic {
         let backfire: number
 
         fail = rpc.int + Math.trunc(rpc.user.level / 10) - (this.spells[spell].cast < 17 ? this.spells[spell].cast : this.spells[spell].cast - 10)
-        if (xvt.validator.isDefined(nme) && [ 9,11,14,15,16,19,20,21,22 ].indexOf(this.spells[spell].cast) >= 0)
+        if (xvt.validator.isDefined(nme) && [ 9,11,12,14,15,16,19,20,21,22 ].indexOf(this.spells[spell].cast) >= 0) {
+            let m = rpc.int - nme.int
+            m = (m < -10) ? -10 : (m > 10) ? 10 : m
             fail += rpc.int - nme.int
-        fail = (fail < 5) ? 5 : (fail > 99) ? 99 : fail
-        backfire = 50 + (fail>>1)
+        }
+
+        fail = (fail < 10) ? 10 : (fail > 99) ? 99 : fail
+        backfire = 50 + $.int(fail / 2)
         return { fail, backfire }
     }
 
