@@ -156,7 +156,7 @@ export class Magic {
         }
 
         fail = (fail < 10) ? 10 : (fail > 99) ? 99 : fail
-        backfire = 50 + $.int(fail / 2)
+        backfire = 50 + (fail >>1)
         return { fail, backfire }
     }
 
