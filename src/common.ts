@@ -1123,7 +1123,7 @@ export function playerPC(points = 200, immortal = false) {
 
     action('list')
     xvt.app.form = {
-        'pc': { cb:pick, min:1, max:2 },
+        'pc': { cb:pick, min:1, max:2, timeout:240 },
         'str': { cb:ability, min:2, max:2, match:/^[2-8][0-9]$/ },
         'int': { cb:ability, min:2, max:2, match:/^[2-8][0-9]$/ },
         'dex': { cb:ability, min:2, max:2, match:/^[2-8][0-9]$/ },
@@ -1141,7 +1141,7 @@ export function playerPC(points = 200, immortal = false) {
 
     xvt.out('      Character        (Recommended abilities + bonus)\n')
     xvt.out('        Class    Users   Str     Int     Dex     Cha       Special Feature\n')
-    xvt.out('      ---------   ---   -----   -----   -----   -----   ---------------------\n')
+    xvt.out('      ---------   ---   -----   -----   -----   -----   ---------------------')
 
     let classes = [ '' ]
     let n = 0
@@ -1153,7 +1153,7 @@ export function playerPC(points = 200, immortal = false) {
                 classes.push(pc)
             }
             else
-                xvt.out(bracket('--'))
+                xvt.out(bracket('x'), xvt.faint)
 
             let rs = query(`SELECT COUNT(id) AS n FROM Players WHERE pc = '${pc}'`)[0]
 
