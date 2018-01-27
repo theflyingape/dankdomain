@@ -68,7 +68,7 @@ export function menu(suppress = true) {
 			$.log(bump.user.id, `\nYou picked ${$.player.handle}'s pouch holding ${v.carry()}!`)
 			$.player.coin.value -= v.value
 			xvt.out('{sigh}\n')
-			xvt.out('oops', 8)
+			$.sound('oops', 8)
 			xvt.out('You notice your pouch of ', ['copper','silver','gold','platinum'][i]
 				, ' pieces has gone missing!\n')
 			xvt.waste(1000)
