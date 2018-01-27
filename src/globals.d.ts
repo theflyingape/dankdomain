@@ -263,6 +263,7 @@ interface character {
     maxInt: number      //  baseInt-99
     maxDex: number      //  baseDex-99
     maxCha: number      //  baseCha-99
+    specialty?: string  //  meta
     description?: string[]
 }
 

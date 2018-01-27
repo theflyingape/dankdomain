@@ -228,7 +228,9 @@ export class Character {
 
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
             xvt.out('       HP: ', xvt.white)
-            xvt.out(sprintf('%-42s', profile.hp + '/' + profile.user.hp + ' (' + ['weak', 'normal', 'advanced', 'warrior', 'brute', 'hero'][profile.user.melee] + ', ' + ['a rare', 'occasional', 'deliberate', 'angry', 'murderous'][profile.user.backstab] + ' backstab)'))
+            xvt.out(sprintf('%-42s', profile.hp + '/' + profile.user.hp + ' (' 
+                + ['weak', 'normal', 'adept', 'warrior', 'brute', 'hero'][profile.user.melee] + ', '
+                + ['a rare', 'occasional', 'deliberate', 'angry', 'murderous'][profile.user.backstab] + ' backstab)'))
             xvt.out(' ', xvt.reset, xvt.blue, '|\n')
 
             if (profile.user.magic > 1) {
@@ -1134,16 +1136,31 @@ export function playerPC(points = 200, immortal = false) {
         return
     }
 
-    xvt.out('You have been rerolled.  You must pick a class.\n')
-    xvt.waste(1000)
+    xvt.out('You have been rerolled.  You must pick a class.', xvt.cyan, '\n\n')
+    xvt.waste(1500)
+
+    xvt.out('      Character        (Recommended abilities + bonus)\n')
+    xvt.out('        Class    Users   Str     Int     Dex     Cha       Special Feature\n')
+    xvt.out('      ---------   ---   -----   -----   -----   -----   ---------------------\n')
+
     let classes = [ '' ]
     let n = 0
     for (let pc in PC.name['player']) {
+        let rpc = PC.card(pc)
         if (++n > 2) {
             if (player.keyhints.indexOf(pc) < 0) {
-                xvt.out(bracket(classes.length), pc)
+                xvt.out(bracket(classes.length))
                 classes.push(pc)
             }
+            else
+                xvt.out(' --  ')
+
+            let rs = query(`SELECT COUNT(id) AS n FROM Players WHERE pc = '${pc}'`)[0]
+
+            xvt.out(sprintf(' %-9s   %3d   %2d %+d   %2d %+d   %2d %+d   %2d %+d   %s',
+                pc, +rs.n,
+                rpc.baseStr, rpc.toStr, rpc.baseInt, rpc.toInt, rpc.baseDex, rpc.toDex, rpc.baseCha, rpc.toCha,
+                rpc.specialty))
         }
     }
     xvt.out('\n')

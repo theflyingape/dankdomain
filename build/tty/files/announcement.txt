@@ -1,7 +1,8 @@
-[22;36mDate:[22;37m Mon 22-Jan-2018  7:00pm
+[22;36mDate:[22;37m Fri 26-Jan-2018  7:25pm
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
 New announcements as missing features get implemented or tweaked:
+- List of Deeds include levels jumped and top Tavern brawling
 - the Craps table is open
 - major updates to both browser and door components, so update your browser!
 - minor dungeon monster spawning and teleports avoid caverns
