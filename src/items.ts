@@ -152,7 +152,7 @@ export class Magic {
         if (xvt.validator.isDefined(nme) && [ 9,11,12,14,15,16,19,20,21,22 ].indexOf(this.spells[spell].cast) >= 0) {
             let m = rpc.int - nme.int
             m = (m < -10) ? -10 : (m > 10) ? 10 : m
-            fail += rpc.int - nme.int
+            fail += m
         }
 
         fail = (fail < 10) ? 10 : (fail > 99) ? 99 : fail
