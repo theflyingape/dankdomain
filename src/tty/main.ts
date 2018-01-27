@@ -217,27 +217,33 @@ function choice() {
                     'yn': { cb: () => {
                         xvt.out('\n')
                         if (/Y/i.test(xvt.entry)) {
-							xvt.out('\nYou slide into the shadows and make your attempt ')
-                            xvt.waste(500)
-                            let lock = 5 * ($.Security.name[opponent.user.security].protection + 1) + $.RealEstate.name[opponent.user.realestate].protection + $.steal
+							xvt.out(xvt.faint, '\nYou slide into the shadows and make your attempt ')
+                            xvt.waste(1000)
+                            let lock = 5 * ($.Security.name[opponent.user.security].protection + 1)
+                                + $.RealEstate.name[opponent.user.realestate].protection
                             let skill = Math.round($.player.steal * $.online.dex * $.online.int / 10000)
                             for (let pick = 0; pick < $.player.steal; pick++) {
-                                xvt.out('. ')
-                                xvt.waste(500)
-                                skill += $.dice(100 + $.player.steal) < 100 ? $.dice($.player.level) : 5 * $.Security.name[opponent.user.security].protection
+                                xvt.out('.')
+                                xvt.waste(400)
+                                skill += $.dice(100 + $.player.steal) < 100
+                                    ? $.dice($.player.level + $.player.steal - $.steal)
+                                    : lock
                             }
-                            xvt.waste(500)
+                            xvt.out(xvt.reset)
+                            xvt.waste(600)
+
                             if ($.player.email === opponent.user.email || !$.lock(opponent.user.id))
                                 skill = 0
+
                             if (skill > lock) {
                                 $.steal++
                                 $.player.coin.value += prize
-                                xvt.out('\nYou break in and make off with ', new $.coins(prize).carry(), ' worth of stuff!\n')
+                                xvt.out('\nYou break in and make off with '
+                                    , new $.coins(prize).carry(), ' worth of stuff!\n')
                                 xvt.waste(1000)
 
                                 opponent.user.coin.value = 0
 
-                                $.Armor.equip(opponent, opponent.user.armor)
                                 if (opponent.armor.ac > 0) {
                                     if (opponent.armor.ac > $.Armor.merchant.length)
                                         opponent.armor.ac = $.int($.Armor.merchant.length * 3 / 5)
@@ -248,7 +254,6 @@ function choice() {
                                 opponent.user.armor = $.Armor.merchant[opponent.armor.ac]
                                 opponent.user.toAC = 0
 
-                                $.Weapon.equip(opponent, opponent.user.weapon)
                                 if (opponent.weapon.wc > 0) {
                                     if (opponent.weapon.wc > $.Weapon.merchant.length)
                                         opponent.weapon.wc = $.int($.Weapon.merchant.length * 3 / 5)
@@ -259,10 +264,8 @@ function choice() {
                                 opponent.user.weapon = $.Weapon.merchant[opponent.weapon.wc]
                                 opponent.user.toWC = 0
 
-                                if (opponent.user.cannon) {
+                                if (opponent.user.cannon)
                                     opponent.user.cannon--
-                                    if (opponent.user.ram) opponent.user.ram = false
-                                }
 
                                 $.saveUser(opponent)
                                 $.news(`\trobbed ${opponent.user.handle}`)

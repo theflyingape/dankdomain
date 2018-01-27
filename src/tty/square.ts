@@ -46,6 +46,35 @@ export function menu(suppress = true) {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }
 
+	if (!$.player.novice && $.player.level > 1 && $.player.coin.value > 0
+		&& $.dice($.online.cha / 2 + 5 * $.player.steal) == 1) {
+		let bump = $.PC.encounter(`AND (id NOT GLOB '_*' OR id = '_TAX')`
+			, $.player.level - 9, $.player.level + 9)
+		xvt.out(xvt.magenta, xvt.faint, `${bump.user.handle} bumps`
+			, xvt.normal, ' into you from'
+			, xvt.bright, ' out of the shadows'
+			, xvt.reset, ' ... ')
+		xvt.waste(600)
+		if ($.dice($.online.cha / 10 + 2 * ($.player.steal + 1)) > 2 * bump.user.steal + 1)
+			xvt.out('waves a pardon and moves along.\n')
+		else {
+			$.beep()
+			let pouch = $.player.coin.amount.split(',')
+			let p = $.dice(pouch.length) - 1
+			let i = 'csgp'.indexOf(pouch[p].substr(-1))
+			let v = new $.coins(pouch[p])
+			bump.user.coin.value += v.value
+			$.saveUser(bump)
+			$.log(bump.user.id, `\nYou picked ${$.player.handle}'s pouch holding ${v.carry()}!`)
+			$.player.coin.value -= v.value
+			xvt.out('{sigh}\n')
+			xvt.out('oops', 8)
+			xvt.out('You notice your pouch of ', ['copper','silver','gold','platinum'][i]
+				, ' pieces has gone missing!\n')
+			xvt.waste(1000)
+		}
+	}
+
 	let hints = ''
 	if (!suppress) {
 		if ($.online.hp < $.player.hp)

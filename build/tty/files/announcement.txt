@@ -1,12 +1,13 @@
-[22;36mDate:[22;37m Fri 26-Jan-2018  7:25pm
+[22;36mDate:[22;37m Sat 27-Jan-2018  6:00pm
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
 New announcements as missing features get implemented or tweaked:
-- List of Deeds include levels jumped and top Tavern brawling
+- it is again possible to bump into another player in the Square
+- <L>ist of Deeds include top 'Levels Jumped' and Tavern brawlers
 - the Craps table is open
 - major updates to both browser and door components, so update your browser!
-- minor dungeon monster spawning and teleports avoid caverns
+- minor dungeon monster spawning, and your teleports will avoid the caverns
 - if you fail to reroll as an immortal, you must choose a different class
-- level with charisma table limits at the casino
+- your level and charisma determines your table betting limits in the casino
 
 Happy hunting!
