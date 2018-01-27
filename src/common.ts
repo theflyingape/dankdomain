@@ -581,7 +581,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
 		rpc.user.dex = PC.ability(rpc.user.dex, PC.card(rpc.user.pc).toDex, rpc.user.maxdex)
 		rpc.user.cha = PC.ability(rpc.user.cha, PC.card(rpc.user.pc).toCha, rpc.user.maxcha)
 
-        if (eligible && rpc.user.level == int(sysop.level / 2)) {
+        if (eligible && rpc.user.level == 50) {
             bonus = true
             break
         }
@@ -1153,7 +1153,7 @@ export function playerPC(points = 200, immortal = false) {
                 classes.push(pc)
             }
             else
-                xvt.out(' --  ')
+                xvt.out(bracket('--'))
 
             let rs = query(`SELECT COUNT(id) AS n FROM Players WHERE pc = '${pc}'`)[0]
 
