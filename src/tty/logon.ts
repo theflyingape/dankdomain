@@ -24,7 +24,10 @@ module Logon
         xvt.out('\x1B]2;', title, '\x07')
 
     process.stdin.setEncoding(xvt.emulation == 'XT' ? 'utf8' : 'ascii')
-    xvt.out(xvt.bright, xvt.cyan, xvt.emulation, ' emulation enabled\n\f', xvt.reset)
+    xvt.out(xvt.bright, xvt.cyan, xvt.emulation
+        , xvt.normal, ' emulation '
+        , xvt.faint, 'enabled'
+        , xvt.reset, '\n\f')
 
     $.loadUser($.sysop)
     if ($.sysop.lastdate != $.now().date)

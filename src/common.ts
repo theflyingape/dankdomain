@@ -1825,14 +1825,16 @@ export function emulator(cb:Function) {
             for(let rows = 99; rows > 1; rows--)
                 xvt.out(bracket(rows > 24 ? rows : '..'))
             xvt.app.focus = 'rows'
-        }, prompt:'Select: ', enter:player.emulation, match:/VT|PC|XT/i, max:2 },
+        }, prompt:xvt.attr('Select [', xvt.bright, `${player.emulation}`, xvt.normal, ']: ')
+        , enter:player.emulation, match:/VT|PC|XT/i, max:2 },
         'rows': { cb:() => {
             online.altered = true
             player.emulation = xvt.emulation
             player.rows = +xvt.entry
             xvt.out(xvt.reset, '\n')
             xvt.app.focus = 'pause'
-        }, prompt:`Enter top visible row number [${player.rows}]: `, enter:player.rows.toString(), max:2, match:/^[2-9][0-9]$/ },
+        }, prompt:xvt.attr('Enter top visible row number [', xvt.bright, `${player.rows}`, xvt.normal, ']: ')
+        , enter:player.rows.toString(), max:2, match:/^[2-9][0-9]$/ },
         'pause': { cb:cb, pause:true }
     }
 
@@ -1840,7 +1842,6 @@ export function emulator(cb:Function) {
     xvt.out(bracket('VT'), ' classic VT terminal with DEC drawing (telnet b&w)')
     xvt.out(bracket('PC'), ' former ANSI color with IBM encoding (telnet color)')
     xvt.out(bracket('XT'), ' modern ANSI color with UTF-8 encoding (browser multimedia)\n')
-    xvt.app.form['term'].prompt = `Select [${player.emulation}]: `
     xvt.app.focus = 'term'
 }
 

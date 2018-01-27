@@ -173,8 +173,9 @@ export function attack(retry = false) {
     if (!round.length) {
         if (volley > 1) {
             xvt.out(xvt.reset, '\n')
-            if (!$.online.hp) xvt.waste(900)
+            xvt.waste($.online.hp > 0 ? 150 : 450)
             xvt.out('    -=', $.bracket('*', false), '=-\n')
+            xvt.waste($.online.hp > 0 ? 150 : 450)
         }
 
         for (let p in parties) {
@@ -449,7 +450,7 @@ export function attack(retry = false) {
                         mm = 13
                 else if ($.Magic.have(rpc.user.spells, 8)
                     && rpc.sp >= $.Magic.power(rpc, 8)
-                    && rpc.hp < rpc.user.hp / (rpc.user.level / (11 - rpc.adept)  + 1)
+                    && rpc.hp < rpc.user.hp / (rpc.user.level / (11 - rpc.adept) + 1)
                     && ($.dice(5 - rpc.adept) == 1 || rpc.user.coward))
                         mm = 8
                 else if ($.Magic.have(rpc.user.spells, 7)
