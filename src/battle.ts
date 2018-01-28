@@ -173,9 +173,9 @@ export function attack(retry = false) {
     if (!round.length) {
         if (volley > 1) {
             xvt.out(xvt.reset, '\n')
-            xvt.waste($.online.hp > 0 ? 150 : 450)
+            xvt.waste($.online.hp > 0 ? 50 : 350)
             xvt.out('    -=', $.bracket('*', false), '=-\n')
-            xvt.waste($.online.hp > 0 ? 150 : 450)
+            xvt.waste($.online.hp > 0 ? 50 : 350)
         }
 
         for (let p in parties) {
