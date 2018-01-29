@@ -125,6 +125,8 @@ function choice() {
                     if (g.name === 'New' || $.cuss(g.name))
                         xvt.hangup()
                     g.members = [ $.player.id ]
+                    g.handles = [ $.player.handle ]
+                    g.validated = [ true ]
                     g.banner = $.dice(7)
                     g.trim = $.dice(7)
                     g.back = $.dice(7)
@@ -149,9 +151,9 @@ function choice() {
                         g.fore = $.dice(7)
                         showGang(g)
                         xvt.app.refocus()
-                        return
                     }
-                }, prompt:'Accept this banner (Y/N)? ', enter:'N', eol:false, match:/Y|N/i }
+                }, prompt:'Accept this banner (Y/N)? '
+                , cancel:'Y', enter:'N', eol:false, match:/Y|N/i, timeout:20 }
             }
             xvt.app.focus = 'new'
             return
@@ -344,6 +346,7 @@ function choice() {
                                 else {
                                     if (!member.user.gang) {
                                         g.members.push(member.user.id)
+                                        g.handles.push(member.user.handle)
                                         $.saveGang(g)
                                         showGang(g)
                                         $.log(member.user.id, `\n${$.player.handle} invites you to join ${g.name}`)

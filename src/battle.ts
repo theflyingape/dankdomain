@@ -173,9 +173,8 @@ export function attack(retry = false) {
     if (!round.length) {
         if (volley > 1) {
             xvt.out(xvt.reset, '\n')
-            xvt.waste($.online.hp > 0 ? 50 : 350)
             xvt.out('    -=', $.bracket('*', false), '=-\n')
-            xvt.waste($.online.hp > 0 ? 50 : 350)
+            xvt.waste($.online.hp > 0 ? 80 : 800)
         }
 
         for (let p in parties) {
@@ -553,7 +552,7 @@ export function spoils() {
 
         for (let m in parties[w]) {
             tl[w] += parties[w][m].user.xplevel
-            take += parties[w][m].user.xp + 1
+            take += $.money(parties[w][m].user.xplevel + 1)
         }
 
         for (let m in parties[l]) {
@@ -570,17 +569,17 @@ export function spoils() {
         }
 
         for (let m in parties[w]) {
-            //  dead men get far less of the booty, taxman always gets a cut
+            //  dead member gets less of the booty, taxman always gets a cut
             let cut = parties[w][m].hp > 0 ? 0.95 : 0.35
-            let max = Math.trunc(1000 * $.money(parties[w][m].user.level) * cut)
-            let award = Math.trunc(coin.value * parties[w][m].user.xp / take * cut)
+            let max = $.int(1000 * $.money(parties[w][m].user.xplevel) * cut)
+            let award = $.int(coin.value * $.money(parties[w][m].user.xplevel) / take * cut)
             award = award > coin.value ? coin.value : award
             award = award < 1 ? 0 : award > max ? max : award
             parties[w][m].user.coin.value += award
             coin.value -= award
-            take -= parties[w][m].user.xp
+            take -= $.money(parties[w][m].user.xplevel)
 
-            let xp = Math.trunc($.experience(parties[w][m].user.xplevel)
+            let xp = $.int($.experience(parties[w][m].user.xplevel)
                 * tl[l] / tl[w] / ((4 + parties[w].length - parties[l].length) / 2))
             parties[w][m].user.xp += xp
 
