@@ -354,20 +354,24 @@ function choice() {
 			xvt.out('\nYou attempt to pick a passerby\'s pocket... ')
 			xvt.waste(1000)
 
+			credit.value = $.dice(6 * $.money($.player.level) / $.dice(10))
 			let pocket = $.PC.encounter(`AND novice = 0 AND id NOT GLOB '_*'`).user
 			if (pocket.id) {
 				$.loadUser(pocket)
-				credit.value += pocket.coin.value
+				if (pocket.coin.value > 0)
+					credit.value += pocket.coin.value
+				else {
+					pocket.id = ''
+					pocket.handle = 'somebody'
+				}
 				pocket.coin.value = 0
 			}
-			else {
+			else
 				pocket.handle = 'somebody'
-				credit.value = $.dice(6 *  $.money($.player.level) / $.dice(10))
-			}
 
 			xvt.out('\n\nYou pick ', pocket.handle, '\'s pocket and steal ', credit.carry(), '!\n\n')
 			xvt.waste(1000)
-			if (Math.trunc(16 * $.player.steal + $.player.level / 10 + $.player.dex / 10) < $.dice(100)) {
+			if ($.int(16 * $.player.steal + $.player.level / 10 + $.player.dex / 10) < $.dice(100)) {
 				$.player.status = 'jail'
 				$.reason = `caught picking ${pocket.handle}\'s pocket`
 				xvt.out('A guard catches you and throws you into jail!\n')
