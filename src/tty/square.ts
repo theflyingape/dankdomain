@@ -50,28 +50,30 @@ export function menu(suppress = true) {
 		&& $.dice($.online.cha / 2 + 5 * $.player.steal) == 1) {
 		let bump = $.PC.encounter(`AND novice = 0 AND (id NOT GLOB '_*' OR id = '_TAX')`
 			, $.player.level - 9, $.player.level + 9)
-		xvt.out(xvt.magenta, xvt.faint, `${bump.user.handle} bumps`
-			, xvt.normal, ' into you from'
-			, xvt.bright, ' out of the shadows'
-			, xvt.reset, ' ... ')
-		xvt.waste(600)
-		if ($.dice($.online.cha / 10 + 2 * ($.player.steal + 1)) > 2 * bump.user.steal + 1)
-			xvt.out('waves a pardon and moves along.\n')
-		else {
-			$.beep()
-			let pouch = $.player.coin.amount.split(',')
-			let p = $.dice(pouch.length) - 1
-			let i = 'csgp'.indexOf(pouch[p].substr(-1))
-			let v = new $.coins(pouch[p])
-			bump.user.coin.value += v.value
-			$.saveUser(bump)
-			$.log(bump.user.id, `\nYou picked ${$.player.handle}'s pouch holding ${v.carry()}!`)
-			$.player.coin.value -= v.value
-			xvt.out('{sigh}\n')
-			$.sound('oops', 8)
-			xvt.out('You notice your pouch of ', ['copper','silver','gold','platinum'][i]
-				, ' pieces has gone missing!\n')
-			xvt.waste(1000)
+		if (bump.user.id) {
+			xvt.out(xvt.magenta, xvt.faint, `${bump.user.handle} bumps`
+				, xvt.normal, ' into you from'
+				, xvt.bright, ' out of the shadows'
+				, xvt.reset, ' ... ')
+			xvt.waste(1200)
+			if ($.dice($.online.cha / 10 + 2 * ($.player.steal + 1)) > 2 * bump.user.steal + 1)
+				xvt.out('\nwaves a pardon and moves along.\n')
+			else {
+				$.beep()
+				let pouch = $.player.coin.amount.split(',')
+				let p = $.dice(pouch.length) - 1
+				let i = 'csgp'.indexOf(pouch[p].substr(-1))
+				let v = new $.coins(pouch[p])
+				bump.user.coin.value += v.value
+				$.saveUser(bump)
+				$.log(bump.user.id, `\nYou picked ${$.player.handle}'s pouch holding ${v.carry()}!`)
+				$.player.coin.value -= v.value
+				xvt.out('{sigh}\n')
+				$.sound('oops', 8)
+				xvt.out('You notice your pouch of ', ['copper','silver','gold','platinum'][i]
+					, ' pieces has gone missing!\n')
+				xvt.waste(1500)
+			}
 		}
 	}
 
@@ -352,20 +354,15 @@ function choice() {
 			xvt.out('\nYou attempt to pick a passerby\'s pocket... ')
 			xvt.waste(1000)
 
-			let pocket = <user>{ id:'', handle:'somebody' }
-			credit.value = $.dice(6 *  $.money($.player.level) / $.dice(10))
-
-			let l = $.dice(90)
-			let rs:any = $.query(`
-				SELECT id, status FROM Players
-				WHERE level BETWEEN ${l} AND ${l + 9} AND status != ''
-			`)
-			let r = $.dice(rs.length) - 1
-			if (r >= 0 && rs[r] && !rs[r].novice && !rs[r].status) {
-				pocket.id = rs[r].id
+			let pocket = $.PC.encounter(`AND novice = 0 AND id NOT GLOB '_*'`).user
+			if (pocket.id) {
 				$.loadUser(pocket)
 				credit.value += pocket.coin.value
 				pocket.coin.value = 0
+			}
+			else {
+				pocket.handle = 'somebody'
+				credit.value = $.dice(6 *  $.money($.player.level) / $.dice(10))
 			}
 
 			xvt.out('\n\nYou pick ', pocket.handle, '\'s pocket and steal ', credit.carry(), '!\n\n')
