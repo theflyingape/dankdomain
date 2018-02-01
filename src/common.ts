@@ -2253,7 +2253,7 @@ export function newDay() {
         }
 
         if ((now().date - rs[row].lastdate) % 50 == 0) {
-            run(`UPDATE Players set pc='${Object.keys(PC.name['player'])[0]}',xplevel=0 WHERE id='${rs[row].id}'`)
+            run(`UPDATE Players set pc='${Object.keys(PC.name['player'])[0]}',level=1,xplevel=0 WHERE id='${rs[row].id}'`)
             let p:user = { id: rs[row].id }
             loadUser(p)
             require('./email').rejoin(p)
