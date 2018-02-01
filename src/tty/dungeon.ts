@@ -1340,7 +1340,7 @@ function doMove(): boolean {
 
 export function doSpoils() {
 	if ($.reason) {
-		if (deep) $.reason += ` (${iii[deep]})`
+		if (deep) $.reason += `-${iii[deep]}`
 		xvt.hangup()
 	}
 	pause = false

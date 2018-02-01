@@ -99,7 +99,7 @@ function choice() {
                     let deeds = $.loadDeed(pc)
                     if (deeds.length) {
                         xvt.out(sprintf('\n%-9s  ', pc))
-                        let keys = ['melee', 'blast', 'big blast', 'levels']
+                        let keys = ['levels', 'melee', 'blast', 'big blast']
                         for (let hurt in keys) {
                             let deed = deeds.find((x) => { return x.deed === keys[hurt] })
                             if (deed) {
@@ -124,7 +124,7 @@ function choice() {
 
             let rs = $.query(`
                 SELECT id, handle, pc, level, tw FROM Players
-                WHERE tw > 0
+                WHERE xplevel > 1 AND tw > 0
                 ORDER BY tw DESC, level DESC, immortal DESC
                 LIMIT 10
             `)
