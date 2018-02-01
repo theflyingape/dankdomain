@@ -101,7 +101,7 @@ function choice() {
             let rs = $.query(`
                 SELECT id, handle, pc, level, xplevel, status, gang, access FROM Players
                 WHERE id NOT GLOB '_*'
-                ORDER BY level DESC, immortal DESC
+                ORDER BY xplevel DESC, level DESC, immortal DESC
                 LIMIT ${$.player.rows - 5}
             `)
 
