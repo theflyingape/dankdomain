@@ -1283,10 +1283,10 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     if (DL.cleric.user.status) {
                         DL.cleric.user.status = ''
                         $.activate(DL.cleric)
-                        xvt.out('Now raising the ', xvt.faint, xvt.yellow, DL.cleric.user.handle, xvt.reset, ' from the dead...')
+                        xvt.out('You raised the ', xvt.faint, xvt.yellow, DL.cleric.user.handle, xvt.reset, ' from the dead!')
+                        cb()
+                        return
                     }
-                    cb()
-                    return
                 }
                 user('Resurrect', (opponent: active) => {
                     if (opponent.user.id === '' || opponent.user.id === $.player.id) {

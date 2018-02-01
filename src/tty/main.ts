@@ -99,7 +99,7 @@ function choice() {
                 , xvt.reset, '\n')
 
             let rs = $.query(`
-                SELECT id, handle, pc, level, status, gang, access FROM Players
+                SELECT id, handle, pc, level, xplevel, status, gang, access FROM Players
                 WHERE id NOT GLOB '_*'
                 ORDER BY level DESC, immortal DESC
                 LIMIT ${$.player.rows - 5}
@@ -111,15 +111,18 @@ function choice() {
                     xvt.out(xvt.bright, xvt.yellow)
                 else if (rs[n].id === $.player.id)
                     xvt.out(xvt.bright, xvt.white)
+                else if (+rs[n].xplevel < +rs[n].level)
+                    xvt.out(xvt.cyan, xvt.faint)
                 xvt.out(sprintf('%-4s  %-22s  %-9s  %3d  ', rs[n].id, rs[n].handle, rs[n].pc, rs[n].level))
                 if (!rs[n].status.length) xvt.out('Alive!')
                 else xvt.out(xvt.faint, rs[n].status === 'jail' ? '#jail#' : '^dead^')
                 xvt.out('  ', rs[n].id === $.player.id ? xvt.bright : xvt.normal)
                 if (rs[n].gang === $.player.gang) xvt.out(xvt.Red)
-                xvt.out(rs[n].gang, xvt.reset)
+                xvt.out(rs[n].gang)
+                //  paint highest badge of honor achieved
                 if ($.Access.name[rs[n].access].promote == 0)
                     xvt.out(' ', $.Access.name[rs[n].access].emoji)
-                xvt.out('\n')
+                xvt.out(xvt.reset, '\n')
             }
             suppress = true
             break

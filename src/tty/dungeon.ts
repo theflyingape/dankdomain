@@ -721,6 +721,7 @@ function doMove(): boolean {
 						$.news(`\twished all the dead resurrected`)
 						break
 					case 'F':
+						$.music('elixir')
 						if ($.online.str < $.player.str)
 							$.online.str = $.player.str
 						if ($.online.int < $.player.int)
@@ -743,8 +744,7 @@ function doMove(): boolean {
 							$.online.sp = $.player.sp
 						if ($.online.hull < $.player.hull)
 							$.online.hull = $.player.hull
-						xvt.out('You are completely healed and all damage has been repaired.\n')
-						$.sound('shimmer')
+						xvt.out('You are completely healed and all damage is repaired.\n')
 						break
 					case 'L':
 						Battle.user('Loot', (opponent: active) => {
