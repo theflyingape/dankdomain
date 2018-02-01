@@ -2230,11 +2230,15 @@ export function newDay() {
         if ((rs[row].level == 1 || rs[row].novice) && (rs[row].jl > (2 * rs[row].jw))) {
             run(`UPDATE Players set jl=0,jw=0 WHERE id='${rs[row].id}'`)
         }
+        //  manually rolled back system date _after_ some player visited?
+        if (!(now().date - rs[row].lastdate))
+            continue
         if (+rs[row].xplevel > 1 && (now().date - rs[row].lastdate) > 10) {
             if (Access.name[rs[row].access].roleplay)
                 run(`UPDATE Players set xplevel=1 WHERE id='${rs[row].id}'`)
             else
                 run(`DELETE FROM Players WHERE id='${rs[row].id}'`)
+            continue
         }
         if ((now().date - rs[row].lastdate) > 365) {
             run(`DELETE FROM Players WHERE id='${rs[row].id}'`)
@@ -2242,9 +2246,10 @@ export function newDay() {
         }
         if ((now().date - rs[row].lastdate) % 100 == 0) {
             run(`UPDATE Players set pc='${Object.keys(PC.name['player'])[0]}',xplevel=0 WHERE id='${rs[row].id}'`)
-            player.id = rs[row].id
-            loadUser(player)
-            require('./email').rejoin(player)
+            let p:user = { id: rs[row].id }
+            loadUser(p)
+            require('./email').rejoin(p)
+            xvt.waste(1000)
         }
     }
     xvt.out('.')
