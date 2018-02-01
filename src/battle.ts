@@ -839,14 +839,15 @@ export function brawl(rpc:active, nme:active) {
     }
 
     function knockout(winner:active, loser:active) {
-        let xp = $.experience(loser.user.level, 9)
+        let xp = $.experience(loser.user.xplevel, 9)
         $.run(`UPDATE Players set tw=tw+1,xp=xp+${xp},coin=coin+${loser.user.coin.value} WHERE id='${winner.user.id}'`)
         $.run(`UPDATE Players set tl=tl+1,coin=0 WHERE id='${loser.user.id}'`)
 
         xvt.out('\n', winner.user.id === $.player.id ? 'You' : winner.user.handle
             , ` ${$.what(winner, 'knock')}${$.who(loser, 'him')}out!\n`)
         xvt.waste(500)
-        xvt.out(`\n${$.who(winner, 'He')}${$.what(winner, 'get')}`, sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
+        if (xp)
+            xvt.out(`\n${$.who(winner, 'He')}${$.what(winner, 'get')}`, sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
         winner.user.xp += xp
         if (loser.user.coin.value) {
             xvt.out(`${$.who(loser, 'He')}was carrying ${loser.user.coin.carry()}\n`)
@@ -2161,7 +2162,7 @@ export function user(venue: string, cb:Function) {
             xvt.out(xvt.reset, '\n')
 
             let rs = $.query(`
-                SELECT id, handle, pc, level, status, lastdate, access FROM Players
+                SELECT id, handle, pc, level, xplevel, status, lastdate, access FROM Players
                 WHERE id NOT GLOB '_*'
                 AND level BETWEEN ${start} AND ${end}
                 ORDER BY level DESC, immortal DESC
@@ -2170,7 +2171,7 @@ export function user(venue: string, cb:Function) {
             for (let i in rs) {
                 if (rs[i].id === $.player.id)
                     continue
-                if (rs[i].length) xvt.out(xvt.faint)
+                if (rs[i].status || +rs[i].xplevel < +rs[i].level) xvt.out(xvt.faint)
                 else xvt.out(xvt.reset)
                 //  paint a target on any player that is winning
                 if (rs[i].pc === $.PC.winning)
