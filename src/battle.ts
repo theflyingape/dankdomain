@@ -2165,18 +2165,21 @@ export function user(venue: string, cb:Function) {
                 SELECT id, handle, pc, level, xplevel, status, lastdate, access FROM Players
                 WHERE id NOT GLOB '_*'
                 AND level BETWEEN ${start} AND ${end}
-                ORDER BY level DESC, immortal DESC
+                ORDER BY xplevel DESC, level DESC, immortal DESC
                 `)
 
             for (let i in rs) {
                 if (rs[i].id === $.player.id)
                     continue
-                if (rs[i].status || +rs[i].xplevel < +rs[i].level) xvt.out(xvt.faint)
+                if ((+rs[n].xplevel !== +rs[n].level && +rs[n].xplevel < 2)) xvt.out(xvt.faint)
                 else xvt.out(xvt.reset)
                 //  paint a target on any player that is winning
                 if (rs[i].pc === $.PC.winning)
                     xvt.out(xvt.bright, xvt.yellow)
-                xvt.out(sprintf('%-4s  %-22s  %-9s  %3d  ', rs[i].id, rs[i].handle, rs[i].pc, rs[i].level))
+                xvt.out(sprintf('%-4s  %-22s  %-9s', rs[i].id, rs[i].handle, rs[i].pc))
+                if (rs[i].status) xvt.out(xvt.faint)
+                xvt.out(sprintf('  %3d  ', rs[n].level == rs[i].xplevel) ? rs[n].level : rs[n].xplevel)
+                if (rs[i].status) xvt.out(xvt.normal)
                 xvt.out($.date2full(rs[i].lastdate), '  ', rs[i].access)
                 if ($.player.emulation === 'XT' && $.Access.name[rs[i].access].emoji)
                     xvt.out(' ', $.Access.name[rs[i].access].sysop ? xvt.cyan : xvt.faint

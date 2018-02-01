@@ -2233,18 +2233,26 @@ export function newDay() {
         //  manually rolled back system date _after_ some player visited?
         if (!(now().date - rs[row].lastdate))
             continue
-        if (+rs[row].xplevel > 1 && (now().date - rs[row].lastdate) > 10) {
-            if (Access.name[rs[row].access].roleplay)
-                run(`UPDATE Players set xplevel=1 WHERE id='${rs[row].id}'`)
-            else
+
+        if ((now().date - rs[row].lastdate) > 10) {
+            if (Access.name[rs[row].access].roleplay) {
+                if (+rs[row].xplevel > 1) {
+                    run(`UPDATE Players set xplevel=1 WHERE id='${rs[row].id}'`)
+                    continue
+                }
+            }
+            else {
                 run(`DELETE FROM Players WHERE id='${rs[row].id}'`)
-            continue
+                continue
+            }
         }
-        if ((now().date - rs[row].lastdate) > 365) {
+
+        if ((now().date - rs[row].lastdate) > 180) {
             run(`DELETE FROM Players WHERE id='${rs[row].id}'`)
             continue
         }
-        if ((now().date - rs[row].lastdate) % 100 == 0) {
+
+        if ((now().date - rs[row].lastdate) % 50 == 0) {
             run(`UPDATE Players set pc='${Object.keys(PC.name['player'])[0]}',xplevel=0 WHERE id='${rs[row].id}'`)
             let p:user = { id: rs[row].id }
             loadUser(p)
