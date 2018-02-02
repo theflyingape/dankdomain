@@ -117,9 +117,9 @@ function choice() {
 
         case 'T':
             xvt.out('\n')
-            xvt.out(xvt.Yellow, xvt.black, ' ID   Player\'s Handle                   Class    Lvl    Brawls '
+            xvt.out(xvt.Yellow, xvt.black, ' ID   Player\'s Handle           Class    Lvl  Brawls '
                 , xvt.reset, '\n')
-            xvt.out(xvt.Yellow, xvt.black, '---------------------------------------------------------------'
+            xvt.out(xvt.Yellow, xvt.black, '-----------------------------------------------------'
                 , xvt.reset, '\n')
 
             let rs = $.query(`
@@ -130,7 +130,7 @@ function choice() {
             `)
 
             for (let n in rs) {
-                xvt.out(sprintf('%-4s  %-30s  %-9s  %3d  %5d'
+                xvt.out(sprintf('%-4s  %-22s  %-9s  %3d  %4d'
                     , rs[n].id[0] !== '_' ? rs[n].id : ' \u00B7 ', rs[n].handle, rs[n].pc, rs[n].level, rs[n].tw)
                     , '\n')
             }

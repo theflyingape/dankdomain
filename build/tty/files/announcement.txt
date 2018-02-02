@@ -1,14 +1,6 @@
 [22;36mDate:[22;37m Thu 01-Feb-2018  10:00am
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
-PLEASE NOTE: Players will stop visiting from time-to-time, bravo, we all
-have life matters to attend.  :)
-So to help with integrity for the "active" board, an idle player will
-automatically downgrade to XP level 1 and appear dimmer in listings.
-Still active for all other engagements and "points", but not in XP awarding.
-An idle player can regain their normal status and resume play on their next
-login without loss of their current character class Level.
-
 New announcements as missing features get implemented or tweaked:
 - it is again possible to bump into another player in the Square
 - <L>ist of Deeds include top 'Levels Jumped' and Tavern brawlers
