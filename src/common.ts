@@ -128,7 +128,7 @@ export class Character {
                     }
             }
             else {
-                let i = dice(this.total)    //  any
+                let i = dice(this.total - 1) + 1    //  any (except None and Novice)
                 let n = i
                 for (type in this.name) {
                     for (let dd in this.name[type])
@@ -1053,7 +1053,7 @@ export function int(n: string|number, whole = false): number {
 }
 
 export function log(who:string, message: string) {
-    const log = `./tty/files/user/${who}.txt`
+    const log = `./files/user/${who}.txt`
     if (who.length && who[0] !== '_' && who !== player.id)
         fs.appendFileSync(log, `${message}\n`)
 }
@@ -1063,12 +1063,12 @@ export function money(level: number): number {
 }
 
 export function news(message: string, commit = false) {
-    const log = `./tty/files/tavern/${player.id}.log`
+    const log = `./files/tavern/${player.id}.log`
 
     if (access.roleplay) {
         fs.appendFileSync(log, `${message}\n`)
         if (commit) {
-            const paper = `./tty/files/tavern/today.txt`
+            const paper = `./files/tavern/today.txt`
             fs.appendFileSync(paper, fs.readFileSync(log))
         }
     }
@@ -1558,7 +1558,7 @@ export function riddle() {
 
     if (max > 2) {
         music('victory')
-        const log = `./tty/files/winners.txt`
+        const log = `./files/winners.txt`
         fs.appendFileSync(log,
             `${player.handle} won on ${date2full(now().date)}  -  game took ${now().date - sysop.dob + 1} days\n`)
         player.wins++
@@ -1759,7 +1759,7 @@ export function buff(perm: number, temp:number, text = false): string {
 }
 
 export function	cat(filename: string): boolean {
-    const folder = './tty/files/'
+    const folder = './files/'
     let path = folder + filename + (xvt.emulation.match('PC|XT') ? '.ans' : '.txt')
 
     try {
@@ -2198,15 +2198,12 @@ export function saveUser(rpc, insert = false, locked = false) {
 }
 
 export function newDay() {
-    xvt.out('One moment.')
-    sysop.lastdate = now().date
-    sysop.lasttime = now().time
-    saveUser(sysop)
+    xvt.out('One moment: [')
 
     run(`UPDATE Players SET bank=bank+coin WHERE id NOT GLOB '_*'`)
-    xvt.out('.')
+    xvt.out('+')
     run(`UPDATE Players SET coin=0`)
-    xvt.out('.')
+    xvt.out('-')
 
     let rs = query(`SELECT id FROM Players WHERE id NOT GLOB '_*' AND status = '' AND magic > 0 AND bank > 99999 AND level > 19`)
     let user: user = { id:'' }
@@ -2223,7 +2220,7 @@ export function newDay() {
         }
         saveUser(user)
     }
-    xvt.out('.')
+    xvt.out('=')
 
     rs = query(`SELECT id, access, lastdate, level, xplevel, novice, jl, jw FROM Players WHERE id NOT GLOB '_*'`)
     for (let row in rs) {
@@ -2238,17 +2235,22 @@ export function newDay() {
             if (Access.name[rs[row].access].roleplay) {
                 if (+rs[row].xplevel > 1) {
                     run(`UPDATE Players set xplevel=1 WHERE id='${rs[row].id}'`)
+                    xvt.out('_')
                     continue
                 }
             }
             else {
                 run(`DELETE FROM Players WHERE id='${rs[row].id}'`)
+                fs.unlink(`./files/user/${rs[row].id}.txt`, () => {})
+                xvt.out('x')
                 continue
             }
         }
 
         if ((now().date - rs[row].lastdate) > 180) {
             run(`DELETE FROM Players WHERE id='${rs[row].id}'`)
+            fs.unlink(`./files/user/${rs[row].id}.txt`, () => {})
+            xvt.out('x')
             continue
         }
 
@@ -2260,14 +2262,20 @@ export function newDay() {
             xvt.waste(1000)
         }
     }
-    xvt.out('.')
 
     try {
-        fs.renameSync('./tty/files/tavern/today.txt', './tty/files/tavern/yesterday.txt')
+        fs.renameSync('./files/tavern/today.txt', './files/tavern/yesterday.txt')
+        xvt.out('T')
     } catch (e) {
+        xvt.out('?')
     }
+    xvt.out(']')
 
-    xvt.out('.\nAll set -- thank you!\n\n')
+    sysop.lastdate = now().date
+    sysop.lasttime = now().time
+    saveUser(sysop)
+    xvt.out(xvt.bright, xvt.yellow, '*', xvt.reset, '\n')
+    xvt.out('All set -- thank you!\n\n')
 }
 
 export function lock(id: string, owner = 0): boolean {

@@ -280,7 +280,7 @@
             "melee":4, "backstab":1, "poison":1, "magic":2, "steal":1, 
             "baseStr":65, "baseInt":55, "baseDex":55, "baseCha":25, 
             "toStr":2, "toInt":1, "toDex":1, "toCha":1, 
-            "maxStr":99, "maxInt":80, "maxDex":70, "maxCha":80, 
+            "maxStr":99, "maxInt":85, "maxDex":66, "maxCha":85, 
             "specialty": "Barbarian/Ranger",
             "description": [
                 "Tiny, the 7'2\" barkeep"

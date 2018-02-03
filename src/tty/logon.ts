@@ -15,7 +15,7 @@ import Taxman = require('./taxman')
 module Logon
 {
     let tax: coins = new $.coins(0)
-    
+
     //  allow hardcopy and monochrome terminals to still play!  :)
     if (!xvt.emulation.match('VT|PC|XT'))                               xvt.emulation = 'dumb'
 
@@ -357,7 +357,7 @@ function welcome() {
     xvt.app.form = {
         'pause': { cb: () => {
             if ($.cat(`user/${$.player.id}`)) {
-                fs.unlink(`./tty/files/user/${$.player.id}.txt`, () => {})
+                fs.unlink(`./files/user/${$.player.id}.txt`, () => {})
                 xvt.app.refocus()
                 return
             }

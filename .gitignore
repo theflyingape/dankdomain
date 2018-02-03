@@ -5,6 +5,6 @@
 build/etc/smtp.json
 build/images/**
 build/sounds/**
-build/tty/files/tavern
-build/tty/files/user
+build/files/tavern
+build/files/user
 build/users

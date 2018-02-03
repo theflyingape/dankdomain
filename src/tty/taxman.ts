@@ -69,7 +69,7 @@ export function cityguards() {
                 xvt.out('\n\n')
                 if (/Y/i.test(xvt.entry)) {
                     xvt.out('You pay the tax.\n')
-                    xvt.waste(1000)
+                    $.sound('thief2', 16)
                     $.player.coin.value -= tax.value
                     if ($.player.coin.value < 0) {
                         $.player.bank.value += $.player.coin.value
@@ -83,7 +83,7 @@ export function cityguards() {
                     return
                 }
 
-                let l = 0, xhp = $.player.hp * 4 / 5
+                let l = 0, xhp = $.int($.player.hp * 0.70)
                 irs = new Array()
                 do {
                     let i = irs.push(<active>{ user:{ id:'', sex:'M' } }) - 1
@@ -93,15 +93,15 @@ export function cityguards() {
                         $.reroll(irs[i].user, $.PC.random('player'), irs[i].user.level)
                     } while (irs[i].user.melee < 1)
 
-                    let w = Math.trunc(irs[i].user.level / 100 * ($.Weapon.merchant.length - 1)) + 1
-                    w = w < 1 ? 1 : w >= $.Weapon.merchant.length ? $.Weapon.merchant.length - 1 : w
+                    let w = $.int(irs[i].user.level / 100 * ($.Weapon.merchant.length - 1))
+                    w = w < 2 ? 2 : w >= $.Weapon.merchant.length ? $.Weapon.merchant.length - 1 : w
                     irs[i].user.weapon = $.Weapon.merchant[w]
-                    irs[i].user.toWC = 2
+                    irs[i].user.toWC = $.dice(irs[i].user.poison * w / 4) + 1
 
-                    let a = Math.trunc(irs[i].user.level / 100 * ($.Armor.merchant.length - 1)) + 1
+                    let a = $.int(irs[i].user.level / 100 * ($.Armor.merchant.length - 1))
                     a = a < 1 ? 1 : a >= $.Armor.merchant.length ? $.Armor.merchant.length - 1 : a
                     irs[i].user.armor = $.Armor.merchant[a]
-                    irs[i].user.toAC = 1
+                    irs[i].user.toAC = $.dice(irs[i].user.magic * a / 4)
 
                     $.activate(irs[i])
                     xhp -= irs[i].hp
@@ -111,9 +111,9 @@ export function cityguards() {
                         l++
                 } while (xhp > 0)
 
-                $.music('taxman')
                 xvt.out(`The Master of Coin points at you, "Shall we begin?"\n\n`)
-                xvt.waste(1500)
+                $.sound('ddd', 15)
+                $.music('taxman')
 
                 Battle.engage('Gates', $.online, irs, boss)
             }, prompt:'Will you pay the tax (Y/N)? ', cancel:'Y', enter:'Y', eol:false, match:/Y|N/i, timeout:20 }

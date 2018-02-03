@@ -1455,7 +1455,9 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             $.sound('morph', 10)
             if (backfire) {
                 rpc.user.level = $.dice(98) + 1
-                $.reroll(rpc.user, $.PC.random(), rpc.user.level)
+                if (rpc.adept)
+                    rpc.user.level += $.dice(rpc.user.level)
+                $.reroll(rpc.user, $.PC.random('monster'), rpc.user.level)
                 $.activate(rpc)
                 rpc.altered = true
                 rpc.user.gender = ['F','M'][$.dice(2) - 1]
@@ -1471,6 +1473,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             }
             else {
                 nme.user.level = $.dice(98) + 1
+                if (nme.adept)
+                    nme.user.level += $.dice(nme.user.level)
                 $.reroll(nme.user, $.PC.random(), nme.user.level)
                 $.activate(nme)
                 nme.altered = true
@@ -1483,7 +1487,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 if (nme.user.gender !== 'I') {
                     $.news(`\t${nme.user.handle} got morphed into a level ${nme.user.level} ${nme.user.pc}!`)
                     if (nme !== $.online)
-                        $.log(nme.user.id, `\nYou got morph into a level ${nme.user.level} ${nme.user.pc} by ${rpc.user.handle}!\n`)
+                        $.log(nme.user.id, `\nYou got morphed into a level ${nme.user.level} ${nme.user.pc} by ${rpc.user.handle}!\n`)
                 }
             }
             xvt.waste(1000)

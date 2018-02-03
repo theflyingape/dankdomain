@@ -3,12 +3,17 @@
 <head>
 <title>Dank Domain: the return of Hack & Slash</title>
 <link rel="manifest" href="manifest.json">
+<meta charset="utf-8">
+<meta name="author" content="Robert Hurst">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="application-name" content="door">
 <meta name="apple-mobile-web-app-title" content="door">
 <meta name="msapplication-starturl" content="https://robert.hurst-ri.us/xterm/door/">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- Bootstrap CSS
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+ -->
 <link href='https://fonts.googleapis.com/css?family=Carter+One' rel='stylesheet'>
 <link rel="stylesheet" href="command.css">
 <style>
@@ -20,7 +25,7 @@
     background: -moz-linear-gradient(bottom right, antiquewhite, gray);  /*  firefox 3.6 to 15  */
     background: linear-gradient(to bottom right, white, skyblue);  /*  standard syntax (must be last)  */
     font-family: 'Carter One', cursive;
-    font-size: 18px;
+    font-size: 100%;
     color: midnightblue;
   }
   form {
@@ -40,8 +45,11 @@
     border: none;
   }
   img {
-    max-width: 100%;
     max-height: 100%;
+    max-width: 100%;
+    object-fit: fill;
+    object-position: 50% 50%;
+    zoom: 100%;
   }
 </style>
 <script>
@@ -103,8 +111,11 @@ else {
 function receive(event) {
   if (event.data) {
     if (event.data.func) {
-      window[event.data.func]();
-      currentCMD = window[event.data.func]();
+      if (currentCMD !== event.data.func) {
+        currentCMD = event.data.func;
+        window[currentCMD]();
+        nmeResize();
+      }
       return
     }
 
@@ -138,15 +149,28 @@ function receive(event) {
     if (event.data.pc) {
       html += ` ${event.data.pc} `;
     }
+    if (html.length > 3) html += '<br>';
     if (event.data.jpg) {
-      html += `<br><img src="images/${event.data.jpg}.jpg" onload="nmeResize();">`;
+      html += `<img src="images/${event.data.jpg}.jpg" onload="nmeResize();">`;
     }
     if (event.data.png) {
-      html += `<br><img src="images/${event.data.png}.png" onload="nmeResize();">`;
+      html += `<img src="images/${event.data.png}.png" onload="nmeResize();">`;
     }
     html += '</p>';
     nme(html);
   }
+}
+
+function SizeS() {
+  document.body.style.fontSize = '75%';
+}
+
+function SizeM() {
+  document.body.style.fontSize = '100%';
+}
+
+function SizeL() {
+  document.body.style.fontSize = '125%';
 }
 
 function nme(html) {
@@ -251,7 +275,6 @@ function listmm() {
 }
 
 function menu() {
-  if (currentCMD === 'menu') return;
   nme('');
   cmd(`
 <p><input type="button" value="Arena" onclick="send('A');">
@@ -476,25 +499,25 @@ function wager() {
 }
 
 function nmeResize() {
-  pic = document.getElementById('nme').getElementsByTagName('img')[0];
-  ih = pic.height;
-  iw = pic.width;
-  h = Math.trunc(window.innerHeight * 0.96
-    - document.getElementById('command').clientHeight
-    - (document.getElementById('nme').clientHeight - ih));
-  w = Math.trunc(window.innerWidth * 0.98);
-  if (h / ih < 0.35)
-    h = Math.trunc(ih * 0.35);
-  else if (h / ih > w / iw)
-    h = Math.trunc(ih * w / iw);
-  w = Math.trunc(iw * h / ih);
-  pic.height = h;
-  pic.width = w;
+  currentCMD = null;
+  if (/^<table.*/.test(document.getElementById('nme').innerHTML)) return;
+  setTimeout(function () {
+    h = window.innerHeight - document.getElementById('command').clientHeight;
+    document.getElementById('nme').clientHeight = h + 'px';
+    if ((pic = document.getElementById('nme').getElementsByTagName('img')[0]))
+      pic.style.zoom = Math.trunc(96 * h / pic.height) + '%';
+  }, 0);
+  return;
 }
 </script>
 </head>
 <body onload="Logon();">
 <div id="command"></div>
 <div class="nme" id="nme"></div>
+<!--
+<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+-->
 </body>
 </html>

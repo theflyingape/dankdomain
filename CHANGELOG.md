@@ -5,7 +5,7 @@
 * 1.0.0 release
 * door: TypeScript app + client using xterm.js v3 release
 * brawling can include NPC participation
-* minor dungeon spawning and teleports avoid caverns
+* minor dungeon spawning and your teleporting avoids caverns
 * if you fail to reroll as an immortal, you must choose a different class
 * level with charisma table limits at the casino
 #### 02-Jan-2018

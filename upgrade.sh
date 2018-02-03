@@ -20,11 +20,6 @@ echo 'server files that exist that are not part of this build'
 echo '                  ~~~~~          ~~~'
 sudo rsync -anv --delete --exclude node_modules --exclude files ./build/ ${TARGET}
 
-# telnet service
-sudo systemctl stop dankdomain
-sudo systemctl start dankdomain
-
 # xterm door service
 sudo systemctl stop dankdomain-door
 sudo systemctl start dankdomain-door
-

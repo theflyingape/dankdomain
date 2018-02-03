@@ -421,7 +421,7 @@ function MonsterFights(): boolean {
 					cost.value += $.worth(new $.coins($.Armor.name[$.Armor.merchant[n]].value).value, $.player.cha)
 
 					$.reroll(monster.user
-						, ($.dice(($.online.int + $.online.cha) / 50) > 1) ? monster.user.pc : $.PC.random()
+						, ($.dice(($.online.int + $.online.cha) / 50) > 1) ? monster.user.pc : $.PC.random('monster')
 						, monster.user.level)
 
 					monster.user.spells = [ 7, 9 ]
@@ -472,7 +472,7 @@ function MonsterFights(): boolean {
 					Battle.engage('Monster', $.online, monster, menu)
 				}
 				else
-					menu(!$.player.expert)
+					menu()
 			}, prompt:'Fight this demon (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
 		}
 		xvt.app.focus = 'pay'
@@ -517,7 +517,7 @@ function MonsterFights(): boolean {
 					Battle.engage('Monster', $.online, monster, menu)
 				}
 				else
-					menu(!$.player.expert)
+					menu()
 			}, prompt:'Will you fight it (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
 		}
 		xvt.app.focus = 'fight'

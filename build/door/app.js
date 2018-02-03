@@ -34,7 +34,7 @@ dns.lookup('localhost', (err, addr, family) => {
             env: process.env
         });
         let pid = parseInt(term.pid);
-        console.log(`Create PLAYER session ${pid} from remote host: ${res.getHeader('X-Forwarded-For') || req.connection.remoteAddress} (${req.hostname})`);
+        console.log(`Create PLAYER session ${pid} from remote host: ${req.header('x-forwarded-for') || req.connection.remoteAddress} (${req.hostname})`);
         sessions[pid] = term;
         logs[pid] = '';
         broadcasts[pid] = '';
@@ -149,11 +149,11 @@ dns.lookup('localhost', (err, addr, family) => {
             if (sessions[pid]) {
                 if (sessions[pid].who)
                     player = ` (${sessions[pid].who})`;
-                console.log(`Lurker session ${pid}${player} request from remote host: ${res.getHeader('X-Forwarded-For') || req.connection.remoteAddress} (${req.hostname})`);
+                console.log(`Lurker session ${pid}${player} request from remote host: ${req.header('x-forwarded-for') || req.connection.remoteAddress} (${req.hostname})`);
                 res.send((lurkers.push(pid) - 1).toString());
             }
             else {
-                console.log(`?unknown lurker session ${pid} request from remote host: ${res.getHeader('X-Forwarded-For') || req.connection.remoteAddress} (${req.hostname})`);
+                console.log(`?unknown lurker session ${pid} request from remote host: ${req.header('x-forwarded-for') || req.connection.remoteAddress} (${req.hostname})`);
             }
         }
         else if (Object.keys(sessions).length) {

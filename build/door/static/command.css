@@ -1,6 +1,6 @@
 /*  stylesheet for dankdomain command buttons
  */
-input, button {
+ input, button {
     background: antiquewhite;
     background-image: -webkit-linear-gradient(top, cornsilk, darkkhaki);
     background-image: -moz-linear-gradient(top, cornsilk, darkkhaki);
@@ -14,7 +14,7 @@ input, button {
     -moz-box-shadow: 0px 1px 3px darkslategray;
     box-shadow: 0px 1px 3px darkslategray;
     font-family: 'Carter One', cursive;
-    font-size: 18px;
+    font-size: 100%;
     color: midnightblue;
     padding: 8px 15px 8px 15px;
     border: solid darkolivegreen 3px;
@@ -33,30 +33,30 @@ input, button {
     background: orchid;
     border: solid darkorchid 3px;
     color: indigo;
-    font-size: 18px;
     padding: 8px 18px;
+    font-size: 125%;
 }
 .gold {
     background: gold;
     border: solid darkgoldenrod 3px;
     color: goldenrod;
-    font-size: 18px;
     padding: 8px 18px;
-    }
+    font-size: 125%;
+}
 .silver {
     background: turquoise;
     border: solid darkturquoise 3px;
     color: steelblue;
-    font-size: 18px;
     padding: 8px 18px;
-    }
+    font-size: 125%;
+}
 .copper {
     background: coral;
     border: solid darkred 3px;
     color: crimson;
-    font-size: 18px;
     padding: 8px 18px;
-    }
+    font-size: 125%;
+}
 input:active, button:active {
     transform: translateX(3px) translateY(3px);
 }
@@ -76,25 +76,25 @@ input:hover, button:hover {
     background: lightpink;
     border: solid darkorchid 3px;
     color: fuchsia;
-    font-size: 20px;
+    font-size: 125%;
 }
 .gold:hover {
     background: yellow;
     border: solid darkgoldenrod 3px;
     color: lightgoldenrodyellow;
-    font-size: 20px;
+    font-size: 125%;
 }
 .silver:hover {
     background: lightskyblue;
     border: solid darkturquoise 3px;
     color: lightsteelblue;
-    font-size: 20px;
+    font-size: 125%;
 }
 .copper:hover {
     background: lightcoral;
     border: solid darkred 3px;
     color: red;
-    font-size: 20px;
+    font-size: 125%;
 }
 table {
     border: none;

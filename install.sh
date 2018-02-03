@@ -27,8 +27,8 @@ npm run build
 member=`sudo groupmems -g games -l | grep -c nobody`
 [ $member -eq 0 ] && sudo groupmems -g games -a nobody
 
-[ -d ./build/tty/files/tavern ] || sudo mkdir ./build/tty/files/tavern
-[ -d ./build/tty/files/user ] || sudo mkdir ./build/tty/files/user
+[ -d ./build/files/tavern ] || sudo mkdir ./build/files/tavern
+[ -d ./build/files/user ] || sudo mkdir ./build/files/user
 sudo rsync -a --delete ./build/ ${TARGET}
 sudo rsync -a --delete ./node_modules ${TARGET}/
 sudo chown -R root.games ${TARGET}
@@ -44,21 +44,22 @@ cat > dankdomain << EOD
 #              Return of Hack & Slash.
 service dankdomain
 {
-        disable = no
-	port			= 23
-        socket_type             = stream
-	type			= UNLISTED
-        wait                    = no
-        user                    = nobody
-	group			= games
-        server                  = `which in.telnetd`
-	server_args		= -L ${TARGET}/logins.sh
-	env			= TERM=pcansi
-	cps			= 2 5
-        log_on_success          += HOST
-        log_on_failure          = 
-	instances		= 6
-	per_source		= 1
+        disable         = no
+        port            = 23
+        socket_type     = stream
+        type            = UNLISTED
+        wait            = no
+        umask           = 117
+        user            = nobody
+        group           = games
+        server          = `which in.telnetd`
+        server_args     = -h -L ${TARGET}/logins.sh
+        env             = TERM=linux
+        cps             = 2 5
+        log_on_success  += HOST
+        log_on_failure  = 
+        instances       = 2
+        per_source      = 1
 }
 EOD
 
@@ -75,10 +76,11 @@ if sudo service iptables status ; then
 	fi
 fi
 
-sudo cp ${TARGET}/etc/dankdomain.service /etc/systemd/system/
+sudo cp ${TARGET}/etc/dankdomain-door.service /etc/systemd/system/
 sudo systemctl daemon-reload
-sudo systemctl enable dankdomain
-sudo systemctl start dankdomain
+sudo systemctl enable dankdomain-door
+sudo systemctl start dankdomain-door
+sudo systemctl status dankdomain-door -l
 
 echo -n "Press RETURN to continue: "
 read n
@@ -88,12 +90,18 @@ echo ... an Apache configuration example follows:
 echo
 
 cat <<-EOD
+DOOR uses app: express + ws and node-pty
+   for client: browser using client + xterm (served as a static bundle.js)
+
+if https / wss is used, SSL Proxy works for me like this:
+
 #
-#   Apache proxy to run local Node.js apps using xterm.js
+#   Apache proxy to run local Node.js apps
 #
     SSLProxyEngine On
+    SSLProxyCheckPeerName off
+    SSLProxyVerify none
     ProxyRequests Off
-    ProxyPreserveHost On
     ProxyBadHeader Ignore
     <Proxy *>
         Order deny,allow
@@ -101,39 +109,20 @@ cat <<-EOD
     </Proxy>
 
     RewriteEngine On
-    RewriteCond %{HTTP:Connection} Upgrade [NC]
-    RewriteRule "^/games/dankdomain/xterm/(.*)" ws://`hostname -f`:1939/$1 [P,L]
+    RewriteCond %{HTTP:Upgrade} WebSocket [NC]
+    RewriteRule "^/xterm/door/(.*)" wss://localhost:1939/xterm/door/$1 [P,L]
 
-    <Location "/games/dankdomain/xterm/">
-        ProxyPass "http://`hostname -f`:1939/"
-        ProxyPassReverse "http://`hostname -f`:1939/"
+    <Location "/xterm/door/">
+        RequestHeader set X-Forwarded-Proto "https"
+        ProxyPass "https://localhost:1939/xterm/door/"
+        ProxyPassReverse "https://localhost:1939/xterm/door/"
+        ProxyPreserveHost On
         Order allow,deny
         Allow from all
-        Header edit Location ^http://`hostname -f`:1939/ https://robert.hurst-ri.us/
+        Header edit Location ^https://localhost:1939/xterm/door/ https://robert.hurst-ri.us/xterm/door/
     </Location>
 
+# generate a self-signed key
+$ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem
 EOD
-
-# DOOR uses app: express + ws and node-pty
-#    for client: browser using xterm.js
-#
-# if https / wss is used, SSL Proxy works for me like this:
-#
-#       SSLProxyCheckPeerName off
-#       SSLProxyVerify none
-#
-#       RewriteEngine On
-#       RewriteCond %{HTTP:Upgrade} WebSocket [NC]
-#       RewriteRule "^/xterm/(.*)" wss://atom.home:1939/xterm/$1 [P,L]
-#
-#       <Location "/xterm/door/">
-#               ProxyPass "https://atom.home:1965/xterm/door/"
-#               ProxyPassReverse "https://atom.home:1965/xterm/door/"
-#               Order allow,deny
-#               Allow from all
-#       </Location>
-#
-# openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem
-
 exit
-

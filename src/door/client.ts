@@ -69,8 +69,8 @@ window.onresize = () => {
 	do {
 		w = (parseInt(w) + 1) + '%'
 		v = (100 - parseInt(w)) + '%'
-		Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': v });
-		Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': w });
+		Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': v })
+		Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': w })
 		xy = fit.proposeGeometry(term)
 	} while (xy.cols > 81 && parseInt(w) < 40)
 
@@ -88,6 +88,10 @@ window.onresize = () => {
 	cols = 80
 	rows = xy.rows
 	term.resize(cols, rows)
+
+	//	tweak window widths inside the browser
+	Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': (term.renderer.dimensions.actualCellWidth * cols) + 'px' })
+	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': (window.innerWidth - (term.renderer.dimensions.actualCellWidth * cols)) + 'px' })
 }
 
 document.getElementById('lurker-list').onchange = () => {
@@ -104,12 +108,12 @@ document.getElementById('lurker-list').onchange = () => {
 	document.getElementById('terminal').hidden = false;
 	term = new Terminal({
 		cursorBlink: false, enableBold: true, scrollback: 0,
-		fontFamily: 'Consolas,Lucida Console,monospace', fontSize: 18, theme: {
-			foreground: '#c1c2c8', background: '#020410',
+		fontFamily: 'Consolas,Lucida Console,monospace', fontSize: 16, theme: {
+			foreground: '#c1c2c8', background: '#040820',
 			black: '#000000', red: '#a00000', green: '#00a000', yellow: '#c8a000',
 			blue: '#0000a0', magenta: '#a000a0', cyan: '#00a0a0', white: '#c8c8c8',
-			brightBlack: '#646464', brightRed: '#fa0000', brightGreen: '#00fa00', brightYellow: '#fafa00',
-			brightBlue: '#0000fa', brightMagenta: '#fa00fa', brightCyan: '#00fafa', brightWhite: '#fafafa'
+			brightBlack: '#646464', brightRed: '#ff0000', brightGreen: '#00ff00', brightYellow: '#ffff00',
+			brightBlue: '#0000ff', brightMagenta: '#ff00ff', brightCyan: '#00ffff', brightWhite: '#ffffff'
 		}
 	})
 	Terminal.applyAddon(fit)
@@ -139,7 +143,7 @@ document.getElementById('lurker-list').onchange = () => {
 			}
 
 			socket.onclose = (ev) => {
-				XT('@tune()')
+				XT('@tune(.)')
 				term.destroy()
 				wpid = 0
 				document.getElementById('terminal').hidden = true
@@ -181,7 +185,7 @@ function newSession() {
 			socket.send(data)
 		}
 		else {
-			XT('@tune()')
+			XT('@tune(.)')
 			pid = 0
 			term.destroy()
 			if (data === '\x0D' || data === ' ')
@@ -192,6 +196,10 @@ function newSession() {
 	})
 
 	term.on('resize', function (size) {
+		let resize = term.getOption('fontSize')
+		let style = resize < 15 ? 'S' : resize > 23 ? 'L' : 'M'
+		XT(`@action(Size${style})`)
+
 		if (!pid) return
 		cols = size.cols
 		rows = size.rows
@@ -203,7 +211,7 @@ function newSession() {
 		let url = `${app}/player/${pid}/wall?msg=${msg}`
 		fetch(url, {method: 'POST'})
 	  })
-	
+
 	// fit is called within a setTimeout, cols and rows need this
 	setTimeout(function () {
 		fetch(`${app}/player/?cols=${term.cols}&rows=${term.rows}`, { method: 'POST' }).then(function (res) {
@@ -282,7 +290,7 @@ function XT(data) {
 
 	function play(fileName) {
 		let audio = <HTMLAudioElement>document.getElementById('play')
-		if (!fileName.length) {
+		if (!fileName.length || fileName === '.') {
 			audio.pause()
 			audio.currentTime = 0
 			return
@@ -305,7 +313,7 @@ function XT(data) {
 
 	function tune(fileName) {
 		let audio = <HTMLAudioElement>document.getElementById('tune')
-		if (!fileName.length || !pid) {
+		if (!fileName.length || fileName === '.' || !pid) {
 			audio.pause()
 			audio.currentTime = 0
 			return
@@ -331,7 +339,7 @@ function receive(event) {
 				term.focus()
 			case 'emit':
 				if (!carrier) {
-					XT('@tune()')
+					XT('@tune(.)')
 					pid = 0
 					term.destroy()
 					if (event.data.message == ' ')
