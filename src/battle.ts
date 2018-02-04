@@ -2136,6 +2136,7 @@ export function user(venue: string, cb:Function) {
             //  paint profile
             xvt.out('\n')
             if (rpc.user.id) {
+                $.action('clear')
 				let userPNG = `door/static/images/user/${rpc.user.id}.png`
 				try {
 					fs.accessSync(userPNG, fs.constants.F_OK)

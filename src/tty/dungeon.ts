@@ -603,6 +603,7 @@ function doMove(): boolean {
 			break
 
 		case 2:
+			$.action('yn')
 			xvt.out(xvt.bright, xvt.blue, 'You\'ve found a portal to a deep, dank dungeon.')
 			xvt.app.form = {
 				'deep': { cb: () => {

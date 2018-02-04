@@ -143,6 +143,7 @@ export class Character {
         }
 
         stats(profile: active) {
+            Common.action('clear')
             let userPNG = `door/static/images/user/${profile.user.id}.png`
             try {
                 fs.accessSync(userPNG, fs.constants.F_OK)
