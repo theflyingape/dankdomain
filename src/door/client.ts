@@ -64,15 +64,15 @@ window.onresize = () => {
 	let xy = fit.proposeGeometry(term)
 
 	//  possibly expand side panel without compromising terminal width
-	let w = '29'
+	let w = '30'
 	let v = w
-	do {
-		w = (parseInt(w) + 1) + '%'
+	while (xy.cols > 81 && parseInt(w) < 40) {
+		w = (parseInt(w) + 2) + '%'
 		v = (100 - parseInt(w)) + '%'
 		Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': v })
 		Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': w })
 		xy = fit.proposeGeometry(term)
-	} while (xy.cols > 81 && parseInt(w) < 40)
+	}
 
 	//  possibly upsize font until it fits targeted size
 	while ((xy = fit.proposeGeometry(term)).rows > 25 && xy.cols > 80) {
@@ -90,8 +90,10 @@ window.onresize = () => {
 	term.resize(cols, rows)
 
 	//	tweak window widths inside the browser
-	Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': (term.renderer.dimensions.actualCellWidth * cols) + 'px' })
-	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': (window.innerWidth - (term.renderer.dimensions.actualCellWidth * cols)) + 'px' })
+	v = (term.renderer.dimensions.actualCellWidth * cols) + 'px'
+	Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': v })
+	w = (window.innerWidth - parseInt(v) > 1 ? window.innerWidth - parseInt(v) : 1) + 'px'
+	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': w })
 }
 
 document.getElementById('lurker-list').onchange = () => {
@@ -200,7 +202,7 @@ function newSession() {
 		let style = resize < 15 ? 'S' : resize > 23 ? 'L' : 'M'
 		XT(`@action(Size${style})`)
 
-		if (!pid) return
+		if (pid < 1) return
 		cols = size.cols
 		rows = size.rows
 		fetch(`${app}/player/${pid}/size?cols=${cols}&rows=${rows}`, { method: 'POST' })

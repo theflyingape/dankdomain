@@ -1,6 +1,6 @@
 {
   "name": "dankdomain-door",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Dank Domain: the return of Hack & Slash (1990-2014)",
   "main": "app",
   "publisher": "theflyingape",
@@ -27,16 +27,21 @@
   },
   "homepage": "https://robert.hurst-ri.us/games/dankdomain/door/",
   "dependencies": {
-    "better-sqlite3": "^4.0.3",
+    "better-sqlite3": "^4.1.0",
+    "bootstrap": "^4.0.0",
     "express": "^4.16.2",
     "express-ws": "^3.0.0",
-    "node-pty": "^0.6.10",
     "fs-extra": "^2.1.2",
+    "jquery": "1.9.1",
+    "node-pty": "^0.6.10",
+    "popper.js": "^1.12.9",
     "xterm": "^3.0.2"
   },
   "devDependencies": {
-    "@types/express": "^4.11.0",
+    "@types/bootstrap": "^3.3.37",
+    "@types/express": "^4.11.1",
     "@types/fs-extra": "0.0.37",
+    "@types/jquery": "^3.3.0",
     "@types/node": "0.0.2"
   }
 }
