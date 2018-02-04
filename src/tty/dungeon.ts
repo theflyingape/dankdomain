@@ -604,6 +604,7 @@ function doMove(): boolean {
 
 		case 2:
 			$.action('yn')
+			$.profile({ jpg:'ddd' })
 			xvt.out(xvt.bright, xvt.blue, 'You\'ve found a portal to a deep, dank dungeon.')
 			xvt.app.form = {
 				'deep': { cb: () => {
@@ -622,10 +623,10 @@ function doMove(): boolean {
 			return false
 
 		case 3:
-			$.music('.')
 			xvt.out(`\x1B[1;${$.player.rows}r`)
 			xvt.plot($.player.rows, 1)
-			$.sound('well', 8)
+			$.music('well')
+			xvt.waste(600)
 			xvt.out(xvt.magenta, 'You have found a legendary Wishing Well.\n')
 			xvt.waste(600)
 			xvt.out('\n'); xvt.waste(600)			
@@ -857,10 +858,10 @@ function doMove(): boolean {
 			return false
 
 		case 4:
-			$.music('.')
 			xvt.out(`\x1B[1;${$.player.rows}r`)
 			xvt.plot($.player.rows, 1)
-			$.sound('wol', 8)
+			$.music('wol')
+			xvt.waste(600)
 			xvt.out(xvt.magenta, 'You have found a Mystical Wheel of Life.\n')
 			xvt.waste(600)
 			xvt.out('\n'); xvt.waste(600)
