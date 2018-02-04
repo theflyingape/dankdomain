@@ -302,7 +302,6 @@ ${enter} ${quit}
 }
 
 function arena() {
-  if (currentCMD === 'arena') return;
   cmd(`
 <input type="button" value="Cast" onclick="send('C');">
 <input type="button" value="Poison" onclick="send('P');">
@@ -334,7 +333,6 @@ function blackjack() {
 }
 
 function battle() {
-  if (currentCMD === 'battle') return;
   cmd(`
 <input class="tall" type="button" value=" Attack " onclick="send('A');"> <input type="button" value=" Cast " onclick="send('C');"><br>
 <input type="button" value="Status" onclick="send('Y');"> <input class="wide" type="button" value=" Retreat " onclick="send('R');">
@@ -371,7 +369,6 @@ function deeds() {
 }
 
 function dungeon() {
-  if (currentCMD === 'dungeon') return;
   cmd(`
 <input class="tall" type="button" value=" North " onclick="send('N');"><br>
 <input class="tall" type="button" value=" West " onclick="send('W');"> <input class="tall" type="button" value=" East " onclick="send('E');"><br>
@@ -405,7 +402,6 @@ ${keypad}
 }
 
 function naval() {
-  if (currentCMD === 'naval') return;
   cmd(`<p><input class="tall" type="button" value="Battle" onclick="send('B');"> <input class="tall" type="button" value="Shipyard" onclick="send('S');"></p>
 <p><input type="button" value="Go Fishing" onclick="send('G');"> <input type="button" value="Hunt" onclick="send('H');">
 <input type="button" value="List" onclick="send('L');"> <input type="button" value="Status" onclick="send('Y');"></p>
