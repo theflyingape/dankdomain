@@ -448,8 +448,8 @@ function MonsterFights(): boolean {
 					monster.user.coin.value += cost.value
 
 					$.profile({ jpg:'arena/' + monster.user.handle.toLowerCase()
-						, handle:monster.user.handle
-						, level:monster.user.level, pc:monster.user.pc
+						, handle:`${monster.user.handle}`
+						, level:monster.user.level, pc:monster.user.pc.toLowerCase()
 					})
 					$.cat('arena/' + monster.user.handle)
 
@@ -500,8 +500,8 @@ function MonsterFights(): boolean {
 
 		$.cat('arena/' + monster.user.handle.toLowerCase())
 		$.profile({ jpg:'arena/' + monster.user.handle.toLowerCase()
-			, handle:monster.user.handle
-			, level:monster.user.level, pc:monster.user.pc
+			, handle:`#${mon + 1} - ${monster.user.handle}`
+			, level:monster.user.level, pc:monster.user.pc.toLowerCase()
 		})
 
 		xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`, '\n')

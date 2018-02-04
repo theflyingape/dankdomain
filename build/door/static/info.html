@@ -27,6 +27,8 @@
     font-family: 'Carter One', cursive;
     font-size: 100%;
     color: midnightblue;
+    margin:  0px;
+    border: none;
   }
   form {
     border: 3px solid #f1f1f1;
@@ -40,16 +42,15 @@
     box-sizing: border-box;
   }
   div {
-    padding: 4px;
-    margin: none;
+    padding: 0px;
+    margin:  0px;
     border: none;
+    overflow: hidden;
   }
   img {
     max-height: 100%;
     max-width: 100%;
-    object-fit: fill;
-    object-position: 50% 50%;
-    zoom: 100%;
+    object-fit: contain;
   }
 </style>
 <script>
@@ -139,7 +140,7 @@ function receive(event) {
       return
     }
 
-    var html = '<p>';
+    var html = '';
     if (event.data.handle) {
       html += `${event.data.handle}`;
     }
@@ -149,14 +150,13 @@ function receive(event) {
     if (event.data.pc) {
       html += ` ${event.data.pc} `;
     }
-    if (html.length > 3) html += '<br>';
+    if (html.length) html += '<br>';
     if (event.data.jpg) {
       html += `<img src="images/${event.data.jpg}.jpg" onload="nmeResize();">`;
     }
     if (event.data.png) {
       html += `<img src="images/${event.data.png}.png" onload="nmeResize();">`;
     }
-    html += '</p>';
     nme(html);
   }
 }
@@ -499,11 +499,10 @@ function nmeResize() {
   if (/^<table.*/.test(document.getElementById('nme').innerHTML)) return;
   setTimeout(function () {
     h = window.innerHeight - document.getElementById('command').clientHeight;
-    document.getElementById('nme').clientHeight = h + 'px';
+    document.getElementById('nme').style.height = h + 'px';
     if ((pic = document.getElementById('nme').getElementsByTagName('img')[0]))
-      pic.style.zoom = Math.trunc(96 * h / pic.height) + '%';
+      pic.style.zoom = Math.trunc(100 * h / pic.height) + '%';
   }, 0);
-  return;
 }
 </script>
 </head>
