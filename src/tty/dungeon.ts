@@ -875,7 +875,7 @@ function doMove(): boolean {
 			xvt.waste(600)
 
 			$.action('yn')
-			$.profile({ jpg:'wol', effect:'rotateIn' })
+			$.profile({ png:'wol', effect:'rotateIn' })
 			xvt.app.form = {
 				'wheel': { cb: () => {
 					ROOM.occupant = 0
@@ -923,13 +923,13 @@ function doMove(): boolean {
 								$.player.maxint = $.PC.ability($.player.maxint, 1)
 								$.player.maxdex = $.PC.ability($.player.maxdex, 1)
 								$.player.maxcha = $.PC.ability($.player.maxcha, 1)
-								if (($.player.str = $.PC.ability($.player.str, 20, $.player.maxstr)) > $.online.str)
+								if (($.player.str = $.PC.ability($.player.str, 10, $.player.maxstr)) > $.online.str)
 									$.online.str = $.player.str
-								if (($.player.int = $.PC.ability($.player.int, 20, $.player.maxint)) > $.online.int)
+								if (($.player.int = $.PC.ability($.player.int, 10, $.player.maxint)) > $.online.int)
 									$.online.int = $.player.int
-								if (($.player.dex = $.PC.ability($.player.dex, 20, $.player.maxdex)) > $.online.dex)
+								if (($.player.dex = $.PC.ability($.player.dex, 10, $.player.maxdex)) > $.online.dex)
 									$.online.dex = $.player.dex
-								if (($.player.cha = $.PC.ability($.player.cha, 20, $.player.maxcha)) > $.online.cha)
+								if (($.player.cha = $.PC.ability($.player.cha, 10, $.player.maxcha)) > $.online.cha)
 									$.online.cha = $.player.cha
 							}
 							break
@@ -946,27 +946,28 @@ function doMove(): boolean {
 								$.player.maxint--
 								$.player.maxdex--
 								$.player.maxcha--
-								if (($.player.str -= 20) < $.online.str)
+								if (($.player.str -= 10) < $.online.str)
 									if (($.online.str = $.player.str) < 20) {
 										$.online.str = 20
 										$.player.str = 20
 									}
-								if (($.player.int -= 20) < $.online.int)
+								if (($.player.int -= 10) < $.online.int)
 									if (($.online.int = $.player.int) < 20) {
 										$.online.int = 20
 										$.player.int = 20
 									}
-								if (($.player.dex -= 20) < $.online.dex)
+								if (($.player.dex -= 10) < $.online.dex)
 									if (($.online.dex = $.player.dex) < 20) {
 										$.online.dex = 20
 										$.player.dex = 20
 									}
-								if (($.player.cha -= 20) < $.online.cha)
+								if (($.player.cha -= 10) < $.online.cha)
 									if (($.online.cha = $.player.cha) < 20) {
 										$.online.cha = 20
 										$.player.cha = 20
 									}
 							}
+							$.sound('crack')
 							break
 						case 2:
 							n = new $.coins($.money(Z))
