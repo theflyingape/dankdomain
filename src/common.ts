@@ -151,7 +151,7 @@ export class Character {
             } catch(e) {
                 userPNG = 'player/' + profile.user.pc.toLowerCase() + (profile.user.gender === 'F' ? '_f' : '')
             }
-            Common.profile({ png:userPNG, handle:profile.user.handle, level:profile.user.level, pc:profile.user.pc })
+            Common.profile({ png:userPNG, handle:profile.user.handle, level:profile.user.level, pc:profile.user.pc, effect:'fadeIn' })
 
             const line = '------------------------------------------------------'
             const space = '                                                      '
@@ -1910,6 +1910,11 @@ export function logoff() {
 export function action(menu: string) {
     if (!xvt.modem) return
     xvt.out('@action(', menu, ')')
+}
+
+export function animated(effect: string) {
+    if (!xvt.modem) return
+    xvt.out('@animated(', effect, ')')
 }
 
 export function music(tune: string) {

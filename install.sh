@@ -29,6 +29,7 @@ member=`sudo groupmems -g games -l | grep -c nobody`
 
 [ -d ./build/files/tavern ] || sudo mkdir ./build/files/tavern
 [ -d ./build/files/user ] || sudo mkdir ./build/files/user
+sudo cp ./node_modules/animate.css/animate.min.css ./build/door/static
 sudo rsync -a --delete ./build/ ${TARGET}
 sudo rsync -a --delete ./node_modules ${TARGET}/
 sudo chown -R root.games ${TARGET}

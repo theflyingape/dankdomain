@@ -13,7 +13,7 @@ module NewUser
 
 	$.action('freetext')
 	$.music('newuser')
-	$.profile({ png:'npc/city_guard_1' })
+	$.profile({ png:'npc/city_guard_1', effect:'bounceInLeft' })
 	xvt.out(xvt.clear)
 
 	xvt.out(xvt.yellow, '     --=:) ', xvt.bright, 'New User Registration', xvt.normal, ' (:=--\n')

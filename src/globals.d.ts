@@ -141,6 +141,7 @@ interface monster {
     weapon?: string|number
     armor?: string|number
     money?: string|number
+    effect?: string
 }
 
 interface naval {
@@ -285,38 +286,5 @@ interface active {
     hp?: number         //  <0=retreated, 0=killed, >0=alive
     sp?: number
     hull?: number
+    effect?: string
 }
-
-/*
-interface PCRunTime {
-    id?: string
-    name: string
-    pc: character
-    money: coins
-    weapon: weapon
-    armor: armor
-    poison: number
-    spells: string[]
-    level: number
-    str: number
-    int: number
-    dex: number
-    cha: number
-    confused: boolean
-    bp: number
-    hp: number
-    sp: number
-    toAC: number
-    toWC: number
-    hull: number
-
-    levelup(pc: character): void
-    reroll(pc: character, level?: number): void
-    spawn(dungeon: dungeon, level?: number): void
-}
-
-interface PCFactory {
-    new(name: string): PCFactory
-    (rt: PCRunTime)
-}
-*/

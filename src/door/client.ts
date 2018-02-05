@@ -274,7 +274,7 @@ function checkCarrier() {
 function XT(data) {
 	let copy = data + ''
 	// find any occurrences of @func(data), and for each: call func(data)
-	const re = '[@](?:(action|profile|play|tune|wall)[(](.+?)[)])'
+	const re = '[@](?:(action|animated|profile|play|tune|wall)[(](.+?)[)])'
 	let search = new RegExp(re, 'g'); let replace = new RegExp(re)
 	let match: RegExpMatchArray
 	while (match = search.exec(copy)) {
@@ -288,6 +288,11 @@ function XT(data) {
 	function action(menu) {
 		if (window.frames['Info'])
 			window.frames['Info'].postMessage({ 'func': menu }, location.href)
+	}
+
+	function animated(effect) {
+		if (window.frames['Info'])
+			window.frames['Info'].postMessage({ 'anim': effect}, location.href)
 	}
 
 	function play(fileName) {

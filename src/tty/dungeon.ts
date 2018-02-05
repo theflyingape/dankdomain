@@ -482,9 +482,9 @@ function doMove(): boolean {
 			let img = 'dungeon/' + ROOM.monster[0].user.handle
 			try {
 				fs.accessSync('door/static/images/' + img + '.jpg', fs.constants.F_OK)
-				$.profile({ jpg:img })
+				$.profile({ jpg:img, effect:ROOM.monster[0].effect })
 			} catch(e) {
-				$.profile({ png:'monster/' + ROOM.monster[0].user.pc.toLowerCase() })
+				$.profile({ png:'monster/' + ROOM.monster[0].user.pc.toLowerCase(), effect:ROOM.monster[0].effect })
 			}
 		}
 		else {
@@ -604,18 +604,21 @@ function doMove(): boolean {
 
 		case 2:
 			$.action('yn')
-			$.profile({ jpg:'ddd' })
+			$.profile({ jpg:'ddd', effect:'fadeIn' })
 			xvt.out(xvt.bright, xvt.blue, 'You\'ve found a portal to a deep, dank dungeon.')
 			xvt.app.form = {
 				'deep': { cb: () => {
 					ROOM.occupant = 0
 					xvt.out('\n')
 					if (/Y/i.test(xvt.entry)) {
+						$.animated('flipOutY')
 						xvt.out(xvt.bright, 'You vanish into the other dungeon...')
 						$.sound('portal', 12)
 						deep++
 						generateLevel()
 					}
+					else
+						$.animated('fadeOut')
 					menu()
 				}, prompt:'Descend even deeper (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
 			}
@@ -648,7 +651,7 @@ function doMove(): boolean {
 			xvt.out('\n')
 
 			$.action('freetext')
-			$.profile({ jpg:'well' })
+			$.profile({ jpg:'well', effect:'fadeIn' })
 			xvt.app.form = {
 				'well': { cb: () => {
 					ROOM.occupant = 0
@@ -659,6 +662,7 @@ function doMove(): boolean {
 						xvt.app.refocus()
 						return
 					}
+					$.animated('flipOutX')
 					xvt.out('\n')
 					switch (wish) {
 					case 'B':
@@ -871,12 +875,13 @@ function doMove(): boolean {
 			xvt.waste(600)
 
 			$.action('yn')
-			$.profile({ jpg:'wol' })
+			$.profile({ jpg:'wol', effect:'rotateIn' })
 			xvt.app.form = {
 				'wheel': { cb: () => {
 					ROOM.occupant = 0
 					xvt.out('\n')
 					if (/Y/i.test(xvt.entry)) {
+						$.animated('infinite rotateIn')
 						let i, m, n, t, z
 						z = (deep < 3) ? 4 : (deep < 6) ? 6 : (deep < 9) ? 8 : 9
 						t = 0
@@ -902,6 +907,7 @@ function doMove(): boolean {
 								xvt.blue, '] \r')
 							$.sound('click', 5 * i)
 						}
+						$.animated('rotateOut')
 						xvt.out(xvt.reset)
 						switch (t % z) {
 						case 0:
@@ -1016,6 +1022,8 @@ function doMove(): boolean {
 							return
 						}
 					}
+					else
+						$.animated('rotateOut')
 					menu()
 				}, prompt:'Will you spin it (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
 			}
@@ -1038,6 +1046,7 @@ function doMove(): boolean {
 				$.profile({ png:'player/' + $.taxman.user.pc.toLowerCase() + ($.taxman.user.gender === 'F' ? '_f' : '')
 					, handle:$.taxman.user.handle
 					, level:$.taxman.user.level, pc:$.taxman.user.pc
+					, effect:'bounceInDown'
 				})
 				$.sound('oops', 8)
 				$.activate($.taxman)
@@ -1430,9 +1439,11 @@ export function doSpoils() {
 		}
 		d.splice(i, 1)
 		pause = true
+		$.animated('fadeOutLeft')
 	}
 
 	if (Battle.teleported) {
+		$.animated('lightSpeedOut')
 		Battle.teleported = false
 		Y = $.dice(DL.rooms.length) - 1
 		X = $.dice(DL.width) - 1
@@ -2098,6 +2109,7 @@ function putMonster(r = -1, c = -1): boolean {
 		dm = monsters[Object.keys(monsters)[j]]
 		m.user.handle = ['lesser ', '', 'greater '][v] + Object.keys(monsters)[j]
 		$.reroll(m.user, dm.pc ? dm.pc : $.player.pc, level)
+		m.effect = dm.effect || 'pulse'
 
 		if (dm.weapon)
 			m.user.weapon = dm.weapon
@@ -2185,6 +2197,15 @@ function putMonster(r = -1, c = -1): boolean {
 }
 
 export function teleport() {
+	let userPNG = `door/static/images/user/${$.player.id}.png`
+	try {
+		fs.accessSync(userPNG, fs.constants.F_OK)
+		userPNG = `user/${$.player.id}`
+	} catch(e) {
+		userPNG = 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : '')
+	}
+	$.profile({ png:userPNG, handle:$.player.handle, level:$.player.level, pc:$.player.pc, effect:'pulse' })
+
 	let min =  Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
 
 	xvt.out(xvt.bright, xvt.yellow, 'What do you wish to do?\n', xvt.reset)
@@ -2201,31 +2222,39 @@ export function teleport() {
 	xvt.app.form = {
 		'wizard': { cb:() => {
 			xvt.out('\n')
-			$.sound('teleport', 8)
 			switch (xvt.entry.toUpperCase()) {
 				case 'D':
-					if (Z < 99)
+					if (Z < 99) {
 						Z++
+						$.animated('fadeOutDown')
+						xvt.waste(600)
+					}
 				case 'R':
+					$.animated('flipOutY')
 					break
 
 				case 'U':
 					if (Z > 0) {
 						Z--
+						$.animated('fadeOutUp')
 						break
 					}
 				case 'O':
+					$.animated('flipOutX')
+					xvt.waste(600)
 					if (deep > 0)
 						deep--
 					else {
 						$.music('thief2')
 						xvt.out(`\x1B[1;${$.player.rows}r`)
 						xvt.plot($.player.rows, 1)
+						xvt.waste(600)
 						require('./main').menu($.player.expert)
 						return
 					}
 					break
 			}
+			$.sound('teleport', 6)
 			generateLevel()
 			menu()
 		}, cancel:'O', enter:'R', eol:false, match:/U|D|O|R/i, timeout:10 }

@@ -247,7 +247,7 @@ function choice() {
 			}
 			xvt.out(' mermaid!\n')
 			xvt.waste(600)
-			$.profile({jpg:'naval/mermaid'})
+			$.profile({ jpg:'naval/mermaid', effect:'bounceInUp' })
 			$.cat('naval/mermaid')
 			if ($.player.today) {
 				xvt.out('She grants you an extra call for today!\n')
@@ -361,7 +361,7 @@ function Shipyard(suppress = true) {
 		'R': { description:'Mount a ram' }
 	}
 	let choice: string
-	
+
 	xvt.app.form = {
         'menu': { cb:master, cancel:'q', enter:'?', eol:false }
     }
@@ -446,7 +446,7 @@ function Shipyard(suppress = true) {
 								return
 							}
 
-							$.profile({ png:'payment' })
+							$.profile({ png:'payment', effect:'tada' })
 							$.sound('click', 5)
 							cost = Math.round(Math.pow(2, ship / 150) * 7937)
 							$.player.coin.value -= cost
@@ -767,7 +767,7 @@ function MonsterHunt() {
 	sm = Object.assign({}, monsters[mon])
 	let damage: number
 
-	$.profile({jpg:'naval/sea monster'})
+	$.profile({ jpg:'naval/sea monster', effect:'fadeInUp' })
 	xvt.out(`\nYou sail out until you spot${$.an(sm.name)} on the horizon.\n\n`)
 	xvt.out(`It has ${sm.hull} hull points.\n`)
 

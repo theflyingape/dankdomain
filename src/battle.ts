@@ -629,6 +629,7 @@ export function spoils() {
             // defeated?
             if ((loser = parties[l][m]).hp == 0) {
                 if (/Monster|User/.test(from)) {
+                    $.animated(loser.user.id ? 'hinge' : 'rotateOutDownRight')
                     loser.altered = true
                     loser.user.status = winner.user.id
                     let x = loser.user.id ? 2 : 3
@@ -1257,7 +1258,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                         xvt.out('\n', xvt.bright, xvt.yellow
                             , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
                             , ' killed you!\n', xvt.reset)
-                        $.profile({ jpg:'death' })
+                        $.profile({ jpg:'death', effect:'fadeInDownBig' })
                         $.sound('killed', 12)
                         $.reason = rpc.user.id.length ? `fatal blast by ${rpc.user.handle}`
                             : `fatal blast by a level ${rpc.user.level} ${rpc.user.handle}`
@@ -1270,7 +1271,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
         case 10:
             if (backfire) {
                 $.player.killed++
-                $.profile({ jpg:'death' })
+                $.profile({ jpg:'death', effect:'fadeInDownBig' })
                 $.sound('killed', 20)
                 xvt.out('You die by your own doing.\n')
                 $.reason = `resurrect backfired`
@@ -1442,7 +1443,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     xvt.out('\n', xvt.bright, xvt.yellow
                         , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
                         , ' killed you!\n\n', xvt.reset)
-                    $.profile({ jpg:'death' })
+                    $.profile({ jpg:'death', effect:'fadeInDownBig' })
                     $.sound('killed', 12)
                     $.reason = rpc.user.id.length ? `defeated by ${rpc.user.handle}`
                         : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`
@@ -1625,7 +1626,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                         xvt.out('\n', xvt.bright, xvt.yellow
                             , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
                             , ' killed you!\n', xvt.reset)
-                        $.profile({ jpg:'death' })
+                        $.profile({ jpg:'death', effect:'fadeInDownBig' })
                         $.sound('killed', 12)
                         $.reason = rpc.user.id.length ? `fatal Big Blast by ${rpc.user.handle}`
                             : `fatal Big Blast by a level ${rpc.user.level} ${rpc.user.handle}`
@@ -2001,7 +2002,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             xvt.out('\n', xvt.bright, xvt.yellow
                 , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
                 , ' killed you!\n\n', xvt.reset)
-            $.profile({ jpg:'death' })
+            $.profile({ jpg:'death', effect:'fadeInDownBig' })
             $.sound('killed', 12)
             $.reason = rpc.user.id.length ? `defeated by ${rpc.user.handle}`
                 : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`
@@ -2018,7 +2019,8 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                     $.news(`\tdefeated ${enemy.user.handle}, an experience level ${enemy.user.xplevel} ${enemy.user.pc}`)
                     $.wall(`defeated ${enemy.user.handle}`)
                 }
-                xvt.waste(500)
+                if (from == 'Dungeon') $.animated('fadeOut')
+                xvt.waste(200)
             }
         }
     }
@@ -2144,7 +2146,7 @@ export function user(venue: string, cb:Function) {
 				} catch(e) {
 					userPNG = 'player/' + rpc.user.pc.toLowerCase() + (rpc.user.gender === 'F' ? '_f' : '')
 				}
-				$.profile({ png:userPNG, handle:rpc.user.handle, level:rpc.user.level, pc:rpc.user.pc })
+				$.profile({ png:userPNG, handle:rpc.user.handle, level:rpc.user.level, pc:rpc.user.pc, effect:'fadeIn' })
 				if (!$.cat('player/' + rpc.user.id)) $.cat('player/' + rpc.user.pc.toLowerCase())
             }
             cb(rpc)

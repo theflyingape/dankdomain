@@ -125,6 +125,7 @@ function choice() {
 							$.profile({ jpg:'arena/joust'
 								, handle:opponent.user.handle
 								, level:opponent.user.level, pc:opponent.user.pc
+								, effect:'slideInLeft'
 							})
 							xvt.out('\nThe trumpets blare! You and your opponent ride into the arena. The crowd roars!\n')
 							round()
@@ -153,7 +154,7 @@ function choice() {
 							while(!result)
 								result = (ability + $.dice(factor * $.player.level)) - (versus + $.dice(factor * opponent.user.level))
 							if(result > 0) {
-								$.sound('hit')
+								//$.sound('hit')
 								xvt.out(xvt.green, '-*>', xvt.bright, xvt.white, ' Thud! ', xvt.normal, xvt.green,'<*-  ', xvt.reset, 'A hit!  You win this pass!\n')
 								if (++jw == 3) {
 									xvt.out('\nYou have won the joust!\n')
@@ -450,6 +451,7 @@ function MonsterFights(): boolean {
 					$.profile({ jpg:'arena/' + monster.user.handle.toLowerCase()
 						, handle:`${monster.user.handle}`
 						, level:monster.user.level, pc:monster.user.pc.toLowerCase()
+						, effect:'jello'
 					})
 					$.cat('arena/' + monster.user.handle)
 
@@ -471,8 +473,10 @@ function MonsterFights(): boolean {
 					$.music('combat' + $.arena--)
 					Battle.engage('Monster', $.online, monster, menu)
 				}
-				else
+				else {
+					$.animated('fadeOutUp')
 					menu()
+				}
 			}, prompt:'Fight this demon (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
 		}
 		xvt.app.focus = 'pay'
@@ -502,6 +506,7 @@ function MonsterFights(): boolean {
 		$.profile({ jpg:'arena/' + monster.user.handle.toLowerCase()
 			, handle:`#${mon + 1} - ${monster.user.handle}`
 			, level:monster.user.level, pc:monster.user.pc.toLowerCase()
+			, effect:monsters[mon].effect
 		})
 
 		xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`, '\n')
@@ -516,8 +521,10 @@ function MonsterFights(): boolean {
 					$.music('combat' + $.arena--)
 					Battle.engage('Monster', $.online, monster, menu)
 				}
-				else
+				else {
+					$.animated('fadeOutUp')
 					menu()
+				}
 			}, prompt:'Will you fight it (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
 		}
 		xvt.app.focus = 'fight'

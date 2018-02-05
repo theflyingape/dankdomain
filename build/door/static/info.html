@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en-US">
+
 <head>
 <title>Dank Domain: the return of Hack & Slash</title>
 <link rel="manifest" href="manifest.json">
@@ -13,27 +14,36 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <!-- Bootstrap CSS
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
- -->
+-->
 <link href='https://fonts.googleapis.com/css?family=Carter+One' rel='stylesheet'>
+<link rel="stylesheet" href="animate.min.css">
 <link rel="stylesheet" href="command.css">
 <style>
   body {
     text-align: center;
-    background: antiquewhite;  /*  older browsers  */
-    background: -webkit-linear-gradient(left top, antiquewhite, gray);  /*  safari 5.1 to 6.0  */
-    background: -o-linear-gradient(bottom right, antiquewhite, gray );  /*  opera 11.1 to 12.0  */
-    background: -moz-linear-gradient(bottom right, antiquewhite, gray);  /*  firefox 3.6 to 15  */
-    background: linear-gradient(to bottom right, white, skyblue);  /*  standard syntax (must be last)  */
+    background: antiquewhite;
+    /*  older browsers  */
+    background: -webkit-linear-gradient(left top, antiquewhite, gray);
+    /*  safari 5.1 to 6.0  */
+    background: -o-linear-gradient(bottom right, antiquewhite, gray);
+    /*  opera 11.1 to 12.0  */
+    background: -moz-linear-gradient(bottom right, antiquewhite, gray);
+    /*  firefox 3.6 to 15  */
+    background: linear-gradient(to bottom right, white, skyblue);
+    /*  standard syntax (must be last)  */
     font-family: 'Carter One', cursive;
     font-size: 100%;
     color: midnightblue;
-    margin:  0px;
+    margin: 0px;
     border: none;
   }
+
   form {
     border: 3px solid #f1f1f1;
   }
-  input[type=text], input[type=password] {
+
+  input[type=text],
+  input[type=password] {
     width: 90%;
     padding: 12px 18px;
     margin: 8px 0;
@@ -41,12 +51,14 @@
     border: 1px solid #ccc;
     box-sizing: border-box;
   }
+
   div {
     padding: 0px;
-    margin:  0px;
+    margin: 0px;
     border: none;
     overflow: hidden;
   }
+
   img {
     max-height: 100%;
     max-width: 100%;
@@ -75,7 +87,7 @@ keypad = `<table align="center">
 <tr><td><input class="numeric" type="button" value=" ? " onclick="send('?', true);"></td><td colspan=2>${cancel}</td>
 </tr>
 </table>`;
-keyboard=`<input type="button" value="a" onclick="send('a');"> <input type="button" value="b" onclick="send('b');"> <input type="button" value="c" onclick="send('c');">
+keyboard = `<input type="button" value="a" onclick="send('a');"> <input type="button" value="b" onclick="send('b');"> <input type="button" value="c" onclick="send('c');">
 <input type="button" value="d" onclick="send('d');"> <input type="button" value="e" onclick="send('e');"> <input type="button" value="f" onclick="send('f');">
 <input type="button" value="g" onclick="send('g');"> <input type="button" value="h" onclick="send('h');"> <input type="button" value="i" onclick="send('i');">
 <input type="button" value="j" onclick="send('j');"> <input type="button" value="k" onclick="send('k');"> <input type="button" value="l" onclick="send('l');">
@@ -101,12 +113,12 @@ money = `<table align="center">
 </table>`;
 
 if (window.addEventListener) {
-    window.addEventListener("message", receive, false);       
+  window.addEventListener("message", receive, false);
 }
 else {
-    if (window.attachEvent) {
-        window.attachEvent("onmessage", receive, false);
-    }
+  if (window.attachEvent) {
+    window.attachEvent("onmessage", receive, false);
+  }
 }
 
 function receive(event) {
@@ -115,29 +127,34 @@ function receive(event) {
       if (currentCMD !== event.data.func) {
         currentCMD = event.data.func;
         window[currentCMD]();
-        nmeResize();
+        nmeResize(undefined, true);
       }
-      return
+      return;
+    }
+
+    if (event.data.anim) {
+      animated(event.data.anim);
+      return;
     }
 
     if (event.data.leader) {
-      var html=`<table align="center">
-        <tr><td rowspan=2><img src="images/${event.data.banner}.png"></td><td><img src="images/${event.data.leader}.png"></td></tr>`
+      var html = `<table align="center">
+    <tr><td rowspan=2><img src="images/${event.data.banner}.png"></td><td><img src="images/${event.data.leader}.png" /></td></tr>`
       if (event.data.leader)
-        html += `<tr><td><img src="images/${event.data.coat}.png"></td></tr>`
+        html += `<tr><td><img src="images/${event.data.coat}.png" /></td></tr>`
       html += `</table>`
       nme(html)
-      return
+      return;
     }
 
     if (event.data.mob1) {
-      var html=`<table align="center">
-        <tr><td><img src="images/${event.data.mob1}.png"></td><td><img src="images/${event.data.mob2}.png"></td></tr>`
+      var html = `<table align="center">
+    <tr><td><img src="images/${event.data.mob1}.png"></td><td><img src="images/${event.data.mob2}.png" /></td></tr>`
       if (event.data.mob3)
-        html += `<tr><td colspan=2><img src="images/${event.data.mob3}.png"></td></tr>`
+        html += `<tr><td colspan=2><img src="images/${event.data.mob3}.png" /></td></tr>`
       html += `</table>`
       nme(html)
-      return
+      return;
     }
 
     var html = '';
@@ -152,10 +169,10 @@ function receive(event) {
     }
     if (html.length) html += '<br>';
     if (event.data.jpg) {
-      html += `<img src="images/${event.data.jpg}.jpg" onload="nmeResize();">`;
+      html += `<img src="images/${event.data.jpg}.jpg" onload="nmeResize(\'${event.data.effect}\');" style="display:none;" />`;
     }
     if (event.data.png) {
-      html += `<img src="images/${event.data.png}.png" onload="nmeResize();">`;
+      html += `<img src="images/${event.data.png}.png" onload="nmeResize(\'${event.data.effect}\');" style="display:none;" />`;
     }
     nme(html);
   }
@@ -173,12 +190,27 @@ function SizeL() {
   document.body.style.fontSize = '125%';
 }
 
-function nme(html) {
-  document.getElementById("nme").innerHTML = html;
-}
-
 function cmd(html) {
   document.getElementById("command").innerHTML = html;
+}
+
+function nme(html) {
+  if (html.length || /^<table.*/.test(document.getElementById('nme').innerHTML))
+    document.getElementById("nme").innerHTML = html;
+  else
+    animated('fadeOutUp');
+}
+
+function animated(effect) {
+  if ((pic = document.getElementById("nme").getElementsByTagName('img')[0])) {
+    while (pic.classList.length)
+      pic.classList.remove(pic.classList.item(0));
+    pic.classList.add('animated');
+    var effects = effect.split(' ');
+    for (var i in effects)
+      pic.classList.add(effects[i]);
+    pic.style.display = 'inline-block';
+  }
 }
 
 function Logon() {
@@ -188,12 +220,12 @@ function Logon() {
 <input type="password" placeholder="Enter password" name="password" required><br>
 <button class="wide" type="submit"> Login </button> <input class="wide" type="button" value="NEW" onclick="send('NEW', true);">
 </form>`);
-nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize();">`);
+  nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize(\'bounceInDown\');" style="display:none;" />`);
 }
 
 function sendLogin() {
-  setTimeout(function(){ send(document.forms[0].elements[0].value, true); }, 99);
-  setTimeout(function(){ send(document.forms[0].elements[1].value, true); }, 1440);
+  setTimeout(function () { send(document.forms[0].elements[0].value, true); }, 99);
+  setTimeout(function () { send(document.forms[0].elements[1].value, true); }, 1440);
   return false;
 }
 
@@ -224,15 +256,18 @@ function rotateImage() {
     'thrask_goliath_fighter_by_peachyco.png',
     'warforged_fighter_and_human_wizard_by_peachyco.png',
     'yuriel_genasi_warlord_by_peachyco.png'
- ];
+  ];
 
   var n = Math.trunc(Math.random() * images.length);
-  nme(`<img src="images/connect/${images[n]}" onload="nmeResize();"/>`);
+  animated('fadeOutLeft');
+  setTimeout(function () {
+    nme(`<img src="images/connect/${images[n]}" onload="nmeResize(\'fadeInRight\');" style="display:none;" />`);
+  }, 1000);
 }
 
 function send(keystrokes, cr = false, et = 'emit') {
   window.focus();
-  window.parent.postMessage({ 'func':et, 'message':keystrokes, 'return':cr }, location.href);
+  window.parent.postMessage({ 'func': et, 'message': keystrokes, 'return': cr }, location.href);
 }
 
 /*
@@ -245,7 +280,8 @@ function keypress(event) {
 
 function actionResize(profile) {
   window.parent.postMessage({
-    'func':'size', 'message':profile }, location.href);
+    'func': 'size', 'message': profile
+  }, location.href);
 }
 
 function clear() {
@@ -321,7 +357,7 @@ ${money}
 <input type="button" value="Loan" onclick="send('L');">
 ${quit}
 `);
-  nme(`<img src="images/bank.jpg" onload="nmeResize();">`);
+  nme(`<img src="images/bank.jpg" onload="nmeResize(\'pulse\');" style="display:none;" />`);
 }
 
 function blackjack() {
@@ -361,11 +397,11 @@ ${money}
 
 function deeds() {
   cmd(`<p><input type="button" value="Champions" onclick="send('C');">
-  <input type="button" value="Heroes" onclick="send('H');">
-  <input type="button" value="Memorable" onclick="send('M');">
-  <input type="button" value="Winners" onclick="send('W');"></p>
-  ${quit}`);
-  nme(`<img src="images/heroes.jpg" onload="nmeResize();">`);
+<input type="button" value="Heroes" onclick="send('H');">
+<input type="button" value="Memorable" onclick="send('M');">
+<input type="button" value="Winners" onclick="send('W');"></p>
+${quit}`);
+  nme(`<img src="images/heroes.jpg" onload="nmeResize(\'bounceInUp\');" style="display:none;" />`);
 }
 
 function dungeon() {
@@ -374,8 +410,8 @@ function dungeon() {
 <input class="tall" type="button" value=" West " onclick="send('W');"> <input class="tall" type="button" value=" East " onclick="send('E');"><br>
 <input class="tall" type="button" value=" South " onclick="send('S');"><br>
 <p><input type="button" value="Cast" onclick="send('C');">
- <input type="button" value="Poison" onclick="send('P');">
- <input type="button" value="Status" onclick="send('Y');"></p>
+<input type="button" value="Poison" onclick="send('P');">
+<input type="button" value="Status" onclick="send('Y');"></p>
 `);
 }
 
@@ -421,7 +457,7 @@ function party() {
 
 function payment() {
   cmd(`${money}`)
-  nme(`<img src="images/payment.png" onload="nmeResize();">`);
+  nme(`<img src="images/payment.png" onload="nmeResize(\'bounce\');" style="display:none;" />`);
 }
 
 function potion() {
@@ -439,7 +475,7 @@ function riddle() {
 <p><input class="silver"   type="button" value="  Silver  " onclick="send('S');"></p>
 <p><input class="copper"   type="button" value="  Copper  " onclick="send('C');"></p>
 `);
-  nme(`<img src="images/riddle.jpg" onload="nmeResize();">`);
+  nme(`<img src="images/riddle.jpg" onload="nmeResize(\'zoomInUp\');" style="display:none;" />`);
 }
 
 function shipyard() {
@@ -447,8 +483,8 @@ function shipyard() {
 <input type="button" value="Buy" onclick="send('B');"> <input type="button" value="Fix" onclick="send('F');">
 <input type="button" value="Cannon" onclick="send('C');"> <input type="button" value="Ram" onclick="send('R');">
 <input class="tall" type="button" value=" Quit " onclick="send('Q');">
-  `);
-  nme('<br><img src="images/naval/shipyard.png" onload="nmeResize();">');
+`);
+  nme('<br><img src="images/naval/shipyard.png" onload="nmeResize(\'swing\');" style="display:none;" />');
 }
 
 function square() {
@@ -491,28 +527,29 @@ function teleport() {
 
 function wager() {
   cmd(`${money}`)
-  nme(`<img src="images/wager.jpg" onload="nmeResize();">`);
+  nme(`<img src="images/wager.jpg" onload="nmeResize(\'pulse\');" style="display:none;" />`);
 }
 
-function nmeResize() {
-  currentCMD = null;
+function nmeResize(effect, func) {
+  //currentCMD = null;
   if (/^<table.*/.test(document.getElementById('nme').innerHTML)) return;
-  setTimeout(function () {
-    h = window.innerHeight - document.getElementById('command').clientHeight;
-    document.getElementById('nme').style.height = h + 'px';
-    if ((pic = document.getElementById('nme').getElementsByTagName('img')[0]))
-      pic.style.zoom = Math.trunc(100 * h / pic.height) + '%';
-  }, 0);
+  h = window.innerHeight - document.getElementById('command').clientHeight;
+  document.getElementById('nme').style.height = h + 'px';
+  if ((pic = document.getElementById('nme').getElementsByTagName('img')[0]))
+    pic.style.zoom = Math.trunc(100 * h / pic.height) + '%';
+  if (!func) animated(effect || 'fadeIn');
 }
 </script>
 </head>
+
 <body onload="Logon();">
-<div id="command"></div>
-<div class="nme" id="nme"></div>
-<!--
+  <div id="command"></div>
+  <div class="nme" id="nme"></div>
+  <!--
 <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 -->
 </body>
+
 </html>

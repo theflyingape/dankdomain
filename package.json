@@ -33,6 +33,7 @@
   },
   "homepage": "https://robert.hurst-ri.us/games/dankdomain",
   "dependencies": {
+    "animate.css": "^3.5.2",
     "better-sqlite3": "^4.1.0",
     "bootstrap": "^4.0.0",
     "express": "^4.16.2",
