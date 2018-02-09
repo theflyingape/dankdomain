@@ -58,7 +58,7 @@ function guards(): boolean {
         default:
             $.sound('stranger')
             $.action('yn')
-            $.profile({ jpg:'npc/stranger' })
+            $.profile({ jpg:'npc/stranger', effect:'zoomIn' })
             xvt.out('The last thing you ever feel is several quarrels cutting deep into your chest.\n')
             xvt.waste(1000)
             xvt.app.form = {
@@ -240,7 +240,7 @@ function welcome() {
     $.action('yn')
 
     if ($.player.status === 'jail' || !$.Access.name[$.player.access].roleplay) {
-        $.profile({ png:'npc/taxman', handle:$.taxman.user.handle })
+        $.profile({ png:'npc/jailer', effect:'fadeIn' })
         xvt.out(xvt.bright, xvt.black, '(', xvt.magenta, 'PRISONER', xvt.black, ')\n')
         xvt.out(xvt.red, '\nYou are locked-up in jail.\n', xvt.reset)
         xvt.waste(1000)

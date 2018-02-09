@@ -155,10 +155,10 @@ function choice() {
 							while(!result)
 								result = (ability + $.dice(factor * $.player.level)) - (versus + $.dice(factor * opponent.user.level))
 							if(result > 0) {
+								$.animated(['flash', 'jello', 'rubberBand'][jw])
 								$.sound('wall')
 								xvt.out(xvt.green, '-*>', xvt.bright, xvt.white, ' Thud! ', xvt.normal, xvt.green,'<*-  ', xvt.reset, 'A hit!  You win this pass!\n')
 								if (++jw == 3) {
-									$.animated('hinge')
 									xvt.out('\nYou have won the joust!\n')
 									xvt.waste(250)
 									$.sound('cheer')
@@ -170,12 +170,13 @@ function choice() {
 									if ($.run(`UPDATE Players set jl=jl+1 WHERE id='${opponent.user.id}'`).changes)
 										$.log(opponent.user.id, `\n${$.player.handle} beat you in a joust and got ${reward.carry()}.`)
 									xvt.waste(250)
+									$.animated('hinge')
 									menu()
 									return
 								}
 							}
 							else {
-								$.animated('shake')
+								$.animated(['bounce', 'shake', 'tada'][jl])
 								$.sound('oof')
 								xvt.out(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.normal, xvt.magenta,'<^  ', xvt.reset
 									, $.who(opponent, 'He'), 'hits!  You lose this pass!\n'

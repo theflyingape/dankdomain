@@ -70,7 +70,7 @@ art = null;
 currentCMD = null;
 all = `<input class="tall" type="button" value=" ALL " onclick="send('=', true);">`
 best = `<input class="tall" type="button" value=" BEST " onclick="send('=', true);">`
-cancel = `<input class="wide" type="button" value="Cancel" onclick="send('\x15');">`;
+cancel = `<input class="wide" type="button" value="Clear" onclick="send('\x15');">`;
 enter = `<input class="wide" type="button" value="Enter" onclick="send('', true);">`;
 logoff = `<input type="button" value="LOGOFF" onclick="send('\x1A');">`;
 max = `<input class="wide" type="button" value=" MAX " onclick="send('MAX', true);">`
@@ -199,7 +199,10 @@ function nme(html) {
 }
 
 function animated(effect) {
-  if ((pic = document.getElementById("nme").getElementsByTagName('img')[0])) {
+  var img = document.getElementById("nme").getElementsByTagName('img');
+  var pic = img[0];
+
+  if (img.length == 1) {
     while (pic.classList.length)
       pic.classList.remove(pic.classList.item(0));
     pic.classList.add('animated');
@@ -208,6 +211,19 @@ function animated(effect) {
       pic.classList.add(effects[i]);
     pic.style.display = 'inline-block';
   }
+  else {
+    for (var i in img) {
+      pic = img[i];
+      if (!pic.style.display)
+        break;
+    }
+  }
+
+  pic.classList.add('animated');
+  var effects = effect.split(' ');
+  for (var i in effects)
+    pic.classList.add(effects[i]);
+  pic.style.display = 'inline-block';
 }
 
 function Logon() {
@@ -286,7 +302,6 @@ function clear() {
 }
 
 function freetext() {
-  nme('');
   cmd(`${keyboard}`);
 }
 

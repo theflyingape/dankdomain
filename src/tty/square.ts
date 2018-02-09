@@ -266,6 +266,7 @@ function choice() {
 
 		case 'J':
 			if ($.bail) {
+				$.profile({ png:'npc/jailer', effect:'fadeIn' })
 				xvt.out('\nA deputy greets you in front of the County Jail.\n')
 				xvt.out('\"What ', ['cur','knave','scum','toad','villain'][$.dice(5) - 1],
 					' do you want to bail out?\"\n'
@@ -302,6 +303,7 @@ function choice() {
 						'pay': { cb:() => {
 							xvt.out('\n')
 							if (/Y/i.test(xvt.entry)) {
+								$.profile({ png:'payment', effect:'tada' })
 								xvt.out(`${opponent.user.handle} is set free.\n`)
 								$.player.coin.value -= credit.value
 								opponent.user.status = ''
@@ -310,6 +312,8 @@ function choice() {
 								$.news(`\t${opponent.user.handle} made bail`)
 								$.bail--
 							}
+							else
+								$.action('fadeOut')
 							menu()
 							return
 						}, prompt:'Will you pay (Y/N)? '
