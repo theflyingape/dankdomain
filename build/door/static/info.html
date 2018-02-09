@@ -195,10 +195,7 @@ function cmd(html) {
 }
 
 function nme(html) {
-  if (html.length || /^<table.*/.test(document.getElementById('nme').innerHTML))
-    document.getElementById("nme").innerHTML = html;
-  else
-    animated('fadeOutUp');
+  document.getElementById("nme").innerHTML = html || '';
 }
 
 function animated(effect) {
@@ -488,7 +485,6 @@ function shipyard() {
 }
 
 function square() {
-  nme('');
   cmd(`
 <input type="button" value="Armoury" onclick="send('A');">
 <input type="button" value="Weapons" onclick="send('W');">
@@ -517,7 +513,6 @@ function tavern() {
 }
 
 function teleport() {
-  nme('');
   cmd(`
 <p><input class="tall" type="button" value=" Up " onclick="send('U');"></p>
 <p><input type="button" value="Random" onclick="send('R');"> <input type="button" value=" Out " onclick="send('O');"></p>

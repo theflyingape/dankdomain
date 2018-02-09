@@ -2019,12 +2019,11 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                     $.news(`\tdefeated ${enemy.user.handle}, an experience level ${enemy.user.xplevel} ${enemy.user.pc}`)
                     $.wall(`defeated ${enemy.user.handle}`)
                 }
-                if (from == 'Dungeon') $.animated('fadeOut')
+                if (from == 'Dungeon') $.animated(['bounceOut', 'fadeOut', 'flipOutX', 'flipOutY', 'rollOut', 'rotateOut', 'zoomOut'][$.dice(7) - 1])
                 xvt.waste(200)
             }
         }
     }
-
     return
 }
 
@@ -2139,15 +2138,7 @@ export function user(venue: string, cb:Function) {
             xvt.out('\n')
             if (rpc.user.id) {
                 $.action('clear')
-				let userPNG = `door/static/images/user/${rpc.user.id}.png`
-				try {
-					fs.accessSync(userPNG, fs.constants.F_OK)
-					userPNG = `user/${rpc.user.id}`
-				} catch(e) {
-					userPNG = 'player/' + rpc.user.pc.toLowerCase() + (rpc.user.gender === 'F' ? '_f' : '')
-				}
-				$.profile({ png:userPNG, handle:rpc.user.handle, level:rpc.user.level, pc:rpc.user.pc, effect:'fadeIn' })
-				if (!$.cat('player/' + rpc.user.id)) $.cat('player/' + rpc.user.pc.toLowerCase())
+                $.PC.profile(rpc)
             }
             cb(rpc)
         }, max:22 },
@@ -2203,14 +2194,7 @@ export function user(venue: string, cb:Function) {
 }
 
 export function yourstats() {
-    let userPNG = `door/static/images/user/${$.player.id}.png`
-    try {
-        fs.accessSync(userPNG, fs.constants.F_OK)
-        userPNG = `user/${$.player.id}`
-    } catch(e) {
-        userPNG = 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : '')
-    }
-    $.profile({ png:userPNG, handle:$.player.handle, level:$.player.level, pc:$.player.pc })
+    $.PC.profile($.online)
     xvt.out(xvt.reset)
     xvt.out(xvt.cyan, 'Str:', xvt.bright, $.online.str > $.player.str ? xvt.yellow : $.online.str < $.player.str ? xvt.red : xvt.white)
     xvt.out(sprintf('%3d', $.online.str), xvt.reset, sprintf(' (%d,%d)    ', $.player.str, $.player.maxstr))

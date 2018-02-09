@@ -128,7 +128,10 @@ export function menu(suppress = false) {
 	if (pause) {
 		pause = false
 		xvt.app.form = {
-			'pause': { cb:menu, cancel:' ', enter:'\x0D', pause:true, timeout:10 }
+			'pause': { cb: () => {
+				$.action('nme')
+				menu()
+			}, cancel:' ', enter:'\x0D', pause:true, timeout:10 }
 		}
 		xvt.app.focus = 'pause'
 		return
@@ -500,6 +503,9 @@ function doMove(): boolean {
 
 		for (let n = 0; n < ROOM.monster.length; n++) {
 			$.cat('dungeon/' + ROOM.monster[n].user.handle)
+			let what = ROOM.monster[n].user.handle
+			if (ROOM.monster[n].user.xplevel > 0)
+				what = ['lesser', '', 'greater'][ROOM.monster[n].user.xplevel - ROOM.monster[n].user.level + 1] + what
 			xvt.out(xvt.reset, '\nIt\'s', $.an(ROOM.monster[n].user.handle), '... ')
 			xvt.waste(400)
 			if ($.player.novice || ($.dice(ROOM.monster[n].user.xplevel / 5 + 5) * (101 - $.online.cha + deep) > 1)) {
@@ -1385,6 +1391,8 @@ export function doSpoils() {
 		}
 	}
 
+	if (Battle.retreat) $.PC.profile($.online)
+
 	let d = ['N','S','E','W']
 	while (Battle.retreat) {
 		$.music('pulse')
@@ -1400,6 +1408,7 @@ export function doSpoils() {
 						Battle.retreat = false
 						Y--
 						looked = false
+						$.animated('fadeOutUp')
 						break
 					}
 				oof('north')
@@ -1411,6 +1420,7 @@ export function doSpoils() {
 						Battle.retreat = false
 						Y++
 						looked = false
+						$.animated('fadeOutDown')
 						break
 					}
 				oof('south')
@@ -1422,6 +1432,7 @@ export function doSpoils() {
 						Battle.retreat = false
 						X++
 						looked = false
+						$.animated('fadeOutRight')
 						break
 					}
 				oof('east')
@@ -1433,6 +1444,7 @@ export function doSpoils() {
 						Battle.retreat = false
 						X--
 						looked = false
+						$.animated('fadeOutLeft')
 						break
 					}
 				oof('west')
@@ -1440,7 +1452,6 @@ export function doSpoils() {
 		}
 		d.splice(i, 1)
 		pause = true
-		$.animated('fadeOutLeft')
 	}
 
 	if (Battle.teleported) {
@@ -2090,26 +2101,22 @@ function putMonster(r = -1, c = -1): boolean {
 	level = (level < 1) ? 1 : (level > 99) ? 99 : level
 
 	do {
-		//	add a monster level relative to this floor, including "strays"
+		//	add a monster level relative to this floor, including any lower "strays" as fodder
 		let room = DL.rooms[r][c]
 		i = room.monster.push(<active>{ user:{ id: '', sex:'I', level:level } }) - 1
 		m = room.monster[i]
 
 		//	pick and generate monster relative to its level
-		let v = $.dice(12)
-		v = v == 12 ? 2 : v > 1 ? 1 : 0
+		let v = 1
+		if (level > 9 && level < 90) {
+			v = $.dice(12)
+			v = v == 12 ? 2 : v > 1 ? 1 : 0
+		}
 		j = level + v - 1
-		if (j < 0) {
-			j = 0
-			v = 1
-		}
-		if (j >= Object.keys(monsters).length) {
-			j = Object.keys(monsters).length - 1
-			v = 1
-		}
 		dm = monsters[Object.keys(monsters)[j]]
-		m.user.handle = ['lesser ', '', 'greater '][v] + Object.keys(monsters)[j]
-		$.reroll(m.user, dm.pc ? dm.pc : $.player.pc, level)
+		m.user.handle = Object.keys(monsters)[j]
+		$.reroll(m.user, dm.pc ? dm.pc : $.player.pc, j)
+		m.user.xplevel = level
 		m.effect = dm.effect || 'pulse'
 
 		if (dm.weapon)
@@ -2192,22 +2199,15 @@ function putMonster(r = -1, c = -1): boolean {
 			if (dm.hit) m.weapon.hit = dm.hit
 			if (dm.smash) m.weapon.smash = dm.smash
 		}
-	} while (DL.rooms[r][c].monster.length < 10 && DL.rooms[r][c].monster.length * m.user.level < Z - 12 + deep)
+	} while (DL.rooms[r][c].monster.length < 10 && DL.rooms[r][c].monster.length * m.user.level < Z + deep - 12)
 
 	return true
 }
 
 export function teleport() {
-	let userPNG = `door/static/images/user/${$.player.id}.png`
-	try {
-		fs.accessSync(userPNG, fs.constants.F_OK)
-		userPNG = `user/${$.player.id}`
-	} catch(e) {
-		userPNG = 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : '')
-	}
-	$.profile({ png:userPNG, handle:$.player.handle, level:$.player.level, pc:$.player.pc, effect:'pulse' })
-
 	let min =  Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
+	$.action('teleport')
+	$.PC.profile($.online)
 
 	xvt.out(xvt.bright, xvt.yellow, 'What do you wish to do?\n', xvt.reset)
 	xvt.out($.bracket('U'), 'Teleport up 1 level')
@@ -2219,16 +2219,16 @@ export function teleport() {
 	if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
 		xvt.out(xvt.faint, '\nThe feeling of in', xvt.normal, 'security', xvt.faint, ' overwhelms you.', xvt.reset)
 
-	$.action('teleport')
 	xvt.app.form = {
 		'wizard': { cb:() => {
+			$.sound('teleport')
 			xvt.out('\n')
 			switch (xvt.entry.toUpperCase()) {
 				case 'D':
 					if (Z < 99) {
 						Z++
 						$.animated('fadeOutDown')
-						xvt.waste(600)
+						break
 					}
 				case 'R':
 					$.animated('flipOutY')
@@ -2242,20 +2242,19 @@ export function teleport() {
 					}
 				case 'O':
 					$.animated('flipOutX')
-					xvt.waste(600)
 					if (deep > 0)
 						deep--
 					else {
 						$.music('thief2')
 						xvt.out(`\x1B[1;${$.player.rows}r`)
 						xvt.plot($.player.rows, 1)
-						xvt.waste(600)
+						xvt.waste(1250)
 						require('./main').menu($.player.expert)
 						return
 					}
 					break
 			}
-			$.sound('teleport', 6)
+			xvt.waste(1250)
 			generateLevel()
 			menu()
 		}, cancel:'O', enter:'R', eol:false, match:/U|D|O|R/i, timeout:10 }
@@ -2299,59 +2298,67 @@ function quaff(v: number, it = true) {
 
 	//	Vial of Weakness
 		case 4:
+			$.player.str = $.PC.ability($.player.str, -1)
 			$.online.str = $.PC.ability($.online.str, -$.dice(10))
 			break
 
 	//	Potion of Stamina
 		case 5:
+			$.player.str = $.PC.ability($.player.str, 1, $.player.maxstr)
 			$.online.str = $.PC.ability($.online.str, $.dice(10))
 			break
 
 	//	Vial of Stupidity
 		case 6:
+			$.player.int = $.PC.ability($.player.int, -1)
 			$.online.int = $.PC.ability($.online.int, -$.dice(10))
 			break
 
 	//	Potion of Wisdom
 		case 7:
+			$.player.int = $.PC.ability($.player.int, 1, $.player.maxint)
 			$.online.int = $.PC.ability($.online.int, $.dice(10))
 			break
 
 	//	Vial of Clumsiness
 		case 8:
+			$.player.dex = $.PC.ability($.player.dex, -1)
 			$.online.dex = $.PC.ability($.online.dex, -$.dice(10))
 			break
 
 	//	Potion of Agility
 		case 9:
+			$.player.dex = $.PC.ability($.player.dex, 1, $.player.maxdex)
 			$.online.dex = $.PC.ability($.online.dex, $.dice(10))
 			break
 
 	//	Vile Vial
 		case 10:
+			$.player.cha = $.PC.ability($.player.cha, -1)
 			$.online.cha = $.PC.ability($.online.cha, -$.dice(10))
 			break
 
 	//	Potion of Charm
 		case 11:
+			$.player.cha = $.PC.ability($.player.cha, 1, $.player.maxcha)
 			$.online.cha = $.PC.ability($.online.cha, $.dice(10))
 			break
 
 	//	Vial of Crack
 		case 12:
 			$.music('crack')
-			$.player.maxstr = $.PC.ability($.player.maxstr, $.player.maxstr > 75 ? -$.dice(5) : -1)
-			$.player.maxint = $.PC.ability($.player.maxint, $.player.maxint > 75 ? -$.dice(5) : -1)
-			$.player.maxdex = $.PC.ability($.player.maxdex, $.player.maxdex > 75 ? -$.dice(5) : -1)
-			$.player.maxcha = $.PC.ability($.player.maxcha, $.player.maxcha > 75 ? -$.dice(5) : -1)
-			$.player.str = $.PC.ability($.player.str, $.player.str > 50 ? -$.dice(5) : -1)
-			$.player.int = $.PC.ability($.player.int, $.player.int > 50 ? -$.dice(5) : -1)
-			$.player.dex = $.PC.ability($.player.dex, $.player.dex > 50 ? -$.dice(5) : -1)
-			$.player.cha = $.PC.ability($.player.cha, $.player.cha > 50 ? -$.dice(5) : -1)
-			$.online.str = $.PC.ability($.online.str, $.online.str > 25 ? -$.dice(5) : -1)
-			$.online.int = $.PC.ability($.online.int, $.online.int > 25 ? -$.dice(5) : -1)
-			$.online.dex = $.PC.ability($.online.dex, $.online.dex > 25 ? -$.dice(5) : -1)
-			$.online.cha = $.PC.ability($.online.cha, $.online.cha > 25 ? -$.dice(5) : -1)
+			$.player.maxstr = $.PC.ability($.player.maxstr, $.player.maxstr > 80 ? -$.dice(3) : -1)
+			$.player.maxint = $.PC.ability($.player.maxint, $.player.maxint > 80 ? -$.dice(3) : -1)
+			$.player.maxdex = $.PC.ability($.player.maxdex, $.player.maxdex > 80 ? -$.dice(3) : -1)
+			$.player.maxcha = $.PC.ability($.player.maxcha, $.player.maxcha > 80 ? -$.dice(3) : -1)
+			$.player.str = $.PC.ability($.player.str, $.player.str > 60 ? -$.dice(3) - 2 : -2)
+			$.player.int = $.PC.ability($.player.int, $.player.int > 60 ? -$.dice(3) - 2 : -2)
+			$.player.dex = $.PC.ability($.player.dex, $.player.dex > 60 ? -$.dice(3) - 2 : -2)
+			$.player.cha = $.PC.ability($.player.cha, $.player.cha > 60 ? -$.dice(3) - 2 : -2)
+			$.online.str = $.PC.ability($.online.str, $.online.str > 40 ? -$.dice(6) - 4 : -3)
+			$.online.int = $.PC.ability($.online.int, $.online.int > 40 ? -$.dice(6) - 4 : -3)
+			$.online.dex = $.PC.ability($.online.dex, $.online.dex > 40 ? -$.dice(6) - 4 : -3)
+			$.online.cha = $.PC.ability($.online.cha, $.online.cha > 40 ? -$.dice(6) - 4 : -3)
 			break
 
 	//	Potion of Augment
@@ -2361,10 +2368,10 @@ function quaff(v: number, it = true) {
 			$.player.maxint = $.PC.ability($.player.maxint, $.player.maxint < 95 ? $.dice(3) : 1)
 			$.player.maxdex = $.PC.ability($.player.maxdex, $.player.maxdex < 95 ? $.dice(3) : 1)
 			$.player.maxcha = $.PC.ability($.player.maxcha, $.player.maxcha < 95 ? $.dice(3) : 1)
-			$.player.str = $.PC.ability($.player.str, $.dice(10), $.player.maxstr)
-			$.player.int = $.PC.ability($.player.int, $.dice(10), $.player.maxint)
-			$.player.dex = $.PC.ability($.player.dex, $.dice(10), $.player.maxdex)
-			$.player.cha = $.PC.ability($.player.cha, $.dice(10), $.player.maxcha)
+			$.player.str = $.PC.ability($.player.str, $.dice(3) + 2, $.player.maxstr)
+			$.player.int = $.PC.ability($.player.int, $.dice(3) + 2, $.player.maxint)
+			$.player.dex = $.PC.ability($.player.dex, $.dice(3) + 2, $.player.maxdex)
+			$.player.cha = $.PC.ability($.player.cha, $.dice(3) + 2, $.player.maxcha)
 			$.online.str = $.PC.ability($.online.str, $.dice(100 - $.online.str))
 			$.online.int = $.PC.ability($.online.int, $.dice(100 - $.online.int))
 			$.online.dex = $.PC.ability($.online.dex, $.dice(100 - $.online.dex))

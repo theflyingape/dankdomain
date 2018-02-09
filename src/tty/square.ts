@@ -51,11 +51,13 @@ export function menu(suppress = true) {
 		let bump = $.PC.encounter(`AND novice = 0 AND (id NOT GLOB '_*' OR id = '_TAX')`
 			, $.player.level - 9, $.player.level + 9)
 		if (bump.user.id) {
+			$.PC.profile(bump)
 			xvt.out(xvt.magenta, xvt.faint, `${bump.user.handle} bumps`
 				, xvt.normal, ' into you from'
 				, xvt.bright, ' out of the shadows'
 				, xvt.reset, ' ... ')
 			xvt.waste(1200)
+			$.animated('fadeOutRight')
 			if ($.dice($.online.cha / 10 + 2 * ($.player.steal + 1)) > 2 * bump.user.steal + 1)
 				xvt.out('\nwaves a pardon and moves along.\n')
 			else {
@@ -579,7 +581,8 @@ function Bank() {
 				break
 			}
 
-        case 'Q':
+		case 'Q':
+			$.action('nme')
 			menu(suppress)
 			break
 	}
@@ -783,7 +786,7 @@ function buy() {
 		case 'A':
 			cost = new $.coins($.Armor.name[$.Armor.merchant[item]].value)
 			if ($.player.coin.value + credit.value >= cost.value) {
-				$.profile({ png:'payment' })
+				$.profile({ png:'payment', effect:'tada' })
 				$.sound('click')
 				$.player.armor = $.Armor.merchant[item]
 				$.player.toAC = 0
@@ -799,7 +802,7 @@ function buy() {
 			cost = $.player.magic == 1 ? new $.coins($.Magic.spells[$.Magic.merchant[item]].wand)
 				:  new $.coins($.Magic.spells[$.Magic.merchant[item]].cost)
 			if ($.player.coin.value >= cost.value && !$.Magic.have($.player.spells, buy)) {
-				$.profile({ png:'payment' })
+				$.profile({ png:'payment', effect:'tada' })
 				$.sound('click')
 				$.Magic.add($.player.spells, buy)
 				xvt.out(' - ', $.Magic.merchant[item], '\n')
@@ -811,7 +814,7 @@ function buy() {
 		case 'R':
 			cost = new $.coins($.RealEstate.name[$.RealEstate.merchant[item]].value)
 			if ($.player.coin.value + credit.value >= cost.value) {
-				$.profile({ png:'payment' })
+				$.profile({ png:'payment', effect:'tada' })
 				$.sound('click')
 				$.player.realestate = $.RealEstate.merchant[item]
 				xvt.out(' - ', $.player.realestate, '\n')
@@ -824,7 +827,7 @@ function buy() {
 		case 'S':
 			cost = new $.coins($.Security.name[$.Security.merchant[item]].value)
 			if ($.player.coin.value + credit.value >= cost.value) {
-				$.profile({ png:'payment' })
+				$.profile({ png:'payment', effect:'tada' })
 				$.sound('click')
 				$.player.security = $.Security.merchant[item]
 				xvt.out(' - ', $.player.security, '\n')
@@ -839,7 +842,7 @@ function buy() {
 			cost = $.player.poison == 1 ? new $.coins($.Poison.vials[$.Poison.merchant[item]].vial)
 				:  new $.coins($.Poison.vials[$.Poison.merchant[item]].cost)
 			if ($.player.coin.value >= cost.value && !$.Poison.have($.player.poisons, buy)) {
-				$.profile({ png:'payment' })
+				$.profile({ png:'payment', effect:'tada' })
 				$.sound('click')
 				$.Poison.add($.player.poisons, buy)
 				xvt.out('\nHe slips you a vial of ', $.Poison.merchant[item], '\n')
@@ -851,7 +854,7 @@ function buy() {
 		case 'W':
 			cost = new $.coins($.Weapon.name[$.Weapon.merchant[buy]].value)
 			if ($.player.coin.value + credit.value >= cost.value) {
-				$.profile({ png:'payment' })
+				$.profile({ png:'payment', effect:'tada' })
 				$.sound('click')
 				$.player.weapon = $.Weapon.merchant[buy]
 				$.player.toWC = 0
@@ -888,7 +891,6 @@ function buyall() {
 			break
 
 		case 'M':
-			$.profile({ png:'payment' })
 			for (let spell = lo; spell <= hi; spell++) {
 				item = spell - 1
 				cost = $.player.magic == 1 ? new $.coins($.Magic.spells[$.Magic.merchant[item]].wand)
@@ -932,7 +934,6 @@ function buyall() {
 			break
 
 		case 'V':
-			$.profile({ png:'payment' })
 			for (let vial = lo; vial <= hi; vial++) {
 				item = vial - 1
 				cost = $.player.poison == 1 ? new $.coins($.Poison.vials[$.Poison.merchant[item]].vial)

@@ -116,6 +116,19 @@ export class Character {
             return Math.round(rpc.dex * rpc.user.level / 10 + 2 * rpc.user.jw - rpc.user.jl + 10)
         }
 
+        profile(rpc: active) {
+            if (rpc.user.id) {
+                let userPNG = `door/static/images/user/${rpc.user.id}.png`
+                try {
+                    fs.accessSync(userPNG, fs.constants.F_OK)
+                    userPNG = `user/${rpc.user.id}`
+                } catch(e) {
+                    userPNG = 'player/' + rpc.user.pc.toLowerCase() + (rpc.user.gender === 'F' ? '_f' : '')
+                }
+                Common.profile({ png:userPNG, handle:rpc.user.handle, level:rpc.user.level, pc:rpc.user.pc, effect:'fadeInLeft' })
+            }
+        }
+
         random(type?: string): string {
             let pc: string = ''
             if (type) {
@@ -144,14 +157,7 @@ export class Character {
 
         stats(profile: active) {
             Common.action('clear')
-            let userPNG = `door/static/images/user/${profile.user.id}.png`
-            try {
-                fs.accessSync(userPNG, fs.constants.F_OK)
-                userPNG = `user/${profile.user.id}`
-            } catch(e) {
-                userPNG = 'player/' + profile.user.pc.toLowerCase() + (profile.user.gender === 'F' ? '_f' : '')
-            }
-            Common.profile({ png:userPNG, handle:profile.user.handle, level:profile.user.level, pc:profile.user.pc, effect:'fadeIn' })
+            this.profile(profile)
 
             const line = '------------------------------------------------------'
             const space = '                                                      '
@@ -364,7 +370,6 @@ export class Character {
 
             xvt.out(xvt.blue, '+', line, '+', xvt.reset)
         }
-
 
         armor(profile: active): { text:string, rich:string } {
             let text = profile.user.armor + buff(profile.toAC, profile.user.toAC, true)

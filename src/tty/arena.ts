@@ -137,13 +137,14 @@ function choice() {
 					}, prompt:'Are you sure (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 },
 					'joust': { cb:() => {
 						if (/F/i.test(xvt.entry)) {
+							$.animated('pulse')
 							$.sound('boo')
 							xvt.out('\n\nThe crowd throws rocks at you as you ride out of the arena.\n')
 							$.player.jl++
-							//opponent.user.jw++
-							//$.saveUser(opponent)
 							if ($.run(`UPDATE Players set jw=jw+1 WHERE id='${opponent.user.id}'`).changes)
 								$.log(opponent.user.id, `\n${$.player.handle} forfeited to you in a joust.`)
+							xvt.waste(250)
+							$.animated('slideOutRight')
 							menu()
 							return
 						}
@@ -154,47 +155,45 @@ function choice() {
 							while(!result)
 								result = (ability + $.dice(factor * $.player.level)) - (versus + $.dice(factor * opponent.user.level))
 							if(result > 0) {
-								//$.sound('hit')
+								$.sound('wall')
 								xvt.out(xvt.green, '-*>', xvt.bright, xvt.white, ' Thud! ', xvt.normal, xvt.green,'<*-  ', xvt.reset, 'A hit!  You win this pass!\n')
 								if (++jw == 3) {
+									$.animated('hinge')
 									xvt.out('\nYou have won the joust!\n')
 									xvt.waste(250)
 									$.sound('cheer')
 									xvt.out('The crowd cheers!\n')
-									xvt.waste(250)
 									let reward = new $.coins($.money(opponent.user.level))
 									xvt.out('You win ', reward.carry(), '!\n')
 									$.player.coin.value += reward.value
 									$.player.jw++
-									//opponent.user.jl++
-									//$.saveUser(opponent)
 									if ($.run(`UPDATE Players set jl=jl+1 WHERE id='${opponent.user.id}'`).changes)
 										$.log(opponent.user.id, `\n${$.player.handle} beat you in a joust and got ${reward.carry()}.`)
+									xvt.waste(250)
 									menu()
 									return
 								}
 							}
 							else {
+								$.animated('shake')
 								$.sound('oof')
 								xvt.out(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.normal, xvt.magenta,'<^  ', xvt.reset
 									, $.who(opponent, 'He'), 'hits!  You lose this pass!\n'
 								)
 								if (++jl == 3) {
 									xvt.out('\nYou have lost the joust!\n')
-									xvt.waste(250)
 									$.sound('boo')
 									xvt.out('The crowd boos you!\n')
 									xvt.waste(250)
 									let reward = new $.coins($.money($.player.level))
 									xvt.out(opponent.user.handle, ' spits on your face.\n')
 									$.player.jl++
-									//opponent.user.coin.value += reward.value
-									//opponent.user.jw++
-									//$.saveUser(opponent)
 									if ($.run(`UPDATE Players set jw=jw+1, coin=coin+${reward.value} WHERE id='${opponent.user.id}'`).changes)
 										$.log(opponent.user.id, `\n${$.player.handle} lost to you in a joust.  You got ${reward.carry()}.`)
 									$.news(`\tlost to ${opponent.user.handle} in a joust`)
 									$.wall(`lost to ${opponent.user.handle} in a joust`)
+									xvt.waste(250)
+									$.animated('slideOutRight')
 									menu()
 									return
 								}
@@ -474,7 +473,7 @@ function MonsterFights(): boolean {
 					Battle.engage('Monster', $.online, monster, menu)
 				}
 				else {
-					$.animated('fadeOutUp')
+					$.animated('fadeOut')
 					menu()
 				}
 			}, prompt:'Fight this demon (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
@@ -522,7 +521,7 @@ function MonsterFights(): boolean {
 					Battle.engage('Monster', $.online, monster, menu)
 				}
 				else {
-					$.animated('fadeOutUp')
+					$.animated('fadeOut')
 					menu()
 				}
 			}, prompt:'Will you fight it (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
