@@ -288,8 +288,17 @@ export function menu(suppress = false) {
 		xvt.out(xvt.reset, '\n')
 	}
 
+	if (process.stdout.rows && process.stdout.rows !== $.player.rows) {
+		xvt.out('\n', xvt.yellow, xvt.Empty[xvt.emulation], xvt.bright
+			, `Resetting your USER ROW setting (${$.player.rows}) to detected size ${process.stdout.rows}`
+			, xvt.reset)
+		$.player.rows = process.stdout.rows
+		xvt.out(`\x1B[1;${$.player.rows}r`)
+		xvt.plot($.player.rows, 1)
+	}
+	xvt.out('\x06')     //  insert any wall messages here
+
 	//	user input
-    xvt.out('\x06')     //  insert any wall messages here
 	xvt.app.form = {
         'command': { cb:command, cancel:'y', enter:'?', eol:false, timeout:20 }
     }

@@ -16,16 +16,17 @@ import { Terminal, ITerminalOptions } from 'xterm'
 import * as fit from 'xterm/lib/addons/fit/fit'
 
 let term: Terminal
-let cols = 80, rows = 24
+let cols = 80, rows = 25
 let options: ITerminalOptions = {
-	cursorBlink: false, enableBold: true, cols: cols, rows: rows, scrollback: 480,
-	fontFamily: 'Consolas,Lucida Console,monospace', fontSize: 18,
+	bellStyle: 'none', cursorBlink: false, cols: cols, rows: rows, scrollback: 500,
+	fontFamily: 'Consolas,Lucida Console,monospace', fontSize: 20,
+	fontWeight: 'normal', fontWeightBold: 'normal',
 	theme: {
 		foreground: '#c1c2c8', background: '#010208',
 		black: '#000000', red: '#a00000', green: '#00a000', yellow: '#c8a000',
 		blue: '#0000a0', magenta: '#a000a0', cyan: '#00a0a0', white: '#c8c8c8',
-		brightBlack: '#646464', brightRed: '#fa0000', brightGreen: '#00fa00', brightYellow: '#fafa00',
-		brightBlue: '#0000fa', brightMagenta: '#fa00fa', brightCyan: '#00fafa', brightWhite: '#fafafa'
+		brightBlack: '#646464', brightRed: '#fb0000', brightGreen: '#00fb00', brightYellow: '#fbfb00',
+		brightBlue: '#0000fb', brightMagenta: '#fb00fb', brightCyan: '#00fbfb', brightWhite: '#fbfbfb'
 	}
 }
 
@@ -56,48 +57,33 @@ window.onresize = () => {
 			I = css
 	}
 
-	Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': '70%' })
-	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': '30%' })
-
-	//  client has a targeted ROWSxCOLS goal, adjust terminal within browser window
-	let fontSize = term.getOption('fontSize')
+	//  guestimate side panel sizing within required terminal width
 	let xy = fit.proposeGeometry(term)
+	let w = Math.trunc(parseInt(I.style.width) * (xy.cols || 80) / 80) + '%'
+	w = parseInt(w) < 28 ? '28%' : parseInt(w) > 42 ? '42%' : w
+	let v = (100 - parseInt(w)) + '%'
+	Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': v })
+	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': w })
+	xy = fit.proposeGeometry(term)
+	let fontSize = term.getOption('fontSize')
+	fontSize = Math.trunc(fontSize * (xy.cols || 80) / 80)
+	term.setOption('fontSize', fontSize)
 
-	//  possibly expand side panel without compromising terminal width
-	let w = '30'
-	let v = w
-	while (xy.cols > 81 && parseInt(w) < 40) {
-		w = (parseInt(w) + 2) + '%'
-		v = (100 - parseInt(w)) + '%'
-		Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': v })
-		Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': w })
-		xy = fit.proposeGeometry(term)
-	}
-
-	//  possibly upsize font until it fits targeted size
-	while ((xy = fit.proposeGeometry(term)).rows > 25 && xy.cols > 80) {
-		term.setOption('fontSize', ++fontSize)
-	}
-
-	//  possibly shrink font until it fits targeted size
-	while (fontSize > 8 && ((xy = fit.proposeGeometry(term)).cols < 80 || xy.rows < 25)) {
-		term.setOption('fontSize', --fontSize)
-	}
-
-	//  make it stick
+	//  and make it stick
+	xy = fit.proposeGeometry(term)
 	cols = 80
 	rows = xy.rows
 	term.resize(cols, rows)
 
 	//	tweak window widths inside the browser
-	v = (term.renderer.dimensions.actualCellWidth * cols) + 'px'
+	v = (term.renderer.dimensions.actualCellWidth * cols + 17) + 'px'
 	Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': v })
 	w = (window.innerWidth - parseInt(v) > 1 ? window.innerWidth - parseInt(v) : 1) + 'px'
 	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': w })
 }
 
 document.getElementById('lurker-list').onchange = () => {
-	let watch = <HTMLOptionsCollection>document.getElementById('lurker-list')
+	let watch: HTMLOptionsCollection = document.getElementById('lurker-list')
 	wpid = parseInt(watch[watch.selectedIndex].value)
 
 	let stylesheet = document.styleSheets[0]
@@ -109,8 +95,8 @@ document.getElementById('lurker-list').onchange = () => {
 
 	document.getElementById('terminal').hidden = false;
 	term = new Terminal({
-		cursorBlink: false, enableBold: true, scrollback: 0,
-		fontFamily: 'Consolas,Lucida Console,monospace', fontSize: 16, theme: {
+		cursorBlink: false, scrollback: 0,
+		fontFamily: 'Consolas,Lucida Console,monospace', fontSize: 18, theme: {
 			foreground: '#c1c2c8', background: '#040820',
 			black: '#000000', red: '#a00000', green: '#00a000', yellow: '#c8a000',
 			blue: '#0000a0', magenta: '#a000a0', cyan: '#00a0a0', white: '#c8c8c8',
@@ -199,7 +185,7 @@ function newSession() {
 
 	term.on('resize', function (size) {
 		let resize = term.getOption('fontSize')
-		let style = resize < 15 ? 'S' : resize > 23 ? 'L' : 'M'
+		let style = resize < 18 ? 'S' : resize > 26 ? 'L' : 'M'
 		XT(`@action(Size${style})`)
 
 		if (pid < 1) return

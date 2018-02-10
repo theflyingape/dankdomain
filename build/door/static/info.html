@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en-US">
-
 <head>
 <title>Dank Domain: the return of Hack & Slash</title>
 <link rel="manifest" href="manifest.json">
@@ -180,14 +179,17 @@ function receive(event) {
 
 function SizeS() {
   document.body.style.fontSize = '75%';
+  currentCMD = null;
 }
 
 function SizeM() {
   document.body.style.fontSize = '100%';
+  currentCMD = null;
 }
 
 function SizeL() {
   document.body.style.fontSize = '125%';
+  currentCMD = null;
 }
 
 function cmd(html) {
@@ -541,7 +543,6 @@ function wager() {
 }
 
 function nmeResize(effect, func) {
-  //currentCMD = null;
   if (/^<table.*/.test(document.getElementById('nme').innerHTML)) return;
   h = window.innerHeight - document.getElementById('command').clientHeight;
   document.getElementById('nme').style.height = h + 'px';
@@ -551,15 +552,13 @@ function nmeResize(effect, func) {
 }
 </script>
 </head>
-
 <body onload="Logon();">
   <div id="command"></div>
   <div class="nme" id="nme"></div>
-  <!--
-<script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+<!--
+  <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
 -->
 </body>
-
 </html>

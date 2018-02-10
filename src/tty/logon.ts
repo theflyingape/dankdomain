@@ -300,9 +300,6 @@ function welcome() {
             xvt.out('not available (', err, ')\n')
         }
 
-        if (process.env.LINES && +process.env.LINES !== $.player.rows)
-            xvt.out('\n', xvt.yellow, 'Warning: ', xvt.bright
-                , `Your USER ROW setting ${$.player.rows} does not match detected login size: ${process.env.LINES}`)
         if (2 * $.player.jw < $.player.jl) {
             xvt.out('\n', xvt.magenta, 'Helpful: ', xvt.bright, `Your poor jousting stats are being reset.`)
             $.player.jl = 0

@@ -29,7 +29,7 @@ module ttyMain
     if (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM))  xvt.emulation = 'dumb'
     else if (/^lisa|^ncsa|^pcvt|^vt/i.test(process.env.TERM))   xvt.emulation = 'VT'
     else if (/ansi|cygwin|^pc/i.test(process.env.TERM))         xvt.emulation = 'PC'
-    else                                                        xvt.emulation = 'XT'
+    else                                                        xvt.emulation = ''
 
     xvt.app.form = {
 	    'enq1': { cb:() => { 
@@ -48,10 +48,10 @@ module ttyMain
         }, prompt:'\x05', enq:true }
     }
 
-    if (process.argv.length < 3)
+    if (!xvt.emulation && process.argv.length < 3)
         xvt.app.focus = 'enq1'
     else {
-        xvt.emulation = process.argv[2].toUpperCase()
+        xvt.emulation = xvt.emulation || process.argv[2].toUpperCase()
     //  initiate user login sequence: id, handle, or a new registration
         require('./tty/logon')
     }

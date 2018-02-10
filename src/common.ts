@@ -1808,6 +1808,13 @@ export function display(title:string, back:number, fore:number, suppress:boolean
         }
     }
 
+    if (process.stdout.rows && process.stdout.rows !== player.rows) {
+        xvt.out('\n', xvt.yellow, xvt.Empty[xvt.emulation], xvt.bright
+            , `Resetting your USER ROW setting (${player.rows}) to detected size ${process.stdout.rows}`
+            , xvt.reset)
+        player.rows = process.stdout.rows
+    }
+
     if (hint && access.roleplay && dice(+player.expert * (player.immortal + 1) * player.level) == 1)
         xvt.out('\n', xvt.bright, xvt.green, hint, xvt.reset)
 
