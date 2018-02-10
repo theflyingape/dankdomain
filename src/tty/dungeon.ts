@@ -138,6 +138,10 @@ export function menu(suppress = false) {
 	}
 
 //	is a redraw needed?
+	if (process.stdout.rows && process.stdout.rows !== $.player.rows) {
+		$.player.rows = process.stdout.rows
+		refresh = true
+	}
 	if (refresh) {
 		drawLevel()
 		refresh = false
@@ -288,14 +292,6 @@ export function menu(suppress = false) {
 		xvt.out(xvt.reset, '\n')
 	}
 
-	if (process.stdout.rows && process.stdout.rows !== $.player.rows) {
-		xvt.out('\n', xvt.yellow, xvt.Empty[xvt.emulation], xvt.bright
-			, `Resetting your USER ROW setting (${$.player.rows}) to detected size ${process.stdout.rows}`
-			, xvt.reset)
-		$.player.rows = process.stdout.rows
-		xvt.out(`\x1B[1;${$.player.rows}r`)
-		xvt.plot($.player.rows, 1)
-	}
 	xvt.out('\x06')     //  insert any wall messages here
 
 	//	user input

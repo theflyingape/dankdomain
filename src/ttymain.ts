@@ -26,10 +26,10 @@ module ttyMain
     xvt.sessionAllowed = 300
     if ((xvt.modem = xvt.validator.isEmpty(process.env.REMOTEHOST)))
         xvt.out('\nCARRIER DETECTED\n')
-    if (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM))  xvt.emulation = 'dumb'
-    else if (/^lisa|^ncsa|^pcvt|^vt/i.test(process.env.TERM))   xvt.emulation = 'VT'
-    else if (/ansi|cygwin|^pc/i.test(process.env.TERM))         xvt.emulation = 'PC'
-    else                                                        xvt.emulation = ''
+    if (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM))          xvt.emulation = 'dumb'
+    else if (/^linux|^lisa|^ncsa|^pcvt|^vt/i.test(process.env.TERM))    xvt.emulation = 'VT'
+    else if (/ansi|cygwin|^pc/i.test(process.env.TERM))                 xvt.emulation = 'PC'
+    else                                                                xvt.emulation = ''
 
     xvt.app.form = {
 	    'enq1': { cb:() => { 
