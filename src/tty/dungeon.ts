@@ -492,7 +492,13 @@ function doMove(): boolean {
 				fs.accessSync('door/static/images/' + img + '.jpg', fs.constants.F_OK)
 				$.profile({ jpg:img, effect:ROOM.monster[0].effect })
 			} catch(e) {
-				$.profile({ png:'monster/' + ROOM.monster[0].user.pc.toLowerCase(), effect:ROOM.monster[0].effect })
+				if ($.PC.name['player'][ROOM.monster[0].user.pc] && ROOM.monster[0].user.pc === $.player.pc)
+					$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : ''), effect:ROOM.monster[0].effect })
+				else
+					$.profile({
+						png:'monster/' + ($.PC.name['monster'][ROOM.monster[0].user.pc] || $.PC.name['tavern'][ROOM.monster[0].user.pc] ? ROOM.monster[0].user.pc.toLowerCase() : 'monster'),
+						effect:ROOM.monster[0].effect
+					})
 			}
 		}
 		else {
@@ -501,18 +507,22 @@ function doMove(): boolean {
 				, ' . . . \n')
 			let m = {}
 			for (let i = 0; i < ROOM.monster.length; i++)
-				m['mob' + (i+1)] = 'monster/' + ROOM.monster[i].user.pc.toLowerCase()
+				m['mob' + (i+1)] = 'monster/' + ($.PC.name['monster'][ROOM.monster[i].user.pc] || $.PC.name['tavern'][ROOM.monster[i].user.pc] ? ROOM.monster[i].user.pc.toLowerCase() : 'monster')
 			$.profile(m)
 		}
 		xvt.waste(1000)
 
 		for (let n = 0; n < ROOM.monster.length; n++) {
 			$.cat('dungeon/' + ROOM.monster[n].user.handle)
+			xvt.out(xvt.reset, '\n')
+
 			let what = ROOM.monster[n].user.handle
 			if (ROOM.monster[n].user.xplevel > 0)
-				what = [xvt.attr(xvt.faint, 'lesser'), xvt.attr(xvt.normal, ''), xvt.attr(xvt.bright, 'greater')][ROOM.monster[n].user.xplevel - ROOM.monster[n].user.level + 1] + ' ' + what
-			xvt.out(xvt.reset, '\nIt\'s', $.an(what), xvt.reset, '... ')
+				what = [xvt.attr(xvt.faint, 'lesser '), '', xvt.attr(xvt.bright, xvt.white, 'greater ')]
+					[ROOM.monster[n].user.xplevel - ROOM.monster[n].user.level + 1] + what
+			xvt.out('It\'s', $.an(what), xvt.reset, '... ')
 			xvt.waste(400)
+
 			if ($.player.novice || ($.dice(ROOM.monster[n].user.xplevel / 5 + 5) * (101 - $.online.cha + deep) > 1)) {
 				if (ROOM.monster[n].user.xplevel > 0)
 					xvt.out('and it doesn\'t look friendly.\n')
@@ -1129,7 +1139,7 @@ function doMove(): boolean {
 					let pouch = $.player.coin.amount.split(',')
 					x = $.dice(pouch.length) - 1
 					y = 'csgp'.indexOf(pouch[x].substr(-1))
-					xvt.out('pouch of ', ['copper','silver','gold','platinum'][y], ' pieces')
+					xvt.out('pouch of ', xvt.bright, [xvt.red,xvt.cyan,xvt.yellow,xvt.magenta][y], ['copper','silver','gold','platinum'][y], xvt.reset, ' pieces')
 					$.player.coin.value -= new $.coins(pouch[x]).value
 				}
 				else
@@ -2270,8 +2280,9 @@ export function teleport() {
 
 function quaff(v: number, it = true) {
 	if ($.player.coward && v > 8) v -= v % 2
-	xvt.out(v % 2 ? xvt.green : xvt.red)
-	xvt.out('It was', $.an(potion[v]), '.\n', xvt.reset)
+	xvt.out(xvt.reset, 'It was')
+	xvt.out(v % 2 ? xvt.green : xvt.red, $.an(potion[v]))
+	xvt.out(xvt.reset, '.\n')
 
 	if (it) {
 		$.sound('quaff', 6)
