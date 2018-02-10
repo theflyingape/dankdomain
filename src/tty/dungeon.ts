@@ -510,8 +510,8 @@ function doMove(): boolean {
 			$.cat('dungeon/' + ROOM.monster[n].user.handle)
 			let what = ROOM.monster[n].user.handle
 			if (ROOM.monster[n].user.xplevel > 0)
-				what = ['lesser', '', 'greater'][ROOM.monster[n].user.xplevel - ROOM.monster[n].user.level + 1] + what
-			xvt.out(xvt.reset, '\nIt\'s', $.an(ROOM.monster[n].user.handle), '... ')
+				what = [xvt.attr(xvt.faint, 'lesser'), xvt.attr(xvt.normal, ''), xvt.attr(xvt.bright, 'greater')][ROOM.monster[n].user.xplevel - ROOM.monster[n].user.level + 1] + ' ' + what
+			xvt.out(xvt.reset, '\nIt\'s', $.an(what), xvt.reset, '... ')
 			xvt.waste(400)
 			if ($.player.novice || ($.dice(ROOM.monster[n].user.xplevel / 5 + 5) * (101 - $.online.cha + deep) > 1)) {
 				if (ROOM.monster[n].user.xplevel > 0)
