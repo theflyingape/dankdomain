@@ -16,8 +16,8 @@ module Logon
 {
     let tax: coins = new $.coins(0)
 
-    //  allow hardcopy and monochrome terminals to still play!  :)
-    if (!xvt.emulation.match('VT|PC|XT'))                               xvt.emulation = 'dumb'
+    if (!xvt.emulation.match('VT|PC|XT'))
+        xvt.emulation = 'VT'
 
     let title = process.title + ' (' + xvt.emulation + ')'
     if (xvt.emulation !== 'VT')

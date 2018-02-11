@@ -1,6 +1,6 @@
 {
   "name": "dankdomain",
-  "version": "1.0.7",
+  "version": "1.1.0",
   "description": "Dank Domain: the return of Hack & Slash (1990-2014)",
   "main": "ttymain",
   "publisher": "theflyingape",
@@ -41,7 +41,6 @@
     "node-pty": "^0.6.10",
     "nodemailer": "^4.4.2",
     "nodemailer-smtp-transport": "^2.7.4",
-    "popper.js": "^1.13.0",
     "sprintf-js": "^1.1.1",
     "title-case": "^2.1.1",
     "xterm": "^3.1.0",

@@ -1343,7 +1343,7 @@ function doMove(): boolean {
 			}
 			else {
 				xvt.waste(600)
-				xvt.out('\nYou quaff it without hesitation.\n')
+				xvt.out('\nYou quaff it without hesitation.', xvt.reset, '\n')
 				xvt.waste(600)
 				quaff(ROOM.giftValue)
 				ROOM.giftItem = ''
@@ -2280,10 +2280,7 @@ export function teleport() {
 
 function quaff(v: number, it = true) {
 	if ($.player.coward && v > 8) v -= v % 2
-	xvt.out(xvt.reset, 'It was')
-	xvt.out(v % 2 ? xvt.green : xvt.red, $.an(potion[v]))
-	xvt.out(xvt.reset, '.\n')
-
+	xvt.out('It was', v % 2 ? xvt.green : xvt.red, $.an(potion[v]), xvt.white, '.', xvt.reset, '\n')
 	if (it) {
 		$.sound('quaff', 6)
 		switch (v) {
