@@ -31,13 +31,31 @@ module Gambling
 	interface card {
 		face:string
 		value:number
+		emoji:string
 	}
 	const card:card[] = [
-		{ face:'*Joker*', value:-1 }, { face:'=Ace=', value:1 },
-		{ face:'Two', value:2 }, { face:'Three', value:3 }, { face:'Four', value:4 },
-		{ face:'Five', value:5 }, { face:'Six', value:6 }, { face:'Seven', value:7 },
-		{ face:'Eight', value:8 }, { face:'Nine', value:9 }, { face:'Ten', value:10 },
-		{ face:'!Jack!', value:10 }, { face:'$Queen$', value:10 }, { face:'&King&', value:10 }
+		{ face:'*Joker*', value:-1, emoji:'\uD83C\uDCBF' },
+		{ face:'=Ace=', value:1, emoji:'\uD83C\uDCA1' },
+		{ face:'Two', value:2, emoji:'\uD83C\uDCA2' }, { face:'Three', value:3, emoji:'\uD83C\uDCA3' }, { face:'Four', value:4, emoji:'\uD83C\uDCA4' },
+		{ face:'Five', value:5, emoji:'\uD83C\uDCA5' }, { face:'Six', value:6, emoji:'\uD83C\uDCA6' }, { face:'Seven', value:7, emoji:'\uD83C\uDCA7' },
+		{ face:'Eight', value:8, emoji:'\uD83C\uDCA8' }, { face:'Nine', value:9, emoji:'\uD83C\uDCA9' }, { face:'Ten', value:10, emoji:'\uD83C\uDCAA' },
+		{ face:'!Jack!', value:10, emoji:'\uD83C\uDCAB' }, { face:'$Queen$', value:10, emoji:'\uD83C\uDCAC' }, { face:'&King&', value:10, emoji:'\uD83C\uDCAE' },
+		{ face:'=Ace=', value:1, emoji:'\uD83C\uDCB1' },
+		{ face:'Two', value:2, emoji:'\uD83C\uDCB2' }, { face:'Three', value:3, emoji:'\uD83C\uDCB3' }, { face:'Four', value:4, emoji:'\uD83C\uDCB4' },
+		{ face:'Five', value:5, emoji:'\uD83C\uDCB5' }, { face:'Six', value:6, emoji:'\uD83C\uDCB6' }, { face:'Seven', value:7, emoji:'\uD83C\uDCB7' },
+		{ face:'Eight', value:8, emoji:'\uD83C\uDCB8' }, { face:'Nine', value:9, emoji:'\uD83C\uDCB9' }, { face:'Ten', value:10, emoji:'\uD83C\uDCBA' },
+		{ face:'!Jack!', value:10, emoji:'\uD83C\uDCBB' }, { face:'$Queen$', value:10, emoji:'\uD83C\uDCBC' }, { face:'&King&', value:10, emoji:'\uD83C\uDCBE' },
+		{ face:'=Ace=', value:1, emoji:'\uD83C\uDCC1' },
+		{ face:'Two', value:2, emoji:'\uD83C\uDCC2' }, { face:'Three', value:3, emoji:'\uD83C\uDCC3' }, { face:'Four', value:4, emoji:'\uD83C\uDCC4' },
+		{ face:'Five', value:5, emoji:'\uD83C\uDCC5' }, { face:'Six', value:6, emoji:'\uD83C\uDCC6' }, { face:'Seven', value:7, emoji:'\uD83C\uDCC7' },
+		{ face:'Eight', value:8, emoji:'\uD83C\uDCC8' }, { face:'Nine', value:9, emoji:'\uD83C\uDCC9' }, { face:'Ten', value:10, emoji:'\uD83C\uDCCA' },
+		{ face:'!Jack!', value:10, emoji:'\uD83C\uDCCB' }, { face:'$Queen$', value:10, emoji:'\uD83C\uDCCC' }, { face:'&King&', value:10, emoji:'\uD83C\uDCCE' },
+		{ face:'=Ace=', value:1, emoji:'\uD83C\uDCD1' },
+		{ face:'Two', value:2, emoji:'\uD83C\uDCD2' }, { face:'Three', value:3, emoji:'\uD83C\uDCD3' }, { face:'Four', value:4, emoji:'\uD83C\uDCD4' },
+		{ face:'Five', value:5, emoji:'\uD83C\uDCD5' }, { face:'Six', value:6, emoji:'\uD83C\uDCD6' }, { face:'Seven', value:7, emoji:'\uD83C\uDCD7' },
+		{ face:'Eight', value:8, emoji:'\uD83C\uDCD8' }, { face:'Nine', value:9, emoji:'\uD83C\uDCD9' }, { face:'Ten', value:10, emoji:'\uD83C\uDCDA' },
+		{ face:'!Jack!', value:10, emoji:'\uD83C\uDCDB' }, { face:'$Queen$', value:10, emoji:'\uD83C\uDCDC' }, { face:'&King&', value:10, emoji:'\uD83C\uDCDE' },
+		{ face:'*Joker*', value:-1, emoji:'\uD83C\uDCCF' }
 	]
 	let deck:number[]
 	let pile:number
@@ -117,9 +135,11 @@ function amount() {
 			dealer.push(deck[pile++])
 			player.push(deck[pile++])
 			dealer.push(deck[pile++])
-			xvt.out(xvt.green, '\nDealer\'s hand: ',
-				xvt.red, '[', xvt.white, 'DOWN', xvt.red, '] ',
-				xvt.red, '[', xvt.white, card[dealer[1]].face, xvt.red, ']\n')
+			xvt.out(xvt.green, '\nDealer\'s hand:')
+			if ($.player.emulation == 'XT')
+				xvt.out(xvt.white, ' \uD83C\uDCA0 ', card[dealer[1]].emoji)
+			xvt.out(' '.repeat(8))
+			xvt.out(xvt.red, '[', xvt.white, 'DOWN', xvt.red, '] [', xvt.white, card[dealer[1]].face, xvt.red, ']\n')
 			myhand = ShowHand(1, player)
 
 			if (myhand == 21) {
@@ -317,19 +337,15 @@ function amount() {
 						return
 					}
 					$.sound(card[deck[--pick]].value > 0 ? 'click' : 'boom', 6)
-					xvt.out(' - ', xvt.bright,
-						xvt.red, '[', xvt.white, card[deck[pick]].face, xvt.red, ']',
-						xvt.reset, '\n'
-					)
+					xvt.out(' - ', card[deck[pick]].emoji, xvt.bright, xvt.red, ' [', xvt.white, card[deck[pick]].face, xvt.red, ']')
+					xvt.out(xvt.reset, '\n')
 					xvt.waste(500)
 
 					xvt.out('Dealer picks card #')
 					while ((dealer = $.dice(54)) - 1 == pick);
 					$.sound(card[deck[--dealer]].value > 0 ? 'click' : 'boom', 6)
-					xvt.out(dealer.toString(), ' - ',
-						xvt.red, '[', xvt.white, card[deck[dealer]].face, xvt.red, ']',
-						xvt.reset, '\n\n'
-					)
+					xvt.out((dealer + 1).toString(), ' - ', card[deck[dealer]].emoji, xvt.bright, xvt.red, ' [', xvt.white, card[deck[dealer]].face, xvt.red, ']')
+					xvt.out(xvt.reset, '\n\n')
 					xvt.waste(500)
 
 					if (card[deck[pick]].value > card[deck[dealer]].value) {
@@ -611,15 +627,19 @@ function amount() {
 		let value:number = 0
 		ace = 0
 
-		xvt.out(who ? xvt.bright : xvt.reset, xvt.green, ['Dealer', 'Player'][who], '\'s hand: ', xvt.red)
+		xvt.out(who ? xvt.bright : xvt.reset, xvt.green, ['Dealer', 'Player'][who], '\'s hand:', xvt.white)
+		if ($.player.emulation == 'XT')
+			for (let i = 0; i < hand.length; i++)
+				xvt.out(' ', card[hand[i]].emoji)
+		xvt.out(' '.repeat(12 - 2 * hand.length))
 		for (let i = 0; i < hand.length; i++) {
-			xvt.out('[', xvt.white, card[hand[i]].face, xvt.red, '] ')
+			xvt.out(xvt.red, '[', xvt.white, card[hand[i]].face, xvt.red, '] ')
 			value += card[hand[i]].value
 			if (card[hand[i]].value == 1)
-					ace++
+				ace++
 		}
 		for (let i = 0; i < ace && value + 10 < 22; i++)
-				value += 10
+			value += 10
 		xvt.out(xvt.reset, `= ${value}\n`)
 		xvt.waste(500)
 		return(value)
@@ -679,10 +699,10 @@ function amount() {
 function shuffle(jokers = false) {
 	deck = [ 0,
 		1,2,3,4,5,6,7,8,9,10,11,12,13,
-		1,2,3,4,5,6,7,8,9,10,11,12,13,
-		1,2,3,4,5,6,7,8,9,10,11,12,13,
-		1,2,3,4,5,6,7,8,9,10,11,12,13,
-		0 ]
+		14,15,16,17,18,19,20,21,22,23,24,25,26,
+		27,28,29,30,31,32,33,34,35,36,37,38,39,
+		40,41,42,43,44,45,46,47,48,49,50,51,52,
+		53 ]
 	xvt.out(xvt.faint, '\nShuffling a new deck ')
 	xvt.waste(250)
 	let cut = $.dice(6) + 4

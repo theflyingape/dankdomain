@@ -26,7 +26,7 @@
     "Chancellor": { "F":"Lady Chancellor", "M":"Lord Chancellor", "calls":3, "minutes":60, "promote":0, "verify":false, "bulletin":true, "roleplay":true, "emoji":"\uD83D\uDC42" },
     "Chief Justice": { "F":"Lady Justice", "M":"Lord Justice", "calls":3, "minutes":60, "promote":0, "verify":false, "bulletin":true, "roleplay":true, "emoji":"\uD83D\uDC40" },
     "Princess": { "F":"Your Royal Highness", "calls":3, "minutes":60, "promote":0, "verify":false, "bulletin":true, "roleplay":true, "emoji":"\uD83D\uDC78" },
-    "Prince": { "M":"Your Royal Highness", "calls":3, "minutes":60, "promote":0, "verify":false, "bulletin":true, "roleplay":true, "emoji":"\uD83D\uDD37" },
+    "Prince": { "M":"Your Royal Highness", "calls":3, "minutes":60, "promote":0, "verify":false, "bulletin":true, "roleplay":true, "emoji":"\uD83D\uDEE1" },
     "Queen": { "F":"Your Majesty", "calls":3, "minutes":60, "promote":0, "verify":false, "bulletin":true, "roleplay":true, "sysop":true, "emoji":"\uD83D\uDC8E" },
     "King": { "M":"Your Majesty", "calls":3, "minutes":60, "promote":0, "verify":false, "bulletin":true, "roleplay":true, "sysop":true, "emoji":"\uD83D\uDC51" }
 }
