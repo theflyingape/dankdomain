@@ -33,17 +33,18 @@ dns.lookup('localhost', (err, addr, family) => {
   app.use('/xterm/door', express.static(__dirname + '/static'))
 
   app.post('/xterm/door/player', function (req, res) {
-    var cols = parseInt(req.query.cols),
-        rows = parseInt(req.query.rows),
-        term = pty.spawn('sh', [ "-l", "../logins.sh" ], {
+
+    let cols = parseInt(req.query.cols)
+    let rows = parseInt(req.query.rows)
+    let term = pty.spawn('sh', [ "-l", "../logins.sh" ], {
           name: 'xterm-256color',
           cols: cols || 80,
           rows: rows || 24,
           cwd: __dirname,
           env: process.env
         })
-
     let pid = parseInt(term.pid)
+
     console.log(`Create PLAYER session ${pid} from remote host: ${req.header('x-forwarded-for') || req.connection.remoteAddress} (${req.hostname})`)
     sessions[pid] = term
     logs[pid] = ''

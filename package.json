@@ -38,7 +38,7 @@
     "express": "^4.16.2",
     "express-ws": "^3.0.0",
     "fs-extra": "^2.1.2",
-    "node-pty": "^0.6.10",
+    "node-pty": "^0.7.4",
     "nodemailer": "^4.4.2",
     "nodemailer-smtp-transport": "^2.7.4",
     "sprintf-js": "^1.1.1",

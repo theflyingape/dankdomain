@@ -76,10 +76,12 @@ window.onresize = () => {
 	term.resize(cols, rows)
 
 	//	tweak window widths inside the browser
-	v = (term.renderer.dimensions.actualCellWidth * cols + 17) + 'px'
+	let xt = document.getElementsByClassName('xterm-screen')[0]
+	v = xt.clientWidth + 'px'
 	Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': v })
 	w = (window.innerWidth - parseInt(v) > 1 ? window.innerWidth - parseInt(v) : 1) + 'px'
 	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': w })
+	xt.style.width = document.getElementsByClassName('xterm-scroll-area')[0].clientWidth + 'px'
 }
 
 document.getElementById('lurker-list').onchange = () => {
