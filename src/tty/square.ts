@@ -56,7 +56,7 @@ export function menu(suppress = true) {
 				, xvt.normal, ' into you from'
 				, xvt.bright, ' out of the shadows'
 				, xvt.reset, ' ... ')
-			xvt.waste(1200)
+			xvt.waste(1500)
 			$.animated('fadeOutRight')
 			if ($.dice($.online.cha / 10 + 2 * ($.player.steal + 1)) > 2 * bump.user.steal + 1)
 				xvt.out('\nwaves a pardon and moves along.\n')
@@ -70,11 +70,12 @@ export function menu(suppress = true) {
 				$.saveUser(bump)
 				$.log(bump.user.id, `\nYou picked ${$.player.handle}'s pouch holding ${v.carry()}!`)
 				$.player.coin.value -= v.value
-				xvt.out('{sigh}\n')
+				xvt.out(xvt.faint, '{sigh}', xvt.reset, '\n')
 				$.sound('oops', 8)
-				xvt.out('You notice your pouch of ', ['copper','silver','gold','platinum'][i]
-					, ' pieces has gone missing!\n')
-				xvt.waste(1500)
+				xvt.out('You notice your pouch of '
+					, xvt.bright, [xvt.red,xvt.cyan,xvt.yellow,xvt.magenta][i], ['copper','silver','gold','platinum'][i]
+					, xvt.reset, ' pieces has gone missing!\n')
+				xvt.waste(2000)
 			}
 		}
 	}

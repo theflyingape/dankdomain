@@ -43,7 +43,7 @@ dns.lookup('localhost', (err, addr, family) => {
           cwd: __dirname,
           env: process.env
         })
-    let pid = parseInt(term.pid)
+    let pid: number = term.pid
 
     console.log(`Create PLAYER session ${pid} from remote host: ${req.header('x-forwarded-for') || req.connection.remoteAddress} (${req.hostname})`)
     sessions[pid] = term
@@ -143,7 +143,7 @@ dns.lookup('localhost', (err, addr, family) => {
         }
       }
     })
-  
+
     ws.on('close', function () {
       console.log(`Closed PLAYER session ${term.pid}`)
       // Clean things up
