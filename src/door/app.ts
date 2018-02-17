@@ -34,6 +34,8 @@ dns.lookup('localhost', (err, addr, family) => {
 
   app.post('/xterm/door/player', function (req, res) {
 
+    let client = req.header('x-forwarded-for') || req.connection.remoteAddress
+    process.env.SSH_CLIENT = client
     let cols = parseInt(req.query.cols)
     let rows = parseInt(req.query.rows)
     let term = pty.spawn('sh', [ "-l", "../logins.sh" ], {
@@ -45,7 +47,7 @@ dns.lookup('localhost', (err, addr, family) => {
         })
     let pid: number = term.pid
 
-    console.log(`Create PLAYER session ${pid} from remote host: ${req.header('x-forwarded-for') || req.connection.remoteAddress} (${req.hostname})`)
+    console.log(`Create PLAYER session ${pid} from remote host: ${client} (${req.hostname})`)
     sessions[pid] = term
     logs[pid] = ''
     broadcasts[pid] = ''

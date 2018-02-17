@@ -52,6 +52,7 @@ module Common
     export let callers: caller[] = []
     export let mydeeds: deed[]
     export let reason: string = ''
+    export let whereis = {}
 
 //  all player characters
 export class Character {
@@ -1420,7 +1421,7 @@ export function reroll(user: user, dd?: string, level = 1) {
         user.calls = 0
         user.today = 0
         user.expert = false
-        user.rows = process.stdout.rows ? process.stdout.rows : 24
+        user.rows = process.stdout.rows || 24
         user.remote = ''
         user.novice = xvt.validator.isEmpty(user.id) && user.gender !== 'I'
         user.gang = ''
@@ -1809,7 +1810,7 @@ export function display(title:string, back:number, fore:number, suppress:boolean
     }
 
     if (process.stdout.rows && process.stdout.rows !== player.rows) {
-        xvt.out('\n', xvt.yellow, xvt.Empty[xvt.emulation], xvt.bright
+        if (!player.expert) xvt.out('\n', xvt.yellow, xvt.Empty[xvt.emulation], xvt.bright
             , `Resetting your USER ROW setting (${player.rows}) to detected size ${process.stdout.rows}`
             , xvt.reset)
         player.rows = process.stdout.rows

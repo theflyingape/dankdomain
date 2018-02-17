@@ -68,7 +68,7 @@ function guards(): boolean {
                             $.player.today = 0
                         $.player.lastdate = $.now().date
                         $.player.lasttime = $.now().time
-                        $.saveUser($.player)
+                        $.run(`UPDATE Players SET lastdate=${$.player.lastdate},lasttime=${$.player.lasttime},today=${$.player.today} WHERE id='${$.player.id}'`)
                         require('../email').resend()
                         return
                     }
@@ -95,7 +95,8 @@ function who() {
         // a bit hack for now, but...
         $.reroll($.player)
         $.newkeys($.player)
-        xvt.emulation = 'dumb'
+        xvt.emulation = 'VT'
+        $.player.rows = process.stdout.rows
         $.emulator(() => {
             $.player.emulation = xvt.emulation
             require('./newuser')
@@ -117,6 +118,19 @@ function who() {
 
     $.access = $.Access.name[$.player.access]
     xvt.emulation = $.player.emulation
+    $.player.rows = process.stdout.rows
+    $.player.remote = process.env.REMOTEHOST || process.env.SSH_CLIENT || ''
+    $.whereis = $.player.remote == 'localhost' || $.player.remote == '127.0.0.1' ? '' : $.player.remote
+    require('got')(`http://freegeoip.net/json/${$.whereis}`, { json: true }).then(response => {
+        if (response.body) {
+            let result = ''
+            if (response.body.ip) result = response.body.ip
+            if (response.body.city) result = response.body.city
+            if (response.body.region_code) result += (result ? ', ' : '') + response.body.region_code
+            if (response.body.country_code) result += (result ? ' ' : '') + response.body.country_code
+            if (result) $.whereis = `${$.player.remote} (${result})`
+        }
+      }).catch(error => { $.whereis += ` (${error.response.body})` })
 
     xvt.app.form['password'].prompt = $.player.handle + ', enter your password: '
     xvt.app.focus = 'password'
@@ -213,6 +227,7 @@ function password() {
     $.activate($.online, true)
     $.online.altered = true
     $.access = $.Access.name[$.player.access]
+    $.player.rows = process.stdout.rows
 
     xvt.out(xvt.clear, xvt.red, '--=:))', xvt.LGradient[xvt.emulation]
     , xvt.Red, xvt.bright, xvt.white, $.sysop.name, xvt.reset
@@ -226,7 +241,8 @@ function password() {
         xvt.out('new game starts', xvt.bright, xvt.yellow)
     xvt.out(' ', $.date2full($.sysop.dob), xvt.reset, '\n')
     xvt.out(xvt.cyan, 'Last on: ', xvt.bright, xvt.white, $.date2full($.player.lastdate), xvt.normal, '\n')
-    xvt.out(xvt.cyan, ' Online: ', xvt.bright, xvt.white, $.player.handle, xvt.normal, '\n')
+    xvt.out(xvt.cyan, ' Online: ', xvt.bright, xvt.white, $.player.handle, xvt.normal
+        , '  -  ', $.whereis, '\n')
     xvt.out(xvt.cyan, ' Access: ', xvt.bright, xvt.white, $.player.access)
     if ($.player.emulation === 'XT' && $.access.emoji)
         xvt.out(' ', $.access.emoji)
