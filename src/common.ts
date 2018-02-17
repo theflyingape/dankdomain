@@ -133,7 +133,7 @@ export class Character {
         random(type?: string): string {
             let pc: string = ''
             if (type) {
-                let i = dice(Object.keys(this.name[type]).length) - 1
+                let i = dice(Object.keys(this.name[type]).length)
                 let n = i
                 for (let dd in this.name[type])
                     if (!--n) {

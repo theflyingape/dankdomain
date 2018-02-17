@@ -2131,7 +2131,7 @@ function putMonster(r = -1, c = -1): boolean {
 		dm = monsters[Object.keys(monsters)[j]]
 		m.user.handle = Object.keys(monsters)[j]
 		$.reroll(m.user, dm.pc ? dm.pc : $.player.pc, j)
-		m.user.xplevel = level
+		if (m.user.xplevel) m.user.xplevel = level
 		m.effect = dm.effect || 'pulse'
 
 		if (dm.weapon)
