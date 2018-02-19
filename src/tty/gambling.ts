@@ -648,11 +648,11 @@ function amount() {
 		case 'S':
 			xvt.out(xvt.bright, xvt.blue, '\nSlot Machine Payout Line:', xvt.reset, '\n\n')
 			if ($.player.emulation === 'XT') {
-				xvt.out(xvt.red,     ' any 2  ', xvt.normal, '🍒 🍒 ', xvt.reset, '🔲    2x     ', xvt.yellow, 'Orange  ', xvt.normal, '🍊 🍊 🍊', xvt.reset, '    50x\n')
+				xvt.out(xvt.red,     ' any 2  ', xvt.normal, ' 🍒  🍒', xvt.reset, '    2x     ', xvt.yellow, 'Orange  ', xvt.normal, '🍊 🍊 🍊', xvt.reset, '    50x\n')
 				xvt.out(xvt.red,     'Cherry  ', xvt.normal, '🍒 🍒 🍒', xvt.reset, '    5x     ', xvt.bright, xvt.yellow, '<Bell>  ', '🔔 🔔 🔔', xvt.reset, '   100x\n')
 				xvt.out(xvt.magenta, 'Grapes  ', xvt.normal, '🍇 🍇 🍇', xvt.reset, '   10x     ', xvt.green,  '=Luck=  ', xvt.normal, '🍀 🍀 🍀', xvt.reset, '   400x\n')
 				xvt.out(xvt.bright, xvt.green,   ':Kiwi:  ', '🥝 🥝 🥝', xvt.reset, '   20x     ', xvt.cyan,   '*Wild*  ', xvt.normal, '💎 💎 💎', xvt.reset, '   500x\n')
-				xvt.out(xvt.faint,   '@Bomb@  ', xvt.normal, '💣 💣 💣', xvt.reset, '    💀 \n')
+				xvt.out(xvt.red,     ' any 2  ', xvt.normal, '🍒 🍒 ', xvt.reset, '💣   25x     ', xvt.faint,  '@Bomb@  ', xvt.normal, '💣 💣 💣', xvt.reset, '    💀 \n')
 			}
 			else {
 				xvt.out('Any 2 ', xvt.red, 'Cherry', xvt.reset, '  2x     3 ', xvt.yellow, 'Orange  ', xvt.reset, '   50x\n')
@@ -663,7 +663,7 @@ function amount() {
 			}
 
 			xvt.out('\nYou pull its arm and the wheels spin ... ')
-			xvt.waste(500)
+			$.sound('click', 4)
 
 			let bandit = [ $.dice(16) % 16, $.dice(16) % 16, $.dice(16) % 16 ]
 			for (let i = 0; i < 3; i++) {
@@ -679,7 +679,6 @@ function amount() {
 				xvt.out(xvt.reset, xvt.blue, '] ')
 			}
 			xvt.out(xvt.reset, '\n\n')
-			$.sound('click', 4)
 
 			let face = [ dial[0][bandit[0]], dial[1][bandit[1]], dial[2][bandit[2]] ]
 			payoff.value = 0
@@ -701,8 +700,10 @@ function amount() {
 					&& (face[1] == '@BOMB@' || face[1] == '*WILD*')
 					&& (face[2] == '@BOMB@' || face[2] == '*WILD*')) {
 				if ($.player.emulation === 'XT') xvt.out ('💀  ')
+				$.sound('boom', 8)
 				xvt.out('You die.\n')
-				$.sound('wild')
+				$.music('wild')
+				xvt.waste(800)
 				$.reason = 'defeated by a one-armed bandit'
 				$.logoff()
 				return
@@ -770,7 +771,7 @@ function amount() {
 			if (payoff.value) {
 				$.sound('cheer')
 				xvt.out('You win ', payoff.carry(), '!\n')
-				$.player.coin.value += payoff.value + amount.value
+				$.player.coin.value += payoff.value
 				xvt.waste(500)
 			}
 			else
