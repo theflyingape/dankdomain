@@ -692,7 +692,8 @@ function amount() {
 						xvt.out((i + j) % 8 + 30, 'YOU WIN! ')
 						xvt.out(10)
 					}
-					$.music('wild')
+					CherryBomb()
+					$.sound('wild', 50)
 					xvt.out(xvt.reset, '\n')
 				}
 			}
@@ -701,7 +702,7 @@ function amount() {
 					&& (face[2] == '@BOMB@' || face[2] == '*WILD*')) {
 				if ($.player.emulation === 'XT') xvt.out ('💀  ')
 				xvt.out('You die.\n')
-				$.music('wild')
+				$.sound('wild')
 				$.reason = 'defeated by a one-armed bandit'
 				$.logoff()
 				return
@@ -716,8 +717,9 @@ function amount() {
 						xvt.out((i + j) % 8 + 30, 'YOU WIN! ')
 						xvt.out(20)
 					}
+					CherryBomb()
+					$.sound('wild', 50)
 					xvt.out(xvt.reset, '\n')
-					$.music('wild')
 				}
 			}
 			else if ((face[0] == '<BELL>' || face[0] == '*WILD*')
@@ -729,14 +731,16 @@ function amount() {
 					xvt.out(i % 8 + 30, 'YOU WIN! ')
 					xvt.out(25)
 				}
+				CherryBomb()
 				xvt.out(xvt.reset, '\n')
-				$.music('wild')
 			}
 			else if ((face[0] == 'ORANGE' || face[0] == '*WILD*')
 					&& (face[1] == 'ORANGE' || face[1] == '*WILD*')
 					&& (face[2] == 'ORANGE' || face[2] == '*WILD*')) {
 				payoff.value = 50 * amount.value
 				$.beep()
+				$.music('wild')
+				xvt.waste(2500)
 			}
 			else if ((face[0] == ':KIWI:' || face[0] == '*WILD*')
 					&& (face[1] == ':KIWI:' || face[1] == '*WILD*')
@@ -759,32 +763,7 @@ function amount() {
 				payoff.value = 2 * amount.value
 				if (face[0] == '@BOMB@' || face[1] == '@BOMB@' || face[2] == '@BOMB@') {
 					payoff.value = 25 * amount.value
-					if ($.player.emulation === 'XT') {
-						$.music('cherry')
-						xvt.out(xvt.red)
-						for (let i = 0; i < 6; i++) {
-							xvt.out(' ', xvt.faint)
-							for (let j = 0; j < i; j++)
-								xvt.out('🍒 ')
-							xvt.out(xvt.normal)
-							xvt.out('🍒 \r')
-							xvt.waste(250)
-						}
-						xvt.out(xvt.bright, xvt.red, '🍒  CHERRY 🍒  ', xvt.reset, '\n')
-						for (let i = 0; i < 4; i++) {
-							xvt.out(' ', xvt.faint)
-							for (let j = 0; j < i; j++)
-								xvt.out('💣 ')
-							xvt.out(xvt.normal)
-							xvt.out('💣 \r')
-							xvt.waste(400)
-						}
-						xvt.out(xvt.bright, xvt.black, '💣  BOMB!! 💣  ', xvt.reset, '\n')
-					}
-					else {
-						$.beep()
-						xvt.out(xvt.bright, xvt.red, 'Cherry ', xvt.black, 'BOMB', xvt.reset, '!!\n')
-					}
+					CherryBomb()
 				}
 			}
 
@@ -799,6 +778,35 @@ function amount() {
 		}
 
 	menu()
+
+	function CherryBomb() {
+		if ($.player.emulation === 'XT') {
+			$.music('cherry')
+			xvt.out(xvt.red)
+			for (let i = 0; i < 6; i++) {
+				xvt.out(' ', xvt.faint)
+				for (let j = 0; j < i; j++)
+					xvt.out('🍒 ')
+				xvt.out(xvt.normal)
+				xvt.out('🍒 \r')
+				xvt.waste(250)
+			}
+			xvt.out(xvt.bright, xvt.red, '🍒  CHERRY 🍒  ', xvt.reset, '\n')
+			for (let i = 0; i < 4; i++) {
+				xvt.out(' ', xvt.faint)
+				for (let j = 0; j < i; j++)
+					xvt.out('💣 ')
+				xvt.out(xvt.normal)
+				xvt.out('💣 \r')
+				xvt.waste(400)
+			}
+			xvt.out(xvt.bright, xvt.black, '💣  BOMB!! 💣  ', xvt.reset, '\n')
+		}
+		else {
+			$.beep()
+			xvt.out(xvt.bright, xvt.red, 'Cherry ', xvt.black, 'BOMB', xvt.reset, '!!\n')
+		}
+	}
 
 	function ShowHand(who: number, hand: number[]) {
 		let value:number = 0
