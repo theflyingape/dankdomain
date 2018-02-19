@@ -95,7 +95,9 @@ export function menu(suppress = true) {
 	}
 	xvt.app.form['menu'].prompt = $.display('casino', xvt.Green, xvt.green, suppress, casino)
 	xvt.app.focus = 'menu'
-	max.value = $.int((new $.coins($.RealEstate.name[$.player.realestate].value).value + new $.coins($.Security.name[$.player.security]).value) / 10)
+	max.value = $.worth(new $.coins($.RealEstate.name[$.player.realestate].value).value, $.online.cha)
+	max.value += $.worth(new $.coins($.Security.name[$.player.security].value).value, $.online.cha)
+	max.value = $.int(max.value / 10)
 	max.value += $.worth(($.player.level * $.money($.player.level)), $.online.cha)
 	if (max.value > 1e+16) max.value = 1e+16
 	max = new $.coins(max.carry(1, true))
@@ -654,7 +656,7 @@ function amount() {
 				xvt.out(xvt.red,     'Cherry  ', xvt.normal, '🍒 🍒 🍒', xvt.reset, '    5x     ', xvt.bright, xvt.yellow, '<Bell>  ', '🔔 🔔 🔔', xvt.reset, '   100x\n')
 				xvt.out(xvt.magenta, 'Grapes  ', xvt.normal, '🍇 🍇 🍇', xvt.reset, '   10x     ', xvt.green,  '=Luck=  ', xvt.normal, '🍀 🍀 🍀', xvt.reset, '   400x\n')
 				xvt.out(xvt.bright, xvt.green,   ':Kiwi:  ', '🥝 🥝 🥝', xvt.reset, '   20x     ', xvt.cyan,   '*Wild*  ', xvt.normal, '💎 💎 💎', xvt.reset, '   500x\n')
-				xvt.out(xvt.red,     'Exacta  ', xvt.normal, '🍒 🍒 💣', xvt.reset, '   25x     ', xvt.faint,  '@Bomb@  ', xvt.normal, '💣 💣 💣', xvt.reset, '    💀 \n')
+				xvt.out(xvt.bright, xvt.uline, xvt.red,     'Exacta', xvt.nouline, '  ', xvt.normal, '🍒 🍒 💣', xvt.reset, '   25x     ', xvt.faint,  '@Bomb@  ', xvt.normal, '💣 💣 💣', xvt.reset, '    💀 \n')
 			}
 			else {
 				xvt.out('Any 2 ', xvt.red, 'Cherry', xvt.reset, '  2x     3 ', xvt.yellow, 'Orange  ', xvt.reset, '   50x\n')
