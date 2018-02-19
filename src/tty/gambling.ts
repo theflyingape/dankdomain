@@ -686,16 +686,16 @@ function amount() {
 			if (face[0] == '*WILD*' && face[1] == '*WILD*' && face[2] == '*WILD*') {
 				payoff.value = 500 * amount.value
 				for (let i = 0; i < 8; i++) {
+					$.beep()
 					for (let j = 0; j < 8; j++) {
-						$.beep()
 						xvt.out((i + j) % 2 ? xvt.blink : xvt.noblink)
 						xvt.out((i + j) % 8 + 30, 'YOU WIN! ')
 						xvt.out(10)
 					}
-					CherryBomb()
-					$.sound('wild', 50)
 					xvt.out(xvt.reset, '\n')
 				}
+				CherryBomb()
+				$.sound('wild', 50)
 			}
 			else if ((face[0] == '@BOMB@' || face[0] == '*WILD*')
 					&& (face[1] == '@BOMB@' || face[1] == '*WILD*')
@@ -712,15 +712,15 @@ function amount() {
 					&& (face[2] == '=LUCK=' || face[2] == '*WILD*')) {
 				payoff.value = 400 * amount.value
 				for (let i = 0; i < 8; i++) {
+					$.beep()
 					for (let j = 0; j < 4; j++) {
-						$.beep()
 						xvt.out((i + j) % 8 + 30, 'YOU WIN! ')
-						xvt.out(20)
+						xvt.out(15)
 					}
-					CherryBomb()
-					$.sound('wild', 50)
 					xvt.out(xvt.reset, '\n')
 				}
+				CherryBomb()
+				$.sound('wild', 50)
 			}
 			else if ((face[0] == '<BELL>' || face[0] == '*WILD*')
 					&& (face[1] == '<BELL>' || face[1] == '*WILD*')
@@ -729,7 +729,7 @@ function amount() {
 				for (let i = 0; i < 8; i++) {
 					$.beep()
 					xvt.out(i % 8 + 30, 'YOU WIN! ')
-					xvt.out(25)
+					xvt.out(20)
 				}
 				CherryBomb()
 				xvt.out(xvt.reset, '\n')
