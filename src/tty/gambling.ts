@@ -95,8 +95,8 @@ export function menu(suppress = true) {
 	}
 	xvt.app.form['menu'].prompt = $.display('casino', xvt.Green, xvt.green, suppress, casino)
 	xvt.app.focus = 'menu'
-	max.value = $.worth(($.player.level * $.money($.player.level))
-		+ $.int(($.RealEstate.name[$.player.realestate].value + $.Security.name[$.player.security].value) / 10), $.online.cha)
+	max.value = $.int((new $.coins($.RealEstate.name[$.player.realestate].value).value + new $.coins($.Security.name[$.player.security]).value) / 10)
+	max.value += $.worth(($.player.level * $.money($.player.level)), $.online.cha)
 	if (max.value > 1e+16) max.value = 1e+16
 	max = new $.coins(max.carry(1, true))
 }
@@ -654,7 +654,7 @@ function amount() {
 				xvt.out(xvt.red,     'Cherry  ', xvt.normal, '🍒 🍒 🍒', xvt.reset, '    5x     ', xvt.bright, xvt.yellow, '<Bell>  ', '🔔 🔔 🔔', xvt.reset, '   100x\n')
 				xvt.out(xvt.magenta, 'Grapes  ', xvt.normal, '🍇 🍇 🍇', xvt.reset, '   10x     ', xvt.green,  '=Luck=  ', xvt.normal, '🍀 🍀 🍀', xvt.reset, '   400x\n')
 				xvt.out(xvt.bright, xvt.green,   ':Kiwi:  ', '🥝 🥝 🥝', xvt.reset, '   20x     ', xvt.cyan,   '*Wild*  ', xvt.normal, '💎 💎 💎', xvt.reset, '   500x\n')
-				xvt.out(xvt.red,     ' any 2  ', xvt.normal, '🍒 🍒 ', xvt.reset, '💣   25x     ', xvt.faint,  '@Bomb@  ', xvt.normal, '💣 💣 💣', xvt.reset, '    💀 \n')
+				xvt.out(xvt.red,     'Exacta  ', xvt.normal, '🍒 🍒 💣', xvt.reset, '   25x     ', xvt.faint,  '@Bomb@  ', xvt.normal, '💣 💣 💣', xvt.reset, '    💀 \n')
 			}
 			else {
 				xvt.out('Any 2 ', xvt.red, 'Cherry', xvt.reset, '  2x     3 ', xvt.yellow, 'Orange  ', xvt.reset, '   50x\n')
@@ -714,9 +714,9 @@ function amount() {
 					&& (face[1] == '=LUCK=' || face[1] == '*WILD*')
 					&& (face[2] == '=LUCK=' || face[2] == '*WILD*')) {
 				payoff.value = 400 * amount.value
-				for (let i = 0; i < 8; i++) {
+				for (let i = 0; i < 4; i++) {
 					$.beep()
-					for (let j = 0; j < 4; j++) {
+					for (let j = 0; j < 8; j++) {
 						xvt.out((i + j) % 8 + 30, 'YOU WIN! ')
 						xvt.out(15)
 					}
@@ -745,6 +745,10 @@ function amount() {
 				$.music('wild')
 				xvt.waste(2500)
 			}
+			else if (face[0] == 'CHERRY' && face[1] == 'CHERRY' && face[2] == '@BOMB@') {
+				payoff.value = 25 * amount.value
+				CherryBomb()
+			}
 			else if ((face[0] == ':KIWI:' || face[0] == '*WILD*')
 					&& (face[1] == ':KIWI:' || face[1] == '*WILD*')
 					&& (face[2] == ':KIWI:' || face[2] == '*WILD*')) {
@@ -764,10 +768,8 @@ function amount() {
 					&& ((face[1] == 'CHERRY' || face[1] == '*WILD*') || (face[2] == 'CHERRY' || face[2] == '*WILD*')))
 					|| ((face[1] == 'CHERRY' || face[1] == '*WILD*') && (face[2] == 'CHERRY' || face[2] == '*WILD*')))) {
 				payoff.value = 2 * amount.value
-				if (face[0] == '@BOMB@' || face[1] == '@BOMB@' || face[2] == '@BOMB@') {
-					payoff.value = 25 * amount.value
+				if (face[0] == '@BOMB@' || face[1] == '@BOMB@' || face[2] == '@BOMB@')
 					CherryBomb()
-				}
 			}
 
 			if (payoff.value) {

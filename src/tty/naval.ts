@@ -12,8 +12,8 @@ import Battle = require('../battle')
 
 module Naval
 {
-	export const monsters: naval[] = require('../etc/naval.json')
 	let mon: number
+	let monsters: naval[] = require('../etc/naval.json')
 	let sm: naval
 	let naval: choices = {
 		'S': { description:'Shipyard' },
