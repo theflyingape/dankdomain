@@ -95,7 +95,9 @@ export function menu(suppress = true) {
 	}
 	xvt.app.form['menu'].prompt = $.display('casino', xvt.Green, xvt.green, suppress, casino)
 	xvt.app.focus = 'menu'
-	max.value = $.worth($.player.level * $.money($.player.level), $.online.cha)
+	max.value = $.worth(($.player.level * $.money($.player.level))
+		+ $.int(($.RealEstate.name[$.player.realestate].value + $.Security.name[$.player.security].value) / 10), $.online.cha)
+	if (max.value > 1e+16) max.value = 1e+16
 	max = new $.coins(max.carry(1, true))
 }
 
