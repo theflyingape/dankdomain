@@ -685,7 +685,7 @@ function amount() {
 			payoff.value = 0
 			if (face[0] == '*WILD*' && face[1] == '*WILD*' && face[2] == '*WILD*') {
 				payoff.value = 500 * amount.value
-				for (let i = 0; i < 8; d1++) {
+				for (let i = 0; i < 8; i++) {
 					for (let j = 0; j < 8; j++) {
 						$.beep()
 						xvt.out((i + j) % 2 ? xvt.blink : xvt.noblink)
@@ -711,7 +711,7 @@ function amount() {
 					&& (face[1] == '=LUCK=' || face[1] == '*WILD*')
 					&& (face[2] == '=LUCK=' || face[2] == '*WILD*')) {
 				payoff.value = 400 * amount.value
-				for (let i = 0; i < 8; d1++) {
+				for (let i = 0; i < 8; i++) {
 					for (let j = 0; j < 4; j++) {
 						$.beep()
 						xvt.out((i + j) % 8 + 30, 'YOU WIN! ')
@@ -726,7 +726,7 @@ function amount() {
 					&& (face[1] == '<BELL>' || face[1] == '*WILD*')
 					&& (face[2] == '<BELL>' || face[2] == '*WILD*')) {
 				payoff.value = 100 * amount.value
-				for (let i = 0; i < 8; d1++) {
+				for (let i = 0; i < 8; i++) {
 					$.beep()
 					xvt.out(i % 8 + 30, 'YOU WIN! ')
 					xvt.out(25)
