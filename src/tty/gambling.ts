@@ -16,11 +16,11 @@ module Gambling
 		'C': { description:'Craps' },
         'H': { description:'High Stakes Draw' },
     	'K': { description:'Keno' },
+        'S': { description:'Cherry Bomb Slots' }
 	}
 /*
 		'G': { description:'Greyhound race' },
         'R': { description:'Roulette' },
-        'S': { description:'One-armed Bandit' }
 */
 
 	let game:string
@@ -39,26 +39,51 @@ module Gambling
 		{ face:'Two', value:2, emoji:'\uD83C\uDCA2' }, { face:'Three', value:3, emoji:'\uD83C\uDCA3' }, { face:'Four', value:4, emoji:'\uD83C\uDCA4' },
 		{ face:'Five', value:5, emoji:'\uD83C\uDCA5' }, { face:'Six', value:6, emoji:'\uD83C\uDCA6' }, { face:'Seven', value:7, emoji:'\uD83C\uDCA7' },
 		{ face:'Eight', value:8, emoji:'\uD83C\uDCA8' }, { face:'Nine', value:9, emoji:'\uD83C\uDCA9' }, { face:'Ten', value:10, emoji:'\uD83C\uDCAA' },
-		{ face:'!Jack!', value:10, emoji:'\uD83C\uDCAB' }, { face:'$Queen$', value:10, emoji:'\uD83C\uDCAC' }, { face:'&King&', value:10, emoji:'\uD83C\uDCAE' },
+		{ face:':Jack:', value:10, emoji:'\uD83C\uDCAB' }, { face:'-Queen-', value:10, emoji:'\uD83C\uDCAC' }, { face:'+King+', value:10, emoji:'\uD83C\uDCAE' },
 		{ face:'=Ace=', value:1, emoji:'\uD83C\uDCB1' },
 		{ face:'Two', value:2, emoji:'\uD83C\uDCB2' }, { face:'Three', value:3, emoji:'\uD83C\uDCB3' }, { face:'Four', value:4, emoji:'\uD83C\uDCB4' },
 		{ face:'Five', value:5, emoji:'\uD83C\uDCB5' }, { face:'Six', value:6, emoji:'\uD83C\uDCB6' }, { face:'Seven', value:7, emoji:'\uD83C\uDCB7' },
 		{ face:'Eight', value:8, emoji:'\uD83C\uDCB8' }, { face:'Nine', value:9, emoji:'\uD83C\uDCB9' }, { face:'Ten', value:10, emoji:'\uD83C\uDCBA' },
-		{ face:'!Jack!', value:10, emoji:'\uD83C\uDCBB' }, { face:'$Queen$', value:10, emoji:'\uD83C\uDCBC' }, { face:'&King&', value:10, emoji:'\uD83C\uDCBE' },
+		{ face:':Jack:', value:10, emoji:'\uD83C\uDCBB' }, { face:'-Queen-', value:10, emoji:'\uD83C\uDCBC' }, { face:'+King+', value:10, emoji:'\uD83C\uDCBE' },
 		{ face:'=Ace=', value:1, emoji:'\uD83C\uDCC1' },
 		{ face:'Two', value:2, emoji:'\uD83C\uDCC2' }, { face:'Three', value:3, emoji:'\uD83C\uDCC3' }, { face:'Four', value:4, emoji:'\uD83C\uDCC4' },
 		{ face:'Five', value:5, emoji:'\uD83C\uDCC5' }, { face:'Six', value:6, emoji:'\uD83C\uDCC6' }, { face:'Seven', value:7, emoji:'\uD83C\uDCC7' },
 		{ face:'Eight', value:8, emoji:'\uD83C\uDCC8' }, { face:'Nine', value:9, emoji:'\uD83C\uDCC9' }, { face:'Ten', value:10, emoji:'\uD83C\uDCCA' },
-		{ face:'!Jack!', value:10, emoji:'\uD83C\uDCCB' }, { face:'$Queen$', value:10, emoji:'\uD83C\uDCCC' }, { face:'&King&', value:10, emoji:'\uD83C\uDCCE' },
+		{ face:':Jack:', value:10, emoji:'\uD83C\uDCCB' }, { face:'-Queen-', value:10, emoji:'\uD83C\uDCCC' }, { face:'+King+', value:10, emoji:'\uD83C\uDCCE' },
 		{ face:'=Ace=', value:1, emoji:'\uD83C\uDCD1' },
 		{ face:'Two', value:2, emoji:'\uD83C\uDCD2' }, { face:'Three', value:3, emoji:'\uD83C\uDCD3' }, { face:'Four', value:4, emoji:'\uD83C\uDCD4' },
 		{ face:'Five', value:5, emoji:'\uD83C\uDCD5' }, { face:'Six', value:6, emoji:'\uD83C\uDCD6' }, { face:'Seven', value:7, emoji:'\uD83C\uDCD7' },
 		{ face:'Eight', value:8, emoji:'\uD83C\uDCD8' }, { face:'Nine', value:9, emoji:'\uD83C\uDCD9' }, { face:'Ten', value:10, emoji:'\uD83C\uDCDA' },
-		{ face:'!Jack!', value:10, emoji:'\uD83C\uDCDB' }, { face:'$Queen$', value:10, emoji:'\uD83C\uDCDC' }, { face:'&King&', value:10, emoji:'\uD83C\uDCDE' },
+		{ face:':Jack:', value:10, emoji:'\uD83C\uDCDB' }, { face:'-Queen-', value:10, emoji:'\uD83C\uDCDC' }, { face:'+King+', value:10, emoji:'\uD83C\uDCDE' },
 		{ face:'*Joker*', value:-1, emoji:'\uD83C\uDCCF' }
 	]
 	let deck:number[]
 	let pile:number
+
+	interface slot {
+		attr: number
+		color: number
+		emoji: string
+	}
+	interface slots {
+		[key: string]: slot
+	}
+	const slot: slots = {
+		'CHERRY': { attr:xvt.normal, color:xvt.red, emoji:'🍒' },
+		'GRAPES': { attr:xvt.normal, color:xvt.magenta, emoji:'🍇' },
+		':KIWI:': { attr:xvt.bright, color:xvt.green, emoji:'🥝' },
+		'ORANGE': { attr:xvt.normal, color:xvt.yellow, emoji:'🍊' },
+		'<BELL>': { attr:xvt.bright, color:xvt.yellow, emoji:'🔔' },
+		'=LUCK=': { attr:xvt.normal, color:xvt.green, emoji:'🍀' },
+		'*WILD*': { attr:xvt.normal, color:xvt.cyan, emoji:'💎' },
+		'@BOMB@': { attr:xvt.faint, color:xvt.white, emoji:'💣' }
+	}
+
+	const dial: string[][] = [
+		[ '=LUCK=', 'GRAPES', 'CHERRY', '<BELL>', ':KIWI:', 'GRAPES', '@BOMB@', 'CHERRY', 'ORANGE', ':KIWI:', '*WILD*', 'GRAPES', 'CHERRY', '<BELL>', ':KIWI:', 'CHERRY' ],
+		[ 'ORANGE', '=LUCK=', 'CHERRY', 'ORANGE', 'GRAPES', 'ORANGE', 'CHERRY', '@BOMB@', '<BELL>', 'ORANGE', 'CHERRY', 'GRAPES', ':KIWI:', 'ORANGE', '*WILD*', 'CHERRY' ],
+		[ '<BELL>', '*WILD*', ':KIWI:', 'CHERRY', 'ORANGE', '@BOMB@', 'GRAPES', ':KIWI:', 'CHERRY', '=LUCK=', 'GRAPES', 'CHERRY', ':KIWI:', 'GRAPES', ':KIWI:', 'CHERRY' ]
+	]
 
 export function menu(suppress = true) {
 	if ($.online.altered) $.saveUser($.online)
@@ -619,7 +644,159 @@ function amount() {
 			}
 			xvt.app.focus = 'point'
 			return
-	}
+
+		case 'S':
+			xvt.out(xvt.bright, xvt.blue, '\nSlot Machine Payout Line:', xvt.reset, '\n\n')
+			if ($.player.emulation === 'XT') {
+				xvt.out(xvt.red,     ' any 2  ', xvt.normal, '🍒 🍒 ', xvt.reset, '🔲    2x     ', xvt.yellow, 'Orange  ', xvt.normal, '🍊 🍊 🍊', xvt.reset, '    50x\n')
+				xvt.out(xvt.red,     'Cherry  ', xvt.normal, '🍒 🍒 🍒', xvt.reset, '    5x     ', xvt.bright, xvt.yellow, '<Bell>  ', '🔔 🔔 🔔', xvt.reset, '   100x\n')
+				xvt.out(xvt.magenta, 'Grapes  ', xvt.normal, '🍇 🍇 🍇', xvt.reset, '   10x     ', xvt.green,  '=Luck=  ', xvt.normal, '🍀 🍀 🍀', xvt.reset, '   400x\n')
+				xvt.out(xvt.bright, xvt.green,   ':Kiwi:  ', '🥝 🥝 🥝', xvt.reset, '   20x     ', xvt.cyan,   '*Wild*  ', xvt.normal, '💎 💎 💎', xvt.reset, '   500x\n')
+				xvt.out(xvt.faint,   '@Bomb@  ', xvt.normal, '💣 💣 💣', xvt.reset, '    💀 \n')
+			}
+			else {
+				xvt.out('Any 2 ', xvt.red, 'Cherry', xvt.reset, '  2x     3 ', xvt.yellow, 'Orange  ', xvt.reset, '   50x\n')
+				xvt.out('3 ', xvt.red,     'Cherry', xvt.reset, '      5x     3 ', xvt.bright, xvt.yellow, '<Bell>  ', xvt.reset, '  100x\n')
+				xvt.out('3 ', xvt.magenta, 'Grapes', xvt.reset, '     10x     3 ', xvt.green, '=Luck=  ', xvt.reset, '  400x\n')
+				xvt.out('3 ', xvt.bright, xvt.green,   ':Kiwi:', xvt.reset, '     20x     3 ', xvt.cyan, '*Wild*  ', xvt.reset, '  500x\n')
+				xvt.out('3 ', xvt.faint,   '@Bomb@', xvt.reset, '     Die\n')
+			}
+
+			xvt.out('\nYou pull its arm and the wheels spin ... ')
+			xvt.waste(500)
+
+			let bandit = [ $.dice(16) % 16, $.dice(16) % 16, $.dice(16) % 16 ]
+			for (let i = 0; i < 3; i++) {
+				for (let spin = $.dice(16) + 16; spin; spin--) {
+					xvt.out('-\\|/'[spin % 4], '\x08')
+					xvt.waste(20)
+					bandit[i] = ++bandit[i] % 16
+				}
+				$.beep()
+				let face = dial[i][bandit[i]]
+				xvt.out(xvt.blue, '[', xvt.attr(slot[face].attr, slot[face].color), face)
+				if ($.player.emulation === 'XT') xvt.out(` ${slot[face].emoji} `)
+				xvt.out(xvt.reset, xvt.blue, '] ')
+			}
+			xvt.out(xvt.reset, '\n\n')
+			$.sound('click', 4)
+
+			let face = [ dial[0][bandit[0]], dial[1][bandit[1]], dial[2][bandit[2]] ]
+			payoff.value = 0
+			if (face[0] == '*WILD*' && face[1] == '*WILD*' && face[2] == '*WILD*') {
+				payoff.value = 500 * amount.value
+				for (let i = 0; i < 8; d1++) {
+					for (let j = 0; j < 8; j++) {
+						$.beep()
+						xvt.out((i + j) % 2 ? xvt.blink : xvt.noblink)
+						xvt.out((i + j) % 8 + 30, 'YOU WIN! ')
+						xvt.out(10)
+					}
+					$.music('wild')
+					xvt.out(xvt.reset, '\n')
+				}
+			}
+			else if ((face[0] == '@BOMB@' || face[0] == '*WILD*')
+					&& (face[1] == '@BOMB@' || face[1] == '*WILD*')
+					&& (face[2] == '@BOMB@' || face[2] == '*WILD*')) {
+				if ($.player.emulation === 'XT') xvt.out ('💀  ')
+				xvt.out('You die.\n')
+				$.music('wild')
+				$.reason = 'defeated by a one-armed bandit'
+				$.logoff()
+				return
+			}
+			else if ((face[0] == '=LUCK=' || face[0] == '*WILD*')
+					&& (face[1] == '=LUCK=' || face[1] == '*WILD*')
+					&& (face[2] == '=LUCK=' || face[2] == '*WILD*')) {
+				payoff.value = 400 * amount.value
+				for (let i = 0; i < 8; d1++) {
+					for (let j = 0; j < 4; j++) {
+						$.beep()
+						xvt.out((i + j) % 8 + 30, 'YOU WIN! ')
+						xvt.out(20)
+					}
+					xvt.out(xvt.reset, '\n')
+					$.music('wild')
+				}
+			}
+			else if ((face[0] == '<BELL>' || face[0] == '*WILD*')
+					&& (face[1] == '<BELL>' || face[1] == '*WILD*')
+					&& (face[2] == '<BELL>' || face[2] == '*WILD*')) {
+				payoff.value = 100 * amount.value
+				for (let i = 0; i < 8; d1++) {
+					$.beep()
+					xvt.out(i % 8 + 30, 'YOU WIN! ')
+					xvt.out(25)
+				}
+				xvt.out(xvt.reset, '\n')
+				$.music('wild')
+			}
+			else if ((face[0] == 'ORANGE' || face[0] == '*WILD*')
+					&& (face[1] == 'ORANGE' || face[1] == '*WILD*')
+					&& (face[2] == 'ORANGE' || face[2] == '*WILD*')) {
+				payoff.value = 50 * amount.value
+				$.beep()
+			}
+			else if ((face[0] == ':KIWI:' || face[0] == '*WILD*')
+					&& (face[1] == ':KIWI:' || face[1] == '*WILD*')
+					&& (face[2] == ':KIWI:' || face[2] == '*WILD*')) {
+				payoff.value = 20 * amount.value
+			}
+			else if ((face[0] == 'GRAPES' || face[0] == '*WILD*')
+					&& (face[1] == 'GRAPES' || face[1] == '*WILD*')
+					&& (face[2] == 'GRAPES' || face[2] == '*WILD*')) {
+				payoff.value = 10 * amount.value
+			}
+			else if ((face[0] == 'CHERRY' || face[0] == '*WILD*')
+					&& (face[1] == 'CHERRY' || face[1] == '*WILD*')
+					&& (face[2] == 'CHERRY' || face[2] == '*WILD*')) {
+				payoff.value = 5 * amount.value
+			}
+			else if ((((face[0] == 'CHERRY' || face[0] == '*WILD*')
+					&& ((face[1] == 'CHERRY' || face[1] == '*WILD*') || (face[2] == 'CHERRY' || face[2] == '*WILD*')))
+					|| ((face[1] == 'CHERRY' || face[1] == '*WILD*') && (face[2] == 'CHERRY' || face[2] == '*WILD*')))) {
+				payoff.value = 2 * amount.value
+				if (face[0] == '@BOMB@' || face[1] == '@BOMB@' || face[2] == '@BOMB@') {
+					payoff.value = 25 * amount.value
+					if ($.player.emulation === 'XT') {
+						$.music('cherry')
+						xvt.out(xvt.red)
+						for (let i = 0; i < 6; i++) {
+							xvt.out(' ', xvt.faint)
+							for (let j = 0; j < i; j++)
+								xvt.out('🍒 ')
+							xvt.out(xvt.normal)
+							xvt.out('🍒 \r')
+							xvt.waste(250)
+						}
+						xvt.out(xvt.bright, xvt.red, '🍒  CHERRY 🍒  ', xvt.reset, '\n')
+						for (let i = 0; i < 4; i++) {
+							xvt.out(' ', xvt.faint)
+							for (let j = 0; j < i; j++)
+								xvt.out('💣 ')
+							xvt.out(xvt.normal)
+							xvt.out('💣 \r')
+							xvt.waste(400)
+						}
+						xvt.out(xvt.bright, xvt.black, '💣  BOMB!! 💣  ', xvt.reset, '\n')
+					}
+					else {
+						$.beep()
+						xvt.out(xvt.bright, xvt.red, 'Cherry ', xvt.black, 'BOMB', xvt.reset, '!!\n')
+					}
+				}
+			}
+
+			if (payoff.value) {
+				$.sound('cheer')
+				xvt.out('You win ', payoff.carry(), '!\n')
+				$.player.coin.value += payoff.value + amount.value
+				xvt.waste(500)
+			}
+			else
+				$.sound('boo')
+		}
 
 	menu()
 

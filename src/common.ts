@@ -1881,8 +1881,9 @@ export function logoff() {
             news(`\tlogged off ${time(player.lasttime)} as a level ${player.level} ${player.pc}`)
             news(`\t(${reason})\n`, true)
 
-            callers = []
-            try { callers = require('./users/callers') } catch(e) {}
+            try {
+                callers = JSON.parse(fs.readFileSync('./users/callers.json').toString())
+            } catch(e) {}
             while (callers.length > 7)
                 callers.pop()
             callers = [<caller>{who: player.handle, reason: reason}].concat(callers)
@@ -1893,7 +1894,7 @@ export function logoff() {
         unlock(player.id, true)
 
         //  logoff banner
-        sound('goodbye')
+        if (online.hp < 1) sound('goodbye')
         xvt.out('\x06\n')
         xvt.out(xvt.reset, 'Goodbye, please play again!  Also visit:\n')
         xvt.waste(750)

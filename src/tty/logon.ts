@@ -306,7 +306,7 @@ function welcome() {
 
         xvt.out(xvt.cyan, '\nLast callers were: ', xvt.white)
         try {
-            $.callers = require('../users/callers')
+            $.callers = JSON.parse(fs.readFileSync('./users/callers.json').toString())
             for (let last in $.callers) {
                 xvt.out(xvt.bright, $.callers[last].who, xvt.normal, ' (', $.callers[last].reason, ')\n')
                 xvt.out('                   ')
