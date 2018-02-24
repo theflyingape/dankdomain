@@ -551,12 +551,10 @@ export function checkXP(rpc: active, cb: Function): boolean {
     }
     let eligible = rpc.user.level < sysop.level / 2
     let bonus = false
-    let jumped = 0
     let i: number
 
-    while (rpc.user.xp >= experience(rpc.user.level, undefined, rpc.user.int)) {
+    while (rpc.user.xp >= experience(rpc.user.level, undefined, rpc.user.int) && rpc.user.level < sysop.level) {
         rpc.user.level++
-        jumped++
 
         if (rpc.user.level == Access.name[rpc.user.access].promote) {
             let title = Object.keys(Access.name).indexOf(rpc.user.access)
@@ -632,6 +630,8 @@ export function checkXP(rpc: active, cb: Function): boolean {
 
     let deed = mydeeds.find((x) => { return x.deed === 'levels' })
     if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, 'levels')[0]) - 1]
+    let rs = query(`SELECT level FROM Players WHERE id = '${player.id}'`)[0]
+    let jumped = player.level - rs.level
     if ((deed && jumped >= deed.value)) {
         deed.value = jumped
         sound('outstanding')
@@ -641,29 +641,29 @@ export function checkXP(rpc: active, cb: Function): boolean {
     if (player.level < sysop.level) {
         xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.hp), xvt.reset, ' Hit points\n')
         xvt.waste(125)
-        if(award.sp) {
+        if (award.sp) {
             xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.sp), xvt.reset, ' Spell points\n')
             xvt.waste(125)
         }
-        if(award.str) {
+        if (award.str) {
             xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.str), xvt.reset, ' Strength\n')
             xvt.waste(125)
         }
-        if(award.int) {
+        if (award.int) {
             xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.int), xvt.reset, ' Intellect\n')
             xvt.waste(125)
         }
-        if(award.dex) {
+        if (award.dex) {
             xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.dex), xvt.reset, ' Dexterity\n')
             xvt.waste(125)
         }
-        if(award.cha) {
+        if (award.cha) {
             xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.cha), xvt.reset, ' Charisma\n')
             xvt.waste(125)
         }
         xvt.out('\n')
         xvt.waste(125)
-        if(eligible && bonus) {
+        if (eligible && bonus) {
             skillplus(rpc, cb)
             return true
         }
@@ -1478,16 +1478,17 @@ export function reroll(user: user, dd?: string, level = 1) {
 // the Ancient Riddle of the Keys
 export function riddle() {
 
+    action('clear')
     xvt.out(xvt.reset, '\n')
 
     if (player.coward) {
         player.coward = false
-        xvt.out(xvt.reset, 'Welcome back to play with the rest of us.\n')
+        xvt.out('Welcome back to play with the rest of us.\n')
         xvt.waste(2000)
     }
 
     if (player.novice) {
-        xvt.out(xvt.reset, 'You are no longer a novice.  Welcome to the next level of play.\n')
+        xvt.out('You are no longer a novice.  Welcome to the next level of play.\n')
         player.novice = false
         player.expert = true
         xvt.waste(2000)
@@ -1550,6 +1551,7 @@ export function riddle() {
         }
     }
 
+    if (bonus) xvt.out(xvt.reset, '\n')
     xvt.out(xvt.bright, xvt.cyan, '\nYou have become so powerful that you are now immortal and you leave your \n')
     xvt.out('worldly possessions behind.\n')
     loadUser(taxman)
@@ -1565,17 +1567,28 @@ export function riddle() {
 
     if (max > 2) {
         music('victory')
+
         const log = `./files/winners.txt`
         fs.appendFileSync(log,
             `${player.handle} won on ${date2full(now().date)}  -  game took ${now().date - sysop.dob + 1} days\n`)
+
+
+        loadUser(sysop)
+        sysop.dob = now().date + 1
+        sysop.plays = 0
+        saveUser(sysop)
+
         player.wins++
+        run(`UPDATE Players set wins=${player.wins} WHERE id='${player.id}'`)
         reason = 'WON THE GAME !!'
         xvt.waste(player.emulation === 'XT' ? 4321 : 432)
 
+        xvt.out(xvt.reset, '\n')
         xvt.out(xvt.bright, xvt.yellow, 'CONGRATULATIONS!!'
-            , xvt.reset, '  You have won the game!\n'
+            , xvt.reset, '  You have won the game!\n\n'
         )
-        sound('winner', 25)
+        profile({ jpg:'winner', effect:'fadeInUp' })
+        sound('winner', 21)
 
         xvt.out(xvt.yellow, 'The board will now reset ')
         let rs = query(`SELECT id, pid FROM Online WHERE id != '${player.id}'`)
@@ -1603,10 +1616,7 @@ export function riddle() {
         }
 
         xvt.out(xvt.reset, '\nHappy hunting tomorrow!\n')
-        loadUser(sysop)
-        sysop.dob = now().date + 1
-        sysop.plays = 0
-        saveUser(sysop)
+        sound('winner', 51)
         xvt.hangup()
     }
 
@@ -1916,7 +1926,7 @@ export function logoff() {
             , xvt.reset, '\n'
         )
         xvt.waste(1965)
-        if (player.today)
+        if (player.today && player.level > 1)
             music(online.hp > 0 ? 'logoff' : 'death')
     }
 }

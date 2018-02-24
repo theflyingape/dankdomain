@@ -54,7 +54,7 @@ function choice() {
                         for (let best in keys) {
                             let deed = deeds.find((x) => { return x.deed === keys[best] })
                             if (deed) {
-                                xvt.out(sprintf('%-22s  %-11s %6d  '
+                                xvt.out(sprintf('%-22.22s  %-11s %6d  '
                                     , deed.hero, $.date2full(deed.date).slice(4), deed.value)
                                     , $.Deed.name[deed.deed].description)
                                 xvt.out('\n           ')
@@ -78,7 +78,7 @@ function choice() {
                 for (let goat in keys) {
                     let deed = deeds.find((x) => { return x.deed === keys[goat] })
                     if (deed) {
-                        xvt.out('\n', sprintf('%-22s  %-11s %6d  '
+                        xvt.out('\n', sprintf('%-22.22s  %-11s %6d  '
                             , deed.hero, $.date2full(deed.date).slice(4), deed.value)
                             , $.Deed.name[deed.deed].description)
                     }
@@ -103,7 +103,7 @@ function choice() {
                         for (let hurt in keys) {
                             let deed = deeds.find((x) => { return x.deed === keys[hurt] })
                             if (deed) {
-                                xvt.out(sprintf('%-22s  %-11s %6d  '
+                                xvt.out(sprintf('%-22.22s  %-11s %6d  '
                                     , deed.hero, $.date2full(deed.date).slice(4), deed.value)
                                     , $.Deed.name[deed.deed].description)
                                 xvt.out('\n           ')
@@ -130,7 +130,7 @@ function choice() {
             `)
 
             for (let n in rs) {
-                xvt.out(sprintf('%-4s  %-22s  %-9s  %3d  %4d'
+                xvt.out(sprintf('%-4s  %-22.22s  %-9s  %3d  %4d'
                     , rs[n].id[0] !== '_' ? rs[n].id : ' \u00B7 ', rs[n].handle, rs[n].pc, rs[n].level, rs[n].tw)
                     , '\n')
             }

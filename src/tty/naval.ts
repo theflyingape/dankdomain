@@ -109,7 +109,6 @@ function choice() {
 				xvt.out('\nYou don\'t have a ship!\n')
 				break
 			}
-			$.online.altered = true
 			xvt.out('\nIt is a fine day for sailing.  You cast your reel into the ocean and feel\n')
 			xvt.out('a gentle tug... ')
 			xvt.waste(600)
@@ -453,7 +452,7 @@ function Shipyard(suppress = true) {
 							$.player.hull = ship
 							$.player.ram = false
 							$.online.hull = $.player.hull
-							$.online.altered = true
+							$.run(`UPDATE Players set hull=${ship},ram=0 WHERE id='${$.player.id}'`)
 							xvt.out(`\nYou now have a brand new ${$.player.hull} hull point ship, with no ram.\n`)
 							$.sound('boat')
 						}
@@ -523,6 +522,7 @@ function Shipyard(suppress = true) {
 							$.player.cannon += buy
 							$.beep()
 							xvt.out(`\nCannons = ${$.player.cannon}\n`)
+							$.run(`UPDATE Players set cannon=${$.player.cannon} WHERE id='${$.player.id}'`)
 						}
 						Shipyard()
 						return
@@ -560,6 +560,7 @@ function Shipyard(suppress = true) {
 							$.player.ram = true
 							$.beep()
 							xvt.out(`\nYou now have a ram.\n`)
+							$.run(`UPDATE Players set ram=1 WHERE id='${$.player.id}'`)
 						}
 						Shipyard()
 						return
@@ -620,7 +621,7 @@ function BattleUser(nme: active) {
 						$.player.retreats++
 						xvt.out('\nYou sail away safely out of range.\n')
 						$.saveUser(nme, false, true)
-						$.online.altered = true
+						$.run(`UPDATE Players set hull=${$.player.hull},cannon=${$.player.cannon},ram=${+$.player.ram},retreats=${$.player.retreats} WHERE id='${$.player.id}'`)
                         $.log(nme.user.id, `\n${$.player.handle}, the coward, sailed away from you.`)
 						menu()
 						return
@@ -632,9 +633,11 @@ function BattleUser(nme: active) {
 						if ($.dice(50 + nme.int / 2) > 100 * nme.hull / (nme.hull + $.online.hull)) {
 							xvt.out(`\n${$.who(nme, 'He')}quickly outmaneuvers your ship.\n`)
 							xvt.out(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
-								[ 'Aim for the head, not the tail!'
-								, 'I said port, bastards, not starboard!'
-								, 'Whose side are you on anyways?!' ][$.dice(3) - 1]
+								[ 'Your aim is going to kill us all!'
+								, 'I said port, bastard, not starboard!'
+								, 'Get me my brown pants!',
+								, 'Someone throw this traitor overboard!',
+								, 'She\'s turning onto US now!' ][$.dice(5) - 1]
 								, xvt.cyan, '"\n')
 							xvt.waste(600)
 						}
@@ -653,7 +656,10 @@ function BattleUser(nme: active) {
 					else {
 						$.sound('oops')
 						xvt.out('\nYour first mate cries back, \"But we don\'t have a ram!\"\n')
-						xvt.waste(500)
+						xvt.waste(2000)
+						$.sound('fire', 8)
+						xvt.out('You shoot your first mate.\n')
+						xvt.waste(800)
 					}
 					if (him()) {
 						menu()
@@ -706,19 +712,28 @@ function BattleUser(nme: active) {
 		}
 		booty.value += nme.user.coin.value
 		$.saveUser(nme, false, true)
-		$.online.altered = true
 	}
 
 	function you(): boolean {
 		let result = fire($.online, nme)
-		if (nme.hull > 0)
+		if (nme.hull > 0) {
+			if ($.dice(10) == 1) {
+				xvt.out(xvt.cyan, 'You call out to your crew, "', xvt.reset,
+				[ 'Fire at crest to hit the best!'
+				, 'Crying will not save you!'
+				, 'Look alive, or I\'ll kill you first!',
+				, 'Get me my red shirt!',
+				, 'Y\'all fight like the will-o-wisp!' ][$.dice(5) - 1]
+				, xvt.cyan, '"\n')
+				xvt.waste(600)
+			}
 			return false
+		}
 		booty()
 		return true
 	}
 
 	function him(): boolean {
-		$.online.altered = true
 		if (!nme.user.cannon && !nme.user.ram) {
 			xvt.out('They are defenseless and attempt to flee . . . ')
 			xvt.waste(1000)
@@ -738,6 +753,7 @@ function BattleUser(nme: active) {
 			ram(nme, $.online)
 
 		if ($.online.hull < 1) {
+			$.online.altered = true
 			$.log(nme.user.id, `\nYou sank ${$.player.handle}'s ship!`)
 			$.reason=`sunk by ${nme.user.handle}`
 
@@ -833,9 +849,11 @@ function MonsterHunt() {
 						if ($.dice(50 + monsters[mon].int / 2) > 100 * sm.hull / (sm.hull + $.online.hull)) {
 							xvt.out('\nIt quickly outmaneuvers your ship.\n')
 							xvt.out(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
-								[ 'Aim for the head, not the tail!'
-								, 'I said starboard, bitches, not port!'
-								, 'Whose side are you on anyways?!' ][$.dice(3) - 1]
+								[ 'Not the tail, aim for the beastie\'s head!'
+								, 'I said starboard, bitch, not port!'
+								, 'Look alive, or it\'ll be fine dining yer bones!',
+								, 'Get me my brown pants!',
+								, 'Whose side are you on anyways?!' ][$.dice(5) - 1]
 								, xvt.cyan, '"\n')
 							xvt.waste(600)
 						}
