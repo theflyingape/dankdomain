@@ -3,8 +3,10 @@
  *  EMAIL authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
+import fs = require('fs')
 import nodemailer = require('nodemailer')
 import smtpTransport = require('nodemailer-smtp-transport')
+
 import $ = require('./common')
 import xvt = require('xvt')
 
@@ -50,19 +52,25 @@ function check() {
     if (rs.length && rs[0].n > 2)
         $.player.access = Object.keys($.Access.name)[1]
 
-    let message = require('./etc/newuser.json')
-    Deliver($.player, 'secret keys to the gate', false, message)
+    try {
+        let message = JSON.parse(fs.readFileSync('./etc/newuser.json').toString())
+        Deliver($.player, 'secret keys to the gate', false, message)
+    } catch(e) {}
 }
 
 export async function newsletter(player: user) {
-    let message = require('./etc/newsletter.json')
-    await Message(player, message)
+    try {
+        let message = JSON.parse(fs.readFileSync('./etc/newsletter.json').toString())
+        await Message(player, message)
+    } catch(e) {}
 }
 
 export async function rejoin(player: user) {
-    echo = false
-    let message = require('./etc/rejoin.json')
-    await Message(player, message)
+    try {
+        echo = false
+        let message = JSON.parse(fs.readFileSync('./etc/rejoin.json').toString())
+        await Message(player, message)
+    } catch(e) {}
 }
 
 export function resend() {
@@ -73,8 +81,10 @@ export function resend() {
             xvt.out('\nYour entry does not match what is registered.\n')
             xvt.hangup()
         }
-        let message = require('./etc/resend.json')
-        Deliver($.player, 'secret keys (again) to the gate', true, message)
+        try {
+            let message = JSON.parse(fs.readFileSync('./etc/resend.json').toString())
+            Deliver($.player, 'secret keys (again) to the gate', true, message)
+        } catch(e) {}
     }
     xvt.app.form['check'].max = $.player.email.length
     xvt.app.focus = 'check'
