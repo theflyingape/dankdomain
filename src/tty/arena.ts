@@ -412,14 +412,14 @@ function MonsterFights(): boolean {
 						monster.user.level = 99
 					cost.value += $.worth($.money(monster.user.level), $.player.cha)
 
-					let n = Math.trunc($.Weapon.merchant.length * monster.user.level / 110)
+					let n = Math.trunc($.Weapon.merchant.length * $.player.level / 110)
 					n = n >= $.Weapon.merchant.length ? $.Weapon.merchant.length - 1 : n
-					monster.user.weapon = n + 2
+					monster.user.weapon = n + 3
 					cost.value += $.worth(new $.coins($.Weapon.name[$.Weapon.merchant[n]].value).value, $.player.cha)
 
-					n = Math.trunc($.Armor.merchant.length * monster.user.level / 110)
+					n = Math.trunc($.Armor.merchant.length * $.player.level / 110)
 					n = n >= $.Armor.merchant.length ? $.Armor.merchant.length - 1 : n
-					monster.user.armor = n + 1
+					monster.user.armor = n + 2
 					cost.value += $.worth(new $.coins($.Armor.name[$.Armor.merchant[n]].value).value, $.player.cha)
 
 					$.reroll(monster.user
@@ -450,11 +450,12 @@ function MonsterFights(): boolean {
 					monster.user.coin.value += cost.value
 
 					$.profile({ jpg:'arena/' + monster.user.handle.toLowerCase()
-						, handle:`${monster.user.handle}`, level:monster.user.level, effect:'jello'
+						, handle:`${monster.user.handle}`, level:monster.user.level, pc:'contest'
+						, effect:'jello'
 					})
 					$.cat('arena/' + monster.user.handle)
 
-					xvt.out(`The old necromancer summons you a level ${monster.user.level} demon.`, '\n')
+					xvt.out(`The old necromancer summons you a level ${monster.user.level} monster.`, '\n')
 					if (isNaN(monster.user.weapon)) xvt.out('\n', $.who(monster, 'He'), $.Weapon.wearing(monster), '.\n')
 					if (isNaN(monster.user.armor)) xvt.out('\n', $.who(monster, 'He'), $.Armor.wearing(monster), '.\n')
 
