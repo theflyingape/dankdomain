@@ -401,15 +401,13 @@ function MonsterFights(): boolean {
 					$.online.altered = true
 					xvt.out('As you hand him the money, it disappears into thin air.\n\n')
 					xvt.waste(1250)
-					xvt.out('The old necromancer summons you a demon.\n\n')
-					xvt.waste(1250)
 
 					monster = <active>{}
 					monster.user = <user>{ id:'' }
 					Object.assign(monster.user, require('../etc/summoned demon.json'))
-					let l = $.player.level + 4
+					let l = $.player.level + 2
 					if (l >= $.sysop.level)
-						l = $.sysop.level - 4
+						l = $.sysop.level - 2
 					if ((monster.user.level = l + $.dice(7) - 4) > 99)
 						monster.user.level = 99
 					cost.value += $.worth($.money(monster.user.level), $.player.cha)
@@ -452,13 +450,11 @@ function MonsterFights(): boolean {
 					monster.user.coin.value += cost.value
 
 					$.profile({ jpg:'arena/' + monster.user.handle.toLowerCase()
-						, handle:`${monster.user.handle}`
-						, level:monster.user.level, pc:'summoned demon'
-						, effect:'jello'
+						, handle:`${monster.user.handle}`, level:monster.user.level, effect:'jello'
 					})
 					$.cat('arena/' + monster.user.handle)
 
-					xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`, '\n')
+					xvt.out(`The old necromancer summons you a level ${monster.user.level} demon.`, '\n')
 					if (isNaN(monster.user.weapon)) xvt.out('\n', $.who(monster, 'He'), $.Weapon.wearing(monster), '.\n')
 					if (isNaN(monster.user.armor)) xvt.out('\n', $.who(monster, 'He'), $.Armor.wearing(monster), '.\n')
 
