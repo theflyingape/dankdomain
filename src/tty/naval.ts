@@ -608,7 +608,7 @@ function BattleUser(nme: active) {
 					break
 
 				case 'S':
-					if ($.dice(50 + nme.int / 2) > 50 + $.int(50 * $.online.hull / ($.online.hull + nme.hull))) {
+					if ($.dice(50 + nme.int / 2) > $.int(50 + 50 * $.online.hull / ($.online.hull + nme.hull))) {
 						$.sound('oops')
 						xvt.out(`\n${$.who(nme, 'He')}outmaneuvers you and stops your retreat!\n`)
 						xvt.waste(500)
@@ -739,7 +739,7 @@ function BattleUser(nme: active) {
 		if (!nme.user.cannon && !nme.user.ram) {
 			xvt.out('They are defenseless and attempt to flee . . . ')
 			xvt.waste(1000)
-			if ($.dice(50 + $.online.int / 2) > 50 * $.online.hull / ($.online.hull + nme.hull) + 50) {
+			if ($.dice(50 + $.online.int / 2) > $.int(50 + 50 * nme.hull / (nme.hull + $.online.hull))) {
 				xvt.out(`\nYou outmaneuver them and stop their retreat!\n`)
 				xvt.waste(500)
 				return false
