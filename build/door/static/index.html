@@ -58,7 +58,7 @@ or <button onclick="window.history.back();">Go Back</button></p>
 <table>
 <tr><td style="vertical-align:bottom;"><img src="images/chrome.png" align="left">&nbsp; Use Google Android tablet or mobile CHROME's<br>&nbsp; <i><b>Add to Home screen</b></i> or <i><b>shelf</b></i> menu option to launch as an <b>app</b>
 </td></tr>
-<tr><td style="vertical-align:bottom;"><img src="images/desktop.png" align="left">&nbsp; Desktop Microsoft <b>Edge</b> and Mozilla <b>Firefox</b> browsers also work.<br>&nbsp; Classic Microsoft Internet Explorer is not supported.
+<tr><td style="vertical-align:bottom;"><img src="images/desktop.png" align="left">&nbsp; Desktop Microsoft <b>Edge</b> and Mozilla <b>Firefox</b> browsers also work.<br>&nbsp; Classic Microsoft Internet Explorer is <b>not supported</b>.
 </td></tr>
 </table>
 <hr>
@@ -72,6 +72,13 @@ or <button onclick="window.history.back();">Go Back</button></p>
   <source id="oggTune" type="audio/ogg" />
   <source id="mp3Tune" type="audio/mp3" />
 </audio>
-<script src="bundle.js" ></script>
+<script type="text/javascript">
+  if (/MSIE \d|Trident.*rv:/.test(navigator.userAgent)) {
+    document.getElementById('terminal').hidden = true
+    document.getElementById('wall').hidden = false
+  }
+  else
+    document.write('<script src="bundle.js"><\/script>');
+</script>
 </body>
 </html>
