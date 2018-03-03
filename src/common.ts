@@ -1572,7 +1572,6 @@ export function riddle() {
         fs.appendFileSync(log,
             `${player.handle} won on ${date2full(now().date)}  -  game took ${now().date - sysop.dob + 1} days\n`)
 
-
         loadUser(sysop)
         sysop.dob = now().date + 1
         sysop.plays = 0

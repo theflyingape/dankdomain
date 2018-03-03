@@ -608,7 +608,7 @@ function BattleUser(nme: active) {
 					break
 
 				case 'S':
-					if ($.dice(50 + nme.int / 2) > 50 + (50 * nme.hull / (nme.hull +$.online.hull))) {
+					if ($.dice(50 + nme.int / 2) > 50 + $.int(50 * $.online.hull / ($.online.hull + nme.hull))) {
 						$.sound('oops')
 						xvt.out(`\n${$.who(nme, 'He')}outmaneuvers you and stops your retreat!\n`)
 						xvt.waste(500)
@@ -618,6 +618,8 @@ function BattleUser(nme: active) {
 						}
 					}
 					else {
+						$.player.cha = $.PC.ability($.player.cha, -1)
+						$.online.cha = $.PC.ability($.online.cha, -$.dice(10))
 						$.player.retreats++
 						xvt.out('\nYou sail away safely out of range.\n')
 						$.saveUser(nme, false, true)
@@ -635,8 +637,8 @@ function BattleUser(nme: active) {
 							xvt.out(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
 								[ 'Your aim is going to kill us all!'
 								, 'I said port, bastard, not starboard!'
-								, 'Get me my brown pants!',
-								, 'Someone throw this traitor overboard!',
+								, 'Get me my brown pants!'
+								, 'Someone throw this traitor overboard!'
 								, 'She\'s turning onto US now!' ][$.dice(5) - 1]
 								, xvt.cyan, '"\n')
 							xvt.waste(600)
@@ -721,8 +723,8 @@ function BattleUser(nme: active) {
 				xvt.out(xvt.cyan, 'You call out to your crew, "', xvt.reset,
 				[ 'Fire at crest to hit the best!'
 				, 'Crying will not save you!'
-				, 'Look alive, or I\'ll kill you first!',
-				, 'Get me my red shirt!',
+				, 'Look alive, or I\'ll kill you first!'
+				, 'Get me my red shirt!'
 				, 'Y\'all fight like the will-o-wisp!' ][$.dice(5) - 1]
 				, xvt.cyan, '"\n')
 				xvt.waste(600)
@@ -828,7 +830,7 @@ function MonsterHunt() {
 					break
 
 				case 'S':
-					if ($.dice(50 + monsters[mon].int / 2) > 50 * sm.hull / (sm.hull + $.online.hull) + 50) {
+					if ($.dice(50 + monsters[mon].int / 2) > $.int(50 + 50 * $.online.hull / ($.online.hull + sm.hull))) {
 						$.sound('oops')
 						xvt.out('\nIt outmaneuvers you and stops your retreat!\n')
 						xvt.waste(500)
@@ -846,13 +848,13 @@ function MonsterHunt() {
 
 				case 'R':
 					if ($.player.ram) {
-						if ($.dice(50 + monsters[mon].int / 2) > 100 * sm.hull / (sm.hull + $.online.hull)) {
+						if ($.dice(50 + monsters[mon].int / 2) > $.int(100 * sm.hull / (sm.hull + $.online.hull))) {
 							xvt.out('\nIt quickly outmaneuvers your ship.\n')
 							xvt.out(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
 								[ 'Not the tail, aim for the beastie\'s head!'
 								, 'I said starboard, bitch, not port!'
-								, 'Look alive, or it\'ll be fine dining yer bones!',
-								, 'Get me my brown pants!',
+								, 'Look alive, or it\'ll be fine dining yer bones!'
+								, 'Get me my brown pants!'
 								, 'Whose side are you on anyways?!' ][$.dice(5) - 1]
 								, xvt.cyan, '"\n')
 							xvt.waste(600)

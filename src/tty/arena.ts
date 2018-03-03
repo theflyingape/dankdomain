@@ -407,16 +407,19 @@ function MonsterFights(): boolean {
 					monster = <active>{}
 					monster.user = <user>{ id:'' }
 					Object.assign(monster.user, require('../etc/summoned demon.json'))
-					if ((monster.user.level = $.player.level + $.dice(7) - 4) > 99)
+					let l = $.player.level + 4
+					if (l >= $.sysop.level)
+						l = $.sysop.level - 4
+					if ((monster.user.level = l + $.dice(7) - 4) > 99)
 						monster.user.level = 99
-					cost.value += $.money(monster.user.level)
+					cost.value += $.worth($.money(monster.user.level), $.player.cha)
 
-					let n = Math.trunc($.Weapon.merchant.length * monster.user.level / 110) + $.dice(3) - 2
+					let n = Math.trunc($.Weapon.merchant.length * monster.user.level / 110)
 					n = n >= $.Weapon.merchant.length ? $.Weapon.merchant.length - 1 : n
 					monster.user.weapon = n + 2
 					cost.value += $.worth(new $.coins($.Weapon.name[$.Weapon.merchant[n]].value).value, $.player.cha)
 
-					n = Math.trunc($.Armor.merchant.length * monster.user.level / 110) + $.dice(3) - 2
+					n = Math.trunc($.Armor.merchant.length * monster.user.level / 110)
 					n = n >= $.Armor.merchant.length ? $.Armor.merchant.length - 1 : n
 					monster.user.armor = n + 1
 					cost.value += $.worth(new $.coins($.Armor.name[$.Armor.merchant[n]].value).value, $.player.cha)
@@ -428,7 +431,7 @@ function MonsterFights(): boolean {
 					monster.user.spells = [ 7, 9 ]
 					if (monster.user.magic) {
 						for (let i = 0; i < Object.keys($.Magic.spells).length; i++) {
-							if ($.dice(($.player.cha >>2) + 5 * i) == 1) {
+							if ($.dice(($.player.cha >>2) + 5 * i + $.player.level - monster.user.level) <= monster.user.magic) {
 								let spell = $.Magic.pick(i)
 								if (!$.Magic.have(monster.user.spells, spell))
 									$.Magic.add(monster.user.spells, i)
@@ -437,7 +440,7 @@ function MonsterFights(): boolean {
 					}
 					if (monster.user.poison) {
 						for (let i = 0; i < Object.keys($.Poison.vials).length; i++) {
-							if ($.dice(($.player.cha >>2) + 5 * i) == 1) {
+							if ($.dice(($.player.cha >>2) + 5 * i + $.player.level - monster.user.level) <= monster.user.poison) {
 								let vial = $.Poison.pick(i)
 								if (!$.Poison.have(monster.user.poisons, vial))
 									$.Poison.add(monster.user.poisons, i)
@@ -450,7 +453,7 @@ function MonsterFights(): boolean {
 
 					$.profile({ jpg:'arena/' + monster.user.handle.toLowerCase()
 						, handle:`${monster.user.handle}`
-						, level:monster.user.level, pc:monster.user.pc.toLowerCase()
+						, level:monster.user.level, pc:'summoned demon'
 						, effect:'jello'
 					})
 					$.cat('arena/' + monster.user.handle)
