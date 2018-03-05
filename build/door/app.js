@@ -16,7 +16,7 @@ console.log(`cwd: ${__dirname}`);
 let sessions = {};
 let logs = {};
 let broadcasts = {};
-dns.lookup('0.0.0.0', (err, addr, family) => {
+dns.lookup('localhost', (err, addr, family) => {
     let app = express();
     app.set('trust proxy', ['loopback', addr]);
     let ssl = { key: fs.readFileSync('key.pem'), cert: fs.readFileSync('cert.pem') };

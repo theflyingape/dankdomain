@@ -222,14 +222,8 @@ function choice() {
 			xvt.app.form = {
 				pick: { cb: () => {
 					if (xvt.entry.length) {
-						let mon = +xvt.entry
-						if (isNaN(mon) && ! /D/i.test(xvt.entry)) {
-							xvt.out(' ?? ')
-							xvt.app.refocus()
-							return
-						}
-						if (mon) {
-							mon = Math.trunc(mon)
+						let mon = $.int(xvt.entry)
+						if (! /D/i.test(xvt.entry)) {
 							if (mon < 1 || mon > monsters.length) {
 								xvt.out(' ?? ')
 								xvt.app.refocus()
