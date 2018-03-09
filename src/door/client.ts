@@ -75,6 +75,7 @@ window.onresize = () => {
 	rows = xy.rows
 	term.resize(cols, rows)
 
+/*	removed for xterm 3.2
 	//	tweak window widths inside the browser
 	let xt = document.getElementsByClassName('xterm-screen')[0]
 	v = xt.clientWidth + 'px'
@@ -82,6 +83,7 @@ window.onresize = () => {
 	w = (window.innerWidth - parseInt(v) > 1 ? window.innerWidth - parseInt(v) : 1) + 'px'
 	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': w })
 	xt.style.width = document.getElementsByClassName('xterm-scroll-area')[0].clientWidth + 'px'
+*/
 }
 
 document.getElementById('lurker-list').onchange = () => {
