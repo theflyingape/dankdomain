@@ -284,19 +284,12 @@ function choice() {
 				pick: { cb: () => {
 					xvt.out('\n')
 					if (xvt.entry.length) {
-						let mon = +xvt.entry
-						if (isNaN(mon)) {
+						let mon = $.int(xvt.entry)
+						if (mon < 1 || mon > monsters.length) {
 							xvt.app.refocus()
 							return
 						}
-						if (mon) {
-							mon = Math.trunc(mon)
-							if (mon < 1 || mon > monsters.length) {
-								xvt.app.refocus()
-								return
-							}
-							xvt.entry = mon.toString()
-						}
+						xvt.entry = mon.toString()
 						MonsterHunt()
 					}
 					else
@@ -632,8 +625,9 @@ function BattleUser(nme: active) {
 
 				case 'R':
 					if ($.player.ram) {
-						if ($.dice(50 + nme.int / 2) > 100 * nme.hull / (nme.hull + $.online.hull)) {
+						if ($.dice(50 + nme.int / 2) > $.int(100 * nme.hull / (nme.hull + $.online.hull))) {
 							xvt.out(`\n${$.who(nme, 'He')}quickly outmaneuvers your ship.\n`)
+							xvt.waste(400)
 							xvt.out(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
 								[ 'Your aim is going to kill us all!'
 								, 'I said port, bastard, not starboard!'
@@ -848,8 +842,9 @@ function MonsterHunt() {
 
 				case 'R':
 					if ($.player.ram) {
-						if ($.dice(50 + monsters[mon].int / 2) > $.int(100 * sm.hull / (sm.hull + $.online.hull))) {
+						if ($.dice(50 + monsters[mon].int / 2) > $.int(100 * $.online.hull / ($.online.hull + sm.hull))) {
 							xvt.out('\nIt quickly outmaneuvers your ship.\n')
+							xvt.waste(400)
 							xvt.out(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
 								[ 'Not the tail, aim for the beastie\'s head!'
 								, 'I said starboard, bitch, not port!'

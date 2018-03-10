@@ -317,9 +317,11 @@ function choice() {
                                         $.beep()
                                         xvt.out(`${$.who(member, 'He')}is currently engaged elsewhere and not available.\n`)
                                     }
-                                    else if (member.user.gang === g.name) {
-                                        member.user.gang = ''
-                                        $.run(`UPDATE Players SET gang = '' WHERE id = '${member.user.id}'`)
+                                    else {
+                                        if (member.user.gang === g.name) {
+                                            member.user.gang = ''
+                                            $.run(`UPDATE Players SET gang = '' WHERE id = '${member.user.id}'`)
+                                        }
                                         g.members.splice(n, 1)
                                         $.saveGang(g)
                                         showGang(g)

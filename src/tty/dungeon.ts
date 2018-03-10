@@ -785,7 +785,7 @@ function doMove(): boolean {
 							}
 							if (opponent.user.id) {
 								let loot = new $.coins(opponent.user.coin.value + opponent.user.bank.value)
-								$.log(opponent.user.id, `${$.player.handle} wished for your ${loot.carry()}`)
+								$.log(opponent.user.id, `\n${$.player.handle} wished for your ${loot.carry()}`)
 								$.news(`\tlooted ${opponent.user.handle}`)
 								$.player.coin.value += loot.value
 								opponent.user.coin.value = 0
@@ -819,7 +819,7 @@ function doMove(): boolean {
 								xvt.out('\nYou can\'t curse novice players.\n')
 							}
 							if (opponent.user.id === '') {
-								$.log(opponent.user.id, `${$.player.handle} cursed you!`)
+								$.log(opponent.user.id, `\n${$.player.handle} cursed you!`)
 								$.news(`\tcursed ${opponent.user.handle}`)
 								if (opponent.user.blessed)
 									opponent.user.blessed = ''
