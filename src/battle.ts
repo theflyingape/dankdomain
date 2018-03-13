@@ -542,9 +542,6 @@ export function spoils() {
 
     // had a little help from my friends (maybe)
     if (from === 'Party') {
-        $.run(`UPDATE Gangs SET win = win + 1 WHERE name = '${parties[w][0].user.gang}'`)
-        $.run(`UPDATE Gangs SET loss = loss + 1 WHERE name = '${parties[l][0].user.gang}'`)
-
         // player(s) can collect off each corpse
         let tl = [ 1, 1 ]
         let take: number = 0
@@ -584,7 +581,11 @@ export function spoils() {
             parties[w][m].user.xp += xp
 
             if (parties[w][m] === $.online) {
-                if (xp) xvt.out('\nYou get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
+                if (xp) {
+                    xvt.out('\nYou get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
+                    $.run(`UPDATE Gangs SET win = win + 1 WHERE name = '${parties[w][0].user.gang}'`)
+                    $.run(`UPDATE Gangs SET loss = loss + 1 WHERE name = '${parties[l][0].user.gang}'`)
+                }
                 if (award)
                     xvt.out('You get your cut worth ', new $.coins(award).carry(), '.\n')
                 xvt.waste(500)
