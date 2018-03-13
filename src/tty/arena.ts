@@ -284,7 +284,7 @@ function choice() {
 					return
 				}
 				if (opponent.user.status.length) {
-					xvt.out('was killed by ')
+					xvt.out('was defeated by ')
 					let rpc: active = { user: { id: opponent.user.status } }
 					if ($.loadUser(rpc)) {
 						xvt.out(rpc.user.handle, xvt.cyan, ' (', xvt.bright, xvt.white, opponent.user.xplevel.toString(), xvt.normal, xvt.cyan, ')', xvt.reset)
