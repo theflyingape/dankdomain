@@ -60,6 +60,7 @@ window.onresize = () => {
 	//  tweak side panel sizing within reason
 	Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': '65%' })
 	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': '35%' })
+	term.setOption('fontSize', 20)
 	let xy = fit.proposeGeometry(term)
 	let w = Math.trunc(parseInt(I.style.width) * (xy.cols || 80) / 80) + '%'
 	w = parseInt(w) < 28 ? '28%' : parseInt(w) > 42 ? '42%' : w
