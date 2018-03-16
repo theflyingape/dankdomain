@@ -57,16 +57,18 @@ window.onresize = () => {
 			I = css
 	}
 
-	//  guestimate side panel sizing within required terminal width
+	//  tweak side panel sizing within reason
+	Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': '65%' })
+	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': '35%' })
 	let xy = fit.proposeGeometry(term)
 	let w = Math.trunc(parseInt(I.style.width) * (xy.cols || 80) / 80) + '%'
 	w = parseInt(w) < 28 ? '28%' : parseInt(w) > 42 ? '42%' : w
 	let v = (100 - parseInt(w)) + '%'
 	Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': v })
 	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': w })
+	//	adjust font to fit for standard width
 	xy = fit.proposeGeometry(term)
-	let fontSize = term.getOption('fontSize')
-	fontSize = Math.trunc(fontSize * (xy.cols || 80) / 80)
+	let fontSize = Math.trunc(20 * (xy.cols || 80) / 80)
 	term.setOption('fontSize', fontSize)
 
 	//  and make it stick
@@ -74,16 +76,6 @@ window.onresize = () => {
 	cols = 80
 	rows = xy.rows
 	term.resize(cols, rows)
-
-/*	removed for xterm 3.2
-	//	tweak window widths inside the browser
-	let xt = document.getElementsByClassName('xterm-screen')[0]
-	v = xt.clientWidth + 'px'
-	Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': v })
-	w = (window.innerWidth - parseInt(v) > 1 ? window.innerWidth - parseInt(v) : 1) + 'px'
-	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': w })
-	xt.style.width = document.getElementsByClassName('xterm-scroll-area')[0].clientWidth + 'px'
-*/
 }
 
 document.getElementById('lurker-list').onchange = () => {
