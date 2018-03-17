@@ -161,7 +161,6 @@ export function menu(suppress = false) {
 	}
 	ROOM = DL.rooms[y][x]
 	if ($.dice(DL.spawn * (ROOM.type == 0 ? 2 : ROOM.type == 3 ? 1 : 3)) == 1) {
-		xvt.plot($.player.rows, 1)
 		let s = $.dice(5) - 1
 		xvt.out(xvt.reset, '\n', xvt.faint, ['Your skin crawls'
 			, 'Your pulse quickens', 'You feel paranoid', 'Your grip tightens'
@@ -199,7 +198,6 @@ export function menu(suppress = false) {
 		if (putMonster(y, x)) {
 			if (DL.map > 1)
 				drawRoom(y, x)
-			xvt.plot($.player.rows, 1)
 			if (ROOM.occupant == 6 && DL.cleric.hp) {
 				$.sound('agony', 10)
 				xvt.out(xvt.reset, xvt.bright, xvt.yellow, 'You hear a dying cry of agony!!\n', xvt.reset)
@@ -474,15 +472,15 @@ function doMove(): boolean {
 		if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
 	}
 
-	xvt.plot($.player.rows, 1)
 	xvt.out(xvt.reset, '\n')
 	if (looked) return true
 
 	//	monsters?
 	if (ROOM.monster.length) {
-        $.action('battle')
+		$.action('battle')
+		xvt.save()
 		xvt.out(`\x1B[1;${$.player.rows}r`)
-		xvt.plot($.player.rows, 1)
+		xvt.restore()
 		refresh = true
 
 		if (ROOM.monster.length == 1) {
@@ -647,8 +645,9 @@ function doMove(): boolean {
 			return false
 
 		case 3:
+			xvt.save()
 			xvt.out(`\x1B[1;${$.player.rows}r`)
-			xvt.plot($.player.rows, 1)
+			xvt.restore()
 			$.music('well')
 			xvt.waste(600)
 			xvt.out(xvt.magenta, 'You have found a legendary Wishing Well.\n')
@@ -737,8 +736,9 @@ function doMove(): boolean {
 						break
 					case 'O':
 						$.sound('teleport')
+						xvt.save()
 						xvt.out(`\x1B[1;${$.player.rows}r`)
-						xvt.plot($.player.rows, 1)
+						xvt.restore()
 						xvt.out('\n')
 						require('./main').menu($.player.expert)
 						return
@@ -883,8 +883,9 @@ function doMove(): boolean {
 			return false
 
 		case 4:
+			xvt.save()
 			xvt.out(`\x1B[1;${$.player.rows}r`)
-			xvt.plot($.player.rows, 1)
+			xvt.restore()
 			$.music('wol')
 			xvt.waste(600)
 			xvt.out(xvt.magenta, 'You have found a Mystical Wheel of Life.\n')
@@ -1171,7 +1172,7 @@ function doMove(): boolean {
 				break
 			}
 
-			let power = Math.trunc(100 * DL.cleric.sp / DL.cleric.user.sp)
+			let power = $.int(100 * DL.cleric.sp / DL.cleric.user.sp)
 			xvt.out(xvt.yellow, 'There is an ', xvt.faint, 'old cleric', xvt.normal
 				, xvt.normal, ' in this room with '
 				, power < 40 ? xvt.faint : power < 80 ? xvt.normal : xvt.bright, `${power}`
@@ -1237,8 +1238,9 @@ function doMove(): boolean {
 			return false
 
 		case 7:
+			xvt.save()
 			xvt.out(`\x1B[1;${$.player.rows}r`)
-			xvt.plot($.player.rows, 1)
+			xvt.restore()
 			refresh = true
 			xvt.out(xvt.magenta, 'You encounter a wizard in this room.\n\n')
 			teleport()
@@ -1482,10 +1484,11 @@ export function doSpoils() {
 
 function drawHero() {
 	ROOM = DL.rooms[Y][X]
-	drawRoom(Y, X)
+	if (!DL.map) drawRoom(Y, X)
+	xvt.save()
 	xvt.plot(Y * 2 + 2, X * 6 + 2)
 	xvt.out(xvt.reset, xvt.reverse, '-YOU-', xvt.reset)
-	xvt.plot($.player.rows, 1)
+	xvt.restore()
 }
 
 function drawLevel() {
@@ -1556,14 +1559,14 @@ function drawLevel() {
 							case 6:
 								if (DL.cleric.sp) {
 									if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_')
-									o = xvt.attr(xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.reset, xvt.faint, xvt.yellow, ':')
+									o = xvt.attr(xvt.reset, xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.reset, xvt.faint, xvt.yellow, ':')
 								}
 								else {
 									if (!icon) icon = xvt.attr(xvt.uline, '_', Cleric[$.player.emulation], '_')
-									o = xvt.attr(xvt.faint, ':', icon, xvt.reset, xvt.faint, ':')
+									o = xvt.attr(xvt.reset, xvt.faint, ':', icon, xvt.reset, xvt.faint, ':')
 								}
 								break
-
+					
 							case 7:
 								if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Teleport[$.player.emulation], xvt.normal, '_')
 								o = xvt.attr(xvt.faint, xvt.magenta, '<', xvt.normal, icon, xvt.reset, xvt.faint, xvt.magenta, '>')
@@ -1586,14 +1589,16 @@ function drawLevel() {
 		for (y = 0; y < DL.rooms.length; y++)
 			for (x = 0; x < DL.width; x++)
 				if (DL.rooms[y][x].map)
-					drawRoom(y, x)
+					drawRoom(y, x, false)
 	}
 
 	xvt.out(`\x1B[${paper.length + 1};${$.player.rows}r`)
 	xvt.plot(paper.length + 1, 1)
+	xvt.save()
 }
 
-function drawRoom(r:number, c:number) {
+function drawRoom(r:number, c:number, keep = true) {
+	if (keep) xvt.save()
 	ROOM = DL.rooms[r][c]
 	let row = r * 2, col = c * 6
 	if (!DL.map) {
@@ -1680,6 +1685,7 @@ function drawRoom(r:number, c:number) {
 		if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col, 7), '\x1B(B')
 		else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[row].substr(col, 7))
 	}
+	if (keep) xvt.restore()
 }
 
 function generateLevel() {
@@ -2261,8 +2267,9 @@ export function teleport() {
 						deep--
 					else {
 						$.music('thief2')
+						xvt.save()
 						xvt.out(`\x1B[1;${$.player.rows}r`)
-						xvt.plot($.player.rows, 1)
+						xvt.restore()
 						xvt.waste(1250)
 						require('./main').menu($.player.expert)
 						return

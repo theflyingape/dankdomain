@@ -172,6 +172,7 @@ function choice() {
 				xvt.app.form = {
 					'skin': { cb:() => {
 						if (/Y/i.test(xvt.entry)) {
+							$.sound('click')
 							$.online.toAC = 0
 							$.player.toAC = 0
 							$.player.coin.value -= credit.value
@@ -185,6 +186,7 @@ function choice() {
 							}
 							$.online.altered = true
 						}
+						Battle.yourstats()
 						menu()
 						return
 					}, cancel:'Y', enter:'Y', max:1, eol:false, match:/Y|N/i, timeout:10 }
@@ -199,6 +201,7 @@ function choice() {
 				xvt.app.form = {
 					'hands': { cb:() => {
 						if (/Y/i.test(xvt.entry)) {
+							$.sound('click')
 							$.online.toWC = 0
 							$.player.toWC = 0
 							$.player.coin.value -= credit.value
@@ -212,6 +215,7 @@ function choice() {
 							}
 							$.online.altered = true
 						}
+						Battle.yourstats()
 						menu()
 						return
 					}, cancel:'Y', enter:'Y', max:1, eol:false, match:/Y|N/i, timeout:10 }
@@ -291,8 +295,7 @@ function choice() {
 						return
 					}
 
-					credit.value = Math.trunc($.money(opponent.user.level)
-						* (100 - $.online.cha + 1) / 100 + 1)
+					credit.value = $.int($.money(opponent.user.level) * (100 - $.online.cha + 1) / 100 + 1)
 					xvt.out(`It will cost you ${credit.carry()} to bail out ${opponent.user.handle}.\n`)
 					if ($.player.coin.value < credit.value) {
 						menu()
@@ -305,10 +308,12 @@ function choice() {
 							xvt.out('\n')
 							if (/Y/i.test(xvt.entry)) {
 								$.profile({ png:'payment', effect:'tada' })
+								$.sound('click')
 								xvt.out(`${opponent.user.handle} is set free.\n`)
 								$.player.coin.value -= credit.value
 								opponent.user.status = ''
-								$.run(`UPDATE Players set status='' WHERE id='${opponent.user.id}'`)
+								opponent.user.xplevel = opponent.user.level
+								$.run(`UPDATE Players set status='',xplevel=level WHERE id='${opponent.user.id}'`)
 								$.log(opponent.user.id, `${$.player.handle} paid ${credit.carry()} to bail you out of jail.\n`)
 								$.news(`\t${opponent.user.handle} made bail`)
 								$.bail--
@@ -380,6 +385,7 @@ function choice() {
 			xvt.waste(1000)
 			if ($.int(16 * $.player.steal + $.player.level / 10 + $.player.dex / 10) < $.dice(100)) {
 				$.player.status = 'jail'
+				$.player.xplevel = 0
 				$.reason = `caught picking ${pocket.handle}\'s pocket`
 				xvt.out('A guard catches you and throws you into jail!\n')
 				$.sound('arrested', 20)
@@ -532,6 +538,7 @@ function Bank() {
 
 			if ($.dice(100) > ++c) {
 				$.player.status = 'jail'
+				$.player.xplevel = 0
 				$.reason = 'caught getting into the vault'
 				xvt.out('\n\nA guard catches you and throws you into jail!\n')
 				$.sound('arrested', 20)
@@ -554,6 +561,7 @@ function Bank() {
 			c /= 15 - ($.player.steal * 3)
 			if ($.dice(100) > ++c) {
 				$.player.status = 'jail'
+				$.player.xplevel = 0
 				$.reason = 'caught inside the vault'
 				xvt.out('something jingles!')
 				xvt.waste(1500)

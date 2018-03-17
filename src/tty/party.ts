@@ -323,6 +323,7 @@ function choice() {
                                             $.run(`UPDATE Players SET gang = '' WHERE id = '${member.user.id}'`)
                                         }
                                         g.members.splice(n, 1)
+                                        g.handles.splice(n ,1)
                                         $.saveGang(g)
                                         showGang(g)
                                         xvt.out(xvt.bright, '\n', member.user.handle, ' is no longer on ', g.name, '.\n', xvt.reset)

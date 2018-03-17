@@ -278,11 +278,7 @@ function choice() {
 				}
 
 				xvt.out(opponent.user.handle, ' ')
-				if (opponent.user.status === 'jail') {
-					xvt.out('is locked-up in jail.\n')
-					menu()
-					return
-				}
+
 				if (opponent.user.status.length) {
 					xvt.out('was defeated by ')
 					let rpc: active = { user: { id: opponent.user.status } }

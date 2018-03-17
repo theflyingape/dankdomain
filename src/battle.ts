@@ -125,11 +125,11 @@ function end() {
 //    do rounds: attack() with possibly backstab or poison
 //       per member: next() for cast, melee, or retreat
 //    until spoils()
-export function engage(module:string, party: active|active[], mob: active|active[], cb:Function) {
+export function engage(menu:string, party: active|active[], mob: active|active[], cb:Function) {
 
     //  process parameters
-    from = module
-    
+    from = menu
+
     if (xvt.validator.isArray(party))
         parties = [ <active[]>party ]
     else {
@@ -2016,9 +2016,13 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                     , '!\n\n', xvt.reset)
                 if (from !== 'Party' && enemy.user.id !== '' && enemy.user.id[0] !== '_') {
                     $.sound('kill', 15)
-                    $.music('bitedust')
-                    $.news(`\tdefeated ${enemy.user.handle}, an experience level ${enemy.user.xplevel} ${enemy.user.pc}`)
+                    $.music($.player.gender == 'M' ? 'bitedust' : 'queen')
+                    $.news(`\tdefeated ${enemy.user.handle}, a level ${enemy.user.xplevel} ${enemy.user.pc}`)
                     $.wall(`defeated ${enemy.user.handle}`)
+                }
+                if (from == 'Monster') {
+                    $.news(`\tdefeated a level ${enemy.user.xplevel} ${enemy.user.handle}`)
+                    $.wall(`defeated a level ${enemy.user.level} ${enemy.user.handle}`)
                 }
                 if (from == 'Dungeon') $.animated(['bounceOut', 'fadeOut', 'flipOutX', 'flipOutY', 'rollOut', 'rotateOut', 'zoomOut'][$.dice(7) - 1])
                 xvt.waste(200)
@@ -2124,23 +2128,32 @@ export function user(venue: string, cb:Function) {
                 xvt.app.focus = 'start'
                 return
             }
-
             let rpc: active = { user: { id: xvt.entry} }
             if (!$.loadUser(rpc)) {
                 rpc.user.id = ''
                 rpc.user.handle = xvt.entry
-                if(!$.loadUser(rpc)) { 
+                if (!$.loadUser(rpc)) { 
                     xvt.beep()
                     xvt.out(' ?? ')
                 }
             }
-
             //  paint profile
-            xvt.out('\n')
             if (rpc.user.id) {
                 $.action('clear')
                 $.PC.profile(rpc)
+                //  the inert player does not fully participate in the fun ... 
+                if (['Bail','Brawl','Curse','Drop','Joust','Resurrect','Rob'].indexOf(venue) < 0 && !rpc.user.xplevel) {
+                    rpc.user.id = ''
+                    xvt.beep()
+                    xvt.out(' ', $.bracket(rpc.user.status == 'jail' ? '🔒 jail' : 'inactive', false))
+                }
+                else if (['Brawl','Joust','Resurrect'].indexOf(venue) >= 0 && rpc.user.status == 'jail') {
+                    rpc.user.id = ''
+                    xvt.beep()
+                    xvt.out(' ', $.bracket('🔒 jail', false))
+                }
             }
+            xvt.out('\n')
             cb(rpc)
         }, max:22 },
         'start': { cb: () => {
@@ -2164,7 +2177,7 @@ export function user(venue: string, cb:Function) {
                 SELECT id, handle, pc, level, xplevel, status, lastdate, access FROM Players
                 WHERE id NOT GLOB '_*'
                 AND level BETWEEN ${start} AND ${end}
-                ORDER BY xplevel DESC, level DESC, immortal DESC
+                ORDER BY xplevel DESC, level DESC, wins DESC, immortal DESC
                 `)
 
             for (let i in rs) {

@@ -35,7 +35,7 @@ module Logon
 
     $.cat('logon')
     xvt.app.form = {
-        'who': { cb:who, prompt:'Who dares to enter my dank domain <or NEW>? ', max:22, timeout:40 },
+        'who': { cb:who, prompt:xvt.attr('Who dares to enter my dank domain ', $.bracket('or NEW', false), '? '), max:22, timeout:40 },
         'password': { cb:password, echo:false, max:26, timeout:20 },
     }
 
@@ -200,8 +200,7 @@ function password() {
 
     if ($.player.today > $.access.calls) {
         $.beep()
-        xvt.out('\nYou have already used all ', $.access.calls.toString(),
-         ' visits for today.  Please visit us again tomorrow!\n')
+        xvt.out(`\nYou played all ${$.access.calls} calls for today.  Please visit again tomorrow!\n`)
         xvt.hangup()
     }
 
@@ -257,9 +256,11 @@ function welcome() {
 
     if ($.player.status === 'jail' || !$.Access.name[$.player.access].roleplay) {
         $.profile({ png:'npc/jailer', effect:'fadeIn' })
+        $.sound('max')
+        if ($.player.emulation == 'XT') xvt.out('🔒 ')
         xvt.out(xvt.bright, xvt.black, '(', xvt.magenta, 'PRISONER', xvt.black, ')\n')
         xvt.out(xvt.red, '\nYou are locked-up in jail.\n', xvt.reset)
-        xvt.waste(1000)
+        xvt.waste(1250)
         if ($.access.roleplay && $.dice(2 * $.online.cha) > (10 - 2 * $.player.steal)) {
             let bail = new $.coins(Math.round($.money($.player.level) * (101 - $.online.cha) / 100))
             xvt.out('\nIt will cost you ', bail.carry(), ' to get bailed-out and to continue play.\n')
@@ -267,6 +268,7 @@ function welcome() {
                 'bail': { cb:() => {
                     xvt.out('\n\n')
                     if (/Y/i.test(xvt.entry)) {
+                        $.sound('click')
                         $.player.coin.value -= bail.value
                         if ($.player.coin.value < 0) {
                             $.player.bank.value += $.player.coin.value
@@ -291,6 +293,8 @@ function welcome() {
             xvt.app.focus = 'bail'
             return
         }
+        else
+            $.sound('boo')
     }
 
     if ($.player.today <= $.access.calls && $.access.roleplay && $.sysop.dob <= $.now().date) {
@@ -300,7 +304,7 @@ function welcome() {
         })
         xvt.out(xvt.bright, xvt.black, '(', xvt.normal, xvt.white, 'Welcome back, ',  $.access[$.player.gender], xvt.bright, xvt.black, ')\n', xvt.reset)
         xvt.out(xvt.cyan, 'Visit #: ', xvt.bright, xvt.white, $.player.calls.toString(), xvt.reset
-            , `  -  ${$.access.calls - $.player.today} calls remaining\n`)
+            , '  -  ', xvt.bright, xvt.blink, xvt.cyan, `${$.access.calls - $.player.today}`, xvt.reset, ' calls remaining\n')
         xvt.sessionAllowed = $.access.minutes * 60
         $.wall(`logged on as a level ${$.player.level} ${$.player.pc}`)
 
@@ -326,6 +330,7 @@ function welcome() {
         $.player.calls++
         $.player.plays++
         $.player.status = ''
+        $.player.xplevel = $.player.level
         $.arena = 3
         $.bail = 1
         $.brawl = 3

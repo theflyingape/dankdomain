@@ -103,7 +103,7 @@ export class Character {
 
             let rpc = <active>{ user:{id:''} }
             let rs = query(`SELECT id FROM Players WHERE id != '${player.id}'
-                AND status != 'jail' AND xplevel BETWEEN ${lo} AND ${hi}
+                AND xplevel BETWEEN ${lo} AND ${hi}
                 ${where} ORDER BY level`)
             if (rs.length) {
                 let n = dice(rs.length) - 1
@@ -1066,7 +1066,7 @@ export function log(who:string, message: string) {
 }
 
 export function money(level: number): number {
-    return Math.trunc(Math.pow(2, (level - 1) / 2) * 10 * (101 - level) / 100)
+    return int(Math.pow(2, (level - 1) / 2) * 10 * (101 - level) / 100)
 }
 
 export function news(message: string, commit = false) {

@@ -276,7 +276,7 @@ function choice() {
 
         case 'B':
             if (!$.brawl) break
-            $.online.bp = Math.trunc($.online.hp / 10)
+            $.online.bp = $.int($.online.hp / 10)
             Battle.user('Brawl', (opponent: active) => {
                 if (opponent.user.id === '') {
                     menu(true)

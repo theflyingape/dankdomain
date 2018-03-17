@@ -1,5 +1,5 @@
-This game runs on a Red Hat Fedora Server using only an Intel Atom quad core
-mini with 4gb RAM on a 100mb fiber optic internet service.
+This game runs on a Red Hat Fedora Server using an Intel Atom quad core
+mini with 4gb RAM on 100mb fiber optic internet service.
 
 The game was re-imagined using Node.js and the TypeScript transpiler.
 The portal door uses the latest xterm.js with a node-pty implementation.

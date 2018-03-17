@@ -17,18 +17,6 @@ import * as fit from 'xterm/lib/addons/fit/fit'
 
 let term: Terminal
 let cols = 80, rows = 25
-let options: ITerminalOptions = {
-	bellStyle: 'none', cursorBlink: false, cols: cols, rows: rows, scrollback: 500,
-	fontFamily: 'Consolas,Lucida Console,monospace', fontSize: 20,
-	fontWeight: 'normal', fontWeightBold: 'normal',
-	theme: {
-		foreground: '#c1c2c8', background: '#010208',
-		black: '#000000', red: '#a00000', green: '#00a000', yellow: '#c8a000',
-		blue: '#0000a0', magenta: '#a000a0', cyan: '#00a0a0', white: '#c8c8c8',
-		brightBlack: '#646464', brightRed: '#fb0000', brightGreen: '#00fb00', brightYellow: '#fbfb00',
-		brightBlue: '#0000fb', brightMagenta: '#fb00fb', brightCyan: '#00fbfb', brightWhite: '#fbfbfb'
-	}
-}
 
 const app = location.pathname.replace(/\/+$/, "")
 let pid = 0, wpid = 0
@@ -92,11 +80,13 @@ document.getElementById('lurker-list').onchange = () => {
 
 	document.getElementById('terminal').hidden = false;
 	term = new Terminal({
-		cursorBlink: false, scrollback: 0,
-		fontFamily: 'Consolas,Lucida Console,monospace', fontSize: 18, theme: {
-			foreground: '#c1c2c8', background: '#040820',
+		bellStyle: 'none', cursorBlink: false, scrollback: 0,
+		fontFamily: 'IBM Plex Mono,Consolas,Lucida Console,monospace', fontSize: 20,
+		fontWeight: '400', fontWeightBold: '500',
+		theme: {
+			foreground: '#a3a7af', background: '#23272f',
 			black: '#000000', red: '#a00000', green: '#00a000', yellow: '#c8a000',
-			blue: '#0000a0', magenta: '#a000a0', cyan: '#00a0a0', white: '#c8c8c8',
+			blue: '#0000a0', magenta: '#a000a0', cyan: '#00a0a0', white: '#b0b0b0',
 			brightBlack: '#646464', brightRed: '#ff0000', brightGreen: '#00ff00', brightYellow: '#ffff00',
 			brightBlue: '#0000ff', brightMagenta: '#ff00ff', brightCyan: '#00ffff', brightWhite: '#ffffff'
 		}
@@ -146,6 +136,19 @@ newSession()
 
 
 function newSession() {
+	const options: ITerminalOptions = {
+		bellStyle: 'none', cursorBlink: false, cols: cols, rows: rows, scrollback: 500,
+		fontFamily: 'IBM Plex Mono,Consolas,Lucida Console,monospace', fontSize: 20,
+		fontWeight: '400', fontWeightBold: '500',
+		theme: {
+			foreground: '#b3b7bf', background: '#03070f',
+			black: '#000000', red: '#a00000', green: '#00a000', yellow: '#c8a000',
+			blue: '#0000a0', magenta: '#a000a0', cyan: '#00a0a0', white: '#b8b9c0',
+			brightBlack: '#646464', brightRed: '#fb0000', brightGreen: '#00fb00', brightYellow: '#fbfb00',
+			brightBlue: '#0000fb', brightMagenta: '#fb00fb', brightCyan: '#00fbfb', brightWhite: '#fbfbfb'
+		}
+	}
+	
 	carrier = true
 	recheck = 0
 	if (reconnect) clearInterval(reconnect)

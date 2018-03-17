@@ -100,8 +100,8 @@ function choice() {
 
             let rs = $.query(`
                 SELECT id, handle, pc, level, xplevel, status, gang, access FROM Players
-                WHERE id NOT GLOB '_*' AND xplevel > 1
-                ORDER BY xplevel DESC, level DESC, immortal DESC
+                WHERE id NOT GLOB '_*' AND level > 1
+                ORDER BY xplevel DESC, level DESC, wins DESC, immortal DESC
                 LIMIT ${$.player.rows - 5}
             `)
 
@@ -111,8 +111,6 @@ function choice() {
                     xvt.out(xvt.bright, xvt.yellow)
                 else if (rs[n].id === $.player.id)
                     xvt.out(xvt.bright, xvt.white)
-                else if (+rs[n].xplevel !== +rs[n].level && +rs[n].xplevel < 2)
-                    xvt.out(xvt.faint)
                 xvt.out(sprintf('%-4s  %-22.22s  %-9s  %3d  ', rs[n].id, rs[n].handle, rs[n].pc, rs[n].level))
                 if (!rs[n].status.length) xvt.out('Alive!')
                 else {
@@ -282,7 +280,8 @@ function choice() {
 							else {
                                 $.log(opponent.user.id, `\n${$.player.handle} was caught robbing you!`)
                                 $.reason = `caught robbing ${opponent.user.handle}`
-								$.player.status = 'jail'
+                                $.player.status = 'jail'
+                                $.player.xplevel = 0
 								xvt.out('\nA guard catches you and throws you into jail!\n')
                                 $.sound('arrested', 20)
                                 xvt.out('You might be released by your next call.\n\n')
