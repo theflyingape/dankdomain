@@ -1,11 +1,19 @@
 # [Dank Domain](https://robert.hurst-ri.us/games/dankdomain)
 ### the return of Hack & Slash
 > [developed](https://github.com/theflyingape/dankdomain) using Node.js on Linux served up using Verizon FiOS 100mb
+#### 17-Mar-2018
+* 1.1.4 release, Happy St. Patrick's Day!
+* xterm.js v3.2 release with preferred Google font IBM Plex Mono
+* an Arena summoned demon is a fair contest
+* dungeon: improved level rendering and a chance taxman boss encounter
+* improved 'inactive player' management, and auto-email reminders until account deletion
+* PVP game enforcement for when player status is defeated or in jail
+* wagering limit and Cherry Bomb Slots added to casino
 #### 20-Jan-2018
 * 1.0.0 release
 * door: TypeScript app + client using xterm.js v3 release
 * brawling can include NPC participation
-* minor dungeon spawning and your teleporting avoids caverns
+* minor dungeon spawning and the teleport avoids caverns
 * if you fail to reroll as an immortal, you must choose a different class
 * level with charisma table limits at the casino
 #### 02-Jan-2018
@@ -23,7 +31,7 @@
 * deeds: memorable hits
 * lurker mode: watch online player
 #### 23-Nov-2017
-* beta 0.8.1 release, uses xterm v3 with smarter browser layout/resizing, Happy Thanksgiving!
+* beta 0.8.1 release, uses xterm.js v3 with smarter browser layout/resizing, Happy Thanksgiving!
 * some casino tables are open
 * naval shipyard, sea monsters, and fishing
 * party fights

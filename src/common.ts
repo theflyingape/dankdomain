@@ -1620,35 +1620,39 @@ export function riddle() {
     }
 
     player.today = 0
-    xvt.out(xvt.bright, xvt.yellow, `\nYou are rewarded with ${access.calls} more calls today.\n`, xvt.reset)
+    xvt.out(xvt.bright, xvt.yellow, '\nYou are rewarded'
+        , xvt.normal, ` ${access.calls} `, xvt.bright, 'more calls today.\n', xvt.reset)
 
-    xvt.out(xvt.green, `\nOl' Mighty One!  Solve the Ancient Riddle of the Keys and you will become\n`)
-    xvt.out(`an immortal being.\n\n`)
+    xvt.out(xvt.green, xvt.bright, `\nOl' Mighty One!  `
+        , xvt.normal, 'Solve the'
+        , xvt.faint, ' Ancient Riddle of the Keys '
+        , xvt.normal, 'and you will become\nan immortal being.\n\n')
 
     let slot: number
     for (let i in player.keyhints) {
         if (+i < 12 && player.keyhints[i]) {
             slot = Math.trunc(+i / 3) + 1
-            xvt.out(xvt.reset, `Key #${slot} is not `, xvt.bright, xvt.reverse)
+            xvt.out(xvt.reset, `Key #${slot} is not `)
+            if (player.emulation === 'XT') xvt.out(' \u{1F511}  ')
+            xvt.out(xvt.bright, xvt.reverse, ' ')
             switch (player.keyhints[i]) {
             case 'P':
-                xvt.out(xvt.magenta, ' Platinum ')
+                xvt.out(xvt.magenta, 'Platinum')
                 break
             case 'G':
-                xvt.out(xvt.yellow, ' Gold ')
+                xvt.out(xvt.yellow, 'Gold')
                 break
             case 'S':
-                xvt.out(xvt.cyan, ' Silver ')
+                xvt.out(xvt.cyan, 'Silver')
                 break
             case 'C':
-                xvt.out(xvt.red, ' Copper ')
+                xvt.out(xvt.red, 'Copper')
                 break
             default:
-                xvt.out(xvt.black, `${player.keyhints[i]} from here`)
+                xvt.out(xvt.black, 'from around here')
                 break
             }
-            if (player.emulation === 'XT') xvt.out(xvt.normal, xvt.noreverse, ' \u{1F511} ')
-            xvt.out(xvt.reset, '\n')
+            xvt.out(' ', xvt.reset, '\n')
         }
     }
 
