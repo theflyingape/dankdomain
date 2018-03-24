@@ -1603,8 +1603,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 if (rpc === $.online) {
                     let deed = $.mydeeds.find((x) => { return x.deed === 'big blast' })
                     if (!deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'big blast')[0]) - 1]
-                    if ((deed && br > deed.value)) {
-                        deed.value = br
+                    if ((deed && bbr > deed.value)) {
+                        deed.value = bbr
                         $.sound('outstanding')
                         $.saveDeed(deed)
                         xvt.out(xvt.yellow, '+', xvt.white)
