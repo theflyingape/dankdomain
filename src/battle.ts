@@ -2001,7 +2001,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         if (enemy == $.online) {
             $.player.killed++
             xvt.out('\n', xvt.bright, xvt.yellow
-                , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
+                , rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle
                 , ' killed you!\n\n', xvt.reset)
             $.profile({ jpg:'death', effect:'fadeInDownBig' })
             $.sound('killed', 12)
@@ -2016,7 +2016,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                     , '!\n\n', xvt.reset)
                 if (from !== 'Party' && enemy.user.id !== '' && enemy.user.id[0] !== '_') {
                     $.sound('kill', 15)
-                    $.music($.player.gender == 'M' ? 'bitedust' : 'queen')
+                    $.music($.player.gender === 'M' ? 'bitedust' : 'queen')
                     $.news(`\tdefeated ${enemy.user.handle}, a level ${enemy.user.xplevel} ${enemy.user.pc}`)
                     $.wall(`defeated ${enemy.user.handle}`)
                 }
