@@ -289,7 +289,7 @@ export function attack(retry = false) {
                 }
 
                 if (/Y/i.test(xvt.entry)) {
-                    yourstats()
+                    yourstats(false)
                     volley += 500
                     xvt.app.refocus()
                     return
@@ -2207,8 +2207,8 @@ export function user(venue: string, cb:Function) {
     xvt.app.focus = 'user'
 }
 
-export function yourstats() {
-    $.PC.profile($.online)
+export function yourstats(profile = true) {
+    profile && $.PC.profile($.online)
     xvt.out(xvt.reset)
     xvt.out(xvt.cyan, 'Str:', xvt.bright, $.online.str > $.player.str ? xvt.yellow : $.online.str < $.player.str ? xvt.red : xvt.white)
     xvt.out(sprintf('%3d', $.online.str), xvt.reset, sprintf(' (%d,%d)    ', $.player.str, $.player.maxstr))

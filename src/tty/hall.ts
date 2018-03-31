@@ -41,7 +41,7 @@ function choice() {
     switch (choice) {
         case 'C':
             xvt.out('\n')
-            xvt.out(xvt.Red, xvt.white, '  Class      CHAMPION                  Date      BEST        Deed      '
+            xvt.out(xvt.Red, xvt.white, xvt.bright, '  Class      CHAMPION                  Date      BEST        Deed      '
                 , xvt.reset, '\n')
             xvt.out(xvt.Red, xvt.white, '-----------------------------------------------------------------------'
                 , xvt.reset)
@@ -67,7 +67,7 @@ function choice() {
 
         case 'H':
             xvt.out('\n')
-            xvt.out(xvt.Magenta, xvt.white, '  HERO                      Date      GOAT        Deed      '
+            xvt.out(xvt.Magenta, xvt.white, xvt.bright, '  HERO                      Date      GOAT        Deed      '
                 , xvt.reset, '\n')
             xvt.out(xvt.Magenta, xvt.white, '------------------------------------------------------------'
                 , xvt.reset)
@@ -84,7 +84,21 @@ function choice() {
                     }
                 }
             }
+
             xvt.out('\n')
+            xvt.out(xvt.Magenta, xvt.yellow, xvt.bright, '   TOP HERO                Deeds   '
+                , xvt.reset, '\n')
+            xvt.out(xvt.Magenta, xvt.yellow, '-----------------------------------'
+                , xvt.reset, '\n')
+            let rd = $.query(`
+                SELECT hero, count(*) as n FROM Deeds
+                GROUP BY hero HAVING n > 1
+                ORDER BY n DESC LIMIT 10
+            `)
+            for (let n in rd) {
+                xvt.out(sprintf('%-22.22s     %4d', rd[n].hero, rd[n].n), '\n')
+            }
+
             suppress = true
             break
 
@@ -130,7 +144,7 @@ function choice() {
             `)
 
             for (let n in rs) {
-                xvt.out(sprintf('%-4s  %-22.22s  %-9s  %3d  %4d'
+                xvt.out(sprintf('%-4s  %-23.23s  %-9s  %3d  %4d'
                     , rs[n].id[0] !== '_' ? rs[n].id : ' \u00B7 ', rs[n].handle, rs[n].pc, rs[n].level, rs[n].tw)
                     , '\n')
             }
@@ -142,7 +156,7 @@ function choice() {
 			return
 
         case 'W':
-            xvt.out(xvt.green, '\n        --=:)) WINNERS Only Noted ((:=--', xvt.reset, '\n\n')
+            xvt.out(xvt.green, '\n        --=:)) ', xvt.bright, 'WINNERS', xvt.normal, ' Only Noted ((:=--', xvt.reset, '\n\n')
             $.cat('winners')
             suppress = true
             break

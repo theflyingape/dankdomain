@@ -294,8 +294,8 @@ export function menu(suppress = false) {
 
 	//	user input
 	xvt.app.form = {
-        'command': { cb:command, cancel:'y', enter:'?', eol:false, timeout:20 }
-    }
+		'command': { cb:command, cancel:'Y', enter:'?', eol:false, timeout:20 }
+	}
 	xvt.app.form['command'].prompt = ''
 	if (suppress)
 		xvt.app.form['command'].prompt += ':'
@@ -383,7 +383,7 @@ function command() {
 
 	case 'Y':
 		xvt.out('\n')
-		Battle.yourstats()
+		Battle.yourstats(false)
 		break
 
 	case 'N':
@@ -659,15 +659,15 @@ function doMove(): boolean {
 			let well = 'BT'
 			xvt.out($.bracket('B'), 'Bless yourself')
 			xvt.out($.bracket('T'), 'Teleport to another level')
-			if (deep > 0) xvt.out($.bracket('D'), 'Destroy dank dungeon'); well += 'D'
-			if (deep > 1) xvt.out($.bracket('O'), 'Teleport all the way out'); well += 'O'
-			if (deep > 2) xvt.out($.bracket('R'), 'Resurrect all the dead players'); well += 'R'
-			if (deep > 3) xvt.out($.bracket('F'), 'Fix all your damage'); well += 'F'
-			if (deep > 4) xvt.out($.bracket('L'), 'Loot another player\'s money'); well += 'L'
-			if (deep > 5) xvt.out($.bracket('G'), 'Grant another call'); well += 'G'
-			if (deep > 6) xvt.out($.bracket('C'), 'Curse another player'); well += 'C'
-			if (deep > 7) xvt.out($.bracket('K'), 'Key hint(s)'); well += 'K'
-			if (deep > 8) xvt.out($.bracket('M'), 'Magical spell(s) or device(s)'); well += 'M'
+			if (deep > 0) { xvt.out($.bracket('D'), 'Destroy dank dungeon'); well += 'D' }
+			if (deep > 1) { xvt.out($.bracket('O'), 'Teleport all the way out'); well += 'O' }
+			if (deep > 2) { xvt.out($.bracket('R'), 'Resurrect all the dead players'); well += 'R' }
+			if (deep > 3) { xvt.out($.bracket('F'), 'Fix all your damage'); well += 'F' }
+			if (deep > 4) { xvt.out($.bracket('L'), 'Loot another player\'s money'); well += 'L' }
+			if (deep > 5) { xvt.out($.bracket('G'), 'Grant another call'); well += 'G' }
+			if (deep > 6) { xvt.out($.bracket('C'), 'Curse another player'); well += 'C' }
+			if (deep > 7) { xvt.out($.bracket('K'), 'Key hint(s)'); well += 'K' }
+			if (deep > 8) { xvt.out($.bracket('M'), 'Magical spell(s) or device(s)'); well += 'M' }
 			xvt.out('\n')
 
 			$.action('well')
@@ -703,6 +703,7 @@ function doMove(): boolean {
 						$.online.dex = $.PC.ability($.online.dex, 10)
 						$.online.cha = $.PC.ability($.online.cha, 10)
 						break
+
 					case 'T':
 						let start = $.int(Z * 2 / 3 - $.dice(deep))
 						if (start < 1) start = 1
@@ -724,16 +725,18 @@ function doMove(): boolean {
 								Z = i - 1
 								generateLevel()
 								menu()
-							}, prompt:`Level (${start}-${end}): `, min:1, max:3 }
+							}, prompt:`Level (${start}-${end}): `, cancel:`${Z}`, enter:`${end}`, min:1, max:3, timeout:15 }
 						}
 						xvt.app.focus = 'level'
 						return
+
 					case 'D':
 						$.sound('destroy', 30)
 						for (let i in dd)
 							delete dd[i]
 						generateLevel()
 						break
+
 					case 'O':
 						$.sound('teleport')
 						xvt.save()
@@ -742,11 +745,13 @@ function doMove(): boolean {
 						xvt.out('\n')
 						require('./main').menu($.player.expert)
 						return
+
 					case 'R':
 		                $.sound('resurrect')
 						$.run(`UPDATE Players SET status = '' WHERE id NOT GLOB '_*' AND status != 'jail'`)
 						$.news(`\twished all the dead resurrected`)
 						break
+
 					case 'F':
 						$.music('elixir')
 						if ($.online.str < $.player.str)
@@ -773,6 +778,7 @@ function doMove(): boolean {
 							$.online.hull = $.player.hull
 						xvt.out('You are completely healed and all damage is repaired.\n')
 						break
+
 					case 'L':
 						Battle.user('Loot', (opponent: active) => {
 							if (opponent.user.id === $.player.id) {
@@ -796,6 +802,7 @@ function doMove(): boolean {
 							return
 						})
 						return
+
 					case 'G':
 						if ($.player.today) {
 							$.sound('shimmer')
@@ -808,6 +815,7 @@ function doMove(): boolean {
 							$.sound('morph', 12)
 						}
 						break
+
 					case 'C':
 						Battle.user('Curse', (opponent: active) => {
 							if (opponent.user.id === $.player.id) {
@@ -831,6 +839,7 @@ function doMove(): boolean {
 							return
 						})
 						return
+
 					case 'K':
 						let k = $.dice(deep / 4)
 						for (let i = 0; i < k; i++) {
@@ -838,11 +847,13 @@ function doMove(): boolean {
 							$.sound("shimmer", 12)
 						}
 						break
+
 					case 'M':
 						if ($.player.magic) {
-							let m = $.dice($.player.magic / 2)
+							let m = $.dice($.player.magic / 2 + 1)
+							let retry = $.player.magic
 							for (let i = 0; i < m; i++) {
-								let p = $.dice(Object.keys($.Magic.spells).length)
+								let p = $.dice(Object.keys($.Magic.spells).length - 4) + 4
 								let spell = $.Magic.pick(p)
 								if (!$.Magic.have($.player.spells, spell)) {
 									$.Magic.add($.player.spells, p)
@@ -853,7 +864,7 @@ function doMove(): boolean {
 											break
 										case 2:
 											$.beep()
-											xvt.out(`A Scroll of ${spell} appears in your hand.\n`)
+											xvt.out(`You add a Scroll of ${spell} to your arsenal.\n`)
 											break
 										case 3:
 											$.sound('shimmer')
@@ -861,10 +872,17 @@ function doMove(): boolean {
 											break
 										case 4:
 											$.sound('shimmer')
-											xvt.out(`The Spell of ${spell} is revealed to you.\n`)
+											xvt.out(`${spell} is known to you.\n`)
 											break
 									}
 								}
+								else {
+									if (retry--)
+										m++
+									else
+										$.sound('boo')
+								}
+								xvt.waste(600)
 							}
 						}
 						else {
@@ -877,7 +895,7 @@ function doMove(): boolean {
 					pause = true
 					refresh = true
 					menu()
-				}, prompt:'What is thy bidding, my master? ', eol:false }
+				}, prompt:'What is thy bidding, my master? ', cancel:'T', enter:'B', eol:false, max:1, timeout:15 }
 			}
 			xvt.app.focus = 'well'
 			return false
@@ -1048,7 +1066,7 @@ function doMove(): boolean {
 					else
 						$.animated('rotateOut')
 					menu()
-				}, prompt:'Will you spin it (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
+				}, prompt:'Will you spin it (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:15 }
 			}
 			xvt.app.focus = 'wheel'
 			pause = true
@@ -1064,8 +1082,11 @@ function doMove(): boolean {
 
 			if ((Z + 1) == $.taxman.user.level && $.player.level < $.taxman.user.level) {
 				$.loadUser($.taxman)
-				xvt.out($.who($.taxman, 'He'), `is the Master of Coin for ${$.king.handle}!`
-					, xvt.reset, '\n')
+				xvt.out(xvt.reset, $.who($.taxman, 'He'), 'is the '
+					, xvt.bright, xvt.cyan, 'Master of Coin'
+					, xvt.reset, ' for '
+					, xvt.bright, xvt.magenta, $.king.handle
+					, xvt.reset, '!\n')
 				$.profile({ png:'player/' + $.taxman.user.pc.toLowerCase() + ($.taxman.user.gender === 'F' ? '_f' : '')
 					, handle:$.taxman.user.handle
 					, level:$.taxman.user.level, pc:$.taxman.user.pc
@@ -1232,7 +1253,7 @@ function doMove(): boolean {
 						}
 					}
 					menu()
-				}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:10 }
+				}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:20 }
 			}
 			xvt.app.focus = 'pay'
 			return false
@@ -1719,8 +1740,8 @@ function generateLevel() {
 			maxCol++
 
 		dd[deep][Z] = <ddd>{
-			cleric:	{ user:{ id:'_Clr', handle:'old cleric', pc:'Cleric', level:99
-			 		, sex:'M', weapon:0, armor:0, magic:3, spells:[7,8,13] } },
+			cleric:	{ user:{ id:'_Clr', handle:'old cleric', pc:'Cleric', level:90+deep
+			 		, sex:'M', weapon:0, armor:1, magic:3, spells:[7,8,13] } },
  			rooms:	new Array(maxRow),
 			map:	0,
 			moves:	0,

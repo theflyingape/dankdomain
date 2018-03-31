@@ -1022,7 +1022,9 @@ export function keyhint(rpc: active) {
         } while(!rpc.user.keyhints[i])
 
         if (rpc == online) {
-            xvt.out(xvt.reset, `Key #${slot + 1} is not `, xvt.bright, xvt.reverse)
+            xvt.out(xvt.reset, `Key #${slot + 1} is not `)
+            if (player.emulation === 'XT') xvt.out(' \u{1F511}  ')
+            xvt.out(xvt.bright, xvt.reverse)
             switch (player.keyhints[i]) {
             case 'P':
                 xvt.out(xvt.magenta, ' Platinum ')
@@ -1040,7 +1042,6 @@ export function keyhint(rpc: active) {
                 xvt.out(xvt.black, `${player.keyhints[i]} from here`)
                 break
             }
-            if (player.emulation === 'XT') xvt.out(xvt.noreverse, '  \u{1F511} ')
             xvt.out(xvt.reset, '\n')
         }
     }
@@ -1907,7 +1908,10 @@ export function logoff() {
         unlock(player.id, true)
 
         //  logoff banner
-        if (online.hp < 1) sound('goodbye')
+        if (online.hp < 1)
+            sound('goodbye')
+        else
+            PC.profile(online)
         xvt.out('\x06\n')
         xvt.out(xvt.reset, 'Goodbye, please play again!  Also visit:\n')
         xvt.waste(750)

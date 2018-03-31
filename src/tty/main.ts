@@ -145,14 +145,6 @@ function choice() {
                 'yn': { cb: () => {
                     xvt.out('\n')
                     if (/Y/i.test(xvt.entry)) {
-                        let userPNG = `door/static/images/user/${$.player.id}.png`
-                        try {
-                            fs.accessSync(userPNG, fs.constants.F_OK)
-                            userPNG = `user/${$.player.id}`
-                        } catch(e) {
-                            userPNG = 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : '')
-                        }
-                        $.profile({ png:userPNG, handle:$.player.handle, level:$.player.level, pc:$.player.pc })
                         if (!$.reason.length) $.reason = 'logged off as a level ' + $.player.level + ' ' + $.player.pc
                         xvt.hangup()
                     }
