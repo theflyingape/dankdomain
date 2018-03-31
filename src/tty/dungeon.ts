@@ -1163,7 +1163,7 @@ function doMove(): boolean {
 			let cost = new $.coins(Math.trunc($.money(Z) / 6 / $.player.hp * ($.player.hp - $.online.hp)))
 			if (cost.value < 1) cost.value = 1
 			cost.value *= (deep + 1)
-			if ($.player.cha > 98)	//	typically a Cleric and God
+			if ($.player.maxcha > 98)	//	typically a Cleric and God
 				cost.value = 0
 			cost = new $.coins(cost.carry(1, true))
 
@@ -1182,7 +1182,7 @@ function doMove(): boolean {
 			if ($.online.hp > $.int($.player.hp / 2) || ($.int(deep / 4) + 3) * cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, 13)) {
 				xvt.out('"I can ', DL.cleric.sp < $.Magic.power(DL.cleric, 13) ? 'only' : 'surely'
 					, ' cast a Heal spell on your wounds for '
-					, cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
+					, cost.value ? cost.carry() : `you, ${$.player.gender === 'F' ? 'sister' : 'brother'}`
 					, '."')
 			}
 			else if (DL.cleric.sp >= $.Magic.power(DL.cleric, 13)) {
@@ -1193,7 +1193,7 @@ function doMove(): boolean {
 					break
 				}
 				xvt.out('"I can cure all your wounds for '
-					, cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
+					, cost.value ? cost.carry() : `you, ${$.player.gender === 'F' ? 'sister' : 'brother'}`
 					, '."')
 			}
 
