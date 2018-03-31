@@ -231,7 +231,7 @@ export class Character {
             xvt.out('      Cha: ', xvt.white)
             xvt.out(sprintf('%-19s', profile.cha + ' (' + profile.user.cha + ',' + profile.user.maxcha + ')'))
             xvt.out(xvt.cyan, ' Steal: ', xvt.white)
-            xvt.out(sprintf('%-15s', ['lawful', 'desperate', 'trickster', 'adept', 'master', 'grandmaster'][profile.user.steal]))
+            xvt.out(sprintf('%-15s', ['lawful', 'desperate', 'trickster', 'adept', 'master'][profile.user.steal]))
             xvt.out(' ', xvt.reset, xvt.blue, '|\n')
 
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
@@ -250,7 +250,7 @@ export class Character {
 
             if (profile.user.magic && profile.user.spells.length) {
                 xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-                xvt.out(sprintf(' %8s: ', ['Wands', 'Scrolls', 'Spells', 'Spells'][profile.user.magic - 1]), xvt.white)
+                xvt.out(sprintf(' %8s: ', ['Wands', 'Scrolls', 'Spells', 'Magus'][profile.user.magic - 1]), xvt.white)
                 let text = ''
                 n = 0
                 for (let p = 0; p < profile.user.spells.length; p++) {
@@ -290,9 +290,9 @@ export class Character {
             xvt.out(sprintf('%-42s', ['none', 'apprentice', 'expert', 'artisan', 'master'][profile.user.poison]))
             xvt.out(' ', xvt.reset, xvt.blue, '|\n')
 
-            if (profile.user.poisons.length) {
+            if (profile.user.poison && profile.user.poisons.length) {
                 xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-                xvt.out('  Poisons: ', xvt.white)
+                xvt.out(sprintf(' %8s: ', ['Toxins', 'Poisons', 'Banes', 'Venena'][profile.user.poison - 1]), xvt.white)
                 xvt.out(sprintf('%-42s', profile.user.poisons.toString()))
                 xvt.out(' ', xvt.reset, xvt.blue, '|\n')
             }

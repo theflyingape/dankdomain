@@ -535,8 +535,24 @@ function teleport() {
 }
 
 function wager() {
-  cmd(`${money}`)
+  cmd(`${money}`);
   nme(`<img src="images/wager.jpg" onload="nmeResize(\'pulse\');" style="display:none;" />`);
+}
+
+function well() {
+  cmd(`
+<input type="button" value="Bless" onclick="send('B');">
+<input type="button" value="Teleport" onclick="send('T');">
+<input type="button" value="Destroy" onclick="send('D');">
+<input type="button" value="Out" onclick="send('O');">
+<input type="button" value="Resurrect" onclick="send('R');">
+<input type="button" value="Fix" onclick="send('F');">
+<input type="button" value="Loot" onclick="send('L');">
+<input type="button" value="Grant" onclick="send('G');">
+<input type="button" value="Curse" onclick="send('C');">
+<input type="button" value="Key" onclick="send('K');">
+<input type="button" value="Magic" onclick="send('M');"><br>
+`);
 }
 
 function nmeResize(effect, func) {

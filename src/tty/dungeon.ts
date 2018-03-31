@@ -670,7 +670,7 @@ function doMove(): boolean {
 			if (deep > 8) xvt.out($.bracket('M'), 'Magical spell(s) or device(s)'); well += 'M'
 			xvt.out('\n')
 
-			$.action('freetext')
+			$.action('well')
 			$.profile({ jpg:'well', effect:'fadeIn' })
 			xvt.app.form = {
 				'well': { cb: () => {

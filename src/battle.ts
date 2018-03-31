@@ -2060,7 +2060,7 @@ export function poison(rpc: active, cb?:Function) {
                     apply(rpc, +xvt.entry)
                 cb(true)
                 return
-            }, prompt:['Use vial', 'Apply poison', 'Make toxic', 'Uti venenum'][$.player.poison - 1] + ' (?=list): ', max:2 }
+            }, prompt:['Make toxic', 'Apply poison', 'Use bane', 'Uti venenum'][$.player.poison - 1] + ' (?=list): ', max:2 }
         }
         xvt.app.focus = 'poison'
         return
