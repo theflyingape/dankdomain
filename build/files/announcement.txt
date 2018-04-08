@@ -1,12 +1,10 @@
-[22;36mDate:[22;37m Mon 19-Feb-2018  11:00am
+[22;36mDate:[22;37m Sun 08-Feb-2018 3:00pm
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
 New announcements as missing features get implemented or tweaked:
 
-- Cherry Bomb Slots are installed
-- it is again possible to bump into another player in the Square
-- <L>ist of Deeds include top 'Levels Jumped' and Tavern brawlers
-- the Craps table is open
-- major updates to both browser and door components, so update your browser!
+ - ANSI and graphic art updates
+ - Cherry Bomb Slots installed
+ - it is again possible to bump into another player in the Square
 
 Happy hunting!
