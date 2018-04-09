@@ -228,10 +228,10 @@
             ]
         },
         "God": {
-            "melee":4, "backstab":0, "poison":2, "magic":4, "steal":0, 
-            "baseStr":45, "baseInt":45, "baseDex":65, "baseCha":45, 
-            "toStr":2, "toInt":2, "toDex":2, "toCha":2, 
-            "maxStr":99, "maxInt":99, "maxDex":99, "maxCha":99, 
+            "melee":4, "backstab":0, "poison":2, "magic":4, "steal":0,
+            "baseStr":45, "baseInt":45, "baseDex":65, "baseCha":45,
+            "toStr":2, "toInt":2, "toDex":2, "toCha":2,
+            "maxStr":99, "maxInt":99, "maxDex":99, "maxCha":99,
             "specialty": "Barbarian/Sage",
             "description": [
                 "The highest superbeing of them all, you can only ascend to a God from a",
@@ -245,42 +245,42 @@
     "monster": {
         "Beast": {
             "melee":2, "backstab":1, "poison":0, "magic":2, "steal":1,
-            "baseStr":66, "baseInt":48, "baseDex":66, "baseCha":20,
+            "baseStr":63, "baseInt":44, "baseDex":63, "baseCha":30,
             "toStr":1, "toInt":1, "toDex":1, "toCha":2,
             "maxStr":90, "maxInt":90, "maxDex":90, "maxCha":90
         },
         "Demon": {
             "melee":3, "backstab":1, "poison":1, "magic":1, "steal":2,
-            "baseStr":66, "baseInt":49, "baseDex":65, "baseCha":20,
+            "baseStr":65, "baseInt":50, "baseDex":65, "baseCha":20,
             "toStr":1, "toInt":1, "toDex":2, "toCha":1,
             "maxStr":95, "maxInt":92, "maxDex":90, "maxCha":75
         },
         "Dragon": {
             "melee":4, "backstab":0, "poison":0, "magic":3, "steal":4,
-            "baseStr":65, "baseInt":40, "baseDex":60, "baseCha":35,
+            "baseStr":45, "baseInt":45, "baseDex":55, "baseCha":55,
             "toStr":2, "toInt":1, "toDex":1, "toCha":1,
             "maxStr":99, "maxInt":90, "maxDex":88, "maxCha":85
         },
         "Lizard": {
             "melee":1, "backstab":1, "poison":3, "magic":1, "steal":3,
-            "baseStr":62, "baseInt":48, "baseDex":70, "baseCha":20,
+            "baseStr":50, "baseInt":50, "baseDex":50, "baseCha":50,
             "toStr":1, "toInt":2, "toDex":2, "toCha":1,
             "maxStr":92, "maxInt":88, "maxDex":92, "maxCha":80
         },
         "Undead": {
-            "melee":4, "backstab":0, "poison":1, "magic":2, "steal":2, 
-            "baseStr":72, "baseInt":38, "baseDex":70, "baseCha":20, 
-            "toStr":2, "toInt":1, "toDex":1, "toCha":1, 
+            "melee":4, "backstab":0, "poison":1, "magic":2, "steal":2,
+            "baseStr":62, "baseInt":38, "baseDex":62, "baseCha":38,
+            "toStr":2, "toInt":1, "toDex":1, "toCha":1,
             "maxStr":98, "maxInt":90, "maxDex":88, "maxCha":70
         }
     },
 
     "tavern": {
         "Ogre": {
-            "melee":4, "backstab":1, "poison":1, "magic":2, "steal":1, 
-            "baseStr":65, "baseInt":55, "baseDex":55, "baseCha":25, 
-            "toStr":2, "toInt":1, "toDex":1, "toCha":1, 
-            "maxStr":99, "maxInt":85, "maxDex":66, "maxCha":85, 
+            "melee":4, "backstab":1, "poison":1, "magic":2, "steal":1,
+            "baseStr":65, "baseInt":55, "baseDex":55, "baseCha":25,
+            "toStr":2, "toInt":1, "toDex":1, "toCha":1,
+            "maxStr":99, "maxInt":85, "maxDex":66, "maxCha":85,
             "specialty": "Barbarian/Ranger",
             "description": [
                 "Tiny, the 7'2\" barkeep"

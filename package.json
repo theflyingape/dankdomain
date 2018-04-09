@@ -37,7 +37,7 @@
     "better-sqlite3": "^4.1.0",
     "express": "^4.16.3",
     "express-ws": "^3.0.0",
-    "fs-extra": "^2.1.2",
+    "fs-extra": "^5.0.0",
     "got": "^8.3.0",
     "node-pty": "^0.7.4",
     "nodemailer": "^4.6.4",

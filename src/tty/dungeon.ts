@@ -2226,10 +2226,10 @@ function putMonster(r = -1, c = -1): boolean {
 
 		m.user.immortal = deep
 		m.adept = $.dice(Z / 30 + deep / 4 + 1) - 1
-		m.str = $.PC.ability(m.str, deep + 1)
-		m.int = $.PC.ability(m.int, deep + 1)
-		m.dex = $.PC.ability(m.dex, deep + 1)
-		m.cha = $.PC.ability(m.cha, deep + 1)
+		m.str = $.PC.ability(m.str, deep - 2, m.user.maxstr, deep >>2)
+		m.int = $.PC.ability(m.int, deep - 2, m.user.maxint, deep >>2)
+		m.dex = $.PC.ability(m.dex, deep - 2, m.user.maxdex, deep >>2)
+		m.cha = $.PC.ability(m.cha, deep - 2, m.user.maxcha, deep >>2)
 
 		let gold = new $.coins($.int($.money(level) / 10))
 		gold.value += $.worth(new $.coins(m.weapon.value).value, $.dice($.online.cha / 5) + 5)
