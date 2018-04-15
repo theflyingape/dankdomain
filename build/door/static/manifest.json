@@ -1,13 +1,11 @@
 {
-  "name": "Dank Domain: the return of Hack & Slash",
-  "short_name": "Dank Domain",
+  "name": "👑 Dank Domain: the return of Hack & Slash",
+  "short_name": "👑 DD",
   "lang": "en-US",
   "start_url": "https://robert.hurst-ri.us/xterm/door/",
   "display": "fullscreen",
   "orientation": "landscape",
   "icons": [
-    {
-      "src": "images/door.png"
-    }
+    { "src": "images/door.png", "sizes": "192x192", "type":"image/png" }
   ]
 }

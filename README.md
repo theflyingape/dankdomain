@@ -72,7 +72,7 @@ Character classes define the nature and tendencies of a character. Some may hit 
 - Disadvantages: Poor Dexterity, poor poison use.
 
 **Fighter**
-    A one-man killing machine. Fighters gain extra Stamina points when gaining a level.
+    is a one-man killing machine. Fighters gain extra Stamina points when gaining a level.
 
 - Advantages: Tough opponents.
 - Disadvantages: Poor poison use, must purchase wands.

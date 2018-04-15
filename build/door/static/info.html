@@ -18,20 +18,16 @@
   body {
     text-align: center;
     background: antiquewhite;
-    /*  older browsers  */
-    background: -webkit-linear-gradient(left top, antiquewhite, gray);
-    /*  safari 5.1 to 6.0  */
-    background: -o-linear-gradient(bottom right, antiquewhite, gray);
-    /*  opera 11.1 to 12.0  */
-    background: -moz-linear-gradient(bottom right, antiquewhite, gray);
-    /*  firefox 3.6 to 15  */
     background: linear-gradient(to bottom right, white, skyblue);
-    /*  standard syntax (must be last)  */
     font-family: 'Carter One', cursive;
     font-size: 100%;
     color: midnightblue;
     margin: 0px;
     border: none;
+    overflow: hidden;
+  }
+  body::-webkit-scrollbar {
+    display: none;
   }
 
   form {
@@ -49,10 +45,8 @@
   }
 
   div {
-    padding: 0px;
-    margin: 0px;
+    padding: .5em;
     border: none;
-    overflow: hidden;
   }
 
   img {
@@ -227,9 +221,7 @@ function animated(effect) {
 
 function Logon() {
   clearInterval(art); art = null;
-  cmd(`<form onsubmit="return sendLogin();">
-<input type="text" placeholder="Enter ID or Handle" name="id" autofocus required><br>
-<input type="password" placeholder="Enter password" name="password" required><br>
+  cmd(`<form onsubmit="return sendLogin();"><input type="text" placeholder="Enter ID or Handle" name="id" autofocus required><input type="password" placeholder="Enter password" name="password" required>
 <button class="wide" type="submit"> Login </button> <input class="wide" type="button" value="NEW" onclick="send('NEW', true);">
 </form>`);
   nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize(\'bounceInDown\');" style="display:none;" />`);
@@ -557,7 +549,7 @@ function well() {
 
 function nmeResize(effect, func) {
   if (/^<table.*/.test(document.getElementById('nme').innerHTML)) return;
-  h = window.innerHeight - document.getElementById('command').clientHeight;
+  h = window.innerHeight - document.getElementById('command').clientHeight - 20;
   document.getElementById('nme').style.height = h + 'px';
   if ((pic = document.getElementById('nme').getElementsByTagName('img')[0]))
     pic.style.zoom = Math.trunc(100 * h / pic.height) + '%';
