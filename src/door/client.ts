@@ -63,6 +63,12 @@ window.onresize = () => {
 
 	//  and make it stick
 	xy = fit.proposeGeometry(term)
+	if (xy.cols > 80) {
+		v = Math.round(parseInt(v) * 80 / xy.cols) + '%'
+		w = (100 - parseInt(v)) + '%'
+		Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': v })
+		Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': w })
+	}
 	cols = 80
 	rows = xy.rows
 	term.resize(cols, rows)

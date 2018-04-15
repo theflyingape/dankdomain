@@ -1,6 +1,6 @@
 {
   "name": "dankdomain",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "👑 Dank Domain: the return of Hack & Slash (1990-2014)",
   "main": "ttymain",
   "publisher": "theflyingape",
@@ -53,7 +53,6 @@
     "@types/express-ws": "^3.0.0",
     "@types/fs-extra": "^5.0.2",
     "@types/node": "^9.6.5",
-    "@types/sprintf-js": "^1.1.0",
-    "@types/ws": "^4.0.2"
+    "@types/sprintf-js": "^1.1.0"
   }
 }

@@ -28,14 +28,11 @@ dns.lookup('localhost', (err, addr, family) => {
   let server = https.createServer(ssl, x)
   let port = parseInt(process.env.PORT) || 1939
 
-  //  WebSocket endpoints for Express applications
-  expressWs(x)
-  expressWs(x, server)
-//let ws = expressWs(app, server)
-  const { app } = expressWs(express())
-
   server.listen(port, addr)
   console.log(`Dank Domain Door on https|wss://${addr}:${port}`)
+
+  //  add WebSocket endpoints for Express applications
+  const { app } = expressWs(x, server)
 
   app.use('/xterm/door', express.static(__dirname + '/static'))
 

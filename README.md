@@ -1,10 +1,10 @@
-# [Dank Domain](https://robert.hurst-ri.us/games/dankdomain)
+# :crown: Dank Domain
 
-> ## the return of Hack &amp; Slash
+## the return of Hack &amp; Slash
 
 ### Introduction
 
-:neckbeard: The portly man with the bulging coin purse approaches with his two strong, but inexperienced-looking bodyguards. Without so much as extending his hand, he speaks:
+:moneybag: The portly man with the bulging coin purse approaches with his two strong, but inexperienced-looking bodyguards. Without so much as extending his hand, he speaks:
 
 > So ye think ye want to be an adventurer, eh?
 
