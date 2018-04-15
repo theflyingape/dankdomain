@@ -2,6 +2,8 @@
 
 ## the return of Hack &amp; Slash
 
+[![Package Quality](http://npm.packagequality.com/shield/dankdomain.svg)](http://packagequality.com/#?package=dankdomain)
+
 ### Introduction
 
 :moneybag: The portly man with the bulging coin purse approaches with his two strong, but inexperienced-looking bodyguards. Without so much as extending his hand, he speaks:
