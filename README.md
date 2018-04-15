@@ -4,6 +4,9 @@
 
 [![Package Quality](http://npm.packagequality.com/shield/dankdomain.svg)](http://packagequality.com/#?package=dankdomain)
 
+Download packs: [![images](https://robert.hurst-ri.us/files/images.zip)](https://robert.hurst-ri.us/files/images.zip) :camera:
+and [![sounds](https://robert.hurst-ri.us/files/sounds.zip)](https://robert.hurst-ri.us/files/sounds.zip) :sound:
+
 ### Introduction
 
 :moneybag: The portly man with the bulging coin purse approaches with his two strong, but inexperienced-looking bodyguards. Without so much as extending his hand, he speaks:
