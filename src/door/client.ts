@@ -26,19 +26,20 @@ let reconnect: NodeJS.Timer, lurking: NodeJS.Timer
 
 if (window.addEventListener)
 	window.addEventListener("message", receive, false)
-else {
+/*	else {
 	if (window.attachEvent)
 		window.attachEvent("onmessage", receive, false)
 }
+*/
 
 window.onresize = () => {
 	if (!pid) return
 
 	let t: CSSStyleRule
 	let I: CSSStyleRule
-	let stylesheet = document.styleSheets[0]
+	let stylesheet = <CSSStyleSheet>document.styleSheets[0]
 	for (let i in stylesheet.cssRules) {
-		let css = stylesheet.cssRules[i]
+		let css: CSSStyleRule = <any>stylesheet.cssRules[i]
 		if (css.selectorText === '#terminal')
 			t = css
 		if (css.selectorText === '#Info')
@@ -67,18 +68,18 @@ window.onresize = () => {
 	term.resize(cols, rows)
 }
 
-document.getElementById('lurker-list').onchange = () => {
-	let watch: HTMLOptionsCollection = document.getElementById('lurker-list')
+document.getElementById('lurker-list').onchange = (ev) => {
+	let watch: HTMLOptionsCollection = <any>ev.target
 	wpid = parseInt(watch[watch.selectedIndex].value)
 
-	let stylesheet = document.styleSheets[0]
+	let stylesheet = <CSSStyleSheet>document.styleSheets[0]
 	for (let i in stylesheet.cssRules) {
-		let css = stylesheet.cssRules[i]
+		let css: CSSStyleRule = <any>stylesheet.cssRules[i]
 		if (css.selectorText === '#terminal')
 			Object.assign(css.style, { 'top': '0%', 'left': '0%', 'height': '100%', 'width': '100%' })
 	}
 
-	document.getElementById('terminal').hidden = false;
+	document.getElementById('terminal').hidden = false
 	term = new Terminal({
 		bellStyle: 'none', cursorBlink: false, scrollback: 0,
 		fontFamily: 'IBM Plex Mono,Consolas,Lucida Console,monospace', fontSize: 20,
@@ -361,7 +362,8 @@ function lurk() {
 	if (document.getElementById('terminal').hidden) {
 		fetch(`${app}/lurker/`, { method: 'POST' }).then(function (res) {
 			return res.json().then(function (data) {
-				let watch = <HTMLOptionsCollection>document.getElementById('lurker-list')
+				let el = document.getElementById('lurker-list')
+				let watch: HTMLOptionsCollection = <any>el
 				for (let i = watch.length - 1; i >= 0; i--)
 					watch.remove(i)
 				for (let i in data) {
@@ -371,7 +373,7 @@ function lurk() {
 					watch.add(option)
 				}
 				if (watch.length)
-					document.getElementById('lurker-list').blur()
+					el.blur()
 				watch.selectedIndex = -1
 			})
 		})

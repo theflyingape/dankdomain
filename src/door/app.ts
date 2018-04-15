@@ -2,13 +2,13 @@
  *  Dank Domain: the return of Hack & Slash                                  *
  *  DOOR authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
-import * as dns from 'dns'
-import * as express from 'express'
-import * as expressWs from 'express-ws'
-import * as https from 'https'
-import * as fs from 'fs'
-import * as os from 'os'
-import * as pty from 'node-pty'
+import dns = require('dns')
+import express = require('express')
+import expressWs = require('express-ws')
+import https = require('https')
+import fs = require('fs')
+import os = require('os')
+import pty = require('node-pty')
 import { ITerminalOptions } from 'xterm'
 
 process.title = 'door'
@@ -21,12 +21,19 @@ let broadcasts = {}
 
 dns.lookup('localhost', (err, addr, family) => {
 
-  let app = express()
-  app.set('trust proxy', ['loopback', addr])
+  const x = express()
+  x.set('trust proxy', ['loopback', addr])
 
   let ssl = { key: fs.readFileSync('key.pem'), cert: fs.readFileSync('cert.pem') }
-  let server = https.createServer(ssl, app)
-  let port = process.env.PORT || 1939
+  let server = https.createServer(ssl, x)
+  let port = parseInt(process.env.PORT) || 1939
+
+  //  WebSocket endpoints for Express applications
+  expressWs(x)
+  expressWs(x, server)
+//let ws = expressWs(app, server)
+  const { app } = expressWs(express())
+
   server.listen(port, addr)
   console.log(`Dank Domain Door on https|wss://${addr}:${port}`)
 
@@ -85,9 +92,6 @@ dns.lookup('localhost', (err, addr, family) => {
         broadcasts[o] += `\r\n\x1B[0;36m\u00B7\x1B[1m${msg}\x1B[m`
     res.end()
   })
-
-  //  WebSocket endpoints for Express applications
-  let ws = expressWs(app, server)
 
   app.ws('/xterm/door/player/:pid', function (ws, req) {
     let term = sessions[parseInt(req.params.pid)]
