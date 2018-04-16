@@ -1,6 +1,6 @@
 {
   "name": "dankdomain",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "👑 Dank Domain: the return of Hack & Slash (1990-2014)",
   "main": "ttymain",
   "publisher": "theflyingape",
@@ -31,7 +31,7 @@
   "bugs": {
     "url": "https://github.com/theflyingape/dankdomain/issues"
   },
-  "homepage": "https://robert.hurst-ri.us/games/dankdomain",
+  "homepage": "https://sites.google.com/view/dankdomain",
   "dependencies": {
     "animate.css": "^3.6.1",
     "better-sqlite3": "^4.1.0",
