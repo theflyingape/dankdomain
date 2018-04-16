@@ -145,7 +145,7 @@ newSession()
 
 function newSession() {
 	const options: ITerminalOptions = {
-		bellSound: DEFAULT_BELL_SOUND, bellStyle: 'sound', cursorBlink: false,
+		bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false,
 		cols: cols, rows: rows, scrollback: 500,
 		fontFamily: 'IBM Plex Mono,Consolas,Lucida Console,monospace', fontSize: 20,
 		fontWeight: '400', fontWeightBold: '500',
