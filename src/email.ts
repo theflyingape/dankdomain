@@ -126,18 +126,21 @@ async function Message(player: user, mailOptions: nodemailer.SendMailOptions) {
         else {
             smtp.sendMail(mailOptions, (error, info) => {
                 if (error) {
-                    xvt.out(xvt.reset, '\nEmail Deliver Message ', error,'\n')
-                    player.id = ''
-                    player.email = ''
-                    xvt.out('\nSorry -- your user registration was aborted.\n')
-                    xvt.out('Please contact the sysop with this error message.\n')
+                    xvt.out(xvt.reset, '\nEmail Deliver Message to ', player.handle, '\n', error,'\n')
+                    if (echo) {
+                        player.id = ''
+                        player.email = ''
+                        xvt.out('\nSorry -- your user registration was aborted.\n')
+                        xvt.out('Please contact the sysop with this error message.\n')
+                    }
                     result = false
                 }
                 else {
                     xvt.out('\n', info.response)
                     if ($.reason.length) {
                         $.saveUser(player, true)
-                        xvt.out('\nYour user ID (', xvt.bright, player.id, xvt.normal, ') was saved, ', $.Access.name[player.access][player.gender], '.\n')
+                        if (echo)
+                            xvt.out('\nYour user ID (', xvt.bright, player.id, xvt.normal, ') was saved, ', $.Access.name[player.access][player.gender], '.\n')
                     }
                     result = true
                 }

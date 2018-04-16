@@ -79,12 +79,12 @@ function choice() {
             return
 
         case 'N':
-            rs = $.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
+            rs = $.query(`SELECT id FROM Players WHERE id NOT GLOB '_*' AND remote = ''`)
             for (let row in rs) {
                 rpc.user.id = rs[row].id
                 $.loadUser(rpc)
                 Email.newsletter(rpc.user)
-                xvt.waste(6000)
+                xvt.waste(2500)
             }
             break
 

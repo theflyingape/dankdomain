@@ -2271,7 +2271,11 @@ export function newDay() {
         if ((now().date - rs[row].lastdate) > 10) {
             if (Access.name[rs[row].access].roleplay) {
                 if (+rs[row].xplevel > 1) {
-                    run(`UPDATE Players set xplevel=1 WHERE id='${rs[row].id}'`)
+                    run(`UPDATE Players set xplevel=1,remote='' WHERE id='${rs[row].id}'`)
+                    let p:user = { id: rs[row].id }
+                    loadUser(p)
+                    require('./email').rejoin(p)
+                    xvt.waste(1000)
                     xvt.out('_')
                     continue
                 }
@@ -2292,7 +2296,7 @@ export function newDay() {
         }
 
         if ((now().date - rs[row].lastdate) % 50 == 0) {
-            run(`UPDATE Players set pc='${Object.keys(PC.name['player'])[0]}',level=1,xplevel=0 WHERE id='${rs[row].id}'`)
+            run(`UPDATE Players set pc='${Object.keys(PC.name['player'])[0]}',level=1,xplevel=0,remote='' WHERE id='${rs[row].id}'`)
             let p:user = { id: rs[row].id }
             loadUser(p)
             require('./email').rejoin(p)
