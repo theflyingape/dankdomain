@@ -2,6 +2,8 @@
 
 ## the return of Hack &amp; Slash
 
+### Play from the [official web site](https://sites.google.com/view/dankdomain)
+
 [![Package Quality](http://npm.packagequality.com/shield/dankdomain.svg)](http://packagequality.com/#?package=dankdomain)
 
 Download packs: [images](https://robert.hurst-ri.us/files/images.zip) :camera:
