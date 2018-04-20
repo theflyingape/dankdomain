@@ -145,6 +145,8 @@ function choice() {
 							, 'So you have escaped my magic, mortal.  Now try me!', xvt.normal, xvt.magenta
 							, '"\n', xvt.reset)
 						$.loadUser($.seahag)
+						$.profile({ jpg:'npc/seahag', effect:'fadeInUp'
+	                        , handle:$.seahag.user.handle, level:$.seahag.user.level, pc:$.seahag.user.pc })
 						$.cat(`naval/${$.seahag}`.toLowerCase())
 						if (isNaN(+$.seahag.user.weapon)) xvt.out('\n', $.who($.seahag, 'He'), $.Weapon.wearing($.seahag), '.\n')
 						if (isNaN(+$.seahag.user.armor)) xvt.out('\n', $.who($.seahag, 'He'), $.Armor.wearing($.seahag), '.\n')
@@ -165,6 +167,8 @@ function choice() {
 						$.neptune.user.spells = keep
 					}
 					$.activate($.neptune)
+                    $.profile({ jpg:'npc/neptune', effect:'fadeInUp'
+                        , handle:$.neptune.user.handle, level:$.neptune.user.level, pc:$.neptune.user.pc })
 					$.cat(`naval/${$.neptune.user.handle}`.toLowerCase())
 					xvt.out(xvt.bright, xvt.cyan,
 						'He looks at you angrily as he removes a hook from his shorts!',
