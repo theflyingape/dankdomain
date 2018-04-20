@@ -3,6 +3,7 @@
  *  TAVERN authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
+import fs = require('fs')
 import {sprintf} from 'sprintf-js'
 
 import $ = require('../common')
@@ -199,15 +200,17 @@ function choice() {
                     if ($.player.level < 60)
                         xvt.out('The barkeep stares off into empty space, ignoring your wimpy comment.\n')
                     else
-                        xvt.out('The barkeep points at his massive, flexed bicep and laughs at your jest.\n')
+                        xvt.out(`The barkeep points at ${$.who($.barkeep,'he')}massive, flexed bicep and laughs at your jest.\n`)
+                    suppress = true
                     break
                 case 1:
                     xvt.out('thumb your nose.\n')
                     xvt.waste(1000)
                     if ($.player.level < 60)
-                        xvt.out('Annoyed, the barkeep looks down at his furry feet and counts, \"100, 99, 98,...\"\n')
+                        xvt.out(`Annoyed, the barkeep looks down at ${$.who($.barkeep,'his')}furry feet and counts, \"100, 99, 98,...\"\n`)
                     else
-                        xvt.out('The former Champion Ogre grunts to himself, \"Not good for business."\n')
+                        xvt.out(`The former Champion Ogre grunts to ${$.who($.barkeep,'him')}\x08self, \"Not good for business."\n`)
+                    suppress = true
                     break
                 default:
                     $.brawl = 0
@@ -221,7 +224,7 @@ function choice() {
                         , handle:$.barkeep.user.handle, level:$.barkeep.user.level, pc:$.barkeep.user.pc })
                     xvt.out('  Here comes Tiny!')
                     $.sound('challenge', 12)
-                    xvt.out('  And he doesn\'t look friendly...\n\n')
+                    xvt.out(`  And ${$.who($.barkeep,'he')}doesn\'t look friendly...\n\n`)
                     xvt.waste(600)
                     xvt.out(xvt.bright, xvt.green, [
                         '"When I\'m through with you, your mama won\'t be able to identify the remains."',
@@ -233,6 +236,7 @@ function choice() {
                     $.loadUser($.barkeep)
                     $.barkeep.toWC += $.Weapon.merchant.length - $.barkeep.weapon.wc
                     $.barkeep.toAC += $.Armor.merchant.length - $.barkeep.armor.ac
+                    $.barkeep.user.spells = JSON.parse(fs.readFileSync('./etc/barkeep.json').toString()).spells
                     xvt.out(`${$.barkeep.user.handle} towels ${$.who($.barkeep,'his')}hands dry from washing the day\'s\nglasses, ${$.who($.barkeep,'he')}warns,\n\n`)
                     xvt.out(xvt.bright, xvt.green, '"Another fool said something like that to me, once, and got all busted up."'
                         , xvt.reset, '\n\n')
@@ -244,9 +248,9 @@ function choice() {
                             , xvt.reset, '\n\n')
                         xvt.waste(4000)
                     }
-                    xvt.out(`${$.who($.barkeep,'He')}points to a weapon hanging over the mantlepiece and says,`
-                        , xvt.bright, xvt.green, '"Lookee there,\n')
-                    xvt.out(`${$.who(fool,'he')}tried to use that ${$.barkeep.user.weapon} on me, but it wasn't good enough.\"`
+                    xvt.out(`${$.who($.barkeep,'He')}points to a buffed weapon hanging over the mantlepiece and says, `
+                        , xvt.bright, xvt.green, '"Lookee\n')
+                    xvt.out(` there, ${$.who(fool,'he')}tried to use that ${$.barkeep.user.weapon} on me, but it wasn't good enough.\"`
                         , xvt.reset, '\n\n')
                     xvt.waste(6000)
 
@@ -260,7 +264,7 @@ function choice() {
                     xvt.waste(2000)
                     xvt.out('you are not amused.\n\n')
                     xvt.waste(1500)
-                    xvt.out(`${$.barkeep.user.handle} removes his tunic to reveal a massive, but\nheavily scarred chest.\n\n`)
+                    xvt.out(`${$.barkeep.user.handle} removes ${$.who($.barkeep,'his')}tunic to reveal a massive, but\nheavily scarred chest.\n\n`)
                     xvt.waste(3000)
                     xvt.out('You look for an exit, but there is none to be found... ')
                     xvt.waste(2000)
@@ -369,8 +373,8 @@ function choice() {
 			return
 
         default:
-			xvt.beep()
-    	    suppress = false
+            xvt.beep()
+            suppress = false
 	}
 	menu(suppress)
 }

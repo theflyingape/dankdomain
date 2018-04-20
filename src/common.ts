@@ -2088,7 +2088,7 @@ export function wall(msg: string) {
 
     rs = query(`SELECT * FROM sqlite_master WHERE name='Deeds' AND type='table'`)
     if (!rs.length) {
-        xvt.out('\ninitializing Deeds ... ')
+        xvt.out('\ninitializing deeds ... ')
         run(`CREATE TABLE IF NOT EXISTS Deeds (pc text KEY,
             deed text KEY, date numeric, hero text, value numeric
         )`)

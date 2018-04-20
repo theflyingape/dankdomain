@@ -38,7 +38,7 @@ function end() {
 
             $.run(`UPDATE Players
                 set kills=kills+1, status='${$.player.id}', weapon='${$.barkeep.user.weapon}'
-                WHERE id='${$.barkeep.user.id}'`).changes
+                WHERE id='${$.barkeep.user.id}'`)
 
             xvt.out(`He picks up your ${$.barkeep.user.weapon} and triumphantly waves it around to\n`)
             xvt.out(`the cheering crowd.  He struts toward the mantelpiece to hang his new trophy.\n\n`)
@@ -50,7 +50,7 @@ function end() {
             $.music('barkeep')
             $.run(`UPDATE Players
                 set killed=killed+1, status='', weapon='${$.barkeep.user.weapon}'
-                WHERE id='${$.barkeep.user.id}'`).changes
+                WHERE id='${$.barkeep.user.id}'`)
             $.news(`\tdefeated ${$.barkeep.user.handle}`)
             $.wall(`defeated ${$.barkeep.user.handle}`)
         }
@@ -231,7 +231,7 @@ export function attack(retry = false) {
                     }
                     if (from === 'Tavern') {
                         $.sound('growl')
-                        xvt.out(xvt.bright, xvt.green, '"You try to escape, but the crowd throws you back to witness the slaughter!"\n', xvt.reset)
+                        xvt.out(xvt.bright, xvt.green, 'You try to escape, but the crowd throws you back to witness the slaughter!\n', xvt.reset)
                         $.player.coward = true
                         $.saveUser($.player)
                         next()

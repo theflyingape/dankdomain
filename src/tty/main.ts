@@ -293,7 +293,8 @@ function choice() {
 
         case 'T':
             if (!$.tiny) {
-                xvt.out(`The tavern is closed for the day.\n`)
+                xvt.out(`\nThe tavern is closed for the day.\n`)
+                suppress = true
                 break
             }
             $.music('tavern' + $.dice(4))
