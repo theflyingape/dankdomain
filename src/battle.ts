@@ -2020,7 +2020,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                     $.news(`\tdefeated ${enemy.user.handle}, a level ${enemy.user.xplevel} ${enemy.user.pc}`)
                     $.wall(`defeated ${enemy.user.handle}`)
                 }
-                if (from == 'Monster') {
+                if (from == 'Monster' && enemy.user.xplevel > 0) {
                     $.news(`\tdefeated a level ${enemy.user.xplevel} ${enemy.user.handle}`)
                     $.wall(`defeated a level ${enemy.user.level} ${enemy.user.handle}`)
                 }
