@@ -141,12 +141,12 @@ function choice() {
 						xvt.reset, '\n')
 					$.sound('crone', 24)
 					require('./dungeon').DeepDank($.player.level + 3 * $.dice($.player.level), () => {
-						xvt.out(xvt.magenta, '\n"', xvt.bright, xvt.yellow
-							, 'So you have escaped my magic, mortal.  Now try me!', xvt.normal, xvt.magenta
-							, '"\n', xvt.reset)
-						$.loadUser($.seahag)
 						$.profile({ jpg:'npc/seahag', effect:'fadeInUp'
 	                        , handle:$.seahag.user.handle, level:$.seahag.user.level, pc:$.seahag.user.pc })
+						xvt.out(xvt.magenta, '\n"', xvt.bright, xvt.yellow
+							, 'You have escaped my magic, mortal?  Now try me!', xvt.normal, xvt.magenta
+							, '"\n', xvt.reset)
+						$.loadUser($.seahag)
 						$.cat(`naval/${$.seahag}`.toLowerCase())
 						if (isNaN(+$.seahag.user.weapon)) xvt.out('\n', $.who($.seahag, 'He'), $.Weapon.wearing($.seahag), '.\n')
 						if (isNaN(+$.seahag.user.armor)) xvt.out('\n', $.who($.seahag, 'He'), $.Armor.wearing($.seahag), '.\n')
@@ -158,6 +158,8 @@ function choice() {
 					return
 				}
 				if ($.dice($.player.level / 3 + 2) == 1) {
+                    $.profile({ jpg:'npc/neptune', effect:'fadeInUp'
+                        , handle:$.neptune.user.handle, level:$.neptune.user.level, pc:$.neptune.user.pc })
 					xvt.out(' titan named Neptune!\n\n')
 					xvt.waste(600)
 					$.loadUser($.neptune)
@@ -167,8 +169,6 @@ function choice() {
 						$.neptune.user.spells = keep
 					}
 					$.activate($.neptune)
-                    $.profile({ jpg:'npc/neptune', effect:'fadeInUp'
-                        , handle:$.neptune.user.handle, level:$.neptune.user.level, pc:$.neptune.user.pc })
 					$.cat(`naval/${$.neptune.user.handle}`.toLowerCase())
 					xvt.out(xvt.bright, xvt.cyan,
 						'He looks at you angrily as he removes a hook from his shorts!',
@@ -229,6 +229,7 @@ function choice() {
 				break
 			}
 			if (hook < 95) {
+				$.profile({ jpg:'naval/turtle', effect:'fadeInUp' })
 				xvt.out(' turtle and you let it go.\n')
 				xvt.waste(600)
 				$.player.toAC++
@@ -239,11 +240,11 @@ function choice() {
 				break
 			}
 			if (hook < 100) {
-				xvt.out(' turtle and you let it go.\n')
+				xvt.out(' tortoise and you let it go.\n')
 				xvt.waste(600)
 				$.player.toWC++
 				$.online.toWC += $.dice($.online.weapon.wc / 10 + 1)
-				xvt.out('The turtle turns and smiles and enhances your ', $.player.weapon)
+				xvt.out('The tortoise shows it gratitude by enchanting your ', $.player.weapon)
 				xvt.out($.buff($.player.toWC, $.online.toWC), xvt.reset,'\n')
 				$.sound('hone')
 				break
