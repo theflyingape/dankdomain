@@ -4,7 +4,7 @@
 
 ### Play from the [official web site](https://sites.google.com/view/dankdomain)
 
-[![Package Quality](http://npm.packagequality.com/shield/dankdomain.svg)](http://packagequality.com/#?package=dankdomain)
+[![GitHub release](https://img.shields.io/github/release/theflyingape/dankdomain.svg)](https://github.com/theflyingape/dankdomain/releases) [![npm version](https://badge.fury.io/js/dankdomain.svg)](https://www.npmjs.com/package/dankdomain)
 
 Download packs: [images](https://drive.google.com/open?id=1ekYDVc7rJHLGv7qcYF-7cb56_ykgUHoW) :camera:
 and [sounds](https://drive.google.com/open?id=1UvqQJbN61VbWVduONXgo1gm9yvGI0Qp8) :sound:
