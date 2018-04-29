@@ -606,9 +606,9 @@ function BattleUser(nme: active) {
 					break
 
 				case 'S':
-					if ($.dice((100 + nme.int - $.online.int) / 3) > $.int(50 * $.online.hull / ($.online.hull + nme.hull))) {
+					if (!outrun($.online.hull / nme.hull, $.online.int - nme.int)) {
 						$.sound('oops')
-						xvt.out(`\n${$.who(nme, 'He')}outmaneuvers you and stops your retreat!\n`)
+						xvt.out(`\n${$.who(nme, 'He')}outruns you and stops your retreat!\n`)
 						xvt.waste(500)
 						if (him()) {
 							menu()
@@ -617,7 +617,7 @@ function BattleUser(nme: active) {
 					}
 					else {
 						$.player.cha = $.PC.ability($.player.cha, -1)
-						$.online.cha = $.PC.ability($.online.cha, -$.dice(10))
+						$.online.cha = $.PC.ability($.online.cha, -$.dice(5))
 						$.player.retreats++
 						xvt.out('\nYou sail away safely out of range.\n')
 						$.saveUser(nme, false, true)
@@ -630,7 +630,7 @@ function BattleUser(nme: active) {
 
 				case 'R':
 					if ($.player.ram) {
-						if ($.dice(50 + nme.int / 2) > $.int(100 * nme.hull / (nme.hull + $.online.hull))) {
+						if (outmaneuvered(nme.int - $.online.int, nme.hull / $.online.hull)) {
 							xvt.out(`\n${$.who(nme, 'He')}quickly outmaneuvers your ship.\n`)
 							xvt.waste(400)
 							xvt.out(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
@@ -738,8 +738,8 @@ function BattleUser(nme: active) {
 		if (!nme.user.cannon && !nme.user.ram) {
 			xvt.out('They are defenseless and attempt to flee . . . ')
 			xvt.waste(1000)
-			if ($.dice((100 + $.online.int - nme.int) / 3) > $.int(50 * nme.hull / (nme.hull + $.online.hull))) {
-				xvt.out(`\nYou outmaneuver them and stop their retreat!\n`)
+			if (!outrun(nme.hull / $.online.hull, nme.int - $.online.int)) {
+				xvt.out(`\nYou outrun them and stop their retreat!\n`)
 				xvt.waste(500)
 				return false
 			}
@@ -829,9 +829,9 @@ function MonsterHunt() {
 					break
 
 				case 'S':
-					if ($.dice((100 + monsters[mon].int - $.online.int) / 3) > $.int(50 * $.online.hull / ($.online.hull + sm.hull))) {
+					if (!outrun($.online.hull / sm.hull, $.online.int - sm.int)) {
 						$.sound('oops')
-						xvt.out('\nIt outmaneuvers you and stops your retreat!\n')
+						xvt.out('\nIt outruns you and stops your retreat!\n')
 						xvt.waste(500)
 						if (it()) {
 							menu()
@@ -847,7 +847,7 @@ function MonsterHunt() {
 
 				case 'R':
 					if ($.player.ram) {
-						if ($.dice(50 + monsters[mon].int / 2) > $.int(100 * $.online.hull / ($.online.hull + sm.hull))) {
+						if (outmaneuvered(sm.int - $.online.int, sm.hull / $.online.hull)) {
 							xvt.out('\nIt quickly outmaneuvers your ship.\n')
 							xvt.waste(400)
 							xvt.out(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
@@ -935,7 +935,7 @@ function MonsterHunt() {
 			$.player.killed++
 			$.reason = `sunk by the ${sm.name}`
 			xvt.out(`\nThe ${sm.name} sank your ship!\n`)
-			xvt.waste(500)
+			$.sound('bubbles', 5)
 			if ($.player.coin.value) {
 				$.player.coin.value = 0
 				xvt.out('It gets all your money!\n')
@@ -1024,6 +1024,22 @@ function fire(a: active, d: active): {  hits:number, damage:number, hull:number,
 	xvt.waste(250)
 
 	return { hits, damage, hull, cannon, ram }
+}
+
+//	ram: can he outsmart (+ bigger) avoid your attempt?
+function outmaneuvered(dint: number, dhull: number): boolean {
+	dint >>= 2
+	const outstmart = 100 + dint
+	let bigger = $.int(100 * dhull)
+	return $.dice(outstmart) + $.dice(bigger) > 66
+}
+
+//	sail away: can my ship (+ wit) outrun yours?
+function outrun(dhull: number, dint: number): boolean {
+	dint = dint > 0 ? dint >>1 : 0
+	let run = $.int(50 + (100 * dhull + dint) / 2)
+	run = run > 100 ? 100 : run
+	return run > $.dice(100)
 }
 
 function ram(a: active, d: active) {
