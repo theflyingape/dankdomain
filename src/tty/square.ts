@@ -532,6 +532,7 @@ function Bank() {
 			break
 
 		case 'R':
+            $.music('ddd')
 			let c = ($.player.level / 5) * ($.player.steal + 1)
 			xvt.out('\nYou attempt to sneak into the vault...')
 			xvt.waste(2500)
@@ -540,6 +541,7 @@ function Bank() {
 				$.player.status = 'jail'
 				$.player.xplevel = 0
 				$.reason = 'caught getting into the vault'
+				$.profile({ png:'npc/jailer', effect:'fadeIn' })
 				xvt.out('\n\nA guard catches you and throws you into jail!\n')
 				$.sound('arrested', 20)
 				xvt.out('\nYou might be released by your next call.\n\n')
@@ -549,14 +551,21 @@ function Bank() {
 			}
 
 			let d = $.player.level + 1
-			let vault = Math.pow(d, 8) + d * $.dice(90) + d * $.dice(10)
+			let vault = Math.pow(d, 7) * $.dice(d / 3) * $.dice(d / 11)
 			let carry = new $.coins(vault)
-			xvt.out('you steal ', carry.carry(), '!\n')
+			xvt.out(' you find ', carry.carry(), ' in an open chest!\n')
 			xvt.waste(2500)
 
 			xvt.out(xvt.reset, '\n')
-			xvt.out('You try to make your way out of the vault...')
-			xvt.waste(2500)
+			xvt.out('You try to make your way out of the vault')
+			let deposits = new $.coins($.query(`SELECT SUM(bank) AS bank FROM Players WHERE id NOT GLOB '_*' AND id <> '${$.player.id}'`)[0].bank)
+			if (deposits.value)
+				xvt.out(' grabbing ', deposits.carry(), ' more in deposits!\n')
+
+			for (let i = 0; i < 3; i++) {
+				xvt.out('.')
+				xvt.waste(750)
+			}
 
 			c /= 15 - ($.player.steal * 3)
 			if ($.dice(100) > ++c) {
@@ -564,6 +573,7 @@ function Bank() {
 				$.player.xplevel = 0
 				$.reason = 'caught inside the vault'
 				xvt.out('something jingles!')
+				$.profile({ png:'npc/jailer', effect:'fadeIn' })
 				xvt.waste(1500)
 				xvt.out('\n\nA guard laughs as he closes the vault door on you!\n')
 				$.sound('arrested', 20)
@@ -574,8 +584,10 @@ function Bank() {
 			}
 
 			$.beep()
-			$.player.coin.value += carry.value
+			$.player.coin.value += carry.value + deposits.value
 			xvt.out('\n')
+			$.run(`UPDATE Players set bank=0 WHERE id NOT GLOB '_*'`)
+			menu(true)
 			break
 
 		case 'T':

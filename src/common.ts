@@ -56,334 +56,334 @@ module Common
 
 //  all player characters
 export class Character {
-        constructor () {
-            this.name = require('./etc/dankdomain.json')
-            this.types = Object.keys(this.name).length
-            this.classes = new Array()
-            this.total = 0
-            for (let type in this.name) {
-                let i = Object.keys(this.name[type]).length
-                this.classes.push({ key:type, value:i })
-                this.total += i
-                if (type === 'immortal')
-                    for (let dd in this.name[type])
-                        this.winning = dd
+    constructor () {
+        this.name = require('./etc/dankdomain.json')
+        this.types = Object.keys(this.name).length
+        this.classes = new Array()
+        this.total = 0
+        for (let type in this.name) {
+            let i = Object.keys(this.name[type]).length
+            this.classes.push({ key:type, value:i })
+            this.total += i
+            if (type === 'immortal')
+                for (let dd in this.name[type])
+                    this.winning = dd
+        }
+    }
+
+    name: character[]
+    types: number
+    classes: { key?:string, value?:number }[]
+    total: number
+    winning: string
+
+    ability(current: number, delta: number, max = 100, mod = 0): number {
+        let ability = current
+        max = max + mod
+        max = max > 100 ? 100 : max < 20 ? 20 : max
+        ability += delta
+        ability = ability > max ? max : ability < 20 ? 20 : ability
+        return ability
+    }
+
+    card(dd = 'None'): character {
+        let rpc = <character>{}
+        for (let type in this.name) {
+            if (this.name[type][dd]) {
+                rpc = this.name[type][dd]
+                break
             }
         }
+        return rpc
+    }
 
-        name: character[]
-        types: number
-        classes: { key?:string, value?:number }[]
-        total: number
-        winning: string
+    encounter(where = '', lo = 2, hi = 99): active {
+        lo = lo < 2 ? 2 : lo > 99 ? 99 : lo
+        hi = hi < 2 ? 2 : hi > 99 ? 99 : hi
 
-        ability(current: number, delta: number, max = 100, mod = 0): number {
-            let ability = current
-            max = max + mod
-            max = max > 100 ? 100 : max < 20 ? 20 : max
-            ability += delta
-            ability = ability > max ? max : ability < 20 ? 20 : ability
-            return ability
+        let rpc = <active>{ user:{id:''} }
+        let rs = query(`SELECT id FROM Players WHERE id != '${player.id}'
+            AND xplevel BETWEEN ${lo} AND ${hi}
+            ${where} ORDER BY level`)
+        if (rs.length) {
+            let n = dice(rs.length) - 1
+            rpc.user.id = rs[n].id
+            loadUser(rpc)
         }
+        return rpc
+    }
 
-        card(dd = 'None'): character {
-            let rpc = <character>{}
-            for (let type in this.name) {
-                if (this.name[type][dd]) {
-                    rpc = this.name[type][dd]
+    jousting(rpc: active): number {
+        return Math.round(rpc.dex * rpc.user.level / 10 + 2 * rpc.user.jw - rpc.user.jl + 10)
+    }
+
+    profile(rpc: active) {
+        if (rpc.user.id) {
+            let userPNG = `door/static/images/user/${rpc.user.id}.png`
+            try {
+                fs.accessSync(userPNG, fs.constants.F_OK)
+                userPNG = `user/${rpc.user.id}`
+            } catch(e) {
+                userPNG = 'player/' + rpc.user.pc.toLowerCase() + (rpc.user.gender === 'F' ? '_f' : '')
+            }
+            Common.profile({ png:userPNG, handle:rpc.user.handle, level:rpc.user.level, pc:rpc.user.pc, effect:'fadeInLeft' })
+        }
+    }
+
+    random(type?: string): string {
+        let pc: string = ''
+        if (type) {
+            let i = dice(Object.keys(this.name[type]).length)
+            let n = i
+            for (let dd in this.name[type])
+                if (!--n) {
+                    pc = dd
                     break
                 }
-            }
-            return rpc
         }
-
-        encounter(where = '', lo = 2, hi = 99): active {
-            lo = lo < 2 ? 2 : lo > 99 ? 99 : lo
-            hi = hi < 2 ? 2 : hi > 99 ? 99 : hi
-
-            let rpc = <active>{ user:{id:''} }
-            let rs = query(`SELECT id FROM Players WHERE id != '${player.id}'
-                AND xplevel BETWEEN ${lo} AND ${hi}
-                ${where} ORDER BY level`)
-            if (rs.length) {
-                let n = dice(rs.length) - 1
-                rpc.user.id = rs[n].id
-                loadUser(rpc)
-            }
-            return rpc
-        }
-
-        jousting(rpc: active): number {
-            return Math.round(rpc.dex * rpc.user.level / 10 + 2 * rpc.user.jw - rpc.user.jl + 10)
-        }
-
-        profile(rpc: active) {
-            if (rpc.user.id) {
-                let userPNG = `door/static/images/user/${rpc.user.id}.png`
-                try {
-                    fs.accessSync(userPNG, fs.constants.F_OK)
-                    userPNG = `user/${rpc.user.id}`
-                } catch(e) {
-                    userPNG = 'player/' + rpc.user.pc.toLowerCase() + (rpc.user.gender === 'F' ? '_f' : '')
-                }
-                Common.profile({ png:userPNG, handle:rpc.user.handle, level:rpc.user.level, pc:rpc.user.pc, effect:'fadeInLeft' })
-            }
-        }
-
-        random(type?: string): string {
-            let pc: string = ''
-            if (type) {
-                let i = dice(Object.keys(this.name[type]).length)
-                let n = i
+        else {
+            let i = dice(this.total - 1) + 1    //  any (except None and Novice)
+            let n = i
+            for (type in this.name) {
                 for (let dd in this.name[type])
                     if (!--n) {
                         pc = dd
                         break
                     }
+                if (!n) break
             }
-            else {
-                let i = dice(this.total - 1) + 1    //  any (except None and Novice)
-                let n = i
-                for (type in this.name) {
-                    for (let dd in this.name[type])
-                        if (!--n) {
-                            pc = dd
-                            break
-                        }
-                    if (!n) break
-                }
-            }
-            return pc
+        }
+        return pc
+    }
+
+    stats(profile: active) {
+        Common.action('clear')
+        this.profile(profile)
+
+        const line = '------------------------------------------------------'
+        const space = '                                                      '
+        var i: number
+        var n: number
+
+        i = 22 - profile.user.handle.length
+        n = 11 + i / 2
+        xvt.out(xvt.clear)
+        xvt.out(xvt.blue, '+', line.slice(0, n), '=:))')
+        xvt.out(xvt.Blue, xvt.bright, xvt.yellow, ' ', profile.user.handle, ' ', xvt.reset)
+        n = 11 + i / 2 + i % 2
+        xvt.out(xvt.blue, '((:=', line.slice(0, n), '+\n')
+
+        i = 30 - Access.name[profile.user.access][profile.user.sex].length
+        n = 11 + i / 2
+        xvt.out(xvt.blue, '|', xvt.Blue, xvt.white, space.slice(0, n))
+        xvt.out('"', Access.name[profile.user.access][profile.user.sex], '"')
+        n = 11 + i / 2 + i % 2
+        xvt.out(xvt.blue, space.slice(0, n), xvt.reset, xvt.blue, '|\n')
+
+        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out('    Title: ', xvt.white)
+        xvt.out(sprintf('%-20s', profile.user.access))
+        xvt.out(xvt.cyan, ' Born: ', xvt.white, date2full(profile.user.dob))
+        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out('    Class: ', xvt.white)
+        xvt.out(sprintf('%-21s', profile.user.pc + ' (' + profile.user.gender + ')'))
+        xvt.out(xvt.cyan, ' Exp: ', xvt.white)
+        if (profile.user.xp < 1e+8)
+            xvt.out(sprintf('%-15f', profile.user.xp))
+        else
+            xvt.out(sprintf('%-15.7e', profile.user.xp))
+        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out(' Immortal: ', xvt.white)
+        xvt.out(sprintf('%-20s', profile.user.immortal + '.' + profile.user.level + ` (${profile.user.calls})`))
+        xvt.out(xvt.cyan, ' Need: ', xvt.white)
+        if (experience(profile.user.level, undefined, profile.user.int) < 1e+8)
+            xvt.out(sprintf('%-15f', experience(profile.user.level, undefined, profile.user.int)))
+        else
+            xvt.out(sprintf('%-15.7e', experience(profile.user.level, undefined, profile.user.int)))
+        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out('      Str: ', xvt.white)
+        xvt.out(sprintf('%-20s', profile.str + ' (' + profile.user.str + ',' + profile.user.maxstr + ')'))
+        xvt.out(xvt.cyan, ' Hand: ', xvt.white)
+        xvt.out(profile.user.coin.carry(), xvt.bright, ' '.repeat(15 - profile.user.coin.amount.length))
+        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out('      Int: ', xvt.white)
+        xvt.out(sprintf('%-20s', profile.int + ' (' + profile.user.int + ',' + profile.user.maxint + ')'))
+        xvt.out(xvt.cyan, ' Bank: ', xvt.white)
+        xvt.out(profile.user.bank.carry(), xvt.bright, ' '.repeat(15 - profile.user.bank.amount.length))
+        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out('      Dex: ', xvt.white)
+        xvt.out(sprintf('%-20s', profile.dex + ' (' + profile.user.dex + ',' + profile.user.maxdex + ')'))
+        xvt.out(xvt.cyan, ' Loan: ', xvt.white)
+        xvt.out(profile.user.loan.carry(), xvt.bright, ' '.repeat(15 - profile.user.loan.amount.length))
+        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out('      Cha: ', xvt.white)
+        xvt.out(sprintf('%-19s', profile.cha + ' (' + profile.user.cha + ',' + profile.user.maxcha + ')'))
+        xvt.out(xvt.cyan, ' Steal: ', xvt.white)
+        xvt.out(sprintf('%-15s', ['lawful', 'desperate', 'trickster', 'adept', 'master'][profile.user.steal]))
+        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out('       HP: ', xvt.white)
+        xvt.out(sprintf('%-42s', profile.hp + '/' + profile.user.hp + ' (' 
+            + ['weak', 'normal', 'adept', 'warrior', 'brute', 'hero'][profile.user.melee] + ', '
+            + ['a rare', 'occasional', 'deliberate', 'angry', 'murderous'][profile.user.backstab] + ' backstab)'))
+        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+        if (profile.user.magic > 1) {
+            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+            xvt.out('       SP: ', xvt.white)
+            xvt.out(sprintf('%-42s', profile.sp + '/' + profile.user.sp + ' (' + ['wizardry', 'arcane', 'divine'][profile.user.magic - 2] + ')'))
+            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
         }
 
-        stats(profile: active) {
-            Common.action('clear')
-            this.profile(profile)
-
-            const line = '------------------------------------------------------'
-            const space = '                                                      '
-            var i: number
-            var n: number
-
-            i = 22 - profile.user.handle.length
-            n = 11 + i / 2
-            xvt.out(xvt.clear)
-            xvt.out(xvt.blue, '+', line.slice(0, n), '=:))')
-            xvt.out(xvt.Blue, xvt.bright, xvt.yellow, ' ', profile.user.handle, ' ', xvt.reset)
-            n = 11 + i / 2 + i % 2
-            xvt.out(xvt.blue, '((:=', line.slice(0, n), '+\n')
-
-            i = 30 - Access.name[profile.user.access][profile.user.sex].length
-            n = 11 + i / 2
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.white, space.slice(0, n))
-            xvt.out('"', Access.name[profile.user.access][profile.user.sex], '"')
-            n = 11 + i / 2 + i % 2
-            xvt.out(xvt.blue, space.slice(0, n), xvt.reset, xvt.blue, '|\n')
-
+        if (profile.user.magic && profile.user.spells.length) {
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out('    Title: ', xvt.white)
-            xvt.out(sprintf('%-20s', profile.user.access))
-            xvt.out(xvt.cyan, ' Born: ', xvt.white, date2full(profile.user.dob))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out('    Class: ', xvt.white)
-            xvt.out(sprintf('%-21s', profile.user.pc + ' (' + profile.user.gender + ')'))
-            xvt.out(xvt.cyan, ' Exp: ', xvt.white)
-            if (profile.user.xp < 1e+8)
-                xvt.out(sprintf('%-15f', profile.user.xp))
-            else
-                xvt.out(sprintf('%-15.7e', profile.user.xp))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out(' Immortal: ', xvt.white)
-            xvt.out(sprintf('%-20s', profile.user.immortal + '.' + profile.user.level + ` (${profile.user.calls})`))
-            xvt.out(xvt.cyan, ' Need: ', xvt.white)
-            if (experience(profile.user.level, undefined, profile.user.int) < 1e+8)
-                xvt.out(sprintf('%-15f', experience(profile.user.level, undefined, profile.user.int)))
-            else
-                xvt.out(sprintf('%-15.7e', experience(profile.user.level, undefined, profile.user.int)))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out('      Str: ', xvt.white)
-            xvt.out(sprintf('%-20s', profile.str + ' (' + profile.user.str + ',' + profile.user.maxstr + ')'))
-            xvt.out(xvt.cyan, ' Hand: ', xvt.white)
-            xvt.out(profile.user.coin.carry(), xvt.bright, ' '.repeat(15 - profile.user.coin.amount.length))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out('      Int: ', xvt.white)
-            xvt.out(sprintf('%-20s', profile.int + ' (' + profile.user.int + ',' + profile.user.maxint + ')'))
-            xvt.out(xvt.cyan, ' Bank: ', xvt.white)
-            xvt.out(profile.user.bank.carry(), xvt.bright, ' '.repeat(15 - profile.user.bank.amount.length))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out('      Dex: ', xvt.white)
-            xvt.out(sprintf('%-20s', profile.dex + ' (' + profile.user.dex + ',' + profile.user.maxdex + ')'))
-            xvt.out(xvt.cyan, ' Loan: ', xvt.white)
-            xvt.out(profile.user.loan.carry(), xvt.bright, ' '.repeat(15 - profile.user.loan.amount.length))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out('      Cha: ', xvt.white)
-            xvt.out(sprintf('%-19s', profile.cha + ' (' + profile.user.cha + ',' + profile.user.maxcha + ')'))
-            xvt.out(xvt.cyan, ' Steal: ', xvt.white)
-            xvt.out(sprintf('%-15s', ['lawful', 'desperate', 'trickster', 'adept', 'master'][profile.user.steal]))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out('       HP: ', xvt.white)
-            xvt.out(sprintf('%-42s', profile.hp + '/' + profile.user.hp + ' (' 
-                + ['weak', 'normal', 'adept', 'warrior', 'brute', 'hero'][profile.user.melee] + ', '
-                + ['a rare', 'occasional', 'deliberate', 'angry', 'murderous'][profile.user.backstab] + ' backstab)'))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-            if (profile.user.magic > 1) {
-                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-                xvt.out('       SP: ', xvt.white)
-                xvt.out(sprintf('%-42s', profile.sp + '/' + profile.user.sp + ' (' + ['wizardry', 'arcane', 'divine'][profile.user.magic - 2] + ')'))
-                xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+            xvt.out(sprintf(' %8s: ', ['Wands', 'Scrolls', 'Spells', 'Magus'][profile.user.magic - 1]), xvt.white)
+            let text = ''
+            n = 0
+            for (let p = 0; p < profile.user.spells.length; p++) {
+                let spell = profile.user.spells[p]
+                let name = Magic.pick(spell)
+                if (spell < 5 || (spell < 17 && name.length > 7)) name = name.slice(0, 3)
+                if (text.length + name.length > 40) break
+                if (text.length) text += ','
+                text += name
+                n++
             }
-
-            if (profile.user.magic && profile.user.spells.length) {
-                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-                xvt.out(sprintf(' %8s: ', ['Wands', 'Scrolls', 'Spells', 'Magus'][profile.user.magic - 1]), xvt.white)
-                let text = ''
-                n = 0
+            xvt.out(sprintf('%-42s', text))
+            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+            while (n < profile.user.spells.length) {
+                text = ''
+                i = 0
+                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.white, '           ')
                 for (let p = 0; p < profile.user.spells.length; p++) {
-                    let spell = profile.user.spells[p]
-                    let name = Magic.pick(spell)
-                    if (spell < 5 || (spell < 17 && name.length > 7)) name = name.slice(0, 3)
-                    if (text.length + name.length > 40) break
-                    if (text.length) text += ','
-                    text += name
-                    n++
+                    i++
+                    if (i > n) {
+                        let spell = profile.user.spells[p]
+                        let name = Magic.pick(spell)
+                        if (spell < 17 && name.length > 7) name = name.slice(0, 3)
+                        if (text.length + name.length > 40) break
+                        if (text.length) text += ','
+                        text += name
+                        n++
+                    }
                 }
                 xvt.out(sprintf('%-42s', text))
                 xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-                while (n < profile.user.spells.length) {
-                    text = ''
-                    i = 0
-                    xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.white, '           ')
-                    for (let p = 0; p < profile.user.spells.length; p++) {
-                        i++
-                        if (i > n) {
-                            let spell = profile.user.spells[p]
-                            let name = Magic.pick(spell)
-                            if (spell < 17 && name.length > 7) name = name.slice(0, 3)
-                            if (text.length + name.length > 40) break
-                            if (text.length) text += ','
-                            text += name
-                            n++
-                        }
-                    }
-                    xvt.out(sprintf('%-42s', text))
-                    xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-                }
             }
-
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out('  Alchemy: ', xvt.white)
-            xvt.out(sprintf('%-42s', ['none', 'apprentice', 'expert', 'artisan', 'master'][profile.user.poison]))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-            if (profile.user.poison && profile.user.poisons.length) {
-                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-                xvt.out(sprintf(' %8s: ', ['Toxins', 'Poisons', 'Banes', 'Venena'][profile.user.poison - 1]), xvt.white)
-                xvt.out(sprintf('%-42s', profile.user.poisons.toString()))
-                xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-            }
-
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out('   Weapon: ', this.weapon(profile).rich)
-            xvt.out(' '.repeat(42 - this.weapon(profile).text.length))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out('    Armor: ', this.armor(profile).rich)
-            xvt.out(' '.repeat(42 - this.armor(profile).text.length))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out(' Lives in: ', xvt.white)
-            xvt.out(sprintf('%-42s', profile.user.realestate + ' (' + profile.user.security + ')'))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-            if (xvt.validator.isNotEmpty(profile.user.gang)) {
-                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-                xvt.out('    Party: ', xvt.white)
-                xvt.out(sprintf('%-42s', profile.user.gang))
-                xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-            }
-
-            if (+profile.user.hull) {
-                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-                xvt.out('  Warship: ', xvt.white)
-                xvt.out(sprintf('%-18s', profile.hull.toString() + ':' +  profile.user.hull.toString()))
-                xvt.out(xvt.cyan, ' Cannon: ', xvt.white)
-                xvt.out(sprintf('%-15s', profile.user.cannon.toString() + ':' +  (profile.user.hull / 50).toString() + (profile.user.ram ? ' (RAM)' : '')))
-                xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-            }
-
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out(' Brawling: ', xvt.white)
-            xvt.out(sprintf('%-42s', profile.user.tw + ':' + profile.user.tl))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out(' Jousting: ', xvt.white)
-            xvt.out(sprintf('%-20s', profile.user.jw + ':' + profile.user.jl + ` (${this.jousting(profile)})`))
-            xvt.out(xvt.cyan, 'Plays: ', xvt.white)
-            xvt.out(sprintf('%-15s', profile.user.plays))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out('    Kills: ', xvt.white)
-            xvt.out(sprintf('%-42s', profile.user.kills + ' with ' + profile.user.retreats + ' retreats and killed ' + profile.user.killed +'x'))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-            if (profile.user.blessed) {
-                let who: user = { id:profile.user.blessed }
-                if (!loadUser(who)) {
-                    if (profile.user.blessed === 'well')
-                        who.handle = 'wishing'
-                    else
-                        who.handle = profile.user.blessed
-                }
-                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.yellow)
-                xvt.out(' + Blessed by ', xvt.white
-                    , sprintf('%-39s', who.handle))
-                xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-            }
-
-            if (profile.user.cursed) {
-                let who: user = { id:profile.user.cursed }
-                if (!loadUser(who))
-                    who.handle = profile.user.cursed
-                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.black)
-                xvt.out(' - Cursed by ', xvt.white
-                    , sprintf('%-40s', who.handle))
-                xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-            }
-
-            xvt.out(xvt.blue, '+', line, '+', xvt.reset)
         }
 
-        armor(profile: active): { text:string, rich:string } {
-            let text = profile.user.armor + buff(profile.toAC, profile.user.toAC, true)
-            let rich = xvt.attr(xvt.bright, xvt.white, profile.user.armor + buff(profile.user.toAC, profile.toAC))
-            return { text:text, rich:rich }
+        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out('  Alchemy: ', xvt.white)
+        xvt.out(sprintf('%-42s', ['none', 'apprentice', 'expert', 'artisan', 'master'][profile.user.poison]))
+        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+        if (profile.user.poison && profile.user.poisons.length) {
+            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+            xvt.out(sprintf(' %8s: ', ['Toxins', 'Poisons', 'Banes', 'Venena'][profile.user.poison - 1]), xvt.white)
+            xvt.out(sprintf('%-42s', profile.user.poisons.toString()))
+            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
         }
 
-        weapon(profile: active): { text:string, rich:string } {
-            let text = profile.user.weapon + buff(profile.toWC, profile.user.toWC, true)
-            let rich = xvt.attr(xvt.bright, xvt.white, profile.user.weapon + buff(profile.user.toWC, profile.toWC))
-            return { text:text, rich:rich }
+        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out('   Weapon: ', this.weapon(profile).rich)
+        xvt.out(' '.repeat(42 - this.weapon(profile).text.length))
+        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out('    Armor: ', this.armor(profile).rich)
+        xvt.out(' '.repeat(42 - this.armor(profile).text.length))
+        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out(' Lives in: ', xvt.white)
+        xvt.out(sprintf('%-42s', profile.user.realestate + ' (' + profile.user.security + ')'))
+        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+        if (xvt.validator.isNotEmpty(profile.user.gang)) {
+            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+            xvt.out('    Party: ', xvt.white)
+            xvt.out(sprintf('%-42s', profile.user.gang))
+            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
         }
+
+        if (+profile.user.hull) {
+            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+            xvt.out('  Warship: ', xvt.white)
+            xvt.out(sprintf('%-18s', profile.hull.toString() + ':' +  profile.user.hull.toString()))
+            xvt.out(xvt.cyan, ' Cannon: ', xvt.white)
+            xvt.out(sprintf('%-15s', profile.user.cannon.toString() + ':' +  (profile.user.hull / 50).toString() + (profile.user.ram ? ' (RAM)' : '')))
+            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+        }
+
+        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out(' Brawling: ', xvt.white)
+        xvt.out(sprintf('%-42s', profile.user.tw + ':' + profile.user.tl))
+        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out(' Jousting: ', xvt.white)
+        xvt.out(sprintf('%-20s', profile.user.jw + ':' + profile.user.jl + ` (${this.jousting(profile)})`))
+        xvt.out(xvt.cyan, 'Plays: ', xvt.white)
+        xvt.out(sprintf('%-15s', profile.user.plays))
+        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out('    Kills: ', xvt.white)
+        xvt.out(sprintf('%-42s', profile.user.kills + ' with ' + profile.user.retreats + ' retreats and killed ' + profile.user.killed +'x'))
+        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+
+        if (profile.user.blessed) {
+            let who: user = { id:profile.user.blessed }
+            if (!loadUser(who)) {
+                if (profile.user.blessed === 'well')
+                    who.handle = 'wishing'
+                else
+                    who.handle = profile.user.blessed
+            }
+            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.yellow)
+            xvt.out(' + Blessed by ', xvt.white
+                , sprintf('%-39s', who.handle))
+            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+        }
+
+        if (profile.user.cursed) {
+            let who: user = { id:profile.user.cursed }
+            if (!loadUser(who))
+                who.handle = profile.user.cursed
+            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.black)
+            xvt.out(' - Cursed by ', xvt.white
+                , sprintf('%-40s', who.handle))
+            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+        }
+
+        xvt.out(xvt.blue, '+', line, '+', xvt.reset)
     }
+
+    armor(profile: active): { text:string, rich:string } {
+        let text = profile.user.armor + buff(profile.toAC, profile.user.toAC, true)
+        let rich = xvt.attr(xvt.bright, xvt.white, profile.user.armor + buff(profile.user.toAC, profile.toAC))
+        return { text:text, rich:rich }
+    }
+
+    weapon(profile: active): { text:string, rich:string } {
+        let text = profile.user.weapon + buff(profile.toWC, profile.user.toWC, true)
+        let rich = xvt.attr(xvt.bright, xvt.white, profile.user.weapon + buff(profile.user.toWC, profile.toWC))
+        return { text:text, rich:rich }
+    }
+}
 
     export const PC = new Character
 
@@ -2024,6 +2024,7 @@ export function wall(msg: string) {
         newkeys(sysop)
         reroll(sysop, sysop.pc, sysop.level)
         sysop.xplevel = 0
+        sysop.level = npc.level
         saveUser(sysop, true)
     }
     //  customize the Master of Whisperers NPC
