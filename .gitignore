@@ -8,3 +8,4 @@ build/sounds/**
 build/files/tavern
 build/files/user
 build/users
+package-lock.json
