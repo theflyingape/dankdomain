@@ -1,6 +1,6 @@
 {
   "name": "dankdomain",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "👑 Dank Domain: the return of Hack & Slash (1990-2014)",
   "main": "ttymain",
   "publisher": "theflyingape",
@@ -34,17 +34,16 @@
   "homepage": "https://sites.google.com/view/dankdomain",
   "dependencies": {
     "animate.css": "^3.6.1",
-    "better-sqlite3": "^4.1.0",
     "express": "^4.16.3",
     "express-ws": "^3.0.0",
-    "fs-extra": "^6.0.0",
+    "fs-extra": "^6.0.1",
     "got": "^8.3.1",
     "node-pty": "^0.7.4",
-    "nodemailer": "^4.6.4",
+    "nodemailer": "^4.6.5",
     "nodemailer-smtp-transport": "^2.7.4",
     "sprintf-js": "^1.1.1",
     "title-case": "^2.1.1",
-    "xterm": "^3.3.0",
+    "xterm": "^3.4.1",
     "xvt": "^1.0.21"
   },
   "devDependencies": {
@@ -52,7 +51,7 @@
     "@types/express": "^4.11.1",
     "@types/express-ws": "^3.0.0",
     "@types/fs-extra": "^5.0.2",
-    "@types/node": "^10.0.3",
+    "@types/node": "^10.3.0",
     "@types/nodemailer": "^4.6.0",
     "@types/nodemailer-smtp-transport": "^2.7.4",
     "@types/sprintf-js": "^1.1.0"

@@ -1,10 +1,17 @@
-# [Dank Domain](https://sites.google.com/view/dankdomain)
+# 👑 [Dank Domain](https://sites.google.com/view/dankdomain)
 
-## the return of Hack & Slash
+## 🛡 the return of Hack & Slash ⚔️
 
 > [developed](https://github.com/theflyingape/dankdomain) using Node.js on Linux served up using Verizon FiOS 100mb
 
-### 16-Apr-2018
+### 28-May-2018
+
+* 1.2.4 release, Memorial Day!
+* xterm.js v3.4.1 release, and other npmvet package updates
+* builds with gcc c++ v8.1 (Fedora 28)
+* NPC jailer
+
+#### 16-Apr-2018
 
 * 1.2.2 release, Patriots' Day!
 * xterm.js v3.3 release, and corrected TypeScript typings for ExpressWs transpiling strictness
@@ -12,7 +19,7 @@
 * door client improvements
 * minor weakened monster tweaks and some bug fixes in battle
 
-### 17-Mar-2018
+#### 17-Mar-2018
 
 * 1.1.4 release, Happy St. Patrick's Day!
 * xterm.js v3.2 release with preferred Google font IBM Plex Mono

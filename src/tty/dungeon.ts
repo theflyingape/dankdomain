@@ -826,7 +826,7 @@ function doMove(): boolean {
 								opponent.user.id = ''
 								xvt.out('\nYou can\'t curse novice players.\n')
 							}
-							if (opponent.user.id === '') {
+							if (opponent.user.id) {
 								$.log(opponent.user.id, `\n${$.player.handle} cursed you!`)
 								$.news(`\tcursed ${opponent.user.handle}`)
 								if (opponent.user.blessed)
