@@ -4,10 +4,17 @@
 
 > [developed](https://github.com/theflyingape/dankdomain) using Node.js on Linux served up using Verizon FiOS 100mb
 
-### 28-May-2018
+### 07-Jun-2018
+
+* 1.3.0 release, Node.js 10 support
+* xterm.js v3.4.1 release, and other npmvet package updates
+* removed express-ws (stale, security issue), re-wrote door for ws
+* minor bug fixes
+
+#### 28-May-2018
 
 * 1.2.4 release, Memorial Day!
-* xterm.js v3.4.1 release, and other npmvet package updates
+* xterm.js v3.4.0 release
 * builds with gcc c++ v8.1 (Fedora 28)
 * NPC jailer
 

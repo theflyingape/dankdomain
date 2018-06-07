@@ -4,12 +4,10 @@
 \*****************************************************************************/
 import dns = require('dns')
 import express = require('express')
-import expressWs = require('express-ws')
-import https = require('https')
 import fs = require('fs')
-import os = require('os')
+import https = require('https')
 import pty = require('node-pty')
-import { ITerminalOptions } from 'xterm'
+import ws = require('ws')
 
 process.title = 'door'
 process.chdir(__dirname)
@@ -21,21 +19,43 @@ let broadcasts = {}
 
 dns.lookup('localhost', (err, addr, family) => {
 
-  const x = express()
-  x.set('trust proxy', ['loopback', addr])
+  const app = express()
+  app.set('trust proxy', ['loopback', addr])
 
   let ssl = { key: fs.readFileSync('key.pem'), cert: fs.readFileSync('cert.pem') }
-  let server = https.createServer(ssl, x)
+  let server = https.createServer(ssl, app)
   let port = parseInt(process.env.PORT) || 1939
 
+  //  enable REST services
   server.listen(port, addr)
   console.log(`Dank Domain Door on https|wss://${addr}:${port}`)
 
-  //  add WebSocket endpoints for Express applications
-  const { app } = expressWs(x, server)
+  //  enable WebSocket endpoints
+  const wssActive = new ws.Server({ noServer:true, path:'/xterm/door/player/', clientTracking: true })
+  const wssLurker = new ws.Server({ noServer:true, path:'/xterm/door/lurker/', clientTracking: true })
 
+  server.on('upgrade', (req, socket, head) => {
+    const pathname = new URL(req.url, 'https://localhost').pathname
+    if (pathname === '/xterm/door/player/') {
+      wssActive.handleUpgrade(req, socket, head, (ws) => {
+        wssActive.emit('connection', ws, req)
+      })
+    }
+    else if (pathname === '/xterm/door/lurker/') {
+      wssLurker.handleUpgrade(req, socket, head, (ws) => {
+        wssLurker.emit('connection', ws, req)
+      })
+    } else {
+      console.log(`?FATAL WebSocket request: ${pathname}`)
+      socket.destroy()
+    }
+  })
+
+  //  web services
   app.use('/xterm/door', express.static(__dirname + '/static'))
 
+  //  REST services
+  //  Player API
   app.post('/xterm/door/player', function (req, res) {
 
     let client = req.header('x-forwarded-for') || req.connection.remoteAddress
@@ -90,83 +110,7 @@ dns.lookup('localhost', (err, addr, family) => {
     res.end()
   })
 
-  app.ws('/xterm/door/player/:pid', function (ws, req) {
-    let term = sessions[parseInt(req.params.pid)]
-    //ws.send(logs[term.pid])
-/*
-    const interval = setInterval(function ping() {
-      console.log(ws.clients)
-      for (let n in ws.clients) {
-        if (ws.clients[n].isAlive === false) return ws.terminate()
-        ws.isAlive = false
-        ws.ping(() => {})
-    }, 30000)
-*/
-    //  dankdomain app events
-    term.on('close', function() {
-      ws.close()
-    })
-
-    //  app events --> browser client
-    term.on('data', function(data) {
-      //  inspect for app's ACK ...
-      let msg = data.toString()
-      let ack = msg.indexOf('\x06')
-      //  ... to appropriately replace it with any pending broadcast message(s)
-      if (broadcasts[term.pid] && ack >= 0) {
-        msg = `${msg.substr(0, ack)}${broadcasts[term.pid]}\n${msg.substr(ack)}`
-        broadcasts[term.pid] = ''
-      }
-
-      try {
-        ws.send(msg)
-      } catch (ex) {
-        if (term.pid) {
-          console.log(`?FATAL PLAYER session ${term.pid} pty -> ws error:`, ex.message)
-          unlock(term.pid)
-          delete term.pid
-        }
-      }
-    })
-
-    //  client events --> app
-    ws.on('connection', function connection(ws) {
-      console.log(`Connect PLAYER session ${term.pid}`)
-      //ws.on('pong', heartbeat)
-    })
-
-    ws.on('message', function(msg) {
-      try {
-        term.write(msg)
-      } catch (ex) {
-        if (term.pid) {
-          console.log(`?FATAL PLAYER session ${term.pid} ws -> pty error:`, ex.message)
-          unlock(term.pid)
-          delete term.pid
-        }
-      }
-    })
-
-    ws.on('close', function () {
-      console.log(`Closed PLAYER session ${term.pid}`)
-      // Clean things up
-      delete broadcasts[term.pid]
-      delete logs[term.pid]
-      delete sessions[term.pid]
-      term.kill()
-    })
-/*
-    function heartbeat() {
-      this.isAlive = true
-    }
-*/
-  })
-
   //  Lurker API
-  const DD = '../users/dankdomain.sql'
-  let better = require('better-sqlite3')
-  let sqlite3 = new better(DD)
-  sqlite3.prepare(`DELETE FROM Online`).run().changes
   var lurkers = []
 
   app.post('/xterm/door/lurker', function (req, res) {
@@ -181,7 +125,7 @@ dns.lookup('localhost', (err, addr, family) => {
         res.send((lurkers.push(pid) - 1).toString())
       }
       else {
-        console.log(`?unknown lurker session ${pid} request from remote host: ${req.header('x-forwarded-for') || req.connection.remoteAddress} (${req.hostname})`)
+        console.log(`?FATAL lurker session ${pid} request from remote host: ${req.header('x-forwarded-for') || req.connection.remoteAddress} (${req.hostname})`)
       }
     }
     else if (Object.keys(sessions).length) {
@@ -201,39 +145,102 @@ dns.lookup('localhost', (err, addr, family) => {
     res.end()
   })
 
-  app.ws('/xterm/door/lurker/:lurker', function (ws, req) {
-    let lurker = parseInt(req.params.lurker)
+  //  WebSocket endpoints: utilize upgraded socket connection to serve I/O between app pty and browser client
+  //  ... for the active player
+  wssActive.on('connection', (wss, req) => {
+    const what = new URL(req.url, 'https://localhost')
+    const pid = what.searchParams.get('pid')
+    let term = sessions[parseInt(pid)]
+  
+    //  app --> browser client
+    term.on('data', (data) => {
+      //  inspect for app's ACK ...
+      let msg = data.toString()
+      let ack = msg.indexOf('\x06')
+      //  ... to appropriately replace it with any pending broadcast message(s)
+      if (broadcasts[term.pid] && ack >= 0) {
+        msg = `${msg.substr(0, ack)}${broadcasts[term.pid]}\n${msg.substr(ack)}`
+        broadcasts[term.pid] = ''
+      }
+
+      try {
+        wss.send(msg)
+      } catch (ex) {
+        if (term.pid) {
+          console.log(`?FATAL ACTIVE app session ${term.pid} pty -> ws error:`, ex.message)
+          unlock(term.pid)
+          delete term.pid
+        }
+      }
+    })
+
+    term.on('close', () => {
+      wss.close()
+    })
+
+    //  browser client --> app
+    wss.on('message', (msg) => {
+      try {
+        term.write(msg)
+      } catch (ex) {
+        if (term.pid) {
+          console.log(`?FATAL ACTIVE browser session ${term.pid} ws -> pty error:`, ex.message)
+          unlock(term.pid)
+          delete term.pid
+        }
+      }
+    })
+
+    wss.on('close', () => {
+      // Clean things up
+      delete broadcasts[term.pid]
+      delete logs[term.pid]
+      delete sessions[term.pid]
+      term.kill()
+    })
+  })
+
+  //  ... for the casual lurker
+  wssLurker.on('connection', (wss, req) => {
+    const what = new URL(req.url, 'https://localhost')
+    let lurker = parseInt(what.searchParams.get('lurker'))
     let term = sessions[lurkers[lurker]]
     let player = ` (${sessions[term.pid].who})`
     console.log(`Lurker session ${term.pid}${player} connected as #${(lurker + 1)}`)
 
     const send = (data) => {
       try {
-        ws.send(data)
+        wss.send(data)
       } catch (ex) {
         if (term.pid)
-          console.log(`?fatal session ${term.pid}${player} lurker/ws error: ${ex.message}`)
+          console.log(`?FATAL session ${term.pid}${player} lurker/ws error: ${ex.message}`)
       }
     }
 
-    term.on('close', function() {
-      ws.close()
-    })
-
-    //  app output to browser client
+    //  app --> browser client
     term.on('data', send)
 
-    //  incoming from browser client
-    ws.on('message', function(msg) {
-      ws.close()
+    term.on('close', function() {
+      wss.close()
     })
 
-    ws.on('close', function () {
+    //  browser client --> app
+    wss.on('message', function(msg) {
+      wss.close()
+    })
+
+    wss.on('close', function () {
       term.removeListener('data', send)
       console.log(`Lurker session ${term.pid}${player} closed #${(lurker + 1)}`)
       delete lurkers[lurker]
     })
   })
+
+  //  database support
+  const DD = '../users/dankdomain.sql'
+  let better = require('better-sqlite3')
+  let sqlite3 = new better(DD)
+  sqlite3.prepare(`DELETE FROM Online`).run().changes
 
   function query(q: string, errOk = false): any {
     try {
@@ -254,22 +261,23 @@ dns.lookup('localhost', (err, addr, family) => {
   }
 })
 
-process.on('SIGHUP', function () {
+//  process signal traps
+process.on('SIGHUP', () => {
   console.log(new Date() + ' :: received hangup')
   process.exit()
 })
 
-process.on('SIGINT', function () {
+process.on('SIGINT', () => {
   console.log(new Date() + ' :: received interrupt')
   process.exit()
 })
 
-process.on('SIGQUIT', function () {
+process.on('SIGQUIT', () => {
   console.log(new Date() + ' :: received quit')
   process.exit()
 })
 
-process.on('SIGTERM', function () {
+process.on('SIGTERM', () => {
   console.log(new Date() + ' :: received terminate')
   process.exit()
 })

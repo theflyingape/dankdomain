@@ -113,7 +113,7 @@ document.getElementById('lurker-list').onchange = (ev) => {
 
 	fetch(`${app}/lurker/?pid=${wpid}`, { method: 'POST' }).then(function (res) {
 		res.text().then(function (lurker) {
-			socketURL += lurker
+			socketURL += `?lurker=${lurker}`
 			socket = new WebSocket(socketURL)
 
 			socket.onmessage = (ev) => {
@@ -214,7 +214,7 @@ function newSession() {
 		fetch(`${app}/player/?cols=${term.cols}&rows=${term.rows}`, { method: 'POST' }).then(function (res) {
 			res.text().then(function (session) {
 				pid = parseInt(session)
-				socketURL += pid
+				socketURL += `?pid=${pid}`
 				socket = new WebSocket(socketURL)
 
 				socket.onmessage = function (ev) {
