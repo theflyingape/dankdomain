@@ -89,7 +89,7 @@ document.getElementById('lurker-list').onchange = (ev) => {
 	document.getElementById('terminal').hidden = false
 	term = new Terminal({
 		bellStyle: 'none', cursorBlink: false, scrollback: 0,
-		fontFamily: 'IBM Plex Mono,Consolas,Lucida Console,monospace', fontSize: 20,
+		fontFamily: 'tty,IBM Plex Mono,Consolas,Lucida Console,monospace', fontSize: 20,
 		fontWeight: '400', fontWeightBold: '500',
 		theme: {
 			foreground: '#a3a7af', background: '#23272f',
@@ -147,7 +147,7 @@ function newSession() {
 	const options: ITerminalOptions = {
 		bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false,
 		cols: cols, rows: rows, scrollback: 500,
-		fontFamily: 'IBM Plex Mono,Consolas,Lucida Console,monospace', fontSize: 20,
+		fontFamily: 'tty,IBM Plex Mono,Consolas,Lucida Console,monospace', fontSize: 20,
 		fontWeight: '400', fontWeightBold: '500',
 		theme: {
 			foreground: '#b3b7bf', background: '#03070f',
