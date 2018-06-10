@@ -274,6 +274,7 @@ function choice() {
                                 $.reason = `caught robbing ${opponent.user.handle}`
                                 $.player.status = 'jail'
                                 $.player.xplevel = 0
+                                $.profile({ png:'npc/jailer', effect:'fadeIn' })
 								xvt.out('\nA guard catches you and throws you into jail!\n')
                                 $.sound('arrested', 20)
                                 xvt.out('You might be released by your next call.\n\n')
