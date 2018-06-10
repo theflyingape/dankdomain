@@ -540,6 +540,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
         return true
     }
     if (rpc.user.xp < experience(rpc.user.level, 1, rpc.user.int)) return false
+    reason = ''
 
     let award = {
         hp: rpc.user.hp,
