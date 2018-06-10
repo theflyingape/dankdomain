@@ -191,6 +191,7 @@ export function attack(retry = false) {
     }
 
     let n = round[0]
+    let enemy: active
     let rpc = parties[n.party][n.member]
     if (rpc.hp < 1 || rpc.user.xplevel < 1) {
         next()
@@ -208,7 +209,7 @@ export function attack(retry = false) {
     let mob = n.party ^ 1
     let nme: number
     do { nme = $.dice(parties[mob].length) - 1 } while (parties[mob][nme].hp < 1)
-    let enemy = parties[mob][nme]
+    enemy = parties[mob][nme]
 
     if (rpc.user.id === $.player.id) {
         $.action('battle')
@@ -490,6 +491,42 @@ export function attack(retry = false) {
             return
         }
         round.shift()
+
+        //  was opponent defeated?
+        if (typeof enemy !== 'undefined' && enemy.hp < 1) {
+            enemy.hp = 0    // killed
+            if (enemy == $.online) {
+                $.player.killed++
+                xvt.out('\n', xvt.bright, xvt.yellow
+                    , rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle
+                    , ' killed you!\n\n', xvt.reset)
+                $.profile({ jpg:'death', effect:'fadeInDownBig' })
+                $.sound('killed', 12)
+                $.reason = $.reason || (rpc.user.id.length
+                    ? `defeated by ${rpc.user.handle}`
+                    : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`)
+            }
+            else {
+                if (rpc == $.online) {
+                    $.player.kills++
+                    xvt.out('You ', enemy.user.xplevel < 1 ? 'eliminated' : 'killed'
+                        , enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
+                        , '!\n\n', xvt.reset)
+                    if (from !== 'Party' && enemy.user.id !== '' && enemy.user.id[0] !== '_') {
+                        $.sound('kill', 15)
+                        $.music($.player.gender === 'M' ? 'bitedust' : 'queen')
+                        $.news(`\tdefeated ${enemy.user.handle}, a level ${enemy.user.xplevel} ${enemy.user.pc}`)
+                        $.wall(`defeated ${enemy.user.handle}`)
+                    }
+                    if (from == 'Monster' && enemy.user.xplevel > 0) {
+                        $.news(`\tdefeated a level ${enemy.user.xplevel} ${enemy.user.handle}`)
+                        $.wall(`defeated a level ${enemy.user.level} ${enemy.user.handle}`)
+                    }
+                    if (from == 'Dungeon') $.animated(['bounceOut', 'fadeOut', 'flipOutX', 'flipOutY', 'rollOut', 'rotateOut', 'zoomOut'][$.dice(7) - 1])
+                    xvt.waste(200)
+                }
+            }
+        }
 
         alive = []
         for (let p in parties) {
@@ -1255,13 +1292,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                         xvt.out(xvt.blue, xvt.faint, ' {', xvt.bright, 'RIP', xvt.faint, '}', xvt.reset)
                     }
                     else {
-                        $.player.killed++
-                        xvt.out('\n', xvt.bright, xvt.yellow
-                            , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
-                            , ' killed you!\n', xvt.reset)
-                        $.profile({ jpg:'death', effect:'fadeInDownBig' })
-                        $.sound('killed', 12)
-                        $.reason = rpc.user.id.length ? `fatal blast by ${rpc.user.handle}`
+                        $.reason = rpc.user.id.length
+                            ? `fatal blast by ${rpc.user.handle}`
                             : `fatal blast by a level ${rpc.user.level} ${rpc.user.handle}`
                     }
                 }
@@ -1271,12 +1303,9 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
         case 10:
             if (backfire) {
-                $.player.killed++
-                $.profile({ jpg:'death', effect:'fadeInDownBig' })
-                $.sound('killed', 20)
+                rpc.hp = 0
                 xvt.out('You die by your own doing.\n')
                 $.reason = `resurrect backfired`
-                rpc.hp = 0
                 break
             }
             else {
@@ -1434,21 +1463,11 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     $.reason = `disintegrate backfired`
             }
             else {
+                nme.hp = 0
                 xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' completely atomize')
                     , nme === $.online ? 'you' : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
                     , '!\n')
-                nme.hp = 0
-                if (nme === $.online) {
-                    $.player.killed++
-                    xvt.out('\n', xvt.bright, xvt.yellow
-                        , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
-                        , ' killed you!\n\n', xvt.reset)
-                    $.profile({ jpg:'death', effect:'fadeInDownBig' })
-                    $.sound('killed', 12)
-                    $.reason = rpc.user.id.length ? `defeated by ${rpc.user.handle}`
-                        : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`
-                }
             }
             xvt.waste(500)
             break
@@ -1593,8 +1612,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     , ' for ', bbr.toString(), ' hit points!\n')
                 rpc.hp -= bbr
                 if (rpc.hp < 1) {
-                    xvt.out(xvt.reset, '\n')
                     rpc.hp = 0
+                    xvt.out(xvt.reset, '\n')
                     if (rpc === $.online)
                         $.reason = 'Big Blast backfired'
                 }
@@ -1623,13 +1642,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                         xvt.out(xvt.blue, xvt.faint, ' {', xvt.bright, 'RIP', xvt.faint, '}', xvt.reset)
                     }
                     else {
-                        $.player.killed++
-                        xvt.out('\n', xvt.bright, xvt.yellow
-                            , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
-                            , ' killed you!\n', xvt.reset)
-                        $.profile({ jpg:'death', effect:'fadeInDownBig' })
-                        $.sound('killed', 12)
-                        $.reason = rpc.user.id.length ? `fatal Big Blast by ${rpc.user.handle}`
+                        $.reason = rpc.user.id.length
+                            ? `fatal Big Blast by ${rpc.user.handle}`
                             : `fatal Big Blast by a level ${rpc.user.level} ${rpc.user.handle}`
                     }
                 }
@@ -1993,41 +2007,6 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             , '.\n'
         )
         xvt.waste(250)
-    }
-
-    if (enemy.hp < 1) {
-        enemy.hp = 0    // killed
-
-        if (enemy == $.online) {
-            $.player.killed++
-            xvt.out('\n', xvt.bright, xvt.yellow
-                , rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle
-                , ' killed you!\n\n', xvt.reset)
-            $.profile({ jpg:'death', effect:'fadeInDownBig' })
-            $.sound('killed', 12)
-            $.reason = rpc.user.id.length ? `defeated by ${rpc.user.handle}`
-                : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`
-        }
-        else {
-            if (rpc == $.online) {
-                $.player.kills++
-                xvt.out('You ', enemy.user.xplevel < 1 ? 'eliminated' : 'killed'
-                    , enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle
-                    , '!\n\n', xvt.reset)
-                if (from !== 'Party' && enemy.user.id !== '' && enemy.user.id[0] !== '_') {
-                    $.sound('kill', 15)
-                    $.music($.player.gender === 'M' ? 'bitedust' : 'queen')
-                    $.news(`\tdefeated ${enemy.user.handle}, a level ${enemy.user.xplevel} ${enemy.user.pc}`)
-                    $.wall(`defeated ${enemy.user.handle}`)
-                }
-                if (from == 'Monster' && enemy.user.xplevel > 0) {
-                    $.news(`\tdefeated a level ${enemy.user.xplevel} ${enemy.user.handle}`)
-                    $.wall(`defeated a level ${enemy.user.level} ${enemy.user.handle}`)
-                }
-                if (from == 'Dungeon') $.animated(['bounceOut', 'fadeOut', 'flipOutX', 'flipOutY', 'rollOut', 'rotateOut', 'zoomOut'][$.dice(7) - 1])
-                xvt.waste(200)
-            }
-        }
     }
     return
 }
