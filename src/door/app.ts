@@ -8,13 +8,13 @@ import fs = require('fs')
 import https = require('https')
 import pty = require('node-pty')
 import ws = require('ws')
+const { URL } = require('url')
 
 process.title = 'door'
 process.chdir(__dirname)
 console.log(`cwd: ${__dirname}`)
 
 let sessions = {}
-let logs = {}
 let broadcasts = {}
 
 dns.lookup('localhost', (err, addr, family) => {
@@ -73,17 +73,11 @@ dns.lookup('localhost', (err, addr, family) => {
 
     console.log(`Create PLAYER session ${pid} from remote host: ${client} (${req.hostname})`)
     sessions[pid] = term
-    logs[pid] = ''
+    sessions[pid].client = process.env.SSH_CLIENT
     broadcasts[pid] = ''
 
     res.send(pid.toString())
     res.end()
-/*
-    //  collect app outputs
-    term.on('data', function(data) {
-      logs[pid] += data
-    })
-*/
   })
 
   app.post('/xterm/door/player/:pid/size', function (req, res) {
@@ -147,10 +141,10 @@ dns.lookup('localhost', (err, addr, family) => {
 
   //  WebSocket endpoints: utilize upgraded socket connection to serve I/O between app pty and browser client
   //  ... for the active player
-  wssActive.on('connection', (wss, req) => {
+  wssActive.on('connection', (browser, req) => {
     const what = new URL(req.url, 'https://localhost')
-    const pid = what.searchParams.get('pid')
-    let term = sessions[parseInt(pid)]
+    const pid = parseInt(what.searchParams.get('pid'))
+    let term = sessions[pid]
   
     //  app --> browser client
     term.on('data', (data) => {
@@ -164,44 +158,51 @@ dns.lookup('localhost', (err, addr, family) => {
       }
 
       try {
-        wss.send(msg)
+        browser.send(msg)
       } catch (ex) {
         if (term.pid) {
           console.log(`?FATAL ACTIVE app session ${term.pid} pty -> ws error:`, ex.message)
           unlock(term.pid)
-          delete term.pid
+          browser.close()
         }
       }
     })
 
     term.on('close', () => {
-      wss.close()
+      //  app shutdown
+      if (term.client) {
+        console.log(`Close PLAYER session ${term.pid} from remote host: ${term.client}`)
+        browser.close()
+      }
     })
 
     //  browser client --> app
-    wss.on('message', (msg) => {
+    browser.on('message', (msg) => {
       try {
         term.write(msg)
       } catch (ex) {
         if (term.pid) {
           console.log(`?FATAL ACTIVE browser session ${term.pid} ws -> pty error:`, ex.message)
           unlock(term.pid)
-          delete term.pid
+          browser.close()
         }
       }
     })
 
-    wss.on('close', () => {
+    browser.on('close', () => {
+      //  did user close browser with an open app?
+      if (pid > 1) try {
+        if (process.kill(pid)) console.log(`Forced close PLAYER session ${pid} from remote host: ${term.client}`)
+      } catch (ex) {}
       // Clean things up
+      term.client = ''
       delete broadcasts[term.pid]
-      delete logs[term.pid]
       delete sessions[term.pid]
-      term.kill()
     })
   })
 
   //  ... for the casual lurker
-  wssLurker.on('connection', (wss, req) => {
+  wssLurker.on('connection', (browser, req) => {
     const what = new URL(req.url, 'https://localhost')
     let lurker = parseInt(what.searchParams.get('lurker'))
     let term = sessions[lurkers[lurker]]
@@ -210,7 +211,7 @@ dns.lookup('localhost', (err, addr, family) => {
 
     const send = (data) => {
       try {
-        wss.send(data)
+        browser.send(data)
       } catch (ex) {
         if (term.pid)
           console.log(`?FATAL session ${term.pid}${player} lurker/ws error: ${ex.message}`)
@@ -220,16 +221,16 @@ dns.lookup('localhost', (err, addr, family) => {
     //  app --> browser client
     term.on('data', send)
 
-    term.on('close', function() {
-      wss.close()
+    term.on('close', () => {
+      browser.close()
     })
 
     //  browser client --> app
-    wss.on('message', function(msg) {
-      wss.close()
+    browser.on('message', (msg) => {
+      browser.close()
     })
 
-    wss.on('close', function () {
+    browser.on('close', () => {
       term.removeListener('data', send)
       console.log(`Lurker session ${term.pid}${player} closed #${(lurker + 1)}`)
       delete lurkers[lurker]
