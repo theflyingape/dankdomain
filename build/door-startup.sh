@@ -1,13 +1,10 @@
 #!/bin/sh
 #
-# allow for web browser access into a classic terminal mode of play
+# service allowing web browser access into a classic terminal mode of play
 #
-path=`dirname $0`; cd $path || exit
+path=`dirname $0`; cd $path || exit 1
 path=$PWD
 
-sudo -v || exit
+sudo -v || exit 2
 sudo killall door 2> /dev/null
 sudo -b -u nobody /opt/node/bin/node $path/door/app &> door.log
-
-exit
-

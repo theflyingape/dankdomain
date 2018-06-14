@@ -1266,7 +1266,7 @@ export function playerPC(points = 200, immortal = false) {
                 player.cha = n
                 activate(online)
                 xvt.out('\n')
-                news(`\trerolled as a ${player.pc}`)
+                news(`\trerolled as${an(player.pc)}`)
                 if (immortal) {
                     reason = 'became immortal'
                     xvt.hangup()

@@ -185,7 +185,7 @@ function newSession() {
 			XT('@tune(.)')
 			pid = 0
 			term.destroy()
-			if (data === '\x0D' || data === ' ')
+			if (data === '\r' || data === ' ')
 				newSession()
 			else
 				window.parent.postMessage({ 'func': 'emit', 'message': '\x1B', 'return': false }, location.href)
@@ -354,13 +354,13 @@ function receive(event) {
 				}
 				if (event.data.message) {
 					socket.send(event.data.message)
+				//	if (event.data.return)
+				//		socket.send('\r')
+				}
+				//else {
 					if (event.data.return)
 						socket.send('\r')
-				}
-				else {
-					if (event.data.return)
-						socket.send('\x0D')
-				}
+				//}
 				break
 		}
 	}

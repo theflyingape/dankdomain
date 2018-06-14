@@ -221,19 +221,15 @@ dns.lookup('localhost', (err, addr, family) => {
     //  app --> browser client
     term.on('data', send)
 
-    term.on('close', () => {
-      browser.close()
-    })
-
-    //  browser client --> app
+    //  browser client --> any key terminates lurking
     browser.on('message', (msg) => {
       browser.close()
     })
 
     browser.on('close', () => {
-      term.removeListener('data', send)
       console.log(`Lurker session ${term.pid}${player} closed #${(lurker + 1)}`)
       delete lurkers[lurker]
+      term.removeListener('data', send)
     })
   })
 

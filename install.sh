@@ -71,9 +71,9 @@ sudo systemctl restart xinetd
 if sudo service iptables status ; then
 	hole=`sudo iptables -L INPUT -n | grep -c 'dpt:23'`
 	if [ $hole -eq 0 ]; then
-                sudo iptables -A INPUT -p tcp --syn --dport 23 -m connlimit --connlimit-above 1 -j REJECT
-		sudo iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 23 -j ACCEPT
-		sudo service iptables save
+        sudo iptables -A INPUT -p tcp --syn --dport 23 -m connlimit --connlimit-above 1 -j REJECT
+        sudo iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 23 -j ACCEPT
+        sudo service iptables save
 	fi
 fi
 
@@ -91,8 +91,8 @@ echo ... an Apache configuration example follows:
 echo
 
 cat <<-EOD
-DOOR uses app: express + ws and node-pty
-   for client: browser using client + xterm (served as a static bundle.js)
+DOOR uses app: express + ws fronts node-pty
+   for client: browser uses xterm and bundle.js
 
 if https / wss is used, SSL Proxy works for me like this:
 
