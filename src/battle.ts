@@ -500,7 +500,7 @@ export function attack(retry = false) {
                 xvt.out('\n', xvt.bright, xvt.yellow
                     , rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle
                     , ' killed you!\n\n', xvt.reset)
-                $.profile({ jpg:'death', effect:'fadeInDownBig' })
+                $.profile({ png:`death${$.player.today}`, effect:'fadeInDownBig' })
                 $.sound('killed', 12)
                 $.reason = $.reason || (rpc.user.id.length
                     ? `defeated by ${rpc.user.handle}`
