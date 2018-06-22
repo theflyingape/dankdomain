@@ -23,3 +23,6 @@ sudo rsync -anv --delete --exclude node_modules --exclude files ./build/ ${TARGE
 # xterm door service
 sudo systemctl stop dankdomain-door
 sudo systemctl start dankdomain-door
+
+cd ${TARGET}
+npm outdated

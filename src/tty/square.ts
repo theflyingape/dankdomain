@@ -387,6 +387,8 @@ function choice() {
 				$.player.status = 'jail'
 				$.player.xplevel = 0
 				$.reason = `caught picking ${pocket.handle}\'s pocket`
+				$.action('clear')
+				$.profile({ png:'npc/jailer', effect:'fadeIn' })
 				xvt.out('A guard catches you and throws you into jail!\n')
 				$.sound('arrested', 20)
 				xvt.out('You might be released by your next call.\n\n')
@@ -541,6 +543,7 @@ function Bank() {
 				$.player.status = 'jail'
 				$.player.xplevel = 0
 				$.reason = 'caught getting into the vault'
+				$.action('clear')
 				$.profile({ png:'npc/jailer', effect:'fadeIn' })
 				xvt.out('\n\nA guard catches you and throws you into jail!\n')
 				$.sound('arrested', 20)
@@ -573,8 +576,9 @@ function Bank() {
 				$.player.xplevel = 0
 				$.reason = 'caught inside the vault'
 				xvt.out('something jingles!')
-				$.profile({ png:'npc/jailer', effect:'fadeIn' })
+				$.action('clear')
 				xvt.waste(1500)
+				$.profile({ png:'npc/jailer', effect:'fadeIn' })
 				xvt.out('\n\nA guard laughs as he closes the vault door on you!\n')
 				$.sound('arrested', 20)
 				xvt.out('\nYou might be released by your next call.\n\n')

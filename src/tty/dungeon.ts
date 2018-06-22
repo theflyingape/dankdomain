@@ -743,7 +743,8 @@ function doMove(): boolean {
 						xvt.out(`\x1B[1;${$.player.rows}r`)
 						xvt.restore()
 						xvt.out('\n')
-						require('./main').menu($.player.expert)
+						//require('./main').menu($.player.expert)
+						fini()
 						return
 
 					case 'R':
@@ -2292,7 +2293,8 @@ export function teleport() {
 						xvt.out(`\x1B[1;${$.player.rows}r`)
 						xvt.restore()
 						xvt.waste(1250)
-						require('./main').menu($.player.expert)
+						//require('./main').menu($.player.expert)
+						fini()
 						return
 					}
 					break

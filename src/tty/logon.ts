@@ -4,7 +4,6 @@
 \*****************************************************************************/
 
 import fs = require('fs')
-import {sprintf} from 'sprintf-js'
 import xvt = require('xvt')
 
 import $ = require('../common')

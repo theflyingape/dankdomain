@@ -141,17 +141,23 @@ function choice() {
 						xvt.reset, '\n')
 					$.sound('crone', 24)
 					require('./dungeon').DeepDank($.player.level + 3 * $.dice($.player.level), () => {
+						$.action('clear')
+						$.sound('god')
 						$.profile({ jpg:'npc/seahag', effect:'fadeInUp'
-	                        , handle:$.seahag.user.handle, level:$.seahag.user.level, pc:$.seahag.user.pc })
+							, handle:$.seahag.user.handle, level:$.seahag.user.level, pc:$.seahag.user.pc })
+						xvt.waste(500)
 						xvt.out(xvt.magenta, '\n"', xvt.bright, xvt.yellow
 							, 'You have escaped my magic, mortal?  Now try me!', xvt.normal, xvt.magenta
 							, '"\n', xvt.reset)
+						xvt.waste(500)
 						$.loadUser($.seahag)
 						$.cat(`naval/${$.seahag}`.toLowerCase())
+						xvt.waste(500)
 						if (isNaN(+$.seahag.user.weapon)) xvt.out('\n', $.who($.seahag, 'He'), $.Weapon.wearing($.seahag), '.\n')
+						xvt.waste(500)
 						if (isNaN(+$.seahag.user.armor)) xvt.out('\n', $.who($.seahag, 'He'), $.Armor.wearing($.seahag), '.\n')
+						xvt.waste(500)
 						$.seahag.user.cursed = $.player.id
-						$.sound('god', 25)
 						Battle.engage('Naval', $.online, $.seahag, menu)
 						return
 					})
