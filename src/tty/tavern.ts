@@ -250,7 +250,7 @@ function choice() {
                     }
                     xvt.out(`${$.who($.barkeep,'He')}points to a buffed weapon hanging over the mantlepiece and says, `
                         , xvt.bright, xvt.green, '"Lookee\n')
-                    xvt.out(` there, ${$.who(fool,'he')}tried to use that ${$.barkeep.user.weapon} on me, but it wasn't good enough.\"`
+                    xvt.out(`there, ${$.who(fool,'he')}tried to use that ${$.barkeep.user.weapon} on me, but it wasn't good enough.\"`
                         , xvt.reset, '\n\n')
                     xvt.waste(6000)
 

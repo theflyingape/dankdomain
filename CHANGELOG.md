@@ -1,8 +1,9 @@
-# 👑 [Dank Domain](https://sites.google.com/view/dankdomain)
+# 🤴 **[Dank Domain](https://sites.google.com/view/dankdomain)** 👸
 
-## 🛡 the return of Hack & Slash ⚔️
+## *the return of* ⚔ **Hack & Slash** 🛡
 
-> [developed](https://github.com/theflyingape/dankdomain) using Node.js on Linux served up using Verizon FiOS 100mb
+🇺🇸 ©️1990-2018 [Robert Hurst](https://robert.hurst-ri.us)
+> [developed](https://github.com/theflyingape/dankdomain) using Node.js on an Atom-powered Linux server with Verizon FiOS 100mb Internet service
 
 ### 07-Jun-2018
 
@@ -83,16 +84,15 @@
 
 ---
 
-```       ---------
+```
  --=:)) HISTORY ((:=--
-       ---------
 ```
 
 ---
 
-### RPGD
+### **RPGD**
 
-> [developed](https://github.com/theflyingape/rpgd) using GCC on Linux served up using a Cox cable modem
+> [developed](https://github.com/theflyingape/rpgd) using GCC on a SuperMicro Linux server with a Cox cable modem
 
 ---
 
@@ -331,11 +331,11 @@ SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
 
 ---
 
-### Commodore Amiga
+### **Commodore Amiga**
 
-#### RPGBBS DELUXE
+#### **RPGBBS** *DELUXE*
 
-> [developed](https://github.com/theflyingape/rpgbbs/tree/master/v7) using SAS/C on an Amiga 3000T using a SupraFAXModem 28.8k
+> [developed](https://github.com/theflyingape/rpgbbs/tree/master/v7) using SAS/C on an Amiga 3000T with a SupraFAXModem 28.8k
 
 ---
 
@@ -438,9 +438,9 @@ SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
 
 ---
 
-### RPGBBS
+### **RPGBBS**
 
-> [developed](https://github.com/theflyingape/rpgbbs/tree/master/v6) using SAS/C on an Amiga 2000 using a SupraFAXModem 14400
+> [developed](https://github.com/theflyingape/rpgbbs/tree/master/v6) using SAS/C on an Amiga 3000/16 with a SupraFAXModem 14400
 
 ---
 
