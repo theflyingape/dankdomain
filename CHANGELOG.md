@@ -5,7 +5,14 @@
 🇺🇸 ©️1990-2018 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) using Node.js on an Atom-powered Linux server with Verizon FiOS 100mb Internet service
 
-### 07-Jun-2018
+### **14-Jul-2018**
+
+* 1.4.0 release
+* xterm.js v3.5.0 release with outdated package updates
+* updated [media packs](https://github.com/theflyingape/dankdomain/blob/master/README.md)
+* minor bug fixes
+
+#### 07-Jun-2018
 
 * 1.3.0 release, Node.js 10 support
 * xterm.js v3.4.1 release, and other npmvet package updates

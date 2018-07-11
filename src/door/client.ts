@@ -21,7 +21,7 @@ const BELL_SOUND = 'data:audio/wav;base64,//uQRAAAAWMSLwUIYAAsYkXgoQwAEaYLWfkWgA
 
 const app = location.pathname.replace(/\/+$/, "")
 let pid = 0, wpid = 0
-let socket
+let socket: WebSocket
 let carrier = false, recheck = 0
 let reconnect: NodeJS.Timer, lurking: NodeJS.Timer
 
@@ -157,9 +157,10 @@ function newSession() {
 			brightBlue: '#0000fb', brightMagenta: '#fb00fb', brightCyan: '#00fbfb', brightWhite: '#fbfbfb'
 		}
 	}
-	
+
 	carrier = true
 	recheck = 0
+	if (lurking) clearInterval(lurking)
 	if (reconnect) clearInterval(reconnect)
 
 	pid = -1

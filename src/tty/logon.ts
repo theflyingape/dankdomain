@@ -148,7 +148,7 @@ function password() {
         return
     }
 
-    $.news(`${$.player.handle} logged in ${$.time($.now().time)} as a level ${$.player.level} ${$.player.pc}:`)
+    $.news(`${$.player.handle} from ${$.whereis ? $.whereis : 'Winterfell'} logged in ${$.time($.now().time)} as a level ${$.player.level} ${$.player.pc}:`)
 
     let rs = $.query(`SELECT * FROM Online`)
     for (let row = 0; row < rs.length; row++) {

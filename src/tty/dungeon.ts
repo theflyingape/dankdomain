@@ -1395,7 +1395,7 @@ function doMove(): boolean {
 	return true
 }
 
-export function doSpoils() {
+function doSpoils() {
 	if ($.reason) {
 		if (deep) $.reason += `-${iii[deep]}`
 		xvt.hangup()
@@ -2247,7 +2247,7 @@ function putMonster(r = -1, c = -1): boolean {
 	return true
 }
 
-export function teleport() {
+function teleport() {
 	let min =  Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
 	$.action('teleport')
 	$.PC.profile($.online)
