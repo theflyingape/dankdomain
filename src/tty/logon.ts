@@ -125,7 +125,7 @@ function who() {
     ][$.dice(20) - 1]
     if ($.player.remote == '' || $.player.remote == 'localhost' || $.player.remote == '127.0.0.1') {
         $.player.remote = 'console'
-        $.whereis = `${$.player.remote} (${$.whereis} 🖥)`
+        $.whereis += ' 🖥'
     }
     else try {
         const apikey = './etc/ipstack.key'
@@ -139,9 +139,9 @@ function who() {
                 if (response.body.region_code) result += (result ? ', ' : '') + response.body.region_code
                 if (response.body.country_code) result += (result ? ' ' : '') + response.body.country_code
                 if (response.body.country_flag_emoji) result += ' ' + response.body.country_flag_emoji
-                if (result) $.whereis = `${$.player.remote} (${result})`
+                $.whereis = result ? result : $.player.remote
             }
-        }).catch(error => { $.whereis += ` (${error.response.body})` })
+        }).catch(error => { $.whereis += ' ⚠️' })
     } catch (e) {}
 
     xvt.app.form['password'].prompt = $.player.handle + ', enter your password: '
