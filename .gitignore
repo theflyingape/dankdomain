@@ -2,6 +2,7 @@
 **/*.js.map
 **/*.d.ts
 **/node_modules/**
+build/etc/ipstack.key
 build/etc/smtp.json
 build/images/**
 build/sounds/**

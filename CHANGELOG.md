@@ -5,10 +5,11 @@
 🇺🇸 ©️1990-2018 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) using Node.js on an Atom-powered Linux server with Verizon FiOS 100mb Internet service
 
-### **14-Jul-2018**
+### **12-Jul-2018**
 
 * 1.4.0 release
 * xterm.js v3.5.0 release with outdated package updates
+* ipstack api support
 * updated [media packs](https://github.com/theflyingape/dankdomain/blob/master/README.md)
 * minor bug fixes
 
