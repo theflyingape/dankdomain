@@ -120,23 +120,27 @@ function who() {
     $.player.rows = process.stdout.rows
 
     $.player.remote = process.env.REMOTEHOST || process.env.SSH_CLIENT || ''
-    $.whereis = $.player.remote == 'localhost' || $.player.remote == '127.0.0.1' ? '' : $.player.remote
-    const apikey = '../etc/ipstack.key'
-    if ($.whereis && fs.accessSync(apikey, fs.constants.F_OK)) try {
-        let key = fs.readFileSync(apikey)
-        require('got')(`https://api.ipstack.com/${$.player.remote}?access_key=${key}`, { json: true }).then(response => {
-            if (response.body) {
-                let result = ''
-                if (response.body.ip) result = response.body.ip
-                if (response.body.city) result = response.body.city
-                if (response.body.region_code) result += (result ? ', ' : '') + response.body.region_code
-                if (response.body.country_code) result += (result ? ' ' : '') + response.body.country_code
-                if (response.body.country_flag_emoji) result += ' ' + response.body.country_flag_emoji
-                if (result) $.whereis = `${$.player.remote} (${result})`
-            }
-        }).catch(error => { $.whereis += ` (${error.response.body})` })
+    $.whereis = [
+        'Braavos', 'Casterly Rock', 'Dorne', 'Dragonstone', 'Dreadfort', 'The Eyrie', 'Harrenhal', 'Highgarden', 'Iron Island', 'King\'s Landing', 'Meereen', 'Norvos', 'Oldtown', 'Pentos', 'Qohor', 'Riverrun', 'The Twins', 'The Wall', 'Winterfell', 'Volantis'
+    ][$.dice(20) - 1]
+    if ($.player.remote == '' || $.player.remote == 'localhost' || $.player.remote == '127.0.0.1')
+        $.player.remote = 'console'
+    else try {
+            const apikey = './etc/ipstack.key'
+            fs.accessSync(apikey, fs.constants.F_OK)
+            let key = fs.readFileSync(apikey).toString()
+            require('got')(`https://api.ipstack.com/${$.player.remote}?access_key=${key}`, { json: true }).then(response => {
+                if (response.body) {
+                    let result = ''
+                    if (response.body.ip) result = response.body.ip
+                    if (response.body.city) result = response.body.city
+                    if (response.body.region_code) result += (result ? ', ' : '') + response.body.region_code
+                    if (response.body.country_code) result += (result ? ' ' : '') + response.body.country_code
+                    if (response.body.country_flag_emoji) result += ' ' + response.body.country_flag_emoji
+                    if (result) $.whereis = `${$.player.remote} (${result})`
+                }
+            }).catch(error => { $.whereis += ` (${error.response.body})` })
     } catch (e) {}
-    else $.whereis = ['Braavos', 'Casterly Rock', 'Dorne', 'Dragonstone', 'Dreadfort', 'The Eyrie', 'Harrenhal', 'Highgarden', 'Iron Island', 'King\'s Landing', 'Meereen', 'Norvos', 'Oldtown', 'Pentos', 'Qohor', 'Riverrun', 'The Twins', 'The Wall', 'Winterfell', 'Volantis'][$.dice(20) - 1]
 
     xvt.app.form['password'].prompt = $.player.handle + ', enter your password: '
     xvt.app.focus = 'password'
