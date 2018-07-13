@@ -140,7 +140,8 @@ function who() {
                 if (response.body.city) result = response.body.city
                 if (response.body.region_code) result += (result ? ', ' : '') + response.body.region_code
                 if (response.body.country_code) result += (result ? ' ' : '') + response.body.country_code
-                if (response.body.location) result += ` ${response.body.location.country_flag_emoji} `
+                if (response.body.location)
+                    if (response.body.location.country_flag_emoji) result += ` ${response.body.location.country_flag_emoji} `
             }
             $.whereis += result ? result : $.player.remote
             $.whereis += ' ⚔️ '
