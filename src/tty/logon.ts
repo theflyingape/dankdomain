@@ -126,10 +126,8 @@ function who() {
         'Meereen', 'Norvos', 'Oldtown', 'Pentos', 'Qohor',
         'Riverrun', 'The Twins', 'The Wall', 'Winterfell', 'Volantis'
     ][$.dice(20) - 1]
-    if ($.player.remote == '' || $.player.remote == 'localhost' || $.player.remote == '127.0.0.1' || /[1][0]|[1][7][2]|[1][9][2]/.test($.player.remote)) {
-        $.player.remote = 'console'
+    if (/([1][0]|[1][2][7]|[1][7][2]|[1][9][2])[.]/.test($.player.remote) || !xvt.validator.isIP($.player.remote))
         $.whereis += ' 🖥 '
-    }
     else try {
         const apikey = './etc/ipstack.key'
         fs.accessSync(apikey, fs.constants.F_OK)
