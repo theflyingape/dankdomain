@@ -54,7 +54,7 @@ service dankdomain
         user            = nobody
         group           = games
         server          = `which in.telnetd`
-        server_args     = -h -L ${TARGET}/logins.sh
+        server_args     = -h -N -L ${TARGET}/logins.sh
         env             = TERM=linux
         cps             = 2 5
         log_on_success  += HOST

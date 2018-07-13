@@ -126,7 +126,7 @@ function who() {
         'Meereen', 'Norvos', 'Oldtown', 'Pentos', 'Qohor',
         'Riverrun', 'The Twins', 'The Wall', 'Winterfell', 'Volantis'
     ][$.dice(20) - 1]
-    if (/([1][0]|[1][2][7]|[1][7][2]|[1][9][2])[.]/.test($.player.remote) || !xvt.validator.isIP($.player.remote))
+    if (/^([1][0]|[1][2][7]|[1][7][2]|[1][9][2])[.]/.test($.player.remote) || !xvt.validator.isIP($.player.remote))
         $.whereis += ' 🖥 '
     else try {
         const apikey = './etc/ipstack.key'
@@ -203,7 +203,7 @@ function password() {
         let t = $.now().time
         t = 1440 * ($.now().date - $.player.lastdate) + 60 * Math.trunc(t / 100) + (t % 100) - (60 * Math.trunc($.player.lasttime / 100) + ($.player.lasttime % 100))
         if (!$.access.sysop && $.player.novice && t < 2) {
-            $.access.roleplay = false
+            $.access.roleplay = false; $.news('', true)
             xvt.beep()
             xvt.out('\nYou were last on just ', t == 1 ? 'a minute' : t.toString() + ' minutes', ' ago.\n')
             xvt.out('Please wait at least 2 minutes between visits.\n')
