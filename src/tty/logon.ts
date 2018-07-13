@@ -203,6 +203,7 @@ function password() {
         let t = $.now().time
         t = 1440 * ($.now().date - $.player.lastdate) + 60 * Math.trunc(t / 100) + (t % 100) - (60 * Math.trunc($.player.lasttime / 100) + ($.player.lasttime % 100))
         if (!$.access.sysop && $.player.novice && t < 2) {
+            $.access.roleplay = false
             xvt.beep()
             xvt.out('\nYou were last on just ', t == 1 ? 'a minute' : t.toString() + ' minutes', ' ago.\n')
             xvt.out('Please wait at least 2 minutes between visits.\n')
