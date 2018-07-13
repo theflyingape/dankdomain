@@ -121,27 +121,32 @@ function who() {
 
     $.player.remote = process.env.REMOTEHOST || process.env.SSH_CLIENT || ''
     $.whereis = [
-        'Braavos', 'Casterly Rock', 'Dorne', 'Dragonstone', 'Dreadfort', 'The Eyrie', 'Harrenhal', 'Highgarden', 'Iron Island', 'King\'s Landing', 'Meereen', 'Norvos', 'Oldtown', 'Pentos', 'Qohor', 'Riverrun', 'The Twins', 'The Wall', 'Winterfell', 'Volantis'
+        'Braavos', 'Casterly Rock', 'Dorne', 'Dragonstone', 'Dreadfort',
+        'The Eyrie', 'Harrenhal', 'Highgarden', 'Iron Island', 'King\'s Landing',
+        'Meereen', 'Norvos', 'Oldtown', 'Pentos', 'Qohor',
+        'Riverrun', 'The Twins', 'The Wall', 'Winterfell', 'Volantis'
     ][$.dice(20) - 1]
     if ($.player.remote == '' || $.player.remote == 'localhost' || $.player.remote == '127.0.0.1' || /[1][0]|[1][7][2]|[1][9][2]/.test($.player.remote)) {
         $.player.remote = 'console'
-        $.whereis += ' 🖥'
+        $.whereis += ' 🖥 '
     }
     else try {
         const apikey = './etc/ipstack.key'
         fs.accessSync(apikey, fs.constants.F_OK)
         let key = fs.readFileSync(apikey).toString()
         require('got')(`http://api.ipstack.com/${$.player.remote}?access_key=${key}`, { json: true }).then(response => {
+            $.whereis = '🛡 '
+            let result = ''
             if (response.body) {
-                let result = ''
                 if (response.body.ip) result = response.body.ip
                 if (response.body.city) result = response.body.city
                 if (response.body.region_code) result += (result ? ', ' : '') + response.body.region_code
                 if (response.body.country_code) result += (result ? ' ' : '') + response.body.country_code
-                if (response.body.location) result += ' ' + response.body.location.country_flag_emoji
-                $.whereis = result ? result : $.whereis + ' ⚔'
+                if (response.body.location) result += ` ${response.body.location.country_flag_emoji} `
             }
-        }).catch(error => { $.whereis += ' ⚠️' })
+            $.whereis += result ? result : $.player.remote
+            $.whereis += ' ⚔️ '
+        }).catch(error => { $.whereis += ' ⚠️ ' })
     } catch (e) {}
 
     xvt.app.form['password'].prompt = $.player.handle + ', enter your password: '
@@ -161,8 +166,7 @@ function password() {
         return
     }
 
-    $.news(`${$.player.handle} from ${$.whereis ? $.whereis : 'Winterfell'} logged in ${$.time($.now().time)} as a level ${$.player.level} ${$.player.pc}:`)
-
+    $.news(`${$.player.handle} logged in from ${$.whereis}\n\tat ${$.time($.now().time)} as a level ${$.player.level} ${$.player.pc}:`)
     let rs = $.query(`SELECT * FROM Online`)
     for (let row = 0; row < rs.length; row++) {
         let t = $.now().time
