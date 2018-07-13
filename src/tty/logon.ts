@@ -123,7 +123,7 @@ function who() {
     $.whereis = [
         'Braavos', 'Casterly Rock', 'Dorne', 'Dragonstone', 'Dreadfort', 'The Eyrie', 'Harrenhal', 'Highgarden', 'Iron Island', 'King\'s Landing', 'Meereen', 'Norvos', 'Oldtown', 'Pentos', 'Qohor', 'Riverrun', 'The Twins', 'The Wall', 'Winterfell', 'Volantis'
     ][$.dice(20) - 1]
-    if ($.player.remote == '' || $.player.remote == 'localhost' || $.player.remote == '127.0.0.1') {
+    if ($.player.remote == '' || $.player.remote == 'localhost' || $.player.remote == '127.0.0.1' || /[1][0]|[1][7][2]|[1][9][2]/.test($.player.remote)) {
         $.player.remote = 'console'
         $.whereis += ' 🖥'
     }
@@ -138,8 +138,8 @@ function who() {
                 if (response.body.city) result = response.body.city
                 if (response.body.region_code) result += (result ? ', ' : '') + response.body.region_code
                 if (response.body.country_code) result += (result ? ' ' : '') + response.body.country_code
-                if (response.body.country_flag_emoji) result += ' ' + response.body.country_flag_emoji
-                $.whereis = result ? result : $.player.remote
+                if (response.body.location) result += ' ' + response.body.location.country_flag_emoji
+                $.whereis = result ? result : $.whereis + ' ⚔'
             }
         }).catch(error => { $.whereis += ' ⚠️' })
     } catch (e) {}
