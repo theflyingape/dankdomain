@@ -14,6 +14,7 @@
 
 import { Terminal, ITerminalOptions } from 'xterm'
 import * as fit from 'xterm/lib/addons/fit/fit'
+import * as webLinks from 'xterm/lib/addons/webLinks/webLinks'
 
 let term: Terminal
 let cols = 80, rows = 25
@@ -100,9 +101,9 @@ document.getElementById('lurker-list').onchange = (ev) => {
 		}
 	})
 	Terminal.applyAddon(fit)
-
 	term.open(document.getElementById('terminal'))
 	fit.fit(term)
+	webLinks.webLinksInit(term)
 
 	term.write('\x1B[H\x1B[J\x1B[1;30mConnecting your terminal to ' + watch[watch.selectedIndex].text + ' WebSocket ... ')
 	let protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://'
