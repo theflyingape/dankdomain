@@ -1396,8 +1396,8 @@ export function reroll(user: user, dd?: string, level = 1) {
     let rpc = PC.card(user.pc)
     user.melee = rpc.melee
     user.backstab = rpc.backstab
-    user.poison = rpc.poison
-    user.magic = rpc.magic
+    if (!(user.poison = rpc.poison)) user.poisons = []
+    if (!(user.magic = rpc.magic)) user.spells = []
     user.steal = rpc.steal
     user.str = rpc.baseStr
     user.int = rpc.baseInt
@@ -1636,19 +1636,19 @@ export function riddle() {
             slot = Math.trunc(+i / 3) + 1
             xvt.out(xvt.reset, `Key #${slot} is not `)
             if (player.emulation === 'XT') xvt.out(' \u{1F511}  ')
-            xvt.out(xvt.bright, xvt.reverse, ' ')
+            xvt.out(xvt.bright, xvt.reverse)
             switch (player.keyhints[i]) {
             case 'P':
-                xvt.out(xvt.magenta, 'Platinum')
+                xvt.out(xvt.magenta, ' Platinum')
                 break
             case 'G':
-                xvt.out(xvt.yellow, 'Gold')
+                xvt.out(xvt.yellow, ' Gold')
                 break
             case 'S':
-                xvt.out(xvt.cyan, 'Silver')
+                xvt.out(xvt.cyan, ' Silver')
                 break
             case 'C':
-                xvt.out(xvt.red, 'Copper')
+                xvt.out(xvt.red, ' Copper')
                 break
             default:
                 xvt.out(xvt.black, 'from around here')

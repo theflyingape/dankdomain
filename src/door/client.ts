@@ -382,8 +382,12 @@ function lurk() {
 					option.value = data[i].pid
 					watch.add(option)
 				}
-				if (watch.length)
+				if (watch.length) {
 					el.blur()
+					let audio = <HTMLAudioElement>document.getElementById('play')
+					audio.src = BELL_SOUND
+					audio.play()
+				}
 				watch.selectedIndex = -1
 			})
 		})
