@@ -1430,7 +1430,7 @@ function doSpoils() {
 		}
 	}
 
-	if (Battle.retreat) $.PC.profile($.online)
+	if (Battle.retreat) $.PC.profile($.online, 'heartBeat')
 
 	let d = ['N','S','E','W']
 	while (Battle.retreat) {

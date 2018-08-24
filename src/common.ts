@@ -117,7 +117,7 @@ export class Character {
         return Math.round(rpc.dex * rpc.user.level / 10 + 2 * rpc.user.jw - rpc.user.jl + 10)
     }
 
-    profile(rpc: active) {
+    profile(rpc: active, effect = 'fadeInLeft') {
         if (rpc.user.id) {
             let userPNG = `door/static/images/user/${rpc.user.id}.png`
             try {
@@ -126,7 +126,7 @@ export class Character {
             } catch(e) {
                 userPNG = 'player/' + rpc.user.pc.toLowerCase() + (rpc.user.gender === 'F' ? '_f' : '')
             }
-            Common.profile({ png:userPNG, handle:rpc.user.handle, level:rpc.user.level, pc:rpc.user.pc, effect:'fadeInLeft' })
+            Common.profile({ png:userPNG, handle:rpc.user.handle, level:rpc.user.level, pc:rpc.user.pc, effect:effect })
         }
     }
 

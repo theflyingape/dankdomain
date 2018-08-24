@@ -41,8 +41,8 @@
             "maxStr":90, "maxInt":95, "maxDex":90, "maxCha":90, 
             "specialty": "Powerful Venenum",
             "description": [
-                "The Alchemist depends greatly on his ability to use poisons.  His skills",
-                "enable him to apply 4x the poison value yielding the greatest effect on his",
+                "The Alchemist depends greatly on the ability to use poisons.  This skill",
+                "enables applying 4x the poison value yielding the greatest effect on a",
                 "weapon.  Without that aid, the Alchemist leaves much to be desired as far",
                 "as natural fighting skills are concerned.  Being a creature of science,",
                 "this is the one class that cannot use any magical device.  The Alchemist",
@@ -57,7 +57,7 @@
             "maxStr":90, "maxInt":90, "maxDex":95, "maxCha":90, 
             "specialty": "Backstab/Poison",
             "description": [
-                "A ninja-style fighter, the Assassin has extra fighting ability making him",
+                "A ninja-style fighter, the Assassin has extra fighting ability making them",
                 "tough to defeat.  With the use of poisons and backstabs, the Assassin will",
                 "usually have enough firepower to defeat any fighting class.  Assassins",
                 "receive an extra bonus in Agility per experience level."
@@ -71,9 +71,9 @@
             "specialty": "Brutal Combatant",
             "description": [
                 "The strongest, combat-class fighter in the game, but the most susceptible",
-                "to the effects of magic.  As the Barbarian grows in experience, his hitting",
+                "to the effects of magic.  As the Barbarian grows in experience, hitting",
                 "power augments.  There will be a point where a Barbarian's essence can",
-                "match the power of any man-made weapon.  Barbarians recieve extra bonuses",
+                "match the power of any crafted weapon.  Barbarians recieve extra bonuses",
                 "in Stamina per experience level."
             ]
         },
@@ -82,11 +82,11 @@
             "baseStr":50, "baseInt":50, "baseDex":65, "baseCha":35, 
             "toStr":1, "toInt":1, "toDex":1, "toCha":3, 
             "maxStr":90, "maxInt":90, "maxDex":85, "maxCha":98, 
-            "specialty": "Scroll/Backstab/Steal",
+            "specialty": "Artisan Enchanter",
             "description": [
-                "The Bard-class enjoys every aspect of the game:  backstabbing, magic,",
-                "stealing, and fighting.  However, the Bard does not specialize in any of",
-                "his abilities, thus his experiences can be either rewarding or frustrating.",
+                "The Bard-class enjoys every aspect of the game: backstabbing, magic,",
+                "stealing, and fighting.  However, the Bard does not specialize in any",
+                "ability, thus the experiences can be either rewarding or frustrating.",
                 "An entertainer by trade, Bards receive extra bonuses in Charisma per",
                 "experience level."
             ] 
@@ -98,7 +98,7 @@
             "maxStr":90, "maxInt":90, "maxDex":80, "maxCha":99, 
             "specialty": "Skillful Magic/Melee",
             "description": [
-                "A Cleric has good combat and magic abilities, but his honing skills are",
+                "A Cleric has good combat and magic abilities, but honing skills are",
                 "typically less than average.  Clerics receive extra bonuses in Charisma",
                 "per experience level."
             ]
@@ -161,10 +161,10 @@
             "baseStr":40, "baseInt":50, "baseDex":75, "baseCha":35, 
             "toStr":1, "toInt":1, "toDex":1, "toCha":2, 
             "maxStr":95, "maxInt":95, "maxDex":95, "maxCha":95, 
-            "specialty": "Skillful Scroll/Steal",
+            "specialty": "Skillful/Wizardry",
             "description": [
                 "A Rogue is similar to a Thief class with a backstab, poison, and stealing.",
-                "Their advantage lies with effective use of magic scrolls.",
+                "Their advantage lies within honed abilities and use of magic scrolls.",
                 "Rogues can achieve better than average abilities, and also",
                 "receive an extra bonus in Charisma per experience level."
             ]
@@ -176,9 +176,9 @@
             "maxStr":80, "maxInt":99, "maxDex":90, "maxCha":90, 
             "specialty": "Divine Magicae",
             "description": [
-                "The weakest combat-class is the Sage.  His hand-to-hand abilities leave",
-                "much to be desired, but as the Sage grows in experience, his spell casting",
-                "abilities can dominate any class, mortal or divine.  Sages receive extra",
+                "The weakest combat-class is the Sage.  While hand-to-hand abilities leave",
+                "much to be desired, spell casting abilities can dominate any class,",
+                "mortal or divine, as the Sage grows in experience.  Sages receive extra",
                 "bonuses in Intellect per experience level."
             ]
         },
@@ -201,7 +201,7 @@
     "immortal": {
         "Paladin": {
             "melee":2, "backstab":2, "poison":2, "magic":2, "steal":2, 
-            "baseStr":55, "baseInt":45, "baseDex":75, "baseCha":25, 
+            "baseStr":55, "baseInt":45, "baseDex":75, "baseCha":45, 
             "toStr":2, "toInt":2, "toDex":2, "toCha":2, 
             "maxStr":95, "maxInt":95, "maxDex":95, "maxCha":95, 
             "specialty": "Ranger/Rogue",
@@ -215,7 +215,7 @@
         },
         "Titan": {
             "melee":3, "backstab":1, "poison":2, "magic":3, "steal":1, 
-            "baseStr":50, "baseInt":40, "baseDex":70, "baseCha":40, 
+            "baseStr":60, "baseInt":50, "baseDex":80, "baseCha":30, 
             "toStr":2, "toInt":2, "toDex":2, "toCha":2, 
             "maxStr":98, "maxInt":98, "maxDex":98, "maxCha":98, 
             "specialty": "Fighter/Magician",
@@ -229,7 +229,7 @@
         },
         "God": {
             "melee":4, "backstab":0, "poison":2, "magic":4, "steal":0,
-            "baseStr":45, "baseInt":45, "baseDex":65, "baseCha":45,
+            "baseStr":55, "baseInt":55, "baseDex":75, "baseCha":55,
             "toStr":2, "toInt":2, "toDex":2, "toCha":2,
             "maxStr":99, "maxInt":99, "maxDex":99, "maxCha":99,
             "specialty": "Barbarian/Sage",
