@@ -248,26 +248,28 @@ function choice() {
                             , xvt.reset, '\n\n')
                         xvt.waste(4000)
                     }
-                    xvt.out(`${$.who($.barkeep,'He')}points to a buffed weapon hanging over the mantlepiece and says, `
-                        , xvt.bright, xvt.green, '"Lookee\n')
-                    xvt.out(`there, ${$.who(fool,'he')}tried to use that ${$.barkeep.user.weapon} on me, but it wasn't good enough.\"`
-                        , xvt.reset, '\n\n')
-                    xvt.waste(6000)
 
                     $.music('tiny')
+                    xvt.out(`${$.who($.barkeep,'He')}points to a buffed weapon hanging over the mantlepiece and says, `
+                        , xvt.bright, xvt.green, '"Lookee\n')
+                    xvt.out(`there, ${$.who(fool,'he')}tried to use that ${$.barkeep.user.weapon}, but it wasn't enough\n`
+                        , `to take me.\"`
+                        , xvt.reset, '\n\n')
+                    xvt.waste(6000)
                     xvt.out('The patrons move in closer to witness the forthcoming slaughter, except for\n')
                     xvt.out(`${$.taxman.user.handle} who is busy raiding the bar of its beer and nuts.\n\n`)
-                    xvt.waste(6000)
+                    xvt.waste(5000)
                     xvt.out('You hear a cry, "I\'ll pay fifteen-to-one on the challenger!"\n')
-                    xvt.waste(3000)
+                    xvt.waste(4000)
+                    $.sound('crowd')
                     xvt.out('The crowd roars with laughter... ')
-                    xvt.waste(2000)
-                    xvt.out('you are not amused.\n\n')
-                    xvt.waste(1500)
-                    xvt.out(`${$.barkeep.user.handle} removes ${$.who($.barkeep,'his')}tunic to reveal a massive, but\nheavily scarred chest.\n\n`)
                     xvt.waste(3000)
-                    xvt.out('You look for an exit, but there is none to be found... ')
+                    xvt.out('you are not amused.\n\n')
                     xvt.waste(2000)
+                    xvt.out(`${$.barkeep.user.handle} removes ${$.who($.barkeep,'his')}tunic to reveal a massive, but\nheavily scarred chest.\n\n`)
+                    xvt.waste(2500)
+                    xvt.out('You look for an exit, but there is none to be found... ')
+                    xvt.waste(2500)
                     xvt.out('\n')
 
                     $.player.coward = true
