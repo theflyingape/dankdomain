@@ -1102,6 +1102,7 @@ export function newkeys(user: user) {
 }
 
 export function playerPC(points = 200, immortal = false) {
+    music('reroll')
     if (points > 240) points = 240
     xvt.out(xvt.reset, '\n')
     xvt.waste(1000)
