@@ -1803,6 +1803,11 @@ export function	cat(filename: string): boolean {
     }
 }
 
+export function death(by: string) {
+    reason = by
+    profile({ png:`death${player.today}`, effect:'fadeInDownBig' })
+}
+
 //  render a menu of options and return the prompt
 export function display(title:string, back:number, fore:number, suppress:boolean, menu:choices, hint?: string): string {
     menu['Q'] = {}  //  Q=Quit

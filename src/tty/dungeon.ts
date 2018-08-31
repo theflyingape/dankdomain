@@ -250,31 +250,31 @@ export function menu(suppress = false) {
 				$.sound('hurt', 5)
 				$.online.hp -= $.dice(Z)
 				if ($.online.hp < 1) {
-					$.reason = 'fell down'
+					$.death('fell down')
 					xvt.hangup()
 				}
 				break
 			case 4:
 				xvt.out(xvt.bright, xvt.red, 'You are attacked by a swarm of bees.')
-				$.sound('oof', 5)
+				$.sound('crack', 12)
 				for (x = 0, y = $.dice(Z); x < y; x++)
 					$.online.hp -= $.dice(Z)
 				if ($.online.hp < 1) {
-					$.reason = 'killer bees'
+					$.death('killer bees')
 					xvt.hangup()
 				}
 				break
 			case 5:
 				$.music('.')
 				xvt.out(xvt.bright, xvt.white, 'A bolt of lightning strikes you.')
-				$.sound('boom', 10)
 				$.player.toAC -= $.dice($.online.armor.ac / 2)
 				$.online.toAC -= $.dice($.online.armor.ac / 2)
 				$.player.toWC -= $.dice($.online.weapon.wc / 2)
 				$.online.toWC -= $.dice($.online.weapon.wc / 2)
 				$.online.hp -= $.dice($.player.hp / 2)
+				$.sound('boom', 10)
 				if ($.online.hp < 1) {
-					$.reason = 'struck by lightning'
+					$.death('struck by lightning')
 					xvt.hangup()
 				}
 				break

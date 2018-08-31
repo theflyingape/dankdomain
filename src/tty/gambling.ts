@@ -838,9 +838,9 @@ function amount() {
 	}
 
 	function RollDice(baby = 0, side = 0): boolean {
-		let d1 = $.dice(6), d2 = $.dice(6)
+		let d1 = $.dice(6), d2 = $.dice(6), n = $.dice(2) + $.dice(2)
 		xvt.out('\x1B[J', xvt.faint)
-		for (let i = 0; i < d1; i++) {
+		for (let i = 0; i < n; i++) {
 			$.sound('click')
 			xvt.out('.')
 		}

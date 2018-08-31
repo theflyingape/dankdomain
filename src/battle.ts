@@ -70,11 +70,11 @@ function end() {
             }
 
             xvt.out('\n')
+            $.reason = 'tax evasion'
             $.sound('max', 8)
             xvt.out(xvt.bright, xvt.blue, '"Thanks for the taxes!"'
                 , xvt.reset, '\n')
             $.sound('thief2', 16)
-            $.reason = 'tax evasion'
         }
         else {
             $.news(`\tdefeated ${$.taxman.user.handle}`)
@@ -497,14 +497,16 @@ export function attack(retry = false) {
             enemy.hp = 0    // killed
             if (enemy == $.online) {
                 $.player.killed++
+                $.run(`UPDATE Players set killed=${$.player.killed} WHERE id='${$.player.id}'`)
                 xvt.out('\n', xvt.bright, xvt.yellow
                     , rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle
                     , ' killed you!\n\n', xvt.reset)
-                $.profile({ png:`death${$.player.today}`, effect:'fadeInDownBig' })
-                $.sound('killed', 12)
-                $.reason = $.reason || (rpc.user.id.length
-                    ? `defeated by ${rpc.user.handle}`
-                    : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`)
+                if (from !== 'Party') {
+                    $.death($.reason || (rpc.user.id.length
+                        ? `defeated by ${rpc.user.handle}`
+                        : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`))
+                    $.sound('killed', 12)
+                }
             }
             else {
                 if (rpc == $.online) {
