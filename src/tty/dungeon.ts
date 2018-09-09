@@ -441,10 +441,7 @@ function oof(wall:string) {
 	if (($.online.hp -= $.dice(deep + Z + 1)) < 1) {
 		xvt.out('\nYou take too many hits and die!\n\n')
 		xvt.waste(500)
-		if (Battle.retreat)
-			$.reason = 'running into a wall'
-		else
-			$.reason = 'banged head against a wall'
+		$.death(Battle.retreat ? 'running into a wall' : 'banged head against a wall')
 		xvt.hangup()
 	}
 }
