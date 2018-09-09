@@ -133,7 +133,7 @@ function who() {
         fs.accessSync(apikey, fs.constants.F_OK)
         let key = fs.readFileSync(apikey).toString()
         require('got')(`http://api.ipstack.com/${$.player.remote}?access_key=${key}`, { json: true }).then(response => {
-            $.whereis = '🛡 '
+            $.whereis = ''
             let result = ''
             if (response.body) {
                 if (response.body.ip) result = response.body.ip
@@ -144,7 +144,6 @@ function who() {
                     if (response.body.location.country_flag_emoji) result += ` ${response.body.location.country_flag_emoji} `
             }
             $.whereis += result ? result : $.player.remote
-            $.whereis += ' ⚔️ '
         }).catch(error => { $.whereis += ' ⚠️ ' })
     } catch (e) {}
 
@@ -165,7 +164,7 @@ function password() {
         return
     }
 
-    $.news(`${$.player.handle} logged in from ${$.whereis}\n\tat ${$.time($.now().time)} as a level ${$.player.level} ${$.player.pc}:`)
+    $.news(`${$.player.handle} ${$.access.emoji} logged in from ${$.whereis}\n\tat ${$.time($.now().time)} as a level ${$.player.level} ${$.player.pc}:`)
     let rs = $.query(`SELECT * FROM Online`)
     for (let row = 0; row < rs.length; row++) {
         let t = $.now().time
