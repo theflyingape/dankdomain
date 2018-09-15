@@ -171,7 +171,7 @@ function newSession(ev) {
 	term.open(document.getElementById('terminal'))
 	fit.fit(term)
 
-	term.writeln('\x1B[18C\x1B[1;31m🔥   \x1B[36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain  \x1B[37m☪️ \x1B[22m\x07\n')
+	term.writeln('\x1B[17C\x1B[1;31m🔥   \x1B[36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain  \x1B[m☪️ \x07\n')
 	window.frames['Info'].postMessage({ 'func':ev }, location.href)
 	let protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://'
 	let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/player/'
@@ -249,8 +249,13 @@ function newSession(ev) {
 		})
 	})
 	else {
-		term.writeln('\npress either ENTER or SPACE to connect')
-		term.writeln('or any other key for more options.')
+		fetch(`${app}/title.txt`, { method: 'GET' }).then(function (res) {
+			return res.text().then(function (data) {
+				term.writeln(data)
+				term.writeln('\r\n\x1B[0;36m\u00B7\x1B[1m press either ENTER or SPACE to connect;')
+				term.writeln('\x1B[0;36m\u00B7\x1B[1m or any other key for more options.')
+			})
+		})
 		term.focus()
 	}
 }
