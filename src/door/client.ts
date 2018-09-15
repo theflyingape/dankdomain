@@ -252,7 +252,7 @@ function newSession(ev) {
 		fetch(`${app}/title.txt`, { method: 'GET' }).then(function (res) {
 			return res.text().then(function (data) {
 				term.writeln(data)
-				term.writeln('\r\n\x1B[0;36m\u00B7\x1B[1m press either ENTER or SPACE to connect;')
+				term.writeln('\x1B[0;36m\u00B7\x1B[1m press either ENTER or SPACE to connect;')
 				term.writeln('\x1B[0;36m\u00B7\x1B[1m or any other key for more options.')
 			})
 		})
