@@ -141,10 +141,10 @@ document.getElementById('lurker-list').onchange = (ev) => {
 	})
 }
 
-newSession()
+newSession('Logoff')
 
 
-function newSession() {
+function newSession(ev) {
 	const options: ITerminalOptions = {
 		bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false,
 		cols: cols, rows: rows, scrollback: 500,
@@ -159,7 +159,7 @@ function newSession() {
 		}
 	}
 
-	carrier = true
+	carrier = (ev === 'Logon')
 	recheck = 0
 	if (lurking) clearInterval(lurking)
 	if (reconnect) clearInterval(reconnect)
@@ -171,11 +171,8 @@ function newSession() {
 	term.open(document.getElementById('terminal'))
 	fit.fit(term)
 
-	term.writeln('\x1B[1;31m\uD83D\uDD25  \x1B[36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain\x1B[22m \u2728\n')
-	term.write(`\x1B[0;2mConnecting terminal WebSocket ... `)
-	XT('@tune(dankdomain)')
-	window.frames['Info'].postMessage({ 'func':'Logon' }, location.href)
-
+	term.writeln('\x1B[18C\x1B[1;31m🔥   \x1B[36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain  \x1B[37m☪️ \x1B[22m\x07\n')
+	window.frames['Info'].postMessage({ 'func':ev }, location.href)
 	let protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://'
 	let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/player/'
 
@@ -188,7 +185,7 @@ function newSession() {
 			pid = 0
 			term.destroy()
 			if (data === '\r' || data === ' ')
-				newSession()
+				newSession('Logon')
 			else
 				window.parent.postMessage({ 'func': 'emit', 'message': '\x1B', 'return': false }, location.href)
 		}
@@ -212,7 +209,9 @@ function newSession() {
 	  })
 
 	// fit is called within a setTimeout, cols and rows need this
-	setTimeout(function () {
+	if (ev === 'Logon')	setImmediate(() => {
+		term.write(`\x1B[0;2mConnecting terminal WebSocket ... `)
+		XT('@tune(dankdomain)')
 		fetch(`${app}/player/?cols=${term.cols}&rows=${term.rows}`, { method: 'POST' }).then(function (res) {
 			res.text().then(function (session) {
 				pid = parseInt(session)
@@ -248,7 +247,12 @@ function newSession() {
 				}
 			})
 		})
-	}, 0)
+	})
+	else {
+		term.writeln('\npress either ENTER or SPACE to connect')
+		term.writeln('or any other key for more options.')
+		term.focus()
+	}
 }
 
 // let's have a nice value for both the player and the web server
@@ -347,7 +351,7 @@ function receive(event) {
 					pid = 0
 					term.destroy()
 					if (event.data.message == ' ')
-						newSession()
+						newSession('Logon')
 					else {
 						recheck = 10
 						checkCarrier()

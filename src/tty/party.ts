@@ -43,7 +43,7 @@ module Party
 export function menu(suppress = true) {
     if ($.checkXP($.online, menu)) return
     if ($.online.altered) $.saveUser($.online)
-    if (!$.reason && $.online.hp < 1) $.reason = 'fought bravely?'
+    if (!$.reason && $.online.hp < 1) $.death('fought bravely?')
     if ($.reason) xvt.hangup()
 
     $.action('party')
@@ -113,7 +113,12 @@ function choice() {
 
         case 'S':
             if (!$.access.roleplay) break
-            if ($.player.gang) break
+            if ($.player.gang) {
+                xvt.beep()
+				xvt.out(`\nYou are already a member of ${$.player.gang}.\n`)
+				suppress = true
+                break
+            }
             g = { name:'', members:[], handles:[], genders:[], melee:[], status:[], validated:[]
                 , win:0, loss:0, banner:0, trim:0, back:0, fore:0 }
 
@@ -163,6 +168,8 @@ function choice() {
             if (!$.player.gang) break
             if (!$.party) {
                 xvt.beep()
+				xvt.out('\nYou cannot resign from your gang after party fights.\n')
+				suppress = true
                 break
             }
             
@@ -198,7 +205,12 @@ function choice() {
 
         case 'J':
             if (!$.access.roleplay) break
-            if ($.player.gang) break
+            if ($.player.gang) {
+                xvt.beep()
+				xvt.out(`\nYou are already a member of ${$.player.gang}.\n`)
+				suppress = true
+                break
+            }
 
             g.members = []
             rs = $.query(`SELECT * FROM Gangs ORDER BY name`)
@@ -288,6 +300,8 @@ function choice() {
             if (!$.player.gang) break
             if (!$.party) {
                 xvt.beep()
+				xvt.out('\nYou cannot edit your gang after party fights.\n')
+				suppress = true
                 break
             }
             
@@ -372,6 +386,8 @@ function choice() {
             if (!$.player.gang) break
             if (!$.party) {
                 xvt.beep()
+				xvt.out('\nYou have no more party fights.\n')
+				suppress = true
                 break
             }
 

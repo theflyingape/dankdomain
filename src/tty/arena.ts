@@ -71,6 +71,7 @@ function choice() {
 		case 'J':
 			if (!$.joust) {
 				xvt.out('\nYou have run out of jousts.\n')
+				suppress = true
 				break
 			}
 			Battle.user('Joust', (opponent: active) => {
@@ -216,6 +217,7 @@ function choice() {
 		case 'M':
 			if (!$.arena) {
 				xvt.out('\nYou have no more arena fights.\n')
+				suppress = true
 				break
 			}
 			$.action('monster')
@@ -258,6 +260,7 @@ function choice() {
 		case 'U':
 			if (!$.arena) {
 				xvt.out('\nYou have no more arena fights.\n')
+				suppress = true
 				break
 			}
 			Battle.user('Fight', (opponent: active) => {

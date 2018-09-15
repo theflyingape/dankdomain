@@ -38,9 +38,7 @@ module Common
     export let arena: number = 0
     export let bail: number = 0
     export let brawl: number = 0
-    export let charity: number = 0
     export let dungeon: number = 0
-    export let nest: number = 0
     export let joust: number = 0
     export let naval: number = 0
     export let party: number = 0

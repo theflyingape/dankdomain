@@ -376,7 +376,6 @@ export function attack(retry = false) {
 
         //  might or magic?
         let mm: number = 0
-        let nest: number = 0
         let odds: number = (from === 'Party' ? 6 : from === 'Dungeon' ? 5 : 4) - $.int(+enemy.user.coward)
         let roll: number = odds + $.int(rpc.user.magic / 2) + rpc.adept + 1
         if (rpc.user.level > enemy.user.level)
@@ -655,7 +654,7 @@ export function spoils() {
             $.wall(`defeated the gang, ${parties[l][0].user.gang}`)
         }
         else if ($.online.hp == 0)
-            $.reason = `defeated by the gang, ${parties[w][0].user.gang}`
+            $.death(`defeated by the gang, ${parties[w][0].user.gang}`)
         return
     }
 

@@ -271,7 +271,7 @@ function welcome() {
 
     if ($.player.status === 'jail' || !$.Access.name[$.player.access].roleplay) {
         $.profile({ png:'npc/jailer', effect:'fadeIn' })
-        $.sound('max')
+        $.sound('ddd')
         if ($.player.emulation == 'XT') xvt.out('🔒 ')
         xvt.out(xvt.bright, xvt.black, '(', xvt.magenta, 'PRISONER', xvt.black, ')\n')
         xvt.out(xvt.red, '\nYou are locked-up in jail.\n', xvt.reset)
@@ -346,19 +346,8 @@ function welcome() {
         $.player.plays++
         $.player.status = ''
         $.player.xplevel = $.player.level
-        $.arena = 3
-        $.bail = 1
-        $.brawl = 3
-        $.charity = 1
-        $.dungeon = 3
-        $.nest = 0
-        $.joust = 3
-        $.naval = 3
-        $.party = 1
-        $.realestate = 1
-        $.security = 1
-        $.steal = 0
-        $.tiny = 3
+        let play = JSON.parse(fs.readFileSync('./etc/play.json').toString())
+        Object.assign($, play)
         $.mydeeds = $.loadDeed($.player.pc)
 
         if ($.player.pc === 'None') {

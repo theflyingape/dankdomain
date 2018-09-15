@@ -102,6 +102,27 @@ money = `<table align="center">
 <tr><td colspan=2>${cancel}</td><td colspan=2>${max}</td>
 </tr>
 </table>`;
+images = [
+    'arexielite_by_peachyco.png',
+    'dragonborn_dagger_sorcerer_by_peachyco.png',
+    'dragonborn_hexblade_by_peachyco.png',
+    'elf_cleric_by_peachyco.png',
+    'elf_fighter_by_peachyco.png',
+    'guild_findsman_by_peachyco.png',
+    'human_battlemage_by_peachyco.png',
+    'human_enchantress_mage_by_peachyco.png',
+    'human_warpriest_by_peachyco.png',
+    'human_wizard_by_peachyco.png',
+    'kashaw_and_zahra_by_peachyco.png',
+    'krauser_dragonborn_warlord_by_peachyco.png',
+    'lucien2_human_wizard_by_peachyco.png',
+    'lucien_human_wizard_by_peachyco.png',
+    'orc_pirate_by_peachyco.png',
+    'paladin_by_peachyco.png',
+    'thrask_goliath_fighter_by_peachyco.png',
+    'warforged_fighter_and_human_wizard_by_peachyco.png',
+    'yuriel_genasi_warlord_by_peachyco.png'
+  ];
 
 if (window.addEventListener) {
   window.addEventListener("message", receive, false);
@@ -237,51 +258,30 @@ function sendLogin() {
 function Logoff() {
   if (!art)
     art = setInterval(rotateImage, 45000);
-  cmd(`<p><input class="tall" type="button" value=" CONNECT " onclick="send(' ');"> <input type="button" value="Disconnect" onclick="send('\x1B');"></p>`);
+  cmd(`
+<p><input class="tall" type="button" id="default" value=" CONNECT " onclick="send(' ');"> <input type="button" id="cancel" value="Disconnect" onclick="send('\x1B');"></p>
+<span style="text-align:center;"><h2>🤴 <a href="https://sites.google.com/view/dankdomain" target="_new"><span style="color:gray !important; font-size:larger">Dank Domain</span></a> 👸<br><span style="color:rosybrown !important; font-size:smaller">the return of Hack &amp; Slash</span></h2></span><table style="margin: 0px auto; vertical-align:bottom;">
+<span style="color:rosybrown !important; font-size:smaller"><p>🇺🇸 &copy;2017-2018 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a> 🧙</p></span>
+`);
 }
 
 function rotateImage() {
-  var images = [
-    'arexielite_by_peachyco.png',
-    'dragonborn_dagger_sorcerer_by_peachyco.png',
-    'dragonborn_hexblade_by_peachyco.png',
-    'elf_cleric_by_peachyco.png',
-    'elf_fighter_by_peachyco.png',
-    'guild_findsman_by_peachyco.png',
-    'human_battlemage_by_peachyco.png',
-    'human_enchantress_mage_by_peachyco.png',
-    'human_warpriest_by_peachyco.png',
-    'human_wizard_by_peachyco.png',
-    'kashaw_and_zahra_by_peachyco.png',
-    'krauser_dragonborn_warlord_by_peachyco.png',
-    'lucien2_human_wizard_by_peachyco.png',
-    'lucien_human_wizard_by_peachyco.png',
-    'orc_pirate_by_peachyco.png',
-    'paladin_by_peachyco.png',
-    'thrask_goliath_fighter_by_peachyco.png',
-    'warforged_fighter_and_human_wizard_by_peachyco.png',
-    'yuriel_genasi_warlord_by_peachyco.png'
-  ];
-
-  var n = Math.trunc(Math.random() * images.length);
   animated('fadeOutLeft');
-  setTimeout(function () {
-    nme(`<img src="images/connect/${images[n]}" onload="nmeResize(\'fadeInRight\');" style="display:none;" />`);
-  }, 1000);
+  if (images.length) {
+    n = Math.trunc(Math.random() * images.length);
+    pic = images.splice(n,1);
+    setTimeout(function () {
+      nme(`<img src="images/connect/${pic}" onload="nmeResize(\'fadeInRight\');" style="display:none;" />`);
+    }, 1000);
+  }
+  else
+    window.location.reload();
 }
 
 function send(keystrokes, cr = false, et = 'emit') {
   window.focus();
   window.parent.postMessage({ 'func': et, 'message': keystrokes, 'return': cr }, location.href);
 }
-
-/*
-<!-- onkeypress="keypress(event);" -->
-function keypress(event) {
-  var x = event.which || event.keyCode;
-  send(String.fromCharCode(x), false, 'kb');
-}
-*/
 
 function actionResize(profile) {
   window.parent.postMessage({
@@ -556,9 +556,39 @@ function nmeResize(effect, func) {
     pic.style.zoom = Math.trunc(100 * h / pic.height) + '%';
   if (!func) animated(effect || 'fadeIn');
 }
+
+function welcome() {
+  Logoff();
+  nme('<img src="images/arena/demogorgon.jpg" onload="nmeResize(\'jackInTheBox\');" style="display:none;" />');
+}
+
+function keydown(event) {
+//console.log(event);
+  switch (event.key) {
+    case ' ':
+    case 'Enter':
+      b = document.getElementById('default');
+      if (b) {
+        console.log('default clicked');
+        b.click();
+        return;
+      }
+      break;
+    case 'Escape':
+      b = document.getElementById('cancel');
+      if (b) {
+        console.log('cancel clicked');
+        b.click();
+        return;
+      }
+      break;
+  }
+  //send(event.keyCode < 32 ? String.fromCharCode(event.keyCode) : event.key, false, 'kb');
+}
+
 </script>
 </head>
-<body onload="Logon();">
+<body onkeydown="keydown(event);" onload="welcome();">
   <div id="command"></div>
   <div class="nme" id="nme"></div>
 </body>
