@@ -171,7 +171,7 @@ function newSession(ev) {
 	term.open(document.getElementById('terminal'))
 	fit.fit(term)
 
-	term.writeln('\x1B[16C\x1B[1;31m🔥 🌨   \x1B[36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain  \x1B[m🌙 💫\x07\n')
+	term.writeln('\x1B[16C\x1B[1;31m🔥  🌨   \x1B[36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain  \x1B[m🌙  💫\x07\n')
 	window.frames['Info'].postMessage({ 'func':ev }, location.href)
 	let protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://'
 	let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/player/'
@@ -258,6 +258,8 @@ function newSession(ev) {
 		})
 		term.focus()
 	}
+	// gratuituous
+	window.dispatchEvent(new Event('resize'))
 }
 
 // let's have a nice value for both the player and the web server
