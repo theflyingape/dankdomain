@@ -15,6 +15,7 @@ module Email
     //let ematch: RegExp = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
     let echo = true
 
+    $.action('freetext')
     xvt.app.form = {
         'email': { cb:email, prompt:'Enter your e-mail address now: ', min:8 },
         'check': { cb:check, prompt:'Re-enter email to verify: ' }

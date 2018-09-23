@@ -129,6 +129,10 @@ function choice() {
                     g.name = $.titlecase(xvt.entry)
                     if (g.name === 'New' || $.cuss(g.name))
                         xvt.hangup()
+                    if (!g.name) {
+                        menu()
+                        return
+                    }
                     g.members = [ $.player.id ]
                     g.handles = [ $.player.handle ]
                     g.validated = [ true ]

@@ -390,6 +390,7 @@ function choice() {
                         return
                     }
                     $.PC.stats($.online)
+                    $.action('yn')
                     xvt.app.focus = 'pause'
                 }, cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 },
                 'pause': { cb:menu, pause:true }

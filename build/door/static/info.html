@@ -30,6 +30,15 @@
   body::-webkit-scrollbar {
     display: none;
   }
+  a:link, a:visited {
+    color: midnightblue;
+    text-decoration: none;
+    display: inline-block;
+  }
+  a:hover, a:active {
+    background-color: skyblue;
+    color: darkslategray;
+  }
 
   form {
     border: 3px solid #f1f1f1;
@@ -87,8 +96,8 @@ keyboard = `<input type="button" value="a" onclick="send('a');"> <input type="bu
 <input type="button" value="s" onclick="send('s');"> <input type="button" value="t" onclick="send('t');"> <input type="button" value="u" onclick="send('u');">
 <input type="button" value="v" onclick="send('v');"> <input type="button" value="w" onclick="send('w');"> <input type="button" value="x" onclick="send('x');">
 <input type="button" value="y" onclick="send('y');"> <input type="button" value="z" onclick="send('z');"><br>
-<input type="button" value="@" onclick="send('@');"> <input type="button" value="." onclick="send('.');"> <input class="wide" type="button" value=" SPACE BAR " onclick="send(' ');"> <input type="button" value="-" onclick="send('-');"> <input type="button" value="+" onclick="send('+');">
-${keypad}
+<input type="button" value="@" onclick="send('@');"> <input type="button" value="." onclick="send('.');"> <input class="wide" type="button" value=" SPACE BAR " onclick="send(' ');"> <input type="button" value="-" onclick="send('-');"> <input type="button" value="+" onclick="send('+');"><br>
+${cancel} ${enter}
 `;
 money = `<table align="center">
 <tr><td><input class="numeric" type="button" value="7" onclick="send('7');"></td><td><input class="numeric" type="button" value="8" onclick="send('8');"></td><td><input class="numeric" type="button" value="9" onclick="send('9');"></td><td><input class="platinum" type="button" value="P" onclick="send('p');"></td>
@@ -297,6 +306,13 @@ function freetext() {
   cmd(`${keyboard}`);
 }
 
+function gender() {
+  cmd(`
+<input class="tall" type="button" value=" Male " onclick="send('M');">
+<input class="tall" type="button" value=" Female " onclick="send('F');">
+`);
+}
+
 function list() {
   cmd(`${keypad}`);
 }
@@ -381,14 +397,11 @@ function battle() {
 
 function casino() {
   nme('');
-  cmd(`<p><input class="wide" type="button" value=" ATM " onclick="send('I');"></p>
-<p><input type="button" value="Black Jack" onclick="send('B');">
-<input type="button" value="High Card" onclick="send('H');">
+  cmd(`<p><input type="button" value="Black Jack" onclick="send('B');">
 <input type="button" value="Craps" onclick="send('C');">
-<input type="button" value="Dogs" onclick="send('D');">
-<input type="button" value="Slots" onclick="send('S');">
+<input type="button" value="High Stakes" onclick="send('H');">
 <input type="button" value="Keno" onclick="send('K');">
-<input type="button" value="Roulette" onclick="send('R');"></p>
+<input type="button" value="Slots" onclick="send('S');">
 ${quit}`);
 }
 
@@ -403,6 +416,7 @@ function deeds() {
   cmd(`<p><input type="button" value="Champions" onclick="send('C');">
 <input type="button" value="Heroes" onclick="send('H');">
 <input type="button" value="Memorable" onclick="send('M');">
+<input type="button" value="Thugs" onclick="send('T');">
 <input type="button" value="Winners" onclick="send('W');"></p>
 ${quit}`);
   nme(`<img src="images/heroes.jpg" onload="nmeResize(\'bounceInUp\');" style="display:none;" />`);

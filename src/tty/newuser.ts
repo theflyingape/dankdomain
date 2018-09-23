@@ -11,7 +11,6 @@ module NewUser
 {
 	let editmode: boolean = false
 
-	$.action('freetext')
 	$.music('newuser')
 	$.profile({ png:'npc/city_guard_1', effect:'bounceInLeft' })
 	xvt.out(xvt.clear)
@@ -40,6 +39,7 @@ module NewUser
 	$.player.expires = $.player.lastdate + $.sysop.expires
 	$.player.novice = true
 
+	$.action('freetext')
 	xvt.app.focus = 1
 
 
@@ -67,6 +67,7 @@ function handle() {
 	xvt.plot(3, 23)
 	xvt.out(xvt.cll, $.player.handle)
 
+	$.action(editmode ? 'list': 'freetext')
 	xvt.app.focus = editmode ? 'edit' : 2
 }
 
@@ -93,6 +94,7 @@ function name() {
 	xvt.plot(4, 23)
 	xvt.out(xvt.cll, $.player.name)
 
+	$.action('list')
 	xvt.app.focus = editmode ? 'edit' : 3
 }
 
@@ -107,6 +109,7 @@ function dob() {
 	xvt.plot(5, 23)
 	xvt.out(xvt.cll, $.date2full($.player.dob))
 
+	$.action(editmode ? 'list' : 'gender')
 	xvt.app.focus = editmode ? 'edit' : 4
 }
 
@@ -117,11 +120,13 @@ function sex() {
 	xvt.out(xvt.cll, $.player.sex)
 
 	editmode = true
+	$.action('list')
 	xvt.app.focus = 'edit'
 }
 
 function edit() {
-	if(xvt.entry.length) {
+	if (xvt.entry.length) {
+		$.action(['list','freetext','freetext','list','gender'][xvt.entry])
 		xvt.app.focus = xvt.entry
 		return
 	}
@@ -137,6 +142,7 @@ function edit() {
 		$.player.id = $.player.handle.slice(0, 3).toUpperCase()
 
 	if ($.player.id === 'NEW' || $.cuss($.player.id)) {
+		$.action('freetext')
 		xvt.beep()
 		xvt.app.focus = 1
 		return
@@ -155,6 +161,7 @@ function edit() {
 	if (retry > 3) $.player.id = ''
 
 	if ($.player.id === '') {
+		$.action('freetext')
 		xvt.beep()
 		xvt.app.focus = 1
 		return
