@@ -470,7 +470,7 @@ function choice() {
                                 for (let vials in monsters[dm].poisons)
                                     $.Poison.add(nme[i].user.poisons, monsters[dm].poisons[vials])
 
-                            nme[i].user.spells = [ 7 ]
+                            nme[i].user.spells = [ 8 ]
                             if (monsters[dm].spells)
                                 for (let magic in monsters[dm].spells)
                                     $.Magic.add(nme[i].user.spells, monsters[dm].spells[magic])

@@ -2,8 +2,8 @@
 <html lang="en-US">
 <head>
 <title>Dank Domain: the return of Hack & Slash</title>
-<link rel="icon" href="favicon.ico" type="image/x-icon" />
-<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 <link rel="manifest" href="manifest.json">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -20,9 +20,9 @@
     background-color: #102040;
     color: antiquewhite;
     border: none;
+    font-family: 'IBM Plex Mono', monospace;
     margin: 0px;
-    min-width: 640px;
-    font-family: 'Glass_TTY_VT220';
+    min-width: 960px;
   }
   #terminal {
     border: 0;
@@ -39,17 +39,21 @@
   }
   a:link, a:visited {
     background-color: #0f1e3c;
-    color: #eca;
-    text-decoration: none;
+    color: rosybrown;
     display: inline-block;
+    font-family: 'Dancing Script', cursive;
+    font-size: 125%;
+    font-weight: bolder;
+    text-decoration: none;
   }
   a:hover, a:active {
     background-color: #112244;
-    color: #ace;
+    color: aliceblue;
   }
 </style>
-<link rel="stylesheet" href="xterm.css" />
-<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css?family=Dancing+Script" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono" rel="stylesheet">
+<link rel="stylesheet" href="xterm.css">
 </head>
 <body>
 <div id="terminal"></div>
@@ -58,7 +62,7 @@
   <span style="text-align:center;"><h2>🤴 <a href="https://sites.google.com/view/dankdomain"><span style="color:gray !important; font-size:larger">Dank Domain</span></a> 👸<br><span style="color:rosybrown !important; font-size:smaller">the return of Hack &amp; Slash</span></h2></span><table style="margin: 0px auto; vertical-align:bottom;">
   <table style="margin: 0px auto; vertical-align:bottom; white-space: nowrap;">
   <tr><td></td><td>Press <button onclick="window.location.reload();"> REFRESH </button> to re-connect</td></tr>
-  <tr><td></td><td>Read today's The Olde Tavern <a href="today.txt" target="_blank">news</a></td></tr>
+  <tr><td></td><td>Read today's <a href="today.txt" target="_blank">The Olde Tavern</a> news</td></tr>
   <tr><td></td><td>Watch another online player <select id="lurker-list"></select> <- list refreshes every 30-seconds</td></tr>
   <tr><td></td><td><hr></td></tr>
   <tr><td><img src="images/chrome.png">&nbsp;</td><td>Google Android tablet or mobile CHROME's<br><i><b>Create shortcut...</b></i> menu option to launch this as an <b>app</b>

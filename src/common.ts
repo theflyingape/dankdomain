@@ -1921,7 +1921,7 @@ export function logoff() {
         xvt.out('\x06\n')
         xvt.out(xvt.reset, 'Goodbye, please play again!  Also visit:\n')
         xvt.waste(750)
-        xvt.out(xvt.cyan, '  ___                            ', xvt.cyan, '   ___  \n')
+        xvt.out(xvt.cyan, '  ___                               ___  \n')
         xvt.out(xvt.cyan, '  \\_/   ', xvt.red, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Red, xvt.white, 'Never Program Mad', xvt.reset, xvt.red, xvt.RGradient[xvt.emulation], xvt.cyan, '   \\_/  \n')
         xvt.out(xvt.cyan, ' _(', xvt.bright, '-', xvt.normal, ')_     ', xvt.reset, ' https://npmjs.com    ', xvt.cyan, '  _(', xvt.bright, '-', xvt.normal, ')_ \n')
         xvt.out(xvt.cyan, '(/ ', xvt.bright, ':', xvt.normal, ' \\)                          ', xvt.cyan, ' (/ ', xvt.bright, ':', xvt.normal, ' \\)\n')
