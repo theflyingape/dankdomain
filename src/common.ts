@@ -1022,7 +1022,7 @@ export function keyhint(rpc: active) {
 
         if (rpc == online) {
             xvt.out(xvt.reset, `Key #${slot + 1} is not `)
-            if (player.emulation === 'XT') xvt.out(' \u{1F511}  ')
+            if (player.emulation === 'XT') xvt.out(' 🗝️  ')
             xvt.out(xvt.bright, xvt.reverse)
             switch (player.keyhints[i]) {
             case 'P':
@@ -1634,7 +1634,7 @@ export function riddle() {
         if (+i < 12 && player.keyhints[i]) {
             slot = Math.trunc(+i / 3) + 1
             xvt.out(xvt.reset, `Key #${slot} is not `)
-            if (player.emulation === 'XT') xvt.out(' \u{1F511}  ')
+            if (player.emulation === 'XT') xvt.out(' 🗝️  ')
             xvt.out(xvt.bright, xvt.reverse)
             switch (player.keyhints[i]) {
             case 'P':
@@ -1667,7 +1667,7 @@ export function riddle() {
             xvt.waste(1234)
             if (xvt.entry.toUpperCase() === player.keyseq[slot]) {
                 sound('click')
-                if (player.emulation === 'XT') xvt.out('\u{1F513} ')
+                if (player.emulation === 'XT') xvt.out('🔓 ')
                 xvt.out(xvt.cyan, '{', xvt.bright, 'Click!', xvt.normal, '}\n')
                 player.pc = Object.keys(PC.name['immortal'])[slot]
                 profile({ png:'player/' + player.pc.toLowerCase() + (player.gender === 'F' ? '_f' : ''), pc:player.pc })
@@ -1684,6 +1684,7 @@ export function riddle() {
             }
             else {
                 sound('thunder')
+                if (player.emulation === 'XT') xvt.out('💀 ')
                 xvt.out(xvt.bright, xvt.black, '^', xvt.white, 'Boom!', xvt.black, '^\n')
                 if (slot == 0) {
                     for (let i = 3 * slot; i < 3 * (slot + 1); i++) {

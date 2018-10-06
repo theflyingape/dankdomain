@@ -21,7 +21,7 @@ module Battle
         name:'', members:[], handles:[], genders:[], melee:[], status:[], validated:[]
             , win:0, loss:0, banner:0, trim:0, back:0, fore:0
     }
-    let parties: [ active[] ]
+    let parties: [ active[], active[] ]
     let alive: number[]
     let round: { party:number, member:number, react:number }[]
     let bs: number
@@ -130,20 +130,18 @@ export function engage(menu:string, party: active|active[], mob: active|active[]
     //  process parameters
     from = menu
 
+    let a: active[], b: active[]
     if (xvt.validator.isArray(party))
-        parties = [ <active[]>party ]
-    else {
-        let a:active[] = new Array(<active>party)
-        parties = [ a ]
-    }
+        a = <active[]>party
+    else
+        a = new Array(<active>party)
 
     if (xvt.validator.isArray(mob))
-        parties.push(<active[]>mob)
-    else {
-        let b:active[] = new Array(<active>mob)
-        parties.push(b)
-    }
+        b = <active[]>mob
+    else
+        b = new Array(<active>mob)
 
+    parties = [ a, b ]
     fini = cb
 
     //  initialize for first encounter in engagement
