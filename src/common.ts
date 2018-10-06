@@ -2266,7 +2266,7 @@ export function newDay() {
     }
     xvt.out('=')
 
-    rs = query(`SELECT id, access, lastdate, level, xplevel, novice, jl, jw FROM Players WHERE id NOT GLOB '_*'`)
+    rs = query(`SELECT id, access, lastdate, level, xplevel, novice, jl, jw, gang FROM Players WHERE id NOT GLOB '_*'`)
     for (let row in rs) {
         if ((rs[row].level == 1 || rs[row].novice) && (rs[row].jl > (2 * rs[row].jw))) {
             run(`UPDATE Players set jl=0,jw=0 WHERE id='${rs[row].id}'`)
@@ -2296,6 +2296,19 @@ export function newDay() {
         }
 
         if ((now().date - rs[row].lastdate) > 180) {
+            if (rs[row].gang) {
+                let g = loadGang(query(`SELECT * FROM Gangs WHERE name = '${rs[row].gang}'`)[0])
+                let i = g.members.indexOf(rs[row].id)
+                if (i > 0) {
+                    g.members.splice(i, 1)
+                    saveGang(g)
+                }
+                else {
+                    run(`UPDATE Players SET gang = '' WHERE gang = '${g.name}'`)
+                    run(`DELETE FROM Gangs WHERE name = '${g.name}'`)
+                    xvt.out('&')
+                }
+            }
             run(`DELETE FROM Players WHERE id='${rs[row].id}'`)
             fs.unlink(`./files/user/${rs[row].id}.txt`, () => {})
             xvt.out('x')
