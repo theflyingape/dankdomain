@@ -90,7 +90,7 @@ document.getElementById('lurker-list').onchange = (ev) => {
 	document.getElementById('terminal').hidden = false
 	term = new Terminal({
 		bellStyle: 'none', cursorBlink: false, scrollback: 0,
-		fontFamily: 'tty,IBM Plex Mono,Consolas,Lucida Console,monospace', fontSize: 20,
+		fontFamily: 'IBM Plex Mono,Consolas,Lucida Console,monospace', fontSize: 20,
 		fontWeight: '400', fontWeightBold: '500',
 		theme: {
 			foreground: '#a3a7af', background: '#23272f',
@@ -101,9 +101,10 @@ document.getElementById('lurker-list').onchange = (ev) => {
 		}
 	})
 	Terminal.applyAddon(fit)
+	Terminal.applyAddon(webLinks)
 	term.open(document.getElementById('terminal'))
-	fit.fit(term)
 	webLinks.webLinksInit(term)
+	fit.fit(term)
 
 	term.write('\x1B[H\x1B[J\x1B[1;30mConnecting your terminal to ' + watch[watch.selectedIndex].text + ' WebSocket ... ')
 	let protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://'
@@ -167,8 +168,9 @@ function newSession(ev) {
 	pid = -1
 	term = new Terminal(options)
 	Terminal.applyAddon(fit)
-
+	Terminal.applyAddon(webLinks)
 	term.open(document.getElementById('terminal'))
+	webLinks.webLinksInit(term)
 	fit.fit(term)
 
 	term.writeln('\x1B[16C\x1B[1;31m🔥  🌨   \x1B[36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain  \x1B[m🌙  💫\x07\n')
