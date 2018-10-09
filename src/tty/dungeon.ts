@@ -1890,13 +1890,15 @@ function generateLevel() {
 			DL.rooms[y][x].giftItem = 'potion'
 			n = $.dice(130 - deep)
 			for (let i = 0; i < 16 && n > 0; i++) {
-				DL.rooms[y][x].giftValue = 15 - i
-				if ($.player.magic < 2 && DL.rooms[y][x].giftValue > 1 && DL.rooms[y][x].giftValue < 4)
-					DL.rooms[y][x].giftValue -= 2
+				let v = 15 - i
+				DL.rooms[y][x].giftValue = v
+				if ($.player.magic < 2 && (v == 10 || v == 11))
+					DL.rooms[y][x].giftValue = (v == 11) ? 9 : 0
 				n -= i + 1
 			}
 			continue
 		}
+
 		if ($.dice(deep + 5) > (deep + 1) && $.player.poison) {
 			DL.rooms[y][x].giftItem = 'poison'
 			DL.rooms[y][x].giftValue =  $.dice($.Poison.merchant.length * Z / 100)
