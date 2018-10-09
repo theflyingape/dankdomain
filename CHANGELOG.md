@@ -3,9 +3,17 @@
 ## *the return of* ⚔ **Hack & Slash** 🛡
 
 🇺🇸 ©️1990-2018 [Robert Hurst](https://robert.hurst-ri.us)
-> [developed](https://github.com/theflyingape/dankdomain) using Node.js on an Atom-powered Linux server with Verizon FiOS 100mb Internet service
+> [developed](https://github.com/theflyingape/dankdomain) using Node.js on an Intel Atom-powered Linux server using a Verizon FiOS 100mb Internet service
 
-### **12-Jul-2018**
+### **08-Oct-2018**
+
+* 1.5.0 release, Columbus Day!
+* package requires Linux OS and Node 10.10
+* xterm.js v3.8.0 release with outdated package updates
+* plays (number of arena, brawl, dungeon, etc.) are now configurable
+* UI improvements, webLinks addon
+
+#### 12-Jul-2018
 
 * 1.4.0 release
 * xterm.js v3.5.0 release with outdated package updates
