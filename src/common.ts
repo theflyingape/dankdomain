@@ -551,6 +551,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
     let eligible = rpc.user.level < sysop.level / 2
     let bonus = false
     let i: number
+    let started = rpc.user.level
 
     while (rpc.user.xp >= experience(rpc.user.level, undefined, rpc.user.int) && rpc.user.level < sysop.level) {
         rpc.user.level++
@@ -591,22 +592,23 @@ export function checkXP(rpc: active, cb: Function): boolean {
         }
     }
 
-	rpc.user.xplevel = rpc.user.level
+    let jumped = player.level - started
+    rpc.user.xplevel = rpc.user.level
     award.hp = rpc.user.hp - award.hp
     award.sp = rpc.user.sp - award.sp
     rpc.hp += award.hp
     rpc.sp += award.sp
 
-    if ((award.str = rpc.user.str - award.str) < 1) award.str = 1
-    if ((award.int = rpc.user.int - award.int) < 1) award.int = 1
-    if ((award.dex = rpc.user.dex - award.dex) < 1) award.dex = 1
-    if ((award.cha = rpc.user.cha - award.cha) < 1) award.cha = 1
+    if ((award.str = rpc.user.str - award.str) < 1) award.str = 0
+    if ((award.int = rpc.user.int - award.int) < 1) award.int = 0
+    if ((award.dex = rpc.user.dex - award.dex) < 1) award.dex = 0
+    if ((award.cha = rpc.user.cha - award.cha) < 1) award.cha = 0
     i = rpc.user.blessed ? 10 : 0
     i = rpc.user.cursed ? i - 10 : i
-    rpc.str = PC.ability(rpc.str, award.str, rpc.user.maxstr, i)
-    rpc.int = PC.ability(rpc.int, award.int, rpc.user.maxint, i)
-    rpc.dex = PC.ability(rpc.dex, award.dex, rpc.user.maxdex, i)
-    rpc.cha = PC.ability(rpc.cha, award.cha, rpc.user.maxcha, i)
+    rpc.str = PC.ability(rpc.str, (award.str < 1) ? jumped : award.str, rpc.user.maxstr, i)
+    rpc.int = PC.ability(rpc.int, (award.int < 1) ? jumped : award.int, rpc.user.maxint, i)
+    rpc.dex = PC.ability(rpc.dex, (award.dex < 1) ? jumped : award.dex, rpc.user.maxdex, i)
+    rpc.cha = PC.ability(rpc.cha, (award.cha < 1) ? jumped : award.cha, rpc.user.maxcha, i)
 
     if (rpc != online) return
 
@@ -629,8 +631,6 @@ export function checkXP(rpc: active, cb: Function): boolean {
 
     let deed = mydeeds.find((x) => { return x.deed === 'levels' })
     if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, 'levels')[0]) - 1]
-    let rs = query(`SELECT level FROM Players WHERE id = '${player.id}'`)[0]
-    let jumped = player.level - rs.level
     if ((deed && jumped >= deed.value)) {
         deed.value = jumped
         sound('outstanding')
