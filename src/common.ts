@@ -597,10 +597,10 @@ export function checkXP(rpc: active, cb: Function): boolean {
     rpc.hp += award.hp
     rpc.sp += award.sp
 
-    award.str = rpc.user.str - award.str
-    award.int = rpc.user.int - award.int
-    award.dex = rpc.user.dex - award.dex
-    award.cha = rpc.user.cha - award.cha
+    if ((award.str = rpc.user.str - award.str) < 1) award.str = 1
+    if ((award.int = rpc.user.int - award.int) < 1) award.int = 1
+    if ((award.dex = rpc.user.dex - award.dex) < 1) award.dex = 1
+    if ((award.cha = rpc.user.cha - award.cha) < 1) award.cha = 1
     i = rpc.user.blessed ? 10 : 0
     i = rpc.user.cursed ? i - 10 : i
     rpc.str = PC.ability(rpc.str, award.str, rpc.user.maxstr, i)

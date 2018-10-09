@@ -15,22 +15,22 @@ module Dungeon
 	const iii = ['I','II','III','IV','V','VI','VII','VIII','IX','X']
 	const monsters: monster = require('../etc/dungeon.json')
 	const potion = [
-		'Vial of Slaad Secretions',
 		'Potion of Cure Light Wounds',
-		'Flask of Fire Water',
-		'Potion of Mana',
 		'Vial of Weakness',
-		'Potion of Stamina',
-		'Vial of Stupidity',
-		'Potion of Wisdom',
-		'Vial of Clumsiness',
-		'Potion of Agility',
-		'Vile Vial',
 		'Potion of Charm',
+		'Vial of Stupidity',
+		'Potion of Agility',
+		'Vial of Clumsiness',
+		'Potion of Wisdom',
+		'Vile Vial',
+		'Potion of Stamina',
+		'Vial of Slaad Secretions',
+		'Potion of Mana',
+		'Flask of Fire Water',
+		'Elixir of Restoration',
 		'Vial of Crack',
 		'Potion of Augment',
-		'Beaker of Death',
-		'Elixir of Restoration'
+		'Beaker of Death'
 	]
 
 	let fini: Function
@@ -508,15 +508,17 @@ function doMove(): boolean {
 		xvt.waste(1000)
 
 		for (let n = 0; n < ROOM.monster.length; n++) {
-			$.cat('dungeon/' + ROOM.monster[n].user.handle)
-			xvt.out(xvt.reset, '\n')
+			if (ROOM.monster.length < 4) {
+				$.cat('dungeon/' + ROOM.monster[n].user.handle)
+				xvt.out(xvt.reset, '\n')
+			}
 
 			let what = ROOM.monster[n].user.handle
 			if (ROOM.monster[n].user.xplevel > 0)
 				what = [xvt.attr(xvt.faint, 'lesser '), '', xvt.attr(xvt.bright, xvt.white, 'greater ')]
 					[ROOM.monster[n].user.xplevel - ROOM.monster[n].user.level + 1] + what
 			xvt.out('It\'s', $.an(what), xvt.reset, '... ')
-			xvt.waste(400)
+			xvt.waste(ROOM.monster.length < 4 ? 400 : 100)
 
 			if ($.player.novice || ($.dice(ROOM.monster[n].user.xplevel / 5 + 5) * (101 - $.online.cha + deep) > 1)) {
 				if (ROOM.monster[n].user.xplevel > 0)
@@ -539,7 +541,7 @@ function doMove(): boolean {
 				party.push(ROOM.monster[n])
 				ROOM.monster.splice(n, 1)
 			}
-			xvt.waste(400)
+			xvt.waste(ROOM.monster.length < 4 ? 400 : 100)
 		}
 
 		if (ROOM.monster.length) {
@@ -1331,11 +1333,16 @@ function doMove(): boolean {
 			xvt.out(xvt.bright, xvt.cyan, 'On the ground, you find a ',
 				['bottle containing', 'flask of some', 'vial holding'][$.dice(3) - 1], ' ',
 				[ 'bubbling', 'clear', 'dark', 'sparkling', 'tainted'][$.dice(5) - 1], ' ')
-			if (ROOM.giftID)
+			if (ROOM.giftID || $.access.sysop)
 				xvt.out(potion[ROOM.giftValue], '.')
-			else
-				xvt.out([ 'amber', 'blue', 'crimson', 'green', 'purple'][$.dice(5) - 1],
-					' potion.')
+			else {
+				let p = $.dice(5) - 1
+				xvt.out(
+					[ xvt.yellow, xvt.blue, xvt.red, xvt.green, xvt.magenta ][p],
+					[ 'amber', 'blue', 'crimson', 'green', 'purple'][p],
+					xvt.cyan, ' potion', xvt.reset, '.'
+				)
+			}
 
 			if (ROOM.giftID || $.dice(100 + 10 * ROOM.giftValue * +$.player.coward) + $.dice(deep / 2) < 50 + $.int($.online.int / 2)) {
 				$.action('potion')
@@ -1364,7 +1371,7 @@ function doMove(): boolean {
 			}
 			else {
 				xvt.waste(600)
-				xvt.out('\nYou quaff it without hesitation.', xvt.reset, '\n')
+				xvt.out(xvt.faint, '\nYou quaff it without hesitation.', xvt.reset, '\n')
 				xvt.waste(600)
 				quaff(ROOM.giftValue)
 				ROOM.giftItem = ''
@@ -1593,6 +1600,7 @@ function drawLevel() {
 						}
 					}
 					xvt.out(o)
+					if ((DL.map > 2 || $.access.sysop) && DL.rooms[r][x].giftItem) xvt.out(`\x08${dot}`)
 				}
 				if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[y].substr(-1), '\x1B(B')
 				else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y].substr(-1))
@@ -2306,91 +2314,110 @@ function teleport() {
 }
 
 function quaff(v: number, it = true) {
-	if ($.player.coward && v > 8) v -= v % 2
-	xvt.out('It was', v % 2 ? xvt.green : xvt.red, $.an(potion[v]), xvt.white, '.', xvt.reset, '\n')
+	let m = $.player.blessed ? 10 : 0
+    m = $.player.cursed ? m - 10 : m
+	xvt.out('It was', xvt.bright, v % 2 ? xvt.red : xvt.green, $.an(potion[v]), xvt.reset, '.\n')
 	if (it) {
 		$.sound('quaff', 6)
 		switch (v) {
-	//	Vial of Slaad Secretions
-		case 0:
-			$.sound('hurt')
-			if (($.online.hp -= $.dice($.player.hp / 2)) < 1)
-				$.reason = `quaffed${$.an(potion[v])}`
-			break
-
 	//	Potion of Cure Light Wounds
-		case 1:
+		case 0:
 			$.sound('yum')
 			$.online.hp += $.dice($.player.hp - $.online.hp)
 			break
 
-	//	Flask of Fire Water
-		case 2:
-			if (($.online.sp -= $.dice($.online.sp / 2)) < 1)
-				$.online.sp = 0
-			break
-
-	//	Potion of Mana
-		case 3:
-			$.sound('shimmer')
-			$.online.sp += $.dice($.player.sp - $.online.sp)
-			break
-
 	//	Vial of Weakness
-		case 4:
+		case 1:
 			$.player.str = $.PC.ability($.player.str, -1)
 			$.online.str = $.PC.ability($.online.str, -$.dice(10))
 			break
 
-	//	Potion of Stamina
-		case 5:
-			$.player.str = $.PC.ability($.player.str, 1, $.player.maxstr)
-			$.online.str = $.PC.ability($.online.str, $.dice(10))
+	//	Potion of Charm
+		case 2:
+			if (($.player.cha = $.PC.ability($.player.cha, 1, $.player.maxcha, 1)) > $.player.maxcha)
+				$.player.maxcha = $.PC.ability($.player.maxcha, 1, $.player.maxcha, 1)
+			$.online.cha = $.PC.ability($.online.cha, $.dice(10), $.player.maxcha, m)
 			break
 
 	//	Vial of Stupidity
-		case 6:
+		case 3:
 			$.player.int = $.PC.ability($.player.int, -1)
 			$.online.int = $.PC.ability($.online.int, -$.dice(10))
 			break
 
-	//	Potion of Wisdom
-		case 7:
-			$.player.int = $.PC.ability($.player.int, 1, $.player.maxint)
-			$.online.int = $.PC.ability($.online.int, $.dice(10))
+	//	Potion of Agility
+		case 4:
+			if (($.player.dex = $.PC.ability($.player.dex, 1, $.player.maxdex, 1)) > $.player.maxdex)
+				$.player.maxdex = $.PC.ability($.player.maxdex, 1, $.player.maxdex, 1)
+			$.online.dex = $.PC.ability($.online.dex, $.dice(10), $.player.maxdex, m)
 			break
 
 	//	Vial of Clumsiness
-		case 8:
+		case 5:
 			$.player.dex = $.PC.ability($.player.dex, -1)
 			$.online.dex = $.PC.ability($.online.dex, -$.dice(10))
 			break
 
-	//	Potion of Agility
-		case 9:
-			$.player.dex = $.PC.ability($.player.dex, 1, $.player.maxdex)
-			$.online.dex = $.PC.ability($.online.dex, $.dice(10))
+	//	Potion of Wisdom
+		case 6:
+			if (($.player.int = $.PC.ability($.player.int, 1, $.player.maxint, 1)) > $.player.maxint)
+				$.player.maxint = $.PC.ability($.player.maxint, 1, $.player.maxint, 1)
+			$.online.int = $.PC.ability($.online.int, $.dice(10), $.player.maxint, m)
 			break
 
 	//	Vile Vial
-		case 10:
+		case 7:
 			$.player.cha = $.PC.ability($.player.cha, -1)
 			$.online.cha = $.PC.ability($.online.cha, -$.dice(10))
 			break
 
-	//	Potion of Charm
+	//	Potion of Stamina
+		case 8:
+			if (($.player.str = $.PC.ability($.player.str, 1, $.player.maxstr, 1)) > $.player.maxstr)
+				$.player.maxstr = $.PC.ability($.player.maxstr, 1, $.player.maxstr, 1)
+			$.online.str = $.PC.ability($.online.str, $.dice(10), $.player.maxstr, m)
+			break
+
+	//	Vial of Slaad Secretions
+		case 9:
+			$.sound('hurt')
+			if (($.online.hp -= $.dice($.player.hp / 2)) < 1) {
+				$.online.hp = 0
+				$.online.sp = 0
+				$.reason = `quaffed${$.an(potion[v])}`
+			}
+			break
+
+	//	Potion of Mana
+		case 10:
+			$.sound('shimmer')
+			$.online.sp += $.dice($.player.sp - $.online.sp)
+			break
+
+	//	Flask of Fire Water
 		case 11:
-			$.player.cha = $.PC.ability($.player.cha, 1, $.player.maxcha)
-			$.online.cha = $.PC.ability($.online.cha, $.dice(10))
+			if (($.online.sp -= $.dice($.online.sp / 2)) < 1)
+				$.online.sp = 0
+			break
+
+	//	Elixir of Restoration
+		case 12:
+			$.music('elixir')
+			$.online.hp = $.player.hp
+			$.online.sp = $.player.sp
+			$.online.str = $.PC.ability($.player.str, 0, $.player.maxstr, m)
+			$.online.int = $.PC.ability($.player.int, 0, $.player.maxint, m)
+			$.online.dex = $.PC.ability($.player.dex, 0, $.player.maxdex, m)
+			$.online.cha = $.PC.ability($.player.cha, 0, $.player.maxcha, m)
 			break
 
 	//	Vial of Crack
-		case 12:
+		case 13:
 			$.music('crack')
-			$.player.maxstr = $.PC.ability($.player.maxstr, $.player.maxstr > 80 ? -$.dice(3) : -1)
-			$.player.maxint = $.PC.ability($.player.maxint, $.player.maxint > 80 ? -$.dice(3) : -1)
-			$.player.maxdex = $.PC.ability($.player.maxdex, $.player.maxdex > 80 ? -$.dice(3) : -1)
-			$.player.maxcha = $.PC.ability($.player.maxcha, $.player.maxcha > 80 ? -$.dice(3) : -1)
+			$.player.maxstr = $.PC.ability($.player.maxstr, $.player.maxstr > 80 ? -2 : -1)
+			$.player.maxint = $.PC.ability($.player.maxint, $.player.maxint > 80 ? -2 : -1)
+			$.player.maxdex = $.PC.ability($.player.maxdex, $.player.maxdex > 80 ? -2 : -1)
+			$.player.maxcha = $.PC.ability($.player.maxcha, $.player.maxcha > 80 ? -2 : -1)
 			$.player.str = $.PC.ability($.player.str, $.player.str > 60 ? -$.dice(3) - 2 : -2)
 			$.player.int = $.PC.ability($.player.int, $.player.int > 60 ? -$.dice(3) - 2 : -2)
 			$.player.dex = $.PC.ability($.player.dex, $.player.dex > 60 ? -$.dice(3) - 2 : -2)
@@ -2402,35 +2429,28 @@ function quaff(v: number, it = true) {
 			break
 
 	//	Potion of Augment
-		case 13:
+		case 14:
 			$.sound('power', 6)
-			$.player.maxstr = $.PC.ability($.player.maxstr, $.player.maxstr < 95 ? $.dice(3) : 1)
-			$.player.maxint = $.PC.ability($.player.maxint, $.player.maxint < 95 ? $.dice(3) : 1)
-			$.player.maxdex = $.PC.ability($.player.maxdex, $.player.maxdex < 95 ? $.dice(3) : 1)
-			$.player.maxcha = $.PC.ability($.player.maxcha, $.player.maxcha < 95 ? $.dice(3) : 1)
+			$.player.maxstr = $.PC.ability($.player.maxstr, $.player.maxstr < 95 ? 2 : 1)
+			$.player.maxint = $.PC.ability($.player.maxint, $.player.maxint < 95 ? 2 : 1)
+			$.player.maxdex = $.PC.ability($.player.maxdex, $.player.maxdex < 95 ? 2 : 1)
+			$.player.maxcha = $.PC.ability($.player.maxcha, $.player.maxcha < 95 ? 2 : 1)
 			$.player.str = $.PC.ability($.player.str, $.dice(3) + 2, $.player.maxstr)
 			$.player.int = $.PC.ability($.player.int, $.dice(3) + 2, $.player.maxint)
 			$.player.dex = $.PC.ability($.player.dex, $.dice(3) + 2, $.player.maxdex)
 			$.player.cha = $.PC.ability($.player.cha, $.dice(3) + 2, $.player.maxcha)
-			$.online.str = $.PC.ability($.online.str, $.dice(100 - $.online.str))
-			$.online.int = $.PC.ability($.online.int, $.dice(100 - $.online.int))
-			$.online.dex = $.PC.ability($.online.dex, $.dice(100 - $.online.dex))
-			$.online.cha = $.PC.ability($.online.cha, $.dice(100 - $.online.cha))
+			$.online.str = $.PC.ability($.online.str, $.dice(100 - $.online.str), $.player.maxstr, m)
+			$.online.int = $.PC.ability($.online.int, $.dice(100 - $.online.int), $.player.maxint, m)
+			$.online.dex = $.PC.ability($.online.dex, $.dice(100 - $.online.dex), $.player.maxdex, m)
+			$.online.cha = $.PC.ability($.online.cha, $.dice(100 - $.online.cha), $.player.maxcha, m)
 			break
 
 	//	Beaker of Death
-		case 14:
+		case 15:
 			$.sound('killed', 12)
 			$.online.hp = 0
 			$.online.sp = 0
 			$.reason = `quaffed${$.an(potion[v])}`
-			break
-
-	//	Elixir of Restoration
-		case 15:
-			$.music('elixir')
-			$.online.hp = $.player.hp
-			$.online.sp = $.player.sp
 			break
 		}
 	}
