@@ -267,6 +267,12 @@
             "toStr":1, "toInt":2, "toDex":2, "toCha":1,
             "maxStr":92, "maxInt":88, "maxDex":92, "maxCha":80
         },
+        "Psionic": {
+            "melee":0, "backstab":0, "poison":1, "magic":4, "steal":2,
+            "baseStr":40, "baseInt":60, "baseDex":40, "baseCha":60,
+            "toStr":1, "toInt":2, "toDex":1, "toCha":1,
+            "maxStr":82, "maxInt":96, "maxDex":90, "maxCha":90
+        },
         "Undead": {
             "melee":4, "backstab":0, "poison":1, "magic":2, "steal":2,
             "baseStr":62, "baseInt":38, "baseDex":62, "baseCha":38,
