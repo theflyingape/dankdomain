@@ -35,7 +35,7 @@
 	"werewolf": { "pc":"Undead", "hit":"bite", "smash":"tear into", "spells":[ "Heal", "Teleport" ], "effect":"fadeIn" },
 	"owlbear": { "pc":"Beast", "hit":"bite", "smash":"tear into" },
 	"firetoad": { "pc":"Lizard", "hit":"claw", "smash":"burn", "poisons":[ 4,5,6,7 ], "effect":"rubberBand" },
-	"hell hound": { "pc":"Demon", "hit":"bite", "smash":"tear into", "effect":"tada" },
+	"hellhound": { "pc":"Demon", "hit":"bite", "smash":"tear into", "effect":"tada" },
 	"hook horror": { "pc":"Beast", "hit":"bite", "smash":"hook" },
 	"anhkheg": { "pc":"Lizard", "hit":"touch", "smash":"crawl all over", "poisons":[ 5,6,7,8 ], "effect":"rubberBand" },
 	"githyanki": { "pc":"Psionic", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"tada" },
