@@ -1,12 +1,11 @@
-[22;36mDate:[22;37m Mon 16-Apr-2018 8:00pm
+[22;36mDate:[22;37m Sat 13-Oct-2018 7:40am
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
 New announcements as missing features get implemented or tweaked:
 
- - offical web site: https://sites.google.com/view/dankdomain
+ - added Psionic class
  - updated terminal emulator
  - ANSI and graphic art updates
- - Cherry Bomb Slots installed
- - it is again possible to bump into another player in the Square
+ - offical web site: https://sites.google.com/view/dankdomain
 
 Happy hunting!
