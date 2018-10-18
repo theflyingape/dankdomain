@@ -1425,22 +1425,14 @@ function doSpoils() {
 					$.beep()
 					let m = $.player.blessed ? 10 : 0
 					m = $.player.cursed ? m - 10 : m
-					if (xvt.validator.isDefined(mon.pc.bonusStr)) {
-						$.player.str = $.PC.ability($.player.str, mon.pc.bonusStr, $.player.maxstr, 1)
-						$.online.str = $.PC.ability($.online.str, mon.pc.bonusStr, $.player.maxstr, m)
-					}
-					if (xvt.validator.isDefined(mon.pc.bonusInt)) {
-						$.player.int = $.PC.ability($.player.int, mon.pc.bonusInt, $.player.maxint, 1)
-						$.online.int = $.PC.ability($.online.int, mon.pc.bonusInt, $.player.maxint, m)
-					}
-					if (xvt.validator.isDefined(mon.pc.bonusDex)) {
-						$.player.dex = $.PC.ability($.player.dex, mon.pc.bonusDex, $.player.maxdex, 1)
-						$.online.dex = $.PC.ability($.online.dex, mon.pc.bonusDex, $.player.maxdex, m)
-					}
-					if (xvt.validator.isDefined(mon.pc.bonusCha)) {
-						$.player.cha = $.PC.ability($.player.cha, mon.pc.bonusCha, $.player.maxcha, 1)
-						$.online.cha = $.PC.ability($.online.cha, mon.pc.bonusCha, $.player.maxcha, m)
-					}
+					$.player.str = $.PC.ability($.player.str, mon.pc.bonusStr, $.player.maxstr, 1)
+					$.online.str = $.PC.ability($.online.str, mon.pc.bonusStr, $.player.maxstr, m)
+					$.player.int = $.PC.ability($.player.int, mon.pc.bonusInt, $.player.maxint, 1)
+					$.online.int = $.PC.ability($.online.int, mon.pc.bonusInt, $.player.maxint, m)
+					$.player.dex = $.PC.ability($.player.dex, mon.pc.bonusDex, $.player.maxdex, 1)
+					$.online.dex = $.PC.ability($.online.dex, mon.pc.bonusDex, $.player.maxdex, m)
+					$.player.cha = $.PC.ability($.player.cha, mon.pc.bonusCha, $.player.maxcha, 1)
+					$.online.cha = $.PC.ability($.online.cha, mon.pc.bonusCha, $.player.maxcha, m)
 				}
 			}
 			ROOM.monster.splice(n, 1)
