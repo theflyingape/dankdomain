@@ -1421,7 +1421,7 @@ function doSpoils() {
 			}
 			else {
 				//	defeated a significantly larger denizen, check for any added bonus(es)
-				if ($.jumped > 1 && ROOM.monster[n].user.xplevel > $.player.level) {
+				if ($.jumped > 2 && ROOM.monster[n].user.xplevel > $.player.level) {
 					$.beep()
 					let m = $.player.blessed ? 10 : 0
 					m = $.player.cursed ? m - 10 : m

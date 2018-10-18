@@ -79,6 +79,7 @@ function end() {
         else {
             $.news(`\tdefeated ${$.taxman.user.handle}`)
             $.wall(`defeated ${$.taxman.user.handle}`)
+            $.sound('shield', 16)
         }
         $.player.coward = false
     }
