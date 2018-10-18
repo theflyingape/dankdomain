@@ -4,7 +4,7 @@
 	"kobold": { "pc":"Beast", "hit":"hit", "smash":"smash" },
 	"hobgoblin": { "pc":"Lizard", "hit":"hit", "smash":"smash", "poisons":[ 1 ], "effect":"rubberBand" },
 	"bullywug": { "pc":"Lizard", "hit":"claw", "smash":"bite", "poisons":[ 1,2 ], "effect":"rubberBand" },
-	"xvart": { "pc":"Beast", "hit":"hit", "smash":"punch" },
+	"xvart": { "pc":"Beast", "hit":"hit", "smash":"punch",  "effect":"zoomInDown" },
 	"caveman": { "pc":"Ogre", "hit":"bash", "smash":"smash", "effect":"wobble" },
 	"norker": { "pc":"Beast", "hit":"hit", "smash":"smash" },
 	"skeleton": { "pc":"Undead", "weapon":"Spear", "effect":"fadeIn" },
