@@ -1425,19 +1425,19 @@ function doSpoils() {
 					$.beep()
 					let m = $.player.blessed ? 10 : 0
 					m = $.player.cursed ? m - 10 : m
-					if (mon.pc.bonusStr) {
+					if (xvt.validator.isDefined(mon.pc.bonusStr)) {
 						$.player.str = $.PC.ability($.player.str, mon.pc.bonusStr, $.player.maxstr, 1)
 						$.online.str = $.PC.ability($.online.str, mon.pc.bonusStr, $.player.maxstr, m)
 					}
-					if (mon.pc.bonusInt) {
+					if (xvt.validator.isDefined(mon.pc.bonusInt)) {
 						$.player.int = $.PC.ability($.player.int, mon.pc.bonusInt, $.player.maxint, 1)
 						$.online.int = $.PC.ability($.online.int, mon.pc.bonusInt, $.player.maxint, m)
 					}
-					if (mon.pc.bonusDex) {
+					if (xvt.validator.isDefined(mon.pc.bonusDex)) {
 						$.player.dex = $.PC.ability($.player.dex, mon.pc.bonusDex, $.player.maxdex, 1)
 						$.online.dex = $.PC.ability($.online.dex, mon.pc.bonusDex, $.player.maxdex, m)
 					}
-					if (mon.pc.bonusCha) {
+					if (xvt.validator.isDefined(mon.pc.bonusCha)) {
 						$.player.cha = $.PC.ability($.player.cha, mon.pc.bonusCha, $.player.maxcha, 1)
 						$.online.cha = $.PC.ability($.online.cha, mon.pc.bonusCha, $.player.maxcha, m)
 					}
