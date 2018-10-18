@@ -40,6 +40,7 @@ module Common
     export let brawl: number = 0
     export let dungeon: number = 0
     export let joust: number = 0
+    export let jumped: number = 0
     export let naval: number = 0
     export let party: number = 0
     export let realestate: number = 0
@@ -592,7 +593,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
         }
     }
 
-    let jumped = player.level - started
+    jumped = player.level - started
     rpc.user.xplevel = rpc.user.level
     award.hp = rpc.user.hp - award.hp
     award.sp = rpc.user.sp - award.sp

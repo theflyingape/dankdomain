@@ -17,9 +17,9 @@ module Battle
 
     let fini: Function
     let from: string
-    let gang: gang = {
-        name:'', members:[], handles:[], genders:[], melee:[], status:[], validated:[]
-            , win:0, loss:0, banner:0, trim:0, back:0, fore:0
+    let gang: gang = { name:'',
+        members:[], handles:[], genders:[], melee:[], status:[], validated:[],
+        win:0, loss:0, banner:0, trim:0, back:0, fore:0
     }
     let parties: [ active[], active[] ]
     let alive: number[]
@@ -42,9 +42,9 @@ function end() {
 
             xvt.out(`He picks up your ${$.barkeep.user.weapon} and triumphantly waves it around to\n`)
             xvt.out(`the cheering crowd.  He struts toward the mantelpiece to hang his new trophy.\n\n`)
-            $.sound('cheer', 40)
+            $.sound('winner', 32)
             xvt.out(xvt.bright, xvt.green, '"Drinks are on the house!"', xvt.reset, '\n')
-            $.sound('cheer', 30)
+            xvt.waste(2250)
         }
         else {
             $.music('barkeep')
@@ -1208,7 +1208,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     xvt.out(nme === $.online ? 'You' : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
                         , $.what(nme, ' teleport'))
                     if (nme !== $.online)
-                        nme.hp = -1
+                        nme.hp = -nme.hp
                     else
                         teleported = true
                 }

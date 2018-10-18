@@ -256,16 +256,20 @@ interface character {
     baseInt: number     //  20-80
     baseDex: number     //  20-80
     baseCha: number     //  20-80
-    toStr: number       //  0-2
-    toInt: number       //  0-2
-    toDex: number       //  0-2
-    toCha: number       //  0-2
+    toStr: number       //  0-4
+    toInt: number       //  0-4
+    toDex: number       //  0-4
+    toCha: number       //  0-4
     maxStr: number      //  baseStr-99
     maxInt: number      //  baseInt-99
     maxDex: number      //  baseDex-99
     maxCha: number      //  baseCha-99
     specialty?: string  //  meta
     description?: string[]
+    bonusStr?: number    //  0-2
+    bonusInt?: number    //  0-2
+    bonusDex?: number    //  0-2
+    bonusCha?: number    //  0-2
 }
 
 interface active {

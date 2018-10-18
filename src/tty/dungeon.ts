@@ -1409,13 +1409,39 @@ function doSpoils() {
 	//	remove any dead carcass, displace teleported creatures
 	for (let n = ROOM.monster.length - 1; n >= 0; n--)
 		if (ROOM.monster[n].hp < 1) {
+			let mon = <active>{ user:{id:''} }
+			Object.assign(mon, ROOM.monster[n])
+			//	teleported?
 			if (ROOM.monster[n].hp < 0) {
-				let mon = <active>{ user:{id:''} }
-				Object.assign(mon, ROOM.monster[n])
 				let y = $.dice(DL.rooms.length) - 1
 				let x = $.dice(DL.width) - 1
-				mon.hp = $.int(mon.user.hp / 8)
+				mon.hp = Math.abs(mon.hp) + $.int(mon.user.hp / ($.dice(5) + 5))
+				mon.sp += $.int(mon.user.sp / ($.dice(5) + 5))
 				DL.rooms[y][x].monster.push(mon)
+			}
+			else {
+				//	defeated a significantly larger denizen, check for any added bonus(es)
+				if ($.jumped > 1 && ROOM.monster[n].user.xplevel > $.player.level) {
+					$.beep()
+					let m = $.player.blessed ? 10 : 0
+					m = $.player.cursed ? m - 10 : m
+					if (mon.pc.bonusStr) {
+						$.player.str = $.PC.ability($.player.str, mon.pc.bonusStr, $.player.maxstr, 1)
+						$.online.str = $.PC.ability($.online.str, mon.pc.bonusStr, $.player.maxstr, m)
+					}
+					if (mon.pc.bonusInt) {
+						$.player.int = $.PC.ability($.player.int, mon.pc.bonusInt, $.player.maxint, 1)
+						$.online.int = $.PC.ability($.online.int, mon.pc.bonusInt, $.player.maxint, m)
+					}
+					if (mon.pc.bonusDex) {
+						$.player.dex = $.PC.ability($.player.dex, mon.pc.bonusDex, $.player.maxdex, 1)
+						$.online.dex = $.PC.ability($.online.dex, mon.pc.bonusDex, $.player.maxdex, m)
+					}
+					if (mon.pc.bonusCha) {
+						$.player.cha = $.PC.ability($.player.cha, mon.pc.bonusCha, $.player.maxcha, 1)
+						$.online.cha = $.PC.ability($.online.cha, mon.pc.bonusCha, $.player.maxcha, m)
+					}
+				}
 			}
 			ROOM.monster.splice(n, 1)
 			pause = true
@@ -2267,7 +2293,7 @@ function teleport() {
 	xvt.out(xvt.cyan, '\n\nTime Left: ', xvt.bright, xvt.white, min.toString(), xvt.normal, xvt.cyan, ' min.', xvt.reset)
 	if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry())
 	if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
-		xvt.out(xvt.faint, '\nThe feeling of in', xvt.normal, 'security', xvt.faint, ' overwhelms you.', xvt.reset)
+		xvt.out(xvt.faint, '\nThe feeling of in', xvt.uline, 'security', xvt.nouline, ' overwhelms you.', xvt.reset)
 
 	xvt.app.form = {
 		'wizard': { cb:() => {

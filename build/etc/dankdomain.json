@@ -247,37 +247,43 @@
             "melee":2, "backstab":1, "poison":0, "magic":2, "steal":1,
             "baseStr":63, "baseInt":44, "baseDex":63, "baseCha":30,
             "toStr":1, "toInt":1, "toDex":1, "toCha":2,
-            "maxStr":90, "maxInt":90, "maxDex":90, "maxCha":90
+            "maxStr":90, "maxInt":90, "maxDex":90, "maxCha":90,
+            "bonusCha":2
         },
         "Demon": {
             "melee":3, "backstab":1, "poison":1, "magic":1, "steal":2,
             "baseStr":65, "baseInt":50, "baseDex":65, "baseCha":20,
             "toStr":1, "toInt":1, "toDex":2, "toCha":1,
-            "maxStr":95, "maxInt":92, "maxDex":90, "maxCha":75
+            "maxStr":95, "maxInt":92, "maxDex":90, "maxCha":75,
+            "bonusInt":2, "bonusCha":1
         },
         "Dragon": {
             "melee":4, "backstab":0, "poison":0, "magic":3, "steal":4,
             "baseStr":45, "baseInt":45, "baseDex":55, "baseCha":55,
-            "toStr":2, "toInt":1, "toDex":1, "toCha":1,
-            "maxStr":99, "maxInt":90, "maxDex":88, "maxCha":85
+            "toStr":3, "toInt":1, "toDex":1, "toCha":1,
+            "maxStr":99, "maxInt":90, "maxDex":88, "maxCha":85,
+            "bonusStr":2, "bonusCha":1
         },
         "Lizard": {
             "melee":1, "backstab":1, "poison":3, "magic":1, "steal":3,
             "baseStr":50, "baseInt":50, "baseDex":50, "baseCha":50,
             "toStr":1, "toInt":2, "toDex":2, "toCha":1,
-            "maxStr":92, "maxInt":88, "maxDex":92, "maxCha":80
+            "maxStr":92, "maxInt":88, "maxDex":92, "maxCha":80,
+            "bonusDex":2, "bonusCha":1
         },
         "Psionic": {
-            "melee":0, "backstab":0, "poison":1, "magic":4, "steal":2,
+            "melee":1, "backstab":1, "poison":1, "magic":4, "steal":1,
             "baseStr":40, "baseInt":60, "baseDex":40, "baseCha":60,
-            "toStr":1, "toInt":2, "toDex":1, "toCha":1,
-            "maxStr":82, "maxInt":96, "maxDex":90, "maxCha":90
+            "toStr":1, "toInt":3, "toDex":1, "toCha":1,
+            "maxStr":82, "maxInt":96, "maxDex":90, "maxCha":90,
+            "bonusInt":2, "bonusCha":2
         },
         "Undead": {
             "melee":4, "backstab":0, "poison":1, "magic":2, "steal":2,
             "baseStr":62, "baseInt":38, "baseDex":62, "baseCha":38,
             "toStr":2, "toInt":1, "toDex":1, "toCha":1,
-            "maxStr":98, "maxInt":90, "maxDex":88, "maxCha":70
+            "maxStr":98, "maxInt":90, "maxDex":88, "maxCha":70,
+            "bonusStr":1, "bonusCha":1
         }
     },
 
