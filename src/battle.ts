@@ -29,6 +29,22 @@ module Battle
 
 
 function end() {
+    if (from === 'Naval') {
+        if ($.online.hp > 0) {
+            $.sound('naval' + parties[1][0].user.id === '_OLD' ? '_f' : '', 32)
+            let m = $.player.blessed ? 10 : 0
+            m = $.player.cursed ? m - 10 : m
+            $.player.str = $.PC.ability($.player.str, 1, $.player.maxstr, 1)
+            $.online.str = $.PC.ability($.online.str, 2, $.player.maxstr, m)
+            $.player.int = $.PC.ability($.player.int, 1, $.player.maxint, 1)
+            $.online.int = $.PC.ability($.online.int, 2, $.player.maxint, m)
+            $.player.dex = $.PC.ability($.player.dex, 1, $.player.maxdex, 1)
+            $.online.dex = $.PC.ability($.online.dex, 2, $.player.maxdex, m)
+            $.player.cha = $.PC.ability($.player.cha, 1, $.player.maxcha, 1)
+            $.online.cha = $.PC.ability($.online.cha, 2, $.player.maxcha, m)
+        }
+    }
+
     if (from === 'Tavern') {
         if ($.online.hp < 1) {
             $.barkeep.user.weapon = $.player.weapon
@@ -226,22 +242,23 @@ export function attack(retry = false) {
                 if (/R/i.test(xvt.entry)) {
                     if (from === 'Naval') {
                         xvt.out(xvt.bright, xvt.cyan, '"You cannot escape me, mortal."\n', xvt.reset)
+                        $.sound('crone', 12)
                         $.player.coward = true
                         $.saveUser($.player)
                         next()
                         return
                     }
                     if (from === 'Tavern') {
-                        $.sound('growl')
                         xvt.out(xvt.bright, xvt.green, 'You try to escape, but the crowd throws you back to witness the slaughter!\n', xvt.reset)
+                        $.sound('growl', 12)
                         $.player.coward = true
                         $.saveUser($.player)
                         next()
                         return
                     }
                     if (from === 'Taxman') {
-                        $.sound('thief2')
                         xvt.out(xvt.bright, xvt.blue, '"You can never escape the taxman!"\n', xvt.reset)
+                        $.sound('thief2', 12)
                         $.player.coward = true
                         $.saveUser($.player)
                         next()
