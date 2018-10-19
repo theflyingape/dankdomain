@@ -1264,15 +1264,19 @@ function doMove(): boolean {
 			xvt.restore()
 			refresh = true
 			xvt.out(xvt.magenta, 'You encounter a wizard in this room.\n\n')
-			if (!$.player.novice && $.dice(100 * $.player.wins + 100 * $.player.immortal + $.player.level + $.online.cha) == 1) {
+			if (!$.player.novice && $.dice($.player.wins + 1) == 1 && $.dice(100 * $.player.immortal + $.player.level + $.online.cha) == 1) {
 				xvt.waste(500)
 				xvt.out(xvt.bright, 'He curses you!\n', xvt.reset)
-				$.player.cursed = 'wiz'
+				if ($.player.blessed)
+					$.player.blessed = ''
+				else
+					$.player.cursed = 'wiz'
 				$.online.str = $.PC.ability($.online.str, -10, $.player.maxstr, -10)
 				$.online.int = $.PC.ability($.online.int, -10, $.player.maxint, -10)
 				$.online.dex = $.PC.ability($.online.dex, -10, $.player.maxdex, -10)
 				$.online.cha = $.PC.ability($.online.cha, -10, $.player.maxcha, -10)
 				$.online.altered = true
+				$.player.coward = false
 				pause = true
 			}
 			else if (!$.player.novice && $.dice($.player.level + $.online.cha) == 1) {
@@ -1440,7 +1444,7 @@ function doSpoils() {
 			}
 			else {
 				//	defeated a significantly larger denizen, check for any added bonus(es)
-				if ($.jumped > 2 && ROOM.monster[n].user.xplevel > $.player.level) {
+				if ($.jumped > $.int(deep / 3 + 2)) {
 					$.beep()
 					let m = $.player.blessed ? 10 : 0
 					m = $.player.cursed ? m - 10 : m
@@ -2308,8 +2312,23 @@ function teleport() {
 
 	xvt.app.form = {
 		'wizard': { cb:() => {
-			$.sound('teleport')
+			if ($.dice(10 * deep + Z + 5 * $.player.magic + $.online.int + $.online.cha) == 1) {
+				xvt.out(' ... \"Huh?\"\n')
+				xvt.waste(500)
+				$.sound('lose', 11)
+				$.music('crack')
+				xvt.waste(1111)
+				let pops = 'UDOR'[$.dice(4) - 1]
+				if (xvt.entry.toUpperCase() == pops) {
+					deep = $.dice(10) - 1
+					Z = $.dice(20) - 10
+					Z = Z < 0 ? 0 : Z > 99 ? 99 : Z
+				}
+				else
+					xvt.entry = pops
+			}
 			xvt.out('\n')
+			$.sound('teleport')
 			switch (xvt.entry.toUpperCase()) {
 				case 'D':
 					if (Z < 99) {
