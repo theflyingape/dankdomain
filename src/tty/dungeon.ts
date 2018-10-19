@@ -1264,7 +1264,7 @@ function doMove(): boolean {
 			xvt.restore()
 			refresh = true
 			xvt.out(xvt.magenta, 'You encounter a wizard in this room.\n\n')
-			if (!$.player.novice && $.dice($.player.wins + 1) == 1 && $.dice(100 * $.player.immortal + $.player.level + $.online.cha) == 1) {
+			if (!$.player.novice && $.dice($.player.wins + 1) == 1 && $.dice(20 * $.player.immortal + $.player.level + Z + $.online.cha) == 1) {
 				xvt.waste(500)
 				xvt.out(xvt.bright, 'He curses you!\n', xvt.reset)
 				if ($.player.blessed)
@@ -1279,9 +1279,9 @@ function doMove(): boolean {
 				$.player.coward = false
 				pause = true
 			}
-			else if (!$.player.novice && $.dice($.player.level + $.online.cha) == 1) {
+			else if (!$.player.novice && $.dice(Z + $.online.cha) == 1) {
 				xvt.waste(500)
-				xvt.out(xvt.faint, 'He is soundly sleeping.\n', xvt.reset)
+				xvt.out(xvt.faint, 'He is asleep.\n', xvt.reset)
 				xvt.out('Try back again later.\n')
 				pause = true
 			}
@@ -2314,21 +2314,27 @@ function teleport() {
 		'wizard': { cb:() => {
 			if ($.dice(10 * deep + Z + 5 * $.player.magic + $.online.int + $.online.cha) == 1) {
 				xvt.out(' ... \"Huh?\"\n')
-				xvt.waste(500)
-				$.sound('lose', 11)
+				$.sound('miss', 6)
+				$.sound('lose', 9)
 				$.music('crack')
-				xvt.waste(1111)
+				xvt.waste(1200)
 				let pops = 'UDOR'[$.dice(4) - 1]
 				if (xvt.entry.toUpperCase() == pops) {
+					$.sound('oops', 6)
 					deep = $.dice(10) - 1
 					Z = $.dice(20) - 10
 					Z = Z < 0 ? 0 : Z > 99 ? 99 : Z
+					$.sound('portal')
 				}
-				else
+				else {
 					xvt.entry = pops
+					$.sound('teleport')
+				}
 			}
-			xvt.out('\n')
-			$.sound('teleport')
+			else {
+				xvt.out('\n')
+				$.sound('teleport')
+			}
 			switch (xvt.entry.toUpperCase()) {
 				case 'D':
 					if (Z < 99) {
