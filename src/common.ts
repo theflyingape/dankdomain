@@ -537,6 +537,7 @@ export function activate(one: active, keep = false, confused = false): boolean {
 
 export function checkXP(rpc: active, cb: Function): boolean {
 
+    jumped = 0
     if (!Access.name[rpc.user.access].roleplay) return false
     if (rpc.user.level >= sysop.level) {
         riddle()
