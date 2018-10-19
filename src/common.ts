@@ -348,7 +348,7 @@ export class Character {
             let who: user = { id:profile.user.blessed }
             if (!loadUser(who)) {
                 if (profile.user.blessed === 'well')
-                    who.handle = 'wishing'
+                    who.handle = 'a wishing well'
                 else
                     who.handle = profile.user.blessed
             }
@@ -360,8 +360,12 @@ export class Character {
 
         if (profile.user.cursed) {
             let who: user = { id:profile.user.cursed }
-            if (!loadUser(who))
-                who.handle = profile.user.cursed
+            if (!loadUser(who)) {
+                if (profile.user.cursed === 'wiz')
+                    who.handle = 'the old wizard'
+                else
+                    who.handle = profile.user.cursed
+            }
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.black)
             xvt.out(' - Cursed by ', xvt.white
                 , sprintf('%-40s', who.handle))

@@ -1264,8 +1264,27 @@ function doMove(): boolean {
 			xvt.restore()
 			refresh = true
 			xvt.out(xvt.magenta, 'You encounter a wizard in this room.\n\n')
-			teleport()
-			return false
+			if (!$.player.novice && $.dice(100 * $.player.wins + 100 * $.player.immortal + $.player.level + $.online.cha) == 1) {
+				xvt.waste(500)
+				xvt.out(xvt.bright, 'He curses you!\n', xvt.reset)
+				$.player.cursed = 'wiz'
+				$.online.str = $.PC.ability($.online.str, -10, $.player.maxstr, -10)
+				$.online.int = $.PC.ability($.online.int, -10, $.player.maxint, -10)
+				$.online.dex = $.PC.ability($.online.dex, -10, $.player.maxdex, -10)
+				$.online.cha = $.PC.ability($.online.cha, -10, $.player.maxcha, -10)
+				$.online.altered = true
+				pause = true
+			}
+			else if (!$.player.novice && $.dice($.player.level + $.online.cha) == 1) {
+				xvt.waste(500)
+				xvt.out(xvt.faint, 'He is soundly sleeping.\n', xvt.reset)
+				xvt.out('Try back again later.\n')
+				pause = true
+			}
+			else {
+				teleport()
+				return false
+			}
 	}
 
 	//	items?
