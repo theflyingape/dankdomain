@@ -69,8 +69,8 @@ function end() {
                 WHERE id='${$.barkeep.user.id}'`)
             $.news(`\tdefeated ${$.barkeep.user.handle}`)
             $.wall(`defeated ${$.barkeep.user.handle}`)
-            $.player.cha = $.PC.ability($.player.cha, -20)
-            $.online.cha = $.PC.ability($.online.cha, -25)
+            if ($.player.cha > 49) $.player.cha = $.PC.ability($.player.cha, -20)
+            if ($.online.cha > 49) $.online.cha = $.PC.ability($.online.cha, -25)
         }
         $.player.coward = false
     }

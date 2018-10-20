@@ -1,10 +1,10 @@
-[22;36mDate:[22;37m Sat 20-Oct-2018 6:40am
+[22;36mDate:[22;37m Fri 19-Oct-2018 6:40am
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
 New announcements as missing features get implemented or tweaked:
 
  - a blessed/cursed state does not carry over into player's new day
- - added Psionic class
+ - added Psionic class: 8 dungeon monsters updated
  - updated terminal emulator
  - ANSI and graphic art updates
 
