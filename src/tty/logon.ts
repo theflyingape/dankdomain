@@ -63,8 +63,7 @@ function guards(): boolean {
             xvt.app.form = {
                 'forgot': { cb:() => {
                     if (/Y/i.test(xvt.entry)) {
-                        if ($.player.lastdate != $.now().date)
-                            $.player.today = 0
+                        if ($.player.lastdate != $.now().date) $.player.today = 0
                         $.player.lastdate = $.now().date
                         $.player.lasttime = $.now().time
                         $.run(`UPDATE Players SET lastdate=${$.player.lastdate},lasttime=${$.player.lasttime},today=${$.player.today} WHERE id='${$.player.id}'`)
@@ -210,8 +209,20 @@ function password() {
         }
     }
 
-    if ($.player.lastdate != $.now().date)
+    if ($.player.lastdate != $.now().date) {
         $.player.today = 0
+        if ($.player.blessed) {
+            $.player.blessed = ''
+            xvt.out(xvt.bright, xvt.yellow, '\nYour shining aura leaves you.\n', xvt.reset)
+            xvt.waste(2000)
+        }
+        if ($.player.cursed) {
+            $.player.coward = false
+            $.player.cursed = ''
+            xvt.out(xvt.bright, xvt.black, '\nA dark cloud has been lifted.\n', xvt.reset)
+            xvt.waste(2000)
+        }
+    }
 
     if ($.player.today > $.access.calls) {
         $.beep()

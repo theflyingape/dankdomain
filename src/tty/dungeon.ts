@@ -1264,17 +1264,20 @@ function doMove(): boolean {
 			xvt.restore()
 			refresh = true
 			xvt.out(xvt.magenta, 'You encounter a wizard in this room.\n\n')
-			if (!$.player.novice && $.dice($.player.wins + 1) == 1 && $.dice(20 * $.player.immortal + $.player.level + Z + $.online.cha) == 1) {
+			if (!$.player.cursed && !$.player.novice && $.dice($.player.wins + 1) == 1 && $.dice((Z > $.player.level ? Z : 1) + 20 * $.player.immortal + $.player.level + $.online.cha) == 1) {
 				xvt.waste(500)
+				$.sound('oops', 6)
 				xvt.out(xvt.bright, 'He curses you!\n', xvt.reset)
+				$.online.str = $.PC.ability($.online.str, -10)
+				$.online.int = $.PC.ability($.online.int, -10)
+				$.online.dex = $.PC.ability($.online.dex, -10)
+				$.online.cha = $.PC.ability($.online.cha, -10)
 				if ($.player.blessed)
 					$.player.blessed = ''
-				else
+				else {
 					$.player.cursed = 'wiz'
-				$.online.str = $.PC.ability($.online.str, -10, $.player.maxstr, -10)
-				$.online.int = $.PC.ability($.online.int, -10, $.player.maxint, -10)
-				$.online.dex = $.PC.ability($.online.dex, -10, $.player.maxdex, -10)
-				$.online.cha = $.PC.ability($.online.cha, -10, $.player.maxcha, -10)
+					$.news(`\tcursed by a wizard`)
+				}
 				$.online.altered = true
 				$.player.coward = false
 				pause = true

@@ -1,11 +1,11 @@
-[22;36mDate:[22;37m Sat 13-Oct-2018 7:40am
+[22;36mDate:[22;37m Sat 20-Oct-2018 6:40am
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
 New announcements as missing features get implemented or tweaked:
 
+ - a blessed/cursed state does not carry over into player's new day
  - added Psionic class
  - updated terminal emulator
  - ANSI and graphic art updates
- - offical web site: https://sites.google.com/view/dankdomain
 
 Happy hunting!
