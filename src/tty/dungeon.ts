@@ -1248,7 +1248,7 @@ function doMove(): boolean {
 							$.sound('teleport', 8)
 						}
 						else {
-							xvt.out(xvt.yellow, '"I will rest.  Go in peace."\n', xvt.reset)
+							xvt.out(xvt.yellow, '"I need to rest.  Go in peace."\n', xvt.reset)
 							looked = true
 						}
 					}

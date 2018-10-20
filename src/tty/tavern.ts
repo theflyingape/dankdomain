@@ -109,12 +109,13 @@ function choice() {
                         'Dungeon maps find more in the hands of the lucky',
                         'Higher intellect calculates opponent\'s hit points more accurately',
                         'At least 50 Intellect points are needed to recall where you\'ve been walking',
+                        'Resurrect works on ALL dead folk, but not creatures',
                         'Take over as your gang\'s leader in the Arena',
-                        'Deeper dungeon portals is a key to victory',
                         'Blessed/Cursed does not stick on your new day here',
                         'Killing the town\'s barkeep will lose you favor with its folks',
+                        'Deeper dungeon portals is a key to victory',
                         'I\'ll have more hints tomorrow.  Maybe'
-                    ][tip % 20])
+                    ][tip % 21])
                     xvt.out('."\n')
                     xvt.waste(1000)
                     menu()
