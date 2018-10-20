@@ -1275,8 +1275,8 @@ function doMove(): boolean {
 				if ($.player.blessed)
 					$.player.blessed = ''
 				else {
-					$.player.cursed = 'wiz'
-					$.news(`\tcursed by a wizard`)
+					$.player.cursed = 'wiz!'
+					$.news(`\tcursed by a wizard!`)
 				}
 				$.online.altered = true
 				$.player.coward = false
