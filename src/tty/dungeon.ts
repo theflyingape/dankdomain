@@ -668,18 +668,18 @@ function doMove(): boolean {
 			xvt.out(xvt.bright, xvt.yellow, 'What do you wish to do?\n', xvt.reset)
 			xvt.waste(600)
 
-			let well = 'BT'
+			let well = 'BCDFORT'
 			xvt.out($.bracket('B'), 'Bless yourself')
+			xvt.out($.bracket('C'), 'Curse another player')
+			xvt.out($.bracket('D'), 'Destroy dank dungeon')
+			xvt.out($.bracket('F'), 'Fix all your damage')
+			xvt.out($.bracket('O'), 'Teleport all the way out')
+			xvt.out($.bracket('R'), 'Resurrect all the dead players')
 			xvt.out($.bracket('T'), 'Teleport to another level')
-			if (deep > 0) { xvt.out($.bracket('D'), 'Destroy dank dungeon'); well += 'D' }
-			if (deep > 1) { xvt.out($.bracket('O'), 'Teleport all the way out'); well += 'O' }
-			if (deep > 2) { xvt.out($.bracket('R'), 'Resurrect all the dead players'); well += 'R' }
-			if (deep > 3) { xvt.out($.bracket('F'), 'Fix all your damage'); well += 'F' }
-			if (deep > 4) { xvt.out($.bracket('L'), 'Loot another player\'s money'); well += 'L' }
-			if (deep > 5) { xvt.out($.bracket('G'), 'Grant another call'); well += 'G' }
-			if (deep > 6) { xvt.out($.bracket('C'), 'Curse another player'); well += 'C' }
-			if (deep > 7) { xvt.out($.bracket('K'), 'Key hint(s)'); well += 'K' }
-			if (deep > 8) { xvt.out($.bracket('M'), 'Magical spell(s) or device(s)'); well += 'M' }
+			if (deep > 1) { xvt.out($.bracket('L'), 'Loot another player\'s money'); well += 'L' }
+			if (deep > 3) { xvt.out($.bracket('G'), 'Grant another call'); well += 'G' }
+			if (deep > 5) { xvt.out($.bracket('K'), 'Key hint(s)'); well += 'K' }
+			if (deep > 7) { xvt.out($.bracket('M'), 'Magical spell(s) or device(s)'); well += 'M' }
 			xvt.out('\n')
 
 			$.action('well')
