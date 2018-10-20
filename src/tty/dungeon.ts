@@ -111,7 +111,7 @@ export function menu(suppress = false) {
 			pause = true
 			return
 		}
-		else if ($.jumped > 9) skillkill = true
+		else if ($.jumped > (19 - deep)) skillkill = true
 	}
 
 	if ($.online.altered) $.saveUser($.player)
@@ -717,9 +717,9 @@ function doMove(): boolean {
 						break
 
 					case 'T':
-						let start = $.int(Z * 2 / 3 - $.dice(deep))
+						let start = $.int(Z - $.dice(deep))
 						if (start < 1) start = 1
-						let end = $.int(Z * 3 / 2 - $.dice(deep))
+						let end = $.int(Z + $.dice(deep) + $.dice(Z) + $.dice(Z))
 						if (end > 100) end = 100
 						$.action('list')
 						xvt.app.form = {
