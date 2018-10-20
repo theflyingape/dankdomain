@@ -31,16 +31,20 @@ module Battle
 function end() {
     if (from === 'Naval') {
         if ($.online.hp > 0) {
-            $.sound('naval' + parties[1][0].user.id === '_OLD' ? '_f' : '', 32)
+            $.sound('naval' + (parties[1][0].user.id === '_OLD' ? '_f' : ''), 32)
             let m = $.player.blessed ? 10 : 0
             m = $.player.cursed ? m - 10 : m
-            $.player.str = $.PC.ability($.player.str, 1, $.player.maxstr, 1)
+            $.player.maxstr = $.PC.ability($.player.maxstr, 1, 99)
+            $.player.str = $.PC.ability($.player.str, 1, $.player.maxstr)
             $.online.str = $.PC.ability($.online.str, 2, $.player.maxstr, m)
-            $.player.int = $.PC.ability($.player.int, 1, $.player.maxint, 1)
+            $.player.maxint = $.PC.ability($.player.maxint, 1, 99)
+            $.player.int = $.PC.ability($.player.int, 1, $.player.maxint)
             $.online.int = $.PC.ability($.online.int, 2, $.player.maxint, m)
-            $.player.dex = $.PC.ability($.player.dex, 1, $.player.maxdex, 1)
+            $.player.maxdex = $.PC.ability($.player.maxdex, 1, 99)
+            $.player.dex = $.PC.ability($.player.dex, 1, $.player.maxdex)
             $.online.dex = $.PC.ability($.online.dex, 2, $.player.maxdex, m)
-            $.player.cha = $.PC.ability($.player.cha, 1, $.player.maxcha, 1)
+            $.player.maxcha = $.PC.ability($.player.maxcha, 1, 99)
+            $.player.cha = $.PC.ability($.player.cha, 1, $.player.maxcha)
             $.online.cha = $.PC.ability($.online.cha, 2, $.player.maxcha, m)
         }
     }

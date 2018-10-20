@@ -737,7 +737,7 @@ function doMove(): boolean {
 								Z = i - 1
 								generateLevel()
 								menu()
-							}, prompt:`Level (${start}-${end}): `, cancel:`${Z}`, enter:`${end}`, min:1, max:3, timeout:15 }
+							}, prompt:`Level (${start}-${end}): `, cancel:`${Z}`, enter:`${end}`, min:1, max:3, timeout:20 }
 						}
 						xvt.app.focus = 'level'
 						return
@@ -973,10 +973,11 @@ function doMove(): boolean {
 								$.online.cha = $.PC.ability($.online.cha, 10, $.player.maxcha)
 							}
 							else {
-								$.player.maxstr = $.PC.ability($.player.maxstr, 1)
-								$.player.maxint = $.PC.ability($.player.maxint, 1)
-								$.player.maxdex = $.PC.ability($.player.maxdex, 1)
-								$.player.maxcha = $.PC.ability($.player.maxcha, 1)
+								$.player.maxstr = $.PC.ability($.player.maxstr, 1, 99)
+								$.player.maxstr = $.PC.ability($.player.maxstr, 1, 99)
+								$.player.maxint = $.PC.ability($.player.maxint, 1, 99)
+								$.player.maxdex = $.PC.ability($.player.maxdex, 1, 99)
+								$.player.maxcha = $.PC.ability($.player.maxcha, 1, 99)
 								if (($.player.str = $.PC.ability($.player.str, 10, $.player.maxstr)) > $.online.str)
 									$.online.str = $.player.str
 								if (($.player.int = $.PC.ability($.player.int, 10, $.player.maxint)) > $.online.int)
@@ -990,10 +991,10 @@ function doMove(): boolean {
 						case 1:
 							if ($.player.blessed) {
 								$.player.blessed = ''
-								$.online.str = $.PC.ability($.online.str, -10, $.player.maxstr)
-								$.online.int = $.PC.ability($.online.int, -10, $.player.maxint)
-								$.online.dex = $.PC.ability($.online.dex, -10, $.player.maxdex)
-								$.online.cha = $.PC.ability($.online.cha, -10, $.player.maxcha)
+								$.online.str = $.PC.ability($.online.str, -10)
+								$.online.int = $.PC.ability($.online.int, -10)
+								$.online.dex = $.PC.ability($.online.dex, -10)
+								$.online.cha = $.PC.ability($.online.cha, -10)
 							}
 							else {
 								$.player.maxstr--
@@ -1493,15 +1494,19 @@ function doSpoils() {
 				$.activate(mon)
 				for (let i = 0; i < $.dice(3); i++) {
 					let avenger = <active>{ user:{id:''} }
-					Object.assign(avenger, mon)
+					Object.assign(avenger.user, mon.user)
 					avenger.user.pc = $.PC.random('monster')
-					avenger.user.handle = `${mon.user.handle} avenger`
+					avenger.user.handle += ' avenger'
 					$.reroll(avenger.user, avenger.user.pc, $.int(avenger.user.level / 2))
+					for (let magic in ROOM.monster[n].monster.spells)
+						$.Magic.add(avenger.user.spells, ROOM.monster[n].monster.spells[magic])
+					for (let poison in ROOM.monster[n].monster.poisons)
+						$.Poison.add(avenger.user.poisons, ROOM.monster[n].monster.poisons[poison])
 					$.activate(avenger)
-					avenger.str = 100
-					avenger.int = 100
-					avenger.dex = 100
-					avenger.cha = 100
+					avenger.str = 99
+					avenger.int = 99
+					avenger.dex = 99
+					avenger.cha = 99
 					ROOM.monster.push(avenger)
 				}
 			}
@@ -2445,8 +2450,9 @@ function teleport() {
 
 function quaff(v: number, it = true) {
 	let m = $.player.blessed ? 10 : 0
-    m = $.player.cursed ? m - 10 : m
+	m = $.player.cursed ? m - 10 : m
 	xvt.out('It was', xvt.bright, v % 2 ? xvt.red : xvt.green, $.an(potion[v]), xvt.reset, '.\n')
+	if (!$.access.sysop && !(v % 2)) $.news(`\t${it ? 'quaffed' : 'tossed'}${$.an(potion[v])}`)
 	if (it) {
 		$.sound('quaff', 6)
 		switch (v) {
