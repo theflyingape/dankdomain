@@ -209,20 +209,8 @@ function password() {
         }
     }
 
-    if ($.player.lastdate != $.now().date) {
+    if ($.player.lastdate != $.now().date)
         $.player.today = 0
-        if ($.player.blessed) {
-            $.player.blessed = ''
-            xvt.out(xvt.bright, xvt.yellow, '\nYour shining aura leaves you.\n', xvt.reset)
-            xvt.waste(2000)
-        }
-        if ($.player.cursed) {
-            $.player.coward = false
-            $.player.cursed = ''
-            xvt.out(xvt.bright, xvt.black, '\nA dark cloud has been lifted.\n', xvt.reset)
-            xvt.waste(2000)
-        }
-    }
 
     if ($.player.today > $.access.calls) {
         $.beep()
@@ -344,6 +332,20 @@ function welcome() {
         }
         catch(err) {
             xvt.out('not available (', err, ')\n')
+        }
+
+        if ($.player.today < 2) {
+            if ($.player.blessed) {
+                $.player.blessed = ''
+                xvt.out(xvt.bright, xvt.yellow, '\nYour shining aura left you.', xvt.reset)
+                $.activate($.online)
+            }
+            if ($.player.cursed) {
+                $.player.coward = false
+                $.player.cursed = ''
+                xvt.out(xvt.bright, xvt.black, '\nThe dark cloud has left you.', xvt.reset)
+                $.activate($.online)
+            }
         }
 
         if (2 * $.player.jw < $.player.jl) {

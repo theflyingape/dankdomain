@@ -495,6 +495,7 @@ export class coins {
 
 export function activate(one: active, keep = false, confused = false): boolean {
     one.adept = one.user.wins ? 1 : 0
+    one.pc = PC.card(one.user.pc)
     one.str = one.user.str
     one.int = one.user.int
     one.dex = one.user.dex
@@ -616,7 +617,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
     rpc.dex = PC.ability(rpc.dex, (award.dex < 1) ? jumped : award.dex, rpc.user.maxdex, i)
     rpc.cha = PC.ability(rpc.cha, (award.cha < 1) ? jumped : award.cha, rpc.user.maxcha, i)
 
-    if (rpc != online) return
+    if (rpc != online) return false
 
     sound('level')
     access = Access.name[player.access]

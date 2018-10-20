@@ -183,13 +183,13 @@
             ]
         },
         "Thief": {
-            "melee":1, "backstab":3, "poison":0, "magic":0, "steal":4, 
-            "baseStr":55, "baseInt":40, "baseDex":75, "baseCha":30, 
+            "melee":0, "backstab":4, "poison":0, "magic":0, "steal":4, 
+            "baseStr":63, "baseInt":35, "baseDex":67, "baseCha":35, 
             "toStr":1, "toInt":1, "toDex":4, "toCha":1, 
             "maxStr":90, "maxInt":90, "maxDex":99, "maxCha":80, 
             "specialty": "Master Steal/Backstab",
             "description": [
-                "The Thief class relies on its ability to stealth approach an enemy and",
+                "The Thief class relies on the ability to stealth approach an enemy and",
                 "deliver a powerful backstab.  Without it, the Thief is quite ordinary.",
                 "A thief picks pockets and robs other users most effectively.  Thieves",
                 "chief ability is Agility and therefore receive extra bonuses in Agility",

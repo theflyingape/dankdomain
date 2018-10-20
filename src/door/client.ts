@@ -90,7 +90,7 @@ document.getElementById('lurker-list').onchange = (ev) => {
 	document.getElementById('terminal').hidden = false
 	term = new Terminal({
 		bellStyle: 'none', cursorBlink: false, scrollback: 0,
-		fontFamily: 'IBM Plex Mono,Consolas,Lucida Console,monospace', fontSize: 20,
+		fontFamily: 'Consolas,Lucida Console,monospace', fontSize: 20,
 		fontWeight: '400', fontWeightBold: '500',
 		theme: {
 			foreground: '#a3a7af', background: '#23272f',

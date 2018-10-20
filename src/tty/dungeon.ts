@@ -13,7 +13,6 @@ import xvt = require('xvt')
 module Dungeon
 {
 	const iii = ['I','II','III','IV','V','VI','VII','VIII','IX','X']
-	const monsters: monster = require('../etc/dungeon.json')
 	const potion = [
 		'Potion of Cure Light Wounds',
 		'Vial of Weakness',
@@ -34,12 +33,14 @@ module Dungeon
 	]
 
 	let fini: Function
+	let monsters: monster = require('../etc/dungeon.json')
 	let party: active[]
 	let tl: number
 
 	let looked: boolean
 	let pause: boolean
 	let refresh: boolean
+	let skillkill: boolean
 
 	let paper: string[]
 	let dot = xvt.Empty[$.player.emulation]
@@ -81,6 +82,7 @@ module Dungeon
 export function DeepDank(start: number, cb: Function) {
 	looked = false
 	pause = false
+	skillkill = false
 
 	party = []
 	party.push($.online)
@@ -104,11 +106,14 @@ export function DeepDank(start: number, cb: Function) {
 //	position Hero and get user command
 export function menu(suppress = false) {
 //	check player status: level up, changed, dead
-	if ($.player.level + 1 < $.sysop.level) 
+	if ($.player.level + 1 < $.sysop.level) {
 		if ($.checkXP($.online, menu)) {
 			pause = true
 			return
 		}
+		else if ($.jumped > 9) skillkill = true
+	}
+
 	if ($.online.altered) $.saveUser($.player)
 	if ($.reason) xvt.hangup()
 
@@ -116,6 +121,14 @@ export function menu(suppress = false) {
 	if (!Battle.retreat && Battle.teleported) {
 		Battle.teleported = false
 		teleport()
+		return
+	}
+
+//	did player just do something eventful worthy of a big bonus?
+	if (skillkill) {
+        $.sound('winner')
+		skillkill = false
+		$.skillplus($.online, menu)
 		return
 	}
 
@@ -524,7 +537,7 @@ function doMove(): boolean {
 				if (ROOM.monster[n].user.xplevel > 0)
 					xvt.out('and it doesn\'t look friendly.\n')
 				else
-					xvt.out('and it looks harmless.\n')
+					xvt.out('and it looks harmless, for now.\n')
 				if (isNaN(+ROOM.monster[n].user.weapon)) xvt.out('\n', $.who(ROOM.monster[n], 'He'), $.Weapon.wearing(ROOM.monster[n]), '.\n')
 				if (isNaN(+ROOM.monster[n].user.armor)) xvt.out('\n', $.who(ROOM.monster[n], 'He'), $.Armor.wearing(ROOM.monster[n]), '.\n')
 			}
@@ -688,7 +701,7 @@ function doMove(): boolean {
 						if ($.player.cursed) {
 							$.player.coward = false
 							$.player.cursed = ''
-							xvt.out ('The ', xvt.faint, 'dark cloud', xvt.normal, ' is lifted.\n')
+							xvt.out(xvt.bright, xvt.black, '\nThe dark cloud has left you.', xvt.reset)
 							$.news(`\tlifted curse`)
 						}
 						else {
@@ -952,6 +965,7 @@ function doMove(): boolean {
 						switch (t % z) {
 						case 0:
 							if ($.player.cursed) {
+								xvt.out(xvt.bright, xvt.black, '\nThe dark cloud has left you.', xvt.reset)
 								$.player.cursed = ''
 								$.online.str = $.PC.ability($.online.str, 10, $.player.maxstr)
 								$.online.int = $.PC.ability($.online.int, 10, $.player.maxint)
@@ -1433,12 +1447,12 @@ function doSpoils() {
 	pause = false
 
 	//	remove any dead carcass, displace teleported creatures
-	for (let n = ROOM.monster.length - 1; n >= 0; n--)
+	for (let n = ROOM.monster.length - 1; n >= 0; n--) {
 		if (ROOM.monster[n].hp < 1) {
 			let mon = <active>{ user:{id:''} }
 			Object.assign(mon, ROOM.monster[n])
 			//	teleported?
-			if (ROOM.monster[n].hp < 0) {
+			if (mon.hp < 0) {
 				let y = $.dice(DL.rooms.length) - 1
 				let x = $.dice(DL.width) - 1
 				mon.hp = Math.abs(mon.hp) + $.int(mon.user.hp / ($.dice(5) + 5))
@@ -1446,24 +1460,68 @@ function doSpoils() {
 				DL.rooms[y][x].monster.push(mon)
 			}
 			else {
-				//	defeated a significantly larger denizen, check for any added bonus(es)
-				if ($.jumped > $.int(deep / 3 + 2)) {
-					$.beep()
+				//	defeated a significantly larger denizen on this level, check for any added bonus(es)
+				if ((mon.user.xplevel - Z) > 5) {
+					if ($.player.cursed) {
+						xvt.out(xvt.bright, xvt.black, '\nThe dark cloud has left you.\n', xvt.reset)
+						$.player.cursed = ''
+					}
 					let m = $.player.blessed ? 10 : 0
-					m = $.player.cursed ? m - 10 : m
-					$.player.str = $.PC.ability($.player.str, $.int(mon.pc.bonusStr), $.player.maxstr, 1)
-					$.online.str = $.PC.ability($.online.str, $.int(mon.pc.bonusStr), $.player.maxstr, m)
-					$.player.int = $.PC.ability($.player.int, $.int(mon.pc.bonusInt), $.player.maxint, 1)
-					$.online.int = $.PC.ability($.online.int, $.int(mon.pc.bonusInt), $.player.maxint, m)
-					$.player.dex = $.PC.ability($.player.dex, $.int(mon.pc.bonusDex), $.player.maxdex, 1)
-					$.online.dex = $.PC.ability($.online.dex, $.int(mon.pc.bonusDex), $.player.maxdex, m)
-					$.player.cha = $.PC.ability($.player.cha, $.int(mon.pc.bonusCha), $.player.maxcha, 1)
-					$.online.cha = $.PC.ability($.online.cha, $.int(mon.pc.bonusCha), $.player.maxcha, m)
+					$.player.maxstr = $.PC.ability($.player.maxstr, $.int(mon.pc.bonusStr), 99)
+					$.player.str = $.PC.ability($.player.str, $.int(mon.pc.bonusStr), $.player.maxstr)
+					$.online.str = $.PC.ability($.online.str, $.int(mon.pc.bonusStr + 1), $.player.maxstr, m)
+					$.player.maxint = $.PC.ability($.player.maxint, $.int(mon.pc.bonusInt), 99)
+					$.player.int = $.PC.ability($.player.int, $.int(mon.pc.bonusInt), $.player.maxint)
+					$.online.int = $.PC.ability($.online.int, $.int(mon.pc.bonusInt + 1), $.player.maxint, m)
+					$.player.maxdex = $.PC.ability($.player.maxdex, $.int(mon.pc.bonusDex), 99)
+					$.player.dex = $.PC.ability($.player.dex, $.int(mon.pc.bonusDex), $.player.maxdex)
+					$.online.dex = $.PC.ability($.online.dex, $.int(mon.pc.bonusDex + 1), $.player.maxdex, m)
+					$.player.maxcha = $.PC.ability($.player.maxcha, $.int(mon.pc.bonusCha), 99)
+					$.player.cha = $.PC.ability($.player.cha, $.int(mon.pc.bonusCha), $.player.maxcha)
+					$.online.cha = $.PC.ability($.online.cha, $.int(mon.pc.bonusCha + 1), $.player.maxcha, m)
+					$.beep()
+					xvt.out('\n'); xvt.waste(500)
+					Battle.yourstats(); xvt.waste(500)
+					xvt.out('\n'); xvt.waste(500)
+				}
+			}
+			//	activate this monster's avenge?
+			if (mon.user.xplevel < 1) {
+				$.sound('oops')
+				ROOM.monster[n].monster.effect = 'flip'
+				ROOM.monster[n].monster.pc = '*'
+				$.activate(mon)
+				for (let i = 0; i < $.dice(3); i++) {
+					let avenger = <active>{ user:{id:''} }
+					Object.assign(avenger, mon)
+					avenger.user.pc = $.PC.random('monster')
+					avenger.user.handle = `${mon.user.handle} avenger`
+					$.reroll(avenger.user, avenger.user.pc, $.int(avenger.user.level / 2))
+					$.activate(avenger)
+					avenger.str = 100
+					avenger.int = 100
+					avenger.dex = 100
+					avenger.cha = 100
+					ROOM.monster.push(avenger)
 				}
 			}
 			ROOM.monster.splice(n, 1)
 			pause = true
 		}
+		else {
+			//	retreated from a harmless creature, good
+			if (ROOM.monster[n].user.xplevel < 1) {
+                $.sound('heal', 3)
+				let ha = $.player.magic > 2 ? $.int($.player.level / 16) + 13 : 16
+				let hr = 0
+				for (let i = 0; i < $.player.level; i++)
+					hr += $.dice(ha)
+				$.online.hp += hr
+				if ($.online.hp > $.player.hp)
+					$.online.hp = $.player.hp
+			}
+		}
+	}
 
 	if (!ROOM.monster.length) {
 		if (DL.map < 2 && $.dice((15 - $.online.cha / 10) / 2) == 1) {
@@ -2208,10 +2266,15 @@ function putMonster(r = -1, c = -1): boolean {
 		}
 		j = level + v - 1
 		dm = monsters[Object.keys(monsters)[j]]
+		m.monster = dm
+		m.effect = dm.effect || 'pulse'
 		m.user.handle = Object.keys(monsters)[j]
+
+		//	chaos
+		if (dm.pc == '*') dm.pc = $.PC.random('monster')
+
 		$.reroll(m.user, dm.pc ? dm.pc : $.player.pc, j)
 		if (m.user.xplevel) m.user.xplevel = level
-		m.effect = dm.effect || 'pulse'
 
 		if (dm.weapon)
 			m.user.weapon = dm.weapon
@@ -2401,7 +2464,7 @@ function quaff(v: number, it = true) {
 
 	//	Potion of Charm
 		case 2:
-			if (($.player.cha = $.PC.ability($.player.cha, 1, $.player.maxcha, 1)) > $.player.maxcha)
+			if (($.player.cha = $.PC.ability($.player.cha, 1, 99)) > $.player.maxcha)
 				$.player.maxcha = $.PC.ability($.player.maxcha, 1, $.player.maxcha, 1)
 			$.online.cha = $.PC.ability($.online.cha, $.dice(10), $.player.maxcha, m)
 			break
@@ -2414,7 +2477,7 @@ function quaff(v: number, it = true) {
 
 	//	Potion of Agility
 		case 4:
-			if (($.player.dex = $.PC.ability($.player.dex, 1, $.player.maxdex, 1)) > $.player.maxdex)
+			if (($.player.dex = $.PC.ability($.player.dex, 1, 99)) > $.player.maxdex)
 				$.player.maxdex = $.PC.ability($.player.maxdex, 1, $.player.maxdex, 1)
 			$.online.dex = $.PC.ability($.online.dex, $.dice(10), $.player.maxdex, m)
 			break
@@ -2427,7 +2490,7 @@ function quaff(v: number, it = true) {
 
 	//	Potion of Wisdom
 		case 6:
-			if (($.player.int = $.PC.ability($.player.int, 1, $.player.maxint, 1)) > $.player.maxint)
+			if (($.player.int = $.PC.ability($.player.int, 1, 99)) > $.player.maxint)
 				$.player.maxint = $.PC.ability($.player.maxint, 1, $.player.maxint, 1)
 			$.online.int = $.PC.ability($.online.int, $.dice(10), $.player.maxint, m)
 			break
@@ -2440,7 +2503,7 @@ function quaff(v: number, it = true) {
 
 	//	Potion of Stamina
 		case 8:
-			if (($.player.str = $.PC.ability($.player.str, 1, $.player.maxstr, 1)) > $.player.maxstr)
+			if (($.player.str = $.PC.ability($.player.str, 1, 99)) > $.player.maxstr)
 				$.player.maxstr = $.PC.ability($.player.maxstr, 1, $.player.maxstr, 1)
 			$.online.str = $.PC.ability($.online.str, $.dice(10), $.player.maxstr, m)
 			break

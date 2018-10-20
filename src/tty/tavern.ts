@@ -147,6 +147,7 @@ function choice() {
                 break
             }
             if ($.player.novice || $.player.level < 10) {
+                $.sound('crowd')
                 xvt.out('\nThe crowd laughs at your gesture.\n')
                 xvt.waste(1000)
                 xvt.out(`${$.barkeep.user.handle} snorts, "Be for real."\n`)

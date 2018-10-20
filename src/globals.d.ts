@@ -290,5 +290,6 @@ interface active {
     hp?: number         //  <0=retreated, 0=killed, >0=alive
     sp?: number
     hull?: number
+    monster?: monster
     effect?: string
 }
