@@ -29,6 +29,8 @@ module Battle
 
 
 function end() {
+    $.unlock($.player.id, true)
+
     if (from === 'Naval') {
         if ($.online.hp > 0) {
             $.sound('naval' + (parties[1][0].user.id === '_OLD' ? '_f' : ''), 32)
@@ -140,7 +142,10 @@ function end() {
             }
         }
     }
-    $.unlock($.player.id, true)
+
+    //  diminish any temporary buff
+    if ($.online.toAC > 0) $.online.toAC--
+    if ($.online.toWC > 0) $.online.toWC--
     fini()
 }
 
@@ -2077,14 +2082,14 @@ export function poison(rpc: active, cb?:Function) {
     function apply(rpc: active, vial: number) {
         rpc.altered = true
         let wc = $.Weapon.baseWC(rpc.user.weapon)
-        let p = Math.trunc(rpc.user.poison / 2)
+        let p = $.int(rpc.user.poison / 2)
         let t = rpc.user.poison - p
         p *= vial
         t *= vial
-        if (p > 0 && rpc.user.toWC >= 0) rpc.user.toWC = p
-        if (t > 0 && rpc.toWC >= 0)
+        if (p > 0 && rpc.user.toWC >= 0 && p >= rpc.user.toWC) rpc.user.toWC = p
+        if (t > 0 && rpc.toWC >= 0 && t >= rpc.toWC)
             rpc.toWC = t
-        else
+        else if (rpc.toWC + t <= rpc.user.toWC)
             rpc.toWC += t
 
         xvt.out(xvt.reset, '\n')
