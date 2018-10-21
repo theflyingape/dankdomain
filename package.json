@@ -1,6 +1,6 @@
 {
   "name": "dankdomain",
-  "version": "1.5.3",
+  "version": "1.5.4",
   "description": "Dank Domain: the return of Hack & Slash (1990-2014)",
   "main": "ttymain",
   "publisher": "theflyingape",
@@ -54,7 +54,7 @@
     "title-case": "^2.1.1",
     "ws": "^6.1.0",
     "xterm": "^3.8.0",
-    "xvt": "^1.0.22"
+    "xvt": "^1.0.23"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^3.1.3",
