@@ -19,6 +19,7 @@ import * as webLinks from 'xterm/lib/addons/webLinks/webLinks'
 let term: Terminal
 let cols = 80, rows = 25
 const BELL_SOUND = 'data:audio/wav;base64,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qJrx4KOQjahZxWbcZgztj2c49nKmkId44S71j0c8eV9yDK6uPRzx5X18eDvjvQ6yKo9ZSS6l//8elePK/Lf//IInrOF/FvDoADYAGBMGb7FtErm5MXMlmPAJQVgWta7Zx2go+8xJ0UiCb8LHHdftWyLJE0QIAIsI+UbXu67dZMjmgDGCGl1H+vpF4NSDckSIkk7Vd+sxEhBQMRU8j/12UIRhzSaUdQ+rQU5kGeFxm+hb1oh6pWWmv3uvmReDl0UnvtapVaIzo1jZbf/pD6ElLqSX+rUmOQNpJFa/r+sa4e/pBlAABoAAAAA3CUgShLdGIxsY7AUABPRrgCABdDuQ5GC7DqPQCgbbJUAoRSUj+NIEig0YfyWUho1VBBBA//uQZB4ABZx5zfMakeAAAAmwAAAAF5F3P0w9GtAAACfAAAAAwLhMDmAYWMgVEG1U0FIGCBgXBXAtfMH10000EEEEEECUBYln03TTTdNBDZopopYvrTTdNa325mImNg3TTPV9q3pmY0xoO6bv3r00y+IDGid/9aaaZTGMuj9mpu9Mpio1dXrr5HERTZSmqU36A3CumzN/9Robv/Xx4v9ijkSRSNLQhAWumap82WRSBUqXStV/YcS+XVLnSS+WLDroqArFkMEsAS+eWmrUzrO0oEmE40RlMZ5+ODIkAyKAGUwZ3mVKmcamcJnMW26MRPgUw6j+LkhyHGVGYjSUUKNpuJUQoOIAyDvEyG8S5yfK6dhZc0Tx1KI/gviKL6qvvFs1+bWtaz58uUNnryq6kt5RzOCkPWlVqVX2a/EEBUdU1KrXLf40GoiiFXK///qpoiDXrOgqDR38JB0bw7SoL+ZB9o1RCkQjQ2CBYZKd/+VJxZRRZlqSkKiws0WFxUyCwsKiMy7hUVFhIaCrNQsKkTIsLivwKKigsj8XYlwt/WKi2N4d//uQRCSAAjURNIHpMZBGYiaQPSYyAAABLAAAAAAAACWAAAAApUF/Mg+0aohSIRobBAsMlO//Kk4soosy1JSFRYWaLC4qZBYWFRGZdwqKiwkNBVmoWFSJkWFxX4FFRQWR+LsS4W/rFRb/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU='
+let tty: boolean = +document.cookie ? true : false
 
 const app = location.pathname.replace(/\/+$/, "")
 let pid = 0, wpid = 0
@@ -51,6 +52,7 @@ window.onresize = () => {
 	//  tweak side panel sizing within reason
 	Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': '65%' })
 	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': '35%' })
+	if (pid > 0) term.setOption('fontFamily', tty ? 'tty,Consolas,monospace' : 'IBM Plex Mono,Consolas,monospace')
 	term.setOption('fontSize', 20)
 	let xy = fit.proposeGeometry(term)
 	let w = Math.trunc(parseInt(I.style.width) * (xy.cols || 80) / 80) + '%'
@@ -74,6 +76,7 @@ window.onresize = () => {
 	cols = 80
 	rows = xy.rows
 	term.resize(cols, rows)
+	term.scrollToBottom()
 }
 
 document.getElementById('lurker-list').onchange = (ev) => {
@@ -90,7 +93,7 @@ document.getElementById('lurker-list').onchange = (ev) => {
 	document.getElementById('terminal').hidden = false
 	term = new Terminal({
 		bellStyle: 'none', cursorBlink: false, scrollback: 0,
-		fontFamily: 'Consolas,Lucida Console,monospace', fontSize: 20,
+		fontFamily: 'Consolas,monospace', fontSize: 20,
 		fontWeight: '400', fontWeightBold: '500',
 		theme: {
 			foreground: '#a3a7af', background: '#23272f',
@@ -149,7 +152,7 @@ function newSession(ev) {
 	const options: ITerminalOptions = {
 		bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false,
 		cols: cols, rows: rows, scrollback: 500,
-		fontFamily: 'tty,IBM Plex Mono,Consolas,Lucida Console,monospace', fontSize: 20,
+		fontFamily: 'IBM Plex Mono,Consolas,monospace', fontSize: 20,
 		fontWeight: '400', fontWeightBold: '500',
 		theme: {
 			foreground: '#b3b7bf', background: '#03070f',
@@ -173,7 +176,7 @@ function newSession(ev) {
 	webLinks.webLinksInit(term)
 	fit.fit(term)
 
-	term.writeln('\x1B[16C\x1B[1;31m🔥  🌨   \x1B[36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain  \x1B[m🌙  💫\x07\n')
+	term.writeln('\x1B[16C\x1B[1;31m🔥\x1B[2C🌨\x1B[2C \x1B[36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain\x1B[2C\x1B[m🌙\x1B[2C💫\x07')
 	window.frames['Info'].postMessage({ 'func':ev }, location.href)
 	let protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://'
 	let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/player/'
@@ -212,6 +215,8 @@ function newSession(ev) {
 
 	// fit is called within a setTimeout, cols and rows need this
 	if (ev === 'Logon')	setImmediate(() => {
+		term.setOption('fontFamily', tty ? 'tty,Consolas,monospace' : 'IBM Plex Mono,Consolas,monospace')
+		window.dispatchEvent(new Event('resize'))
 		term.write(`\x1B[0;2mConnecting terminal WebSocket ... `)
 		XT('@tune(dankdomain)')
 		fetch(`${app}/player/?cols=${term.cols}&rows=${term.rows}`, { method: 'POST' }).then(function (res) {
@@ -254,8 +259,8 @@ function newSession(ev) {
 		fetch(`${app}/title.txt`, { method: 'GET' }).then(function (res) {
 			return res.text().then(function (data) {
 				term.writeln(data)
-				term.writeln('\x1B[0;36m\u00B7\x1B[1m press either ENTER or SPACE to connect;')
-				term.writeln('\x1B[0;36m\u00B7\x1B[1m or any other key for more options.')
+				term.writeln(' \x1B[36m\u00B7\x1B[2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to connect;\x1B[22m')
+				term.writeln(' \x1B[36m\u00B7\x1B[2m or any other \x1B[22;1m🗝️  \x1B[22mkey\x1B[2m for more options.')
 			})
 		})
 		term.focus()
@@ -368,7 +373,16 @@ function receive(event) {
 					return
 				}
 				if (event.data.message) {
-					socket.send(event.data.message)
+					if (event.data.message == 'F2') {
+						setImmediate(() => {
+							term.setOption('fontFamily', tty ? 'tty,Consolas,monospace' : 'IBM Plex Mono,Consolas,monospace')
+							window.dispatchEvent(new Event('resize'))
+						})
+						tty = !tty
+						window.dispatchEvent(new Event('resize'))
+					}
+					else
+						socket.send(event.data.message)
 				//	if (event.data.return)
 				//		socket.send('\r')
 				}

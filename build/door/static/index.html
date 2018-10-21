@@ -13,18 +13,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <style type='text/css'>
   @font-face {
-    font-family: tty;
-    src: url('vt220.woff2');
+    font-family: 'tty';
+    src: url('vt220.woff2') format('woff2'), url('vt220.woff') format('woff'), url('vt220.ttf') format('ttf');
   }
   body {
     background-color: #102040;
     color: antiquewhite;
     border: none;
-    font-family: 'IBM Plex Mono', monospace;
+    font-family: 'IBM Plex Mono', Consolas, monospace;
     margin: 0px;
     min-width: 960px;
   }
   #terminal {
+    font-family: 'IBM Plex Mono', Consolas, monospace;
     border: 0;
     top: 0; left: 0;
     width: 65%;
