@@ -1171,6 +1171,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             if ($.dice(3 * (rpc.user.toAC + rpc.toAC + 1) / rpc.user.magic) > rpc.armor.ac) {
                 xvt.out($.who(rpc, 'His'), isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' vaporizes!\n')
                 $.Armor.equip(rpc, $.Armor.merchant[0])
+                if (rpc == $.online) $.sound('crack', 6)
             }
             rpc.altered = true
             break
@@ -1196,6 +1197,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             if ($.dice(3 * (rpc.user.toWC + rpc.toWC + 1) / rpc.user.magic) > rpc.weapon.wc) {
                 xvt.out($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' vaporizes!\n')
                 $.Weapon.equip(rpc, $.Weapon.merchant[0])
+                if (rpc == $.online) $.sound('crack', 6)
             }
             rpc.altered = true
             break
@@ -2088,8 +2090,8 @@ export function poison(rpc: active, cb?:Function) {
         t *= vial
         if (p > 0 && rpc.user.toWC >= 0 && p >= rpc.user.toWC) rpc.user.toWC = p
         if (t > 0 && rpc.toWC >= 0 && t >= rpc.toWC)
-            rpc.toWC = t
-        else (rpc.toWC + t <= rpc.user.toWC)
+            rpc.toWC = t 
+        else if (rpc.user.toWC > 0)
             rpc.toWC += (rpc.toWC + t < rpc.user.toWC ? t : rpc.user.toWC - rpc.toWC)
 
         xvt.out(xvt.reset, '\n')
@@ -2107,10 +2109,10 @@ export function poison(rpc: active, cb?:Function) {
             if (/^[A-Z]/.test(rpc.user.id)) {
                 if ($.dice(3 * (rpc.toWC + rpc.user.toWC + 1)) / rpc.user.poison > $.Weapon.name[rpc.user.weapon].wc) {
                     xvt.out($.who(rpc, 'His'), rpc.user.weapon, ' vaporizes!\n')
-                    xvt.waste(500)
                     rpc.user.weapon = $.Weapon.merchant[0]
                     rpc.toWC = 0
                     rpc.user.toWC = 0
+                    if (rpc == $.online) $.sound('crack', 6)
                 }
             }
             if (rpc.user.id !== $.player.id || $.dice(rpc.user.poison) == 1) {
