@@ -130,7 +130,7 @@
             ]
         },
         "Magician": {
-            "melee":0, "backstab":0, "poison":3, "magic":3, "steal":2, 
+            "melee":0, "backstab":1, "poison":2, "magic":3, "steal":2, 
             "baseStr":40, "baseInt":65, "baseDex":65, "baseCha":30, 
             "toStr":1, "toInt":3, "toDex":1, "toCha":1, 
             "maxStr":85, "maxInt":98, "maxDex":90, "maxCha":90, 
@@ -170,7 +170,7 @@
             ]
         },
         "Sage": {
-            "melee":0, "backstab":1, "poison":1, "magic":4, "steal":2, 
+            "melee":0, "backstab":0, "poison":2, "magic":4, "steal":2, 
             "baseStr":40, "baseInt":55, "baseDex":70, "baseCha":35, 
             "toStr":1, "toInt":4, "toDex":1, "toCha":1, 
             "maxStr":80, "maxInt":99, "maxDex":90, "maxCha":90, 
@@ -183,7 +183,7 @@
             ]
         },
         "Thief": {
-            "melee":0, "backstab":4, "poison":0, "magic":0, "steal":4, 
+            "melee":1, "backstab":3, "poison":0, "magic":0, "steal":4, 
             "baseStr":63, "baseInt":35, "baseDex":67, "baseCha":35, 
             "toStr":1, "toInt":1, "toDex":4, "toCha":1, 
             "maxStr":90, "maxInt":90, "maxDex":99, "maxCha":80, 
