@@ -2089,8 +2089,8 @@ export function poison(rpc: active, cb?:Function) {
         if (p > 0 && rpc.user.toWC >= 0 && p >= rpc.user.toWC) rpc.user.toWC = p
         if (t > 0 && rpc.toWC >= 0 && t >= rpc.toWC)
             rpc.toWC = t
-        else if (rpc.toWC + t <= rpc.user.toWC)
-            rpc.toWC += t
+        else (rpc.toWC + t <= rpc.user.toWC)
+            rpc.toWC += (rpc.toWC + t < rpc.user.toWC ? t : rpc.user.toWC - rpc.toWC)
 
         xvt.out(xvt.reset, '\n')
         if (!$.Poison.have(rpc.user.poisons, vial) || +rpc.user.weapon > 0) {
