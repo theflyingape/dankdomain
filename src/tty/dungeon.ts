@@ -1487,7 +1487,7 @@ function doSpoils() {
 				}
 			}
 			//	activate this monster's avenge?
-			if (mon.user.xplevel < 1) {
+			if (mon.user.xplevel == 0) {
 				$.sound('oops')
 				ROOM.monster[n].monster.effect = 'flip'
 				ROOM.monster[n].monster.pc = '*'
@@ -1515,7 +1515,7 @@ function doSpoils() {
 		}
 		else {
 			//	retreated from a harmless creature, good
-			if (ROOM.monster[n].user.xplevel < 1) {
+			if (ROOM.monster[n].user.xplevel == 0) {
                 $.sound('heal', 3)
 				let ha = $.player.magic > 2 ? $.int($.player.level / 16) + 13 : 16
 				let hr = 0
@@ -1525,6 +1525,8 @@ function doSpoils() {
 				if ($.online.hp > $.player.hp)
 					$.online.hp = $.player.hp
 			}
+			else if (ROOM.monster[n].user.xplevel < 0)
+				ROOM.monster.splice(n, 1)	//	remove an illusion
 		}
 	}
 
