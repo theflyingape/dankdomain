@@ -171,7 +171,7 @@ keyboard = `<input type="button" value="a" onclick="send('a');"> <input type="bu
 <input type="button" value="v" onclick="send('v');"> <input type="button" value="w" onclick="send('w');"> <input type="button" value="x" onclick="send('x');">
 <input type="button" value="y" onclick="send('y');"> <input type="button" value="z" onclick="send('z');"><br>
 <input type="button" value="@" onclick="send('@');"> <input type="button" value="." onclick="send('.');"> <input class="wide" type="button" value=" SPACE BAR " onclick="send(' ');"> <input type="button" value="-" onclick="send('-');"> <input type="button" value="+" onclick="send('+');"><br>
-${cancel} ${enter}
+${cancel} <input type="button" value=" ? " onclick="send('?', true);"> ${enter}
 `;
 money = `<table>
 <tr><td><input class="numeric" type="button" value="7" onclick="send('7');"></td><td><input class="numeric" type="button" value="8" onclick="send('8');"></td><td><input class="numeric" type="button" value="9" onclick="send('9');"></td><td><input class="platinum" type="button" value="P" onclick="send('p');"></td>
@@ -383,7 +383,7 @@ function list() {
 }
 
 function listall() {
-  cmd(`${keypad}${all}`);
+  cmd(`${keypad}<br>${all}`);
 }
 
 function listbest() {

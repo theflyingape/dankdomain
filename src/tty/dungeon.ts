@@ -908,7 +908,7 @@ function doMove(): boolean {
 					pause = true
 					refresh = true
 					menu()
-				}, prompt:'What is thy bidding, my master? ', cancel:'T', enter:'B', eol:false, max:1, timeout:15 }
+				}, prompt:'What is thy bidding, my master? ', cancel:'O', enter:'B', eol:false, max:1, timeout:30 }
 			}
 			xvt.app.focus = 'well'
 			return false
