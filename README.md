@@ -2,7 +2,7 @@
 
 ## the return of Hack &amp; Slash
 
-### Play from the [official web site](https://sites.google.com/view/dankdomain)
+### Play from the [official web site](https://ddgame.us)
 
 [![Downloads](https://img.shields.io/npm/dy/dankdomain.svg)](https://www.npmjs.com/package/dankdomain)
 [![GitHub release](https://img.shields.io/github/release/theflyingape/dankdomain.svg)](https://github.com/theflyingape/dankdomain/releases) [![npm version](https://badge.fury.io/js/dankdomain.svg)](https://www.npmjs.com/package/dankdomain)

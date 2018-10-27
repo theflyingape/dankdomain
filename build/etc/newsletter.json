@@ -1,4 +1,4 @@
 {
 	"subject": "Newsletter 📣",
-	"text": "This newsletter is being sent to you, ${player.handle}, to inform you of the new official web site: \n\n\thttps://sites.google.com/view/dankdomain \n\nIf you have not played in a while, come re-join the party! And speaking of parties, if you are not a member of a gang, consider starting a new one or joining up in an open spot. \n\nFor the latest developments with 🔥 Dank Domain 🔥 \n\n\thttps://www.npmjs.com/package/dankdomain \n\nHappy hunting!"
+	"text": "This newsletter is being sent to you, ${player.handle}, to inform you of the new official web site: \n\n\thttps://ddgame.us \n\nIf you have not played in a while, come re-join the party! And speaking of parties, if you are not a member of a gang, consider starting a new one or joining up in an open spot. \n\nFor the latest developments with 🔥 Dank Domain 🔥 \n\n\thttps://www.npmjs.com/package/dankdomain \n\nHappy hunting!"
 }
