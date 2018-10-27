@@ -17,7 +17,7 @@
 <style>
   body {
     background: antiquewhite;
-    background: linear-gradient(to bottom right, white, skyblue);
+    background: linear-gradient(to bottom right, skyblue, aliceblue);
     font-family: 'Carter One', cursive;
     font-size: 100%;
     color: midnightblue;
@@ -113,13 +113,9 @@
     color: darkslategray;
   }
 
-  form {
-    border: 3px solid #f1f1f1;
-  }
-
   input[type=text],
   input[type=password] {
-    width: 90%;
+    width: 75%;
     padding: 12px 18px;
     margin: 8px 0;
     display: inline-block;
@@ -137,6 +133,10 @@
     max-width: 100%;
     object-fit: contain;
   }
+  p, table {
+    display: inline-block;
+    text-align: center;
+  }
 </style>
 <script>
 art = null;
@@ -148,7 +148,7 @@ enter = `<input class="wide" type="button" value="Enter" onclick="send('', true)
 logoff = `<input type="button" value="LOGOFF" onclick="send('\x1A');">`;
 max = `<input class="wide" type="button" value=" MAX " onclick="send('MAX', true);">`
 quit = `<input class="wide" type="button" value="Quit" onclick="send('Q');">`;
-keypad = `<table align="center">
+keypad = `<table>
 <tr><td><input class="numeric" type="button" value="7" onclick="send('7');"></td><td><input class="numeric" type="button" value="8" onclick="send('8');"></td><td><input class="numeric" type="button" value="9" onclick="send('9');"></td>
 </tr>
 <tr><td><input class="numeric" type="button" value="4" onclick="send('4');"></td><td><input class="numeric" type="button" value="5" onclick="send('5');"></td><td><input class="numeric" type="button" value="6" onclick="send('6');"></td>
@@ -172,7 +172,7 @@ keyboard = `<input type="button" value="a" onclick="send('a');"> <input type="bu
 <input type="button" value="@" onclick="send('@');"> <input type="button" value="." onclick="send('.');"> <input class="wide" type="button" value=" SPACE BAR " onclick="send(' ');"> <input type="button" value="-" onclick="send('-');"> <input type="button" value="+" onclick="send('+');"><br>
 ${cancel} ${enter}
 `;
-money = `<table align="center">
+money = `<table>
 <tr><td><input class="numeric" type="button" value="7" onclick="send('7');"></td><td><input class="numeric" type="button" value="8" onclick="send('8');"></td><td><input class="numeric" type="button" value="9" onclick="send('9');"></td><td><input class="platinum" type="button" value="P" onclick="send('p');"></td>
 </tr>
 <tr><td><input class="numeric" type="button" value="4" onclick="send('4');"></td><td><input class="numeric" type="button" value="5" onclick="send('5');"></td><td><input class="numeric" type="button" value="6" onclick="send('6');"></td><td><input class="gold" type="button" value="G" onclick="send('g');"></td>
@@ -288,7 +288,7 @@ function SizeL() {
 }
 
 function cmd(html) {
-  document.getElementById("command").innerHTML = html;
+  document.getElementById("command").innerHTML = '<p>' + html + '</p>';
 }
 
 function nme(html) {
@@ -325,8 +325,7 @@ function animated(effect) {
 
 function Logon() {
   clearInterval(art); art = null;
-  cmd(`<form onsubmit="return sendLogin();"><input type="text" placeholder="Enter ID or Handle" name="id" autofocus required><input type="password" placeholder="Enter password" name="password" required>
-<button class="wide" type="submit"> Login </button> <input class="wide" type="button" value="NEW" onclick="send('NEW', true);"> <input class="inp-cbx" id="ttyCheckbox" type="checkbox" style="display: none;" onclick="send('F2', false, 'kb'); document.cookie=+this.checked + '; expires=Fri, 31 Dec 9999 23:59:59 GMT';" /><label class="cbx" for="ttyCheckbox"><span><svg width="12px" height="10px" viewbox="0 0 12 10"><polyline points="1.5 6 4.5 9 10.5 1"></polyline></svg></span><span>old</span></label></form>`);
+  cmd(`<form onsubmit="return sendLogin();"><input type="text" placeholder="Enter ID or Handle" name="id" autofocus required><br><input type="password" placeholder="Enter password" name="password" required><br><button class="wide" type="submit"> Login </button> <input class="wide" type="button" value="NEW" onclick="send('NEW', true);"> <input class="inp-cbx" id="ttyCheckbox" type="checkbox" style="display: none;" onclick="send('F2', false, 'kb'); document.cookie=+this.checked + '; expires=Fri, 31 Dec 9999 23:59:59 GMT';" /><label class="cbx" for="ttyCheckbox"><span><svg width="12px" height="10px" viewbox="0 0 12 10"><polyline points="1.5 6 4.5 9 10.5 1"></polyline></svg></span><span>old</span></label></form>`);
   nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize(\'bounceInDown\'); document.getElementById('ttyCheckbox').checked = +document.cookie;" style="display:none;" />`);
 }
 
@@ -339,11 +338,7 @@ function sendLogin() {
 function Logoff() {
   if (!art)
     art = setInterval(rotateImage, 45000);
-  cmd(`
-<p><input class="tall" type="button" id="default" value=" CONNECT " onclick="send(' ');"> <input type="button" id="cancel" value="Disconnect" onclick="send('\x1B');"></p>
-<span style="text-align:center;"><h2>🤴 <a href="https://sites.google.com/view/dankdomain" target="_new"><span style="color:gray !important; font-size:larger">Dank Domain</span></a> 👸<br><span style="color:rosybrown !important; font-size:smaller">the return of Hack &amp; Slash</span></h2></span><table style="margin: 0px auto; vertical-align:bottom;">
-<span style="color:rosybrown !important; font-size:smaller"><p>🇺🇸 &copy;2017-2018 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a> 🧙</p></span>
-`);
+  cmd(`<input class="tall" type="button" id="default" value=" CONNECT " onclick="send(' ');"> <input type="button" id="cancel" value="Disconnect" onclick="send('\x1B');"><br><span style="font-size:larger">🤴 <a href="https://sites.google.com/view/dankdomain" target="_new"><span style="color:black !important">Dank Domain</span></a> 👸</span><br><span style="color:brown !important;">the return of Hack &amp; Slash<br>🇺🇸 <span style="font-size:smaller;">&copy;2017-2018 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a></span></span> 🧙`);
 }
 
 function rotateImage() {
@@ -352,7 +347,7 @@ function rotateImage() {
     n = Math.trunc(Math.random() * images.length);
     pic = images.splice(n,1);
     setTimeout(function () {
-      nme(`<img src="images/connect/${pic}" onload="nmeResize(\'fadeInRight\');" style="display:none;" />`);
+      nme(`<img src="images/connect/${pic}" onload="nmeResize(\'fadeInRight\');" style="display:none; filter: opacity(35%);" />`);
     }, 1000);
   }
   else
@@ -379,10 +374,7 @@ function freetext() {
 }
 
 function gender() {
-  cmd(`
-<input class="tall" type="button" value=" Male " onclick="send('M');">
-<input class="tall" type="button" value=" Female " onclick="send('F');">
-`);
+  cmd(`<input class="tall" type="button" value=" Male " onclick="send('M');"> <input class="tall" type="button" value=" Female " onclick="send('F');">`);
 }
 
 function list() {
@@ -394,77 +386,62 @@ function listall() {
 }
 
 function listbest() {
-  cmd(`${keypad}${best}`);
+  cmd(`${keypad}<br>${best}`);
 }
 
 function listmm() {
-  cmd(`${keypad}
-<p><input class="wide" type="button" value="Monster Mash" onclick="send('M', true);"></p>`);
+  cmd(`${keypad}<br><input class="wide" type="button" value="Monster Mash" onclick="send('M', true);">`);
 }
 
 function menu() {
   nme('');
-  cmd(`
-<p><input type="button" value="Arena" onclick="send('A');">
+  cmd(`<input type="button" value="Arena" onclick="send('A');">
 <input class="tall" type="button" value="Dungeon" onclick="send('D');">
-<input type="button" value="Square" onclick="send('S');"></p>
-<p><input type="button" value="Naval" onclick="send('N');">
+<input type="button" value="Square" onclick="send('S');"><br>
+<input type="button" value="Naval" onclick="send('N');">
 <input class="tall" type="button" value="Party" onclick="send('P');">
-<input type="button" value="Tavern" onclick="send('T');"></p>
-<p><input type="button" value="Casino" onclick="send('G');">
+<input type="button" value="Tavern" onclick="send('T');"><br>
+<input type="button" value="Casino" onclick="send('G');">
 <input class="tall" type="button" value="Most Wanted" onclick="send('M');">
-<input type="button" value="Halls" onclick="send('L');"></p>
-<p><input type="button" value="Reroll" onclick="send('X');">
+<input type="button" value="Halls" onclick="send('L');"><br>
+<input type="button" value="Reroll" onclick="send('X');">
 <input class="tall" type="button" value="Status" onclick="send('Y');">
-<input type="button" value="Rob" onclick="send('R');"></p>
-<input type="button" value="System" onclick="send('Z');"> ${logoff}
-`);
+<input type="button" value="Rob" onclick="send('R');"><br>
+<input type="button" value="System" onclick="send('Z');"> ${logoff}`);
 }
 
 function yn() {
-  cmd(`
-<input class="tall" type="button" value=" Yes " onclick="send('Y');">
-<input class="tall" type="button" value=" No " onclick="send('N');"><br>
-${enter} ${quit}
-`);
+  cmd(`<input class="tall" type="button" value=" Yes " onclick="send('Y');"> <input class="tall" type="button" value=" No " onclick="send('N');"><br>${enter} ${quit}`);
 }
 
 function arena() {
-  cmd(`
-<input type="button" value="Cast" onclick="send('C');">
+  cmd(`<input type="button" value="Cast" onclick="send('C');">
 <input type="button" value="Poison" onclick="send('P');">
 <input type="button" value="User" onclick="send('U');">
 <input type="button" value="Monster" onclick="send('M');">
 <input type="button" value="Joust" onclick="send('J');">
 <input type="button" value="Status" onclick="send('Y');"><br>
-<input class="tall" type="button" value="SQUARE" onclick="send('G');"> ${quit}
-`);
+<input class="tall" type="button" value="SQUARE" onclick="send('G');"> ${quit}`);
 }
 
 function bank() {
-  cmd(`
-${money}
-<input type="button" value="Deposit" onclick="send('D');">
+  cmd(`${money}<br><input type="button" value="Deposit" onclick="send('D');">
 <input type="button" value="Withdraw" onclick="send('W');">
-<input type="button" value="Loan" onclick="send('L');">
-${quit}
-`);
+<input type="button" value="Loan" onclick="send('L');"><br>
+<input type="button" value="Rob" onclick="send('R');"> ${quit}`);
   nme(`<img src="images/bank.jpg" onload="nmeResize(\'pulse\');" style="display:none;" />`);
 }
 
 function blackjack() {
   nme('');
-  cmd(`<p><input class="wide" type="button" value="Double" onclick="send('D');"></p>
-<p><input class="tall" type="button" value=" Hit me! " onclick="send('H');"></p>
-<p><input class="wide" type="button" value="Stay" onclick="send('S');"></p>
-`);
+  cmd(`<input class="wide" type="button" value="Double" onclick="send('D');"><br>
+<input class="tall" type="button" value=" Hit me! " onclick="send('H');"><br>
+<input class="wide" type="button" value="Stay" onclick="send('S');">`);
 }
 
 function battle() {
-  cmd(`
-<input class="tall" type="button" value=" Attack " onclick="send('A');"> <input type="button" value=" Cast " onclick="send('C');"><br>
-<input type="button" value="Status" onclick="send('Y');"> <input class="wide" type="button" value=" Retreat " onclick="send('R');">
-`);
+  cmd(`<input class="tall" type="button" value=" Attack " onclick="send('A');"> <input type="button" value=" Cast " onclick="send('C');"><br>
+<input type="button" value="Status" onclick="send('Y');"> <input class="wide" type="button" value=" Retreat " onclick="send('R');">`);
 }
 
 function casino() {
@@ -473,76 +450,55 @@ function casino() {
 <input type="button" value="Craps" onclick="send('C');">
 <input type="button" value="High Stakes" onclick="send('H');">
 <input type="button" value="Keno" onclick="send('K');">
-<input type="button" value="Slots" onclick="send('S');">
-${quit}`);
+<input type="button" value="Slots" onclick="send('S');"><br>${quit}`);
 }
 
 function craps() {
   nme('');
-  cmd(`<p><input class="tall" type="button" value=" Roll! " onclick="send('', true);"></p>
-${money}
-`);
+  cmd(`${money}<br><input class="tall" type="button" value=" Roll! " onclick="send('', true);">`);
 }
 
 function deeds() {
-  cmd(`<p><input type="button" value="Champions" onclick="send('C');">
+  cmd(`<input type="button" value="Champions" onclick="send('C');">
 <input type="button" value="Heroes" onclick="send('H');">
 <input type="button" value="Memorable" onclick="send('M');">
 <input type="button" value="Thugs" onclick="send('T');">
-<input type="button" value="Winners" onclick="send('W');"></p>
-${quit}`);
+<input type="button" value="Winners" onclick="send('W');"><br>${quit}`);
   nme(`<img src="images/heroes.jpg" onload="nmeResize(\'bounceInUp\');" style="display:none;" />`);
 }
 
 function dungeon() {
-  cmd(`
-<input class="tall" type="button" value=" North " onclick="send('N');"><br>
+  cmd(`<input class="tall" type="button" value=" North " onclick="send('N');"><br>
 <input class="tall" type="button" value=" West " onclick="send('W');"> <input class="tall" type="button" value=" East " onclick="send('E');"><br>
 <input class="tall" type="button" value=" South " onclick="send('S');"><br>
-<p><input type="button" value="Cast" onclick="send('C');">
-<input type="button" value="Poison" onclick="send('P');">
-<input type="button" value="Status" onclick="send('Y');"></p>
-`);
+<input type="button" value="Cast" onclick="send('C');"> <input type="button" value="Poison" onclick="send('P');"> <input type="button" value="Status" onclick="send('Y');">`);
 }
 
 function hunt() {
-  cmd(`
-<p><input class="tall" type="button" value=" Fire! " onclick="send('F');"></p>
-<p><input type="button" value="Ram" onclick="send('R');"> <input type="button" value="Status" onclick="send('Y');"></p>
-<input class="wide" type="button" value="Sail off" onclick="send('S');">
-`);
+  cmd(`<input class="tall" type="button" value=" Fire! " onclick="send('F');"><br>
+<input type="button" value="Ram" onclick="send('R');"> <input type="button" value="Status" onclick="send('Y');"><br>
+<input class="wide" type="button" value="Sail off" onclick="send('S');">`);
 }
 
 function joust() {
-  cmd(`
-<p><input class="tall" type="button" value=" Joust " onclick="send('J');"></p>
-<input type="button" value="Forfeit" onclick="send('F');">
-`);
+  cmd(`<input class="tall" type="button" value=" Joust " onclick="send('J');"><br><input class="wide" type="button" value="Forfeit" onclick="send('F');">`);
 }
 
 function monster() {
-  cmd(`
-${keypad}
-<p><input class="tall" type="button" value=" Demon " onclick="send('D', true);"></p>
-`);
+  cmd(`${keypad}<br><input class="tall" type="button" value=" Demon " onclick="send('D', true);">`);
 }
 
 function naval() {
-  cmd(`<p><input class="tall" type="button" value="Battle" onclick="send('B');"> <input class="tall" type="button" value="Shipyard" onclick="send('S');"></p>
-<p><input type="button" value="Go Fishing" onclick="send('G');"> <input type="button" value="Hunt" onclick="send('H');">
-<input type="button" value="List" onclick="send('L');"> <input type="button" value="Status" onclick="send('Y');"></p>
-<input class="tall" type="button" value=" Quit " onclick="send('Q');">
-`);
+  cmd(`<input class="tall" type="button" value="Battle" onclick="send('B');"> <input class="tall" type="button" value="Shipyard" onclick="send('S');"><br>
+<input type="button" value="Go Fishing" onclick="send('G');"> <input type="button" value="Hunt" onclick="send('H');"> <input type="button" value="List" onclick="send('L');"> <input type="button" value="Status" onclick="send('Y');"><br>${quit}`);
 }
 
 function party() {
   nme('');
-  cmd(`<p><input class="tall" type="button" value=" Fight " onclick="send('F');"></p>
-<p><input type="button" value="Join" onclick="send('J');"> <input type="button" value="List" onclick="send('L');">
+  cmd(`<input class="tall" type="button" value=" Fight " onclick="send('F');"><br>
+<input type="button" value="Join" onclick="send('J');"> <input type="button" value="List" onclick="send('L');">
 <input type="button" value="Most Wanted" onclick="send('M');"> <input type="button" value="Resign" onclick="send('R');">
-<input type="button" value="Start" onclick="send('S');"> <input type="button" value="Transfer" onclick="send('T');"></p>
-<input class="tall" type="button" value=" Quit " onclick="send('Q');">
-`);
+<input type="button" value="Start" onclick="send('S');"> <input type="button" value="Transfer" onclick="send('T');"><br>${quit}`);
 }
 
 function payment() {
@@ -551,35 +507,26 @@ function payment() {
 }
 
 function potion() {
-  cmd(`
-<p><input class="tall" type="button" value=" Yes " onclick="send('Y');">
-<input class="tall" type="button" value=" No " onclick="send('N');"></p>
-<input type="button" value="Toss" onclick="send('T');">
-`);
+  cmd(`<input class="tall" type="button" value=" Yes " onclick="send('Y');"> <input class="tall" type="button" value=" No " onclick="send('N');"><br>
+<input class="wide" type="button" value="Toss" onclick="send('T');">`);
 }
 
 function riddle() {
-  cmd(`
-<p><input class="platinum" type="button" value=" Platinum " onclick="send('P');"></p>
-<p><input class="gold"     type="button" value="   Gold   " onclick="send('G');"></p>
-<p><input class="silver"   type="button" value="  Silver  " onclick="send('S');"></p>
-<p><input class="copper"   type="button" value="  Copper  " onclick="send('C');"></p>
-`);
+  cmd(`<input class="platinum" type="button" value=" Platinum " onclick="send('P');"><br>
+<input class="gold"     type="button" value="   Gold   " onclick="send('G');"><br>
+<input class="silver"   type="button" value="  Silver  " onclick="send('S');"><br>
+<input class="copper"   type="button" value="  Copper  " onclick="send('C');"><br>`);
   nme(`<img src="images/riddle.jpg" onload="nmeResize(\'zoomInUp\');" style="display:none;" />`);
 }
 
 function shipyard() {
-  cmd(`
-<input type="button" value="Buy" onclick="send('B');"> <input type="button" value="Fix" onclick="send('F');">
-<input type="button" value="Cannon" onclick="send('C');"> <input type="button" value="Ram" onclick="send('R');">
-<input class="tall" type="button" value=" Quit " onclick="send('Q');">
-`);
+  cmd(`<input type="button" value="Buy" onclick="send('B');"> <input type="button" value="Fix" onclick="send('F');">
+<input type="button" value="Cannon" onclick="send('C');"> <input type="button" value="Ram" onclick="send('R');"> ${quit}`);
   nme('<br><img src="images/naval/shipyard.png" onload="nmeResize(\'swing\');" style="display:none;" />');
 }
 
 function square() {
-  cmd(`
-<input type="button" value="Armoury" onclick="send('A');">
+  cmd(`<input type="button" value="Armoury" onclick="send('A');">
 <input type="button" value="Weapons" onclick="send('W');">
 <input type="button" value="Real Estate" onclick="send('R');">
 <input type="button" value="Security" onclick="send('S');">
@@ -589,28 +536,22 @@ function square() {
 <input type="button" value="Hospital" onclick="send('H');">
 <input type="button" value="Pick pockets" onclick="send('P');">
 <input type="button" value="Jail" onclick="send('J');"><br>
-<input class="tall" type="button" value="ARENA" onclick="send('G');"> ${quit}
-`);
+<input class="tall" type="button" value="ARENA" onclick="send('G');"> ${quit}`);
 }
 
 function tavern() {
   nme('');
-  cmd(`
-<p><input class="tall" type="button" value=" Brawl " onclick="send('B');"></p>
+  cmd(`<input class="tall" type="button" value=" Brawl " onclick="send('B');"><br>
 <input type="button" value="Eavesdrop" onclick="send('E');"> <input type="button" value="Jump" onclick="send('J');"><br>
 <input type="button" value="Guzzle" onclick="send('G');"> <input type="button" value="Swear" onclick="send('S');"><br>
 <input type="button" value="List" onclick="send('L');"> <input type="button" value="Post" onclick="send('P');"><br>
-<p><input type="button" value="Today" onclick="send('T');"> <input type="button" value="Yesterday" onclick="send('Y');"></p>
-<input class="tall" type="button" value=" Quit " onclick="send('Q');">
-`);
+<input type="button" value="Today" onclick="send('T');"> <input type="button" value="Yesterday" onclick="send('Y');"><br>${quit}`);
 }
 
 function teleport() {
-  cmd(`
-<p><input class="tall" type="button" value=" Up " onclick="send('U');"></p>
-<p><input type="button" value="Random" onclick="send('R');"> <input type="button" value=" Out " onclick="send('O');"></p>
-<input class="tall" type="button" value="Down" onclick="send('D');">
-`);
+  cmd(`<input class="tall" type="button" value=" Up " onclick="send('U');"><br>
+<input type="button" value="Random" onclick="send('R');"> <input type="button" value=" Out " onclick="send('O');"><br>
+<input class="tall" type="button" value="Down" onclick="send('D');">`);
 }
 
 function wager() {
@@ -619,8 +560,7 @@ function wager() {
 }
 
 function well() {
-  cmd(`
-<input type="button" value="Bless" onclick="send('B');">
+  cmd(`<input type="button" value="Bless" onclick="send('B');">
 <input type="button" value="Teleport" onclick="send('T');">
 <input type="button" value="Destroy" onclick="send('D');">
 <input type="button" value="Out" onclick="send('O');">
@@ -630,13 +570,14 @@ function well() {
 <input type="button" value="Grant" onclick="send('G');">
 <input type="button" value="Curse" onclick="send('C');">
 <input type="button" value="Key" onclick="send('K');">
-<input type="button" value="Magic" onclick="send('M');"><br>
-`);
+<input type="button" value="Magic" onclick="send('M');">`);
 }
 
 function nmeResize(effect, func) {
   if (/^<table.*/.test(document.getElementById('nme').innerHTML)) return;
-  h = window.innerHeight - document.getElementById('command').clientHeight - 20;
+  //h = window.innerHeight - document.getElementById('command').clientHeight - 20;
+  h = window.innerHeight - 8;
+  document.getElementById('command').style.top = -document.getElementById('command').clientHeight + 'px';
   document.getElementById('nme').style.height = h + 'px';
   if ((pic = document.getElementById('nme').getElementsByTagName('img')[0]))
     pic.style.zoom = Math.trunc(100 * h / pic.height) + '%';
@@ -672,7 +613,7 @@ function keydown(event) {
 </script>
 </head>
 <body onkeydown="keydown(event);" onload="welcome();">
-  <div class="nme" id="nme"></div>
-  <div id="command"></div>
+  <div id="nme"></div>
+  <div id="command" style="position: relative; text-align: right;"></div>
 </body>
 </html>

@@ -556,14 +556,18 @@ function Bank() {
 			let d = $.player.level + 1
 			let vault = Math.pow(d, 7) * $.dice(d / 3) * $.dice(d / 11)
 			let carry = new $.coins(vault)
-			xvt.out(' you find ', carry.carry(), ' in an open chest!\n')
-			xvt.waste(2500)
+
+			xvt.out(' you open a chest and find ', carry.carry(), '!\n')
+			$.sound('creak2', 25)
 
 			xvt.out(xvt.reset, '\n')
 			xvt.out('You try to make your way out of the vault')
 			let deposits = new $.coins($.query(`SELECT SUM(bank) AS bank FROM Players WHERE id NOT GLOB '_*' AND id <> '${$.player.id}'`)[0].bank)
-			if (deposits.value)
+			if (deposits.value) {
 				xvt.out(' grabbing ', deposits.carry(), ' more in deposits!\n')
+				$.sound('yahoo')
+
+			}
 
 			for (let i = 0; i < 3; i++) {
 				xvt.out('.')
