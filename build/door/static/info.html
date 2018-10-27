@@ -7,10 +7,11 @@
 <meta name="author" content="Robert Hurst">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="application-name" content="door">
 <meta name="apple-mobile-web-app-title" content="door">
 <meta name="msapplication-starturl" content="http://play.ddgame.us/">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes, user-scalable=no">
 <link href='https://fonts.googleapis.com/css?family=Carter+One' rel='stylesheet'>
 <link rel="stylesheet" href="animate.min.css">
 <link rel="stylesheet" href="command.css">
@@ -24,9 +25,10 @@
     text-align: center;
     border: none;
     margin: 0px;
-    min-width: 320px;
     overflow: hidden;
+    touch-action: none;
   }
+
   body::-webkit-scrollbar {
     display: none;
   }
@@ -96,7 +98,6 @@
     opacity: 0;
     transition: all 0.6s ease;
   }
-
   @keyframes wave {
     50% {
       transform: scale(0.9);
@@ -325,7 +326,7 @@ function animated(effect) {
 
 function Logon() {
   clearInterval(art); art = null;
-  cmd(`<form onsubmit="return sendLogin();"><input type="text" placeholder="Enter ID or Handle" name="id" autofocus required><br><input type="password" placeholder="Enter password" name="password" required><br><button class="wide" type="submit"> Login </button> <input class="wide" type="button" value="NEW" onclick="send('NEW', true);"> <input class="inp-cbx" id="ttyCheckbox" type="checkbox" style="display: none;" onclick="send('F2', false, 'kb'); document.cookie=+this.checked + '; expires=Fri, 31 Dec 9999 23:59:59 GMT';" /><label class="cbx" for="ttyCheckbox"><span><svg width="12px" height="10px" viewbox="0 0 12 10"><polyline points="1.5 6 4.5 9 10.5 1"></polyline></svg></span><span>old</span></label></form>`);
+  cmd(`<form onsubmit="return sendLogin();"><input type="text" placeholder="Enter ID or Handle" name="id" required><br><input type="password" placeholder="Enter password" name="password" required><br><button class="wide" autofocus type="submit"> Login </button> <input class="wide" type="button" value="NEW" onclick="send('NEW', true);"> <input class="inp-cbx" id="ttyCheckbox" type="checkbox" style="display: none;" onclick="send('F2', false, 'kb'); document.cookie=+this.checked + '; expires=Fri, 31 Dec 9999 23:59:59 GMT';" /><label class="cbx" for="ttyCheckbox"><span><svg width="12px" height="10px" viewbox="0 0 12 10"><polyline points="1.5 6 4.5 9 10.5 1"></polyline></svg></span><span>old</span></label></form>`);
   nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize(\'bounceInDown\'); document.getElementById('ttyCheckbox').checked = +document.cookie;" style="display:none;" />`);
 }
 
@@ -347,7 +348,7 @@ function rotateImage() {
     n = Math.trunc(Math.random() * images.length);
     pic = images.splice(n,1);
     setTimeout(function () {
-      nme(`<img src="images/connect/${pic}" onload="nmeResize(\'fadeInRight\');" style="display:none; filter: opacity(35%);" />`);
+      nme(`<img src="images/connect/${pic}" onload="nmeResize(\'fadeInRight\');" style="display:none; filter: opacity(40%);" />`);
     }, 1000);
   }
   else
@@ -577,11 +578,11 @@ function nmeResize(effect, func) {
   if (/^<table.*/.test(document.getElementById('nme').innerHTML)) return;
   //h = window.innerHeight - document.getElementById('command').clientHeight - 20;
   h = window.innerHeight - 8;
-  document.getElementById('command').style.top = -document.getElementById('command').clientHeight + 'px';
   document.getElementById('nme').style.height = h + 'px';
   if ((pic = document.getElementById('nme').getElementsByTagName('img')[0]))
     pic.style.zoom = Math.trunc(100 * h / pic.height) + '%';
   if (!func) animated(effect || 'fadeIn');
+  document.getElementById('command').style.top = -document.getElementById('command').clientHeight + 'px';
 }
 
 function welcome() {

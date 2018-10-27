@@ -126,7 +126,7 @@ document.getElementById('lurker-list').onchange = (ev) => {
 			}
 
 			socket.onopen = () => {
-				term.focus()
+				//term.focus()
 				term.writeln('open\x1B[m')
 			}
 
@@ -217,6 +217,7 @@ function newSession(ev) {
 	if (ev === 'Logon')	setImmediate(() => {
 		term.setOption('fontFamily', tty ? 'tty,Consolas,monospace' : 'IBM Plex Mono,Consolas,monospace')
 		window.dispatchEvent(new Event('resize'))
+		term.focus()
 		term.write(`\x1B[0;2mConnecting terminal WebSocket ... `)
 		XT('@tune(dankdomain)')
 		fetch(`${app}/player/?cols=${term.cols}&rows=${term.rows}`, { method: 'POST' }).then(function (res) {
@@ -232,7 +233,6 @@ function newSession(ev) {
 				socket.onopen = () => {
 					carrier = true
 					window.dispatchEvent(new Event('resize'))
-					term.focus()
 					if (!term.getOption('cursorBlink'))
 						term.setOption('cursorBlink', true)
 					term.writeln('open\x1B[m')
@@ -358,7 +358,6 @@ function receive(event) {
 	if (event.data) {
 		switch (event.data.func) {
 			case 'kb':
-				term.focus()
 			case 'emit':
 				if (!carrier) {
 					XT('@tune(.)')

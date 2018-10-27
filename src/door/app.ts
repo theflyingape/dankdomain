@@ -17,6 +17,7 @@ console.log(`cwd: ${__dirname}`)
 let sessions = {}
 let broadcasts = {}
 
+//dns.lookup('0.0.0.0', (err, addr, family) => {
 dns.lookup('localhost', (err, addr, family) => {
 
   const app = express()
