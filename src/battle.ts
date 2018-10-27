@@ -2099,16 +2099,14 @@ export function poison(rpc: active, cb?:Function) {
 
         xvt.out(xvt.reset, '\n')
         if (!$.Poison.have(rpc.user.poisons, vial) || +rpc.user.weapon > 0) {
-            $.sound('ooze')
             xvt.out(xvt.bright, xvt.green, $.who(rpc, 'He'), $.what(rpc, 'secrete'), 'a caustic ooze', xvt.reset, $.buff(p, t), xvt.reset, '\n')
-            xvt.waste(500)
+            $.sound('ooze', 6)
         }
         else {
-            $.sound('hone')
             xvt.out($.who(rpc, 'He'), $.what(rpc, 'pour')
                 , 'some ', $.Poison.merchant[vial - 1]
                 , ' on ', $.who(rpc, 'his'), rpc.user.weapon, '.\n')
-            xvt.waste(500)
+            $.sound('hone', 6)
             if (/^[A-Z]/.test(rpc.user.id)) {
                 if ($.dice(3 * (rpc.toWC + rpc.user.toWC + 1)) / rpc.user.poison > rpc.weapon.wc) {
                     xvt.out($.who(rpc, 'His'), rpc.user.weapon, ' vaporizes!\n')
@@ -2116,7 +2114,7 @@ export function poison(rpc: active, cb?:Function) {
                     $.Weapon.equip(rpc, $.Weapon.merchant[0])
                 }
             }
-            if (rpc.user.id !== $.player.id || $.dice(rpc.user.poison) == 1) {
+            if (rpc.user.id !== $.player.id || ($.dice(rpc.user.poison) == 1 && $.dice(105 - rpc.cha) > 1)) {
                 $.Poison.remove(rpc.user.poisons, vial)
                 if (rpc.user.id === $.player.id) {
                     xvt.out('You toss the empty vial aside.\n')
