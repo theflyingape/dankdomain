@@ -951,6 +951,7 @@ function doMove(): boolean {
 						for (i = 1; i <= n; i++) {
 							t = $.dice(z)
 							if (i == n && $.player.coward) t = 5
+							if (t % 2 && $.access.sysop) t--
 							xvt.out(xvt.bright, xvt.blue, '[', xvt.cyan, [
 								' Grace ', ' Doom! ',
 								'Fortune', ' Taxes ',
@@ -962,6 +963,7 @@ function doMove(): boolean {
 						}
 						$.animated('rotateOut')
 						xvt.out(xvt.reset)
+
 						switch (t % z) {
 						case 0:
 							if ($.player.cursed) {

@@ -2088,11 +2088,14 @@ export function poison(rpc: active, cb?:Function) {
         let t = rpc.user.poison - p
         p *= vial
         t *= vial
-        if (p > 0 && rpc.user.toWC >= 0 && p >= rpc.user.toWC) rpc.user.toWC = p
-        if (t > 0 && rpc.toWC >= 0 && t >= rpc.toWC)
-            rpc.toWC = t 
-        else if (rpc.user.toWC > 0)
-            rpc.toWC += (rpc.toWC + t < rpc.user.toWC ? t : rpc.user.toWC - rpc.toWC)
+        if (p > 0 && rpc.user.toWC >= 0)    //  cannot augment a damaged weapon
+            if (p >= rpc.user.toWC) rpc.user.toWC = p
+        if (t > 0) {
+            if (rpc.user.toWC > 0)          //  apply buff to an augmented weapon
+                rpc.toWC = (rpc.toWC + t <= rpc.user.toWC ? rpc.toWC + t : t)
+            else                            //  apply buff to a damaged weapon
+                rpc.toWC = (rpc.toWC >=0 ? t : rpc.toWC + t)
+        }
 
         xvt.out(xvt.reset, '\n')
         if (!$.Poison.have(rpc.user.poisons, vial) || +rpc.user.weapon > 0) {
@@ -2107,12 +2110,10 @@ export function poison(rpc: active, cb?:Function) {
                 , ' on ', $.who(rpc, 'his'), rpc.user.weapon, '.\n')
             xvt.waste(500)
             if (/^[A-Z]/.test(rpc.user.id)) {
-                if ($.dice(3 * (rpc.toWC + rpc.user.toWC + 1)) / rpc.user.poison > $.Weapon.name[rpc.user.weapon].wc) {
+                if ($.dice(3 * (rpc.toWC + rpc.user.toWC + 1)) / rpc.user.poison > rpc.weapon.wc) {
                     xvt.out($.who(rpc, 'His'), rpc.user.weapon, ' vaporizes!\n')
-                    rpc.user.weapon = $.Weapon.merchant[0]
-                    rpc.toWC = 0
-                    rpc.user.toWC = 0
-                    if (rpc == $.online) $.sound('crack', 6)
+                    if (rpc == $.online && $.online.weapon.wc > 1) $.sound('crack', 6)
+                    $.Weapon.equip(rpc, $.Weapon.merchant[0])
                 }
             }
             if (rpc.user.id !== $.player.id || $.dice(rpc.user.poison) == 1) {
