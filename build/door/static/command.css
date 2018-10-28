@@ -100,8 +100,3 @@ input:hover, button:hover, button:focus {
     color: red;
     font-size: 125%;
 }
-table {
-    border: none;
-    border-spacing: 0px;
-    padding: 0px;
-}

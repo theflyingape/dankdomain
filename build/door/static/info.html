@@ -135,20 +135,23 @@
     object-fit: contain;
   }
   p, table {
+    border: none;
+    border-spacing: 0px;
     display: inline-block;
+    padding: 0px;
     text-align: center;
   }
 </style>
 <script>
 art = null;
 currentCMD = null;
-all = `<input class="tall" type="button" value=" ALL " onclick="send('=', true);">`
-best = `<input class="tall" type="button" value=" BEST " onclick="send('=', true);">`
-cancel = `<input class="wide" type="button" value="Clear" onclick="send('\x15');">`;
-enter = `<input class="wide" type="button" value="Enter" onclick="send('', true);">`;
-logoff = `<input type="button" value="LOGOFF" onclick="send('\x1A');">`;
-max = `<input class="wide" type="button" value=" MAX " onclick="send('MAX', true);">`
-quit = `<input class="wide" type="button" value="Quit" onclick="send('Q');">`;
+all = `<input class="platinum" class="tall" type="button" value=" ALL " onclick="send('=', true);">`
+best = `<input class="platinum" class="tall" type="button" value=" BEST " onclick="send('=', true);">`
+cancel = `<input class="copper" type="button" value="Clear" onclick="send('\x15');">`;
+enter = `<input class="gold" type="button" value="Enter" onclick="send('', true);">`;
+logoff = `<input class="copper" type="button" value="LOGOFF" onclick="send('\x1A');">`;
+max = `<input class="platinum" type="button" value=" MAX " onclick="send('MAX', true);">`
+quit = `<input class="copper" type="button" value="Quit" onclick="send('Q');">`;
 keypad = `<table>
 <tr><td><input class="numeric" type="button" value="7" onclick="send('7');"></td><td><input class="numeric" type="button" value="8" onclick="send('8');"></td><td><input class="numeric" type="button" value="9" onclick="send('9');"></td>
 </tr>
@@ -158,21 +161,10 @@ keypad = `<table>
 </tr>
 <tr><td><input class="numeric" type="button" value=" 0 " onclick="send('0');"></td><td colspan=2>${enter}</td>
 </tr>
-<tr><td><input class="numeric" type="button" value=" ? " onclick="send('?', true);"></td><td colspan=2>${cancel}</td>
+<tr><td><input class="silver" type="button" value=" ? " onclick="send('?', true);"></td><td colspan=2>${cancel}</td>
 </tr>
 </table>`;
-keyboard = `<input type="button" value="a" onclick="send('a');"> <input type="button" value="b" onclick="send('b');"> <input type="button" value="c" onclick="send('c');">
-<input type="button" value="d" onclick="send('d');"> <input type="button" value="e" onclick="send('e');"> <input type="button" value="f" onclick="send('f');">
-<input type="button" value="g" onclick="send('g');"> <input type="button" value="h" onclick="send('h');"> <input type="button" value="i" onclick="send('i');">
-<input type="button" value="j" onclick="send('j');"> <input type="button" value="k" onclick="send('k');"> <input type="button" value="l" onclick="send('l');">
-<input type="button" value="m" onclick="send('m');"> <input type="button" value="n" onclick="send('n');"> <input type="button" value="o" onclick="send('o');">
-<input type="button" value="p" onclick="send('p');"> <input type="button" value="q" onclick="send('q');"> <input type="button" value="r" onclick="send('r');">
-<input type="button" value="s" onclick="send('s');"> <input type="button" value="t" onclick="send('t');"> <input type="button" value="u" onclick="send('u');">
-<input type="button" value="v" onclick="send('v');"> <input type="button" value="w" onclick="send('w');"> <input type="button" value="x" onclick="send('x');">
-<input type="button" value="y" onclick="send('y');"> <input type="button" value="z" onclick="send('z');"><br>
-<input type="button" value="@" onclick="send('@');"> <input type="button" value="." onclick="send('.');"> <input class="wide" type="button" value=" SPACE BAR " onclick="send(' ');"> <input type="button" value="-" onclick="send('-');"> <input type="button" value="+" onclick="send('+');"><br>
-${cancel} <input type="button" value=" ? " onclick="send('?', true);"> ${enter}
-`;
+keyboard = `<input type="button" value="a" onclick="send('a');"><input type="button" value="b" onclick="send('b');"><input type="button" value="c" onclick="send('c');"><input type="button" value="d" onclick="send('d');"><input type="button" value="e" onclick="send('e');"><input type="button" value="f" onclick="send('f');"><input type="button" value="g" onclick="send('g');"><input type="button" value="h" onclick="send('h');"><input type="button" value="i" onclick="send('i');"><input type="button" value="j" onclick="send('j');"><input type="button" value="k" onclick="send('k');"><input type="button" value="l" onclick="send('l');"><input type="button" value="m" onclick="send('m');"><input type="button" value="n" onclick="send('n');"><input type="button" value="o" onclick="send('o');"><input type="button" value="p" onclick="send('p');"><input type="button" value="q" onclick="send('q');"><input type="button" value="r" onclick="send('r');"><input type="button" value="s" onclick="send('s');"><input type="button" value="t" onclick="send('t');"><input type="button" value="u" onclick="send('u');"><input type="button" value="v" onclick="send('v');"><input type="button" value="w" onclick="send('w');"><input type="button" value="x" onclick="send('x');"><input type="button" value="y" onclick="send('y');"><input type="button" value="z" onclick="send('z');"><br><input type="button" value="@" onclick="send('@');"><input type="button" value="-" onclick="send('-');"><input type="button" value="+" onclick="send('+');"><input type="button" value="." onclick="send('.');"><input class="silver" type="button" value=" ? " onclick="send('?', true);"><br><input class="wide" type="button" value=" SPACE BAR " onclick="send(' ');"><br>${cancel} ${enter}`;
 money = `<table>
 <tr><td><input class="numeric" type="button" value="7" onclick="send('7');"></td><td><input class="numeric" type="button" value="8" onclick="send('8');"></td><td><input class="numeric" type="button" value="9" onclick="send('9');"></td><td><input class="platinum" type="button" value="P" onclick="send('p');"></td>
 </tr>
@@ -416,13 +408,10 @@ function yn() {
 }
 
 function arena() {
-  cmd(`<input type="button" value="Cast" onclick="send('C');">
-<input type="button" value="Poison" onclick="send('P');">
-<input type="button" value="User" onclick="send('U');">
-<input type="button" value="Monster" onclick="send('M');">
-<input type="button" value="Joust" onclick="send('J');">
-<input type="button" value="Status" onclick="send('Y');"><br>
-<input class="tall" type="button" value="SQUARE" onclick="send('G');"> ${quit}`);
+  cmd(`<input type="button" value="Cast" onclick="send('C');"><input type="button" value="Poison" onclick="send('P');"><br>
+<input type="button" value="User" onclick="send('U');"><input type="button" value="Monster" onclick="send('M');"><br>
+<input type="button" value="Joust" onclick="send('J');"><input type="button" value="Status" onclick="send('Y');"><br>
+<input class="gold" type="button" value="SQUARE" onclick="send('G');"> ${quit}`);
 }
 
 function bank() {
@@ -527,17 +516,17 @@ function shipyard() {
 }
 
 function square() {
-  cmd(`<input type="button" value="Armoury" onclick="send('A');">
-<input type="button" value="Weapons" onclick="send('W');">
-<input type="button" value="Real Estate" onclick="send('R');">
-<input type="button" value="Security" onclick="send('S');">
-<input type="button" value="Mage" onclick="send('M');">
-<input type="button" value="Apothecary" onclick="send('V');">
-<input type="button" value="Bank" onclick="send('B');">
-<input type="button" value="Hospital" onclick="send('H');">
-<input type="button" value="Pick pockets" onclick="send('P');">
+  cmd(`<input type="button" value="Armoury" onclick="send('A');"><br>
+<input type="button" value="Weapons" onclick="send('W');"><br>
+<input type="button" value="Real Estate" onclick="send('R');"><br>
+<input type="button" value="Security" onclick="send('S');"><br>
+<input type="button" value="Mage" onclick="send('M');"><br>
+<input type="button" value="Apothecary" onclick="send('V');"><br>
+<input type="button" value="Bank" onclick="send('B');"><br>
+<input type="button" value="Hospital" onclick="send('H');"><br>
+<input type="button" value="Pick pockets" onclick="send('P');"><br>
 <input type="button" value="Jail" onclick="send('J');"><br>
-<input class="tall" type="button" value="ARENA" onclick="send('G');"> ${quit}`);
+<input class="gold" type="button" value="ARENA" onclick="send('G');"> ${quit}`);
 }
 
 function tavern() {
