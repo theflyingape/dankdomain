@@ -1,11 +1,12 @@
-[22;36mDate:[22;37m Sun 21-Oct-2018 10:35am
+[22;36mDate:[22;37m Sun 28-Oct-2018 12:34pm
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
 New announcements as missing features get implemented or tweaked:
 
+ - UI tweaks may improve tablet / touch play
  - temporary buff diminishes after every engagement
  - like hone, apply lower poisons to increase temporary buff
- - a harmless will-o-wisp may be avenged
+ - a harmless will-o-wisp may avenge
  - a blessed/cursed state does not carry over into player's new day
  - you lose favor for killing our barkeep
  - added Psionic class: 8 dungeon monsters updated
