@@ -86,12 +86,13 @@ module Dungeon
 	while (containers.length) {
 		let c = $.dice(containers.length) - 1
 		let liquids = [ 'bubbling', 'clear', 'milky', 'sparkling' ]
-		let colors = [ 'amber', 'sapphire', 'crimson', 'emerald', 'amethyst']
+		let colors = [ 'amber', 'sapphire', 'crimson', 'emerald', 'amethyst' ]
 		let coded = [ xvt.yellow, xvt.blue, xvt.red, xvt.green, xvt.magenta ]
 		while (liquids.length) {
 			let l = $.dice(liquids.length) - 1
 			let i = $.dice(colors.length) - 1
-			potions.push({ potion: v++, identified: false, image: 'potion/' + (containers[c].startsWith('beaker') ? 'beaker' :  colors[i])
+			potions.push({ potion: v++, identified: false
+				, image: 'potion/' + (containers[c].startsWith('beaker') ? 'beaker' :  colors[i])
 				, description: xvt.attr(xvt.uline, containers[c], xvt.nouline, ' a ', liquids[l], ' ', coded[i], colors[i]) })
 			liquids.splice(l, 1)
 			colors.splice(i, 1)
@@ -1231,6 +1232,7 @@ function doMove(): boolean {
 				break
 			}
 
+			$.profile({ jpg:'npc/old cleric', effect:'zoomInUp' })
 			let power = $.int(100 * DL.cleric.sp / DL.cleric.user.sp)
 			xvt.out(xvt.yellow, 'There is an ', xvt.faint, 'old cleric', xvt.normal
 				, xvt.normal, ' in this room with '
@@ -1301,6 +1303,8 @@ function doMove(): boolean {
 			xvt.out(`\x1B[1;${$.player.rows}r`)
 			xvt.restore()
 			refresh = true
+
+			$.profile({ jpg:'npc/wizard', effect:'flash' })
 			xvt.out(xvt.magenta, 'You encounter a wizard in this room.\n\n')
 			if (!$.player.cursed && !$.player.novice && $.dice($.player.wins + 1) == 1 && $.dice((Z > $.player.level ? Z : 1) + 20 * $.player.immortal + $.player.level + $.online.cha) == 1) {
 				xvt.waste(500)
@@ -2391,7 +2395,6 @@ function putMonster(r = -1, c = -1): boolean {
 function teleport() {
 	let min =  Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
 	$.action('teleport')
-	$.PC.profile($.online)
 
 	xvt.out(xvt.bright, xvt.yellow, 'What do you wish to do?\n', xvt.reset)
 	xvt.out($.bracket('U'), 'Teleport up 1 level')
@@ -2405,6 +2408,7 @@ function teleport() {
 
 	xvt.app.form = {
 		'wizard': { cb:() => {
+			$.PC.profile($.online)
 			if ($.dice(10 * deep + Z + 5 * $.player.magic + $.online.int + $.online.cha) == 1) {
 				xvt.out(' ... \"Huh?\"\n')
 				$.sound('miss', 6)
