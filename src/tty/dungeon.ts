@@ -8,33 +8,15 @@ import fs = require('fs')
 import $ = require('../common')
 import Battle = require('../battle')
 import xvt = require('xvt')
+import { PortInfo } from 'aws-sdk/clients/lightsail';
 
 
 module Dungeon
 {
-	const iii = ['I','II','III','IV','V','VI','VII','VIII','IX','X']
-	const potion = [
-		'Potion of Cure Light Wounds',
-		'Vial of Weakness',
-		'Potion of Charm',
-		'Vial of Stupidity',
-		'Potion of Agility',
-		'Vial of Clumsiness',
-		'Potion of Wisdom',
-		'Vile Vial',
-		'Potion of Stamina',
-		'Vial of Slaad Secretions',
-		'Potion of Mana',
-		'Flask of Fire Water',
-		'Elixir of Restoration',
-		'Vial of Crack',
-		'Potion of Augment',
-		'Beaker of Death'
-	]
-
 	let fini: Function
 	let monsters: monster = require('../etc/dungeon.json')
 	let party: active[]
+	let potions: vial[] = []
 	let tl: number
 
 	let looked: boolean
@@ -77,6 +59,45 @@ module Dungeon
 		'C': { description:'' },
 		'P': { description:'' },
 		'Y': { description:'' }
+	}
+
+	const iii = ['I','II','III','IV','V','VI','VII','VIII','IX','X']
+	const potion = [
+		'Potion of Cure Light Wounds',
+		'Vial of Weakness',
+		'Potion of Charm',
+		'Vial of Stupidity',
+		'Potion of Agility',
+		'Vial of Clumsiness',
+		'Potion of Wisdom',
+		'Vile Vial',
+		'Potion of Stamina',
+		'Vial of Slaad Secretions',
+		'Potion of Mana',
+		'Flask of Fire Water',
+		'Elixir of Restoration',
+		'Vial of Crack',
+		'Potion of Augment',
+		'Beaker of Death'
+	]
+	//	make some magic brew & bottle it up . . . 
+	let containers = [ 'beaker filled with', 'bottle containing', 'flask of', 'vial holding' ]
+	let v = 0
+	while (containers.length) {
+		let c = $.dice(containers.length) - 1
+		let liquids = [ 'bubbling', 'clear', 'milky', 'sparkling' ]
+		let colors = [ 'amber', 'sapphire', 'crimson', 'emerald', 'amethyst']
+		let coded = [ xvt.yellow, xvt.blue, xvt.red, xvt.green, xvt.magenta ]
+		while (liquids.length) {
+			let l = $.dice(liquids.length) - 1
+			let i = $.dice(colors.length) - 1
+			potions.push({ potion: v++, identified: false, image: 'potion/' + (containers[c].startsWith('beaker') ? 'beaker' :  colors[i])
+				, description: xvt.attr(xvt.uline, containers[c], xvt.nouline, ' a ', liquids[l], ' ', coded[i], colors[i]) })
+			liquids.splice(l, 1)
+			colors.splice(i, 1)
+			coded.splice(i, 1)
+		}
+		containers.splice(c, 1)
 	}
 
 export function DeepDank(start: number, cb: Function) {
@@ -381,7 +402,7 @@ function command() {
 
     switch (choice) {
 	case 'M':	//	#tbt
-		if ($.access.sysop) DL.map = 3
+		DL.map = 3
 		refresh = true
 		break
 
@@ -1124,10 +1145,10 @@ function doMove(): boolean {
 			}
 
 			let x = $.dice(DL.width) - 1, y = $.dice(DL.rooms.length) - 1
-			ROOM = DL.rooms[y][x]
-			if (ROOM.occupant || $.dice(Z * ($.player.steal / 2 + 1) - deep) > Z) {
-				if (!ROOM.occupant) {
-					ROOM.occupant = 5
+			let escape = DL.rooms[y][x]
+			if (escape.occupant || $.dice(Z * ($.player.steal / 2 + 1) - deep) > Z) {
+				if (!escape.occupant) {
+					escape.occupant = 5
 					xvt.out([
 						'He silently ignores you',
 						'He recognizes your skill and winks',
@@ -1143,7 +1164,7 @@ function doMove(): boolean {
 				xvt.out(xvt.reset, '\n')
 			}
 			else {
-				ROOM.occupant = 5
+				escape.occupant = 5
 				if (DL.map > 1)
 					xvt.out('You expect nothing less from the coward.')
 				else
@@ -1373,18 +1394,15 @@ function doMove(): boolean {
 			if (typeof ROOM.giftID == 'undefined' && !$.player.coward)
 				ROOM.giftID = !$.player.novice && $.dice(100 + ROOM.giftValue) < ($.online.int / 20 * (1 << $.player.poison) + ($.online.int > 90 ? ($.online.int % 90) <<1 : 0))
 			$.sound('bubbles')
-			xvt.out(xvt.bright, xvt.cyan, 'On the ground, you find a ',
-				['bottle containing', 'flask of some', 'vial holding'][$.dice(3) - 1], ' ',
-				[ 'bubbling', 'clear', 'dark', 'sparkling', 'tainted'][$.dice(5) - 1], ' ')
-			if (ROOM.giftID || $.access.sysop)
+			xvt.out(xvt.bright, xvt.cyan, 'On the ground, you find a ')
+			if (potions[ROOM.giftValue].identified || ROOM.giftID || $.access.sysop) {
+				$.profile({ png:potions[ROOM.giftValue].image, handle:potion[ROOM.giftValue], effect:'fadeInUp' })
 				xvt.out(potion[ROOM.giftValue], '.')
+				potions[ROOM.giftValue].identified = $.online.int > (85 - 4 * $.player.poison)	//	recall seeing this before
+			}
 			else {
-				let p = $.dice(5) - 1
-				xvt.out(
-					[ xvt.yellow, xvt.blue, xvt.red, xvt.green, xvt.magenta ][p],
-					[ 'amber', 'blue', 'crimson', 'green', 'purple'][p],
-					xvt.cyan, ' potion', xvt.reset, '.'
-				)
+				$.profile({ png:potions[ROOM.giftValue].image, handle:'Is it ' + 'nt'[$.dice(2) - 1] + 'asty ?', effect:'fadeInUp' })
+				xvt.out(potions[ROOM.giftValue].description, xvt.bright, xvt.cyan, ' potion', xvt.reset, '.')
 			}
 
 			if (ROOM.giftID || $.dice(100 + 10 * ROOM.giftValue * +$.player.coward) + $.dice(deep / 2) < 50 + $.int($.online.int / 2)) {
@@ -2455,9 +2473,10 @@ function teleport() {
 function quaff(v: number, it = true) {
 	let m = $.player.blessed ? 10 : 0
 	m = $.player.cursed ? m - 10 : m
-	xvt.out('It was', xvt.bright, v % 2 ? xvt.red : xvt.green, $.an(potion[v]), xvt.reset, '.\n')
-	if (!$.access.sysop && !(v % 2)) $.news(`\t${it ? 'quaffed' : 'tossed'}${$.an(potion[v])}`)
+	if (!(v % 2) && !potions[v].identified) $.news(`\t${it ? 'quaffed' : 'tossed'}${$.an(potion[v])}`)
 	if (it) {
+		potions[v].identified = $.online.int > (85 - 4 * $.player.poison)	//	recall seeing this before
+		xvt.out('It was', xvt.bright, v % 2 ? xvt.red : xvt.green, $.an(potion[v]), xvt.reset, '.\n')
 		$.sound('quaff', 6)
 		switch (v) {
 	//	Potion of Cure Light Wounds
@@ -2570,7 +2589,7 @@ function quaff(v: number, it = true) {
 
 	//	Potion of Augment
 		case 14:
-			$.sound('power', 6)
+			$.sound('hone', 6)
 			$.player.maxstr = $.PC.ability($.player.maxstr, $.player.maxstr < 95 ? 2 : 1)
 			$.player.maxint = $.PC.ability($.player.maxint, $.player.maxint < 95 ? 2 : 1)
 			$.player.maxdex = $.PC.ability($.player.maxdex, $.player.maxdex < 95 ? 2 : 1)

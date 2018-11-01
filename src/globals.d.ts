@@ -230,6 +230,13 @@ interface spell {
     wand?: string
 }
 
+interface vial {
+    potion: number
+    identified: boolean
+    image: string
+    description: string
+}
+
 interface weapon {
     text: string
     value: string
