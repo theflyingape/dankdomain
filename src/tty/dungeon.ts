@@ -2410,16 +2410,19 @@ function teleport() {
 		'wizard': { cb:() => {
 			$.PC.profile($.online)
 			if ($.dice(10 * deep + Z + 5 * $.player.magic + $.online.int + $.online.cha) == 1) {
-				xvt.out(' ... \"Huh?\"\n')
-				$.sound('miss', 6)
+				xvt.out(' ... \"', xvt.bright, xvt.blue, 'Huh?', xvt.reset, '\"\n')
+				$.sound('miss', 9)
+				$.animated('wobble')
 				$.sound('lose', 9)
+				$.animated('rubberBand')
 				$.music('crack')
-				xvt.waste(1200)
+				xvt.waste(2000)
+				$.animated('bounceOutUp')
 				let pops = 'UDOR'[$.dice(4) - 1]
 				if (xvt.entry.toUpperCase() == pops) {
 					$.sound('oops', 6)
 					deep = $.dice(10) - 1
-					Z = $.dice(20) - 10
+					Z += $.dice(20) - 10
 					Z = Z < 0 ? 0 : Z > 99 ? 99 : Z
 					$.sound('portal')
 				}
@@ -2463,6 +2466,8 @@ function teleport() {
 						fini()
 						return
 					}
+					break
+				default:
 					break
 			}
 			xvt.waste(1250)
