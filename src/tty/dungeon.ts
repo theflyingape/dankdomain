@@ -2617,6 +2617,7 @@ function quaff(v: number, it = true) {
 
 	//	Beaker of Death
 		case 15:
+			$.profile({ png:'potion/beaker', handle: `💀 ${potion[v]} 💀`, effect:'fadeInDown' })
 			$.sound('killed', 12)
 			$.online.hp = 0
 			$.online.sp = 0
