@@ -8,7 +8,6 @@ import fs = require('fs')
 import $ = require('../common')
 import Battle = require('../battle')
 import xvt = require('xvt')
-import { PortInfo } from 'aws-sdk/clients/lightsail';
 
 
 module Dungeon
@@ -199,28 +198,28 @@ export function menu(suppress = false) {
 		let s = $.dice(5) - 1
 		xvt.out(xvt.reset, '\n', xvt.faint, ['Your skin crawls'
 			, 'Your pulse quickens', 'You feel paranoid', 'Your grip tightens'
-			, 'You stand ready'][s], ' when you hear a')
+			, 'You stand ready'][s], ' from hearing a ')
 		if (s == 1) $.sound('pulse')
 		switch ($.dice(5)) {
 			case 1:
 				if (s == 0) $.sound('creak' + $.dice(2))
-				xvt.out('n eerie, creaking noise')
+				xvt.out('creaking sound')
 				break
 			case 2:
 				if (s == 2) $.sound('thunder')
-				xvt.out(' clap of thunder')
+				xvt.out('clap of thunder')
 				break
 			case 3:
 				if (s == 3) $.sound('ghostly')
-				xvt.out(' ghostly whisper')
+				xvt.out('ghostly whisper')
 				break
 			case 4:
 				if (s == 4) $.sound('growl')
-				xvt.out(' beast growl')
+				xvt.out('beast growl')
 				break
 			case 5:
 				$.sound('laugh')
-				xvt.out(' maniacal laugh')
+				xvt.out('maniacal laugh')
 				break
 		}
 		if (Math.abs(Y - y) < 3 && Math.abs(X - x) < 3)
@@ -1405,11 +1404,13 @@ function doMove(): boolean {
 				potions[ROOM.giftValue].identified = $.online.int > (85 - 4 * $.player.poison)	//	recall seeing this before
 			}
 			else {
-				$.profile({ png:potions[ROOM.giftValue].image, handle:'Is it ' + 'nt'[$.dice(2) - 1] + 'asty ?', effect:'fadeInUp' })
+				$.profile({ png:potions[ROOM.giftValue].image, handle:'Is it ' + 'nt'[$.dice(2) - 1] + 'asty, precious?', effect:'fadeInUp' })
 				xvt.out(potions[ROOM.giftValue].description, xvt.bright, xvt.cyan, ' potion', xvt.reset, '.')
 			}
 
-			if (ROOM.giftID || $.dice(100 + 10 * ROOM.giftValue * +$.player.coward) + $.dice(deep / 2) < 50 + $.int($.online.int / 2)) {
+			if (potions[ROOM.giftValue].identified || ROOM.giftID
+				|| ($.dice(100 + 10 * ROOM.giftValue * +$.player.coward) + $.dice(deep / 2) < (50 + $.int($.online.int / 2))
+				&& $.dice(100) > 1)) {
 				$.action('potion')
 				xvt.app.form = {
 					'quaff': { cb: () => {
@@ -1435,10 +1436,11 @@ function doMove(): boolean {
 				return false
 			}
 			else {
+				let auto = $.dice(2) < 2
 				xvt.waste(600)
-				xvt.out(xvt.faint, '\nYou quaff it without hesitation.', xvt.reset, '\n')
+				xvt.out(xvt.faint, '\nYou ', auto ? 'quaff' : 'toss', ' it without hesitation.', xvt.reset, '\n')
 				xvt.waste(600)
-				quaff(ROOM.giftValue)
+				quaff(ROOM.giftValue, auto)
 				ROOM.giftItem = ''
 			}
 			break

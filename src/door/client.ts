@@ -109,7 +109,7 @@ document.getElementById('lurker-list').onchange = (ev) => {
 	webLinks.webLinksInit(term)
 	fit.fit(term)
 
-	term.write('\x1B[H\x1B[J\x1B[1;30mConnecting your terminal to ' + watch[watch.selectedIndex].text + ' WebSocket ... ')
+	term.write('\n\x1B[1;34mConnecting your terminal to ' + watch[watch.selectedIndex].text + ' WebSocket ... ')
 	let protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://'
 	let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/lurker/'
 
@@ -218,7 +218,7 @@ function newSession(ev) {
 		term.setOption('fontFamily', tty ? 'tty,Consolas,monospace' : 'IBM Plex Mono,Consolas,monospace')
 		window.dispatchEvent(new Event('resize'))
 		term.focus()
-		term.write(`\x1B[0;2mConnecting terminal WebSocket ... `)
+		term.write(`\n\x1B[0;2mConnecting terminal WebSocket ... `)
 		XT('@tune(dankdomain)')
 		fetch(`${app}/player/?cols=${term.cols}&rows=${term.rows}`, { method: 'POST' }).then(function (res) {
 			res.text().then(function (session) {
