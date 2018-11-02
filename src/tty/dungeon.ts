@@ -1218,6 +1218,7 @@ function doMove(): boolean {
 				xvt.out('You pray for him.\n')
 				break
 			}
+			if (!DL.map) $.profile({ jpg:'npc/old cleric', effect:'zoomInUp' })
 
 			let cast = 7
 			let cost = new $.coins(Math.trunc($.money(Z) / 6 / $.player.hp * ($.player.hp - $.online.hp)))
@@ -1232,7 +1233,6 @@ function doMove(): boolean {
 				break
 			}
 
-			$.profile({ jpg:'npc/old cleric', effect:'zoomInUp' })
 			let power = $.int(100 * DL.cleric.sp / DL.cleric.user.sp)
 			xvt.out(xvt.yellow, 'There is an ', xvt.faint, 'old cleric', xvt.normal
 				, xvt.normal, ' in this room with '
