@@ -1232,7 +1232,7 @@ function doMove(): boolean {
 			}
 
 			let power = $.int(100 * DL.cleric.sp / DL.cleric.user.sp)
-			if (!DL.map && power > 97) $.profile({ jpg:'npc/old cleric', effect:'zoomInUp' })
+			if (DL.map < 2 && power > 97) $.profile({ jpg:'npc/old cleric', effect:'zoomInUp' })
 			xvt.out(xvt.yellow, 'There is an ', xvt.faint, 'old cleric', xvt.normal
 				, xvt.normal, ' in this room with '
 				, power < 40 ? xvt.faint : power < 80 ? xvt.normal : xvt.bright, `${power}`
