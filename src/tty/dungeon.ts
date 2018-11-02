@@ -1158,7 +1158,7 @@ function doMove(): boolean {
 						][$.dice(5) - 1], xvt.cyan, '.')
 				}
 				else {
-					xvt.out(xvt.normal, xvt.magenta, 'He teleports away!')
+					xvt.out(xvt.normal, xvt.lmagenta, 'He teleports away!')
 					$.sound('teleport', 8)
 				}
 				xvt.out(xvt.reset, '\n')
@@ -1232,7 +1232,7 @@ function doMove(): boolean {
 			}
 
 			let power = $.int(100 * DL.cleric.sp / DL.cleric.user.sp)
-			if (DL.map < 2 && power > 97) $.profile({ jpg:'npc/old cleric', effect:'zoomInUp' })
+			if (DL.map < 2 && power > 95) $.profile({ jpg:'npc/old cleric', effect:'zoomInUp' })
 			xvt.out(xvt.yellow, 'There is an ', xvt.faint, 'old cleric', xvt.normal
 				, xvt.normal, ' in this room with '
 				, power < 40 ? xvt.faint : power < 80 ? xvt.normal : xvt.bright, `${power}`
@@ -1283,11 +1283,11 @@ function doMove(): boolean {
 					else {
 						if (cast == 13) {
 							ROOM.occupant = 0
-							xvt.out(xvt.magenta, 'He teleports away!\n', xvt.reset)
+							xvt.out(xvt.lmagenta, 'He teleports away!\n', xvt.reset)
 							$.sound('teleport', 8)
 						}
 						else {
-							xvt.out(xvt.yellow, '"I need to rest.  Go in peace."\n', xvt.reset)
+							xvt.out(xvt.lyellow, '"I need to rest.  Go in peace."\n', xvt.reset)
 							looked = true
 						}
 					}

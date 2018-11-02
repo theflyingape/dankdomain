@@ -281,14 +281,14 @@ export function attack(retry = false) {
                     trip = trip < 5 ? 5 : trip > 95 ? 95 : trip
                     if ($.dice(100) > trip) {
                         let who = (enemy.user.gender === 'I' ? 'The ' : '') + enemy.user.handle
-                        xvt.out([
+                        xvt.out(xvt.lyellow, [
                             'You trip and fail in your attempt to retreat.',
                             `${who} pulls you back into the battle.`,
                             `${who} prevents your retreat and says, "I'm not through with you yet!"`,
                             `${who} outmaneuvers you and says, "You started this, I'm finishing it."`,
                             `${who} blocks your path and says, "Where do you want to go today?"`,
                         ][$.dice(5) - 1]
-                        , '\n'
+                        , xvt.reset, '\n'
                         )
                         next()
                         return
@@ -297,14 +297,14 @@ export function attack(retry = false) {
                     retreat = true
                     $.player.retreats++
                     let who = $.player.gender === 'F' ? 'She' : 'He'
-                    xvt.out([
+                    xvt.out(xvt.lblue, [
                             'You are successful in your attempt to retreat.',
                             'You limp away from the battle.',
                             'You decide this isn\'t worth the effort.',
                             'You listen to the voice in your head yelling, \"Run!\"',
                             `You say, "${who} who fights and runs away lives to fight another day!"`
                         ][$.dice(5) - 1]
-                        , '\n'
+                        , xvt.reset, '\n'
                     )
                     if ($.online.confused)
                         $.activate($.online, false, true)
@@ -1234,7 +1234,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
         case 8:
             if (xvt.validator.isDefined(nme)) {
-                xvt.out(xvt.bright, xvt.magenta)
+                xvt.out(xvt.bright, xvt.lmagenta)
                 if (backfire) {
                     xvt.out(nme === $.online ? 'You' : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
                         , $.what(nme, ' teleport'))
@@ -1257,8 +1257,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 xvt.out(xvt.normal, 'away from the ', xvt.faint, 'battle!\n', xvt.reset)
                 $.sound('teleport', 8)
                 if ($.dice(100) == 1) {
-                    xvt.out('Nearby is the Crown\'s Champion shaking his head and texting his Maker.\n')
-                    xvt.waste(1000)
+                    xvt.out(xvt.lred, 'Nearby is the Crown\'s Champion shaking his head and texting his Maker.\n', xvt.reset)
+                    xvt.waste(2000)
                 }
             }
             else {
@@ -1868,7 +1868,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
 
     if (from !== 'Party' && rpc !== $.online && rpc.user.coward && rpc.hp < (rpc.user.hp / 5)) {
         rpc.hp = -1
-        xvt.out(xvt.bright, xvt.green
+        xvt.out(xvt.bright, xvt.lgreen
             , rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle
             , xvt.normal, ' runs away from '
             , xvt.faint, 'the battle!'
@@ -1979,7 +1979,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             enemy.hp = 0
             if (enemy == $.online)
                 $.sound('kill', 5)
-            xvt.out(xvt.bright, enemy == $.online ? xvt.yellow : round[0].party == 0 ? xvt.cyan : xvt.red)
+            xvt.out(xvt.bright, enemy == $.online ? xvt.lyellow : round[0].party == 0 ? xvt.lcyan : xvt.lred)
             xvt.out(rpc.user.handle, ' ', sprintf([
                 'makes a fatal blow to %s',
                 'blows %s away',
@@ -2005,7 +2005,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                 deed.value = hit
                 $.sound('outstanding')
                 $.saveDeed(deed)
-                xvt.out(xvt.yellow, '+', xvt.white)
+                xvt.out(xvt.lyellow, '+', xvt.white)
             }
             xvt.out('You ', action ,' ')
             if (alive[0] == 1 && alive[1] == 1)
