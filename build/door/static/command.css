@@ -7,9 +7,9 @@
     background-image: -ms-linear-gradient(top, cornsilk, darkkhaki);
     background-image: -o-linear-gradient(top, cornsilk, darkkhaki);
     background-image: linear-gradient(to bottom, cornsilk, darkkhaki);
-    -webkit-border-radius: 12;
-    -moz-border-radius: 12;
-    border-radius: 12px;
+    -webkit-border-radius: 8;
+    -moz-border-radius: 8;
+    border-radius: 8px;
     -webkit-box-shadow: 0px 1px 3px darkslategray;
     -moz-box-shadow: 0px 1px 3px darkslategray;
     box-shadow: 0px 1px 3px darkslategray;
@@ -17,52 +17,60 @@
     font-family: 'Carter One', cursive;
     font-size: 100%;
     color: midnightblue;
-    padding: 8px 15px 8px 15px;
-    border: solid darkolivegreen 3px;
+    padding: 4px 7px 4px 7px;
+    border: solid darkolivegreen 2px;
     text-decoration: none;
 }
 .tall {
-    padding: 20px 15px;
+    padding: 8px 5px;
 }
 .wide {
-    padding: 8px 24px;
+    padding: 4px 10px;
 }
 .numeric {
     padding: 4px 24px 15px 6px;
 }
 .platinum {
     background: orchid;
-    border: solid darkorchid 3px;
+    border: solid darkorchid 2px;
     color: indigo;
     padding: 8px 18px;
     font-size: 125%;
 }
 .gold {
     background: gold;
-    border: solid darkgoldenrod 3px;
+    border: solid darkgoldenrod 2px;
     color: goldenrod;
     padding: 8px 18px;
     font-size: 125%;
 }
 .silver {
     background: turquoise;
-    border: solid darkturquoise 3px;
+    border: solid darkturquoise 2px;
     color: steelblue;
     padding: 8px 18px;
     font-size: 125%;
 }
 .copper {
     background: coral;
-    border: solid darkred 3px;
+    border: solid darkred 2px;
     color: crimson;
+    padding: 8px 18px;
+    font-size: 125%;
+}
+.slate {
+    background: lightgray;
+    border: solid darkslategray 2px;
+    color: slategray;
     padding: 8px 18px;
     font-size: 125%;
 }
 :focus { outline: none; }
 input:active, button:active {
-    transform: scale(1.25, 1.1) translateY(-8px);
+    transform: scale(1.2) translateY(-3px);
     text-shadow: 1px 1px 2px black;
     color: white;
+    padding: 4px 24px 15px 6px;
 }
 input:hover, button:hover, button:focus {
     background: gold;
@@ -73,30 +81,36 @@ input:hover, button:hover, button:focus {
     background-image: linear-gradient(to bottom, gold, goldenrod);
     text-decoration: none;
     text-shadow: 1px 1px 2px darkslategray;
-    border: solid yellowgreen 3px;
+    border: solid yellowgreen 2px;
     color: whitesmoke;
 }
 .platinum:hover {
     background: lightpink;
-    border: solid darkorchid 3px;
+    border: solid darkorchid 2px;
     color: fuchsia;
     font-size: 125%;
 }
 .gold:hover {
     background: yellow;
-    border: solid darkgoldenrod 3px;
+    border: solid darkgoldenrod 2px;
     color: lightgoldenrodyellow;
     font-size: 125%;
 }
 .silver:hover {
     background: lightskyblue;
-    border: solid darkturquoise 3px;
+    border: solid darkturquoise 2px;
     color: lightsteelblue;
     font-size: 125%;
 }
 .copper:hover {
     background: lightcoral;
-    border: solid darkred 3px;
+    border: solid darkred 2px;
     color: red;
+    font-size: 125%;
+}
+.slate:hover {
+    background: gainsboro;
+    border: solid darkslategray 2px;
+    color: ghostwhite;
     font-size: 125%;
 }

@@ -240,7 +240,7 @@ function choice() {
 				else
 					xvt.out('You can be billed for the remaining ', (hi - lo).toString(), ' hit points.\n')
 			}
-			$.action('listbest')
+			$.action('listall')
 			xvt.app.form = {
 				'hp': { cb: () => {
 					xvt.out('\n')

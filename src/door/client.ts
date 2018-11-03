@@ -96,7 +96,7 @@ document.getElementById('lurker-list').onchange = (ev) => {
 		fontFamily: 'Consolas,monospace', fontSize: 20,
 		fontWeight: '400', fontWeightBold: '500',
 		theme: {
-			foreground: '#a3a7af', background: '#23272f',
+			foreground: '#a3a7af', background: '#23272f', cursor: '#e0c8e0',
 			black: '#000000', red: '#a00000', green: '#00a000', yellow: '#c8a000',
 			blue: '#0000a0', magenta: '#a000a0', cyan: '#00a0a0', white: '#b0b0b0',
 			brightBlack: '#646464', brightRed: '#ff0000', brightGreen: '#00ff00', brightYellow: '#ffff00',
@@ -150,16 +150,16 @@ newSession('Logoff')
 
 function newSession(ev) {
 	const options: ITerminalOptions = {
-		bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false,
+		bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false, drawBoldTextInBrightColors: true,
 		cols: cols, rows: rows, scrollback: 500,
 		fontFamily: 'IBM Plex Mono,Consolas,monospace', fontSize: 20,
 		fontWeight: '400', fontWeightBold: '500',
 		theme: {
-			foreground: '#b3b7bf', background: '#03070f',
-			black: '#000000', red: '#a00000', green: '#00a000', yellow: '#c8a000',
-			blue: '#0000a0', magenta: '#a000a0', cyan: '#00a0a0', white: '#b8b9c0',
-			brightBlack: '#646464', brightRed: '#fb0000', brightGreen: '#00fb00', brightYellow: '#fbfb00',
-			brightBlue: '#0000fb', brightMagenta: '#fb00fb', brightCyan: '#00fbfb', brightWhite: '#fbfbfb'
+			foreground: '#a8a8a8', background: '#020408', cursor: '#a0c8f0',
+			black: '#000000', red: '#a80000', green: '#00a800', yellow: '#c8a800',
+			blue: '#0000a8', magenta: '#a800a8', cyan: '#00a8a8', white: '#a8a8b0',
+			brightBlack: '#666666', brightRed: '#fb0b0b', brightGreen: '#0bfb0b', brightYellow: '#fbfb0b',
+			brightBlue: '#0b0bfb', brightMagenta: '#fb0bfb', brightCyan: '#0bfbfb', brightWhite: '#fbfbfb'
 		}
 	}
 
@@ -198,13 +198,18 @@ function newSession(ev) {
 
 	term.on('resize', function (size) {
 		let resize = term.getOption('fontSize')
-		let style = resize < 18 ? 'S' : resize > 26 ? 'L' : 'M'
+		let style = resize < 16 ? 'S' : resize > 26 ? 'L' : 'M'
 		XT(`@action(Size${style})`)
 
 		if (pid < 1) return
 		cols = size.cols
 		rows = size.rows
 		fetch(`${app}/player/${pid}/size?cols=${cols}&rows=${rows}`, { method: 'POST' })
+	})
+
+	term.on('selection', function () {
+		if (carrier) socket.send(term.getSelection())
+		term.clearSelection()
 	})
 
 	term.on('wall', function (msg) {
@@ -302,7 +307,7 @@ function XT(data) {
 
 	function action(menu) {
 		if (window.frames['Info'])
-			window.frames['Info'].postMessage({ 'func': menu }, location.href)
+			window.frames['Info'].postMessage({ 'func': menu, 'fontSize':term.getOption('fontSize') }, location.href)
 	}
 
 	function animated(effect) {

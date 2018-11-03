@@ -480,7 +480,7 @@ function Shipyard(suppress = true) {
 				afford = Math.trunc($.player.coin.value / cost)
 				if (afford < max)
 					max = afford
-				$.action('listbest')
+				$.action('listall')
 				xvt.app.form = {
 					'hp': { cb: () => {
 						xvt.out('\n')

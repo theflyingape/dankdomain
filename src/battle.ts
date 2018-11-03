@@ -2133,6 +2133,7 @@ export function user(venue: string, cb:Function) {
     xvt.app.form = {
         'user': { cb: () => {
             if (xvt.entry === '?') {
+                $.action('list')
                 xvt.app.form['start'].prompt = 'Starting level ' + $.bracket(start, false) + ': '
                 xvt.app.focus = 'start'
                 return
@@ -2208,6 +2209,7 @@ export function user(venue: string, cb:Function) {
                 xvt.out(xvt.reset, '\n')
             }
 
+            $.action('freetext')
             xvt.app.focus = 'user'
             return
         }}
