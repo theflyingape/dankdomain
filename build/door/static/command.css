@@ -65,7 +65,7 @@
     padding: 6px 16px;
     font-size: 120%;
 }
-:focus { outline: none; }
+
 input:active, button:active {
     transform: scale(1.2) translateY(-3px);
     text-shadow: 1px 1px 2px black;

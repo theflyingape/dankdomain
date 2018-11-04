@@ -32,77 +32,6 @@
   body::-webkit-scrollbar {
     display: none;
   }
-  .cbx {
-    margin: auto;
-    -webkit-user-select: none;
-    user-select: none;
-    cursor: pointer;
-  }
-  .cbx span {
-    display: inline-block;
-    vertical-align: middle;
-    transform: translate3d(0, 0, 0);
-  }
-  .cbx span:first-child {
-    position: relative;
-    width: 18px;
-    height: 18px;
-    border-radius: 3px;
-    transform: scale(1);
-    vertical-align: middle;
-    border: 1px solid #9098A9;
-    transition: all 0.2s ease;
-  }
-  .cbx span:first-child svg {
-    position: absolute;
-    top: 3px;
-    left: 2px;
-    fill: none;
-    stroke: #FFFFFF;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-dasharray: 16px;
-    stroke-dashoffset: 16px;
-    transition: all 0.3s ease;
-    transition-delay: 0.1s;
-    transform: translate3d(0, 0, 0);
-  }
-  .cbx span:first-child:before {
-    content: "";
-    width: 100%;
-    height: 100%;
-    background: #506EEC;
-    display: block;
-    transform: scale(0);
-    opacity: 1;
-    border-radius: 50%;
-  }
-  .cbx span:last-child {
-    padding-left: 8px;
-  }
-  .cbx:hover span:first-child {
-    border-color: #506EEC;
-  }
-
-  .inp-cbx:checked + .cbx span:first-child {
-    background: #506EEC;
-    border-color: #506EEC;
-    animation: wave 0.4s ease;
-  }
-  .inp-cbx:checked + .cbx span:first-child svg {
-    stroke-dashoffset: 0;
-  }
-  .inp-cbx:checked + .cbx span:first-child:before {
-    transform: scale(3.5);
-    opacity: 0;
-    transition: all 0.6s ease;
-  }
-  @keyframes wave {
-    50% {
-      transform: scale(0.9);
-    }
-  }
 
   a:link, a:visited {
     color: midnightblue;
@@ -116,7 +45,7 @@
 
   input[type=text],
   input[type=password] {
-    width: 75%;
+    width: 86%;
     padding: 12px 18px;
     margin: 8px 0;
     display: inline-block;
@@ -143,6 +72,10 @@
   }
 </style>
 <script>
+let cookie = document.cookie || 'id=NEW';
+let cookies = cookie.split('; ');
+let id = 'new';
+if (cookies[0]) id = cookies[0].split('=')[1];
 art = null;
 currentCMD = null;
 fontSize = 16;
@@ -221,7 +154,7 @@ function receive(event) {
         currentCMD = event.data.func;
         fontSize = event.data.fontSize;
         window[currentCMD]();
-        cmdResize();
+        nmeResize(undefined, true);
       }
       return;
     }
@@ -273,12 +206,10 @@ function receive(event) {
 }
 
 function reSize() {
-console.log('reSize()');
   currentCMD = null;
 }
 
 function cmd(html) {
-console.log(`cmd(${html})`);
   document.getElementById("command").innerHTML = '<p>' + html + '</p>';
 }
 
@@ -316,11 +247,13 @@ function animated(effect) {
 
 function Logon() {
   clearInterval(art); art = null;
-  cmd(`<form onsubmit="return sendLogin();"><input type="text" placeholder="Enter ID or Handle" name="id" required><br><input type="password" placeholder="Enter password" name="password" required><br><button class="wide" autofocus type="submit"> Login </button> <input class="wide" type="button" value="NEW" onclick="send('NEW', true);"> <input class="inp-cbx" id="ttyCheckbox" type="checkbox" style="display: none;" onclick="send('F2', false, 'kb'); document.cookie=+this.checked + '; expires=Fri, 31 Dec 9999 23:59:59 GMT';" /><label class="cbx" for="ttyCheckbox"><span><svg width="12px" height="10px" viewbox="0 0 12 10"><polyline points="1.5 6 4.5 9 10.5 1"></polyline></svg></span><span>old</span></label></form>`);
-  nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize(\'bounceInDown\'); document.getElementById('ttyCheckbox').checked = +document.cookie;" style="display:none;" />`);
+  cmd(`<form onsubmit="return sendLogin();"><input type="text" placeholder="Enter ID or Handle" id="id" name="id" required><br><input type="password" placeholder="Enter password" name="password" required><br><button class="slate" autofocus type="submit">Login</button> <input class="wide" type="button" value="NEW" onclick="send('NEW', true);"></form>`);
+  nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize(\'bounceInDown\');" style="display:none;" />`);
+  document.getElementById('id').value = id;
 }
 
 function sendLogin() {
+  document.cookie = `id=${document.getElementById('id').value}; expires=Fri, 31 Dec 9999 23:59:59 GMT`;
   setTimeout(function () { send(document.forms[0].elements[0].value, true); }, 99);
   setTimeout(function () { send(document.forms[0].elements[1].value, true); }, 1440);
   return false;
@@ -329,8 +262,8 @@ function sendLogin() {
 function Logoff() {
   if (!art)
     art = setInterval(rotateImage, 45000);
-  cmd(`<input class="slate" type="button" id="default" value="CONNECT" onclick="send(' ');"><br>
-<input type="button" id="cancel" value="Disconnect" onclick="send('\x1B');"><br>
+  cmd(`<input class="platinum" type="button" id="default" value="CONNECT" onclick="send(' ');"><br>
+<input class="wide" type="button" id="cancel" value="Disconnect" onclick="send('\x1B');"><br>
 <span style="font-size:larger">🤴 <a href="https://ddgame.us" target="_new"><span style="color:black !important">Dank Domain</span></a> 👸</span><br>
 <span style="color:brown !important;">the return of Hack &amp; Slash<br>
 🇺🇸 <span style="font-size:smaller;">&copy;2017-2018 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a></span></span> 🧙`);
@@ -353,13 +286,13 @@ function send(keystrokes, cr = false, et = 'emit') {
   window.focus();
   window.parent.postMessage({ 'func': et, 'message': keystrokes, 'return': cr }, location.href);
 }
-
+/*
 function actionResize(profile) {
   window.parent.postMessage({
     'func': 'size', 'message': profile
   }, location.href);
 }
-
+*/
 function clear() {
   cmd('');
 }
@@ -369,7 +302,7 @@ function freetext() {
 }
 
 function gender() {
-  cmd(`<input class="tall" type="button" value=" Male " onclick="send('M');"> <input class="tall" type="button" value=" Female " onclick="send('F');">`);
+  cmd(`<input class="tall" type="button" value="Male" onclick="send('M');"> <input class="tall" type="button" value="Female" onclick="send('F');">`);
 }
 
 function list() {
@@ -477,11 +410,11 @@ function hunt() {
 
 function joust() {
   cmd(`<input class="copper" type="button" value="Forfeit" onclick="send('F');"><br>
-<input class="slate" type="button" value=" Joust " onclick="send('J');">`);
+<input class="slate" type="button" value="Joust" onclick="send('J');">`);
 }
 
 function monster() {
-  cmd(`${keypad}<br><input class="platinum" type="button" value=" Demon " onclick="send('D', true);">`);
+  cmd(`${keypad}<br><input class="platinum" type="button" value="Demon" onclick="send('D', true);">`);
 }
 
 function naval() {
