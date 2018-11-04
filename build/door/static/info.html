@@ -207,14 +207,17 @@ function receive(event) {
 
 function reSize() {
   currentCMD = null;
+  cmdResize();
 }
 
 function cmd(html) {
   document.getElementById("command").innerHTML = '<p>' + html + '</p>';
+  cmdResize();
 }
 
 function nme(html) {
   document.getElementById("nme").innerHTML = html || '';
+  cmdResize();
 }
 
 function animated(effect) {
@@ -505,12 +508,11 @@ function well() {
 function nmeResize(effect, func) {
   if (/^<table.*/.test(document.getElementById('nme').innerHTML)) return;
   //h = window.innerHeight - document.getElementById('command').clientHeight - 20;
-  h = window.innerHeight - 8;
+  h = Math.abs(window.innerHeight - 8);
   document.getElementById('nme').style.height = h + 'px';
   if ((pic = document.getElementById('nme').getElementsByTagName('img')[0]))
     pic.style.zoom = Math.trunc(100 * h / pic.height) + '%';
   if (!func) animated(effect || 'fadeIn');
-  cmdResize();
 }
 
 function cmdResize() {

@@ -180,10 +180,9 @@ function choice() {
             g = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
             showGang(g)
             xtGang($.player.gender, $.player.melee, g.banner, g.trim)
+            $.sound('ddd', 6)
 
             $.action('ny')
-            $.sound('ddd')
-
             xvt.app.form = {
                 'resign': { cb:() => {
                     xvt.out('\n')
@@ -277,7 +276,7 @@ function choice() {
                 break
             }
             xtGang($.player.gender, $.player.melee, g.banner, g.trim)
-            $.sound('ddd')
+            $.sound('ddd', 6)
 
             Battle.user('Transfer leadership to', (member: active) => {
                 let n = g.members.indexOf(member.user.id)
@@ -321,8 +320,8 @@ function choice() {
                 break
             }
             xtGang($.player.gender, $.player.melee, g.banner, g.trim)
-
             $.action('ny')
+
             xvt.app.form = {
                 'drop': { cb:() => {
                     xvt.out('\n')
