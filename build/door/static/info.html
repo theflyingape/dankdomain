@@ -272,18 +272,7 @@ function receive(event) {
   }
 }
 
-function SizeS() {
-  //document.body.style.fontSize = '75%';
-  currentCMD = null;
-}
-
-function SizeM() {
-  //document.body.style.fontSize = '100%';
-  currentCMD = null;
-}
-
-function SizeL() {
-  //document.body.style.fontSize = '125%';
+function reSize() {
   currentCMD = null;
 }
 
@@ -423,6 +412,11 @@ function bank() {
   nme(`<img src="images/bank.jpg" onload="nmeResize(\'pulse\');" style="display:none;" />`);
 }
 
+function battle() {
+  cmd(`<input class="slate" type="button" value=" Attack " onclick="send('A');"> <input class="platinum" type="button" value=" Cast " onclick="send('C');"><br>
+<input type="button" value="Status" onclick="send('Y');"> <input class="copper" type="button" value="Retreat" onclick="send('R');">`);
+}
+
 function blackjack() {
   nme('');
   cmd(`<input class="gold" type="button" value="Double" onclick="send('D');"><br>
@@ -430,9 +424,9 @@ function blackjack() {
 <input class="copper" type="button" value="Stay" onclick="send('S');">`);
 }
 
-function battle() {
-  cmd(`<input class="slate" type="button" value=" Attack " onclick="send('A');"> <input class="platinum" type="button" value=" Cast " onclick="send('C');"><br>
-<input type="button" value="Status" onclick="send('Y');"> <input class="copper" type="button" value="Retreat" onclick="send('R');">`);
+function brawl() {
+  cmd(`<input class="slate" type="button" value=" Punch! " onclick="send('P');"><br>
+<input type="button" value="Status" onclick="send('Y');"> <input class="copper" type="button" value="Give up" onclick="send('G');">`);
 }
 
 function casino() {

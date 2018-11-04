@@ -177,7 +177,6 @@ function newSession(ev) {
 	fit.fit(term)
 
 	term.writeln('\x1B[16C\x1B[1;31m🔥\x1B[2C🌨\x1B[2C \x1B[36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain\x1B[2C\x1B[m🌙\x1B[2C💫\x07')
-	window.frames['Info'].postMessage({ 'func':ev }, location.href)
 	let protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://'
 	let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/player/'
 
@@ -197,10 +196,7 @@ function newSession(ev) {
 	})
 
 	term.on('resize', function (size) {
-		let resize = term.getOption('fontSize')
-		let style = resize < 16 ? 'S' : resize > 26 ? 'L' : 'M'
-		XT(`@action(Size${style})`)
-
+		XT('@action(reSize)')
 		if (pid < 1) return
 		cols = size.cols
 		rows = size.rows
@@ -250,7 +246,7 @@ function newSession(ev) {
 					carrier = false
 					recheck = 0
 					reconnect = setInterval(checkCarrier, 20000)
-					window.frames['Info'].postMessage({ 'func': 'Logoff' }, location.href)
+					window.frames['Info'].postMessage({ 'func': 'Logoff', 'fontSize':term.getOption('fontSize') }, location.href)
 				}
 
 				socket.onerror = (ev) => {
@@ -266,6 +262,7 @@ function newSession(ev) {
 				term.writeln(data)
 				term.writeln(' \x1B[36m\u00B7\x1B[2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to connect;\x1B[22m')
 				term.writeln(' \x1B[36m\u00B7\x1B[2m or any other \x1B[22;1m🗝️  \x1B[22mkey\x1B[2m for more options.')
+				XT('@action(Logoff)')
 			})
 		})
 		term.focus()

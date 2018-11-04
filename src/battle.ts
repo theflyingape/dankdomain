@@ -2209,6 +2209,9 @@ export function user(venue: string, cb:Function) {
                 xvt.out(xvt.reset, '\n')
             }
 
+            if ($.access.roleplay && $.dice(+$.player.expert * ($.player.immortal + 1) * $.player.level) == 1)
+                xvt.out('\n', xvt.bright, xvt.green, '> double-click (tap) the Player ID to send your selection.', xvt.reset, '\n')
+
             $.action('freetext')
             xvt.app.focus = 'user'
             return

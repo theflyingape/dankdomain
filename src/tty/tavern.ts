@@ -337,8 +337,10 @@ function choice() {
                                 xvt.out(`\n${$.who(opponent, 'He')}gets the first punch.\n`)
                             if ($.online.bp > 0 && opponent.bp > 0)
                                 Battle.brawl(opponent, $.online)
-                            if ($.online.bp > 0 && opponent.bp > 0)
+                            if ($.online.bp > 0 && opponent.bp > 0) {
+                                $.action('brawl')
                                 xvt.app.focus = 'punch'
+                            }
                             else
                                 menu($.player.expert)
                         }
