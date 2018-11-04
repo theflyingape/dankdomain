@@ -92,7 +92,7 @@ function choice() {
             let pc: string
             let kh: number
             let k: number
-            $.action('yn')
+            $.action('ny')
             xvt.app.form = {
                 'pc': { cb:() => {
                     if (!xvt.entry)

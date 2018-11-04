@@ -302,7 +302,7 @@ function choice() {
 						return
 					}
 
-					$.action('yn')				
+					$.action('ny')
 					xvt.app.form = {
 						'pay': { cb:() => {
 							xvt.out('\n')

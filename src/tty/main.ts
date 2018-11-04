@@ -140,7 +140,7 @@ function choice() {
 
         case 'Q':
             $.beep()
-            $.action('yn')
+            $.action('ny')
             xvt.app.form = {
                 'yn': { cb: () => {
                     xvt.out('\n')
@@ -210,7 +210,7 @@ function choice() {
 
                 xvt.out('The goods are in', $.an(opponent.user.realestate),  ' protected by', $.an(opponent.user.security), '.\n')
 
-                $.action('yn')
+                $.action('ny')
                 xvt.app.form = {
                     'yn': { cb: () => {
                         xvt.out('\n')
@@ -305,7 +305,7 @@ function choice() {
 
         case 'U':
             $.music('.')
-            $.action('yn')
+            $.action('ny')
             let newpassword: string = ''
             xvt.app.form = {
                 'yn': { cb: () => {
@@ -344,8 +344,9 @@ function choice() {
 
         case 'X':
             if (!$.access.roleplay) break
+            $.profile($.online)
             $.music('ddd')
-            $.action('yn')
+            $.action('ny')
             xvt.app.form = {
                 'yn': { cb: () => {
                     if (/Y/i.test(xvt.entry)) {
@@ -364,7 +365,7 @@ function choice() {
             return
 
         case 'Y':
-            $.action('yn')
+            $.action('ny')
             xvt.app.form = {
                 'yn': { cb: () => {
                     if (/Y/i.test(xvt.entry)) {
@@ -390,7 +391,7 @@ function choice() {
                         return
                     }
                     $.PC.stats($.online)
-                    $.action('yn')
+                    $.action('ny')
                     xvt.app.focus = 'pause'
                 }, cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 },
                 'pause': { cb:menu, pause:true }

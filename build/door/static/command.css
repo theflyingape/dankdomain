@@ -34,36 +34,36 @@
     background: orchid;
     border: solid darkorchid 2px;
     color: indigo;
-    padding: 8px 18px;
-    font-size: 125%;
+    padding: 6px 16px;
+    font-size: 120%;
 }
 .gold {
     background: gold;
     border: solid darkgoldenrod 2px;
     color: goldenrod;
-    padding: 8px 18px;
-    font-size: 125%;
+    padding: 6px 16px;
+    font-size: 120%;
 }
 .silver {
     background: turquoise;
     border: solid darkturquoise 2px;
     color: steelblue;
-    padding: 8px 18px;
-    font-size: 125%;
+    padding: 6px 16px;
+    font-size: 120%;
 }
 .copper {
     background: coral;
     border: solid darkred 2px;
     color: crimson;
-    padding: 8px 18px;
-    font-size: 125%;
+    padding: 6px 16px;
+    font-size: 120%;
 }
 .slate {
     background: lightgray;
     border: solid darkslategray 2px;
     color: slategray;
-    padding: 8px 18px;
-    font-size: 125%;
+    padding: 6px 16px;
+    font-size: 120%;
 }
 :focus { outline: none; }
 input:active, button:active {

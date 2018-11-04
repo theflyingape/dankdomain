@@ -684,6 +684,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
 
 export function skillplus(rpc: active, cb: Function) {
 
+    PC.profile(online)
     rpc.user.expert = true
 
     //  slow-roll endowment choices for a dramatic effect  :)
@@ -758,6 +759,7 @@ export function skillplus(rpc: active, cb: Function) {
     ); xvt.waste(200)
 
     action('list')
+
     xvt.app.form = {
         'skill': { cb: () => {
             xvt.out('\n', xvt.bright)

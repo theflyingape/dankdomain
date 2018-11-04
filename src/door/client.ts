@@ -204,8 +204,11 @@ function newSession(ev) {
 	})
 
 	term.on('selection', function () {
-		if (carrier) socket.send(term.getSelection())
+		let nme = term.getSelection()
 		term.clearSelection()
+		if (carrier)
+			if (nme.length > 1 && nme.length < 5)
+				socket.send(nme + '\x0D')
 	})
 
 	term.on('wall', function (msg) {
@@ -237,6 +240,7 @@ function newSession(ev) {
 					if (!term.getOption('cursorBlink'))
 						term.setOption('cursorBlink', true)
 					term.writeln('open\x1B[m')
+					XT('@action(Logon)')
 				}
 
 				socket.onclose = (ev) => {
@@ -246,7 +250,7 @@ function newSession(ev) {
 					carrier = false
 					recheck = 0
 					reconnect = setInterval(checkCarrier, 20000)
-					window.frames['Info'].postMessage({ 'func': 'Logoff', 'fontSize':term.getOption('fontSize') }, location.href)
+					XT('@action(Logoff)')
 				}
 
 				socket.onerror = (ev) => {

@@ -162,7 +162,7 @@ function choice() {
                         xvt.app.refocus()
                     }
                 }, prompt:'Accept this banner (Y/N)? '
-                , cancel:'Y', enter:'N', eol:false, match:/Y|N/i, timeout:20 }
+                , cancel:'N', enter:'Y', eol:false, match:/Y|N/i, timeout:20 }
             }
             xvt.app.focus = 'new'
             return
@@ -179,8 +179,11 @@ function choice() {
 
             g = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
             showGang(g)
+            xtGang($.player.gender, $.player.melee, g.banner, g.trim)
 
-            $.action('yn')
+            $.action('ny')
+            $.sound('ddd')
+
             xvt.app.form = {
                 'resign': { cb:() => {
                     xvt.out('\n')
@@ -228,7 +231,7 @@ function choice() {
             if (g.members.length > 0 && (g.members.length < 4 || g.members.indexOf($.player.id) > 0)) {
                 showGang(g)
 
-                $.action('yn')
+                $.action('ny')
                 xvt.app.form = {
                     'join': { cb:() => {
                         xvt.out('\n')
@@ -274,6 +277,7 @@ function choice() {
                 break
             }
             xtGang($.player.gender, $.player.melee, g.banner, g.trim)
+            $.sound('ddd')
 
             Battle.user('Transfer leadership to', (member: active) => {
                 let n = g.members.indexOf(member.user.id)
@@ -318,7 +322,7 @@ function choice() {
             }
             xtGang($.player.gender, $.player.melee, g.banner, g.trim)
 
-            $.action('yn')
+            $.action('ny')
             xvt.app.form = {
                 'drop': { cb:() => {
                     xvt.out('\n')
@@ -492,7 +496,7 @@ function choice() {
                         return
                     }
 
-                    $.action('yn')
+                    $.action('ny')
                     showGang(g, o, true)
                     xtGang(o.genders[0], o.melee[0], o.banner, o.trim)
                     xvt.app.focus = 'fight'

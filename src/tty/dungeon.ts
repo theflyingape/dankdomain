@@ -655,7 +655,7 @@ function doMove(): boolean {
 			break
 
 		case 2:
-			$.action('yn')
+			$.action('ny')
 			$.profile({ jpg:'ddd', effect:'fadeIn' })
 			xvt.out(xvt.bright, xvt.blue, 'You\'ve found a portal to a deep, dank dungeon.')
 			xvt.app.form = {
@@ -1104,7 +1104,7 @@ function doMove(): boolean {
 					else
 						$.animated('rotateOut')
 					menu()
-				}, prompt:'Will you spin it (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:15 }
+				}, prompt:'Will you spin it (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:15 }
 			}
 			xvt.app.focus = 'wheel'
 			pause = true

@@ -323,7 +323,7 @@ function choice() {
 					return
                 }
 
-                $.action('yn')
+                $.action('ny')
 				xvt.app.form = {
 					'brawl': { cb:() => {
 						xvt.out('\n')

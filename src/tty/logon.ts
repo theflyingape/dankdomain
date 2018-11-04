@@ -13,8 +13,6 @@ import Taxman = require('./taxman')
 
 module Logon
 {
-    let tax: coins = new $.coins(0)
-
     if (!xvt.emulation.match('VT|PC|XT'))
         xvt.emulation = 'VT'
 

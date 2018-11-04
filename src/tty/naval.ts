@@ -82,7 +82,7 @@ function choice() {
 				xvt.out(`\nYou sail out until you spot ${opponent.user.handle}\'s ship on the horizon.\n\n`)
 				xvt.out(`It has ${opponent.user.hull} hull points.\n`)
 
-				$.action('yn')				
+				$.action('ny')				
 				xvt.app.form = {
 					'battle': { cb:() => {
 						xvt.out('\n\n')
@@ -568,7 +568,7 @@ function Shipyard(suppress = true) {
 						}
 						Shipyard()
 						return
-					}, prompt: 'Ok (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
+					}, prompt: 'Ok (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:10 }
 				}
 				xvt.app.focus = 'ram'
 				return
@@ -794,7 +794,7 @@ function MonsterHunt() {
 	xvt.out(`\nYou sail out until you spot${$.an(sm.name)} on the horizon.\n\n`)
 	xvt.out(`It has ${sm.hull} hull points.\n`)
 
-	$.action('yn')
+	$.action('ny')
 	xvt.app.form = {
 		'fight': { cb:() => {
 			xvt.out('\n')

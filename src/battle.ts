@@ -113,7 +113,7 @@ function end() {
         if (!(opponent.user.id === '_' || opponent.user.gender === 'I')) {
             $.saveUser(opponent, false, true)
             if ($.player.hp > 0 && opponent.hp == 0) {
-                $.action('yn')
+                $.action('ny')
                 xvt.app.form = {
                 'yn': { cb:() => {
                     if (/Y/i.test(xvt.entry))
