@@ -395,7 +395,7 @@ function deeds() {
 function dungeon() {
   cmd(`<input type="button" value="Status" onclick="send('Y');"> <input class="copper" type="button" value="Poison" onclick="send('P');"> <input class="platinum" type="button" value="Cast" onclick="send('C');"><br>
 <input class="slate" type="button" value="North" onclick="send('N');"><br>
-<input class="slate" type="button" value="West" onclick="send('W');"> 🧭 <input class="slate" type="button" value="East" onclick="send('E');"><br>
+<input class="slate" type="button" value="West" onclick="send('W');"><span style="font-size:xx-large;">🧭</span><input class="slate" type="button" value="East" onclick="send('E');"><br>
 <input class="slate" type="button" value="South" onclick="send('S');">`);
 }
 
@@ -455,8 +455,9 @@ function shipyard() {
 
 function square() {
   cmd(`<input type="button" value="Pick pockets" onclick="send('P');"><br>
-<input type="button" value="Armoury" onclick="send('A');"> <input type="button" value="Weapons" onclick="send('W');"> <input type="button" value="Real Estate" onclick="send('R');"> 
-<input type="button" value="Security" onclick="send('S');"> <input type="button" value="Apothecary" onclick="send('V');"> <input type="button" value="Mage" onclick="send('M');"><br>
+<input type="button" value="Armoury" onclick="send('A');"> <input type="button" value="Weapons" onclick="send('W');"><br>
+<input type="button" value="Real Estate" onclick="send('R');"> <input type="button" value="Security" onclick="send('S');"><br>
+<input type="button" value="Apothecary" onclick="send('V');"> <input type="button" value="Mage" onclick="send('M');"><br>
 <input class="platinum" type="button" value="Hospital" onclick="send('H');"><br>
 <input type="button" value="Jail" onclick="send('J');"> <input class="slate" type="button" value="Bank" onclick="send('B');"><br>
 ${quit} <input class="silver" type="button" value="ARENA" onclick="send('G');">`);

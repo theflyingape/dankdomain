@@ -219,7 +219,7 @@ function newSession(ev) {
 	if (ev === 'Logon')	setImmediate(() => {
 		term.setOption('fontFamily', tty ? 'tty,Consolas,monospace' : 'IBM Plex Mono,Consolas,monospace')
 		window.dispatchEvent(new Event('resize'))
-		term.focus()
+		//term.focus()
 		term.write(`\n\x1B[0;2mConnecting terminal WebSocket ... `)
 		XT('@tune(dankdomain)')
 		fetch(`${app}/player/?cols=${term.cols}&rows=${term.rows}`, { method: 'POST' }).then(function (res) {
@@ -267,7 +267,7 @@ function newSession(ev) {
 				XT('@action(Logoff)')
 			})
 		})
-		term.focus()
+		//term.focus()
 	}
 	// gratuituous
 	window.dispatchEvent(new Event('resize'))
