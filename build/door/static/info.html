@@ -67,7 +67,7 @@
     border: none;
     border-spacing: 0px;
     display: inline-block;
-    padding: 0px;
+    padding: 1px 1px;
     text-align: center;
   }
 </style>
@@ -83,7 +83,7 @@ all = `<input class="platinum" class="tall" type="button" value=" ALL " onclick=
 best = `<input class="platinum" class="tall" type="button" value=" BEST " onclick="send('=', true);">`
 cancel = `<input class="copper" type="button" value="Clear" onclick="send('\x15');">`;
 enter = `<input class="slate" type="button" value="Enter" onclick="send('', true);">`;
-logoff = `<input class="copper" type="button" value="LOGOFF" onclick="send('\x1A');">`;
+logoff = `<input class="copper" type="button" value="LOGOFF" onclick="send('Q');">`;
 max = `<input class="platinum" type="button" value=" MAX " onclick="send('MAX', true);">`
 quit = `<input class="copper" type="button" value="Quit" onclick="send('Q');">`;
 keypad = `<table>
@@ -98,12 +98,14 @@ keypad = `<table>
 <tr><td><input class="silver" type="button" value="?" onclick="send('?', true);"></td><td colspan=2>${cancel}</td>
 </tr>
 </table>`;
-keyboard = `<input type="button" value=" a " onclick="send('a');"> <input type="button" value=" b " onclick="send('b');"> <input type="button" value=" c " onclick="send('c');"> <input type="button" value=" d " onclick="send('d');"> <input type="button" value=" e " onclick="send('e');"><br>
-<input type="button" value=" f " onclick="send('f');"> <input type="button" value=" g " onclick="send('g');"> <input type="button" value=" h " onclick="send('h');"> <input type="button" value=" i " onclick="send('i');"> <input type="button" value=" j " onclick="send('j');"><br>
-<input type="button" value=" k " onclick="send('k');"> <input type="button" value=" l " onclick="send('l');"> <input type="button" value=" m " onclick="send('m');"> <input type="button" value=" n " onclick="send('n');"> <input type="button" value=" o " onclick="send('o');"><br>
-<input type="button" value=" p " onclick="send('p');"> <input type="button" value=" q " onclick="send('q');"> <input type="button" value=" r " onclick="send('r');"> <input type="button" value=" s " onclick="send('s');"> <input type="button" value=" t " onclick="send('t');"><br>
-<input type="button" value=" u " onclick="send('u');"> <input type="button" value=" v " onclick="send('v');"> <input type="button" value=" w " onclick="send('w');"> <input type="button" value=" x " onclick="send('x');"> <input type="button" value=" y " onclick="send('y');"><br>
-<input type="button" value=" z " onclick="send('z');"> <input type="button" value=" @ " onclick="send('@');"> <input type="button" value=" - " onclick="send('-');"> <input type="button" value=" + " onclick="send('+');"> <input type="button" value=" . " onclick="send('.');"><br>
+keyboard = `<table>
+<tr><td><input type="button" value=" a " onclick="send('a');"></td><td><input type="button" value=" b " onclick="send('b');"></td><td><input type="button" value=" c " onclick="send('c');"></td><td><input type="button" value=" d " onclick="send('d');"></td><td><input type="button" value=" e " onclick="send('e');"></td></tr>
+<tr><td><input type="button" value=" f " onclick="send('f');"></td><td><input type="button" value=" g " onclick="send('g');"></td><td><input type="button" value=" h " onclick="send('h');"></td><td><input type="button" value=" i " onclick="send('i');"></td><td><input type="button" value=" j " onclick="send('j');"></td></tr>
+<tr><td><input type="button" value=" k " onclick="send('k');"></td><td><input type="button" value=" l " onclick="send('l');"></td><td><input type="button" value=" m " onclick="send('m');"></td><td><input type="button" value=" n " onclick="send('n');"></td><td><input type="button" value=" o " onclick="send('o');"></td></tr>
+</td><td><input type="button" value=" p " onclick="send('p');"></td><td><input type="button" value=" q " onclick="send('q');"></td><td><input type="button" value=" r " onclick="send('r');"></td><td><input type="button" value=" s " onclick="send('s');"></td><td><input type="button" value=" t " onclick="send('t');"></td></tr>
+<tr><td><input type="button" value=" u " onclick="send('u');"></td><td><input type="button" value=" v " onclick="send('v');"></td><td><input type="button" value=" w " onclick="send('w');"></td><td><input type="button" value=" x " onclick="send('x');"></td><td><input type="button" value=" y " onclick="send('y');"></td></tr>
+</td><td><input type="button" value=" z " onclick="send('z');"></td><td><input type="button" value=" @ " onclick="send('@');"></td><td><input type="button" value=" - " onclick="send('-');"></td><td><input type="button" value=" + " onclick="send('+');"></td><td><input type="button" value=" . " onclick="send('.');"></td></tr>
+</table><br>
 <input class="silver" type="button" value=" ? " onclick="send('?', true);"> <input class="wide" type="button" value=" SPACE BAR " onclick="send(' ');"><br>
 ${cancel} ${enter}`;
 money = `<table><tr><td><input class="numeric" type="button" value="7 " onclick="send('7');"></td><td><input class="numeric" type="button" value="8 " onclick="send('8');"></td><td><input class="numeric" type="button" value="9 " onclick="send('9');"></td><td><input class="platinum" type="button" value="P" onclick="send('p');"></td>
@@ -326,14 +328,13 @@ function listmm() {
 
 function menu() {
   nme('');
-  cmd(`<input type="button" value="Reroll" onclick="send('X');"> <input type="button" value="Rob" onclick="send('R');"><br>
-<input type="button" value="Casino" onclick="send('G');"> <input type="button" value="Halls" onclick="send('L');"><br>
-<input class="silver" type="button" value="Naval" onclick="send('N');"> <input class="platinum" type="button" value="Tavern" onclick="send('T');"><br>
-<input class="gold" type="button" value="Most Wanted" onclick="send('M');"> <input class="slate" type="button" value=" Party " onclick="send('P');"><br>
-<input class="tall" type="button" value="Status" onclick="send('Y');"> <input class="silver" type="button" value="Arena" onclick="send('A');"><br>
-<input class="slate" type="button" value="Dungeon" onclick="send('D');"><br>
-<input class="platinum" type="button" value="Square" onclick="send('S');"><br>
-<input type="button" value="System" onclick="send('Z');"> ${logoff}`);
+  cmd(`${logoff} <input type="button" value="System" onclick="send('Z');"><br>
+<input type="button" value="Reroll" onclick="send('X');"> <input type="button" value="Rob" onclick="send('R');"><br>
+<input type="button" value="Casino" onclick="send('G');"> <input type="button" value="Halls" onclick="send('L');"> <input type="button" value="Status" onclick="send('Y');"><br>
+<input class="gold" type="button" value="Most Wanted" onclick="send('M');"><br>
+<input class="silver" type="button" value="Naval" onclick="send('N');"><input class="silver" type="button" value="Arena" onclick="send('A');"><br>
+<input class="slate" type="button" value=" Party " onclick="send('P');"><input class="slate" type="button" value="Dungeon" onclick="send('D');"><br>
+<input class="platinum" type="button" value="Tavern" onclick="send('T');"><input class="platinum" type="button" value="Square" onclick="send('S');">`);
 }
 
 function ny() {
@@ -348,12 +349,13 @@ function arena() {
   cmd(`<input class="tall" type="button" value="Cast" onclick="send('C');"> <input class="tall" type="button" value="Poison" onclick="send('P');"><br>
 <input class="tall" type="button" value="User" onclick="send('U');"> <input class="tall" type="button" value="Monster" onclick="send('M');"><br>
 <input class="tall" type="button" value="Joust" onclick="send('J');"> <input class="tall" type="button" value="Status" onclick="send('Y');"><br>
-<input class="platinum" type="button" value="SQUARE" onclick="send('G');"> ${quit}`);
+${quit} <input class="platinum" type="button" value="SQUARE" onclick="send('G');">`);
 }
 
 function bank() {
   cmd(`${money}<br>
-<input class="copper" type="button" value="Loan" onclick="send('L');"> <input class="slate" type="button" value="Deposit" onclick="send('D');"> <input class="gold" type="button" value="Withdraw" onclick="send('W');"><br>
+<input class="copper" type="button" value="Loan" onclick="send('L');"> <input class="slate" type="button" value="Deposit" onclick="send('D');"><br>
+<input class="gold" type="button" value="Withdraw" onclick="send('W');"><br>
 <input type="button" value="Rob" onclick="send('R');"> ${quit}`);
   nme(`<img src="images/bank.jpg" onload="nmeResize(\'pulse\');" style="display:none;" />`);
 }
@@ -377,32 +379,25 @@ function brawl() {
 
 function casino() {
   nme('');
-  cmd(`<p><input type="button" value="Black Jack" onclick="send('B');">
-<input type="button" value="Craps" onclick="send('C');">
-<input type="button" value="High Stakes" onclick="send('H');">
-<input type="button" value="Keno" onclick="send('K');">
-<input type="button" value="Slots" onclick="send('S');"><br>${quit}`);
+  cmd(`<input type="button" value="Black Jack" onclick="send('B');"> <input type="button" value="Craps" onclick="send('C');"> <input type="button" value="High Stakes" onclick="send('H');">
+<input type="button" value="Keno" onclick="send('K');"> <input type="button" value="Slots" onclick="send('S');"> ${quit}`);
 }
 
 function craps() {
   nme('');
-  cmd(`${money}<br><input class="slate" type="button" value=" Roll! " onclick="send('', true);">`);
+  cmd(`${money}<br><input class="slate" type="button" value="Roll!" onclick="send('', true);">`);
 }
 
 function deeds() {
-  cmd(`<input type="button" value="Champions" onclick="send('C');">
-<input type="button" value="Heroes" onclick="send('H');">
-<input type="button" value="Memorable" onclick="send('M');">
-<input type="button" value="Thugs" onclick="send('T');">
-<input type="button" value="Winners" onclick="send('W');"><br>${quit}`);
+  cmd(`<input type="button" value="Champions" onclick="send('C');"> <input type="button" value="Heroes" onclick="send('H');"> <input type="button" value="Memorable" onclick="send('M');"> <input type="button" value="Thugs" onclick="send('T');"> <input type="button" value="Winners" onclick="send('W');"> ${quit}`);
   nme(`<img src="images/heroes.jpg" onload="nmeResize(\'bounceInUp\');" style="display:none;" />`);
 }
 
 function dungeon() {
-  cmd(`<input class="platinum" type="button" value="Cast" onclick="send('C');"> <input class="copper" type="button" value="Poison" onclick="send('P');"> <input type="button" value="Status" onclick="send('Y');"><br>
-<input class="slate" type="button" value=" North " onclick="send('N');"><br>
-<input class="slate" type="button" value=" West " onclick="send('W');"> <input class="slate" type="button" value=" East " onclick="send('E');"><br>
-<input class="slate" type="button" value=" South " onclick="send('S');">`);
+  cmd(`<input type="button" value="Status" onclick="send('Y');"> <input class="copper" type="button" value="Poison" onclick="send('P');"> <input class="platinum" type="button" value="Cast" onclick="send('C');"><br>
+<input class="slate" type="button" value="North" onclick="send('N');"><br>
+<input class="slate" type="button" value="West" onclick="send('W');"> 🧭 <input class="slate" type="button" value="East" onclick="send('E');"><br>
+<input class="slate" type="button" value="South" onclick="send('S');">`);
 }
 
 function hunt() {
@@ -421,18 +416,18 @@ function monster() {
 }
 
 function naval() {
-  cmd(`<input type="button" value="List" onclick="send('L');"> <input type="button" value="Status" onclick="send('Y');"><br>
-<input type="button" value="Go Fishing" onclick="send('G');"> <input type="button" value="Hunt" onclick="send('H');"><br>
-<input class="tall" type="button" value="Battle" onclick="send('B');"> <input class="tall" type="button" value="Shipyard" onclick="send('S');"><br>${quit}`);
+  cmd(`<input type="button" value="Go Fishing" onclick="send('G');"><br>
+<input type="button" value="List" onclick="send('L');"> <input type="button" value="Status" onclick="send('Y');"> <input class="silver" type="button" value="Hunt" onclick="send('H');"> <input class="platinum" class="tall" type="button" value="Shipyard" onclick="send('S');"><br>
+${quit} <input class="slate" type="button" value="Battle" onclick="send('B');">`);
 }
 
 function party() {
   nme('');
-  cmd(`<input type="button" value="Start" onclick="send('S');"><br>
-<input type="button" value="Edit" onclick="send('E');"> <input type="button" value="Join" onclick="send('J');"> <input type="button" value="List" onclick="send('L');">
-<input class="gold" type="button" value="Most Wanted" onclick="send('M');"><br>
+  cmd(`<input type="button" value="Start" onclick="send('S');"> <input type="button" value="List" onclick="send('L');"><br>
+<input type="button" value="Edit" onclick="send('E');"> <input type="button" value="Join" onclick="send('J');"><br>
 <input type="button" value="Resign" onclick="send('R');"> <input type="button" value="Transfer" onclick="send('T');"><br>
-<input class="slate" type="button" value=" Fight " onclick="send('F');"><br>${quit}`);
+<input class="gold" type="button" value="Most Wanted" onclick="send('M');"><br>
+${quit} <input class="slate" type="button" value=" Fight " onclick="send('F');">`);
 }
 
 function payment() {
@@ -449,7 +444,7 @@ function riddle() {
   cmd(`<input class="platinum" type="button" value=" Platinum " onclick="send('P');"><br>
 <input class="gold"     type="button" value="   Gold   " onclick="send('G');"><br>
 <input class="silver"   type="button" value="  Silver  " onclick="send('S');"><br>
-<input class="copper"   type="button" value="  Copper  " onclick="send('C');"><br>`);
+<input class="copper"   type="button" value="  Copper  " onclick="send('C');">`);
   nme(`<img src="images/riddle.jpg" onload="nmeResize(\'zoomInUp\');" style="display:none;" />`);
 }
 
@@ -460,30 +455,26 @@ function shipyard() {
 }
 
 function square() {
-  cmd(`<input type="button" value="Pick pockets" onclick="send('P');"><br> <br>
-<input type="button" value="Armoury" onclick="send('A');"><br>
-<input type="button" value="Weapons" onclick="send('W');"><br>
-<input type="button" value="Real Estate" onclick="send('R');"><br>
-<input type="button" value="Security" onclick="send('S');"><br>
-<input type="button" value="Apothecary" onclick="send('V');"> <input type="button" value="Mage" onclick="send('M');"><br>
+  cmd(`<input type="button" value="Pick pockets" onclick="send('P');"><br>
+<input type="button" value="Armoury" onclick="send('A');"> <input type="button" value="Weapons" onclick="send('W');"> <input type="button" value="Real Estate" onclick="send('R');"> 
+<input type="button" value="Security" onclick="send('S');"> <input type="button" value="Apothecary" onclick="send('V');"> <input type="button" value="Mage" onclick="send('M');"><br>
 <input class="platinum" type="button" value="Hospital" onclick="send('H');"><br>
 <input type="button" value="Jail" onclick="send('J');"> <input class="slate" type="button" value="Bank" onclick="send('B');"><br>
-<input class="silver" type="button" value="ARENA" onclick="send('G');"> ${quit}`);
+${quit} <input class="silver" type="button" value="ARENA" onclick="send('G');">`);
 }
 
 function tavern() {
   nme('');
-  cmd(`<input class="tall" type="button" value=" Brawl " onclick="send('B');"><br>
-<input type="button" value="Eavesdrop" onclick="send('E');"> <input type="button" value="Jump" onclick="send('J');"><br>
-<input type="button" value="Guzzle" onclick="send('G');"> <input type="button" value="Swear" onclick="send('S');"><br>
-<input type="button" value="List" onclick="send('L');"> <input type="button" value="Post" onclick="send('P');"><br>
-<input type="button" value="Today" onclick="send('T');"> <input type="button" value="Yesterday" onclick="send('Y');"><br>${quit}`);
+  cmd(`<input type="button" value="Swear" onclick="send('S');"><br>
+<input type="button" value="List" onclick="send('L');"> <input type="button" value="Post" onclick="send('P');"> <input class="gold" type="button" value="Guzzle" onclick="send('G');"> 
+<input type="button" value="Yesterday" onclick="send('Y');"> <input type="button" value="Today" onclick="send('T');"><br>
+${quit} <input class="slate" type="button" value="Brawl" onclick="send('B');">`);
 }
 
 function teleport() {
-  cmd(`<input class="tall" type="button" value=" Up " onclick="send('U');"><br>
-<input type="button" value="Random" onclick="send('R');"> <input type="button" value=" Out " onclick="send('O');"><br>
-<input class="tall" type="button" value="Down" onclick="send('D');">`);
+  cmd(`<input class="silver" type="button" value=" Up " onclick="send('U');"><br>
+<input class="copper" type="button" value="Random" onclick="send('R');"> <input class="slate" type="button" value="Out" onclick="send('O');"><br>
+<input class="platinum" type="button" value="Down" onclick="send('D');">`);
 }
 
 function wager() {
