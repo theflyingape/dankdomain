@@ -1069,7 +1069,11 @@ export function int(n: string|number, whole = false): number {
 }
 
 export function log(who:string, message: string) {
-    const log = `./files/user/${who}.txt`
+    const folder = './files/user'
+    if(!fs.existsSync(folder))
+        fs.mkdirSync(folder)
+    const log = `${folder}/${who}.txt`
+
     if (who.length && who[0] !== '_' && who !== player.id)
         fs.appendFileSync(log, `${message}\n`)
 }
@@ -1079,7 +1083,11 @@ export function money(level: number): number {
 }
 
 export function news(message: string, commit = false) {
-    const log = `./files/tavern/${player.id}.log`
+
+    const folder = './files/tavern'
+    if(!fs.existsSync(folder))
+        fs.mkdirSync(folder)
+    const log = `${folder}/${player.id}.log`
 
     if (access.roleplay) {
         fs.appendFileSync(log, `${message}\n`)

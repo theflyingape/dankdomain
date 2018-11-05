@@ -27,8 +27,6 @@ npm run build
 member=`sudo groupmems -g games -l | grep -c nobody`
 [ $member -eq 0 ] && sudo groupmems -g games -a nobody
 
-[ -d ./build/files/tavern ] || sudo mkdir ./build/files/tavern
-[ -d ./build/files/user ] || sudo mkdir ./build/files/user
 sudo cp ./node_modules/animate.css/animate.min.css ./build/door/static
 sudo rsync -a --delete ./build/ ${TARGET}
 sudo rsync -a --delete ./node_modules ${TARGET}/
