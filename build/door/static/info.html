@@ -252,7 +252,7 @@ function animated(effect) {
 
 function Logon() {
   clearInterval(art); art = null;
-  cmd(`<form onsubmit="return sendLogin();"><input type="text" placeholder="Enter ID or Handle" id="id" name="id" required><br><input type="password" placeholder="Enter password" name="password" required><br><button class="slate" id="default" autofocus type="submit">Login</button> <input class="wide" type="button" value="NEW" onclick="send('NEW', true);"></form>`);
+  cmd(`<form onsubmit="return sendLogin();"><input type="text" placeholder="Enter ID or Handle" id="id" name="id" required> <input type="password" placeholder="Enter password" name="password" required> <button class="slate" autofocus id="default" type="submit">Login</button> <input type="button" value="NEW" onclick="send('NEW', true);"></form><span style="color: steelblue !important; font-size:smaller;">⬅️ click left window for cursor</span>`);
   nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize(\'bounceInDown\');" style="display:none;" />`);
   document.getElementById('id').value = id;
 }
@@ -270,7 +270,7 @@ function Logoff() {
   cmd(`<span style="font-size:larger">🤴 <a href="https://ddgame.us" target="_new"><span style="color:black !important">Dank Domain</span></a> 👸</span><br>
 <span style="color:brown !important;">the return of Hack &amp; Slash<br>
 🇺🇸 <span style="font-size:smaller;">&copy;2017-2018 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a></span></span> 🧙<br>
-<input type="button" id="cancel" value="Disconnect" onclick="send('\x1B');"> <input class="platinum" id="default" value="CONNECT" onclick="send(' ');" autofocus type="submit">`);
+<input type="button" id="cancel" value="Disconnect" onclick="send('\x1B');"> <input class="platinum" autofocus id="default" value="CONNECT" onclick="send(' ');" type="submit">`);
 }
 
 function rotateImage() {
@@ -360,8 +360,8 @@ function bank() {
 }
 
 function battle() {
-  cmd(`<input class="copper" id="cancel" type="button" value="Retreat" onclick="send('R');"> <input type="button" value="Status" onclick="send('Y');"><br>
-<input class="platinum" type="button" value="Cast" onclick="send('C');"> <input class="slate" id="default" type="button" value="Attack" onclick="send('A');">`);
+  cmd(`<input class="copper" id="cancel" type="button" value="Retreat" onclick="send('R');"> <input class="platinum" type="button" value="Cast" onclick="send('C');"><br>
+  <input type="button" value="Status" onclick="send('Y');"> <input class="slate" id="default" type="button" value="Attack" onclick="send('A');">`);
 }
 
 function blackjack() {

@@ -1877,7 +1877,7 @@ export function emulator(cb:Function) {
             for(let rows = 99; rows > 1; rows--)
                 xvt.out(bracket(rows > 24 ? rows : '..'))
             xvt.app.focus = 'rows'
-        }, prompt:xvt.attr('Select [', xvt.bright, `${player.emulation}`, xvt.normal, ']: ')
+        }, prompt:xvt.attr('Select ', xvt.faint, '[', xvt.reset, xvt.bright, `${player.emulation}`, xvt.reset, xvt.faint, ']', xvt.reset, ': ')
         , enter:player.emulation, match:/VT|PC|XT/i, max:2 },
         'rows': { cb:() => {
             online.altered = true
@@ -1885,7 +1885,7 @@ export function emulator(cb:Function) {
             player.rows = +xvt.entry
             xvt.out(xvt.reset, '\n')
             xvt.app.focus = 'pause'
-        }, prompt:xvt.attr('Enter top visible row number [', xvt.bright, `${player.rows}`, xvt.normal, ']: ')
+        }, prompt:xvt.attr('Enter top visible row number ', xvt.reset, xvt.faint, '[', xvt.reset, xvt.bright, `${player.rows}`, xvt.reset, xvt.faint, ']', xvt.reset, ': ')
         , enter:player.rows.toString(), max:2, match:/^[2-9][0-9]$/ },
         'pause': { cb:cb, pause:true }
     }

@@ -358,46 +358,6 @@ function XT(data) {
 	}
 }
 
-function receive(event) {
-	if (event.data) {
-		switch (event.data.func) {
-			case 'kb':
-			case 'emit':
-				if (!carrier) {
-					XT('@tune(.)')
-					pid = 0
-					term.destroy()
-					if (event.data.message == ' ')
-						newSession('Logon')
-					else {
-						recheck = 10
-						checkCarrier()
-					}
-					return
-				}
-				if (event.data.message) {
-					if (event.data.message == 'F2') {
-						setImmediate(() => {
-							term.setOption('fontFamily', tty ? 'tty,Consolas,monospace' : 'IBM Plex Mono,Consolas,monospace')
-							window.dispatchEvent(new Event('resize'))
-						})
-						tty = !tty
-						window.dispatchEvent(new Event('resize'))
-					}
-					else
-						socket.send(event.data.message)
-				//	if (event.data.return)
-				//		socket.send('\r')
-				}
-				//else {
-					if (event.data.return)
-						socket.send('\r')
-				//}
-				break
-		}
-	}
-}
-
 function lurk() {
 	if (document.getElementById('terminal').hidden) {
 		fetch(`${app}/lurker/`, { method: 'POST' }).then(function (res) {
@@ -421,5 +381,45 @@ function lurk() {
 				watch.selectedIndex = -1
 			})
 		})
+	}
+}
+
+function receive(event) {
+	if (event.data) {
+		switch (event.data.func) {
+			case 'kb':
+			case 'emit':
+				if (!carrier) {
+					XT('@tune(.)')
+					pid = 0
+					term.destroy()
+					if (event.data.message == ' ')
+						newSession('Logon')
+					else {
+						recheck = 10
+						checkCarrier()
+					}
+					return
+				}
+				if (event.data.message) {
+					if (event.data.message == 'F2') {
+						tty = !tty
+						window.dispatchEvent(new Event('resize'))
+						setImmediate(() => {
+							term.setOption('fontFamily', tty ? 'tty,Consolas,monospace' : 'IBM Plex Mono,Consolas,monospace')
+							window.dispatchEvent(new Event('resize'))
+						})
+					}
+					else
+						socket.send(event.data.message)
+				//	if (event.data.return)
+				//		socket.send('\r')
+				}
+				//else {
+					if (event.data.return)
+						socket.send('\r')
+				//}
+				break
+		}
 	}
 }
