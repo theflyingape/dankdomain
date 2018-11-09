@@ -1234,7 +1234,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
         case 8:
             if (xvt.validator.isDefined(nme)) {
-                xvt.out(xvt.bright, xvt.lmagenta)
+                xvt.out(xvt.bright, xvt.magenta)
                 if (backfire) {
                     xvt.out(nme === $.online ? 'You' : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
                         , $.what(nme, ' teleport'))
@@ -1868,7 +1868,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
 
     if (from !== 'Party' && rpc !== $.online && rpc.user.coward && rpc.hp < (rpc.user.hp / 5)) {
         rpc.hp = -1
-        xvt.out(xvt.bright, xvt.lgreen
+        xvt.out(xvt.bright, xvt.green
             , rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle
             , xvt.normal, ' runs away from '
             , xvt.faint, 'the battle!'
