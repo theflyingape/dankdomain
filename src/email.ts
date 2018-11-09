@@ -105,6 +105,7 @@ export async function Deliver(player: user, what: string, repeat: boolean, mailO
             $.saveUser(player, true)
     }
     xvt.out('\n')
+    $.music('.')
     xvt.waste(1000)
     $.logoff()
     xvt.hangup()

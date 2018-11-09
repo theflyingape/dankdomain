@@ -32,6 +32,7 @@ module Dungeon
 	let Z: number
 	let Y: number
 	let X: number
+	let b4: number
 
     //  £
     const Cleric = {
@@ -54,10 +55,9 @@ module Dungeon
 		'S': { description:'outh' },
 		'E': { description:'ast' },
 		'W': { description:'est' },
-		'M': { description:'' },
-		'C': { description:'' },
-		'P': { description:'' },
-		'Y': { description:'' }
+		'C': { description:'ast' },
+		'P': { description:'oison' },
+		'Y': { description:'our status' }
 	}
 
 	const iii = ['I','II','III','IV','V','VI','VII','VIII','IX','X']
@@ -113,7 +113,7 @@ export function DeepDank(start: number, cb: Function) {
 	Z = start < 0 ? 0 : start > 99 ? 99 : start
 	fini = cb
 
-	if (!$.access.sysop) delete crawling['M']
+	if ($.access.sysop) crawling['M'] = { description: 'y liege' }
 	generateLevel()
 	menu()
 }
@@ -579,6 +579,7 @@ function doMove(): boolean {
 		}
 
 		if (ROOM.monster.length) {
+			b4 = ROOM.monster.length > 3 ? -1 : ROOM.monster.length > 2 ? $.online.hp : 0
 			Battle.engage('Dungeon', party, ROOM.monster, doSpoils)
 			return false
 		}
@@ -1139,6 +1140,7 @@ function doMove(): boolean {
 				if (isNaN(+$.taxman.user.armor)) xvt.out('\n', $.who($.taxman, 'He'), $.Armor.wearing($.taxman), '.\n')
 				xvt.waste(750)
 				xvt.out('\n')
+				b4 = 0
 				Battle.engage('Taxman', $.online, $.taxman, doSpoils)
 				refresh = true
 				return
@@ -1158,7 +1160,7 @@ function doMove(): boolean {
 						][$.dice(5) - 1], xvt.cyan, '.')
 				}
 				else {
-					xvt.out(xvt.normal, xvt.lmagenta, 'He teleports away!')
+					xvt.out(xvt.normal, xvt.magenta, 'He teleports away!')
 					$.sound('teleport', 8)
 				}
 				xvt.out(xvt.reset, '\n')
@@ -1283,7 +1285,7 @@ function doMove(): boolean {
 					else {
 						if (cast == 13) {
 							ROOM.occupant = 0
-							xvt.out(xvt.lmagenta, 'He teleports away!\n', xvt.reset)
+							xvt.out(xvt.magenta, 'He teleports away!\n', xvt.reset)
 							$.sound('teleport', 8)
 						}
 						else {
@@ -1557,6 +1559,10 @@ function doSpoils() {
 	}
 
 	if (!ROOM.monster.length) {
+		if (b4 < 0)
+			$.sound('effort')
+		if (b4 / $.player.hp > 0.65 && $.online.hp / $.player.hp < 0.15)
+			$.sound('bravery')
 		if (DL.map < 2 && $.dice((15 - $.online.cha / 10) / 2) == 1) {
 			let m = ($.dice(Z / 33 + 2) > 1 ? 1 : 2)
 			if (DL.map < m) {
@@ -2463,6 +2469,7 @@ function teleport() {
 						xvt.save()
 						xvt.out(`\x1B[1;${$.player.rows}r`)
 						xvt.restore()
+						xvt.out(xvt.lblue, 'Next time you won\'t escape so easily... moo-hahahahaha!!', xvt.reset, '\n')
 						xvt.waste(1250)
 						//require('./main').menu($.player.expert)
 						fini()

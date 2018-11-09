@@ -595,6 +595,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
 
         if (eligible && rpc.user.level == 50) {
             bonus = true
+            sound('demon', 18)
             break
         }
     }
@@ -1933,8 +1934,10 @@ export function logoff() {
         //  logoff banner
         if (online.hp < 1)
             sound('goodbye')
-        else
+        else {
+            sound('invite')
             PC.profile(online)
+        }
         xvt.out('\x06\n')
         xvt.out(xvt.reset, 'Goodbye, please play again!  Also visit:\n')
         xvt.waste(750)
@@ -1959,6 +1962,8 @@ export function logoff() {
         if (player.today && player.level > 1)
             music(online.hp > 0 ? 'logoff' : 'death')
     }
+    else
+        sound('invite')
 }
 
 export function action(menu: string) {

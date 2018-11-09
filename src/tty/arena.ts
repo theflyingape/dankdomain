@@ -385,7 +385,7 @@ function MonsterFights(): boolean {
 			return
 		}
 
-		$.action('ny')
+		$.action('yn')
 		xvt.app.form = {
 			'pay': { cb:() => {
 				xvt.out('\n\n')
@@ -459,7 +459,7 @@ function MonsterFights(): boolean {
 					, xvt.cyan, ' and he says, "', xvt.bright, xvt.white, 'I don\'t make deals!'
 					, xvt.normal, xvt.cyan, '"\n', xvt.reset)
 				menu()
-			}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 },
+			}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:10 },
 			'fight': { cb:() => {
 				xvt.out('\n')
 				if (/Y/i.test(xvt.entry)) {
@@ -470,7 +470,7 @@ function MonsterFights(): boolean {
 					$.animated('fadeOut')
 					menu()
 				}
-			}, prompt:'Fight this demon (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
+			}, prompt:'Fight this demon (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:20 }
 		}
 		xvt.app.focus = 'pay'
 	}

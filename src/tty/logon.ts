@@ -314,8 +314,9 @@ function welcome() {
             , handle:$.player.handle
             , level:$.player.level, pc:$.player.pc
         })
+        $.sound('welcome')
 
-        xvt.out(xvt.bright, xvt.black, '(', xvt.normal, xvt.white, 'Welcome back, ',  $.access[$.player.gender], xvt.bright, xvt.black, ')\n', xvt.reset)
+        xvt.out(xvt.bright, xvt.black, '(', xvt.normal, xvt.white, 'Welcome back, ',  $.access[$.player.gender] || 'you', xvt.bright, xvt.black, ')\n', xvt.reset)
         xvt.out(xvt.cyan, 'Visit #: ', xvt.bright, xvt.white, $.player.calls.toString(), xvt.reset
             , '  -  ', xvt.bright, xvt.blink
             , $.access.calls - $.player.today ? xvt.cyan : xvt.red
@@ -364,6 +365,8 @@ function welcome() {
         let play = JSON.parse(fs.readFileSync('./etc/play.json').toString())
         Object.assign($, play)
         $.mydeeds = $.loadDeed($.player.pc)
+
+        xvt.waste(500)
 
         if ($.player.pc === 'None') {
             $.music('reroll')

@@ -75,6 +75,8 @@ function end() {
                 WHERE id='${$.barkeep.user.id}'`)
             $.news(`\tdefeated ${$.barkeep.user.handle}`)
             $.wall(`defeated ${$.barkeep.user.handle}`)
+            xvt.waste(1234)
+            $.sound('ko')
             if ($.player.cha > 49) $.player.cha = $.PC.ability($.player.cha, -20)
             if ($.online.cha > 49) $.online.cha = $.PC.ability($.online.cha, -25)
         }
@@ -680,8 +682,10 @@ export function spoils() {
             $.news(`\tdefeated the gang, ${parties[l][0].user.gang}`)
             $.wall(`defeated the gang, ${parties[l][0].user.gang}`)
         }
-        else if ($.online.hp == 0)
+        else if ($.online.hp == 0) {
             $.death(`defeated by the gang, ${parties[w][0].user.gang}`)
+            $.sound('effort', 18)
+        }
         return
     }
 

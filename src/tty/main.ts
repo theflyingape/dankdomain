@@ -72,8 +72,9 @@ function choice() {
 
         case 'D':
             if ($.dungeon) {
-                $.dungeon--
+                $.sound(`dt${$.dungeon}`, 20)
                 $.music('dungeon' + $.dice(9))
+                $.dungeon--
                 require('./dungeon').DeepDank($.player.level - 1, menu)
             }
             else {
