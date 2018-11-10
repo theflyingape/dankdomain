@@ -265,8 +265,8 @@ function sendLogin() {
 }
 
 function Logoff() {
-  if (!art)
-    art = setInterval(rotateImage, 45000);
+  if (!art) art = setInterval(rotateImage, 45000);
+  window.focus();
   cmd(`<span style="font-size:larger">🤴 <a href="https://ddgame.us" target="_new"><span style="color:black !important">Dank Domain</span></a> 👸</span><br>
 <span style="color:brown !important;">the return of Hack &amp; Slash<br>
 🇺🇸 <span style="font-size:smaller;">&copy;2017-2018 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a></span></span> 🧙<br>
@@ -287,7 +287,6 @@ function rotateImage() {
 }
 
 function send(keystrokes, cr = false, et = 'emit') {
-  window.focus();
   window.parent.postMessage({ 'func': et, 'message': keystrokes, 'return': cr }, location.href);
 }
 /*
