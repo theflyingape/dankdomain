@@ -174,6 +174,7 @@ function newSession(ev) {
 	webLinks.webLinksInit(term)
 	fit.fit(term)
 
+	term.focus(); term.blur()
 	term.writeln('\x1B[16C\x1B[1;31m🔥\x1B[2C🌨\x1B[2C \x1B[36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain\x1B[2C\x1B[m🌙\x1B[2C💫\x07')
 	let protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://'
 	let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/player/'
@@ -219,7 +220,6 @@ function newSession(ev) {
 	if (ev === 'Logon')	setImmediate(() => {
 		term.setOption('fontFamily', tty ? 'tty,Consolas,monospace' : 'IBM Plex Mono,Consolas,monospace')
 		window.dispatchEvent(new Event('resize'))
-		//term.focus()
 		term.write(`\n\x1B[0;2mConnecting terminal WebSocket ... `)
 		XT('@tune(dankdomain)')
 		fetch(`${app}/player/?cols=${term.cols}&rows=${term.rows}`, { method: 'POST' }).then(function (res) {
@@ -265,9 +265,9 @@ function newSession(ev) {
 				term.writeln(' \x1B[36m\u00B7\x1B[2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to connect;\x1B[22m')
 				term.writeln(' \x1B[36m\u00B7\x1B[2m or any other \x1B[22;1m🗝️  \x1B[22mkey\x1B[2m for more options.')
 				XT('@action(Logoff)')
+				XT(`@play(${['demon','demogorgon','portal','thief2'][Math.trunc(4*Math.random())]})`)
 			})
 		})
-		//term.focus()
 	}
 	// gratuituous
 	window.dispatchEvent(new Event('resize'))
@@ -278,6 +278,7 @@ function checkCarrier() {
 	if (++recheck < 10)
 		term.write('.')
 	else {
+		XT('@play(invite)')
 		carrier = false
 		clearInterval(reconnect)
 		document.getElementById('terminal').hidden = true
