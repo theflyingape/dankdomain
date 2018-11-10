@@ -136,7 +136,12 @@ export function menu(suppress = false) {
 	}
 
 	if ($.online.altered) $.saveUser($.player)
-	if ($.reason) xvt.hangup()
+	if ($.reason) {
+		xvt.save()
+		xvt.out(`\x1B[1;${$.player.rows}r`)
+		xvt.restore()
+		xvt.hangup()
+	}
 
 //	did player cast teleport?
 	if (!Battle.retreat && Battle.teleported) {
@@ -283,20 +288,14 @@ export function menu(suppress = false) {
 				xvt.out(xvt.yellow, 'You trip on the rocky surface and hurt yourself.')
 				$.sound('hurt', 5)
 				$.online.hp -= $.dice(Z)
-				if ($.online.hp < 1) {
-					$.death('fell down')
-					xvt.hangup()
-				}
+				if ($.online.hp < 1) $.death('fell down')
 				break
 			case 4:
 				xvt.out(xvt.bright, xvt.red, 'You are attacked by a swarm of bees.')
 				$.sound('crack', 12)
 				for (x = 0, y = $.dice(Z); x < y; x++)
 					$.online.hp -= $.dice(Z)
-				if ($.online.hp < 1) {
-					$.death('killer bees')
-					xvt.hangup()
-				}
+				if ($.online.hp < 1) $.death('killer bees')
 				break
 			case 5:
 				$.music('.')
@@ -307,10 +306,7 @@ export function menu(suppress = false) {
 				$.online.toWC -= $.dice($.online.weapon.wc / 2)
 				$.online.hp -= $.dice($.player.hp / 2)
 				$.sound('boom', 10)
-				if ($.online.hp < 1) {
-					$.death('struck by lightning')
-					xvt.hangup()
-				}
+				if ($.online.hp < 1) $.death('struck by lightning')
 				break
 		}
 		if ($.online.weapon.wc > 0 && $.online.weapon.wc + $.online.toWC + $.player.toWC < 0) {
@@ -322,6 +318,12 @@ export function menu(suppress = false) {
 			$.Armor.equip($.online, $.Armor.merchant[0])
 		}
 		xvt.out(xvt.reset, '\n')
+		if ($.reason) {
+			xvt.save()
+			xvt.out(`\x1B[1;${$.player.rows}r`)
+			xvt.restore()
+			xvt.hangup()
+		}
 	}
 
 	xvt.out('\x06')     //  insert any wall messages here
@@ -473,10 +475,10 @@ function oof(wall:string) {
 	xvt.out(xvt.bright, xvt.yellow, 'Oof!  There is a wall to the ', wall, '.\n', xvt.reset)
 	xvt.waste(600)
 	if (($.online.hp -= $.dice(deep + Z + 1)) < 1) {
-		xvt.out('\nYou take too many hits and die!\n\n')
-		xvt.waste(500)
+		xvt.out(xvt.faint, '\nYou take too many hits and die!', xvt.reset, '\n')
+		$.music('.')
+		xvt.waste(600)
 		$.death(Battle.retreat ? 'running into a wall' : 'banged head against a wall')
-		xvt.hangup()
 	}
 }
 
@@ -777,7 +779,6 @@ function doMove(): boolean {
 						xvt.out(`\x1B[1;${$.player.rows}r`)
 						xvt.restore()
 						xvt.out('\n')
-						//require('./main').menu($.player.expert)
 						fini()
 						return
 
@@ -1078,7 +1079,7 @@ function doMove(): boolean {
 							$.online.hp = 0
 							$.online.sp = 0
 							$.sound('killed')
-							$.reason = 'Wheel of Death'
+							$.death('Wheel of Death')
 							break
 						case 6:
 							$.keyhint($.online)
@@ -1895,13 +1896,13 @@ function generateLevel() {
 			maxCol++
 
 		dd[deep][Z] = <ddd>{
-			cleric:	{ user:{ id:'_Clr', handle:'old cleric', pc:'Cleric', level:90+deep
-			 		, sex:'M', weapon:0, armor:1, magic:3, spells:[7,8,13] } },
+			cleric:	{ user:{ id:'_Clr', handle:'old cleric', pc:'Cleric', level:$.int(65 + Z / 4 + deep)
+			 		, sex:'M', weapon:0, armor:1, magic:3, spells:[7, 8, 13] } },
  			rooms:	new Array(maxRow),
 			map:	0,
 			moves:	0,
 			spawn:	Math.trunc(deep / 3 + Z / 9 + maxRow / 3)
-					+ $.dice(Math.round($.online.cha / 20)) + 3,
+					+ $.dice(Math.round($.online.cha / 20) + 1) + 3,
 			width:	maxCol
 		}
 
@@ -2477,9 +2478,8 @@ function teleport() {
 						xvt.save()
 						xvt.out(`\x1B[1;${$.player.rows}r`)
 						xvt.restore()
-						xvt.out(xvt.lblue, 'Next time you won\'t escape so easily... moo-hahahahaha!!', xvt.reset, '\n')
+						xvt.out(xvt.lblue, '\n"Next time you won\'t escape so easily... moo-hahahahaha!!"', xvt.reset, '\n')
 						xvt.waste(1250)
-						//require('./main').menu($.player.expert)
 						fini()
 						return
 					}
@@ -2569,7 +2569,7 @@ function quaff(v: number, it = true) {
 			if (($.online.hp -= $.dice($.player.hp / 2)) < 1) {
 				$.online.hp = 0
 				$.online.sp = 0
-				$.reason = `quaffed${$.an(potion[v])}`
+				$.death(`quaffed${$.an(potion[v])}`)
 			}
 			break
 
