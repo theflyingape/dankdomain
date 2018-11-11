@@ -1301,41 +1301,47 @@ function doMove(): boolean {
 			return false
 
 		case 7:
-			xvt.save()
-			xvt.out(`\x1B[1;${$.player.rows}r`)
-			xvt.restore()
-			refresh = true
-
 			$.profile({ jpg:'npc/wizard', effect:'flash' })
 			xvt.out(xvt.magenta, 'You encounter a wizard in this room.\n\n')
-			if (!$.player.cursed && !$.player.novice && $.dice($.player.wins + 1) == 1 && $.dice((Z > $.player.level ? Z : 1) + 20 * $.player.immortal + $.player.level + $.online.cha) == 1) {
-				xvt.waste(500)
-				$.sound('oops', 6)
-				xvt.out(xvt.bright, 'He curses you!\n', xvt.reset)
+			if (!$.player.cursed && !$.player.novice && $.dice((Z > $.player.level ? Z : 1) + 20 * $.player.immortal + $.player.level + $.online.cha) == 1) {
+				$.player.coward = true
+				xvt.waste(600)
+				xvt.out(xvt.bright, 'He curses you!\n')
+				$.sound('morph', 6)
 				$.online.str = $.PC.ability($.online.str, -10)
 				$.online.int = $.PC.ability($.online.int, -10)
 				$.online.dex = $.PC.ability($.online.dex, -10)
 				$.online.cha = $.PC.ability($.online.cha, -10)
-				if ($.player.blessed)
+				if ($.player.blessed) {
 					$.player.blessed = ''
+					xvt.out(xvt.yellow, 'Your shining aura left')
+				}
 				else {
 					$.player.cursed = 'wiz!'
-					$.news(`\tcursed by a wizard!`)
+					xvt.out(xvt.black, 'A dark cloud hovers over')
 				}
-				$.online.altered = true
+				$.saveUser($.player)
+				xvt.out(xvt.reset, ' you.\n')
+				$.news(`\tcursed by a wizard!`)
 				$.player.coward = false
-				pause = true
+				$.online.altered = true
 			}
 			else if (!$.player.novice && $.dice(Z + $.online.cha) == 1) {
-				xvt.waste(500)
+				xvt.waste(600)
 				xvt.out(xvt.faint, 'He is asleep.\n', xvt.reset)
+				xvt.waste(600)
 				xvt.out('Try back again later.\n')
-				pause = true
 			}
 			else {
+				xvt.save()
+				xvt.out(`\x1B[1;${$.player.rows}r`)
+				xvt.restore()
+				refresh = true
 				teleport()
 				return false
 			}
+			pause = true
+			break
 	}
 
 	//	items?
