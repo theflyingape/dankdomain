@@ -655,7 +655,7 @@ export function spoils() {
                 }
                 if (award)
                     xvt.out('You get your cut worth ', new $.coins(award).carry(), '.\n')
-                xvt.waste(500)
+                xvt.waste(600)
             }
             else {
                 $.log(parties[w][m].user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`)
@@ -675,7 +675,7 @@ export function spoils() {
                 set bank = ${$.taxman.user.bank.value}
                 WHERE id='${$.taxman.user.id}'`).changes
             xvt.out($.taxman.user.handle, ' took ', $.who($.taxman, 'his'), 'cut worth ', coin.carry(), '.\n')
-            xvt.waste(1000)
+            xvt.waste(600)
         }
 
         if (winner === $.online) {
@@ -684,7 +684,8 @@ export function spoils() {
         }
         else if ($.online.hp == 0) {
             $.death(`defeated by the gang, ${parties[w][0].user.gang}`)
-            $.sound('effort', 18)
+            $.music('.')
+            $.sound('effort', 15)
         }
         return
     }
@@ -748,7 +749,7 @@ export function spoils() {
                         winner.user.coward = false
                         winner.user.cursed = ''
                         xvt.out(xvt.bright, xvt.black, 'A dark cloud has lifted and shifted.\n', xvt.reset)
-                        xvt.waste(1000)
+                        xvt.waste(600)
                         $.log(loser.user.id, `... and left you with a dark cloud.`)
                         winner.str = $.PC.ability(winner.str, 10, winner.user.maxstr)
                         winner.int = $.PC.ability(winner.int, 10, winner.user.maxint)
@@ -760,7 +761,7 @@ export function spoils() {
                         loser.altered = true
                         winner.user.blessed = loser.user.id
                         xvt.out(xvt.bright, xvt.yellow, 'A shining aura surrounds you.\n', xvt.reset)
-                        xvt.waste(1000)
+                        xvt.waste(600)
                         $.log(loser.user.id, `... and took your blessedness.`)
                         winner.str = $.PC.ability(winner.str, 10, winner.user.maxstr, 10)
                         winner.int = $.PC.ability(winner.int, 10, winner.user.maxint, 10)
@@ -776,7 +777,7 @@ export function spoils() {
                             gang.members[n] = loser.user.id
                             $.saveGang(gang)
                             xvt.out(`You take over as the leader of ${gang.name}.\n`)
-                            xvt.waste(500)
+                            xvt.waste(600)
                         }
                         else {
                             $.player.maxcha--
@@ -790,7 +791,7 @@ export function spoils() {
                         loser.user.bounty.value = 0
                         loser.user.who = ''
                     }
-                    xvt.out(1000)
+                    xvt.out(600)
                 }
             }
         }
@@ -818,22 +819,23 @@ export function spoils() {
             xvt.out($.who(winner, 'He'), 'gets ', $.player.coin.carry(), ' you were carrying.\n')
             $.player.coin.value = 0
         }
-        xvt.out(1000)
+        xvt.out(600)
 
         //  manage grace modifiers, but not sticky for NPC
         if (winner.user.cursed) {
             if ($.player.blessed) {
                 $.player.blessed = ''
-                xvt.out(xvt.bright, xvt.yellow, 'Your shining aura leaves you.\n', xvt.reset)
+                xvt.out(xvt.bright, xvt.yellow, 'Your shining aura leaves')
             }
             else {
                 $.player.coward = false
                 $.player.cursed = winner.user.id
                 winner.user.coward = false
                 winner.user.cursed = ''
-                xvt.out(xvt.bright, xvt.black, 'A dark cloud hovers over you.\n', xvt.reset)
+                xvt.out(xvt.bright, xvt.black, 'A dark cloud hovers over')
             }
-            xvt.waste(1000)
+            xvt.out(' you.', xvt.reset)
+            xvt.waste(600)
         }
 
         //  manage any asset upgrades for PC
@@ -843,7 +845,7 @@ export function spoils() {
                 winner.user.blessed = $.player.id
                 $.player.blessed = ''
                 xvt.out(xvt.bright, xvt.yellow, 'Your shining aura leaves you.\n', xvt.reset)
-                xvt.waste(1000)
+                xvt.waste(600)
             }
             if ($.Weapon.swap(winner, $.online)) {
                 xvt.out($.who(winner, 'He'), $.what(winner, 'take'), $.who($.online, 'his'), winner.user.weapon, '.\n')
@@ -854,7 +856,7 @@ export function spoils() {
                 $.log(winner.user.id, `You upgraded to ${winner.user.armor}.`)
             }
             if (winner.user.gang && winner.user.gang === $.player.gang) {
-                $.sound('punk', 5)
+                $.music('punk')
                 $.player.maxcha--
                 $.player.cha--
 
@@ -864,7 +866,7 @@ export function spoils() {
                     xvt.out($.who(winner,'He'), 'says, "'
                         , xvt.bright, 'Let that be a lesson to you punk!'
                         , xvt.reset, '"\n')
-                    xvt.waste(500)
+                    xvt.waste(600)
                 }
                 if (gang.members[0] === $.player.id) {
                     gang.members[0] = winner.user.id
@@ -872,7 +874,7 @@ export function spoils() {
                     $.saveGang(gang)
                     $.player.cha--
                     xvt.out($.who(winner,'He'), `takes over as the leader of ${gang.name}.\n`)
-                    xvt.waste(500)
+                    xvt.waste(600)
                 }
             }
             $.saveUser(winner)
@@ -885,16 +887,18 @@ export function brawl(rpc:active, nme:active) {
     if ($.dice(100) >= (50 + $.int(rpc.dex / 2))) {
         $.sound(rpc.user.id === $.player.id ? 'whoosh' : 'swoosh')
         xvt.out(`\n${$.who(nme, 'He')}${$.what(nme, 'duck')}${$.who(rpc,'his')}punch.\n`)
-        xvt.waste(500)
+        xvt.waste(600)
         let patron = $.PC.encounter()
         if (patron.user.id && patron.user.id != rpc.user.id && patron.user.id != nme.user.id && !patron.user.status) {
             xvt.out(`\n${$.who(rpc, 'He')}${$.what(rpc, 'hit')}${patron.user.handle}!\n`)
-            xvt.waste(500)
+            xvt.waste(600)
             let bp = punch(rpc)
             patron.bp -= bp
             if (patron.bp > 0) {
-                xvt.out(`\nUh oh!  Here comes ${patron.user.handle}!\n`)
-                xvt.waste(1000)
+                xvt.out('\nUh oh! ')
+                xvt.waste(600)
+                xvt.out(` Here comes ${patron.user.handle}!\n`)
+                xvt.waste(600)
                 this.brawl(patron, rpc)
             }
             else
@@ -916,7 +920,7 @@ export function brawl(rpc:active, nme:active) {
 
         xvt.out('\n', winner.user.id === $.player.id ? 'You' : winner.user.handle
             , ` ${$.what(winner, 'knock')}${$.who(loser, 'him')}out!\n`)
-        xvt.waste(500)
+        xvt.waste(600)
         if (xp)
             xvt.out(`\n${$.who(winner, 'He')}${$.what(winner, 'get')}`, sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
         winner.user.xp += xp
@@ -926,7 +930,7 @@ export function brawl(rpc:active, nme:active) {
             loser.user.coin.value = 0
         }
         winner.user.tw++
-        xvt.waste(500)
+        xvt.waste(600)
 
         loser.user.tl++
         if (loser.user.id === $.player.id) {
@@ -939,7 +943,7 @@ export function brawl(rpc:active, nme:active) {
             xvt.out(`\nYou are unconscious for ${m} minute`, m != 1 ? 's' : '')
             while (m--) {
                 xvt.out('.')
-                xvt.waste(400)
+                xvt.waste(300)
             }
             xvt.out('\n')
             $.news(`\tgot knocked out by ${winner.user.handle}`)

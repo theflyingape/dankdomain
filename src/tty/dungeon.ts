@@ -570,10 +570,9 @@ function doMove(): boolean {
 					, ' by your '
 					, [ 'awesomeness', 'elegance', 'presence', $.player.armor, $.player.weapon ][$.dice(5) - 1]
 					, '!', xvt.reset, '\n')
-				ROOM.monster[n].user.handle = xvt.attr(xvt.faint, 'your ', xvt.normal, ROOM.monster[n].user.handle)
 				ROOM.monster[n].user.gender = 'FM'[$.dice(2) - 1]
-				ROOM.monster[n].user.pc = Object.keys($.PC.name['player'])[0]
-				ROOM.monster[n].user.xplevel = 0
+				ROOM.monster[n].user.handle = xvt.attr(xvt.faint, 'your ', xvt.normal, ROOM.monster[n].user.handle)
+				ROOM.monster[n].user.xplevel = $.dice(3) - 2
 				party.push(ROOM.monster[n])
 				ROOM.monster.splice(n, 1)
 			}
@@ -937,9 +936,6 @@ function doMove(): boolean {
 			return false
 
 		case 4:
-			xvt.save()
-			xvt.out(`\x1B[1;${$.player.rows}r`)
-			xvt.restore()
 			$.music('wol')
 			xvt.waste(600)
 			xvt.out(xvt.magenta, 'You have found a Mystical Wheel of Life.\n')
@@ -1567,13 +1563,13 @@ function doSpoils() {
 
 	if (!ROOM.monster.length) {
 		if (b4 < 0) {
-			$.sound('effort')
+			$.sound('effort', 15)
 			if (($.player.cha = $.PC.ability($.player.cha, 1, 99)) > $.player.maxcha)
 				$.player.maxcha = $.PC.ability($.player.maxcha, 1, $.player.maxcha, 1)
 			$.online.cha = $.PC.ability($.online.cha, $.dice(5), $.player.maxcha)
 		}
 		if (b4 / $.player.hp > 0.65 && b4 / $.player.hp < 1 && $.online.hp / $.player.hp < 0.15) {
-			$.sound('bravery')
+			$.sound('bravery', 15)
 			if (($.player.str = $.PC.ability($.player.str, 1, 99)) > $.player.maxstr)
 				$.player.maxstr = $.PC.ability($.player.maxstr, 1, $.player.maxstr, 1)
 			$.online.str = $.PC.ability($.online.str, $.dice(5), $.player.maxstr)
