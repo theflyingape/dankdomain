@@ -79,6 +79,7 @@ if (cookies[0]) id = cookies[0].split('=')[1] || '';
 art = null;
 currentCMD = null;
 fontSize = 16;
+input = false;
 all = `<input class="platinum" class="tall" type="button" value=" ALL " onclick="send('=', true);">`
 best = `<input class="platinum" class="tall" type="button" value=" BEST " onclick="send('=', true);">`
 cancel = `<input class="copper" type="button" id="cancel" value="Clear" onclick="send('\x15');">`;
@@ -252,7 +253,8 @@ function animated(effect) {
 
 function Logon() {
   clearInterval(art); art = null;
-  cmd(`<form onsubmit="return sendLogin();"><input type="text" placeholder="Enter ID or Handle" id="id" name="id" required> <input type="password" placeholder="Enter password" name="password" required> <button class="slate" autofocus id="default" type="submit">Login</button> <input type="button" value="NEW" onclick="send('NEW', true);"></form><span style="color: steelblue !important; font-size:smaller;">⬅️ click left window for cursor</span>`);
+  input = true;
+  cmd(`<form onsubmit="return sendLogin();"><input type="text" placeholder="Enter ID or Handle" id="id" name="id" required> <input type="password" placeholder="Enter password" name="password" required> <button class="slate" type="submit">Login</button> <input type="button" value="NEW" onclick="send('NEW', true);"></form><span style="color: steelblue !important; font-size:smaller;">⬅️ click left window for cursor</span>`);
   nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize(\'bounceInDown\');" style="display:none;" />`);
   document.getElementById('id').value = id;
 }
@@ -267,10 +269,11 @@ function sendLogin() {
 function Logoff() {
   if (!art) art = setInterval(rotateImage, 45000);
   window.focus();
+  input = false;
   cmd(`<span style="font-size:larger">🤴 <a href="https://ddgame.us" target="_new"><span style="color:black !important">Dank Domain</span></a> 👸</span><br>
 <span style="color:brown !important;">the return of Hack &amp; Slash<br>
 🇺🇸 <span style="font-size:smaller;">&copy;2017-2018 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a></span></span> 🧙<br>
-<input type="button" id="cancel" value="Disconnect" onclick="send('\x1B');"> <input class="platinum" autofocus id="default" value="CONNECT" onclick="send(' ');" type="submit">`);
+<input type="button" id="cancel" value="Disconnect" onclick="send('\x1B');"> <input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit">`);
 }
 
 function rotateImage() {
@@ -523,12 +526,13 @@ function keydown(event) {
   switch (event.key) {
     case ' ':
     case 'Enter':
-      b = document.getElementById('default');
-      if (b) {
-        b.click();
-        return;
+      if (input) {
+        b = document.getElementById('default');
+        if (b) b.click();
       }
-      break;
+      else
+        send(' ', false, 'kb');
+      return;
     case 'Escape':
       b = document.getElementById('cancel');
       if (b) {
@@ -540,7 +544,6 @@ function keydown(event) {
       send(event.key, false, 'kb');
       break;
   }
-  //if (event.keyCode > 32) send(event.key, false, 'kb');
 }
 
 </script>

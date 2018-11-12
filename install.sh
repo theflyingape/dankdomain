@@ -1,12 +1,16 @@
 #!/bin/sh
-
-[ -n "$1" ] && TARGET="$1" || TARGET=/usr/local/games
-TARGET="${TARGET}/`basename ${PWD}`"
-echo "Installing into ${TARGET}"
-
+#
 # let's prompt for admin credentials now, if necessary
 sudo -v || exit
+member=`sudo groupmems -g games -l | grep -c nobody`
+[ $member -eq 0 ] && sudo groupmems -g games -a nobody
+member=`sudo groupmems -g games -l | grep -c $USER`
+[ $member -eq 0 ] && sudo groupmems -g games -a $USER
 
+[ -n "$1" ] && TARGET="$1" || TARGET=/usr/local/games
+[ -d ${TARGET} ] || sudo mkdir -v ${TARGET}
+TARGET="${TARGET}/`basename ${PWD}`"
+echo "Installing into ${TARGET}"
 [ -d ${TARGET} ] || sudo mkdir -v ${TARGET}
 
 # let's start with the services
@@ -18,20 +22,22 @@ sudo dnf update nodejs npm
 tsc -v && sudo npm update typescript -g || sudo npm install typescript -g
 
 # this.package install script
-sudo npm install
+npm install
 
-# transpile and test run locally
+# transpile
 npm run build
 
-# copy build, add it as a network service, and happy hunting
-member=`sudo groupmems -g games -l | grep -c nobody`
-[ $member -eq 0 ] && sudo groupmems -g games -a nobody
-
+# copy over
 sudo cp ./node_modules/animate.css/animate.min.css ./build/door/static
 sudo rsync -a --delete ./build/ ${TARGET}
 sudo rsync -a --delete ./node_modules ${TARGET}/
 sudo chown -R root.games ${TARGET}
 sudo find ${TARGET} -type d -exec chmod u+rwx,g+rwxs,o-rwx {} \;
+
+# initialize the game
+umask 0002
+cd ${TARGET}
+env REMOTEHOST=localhost ./logins.sh
 ls -lh ${TARGET}
 
 # practical, but use at your own risk
@@ -75,7 +81,7 @@ if sudo service iptables status ; then
 	fi
 fi
 
-sudo cp ${TARGET}/etc/dankdomain-door.service /etc/systemd/system/
+sudo cp -v ${TARGET}/etc/dankdomain-door.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable dankdomain-door
 sudo systemctl start dankdomain-door

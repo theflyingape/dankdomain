@@ -50,7 +50,7 @@ window.onresize = () => {
 	//  tweak side panel sizing within reason
 	Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': '65%' })
 	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': '35%' })
-	if (pid > 0) term.setOption('fontFamily', tty ? 'tty,Consolas,monospace' : 'IBM Plex Mono,Consolas,monospace')
+	//if (pid > 0) term.setOption('fontFamily', tty ? 'tty,Consolas,monospace' : 'IBM Plex Mono,Consolas,monospace')
 	term.setOption('fontSize', 20)
 	let xy = fit.proposeGeometry(term)
 	let w = Math.trunc(parseInt(I.style.width) * (xy.cols || 80) / 80) + '%'
@@ -124,7 +124,6 @@ document.getElementById('lurker-list').onchange = (ev) => {
 			}
 
 			socket.onopen = () => {
-				//term.focus()
 				term.writeln('open\x1B[m')
 			}
 
@@ -234,7 +233,7 @@ function newSession(ev) {
 
 				socket.onopen = () => {
 					carrier = true
-					term.focus()
+					if (tty) term.focus()
 					if (!term.getOption('cursorBlink'))
 						term.setOption('cursorBlink', true)
 					term.writeln('open\x1B[m')
@@ -265,8 +264,7 @@ function newSession(ev) {
 		fetch(`${app}/title.txt`, { method: 'GET' }).then(function (res) {
 			return res.text().then(function (data) {
 				term.writeln(data)
-				term.writeln(' \x1B[36m\u00B7\x1B[2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to connect;\x1B[22m')
-				term.writeln(' \x1B[36m\u00B7\x1B[2m or any other \x1B[22;1m🗝️  \x1B[22mkey\x1B[2m for more options.')
+				term.writeln(' \x1B[36m\u00B7\x1B[2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to connect\x1B[22m')
 				XT('@action(Logoff)')
 				XT(`@play(${['demon','demogorgon','portal','thief2'][Math.trunc(4*Math.random())]})`)
 				window.dispatchEvent(new Event('resize'))	// gratuituous
@@ -391,6 +389,10 @@ function receive(event) {
 	if (event.data) {
 		switch (event.data.func) {
 			case 'kb':
+				if (pid) {
+					tty = true
+					term.focus()
+				}
 			case 'emit':
 				if (!carrier) {
 					XT('@tune(.)')
@@ -406,10 +408,8 @@ function receive(event) {
 				}
 				if (event.data.message) {
 					if (event.data.message == 'F2') {
-						tty = !tty
-						window.dispatchEvent(new Event('resize'))
 						setImmediate(() => {
-							term.setOption('fontFamily', tty ? 'tty,Consolas,monospace' : 'IBM Plex Mono,Consolas,monospace')
+							term.setOption('fontFamily', 'tty,Consolas,monospace')
 							window.dispatchEvent(new Event('resize'))
 						})
 					}
