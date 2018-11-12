@@ -324,18 +324,21 @@ function listbest() {
 }
 
 function listmm() {
-  cmd(`${keypad}<br><input class="wide" type="button" value="Monster Mash" onclick="send('M', true);">`);
+  cmd(`${keypad}<br><input class="platinum" type="button" value="Monster Mash" onclick="send('M', true);">`);
 }
 
 function menu() {
   nme('');
-  cmd(`${logoff} <input type="button" value="System" onclick="send('Z');"><br>
-<input type="button" value="Reroll" onclick="send('X');"> <input type="button" value="Rob" onclick="send('R');"><br>
-<input type="button" value="Casino" onclick="send('G');"> <input type="button" value="Halls" onclick="send('L');"> <input type="button" value="Status" onclick="send('Y');"><br>
-<input class="gold" type="button" value="Most Wanted" onclick="send('M');"><br>
-<input class="silver" type="button" value="Naval" onclick="send('N');"><input class="silver" type="button" value="Arena" onclick="send('A');"><br>
-<input class="slate" type="button" value=" Party " onclick="send('P');"><input class="slate" type="button" value="Dungeon" onclick="send('D');"><br>
-<input class="platinum" type="button" value="Tavern" onclick="send('T');"><input class="platinum" type="button" value="Square" onclick="send('S');">`);
+  cmd(`<table>
+<tr><td colspan=2>${logoff}</td></tr>
+<tr><td><input type="button" value="Reroll" onclick="send('X');"></td><td><input type="button" value="Rob" onclick="send('R');"></td></tr>
+<tr><td><input type="button" value="Casino" onclick="send('G');"></td><td><input type="button" value="Halls" onclick="send('L');"></td></tr>
+<tr><td><input type="button" value="System" onclick="send('Z');"></td><td><input type="button" value="Status" onclick="send('Y');"></td></tr>
+<tr><td colspan=2><input class="gold" type="button" value="Most Wanted" onclick="send('M');"></td></tr>
+<tr><td><input class="silver" type="button" value="Naval" onclick="send('N');"></td><td><input class="silver" type="button" value="Arena" onclick="send('A');"></td></tr>
+<tr><td><input class="slate" type="button" value="Party" onclick="send('P');"></td><td><input class="slate" type="button" value="Dungeon" onclick="send('D');"></td></tr>
+<tr><td><input class="platinum" type="button" value="Tavern" onclick="send('T');"></td><td><input class="platinum" type="button" value="Square" onclick="send('S');"></td></tr>
+</table>`);
 }
 
 function ny() {
@@ -347,10 +350,12 @@ function yn() {
 }
 
 function arena() {
-  cmd(`<input class="tall" type="button" value="Cast" onclick="send('C');"> <input class="tall" type="button" value="Poison" onclick="send('P');"><br>
-<input class="tall" type="button" value="User" onclick="send('U');"> <input class="tall" type="button" value="Monster" onclick="send('M');"><br>
-<input class="tall" type="button" value="Joust" onclick="send('J');"> <input class="tall" type="button" value="Status" onclick="send('Y');"><br>
-${quit} <input class="platinum" type="button" value="SQUARE" onclick="send('G');">`);
+  cmd(`<table>
+<tr><td><input class="copper" type="button" value="Poison" onclick="send('P');"></td><td><input class="platinum" type="button" value="Cast" onclick="send('C');"></td></tr>
+<tr><td><input class="silver" type="button" value="User" onclick="send('U');"></td><td><input class="silver" type="button" value="Monster" onclick="send('M');"></td></tr>
+<tr><td><input type="button" value="Status" onclick="send('Y');"></td><td><input class="gold" type="button" value="Joust" onclick="send('J');"></td></tr>
+<tr><td>${quit}</td><td><input class="platinum" type="button" value="SQUARE" onclick="send('G');"></td></tr>
+</table>`);
 }
 
 function bank() {
@@ -424,11 +429,13 @@ ${quit} <input class="slate" type="button" value="Battle" onclick="send('B');">`
 
 function party() {
   nme('');
-  cmd(`<input type="button" value="Start" onclick="send('S');"> <input type="button" value="List" onclick="send('L');"><br>
-<input type="button" value="Edit" onclick="send('E');"> <input type="button" value="Join" onclick="send('J');"><br>
-<input type="button" value="Resign" onclick="send('R');"> <input type="button" value="Transfer" onclick="send('T');"><br>
-<input class="gold" type="button" value="Most Wanted" onclick="send('M');"><br>
-${quit} <input class="slate" type="button" value=" Fight " onclick="send('F');">`);
+  cmd(`<table>
+<tr><td><input type="button" value="Edit" onclick="send('E');"></td><td><input type="button" value="List" onclick="send('L');"></td></tr>
+<tr><td><input type="button" value="Resign" onclick="send('R');"></td><td><input type="button" value="Transfer" onclick="send('T');"></td></tr>
+<tr><td colspan=2><input class="gold" type="button" value="Most Wanted" onclick="send('M');"></td></tr>
+<tr><td><input class="silver" type="button" value="Start" onclick="send('S');"></td><td><input class="platinum" type="button" value="Join" onclick="send('J');"></td></tr>
+<tr><td>${quit}</td><td><input class="slate" type="button" value=" Fight " onclick="send('F');"></td></tr>
+</table>`);
 }
 
 function payment() {
@@ -467,10 +474,11 @@ ${quit} <input class="silver" type="button" value="ARENA" onclick="send('G');">`
 
 function tavern() {
   nme('');
-  cmd(`<input type="button" value="Swear" onclick="send('S');"><br>
-<input type="button" value="List" onclick="send('L');"> <input type="button" value="Post" onclick="send('P');"> <input class="gold" type="button" value="Guzzle" onclick="send('G');"> 
-<input type="button" value="Yesterday" onclick="send('Y');"> <input type="button" value="Today" onclick="send('T');"><br>
-${quit} <input class="slate" type="button" value="Brawl" onclick="send('B');">`);
+  cmd(`<table>
+<tr><td><input type="button" value="Swear" onclick="send('S');"></td><td><input type="button" value="List" onclick="send('L');"></td><td><input type="button" value="Post" onclick="send('P');"></td></tr>
+<tr><td><input type="button" value="Old" onclick="send('Y');"></td><td><input class="gold" type="button" value="Guzzle" onclick="send('G');"></td><td><input type="button" value="News" onclick="send('T');"></td></tr>
+<tr><td>${quit}</td><td colspan=2><input class="slate" type="button" value="Brawl" onclick="send('B');"></td></tr>
+</table>`);
 }
 
 function teleport() {

@@ -1,15 +1,12 @@
-[22;36mDate:[22;37m Wed 31-Oct-2018 9:25pm
+[22;36mDate:[22;37m Mon 12-Nov-2018 5:25pm
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
 New announcements as missing features get implemented or tweaked:
 
+ - UI tweaks that improve tablet / touch play
  - dungeon potions are bottled consistently per call
- - UI tweaks may improve tablet / touch play
  - temporary buff diminishes after every engagement
  - like hone, apply lower poisons to increase temporary buff
- - a harmless will-o-wisp may avenge
  - a blessed/cursed state does not carry over into player's new day
- - you lose favor for killing our barkeep
- - added Psionic class: 8 dungeon monsters updated
 
 Happy hunting!

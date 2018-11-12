@@ -930,7 +930,7 @@ function doMove(): boolean {
 					pause = true
 					refresh = true
 					menu()
-				}, prompt:'What is thy bidding, my master? ', cancel:'O', enter:'B', eol:false, max:1, timeout:30 }
+				}, prompt:'What is thy bidding, my master? ', cancel:'O', enter:'B', eol:false, max:1, timeout:60 }
 			}
 			xvt.app.focus = 'well'
 			return false
@@ -1225,6 +1225,11 @@ function doMove(): boolean {
 				cost.value = 0
 			cost = new $.coins(cost.carry(1, true))
 
+			if (ROOM.giftItem == 'chest') {
+				ROOM.giftValue = $.dice(6 - $.player.magic) - 1
+				cost.value = 0	//	this one is free of charge
+			}
+
 			if ($.online.hp >= $.player.hp || cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, cast)) {
 				xvt.out(xvt.yellow, '"I will pray for you."', xvt.reset, '\n')
 				break
@@ -1406,7 +1411,7 @@ function doMove(): boolean {
 			if (potions[ROOM.giftValue].identified || ROOM.giftID || $.access.sysop) {
 				$.profile({ png:potions[ROOM.giftValue].image, handle:potion[ROOM.giftValue], effect:'fadeInUp' })
 				xvt.out(potion[ROOM.giftValue], '.')
-				potions[ROOM.giftValue].identified = $.online.int > (85 - 4 * $.player.poison)	//	recall seeing this before
+				potions[ROOM.giftValue].identified = $.player.novice || $.online.int > (85 - 4 * $.player.poison)	//	recall seeing this before
 			}
 			else {
 				$.profile({ png:potions[ROOM.giftValue].image, handle:'Is it ' + 'nt'[$.dice(2) - 1] + 'asty, precious?', effect:'fadeInUp' })
@@ -2051,37 +2056,38 @@ function generateLevel() {
 			continue
 		}
 
-		if ($.dice(deep + 5) > (deep + 1) && $.player.poison) {
+		if ($.player.poison && $.dice(deep + $.player.poison + 2) > (deep + 1)) {
 			DL.rooms[y][x].giftItem = 'poison'
 			DL.rooms[y][x].giftValue =  $.dice($.Poison.merchant.length * Z / 100)
 			continue
 		}
 
-		if ($.dice(deep + 5) > (deep + 1) && ($.player.magic == 1 || $.player.magic == 2)) {
-			DL.rooms[y][x].giftItem = 'magic'
-			DL.rooms[y][x].giftValue =  $.dice($.Magic.merchant.length * Z / 100)
-			continue
+		if ($.player.magic == 1 || $.player.magic == 2) {
+			if ($.dice(deep + $.player.magic + 2) > (deep + 1)) {
+				DL.rooms[y][x].giftItem = 'magic'
+				DL.rooms[y][x].giftValue =  $.dice($.Magic.merchant.length * Z / 100)
+				continue
+			}
+			if ($.dice(deep + $.player.magic + 3) > (deep + 1)) {
+				DL.rooms[y][x].giftItem = 'xmagic'
+				DL.rooms[y][x].giftValue =  $.Magic.merchant.length + $.dice($.Magic.special.length)
+				continue
+			}
 		}
 
-		if ($.dice(deep + 3) > (deep + 1) && ($.player.magic == 1 || $.player.magic == 2)) {
-			DL.rooms[y][x].giftItem = 'xmagic'
-			DL.rooms[y][x].giftValue =  $.Magic.merchant.length + $.dice($.Magic.special.length)
-			continue
-		}
-
-		if ($.dice(deep + $.player.magic + 4) > (deep + 1)) {
+		if ($.dice(deep + 2 * $.player.steal) > (deep + 1)) {
 			DL.rooms[y][x].giftItem = 'chest'
-			DL.rooms[y][x].giftValue =  $.dice(10 + deep) - 1
+			DL.rooms[y][x].giftValue =  $.dice(8 + deep + $.player.steal) - 1
 			continue
 		}
 
-		if ($.dice(deep * ($.player.magic + 3)) - $.player.magic > (deep + 1)) {
+		if ($.dice(deep * ($.player.melee + 3)) - $.player.magic > (deep + 1)) {
 			DL.rooms[y][x].giftItem = 'armor'
 			DL.rooms[y][x].giftValue =  $.dice(deep) + 2
 			continue
 		}
 
-		if ($.dice(deep * ($.player.magic + 2)) - $.player.magic > (deep + 1)) {
+		if ($.dice(deep * ($.player.melee + 2)) - $.player.magic > (deep + 1)) {
 			DL.rooms[y][x].giftItem = 'weapon'
 			DL.rooms[y][x].giftValue =  $.dice(deep) + 2
 			continue

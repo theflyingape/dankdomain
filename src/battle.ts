@@ -1354,6 +1354,9 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                         $.activate(DL.cleric)
                         $.sound('winner')
                         xvt.out('You raised the ', xvt.faint, xvt.yellow, DL.cleric.user.handle, xvt.reset, ' from the dead!\n')
+                        if (($.player.cha = $.PC.ability($.player.cha, 1, 99)) > $.player.maxcha)
+                            $.player.maxcha = $.PC.ability($.player.maxcha, 1, $.player.maxcha, 1)
+                        $.online.cha = $.PC.ability($.online.cha, $.dice(5), $.player.maxcha)
                         cb()
                         return
                     }
