@@ -147,6 +147,8 @@ newSession('Logoff')
 
 
 function newSession(ev) {
+	const protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://'
+	let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/player/'
 	const options: ITerminalOptions = {
 		bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false, drawBoldTextInBrightColors: true,
 		cols: cols, rows: rows, scrollback: 500,
@@ -170,14 +172,7 @@ function newSession(ev) {
 	term = new Terminal(options)
 	Terminal.applyAddon(fit)
 	Terminal.applyAddon(webLinks)
-	term.open(document.getElementById('terminal'))
-	webLinks.webLinksInit(term)
-	fit.fit(term)
-
-	term.focus(); term.blur()
-	term.writeln('\x1B[16C\x1B[1;31m🔥\x1B[2C🌨\x1B[2C \x1B[36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain\x1B[2C\x1B[m🌙\x1B[2C💫\x07')
-	let protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://'
-	let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/player/'
+	term.setOption('fontFamily', `${carrier ? 'IBM Plex Mono' : 'tty'},Consolas,monospace`)
 
 	term.on('data', function (data) {
 		if (carrier) {
@@ -203,23 +198,28 @@ function newSession(ev) {
 	})
 
 	term.on('selection', function () {
-		let nme = term.getSelection()
-		term.clearSelection()
-		if (carrier)
+		if (carrier) {
+			let nme = term.getSelection()
+			term.clearSelection()
 			if (nme.length > 1 && nme.length < 5)
 				socket.send(nme + '\x0D')
+		}
 	})
 
 	term.on('wall', function (msg) {
 		if (!pid) return
 		let url = `${app}/player/${pid}/wall?msg=${msg}`
 		fetch(url, {method: 'POST'})
-	  })
+	})
 
-	// fit is called within a setTimeout, cols and rows need this
+	term.open(document.getElementById('terminal'))
+	webLinks.webLinksInit(term)
+	fit.fit(term)
+	window.dispatchEvent(new Event('resize'))	// gratuituous
+	term.focus(); term.blur()
+	term.writeln('\x1B[16C\x1B[1;31m🔥\x1B[2C🌨\x1B[2C \x1B[36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain\x1B[2C\x1B[m🌙\x1B[2C💫\x07')
+  
 	if (ev === 'Logon')	setImmediate(() => {
-		term.setOption('fontFamily', tty ? 'tty,Consolas,monospace' : 'IBM Plex Mono,Consolas,monospace')
-		window.dispatchEvent(new Event('resize'))
 		term.write(`\n\x1B[0;2mConnecting terminal WebSocket ... `)
 		XT('@tune(dankdomain)')
 		fetch(`${app}/player/?cols=${term.cols}&rows=${term.rows}`, { method: 'POST' }).then(function (res) {
@@ -234,7 +234,7 @@ function newSession(ev) {
 
 				socket.onopen = () => {
 					carrier = true
-					window.dispatchEvent(new Event('resize'))
+					term.focus()
 					if (!term.getOption('cursorBlink'))
 						term.setOption('cursorBlink', true)
 					term.writeln('open\x1B[m')
@@ -253,8 +253,11 @@ function newSession(ev) {
 
 				socket.onerror = (ev) => {
 					term.writeln('\x1B[1;31merror\x1B[m')
+					console.log(ev)
 					carrier = false
 				}
+
+				window.dispatchEvent(new Event('resize'))	// gratuituous
 			})
 		})
 	})
@@ -266,11 +269,10 @@ function newSession(ev) {
 				term.writeln(' \x1B[36m\u00B7\x1B[2m or any other \x1B[22;1m🗝️  \x1B[22mkey\x1B[2m for more options.')
 				XT('@action(Logoff)')
 				XT(`@play(${['demon','demogorgon','portal','thief2'][Math.trunc(4*Math.random())]})`)
+				window.dispatchEvent(new Event('resize'))	// gratuituous
 			})
 		})
 	}
-	// gratuituous
-	window.dispatchEvent(new Event('resize'))
 }
 
 // let's have a nice value for both the player and the web server
@@ -413,13 +415,9 @@ function receive(event) {
 					}
 					else
 						socket.send(event.data.message)
-				//	if (event.data.return)
-				//		socket.send('\r')
 				}
-				//else {
-					if (event.data.return)
-						socket.send('\r')
-				//}
+				if (event.data.return)
+					socket.send('\r')
 				break
 		}
 	}
