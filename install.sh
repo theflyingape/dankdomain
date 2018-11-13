@@ -14,12 +14,7 @@ echo "Installing into ${TARGET}"
 [ -d ${TARGET} ] || sudo mkdir -v ${TARGET}
 
 # let's start with the services
-[ -n "`which node`" ] || sudo dnf install nodejs npm
-sudo dnf update nodejs npm
-
-# add the transpiler
-# npm install typescript@next -g
-tsc -v && sudo npm update typescript -g || sudo npm install typescript -g
+[ -n "`which node`" ] || sudo dnf install nodejs nodejs-typescript npm
 
 # this.package install script
 npm install
@@ -38,6 +33,8 @@ sudo find ${TARGET} -type d -exec chmod u+rwx,g+rwxs,o-rwx {} \;
 umask 0002
 cd ${TARGET}
 env REMOTEHOST=localhost ./logins.sh
+
+echo -e "\n${PWD}"
 ls -lh ${TARGET}
 
 # practical, but use at your own risk
@@ -71,6 +68,7 @@ EOD
 sudo mv -v dankdomain /etc/xinetd.d/
 sudo systemctl enable xinetd
 sudo systemctl restart xinetd
+echo -e "\nOld school gaming door added:\n$ telnet localhost\n"
 
 if sudo service iptables status ; then
 	hole=`sudo iptables -L INPUT -n | grep -c 'dpt:23'`
