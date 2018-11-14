@@ -30,9 +30,9 @@ sudo chown -R root.games ${TARGET}
 sudo find ${TARGET} -type d -exec chmod u+rwx,g+rwxs,o-rwx {} \;
 
 # initialize the game
-umask 0002
 cd ${TARGET}
 env REMOTEHOST=localhost ./logins.sh
+sudo chmod 660 ${TARGET}/users/*
 
 echo -e "\n${PWD}"
 ls -lh ${TARGET}
@@ -82,10 +82,10 @@ fi
 sudo cp -v ${TARGET}/etc/dankdomain-door.service /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable dankdomain-door
-sudo systemctl start dankdomain-door
+#sudo systemctl start dankdomain-door
 sudo systemctl status dankdomain-door -l
 
-echo -n "Press RETURN to continue: "
+echo -n "Press RETURN to continue for Apache DOOR instructions: "
 read n
 
 echo

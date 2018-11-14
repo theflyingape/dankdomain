@@ -1935,7 +1935,7 @@ export function logoff() {
         if (online.hp < 1)
             sound('goodbye')
         else {
-            sound('invite')
+            if (online.hull) sound('invite')
             PC.profile(online)
         }
         xvt.out('\x06\n')
