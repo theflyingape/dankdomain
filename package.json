@@ -8,7 +8,7 @@
     "linux"
   ],
   "engines": {
-    "node": ">=10.10"
+    "node": ">=10.13"
   },
   "scripts": {
     "build": "./build.sh",
