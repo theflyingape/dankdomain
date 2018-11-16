@@ -1568,13 +1568,13 @@ function doSpoils() {
 
 	if (!ROOM.monster.length) {
 		if (b4 < 0) {
-			$.sound('effort', 15)
+			$.sound('effort', 16)
 			if (($.player.cha = $.PC.ability($.player.cha, 1, 99)) > $.player.maxcha)
 				$.player.maxcha = $.PC.ability($.player.maxcha, 1, $.player.maxcha, 1)
 			$.online.cha = $.PC.ability($.online.cha, $.dice(5), $.player.maxcha)
 		}
-		if (b4 / $.player.hp > 0.65 && b4 / $.player.hp < 1 && $.online.hp / $.player.hp < 0.15) {
-			$.sound('bravery', 15)
+		else if (b4 / $.player.hp > 0.5 && b4 / $.player.hp < 1 && $.online.hp / $.player.hp < 0.25) {
+			$.sound('bravery', 16)
 			if (($.player.str = $.PC.ability($.player.str, 1, 99)) > $.player.maxstr)
 				$.player.maxstr = $.PC.ability($.player.maxstr, 1, $.player.maxstr, 1)
 			$.online.str = $.PC.ability($.online.str, $.dice(5), $.player.maxstr)
