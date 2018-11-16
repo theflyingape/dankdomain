@@ -1869,19 +1869,22 @@ export function emulator(cb:Function) {
     xvt.app.form = {
         'term': { cb:() => {
             if (xvt.validator.isNotEmpty(xvt.entry) && xvt.entry.length == 2) xvt.emulation = xvt.entry.toUpperCase()
-            sound('max')
             xvt.out('\n\n', xvt.reset, xvt.magenta, xvt.LGradient[xvt.emulation], xvt.reverse, 'TEST BANNER', xvt.noreverse, xvt.RGradient[xvt.emulation], '\n')
             xvt.out(xvt.red,'R', xvt.green,'G', xvt.blue,'B', xvt.reset, xvt.bright,' bold ', xvt.normal, 'normal', xvt.faint, ' dark')
             xvt.out(xvt.reset, '\n')
-            xvt.waste(2000)
+            online.altered = true
+            player.emulation = xvt.emulation
+            sound('max', 20)
+            if (player.emulation == 'XT') {
+                cb()
+                return
+            }
             for(let rows = 99; rows > 1; rows--)
                 xvt.out(bracket(rows > 24 ? rows : '..'))
             xvt.app.focus = 'rows'
         }, prompt:xvt.attr('Select ', xvt.faint, '[', xvt.reset, xvt.bright, `${player.emulation}`, xvt.reset, xvt.faint, ']', xvt.reset, ': ')
         , enter:player.emulation, match:/VT|PC|XT/i, max:2 },
         'rows': { cb:() => {
-            online.altered = true
-            player.emulation = xvt.emulation
             player.rows = +xvt.entry
             xvt.out(xvt.reset, '\n')
             xvt.app.focus = 'pause'
