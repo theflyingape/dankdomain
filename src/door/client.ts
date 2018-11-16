@@ -251,7 +251,7 @@ function newSession(ev) {
 				}
 
 				socket.onerror = (ev) => {
-					term.writeln('\x1B[1;31merror\x1B[m')
+					term.writeln('\x1B[1;31merror\x1B[m\nNO DIALTONE\n')
 					console.log(ev)
 					carrier = false
 				}
