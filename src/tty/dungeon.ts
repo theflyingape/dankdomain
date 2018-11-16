@@ -1573,7 +1573,7 @@ function doSpoils() {
 				$.player.maxcha = $.PC.ability($.player.maxcha, 1, $.player.maxcha, 1)
 			$.online.cha = $.PC.ability($.online.cha, $.dice(5), $.player.maxcha)
 		}
-		else if (b4 / $.player.hp > 0.5 && b4 / $.player.hp < 1 && $.online.hp / $.player.hp < 0.25) {
+		else if (b4 / $.player.hp > 0.35 && b4 / $.player.hp < 1 && $.online.hp / $.player.hp < 0.25) {
 			$.sound('bravery', 16)
 			if (($.player.str = $.PC.ability($.player.str, 1, 99)) > $.player.maxstr)
 				$.player.maxstr = $.PC.ability($.player.maxstr, 1, $.player.maxstr, 1)
