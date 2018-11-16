@@ -452,6 +452,7 @@ function MonsterFights(): boolean {
 					if (isNaN(monster.user.weapon)) xvt.out('\n', $.who(monster, 'He'), $.Weapon.wearing(monster), '.\n')
 					if (isNaN(monster.user.armor)) xvt.out('\n', $.who(monster, 'He'), $.Armor.wearing(monster), '.\n')
 
+					$.action('ny')
 					xvt.app.focus = 'fight'
 					return
 				}
@@ -470,7 +471,7 @@ function MonsterFights(): boolean {
 					$.animated('fadeOut')
 					menu()
 				}
-			}, prompt:'Fight this demon (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:20 }
+			}, prompt:'Fight this demon (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:30 }
 		}
 		xvt.app.focus = 'pay'
 	}
