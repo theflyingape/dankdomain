@@ -140,6 +140,29 @@ images = [
     'yuriel_genasi_warlord_by_peachyco.png'
   ];
 
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('manifest.json').then(function(registration) {
+      // Registration was successful
+      console.log('ServiceWorker registration successful with scope: ', registration.scope);
+    }, function(err) {
+      // registration failed :(
+      console.log('ServiceWorker registration failed: ', err);
+    });
+  });
+}
+
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+console.log(e);
+    // Prevent Chrome 67 and earlier from automatically showing the prompt
+    e.preventDefault();
+    // Stash the event so it can be triggered later.
+    deferredPrompt = e;
+    // Update UI notify the user they can add to home screen
+    //btnAdd.style.display = 'block';
+  });
+
 if (window.addEventListener) {
   window.addEventListener("message", receive, false);
 }
@@ -269,7 +292,15 @@ function Logoff() {
   if (!art) art = setInterval(rotateImage, 22500);
   window.focus();
   input = false;
-  cmd(`<input type="button" id="cancel" value="Disconnect" onclick="send('\x1B');"> <input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"><br>
+  cmd(`<input type="button" value="+" onclick="deferredPrompt.prompt(); deferredPrompt.userChoice
+    .then((choiceResult) => {
+      if (choiceResult.outcome === 'accepted') {
+        console.log('User accepted the A2HS prompt');
+      } else {
+        console.log('User dismissed the A2HS prompt');
+      }
+      deferredPrompt = null;
+    });"> <input type="button" id="cancel" value="Disconnect" onclick="send('\x1B');"> <input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"><br>
 <span style="font-size:larger">🤴 <a href="https://ddgame.us" target="_new"><span style="color:black !important">Dank Domain</span></a> 👸</span><br>
 <span style="color:brown !important;">the return of Hack &amp; Slash<br>
 🇺🇸 <span style="font-size:smaller;">&copy;2017-2018 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a></span></span> 🧙`);

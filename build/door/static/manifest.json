@@ -1,11 +1,10 @@
 {
-  "name": "👑 DDgame.us",
   "short_name": "DDgame.us",
-  "lang": "en-US",
-  "start_url": "http://play.ddgame.us/",
+  "name": "👑 DDgame.us",
+  "icons": [ { "src": "images/door.png", "sizes": "192x192", "type":"image/png" } ],
+  "start_url": "https://robert.hurst-ri.us/xterm/door/",
   "display": "fullscreen",
   "orientation": "landscape",
-  "icons": [
-    { "src": "images/door.png", "sizes": "192x192", "type":"image/png" }
-  ]
+  "scope": "/xterm/door/",
+  "lang": "en-US"
 }

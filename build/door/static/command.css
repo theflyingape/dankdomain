@@ -20,6 +20,7 @@
     padding: 4px 7px 4px 7px;
     border: solid darkolivegreen 2px;
     text-decoration: none;
+    user-select: none;
 }
 .tall {
     padding: 8px 5px;
@@ -79,6 +80,7 @@ input:hover, button:hover, button:focus {
     background-image: -ms-linear-gradient(top, gold, goldenrod);
     background-image: -o-linear-gradient(top, gold, goldenrod);
     background-image: linear-gradient(to bottom, gold, goldenrod);
+    outline: 0;
     text-decoration: none;
     text-shadow: 1px 1px 2px darkslategray;
     border: solid yellowgreen 2px;
