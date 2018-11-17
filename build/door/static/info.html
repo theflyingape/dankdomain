@@ -139,10 +139,10 @@ images = [
     'warforged_fighter_and_human_wizard_by_peachyco.png',
     'yuriel_genasi_warlord_by_peachyco.png'
   ];
-
+/*
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('manifest.json').then(function(registration) {
+    navigator.serviceWorker.register('bundle.js').then(function(registration) {
       // Registration was successful
       console.log('ServiceWorker registration successful with scope: ', registration.scope);
     }, function(err) {
@@ -151,7 +151,7 @@ if ('serviceWorker' in navigator) {
     });
   });
 }
-
+*/
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
 console.log(e);
@@ -292,15 +292,7 @@ function Logoff() {
   if (!art) art = setInterval(rotateImage, 22500);
   window.focus();
   input = false;
-  cmd(`<input type="button" value="+" onclick="deferredPrompt.prompt(); deferredPrompt.userChoice
-    .then((choiceResult) => {
-      if (choiceResult.outcome === 'accepted') {
-        console.log('User accepted the A2HS prompt');
-      } else {
-        console.log('User dismissed the A2HS prompt');
-      }
-      deferredPrompt = null;
-    });"> <input type="button" id="cancel" value="Disconnect" onclick="send('\x1B');"> <input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"><br>
+  cmd(`<input type="button" id="cancel" value="Disconnect" onclick="send('\x1B');"> <input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"><br>
 <span style="font-size:larger">🤴 <a href="https://ddgame.us" target="_new"><span style="color:black !important">Dank Domain</span></a> 👸</span><br>
 <span style="color:brown !important;">the return of Hack &amp; Slash<br>
 🇺🇸 <span style="font-size:smaller;">&copy;2017-2018 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a></span></span> 🧙`);
