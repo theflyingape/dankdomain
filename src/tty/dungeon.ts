@@ -571,8 +571,8 @@ function doMove(): boolean {
 					, [ 'awesomeness', 'elegance', 'presence', $.player.armor, $.player.weapon ][$.dice(5) - 1]
 					, '!', xvt.reset, '\n')
 				ROOM.monster[n].user.gender = 'FM'[$.dice(2) - 1]
-				ROOM.monster[n].user.handle = xvt.attr(xvt.faint, 'Your ', ROOM.monster[n].user.handle, xvt.normal)
-				ROOM.monster[n].user.xplevel = $.dice(3) - 2
+				ROOM.monster[n].user.handle = xvt.attr(xvt.faint, 'charmed ', ROOM.monster[n].user.handle, xvt.normal)
+				ROOM.monster[n].user.xplevel = $.dice(4) - 2
 				party.push(ROOM.monster[n])
 				ROOM.monster.splice(n, 1)
 			}
@@ -1500,36 +1500,36 @@ function doSpoils() {
 				//	defeated a significantly larger denizen on this level, check for any added bonus(es)
 				if ((mon.user.xplevel - Z) > 5) {
 					if ($.player.cursed) {
-						xvt.out(xvt.bright, xvt.black, '\nThe dark cloud has left you.\n', xvt.reset)
+						xvt.out(xvt.bright, xvt.black, 'The dark cloud has left you.\n', xvt.reset)
 						$.player.cursed = ''
 					}
 					let m = $.player.blessed ? 10 : 0
 					$.beep()
 					xvt.out(xvt.lyellow, `+ ${mon.user.pc} bonus`)
 					if ($.int(mon.pc.bonusStr)) {
-						$.player.maxstr = $.PC.ability($.player.maxstr, $.int(mon.pc.bonusStr), 99)
-						$.player.str = $.PC.ability($.player.str, $.int(mon.pc.bonusStr), $.player.maxstr)
-						$.online.str = $.PC.ability($.online.str, $.int(mon.pc.bonusStr + 1), $.player.maxstr, m)
+						$.player.maxstr = $.PC.ability($.player.maxstr, mon.pc.bonusStr, 99)
+						$.player.str = $.PC.ability($.player.str, mon.pc.bonusStr, $.player.maxstr)
 						xvt.out(xvt.lred, ' strength', $.bracket(`+${mon.pc.bonusStr}`, false))
 					}
+					$.online.str = $.PC.ability($.online.str, $.int(mon.pc.bonusStr) + 1, $.player.maxstr, m)
 					if ($.int(mon.pc.bonusInt)) {
-						$.player.maxint = $.PC.ability($.player.maxint, $.int(mon.pc.bonusInt), 99)
-						$.player.int = $.PC.ability($.player.int, $.int(mon.pc.bonusInt), $.player.maxint)
-						$.online.int = $.PC.ability($.online.int, $.int(mon.pc.bonusInt + 1), $.player.maxint, m)
+						$.player.maxint = $.PC.ability($.player.maxint, mon.pc.bonusInt, 99)
+						$.player.int = $.PC.ability($.player.int, mon.pc.bonusInt, $.player.maxint)
 						xvt.out(xvt.lmagenta, ' intellect', $.bracket(`+${mon.pc.bonusInt}`, false))
 					}
+					$.online.int = $.PC.ability($.online.int, $.int(mon.pc.bonusInt) + 1, $.player.maxint, m)
 					if ($.int(mon.pc.bonusDex)) {
-						$.player.maxdex = $.PC.ability($.player.maxdex, $.int(mon.pc.bonusDex), 99)
-						$.player.dex = $.PC.ability($.player.dex, $.int(mon.pc.bonusDex), $.player.maxdex)
-						$.online.dex = $.PC.ability($.online.dex, $.int(mon.pc.bonusDex + 1), $.player.maxdex, m)
+						$.player.maxdex = $.PC.ability($.player.maxdex, mon.pc.bonusDex, 99)
+						$.player.dex = $.PC.ability($.player.dex, mon.pc.bonusDex, $.player.maxdex)
 						xvt.out(xvt.lcyan, ' dexterity', $.bracket(`+${mon.pc.bonusDex}`, false))
 					}
+					$.online.dex = $.PC.ability($.online.dex, $.int(mon.pc.bonusDex) + 1, $.player.maxdex, m)
 					if ($.int(mon.pc.bonusCha)) {
-						$.player.maxcha = $.PC.ability($.player.maxcha, $.int(mon.pc.bonusCha), 99)
-						$.player.cha = $.PC.ability($.player.cha, $.int(mon.pc.bonusCha), $.player.maxcha)
-						$.online.cha = $.PC.ability($.online.cha, $.int(mon.pc.bonusCha + 1), $.player.maxcha, m)
+						$.player.maxcha = $.PC.ability($.player.maxcha, mon.pc.bonusCha, 99)
+						$.player.cha = $.PC.ability($.player.cha, mon.pc.bonusCha, $.player.maxcha)
 						xvt.out(xvt.lgreen, ' charisma', $.bracket(`+${mon.pc.bonusCha}`, false))
 					}
+					$.online.cha = $.PC.ability($.online.cha, $.int(mon.pc.bonusCha) + 1, $.player.maxcha, m)
 					xvt.out(xvt.reset, '\n\n'); xvt.waste(500)
 					Battle.yourstats(); xvt.waste(500)
 					xvt.out('\n'); xvt.waste(500)
@@ -2340,11 +2340,10 @@ function putMonster(r = -1, c = -1): boolean {
 		m.user.handle = Object.keys(monsters)[j]
 		Object.assign(dm, monsters[m.user.handle])
 		if (dm.pc == '*') {		//	chaos
-			Object.assign(dm, monsters[$.PC.random('monster')])
+			dm.pc = $.PC.random('monster')
 			m.user.handle += xvt.attr(' ', xvt.uline, 'avenger', xvt.nouline)
 		}
 		m.monster = dm
-console.log(m)
 		m.effect = dm.effect || 'pulse'
 
 		$.reroll(m.user, dm.pc ? dm.pc : $.player.pc, j)
