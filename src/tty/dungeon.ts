@@ -571,7 +571,7 @@ function doMove(): boolean {
 					, [ 'awesomeness', 'elegance', 'presence', $.player.armor, $.player.weapon ][$.dice(5) - 1]
 					, '!', xvt.reset, '\n')
 				ROOM.monster[n].user.gender = 'FM'[$.dice(2) - 1]
-				ROOM.monster[n].user.handle = xvt.attr(xvt.faint, 'your ', xvt.normal, ROOM.monster[n].user.handle)
+				ROOM.monster[n].user.handle = xvt.attr(xvt.faint, 'Your ', ROOM.monster[n].user.handle, xvt.normal)
 				ROOM.monster[n].user.xplevel = $.dice(3) - 2
 				party.push(ROOM.monster[n])
 				ROOM.monster.splice(n, 1)
@@ -1539,13 +1539,13 @@ function doSpoils() {
 			if (mon.user.xplevel == 0) {
 				$.sound('oops')
 				ROOM.monster[n].monster.effect = 'flip'
-				ROOM.monster[n].monster.pc = '*'
+				monsters[mon.user.handle].pc = '*'	//	chaos
 				$.activate(mon)
 				for (let i = 0; i < $.dice(3); i++) {
 					let avenger = <active>{ user:{id:''} }
 					Object.assign(avenger.user, mon.user)
 					avenger.user.pc = $.PC.random('monster')
-					avenger.user.handle += ' avenger'
+					avenger.user.handle += xvt.attr(' ', xvt.uline, 'avenger', xvt.nouline)
 					$.reroll(avenger.user, avenger.user.pc, $.int(avenger.user.level / 2))
 					for (let magic in ROOM.monster[n].monster.spells)
 						$.Magic.add(avenger.user.spells, ROOM.monster[n].monster.spells[magic])
@@ -2290,7 +2290,7 @@ function putMonster(r = -1, c = -1): boolean {
 
 	let i:number = DL.rooms[r][c].monster.length
 	let j:number = 0
-	let dm:monster
+	let dm:monster = { name:'', pc:'' }
 	let level: number = 0
 	let m:active
 
@@ -2336,13 +2336,16 @@ function putMonster(r = -1, c = -1): boolean {
 			v = v == 12 ? 2 : v > 1 ? 1 : 0
 		}
 		j = level + v - 1
-		dm = monsters[Object.keys(monsters)[j]]
-		m.monster = dm
-		m.effect = dm.effect || 'pulse'
-		m.user.handle = Object.keys(monsters)[j]
 
-		//	chaos
-		if (dm.pc == '*') dm.pc = $.PC.random('monster')
+		m.user.handle = Object.keys(monsters)[j]
+		Object.assign(dm, monsters[m.user.handle])
+		if (dm.pc == '*') {		//	chaos
+			Object.assign(dm, monsters[$.PC.random('monster')])
+			m.user.handle += xvt.attr(' ', xvt.uline, 'avenger', xvt.nouline)
+		}
+		m.monster = dm
+console.log(m)
+		m.effect = dm.effect || 'pulse'
 
 		$.reroll(m.user, dm.pc ? dm.pc : $.player.pc, j)
 		if (m.user.xplevel) m.user.xplevel = level
