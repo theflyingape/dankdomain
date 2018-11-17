@@ -17,7 +17,6 @@
 <link rel="stylesheet" href="command.css">
 <style>
   body {
-    background: antiquewhite;
     background: linear-gradient(to bottom right, skyblue, aliceblue);
     font-family: 'Carter One', cursive;
     font-size: 100%;
@@ -254,7 +253,7 @@ function animated(effect) {
 function Logon() {
   clearInterval(art); art = null;
   input = true;
-  cmd(`<form onsubmit="return sendLogin();"><input type="text" placeholder="Enter ID or Handle" id="id" name="id" required> <input type="password" placeholder="Enter password" name="password" required> <button class="slate" type="submit">Login</button> <input type="button" value="NEW" onclick="send('NEW', true);"></form><span style="color: steelblue !important; font-size:smaller;">⬅️ click left window for cursor</span>`);
+  cmd(`<form onsubmit="return sendLogin();"><input type="text" placeholder="Enter ID or Handle" id="id" name="id" required> <input type="password" placeholder="Enter password" name="password" required> <button class="slate" type="submit">Login</button> <input type="button" value="NEW" onclick="send('NEW', true);"></form><span style="font-size:smaller;">⬅️ click left window for cursor</span>`);
   nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize(\'bounceInDown\');" style="display:none;" />`);
   document.getElementById('id').value = id;
 }
@@ -270,10 +269,10 @@ function Logoff() {
   if (!art) art = setInterval(rotateImage, 22500);
   window.focus();
   input = false;
-  cmd(`<span style="font-size:larger">🤴 <a href="https://ddgame.us" target="_new"><span style="color:black !important">Dank Domain</span></a> 👸</span><br>
+  cmd(`<input type="button" id="cancel" value="Disconnect" onclick="send('\x1B');"> <input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"><br>
+<span style="font-size:larger">🤴 <a href="https://ddgame.us" target="_new"><span style="color:black !important">Dank Domain</span></a> 👸</span><br>
 <span style="color:brown !important;">the return of Hack &amp; Slash<br>
-🇺🇸 <span style="font-size:smaller;">&copy;2017-2018 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a></span></span> 🧙<br>
-<input type="button" id="cancel" value="Disconnect" onclick="send('\x1B');"> <input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit">`);
+🇺🇸 <span style="font-size:smaller;">&copy;2017-2018 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a></span></span> 🧙`);
 }
 
 function rotateImage() {
@@ -558,6 +557,6 @@ function keydown(event) {
 </head>
 <body onkeydown="keydown(event);" onload="welcome();">
   <div id="nme"></div>
-  <div id="command" style="position: relative; text-align: right; width:96%;"></div>
+  <div id="command" style="background: linear-gradient(to bottom, rgba(223, 239, 255, 0.04), rgba(112, 120, 128, 0.96)); position: relative; text-align: right;  width:96%;"></div>
 </body>
 </html>
