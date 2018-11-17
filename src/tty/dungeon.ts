@@ -1504,20 +1504,33 @@ function doSpoils() {
 						$.player.cursed = ''
 					}
 					let m = $.player.blessed ? 10 : 0
-					$.player.maxstr = $.PC.ability($.player.maxstr, $.int(mon.pc.bonusStr), 99)
-					$.player.str = $.PC.ability($.player.str, $.int(mon.pc.bonusStr), $.player.maxstr)
-					$.online.str = $.PC.ability($.online.str, $.int(mon.pc.bonusStr + 1), $.player.maxstr, m)
-					$.player.maxint = $.PC.ability($.player.maxint, $.int(mon.pc.bonusInt), 99)
-					$.player.int = $.PC.ability($.player.int, $.int(mon.pc.bonusInt), $.player.maxint)
-					$.online.int = $.PC.ability($.online.int, $.int(mon.pc.bonusInt + 1), $.player.maxint, m)
-					$.player.maxdex = $.PC.ability($.player.maxdex, $.int(mon.pc.bonusDex), 99)
-					$.player.dex = $.PC.ability($.player.dex, $.int(mon.pc.bonusDex), $.player.maxdex)
-					$.online.dex = $.PC.ability($.online.dex, $.int(mon.pc.bonusDex + 1), $.player.maxdex, m)
-					$.player.maxcha = $.PC.ability($.player.maxcha, $.int(mon.pc.bonusCha), 99)
-					$.player.cha = $.PC.ability($.player.cha, $.int(mon.pc.bonusCha), $.player.maxcha)
-					$.online.cha = $.PC.ability($.online.cha, $.int(mon.pc.bonusCha + 1), $.player.maxcha, m)
 					$.beep()
-					xvt.out('\n'); xvt.waste(500)
+					xvt.out(xvt.lyellow, `+ ${mon.user.pc} bonus`)
+					if ($.int(mon.pc.bonusStr)) {
+						$.player.maxstr = $.PC.ability($.player.maxstr, $.int(mon.pc.bonusStr), 99)
+						$.player.str = $.PC.ability($.player.str, $.int(mon.pc.bonusStr), $.player.maxstr)
+						$.online.str = $.PC.ability($.online.str, $.int(mon.pc.bonusStr + 1), $.player.maxstr, m)
+						xvt.out(xvt.lred, ' strength', $.bracket(`+${mon.pc.bonusStr}`, false))
+					}
+					if ($.int(mon.pc.bonusInt)) {
+						$.player.maxint = $.PC.ability($.player.maxint, $.int(mon.pc.bonusInt), 99)
+						$.player.int = $.PC.ability($.player.int, $.int(mon.pc.bonusInt), $.player.maxint)
+						$.online.int = $.PC.ability($.online.int, $.int(mon.pc.bonusInt + 1), $.player.maxint, m)
+						xvt.out(xvt.lmagenta, ' intellect', $.bracket(`+${mon.pc.bonusInt}`, false))
+					}
+					if ($.int(mon.pc.bonusDex)) {
+						$.player.maxdex = $.PC.ability($.player.maxdex, $.int(mon.pc.bonusDex), 99)
+						$.player.dex = $.PC.ability($.player.dex, $.int(mon.pc.bonusDex), $.player.maxdex)
+						$.online.dex = $.PC.ability($.online.dex, $.int(mon.pc.bonusDex + 1), $.player.maxdex, m)
+						xvt.out(xvt.lcyan, ' dexterity', $.bracket(`+${mon.pc.bonusDex}`, false))
+					}
+					if ($.int(mon.pc.bonusCha)) {
+						$.player.maxcha = $.PC.ability($.player.maxcha, $.int(mon.pc.bonusCha), 99)
+						$.player.cha = $.PC.ability($.player.cha, $.int(mon.pc.bonusCha), $.player.maxcha)
+						$.online.cha = $.PC.ability($.online.cha, $.int(mon.pc.bonusCha + 1), $.player.maxcha, m)
+						xvt.out(xvt.lgreen, ' charisma', $.bracket(`+${mon.pc.bonusCha}`, false))
+					}
+					xvt.out(xvt.reset, '\n\n'); xvt.waste(500)
 					Battle.yourstats(); xvt.waste(500)
 					xvt.out('\n'); xvt.waste(500)
 				}
@@ -1568,12 +1581,14 @@ function doSpoils() {
 
 	if (!ROOM.monster.length) {
 		if (b4 < 0) {
+			xvt.out(xvt.lgreen, '+ bonus charisma\n', xvt.reset)
 			$.sound('effort', 16)
 			if (($.player.cha = $.PC.ability($.player.cha, 1, 99)) > $.player.maxcha)
 				$.player.maxcha = $.PC.ability($.player.maxcha, 1, $.player.maxcha, 1)
 			$.online.cha = $.PC.ability($.online.cha, $.dice(5), $.player.maxcha)
 		}
 		else if (b4 / $.player.hp > 0.35 && b4 / $.player.hp < 1 && $.online.hp / $.player.hp < 0.25) {
+			xvt.out(xvt.lred, '+ bonus strength\n', xvt.reset)
 			$.sound('bravery', 16)
 			if (($.player.str = $.PC.ability($.player.str, 1, 99)) > $.player.maxstr)
 				$.player.maxstr = $.PC.ability($.player.maxstr, 1, $.player.maxstr, 1)
