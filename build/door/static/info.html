@@ -119,49 +119,26 @@ money = `<table><tr><td><input class="numeric" type="button" value="7 " onclick=
 <tr><td colspan=2>${cancel}</td><td colspan=2>${max}</td>
 </tr></table>`;
 images = [
-    'arexielite_by_peachyco.png',
-    'dragonborn_dagger_sorcerer_by_peachyco.png',
-    'dragonborn_hexblade_by_peachyco.png',
-    'elf_cleric_by_peachyco.png',
-    'elf_fighter_by_peachyco.png',
-    'guild_findsman_by_peachyco.png',
-    'human_battlemage_by_peachyco.png',
-    'human_enchantress_mage_by_peachyco.png',
-    'human_warpriest_by_peachyco.png',
-    'human_wizard_by_peachyco.png',
-    'kashaw_and_zahra_by_peachyco.png',
-    'krauser_dragonborn_warlord_by_peachyco.png',
-    'lucien2_human_wizard_by_peachyco.png',
-    'lucien_human_wizard_by_peachyco.png',
-    'orc_pirate_by_peachyco.png',
-    'paladin_by_peachyco.png',
-    'thrask_goliath_fighter_by_peachyco.png',
-    'warforged_fighter_and_human_wizard_by_peachyco.png',
-    'yuriel_genasi_warlord_by_peachyco.png'
-  ];
-/*
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('bundle.js').then(function(registration) {
-      // Registration was successful
-      console.log('ServiceWorker registration successful with scope: ', registration.scope);
-    }, function(err) {
-      // registration failed :(
-      console.log('ServiceWorker registration failed: ', err);
-    });
-  });
-}
-*/
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-console.log(e);
-    // Prevent Chrome 67 and earlier from automatically showing the prompt
-    e.preventDefault();
-    // Stash the event so it can be triggered later.
-    deferredPrompt = e;
-    // Update UI notify the user they can add to home screen
-    //btnAdd.style.display = 'block';
-  });
+  'arexielite_by_peachyco.png',
+  'dragonborn_dagger_sorcerer_by_peachyco.png',
+  'dragonborn_hexblade_by_peachyco.png',
+  'elf_cleric_by_peachyco.png',
+  'elf_fighter_by_peachyco.png',
+  'guild_findsman_by_peachyco.png',
+  'human_battlemage_by_peachyco.png',
+  'human_enchantress_mage_by_peachyco.png',
+  'human_warpriest_by_peachyco.png',
+  'human_wizard_by_peachyco.png',
+  'kashaw_and_zahra_by_peachyco.png',
+  'krauser_dragonborn_warlord_by_peachyco.png',
+  'lucien2_human_wizard_by_peachyco.png',
+  'lucien_human_wizard_by_peachyco.png',
+  'orc_pirate_by_peachyco.png',
+  'paladin_by_peachyco.png',
+  'thrask_goliath_fighter_by_peachyco.png',
+  'warforged_fighter_and_human_wizard_by_peachyco.png',
+  'yuriel_genasi_warlord_by_peachyco.png'
+];
 
 if (window.addEventListener) {
   window.addEventListener("message", receive, false);
@@ -276,7 +253,11 @@ function animated(effect) {
 function Logon() {
   clearInterval(art); art = null;
   input = true;
-  cmd(`<form onsubmit="return sendLogin();"><input type="text" placeholder="Enter ID or Handle" id="id" name="id" required> <input type="password" placeholder="Enter password" name="password" required> <button class="slate" type="submit">Login</button> <input type="button" value="NEW" onclick="send('NEW', true);"></form><span style="font-size:smaller;">⬅️ click left window for cursor</span>`);
+  cmd(`<form onsubmit="return sendLogin();">
+<input type="text" placeholder="Enter ID or Handle" id="id" name="id" required><br>
+<input type="password" placeholder="Enter password" name="password" required><br>
+<input type="button" value="NEW" onclick="send('NEW', true);"> <button id="default" class="silver" type="submit">Login</button>
+</form><span style="font-size:smaller;">⬅️ or click left window for cursor</span>`);
   nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize(\'bounceInDown\');" style="display:none;" />`);
   document.getElementById('id').value = id;
 }

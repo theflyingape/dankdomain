@@ -61,8 +61,11 @@
 <div id="terminal"></div>
 <iframe seamless id="Info" name="Info" src="./info.html" style="border: none;" allow="autoplay"></iframe>
 <div id="wall" hidden=true style="padding:4px;">
-  <span style="text-align:center;"><h2>🤴 <a href="https://ddgame.us"><span style="color:gray !important; font-size:larger">Dank Domain</span></a> 👸<br><span style="color:rosybrown !important; font-size:smaller">the return of Hack &amp; Slash</span></h2></span><table style="margin: 0px auto; vertical-align:bottom;">
+  <span style="text-align:center;">
+    <h2>🤴 <a href="https://ddgame.us"><span style="color:gray !important; font-size:larger">Dank Domain</span></a> 👸<br><span style="color:rosybrown !important; font-size:smaller">the return of Hack &amp; Slash</span></h2>
+  </span>
   <table style="margin: 0px auto; vertical-align:bottom; white-space: nowrap;">
+  <img hidden id="A2HS" src="images/A2HS.png" style="float: right" onclick="window.location.reload();" title="add to Home Screen"></img>
   <tr><td></td><td>Press <button onclick="window.location.reload();"> REFRESH </button> to re-connect</td></tr>
   <tr><td></td><td>Read today's <a href="today.txt" target="_blank">The Olde Tavern</a> news</td></tr>
   <tr><td></td><td>Watch another online player <select id="lurker-list"></select> ⬅️ list refreshes every 30-seconds</td></tr>
@@ -88,8 +91,31 @@
     document.getElementById('terminal').hidden = true;
     document.getElementById('wall').hidden = false;
   }
-  else
-    document.write('<script src="bundle.js"><\/script>');
+
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('bundle.js').then(function(registration) {
+        // Registration was successful
+        console.log('ServiceWorker registration successful with scope: ', registration.scope);
+      }, function(err) {
+        // registration failed :(
+        console.log('ServiceWorker registration failed: ', err);
+      });
+    });
+  }
+
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    console.log(e);
+    // Prevent Chrome 67 and earlier from automatically showing the prompt
+    e.preventDefault();
+    // Stash the event so it can be triggered later.
+    deferredPrompt = e;
+    // Update UI notify the user they can add to home screen
+    document.getElementById("A2HS").hidden = false;
+  });
+
+  document.write('<script src="bundle.js"><\/script>');
 </script>
 </body>
 </html>

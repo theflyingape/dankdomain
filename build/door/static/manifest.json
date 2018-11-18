@@ -1,7 +1,9 @@
 {
   "short_name": "DDgame.us",
   "name": "👑 DDgame.us",
-  "icons": [ { "src": "images/door.png", "sizes": "192x192", "type":"image/png" } ],
+  "icons": [
+    { "src": "images/DDgame2.png", "sizes": "512x512", "type":"image/png" }
+  ],
   "start_url": "https://robert.hurst-ri.us/xterm/door/",
   "display": "fullscreen",
   "orientation": "landscape",

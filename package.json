@@ -40,7 +40,7 @@
   "bugs": {
     "url": "https://github.com/theflyingape/dankdomain/issues"
   },
-  "homepage": "https://ddgame.us",
+  "homepage": "https://DDgame.us",
   "dependencies": {
     "animate.css": "^3.7.0",
     "better-sqlite3": "^5.0.1",
@@ -52,7 +52,7 @@
     "nodemailer-smtp-transport": "^2.7.4",
     "sprintf-js": "^1.1.1",
     "title-case": "^2.1.1",
-    "ws": "^6.1.1",
+    "ws": "^6.1.2",
     "xterm": "^3.8.0",
     "xvt": "^1.0.25"
   },
