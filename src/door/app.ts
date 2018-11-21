@@ -211,18 +211,6 @@ dns.lookup('localhost', (err, addr, family) => {
     let player = ` (${sessions[term.pid].who})`
     console.log(`Lurker session ${term.pid}${player} connected as #${(lurker + 1)}`)
 
-    const send = (data) => {
-      try {
-        browser.send(data)
-      } catch (ex) {
-        if (term.pid)
-          console.log(`?FATAL session ${term.pid}${player} lurker/ws error: ${ex.message}`)
-      }
-    }
-
-    //  app --> browser client
-    term.on('data', send)
-
     //  browser client --> any key terminates lurking
     browser.on('message', (msg) => {
       browser.close()
@@ -233,6 +221,25 @@ dns.lookup('localhost', (err, addr, family) => {
       delete lurkers[lurker]
       term.removeListener('data', send)
     })
+
+    //  app --> browser client
+    const close = () => {
+      try {
+        browser.close()
+      } catch (ex) {
+        console.log(`?FATAL browser session ${term.pid}${player} lurker/ws error: ${ex.message}`)
+      }
+    }
+    const send = (data) => {
+      try {
+        browser.send(data)
+      } catch (ex) {
+        if (term.pid)
+          console.log(`?FATAL session ${term.pid}${player} lurker/ws error: ${ex.message}`)
+      }
+    }
+    term.on('close', close)
+    term.on('data', send)
   })
 
   //  database support

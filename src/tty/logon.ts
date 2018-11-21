@@ -100,7 +100,7 @@ function who() {
         return
     }
 
-    $.player.id = xvt.entry
+    $.player.id = $.titlecase(xvt.entry)
 
     if (!$.loadUser($.player)) {
         $.player.id = ''

@@ -7,7 +7,7 @@ TARGET="${TARGET}/`basename ${PWD}`"
 sudo -v || exit
 
 git pull
-npm install
+npm rebuild
 npm run build
 
 sudo rsync -av --chown=root:games ./build/ ${TARGET}

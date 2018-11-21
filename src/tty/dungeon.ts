@@ -1586,6 +1586,7 @@ function doSpoils() {
 			if (($.player.cha = $.PC.ability($.player.cha, 1, 99)) > $.player.maxcha)
 				$.player.maxcha = $.PC.ability($.player.maxcha, 1, $.player.maxcha, 1)
 			$.online.cha = $.PC.ability($.online.cha, $.dice(5), $.player.maxcha)
+			pause = true
 		}
 		else if (b4 / $.player.hp > 0.35 && b4 / $.player.hp < 1 && $.online.hp / $.player.hp < 0.25) {
 			xvt.out(xvt.lred, '+ bonus strength\n', xvt.reset)
@@ -1593,6 +1594,7 @@ function doSpoils() {
 			if (($.player.str = $.PC.ability($.player.str, 1, 99)) > $.player.maxstr)
 				$.player.maxstr = $.PC.ability($.player.maxstr, 1, $.player.maxstr, 1)
 			$.online.str = $.PC.ability($.online.str, $.dice(5), $.player.maxstr)
+			pause = true
 		}
 		if (DL.map < 2 && $.dice((15 - $.online.cha / 10) / 2) == 1) {
 			let m = ($.dice(Z / 33 + 2) > 1 ? 1 : 2)
