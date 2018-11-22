@@ -215,9 +215,10 @@ function newSession(ev) {
 	webLinks.webLinksInit(term)
 	fit.fit(term)
 	window.dispatchEvent(new Event('resize'))	// gratuituous
+
 	term.focus(); term.blur()
 	term.writeln('\x1B[16C\x1B[1;31m🔥\x1B[2C🌨\x1B[2C \x1B[36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain\x1B[2C\x1B[m🌙\x1B[2C💫\x07')
-  
+
 	if (ev === 'Logon')	setImmediate(() => {
 		term.write(`\n\x1B[0;2mConnecting terminal WebSocket ... `)
 		XT('@tune(dankdomain)')
@@ -265,9 +266,6 @@ function newSession(ev) {
 			return res.text().then(function (data) {
 				term.writeln(data)
 				term.writeln(' \x1B[36m\u00B7\x1B[2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1B[22m')
-				XT('@action(Logoff)')
-				XT(`@play(${['demon','demogorgon','portal','thief2'][Math.trunc(4*Math.random())]})`)
-				window.dispatchEvent(new Event('resize'))	// gratuituous
 			})
 		})
 	}
@@ -389,6 +387,15 @@ function receive(event) {
 	if (event.data) {
 		switch (event.data.func) {
 			case 'kb':
+				if (event.data.message == 'F5') {
+					window.dispatchEvent(new Event('resize'))	// gratuituous
+					setImmediate(() => {
+						XT('@action(Logoff)')
+						XT(`@play(${['demon','demogorgon','portal','thief2'][Math.trunc(4*Math.random())]})`)
+						XT(`@profile({ "jpg":"arena/demogorgon", "handle":"Can you defeat the Demogorgon?", "effect":"jackInTheBox" })`)
+					})
+					return
+				}
 				if (pid) {
 					tty = true
 					term.focus()

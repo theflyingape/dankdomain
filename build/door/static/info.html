@@ -285,7 +285,7 @@ function rotateImage() {
     n = Math.trunc(Math.random() * images.length);
     pic = images.splice(n,1);
     setTimeout(function () {
-      nme(`<img src="images/connect/${pic}" onload="nmeResize(\'fadeInRight\');" style="display:none; filter: opacity(40%);" />`);
+      nme(`<img src="images/connect/${pic}" onload="nmeResize(\'fadeInRight\');" style="display:none; filter:opacity(40%);" />`);
     }, 1000);
   }
   else
@@ -526,13 +526,13 @@ function cmdResize() {
   document.getElementById('command').style.top = -document.getElementById('command').clientHeight + 'px';
   //document.getElementById("command").style.transform = `scale(${scale})`;
 }
-
+/*
 function welcome() {
   Logoff();
   nme('<img src="images/arena/demogorgon.jpg" onload="nmeResize(\'jackInTheBox\');" style="display:none;" />');
   window.focus();
 }
-
+*/
 function keydown(event) {
   switch (event.key) {
     case ' ':
@@ -559,7 +559,7 @@ function keydown(event) {
 
 </script>
 </head>
-<body onkeydown="keydown(event);" onload="welcome();">
+<body onkeydown="keydown(event);" onload="send('F5', false, 'kb');">
   <div id="nme"></div>
   <div id="command" style="background: linear-gradient(to bottom, rgba(223, 247, 255, 0.04), rgba(215, 241, 247, 0.96)); position: relative; text-align: right;  width:96%;"></div>
 </body>
