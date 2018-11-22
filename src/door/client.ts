@@ -268,6 +268,7 @@ function newSession(ev) {
 				term.writeln(' \x1B[36m\u00B7\x1B[2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1B[22m')
 				XT(`@play(${['demon','demogorgon','portal','thief2'][Math.trunc(4*Math.random())]})`)
 				window.dispatchEvent(new Event('resize'))	// gratuituous
+				window.frames['Info'].focus()
 			})
 		})
 	}
