@@ -58,9 +58,9 @@
 <link rel="stylesheet" href="xterm.css">
 </head>
 <body>
-<div id="terminal"></div>
-<iframe seamless id="Info" name="Info" src="./info.html" style="border: none;" allow="autoplay"></iframe>
-<div id="wall" hidden=true style="padding:4px;">
+<div hidden id="terminal"></div>
+<iframe hidden seamless id="Info" name="Info" src="./info.html" style="border: none;" allow="autoplay"></iframe>
+<div id="wall" style="padding:4px;">
   <span style="text-align:center;">
     <h2>🤴 <a href="https://ddgame.us"><span style="color:gray !important; font-size:larger">Dank Domain</span></a> 👸<br><span style="color:rosybrown !important; font-size:smaller">the return of Hack &amp; Slash</span></h2>
   </span>
@@ -87,34 +87,36 @@
   <source id="mp3Tune" type="audio/mp3" />
 </audio>
 <script type="text/javascript">
-  if (/MSIE \d|Trident.*rv:/.test(navigator.userAgent)) {
-    document.getElementById('terminal').hidden = true;
-    document.getElementById('wall').hidden = false;
-  }
+  let deferredPrompt;
 
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('sw.js').then(function(registration) {
-        // Registration was successful
-        console.log('ServiceWorker registration successful with scope: ', registration.scope);
-      }, function(err) {
-        // registration failed :(
-        console.log('ServiceWorker registration failed: ', err);
+  if (! /MSIE \d|Trident.*rv:/.test(navigator.userAgent)) {
+    document.getElementById('terminal').hidden = false;
+    document.getElementById('Info').hidden = false;
+    document.getElementById('wall').hidden = true;
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('sw.js').then(function(registration) {
+          // Registration was successful
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, function(err) {
+          // registration failed :(
+          console.log('ServiceWorker registration failed: ', err);
+        });
       });
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      console.log(e);
+      // Prevent Chrome 67 and earlier from automatically showing the prompt
+      e.preventDefault();
+      // Stash the event so it can be triggered later.
+      deferredPrompt = e;
+      // Update UI notify the user they can add to home screen
+      document.getElementById("A2HS").hidden = false;
     });
   }
-
-  let deferredPrompt;
-  window.addEventListener('beforeinstallprompt', (e) => {
-    console.log(e);
-    // Prevent Chrome 67 and earlier from automatically showing the prompt
-    e.preventDefault();
-    // Stash the event so it can be triggered later.
-    deferredPrompt = e;
-    // Update UI notify the user they can add to home screen
-    document.getElementById("A2HS").hidden = false;
-  });
 </script>
-<script src="bundle.js" defer></script>
+<script src="bundle.js"></script>
 </body>
 </html>
