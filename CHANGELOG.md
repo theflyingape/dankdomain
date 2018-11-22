@@ -2,10 +2,21 @@
 
 ## *the return of* ⚔ **Hack & Slash** 🛡
 
-🇺🇸 ©️1990-2018 [Robert Hurst](https://robert.hurst-ri.us)
+🇺🇸 ©️1989-2018 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) using Node.js on an Intel Atom-powered Linux server using a Verizon FiOS 100mb Internet service
 
-### **08-Oct-2018**
+### **22-Nov-2018**
+
+* 1.6.1 release, Happy Thanksgiving!
+* UI app & client improvements with a new Google domain registered: [DDgame.us](https://ddgame.us)
+* dungeon potions are bottled consistently per call
+* temporary buff diminishes after every engagement
+* like hone, apply lower poisons to increase temporary buff
+* a blessed/cursed state does not carry over into player's new day
+* updated [media packs](https://github.com/theflyingape/dankdomain/blob/master/README.md) includes all dungeon monsters
+* package dependency updates and minor bug fixes
+
+#### 08-Oct-2018
 
 * 1.5.0 release, Columbus Day!
 * package requires Linux OS and Node 10.10
