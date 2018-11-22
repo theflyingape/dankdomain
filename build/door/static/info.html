@@ -273,7 +273,7 @@ function Logoff() {
   if (!art) art = setInterval(rotateImage, 22500);
   window.focus();
   input = false;
-  cmd(`<input type="button" id="cancel" value="Disconnect" onclick="send('\x1B');"> <input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"><br>
+  cmd(`<input type="button" id="cancel" value="Disconnect" onclick="send('\x1B');"> <input class="platinum" id="default" value="CONNECT" autofocus onclick="send(' ');" type="submit"><br>
 <span style="font-size:larger">🤴 <a href="https://ddgame.us" target="_new"><span style="color:black !important">Dank Domain</span></a> 👸</span><br>
 <span style="color:brown !important;">the return of Hack &amp; Slash<br>
 🇺🇸 <span style="font-size:smaller;">&copy;2017-2018 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a></span></span> 🧙`);
@@ -530,7 +530,6 @@ function cmdResize() {
 function welcome() {
   Logoff();
   nme('Can you defeat the Demogorgon?<br><img src="images/arena/demogorgon.jpg" onload="nmeResize(\'jackInTheBox\');" style="display:none;" />');
-  window.focus();
 }
 
 function keydown(event) {
