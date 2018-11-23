@@ -523,8 +523,8 @@ function nmeResize(effect, func) {
 }
 
 function cmdResize() {
-  let scale = Math.trunc(100 * (fontSize / 14));
-  scale = scale < 50 ? 50 : scale > 300 ? 300 : scale;
+  let scale = Math.trunc(100 * (fontSize / 15));
+  scale = scale < 40 ? 40 : scale > 240 ? 240 : scale;
   document.body.style.fontSize = scale + '%';
   document.getElementById('command').style.top = -document.getElementById('command').clientHeight + 'px';
   //document.getElementById("command").style.transform = `scale(${scale})`;
