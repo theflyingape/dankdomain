@@ -4,13 +4,13 @@
 \*****************************************************************************/
 
 //	CLIENT start
-//	https://webserver/xterm/door
+//	https://webserver/xterm/door/
 
 //	REST API
-//	https://webserver/xterm/door/player
-//	https://webserver/xterm/door/lurker
-//	params: /:pid
-//	params: /size?cols=:cols&rows=:rows
+//	https://webserver/xterm/door/player/
+//	https://webserver/xterm/door/lurker/
+//	params: :pid
+//	params: size?cols=:cols&rows=:rows
 
 import { Terminal, ITerminalOptions } from 'xterm'
 import * as fit from 'xterm/lib/addons/fit/fit'
@@ -90,7 +90,7 @@ document.getElementById('lurker-list').onchange = (ev) => {
 	document.getElementById('terminal').hidden = false
 	term = new Terminal({
 		bellStyle: 'none', cursorBlink: false, scrollback: 0,
-		fontFamily: 'Consolas,monospace', fontSize: 20,
+		fontFamily: 'Consolas,monospace', fontSize: 22,
 		fontWeight: '400', fontWeightBold: '500',
 		theme: {
 			foreground: '#a3a7af', background: '#23272f', cursor: '#e0c8e0',
@@ -137,6 +137,8 @@ document.getElementById('lurker-list').onchange = (ev) => {
 			socket.onerror = (ev) => {
 				term.writeln('\x1B[1;31merror')
 			}
+
+			window.dispatchEvent(new Event('resize'))	// gratuituous
 		})
 	})
 }
@@ -268,7 +270,7 @@ function newSession(ev) {
 		fetch(`${app}/title.txt`, { method: 'GET' }).then(function (res) {
 			return res.text().then(function (data) {
 				term.writeln(data)
-				term.writeln(' \x1B[36m\u00B7\x1B[2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1B[22m')
+				term.writeln(' \x1B[1;36m\u00B7\x1B[22;2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1B[22m')
 				XT(`@play(${['demon','demogorgon','portal','thief2'][Math.trunc(4*Math.random())]})`)
 				window.dispatchEvent(new Event('resize'))	// gratuituous
 				window.frames['Info'].focus()
