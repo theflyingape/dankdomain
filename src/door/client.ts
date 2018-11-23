@@ -188,7 +188,7 @@ function newSession(ev) {
 	})
 
 	term.on('focus', () => {
-		if (pid) tty = true
+		if (pid > 0) tty = true
 	})
 
 	term.on('resize', function (size) {
@@ -270,7 +270,6 @@ function newSession(ev) {
 				term.writeln(' \x1B[1;36m\u00B7\x1B[22;2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1B[22m')
 				XT(`@play(${['demon','demogorgon','portal','thief2'][Math.trunc(4*Math.random())]})`)
 				window.frames['Info'].focus()
-				pid = 0
 			})
 		})
 	}
@@ -399,6 +398,7 @@ function receive(event) {
 			case 'emit':
 				if (!carrier) {
 					XT('@tune(.)')
+					term.reset()
 					term.destroy()
 					if (event.data.message == ' ')
 						newSession('Logon')
