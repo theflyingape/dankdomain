@@ -69,6 +69,9 @@
     padding: 1px 1px;
     text-align: center;
   }
+  td {
+    height: 100%;
+  }
 </style>
 <script>
 let cookie = document.cookie || 'id=NEW';
@@ -99,12 +102,12 @@ keypad = `<table>
 </tr>
 </table>`;
 keyboard = `<table>
-<tr><td><input type="button" value=" a " onclick="send('a');"></td><td><input type="button" value=" b " onclick="send('b');"></td><td><input type="button" value=" c " onclick="send('c');"></td><td><input type="button" value=" d " onclick="send('d');"></td><td><input type="button" value=" e " onclick="send('e');"></td></tr>
-<tr><td><input type="button" value=" f " onclick="send('f');"></td><td><input type="button" value=" g " onclick="send('g');"></td><td><input type="button" value=" h " onclick="send('h');"></td><td><input type="button" value=" i " onclick="send('i');"></td><td><input type="button" value=" j " onclick="send('j');"></td></tr>
-<tr><td><input type="button" value=" k " onclick="send('k');"></td><td><input type="button" value=" l " onclick="send('l');"></td><td><input type="button" value=" m " onclick="send('m');"></td><td><input type="button" value=" n " onclick="send('n');"></td><td><input type="button" value=" o " onclick="send('o');"></td></tr>
-</td><td><input type="button" value=" p " onclick="send('p');"></td><td><input type="button" value=" q " onclick="send('q');"></td><td><input type="button" value=" r " onclick="send('r');"></td><td><input type="button" value=" s " onclick="send('s');"></td><td><input type="button" value=" t " onclick="send('t');"></td></tr>
-<tr><td><input type="button" value=" u " onclick="send('u');"></td><td><input type="button" value=" v " onclick="send('v');"></td><td><input type="button" value=" w " onclick="send('w');"></td><td><input type="button" value=" x " onclick="send('x');"></td><td><input type="button" value=" y " onclick="send('y');"></td></tr>
-</td><td><input type="button" value=" z " onclick="send('z');"></td><td><input type="button" value=" @ " onclick="send('@');"></td><td><input type="button" value=" - " onclick="send('-');"></td><td><input type="button" value=" + " onclick="send('+');"></td><td><input type="button" value=" . " onclick="send('.');"></td></tr>
+<tr><td><input class="numeric" type="button" value="a " onclick="send('a');"></td><td><input class="numeric" type="button" value="b " onclick="send('b');"></td><td><input class="numeric" type="button" value="c " onclick="send('c');"></td><td><input class="numeric" type="button" value="d " onclick="send('d');"></td><td><input class="numeric" type="button" value="e " onclick="send('e');"></td></tr>
+<tr><td><input class="numeric" type="button" value="f " onclick="send('f');"></td><td><input class="numeric" type="button" value="g " onclick="send('g');"></td><td><input class="numeric" type="button" value="h " onclick="send('h');"></td><td><input class="numeric" type="button" value="i " onclick="send('i');"></td><td><input class="numeric" type="button" value="j " onclick="send('j');"></td></tr>
+<tr><td><input class="numeric" type="button" value="k " onclick="send('k');"></td><td><input class="numeric" type="button" value="l " onclick="send('l');"></td><td><input class="numeric" type="button" value="m " onclick="send('m');"></td><td><input class="numeric" type="button" value="n " onclick="send('n');"></td><td><input class="numeric" type="button" value="o " onclick="send('o');"></td></tr>
+</td><td><input class="numeric" type="button" value="p " onclick="send('p');"></td><td><input class="numeric" type="button" value="q " onclick="send('q');"></td><td><input class="numeric" type="button" value="r " onclick="send('r');"></td><td><input class="numeric" type="button" value="s " onclick="send('s');"></td><td><input class="numeric" type="button" value="t " onclick="send('t');"></td></tr>
+<tr><td><input class="numeric" type="button" value="u " onclick="send('u');"></td><td><input class="numeric" type="button" value="v " onclick="send('v');"></td><td><input class="numeric" type="button" value="w " onclick="send('w');"></td><td><input class="numeric" type="button" value="x " onclick="send('x');"></td><td><input class="numeric" type="button" value="y " onclick="send('y');"></td></tr>
+</td><td><input class="numeric" type="button" value="z " onclick="send('z');"></td><td><input class="numeric" type="button" value="@" onclick="send('@');"></td><td><input class="numeric" type="button" value="- " onclick="send('-');"></td><td><input class="numeric" type="button" value="+ " onclick="send('+');"></td><td><input class="numeric" type="button" value=". " onclick="send('.');"></td></tr>
 </table><br>
 <input class="silver" type="button" value=" ? " onclick="send('?', true);"> <input class="wide" type="button" value=" SPACE BAR " onclick="send(' ');"><br>
 ${cancel} ${enter}`;
@@ -520,8 +523,8 @@ function nmeResize(effect, func) {
 }
 
 function cmdResize() {
-  let scale = Math.trunc(100 * (fontSize / 16));
-  scale = scale < 35 ? 35 : scale > 175 ? 175 : scale;
+  let scale = Math.trunc(100 * (fontSize / 10));
+  scale = scale < 50 ? 50 : scale > 400 ? 400 : scale;
   document.body.style.fontSize = scale + '%';
   document.getElementById('command').style.top = -document.getElementById('command').clientHeight + 'px';
   //document.getElementById("command").style.transform = `scale(${scale})`;
