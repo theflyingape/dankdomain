@@ -523,8 +523,8 @@ function nmeResize(effect, func) {
 }
 
 function cmdResize() {
-  let scale = Math.trunc(100 * (fontSize / 15));
-  scale = scale < 40 ? 40 : scale > 240 ? 240 : scale;
+  let scale = Math.trunc(100 * (fontSize / 18));
+  scale = scale < 40 ? 40 : scale > 400 ? 400 : scale;
   document.body.style.fontSize = scale + '%';
   document.getElementById('command').style.top = -document.getElementById('command').clientHeight + 'px';
   //document.getElementById("command").style.transform = `scale(${scale})`;
@@ -560,6 +560,6 @@ function keydown(event) {
 </head>
 <body onkeydown="keydown(event);" onload="welcome();">
   <div id="nme"></div>
-  <div id="command" style="background: linear-gradient(to bottom, rgba(223, 247, 255, 0.04), rgba(215, 241, 247, 0.96)); position: relative; text-align: right;  width:96%;"></div>
+  <div id="command" style="background: linear-gradient(to bottom, rgba(223, 247, 255, 0.04), rgba(215, 241, 247, 0.96)); position: relative; text-align: right; width:98%;"></div>
 </body>
 </html>
