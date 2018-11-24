@@ -565,13 +565,13 @@ function doMove(): boolean {
 				if (isNaN(+ROOM.monster[n].user.armor)) xvt.out('\n', $.who(ROOM.monster[n], 'He'), $.Armor.wearing(ROOM.monster[n]), '.\n')
 			}
 			else {
-				xvt.out(xvt.bright, 'and it\'s '
+				xvt.out(xvt.bright, xvt.yellow, 'and it\'s '
 					, [ 'bewitched', 'charmed', 'dazzled', 'impressed', 'seduced' ][$.dice(5) - 1]
 					, ' by your '
 					, [ 'awesomeness', 'elegance', 'presence', $.player.armor, $.player.weapon ][$.dice(5) - 1]
 					, '!', xvt.reset, '\n')
 				ROOM.monster[n].user.gender = 'FM'[$.dice(2) - 1]
-				ROOM.monster[n].user.handle = xvt.attr(xvt.faint, 'charmed ', ROOM.monster[n].user.handle, xvt.normal)
+				ROOM.monster[n].user.handle = xvt.attr(xvt.faint, xvt.cyan, 'charmed ', ROOM.monster[n].user.handle, xvt.reset)
 				ROOM.monster[n].user.xplevel = $.dice(4) - 2
 				party.push(ROOM.monster[n])
 				ROOM.monster.splice(n, 1)
@@ -580,7 +580,7 @@ function doMove(): boolean {
 		}
 
 		if (ROOM.monster.length) {
-			b4 = ROOM.monster.length > 3 ? -1 : ROOM.monster.length > 2 ? $.online.hp : 0
+			b4 = ROOM.monster.length > 3 ? -ROOM.monster.length : ROOM.monster.length > 2 ? $.online.hp : 0
 			Battle.engage('Dungeon', party, ROOM.monster, doSpoils)
 			return false
 		}
@@ -691,10 +691,9 @@ function doMove(): boolean {
 			xvt.out(xvt.bright, xvt.yellow, 'What do you wish to do?\n', xvt.reset)
 			xvt.waste(600)
 
-			let well = 'BCDFORT'
+			let well = 'BCFORT'
 			xvt.out($.bracket('B'), 'Bless yourself')
 			xvt.out($.bracket('C'), 'Curse another player')
-			xvt.out($.bracket('D'), 'Destroy dank dungeon')
 			xvt.out($.bracket('F'), 'Fix all your damage')
 			xvt.out($.bracket('O'), 'Teleport all the way out')
 			xvt.out($.bracket('R'), 'Resurrect all the dead players')
@@ -702,7 +701,10 @@ function doMove(): boolean {
 			if (deep > 1) { xvt.out($.bracket('L'), 'Loot another player\'s money'); well += 'L' }
 			if (deep > 3) { xvt.out($.bracket('G'), 'Grant another call'); well += 'G' }
 			if (deep > 5) { xvt.out($.bracket('K'), 'Key hint(s)'); well += 'K' }
-			if (deep > 7) { xvt.out($.bracket('M'), 'Magical spell(s) or device(s)'); well += 'M' }
+			if (deep > 7) {
+				xvt.out($.bracket('D'), 'Destroy dank dungeon'); well += 'D'
+				xvt.out($.bracket('M'), 'Magical spell(s) or device(s)'); well += 'M'
+			}
 			xvt.out('\n')
 
 			$.action('well')
@@ -719,24 +721,25 @@ function doMove(): boolean {
 					}
 					$.animated('flipOutX')
 					xvt.out('\n')
+
 					switch (wish) {
 					case 'B':
 						if ($.player.cursed) {
 							$.player.coward = false
 							$.player.cursed = ''
-							xvt.out(xvt.bright, xvt.black, '\nThe dark cloud has left you.', xvt.reset)
+							xvt.out(xvt.bright, xvt.black, 'The dark cloud has left you.')
 							$.news(`\tlifted curse`)
 						}
 						else {
 							$.sound('shimmer')
 							$.player.blessed = 'well'
-							xvt.out(xvt.bright, xvt.yellow, 'You feel a shining aura surround you.\n')
+							xvt.out(xvt.bright, xvt.yellow, 'You feel a shining aura surround you.')
 							$.news(`\twished for a blessing`)
 						}
-						$.online.str = $.PC.ability($.online.str, 10)
-						$.online.int = $.PC.ability($.online.int, 10)
-						$.online.dex = $.PC.ability($.online.dex, 10)
-						$.online.cha = $.PC.ability($.online.cha, 10)
+						$.PC.adjust('str', 10)
+						$.PC.adjust('int', 10)
+						$.PC.adjust('dex', 10)
+						$.PC.adjust('cha', 10)
 						break
 
 					case 'T':
@@ -760,17 +763,17 @@ function doMove(): boolean {
 								Z = i - 1
 								generateLevel()
 								menu()
-							}, prompt:`Level (${start}-${end}): `, cancel:`${Z}`, enter:`${end}`, min:1, max:3, timeout:20 }
+							}, prompt:`Level (${start}-${end}): `, cancel:`${Z}`, enter:`${end}`, min:1, max:3, timeout:30 }
 						}
 						xvt.app.focus = 'level'
 						return
 
 					case 'D':
+						xvt.out(xvt.bright, xvt.black, 'Your past time in this dungeon is eradicated and reset.')
 						$.sound('destroy', 30)
 						for (let i in dd)
 							delete dd[i]
-						generateLevel()
-						break
+						$.dungeon++
 
 					case 'O':
 						$.sound('teleport')
@@ -811,7 +814,7 @@ function doMove(): boolean {
 							$.online.sp = $.player.sp
 						if ($.online.hull < $.player.hull)
 							$.online.hull = $.player.hull
-						xvt.out('You are completely healed and all damage is repaired.\n')
+						xvt.out(xvt.bright, xvt.cyan, '\nYou are completely healed and all damage is repaired.\n')
 						break
 
 					case 'L':
@@ -927,6 +930,7 @@ function doMove(): boolean {
 						}
 						break
 					}
+					xvt.out(xvt.reset, '\n')
 					pause = true
 					refresh = true
 					menu()
@@ -986,63 +990,35 @@ function doMove(): boolean {
 						switch (t % z) {
 						case 0:
 							if ($.player.cursed) {
-								xvt.out(xvt.bright, xvt.black, '\nThe dark cloud has left you.', xvt.reset)
+								xvt.out(xvt.faint, '\nThe dark cloud has been lifted.', xvt.reset)
 								$.player.cursed = ''
-								$.online.str = $.PC.ability($.online.str, 10, $.player.maxstr)
-								$.online.int = $.PC.ability($.online.int, 10, $.player.maxint)
-								$.online.dex = $.PC.ability($.online.dex, 10, $.player.maxdex)
-								$.online.cha = $.PC.ability($.online.cha, 10, $.player.maxcha)
 							}
 							else {
-								$.player.maxstr = $.PC.ability($.player.maxstr, 1, 99)
-								$.player.maxstr = $.PC.ability($.player.maxstr, 1, 99)
-								$.player.maxint = $.PC.ability($.player.maxint, 1, 99)
-								$.player.maxdex = $.PC.ability($.player.maxdex, 1, 99)
-								$.player.maxcha = $.PC.ability($.player.maxcha, 1, 99)
-								if (($.player.str = $.PC.ability($.player.str, 10, $.player.maxstr)) > $.online.str)
-									$.online.str = $.player.str
-								if (($.player.int = $.PC.ability($.player.int, 10, $.player.maxint)) > $.online.int)
-									$.online.int = $.player.int
-								if (($.player.dex = $.PC.ability($.player.dex, 10, $.player.maxdex)) > $.online.dex)
-									$.online.dex = $.player.dex
-								if (($.player.cha = $.PC.ability($.player.cha, 10, $.player.maxcha)) > $.online.cha)
-									$.online.cha = $.player.cha
+								$.PC.adjust('str', 0, 2, 1)
+								$.PC.adjust('int', 0, 2, 1)
+								$.PC.adjust('dex', 0, 2, 1)
+								$.PC.adjust('cha', 0, 2, 1)
 							}
+							$.PC.adjust('str', 10)
+							$.PC.adjust('int', 10)
+							$.PC.adjust('dex', 10)
+							$.PC.adjust('cha', 10)
 							break
 						case 1:
 							if ($.player.blessed) {
+								xvt.out(xvt.bright, xvt.yellow, '\nYour shining aura has left you.', xvt.reset)
 								$.player.blessed = ''
-								$.online.str = $.PC.ability($.online.str, -10)
-								$.online.int = $.PC.ability($.online.int, -10)
-								$.online.dex = $.PC.ability($.online.dex, -10)
-								$.online.cha = $.PC.ability($.online.cha, -10)
 							}
 							else {
-								$.player.maxstr--
-								$.player.maxint--
-								$.player.maxdex--
-								$.player.maxcha--
-								if (($.player.str -= 10) < $.online.str)
-									if (($.online.str = $.player.str) < 20) {
-										$.online.str = 20
-										$.player.str = 20
-									}
-								if (($.player.int -= 10) < $.online.int)
-									if (($.online.int = $.player.int) < 20) {
-										$.online.int = 20
-										$.player.int = 20
-									}
-								if (($.player.dex -= 10) < $.online.dex)
-									if (($.online.dex = $.player.dex) < 20) {
-										$.online.dex = 20
-										$.player.dex = 20
-									}
-								if (($.player.cha -= 10) < $.online.cha)
-									if (($.online.cha = $.player.cha) < 20) {
-										$.online.cha = 20
-										$.player.cha = 20
-									}
+								$.PC.adjust('str', 0, -2, -1)
+								$.PC.adjust('int', 0, -2, -1)
+								$.PC.adjust('dex', 0, -2, -1)
+								$.PC.adjust('cha', 0, -2, -1)
 							}
+							$.PC.adjust('str', -10)
+							$.PC.adjust('int', -10)
+							$.PC.adjust('dex', -10)
+							$.PC.adjust('cha', -10)
 							$.sound('crack')
 							break
 						case 2:
@@ -1303,35 +1279,38 @@ function doMove(): boolean {
 
 		case 7:
 			$.profile({ jpg:'npc/wizard', effect:'flash' })
-			xvt.out(xvt.magenta, 'You encounter a wizard in this room.\n\n')
+			xvt.out(xvt.magenta, 'You encounter a ', xvt.bright, 'wizard', xvt.normal, ' in this room.\n\n')
 			if (!$.player.cursed && !$.player.novice && $.dice((Z > $.player.level ? Z : 1) + 20 * $.player.immortal + $.player.level + $.online.cha) == 1) {
 				$.player.coward = true
 				xvt.waste(600)
-				xvt.out(xvt.bright, 'He curses you!\n')
+				xvt.out(xvt.bright, 'He curses you!', xvt.reset, '\n')
 				$.sound('morph', 6)
-				$.online.str = $.PC.ability($.online.str, -10)
-				$.online.int = $.PC.ability($.online.int, -10)
-				$.online.dex = $.PC.ability($.online.dex, -10)
-				$.online.cha = $.PC.ability($.online.cha, -10)
+				$.PC.adjust('str', -10)
+				$.PC.adjust('int', -10)
+				$.PC.adjust('dex', -10)
+				$.PC.adjust('cha', -10)
 				if ($.player.blessed) {
 					$.player.blessed = ''
-					xvt.out(xvt.yellow, 'Your shining aura left')
+					xvt.out(xvt.bright, xvt.yellow, 'Your shining aura left')
 				}
 				else {
 					$.player.cursed = 'wiz!'
-					xvt.out(xvt.black, 'A dark cloud hovers over')
+					xvt.out(xvt.faint, 'A dark cloud hovers over')
 				}
 				$.saveUser($.player)
-				xvt.out(xvt.reset, ' you.\n')
+				xvt.out(' you.', xvt.reset, '\n')
 				$.news(`\tcursed by a wizard!`)
 				$.player.coward = false
 				$.online.altered = true
 			}
 			else if (!$.player.novice && $.dice(Z + $.online.cha) == 1) {
 				xvt.waste(600)
-				xvt.out(xvt.faint, 'He is asleep.\n', xvt.reset)
+				xvt.out(xvt.faint, 'He waves a hand at you ... ')
 				xvt.waste(600)
-				xvt.out('Try back again later.\n')
+				xvt.out(xvt.reset, '\n')
+				$.animated('flipOutY')
+				$.sound('teleport', 12)
+				generateLevel()
 			}
 			else {
 				xvt.save()
@@ -1503,33 +1482,29 @@ function doSpoils() {
 						xvt.out(xvt.bright, xvt.black, 'The dark cloud has left you.\n', xvt.reset)
 						$.player.cursed = ''
 					}
-					let m = $.player.blessed ? 10 : 0
+					let m = $.int((mon.user.xplevel - Z) / 6)
 					$.beep()
 					xvt.out(xvt.lyellow, `+ ${mon.user.pc} bonus`)
 					if ($.int(mon.pc.bonusStr)) {
-						$.player.maxstr = $.PC.ability($.player.maxstr, mon.pc.bonusStr, 99)
-						$.player.str = $.PC.ability($.player.str, mon.pc.bonusStr, $.player.maxstr)
-						xvt.out(xvt.lred, ' strength', $.bracket(`+${mon.pc.bonusStr}`, false))
+						$.PC.adjust('str', m * mon.pc.bonusStr, m * mon.pc.bonusStr, m * mon.pc.bonusStr)
+						xvt.out(xvt.lred, ' strength', $.bracket(`+${m * mon.pc.bonusStr}`, false))
 					}
-					$.online.str = $.PC.ability($.online.str, $.int(mon.pc.bonusStr) + 1, $.player.maxstr, m)
+					$.PC.adjust('str', m)
 					if ($.int(mon.pc.bonusInt)) {
-						$.player.maxint = $.PC.ability($.player.maxint, mon.pc.bonusInt, 99)
-						$.player.int = $.PC.ability($.player.int, mon.pc.bonusInt, $.player.maxint)
-						xvt.out(xvt.lmagenta, ' intellect', $.bracket(`+${mon.pc.bonusInt}`, false))
+						$.PC.adjust('int', m * mon.pc.bonusInt, m * mon.pc.bonusInt, m * mon.pc.bonusInt)
+						xvt.out(xvt.lmagenta, ' intellect', $.bracket(`+${m * mon.pc.bonusInt}`, false))
 					}
-					$.online.int = $.PC.ability($.online.int, $.int(mon.pc.bonusInt) + 1, $.player.maxint, m)
+					$.PC.adjust('int', m)
 					if ($.int(mon.pc.bonusDex)) {
-						$.player.maxdex = $.PC.ability($.player.maxdex, mon.pc.bonusDex, 99)
-						$.player.dex = $.PC.ability($.player.dex, mon.pc.bonusDex, $.player.maxdex)
-						xvt.out(xvt.lcyan, ' dexterity', $.bracket(`+${mon.pc.bonusDex}`, false))
+						$.PC.adjust('dex', m * mon.pc.bonusDex, m * mon.pc.bonusDex, m * mon.pc.bonusDex)
+						xvt.out(xvt.lcyan, ' dexterity', $.bracket(`+${m * mon.pc.bonusDex}`, false))
 					}
-					$.online.dex = $.PC.ability($.online.dex, $.int(mon.pc.bonusDex) + 1, $.player.maxdex, m)
+					$.PC.adjust('dex', m)
 					if ($.int(mon.pc.bonusCha)) {
-						$.player.maxcha = $.PC.ability($.player.maxcha, mon.pc.bonusCha, 99)
-						$.player.cha = $.PC.ability($.player.cha, mon.pc.bonusCha, $.player.maxcha)
-						xvt.out(xvt.lgreen, ' charisma', $.bracket(`+${mon.pc.bonusCha}`, false))
+						$.PC.adjust('cha', m * mon.pc.bonusCha, m * mon.pc.bonusCha, m * mon.pc.bonusCha)
+						xvt.out(xvt.lgreen, ' charisma', $.bracket(`+${m * mon.pc.bonusCha}`, false))
 					}
-					$.online.cha = $.PC.ability($.online.cha, $.int(mon.pc.bonusCha) + 1, $.player.maxcha, m)
+					$.PC.adjust('cha', m)
 					xvt.out(xvt.reset, '\n\n'); xvt.waste(500)
 					Battle.yourstats(); xvt.waste(500)
 					xvt.out('\n'); xvt.waste(500)
@@ -1580,22 +1555,6 @@ function doSpoils() {
 	}
 
 	if (!ROOM.monster.length) {
-		if (b4 < 0) {
-			xvt.out(xvt.lgreen, '+ bonus charisma\n', xvt.reset)
-			$.sound('effort', 16)
-			if (($.player.cha = $.PC.ability($.player.cha, 1, 99)) > $.player.maxcha)
-				$.player.maxcha = $.PC.ability($.player.maxcha, 1, $.player.maxcha, 1)
-			$.online.cha = $.PC.ability($.online.cha, $.dice(5), $.player.maxcha)
-			pause = true
-		}
-		else if (b4 / $.player.hp > 0.35 && b4 / $.player.hp < 1 && $.online.hp / $.player.hp < 0.25) {
-			xvt.out(xvt.lred, '+ bonus strength\n', xvt.reset)
-			$.sound('bravery', 16)
-			if (($.player.str = $.PC.ability($.player.str, 1, 99)) > $.player.maxstr)
-				$.player.maxstr = $.PC.ability($.player.maxstr, 1, $.player.maxstr, 1)
-			$.online.str = $.PC.ability($.online.str, $.dice(5), $.player.maxstr)
-			pause = true
-		}
 		if (DL.map < 2 && $.dice((15 - $.online.cha / 10) / 2) == 1) {
 			let m = ($.dice(Z / 33 + 2) > 1 ? 1 : 2)
 			if (DL.map < m) {
@@ -1605,6 +1564,24 @@ function doSpoils() {
 					, 'map!', xvt.reset, '\n')
 				pause = true
 			}
+		}
+		//	> 3 monsters
+		if (b4 < 0) {
+			xvt.out(xvt.lgreen, '+ bonus charisma\n', xvt.reset)
+			$.sound('effort', 20)
+			$.PC.adjust('cha', $.dice(Math.abs(b4)), 1, 1)
+			pause = true
+		}
+		//	the wounded warrior just surviving any mob size
+		//	and without a magic map nor any visit to the cleric yet ...
+		if ((b4 !== 0 && DL.map < 2 && DL.cleric.sp == DL.cleric.user.sp) &&
+			((b4 > 0 && b4 / $.player.hp < 0.67 && $.online.hp / $.player.hp < 0.067)
+			|| ($.online.hp <= Z + deep + 1))) {
+			xvt.out(xvt.lred, '+ bonus strength\n', xvt.reset)
+			$.sound('bravery', 20)
+			$.PC.adjust('str', deep + 2, deep + 1, 1)
+			DL.map = 3
+			pause = true
 		}
 	}
 
@@ -2416,10 +2393,10 @@ function putMonster(r = -1, c = -1): boolean {
 
 		m.user.immortal = deep
 		m.adept = $.dice(Z / 30 + deep / 4 + 1) - 1
-		m.str = $.PC.ability(m.str, deep - 2, m.user.maxstr, deep >>2)
-		m.int = $.PC.ability(m.int, deep - 2, m.user.maxint, deep >>2)
-		m.dex = $.PC.ability(m.dex, deep - 2, m.user.maxdex, deep >>2)
-		m.cha = $.PC.ability(m.cha, deep - 2, m.user.maxcha, deep >>2)
+		$.PC.adjust('str', deep - 2, 0, deep >>2, m)
+		$.PC.adjust('int', deep - 2, 0, deep >>2, m)
+		$.PC.adjust('dex', deep - 2, 0, deep >>2, m)
+		$.PC.adjust('cha', deep - 2, 0, deep >>2, m)
 
 		let gold = new $.coins($.int($.money(level) / 10))
 		gold.value += $.worth(new $.coins(m.weapon.value).value, $.dice($.online.cha / 5) + 5)
@@ -2540,54 +2517,42 @@ function quaff(v: number, it = true) {
 
 	//	Vial of Weakness
 		case 1:
-			$.player.str = $.PC.ability($.player.str, -1)
-			$.online.str = $.PC.ability($.online.str, -$.dice(10))
+			$.PC.adjust('str', -$.dice(10), -1)
 			break
 
 	//	Potion of Charm
 		case 2:
-			if (($.player.cha = $.PC.ability($.player.cha, 1, 99)) > $.player.maxcha)
-				$.player.maxcha = $.PC.ability($.player.maxcha, 1, $.player.maxcha, 1)
-			$.online.cha = $.PC.ability($.online.cha, $.dice(10), $.player.maxcha, m)
+			$.PC.adjust('cha', $.dice(10), 1, +($.player.cha == $.player.maxcha))
 			break
 
 	//	Vial of Stupidity
 		case 3:
-			$.player.int = $.PC.ability($.player.int, -1)
-			$.online.int = $.PC.ability($.online.int, -$.dice(10))
+			$.PC.adjust('int', -$.dice(10), -1)
 			break
 
 	//	Potion of Agility
 		case 4:
-			if (($.player.dex = $.PC.ability($.player.dex, 1, 99)) > $.player.maxdex)
-				$.player.maxdex = $.PC.ability($.player.maxdex, 1, $.player.maxdex, 1)
-			$.online.dex = $.PC.ability($.online.dex, $.dice(10), $.player.maxdex, m)
+			$.PC.adjust('dex', $.dice(10), 1, +($.player.dex == $.player.maxdex))
 			break
 
 	//	Vial of Clumsiness
 		case 5:
-			$.player.dex = $.PC.ability($.player.dex, -1)
-			$.online.dex = $.PC.ability($.online.dex, -$.dice(10))
+			$.PC.adjust('dex', -$.dice(10), -1)
 			break
 
 	//	Potion of Wisdom
 		case 6:
-			if (($.player.int = $.PC.ability($.player.int, 1, 99)) > $.player.maxint)
-				$.player.maxint = $.PC.ability($.player.maxint, 1, $.player.maxint, 1)
-			$.online.int = $.PC.ability($.online.int, $.dice(10), $.player.maxint, m)
+			$.PC.adjust('int', $.dice(10), 1, +($.player.int == $.player.maxint))
 			break
 
 	//	Vile Vial
 		case 7:
-			$.player.cha = $.PC.ability($.player.cha, -1)
-			$.online.cha = $.PC.ability($.online.cha, -$.dice(10))
+			$.PC.adjust('cha', -$.dice(10), -1)
 			break
 
 	//	Potion of Stamina
 		case 8:
-			if (($.player.str = $.PC.ability($.player.str, 1, 99)) > $.player.maxstr)
-				$.player.maxstr = $.PC.ability($.player.maxstr, 1, $.player.maxstr, 1)
-			$.online.str = $.PC.ability($.online.str, $.dice(10), $.player.maxstr, m)
+			$.PC.adjust('str', $.dice(10), 1, +($.player.str == $.player.maxstr))
 			break
 
 	//	Vial of Slaad Secretions
@@ -2617,44 +2582,49 @@ function quaff(v: number, it = true) {
 			$.music('elixir')
 			$.online.hp = $.player.hp
 			$.online.sp = $.player.sp
-			$.online.str = $.PC.ability($.player.str, 0, $.player.maxstr, m)
-			$.online.int = $.PC.ability($.player.int, 0, $.player.maxint, m)
-			$.online.dex = $.PC.ability($.player.dex, 0, $.player.maxdex, m)
-			$.online.cha = $.PC.ability($.player.cha, 0, $.player.maxcha, m)
+			$.activate($.online, false, true)
 			break
 
 	//	Vial of Crack
 		case 13:
 			$.music('crack')
-			$.player.maxstr = $.PC.ability($.player.maxstr, $.player.maxstr > 80 ? -2 : -1)
-			$.player.maxint = $.PC.ability($.player.maxint, $.player.maxint > 80 ? -2 : -1)
-			$.player.maxdex = $.PC.ability($.player.maxdex, $.player.maxdex > 80 ? -2 : -1)
-			$.player.maxcha = $.PC.ability($.player.maxcha, $.player.maxcha > 80 ? -2 : -1)
-			$.player.str = $.PC.ability($.player.str, $.player.str > 60 ? -$.dice(3) - 2 : -2)
-			$.player.int = $.PC.ability($.player.int, $.player.int > 60 ? -$.dice(3) - 2 : -2)
-			$.player.dex = $.PC.ability($.player.dex, $.player.dex > 60 ? -$.dice(3) - 2 : -2)
-			$.player.cha = $.PC.ability($.player.cha, $.player.cha > 60 ? -$.dice(3) - 2 : -2)
-			$.online.str = $.PC.ability($.online.str, $.online.str > 40 ? -$.dice(6) - 4 : -3)
-			$.online.int = $.PC.ability($.online.int, $.online.int > 40 ? -$.dice(6) - 4 : -3)
-			$.online.dex = $.PC.ability($.online.dex, $.online.dex > 40 ? -$.dice(6) - 4 : -3)
-			$.online.cha = $.PC.ability($.online.cha, $.online.cha > 40 ? -$.dice(6) - 4 : -3)
+			$.PC.adjust('str'
+				, $.online.str > 40 ? -$.dice(6) - 4 : -3
+				, $.player.str > 60 ? -$.dice(3) - 2 : -2
+				, $.player.maxstr > 80 ? -2 : -1)
+			$.PC.adjust('int'
+				, $.online.int > 40 ? -$.dice(6) - 4 : -3
+				, $.player.int > 60 ? -$.dice(3) - 2 : -2
+				, $.player.maxint > 80 ? -2 : -1)
+			$.PC.adjust('dex'
+				, $.online.dex > 40 ? -$.dice(6) - 4 : -3
+				, $.player.dex > 60 ? -$.dice(3) - 2 : -2
+				, $.player.maxdex > 80 ? -2 : -1)
+			$.PC.adjust('cha'
+				, $.online.cha > 40 ? -$.dice(6) - 4 : -3
+				, $.player.cha > 60 ? -$.dice(3) - 2 : -2
+				, $.player.maxcha > 80 ? -2 : -1)
 			break
 
 	//	Potion of Augment
 		case 14:
 			$.sound('hone', 6)
-			$.player.maxstr = $.PC.ability($.player.maxstr, $.player.maxstr < 95 ? 2 : 1)
-			$.player.maxint = $.PC.ability($.player.maxint, $.player.maxint < 95 ? 2 : 1)
-			$.player.maxdex = $.PC.ability($.player.maxdex, $.player.maxdex < 95 ? 2 : 1)
-			$.player.maxcha = $.PC.ability($.player.maxcha, $.player.maxcha < 95 ? 2 : 1)
-			$.player.str = $.PC.ability($.player.str, $.dice(3) + 2, $.player.maxstr)
-			$.player.int = $.PC.ability($.player.int, $.dice(3) + 2, $.player.maxint)
-			$.player.dex = $.PC.ability($.player.dex, $.dice(3) + 2, $.player.maxdex)
-			$.player.cha = $.PC.ability($.player.cha, $.dice(3) + 2, $.player.maxcha)
-			$.online.str = $.PC.ability($.online.str, $.dice(100 - $.online.str), $.player.maxstr, m)
-			$.online.int = $.PC.ability($.online.int, $.dice(100 - $.online.int), $.player.maxint, m)
-			$.online.dex = $.PC.ability($.online.dex, $.dice(100 - $.online.dex), $.player.maxdex, m)
-			$.online.cha = $.PC.ability($.online.cha, $.dice(100 - $.online.cha), $.player.maxcha, m)
+			$.PC.adjust('str'
+				, $.dice(100 - $.online.str)
+				, $.dice(3) + 2
+				, $.player.maxstr < 95 ? 2 : 1)
+			$.PC.adjust('int'
+				, $.dice(100 - $.online.int)
+				, $.dice(3) + 2
+				, $.player.maxint < 95 ? 2 : 1)
+			$.PC.adjust('dex'
+				, $.dice(100 - $.online.dex)
+				, $.dice(3) + 2
+				, $.player.maxdex < 95 ? 2 : 1)
+			$.PC.adjust('cha'
+				, $.dice(100 - $.online.cha)
+				, $.dice(3) + 2
+				, $.player.maxcha < 95 ? 2 : 1)
 			break
 
 	//	Beaker of Death

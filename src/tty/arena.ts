@@ -306,13 +306,12 @@ function choice() {
 					return
 				}
 
-				if (!$.Access.name[opponent.user.access].roleplay || opponent.user.id[0] === '_') {
+				if (!$.Access.name[opponent.user.access].roleplay) {
 					xvt.out('You are allowed only to fight other players.\n')
 					if (opponent.user.id[0] === '_') {
-						if (($.online.cha = $.PC.ability($.player.cha, -10)) < 20)
-							$.online.cha = 20
-						$.online.altered = true
+						$.PC.adjust('cha', -1)
 						$.player.coward = true
+						$.online.altered = true
 					}
 					menu()
 					return
@@ -326,7 +325,7 @@ function choice() {
 
 				if (!$.lock(opponent.user.id)) {
 					$.beep()
-					xvt.out(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
+					xvt.out(xvt.faint, xvt.cyan, `${$.who(opponent, 'He')}is currently engaged elsewhere and not available.`, xvt.reset, '\n')
 					menu()
 					return
 				}

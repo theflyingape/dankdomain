@@ -85,6 +85,22 @@ export class Character {
         return ability
     }
 
+    adjust(ability: 'str'|'int'|'dex'|'cha', rt: number, pc = 0, max = 0, rpc = online) {
+        if (max) {
+            rpc.user[`max${ability}`] = this.ability(rpc.user[`max${ability}`], max, 99)
+            rpc.altered = true
+        }
+        if (pc) {
+            rpc.user[ability] = this.ability(rpc.user[ability], pc, rpc.user[`max${ability}`])
+            rpc.altered = true
+        }
+        if (rt) {
+            let mod = rpc.user.blessed ? 10 : 0
+            mod -= rpc.user.cursed ? 10 : 0
+            rpc[ability] = this.ability(rpc[ability], rt, rpc.user[`max${ability}`], mod)
+        }
+    }
+
     card(dd = 'None'): character {
         let rpc = <character>{}
         for (let type in this.name) {
@@ -500,17 +516,17 @@ export function activate(one: active, keep = false, confused = false): boolean {
     one.int = one.user.int
     one.dex = one.user.dex
     one.cha = one.user.cha
-    if (one.user.blessed.length) {
-        one.str = PC.ability(one.str, 10, one.user.maxstr, 10)
-        one.int = PC.ability(one.int, 10, one.user.maxint, 10)
-        one.dex = PC.ability(one.dex, 10, one.user.maxdex, 10)
-        one.cha = PC.ability(one.cha, 10, one.user.maxcha, 10)
+    if (one.user.blessed) {
+        PC.adjust('str', 10, 0, 0, one)
+        PC.adjust('int', 10, 0, 0, one)
+        PC.adjust('dex', 10, 0, 0, one)
+        PC.adjust('cha', 10, 0, 0, one)
     }
-    if (one.user.cursed.length) {
-        one.str = PC.ability(one.str, -10, one.user.maxstr, -10)
-        one.int = PC.ability(one.int, -10, one.user.maxint, -10)
-        one.dex = PC.ability(one.dex, -10, one.user.maxdex, -10)
-        one.cha = PC.ability(one.cha, -10, one.user.maxcha, -10)
+    if (one.user.cursed) {
+        PC.adjust('str', -10, 0, 0, one)
+        PC.adjust('int', -10, 0, 0, one)
+        PC.adjust('dex', -10, 0, 0, one)
+        PC.adjust('cha', -10, 0, 0, one)
     }
     one.confused = false
     if (confused) return true
@@ -588,10 +604,10 @@ export function checkXP(rpc: active, cb: Function): boolean {
 		if (rpc.user.magic > 1)
 			rpc.user.sp += Math.round(rpc.user.level + dice(rpc.user.level) + rpc.user.int / 10 + (rpc.user.int > 90 ? rpc.user.int - 90 : 0))
 
-		rpc.user.str = PC.ability(rpc.user.str, PC.card(rpc.user.pc).toStr, rpc.user.maxstr)
-		rpc.user.int = PC.ability(rpc.user.int, PC.card(rpc.user.pc).toInt, rpc.user.maxint)
-		rpc.user.dex = PC.ability(rpc.user.dex, PC.card(rpc.user.pc).toDex, rpc.user.maxdex)
-		rpc.user.cha = PC.ability(rpc.user.cha, PC.card(rpc.user.pc).toCha, rpc.user.maxcha)
+        PC.adjust('str', 0, PC.card(rpc.user.pc).toStr, 0, rpc)
+        PC.adjust('int', 0, PC.card(rpc.user.pc).toInt, 0, rpc)
+        PC.adjust('dex', 0, PC.card(rpc.user.pc).toDex, 0, rpc)
+        PC.adjust('cha', 0, PC.card(rpc.user.pc).toCha, 0, rpc)
 
         if (eligible && rpc.user.level == 50) {
             bonus = true
@@ -611,12 +627,11 @@ export function checkXP(rpc: active, cb: Function): boolean {
     if ((award.int = rpc.user.int - award.int) < 1) award.int = 0
     if ((award.dex = rpc.user.dex - award.dex) < 1) award.dex = 0
     if ((award.cha = rpc.user.cha - award.cha) < 1) award.cha = 0
-    i = rpc.user.blessed ? 10 : 0
-    i = rpc.user.cursed ? i - 10 : i
-    rpc.str = PC.ability(rpc.str, (award.str < 1) ? jumped : award.str, rpc.user.maxstr, i)
-    rpc.int = PC.ability(rpc.int, (award.int < 1) ? jumped : award.int, rpc.user.maxint, i)
-    rpc.dex = PC.ability(rpc.dex, (award.dex < 1) ? jumped : award.dex, rpc.user.maxdex, i)
-    rpc.cha = PC.ability(rpc.cha, (award.cha < 1) ? jumped : award.cha, rpc.user.maxcha, i)
+
+    PC.adjust('str', (award.str < 1) ? jumped : award.str, 0, 0, rpc)
+    PC.adjust('int', (award.int < 1) ? jumped : award.int, 0, 0, rpc)
+    PC.adjust('dex', (award.dex < 1) ? jumped : award.dex, 0, 0, rpc)
+    PC.adjust('cha', (award.cha < 1) ? jumped : award.cha, 0, 0, rpc)
 
     if (rpc != online) return false
 
@@ -624,17 +639,17 @@ export function checkXP(rpc: active, cb: Function): boolean {
     access = Access.name[player.access]
     online.altered = true
     xvt.out('\n')
-    xvt.waste(125)
+    xvt.waste(200)
     xvt.out('      ', xvt.magenta, '-=', xvt.blue, '>'
         , xvt.bright, xvt.yellow, '*', xvt.normal
         , xvt.blue, '<', xvt.magenta, '=-\n')
-    xvt.waste(125)
+    xvt.waste(200)
     xvt.out('\n')
-    xvt.waste(125)
+    xvt.waste(200)
     xvt.out(xvt.bright, xvt.yellow, 'Welcome to level ', player.level.toString(), '!\n', xvt.reset)
-    xvt.waste(125)
+    xvt.waste(200)
     xvt.out('\n')
-    xvt.waste(125)
+    xvt.waste(200)
     wall(`is now a level ${player.level} ${player.pc}`)
 
     let deed = mydeeds.find((x) => { return x.deed === 'levels' })
@@ -647,29 +662,29 @@ export function checkXP(rpc: active, cb: Function): boolean {
 
     if (player.level < sysop.level) {
         xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.hp), xvt.reset, ' Hit points\n')
-        xvt.waste(125)
+        xvt.waste(100)
         if (award.sp) {
             xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.sp), xvt.reset, ' Spell points\n')
-            xvt.waste(125)
+            xvt.waste(100)
         }
         if (award.str) {
             xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.str), xvt.reset, ' Strength\n')
-            xvt.waste(125)
+            xvt.waste(100)
         }
         if (award.int) {
             xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.int), xvt.reset, ' Intellect\n')
-            xvt.waste(125)
+            xvt.waste(100)
         }
         if (award.dex) {
             xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.dex), xvt.reset, ' Dexterity\n')
-            xvt.waste(125)
+            xvt.waste(100)
         }
         if (award.cha) {
             xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.cha), xvt.reset, ' Charisma\n')
-            xvt.waste(125)
+            xvt.waste(100)
         }
         xvt.out('\n')
-        xvt.waste(125)
+        xvt.waste(100)
         if (eligible && bonus) {
             skillplus(rpc, cb)
             return true
@@ -689,12 +704,12 @@ export function skillplus(rpc: active, cb: Function) {
     rpc.user.expert = true
 
     //  slow-roll endowment choices for a dramatic effect  :)
-    xvt.out(xvt.reset); xvt.waste(500)
-    xvt.out(xvt.bright, xvt.yellow,` + You earn a gift to endow your ${rpc.user.pc} character +\n`); xvt.waste(1000)
-    xvt.out('\n'); xvt.waste(500)
+    xvt.out(xvt.reset); xvt.waste(600)
+    xvt.out(xvt.bright, xvt.yellow,` + You earn a gift to endow your ${rpc.user.pc} character +\n`); xvt.waste(1200)
+    xvt.out('\n'); xvt.waste(600)
 
-    if (rpc.user.maxstr < 99 && rpc.user.maxint < 99 && rpc.user.maxdex < 99 && rpc.user.maxcha < 99) {
-        xvt.out(bracket(0, false), xvt.yellow, ' Increase ALL abilities by ' ,xvt.reset, '+2\n')
+    if (rpc.user.maxstr < 97 || rpc.user.maxint < 97 || rpc.user.maxdex < 97 || rpc.user.maxcha < 97) {
+        xvt.out(bracket(0, false), xvt.yellow, ' Increase ALL abilities by ' ,xvt.reset, '+3\n')
         xvt.waste(200)
     }
     xvt.out(bracket(1, false), xvt.yellow, ' Increase Strength ability from ', xvt.reset
@@ -767,18 +782,10 @@ export function skillplus(rpc: active, cb: Function) {
             switch (+xvt.entry) {
             case 0:
                 news('\tgot generally better')
-                if ((online.str += 2) > 100) online.str = 100
-                if ((online.int += 2) > 100) online.int = 100
-                if ((online.dex += 2) > 100) online.dex = 100
-                if ((online.cha += 2) > 100) online.cha = 100
-                if ((player.str += 2) > 100) player.str = 100
-                if ((player.int += 2) > 100) player.int = 100
-                if ((player.dex += 2) > 100) player.dex = 100
-                if ((player.cha += 2) > 100) player.cha = 100
-                if ((player.maxstr += 2) > 100) player.maxstr = 100
-                if ((player.maxint += 2) > 100) player.maxint = 100
-                if ((player.maxdex += 2) > 100) player.maxdex = 100
-                if ((player.maxcha += 2) > 100) player.maxcha = 100
+                PC.adjust('str', 3, 3, 3)
+                PC.adjust('int', 3, 3, 3)
+                PC.adjust('dex', 3, 3, 3)
+                PC.adjust('cha', 3, 3, 3)
                 break
 
             case 1:
@@ -841,9 +848,9 @@ export function skillplus(rpc: active, cb: Function) {
                 news('\tApothecary visits have more meaning')
                 xvt.out([xvt.cyan, xvt.blue, xvt.red, xvt.magenta][player.poison]
                     , [ 'The Apothecary will see you now, bring money.'
-                      , 'Your poisons can achieve 2x its potency now.'
-                      , 'Your poisons can achieve 3x its potency now.'
-                      , 'Your poisons can achieve 4x its potency now.' ][player.poison++]
+                      , 'Your poisons can achieve (+1x,+1x) potency now.'
+                      , 'Your poisons can achieve (+1x,+2x) potency now.'
+                      , 'Your poisons can achieve (+2x,+2x) its potency now.' ][player.poison++]
                 )
                 break
 
@@ -882,7 +889,7 @@ export function skillplus(rpc: active, cb: Function) {
                     , [ 'Your fingers are starting to itch.'
                       , 'Your eyes widen at the chance for unearned loot.'
                       , 'Welcome to the Thieves guild: go pick a pocket or two!'
-                      , 'You\'re convinced that no lock cannot be picked.' ][player.steal++]
+                      , 'You\'re convinced that no lock can\'t be picked.' ][player.steal++]
                 )
                 break
 
@@ -895,7 +902,7 @@ export function skillplus(rpc: active, cb: Function) {
             xvt.out(xvt.reset, '\n')
             xvt.waste(2000)
             cb()
-        }, prompt:'Choose which: ', min:1, max:1, match:/^[0-9]/ }
+        }, prompt:'Choose which: ', cancel:'0', min:1, max:1, match:/^[0-9]/ }
     }
     xvt.app.focus = 'skill'
 }

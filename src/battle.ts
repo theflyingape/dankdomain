@@ -34,20 +34,13 @@ function end() {
     if (from === 'Naval') {
         if ($.online.hp > 0) {
             $.sound('naval' + (parties[1][0].user.id === '_OLD' ? '_f' : ''), 32)
-            let m = $.player.blessed ? 10 : 0
-            m = $.player.cursed ? m - 10 : m
-            $.player.maxstr = $.PC.ability($.player.maxstr, 1, 99)
-            $.player.str = $.PC.ability($.player.str, 1, $.player.maxstr)
-            $.online.str = $.PC.ability($.online.str, 2, $.player.maxstr, m)
-            $.player.maxint = $.PC.ability($.player.maxint, 1, 99)
-            $.player.int = $.PC.ability($.player.int, 1, $.player.maxint)
-            $.online.int = $.PC.ability($.online.int, 2, $.player.maxint, m)
-            $.player.maxdex = $.PC.ability($.player.maxdex, 1, 99)
-            $.player.dex = $.PC.ability($.player.dex, 1, $.player.maxdex)
-            $.online.dex = $.PC.ability($.online.dex, 2, $.player.maxdex, m)
-            $.player.maxcha = $.PC.ability($.player.maxcha, 1, 99)
-            $.player.cha = $.PC.ability($.player.cha, 1, $.player.maxcha)
-            $.online.cha = $.PC.ability($.online.cha, 2, $.player.maxcha, m)
+            $.PC.adjust('str', 2, 1, 1)
+            $.PC.adjust('int', 2, 1, 1)
+            $.PC.adjust('dex', 2, 1, 1)
+            $.PC.adjust('cha', 2, 1, 1)
+            xvt.beep()
+            Battle.yourstats(); xvt.waste(500)
+            xvt.out('\n'); xvt.waste(500)
         }
     }
 
@@ -77,8 +70,10 @@ function end() {
             $.wall(`defeated ${$.barkeep.user.handle}`)
             xvt.waste(1234)
             $.sound('ko')
-            if ($.player.cha > 49) $.player.cha = $.PC.ability($.player.cha, -20)
-            if ($.online.cha > 49) $.online.cha = $.PC.ability($.online.cha, -25)
+            if ($.player.cha > 49)
+                $.PC.adjust('cha', -22, -20, -2)
+            else
+                $.player.coward = true
         }
         $.player.coward = false
     }
@@ -228,9 +223,8 @@ export function attack(retry = false) {
 
     //  recovery?
     if (rpc.confused) {
-        let mod = rpc.user.blessed ? 10 : rpc.user.cursed ? -10 : 0
-        rpc.int = $.PC.ability(rpc.int, $.PC.card(rpc.user.pc).toInt, rpc.user.maxint, mod)
-        rpc.dex = $.PC.ability(rpc.dex, $.PC.card(rpc.user.pc).toDex, rpc.user.maxdex, mod)
+        $.PC.adjust('int', $.PC.card(rpc.user.pc).toInt, 0, 0, rpc)
+        $.PC.adjust('dex', $.PC.card(rpc.user.pc).toDex, 0, 0, rpc)
     }
 
     //  choose an opponent
@@ -312,8 +306,10 @@ export function attack(retry = false) {
                         $.activate($.online, false, true)
                     if (from === 'Party' && $.player.gang)
                         $.run(`UPDATE Gangs SET loss = loss + 1 WHERE name = '${$.player.gang}'`)
-                    if (from === 'User' && enemy.user.gender !== 'I')
+                    if (from === 'User' && enemy.user.gender !== 'I') {
+						$.PC.adjust('cha', -2, -1)
                         $.log(enemy.user.id, `\n${$.player.handle}, the coward, retreated from you.`)
+                    }
                     end()
                     return
                 }
@@ -329,14 +325,14 @@ export function attack(retry = false) {
                 melee(rpc, enemy)
                 next()
                 return
-            }, cancel:'R', enter:'A', eol:false, max:1, match:/A|C|R|Y/i, timeout:50 },
+            }, cancel:'R', enter:'A', eol:false, max:1, match:/A|C|R|Y/i, timeout:30 },
             'backstab': {cb:() => {
                 if (/N/i.test(xvt.entry)) bs = 1
                 xvt.out('\n\n', xvt.bright, xvt.white)
                 melee(rpc, enemy, bs)
                 next()
                 return
-            }, cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:50 }
+            }, cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:30 }
         }
 
         //  sneaking
@@ -743,30 +739,32 @@ export function spoils() {
                         $.log(loser.user.id, `... and took your ${winner.user.armor}.`)
                     }
                     if (winner.user.cursed) {
-                        loser.user.coward = false
+                        winner.user.cursed = ''
+                        $.PC.adjust('str', 10, 0, 0, winner)
+                        $.PC.adjust('int', 10, 0, 0, winner)
+                        $.PC.adjust('dex', 10, 0, 0, winner)
+                        $.PC.adjust('cha', 10, 0, 0, winner)
                         loser.user.cursed = winner.user.id
                         loser.altered = true
-                        winner.user.coward = false
-                        winner.user.cursed = ''
                         xvt.out(xvt.bright, xvt.black, 'A dark cloud has lifted and shifted.\n', xvt.reset)
                         xvt.waste(600)
                         $.log(loser.user.id, `... and left you with a dark cloud.`)
-                        winner.str = $.PC.ability(winner.str, 10, winner.user.maxstr)
-                        winner.int = $.PC.ability(winner.int, 10, winner.user.maxint)
-                        winner.dex = $.PC.ability(winner.dex, 10, winner.user.maxdex)
-                        winner.cha = $.PC.ability(winner.cha, 10, winner.user.maxcha)
                     }
                     if (loser.user.blessed) {
                         loser.user.blessed = ''
                         loser.altered = true
-                        winner.user.blessed = loser.user.id
-                        xvt.out(xvt.bright, xvt.yellow, 'A shining aura surrounds you.\n', xvt.reset)
-                        xvt.waste(600)
+                        if (winner.user.coward)
+                            winner.user.coward = false
+                        else {
+                            winner.user.blessed = loser.user.id
+                            $.PC.adjust('str', 10, 0, 0, winner)
+                            $.PC.adjust('int', 10, 0, 0, winner)
+                            $.PC.adjust('dex', 10, 0, 0, winner)
+                            $.PC.adjust('cha', 10, 0, 0, winner)
+                            xvt.out(xvt.bright, xvt.yellow, 'A shining aura surrounds you.\n', xvt.reset)
+                            xvt.waste(600)
+                        }
                         $.log(loser.user.id, `... and took your blessedness.`)
-                        winner.str = $.PC.ability(winner.str, 10, winner.user.maxstr, 10)
-                        winner.int = $.PC.ability(winner.int, 10, winner.user.maxint, 10)
-                        winner.dex = $.PC.ability(winner.dex, 10, winner.user.maxdex, 10)
-                        winner.cha = $.PC.ability(winner.cha, 10, winner.user.maxcha, 10)
                     }
                     if (loser.user.gang && loser.user.gang === $.player.gang) {
                         gang = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
@@ -1102,17 +1100,15 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             }
         }
 
-        let mod = rpc.user.blessed ? 10 : 0
-        mod = rpc.user.cursed ? mod - 10 : mod
-
         switch(spell.cast) {
         case 1:
             if (backfire) {
-                rpc.str = $.PC.ability(rpc.str, -$.dice(10))
+                $.PC.adjust('str', -$.dice(10))
                 xvt.out(`You feel weaker (${rpc.str})\n`)
             }
             else {
-                if ((rpc.str = $.PC.ability(rpc.str, $.dice(10), rpc.user.maxstr, mod)) < rpc.user.maxstr)
+                $.PC.adjust('str', $.dice(10))
+                if (rpc.str < rpc.user.maxstr)
                     xvt.out(`You feel much more stronger (${rpc.str})\n`)
                 else
                     xvt.out(`This game prohibits the use of steroids.\n`)
@@ -1121,11 +1117,12 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
         case 2:
             if (backfire) {
-                rpc.int = $.PC.ability(rpc.int, -$.dice(10))
+                $.PC.adjust('int', -$.dice(10))
                 xvt.out(`You feel stupid (${rpc.int})\n`)
             }
             else {
-                if ((rpc.int = $.PC.ability(rpc.int, $.dice(10), rpc.user.maxint, mod)) < rpc.user.maxint)
+                $.PC.adjust('int', $.dice(10))
+                if (rpc.int < rpc.user.maxint)
                     xvt.out(`You feel much more intelligent (${rpc.int})\n`)
                 else
                     xvt.out(`Get on with it, professor!\n`)
@@ -1134,11 +1131,12 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
         case 3:
             if (backfire) {
-                rpc.dex = $.PC.ability(rpc.dex, -$.dice(10))
+                $.PC.adjust('dex', -$.dice(10))
                 xvt.out(`You feel clumsy (${rpc.dex})\n`)
             }
             else {
-                if ((rpc.dex = $.PC.ability(rpc.dex, $.dice(10), rpc.user.maxdex, mod)) < rpc.user.maxdex)
+                $.PC.adjust('dex', $.dice(10))
+                if (rpc.dex < rpc.user.maxdex)
                     xvt.out(`You feel much more agile (${rpc.dex})\n`)
                 else
                     xvt.out(`Y'all shakin' and bakin'.\n`)
@@ -1147,11 +1145,12 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
         case 4:
             if (backfire) {
-                rpc.cha = $.PC.ability(rpc.cha, -$.dice(10))
+                $.PC.adjust('cha', -$.dice(10))
                 xvt.out(`You feel depressed (${rpc.cha})\n`)
             }
             else {
-                if ((rpc.cha = $.PC.ability(rpc.cha, $.dice(10), rpc.user.maxcha, mod)) < rpc.user.maxcha)
+                $.PC.adjust('cha', $.dice(10))
+                if (rpc.cha < rpc.user.maxcha)
                     xvt.out(`You feel much more charismatic (${rpc.cha})\n`)
                 else
                     xvt.out(`Stop being so vain.\n`)
@@ -1354,16 +1353,14 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                         $.activate(DL.cleric)
                         $.sound('winner')
                         xvt.out('You raised the ', xvt.faint, xvt.yellow, DL.cleric.user.handle, xvt.reset, ' from the dead!\n')
-                        if (($.player.cha = $.PC.ability($.player.cha, 1, 99)) > $.player.maxcha)
-                            $.player.maxcha = $.PC.ability($.player.maxcha, 1, $.player.maxcha, 1)
-                        $.online.cha = $.PC.ability($.online.cha, $.dice(5), $.player.maxcha)
+                        $.PC.adjust('cha', 4, 2, 1)
                         cb()
                         return
                     }
                 }
                 user('Resurrect', (opponent: active) => {
-                    if (opponent.user.id === '' || opponent.user.id === $.player.id) {
-                        xvt.out('\nGo get some coffee.\n')
+                    if (opponent.user.id === $.player.id || opponent.user.status === '' || opponent.user.id === '') {
+                        xvt.out(xvt.bright, xvt.black, '\nGo get some coffee.', xvt.reset, '\n')
                     }
                     else {
                         xvt.out('Now raising ', opponent.user.handle, ' from the dead...')
@@ -1771,16 +1768,10 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             xvt.waste(800)
             xvt.out('\n', xvt.reset)
             if (backfire && rpc.user.level > 1) {
-                if (rpc.user.level < 80) {
-                    rpc.user.str = $.PC.ability(rpc.user.str, -$.PC.card(rpc.user.pc).toStr)
-                    rpc.user.int = $.PC.ability(rpc.user.int, -$.PC.card(rpc.user.pc).toInt)
-                    rpc.user.dex = $.PC.ability(rpc.user.dex, -$.PC.card(rpc.user.pc).toDex)
-                    rpc.user.cha = $.PC.ability(rpc.user.cha, -$.PC.card(rpc.user.pc).toCha)
-                }
-                rpc.str = $.PC.ability(rpc.str, -$.PC.card(rpc.user.pc).toStr)
-                rpc.int = $.PC.ability(rpc.int, -$.PC.card(rpc.user.pc).toInt)
-                rpc.dex = $.PC.ability(rpc.dex, -$.PC.card(rpc.user.pc).toDex)
-                rpc.cha = $.PC.ability(rpc.cha, -$.PC.card(rpc.user.pc).toCha)
+                $.PC.adjust('str', -$.PC.card(rpc.user.pc).toStr, -1, 0 ,rpc)
+                $.PC.adjust('int', -$.PC.card(rpc.user.pc).toInt, -1, 0 ,rpc)
+                $.PC.adjust('dex', -$.PC.card(rpc.user.pc).toDex, -1, 0 ,rpc)
+                $.PC.adjust('cha', -$.PC.card(rpc.user.pc).toCha, -1, 0 ,rpc)
                 rpc.user.xp = Math.round(nme.user.xp / 2)
                 rpc.user.xplevel--
                 rpc.user.level--
@@ -1800,16 +1791,10 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 nme.user.xp = Math.round(nme.user.xp / 2)
                 nme.user.xplevel--
                 nme.user.level--
-                if (nme.user.level < 80) {
-                    nme.user.str = $.PC.ability(nme.user.str, -$.PC.card(nme.user.pc).toStr)
-                    nme.user.int = $.PC.ability(nme.user.int, -$.PC.card(nme.user.pc).toInt)
-                    nme.user.dex = $.PC.ability(nme.user.dex, -$.PC.card(nme.user.pc).toDex)
-                    nme.user.cha = $.PC.ability(nme.user.cha, -$.PC.card(nme.user.pc).toCha)
-                }
-                nme.str = $.PC.ability(nme.str, -$.PC.card(nme.user.pc).toStr)
-                nme.int = $.PC.ability(nme.int, -$.PC.card(nme.user.pc).toInt)
-                nme.dex = $.PC.ability(nme.dex, -$.PC.card(nme.user.pc).toDex)
-                nme.cha = $.PC.ability(nme.cha, -$.PC.card(nme.user.pc).toCha)
+                $.PC.adjust('str', -$.PC.card(nme.user.pc).toStr, -1, 0, nme)
+                $.PC.adjust('int', -$.PC.card(nme.user.pc).toInt, -1, 0, nme)
+                $.PC.adjust('dex', -$.PC.card(nme.user.pc).toDex, -1, 0, nme)
+                $.PC.adjust('cha', -$.PC.card(nme.user.pc).toCha, -1, 0, nme)
                 nme.user.hp -= Math.round(nme.user.level + $.dice(nme.user.level) + nme.user.str / 10 + (nme.user.str > 90 ? nme.user.str - 90 : 0))
                 if (nme.user.magic > 1)
                     nme.user.sp -= Math.round(nme.user.level + $.dice(nme.user.level) + nme.user.int / 10 + (nme.user.int > 90 ? nme.user.int - 90 : 0))

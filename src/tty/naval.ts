@@ -197,9 +197,7 @@ function choice() {
 				xvt.waste(600)
 				$.sound('yum')
 				xvt.out('Yum!  You feel stronger and healthier.\n\n')
-				let mod = $.player.blessed ? 10 : 0
-				mod = $.player.cursed ? mod - 10 : mod
-				$.online.str = $.PC.ability($.online.str, $.dice(10), $.online.user.maxstr, mod + 2)
+				$.PC.adjust('str', $.dice(10))
 				xvt.out(`Stamina = ${$.online.str}     `)
 				$.online.hp += $.player.level + $.dice($.player.level)
 					+ Math.trunc($.player.str / 10) + ($.player.str > 90 ? $.player.str - 90 : 0)
@@ -622,10 +620,12 @@ function BattleUser(nme: active) {
 						}
 					}
 					else {
-						$.player.cha = $.PC.ability($.player.cha, -1)
-						$.online.cha = $.PC.ability($.online.cha, -$.dice(5))
+						$.PC.adjust('cha', -2, -1)
 						$.player.retreats++
-						xvt.out('\nYou sail away safely out of range.\n')
+						xvt.out(xvt.bright, xvt.cyan, '\nYou sail '
+							, xvt.normal, 'away safely '
+							, xvt.faint, 'out of range.'
+							, xvt.reset, '\n')
 						$.saveUser(nme, false, true)
 						$.run(`UPDATE Players set hull=${$.player.hull},cannon=${$.player.cannon},ram=${+$.player.ram},retreats=${$.player.retreats} WHERE id='${$.player.id}'`)
                         $.log(nme.user.id, `\n${$.player.handle}, the coward, sailed away from you.`)

@@ -290,13 +290,11 @@ function welcome() {
                                 $.player.bank.value = 0
                             }
                         }
-                        $.player.cha = $.PC.ability($.player.cha, -1)
-                        $.activate($.online)
-                        $.player.status = ''
+                        $.PC.adjust('cha', -(4 - $.player.steal), -$.int((4 - $.player.steal) / 2, true))
                     }
                     else {
-                        xvt.out('You are left brooding with your fellow cellmates.\n')
-                        xvt.waste(1000)
+                        xvt.out(xvt.bright, xvt.red, 'You are left brooding with your fellow cellmates.', xvt.reset, '\n')
+                        xvt.waste(1234)
                         $.access = $.Access.name['Prisoner']
                     }
                     welcome()

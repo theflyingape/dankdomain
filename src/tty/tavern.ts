@@ -305,12 +305,10 @@ function choice() {
                 xvt.out(xvt.green, 'Name: ', xvt.white, sprintf('%-22s      You:', opponent.user.handle), '\n')
                 xvt.out(xvt.green, 'Level: ', xvt.white, sprintf('%-22d     %-2d', opponent.user.level, $.player.level), '\n')
                 xvt.out(xvt.green, 'Knock out points: ', xvt.white, sprintf('%-15d %-3d', opponent.bp, $.online.bp), '\n')
-				if (!$.Access.name[opponent.user.access].roleplay || opponent.user.id[0] === '_') {
+				if (!$.Access.name[opponent.user.access].roleplay) {
 					xvt.out('\nYou are allowed only to brawl other players.\n')
 					if (opponent.user.id[0] === '_') {
-						if (($.online.cha = $.PC.ability($.player.cha, -10)) < 20)
-                            $.online.cha = 20
-                        $.online.altered = true
+                        $.PC.adjust('cha', -2, -1)
 						$.player.coward = true
 					}
 					menu(true)
@@ -318,7 +316,7 @@ function choice() {
 				}
                 if (!$.lock(opponent.user.id)) {
                     $.beep()
-                    xvt.out(`\n${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
+                    xvt.out(xvt.faint, xvt.cyan, `\n${$.who(opponent, 'He')}is currently engaged elsewhere and not available.`, xvt.reset, '\n')
 					menu(true)
 					return
                 }
