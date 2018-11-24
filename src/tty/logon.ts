@@ -291,6 +291,7 @@ function welcome() {
                             }
                         }
                         $.PC.adjust('cha', -(4 - $.player.steal), -$.int((4 - $.player.steal) / 2, true))
+                        $.player.status = ''
                     }
                     else {
                         xvt.out(xvt.bright, xvt.red, 'You are left brooding with your fellow cellmates.', xvt.reset, '\n')
