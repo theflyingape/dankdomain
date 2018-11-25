@@ -70,7 +70,7 @@ export function menu(suppress = true) {
 				$.saveUser(bump)
 				$.log(bump.user.id, `\nYou picked ${$.player.handle}'s pouch holding ${v.carry()}!`)
 				$.player.coin.value -= v.value
-				xvt.out(xvt.faint, '{sigh}', xvt.reset, '\n')
+				xvt.outln(xvt.faint, '{sigh}')
 				$.sound('oops', 8)
 				xvt.out('You notice your pouch of '
 					, xvt.bright, [xvt.red,xvt.cyan,xvt.yellow,xvt.magenta][i], ['copper','silver','gold','platinum'][i]
@@ -515,7 +515,7 @@ function Bank() {
 		'coin': { cb:amount, max:24 }
 	}
 
-	xvt.out(xvt.reset, '\n')
+	xvt.outln()
 
     switch (choice) {
 		case 'D':
@@ -560,7 +560,7 @@ function Bank() {
 			xvt.out(' you open a chest and find ', carry.carry(), '!\n')
 			$.sound('creak2', 25)
 
-			xvt.out(xvt.reset, '\n')
+			xvt.outln()
 			xvt.out('You try to make your way out of the vault')
 			let deposits = new $.coins($.query(`SELECT SUM(bank) AS bank FROM Players WHERE id NOT GLOB '_*' AND id <> '${$.player.id}'`)[0].bank)
 			if (deposits.value) {

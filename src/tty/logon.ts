@@ -250,7 +250,7 @@ function password() {
         xvt.out(xvt.faint, $.sysop.plays.toString(), ' plays since this game started')
     else
         xvt.out('new game starts', xvt.bright, xvt.yellow)
-    xvt.out(' ', $.date2full($.sysop.dob), xvt.reset, '\n')
+    xvt.outln(' ', $.date2full($.sysop.dob))
     xvt.out(xvt.cyan, 'Last on: ', xvt.bright, xvt.white, $.date2full($.player.lastdate), xvt.normal, '\n')
     xvt.out(xvt.cyan, ' Online: ', xvt.bright, xvt.white, $.player.handle, xvt.normal
         , '  -  ', $.whereis, '\n')
@@ -294,7 +294,7 @@ function welcome() {
                         $.player.status = ''
                     }
                     else {
-                        xvt.out(xvt.bright, xvt.red, 'You are left brooding with your fellow cellmates.', xvt.reset, '\n')
+                        xvt.outln(xvt.bright, xvt.red, 'You are left brooding with your fellow cellmates.')
                         xvt.waste(1234)
                         $.access = $.Access.name['Prisoner']
                     }
@@ -355,7 +355,7 @@ function welcome() {
             $.player.jl = 0
             $.player.jw = 0
         }
-        xvt.out(xvt.reset, '\n')
+        xvt.outln()
 
         $.player.calls++
         $.player.plays++
@@ -370,7 +370,8 @@ function welcome() {
         if ($.player.pc === 'None') {
             $.music('reroll')
             if ($.player.novice) {
-                xvt.out(xvt.reset, '\n', xvt.bright)
+                xvt.outln()
+                xvt.out(xvt.bright)
                 $.cat('intro')
                 xvt.app.form = {
                     'pause': { cb:$.playerPC, pause:true, timeout:200 }

@@ -107,7 +107,7 @@ function choice() {
 				xvt.out('\nJousting ability:\n\n', xvt.bright)
 				xvt.out(xvt.green, sprintf('%-25s', opponent.user.handle), xvt.white, sprintf('%4d', versus), '\n')
 				xvt.out(xvt.green, sprintf('%-25s', $.player.handle), xvt.white, sprintf('%4d', ability), '\n')
-				xvt.out(xvt.reset, '\n')
+				xvt.outln()
 				if ((ability + factor * $.player.level) < (versus + 1)) {
 					xvt.out(opponent.user.handle, ' laughs rudely in your face!\n\n')
 					menu(true)
@@ -325,7 +325,7 @@ function choice() {
 
 				if (!$.lock(opponent.user.id)) {
 					$.beep()
-					xvt.out(xvt.faint, xvt.cyan, `${$.who(opponent, 'He')}is currently engaged elsewhere and not available.`, xvt.reset, '\n')
+					xvt.outln(xvt.faint, xvt.cyan, `${$.who(opponent, 'He')}is currently engaged elsewhere and not available.`)
 					menu()
 					return
 				}
@@ -455,9 +455,8 @@ function MonsterFights(): boolean {
 					xvt.app.focus = 'fight'
 					return
 				}
-				xvt.out(xvt.cyan, 'His eyes glow ', xvt.bright, xvt.red, 'red', xvt.normal
-					, xvt.cyan, ' and he says, "', xvt.bright, xvt.white, 'I don\'t make deals!'
-					, xvt.normal, xvt.cyan, '"\n', xvt.reset)
+				xvt.outln(xvt.cyan, 'His eyes glow ', xvt.bright, xvt.red, 'red', xvt.normal
+					, xvt.cyan, ' and he says, "', xvt.bright, xvt.white, 'I don\'t make deals!', xvt.normal, xvt.cyan, '"')
 				menu()
 			}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:10 },
 			'fight': { cb:() => {

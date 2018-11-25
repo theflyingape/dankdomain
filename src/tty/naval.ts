@@ -136,9 +136,7 @@ function choice() {
 				if ($.dice($.player.level / 3 + 2) == 1) {
 					xvt.out('n old sea hag!\n\n')
 					xvt.waste(600)
-					xvt.out(xvt.bright, xvt.green,
-						'She cackles as you are sent spinning elsewhere...',
-						xvt.reset, '\n')
+					xvt.outln(xvt.bright, xvt.green, 'She cackles as you are sent spinning elsewhere ... ')
 					$.sound('crone', 24)
 					require('./dungeon').DeepDank($.player.level + 3 * $.dice($.player.level), () => {
 						$.action('clear')
@@ -146,9 +144,8 @@ function choice() {
 						$.profile({ jpg:'npc/seahag', effect:'fadeInUp'
 							, handle:$.seahag.user.handle, level:$.seahag.user.level, pc:$.seahag.user.pc })
 						xvt.waste(500)
-						xvt.out(xvt.magenta, '\n"', xvt.bright, xvt.yellow
-							, 'You have escaped my magic, mortal?  Now try me!', xvt.normal, xvt.magenta
-							, '"\n', xvt.reset)
+						xvt.outln(xvt.magenta, '\n"', xvt.bright, xvt.yellow
+							, 'You have escaped my magic, mortal?  Now try me!', xvt.normal, xvt.magenta, '"')
 						xvt.waste(500)
 						$.loadUser($.seahag)
 						$.cat(`naval/${$.seahag}`.toLowerCase())
@@ -176,9 +173,7 @@ function choice() {
 					}
 					$.activate($.neptune)
 					$.cat(`naval/${$.neptune.user.handle}`.toLowerCase())
-					xvt.out(xvt.bright, xvt.cyan,
-						'He looks at you angrily as he removes a hook from his shorts!',
-						xvt.reset, '\n')
+					xvt.outln(xvt.bright, xvt.cyan, 'He looks at you angrily as he removes a hook from his shorts!')
 					$.sound('neptune', 32)
 
 					if (isNaN(+$.neptune.user.weapon)) xvt.out('\n', $.who($.neptune, 'He'), $.Weapon.wearing($.neptune), '.\n')
@@ -311,12 +306,8 @@ function choice() {
 
 		case 'L':
 			xvt.out('\n')
-			xvt.out(xvt.Blue, xvt.bright,
-				' ID             Username            Hull     Cannons     Ram'
-				, xvt.reset, '\n')
-			xvt.out(xvt.Blue, xvt.bright,
-				'----     ----------------------     ----     -------     ---'
-				, xvt.reset, '\n')
+			xvt.outln(xvt.Blue, xvt.bright, ' ID             Username            Hull     Cannons     Ram')
+			xvt.outln(xvt.Blue, xvt.bright, '----     ----------------------     ----     -------     ---')
 			rs = $.query(`SELECT id,handle,hull,cannon,ram FROM Players WHERE hull > 0 ORDER BY hull DESC`)
 			for (let i in rs) {
 				xvt.out(sprintf('%-4s     %-22s     %4u     %5u        %s\n'
@@ -622,10 +613,9 @@ function BattleUser(nme: active) {
 					else {
 						$.PC.adjust('cha', -2, -1)
 						$.player.retreats++
-						xvt.out(xvt.bright, xvt.cyan, '\nYou sail '
+						xvt.outln(xvt.bright, xvt.cyan, '\nYou sail '
 							, xvt.normal, 'away safely '
-							, xvt.faint, 'out of range.'
-							, xvt.reset, '\n')
+							, xvt.faint, 'out of range.')
 						$.saveUser(nme, false, true)
 						$.run(`UPDATE Players set hull=${$.player.hull},cannon=${$.player.cannon},ram=${+$.player.ram},retreats=${$.player.retreats} WHERE id='${$.player.id}'`)
                         $.log(nme.user.id, `\n${$.player.handle}, the coward, sailed away from you.`)
@@ -926,10 +916,8 @@ function MonsterHunt() {
 		if (!sm.ram || ($.dice(sm.shot * sm.hull / (sm.hull - $.online.hull) + 3 * sm.shot) > 1)) {
 			for (let i = 0; i < sm.shot; i++)
 				damage += $.dice(sm.powder) + $.dice(sm.powder)
-			xvt.out('\n', xvt.bright, xvt.blue, `The ${sm.name} attacks your ship, causing`
-				, xvt.cyan, ` ${damage} `
-				, xvt.blue, `hull points of damage.`)
-			xvt.out(xvt.reset, '\n')
+			xvt.outln('\n', xvt.bright, xvt.blue, `The ${sm.name} attacks your ship, causing`
+				, xvt.cyan, ` ${damage} `, xvt.blue, `hull points of damage.\n`)
 			xvt.waste(250)
 		}
 		else

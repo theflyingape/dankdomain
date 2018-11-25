@@ -94,10 +94,8 @@ function choice() {
 
         case 'M':
             xvt.out('\n')
-            xvt.out(xvt.Blue, xvt.white, ' ID   Player\'s Handle           Class    Lvl  Status  Party               '
-                , xvt.reset, '\n')
-            xvt.out(xvt.Blue, xvt.white, '--------------------------------------------------------------------------'
-                , xvt.reset, '\n')
+            xvt.outln(xvt.Blue, xvt.white, ' ID   Player\'s Handle           Class    Lvl  Status  Party               ')
+            xvt.outln(xvt.Blue, xvt.white, '--------------------------------------------------------------------------')
 
             let rs = $.query(`
                 SELECT id, handle, pc, level, xplevel, status, gang, access FROM Players
@@ -126,7 +124,7 @@ function choice() {
                 //  paint highest badge of honor achieved
                 if ($.Access.name[rs[n].access].promote == 0)
                     xvt.out(' ', $.Access.name[rs[n].access].emoji)
-                xvt.out(xvt.reset, '\n')
+                xvt.outln()
             }
             suppress = true
             break

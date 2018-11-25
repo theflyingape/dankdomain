@@ -201,7 +201,8 @@ export function menu(suppress = false) {
 	ROOM = DL.rooms[y][x]
 	if ($.dice(DL.spawn * (ROOM.type == 0 ? 2 : ROOM.type == 3 ? 1 : 3)) == 1) {
 		let s = $.dice(5) - 1
-		xvt.out(xvt.reset, '\n', xvt.faint, ['Your skin crawls'
+		xvt.outln()
+		xvt.out(xvt.faint, ['Your skin crawls'
 			, 'Your pulse quickens', 'You feel paranoid', 'Your grip tightens'
 			, 'You stand ready'][s], ' from hearing a ')
 		if (s == 1) $.sound('pulse')
@@ -317,7 +318,7 @@ export function menu(suppress = false) {
 			xvt.out(`\nYour ${$.player.armor} is damaged beyond repair; you toss it aside.`)
 			$.Armor.equip($.online, $.Armor.merchant[0])
 		}
-		xvt.out(xvt.reset, '\n')
+		xvt.outln()
 		if ($.reason) {
 			xvt.save()
 			xvt.out(`\x1B[1;${$.player.rows}r`)
@@ -472,11 +473,11 @@ function command() {
 
 function oof(wall:string) {
 	$.sound('wall')
-	xvt.out(xvt.bright, xvt.yellow, 'Oof!  There is a wall to the ', wall, '.\n', xvt.reset)
+	xvt.outln(xvt.bright, xvt.yellow, 'Oof!  There is a wall to the ', wall, '.')
 	xvt.waste(600)
 	if (($.online.hp -= $.dice(deep + Z + 1)) < 1) {
-		xvt.out(xvt.faint, '\nYou take too many hits and die!', xvt.reset, '\n')
 		$.music('.')
+		xvt.outln(xvt.faint, '\nYou take too many hits and die!')
 		xvt.waste(600)
 		$.death(Battle.retreat ? 'running into a wall' : 'banged head against a wall')
 	}
@@ -505,7 +506,7 @@ function doMove(): boolean {
 		if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
 	}
 
-	xvt.out(xvt.reset, '\n')
+	xvt.outln()
 	if (looked) return true
 
 	//	monsters?
@@ -546,7 +547,7 @@ function doMove(): boolean {
 		for (let n = 0; n < ROOM.monster.length; n++) {
 			if (ROOM.monster.length < 4) {
 				$.cat('dungeon/' + ROOM.monster[n].user.handle)
-				xvt.out(xvt.reset, '\n')
+				xvt.outln()
 			}
 
 			let what = ROOM.monster[n].user.handle
@@ -565,11 +566,11 @@ function doMove(): boolean {
 				if (isNaN(+ROOM.monster[n].user.armor)) xvt.out('\n', $.who(ROOM.monster[n], 'He'), $.Armor.wearing(ROOM.monster[n]), '.\n')
 			}
 			else {
-				xvt.out(xvt.bright, xvt.yellow, 'and it\'s '
+				xvt.outln(xvt.bright, xvt.yellow, 'and it\'s '
 					, [ 'bewitched', 'charmed', 'dazzled', 'impressed', 'seduced' ][$.dice(5) - 1]
 					, ' by your '
 					, [ 'awesomeness', 'elegance', 'presence', $.player.armor, $.player.weapon ][$.dice(5) - 1]
-					, '!', xvt.reset, '\n')
+					, '!')
 				ROOM.monster[n].user.gender = 'FM'[$.dice(2) - 1]
 				ROOM.monster[n].user.handle = xvt.attr(xvt.faint, xvt.cyan, 'charmed ', ROOM.monster[n].user.handle, xvt.reset)
 				ROOM.monster[n].user.xplevel = $.dice(4) - 2
@@ -930,7 +931,7 @@ function doMove(): boolean {
 						}
 						break
 					}
-					xvt.out(xvt.reset, '\n')
+					xvt.outln()
 					pause = true
 					refresh = true
 					menu()
@@ -1136,7 +1137,7 @@ function doMove(): boolean {
 					xvt.out(xvt.normal, xvt.magenta, 'He teleports away!')
 					$.sound('teleport', 8)
 				}
-				xvt.out(xvt.reset, '\n')
+				xvt.outln()
 			}
 			else {
 				escape.occupant = 5
@@ -1187,8 +1188,8 @@ function doMove(): boolean {
 
 		case 6:
 			if (!DL.cleric.hp) {
-				xvt.out(xvt.yellow, 'You find the ', xvt.white, 'bones'
-					, xvt.yellow, ' of an ', xvt.faint, 'old cleric', xvt.normal, '.', xvt.reset, '\n')
+				xvt.outln(xvt.yellow, 'You find the ', xvt.white, 'bones'
+					, xvt.yellow, ' of an ', xvt.faint, 'old cleric', xvt.normal, '.')
 				xvt.out('You pray for him.\n')
 				break
 			}
@@ -1207,17 +1208,16 @@ function doMove(): boolean {
 			}
 
 			if ($.online.hp >= $.player.hp || cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, cast)) {
-				xvt.out(xvt.yellow, '"I will pray for you."', xvt.reset, '\n')
+				xvt.outln(xvt.yellow, '"I will pray for you."')
 				break
 			}
 
 			let power = $.int(100 * DL.cleric.sp / DL.cleric.user.sp)
 			if (DL.map < 2 && power > 95) $.profile({ jpg:'npc/old cleric', effect:'zoomInUp' })
-			xvt.out(xvt.yellow, 'There is an ', xvt.faint, 'old cleric', xvt.normal
+			xvt.outln(xvt.yellow, 'There is an ', xvt.faint, 'old cleric', xvt.normal
 				, xvt.normal, ' in this room with '
 				, power < 40 ? xvt.faint : power < 80 ? xvt.normal : xvt.bright, `${power}`
-				, xvt.normal, '% spell power.'
-				, xvt.reset, '\n')
+				, xvt.normal, '% spell power.')
 			xvt.out('He says, ')
 			if ($.online.hp > $.int($.player.hp / 2) || ($.int(deep / 4) + 3) * cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, 13)) {
 				xvt.out('"I can ', DL.cleric.sp < $.Magic.power(DL.cleric, 13) ? 'only' : 'surely'
@@ -1283,7 +1283,7 @@ function doMove(): boolean {
 			if (!$.player.cursed && !$.player.novice && $.dice((Z > $.player.level ? Z : 1) + 20 * $.player.immortal + $.player.level + $.online.cha) == 1) {
 				$.player.coward = true
 				xvt.waste(600)
-				xvt.out(xvt.bright, 'He curses you!', xvt.reset, '\n')
+				xvt.outln(xvt.bright, 'He curses you!')
 				$.sound('morph', 6)
 				$.PC.adjust('str', -10)
 				$.PC.adjust('int', -10)
@@ -1298,16 +1298,16 @@ function doMove(): boolean {
 					xvt.out(xvt.faint, 'A dark cloud hovers over')
 				}
 				$.saveUser($.player)
-				xvt.out(' you.', xvt.reset, '\n')
+				xvt.outln(' you.')
 				$.news(`\tcursed by a wizard!`)
 				$.player.coward = false
 				$.online.altered = true
+				generateLevel()
 			}
 			else if (!$.player.novice && $.dice(Z + $.online.cha) == 1) {
 				xvt.waste(600)
-				xvt.out(xvt.faint, 'He waves a hand at you ... ')
-				xvt.waste(600)
-				xvt.out(xvt.reset, '\n')
+				xvt.out(xvt.faint, 'He waves a hand at you ... '); xvt.waste(600)
+				xvt.outln()
 				$.animated('flipOutY')
 				$.sound('teleport', 12)
 				generateLevel()
@@ -1339,12 +1339,11 @@ function doMove(): boolean {
 			gold = new $.coins(gold.carry(1, true))
 			if (gold.value) {
 				$.sound('yahoo', 10)
-				xvt.out(xvt.yellow, 'You find a ', xvt.bright, 'treasure chest'
-					, xvt.normal, ' holding ', gold.carry(), '!'
-					, xvt.reset, '\n')
+				xvt.outln(xvt.yellow, 'You find a ', xvt.bright, 'treasure chest'
+					, xvt.normal, ' holding ', gold.carry(), '!')
 			}
 			else {
-				xvt.out(xvt.faint, xvt.yellow, 'You find an empty, treasure chest.\n', xvt.reset)
+				xvt.outln(xvt.faint, xvt.yellow, 'You find an empty, treasure chest.')
 				$.sound('boo')
 			}
 			$.player.coin.value += gold.value
@@ -1354,10 +1353,9 @@ function doMove(): boolean {
 
 		case 'magic':
 			if (!$.Magic.have($.player.spells, ROOM.giftValue)) {
-				xvt.out(xvt.bright, xvt.yellow, 'You find a '
+				xvt.outln(xvt.bright, xvt.yellow, 'You find a '
 					, xvt.cyan, $.Magic.merchant[ROOM.giftValue - 1], xvt.yellow
-					, ' ', $.player.magic == 1 ? 'wand' : 'scroll', '!'
-					, xvt.reset, '\n')
+					, ' ', $.player.magic == 1 ? 'wand' : 'scroll', '!')
 				$.Magic.add($.player.spells, ROOM.giftValue)
 				pause = true
 				ROOM.giftItem = ''
@@ -1427,7 +1425,7 @@ function doMove(): boolean {
 			else {
 				let auto = $.dice(2) < 2
 				xvt.waste(600)
-				xvt.out(xvt.faint, '\nYou ', auto ? 'quaff' : 'toss', ' it without hesitation.', xvt.reset, '\n')
+				xvt.outln(xvt.faint, '\nYou ', auto ? 'quaff' : 'toss', ' it without hesitation.')
 				xvt.waste(600)
 				quaff(ROOM.giftValue, auto)
 				ROOM.giftItem = ''
@@ -1435,16 +1433,15 @@ function doMove(): boolean {
 			break
 
 		case 'weapon':
-			xvt.out(xvt.yellow, 'The weapon shop is closed.\n', xvt.reset)
+			xvt.outln(xvt.yellow, 'The weapon shop is closed.')
 			$.sound('boo')
 			break
 
 		case 'xmagic':
 			if (!$.Magic.have($.player.spells, ROOM.giftValue)) {
-				xvt.out(xvt.bright, xvt.yellow, 'You find a '
+				xvt.outln(xvt.bright, xvt.yellow, 'You find a '
 					, xvt.magenta, $.Magic.special[ROOM.giftValue - $.Magic.merchant.length - 1], xvt.yellow
-					, ' ', $.player.magic == 1 ? 'wand' : 'scroll', '!'
-					, xvt.reset, '\n')
+					, ' ', $.player.magic == 1 ? 'wand' : 'scroll', '!')
 				$.Magic.add($.player.spells, ROOM.giftValue)
 				pause = true
 				ROOM.giftItem = ''
@@ -1559,9 +1556,9 @@ function doSpoils() {
 			let m = ($.dice(Z / 33 + 2) > 1 ? 1 : 2)
 			if (DL.map < m) {
 				DL.map = m
-				xvt.out('\n', xvt.bright, xvt.yellow
+				xvt.outln('\n', xvt.bright, xvt.yellow
 					, 'You find a', m == 2 ? ' magic ' : ' '
-					, 'map!', xvt.reset, '\n')
+					, 'map!')
 				pause = true
 			}
 		}
@@ -2482,8 +2479,7 @@ function teleport() {
 						xvt.save()
 						xvt.out(`\x1B[1;${$.player.rows}r`)
 						xvt.restore()
-						xvt.out(xvt.lblue, '\n"Next time you won\'t escape so easily... moo-hahahahaha!!"', xvt.reset, '\n')
-						xvt.waste(1250)
+						xvt.outln(xvt.lblue, '\n"Next time you won\'t escape so easily... moo-hahahahaha!!"')
 						fini()
 						return
 					}

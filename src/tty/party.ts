@@ -89,10 +89,8 @@ function choice() {
 
         case 'M':
             xvt.out('\n')
-            xvt.out(xvt.Blue, xvt.bright, '        Party            Win-Loss   Ratio '
-                , xvt.reset, '\n')
-            xvt.out(xvt.Blue, xvt.bright, '------------------------------------------'
-                , xvt.reset, '\n')
+            xvt.outln(xvt.Blue, xvt.bright, '        Party            Win-Loss   Ratio ')
+            xvt.outln(xvt.Blue, xvt.bright, '------------------------------------------')
             rs = $.query(`SELECT * FROM Gangs ORDER BY win DESC, loss ASC`)
             let crown = true
             for (let i in rs) {
@@ -531,12 +529,12 @@ function choice() {
 }
 
 function showGang(lg: gang, rg?: gang, engaged = false) {
-    xvt.out(xvt.reset, '\n')
+    xvt.outln()
 
     xvt.out(xvt.bright, xvt.white, mp[lg.banner])
     if (rg)
         xvt.out(' '.repeat(31), mp[rg.banner])
-    xvt.out(xvt.reset, '\n')
+    xvt.outln()
 
     xvt.out(' |', xvt.Black + lg.back, xvt.black + lg.fore, xvt.bright)
     xvt.out(le[lg.trim], tb[lg.trim].repeat(26), re[lg.trim], xvt.reset)
@@ -544,7 +542,7 @@ function showGang(lg: gang, rg?: gang, engaged = false) {
         xvt.out(' '.repeat(4), ' |', xvt.Black + rg.back, xvt.black + rg.fore, xvt.bright)
         xvt.out(le[rg.trim], tb[rg.trim].repeat(26), re[rg.trim])
     }
-    xvt.out(xvt.reset, '\n')
+    xvt.outln()
 
     xvt.out(' |', xvt.Black + lg.back, xvt.black + lg.fore, xvt.bright)
     let i = 26 - lg.name.length
@@ -554,7 +552,7 @@ function showGang(lg: gang, rg?: gang, engaged = false) {
         i = 26 - rg.name.length
         xvt.out(le[rg.trim], ' '.repeat(i >>1), rg.name, ' '.repeat((i >>1) + i % 2), re[rg.trim])
     }
-    xvt.out(xvt.reset, '\n')
+    xvt.outln()
 
     xvt.out(' |', xvt.Black + lg.back, xvt.black + lg.fore, xvt.bright)
     xvt.out(le[lg.trim], tb[lg.trim].repeat(26), re[lg.trim], xvt.reset)
@@ -562,7 +560,7 @@ function showGang(lg: gang, rg?: gang, engaged = false) {
         xvt.out(' '.repeat(4), ' |', xvt.Black + rg.back, xvt.black + rg.fore, xvt.bright)
         xvt.out(le[rg.trim], tb[rg.trim].repeat(26), re[rg.trim])
     }
-    xvt.out(xvt.reset, '\n')
+    xvt.outln()
 
     let n = 0
     let who: { handle:string, status:string, gang:string }[]
@@ -647,7 +645,7 @@ function showGang(lg: gang, rg?: gang, engaged = false) {
                 if (!engaged)
                     xvt.out(sprintf(' -open invitation to join- '))
         }
-        xvt.out(xvt.reset, '\n')
+        xvt.outln()
         n++
     }
 }

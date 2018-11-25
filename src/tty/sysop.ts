@@ -52,10 +52,8 @@ function choice() {
 
         case 'B':
             xvt.out('\n')
-            xvt.out(xvt.Blue, xvt.white, ' ID   Player\'s Handle           Class    Lvl  '
-                , xvt.reset, '\n')
-            xvt.out(xvt.Blue, xvt.white, '----------------------------------------------'
-                , xvt.reset, '\n')
+            xvt.outln(xvt.Blue, xvt.white, ' ID   Player\'s Handle           Class    Lvl  ')
+            xvt.outln(xvt.Blue, xvt.white, '----------------------------------------------')
             rs = $.query(`SELECT * FROM Players WHERE blessed !='' OR cursed !='' OR coward != 0`)
             for (let n in rs) {
                 //  paint a target on any player that is winning
@@ -67,7 +65,7 @@ function choice() {
                 if (rs[n].blessed) xvt.out(` blessed by ${rs[n].blessed} `)
                 if (rs[n].cursed) xvt.out(` cursed by ${rs[n].cursed} `)
                 if (rs[n].coward) xvt.out($.bracket('COWARD', false))
-                xvt.out(xvt.reset, '\n')
+                xvt.outln()
             }
             xvt.app.form['pause'] = { cb:menu, pause:true }
             xvt.app.focus = 'pause'

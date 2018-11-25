@@ -125,7 +125,7 @@ function choice() {
             return
 
         case 'L':
-            xvt.out(xvt.green, '\n        --=:)) Tavern Bounty List ((:=--', xvt.reset, '\n\n')
+            xvt.outln(xvt.green, '\n        --=:)) Tavern Bounty List ((:=--\n')
             let rs = $.query(`SELECT handle,bounty,who FROM Players WHERE bounty > 0 ORDER BY level DESC`)
             for (let i in rs) {
                 let adversary = <active>{ user:{ id:rs[i].who } }
@@ -230,11 +230,10 @@ function choice() {
                     $.sound('challenge', 12)
                     xvt.out(`  And ${$.who($.barkeep,'he')}doesn\'t look friendly...\n\n`)
                     xvt.waste(600)
-                    xvt.out(xvt.bright, xvt.green, [
+                    xvt.outln(xvt.bright, xvt.green, [
                         '"When I\'m through with you, your mama won\'t be able to identify the remains."',
                         '"I am getting too old for this."',
-                        '"Never rub another man\'s rhubarb!"'][$.dice(3) - 1]
-                        , xvt.reset, '\n\n')
+                        '"Never rub another man\'s rhubarb!"'][$.dice(3) - 1], '\n')
                     xvt.waste(3000)
 
                     $.loadUser($.barkeep)
@@ -242,23 +241,19 @@ function choice() {
                     $.barkeep.toAC += $.Armor.merchant.length - $.barkeep.armor.ac
                     $.barkeep.user.spells = JSON.parse(fs.readFileSync('./etc/barkeep.json').toString()).spells
                     xvt.out(`${$.barkeep.user.handle} towels ${$.who($.barkeep,'his')}hands dry from washing the day\'s\nglasses, ${$.who($.barkeep,'he')}warns,\n\n`)
-                    xvt.out(xvt.bright, xvt.green, '"Another fool said something like that to me, once, and got all busted up."'
-                        , xvt.reset, '\n\n')
+                    xvt.outln(xvt.bright, xvt.green, '"Another fool said something like that to me, once, and got all busted up."\n')
                     xvt.waste(5000)
                     let fool = <active>{ user:{ id:$.barkeep.user.status, gender:'M' }}
                     if ($.barkeep.user.status) {
                         $.loadUser(fool)
-                        xvt.out(xvt.bright, xvt.green, `"I think it was ${fool.user.handle}, and it took me a week to clean up the blood!"`
-                            , xvt.reset, '\n\n')
+                        xvt.outln(xvt.bright, xvt.green, `"I think it was ${fool.user.handle}, and it took me a week to clean up the blood!"\n`)
                         xvt.waste(4000)
                     }
 
                     $.music('tiny')
                     xvt.out(`${$.who($.barkeep,'He')}points to a buffed weapon hanging over the mantlepiece and says, `
                         , xvt.bright, xvt.green, '"Lookee\n')
-                    xvt.out(`there, ${$.who(fool,'he')}tried to use that ${$.barkeep.user.weapon}, but it wasn't enough\n`
-                        , `to take me.\"`
-                        , xvt.reset, '\n\n')
+                    xvt.outln(`there, ${$.who(fool,'he')}tried to use that ${$.barkeep.user.weapon}, but it wasn't enough\nto take me.\"\n`)
                     xvt.waste(6000)
                     xvt.out('The patrons move in closer to witness the forthcoming slaughter, except for\n')
                     xvt.out(`${$.taxman.user.handle} who is busy raiding the bar of its beer and nuts.\n\n`)
@@ -316,7 +311,7 @@ function choice() {
 				}
                 if (!$.lock(opponent.user.id)) {
                     $.beep()
-                    xvt.out(xvt.faint, xvt.cyan, `\n${$.who(opponent, 'He')}is currently engaged elsewhere and not available.`, xvt.reset, '\n')
+                    xvt.outln(xvt.faint, xvt.cyan, `\n${$.who(opponent, 'He')}is currently engaged elsewhere and not available.`)
 					menu(true)
 					return
                 }

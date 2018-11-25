@@ -544,7 +544,7 @@ export function activate(one: active, keep = false, confused = false): boolean {
     if (keep) {
         if (!lock(one.user.id, one.user.id === player.id ? 1 : 2) && one.user.id !== player.id) {
             xvt.beep()
-            xvt.out('\n', xvt.cyan, xvt.bright, one.user.handle, ' is engaged elsewhere.', xvt.reset, '\n')
+            xvt.outln('\n', xvt.cyan, xvt.bright, one.user.handle, ' is engaged elsewhere.')
             xvt.waste(500)
             return false
         }
@@ -585,16 +585,14 @@ export function checkXP(rpc: active, cb: Function): boolean {
                 rpc.user.access = Object.keys(Access.name)[++title]
             } while (!xvt.validator.isDefined(Access.name[rpc.user.access][rpc.user.gender]))
             xvt.waste(250)
-            xvt.out(xvt.reset, '\n')
-            xvt.waste(250)
+            xvt.outln(); xvt.waste(250)
             xvt.out(xvt.bright, xvt.yellow
                 , Access.name[king.access][king.gender], ' the ', king.access.toLowerCase()
                 , ', ', king.handle
                 , ', is pleased with your accomplishments\n'
                 , 'and promotes you to', an(rpc.user.access), '!\n')
             xvt.waste(250)
-            xvt.out(xvt.reset, '\n')
-            xvt.waste(250)
+            xvt.outln(); xvt.waste(250)
             news(`\twas promoted to ${rpc.user.access}`)
             wall(`promoted to ${rpc.user.access}`)
         }
@@ -638,18 +636,13 @@ export function checkXP(rpc: active, cb: Function): boolean {
     sound('level')
     access = Access.name[player.access]
     online.altered = true
-    xvt.out('\n')
-    xvt.waste(200)
+    xvt.out('\n'); xvt.waste(125)
     xvt.out('      ', xvt.magenta, '-=', xvt.blue, '>'
         , xvt.bright, xvt.yellow, '*', xvt.normal
-        , xvt.blue, '<', xvt.magenta, '=-\n')
-    xvt.waste(200)
-    xvt.out('\n')
-    xvt.waste(200)
-    xvt.out(xvt.bright, xvt.yellow, 'Welcome to level ', player.level.toString(), '!\n', xvt.reset)
-    xvt.waste(200)
-    xvt.out('\n')
-    xvt.waste(200)
+        , xvt.blue, '<', xvt.magenta, '=-\n'); xvt.waste(125)
+    xvt.out('\n'); xvt.waste(125)
+    xvt.out(xvt.bright, xvt.yellow, 'Welcome to level ', player.level.toString(), '!\n', xvt.reset); xvt.waste(125)
+    xvt.out('\n'); xvt.waste(100)
     wall(`is now a level ${player.level} ${player.pc}`)
 
     let deed = mydeeds.find((x) => { return x.deed === 'levels' })
@@ -899,8 +892,7 @@ export function skillplus(rpc: active, cb: Function) {
             }
 
             online.altered = true
-            xvt.out(xvt.reset, '\n')
-            xvt.waste(2000)
+            xvt.outln(); xvt.waste(2000)
             cb()
         }, prompt:'Choose which: ', cancel:'0', min:1, max:1, match:/^[0-9]/ }
     }
@@ -1058,7 +1050,7 @@ export function keyhint(rpc: active) {
                 xvt.out(xvt.black, `${player.keyhints[i]} from here`)
                 break
             }
-            xvt.out(xvt.reset, '\n')
+            xvt.outln()
         }
     }
     else
@@ -1127,8 +1119,7 @@ export function newkeys(user: user) {
 export function playerPC(points = 200, immortal = false) {
     music('reroll')
     if (points > 240) points = 240
-    xvt.out(xvt.reset, '\n')
-    xvt.waste(1000)
+    xvt.outln(); xvt.waste(1000)
     if (!Access.name[player.access].roleplay) return
 
     if (player.novice) {
@@ -1388,7 +1379,7 @@ export function remake(user: user) {
                     xvt.out('Stealing')
                     break
             }
-            xvt.out(' awarded ', xvt.bright, xvt.yellow, '+', xvt.reset, '\n')
+            xvt.outln(' awarded ', xvt.bright, xvt.yellow, '+')
         }
         if ((user.str += rpc.toStr) > user.maxstr)
             user.str = user.maxstr
@@ -1505,7 +1496,7 @@ export function reroll(user: user, dd?: string, level = 1) {
 export function riddle() {
 
     action('clear')
-    xvt.out(xvt.reset, '\n')
+    xvt.outln()
 
     if (player.coward) {
         player.coward = false
@@ -1577,8 +1568,8 @@ export function riddle() {
         }
     }
 
-    if (bonus) xvt.out(xvt.reset, '\n')
-    xvt.out(xvt.bright, xvt.cyan, '\nYou have become so powerful that you are now immortal and you leave your \n')
+    if (bonus) xvt.outln()
+    xvt.out(xvt.bright, xvt.cyan, '\nYou have become so powerful that you are now immortal and you leave your\n')
     xvt.out('worldly possessions behind.\n')
     loadUser(taxman)
     taxman.user.bank.value +=  player.bank.value + player.coin.value
@@ -1608,10 +1599,9 @@ export function riddle() {
         reason = 'WON THE GAME !!'
         xvt.waste(player.emulation === 'XT' ? 4321 : 432)
 
-        xvt.out(xvt.reset, '\n')
+        xvt.outln()
         xvt.out(xvt.bright, xvt.yellow, 'CONGRATULATIONS!!'
-            , xvt.reset, '  You have won the game!\n\n'
-        )
+            , xvt.reset, '  You have won the game!\n\n')
         profile({ jpg:'winner', effect:'fadeInUp' })
         sound('winner', 21)
 
@@ -1678,7 +1668,7 @@ export function riddle() {
                 xvt.out(xvt.black, 'from around here')
                 break
             }
-            xvt.out(' ', xvt.reset, '\n')
+            xvt.outln(' ')
         }
     }
 
@@ -1878,7 +1868,7 @@ export function emulator(cb:Function) {
             if (xvt.validator.isNotEmpty(xvt.entry) && xvt.entry.length == 2) xvt.emulation = xvt.entry.toUpperCase()
             xvt.out('\n\n', xvt.reset, xvt.magenta, xvt.LGradient[xvt.emulation], xvt.reverse, 'TEST BANNER', xvt.noreverse, xvt.RGradient[xvt.emulation], '\n')
             xvt.out(xvt.red,'R', xvt.green,'G', xvt.blue,'B', xvt.reset, xvt.bright,' bold ', xvt.normal, 'normal', xvt.faint, ' dark')
-            xvt.out(xvt.reset, '\n')
+            xvt.outln()
             online.altered = true
             player.emulation = xvt.emulation
             sound('max', 20)
@@ -1893,7 +1883,7 @@ export function emulator(cb:Function) {
         , enter:player.emulation, match:/VT|PC|XT/i, max:2 },
         'rows': { cb:() => {
             player.rows = +xvt.entry
-            xvt.out(xvt.reset, '\n')
+            xvt.outln()
             xvt.app.focus = 'pause'
         }, prompt:xvt.attr('Enter top visible row number ', xvt.reset, xvt.faint, '[', xvt.reset, xvt.bright, `${player.rows}`, xvt.reset, xvt.faint, ']', xvt.reset, ': ')
         , enter:player.rows.toString(), max:2, match:/^[2-9][0-9]$/ },
@@ -1960,14 +1950,11 @@ export function logoff() {
         xvt.out(xvt.cyan, ' \\ : /                           ', xvt.cyan, '  \\ : / \n')
         xvt.out(xvt.cyan, '  I:I     ', xvt.blue, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Blue, xvt.white, 'Robert Hurst', xvt.reset, xvt.blue, xvt.RGradient[xvt.emulation], xvt.cyan, '      I:I  \n')
         xvt.out(xvt.cyan, ' .I:I. ', xvt.reset, 'https://robert.hurst-ri.us', xvt.cyan, '  .I:I. \n')
-        xvt.out(xvt.reset, '\n')
-        xvt.waste(500)
-        xvt.out(xvt.bright, xvt.black, process.title
+        xvt.outln(); xvt.waste(500)
+        xvt.outln(xvt.bright, xvt.black, process.title
             , xvt.normal, xvt.white, xvt.validator.isNotEmpty(process.env.npm_package_version) ? ' ' + process.env.npm_package_version : ''
             , ' running on ', xvt.bright, xvt.green, 'Node.js ', xvt.normal, process.version, xvt.reset
-            , xvt.faint, ' (', xvt.cyan, process.platform, xvt.white, xvt.faint, ')'
-            , xvt.reset, '\n'
-        )
+            , xvt.faint, ' (', xvt.cyan, process.platform, xvt.white, xvt.faint, ')')
         xvt.waste(1965)
         if (player.today && player.level > 1)
             music(online.hp > 0 ? 'logoff' : 'death')
@@ -2135,7 +2122,7 @@ export function wall(msg: string) {
         xvt.waste(250)
     }
 
-    xvt.out(xvt.reset, '\n')
+    xvt.outln()
 
 
 function isActive(arg: any): arg is active {
@@ -2367,7 +2354,7 @@ export function newDay() {
     sysop.lastdate = now().date
     sysop.lasttime = now().time
     saveUser(sysop)
-    xvt.out(xvt.bright, xvt.yellow, '*', xvt.reset, '\n')
+    xvt.outln(xvt.bright, xvt.yellow, '*')
     xvt.out('All set -- thank you!\n\n')
 }
 

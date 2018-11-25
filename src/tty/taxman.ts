@@ -128,7 +128,7 @@ export function cityguards() {
         if ($.reason) xvt.hangup()
         if (Battle.retreat || Battle.teleported) {
             $.news(`\tgot schooled on economics`)
-            xvt.out(xvt.bright, xvt.cyan, '\nYou got schooled on economics, and pay homage to the Crown.\n', xvt.reset)
+            xvt.outln(xvt.bright, xvt.cyan, '\nYou got schooled on economics, and pay homage to the Crown.')
             xvt.waste(1000)
             $.player.coin.value -= tax.value
             if ($.player.coin.value < 0) {
@@ -143,11 +143,11 @@ export function cityguards() {
             return
         }
 
-        xvt.out(xvt.yellow, '\nThe tax collector ', [
+        xvt.outln(xvt.yellow, '\nThe tax collector ', [
             `mutters, "Good help is hard to find these days..."`,
             `sighs, "If you want a job done right..."`,
             `swears, "That's gonna cost you."`
-            ][$.dice(3) - 1], '\n', xvt.reset)
+            ][$.dice(3) - 1])
         xvt.waste(750)
 
         $.activate($.taxman)

@@ -41,10 +41,8 @@ function choice() {
     switch (choice) {
         case 'C':
             xvt.out('\n')
-            xvt.out(xvt.Red, xvt.white, xvt.bright, '  Class      CHAMPION                  Date      BEST        Deed      '
-                , xvt.reset, '\n')
-            xvt.out(xvt.Red, xvt.white, '-----------------------------------------------------------------------'
-                , xvt.reset)
+            xvt.outln(xvt.Red, xvt.white, xvt.bright, '  Class      CHAMPION                  Date      BEST        Deed      ')
+            xvt.out(xvt.Red, xvt.white, '-----------------------------------------------------------------------', xvt.reset)
             for (let type in $.PC.name)
                 for (let pc in $.PC.name[type]) {
                     let deeds = $.loadDeed(pc)
@@ -67,10 +65,8 @@ function choice() {
 
         case 'H':
             xvt.out('\n')
-            xvt.out(xvt.Magenta, xvt.white, xvt.bright, '  HERO                      Date      GOAT        Deed      '
-                , xvt.reset, '\n')
-            xvt.out(xvt.Magenta, xvt.white, '------------------------------------------------------------'
-                , xvt.reset)
+            xvt.outln(xvt.Magenta, xvt.white, xvt.bright, '  HERO                      Date      GOAT        Deed      ')
+            xvt.out(xvt.Magenta, xvt.white, '------------------------------------------------------------', xvt.reset)
             let type = 'GOAT'
             let deeds = $.loadDeed(type)
             if (deeds.length) {
@@ -86,10 +82,8 @@ function choice() {
             }
 
             xvt.out('\n')
-            xvt.out(xvt.Magenta, xvt.yellow, xvt.bright, '   TOP HERO                Deeds   '
-                , xvt.reset, '\n')
-            xvt.out(xvt.Magenta, xvt.yellow, '-----------------------------------'
-                , xvt.reset, '\n')
+            xvt.outln(xvt.Magenta, xvt.yellow, xvt.bright, '   TOP HERO                Deeds   ')
+            xvt.outln(xvt.Magenta, xvt.yellow, '-----------------------------------')
             let rd = $.query(`
                 SELECT hero, count(*) as n FROM Deeds
                 GROUP BY hero HAVING n > 1
@@ -104,10 +98,8 @@ function choice() {
 
         case 'M':
             xvt.out('\n')
-            xvt.out(xvt.Blue, xvt.white, '  Class      OUTSTANDING               Date      HURT               '
-                , xvt.reset, '\n')
-            xvt.out(xvt.Blue, xvt.white, '--------------------------------------------------------------------'
-                , xvt.reset)
+            xvt.out(xvt.Blue, xvt.white, '  Class      OUTSTANDING               Date      HURT               ')
+            xvt.out(xvt.Blue, xvt.white, '--------------------------------------------------------------------', xvt.reset)
             for (let type in $.PC.name) {
                 for (let pc in $.PC.name[type]) {
                     let deeds = $.loadDeed(pc)
@@ -131,10 +123,8 @@ function choice() {
 
         case 'T':
             xvt.out('\n')
-            xvt.out(xvt.Yellow, xvt.black, ' ID   Player\'s Handle           Class    Lvl  Brawls '
-                , xvt.reset, '\n')
-            xvt.out(xvt.Yellow, xvt.black, '-----------------------------------------------------'
-                , xvt.reset, '\n')
+            xvt.outln(xvt.Yellow, xvt.black, ' ID   Player\'s Handle           Class    Lvl  Brawls ')
+            xvt.outln(xvt.Yellow, xvt.black, '-----------------------------------------------------')
 
             let rs = $.query(`
                 SELECT id, handle, pc, level, tw FROM Players

@@ -284,7 +284,7 @@ function amount() {
 				xvt.bright, xvt.cyan, d2.toString(),
 				xvt.normal, xvt.blue, ']')
 			xvt.waste(600)
-			xvt.out(xvt.white, ' = ', xvt.bright, point.toString(), xvt.reset, '\n')
+			xvt.outln(xvt.white, ' = ', xvt.bright, point.toString())
 			xvt.waste(1000)
 			if (point == 7 || point == 11) {
 				$.sound('cheer')
@@ -367,8 +367,7 @@ function amount() {
 					}
 					$.sound(card[deck[--pick]].value > 0 ? 'click' : 'boom', 6)
 					xvt.out(' - ', card[deck[pick]].emoji, xvt.bright, xvt.red, ' [', xvt.white, card[deck[pick]].face, xvt.red, ']')
-					xvt.out(xvt.reset, '\n')
-					xvt.waste(500)
+					xvt.outln(); xvt.waste(500)
 
 					xvt.out('Dealer picks card #')
 					while ((dealer = $.dice(54)) - 1 == pick);
@@ -695,7 +694,7 @@ function amount() {
 						xvt.out((i + j) % 8 + 30, 'YOU WIN! ')
 						xvt.out(10)
 					}
-					xvt.out(xvt.reset, '\n')
+					xvt.outln()
 				}
 				CherryBomb()
 				$.sound('wild', 50)
@@ -722,7 +721,7 @@ function amount() {
 						xvt.out((i + j) % 8 + 30, 'YOU WIN! ')
 						xvt.out(15)
 					}
-					xvt.out(xvt.reset, '\n')
+					xvt.outln()
 				}
 				CherryBomb()
 				$.sound('wild', 50)
@@ -737,7 +736,7 @@ function amount() {
 					xvt.out(20)
 				}
 				CherryBomb()
-				xvt.out(xvt.reset, '\n')
+				xvt.outln()
 			}
 			else if ((face[0] == 'ORANGE' || face[0] == '*WILD*')
 					&& (face[1] == 'ORANGE' || face[1] == '*WILD*')
@@ -798,7 +797,7 @@ function amount() {
 				xvt.out('🍒 \r')
 				xvt.waste(250)
 			}
-			xvt.out(xvt.bright, xvt.red, '🍒  CHERRY 🍒  ', xvt.reset, '\n')
+			xvt.outln(xvt.bright, xvt.red, '🍒  CHERRY 🍒  ')
 			for (let i = 0; i < 4; i++) {
 				xvt.out(' ', xvt.faint)
 				for (let j = 0; j < i; j++)
@@ -807,7 +806,7 @@ function amount() {
 				xvt.out('💣 \r')
 				xvt.waste(400)
 			}
-			xvt.out(xvt.bright, xvt.black, '💣  BOMB!! 💣  ', xvt.reset, '\n')
+			xvt.outln(xvt.bright, xvt.black, '💣  BOMB!! 💣  ')
 		}
 		else {
 			$.beep()
@@ -850,7 +849,7 @@ function amount() {
 			xvt.bright, xvt.cyan, d2.toString(),
 			xvt.normal, xvt.blue, ']')
 		$.beep()
-		xvt.out(xvt.white, ' = ', xvt.bright, (d1 + d2).toString(), xvt.reset, '\n')
+		xvt.outln(xvt.white, ' = ', xvt.bright, (d1 + d2).toString())
 		if (baby && d1 + d2 !== baby) {
 			$.sound('boo')
 			xvt.out('You lose on the side bet.\n')
