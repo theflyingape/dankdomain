@@ -70,16 +70,15 @@
 <iframe seamless id="Info" name="Info" src="./info.html" style="border: none;" allow="autoplay"></iframe>
 <div hidden id="wall">
   <table style="margin: 0px auto; vertical-align: bottom; white-space: nowrap;">
-    <tr><td><img src="images/joust.png" style="height: 96px; width: 96px;" title="Player versus Player"></td>
-    <td style="text-align: center;"><h2>🤴 <a href="https://DDgame.us"><span style="color:gray !important; font-size:larger">Dank Domain</span></a> 👸<br><span style="color:rosybrown !important; font-size:smaller">the return of Hack &amp; Slash</span></h2></td>
-    <td><img src="images/castle.png" style="height: 160px; width: 160px;" title="Fortune & Glory"></td></tr>
+    <tr><td colspan=2 style="text-align: center;"><h2>🤴 <a href="https://DDgame.us"><span style="color:gray !important; font-size:larger">Dank Domain</span></a> 👸<br><span style="color:rosybrown !important; font-size:smaller">the return of Hack &amp; Slash</span></h2></td>
+    <td><img src="images/castle.png" style="height: 128px; width: 128px;" title="Fortune & Glory"></td></tr>
     <img hidden id="A2HS" src="images/A2HS.png" style="float: right; height: 96px; width: 96px;" onclick="window.location.reload();" title="add to Home Screen"></img>
-    <tr><td></td><td colspan=2>Press <button onclick="window.location.reload();"> REFRESH </button> to re-connect</td></tr>
-    <tr><td></td><td colspan=2>Read today's <a href="today.txt" target="_blank">The Olde Tavern</a> news</td></tr>
-    <tr><td></td><td colspan=2>Watch an online player <select id="lurker-list"></select> refreshes every 30-seconds</td></tr>
-    <tr><td></td><td><hr></td><td rowspan=4><img src="images/dragon.jpg" style="height: 160px; width: 160px;" title="Classic gaming"></td></tr>
+    <tr><td rowspan=4><img src="images/joust.png" style="height: 80px; width: 80px;" title="Player versus Player"></td><td colspan=2>Press <button onclick="window.location.reload();"> REFRESH </button> to re-connect</td></tr>
+    <tr><td colspan=2>Read today's <a href="today.txt" target="_blank">The Olde Tavern</a> news</td></tr>
+    <tr><td colspan=2>Watch an online player <select id="lurker-list"></select> refreshes every 30-seconds</td></tr>
+    <tr><td><hr></td><td rowspan=4 style="vertical-align: top;"><img src="images/dragon.jpg" style="height: 144px; width: 144px;" title="Classic gaming"></td></tr>
     <tr><td><img src="images/chrome.png">&nbsp;</td><td>Google <b>Chrome</b> for Android, mobile or desktop can use<br><i><b>Add to Home Screen...</b></i> menu option to launch as an <b>app</b>&nbsp;</td></tr>
-    <tr><td><img src="images/desktop.png">&nbsp;</td><td>Microsoft <b>Edge</b> and Mozilla <b>Firefox</b> desktop <b>work</b> <br>classic Microsoft <b>I</b>nternet <b>E</b>xplorer is <b>not supported</b></td></tr>
+    <tr id="desktop" hidden><td><img src="images/desktop.png">&nbsp;</td><td>Microsoft <b>Edge</b> and Mozilla <b>Firefox</b> desktop <b>work</b> <br>classic Microsoft <b>I</b>nternet <b>E</b>xplorer is <b>not supported</b></td></tr>
     <tr><td></td><td><hr></td></tr>
     <tr><td colspan=3 style="text-align:right;"><span style="color:rosybrown !important; font-size:smaller"><p>🇺🇸 &copy;2017-2018 <a href="https://robert.hurst-ri.us">Robert Hurst</a> 🧙</p></span></td></tr>
   </table>
@@ -127,6 +126,7 @@
     document.getElementById('terminal').hidden = true;
     document.getElementById('Info').hidden = true;
     document.getElementById('wall').hidden = false;
+    document.getElementById('desktop').hidden = false;
   }
 </script>
 <script src="bundle.js"></script>
