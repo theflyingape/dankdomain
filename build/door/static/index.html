@@ -54,6 +54,12 @@
     background-color: #112244;
     color: aliceblue;
   }
+  td img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+
+  }
 </style>
 <link href="https://fonts.googleapis.com/css?family=Dancing+Script" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono" rel="stylesheet">
@@ -62,22 +68,20 @@
 <body>
 <div id="terminal"></div>
 <iframe seamless id="Info" name="Info" src="./info.html" style="border: none;" allow="autoplay"></iframe>
-<div hidden id="wall" style="padding:4px;">
-  <span style="text-align:center;">
-    <h2>🤴 <a href="https://ddgame.us"><span style="color:gray !important; font-size:larger">Dank Domain</span></a> 👸<br><span style="color:rosybrown !important; font-size:smaller">the return of Hack &amp; Slash</span></h2>
-  </span>
-  <table style="margin: 0px auto; vertical-align:bottom; white-space: nowrap;">
-  <img hidden id="A2HS" src="images/A2HS.png" style="float: right" onclick="window.location.reload();" title="add to Home Screen"></img>
-  <tr><td></td><td>Press <button onclick="window.location.reload();"> REFRESH </button> to re-connect</td></tr>
-  <tr><td></td><td>Read today's <a href="today.txt" target="_blank">The Olde Tavern</a> news</td></tr>
-  <tr><td></td><td>Watch another online player <select id="lurker-list"></select> ⬅️ list refreshes every 30-seconds</td></tr>
-  <tr><td></td><td><hr></td></tr>
-  <tr><td><img src="images/chrome.png">&nbsp;</td><td>Google Android tablet or mobile CHROME's<br><i><b>Create shortcut...</b></i> menu option to launch this as an <b>app</b>
-  </td></tr>
-  <tr><td><img src="images/desktop.png">&nbsp;</td><td>Microsoft <b>Edge</b> and Mozilla <b>Firefox</b> desktop browsers <b>work</b><br>classic Microsoft <b>I</b>nternet <b>E</b>xplorer is <b>not supported</b>
-  </td></tr>
-  <tr><td></td><td><hr></td></tr>
-  <tr><td></td><td style="text-align:right;"><span style="color:rosybrown !important; font-size:smaller"><p>🇺🇸 &copy;2017-2018 <a href="https://robert.hurst-ri.us">Robert Hurst</a> 🧙</p></span></td></tr>
+<div hidden id="wall">
+  <table style="margin: 0px auto; vertical-align: bottom; white-space: nowrap;">
+    <tr><td><img src="images/joust.png" style="height: 128px; width: 128px;" title="Player versus Player"></td>
+    <td style="text-align: center;"><h2>🤴 <a href="https://DDgame.us"><span style="color:gray !important; font-size:larger">Dank Domain</span></a> 👸<br><span style="color:rosybrown !important; font-size:smaller">the return of Hack &amp; Slash</span></h2></td>
+    <td><img src="images/castle.png" style="height: 128px; width: 128px;" title="Fortune & Glory"></td></tr>
+    <img hidden id="A2HS" src="images/A2HS.png" style="float: right" onclick="window.location.reload();" title="add to Home Screen"></img>
+    <tr><td></td><td colspan=2>Press <button onclick="window.location.reload();"> REFRESH </button> to re-connect</td></tr>
+    <tr><td></td><td colspan=2>Read today's <a href="today.txt" target="_blank">The Olde Tavern</a> news</td></tr>
+    <tr><td></td><td colspan=2>Watch another online player <select id="lurker-list"></select> ⬅️ list refreshes every 30-seconds</td></tr>
+    <tr><td></td><td><hr></td><td rowspan=4><img src="images/dragon.jpg" title="Classic gaming"></td></tr>
+    <tr><td><img src="images/chrome.png">&nbsp;</td><td>Google Android tablet or mobile CHROME's<br><i><b>Create shortcut...</b></i> menu option to launch this as an <b>app</b></td></tr>
+    <tr><td><img src="images/desktop.png">&nbsp;</td><td>Microsoft <b>Edge</b> and Mozilla <b>Firefox</b> desktop browsers <b>work</b><br>classic Microsoft <b>I</b>nternet <b>E</b>xplorer is <b>not supported</b></td></tr>
+    <tr><td></td><td><hr></td></tr>
+    <tr><td colspan=3 style="text-align:right;"><span style="color:rosybrown !important; font-size:smaller"><p>🇺🇸 &copy;2017-2018 <a href="https://robert.hurst-ri.us">Robert Hurst</a> 🧙</p></span></td></tr>
   </table>
 </div>
 <audio id="play">
