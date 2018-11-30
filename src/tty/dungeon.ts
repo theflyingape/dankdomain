@@ -734,7 +734,7 @@ function doMove(): boolean {
 						else {
 							$.sound('shimmer')
 							$.player.blessed = 'well'
-							xvt.out(xvt.bright, xvt.yellow, 'You feel a shining aura surround you.')
+							xvt.out(xvt.yellow, 'You feel ', xvt.bright, 'a shining aura', xvt.normal, ' surround you.')
 							$.news(`\twished for a blessing`)
 						}
 						$.PC.adjust('str', 10)
@@ -1007,7 +1007,7 @@ function doMove(): boolean {
 							break
 						case 1:
 							if ($.player.blessed) {
-								xvt.out(xvt.bright, xvt.yellow, '\nYour shining aura has left you.', xvt.reset)
+								xvt.out(xvt.bright, xvt.yellow, '\nYour shining aura ', xvt.normal, 'has left ', xvt.faint, 'you.', xvt.reset)
 								$.player.blessed = ''
 							}
 							else {
@@ -1279,11 +1279,12 @@ function doMove(): boolean {
 
 		case 7:
 			$.profile({ jpg:'npc/wizard', effect:'flash' })
-			xvt.out(xvt.magenta, 'You encounter a ', xvt.bright, 'wizard', xvt.normal, ' in this room.\n\n')
+			xvt.out(xvt.magenta, 'You encounter a ', xvt.bright)
 			if (!$.player.cursed && !$.player.novice && $.dice((Z > $.player.level ? Z : 1) + 20 * $.player.immortal + $.player.level + $.online.cha) == 1) {
+				xvt.outln('doppleganger', xvt.normal, ' waiting for you.\n')
 				$.player.coward = true
 				xvt.waste(600)
-				xvt.outln(xvt.bright, 'He curses you!')
+				xvt.outln(xvt.bright, 'It curses you!')
 				$.sound('morph', 6)
 				$.PC.adjust('str', -10)
 				$.PC.adjust('int', -10)
@@ -1291,28 +1292,30 @@ function doMove(): boolean {
 				$.PC.adjust('cha', -10)
 				if ($.player.blessed) {
 					$.player.blessed = ''
-					xvt.out(xvt.bright, xvt.yellow, 'Your shining aura left')
+					xvt.out(xvt.bright, xvt.yellow, 'Your shining aura ', xvt.normal, 'left')
 				}
 				else {
 					$.player.cursed = 'wiz!'
-					xvt.out(xvt.faint, 'A dark cloud hovers over')
+					xvt.out(xvt.bright, xvt.black, 'A dark cloud hovers over', xvt.reset)
 				}
 				$.saveUser($.player)
 				xvt.outln(' you.')
-				$.news(`\tcursed by a wizard!`)
+				$.news(`\tcursed by a doppleganger!`)
 				$.player.coward = false
 				$.online.altered = true
 				generateLevel()
 			}
 			else if (!$.player.novice && $.dice(Z + $.online.cha) == 1) {
+				xvt.outln('mimic', xvt.normal, ' occupying this space.\n')
 				xvt.waste(600)
-				xvt.out(xvt.faint, 'He waves a hand at you ... '); xvt.waste(600)
+				xvt.out(xvt.faint, 'It waves a hand at you ... '); xvt.waste(600)
 				xvt.outln()
 				$.animated('flipOutY')
 				$.sound('teleport', 12)
 				generateLevel()
 			}
 			else {
+				xvt.outln('wizard', xvt.normal, ' in this room.\n')
 				xvt.save()
 				xvt.out(`\x1B[1;${$.player.rows}r`)
 				xvt.restore()

@@ -339,7 +339,7 @@ function welcome() {
         if ($.player.today < 2) {
             if ($.player.blessed) {
                 $.player.blessed = ''
-                xvt.out(xvt.bright, xvt.yellow, '\nYour shining aura left you.', xvt.reset)
+                xvt.out(xvt.bright, xvt.yellow, '\nYour shining aura ', xvt.normal, 'left ', xvt.faint, 'you.', xvt.reset)
                 $.activate($.online)
             }
             if ($.player.cursed) {

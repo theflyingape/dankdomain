@@ -276,12 +276,12 @@ export function attack(retry = false) {
                     trip = trip < 5 ? 5 : trip > 95 ? 95 : trip
                     if ($.dice(100) > trip) {
                         let who = (enemy.user.gender === 'I' ? 'The ' : '') + enemy.user.handle
-                        xvt.outln(xvt.lyellow, [
+                        xvt.outln(xvt.lcyan, [
                             'You trip and fail in your attempt to retreat.',
                             `${who} pulls you back into the battle.`,
-                            `${who} prevents your retreat and says, "I'm not through with you yet!"`,
-                            `${who} outmaneuvers you and says, "You started this, I'm finishing it."`,
-                            `${who} blocks your path and says, "Where do you want to go today?"`,
+                            `${who} prevents your retreat and says,\n"I'm not through with you yet!"`,
+                            `${who} outmaneuvers you and says, "You started this,\nI'm finishing it."`,
+                            `${who} blocks your path and says,\n"Where do you want to go today?"`,
                         ][$.dice(5) - 1])
                         next()
                         return
@@ -754,7 +754,7 @@ export function spoils() {
                             $.PC.adjust('int', 10, 0, 0, winner)
                             $.PC.adjust('dex', 10, 0, 0, winner)
                             $.PC.adjust('cha', 10, 0, 0, winner)
-                            xvt.outln(xvt.bright, xvt.yellow, 'A shining aura surrounds you.')
+                            xvt.outln(xvt.bright, xvt.yellow, 'A shining aura ', xvt.normal, 'surrounds you.')
                             xvt.waste(600)
                         }
                         $.log(loser.user.id, `... and took your blessedness.`)
@@ -816,16 +816,16 @@ export function spoils() {
         if (winner.user.cursed) {
             if ($.player.blessed) {
                 $.player.blessed = ''
-                xvt.out(xvt.bright, xvt.yellow, 'Your shining aura leaves')
+                xvt.out(xvt.bright, xvt.yellow, 'Your shining aura ', xvt.normal, 'leaves')
             }
             else {
                 $.player.coward = false
                 $.player.cursed = winner.user.id
                 winner.user.coward = false
                 winner.user.cursed = ''
-                xvt.out(xvt.bright, xvt.black, 'A dark cloud hovers over')
+                xvt.out(xvt.bright, xvt.black, 'A dark cloud hovers over', xvt.reset)
             }
-            xvt.out(' you.', xvt.reset)
+            xvt.outln(xvt.faint, ' you.')
             xvt.waste(600)
         }
 
@@ -835,7 +835,7 @@ export function spoils() {
             if ($.player.blessed) {
                 winner.user.blessed = $.player.id
                 $.player.blessed = ''
-                xvt.outln(xvt.bright, xvt.yellow, 'Your shining aura leaves you.')
+                xvt.outln(xvt.bright, xvt.yellow, 'Your shining aura ', xvt.normal, 'leaves ', xvt.faint, 'you.')
                 xvt.waste(600)
             }
             if ($.Weapon.swap(winner, $.online)) {

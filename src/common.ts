@@ -378,7 +378,7 @@ export class Character {
             let who: user = { id:profile.user.cursed }
             if (!loadUser(who)) {
                 if (profile.user.cursed === 'wiz!')
-                    who.handle = 'a wizard!'
+                    who.handle = 'a doppleganger!'
                 else
                     who.handle = profile.user.cursed
             }
