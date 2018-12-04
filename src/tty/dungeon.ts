@@ -1279,17 +1279,23 @@ function doMove(): boolean {
 
 		case 7:
 			$.profile({ jpg:'npc/wizard', effect:'flash' })
+			xvt.waste(200)
 			xvt.out(xvt.magenta, 'You encounter a ', xvt.bright)
 			if (!$.player.cursed && !$.player.novice && $.dice((Z > $.player.level ? Z : 1) + 20 * $.player.immortal + $.player.level + $.online.cha) == 1) {
 				xvt.outln('doppleganger', xvt.normal, ' waiting for you.\n')
 				$.player.coward = true
+				xvt.waste(200)
+				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : ''), effect:'flip' })
 				xvt.waste(600)
 				xvt.outln(xvt.bright, 'It curses you!')
+				$.animated('flipOutY')
 				$.sound('morph', 6)
 				$.PC.adjust('str', -10)
 				$.PC.adjust('int', -10)
 				$.PC.adjust('dex', -10)
 				$.PC.adjust('cha', -10)
+				$.animated('flipOutY')
+				$.sound('teleport', 12)
 				if ($.player.blessed) {
 					$.player.blessed = ''
 					xvt.out(xvt.bright, xvt.yellow, 'Your shining aura ', xvt.normal, 'left')
@@ -1303,19 +1309,42 @@ function doMove(): boolean {
 				$.news(`\tcursed by a doppleganger!`)
 				$.player.coward = false
 				$.online.altered = true
-				generateLevel()
+				//	vacate
+				$.animated('flipOutY')
+				$.sound('teleport', 12)
+				ROOM.occupant = 0
+				let x:number, y:number
+				do {
+					y = $.dice(DL.rooms.length) - 1
+					x = $.dice(DL.width) - 1
+				} while (DL.rooms[y][x].type == 3 || DL.rooms[y][x].occupant)
+				DL.rooms[y][x].occupant = 7
+				pause = true
+				refresh = true
 			}
 			else if (!$.player.novice && $.dice(Z + $.online.cha) == 1) {
 				xvt.outln('mimic', xvt.normal, ' occupying this space.\n')
+				xvt.waste(200)
+				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : ''), effect:'flip' })
 				xvt.waste(600)
 				xvt.out(xvt.faint, 'It waves a hand at you ... '); xvt.waste(600)
 				xvt.outln()
+				//	vacate
 				$.animated('flipOutY')
 				$.sound('teleport', 12)
-				generateLevel()
+				ROOM.occupant = 0
+				let x:number, y:number
+				do {
+					y = $.dice(DL.rooms.length) - 1
+					x = $.dice(DL.width) - 1
+				} while (DL.rooms[y][x].type == 3 || DL.rooms[y][x].occupant)
+				DL.rooms[y][x].occupant = 7
+				pause = true
+				refresh = true
 			}
 			else {
 				xvt.outln('wizard', xvt.normal, ' in this room.\n')
+				xvt.waste(200)
 				xvt.save()
 				xvt.out(`\x1B[1;${$.player.rows}r`)
 				xvt.restore()
