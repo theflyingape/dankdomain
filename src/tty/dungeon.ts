@@ -1286,16 +1286,12 @@ function doMove(): boolean {
 				$.player.coward = true
 				xvt.waste(200)
 				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : ''), effect:'flip' })
-				xvt.waste(600)
 				xvt.outln(xvt.bright, 'It curses you!')
-				$.animated('flipOutY')
-				$.sound('morph', 6)
+				$.sound('morph', 15)
 				$.PC.adjust('str', -10)
 				$.PC.adjust('int', -10)
 				$.PC.adjust('dex', -10)
 				$.PC.adjust('cha', -10)
-				$.animated('flipOutY')
-				$.sound('teleport', 12)
 				if ($.player.blessed) {
 					$.player.blessed = ''
 					xvt.out(xvt.bright, xvt.yellow, 'Your shining aura ', xvt.normal, 'left')
@@ -1326,8 +1322,8 @@ function doMove(): boolean {
 				xvt.outln('mimic', xvt.normal, ' occupying this space.\n')
 				xvt.waste(200)
 				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : ''), effect:'flip' })
-				xvt.waste(600)
-				xvt.out(xvt.faint, 'It waves a hand at you ... '); xvt.waste(600)
+				xvt.waste(750)
+				xvt.out(xvt.faint, 'It waves a hand at you ... '); xvt.waste(750)
 				xvt.outln()
 				//	vacate
 				$.animated('flipOutY')
