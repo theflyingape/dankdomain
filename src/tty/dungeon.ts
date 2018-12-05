@@ -270,45 +270,44 @@ export function menu(suppress = false) {
 	x = $.online.cha * $.online.int / 10 + $.online.dex / (deep + 1) - DL.moves + deep
 	if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
 		x /= $.player.level
-	if (x < 5) x = 5
+	if (x < 6) x = 6
 	if ($.dice(x) == 1) {
-		switch ($.dice(5)) {
-			case 1:
-				xvt.out(xvt.faint, 'A bat flies by and soils your ', xvt.normal)
-				$.sound('splat', 4)
-				$.player.toAC -= $.dice(deep)
-				xvt.out($.player.armor, $.buff($.player.toAC, $.online.toAC))
-				break
-			case 2:
-				xvt.out(xvt.blue, 'A drop of acid water lands on your ')
-				$.sound('drop', 4)
-				$.player.toWC -= $.dice(deep)
-				xvt.out($.player.weapon, $.buff($.player.toWC, $.online.toWC))
-				break
-			case 3:
-				xvt.out(xvt.yellow, 'You trip on the rocky surface and hurt yourself.')
-				$.sound('hurt', 5)
+		let rng = $.dice(16)
+		if (rng > 8) {
+			xvt.out(xvt.faint, 'A bat flies by and soils your ', xvt.normal)
+			$.sound('splat', 4)
+			$.player.toAC -= $.dice(deep)
+			xvt.out($.player.armor, $.buff($.player.toAC, $.online.toAC))
+		}
+		else if (rng > 4) {
+			xvt.out(xvt.blue, 'A drop of acid water lands on your ')
+			$.sound('drop', 4)
+			$.player.toWC -= $.dice(deep)
+			xvt.out($.player.weapon, $.buff($.player.toWC, $.online.toWC))
+		}
+		else if (rng > 2) {
+			xvt.out(xvt.yellow, 'You trip on the rocky surface and hurt yourself.')
+			$.sound('hurt', 5)
+			$.online.hp -= $.dice(Z)
+			if ($.online.hp < 1) $.death('fell down')
+		}
+		else if (rng > 1) {
+			xvt.out(xvt.bright, xvt.red, 'You are attacked by a swarm of bees.')
+			$.sound('crack', 12)
+			for (x = 0, y = $.dice(Z); x < y; x++)
 				$.online.hp -= $.dice(Z)
-				if ($.online.hp < 1) $.death('fell down')
-				break
-			case 4:
-				xvt.out(xvt.bright, xvt.red, 'You are attacked by a swarm of bees.')
-				$.sound('crack', 12)
-				for (x = 0, y = $.dice(Z); x < y; x++)
-					$.online.hp -= $.dice(Z)
-				if ($.online.hp < 1) $.death('killer bees')
-				break
-			case 5:
-				$.music('.')
-				xvt.out(xvt.bright, xvt.white, 'A bolt of lightning strikes you.')
-				$.player.toAC -= $.dice($.online.armor.ac / 2)
-				$.online.toAC -= $.dice($.online.armor.ac / 2)
-				$.player.toWC -= $.dice($.online.weapon.wc / 2)
-				$.online.toWC -= $.dice($.online.weapon.wc / 2)
-				$.online.hp -= $.dice($.player.hp / 2)
-				$.sound('boom', 10)
-				if ($.online.hp < 1) $.death('struck by lightning')
-				break
+			if ($.online.hp < 1) $.death('killer bees')
+		}
+		else {
+			$.music('.')
+			xvt.out(xvt.bright, xvt.white, 'A bolt of lightning strikes you.')
+			$.player.toAC -= $.dice($.online.armor.ac / 2)
+			$.online.toAC -= $.dice($.online.armor.ac / 2)
+			$.player.toWC -= $.dice($.online.weapon.wc / 2)
+			$.online.toWC -= $.dice($.online.weapon.wc / 2)
+			$.online.hp -= $.dice($.player.hp / 2)
+			$.sound('boom', 10)
+			if ($.online.hp < 1) $.death('struck by lightning')
 		}
 		if ($.online.weapon.wc > 0 && $.online.weapon.wc + $.online.toWC + $.player.toWC < 0) {
 			xvt.out(`\nYour ${$.player.weapon} is damaged beyond repair; you toss it aside.`)
@@ -1906,6 +1905,7 @@ function generateLevel() {
 			X = $.dice(DL.width) - 1
 			ROOM = DL.rooms[Y][X]
 		} while (ROOM.type == 3)	//	cannot teleport into a cavern
+		DL.moves >>= 1
 		return
 	}
 

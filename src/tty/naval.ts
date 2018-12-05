@@ -322,7 +322,7 @@ function choice() {
 
 		case 'S':
 			if (!$.access.roleplay) break
-			Shipyard()
+			Shipyard($.player.expert)
 			return
 
 		case 'Q':
@@ -352,7 +352,6 @@ function Shipyard(suppress = true) {
 		'C': { description:'Mount cannons' },
 		'R': { description:'Mount a ram' }
 	}
-	let choice: string
 
 	xvt.app.form = {
         'menu': { cb:master, cancel:'q', enter:'?', eol:false }
@@ -361,17 +360,13 @@ function Shipyard(suppress = true) {
     xvt.app.focus = 'menu'
 
 	function master() {
-		let suppress = $.player.expert
+		let suppress = false
 		let choice = xvt.entry.toUpperCase()
-		if (xvt.validator.isNotEmpty(menu[choice]))
-			if (xvt.validator.isNotEmpty(menu[choice].description)) {
-				xvt.out(' - ', menu[choice].description)
+		if (xvt.validator.isNotEmpty(shipyard[choice]))
+			if (xvt.validator.isNotEmpty(shipyard[choice].description)) {
+				xvt.out(' - ', shipyard[choice].description)
 				suppress = true
 			}
-		else {
-			xvt.beep()
-			suppress = false
-		}
 		xvt.out('\n')
 
 		let ship = 50
