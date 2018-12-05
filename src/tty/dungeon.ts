@@ -1923,7 +1923,7 @@ function generateLevel() {
 
 		dd[deep][Z] = <ddd>{
 			cleric:	{ user:{ id:'_Clr', handle:'old cleric', pc:'Cleric', level:$.int(65 + Z / 4 + deep)
-			 		, sex:'M', weapon:0, armor:1, magic:3, spells:[7, 8, 13] } },
+			 		, sex:'I', weapon:0, armor:1, magic:3, spells:[7, 8, 13] } },
  			rooms:	new Array(maxRow),
 			map:	0,
 			moves:	0,
