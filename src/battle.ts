@@ -279,10 +279,12 @@ export function attack(retry = false) {
                         xvt.outln(xvt.lcyan, [
                             'You trip and fail in your attempt to retreat.',
                             `${who} pulls you back into the battle.`,
-                            `${who} prevents your retreat and says,\n"I'm not through with you yet!"`,
-                            `${who} outmaneuvers you and says, "You started this,\nI'm finishing it."`,
-                            `${who} blocks your path and says,\n"Where do you want to go today?"`,
+                            `${who} prevents your retreat and says,\n  "I'm not through with you yet!"`,
+                            `${who} outmaneuvers you and says, "You started this,\n  I'm finishing it."`,
+                            `${who} blocks your path and says,\n  "Where do you want to go today?"`,
                         ][$.dice(5) - 1])
+                        $.beep()
+                        xvt.outln()
                         next()
                         return
                     }
