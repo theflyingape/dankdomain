@@ -40,7 +40,7 @@ function end() {
             $.PC.adjust('cha', 2, 1, 1)
             xvt.beep()
             Battle.yourstats(); xvt.waste(500)
-            xvt.out('\n'); xvt.waste(500)
+            xvt.outln(); xvt.waste(500)
         }
     }
 
@@ -78,7 +78,7 @@ function end() {
         $.player.coward = false
     }
 
-    if (from === 'Taxman') {
+    if (/Gates|Taxman/.test(from)) {
         if ($.online.hp < 1) {
             $.player.coin.value -= $.taxman.user.coin.value
             if ($.player.coin.value < 0) {
@@ -89,17 +89,14 @@ function end() {
                     $.player.bank.value = 0
                 }
             }
-
-            xvt.out('\n')
-            $.reason = 'tax evasion'
-            $.sound('max', 8)
+            $.beep()
+            $.death($.reason || 'tax evasion')
             xvt.outln(xvt.bright, xvt.blue, '"Thanks for the taxes!"')
             $.sound('thief2', 16)
         }
-        else {
+        else if (from === 'Taxman') {
             $.news(`\tdefeated ${$.taxman.user.handle}`)
             $.wall(`defeated ${$.taxman.user.handle}`)
-            $.sound('shield', 16)
         }
         $.player.coward = false
     }
@@ -244,31 +241,19 @@ export function attack(retry = false) {
 
                 xvt.out('\n')
                 if (/R/i.test(xvt.entry)) {
-                    if (from === 'Naval') {
-                        xvt.outln(xvt.bright, xvt.cyan, '"You cannot escape me, mortal."')
-                        $.sound('crone', 12)
-                        $.player.coward = true
+                    if (/Naval|Tavern|Taxman/.test(from)) {
+                        if (from === 'Naval')
+                            xvt.outln(xvt.bright, xvt.cyan, '"You cannot escape me, mortal."')
+                        if (from === 'Tavern')
+                            xvt.outln(xvt.bright, xvt.green, 'You try to escape, but the crowd throws you back to witness the slaughter!')
+                        if (from === 'Taxman')
+                            xvt.outln(xvt.bright, xvt.blue, '"You can never escape the taxman!"')
+                        $.sound({ _BAR:'growl', _NEP:'thunder', _OLD:'crone', _TAX:'thief2' }[enemy.user.id], 12)
+						$.PC.adjust('cha', -2, -1)
                         $.saveUser($.player)
                         next()
                         return
                     }
-                    if (from === 'Tavern') {
-                        xvt.outln(xvt.bright, xvt.green, 'You try to escape, but the crowd throws you back to witness the slaughter!')
-                        $.sound('growl', 12)
-                        $.player.coward = true
-                        $.saveUser($.player)
-                        next()
-                        return
-                    }
-                    if (from === 'Taxman') {
-                        xvt.outln(xvt.bright, xvt.blue, '"You can never escape the taxman!"')
-                        $.sound('thief2', 12)
-                        $.player.coward = true
-                        $.saveUser($.player)
-                        next()
-                        return
-                    }
-
                     let trip = rpc.dex + $.dice(rpc.int) / 2
                     trip += Math.round((rpc.dex - enemy.dex) / 2)
                     trip = trip < 5 ? 5 : trip > 95 ? 95 : trip
@@ -713,13 +698,15 @@ export function spoils() {
                     if (xvt.validator.isBoolean(result) && result)
                         xvt.out($.who(winner, 'He'), $.what(winner, 'take'), $.who(loser, 'his'), winner.user.weapon, '.\n')
                     else if (from === 'Monster' && result)
-                        xvt.out($.who(winner, 'He'), $.what(winner, 'get'), credit.carry(), ' for ', $.who(loser, 'his'), loser.user.weapon, '.\n')
+                        xvt.outln($.who(winner, 'He'), $.what(winner, 'get'), credit.carry(), ' for ', $.who(loser, 'his'), loser.user.weapon, '.')
 
                     credit = new $.coins(loser.armor.value)
                     credit.value = $.worth(credit.value, winner.cha)
                     result = $.Armor.swap(winner, loser, credit)
-                    if (xvt.validator.isBoolean(result) && result)
-                        xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who(loser, 'his'), winner.user.armor, '.\n')
+                    if (xvt.validator.isBoolean(result) && result) {
+                        xvt.outln($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who(loser, 'his'), winner.user.armor, '.')
+                        if (/_NEP|_OLD|_TAX/.test(loser.user.id)) $.sound('shield', 16)
+                    }
                     else if (from === 'Monster' && result)
                         xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'get'), credit.carry(), ' for ', $.who(loser, 'his'), loser.user.armor, '.\n')
                 }
@@ -2146,7 +2133,7 @@ export function user(venue: string, cb:Function) {
                     xvt.out(' ', $.bracket('🔒 jail', false))
                 }
             }
-            xvt.out('\n')
+            xvt.outln()
             cb(rpc)
         }, max:22 },
         'start': { cb: () => {

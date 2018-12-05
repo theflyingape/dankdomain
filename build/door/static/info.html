@@ -401,7 +401,10 @@ function craps() {
 }
 
 function deeds() {
-  cmd(`<input type="button" value="Champions" onclick="send('C');"> <input type="button" value="Heroes" onclick="send('H');"> <input type="button" value="Memorable" onclick="send('M');"> <input type="button" value="Thugs" onclick="send('T');"> <input type="button" value="Winners" onclick="send('W');"> ${quit}`);
+  cmd(`<input type="button" value="Champions" onclick="send('C');"> <input type="button" value="Heroes" onclick="send('H');"><br>
+<input type="button" value="Memorable" onclick="send('M');"><br>
+<input type="button" value="Thugs" onclick="send('T');"> <input type="button" value="Winners" onclick="send('W');"><br>
+${quit}`);
   nme(`<img src="images/heroes.jpg" onload="nmeResize(\'bounceInUp\');" style="display:none;" />`);
 }
 

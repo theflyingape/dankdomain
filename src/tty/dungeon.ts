@@ -1106,7 +1106,7 @@ function doMove(): boolean {
 				})
 				$.sound('oops', 8)
 				$.activate($.taxman)
-				$.taxman.user.id = ''
+				//$.taxman.user.id = ''
 				$.taxman.user.coin.value = $.player.coin.value
 				if (isNaN(+$.taxman.user.weapon)) xvt.out('\n', $.who($.taxman, 'He'), $.Weapon.wearing($.taxman), '.\n')
 				xvt.waste(750)

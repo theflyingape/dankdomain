@@ -25,14 +25,19 @@ function checkpoint(scratch: number): boolean {
         })
 
         $.sound('oops', 8)
+        let p = 'csgp'.indexOf(new $.coins(scratch).amount.split(',')[0].substr(-1))
+        let pouch = xvt.attr(xvt.bright, [xvt.red,xvt.cyan,xvt.yellow,xvt.magenta][p]
+            , ['copper','silver','gold','platinum'][p], xvt.normal, xvt.yellow)
+
         xvt.out('\n\n', xvt.yellow, xvt.bright, $.taxman.user.handle, xvt.normal)
-        xvt.out(`, our Master of Coin, looks at your bulging money purse\n`)
-        xvt.out(`and says, "Ah, it is time to pay your taxes!"  You check out the burly\n`)
-        xvt.out(`guards who stand ready to enforce ${$.king.handle}'s will.\n\n`)
-        xvt.waste(2000)
+        xvt.out(`, our Master of Coin, looks at your bulging ${pouch} pouch\n`)
+        xvt.out('and says, ', xvt.bright, xvt.blue, '"Ah, it is time to pay your taxes!"', xvt.normal)
+        xvt.out(xvt.yellow, '  You check out the burly\n')
+        xvt.outln(`guards who stand ready to enforce ${$.king.handle}'s will.\n`)
+        xvt.waste(2500)
         tax.value = scratch - tax.value
-        xvt.out(`The tax will cost you ${tax.carry()}.\n`)
-        xvt.waste(1000)
+        xvt.outln(`The tax will cost you ${tax.carry()}.`)
+        xvt.waste(1500)
         return true
     }
     return false
@@ -43,7 +48,7 @@ export function bar() {
 
     tax.value = 10 * $.money($.player.level)
     if (checkpoint($.player.coin.value)) {
-        xvt.out('\nYou really want a drink, so you pay the tax.\n')
+        xvt.outln('\nYou really want a drink, so you pay the tax.')
         $.beep()
         $.player.coin.value -= tax.value
         if ($.player.coin.value < 0) {
@@ -54,7 +59,7 @@ export function bar() {
                 $.player.bank.value = 0
             }
         }
-        $.sound('thief', 18)
+        $.sound('thief', 20)
     }
 }
 
@@ -62,7 +67,12 @@ export function bar() {
 export function cityguards() {
 
     tax.value = 1000 * $.money($.player.level)
+            + $.worth(new $.coins($.RealEstate.name[$.player.realestate].value).value, 35)
+            + $.worth(new $.coins($.Security.name[$.player.security].value).value, 15)
+
     if (checkpoint($.player.coin.value + $.player.bank.value)) {
+        xvt.outln(`\nYou weigh the chances with your ${$.player.weapon} against the Crown.`)
+        xvt.waste(1500)
         $.action('yn')
         xvt.app.form = {
             'tax': { cb:() => {
@@ -83,12 +93,13 @@ export function cityguards() {
                     return
                 }
 
-                let l = 0, xhp = $.int($.player.hp * 0.70)
+                let l = 0, xhp = $.int($.player.hp * $.player.level / $.sysop.level)
                 irs = new Array()
                 do {
                     let i = irs.push(<active>{ user:{ id:'', sex:'M' } }) - 1
-                    irs[i].user.level = 10 * l + $.dice(10)
-                    irs[i].user.handle = `City Guard #${i + 1}`
+                    irs[i].user.level = 10 * l + $.dice(9)
+                    let title = ['Reserve', 'Home', 'City', 'Foot', 'Infantry', 'Cavalry', 'Treasury', 'Tower', 'Castle', 'Royal' ][i < 10 ? i : 9]
+                    irs[i].user.handle = `${title} Guard`
                     do {
                         $.reroll(irs[i].user, $.PC.random('player'), irs[i].user.level)
                     } while (irs[i].user.melee < 1)
@@ -111,7 +122,7 @@ export function cityguards() {
                         l++
                 } while (xhp > 0)
 
-                xvt.out(`The Master of Coin points at you, "Shall we begin?"\n\n`)
+                xvt.outln(`The Master of Coin points ${$.who($.taxman, 'his')}${$.taxman.user.weapon} at you,\n`, xvt.bright, xvt.blue,`  "Shall we begin?"\n`)
                 $.sound('ddd', 15)
                 $.music('taxman')
 
@@ -144,16 +155,16 @@ export function cityguards() {
         }
 
         xvt.outln(xvt.yellow, '\nThe tax collector ', [
-            `mutters, "Good help is hard to find these days..."`,
-            `sighs, "If you want a job done right..."`,
-            `swears, "That's gonna cost you."`
+            `${xvt.attr('mutters', xvt.bright, xvt.blue, "Good help is hard to find these days...")}`,
+            `${xvt.attr('sighs, ', xvt.bright, xvt.blue, "If you want a job done right...")}`,
+            `${xvt.attr('swears, ', xvt.bright, xvt.blue, "That's gonna cost you.")}`
             ][$.dice(3) - 1])
         xvt.waste(750)
 
         $.activate($.taxman)
-        $.taxman.user.id = ''
+        //$.taxman.sp >>= 1
+        //$.taxman.user.id = ''
         $.taxman.user.coin = tax
-        $.taxman.sp >>= 1
 
         if (isNaN(+$.taxman.user.weapon)) xvt.out('\n', $.who($.taxman, 'He'), $.Weapon.wearing($.taxman), '.\n')
         xvt.waste(750)

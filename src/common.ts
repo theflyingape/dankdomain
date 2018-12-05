@@ -573,7 +573,6 @@ export function checkXP(rpc: active, cb: Function): boolean {
     }
     let eligible = rpc.user.level < sysop.level / 2
     let bonus = false
-    let i: number
     let started = rpc.user.level
 
     while (rpc.user.xp >= experience(rpc.user.level, undefined, rpc.user.int) && rpc.user.level < sysop.level) {
@@ -636,48 +635,45 @@ export function checkXP(rpc: active, cb: Function): boolean {
     sound('level')
     access = Access.name[player.access]
     online.altered = true
-    xvt.out('\n'); xvt.waste(125)
-    xvt.out('      ', xvt.magenta, '-=', xvt.blue, '>'
-        , xvt.bright, xvt.yellow, '*', xvt.normal
-        , xvt.blue, '<', xvt.magenta, '=-\n'); xvt.waste(125)
-    xvt.out('\n'); xvt.waste(125)
-    xvt.out(xvt.bright, xvt.yellow, 'Welcome to level ', player.level.toString(), '!\n', xvt.reset); xvt.waste(125)
-    xvt.out('\n'); xvt.waste(100)
+    xvt.outln(); xvt.waste(125)
+    xvt.outln('      ', xvt.magenta, '-=', xvt.blue, '>', xvt.bright, xvt.yellow, '*', xvt.normal
+        , xvt.blue, '<', xvt.magenta, '=-'); xvt.waste(125)
+    xvt.outln(); xvt.waste(125)
+    xvt.outln(xvt.bright, xvt.yellow, 'Welcome to level ', player.level.toString(), '!'); xvt.waste(125)
+    xvt.outln(); xvt.waste(125)
     wall(`is now a level ${player.level} ${player.pc}`)
 
     let deed = mydeeds.find((x) => { return x.deed === 'levels' })
     if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, 'levels')[0]) - 1]
     if ((deed && jumped >= deed.value)) {
+        beep()
         deed.value = jumped
-        sound('outstanding')
         saveDeed(deed)
+        PC.adjust('str', 1)
+        PC.adjust('int', 1)
+        PC.adjust('dex', 1)
+        PC.adjust('cha', 1)
+        sound('outstanding')
     }
 
     if (player.level < sysop.level) {
-        xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.hp), xvt.reset, ' Hit points\n')
-        xvt.waste(100)
+        xvt.outln(xvt.bright, xvt.white, sprintf('%+6d', award.hp), xvt.reset, ' Hit points'); xvt.waste(100)
         if (award.sp) {
-            xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.sp), xvt.reset, ' Spell points\n')
-            xvt.waste(100)
+            xvt.outln(xvt.bright, xvt.white, sprintf('%+6d', award.sp), xvt.reset, ' Spell points'); xvt.waste(100)
         }
         if (award.str) {
-            xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.str), xvt.reset, ' Strength\n')
-            xvt.waste(100)
+            xvt.outln(xvt.bright, xvt.white, sprintf('%+6d', award.str), xvt.reset, ' Strength'); xvt.waste(100)
         }
         if (award.int) {
-            xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.int), xvt.reset, ' Intellect\n')
-            xvt.waste(100)
+            xvt.outln(xvt.bright, xvt.white, sprintf('%+6d', award.int), xvt.reset, ' Intellect'); xvt.waste(100)
         }
         if (award.dex) {
-            xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.dex), xvt.reset, ' Dexterity\n')
-            xvt.waste(100)
+            xvt.outln(xvt.bright, xvt.white, sprintf('%+6d', award.dex), xvt.reset, ' Dexterity'); xvt.waste(100)
         }
         if (award.cha) {
-            xvt.out(xvt.bright, xvt.white, sprintf('%+6d', award.cha), xvt.reset, ' Charisma\n')
-            xvt.waste(100)
+            xvt.outln(xvt.bright, xvt.white, sprintf('%+6d', award.cha), xvt.reset, ' Charisma'); xvt.waste(100)
         }
-        xvt.out('\n')
-        xvt.waste(100)
+        xvt.outln(); xvt.waste(100)
         if (eligible && bonus) {
             skillplus(rpc, cb)
             return true
@@ -1300,7 +1296,7 @@ export function playerPC(points = 200, immortal = false) {
 export function remake(user: user) {
     let rpc = PC.card(user.pc)
     for (let n = 1; n < user.level; n++) {
-        if (n == 50 && user.id[0] !== '_' && user.gender !== 'I') {
+        if (n == 50 && user.gender !== 'I') {
             xvt.out(xvt.reset, xvt.bright, xvt.yellow, '+', xvt.reset, ' Bonus ')
             let d: number = 0
             while (!d) {
@@ -1379,7 +1375,9 @@ export function remake(user: user) {
                     xvt.out('Stealing')
                     break
             }
-            xvt.outln(' awarded ', xvt.bright, xvt.yellow, '+')
+            xvt.out(' added')
+            if (user != player) xvt.out(' to ', user.handle)
+            xvt.outln(' ', xvt.bright, xvt.yellow, '+')
         }
         if ((user.str += rpc.toStr) > user.maxstr)
             user.str = user.maxstr

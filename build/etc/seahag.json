@@ -20,5 +20,7 @@
     "weapon": "Sun Blade",
     "armor": "Divine Sphere",
     "spells": [ 11, 13, 19 ],
+    "realestate": "Cave",
+    "security": "Boulder",
     "xplevel": 90
 }

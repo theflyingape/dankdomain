@@ -113,7 +113,7 @@ export class Armor {
         let result = ''
         if (isNaN(+rpc.user.armor)) {
             if (text) result = rpc.armor.text + ' '
-            result = result + rpc.user.armor
+            result += rpc.user.armor
         }
         return result
     }
@@ -363,7 +363,7 @@ export class Weapon {
         let result = ''
         if (isNaN(+rpc.user.weapon)) {
             if (text) result = rpc.weapon.text + ' '
-            result = result + rpc.user.weapon
+            result += rpc.user.weapon
         }
         return result
     }
