@@ -1933,8 +1933,6 @@ function generateLevel() {
 		}
 
 		DL = dd[deep][Z]
-		$.reroll(DL.cleric.user, DL.cleric.user.pc, DL.cleric.user.level)
-		$.activate(DL.cleric)
 		for (y = 0; y < DL.rooms.length; y++) {
 			DL.rooms[y] = new Array(DL.width)
 			for (x = 0; x < DL.width; x++)
@@ -1956,6 +1954,9 @@ function generateLevel() {
 				if (DL.rooms[y][x].map)
 					result = true
 	} while (result)
+
+	$.reroll(DL.cleric.user, DL.cleric.user.pc, DL.cleric.user.level)
+	$.activate(DL.cleric)
 
 	renderMap()
 	do {
