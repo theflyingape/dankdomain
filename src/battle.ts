@@ -38,7 +38,8 @@ function end() {
             $.PC.adjust('int', 2, 1, 1)
             $.PC.adjust('dex', 2, 1, 1)
             $.PC.adjust('cha', 2, 1, 1)
-            xvt.beep()
+            $.beep()
+            xvt.outln(); xvt.waste(500)
             Battle.yourstats(); xvt.waste(500)
             xvt.outln(); xvt.waste(500)
         }
@@ -233,7 +234,7 @@ export function attack(retry = false) {
         $.action('battle')
         xvt.app.form = {
             'attack': {cb:() => {
-                xvt.out('\n')
+                xvt.outln()
                 if (/C/i.test(xvt.entry)) {
                     Battle.cast($.online, next, enemy)
                     return
@@ -314,7 +315,12 @@ export function attack(retry = false) {
                 melee(rpc, enemy, bs)
                 next()
                 return
-            }, cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:30 }
+            }, cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:30 },
+            'skip': {cb:() => {
+                xvt.outln()
+                next()
+                return
+            }, cancel:'*', enter:'*', eol:false, max:1, timeout:3 }
         }
 
         //  sneaking
@@ -367,8 +373,16 @@ export function attack(retry = false) {
             choices += xvt.attr(xvt.normal, xvt.blue, '] ')
             bs = 1
 
-            xvt.app.form['attack'].prompt = choices + xvt.attr(
-                $.bracket('A', false), xvt.cyan, 'ttack, ')
+            let skip = $.Ring.power(enemy.user.rings, 'skip', 'pc', $.player.pc)
+            if (skip.power && !$.Ring.power($.player.rings, 'ring').power && $.dice(20 - 2 * enemy.user.magic) == 1) {
+                xvt.app.form['skip'].prompt = choices
+                xvt.app.form['skip'].prompt += xvt.attr(xvt.green, '<< ', xvt.bright, enemy.user.handle, xvt.normal, ' has paralyzed you this turn >> ')
+                xvt.app.focus = 'skip'
+                return
+            }
+
+            xvt.app.form['attack'].prompt = choices
+            xvt.app.form['attack'].prompt += xvt.attr($.bracket('A', false), xvt.cyan, 'ttack, ')
             if ($.player.magic && $.player.spells.length)
                 xvt.app.form['attack'].prompt += xvt.attr($.bracket('C', false), xvt.cyan, 'ast spell, ')
             xvt.app.form['attack'].prompt += xvt.attr($.bracket('R', false), xvt.cyan, 'etreat, '
@@ -710,7 +724,7 @@ export function spoils() {
                     else if (from === 'Monster' && result)
                         xvt.outln($.who(winner, 'He'), 'also ', $.what(winner, 'get'), credit.carry(), ' for ', $.who(loser, 'his'), loser.user.armor, '.')
 
-                    if (loser.user.rings.length) {
+                    if (loser.user.sex !== 'I' && loser.user.rings.length) {
                         xvt.outln($.who(winner, 'He'), 'also ', $.what(winner, 'remove'), loser.user.rings.length > 1 ? 'all of ' : '', $.who(loser, 'his'), 'rings...')
                         for (let f in loser.user.rings) {
                             if ($.Ring.wear(winner.user.rings, loser.user.rings[f])) {
@@ -738,7 +752,7 @@ export function spoils() {
                         xvt.waste(250)
                         $.log(loser.user.id, `... and took your ${winner.user.armor}.`)
                     }
-                    if (loser.user.rings.length) {
+                    if (loser.user.sex !== 'I' && loser.user.rings.length) {
                         xvt.outln($.who(winner, 'He'), 'also ', $.what(winner, 'remove'), loser.user.rings.length > 1 ? 'all of ' : '', $.who(loser, 'his'), 'rings...')
                         for (let f in loser.user.rings) {
                             if ($.Ring.wear(winner.user.rings, loser.user.rings[f])) {

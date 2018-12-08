@@ -251,6 +251,32 @@ export class Character {
         xvt.out(sprintf('%-15s', ['lawful', 'desperate', 'trickster', 'adept', 'master'][profile.user.steal]))
         xvt.out(' ', xvt.reset, xvt.blue, '|\n')
 
+        if (profile.user.blessed) {
+            let who: user = { id:profile.user.blessed }
+            if (!loadUser(who)) {
+                if (profile.user.blessed === 'well')
+                    who.handle = 'a wishing well'
+                else
+                    who.handle = profile.user.blessed
+            }
+            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.yellow)
+            xvt.out(' +Blessed:', xvt.white, ' by ', sprintf('%-39s', who.handle))
+            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+        }
+
+        if (profile.user.cursed) {
+            let who: user = { id:profile.user.cursed }
+            if (!loadUser(who)) {
+                if (profile.user.cursed === 'wiz!')
+                    who.handle = 'a doppleganger!'
+                else
+                    who.handle = profile.user.cursed
+            }
+            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.black)
+            xvt.out('  -Cursed:', xvt.white,' by ', sprintf('%-39s', who.handle))
+            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+        }
+
         xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
         xvt.out('       HP: ', xvt.white)
         xvt.out(sprintf('%-42s', profile.hp + '/' + profile.user.hp + ' (' 
@@ -304,7 +330,7 @@ export class Character {
 
         xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
         xvt.out('  Alchemy: ', xvt.white)
-        xvt.out(sprintf('%-42s', ['none', 'apprentice', 'expert', 'artisan', 'master'][profile.user.poison]))
+        xvt.out(sprintf('%-42s', ['none', 'apprentice', 'expert (+1x,+1x)', 'artisan (+1x,+2x)', 'master (+2x,+2x)'][profile.user.poison]))
         xvt.out(' ', xvt.reset, xvt.blue, '|\n')
 
         if (profile.user.poison && profile.user.poisons.length) {
@@ -314,14 +340,51 @@ export class Character {
             xvt.out(' ', xvt.reset, xvt.blue, '|\n')
         }
 
+        if (profile.user.rings.length) {
+            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+            xvt.out('    Rings: ', xvt.white)
+            if (xvt.emulation == 'XT')
+                xvt.out('\r\x1B[2C💍\r\x1B[12C')
+            let text = ''
+            n = 0
+            for (let p = 0; p < profile.user.rings.length; p++) {
+                let name = profile.user.rings[p]
+                if (text.length + name.length > 40) break
+                if (text.length) text += ','
+                text += name
+                n++
+            }
+            xvt.out(sprintf('%-42s', text))
+            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+            while (n < profile.user.rings.length) {
+                text = ''
+                i = 0
+                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.white, '           ')
+                for (let p = 0; p < profile.user.rings.length; p++) {
+                    i++
+                    if (i > n) {
+                        let name = profile.user.rings[p]
+                        if (text.length + name.length > 40) break
+                        if (text.length) text += ','
+                        text += name
+                        n++
+                    }
+                }
+                xvt.out(sprintf('%-42s', text))
+                xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+            }
+        }
+
         xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
         xvt.out('   Weapon: ', this.weapon(profile).rich)
         xvt.out(' '.repeat(42 - this.weapon(profile).text.length))
         xvt.out(' ', xvt.reset, xvt.blue, '|\n')
 
         xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-        xvt.out('    Armor: ', this.armor(profile).rich)
-        xvt.out(' '.repeat(42 - this.armor(profile).text.length))
+        xvt.out('    Armor: ')
+        if (xvt.emulation == 'XT')
+            xvt.out('\r\x1B[2C🛡\r\x1B[12C')
+        xvt.out(this.armor(profile).rich, ' '.repeat(42 - this.armor(profile).text.length))
         xvt.out(' ', xvt.reset, xvt.blue, '|\n')
 
         xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
@@ -332,6 +395,8 @@ export class Character {
         if (xvt.validator.isNotEmpty(profile.user.gang)) {
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
             xvt.out('    Party: ', xvt.white)
+            if (xvt.emulation == 'XT')
+                xvt.out('\r\x1B[2C🏴\r\x1B[12C')
             xvt.out(sprintf('%-42s', profile.user.gang))
             xvt.out(' ', xvt.reset, xvt.blue, '|\n')
         }
@@ -359,36 +424,10 @@ export class Character {
 
         xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
         xvt.out('    Kills: ', xvt.white)
+        if (xvt.emulation == 'XT')
+            xvt.out('\r\x1B[2C💀\r\x1B[12C')
         xvt.out(sprintf('%-42s', profile.user.kills + ' with ' + profile.user.retreats + ' retreats and killed ' + profile.user.killed +'x'))
         xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-        if (profile.user.blessed) {
-            let who: user = { id:profile.user.blessed }
-            if (!loadUser(who)) {
-                if (profile.user.blessed === 'well')
-                    who.handle = 'a wishing well'
-                else
-                    who.handle = profile.user.blessed
-            }
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.yellow)
-            xvt.out(' + Blessed by ', xvt.white
-                , sprintf('%-39s', who.handle))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-        }
-
-        if (profile.user.cursed) {
-            let who: user = { id:profile.user.cursed }
-            if (!loadUser(who)) {
-                if (profile.user.cursed === 'wiz!')
-                    who.handle = 'a doppleganger!'
-                else
-                    who.handle = profile.user.cursed
-            }
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.black)
-            xvt.out(' - Cursed by ', xvt.white
-                , sprintf('%-40s', who.handle))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-        }
 
         xvt.out(xvt.blue, '+', line, '+', xvt.reset)
     }
@@ -837,11 +876,11 @@ export function skillplus(rpc: active, cb: Function) {
                     return
                 }
                 news('\tApothecary visits have more meaning')
-                xvt.out([xvt.cyan, xvt.blue, xvt.red, xvt.magenta][player.poison]
-                    , [ 'The Apothecary will see you now, bring money.'
+                xvt.out([xvt.green, xvt.cyan, xvt.red, xvt.magenta][player.poison]
+                    , [ 'The Apothecary will sell you toxins now, bring money.'
                       , 'Your poisons can achieve (+1x,+1x) potency now.'
-                      , 'Your poisons can achieve (+1x,+2x) potency now.'
-                      , 'Your poisons can achieve (+2x,+2x) its potency now.' ][player.poison++]
+                      , 'Your banes will add (+1x,+2x) potency now.'
+                      , 'Your venena now makes for (+2x,+2x) potency!' ][player.poison++]
                 )
                 break
 

@@ -485,6 +485,7 @@ function MonsterFights(): boolean {
 
 		monster.user.weapon = monsters[mon].weapon
 		monster.user.armor = monsters[mon].armor
+		monster.user.rings = monsters[mon].rings || []
 		monster.user.spells = []
 		if (monsters[mon].spells)
 			for (let i = 0; i < monsters[mon].spells.length; i++)

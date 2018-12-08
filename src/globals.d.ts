@@ -136,6 +136,7 @@ interface monster {
     hit?: string
     smash?: string
     poisons?: string[]
+    rings?: string[]
     spells?: string[]
     level?: number
     weapon?: string|number

@@ -409,13 +409,14 @@ export class Ring {
                 if (abilities[a].id == id) {
                     if (match && abilities[a][match]) {
                         if (abilities[a][match] == value)
-                            result = { name: rings[f] + ' ring', power: abilities[a][match].power }
+                            result = { name: rings[f], power: abilities[a][match].power }
                     }
                     else
-                        result = { name: rings[f] + ' ring', power: abilities[a].power }
+                        result = { name: rings[f], power: abilities[a].power }
                 }
             }
         }
+
         return result
     }
 

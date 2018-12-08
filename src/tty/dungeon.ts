@@ -2401,6 +2401,8 @@ function putMonster(r = -1, c = -1): boolean {
 			}
 		}
 
+		m.user.rings = dm.rings || []
+
 		m.user.spells = []
 		if (m.user.magic) {
 			if (dm.spells)
