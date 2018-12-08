@@ -9,6 +9,7 @@ import titleCase = require('title-case')
 
 import xvt = require('xvt')
 import Items = require('./items')
+import { user } from './battle';
 
 
 module Common
@@ -19,6 +20,7 @@ module Common
     export const Deed = new Items.Deed
     export const Magic = new Items.Magic
     export const Poison = new Items.Poison
+    export const Ring = new Items.Ring
     export const RealEstate = new Items.RealEstate
     export const Security = new Items.Security
     export const Weapon = new Items.Weapon
@@ -1442,7 +1444,6 @@ export function reroll(user: user, dd?: string, level = 1) {
         user.gang = ''
         user.wins = 0
         user.immortal = 0
-        user.rating = 0
 
         user.coin = new coins(0)
         user.bank = new coins(0)
@@ -1455,10 +1456,13 @@ export function reroll(user: user, dd?: string, level = 1) {
 
     if (level == 1) {
         Object.assign(user, require('./etc/reroll'))
+        user.gender = user.sex
         user.coin = new coins(user.coin.toString())
         user.bank = new coins(user.bank.toString())
         user.loan = new coins(0)
-        user.gender = user.sex
+        if (user.rings && user.rings.length)
+            for (let i in user.rings)
+                saveRing(user.rings[i])
         //  force a verify if their access allows it
         // if (!user.novice && !Access.name[player.access].sysop) user.email = ''
     }
@@ -1467,6 +1471,7 @@ export function reroll(user: user, dd?: string, level = 1) {
         //  no extra free or augmented stuff
         user.poisons = []
         user.spells = []
+        user.rings = []
         user.toAC = 0
         user.toWC = 0
         user.hull = 0
@@ -2031,11 +2036,10 @@ export function wall(msg: string) {
             str numeric, maxstr numeric, int numeric, maxint numeric, dex numeric,
             maxdex numeric, cha numeric, maxcha numeric, coin numeric, bank numeric,
             loan numeric, weapon text, toWC numeric, armor text, toAC numeric,
-            spells text, poisons text, realestate text, security text, hull numeric,
-            cannon numeric, ram integer, wins numeric, immortal numeric, rating numeric,
+            spells text, poisons text, rings text, realestate text, security text,
+            hull numeric, cannon numeric, ram integer, wins numeric, immortal numeric,
           	plays numeric, jl numeric, jw numeric, killed numeric, kills numeric,
-            retreats numeric, tl numeric, tw numeric
-        )`)
+            retreats numeric, tl numeric, tw numeric)`)
     }
 
     let npc = <user>{}
@@ -2120,6 +2124,16 @@ export function wall(msg: string) {
         xvt.waste(250)
     }
 
+    rs = query(`SELECT * FROM sqlite_master WHERE name='Rings' AND type='table'`)
+    if (!rs.length) {
+        xvt.out('\ninitializing (unique) rings ... ')
+        run(`CREATE TABLE IF NOT EXISTS Rings (name text PRIMARY KEY, bearer text)`)
+        xvt.out('done.')
+        xvt.waste(250)
+    }
+    for (let i in Ring.name)
+        ringBearer(i)
+    
     xvt.outln()
 
 
@@ -2179,6 +2193,13 @@ export function loadUser(rpc): boolean {
                 Magic.add(user.spells, spells[i])
         }
 
+        user.rings = []
+        if (rs[0].rings.length) {
+            let rings = rs[0].rings.split(',')
+            for (let i = 0; i < rings.length; i++)
+                Ring.wear(user.rings, rings[i])
+        }
+
         if (isActive(rpc)) activate(rpc)
         return true
     }
@@ -2196,61 +2217,56 @@ export function saveUser(rpc, insert = false, locked = false) {
 
     let sql: string = ''
 
-    if (insert) {
-        sql = `INSERT INTO Players 
-            ( id, handle, name, email, password
-            , dob, sex, joined, expires, lastdate
-            , lasttime, calls, today, expert, emulation
-            , rows, access, remote, pc, gender
-            , novice, level, xp, xplevel, status
-            , blessed, cursed, coward, bounty, who
-            , gang, keyseq, keyhints, melee, backstab
-            , poison, magic, steal, hp, sp
-            , str, maxstr, int, maxint, dex
-            , maxdex, cha, maxcha, coin, bank
-            , loan, weapon, toWC, armor, toAC
-            , spells, poisons, realestate, security, hull
-            , cannon, ram, wins, immortal, rating
-          	, plays, jl, jw, killed, kills
-            , retreats, tl, tw
-            ) VALUES
-            ('${user.id}', '${user.handle}', '${user.name}', '${user.email}', '${user.password}'
-            , ${user.dob}, '${user.sex}', ${user.joined}, ${user.expires}, ${user.lastdate}
-            , ${user.lasttime}, ${user.calls}, ${user.today}, ${+user.expert}, '${user.emulation}'
-            , ${user.rows}, '${user.access}', '${user.remote}', '${user.pc}', '${user.gender}'
-            , ${+user.novice}, ${user.level}, ${user.xp}, ${user.xplevel}, '${user.status}'
-            ,'${user.blessed}', '${user.cursed}', ${+user.coward}, ${user.bounty.value}, '${user.who}'
-            ,'${user.gang}', '${user.keyseq}', '${user.keyhints.toString()}', ${user.melee}, ${user.backstab}
-            , ${user.poison}, ${user.magic}, ${user.steal}, ${user.hp}, ${user.sp}
-            , ${user.str}, ${user.maxstr}, ${user.int}, ${user.maxint}, ${user.dex}
-            , ${user.maxdex}, ${user.cha}, ${user.maxcha}, ${user.coin.value}, ${user.bank.value}
-            , ${user.loan.value}, '${user.weapon}', ${user.toWC}, '${user.armor}', ${user.toAC}
-            ,'${user.spells.toString()}', '${user.poisons.toString()}', '${user.realestate}', '${user.security}', ${user.hull}
-            , ${user.cannon}, ${+user.ram}, ${user.wins}, ${user.immortal}, ${user.rating}
-          	, ${user.plays}, ${user.jl}, ${user.jw}, ${user.killed}, ${user.kills}
-            , ${user.retreats}, ${user.tl}, ${user.tw}
-            )`
-    }
-    else {
-        sql = `UPDATE Players SET
-            handle='${user.handle}', name='${user.name}', email='${user.email}', password='${user.password}',
-            dob=${user.dob}, sex='${user.sex}', joined=${user.joined}, expires=${user.expires}, lastdate=${user.lastdate},
-            lasttime=${user.lasttime}, calls=${user.calls}, today=${user.today}, expert=${+user.expert}, emulation='${user.emulation}',
-            rows=${user.rows}, access='${user.access}', remote='${user.remote}', pc='${user.pc}', gender='${user.gender}',
-            novice=${+user.novice}, level=${user.level}, xp=${user.xp}, xplevel=${user.xplevel}, status='${user.status}',
-            blessed='${user.blessed}', cursed='${user.cursed}', coward=${+user.coward}, bounty=${user.bounty.value}, who='${user.who}',
-            gang='${user.gang}', keyseq='${user.keyseq}', keyhints='${user.keyhints.toString()}', melee=${user.melee}, backstab=${user.backstab},
-            poison=${user.poison}, magic=${user.magic}, steal=${user.steal}, hp=${user.hp}, sp=${user.sp},
-            str=${user.str}, maxstr=${user.maxstr}, int=${user.int}, maxint=${user.maxint}, dex=${user.dex},
-            maxdex=${user.maxdex}, cha=${user.cha}, maxcha=${user.maxcha}, coin=${user.coin.value}, bank=${user.bank.value},
-            loan=${user.loan.value}, weapon='${user.weapon}', toWC=${user.toWC}, armor='${user.armor}', toAC=${user.toAC},
-            spells='${user.spells.toString()}', poisons='${user.poisons.toString()}', realestate='${user.realestate}', security='${user.security}', hull=${user.hull},
-            cannon=${user.cannon}, ram=${+user.ram}, wins=${user.wins}, immortal=${user.immortal}, rating=${user.rating},
-          	plays=${user.plays}, jl=${user.jl}, jw=${user.jw}, killed=${user.killed}, kills=${user.kills},
-            retreats=${user.retreats}, tl=${user.tl}, tw=${user.tw}
-            WHERE id='${user.id}'
-        `
-    }
+    sql = insert ? `INSERT INTO Players 
+        ( id, handle, name, email, password
+        , dob, sex, joined, expires, lastdate
+        , lasttime, calls, today, expert, emulation
+        , rows, access, remote, pc, gender
+        , novice, level, xp, xplevel, status
+        , blessed, cursed, coward, bounty, who
+        , gang, keyseq, keyhints, melee, backstab
+        , poison, magic, steal, hp, sp
+        , str, maxstr, int, maxint, dex
+        , maxdex, cha, maxcha, coin, bank
+        , loan, weapon, toWC, armor, toAC
+        , spells, poisons, rings, realestate, security
+        , hull, cannon, ram, wins, immortal
+        , plays, jl, jw, killed, kills
+        , retreats, tl, tw
+        ) VALUES
+        ('${user.id}', '${user.handle}', '${user.name}', '${user.email}', '${user.password}'
+        , ${user.dob}, '${user.sex}', ${user.joined}, ${user.expires}, ${user.lastdate}
+        , ${user.lasttime}, ${user.calls}, ${user.today}, ${+user.expert}, '${user.emulation}'
+        , ${user.rows}, '${user.access}', '${user.remote}', '${user.pc}', '${user.gender}'
+        , ${+user.novice}, ${user.level}, ${user.xp}, ${user.xplevel}, '${user.status}'
+        ,'${user.blessed}', '${user.cursed}', ${+user.coward}, ${user.bounty.value}, '${user.who}'
+        ,'${user.gang}', '${user.keyseq}', '${user.keyhints.toString()}', ${user.melee}, ${user.backstab}
+        , ${user.poison}, ${user.magic}, ${user.steal}, ${user.hp}, ${user.sp}
+        , ${user.str}, ${user.maxstr}, ${user.int}, ${user.maxint}, ${user.dex}
+        , ${user.maxdex}, ${user.cha}, ${user.maxcha}, ${user.coin.value}, ${user.bank.value}
+        , ${user.loan.value}, '${user.weapon}', ${user.toWC}, '${user.armor}', ${user.toAC}
+        ,'${user.spells.toString()}', '${user.poisons.toString()}', '${user.rings.toString()}', '${user.realestate}', '${user.security}'
+        , ${user.hull}, ${user.cannon}, ${+user.ram}, ${user.wins}, ${user.immortal}
+        , ${user.plays}, ${user.jl}, ${user.jw}, ${user.killed}, ${user.kills}
+        , ${user.retreats}, ${user.tl}, ${user.tw}
+        )`
+        : `UPDATE Players SET
+        handle='${user.handle}', name='${user.name}', email='${user.email}', password='${user.password}',
+        dob=${user.dob}, sex='${user.sex}', joined=${user.joined}, expires=${user.expires}, lastdate=${user.lastdate},
+        lasttime=${user.lasttime}, calls=${user.calls}, today=${user.today}, expert=${+user.expert}, emulation='${user.emulation}',
+        rows=${user.rows}, access='${user.access}', remote='${user.remote}', pc='${user.pc}', gender='${user.gender}',
+        novice=${+user.novice}, level=${user.level}, xp=${user.xp}, xplevel=${user.xplevel}, status='${user.status}',
+        blessed='${user.blessed}', cursed='${user.cursed}', coward=${+user.coward}, bounty=${user.bounty.value}, who='${user.who}',
+        gang='${user.gang}', keyseq='${user.keyseq}', keyhints='${user.keyhints.toString()}', melee=${user.melee}, backstab=${user.backstab},
+        poison=${user.poison}, magic=${user.magic}, steal=${user.steal}, hp=${user.hp}, sp=${user.sp},
+        str=${user.str}, maxstr=${user.maxstr}, int=${user.int}, maxint=${user.maxint}, dex=${user.dex},
+        maxdex=${user.maxdex}, cha=${user.cha}, maxcha=${user.maxcha}, coin=${user.coin.value}, bank=${user.bank.value},
+        loan=${user.loan.value}, weapon='${user.weapon}', toWC=${user.toWC}, armor='${user.armor}', toAC=${user.toAC},
+        spells='${user.spells.toString()}', poisons='${user.poisons.toString()}', rings='${user.rings.toString()}', realestate='${user.realestate}', security='${user.security}',
+        hull=${user.hull}, cannon=${user.cannon}, ram=${+user.ram}, wins=${user.wins}, immortal=${user.immortal},
+        plays=${user.plays}, jl=${user.jl}, jw=${user.jw}, killed=${user.killed}, kills=${user.kills},
+        retreats=${user.retreats}, tl=${user.tl}, tw=${user.tw}
+        WHERE id='${user.id}'`
 
     run(sql)
 
@@ -2396,8 +2412,9 @@ export function query(q: string, errOk = false): any {
     }
     catch(err) {
         if (!errOk) {
-            xvt.beep()
-            xvt.out(xvt.reset, '\n?Unexpected error:', String(err), '\n')
+            xvt.outln()
+            beep()
+            xvt.outln(xvt.red, '?Unexpected error: ', xvt.bright, String(err))
             xvt.out(q)
             reason = 'defect - ' + err.code
             xvt.hangup()
@@ -2540,8 +2557,9 @@ export function saveGang(g: gang, insert = false) {
         }
         catch(err) {
             if (err.code !== 'SQLITE_CONSTRAINT_PRIMARYKEY') {
-                xvt.beep()
-                xvt.out(xvt.reset, '\n?Unexpected error: ', String(err), '\n')
+                xvt.outln()
+                beep()
+                xvt.outln(xvt.red, '?Unexpected error: ', xvt.bright, String(err))
                 xvt.waste(2000)
             }
         }
@@ -2553,6 +2571,30 @@ export function saveGang(g: gang, insert = false) {
                 , banner = ${(g.banner <<4) + g.trim}, color = ${(g.back <<4) + g.fore}
             WHERE name = '${g.name}'`)
     }
+}
+
+export function ringBearer(name: string): string {
+    if (Ring.name[name].unique) {
+        let rs = query(`SELECT bearer FROM Rings WHERE name = '${name}'`)
+        if (!rs.length) {
+            run(`INSERT INTO Rings (name, bearer) VALUES ('${name}', '')`)
+            return ''
+        }
+        return rs[0].bearer
+    }
+    return ''
+}
+
+
+export function saveRing(name: string, bearer = '', rings?: string[]) {
+    let theRing = { name: name, bearer: bearer[0] == '_' ? '' : bearer }
+
+    //  primarily maintain the one ring's active bearer here
+    if (Ring.name[name].unique)
+        run(`UPDATE Rings set bearer = '${theRing.bearer}' WHERE name = '${theRing.name}'`)
+
+    if (theRing.bearer.length && rings)
+        run(`UPDATE Players set rings = '${rings.toString()}' WHERE id = '${theRing.bearer}'`)
 }
 
 }

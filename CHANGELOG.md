@@ -2,10 +2,18 @@
 
 ## *the return of* ⚔ **Hack & Slash** 🛡
 
-🇺🇸 ©️1989-2018 [Robert Hurst](https://robert.hurst-ri.us)
-> [developed](https://github.com/theflyingape/dankdomain) using Node.js on an Intel Atom-powered Linux server using a Verizon FiOS 100mb Internet service
+🇺🇸 ©️1991-2018 [Robert Hurst](https://robert.hurst-ri.us)
+> [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](http://Play.DDgame.us) on an Intel Atom-powered Linux server using a Verizon FiOS 100mb Internet service
 
-### **22-Nov-2018**
+### **24-Dec-2018**
+
+* 1.7.0 release, Merry Christmas!
+* added the 💍 rings of power to wearable items
+* tax credit for real estate + security
+* lessen random event occurences when entering a dungeon level
+* outdated package updates, refactoring with minor bug fixes
+
+#### 22-Nov-2018
 
 * 1.6.1 release, Happy Thanksgiving!
 * UI app & client improvements with a new Google domain registered: [DDgame.us](https://ddgame.us)
@@ -619,3 +627,17 @@ SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
 #### 19-Jun-1992 `v1.00`
 
 * Hack & Slash BBS goes online for the first time using the new SupraFAXModem 14400: `(401) 787-1437` with Caller ID.
+
+---
+
+### **The Rhode Warrior**
+
+> [developed](https://github.com/theflyingape/the-rhode-warrior) using GW-BASIC on an IBM XT MS-DOS PC with a Supra 2400 baud modem
+
+---
+#### 24-Dec-1991 ####
+
+* BBS went online on Manton Avenue in Providence, Rhode Island
+* added blessed / cursed state on a player
+* added Go Fishing to Naval section
+* ported from Apple ][ BASIC TproBBS Guy T. Rice

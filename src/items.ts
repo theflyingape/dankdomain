@@ -381,6 +381,54 @@ export class RealEstate {
     }
 }
 
+export class Ring {
+    name: ring[]
+
+    constructor() {
+        this.name = require('./items/ring.json')
+    }
+
+    have(rings: string[], name: string): boolean {
+        return rings.indexOf(name) >= 0
+    }
+
+    remove(rings: string[], name: string) {
+        let i = rings.indexOf(name)
+        if (i >= 0) rings.splice(i, 1)
+    }
+
+    power(rings: string[]
+        , id: 'activate'|'cast'|'initiate'|'hit'|'hp'|'identify'|'joust'|'resurrect'|'ring'|'skip'|'sp'|'spell'|'steal'|'taxes'|'teleport'
+        , match?: 'magic'|'pc'|'spell', value?: any): { name: string, power: boolean } {
+
+        let result = { name:'', power: false }
+
+        for (let f in rings) {
+            let abilities = this.name[rings[f]].ability
+            for (let a in abilities) {
+                if (abilities[a].id == id) {
+                    if (match && abilities[a][match]) {
+                        if (abilities[a][match] == value)
+                            result = { name: rings[f] + ' ring', power: abilities[a][match].power }
+                    }
+                    else
+                        result = { name: rings[f] + ' ring', power: abilities[a].power }
+                }
+            }
+        }
+        return result
+    }
+
+    wear(rings: string[], name: string): boolean {
+        if (!this.have(rings, name)) {
+            rings.push(name)
+            rings.sort()
+            return true
+        }
+        return false
+    }
+}
+
 export class Security {
 
     name: security[]

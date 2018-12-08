@@ -708,7 +708,6 @@ function doMove(): boolean {
 			xvt.out('\n')
 
 			$.action('well')
-			$.profile({ jpg:'well', effect:'fadeIn' })
 			xvt.app.form = {
 				'well': { cb: () => {
 					ROOM.occupant = 0
@@ -1115,6 +1114,7 @@ function doMove(): boolean {
 				xvt.out('\n')
 				b4 = 0
 				Battle.engage('Taxman', $.online, $.taxman, doSpoils)
+				pause = true
 				refresh = true
 				return
 			}

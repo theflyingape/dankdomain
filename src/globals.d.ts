@@ -71,6 +71,7 @@ interface user {
     toAC?: number
     spells?: number[]
     poisons?: number[]
+    rings?: string[]
     realestate?: string
     security?: string
     hull?: number
@@ -80,7 +81,6 @@ interface user {
     //  statistics
     wins?: number
     immortal?: number
-    rating?: number
     //  per roll
   	plays?: number
 	jl?: number
@@ -205,6 +205,18 @@ interface poison {
 interface realestate {
     value: string
     protection: number
+}
+
+interface ring {
+    unique: boolean
+    description: string
+    ability: [{
+        id: string
+        power: boolean
+        magic?: number
+        pc?: string
+        spell?: string
+    }]
 }
 
 interface room {

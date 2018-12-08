@@ -1,6 +1,6 @@
 {
   "name": "dankdomain",
-  "version": "1.6.2",
+  "version": "1.7.0",
   "description": "Dank Domain: the return of Hack & Slash (1990-2014)",
   "main": "ttymain",
   "publisher": "theflyingape",
@@ -66,6 +66,6 @@
     "@types/sprintf-js": "^1.1.1",
     "@types/ws": "^6.0.1",
     "browserify": "^16.2.3",
-    "typescript": "^3.2.1"
+    "typescript": "^3.2.2"
   }
 }

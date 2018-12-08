@@ -708,17 +708,51 @@ export function spoils() {
                         if (/_NEP|_OLD|_TAX/.test(loser.user.id)) $.sound('shield', 16)
                     }
                     else if (from === 'Monster' && result)
-                        xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'get'), credit.carry(), ' for ', $.who(loser, 'his'), loser.user.armor, '.\n')
+                        xvt.outln($.who(winner, 'He'), 'also ', $.what(winner, 'get'), credit.carry(), ' for ', $.who(loser, 'his'), loser.user.armor, '.')
+
+                    if (loser.user.rings.length) {
+                        xvt.outln($.who(winner, 'He'), 'also ', $.what(winner, 'remove'), loser.user.rings.length > 1 ? 'all of ' : '', $.who(loser, 'his'), 'rings...')
+                        for (let f in loser.user.rings) {
+                            if ($.Ring.wear(winner.user.rings, loser.user.rings[f])) {
+                                $.saveRing(loser.user.rings[f], winner.user.id)
+                                xvt.waste(500)
+                                xvt.out(' ', $.bracket(loser.user.rings[f], false), ' ')
+                                $.sound('click')
+                                xvt.waste(500)
+                            }
+                        }
+                        loser.user.rings = []
+                        loser.altered = true
+                        xvt.outln()
+                    }
                 }
                 else {
                     $.log(loser.user.id, `\n${$.player.handle} killed you!`)
                     if ($.Weapon.swap(winner, loser)) {
-                        xvt.out($.who(winner, 'He'), $.what(winner, 'take'), $.who(loser, 'his'), winner.user.weapon, '.\n')
+                        xvt.outln($.who(winner, 'He'), $.what(winner, 'take'), $.who(loser, 'his'), winner.user.weapon, '.')
+                        xvt.waste(250)
                         $.log(loser.user.id, `... and took your ${winner.user.weapon}.`)
                     }
                     if ($.Armor.swap(winner, loser)) {
-                        xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who(loser, 'his'), winner.user.armor, '.\n')
+                        xvt.outln($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who(loser, 'his'), winner.user.armor, '.')
+                        xvt.waste(250)
                         $.log(loser.user.id, `... and took your ${winner.user.armor}.`)
+                    }
+                    if (loser.user.rings.length) {
+                        xvt.outln($.who(winner, 'He'), 'also ', $.what(winner, 'remove'), loser.user.rings.length > 1 ? 'all of ' : '', $.who(loser, 'his'), 'rings...')
+                        for (let f in loser.user.rings) {
+                            if ($.Ring.wear(winner.user.rings, loser.user.rings[f])) {
+                                $.saveRing(loser.user.rings[f], winner.user.id)
+                                xvt.waste(500)
+                                xvt.out(' ', $.bracket(loser.user.rings[f], false), ' ')
+                                $.sound('click')
+                                xvt.waste(500)
+                            }
+                        }
+                        loser.user.rings = []
+                        loser.altered = true
+                        $.log(loser.user.id, `... and took your rings.`)
+                        xvt.outln()
                     }
                     if (winner.user.cursed) {
                         winner.user.cursed = ''

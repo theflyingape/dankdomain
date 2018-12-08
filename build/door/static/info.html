@@ -502,17 +502,15 @@ function wager() {
 }
 
 function well() {
-  cmd(`<input type="button" value="Bless" onclick="send('B');">
-<input type="button" value="Teleport" onclick="send('T');">
-<input type="button" value="Destroy" onclick="send('D');">
-<input type="button" value="Out" onclick="send('O');">
-<input type="button" value="Resurrect" onclick="send('R');">
-<input type="button" value="Fix" onclick="send('F');">
-<input type="button" value="Loot" onclick="send('L');">
-<input type="button" value="Grant" onclick="send('G');">
-<input type="button" value="Curse" onclick="send('C');">
-<input type="button" value="Key" onclick="send('K');">
-<input type="button" value="Magic" onclick="send('M');">`);
+  cmd(`<table>
+<tr><td colspan=2><input class="slate" value="Destroy Dungeon" onclick="send('D');"></td></tr>
+<tr><td><input class="silver" value="Key" onclick="send('K');"></td><td><input class="platinum" value="Magic" onclick="send('M');"></td></tr>
+<tr><td><input class="gold" value="Loot" onclick="send('L');"></td><td><input class="silver" value="Grant" onclick="send('G');"></td></tr>
+<tr><td><input class="slate" value="Resurrect" onclick="send('R');"></td><td><input class="platinum" value="Teleport" onclick="send('T');"></td></tr>
+<tr><td><input class="silver" value="Fix" onclick="send('F');"></td><td><input class="slate" value="Out" onclick="send('O');"></td></tr>
+<tr><td><input class="slate" value="Curse" onclick="send('C');"></td><td><input class="gold" value="Bless" onclick="send('B');"></td></tr>
+</table>`);
+  nme(`<img src="images/well.jpg" onload="nmeResize(\'fadeIn\');" style="display:none;" />`);
 }
 
 function nmeResize(effect, func) {

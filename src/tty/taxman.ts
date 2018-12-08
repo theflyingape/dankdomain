@@ -48,7 +48,7 @@ export function bar() {
 
     tax.value = 10 * $.money($.player.level)
     if (checkpoint($.player.coin.value)) {
-        xvt.outln('\nYou really want a drink, so you pay the tax.')
+        xvt.outln('\nYou really want a drink, so you pay the shakedown.')
         $.beep()
         $.player.coin.value -= tax.value
         if ($.player.coin.value < 0) {
@@ -59,7 +59,7 @@ export function bar() {
                 $.player.bank.value = 0
             }
         }
-        $.sound('thief', 20)
+        $.sound('thief', 22)
     }
 }
 
@@ -71,66 +71,75 @@ export function cityguards() {
             + $.worth(new $.coins($.Security.name[$.player.security].value).value, 15)
 
     if (checkpoint($.player.coin.value + $.player.bank.value)) {
-        xvt.outln(`\nYou weigh the chances with your ${$.player.weapon} against the Crown.`)
-        xvt.waste(1500)
-        $.action('yn')
-        xvt.app.form = {
-            'tax': { cb:() => {
-                xvt.out('\n\n')
-                if (/Y/i.test(xvt.entry)) {
-                    xvt.out('You pay the tax.\n')
-                    $.sound('thief2', 16)
-                    $.player.coin.value -= tax.value
-                    if ($.player.coin.value < 0) {
-                        $.player.bank.value += $.player.coin.value
-                        $.player.coin.value = 0
-                        if ($.player.bank.value < 0) {
-                            $.player.loan.value -= $.player.bank.value
-                            $.player.bank.value = 0
-                        }
-                    }
-                    require('./main').menu()
-                    return
-                }
-
-                let l = 0, xhp = $.int($.player.hp * $.player.level / $.sysop.level)
-                irs = new Array()
-                do {
-                    let i = irs.push(<active>{ user:{ id:'', sex:'M' } }) - 1
-                    irs[i].user.level = 10 * l + $.dice(9)
-                    let title = ['Reserve', 'Home', 'City', 'Foot', 'Infantry', 'Cavalry', 'Treasury', 'Tower', 'Castle', 'Royal' ][i < 10 ? i : 9]
-                    irs[i].user.handle = `${title} Guard`
-                    do {
-                        $.reroll(irs[i].user, $.PC.random('player'), irs[i].user.level)
-                    } while (irs[i].user.melee < 1)
-
-                    let w = $.int(irs[i].user.level / 100 * ($.Weapon.merchant.length - 1))
-                    w = w < 2 ? 2 : w >= $.Weapon.merchant.length ? $.Weapon.merchant.length - 1 : w
-                    irs[i].user.weapon = $.Weapon.merchant[w]
-                    irs[i].user.toWC = $.dice(irs[i].user.poison * w / 4) + 1
-
-                    let a = $.int(irs[i].user.level / 100 * ($.Armor.merchant.length - 1))
-                    a = a < 1 ? 1 : a >= $.Armor.merchant.length ? $.Armor.merchant.length - 1 : a
-                    irs[i].user.armor = $.Armor.merchant[a]
-                    irs[i].user.toAC = $.dice(irs[i].user.magic * a / 4)
-
-                    $.activate(irs[i])
-                    xhp -= irs[i].hp
-
-                    i = ($.player.level / 11) >>0
-                    if (l < i && $.dice(i) > 1)
-                        l++
-                } while (xhp > 0)
-
-                xvt.outln(`The Master of Coin points ${$.who($.taxman, 'his')}${$.taxman.user.weapon} at you,\n`, xvt.bright, xvt.blue,`  "Shall we begin?"\n`)
-                $.sound('ddd', 15)
-                $.music('taxman')
-
-                Battle.engage('Gates', $.online, irs, boss)
-            }, prompt:'Will you pay the tax (Y/N)? ', cancel:'Y', enter:'Y', eol:false, match:/Y|N/i, timeout:20 }
+        let exempt = $.Ring.power($.player.rings, 'taxes')
+        if (exempt.power) {
+            xvt.outln('\nYour hand extends to show', xvt.cyan, xvt.bright, $.an(exempt.name), xvt.normal, '.')
+            xvt.waste(1500)
+            xvt.outln(xvt.yellow, xvt.bright, $.taxman.user.handle, xvt.normal,' nods approval while the guards stand down to let you pass.')
+            xvt.waste(1500)
         }
-        xvt.app.focus = 'tax'
-        return
+        else {
+            xvt.outln(`\nYou weigh the chances with your ${$.player.weapon} against the Crown.`)
+            xvt.waste(1500)
+            $.action('yn')
+            xvt.app.form = {
+                'tax': { cb:() => {
+                    xvt.out('\n\n')
+                    if (/Y/i.test(xvt.entry)) {
+                        xvt.outln('You pay the tax.')
+                        $.sound('thief2', 16)
+                        $.player.coin.value -= tax.value
+                        if ($.player.coin.value < 0) {
+                            $.player.bank.value += $.player.coin.value
+                            $.player.coin.value = 0
+                            if ($.player.bank.value < 0) {
+                                $.player.loan.value -= $.player.bank.value
+                                $.player.bank.value = 0
+                            }
+                        }
+                        require('./main').menu()
+                        return
+                    }
+
+                    let l = 0, xhp = $.int($.player.hp * ($.player.level - 9) / $.sysop.level, true)
+                    irs = new Array()
+                    do {
+                        let i = irs.push(<active>{ user:{ id:'', sex:'M' } }) - 1
+                        irs[i].user.level = 10 * l + $.dice(9)
+                        let title = ['Reserve', 'Home', 'City', 'Foot', 'Infantry', 'Cavalry', 'Castle', 'Royal'][i < 7 ? i : 7]
+                        irs[i].user.handle = `${title} Guard`
+                        do {
+                            $.reroll(irs[i].user, $.PC.random('player'), irs[i].user.level)
+                        } while (irs[i].user.melee < 1)
+
+                        let w = $.int(irs[i].user.level / 100 * ($.Weapon.merchant.length - 1))
+                        w = w < 2 ? 2 : w >= $.Weapon.merchant.length ? $.Weapon.merchant.length - 1 : w
+                        irs[i].user.weapon = $.Weapon.merchant[w]
+                        irs[i].user.toWC = $.dice(irs[i].user.poison * w / 4) + 1
+
+                        let a = $.int(irs[i].user.level / 100 * ($.Armor.merchant.length - 1))
+                        a = a < 1 ? 1 : a >= $.Armor.merchant.length ? $.Armor.merchant.length - 1 : a
+                        irs[i].user.armor = $.Armor.merchant[a]
+                        irs[i].user.toAC = $.dice(irs[i].user.magic * a / 4)
+
+                        $.activate(irs[i])
+                        xhp -= irs[i].hp
+
+                        i = ($.player.level / 11) >>0
+                        if (l < i && $.dice(i) > 1)
+                            l++
+                    } while (xhp > 0)
+
+                    xvt.outln(xvt.yellow, `The Master of Coin points ${$.who($.taxman, 'his')}${$.taxman.user.weapon} at you,\n`, xvt.bright, xvt.blue,`  "Shall we begin?"\n`)
+                    $.sound('ddd', 15)
+                    $.music('taxman')
+
+                    Battle.engage('Gates', $.online, irs, boss)
+                }, prompt:'Will you pay the tax (Y/N)? ', cancel:'Y', enter:'Y', eol:false, match:/Y|N/i, timeout:20 }
+            }
+            xvt.app.focus = 'tax'
+            return
+        }
     }
 
     require('./main').menu()
@@ -155,9 +164,9 @@ export function cityguards() {
         }
 
         xvt.outln(xvt.yellow, '\nThe tax collector ', [
-            `${xvt.attr('mutters', xvt.bright, xvt.blue, "Good help is hard to find these days...")}`,
-            `${xvt.attr('sighs, ', xvt.bright, xvt.blue, "If you want a job done right...")}`,
-            `${xvt.attr('swears, ', xvt.bright, xvt.blue, "That's gonna cost you.")}`
+            `${xvt.attr('mutters, ', xvt.bright, xvt.blue)} "Good help is hard to find these days..."`,
+            `${xvt.attr('sighs, ', xvt.bright, xvt.blue)} "If you want a job done right..."`,
+            `${xvt.attr('swears, ', xvt.bright, xvt.blue)} "That's gonna cost you."`
             ][$.dice(3) - 1])
         xvt.waste(750)
 
