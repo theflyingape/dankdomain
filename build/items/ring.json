@@ -58,7 +58,7 @@
         ]
     },
 	"Medusa's": { 
-        "unique": false,
+        "unique": true,
         "description":"freeze opponent, except against Sages, Psionics, and Gods" , "value":"500p",
         "ability":[
             { "id":"skip", "power":true },

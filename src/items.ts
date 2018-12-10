@@ -152,10 +152,16 @@ export class Magic {
         if (xvt.validator.isDefined(nme) && [ 9,11,12,14,15,16,19,20,21,22 ].indexOf(this.spells[spell].cast) >= 0) {
             let m = rpc.int - nme.int
             m = (m < -10) ? -10 : (m > 10) ? 10 : m
+            m += 2 * (rpc.user.magic - nme.user.magic)
             fail += m
         }
 
         fail = (fail < 10) ? 10 : (fail > 99) ? 99 : fail
+
+        let mod = $.Ring.power(nme.user.rings, 'cast', 'magic', rpc.user.magic)
+        if (mod.power && !$.Ring.power(rpc.user.rings, 'ring').power)
+            fail -= 2 * (nme.user.magic + 1)
+
         backfire = 50 + (fail >>1)
         return { fail, backfire }
     }
