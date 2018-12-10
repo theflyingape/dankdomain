@@ -42,21 +42,21 @@ module Logon
 
 function guards(): boolean {
     xvt.beep()
-    xvt.out(xvt.reset, 'Invalid response.\n\n')
+    xvt.outln(xvt.reset, 'Invalid response.\n')
     xvt.waste(500)
 
     switch(--retry) {
         case 2:
-            xvt.out('The guards eye you suspiciously.\n')
+            xvt.outln('The guards eye you suspiciously.')
             break
         case 1:
-            xvt.out('The guards aim their crossbows at you.\n')
+            xvt.outln('The guards aim their crossbows at you.')
             break
         default:
             $.sound('stranger')
             $.action('yn')
             $.profile({ jpg:'npc/stranger', effect:'zoomIn' })
-            xvt.out('The last thing you ever feel is several quarrels cutting deep into your chest.\n')
+            xvt.outln('The last thing you ever feel is several quarrels cutting deep into your chest.')
             xvt.waste(1000)
             xvt.app.form = {
                 'forgot': { cb:() => {
@@ -85,14 +85,14 @@ function guards(): boolean {
 }
 
 function who() {
-    xvt.out('\n')
+    xvt.outln()
 
     if (/new/i.test(xvt.entry)) {
         // a bit hack for now, but...
         $.reroll($.player)
         $.newkeys($.player)
         xvt.emulation = 'VT'
-        $.player.rows = process.stdout.rows
+        $.player.rows = process.stdout.rows || 24
         $.emulator(() => {
             $.player.emulation = xvt.emulation
             require('./newuser')
@@ -114,7 +114,7 @@ function who() {
 
     $.access = $.Access.name[$.player.access]
     xvt.emulation = $.player.emulation
-    $.player.rows = process.stdout.rows
+    $.player.rows = process.stdout.rows || 24
 
     $.player.remote = process.env.REMOTEHOST || process.env.SSH_CLIENT || ''
     $.whereis = [
@@ -149,7 +149,7 @@ function who() {
 }
 
 function password() {
-    xvt.out('\n')
+    xvt.outln()
     if ($.player.password !== xvt.entry) {
         if (guards())
             xvt.app.refocus()
@@ -175,7 +175,7 @@ function password() {
             $.news(`\tkicked simultaneous player off: ${rs[row].id} lock from ${$.time(rs[row].locktime)}`)
             try {
                 process.kill(rs[row].pid, 'SIGHUP')
-                xvt.out(`\nYou\'re in violation of the space-time continuum: T - ${60 - t} minutes\n`)
+                xvt.outln(`\nYou\'re in violation of the space-time continuum: T - ${60 - t} minutes`)
             }
             catch {
                 $.unlock(rs[row].id)
@@ -201,8 +201,8 @@ function password() {
         if (!$.access.sysop && $.player.novice && t < 2) {
             $.access.roleplay = false; $.news('', true)
             xvt.beep()
-            xvt.out('\nYou were last on just ', t == 1 ? 'a minute' : t.toString() + ' minutes', ' ago.\n')
-            xvt.out('Please wait at least 2 minutes between visits.\n')
+            xvt.outln('\nYou were last on just ', t == 1 ? 'a minute' : t.toString() + ' minutes', ' ago.')
+            xvt.outln('Please wait at least 2 minutes between visits.')
             xvt.hangup()
         }
     }
@@ -212,7 +212,7 @@ function password() {
 
     if ($.player.today > $.access.calls) {
         $.beep()
-        xvt.out(`\nYou played all ${$.access.calls} calls for today.  Please visit again tomorrow!\n`)
+        xvt.outln(`\nYou played all ${$.access.calls} calls for today.  Please visit again tomorrow!`)
         xvt.hangup()
     }
 
@@ -240,10 +240,9 @@ function password() {
     $.access = $.Access.name[$.player.access]
     $.player.rows = process.stdout.rows
 
-    xvt.out(xvt.clear, xvt.red, '--=:))', xvt.LGradient[xvt.emulation]
-    , xvt.Red, xvt.bright, xvt.white, $.sysop.name, xvt.reset
-    , xvt.red, xvt.RGradient[xvt.emulation], '((:=--')
-    xvt.out('\n\n')
+    xvt.outln(xvt.clear, xvt.red, '--=:))', xvt.LGradient[xvt.emulation]
+        , xvt.Red, xvt.bright, xvt.white, $.sysop.name, xvt.reset
+        , xvt.red, xvt.RGradient[xvt.emulation], '((:=--\n')
     xvt.out(xvt.cyan, 'Visitor: ', xvt.bright, xvt.white, $.sysop.calls.toString()
         , xvt.reset, '  -  ')
     if ($.now().date >= $.sysop.dob)
@@ -251,9 +250,9 @@ function password() {
     else
         xvt.out('new game starts', xvt.bright, xvt.yellow)
     xvt.outln(' ', $.date2full($.sysop.dob))
-    xvt.out(xvt.cyan, 'Last on: ', xvt.bright, xvt.white, $.date2full($.player.lastdate), xvt.normal, '\n')
-    xvt.out(xvt.cyan, ' Online: ', xvt.bright, xvt.white, $.player.handle, xvt.normal
-        , '  -  ', $.whereis, '\n')
+    xvt.outln(xvt.cyan, 'Last on: ', xvt.bright, xvt.white, $.date2full($.player.lastdate))
+    xvt.outln(xvt.cyan, ' Online: ', xvt.bright, xvt.white, $.player.handle
+        , xvt.normal, '  -  ', $.whereis)
     xvt.out(xvt.cyan, ' Access: ', xvt.bright, xvt.white, $.player.access)
     if ($.player.emulation === 'XT' && $.access.emoji)
         xvt.out(' ', $.access.emoji)
@@ -266,19 +265,19 @@ function password() {
 function welcome() {
     $.action('yn')
 
-    if ($.player.status === 'jail' || !$.Access.name[$.player.access].roleplay) {
+    if ($.player.today <= $.access.calls && ($.player.status === 'jail' || !$.Access.name[$.player.access].roleplay)) {
         $.profile({ png:'npc/jailer', effect:'fadeIn' })
         $.sound('ddd')
         if ($.player.emulation == 'XT') xvt.out('🔒 ')
-        xvt.out(xvt.bright, xvt.black, '(', xvt.magenta, 'PRISONER', xvt.black, ')\n')
-        xvt.out(xvt.red, '\nYou are locked-up in jail.\n', xvt.reset)
+        xvt.outln(xvt.bright, xvt.black, '(', xvt.magenta, 'PRISONER', xvt.black, ')')
+        xvt.outln(xvt.red, '\nYou are locked-up in jail.')
         xvt.waste(1250)
         if ($.access.roleplay && $.dice(2 * $.online.cha) > (10 - 2 * $.player.steal)) {
             let bail = new $.coins(Math.round($.money($.player.level) * (101 - $.online.cha) / 100))
-            xvt.out('\nIt will cost you ', bail.carry(), ' to get bailed-out and to continue play.\n')
+            xvt.outln('\nIt will cost you ', bail.carry(), ' to get bailed-out and to continue play.')
             xvt.app.form = {
                 'bail': { cb:() => {
-                    xvt.out('\n\n')
+                    xvt.outln('\n')
                     if (/Y/i.test(xvt.entry)) {
                         $.sound('click')
                         $.player.coin.value -= bail.value
@@ -315,11 +314,12 @@ function welcome() {
         })
         $.sound('welcome')
 
-        xvt.out(xvt.bright, xvt.black, '(', xvt.normal, xvt.white, 'Welcome back, ',  $.access[$.player.gender] || 'you', xvt.bright, xvt.black, ')\n', xvt.reset)
-        xvt.out(xvt.cyan, 'Visit #: ', xvt.bright, xvt.white, $.player.calls.toString(), xvt.reset
+        xvt.outln(xvt.bright, xvt.black, '(', xvt.normal, xvt.white, 'Welcome back, '
+            ,  $.access[$.player.gender] || 'you', xvt.bright, xvt.black, ')')
+        xvt.outln(xvt.cyan, 'Visit #: ', xvt.bright, xvt.white, $.player.calls.toString(), xvt.reset
             , '  -  ', xvt.bright, xvt.blink
             , $.access.calls - $.player.today ? xvt.cyan : xvt.red
-            , `${$.access.calls - $.player.today}`, xvt.reset, ' calls remaining\n')
+            , `${$.access.calls - $.player.today}`, xvt.reset, ' calls remaining')
         xvt.sessionAllowed = $.access.minutes * 60
 
         $.wall(`logged on as a level ${$.player.level} ${$.player.pc}`)
@@ -401,15 +401,15 @@ function welcome() {
                 xvt.app.refocus()
                 return
             }
-            xvt.out(xvt.clear, xvt.blue, '--=:))', xvt.LGradient[xvt.emulation]
+            xvt.outln(xvt.clear, xvt.blue, '--=:))', xvt.LGradient[xvt.emulation]
                 , xvt.Blue, xvt.bright, xvt.cyan, 'Announcement', xvt.reset
-                , xvt.blue, xvt.RGradient[xvt.emulation], '((:=--\n\n'
+                , xvt.blue, xvt.RGradient[xvt.emulation], '((:=--\n'
             )
             $.cat('announcement')
 
-            xvt.out('\n\n', xvt.cyan, '--=:))', xvt.LGradient[xvt.emulation]
+            xvt.outln('\n\n', xvt.cyan, '--=:))', xvt.LGradient[xvt.emulation]
                 , xvt.Cyan, xvt.bright, xvt.white, 'Auto Message', xvt.reset
-                , xvt.cyan, xvt.RGradient[xvt.emulation], '((:=--\n\n'
+                , xvt.cyan, xvt.RGradient[xvt.emulation], '((:=--\n'
             )
             $.cat('auto-message')
 

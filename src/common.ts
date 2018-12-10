@@ -1317,7 +1317,7 @@ export function playerPC(points = 200, immortal = false) {
                 }
                 player.cha = n
                 activate(online)
-                xvt.out('\n')
+                xvt.outln()
                 news(`\trerolled as${an(player.pc)}`)
                 if (immortal) {
                     reason = 'became immortal'
@@ -2614,9 +2614,9 @@ export function saveGang(g: gang, insert = false) {
 
 export function ringBearer(name: string): string {
     if (Ring.name[name].unique) {
-        let rs = query(`SELECT bearer FROM Rings WHERE name = '${name}'`)
+        let rs = query(`SELECT bearer FROM Rings WHERE name = "${name}"`)
         if (!rs.length) {
-            run(`INSERT INTO Rings (name, bearer) VALUES ('${name}', '')`)
+            run(`INSERT INTO Rings (name, bearer) VALUES ("${name}", "")`)
             return ''
         }
         return rs[0].bearer
@@ -2630,10 +2630,10 @@ export function saveRing(name: string, bearer = '', rings?: string[]) {
 
     //  primarily maintain the one ring's active bearer here
     if (Ring.name[name].unique)
-        run(`UPDATE Rings set bearer = '${theRing.bearer}' WHERE name = '${theRing.name}'`)
+        run(`UPDATE Rings set bearer = "${theRing.bearer}" WHERE name = "${theRing.name}"`)
 
     if (theRing.bearer.length && rings)
-        run(`UPDATE Players set rings = '${rings.toString()}' WHERE id = '${theRing.bearer}'`)
+        run(`UPDATE Players set rings = "${rings.toString()}" WHERE id = "${theRing.bearer}"`)
 }
 
 }
