@@ -389,9 +389,16 @@ export class RealEstate {
 
 export class Ring {
     name: ring[]
+    common: string[] = []
+    unique: string[] = []
 
     constructor() {
         this.name = require('./items/ring.json')
+        for (let i in this.name)
+            if (this.name[i].unique)
+                this.unique.push(i)
+            else
+                this.common.push(i)
     }
 
     have(rings: string[], name: string): boolean {

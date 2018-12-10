@@ -1,3 +1,4 @@
+type GIFT = '' | 'armor' | 'chest' | 'magic' | 'map' | 'poison' | 'potion' | 'ring' | 'weapon' | 'xmagic'
 type MAP = '' | 'map' | 'magic map' | 'Marauder\'s map'
 type NPC = '' | 'cleric' | 'wizard' | 'trapdoor' | 'thief' | 'portal' | 'well' | 'wheel' | 'dwarf'
 type ROOM = '' | 'n-s' | 'w-e' | 'cavern'
@@ -228,8 +229,8 @@ interface room {
     map: boolean		//	explored?
     occupant: NPC
     type: ROOM  		
-    giftItem?: string	//	potion, poison, magic, xmagic, chest, map, armor, weapon, Marauder's
-    giftValue?: number
+    giftItem?: GIFT
+    giftValue?: number|string
     giftID?: boolean	//	undefined, or identified?
     monster?: active[]
 }

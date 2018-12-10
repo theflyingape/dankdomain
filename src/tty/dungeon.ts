@@ -1364,7 +1364,7 @@ function doMove(): boolean {
 			let gold = new $.coins($.money(Z))
 			gold.value += $.worth(new $.coins($.online.weapon.value).value, $.online.cha)
 			gold.value += $.worth(new $.coins($.online.armor.value).value, $.online.cha)
-			gold.value *= ROOM.giftValue
+			gold.value *= +ROOM.giftValue
 			gold = new $.coins(gold.carry(1, true))
 			if (gold.value) {
 				$.sound('yahoo', 10)
@@ -1381,11 +1381,11 @@ function doMove(): boolean {
 			break
 
 		case 'magic':
-			if (!$.Magic.have($.player.spells, ROOM.giftValue)) {
+			if (!$.Magic.have($.player.spells, +ROOM.giftValue)) {
 				xvt.outln(xvt.bright, xvt.yellow, 'You find a '
-					, xvt.cyan, $.Magic.merchant[ROOM.giftValue - 1], xvt.yellow
+					, xvt.cyan, $.Magic.merchant[+ROOM.giftValue - 1], xvt.yellow
 					, ' ', $.player.magic == 1 ? 'wand' : 'scroll', '!')
-				$.Magic.add($.player.spells, ROOM.giftValue)
+				$.Magic.add($.player.spells, +ROOM.giftValue)
 				pause = true
 				ROOM.giftItem = ''
 			}
@@ -1400,10 +1400,10 @@ function doMove(): boolean {
 			break
 
 		case 'poison':
-			if (!$.Poison.have($.player.poisons, ROOM.giftValue)) {
+			if (!$.Poison.have($.player.poisons, +ROOM.giftValue)) {
 				xvt.outln(xvt.bright, xvt.yellow, 'You find a vial of '
-					, $.Poison.merchant[ROOM.giftValue - 1], '!')
-				$.Poison.add($.player.poisons, ROOM.giftValue)
+					, $.Poison.merchant[+ROOM.giftValue - 1], '!')
+				$.Poison.add($.player.poisons, +ROOM.giftValue)
 				pause = true
 				ROOM.giftItem = ''
 			}
@@ -1412,7 +1412,7 @@ function doMove(): boolean {
 		case 'potion':
 			if (ROOM.giftID === undefined && !$.player.coward)
 				ROOM.giftID = !$.player.novice
-					&& $.dice(100 + ROOM.giftValue) < ($.online.int / 20 * (1 << $.player.poison) + ($.online.int > 90 ? ($.online.int % 90) <<1
+					&& $.dice(100 + +ROOM.giftValue) < ($.online.int / 20 * (1 << $.player.poison) + ($.online.int > 90 ? ($.online.int % 90) <<1
 					: 0))
 			$.sound('bubbles')
 			xvt.out(xvt.bright, xvt.cyan, 'On the ground, you find a ')
@@ -1427,7 +1427,7 @@ function doMove(): boolean {
 			}
 
 			if (potions[ROOM.giftValue].identified || ROOM.giftID
-				|| ($.dice(100 + 10 * ROOM.giftValue * +$.player.coward) + $.dice(deep / 2) < (50 + $.int($.online.int / 2))
+				|| ($.dice(100 + 10 * +ROOM.giftValue * +$.player.coward) + $.dice(deep / 2) < (50 + $.int($.online.int / 2))
 				&& $.dice(100) > 1)) {
 				$.action('potion')
 				xvt.app.form = {
@@ -1440,11 +1440,11 @@ function doMove(): boolean {
 						}
 						if (/Y/i.test(xvt.entry)) {
 							xvt.out(xvt.bright)
-							quaff(ROOM.giftValue)
+							quaff(+ROOM.giftValue)
 						}
 						else if (/T/i.test(xvt.entry)) {
 							xvt.out(xvt.faint)
-							quaff(ROOM.giftValue, false)
+							quaff(+ROOM.giftValue, false)
 						}
 						ROOM.giftItem = ''
 						menu()
@@ -1458,7 +1458,19 @@ function doMove(): boolean {
 				xvt.waste(600)
 				xvt.outln(xvt.faint, '\nYou ', auto ? 'quaff' : 'toss', ' it without hesitation.')
 				xvt.waste(600)
-				quaff(ROOM.giftValue, auto)
+				quaff(+ROOM.giftValue, auto)
+				ROOM.giftItem = ''
+			}
+			break
+
+		case 'ring':
+			let ring = ROOM.giftValue.toString()
+			if (!$.Ring.have($.player.rings, ring)) {
+				xvt.outln(xvt.bright, xvt.cyan, 'You find a '
+					, $.Poison.merchant[+ROOM.giftValue - 1], 'ring!')
+				$.Ring.wear($.player.rings, ring)
+				$.saveRing(ring, $.player.id, $.player.rings)
+				pause = true
 				ROOM.giftItem = ''
 			}
 			break
@@ -1471,9 +1483,9 @@ function doMove(): boolean {
 		case 'xmagic':
 			if (!$.Magic.have($.player.spells, ROOM.giftValue)) {
 				xvt.outln(xvt.bright, xvt.yellow, 'You find a '
-					, xvt.magenta, $.Magic.special[ROOM.giftValue - $.Magic.merchant.length - 1], xvt.yellow
+					, xvt.magenta, $.Magic.special[+ROOM.giftValue - $.Magic.merchant.length - 1], xvt.yellow
 					, ' ', $.player.magic == 1 ? 'wand' : 'scroll', '!')
-				$.Magic.add($.player.spells, ROOM.giftValue)
+				$.Magic.add($.player.spells, +ROOM.giftValue)
 				pause = true
 				ROOM.giftItem = ''
 			}
@@ -2089,38 +2101,51 @@ function generateLevel() {
 
 		if ($.player.poison && $.dice(deep + $.player.poison + 2) > (deep + 1)) {
 			DL.rooms[y][x].giftItem = 'poison'
-			DL.rooms[y][x].giftValue =  $.dice($.Poison.merchant.length * Z / 100)
+			DL.rooms[y][x].giftValue = $.dice($.Poison.merchant.length * Z / 100)
 			continue
 		}
 
 		if ($.player.magic == 1 || $.player.magic == 2) {
 			if ($.dice(deep + $.player.magic + 2) > (deep + 1)) {
 				DL.rooms[y][x].giftItem = 'magic'
-				DL.rooms[y][x].giftValue =  $.dice($.Magic.merchant.length * Z / 100)
+				DL.rooms[y][x].giftValue = $.dice($.Magic.merchant.length * Z / 100)
 				continue
 			}
 			if ($.dice(deep + $.player.magic + 3) > (deep + 1)) {
 				DL.rooms[y][x].giftItem = 'xmagic'
-				DL.rooms[y][x].giftValue =  $.Magic.merchant.length + $.dice($.Magic.special.length)
+				DL.rooms[y][x].giftValue = $.Magic.merchant.length + $.dice($.Magic.special.length)
 				continue
 			}
 		}
 
 		if ($.dice(deep + 2 * $.player.steal) > (deep + 1)) {
 			DL.rooms[y][x].giftItem = 'chest'
-			DL.rooms[y][x].giftValue =  $.dice(8 + deep + $.player.steal) - 1
+			DL.rooms[y][x].giftValue = $.dice(8 + deep + $.player.steal) - 1
+			continue
+		}
+
+		if ($.dice(deep * ($.player.magic + 2)) - $.player.melee > (deep + 1)) {
+			DL.rooms[y][x].giftItem = 'ring'
+			if ($.dice(10) > 1) {
+				let ring = Object.keys($.Ring.common)
+				DL.rooms[y][x].giftValue = ring[$.dice(ring.length) - 1]
+			}
+			else {
+				let ring = Object.keys($.Ring.unique)
+				DL.rooms[y][x].giftValue = ring[$.dice(ring.length) - 1]
+			}
 			continue
 		}
 
 		if ($.dice(deep * ($.player.melee + 3)) - $.player.magic > (deep + 1)) {
 			DL.rooms[y][x].giftItem = 'armor'
-			DL.rooms[y][x].giftValue =  $.dice(deep) + 2
+			DL.rooms[y][x].giftValue = $.dice(deep) + 2
 			continue
 		}
 
 		if ($.dice(deep * ($.player.melee + 2)) - $.player.magic > (deep + 1)) {
 			DL.rooms[y][x].giftItem = 'weapon'
-			DL.rooms[y][x].giftValue =  $.dice(deep) + 2
+			DL.rooms[y][x].giftValue = $.dice(deep) + 2
 			continue
 		}
 	}
