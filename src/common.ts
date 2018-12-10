@@ -1337,7 +1337,7 @@ export function playerPC(points = 200, immortal = false) {
 export function remake(user: user) {
     let rpc = PC.card(user.pc)
     for (let n = 1; n < user.level; n++) {
-        if (n == 50 && user.gender !== 'I') {
+        if (n == 50 && user.gender !== 'I' && user.id[0] !== '_') {
             xvt.out(xvt.reset, xvt.bright, xvt.yellow, '+', xvt.reset, ' Bonus ')
             let d: number = 0
             while (!d) {
@@ -2284,7 +2284,7 @@ export function saveUser(rpc, insert = false, locked = false) {
         , ${user.str}, ${user.maxstr}, ${user.int}, ${user.maxint}, ${user.dex}
         , ${user.maxdex}, ${user.cha}, ${user.maxcha}, ${user.coin.value}, ${user.bank.value}
         , ${user.loan.value}, '${user.weapon}', ${user.toWC}, '${user.armor}', ${user.toAC}
-        ,'${user.spells.toString()}', '${user.poisons.toString()}', '${user.rings.toString()}', '${user.realestate}', '${user.security}'
+        ,'${user.spells.toString()}', '${user.poisons.toString()}', "${user.rings.toString()}", '${user.realestate}', '${user.security}'
         , ${user.hull}, ${user.cannon}, ${+user.ram}, ${user.wins}, ${user.immortal}
         , ${user.plays}, ${user.jl}, ${user.jw}, ${user.killed}, ${user.kills}
         , ${user.retreats}, ${user.tl}, ${user.tw}
@@ -2301,7 +2301,7 @@ export function saveUser(rpc, insert = false, locked = false) {
         str=${user.str}, maxstr=${user.maxstr}, int=${user.int}, maxint=${user.maxint}, dex=${user.dex},
         maxdex=${user.maxdex}, cha=${user.cha}, maxcha=${user.maxcha}, coin=${user.coin.value}, bank=${user.bank.value},
         loan=${user.loan.value}, weapon='${user.weapon}', toWC=${user.toWC}, armor='${user.armor}', toAC=${user.toAC},
-        spells='${user.spells.toString()}', poisons='${user.poisons.toString()}', rings='${user.rings.toString()}', realestate='${user.realestate}', security='${user.security}',
+        spells='${user.spells.toString()}', poisons='${user.poisons.toString()}', rings="${user.rings.toString()}", realestate='${user.realestate}', security='${user.security}',
         hull=${user.hull}, cannon=${user.cannon}, ram=${+user.ram}, wins=${user.wins}, immortal=${user.immortal},
         plays=${user.plays}, jl=${user.jl}, jw=${user.jw}, killed=${user.killed}, kills=${user.kills},
         retreats=${user.retreats}, tl=${user.tl}, tw=${user.tw}

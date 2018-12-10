@@ -200,7 +200,7 @@ export function menu(suppress = false) {
 			x = $.dice(DL.width) - 1
 	}
 	ROOM = DL.rooms[y][x]
-	if ($.dice(DL.spawn * (ROOM.type == '' ? 2 : ROOM.type == 'Cavern' ? 1 : 3)) == 1) {
+	if ($.dice(DL.spawn * (ROOM.type == '' ? 2 : ROOM.type == 'cavern' ? 1 : 3)) == 1) {
 		let s = $.dice(5) - 1
 		xvt.outln()
 		xvt.out(xvt.faint, ['Your skin crawls'
@@ -345,23 +345,23 @@ export function menu(suppress = false) {
 			xvt.app.form['command'].prompt += xvt.attr(
 				$.bracket('P', false), xvt.cyan, 'oison, '
 			)
-		if (Y > 0 && DL.rooms[Y][X].type !== 'W-E')
-			if (DL.rooms[Y - 1][X].type !== 'W-E')
+		if (Y > 0 && DL.rooms[Y][X].type !== 'w-e')
+			if (DL.rooms[Y - 1][X].type !== 'w-e')
 				xvt.app.form['command'].prompt += xvt.attr(
 					$.bracket('N', false), xvt.cyan, 'orth, '
 				)
-		if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 'W-E')
-			if (DL.rooms[Y + 1][X].type !== 'W-E')
+		if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 'w-e')
+			if (DL.rooms[Y + 1][X].type !== 'w-e')
 				xvt.app.form['command'].prompt += xvt.attr(
 					$.bracket('S', false), xvt.cyan, 'outh, ',
 				)
-		if (X < DL.width - 1 && DL.rooms[Y][X].type !== 'N-S')
-			if (DL.rooms[Y][X + 1].type !== 'N-S')
+		if (X < DL.width - 1 && DL.rooms[Y][X].type !== 'n-s')
+			if (DL.rooms[Y][X + 1].type !== 'n-s')
 				xvt.app.form['command'].prompt += xvt.attr(
 					$.bracket('E', false), xvt.cyan, 'ast, ',
 				)
-		if (X > 0 && DL.rooms[Y][X].type !== 'N-S')
-			if (DL.rooms[Y][X - 1].type !== 'N-S')
+		if (X > 0 && DL.rooms[Y][X].type !== 'n-s')
+			if (DL.rooms[Y][X - 1].type !== 'n-s')
 				xvt.app.form['command'].prompt += xvt.attr(
 					$.bracket('W', false), xvt.cyan, 'est, ',
 				)
@@ -405,7 +405,7 @@ function command() {
 
     switch (choice) {
 	case 'M':	//	#tbt
-		DL.map = 'Maruader\'s map'
+		DL.map = 'Marauder\'s map'
 		refresh = true
 		break
 
@@ -424,8 +424,8 @@ function command() {
 		break
 
 	case 'N':
-		if (Y > 0 && DL.rooms[Y][X].type !== 'W-E')
-			if (DL.rooms[Y - 1][X].type !== 'W-E') {
+		if (Y > 0 && DL.rooms[Y][X].type !== 'w-e')
+			if (DL.rooms[Y - 1][X].type !== 'w-e') {
 				drawRoom(Y, X)
 				Y--
 				looked = false
@@ -435,8 +435,8 @@ function command() {
 		break
 
 	case 'S':
-		if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 'W-E')
-			if (DL.rooms[Y + 1][X].type !== 'W-E') {
+		if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 'w-e')
+			if (DL.rooms[Y + 1][X].type !== 'w-e') {
 				drawRoom(Y, X)
 				Y++
 				looked = false
@@ -446,8 +446,8 @@ function command() {
 		break
 
 	case 'E':
-		if (X < DL.width - 1 && DL.rooms[Y][X].type !== 'N-S')
-			if (DL.rooms[Y][X + 1].type !== 'N-S') {
+		if (X < DL.width - 1 && DL.rooms[Y][X].type !== 'n-s')
+			if (DL.rooms[Y][X + 1].type !== 'n-s') {
 				drawRoom(Y, X)
 				X++
 				looked = false
@@ -457,8 +457,8 @@ function command() {
 		break
 
 	case 'W':
-		if (X > 0 && DL.rooms[Y][X].type !== 'N-S')
-			if (DL.rooms[Y][X - 1].type !== 'N-S') {
+		if (X > 0 && DL.rooms[Y][X].type !== 'n-s')
+			if (DL.rooms[Y][X - 1].type !== 'n-s') {
 				drawRoom(Y, X)
 				X--
 				looked = false
@@ -1087,7 +1087,7 @@ function doMove(): boolean {
 
 		case 'thief':
 			xvt.out(xvt.cyan, xvt.faint, 'There is a thief in this ', !ROOM.type ? 'chamber'
-				: ROOM.type == 'N-S' ? 'hallway' : ROOM.type == 'W-E' ? 'corridor' : 'cavern'
+				: ROOM.type == 'n-s' ? 'hallway' : ROOM.type == 'w-e' ? 'corridor' : 'cavern'
 				, '! ', xvt.white)
 			xvt.waste(600)
 			ROOM.occupant = ''
@@ -1313,7 +1313,7 @@ function doMove(): boolean {
 				do {
 					y = $.dice(DL.rooms.length) - 1
 					x = $.dice(DL.width) - 1
-				} while (DL.rooms[y][x].type == 'Cavern' || DL.rooms[y][x].occupant)
+				} while (DL.rooms[y][x].type == 'cavern' || DL.rooms[y][x].occupant)
 				DL.rooms[y][x].occupant = 'wizard'
 				refresh = true
 			}
@@ -1332,7 +1332,7 @@ function doMove(): boolean {
 				do {
 					y = $.dice(DL.rooms.length) - 1
 					x = $.dice(DL.width) - 1
-				} while (DL.rooms[y][x].type == 'Cavern' || DL.rooms[y][x].occupant)
+				} while (DL.rooms[y][x].type == 'cavern' || DL.rooms[y][x].occupant)
 				DL.rooms[y][x].occupant = 'wizard'
 				refresh = true
 			}
@@ -1393,7 +1393,7 @@ function doMove(): boolean {
 
 		case 'map':
 			xvt.outln(xvt.bright, xvt.yellow, 'You find Marauder\'s map!')
-			DL.map = 'Maruader\'s map'
+			DL.map = 'Marauder\'s map'
 			pause = true
 			refresh = true
 			ROOM.giftItem = ''
@@ -1606,7 +1606,7 @@ function doSpoils() {
 			xvt.out(xvt.lred, '+ bonus strength\n', xvt.reset)
 			$.sound('bravery', 20)
 			$.PC.adjust('str', deep + 2, deep + 1, 1)
-			DL.map = 'Maruader\'s map'
+			DL.map = 'Marauder\'s map'
 			pause = true
 		}
 	}
@@ -1623,8 +1623,8 @@ function doSpoils() {
 		let i = $.dice(d.length) - 1
 		switch (d[i]) {
 			case 'N':
-				if (Y > 0 && DL.rooms[Y][X].type !== 'W-E')
-					if (DL.rooms[Y - 1][X].type !== 'W-E') {
+				if (Y > 0 && DL.rooms[Y][X].type !== 'w-e')
+					if (DL.rooms[Y - 1][X].type !== 'w-e') {
 						Battle.retreat = false
 						Y--
 						looked = false
@@ -1635,8 +1635,8 @@ function doSpoils() {
 				break
 
 			case 'S':
-				if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 'W-E')
-					if (DL.rooms[Y + 1][X].type !== 'W-E') {
+				if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 'w-e')
+					if (DL.rooms[Y + 1][X].type !== 'w-e') {
 						Battle.retreat = false
 						Y++
 						looked = false
@@ -1647,8 +1647,8 @@ function doSpoils() {
 				break
 
 			case 'E':
-				if (X < DL.width - 1 && DL.rooms[Y][X].type !== 'N-S')
-					if (DL.rooms[Y][X + 1].type !== 'N-S') {
+				if (X < DL.width - 1 && DL.rooms[Y][X].type !== 'n-s')
+					if (DL.rooms[Y][X + 1].type !== 'n-s') {
 						Battle.retreat = false
 						X++
 						looked = false
@@ -1659,8 +1659,8 @@ function doSpoils() {
 				break
 
 			case 'W':
-				if (X > 0 && DL.rooms[Y][X].type !== 'N-S')
-					if (DL.rooms[Y][X - 1].type !== 'N-S') {
+				if (X > 0 && DL.rooms[Y][X].type !== 'n-s')
+					if (DL.rooms[Y][X - 1].type !== 'n-s') {
 						Battle.retreat = false
 						X--
 						looked = false
@@ -1715,7 +1715,7 @@ function drawLevel() {
 					let icon = null
 					let o: string = xvt.attr(xvt.reset)
 					if (DL.rooms[r][x].map) {
-						if (!DL.rooms[r][x].type || DL.rooms[r][x].type == 'Cavern')
+						if (!DL.rooms[r][x].type || DL.rooms[r][x].type == 'cavern')
 							o += xvt.attr(xvt.faint, !DL.rooms[r][x].type ? xvt.yellow : xvt.red)
 						o += `  ${dot}  `
 					}
@@ -1745,12 +1745,12 @@ function drawLevel() {
 								break
 
 							case 'well':
-								if (!icon && DL.map == 'Maruader\'s map')
+								if (!icon && DL.map == 'Marauder\'s map')
 									o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.blue, '  *  ', xvt.reset)
 								break
 
 							case 'wheel':
-								if (!icon && DL.map == 'Maruader\'s map')
+								if (!icon && DL.map == 'Marauder\'s map')
 									o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.green, '  @  ', xvt.reset)
 								break
 
@@ -1782,7 +1782,7 @@ function drawLevel() {
 						}
 					}
 					xvt.out(o)
-					if ((DL.map == 'Maruader\'s map' || $.access.sysop) && DL.rooms[r][x].giftItem) xvt.out(`\x08${dot}`)
+					if ((DL.map == 'Marauder\'s map' || $.access.sysop) && DL.rooms[r][x].giftItem) xvt.out(`\x08${dot}`)
 				}
 				if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[y].substr(-1), '\x1B(B')
 				else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y].substr(-1))
@@ -1826,7 +1826,7 @@ function drawRoom(r:number, c:number, keep = true) {
 	let o: string = xvt.attr(xvt.reset)
 
 	if (ROOM.map) {
-		if (!ROOM.type || ROOM.type == 'Cavern')
+		if (!ROOM.type || ROOM.type == 'cavern')
 			o += xvt.attr(xvt.faint, !ROOM.type ? xvt.yellow : xvt.red)
 		o += `  ${dot}  `
 	}
@@ -1852,17 +1852,17 @@ function drawRoom(r:number, c:number, keep = true) {
 			break
 
 		case 'well':
-			if (!icon && DL.map == 'Maruader\'s map')
+			if (!icon && DL.map == 'Marauder\'s map')
 				o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.blue, '  *  ', xvt.reset)
 			break
 
 		case 'wheel':
-			if (!icon && DL.map == 'Maruader\'s map')
+			if (!icon && DL.map == 'Marauder\'s map')
 				o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.green, '  @  ', xvt.reset)
 			break
 
 		case 'thief':
-			if (!icon && ($.player.steal == 4 || DL.map == 'Maruader\'s map'))
+			if (!icon && ($.player.steal == 4 || DL.map == 'Marauder\'s map'))
 				o = xvt.attr(xvt.reset, xvt.faint, '  &  ', xvt.normal)
 			break
 
@@ -1915,7 +1915,7 @@ function generateLevel() {
 			Y = $.dice(DL.rooms.length) - 1
 			X = $.dice(DL.width) - 1
 			ROOM = DL.rooms[Y][X]
-		} while (ROOM.type == 'Cavern')	//	cannot teleport into a cavern
+		} while (ROOM.type == 'cavern')	//	cannot teleport into a cavern
 		DL.moves >>= 1
 		return
 	}
@@ -1954,7 +1954,7 @@ function generateLevel() {
 			for (x = 0; x < DL.width; x++) {
 				let n:number
 				while ((n = $.int(($.dice(4) + $.dice(4)) / 2) - 1) == 3);
-				DL.rooms[y][x].type = (n == 0) ? 'Cavern' : (n == 1) ? '' : $.dice(2) == 1 ? 'N-S' : 'W-E'
+				DL.rooms[y][x].type = (n == 0) ? 'cavern' : (n == 1) ? '' : $.dice(2) == 1 ? 'n-s' : 'w-e'
 			}
 		}
 
@@ -2030,7 +2030,7 @@ function generateLevel() {
 		do {
 			y = $.dice(DL.rooms.length) - 1
 			x = $.dice(DL.width) - 1
-		} while (wow == 0 && DL.rooms[y][x].type == 'Cavern')
+		} while (wow == 0 && DL.rooms[y][x].type == 'cavern')
 		DL.rooms[y][x].occupant = 'thief'
 		wow--
 	}
@@ -2039,14 +2039,14 @@ function generateLevel() {
 	do {
 		y = $.dice(DL.rooms.length) - 1
 		x = $.dice(DL.width) - 1
-	} while (DL.rooms[y][x].type == 'Cavern' || DL.rooms[y][x].monster.length || DL.rooms[y][x].occupant)
+	} while (DL.rooms[y][x].type == 'cavern' || DL.rooms[y][x].monster.length || DL.rooms[y][x].occupant)
 	DL.rooms[y][x].occupant = 'cleric'
 
 	//	a wizard in another space
 	do {
 		y = $.dice(DL.rooms.length) - 1
 		x = $.dice(DL.width) - 1
-	} while (DL.rooms[y][x].type == 'Cavern' || DL.rooms[y][x].monster.length || DL.rooms[y][x].occupant)
+	} while (DL.rooms[y][x].type == 'cavern' || DL.rooms[y][x].monster.length || DL.rooms[y][x].occupant)
 	DL.rooms[y][x].occupant = 'wizard'
 
 	//	set some trapdoors in empty corridors only
@@ -2128,16 +2128,16 @@ function generateLevel() {
 	function spider(r:number, c:number) {
 		DL.rooms[r][c].map = false
 		if (c + 1 < DL.width)
-			if (DL.rooms[r][c + 1].map && DL.rooms[r][c].type !== 'N-S' && DL.rooms[r][c + 1].type !== 'N-S')
+			if (DL.rooms[r][c + 1].map && DL.rooms[r][c].type !== 'n-s' && DL.rooms[r][c + 1].type !== 'n-s')
 				spider(r, c + 1)
 		if (r + 1 < DL.rooms.length)
-			if (DL.rooms[r + 1][c].map && DL.rooms[r][c].type !== 'W-E' && DL.rooms[r + 1][c].type !== 'W-E')
+			if (DL.rooms[r + 1][c].map && DL.rooms[r][c].type !== 'w-e' && DL.rooms[r + 1][c].type !== 'w-e')
 				spider(r + 1, c)
 		if (c > 0)
-			if (DL.rooms[r][c - 1].map && DL.rooms[r][c].type !== 'N-S' && DL.rooms[r][c - 1].type !== 'N-S')
+			if (DL.rooms[r][c - 1].map && DL.rooms[r][c].type !== 'n-s' && DL.rooms[r][c - 1].type !== 'n-s')
 				spider(r, c - 1)
 		if (r > 0)
-			if (DL.rooms[r - 1][c].map && DL.rooms[r][c].type !== 'W-E' && DL.rooms[r - 1][c].type !== 'W-E')
+			if (DL.rooms[r - 1][c].map && DL.rooms[r][c].type !== 'w-e' && DL.rooms[r - 1][c].type !== 'w-e')
 				spider(r - 1, c)
 	}
 
@@ -2165,7 +2165,7 @@ function generateLevel() {
 				let row = r * 2, col = c * 6
 
 				//	north-south corridor
-				if (ROOM.type == 'N-S') {
+				if (ROOM.type == 'n-s') {
 					if (paper[row][col] == ' ')
 						paper[row] = replaceAt(paper[row], col, box[10])
 					else
@@ -2224,7 +2224,7 @@ function generateLevel() {
 				}
 
 				//	west-east corridor
-				if (ROOM.type == 'W-E') {
+				if (ROOM.type == 'w-e') {
 					if (paper[row][col] == ' ')
 						paper[row] = replaceAt(paper[row], col, box[0])
 					else
@@ -2297,11 +2297,11 @@ function putMonster(r = -1, c = -1): boolean {
 		do {
 			r = $.dice(DL.rooms.length) - 1
 			c = $.dice(DL.width) - 1
-		} while (DL.rooms[r][c].type && DL.rooms[r][c].type != 'Cavern')
+		} while (DL.rooms[r][c].type && DL.rooms[r][c].type !== 'cavern')
 	}
 
 	//	check for overcrowding
-	if (DL.rooms[r][c].monster.length >= (!DL.rooms[r][c].type ? 2 : DL.rooms[r][c].type == 'Cavern' ? 3 : 1))
+	if (DL.rooms[r][c].monster.length >= (!DL.rooms[r][c].type ? 2 : DL.rooms[r][c].type == 'cavern' ? 3 : 1))
 		return false
 
 	let i:number = DL.rooms[r][c].monster.length

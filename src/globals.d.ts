@@ -1,6 +1,6 @@
-type MAP = '' | 'map' | 'magic map' | 'Maruader\'s map'
+type MAP = '' | 'map' | 'magic map' | 'Marauder\'s map'
 type NPC = '' | 'cleric' | 'wizard' | 'trapdoor' | 'thief' | 'portal' | 'well' | 'wheel' | 'dwarf'
-type ROOM = '' | 'N-S' | 'W-E' | 'Cavern'
+type ROOM = '' | 'n-s' | 'w-e' | 'cavern'
 
 interface caller {
     who?: string

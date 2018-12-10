@@ -246,7 +246,12 @@ dns.lookup('localhost', (err, addr, family) => {
   const DD = '../users/dankdomain.sql'
   let better = require('better-sqlite3')
   let sqlite3 = new better(DD)
-  sqlite3.prepare(`DELETE FROM Online`).run().changes
+  try {
+    sqlite3.prepare(`DELETE FROM Online`).run().changes
+  }
+  catch (err) {
+    console.log(`warning ${err.code} :: ${String(err)}`)
+  }
 
   function query(q: string, errOk = false): any {
     try {
