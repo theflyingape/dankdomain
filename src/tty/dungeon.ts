@@ -34,7 +34,7 @@ module Dungeon
 	let X: number
 	let b4: number
 
-    //  £
+	//  £
     const Cleric = {
         VT: '\x1B(0\x7D\x1B(B',
         PC: '\x9C',
@@ -99,6 +99,7 @@ module Dungeon
 		}
 		containers.splice(c, 1)
 	}
+
 
 export function DeepDank(start: number, cb: Function) {
 	looked = false
@@ -199,7 +200,7 @@ export function menu(suppress = false) {
 			x = $.dice(DL.width) - 1
 	}
 	ROOM = DL.rooms[y][x]
-	if ($.dice(DL.spawn * (ROOM.type == 0 ? 2 : ROOM.type == 3 ? 1 : 3)) == 1) {
+	if ($.dice(DL.spawn * (ROOM.type == '' ? 2 : ROOM.type == 'Cavern' ? 1 : 3)) == 1) {
 		let s = $.dice(5) - 1
 		xvt.outln()
 		xvt.out(xvt.faint, ['Your skin crawls'
@@ -236,9 +237,9 @@ export function menu(suppress = false) {
 			xvt.out(' as a faint echo.\n')
 
 		if (putMonster(y, x)) {
-			if (DL.map > 1)
+			if (DL.map && DL.map !== 'map')
 				drawRoom(y, x)
-			if (ROOM.occupant == 6 && DL.cleric.hp) {
+			if (ROOM.occupant == 'cleric' && DL.cleric.hp) {
 				$.sound('agony', 10)
 				xvt.out(xvt.reset, xvt.bright, xvt.yellow, 'You hear a dying cry of agony!!\n', xvt.reset)
 				xvt.waste(1000)
@@ -248,7 +249,7 @@ export function menu(suppress = false) {
 				ROOM.giftItem = 'chest'
 				ROOM.giftValue = 0
 				DL.cleric.user.coin.value = 0
-				if (DL.map > 1) {
+				if (DL.map && DL.map !== 'map') {
 					drawRoom(y, x)
 					xvt.waste(1000)
 				}
@@ -344,23 +345,23 @@ export function menu(suppress = false) {
 			xvt.app.form['command'].prompt += xvt.attr(
 				$.bracket('P', false), xvt.cyan, 'oison, '
 			)
-		if (Y > 0 && DL.rooms[Y][X].type !== 2)
-			if (DL.rooms[Y - 1][X].type !== 2)
+		if (Y > 0 && DL.rooms[Y][X].type !== 'W-E')
+			if (DL.rooms[Y - 1][X].type !== 'W-E')
 				xvt.app.form['command'].prompt += xvt.attr(
 					$.bracket('N', false), xvt.cyan, 'orth, '
 				)
-		if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 2)
-			if (DL.rooms[Y + 1][X].type !== 2)
+		if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 'W-E')
+			if (DL.rooms[Y + 1][X].type !== 'W-E')
 				xvt.app.form['command'].prompt += xvt.attr(
 					$.bracket('S', false), xvt.cyan, 'outh, ',
 				)
-		if (X < DL.width - 1 && DL.rooms[Y][X].type !== 1)
-			if (DL.rooms[Y][X + 1].type !== 1)
+		if (X < DL.width - 1 && DL.rooms[Y][X].type !== 'N-S')
+			if (DL.rooms[Y][X + 1].type !== 'N-S')
 				xvt.app.form['command'].prompt += xvt.attr(
 					$.bracket('E', false), xvt.cyan, 'ast, ',
 				)
-		if (X > 0 && DL.rooms[Y][X].type !== 1)
-			if (DL.rooms[Y][X - 1].type !== 1)
+		if (X > 0 && DL.rooms[Y][X].type !== 'N-S')
+			if (DL.rooms[Y][X - 1].type !== 'N-S')
 				xvt.app.form['command'].prompt += xvt.attr(
 					$.bracket('W', false), xvt.cyan, 'est, ',
 				)
@@ -404,7 +405,7 @@ function command() {
 
     switch (choice) {
 	case 'M':	//	#tbt
-		DL.map = 3
+		DL.map = 'Maruader\'s map'
 		refresh = true
 		break
 
@@ -423,8 +424,8 @@ function command() {
 		break
 
 	case 'N':
-		if (Y > 0 && DL.rooms[Y][X].type !== 2)
-			if (DL.rooms[Y - 1][X].type !== 2) {
+		if (Y > 0 && DL.rooms[Y][X].type !== 'W-E')
+			if (DL.rooms[Y - 1][X].type !== 'W-E') {
 				drawRoom(Y, X)
 				Y--
 				looked = false
@@ -434,8 +435,8 @@ function command() {
 		break
 
 	case 'S':
-		if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 2)
-			if (DL.rooms[Y + 1][X].type !== 2) {
+		if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 'W-E')
+			if (DL.rooms[Y + 1][X].type !== 'W-E') {
 				drawRoom(Y, X)
 				Y++
 				looked = false
@@ -445,8 +446,8 @@ function command() {
 		break
 
 	case 'E':
-		if (X < DL.width - 1 && DL.rooms[Y][X].type !== 1)
-			if (DL.rooms[Y][X + 1].type !== 1) {
+		if (X < DL.width - 1 && DL.rooms[Y][X].type !== 'N-S')
+			if (DL.rooms[Y][X + 1].type !== 'N-S') {
 				drawRoom(Y, X)
 				X++
 				looked = false
@@ -456,8 +457,8 @@ function command() {
 		break
 
 	case 'W':
-		if (X > 0 && DL.rooms[Y][X].type !== 1)
-			if (DL.rooms[Y][X - 1].type !== 1) {
+		if (X > 0 && DL.rooms[Y][X].type !== 'N-S')
+			if (DL.rooms[Y][X - 1].type !== 'N-S') {
 				drawRoom(Y, X)
 				X--
 				looked = false
@@ -591,11 +592,11 @@ function doMove(): boolean {
 
 	//	npc?
 	switch (ROOM.occupant) {
-		case 1:
+		case 'trapdoor':
 			if ($.dice(100 - Z) > 1) {
 				xvt.out('You have stepped onto a trapdoor!\n\n')
 				xvt.waste(300)
-				let u = ($.dice(128 + deep - ($.player.backstab <<1) - ($.player.steal <<2) - DL.map) < $.online.dex)
+				let u = ($.dice(127 + deep - ($.player.backstab <<1) - ($.player.steal <<2)) < $.online.dex)
 				for (let m = party.length - 1; m > 0; m--) {
 					if ($.dice(120) < party[m].dex)
 						xvt.out(xvt.reset, party[m].user.handle, ' manages to catch the edge and stop from falling.\n')
@@ -607,20 +608,20 @@ function doMove(): boolean {
 				}
 				if (u) {
 					xvt.out(xvt.reset, 'You manage to catch the edge and stop yourself from falling.\n')
-					ROOM.occupant = 0
+					ROOM.occupant = ''
 				}
 				else {
 					party = []
 					party.push($.online)
 					xvt.out(xvt.bright, xvt.yellow, 'You fall down a level!\n', xvt.reset)
 					xvt.waste(600)
-					if ($.dice(100 + Z - $.player.level) > $.online.dex - DL.map) {
+					if ($.dice(100 + $.player.level - Z) > $.online.dex) {
 						if ($.dice($.online.cha / 10 + deep) <= (deep + 1))
 							$.player.toWC -= $.dice(Math.abs(Z - $.player.level))
 						$.online.toWC -= $.dice(Math.round($.online.weapon.wc / 10) + 1)
 						xvt.out(`Your ${$.player.weapon} is damaged from the fall!\n`)
 					}
-					if ($.dice(100 + Z - $.player.level) > $.online.dex - DL.map) {
+					if ($.dice(100 + $.player.level - Z) > $.online.dex) {
 						if ($.dice($.online.cha / 10 + deep) <= (deep + 1))
 							$.player.toAC -= $.dice(Math.abs(Z - $.player.level))
 						$.online.toAC -= $.dice(Math.round($.online.armor.ac / 10) + 1)
@@ -634,7 +635,7 @@ function doMove(): boolean {
 				}
 			}
 			else {
-				ROOM.occupant = 0
+				ROOM.occupant = ''
 				if ($.dice(50 + Z - deep) > $.online.cha)
 					xvt.out(xvt.bright, xvt.cyan, 'A fairie flies by you.\n')
 				else {
@@ -656,13 +657,13 @@ function doMove(): boolean {
 			}
 			break
 
-		case 2:
+		case 'portal':
 			$.action('ny')
 			$.profile({ jpg:'ddd', effect:'fadeIn' })
 			xvt.out(xvt.bright, xvt.blue, 'You\'ve found a portal to a deep, dank dungeon.')
 			xvt.app.form = {
 				'deep': { cb: () => {
-					ROOM.occupant = 0
+					ROOM.occupant = ''
 					xvt.out('\n')
 					if (/Y/i.test(xvt.entry)) {
 						$.animated('flipOutY')
@@ -679,16 +680,16 @@ function doMove(): boolean {
 			xvt.app.focus = 'deep'
 			return false
 
-		case 3:
+		case 'well':
 			xvt.save()
 			xvt.out(`\x1B[1;${$.player.rows}r`)
 			xvt.restore()
 			$.music('well')
 			xvt.waste(600)
-			xvt.out(xvt.magenta, 'You have found a legendary Wishing Well.\n')
+			xvt.outln(xvt.magenta, 'You have found a legendary Wishing Well.')
 			xvt.waste(600)
-			xvt.out('\n'); xvt.waste(600)			
-			xvt.out(xvt.bright, xvt.yellow, 'What do you wish to do?\n', xvt.reset)
+			xvt.outln(); xvt.waste(600)			
+			xvt.outln(xvt.bright, xvt.yellow, 'What do you wish to do?')
 			xvt.waste(600)
 
 			let well = 'BCFORT'
@@ -710,8 +711,8 @@ function doMove(): boolean {
 			$.action('well')
 			xvt.app.form = {
 				'well': { cb: () => {
-					ROOM.occupant = 0
-					xvt.out('\n')
+					ROOM.occupant = ''
+					xvt.outln()
 					let wish = xvt.entry.toUpperCase()
 					if (wish === '' || well.indexOf(wish) < 0) {
 						$.sound('oops')
@@ -719,7 +720,7 @@ function doMove(): boolean {
 						return
 					}
 					$.animated('flipOutX')
-					xvt.out('\n')
+					xvt.outln()
 
 					switch (wish) {
 					case 'B':
@@ -938,23 +939,23 @@ function doMove(): boolean {
 			xvt.app.focus = 'well'
 			return false
 
-		case 4:
+		case 'wheel':
 			$.music('wol')
 			xvt.waste(600)
-			xvt.out(xvt.magenta, 'You have found a Mystical Wheel of Life.\n')
+			xvt.outln(xvt.magenta, 'You have found a Mystical Wheel of Life.')
 			xvt.waste(600)
-			xvt.out('\n'); xvt.waste(600)
-			xvt.out(xvt.bright, xvt.yellow, 'The runes are ',
+			xvt.outln(); xvt.waste(600)
+			xvt.outln(xvt.bright, xvt.yellow, 'The runes are ',
 				['cryptic', 'familiar', 'foreign', 'speaking out', 'strange'][$.dice(5) - 1],
-				' to you.\n', xvt.reset)
+				' to you.')
 			xvt.waste(600)
 
 			$.action('yn')
 			$.profile({ png:'wol', effect:'rotateIn' })
 			xvt.app.form = {
 				'wheel': { cb: () => {
-					ROOM.occupant = 0
-					xvt.out('\n')
+					ROOM.occupant = ''
+					xvt.outln()
 					if (/Y/i.test(xvt.entry)) {
 						$.animated('infinite rotateIn')
 						let i, m, n, t, z
@@ -1084,12 +1085,12 @@ function doMove(): boolean {
 			refresh = true
 			return false
 
-		case 5:
-			xvt.out(xvt.cyan, xvt.faint, 'There is a thief in this '
-				, ['chamber', 'hallway', 'corridor', 'cavern'][ROOM.type]
+		case 'thief':
+			xvt.out(xvt.cyan, xvt.faint, 'There is a thief in this ', !ROOM.type ? 'chamber'
+				: ROOM.type == 'N-S' ? 'hallway' : ROOM.type == 'W-E' ? 'corridor' : 'cavern'
 				, '! ', xvt.white)
 			xvt.waste(600)
-			ROOM.occupant = 0
+			ROOM.occupant = ''
 
 			if ((Z + 1) == $.taxman.user.level && $.player.level < $.taxman.user.level) {
 				$.loadUser($.taxman)
@@ -1107,11 +1108,11 @@ function doMove(): boolean {
 				$.activate($.taxman)
 				//$.taxman.user.id = ''
 				$.taxman.user.coin.value = $.player.coin.value
-				if (isNaN(+$.taxman.user.weapon)) xvt.out('\n', $.who($.taxman, 'He'), $.Weapon.wearing($.taxman), '.\n')
+				if (isNaN(+$.taxman.user.weapon)) xvt.outln('\n', $.who($.taxman, 'He'), $.Weapon.wearing($.taxman), '.')
 				xvt.waste(750)
-				if (isNaN(+$.taxman.user.armor)) xvt.out('\n', $.who($.taxman, 'He'), $.Armor.wearing($.taxman), '.\n')
+				if (isNaN(+$.taxman.user.armor)) xvt.outln('\n', $.who($.taxman, 'He'), $.Armor.wearing($.taxman), '.')
 				xvt.waste(750)
-				xvt.out('\n')
+				xvt.outln()
 				b4 = 0
 				Battle.engage('Taxman', $.online, $.taxman, doSpoils)
 				pause = true
@@ -1123,7 +1124,7 @@ function doMove(): boolean {
 			let escape = DL.rooms[y][x]
 			if (escape.occupant || $.dice(Z * ($.player.steal / 2 + 1) - deep) > Z) {
 				if (!escape.occupant) {
-					escape.occupant = 5
+					escape.occupant = 'thief'
 					xvt.out([
 						'He silently ignores you',
 						'He recognizes your skill and winks',
@@ -1139,8 +1140,8 @@ function doMove(): boolean {
 				xvt.outln()
 			}
 			else {
-				escape.occupant = 5
-				if (DL.map > 1)
+				escape.occupant = 'thief'
+				if (DL.map && DL.map !== 'map')
 					xvt.out('You expect nothing less from the coward.')
 				else
 					xvt.out(xvt.bright, xvt.white, 'He surprises you!')
@@ -1157,7 +1158,7 @@ function doMove(): boolean {
 				}
 				else if (DL.map && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
 					xvt.out('map')
-					DL.map = 0
+					DL.map = ''
 					refresh = true
 				}
 				else if ($.player.magic < 3 && $.player.spells.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
@@ -1185,7 +1186,7 @@ function doMove(): boolean {
 			}
 			break
 
-		case 6:
+		case 'cleric':
 			if (!DL.cleric.hp) {
 				xvt.outln(xvt.yellow, 'You find the ', xvt.white, 'bones'
 					, xvt.yellow, ' of an ', xvt.faint, 'old cleric', xvt.normal, '.')
@@ -1212,7 +1213,7 @@ function doMove(): boolean {
 			}
 
 			let power = $.int(100 * DL.cleric.sp / DL.cleric.user.sp)
-			if (DL.map < 2 && power > 95) $.profile({ jpg:'npc/old cleric', effect:'zoomInUp' })
+			if ((!DL.map || DL.map == 'map') && power > 95) $.profile({ jpg:'npc/old cleric', effect:'zoomInUp' })
 			xvt.outln(xvt.yellow, 'There is an ', xvt.faint, 'old cleric', xvt.normal
 				, xvt.normal, ' in this room with '
 				, power < 40 ? xvt.faint : power < 80 ? xvt.normal : xvt.bright, `${power}`
@@ -1228,7 +1229,7 @@ function doMove(): boolean {
 				cast = 13
 				cost.value *= $.int(deep / 4) + 3
 				if (cost.value > $.player.coin.value) {
-					xvt.out('"I will pray for you."\n')
+					xvt.outln('"I will pray for you."')
 					break
 				}
 				xvt.out('"I can cure all your wounds for '
@@ -1239,7 +1240,7 @@ function doMove(): boolean {
 			$.action('yn')
 			xvt.app.form = {
 			'pay': { cb: () => {
-					xvt.out('\n\n')
+					xvt.outln('\n')
 					if (/Y/i.test(xvt.entry)) {
 						$.player.coin.value -= cost.value
 						DL.cleric.user.coin.value += cost.value
@@ -1261,12 +1262,12 @@ function doMove(): boolean {
 					}
 					else {
 						if (cast == 13) {
-							ROOM.occupant = 0
+							ROOM.occupant = ''
 							xvt.out(xvt.magenta, 'He teleports away!\n', xvt.reset)
 							$.sound('teleport', 8)
 						}
 						else {
-							xvt.out(xvt.lyellow, '"I need to rest.  Go in peace."\n', xvt.reset)
+							xvt.outln(xvt.lyellow, '"I need to rest.  Go in peace."')
 							looked = true
 						}
 					}
@@ -1276,14 +1277,14 @@ function doMove(): boolean {
 			xvt.app.focus = 'pay'
 			return false
 
-		case 7:
+		case 'wizard':
 			$.profile({ jpg:'npc/wizard', effect:'flash' })
-			xvt.waste(200)
+			xvt.waste(400)
 			xvt.out(xvt.magenta, 'You encounter a ', xvt.bright)
 			if (!$.player.cursed && !$.player.novice && $.dice((Z > $.player.level ? Z : 1) + 20 * $.player.immortal + $.player.level + $.online.cha) == 1) {
 				xvt.outln('doppleganger', xvt.normal, ' waiting for you.\n')
 				$.player.coward = true
-				xvt.waste(200)
+				xvt.waste(600)
 				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : ''), effect:'flip' })
 				xvt.outln(xvt.bright, 'It curses you!')
 				$.sound('morph', 15)
@@ -1307,39 +1308,37 @@ function doMove(): boolean {
 				//	vacate
 				$.animated('flipOutY')
 				$.sound('teleport', 12)
-				ROOM.occupant = 0
+				ROOM.occupant = ''
 				let x:number, y:number
 				do {
 					y = $.dice(DL.rooms.length) - 1
 					x = $.dice(DL.width) - 1
-				} while (DL.rooms[y][x].type == 3 || DL.rooms[y][x].occupant)
-				DL.rooms[y][x].occupant = 7
-				pause = true
+				} while (DL.rooms[y][x].type == 'Cavern' || DL.rooms[y][x].occupant)
+				DL.rooms[y][x].occupant = 'wizard'
 				refresh = true
 			}
 			else if (!$.player.novice && $.dice(Z + $.online.cha) == 1) {
 				xvt.outln('mimic', xvt.normal, ' occupying this space.\n')
-				xvt.waste(200)
+				xvt.waste(600)
 				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : ''), effect:'flip' })
-				xvt.waste(750)
-				xvt.out(xvt.faint, 'It waves a hand at you ... '); xvt.waste(750)
+				xvt.waste(1200)
+				xvt.out(xvt.faint, 'It waves a hand at you ... '); xvt.waste(600)
 				xvt.outln()
 				//	vacate
 				$.animated('flipOutY')
 				$.sound('teleport', 12)
-				ROOM.occupant = 0
+				ROOM.occupant = ''
 				let x:number, y:number
 				do {
 					y = $.dice(DL.rooms.length) - 1
 					x = $.dice(DL.width) - 1
-				} while (DL.rooms[y][x].type == 3 || DL.rooms[y][x].occupant)
-				DL.rooms[y][x].occupant = 7
-				pause = true
+				} while (DL.rooms[y][x].type == 'Cavern' || DL.rooms[y][x].occupant)
+				DL.rooms[y][x].occupant = 'wizard'
 				refresh = true
 			}
 			else {
 				xvt.outln('wizard', xvt.normal, ' in this room.\n')
-				xvt.waste(200)
+				xvt.waste(300)
 				xvt.save()
 				xvt.out(`\x1B[1;${$.player.rows}r`)
 				xvt.restore()
@@ -1349,12 +1348,15 @@ function doMove(): boolean {
 			}
 			pause = true
 			break
+
+		case 'dwarf':
+			break
 	}
 
 	//	items?
 	switch (ROOM.giftItem) {
 		case 'armor':
-			xvt.out(xvt.yellow, 'The armor shop is closed.\n', xvt.reset)
+			xvt.outln(xvt.yellow, 'The armor shop is closed.')
 			$.sound('boo')
 			break
 
@@ -1390,8 +1392,8 @@ function doMove(): boolean {
 			break
 
 		case 'map':
-			xvt.out(xvt.bright, xvt.yellow, 'You find Marauder\'s map!\n', xvt.reset)
-			DL.map = 3
+			xvt.outln(xvt.bright, xvt.yellow, 'You find Marauder\'s map!')
+			DL.map = 'Maruader\'s map'
 			pause = true
 			refresh = true
 			ROOM.giftItem = ''
@@ -1399,8 +1401,8 @@ function doMove(): boolean {
 
 		case 'poison':
 			if (!$.Poison.have($.player.poisons, ROOM.giftValue)) {
-				xvt.out(xvt.bright, xvt.yellow, 'You find a vial of '
-					, $.Poison.merchant[ROOM.giftValue - 1], '!\n', xvt.reset)
+				xvt.outln(xvt.bright, xvt.yellow, 'You find a vial of '
+					, $.Poison.merchant[ROOM.giftValue - 1], '!')
 				$.Poison.add($.player.poisons, ROOM.giftValue)
 				pause = true
 				ROOM.giftItem = ''
@@ -1408,8 +1410,10 @@ function doMove(): boolean {
 			break
 
 		case 'potion':
-			if (typeof ROOM.giftID == 'undefined' && !$.player.coward)
-				ROOM.giftID = !$.player.novice && $.dice(100 + ROOM.giftValue) < ($.online.int / 20 * (1 << $.player.poison) + ($.online.int > 90 ? ($.online.int % 90) <<1 : 0))
+			if (ROOM.giftID === undefined && !$.player.coward)
+				ROOM.giftID = !$.player.novice
+					&& $.dice(100 + ROOM.giftValue) < ($.online.int / 20 * (1 << $.player.poison) + ($.online.int > 90 ? ($.online.int % 90) <<1
+					: 0))
 			$.sound('bubbles')
 			xvt.out(xvt.bright, xvt.cyan, 'On the ground, you find a ')
 			if (potions[ROOM.giftValue].identified || ROOM.giftID || $.access.sysop) {
@@ -1579,13 +1583,11 @@ function doSpoils() {
 	}
 
 	if (!ROOM.monster.length) {
-		if (DL.map < 2 && $.dice((15 - $.online.cha / 10) / 2) == 1) {
-			let m = ($.dice(Z / 33 + 2) > 1 ? 1 : 2)
-			if (DL.map < m) {
+		if ((!DL.map || DL.map == 'map') && $.dice((15 - $.online.cha / 10) / 2) == 1) {
+			let m = <MAP>['','map','magic map'][($.dice(Z / 33 + 2) > 1 ? 1 : 2)]
+			if (DL.map.length < m.length) {
 				DL.map = m
-				xvt.outln('\n', xvt.bright, xvt.yellow
-					, 'You find a', m == 2 ? ' magic ' : ' '
-					, 'map!')
+				xvt.outln('\n', xvt.bright, xvt.yellow, 'You find a ', m, '!')
 				pause = true
 			}
 		}
@@ -1598,13 +1600,13 @@ function doSpoils() {
 		}
 		//	the wounded warrior just surviving any mob size
 		//	and without a magic map nor any visit to the cleric yet ...
-		if ((b4 !== 0 && DL.map < 2 && DL.cleric.sp == DL.cleric.user.sp) &&
+		if ((b4 !== 0 && (!DL.map || DL.map !== 'map') && DL.cleric.sp == DL.cleric.user.sp) &&
 			((b4 > 0 && b4 / $.player.hp < 0.67 && $.online.hp / $.player.hp < 0.067)
 			|| ($.online.hp <= Z + deep + 1))) {
 			xvt.out(xvt.lred, '+ bonus strength\n', xvt.reset)
 			$.sound('bravery', 20)
 			$.PC.adjust('str', deep + 2, deep + 1, 1)
-			DL.map = 3
+			DL.map = 'Maruader\'s map'
 			pause = true
 		}
 	}
@@ -1621,8 +1623,8 @@ function doSpoils() {
 		let i = $.dice(d.length) - 1
 		switch (d[i]) {
 			case 'N':
-				if (Y > 0 && DL.rooms[Y][X].type !== 2)
-					if (DL.rooms[Y - 1][X].type !== 2) {
+				if (Y > 0 && DL.rooms[Y][X].type !== 'W-E')
+					if (DL.rooms[Y - 1][X].type !== 'W-E') {
 						Battle.retreat = false
 						Y--
 						looked = false
@@ -1633,8 +1635,8 @@ function doSpoils() {
 				break
 
 			case 'S':
-				if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 2)
-					if (DL.rooms[Y + 1][X].type !== 2) {
+				if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 'W-E')
+					if (DL.rooms[Y + 1][X].type !== 'W-E') {
 						Battle.retreat = false
 						Y++
 						looked = false
@@ -1645,8 +1647,8 @@ function doSpoils() {
 				break
 
 			case 'E':
-				if (X < DL.width - 1 && DL.rooms[Y][X].type !== 1)
-					if (DL.rooms[Y][X + 1].type !== 1) {
+				if (X < DL.width - 1 && DL.rooms[Y][X].type !== 'N-S')
+					if (DL.rooms[Y][X + 1].type !== 'N-S') {
 						Battle.retreat = false
 						X++
 						looked = false
@@ -1657,8 +1659,8 @@ function doSpoils() {
 				break
 
 			case 'W':
-				if (X > 0 && DL.rooms[Y][X].type !== 1)
-					if (DL.rooms[Y][X - 1].type !== 1) {
+				if (X > 0 && DL.rooms[Y][X].type !== 'N-S')
+					if (DL.rooms[Y][X - 1].type !== 'N-S') {
 						Battle.retreat = false
 						X--
 						looked = false
@@ -1713,51 +1715,51 @@ function drawLevel() {
 					let icon = null
 					let o: string = xvt.attr(xvt.reset)
 					if (DL.rooms[r][x].map) {
-						if (DL.rooms[r][x].type == 0 || DL.rooms[r][x].type == 3)
-							o += xvt.attr(xvt.faint, DL.rooms[r][x].type == 0 ? xvt.yellow : xvt.red)
+						if (!DL.rooms[r][x].type || DL.rooms[r][x].type == 'Cavern')
+							o += xvt.attr(xvt.faint, !DL.rooms[r][x].type ? xvt.yellow : xvt.red)
 						o += `  ${dot}  `
 					}
 					else
 						o += '     '
 
-					if (DL.map > 1 || (DL.rooms[r][x].map
+					if ((DL.map && DL.map !== 'map') || (DL.rooms[r][x].map
 						&& Math.abs(Y - r) < Math.trunc($.online.int / 20) && Math.abs(X - x) < Math.trunc($.online.int / 20))) {
 						if (DL.rooms[r][x].monster.length) {
 							icon = xvt.attr(xvt.reset, DL.rooms[r][x].occupant || DL.rooms[r][x].giftItem ? xvt.green : xvt.red, 
 								DL.rooms[r][x].monster.length > 1 ? 'Mob' : 'Mon', xvt.reset)
 							o = ` ${icon} `
 						}
-						//	0=none, 1=trapdoor, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard
+						//	0=none, 1=trapdoor, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard, 8=dwarf
 						switch (DL.rooms[r][x].occupant) {
-							case 0:
+							case '':
 								break
 
-							case 1:
-								if (!icon && DL.map > 1)
+							case 'trapdoor':
+								if (!icon && DL.map && DL.map !== 'map')
 									o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.cyan, '  ?  ', xvt.reset)
 								break
 
-							case 2:
+							case 'portal':
 								if (!icon) icon = xvt.attr('v', xvt.bright, xvt.blink, 'V', xvt.noblink, xvt.normal, 'v')
 								o = xvt.attr(xvt.faint, xvt.blue, 'v', xvt.normal, icon, xvt.reset, xvt.faint, xvt.blue, 'v')
 								break
 
-							case 3:
-								if (!icon && DL.map > 2)
+							case 'well':
+								if (!icon && DL.map == 'Maruader\'s map')
 									o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.blue, '  *  ', xvt.reset)
 								break
 
-							case 4:
-								if (!icon && DL.map > 2)
+							case 'wheel':
+								if (!icon && DL.map == 'Maruader\'s map')
 									o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.green, '  @  ', xvt.reset)
 								break
 
-							case 5:
-								if (!icon && ($.player.steal == 4 || DL.map > 1))
+							case 'thief':
+								if (!icon && ($.player.steal == 4 || (DL.map && DL.map !== 'map')))
 									o = xvt.attr(xvt.faint, '  &  ', xvt.normal)
 								break
 
-							case 6:
+							case 'cleric':
 								if (DL.cleric.sp) {
 									if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_')
 									o = xvt.attr(xvt.reset, xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.reset, xvt.faint, xvt.yellow, ':')
@@ -1768,14 +1770,19 @@ function drawLevel() {
 								}
 								break
 					
-							case 7:
+							case 'wizard':
 								if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Teleport[$.player.emulation], xvt.normal, '_')
 								o = xvt.attr(xvt.faint, xvt.magenta, '<', xvt.normal, icon, xvt.reset, xvt.faint, xvt.magenta, '>')
+								break
+
+							case 'dwarf':
+								if (!icon && DL.map && DL.map !== 'map')
+									o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.cyan, '  ?  ', xvt.reset)
 								break
 						}
 					}
 					xvt.out(o)
-					if ((DL.map > 2 || $.access.sysop) && DL.rooms[r][x].giftItem) xvt.out(`\x08${dot}`)
+					if ((DL.map == 'Maruader\'s map' || $.access.sysop) && DL.rooms[r][x].giftItem) xvt.out(`\x08${dot}`)
 				}
 				if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[y].substr(-1), '\x1B(B')
 				else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y].substr(-1))
@@ -1819,8 +1826,8 @@ function drawRoom(r:number, c:number, keep = true) {
 	let o: string = xvt.attr(xvt.reset)
 
 	if (ROOM.map) {
-		if (ROOM.type == 0 || ROOM.type == 3)
-			o += xvt.attr(xvt.faint, ROOM.type == 0 ? xvt.yellow : xvt.red)
+		if (!ROOM.type || ROOM.type == 'Cavern')
+			o += xvt.attr(xvt.faint, !ROOM.type ? xvt.yellow : xvt.red)
 		o += `  ${dot}  `
 	}
 	else
@@ -1829,38 +1836,37 @@ function drawRoom(r:number, c:number, keep = true) {
 	if (ROOM.monster.length)
 		icon = xvt.attr(xvt.reset, ROOM.occupant ? xvt.green : xvt.red, ROOM.monster.length > 1 ? 'Mob' : 'Mon', xvt.reset)
 
-	//	0=none, 1=trapdoor, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard
 	switch (ROOM.occupant) {
-		case 0:
+		case '':
 			if (icon) o = ` ${icon} `
 			break
 
-		case 1:
+		case 'trapdoor':
 			if (DL.map)
 				o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.cyan, '  ?  ', xvt.reset)
 			break
 
-		case 2:
+		case 'portal':
 			if (!icon) icon = xvt.attr(xvt.normal, 'v', xvt.bright, xvt.blink, 'V', xvt.noblink, xvt.normal, 'v')
 			o = xvt.attr(xvt.reset, xvt.faint, xvt.blue, 'v', xvt.normal, icon, xvt.reset, xvt.faint, xvt.blue, 'v')
 			break
 
-		case 3:
-			if (!icon && DL.map > 2)
+		case 'well':
+			if (!icon && DL.map == 'Maruader\'s map')
 				o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.blue, '  *  ', xvt.reset)
 			break
 
-		case 4:
-			if (!icon && DL.map > 2)
+		case 'wheel':
+			if (!icon && DL.map == 'Maruader\'s map')
 				o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.green, '  @  ', xvt.reset)
 			break
 
-		case 5:
-			if (!icon && ($.player.steal == 4 || DL.map == 2))
+		case 'thief':
+			if (!icon && ($.player.steal == 4 || DL.map == 'Maruader\'s map'))
 				o = xvt.attr(xvt.reset, xvt.faint, '  &  ', xvt.normal)
 			break
 
-		case 6:
+		case 'cleric':
 			if (DL.cleric.sp) {
 				if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_')
 				o = xvt.attr(xvt.reset, xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.reset, xvt.faint, xvt.yellow, ':')
@@ -1871,9 +1877,14 @@ function drawRoom(r:number, c:number, keep = true) {
 			}
 			break
 
-		case 7:
+		case 'wizard':
 			if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Teleport[$.player.emulation], xvt.normal, '_')
 			o = xvt.attr(xvt.reset, xvt.faint, xvt.magenta, '<', xvt.normal, icon, xvt.reset, xvt.faint, xvt.magenta, '>')
+			break
+		
+		case 'dwarf':
+			if (DL.map)
+				o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.cyan, '  ?  ', xvt.reset)
 			break
 	}
 	xvt.out(o)
@@ -1904,7 +1915,7 @@ function generateLevel() {
 			Y = $.dice(DL.rooms.length) - 1
 			X = $.dice(DL.width) - 1
 			ROOM = DL.rooms[Y][X]
-		} while (ROOM.type == 3)	//	cannot teleport into a cavern
+		} while (ROOM.type == 'Cavern')	//	cannot teleport into a cavern
 		DL.moves >>= 1
 		return
 	}
@@ -1925,7 +1936,7 @@ function generateLevel() {
 			cleric:	{ user:{ id:'_Clr', handle:'old cleric', pc:'Cleric', level:$.int(65 + Z / 4 + deep)
 			 		, sex:'I', weapon:0, armor:1, magic:3, spells:[7, 8, 13] } },
  			rooms:	new Array(maxRow),
-			map:	0,
+			map:	'',
 			moves:	0,
 			spawn:	Math.trunc(deep / 3 + Z / 9 + maxRow / 3)
 					+ $.dice(Math.round($.online.cha / 20) + 1) + 3,
@@ -1936,14 +1947,14 @@ function generateLevel() {
 		for (y = 0; y < DL.rooms.length; y++) {
 			DL.rooms[y] = new Array(DL.width)
 			for (x = 0; x < DL.width; x++)
-				DL.rooms[y][x] = <room>{ map:true, monster:[], occupant:0, type:0 }
+				DL.rooms[y][x] = <room>{ map:true, monster:[], occupant:'', type:'' }
 		}
 
 		for (y = 0; y < DL.rooms.length; y++) {
 			for (x = 0; x < DL.width; x++) {
 				let n:number
 				while ((n = $.int(($.dice(4) + $.dice(4)) / 2) - 1) == 3);
-				DL.rooms[y][x].type = (n == 0) ? 3 : (n == 1) ? 0 : $.dice(2)
+				DL.rooms[y][x].type = (n == 0) ? 'Cavern' : (n == 1) ? '' : $.dice(2) == 1 ? 'N-S' : 'W-E'
 			}
 		}
 
@@ -1989,7 +2000,7 @@ function generateLevel() {
 			for (let i = 0; i < wow; i++) {
 				y = $.dice(DL.rooms.length) - 1
 				x = $.dice(DL.width) - 1
-				DL.rooms[y][x].occupant = 3
+				DL.rooms[y][x].occupant = 'well'
 			}
 			wow = 1
 		}
@@ -1999,7 +2010,7 @@ function generateLevel() {
 			for (let i = 0; i < wow; i++) {
 				y = $.dice(DL.rooms.length) - 1
 				x = $.dice(DL.width) - 1
-				DL.rooms[y][x].occupant = 4
+				DL.rooms[y][x].occupant = 'wheel'
 			}
 			wow = 1
 		}
@@ -2008,7 +2019,7 @@ function generateLevel() {
 		if (deep < 9 && deep < $.player.immortal && Z / 9 < $.player.immortal) {
 			y = $.dice(DL.rooms.length) - 1
 			x = $.dice(DL.width) - 1
-			DL.rooms[y][x].occupant = 2
+			DL.rooms[y][x].occupant = 'portal'
 		}
 	}
 
@@ -2019,8 +2030,8 @@ function generateLevel() {
 		do {
 			y = $.dice(DL.rooms.length) - 1
 			x = $.dice(DL.width) - 1
-		} while (wow == 0 && DL.rooms[y][x].type == 3)
-		DL.rooms[y][x].occupant = 5
+		} while (wow == 0 && DL.rooms[y][x].type == 'Cavern')
+		DL.rooms[y][x].occupant = 'thief'
 		wow--
 	}
 
@@ -2028,15 +2039,15 @@ function generateLevel() {
 	do {
 		y = $.dice(DL.rooms.length) - 1
 		x = $.dice(DL.width) - 1
-	} while (DL.rooms[y][x].type == 3 || DL.rooms[y][x].monster.length || DL.rooms[y][x].occupant)
-	DL.rooms[y][x].occupant = 6
+	} while (DL.rooms[y][x].type == 'Cavern' || DL.rooms[y][x].monster.length || DL.rooms[y][x].occupant)
+	DL.rooms[y][x].occupant = 'cleric'
 
 	//	a wizard in another space
 	do {
 		y = $.dice(DL.rooms.length) - 1
 		x = $.dice(DL.width) - 1
-	} while (DL.rooms[y][x].type == 3 || DL.rooms[y][x].monster.length || DL.rooms[y][x].occupant)
-	DL.rooms[y][x].occupant = 7
+	} while (DL.rooms[y][x].type == 'Cavern' || DL.rooms[y][x].monster.length || DL.rooms[y][x].occupant)
+	DL.rooms[y][x].occupant = 'wizard'
 
 	//	set some trapdoors in empty corridors only
 	n = $.int(DL.rooms.length * DL.width / 10)
@@ -2046,7 +2057,7 @@ function generateLevel() {
 		y = $.dice(DL.rooms.length) - 1
 		x = $.dice(DL.width) - 1
 		if (!DL.rooms[y][x].occupant) {
-			DL.rooms[y][x].occupant = 1
+			DL.rooms[y][x].occupant = 'trapdoor'
 			n--
 		}
 	}
@@ -2117,16 +2128,16 @@ function generateLevel() {
 	function spider(r:number, c:number) {
 		DL.rooms[r][c].map = false
 		if (c + 1 < DL.width)
-			if (DL.rooms[r][c + 1].map && DL.rooms[r][c].type !== 1 && DL.rooms[r][c + 1].type !== 1)
+			if (DL.rooms[r][c + 1].map && DL.rooms[r][c].type !== 'N-S' && DL.rooms[r][c + 1].type !== 'N-S')
 				spider(r, c + 1)
 		if (r + 1 < DL.rooms.length)
-			if (DL.rooms[r + 1][c].map && DL.rooms[r][c].type !== 2 && DL.rooms[r + 1][c].type !== 2)
+			if (DL.rooms[r + 1][c].map && DL.rooms[r][c].type !== 'W-E' && DL.rooms[r + 1][c].type !== 'W-E')
 				spider(r + 1, c)
 		if (c > 0)
-			if (DL.rooms[r][c - 1].map && DL.rooms[r][c].type !== 1 && DL.rooms[r][c - 1].type !== 1)
+			if (DL.rooms[r][c - 1].map && DL.rooms[r][c].type !== 'N-S' && DL.rooms[r][c - 1].type !== 'N-S')
 				spider(r, c - 1)
 		if (r > 0)
-			if (DL.rooms[r - 1][c].map && DL.rooms[r][c].type !== 2 && DL.rooms[r - 1][c].type !== 2)
+			if (DL.rooms[r - 1][c].map && DL.rooms[r][c].type !== 'W-E' && DL.rooms[r - 1][c].type !== 'W-E')
 				spider(r - 1, c)
 	}
 
@@ -2154,7 +2165,7 @@ function generateLevel() {
 				let row = r * 2, col = c * 6
 
 				//	north-south corridor
-				if (ROOM.type == 1) {
+				if (ROOM.type == 'N-S') {
 					if (paper[row][col] == ' ')
 						paper[row] = replaceAt(paper[row], col, box[10])
 					else
@@ -2212,8 +2223,8 @@ function generateLevel() {
 						row < 2 * DL.rooms.length ? 10 : 2])
 				}
 
-				//	east-west corridor
-				if (ROOM.type == 2) {
+				//	west-east corridor
+				if (ROOM.type == 'W-E') {
 					if (paper[row][col] == ' ')
 						paper[row] = replaceAt(paper[row], col, box[0])
 					else
@@ -2286,11 +2297,11 @@ function putMonster(r = -1, c = -1): boolean {
 		do {
 			r = $.dice(DL.rooms.length) - 1
 			c = $.dice(DL.width) - 1
-		} while (DL.rooms[r][c].type != 0 && DL.rooms[r][c].type != 3)
+		} while (DL.rooms[r][c].type && DL.rooms[r][c].type != 'Cavern')
 	}
 
 	//	check for overcrowding
-	if (DL.rooms[r][c].monster.length >= [2,1,1,3][DL.rooms[r][c].type])
+	if (DL.rooms[r][c].monster.length >= (!DL.rooms[r][c].type ? 2 : DL.rooms[r][c].type == 'Cavern' ? 3 : 1))
 		return false
 
 	let i:number = DL.rooms[r][c].monster.length
@@ -2459,7 +2470,7 @@ function teleport() {
 		'wizard': { cb:() => {
 			$.PC.profile($.online)
 			if ($.dice(10 * deep + Z + 5 * $.player.magic + $.online.int + $.online.cha) == 1) {
-				xvt.out(' ... \"', xvt.bright, xvt.blue, 'Huh?', xvt.reset, '\"\n')
+				xvt.outln(' ... "', xvt.bright, xvt.blue, 'Huh?', xvt.reset, '"')
 				$.sound('miss', 9)
 				$.animated('wobble')
 				$.sound('lose', 9)
@@ -2481,7 +2492,7 @@ function teleport() {
 				}
 			}
 			else {
-				xvt.out('\n')
+				xvt.outln()
 				$.sound('teleport')
 			}
 			switch (xvt.entry.toUpperCase()) {

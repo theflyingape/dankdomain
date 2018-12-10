@@ -1,8 +1,9 @@
-[22;36mDate:[22;37m Mon 05-Dec-2018 9:30am
+[22;36mDate:[22;37m Mon 08-Dec-2018 6:00pm
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
 New announcements as missing features get implemented or tweaked:
 
+ - new items making their way in: rings with magical properties, some unique
  - real estate + security tax credits on collection checkpoint
  - dungeon event tweaks that lessens adverse event occurrences and outcomes
  - more special bonus awards when favorable deeds are accomplished

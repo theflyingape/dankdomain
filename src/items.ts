@@ -397,11 +397,13 @@ export class Ring {
         if (i >= 0) rings.splice(i, 1)
     }
 
-    power(rings: string[]
+    power(rings: string[]|null
         , id: 'activate'|'cast'|'initiate'|'hit'|'hp'|'identify'|'joust'|'resurrect'|'ring'|'skip'|'sp'|'spell'|'steal'|'taxes'|'teleport'
         , match?: 'magic'|'pc'|'spell', value?: any): { name: string, power: boolean } {
 
         let result = { name:'', power: false }
+        if (rings === null)
+            rings = Object.keys(this.name)
 
         for (let f in rings) {
             let abilities = this.name[rings[f]].ability

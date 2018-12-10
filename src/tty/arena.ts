@@ -153,35 +153,49 @@ function choice() {
 							xvt.out('\n\nYou spur the horse.  The tension mounts.\n')
 							xvt.waste(250)
 							let result = 0
-							while(!result)
+							while (!result)
 								result = (ability + $.dice(factor * $.player.level)) - (versus + $.dice(factor * opponent.user.level))
-							if(result > 0) {
+							if (result > 0) {
 								$.animated(['flash', 'jello', 'rubberBand'][jw])
 								$.sound('wall')
-								xvt.out(xvt.green, '-*>', xvt.bright, xvt.white, ' Thud! ', xvt.normal, xvt.green,'<*-  ', xvt.reset, 'A hit!  You win this pass!\n')
+								xvt.outln(xvt.green, '-*>', xvt.bright, xvt.white, ' Thud! ', xvt.normal, xvt.green,'<*-  ', xvt.reset, 'A hit!  You win this pass!')
 								if (++jw == 3) {
 									xvt.out('\nYou have won the joust!\n')
 									xvt.waste(250)
 									$.sound('cheer')
 									xvt.out('The crowd cheers!\n')
 									let reward = new $.coins($.money(opponent.user.level))
-									xvt.out('You win ', reward.carry(), '!\n')
+									xvt.outln('You win ', reward.carry(), '!')
 									$.player.coin.value += reward.value
 									$.player.jw++
 									if ($.run(`UPDATE Players set jl=jl+1 WHERE id='${opponent.user.id}'`).changes)
 										$.log(opponent.user.id, `\n${$.player.handle} beat you in a joust and got ${reward.carry()}.`)
 									xvt.waste(250)
 									$.animated('hinge')
+									if (($.player.jw == 15 && $.player.jl == 0) || ($.player.jw > 15 && 1 - $.player.jw / $.player.jl > 0.93)) {
+										let ring = $.Ring.power(null, 'joust')
+										if ($.Ring.wear($.player.rings, ring.name)) {
+											xvt.outln(xvt.yellow, 'You win', xvt.bright, $.an(ring.name), xvt.normal, ' ring!')
+											$.saveRing(ring.name, $.player.id, $.player.rings)
+										}
+									}
 									menu()
 									return
 								}
 							}
 							else {
+								if ($.Ring.power($.player.rings, 'joust').power && !$.Ring.power(opponent.user.rings, 'ring').power && $.dice(3) == 1) {
+									$.sound('swoosh')
+									xvt.outln(xvt.magenta, '^>', xvt.bright, xvt.white, ' SWOOSH! ', xvt.normal, xvt.magenta,'<^  ', xvt.reset
+									, $.who(opponent, 'He'), 'missed!  You both pass and try again!')
+									xvt.app.refocus()
+									return
+								}
+
 								$.animated(['bounce', 'shake', 'tada'][jl])
 								$.sound('oof')
-								xvt.out(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.normal, xvt.magenta,'<^  ', xvt.reset
-									, $.who(opponent, 'He'), 'hits!  You lose this pass!\n'
-								)
+								xvt.outln(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.normal, xvt.magenta,'<^  ', xvt.reset
+									, $.who(opponent, 'He'), 'hits!  You lose this pass!')
 								if (++jl == 3) {
 									xvt.out('\nYou have lost the joust!\n')
 									$.sound('boo')
@@ -233,12 +247,12 @@ function choice() {
 							}
 							xvt.entry = mon.toString()
 						}
-						xvt.out('\n')
+						xvt.outln()
 						if (!MonsterFights())
 							menu()
 					}
 					else {
-						xvt.out('\n')
+						xvt.outln()
 						menu()
 					}
 				}

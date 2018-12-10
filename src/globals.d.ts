@@ -1,3 +1,7 @@
+type MAP = '' | 'map' | 'magic map' | 'Maruader\'s map'
+type NPC = '' | 'cleric' | 'wizard' | 'trapdoor' | 'thief' | 'portal' | 'well' | 'wheel' | 'dwarf'
+type ROOM = '' | 'N-S' | 'W-E' | 'Cavern'
+
 interface caller {
     who?: string
     reason?: string
@@ -191,7 +195,7 @@ interface coins {
 interface ddd {
     cleric: active
     rooms: [ room[] ]	//	7-10
-    map: number			//	0=none, 1=map, 2=magic, 3=Marauder's
+    map: MAP
     moves: number       //  hero steps (2x backtracking)
     spawn: number       //  2-23
     width: number		//	7-13
@@ -222,8 +226,8 @@ interface ring {
 
 interface room {
     map: boolean		//	explored?
-    occupant: number	//	0=none, 1=trapdoor, 2=deeper dungeon, 3=well, 4=wheel, 5=thief, 6=cleric, 7=wizard
-    type: number		//	0=Emp, 1=N-S, 2=W-E, 3=Cav
+    occupant: NPC
+    type: ROOM  		
     giftItem?: string	//	potion, poison, magic, xmagic, chest, map, armor, weapon, Marauder's
     giftValue?: number
     giftID?: boolean	//	undefined, or identified?
