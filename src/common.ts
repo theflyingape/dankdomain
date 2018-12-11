@@ -936,8 +936,8 @@ export function skillplus(rpc: active, cb: Function) {
     xvt.app.focus = 'skill'
 }
 
-export function an(item: string) {
-    return ' ' + (/a|e|i|o|u/i.test(item[0]) ? 'an' : 'a') + ' ' + item
+export function an(item: string, show = true) {
+    return ' ' + (/a|e|i|o|u/i.test(item[0]) ? 'an' : 'a') + ' ' + (show ? item : '')
 }
 
 export function cuss(text: string): boolean {
@@ -2622,6 +2622,13 @@ export function ringBearer(name: string): string {
         return rs[0].bearer
     }
     return ''
+}
+
+export function getRing(how: string, what: string) {
+    xvt.out(`You ${how}`)
+    if (xvt.emulation == 'XT') xvt.out(' 💍')
+    xvt.outln(xvt.bright, xvt.cyan, an(name), xvt.normal, 'ring', xvt.white, ', which can')
+    xvt.outln(this.name[name].description)
 }
 
 export function saveRing(name: string, bearer = '', rings?: string[]) {

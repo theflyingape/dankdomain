@@ -1,3 +1,5 @@
+type POWER = 'activate' | 'cast' | 'initiate' | 'hit' | 'hp' | 'identify' | 'joust' | 'resist' | 'resurrect' | 'ring' | 'skip' |'sp' |'steal' | 'taxes' | 'teleport'
+type POWTO = 'magic' | 'pc' | 'spell'
 type GIFT = '' | 'armor' | 'chest' | 'magic' | 'map' | 'poison' | 'potion' | 'ring' | 'weapon' | 'xmagic'
 type MAP = '' | 'map' | 'magic map' | 'Marauder\'s map'
 type NPC = '' | 'cleric' | 'wizard' | 'trapdoor' | 'thief' | 'portal' | 'well' | 'wheel' | 'dwarf'

@@ -56,8 +56,8 @@ function end() {
                 set kills=kills+1, status='${$.player.id}', weapon='${$.barkeep.user.weapon}'
                 WHERE id='${$.barkeep.user.id}'`)
 
-            xvt.out(`He picks up your ${$.barkeep.user.weapon} and triumphantly waves it around to\n`)
-            xvt.out(`the cheering crowd.  He struts toward the mantelpiece to hang his new trophy.\n\n`)
+            xvt.outln(`He picks up your ${$.barkeep.user.weapon} and triumphantly waves it around to`)
+            xvt.outln(`the cheering crowd.  He struts toward the mantelpiece to hang his new trophy.\n`)
             $.sound('winner', 32)
             xvt.outln(xvt.bright, xvt.green, '"Drinks are on the house!"')
             xvt.waste(2250)
@@ -104,7 +104,7 @@ function end() {
 
     if (from === 'User') {
         let opponent = parties[1][0]
-        if (!(opponent.user.id === '_' || opponent.user.gender === 'I')) {
+        if (!(opponent.user.id[0] === '_' || opponent.user.gender === 'I')) {
             $.saveUser(opponent, false, true)
             if ($.player.hp > 0 && opponent.hp == 0) {
                 $.action('ny')
@@ -989,7 +989,7 @@ export function brawl(rpc:active, nme:active) {
 export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?: ddd) {
     if (!rpc.user.magic || !rpc.user.spells.length) {
         if (rpc.user.id === $.player.id) {
-            xvt.out('You don\'t have any magic.\n')
+            xvt.outln(`You don't have any magic.`)
             cb(true)
         }
         else {
@@ -1050,7 +1050,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
         if (rpc.user.magic > 1)
             if (rpc.sp < $.Magic.power(rpc, spell.cast)) {
-                if (rpc === $.online) xvt.out('You don\'t have enough power to cast that spell!\n')
+                if (rpc === $.online)
+                    xvt.outln(`You don't have enough power to cast that spell!`)
                 cb(!rpc.confused)
                 return
             }
@@ -1058,34 +1059,49 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
         //  some sensible ground rules to avoid known muling exploits (by White Knights passing gas)
         if (xvt.validator.isDefined(nme)) {
             if ([ 1,2,3,4,5,6,10 ].indexOf(spell.cast) >= 0) {
-                if (rpc.user.id === $.player.id) xvt.out('You cannot cast that spell during a battle!\n')
+                if (rpc.user.id === $.player.id)
+                    xvt.outln('You cannot cast that spell during a battle!')
                 cb(!rpc.confused)
                 return
             }
             if (nme.user.novice && [ 12,15,16,20,21,22 ].indexOf(spell.cast) >= 0) {
-                if (rpc.user.id === $.player.id) xvt.out('You cannot cast that spell on a novice player.\n')
+                if (rpc.user.id === $.player.id)
+                    xvt.outln('You cannot cast that spell on a novice player.')
                 cb(!rpc.confused)
                 return
             }
             if (/Naval|Tavern|Taxman/.test(from) && [ 8,12,16,17,18,22 ].indexOf(spell.cast) >= 0) {
                 if (spell.cast == 8 && rpc.user.id === $.player.id) {
-                    xvt.out('You cannot cast that spell to retreat!\n')
+                    xvt.outln('You cannot cast that spell to retreat!')
                     cb(!rpc.confused)
                     return
                 }
                 if (spell.cast > 8) {
                     if (rpc.user.id === $.player.id) {
                         $.sound('oops', 4)
-                        xvt.out('You are too frantic to cast that spell!\n')
+                        xvt.outln('You are too frantic to cast that spell!')
                     }
                     cb(!rpc.confused)
                     return
                 }
             }
+            let mod = $.Ring.power(nme.user.rings, 'resist', 'magic', rpc.user.magic)
+            if (mod.power) {
+                if (rpc.user.id === $.player.id) {
+                    $.sound('oops', 4)
+                    xvt.outln('You cannot cast that spell against', $.an(mod.name, false))
+                    xvt.out(xvt.bright, xvt.cyan, mod.name, xvt.normal)
+                    if (xvt.emulation == 'XT') xvt.out(' 💍')
+                    xvt.outln(' ring', xvt.white, ' bearer!')
+                }
+                cb(!rpc.confused)
+                return
+            }
         }
         else {
             if ([ 9,11,12,14,15,16,17,18,19,20,21,22 ].indexOf(spell.cast) >= 0) {
-                if (rpc.user.id === $.player.id) xvt.out('You cannot cast that spell on yourself!\n')
+                if (rpc.user.id === $.player.id)
+                    xvt.outln('You cannot cast that spell on yourself!')
                 cb(!rpc.confused)
                 return
             }
@@ -1097,8 +1113,9 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
         if (rpc.user.magic == 1 && $.dice(100) < 50 + (spell.cast < 17 ? 2 * spell.cast : 2 * spell.cast - 16)) {
             rpc.altered = true
             $.Magic.remove(rpc.user.spells, spell.cast)
-            xvt.out($.who(rpc, 'His'), 'wand smokes as ', $.who(rpc, 'he'), $.what(rpc, 'cast'), 'the spell.\n')
-            if (!(rpc.user.id === '_' || rpc.user.gender === 'I'))
+            xvt.outln($.who(rpc, 'His'), 'wand smokes as ', $.who(rpc, 'he')
+                , $.what(rpc, 'cast'), 'the spell.')
+            if (!(rpc.user.id[0] === '_' || rpc.user.gender === 'I'))
                 $.saveUser(rpc)
             xvt.waste(300)
         }
@@ -1107,8 +1124,9 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
         if (rpc.user.magic == 2 && $.dice(5 + +xvt.validator.isDefined($.Access.name[rpc.user.access].sysop)) == 1) {
             rpc.altered = true
             $.Magic.remove(rpc.user.spells, spell.cast)
-            xvt.out($.who(rpc, 'His'), 'scroll burns as ', $.who(rpc, 'he'), $.what(rpc, 'cast'), 'the spell.\n')
-            if (!(rpc.user.id === '_' || rpc.user.gender === 'I'))
+            xvt.outln($.who(rpc, 'His'), 'scroll burns as ', $.who(rpc, 'he')
+                , $.what(rpc, 'cast'), 'the spell.')
+            if (!(rpc.user.id[0] === '_' || rpc.user.gender === 'I'))
                 $.saveUser(rpc)
             xvt.waste(300)
         }
@@ -1117,11 +1135,11 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
         if ($.dice(100) > $.Magic.ability(name, rpc, nme).fail) {
             if ((backfire = $.dice(100) > $.Magic.ability(name, rpc, nme).backfire)) {
-                xvt.out('Oops!  ', xvt.reset, $.who(rpc, 'His'), 'spell backfires!\n')
+                xvt.outln('Oops!  ', xvt.reset, $.who(rpc, 'His'), 'spell backfires!')
                 $.sound('oops', 4)
             }
             else {
-                xvt.out('Fssst!  ', xvt.reset, $.who(rpc, 'His'), 'spell fails!\n')
+                xvt.outln('Fssst!  ', xvt.reset, $.who(rpc, 'His'), 'spell fails!')
                 $.sound('fssst', 4)
                 cb()
                 return

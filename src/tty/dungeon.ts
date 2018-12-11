@@ -1465,12 +1465,8 @@ function doMove(): boolean {
 
 		case 'ring':
 			let ring = ROOM.giftValue.toString()
-			if (!$.Ring.have($.player.rings, ring) && !$.ringBearer(ring)) {
-				xvt.out('You find a ')
-				if (xvt.emulation == 'XT') xvt.out('💍 ')
-				xvt.outln(xvt.bright, xvt.cyan, ring, xvt.normal, 'ring', xvt.white, ', which can')
-				xvt.outln($.Ring.name[ring].description)
-				$.Ring.wear($.player.rings, ring)
+			if (!$.ringBearer(ring) && $.Ring.wear($.player.rings, ring)) {
+				$.getRing('find', ring)
 				$.saveRing(ring, $.player.id, $.player.rings)
 				pause = true
 				ROOM.giftItem = ''

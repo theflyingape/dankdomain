@@ -160,6 +160,7 @@ export class Magic {
 
         fail = (fail < 10) ? 10 : (fail > 99) ? 99 : fail
 
+        //  integrate any rings of power that can affect casting spells
         if (nme && nme.user.rings.length) {
             let mod = this.ring.power(nme.user.rings, 'cast', 'magic', rpc.user.magic)
             if (mod.power && !this.ring.power(rpc.user.rings, 'ring').power)
@@ -414,9 +415,8 @@ export class Ring {
         if (i >= 0) rings.splice(i, 1)
     }
 
-    power(rings: string[]|null
-        , id: 'activate'|'cast'|'initiate'|'hit'|'hp'|'identify'|'joust'|'resurrect'|'ring'|'skip'|'sp'|'spell'|'steal'|'taxes'|'teleport'
-        , match?: 'magic'|'pc'|'spell', value?: any): { name: string, power: boolean } {
+    power(rings: string[]|null, id: POWER, match?: POWTO, value?: any)
+        : { name: string, power: boolean } {
 
         let name = ''
         let power = false

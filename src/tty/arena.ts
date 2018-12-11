@@ -172,10 +172,10 @@ function choice() {
 										$.log(opponent.user.id, `\n${$.player.handle} beat you in a joust and got ${reward.carry()}.`)
 									xvt.waste(250)
 									$.animated('hinge')
-									if (($.player.jw == 15 && $.player.jl == 0) || ($.player.jw > 15 && 1 - $.player.jw / $.player.jl > 0.93)) {
+									if (($.player.jw > 15 && 1 - $.player.jw / $.player.jl > 0.93)) {
 										let ring = $.Ring.power(null, 'joust')
 										if ($.Ring.wear($.player.rings, ring.name)) {
-											xvt.outln(xvt.yellow, 'You win', xvt.bright, $.an(ring.name), xvt.normal, ' ring!')
+											$.getRing('win', ring.name)
 											$.saveRing(ring.name, $.player.id, $.player.rings)
 										}
 									}

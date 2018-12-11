@@ -3,11 +3,11 @@
         "unique": true,
         "description":"resist all transforming attacks", "value":"5p",
         "ability":[
-            { "id":"spell", "power":true, "spell":"Transmute" },
-            { "id":"spell", "power":true, "spell":"Disintegrate" },
-            { "id":"spell", "power":true, "spell":"Morph" },
-            { "id":"spell", "power":true, "spell":"Armor Rusting" },
-            { "id":"spell", "power":true, "spell":"Weapon Decay" }
+            { "id":"resist", "power":true, "spell":"Transmute" },
+            { "id":"resist", "power":true, "spell":"Disintegrate" },
+            { "id":"resist", "power":true, "spell":"Morph" },
+            { "id":"resist", "power":true, "spell":"Armor Rusting" },
+            { "id":"resist", "power":true, "spell":"Weapon Decay" }
         ]
     },
     "Champion": {
@@ -40,6 +40,13 @@
             { "id":"sp", "power":true, "pc":"Cleric" },
             { "id":"sp", "power":true, "pc":"Paladin" },
             { "id":"sp", "power":true, "pc":"God" }
+        ]
+    },
+    "Forbiddance": {
+        "unique": false,
+        "description":"prevent an opponent from teleporting away", "value":"5p",
+        "ability":[
+            { "id":"resist", "power":true, "spell":"Teleport" }
         ]
     },
 	"Hell's Fury": {
