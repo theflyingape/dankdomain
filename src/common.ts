@@ -2624,7 +2624,6 @@ export function ringBearer(name: string): string {
     return ''
 }
 
-
 export function saveRing(name: string, bearer = '', rings?: string[]) {
     let theRing = { name: name, bearer: bearer[0] == '_' ? '' : bearer }
 
