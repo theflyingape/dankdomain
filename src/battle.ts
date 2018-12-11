@@ -1112,7 +1112,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 $.saveUser(rpc)
             xvt.waste(300)
         }
-    
+
         let backfire = false
 
         if ($.dice(100) > $.Magic.ability(name, rpc, nme).fail) {

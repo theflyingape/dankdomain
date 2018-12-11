@@ -370,7 +370,7 @@ function choice() {
 			return
 
 		case 'Y':
-			xvt.out('\n')
+			xvt.outln()
 			Battle.yourstats()
 			suppress = true
 			break
@@ -386,26 +386,26 @@ function MonsterFights(): boolean {
 
 	if (/D/i.test(xvt.entry)) {
 		if ($.player.level < 50) {
-			xvt.out('\nYou are not powerful enough to fight demons yet.  Go fight some monsters.\n')
+			xvt.outln('\nYou are not powerful enough to fight demons yet.  Go fight some monsters.')
 			return
 		}
 
 		cost = new $.coins(new $.coins($.money($.player.level)).carry(1, true))
 
-		xvt.out('\nThe ancient necromancer will summon you a demon for ', cost.carry(), '\n')
+		xvt.outln('\nThe ancient necromancer will summon you a demon for ', cost.carry())
 		if ($.player.coin.value < cost.value) {
-			xvt.out('You don\'t have enough!\n')
+			xvt.outln('You don\'t have enough!')
 			return
 		}
 
 		$.action('yn')
 		xvt.app.form = {
 			'pay': { cb:() => {
-				xvt.out('\n\n')
+				xvt.outln('\n')
 				if (/Y/i.test(xvt.entry)) {
 					$.player.coin.value -= cost.value
 					$.online.altered = true
-					xvt.out('As you hand him the money, it disappears into thin air.\n\n')
+					xvt.outln('As you hand him the money, it disappears into thin air.\n')
 					xvt.waste(1250)
 
 					monster = <active>{}
@@ -461,9 +461,9 @@ function MonsterFights(): boolean {
 					})
 					$.cat('arena/' + monster.user.handle)
 
-					xvt.out(`The old necromancer summons you a level ${monster.user.level} monster.`, '\n')
-					if (isNaN(monster.user.weapon)) xvt.out('\n', $.who(monster, 'He'), $.Weapon.wearing(monster), '.\n')
-					if (isNaN(monster.user.armor)) xvt.out('\n', $.who(monster, 'He'), $.Armor.wearing(monster), '.\n')
+					xvt.outln(`The old necromancer summons you a level ${monster.user.level} monster.`)
+					if (isNaN(monster.user.weapon)) xvt.outln('\n', $.who(monster, 'He'), $.Weapon.wearing(monster), '.')
+					if (isNaN(monster.user.armor)) xvt.outln('\n', $.who(monster, 'He'), $.Armor.wearing(monster), '.')
 
 					$.action('ny')
 					xvt.app.focus = 'fight'

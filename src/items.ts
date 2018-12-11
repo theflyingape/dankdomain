@@ -130,11 +130,13 @@ export class Deed {
 
 export class Magic {
 
+    ring: Ring
     spells: spell[]
     merchant: string[] = []
     special: string[] = []
 
-    constructor () {
+    constructor (ring: Ring) {
+        this.ring = ring
         this.spells = require('./items/magic.json')
         for (let i in this.spells) {
             if (this.spells[i].cost)
@@ -158,9 +160,11 @@ export class Magic {
 
         fail = (fail < 10) ? 10 : (fail > 99) ? 99 : fail
 
-        let mod = $.Ring.power(nme.user.rings, 'cast', 'magic', rpc.user.magic)
-        if (mod.power && !$.Ring.power(rpc.user.rings, 'ring').power)
-            fail -= 2 * (nme.user.magic + 1)
+        if (nme && nme.user.rings.length) {
+            let mod = this.ring.power(nme.user.rings, 'cast', 'magic', rpc.user.magic)
+            if (mod.power && !this.ring.power(rpc.user.rings, 'ring').power)
+                fail -= 2 * (nme.user.magic + 1)
+        }
 
         backfire = 50 + (fail >>1)
         return { fail, backfire }
@@ -414,7 +418,8 @@ export class Ring {
         , id: 'activate'|'cast'|'initiate'|'hit'|'hp'|'identify'|'joust'|'resurrect'|'ring'|'skip'|'sp'|'spell'|'steal'|'taxes'|'teleport'
         , match?: 'magic'|'pc'|'spell', value?: any): { name: string, power: boolean } {
 
-        let result = { name:'', power: false }
+        let name = ''
+        let power = false
         if (rings === null)
             rings = Object.keys(this.name)
 
@@ -423,16 +428,20 @@ export class Ring {
             for (let a in abilities) {
                 if (abilities[a].id == id) {
                     if (match && abilities[a][match]) {
-                        if (abilities[a][match] == value)
-                            result = { name: rings[f], power: abilities[a][match].power }
+                        if (abilities[a][match] == value) {
+                            name = rings[f]
+                            power = abilities[a].power
+                        }
                     }
-                    else
-                        result = { name: rings[f], power: abilities[a].power }
+                    else {
+                        name = rings[f]
+                        power = abilities[a].power
+                    }
                 }
             }
         }
 
-        return result
+        return { name:name, power:power }
     }
 
     wear(rings: string[], name: string): boolean {

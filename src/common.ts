@@ -18,9 +18,9 @@ module Common
     export const Access = new Items.Access
     export const Armor = new Items.Armor
     export const Deed = new Items.Deed
-    export const Magic = new Items.Magic
-    export const Poison = new Items.Poison
     export const Ring = new Items.Ring
+    export const Magic = new Items.Magic(Ring)
+    export const Poison = new Items.Poison
     export const RealEstate = new Items.RealEstate
     export const Security = new Items.Security
     export const Weapon = new Items.Weapon
@@ -1466,7 +1466,7 @@ export function reroll(user: user, dd?: string, level = 1) {
     user.sp = user.magic > 1 ? 15 : 0
 
     //  reset for new or non player
-    if(xvt.validator.isEmpty(user.id) || user.id[0] === '_') {
+    if (xvt.validator.isEmpty(user.id) || user.id[0] === '_') {
         if (isNaN(user.dob)) user.dob = now().date
         if (isNaN(user.joined)) user.joined = now().date
         user.lastdate = now().date
