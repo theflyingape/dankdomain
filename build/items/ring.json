@@ -1,7 +1,7 @@
 {
     "Atomic": {
         "unique": true,
-        "description":"resist all transforming attacks", "value":"5p",
+        "description":"resist all transforming attacks",
         "ability":[
             { "id":"resist", "power":true, "spell":"Transmute" },
             { "id":"resist", "power":true, "spell":"Disintegrate" },
@@ -10,30 +10,38 @@
             { "id":"resist", "power":true, "spell":"Weapon Decay" }
         ]
     },
+    "Augmentation": {
+        "unique": true,
+        "description":"enhance active level of ability",
+        "ability":[
+            { "id":"upgrade", "power":true }
+        ]
+    },
     "Champion": {
         "unique": false,
-        "description":"enhance lance handling", "value":"1g",
+        "description":"enhance lance handling",
         "ability":[
-            { "id":"joust", "power":true }
+            { "id":"joust", "power":true },
+            { "id":"upgrade", "power":true, "ability":"dex" }
         ]
     },
     "Cursed": {
         "unique": true,
-        "description":"lessen active level of ability", "value":"0c",
+        "description":"lessen active level of ability",
         "ability":[
-            { "id":"activate", "power":true }
+            { "id":"degrade", "power":true }
         ]
     },
     "Detection": {
         "unique": false,
-        "description":"identify all potions and rings", "value":"10g",
+        "description":"identify all potions and rings",
         "ability":[
             { "id":"identify", "power":true }
         ]
     },
     "Faith": {
         "unique": true,
-        "description":"autogenerate hit points; added power for Cleric, Paladin, and God classes: autogenerate spell points", "value":"50p",
+        "description":"autogenerate hit points; added power for Cleric, Paladin, and God classes: autogenerate spell points",
         "ability":[
             { "id":"hp", "power":true },
             { "id":"hp", "power":false, "pc":"Undead" },
@@ -44,39 +52,41 @@
     },
     "Forbiddance": {
         "unique": false,
-        "description":"prevent an opponent from teleporting away", "value":"5p",
+        "description":"prevent an opponent from teleporting away",
         "ability":[
             { "id":"resist", "power":true, "spell":"Teleport" }
         ]
     },
 	"Hell's Fury": {
         "unique": false,
-        "description":"enhance fighting ability, except against Demons", "value":"1000p",
+        "description":"enhance fighting ability, except for Cleric, Paladin, and God classes or against Demons",
         "ability":[
-            { "id":"hit", "power":true },
-            { "id":"hit", "power":false, "pc":"Demon" }
+            { "id":"melee", "power":true },
+            { "id":"melee", "power":false, "pc":"Demon" },
+            { "id":"melee", "power":false, "pc":"Cleric" },
+            { "id":"melee", "power":false, "pc":"Paladin" },
+            { "id":"melee", "power":false, "pc":"God" }
         ]
     },
     "Immunity": {
         "unique": true,
-        "description":"neutralize opponent's rings", "value":"250p",
+        "description":"neutralize opponent's rings and enhance your rings",
         "ability":[
             { "id":"ring", "power":true }
         ]
     },
 	"Medusa's": { 
         "unique": true,
-        "description":"freeze opponent, except against Sages, Psionics, and Gods" , "value":"500p",
+        "description":"freeze opponent, except against Magus-level spellcasters; a Titan's weapon",
         "ability":[
+            { "id":"melee", "power":true, "pc":"Titan" },
             { "id":"skip", "power":true },
-            { "id":"skip", "power":false, "pc":"Sage" },
-            { "id":"skip", "power":false, "pc":"Psionic" },
-            { "id":"skip", "power":false, "pc":"God" }
+            { "id":"skip", "power":false, "magic":4 }
         ]
     },
     "Moon": {
         "unique": false,
-        "description":"absorb mana from opponent, but reverses that against an Undead" , "value":"100p",
+        "description":"absorb mana from opponent, but reverses that against an Undead",
         "ability":[
             { "id":"sp", "power":true },
             { "id":"sp", "power":false, "pc":"Undead" }
@@ -84,49 +94,55 @@
     },
     "Mystic Portal": {
         "unique": true,
-        "description":"teleport, anytime, at some personal cost" , "value":"1000p",
+        "description":"teleport, anytime, at some personal cost",
         "ability":[
-            { "id":"teleport", "power":true }
+            { "id":"teleport", "power":true },
+            { "id":"degrade", "power":true, "ability":"str" },
+            { "id":"degrade", "power":true, "ability":"dex" }
         ]
     },
     "Mage Resistance": {
         "unique": true,
-        "description":"enhance defense against mortal-made attack spells, not incantions" , "value":"100p",
+        "description":"enhance defense against mortal-made attack spells, not incantions",
         "ability":[
             { "id":"cast", "power":true, "magic":1 },
             { "id":"cast", "power":true, "magic":2 },
             { "id":"cast", "power":false, "magic":3 },
-            { "id":"cast", "power":false, "magic":4 }
-        ]
+            { "id":"cast", "power":false, "magic":4 },
+            { "id":"upgrade", "power":true, "ability":"int" }        ]
     },
     "Nobility": {
         "unique": false,
-        "description":"exempt bearer from taxes to the Crown", "value":"10p",
+        "description":"exempt bearer from taxes to the Crown",
         "ability":[
-            { "id":"taxes", "power":true }
+            { "id":"taxes", "power":true },
+            { "id":"upgrade", "power":true, "ability":"cha" }
         ]
     },
     "Sage Resistance": {
         "unique": true,
-        "description":"enhance defense against all attack spells" , "value":"500p",
+        "description":"enhance defense against all attack spells",
         "ability":[
             { "id":"cast", "power":true, "magic":1 },
             { "id":"cast", "power":true, "magic":2 },
             { "id":"cast", "power":true, "magic":3 },
-            { "id":"cast", "power":true, "magic":4 }
+            { "id":"cast", "power":true, "magic":4 },
+            { "id":"upgrade", "power":true, "ability":"int" }
         ]
     },
 	"Shade": { 
         "unique": false,
-        "description":"enhance stealth ability for 1st swing and stealing" , "value":"1000p",
+        "description":"enhance stealth ability for 1st swing and stealing, at some personal cost",
         "ability":[
             { "id":"initiate", "power":true },
-            { "id":"steal", "power":true }
+            { "id":"steal", "power":true },
+            { "id":"upgrade", "power":true, "ability":"dex" },
+            { "id":"degrade", "power":true, "ability":"cha" }
         ]
     },
-	"Undead": { 
+	"Undying": { 
         "unique": true,
-        "description":"allow for necromancing" , "value":"1p",
+        "description":"allow for necromancing",
         "ability":[
             { "id":"resurrect", "power":true }
         ]

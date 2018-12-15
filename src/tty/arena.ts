@@ -128,7 +128,7 @@ function choice() {
 								, level:opponent.user.level, pc:opponent.user.pc
 								, effect:'slideInLeft'
 							})
-							xvt.out('\nThe trumpets blare! You and your opponent ride into the arena. The crowd roars!\n')
+							xvt.outln('\nThe trumpets blare! You and your opponent ride into the arena. The crowd roars!')
 							round()
 							xvt.app.focus = 'joust'
 							return
@@ -140,7 +140,7 @@ function choice() {
 						if (/F/i.test(xvt.entry)) {
 							$.animated('pulse')
 							$.sound('boo')
-							xvt.out('\n\nThe crowd throws rocks at you as you ride out of the arena.\n')
+							xvt.outln('\n\nThe crowd throws rocks at you as you ride out of the arena.')
 							$.player.jl++
 							if ($.run(`UPDATE Players set jw=jw+1 WHERE id='${opponent.user.id}'`).changes)
 								$.log(opponent.user.id, `\n${$.player.handle} forfeited to you in a joust.`)
@@ -150,7 +150,7 @@ function choice() {
 							return
 						}
 						if (/J/i.test(xvt.entry)) {
-							xvt.out('\n\nYou spur the horse.  The tension mounts.\n')
+							xvt.outln('\n\nYou spur the horse.  The tension mounts.')
 							xvt.waste(250)
 							let result = 0
 							while (!result)
@@ -160,10 +160,10 @@ function choice() {
 								$.sound('wall')
 								xvt.outln(xvt.green, '-*>', xvt.bright, xvt.white, ' Thud! ', xvt.normal, xvt.green,'<*-  ', xvt.reset, 'A hit!  You win this pass!')
 								if (++jw == 3) {
-									xvt.out('\nYou have won the joust!\n')
+									xvt.outln('\nYou have won the joust!')
 									xvt.waste(250)
 									$.sound('cheer')
-									xvt.out('The crowd cheers!\n')
+									xvt.outln('The crowd cheers!')
 									let reward = new $.coins($.money(opponent.user.level))
 									xvt.outln('You win ', reward.carry(), '!')
 									$.player.coin.value += reward.value
@@ -197,12 +197,12 @@ function choice() {
 								xvt.outln(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.normal, xvt.magenta,'<^  ', xvt.reset
 									, $.who(opponent, 'He'), 'hits!  You lose this pass!')
 								if (++jl == 3) {
-									xvt.out('\nYou have lost the joust!\n')
+									xvt.outln('\nYou have lost the joust!')
 									$.sound('boo')
-									xvt.out('The crowd boos you!\n')
+									xvt.outln('The crowd boos you!')
 									xvt.waste(250)
 									let reward = new $.coins($.money($.player.level))
-									xvt.out(opponent.user.handle, ' spits on your face.\n')
+									xvt.outln(opponent.user.handle, ' spits on your face.')
 									$.player.jl++
 									if ($.run(`UPDATE Players set jw=jw+1, coin=coin+${reward.value} WHERE id='${opponent.user.id}'`).changes)
 										$.log(opponent.user.id, `\n${$.player.handle} lost to you in a joust.  You got ${reward.carry()}.`)

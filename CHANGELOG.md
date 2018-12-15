@@ -1,81 +1,80 @@
 # 🤴 **[Dank Domain](https://sites.google.com/view/dankdomain)** 👸
 
-## *the return of* ⚔ **Hack & Slash** 🛡
+## *the return of Hack & Slash*
 
-🇺🇸 ©️1991-2018 [Robert Hurst](https://robert.hurst-ri.us)
+🇺🇸 ©️1991-2019 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](http://Play.DDgame.us) on an Intel Atom-powered Linux server using a Verizon FiOS 100mb Internet service
 
-### **24-Dec-2018**
+### **24-Dec-2018** `v1.7.0`
 
-* 1.7.0 release, Merry Christmas!
-* added the 💍 rings of power to wearable items
+* Merry Christmas! 🎅 🎄
+* added 💍 rings of power to wearable items, some are unique
 * tax credit for real estate + security
 * lessen random event occurences when entering a dungeon level
-* outdated package updates, refactoring with minor bug fixes
+* xterm.js v3.9.1 release with outdated package updates
+* class code refactoring with minor bug fixes
 
-#### 22-Nov-2018
+#### 22-Nov-2018 `v1.6.1`
 
-* 1.6.1 release, Happy Thanksgiving!
+* Happy Thanksgiving! 🦃
 * UI app & client improvements with a new Google domain registered: [DDgame.us](https://ddgame.us)
 * dungeon potions are bottled consistently per call
 * temporary buff diminishes after every engagement
 * like hone, apply lower poisons to increase temporary buff
 * a blessed/cursed state does not carry over into player's new day
-* updated [media packs](https://github.com/theflyingape/dankdomain/blob/master/README.md) includes all dungeon monsters
+* completed dungeon set of animated profile cards in [media packs](https://github.com/theflyingape/dankdomain/blob/master/README.md)
 * package dependency updates and minor bug fixes
 
-#### 08-Oct-2018
+#### 08-Oct-2018 `v1.5.0`
 
-* 1.5.0 release, Columbus Day!
+* Columbus Day! ⛵️
 * package requires Linux OS and Node 10.10
 * xterm.js v3.8.0 release with outdated package updates
 * plays (number of arena, brawl, dungeon, etc.) are now configurable
 * UI improvements, webLinks addon
 
-#### 12-Jul-2018
+#### 12-Jul-2018 `v1.4.0`
 
-* 1.4.0 release
 * xterm.js v3.5.0 release with outdated package updates
 * ipstack api support
 * updated [media packs](https://github.com/theflyingape/dankdomain/blob/master/README.md)
 * minor bug fixes
 
-#### 07-Jun-2018
+#### 07-Jun-2018 `v1.3.0`
 
-* 1.3.0 release, Node.js 10 support
+* Node.js 10 support
 * xterm.js v3.4.1 release, and other npmvet package updates
 * removed express-ws (stale, security issue), re-wrote door for ws
 * minor bug fixes
 
-#### 28-May-2018
+#### 28-May-2018 `v1.2.4`
 
-* 1.2.4 release, Memorial Day!
+* Memorial Day! ⛪️
 * xterm.js v3.4.0 release
 * builds with gcc c++ v8.1 (Fedora 28)
 * NPC jailer
 
-#### 16-Apr-2018
+#### 16-Apr-2018 `v1.2.2`
 
-* 1.2.2 release, Patriots' Day!
+* Patriots' Day! 🇺🇸
 * xterm.js v3.3 release, and corrected TypeScript typings for ExpressWs transpiling strictness
 * launched replacement game web site, but door hosting is still managed local (to me)
 * door client improvements
 * minor weakened monster tweaks and some bug fixes in battle
 
-#### 17-Mar-2018
+#### 17-Mar-2018 `v1.1.4`
 
-* 1.1.4 release, Happy St. Patrick's Day!
+* Happy St. Patrick's Day! 🍀
 * xterm.js v3.2 release with preferred Google font IBM Plex Mono
 * an Arena summoned demon is a fair contest
 * dungeon: improved level rendering and a chance taxman boss encounter
 * improved 'inactive player' management, and auto-email reminders until account deletion
 * PVP game enforcement for when player status is defeated or in jail
-* wagering limit and Cherry Bomb Slots added to casino
+* wagering limit and 🍒 Cherry Bomb 💣 Slots added to casino
 
-#### 20-Jan-2018
+#### 20-Jan-2018 `v1.0.0` 🏆
 
-* 1.0.0 release
-* door: TypeScript app + client using xterm.js v3 release
+* door: TypeScript app + client using **xterm.js v3** release
 * brawling can include NPC participation
 * minor dungeon spawning and the teleport avoids caverns
 * if you fail to reroll as an immortal, you must choose a different class
@@ -83,7 +82,7 @@
 
 #### 02-Jan-2018
 
-* 0.9.16 release, Happy New Year!
+* 0.9.16 release, Happy New Year! 🔔
 * dungeon: old cleric is an active PC, fairies, monster action words
 * tavern: barkeep and brawling
 * list of deeds: champions and heroes
@@ -101,7 +100,7 @@
 
 #### 23-Nov-2017
 
-* beta 0.8.1 release, uses xterm.js v3 with smarter browser layout/resizing, Happy Thanksgiving!
+* beta 0.8.1 release, uses xterm.js with smarter browser layout/resizing, Happy Thanksgiving!
 * some casino tables are open
 * naval shipyard, sea monsters, and fishing
 * party fights

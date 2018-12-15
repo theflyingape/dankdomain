@@ -9,12 +9,12 @@ import titleCase = require('title-case')
 
 import xvt = require('xvt')
 import Items = require('./items')
-import { user } from './battle';
 
 
 module Common
 {
     //  items
+    export const Abilities = [ 'str', 'int', 'dex', 'cha' ]
     export const Access = new Items.Access
     export const Armor = new Items.Armor
     export const Deed = new Items.Deed
@@ -87,7 +87,7 @@ export class Character {
         return ability
     }
 
-    adjust(ability: 'str'|'int'|'dex'|'cha', rt: number, pc = 0, max = 0, rpc = online) {
+    adjust(ability: ABILITY, rt: number, pc = 0, max = 0, rpc = online) {
         if (max) {
             rpc.user[`max${ability}`] = this.ability(rpc.user[`max${ability}`], max, 99)
             rpc.altered = true
@@ -97,8 +97,16 @@ export class Character {
             rpc.altered = true
         }
         if (rt) {
+            const a = `to${titleCase(ability)}`
             let mod = rpc.user.blessed ? 10 : 0
             mod -= rpc.user.cursed ? 10 : 0
+            //  iterate each ring, ability mods are additive
+            rpc.user.rings.forEach(ring => {
+                if (Ring.power([ ring ], 'degrade', 'ability', ability).power && !Ring.power(rpc.user.rings, 'ring').power)
+                    mod += -2 * PC.card(rpc.user.pc)[a]
+                if (Ring.power([ ring ], 'upgrade', 'ability', ability).power)
+                    mod += (+Ring.power(rpc.user.rings, 'ring').power + 1) * PC.card(rpc.user.pc)[a]
+            })
             rpc[ability] = this.ability(rpc[ability], rt, rpc.user[`max${ability}`], mod)
         }
     }
@@ -557,18 +565,18 @@ export function activate(one: active, keep = false, confused = false): boolean {
     one.int = one.user.int
     one.dex = one.user.dex
     one.cha = one.user.cha
-    if (one.user.blessed) {
-        PC.adjust('str', 10, 0, 0, one)
-        PC.adjust('int', 10, 0, 0, one)
-        PC.adjust('dex', 10, 0, 0, one)
-        PC.adjust('cha', 10, 0, 0, one)
-    }
-    if (one.user.cursed) {
-        PC.adjust('str', -10, 0, 0, one)
-        PC.adjust('int', -10, 0, 0, one)
-        PC.adjust('dex', -10, 0, 0, one)
-        PC.adjust('cha', -10, 0, 0, one)
-    }
+    Abilities.forEach(ability => {
+        const a = `to${titleCase(ability)}`
+        if (one.user.blessed) PC.adjust(ability, +10, 0, 0, one)
+        if (one.user.cursed)  PC.adjust(ability, -10, 0, 0, one)
+        //  iterate each ring, ability mods are additive
+        one.user.rings.forEach(ring => {
+            if (Ring.power([ ring ], 'degrade', 'ability', ability).power && !Ring.power(one.user.rings, 'ring').power)
+                PC.adjust(ability, -2 * PC.card(one.user.pc)[a], 0, 0, one)
+            if (Ring.power([ ring ], 'upgrade', 'ability', ability).power)
+                PC.adjust(ability, (+Ring.power(one.user.rings, 'ring').power + 1) * PC.card(one.user.pc)[a], 0, 0, one)
+        })
+    })
     one.confused = false
     if (confused) return true
 
@@ -894,10 +902,12 @@ export function skillplus(rpc: active, cb: Function) {
                 case 0:
                     xvt.out(xvt.cyan, 'The old mage will see you now, bring money.')
                     player.magic++
+                    player.spells = []
                     break
                 case 1:
-                    xvt.out(xvt.cyan, 'Your wands have turned into scrolls.')
+                    xvt.out(xvt.cyan, 'You can no longer use wands.')
                     player.magic++
+                    player.spells = []
                     player.sp += 15 + dice(511)
                     online.sp = player.sp
                     break

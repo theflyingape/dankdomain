@@ -364,7 +364,7 @@ function choice() {
             return
 
         case 'Y':
-            $.action('ny')
+            let cost = new $.coins(Math.trunc($.money($.player.level) / 10))
             xvt.app.form = {
                 'yn': { cb: () => {
                     if (/Y/i.test(xvt.entry)) {
@@ -377,11 +377,10 @@ function choice() {
                                 $.player.bank.value = 0
                             }
                         }
-                        xvt.out('\n')
+                        xvt.outln()
                         Battle.user('Scout', (opponent: active) => {
                             if (opponent.user.id) {
                                 $.PC.stats(opponent)
-                                xvt.app.form['pause'] = { cb:menu, pause:true }
                                 xvt.app.focus = 'pause'
                             }
                             else
@@ -390,20 +389,24 @@ function choice() {
                         return
                     }
                     $.PC.stats($.online)
-                    $.action('ny')
                     xvt.app.focus = 'pause'
                 }, cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 },
-                'pause': { cb:menu, pause:true }
+                'pause': { cb:menu, cancel:'!', pause:true }
             }
-            let cost = new $.coins(Math.trunc($.money($.player.level) / 10))
-            xvt.app.form['yn'].prompt = 'Scout another user for ' + cost.carry() + ' (Y/N)? '
-            xvt.app.focus = 'yn'
-            return
+            if ($.access.roleplay) {
+                $.action('ny')
+                xvt.app.form['yn'].prompt = 'Scout another user for ' + cost.carry() + ' (Y/N)? '
+                xvt.app.focus = 'yn'
+                return
+            }
+            else
+                $.PC.stats($.online)
+            suppress = true
+            break
 
         case 'Z':
             xvt.out(xvt.bright, xvt.green, '\n')
             $.cat('system')
-            xvt.out(xvt.reset)
             suppress = true
             break
     }

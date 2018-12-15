@@ -427,15 +427,15 @@ export class Ring {
             let abilities = this.name[rings[f]].ability
             for (let a in abilities) {
                 if (abilities[a].id == id) {
-                    if (match && abilities[a][match]) {
+                    if (!match) {
+                        name = rings[f]
+                        power = abilities[a].power
+                    }
+                    else if (abilities[a][match] && value) {
                         if (abilities[a][match] == value) {
                             name = rings[f]
                             power = abilities[a].power
                         }
-                    }
-                    else {
-                        name = rings[f]
-                        power = abilities[a].power
                     }
                 }
             }
