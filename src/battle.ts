@@ -1087,25 +1087,25 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
         //  some sensible ground rules to avoid known muling exploits (by White Knights passing gas)
         if (xvt.validator.isDefined(nme)) {
             if ([ 1,2,3,4,5,6,10 ].indexOf(spell.cast) >= 0) {
-                if (rpc.user.id === $.player.id)
+                if (rpc === $.online)
                     xvt.outln('You cannot cast that spell during a battle!')
                 cb(!rpc.confused)
                 return
             }
             if (nme.user.novice && [ 12,15,16,20,21,22 ].indexOf(spell.cast) >= 0) {
-                if (rpc.user.id === $.player.id)
+                if (rpc === $.online)
                     xvt.outln('You cannot cast that spell on a novice player.')
                 cb(!rpc.confused)
                 return
             }
-            if (/Naval|Tavern|Taxman/.test(from) && [ 8,12,16,17,18,22 ].indexOf(spell.cast) >= 0) {
-                if (spell.cast == 8 && rpc.user.id === $.player.id) {
+            if (/Naval|Tavern|Taxman/.test(from) && [ 8,12,17,18,22 ].indexOf(spell.cast) >= 0) {
+                if (spell.cast == 8 && rpc === $.online) {
                     xvt.outln('You cannot cast that spell to retreat!')
                     cb(!rpc.confused)
                     return
                 }
                 if (spell.cast > 8) {
-                    if (rpc.user.id === $.player.id) {
+                    if (rpc === $.online) {
                         $.sound('oops', 4)
                         xvt.outln('You are too frantic to cast that spell!')
                     }
@@ -1113,11 +1113,11 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     return
                 }
             }
-            let mod = $.Ring.power(nme.user.rings, 'resist', 'magic', rpc.user.magic)
+            let mod = $.Ring.power(nme.user.rings, 'resist', 'spell', name)
             if (mod.power) {
-                if (rpc.user.id === $.player.id) {
+                if (rpc === $.online) {
                     $.sound('oops', 4)
-                    xvt.outln('You cannot cast that spell against', $.an(mod.name, false))
+                    xvt.out('That spell is ineffective against', $.an(mod.name, false))
                     xvt.out(xvt.bright, xvt.cyan, mod.name, xvt.normal)
                     if (xvt.emulation == 'XT') xvt.out(' 💍')
                     xvt.outln(' ring', xvt.white, ' bearer!')
@@ -1128,7 +1128,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
         }
         else {
             if ([ 9,11,12,14,15,16,17,18,19,20,21,22 ].indexOf(spell.cast) >= 0) {
-                if (rpc.user.id === $.player.id)
+                if (rpc === $.online)
                     xvt.outln('You cannot cast that spell on yourself!')
                 cb(!rpc.confused)
                 return
@@ -1143,14 +1143,14 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             if (nme) {
                 const spent = +(+$.Ring.power(nme.user.rings, 'sp', 'pc', nme.user.pc).power && !$.Ring.power(rpc.user.rings, 'ring').power) * (+$.Ring.power(nme.user.rings, 'ring').power + 1)
                 if (mana = spent * $.dice(mana / rpc.user.magic)) {
-                    if (nme.sp + mana > nme.user.hp) {
-                        mana -= nme.hp - nme.user.hp
+                    if (nme.sp + mana > nme.user.sp) {
+                        mana -= nme.sp - nme.user.sp
                         if (mana < 0) mana = 0
                     }
                     if (mana) {
                         nme.sp += mana
-                        xvt.outln(nme == $.online ? 'You ' : nme.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                            , ' ', $.what(rpc, 'absorb'), mana.toString(), ' mana spent off the spell.')
+                        xvt.outln(nme == $.online ? 'You ' : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
+                            , ' ', $.what(rpc, 'absorb'), xvt.bright, xvt.cyan, mana.toString(), xvt.normal, ' mana ', xvt.reset, 'spent off the spell.')
                         xvt.waste(100)
                     }
                 }
@@ -2106,7 +2106,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         xvt.waste(50)
 
         //  any bonus restore health from the hit off enemy?
-        if (hit = life * $.dice(hit / rpc.user.level / (rpc.user.melee + 2))) {
+        if (hit = life * $.dice(hit / (rpc.user.melee + 2))) {
             if (rpc.hp + hit > rpc.user.hp) {
                 hit -= rpc.hp - rpc.user.hp
                 if (hit < 0) hit = 0
@@ -2114,7 +2114,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             if (hit) {
                 rpc.hp += hit
                 xvt.outln(rpc == $.online ? 'You ' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , ' ', $.what(rpc, 'absorb'), hit.toString(), ' off the hit.')
+                    , ' ', $.what(rpc, 'absorb'), xvt.bright, xvt.red, hit.toString(), xvt.reset, ' off the hit.')
                 xvt.waste(50)
             }
         }
