@@ -1551,9 +1551,10 @@ function doSpoils() {
 						xvt.out(xvt.lgreen, ' charisma', $.bracket(`+${m * mon.pc.bonusCha}`, false))
 					}
 					$.PC.adjust('cha', m)
-					xvt.out(xvt.reset, '\n\n'); xvt.waste(500)
+					xvt.outln('\n'); xvt.waste(500)
 					Battle.yourstats(); xvt.waste(500)
-					xvt.out('\n'); xvt.waste(500)
+					xvt.outln(); xvt.waste(500)
+					DL.moves >>= 1
 				}
 			}
 			//	activate this monster's avenge?

@@ -1737,11 +1737,11 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 bbr += $.dice(bba)
 
             if (backfire) {
-                xvt.out(rpc === $.online ? 'you'
+                xvt.outln(rpc === $.online ? 'you'
                     : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' BLAST')
                     , rpc !== $.online ? $.who(rpc, 'him') + '\x08self' : 'yourself'
-                    , ' for ', bbr.toString(), ' hit points!\n')
+                    , ' for ', bbr.toString(), ' hit points!')
                 rpc.hp -= bbr
                 if (rpc.hp < 1) {
                     rpc.hp = 0
@@ -1771,7 +1771,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 if (nme.hp < 1) {
                     nme.hp = 0
                     if (from === 'Party' || nme !== $.online) {
-                        xvt.out(xvt.blue, xvt.faint, ' {', xvt.bright, 'RIP', xvt.faint, '}', xvt.reset)
+                        xvt.out(xvt.blue, xvt.faint, ' {', xvt.bright, 'RIP', xvt.faint, '}')
                     }
                     else {
                         $.reason = rpc.user.id.length
@@ -1779,7 +1779,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                             : `fatal Big Blast by a level ${rpc.user.level} ${rpc.user.handle}`
                     }
                 }
-                xvt.out('\n')
+                xvt.outln()
             }
             break
 
@@ -2116,7 +2116,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                 rpc.hp += hit
                 xvt.outln(rpc == $.online ? 'You ' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , ' ', $.what(rpc, 'absorb'), xvt.bright, xvt.red, hit.toString(), xvt.reset, ' off the hit.')
-                xvt.waste(50)
+                xvt.waste(100)
             }
         }
     }
