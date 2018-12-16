@@ -105,10 +105,11 @@ export function DeepDank(start: number, cb: Function) {
 	looked = false
 	pause = false
 	skillkill = false
+	Battle.teleported = false
 
 	party = []
 	party.push($.online)
-	tl = Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
+	tl = Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60) + 3
 
 	deep = 0
 	Z = start < 0 ? 0 : start > 99 ? 99 : start
@@ -147,6 +148,12 @@ export function menu(suppress = false) {
 //	did player cast teleport?
 	if (!Battle.retreat && Battle.teleported) {
 		Battle.teleported = false
+		xvt.outln(xvt.bright, xvt.magenta, 'You open a mystic portal.\n')
+		xvt.waste(300)
+		xvt.save()
+		xvt.out(`\x1B[1;${$.player.rows}r`)
+		xvt.restore()
+		refresh = true
 		teleport()
 		return
 	}
@@ -1416,6 +1423,7 @@ function doMove(): boolean {
 					: 0))
 			$.sound('bubbles')
 			xvt.out(xvt.bright, xvt.cyan, 'On the ground, you find a ')
+			if ($.Ring.power($.player.rings, 'identify').power) potions[ROOM.giftValue].identified = true
 			if (potions[ROOM.giftValue].identified || ROOM.giftID || $.access.sysop) {
 				$.profile({ png:potions[ROOM.giftValue].image, handle:potion[ROOM.giftValue], effect:'fadeInUp' })
 				xvt.out(potion[ROOM.giftValue], '.')
@@ -1432,7 +1440,7 @@ function doMove(): boolean {
 				$.action('potion')
 				xvt.app.form = {
 					'quaff': { cb: () => {
-						xvt.out('\n\n')
+						xvt.outln('\n')
 						if (/N/i.test(xvt.entry)) {
 							looked = true
 							menu()
@@ -1603,7 +1611,7 @@ function doSpoils() {
 		}
 		//	> 3 monsters
 		if (b4 < 0) {
-			xvt.out(xvt.lgreen, '+ bonus charisma\n', xvt.reset)
+			xvt.outln(xvt.lgreen, '+ bonus charisma')
 			$.sound('effort', 20)
 			$.PC.adjust('cha', $.dice(Math.abs(b4)), 1, 1)
 			pause = true
@@ -1619,6 +1627,16 @@ function doSpoils() {
 			DL.map = 'Marauder\'s map'
 			pause = true
 		}
+	}
+
+	if (Battle.teleported) {
+		$.PC.profile($.online, 'lightSpeedOut')
+		Battle.teleported = false
+		Y = $.dice(DL.rooms.length) - 1
+		X = $.dice(DL.width) - 1
+		looked = false
+		menu()
+		return
 	}
 
 	if (Battle.retreat) $.PC.profile($.online, 'heartBeat')
@@ -1682,14 +1700,6 @@ function doSpoils() {
 		}
 		d.splice(i, 1)
 		pause = true
-	}
-
-	if (Battle.teleported) {
-		$.animated('lightSpeedOut')
-		Battle.teleported = false
-		Y = $.dice(DL.rooms.length) - 1
-		X = $.dice(DL.width) - 1
-		looked = false
 	}
 
 	menu()
@@ -2122,9 +2132,9 @@ function generateLevel() {
 			continue
 		}
 
-		if ($.dice(deep * ($.player.magic + 2)) - $.player.melee > (deep + 1)) {
+		if ($.dice(Z + deep) > $.player.level + 1) {
 			DL.rooms[y][x].giftItem = 'ring'
-			if ($.dice(10) > 1) {
+			if ($.dice(12 - deep) > 1) {
 				let ring = Object.keys($.Ring.common)
 				DL.rooms[y][x].giftValue = ring[$.dice(ring.length) - 1]
 			}

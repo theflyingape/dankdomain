@@ -10,8 +10,8 @@
             { "id":"resist", "power":true, "spell":"Weapon Decay" }
         ]
     },
-    "Augmentation": {
-        "unique": true,
+    "Augmenting": {
+        "unique": false,
         "description":"enhance active level of ability",
         "ability":[
             { "id":"upgrade", "power":true }
@@ -26,7 +26,7 @@
         ]
     },
     "Cursed": {
-        "unique": true,
+        "unique": false,
         "description":"lessen active level of ability",
         "ability":[
             { "id":"degrade", "power":true }
@@ -39,10 +39,18 @@
             { "id":"identify", "power":true }
         ]
     },
+    "Elven": {
+        "unique": false,
+        "description":"enhance dexterity ability",
+        "ability":[
+            { "id":"upgrade", "power":true, "ability":"dex" }
+        ]
+    },
     "Faith": {
         "unique": true,
-        "description":"autogenerate hit points; added power for Cleric, Paladin, and God classes: autogenerate spell points",
+        "description":"life-steal hit points; added mana-steal for Cleric, Paladin, and God classes",
         "ability":[
+            { "id":"degrade", "power":true, "pc":"Undead" },
             { "id":"hp", "power":true },
             { "id":"hp", "power":false, "pc":"Undead" },
             { "id":"sp", "power":true, "pc":"Cleric" },
@@ -68,11 +76,30 @@
             { "id":"melee", "power":false, "pc":"God" }
         ]
     },
-    "Immunity": {
+    "Infinity": {
         "unique": true,
         "description":"neutralize opponent's rings and enhance your rings",
         "ability":[
+            { "id":"resist", "power":true, "spell":"Teleport" },
             { "id":"ring", "power":true }
+        ]
+    },
+    "Lucky": {
+        "unique": false,
+        "description":"enhance charisma ability",
+        "ability":[
+            { "id":"upgrade", "power":true, "ability":"cha" }
+        ]
+    },
+    "Magus": {
+        "unique": false,
+        "description":"enhance defense against mortal-made attack spells, not incantions",
+        "ability":[
+            { "id":"cast", "power":true, "magic":1 },
+            { "id":"cast", "power":true, "magic":2 },
+            { "id":"cast", "power":false, "magic":3 },
+            { "id":"cast", "power":false, "magic":4 },
+            { "id":"upgrade", "power":true, "ability":"int" }
         ]
     },
 	"Medusa's": { 
@@ -101,16 +128,6 @@
             { "id":"degrade", "power":true, "ability":"dex" }
         ]
     },
-    "Mage Resistance": {
-        "unique": true,
-        "description":"enhance defense against mortal-made attack spells, not incantions",
-        "ability":[
-            { "id":"cast", "power":true, "magic":1 },
-            { "id":"cast", "power":true, "magic":2 },
-            { "id":"cast", "power":false, "magic":3 },
-            { "id":"cast", "power":false, "magic":4 },
-            { "id":"upgrade", "power":true, "ability":"int" }        ]
-    },
     "Nobility": {
         "unique": false,
         "description":"exempt bearer from taxes to the Crown",
@@ -119,15 +136,12 @@
             { "id":"upgrade", "power":true, "ability":"cha" }
         ]
     },
-    "Sage Resistance": {
+	"Ogre": { 
         "unique": true,
-        "description":"enhance defense against all attack spells",
+        "description":"add power to melee attacks",
         "ability":[
-            { "id":"cast", "power":true, "magic":1 },
-            { "id":"cast", "power":true, "magic":2 },
-            { "id":"cast", "power":true, "magic":3 },
-            { "id":"cast", "power":true, "magic":4 },
-            { "id":"upgrade", "power":true, "ability":"int" }
+            { "id":"melee", "power":true },
+            { "id":"upgrade", "power":true, "ability":"str" }
         ]
     },
 	"Shade": { 
@@ -142,9 +156,25 @@
     },
 	"Undying": { 
         "unique": true,
-        "description":"allow for necromancing",
+        "description":"allow for necromancing; augments the Undead",
         "ability":[
-            { "id":"resurrect", "power":true }
+            { "id":"degrade", "power":true, "pc":"Cleric" },
+            { "id":"degrade", "power":true, "pc":"Paladin" },
+            { "id":"degrade", "power":true, "pc":"God" },
+            { "id":"hp", "power":true, "pc":"Undead" },
+            { "id":"melee", "power":true, "pc":"Undead" },
+            { "id":"resurrect", "power":true },
+            { "id":"sp", "power":true, "pc":"Undead" },
+            { "id":"upgrade", "power":true, "pc":"Undead" }
+        ]
+    },
+    "White Wizard": {
+        "unique": true,
+        "description":"enhance defense against all attack spells",
+        "ability":[
+            { "id":"cast", "power":true },
+            { "id":"teleport", "power":true },
+            { "id":"upgrade", "power":true, "ability":"int" }
         ]
     }
 }

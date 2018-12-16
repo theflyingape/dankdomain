@@ -380,18 +380,6 @@ export class Weapon {
     }
 }
 
-export class RealEstate {
-
-    name: realestate[]
-    merchant: string[] = []
-
-    constructor () {
-        this.name = require('./items/realestate.json')
-        for (let i in this.name)
-            this.merchant.push(i)
-    }
-}
-
 export class Ring {
     name: ring[]
     common: string[] = []
@@ -427,7 +415,7 @@ export class Ring {
             let abilities = this.name[rings[f]].ability
             for (let a in abilities) {
                 if (abilities[a].id == id) {
-                    if (!match) {
+                    if (!match || !abilities[a][match]) {
                         name = rings[f]
                         power = abilities[a].power
                     }
@@ -451,6 +439,18 @@ export class Ring {
             return true
         }
         return false
+    }
+}
+
+export class RealEstate {
+
+    name: realestate[]
+    merchant: string[] = []
+
+    constructor () {
+        this.name = require('./items/realestate.json')
+        for (let i in this.name)
+            this.merchant.push(i)
     }
 }
 

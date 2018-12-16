@@ -21,7 +21,7 @@
     "armor": "Cloak of Wonder",
     "spells": [ 8, 19, 20 ],
     "poisons": [ 1, 2, 3, 4 ],
-    "rings": [ "Nobility" ],
+    "rings": [ "Lucky", "Nobility" ],
     "toAC": 7,
     "toWC": 7,
     "realestate": "Tower",

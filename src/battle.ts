@@ -625,7 +625,7 @@ export function spoils() {
         for (let m in parties[w]) {
             //  dead member gets less of the booty, taxman always gets a cut
             let cut = parties[w][m].hp > 0 ? 0.95 : 0.35
-            let max = $.int(1000 * $.money(parties[w][m].user.xplevel) * cut)
+            let max = $.int(((4 + parties[w].length - parties[l].length) / 2) * 1250 * $.money(parties[w][m].user.xplevel) * cut)
             let award = $.int(coin.value * $.money(parties[w][m].user.xplevel) / take * cut)
             award = award > coin.value ? coin.value : award
             award = award < 1 ? 0 : award > max ? max : award
@@ -639,12 +639,12 @@ export function spoils() {
 
             if (parties[w][m] === $.online) {
                 if (xp) {
-                    xvt.out('\nYou get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
+                    xvt.outln('\nYou get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.')
                     $.run(`UPDATE Gangs SET win = win + 1 WHERE name = '${parties[w][0].user.gang}'`)
                     $.run(`UPDATE Gangs SET loss = loss + 1 WHERE name = '${parties[l][0].user.gang}'`)
                 }
                 if (award)
-                    xvt.out('You get your cut worth ', new $.coins(award).carry(), '.\n')
+                    xvt.outln('You get your cut worth ', new $.coins(award).carry(), '.')
                 xvt.waste(600)
             }
             else {
@@ -664,7 +664,7 @@ export function spoils() {
             $.run(`UPDATE Players
                 set bank = ${$.taxman.user.bank.value}
                 WHERE id='${$.taxman.user.id}'`).changes
-            xvt.out($.taxman.user.handle, ' took ', $.who($.taxman, 'his'), 'cut worth ', coin.carry(), '.\n')
+            xvt.outln($.taxman.user.handle, ' took ', $.who($.taxman, 'his'), 'cut worth ', coin.carry(), '.')
             xvt.waste(600)
         }
 
@@ -825,18 +825,18 @@ export function spoils() {
         }
         if (xp) {
             winner.user.xp += xp
-            xvt.out('You get'
+            xvt.outln('You get'
                 , parties[l].length > 1 ? ' a total of ' : ' '
-                , sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n'
+                , sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.'
             )
         }
         if (coin.value) {
             winner.user.coin.value += coin.value
-            xvt.out('You get'
+            xvt.outln('You get'
                 , parties[l].length > 1 ? ' a total of ' : ' '
                 , coin.carry(), ' '
                 , parties[l].length > 1 ? 'they were ' : $.who(loser, 'he') + 'was '
-                , 'carrying.\n'
+                , 'carrying.'
             )
         }
     }
@@ -869,6 +869,9 @@ export function spoils() {
         //  manage any asset upgrades for PC
         if (winner.user.id && winner.user.id[0] !== '_') {
             $.log(winner.user.id, `\nYou killed ${$.player.handle}!`)
+            $.player.coward = true
+            $.saveUser($.online)
+
             if ($.player.blessed) {
                 winner.user.blessed = $.player.id
                 $.player.blessed = ''
@@ -876,13 +879,27 @@ export function spoils() {
                 xvt.waste(600)
             }
             if ($.Weapon.swap(winner, $.online)) {
-                xvt.out($.who(winner, 'He'), $.what(winner, 'take'), $.who($.online, 'his'), winner.user.weapon, '.\n')
+                xvt.outln($.who(winner, 'He'), $.what(winner, 'take'), $.who($.online, 'his'), winner.user.weapon, '.')
                 $.log(winner.user.id, `You upgraded to ${winner.user.weapon}.`)
             }
             if ($.Armor.swap(winner, $.online)) {
-                xvt.out($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who($.online, 'his'), winner.user.armor, '.\n')
+                xvt.outln($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who($.online, 'his'), winner.user.armor, '.')
                 $.log(winner.user.id, `You upgraded to ${winner.user.armor}.`)
             }
+            if ($.player.rings.length) {
+                xvt.outln($.who(winner, 'He'), 'also ', $.what(winner, 'remove'), $.player.rings.length > 1 ? 'all of ' : '', 'your rings...')
+                $.player.rings.forEach(ring => {
+                    xvt.out(' ', $.bracket(ring, false), ' ')
+                    $.sound('click')
+                    xvt.waste(200)
+                    if ($.Ring.wear(winner.user.rings, ring))
+                        $.saveRing(ring, winner.user.id)
+                })
+                $.player.rings = []
+                xvt.outln()
+                $.log(winner.user.id, `... and there were rings, too!`)
+            }
+
             if (winner.user.gang && winner.user.gang === $.player.gang) {
                 $.music('punk')
                 $.player.maxcha--
@@ -891,7 +908,7 @@ export function spoils() {
                 gang = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                 let n = gang.members.indexOf(winner.user.id)
                 if (n == 0) {
-                    xvt.out($.who(winner,'He'), 'says, "', xvt.bright, 'Let that be a lesson to you punk!', xvt.reset, '"\n')
+                    xvt.outln($.who(winner,'He'), 'says, "', xvt.bright, 'Let that be a lesson to you punk!', xvt.reset, '"')
                     xvt.waste(600)
                 }
                 if (gang.members[0] === $.player.id) {
@@ -899,11 +916,12 @@ export function spoils() {
                     gang.members[n] = $.player.id
                     $.saveGang(gang)
                     $.player.cha--
-                    xvt.out($.who(winner,'He'), `takes over as the leader of ${gang.name}.\n`)
+                    xvt.outln($.who(winner,'He'), `takes over as the leader of ${gang.name}.`)
                     xvt.waste(600)
                 }
             }
             $.saveUser(winner)
+            $.player.coward = false
         }
     }
     $.online.altered = true
@@ -987,68 +1005,78 @@ export function brawl(rpc:active, nme:active) {
 }
 
 export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?: ddd) {
-    if (!rpc.user.magic || !rpc.user.spells.length) {
-        if (rpc.user.id === $.player.id) {
+
+    let tricks = Object.assign([], rpc.user.spells)
+    let Summons = [ 'Teleport', 'Resurrect' ]
+    Summons.forEach(summon => {
+        if ($.Ring.power(rpc.user.rings, summon.toLocaleLowerCase()).power)
+            $.Magic.add(tricks, summon)
+        else
+            Summons.splice(Summons.indexOf(summon), 1)
+    })
+
+    if (!tricks.length) {
+        if (rpc === $.online) {
             xvt.outln(`You don't have any magic.`)
             cb(true)
         }
         else {
-            xvt.out('cast() failure -- ', rpc)
+            xvt.out('cast() failure :: ', rpc)
             cb()
         }
         return
     }
 
-    if (rpc.user.id === $.player.id) {
+    if (rpc === $.online) {
         $.action('list')
         xvt.app.form = {
             'magic': { cb: () => {
-                xvt.out('\n')
+                xvt.outln()
                 if (xvt.entry === '') {
                     cb(true)
                     return
                 }
-                if (!$.Magic.have(rpc.user.spells, +xvt.entry)) {
-                	for (let i in $.player.spells) {
-                        let p = $.player.spells[i]
-                        let spell = Object.keys($.Magic.spells)[p - 1]
-                        if (rpc.user.magic == 1) {
-                            xvt.out($.bracket(p)
-                                , sprintf('%-18s  (%d%%)'
+
+                let spell = Object.keys($.Magic.spells)[+xvt.entry - 1]
+
+                if (!$.Magic.have(tricks, +xvt.entry)) {
+                	for (let i in tricks) {
+                        let p = tricks[i]
+                        spell = Object.keys($.Magic.spells)[p - 1]
+                        if (rpc.user.magic < 2)
+                            xvt.out($.bracket(p), sprintf('%-18s  (%d%%)', spell, $.Magic.ability(spell, rpc, nme).fail))
+                        else
+                            xvt.out($.bracket(p), sprintf('%-18s  %4d  (%d%%)'
                                 , spell
+                                , Summons.includes(spell) ? 0
+                                    : rpc.user.magic < 4 ? $.Magic.spells[spell].mana
+                                    : $.Magic.spells[spell].enchanted
                                 , $.Magic.ability(spell, rpc, nme).fail)
                             )
-                        }
-                        else {
-                            xvt.out($.bracket(p)
-                                , sprintf('%-18s  %4d  (%d%%)'
-                                , spell
-                                , rpc.user.magic < 4 ? $.Magic.spells[spell].mana : $.Magic.spells[spell].enchanted
-                                , $.Magic.ability(spell, rpc, nme).fail)
-                            )
-                        }
                     }
-                    xvt.out('\n')
+                    xvt.outln()
                     xvt.app.refocus()
                 }
                 else {
-                    xvt.out('\n')
-                    invoke(Object.keys($.Magic.spells)[+xvt.entry - 1])
+                    xvt.outln()
+                    invoke(spell, Summons.includes(spell))
                 }
             }, prompt:['Use wand', 'Read scroll', 'Cast spell', 'Uti magicae'][$.player.magic - 1] + ' (?=list): ', max:2 }
         }
         xvt.app.focus = 'magic'
         return
     }
-    else
-        invoke(Object.keys($.Magic.spells)[magic - 1])
+    else {
+        let spell = Object.keys($.Magic.spells)[magic - 1]
+        invoke(spell, Summons.includes(spell))
+    }
 
-    function invoke(name: string) {
+    function invoke(name: string, summon: boolean) {
         let spell = $.Magic.spells[name]
         if (rpc.user.id !== $.player.id)
             xvt.waste(200)
 
-        if (rpc.user.magic > 1)
+        if (rpc.user.magic > 1 && !summon)
             if (rpc.sp < $.Magic.power(rpc, spell.cast)) {
                 if (rpc === $.online)
                     xvt.outln(`You don't have enough power to cast that spell!`)
@@ -1107,10 +1135,29 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             }
         }
 
-        if (rpc.sp)
-            rpc.sp -= rpc.user.magic < 4 ? spell.mana : spell.enchanted
+        if (rpc.sp) {
+            let mana = summon ? 0 : rpc.user.magic < 4 ? spell.mana : spell.enchanted
+            rpc.sp -= mana
 
-        if (rpc.user.magic == 1 && $.dice(100) < 50 + (spell.cast < 17 ? 2 * spell.cast : 2 * spell.cast - 16)) {
+            //  collect some of the mana spent by the enemy?
+            if (nme) {
+                const spent = +(+$.Ring.power(nme.user.rings, 'sp', 'pc', nme.user.pc).power && !$.Ring.power(rpc.user.rings, 'ring').power) * (+$.Ring.power(nme.user.rings, 'ring').power + 1)
+                if (mana = spent * $.dice(mana / rpc.user.magic)) {
+                    if (nme.sp + mana > nme.user.hp) {
+                        mana -= nme.hp - nme.user.hp
+                        if (mana < 0) mana = 0
+                    }
+                    if (mana) {
+                        nme.sp += mana
+                        xvt.outln(nme == $.online ? 'You ' : nme.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                            , ' ', $.what(rpc, 'absorb'), mana.toString(), ' mana spent off the spell.')
+                        xvt.waste(100)
+                    }
+                }
+            }
+        }
+
+        if (rpc.user.magic == 1 && !summon && $.dice(100) < 50 + (spell.cast < 17 ? 2 * spell.cast : 2 * spell.cast - 16)) {
             rpc.altered = true
             $.Magic.remove(rpc.user.spells, spell.cast)
             xvt.outln($.who(rpc, 'His'), 'wand smokes as ', $.who(rpc, 'he')
@@ -1121,7 +1168,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
         }
 
         //  Tigress prefers the Ranger (and Paladin) class, because it comes with a coupon and a better warranty
-        if (rpc.user.magic == 2 && $.dice(5 + +xvt.validator.isDefined($.Access.name[rpc.user.access].sysop)) == 1) {
+        if (rpc.user.magic == 2 && !summon && $.dice(5 + +xvt.validator.isDefined($.Access.name[rpc.user.access].sysop)) == 1) {
             rpc.altered = true
             $.Magic.remove(rpc.user.spells, spell.cast)
             xvt.outln($.who(rpc, 'His'), 'scroll burns as ', $.who(rpc, 'he')
@@ -1150,56 +1197,56 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
         case 1:
             if (backfire) {
                 $.PC.adjust('str', -$.dice(10))
-                xvt.out(`You feel weaker (${rpc.str})\n`)
+                xvt.outln(`You feel weaker (${rpc.str})`)
             }
             else {
                 $.PC.adjust('str', $.dice(10))
                 if (rpc.str < rpc.user.maxstr)
-                    xvt.out(`You feel much more stronger (${rpc.str})\n`)
+                    xvt.outln(`You feel much more stronger (${rpc.str})`)
                 else
-                    xvt.out(`This game prohibits the use of steroids.\n`)
+                    xvt.outln(`This game prohibits the use of steroids.`)
             }
             break
 
         case 2:
             if (backfire) {
                 $.PC.adjust('int', -$.dice(10))
-                xvt.out(`You feel stupid (${rpc.int})\n`)
+                xvt.outln(`You feel stupid (${rpc.int})`)
             }
             else {
                 $.PC.adjust('int', $.dice(10))
                 if (rpc.int < rpc.user.maxint)
-                    xvt.out(`You feel much more intelligent (${rpc.int})\n`)
+                    xvt.outln(`You feel much more intelligent (${rpc.int})`)
                 else
-                    xvt.out(`Get on with it, professor!\n`)
+                    xvt.outln(`Get on with it, professor!`)
             }
             break
 
         case 3:
             if (backfire) {
                 $.PC.adjust('dex', -$.dice(10))
-                xvt.out(`You feel clumsy (${rpc.dex})\n`)
+                xvt.outln(`You feel clumsy (${rpc.dex})`)
             }
             else {
                 $.PC.adjust('dex', $.dice(10))
                 if (rpc.dex < rpc.user.maxdex)
-                    xvt.out(`You feel much more agile (${rpc.dex})\n`)
+                    xvt.outln(`You feel much more agile (${rpc.dex})`)
                 else
-                    xvt.out(`Y'all shakin' and bakin'.\n`)
+                    xvt.outln(`Y'all shakin' and bakin'.`)
             }
             break
 
         case 4:
             if (backfire) {
                 $.PC.adjust('cha', -$.dice(10))
-                xvt.out(`You feel depressed (${rpc.cha})\n`)
+                xvt.outln(`You feel depressed (${rpc.cha})`)
             }
             else {
                 $.PC.adjust('cha', $.dice(10))
                 if (rpc.cha < rpc.user.maxcha)
-                    xvt.out(`You feel much more charismatic (${rpc.cha})\n`)
+                    xvt.outln(`You feel much more charismatic (${rpc.cha})`)
                 else
-                    xvt.out(`Stop being so vain.\n`)
+                    xvt.outln(`Stop being so vain.`)
             }
             break
 
@@ -1862,11 +1909,11 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     rpc.toAC -= $.dice(rpc.toAC)
                 else
                     rpc.toAC--
-                xvt.out($.who(rpc, 'His'), isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' loses most of its effectiveness.\n')
+                xvt.outln($.who(rpc, 'His'), isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' loses most of its effectiveness.')
             }
             else {
                 $.sound('shield')
-                xvt.out('A magical field glitters around ', isNaN(+rpc.user.armor) ? $.who(rpc, 'his') + rpc.user.armor : $.who(rpc, 'him') + '\x08', '.\n')
+                xvt.outln('A magical field glitters around ', isNaN(+rpc.user.armor) ? $.who(rpc, 'his') + rpc.user.armor : $.who(rpc, 'him') + '\x08', '.')
                 if (rpc.user.magic > 2 && rpc.user.toAC >= 0)
                     rpc.user.toAC++
                 rpc.toAC += $.dice(rpc.armor.ac)
@@ -1876,7 +1923,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
         case 24:
             if (backfire) {
-                xvt.out($.who(rpc, 'His'), isNaN(+rpc.user.weapon) ? rpc.user.weapon : 'attack', ' loses most of its effectiveness.\n')
+                xvt.outln($.who(rpc, 'His'), isNaN(+rpc.user.weapon) ? rpc.user.weapon : 'attack', ' loses most of its effectiveness.')
                 if (rpc.user.magic > 2 && rpc.user.toWC > 0)
                     rpc.user.toWC--
                 else if(rpc.toWC > 0)
@@ -1886,7 +1933,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             }
             else {
                 $.sound('hone')
-                xvt.out($.who(rpc, 'His'), isNaN(+rpc.user.weapon) ? rpc.user.weapon : 'attack', ' emanates magical sharpness.\n')
+                xvt.outln($.who(rpc, 'His'), isNaN(+rpc.user.weapon) ? rpc.user.weapon : 'attack', ' emanates magical sharpness.')
                 if (rpc.user.magic > 2 && rpc.user.toWC >= 0)
                     rpc.user.toWC++
                 rpc.toWC += $.dice(rpc.weapon.wc)
@@ -1900,6 +1947,10 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 }
 
 export function melee(rpc: active, enemy: active, blow = 1) {
+    const melee = +($.Ring.power(rpc.user.rings, 'melee', 'pc', rpc.user.pc).power && !$.Ring.power(enemy.user.rings, 'ring').power)
+        * (+$.Ring.power($.player.rings, 'ring').power + 1)
+    const life = +($.Ring.power(rpc.user.rings, 'hp', 'pc', rpc.user.pc).power && !$.Ring.power(enemy.user.rings, 'ring').power)
+        * (+$.Ring.power($.player.rings, 'ring').power + 1)
     let action: string
     let hit = 0
 
@@ -1937,43 +1988,44 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     if ($.dice(100) > n) {
         if (blow == 1) {
             if (rpc == $.online) {
-                xvt.out('Your ', rpc.user.weapon, ' passes through thin air.\n')
+                xvt.outln('Your ', rpc.user.weapon, ' passes through thin air.')
                 $.sound('miss')
                 return
             }
             else {
                 $.sound(rpc.user.melee < 2 ? 'whoosh' : rpc.user.gender === 'I' ? 'swoosh' : 'swords')
                 if (isNaN(+rpc.user.weapon))
-                    xvt.out(rpc.user.gender === 'I' ? 'The ' : ''
+                    xvt.outln(rpc.user.gender === 'I' ? 'The ' : ''
                         , rpc.user.handle, '\'s ', rpc.user.weapon
                         , ' whistles by '
                         , enemy.user.gender === 'I' ? 'the ' : ''
                         , enemy == $.online ? 'you' : enemy.user.handle
-                        , '.\n')
+                        , '.')
                 else {
-                    xvt.out(rpc.user.gender === 'I' ? 'The ' : ''
+                    xvt.outln(rpc.user.gender === 'I' ? 'The ' : ''
                         , rpc.user.handle, ' attacks '
                         , enemy.user.gender === 'I' ? 'the ' : ''
                         , enemy == $.online ? 'you' : enemy.user.handle
-                        , ', but misses.\n')
+                        , ', but misses.')
                 }
                 return
             }
         }
         else {
-            xvt.out('Attempt fails!\n')
+            xvt.outln('Attempt fails!')
             $.sound('miss')
             return
         }
     }
 
     // melee
-    hit = Math.trunc(rpc.str / 10)
-    hit += $.dice(rpc.user.level)
-    hit += rpc.user.melee * $.dice(rpc.user.level)
+    hit = Math.trunc(rpc.str / 10) + melee
+    hit += $.dice(rpc.user.level + melee)
+    hit += rpc.user.melee * $.dice(rpc.user.level + melee)
 
     // excellent
-    n = rpc.user.melee + 1
+    n = rpc.user.melee + melee + 1
+
     let period = ''
     let smash = 0
     while ((smash = $.dice(98 + n)) > 98) {
@@ -1984,7 +2036,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
 		n += $.dice(rpc.user.melee)
     }
     if (!period) period = '.'
-    hit *= 50 + Math.trunc(rpc.user.str / 2)
+    hit *= 50 + Math.trunc(rpc.user.str / 2) + melee
     hit = Math.round(hit / 100)
 
     // my stuff vs your stuff
@@ -1997,15 +2049,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     hit *= 50 + Math.trunc(rpc.user.str / 2)
     hit = Math.round(hit / 100)
     hit -= ac + $.dice(ac)
-    if (hit <= 0) {
-        hit = 0
-    }
-    else {
-        //  any ego involvement
-        //  if((damage + egostat[0] + egostat[1] + egostat[2] + egostat[3]) < 1)
-        //      damage = dice(2) - (egostat[0] + egostat[1] + egostat[2] + egostat[3]);
-        hit *= blow
-    }
+    hit = (hit > 0) ? hit * blow : melee
 
     enemy.hp -= hit
 
@@ -2015,17 +2059,15 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             if (enemy == $.online)
                 $.sound('kill', 5)
             xvt.out(xvt.bright, enemy == $.online ? xvt.lyellow : round[0].party == 0 ? xvt.lcyan : xvt.lred)
-            xvt.out(rpc.user.handle, ' ', sprintf([
+            xvt.outln(rpc.user.handle, ' ', sprintf([
                 'makes a fatal blow to %s',
                 'blows %s away',
                 'laughs, then kills %s',
                 'easily slays %s',
                 'makes minced-meat out of %s',
                 'runs %s through'
-                ][$.dice(6) - 1], enemy.user.handle)
-                , xvt.reset, '.\n'
-            )
-            xvt.waste(500)
+                ][$.dice(6) - 1], enemy.user.handle), '.')
+            xvt.waste(600)
             return
         }
 
@@ -2060,18 +2102,27 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                 , ' '
             )
         }
-        xvt.out('for ', hit.toString(), ' hit points', period, '\n')
+        xvt.outln('for ', hit.toString(), ' hit points', period)
         xvt.waste(50)
+
+        //  any bonus restore health from the hit off enemy?
+        if (hit = life * $.dice(hit / rpc.user.level / (rpc.user.melee + 2))) {
+            if (rpc.hp + hit > rpc.user.hp) {
+                hit -= rpc.hp - rpc.user.hp
+                if (hit < 0) hit = 0
+            }
+            if (hit) {
+                rpc.hp += hit
+                xvt.outln(rpc == $.online ? 'You ' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , ' ', $.what(rpc, 'absorb'), hit.toString(), ' off the hit.')
+                xvt.waste(50)
+            }
+        }
     }
     else {
-        xvt.out(
-            rpc == $.online ? 'Your ' + rpc.user.weapon
-            : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+        xvt.outln(rpc == $.online ? 'Your ' + rpc.user.weapon : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
             , ' does not even scratch '
-            , enemy == $.online ? 'you'
-            : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
-            , '.\n'
-        )
+            , enemy == $.online ? 'you' : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle, '.')
         xvt.waste(250)
     }
     return
@@ -2080,7 +2131,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
 export function poison(rpc: active, cb?:Function) {
     if (rpc.user.id === $.player.id) {
         if (!$.player.poisons.length) {
-            xvt.out('\nYou don\'t have any poisons.\n')
+            xvt.outln('\nYou don\'t have any poisons.')
             cb(true)
             return
         }
@@ -2097,7 +2148,7 @@ export function poison(rpc: active, cb?:Function) {
                         let p = $.player.poisons[i]
 				    	xvt.out($.bracket(p), $.Poison.merchant[p - 1])
                     }
-                    xvt.out('\n')
+                    xvt.outln()
                     xvt.app.refocus()
                     return
                 }

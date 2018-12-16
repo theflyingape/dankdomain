@@ -1520,6 +1520,7 @@ export function reroll(user: user, dd?: string, level = 1) {
         //  no extra free or augmented stuff
         user.poisons = []
         user.spells = []
+        if (user.rings) user.rings.forEach(ring => { saveRing(ring, '') })
         user.rings = []
         user.toAC = 0
         user.toWC = 0
@@ -1622,7 +1623,7 @@ export function riddle() {
 
     if (bonus) xvt.outln()
     xvt.out(xvt.bright, xvt.cyan, '\nYou have become so powerful that you are now immortal and you leave your\n')
-    xvt.out('worldly possessions behind.\n')
+    xvt.outln('worldly possessions behind.')
     loadUser(taxman)
     taxman.user.bank.value +=  player.bank.value + player.coin.value
     saveUser(taxman)
@@ -1987,11 +1988,11 @@ export function logoff() {
         if (online.hp < 1)
             sound('goodbye')
         else {
-            if (online.hull) sound('invite')
+            sound(online.hull ? 'comeagain' : 'invite')
             PC.profile(online)
         }
-        xvt.out('\x06\n')
-        xvt.out(xvt.reset, 'Goodbye, please play again!  Also visit:\n')
+        xvt.outln('\x06')
+        xvt.outln('Goodbye, please play again!  Also visit:')
         xvt.waste(750)
         xvt.out(xvt.cyan, '  ___                               ___  \n')
         xvt.out(xvt.cyan, '  \\_/   ', xvt.red, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Red, xvt.white, 'Never Program Mad', xvt.reset, xvt.red, xvt.RGradient[xvt.emulation], xvt.cyan, '   \\_/  \n')
@@ -2635,10 +2636,11 @@ export function ringBearer(name: string): string {
 }
 
 export function getRing(how: string, what: string) {
-    xvt.out(`You ${how}`)
+    xvt.out('You ', how, an(what, false))
+    xvt.out(xvt.bright, xvt.cyan, what, xvt.normal)
     if (xvt.emulation == 'XT') xvt.out(' 💍')
-    xvt.outln(xvt.bright, xvt.cyan, an(name), xvt.normal, 'ring', xvt.white, ', which can')
-    xvt.outln(this.name[name].description)
+    xvt.outln(' ring', xvt.white, ', which can')
+    xvt.outln(Ring.name[what].description)
 }
 
 export function saveRing(name: string, bearer = '', rings?: string[]) {

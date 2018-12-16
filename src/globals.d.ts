@@ -1,5 +1,5 @@
 type ABILITY = string | 'str' | 'int' | 'dex' | 'cha'
-type POWER = 'cast' | 'degrade' | 'initiate' | 'hp' | 'identify' | 'joust' | 'melee' | 'resist' | 'resurrect' | 'ring' | 'skip' |'sp' |'steal' | 'taxes' | 'teleport' | 'upgrade'
+type POWER = string | 'cast' | 'degrade' | 'initiate' | 'hp' | 'identify' | 'joust' | 'melee' | 'resist' | 'resurrect' | 'ring' | 'skip' |'sp' |'steal' | 'taxes' | 'teleport' | 'upgrade'
 type POWTO = 'ability' | 'magic' | 'melee' | 'pc' | 'poison' | 'spell'
 type GIFT = '' | 'armor' | 'chest' | 'magic' | 'map' | 'poison' | 'potion' | 'ring' | 'weapon' | 'xmagic'
 type MAP = '' | 'map' | 'magic map' | 'Marauder\'s map'

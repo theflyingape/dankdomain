@@ -134,26 +134,28 @@ function choice() {
 					}
 				}
 				if ($.dice($.player.level / 3 + 2) == 1) {
-					xvt.out('n old sea hag!\n\n')
+					xvt.outln('n old sea hag!')
+					$.cat(`naval/${$.seahag}`.toLowerCase())
 					xvt.waste(600)
-					xvt.outln(xvt.bright, xvt.green, 'She cackles as you are sent spinning elsewhere ... ')
+					xvt.outln(xvt.bright, xvt.green, '\nShe cackles as you are sent spinning elsewhere ... ')
 					$.sound('crone', 24)
 					require('./dungeon').DeepDank($.player.level + 3 * $.dice($.player.level), () => {
 						$.action('clear')
-						$.sound('god')
+						xvt.waste(1000)
 						$.profile({ jpg:'npc/seahag', effect:'fadeInUp'
 							, handle:$.seahag.user.handle, level:$.seahag.user.level, pc:$.seahag.user.pc })
-						xvt.waste(500)
+						$.sound('god', 12)
 						xvt.outln(xvt.magenta, '\n"', xvt.bright, xvt.yellow
 							, 'You have escaped my magic, mortal?  Now try me!', xvt.normal, xvt.magenta, '"')
-						xvt.waste(500)
+						xvt.waste(1200)
 						$.loadUser($.seahag)
 						$.cat(`naval/${$.seahag}`.toLowerCase())
-						xvt.waste(500)
-						if (isNaN(+$.seahag.user.weapon)) xvt.out('\n', $.who($.seahag, 'He'), $.Weapon.wearing($.seahag), '.\n')
-						xvt.waste(500)
-						if (isNaN(+$.seahag.user.armor)) xvt.out('\n', $.who($.seahag, 'He'), $.Armor.wearing($.seahag), '.\n')
-						xvt.waste(500)
+						xvt.waste(600)
+						if (isNaN(+$.seahag.user.weapon)) xvt.outln('\n', $.who($.seahag, 'He'), $.Weapon.wearing($.seahag), '.')
+						xvt.waste(600)
+						if (isNaN(+$.seahag.user.armor)) xvt.outln('\n', $.who($.seahag, 'He'), $.Armor.wearing($.seahag), '.')
+						xvt.waste(600)
+						xvt.outln()
 						$.seahag.user.cursed = $.player.id
 						Battle.engage('Naval', $.online, $.seahag, menu)
 						return
@@ -161,9 +163,8 @@ function choice() {
 					return
 				}
 				if ($.dice($.player.level / 3 + 2) == 1) {
-                    $.profile({ jpg:'npc/neptune', effect:'fadeInUp'
-                        , handle:$.neptune.user.handle, level:$.neptune.user.level, pc:$.neptune.user.pc })
-					xvt.out(' titan named Neptune!\n\n')
+					xvt.outln(' titan named Neptune!')
+					$.cat(`naval/${$.neptune.user.handle}`.toLowerCase())
 					xvt.waste(600)
 					$.loadUser($.neptune)
 					if ($.player.level > $.neptune.user.level) {
@@ -172,26 +173,30 @@ function choice() {
 						$.neptune.user.spells = keep
 					}
 					$.activate($.neptune)
-					$.cat(`naval/${$.neptune.user.handle}`.toLowerCase())
 					xvt.outln(xvt.bright, xvt.cyan, 'He looks at you angrily as he removes a hook from his shorts!')
+                    $.profile({ jpg:'npc/neptune', effect:'fadeInUp'
+                        , handle:$.neptune.user.handle, level:$.neptune.user.level, pc:$.neptune.user.pc })
 					$.sound('neptune', 32)
 
-					if (isNaN(+$.neptune.user.weapon)) xvt.out('\n', $.who($.neptune, 'He'), $.Weapon.wearing($.neptune), '.\n')
-					if (isNaN(+$.neptune.user.armor)) xvt.out('\n', $.who($.neptune, 'He'), $.Armor.wearing($.neptune), '.\n')
+					if (isNaN(+$.neptune.user.weapon)) xvt.outln('\n', $.who($.neptune, 'He'), $.Weapon.wearing($.neptune), '.')
+					xvt.waste(600)
+					if (isNaN(+$.neptune.user.armor)) xvt.outln('\n', $.who($.neptune, 'He'), $.Armor.wearing($.neptune), '.')
+					xvt.waste(600)
+					xvt.outln()
 					Battle.engage('Naval', $.online, $.neptune, menu)
 					return
 				}
-				xvt.out(' fish and you eat it.\n')
+				xvt.outln(' fish and you eat it.')
 				xvt.waste(600)
-				xvt.out('Ugh!  You feel sick and die!\n')
+				xvt.outln('Ugh!  You feel sick and die!')
 				$.reason = 'ate yesterday\'s catch of the day'
 				break
 			}
 			if (hook < 50) {
-				xvt.out(' fish and you eat it.\n')
+				xvt.outln(' fish and you eat it.')
 				xvt.waste(600)
 				$.sound('yum')
-				xvt.out('Yum!  You feel stronger and healthier.\n\n')
+				xvt.outln('Yum!  You feel stronger and healthier.\n')
 				$.PC.adjust('str', $.dice(10))
 				xvt.out(`Stamina = ${$.online.str}     `)
 				$.online.hp += $.player.level + $.dice($.player.level)

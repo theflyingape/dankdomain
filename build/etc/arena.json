@@ -3,12 +3,12 @@
   { "name":"Ogre", "level":5, "pc":"Beast", "weapon":"Club", "armor":"Large Shield", "money":"100c", "effect":"bounceInDown" },
   { "name":"Gnoll", "level":7, "pc":"Beast", "weapon":"Mace", "armor":"Leather", "money":"500c", "effect":"bounceInLeft" },
   { "name":"Troglodyte", "level":9, "pc":"Beast", "weapon":"Spear", "armor":"Padded Leather", "money":"1000c", "effect":"zoomInDown" },
-  { "name":"Gargoyle", "level":12, "pc":"Demon", "weapon":"Axe", "armor":6, "money":"10000c", "spells": [ "Teleport" ], "effect":"lightSpeedIn" },
-  { "name":"Troll", "level":23, "pc":"Beast", "weapon":"Heavy Crossbow", "armor":12, "money":"1s", "spells":[ "Heal" ], "effect":"rubberBand" },
-  { "name":"Hydra", "level":34, "pc":"Dragon", "weapon":25, "armor":"Dragon Scale Mail", "money":"1000s", "spells": [ "Heal", "Teleport", "Blast" ], "effect":"fadeInUpBig" },
-  { "name":"Nycadaemon", "level":41, "pc":"Demon", "weapon":"Staff of Striking", "armor":18, "money":"10g", "spells": [ "Heal", "Teleport", "Blast" ], "effect":"rotateInDownLeft" },
-  { "name":"Red Dragon", "level":44, "pc":"Dragon", "weapon":32, "armor":20, "money":"500g", "spells": [ "Heal", "Teleport", "Blast" ], "effect":"shake" },
-  { "name":"Lich", "level":47, "pc":"Undead", "adept":1, "weapon":35, "armor":23, "money":"2500g", "spells": [ "Heal", "Teleport", "Blast" ], "rings": [ "Mage Resistance" ], "effect":"rotateInDownRight" },
-  { "name":"Beholder", "level":50, "pc":"Beast", "adept":1, "weapon":40, "armor":25, "money":"1p", "spells": [ "Heal", "Teleport", "Blast" ], "rings": [ "Medusa's" ], "effect":"flip" },
-  { "name":"Demogorgon", "level":99, "pc":"Beast", "adept":2, "weapon":"Staff of the Magi", "armor":25, "money":"1000p", "spells": [ "Heal", "Teleport", "Blast", "Confusion", "Transmute", "Cure", "Illusion", "Disintegrate", "Morph" ], "rings": [ "Sage Resistance" ], "effect":"zoomIn" }
+  { "name":"Gargoyle", "level":12, "pc":"Demon", "weapon":"Axe", "armor":6, "money":"10000c", "spells":[ "Teleport" ], "effect":"lightSpeedIn" },
+  { "name":"Troll", "level":23, "pc":"Beast", "weapon":"Heavy Crossbow", "armor":12, "money":"1s", "spells":[ "Heal" ], "rings":[ "Ogre" ], "effect":"rubberBand" },
+  { "name":"Hydra", "level":34, "pc":"Dragon", "weapon":25, "armor":"Dragon Scale Mail", "money":"1000s", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"fadeInUpBig" },
+  { "name":"Nycadaemon", "level":41, "pc":"Demon", "weapon":"Staff of Striking", "armor":18, "money":"10g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"rotateInDownLeft" },
+  { "name":"Red Dragon", "level":44, "pc":"Dragon", "weapon":32, "armor":20, "money":"500g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"shake" },
+  { "name":"Lich", "level":47, "pc":"Undead", "adept":1, "weapon":35, "armor":23, "money":"2500g", "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Magus", "Undying" ], "effect":"rotateInDownRight" },
+  { "name":"Beholder", "level":50, "pc":"Beast", "adept":1, "weapon":40, "armor":25, "money":"1p", "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Medusa's" ], "effect":"flip" },
+  { "name":"Demogorgon", "level":99, "pc":"Beast", "adept":2, "weapon":"Staff of the Magi", "armor":25, "money":"1000p", "spells":[ "Heal", "Teleport", "Blast", "Confusion", "Transmute", "Cure", "Illusion", "Disintegrate", "Morph" ], "rings":[ "Augmenting", "Undying", "White Wizard" ], "effect":"zoomIn" }
 ]

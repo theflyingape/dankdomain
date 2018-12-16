@@ -29,7 +29,7 @@
 	"Amulet of Protection": { "text":"wears a mysterious", "value":"1000g", "ac":20, "ego_blessed":"Sage", "vs_melee":3 }, 
 	"Blast Shield": { "text":"carries an awesome", "value":"1000g", "ac":20, "vs_magic":4 }, 
 	"Cloak of Wonder": { "text":"wears a shining", "value":"1000g", "ac":20, "ego_blessed":"Magician" }, 
-	"Divine Sphere": { "text":"is shrouded by", "value":"25p", "ac":28, "ego_blessed":"God", "ego_cursed":"Beast" }, 
+	"Divine Sphere": { "text":"is shrouded by a", "value":"25p", "ac":28, "ego_blessed":"God", "ego_cursed":"Beast" }, 
 	"Fleece of Gold": { "text":"glimmers in a", "value":"100g", "ac":18, "ego_blessed":"Thief", "ego_cursed":"Cleric" }, 
 	"Giant Turtle Shell": { "text":"covered by a", "value":"10000c", "ac":10, "ego_blessed":"Lizard" }, 
 	"Helm of Heroes": { "text":"topped with a", "value":"5p", "ac":26, "ego_blessed":"Paladin", "ego_cursed":"Dragon" }, 

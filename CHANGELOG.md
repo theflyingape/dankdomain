@@ -8,7 +8,7 @@
 ### **24-Dec-2018** `v1.7.0`
 
 * Merry Christmas! 🎅 🎄
-* added 💍 rings of power to wearable items, some are unique
+* added twenty 💍 rings of power to wearable items, 8 are unique
 * tax credit for real estate + security
 * lessen random event occurences when entering a dungeon level
 * xterm.js v3.9.1 release with outdated package updates

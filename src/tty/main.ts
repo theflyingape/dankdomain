@@ -364,7 +364,7 @@ function choice() {
             return
 
         case 'Y':
-            let cost = new $.coins(Math.trunc($.money($.player.level) / 10))
+            let cost = new $.coins(Math.trunc($.money($.player.level) / 5))
             xvt.app.form = {
                 'yn': { cb: () => {
                     if (/Y/i.test(xvt.entry)) {
@@ -381,10 +381,10 @@ function choice() {
                         Battle.user('Scout', (opponent: active) => {
                             if (opponent.user.id) {
                                 $.PC.stats(opponent)
-                                xvt.app.focus = 'pause'
+                                xvt.app.refocus()
                             }
                             else
-                                menu()
+                                menu(true)
                         })
                         return
                     }
@@ -395,7 +395,7 @@ function choice() {
             }
             if ($.access.roleplay) {
                 $.action('ny')
-                xvt.app.form['yn'].prompt = 'Scout another user for ' + cost.carry() + ' (Y/N)? '
+                xvt.app.form['yn'].prompt = 'Scout other users for ' + cost.carry() + ' (Y/N)? '
                 xvt.app.focus = 'yn'
                 return
             }
