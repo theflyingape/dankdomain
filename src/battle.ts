@@ -1009,7 +1009,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
     let tricks = Object.assign([], rpc.user.spells)
     let Summons = [ 'Teleport', 'Resurrect' ]
     Summons.forEach(summon => {
-        if ($.Ring.power(rpc.user.rings, summon.toLocaleLowerCase()).power)
+        if ($.Ring.power(rpc.user.rings, summon.toLowerCase()).power)
             $.Magic.add(tricks, summon)
         else
             Summons.splice(Summons.indexOf(summon), 1)
@@ -2191,13 +2191,13 @@ export function poison(rpc: active, cb?:Function) {
             $.sound('ooze', 6)
         }
         else {
-            xvt.out($.who(rpc, 'He'), $.what(rpc, 'pour')
+            xvt.outln($.who(rpc, 'He'), $.what(rpc, 'pour')
                 , 'some ', $.Poison.merchant[vial - 1]
-                , ' on ', $.who(rpc, 'his'), rpc.user.weapon, '.\n')
+                , ' on ', $.who(rpc, 'his'), rpc.user.weapon, '.')
             $.sound('hone', 6)
             if (/^[A-Z]/.test(rpc.user.id)) {
                 if ($.dice(3 * (rpc.toWC + rpc.user.toWC + 1)) / rpc.user.poison > rpc.weapon.wc) {
-                    xvt.out($.who(rpc, 'His'), rpc.user.weapon, ' vaporizes!\n')
+                    xvt.outln(xvt.bright, $.who(rpc, 'His'), rpc.user.weapon, ' vaporizes!')
                     if (rpc == $.online && $.online.weapon.wc > 1) $.sound('crack', 6)
                     $.Weapon.equip(rpc, $.Weapon.merchant[0])
                 }
@@ -2205,7 +2205,7 @@ export function poison(rpc: active, cb?:Function) {
             if (rpc.user.id !== $.player.id || ($.dice(rpc.user.poison) == 1 && $.dice(105 - rpc.cha) > 1)) {
                 $.Poison.remove(rpc.user.poisons, vial)
                 if (rpc.user.id === $.player.id) {
-                    xvt.out('You toss the empty vial aside.\n')
+                    xvt.outln('You toss the empty vial aside.')
                     xvt.waste(500)
                 }
             }
@@ -2240,12 +2240,12 @@ export function user(venue: string, cb:Function) {
                 $.action('clear')
                 $.PC.profile(rpc)
                 //  the inert player does not fully participate in the fun ... 
-                if (['Bail','Brawl','Curse','Drop','Joust','Resurrect','Rob'].indexOf(venue) < 0 && !rpc.user.xplevel) {
+                if (/Bail|Brawl|Curse|Drop|Joust|Resurrect|Rob/.test(venue) && !rpc.user.xplevel) {
                     rpc.user.id = ''
                     xvt.beep()
                     xvt.out(' ', $.bracket(rpc.user.status == 'jail' ? '🔒 jail' : 'inactive', false))
                 }
-                else if (['Brawl','Joust','Resurrect'].indexOf(venue) >= 0 && rpc.user.status == 'jail') {
+                else if (/Brawl|Joust|Resurrect/.test(venue) && rpc.user.status == 'jail') {
                     rpc.user.id = ''
                     xvt.beep()
                     xvt.out(' ', $.bracket('🔒 jail', false))
@@ -2267,7 +2267,7 @@ export function user(venue: string, cb:Function) {
             if (n >= start && n < 100) end = n
 
             xvt.out('\n', xvt.Blue, xvt.bright)
-            xvt.out(' ID   Player\'s Handle          Class     Lvl      Last On       Access Level  \n')
+            xvt.out(` ID   Player's Handle          Class     Lvl      Last On       Access Level  \n`)
             xvt.out('------------------------------------------------------------------------------')
             xvt.outln()
 
@@ -2298,7 +2298,7 @@ export function user(venue: string, cb:Function) {
             }
 
             if ($.access.roleplay && $.dice(+$.player.expert * ($.player.immortal + 1) * $.player.level) == 1)
-                xvt.outln('\n', xvt.bright, xvt.green, '> double-click (tap) the Player ID to send your selection.')
+                xvt.outln('\n', xvt.green, '> ', xvt.bright, 'double-click (tap) the Player ID to send your selection.')
 
             $.action('freetext')
             xvt.app.focus = 'user'
