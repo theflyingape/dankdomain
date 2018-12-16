@@ -113,12 +113,12 @@ function end() {
                     if (/Y/i.test(xvt.entry))
                         xvt.app.focus = 'message'
                     else {
-                        xvt.out('\n')
+                        xvt.outln()
                         fini()
                     }
-                    }, cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 },
+                    }, cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:20 },
                 'message': { cb:() => {
-                    xvt.out('\n')
+                    xvt.outln()
                     if ($.cuss(xvt.entry)) {
                         $.player.coward = true
                         xvt.hangup()
@@ -230,7 +230,7 @@ export function attack(retry = false) {
     do { nme = $.dice(parties[mob].length) - 1 } while (parties[mob][nme].hp < 1)
     enemy = parties[mob][nme]
 
-    if (rpc.user.id === $.player.id) {
+    if (rpc === $.online) {
         $.action('battle')
         xvt.app.form = {
             'attack': {cb:() => {
@@ -240,7 +240,7 @@ export function attack(retry = false) {
                     return
                 }
 
-                xvt.out('\n')
+                xvt.outln()
                 if (/R/i.test(xvt.entry)) {
                     if (/Naval|Tavern|Taxman/.test(from)) {
                         if (from === 'Naval')
@@ -689,6 +689,8 @@ export function spoils() {
         for (let m in parties[l]) {
             // defeated?
             if ((loser = parties[l][m]).hp == 0) {
+                $.log(loser.user.id, `\n${$.player.handle} killed you!`)
+
                 if (/Monster|User/.test(from)) {
                     $.animated(loser.user.id ? 'hinge' : 'rotateOutDownRight')
                     loser.altered = true
@@ -700,17 +702,35 @@ export function spoils() {
                 }
                 else
                     xp += $.experience(loser.user.xplevel, 18 - (1.333 * loser.user.immortal))
+
+                if (loser.user.sex !== 'I' && loser.user.rings.length) {
+                    xvt.outln('You start by removing ', loser.user.rings.length > 1 ? 'all of ' : '', $.who(loser, 'his'), 'rings...')
+                    $.sound('click', 8)
+                    loser.user.rings.forEach(ring => {
+                        if ($.Ring.wear(winner.user.rings, ring)) {
+                            $.getRing(['fondle', 'polish', 'slip on', 'wear', 'win'][$.dice(5) - 1], ring)
+                            $.saveRing(ring, winner.user.id)
+                            $.sound('click', 8)
+                        }
+                    })
+                    loser.user.rings = []
+                    loser.altered = true
+                    $.log(loser.user.id, `$.who(winner, 'He') started with your rings.`)
+                    xvt.outln()
+                }
+
                 if (loser.user.coin.value) {
                     coin.value += loser.user.coin.value
                     loser.user.coin.value = 0
                     loser.altered = true
                 }
+
                 if (from !== 'User') {
                     let credit = new $.coins(loser.weapon.value)
                     credit.value = $.worth(credit.value, winner.cha)
                     let result = $.Weapon.swap(winner, loser, credit)
                     if (xvt.validator.isBoolean(result) && result)
-                        xvt.out($.who(winner, 'He'), $.what(winner, 'take'), $.who(loser, 'his'), winner.user.weapon, '.\n')
+                        xvt.outln($.who(winner, 'He'), $.what(winner, 'take'), $.who(loser, 'his'), winner.user.weapon, '.')
                     else if (from === 'Monster' && result)
                         xvt.outln($.who(winner, 'He'), $.what(winner, 'get'), credit.carry(), ' for ', $.who(loser, 'his'), loser.user.weapon, '.')
 
@@ -723,25 +743,8 @@ export function spoils() {
                     }
                     else if (from === 'Monster' && result)
                         xvt.outln($.who(winner, 'He'), 'also ', $.what(winner, 'get'), credit.carry(), ' for ', $.who(loser, 'his'), loser.user.armor, '.')
-
-                    if (loser.user.sex !== 'I' && loser.user.rings.length) {
-                        xvt.outln($.who(winner, 'He'), 'also ', $.what(winner, 'remove'), loser.user.rings.length > 1 ? 'all of ' : '', $.who(loser, 'his'), 'rings...')
-                        for (let f in loser.user.rings) {
-                            if ($.Ring.wear(winner.user.rings, loser.user.rings[f])) {
-                                $.saveRing(loser.user.rings[f], winner.user.id)
-                                xvt.waste(500)
-                                xvt.out(' ', $.bracket(loser.user.rings[f], false), ' ')
-                                $.sound('click')
-                                xvt.waste(500)
-                            }
-                        }
-                        loser.user.rings = []
-                        loser.altered = true
-                        xvt.outln()
-                    }
                 }
                 else {
-                    $.log(loser.user.id, `\n${$.player.handle} killed you!`)
                     if ($.Weapon.swap(winner, loser)) {
                         xvt.outln($.who(winner, 'He'), $.what(winner, 'take'), $.who(loser, 'his'), winner.user.weapon, '.')
                         xvt.waste(250)
@@ -751,22 +754,6 @@ export function spoils() {
                         xvt.outln($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who(loser, 'his'), winner.user.armor, '.')
                         xvt.waste(250)
                         $.log(loser.user.id, `... and took your ${winner.user.armor}.`)
-                    }
-                    if (loser.user.sex !== 'I' && loser.user.rings.length) {
-                        xvt.outln($.who(winner, 'He'), 'also ', $.what(winner, 'remove'), loser.user.rings.length > 1 ? 'all of ' : '', $.who(loser, 'his'), 'rings...')
-                        for (let f in loser.user.rings) {
-                            if ($.Ring.wear(winner.user.rings, loser.user.rings[f])) {
-                                $.saveRing(loser.user.rings[f], winner.user.id)
-                                xvt.waste(500)
-                                xvt.out(' ', $.bracket(loser.user.rings[f], false), ' ')
-                                $.sound('click')
-                                xvt.waste(500)
-                            }
-                        }
-                        loser.user.rings = []
-                        loser.altered = true
-                        $.log(loser.user.id, `... and took your rings.`)
-                        xvt.outln()
                     }
                     if (winner.user.cursed) {
                         winner.user.cursed = ''
@@ -844,7 +831,7 @@ export function spoils() {
         //  accruing money is always eligible
         if ($.player.coin.value) {
             winner.user.coin.value += $.player.coin.value
-            xvt.out($.who(winner, 'He'), 'gets ', $.player.coin.carry(), ' you were carrying.\n')
+            xvt.outln($.who(winner, 'He'), 'gets ', $.player.coin.carry(), ' you were carrying.')
             $.player.coin.value = 0
         }
         xvt.out(600)
@@ -891,7 +878,6 @@ export function spoils() {
                 $.player.rings.forEach(ring => {
                     xvt.out(' ', $.bracket(ring, false), ' ')
                     $.sound('click')
-                    xvt.waste(200)
                     if ($.Ring.wear(winner.user.rings, ring))
                         $.saveRing(ring, winner.user.id)
                 })

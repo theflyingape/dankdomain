@@ -6,7 +6,6 @@
 import fs = require('fs')
 import {sprintf} from 'sprintf-js'
 import titleCase = require('title-case')
-
 import xvt = require('xvt')
 import Items = require('./items')
 
@@ -930,7 +929,7 @@ export function skillplus(rpc: active, cb: Function) {
                     , [ 'Your fingers are starting to itch.'
                       , 'Your eyes widen at the chance for unearned loot.'
                       , 'Welcome to the Thieves guild: go pick a pocket or two!'
-                      , 'You\'re convinced that no lock can\'t be picked.' ][player.steal++]
+                      , `You're convinced that no lock can't be picked.` ][player.steal++]
                 )
                 break
 
@@ -985,31 +984,31 @@ export function date2days(date: string): number {
         day = +pieces[1]
         if (day == 0) {
             day = month
-            for(month = 0; month<12 && mon[month].toLowerCase() == pieces[1].substr(0,3).toLowerCase(); month++) {}
+            for (month = 0; month < 12 && mon[month].toLowerCase() == pieces[1].substr(0, 3).toLowerCase(); month++) {}
             month++
         }
         year = +pieces[2]
     }
     else if (+date > 18991231) {
-        year = +date.substr(0,4)
-        month = +date.substr(4,2)
-        day = +date.substr(6,2)
+        year = +date.substr(0, 4)
+        month = +date.substr(4, 2)
+        day = +date.substr(6, 2)
     }
     else {
-        month = +date.substr(0,2)
-        day = +date.substr(2,2)
-        year = +date.substr(4,4)
+        month = +date.substr(0, 2)
+        day = +date.substr(2, 2)
+        year = +date.substr(4, 4)
     }
 
     month = (month < 1) ? 1 : (month > 12) ? 12 : month
     day = (day < 1) ? 1 : (day > 31) ? 31: day
     year = (year < 100) ? year + 1900 : year
 
-    if(isNaN(day) || isNaN(month) || isNaN(year))
+    if (isNaN(day) || isNaN(month) || isNaN(year))
         return NaN
 
 	days = (year * 365) + Math.trunc(year / 4) + md[month - 1] + (day - 1)
-	if((((year % 4) == 0) && (((year % 100) != 0) || ((year % 400) == 0))) && (month < 3))
+	if ((((year % 4) == 0) && (((year % 100) != 0) || ((year % 400) == 0))) && (month < 3))
 		days--
 
     return days
@@ -1018,7 +1017,7 @@ export function date2days(date: string): number {
 //  returns 'Day dd-Mon-yyyy'
 export function date2full(days: number): string {
 	var date = date2str(days)
-	return sprintf('%.3s %.2s-%.3s-%.4s', day[(days - 1) % 7], date.substr(6,2), mon[+date.substr(4,2) - 1], date)
+	return sprintf('%.3s %.2s-%.3s-%.4s', day[(days - 1) % 7], date.substr(6, 2), mon[+date.substr(4, 2) - 1], date)
 }
 
 //  returns 'yyyymmdd'
@@ -1031,12 +1030,12 @@ export function date2str(days: number): string {
 	days = days - ((year * 365) + Math.trunc(year / 4)) + 1
 	month = 0
 
-	while(days > md[month+1] - ((((year % 4) == 0) && (((year % 100) != 0) || ((year % 400) == 0))) && month == 0 ? 1 : 0) && month < 11)
+	while (days > md[month+1] - ((((year % 4) == 0) && (((year % 100) != 0) || ((year % 400) == 0))) && month == 0 ? 1 : 0) && month < 11)
 		month++
 
 	days -= md[month++]
 	day = days
-	if((((year % 4) == 0) && (((year % 100) != 0) || ((year % 400) == 0))) && month < 3)
+	if ((((year % 4) == 0) && (((year % 100) != 0) || ((year % 400) == 0))) && month < 3)
 		day++
 
 	return sprintf('%04d%02d%02d', year, month, day)
@@ -1118,7 +1117,7 @@ export function int(n: string|number, whole = false): number {
 
 export function log(who:string, message: string) {
     const folder = './files/user'
-    if(!fs.existsSync(folder))
+    if (!fs.existsSync(folder))
         fs.mkdirSync(folder)
     const log = `${folder}/${who}.txt`
 
