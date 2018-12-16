@@ -237,22 +237,22 @@ export function menu(suppress = false) {
 				break
 		}
 		if (Math.abs(Y - y) < 3 && Math.abs(X - x) < 3)
-			xvt.out(' nearby!\n')
+			xvt.outln(' nearby!')
 		else if (Math.abs(Y - y) < 6 && Math.abs(X - x) < 6)
-			xvt.out(' off in the distance.\n')
+			xvt.outln(' off in the distance.')
 		else
-			xvt.out(' as a faint echo.\n')
+			xvt.outln(' as a faint echo.')
 
 		if (putMonster(y, x)) {
 			if (DL.map && DL.map !== 'map')
 				drawRoom(y, x)
 			if (ROOM.occupant == 'cleric' && DL.cleric.hp) {
 				$.sound('agony', 10)
-				xvt.out(xvt.reset, xvt.bright, xvt.yellow, 'You hear a dying cry of agony!!\n', xvt.reset)
+				xvt.outln(xvt.bright, xvt.yellow, 'You hear a dying cry of agony!!')
 				xvt.waste(1000)
 				DL.cleric.hp = 0
 				DL.cleric.sp = 0
-				DL.cleric.user.status='dead'
+				DL.cleric.user.status = 'dead'
 				ROOM.giftItem = 'chest'
 				ROOM.giftValue = 0
 				DL.cleric.user.coin.value = 0
@@ -282,25 +282,30 @@ export function menu(suppress = false) {
 	if ($.dice(x) == 1) {
 		let rng = $.dice(16)
 		if (rng > 8) {
-			xvt.out(xvt.faint, 'A bat flies by and soils your ', xvt.normal)
+			if (xvt.emulation == 'XT') xvt.out(' 🦇 ')
+			xvt.out(xvt.faint, 'A bat flies by and soils your ')
 			$.sound('splat', 4)
 			$.player.toAC -= $.dice(deep)
 			xvt.out($.player.armor, $.buff($.player.toAC, $.online.toAC))
 		}
 		else if (rng > 4) {
+			if (xvt.emulation == 'XT') xvt.out(' 💧 ')
 			xvt.out(xvt.blue, 'A drop of acid water lands on your ')
 			$.sound('drop', 4)
 			$.player.toWC -= $.dice(deep)
 			xvt.out($.player.weapon, $.buff($.player.toWC, $.online.toWC))
 		}
 		else if (rng > 2) {
-			xvt.out(xvt.yellow, 'You trip on the rocky surface and hurt yourself.')
+			if (xvt.emulation == 'XT') xvt.out(' 😬 ')
+			xvt.out(xvt.yellow, 'You trip on the rocky surface and hurt yourself')
 			$.sound('hurt', 5)
 			$.online.hp -= $.dice(Z)
 			if ($.online.hp < 1) $.death('fell down')
 		}
 		else if (rng > 1) {
-			xvt.out(xvt.bright, xvt.red, 'You are attacked by a swarm of bees.')
+			if (xvt.emulation == 'XT') xvt.out(' 🐝  🐝  🐝  🐝 ')
+			xvt.out(xvt.bright, xvt.red, 'You are attacked by a swarm of bees')
+			if (xvt.emulation == 'XT') xvt.out(xvt.reset, ' 🐝  🐝  🐝  🐝 ')
 			$.sound('crack', 12)
 			for (x = 0, y = $.dice(Z); x < y; x++)
 				$.online.hp -= $.dice(Z)
@@ -308,6 +313,7 @@ export function menu(suppress = false) {
 		}
 		else {
 			$.music('.')
+			if (xvt.emulation == 'XT') xvt.out(' 🌩 ')
 			xvt.out(xvt.bright, xvt.white, 'A bolt of lightning strikes you.')
 			$.player.toAC -= $.dice($.online.armor.ac / 2)
 			$.online.toAC -= $.dice($.online.armor.ac / 2)
@@ -412,7 +418,7 @@ function command() {
 
     switch (choice) {
 	case 'M':	//	#tbt
-		DL.map = 'Marauder\'s map'
+		DL.map = `Marauder's map`
 		refresh = true
 		break
 
@@ -426,7 +432,7 @@ function command() {
 		return
 
 	case 'Y':
-		xvt.out('\n')
+		xvt.outln()
 		Battle.yourstats(false)
 		break
 
@@ -905,19 +911,19 @@ function doMove(): boolean {
 									switch ($.player.magic) {
 										case 1:
 											$.beep()
-											xvt.out(`A Wand of ${spell} appears in your hand.\n`)
+											xvt.outln(`A Wand of ${spell} appears in your hand.`)
 											break
 										case 2:
 											$.beep()
-											xvt.out(`You add a Scroll of ${spell} to your arsenal.\n`)
+											xvt.outln(`You add a Scroll of ${spell} to your arsenal.`)
 											break
 										case 3:
 											$.sound('shimmer')
-											xvt.out(`The Spell of ${spell} is revealed to you.\n`)
+											xvt.outln(`The Spell of ${spell} is revealed to you.`)
 											break
 										case 4:
 											$.sound('shimmer')
-											xvt.out(`${spell} is known to you.\n`)
+											xvt.outln(`${spell} is known to you.`)
 											break
 									}
 								}
@@ -1149,11 +1155,11 @@ function doMove(): boolean {
 			else {
 				escape.occupant = 'thief'
 				if (DL.map && DL.map !== 'map')
-					xvt.out('You expect nothing less from the coward.')
+					xvt.outln('You expect nothing less from the coward.')
 				else
-					xvt.out(xvt.bright, xvt.white, 'He surprises you!')
+					xvt.outln(xvt.bright, xvt.white, 'He surprises you!')
 				$.sound('thief', 4)
-				xvt.out(xvt.reset, '\nAs he passes by, he steals your ')
+				xvt.out('As he passes by, he steals your ')
 				x = $.online.cha + deep + 1
 				if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
 					x = Math.trunc(x / $.player.level)
@@ -1170,23 +1176,26 @@ function doMove(): boolean {
 				}
 				else if ($.player.magic < 3 && $.player.spells.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
 					y = $.player.spells[$.dice($.player.spells.length) - 1]
-					xvt.out(['wand', 'scroll'][$.player.magic - 1], ' for ', Object.keys($.Magic.spells)[y - 1])
+					xvt.out(Object.keys($.Magic.spells)[y - 1], ' ', ['wand', 'scroll'][$.player.magic - 1])
+					if (xvt.emulation == 'XT') xvt.out(' 📜 ')
 					$.Magic.remove($.player.spells, y)
 				}
 				else if ($.player.poisons.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
 					y = $.player.poisons[$.dice($.player.poisons.length) - 1]
 					xvt.out('vial of ', Object.keys($.Poison.vials)[y - 1])
+					if (xvt.emulation == 'XT') xvt.out(' 💀 ')
 					$.Poison.remove($.player.poisons, y)
 				}
 				else if ($.player.coin.value) {
 					let pouch = $.player.coin.amount.split(',')
 					x = $.dice(pouch.length) - 1
 					y = 'csgp'.indexOf(pouch[x].substr(-1))
+					if (xvt.emulation == 'XT') xvt.out(' 💰 ')
 					xvt.out('pouch of ', xvt.bright, [xvt.red,xvt.cyan,xvt.yellow,xvt.magenta][y], ['copper','silver','gold','platinum'][y], xvt.reset, ' pieces')
 					$.player.coin.value -= new $.coins(pouch[x]).value
 				}
 				else
-					xvt.out('Reese\'s pieces')
+					xvt.out(`Reese's pieces`)
 				xvt.out(xvt.reset, '!\n')
 				xvt.waste(600)
 				pause = true
@@ -1197,7 +1206,7 @@ function doMove(): boolean {
 			if (!DL.cleric.hp) {
 				xvt.outln(xvt.yellow, 'You find the ', xvt.white, 'bones'
 					, xvt.yellow, ' of an ', xvt.faint, 'old cleric', xvt.normal, '.')
-				xvt.out('You pray for him.\n')
+				xvt.outln('You pray for him.')
 				break
 			}
 
@@ -1506,6 +1515,7 @@ function doSpoils() {
 		if (deep) $.reason += `-${iii[deep]}`
 		xvt.hangup()
 	}
+	looked = false
 	pause = false
 
 	//	remove any dead carcass, displace teleported creatures
@@ -1525,7 +1535,7 @@ function doSpoils() {
 				//	defeated a significantly larger denizen on this level, check for any added bonus(es)
 				if ((mon.user.xplevel - Z) > 5) {
 					if ($.player.cursed) {
-						xvt.out(xvt.bright, xvt.black, 'The dark cloud has left you.\n', xvt.reset)
+						xvt.outln(xvt.bright, xvt.black, 'The dark cloud has left you.')
 						$.player.cursed = ''
 					}
 					let m = $.int((mon.user.xplevel - Z) / 6)
@@ -1635,7 +1645,6 @@ function doSpoils() {
 		Battle.teleported = false
 		Y = $.dice(DL.rooms.length) - 1
 		X = $.dice(DL.width) - 1
-		looked = false
 		menu()
 		return
 	}
@@ -1643,7 +1652,7 @@ function doSpoils() {
 	if (Battle.retreat) $.PC.profile($.online, 'heartBeat')
 
 	let d = ['N','S','E','W']
-	while (Battle.retreat) {
+	while (Battle.retreat && !$.reason) {
 		$.music('pulse')
 		xvt.waste(400)
 		xvt.out(xvt.bright, xvt.red, 'You frantically look to escape . . . ')
