@@ -41,9 +41,11 @@
     },
     "Elven": {
         "unique": false,
-        "description":"enhance dexterity ability",
+        "description":"enhance dexterous speed attacks",
         "ability":[
-            { "id":"upgrade", "power":true, "ability":"dex" }
+            { "id":"upgrade", "power":true, "ability":"dex" },
+            { "id":"skip", "power":true, "pc":"Ogre" },
+            { "id":"skip", "power":true, "pc":"Undead" }
         ]
     },
     "Faith": {

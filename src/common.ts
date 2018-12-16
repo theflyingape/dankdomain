@@ -657,6 +657,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
 
         if (eligible && rpc.user.level == 50) {
             bonus = true
+            music('.')
             sound('demon', 18)
             break
         }

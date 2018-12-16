@@ -374,7 +374,7 @@ export function attack(retry = false) {
             bs = 1
 
             let skip = $.Ring.power(enemy.user.rings, 'skip', 'pc', $.player.pc)
-            if (skip.power && !$.Ring.power($.player.rings, 'ring').power && $.dice(20 - 2 * enemy.user.magic) == 1) {
+            if (skip.power && !$.Ring.power($.player.rings, 'ring').power && $.dice(16 - 2 * enemy.user.magic) == 1) {
                 xvt.app.form['skip'].prompt = choices
                 xvt.app.form['skip'].prompt += xvt.attr(xvt.green, '<< ', xvt.bright, enemy.user.handle, xvt.normal, ' has paralyzed you this turn >> ')
                 xvt.app.focus = 'skip'
