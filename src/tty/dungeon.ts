@@ -531,7 +531,7 @@ function doMove(): boolean {
 		refresh = true
 
 		if (ROOM.monster.length == 1) {
-			xvt.out('There\'s something lurking in here . . . \n')
+			xvt.outln(`There's something lurking in here . . .`)
 			let img = 'dungeon/' + ROOM.monster[0].user.handle
 			try {
 				fs.accessSync('door/static/images/' + img + '.jpg', fs.constants.F_OK)
@@ -547,9 +547,9 @@ function doMove(): boolean {
 			}
 		}
 		else {
-			xvt.out('There\'s a party waiting for '
+			xvt.outln(`There's a party waiting for `
 				, ['you', 'the main course', 'the entertainment', 'meat', 'a good chew'][$.dice(5) - 1]
-				, ' . . . \n')
+				, ' . . .')
 			let m = {}
 			for (let i = 0; i < ROOM.monster.length; i++)
 				m['mob' + (i+1)] = 'monster/' + ($.PC.name['monster'][ROOM.monster[i].user.pc] || $.PC.name['tavern'][ROOM.monster[i].user.pc] ? ROOM.monster[i].user.pc.toLowerCase() : 'monster')
@@ -567,19 +567,19 @@ function doMove(): boolean {
 			if (ROOM.monster[n].user.xplevel > 0)
 				what = [xvt.attr(xvt.faint, 'lesser '), '', xvt.attr(xvt.bright, xvt.white, 'greater ')]
 					[ROOM.monster[n].user.xplevel - ROOM.monster[n].user.level + 1] + what
-			xvt.out('It\'s', $.an(what), xvt.reset, '... ')
+			xvt.out(`It's`, $.an(what), xvt.reset, '... ')
 			xvt.waste(ROOM.monster.length < 4 ? 400 : 100)
 
 			if ($.player.novice || ($.dice(ROOM.monster[n].user.xplevel / 5 + 5) * (101 - $.online.cha + deep) > 1)) {
 				if (ROOM.monster[n].user.xplevel > 0)
-					xvt.out('and it doesn\'t look friendly.\n')
+					xvt.outln(`and it doesn't look friendly.`)
 				else
-					xvt.out('and it looks harmless, for now.\n')
-				if (isNaN(+ROOM.monster[n].user.weapon)) xvt.out('\n', $.who(ROOM.monster[n], 'He'), $.Weapon.wearing(ROOM.monster[n]), '.\n')
-				if (isNaN(+ROOM.monster[n].user.armor)) xvt.out('\n', $.who(ROOM.monster[n], 'He'), $.Armor.wearing(ROOM.monster[n]), '.\n')
+					xvt.outln('and it looks harmless, for now.')
+				if (isNaN(+ROOM.monster[n].user.weapon)) xvt.outln('\n', $.who(ROOM.monster[n], 'He'), $.Weapon.wearing(ROOM.monster[n]), '.')
+				if (isNaN(+ROOM.monster[n].user.armor)) xvt.outln('\n', $.who(ROOM.monster[n], 'He'), $.Armor.wearing(ROOM.monster[n]), '.')
 			}
 			else {
-				xvt.outln(xvt.bright, xvt.yellow, 'and it\'s '
+				xvt.outln(xvt.bright, xvt.yellow, `and it's `
 					, [ 'bewitched', 'charmed', 'dazzled', 'impressed', 'seduced' ][$.dice(5) - 1]
 					, ' by your '
 					, [ 'awesomeness', 'elegance', 'presence', $.player.armor, $.player.weapon ][$.dice(5) - 1]
@@ -673,7 +673,7 @@ function doMove(): boolean {
 		case 'portal':
 			$.action('ny')
 			$.profile({ jpg:'ddd', effect:'fadeIn' })
-			xvt.out(xvt.bright, xvt.blue, 'You\'ve found a portal to a deep, dank dungeon.')
+			xvt.out(xvt.bright, xvt.blue, `You've found a portal to a deep, dank dungeon.`)
 			xvt.app.form = {
 				'deep': { cb: () => {
 					ROOM.occupant = ''
@@ -712,14 +712,14 @@ function doMove(): boolean {
 			xvt.out($.bracket('O'), 'Teleport all the way out')
 			xvt.out($.bracket('R'), 'Resurrect all the dead players')
 			xvt.out($.bracket('T'), 'Teleport to another level')
-			if (deep > 1) { xvt.out($.bracket('L'), 'Loot another player\'s money'); well += 'L' }
+			if (deep > 1) { xvt.out($.bracket('L'), `Loot another player's money`); well += 'L' }
 			if (deep > 3) { xvt.out($.bracket('G'), 'Grant another call'); well += 'G' }
 			if (deep > 5) { xvt.out($.bracket('K'), 'Key hint(s)'); well += 'K' }
 			if (deep > 7) {
 				xvt.out($.bracket('D'), 'Destroy dank dungeon'); well += 'D'
 				xvt.out($.bracket('M'), 'Magical spell(s) or device(s)'); well += 'M'
 			}
-			xvt.out('\n')
+			xvt.outln(')
 
 			$.action('well')
 			xvt.app.form = {
@@ -834,11 +834,11 @@ function doMove(): boolean {
 						Battle.user('Loot', (opponent: active) => {
 							if (opponent.user.id === $.player.id) {
 								opponent.user.id = ''
-								xvt.out('\nYou can\'t loot yourself.\n')
+								xvt.outln(`\nYou can't loot yourself.`)
 							}
 							else if (opponent.user.novice) {
 								opponent.user.id = ''
-								xvt.out('\nYou can\'t loot novice players.\n')
+								xvt.outln(`\nYou can't loot novice players.`)
 							}
 							if (opponent.user.id) {
 								let loot = new $.coins(opponent.user.coin.value + opponent.user.bank.value)
@@ -871,11 +871,11 @@ function doMove(): boolean {
 						Battle.user('Curse', (opponent: active) => {
 							if (opponent.user.id === $.player.id) {
 								opponent.user.id = ''
-								xvt.out('\nYou can\'t curse yourself.\n')
+								xvt.outln(`\nYou can't curse yourself.`)
 							}
 							else if (opponent.user.novice) {
 								opponent.user.id = ''
-								xvt.out('\nYou can\'t curse novice players.\n')
+								xvt.out(`\nYou can't curse novice players.`)
 							}
 							if (opponent.user.id) {
 								$.log(opponent.user.id, `\n${$.player.handle} cursed you!`)
@@ -1143,7 +1143,7 @@ function doMove(): boolean {
 						'He recognizes your skill and winks',
 						'He slaps your back, but your wallet remains',
 						'He offers you a drink, and you accept',
-						xvt.attr('"I\'ll be seeing you again"', xvt.cyan, ' as he leaves')
+						xvt.attr(`"I'll be seeing you again"`, xvt.cyan, ' as he leaves')
 						][$.dice(5) - 1], xvt.cyan, '.')
 				}
 				else {
@@ -1338,7 +1338,7 @@ function doMove(): boolean {
 				xvt.waste(600)
 				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : ''), effect:'flip' })
 				xvt.waste(1200)
-				xvt.out(xvt.faint, 'It waves a hand at you ... '); xvt.waste(600)
+				xvt.out(xvt.faint, 'It waves a hand at you ... '); xvt.waste(1200)
 				xvt.outln()
 				//	vacate
 				$.animated('flipOutY')
@@ -1408,8 +1408,8 @@ function doMove(): boolean {
 			break
 
 		case 'map':
-			xvt.outln(xvt.bright, xvt.yellow, 'You find Marauder\'s map!')
-			DL.map = 'Marauder\'s map'
+			DL.map = `Marauder's map`
+			xvt.outln(xvt.bright, xvt.yellow, `You find ${DL.map}!`)
 			pause = true
 			refresh = true
 			ROOM.giftItem = ''
@@ -1635,7 +1635,7 @@ function doSpoils() {
 			xvt.out(xvt.lred, '+ bonus strength\n', xvt.reset)
 			$.sound('bravery', 20)
 			$.PC.adjust('str', deep + 2, deep + 1, 1)
-			DL.map = 'Marauder\'s map'
+			DL.map = `Marauder's map`
 			pause = true
 		}
 	}
@@ -1775,12 +1775,12 @@ function drawLevel() {
 								break
 
 							case 'well':
-								if (!icon && DL.map == 'Marauder\'s map')
+								if (!icon && DL.map == `Marauder's map`)
 									o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.blue, '  *  ', xvt.reset)
 								break
 
 							case 'wheel':
-								if (!icon && DL.map == 'Marauder\'s map')
+								if (!icon && DL.map == `Marauder's map`)
 									o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.green, '  @  ', xvt.reset)
 								break
 
@@ -1812,7 +1812,7 @@ function drawLevel() {
 						}
 					}
 					xvt.out(o)
-					if ((DL.map == 'Marauder\'s map' || $.access.sysop) && DL.rooms[r][x].giftItem) xvt.out(`\x08${dot}`)
+					if ((DL.map == `Marauder's map` || $.access.sysop) && DL.rooms[r][x].giftItem) xvt.out(`\x08${dot}`)
 				}
 				if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[y].substr(-1), '\x1B(B')
 				else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y].substr(-1))
@@ -1882,17 +1882,17 @@ function drawRoom(r:number, c:number, keep = true) {
 			break
 
 		case 'well':
-			if (!icon && DL.map == 'Marauder\'s map')
+			if (!icon && DL.map == `Marauder's map`)
 				o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.blue, '  *  ', xvt.reset)
 			break
 
 		case 'wheel':
-			if (!icon && DL.map == 'Marauder\'s map')
+			if (!icon && DL.map == `Marauder's map`)
 				o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.green, '  @  ', xvt.reset)
 			break
 
 		case 'thief':
-			if (!icon && ($.player.steal == 4 || DL.map == 'Marauder\'s map'))
+			if (!icon && ($.player.steal == 4 || DL.map == `Marauder's map`))
 				o = xvt.attr(xvt.reset, xvt.faint, '  &  ', xvt.normal)
 			break
 
@@ -2564,7 +2564,7 @@ function teleport() {
 						xvt.save()
 						xvt.out(`\x1B[1;${$.player.rows}r`)
 						xvt.restore()
-						xvt.outln(xvt.lblue, '\n"Next time you won\'t escape so easily... moo-hahahahaha!!"')
+						xvt.outln(xvt.lblue, `\n"Next time you won't escape so easily... moo-hahahahaha!!"`)
 						fini()
 						return
 					}
