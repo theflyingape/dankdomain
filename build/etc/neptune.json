@@ -4,6 +4,7 @@
     "name": "Neptune",
     "dob": 1,
     "sex": "I",
+    "gender": "M",
     "access": "Inactive",
     "email": "nobody@mail.com",
     "password": "\n",
