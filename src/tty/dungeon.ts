@@ -719,7 +719,7 @@ function doMove(): boolean {
 				xvt.out($.bracket('D'), 'Destroy dank dungeon'); well += 'D'
 				xvt.out($.bracket('M'), 'Magical spell(s) or device(s)'); well += 'M'
 			}
-			xvt.outln(')
+			xvt.outln()
 
 			$.action('well')
 			xvt.app.form = {
