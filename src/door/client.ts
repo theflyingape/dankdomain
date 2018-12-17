@@ -289,7 +289,7 @@ function checkCarrier() {
 		for (let i = 0; i < iframes.length; i++)
 			iframes[i].parentNode.removeChild(iframes[i])
 		lurk()
-		lurking = setInterval(lurk, 30000)
+		lurking = setInterval(lurk, 20000)
 	}
 }
 

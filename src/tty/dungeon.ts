@@ -1175,22 +1175,22 @@ function doMove(): boolean {
 					refresh = true
 				}
 				else if ($.player.magic < 3 && $.player.spells.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
+					if (xvt.emulation == 'XT') xvt.out('📜 ')
 					y = $.player.spells[$.dice($.player.spells.length) - 1]
 					xvt.out(Object.keys($.Magic.spells)[y - 1], ' ', ['wand', 'scroll'][$.player.magic - 1])
-					if (xvt.emulation == 'XT') xvt.out(' 📜 ')
 					$.Magic.remove($.player.spells, y)
 				}
 				else if ($.player.poisons.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
 					y = $.player.poisons[$.dice($.player.poisons.length) - 1]
 					xvt.out('vial of ', Object.keys($.Poison.vials)[y - 1])
-					if (xvt.emulation == 'XT') xvt.out(' 💀 ')
+					if (xvt.emulation == 'XT') xvt.out('💀 ')
 					$.Poison.remove($.player.poisons, y)
 				}
 				else if ($.player.coin.value) {
 					let pouch = $.player.coin.amount.split(',')
 					x = $.dice(pouch.length) - 1
 					y = 'csgp'.indexOf(pouch[x].substr(-1))
-					if (xvt.emulation == 'XT') xvt.out(' 💰 ')
+					if (xvt.emulation == 'XT') xvt.out('💰 ')
 					xvt.out('pouch of ', xvt.bright, [xvt.red,xvt.cyan,xvt.yellow,xvt.magenta][y], ['copper','silver','gold','platinum'][y], xvt.reset, ' pieces')
 					$.player.coin.value -= new $.coins(pouch[x]).value
 				}
