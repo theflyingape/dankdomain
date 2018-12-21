@@ -231,14 +231,14 @@ function choice() {
                 $.action('ny')
                 xvt.app.form = {
                     'join': { cb:() => {
-                        xvt.out('\n')
+                        xvt.outln()
                         if (/Y/i.test(xvt.entry)) {
                             $.player.gang = g.name
                             $.online.altered = true
                             if (g.members.indexOf($.player.id) < 0)
                                 g.members.push($.player.id)
                             $.run(`UPDATE Gangs SET members = '${g.members.join()}' WHERE name = '${g.name}'`)
-                            xvt.out(`\nYou are now a member of ${g.name}.\n`)
+                            xvt.outln(`\nYou are now a member of ${g.name}.`)
                         }
                         else {
                             g.members = []

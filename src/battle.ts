@@ -31,6 +31,10 @@ module Battle
 function end() {
     $.unlock($.player.id, true)
 
+    //  diminish any temporary buff
+    if ($.online.toAC > 0) $.online.toAC--
+    if ($.online.toWC > 0) $.online.toWC--
+
     if (from === 'Naval') {
         if ($.online.hp > 0) {
             $.sound('naval' + (parties[1][0].user.id === '_OLD' ? '_f' : ''), 32)
@@ -137,9 +141,6 @@ function end() {
         }
     }
 
-    //  diminish any temporary buff
-    if ($.online.toAC > 0) $.online.toAC--
-    if ($.online.toWC > 0) $.online.toWC--
     fini()
 }
 
@@ -599,6 +600,9 @@ export function spoils() {
 
     // had a little help from my friends (maybe)
     if (from === 'Party') {
+        $.run(`UPDATE Gangs SET win = win + 1 WHERE name = '${parties[w][0].user.gang}'`)
+        $.run(`UPDATE Gangs SET loss = loss + 1 WHERE name = '${parties[l][0].user.gang}'`)
+
         // player(s) can collect off each corpse
         let tl = [ 1, 1 ]
         let take: number = 0
@@ -624,7 +628,7 @@ export function spoils() {
 
         for (let m in parties[w]) {
             //  dead member gets less of the booty, taxman always gets a cut
-            let cut = parties[w][m].hp > 0 ? 0.95 : 0.35
+            let cut = parties[w][m].hp > 0 ? 0.95 : 0.45
             let max = $.int(((4 + parties[w].length - parties[l].length) / 2) * 1250 * $.money(parties[w][m].user.xplevel) * cut)
             let award = $.int(coin.value * $.money(parties[w][m].user.xplevel) / take * cut)
             award = award > coin.value ? coin.value : award
@@ -638,11 +642,8 @@ export function spoils() {
             parties[w][m].user.xp += xp
 
             if (parties[w][m] === $.online) {
-                if (xp) {
+                if (xp)
                     xvt.outln('\nYou get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.')
-                    $.run(`UPDATE Gangs SET win = win + 1 WHERE name = '${parties[w][0].user.gang}'`)
-                    $.run(`UPDATE Gangs SET loss = loss + 1 WHERE name = '${parties[l][0].user.gang}'`)
-                }
                 if (award)
                     xvt.outln('You get your cut worth ', new $.coins(award).carry(), '.')
                 xvt.waste(600)
@@ -1101,13 +1102,11 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             }
             let mod = $.Ring.power(nme.user.rings, 'resist', 'spell', name)
             if (mod.power) {
-                if (rpc === $.online) {
-                    $.sound('oops', 4)
-                    xvt.out('That spell is ineffective against', $.an(mod.name, false))
-                    xvt.out(xvt.bright, xvt.cyan, mod.name, xvt.normal)
-                    if (xvt.emulation == 'XT') xvt.out(' 💍')
-                    xvt.outln(' ring', xvt.white, ' bearer!')
-                }
+                $.sound('oops', 4)
+                xvt.out(`${$.who(rpc,'His')}${name} spell is ineffective against ${$.who(rpc,'his')}${mod.name}`)
+                xvt.out(xvt.bright, xvt.cyan, mod.name, xvt.normal)
+                if (xvt.emulation == 'XT') xvt.out(' 💍')
+                xvt.outln(' ring', xvt.white, '!')
                 cb(!rpc.confused)
                 return
             }
@@ -1297,9 +1296,9 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             if (backfire) {
                 $.sound('hurt', 3)
                 rpc.hp -= hr
-                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                xvt.outln(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' hurt'), $.who(rpc, 'him'), '\x08self'
-                    , ' for ', hr.toString(), ' hit points!\n')
+                    , ' for ', hr.toString(), ' hit points!')
                 if (rpc.hp < 1) {
                     xvt.outln()
                     rpc.hp = 0
@@ -1312,9 +1311,9 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 rpc.hp += hr
                 if (rpc.hp > rpc.user.hp)
                     rpc.hp = rpc.user.hp
-                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                xvt.outln(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' heal'), rpc !== $.online ? $.who(rpc, 'him') + '\x08self ' : ''
-                    , 'for ', hr.toString(), ' hit points.\n')
+                    , 'for ', hr.toString(), ' hit points.')
             }
             break
 
@@ -1343,8 +1342,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 xvt.outln(xvt.normal, 'away from the ', xvt.faint, 'battle!')
                 $.sound('teleport', 8)
                 if ($.dice(100) == 1) {
-                    xvt.outln(xvt.lred, 'Nearby is the Crown\'s Champion shaking his head and texting his Maker.')
-                    xvt.waste(2000)
+                    xvt.outln(xvt.lred, `Nearby is the Crown's Champion shaking his head and texting his Maker.`)
+                    xvt.waste(+'0212' * 10)     // The Conqueror was here
                 }
             }
             else {
