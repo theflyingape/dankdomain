@@ -287,9 +287,9 @@ export function attack(retry = false) {
                         xvt.outln(xvt.lcyan, [
                             'You trip and fail in your attempt to retreat.',
                             `${who} pulls you back into the battle.`,
-                            `${who} prevents your retreat and says,\n  "I'm not through with you yet!"`,
-                            `${who} outmaneuvers you and says, "You started this,\n  I'm finishing it."`,
-                            `${who} blocks your path and says,\n  "Where do you want to go today?"`,
+                            `${who} prevents your retreat and says,\n  ${xvt.attr(xvt.cyan, "I'm not through with you yet!")}`,
+                            `${who} outmaneuvers you and says,\n  ${xvt.attr(xvt.cyan, "You started this, I'm finishing it.")}`,
+                            `${who} blocks your path and says,\n  ${xvt.attr(xvt.cyan, "Where do you want to go today?")}`,
                         ][$.dice(5) - 1])
                         $.beep()
                         xvt.outln()
@@ -305,7 +305,7 @@ export function attack(retry = false) {
                             'You limp away from the battle.',
                             `You decide this isn't worth the effort.`,
                             `You listen to the voice in your head yelling, "Run!"`,
-                            `You say, "${who} who fights and runs away lives to fight another day!"`
+                            `You say, ${xvt.attr(xvt.cyan, "${who} who fights and runs away lives to fight another day!")}`
                         ][$.dice(5) - 1])
                     if ($.online.confused)
                         $.activate($.online, false, true)
