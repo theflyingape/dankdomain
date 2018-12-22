@@ -158,7 +158,7 @@ export function menu(suppress = false) {
 		return
 	}
 
-//	did player just do something eventful worthy of a big bonus?
+//	did player just do something eventful worthy of the big bonus?
 	if (skillkill) {
         $.sound('winner')
 		skillkill = false
@@ -178,7 +178,7 @@ export function menu(suppress = false) {
 			'pause': { cb: () => {
 				$.action('nme')
 				menu()
-			}, cancel:' ', enter:'\x0D', pause:true, timeout:10 }
+			}, cancel:' ', enter:'\x0D', pause:true, timeout:20 }
 		}
 		xvt.app.focus = 'pause'
 		return
@@ -282,30 +282,33 @@ export function menu(suppress = false) {
 	if ($.dice(x) == 1) {
 		let rng = $.dice(16)
 		if (rng > 8) {
-			if (xvt.emulation == 'XT') xvt.out(' 🦇 ')
+			if (xvt.emulation == 'XT') xvt.out(' 🦇  ')
 			xvt.out(xvt.faint, 'A bat flies by and soils your ')
 			$.sound('splat', 4)
 			$.player.toAC -= $.dice(deep)
 			xvt.out($.player.armor, $.buff($.player.toAC, $.online.toAC))
 		}
 		else if (rng > 4) {
-			if (xvt.emulation == 'XT') xvt.out(' 💧 ')
+			if (xvt.emulation == 'XT') xvt.out(' 💧  ')
 			xvt.out(xvt.blue, 'A drop of acid water lands on your ')
 			$.sound('drop', 4)
 			$.player.toWC -= $.dice(deep)
 			xvt.out($.player.weapon, $.buff($.player.toWC, $.online.toWC))
 		}
 		else if (rng > 2) {
-			if (xvt.emulation == 'XT') xvt.out(' 😬 ')
-			xvt.out(xvt.yellow, 'You trip on the rocky surface and hurt yourself')
+			if (xvt.emulation == 'XT') xvt.out(' 😬  ')
+			xvt.out(xvt.yellow, 'You trip on the rocky surface and hurt yourself.')
 			$.sound('hurt', 5)
 			$.online.hp -= $.dice(Z)
 			if ($.online.hp < 1) $.death('fell down')
 		}
 		else if (rng > 1) {
-			if (xvt.emulation == 'XT') xvt.out(' 🐝  🐝  🐝  🐝 ')
+			if (xvt.emulation == 'XT') xvt.out(' 🐝  🐝  🐝  🐝  ')
 			xvt.out(xvt.bright, xvt.red, 'You are attacked by a swarm of bees')
-			if (xvt.emulation == 'XT') xvt.out(xvt.reset, ' 🐝  🐝  🐝  🐝 ')
+			if (xvt.emulation == 'XT')
+				xvt.out(xvt.reset, ' 🐝  🐝  🐝  🐝')
+			else
+				xvt.out('!')
 			$.sound('crack', 12)
 			for (x = 0, y = $.dice(Z); x < y; x++)
 				$.online.hp -= $.dice(Z)
@@ -313,8 +316,9 @@ export function menu(suppress = false) {
 		}
 		else {
 			$.music('.')
-			if (xvt.emulation == 'XT') xvt.out(' 🌩 ')
-			xvt.out(xvt.bright, xvt.white, 'A bolt of lightning strikes you.')
+			xvt.out(xvt.bright, xvt.white)
+			if (xvt.emulation == 'XT') xvt.out(' ⚡ ')
+			xvt.out('A bolt of lightning strikes you!')
 			$.player.toAC -= $.dice($.online.armor.ac / 2)
 			$.online.toAC -= $.dice($.online.armor.ac / 2)
 			$.player.toWC -= $.dice($.online.weapon.wc / 2)
@@ -1175,7 +1179,7 @@ function doMove(): boolean {
 					refresh = true
 				}
 				else if ($.player.magic < 3 && $.player.spells.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
-					if (xvt.emulation == 'XT') xvt.out('📜 ')
+					if (xvt.emulation == 'XT') xvt.out('📜  ')
 					y = $.player.spells[$.dice($.player.spells.length) - 1]
 					xvt.out(Object.keys($.Magic.spells)[y - 1], ' ', ['wand', 'scroll'][$.player.magic - 1])
 					$.Magic.remove($.player.spells, y)
@@ -1183,20 +1187,20 @@ function doMove(): boolean {
 				else if ($.player.poisons.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
 					y = $.player.poisons[$.dice($.player.poisons.length) - 1]
 					xvt.out('vial of ', Object.keys($.Poison.vials)[y - 1])
-					if (xvt.emulation == 'XT') xvt.out('💀 ')
+					if (xvt.emulation == 'XT') xvt.out('💀  ')
 					$.Poison.remove($.player.poisons, y)
 				}
 				else if ($.player.coin.value) {
 					let pouch = $.player.coin.amount.split(',')
 					x = $.dice(pouch.length) - 1
 					y = 'csgp'.indexOf(pouch[x].substr(-1))
-					if (xvt.emulation == 'XT') xvt.out('💰 ')
+					if (xvt.emulation == 'XT') xvt.out('💰  ')
 					xvt.out('pouch of ', xvt.bright, [xvt.red,xvt.cyan,xvt.yellow,xvt.magenta][y], ['copper','silver','gold','platinum'][y], xvt.reset, ' pieces')
 					$.player.coin.value -= new $.coins(pouch[x]).value
 				}
 				else
 					xvt.out(`Reese's pieces`)
-				xvt.out(xvt.reset, '!\n')
+				xvt.outln(xvt.reset, '!')
 				xvt.waste(600)
 				pause = true
 			}
