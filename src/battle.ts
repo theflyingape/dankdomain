@@ -230,6 +230,27 @@ export function attack(retry = false) {
     do { nme = $.dice(parties[mob].length) - 1 } while (parties[mob][nme].hp < 1)
     enemy = parties[mob][nme]
 
+    //  a frozen treat?
+    let skip = $.Ring.power(enemy.user.rings, 'skip', 'pc', rpc.user.pc)
+    if (skip.power && !$.Ring.power(rpc.user.rings, 'ring').power && $.dice(16 - 2 * enemy.user.magic) == 1) {
+        let how = 'paralyze', color = xvt.magenta
+        if (enemy.user.pc == 'Undead') {
+            how = 'hynoptize'
+            color = xvt.white
+        }
+        else if (enemy.user.pc == 'Lizard') {
+            how = 'freeze'
+            color = xvt.green
+        }
+        xvt.outln(xvt.faint, color, '>> ', xvt.normal
+            , xvt.bright, enemy == $.online ? 'You ' : ((enemy.user.gender === 'I' ? 'The ' : '') + enemy.user.handle)
+            , xvt.normal, ' ', $.what(enemy, how), $.who(rpc, 'him')
+            , xvt.faint, '<<')
+        xvt.waste(600)
+        next()
+        return
+    }
+
     if (rpc === $.online) {
         $.action('battle')
         xvt.app.form = {
@@ -281,8 +302,8 @@ export function attack(retry = false) {
                     xvt.outln(xvt.lblue, [
                             'You are successful in your attempt to retreat.',
                             'You limp away from the battle.',
-                            'You decide this isn\'t worth the effort.',
-                            'You listen to the voice in your head yelling, \"Run!\"',
+                            `You decide this isn't worth the effort.`,
+                            `You listen to the voice in your head yelling, "Run!"`,
                             `You say, "${who} who fights and runs away lives to fight another day!"`
                         ][$.dice(5) - 1])
                     if ($.online.confused)
@@ -316,11 +337,6 @@ export function attack(retry = false) {
                 next()
                 return
             }, cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:30 },
-            'skip': {cb:() => {
-                xvt.outln()
-                next()
-                return
-            }, cancel:'*', enter:'*', eol:false, max:1, timeout:3 }
         }
 
         //  sneaking
@@ -372,14 +388,6 @@ export function attack(retry = false) {
                 choices += enemy.hp.toString()
             choices += xvt.attr(xvt.normal, xvt.blue, '] ')
             bs = 1
-
-            let skip = $.Ring.power(enemy.user.rings, 'skip', 'pc', $.player.pc)
-            if (skip.power && !$.Ring.power($.player.rings, 'ring').power && $.dice(16 - 2 * enemy.user.magic) == 1) {
-                xvt.app.form['skip'].prompt = choices
-                xvt.app.form['skip'].prompt += xvt.attr(xvt.green, '<< ', xvt.bright, enemy.user.handle, xvt.normal, ' has paralyzed you this turn >> ')
-                xvt.app.focus = 'skip'
-                return
-            }
 
             xvt.app.form['attack'].prompt = choices
             xvt.app.form['attack'].prompt += xvt.attr($.bracket('A', false), xvt.cyan, 'ttack, ')
@@ -975,7 +983,7 @@ export function brawl(rpc:active, nme:active) {
                 xvt.out('.')
                 xvt.waste(300)
             }
-            xvt.out('\n')
+            xvt.outln()
             $.news(`\tgot knocked out by ${winner.user.handle}`)
         }
         else
@@ -1121,22 +1129,32 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             }
         }
 
-        if (rpc.sp) {
+        if (rpc.sp > 0) {
             let mana = summon ? 0 : rpc.user.magic < 4 ? spell.mana : spell.enchanted
             rpc.sp -= mana
 
             //  collect some of the mana spent by the enemy?
             if (nme) {
                 const spent = +(+$.Ring.power(nme.user.rings, 'sp', 'pc', nme.user.pc).power && !$.Ring.power(rpc.user.rings, 'ring').power) * (+$.Ring.power(nme.user.rings, 'ring').power + 1)
-                if (mana = spent * $.dice(mana / rpc.user.magic)) {
+                if (mana = spent * $.dice(mana / (rpc.user.magic + 1))) {
                     if (nme.sp + mana > nme.user.sp) {
                         mana -= nme.sp - nme.user.sp
                         if (mana < 0) mana = 0
                     }
                     if (mana) {
-                        nme.sp += mana
-                        xvt.outln(nme == $.online ? 'You ' : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
-                            , ' ', $.what(rpc, 'absorb'), xvt.bright, xvt.cyan, mana.toString(), xvt.normal, ' mana ', xvt.reset, 'spent off the spell.')
+                        if (nme.sp > 0) {
+                            nme.sp += mana
+                            xvt.outln(nme == $.online ? 'You' : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
+                                , ' ', $.what(nme, 'absorb'), xvt.bright, xvt.cyan, mana.toString(), xvt.normal, ' mana '
+                                , xvt.reset, 'spent off ', $.who(rpc,'his'), 'spell.')
+                        }
+                        else {
+                            rpc.sp -= mana
+                            if (rpc.sp < 0) rpc.sp = 0
+                            xvt.outln(nme == $.online ? 'You' : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
+                                , ' ', $.what(nme, 'drain'), 'an extra ', xvt.bright, xvt.cyan, mana.toString(), xvt.normal, ' mana '
+                                , xvt.reset, 'from ', $.who(rpc,'his'), 'spell.')
+                        }
                         xvt.waste(100)
                     }
                 }
@@ -2100,7 +2118,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             }
             if (hit) {
                 rpc.hp += hit
-                xvt.outln(rpc == $.online ? 'You ' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                xvt.outln(rpc == $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , ' ', $.what(rpc, 'absorb'), xvt.bright, xvt.red, hit.toString(), xvt.reset, ' off the hit.')
                 xvt.waste(100)
             }
@@ -2118,7 +2136,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
 export function poison(rpc: active, cb?:Function) {
     if (rpc.user.id === $.player.id) {
         if (!$.player.poisons.length) {
-            xvt.outln('\nYou don\'t have any poisons.')
+            xvt.outln(`\nYou don't have any poisons.`)
             cb(true)
             return
         }

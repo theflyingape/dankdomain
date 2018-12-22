@@ -317,7 +317,7 @@ export function menu(suppress = false) {
 		else {
 			$.music('.')
 			xvt.out(xvt.bright, xvt.white)
-			if (xvt.emulation == 'XT') xvt.out(' ⚡ ')
+			if (xvt.emulation == 'XT') xvt.out(' ⚡  ')
 			xvt.out('A bolt of lightning strikes you!')
 			$.player.toAC -= $.dice($.online.armor.ac / 2)
 			$.online.toAC -= $.dice($.online.armor.ac / 2)

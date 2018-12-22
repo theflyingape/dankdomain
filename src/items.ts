@@ -415,12 +415,12 @@ export class Ring {
             let abilities = this.name[rings[f]].ability
             for (let a in abilities) {
                 if (abilities[a].id == id) {
-                    if (!match || !abilities[a][match]) {
+                    if (typeof abilities[a][match] == 'undefined') {
                         name = rings[f]
                         power = abilities[a].power
                     }
-                    else if (abilities[a][match] && value) {
-                        if (abilities[a][match] == value) {
+                    else if (match && abilities[a][match]) {
+                        if (value && abilities[a][match] == value) {
                             name = rings[f]
                             power = abilities[a].power
                         }

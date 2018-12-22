@@ -44,6 +44,7 @@
         "description":"enhance dexterous speed attacks",
         "ability":[
             { "id":"upgrade", "power":true, "ability":"dex" },
+            { "id":"skip", "power":true, "pc":"Barbarian" },
             { "id":"skip", "power":true, "pc":"Ogre" },
             { "id":"skip", "power":true, "pc":"Undead" }
         ]
@@ -95,7 +96,7 @@
     },
     "Magus": {
         "unique": false,
-        "description":"enhance defense against mortal-made attack spells, not incantions",
+        "description":"enhance defense against mortal-made attack spells, not incantations",
         "ability":[
             { "id":"cast", "power":true, "magic":1 },
             { "id":"cast", "power":true, "magic":2 },
@@ -110,7 +111,8 @@
         "ability":[
             { "id":"melee", "power":true, "pc":"Titan" },
             { "id":"skip", "power":true },
-            { "id":"skip", "power":false, "magic":4 }
+            { "id":"skip", "power":false, "pc":"Sage" },
+            { "id":"skip", "power":false, "pc":"God" }
         ]
     },
     "Moon": {
@@ -166,6 +168,7 @@
             { "id":"hp", "power":true, "pc":"Undead" },
             { "id":"melee", "power":true, "pc":"Undead" },
             { "id":"resurrect", "power":true },
+            { "id":"skip", "power":true, "pc":"Undead" },
             { "id":"sp", "power":true, "pc":"Undead" },
             { "id":"upgrade", "power":true, "pc":"Undead" }
         ]

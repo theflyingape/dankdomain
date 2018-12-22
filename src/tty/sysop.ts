@@ -40,7 +40,7 @@ function choice() {
             xvt.out(' - ', sysop[choice].description)
             suppress = $.player.expert
         }
-    xvt.out('\n')
+    xvt.outln()
 
     let rpc: active = { user:{ id:'' } }
     let rs = []
@@ -51,8 +51,8 @@ function choice() {
             return
 
         case 'B':
-            xvt.out('\n')
-            xvt.outln(xvt.Blue, xvt.white, ' ID   Player\'s Handle           Class    Lvl  ')
+            xvt.outln()
+            xvt.outln(xvt.Blue, xvt.white, ` ID   Player's Handle           Class    Lvl  `)
             xvt.outln(xvt.Blue, xvt.white, '----------------------------------------------')
             rs = $.query(`SELECT * FROM Players WHERE blessed !='' OR cursed !='' OR coward != 0`)
             for (let n in rs) {
@@ -104,7 +104,7 @@ function choice() {
                     xvt.app.focus = 'yn'
                 }, prompt:'Enter starting key hints (0-6)? ', max:1 },
                 'yn': { cb:() => {
-                    xvt.out('\n')
+                    xvt.outln()
                     if (/Y/i.test(xvt.entry)) {
                         $.loadUser($.sysop)
                         $.sysop.dob = $.now().date + 1
@@ -127,10 +127,12 @@ function choice() {
                         for (k = 0; k < kh; k++)
                             $.keyhint($.online)
                         rpc.user.plays = 0
-                        xvt.out(xvt.reset, '\nHappy hunting tomorrow!\n')
+                        xvt.outln(xvt.reset, '\nHappy hunting tomorrow!')
                         $.reason = 'reroll'
                         xvt.hangup()
                     }
+                    else
+                        menu()
                 }, prompt:'Reroll the board (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i }
             }
             xvt.app.focus = 'pc'
