@@ -1792,8 +1792,11 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 return
             }
             xvt.out(xvt.cyan, 'A glowing '
-                , xvt.lcyan, xvt.LGradient[xvt.emulation], xvt.bright, xvt.reverse, 'orb', xvt.noreverse, xvt.nobright, xvt.RGradient[xvt.emulation]
-                , xvt.cyan, ' radiates above ', xvt.faint, $.who(backfire ? nme : rpc, 'him'), '... ')
+                , xvt.lcyan, xvt.LGradient[xvt.emulation]
+                , xvt.bright, xvt.lblack, xvt.lCyan, 'orb', xvt.reset
+                , xvt.lcyan, xvt.RGradient[xvt.emulation]
+                , xvt.cyan, ' radiates above '
+                , xvt.faint, $.who(backfire ? nme : rpc, 'him'), '... ')
             $.sound('mana', 8)
             xvt.outln()
             let mana = 0

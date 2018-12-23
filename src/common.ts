@@ -1888,7 +1888,7 @@ export function display(title:string, back:number, fore:number, suppress:boolean
                     fore, xvt.RGradient[xvt.emulation], '((:=--')
             else
                 xvt.out(titlecase(title))
-            xvt.out(xvt.reset, '\n\n')
+            xvt.outln('\n')
             for (let i in menu) {
                 if (xvt.validator.isNotEmpty(menu[i].description))
                     xvt.out(xvt.faint, fore, '<', xvt.bright, xvt.white, i, xvt.faint, fore, '> ',
