@@ -1797,11 +1797,12 @@ export function what(rpc: active, action: string): string {
 
 export function who(rpc: active, word: string): string {
     let result = {
-        He:  { M:'He ',   F:'She ',  I:'It ',   U:'You ' },
-        His: { M:'His ',  F:'Her ',  I:'Its ',  U:'Your ' },
-        he:  { M:'he ',  F:'she ', I:'it ',  U:'you ' },
-        him: { M:'him ',  F:'her ',  I:'it ',   U:'you ' },
-        his: { M:'his ', F:'her ', I:'its ', U:'your ' }
+        He:  { M:'He ',  F:'She ', I:'It ',  U:'You '  },
+        His: { M:'His ', F:'Her ', I:'Its ', U:'Your ' },
+        he:  { M:'he ',  F:'she ', I:'it ',  U:'you '  },
+        him: { M:'him ', F:'her ', I:'it ',  U:'you '  },
+        his: { M:'his ', F:'her ', I:'its ', U:'your ' },
+        self:{ M:'himself ', F:'herself ', I:'itself ', U:'yourself ' }
     }
 
     let gender = rpc == online ? 'U' : rpc.user.gender

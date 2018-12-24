@@ -202,45 +202,47 @@ function choice() {
                     xvt.out('yell, "Freak!"\n')
                     xvt.waste(1000)
                     if ($.player.level < 60)
-                        xvt.out('The barkeep stares off into empty space, ignoring your wimpy comment.\n')
+                        xvt.outln('The barkeep stares off into empty space, ignoring your wimpy comment.')
                     else
-                        xvt.out(`The barkeep points at ${$.who($.barkeep,'he')}massive, flexed bicep and laughs at your jest.\n`)
+                        xvt.outln(`The barkeep points at ${$.who($.barkeep,'he')}massive, flexed bicep and laughs at your jest.`)
                     suppress = true
                     break
+
                 case 1:
-                    xvt.out('thumb your nose.\n')
+                    xvt.outln('thumb your nose.')
                     xvt.waste(1000)
                     if ($.player.level < 60)
-                        xvt.out(`Annoyed, the barkeep looks down at ${$.who($.barkeep,'his')}furry feet and counts, \"100, 99, 98,...\"\n`)
+                        xvt.outln(`Annoyed, the barkeep looks down at ${$.who($.barkeep, 'his')}furry feet and counts, \"100, 99, 98,...\"`)
                     else
-                        xvt.out(`The former Champion Ogre grunts to ${$.who($.barkeep,'him')}\x08self, \"Not good for business."\n`)
+                        xvt.outln(`The former Champion Ogre grunts to ${$.who($.barkeep, 'self')} "Not good for business."`)
                     suppress = true
                     break
+
                 default:
                     $.brawl = 0
                     $.action('clear')
                     $.music('.')
-                    xvt.out('jest, \"What you looking at, wart-face!\"')
+                    xvt.outln(`jest, "What you looking at, wart-face!"`)
                     xvt.waste(1200)
-                    xvt.out('\nUh, oh!')
+                    xvt.out('Uh, oh!')
                     $.sound('ddd', 22)
                     $.profile({ jpg:'npc/barkeep'
                         , handle:$.barkeep.user.handle, level:$.barkeep.user.level, pc:$.barkeep.user.pc })
                     xvt.out('  Here comes Tiny!')
                     $.sound('challenge', 12)
-                    xvt.out(`  And ${$.who($.barkeep,'he')}doesn\'t look friendly...\n\n`)
+                    xvt.outln(`  And ${$.who($.barkeep, 'he')}doesn't look friendly...\n`)
                     xvt.waste(600)
                     xvt.outln(xvt.bright, xvt.green, [
-                        '"When I\'m through with you, your mama won\'t be able to identify the remains."',
-                        '"I am getting too old for this."',
-                        '"Never rub another man\'s rhubarb!"'][$.dice(3) - 1], '\n')
+                        `"When I'm through with you, your mama won't be able to identify the remains."`,
+                        `"I am getting too old for this."`,
+                        `"Never rub another man\'s rhubarb!"`][$.dice(3) - 1])
                     xvt.waste(3000)
 
                     $.loadUser($.barkeep)
                     $.barkeep.toWC += $.Weapon.merchant.length - $.barkeep.weapon.wc
                     $.barkeep.toAC += $.Armor.merchant.length - $.barkeep.armor.ac
                     $.barkeep.user.spells = JSON.parse(fs.readFileSync('./etc/barkeep.json').toString()).spells
-                    xvt.out(`${$.barkeep.user.handle} towels ${$.who($.barkeep,'his')}hands dry from washing the day\'s\nglasses, ${$.who($.barkeep,'he')}warns,\n\n`)
+                    xvt.outln(`\n${$.barkeep.user.handle} towels ${$.who($.barkeep,'his')}hands dry from washing the day\'s\nglasses, ${$.who($.barkeep, 'he')}warns,\n`)
                     xvt.outln(xvt.bright, xvt.green, '"Another fool said something like that to me, once, and got all busted up."\n')
                     xvt.waste(5000)
                     let fool = <active>{ user:{ id:$.barkeep.user.status, gender:'M' }}
@@ -256,20 +258,20 @@ function choice() {
                     xvt.outln(`there, ${$.who(fool,'he')}tried to use that ${$.barkeep.user.weapon}, but it wasn't enough\nto take me.\"\n`)
                     xvt.waste(6000)
                     xvt.out('The patrons move in closer to witness the forthcoming slaughter, except for\n')
-                    xvt.out(`${$.taxman.user.handle} who is busy raiding the bar of its beer and nuts.\n\n`)
+                    xvt.outln(`${$.taxman.user.handle} who is busy raiding the bar of its beer and nuts.\n`)
                     xvt.waste(5000)
-                    xvt.out('You hear a cry, "I\'ll pay fifteen-to-one on the challenger!"\n')
+                    xvt.outln(`\nYou hear a cry, "I'll pay fifteen-to-one on the challenger!"`)
                     xvt.waste(4000)
                     $.sound('crowd')
                     xvt.out('The crowd roars with laughter... ')
                     xvt.waste(3000)
-                    xvt.out('you are not amused.\n\n')
+                    xvt.outln('you are not amused.')
                     xvt.waste(2000)
-                    xvt.out(`${$.barkeep.user.handle} removes ${$.who($.barkeep,'his')}tunic to reveal a massive, but\nheavily scarred chest.\n\n`)
+                    xvt.outln(`\n${$.barkeep.user.handle} removes ${$.who($.barkeep,'his')}tunic to reveal a massive, but\nheavily scarred chest.`)
                     xvt.waste(2500)
-                    xvt.out('You look for an exit, but there is none to be found... ')
+                    xvt.out('\nYou look for an exit, but there is none to be found... ')
                     xvt.waste(2500)
-                    xvt.out('\n')
+                    xvt.outln()
 
                     $.player.coward = true
                     $.saveUser($.online)
@@ -287,21 +289,22 @@ function choice() {
                     menu(true)
                     return
                 }
+                xvt.outln()
                 if (opponent.user.id === $.player.id) {
-					xvt.out('\nYou want to hit yourself?\n')
+					xvt.outln('You want to hit yourself?')
 					menu(true)
 					return
                 }
 				if ($.player.level - opponent.user.level > 3) {
-					xvt.out('\nYou can only brawl someone higher or up to three levels below you.\n')
+					xvt.outln('You can only brawl someone higher or up to three levels below you.')
 					menu(true)
 					return
 				}
-                xvt.out(xvt.green, 'Name: ', xvt.white, sprintf('%-22s      You:', opponent.user.handle), '\n')
-                xvt.out(xvt.green, 'Level: ', xvt.white, sprintf('%-22d     %-2d', opponent.user.level, $.player.level), '\n')
-                xvt.out(xvt.green, 'Knock out points: ', xvt.white, sprintf('%-15d %-3d', opponent.bp, $.online.bp), '\n')
+                xvt.outln(xvt.green, 'Name: ', xvt.white, sprintf('%-22s      You:', opponent.user.handle))
+                xvt.outln(xvt.green, 'Level: ', xvt.white, sprintf('%-22d     %-2d', opponent.user.level, $.player.level))
+                xvt.outln(xvt.green, 'Knock out points: ', xvt.white, sprintf('%-15d %-3d', opponent.bp, $.online.bp))
 				if (!$.Access.name[opponent.user.access].roleplay) {
-					xvt.out('\nYou are allowed only to brawl other players.\n')
+					xvt.outln('\nYou are allowed only to brawl other players.')
 					if (opponent.user.id[0] === '_') {
                         $.PC.adjust('cha', -2, -1)
 						$.player.coward = true
@@ -319,15 +322,15 @@ function choice() {
                 $.action('ny')
 				xvt.app.form = {
 					'brawl': { cb:() => {
-						xvt.out('\n')
+						xvt.outln('\n')
 						if (/Y/i.test(xvt.entry)) {
                             $.brawl--
                             if (($.online.dex / 2 + $.dice($.online.dex / 2)) > (opponent.dex / 2 + $.dice(opponent.dex / 2))) {
-                                xvt.out('\nYou get the first punch.\n')
+                                xvt.outln('You get the first punch.')
                                 Battle.brawl($.online, opponent)
                             }
                             else
-                                xvt.out(`\n${$.who(opponent, 'He')}gets the first punch.\n`)
+                                xvt.outln(`${$.who(opponent, 'He')}gets the first punch.`)
                             if ($.online.bp > 0 && opponent.bp > 0)
                                 Battle.brawl(opponent, $.online)
                             if ($.online.bp > 0 && opponent.bp > 0) {
@@ -341,7 +344,7 @@ function choice() {
                             menu($.player.expert)
 					}, prompt:'Are you sure (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 },
 					'punch': { cb:() => {
-						xvt.out('\n')
+						xvt.outln()
 						if (/P/i.test(xvt.entry)) {
                             Battle.brawl($.online, opponent)
                             if ($.online.bp > 0 && opponent.bp > 0)
@@ -349,12 +352,12 @@ function choice() {
                         }
 						if (/G/i.test(xvt.entry)) {
                             $.unlock($.player.id, true)
-                            xvt.out(`\nWe can't all be Rocky, eh?\n`)
+                            xvt.outln(`\nWe can't all be Rocky, eh?`)
                             menu($.player.expert)
                             return
                         }
 						if (/Y/i.test(xvt.entry)) {
-                            xvt.out(`\nYour knock out points: ${$.online.bp}\n`)
+                            xvt.outln(`\nYour knock out points: ${$.online.bp}`)
                         }
                         if ($.online.bp > 0 && opponent.bp > 0)
                             xvt.app.refocus()

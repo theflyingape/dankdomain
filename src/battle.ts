@@ -233,19 +233,27 @@ export function attack(retry = false) {
 
     //  a frozen treat?
     let skip = $.Ring.power(enemy.user.rings, 'skip', 'pc', rpc.user.pc)
+    if (!skip.power && $.dice(100) == 100) skip.power = true
     if (skip.power && !$.Ring.power(rpc.user.rings, 'ring').power && $.dice(16 - 2 * enemy.user.magic) == 1) {
         let how = 'paralyze', color = xvt.magenta
-        if (enemy.user.pc == 'Undead') {
+        if (enemy.user.pc == 'Lizard') {
+            how = 'freeze'
+            color = xvt.cyan
+        }
+        else if (enemy.user.pc == 'Ogre') {
+            how = 'grab'
+            color = xvt.yellow
+        }
+        else if (enemy.user.pc == 'Undead') {
             how = 'hynoptize'
             color = xvt.white
         }
-        else if (enemy.user.pc == 'Lizard') {
-            how = 'freeze'
-            color = xvt.green
+        else if (enemy === $.online) {
+            how = ''
         }
         xvt.outln(xvt.faint, color, '>> ', xvt.normal
             , xvt.bright, enemy == $.online ? 'You ' : ((enemy.user.gender === 'I' ? 'The ' : '') + enemy.user.handle)
-            , xvt.normal, ' ', $.what(enemy, how), $.who(rpc, 'him')
+            , xvt.normal, ' ', $.what(enemy, how), enemy.user.gender === 'I' ? `the ${enemy.user.handle}` : $.who(rpc, 'him')
             , xvt.faint, '<<')
         xvt.waste(600)
         next()
@@ -925,18 +933,18 @@ export function spoils() {
 export function brawl(rpc:active, nme:active) {
     if ($.dice(100) >= (50 + $.int(rpc.dex / 2))) {
         $.sound(rpc.user.id === $.player.id ? 'whoosh' : 'swoosh')
-        xvt.out(`\n${$.who(nme, 'He')}${$.what(nme, 'duck')}${$.who(rpc,'his')}punch.\n`)
+        xvt.outln(`\n${$.who(nme, 'He')}${$.what(nme, 'duck')}${$.who(rpc,'his')}punch.`)
         xvt.waste(600)
         let patron = $.PC.encounter()
         if (patron.user.id && patron.user.id != rpc.user.id && patron.user.id != nme.user.id && !patron.user.status) {
-            xvt.out(`\n${$.who(rpc, 'He')}${$.what(rpc, 'hit')}${patron.user.handle}!\n`)
+            xvt.outln(`\n${$.who(rpc, 'He')}${$.what(rpc, 'hit')}${patron.user.handle}!`)
             xvt.waste(600)
             let bp = punch(rpc)
             patron.bp -= bp
             if (patron.bp > 0) {
                 xvt.out('\nUh oh! ')
                 xvt.waste(600)
-                xvt.out(` Here comes ${patron.user.handle}!\n`)
+                xvt.outln(` Here comes ${patron.user.handle}!`)
                 xvt.waste(600)
                 this.brawl(patron, rpc)
             }
@@ -946,7 +954,7 @@ export function brawl(rpc:active, nme:active) {
     }
     else {
         let bp = punch(rpc)
-        xvt.out(`\n${$.who(rpc, 'He')}${$.what(rpc, 'punch')}${$.who(nme,'him')}for ${bp} points.\n`)
+        xvt.outln(`\n${$.who(rpc, 'He')}${$.what(rpc, 'punch')}${$.who(nme,'him')}for ${bp} points.`)
         nme.bp -= bp
         if (nme.bp < 1)
             knockout(rpc, nme)
@@ -957,14 +965,14 @@ export function brawl(rpc:active, nme:active) {
         $.run(`UPDATE Players set tw=tw+1,xp=xp+${xp},coin=coin+${loser.user.coin.value} WHERE id='${winner.user.id}'`)
         $.run(`UPDATE Players set tl=tl+1,coin=0 WHERE id='${loser.user.id}'`)
 
-        xvt.out('\n', winner.user.id === $.player.id ? 'You' : winner.user.handle
-            , ` ${$.what(winner, 'knock')}${$.who(loser, 'him')}out!\n`)
+        xvt.outln('\n', winner.user.id === $.player.id ? 'You' : winner.user.handle
+            , ` ${$.what(winner, 'knock')}${$.who(loser, 'him')}out!`)
         xvt.waste(600)
         if (xp)
-            xvt.out(`\n${$.who(winner, 'He')}${$.what(winner, 'get')}`, sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.\n')
+            xvt.outln(`\n${$.who(winner, 'He')}${$.what(winner, 'get')}`, sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.')
         winner.user.xp += xp
         if (loser.user.coin.value) {
-            xvt.out(`${$.who(loser, 'He')}was carrying ${loser.user.coin.carry()}\n`)
+            xvt.outln(`${$.who(loser, 'He')}was carrying ${loser.user.coin.carry()}`)
             winner.user.coin.value += loser.user.coin.value
             loser.user.coin.value = 0
         }
@@ -1258,21 +1266,21 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 if (rpc.user.magic > 2 && rpc.user.toAC > 0)
                     rpc.user.toAC--
                 rpc.toAC--
-                xvt.out($.who(rpc, 'His'), isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' loses some of its effectiveness.\n')
+                xvt.outln($.who(rpc, 'His'), isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' loses some of its effectiveness')
             }
             else {
                 $.sound('shield')
-                xvt.out('A magical field shimmers around ', rpc.user.armor ? $.who(rpc, 'his') + rpc.user.armor : $.who(rpc, 'him'), '.\n')
+                xvt.outln('A magical field shimmers around ', rpc.user.armor ? $.who(rpc, 'his') + rpc.user.armor : $.who(rpc, 'him'))
                 if (rpc.user.magic > 2 && rpc.user.toAC >= 0)
                     rpc.user.toAC++
                 rpc.toAC++
             }
             if (-rpc.user.toAC >= rpc.armor.ac || -(rpc.user.toAC + rpc.toAC) >= rpc.armor.ac) {
-                xvt.out($.who(rpc, 'His'), isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' crumbles!\n')
+                xvt.outln($.who(rpc, 'His'), isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' crumbles!')
                 $.Armor.equip(rpc, $.Armor.merchant[0])
             }
             if ($.dice(3 * (rpc.user.toAC + rpc.toAC + 1) / rpc.user.magic) > rpc.armor.ac) {
-                xvt.out($.who(rpc, 'His'), isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' vaporizes!\n')
+                xvt.outln($.who(rpc, 'His'), isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' vaporizes!')
                 $.Armor.equip(rpc, $.Armor.merchant[0])
                 if (rpc == $.online) $.sound('crack', 6)
             }
@@ -1281,24 +1289,24 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
         case 6:
             if (backfire) {
-                xvt.out($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' loses some of its effectiveness.\n')
+                xvt.outln($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' loses some of its effectiveness.')
                 if (rpc.user.magic > 2 && rpc.user.toWC > 0)
                     rpc.user.toWC--
                 rpc.toWC--
             }
             else {
                 $.sound('hone')
-                xvt.out($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' glows with magical sharpness.\n')
+                xvt.outln($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' glows with magical sharpness.')
                 if (rpc.user.magic > 2 && rpc.user.toWC >= 0)
                     rpc.user.toWC++
                 rpc.toWC++
             }
             if (-rpc.user.toWC >= rpc.weapon.wc || -(rpc.user.toWC + rpc.toWC) >= rpc.weapon.wc) {
-                xvt.out($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' crumbles!\n')
+                xvt.outln($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' crumbles!')
                 $.Weapon.equip(rpc, $.Weapon.merchant[0])
             }
             if ($.dice(3 * (rpc.user.toWC + rpc.toWC + 1) / rpc.user.magic) > rpc.weapon.wc) {
-                xvt.out($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' vaporizes!\n')
+                xvt.outln($.who(rpc, 'His'), rpc.user.weapon ? rpc.user.weapon : 'attack', ' vaporizes!')
                 $.Weapon.equip(rpc, $.Weapon.merchant[0])
                 if (rpc == $.online) $.sound('crack', 6)
             }
@@ -1315,8 +1323,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 $.sound('hurt', 3)
                 rpc.hp -= hr
                 xvt.outln(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , $.what(rpc, ' hurt'), $.who(rpc, 'him'), '\x08self'
-                    , ' for ', hr.toString(), ' hit points!')
+                    , $.what(rpc, ' hurt'), $.who(rpc, 'self'), 'for ', hr.toString(), ' hit points!')
                 if (rpc.hp < 1) {
                     xvt.outln()
                     rpc.hp = 0
@@ -1330,8 +1337,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 if (rpc.hp > rpc.user.hp)
                     rpc.hp = rpc.user.hp
                 xvt.outln(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , $.what(rpc, ' heal'), rpc !== $.online ? $.who(rpc, 'him') + '\x08self ' : ''
-                    , 'for ', hr.toString(), ' hit points.')
+                    , $.what(rpc, ' heal'), $.who(rpc, 'self'), 'for ', hr.toString(), ' hit points.')
             }
             break
 
@@ -1390,10 +1396,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 br += $.dice(ba)
 
             if (backfire) {
-                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , $.what(rpc, ' blast')
-                    , rpc !== $.online ? $.who(rpc, 'him') + '\x08self' : 'yourself'
-                    , ' for ', br.toString(), ' hit points!\n')
+                xvt.outln(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' blast'), $.who(rpc, 'self'), 'for ', br.toString(), ' hit points!')
                 rpc.hp -= br
                 if (rpc.hp < 1) {
                     xvt.outln()
@@ -1414,8 +1418,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     }
                 }
                 xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , $.what(rpc, ' blast')
-                    , nme === $.online ? 'you' : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
+                    , $.what(rpc, ' blast'), nme === $.online ? 'you' : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
                     , ' for ', br.toString(), ' hit points!')
                 nme.hp -= br
 
@@ -1430,15 +1433,15 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                             : `fatal blast by a level ${rpc.user.level} ${rpc.user.handle}`
                     }
                 }
-                xvt.out('\n')
+                xvt.outln()
             }
             break
 
         case 10:
             if (backfire) {
                 rpc.hp = 0
-                xvt.out('You die by your own doing.\n')
-                $.reason = `resurrect backfired`
+                xvt.outln(xvt.faint, 'You die by your own doing.')
+                $.death(`resurrect backfired`)
                 break
             }
             else {
@@ -1447,9 +1450,12 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     if (DL.cleric.user.status) {
                         DL.cleric.user.status = ''
                         $.activate(DL.cleric)
-                        $.sound('winner')
-                        xvt.out('You raised the ', xvt.faint, xvt.yellow, DL.cleric.user.handle, xvt.reset, ' from the dead!\n')
+                        $.profile({ jpg:'npc/old cleric', effect:'fadeInUpBig' })
+                        xvt.waste(600)
+                        $.music('winner')
+                        xvt.outln(xvt.faint, 'You raise the ', xvt.yellow, DL.cleric.user.handle, xvt.reset, ' from the dead!')
                         $.PC.adjust('cha', 4, 2, 1)
+                        xvt.waste(600)
                         cb()
                         return
                     }
@@ -1459,6 +1465,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                         xvt.outln(xvt.bright, xvt.black, '\nGo get some coffee.')
                     }
                     else {
+                        $.PC.profile(opponent, 'fadeInUpBig')
                         xvt.out(xvt.magenta, xvt.bright, 'Now raising ', xvt.normal, opponent.user.handle, xvt.faint, ' from the dead ... ')
                         opponent.user.status = ''
                         $.saveUser(opponent)
@@ -1475,23 +1482,21 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
         case 11:
             $.sound('confusion')
             if (backfire) {
-                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , $.what(rpc, ' blitz')
-                    , rpc === $.online ? 'yourself' : $.who(rpc, 'him') + '\x08self'
-                    , ' with exploding ', xvt.bright
+                xvt.outln(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' blitz'), $.who(rpc, 'self'), ' with exploding ', xvt.bright
                     , xvt.red, 'c', xvt.yellow, 'o', xvt.green, 'l', xvt.cyan, 'o', xvt.blue, 'r', xvt.magenta, 's'
-                    , xvt.reset, '!\n')
+                    , xvt.reset, '!')
                 rpc.confused = true
                 rpc.int >>= 1
                 rpc.dex >>= 1
             }
             else {
-                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                xvt.outln(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' blitz')
                     , nme === $.online ? 'you' : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
                     , ' with exploding ', xvt.bright
                     , xvt.red, 'c', xvt.yellow, 'o', xvt.green, 'l', xvt.cyan, 'o', xvt.blue, 'r', xvt.magenta, 's'
-                    , xvt.reset, '!\n')
+                    , xvt.reset, '!')
                 nme.confused = true
                 nme.int >>= 1
                 nme.dex >>= 1
@@ -1505,7 +1510,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                         , $.what(rpc, ' transform'), $.who(rpc, 'his'), rpc.user.weapon, ' into')
                 else
-                    xvt.out('A new weapon materializes... it\'s')
+                    xvt.out(`A new weapon materializes... it's`)
                 let n = Math.round(($.dice(rpc.weapon.wc) + $.dice(rpc.weapon.wc)
                     + $.dice($.Weapon.merchant.length)) / 3)
                 if (++n > $.Weapon.merchant.length - 1)
@@ -1513,7 +1518,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 else
                     rpc.user.weapon = $.Weapon.merchant[n]
                 $.Weapon.equip(rpc, rpc.user.weapon)
-                xvt.out($.an(rpc.user.weapon.toString()), xvt.reset, '!\n')
+                xvt.outln($.an(rpc.user.weapon.toString()), '!')
                 $.saveUser(rpc)
             }
             else {
@@ -1521,7 +1526,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                         , $.what(rpc, ' transform'), $.who(nme, 'his'), nme.user.weapon, ' into')
                 else
-                    xvt.out('A new weapon materializes... it\'s')
+                    xvt.out(`A new weapon materializes... it's`)
                 let n = Math.round(($.dice(nme.weapon.wc) + $.dice(nme.weapon.wc)
                     + $.dice($.Weapon.merchant.length)) / 3)
                 if (++n > $.Weapon.merchant.length - 1)
@@ -1529,7 +1534,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 else
                     nme.user.weapon = $.Weapon.merchant[n]
                 $.Weapon.equip(nme, nme.user.weapon)
-                xvt.out($.an(nme.user.weapon.toString()), xvt.reset, '!\n')
+                xvt.outln($.an(nme.user.weapon.toString()), '!')
                 $.saveUser(nme)
             }
             xvt.waste(500)
@@ -1538,19 +1543,19 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
         case 13:
             $.sound('cure', 6)
             if (backfire) {
-                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                xvt.outln(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' cure')
                     , nme === $.online ? 'you' : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
-                    , '!\n')
+                    , '!')
                 nme.hp = nme.user.hp
             }
             else {
                 if (rpc === $.online) {
-                    xvt.out('You feel your vitality completed restored.\n')
+                    xvt.outln('You feel your vitality completed restored.')
                 }
                 else {
-                    xvt.out(rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                        , $.what(rpc, ' cure'), $.who(rpc, 'him'), '\x08self!\n')
+                    xvt.outln(rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                        , $.what(rpc, ' cure'), $.who(rpc, 'self'), '!')
                 }
                 rpc.hp = rpc.user.hp
             }
@@ -1581,8 +1586,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 iou.user.handle = `image of ${rpc.user.handle}`
                 iou.hp = Math.trunc(rpc.hp * (rpc.user.magic + 1) / 5)
                 parties[p].push(iou)
-                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , $.what(rpc, ' render'), 'an image of ', $.who(rpc, 'him'), '\x08self!\n')
+                xvt.outln(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' render'), 'an image of ', $.who(rpc, 'self'), '!')
             }
             xvt.waste(500)
             break
@@ -1590,19 +1595,17 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
         case 15:
             $.sound('disintegrate', 6)
             if (backfire) {
-                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , $.what(rpc, ' completely atomize')
-                    , $.who(rpc, 'him'), '\x08self!\n')
+                xvt.outln(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' completely atomize'), $.who(rpc, 'self'), '!')
                 rpc.hp = 0
                 if (rpc === $.online)
                     $.reason = `disintegrate backfired`
             }
             else {
                 nme.hp = 0
-                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , $.what(rpc, ' completely atomize')
-                    , nme === $.online ? 'you' : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
-                    , '!\n')
+                xvt.outln(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' completely atomize'), nme === $.online ? 'you' : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
+                    , '!')
             }
             xvt.waste(500)
             break
@@ -1618,9 +1621,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 rpc.altered = true
                 rpc.user.gender = ['F','M'][$.dice(2) - 1]
                 $.saveUser(rpc)
-                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , $.what(rpc, ' morph'), $.who(rpc, 'him'), '\x08self'
-                    , ` into a level ${rpc.user.level} ${rpc.user.pc}!\n`)
+                xvt.outln(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    , $.what(rpc, ' morph'), $.who(rpc, 'self'), `into a level ${rpc.user.level} ${rpc.user.pc}!`)
                 if (rpc.user.gender !== 'I') {
                     $.news(`\t${rpc.user.handle} morphed into a level ${rpc.user.level} ${rpc.user.pc}!`)
                     if (rpc !== $.online)
@@ -1636,10 +1638,10 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 nme.altered = true
                 nme.user.gender = ['F','M'][$.dice(2) - 1]
                 $.saveUser(nme)
-                xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                xvt.outln(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' morph')
                     , nme === $.online ? 'you' : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
-                    , ` into a level ${nme.user.level} ${nme.user.pc}!\n`)
+                    , ` into a level ${nme.user.level} ${nme.user.pc}!`)
                 if (nme.user.gender !== 'I') {
                     $.news(`\t${nme.user.handle} got morphed into a level ${nme.user.level} ${nme.user.pc}!`)
                     if (nme !== $.online)
@@ -1742,9 +1744,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             if (backfire) {
                 xvt.outln(rpc === $.online ? 'you'
                     : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
-                    , $.what(rpc, ' BLAST')
-                    , rpc !== $.online ? $.who(rpc, 'him') + '\x08self' : 'yourself'
-                    , ' for ', bbr.toString(), ' hit points!')
+                    , $.what(rpc, ' BLAST'), $.who(rpc, 'self'), 'for ', bbr.toString(), ' hit points!')
                 rpc.hp -= bbr
                 if (rpc.hp < 1) {
                     rpc.hp = 0
@@ -1831,7 +1831,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
         case 21:
             $.sound('life')
-            xvt.out(xvt.bright, xvt.black, 'A black finger extends and touches ', $.who(backfire ? rpc : nme, 'him'), ' ... ')
+            xvt.out(xvt.bright, xvt.black, `A black finger extends and touches ${$.who(backfire ? rpc : nme, 'him')}... `)
             xvt.waste(800)
             xvt.outln()
             let xp = 0
@@ -1839,27 +1839,27 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 xp = Math.trunc(rpc.user.xp / 2)
                 rpc.user.xp -= xp
                 nme.user.xp += (nme.user.level > rpc.user.level) ? xp : Math.trunc(nme.user.xp / 2)
-                xvt.out(nme === $.online ? 'You'
+                xvt.outln(nme === $.online ? 'You'
                     : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
                     , $.what(nme, ' absorb'), 'some life experience from ', rpc === $.online ? 'you'
                     : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
-                    , '.\n')
+                    , '.')
             }
             else {
                 xp = Math.trunc(nme.user.xp / 2)
                 nme.user.xp -= xp
                 rpc.user.xp += (rpc.user.level > nme.user.level) ? xp : Math.trunc(rpc.user.xp / 2)
-                xvt.out(rpc === $.online ? 'You'
+                xvt.outln(rpc === $.online ? 'You'
                     : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' absorb'), 'some life experience from ', nme === $.online ? 'you'
                     : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
-                    , '.\n')
+                    , '.')
             }
             break
 
         case 22:
             $.sound('lose')
-            xvt.out(xvt.bright, xvt.black, 'A shroud of blackness engulfs ', $.who(backfire ? rpc : nme, 'him'), ' ... ')
+            xvt.out(xvt.bright, xvt.black, `A shroud of blackness engulfs ${$.who(backfire ? rpc : nme, 'him')}... `)
             xvt.waste(800)
             xvt.outln()
             if (backfire && rpc.user.level > 1) {
@@ -1875,11 +1875,11 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     rpc.user.sp -= Math.round(rpc.user.level + $.dice(rpc.user.level) + rpc.user.int / 10 + (rpc.user.int > 90 ? rpc.user.int - 90 : 0))
 
                 nme.user.xp *= 2
-                xvt.out(nme === $.online ? 'You'
+                xvt.outln(nme === $.online ? 'You'
                     : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
                     , $.what(nme, ' gain'), 'an experience level off ', rpc === $.online ? 'you'
                     : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle
-                    , '.\n')
+                    , '.')
                 if ($.checkXP(nme, cb)) return
             }
             else if (!backfire && nme.user.level > 1) {
@@ -1895,11 +1895,11 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     nme.user.sp -= Math.round(nme.user.level + $.dice(nme.user.level) + nme.user.int / 10 + (nme.user.int > 90 ? nme.user.int - 90 : 0))
 
                 rpc.user.xp *= 2
-                xvt.out(rpc === $.online ? 'You'
+                xvt.outln(rpc === $.online ? 'You'
                     : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
                     , $.what(rpc, ' gain'), 'an experience level off ', nme === $.online ? 'you'
                     : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle
-                    , '.\n')
+                    , '.')
                 if ($.checkXP(rpc, cb)) return
             }
             else {
@@ -1920,7 +1920,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             }
             else {
                 $.sound('shield')
-                xvt.outln('A magical field glitters around ', isNaN(+rpc.user.armor) ? $.who(rpc, 'his') + rpc.user.armor : $.who(rpc, 'him') + '\x08', '.')
+                xvt.outln('A magical field glitters around ', isNaN(+rpc.user.armor) ? `${$.who(rpc, 'his')}${rpc.user.armor}` : `${$.who(rpc, 'him')}...`)
                 if (rpc.user.magic > 2 && rpc.user.toAC >= 0)
                     rpc.user.toAC++
                 rpc.toAC += $.dice(rpc.armor.ac)

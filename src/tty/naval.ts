@@ -59,7 +59,7 @@ function choice() {
 				break
 			}
 			if (!$.naval) {
-				xvt.out('\nYou have run out of battles.\n')
+				xvt.outln('\nYou have run out of battles.')
 				break
 			}
 			Battle.user('Battle', (opponent: active) => {
@@ -68,24 +68,24 @@ function choice() {
 					return
 				}
 				if (!opponent.user.hull) {
-					xvt.out(`\n${$.who(opponent, 'He')}doesn\'t have a ship.\n`)
+					xvt.outln(`\n${$.who(opponent, 'He')}doesn\'t have a ship.`)
 					menu(true)
 					return
 				}
 				if (!$.lock(opponent.user.id)) {
 					$.beep()
-					xvt.out(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
+					xvt.outln(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.`)
 					menu(true)
 					return
 				}
 
-				xvt.out(`\nYou sail out until you spot ${opponent.user.handle}\'s ship on the horizon.\n\n`)
-				xvt.out(`It has ${opponent.user.hull} hull points.\n`)
+				xvt.outln(`\nYou sail out until you spot ${opponent.user.handle}\'s ship on the horizon.\n`)
+				xvt.outln(`It has ${opponent.user.hull} hull points.`)
 
 				$.action('ny')				
 				xvt.app.form = {
 					'battle': { cb:() => {
-						xvt.out('\n\n')
+						xvt.outln('\n')
 						if (/Y/i.test(xvt.entry)) {
 							if ($.activate(opponent, true)) {
 								$.naval--
@@ -106,10 +106,10 @@ function choice() {
 			suppress = true
 			if (!$.access.roleplay) break
 			if (!$.player.hull) {
-				xvt.out('\nYou don\'t have a ship!\n')
+				xvt.outln(`\nYou don't have a ship!`)
 				break
 			}
-			xvt.out('\nIt is a fine day for sailing.  You cast your reel into the ocean and feel\n')
+			xvt.outln('\nIt is a fine day for sailing.  You cast your reel into the ocean and feel')
 			xvt.out('a gentle tug... ')
 			xvt.waste(600)
 			xvt.out('you caught a')
@@ -118,17 +118,18 @@ function choice() {
 			cast = (cast < 15) ? 15 : (cast > 100) ? 100 : cast >>0
 			let hook = $.dice(cast)
 			if (hook < 15) {
-				let floater = $.PC.encounter(`AND id NOT GLOB '_*'`).user
-				if (floater.id && floater.status) {
-					let leftby = <user>{ id:floater.status }
+				let floater = $.PC.encounter(`AND id NOT GLOB '_*'`)
+				if (floater.user.id && floater.user.status) {
+					let leftby = <user>{ id:floater.user.status }
 					if ($.loadUser(leftby)) {
+                        $.PC.profile(floater, 'fadeInUpBig')
 						xvt.out(' floating carcass!')
 						xvt.waste(500)
 						$.loadUser(floater)
-						xvt.out(`\nIt is ${floater.handle}'s body in the ocean left there by ${leftby.handle}, and\n`)
-						xvt.out(`you're able to bring the player back to an Alive! state.\n`)
-						$.run(`UPDATE Players set status='' WHERE id='${floater.id}'`)
-						$.news(`\trecovered ${floater.handle}'s body from the ocean`)
+						xvt.outln(`\nIt is ${floater.user.handle}'s body in the ocean left there by ${leftby.handle}, and`)
+						xvt.outln(`you're able to bring the player back to an Alive! state.`)
+						$.run(`UPDATE Players set status='' WHERE id='${floater.user.id}'`)
+						$.news(`\trecovered ${floater.user.handle}'s body from the ocean`)
 						menu()
 						return
 					}
@@ -627,22 +628,22 @@ function BattleUser(nme: active) {
 				case 'R':
 					if ($.player.ram) {
 						if (outmaneuvered(nme.int - $.online.int, nme.hull / $.online.hull)) {
-							xvt.out(`\n${$.who(nme, 'He')}quickly outmaneuvers your ship.\n`)
+							xvt.outln(`\n${$.who(nme, 'He')}quickly outmaneuvers your ship.`)
 							xvt.waste(400)
-							xvt.out(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
+							xvt.outln(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
 								[ 'Your aim is going to kill us all!'
 								, 'I said port, bastard, not starboard!'
 								, 'Get me my brown pants!'
 								, 'Someone throw this traitor overboard!'
 								, 'She\'s turning onto US now!' ][$.dice(5) - 1]
-								, xvt.cyan, '"\n')
+								, xvt.cyan, '"')
 							xvt.waste(600)
 						}
 						else {
 							damage = $.dice($.player.hull / 2) + $.dice($.online.hull / 2)
-							xvt.out(xvt.green, `\nYou ram ${$.who(nme, 'him')}for `
+							xvt.outln(xvt.green, `\nYou ram ${$.who(nme, 'him')}for `
 								, xvt.bright, `${damage}`
-								, xvt.normal, ` hull points of damage!\n`)
+								, xvt.normal, ` hull points of damage!`)
 							if ((nme.hull -= damage) < 1) {
 								booty()
 								menu()
@@ -652,10 +653,10 @@ function BattleUser(nme: active) {
 					}
 					else {
 						$.sound('oops')
-						xvt.out('\nYour first mate cries back, \"But we don\'t have a ram!\"\n')
+						xvt.outln(`\nYour first mate cries back, "But we don't have a ram!"`)
 						xvt.waste(2000)
 						$.sound('fire', 8)
-						xvt.out('You shoot your first mate.\n')
+						xvt.outln('You shoot your first mate.')
 						xvt.waste(800)
 					}
 					if (him()) {
@@ -665,9 +666,9 @@ function BattleUser(nme: active) {
 					break
 
 				case 'Y':
-					xvt.out(`\nHull points: ${$.online.hull}\n`)
-					xvt.out(`Cannons: ${$.player.cannon}\n`)
-					xvt.out(`Ram: ${$.player.ram ? 'Yes' : 'No'}\n`)
+					xvt.outln(`\nHull points: ${$.online.hull}`)
+					xvt.outln(`Cannons: ${$.player.cannon}`)
+					xvt.outln(`Ram: ${$.player.ram ? 'Yes' : 'No'}`)
 					break
 				}
 			xvt.app.refocus()

@@ -226,24 +226,24 @@ function choice() {
 			}
 			hi = $.player.hp - $.online.hp
 			if (hi < 1) {
-				xvt.out('\nYou don\'t need any hit points.\n')
+				xvt.outln(`\nYou don't need any hit points.`)
 				break
 			}
-			xvt.out('\nWelcome to Butler Hospital.\n\n')
-			xvt.out('Hit points cost ', $.player.level.toString(), ' each.\n')
-			xvt.out('You need ', hi.toString(), ' hit points.\n')
+			xvt.outln('\nWelcome to Butler Hospital.\n')
+			xvt.outln('Hit points cost ', $.player.level.toString(), ' each.')
+			xvt.outln('You need ', hi.toString(), ' hit points.')
 			lo = Math.trunc($.player.coin.value / $.player.level)
-			xvt.out('You can afford ', lo < hi ? lo.toString() : 'all your', ' hit points.\n')
+			xvt.outln('You can afford ', lo < hi ? lo.toString() : 'all your', ' hit points.')
 			if (lo < hi) {
 				if ($.player.novice)
-					xvt.out('Normally, you would be billed for the remaining ', (hi - lo).toString(), ' hit points.\n')
+					xvt.outln('Normally, you would be billed for the remaining ', (hi - lo).toString(), ' hit points.')
 				else
-					xvt.out('You can be billed for the remaining ', (hi - lo).toString(), ' hit points.\n')
+					xvt.outln('You can be billed for the remaining ', (hi - lo).toString(), ' hit points.')
 			}
 			$.action('listall')
 			xvt.app.form = {
 				'hp': { cb: () => {
-					xvt.out('\n')
+					xvt.outln()
 					let buy = Math.abs(Math.trunc(/=|max/i.test(xvt.entry) ? hi : +xvt.entry))
 					if (buy > 0 && buy <= hi) {
 						$.player.coin.value -= buy * $.player.level
@@ -257,7 +257,7 @@ function choice() {
                         }
 						$.online.hp += buy
 						$.beep()
-						xvt.out('\nHit points = ', $.online.hp.toString(), '\n')
+						xvt.outln('\nHit points = ', $.online.hp.toString())
 					}
 					menu()
 					return
@@ -272,25 +272,25 @@ function choice() {
 		case 'J':
 			if ($.bail) {
 				$.profile({ png:'npc/jailer', effect:'fadeIn' })
-				xvt.out('\nA deputy greets you in front of the County Jail.\n')
-				xvt.out('\"What ', ['cur','knave','scum','toad','villain'][$.dice(5) - 1],
-					' do you want to bail out?\"\n'
-				)
+				xvt.outln('\nA deputy greets you in front of the County Jail.')
+				xvt.waste(600)
+				xvt.outln(`"What `, ['cur', 'knave', 'scum', 'toad', 'villain'][$.dice(5) - 1]
+					, ` do you come for, ${$.access[$.player.gender]}?"`)
 				Battle.user('Bail', (opponent: active) => {
 					if (opponent.user.id === '') {
 						menu()
 						return
 					}
-					xvt.out('\n')
+					xvt.outln()
 					if (opponent.user.id === $.player.id) {
 						opponent.user.id = ''
-						xvt.out('You can\'t bail ', $.who(opponent, 'him'), 'out.\n')
+						xvt.outln(`You can't bail ${$.who(opponent, 'him')}out.`)
 						menu()
 						return
 					}
 					if (opponent.user.status !== 'jail') {
 						opponent.user.id = ''
-						xvt.out(`${opponent.user.handle} is not in jail.\n`)
+						xvt.outln(`${opponent.user.handle} is not in jail.`)
 						menu()
 						return
 					}

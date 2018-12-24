@@ -70,7 +70,7 @@ function choice() {
 
 		case 'J':
 			if (!$.joust) {
-				xvt.out('\nYou have run out of jousts.\n')
+				xvt.outln('\nYou have run out of jousts.')
 				suppress = true
 				break
 			}
@@ -79,14 +79,15 @@ function choice() {
 					menu()
 					return
 				}
+				xvt.outln()
 				if (opponent.user.id === $.player.id) {
 					opponent.user.id = ''
-					xvt.out('\nYou can\'t joust a wimp like', $.who(opponent, 'him'), '.\n')
+					xvt.outln(`You can't joust a wimp like `, $.who(opponent, 'him'))
 					menu()
 					return
 				}
 				if ($.player.level - opponent.user.level > 3) {
-					xvt.out('\nYou can only joust someone higher or up to three levels below you.\n')
+					xvt.outln('You can only joust someone higher or up to three levels below you.')
 					menu(true)
 					return
 				}
@@ -99,17 +100,17 @@ function choice() {
 				let pass = 0
 
 				if (!$.Access.name[opponent.user.access].roleplay || versus < 1 || opponent.user.level > 1 && (opponent.user.jw + 3 * opponent.user.level) < opponent.user.jl) {
-					xvt.out('That knight is out practicing right now.\n')
+					xvt.outln('That knight is out practicing right now.')
 					menu(true)
 					return
 				}
 
-				xvt.out('\nJousting ability:\n\n', xvt.bright)
-				xvt.out(xvt.green, sprintf('%-25s', opponent.user.handle), xvt.white, sprintf('%4d', versus), '\n')
-				xvt.out(xvt.green, sprintf('%-25s', $.player.handle), xvt.white, sprintf('%4d', ability), '\n')
+				xvt.outln('Jousting ability:\n')
+				xvt.outln(xvt.bright, xvt.green, sprintf('%-25s', opponent.user.handle), xvt.white, sprintf('%4d', versus))
+				xvt.outln(xvt.bright, xvt.green, sprintf('%-25s', $.player.handle), xvt.white, sprintf('%4d', ability))
 				xvt.outln()
 				if ((ability + factor * $.player.level) < (versus + 1)) {
-					xvt.out(opponent.user.handle, ' laughs rudely in your face!\n\n')
+					xvt.outln(opponent.user.handle, ' laughs rudely in your face!\n')
 					menu(true)
 					return
 				}
@@ -284,12 +285,12 @@ function choice() {
 				}
 				if (opponent.user.id === $.player.id) {
 					opponent.user.id = ''
-					xvt.out('\nYou can\'t fight a wimp like ', $.who(opponent, 'him'), '\n')
+					xvt.outln(`\nYou can't fight a wimp like `, $.who(opponent, 'him'))
 					menu()
 					return
 				}
 				if ($.player.level - opponent.user.level > 3) {
-					xvt.out('\nYou can only fight someone higher or up to three levels below you.\n')
+					xvt.outln('\nYou can only fight someone higher or up to three levels below you.')
 					menu()
 					return
 				}
@@ -305,23 +306,23 @@ function choice() {
 					else {
 						xvt.out(opponent.user.status)
 					}
-					xvt.out('.\n')
+					xvt.outln('.')
 					menu()
 					return
 				}
 				xvt.out(`is a level ${opponent.user.level} ${opponent.user.pc}`)
 				if (opponent.user.level !== opponent.user.xplevel)
 					xvt.out(' ', $.bracket(opponent.user.xplevel, false))
-				xvt.out('\n')
+				xvt.outln()
 
 				if ($.player.novice && !opponent.user.novice) {
-					xvt.out('You are allowed only to fight other novices.\n')
+					xvt.outln('You are allowed only to fight other novices.')
 					menu()
 					return
 				}
 
 				if (!$.Access.name[opponent.user.access].roleplay) {
-					xvt.out('You are allowed only to fight other players.\n')
+					xvt.outln('You are allowed only to fight other players.')
 					if (opponent.user.id[0] === '_') {
 						$.PC.adjust('cha', -1)
 						$.player.coward = true
@@ -332,7 +333,7 @@ function choice() {
 				}
 
 				if (!$.player.novice && opponent.user.novice) {
-					xvt.out('You are not allowed to fight novices.\n')
+					xvt.outln('You are not allowed to fight novices.')
 					menu()
 					return
 				}
@@ -344,13 +345,13 @@ function choice() {
 					return
 				}
 
-				if (isNaN(+opponent.user.weapon)) xvt.out('\n', $.who(opponent, 'He'), $.Weapon.wearing(opponent), '.\n')
-				if (isNaN(+opponent.user.armor)) xvt.out('\n', $.who(opponent, 'He'), $.Armor.wearing(opponent), '.\n')
+				if (isNaN(+opponent.user.weapon)) xvt.outln('\n', $.who(opponent, 'He'), $.Weapon.wearing(opponent), '.')
+				if (isNaN(+opponent.user.armor)) xvt.outln('\n', $.who(opponent, 'He'), $.Armor.wearing(opponent), '.')
 
 				$.action('ny')
 				xvt.app.form = {
 					'fight': { cb:() => {
-						xvt.out('\n\n')
+						xvt.outln('\n')
 						if (/Y/i.test(xvt.entry)) {
 							if ($.activate(opponent, true)) {
 								$.music('combat' + $.arena--)

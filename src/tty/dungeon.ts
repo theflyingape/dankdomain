@@ -653,10 +653,11 @@ function doMove(): boolean {
 			}
 			else {
 				ROOM.occupant = ''
+				xvt.out(xvt.bright, xvt.cyan, 'A fairie ')
 				if ($.dice(50 + Z - deep) > $.online.cha)
-					xvt.out(xvt.bright, xvt.cyan, 'A fairie flies by you.\n')
+					xvt.outln('flies by you.')
 				else {
-					xvt.out(xvt.bright, xvt.cyan, 'A fairie brushes by you.\n')
+					xvt.outln('brushes by you.')
 					$.sound('heal')
 					for (let i = 0; i <= Z; i++)
 						$.online.hp += $.dice($.int(DL.cleric.user.level / 9)) + $.dice($.int(Z / 9 + deep / 3))
@@ -666,10 +667,10 @@ function doMove(): boolean {
 							$.online.sp += $.dice($.int(DL.cleric.user.level / 9)) + $.dice($.int(Z / 9 + deep / 3))
 						if ($.online.sp > $.player.sp) $.online.sp = $.player.sp
 					}
-					if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
-						DL.cleric.sp += $.Magic.power(DL.cleric, 7)
-						if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
-					}
+				}
+				if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
+					DL.cleric.sp += $.Magic.power(DL.cleric, 7)
+					if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
 				}
 			}
 			break
@@ -1210,6 +1211,7 @@ function doMove(): boolean {
 			if (!DL.cleric.hp) {
 				xvt.outln(xvt.yellow, 'You find the ', xvt.white, 'bones'
 					, xvt.yellow, ' of an ', xvt.faint, 'old cleric', xvt.normal, '.')
+				xvt.waste(600)
 				xvt.outln('You pray for him.')
 				break
 			}
