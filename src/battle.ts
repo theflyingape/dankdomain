@@ -235,7 +235,7 @@ export function attack(retry = false) {
     let skip = $.Ring.power(enemy.user.rings, 'skip', 'pc', rpc.user.pc)
     if (skip.power && $.dice(16 - 2 * enemy.user.magic) > 1)
         skip.power = false
-    if (!skip.power && $.dice(enemy.dex) > 94 && $.dice(enemy.user.steal + 1) > $.dice(rpc.user.steal))
+    if (!skip.power && $.dice(enemy.dex) > 94 && $.dice(enemy.user.steal + 1) > $.dice(rpc.user.steal + 2))
         skip.power = true
     if (skip.power && !$.Ring.power(rpc.user.rings, 'ring').power) {
         let how = 'paralyze', color = xvt.magenta

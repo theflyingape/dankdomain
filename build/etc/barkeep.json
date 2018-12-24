@@ -23,5 +23,6 @@
     "spells": [ 7, 11, 13 ],
     "rings": [ "Atomic", "Champion", "Ogre", "Magus" ],
     "realestate": "Room above tavern",
-    "security": "Shotgun"
+    "security": "Shotgun",
+    "steal": 2
 }

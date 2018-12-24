@@ -1589,6 +1589,7 @@ function doSpoils() {
 						$.Magic.add(avenger.user.spells, ROOM.monster[n].monster.spells[magic])
 					for (let poison in ROOM.monster[n].monster.poisons)
 						$.Poison.add(avenger.user.poisons, ROOM.monster[n].monster.poisons[poison])
+					avenger.user.steal = 2
 					$.activate(avenger)
 					avenger.str = 99
 					avenger.int = 99
@@ -2407,12 +2408,14 @@ function putMonster(r = -1, c = -1): boolean {
 		if (dm.pc == '*') {		//	chaos
 			dm.pc = $.PC.random('monster')
 			m.user.handle += xvt.attr(' ', xvt.uline, 'avenger', xvt.nouline)
+			m.user.steal = 2
 		}
 		m.monster = dm
 		m.effect = dm.effect || 'pulse'
 
 		$.reroll(m.user, dm.pc ? dm.pc : $.player.pc, j)
 		if (m.user.xplevel) m.user.xplevel = level
+		if (!dm.pc) m.user.steal = $.player.steal + 1
 
 		if (dm.weapon)
 			m.user.weapon = dm.weapon
