@@ -274,7 +274,7 @@ function choice() {
 
 		case 'U':
 			if (!$.arena) {
-				xvt.out('\nYou have no more arena fights.\n')
+				xvt.outln('\nYou have no more arena fights.')
 				suppress = true
 				break
 			}
@@ -295,18 +295,17 @@ function choice() {
 					return
 				}
 
+				$.cat('player/' + opponent.user.pc.toLowerCase())
 				xvt.out(opponent.user.handle, ' ')
 
 				if (opponent.user.status.length) {
 					xvt.out('was defeated by ')
 					let rpc: active = { user: { id: opponent.user.status } }
-					if ($.loadUser(rpc)) {
-						xvt.out(rpc.user.handle, xvt.cyan, ' (', xvt.bright, xvt.white, opponent.user.xplevel.toString(), xvt.normal, xvt.cyan, ')', xvt.reset)
-					}
-					else {
+					if ($.loadUser(rpc))
+						xvt.out(rpc.user.handle, xvt.cyan, ' (', xvt.bright, xvt.white, opponent.user.xplevel.toString(), xvt.normal, xvt.cyan, ')')
+					else
 						xvt.out(opponent.user.status)
-					}
-					xvt.outln('.')
+					xvt.outln()
 					menu()
 					return
 				}

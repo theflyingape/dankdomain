@@ -611,38 +611,38 @@ function doMove(): boolean {
 	switch (ROOM.occupant) {
 		case 'trapdoor':
 			if ($.dice(100 - Z) > 1) {
-				xvt.out('You have stepped onto a trapdoor!\n\n')
+				xvt.outln('You have stepped onto a trapdoor!\n')
 				xvt.waste(300)
 				let u = ($.dice(127 + deep - ($.player.backstab <<1) - ($.player.steal <<2)) < $.online.dex)
 				for (let m = party.length - 1; m > 0; m--) {
 					if ($.dice(120) < party[m].dex)
-						xvt.out(xvt.reset, party[m].user.handle, ' manages to catch the edge and stop from falling.\n')
+						xvt.outln(party[m].user.handle, ' manages to catch the edge and stop from falling.')
 					else {
-						xvt.out(xvt.yellow, party[m].user.handle, xvt.bright, ' falls down a level!\n')
+						xvt.outln(xvt.yellow, party[m].user.handle, xvt.bright, ' falls down a level!')
 						if (u) party.splice(m, 1)
 					}
 					xvt.waste(300)
 				}
 				if (u) {
-					xvt.out(xvt.reset, 'You manage to catch the edge and stop yourself from falling.\n')
+					xvt.outln('You manage to catch the edge and stop yourself from falling.')
 					ROOM.occupant = ''
 				}
 				else {
 					party = []
 					party.push($.online)
-					xvt.out(xvt.bright, xvt.yellow, 'You fall down a level!\n', xvt.reset)
+					xvt.out(xvt.bright, xvt.yellow, 'You fall down a level!')
 					xvt.waste(600)
 					if ($.dice(100 + $.player.level - Z) > $.online.dex) {
 						if ($.dice($.online.cha / 10 + deep) <= (deep + 1))
 							$.player.toWC -= $.dice(Math.abs(Z - $.player.level))
 						$.online.toWC -= $.dice(Math.round($.online.weapon.wc / 10) + 1)
-						xvt.out(`Your ${$.player.weapon} is damaged from the fall!\n`)
+						xvt.outln(`Your ${$.player.weapon} is damaged from the fall!`)
 					}
 					if ($.dice(100 + $.player.level - Z) > $.online.dex) {
 						if ($.dice($.online.cha / 10 + deep) <= (deep + 1))
 							$.player.toAC -= $.dice(Math.abs(Z - $.player.level))
 						$.online.toAC -= $.dice(Math.round($.online.armor.ac / 10) + 1)
-						xvt.out(`Your ${$.player.armor} is damaged from the fall!\n`)
+						xvt.outln(`Your ${$.player.armor} is damaged from the fall!`)
 					}
 					Z++
 					generateLevel()

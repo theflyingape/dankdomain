@@ -1207,12 +1207,12 @@ export function playerPC(points = 200, immortal = false) {
         return
     }
 
-    xvt.out('You have been rerolled.  You must pick a class.', xvt.cyan, '\n\n')
+    xvt.outln('You have been rerolled.  You must pick a class.\n')
     xvt.waste(1500)
 
-    xvt.out('      Character        (Recommended abilities + bonus)\n')
-    xvt.out('        Class    Users   Str     Int     Dex     Cha       Special Feature\n')
-    xvt.out('      ---------   ---   -----   -----   -----   -----   ---------------------')
+    xvt.outln(xvt.lcyan, '      Character        (Recommended abilities + bonus)')
+    xvt.outln(xvt.lcyan, '        Class    Users   Str     Int     Dex     Cha       Special Feature')
+    xvt.outln(xvt.cyan,  '      ---------   ---   -----   -----   -----   -----   ---------------------')
 
     let classes = [ '' ]
     let n = 0
@@ -1239,13 +1239,11 @@ export function playerPC(points = 200, immortal = false) {
     xvt.app.focus = 'pc'
 
     function show() {
-        xvt.out('\n')
+        xvt.outln()
         cat('player/' + player.pc.toLowerCase())
-        xvt.out(xvt.bright, xvt.cyan)
         let rpc = PC.card(player.pc)
         for (let l = 0; l < rpc.description.length; l++)
-            xvt.out(rpc.description[l], '\n')
-        xvt.out(xvt.reset)
+            xvt.outln(xvt.bright, xvt.cyan, rpc.description[l])
     }
 
     function pick() {
@@ -1553,12 +1551,12 @@ export function riddle() {
 
     if (player.coward) {
         player.coward = false
-        xvt.out('Welcome back to play with the rest of us.\n')
+        xvt.outln('Welcome back to play with the rest of us.')
         xvt.waste(2000)
     }
 
     if (player.novice) {
-        xvt.out('You are no longer a novice.  Welcome to the next level of play.\n')
+        xvt.outln('You are no longer a novice.  Welcome to the next level of play.')
         player.novice = false
         player.expert = true
         xvt.waste(2000)

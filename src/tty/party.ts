@@ -499,15 +499,16 @@ function choice() {
                     xvt.app.focus = 'fight'
                 }, prompt:'\nFight which gang? ', max:2 },
                 'fight': { cb:() => {
-                    xvt.out('\n\n')
+                    xvt.outln('\n')
                     if (/Y/i.test(xvt.entry)) {
                         $.party--
                         $.music('party')
 
-                        $.cat('dungeon/' + nme[0].user.handle.toLowerCase())
-                        xvt.out(xvt.bright, xvt.magenta, nme[0].user.handle, xvt.reset
+                        if (!$.cat('dungeon/' + nme[0].user.handle.toLowerCase()))
+                            $.cat('player/' + nme[0].user.pc.toLowerCase())
+                        xvt.outln(xvt.bright, xvt.magenta, nme[0].user.handle, xvt.reset
                             , ' grins as ', $.who(nme[0], 'he'), 'pulls out '
-                            , $.who(nme[0], 'his'), nme[0].user.weapon, '.\n\n')
+                            , $.who(nme[0], 'his'), nme[0].user.weapon, '.\n')
                         xvt.waste(1200)
 
                         Battle.engage('Party', posse, nme, menu)
