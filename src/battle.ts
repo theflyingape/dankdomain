@@ -301,11 +301,11 @@ export function attack(retry = false) {
                     $.player.retreats++
                     let who = $.player.gender === 'F' ? 'She' : 'He'
                     xvt.outln(xvt.lblue, [
-                            'You are successful in your attempt to retreat.',
-                            'You limp away from the battle.',
-                            `You decide this isn't worth the effort.`,
-                            `You listen to the voice in your head yelling, "Run!"`,
-                            `You say, ${xvt.attr(xvt.cyan, "${who} who fights and runs away lives to fight another day!")}`
+                        'You are successful in your attempt to retreat.',
+                        'You limp away from the battle.',
+                        `You decide this isn't worth the effort.`,
+                        `You listen to the voice in your head yelling, ${xvt.bright, xvt.attr(xvt.red)}"Run!"`,
+                        `You say, ${xvt.attr(xvt.bright, xvt.cyan)}"${who} who fights and runs away lives to fight another day!"`
                         ][$.dice(5) - 1])
                     if ($.online.confused)
                         $.activate($.online, false, true)
