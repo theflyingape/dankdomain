@@ -256,8 +256,8 @@ export function attack(retry = false) {
             color = xvt.red
         }
         xvt.outln(xvt.faint, color, '>> ', xvt.normal
-            , xvt.bright, enemy == $.online ? 'You ' : ((enemy.user.gender === 'I' ? 'The ' : '') + enemy.user.handle)
-            , xvt.normal, ' ', $.what(enemy, how), enemy.user.gender === 'I' ? `the ${enemy.user.handle}` : $.who(rpc, 'him')
+            , xvt.bright, enemy == $.online ? 'You' : ((enemy.user.gender === 'I' ? 'The ' : '') + enemy.user.handle)
+            , xvt.normal, ' ', $.what(enemy, how), rpc.user.gender === 'I' ? `the ${enemy.user.handle}` : $.who(rpc, 'him')
             , xvt.faint, '<<')
         xvt.waste(600)
         next()
