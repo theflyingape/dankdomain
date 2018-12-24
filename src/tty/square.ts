@@ -339,7 +339,8 @@ function choice() {
 				if (!$.Magic.have($.player.spells, lo))
 					break
 			if (lo > $.Magic.merchant.length || !$.player.magic || !$.access.roleplay) {
-				xvt.out('says, "Get outta here!"\n')
+				xvt.outln('says, "Get outta here!"')
+				suppress = true
 				break
 			}
 			for (hi = max; hi > lo; hi--)
@@ -381,17 +382,17 @@ function choice() {
 			else
 				pocket.handle = 'somebody'
 
-			xvt.out('\n\nYou pick ', pocket.handle, '\'s pocket and steal ', credit.carry(), '!\n\n')
+			xvt.outln('\n\nYou pick ', pocket.handle, '\'s pocket and steal ', credit.carry(), '!\n')
 			xvt.waste(1000)
 			if ($.int(16 * $.player.steal + $.player.level / 10 + $.player.dex / 10) < $.dice(100)) {
 				$.player.status = 'jail'
 				$.player.xplevel = 0
-				$.reason = `caught picking ${pocket.handle}\'s pocket`
+				$.reason = `caught picking ${pocket.handle}'s pocket`
 				$.action('clear')
 				$.profile({ png:'npc/jailer', effect:'fadeIn' })
-				xvt.out('A guard catches you and throws you into jail!\n')
+				xvt.outln('A guard catches you and throws you into jail!')
 				$.sound('arrested', 20)
-				xvt.out('You might be released by your next call.\n\n')
+				xvt.outln('You might be released by your next call.\n')
 				xvt.waste(1000)
 				xvt.hangup()
 				return
@@ -400,6 +401,7 @@ function choice() {
 				$.beep()
 				$.player.coin.value += credit.value
 				if (pocket.id) $.saveUser(pocket)
+				suppress = true
 				break
 			}
 
@@ -444,14 +446,15 @@ function choice() {
 			return
 
 		case 'V':
-			xvt.out('\n', xvt.faint, '... you enter the back door of the shop ...\n', xvt.reset)
+			xvt.outln('\n', xvt.faint, '... you enter the back door of the shop ...')
 			xvt.out('The ', xvt.bright, xvt.magenta, 'apothecary ', xvt.reset)
 			max = $.Poison.merchant.length
 			for (lo = 1; lo <= max; lo++)
 				if (!$.Poison.have($.player.poisons, lo))
 					break
 			if (lo > $.Poison.merchant.length || !$.player.poison || !$.access.roleplay) {
-				xvt.out('says, "Get outta here!"\n')
+				xvt.outln('says, "Get outta here!"')
+				suppress = true
 				break
 			}
 			for (hi = max; hi > lo; hi--)

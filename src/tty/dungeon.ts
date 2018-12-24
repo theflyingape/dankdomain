@@ -630,7 +630,7 @@ function doMove(): boolean {
 				else {
 					party = []
 					party.push($.online)
-					xvt.out(xvt.bright, xvt.yellow, 'You fall down a level!')
+					xvt.outln(xvt.bright, xvt.yellow, 'You fall down a level!')
 					xvt.waste(600)
 					if ($.dice(100 + $.player.level - Z) > $.online.dex) {
 						if ($.dice($.online.cha / 10 + deep) <= (deep + 1))

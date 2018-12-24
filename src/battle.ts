@@ -233,8 +233,11 @@ export function attack(retry = false) {
 
     //  a frozen treat?
     let skip = $.Ring.power(enemy.user.rings, 'skip', 'pc', rpc.user.pc)
-    if (!skip.power && $.dice(100) == 100) skip.power = true
-    if (skip.power && !$.Ring.power(rpc.user.rings, 'ring').power && $.dice(16 - 2 * enemy.user.magic) == 1) {
+    if (skip.power && $.dice(16 - 2 * enemy.user.magic) > 1)
+        skip.power = false
+    if (!skip.power && $.dice(rpc.dex) > 94 && $.dice(rpc.user.steal) > $.dice(enemy.user.steal))
+        skip.power = true
+    if (skip.power && !$.Ring.power(rpc.user.rings, 'ring').power) {
         let how = 'paralyze', color = xvt.magenta
         if (enemy.user.pc == 'Lizard') {
             how = 'freeze'
@@ -249,7 +252,8 @@ export function attack(retry = false) {
             color = xvt.white
         }
         else if (enemy === $.online) {
-            how = ''
+            how = 'dodge'
+            color = xvt.red
         }
         xvt.outln(xvt.faint, color, '>> ', xvt.normal
             , xvt.bright, enemy == $.online ? 'You ' : ((enemy.user.gender === 'I' ? 'The ' : '') + enemy.user.handle)

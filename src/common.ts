@@ -2095,7 +2095,7 @@ export function wall(msg: string) {
     Object.assign(npc, require('./etc/sysop.json'))
     rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
     if (!rs.length) {
-        xvt.out(`[${npc.id}]`)
+        xvt.out(`[${npc.handle}]`)
         Object.assign(sysop, npc)
         newkeys(sysop)
         reroll(sysop, sysop.pc, sysop.level)
@@ -2103,54 +2103,16 @@ export function wall(msg: string) {
         sysop.level = npc.level
         saveUser(sysop, true)
     }
-    //  customize the Master of Whisperers NPC
-    npc = <user>{}
-    Object.assign(npc, require('./etc/barkeep.json'))
-    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
+
+    rs = query(`SELECT * FROM sqlite_master WHERE name='Rings' AND type='table'`)
     if (!rs.length) {
-        xvt.out(`[${npc.id}]`)
-        Object.assign(barkeep.user, npc)
-        newkeys(barkeep.user)
-        reroll(barkeep.user, barkeep.user.pc, barkeep.user.level)
-        Object.assign(barkeep.user, npc)
-        saveUser(barkeep, true)
+        xvt.out('\ninitializing (unique) rings ... ')
+        run(`CREATE TABLE IF NOT EXISTS Rings (name text PRIMARY KEY, bearer text)`)
+        xvt.out('done.')
+        xvt.waste(250)
     }
-    //  customize the Big Kahuna NPC
-    npc = <user>{}
-    Object.assign(npc, require('./etc/neptune.json'))
-    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
-    if (!rs.length) {
-        xvt.out(`[${npc.id}]`)
-        Object.assign(neptune.user, npc)
-        newkeys(neptune.user)
-        reroll(neptune.user, neptune.user.pc, neptune.user.level)
-        Object.assign(neptune.user, npc)
-        saveUser(neptune, true)
-    }
-    //  customize the Queen B NPC
-    npc = <user>{}
-    Object.assign(npc, require('./etc/seahag.json'))
-    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
-    if (!rs.length) {
-        xvt.out(`[${npc.id}]`)
-        Object.assign(seahag.user, npc)
-        newkeys(seahag.user)
-        reroll(seahag.user, seahag.user.pc, seahag.user.level)
-        Object.assign(seahag.user, npc)
-        saveUser(seahag, true)
-    }
-    //  customize the Master of Coin NPC
-    npc = <user>{}
-    Object.assign(npc, require('./etc/taxman.json'))
-    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
-    if (!rs.length) {
-        xvt.out(`[${npc.id}]`)
-        Object.assign(taxman.user, npc)
-        newkeys(taxman.user)
-        reroll(taxman.user, taxman.user.pc, taxman.user.level)
-        Object.assign(taxman.user, npc)
-        saveUser(taxman, true)
-    }
+    for (let i in Ring.name)
+        ringBearer(i)
 
     rs = query(`SELECT * FROM sqlite_master WHERE name='Gangs' AND type='table'`)
     if (!rs.length) {
@@ -2172,16 +2134,55 @@ export function wall(msg: string) {
         xvt.out('done.')
         xvt.waste(250)
     }
-
-    rs = query(`SELECT * FROM sqlite_master WHERE name='Rings' AND type='table'`)
+    
+    //  customize the Master of Whisperers NPC
+    npc = <user>{}
+    Object.assign(npc, require('./etc/barkeep.json'))
+    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
     if (!rs.length) {
-        xvt.out('\ninitializing (unique) rings ... ')
-        run(`CREATE TABLE IF NOT EXISTS Rings (name text PRIMARY KEY, bearer text)`)
-        xvt.out('done.')
-        xvt.waste(250)
+        xvt.out(`\n[${npc.handle}]`)
+        Object.assign(barkeep.user, npc)
+        newkeys(barkeep.user)
+        reroll(barkeep.user, barkeep.user.pc, barkeep.user.level)
+        Object.assign(barkeep.user, npc)
+        saveUser(barkeep, true)
     }
-    for (let i in Ring.name)
-        ringBearer(i)
+    //  customize the Big Kahuna NPC
+    npc = <user>{}
+    Object.assign(npc, require('./etc/neptune.json'))
+    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
+    if (!rs.length) {
+        xvt.out(`\n[${npc.handle}]`)
+        Object.assign(neptune.user, npc)
+        newkeys(neptune.user)
+        reroll(neptune.user, neptune.user.pc, neptune.user.level)
+        Object.assign(neptune.user, npc)
+        saveUser(neptune, true)
+    }
+    //  customize the Queen B NPC
+    npc = <user>{}
+    Object.assign(npc, require('./etc/seahag.json'))
+    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
+    if (!rs.length) {
+        xvt.out(`\n[${npc.handle}]`)
+        Object.assign(seahag.user, npc)
+        newkeys(seahag.user)
+        reroll(seahag.user, seahag.user.pc, seahag.user.level)
+        Object.assign(seahag.user, npc)
+        saveUser(seahag, true)
+    }
+    //  customize the Master of Coin NPC
+    npc = <user>{}
+    Object.assign(npc, require('./etc/taxman.json'))
+    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
+    if (!rs.length) {
+        xvt.out(`\n[${npc.handle}]`)
+        Object.assign(taxman.user, npc)
+        newkeys(taxman.user)
+        reroll(taxman.user, taxman.user.pc, taxman.user.level)
+        Object.assign(taxman.user, npc)
+        saveUser(taxman, true)
+    }
     
     xvt.outln()
 
