@@ -219,6 +219,7 @@ interface realestate {
 interface ring {
     unique: boolean
     description: string
+    emoji: string
     ability: [{
         id: string
         power: boolean

@@ -2638,7 +2638,7 @@ export function ringBearer(name: string): string {
 export function getRing(how: string, what: string) {
     xvt.out('You ', how, an(what, false))
     xvt.out(xvt.bright, xvt.cyan, what, xvt.normal)
-    if (xvt.emulation == 'XT') xvt.out(' 💍')
+    if (xvt.emulation == 'XT') xvt.out(' ', Ring.name[what].emoji, ' 💍')
     xvt.outln(' ring', xvt.white, ', which can')
     xvt.outln(Ring.name[what].description)
 }

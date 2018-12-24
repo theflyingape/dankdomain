@@ -23,7 +23,7 @@ module Email
 
 export function newuser() {
     xvt.beep()
-    xvt.out('\n\nYour account requires a validated e-mail address.\n')
+    xvt.outln('\n\nYour account requires a validated e-mail address.')
     xvt.app.focus = 'email'
 }
 
@@ -42,7 +42,7 @@ function check() {
     let check = xvt.entry.toLowerCase()
     if ($.player.email !== check) {
         xvt.beep()
-        xvt.out('\nYour entries do not match -- try again\n')
+        xvt.outln('\nYour entries do not match -- try again')
         xvt.app.focus = 'email'
         return
     }
@@ -79,7 +79,7 @@ export function resend() {
         let check = xvt.entry.toLowerCase()
         if ($.player.email !== check) {
             xvt.beep()
-            xvt.out('\nYour entry does not match what is registered.\n')
+            xvt.outln('\nYour entry does not match what is registered.')
             xvt.hangup()
         }
         try {
@@ -99,12 +99,12 @@ export async function Deliver(player: user, what: string, repeat: boolean, mailO
     if ($.player.email !== $.sysop.email)
         await Message(player, mailOptions)
     else {
-        xvt.out(' ...skipping delivery... \nCheck SQLite3 table for relevant information.\n')
+        xvt.outln(' ...skipping delivery... \nCheck SQLite3 table for relevant information.')
         xvt.out(`select id,handle,access,password from Players where id='${player.id}';`)
         if ($.reason.length)
             $.saveUser(player, true)
     }
-    xvt.out('\n')
+    xvt.outln()
     $.music('.')
     xvt.waste(1000)
     $.logoff()
@@ -129,12 +129,12 @@ async function Message(player: user, mailOptions: nodemailer.SendMailOptions) {
         else {
             smtp.sendMail(mailOptions, (error, info) => {
                 if (error) {
-                    xvt.out(xvt.reset, '\nEmail Deliver Message to ', player.handle, '\n', error,'\n')
+                    xvt.outln(xvt.reset, '\nEmail Deliver Message to ', player.handle, '\n', error)
                     if (echo) {
                         player.id = ''
                         player.email = ''
-                        xvt.out('\nSorry -- your user registration was aborted.\n')
-                        xvt.out('Please contact the sysop with this error message.\n')
+                        xvt.outln('\nSorry -- your user registration was aborted.')
+                        xvt.outln('Please contact the sysop with this error message.')
                     }
                     result = false
                 }
@@ -143,7 +143,7 @@ async function Message(player: user, mailOptions: nodemailer.SendMailOptions) {
                     if ($.reason.length) {
                         $.saveUser(player, true)
                         if (echo)
-                            xvt.out('\nYour user ID (', xvt.bright, player.id, xvt.normal, ') was saved, ', $.Access.name[player.access][player.gender], '.\n')
+                            xvt.outln('\nYour user ID (', xvt.bright, player.id, xvt.normal, ') was saved, ', $.Access.name[player.access][player.gender], '.')
                     }
                     result = true
                 }

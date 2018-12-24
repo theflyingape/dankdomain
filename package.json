@@ -43,11 +43,11 @@
   "homepage": "https://DDgame.us",
   "dependencies": {
     "animate.css": "^3.7.0",
-    "better-sqlite3": "^5.0.1",
+    "better-sqlite3": "^5.2.1",
     "express": "^4.16.4",
     "fs-extra": "^7.0.1",
     "got": "^9.4.0",
-    "node-pty": "^0.7.8",
+    "node-pty": "^0.8.0",
     "nodemailer": "^4.7.0",
     "nodemailer-smtp-transport": "^2.7.4",
     "sprintf-js": "^1.1.2",
@@ -57,7 +57,7 @@
     "xvt": "^1.0.27"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^5.0.1",
+    "@types/better-sqlite3": "^5.2.1",
     "@types/express": "^4.16.0",
     "@types/fs-extra": "^5.0.4",
     "@types/node": "^10.12.15",

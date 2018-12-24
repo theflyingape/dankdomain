@@ -2,6 +2,7 @@
     "Atomic": {
         "unique": true,
         "description":"resist all transforming attacks",
+        "emoji":"⚛️",
         "ability":[
             { "id":"resist", "power":true, "spell":"Transmute" },
             { "id":"resist", "power":true, "spell":"Disintegrate" },
@@ -13,6 +14,7 @@
     "Augmenting": {
         "unique": false,
         "description":"enhance active level of ability",
+        "emoji":"🆙",
         "ability":[
             { "id":"upgrade", "power":true }
         ]
@@ -20,6 +22,7 @@
     "Champion": {
         "unique": false,
         "description":"enhance lance handling",
+        "emoji":"🦄",
         "ability":[
             { "id":"joust", "power":true },
             { "id":"upgrade", "power":true, "ability":"dex" }
@@ -28,6 +31,7 @@
     "Cursed": {
         "unique": false,
         "description":"lessen active level of ability",
+        "emoji":"😠",
         "ability":[
             { "id":"degrade", "power":true }
         ]
@@ -35,6 +39,7 @@
     "Detection": {
         "unique": false,
         "description":"identify all potions and rings",
+        "emoji":"🔎",
         "ability":[
             { "id":"identify", "power":true }
         ]
@@ -42,6 +47,7 @@
     "Elven": {
         "unique": false,
         "description":"enhance dexterous speed attacks",
+        "emoji":"🧝",
         "ability":[
             { "id":"upgrade", "power":true, "ability":"dex" },
             { "id":"skip", "power":true, "pc":"Barbarian" },
@@ -52,6 +58,7 @@
     "Faith": {
         "unique": true,
         "description":"life-steal hit points; added mana-steal for Cleric, Paladin, and God classes",
+        "emoji":"✝️",
         "ability":[
             { "id":"degrade", "power":true, "pc":"Undead" },
             { "id":"hp", "power":true },
@@ -64,6 +71,7 @@
     "Forbiddance": {
         "unique": false,
         "description":"prevent an opponent from teleporting away",
+        "emoji":"🧿",
         "ability":[
             { "id":"resist", "power":true, "spell":"Teleport" }
         ]
@@ -71,6 +79,7 @@
 	"Hell's Fury": {
         "unique": false,
         "description":"enhance fighting ability, except for Cleric, Paladin, and God classes or against Demons",
+        "emoji":"👿",
         "ability":[
             { "id":"melee", "power":true },
             { "id":"melee", "power":false, "pc":"Demon" },
@@ -82,6 +91,7 @@
     "Infinity": {
         "unique": true,
         "description":"neutralize opponent's rings and enhance your rings",
+        "emoji":"♾️",
         "ability":[
             { "id":"resist", "power":true, "spell":"Teleport" },
             { "id":"ring", "power":true }
@@ -90,6 +100,7 @@
     "Lucky": {
         "unique": false,
         "description":"enhance charisma ability",
+        "emoji":"🍀",
         "ability":[
             { "id":"upgrade", "power":true, "ability":"cha" }
         ]
@@ -97,6 +108,7 @@
     "Magus": {
         "unique": false,
         "description":"enhance defense against mortal-made attack spells, not incantations",
+        "emoji":"🎱",
         "ability":[
             { "id":"cast", "power":true, "magic":1 },
             { "id":"cast", "power":true, "magic":2 },
@@ -108,6 +120,7 @@
 	"Medusa's": { 
         "unique": true,
         "description":"freeze opponent, except against Magus-level spellcasters; a Titan's weapon",
+        "emoji":"🐍",
         "ability":[
             { "id":"melee", "power":true, "pc":"Titan" },
             { "id":"skip", "power":true },
@@ -118,6 +131,7 @@
     "Moon": {
         "unique": false,
         "description":"absorb mana from opponent, but reverses that against an Undead",
+        "emoji":"🌓",
         "ability":[
             { "id":"sp", "power":true },
             { "id":"sp", "power":false, "pc":"Undead" }
@@ -126,6 +140,7 @@
     "Mystic Portal": {
         "unique": true,
         "description":"teleport, anytime, at some personal cost",
+        "emoji":"🕳️",
         "ability":[
             { "id":"teleport", "power":true },
             { "id":"degrade", "power":true, "ability":"str" },
@@ -135,6 +150,7 @@
     "Nobility": {
         "unique": false,
         "description":"exempt bearer from taxes to the Crown",
+        "emoji":"💸",
         "ability":[
             { "id":"taxes", "power":true },
             { "id":"upgrade", "power":true, "ability":"cha" }
@@ -143,6 +159,7 @@
 	"Ogre": { 
         "unique": true,
         "description":"add power to melee attacks",
+        "emoji":"👹",
         "ability":[
             { "id":"melee", "power":true },
             { "id":"upgrade", "power":true, "ability":"str" }
@@ -151,6 +168,7 @@
 	"Shade": { 
         "unique": false,
         "description":"enhance stealth ability for 1st swing and stealing, at some personal cost",
+        "emoji":"⚡",
         "ability":[
             { "id":"initiate", "power":true },
             { "id":"steal", "power":true },
@@ -161,6 +179,7 @@
 	"Undying": { 
         "unique": true,
         "description":"allow for necromancing; augments the Undead",
+        "emoji":"🖤",
         "ability":[
             { "id":"degrade", "power":true, "pc":"Cleric" },
             { "id":"degrade", "power":true, "pc":"Paladin" },
@@ -176,6 +195,7 @@
     "White Wizard": {
         "unique": true,
         "description":"enhance defense against all attack spells",
+        "emoji":"⚪",
         "ability":[
             { "id":"cast", "power":true },
             { "id":"teleport", "power":true },
