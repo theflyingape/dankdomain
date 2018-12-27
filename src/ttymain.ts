@@ -24,10 +24,11 @@ module ttyMain
     xvt.sessionAllowed = 150
     xvt.defaultTimeout = 100
     xvt.pollingMS = 20
-    if (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM))          xvt.emulation = 'dumb'
-    else if (/^linux|^lisa|^ncsa|^pcvt|^vt/i.test(process.env.TERM))    xvt.emulation = 'VT'
-    else if (/ansi|cygwin|^pc/i.test(process.env.TERM))                 xvt.emulation = 'PC'
-    else                                                                xvt.emulation = ''
+
+    xvt.emulation = (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM)) ? 'dumb'
+        : (/^linux|^lisa|^ncsa|^pcvt|^vt|^xt/i.test(process.env.TERM)) ? 'VT'
+        : (/ansi|cygwin|^pc/i.test(process.env.TERM)) ? 'PC'
+        : ''
     if ((xvt.modem = xvt.validator.isEmpty(process.env.REMOTEHOST)))
         xvt.outln(xvt.reset, '\n', xvt.bright
             , xvt.red,      'C'
@@ -60,7 +61,7 @@ module ttyMain
     if (!xvt.emulation && process.argv.length < 3)
         xvt.app.focus = 'enq1'
     else {
-        xvt.emulation = xvt.emulation || process.argv[2].toUpperCase()
+        xvt.emulation = process.argv[2].toUpperCase()
     //  initiate user login sequence: id, handle, or a new registration
         require('./tty/logon')
     }

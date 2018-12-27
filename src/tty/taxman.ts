@@ -73,7 +73,9 @@ export function cityguards() {
     if (checkpoint($.player.coin.value + $.player.bank.value)) {
         let exempt = $.Ring.power($.player.rings, 'taxes')
         if (exempt.power) {
-            xvt.outln('\nYour hand extends to show', xvt.cyan, xvt.bright, $.an(exempt.name), xvt.normal, ' ring.')
+            xvt.out('\nYour hand extends to show', xvt.cyan, xvt.bright, $.an(exempt.name), xvt.normal)
+            if (xvt.emulation == 'XT') xvt.out(' ', $.Ring.name[exempt.name].emoji, ' 💍')
+            xvt.outln(' ring.')
             xvt.waste(1500)
             xvt.out(xvt.yellow, xvt.bright, $.taxman.user.handle, xvt.normal, ' ')
             if ($.dice(100) < ($.online.cha - 10)) {
@@ -92,7 +94,7 @@ export function cityguards() {
         $.action('yn')
         xvt.app.form = {
             'tax': { cb:() => {
-                xvt.out('\n\n')
+                xvt.outln('\n')
                 if (/Y/i.test(xvt.entry)) {
                     xvt.outln('You pay the tax.')
                     $.sound('thief2', 16)

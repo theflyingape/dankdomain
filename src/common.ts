@@ -1803,7 +1803,9 @@ export function who(rpc: active, word: string): string {
         he:  { M:'he ',  F:'she ', I:'it ',  U:'you '  },
         him: { M:'him ', F:'her ', I:'it ',  U:'you '  },
         his: { M:'his ', F:'her ', I:'its ', U:'your ' },
-        self:{ M:'himself ', F:'herself ', I:'itself ', U:'yourself ' }
+        self:{ M:'himself ', F:'herself ', I:'itself ', U:'yourself ' },
+        You: { M:rpc.user.handle, F:rpc.user.handle, I:`The ${rpc.user.handle}`, U:'You'},
+        you: { M:rpc.user.handle, F:rpc.user.handle, I:`the ${rpc.user.handle}`, U:'you'}
     }
 
     let gender = rpc == online ? 'U' : rpc.user.gender
