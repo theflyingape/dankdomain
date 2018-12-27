@@ -5,6 +5,7 @@ type GIFT = '' | 'armor' | 'chest' | 'magic' | 'map' | 'poison' | 'potion' | 'ri
 type MAP = '' | 'map' | 'magic map' | 'Marauder\'s map'
 type NPC = '' | 'cleric' | 'wizard' | 'trapdoor' | 'thief' | 'portal' | 'well' | 'wheel' | 'dwarf'
 type ROOM = '' | 'n-s' | 'w-e' | 'cavern'
+type TTY = 'rlogin' | 'telnet' | 'web'
 
 interface caller {
     who?: string

@@ -7,24 +7,31 @@ import fs = require('fs')
 import xvt = require('xvt')
 
 import $ = require('../common')
-import Email = require('../email')
-import Taxman = require('./taxman')
 
 
 module Logon
 {
-    if (!xvt.emulation.match('VT|PC|XT'))
-        xvt.emulation = 'VT'
-
-    let title = process.title + ' (' + xvt.emulation + ')'
-    if (xvt.emulation !== 'VT')
-        xvt.out('\x1B]2;', title, '\x07')
+    switch (xvt.emulation) {
+    case 'PC':
+        $.tty = 'rlogin'
+        break
+    case 'VT':
+        $.tty = 'telnet'
+        break
+    case 'XT':
+        $.tty = 'web'
+        break
+    default:
+        $.tty = 'telnet'
+        xvt.emulation = 'dumb'
+    }
 
     process.stdin.setEncoding(xvt.emulation == 'XT' ? 'utf8' : 'ascii')
-    xvt.out(xvt.bright, xvt.cyan, xvt.emulation
+//  xvt.out('\x1B]2;', process.title, '\x07')
+    xvt.outln(xvt.bright, xvt.cyan, xvt.emulation
         , xvt.normal, ' emulation '
-        , xvt.faint, 'enabled'
-        , xvt.reset, '\n\f')
+        , xvt.faint, 'enabled')
+    xvt.out('\f')
 
     $.loadUser($.sysop)
     if ($.sysop.lastdate != $.now().date)
@@ -413,7 +420,7 @@ function welcome() {
             )
             $.cat('auto-message')
 
-            Taxman.cityguards()
+            require('./taxman').cityguards()
         }, pause:true }
     }
     xvt.app.focus = 'pause'

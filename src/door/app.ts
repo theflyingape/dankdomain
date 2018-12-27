@@ -63,7 +63,7 @@ dns.lookup('localhost', (err, addr, family) => {
     process.env.SSH_CLIENT = client
     let cols = parseInt(req.query.cols)
     let rows = parseInt(req.query.rows)
-    let term = pty.spawn('sh', [ "-l", "../logins.sh" ], {
+    let term = pty.spawn('sh', [ "-l", "../logins.sh", "XT" ], {
           name: 'xterm-256color',
           cols: cols || 80,
           rows: rows || 24,

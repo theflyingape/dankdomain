@@ -344,7 +344,8 @@ export function menu(suppress = false) {
 		}
 	}
 
-	xvt.out('\x06')     //  insert any wall messages here
+	//  insert any wall messages here
+	if ($.tty == 'web') xvt.out('\x06')
 
 	//	user input
 	xvt.app.form = {

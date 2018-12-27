@@ -15,12 +15,21 @@ module NewUser
 	$.profile({ png:'npc/city_guard_1', effect:'bounceInLeft' })
 	xvt.out(xvt.clear)
 
-	xvt.out(xvt.yellow, '     --=:) ', xvt.bright, 'New User Registration', xvt.normal, ' (:=--\n')
-	xvt.out($.bracket(1), xvt.cyan, 'Player\'s Handle:')
-	xvt.out($.bracket(2), xvt.cyan, 'Your REAL Name.:')
-	xvt.out($.bracket(3), xvt.cyan, 'Date of Birth..:')
-	xvt.out($.bracket(4), xvt.cyan, 'Gender (M/F)...:')
-	
+	if ($.tty == 'rlogin') {
+		xvt.outln(xvt.blue, '     --=:) ', xvt.bright, 'New BBS Registration', xvt.normal, ' (:=--')
+		xvt.out($.bracket(1), xvt.cyan, 'This BBS Name.:')
+		xvt.out($.bracket(2), xvt.cyan, 'The Sysop Name:')
+		xvt.out($.bracket(3), xvt.cyan, 'BBS Start Date:')
+		xvt.out($.bracket(4), xvt.cyan, 'NPC Gender (I):')
+	}
+	else {
+		xvt.outln(xvt.yellow, '     --=:) ', xvt.bright, 'New User Registration', xvt.normal, ' (:=--')
+		xvt.out($.bracket(1), xvt.cyan, `Player's Handle:`)
+		xvt.out($.bracket(2), xvt.cyan, 'Your REAL Name.:')
+		xvt.out($.bracket(3), xvt.cyan, 'Date of Birth..:')
+		xvt.out($.bracket(4), xvt.cyan, 'Gender (M/F)...:')
+	}
+
 	xvt.app.form = {
 		1: { cb:handle, row:3, col:23, min:2, max:22, match:/^[A-Z][A-Z\s]*$/i },
 		2: { cb:name, row:4, col:23, min:5, max:32, match:/^[A-Z][A-Z\s]*$/i },

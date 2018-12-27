@@ -12,6 +12,9 @@ import Items = require('./items')
 
 module Common
 {
+    //  mode of operation
+    export let tty: TTY
+
     //  items
     export const Abilities = [ 'str', 'int', 'dex', 'cha' ]
     export const Access = new Items.Access
@@ -1906,7 +1909,8 @@ export function display(title:string, back:number, fore:number, suppress:boolean
     if (hint && access.roleplay && dice(+player.expert * (player.immortal + 1) * player.level) == 1)
         xvt.out('\n', xvt.bright, xvt.green, hint, xvt.reset)
 
-    xvt.out('\x06')     //  insert any wall messages here
+     //  insert any wall messages here
+    if (tty == 'web') xvt.out('\x06')
 
     return xvt.attr(fore, '[', xvt.bright, xvt.yellow, back ? titlecase(title) : 'Iron Bank', xvt.normal, fore, ']'
         , xvt.faint, ' Option '
@@ -1990,7 +1994,7 @@ export function logoff() {
             sound(online.hull ? 'comeagain' : 'invite')
             PC.profile(online)
         }
-        xvt.outln('\x06')
+        if (tty == 'web') xvt.outln('\x06')
         xvt.outln('Goodbye, please play again!  Also visit:')
         xvt.waste(750)
         xvt.out(xvt.cyan, '  ___                               ___  \n')

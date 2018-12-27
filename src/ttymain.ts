@@ -29,7 +29,7 @@ module ttyMain
     else if (/ansi|cygwin|^pc/i.test(process.env.TERM))                 xvt.emulation = 'PC'
     else                                                                xvt.emulation = ''
     if ((xvt.modem = xvt.validator.isEmpty(process.env.REMOTEHOST)))
-        xvt.outln('\n', xvt.bright
+        xvt.outln(xvt.reset, '\n', xvt.bright
             , xvt.red,      'C'
             , xvt.yellow,   'A'
             , xvt.green,    'R'
