@@ -25,7 +25,7 @@ module ttyMain
     xvt.defaultTimeout = 100
     xvt.pollingMS = 20
 
-    xvt.emulation = process.argv.length > 2 ? process.argv[2].toUpperCase()
+    xvt.emulation = process.argv.length > 2 && process.argv[2] ? process.argv[2].toUpperCase()
         : (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM)) ? 'dumb'
         : (/^linux|^lisa|^ncsa|^pcvt|^vt|^xt/i.test(process.env.TERM)) ? 'VT'
         : (/ansi|cygwin|^pc/i.test(process.env.TERM)) ? 'PC'
