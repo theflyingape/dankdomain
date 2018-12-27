@@ -25,7 +25,8 @@ module ttyMain
     xvt.defaultTimeout = 100
     xvt.pollingMS = 20
 
-    xvt.emulation = (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM)) ? 'dumb'
+    xvt.emulation = process.argv.length > 2 ? process.argv[2].toUpperCase()
+        : (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM)) ? 'dumb'
         : (/^linux|^lisa|^ncsa|^pcvt|^vt|^xt/i.test(process.env.TERM)) ? 'VT'
         : (/ansi|cygwin|^pc/i.test(process.env.TERM)) ? 'PC'
         : ''
@@ -58,13 +59,11 @@ module ttyMain
         }, prompt:'\x05', enq:true }
     }
 
-    if (!xvt.emulation && process.argv.length < 3)
+    //  old-school enquire the terminal to identify itself
+    if (!xvt.emulation)
         xvt.app.focus = 'enq1'
-    else {
-        xvt.emulation = process.argv[2].toUpperCase()
-    //  initiate user login sequence: id, handle, or a new registration
+    else
         require('./tty/logon')
-    }
 }
 
 export = ttyMain
