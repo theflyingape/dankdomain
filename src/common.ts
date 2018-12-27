@@ -2022,22 +2022,18 @@ export function logoff() {
 }
 
 export function action(menu: string) {
-    if (!xvt.modem) return
-    xvt.out('@action(', menu, ')')
+    if (tty == 'web') xvt.out('@action(', menu, ')')
 }
 
 export function animated(effect: string) {
-    if (!xvt.modem) return
-    xvt.out('@animated(', effect, ')')
+    if (tty == 'web') xvt.out('@animated(', effect, ')')
 }
 
 export function music(tune: string) {
-    if (!xvt.modem) return
-    xvt.out('@tune(', tune, ')')
+    if (tty == 'web') xvt.out('@tune(', tune, ')')
 }
 
 export function profile(params) {
-    if (!xvt.modem) return
 /*
     let result = { }
     params.forEach(x => {
@@ -2045,16 +2041,16 @@ export function profile(params) {
         result[a[0]] = a[1]
     })
 */
-    xvt.out('@profile(', JSON.stringify(params), ')')
+    if (tty == 'web') xvt.out('@profile(', JSON.stringify(params), ')')
 }
 
 export function sound(effect: string, sync = 2) {
-    if (xvt.modem) xvt.out('@play(', effect, ')')
+    if (tty == 'web') xvt.out('@play(', effect, ')')
     xvt.waste(sync * 100)
 }
 
 export function wall(msg: string) {
-    if (xvt.modem) xvt.out(`@wall(${player.handle} ${msg})`)
+    if (tty == 'web') xvt.out(`@wall(${player.handle} ${msg})`)
 }
 
 /***********
