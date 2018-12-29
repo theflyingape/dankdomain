@@ -139,21 +139,16 @@ export function menu(suppress = false) {
 
 	if ($.online.altered) $.saveUser($.player)
 	if ($.reason) {
-		xvt.save()
-		xvt.out(`\x1B[1;${$.player.rows}r`)
-		xvt.restore()
+		scroll()
 		xvt.hangup()
 	}
 
 //	did player cast teleport?
 	if (!Battle.retreat && Battle.teleported) {
-		Battle.teleported = false
+		scroll()
 		xvt.outln(xvt.bright, xvt.magenta, 'You open a mystic portal.\n')
 		xvt.waste(300)
-		xvt.save()
-		xvt.out(`\x1B[1;${$.player.rows}r`)
-		xvt.restore()
-		refresh = true
+		Battle.teleported = false
 		teleport()
 		return
 	}
@@ -283,7 +278,7 @@ export function menu(suppress = false) {
 		let rng = $.dice(16)
 		if (rng > 8) {
 			if ($.tty == 'web') xvt.out(' 🦇  ')
-			xvt.out(xvt.faint, 'A bat flies by and soils your ')
+			xvt.out(xvt.faint, 'A bat flies by and soils your ', xvt.normal)
 			$.sound('splat', 4)
 			$.player.toAC -= $.dice(deep)
 			xvt.out($.player.armor, $.buff($.player.toAC, $.online.toAC))
@@ -337,9 +332,7 @@ export function menu(suppress = false) {
 		}
 		xvt.outln()
 		if ($.reason) {
-			xvt.save()
-			xvt.out(`\x1B[1;${$.player.rows}r`)
-			xvt.restore()
+			scroll()
 			xvt.hangup()
 		}
 	}
@@ -419,7 +412,7 @@ function command() {
 		menu(false)
 		return
 	}
-	xvt.out('\n')
+	xvt.outln()
 
     switch (choice) {
 	case 'M':	//	#tbt
@@ -530,10 +523,7 @@ function doMove(): boolean {
 	//	monsters?
 	if (ROOM.monster.length) {
 		$.action('battle')
-		xvt.save()
-		xvt.out(`\x1B[1;${$.player.rows}r`)
-		xvt.restore()
-		refresh = true
+		scroll()
 
 		if (ROOM.monster.length == 1) {
 			xvt.outln(`There's something lurking in here . . .`)
@@ -700,9 +690,7 @@ function doMove(): boolean {
 			return false
 
 		case 'well':
-			xvt.save()
-			xvt.out(`\x1B[1;${$.player.rows}r`)
-			xvt.restore()
+			scroll()
 			$.music('well')
 			xvt.waste(600)
 			xvt.outln(xvt.magenta, 'You have found a legendary Wishing Well.')
@@ -816,10 +804,8 @@ function doMove(): boolean {
 
 					case 'O':
 						$.sound('teleport')
-						xvt.save()
-						xvt.out(`\x1B[1;${$.player.rows}r`)
-						xvt.restore()
-						xvt.out('\n')
+						scroll()
+						xvt.outln()
 						fini()
 						return
 
@@ -947,7 +933,6 @@ function doMove(): boolean {
 					}
 					xvt.outln()
 					pause = true
-					refresh = true
 					menu()
 				}, prompt:'What is thy bidding, my master? ', cancel:'O', enter:'B', eol:false, max:1, timeout:60 }
 			}
@@ -1129,9 +1114,12 @@ function doMove(): boolean {
 				xvt.outln()
 
 				b4 = 0
-				pause = true
-				refresh = true
-				Battle.engage('Taxman', $.online, $.taxman, doSpoils)
+				Battle.engage('Taxman', $.online, $.taxman, () => {
+					looked = false
+					pause = true
+					refresh = true
+					menu()
+				})
 				return
 			}
 
@@ -1233,6 +1221,7 @@ function doMove(): boolean {
 
 			let power = $.int(100 * DL.cleric.sp / DL.cleric.user.sp)
 			if ((!DL.map || DL.map == 'map') && power > 95) $.profile({ jpg:'npc/old cleric', effect:'zoomInUp' })
+			drawRoom(Y, X)
 			xvt.outln(xvt.yellow, 'There is an ', xvt.faint, 'old cleric', xvt.normal
 				, xvt.normal, ' in this room with '
 				, power < 40 ? xvt.faint : power < 80 ? xvt.normal : xvt.bright, `${power}`
@@ -1297,13 +1286,14 @@ function doMove(): boolean {
 			return false
 
 		case 'wizard':
+			scroll()
 			$.profile({ jpg:'npc/wizard', effect:'flash' })
-			xvt.waste(400)
+			xvt.waste(800)
 			xvt.out(xvt.magenta, 'You encounter a ', xvt.bright)
 			if (!$.player.cursed && !$.player.novice && $.dice((Z > $.player.level ? Z : 1) + 20 * $.player.immortal + $.player.level + $.online.cha) == 1) {
 				xvt.outln('doppleganger', xvt.normal, ' waiting for you.\n')
 				$.player.coward = true
-				xvt.waste(600)
+				xvt.waste(1200)
 				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : ''), effect:'flip' })
 				xvt.outln(xvt.bright, 'It curses you!')
 				$.sound('morph', 15)
@@ -1334,11 +1324,10 @@ function doMove(): boolean {
 					x = $.dice(DL.width) - 1
 				} while (DL.rooms[y][x].type == 'cavern' || DL.rooms[y][x].occupant)
 				DL.rooms[y][x].occupant = 'wizard'
-				refresh = true
 			}
 			else if (!$.player.novice && $.dice(Z + $.online.cha) == 1) {
 				xvt.outln('mimic', xvt.normal, ' occupying this space.\n')
-				xvt.waste(600)
+				xvt.waste(1200)
 				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : ''), effect:'flip' })
 				xvt.waste(1200)
 				xvt.out(xvt.faint, 'It waves a hand at you ... '); xvt.waste(1200)
@@ -1353,15 +1342,10 @@ function doMove(): boolean {
 					x = $.dice(DL.width) - 1
 				} while (DL.rooms[y][x].type == 'cavern' || DL.rooms[y][x].occupant)
 				DL.rooms[y][x].occupant = 'wizard'
-				refresh = true
 			}
 			else {
 				xvt.outln('wizard', xvt.normal, ' in this room.\n')
 				xvt.waste(300)
-				xvt.save()
-				xvt.out(`\x1B[1;${$.player.rows}r`)
-				xvt.restore()
-				refresh = true
 				teleport()
 				return false
 			}
@@ -1722,9 +1706,13 @@ function doSpoils() {
 function drawHero() {
 	ROOM = DL.rooms[Y][X]
 	if (!DL.map) drawRoom(Y, X)
+	xvt.out(xvt.reset)
 	xvt.save()
 	xvt.plot(Y * 2 + 2, X * 6 + 2)
-	xvt.out(xvt.reset, xvt.reverse, '-YOU-', xvt.reset)
+	if ($.player.emulation === 'XT')
+		xvt.out(xvt.lBlack, ' ', xvt.cyan, '⚸', xvt.bright, xvt.white, '☥', xvt.normal, xvt.yellow, '⛨', ' ')
+	else
+		xvt.out(xvt.reverse, '-YOU-')
 	xvt.restore()
 }
 
@@ -1817,7 +1805,8 @@ function drawLevel() {
 						}
 					}
 					xvt.out(o)
-					if ((DL.map == `Marauder's map` || $.access.sysop) && DL.rooms[r][x].giftItem) xvt.out(`\x08${dot}`)
+					if ((DL.map == `Marauder's map` || $.access.sysop) && DL.rooms[r][x].giftItem)
+						xvt.out(xvt.reset, xvt.faint, `\x08${$.tty == 'web' ? '⚱' : dot}`, xvt.reset)
 				}
 				if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[y].substr(-1), '\x1B(B')
 				else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y].substr(-1))
@@ -1826,7 +1815,7 @@ function drawLevel() {
 				if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[y], '\x1B(B')
 				else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y])
 			}
-			xvt.out('\n')
+			xvt.outln()
 		}
 	}
 	else {
@@ -1836,9 +1825,8 @@ function drawLevel() {
 					drawRoom(y, x, false)
 	}
 
-	xvt.out(`\x1B[${paper.length + 1};${$.player.rows}r`)
 	xvt.plot(paper.length + 1, 1)
-	xvt.save()
+	scroll(paper.length + 1)
 }
 
 function drawRoom(r:number, c:number, keep = true) {
@@ -2568,9 +2556,7 @@ function teleport() {
 						deep--
 					else {
 						$.music('thief2')
-						xvt.save()
-						xvt.out(`\x1B[1;${$.player.rows}r`)
-						xvt.restore()
+						scroll()
 						xvt.outln(xvt.lblue, `\n"Next time you won't escape so easily... moo-hahahahaha!!"`)
 						fini()
 						return
@@ -2726,6 +2712,17 @@ function quaff(v: number, it = true) {
 		}
 	}
 	if (!$.reason) pause = true
+}
+
+function scroll(top = 1) {
+	if (top == 1) {
+		drawLevel()
+		drawHero()
+	}
+	xvt.save()
+	xvt.out(`\x1B[${top};${$.player.rows}r`)
+	xvt.restore()
+	refresh = true
 }
 
 }

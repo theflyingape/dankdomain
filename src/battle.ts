@@ -1023,7 +1023,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
     if (!tricks.length) {
         if (rpc === $.online) {
-            xvt.outln(`You don't have any magic.`)
+            xvt.outln(`\nYou don't have any magic.`)
             cb(true)
         }
         else {
