@@ -74,8 +74,8 @@ export function cityguards() {
         let exempt = $.Ring.power($.player.rings, 'taxes')
         if (exempt.power) {
             xvt.out('\nYour hand extends to show', xvt.cyan, xvt.bright, $.an(exempt.name), xvt.normal)
-            if (xvt.emulation == 'XT') xvt.out(' ', $.Ring.name[exempt.name].emoji, ' 💍')
-            xvt.outln(' ring.')
+            if ($.player.emulation === 'XT') xvt.out(' ', $.Ring.name[exempt.name].emoji, ' 💍')
+            xvt.outln(' ring')
             xvt.waste(1500)
             xvt.out(xvt.yellow, xvt.bright, $.taxman.user.handle, xvt.normal, ' ')
             if ($.dice(100) < ($.online.cha - 10)) {

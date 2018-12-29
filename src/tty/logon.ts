@@ -14,24 +14,27 @@ module Logon
     switch (xvt.emulation) {
     case 'PC':
         $.tty = 'rlogin'
+        process.stdin.setEncoding('ascii')
         break
     case 'VT':
         $.tty = 'telnet'
+        process.stdin.setEncoding('ascii')
         break
     case 'XT':
         $.tty = 'web'
+        process.stdin.setEncoding('utf8')
+        xvt.out('\x1B]2;', process.title, '\x07')
         break
     default:
         $.tty = 'telnet'
+        process.stdin.setEncoding('ascii')
         xvt.emulation = 'dumb'
+        xvt.out('\f')
     }
 
-    process.stdin.setEncoding(xvt.emulation == 'XT' ? 'utf8' : 'ascii')
-//  xvt.out('\x1B]2;', process.title, '\x07')
     xvt.outln(xvt.bright, xvt.cyan, xvt.emulation
         , xvt.normal, ' emulation '
         , xvt.faint, 'enabled')
-    xvt.out('\f')
 
     $.loadUser($.sysop)
     if ($.sysop.lastdate != $.now().date)
@@ -122,34 +125,7 @@ function who() {
     $.access = $.Access.name[$.player.access]
     xvt.emulation = $.player.emulation
     $.player.rows = process.stdout.rows || 24
-
-    $.player.remote = process.env.REMOTEHOST || process.env.SSH_CLIENT || ''
-    $.whereis = [
-        'Braavos', 'Casterly Rock', 'Dorne', 'Dragonstone', 'Dreadfort',
-        'The Eyrie', 'Harrenhal', 'Highgarden', 'Iron Island', 'King\'s Landing',
-        'Meereen', 'Norvos', 'Oldtown', 'Pentos', 'Qohor',
-        'Riverrun', 'The Twins', 'The Wall', 'Winterfell', 'Volantis'
-    ][$.dice(20) - 1]
-    if (/^([1][0]|[1][2][7]|[1][7][2]|[1][9][2])[.]/.test($.player.remote) || !xvt.validator.isIP($.player.remote))
-        $.whereis += ' 🖥 '
-    else try {
-        const apikey = './etc/ipstack.key'
-        fs.accessSync(apikey, fs.constants.F_OK)
-        let key = fs.readFileSync(apikey).toString()
-        require('got')(`http://api.ipstack.com/${$.player.remote}?access_key=${key}`, { json: true }).then(response => {
-            $.whereis = ''
-            let result = ''
-            if (response.body) {
-                if (response.body.ip) result = response.body.ip
-                if (response.body.city) result = response.body.city
-                if (response.body.region_code) result += (result ? ', ' : '') + response.body.region_code
-                if (response.body.country_code) result += (result ? ' ' : '') + response.body.country_code
-                if (response.body.location)
-                    if (response.body.location.country_flag_emoji) result += ` ${response.body.location.country_flag_emoji} `
-            }
-            $.whereis += result ? result : $.player.remote
-        }).catch(error => { $.whereis += ' ⚠️ ' })
-    } catch (e) {}
+    $.player.remote = $.remote
 
     xvt.app.form['password'].prompt = $.player.handle + ', enter your password: '
     xvt.app.focus = 'password'
@@ -275,7 +251,7 @@ function welcome() {
     if ($.player.today <= $.access.calls && ($.player.status === 'jail' || !$.Access.name[$.player.access].roleplay)) {
         $.profile({ png:'npc/jailer', effect:'fadeIn' })
         $.sound('ddd')
-        if ($.player.emulation == 'XT') xvt.out('🔒 ')
+        if ($.player.emulation === 'XT') xvt.out('🔒 ')
         xvt.outln(xvt.bright, xvt.black, '(', xvt.magenta, 'PRISONER', xvt.black, ')')
         xvt.outln(xvt.red, '\nYou are locked-up in jail.')
         xvt.waste(1250)
@@ -335,12 +311,12 @@ function welcome() {
         try {
             $.callers = JSON.parse(fs.readFileSync('./users/callers.json').toString())
             for (let last in $.callers) {
-                xvt.out(xvt.bright, $.callers[last].who, xvt.normal, ' (', $.callers[last].reason, ')\n')
+                xvt.outln(xvt.bright, $.callers[last].who, xvt.normal, ' (', $.callers[last].reason, ')')
                 xvt.out('                   ')
             }
         }
         catch(err) {
-            xvt.out('not available (', err, ')\n')
+            xvt.outln(`not available (${err})`)
         }
 
         if ($.player.today < 2) {
@@ -358,7 +334,7 @@ function welcome() {
         }
 
         if (2 * $.player.jw < $.player.jl) {
-            xvt.out('\n', xvt.magenta, 'Helpful: ', xvt.bright, `Your poor jousting stats are being reset.`)
+            xvt.out('\n', xvt.magenta, 'Helpful: ', xvt.bright, `Your poor jousting stats have been reset.`)
             $.player.jl = 0
             $.player.jw = 0
         }
@@ -393,7 +369,7 @@ function welcome() {
             $.music('logon')
     }
     else {
-        xvt.out(xvt.bright, xvt.black, '(', xvt.yellow, 'VISITING', xvt.black, ')\n', xvt.reset)
+        xvt.outln(xvt.bright, xvt.black, '(', xvt.yellow, 'VISITING', xvt.black, ')')
         xvt.sessionAllowed = 5 * 60
         $.access.roleplay = false
         $.saveUser($.player)

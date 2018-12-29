@@ -15,6 +15,7 @@
             "baseStr":60, "baseInt":40, "baseDex":65, "baseCha":35, 
             "toStr":1, "toInt":1, "toDex":1, "toCha":2, 
             "maxStr":90, "maxInt":90, "maxDex":90, "maxCha":90, 
+            "bonusStr":1, "bonusInt":1, "bonusDex":1, "bonusCha":1,
             "specialty": "Newbie versus newbies",
             "description": [
                 "Being a novice is not necessarily a bad thing.  A Novice class adventurer",
@@ -39,6 +40,7 @@
             "baseStr":60, "baseInt":35, "baseDex":65, "baseCha":40, 
             "toStr":1, "toInt":2, "toDex":1, "toCha":1, 
             "maxStr":90, "maxInt":95, "maxDex":90, "maxCha":90, 
+            "bonusStr":0, "bonusInt":1, "bonusDex":1, "bonusCha":1,
             "specialty": "Powerful Venenum",
             "description": [
                 "The Alchemist depends greatly on the ability to use poisons.  This skill",
@@ -55,6 +57,7 @@
             "baseStr":55, "baseInt":30, "baseDex":75, "baseCha":40, 
             "toStr":1, "toInt":1, "toDex":2, "toCha":1, 
             "maxStr":90, "maxInt":90, "maxDex":95, "maxCha":90, 
+            "bonusStr":1, "bonusInt":0, "bonusDex":1, "bonusCha":1,
             "specialty": "Backstab/Poison",
             "description": [
                 "A ninja-style fighter, the Assassin has extra fighting ability making them",
@@ -68,6 +71,7 @@
             "baseStr":75, "baseInt":25, "baseDex":65, "baseCha":35, 
             "toStr":4, "toInt":1, "toDex":1, "toCha":1, 
             "maxStr":99, "maxInt":80, "maxDex":90, "maxCha":90, 
+            "bonusStr":1, "bonusInt":2, "bonusDex":0, "bonusCha":0,
             "specialty": "Brutal Combatant",
             "description": [
                 "The strongest, combat-class fighter in the game, but the most susceptible",
@@ -82,6 +86,7 @@
             "baseStr":50, "baseInt":50, "baseDex":65, "baseCha":35, 
             "toStr":1, "toInt":1, "toDex":1, "toCha":3, 
             "maxStr":90, "maxInt":90, "maxDex":85, "maxCha":98, 
+            "bonusStr":0, "bonusInt":0, "bonusDex":2, "bonusCha":1,
             "specialty": "Artisan Enchanter",
             "description": [
                 "The Bard-class enjoys every aspect of the game: backstabbing, magic,",
@@ -96,6 +101,7 @@
             "baseStr":50, "baseInt":55, "baseDex":60, "baseCha":35, 
             "toStr":1, "toInt":1, "toDex":1, "toCha":4, 
             "maxStr":90, "maxInt":90, "maxDex":80, "maxCha":99, 
+            "bonusStr":0, "bonusInt":0, "bonusDex":2, "bonusCha":1,
             "specialty": "Skillful Magic/Melee",
             "description": [
                 "A Cleric has good combat and magic abilities, but honing skills are",
@@ -108,6 +114,7 @@
             "baseStr":65, "baseInt":30, "baseDex":70, "baseCha":35, 
             "toStr":3, "toInt":1, "toDex":1, "toCha":1, 
             "maxStr":98, "maxInt":90, "maxDex":90, "maxCha":85,
+            "bonusStr":1, "bonusInt":0, "bonusDex":0, "bonusCha":2,
             "specialty": "Warrior Combatant",
             "description": [
                 "Fighters are excellent killers.  Their extra-ordinary combat ability makes",
@@ -121,6 +128,7 @@
             "baseStr":50, "baseInt":45, "baseDex":65, "baseCha":40, 
             "toStr":1, "toInt":1, "toDex":3, "toCha":1, 
             "maxStr":90, "maxInt":85, "maxDex":98, "maxCha":90,
+            "bonusStr":0, "bonusInt":2, "bonusDex":1, "bonusCha":0,
             "specialty": "Magic/Dodge/Steal",
             "description": [
                 "Jesters are annoying pests.  They lack serious hand-to-hand combat power,",
@@ -134,6 +142,7 @@
             "baseStr":40, "baseInt":65, "baseDex":65, "baseCha":30, 
             "toStr":1, "toInt":3, "toDex":1, "toCha":1, 
             "maxStr":85, "maxInt":98, "maxDex":90, "maxCha":90, 
+            "bonusStr":2, "bonusInt":1, "bonusDex":0, "bonusCha":0,
             "specialty": "Arcane Magic/Poison",
             "description": [
                 "The Magician is the opposite of the Fighter; powerful magic opposed to",
@@ -147,6 +156,7 @@
             "baseStr":65, "baseInt":35, "baseDex":65, "baseCha":35, 
             "toStr":2, "toInt":1, "toDex":1, "toCha":1, 
             "maxStr":95, "maxInt":90, "maxDex":90, "maxCha":90, 
+            "bonusStr":1, "bonusInt":0, "bonusDex":1, "bonusCha":1,
             "specialty": "Skillful Melee/Scroll",
             "description": [
                 "Rangers are great survivors, because they must depend on their ability to",
@@ -161,6 +171,7 @@
             "baseStr":40, "baseInt":50, "baseDex":75, "baseCha":35, 
             "toStr":1, "toInt":1, "toDex":1, "toCha":2, 
             "maxStr":95, "maxInt":95, "maxDex":95, "maxCha":95, 
+            "bonusStr":0, "bonusInt":1, "bonusDex":1, "bonusCha":1,
             "specialty": "Skillful/Wizardry",
             "description": [
                 "A Rogue is similar to a Thief class with a backstab, poison, and stealing.",
@@ -174,6 +185,7 @@
             "baseStr":40, "baseInt":55, "baseDex":70, "baseCha":35, 
             "toStr":1, "toInt":4, "toDex":1, "toCha":1, 
             "maxStr":80, "maxInt":99, "maxDex":90, "maxCha":90, 
+            "bonusStr":2, "bonusInt":1, "bonusDex":0, "bonusCha":0,
             "specialty": "Divine Magicae",
             "description": [
                 "The weakest combat-class is the Sage.  While hand-to-hand abilities leave",
@@ -187,6 +199,7 @@
             "baseStr":63, "baseInt":35, "baseDex":67, "baseCha":35, 
             "toStr":1, "toInt":1, "toDex":4, "toCha":1, 
             "maxStr":90, "maxInt":90, "maxDex":99, "maxCha":80, 
+            "bonusStr":0, "bonusInt":0, "bonusDex":1, "bonusCha":2,
             "specialty": "Master Steal/Backstab",
             "description": [
                 "The Thief class relies on the ability to stealth approach an enemy and",
@@ -204,6 +217,7 @@
             "baseStr":55, "baseInt":45, "baseDex":75, "baseCha":45, 
             "toStr":2, "toInt":2, "toDex":2, "toCha":2, 
             "maxStr":95, "maxInt":95, "maxDex":95, "maxCha":95, 
+            "bonusStr":1, "bonusInt":1, "bonusDex":1, "bonusCha":1,
             "specialty": "Ranger/Rogue",
             "description": [
                 "A Paladin class can only be achieved by becoming immortal (100th level) and",
@@ -218,6 +232,7 @@
             "baseStr":60, "baseInt":50, "baseDex":80, "baseCha":30, 
             "toStr":2, "toInt":2, "toDex":2, "toCha":2, 
             "maxStr":98, "maxInt":98, "maxDex":98, "maxCha":98, 
+            "bonusStr":1, "bonusInt":1, "bonusDex":1, "bonusCha":1,
             "specialty": "Fighter/Magician",
             "description": [
                 "You can only ascend to a Titan class from immortalizing a Paladin class and",
@@ -232,6 +247,7 @@
             "baseStr":55, "baseInt":55, "baseDex":75, "baseCha":55,
             "toStr":2, "toInt":2, "toDex":2, "toCha":2,
             "maxStr":99, "maxInt":99, "maxDex":99, "maxCha":99,
+            "bonusStr":1, "bonusInt":1, "bonusDex":1, "bonusCha":1,
             "specialty": "Barbarian/Sage",
             "description": [
                 "The highest superbeing of them all, you can only ascend to a God from a",
@@ -276,7 +292,7 @@
             "baseStr":40, "baseInt":60, "baseDex":40, "baseCha":60,
             "toStr":1, "toInt":3, "toDex":1, "toCha":1,
             "maxStr":82, "maxInt":96, "maxDex":90, "maxCha":90,
-            "bonusStr":0, "bonusInt":2, "bonusDex":0, "bonusCha":1
+            "bonusStr":0, "bonusInt":2, "bonusDex":0, "bonusCha":0
         },
         "Undead": {
             "melee":4, "backstab":0, "poison":1, "magic":2, "steal":2,
@@ -293,6 +309,7 @@
             "baseStr":65, "baseInt":55, "baseDex":55, "baseCha":25,
             "toStr":2, "toInt":1, "toDex":1, "toCha":1,
             "maxStr":99, "maxInt":85, "maxDex":66, "maxCha":85,
+            "bonusStr":0, "bonusInt":0, "bonusDex":0, "bonusCha":2,
             "specialty": "Barbarian/Ranger",
             "description": [
                 "Tiny, the 7'2\" barkeep"

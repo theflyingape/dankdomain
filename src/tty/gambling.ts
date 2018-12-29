@@ -165,8 +165,7 @@ function amount() {
 			player.push(deck[pile++])
 			dealer.push(deck[pile++])
 			xvt.out(xvt.green, '\nDealer\'s hand:')
-			if ($.player.emulation == 'XT')
-				xvt.out(xvt.white, ' \uD83C\uDCA0 ', card[dealer[1]].emoji)
+			if ($.player.emulation === 'XT') xvt.out(xvt.white, ' 🂠 ', card[dealer[1]].emoji)
 			xvt.out(' '.repeat(8))
 			xvt.out(xvt.red, '[', xvt.white, 'DOWN', xvt.red, '] [', xvt.white, card[dealer[1]].face, xvt.red, ']\n')
 			myhand = ShowHand(1, player)
@@ -174,17 +173,17 @@ function amount() {
 			if (myhand == 21) {
 				$.sound('cheer')
 				payoff.value = 2 * amount.value
-				xvt.out(xvt.bright, xvt.cyan, '\nBlackjack!!\n\n', xvt.reset)
+				xvt.outln(xvt.bright, xvt.cyan, '\nBlackjack!!')
 				xvt.waste(1000)
 
 				value = ShowHand(0, dealer)
 				if (value == 21) {
 					$.sound('boo')
-					xvt.out('\nDealer has Blackjack!  You\'re a loser.\n')
+					xvt.outln('\nDealer has Blackjack!  You\'re a loser.')
 					xvt.waste(1000)
 				}
 				else {
-					xvt.out('\nYou win ', payoff.carry(), '!\n')
+					xvt.outln('\nYou win ', payoff.carry(), '!')
 					$.player.coin.value += payoff.value + amount.value
 				}
 				break
@@ -649,7 +648,7 @@ function amount() {
 			return
 
 		case 'S':
-			xvt.out(xvt.bright, xvt.blue, '\nSlot Machine Payout Line:', xvt.reset, '\n\n')
+			xvt.outln(xvt.bright, xvt.blue, '\nSlot Machine Payout Line:\n')
 			if ($.player.emulation === 'XT') {
 				xvt.out(xvt.red,     ' any 2  ', xvt.normal, ' 🍒  🍒', xvt.reset, '    2x     ', xvt.yellow, 'Orange  ', xvt.normal, '🍊 🍊 🍊', xvt.reset, '    50x\n')
 				xvt.out(xvt.red,     'Cherry  ', xvt.normal, '🍒 🍒 🍒', xvt.reset, '    5x     ', xvt.bright, xvt.yellow, '<Bell>  ', '🔔 🔔 🔔', xvt.reset, '   100x\n')
@@ -819,7 +818,7 @@ function amount() {
 		ace = 0
 
 		xvt.out(who ? xvt.bright : xvt.reset, xvt.green, ['Dealer', 'Player'][who], '\'s hand:', xvt.white)
-		if ($.player.emulation == 'XT')
+		if ($.player.emulation === 'XT')
 			for (let i = 0; i < hand.length; i++)
 				xvt.out(' ', card[hand[i]].emoji)
 		xvt.out(' '.repeat(12 - 2 * hand.length))
@@ -911,7 +910,7 @@ function shuffle(jokers = false) {
 		xvt.out('.')
 		xvt.waste(20)
 	}
-	xvt.out(' Ok.\n', xvt.reset)
+	xvt.outln(' Ok.')
 	xvt.waste(250)
 	pile = 1
 }

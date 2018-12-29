@@ -94,7 +94,7 @@ export function resend() {
 export async function Deliver(player: user, what: string, repeat: boolean, mailOptions: nodemailer.SendMailOptions) {
     xvt.out('\n\n', xvt.magenta, xvt.bright)
     let royalty = Object.keys($.Access.name).slice($.player.gender === 'F' ? -2 : -1)[0]
-    if (xvt.emulation === 'XT') xvt.out('\u{1F451} ')
+    if ($.tty == 'web') xvt.out('👑 ')
     xvt.out(`The ${royalty} orders the royal scribe to dispatch ${what}\nfor ${$.player.handle} ` + (!repeat ? `<${$.player.email}> ` : ''), xvt.reset)
     if ($.player.email !== $.sysop.email)
         await Message(player, mailOptions)

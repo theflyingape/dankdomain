@@ -55,7 +55,34 @@ module Common
     export let callers: caller[] = []
     export let mydeeds: deed[]
     export let reason: string = ''
-    export let whereis = {}
+    export let remote = process.env.REMOTEHOST || process.env.SSH_CLIENT || ''
+    export let whereis = [
+        'Braavos', 'Casterly Rock', 'Dorne', 'Dragonstone', 'Dreadfort',
+        'The Eyrie', 'Harrenhal', 'Highgarden', 'Iron Island', `King's Landing`,
+        'Meereen', 'Norvos', 'Oldtown', 'Pentos', 'Qohor',
+        'Riverrun', 'The Twins', 'The Wall', 'Winterfell', 'Volantis'
+    ][dice(20) - 1]
+    if (/^([1][0]|[1][2][7]|[1][7][2]|[1][9][2])[.]/.test(remote) || !xvt.validator.isIP(remote))
+        whereis += ' 🖥 '
+    else try {
+        const apikey = './etc/ipstack.key'
+        fs.accessSync(apikey, fs.constants.F_OK)
+        let key = fs.readFileSync(apikey).toString()
+        require('got')(`http://api.ipstack.com/${remote}?access_key=${key}`, { json: true }).then(response => {
+            whereis = ''
+            let result = ''
+            if (response.body) {
+                if (response.body.ip) result = response.body.ip
+                if (response.body.city) result = response.body.city
+                if (response.body.region_code) result += (result ? ', ' : '') + response.body.region_code
+                if (response.body.country_code) result += (result ? ' ' : '') + response.body.country_code
+                if (response.body.location)
+                    if (response.body.location.country_flag_emoji) result += ` ${response.body.location.country_flag_emoji} `
+            }
+            whereis += result ? result : remote
+        }).catch(error => { whereis += ' ⚠️ ' })
+    } catch (e) {}
+
 
 //  all player characters
 export class Character {
@@ -353,7 +380,7 @@ export class Character {
         if (profile.user.rings.length) {
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
             xvt.out('    Rings: ', xvt.white)
-            if (xvt.emulation == 'XT')
+            if (player.emulation === 'XT')
                 xvt.out('\r\x1B[2C💍\r\x1B[12C')
             let text = ''
             n = 0
@@ -392,7 +419,7 @@ export class Character {
 
         xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
         xvt.out('    Armor: ')
-        if (xvt.emulation == 'XT')
+        if (player.emulation === 'XT')
             xvt.out('\r\x1B[2C🛡\r\x1B[12C')
         xvt.out(this.armor(profile).rich, ' '.repeat(42 - this.armor(profile).text.length))
         xvt.out(' ', xvt.reset, xvt.blue, '|\n')
@@ -405,7 +432,7 @@ export class Character {
         if (xvt.validator.isNotEmpty(profile.user.gang)) {
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
             xvt.out('    Party: ', xvt.white)
-            if (xvt.emulation == 'XT')
+            if (player.emulation === 'XT')
                 xvt.out('\r\x1B[2C🏴\r\x1B[12C')
             xvt.out(sprintf('%-42s', profile.user.gang))
             xvt.out(' ', xvt.reset, xvt.blue, '|\n')
@@ -434,7 +461,7 @@ export class Character {
 
         xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
         xvt.out('    Kills: ', xvt.white)
-        if (xvt.emulation == 'XT')
+        if (player.emulation === 'XT')
             xvt.out('\r\x1B[2C💀\r\x1B[12C')
         xvt.out(sprintf('%-42s', profile.user.kills + ' with ' + profile.user.retreats + ' retreats and killed ' + profile.user.killed +'x'))
         xvt.out(' ', xvt.reset, xvt.blue, '|\n')
@@ -1654,8 +1681,8 @@ export function riddle() {
         xvt.waste(player.emulation === 'XT' ? 4321 : 432)
 
         xvt.outln()
-        xvt.out(xvt.bright, xvt.yellow, 'CONGRATULATIONS!!'
-            , xvt.reset, '  You have won the game!\n\n')
+        xvt.outln(xvt.bright, xvt.yellow, 'CONGRATULATIONS!!'
+            , xvt.reset, '  You have won the game!\n')
         profile({ jpg:'winner', effect:'fadeInUp' })
         sound('winner', 21)
 
@@ -1817,11 +1844,11 @@ export function worth(n: number, p: number): number {
 }
 
 export function beep() {
-    if (xvt.emulation === 'XT')
+    if (player.emulation === 'XT')
         sound('max')
     else
         xvt.beep()
-    xvt.waste(100)
+    xvt.waste(86)   //  magical year
 }
 
 export function bracket(item: number|string, nl = true): string {
@@ -1924,13 +1951,13 @@ export function emulator(cb:Function) {
     xvt.app.form = {
         'term': { cb:() => {
             if (xvt.validator.isNotEmpty(xvt.entry) && xvt.entry.length == 2) xvt.emulation = xvt.entry.toUpperCase()
-            xvt.out('\n\n', xvt.reset, xvt.magenta, xvt.LGradient[xvt.emulation], xvt.reverse, 'TEST BANNER', xvt.noreverse, xvt.RGradient[xvt.emulation], '\n')
-            xvt.out(xvt.red,'R', xvt.green,'G', xvt.blue,'B', xvt.reset, xvt.bright,' bold ', xvt.normal, 'normal', xvt.faint, ' dark')
-            xvt.outln()
-            online.altered = true
             player.emulation = xvt.emulation
+            process.stdin.setEncoding(player.emulation === 'XT' ? 'utf8' : 'ascii')
+            xvt.outln('\n\n', xvt.reset, xvt.magenta, xvt.LGradient[xvt.emulation], xvt.reverse, 'TEST BANNER', xvt.noreverse, xvt.RGradient[xvt.emulation])
+            xvt.outln(xvt.red,'R', xvt.green,'G', xvt.blue,'B', xvt.reset, xvt.bright,' bold ', xvt.normal, 'normal', xvt.faint, ' dark')
+            online.altered = true
             sound('max', 20)
-            if (player.emulation == 'XT') {
+            if (player.emulation === 'XT') {
                 cb()
                 return
             }
@@ -1948,10 +1975,10 @@ export function emulator(cb:Function) {
         'pause': { cb:cb, pause:true }
     }
 
-    xvt.out('\n', xvt.cyan, 'Which emulation / character encoding are you using?\n')
+    xvt.outln('\n', xvt.cyan, 'Which emulation / character encoding are you using?')
     xvt.out(bracket('VT'), ' classic VT terminal with DEC drawing (telnet b&w)')
     xvt.out(bracket('PC'), ' former ANSI color with IBM encoding (telnet color)')
-    xvt.out(bracket('XT'), ' modern ANSI color with UTF-8 encoding (browser multimedia)\n')
+    xvt.outln(bracket('XT'), ' modern ANSI color with UTF-8 encoding (browser multimedia)')
     xvt.app.focus = 'term'
 }
 
@@ -2640,7 +2667,7 @@ export function ringBearer(name: string): string {
 export function getRing(how: string, what: string) {
     xvt.out('You ', how, an(what, false))
     xvt.out(xvt.bright, xvt.cyan, what, xvt.normal)
-    if (xvt.emulation == 'XT') xvt.out(' ', Ring.name[what].emoji, ' 💍')
+    if (player.emulation === 'XT') xvt.out(' ', Ring.name[what].emoji, ' 💍')
     xvt.outln(' ring', xvt.white, ', which can')
     xvt.outln(Ring.name[what].description)
 }

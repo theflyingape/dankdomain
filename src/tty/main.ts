@@ -113,7 +113,7 @@ function choice() {
                 xvt.out(sprintf('%-4s  %-22.22s  %-9s  %3d  ', rs[n].id, rs[n].handle, rs[n].pc, rs[n].level))
                 if (!rs[n].status.length) xvt.out('Alive!')
                 else {
-                    if ($.player.emulation == 'XT')
+                    if ($.player.emulation === 'XT')
                         xvt.out(rs[n].status === 'jail' ? '🔒' : '🍺', ' ', xvt.faint, rs[n].status === 'jail' ? 'jail' : 'beer')
                     else
                         xvt.out(xvt.faint, rs[n].status === 'jail' ? '#jail#' : '^beer^')

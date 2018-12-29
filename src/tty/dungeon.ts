@@ -282,31 +282,31 @@ export function menu(suppress = false) {
 	if ($.dice(x) == 1) {
 		let rng = $.dice(16)
 		if (rng > 8) {
-			if (xvt.emulation == 'XT') xvt.out(' 🦇  ')
+			if ($.tty == 'web') xvt.out(' 🦇  ')
 			xvt.out(xvt.faint, 'A bat flies by and soils your ')
 			$.sound('splat', 4)
 			$.player.toAC -= $.dice(deep)
 			xvt.out($.player.armor, $.buff($.player.toAC, $.online.toAC))
+			if ($.tty == 'web') xvt.out(' 💩')
 		}
 		else if (rng > 4) {
-			if (xvt.emulation == 'XT') xvt.out(' 💧  ')
+			if ($.tty == 'web') xvt.out(' 💧  ')
 			xvt.out(xvt.blue, 'A drop of acid water lands on your ')
 			$.sound('drop', 4)
 			$.player.toWC -= $.dice(deep)
 			xvt.out($.player.weapon, $.buff($.player.toWC, $.online.toWC))
 		}
 		else if (rng > 2) {
-			if (xvt.emulation == 'XT') xvt.out(' 😬  ')
+			if ($.tty == 'web') xvt.out(' 😬  ')
 			xvt.out(xvt.yellow, 'You trip on the rocky surface and hurt yourself.')
 			$.sound('hurt', 5)
 			$.online.hp -= $.dice(Z)
 			if ($.online.hp < 1) $.death('fell down')
 		}
 		else if (rng > 1) {
-			if (xvt.emulation == 'XT') xvt.out(' 🐝  🐝  🐝  🐝  ')
+			if ($.tty == 'web') xvt.out(' 🐝  🐝  🐝  🐝  ')
 			xvt.out(xvt.bright, xvt.red, 'You are attacked by a swarm of bees')
-			if (xvt.emulation == 'XT')
-				xvt.out(xvt.reset, ' 🐝  🐝  🐝  🐝')
+			if ($.tty == 'web') xvt.out(xvt.reset, ' 🐝  🐝  🐝  🐝')
 			else
 				xvt.out('!')
 			$.sound('crack', 12)
@@ -317,7 +317,7 @@ export function menu(suppress = false) {
 		else {
 			$.music('.')
 			xvt.out(xvt.bright, xvt.white)
-			if (xvt.emulation == 'XT') xvt.out(' ⚡  ')
+			if ($.tty == 'web') xvt.out(' ⚡  ')
 			xvt.out('A bolt of lightning strikes you!')
 			$.player.toAC -= $.dice($.online.armor.ac / 2)
 			$.online.toAC -= $.dice($.online.armor.ac / 2)
@@ -761,6 +761,26 @@ function doMove(): boolean {
 						$.PC.adjust('cha', 10)
 						break
 
+					case 'C':
+						Battle.user('Curse', (opponent: active) => {
+							if (opponent.user.id === $.player.id) {
+								opponent.user.id = ''
+								xvt.outln(`\nYou can't curse yourself.`)
+							}
+							if (opponent.user.id) {
+								$.log(opponent.user.id, `\n${$.player.handle} cursed you!`)
+								$.news(`\tcursed ${opponent.user.handle}`)
+								if (opponent.user.blessed)
+									opponent.user.blessed = ''
+								else
+									opponent.user.cursed = $.player.id
+								$.saveUser(opponent)
+							}
+							menu()
+							return
+						})
+						return
+
 					case 'T':
 						let start = $.int(Z - $.dice(deep))
 						if (start < 1) start = 1
@@ -872,30 +892,6 @@ function doMove(): boolean {
 							$.sound('morph', 12)
 						}
 						break
-
-					case 'C':
-						Battle.user('Curse', (opponent: active) => {
-							if (opponent.user.id === $.player.id) {
-								opponent.user.id = ''
-								xvt.outln(`\nYou can't curse yourself.`)
-							}
-							else if (opponent.user.novice) {
-								opponent.user.id = ''
-								xvt.out(`\nYou can't curse novice players.`)
-							}
-							if (opponent.user.id) {
-								$.log(opponent.user.id, `\n${$.player.handle} cursed you!`)
-								$.news(`\tcursed ${opponent.user.handle}`)
-								if (opponent.user.blessed)
-									opponent.user.blessed = ''
-								else
-									opponent.user.cursed = $.player.id
-								$.saveUser(opponent)
-							}
-							menu()
-							return
-						})
-						return
 
 					case 'K':
 						let k = $.dice(deep / 4)
@@ -1125,17 +1121,17 @@ function doMove(): boolean {
 				})
 				$.sound('oops', 8)
 				$.activate($.taxman)
-				//$.taxman.user.id = ''
 				$.taxman.user.coin.value = $.player.coin.value
 				if (isNaN(+$.taxman.user.weapon)) xvt.outln('\n', $.who($.taxman, 'He'), $.Weapon.wearing($.taxman), '.')
 				xvt.waste(750)
 				if (isNaN(+$.taxman.user.armor)) xvt.outln('\n', $.who($.taxman, 'He'), $.Armor.wearing($.taxman), '.')
 				xvt.waste(750)
 				xvt.outln()
+
 				b4 = 0
-				Battle.engage('Taxman', $.online, $.taxman, doSpoils)
 				pause = true
 				refresh = true
+				Battle.engage('Taxman', $.online, $.taxman, doSpoils)
 				return
 			}
 
@@ -1181,7 +1177,7 @@ function doMove(): boolean {
 					refresh = true
 				}
 				else if ($.player.magic < 3 && $.player.spells.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
-					if (xvt.emulation == 'XT') xvt.out('📜  ')
+					if ($.tty == 'web') xvt.out('📜  ')
 					y = $.player.spells[$.dice($.player.spells.length) - 1]
 					xvt.out(Object.keys($.Magic.spells)[y - 1], ' ', ['wand', 'scroll'][$.player.magic - 1])
 					$.Magic.remove($.player.spells, y)
@@ -1189,14 +1185,14 @@ function doMove(): boolean {
 				else if ($.player.poisons.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
 					y = $.player.poisons[$.dice($.player.poisons.length) - 1]
 					xvt.out('vial of ', Object.keys($.Poison.vials)[y - 1])
-					if (xvt.emulation == 'XT') xvt.out('💀  ')
+					if ($.tty == 'web') xvt.out('💀  ')
 					$.Poison.remove($.player.poisons, y)
 				}
 				else if ($.player.coin.value) {
 					let pouch = $.player.coin.amount.split(',')
 					x = $.dice(pouch.length) - 1
 					y = 'csgp'.indexOf(pouch[x].substr(-1))
-					if (xvt.emulation == 'XT') xvt.out('💰  ')
+					if ($.tty == 'web') xvt.out('💰  ')
 					xvt.out('pouch of ', xvt.bright, [xvt.red,xvt.cyan,xvt.yellow,xvt.magenta][y], ['copper','silver','gold','platinum'][y], xvt.reset, ' pieces')
 					$.player.coin.value -= new $.coins(pouch[x]).value
 				}
@@ -1734,12 +1730,13 @@ function drawHero() {
 
 function drawLevel() {
 	let y:number, x:number
-	if ($.player.emulation === 'XT') {
+
+	xvt.out(xvt.reset)
+	if ($.tty == 'web') {
 		xvt.plot($.player.rows, 1)
-		for (y = 0; y < $.player.rows; y++)
-			xvt.out('\n')
+		xvt.out('\n'.repeat($.player.rows))
 	}
-	xvt.out(xvt.reset, xvt.clear)
+	xvt.out(xvt.clear)
 
 	if (DL.map) {
 		for (y = 0; y < paper.length; y++) {

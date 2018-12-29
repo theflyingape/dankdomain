@@ -97,10 +97,10 @@ function choice() {
                 let ratio = '  ' + (crown ? 'GOAT' : rs[i].loss ? sprintf('%5.3f', rs[i].win / (rs[i].win + rs[i].loss)).substr(1) : ' ---')
                 xvt.out(sprintf('%-22s %5u-%-5u ', rs[i].name, rs[i].win, rs[i].loss), ratio)
                 if (crown) {
-                    xvt.out(' ', xvt.bright, xvt.yellow, $.player.emulation === 'XT' ? '\u{1F451}' : '+', xvt.reset)
+                    xvt.out(' ', xvt.bright, xvt.yellow, $.player.emulation === 'XT' ? '👑' : '+')
                     crown = false
                 }
-                xvt.out('\n')
+                xvt.outln()
             }
 
             xvt.app.form = {
@@ -113,7 +113,7 @@ function choice() {
             if (!$.access.roleplay) break
             if ($.player.gang) {
                 xvt.beep()
-				xvt.out(`\nYou are already a member of ${$.player.gang}.\n`)
+				xvt.outln(`\nYou are already a member of ${$.player.gang}.`)
 				suppress = true
                 break
             }
@@ -123,7 +123,7 @@ function choice() {
             $.action('freetext')
             xvt.app.form = {
                 'new': { cb:() => {
-                    xvt.out('\n')
+                    xvt.outln()
                     g.name = $.titlecase(xvt.entry)
                     if (g.name === 'New' || $.cuss(g.name))
                         xvt.hangup()
@@ -653,20 +653,18 @@ function showGang(lg: gang, rg?: gang, engaged = false) {
 
 function xtGang(sex:string, melee:number, banner:number, coat:number) {
 
-    if ($.player.emulation == 'XT') {
-        switch(sex) {
-            case 'I':
-                $.profile({ leader:'gang/leadermm', banner:'gang/bannermm', coat:'gang/coatmm' })
-                break
+    switch(sex) {
+        case 'I':
+            $.profile({ leader:'gang/leadermm', banner:'gang/bannermm', coat:'gang/coatmm' })
+            break
 
-            case 'F':
-                $.profile({ leader:`gang/leader${melee}_f`, banner:`gang/banner${banner}`, coat:`gang/coat${coat}` })
-                break
+        case 'F':
+            $.profile({ leader:`gang/leader${melee}_f`, banner:`gang/banner${banner}`, coat:`gang/coat${coat}` })
+            break
 
-            default:
-                $.profile({ leader:`gang/leader${melee}`, banner:`gang/banner${banner}`, coat:`gang/coat${coat}` })
-                break
-        }
+        default:
+            $.profile({ leader:`gang/leader${melee}`, banner:`gang/banner${banner}`, coat:`gang/coat${coat}` })
+            break
     }
 }
 
