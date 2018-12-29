@@ -1173,16 +1173,18 @@ function doMove(): boolean {
 				}
 				else if ($.player.poisons.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
 					y = $.player.poisons[$.dice($.player.poisons.length) - 1]
-					xvt.out('vial of ', Object.keys($.Poison.vials)[y - 1])
+					xvt.out('vial of ')
 					if ($.tty == 'web') xvt.out('💀  ')
+					xvt.out(Object.keys($.Poison.vials)[y - 1])
 					$.Poison.remove($.player.poisons, y)
 				}
 				else if ($.player.coin.value) {
 					let pouch = $.player.coin.amount.split(',')
 					x = $.dice(pouch.length) - 1
 					y = 'csgp'.indexOf(pouch[x].substr(-1))
+					xvt.out('pouch of ')
 					if ($.tty == 'web') xvt.out('💰  ')
-					xvt.out('pouch of ', xvt.bright, [xvt.red,xvt.cyan,xvt.yellow,xvt.magenta][y], ['copper','silver','gold','platinum'][y], xvt.reset, ' pieces')
+					xvt.out(xvt.bright, [xvt.red,xvt.cyan,xvt.yellow,xvt.magenta][y], ['copper','silver','gold','platinum'][y], xvt.reset, ' pieces')
 					$.player.coin.value -= new $.coins(pouch[x]).value
 				}
 				else
