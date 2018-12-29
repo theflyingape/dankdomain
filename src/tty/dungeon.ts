@@ -804,7 +804,7 @@ function doMove(): boolean {
 
 					case 'O':
 						$.sound('teleport')
-						scroll()
+						scroll(1, false)
 						xvt.outln()
 						fini()
 						return
@@ -1143,13 +1143,11 @@ function doMove(): boolean {
 				xvt.outln()
 			}
 			else {
+				escape.occupant = 'thief'
 				if (DL.map && DL.map !== 'map')
 					xvt.outln('You expect nothing less from the coward.')
 				else
 					xvt.outln(xvt.bright, xvt.white, 'He surprises you!')
-
-				escape.occupant = 'thief'
-				drawRoom(y, x)
 				$.sound('thief', 4)
 
 				xvt.out('As he passes by, he steals your ')
@@ -1191,8 +1189,9 @@ function doMove(): boolean {
 					xvt.out(`Reese's pieces`)
 				xvt.outln(xvt.reset, '!')
 				xvt.waste(600)
-				pause = true
 			}
+			pause = true
+			refresh = true
 			break
 
 		case 'cleric':
@@ -2566,8 +2565,7 @@ function teleport() {
 						deep--
 					else {
 						$.music('thief2')
-						scroll()
-						xvt.outln(xvt.lblue, `\n"Next time you won't escape so easily... moo-hahahahaha!!"`)
+						scroll(1, false)
 						fini()
 						return
 					}
@@ -2724,10 +2722,14 @@ function quaff(v: number, it = true) {
 	if (!$.reason) pause = true
 }
 
-function scroll(top = 1) {
+function scroll(top = 1, redraw = true) {
 	if (top == 1) {
-		drawLevel()
-		drawHero()
+		if (redraw) {
+			drawLevel()
+			drawHero()
+		}
+		else
+			xvt.outln(xvt.lblue, `\n"Next time you won't escape so easily... moo-hahahahaha!!"`)
 	}
 	xvt.save()
 	xvt.out(`\x1B[${top};${$.player.rows}r`)
