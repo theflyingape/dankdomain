@@ -724,7 +724,7 @@ export function spoils() {
                     xp += $.experience(loser.user.xplevel, 18 - (1.333 * loser.user.immortal))
 
                 if (loser.user.sex !== 'I' && loser.user.rings.length) {
-                    xvt.outln('You start by removing ', loser.user.rings.length > 1 ? 'all of ' : '', $.who(loser, 'his'), 'rings...')
+                    xvt.out('You start by removing ', loser.user.rings.length > 1 ? 'all of ' : '', $.who(loser, 'his'), 'rings...')
                     $.sound('click', 8)
                     loser.user.rings.forEach(ring => {
                         if ($.Ring.wear(winner.user.rings, ring)) {
@@ -1014,7 +1014,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
     let tricks = Object.assign([], rpc.user.spells)
     let Summons = [ 'Teleport', 'Resurrect' ]
-    Summons.forEach(summon => {
+    Object.assign([], Summons).forEach(summon => {
         if ($.Ring.power(rpc.user.rings, summon.toLowerCase()).power)
             $.Magic.add(tricks, summon)
         else
@@ -1122,7 +1122,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             let mod = $.Ring.power(nme.user.rings, 'resist', 'spell', name)
             if (mod.power) {
                 $.sound('oops', 4)
-                xvt.out(`${$.who(rpc,'His')}${name} spell is ineffective against ${$.who(rpc,'his')}${mod.name}`)
+                xvt.out(`${$.who(rpc,'His')}${name} spell is ineffective against ${$.who(rpc,'his')}`)
                 xvt.out(xvt.bright, xvt.cyan, mod.name, xvt.normal)
                 if ($.player.emulation === 'XT') xvt.out(' ', $.Ring.name[mod.name].emoji, ' 💍')
                 xvt.outln(' ring', xvt.white, '!')
@@ -1146,7 +1146,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             //  collect some of the mana spent by the enemy?
             if (nme) {
                 const spent = +(+$.Ring.power(nme.user.rings, 'sp', 'pc', nme.user.pc).power && !$.Ring.power(rpc.user.rings, 'ring').power) * (+$.Ring.power(nme.user.rings, 'ring').power + 1)
-                if (mana = spent * $.dice(mana / (rpc.user.magic + 1))) {
+                if (mana = spent * $.dice(mana >>1)) {
                     if (nme.sp + mana > nme.user.sp) {
                         mana -= nme.sp - nme.user.sp
                         if (mana < 0) mana = 0

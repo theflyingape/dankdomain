@@ -343,7 +343,7 @@ function choice() {
 
         case 'X':
             if (!$.access.roleplay) break
-            $.profile($.online)
+            $.PC.profile($.online)
             $.music('ddd')
             $.action('ny')
             xvt.app.form = {
@@ -351,12 +351,12 @@ function choice() {
                     if (/Y/i.test(xvt.entry)) {
                         $.reroll($.player)
                         $.activate($.online)
-                        xvt.out('\n')
+                        xvt.outln()
                         $.playerPC()
                         $.player.coward = true
                         return
                     }
-                    xvt.out('\n')
+                    xvt.outln()
                     menu()
                 }, prompt:'Reroll (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
             }

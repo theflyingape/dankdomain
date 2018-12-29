@@ -2033,7 +2033,7 @@ export function logoff() {
         xvt.out(xvt.cyan, 'I\\___/I    ', xvt.green, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Green, xvt.white, 'RAH-CoCo\'s', xvt.reset, xvt.green, xvt.RGradient[xvt.emulation], xvt.cyan, '     I\\___/I\n')
         xvt.out(xvt.cyan, '\\/   \\/ ', xvt.reset, '   http://rahcocos.com  ', xvt.cyan, '  \\/   \\/\n')
         xvt.out(xvt.cyan, ' \\ : /                           ', xvt.cyan, '  \\ : / \n')
-        xvt.out(xvt.cyan, '  I:I     ', xvt.blue, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Blue, xvt.white, 'Robert Hurst', xvt.reset, xvt.blue, xvt.RGradient[xvt.emulation], xvt.cyan, '      I:I  \n')
+        xvt.out(xvt.cyan, '  I:I     ', xvt.blue, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Blue, xvt.white, `${player.emulation === 'XT' ? 'ℛ' : 'R'}obert ${player.emulation == 'XT' ? 'ℋ' : 'H'}urst`, xvt.reset, xvt.blue, xvt.RGradient[xvt.emulation], xvt.cyan, '      I:I  \n')
         xvt.out(xvt.cyan, ' .I:I. ', xvt.reset, 'https://robert.hurst-ri.us', xvt.cyan, '  .I:I. \n')
         xvt.outln(); xvt.waste(500)
         xvt.outln(xvt.bright, xvt.black, process.title
@@ -2665,11 +2665,12 @@ export function ringBearer(name: string): string {
 }
 
 export function getRing(how: string, what: string) {
-    xvt.out('You ', how, an(what, false))
-    xvt.out(xvt.bright, xvt.cyan, what, xvt.normal)
+    xvt.outln()
+    xvt.out(xvt.bright, xvt.yellow, 'You ', how, an(what, false))
+    xvt.out(xvt.cyan, what, xvt.normal)
     if (player.emulation === 'XT') xvt.out(' ', Ring.name[what].emoji, ' 💍')
-    xvt.outln(' ring', xvt.white, ', which can')
-    xvt.outln(Ring.name[what].description)
+    xvt.outln(' ring', xvt.yellow, ', which can')
+    xvt.outln(xvt.yellow, Ring.name[what].description)
 }
 
 export function saveRing(name: string, bearer = '', rings?: string[]) {

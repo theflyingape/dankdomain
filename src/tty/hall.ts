@@ -40,33 +40,34 @@ function choice() {
 
     switch (choice) {
         case 'C':
-            xvt.out('\n')
+            xvt.outln()
             xvt.outln(xvt.Red, xvt.white, xvt.bright, '  Class      CHAMPION                  Date      BEST        Deed      ')
-            xvt.out(xvt.Red, xvt.white, '-----------------------------------------------------------------------', xvt.reset)
+            xvt.outln(xvt.Red, xvt.white, '-----------------------------------------------------------------------')
             for (let type in $.PC.name)
                 for (let pc in $.PC.name[type]) {
                     let deeds = $.loadDeed(pc)
                     if (deeds.length) {
-                        xvt.out(sprintf('\n%-9s  ', pc))
+                        xvt.out(sprintf('%-9s  ', pc))
                         let keys = ['plays', 'retreats', 'killed', 'kills', 'jw', 'jl', 'tw', 'tl']
                         for (let best in keys) {
                             let deed = deeds.find((x) => { return x.deed === keys[best] })
                             if (deed) {
-                                xvt.out(sprintf('%-22.22s  %-11s %6d  '
+                                xvt.outln(sprintf('%-22.22s  %-11s %6d  '
                                     , deed.hero, $.date2full(deed.date).slice(4), deed.value)
                                     , $.Deed.name[deed.deed].description)
-                                xvt.out('\n           ')
+                                xvt.out('           ')
                             }
                         }
+                        xvt.outln()
                     }
                 }
             suppress = true
             break
 
         case 'H':
-            xvt.out('\n')
+            xvt.outln()
             xvt.outln(xvt.Magenta, xvt.white, xvt.bright, '  HERO                      Date      GOAT        Deed      ')
-            xvt.out(xvt.Magenta, xvt.white, '------------------------------------------------------------', xvt.reset)
+            xvt.outln(xvt.Magenta, xvt.white, '------------------------------------------------------------')
             let type = 'GOAT'
             let deeds = $.loadDeed(type)
             if (deeds.length) {
@@ -74,14 +75,14 @@ function choice() {
                 for (let goat in keys) {
                     let deed = deeds.find((x) => { return x.deed === keys[goat] })
                     if (deed) {
-                        xvt.out('\n', sprintf('%-22.22s  %-11s %6d  '
+                        xvt.outln(sprintf('%-22.22s  %-11s %6d  '
                             , deed.hero, $.date2full(deed.date).slice(4), deed.value)
                             , $.Deed.name[deed.deed].description)
                     }
                 }
             }
 
-            xvt.out('\n')
+            xvt.outln()
             xvt.outln(xvt.Magenta, xvt.yellow, xvt.bright, '   TOP HERO                Deeds   ')
             xvt.outln(xvt.Magenta, xvt.yellow, '-----------------------------------')
             let rd = $.query(`
@@ -90,31 +91,32 @@ function choice() {
                 ORDER BY n DESC LIMIT 10
             `)
             for (let n in rd) {
-                xvt.out(sprintf('%-22.22s     %4d', rd[n].hero, rd[n].n), '\n')
+                xvt.outln(sprintf('%-22.22s     %4d', rd[n].hero, rd[n].n))
             }
 
             suppress = true
             break
 
         case 'M':
-            xvt.out('\n')
-            xvt.out(xvt.Blue, xvt.white, '  Class      OUTSTANDING               Date      HURT               ')
-            xvt.out(xvt.Blue, xvt.white, '--------------------------------------------------------------------', xvt.reset)
+            xvt.outln()
+            xvt.outln(xvt.Blue, xvt.white, xvt.bright, '  Class      OUTSTANDING               Date      HURT               ')
+            xvt.outln(xvt.Blue, xvt.white, '--------------------------------------------------------------------')
             for (let type in $.PC.name) {
                 for (let pc in $.PC.name[type]) {
                     let deeds = $.loadDeed(pc)
                     if (deeds.length) {
-                        xvt.out(sprintf('\n%-9s  ', pc))
+                        xvt.out(sprintf('%-9s  ', pc))
                         let keys = ['levels', 'melee', 'blast', 'big blast']
                         for (let hurt in keys) {
                             let deed = deeds.find((x) => { return x.deed === keys[hurt] })
                             if (deed) {
-                                xvt.out(sprintf('%-22.22s  %-11s %6d  '
+                                xvt.outln(sprintf('%-22.22s  %-11s %6d  '
                                     , deed.hero, $.date2full(deed.date).slice(4), deed.value)
                                     , $.Deed.name[deed.deed].description)
-                                xvt.out('\n           ')
+                                xvt.out('           ')
                             }
                         }
+                        xvt.outln()
                     }
                 }
             }
@@ -122,8 +124,8 @@ function choice() {
             break
 
         case 'T':
-            xvt.out('\n')
-            xvt.outln(xvt.Yellow, xvt.black, ' ID   Player\'s Handle           Class    Lvl  Brawls ')
+            xvt.outln()
+            xvt.outln(xvt.Yellow, xvt.black, ` ID   Player's Handle           Class    Lvl  Brawls `)
             xvt.outln(xvt.Yellow, xvt.black, '-----------------------------------------------------')
 
             let rs = $.query(`
@@ -134,9 +136,9 @@ function choice() {
             `)
 
             for (let n in rs) {
-                xvt.out(sprintf('%-4s  %-23.23s  %-9s  %3d  %4d'
-                    , rs[n].id[0] !== '_' ? rs[n].id : ' \u00B7 ', rs[n].handle, rs[n].pc, rs[n].level, rs[n].tw)
-                    , '\n')
+                xvt.outln(sprintf('%-4s  %-23.23s  %-9s  %3d  %4d'
+                    , rs[n].id[0] !== '_' ? rs[n].id : ' \u00B7 ', rs[n].handle
+                    , rs[n].pc, rs[n].level, rs[n].tw))
             }
             suppress = true
             break
@@ -146,7 +148,7 @@ function choice() {
 			return
 
         case 'W':
-            xvt.out(xvt.green, '\n        --=:)) ', xvt.bright, 'WINNERS', xvt.normal, ' Only Noted ((:=--', xvt.reset, '\n\n')
+            xvt.outln(xvt.green, '\n        --=:)) ', xvt.bright, 'WINNERS', xvt.normal, ' Only Noted ((:=--\n')
             $.cat('winners')
             suppress = true
             break

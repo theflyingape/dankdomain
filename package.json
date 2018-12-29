@@ -48,7 +48,7 @@
     "fs-extra": "^7.0.1",
     "got": "^9.4.0",
     "node-pty": "^0.8.0",
-    "nodemailer": "^4.7.0",
+    "nodemailer": "^5.0.0",
     "nodemailer-smtp-transport": "^2.7.4",
     "sprintf-js": "^1.1.2",
     "title-case": "^2.1.1",

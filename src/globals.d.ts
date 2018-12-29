@@ -237,6 +237,7 @@ interface room {
     giftItem?: GIFT
     giftValue?: number|string
     giftID?: boolean	//	undefined, or identified?
+    giftIcon?: string
     monster?: active[]
 }
 

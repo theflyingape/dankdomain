@@ -5,7 +5,13 @@
 🇺🇸 ©️1991-2019 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](http://Play.DDgame.us) on an Intel Atom-powered Linux server using a Verizon FiOS 100mb Internet service
 
-### **24-Dec-2018** `v1.7.0`
+### **01-Jan-2019** `v1.7.1`
+
+* Happy New Year! 🔔
+* big maintenance release after many hours of testing
+* enhances to dungeon map and its mapping as it relates to player's intellect
+
+#### 24-Dec-2018 `v1.7.0`
 
 * Merry Christmas! 🎅 🎄
 * added twenty 💍 rings of power to wearable items, 8 are unique

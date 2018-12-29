@@ -130,7 +130,7 @@
     },
     "Moon": {
         "unique": false,
-        "description":"absorb mana from opponent, but reverses that against an Undead",
+        "description":"absorb mana from opponent, but not against the Undead",
         "emoji":"🌓",
         "ability":[
             { "id":"sp", "power":true },
