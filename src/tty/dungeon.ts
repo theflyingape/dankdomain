@@ -202,7 +202,7 @@ export function menu(suppress = false) {
 			x = $.dice(DL.width) - 1
 	}
 	ROOM = DL.rooms[y][x]
-	if ($.dice(DL.spawn * (ROOM.type == '' ? 2 : ROOM.type == 'cavern' ? 1 : 3)) == 1) {
+	if ($.dice(DL.spawn * (!ROOM.type ? 2 : ROOM.type == 'cavern' ? 1 : 3)) == 1) {
 		let s = $.dice(5) - 1
 		xvt.outln()
 		xvt.out(xvt.faint, ['Your skin crawls'
@@ -1290,14 +1290,16 @@ function doMove(): boolean {
 			return false
 
 		case 'wizard':
-			scroll()
 			$.profile({ jpg:'npc/wizard', effect:'flash' })
 			xvt.waste(800)
 			xvt.out(xvt.magenta, 'You encounter a ', xvt.bright)
+
 			if (!$.player.cursed && !$.player.novice && $.dice((Z > $.player.level ? Z : 1) + 20 * $.player.immortal + $.player.level + $.online.cha) == 1) {
 				xvt.outln('doppleganger', xvt.normal, ' waiting for you.\n')
 				$.player.coward = true
 				xvt.waste(1200)
+
+				drawHero()
 				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : ''), effect:'flip' })
 				xvt.outln(xvt.bright, 'It curses you!')
 				$.sound('morph', 15)
@@ -1318,6 +1320,7 @@ function doMove(): boolean {
 				$.news(`\tcursed by a doppleganger!`)
 				$.player.coward = false
 				$.online.altered = true
+
 				//	vacate
 				$.animated('flipOutY')
 				$.sound('teleport', 12)
@@ -1332,10 +1335,13 @@ function doMove(): boolean {
 			else if (!$.player.novice && $.dice(Z + $.online.cha) == 1) {
 				xvt.outln('mimic', xvt.normal, ' occupying this space.\n')
 				xvt.waste(1200)
+
+				drawHero()
 				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : ''), effect:'flip' })
 				xvt.waste(1200)
 				xvt.out(xvt.faint, 'It waves a hand at you ... '); xvt.waste(1200)
 				xvt.outln()
+
 				//	vacate
 				$.animated('flipOutY')
 				$.sound('teleport', 12)
@@ -1349,6 +1355,7 @@ function doMove(): boolean {
 			}
 			else {
 				xvt.outln('wizard', xvt.normal, ' in this room.\n')
+				scroll()
 				xvt.waste(300)
 				teleport()
 				return false
@@ -1750,7 +1757,7 @@ function drawLevel() {
 					if (reveal) {
 						if (!DL.rooms[r][x].type || DL.rooms[r][x].type == 'cavern')
 							o += xvt.attr(xvt.faint, !DL.rooms[r][x].type ? xvt.yellow : xvt.red)
-						o += `  ${dot}  `
+						o += `  ${DL.rooms[r][x].map ? dot : ' '}  `
 						if (DL.rooms[r][x].monster.length) {
 							icon = xvt.attr(xvt.reset, DL.rooms[r][x].occupant || DL.rooms[r][x].giftItem ? xvt.green : xvt.red, 
 								DL.rooms[r][x].monster.length > 1 ? 'Mob' : 'Mon', xvt.reset)
@@ -1860,7 +1867,7 @@ function drawRoom(r:number, c:number, keep = true) {
 	if (reveal) {
 		if (!ROOM.type || ROOM.type == 'cavern')
 			o += xvt.attr(xvt.faint, !ROOM.type ? xvt.yellow : xvt.red)
-		o += `  ${dot}  `
+		o += `  ${ROOM.map ? dot : ' '}  `
 		if (ROOM.monster.length)
 			icon = xvt.attr(xvt.reset, ROOM.occupant ? xvt.green : xvt.red, ROOM.monster.length > 1 ? 'Mob' : 'Mon', xvt.reset)
 	}
