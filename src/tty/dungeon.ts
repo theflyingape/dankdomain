@@ -146,8 +146,8 @@ export function menu(suppress = false) {
 //	did player cast teleport?
 	if (!Battle.retreat && Battle.teleported) {
 		scroll()
-		xvt.outln(xvt.bright, xvt.magenta, 'You open a mystic portal.\n')
-		xvt.waste(300)
+		xvt.outln(xvt.magenta, 'You open a ', xvt.bright, 'mystic portal', xvt.normal, '.\n')
+		$.sound('portal', 4)
 		Battle.teleported = false
 		teleport()
 		return
@@ -485,12 +485,14 @@ function command() {
 function oof(wall:string) {
 	$.sound('wall')
 	xvt.outln(xvt.bright, xvt.yellow, 'Oof!  There is a wall to the ', wall, '.')
-	xvt.waste(600)
+	xvt.waste(400)
 	if (($.online.hp -= $.dice(deep + Z + 1)) < 1) {
+		$.online.hp = 0
 		$.music('.')
 		xvt.outln(xvt.faint, '\nYou take too many hits and die!')
 		xvt.waste(600)
 		$.death(Battle.retreat ? 'running into a wall' : 'banged head against a wall')
+		if (deep) $.reason += `-${iii[deep]}`
 	}
 }
 
@@ -669,28 +671,27 @@ function doMove(): boolean {
 		case 'portal':
 			$.action('ny')
 			$.profile({ jpg:'ddd', effect:'fadeIn' })
-			xvt.out(xvt.bright, xvt.blue, `You've found a portal to a deep, dank dungeon.`)
+			xvt.out(xvt.bright, xvt.blue, `You've found a portal to a deeper and more dank dungeon.`)
 			xvt.app.form = {
 				'deep': { cb: () => {
 					ROOM.occupant = ''
-					xvt.out('\n')
+					xvt.outln()
 					if (/Y/i.test(xvt.entry)) {
+						xvt.out(xvt.bright, `You vanish into dungeon ${iii[++deep]} ... `)
 						$.animated('flipOutY')
-						xvt.out(xvt.bright, 'You vanish into the other dungeon...')
 						$.sound('portal', 12)
-						deep++
 						generateLevel()
 					}
 					else
 						$.animated('fadeOut')
 					menu()
-				}, prompt:'Descend even deeper (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
+				}, prompt:'Descend even deeper (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:20 }
 			}
 			xvt.app.focus = 'deep'
 			return false
 
 		case 'well':
-			scroll()
+			scroll(1, false)
 			$.music('well')
 			xvt.waste(600)
 			xvt.outln(xvt.magenta, 'You have found a legendary Wishing Well.')
@@ -804,7 +805,7 @@ function doMove(): boolean {
 
 					case 'O':
 						$.sound('teleport')
-						scroll(1, false)
+						scroll(1, false, true)
 						xvt.outln()
 						fini()
 						return
@@ -1355,7 +1356,7 @@ function doMove(): boolean {
 			}
 			else {
 				xvt.outln('wizard', xvt.normal, ' in this room.\n')
-				scroll()
+				scroll(1, false)
 				xvt.waste(300)
 				teleport()
 				return false
@@ -1727,6 +1728,18 @@ function drawHero() {
 		xvt.out(xvt.lBlack, ' ', xvt.cyan, '⚸', xvt.bright, xvt.white, '☥', xvt.normal, xvt.yellow, '⛨', ' ')
 	else
 		xvt.out(xvt.reverse, '-YOU-')
+
+	if (!$.online.hp) {
+		xvt.plot(Y * 2 + 2, X * 6 + 4)
+		xvt.waste(500)
+		xvt.plot(Y * 2 + 2, X * 6 + 2)
+		if ($.player.emulation === 'XT')
+			xvt.out(xvt.lBlack, xvt.black, '  ☥  ')
+		else
+			xvt.out(xvt.faint, xvt.reverse, '  X  ')
+		xvt.plot(Y * 2 + 2, X * 6 + 4)
+		xvt.waste(750)
+	}
 	xvt.restore()
 }
 
@@ -1839,7 +1852,8 @@ function drawLevel() {
 	}
 
 	xvt.plot(paper.length + 1, 1)
-	scroll(paper.length + 1)
+	scroll(paper.length + 1, false)
+	refresh = false
 }
 
 function drawRoom(r:number, c:number, keep = true) {
@@ -2582,8 +2596,7 @@ function teleport() {
 					if (deep > 0)
 						deep--
 					else {
-						$.music('thief2')
-						scroll(1, false)
+						scroll(1, false, true)
 						fini()
 						return
 					}
@@ -2594,7 +2607,7 @@ function teleport() {
 			xvt.waste(1250)
 			generateLevel()
 			menu()
-		}, cancel:'O', enter:'R', eol:false, match:/U|D|O|R/i, timeout:10 }
+		}, cancel:'O', enter:'R', eol:false, match:/U|D|O|R/i, timeout:20 }
 	}
 	xvt.app.form['wizard'].prompt = `Teleport #${iii[deep]}.${Z + 1}: `
 	xvt.app.focus = 'wizard'
@@ -2606,7 +2619,7 @@ function quaff(v: number, it = true) {
 	if (!(v % 2) && !potions[v].identified) $.news(`\t${it ? 'quaffed' : 'tossed'}${$.an(potion[v])}`)
 	if (it) {
 		potions[v].identified = $.online.int > (85 - 4 * $.player.poison)	//	recall seeing this before
-		xvt.out('It was', xvt.bright, v % 2 ? xvt.red : xvt.green, $.an(potion[v]), xvt.reset, '.\n')
+		xvt.outln('It was', xvt.bright, v % 2 ? xvt.red : xvt.green, $.an(potion[v]))
 		$.sound('quaff', 6)
 		switch (v) {
 	//	Potion of Cure Light Wounds
@@ -2740,19 +2753,19 @@ function quaff(v: number, it = true) {
 	if (!$.reason) pause = true
 }
 
-function scroll(top = 1, redraw = true) {
-	if (top == 1) {
-		if (redraw) {
-			drawLevel()
-			drawHero()
-		}
-		else
-			xvt.outln(xvt.lblue, `\n"Next time you won't escape so easily... moo-hahahahaha!!"`)
+function scroll(top = 1, redraw = true, escape = false) {
+	if (redraw) {
+		drawLevel()
+		drawHero()
+	}
+	else if (escape) {
+		$.music('thief2')
+		xvt.outln(xvt.lblue, `\n"Next time you won't escape so easily... moo-hahahahaha!!"`)
 	}
 	xvt.save()
 	xvt.out(`\x1B[${top};${$.player.rows}r`)
 	xvt.restore()
-	refresh = true
+	refresh = (top == 1)
 }
 
 }
