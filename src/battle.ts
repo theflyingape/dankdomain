@@ -1148,7 +1148,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 const spent = +(+$.Ring.power(nme.user.rings, 'sp', 'pc', nme.user.pc).power && !$.Ring.power(rpc.user.rings, 'ring').power) * (+$.Ring.power(nme.user.rings, 'ring').power + 1)
                 if (mana = spent * $.dice(mana >>1)) {
                     if (nme.sp + mana > nme.user.sp) {
-                        mana -= nme.sp - nme.user.sp
+                        mana = nme.user.sp - nme.sp
                         if (mana < 0) mana = 0
                     }
                     if (mana) {
@@ -1156,14 +1156,14 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                             nme.sp += mana
                             xvt.outln(nme == $.online ? 'You' : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
                                 , ' ', $.what(nme, 'absorb'), xvt.bright, xvt.cyan, mana.toString(), xvt.normal, ' mana '
-                                , xvt.reset, 'spent off ', $.who(rpc,'his'), 'spell.')
+                                , xvt.reset, 'spent off ', $.who(rpc, 'his'), 'spell.')
                         }
                         else {
                             rpc.sp -= mana
                             if (rpc.sp < 0) rpc.sp = 0
                             xvt.outln(nme == $.online ? 'You' : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
                                 , ' ', $.what(nme, 'drain'), 'an extra ', xvt.bright, xvt.cyan, mana.toString(), xvt.normal, ' mana '
-                                , xvt.reset, 'from ', $.who(rpc,'his'), 'spell.')
+                                , xvt.reset, 'from ', $.who(rpc, 'his'), 'spell.')
                         }
                         xvt.waste(100)
                     }
@@ -2116,9 +2116,9 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         xvt.waste(50)
 
         //  any bonus restore health from the hit off enemy?
-        if (hit = life * $.dice(hit / (rpc.user.melee + 2))) {
+        if (hit = life * $.dice(hit >>1)) {
             if (rpc.hp + hit > rpc.user.hp) {
-                hit -= rpc.hp - rpc.user.hp
+                hit = rpc.user.hp - rpc.hp
                 if (hit < 0) hit = 0
             }
             if (hit) {

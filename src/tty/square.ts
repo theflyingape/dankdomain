@@ -560,8 +560,9 @@ function Bank() {
 			let vault = Math.pow(d, 7) * $.dice(d / 3) * $.dice(d / 11)
 			let carry = new $.coins(vault)
 
+			$.sound('creak2', 12)
 			xvt.outln(xvt.yellow, ' you open a chest and find ', carry.carry(), '!')
-			$.sound('creak2', 25)
+			xvt.waste(1200)
 
 			xvt.outln()
 			xvt.out('You try to make your way out of the vault')
@@ -581,7 +582,7 @@ function Bank() {
 				$.player.status = 'jail'
 				$.player.xplevel = 0
 				$.reason = 'caught inside the vault'
-				xvt.out(xvt.faint, ' something jingles.')
+				xvt.out(xvt.faint, ' something jingles.', xvt.normal)
 				$.action('clear')
 				$.sound('max', 12)
 				$.profile({ png:'npc/jailer', effect:'fadeIn' })
