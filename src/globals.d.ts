@@ -2,7 +2,7 @@ type ABILITY = string | 'str' | 'int' | 'dex' | 'cha'
 type POWER = string | 'cast' | 'degrade' | 'initiate' | 'hp' | 'identify' | 'joust' | 'melee' | 'resist' | 'resurrect' | 'ring' | 'skip' |'sp' |'steal' | 'taxes' | 'teleport' | 'upgrade'
 type POWTO = 'ability' | 'magic' | 'melee' | 'pc' | 'poison' | 'spell'
 type GIFT = '' | 'armor' | 'chest' | 'magic' | 'map' | 'poison' | 'potion' | 'ring' | 'weapon' | 'xmagic'
-type MAP = '' | 'map' | 'magic map' | 'Marauder\'s map'
+type MAP = '' | 'map' | 'magic map' | `Marauder's map`
 type NPC = '' | 'cleric' | 'wizard' | 'trapdoor' | 'thief' | 'portal' | 'well' | 'wheel' | 'dwarf'
 type ROOM = '' | 'n-s' | 'w-e' | 'cavern'
 type TTY = 'rlogin' | 'telnet' | 'web'
@@ -183,11 +183,7 @@ interface armor {
     value: string
     ac: number
     armoury?: boolean
-    gift?: boolean
-    ego_blessed?: string
-    ego_cursed?: string
-    vs_magic?: number
-    vs_melee?: number
+    dwarf?: boolean
 }
 
 interface coins {
@@ -270,11 +266,7 @@ interface weapon {
     stab: string
     plunge: string
     shoppe?: boolean
-    gift?: boolean
-    ego_blessed?: string
-    ego_cursed?: string
-    vs_magic?: number
-    vs_melee?: number
+    dwarf?: boolean
 }
 
 interface character {

@@ -281,15 +281,15 @@ export function menu(suppress = false) {
 			xvt.out(xvt.faint, 'A bat flies by and soils your ', xvt.normal)
 			$.sound('splat', 4)
 			$.player.toAC -= $.dice(deep)
-			xvt.out($.player.armor, $.buff($.player.toAC, $.online.toAC))
+			xvt.out(xvt.yellow, $.player.armor, $.buff($.player.toAC, $.online.toAC))
 			if ($.tty == 'web') xvt.out(' 💩')
 		}
 		else if (rng > 4) {
 			if ($.tty == 'web') xvt.out(' 💧  ')
-			xvt.out(xvt.blue, 'A drop of acid water lands on your ')
+			xvt.out(xvt.blue, 'A drop of ', xvt.bright, 'acid water', xvt.normal, ' lands on your ')
 			$.sound('drop', 4)
 			$.player.toWC -= $.dice(deep)
-			xvt.out($.player.weapon, $.buff($.player.toWC, $.online.toWC))
+			xvt.out(xvt.bright, xvt.cyan, $.player.weapon, $.buff($.player.toWC, $.online.toWC))
 		}
 		else if (rng > 2) {
 			if ($.tty == 'web') xvt.out(' 😬  ')
@@ -346,7 +346,7 @@ export function menu(suppress = false) {
 	}
 	xvt.app.form['command'].prompt = ''
 	if (suppress)
-		xvt.app.form['command'].prompt += ':'
+		xvt.app.form['command'].prompt += `${deep ? xvt.attr(xvt.faint, iii[deep], xvt.normal) : ''}:`
 	else {
 		if ($.player.magic && $.player.spells.length)
 			xvt.app.form['command'].prompt += xvt.attr(
@@ -484,7 +484,7 @@ function command() {
 
 function oof(wall:string) {
 	$.sound('wall')
-	xvt.outln(xvt.bright, xvt.yellow, 'Oof!  There is a wall to the ', wall, '.')
+	xvt.outln(xvt.bright, xvt.yellow, 'Oof!', xvt.normal, ` There is a wall to the ${wall}.`)
 	xvt.waste(400)
 	if (($.online.hp -= $.dice(deep + Z + 1)) < 1) {
 		$.online.hp = 0
@@ -797,11 +797,13 @@ function doMove(): boolean {
 						return
 
 					case 'D':
-						xvt.out(xvt.bright, xvt.black, 'Your past time in this dungeon is eradicated and reset.')
-						$.sound('destroy', 30)
+						xvt.outln(xvt.bright, xvt.black, 'Your past time in this dungeon is eradicated and reset.')
+						$.sound('destroy', 32)
 						for (let i in dd)
 							delete dd[i]
 						$.dungeon++
+						generateLevel()
+						break
 
 					case 'O':
 						$.sound('teleport')
@@ -1232,7 +1234,7 @@ function doMove(): boolean {
 				, power < 40 ? xvt.faint : power < 80 ? xvt.normal : xvt.bright, `${power}`
 				, xvt.normal, '% spell power.')
 			xvt.out('He says, ')
-			if ($.online.hp > $.int($.player.hp / 2) || ($.int(deep / 4) + 3) * cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, 13)) {
+			if ($.online.hp > $.int($.player.hp / 3) || ($.int(deep / 4) + 3) * cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, 13)) {
 				xvt.out('"I can ', DL.cleric.sp < $.Magic.power(DL.cleric, 13) ? 'only' : 'surely'
 					, ' cast a Heal spell on your wounds for '
 					, cost.value ? cost.carry() : `you, ${$.player.gender === 'F' ? 'sister' : 'brother'}`
@@ -1276,7 +1278,7 @@ function doMove(): boolean {
 					else {
 						if (cast == 13) {
 							ROOM.occupant = ''
-							xvt.out(xvt.magenta, 'He teleports away!\n', xvt.reset)
+							xvt.outln(xvt.magenta, 'He teleports away!')
 							$.sound('teleport', 8)
 						}
 						else {
@@ -1291,6 +1293,7 @@ function doMove(): boolean {
 			return false
 
 		case 'wizard':
+			drawRoom(Y, X)
 			$.profile({ jpg:'npc/wizard', effect:'flash' })
 			xvt.waste(800)
 			xvt.out(xvt.magenta, 'You encounter a ', xvt.bright)
@@ -1300,21 +1303,20 @@ function doMove(): boolean {
 				$.player.coward = true
 				xvt.waste(1200)
 
-				drawHero()
 				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : ''), effect:'flip' })
 				xvt.outln(xvt.bright, 'It curses you!')
-				$.sound('morph', 15)
+				$.sound('morph', 18)
 				$.PC.adjust('str', -10)
 				$.PC.adjust('int', -10)
 				$.PC.adjust('dex', -10)
 				$.PC.adjust('cha', -10)
 				if ($.player.blessed) {
 					$.player.blessed = ''
-					xvt.out(xvt.bright, xvt.yellow, 'Your shining aura ', xvt.normal, 'left')
+					xvt.out(xvt.yellow, 'Your ', xvt.bright, 'shining aura ', xvt.normal, 'left', xvt.faint)
 				}
 				else {
 					$.player.cursed = 'wiz!'
-					xvt.out(xvt.bright, xvt.black, 'A dark cloud hovers over', xvt.reset)
+					xvt.out(xvt.bright, xvt.black, 'A dark cloud hovers over')
 				}
 				$.saveUser($.player)
 				xvt.outln(' you.')
@@ -1323,6 +1325,7 @@ function doMove(): boolean {
 				$.online.altered = true
 
 				//	vacate
+				drawHero()
 				$.animated('flipOutY')
 				$.sound('teleport', 12)
 				ROOM.occupant = ''
@@ -1337,13 +1340,13 @@ function doMove(): boolean {
 				xvt.outln('mimic', xvt.normal, ' occupying this space.\n')
 				xvt.waste(1200)
 
-				drawHero()
 				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : ''), effect:'flip' })
-				xvt.waste(1200)
+				xvt.waste(1800)
 				xvt.out(xvt.faint, 'It waves a hand at you ... '); xvt.waste(1200)
 				xvt.outln()
 
 				//	vacate
+				drawHero()
 				$.animated('flipOutY')
 				$.sound('teleport', 12)
 				ROOM.occupant = ''
@@ -1365,14 +1368,45 @@ function doMove(): boolean {
 			break
 
 		case 'dwarf':
+			let lo = 0, hi = 0, max = 0
+			let credit = new $.coins(0)
+			let ac = $.Armor.name[$.player.armor].ac
+			xvt.out('\nYou own a class ', $.bracket(ac, false), ' ', $.player.armor, $.buff($.player.toAC, $.online.toAC))
+			if (ac) {
+				let cv = new $.coins($.Armor.name[$.player.armor].value)
+				credit.value = $.worth(cv.value, $.online.cha)
+				if ($.player.toAC) credit.value = Math.trunc(credit.value * (ac + $.player.toAC / ($.player.poison + 1)) / ac)
+				if ($.online.toAC < 0) credit.value = Math.trunc(credit.value * (ac + $.online.toAC) / ac)
+				if (credit.value > cv.value)
+					credit.value = cv.value
+			}
+			else
+				credit.value = 0
+			xvt.outln(' worth ', credit.carry())
+			max = $.Armor.dwarf.length - 1
+			lo = $.online.armor.ac - 1
+			lo = lo < 1 ? 0 : lo > max ? max - 1 : lo
+			for (hi = lo;
+				hi < max && $.player.coin.value + credit.value >= new $.coins($.Armor.name[$.Armor.dwarf[hi]].value).value;
+				hi++);
+
+			xvt.outln('Trade you for ', $.bracket(hi, false), ' ', $.Armor.dwarf[hi])
 			break
 	}
 
 	//	items?
 	switch (ROOM.giftItem) {
 		case 'armor':
-			xvt.outln(xvt.yellow, 'The armor shop is closed.')
-			$.sound('boo')
+			let aname = $.Armor.special[ROOM.giftValue]
+			let armor = $.Armor.name[aname]
+			let ac = $.Armor.name[$.player.armor].ac + $.player.toAC + $.online.toAC
+			if (ac < armor.ac) {
+				$.Armor.equip($.online, aname)
+				xvt.outln(xvt.faint, xvt.yellow, 'You find', xvt.normal, $.an(aname), xvt.bright, '!')
+				$.sound('max')
+				pause = true
+				ROOM.giftItem = ''
+			}
 			break
 
 		case 'chest':
@@ -1436,7 +1470,8 @@ function doMove(): boolean {
 			if (potions[ROOM.giftValue].identified || ROOM.giftID || $.access.sysop) {
 				$.profile({ png:potions[ROOM.giftValue].image, handle:potion[ROOM.giftValue], effect:'fadeInUp' })
 				xvt.out(potion[ROOM.giftValue], '.')
-				potions[ROOM.giftValue].identified = $.player.novice || $.online.int > (85 - 4 * $.player.poison)	//	recall seeing this before
+				if (!potions[ROOM.giftValue].identified)	//	recall seeing this before
+					potions[ROOM.giftValue].identified = $.player.novice || $.online.int > (85 - 4 * $.player.poison)
 				id = true
 			}
 			else {
@@ -1493,8 +1528,17 @@ function doMove(): boolean {
 			break
 
 		case 'weapon':
-			xvt.outln(xvt.yellow, 'The weapon shop is closed.')
-			$.sound('boo')
+			let wname = $.Weapon.special[ROOM.giftValue]
+			let weapon = $.Weapon.name[wname]
+			let wc = $.Weapon.name[$.player.weapon].wc + $.player.toWC + $.online.toWC
+
+			if (wc < weapon.wc) {
+				$.Weapon.equip($.online, wname)
+				xvt.outln(xvt.faint, xvt.cyan, 'You find', xvt.normal, $.an(wname), xvt.bright, '!')
+				$.sound('max')
+				pause = true
+				ROOM.giftItem = ''
+			}
 			break
 
 		case 'xmagic':
@@ -2120,12 +2164,14 @@ function generateLevel() {
 	//	potential bonus(es) for the more experienced adventurer
 	if (!$.player.novice && $.dice($.player.immortal) > Z)
 		if (Math.trunc($.dice(100 * (Z + 1)) / (deep + 1)) < (deep + 2))
-			wow = DL.rooms.length * DL.width
+			wow = $.int(DL.rooms.length * DL.width / 2)
 
 	wow = $.dice(Z / 33) + $.dice(deep / 3) + wow - 2
 	for (let i = 0; i < wow; i++) {
-		y = $.dice(DL.rooms.length) - 1
-		x = $.dice(DL.width) - 1
+		do {
+			y = $.dice(DL.rooms.length) - 1
+			x = $.dice(DL.width) - 1
+		} while (DL.rooms[y][x].giftItem || DL.rooms[y][x].occupant == 'wizard')
 
 		if ($.dice(deep + 10) > (deep + 1)) {
 			DL.rooms[y][x].giftItem = 'potion'
@@ -2187,14 +2233,22 @@ function generateLevel() {
 		if ($.dice(deep * ($.player.melee + 3)) - $.player.magic > (deep + 1)) {
 			DL.rooms[y][x].giftItem = 'armor'
 			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⛨' : dot
-			DL.rooms[y][x].giftValue = $.dice(deep) + 2
+			n = $.Armor.special.length - 1
+			for (v = 0;
+				v < n && $.online.armor.ac >= $.Armor.name[$.Armor.special[v]].ac;
+				v++);
+			DL.rooms[y][x].giftValue = v
 			continue
 		}
 
 		if ($.dice(deep * ($.player.melee + 2)) - $.player.magic > (deep + 1)) {
 			DL.rooms[y][x].giftItem = 'weapon'
 			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⚸' : dot
-			DL.rooms[y][x].giftValue = $.dice(deep) + 2
+			n = $.Weapon.special.length - 1
+			for (v = 0;
+				v < n && $.online.weapon.wc >= $.Weapon.name[$.Weapon.special[v]].wc;
+				v++);
+			DL.rooms[y][x].giftValue = v
 			continue
 		}
 	}
@@ -2614,12 +2668,12 @@ function teleport() {
 }
 
 function quaff(v: number, it = true) {
-	let m = $.player.blessed ? 10 : 0
-	m = $.player.cursed ? m - 10 : m
 	if (!(v % 2) && !potions[v].identified) $.news(`\t${it ? 'quaffed' : 'tossed'}${$.an(potion[v])}`)
 	if (it) {
-		potions[v].identified = $.online.int > (85 - 4 * $.player.poison)	//	recall seeing this before
-		xvt.outln('It was', xvt.bright, v % 2 ? xvt.red : xvt.green, $.an(potion[v]))
+		if (!potions[v].identified)	{
+			potions[v].identified = $.online.int > (85 - 4 * $.player.poison)
+			xvt.outln(v % 2 ? xvt.red : xvt.green, 'It was', xvt.bright, $.an(potion[v]), xvt.normal, '.')
+		}
 		$.sound('quaff', 6)
 		switch (v) {
 	//	Potion of Cure Light Wounds

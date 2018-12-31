@@ -1122,7 +1122,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             let mod = $.Ring.power(nme.user.rings, 'resist', 'spell', name)
             if (mod.power) {
                 $.sound('oops', 4)
-                xvt.out(`${$.who(rpc,'His')}${name} spell is ineffective against ${$.who(rpc,'his')}`)
+                xvt.out(`${$.who(rpc, 'His')}${name} spell is ineffective against ${$.who(nme, 'his')}`)
                 xvt.out(xvt.bright, xvt.cyan, mod.name, xvt.normal)
                 if ($.player.emulation === 'XT') xvt.out(' ', $.Ring.name[mod.name].emoji, ' 💍')
                 xvt.outln(' ring', xvt.white, '!')

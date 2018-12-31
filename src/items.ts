@@ -21,7 +21,7 @@ export class Access {
 export class Armor {
 
     name: armor[]
-    gift: string[] = []
+    dwarf: string[] = []
     merchant: string[] = []
     special: string[] = []
 
@@ -30,8 +30,8 @@ export class Armor {
         for (let i in this.name) {
             if (this.name[i].armoury)
                 this.merchant.push(i)
-            else if (this.name[i].gift)
-                this.gift.push(i)
+            else if (this.name[i].dwarf)
+                this.dwarf.push(i)
             else
                 this.special.push(i)
         }
@@ -281,7 +281,7 @@ export class Poison {
 
 export class Weapon {
     name: weapon[]
-    gift: string[] = []
+    dwarf: string[] = []
     merchant: string[] = []
     special: string[] = []
 
@@ -290,8 +290,8 @@ export class Weapon {
         for (let i in this.name) {
             if (this.name[i].shoppe)
                 this.merchant.push(i)
-            else if (this.name[i].gift)
-                this.gift.push(i)
+            else if (this.name[i].dwarf)
+                this.dwarf.push(i)
             else
                 this.special.push(i)
         }

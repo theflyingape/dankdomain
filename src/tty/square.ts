@@ -107,7 +107,7 @@ function choice() {
             xvt.out(' - ', square[choice].description)
             suppress = $.player.expert
         }
-    xvt.out('\n')
+    xvt.outln()
 
     switch (choice) {
 		case 'A':
@@ -548,9 +548,9 @@ function Bank() {
 				$.reason = 'caught getting into the vault'
 				$.action('clear')
 				$.profile({ png:'npc/jailer', effect:'fadeIn' })
-				xvt.out('\n\nA guard catches you and throws you into jail!\n')
+				xvt.outln('\n\nA guard catches you and throws you into jail!')
 				$.sound('arrested', 20)
-				xvt.out('\nYou might be released by your next call.\n\n')
+				xvt.outln('\nYou might be released by your next call.\n')
 				xvt.waste(1000)
 				xvt.hangup()
 				return
@@ -560,16 +560,15 @@ function Bank() {
 			let vault = Math.pow(d, 7) * $.dice(d / 3) * $.dice(d / 11)
 			let carry = new $.coins(vault)
 
-			xvt.out(' you open a chest and find ', carry.carry(), '!\n')
+			xvt.outln(xvt.yellow, ' you open a chest and find ', carry.carry(), '!')
 			$.sound('creak2', 25)
 
 			xvt.outln()
 			xvt.out('You try to make your way out of the vault')
-			let deposits = new $.coins($.query(`SELECT SUM(bank) AS bank FROM Players WHERE id NOT GLOB '_*' AND id <> '${$.player.id}'`)[0].bank)
+			let deposits = new $.coins($.int($.query(`SELECT SUM(bank) AS bank FROM Players WHERE id NOT GLOB '_*' AND id <> '${$.player.id}'`)[0].bank, true))
 			if (deposits.value) {
-				xvt.out(' grabbing ', deposits.carry(), ' more in deposits!\n')
+				xvt.outln(' grabbing ', deposits.carry(), ' more in deposits!')
 				$.sound('yahoo')
-
 			}
 
 			for (let i = 0; i < 3; i++) {
@@ -582,13 +581,13 @@ function Bank() {
 				$.player.status = 'jail'
 				$.player.xplevel = 0
 				$.reason = 'caught inside the vault'
-				xvt.out('something jingles!')
+				xvt.out(xvt.faint, ' something jingles.')
 				$.action('clear')
-				xvt.waste(1500)
+				$.sound('max', 12)
 				$.profile({ png:'npc/jailer', effect:'fadeIn' })
-				xvt.out('\n\nA guard laughs as he closes the vault door on you!\n')
+				xvt.outln('\n\nA guard laughs as he closes the vault door on you!')
 				$.sound('arrested', 20)
-				xvt.out('\nYou might be released by your next call.\n\n')
+				xvt.outln('\nYou might be released by your next call.')
 				xvt.waste(1000)
 				xvt.hangup()
 				return
@@ -596,7 +595,7 @@ function Bank() {
 
 			$.beep()
 			$.player.coin.value += carry.value + deposits.value
-			xvt.out('\n')
+			xvt.outln()
 			$.run(`UPDATE Players set bank=0 WHERE id NOT GLOB '_*'`)
 			menu(true)
 			break
@@ -750,7 +749,7 @@ function listEnd() {
 	if (n > max) n = max
 
 	hi = n
-	xvt.out('\n')
+	xvt.outln()
 	for (let i = lo; i <= hi; i++) {
 		switch (want) {
 			case 'A':

@@ -45,7 +45,7 @@ function choice() {
             xvt.out(' - ', naval[choice].description)
             suppress = $.player.expert
         }
-    xvt.out('\n')
+    xvt.outln()
 
 	let rs: any[]
 	let n:number
@@ -54,12 +54,13 @@ function choice() {
 		case 'B':
 			suppress = true
 			if (!$.access.roleplay) break
+			xvt.outln()
 			if (!$.player.hull) {
-				xvt.out('\nYou don\'t have a ship!\n')
+				xvt.outln(`You don't have a ship!`)
 				break
 			}
 			if (!$.naval) {
-				xvt.outln('\nYou have run out of battles.')
+				xvt.outln('You have run out of battles.')
 				break
 			}
 			Battle.user('Battle', (opponent: active) => {
@@ -68,7 +69,7 @@ function choice() {
 					return
 				}
 				if (!opponent.user.hull) {
-					xvt.outln(`\n${$.who(opponent, 'He')}doesn\'t have a ship.`)
+					xvt.outln(`${$.who(opponent, 'He')}doesn't have a ship.`)
 					menu(true)
 					return
 				}
@@ -79,8 +80,10 @@ function choice() {
 					return
 				}
 
-				xvt.outln(`\nYou sail out until you spot ${opponent.user.handle}\'s ship on the horizon.\n`)
+				xvt.outln(`You sail out until you spot ${opponent.user.handle}'s ship on the horizon.`)
+				xvt.waste(500)
 				xvt.outln(`It has ${opponent.user.hull} hull points.`)
+				xvt.waste(500)
 
 				$.action('ny')				
 				xvt.app.form = {
@@ -105,11 +108,12 @@ function choice() {
 		case 'G':
 			suppress = true
 			if (!$.access.roleplay) break
+			xvt.outln()
 			if (!$.player.hull) {
-				xvt.outln(`\nYou don't have a ship!`)
+				xvt.outln(`You don't have a ship!`)
 				break
 			}
-			xvt.outln('\nIt is a fine day for sailing.  You cast your reel into the ocean and feel')
+			xvt.outln('It is a fine day for sailing.  You cast your reel into the ocean and feel')
 			xvt.out('a gentle tug... ')
 			xvt.waste(600)
 			xvt.out('you caught a')
@@ -188,14 +192,14 @@ function choice() {
 					return
 				}
 				xvt.outln(' fish and you eat it.')
-				xvt.waste(600)
+				$.sound('quaff', 6)
 				xvt.outln('Ugh!  You feel sick and die!')
-				$.reason = 'ate yesterday\'s catch of the day'
+				$.reason = `ate yesterday's catch of the day`
 				break
 			}
 			if (hook < 50) {
 				xvt.outln(' fish and you eat it.')
-				xvt.waste(600)
+				$.sound('quaff', 6)
 				$.sound('yum')
 				xvt.outln('Yum!  You feel stronger and healthier.\n')
 				$.PC.adjust('str', $.dice(10))
@@ -208,63 +212,65 @@ function choice() {
 						+ Math.trunc($.player.int / 10) + ($.player.int > 90 ? $.player.int - 90 : 0)
 					xvt.out(`Spell points = ${$.online.sp}`)
 				}
-				xvt.out('\n')
+				xvt.outln()
 				break
 			}
 			if (hook < 75) {
-				xvt.out('n oyster and you eat it.\n')
+				xvt.outln('n oyster and you eat it.')
 				xvt.waste(600)
 				n = Math.round(Math.pow(2., $.player.hull / 150.) * 7937)
 				n = Math.trunc(n / $.player.hull / 10 * $.dice($.online.hull))
 				n = Math.trunc(n * ($.player.cannon + 1) / ($.player.hull / 50))
 				n = $.worth(n, $.online.cha)
-				xvt.out(`Ouch!  You bit into a pearl and sell it for ${new $.coins(n).carry()}.\n`)
+				$.sound('oof')
+				xvt.outln(`Ouch!  You bit into a pearl and sell it for ${new $.coins(n).carry()}.`)
 				$.player.coin.value += n
 				break
 			}
 			if (hook < 90) {
-				xvt.out('n oyster and you eat it.\n')
+				xvt.outln('n oyster and you eat it.')
 				xvt.waste(600)
 				n = Math.round(Math.pow(2., $.player.hull / 150.) * 7937)
 				n = Math.trunc(n / $.player.hull * $.dice($.online.hull))
 				n = Math.trunc(n * ($.player.cannon + 1) / ($.player.hull / 50))
 				n = $.worth(n, $.online.cha)
-				xvt.out(`Ouch!  You bit into a diamond and sell it for ${new $.coins(n).carry()}.\n`)
+				$.sound('oof')
+				xvt.outln(`Ouch!  You bit into a diamond and sell it for ${new $.coins(n).carry()}.`)
 				$.player.coin.value += n
 				break
 			}
 			if (hook < 95) {
 				$.profile({ jpg:'naval/turtle', effect:'fadeInUp' })
-				xvt.out(' turtle and you let it go.\n')
+				xvt.outln(' turtle and you let it go.')
 				xvt.waste(600)
 				$.player.toAC++
 				$.online.toAC += $.dice($.online.armor.ac / 5 + 1)
 				xvt.out('The turtle turns and smiles and enhances your ', $.player.armor)
-				xvt.out($.buff($.player.toAC, $.online.toAC), xvt.reset,'\n')
+				xvt.outln($.buff($.player.toAC, $.online.toAC))
 				$.sound('shield')
 				break
 			}
 			if (hook < 100) {
-				xvt.out(' tortoise and you let it go.\n')
+				xvt.outln(' tortoise and you let it go.')
 				xvt.waste(600)
 				$.player.toWC++
 				$.online.toWC += $.dice($.online.weapon.wc / 10 + 1)
 				xvt.out('The tortoise shows it gratitude by enchanting your ', $.player.weapon)
-				xvt.out($.buff($.player.toWC, $.online.toWC), xvt.reset,'\n')
+				xvt.outln($.buff($.player.toWC, $.online.toWC))
 				$.sound('hone')
 				break
 			}
-			xvt.out(' mermaid!\n')
+			xvt.outln(' mermaid!')
 			xvt.waste(600)
 			$.profile({ jpg:'naval/mermaid', effect:'bounceInUp' })
 			$.cat('naval/mermaid')
 			if ($.player.today) {
-				xvt.out('She grants you an extra call for today!\n')
+				xvt.outln('She grants you an extra call for today!')
 				$.player.today--
 				$.news('\tcaught an extra call')
 			}
 			else {
-				xvt.out('She says, \"Here\'s a key hint:\"\n')
+				xvt.outln(`She says, "Here's a key hint:"`)
 				$.keyhint($.online)
 			}
 			xvt.app.form = {
@@ -276,23 +282,24 @@ function choice() {
 		case 'H':
 			suppress = true
 			if (!$.access.roleplay) break
+			xvt.outln()
 			if (!$.player.hull) {
-				xvt.out('\nYou don\'t have a ship!\n')
+				xvt.outln(`You don't have a ship!`)
 				break
 			}
 			if (!$.naval) {
-				xvt.out('\nYou have run out of battles.\n')
+				xvt.outln('You have run out of battles.')
 				break
 			}
 
 			for (let i in monsters)
 				xvt.out($.bracket(+i + 1), xvt.cyan, monsters[i].name)
-			xvt.out('\n')
+			xvt.outln()
 
 			$.action('list')
 			xvt.app.form = {
 				pick: { cb: () => {
-					xvt.out('\n')
+					xvt.outln()
 					if (xvt.entry.length) {
 						let mon = $.int(xvt.entry)
 						if (mon < 1 || mon > monsters.length) {
@@ -311,7 +318,7 @@ function choice() {
 			return
 
 		case 'L':
-			xvt.out('\n')
+			xvt.outln()
 			xvt.outln(xvt.Blue, xvt.bright, ' ID             Username            Hull     Cannons     Ram')
 			xvt.outln(xvt.Blue, xvt.bright, '----     ----------------------     ----     -------     ---')
 			rs = $.query(`SELECT id,handle,hull,cannon,ram FROM Players WHERE hull > 0 ORDER BY hull DESC`)
@@ -373,7 +380,7 @@ function Shipyard(suppress = true) {
 				xvt.out(' - ', shipyard[choice].description)
 				suppress = true
 			}
-		xvt.out('\n')
+		xvt.outln('\n')
 
 		let ship = 50
 		let cost = Math.round(Math.pow(2, ship / 150) * 7937)
@@ -384,22 +391,22 @@ function Shipyard(suppress = true) {
 			case 'B':
 				if ($.player.hull + 50 > 8000) {
 					$.beep()
-					xvt.out('\nThey don\'t make ships any bigger than the one you have now.\n')
+					xvt.outln(`They don't make ships any bigger than the one you have now.`)
 					break
 				}
 				if (!$.player.hull) {
 					if ($.player.coin.value < cost) {
-						xvt.out('\nYou need at least ', new $.coins(cost).carry(), ' to buy a ship.\n')
+						xvt.outln('You need at least ', new $.coins(cost).carry(), ' to buy a ship.')
 						break
 					}
 				}
 				if ($.naval > 2) $.music('sailing')
 
-				xvt.out('\nList of affordable ships:\n\n')
+				xvt.outln('List of affordable ships:\n')
 				max = $.player.hull + 50
 				cost = Math.round(Math.pow(2, max / 150) * 7937)
 				while (max <= 8000 && cost < $.player.coin.value) {
-					xvt.out(sprintf('Hull size: %-4d     Cost: ', max), new $.coins(cost).carry(), '\n')
+					xvt.outln(sprintf('Hull size: %-4d     Cost: ', max), new $.coins(cost).carry())
 					max += 50
 					cost = Math.round(Math.pow(2, max / 150) * 7937)
 				}
@@ -407,7 +414,7 @@ function Shipyard(suppress = true) {
 				$.action('listbest')
 				xvt.app.form = {
 					'size': { cb: () => {
-						xvt.out('\n')
+						xvt.outln('\n')
 						if (xvt.entry.length) {
 							if (/=|max/i.test(xvt.entry)) {
 								$.beep()
@@ -419,22 +426,22 @@ function Shipyard(suppress = true) {
 								return
 							}
 							if (ship % 50) {
-								xvt.out('\nWe don\'t make ships with that hull size.  Only in multiples of 50.\n')
+								xvt.outln(`We don't make ships with that hull size.  Only in multiples of 50.`)
 								xvt.app.refocus()
 								return
 							}
 							if (ship <= $.player.hull) {
-								xvt.out(`\nYou already have a ${$.player.hull} hull size ship!\n`)
+								xvt.outln(`You already have a ${$.player.hull} hull size ship!`)
 								xvt.app.refocus()
 								return
 							}
 							if (ship >= max) {
-								xvt.out('You don\'t have enough money!\n')
+								xvt.outln(`You don't have enough money!`)
 								xvt.app.refocus()
 								return
 							}
 							if (ship > 8000) {
-								xvt.out('\nWe don\'t make ships that big!\n')
+								xvt.outln(`We don't make ships that big!`)
 								xvt.app.refocus()
 								return
 							}
@@ -447,7 +454,7 @@ function Shipyard(suppress = true) {
 							$.player.ram = false
 							$.online.hull = $.player.hull
 							$.run(`UPDATE Players set hull=${ship},ram=0 WHERE id='${$.player.id}'`)
-							xvt.out(`\nYou now have a brand new ${$.player.hull} hull point ship, with no ram.\n`)
+							xvt.outln(`You now have a brand new ${$.player.hull} hull point ship, with no ram.`)
 							$.sound('boat')
 						}
 						Shipyard()
@@ -459,21 +466,21 @@ function Shipyard(suppress = true) {
 
 			case 'F':
 				if (!$.player.hull) {
-					xvt.out('\nYou don\'t have a ship!\n')
+					xvt.outln(`You don't have a ship!`)
 					break
 				}
 				max = $.player.hull - $.online.hull
-				xvt.out(`\nYou need ${max} hull points of repair.\n`)
+				xvt.outln(`You need ${max} hull points of repair.`)
 				cost = Math.round(Math.pow(2, $.player.hull / 150) * 7937)
 				cost = Math.trunc(cost / $.player.hull / 10)
-				xvt.out(`Each hull point costs ${new $.coins(cost).carry()}.\n`)
+				xvt.outln(`Each hull point costs ${new $.coins(cost).carry()}.`)
 				afford = Math.trunc($.player.coin.value / cost)
 				if (afford < max)
 					max = afford
 				$.action('listall')
 				xvt.app.form = {
 					'hp': { cb: () => {
-						xvt.out('\n')
+						xvt.outln('\n')
 						let buy = Math.abs(Math.trunc(/=|max/i.test(xvt.entry) ? max : +xvt.entry))
 						if (buy > 0 && buy <= max) {
 							$.player.coin.value -= buy * cost
@@ -481,7 +488,7 @@ function Shipyard(suppress = true) {
 								$.player.coin.value = 0
 							$.online.hull += buy
 							$.beep()
-							xvt.out(`\nHull points = ${$.online.hull}\n`)
+							xvt.outln(`Hull points = ${$.online.hull}`)
 						}
 						Shipyard()
 						return
@@ -493,21 +500,21 @@ function Shipyard(suppress = true) {
 
 			case 'C':
 				if (!$.player.hull) {
-					xvt.out('\nYou don\'t have a ship!\n')
+					xvt.outln(`You don't have a ship!`)
 					break
 				}
 				max = Math.trunc($.player.hull / 50) - $.player.cannon
-				xvt.out(`\nYou can mount up to ${max} more cannons.\n`)
+				xvt.outln(`You can mount up to ${max} more cannons.`)
 				cost = Math.round(Math.pow(2, $.player.hull / 150) * 7937)
 				cost = Math.trunc(cost / 250)
-				xvt.out(`Each cannon costs ${new $.coins(cost).carry()}.\n`)
+				xvt.outln(`Each cannon costs ${new $.coins(cost).carry()}.`)
 				afford = Math.trunc($.player.coin.value / cost)
 				if (afford < max)
 					max = afford
 				$.action('listbest')
 				xvt.app.form = {
 					'cannon': { cb: () => {
-						xvt.out('\n')
+						xvt.outln('\n')
 						let buy = Math.abs(Math.trunc(/=|max/i.test(xvt.entry) ? max : +xvt.entry))
 						if (buy > 0 && buy <= max) {
 							$.player.coin.value -= buy * cost
@@ -515,7 +522,7 @@ function Shipyard(suppress = true) {
 								$.player.coin.value = 0
 							$.player.cannon += buy
 							$.beep()
-							xvt.out(`\nCannons = ${$.player.cannon}\n`)
+							xvt.outln(`Cannons = ${$.player.cannon}`)
 							$.run(`UPDATE Players set cannon=${$.player.cannon} WHERE id='${$.player.id}'`)
 						}
 						Shipyard()
@@ -528,37 +535,37 @@ function Shipyard(suppress = true) {
 
 			case 'R':
 				if (!$.player.hull) {
-					xvt.out('\nYou don\'t have a ship!\n')
+					xvt.outln(`You don't have a ship!`)
 					break
 				}
 				if ($.player.ram) {
-					xvt.out('\nBut your ship already has a ram!\n')
+					xvt.outln(`But your ship already has a ram!`)
 					break
 				}
 				cost = Math.round(Math.pow(2, $.player.hull / 150) * 7937)
 				cost = Math.trunc(cost / 10)
-				xvt.out(`\nWe can equip your ship with a ram for ${new $.coins(cost).carry()}.\n`)
+				xvt.outln(`We can equip your ship with a ram for ${new $.coins(cost).carry()}.`)
 				afford = Math.trunc($.player.coin.value / cost)
 				if (!afford) {
-					xvt.out(`\nYou don\'t have enough money!\n`)
+					xvt.outln(`You don't have enough money!`)
 					break
 				}
 				$.action('yn')
 				xvt.app.form = {
 					'ram': { cb: () => {
-						xvt.out('\n')
+						xvt.outln('\n')
 						if (/Y/i.test(xvt.entry)) {
 							$.player.coin.value -= cost
 							if ($.player.coin.value < 0)
 								$.player.coin.value = 0
 							$.player.ram = true
 							$.beep()
-							xvt.out(`\nYou now have a ram.\n`)
+							xvt.outln('You now have a ram.')
 							$.run(`UPDATE Players set ram=1 WHERE id='${$.player.id}'`)
 						}
 						Shipyard()
 						return
-					}, prompt: 'Ok (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:10 }
+					}, prompt: 'Ok (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:20 }
 				}
 				xvt.app.focus = 'ram'
 				return
@@ -575,14 +582,14 @@ function BattleUser(nme: active) {
 	let damage: number
 
 	if ($.dice(100) + $.online.int >= $.dice(100) + nme.int) {
-		xvt.out(`You approach ${$.who(nme, 'him')}and quickly open fire.\n`)
+		xvt.outln(`You approach ${$.who(nme, 'him')}and quickly open fire.`)
 		if (you()) {
 			menu()
 			return
 		}
 	}
 	else
-		xvt.out(`${$.who(nme, 'He')}spots you coming and attacks.\n`)
+		xvt.outln(`${$.who(nme, 'He')}spots you coming and attacks.`)
 
 	if (him()) {
 		menu()
@@ -592,7 +599,7 @@ function BattleUser(nme: active) {
 	$.action('hunt')
 	xvt.app.form = {
 		'attack': { cb:() => {
-			xvt.out('\n')
+			xvt.outln('\n')
 			switch (xvt.entry.toUpperCase()) {
 				case 'F':
 					if (you() || him()) {
@@ -604,7 +611,7 @@ function BattleUser(nme: active) {
 				case 'S':
 					if (!outrun($.online.hull / nme.hull, $.online.int - nme.int)) {
 						$.sound('oops')
-						xvt.out(`\n${$.who(nme, 'He')}outruns you and stops your retreat!\n`)
+						xvt.outln(`${$.who(nme, 'He')}outruns you and stops your retreat!`)
 						xvt.waste(500)
 						if (him()) {
 							menu()
@@ -614,7 +621,7 @@ function BattleUser(nme: active) {
 					else {
 						$.PC.adjust('cha', -2, -1)
 						$.player.retreats++
-						xvt.outln(xvt.bright, xvt.cyan, '\nYou sail '
+						xvt.outln(xvt.bright, xvt.cyan, 'You sail '
 							, xvt.normal, 'away safely '
 							, xvt.faint, 'out of range.')
 						$.saveUser(nme, false, true)
@@ -628,7 +635,7 @@ function BattleUser(nme: active) {
 				case 'R':
 					if ($.player.ram) {
 						if (outmaneuvered(nme.int - $.online.int, nme.hull / $.online.hull)) {
-							xvt.outln(`\n${$.who(nme, 'He')}quickly outmaneuvers your ship.`)
+							xvt.outln(`${$.who(nme, 'He')}quickly outmaneuvers your ship.`)
 							xvt.waste(400)
 							xvt.outln(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
 								[ 'Your aim is going to kill us all!'
@@ -641,7 +648,7 @@ function BattleUser(nme: active) {
 						}
 						else {
 							damage = $.dice($.player.hull / 2) + $.dice($.online.hull / 2)
-							xvt.outln(xvt.green, `\nYou ram ${$.who(nme, 'him')}for `
+							xvt.outln(xvt.green, `You ram ${$.who(nme, 'him')}for `
 								, xvt.bright, `${damage}`
 								, xvt.normal, ` hull points of damage!`)
 							if ((nme.hull -= damage) < 1) {
@@ -653,7 +660,7 @@ function BattleUser(nme: active) {
 					}
 					else {
 						$.sound('oops')
-						xvt.outln(`\nYour first mate cries back, "But we don't have a ram!"`)
+						xvt.outln(`Your first mate cries back, "But we don't have a ram!"`)
 						xvt.waste(2000)
 						$.sound('fire', 8)
 						xvt.outln('You shoot your first mate.')
@@ -666,7 +673,7 @@ function BattleUser(nme: active) {
 					break
 
 				case 'Y':
-					xvt.outln(`\nHull points: ${$.online.hull}`)
+					xvt.outln(`Hull points: ${$.online.hull}`)
 					xvt.outln(`Cannons: ${$.player.cannon}`)
 					xvt.outln(`Ram: ${$.player.ram ? 'Yes' : 'No'}`)
 					break
@@ -782,13 +789,13 @@ function MonsterHunt() {
 	let damage: number
 
 	$.profile({ jpg:'naval/sea monster', effect:'fadeInUp' })
-	xvt.out(`\nYou sail out until you spot${$.an(sm.name)} on the horizon.\n\n`)
-	xvt.out(`It has ${sm.hull} hull points.\n`)
+	xvt.outln(`\nYou sail out until you spot${$.an(sm.name)} on the horizon.\n`)
+	xvt.outln(`It has ${sm.hull} hull points.`)
 
 	$.action('ny')
 	xvt.app.form = {
 		'fight': { cb:() => {
-			xvt.out('\n')
+			xvt.outln()
 			if (!/Y/i.test(xvt.entry)) {
 				menu()
 				return
@@ -796,7 +803,7 @@ function MonsterHunt() {
 
 			$.naval--
 			if ($.dice(100) + $.online.int >= $.dice(100) + sm.int) {
-				xvt.out('\nYou approach it and quickly open fire.\n')
+				xvt.outln('\nYou approach it and quickly open fire.')
 				if (you()) {
 					menu()
 					return
@@ -805,7 +812,7 @@ function MonsterHunt() {
 					return
 			}
 			else {
-				xvt.out('\nIt spots you coming and attacks.\n')
+				xvt.outln('\nIt spots you coming and attacks.')
 				if (it()) {
 					menu()
 					return
@@ -814,9 +821,9 @@ function MonsterHunt() {
 
 			$.action('hunt')
 			xvt.app.focus = 'attack'
-		}, prompt:'Continue (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 },
+		}, prompt:'Continue (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:20 },
 		'attack': { cb:() => {
-			xvt.out('\n')
+			xvt.outln()
 			switch (xvt.entry.toUpperCase()) {
 				case 'F':
 					if (you() || it()) {

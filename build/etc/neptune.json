@@ -18,7 +18,7 @@
     "hp": 500,
     "sp": 500,
     "poison": 2,
-    "weapon": "Trident of Titans \uD83D\uDD31",
+    "weapon": "Trident of Titans",
     "armor": "Titanium Armor",
     "poisons": [ 11 ],
     "spells": [ 7, 9, 11, 13, 15 ],
