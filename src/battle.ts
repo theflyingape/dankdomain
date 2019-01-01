@@ -1119,16 +1119,6 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     return
                 }
             }
-            let mod = $.Ring.power(nme.user.rings, 'resist', 'spell', name)
-            if (mod.power) {
-                $.sound('oops', 4)
-                xvt.out(`${$.who(rpc, 'His')}${name} spell is ineffective against ${$.who(nme, 'his')}`)
-                xvt.out(xvt.bright, xvt.cyan, mod.name, xvt.normal)
-                if ($.player.emulation === 'XT') xvt.out(' ', $.Ring.name[mod.name].emoji, ' 💍')
-                xvt.outln(' ring', xvt.white, '!')
-                cb(!rpc.confused)
-                return
-            }
         }
         else {
             if ([ 9,11,12,14,15,16,17,18,19,20,21,22 ].indexOf(spell.cast) >= 0) {
@@ -1190,6 +1180,18 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             if (!(rpc.user.id[0] === '_' || rpc.user.gender === 'I'))
                 $.saveUser(rpc)
             xvt.waste(300)
+        }
+
+        let mod = $.Ring.power(nme.user.rings, 'resist', 'spell', name)
+        if (mod.power) {
+            xvt.out(xvt.faint, '>> ', xvt.normal)
+            xvt.out(`${$.who(rpc, 'His')}${name} spell is ineffective against ${$.who(nme, 'his')} <<`)
+            xvt.out(xvt.bright, xvt.cyan, mod.name, xvt.normal)
+            if ($.player.emulation === 'XT') xvt.out(' ', $.Ring.name[mod.name].emoji, ' 💍')
+            xvt.out(' ring', xvt.reset)
+            xvt.outln(xvt.faint, ' <<')
+            cb()
+            return
         }
 
         let backfire = false
