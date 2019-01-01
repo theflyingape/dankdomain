@@ -2190,7 +2190,7 @@ function generateLevel() {
 		if ($.player.poison && $.dice(deep + $.player.poison + 2) > (deep + 1)) {
 			DL.rooms[y][x].giftItem = 'poison'
 			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⚱' : dot
-			DL.rooms[y][x].giftValue = $.dice($.Poison.merchant.length * Z / 100)
+			DL.rooms[y][x].giftValue = $.dice(Math.round($.Poison.merchant.length * Z / 100))
 			continue
 		}
 
@@ -2198,7 +2198,7 @@ function generateLevel() {
 			if ($.dice(deep + $.player.magic + 2) > (deep + 1)) {
 				DL.rooms[y][x].giftItem = 'magic'
 				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '☀' : dot
-				DL.rooms[y][x].giftValue = $.dice($.Magic.merchant.length * Z / 100)
+				DL.rooms[y][x].giftValue = $.dice(Math.round($.Magic.merchant.length * Z / 100))
 				continue
 			}
 			if ($.dice(deep + $.player.magic + 3) > (deep + 1)) {
@@ -2213,20 +2213,6 @@ function generateLevel() {
 			DL.rooms[y][x].giftItem = 'chest'
 			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⌂' : dot
 			DL.rooms[y][x].giftValue = $.dice(8 + deep + $.player.steal) - 1
-			continue
-		}
-
-		if ($.dice(Z + deep + 1) > $.player.level) {
-			DL.rooms[y][x].giftItem = 'ring'
-			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⍥' : dot
-			if ($.dice(12 - deep) > 1) {
-				let ring = $.Ring.common[$.dice($.Ring.common.length) - 1]
-				DL.rooms[y][x].giftValue = ring
-			}
-			else {
-				let ring = $.Ring.unique[$.dice($.Ring.unique.length) - 1]
-				DL.rooms[y][x].giftValue = ring
-			}
 			continue
 		}
 
@@ -2250,6 +2236,17 @@ function generateLevel() {
 				v++);
 			DL.rooms[y][x].giftValue = v
 			continue
+		}
+
+		DL.rooms[y][x].giftItem = 'ring'
+		DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⍥' : dot
+		if ($.dice(12 - deep) > 1) {
+			let ring = $.Ring.common[$.dice($.Ring.common.length) - 1]
+			DL.rooms[y][x].giftValue = ring
+		}
+		else {
+			let ring = $.Ring.unique[$.dice($.Ring.unique.length) - 1]
+			DL.rooms[y][x].giftValue = ring
 		}
 	}
 
