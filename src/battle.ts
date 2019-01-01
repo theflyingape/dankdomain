@@ -1182,14 +1182,16 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             xvt.waste(300)
         }
 
-        let mod = $.Ring.power(nme.user.rings, 'resist', 'spell', name)
-        if (mod.power) {
-            xvt.outln(xvt.faint, '>> ', xvt.normal, `${$.who(rpc, 'His')}`, `${name} spell attempt is ineffective against`)
-            xvt.out(`   ${$.who(nme, 'his')}`, xvt.bright, xvt.cyan, mod.name, xvt.normal)
-            if ($.player.emulation === 'XT') xvt.out(' ', $.Ring.name[mod.name].emoji, ' 💍')
-            xvt.outln(' ring', xvt.reset, '!', xvt.faint, ' <<')
-            cb()
-            return
+        if (xvt.validator.isDefined(nme)) {
+            let mod = $.Ring.power(nme.user.rings, 'resist', 'spell', name)
+            if (mod.power) {
+                xvt.outln(xvt.faint, '>> ', xvt.normal, `${$.who(rpc, 'His')}`, `${name} spell attempt is ineffective against`)
+                xvt.out(`   ${$.who(nme, 'his')}`, xvt.bright, xvt.cyan, mod.name, xvt.normal)
+                if ($.player.emulation === 'XT') xvt.out(' ', $.Ring.name[mod.name].emoji, ' 💍')
+                xvt.outln(' ring', xvt.reset, '!', xvt.faint, ' <<')
+                cb()
+                return
+            }
         }
 
         let backfire = false

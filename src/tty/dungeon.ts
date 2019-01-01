@@ -102,7 +102,6 @@ module Dungeon
 
 
 export function DeepDank(start: number, cb: Function) {
-	looked = false
 	pause = false
 	skillkill = false
 	Battle.teleported = false
@@ -145,7 +144,7 @@ export function menu(suppress = false) {
 
 //	did player cast teleport?
 	if (!Battle.retreat && Battle.teleported) {
-		scroll()
+		scroll(1, false)
 		xvt.outln(xvt.magenta, 'You open a ', xvt.bright, 'mystic portal', xvt.normal, '.\n')
 		$.sound('portal', 4)
 		Battle.teleported = false
@@ -525,7 +524,7 @@ function doMove(): boolean {
 	//	monsters?
 	if (ROOM.monster.length) {
 		$.action('battle')
-		scroll()
+		scroll(1, false)
 
 		if (ROOM.monster.length == 1) {
 			xvt.outln(`There's something lurking in here . . .`)
@@ -552,7 +551,7 @@ function doMove(): boolean {
 				m['mob' + (i+1)] = 'monster/' + ($.PC.name['monster'][ROOM.monster[i].user.pc] || $.PC.name['tavern'][ROOM.monster[i].user.pc] ? ROOM.monster[i].user.pc.toLowerCase() : 'monster')
 			$.profile(m)
 		}
-		xvt.waste(1000)
+		xvt.waste(800)
 
 		for (let n = 0; n < ROOM.monster.length; n++) {
 			if (ROOM.monster.length < 4) {
@@ -587,7 +586,7 @@ function doMove(): boolean {
 				party.push(ROOM.monster[n])
 				ROOM.monster.splice(n, 1)
 			}
-			xvt.waste(ROOM.monster.length < 4 ? 400 : 100)
+			xvt.waste(ROOM.monster.length < 4 ? 400 : 200)
 		}
 
 		if (ROOM.monster.length) {
@@ -601,6 +600,7 @@ function doMove(): boolean {
 	}
 
 	//	npc?
+	if (ROOM.occupant && !refresh) drawRoom(Y, X)
 	switch (ROOM.occupant) {
 		case 'trapdoor':
 			if ($.dice(100 - Z) > 1) {
@@ -647,8 +647,10 @@ function doMove(): boolean {
 			else {
 				ROOM.occupant = ''
 				xvt.out(xvt.bright, xvt.cyan, 'A fairie ')
-				if ($.dice(50 + Z - deep) > $.online.cha)
+				if ($.dice(50 + Z - deep) > $.online.cha) {
 					xvt.outln('flies by you.')
+					xvt.out(300)
+				}
 				else {
 					xvt.outln('brushes by you.')
 					$.sound('heal')
@@ -1277,6 +1279,8 @@ function doMove(): boolean {
 					}
 					else {
 						if (cast == 13) {
+							xvt.outln(xvt.lyellow, '"God save you."')
+							xvt.waste(300)
 							ROOM.occupant = ''
 							xvt.outln(xvt.magenta, 'He teleports away!')
 							$.sound('teleport', 8)
@@ -1287,13 +1291,12 @@ function doMove(): boolean {
 						}
 					}
 					menu()
-				}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:20 }
+				}, prompt:`${cost.value ? 'Pay' : 'Receive'} (Y/N)? `, cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:20 }
 			}
 			xvt.app.focus = 'pay'
 			return false
 
 		case 'wizard':
-			drawRoom(Y, X)
 			$.profile({ jpg:'npc/wizard', effect:'flash' })
 			xvt.waste(800)
 			xvt.out(xvt.magenta, 'You encounter a ', xvt.bright)
@@ -2805,13 +2808,13 @@ function quaff(v: number, it = true) {
 }
 
 function scroll(top = 1, redraw = true, escape = false) {
-	if (redraw) {
-		drawLevel()
-		drawHero()
-	}
-	else if (escape) {
+	if (escape) {
 		$.music('thief2')
 		xvt.outln(xvt.lblue, `\n"Next time you won't escape so easily... moo-hahahahaha!!"`)
+	}
+	else if (redraw) {
+		drawLevel()
+		drawHero()
 	}
 	xvt.save()
 	xvt.out(`\x1B[${top};${$.player.rows}r`)
