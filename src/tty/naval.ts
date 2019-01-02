@@ -20,7 +20,7 @@ module Naval
         'B': { description:'Battle other users' },
         'H': { description:'Hunt sea monsters' },
         'G': { description:'Go fishing' },
-        'Y': { description:'Your ship\'s status' },
+        'Y': { description:`Your ship's status` },
         'L': { description:'List user ships' }
 	}
 
@@ -54,16 +54,16 @@ function choice() {
 		case 'B':
 			suppress = true
 			if (!$.access.roleplay) break
-			xvt.outln()
 			if (!$.player.hull) {
-				xvt.outln(`You don't have a ship!`)
+				xvt.outln(`\nYou don't have a ship!`)
 				break
 			}
 			if (!$.naval) {
-				xvt.outln('You have run out of battles.')
+				xvt.outln('\nYou have run out of battles.')
 				break
 			}
 			Battle.user('Battle', (opponent: active) => {
+				xvt.outln()
 				if (opponent.user.id === '' || opponent.user.id === $.player.id) {
 					menu(true)
 					return
@@ -88,7 +88,7 @@ function choice() {
 				$.action('ny')				
 				xvt.app.form = {
 					'battle': { cb:() => {
-						xvt.outln('\n')
+						xvt.outln()
 						if (/Y/i.test(xvt.entry)) {
 							if ($.activate(opponent, true)) {
 								$.naval--
