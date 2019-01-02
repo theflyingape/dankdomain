@@ -66,8 +66,8 @@ export class Armor {
         }
         if (worth)
             armor.value = worth
-        else if (this.merchant[armor.ac])
-            armor.value = this.name[this.merchant[armor.ac]].value
+        else if (this.name[armor.ac])
+            armor.value = this.name[armor.ac].value
         if (!keep) rpc.user.toAC = 0
         rpc.armor = armor
         rpc.toAC = 0
@@ -326,8 +326,8 @@ export class Weapon {
         }
         if (worth)
             weapon.value = worth
-        else if (this.merchant[weapon.wc])
-            weapon.value = this.name[this.merchant[weapon.wc]].value
+        else if (this.name[weapon.wc])
+            weapon.value = this.name[weapon.wc].value
 
         if (!keep) rpc.user.toWC = 0
         rpc.weapon = weapon

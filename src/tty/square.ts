@@ -171,6 +171,7 @@ function choice() {
 				$.action('yn')
 				xvt.app.form = {
 					'skin': { cb:() => {
+						xvt.outln('\n')
 						if (/Y/i.test(xvt.entry)) {
 							$.sound('click')
 							$.online.toAC = 0
@@ -200,6 +201,7 @@ function choice() {
 				$.action('yn')
 				xvt.app.form = {
 					'hands': { cb:() => {
+						xvt.outln('\n')
 						if (/Y/i.test(xvt.entry)) {
 							$.sound('click')
 							$.online.toWC = 0

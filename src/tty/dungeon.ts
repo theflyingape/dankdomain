@@ -1371,31 +1371,91 @@ function doMove(): boolean {
 			break
 
 		case 'dwarf':
-			let lo = 0, hi = 0, max = 0
-			let credit = new $.coins(0)
-			let ac = $.Armor.name[$.player.armor].ac
-			xvt.out('\nYou own a class ', $.bracket(ac, false), ' ', $.player.armor, $.buff($.player.toAC, $.online.toAC))
-			if (ac) {
-				let cv = new $.coins($.Armor.name[$.player.armor].value)
-				credit.value = $.worth(cv.value, $.online.cha)
-				if ($.player.toAC) credit.value = Math.trunc(credit.value * (ac + $.player.toAC / ($.player.poison + 1)) / ac)
-				if ($.online.toAC < 0) credit.value = Math.trunc(credit.value * (ac + $.online.toAC) / ac)
-				if (credit.value > cv.value)
-					credit.value = cv.value
-			}
-			else
-				credit.value = 0
-			xvt.outln(' worth ', credit.carry())
-			max = $.Armor.dwarf.length - 1
-			lo = $.online.armor.ac - 1
-			lo = lo < 1 ? 0 : lo > max ? max - 1 : lo
-			for (hi = lo;
-				hi < max && $.player.coin.value + credit.value >= new $.coins($.Armor.name[$.Armor.dwarf[hi]].value).value;
-				hi++);
+			$.beep()
+			xvt.out('You run into a ', xvt.bright, 'dwarven merchant', xvt.reset, '.')
+			let hi = 0, credit = new $.coins(0)
 
-			xvt.outln('Trade you for ', $.bracket(hi, false), ' ', $.Armor.dwarf[hi])
-			break
-	}
+			$.action('ny')
+			xvt.app.form = {
+			'armor': { cb: () => {
+					xvt.outln('\n')
+					if (/Y/i.test(xvt.entry)) {
+						$.player.coin = new $.coins(0)
+						$.Armor.equip($.online, $.Armor.dwarf[hi])
+						$.player.toAC = 2 - $.dice(3)
+						$.online.toAC = $.dice($.online.armor.ac) - 2
+						$.sound('click')
+					}
+					looked = true
+					ROOM.occupant = ''
+					menu()
+				}, prompt:'Ok (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:20 },
+			'weapon': { cb: () => {
+					xvt.outln('\n')
+					if (/Y/i.test(xvt.entry)) {
+						$.player.coin = new $.coins(0)
+						$.Weapon.equip($.online, $.Weapon.dwarf[hi])
+						$.player.toWC = 2 - $.dice(3)
+						$.online.toWC = $.dice($.online.weapon.wc) - 2
+						$.sound('click')
+					}
+					looked = true
+					ROOM.occupant = ''
+					menu()
+				}, prompt:'Ok (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:20 }
+			}
+
+			if ($.dice(2) == 1) {
+				let ac = $.Armor.name[$.player.armor].ac
+				xvt.out('\nI see you have a class ', $.bracket(ac, false), ' ', $.player.armor, $.buff($.player.toAC, $.online.toAC))
+				if (ac) {
+					let cv = new $.coins($.Armor.name[$.player.armor].value)
+					credit.value = $.worth(cv.value, $.online.cha)
+					if ($.player.toAC) credit.value = Math.trunc(credit.value * (ac + $.player.toAC / ($.player.poison + 1)) / ac)
+					if ($.online.toAC < 0) credit.value = Math.trunc(credit.value * (ac + $.online.toAC) / ac)
+					if (credit.value > cv.value)
+						credit.value = cv.value
+				}
+				else
+					credit.value = 0
+				xvt.outln(' worth ', credit.carry())
+
+				for (hi = 0; hi < $.Armor.dwarf.length - 1 && ac >= $.Armor.name[$.Armor.dwarf[hi]].ac; hi++);
+				if (new $.coins($.Armor.name[$.Armor.dwarf[hi]].value).value < credit.value + $.player.coin.value) {
+					if ($.player.coin.value) xvt.outln('and all your coin worth ', $.player.coin.carry())
+					xvt.out(`I'll trade you for my `, $.bracket($.Armor.name[$.Armor.dwarf[hi]].ac, false), ' ')
+					xvt.outln(xvt.bright, xvt.yellow, $.Armor.dwarf[hi])
+					xvt.app.focus = 'armor'
+					return false
+				}
+			}
+			else {
+				let wc = $.Weapon.name[$.player.weapon].wc
+				xvt.out('\nI see you carrying a class ', $.bracket(wc, false), ' ', $.player.weapon, $.buff($.player.toWC, $.online.toWC))
+				if (wc) {
+					let cv = new $.coins($.Weapon.name[$.player.weapon].value)
+					credit.value = $.worth(cv.value, $.online.cha)
+					if ($.player.toWC) credit.value = Math.trunc(credit.value * (wc + $.player.toWC / ($.player.poison + 1)) / wc)
+					if ($.online.toWC < 0) credit.value = Math.trunc(credit.value * (wc + $.online.toWC) / wc)
+					if (credit.value > cv.value)
+						credit.value = cv.value
+				}
+				else
+					credit.value = 0
+				xvt.outln(' worth ', credit.carry())
+
+				for (hi = 0; hi < $.Weapon.dwarf.length - 1 && wc >= $.Weapon.name[$.Weapon.dwarf[hi]].wc; hi++);
+				if (new $.coins($.Weapon.name[$.Weapon.dwarf[hi]].value).value < credit.value + $.player.coin.value) {
+					if ($.player.coin.value) xvt.outln('and all your coin worth ', $.player.coin.carry())
+					xvt.out(`I'll trade you for my `, $.bracket($.Weapon.name[$.Weapon.dwarf[hi]].wc, false), ' ')
+					xvt.outln(xvt.bright, xvt.cyan, $.Weapon.dwarf[hi])
+					xvt.app.focus = 'weapon'
+					return false
+				}
+			}
+			xvt.outln(`I've got nothing of interest for trading.  Perhaps next time, friend?`)
+			ROOM.occupant = ''
+		}
 
 	//	items?
 	switch (ROOM.giftItem) {
@@ -1873,7 +1933,7 @@ function drawLevel() {
 
 							case 'dwarf':
 								if (!icon && DL.map && DL.map !== 'map')
-									o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.cyan, '  ?  ', xvt.reset)
+									o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.white, '  %  ', xvt.reset)
 								break
 						}
 					}
@@ -1980,7 +2040,7 @@ function drawRoom(r:number, c:number, keep = true) {
 			
 			case 'dwarf':
 				if (DL.map)
-					o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.cyan, '  ?  ', xvt.reset)
+					o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.white, '  %  ', xvt.reset)
 				break
 		}
 	else
@@ -2092,17 +2152,7 @@ function generateLevel() {
 			DL.rooms[y][x].giftItem = 'map'
 			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⎅' : dot
 			if (Math.trunc($.dice(100 * (Z + 1)) / (deep + 1)) < (deep + 4))
-				wow = DL.rooms.length * DL.width
-		}
-
-		//	wishing well
-		if ($.dice((110 - Z) / 3 + deep) == 1) {
-			for (let i = 0; i < wow; i++) {
-				y = $.dice(DL.rooms.length) - 1
-				x = $.dice(DL.width) - 1
-				DL.rooms[y][x].occupant = 'well'
-			}
-			wow = 1
+				wow = $.int(DL.rooms.length * DL.width / 2)
 		}
 
 		//	wheel of life
@@ -2113,6 +2163,20 @@ function generateLevel() {
 				DL.rooms[y][x].occupant = 'wheel'
 			}
 			wow = 1
+		}
+
+		//	wishing well
+		if ($.dice((110 - Z) / 3 + deep) == 1) {
+			y = $.dice(DL.rooms.length) - 1
+			x = $.dice(DL.width) - 1
+			DL.rooms[y][x].occupant = 'well'
+		}
+
+		//	dwarven merchant
+		if ($.dice(110 - Z - deep) == 1 || true) {
+			y = $.dice(DL.rooms.length) - 1
+			x = $.dice(DL.width) - 1
+			DL.rooms[y][x].occupant = 'dwarf'
 		}
 
 		//	deep dank dungeon portal
@@ -2223,9 +2287,7 @@ function generateLevel() {
 			DL.rooms[y][x].giftItem = 'armor'
 			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⛨' : dot
 			n = $.Armor.special.length - 1
-			for (v = 0;
-				v < n && $.online.armor.ac >= $.Armor.name[$.Armor.special[v]].ac;
-				v++);
+			for (v = 0; v < n && $.online.armor.ac >= $.Armor.name[$.Armor.special[v]].ac; v++);
 			DL.rooms[y][x].giftValue = v
 			continue
 		}
@@ -2234,22 +2296,22 @@ function generateLevel() {
 			DL.rooms[y][x].giftItem = 'weapon'
 			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⚸' : dot
 			n = $.Weapon.special.length - 1
-			for (v = 0;
-				v < n && $.online.weapon.wc >= $.Weapon.name[$.Weapon.special[v]].wc;
-				v++);
+			for (v = 0; v < n && $.online.weapon.wc >= $.Weapon.name[$.Weapon.special[v]].wc; v++);
 			DL.rooms[y][x].giftValue = v
 			continue
 		}
 
-		DL.rooms[y][x].giftItem = 'ring'
-		DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⍥' : dot
-		if ($.dice(12 - deep) > 1) {
-			let ring = $.Ring.common[$.dice($.Ring.common.length) - 1]
-			DL.rooms[y][x].giftValue = ring
-		}
-		else {
-			let ring = $.Ring.unique[$.dice($.Ring.unique.length) - 1]
-			DL.rooms[y][x].giftValue = ring
+		if ($.dice($.int($.online.cha / 10)) > 1) {
+			DL.rooms[y][x].giftItem = 'ring'
+			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⍥' : dot
+			if ($.dice(12 - deep) > 1) {
+				let ring = $.Ring.common[$.dice($.Ring.common.length) - 1]
+				DL.rooms[y][x].giftValue = ring
+			}
+			else {
+				let ring = $.Ring.unique[$.dice($.Ring.unique.length) - 1]
+				DL.rooms[y][x].giftValue = ring
+			}
 		}
 	}
 

@@ -18,7 +18,7 @@
 	"Dancing Shield": { "text":"carries", "value":"5000s", "ac":16, "armoury":true },
 	"Dragon Scale Mail": { "text":"wears", "value":"1g", "ac":17, "armoury":true },
 	"Elfin Chain Mail": { "text":"wears", "value":"10g", "ac":18, "armoury":true },
-	"Minthril Chain Mail": { "text":"wears", "value":"100g", "ac":19, "armoury":true },
+	"Mithril Chain Mail": { "text":"wears", "value":"100g", "ac":19, "armoury":true },
 	"Cloak of Elvenkind": { "text":"wears a", "value":"500g", "ac":20, "armoury":true },
 	"Robe of Blending": { "text":"dresses with a", "value":"1000g", "ac":21, "armoury":true },
 	"Adamantite Plate Mail": { "text":"wears", "value":"5000g", "ac":22, "armoury":true },
@@ -36,11 +36,11 @@
 	"Ring of Insanity": { "text":"is fashioned with a", "value":"25p", "ac":26 },
 	"Titanium Armor": { "text":"is armored with", "value":"50p", "ac":28 },
 
-	"Trash Can Cover": { "text":"brings a", "value":"1c", "ac":5, "dwarf":true },
+	"Spiked Leather": { "text":"wears fitted", "value":"1c", "ac":5, "dwarf":true },
 	"Armodillo Husk": { "text":"covered by an", "value":"100c", "ac":10, "dwarf":true },
-	"Suit of Armor": { "text":"is protected by a", "value":"1s", "ac":15, "dwarf":true },
+	"Half Plate Armor": { "text":"is protected by", "value":"1s", "ac":15, "dwarf":true },
 	"Red Dragon Scale Mail": { "text":"sports", "value":"1g", "ac":20, "dwarf":true },
 	"Cloak of Elvenlords": { "text":"wears a shimmering", "value":"1p", "ac":24, "dwarf":true },
 	"Adamantite Chain Mail": { "text":"shows off", "value":"10p", "ac":27, "dwarf":true },
-	"Helm of Hades": { "text":"topped with a", "value":"50p", "ac":32, "dwarf":true }
+	"Helm of Hades": { "text":"topped with", "value":"50p", "ac":32, "dwarf":true }
 }
