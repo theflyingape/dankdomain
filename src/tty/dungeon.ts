@@ -2141,7 +2141,7 @@ function generateLevel() {
 		if (putMonster())
 			n--
 
-	let wow:number = 1
+	let wow = 1
 
 	//	potential bonus(es) for the more experienced adventurer
 	if (!$.player.novice) {
@@ -2152,7 +2152,7 @@ function generateLevel() {
 			DL.rooms[y][x].giftItem = 'map'
 			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⎅' : dot
 			if (Math.trunc($.dice(100 * (Z + 1)) / (deep + 1)) < (deep + 4))
-				wow = $.int(DL.rooms.length * DL.width / 2)
+				wow = $.dice($.int(DL.rooms.length * DL.width / 2))
 		}
 
 		//	wheel of life
@@ -2162,7 +2162,6 @@ function generateLevel() {
 				x = $.dice(DL.width) - 1
 				DL.rooms[y][x].occupant = 'wheel'
 			}
-			wow = 1
 		}
 
 		//	wishing well
@@ -2173,7 +2172,7 @@ function generateLevel() {
 		}
 
 		//	dwarven merchant
-		if ($.dice(110 - Z - deep) == 1) {
+		if ($.dice(24 + 2 * $.player.melee) < (deep + 2)) {
 			y = $.dice(DL.rooms.length) - 1
 			x = $.dice(DL.width) - 1
 			DL.rooms[y][x].occupant = 'dwarf'
@@ -2194,9 +2193,8 @@ function generateLevel() {
 		do {
 			y = $.dice(DL.rooms.length) - 1
 			x = $.dice(DL.width) - 1
-		} while (wow == 0 && DL.rooms[y][x].type == 'cavern')
+		} while (DL.rooms[y][x].type == 'cavern')
 		DL.rooms[y][x].occupant = 'thief'
-		wow--
 	}
 
 	//	a cleric in another space
