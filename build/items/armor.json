@@ -36,11 +36,11 @@
 	"Ring of Insanity": { "text":"is fashioned with a", "value":"25p", "ac":26 },
 	"Titanium Armor": { "text":"is armored with", "value":"50p", "ac":28 },
 
-	"Spiked Leather": { "text":"wears fitted", "value":"1c", "ac":5, "dwarf":true },
-	"Armodillo Husk": { "text":"covered by an", "value":"100c", "ac":10, "dwarf":true },
-	"Half Plate Armor": { "text":"is protected by", "value":"1s", "ac":15, "dwarf":true },
-	"Red Dragon Scale Mail": { "text":"sports", "value":"1g", "ac":20, "dwarf":true },
-	"Cloak of Elvenlords": { "text":"wears a shimmering", "value":"1p", "ac":24, "dwarf":true },
-	"Adamantite Chain Mail": { "text":"shows off", "value":"10p", "ac":27, "dwarf":true },
-	"Helm of Hades": { "text":"topped with", "value":"50p", "ac":32, "dwarf":true }
+	"Spiked Leather": { "text":"wears fitted", "value":"4c", "ac":5, "dwarf":true },
+	"Armodillo Husk": { "text":"covered by an", "value":"400c", "ac":10, "dwarf":true },
+	"Half Plate Armor": { "text":"is protected by", "value":"4s", "ac":15, "dwarf":true },
+	"Red Dragon Scale Mail": { "text":"sports", "value":"4000s", "ac":20, "dwarf":true },
+	"Cloak of Elvenlords": { "text":"wears a shimmering", "value":"400g", "ac":24, "dwarf":true },
+	"Adamantite Chain Mail": { "text":"shows off", "value":"4p", "ac":27, "dwarf":true },
+	"Helm of Hades": { "text":"topped with", "value":"40p", "ac":32, "dwarf":true }
 }
