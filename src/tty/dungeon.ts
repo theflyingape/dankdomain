@@ -2173,7 +2173,7 @@ function generateLevel() {
 		}
 
 		//	dwarven merchant
-		if ($.dice(110 - Z - deep) == 1 || true) {
+		if ($.dice(110 - Z - deep) == 1) {
 			y = $.dice(DL.rooms.length) - 1
 			x = $.dice(DL.width) - 1
 			DL.rooms[y][x].occupant = 'dwarf'
