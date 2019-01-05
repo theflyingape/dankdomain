@@ -287,6 +287,8 @@ interface character {
     maxInt: number      //  baseInt-99
     maxDex: number      //  baseDex-99
     maxCha: number      //  baseCha-99
+    unicode: string     //  dungeon map symbol
+    color?: number      //  symbol's color
     specialty?: string  //  meta
     description?: string[]
     bonusStr?: number    //  0-2

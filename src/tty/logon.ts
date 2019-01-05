@@ -396,7 +396,7 @@ function welcome() {
             )
             $.cat('auto-message')
 
-            require('./taxman').cityguards()
+            if ($.access.roleplay) require('./taxman').cityguards()
         }, pause:true }
     }
     xvt.app.focus = 'pause'

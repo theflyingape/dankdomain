@@ -53,7 +53,7 @@
     "sprintf-js": "^1.1.2",
     "title-case": "^2.1.1",
     "ws": "^6.1.2",
-    "xterm": "^3.9.1",
+    "xterm": "^3.10.0",
     "xvt": "^1.0.27"
   },
   "devDependencies": {

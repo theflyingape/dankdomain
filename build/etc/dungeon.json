@@ -90,7 +90,7 @@
 	"mist dragon": { "pc":"Dragon", "hit":"claw", "smash":"drown", "spells":[ "Heal", "Teleport", "Armor Rusting", "Weapon Decay", "Super Shield" ], "effect":"shake" },
 	"grey slaad": { "pc":"Lizard", "weapon":"Dagger of Venom", "poisons":[ 9 ], "effect":"rubberBand" },
 	"beholder": { "pc":"Psionic", "hit":"drain", "smash":"gaze upon", "spells":[ "Heal", "Teleport", "Blast", "Mana Stealing" ], "rings":[ "Medusa's" ], "effect":"rotateIn" },
-	"iron golem": { "pc":"Ogre", "hit":"gnaw", "smash":"wreck", "armor":"Minthril Chain Mail", "rings":[ "Ogre" ], "effect":"wobble" },
+	"iron golem": { "pc":"Ogre", "hit":"gnaw", "smash":"wreck", "armor":"Mithril Chain Mail", "rings":[ "Ogre" ], "effect":"wobble" },
 	"death slaad": { "pc":"Lizard", "weapon":"Staff of RAH", "poisons":[ 10 ], "spells":[ "Heal", "Cure" ], "effect":"rubberBand" },
 	"cloud dragon": { "pc":"Dragon", "hit":"claw", "smash":"bite", "spells":[ "Teleport", "Big Blast", "Mana Stealing" ], "effect":"shake" },
 	"elder titan": { "pc":"Titan", "hit":"hammer", "smash":"nail", "spells":[ "Blast" ], "effect":"fadeInUpBig" },

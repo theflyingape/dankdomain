@@ -1,8 +1,9 @@
-[22;36mDate:[22;37m Sat 29-Dec-2018 10:00am
+[22;36mDate:[22;37m Sat 05-Jan-2019 11:00am
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
 New announcements as missing features get implemented or tweaked:
 
+ - improved dungeon mapping as it relates to map type or a blessed state
  - improved dungeon mapping as it relates to player's intellect
  - new items making their way in: rings with magical properties, some unique
  - real estate + security tax credits on collection checkpoint

@@ -1185,7 +1185,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
         if (xvt.validator.isDefined(nme)) {
             let mod = $.Ring.power(nme.user.rings, 'resist', 'spell', name)
             if (mod.power) {
-                xvt.outln(xvt.faint, '>> ', xvt.normal, `${$.who(rpc, 'His')}`, `${name} spell attempt is ineffective against`)
+                xvt.outln(xvt.faint, '>> ', xvt.normal, `${$.who(rpc, 'His')}`
+                    , xvt.bright, xvt.magenta, name, xvt.normal, ' spell ', xvt.reset, 'attempt is ineffective against')
                 xvt.out(`   ${$.who(nme, 'his')}`, xvt.bright, xvt.cyan, mod.name, xvt.normal)
                 if ($.player.emulation === 'XT') xvt.out(' ', $.Ring.name[mod.name].emoji, ' 💍')
                 xvt.outln(' ring', xvt.reset, '!', xvt.faint, ' <<')
@@ -1811,7 +1812,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     mana = nme.user.sp - nme.sp
                 xvt.out(nme === $.online ? 'You'
                     : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
-                    , $.what(rpc, ' absorb'), 'spell power (', mana.toString(), ') '
+                    , $.what(rpc, ' absorb'), 'spell power (', xvt.bright, xvt.cyan, mana.toString(), xvt.reset, ') '
                     , 'from ', rpc === $.online ? 'you'
                     : rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle)
                 rpc.sp -= mana
@@ -1824,7 +1825,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     mana = rpc.user.sp - rpc.sp
                 xvt.out(rpc === $.online ? 'You'
                     : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , $.what(rpc, ' absorb'), 'spell power (', mana.toString(), ') '
+                    , $.what(rpc, ' absorb'), 'spell power (', xvt.bright, xvt.cyan, mana.toString(), xvt.reset, ') '
                     , 'from ', nme === $.online ? 'you'
                     : nme.user.gender === 'I' ? 'the ' + nme.user.handle : nme.user.handle)
                 nme.sp -= mana
