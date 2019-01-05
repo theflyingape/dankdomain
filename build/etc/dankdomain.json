@@ -248,7 +248,7 @@
             "toStr":2, "toInt":2, "toDex":2, "toCha":2, 
             "maxStr":98, "maxInt":98, "maxDex":98, "maxCha":98, 
             "bonusStr":1, "bonusInt":1, "bonusDex":1, "bonusCha":1,
-            "unicode":"♜",
+            "unicode":"♆",
             "specialty": "Fighter/Magician",
             "description": [
                 "You can only ascend to a Titan class from immortalizing a Paladin class and",
@@ -333,7 +333,7 @@
             "toStr":2, "toInt":1, "toDex":1, "toCha":1,
             "maxStr":99, "maxInt":85, "maxDex":66, "maxCha":85,
             "bonusStr":0, "bonusInt":0, "bonusDex":0, "bonusCha":2,
-            "unicode":"Ȫ", "color":33,
+            "unicode":"♜", "color":33,
             "specialty": "Barbarian/Ranger",
             "description": [
                 "Tiny, the 7'2\" barkeep"

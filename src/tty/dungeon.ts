@@ -42,7 +42,7 @@ module Dungeon
         dumb: '$'
     }
 
-	const Mask = ['   ', ' ☿ ', '☿ ☿', '☿☿☿', '☦☤☦']
+	const Mask = ['   ', ' ♗ ', '♗ ♗', '♗♗♗', '☦☤☦']
 	const Monster = {
 		rlogin:	[ '   ', 'Mon', 'M+M', 'Mob', 'MOB' ],
 		telnet:	[ '   ', 'Mon', 'M+M', 'Mob', 'MOB' ]
@@ -1170,7 +1170,7 @@ function doMove(): boolean {
 					xvt.waste(600)
 					$.sound('thief2')
 				}
-				else if (DL.map && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
+				else if (DL.map && $.dice($.online.cha / 9) - 1 <= $.int(deep / 3)) {
 					xvt.out('map')
 					DL.map = ''
 					refresh = true
@@ -2782,19 +2782,21 @@ function occupying(room: room, o = '', reveal = false, identify = false) {
 					icon += Mask[m]
 					for (let i = 0; i < m; i++) {
 						let dm = $.PC.card(room.monster[i].user.pc)
-						icon = icon.replace('☿', xvt.attr(dm.color || xvt.white, dm.unicode))
+						icon = icon.replace('♗', xvt.attr(dm.color || xvt.white, dm.unicode))
 					}
 				}
 				else
-					icon += xvt.attr(xvt.red, Mask[m])
+					icon += Mask[m]
 			}
 			o += ` ${icon} `
 		}
-		else {
+		else if (room.map) {
 			if (!room.type || room.type == 'cavern')
 				o += xvt.attr(!room.type ? xvt.yellow : xvt.red)
 			o += `  ${dot}  `
 		}
+		else
+			o = '     '
 
 		switch (room.occupant) {
 			case 'trapdoor':
