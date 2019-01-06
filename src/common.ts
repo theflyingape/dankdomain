@@ -1956,28 +1956,29 @@ export function emulator(cb:Function) {
             xvt.outln('\n\n', xvt.reset, xvt.magenta, xvt.LGradient[xvt.emulation], xvt.reverse, 'TEST BANNER', xvt.noreverse, xvt.RGradient[xvt.emulation])
             xvt.outln(xvt.red,'R', xvt.green,'G', xvt.blue,'B', xvt.reset, xvt.bright,' bold ', xvt.normal, 'normal', xvt.faint, ' dark')
             online.altered = true
-            sound('max', 20)
             if (player.emulation === 'XT') {
+                sound('yahoo', 20)
                 cb()
                 return
             }
+            beep()
             for(let rows = 99; rows > 1; rows--)
                 xvt.out(bracket(rows > 24 ? rows : '..'))
             xvt.app.focus = 'rows'
-        }, prompt:xvt.attr('Select ', xvt.faint, '[', xvt.reset, xvt.bright, `${player.emulation}`, xvt.reset, xvt.faint, ']', xvt.reset, ': ')
+        }, prompt:xvt.attr(xvt.reset, 'Select ', xvt.faint, '[', xvt.reset, xvt.bright, `${player.emulation}`, xvt.reset, xvt.faint, ']', xvt.reset, ': ')
         , enter:player.emulation, match:/VT|PC|XT/i, max:2 },
         'rows': { cb:() => {
             player.rows = +xvt.entry
             xvt.outln()
             xvt.app.focus = 'pause'
-        }, prompt:xvt.attr('Enter top visible row number ', xvt.reset, xvt.faint, '[', xvt.reset, xvt.bright, `${player.rows}`, xvt.reset, xvt.faint, ']', xvt.reset, ': ')
+        }, prompt:xvt.attr(xvt.reset, 'Enter top visible row number ', xvt.reset, xvt.faint, '[', xvt.reset, xvt.bright, `${player.rows}`, xvt.reset, xvt.faint, ']', xvt.reset, ': ')
         , enter:player.rows.toString(), max:2, match:/^[2-9][0-9]$/ },
         'pause': { cb:cb, pause:true }
     }
 
     xvt.outln('\n', xvt.cyan, 'Which emulation / character encoding are you using?')
     xvt.out(bracket('VT'), ' classic VT terminal with DEC drawing (telnet b&w)')
-    xvt.out(bracket('PC'), ' former ANSI color with IBM encoding (telnet color)')
+    xvt.out(bracket('PC'), ' former ANSI color with IBM CP850 encoding (telnet color)')
     xvt.outln(bracket('XT'), ' modern ANSI color with UTF-8 encoding (browser multimedia)')
     xvt.app.focus = 'term'
 }

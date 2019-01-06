@@ -170,17 +170,18 @@ function choice() {
             self = Math.trunc(self / (6 + $.player.steal))
 
             Battle.user('Rob', (opponent: active) => {
+                xvt.outln()
 				if (opponent.user.id === $.player.id) {
 					opponent.user.id = ''
-					xvt.out('\nYou can\'t rob yourself.\n')
+					xvt.outln(`You can't rob yourself.`)
 				}
 				else if (opponent.user.novice) {
 					opponent.user.id = ''
-					xvt.out('\nYou can\'t rob novice players.\n')
+					xvt.outln(`You can't rob novice players.`)
                 }
                 else if ($.player.level - opponent.user.level > 3) {
 					opponent.user.id = ''
-					xvt.out('\nYou can only rob someone higher or up to three levels below you.\n')
+					xvt.outln('You can only rob someone higher or up to three levels below you.')
 				}
 				if (opponent.user.id === '') {
 					menu()
@@ -188,13 +189,13 @@ function choice() {
 				}
                 if (!$.lock(opponent.user.id)) {
                     $.beep()
-                    xvt.out(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.\n`)
+                    xvt.outln(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.`)
 					menu()
 					return
                 }
 
-                xvt.out('\nYou case ', opponent.user.handle, '\'s joint out.\n')
-                xvt.waste(500)
+                xvt.outln(`\nYou case ${opponent.user.handle}'s joint out.`)
+                xvt.waste(600)
                 let prize = $.worth(new $.coins($.Armor.name[opponent.user.armor].value).value, $.online.cha)
                 prize += $.worth(new $.coins($.Weapon.name[opponent.user.weapon].value).value, $.online.cha)
                 if (opponent.user.cannon) prize += $.money(opponent.user.level)
@@ -202,19 +203,20 @@ function choice() {
                 prize = $.int(prize / (6 - $.player.steal))
 
                 if ($.dice($.online.int) > 5 && prize < self) {
-                    xvt.out('But you decide it is not worth the effort.\n')
+                    xvt.outln('But you decide it is not worth the effort.')
+                    xvt.waste(600)
 					menu()
 					return
                 }
 
-                xvt.out('The goods are in', $.an(opponent.user.realestate),  ' protected by', $.an(opponent.user.security), '.\n')
+                xvt.outln('The goods are in', $.an(opponent.user.realestate),  ' protected by', $.an(opponent.user.security), '.')
 
                 $.action('ny')
                 xvt.app.form = {
                     'yn': { cb: () => {
-                        xvt.out('\n')
+                        xvt.outln()
                         if (/Y/i.test(xvt.entry)) {
-							xvt.out(xvt.faint, '\nYou slide into the shadows and make your attempt ')
+							xvt.out('\nYou slide into the shadows and make your attempt ', xvt.faint)
                             xvt.waste(1000)
                             let lock = 5 * ($.Security.name[opponent.user.security].protection + 1)
                                 + $.RealEstate.name[opponent.user.realestate].protection
@@ -226,7 +228,7 @@ function choice() {
                                     ? $.dice($.player.level + $.player.steal - $.steal)
                                     : lock
                             }
-                            xvt.out(xvt.reset)
+                            xvt.outln()
                             xvt.waste(600)
 
                             if ($.player.email === opponent.user.email || !$.lock(opponent.user.id))
@@ -235,8 +237,7 @@ function choice() {
                             if (skill > lock) {
                                 $.steal++
                                 $.player.coin.value += prize
-                                xvt.out('\nYou break in and make off with '
-                                    , new $.coins(prize).carry(), ' worth of stuff!\n')
+                                xvt.outln('You break in and make off with ', new $.coins(prize).carry(), ' worth of stuff!')
                                 xvt.waste(1000)
 
                                 opponent.user.coin.value = 0
@@ -274,10 +275,10 @@ function choice() {
                                 $.player.status = 'jail'
                                 $.player.xplevel = 0
                                 $.action('clear')
-                                $.profile({ png:'npc/jailer', effect:'fadeIn' })
-								xvt.out('\nA guard catches you and throws you into jail!\n')
+                                $.profile({ png:'npc/city_guard_2', effect:'fadeIn' })
+								xvt.outln('A city guard catches you and throws you into jail!')
                                 $.sound('arrested', 20)
-                                xvt.out('You might be released by your next call.\n\n')
+                                xvt.outln('You might be released by your next call.\n')
                                 xvt.waste(1000)
                             }
                         }
@@ -308,7 +309,7 @@ function choice() {
             let newpassword: string = ''
             xvt.app.form = {
                 'yn': { cb: () => {
-                    xvt.out('\n')
+                    xvt.outln()
                     if (xvt.entry.toUpperCase() === 'Y') {
                         xvt.app.focus = 'new'
                         return

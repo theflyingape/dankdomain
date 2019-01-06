@@ -398,7 +398,7 @@ function receive(event) {
 			case 'emit':
 				if (!carrier) {
 					XT('@tune(.)')
-					term.reset()
+					term.clear()
 					term.destroy()
 					if (event.data.message == ' ')
 						newSession('Logon')

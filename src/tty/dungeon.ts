@@ -1376,8 +1376,9 @@ function doMove(): boolean {
 			break
 
 		case 'dwarf':
+			$.profile({ jpg:'npc/dwarf', effect:'fadeIn' })
 			$.beep()
-			xvt.out('You run into a ', xvt.bright, 'dwarven merchant', xvt.reset, '.')
+			xvt.out(xvt.yellow, 'You run into a ', xvt.bright, 'dwarven merchant', xvt.reset, '.')
 			let hi = 0, credit = new $.coins(0)
 
 			$.action('ny')
@@ -2165,7 +2166,7 @@ function generateLevel() {
 		if ($.player.magic == 1 || $.player.magic == 2) {
 			if ($.dice(deep + $.player.magic + 2) > (deep + 1)) {
 				DL.rooms[y][x].giftItem = 'magic'
-				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '☀' : dot
+				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⚹' : dot
 				DL.rooms[y][x].giftValue = $.dice(Math.round($.Magic.merchant.length * Z / 100))
 				continue
 			}
@@ -2202,17 +2203,15 @@ function generateLevel() {
 			continue
 		}
 
-		if ($.dice($.int($.online.cha / 10)) > 1) {
-			DL.rooms[y][x].giftItem = 'ring'
-			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⍥' : dot
-			if ($.dice(12 - deep) > 1) {
-				let ring = $.Ring.common[$.dice($.Ring.common.length) - 1]
-				DL.rooms[y][x].giftValue = ring
-			}
-			else {
-				let ring = $.Ring.unique[$.dice($.Ring.unique.length) - 1]
-				DL.rooms[y][x].giftValue = ring
-			}
+		DL.rooms[y][x].giftItem = 'ring'
+		DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⍥' : dot
+		if ($.dice(12 - deep) > 1) {
+			let ring = $.Ring.common[$.dice($.Ring.common.length) - 1]
+			DL.rooms[y][x].giftValue = ring
+		}
+		else {
+			let ring = $.Ring.unique[$.dice($.Ring.unique.length) - 1]
+			DL.rooms[y][x].giftValue = ring
 		}
 	}
 

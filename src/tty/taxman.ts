@@ -19,8 +19,7 @@ function checkpoint(scratch: number): boolean {
 
     if (scratch > tax.value) {
         $.loadUser($.taxman)
-        $.profile({ png:'player/' + $.taxman.user.pc.toLowerCase() + ($.taxman.user.gender === 'F' ? '_f' : '')
-            , handle:$.taxman.user.handle
+        $.profile({ png:'npc/taxman', handle:$.taxman.user.handle
             , level:$.taxman.user.level, pc:$.taxman.user.pc
         })
 

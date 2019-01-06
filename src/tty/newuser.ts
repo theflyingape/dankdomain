@@ -12,18 +12,21 @@ module NewUser
 	let editmode: boolean = false
 
 	$.music('newuser')
-	$.profile({ png:'npc/city_guard_1', effect:'bounceInLeft' })
+	$.profile({ png:'npc/city_guard_1', effect:'bounceInLeft'
+		, handle:'Shall we begin?'
+	})
 	xvt.out(xvt.clear)
+	xvt.plot(1, 17)
 
 	if ($.tty == 'rlogin') {
-		xvt.outln(xvt.blue, '     --=:) ', xvt.bright, 'New BBS Registration', xvt.normal, ' (:=--')
+		xvt.outln(xvt.blue, '--=:) ', xvt.bright, 'New BBS Registration', xvt.normal, ' (:=--')
 		xvt.out($.bracket(1), xvt.cyan, 'This BBS Name.:')
 		xvt.out($.bracket(2), xvt.cyan, 'The Sysop Name:')
 		xvt.out($.bracket(3), xvt.cyan, 'BBS Start Date:')
 		xvt.out($.bracket(4), xvt.cyan, 'NPC Gender (I):')
 	}
 	else {
-		xvt.outln(xvt.yellow, '     --=:) ', xvt.bright, 'New User Registration', xvt.normal, ' (:=--')
+		xvt.outln(xvt.yellow, '--=:) ', xvt.bright, 'New User Registration', xvt.normal, ' (:=--')
 		xvt.out($.bracket(1), xvt.cyan, `Player's Handle:`)
 		xvt.out($.bracket(2), xvt.cyan, 'Your REAL Name.:')
 		xvt.out($.bracket(3), xvt.cyan, 'Date of Birth..:')
