@@ -48,18 +48,18 @@ window.onresize = () => {
 	}
 
 	//  tweak side panel sizing within reason
-	Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': '65%' })
-	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': '35%' })
-	term.setOption('fontSize', 20)
+	Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': '70%' })
+	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': '30%' })
+	term.setOption('fontSize', 22)
 	let xy = fit.proposeGeometry(term)
 	let w = Math.trunc(parseInt(I.style.width) * (xy.cols || 80) / 80) + '%'
-	w = parseInt(w) < 28 ? '28%' : parseInt(w) > 42 ? '42%' : w
+	w = parseInt(w) < 24 ? '24%' : parseInt(w) > 38 ? '38%' : w
 	let v = (100 - parseInt(w)) + '%'
 	Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': v })
 	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': w })
 	//	adjust font to fit for standard width
 	xy = fit.proposeGeometry(term)
-	let fontSize = Math.trunc(20 * (xy.cols || 80) / 80)
+	let fontSize = Math.trunc(22 * (xy.cols || 80) / 80)
 	term.setOption('fontSize', fontSize)
 
 	//  and make it stick

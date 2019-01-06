@@ -8,7 +8,7 @@ import fs = require('fs')
 import https = require('https')
 import pty = require('node-pty')
 import ws = require('ws')
-const { URL } = require('url')
+import url = require('url')
 
 process.title = 'door'
 process.chdir(__dirname)
@@ -20,6 +20,7 @@ let broadcasts = {}
 //dns.lookup('0.0.0.0', (err, addr, family) => {
 dns.lookup('localhost', (err, addr, family) => {
 
+  const URL = url.URL
   const app = express()
   app.set('trust proxy', ['loopback', addr])
 
