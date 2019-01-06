@@ -42,7 +42,7 @@ module Dungeon
         dumb: '$'
     }
 
-	const Mask = ['   ', ' ♗ ', '♗ ♗', '♗♗♗', '☦☤☦']
+	const Mask = ['   ', ' ♗ ', '♗ ♗', '♗♗♗', '☨♝☨']
 	const Monster = {
 		rlogin:	[ '   ', 'Mon', 'M+M', 'Mob', 'MOB' ],
 		telnet:	[ '   ', 'Mon', 'M+M', 'Mob', 'MOB' ]
@@ -2808,16 +2808,16 @@ function occupying(room: room, o = '', reveal = false, identify = false) {
 				break
 
 			case 'well':
-				if (DL.map == `Marauder's map` && !icon) o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.blue, `  ${$.tty == 'web' ? '⛃' : '*'}  `)
+				if (DL.map == `Marauder's map` && !icon) o = xvt.attr(xvt.reset, `  ${$.tty == 'web' ? xvt.attr(xvt.lblue, '⛃') : xvt.attr(xvt.bright, xvt.blink, xvt.blue, '*')}  `)
 				break
 
 			case 'wheel':
-				if (DL.map == `Marauder's map` && !icon) o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.green, `  ${$.tty == 'web' ? '☸' : '@'}  `)
+				if (DL.map == `Marauder's map` && !icon) o = xvt.attr(xvt.reset, `  ${$.tty == 'web' ? xvt.attr(xvt.lgreen, '☸') : xvt.attr(xvt.bright, xvt.blink, xvt.green, '@')}  `)
 				break
 
 			case 'thief':
 				if ((identify || $.player.steal == 4) && !icon)
-					o = xvt.attr(xvt.reset, xvt.bright, xvt.black, `  ${$.tty == 'web' ? $.PC.card('Thief').unicode : '&'}  `)
+					o = xvt.attr(xvt.reset, xvt.faint, `  ${$.tty == 'web' ? $.PC.card('Thief').unicode : '&'}  `)
 				break
 
 			case 'cleric':
