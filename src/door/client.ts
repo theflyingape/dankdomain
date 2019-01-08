@@ -191,10 +191,8 @@ function newSession(ev) {
 	term.on('focus', () => {
 		if (pid > 0)
 			tty = true
-		else {
-			XT(`@play(${['demon','demogorgon','portal','thief2'][Math.trunc(4*Math.random())]})`)
+		else
 			XT('@action(welcome)')
-		}
 	})
 
 	term.on('resize', function (size) {
@@ -275,6 +273,7 @@ function newSession(ev) {
 				term.writeln(data)
 				setTimeout(() => {
 					term.focus()
+					XT(`@play(${['demon','demogorgon','portal','thief2'][Math.trunc(4*Math.random())]})`)
 					term.writeln(' \x1B[1;36m\u00B7\x1B[22;2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1B[22m')
 					window.frames['Info'].focus()
 				}, 500)
