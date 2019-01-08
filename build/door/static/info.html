@@ -53,7 +53,7 @@
   }
 
   div {
-    padding: 1px 2px 2px 0px;
+    padding: 1px 1px 1px 0px;
     border: none;
   }
 
@@ -107,8 +107,8 @@ keyboard = `<table>
 <tr><td><input class="numeric" type="button" value="k " onclick="send('k');"></td><td><input class="numeric" type="button" value="l " onclick="send('l');"></td><td><input class="numeric" type="button" value="m " onclick="send('m');"></td><td><input class="numeric" type="button" value="n " onclick="send('n');"></td><td><input class="numeric" type="button" value="o " onclick="send('o');"></td></tr>
 </td><td><input class="numeric" type="button" value="p " onclick="send('p');"></td><td><input class="numeric" type="button" value="q " onclick="send('q');"></td><td><input class="numeric" type="button" value="r " onclick="send('r');"></td><td><input class="numeric" type="button" value="s " onclick="send('s');"></td><td><input class="numeric" type="button" value="t " onclick="send('t');"></td></tr>
 <tr><td><input class="numeric" type="button" value="u " onclick="send('u');"></td><td><input class="numeric" type="button" value="v " onclick="send('v');"></td><td><input class="numeric" type="button" value="w " onclick="send('w');"></td><td><input class="numeric" type="button" value="x " onclick="send('x');"></td><td><input class="numeric" type="button" value="y " onclick="send('y');"></td></tr>
-</td><td><input class="numeric" type="button" value="z " onclick="send('z');"></td><td><input class="gold" type="button" value=" . " onclick="send('.');"></td><td><input class="gold" type="button" value=" - " onclick="send('-');"></td><td><input class="gold" type="button" value=" + " onclick="send('+');"></td><td><input class="silver" type="button" value=" ? " onclick="send('?', true);"></td></tr>
-<tr><td><input class="gold" type="button" value="@" onclick="send('@');"></td><td colspan=3><input class="tall" type="button" value=" SPACE BAR " onclick="send(' ');"></td><td><input class="slate" type="button" value=" ⇐ " onclick="send('\x08');"></td></tr>
+</td><td><input class="numeric" type="button" value="z " onclick="send('z');"></td><td><input class="gold" type="button" value=" ." onclick="send('.');"></td><td><input class="gold" type="button" value=" -" onclick="send('-');"></td><td><input class="gold" type="button" value=" +" onclick="send('+');"></td><td><input class="silver" type="button" value=" ?" onclick="send('?', true);"></td></tr>
+<tr><td><input class="gold" type="button" value="@" onclick="send('@');"></td><td colspan=3><input class="tall" type="button" value=" SPACE BAR " onclick="send(' ');"></td><td><input class="slate" type="button" value=" ⇐" onclick="send('\x08');"></td></tr>
 <tr><td colspan=2>${cancel}</td><td></td><td colspan=2>${enter}</td></tr>
 </table>`;
 money = `<table><tr><td><input class="numeric" type="button" value="7 " onclick="send('7');"></td><td><input class="numeric" type="button" value="8 " onclick="send('8');"></td><td><input class="numeric" type="button" value="9 " onclick="send('9');"></td><td><input class="platinum" type="button" value="P" onclick="send('p');"></td>
@@ -276,7 +276,7 @@ function Logoff() {
   if (!art) art = setInterval(rotateImage, 22500);
   window.focus();
   input = false;
-  cmd(`<input type="button" id="cancel" value="Disconnect" onclick="send('\x1B');"> <input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"><br>
+  cmd(`<input type="button" id="cancel" value="Disconnect" onclick="currentCMD = ''; send('\x1B');"> <input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"><br>
 <span style="font-size:larger">🤴 <a href="https://ddgame.us" target="_new"><span style="color:black !important">Dank Domain</span></a> 👸</span><br>
 <span style="color:brown !important;">the return of Hack &amp; Slash<br>
 🇺🇸 <span style="font-size:smaller;">&copy;2017-2019 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a></span></span> 🧙`);
@@ -306,6 +306,7 @@ function actionResize(profile) {
 }
 */
 function clear() {
+console.log('clear', currentCMD);
   cmd('');
 }
 
@@ -532,8 +533,9 @@ function cmdResize() {
 }
 
 function welcome() {
-  Logoff();
+console.log('welcome');
   nme('Can you defeat the Demogorgon?<br><img src="images/arena/demogorgon.jpg" onload="nmeResize(\'jackInTheBox\');" style="display:none;" />');
+  Logoff();
 }
 
 function keydown(event) {
@@ -559,7 +561,7 @@ function keydown(event) {
 
 </script>
 </head>
-<body onkeydown="keydown(event);" onload="welcome();">
+<body onkeydown="keydown(event);">
   <div id="nme"></div>
   <div id="command" style="background: linear-gradient(to bottom, rgba(223, 247, 255, 0.04), rgba(215, 241, 247, 0.96)); position: relative; text-align: right; width:98%;"></div>
 </body>

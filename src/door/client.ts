@@ -50,7 +50,7 @@ window.onresize = () => {
 	//  tweak side panel sizing within reason
 	Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': '70%' })
 	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': '30%' })
-	term.setOption('fontSize', 22)
+	term.setOption('fontSize', 24)
 	let xy = fit.proposeGeometry(term)
 	let w = Math.trunc(parseInt(I.style.width) * (xy.cols || 80) / 80) + '%'
 	w = parseInt(w) < 24 ? '24%' : parseInt(w) > 38 ? '38%' : w
@@ -59,7 +59,7 @@ window.onresize = () => {
 	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': w })
 	//	adjust font to fit for standard width
 	xy = fit.proposeGeometry(term)
-	let fontSize = Math.trunc(22 * (xy.cols || 80) / 80)
+	let fontSize = Math.trunc(24 * (xy.cols || 80) / 80)
 	term.setOption('fontSize', fontSize)
 
 	//  and make it stick
@@ -90,7 +90,7 @@ document.getElementById('lurker-list').onchange = (ev) => {
 	document.getElementById('terminal').hidden = false
 	term = new Terminal({
 		bellStyle: 'none', cursorBlink: false, scrollback: 0,
-		fontFamily: 'Consolas,monospace', fontSize: 22,
+		fontFamily: 'Consolas,monospace', fontSize: 20,
 		fontWeight: '400', fontWeightBold: '500',
 		theme: {
 			foreground: '#a3a7af', background: '#23272f', cursor: '#e0c8e0',
@@ -128,7 +128,7 @@ document.getElementById('lurker-list').onchange = (ev) => {
 
 			socket.onclose = (ev) => {
 				XT('@tune(.)')
-				term.destroy()
+				term.dispose()
 				wpid = 0
 				document.getElementById('terminal').hidden = true
 				lurk()
@@ -150,7 +150,7 @@ function newSession(ev) {
 	const options: ITerminalOptions = {
 		bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false, drawBoldTextInBrightColors: true,
 		cols: cols, rows: rows, scrollback: 500,
-		fontFamily: 'tty,Consolas,monospace', fontSize: 22,
+		fontFamily: 'tty,Consolas,monospace', fontSize: 24,
 		fontWeight: '400', fontWeightBold: '500',
 		theme: {
 			foreground: '#a8a8a8', background: '#020408', cursor: '#a0c8f0',
@@ -169,6 +169,7 @@ function newSession(ev) {
 	pid = -1
 	term = new Terminal(options)
 	if (carrier) term.setOption('fontFamily', 'IBM Plex Mono,Consolas,monospace')
+
 	Terminal.applyAddon(fit)
 	Terminal.applyAddon(webLinks)
 
@@ -179,7 +180,7 @@ function newSession(ev) {
 		else {
 			XT('@tune(.)')
 			pid = 0
-			term.destroy()
+			term.dispose()
 			if (data === '\r' || data === ' ')
 				newSession('Logon')
 			else
@@ -188,7 +189,12 @@ function newSession(ev) {
 	})
 
 	term.on('focus', () => {
-		if (pid > 0) tty = true
+		if (pid > 0)
+			tty = true
+		else {
+			XT(`@play(${['demon','demogorgon','portal','thief2'][Math.trunc(4*Math.random())]})`)
+			XT('@action(welcome)')
+		}
 	})
 
 	term.on('resize', function (size) {
@@ -220,7 +226,7 @@ function newSession(ev) {
 	fit.fit(term)
 	window.dispatchEvent(new Event('resize'))	// gratuituous
 
-	term.focus(); term.blur()
+	term.blur()
 	term.writeln('\x1B[16C\x1B[1;31m🔥\x1B[2C🌨\x1B[2C \x1B[36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain\x1B[2C\x1B[m🌙\x1B[2C💫\x07')
 
 	if (ev === 'Logon')	{
@@ -267,9 +273,11 @@ function newSession(ev) {
 		fetch(`${app}/title.txt`, { method: 'GET' }).then(function (res) {
 			return res.text().then(function (data) {
 				term.writeln(data)
-				term.writeln(' \x1B[1;36m\u00B7\x1B[22;2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1B[22m')
-				XT(`@play(${['demon','demogorgon','portal','thief2'][Math.trunc(4*Math.random())]})`)
-				window.frames['Info'].focus()
+				setTimeout(() => {
+					term.focus()
+					term.writeln(' \x1B[1;36m\u00B7\x1B[22;2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1B[22m')
+					window.frames['Info'].focus()
+				}, 500)
 			})
 		})
 	}
@@ -280,14 +288,22 @@ function checkCarrier() {
 	if (++recheck < 10)
 		term.write('.')
 	else {
-		XT('@play(invite)')
 		carrier = false
 		clearInterval(reconnect)
+		XT('@action(clear)')
+		XT('@play(invite)')
+		if (pid) {
+			term.dispose()
+			pid = 0
+		}
 		document.getElementById('terminal').hidden = true
 		document.getElementById('wall').hidden = false
 		let iframes = document.querySelectorAll('iframe')
-		for (let i = 0; i < iframes.length; i++)
-			iframes[i].parentNode.removeChild(iframes[i])
+		for (let i = 0; i < iframes.length; i++) {
+			iframes[i].hidden = true
+			iframes[i].src = ''
+		}
+		//iframes[i].parentNode.removeChild(iframes[i])
 		lurk()
 		lurking = setInterval(lurk, 20000)
 	}
@@ -328,7 +344,7 @@ function XT(data) {
 		source[0].src = `sounds/${fileName}.ogg`
 		source[0].type = 'audio/ogg'
 		source[1].src = `sounds/${fileName}.mp3`
-	source[1].type = 'audio/mp3'
+		source[1].type = 'audio/mp3'
 		audio.load()
 		audio.play()
 	}
@@ -397,13 +413,13 @@ function receive(event) {
 				}
 			case 'emit':
 				if (!carrier) {
-					XT('@tune(.)')
-					term.clear()
-					term.destroy()
-					if (event.data.message == ' ')
-						newSession('Logon')
-					else {
+					if (event.data.message == ' ') {
+						XT('@tune(.)')
+						term.dispose()
 						pid = 0
+						newSession('Logon')
+					}
+					else {
 						recheck = 10
 						checkCarrier()
 					}
