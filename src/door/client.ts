@@ -253,11 +253,11 @@ function newSession(ev) {
 					if (term.getOption('cursorBlink'))
 						term.setOption('cursorBlink', false)
 					term.writeln('\x1B[0;2mWebSocket close\x1B[m')
+					XT('@action(Logoff)')
 					carrier = false
 					recheck = 0
 					reconnect = setInterval(checkCarrier, 20000)
 					tty = false
-					XT('@action(Logoff)')
 				}
 
 				socket.onerror = (ev) => {

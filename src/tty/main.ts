@@ -382,6 +382,7 @@ function choice() {
                         Battle.user('Scout', (opponent: active) => {
                             if (opponent.user.id) {
                                 $.PC.stats(opponent)
+                                $.action('freetext')
                                 xvt.app.refocus()
                             }
                             else

@@ -29,7 +29,7 @@
 .wide, .Wide {
     padding: 4px 10px;
 }
-.numeric, .Numeric {
+.generic, .Generic {
     padding: 2px 22px 12px 4px;
     font-size: 110%;
 }
@@ -68,7 +68,7 @@
     padding: 6px 16px;
     font-size: 120%;
 }
-.Tall, .Wide, .Numeric, .Platinum, .Gold, .Silver, .Copper, .Slate {
+.Tall, .Wide, .Generic, .Platinum, .Gold, .Silver, .Copper, .Slate {
     width: 100%;
 }
 

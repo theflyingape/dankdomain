@@ -8,13 +8,14 @@ member=`sudo groupmems -g games -l | grep -c $USER`
 [ $member -eq 0 ] && sudo groupmems -g games -a $USER
 
 [ -n "$1" ] && TARGET="$1" || TARGET=/usr/local/games
-[ -d ${TARGET} ] || sudo mkdir -v ${TARGET}
+[ -d "${TARGET}" ] || sudo mkdir -v "${TARGET}"
 TARGET="${TARGET}/`basename ${PWD}`"
 echo "Installing into ${TARGET}"
-[ -d ${TARGET} ] || sudo mkdir -v ${TARGET}
+[ -d "${TARGET}" ] || sudo mkdir -v "${TARGET}"
+[ -d "${TARGET}/users" ] || sudo mkdir -v "${TARGET}/users"
 
 # let's start with the services
-[ -n "`which node`" ] || sudo dnf install nodejs nodejs-typescript npm
+[ -n "`which node-gyp`" ] || sudo dnf install node-gyp nodejs-typescript
 
 # this.package install script
 npm install
@@ -30,12 +31,12 @@ sudo chown -R root.games ${TARGET}
 sudo find ${TARGET} -type d -exec chmod u+rwx,g+rwxs,o-rwx {} \;
 
 # initialize the game
-cd ${TARGET}
+cd "${TARGET}"
 env REMOTEHOST=localhost ./logins.sh
-sudo chmod 660 ${TARGET}/users/*
+sudo chmod 660 "${TARGET}/users/*"
 
 echo -e "\n${PWD}"
-ls -lh ${TARGET}
+ls -lh "${TARGET}"
 
 # practical, but use at your own risk
 [ -n "`which in.telnetd`" ] || sudo dnf install telnet-server
@@ -79,7 +80,7 @@ if sudo service iptables status ; then
 	fi
 fi
 
-sudo cp -v ${TARGET}/etc/dankdomain-door.service /etc/systemd/system/
+sudo cp -v "${TARGET}/etc/dankdomain-door.service" /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable dankdomain-door
 #sudo systemctl start dankdomain-door

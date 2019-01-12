@@ -323,15 +323,12 @@ function choice() {
 			xvt.outln(xvt.Blue, xvt.bright, '----     ----------------------     ----     -------     ---')
 			rs = $.query(`SELECT id,handle,hull,cannon,ram FROM Players WHERE hull > 0 ORDER BY hull DESC`)
 			for (let i in rs) {
-				xvt.out(sprintf('%-4s     %-22s     %4u     %5u        %s\n'
+				xvt.outln(sprintf('%-4s     %-22s     %4u     %5u        %s'
 					, rs[i].id, rs[i].handle, rs[i].hull, rs[i].cannon, rs[i].ram ? 'Y' : 'N')
 				)
 			}
-            xvt.app.form = {
-                'pause': { cb:menu, pause:true }
-            }
-            xvt.app.focus = 'pause'
-            return
+			suppress = true
+			break
 
 		case 'S':
 			if (!$.access.roleplay) break

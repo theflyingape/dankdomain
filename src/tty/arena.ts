@@ -474,7 +474,7 @@ function MonsterFights(): boolean {
 				menu()
 			}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:10 },
 			'fight': { cb:() => {
-				xvt.out('\n')
+				xvt.outln()
 				if (/Y/i.test(xvt.entry)) {
 					$.music('combat' + $.arena--)
 					Battle.engage('Monster', $.online, monster, menu)

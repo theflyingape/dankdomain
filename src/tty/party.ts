@@ -67,7 +67,7 @@ function choice() {
             xvt.out(' - ', party[choice].description)
             suppress = $.player.expert
         }
-    xvt.out('\n')
+    xvt.outln()
 
     let rs: any[]
 
@@ -80,15 +80,11 @@ function choice() {
                 else
                     showGang($.loadGang(rs[i]))
             }
-
-            xvt.app.form = {
-                'pause': { cb:menu, pause:true }
-            }
-            xvt.app.focus = 'pause'
-            return
+            suppress = true
+            break
 
         case 'M':
-            xvt.out('\n')
+            xvt.outln()
             xvt.outln(xvt.Blue, xvt.bright, '        Party            Win-Loss   Ratio ')
             xvt.outln(xvt.Blue, xvt.bright, '------------------------------------------')
             rs = $.query(`SELECT * FROM Gangs ORDER BY win DESC, loss ASC`)
@@ -102,12 +98,8 @@ function choice() {
                 }
                 xvt.outln()
             }
-
-            xvt.app.form = {
-                'pause': { cb:menu, pause:true }
-            }
-            xvt.app.focus = 'pause'
-            return
+            suppress = true
+            break
 
         case 'S':
             if (!$.access.roleplay) break
@@ -144,11 +136,12 @@ function choice() {
                     xvt.app.focus = 'accept'
                 }, prompt:'New gang name? ', min:2, max:22 },
                 'accept': { cb:() => {
-                    xvt.out('\n')
+                    xvt.outln()
                     if (/Y/i.test(xvt.entry)) {
                         $.player.gang = g.name
                         $.online.altered = true
                         $.saveGang(g, true)
+                        $.sound('click')
                         menu()
                     }
                     else {
@@ -183,7 +176,7 @@ function choice() {
             $.action('ny')
             xvt.app.form = {
                 'resign': { cb:() => {
-                    xvt.out('\n')
+                    xvt.outln()
                     if (/Y/i.test(xvt.entry)) {
                         $.player.gang = ''
                         $.online.altered = true
@@ -193,10 +186,10 @@ function choice() {
                             $.saveGang(g)
                         }
                         else {
-                            xvt.out('Dissolving the gang... ')
+                            xvt.out('\nDissolving the gang... ')
                             $.run(`UPDATE Players SET gang = '' WHERE gang = '${g.name}'`)
                             $.run(`DELETE FROM Gangs WHERE name = '${g.name}'`)
-                            xvt.out('ok.\n')
+                            xvt.outln()
                         }
                     }
                     g = { name:'', members:[], handles:[], genders:[], melee:[], status:[], validated:[]
@@ -211,7 +204,7 @@ function choice() {
             if (!$.access.roleplay) break
             if ($.player.gang) {
                 xvt.beep()
-				xvt.out(`\nYou are already a member of ${$.player.gang}.\n`)
+				xvt.outln(`\nYou are already a member of ${$.player.gang}.`)
 				suppress = true
                 break
             }
@@ -231,13 +224,14 @@ function choice() {
                 $.action('ny')
                 xvt.app.form = {
                     'join': { cb:() => {
-                        xvt.outln()
                         if (/Y/i.test(xvt.entry)) {
                             $.player.gang = g.name
                             $.online.altered = true
                             if (g.members.indexOf($.player.id) < 0)
                                 g.members.push($.player.id)
                             $.run(`UPDATE Gangs SET members = '${g.members.join()}' WHERE name = '${g.name}'`)
+                            $.sound('click')
+                            xvt.outln()
                             xvt.outln(`\nYou are now a member of ${g.name}.`)
                         }
                         else {
@@ -270,7 +264,7 @@ function choice() {
             showGang(g)
             if (g.members.indexOf($.player.id) != 0) {
                 xvt.beep()
-                xvt.out('\nYou are not its leader.\n')
+                xvt.outln('\nYou are not its leader.')
                 break
             }
             xtGang($.player.gender, $.player.melee, g.banner, g.trim)
@@ -280,7 +274,10 @@ function choice() {
                 let n = g.members.indexOf(member.user.id)
                 if (n < 0) {
                     xvt.beep()
-                    xvt.out(`\n${member.user.handle} is not a member.\n`)
+                    if (member.user.id) {
+                        $.profile(member)
+                        xvt.outln(`\n${member.user.handle} is not a member.`)
+                    }
                 }
                 else {
                     if (member.user.gang === g.name) {
@@ -289,11 +286,12 @@ function choice() {
                         $.saveGang(g)
                         g = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                         showGang(g)
-                        xvt.out(xvt.bright, '\n', member.user.handle, ' is now leader of ', g.name, '.\n', xvt.reset)
+                        xvt.outln()
+                        xvt.outln(xvt.bright, member.user.handle, ' is now leader of ', g.name, '.')
                     }
                     else {
                         xvt.beep()
-                        xvt.out(`\n${member.user.handle} has not accepted membership.\n`)
+                        xvt.outln(`\n${member.user.handle} has not accepted membership.`)
                     }
                 }
                 menu()
@@ -305,7 +303,7 @@ function choice() {
             if (!$.player.gang) break
             if (!$.party) {
                 xvt.beep()
-				xvt.out('\nYou cannot edit your gang after party fights.\n')
+				xvt.outln('\nYou cannot edit your gang after party fights.')
 				suppress = true
                 break
             }
@@ -314,7 +312,7 @@ function choice() {
             showGang(g)
             if (g.members.indexOf($.player.id) != 0) {
                 xvt.beep()
-                xvt.out('\nYou are not its leader.\n')
+                xvt.outln('\nYou are not its leader.')
                 break
             }
             xtGang($.player.gender, $.player.melee, g.banner, g.trim)
@@ -322,19 +320,18 @@ function choice() {
 
             xvt.app.form = {
                 'drop': { cb:() => {
-                    xvt.out('\n')
                     if (/Y/i.test(xvt.entry)) {
                         Battle.user('Drop', (member: active) => {
                             if (member.user.id !== '') {
                                 let n = g.members.indexOf(member.user.id)
                                 if (n < 0) {
                                     xvt.beep()
-                                    xvt.out(`\n${member.user.handle} is not a member.\n`)
+                                    if (member.user.handle) xvt.outln(`\n${member.user.handle} is not a member.`)
                                 }
                                 else {
                                     if (!$.lock(member.user.id)) {
                                         $.beep()
-                                        xvt.out(`${$.who(member, 'He')}is currently engaged elsewhere and not available.\n`)
+                                        xvt.outln(`\n${$.who(member, 'He')}is currently engaged elsewhere and not available.`)
                                     }
                                     else {
                                         if (member.user.gang === g.name) {
@@ -345,7 +342,9 @@ function choice() {
                                         g.handles.splice(n ,1)
                                         $.saveGang(g)
                                         showGang(g)
-                                        xvt.out(xvt.bright, '\n', member.user.handle, ' is no longer on ', g.name, '.\n', xvt.reset)
+                                        $.sound('click')
+                                        xvt.outln()
+                                        xvt.outln(xvt.bright, member.user.handle, ' is no longer on ', g.name, '.')
                                     }
                                 }
                             }
@@ -356,14 +355,13 @@ function choice() {
                         xvt.app.focus = 'invite'
                 }, prompt:'Drop a member (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 },
                 'invite': { cb: () => {
-                    xvt.out('\n')
                     if (/Y/i.test(xvt.entry)) {
                         Battle.user('Invite', (member: active) => {
                             if (member.user.id !== '') {
                                 let n = g.members.indexOf(member.user.id)
                                 if (n >= 0) {
                                     xvt.beep()
-                                    xvt.out(`\n${member.user.handle} is already a member.\n`)
+                                    xvt.outln(`\n${member.user.handle} is already a member.`)
                                 }
                                 else {
                                     if (!member.user.gang) {
@@ -372,7 +370,9 @@ function choice() {
                                         $.saveGang(g)
                                         showGang(g)
                                         $.log(member.user.id, `\n${$.player.handle} invites you to join ${g.name}`)
-                                        xvt.out(xvt.bright, '\n', member.user.handle, ' is invited to join ', g.name, '.\n', xvt.reset)
+                                        $.sound('click')
+                                        xvt.outln()
+                                        xvt.outln(xvt.bright, member.user.handle, ' is invited to join ', g.name, '.')
                                     }
                                 }
                             }
@@ -391,7 +391,7 @@ function choice() {
             if (!$.player.gang) break
             if (!$.party) {
                 xvt.beep()
-				xvt.out('\nYou have no more party fights.\n')
+				xvt.outln('\nYou have no more party fights.')
 				suppress = true
                 break
             }
@@ -406,7 +406,7 @@ function choice() {
             $.action('listmm')
             xvt.app.form = {
                 'gang': { cb:() => {
-                    xvt.out('\n')
+                    xvt.outln()
                     let i = (+xvt.entry >>0) - 1
                     if (/M/i.test(xvt.entry)) {
                         rs = [ rs.find((x) => { return x.name === 'Monster Mash' }) ]
@@ -488,7 +488,7 @@ function choice() {
                     }
 
                     if (!nme.length) {
-                        xvt.out('\nThat gang is not active!\n')
+                        xvt.outln('\nThat gang is not active!')
                         menu()
                         return
                     }
@@ -508,7 +508,7 @@ function choice() {
                             $.cat('player/' + nme[0].user.pc.toLowerCase())
                         xvt.outln(xvt.bright, xvt.magenta, nme[0].user.handle, xvt.reset
                             , ' grins as ', $.who(nme[0], 'he'), 'pulls out '
-                            , $.who(nme[0], 'his'), nme[0].user.weapon, '.\n')
+                            , $.who(nme[0], 'his'), nme[0].user.weapon, '.')
                         xvt.waste(1200)
 
                         Battle.engage('Party', posse, nme, menu)

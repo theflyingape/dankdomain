@@ -216,6 +216,7 @@ export class Character {
 
         const line = '------------------------------------------------------'
         const space = '                                                      '
+        const sex = profile.user.sex == 'I' ? profile.user.gender : profile.user.sex
         var i: number
         var n: number
 
@@ -227,10 +228,10 @@ export class Character {
         n = 11 + i / 2 + i % 2
         xvt.out(xvt.blue, '((:=', line.slice(0, n), '+\n')
 
-        i = 30 - Access.name[profile.user.access][profile.user.sex].length
+        i = 30 - Access.name[profile.user.access][sex].length
         n = 11 + i / 2
         xvt.out(xvt.blue, '|', xvt.Blue, xvt.white, space.slice(0, n))
-        xvt.out('"', Access.name[profile.user.access][profile.user.sex], '"')
+        xvt.out('"', Access.name[profile.user.access][sex], '"')
         n = 11 + i / 2 + i % 2
         xvt.out(xvt.blue, space.slice(0, n), xvt.reset, xvt.blue, '|\n')
 

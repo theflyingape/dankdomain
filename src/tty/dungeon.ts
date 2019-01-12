@@ -2777,7 +2777,7 @@ function occupying(room: room, o = '', reveal = false, identify = false) {
 			if (Monster[$.tty])
 				icon += Monster[$.tty][m]
 			else {
-				if (DL.map == `Marauder's map` || identify) {
+				if (identify) {
 					icon += Mask[m]
 					for (let i = 0; i < m; i++) {
 						let dm = $.PC.card(room.monster[i].user.pc)
@@ -2799,7 +2799,7 @@ function occupying(room: room, o = '', reveal = false, identify = false) {
 
 		switch (room.occupant) {
 			case 'trapdoor':
-				if (!icon && !identify) o = xvt.attr(xvt.reset, xvt.bright, xvt.blink, xvt.cyan, '  ?  ')
+				if (identify && !icon) o = xvt.attr(xvt.reset, `  ${$.tty == 'web' ? xvt.attr(xvt.lcyan, '☒') : xvt.attr(xvt.bright, xvt.blink, xvt.cyan, '?')}  `)
 				break
 
 			case 'portal':
@@ -2808,11 +2808,11 @@ function occupying(room: room, o = '', reveal = false, identify = false) {
 				break
 
 			case 'well':
-				if (DL.map == `Marauder's map` && !icon) o = xvt.attr(xvt.reset, `  ${$.tty == 'web' ? xvt.attr(xvt.lblue, '⛃') : xvt.attr(xvt.bright, xvt.blink, xvt.blue, '*')}  `)
+				if (identify && !icon) o = xvt.attr(xvt.reset, `  ${$.tty == 'web' ? xvt.attr(xvt.lblue, '⛃') : xvt.attr(xvt.bright, xvt.blink, xvt.blue, '*')}  `)
 				break
 
 			case 'wheel':
-				if (DL.map == `Marauder's map` && !icon) o = xvt.attr(xvt.reset, `  ${$.tty == 'web' ? xvt.attr(xvt.lgreen, '☸') : xvt.attr(xvt.bright, xvt.blink, xvt.green, '@')}  `)
+				if (identify && !icon) o = xvt.attr(xvt.reset, `  ${$.tty == 'web' ? xvt.attr(xvt.lgreen, '☸') : xvt.attr(xvt.bright, xvt.blink, xvt.green, '@')}  `)
 				break
 
 			case 'thief':
@@ -2826,7 +2826,7 @@ function occupying(room: room, o = '', reveal = false, identify = false) {
 					o = xvt.attr(xvt.reset, xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.reset, xvt.faint, xvt.yellow, ':')
 				}
 				else {
-					if (!icon) icon = xvt.attr(xvt.uline, '_', Cleric[$.player.emulation], '_')
+					if (!icon) icon = xvt.attr(xvt.uline, '_', $.tty == 'web' ? '⚰' : Cleric[$.player.emulation], '_')
 					o = xvt.attr(xvt.reset, xvt.faint, ':', icon, xvt.reset, xvt.faint, ':')
 				}
 				break
@@ -2837,7 +2837,7 @@ function occupying(room: room, o = '', reveal = false, identify = false) {
 				break
 
 			case 'dwarf':
-				if (DL.map == `Marauder's map` && !icon) o = xvt.attr(xvt.reset, xvt.faint, xvt.blink, xvt.yellow, `  ${$.tty == 'web' ? '⚘' : '$'}  `)
+				if (identify && !icon) o = xvt.attr(xvt.reset, xvt.faint, xvt.blink, xvt.yellow, `  ${$.tty == 'web' ? '⚘' : '$'}  `)
 				break
 		}
 	}

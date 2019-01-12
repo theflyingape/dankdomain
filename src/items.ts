@@ -342,7 +342,7 @@ export class Weapon {
 
         // is it better than this weapon class?
         if ((winner.user.toWC >= 0 && winner.weapon.wc >= loser.weapon.wc)
-            || (winner.user.toWC < 0 && winner.weapon.wc + winner.user.toWC > loser.weapon.wc)) {
+            || (winner.user.toWC < 0 && winner.weapon.wc + (winner.user.toWC * (winner.user.poison > 1 ? winner.user.poison : 1)) >= loser.weapon.wc)) {
             if (value) {
                 winner.user.coin.value += value.value
                 return value

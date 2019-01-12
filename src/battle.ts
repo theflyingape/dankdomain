@@ -1430,9 +1430,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
                 if (nme.hp < 1) {
                     nme.hp = 0
-                    if (from === 'Party' || nme !== $.online) {
-                        xvt.out(xvt.blue, xvt.faint, ' {', xvt.bright, 'RIP', xvt.faint, '}', xvt.reset)
-                    }
+                    if (from === 'Party' || nme !== $.online)
+                        xvt.out($.bracket('RIP', false))
                     else {
                         $.reason = rpc.user.id.length
                             ? `fatal blast by ${rpc.user.handle}`
@@ -1779,9 +1778,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
                 if (nme.hp < 1) {
                     nme.hp = 0
-                    if (from === 'Party' || nme !== $.online) {
-                        xvt.out(xvt.blue, xvt.faint, ' {', xvt.bright, 'RIP', xvt.faint, '}')
-                    }
+                    if (from === 'Party' || nme !== $.online)
+                        xvt.out($.bracket('RIP', false))
                     else {
                         $.reason = rpc.user.id.length
                             ? `fatal Big Blast by ${rpc.user.handle}`
