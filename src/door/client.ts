@@ -181,18 +181,15 @@ function newSession(ev) {
 			XT('@tune(.)')
 			pid = 0
 			term.dispose()
-			if (data === '\r' || data === ' ')
+			if (data === '\r' || data === ' ') {
+				tty = true
 				newSession('Logon')
-			else
+			}
+			else {
+				tty = false
 				window.parent.postMessage({ 'func': 'emit', 'message': '\x1B', 'return': false }, location.href)
+			}
 		}
-	})
-
-	term.on('focus', () => {
-		if (pid > 0)
-			tty = true
-		else
-			XT('@action(welcome)')
 	})
 
 	term.on('resize', function (size) {
@@ -222,13 +219,12 @@ function newSession(ev) {
 	term.open(document.getElementById('terminal'))
 	webLinks.webLinksInit(term)
 	fit.fit(term)
-	term.focus()
 	window.dispatchEvent(new Event('resize'))	// gratuituous
 
-	term.blur()
 	term.writeln('\x1B[16C\x1B[1;31m🔥\x1B[2C🌨\x1B[2C \x1B[36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain\x1B[2C\x1B[m🌙\x1B[2C💫\x07')
 
 	if (ev === 'Logon')	{
+		pid = 0
 		term.write(`\n\x1B[0;2mConnecting terminal WebSocket ... `)
 		XT('@tune(dankdomain)')
 		fetch(`${app}/player/?cols=${term.cols}&rows=${term.rows}`, { method: 'POST' }).then(function (res) {
@@ -243,13 +239,13 @@ function newSession(ev) {
 
 				socket.onopen = () => {
 					carrier = true
-					if (!term.getOption('cursorBlink'))
-						term.setOption('cursorBlink', true)
-					if (tty)
-						term.focus()
-					else
-						term.blur()
 					term.writeln('open\x1B[m')
+					if (!term.getOption('cursorBlink')) {
+						term.focus()
+						term.setOption('cursorBlink', true)
+					}
+					if (!tty)
+						term.blur()
 					XT('@action(Logon)')
 				}
 
@@ -260,6 +256,7 @@ function newSession(ev) {
 					carrier = false
 					recheck = 0
 					reconnect = setInterval(checkCarrier, 20000)
+					tty = false
 					XT('@action(Logoff)')
 				}
 
@@ -276,9 +273,11 @@ function newSession(ev) {
 			return res.text().then(function (data) {
 				term.writeln(data)
 				setTimeout(() => {
-					term.focus()
-					XT(`@play(${['demon','demogorgon','portal','thief2'][Math.trunc(4*Math.random())]})`)
 					term.writeln(' \x1B[1;36m\u00B7\x1B[22;2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1B[22m')
+					term.focus()
+					term.blur()
+					XT(`@play(${['demon','demogorgon','portal','thief2'][Math.trunc(4*Math.random())]})`)
+					XT('@action(welcome)')
 					window.frames['Info'].focus()
 				}, 500)
 			})
@@ -361,7 +360,7 @@ function XT(data) {
 
 	function tune(fileName) {
 		let audio = <HTMLAudioElement>document.getElementById('tune')
-		if (!fileName.length || fileName === '.' || !pid) {
+		if (!fileName.length || fileName === '.') {
 			audio.pause()
 			audio.currentTime = 0
 			return
