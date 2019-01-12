@@ -53,7 +53,7 @@ window.onresize = () => {
 	term.setOption('fontSize', 24)
 	let xy = fit.proposeGeometry(term)
 	let w = Math.trunc(parseInt(I.style.width) * (xy.cols || 80) / 80) + '%'
-	w = parseInt(w) < 24 ? '24%' : parseInt(w) > 38 ? '38%' : w
+	w = parseInt(w) < 26 ? '26%' : parseInt(w) > 34 ? '34%' : w
 	let v = (100 - parseInt(w)) + '%'
 	Object.assign(t.style, { 'top': '0%', 'height': '100%', 'width': v })
 	Object.assign(I.style, { 'top': '0%', 'height': '100%', 'width': w })
@@ -222,6 +222,7 @@ function newSession(ev) {
 	term.open(document.getElementById('terminal'))
 	webLinks.webLinksInit(term)
 	fit.fit(term)
+	term.focus()
 	window.dispatchEvent(new Event('resize'))	// gratuituous
 
 	term.blur()
@@ -242,9 +243,12 @@ function newSession(ev) {
 
 				socket.onopen = () => {
 					carrier = true
-					if (tty) term.focus()
 					if (!term.getOption('cursorBlink'))
 						term.setOption('cursorBlink', true)
+					if (tty)
+						term.focus()
+					else
+						term.blur()
 					term.writeln('open\x1B[m')
 					XT('@action(Logon)')
 				}
@@ -412,8 +416,8 @@ function receive(event) {
 				}
 			case 'emit':
 				if (!carrier) {
+					XT('@tune(.)')
 					if (event.data.message == ' ') {
-						XT('@tune(.)')
 						term.dispose()
 						pid = 0
 						newSession('Logon')

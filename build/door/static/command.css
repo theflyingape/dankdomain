@@ -23,59 +23,59 @@
     text-decoration: none;
     user-select: none;
 }
-.tall {
+.tall, .Tall {
     padding: 8px 5px;
 }
-.wide {
+.wide, .Wide {
     padding: 4px 10px;
 }
-.numeric {
+.numeric, .Numeric {
     padding: 2px 22px 12px 4px;
     font-size: 110%;
-    width: 97%;
-    width: 97%;
 }
-.platinum {
+.platinum, .Platinum {
     background: orchid;
     border: solid darkorchid 2px;
     color: indigo;
     padding: 6px 16px;
     font-size: 120%;
 }
-.gold {
+.gold, .Gold {
     background: gold;
     border: solid darkgoldenrod 2px;
     color: goldenrod;
     padding: 6px 16px;
     font-size: 120%;
 }
-.silver {
+.silver, .Silver {
     background: turquoise;
     border: solid darkturquoise 2px;
     color: steelblue;
     padding: 6px 16px;
     font-size: 120%;
 }
-.copper {
+.copper, .Copper {
     background: coral;
     border: solid darkred 2px;
     color: crimson;
     padding: 6px 16px;
     font-size: 120%;
 }
-.slate {
+.slate, .Slate {
     background: lightgray;
     border: solid darkslategray 2px;
     color: slategray;
     padding: 6px 16px;
     font-size: 120%;
 }
+.Tall, .Wide, .Numeric, .Platinum, .Gold, .Silver, .Copper, .Slate {
+    width: 100%;
+}
 
 input:active, button:active {
     transform: scale(1.5) translateY(-4px);
     text-shadow: 1px 1px 2px black;
     color: white;
-    padding: 4px 24px 15px 6px;
 }
 input:hover, button:hover, button:focus {
     background: gold;
@@ -93,29 +93,24 @@ input:hover, button:hover, button:focus {
     background: lightpink;
     border: solid darkorchid 2px;
     color: fuchsia;
-    font-size: 125%;
 }
 .gold:hover {
     background: yellow;
     border: solid darkgoldenrod 2px;
     color: lightgoldenrodyellow;
-    font-size: 125%;
 }
 .silver:hover {
     background: lightskyblue;
     border: solid darkturquoise 2px;
     color: lightsteelblue;
-    font-size: 125%;
 }
 .copper:hover {
     background: lightcoral;
     border: solid darkred 2px;
     color: red;
-    font-size: 125%;
 }
 .slate:hover {
     background: gainsboro;
     border: solid darkslategray 2px;
     color: ghostwhite;
-    font-size: 125%;
 }

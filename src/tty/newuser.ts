@@ -166,8 +166,6 @@ function edit() {
 		retry++
 		check.id = `${$.player.id}${retry}`
 		check.handle = ''
-		console.log(check)
-		xvt.waste(2000)
 	}
 	if (retry > 1) $.player.id = `${$.player.id}${retry}`
 	if (retry > 3) $.player.id = ''
