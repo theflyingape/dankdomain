@@ -221,7 +221,7 @@ function newSession(ev) {
 	fit.fit(term)
 	window.dispatchEvent(new Event('resize'))	// gratuituous
 
-	term.writeln('\x1B[16C\x1B[1;31m🔥\x1B[2C🌨\x1B[2C \x1B[36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain\x1B[2C\x1B[m🌙\x1B[2C💫\x07')
+	term.writeln('\x07\x1B[16C🔥  🌨   \x1B[1;36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain \x1B[m🌙  💫')
 
 	if (ev === 'Logon')	{
 		pid = 0
@@ -314,7 +314,7 @@ function checkCarrier() {
 function XT(data) {
 	let copy = data + ''
 	// find any occurrences of @func(data), and for each: call func(data)
-	const re = '[@](?:(action|animated|profile|play|tune|wall)[(](.+?)[)])'
+	const re = '[@](?:(action|animated|profile|play|title|tune|wall)[(](.+?)[)])'
 	let search = new RegExp(re, 'g'); let replace = new RegExp(re)
 	let match: RegExpMatchArray
 	while (match = search.exec(copy)) {
@@ -356,6 +356,10 @@ function XT(data) {
 		if (typeof panel === 'string') panel = JSON.parse(panel)
 		if (window.frames['Info'])
 			window.frames['Info'].postMessage(panel, location.href)
+	}
+
+	function title(name) {
+		document.title = name
 	}
 
 	function tune(fileName) {

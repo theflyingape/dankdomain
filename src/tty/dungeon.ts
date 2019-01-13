@@ -1984,6 +1984,7 @@ function generateLevel() {
 	}
 
 	$.wall(`is entering dungeon level ${iii[deep]}.${Z + 1}`)
+	$.title(`Dungeon ${iii[deep]}.${Z + 1}`)
 
 	let y:number, x:number
 	let result: boolean

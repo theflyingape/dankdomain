@@ -181,6 +181,7 @@ export class Character {
                 userPNG = 'player/' + rpc.user.pc.toLowerCase() + (rpc.user.gender === 'F' ? '_f' : '')
             }
             Common.profile({ png:userPNG, handle:rpc.user.handle, level:rpc.user.level, pc:rpc.user.pc, effect:effect })
+            Common.title(`${rpc.user.handle}: level ${rpc.user.level} ${rpc.user.pc}`)
         }
     }
 
@@ -2076,6 +2077,11 @@ export function profile(params) {
 export function sound(effect: string, sync = 2) {
     if (tty == 'web') xvt.out('@play(', effect, ')')
     xvt.waste(sync * 100)
+}
+
+export function title(name: string) {
+    if (xvt.emulation == 'XT') xvt.out('\x1B]2;', name, '\x07')
+    if (tty == 'web') xvt.out('@title(', name, ')')
 }
 
 export function wall(msg: string) {

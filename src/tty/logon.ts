@@ -33,8 +33,7 @@ module Logon
     }
 
     xvt.outln(xvt.bright, xvt.cyan, xvt.emulation
-        , xvt.normal, ' emulation '
-        , xvt.faint, 'enabled')
+        , xvt.normal, ' emulation ', xvt.faint, 'enabled\n')
 
     $.loadUser($.sysop)
     if ($.sysop.lastdate != $.now().date)

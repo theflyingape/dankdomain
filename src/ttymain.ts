@@ -31,7 +31,7 @@ module ttyMain
         : (/ansi|cygwin|^pc/i.test(process.env.TERM)) ? 'PC'
         : ''
     if ((xvt.modem = xvt.validator.isEmpty(process.env.REMOTEHOST)))
-        xvt.outln(xvt.reset, '\n', xvt.bright
+        xvt.out(xvt.reset, xvt.bright
             , xvt.red,      'C'
             , xvt.yellow,   'A'
             , xvt.green,    'R'
@@ -40,30 +40,31 @@ module ttyMain
             , xvt.magenta,  'E'
             , xvt.white,    'R'
             , xvt.normal,   ' '
-            , xvt.faint,    'DETECTED')
+            , xvt.faint,    'DETECTED', xvt.reset)
 
     xvt.app.form = {
 	    'enq1': { cb:() => { 
 		//  console.log('ENQ response =', xvt.entry.split('').map((c) => { return c.charCodeAt(0) }))
             if (/^.*\[.*R$/i.test(xvt.entry)) {
                 xvt.emulation = 'XT'
-                require('./tty/logon')
+                logon()
             }
             else xvt.app.focus = 'enq2'
         }, prompt:'\x1B[6n', enq:true },
 	    'enq2': { cb:() => { 
 		//  console.log('ENQ response =', xvt.entry.split('').map((c) => { return c.charCodeAt(0) }))
-            if (xvt.entry.length)
-                xvt.emulation = 'VT'
-            require('./tty/logon')
+            if (xvt.entry.length) xvt.emulation = 'VT'
+            logon()
         }, prompt:'\x05', enq:true }
     }
 
     //  old-school enquire the terminal to identify itself
-    if (!xvt.emulation)
-        xvt.app.focus = 'enq1'
-    else
+    if (xvt.emulation) logon()
+    else xvt.app.focus = 'enq1'
+
+    function logon() {
         require('./tty/logon')
+    }
 }
 
 export = ttyMain

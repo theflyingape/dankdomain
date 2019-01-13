@@ -73,6 +73,8 @@
     width: 19vw;
   }
 </style>
+</head>
+<body onkeydown="keydown(event);">
 <script>
 let cookie = document.cookie || 'id=NEW';
 let cookies = cookie.split('; ');
@@ -85,11 +87,8 @@ input = false;
 all = `<input class="platinum" class="tall" type="button" value=" ALL " onclick="send('=', true);">`
 best = `<input class="platinum" class="tall" type="button" value=" BEST " onclick="send('=', true);">`
 ByeBye = `<input class="Copper" type="button" id="cancel" value="LOGOFF" onclick="send('Q');">`;
-cancel = `<input class="copper" type="button" id="cancel" value="Clear" onclick="send('\x15');">`;
-enter = `<input class="slate" type="button" id="default" value="Enter" onclick="send('', true);">`;
 Cancel = `<input class="Copper" type="button" id="cancel" value="Clear" onclick="send('\x15');">`;
 Enter = `<input class="Slate" type="button" id="default" value="Enter" onclick="send('', true);">`;
-max = `<input class="platinum" type="button" value=" MAX " onclick="send('MAX', true);">`
 Max = `<input class="Platinum" type="button" value="MAX" onclick="send('MAX', true);">`
 quit = `<input class="copper" type="button" id="cancel" value="Quit" onclick="send('Q');">`;
 keypad = `<table>
@@ -138,15 +137,15 @@ images = [
   'yuriel_genasi_warlord_by_peachyco.png'
 ];
 
-if (window.addEventListener) {
+if (window.addEventListener)
   window.addEventListener("message", receive, false);
-}
+/*
 else {
   if (window.attachEvent) {
     window.attachEvent("onmessage", receive, false);
   }
 }
-
+*/
 function receive(event) {
   if (event.data) {
     if (event.data.func) {
@@ -273,8 +272,8 @@ function Logoff() {
   input = false;
   cmd(`<input type="button" id="cancel" value="Disconnect" onclick="currentCMD = ''; send('\x1B');"> <input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"><br>
 <span style="font-size:larger">🤴 <a href="https://ddgame.us" target="_new"><span style="color:black !important">Dank Domain</span></a> 👸</span><br>
-<span style="color:brown !important;">the return of Hack &amp; Slash<br>
-🇺🇸 <span style="font-size:smaller;">&copy;2017-2019 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a></span></span> 🧙`);
+<span style="color:gray !important;">the return of Hack &amp; Slash</span><br>
+🇺🇸 <span style="color:brown !important; font-size:smaller;">&copy;2017-2019 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a></span> 🧙`);
 }
 
 function rotateImage() {
@@ -287,7 +286,7 @@ function rotateImage() {
     }, 1000);
   }
   else
-    window.location.reload();
+    window.frames.parent.location.reload(true);
 }
 
 function send(keystrokes, cr = false, et = 'emit') {
@@ -606,10 +605,7 @@ function keydown(event) {
       break;
   }
 }
-
 </script>
-</head>
-<body onkeydown="keydown(event);">
   <div id="nme"></div>
   <div id="command" style="background: linear-gradient(to bottom, rgba(223, 247, 255, 0.04), rgba(215, 241, 247, 0.96)); position: relative; text-align: right; width:99%;"></div>
 </body>

@@ -68,7 +68,7 @@
 <body>
 <div id="terminal"></div>
 <iframe seamless id="Info" name="Info" src="./info.html" style="border: none;" allow="autoplay"></iframe>
-<div hidden id="wall">
+<div id="wall" hidden>
   <table style="margin: 0px auto; vertical-align: bottom; white-space: nowrap;">
     <tr><td></td><td style="text-align: center;"><h2>🤴 <a href="https://DDgame.us"><span style="color:gray !important; font-size:larger">Dank Domain</span></a> 👸<br><span style="color:rosybrown !important; font-size:smaller">the return of Hack &amp; Slash</span></h2></td>
     <td><img src="images/castle.png" style="height: 96px; width: 96px;" title="Fortune & Glory"></td></tr>
@@ -99,6 +99,7 @@
     document.getElementById('terminal').hidden = false;
     document.getElementById('Info').hidden = false;
     document.getElementById('wall').hidden = true;
+    document.getElementById('desktop').hidden = true;
 /*
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
