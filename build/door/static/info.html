@@ -432,10 +432,12 @@ ${quit}`);
 
 function dungeon() {
   input = false;
-  cmd(`<input type="button" value="Status" onclick="send('Y');"> <input class="copper" type="button" value="Poison" onclick="send('P');"> <input class="platinum" type="button" value="Cast" onclick="send('C');"><br>
-<input class="slate" type="button" value="North" onclick="send('N');"><br>
-<input class="slate" type="button" value="West" onclick="send('W');"><span style="font-size:xx-large;">🧭</span><input class="slate" type="button" value="East" onclick="send('E');"><br>
-<input class="slate" type="button" value="South" onclick="send('S');">`);
+  cmd(`<table>
+<tr></tr>
+<tr><td></td><td><input class="slate" type="button" value="North" onclick="send('N');"></td><td><input class="platinum" type="button" value="Cast" onclick="send('C');"></td></tr>
+<tr><td><input class="Slate" type="button" value="West" onclick="send('W');"></td><td><H1>🧭</H1></td><td><input class="Slate" type="button" value="East" onclick="send('E');"></td></tr>
+<tr><td><input type="button" value="Status" onclick="send('Y');"></td><td><input class="Slate" type="button" value="South" onclick="send('S');"></td><td><input class="copper" type="button" value="Poison" onclick="send('P');"></td></tr>
+</table>`);
 }
 
 function hunt() {
