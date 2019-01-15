@@ -86,13 +86,13 @@
     <tr>
       <td><hr></td>
       <td rowspan=2 style="vertical-align: middle;"><img src="images/dragon.jpg" style="height: 96px; width: 96px;" title="Classic gaming"></td></tr>
-    <tr>
-      <td style="text-align: center;"><a href="#" id="a2hs-button" title="Add app to homescreen"><img hidden id="a2hs" src="./a2hs.svg" style="height: 36px; width: 36px;"></a></td>
+    <tr hidden id="a2hs">
+      <td style="text-align: center;"><a href="#" id="a2hs-button" title="Add app to homescreen"><img src="./a2hs.svg" style="height: 36px; width: 36px;"></a></td>
       <td><span style="color:lightgray !important; font-size:smaller">Google <b>Chrome</b> for Android, mobile or desktop&nbsp;<br>can use <i><b>Add to Home Screen...</b></i> menu option<br>to play game as a fullscreen <b>app</b></span></td></tr>
     <tr id="desktop" hidden>
       <td></td><td>Microsoft <b>Edge</b> and Mozilla <b>Firefox</b> desktop <b>work</b><br>classic Microsoft <b>I</b>nternet <b>E</b>xplorer is <b>not supported</b></td></tr>
     <tr>
-      <td colspan=3 style="text-align:right;">🇺🇸 <span style="color:gray !important; font-size:smaller">&copy;2017-2019 <a href="https://robert.hurst-ri.us">Robert Hurst</a> 🧙</span></td></tr>
+      <td colspan=3 style="text-align:center;">🇺🇸 <span style="color:gray !important; font-size:smaller">&copy;2017-2019 <a href="https://robert.hurst-ri.us">Robert Hurst</a> 🧙</span></td></tr>
   </table>
 </div>
 <audio id="play">
@@ -129,23 +129,24 @@
     window.addEventListener('beforeinstallprompt', (e) => {
       // Prevent Chrome 67 and earlier from automatically showing the prompt
       e.preventDefault();
+console.log('e', e)
       // Stash the event so it can be triggered later.
       t = e;
+console.log('t', t)
       // Update UI notify the user they can add to home screen
       document.getElementById("a2hs").hidden = false;
 
       a.classList.add("available");
-    });
-
-    a.addEventListener("click", function(e) {
-      e.preventDefault();
-      t && !a.classList.contains("disabled") && t.prompt().then(function() {
-        t.userChoice.then(function(e) {
-          "accepted"===e.outcome
-            ? (a.classList.add("disabled"),a.setAttribute("title", "App already installed"),t=null)
-            : a.setAttribute("title", "Refresh the page and click again to install app");
-          a.classList.add("disabled");
-        })
+      a.addEventListener("click", function(e) {
+        e.preventDefault();
+        t && !a.classList.contains("disabled") && t.prompt().then(function() {
+          t.userChoice.then(function(e) {
+            "accepted"===e.outcome
+              ? (a.classList.add("disabled"),a.setAttribute("title", "App already installed"),t=null)
+              : a.setAttribute("title", "Refresh the page and click again to install app");
+            a.classList.add("disabled");
+          })
+        });
       });
     });
   }
