@@ -59,11 +59,6 @@
     margin-left: auto;
     margin-right: auto;
   }
-  chromedash-toast {
-    width: 100%;
-    left: 0;
-    right: 0;
-  }
   #a2hs-button.disabled {
     opacity: 0.35;
   }
@@ -85,15 +80,15 @@
       <td rowspan=4><img src="images/joust.png" style="height: 96px; width: 96px;" title="Player versus Player"></td>
       <td colspan=2>Press <button onclick="window.location.reload(true);"> REFRESH </button> to re-connect</td></tr>
     <tr>
-      <td>Read today's <a href="today.txt" target="_blank">The Olde Tavern</a> news</td>
-      <td hidden id="a2hs" style="text-align:center;"><a href="#" id="a2hs-button" title="Add app to homescreen"><img src="./a2hs.svg" style="float: right; height: 24px; width: 24px;"></a></td></tr>
+      <td colspan=2>Read today's <a href="today.txt" target="_blank">The Olde Tavern</a> news</td></tr>
     <tr>
       <td colspan=2>Watch an online player <select id="lurker-list"></select> auto-refreshes</td></tr>
     <tr>
       <td><hr></td>
       <td rowspan=2 style="vertical-align: middle;"><img src="images/dragon.jpg" style="height: 96px; width: 96px;" title="Classic gaming"></td></tr>
     <tr>
-      <td><img src="images/chrome.png" style="height: 96px; width: 96px;">&nbsp;</td><td>Google <b>Chrome</b> for Android, mobile or desktop&nbsp;<br>can use <i><b>Add to Home Screen...</b></i> menu option<br>to play game as a fullscreen <b>app</b></td></tr>
+      <td style="text-align: center;"><a href="#" id="a2hs-button" title="Add app to homescreen"><img hidden id="a2hs" src="./a2hs.svg" style="height: 36px; width: 36px;"></a></td>
+      <td><span style="color:lightgray !important; font-size:smaller">Google <b>Chrome</b> for Android, mobile or desktop&nbsp;<br>can use <i><b>Add to Home Screen...</b></i> menu option<br>to play game as a fullscreen <b>app</b></span></td></tr>
     <tr id="desktop" hidden>
       <td></td><td>Microsoft <b>Edge</b> and Mozilla <b>Firefox</b> desktop <b>work</b><br>classic Microsoft <b>I</b>nternet <b>E</b>xplorer is <b>not supported</b></td></tr>
     <tr>
@@ -111,7 +106,7 @@
 <noscript>https://www.google.com/chrome/</noscript>
 <script type="text/javascript">
   let a = document.querySelector("#a2hs-button");
-  let t = void(0);
+  let t;
 
   if (! /MSIE \d|Trident.*rv:/.test(navigator.userAgent)) {
     document.getElementById('terminal').hidden = false;
@@ -132,7 +127,6 @@
     }
 
     window.addEventListener('beforeinstallprompt', (e) => {
-      console.log('beforeinstallprompt', e);
       // Prevent Chrome 67 and earlier from automatically showing the prompt
       e.preventDefault();
       // Stash the event so it can be triggered later.
@@ -144,18 +138,16 @@
     });
 
     a.addEventListener("click", function(e) {
-      console.log('click', e);
       e.preventDefault();
       t && !a.classList.contains("disabled") && t.prompt().then(function() {
         t.userChoice.then(function(e) {
-          console.log(e);
           "accepted"===e.outcome
-            ? (a.classList.add("disabled"),a.setAttribute("title","App already installed."),t=null)
-            : a.setAttribute("title","Refresh the page and click again to install app.");
-          a.classList.add("disabled")
+            ? (a.classList.add("disabled"),a.setAttribute("title", "App already installed"),t=null)
+            : a.setAttribute("title", "Refresh the page and click again to install app");
+          a.classList.add("disabled");
         })
       });
-  });
+    });
   }
   else {
     document.getElementById('terminal').hidden = true;
