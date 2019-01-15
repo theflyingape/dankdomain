@@ -1,14 +1,14 @@
 {
   "name": "dankdomain",
-  "version": "1.7.3",
-  "description": "Dank Domain: the return of Hack & Slash (1990-2014)",
+  "version": "1.8.0",
+  "description": "Dank Domain: the return of Hack & Slash",
   "main": "ttymain",
   "publisher": "theflyingape",
   "os": [
     "linux"
   ],
   "engines": {
-    "node": ">=10.13"
+    "node": ">=10.15"
   },
   "scripts": {
     "build": "./build.sh",
@@ -46,7 +46,7 @@
     "better-sqlite3": "^5.3.0",
     "express": "^4.16.4",
     "fs-extra": "^7.0.1",
-    "got": "^9.4.0",
+    "got": "^9.5.1",
     "integer": "^2.1.0",
     "node-pty": "^0.8.0",
     "nodemailer": "^5.1.1",
