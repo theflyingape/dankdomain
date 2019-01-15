@@ -391,9 +391,9 @@ function choice() {
                         return
                     }
                     $.PC.stats($.online)
-                    xvt.app.focus = 'pause'
-                }, cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 },
-                'pause': { cb:menu, cancel:'!', pause:true }
+                    suppress = true
+                    menu()
+                }, cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
             }
             if ($.access.roleplay) {
                 $.action('ny')

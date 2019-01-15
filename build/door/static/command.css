@@ -23,13 +23,7 @@
     text-decoration: none;
     user-select: none;
 }
-.tall, .Tall {
-    padding: 8px 5px;
-}
-.wide, .Wide {
-    padding: 4px 10px;
-}
-.generic, .Generic {
+.Keycap {
     padding: 2px 22px 12px 4px;
     font-size: 110%;
 }
@@ -68,7 +62,7 @@
     padding: 6px 16px;
     font-size: 120%;
 }
-.Tall, .Wide, .Generic, .Platinum, .Gold, .Silver, .Copper, .Slate {
+.Keycap, .Platinum, .Gold, .Silver, .Copper, .Slate {
     width: 100%;
 }
 

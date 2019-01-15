@@ -105,14 +105,14 @@ export function menu(suppress = true) {
 
 function choice() {
     if ((game = xvt.entry.toUpperCase()) === 'Q') {
-		xvt.out('\n')
+		xvt.outln()
 		require('./main').menu($.player.expert)
 		return
 	}
 
 	if (xvt.validator.isNotEmpty(casino[game]))
         if (xvt.validator.isNotEmpty(casino[game].description)) {
-			xvt.out(' - ', casino[game].description, '\n')
+			xvt.outln(' - ', casino[game].description)
 			if ($.access.roleplay) {
 				Bet()
 				return
@@ -135,7 +135,7 @@ function Bet() {
 
 function amount() {
 	let ace:number = 0
-	xvt.out('\n')
+	xvt.outln()
 
 	if ((+xvt.entry).toString() === xvt.entry) xvt.entry += 'c'
 	let amount = new $.coins(0)
@@ -192,25 +192,26 @@ function amount() {
 			$.action('blackjack')
 			xvt.app.form = {
 				'draw': { cb: () => {
-					xvt.out('\n\n')
+					xvt.outln('\n')
 					switch (xvt.entry.toUpperCase()) {
 						case 'D':
 							$.player.coin.value -= amount.value
 							amount.value *= 2
 							payoff.value = amount.value
 							xvt.entry = 'S'
+
 						case 'H':
 							player.push(deck[pile++])
 							myhand = ShowHand(1, player)
 							if (myhand > 21) {
-								xvt.out('You bust!\n')
+								xvt.outln('You bust!')
 								xvt.entry = 'S'
 								amount.value = 0
 							}
 							else if (player.length == 5) {
 								$.sound('cheer')
 								payoff.value = 2 * amount.value
-								xvt.out('Five card charley!  You win ', payoff.carry(), '!\n')
+								xvt.outln('Five card charley!  You win ', payoff.carry(), '!')
 								$.player.coin.value += payoff.value + amount.value
 								menu()
 								return
@@ -221,40 +222,40 @@ function amount() {
 								xvt.app.refocus()
 								return
 							}
-							xvt.out('\n')
+							xvt.outln()
 							break
 					}
 					if (/S/i.test(xvt.entry)) {
 						while ((value = ShowHand(0, dealer)) < 17 && amount.value) {
 							dealer.push(deck[pile++])
-							xvt.waste(1000)
+							$.sound('click', 8)
 						}
-						xvt.out('\n')
+						xvt.outln()
 						if (amount.value) {
 							if (value > 21) {
 								$.sound('cheer')
 								payoff.value = amount.value
-								xvt.out('Dealer breaks!  You win ', payoff.carry(), '!\n')
+								xvt.outln('Dealer breaks!  You win ', payoff.carry(), '!')
 								$.player.coin.value += payoff.value + amount.value
 							}
 							else if (myhand > value) {
 								$.sound('cheer')
 								payoff.value = amount.value
-								xvt.out('You win ', payoff.carry(), '!\n')
+								xvt.outln('You win ', payoff.carry(), '!')
 								$.player.coin.value += payoff.value + amount.value
 							}
 							else if (myhand < value) {
 								$.sound('boo')
-								xvt.out('You lose.\n')
+								xvt.outln('You lose.')
 							}
 							else {
-								xvt.out('You tie.  It\'s a push.\n')
+								xvt.outln(`You tie.  It's a push.`)
 								$.player.coin.value += amount.value
 							}
 						}
 						menu()
 					}
-				}, eol:false, max:1 }
+				}, cancel:'S', eol:false, max:1 }
 			}
 			xvt.app.form['draw'].prompt = xvt.attr($.bracket('H', false), xvt.cyan, 'it, ',
 				$.bracket('S', false), xvt.cyan,'tand')
@@ -830,7 +831,7 @@ function amount() {
 		}
 		for (let i = 0; i < ace && value + 10 < 22; i++)
 			value += 10
-		xvt.out(xvt.reset, `= ${value}\n`)
+		xvt.outln(xvt.reset, '= ', xvt.bright, who ? xvt.cyan : xvt.green, `${value}`)
 		xvt.waste(500)
 		return(value)
 	}

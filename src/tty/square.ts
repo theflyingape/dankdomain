@@ -277,7 +277,7 @@ function choice() {
 				xvt.outln('\nA deputy greets you in front of the County Jail.')
 				xvt.waste(600)
 				xvt.outln(`"What `, ['cur', 'knave', 'scum', 'toad', 'villain'][$.dice(5) - 1]
-					, ` do you come for, ${$.access[$.player.gender]}?"`)
+					, ` do you come for, ${$.access[$.player.gender] || $.access[$.player.sex]}?"`)
 				Battle.user('Bail', (opponent: active) => {
 					if (opponent.user.id === '') {
 						menu()

@@ -774,12 +774,13 @@ export function skillplus(rpc: active, cb: Function) {
     rpc.user.expert = true
 
     //  slow-roll endowment choices for a dramatic effect  :)
-    xvt.out(xvt.reset); xvt.waste(600)
-    xvt.out(xvt.bright, xvt.yellow,` + You earn a gift to endow your ${rpc.user.pc} character +\n`); xvt.waste(1200)
-    xvt.out('\n'); xvt.waste(600)
+    xvt.outln(); xvt.waste(600)
+    xvt.outln(xvt.bright, xvt.yellow,' + ', xvt.normal, 'You earn a gift to endow your '
+        , xvt.faint, rpc.user.pc, xvt.normal, ' character', xvt.bright, ' +'); xvt.waste(1200)
+    xvt.outln(); xvt.waste(600)
 
     if (rpc.user.maxstr < 97 || rpc.user.maxint < 97 || rpc.user.maxdex < 97 || rpc.user.maxcha < 97) {
-        xvt.out(bracket(0, false), xvt.yellow, ' Increase ALL abilities by ' ,xvt.reset, '+3\n')
+        xvt.out(bracket(0, false), xvt.yellow, ' Increase ALL abilities by ' , xvt.reset, '+3\n')
         xvt.waste(200)
     }
     xvt.out(bracket(1, false), xvt.yellow, ' Increase Strength ability from ', xvt.reset
