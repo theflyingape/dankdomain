@@ -311,7 +311,7 @@ function choice() {
 							if (/Y/i.test(xvt.entry)) {
 								$.profile({ png:'payment', effect:'tada' })
 								$.sound('click')
-								xvt.out(`${opponent.user.handle} is set free.\n`)
+								xvt.outln(`${opponent.user.handle} is set free.`)
 								$.player.coin.value -= credit.value
 								opponent.user.status = ''
 								opponent.user.xplevel = opponent.user.level

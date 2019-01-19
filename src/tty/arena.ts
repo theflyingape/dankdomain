@@ -173,7 +173,7 @@ function choice() {
 										$.log(opponent.user.id, `\n${$.player.handle} beat you in a joust and got ${reward.carry()}.`)
 									xvt.waste(250)
 									$.animated('hinge')
-									if (($.player.jw > 15 && 1 - $.player.jw / $.player.jl > 0.93)) {
+									if ($.player.jw > 14 && $.player.jw / ($.player.jw + $.player.jl) > 0.9) {
 										let ring = $.Ring.power(null, 'joust')
 										if ($.Ring.wear($.player.rings, ring.name)) {
 											$.getRing('win', ring.name)

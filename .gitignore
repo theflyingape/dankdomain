@@ -1,7 +1,10 @@
-**/*.js
-**/*.js.map
-**/*.d.ts
 **/node_modules/**
+build/*.d.ts
+build/*.js
+build/door/*.d.ts
+build/door/*.js
+build/tty/*.d.ts
+build/tty/*.js
 build/etc/ipstack.key
 build/etc/smtp.json
 build/images/**

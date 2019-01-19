@@ -1655,9 +1655,7 @@ export function riddle() {
     if (bonus) xvt.outln()
     xvt.out(xvt.bright, xvt.cyan, '\nYou have become so powerful that you are now immortal and you leave your\n')
     xvt.outln('worldly possessions behind.')
-    loadUser(taxman)
-    taxman.user.bank.value +=  player.bank.value + player.coin.value
-    saveUser(taxman)
+    run(`UPDATE Players set bank=bank+${player.bank.value + player.coin.value} WHERE id='${taxman.user.id}'`)
     xvt.waste(2000)
 
     let max = Object.keys(PC.name['immortal']).indexOf(player.pc) + 1
@@ -2221,7 +2219,8 @@ export function wall(msg: string) {
         Object.assign(taxman.user, npc)
         saveUser(taxman, true)
     }
-    
+
+    //  ah, that's where the newline comes from after CARRIER DETECTED
     xvt.outln()
 
 
@@ -2678,8 +2677,8 @@ export function getRing(how: string, what: string) {
     xvt.out(xvt.bright, xvt.yellow, 'You ', how, an(what, false))
     xvt.out(xvt.cyan, what, xvt.normal)
     if (player.emulation === 'XT') xvt.out(' ', Ring.name[what].emoji, ' 💍')
-    xvt.outln(' ring', xvt.yellow, ', which can')
-    xvt.outln(xvt.yellow, Ring.name[what].description)
+    xvt.outln(' ring', xvt.reset, ', ', xvt.yellow, 'which can\n'
+        , Ring.name[what].description)
 }
 
 export function saveRing(name: string, bearer = '', rings?: string[]) {

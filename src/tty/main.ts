@@ -31,11 +31,14 @@ module Main
         'Z': { description:'System Status' }
     }
 
+    $.profile({ png:'castle', effect:'pulse' })
+
 export function menu(suppress = true) {
     if ($.checkXP($.online, menu)) return
     if ($.online.altered) $.saveUser($.online)
     if ($.reason) xvt.hangup()
 
+    if (!suppress) $.profile({ png:'castle', effect:'pulse' })
     $.action('menu')
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
@@ -57,7 +60,7 @@ function choice() {
             xvt.out(' - ', mainmenu[choice].description)
             suppress = $.player.expert
         }
-    xvt.out('\n')
+    xvt.outln()
 
     switch (choice) {
         case '@':
@@ -79,6 +82,7 @@ function choice() {
             }
             else {
                 xvt.out('\nYou have run out of dungeon turns.\n')
+                suppress = true
                 break
             }
             return

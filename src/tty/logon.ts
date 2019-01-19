@@ -319,12 +319,12 @@ function welcome() {
         }
 
         if ($.player.today < 2) {
-            if ($.player.blessed) {
+            if ($.player.blessed && !$.Ring.power($.player.rings, 'ring').power) {
                 $.player.blessed = ''
                 xvt.out(xvt.bright, xvt.yellow, '\nYour shining aura ', xvt.normal, 'left ', xvt.faint, 'you.', xvt.reset)
                 $.activate($.online)
             }
-            if ($.player.cursed) {
+            if ($.player.cursed && (!$.Ring.power($.player.rings, 'degrade').power || $.Ring.power($.player.rings, 'ring').power)) {
                 $.player.coward = false
                 $.player.cursed = ''
                 xvt.out(xvt.bright, xvt.black, '\nThe dark cloud has left you.', xvt.reset)
@@ -336,6 +336,13 @@ function welcome() {
             xvt.out('\n', xvt.magenta, 'Helpful: ', xvt.bright, `Your poor jousting stats have been reset.`)
             $.player.jl = 0
             $.player.jw = 0
+        }
+        if (($.player.jw > 14 && $.player.jw / ($.player.jw + $.player.jl) > 0.9) || $.access.sysop) {
+            let ring = $.Ring.power(null, 'joust')
+            if ($.Ring.wear($.player.rings, ring.name)) {
+                $.getRing('win', ring.name)
+                $.saveRing(ring.name, $.player.id, $.player.rings)
+            }
         }
         xvt.outln()
 

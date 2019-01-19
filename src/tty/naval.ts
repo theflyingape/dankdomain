@@ -954,7 +954,7 @@ function fire(a: active, d: active): {  hits:number, damage:number, hull:number,
 	let ram: boolean = false
 
 	if (a.user == $.player) $.sound('fire')
-	xvt.out(xvt.cyan, '\n', a.user == $.player ? 'Attacker: ' : 'Defender: ')
+	xvt.out(xvt.cyan, a.user == $.player ? 'Attacker: ' : 'Defender: ')
 	for (let i = 0; i < a.user.cannon && d.user.hull; i++) {
 		let n = $.dice(100)
 		n = (n < 66) ? 0 : (n < 96) ? 1: (n < 100 || !d.user.id) ? 2: 3
@@ -996,7 +996,7 @@ function fire(a: active, d: active): {  hits:number, damage:number, hull:number,
 		xvt.waste(12)
 	}
 
-	xvt.out(xvt.reset, '\n\n')
+	xvt.outln('\n')
 	if (a == $.online) {
 		xvt.out(xvt.green, 'You hit ', d.user.id ? 'them' : 'it', ` ${hits} times for`
 			, xvt.bright,` ${damage} `, xvt.normal
@@ -1019,7 +1019,7 @@ function fire(a: active, d: active): {  hits:number, damage:number, hull:number,
 		if (ram)
 			xvt.out(`\nThey also hit your ram.`)
 	}
-	xvt.out('\n')
+	xvt.outln()
 	xvt.waste(250)
 
 	return { hits, damage, hull, cannon, ram }

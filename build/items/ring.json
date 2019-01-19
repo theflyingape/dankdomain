@@ -8,7 +8,8 @@
             { "id":"resist", "power":true, "spell":"Disintegrate" },
             { "id":"resist", "power":true, "spell":"Morph" },
             { "id":"resist", "power":true, "spell":"Armor Rusting" },
-            { "id":"resist", "power":true, "spell":"Weapon Decay" }
+            { "id":"resist", "power":true, "spell":"Weapon Decay" },
+            { "id":"resist", "power":true, "spell":"Level Stealing" }
         ]
     },
     "Augmenting": {
@@ -38,7 +39,7 @@
     },
     "Detection": {
         "unique": false,
-        "description":"identify all potions and rings",
+        "description":"detect dungeon objects and identify potions",
         "emoji":"🔎",
         "ability":[
             { "id":"identify", "power":true }
@@ -94,6 +95,7 @@
         "emoji":"♾️",
         "ability":[
             { "id":"resist", "power":true, "spell":"Teleport" },
+            { "id":"resist", "power":true, "spell":"Life Stealing" },
             { "id":"ring", "power":true }
         ]
     },
@@ -124,6 +126,7 @@
         "ability":[
             { "id":"melee", "power":true, "pc":"Titan" },
             { "id":"skip", "power":true },
+            { "id":"skip", "power":false, "pc":"Psionic" },
             { "id":"skip", "power":false, "pc":"Sage" },
             { "id":"skip", "power":false, "pc":"God" }
         ]
@@ -198,6 +201,8 @@
         "emoji":"⚪",
         "ability":[
             { "id":"cast", "power":true },
+            { "id":"resist", "power":true, "spell":"Confusion" },
+            { "id":"resist", "power":true, "spell":"Mana Stealing" },
             { "id":"teleport", "power":true },
             { "id":"upgrade", "power":true, "ability":"int" }
         ]
