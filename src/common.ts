@@ -1768,7 +1768,7 @@ export function riddle() {
                 xvt.out(xvt.cyan, '{', xvt.bright, 'Click!', xvt.normal, '}\n')
                 player.pc = Object.keys(PC.name['immortal'])[slot]
                 profile({ png:'player/' + player.pc.toLowerCase() + (player.gender === 'F' ? '_f' : ''), pc:player.pc })
-                xvt.out(xvt.bright, [ xvt.cyan, xvt.blue, xvt.magenta ][slot], `You are now a ${player.pc}.\n`)
+                xvt.outln(xvt.bright, [ xvt.cyan, xvt.blue, xvt.magenta ][slot], `You are now a ${player.pc}.`)
                 if (slot++ < max) {
                     xvt.app.form['key'].prompt = `Insert key #${slot + 1}? `
                     xvt.app.refocus()
@@ -1782,7 +1782,7 @@ export function riddle() {
             else {
                 sound('thunder')
                 if (player.emulation === 'XT') xvt.out('💀 ')
-                xvt.out(xvt.bright, xvt.black, '^', xvt.white, 'Boom!', xvt.black, '^\n')
+                xvt.outln(xvt.bright, xvt.black, '^', xvt.white, 'Boom!', xvt.black, '^')
                 if (slot == 0) {
                     for (let i = 3 * slot; i < 3 * (slot + 1); i++) {
                         if (player.keyhints[i] === xvt.entry.toUpperCase())
@@ -2677,8 +2677,9 @@ export function getRing(how: string, what: string) {
     xvt.out(xvt.bright, xvt.yellow, 'You ', how, an(what, false))
     xvt.out(xvt.cyan, what, xvt.normal)
     if (player.emulation === 'XT') xvt.out(' ', Ring.name[what].emoji, ' 💍')
-    xvt.outln(' ring', xvt.reset, ', ', xvt.yellow, 'which can\n'
-        , Ring.name[what].description)
+    xvt.outln(' ring', xvt.reset, ', which can\n'
+        , xvt.bright, xvt.yellow, Ring.name[what].description)
+    if (Ring.name[what].unique) profile({ jpg:`ring/${what}`, handle:`${what} ${Ring.name[what].emoji} 💍 ring`, effect:'tada' })
 }
 
 export function saveRing(name: string, bearer = '', rings?: string[]) {
