@@ -849,7 +849,7 @@ function MonsterHunt() {
 				case 'R':
 					if ($.player.ram) {
 						if (outmaneuvered(sm.int - $.online.int, sm.hull / $.online.hull)) {
-							xvt.out('\nIt quickly outmaneuvers your ship.\n')
+							xvt.outln('\nIt quickly outmaneuvers your ship.')
 							xvt.waste(400)
 							xvt.out(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
 								[ 'Not the tail, aim for the beastie\'s head!'
@@ -862,9 +862,9 @@ function MonsterHunt() {
 						}
 						else {
 							damage = $.dice($.player.hull / 2) + $.dice($.online.hull / 2)
-							xvt.out(xvt.green, '\nYou ram it for '
+							xvt.outln(xvt.green, '\nYou ram it for '
 								, xvt.bright, `${damage}`
-								, xvt.normal, ` hull points of damage!\n`)
+								, xvt.normal, ` hull points of damage!`)
 							if ((sm.hull -= damage) < 1) {
 								booty()
 								menu()
@@ -874,7 +874,7 @@ function MonsterHunt() {
 					}
 					else {
 						$.sound('oops')
-						xvt.out('\nYour first mate cries back, \"But we don\'t have a ram!\"\n')
+						xvt.outln(`\nYour first mate cries back, "But we don't have a ram!"`)
 						xvt.waste(500)
 					}
 					if (it()) {
@@ -884,9 +884,9 @@ function MonsterHunt() {
 					break
 
 				case 'Y':
-					xvt.out(`\nHull points: ${$.online.hull}\n`)
-					xvt.out(`Cannons: ${$.player.cannon}\n`)
-					xvt.out(`Ram: ${$.player.ram ? 'Yes' : 'No'}\n`)
+					xvt.outln(`\nHull points: ${$.online.hull}`)
+					xvt.outln(`Cannons: ${$.player.cannon}`)
+					xvt.outln(`Ram: ${$.player.ram ? 'Yes' : 'No'}`)
 					break
 				}
 			xvt.app.refocus()
@@ -901,7 +901,7 @@ function MonsterHunt() {
 		$.sound('booty', 5)
 		let coin = new $.coins(sm.money)
 		coin.value = $.worth(coin.value, $.online.cha)
-		xvt.out('You get ', coin.carry(), ' for bringing home the carcass.\n')
+		xvt.outln('You get ', coin.carry(), ' for bringing home the carcass.')
 		$.player.coin.value += coin.value
 		xvt.waste(500)
 	}
@@ -954,7 +954,7 @@ function fire(a: active, d: active): {  hits:number, damage:number, hull:number,
 	let ram: boolean = false
 
 	if (a.user == $.player) $.sound('fire')
-	xvt.out(xvt.cyan, a.user == $.player ? 'Attacker: ' : 'Defender: ')
+	xvt.out('\n', xvt.cyan, a.user == $.player ? 'Attacker: ' : 'Defender: ')
 	for (let i = 0; i < a.user.cannon && d.user.hull; i++) {
 		let n = $.dice(100)
 		n = (n < 66) ? 0 : (n < 96) ? 1: (n < 100 || !d.user.id) ? 2: 3
@@ -1053,7 +1053,7 @@ function ram(a: active, d: active) {
 
 	if (a.user.id) xvt.out(xvt.normal)
 	else xvt.out(xvt.blue)
-	xvt.out(`hull points of damage!\n`, xvt.reset)
+	xvt.outln(`hull points of damage!`)
 	xvt.waste(500)
 
 	d.hull -= damage

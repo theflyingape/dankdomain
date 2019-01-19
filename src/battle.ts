@@ -550,13 +550,15 @@ export function attack(retry = false) {
             else {
                 if (rpc == $.online) {
                     $.player.kills++
-                    xvt.outln('You ', enemy.user.xplevel < 1 ? 'eliminated' : 'killed'
-                        , enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle, '!\n')
-                    if (from !== 'Party' && enemy.user.id !== '' && enemy.user.id[0] !== '_') {
-                        $.sound('kill', 15)
-                        $.music($.player.gender === 'M' ? 'bitedust' : 'queen')
-                        $.news(`\tdefeated ${enemy.user.handle}, a level ${enemy.user.xplevel} ${enemy.user.pc}`)
-                        $.wall(`defeated ${enemy.user.handle}`)
+                    if (from !== 'Party' ) {
+                        xvt.outln('You ', enemy.user.xplevel < 1 ? 'eliminated' : 'killed'
+                            , enemy.user.gender === 'I' ? ' the ' : ' ', enemy.user.handle, '!\n')
+                        if (enemy.user.id !== '' && enemy.user.id[0] !== '_') {
+                            $.sound('kill', 15)
+                            $.music($.player.gender === 'M' ? 'bitedust' : 'queen')
+                            $.news(`\tdefeated ${enemy.user.handle}, a level ${enemy.user.xplevel} ${enemy.user.pc}`)
+                            $.wall(`defeated ${enemy.user.handle}`)
+                        }
                     }
                     if (from == 'Monster' && enemy.user.xplevel > 0) {
                         $.news(`\tdefeated a level ${enemy.user.xplevel} ${enemy.user.handle}`)
