@@ -1,9 +1,5 @@
 input, button {
     background: antiquewhite;
-    background-image: -webkit-linear-gradient(top, cornsilk, darkkhaki);
-    background-image: -moz-linear-gradient(top, cornsilk, darkkhaki);
-    background-image: -ms-linear-gradient(top, cornsilk, darkkhaki);
-    background-image: -o-linear-gradient(top, cornsilk, darkkhaki);
     background-image: linear-gradient(to bottom, cornsilk, darkkhaki);
     border-radius: 12px 4px 2px 6px;
     box-shadow: 1px 3px 5px darkslategray;
@@ -25,16 +21,11 @@ input:active, button:active {
     box-shadow: 2px 6px 10px darkslategray;
     transform: scale(1.20) translateY(-0.2em);
 }
-input:hover, button:hover, button:focus {
-    background: gold;
-    background-image: -webkit-linear-gradient(top, gold, goldenrod);
-    background-image: -moz-linear-gradient(top, gold, goldenrod);
-    background-image: -ms-linear-gradient(top, gold, goldenrod);
-    background-image: -o-linear-gradient(top, gold, goldenrod);
-    background-image: linear-gradient(to bottom, gold, goldenrod);
+input:hover, button:hover {
+    background-image: linear-gradient(to bottom, antiquewhite, olive);
     text-decoration: none;
-    text-shadow: 1px 1px 2px darkslategray;
-    border: solid goldenrod;
+    text-shadow: 1px 1px 2px black;
+    border: solid darkolivegreen;
     border-width: 1px 3px 3px 1px;
     color: ghostwhite;
 }
@@ -53,12 +44,11 @@ input:hover, button:hover, button:focus {
     color: indigo;
     font-size: 120%;
 }
-.platinum:hover, .platinum:focus,
-.Platinum:hover, .Platinum:focus {
+.platinum:hover, .Platinum:hover {
     background: lightpink;
+    background-image: linear-gradient(to bottom, lightpink, darkorchid);
     border: solid darkorchid;
     border-width: 1px 3px 3px 1px;
-    color: fuchsia;
 }
 
 .gold, .Gold {
@@ -67,12 +57,10 @@ input:hover, button:hover, button:focus {
     color: goldenrod;
     font-size: 120%;
 }
-.gold:hover, .gold:focus,
-.Gold:hover, .Gold:focus {
-    background: yellow;
+.gold:hover, .Gold:hover {
+    background-image: linear-gradient(to bottom, lightgoldenrodyellow, darkgoldenrod);
     border: solid darkgoldenrod;
     border-width: 1px 3px 3px 1px;
-    color: lightgoldenrodyellow;
 }
 
 .silver, .Silver {
@@ -81,12 +69,10 @@ input:hover, button:hover, button:focus {
     color: steelblue;
     font-size: 120%;
 }
-.silver:hover, .silver:focus,
-.Silver:hover, .Silver:focus {
-    background: aquamarine;
+.silver:hover, .Silver:hover {
+    background-image: linear-gradient(to bottom, lightcyan, darkturquoise);
     border: solid darkturquoise;
     border-width: 1px 3px 3px 1px;
-    color: aqua;
 }
 
 .copper, .Copper {
@@ -95,12 +81,11 @@ input:hover, button:hover, button:focus {
     color: crimson;
     font-size: 120%;
 }
-.copper:hover, .copper:focus,
-.Copper:hover, .Copper:focus {
+.copper:hover, .Copper:hover {
     background: lightsalmon;
+    background-image: linear-gradient(to bottom, lightsalmon, darkred);
     border: solid darkred;
     border-width: 1px 3px 3px 1px;
-    color: red;
 }
 
 .slate, .Slate {
@@ -109,12 +94,10 @@ input:hover, button:hover, button:focus {
     color: slategray;
     font-size: 120%;
 }
-.slate:hover, .slate:focus,
-.Slate:hover, .Slate:focus {
-    background: whitesmoke;
+.slate:hover, .Slate:hover {
+    background-image: linear-gradient(to bottom, whitesmoke, darkslategray);
     border: solid darkslategray;
     border-width: 1px 3px 3px 1px;
-    color: dimgray;
 }
 
 .Keycap, .Platinum, .Gold, .Silver, .Copper, .Slate {
