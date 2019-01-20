@@ -1215,7 +1215,7 @@ export function playerPC(points = 200, immortal = false) {
         player.plays = 1
         newkeys(player)
 
-        xvt.out('Since you are a new user here, you are automatically assigned a character\n')
+        xvt.outln('Since you are a new user here, you are automatically assigned a character')
         xvt.out('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.')
         show()
         activate(online)
@@ -1267,7 +1267,7 @@ export function playerPC(points = 200, immortal = false) {
                 rpc.specialty))
         }
     }
-    xvt.out('\n')
+    xvt.outln()
     xvt.app.form['pc'].prompt = `Enter class (1-${(classes.length - 1)}): `
     xvt.app.focus = 'pc'
 
@@ -1364,12 +1364,12 @@ export function playerPC(points = 200, immortal = false) {
                     reason = 'became immortal'
                     xvt.hangup()
                 }
-                xvt.out(`... and you get to complete any remaining parts to this play.\n`)
+                xvt.outln(`... and you get to complete any remaining parts to this play.`)
                 require('./tty/main').menu(true)
                 return
         }
 
-        xvt.out('\n\nYou have ', left.toString(), ' ability points left.\n')
+        xvt.outln('\n\nYou have ', left.toString(), ' ability points left.')
         xvt.app.form[p].prompt += ' ' + bracket(xvt.app.form[p].enter, false) + ': '
         xvt.app.focus = p
     }

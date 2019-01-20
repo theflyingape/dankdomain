@@ -353,26 +353,20 @@ function welcome() {
         let play = JSON.parse(fs.readFileSync('./etc/play.json').toString())
         Object.assign($, play)
         $.mydeeds = $.loadDeed($.player.pc)
-
-        xvt.waste(500)
+        $.music('logon')
 
         if ($.player.pc === 'None') {
-            $.music('reroll')
             if ($.player.novice) {
                 xvt.outln()
                 xvt.out(xvt.bright)
                 $.cat('intro')
-                xvt.app.form = {
-                    'pause': { cb:$.playerPC, pause:true, timeout:200 }
-                }
-                xvt.app.focus = 'pause'
-                return
             }
-            $.playerPC()
+            xvt.app.form = {
+                'pause': { cb:$.playerPC, pause:true, timeout:200 }
+            }
+            xvt.app.focus = 'pause'
             return
         }
-        else
-            $.music('logon')
     }
     else {
         xvt.outln(xvt.bright, xvt.black, '(', xvt.yellow, 'VISITING', xvt.black, ')')
