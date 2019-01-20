@@ -1203,9 +1203,10 @@ export function playerPC(points = 200, immortal = false) {
     if (!Access.name[player.access].roleplay) return
 
     if (player.novice) {
-        let novice: user = { id:'' }
+        let novice: user = { id:'', novice:true }
         Object.assign(novice, require('./etc/novice'))
         reroll(player, novice.pc)
+        player.novice = novice.novice
         player.coin = new coins(novice.coin.toString())
         player.bank = new coins(novice.bank.toString())
         player.realestate = novice.realestate
@@ -1213,6 +1214,8 @@ export function playerPC(points = 200, immortal = false) {
         player.weapon = novice.weapon
         player.armor = novice.armor
         player.plays = 1
+        if (novice.immortal) player.immortal = novice.immortal
+        if (novice.rings) player.rings = novice.rings
         newkeys(player)
 
         xvt.outln('Since you are a new user here, you are automatically assigned a character')
