@@ -1427,7 +1427,9 @@ function doMove(): boolean {
 				for (hi = 0; hi < $.Armor.dwarf.length - 1 && ac >= $.Armor.name[$.Armor.dwarf[hi]].ac; hi++);
 				if (new $.coins($.Armor.name[$.Armor.dwarf[hi]].value).value < credit.value + $.player.coin.value) {
 					if ($.player.coin.value) xvt.outln('and all your coin worth ', $.player.coin.carry())
-					xvt.out(`I'll trade you for my `, $.bracket($.Armor.name[$.Armor.dwarf[hi]].ac, false), ' ')
+					xvt.out(`I'll trade you for my `
+						, ['exceptional', 'precious', 'remarkable', 'special', 'uncommon'][$.dice(5) - 1]
+						, $.bracket($.Armor.name[$.Armor.dwarf[hi]].ac, false), ' ')
 					xvt.outln(xvt.bright, xvt.yellow, $.Armor.dwarf[hi])
 					xvt.app.focus = 'armor'
 					return false
@@ -1451,7 +1453,9 @@ function doMove(): boolean {
 				for (hi = 0; hi < $.Weapon.dwarf.length - 1 && wc >= $.Weapon.name[$.Weapon.dwarf[hi]].wc; hi++);
 				if (new $.coins($.Weapon.name[$.Weapon.dwarf[hi]].value).value < credit.value + $.player.coin.value) {
 					if ($.player.coin.value) xvt.outln('and all your coin worth ', $.player.coin.carry())
-					xvt.out(`I'll trade you for my `, $.bracket($.Weapon.name[$.Weapon.dwarf[hi]].wc, false), ' ')
+					xvt.out(`I'll trade you for my `
+						, ['exquisite', 'fine', 'handcrafted', 'jeweled', 'rare'][$.dice(5) - 1]
+						, $.bracket($.Weapon.name[$.Weapon.dwarf[hi]].wc, false), ' ')
 					xvt.outln(xvt.bright, xvt.cyan, $.Weapon.dwarf[hi])
 					xvt.app.focus = 'weapon'
 					return false
