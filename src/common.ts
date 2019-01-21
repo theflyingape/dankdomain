@@ -2018,7 +2018,7 @@ export function logoff() {
         if (online.hp < 1)
             sound('goodbye')
         else {
-            sound(online.hull ? 'comeagain' : 'invite')
+            sound(online.hull < 1 ? 'comeagain' : 'invite')
             PC.profile(online)
         }
         if (tty == 'web') xvt.outln('\x06')

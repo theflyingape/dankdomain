@@ -282,13 +282,12 @@ function choice() {
 		case 'H':
 			suppress = true
 			if (!$.access.roleplay) break
-			xvt.outln()
 			if (!$.player.hull) {
-				xvt.outln(`You don't have a ship!`)
+				xvt.outln(`\nYou don't have a ship!`)
 				break
 			}
 			if (!$.naval) {
-				xvt.outln('You have run out of battles.')
+				xvt.outln('\nYou have run out of battles.')
 				break
 			}
 
@@ -318,6 +317,7 @@ function choice() {
 			return
 
 		case 'L':
+			suppress = true
 			xvt.outln()
 			xvt.outln(xvt.Blue, xvt.bright, ' ID             Username            Hull     Cannons     Ram')
 			xvt.outln(xvt.Blue, xvt.bright, '----     ----------------------     ----     -------     ---')
@@ -327,7 +327,6 @@ function choice() {
 					, rs[i].id, rs[i].handle, rs[i].hull, rs[i].cannon, rs[i].ram ? 'Y' : 'N')
 				)
 			}
-			suppress = true
 			break
 
 		case 'S':
@@ -341,14 +340,15 @@ function choice() {
 
 		case 'Y':
 			suppress = true
+			xvt.outln()
 			if (!$.player.hull) {
-				xvt.out('\nYou don\'t have a ship!\n')
+				xvt.outln(`You don't have a ship!`)
 				break
 			}
-			xvt.out('\nShip\'s Status:\n\n')
-			xvt.out(`Hull points: ${$.online.hull} out of ${$.player.hull}\n`)
-			xvt.out(`Cannons: ${$.player.cannon}\n`)
-			xvt.out(`Ram: ${$.player.ram ? 'Yes' : 'No'}\n`)
+			xvt.outln(`Ship's Status:\n`)
+			xvt.outln(`Hull points: ${$.online.hull} out of ${$.player.hull}`)
+			xvt.outln(`Cannons: ${$.player.cannon}`)
+			xvt.outln(`Ram: ${$.player.ram ? 'Yes' : 'No'}`)
 			break
 	}
 	menu(suppress)
@@ -720,13 +720,13 @@ function BattleUser(nme: active) {
 		let result = fire($.online, nme)
 		if (nme.hull > 0) {
 			if ($.dice(10) == 1) {
-				xvt.out(xvt.cyan, 'You call out to your crew, "', xvt.reset,
+				xvt.outln(xvt.cyan, 'You call out to your crew, "', xvt.reset,
 				[ 'Fire at crest to hit the best!'
 				, 'Crying will not save you!'
-				, 'Look alive, or I\'ll kill you first!'
+				, `Look alive, or I'll kill you first!`
 				, 'Get me my red shirt!'
-				, 'Y\'all fight like the will-o-wisp!' ][$.dice(5) - 1]
-				, xvt.cyan, '"\n')
+				, `Y'all fight like the will-o-wisp!` ][$.dice(5) - 1]
+				, xvt.cyan, '"')
 				xvt.waste(600)
 			}
 			return false
@@ -740,11 +740,11 @@ function BattleUser(nme: active) {
 			xvt.out('They are defenseless and attempt to flee . . . ')
 			xvt.waste(1000)
 			if (!outrun(nme.hull / $.online.hull, nme.int - $.online.int)) {
-				xvt.out(`\nYou outrun them and stop their retreat!\n`)
+				xvt.outln(`\nYou outrun them and stop their retreat!`)
 				xvt.waste(500)
 				return false
 			}
-			xvt.out('\nThey sail away over the horizon.\n')
+			xvt.outln('\nThey sail away over the horizon.')
 			$.saveUser(nme, false, true)
 			xvt.waste(500)
 			return true
@@ -758,6 +758,8 @@ function BattleUser(nme: active) {
 			$.online.altered = true
 			$.log(nme.user.id, `\nYou sank ${$.player.handle}'s ship!`)
 			$.reason=`sunk by ${nme.user.handle}`
+			$.online.hp = 0
+			$.online.hull = 0
 
 			let booty = new $.coins(Math.round(Math.pow(2, nme.user.hull / 150) * 7937 / 250))
 			booty.value = Math.trunc(booty.value * $.player.cannon)
@@ -771,8 +773,8 @@ function BattleUser(nme: active) {
 			}
 			$.saveUser(nme, false, true)
 
-			xvt.out(`\n${nme.user.handle} smiles as a shark approaches you.\n`)
-			$.sound('bubbles', 10)
+			xvt.outln(xvt.faint, `\n${nme.user.handle} smiles as a shark approaches you.`)
+			$.sound('bubbles', 15)
 			xvt.hangup()
 		}
 		return ($.online.hull < 1)
@@ -930,14 +932,15 @@ function MonsterHunt() {
 
 		if (($.online.hull -= damage) < 1) {
 			$.online.altered = true
+			$.online.hp = 0
 			$.online.hull = 0
 			$.player.killed++
 			$.reason = `sunk by the ${sm.name}`
-			xvt.out(`\nThe ${sm.name} sank your ship!\n`)
-			$.sound('bubbles', 5)
+			xvt.outln(`\nThe ${sm.name} sank your ship!`)
+			$.sound('bubbles', 15)
 			if ($.player.coin.value) {
 				$.player.coin.value = 0
-				xvt.out('It gets all your money!\n')
+				xvt.outln('It gets all your money!')
 				xvt.waste(500)
 			}
 			return true

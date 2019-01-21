@@ -56,7 +56,11 @@
     padding: 0px 0px 0px 0px;
     border: none;
   }
-
+  hr { 
+    background-image: linear-gradient(to left, gainsboro, steelblue, gainsboro);
+    border: 0; 
+    height: 1px; 
+  }
   img {
     max-height: 100%;
     max-width: 100%;
@@ -339,14 +343,17 @@ function listmm() {
 function menu() {
   input = false;
   cmd(`<table>
-<tr><td colspan=2>${ByeBye}<br>&nbsp;</td></tr>
+<tr><td colspan=2>${ByeBye}</td></tr>
+<tr><td colspan=2><hr></td></tr>
 <tr><td><input type="button" value="Reroll" onclick="send('X');"></td><td><input type="button" value="Rob" onclick="send('R');"></td></tr>
 <tr><td><input type="button" value="Halls" onclick="send('L');"></td><td><input type="button" value="Casino" onclick="send('G');"></td></tr>
 <tr><td><input type="button" value="System" onclick="send('Z');"></td><td><input type="button" value="Status" onclick="send('Y');"></td></tr>
-<tr><td colspan=2>&nbsp;<br><input class="Gold" type="button" value="Most Wanted" onclick="send('M');"><br>&nbsp;</td></tr>
+<tr><td colspan=2><hr></td></tr>
+<tr><td colspan=2><input class="Gold" type="button" value="Most Wanted" onclick="send('M');"></td></tr>
+<tr><td colspan=2><hr></td></tr>
 <tr><td><input class="Silver" type="button" value="Naval" onclick="send('N');"></td><td><input class="Silver" type="button" value="Arena" onclick="send('A');"></td></tr>
 <tr><td><input class="Slate" type="button" value="Party" onclick="send('P');"></td><td><input class="Slate" type="button" value="Dungeon" onclick="send('D');"></td></tr>
-<tr><td><input class="Platinum" type="button" value="Tavern" onclick="send('T');"></td><td><input class="Platinum" type="button" value="Square" onclick="send('S');"></td></tr>
+<tr><td><input class="Tavern" type="button" value="Tavern" onclick="send('T');"></td><td><input class="Tavern" type="button" value="Square" onclick="send('S');"></td></tr>
 </table>`);
 }
 
@@ -374,7 +381,7 @@ function arena() {
 <tr><td><input class="Slate" type="button" value="Poison" onclick="send('P');"></td><td><input class="Platinum" type="button" value="Cast" onclick="send('C');"></td></tr>
 <tr><td><input type="button" value="Status" onclick="send('Y');"></td><td><input class="Gold" type="button" value="Joust" onclick="send('J');"></td></tr>
 <tr><td colspan=2><hr></td></tr>
-<tr><td><input class="Platinum" type="button" value="SQUARE" onclick="send('G');"></td><td>${quit}</td></tr>
+<tr><td><input class="Tavern" type="button" value="SQUARE" onclick="send('G');"></td><td>${quit}</td></tr>
 </table>`);
 }
 
@@ -451,9 +458,12 @@ function dungeon() {
 
 function hunt() {
   input = true;
-  cmd(`<input class="silver" id="cancel" type="button" value="Sail off" onclick="send('S');"><br>
-<input class="platinum" type="button" value="Ram" onclick="send('R');"> <input type="button" value="Status" onclick="send('Y');"><br>
-<input class="slate" id="default" type="button" value=" Fire! " onclick="send('F');">`);
+  cmd(`<table>
+<tr><td colspan=2><input class="silver" id="cancel" type="button" value=" Sail off " onclick="send('S');"></td></tr>
+<tr><td colspan=2><hr></td></tr>
+<tr><td colspan=2><input type="button" value="Status" onclick="send('Y');"></tdtd></tr>
+<tr><td><input class="Slate" type="button" value="Ram" onclick="send('R');"></td><td><input class="Copper" id="default" type="button" value="Fire!" onclick="send('F');"></td></tr>
+</table>`);
 }
 
 function joust() {
@@ -472,9 +482,9 @@ function naval() {
   cmd(`<table>
 <tr><td><input type="button" value="Go fishing" onclick="send('G');"></td><td><h1>🐟</h1></td></tr>
 <tr><td><input class="Slate" type="button" value="List" onclick="send('L');"></td><td><input class="Slate" type="button" value="Status" onclick="send('Y');"></td></tr>
-<tr><td><input class="Silver" type="button" value="Hunt" onclick="send('H');"></td><td><input class="Platinum" type="button" value="Shipyard" onclick="send('S');"></td></tr>
+<tr><td><input class="Silver" type="button" value="Hunt" onclick="send('H');"></td><td><input class="Tavern" type="button" value="Shipyard" onclick="send('S');"></td></tr>
 <tr><td><input class="Gold" type="button" value="Battle" onclick="send('B');"></td><td>${quit}</td></tr>
-`);
+</table>`);
 }
 
 function party() {
@@ -483,7 +493,9 @@ function party() {
   cmd(`<table>
 <tr><td><input type="button" value="Edit" onclick="send('E');"></td><td><input type="button" value="List" onclick="send('L');"></td></tr>
 <tr><td><input type="button" value="Resign" onclick="send('R');"></td><td><input type="button" value="Transfer" onclick="send('T');"></td></tr>
-<tr><td colspan=2>&nbsp;<br><input class="Gold" type="button" value="Most Wanted" onclick="send('M');"><br>&nbsp;</td></tr>
+<tr><td colspan=2><hr></td></tr>
+<tr><td colspan=2><input class="Gold" type="button" value="Most Wanted" onclick="send('M');"></td></tr>
+<tr><td colspan=2><hr></td></tr>
 <tr><td><input class="Silver" type="button" value="Start" onclick="send('S');"></td><td><input class="Platinum" type="button" value="Join" onclick="send('J');"></td></tr>
 <tr><td><input class="Slate" type="button" value="Fight!" onclick="send('F');"></td><td>${quit}</td></tr>
 </table>`);
@@ -516,7 +528,7 @@ function shipyard() {
   input = false;
   nme('<img src="images/naval/shipyard.png" onload="nmeResize(\'swing\');" style="display:none;" />');
   cmd(`<table>
-<tr><td><input class="Platinum" type="button" value="Buy" onclick="send('B');"></td><td><input class="Gold" type="button" value="Fix" onclick="send('F');"></td></tr>
+<tr><td><input class="Platinum" type="button" value="Buy" onclick="send('B');"></td><td><input class="Tavern" type="button" value="Fix" onclick="send('F');"></td></tr>
 <tr><td><input class="Slate" type="button" value="Cannon" onclick="send('C');"></td><td><input class="Slate" type="button" value="Ram" onclick="send('R');"></td></tr>
 <tr><td></td><td>${quit}</td></tr>
 </table>`);
@@ -525,11 +537,14 @@ function shipyard() {
 function square() {
   input = false;
   cmd(`<table>
-<tr><td colspan=2><input type="button" value="Pick pockets" onclick="send('P');"><br>&nbsp;</td></tr>
+<tr><td colspan=2><input type="button" value="Pick pockets" onclick="send('P');"></td></tr>
+<tr><td colspan=2><hr></td></tr>
 <tr><td><input class="Slate" type="button" value="Armoury" onclick="send('A');"></td><td><input class="Slate" type="button" value="Weapon" onclick="send('W');"></td></tr>
-<tr><td><input class="Gold" type="button" value="Real Estate" onclick="send('R');"></td><td><input class="Gold" type="button" value="Security" onclick="send('S');"></td></tr>
+<tr><td><input class="Tavern" type="button" value="Real Estate" onclick="send('R');"></td><td><input class="Tavern" type="button" value="Security" onclick="send('S');"></td></tr>
 <tr><td><input class="Slate" type="button" value="Apothecary" onclick="send('V');"></td><td><input class="Platinum" type="button" value="Mage" onclick="send('M');"></td></tr>
-<tr><td colspan=2>&nbsp;<br><input class="Silver" type="button" value="Hospital" onclick="send('H');"><br>&nbsp;</td></tr>
+<tr><td colspan=2><hr></td></tr>
+<tr><td colspan=2><input class="Silver" type="button" value="Hospital" onclick="send('H');"></td></tr>
+<tr><td colspan=2><hr></td></tr>
 <tr><td><input class="Slate" type="button" value="Jail" onclick="send('J');"></td><td><input class="Slate" type="button" value="Bank" onclick="send('B');"></td></tr>
 <tr><td><input class="Silver" type="button" value="ARENA" onclick="send('G');"></td><td>${quit}</td></tr>
 </table>`);

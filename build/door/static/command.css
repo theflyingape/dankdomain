@@ -1,7 +1,7 @@
 input, button {
     background: antiquewhite;
     background-image: linear-gradient(to bottom, cornsilk, darkkhaki);
-    border-radius: 12px 4px 2px 6px;
+    border-radius: 10px 4px 2px 6px;
     box-shadow: 1px 3px 5px darkslategray;
     font-family: 'Carter One', cursive;
     font-size: 100%;
@@ -36,17 +36,17 @@ input:hover, button:hover {
     padding-bottom: 0.90em;
     padding-right: 2.85em;
     font-size: 110%;
+    width: 98%;
 }
 
 .platinum, .Platinum {
-    background: orchid;
+    background: hotpink;
     border: solid darkorchid;
     color: indigo;
     font-size: 120%;
 }
 .platinum:hover, .Platinum:hover {
-    background: lightpink;
-    background-image: linear-gradient(to bottom, lightpink, darkorchid);
+    background-image: linear-gradient(to bottom, hotpink, darkorchid);
     border: solid darkorchid;
     border-width: 1px 3px 3px 1px;
 }
@@ -58,8 +58,8 @@ input:hover, button:hover {
     font-size: 120%;
 }
 .gold:hover, .Gold:hover {
-    background-image: linear-gradient(to bottom, lightgoldenrodyellow, darkgoldenrod);
-    border: solid darkgoldenrod;
+    background-image: linear-gradient(to bottom, lightgoldenrodyellow, gold);
+    border: solid goldenrod;
     border-width: 1px 3px 3px 1px;
 }
 
@@ -82,7 +82,6 @@ input:hover, button:hover {
     font-size: 120%;
 }
 .copper:hover, .Copper:hover {
-    background: lightsalmon;
     background-image: linear-gradient(to bottom, lightsalmon, darkred);
     border: solid darkred;
     border-width: 1px 3px 3px 1px;
@@ -100,6 +99,18 @@ input:hover, button:hover {
     border-width: 1px 3px 3px 1px;
 }
 
-.Keycap, .Platinum, .Gold, .Silver, .Copper, .Slate {
-    width: 100%;
+.tavern, .Tavern {
+    background: burlywood;
+    border: solid saddlebrown;
+    color: chocolate;
+    font-size: 120%;
+}
+.tavern:hover, .Tavern:hover {
+    background-image: linear-gradient(to bottom, bisque, saddlebrown);
+    border: solid saddlebrown;
+    border-width: 1px 3px 3px 1px;
+}
+
+.Platinum, .Gold, .Silver, .Copper, .Slate, .Tavern {
+    width: 99%;
 }
