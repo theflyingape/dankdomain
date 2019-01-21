@@ -258,7 +258,7 @@ function choice() {
                     xvt.outln(`there, ${$.who(fool,'he')}tried to use that ${$.barkeep.user.weapon}, but it wasn't enough\nto take me.\"\n`)
                     xvt.waste(6000)
                     xvt.out('The patrons move in closer to witness the forthcoming slaughter, except for\n')
-                    xvt.outln(`${$.taxman.user.handle} who is busy raiding the bar of its beer and nuts.\n`)
+                    xvt.outln(`${$.taxman.user.handle} who is busy raiding the bar of its beer and nuts.`)
                     xvt.waste(5000)
                     xvt.outln(`\nYou hear a cry, "I'll pay fifteen-to-one on the challenger!"`)
                     xvt.waste(4000)
