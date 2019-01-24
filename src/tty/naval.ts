@@ -164,8 +164,8 @@ function choice() {
 							let ring = $.seahag.user.rings[i]
 							if (!+i) xvt.outln()
 							xvt.out($.who($.seahag, 'He'), 'has ', xvt.bright, xvt.cyan, ring, xvt.normal)
-							if ($.tty == 'web') xvt.out(' ', $.Ring.name[ring].emoji, ' 💍')
-							xvt.outln(' ring ', xvt.reset, 'that can ', $.Ring.name[ring].description)
+							if ($.tty == 'web') xvt.out(' ', $.Ring.name[ring].emoji, ' ')
+							xvt.outln(' powers ', xvt.reset, 'that can ', $.Ring.name[ring].description)
 						}
 						xvt.outln()
 						$.seahag.user.cursed = $.player.id
@@ -198,8 +198,8 @@ function choice() {
 						let ring = $.neptune.user.rings[i]
 						if (!+i) xvt.outln()
 						xvt.out($.who($.neptune, 'He'), 'has ', xvt.bright, xvt.cyan, ring, xvt.normal)
-						if ($.tty == 'web') xvt.out(' ', $.Ring.name[ring].emoji, ' 💍')
-						xvt.outln(' ring ', xvt.reset, 'that can ', $.Ring.name[ring].description)
+						if ($.tty == 'web') xvt.out(' ', $.Ring.name[ring].emoji, ' ')
+						xvt.outln(' powers ', xvt.reset, 'that can ', $.Ring.name[ring].description)
 					}
 					xvt.outln()
 					Battle.engage('Naval', $.online, $.neptune, menu)

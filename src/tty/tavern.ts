@@ -69,7 +69,7 @@ function choice() {
             break
 
         case 'G':
-            xvt.out(`\n${$.barkeep.user.handle} pours you a beer.\n`)
+            xvt.outln(`\n${$.barkeep.user.handle} pours you a beer.`)
             xvt.waste(500)
 
             $.action('payment')
@@ -80,7 +80,7 @@ function choice() {
                     let tip = (/=|max/i.test(xvt.entry)) ? $.player.coin.value : new $.coins(xvt.entry).value
                     if (tip < 1 || tip > $.player.coin.value) {
                         $.sound('oops')
-                        xvt.out($.who($.barkeep, 'He'), 'pours the beer on you and kicks you out of his bar.\n')
+                        xvt.outln($.who($.barkeep, 'He'), 'pours the beer on you and kicks you out of his bar.')
                         xvt.waste(1000)
                         $.brawl = 0
                         require('./main').menu(true)
@@ -89,7 +89,7 @@ function choice() {
                     xvt.beep()
                     xvt.out($.who($.barkeep, 'He'), 'grunts and hands you your beer.')
                     if ($.player.emulation === 'XT') xvt.out(' \u{1F37A}')
-                    xvt.out('\n')
+                    xvt.outln()
                     $.online.altered = true
                     $.player.coin.value -= tip
                     xvt.waste(1000)
@@ -116,7 +116,7 @@ function choice() {
                         'Deeper dungeon portals is a key to victory',
                         'I\'ll have more hints tomorrow.  Maybe'
                     ][tip % 21])
-                    xvt.out('."\n')
+                    xvt.outln('."')
                     xvt.waste(1000)
                     menu()
                 }, prompt:'How much will you tip? ', max:8 },
@@ -142,15 +142,15 @@ function choice() {
         case 'P':
             if (!$.access.roleplay) break
             if ($.player.coin.value < 1) {
-                xvt.out('\nYou\'ll need some cash to post a bounty.\n')
+                xvt.outln('\nYou\'ll need some cash to post a bounty.')
                 suppress = true
                 break
             }
             if ($.player.novice || $.player.level < 10) {
                 $.sound('crowd')
-                xvt.out('\nThe crowd laughs at your gesture.\n')
+                xvt.outln('\nThe crowd laughs at your gesture.')
                 xvt.waste(1000)
-                xvt.out(`${$.barkeep.user.handle} snorts, "Be for real."\n`)
+                xvt.outln(`${$.barkeep.user.handle} snorts, "Be for real."`)
                 suppress = true
                 break
             }
@@ -161,7 +161,7 @@ function choice() {
                 }
                 xvt.out('\n')
                 if (opponent.user.bounty.value) {
-                    xvt.out(`${opponent.user.handle} already has a bounty posted.\n`)
+                    xvt.outln(`${opponent.user.handle} already has a bounty posted.`)
                     menu()
                     return
                 }
@@ -179,7 +179,7 @@ function choice() {
                             opponent.user.bounty = new $.coins(post)
                             opponent.user.who = $.player.id
                             $.sound('click')
-                            xvt.out(`\n\nYour bounty is posted for all to see.\n`)
+                            xvt.outln(`\n\nYour bounty is posted for all to see.`)
                             $.news(`\tposted a bounty on ${opponent.user.handle}`)
                             $.saveUser(opponent)
                             xvt.waste(500)
@@ -199,7 +199,7 @@ function choice() {
             $.tiny--
             switch($.tiny) {
                 case 2:
-                    xvt.out('yell, "Freak!"\n')
+                    xvt.outln('yell, "Freak!"')
                     xvt.waste(1000)
                     if ($.player.level < 60)
                         xvt.outln('The barkeep stares off into empty space, ignoring your wimpy comment.')
