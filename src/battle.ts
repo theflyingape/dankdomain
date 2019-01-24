@@ -1192,8 +1192,8 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     xvt.outln(xvt.faint, '>> ', xvt.normal, `${$.who(rpc, 'His')}`
                         , xvt.bright, xvt.magenta, name, xvt.normal, ' spell ', xvt.reset, 'attempt is ineffective against')
                     xvt.out(`   ${$.who(nme, 'his')}`, xvt.bright, xvt.cyan, mod.name, xvt.normal)
-                    if ($.player.emulation === 'XT') xvt.out(' ', $.Ring.name[mod.name].emoji, ' 💍')
-                    xvt.outln(' ring', xvt.reset, '!', xvt.faint, ' <<')
+                    if ($.player.emulation === 'XT' && nme.user.sex !== 'I') xvt.out(' ', $.Ring.name[mod.name].emoji, ' 💍')
+                    xvt.outln(nme.user.sex == 'I' ? ' power' : ' ring', xvt.reset, '!', xvt.faint, ' <<')
                     cb()
                     return
                 }
@@ -2207,7 +2207,6 @@ export function poison(rpc: active, cb?:Function) {
                 rpc.toWC = rpc.toWC >=0 ? t : rpc.toWC + t
         }
 
-        xvt.outln()
         if (!$.Poison.have(rpc.user.poisons, vial) || +rpc.user.weapon > 0) {
             xvt.outln(xvt.bright, xvt.green, $.who(rpc, 'He'), $.what(rpc, 'secrete'), 'a caustic ooze', xvt.reset, $.buff(p, t))
             $.sound('ooze', 6)
