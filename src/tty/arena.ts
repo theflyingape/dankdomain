@@ -520,9 +520,10 @@ function MonsterFights(): boolean {
 		if (isNaN(+monster.user.armor)) xvt.outln('\n', $.who(monster, 'He'), $.Armor.wearing(monster), '.')
 		for (let i in monster.user.rings) {
 			let ring = monster.user.rings[i]
-			xvt.out('\n', xvt.cyan, $.who(monster, 'He'), 'has ', xvt.bright, ring, xvt.normal)
-			if ($.tty == 'web') xvt.out(' ', $.Ring.name[ring].emoji)
-			xvt.outln(' powers that can ', $.Ring.name[ring].description)
+			if (!+i) xvt.outln()
+			xvt.out($.who(monster, 'He'), 'has ', xvt.bright, xvt.cyan, ring, xvt.normal)
+			if ($.tty == 'web') xvt.out(' ', $.Ring.name[ring].emoji, ' ')
+			xvt.outln(' powers ', xvt.reset, 'that can ', $.Ring.name[ring].description)
 		}
 
 		$.action('ny')

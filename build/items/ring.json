@@ -58,7 +58,7 @@
     },
     "Faith": {
         "unique": true,
-        "description":"life-steal hit points; added mana-steal for Cleric, Paladin, and God classes",
+        "description":"life-steal hit points; added mana-steal for Cleric,\n   Paladin and God classes",
         "emoji":"✝️",
         "ability":[
             { "id":"degrade", "power":true, "pc":"Undead" },
@@ -79,7 +79,7 @@
     },
 	"Hell's Fury": {
         "unique": false,
-        "description":"enhance fighting ability, except for Cleric, Paladin, and God classes or against Demons",
+        "description":"enhance fighting ability, except for Cleric,\n   Paladin and God classes, or against Demons",
         "emoji":"👿",
         "ability":[
             { "id":"melee", "power":true },
@@ -109,7 +109,7 @@
     },
     "Magus": {
         "unique": false,
-        "description":"enhance defense against mortal-made attack spells, not incantations",
+        "description":"enhance defense against mortal-made\n   attack spells, not incantations",
         "emoji":"🎱",
         "ability":[
             { "id":"cast", "power":true, "magic":1 },
@@ -121,7 +121,7 @@
     },
 	"Medusa's": { 
         "unique": true,
-        "description":"freeze opponent, except against Magus-level spellcasters; a Titan's weapon",
+        "description":"freeze opponent, except against Magus-level\n   spellcasters; a Titan's weapon",
         "emoji":"🐍",
         "ability":[
             { "id":"melee", "power":true, "pc":"Titan" },
@@ -133,7 +133,7 @@
     },
     "Moon": {
         "unique": false,
-        "description":"absorb mana from opponent, but not against the Undead",
+        "description":"absorb mana from opponent, but not against\n   the Undead",
         "emoji":"🌓",
         "ability":[
             { "id":"sp", "power":true },
@@ -161,7 +161,7 @@
     },
 	"Ogre": { 
         "unique": true,
-        "description":"add power to melee attacks",
+        "description":"add to melee attacks",
         "emoji":"👹",
         "ability":[
             { "id":"melee", "power":true },
@@ -170,7 +170,7 @@
     },
 	"Shade": { 
         "unique": false,
-        "description":"enhance stealth ability for 1st swing and stealing, at some personal cost",
+        "description":"enhance stealth ability for 1st swing and stealing,\n   at some personal cost",
         "emoji":"⚡",
         "ability":[
             { "id":"initiate", "power":true },
