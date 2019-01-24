@@ -529,7 +529,7 @@ function MonsterFights(): boolean {
 		$.action('ny')
 		xvt.app.form = {
 			'fight': { cb:() => {
-				xvt.outln('\n')
+				xvt.outln()
 				if (/Y/i.test(xvt.entry)) {
 					$.music('combat' + $.arena--)
 					Battle.engage('Monster', $.online, monster, menu)

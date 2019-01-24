@@ -230,6 +230,7 @@ export function attack(retry = false) {
     let nme: number
     do { nme = $.dice(parties[mob].length) - 1 } while (parties[mob][nme].hp < 1)
     enemy = parties[mob][nme]
+    if (volley == 1 && rpc !== $.online) xvt.outln()
 
     //  a frozen treat?
     let skip = $.Ring.power(enemy.user.rings, 'skip', 'pc', rpc.user.pc)
