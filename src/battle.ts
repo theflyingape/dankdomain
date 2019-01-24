@@ -1017,7 +1017,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
     let tricks = Object.assign([], rpc.user.spells)
     let Summons = [ 'Teleport', 'Resurrect' ]
     Object.assign([], Summons).forEach(summon => {
-        if ($.Ring.power(rpc.user.rings, summon.toLowerCase()).power)
+        if ($.Ring.power(rpc.user.rings, summon.toLowerCase()).power && !$.Ring.power(nme.user.rings, 'ring').power)
             $.Magic.add(tricks, summon)
         else
             Summons.splice(Summons.indexOf(summon), 1)
@@ -1187,13 +1187,22 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
         if (xvt.validator.isDefined(nme)) {
             let mod = $.Ring.power(nme.user.rings, 'resist', 'spell', name)
             if (mod.power) {
-                xvt.outln(xvt.faint, '>> ', xvt.normal, `${$.who(rpc, 'His')}`
-                    , xvt.bright, xvt.magenta, name, xvt.normal, ' spell ', xvt.reset, 'attempt is ineffective against')
-                xvt.out(`   ${$.who(nme, 'his')}`, xvt.bright, xvt.cyan, mod.name, xvt.normal)
-                if ($.player.emulation === 'XT') xvt.out(' ', $.Ring.name[mod.name].emoji, ' 💍')
-                xvt.outln(' ring', xvt.reset, '!', xvt.faint, ' <<')
-                cb()
-                return
+                if (!$.Ring.power(rpc.user.rings, 'ring').power) {
+                    xvt.outln(xvt.faint, '>> ', xvt.normal, `${$.who(rpc, 'His')}`
+                        , xvt.bright, xvt.magenta, name, xvt.normal, ' spell ', xvt.reset, 'attempt is ineffective against')
+                    xvt.out(`   ${$.who(nme, 'his')}`, xvt.bright, xvt.cyan, mod.name, xvt.normal)
+                    if ($.player.emulation === 'XT') xvt.out(' ', $.Ring.name[mod.name].emoji, ' 💍')
+                    xvt.outln(' ring', xvt.reset, '!', xvt.faint, ' <<')
+                    cb()
+                    return
+                }
+                else {
+                    xvt.out(xvt.faint, '>> ', xvt.normal, `${$.who(rpc, 'His')}`
+                        , xvt.bright, xvt.magenta, $.Ring.power(rpc.user.rings, 'ring').name, xvt.normal, ' ring '
+                        , xvt.reset, `negates ${$.who(nme, 'his')}`, xvt.bright, xvt.cyan, mod.name, xvt.normal)
+                    if ($.player.emulation === 'XT') xvt.out(' ', $.Ring.name[mod.name].emoji, ' 💍')
+                    xvt.outln(' ring', xvt.reset, '!', xvt.faint, ' <<')
+                }
             }
         }
 

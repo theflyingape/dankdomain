@@ -578,6 +578,7 @@ function Shipyard(suppress = true) {
 function BattleUser(nme: active) {
 	let damage: number
 
+	xvt.outln()
 	if ($.dice(100) + $.online.int >= $.dice(100) + nme.int) {
 		xvt.outln(`You approach ${$.who(nme, 'him')}and quickly open fire.`)
 		if (you()) {
@@ -596,7 +597,7 @@ function BattleUser(nme: active) {
 	$.action('hunt')
 	xvt.app.form = {
 		'attack': { cb:() => {
-			xvt.outln('\n')
+			xvt.outln()
 			switch (xvt.entry.toUpperCase()) {
 				case 'F':
 					if (you() || him()) {
@@ -606,6 +607,7 @@ function BattleUser(nme: active) {
 					break
 
 				case 'S':
+					xvt.outln()
 					if (!outrun($.online.hull / nme.hull, $.online.int - nme.int)) {
 						$.sound('oops')
 						xvt.outln(`${$.who(nme, 'He')}outruns you and stops your retreat!`)
@@ -631,6 +633,7 @@ function BattleUser(nme: active) {
 
 				case 'R':
 					if ($.player.ram) {
+						xvt.outln()
 						if (outmaneuvered(nme.int - $.online.int, nme.hull / $.online.hull)) {
 							xvt.outln(`${$.who(nme, 'He')}quickly outmaneuvers your ship.`)
 							xvt.waste(400)
@@ -657,6 +660,7 @@ function BattleUser(nme: active) {
 					}
 					else {
 						$.sound('oops')
+						xvt.outln()
 						xvt.outln(`Your first mate cries back, "But we don't have a ram!"`)
 						xvt.waste(2000)
 						$.sound('fire', 8)
@@ -670,6 +674,7 @@ function BattleUser(nme: active) {
 					break
 
 				case 'Y':
+					xvt.outln()
 					xvt.outln(`Hull points: ${$.online.hull}`)
 					xvt.outln(`Cannons: ${$.player.cannon}`)
 					xvt.outln(`Ram: ${$.player.ram ? 'Yes' : 'No'}`)

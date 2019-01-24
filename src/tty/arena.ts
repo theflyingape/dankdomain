@@ -231,7 +231,7 @@ function choice() {
 
 		case 'M':
 			if (!$.arena) {
-				xvt.out('\nYou have no more arena fights.\n')
+				xvt.outln('\nYou have no more arena fights.')
 				suppress = true
 				break
 			}
@@ -470,7 +470,7 @@ function MonsterFights(): boolean {
 					return
 				}
 				xvt.outln(xvt.cyan, 'His eyes glow ', xvt.bright, xvt.red, 'red', xvt.normal
-					, xvt.cyan, ' and he says, "', xvt.bright, xvt.white, 'I don\'t make deals!', xvt.normal, xvt.cyan, '"')
+					, xvt.cyan, ' and he says, "', xvt.bright, xvt.white, `I don't make deals!`, xvt.normal, xvt.cyan, '"')
 				menu()
 			}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:10 },
 			'fight': { cb:() => {
@@ -489,8 +489,7 @@ function MonsterFights(): boolean {
 	}
 	else {
 		let mon = $.int(xvt.entry) - 1
-		if (mon == monsters.length - 1)
-			$.sound('demogorgon')
+		if (mon == monsters.length - 1) $.sound('demogorgon')
 		monster = <active>{}
 		monster.user = <user>{id: ''}
 		monster.user.handle = monsters[mon].name
@@ -516,14 +515,20 @@ function MonsterFights(): boolean {
 			, effect:monsters[mon].effect
 		})
 
-		xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`, '\n')
-		if (isNaN(+monster.user.weapon)) xvt.out('\n', $.who(monster, 'He'), $.Weapon.wearing(monster), '.\n')
-		if (isNaN(+monster.user.armor)) xvt.out('\n', $.who(monster, 'He'), $.Armor.wearing(monster), '.\n')
+		xvt.outln(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`)
+		if (isNaN(+monster.user.weapon)) xvt.outln('\n', $.who(monster, 'He'), $.Weapon.wearing(monster), '.')
+		if (isNaN(+monster.user.armor)) xvt.outln('\n', $.who(monster, 'He'), $.Armor.wearing(monster), '.')
+		for (let i in monster.user.rings) {
+			let ring = monster.user.rings[i]
+			xvt.out('\n', xvt.cyan, $.who(monster, 'He'), 'has ', xvt.bright, ring, xvt.normal)
+			if ($.tty == 'web') xvt.out(' ', $.Ring.name[ring].emoji)
+			xvt.outln(' powers that can ', $.Ring.name[ring].description)
+		}
 
 		$.action('ny')
 		xvt.app.form = {
 			'fight': { cb:() => {
-				xvt.out('\n\n')
+				xvt.outln('\n')
 				if (/Y/i.test(xvt.entry)) {
 					$.music('combat' + $.arena--)
 					Battle.engage('Monster', $.online, monster, menu)
