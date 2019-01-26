@@ -170,14 +170,14 @@
             "unicode":"♂",
             "specialty": "Skillful Melee/Scroll",
             "description": [
-                call"Rangers are great survivors, because they must depend on their ability to",
-                call"live off the land.  Like Bards, they have many special abilities, though",
-                call"they do not excel at any particular one.  Their fighting and healing powers",
-                call"are among their best abilities.  Rangers receive an extra bonus in Strength",
-                call"per experience level."
-            ]call
-        },call
-        "Rogue":call {
+                "Rangers are great survivors, because they must depend on their ability to",
+                "live off the land.  Like Bards, they have many special abilities, though",
+                "they do not excel at any particular one.  Their fighting and healing powers",
+                "are among their best abilities.  Rangers receive an extra bonus in Strength",
+                "per experience level."
+            ]
+        },
+        "Rogue": {
             "melcallee":1, "backstab":1, "poison":1, "magic":2, "steal":3, 
             "baseStr":40, "baseInt":50, "baseDex":75, "baseCha":35, 
             "toStr":1, "toInt":1, "toDex":1, "toCha":2, 

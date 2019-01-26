@@ -666,7 +666,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
             xvt.waste(250)
             xvt.outln(); xvt.waste(250)
             xvt.outln(xvt.bright, xvt.yellow
-                , Access.name[king.access][king.gender], ' the ', king.access.toLowerCase()
+                , Access.name[king.access][king.sex], ' the ', king.access.toLowerCase()
                 , ', ', king.handle
                 , ', is pleased with your accomplishments\n'
                 , 'and promotes you to', an(rpc.user.access), '!')
@@ -674,6 +674,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
             xvt.outln(); xvt.waste(250)
             news(`\twas promoted to ${rpc.user.access}`)
             wall(`promoted to ${rpc.user.access}`)
+            xvt.sessionAllowed += 300
         }
 
 		rpc.user.hp += Math.round(rpc.user.level + dice(rpc.user.level) + rpc.user.str / 10 + (rpc.user.str > 90 ? rpc.user.str - 90 : 0))
@@ -1251,9 +1252,9 @@ export function playerPC(points = 200, immortal = false) {
     xvt.outln('You have been rerolled.  You must pick a class.\n')
     xvt.waste(1500)
 
-    xvt.outln(xvt.lcyan, '      Character        (Recommended abilities + bonus)')
-    xvt.outln(xvt.lcyan, '        Class    Users   Str     Int     Dex     Cha       Special Feature')
-    xvt.outln(xvt.cyan,  '      ---------   ---   -----   -----   -----   -----   ---------------------')
+    xvt.outln(xvt.lcyan, '      Character          (Recommended abilities + bonus)')
+    xvt.outln(xvt.lcyan, '        Class      Users   Str     Int     Dex     Cha       Special Feature')
+    xvt.out(xvt.cyan,  '      ---------     ---   -----   -----   -----   -----   ---------------------')
 
     let classes = [ '' ]
     let n = 0
@@ -1269,8 +1270,8 @@ export function playerPC(points = 200, immortal = false) {
 
             let rs = query(`SELECT COUNT(id) AS n FROM Players WHERE pc = '${pc}'`)[0]
 
-            xvt.out(sprintf(' %-9s   %3d   %2d %+d   %2d %+d   %2d %+d   %2d %+d   %s',
-                pc, +rs.n,
+            xvt.out(sprintf(' %-9s  %s  %3d   %2d %+d   %2d %+d   %2d %+d   %2d %+d   %s',
+                pc, tty == 'web' ? rpc.unicode : ' ', +rs.n,
                 rpc.baseStr, rpc.toStr, rpc.baseInt, rpc.toInt, rpc.baseDex, rpc.toDex, rpc.baseCha, rpc.toCha,
                 rpc.specialty))
         }

@@ -141,7 +141,7 @@ function choice() {
                         $.player.gang = g.name
                         $.online.altered = true
                         $.saveGang(g, true)
-                        $.cat('party')
+                        $.cat('gang')
                         xvt.waste(1200)
                         $.sound('click', 12)
                         menu()
@@ -233,7 +233,7 @@ function choice() {
                                 g.members.push($.player.id)
                             $.run(`UPDATE Gangs SET members = '${g.members.join()}' WHERE name = '${g.name}'`)
                             xvt.outln()
-                            $.cat('party')
+                            $.cat('gang')
                             xvt.waste(1200)
                             xvt.outln(`\nYou are now a member of ${g.name}.`)
                             $.sound('click', 12)

@@ -234,7 +234,7 @@ function newSession(ev) {
                     tty = false;
                 };
                 socket.onerror = (ev) => {
-                    term.writeln('\x1B[1;31merror\x1B[m\nNO DIALTONE\n');
+                    term.writeln('\x1B[1;31merror\x1B[m\r\nNO DIALTONE\r\n');
                     console.log(ev);
                     carrier = false;
                 };

@@ -2212,7 +2212,7 @@ export function poison(rpc: active, cb?:Function) {
             $.sound('ooze', 6)
         }
         else {
-            xvt.outln($.who(rpc, 'He'), $.what(rpc, 'pour')
+            xvt.outln('\n', $.who(rpc, 'He'), $.what(rpc, 'pour')
                 , 'some ', $.Poison.merchant[vial - 1]
                 , ' on ', $.who(rpc, 'his'), rpc.user.weapon, '.')
             $.sound('hone', 6)
