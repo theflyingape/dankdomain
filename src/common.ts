@@ -653,7 +653,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
     }
     let eligible = rpc.user.level < sysop.level / 2
     let bonus = false
-    let started = rpc.user.level
+    let started = rpc.user.xplevel || rpc.user.level
 
     while (rpc.user.xp >= experience(rpc.user.level, undefined, rpc.user.int) && rpc.user.level < sysop.level) {
         rpc.user.level++
@@ -665,11 +665,11 @@ export function checkXP(rpc: active, cb: Function): boolean {
             } while (!xvt.validator.isDefined(Access.name[rpc.user.access][rpc.user.gender]))
             xvt.waste(250)
             xvt.outln(); xvt.waste(250)
-            xvt.out(xvt.bright, xvt.yellow
+            xvt.outln(xvt.bright, xvt.yellow
                 , Access.name[king.access][king.gender], ' the ', king.access.toLowerCase()
                 , ', ', king.handle
                 , ', is pleased with your accomplishments\n'
-                , 'and promotes you to', an(rpc.user.access), '!\n')
+                , 'and promotes you to', an(rpc.user.access), '!')
             xvt.waste(250)
             xvt.outln(); xvt.waste(250)
             news(`\twas promoted to ${rpc.user.access}`)
@@ -689,13 +689,24 @@ export function checkXP(rpc: active, cb: Function): boolean {
         if (eligible && rpc.user.level == 50) {
             bonus = true
             music('.')
+            if (rpc.user.novice) {
+                xvt.outln('You are no longer a novice.  Welcome to the next level of play.')
+                rpc.user.novice = false
+                rpc.user.expert = true
+                //  adjust character attributes to match 8 skill points
+                rpc.user.melee--
+                rpc.user.backstab++
+                rpc.user.magic++
+                rpc.user.steal++
+                sound('cheer', 20)
+                xvt.outln(); xvt.waste(250)
+            }
             sound('demon', 18)
             break
         }
     }
 
-    jumped = player.level - started
-    rpc.user.xplevel = rpc.user.level
+    jumped = rpc.user.level - started
     award.hp = rpc.user.hp - award.hp
     award.sp = rpc.user.sp - award.sp
     rpc.hp += award.hp
@@ -759,6 +770,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
             skillplus(rpc, cb)
             return true
         }
+        player.xplevel = player.level
     }
     else {
         riddle()

@@ -12,10 +12,10 @@
             ]
         },
         "Novice": {
-            "melee":3, "backstab":1, "poison":2, "magic":0, "steal":0, 
-            "baseStr":60, "baseInt":40, "baseDex":65, "baseCha":35, 
-            "toStr":1, "toInt":1, "toDex":1, "toCha":2, 
-            "maxStr":90, "maxInt":90, "maxDex":90, "maxCha":90, 
+            "melee":3, "backstab":1, "poison":2, "magic":0, "steal":0,
+            "baseStr":65, "baseInt":40, "baseDex":65, "baseCha":30,
+            "toStr":1, "toInt":1, "toDex":1, "toCha":1,
+            "maxStr":90, "maxInt":90, "maxDex":90, "maxCha":90,
             "bonusStr":1, "bonusInt":1, "bonusDex":1, "bonusCha":1,
             "unicode":"☥",
             "specialty": "Newbie versus newbies",
@@ -27,14 +27,14 @@
                 "for casting magical spells, they are subject to their effects (except for",
                 "the nasty Morph spell!)",
                 "",
-                "Upon reaching immortality (level 100), you will be given a new title, which",
-                "will grant you all the rights & privileges worthy of a deserving adventurer.",
+                "Upon reaching level 50, you will be given a new title, which grants you all",
+                "the rights & privileges worthy of a deserving adventurer.",
                 "",
-                "Enjoy your stay here.  And please call often enough to keep your character,",
+                "Enjoy your stay here.  And please visit often enough to keep your character,",
                 "and the rest of the competition, alive and healthy.  If for whatever reason",
-                "you cannot play for a stretch of time, this system may automatically delete",
+                "you cannot play for a stretch of time, this system automatically deactivates",
                 "your character.  Do not be alarmed if this should ever happen.  Just sign on",
-                "again as a new user, and you will be welcomed as such."
+                "when you can and your character will reactivate."
             ]
         },
         "Alchemist": {
@@ -170,15 +170,15 @@
             "unicode":"♂",
             "specialty": "Skillful Melee/Scroll",
             "description": [
-                "Rangers are great survivors, because they must depend on their ability to",
-                "live off the land.  Like Bards, they have many special abilities, though",
-                "they do not excel at any particular one.  Their fighting and healing powers",
-                "are among their best abilities.  Rangers receive an extra bonus in Strength",
-                "per experience level."
-            ]
-        },
-        "Rogue": {
-            "melee":1, "backstab":1, "poison":1, "magic":2, "steal":3, 
+                call"Rangers are great survivors, because they must depend on their ability to",
+                call"live off the land.  Like Bards, they have many special abilities, though",
+                call"they do not excel at any particular one.  Their fighting and healing powers",
+                call"are among their best abilities.  Rangers receive an extra bonus in Strength",
+                call"per experience level."
+            ]call
+        },call
+        "Rogue":call {
+            "melcallee":1, "backstab":1, "poison":1, "magic":2, "steal":3, 
             "baseStr":40, "baseInt":50, "baseDex":75, "baseCha":35, 
             "toStr":1, "toInt":1, "toDex":1, "toCha":2, 
             "maxStr":95, "maxInt":95, "maxDex":95, "maxCha":95, 

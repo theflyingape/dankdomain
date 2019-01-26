@@ -141,7 +141,9 @@ function choice() {
                         $.player.gang = g.name
                         $.online.altered = true
                         $.saveGang(g, true)
-                        $.sound('click')
+                        $.cat('party')
+                        xvt.waste(1200)
+                        $.sound('click', 12)
                         menu()
                     }
                     else {
@@ -230,9 +232,11 @@ function choice() {
                             if (g.members.indexOf($.player.id) < 0)
                                 g.members.push($.player.id)
                             $.run(`UPDATE Gangs SET members = '${g.members.join()}' WHERE name = '${g.name}'`)
-                            $.sound('click')
                             xvt.outln()
+                            $.cat('party')
+                            xvt.waste(1200)
                             xvt.outln(`\nYou are now a member of ${g.name}.`)
+                            $.sound('click', 12)
                         }
                         else {
                             g.members = []
