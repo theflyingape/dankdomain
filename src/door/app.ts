@@ -164,6 +164,7 @@ dns.lookup('localhost', (err, addr, family) => {
       } catch (ex) {
         if (term.pid) {
           console.log(`?FATAL ACTIVE app session ${term.pid} pty -> ws error:`, ex.message)
+          console.log(msg)
           unlock(term.pid)
           browser.close()
         }
@@ -194,7 +195,7 @@ dns.lookup('localhost', (err, addr, family) => {
     browser.on('close', () => {
       //  did user close browser with an open app?
       if (pid > 1) try {
-        process.kill(pid)
+        process.kill(pid, 1)
         console.log(`Forced close PLAYER session ${pid} from remote host: ${term.client}`)
       } catch (ex) {}
       // Clean things up

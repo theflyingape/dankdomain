@@ -157,7 +157,7 @@ function password() {
             $.news(`\tkicked simultaneous player off: ${rs[row].id} lock from ${$.time(rs[row].locktime)}`)
             try {
                 process.kill(rs[row].pid, 'SIGHUP')
-                xvt.outln(`\nYou\'re in violation of the space-time continuum: T - ${60 - t} minutes`)
+                xvt.outln(`\nYou're in violation of the space-time continuum: T - ${60 - t} minutes`)
             }
             catch {
                 $.unlock(rs[row].id)
@@ -195,6 +195,7 @@ function password() {
     if ($.player.today > $.access.calls) {
         $.beep()
         xvt.outln(`\nYou played all ${$.access.calls} calls for today.  Please visit again tomorrow!`)
+        $.news('', true)
         xvt.hangup()
     }
 
@@ -396,7 +397,10 @@ function welcome() {
             )
             $.cat('auto-message')
 
-            if ($.access.roleplay) require('./taxman').cityguards()
+            if ($.access.roleplay)
+                require('./taxman').cityguards()
+            else
+                require('./main').menu()
         }, pause:true }
     }
     xvt.app.focus = 'pause'

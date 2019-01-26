@@ -854,7 +854,7 @@ export function spoils() {
         //  accruing money is always eligible
         if ($.player.coin.value) {
             winner.user.coin.value += $.player.coin.value
-            xvt.outln($.who(winner, 'He'), 'gets ', $.player.coin.carry(), ' you were carrying.')
+            xvt.outln(xvt.reset, $.who(winner, 'He'), 'gets ', $.player.coin.carry(), ' you were carrying.')
             $.player.coin.value = 0
         }
         xvt.out(600)

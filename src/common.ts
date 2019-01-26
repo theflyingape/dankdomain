@@ -1149,7 +1149,7 @@ export function keyhint(rpc: active) {
         }
     }
     else
-        xvt.out(xvt.reset, 'There are no more key hints available to you.\n')
+        xvt.outln(xvt.reset, 'There are no more key hints available to you.')
 
     rpc.altered = true
 }
@@ -1180,13 +1180,13 @@ export function money(level: number): number {
 export function news(message: string, commit = false) {
 
     const folder = './files/tavern'
-    if(!fs.existsSync(folder))
+    if (!fs.existsSync(folder))
         fs.mkdirSync(folder)
     const log = `${folder}/${player.id}.log`
 
     if (access.roleplay) {
         fs.appendFileSync(log, `${message}\n`)
-        if (commit) {
+        if (message && commit) {
             const paper = `./files/tavern/today.txt`
             fs.appendFileSync(paper, fs.readFileSync(log))
         }
@@ -1999,6 +1999,10 @@ export function logoff() {
     if (!reason) {
         if (access.roleplay) {
             player.lasttime = now().time
+            PC.adjust('str', -1, -1, -1)
+            PC.adjust('int', -1, -1, -1)
+            PC.adjust('dex', -1, -1, -1)
+            PC.adjust('cha', -1, -1, -1)
             saveUser(player)
             unlock(player.id)
         }
@@ -2033,7 +2037,7 @@ export function logoff() {
         if (online.hp < 1)
             sound('goodbye')
         else {
-            sound(online.hull < 1 ? 'comeagain' : 'invite')
+            if (player.plays) sound(online.hull < 1 ? 'comeagain' : 'invite')
             PC.profile(online)
         }
         if (tty == 'web') xvt.outln('\x06')
@@ -2467,7 +2471,7 @@ export function newDay() {
     sysop.lasttime = now().time
     saveUser(sysop)
     xvt.outln(xvt.bright, xvt.yellow, '*')
-    xvt.out('All set -- thank you!\n\n')
+    xvt.outln('All set -- thank you!\n')
 }
 
 export function lock(id: string, owner = 0): boolean {
@@ -2480,7 +2484,7 @@ export function lock(id: string, owner = 0): boolean {
         catch(err) {
             if (err.code !== 'SQLITE_CONSTRAINT_PRIMARYKEY') {
                 xvt.beep()
-                xvt.out(xvt.reset, '\n?Unexpected error: ', String(err), '\n')
+                xvt.outln(xvt.reset, '\n?Unexpected error: ', String(err))
                 reason = 'defect - ' + err.code
                 xvt.hangup()
             }

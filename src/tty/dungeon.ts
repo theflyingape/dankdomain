@@ -252,6 +252,7 @@ export function menu(suppress = false) {
 				DL.cleric.sp = 0
 				DL.cleric.user.status = 'dead'
 				ROOM.giftItem = 'chest'
+				ROOM.giftIcon = $.player.emulation === 'XT' ? '⌂' : dot
 				ROOM.giftValue = 0
 				DL.cleric.user.coin.value = 0
 				if (DL.map && DL.map !== 'map')
@@ -439,7 +440,7 @@ function command() {
 	case 'N':
 		if (Y > 0 && DL.rooms[Y][X].type !== 'w-e')
 			if (DL.rooms[Y - 1][X].type !== 'w-e') {
-				drawRoom(Y, X)
+				eraseHero($.player.blessed ? true : false)
 				Y--
 				looked = false
 				break
@@ -450,7 +451,7 @@ function command() {
 	case 'S':
 		if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 'w-e')
 			if (DL.rooms[Y + 1][X].type !== 'w-e') {
-				drawRoom(Y, X)
+				eraseHero($.player.blessed ? true : false)
 				Y++
 				looked = false
 				break
@@ -461,7 +462,7 @@ function command() {
 	case 'E':
 		if (X < DL.width - 1 && DL.rooms[Y][X].type !== 'n-s')
 			if (DL.rooms[Y][X + 1].type !== 'n-s') {
-				drawRoom(Y, X)
+				eraseHero($.player.blessed ? true : false)
 				X++
 				looked = false
 				break
@@ -472,7 +473,7 @@ function command() {
 	case 'W':
 		if (X > 0 && DL.rooms[Y][X].type !== 'n-s')
 			if (DL.rooms[Y][X - 1].type !== 'n-s') {
-				drawRoom(Y, X)
+				eraseHero($.player.blessed ? true : false)
 				X--
 				looked = false
 				break
@@ -1211,6 +1212,7 @@ function doMove(): boolean {
 				xvt.outln(xvt.yellow, 'You find the ', xvt.white, 'bones'
 					, xvt.yellow, ' of an ', xvt.faint, 'old cleric', xvt.normal, '.')
 				xvt.waste(600)
+				if ($.tty == 'web') xvt.out('⚰️  ')
 				xvt.outln('You pray for him.')
 				break
 			}
@@ -1428,7 +1430,7 @@ function doMove(): boolean {
 				if (new $.coins($.Armor.name[$.Armor.dwarf[hi]].value).value < credit.value + $.player.coin.value) {
 					if ($.player.coin.value) xvt.outln('and all your coin worth ', $.player.coin.carry())
 					xvt.out(`I'll trade you for my `
-						, ['exceptional', 'precious', 'remarkable', 'special', 'uncommon'][$.dice(5) - 1]
+						, ['exceptional', 'precious', 'remarkable', 'special', 'uncommon'][$.dice(5) - 1], ' '
 						, $.bracket($.Armor.name[$.Armor.dwarf[hi]].ac, false), ' ')
 					xvt.outln(xvt.bright, xvt.yellow, $.Armor.dwarf[hi])
 					xvt.app.focus = 'armor'
@@ -1454,7 +1456,7 @@ function doMove(): boolean {
 				if (new $.coins($.Weapon.name[$.Weapon.dwarf[hi]].value).value < credit.value + $.player.coin.value) {
 					if ($.player.coin.value) xvt.outln('and all your coin worth ', $.player.coin.carry())
 					xvt.out(`I'll trade you for my `
-						, ['exquisite', 'fine', 'handcrafted', 'jeweled', 'rare'][$.dice(5) - 1]
+						, ['exquisite', 'fine', 'jeweled', 'rare', 'splendid'][$.dice(5) - 1], ' '
 						, $.bracket($.Weapon.name[$.Weapon.dwarf[hi]].wc, false), ' ')
 					xvt.outln(xvt.bright, xvt.cyan, $.Weapon.dwarf[hi])
 					xvt.app.focus = 'weapon'
@@ -1886,6 +1888,29 @@ function drawHero(peek = false) {
 		xvt.waste(800)
 	}
 	xvt.restore()
+}
+
+function eraseHero(peek = false) {
+	xvt.out(xvt.reset)
+	xvt.save()
+	ROOM = DL.rooms[Y][X]
+	if (!DL.map || peek) {
+		if (Y > 0 && DL.rooms[Y][X].type !== 'w-e')
+			if (DL.rooms[Y - 1][X].type !== 'w-e')
+				drawRoom(Y - 1, X, false)
+		if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 'w-e')
+			if (DL.rooms[Y + 1][X].type !== 'w-e')
+				drawRoom(Y + 1, X, false)
+		if (X < DL.width - 1 && DL.rooms[Y][X].type !== 'n-s')
+			if (DL.rooms[Y][X + 1].type !== 'n-s')
+				drawRoom(Y, X + 1, false)
+		if (X > 0 && DL.rooms[Y][X].type !== 'n-s')
+			if (DL.rooms[Y][X - 1].type !== 'n-s')
+				drawRoom(Y, X - 1, false)
+	}
+	xvt.restore()
+
+	drawRoom(Y, X)
 }
 
 function drawLevel() {
@@ -2775,8 +2800,8 @@ function quaff(v: number, it = true) {
 }
 
 function occupying(room: room, o = '', reveal = false, identify = false) {
+	let icon = ''
 	if (reveal) {
-		let icon = ''
 		let m = room.monster.length > 4 ? 4 : room.monster.length
 		if (m) {
 			if (Monster[$.tty])
@@ -2831,7 +2856,7 @@ function occupying(room: room, o = '', reveal = false, identify = false) {
 					o = xvt.attr(xvt.reset, xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.reset, xvt.faint, xvt.yellow, ':')
 				}
 				else {
-					if (!icon) icon = xvt.attr(xvt.uline, '_', $.tty == 'web' ? '⚰' : Cleric[$.player.emulation], '_')
+					if (!icon) icon = `_${$.tty == 'web' ? '⚰' : Cleric[$.player.emulation]}_`
 					o = xvt.attr(xvt.reset, xvt.faint, ':', icon, xvt.reset, xvt.faint, ':')
 				}
 				break
@@ -2851,7 +2876,7 @@ function occupying(room: room, o = '', reveal = false, identify = false) {
 
 	xvt.out(o, xvt.reset)
 
-	if (DL.map == `Marauder's map` && room.giftItem)
+	if (room.giftItem && DL.map == `Marauder's map`)
 		xvt.out('\x08', xvt.faint, room.giftIcon, xvt.reset)
 }
 
