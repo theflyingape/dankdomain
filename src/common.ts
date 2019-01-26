@@ -264,6 +264,8 @@ export class Character {
 
         xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
         xvt.out('      Str: ', xvt.white)
+        if (player.emulation === 'XT')
+            xvt.out('\r\x1B[2C💪\r\x1B[12C')
         xvt.out(sprintf('%-20s', profile.str + ' (' + profile.user.str + ',' + profile.user.maxstr + ')'))
         xvt.out(xvt.cyan, ' Hand: ', xvt.white)
         xvt.out(profile.user.coin.carry(), xvt.bright, ' '.repeat(15 - profile.user.coin.amount.length))
