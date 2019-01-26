@@ -712,7 +712,7 @@ function BattleUser(nme: active) {
 			][$.dice(5) - 1], '!\n')
 		xvt.waste(500)
 		$.log(nme.user.id, `\n${$.player.handle} sank your ship!`)
-		$.news(`\tsank ${nme.user.handle}\'s ship`)
+		$.news(`\tsank ${nme.user.handle}'s ship`)
 
 		let booty = new $.coins(Math.round(Math.pow(2, $.player.hull / 150) * 7937 / 250))
 		booty.value = Math.trunc(booty.value * nme.user.cannon)
@@ -955,7 +955,7 @@ function MonsterHunt() {
 			$.online.hull = 0
 			$.player.killed++
 			$.reason = `sunk by the ${sm.name}`
-			xvt.outln(`\nThe ${sm.name} sank your ship!`)
+			xvt.outln(`The ${sm.name} sank your ship!`)
 			$.sound('bubbles', 15)
 			if ($.player.coin.value) {
 				$.player.coin.value = 0
