@@ -28,7 +28,7 @@ module Logon
     default:
         $.tty = 'telnet'
         process.stdin.setEncoding('ascii')
-        xvt.emulation = 'dumb'
+        xvt.emulation = 'VT'
         xvt.out('\f')
     }
 
@@ -78,7 +78,7 @@ function guards(): boolean {
                         return
                     }
                     else {
-                        xvt.out('\n')
+                        xvt.outln()
                         process.exit()
                     }
                 }, prompt:'DOH!!  Re-send the password to your email account (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, timeout:10 }
@@ -100,12 +100,18 @@ function who() {
         // a bit hack for now, but...
         $.reroll($.player)
         $.newkeys($.player)
-        xvt.emulation = 'VT'
+        $.player.emulation = xvt.emulation
         $.player.rows = process.stdout.rows || 24
-        $.emulator(() => {
-            $.player.emulation = xvt.emulation
+        if ($.tty == 'web') {
+            $.sound('yahoo', 20)
             require('./newuser')
-        })
+        }
+        else {
+            $.emulator(() => {
+                $.player.emulation = xvt.emulation
+                require('./newuser')
+            })
+        }
         return
     }
 
@@ -397,10 +403,7 @@ function welcome() {
             )
             $.cat('auto-message')
 
-            if ($.access.roleplay)
-                require('./taxman').cityguards()
-            else
-                require('./main').menu()
+            require('./taxman').cityguards()
         }, pause:true }
     }
     xvt.app.focus = 'pause'

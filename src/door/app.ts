@@ -197,7 +197,9 @@ dns.lookup('localhost', (err, addr, family) => {
       if (pid > 1) try {
         process.kill(pid, 1)
         console.log(`Forced close PLAYER session ${pid} from remote host: ${term.client}`)
-      } catch (ex) {}
+      } catch (ex) {
+        console.log(`?FATAL browser close event ${pid}: ${ex}`)
+      }
       // Clean things up
       term.client = ''
       delete broadcasts[term.pid]

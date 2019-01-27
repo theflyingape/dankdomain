@@ -616,7 +616,7 @@ export function activate(one: active, keep = false, confused = false): boolean {
     one.altered = true
     one.hp = one.user.hp
     one.sp = one.user.sp
-    one.bp = Math.trunc(one.user.hp / 10)
+    one.bp = int(one.user.hp / 10)
     one.hull = one.user.hull
     Weapon.equip(one, one.user.weapon, true)
     Armor.equip(one, one.user.armor, true)
@@ -1299,7 +1299,7 @@ export function playerPC(points = 200, immortal = false) {
         }
         if (player.keyhints.indexOf(classes[n]) >= 0) {
             xvt.beep()
-            xvt.out(` - you cannot re-play ${classes[n]} until after you make an immortal class.`)
+            xvt.out(` - you cannot re-play ${classes[n]} until after you make an Immortal class.`)
             xvt.app.refocus()
             return
         }
@@ -1369,14 +1369,18 @@ export function playerPC(points = 200, immortal = false) {
                 }
                 player.cha = n
                 activate(online)
+
                 xvt.outln()
+                saveUser(player)
                 news(`\trerolled as${an(player.pc)}`)
                 if (immortal) {
                     reason = 'became immortal'
                     xvt.hangup()
                 }
-                xvt.outln(`... and you get to complete any remaining parts to this play.`)
-                require('./tty/main').menu(true)
+                else {
+                    xvt.outln(`... and you get to complete any remaining parts to this play.`)
+                    require('./tty/main').menu(true)
+                }
                 return
         }
 
@@ -1776,7 +1780,7 @@ export function riddle() {
             if (xvt.entry.toUpperCase() === player.keyseq[slot]) {
                 sound('click')
                 if (player.emulation === 'XT') xvt.out('🔓 ')
-                xvt.out(xvt.cyan, '{', xvt.bright, 'Click!', xvt.normal, '}\n')
+                xvt.outln(xvt.cyan, '{', xvt.bright, 'Click!', xvt.normal, '}')
                 player.pc = Object.keys(PC.name['immortal'])[slot]
                 profile({ png:'player/' + player.pc.toLowerCase() + (player.gender === 'F' ? '_f' : ''), pc:player.pc })
                 xvt.outln(xvt.bright, [ xvt.cyan, xvt.blue, xvt.magenta ][slot], `You are now a ${player.pc}.`)
@@ -1973,8 +1977,9 @@ export function emulator(cb:Function) {
                 cb()
                 return
             }
+            xvt.waste(2000)
             beep()
-            for(let rows = 99; rows > 1; rows--)
+            for (let rows = player.rows + 5; rows > 1; rows--)
                 xvt.out(bracket(rows > 24 ? rows : '..'))
             xvt.app.focus = 'rows'
         }, prompt:xvt.attr(xvt.reset, 'Select ', xvt.faint, '[', xvt.reset, xvt.bright, `${player.emulation}`, xvt.reset, xvt.faint, ']', xvt.reset, ': ')
@@ -2006,7 +2011,7 @@ export function logoff() {
             saveUser(player)
             unlock(player.id)
         }
-        reason = (xvt.reason ? xvt.reason : 'mystery')
+        reason = xvt.reason || 'mystery'
         if (player && player.id) {
             if (run(`UPDATE Players set coward=1 WHERE id='${player.id}'`).changes)
                 news(`\tlogged off ${time(player.lasttime)} (${reason})\n`, true)

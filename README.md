@@ -20,7 +20,7 @@ and [sounds](https://drive.google.com/open?id=1UvqQJbN61VbWVduONXgo1gm9yvGI0Qp8)
 
 After scanning you over, he continues:
 > Certainly don't look the type, all sissified and soft. Ye'll be running for yer wetnurse soon enough, I'll warrant. But if ye want to play with the big boys, ye've come to the right place. Ye want to be rich, famous, an' powerful like the rest, don't ye? Aye, else ye wouldn't be here.
-> 
+>
 > Well, don't be thinkin' this is a cakewalk. Ye'll be payin' yer dues, and there's plenty of 'em to be paid. By the way, me name's Ira Hess. Ye can call me 'Sir' or simply 'Taxman', that's what I does here, but don't let me catch ye badmouthin' me behind me back.
 
 As he turns to leave, he shouts behind him:

@@ -69,7 +69,7 @@ export function cityguards() {
             + $.worth(new $.coins($.RealEstate.name[$.player.realestate].value).value, 35)
             + $.worth(new $.coins($.Security.name[$.player.security].value).value, 15)
 
-    if (checkpoint($.player.coin.value + $.player.bank.value)) {
+    if ($.access.roleplay && checkpoint($.player.coin.value + $.player.bank.value)) {
         let exempt = $.Ring.power($.player.rings, 'taxes')
         if (exempt.power) {
             xvt.out('\nYour hand extends to show', xvt.cyan, xvt.bright, $.an(exempt.name), xvt.normal)
