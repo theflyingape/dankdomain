@@ -344,7 +344,7 @@ function welcome() {
             $.player.jl = 0
             $.player.jw = 0
         }
-        if (($.player.jw > 14 && $.player.jw / ($.player.jw + $.player.jl) > 0.9) || $.access.sysop) {
+        if ($.access.sysop) {
             let ring = $.Ring.power(null, 'joust')
             if ($.Ring.wear($.player.rings, ring.name)) {
                 $.getRing('win', ring.name)

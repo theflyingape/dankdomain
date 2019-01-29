@@ -738,7 +738,7 @@ export function spoils() {
                     })
                     loser.user.rings = []
                     loser.altered = true
-                    $.log(loser.user.id, `$.who(winner, 'He') started with your rings.`)
+                    $.log(loser.user.id, `${$.who(winner, 'He')} started with your rings.`)
                     xvt.outln()
                 }
 

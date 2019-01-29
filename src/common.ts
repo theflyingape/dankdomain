@@ -2059,7 +2059,6 @@ export function logoff() {
         xvt.out(xvt.cyan, ' .I:I. ', xvt.reset, 'https://robert.hurst-ri.us', xvt.cyan, '  .I:I. \n')
         xvt.outln(); xvt.waste(500)
         xvt.outln(xvt.bright, xvt.black, process.title
-            , xvt.normal, xvt.white, xvt.validator.isNotEmpty(process.env.npm_package_version) ? ' ' + process.env.npm_package_version : ''
             , ' running on ', xvt.bright, xvt.green, 'Node.js ', xvt.normal, process.version, xvt.reset
             , xvt.faint, ' (', xvt.cyan, process.platform, xvt.white, xvt.faint, ')')
         xvt.waste(1965)
