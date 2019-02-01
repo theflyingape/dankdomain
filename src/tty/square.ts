@@ -50,7 +50,7 @@ export function menu(suppress = true) {
 		&& $.dice($.online.cha / 2 + 5 * $.player.steal) == 1) {
 		let bump = $.PC.encounter(`AND novice = 0 AND (id NOT GLOB '_*' OR id = '_TAX')`
 			, $.player.level - 9, $.player.level + 9)
-		if (bump.user.id) {
+		if (bump.user.id && !bump.user.status) {
 			$.PC.profile(bump)
 			xvt.out(xvt.magenta, xvt.faint, `${bump.user.handle} bumps`
 				, xvt.normal, ' into you from'
