@@ -119,7 +119,7 @@ function choice() {
                     g.name = $.titlecase(xvt.entry)
                     if (g.name === 'New' || $.cuss(g.name))
                         xvt.hangup()
-                    if (!g.name) {
+                    if (!g.name || /King|Mash|Mon|Queen/.test(g.name)) {
                         menu()
                         return
                     }
