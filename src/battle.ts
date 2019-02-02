@@ -734,11 +734,11 @@ export function spoils() {
                             $.getRing(['fondle', 'polish', 'slip on', 'wear', 'win'][$.dice(5) - 1], ring)
                             $.saveRing(ring, winner.user.id)
                             $.sound('click', 8)
+                            $.log(loser.user.id, `... took your ${ring} ring.`)
                         }
                     })
                     loser.user.rings = []
                     loser.altered = true
-                    $.log(loser.user.id, `${$.who(winner, 'He')} started with your rings.`)
                     xvt.outln()
                 }
 

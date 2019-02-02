@@ -1218,14 +1218,16 @@ function doMove(): boolean {
 			}
 
 			let cast = 7
-			let mod = 6 + $.int($.player.melee / 2) - $.int($.player.magic / 2) - +$.player.coward
-				+ +$.Ring.power($.player.rings, 'taxes').power + +$.access.sysop
-			let cost = new $.coins($.int($.money(Z) / mod / $.player.hp * ($.player.hp - $.online.hp)))
+			let mod = 6 + $.int($.player.melee / 2) - $.int($.player.magic / 2)
+			if ($.Ring.power($.player.rings, 'taxes').power) mod++
+			if ($.access.sysop) mod++
+			if ($.player.coward) mod--
+			let cost = new $.coins(($.player.hp - $.online.hp) * $.int($.money(Z) / mod / $.player.hp))
 			if (cost.value < 1) cost.value = 1
-			cost.value *= $.int(deep / 4 + 1)
+			cost.value *= ($.int(deep / 3) + 1)
 			if ($.player.maxcha > 98)	//	typically a Cleric and God
 				cost.value = 0
-			cost = new $.coins(cost.carry(1, true))
+			cost = new $.coins(cost.carry(1, true))	//	just from 1-pouch
 
 			if (ROOM.giftItem == 'chest') {
 				ROOM.giftValue = $.dice(6 - $.player.magic) - 1
