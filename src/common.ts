@@ -13,7 +13,7 @@ import Items = require('./items')
 module Common
 {
     //  mode of operation
-    export let tty: TTY
+    export let tty: TTY = 'telnet'
 
     //  items
     export const Abilities = [ 'str', 'int', 'dex', 'cha' ]
@@ -28,10 +28,10 @@ module Common
     export const Weapon = new Items.Weapon
 
     //  maintain usual suspects
-    export let barkeep: active = { user: { id:'_BAR'} }
-    export let neptune: active = { user: { id:'_NEP'} }
-    export let seahag: active = { user: { id:'_OLD'} }
-    export let taxman: active = { user: { id:'_TAX'} }
+    export let barkeep: active = { user: { id:'_BAR' } }
+    export let neptune: active = { user: { id:'_NEP' } }
+    export let seahag: active = { user: { id:'_OLD' } }
+    export let taxman: active = { user: { id:'_TAX' } }
     export let king: user = { id:'' }
     export let online: active = { user: { id:'' } }
     export let player: user = online.user
@@ -2014,7 +2014,7 @@ export function logoff() {
         reason = xvt.reason || 'mystery'
         if (player && player.id) {
             if (run(`UPDATE Players set coward=1 WHERE id='${player.id}'`).changes)
-                news(`\tlogged off ${time(player.lasttime)} (${reason})\n`, true)
+                news(`\tthe coward logged off ${time(player.lasttime)} (${reason})\n`, true)
             access.roleplay = false
         }
     }

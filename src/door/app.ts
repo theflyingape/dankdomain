@@ -145,7 +145,7 @@ dns.lookup('localhost', (err, addr, family) => {
   //  ... for the active player
   wssActive.on('connection', (browser, req) => {
     const what = new URL(req.url, 'https://localhost')
-    const pid = parseInt(what.searchParams.get('pid'))
+    let pid = parseInt(what.searchParams.get('pid'))
     let term = sessions[pid]
   
     //  app --> browser client
@@ -171,12 +171,14 @@ dns.lookup('localhost', (err, addr, family) => {
       }
     })
 
+    //  app shutdown
     term.on('close', () => {
-      //  app shutdown
-      if (term.client) {
-        console.log(`Close PLAYER session ${term.pid} from remote host: ${term.client}`)
-        browser.close()
-      }
+      console.log(`Close PLAYER session ${term.pid} from remote host: ${term.client}`)
+      // Clean things up
+      delete broadcasts[term.pid]
+      delete sessions[term.pid]
+      pid = 0
+      browser.close()
     })
 
     //  browser client --> app
@@ -195,15 +197,11 @@ dns.lookup('localhost', (err, addr, family) => {
     browser.on('close', () => {
       //  did user close browser with an open app?
       if (pid > 1) try {
-        process.kill(pid, 1)
-        console.log(`Forced close PLAYER session ${pid} from remote host: ${term.client}`)
+        term.destroy()   // process.kill(pid, 1)
+        console.log(`Forced close PLAYER session ${term.pid} from remote host: ${term.client}`)
       } catch (ex) {
-        console.log(`?FATAL browser close event ${pid}: ${ex}`)
+        console.log(`?FATAL browser close event ${term.pid}: ${ex}`)
       }
-      // Clean things up
-      term.client = ''
-      delete broadcasts[term.pid]
-      delete sessions[term.pid]
     })
   })
 

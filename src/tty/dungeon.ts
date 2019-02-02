@@ -1218,9 +1218,11 @@ function doMove(): boolean {
 			}
 
 			let cast = 7
-			let cost = new $.coins(Math.trunc($.money(Z) / 6 / $.player.hp * ($.player.hp - $.online.hp)))
+			let mod = 6 + $.int($.player.melee / 2) - $.int($.player.magic / 2) - +$.player.coward
+				+ +$.Ring.power($.player.rings, 'taxes').power + +$.access.sysop
+			let cost = new $.coins($.int($.money(Z) / mod / $.player.hp * ($.player.hp - $.online.hp)))
 			if (cost.value < 1) cost.value = 1
-			cost.value *= (deep + 1)
+			cost.value *= $.int(deep / 4 + 1)
 			if ($.player.maxcha > 98)	//	typically a Cleric and God
 				cost.value = 0
 			cost = new $.coins(cost.carry(1, true))
@@ -1230,19 +1232,20 @@ function doMove(): boolean {
 				cost.value = 0	//	this one is free of charge
 			}
 
-			if ($.online.hp >= $.player.hp || cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, cast)) {
-				xvt.outln(xvt.yellow, '"I will pray for you."')
-				break
-			}
-
 			let power = $.int(100 * DL.cleric.sp / DL.cleric.user.sp)
-			if ((!DL.map || DL.map == 'map') && power > 95) $.profile({ jpg:'npc/old cleric', effect:'zoomInUp' })
 			xvt.outln(xvt.yellow, 'There is an ', xvt.faint, 'old cleric', xvt.normal
 				, xvt.normal, ' in this room with '
 				, power < 40 ? xvt.faint : power < 80 ? xvt.normal : xvt.bright, `${power}`
 				, xvt.normal, '% spell power.')
 			xvt.out('He says, ')
-			if ($.online.hp > $.int($.player.hp / 3) || ($.int(deep / 4) + 3) * cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, 13)) {
+
+			if ($.online.hp >= $.player.hp || cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, cast)) {
+				xvt.outln(xvt.yellow, '"I will pray for you."')
+				break
+			}
+
+			if ((!DL.map || DL.map == 'map') && power > 95) $.profile({ jpg:'npc/old cleric', effect:'zoomInUp' })
+			if ($.online.hp > $.int($.player.hp / 3) || DL.cleric.sp < $.Magic.power(DL.cleric, 13)) {
 				xvt.out('"I can ', DL.cleric.sp < $.Magic.power(DL.cleric, 13) ? 'only' : 'surely'
 					, ' cast a Heal spell on your wounds for '
 					, cost.value ? cost.carry() : `you, ${$.player.gender === 'F' ? 'sister' : 'brother'}`
@@ -1250,12 +1253,7 @@ function doMove(): boolean {
 			}
 			else if (DL.cleric.sp >= $.Magic.power(DL.cleric, 13)) {
 				cast = 13
-				cost.value *= $.int(deep / 4) + 3
-				if (cost.value > $.player.coin.value) {
-					xvt.outln('"I will pray for you."')
-					break
-				}
-				xvt.out('"I can cure all your wounds for '
+				xvt.out('"I can restore your health for '
 					, cost.value ? cost.carry() : `you, ${$.player.gender === 'F' ? 'sister' : 'brother'}`
 					, '."')
 			}
@@ -1380,13 +1378,14 @@ function doMove(): boolean {
 		case 'dwarf':
 			$.profile({ jpg:'npc/dwarf', effect:'fadeIn' })
 			$.beep()
-			xvt.out(xvt.yellow, 'You run into a ', xvt.bright, 'dwarven merchant', xvt.reset, '.')
+			xvt.outln(xvt.yellow, 'You run into a ', xvt.bright, 'dwarven merchant', xvt.reset, '.')
+			xvt.waste(1000)
 			let hi = 0, credit = new $.coins(0)
 
 			$.action('ny')
 			xvt.app.form = {
 			'armor': { cb: () => {
-					xvt.outln('\n')
+					xvt.outln()
 					if (/Y/i.test(xvt.entry)) {
 						$.player.coin = new $.coins(0)
 						$.Armor.equip($.online, $.Armor.dwarf[hi])
@@ -1398,7 +1397,7 @@ function doMove(): boolean {
 					menu()
 				}, prompt:'Ok (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:20 },
 			'weapon': { cb: () => {
-					xvt.outln('\n')
+					xvt.outln()
 					if (/Y/i.test(xvt.entry)) {
 						$.player.coin = new $.coins(0)
 						$.Weapon.equip($.online, $.Weapon.dwarf[hi])
@@ -1413,7 +1412,8 @@ function doMove(): boolean {
 
 			if ($.dice(2) == 1) {
 				let ac = $.Armor.name[$.player.armor].ac
-				xvt.out('\nI see you have a class ', $.bracket(ac, false), ' ', $.player.armor, $.buff($.player.toAC, $.online.toAC))
+				xvt.out('\nI see you have a class ', $.bracket(ac, false), ' '
+					, xvt.bright, $.player.armor, xvt.normal, $.buff($.player.toAC, $.online.toAC))
 				if (ac) {
 					let cv = new $.coins($.Armor.name[$.player.armor].value)
 					credit.value = $.worth(cv.value, $.online.cha)
@@ -1425,21 +1425,25 @@ function doMove(): boolean {
 				else
 					credit.value = 0
 				xvt.outln(' worth ', credit.carry())
+				xvt.waste(1000)
 
 				for (hi = 0; hi < $.Armor.dwarf.length - 1 && ac >= $.Armor.name[$.Armor.dwarf[hi]].ac; hi++);
 				if (new $.coins($.Armor.name[$.Armor.dwarf[hi]].value).value < credit.value + $.player.coin.value) {
-					if ($.player.coin.value) xvt.outln('and all your coin worth ', $.player.coin.carry())
-					xvt.out(`I'll trade you for my `
+					if ($.player.coin.value) xvt.outln('  and all your coin worth ', $.player.coin.carry())
+					xvt.waste(1000)
+					xvt.out(`I'll trade you for my `, xvt.bright
 						, ['exceptional', 'precious', 'remarkable', 'special', 'uncommon'][$.dice(5) - 1], ' '
 						, $.bracket($.Armor.name[$.Armor.dwarf[hi]].ac, false), ' ')
 					xvt.outln(xvt.bright, xvt.yellow, $.Armor.dwarf[hi])
+					xvt.waste(1000)
 					xvt.app.focus = 'armor'
 					return false
 				}
 			}
 			else {
 				let wc = $.Weapon.name[$.player.weapon].wc
-				xvt.out('\nI see you carrying a class ', $.bracket(wc, false), ' ', $.player.weapon, $.buff($.player.toWC, $.online.toWC))
+				xvt.out('\nI see you carrying a class ', $.bracket(wc, false), ' '
+					, xvt.bright, $.player.weapon, xvt.normal, $.buff($.player.toWC, $.online.toWC))
 				if (wc) {
 					let cv = new $.coins($.Weapon.name[$.player.weapon].value)
 					credit.value = $.worth(cv.value, $.online.cha)
@@ -1454,11 +1458,13 @@ function doMove(): boolean {
 
 				for (hi = 0; hi < $.Weapon.dwarf.length - 1 && wc >= $.Weapon.name[$.Weapon.dwarf[hi]].wc; hi++);
 				if (new $.coins($.Weapon.name[$.Weapon.dwarf[hi]].value).value < credit.value + $.player.coin.value) {
-					if ($.player.coin.value) xvt.outln('and all your coin worth ', $.player.coin.carry())
-					xvt.out(`I'll trade you for my `
+					if ($.player.coin.value) xvt.outln('  and all your coin worth ', $.player.coin.carry())
+					xvt.waste(1000)
+					xvt.out(`I'll trade you for my `, xvt.bright
 						, ['exquisite', 'fine', 'jeweled', 'rare', 'splendid'][$.dice(5) - 1], ' '
 						, $.bracket($.Weapon.name[$.Weapon.dwarf[hi]].wc, false), ' ')
 					xvt.outln(xvt.bright, xvt.cyan, $.Weapon.dwarf[hi])
+					xvt.waste(1000)
 					xvt.app.focus = 'weapon'
 					return false
 				}
@@ -2559,10 +2565,10 @@ function putMonster(r = -1, c = -1): boolean {
 		$.PC.adjust('dex', deep - 2, 0, deep >>2, m)
 		$.PC.adjust('cha', deep - 2, 0, deep >>2, m)
 
-		let gold = new $.coins($.int($.money(level) / 10))
+		let gold = new $.coins($.int($.money(level) / (11 - deep)))
 		gold.value += $.worth(new $.coins(m.weapon.value).value, $.dice($.online.cha / 5) + 5)
 		gold.value += $.worth(new $.coins(m.armor.value).value, $.dice($.online.cha / 5) + 5)
-		gold.value *= $.dice(deep)
+		gold.value *= $.dice(deep * 2 / 3)
 		m.user.coin = new $.coins(gold.carry(1, true))
 
 		if (+m.user.weapon) {
@@ -2578,7 +2584,7 @@ function teleport() {
 	let min =  Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
 	$.action('teleport')
 
-	xvt.out(xvt.bright, xvt.yellow, 'What do you wish to do?\n', xvt.reset)
+	xvt.outln(xvt.bright, xvt.yellow, 'What do you wish to do?')
 	xvt.out($.bracket('U'), 'Teleport up 1 level')
 	if (Z < 99) xvt.out($.bracket('D'), 'Teleport down 1 level')
 	xvt.out($.bracket('O'), `Teleport out of this ${deep ? 'dank' : ''} dungeon`)

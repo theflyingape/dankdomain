@@ -16,17 +16,12 @@ module Logon
         $.tty = 'rlogin'
         process.stdin.setEncoding('ascii')
         break
-    case 'VT':
-        $.tty = 'telnet'
-        process.stdin.setEncoding('ascii')
-        break
     case 'XT':
         $.tty = 'web'
         process.stdin.setEncoding('utf8')
         xvt.out('\x1B]2;', process.title, '\x07')
         break
     default:
-        $.tty = 'telnet'
         process.stdin.setEncoding('ascii')
         xvt.emulation = 'VT'
         xvt.out('\f')

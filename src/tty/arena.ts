@@ -394,7 +394,7 @@ function MonsterFights(): boolean {
 
 		xvt.outln('\nThe ancient necromancer will summon you a demon for ', cost.carry())
 		if ($.player.coin.value < cost.value) {
-			xvt.outln('You don\'t have enough!')
+			xvt.outln(`You don't have enough!`)
 			return
 		}
 
