@@ -343,17 +343,11 @@ function listmm() {
 function menu() {
   input = false;
   cmd(`<table>
-<tr><td colspan=2>${ByeBye}</td></tr>
-<tr><td colspan=2><hr></td></tr>
-<tr><td><input type="button" value="Reroll" onclick="send('X');"></td><td><input type="button" value="Rob" onclick="send('R');"></td></tr>
-<tr><td><input type="button" value="Halls" onclick="send('L');"></td><td><input type="button" value="Casino" onclick="send('G');"></td></tr>
-<tr><td><input type="button" value="System" onclick="send('Z');"></td><td><input type="button" value="Status" onclick="send('Y');"></td></tr>
-<tr><td colspan=2><hr></td></tr>
-<tr><td colspan=2><input class="Gold" type="button" value="Most Wanted" onclick="send('M');"></td></tr>
-<tr><td colspan=2><hr></td></tr>
-<tr><td><input class="Silver" type="button" value="Naval" onclick="send('N');"></td><td><input class="Silver" type="button" value="Arena" onclick="send('A');"></td></tr>
-<tr><td><input class="Slate" type="button" value="Party" onclick="send('P');"></td><td><input class="Slate" type="button" value="Dungeon" onclick="send('D');"></td></tr>
-<tr><td><input class="Tavern" type="button" value="Tavern" onclick="send('T');"></td><td><input class="Tavern" type="button" value="Square" onclick="send('S');"></td></tr>
+<tr><td colspan=2>${ByeBye}</td><td colspan=2><input class="Gold" type="button" value="Most Wanted" onclick="send('M');"></td></tr>
+<tr><td colspan=4><hr></td></tr>
+<tr><td><input type="button" value="Reroll" onclick="send('X');"></td><td><input type="button" value="Rob" onclick="send('R');"></td><td><input class="Silver" type="button" value="Naval" onclick="send('N');"></td><td><input class="Silver" type="button" value="Arena" onclick="send('A');"></td></tr>
+<tr><td><input type="button" value="Halls" onclick="send('L');"></td><td><input type="button" value="Casino" onclick="send('G');"></td><td><input class="Slate" type="button" value="Party" onclick="send('P');"></td><td><input class="Slate" type="button" value="Dungeon" onclick="send('D');"></td></tr>
+<tr><td><input type="button" value="System" onclick="send('Z');"></td><td><input type="button" value="Status" onclick="send('Y');"></td><td><input class="Tavern" type="button" value="Tavern" onclick="send('T');"></td><td><input class="Tavern" type="button" value="Square" onclick="send('S');"></td></tr>
 </table>`);
 }
 
