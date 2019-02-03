@@ -172,10 +172,7 @@ export class Character {
     }
 
     hp(user = player): number {
-        return Math.round(user.level
-            + dice(user.level + user.melee)
-            + user.str / 10
-            + (user.str > 90 ? dice(user.str - 90) : 0))
+        return Math.round(user.level + dice(user.level) + user.str / 10)
     }
 
     jousting(rpc: active): number {
@@ -223,11 +220,7 @@ export class Character {
     }
 
     sp(user = player): number {
-        return user.magic > 1 ? Math.round(user.level
-            + dice(user.level + user.magic)
-            + user.int / 10
-            + (user.int > 90 ? dice(user.int - 90) : 0))
-            : 0
+        return user.magic > 1 ? Math.round(user.level + dice(user.level) + user.int / 10) : 0
     }
 
     stats(profile: active) {
@@ -1407,10 +1400,107 @@ export function playerPC(points = 200, immortal = false) {
     }
 }
 
-export function remake(user: user) {
+export function reroll(user: user, dd?: string, level = 1) {
+    //  reset essential character attributes
+    user.level = level > 99 ? 99 : level < 1 ? 1: level
+    user.pc = dd ? dd : Object.keys(PC.name['player'])[0]
+    user.status = ''
+
     let rpc = PC.card(user.pc)
-    for (let n = 1; n < user.level; n++) {
-        if (n == 50 && user.gender !== 'I' && user.id[0] !== '_') {
+    user.melee = rpc.melee
+    user.backstab = rpc.backstab
+    if (!(user.poison = rpc.poison)) user.poisons = []
+    if (!(user.magic = rpc.magic)) user.spells = []
+    user.steal = rpc.steal
+    user.str = rpc.baseStr
+    user.int = rpc.baseInt
+    user.dex = rpc.baseDex
+    user.cha = rpc.baseCha
+    user.maxstr = rpc.maxStr
+    user.maxint = rpc.maxInt
+    user.maxdex = rpc.maxDex
+    user.maxcha = rpc.maxCha
+    user.xp = 0
+    user.hp = 15
+    user.sp = user.magic > 1 ? 15 : 0
+
+    //  reset for new or non player
+    if (xvt.validator.isEmpty(user.id) || user.id[0] === '_') {
+        if (isNaN(user.dob)) user.dob = now().date
+        if (isNaN(user.joined)) user.joined = now().date
+        user.lastdate = now().date
+        user.lasttime = now().time
+        user.gender = user.sex
+
+        user.emulation = xvt.emulation
+        user.calls = 0
+        user.today = 0
+        user.expert = false
+        user.rows = process.stdout.rows || 24
+        user.remote = ''
+        user.novice = xvt.validator.isEmpty(user.id) && user.gender !== 'I'
+        user.gang = ''
+        user.wins = 0
+        user.immortal = 0
+
+        user.coin = new coins(0)
+        user.bank = new coins(0)
+        user.loan = new coins(0)
+        user.bounty = new coins(0)
+        user.who = ''
+        user.security = ''
+        user.realestate = ''
+    }
+
+    if (level == 1) {
+        Object.assign(user, require('./etc/reroll'))
+        user.gender = user.sex
+        user.coin = new coins(user.coin.toString())
+        user.bank = new coins(user.bank.toString())
+        user.loan = new coins(0)
+        if (user.rings && user.rings.length)
+            for (let i in user.rings)
+                saveRing(user.rings[i])
+        //  force a verify if their access allows it
+        // if (!user.novice && !Access.name[player.access].sysop) user.email = ''
+    }
+
+    if (level == 1 || xvt.validator.isEmpty(user.id) || user.id[0] === '_') {
+        //  no extra free or augmented stuff
+        user.poisons = []
+        user.spells = []
+        if (user.rings) user.rings.forEach(ring => { saveRing(ring, '') })
+        user.rings = []
+        user.toAC = 0
+        user.toWC = 0
+        user.hull = 0
+        user.cannon = 0
+        user.ram = false
+        user.blessed = ''
+        user.cursed = ''
+        user.coward = false
+        user.plays = 0
+        user.jl = 0
+        user.jw = 0
+        user.killed = 0
+        user.kills = 0
+        user.retreats = 0
+        user.tl = 0
+        user.tw = 0
+        user.bounty = new coins(0)
+        user.who = ''
+    }
+
+    if (user.level > 1)
+        user.xp = experience(user.level - 1, 1, user.int)
+    if (user.pc === Object.keys(PC.name['player'])[0])
+        user.xplevel = 0
+    else
+        user.xplevel = user.level
+
+    for (let n = 2; n <= user.xplevel; n++) {
+        user.level = n
+        if (user.level == 50 && user.gender !== 'I' && user.id[0] !== '_') {
             xvt.out(xvt.reset, xvt.bright, xvt.yellow, '+', xvt.reset, ' Bonus ')
             let d: number = 0
             while (!d) {
@@ -1504,107 +1594,6 @@ export function remake(user: user) {
         user.hp += PC.hp(user)
         user.sp += PC.sp(user)
     }
-
-    if (user.level > 1)
-        user.xp = experience(user.level - 1, 1, user.int)
-    if (user.pc === Object.keys(PC.name['player'])[0])
-        user.xplevel = 0
-    else
-        user.xplevel = user.level
-}
-
-export function reroll(user: user, dd?: string, level = 1) {
-    //  reset essential character attributes
-    user.level = level > 99 ? 99 : level < 1 ? 1: level
-    user.pc = dd ? dd : Object.keys(PC.name['player'])[0]
-    user.status = ''
-
-    let rpc = PC.card(user.pc)
-    user.melee = rpc.melee
-    user.backstab = rpc.backstab
-    if (!(user.poison = rpc.poison)) user.poisons = []
-    if (!(user.magic = rpc.magic)) user.spells = []
-    user.steal = rpc.steal
-    user.str = rpc.baseStr
-    user.int = rpc.baseInt
-    user.dex = rpc.baseDex
-    user.cha = rpc.baseCha
-    user.maxstr = rpc.maxStr
-    user.maxint = rpc.maxInt
-    user.maxdex = rpc.maxDex
-    user.maxcha = rpc.maxCha
-    user.xp = 0
-    user.hp = 15
-    user.sp = user.magic > 1 ? 15 : 0
-
-    //  reset for new or non player
-    if (xvt.validator.isEmpty(user.id) || user.id[0] === '_') {
-        if (isNaN(user.dob)) user.dob = now().date
-        if (isNaN(user.joined)) user.joined = now().date
-        user.lastdate = now().date
-        user.lasttime = now().time
-        user.gender = user.sex
-
-        user.emulation = xvt.emulation
-        user.calls = 0
-        user.today = 0
-        user.expert = false
-        user.rows = process.stdout.rows || 24
-        user.remote = ''
-        user.novice = xvt.validator.isEmpty(user.id) && user.gender !== 'I'
-        user.gang = ''
-        user.wins = 0
-        user.immortal = 0
-
-        user.coin = new coins(0)
-        user.bank = new coins(0)
-        user.loan = new coins(0)
-        user.bounty = new coins(0)
-        user.who = ''
-        user.security = ''
-        user.realestate = ''
-    }
-
-    if (level == 1) {
-        Object.assign(user, require('./etc/reroll'))
-        user.gender = user.sex
-        user.coin = new coins(user.coin.toString())
-        user.bank = new coins(user.bank.toString())
-        user.loan = new coins(0)
-        if (user.rings && user.rings.length)
-            for (let i in user.rings)
-                saveRing(user.rings[i])
-        //  force a verify if their access allows it
-        // if (!user.novice && !Access.name[player.access].sysop) user.email = ''
-    }
-
-    if (level == 1 || xvt.validator.isEmpty(user.id) || user.id[0] === '_') {
-        //  no extra free or augmented stuff
-        user.poisons = []
-        user.spells = []
-        if (user.rings) user.rings.forEach(ring => { saveRing(ring, '') })
-        user.rings = []
-        user.toAC = 0
-        user.toWC = 0
-        user.hull = 0
-        user.cannon = 0
-        user.ram = false
-        user.blessed = ''
-        user.cursed = ''
-        user.coward = false
-        user.plays = 0
-        user.jl = 0
-        user.jw = 0
-        user.killed = 0
-        user.kills = 0
-        user.retreats = 0
-        user.tl = 0
-        user.tw = 0
-        user.bounty = new coins(0)
-        user.who = ''
-    }
-
-    remake(user)
 }
 
 // the Ancient Riddle of the Keys
@@ -2071,8 +2060,8 @@ export function logoff() {
         xvt.out(xvt.cyan, 'I\\___/I    ', xvt.green, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Green, xvt.white, 'RAH-CoCo\'s', xvt.reset, xvt.green, xvt.RGradient[xvt.emulation], xvt.cyan, '     I\\___/I\n')
         xvt.out(xvt.cyan, '\\/   \\/ ', xvt.reset, '   http://rahcocos.com  ', xvt.cyan, '  \\/   \\/\n')
         xvt.out(xvt.cyan, ' \\ : /                           ', xvt.cyan, '  \\ : / \n')
-        xvt.out(xvt.cyan, '  I:I     ', xvt.blue, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Blue, xvt.white, `${player.emulation === 'XT' ? 'ℛ' : 'R'}obert ${player.emulation == 'XT' ? 'ℋ' : 'H'}urst`, xvt.reset, xvt.blue, xvt.RGradient[xvt.emulation], xvt.cyan, '      I:I  \n')
-        xvt.out(xvt.cyan, ' .I:I. ', xvt.reset, 'https://robert.hurst-ri.us', xvt.cyan, '  .I:I. \n')
+        xvt.out(xvt.cyan, '  I:I    ', xvt.blue, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Blue, xvt.white, `${player.emulation === 'XT' ? 'ℛ ' : ' R'}obert ${player.emulation == 'XT' ? 'ℋ ' : ' H'}urst`, xvt.reset, xvt.blue, xvt.RGradient[xvt.emulation], xvt.cyan, '     I:I  \n')
+        xvt.out(xvt.cyan, ' .I:I. ', xvt.reset, '     https://ddgame.us    ', xvt.cyan, '  .I:I. \n')
         xvt.outln(); xvt.waste(500)
         xvt.outln(xvt.bright, xvt.black, process.title
             , ' running on ', xvt.bright, xvt.green, 'Node.js ', xvt.normal, process.version, xvt.reset

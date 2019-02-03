@@ -146,7 +146,7 @@ function choice() {
             $.action('ny')
             xvt.app.form = {
                 'yn': { cb: () => {
-                    xvt.out('\n')
+                    xvt.outln('\n')
                     if (/Y/i.test(xvt.entry)) {
                         if (!$.reason.length) $.reason = 'logged off as a level ' + $.player.level + ' ' + $.player.pc
                         xvt.hangup()
