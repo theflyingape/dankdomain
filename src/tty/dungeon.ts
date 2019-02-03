@@ -2895,7 +2895,7 @@ function occupying(room: room, o = '', reveal = false, identify = false) {
 
 	xvt.out(o, xvt.reset)
 
-	if (room.giftItem && DL.map == `Marauder's map`)
+	if (room.giftItem && (DL.map == `Marauder's map` || $.Ring.power($.player.rings, 'identify').power))
 		xvt.out('\x08', xvt.faint, room.giftIcon, xvt.reset)
 }
 
