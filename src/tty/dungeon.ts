@@ -1051,7 +1051,8 @@ function doMove(): boolean {
 							break
 						case 4:
 							$.online.hp += $.int($.player.hp / 2) + $.dice($.player.hp / 2)
-							$.online.sp += $.int($.player.sp / 2) + $.dice($.player.sp / 2)
+							if ($.player.magic > 1)
+								$.online.sp += $.int($.player.sp / 2) + $.dice($.player.sp / 2)
 							$.player.toWC += $.dice($.online.weapon.wc)
 							$.online.toWC += $.int($.online.weapon.wc / 2) + 1
 							$.player.toAC += $.dice($.online.armor.ac)
@@ -1195,7 +1196,9 @@ function doMove(): boolean {
 					y = 'csgp'.indexOf(pouch[x].substr(-1))
 					xvt.out('pouch of ')
 					if ($.tty == 'web') xvt.out('💰  ')
-					xvt.out(xvt.bright, [xvt.red,xvt.cyan,xvt.yellow,xvt.magenta][y], ['copper','silver','gold','platinum'][y], xvt.reset, ' pieces')
+					xvt.out(xvt.bright, [xvt.red,xvt.cyan,xvt.yellow,xvt.magenta][y]
+						, ['copper','silver','gold','platinum'][y]
+						, xvt.reset, ' pieces')
 					$.player.coin.value -= new $.coins(pouch[x]).value
 				}
 				else
@@ -1222,7 +1225,7 @@ function doMove(): boolean {
 			if ($.Ring.power($.player.rings, 'taxes').power) mod++
 			if ($.access.sysop) mod++
 			if ($.player.coward) mod--
-			let cost = new $.coins(($.player.hp - $.online.hp) * $.int($.money(Z) / mod / $.player.hp))
+			let cost = new $.coins($.int(($.player.hp - $.online.hp) * $.money(Z) / mod / $.player.hp))
 			if (cost.value < 1) cost.value = 1
 			cost.value *= ($.int(deep / 3) + 1)
 			if ($.player.maxcha > 98)	//	typically a Cleric and God
@@ -2679,7 +2682,7 @@ function quaff(v: number, it = true) {
 	//	Potion of Cure Light Wounds
 		case 0:
 			$.sound('yum')
-			$.online.hp += $.dice($.player.hp - $.online.hp)
+			$.online.hp += $.PC.hp() + $.dice($.player.hp - $.online.hp)
 			break
 
 	//	Vial of Weakness
@@ -2689,7 +2692,7 @@ function quaff(v: number, it = true) {
 
 	//	Potion of Charm
 		case 2:
-			$.PC.adjust('cha', $.dice(10), 1, +($.player.cha == $.player.maxcha))
+			$.PC.adjust('cha', 100 + $.dice(10), 1, +($.player.cha == $.player.maxcha))
 			break
 
 	//	Vial of Stupidity
@@ -2699,7 +2702,7 @@ function quaff(v: number, it = true) {
 
 	//	Potion of Agility
 		case 4:
-			$.PC.adjust('dex', $.dice(10), 1, +($.player.dex == $.player.maxdex))
+			$.PC.adjust('dex', 100 + $.dice(10), 1, +($.player.dex == $.player.maxdex))
 			break
 
 	//	Vial of Clumsiness
@@ -2709,7 +2712,7 @@ function quaff(v: number, it = true) {
 
 	//	Potion of Wisdom
 		case 6:
-			$.PC.adjust('int', $.dice(10), 1, +($.player.int == $.player.maxint))
+			$.PC.adjust('int', 100 + $.dice(10), 1, +($.player.int == $.player.maxint))
 			break
 
 	//	Vile Vial
@@ -2719,7 +2722,7 @@ function quaff(v: number, it = true) {
 
 	//	Potion of Stamina
 		case 8:
-			$.PC.adjust('str', $.dice(10), 1, +($.player.str == $.player.maxstr))
+			$.PC.adjust('str', 100 + $.dice(10), 1, +($.player.str == $.player.maxstr))
 			break
 
 	//	Vial of Slaad Secretions
@@ -2735,7 +2738,7 @@ function quaff(v: number, it = true) {
 	//	Potion of Mana
 		case 10:
 			$.sound('shimmer')
-			$.online.sp += $.dice($.player.sp - $.online.sp)
+			$.online.sp += $.PC.sp() + $.dice($.player.sp - $.online.sp)
 			break
 
 	//	Flask of Fire Water
@@ -2775,23 +2778,26 @@ function quaff(v: number, it = true) {
 
 	//	Potion of Augment
 		case 14:
-			$.sound('hone', 6)
+			$.sound('hone', 12)
 			$.PC.adjust('str'
-				, $.dice(100 - $.online.str)
+				, 100 + $.dice(100 - $.online.str)
 				, $.dice(3) + 2
 				, $.player.maxstr < 95 ? 2 : 1)
 			$.PC.adjust('int'
-				, $.dice(100 - $.online.int)
+				, 100 + $.dice(100 - $.online.int)
 				, $.dice(3) + 2
 				, $.player.maxint < 95 ? 2 : 1)
 			$.PC.adjust('dex'
-				, $.dice(100 - $.online.dex)
+				, 100 + $.dice(100 - $.online.dex)
 				, $.dice(3) + 2
 				, $.player.maxdex < 95 ? 2 : 1)
 			$.PC.adjust('cha'
-				, $.dice(100 - $.online.cha)
+				, 100 + $.dice(100 - $.online.cha)
 				, $.dice(3) + 2
 				, $.player.maxcha < 95 ? 2 : 1)
+			$.sound('heal')
+			$.online.hp += $.PC.hp()
+			$.online.sp += $.PC.sp()
 			break
 
 	//	Beaker of Death

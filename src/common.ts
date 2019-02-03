@@ -129,6 +129,10 @@ export class Character {
             const a = `to${titleCase(ability)}`
             let mod = rpc.user.blessed ? 10 : 0
             mod -= rpc.user.cursed ? 10 : 0
+            if (rt > 100) {
+                mod++
+                rt %= 100
+            }
             //  iterate each ring, ability mods are additive
             rpc.user.rings.forEach(ring => {
                 if (Ring.power([ ring ], 'degrade', 'ability', ability).power && !Ring.power(rpc.user.rings, 'ring').power)
@@ -165,6 +169,13 @@ export class Character {
             loadUser(rpc)
         }
         return rpc
+    }
+
+    hp(user = player): number {
+        return Math.round(user.level
+            + dice(user.level + user.melee)
+            + user.str / 10
+            + (user.str > 90 ? dice(user.str - 90) : 0))
     }
 
     jousting(rpc: active): number {
@@ -209,6 +220,14 @@ export class Character {
             }
         }
         return pc
+    }
+
+    sp(user = player): number {
+        return user.magic > 1 ? Math.round(user.level
+            + dice(user.level + user.magic)
+            + user.int / 10
+            + (user.int > 90 ? dice(user.int - 90) : 0))
+            : 0
     }
 
     stats(profile: active) {
@@ -679,10 +698,8 @@ export function checkXP(rpc: active, cb: Function): boolean {
             xvt.sessionAllowed += 300
         }
 
-		rpc.user.hp += Math.round(rpc.user.level + dice(rpc.user.level) + rpc.user.str / 10 + (rpc.user.str > 90 ? rpc.user.str - 90 : 0))
-
-		if (rpc.user.magic > 1)
-			rpc.user.sp += Math.round(rpc.user.level + dice(rpc.user.level) + rpc.user.int / 10 + (rpc.user.int > 90 ? rpc.user.int - 90 : 0))
+		rpc.user.hp += PC.hp(rpc.user)
+		rpc.user.sp += PC.sp(rpc.user)
 
         PC.adjust('str', 0, PC.card(rpc.user.pc).toStr, 0, rpc)
         PC.adjust('int', 0, PC.card(rpc.user.pc).toInt, 0, rpc)
@@ -1484,9 +1501,8 @@ export function remake(user: user) {
             user.dex = user.maxdex
         if ((user.cha += rpc.toCha) > user.maxcha)
             user.cha = user.maxcha
-        user.hp += n + dice(n) + int(user.str / 10)
-        if (user.magic > 1)
-            user.sp += n + dice(n) + int(user.int / 10)
+        user.hp += PC.hp(user)
+        user.sp += PC.sp(user)
     }
 
     if (user.level > 1)

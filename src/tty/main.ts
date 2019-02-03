@@ -160,14 +160,15 @@ function choice() {
 
         case 'R':
             if (!$.access.roleplay) break
+            xvt.outln()
             if ($.player.novice) {
-                xvt.out('\nNovice players cannot rob.\n')
+                xvt.outln('Novice players cannot rob.')
                 suppress = true
                 break
             }
             $.music('.')
-            xvt.out('\nIt is a hot, moonless night.\n')
-            xvt.out('A city guard walks down another street.\n')
+            xvt.outln('It is a hot, moonless night.')
+            xvt.outln('A city guard walks down another street.')
             let self = $.worth(new $.coins($.online.armor.value).value, $.online.cha)
             self += $.worth(new $.coins($.online.weapon.value).value, $.online.cha)
             self += $.player.coin.value + $.player.bank.value - $.player.loan.value
@@ -198,7 +199,7 @@ function choice() {
 					return
                 }
 
-                xvt.outln(`\nYou case ${opponent.user.handle}'s joint out.`)
+                xvt.outln(xvt.faint, `You case ${opponent.user.handle}'s joint out.`)
                 xvt.waste(600)
                 let prize = $.worth(new $.coins($.Armor.name[opponent.user.armor].value).value, $.online.cha)
                 prize += $.worth(new $.coins($.Weapon.name[opponent.user.weapon].value).value, $.online.cha)
@@ -213,14 +214,20 @@ function choice() {
 					return
                 }
 
-                xvt.outln('The goods are in', $.an(opponent.user.realestate),  ' protected by', $.an(opponent.user.security), '.')
+                xvt.outln(xvt.faint, xvt.cyan, 'The goods are in'
+                    , xvt.normal, $.an(opponent.user.realestate)
+                    , xvt.faint, ' protected by'
+                    , xvt.normal, $.an(opponent.user.security)
+                    , xvt.faint, '.')
 
                 $.action('ny')
                 xvt.app.form = {
                     'yn': { cb: () => {
                         xvt.outln()
                         if (/Y/i.test(xvt.entry)) {
-							xvt.out('\nYou slide into the shadows and make your attempt ', xvt.faint)
+                            xvt.out(xvt.bright, '\nYou slide into '
+                                , xvt.normal, 'the shadows and '
+                                , xvt.faint, 'make your attempt ')
                             xvt.waste(1000)
                             let lock = 5 * ($.Security.name[opponent.user.security].protection + 1)
                                 + $.RealEstate.name[opponent.user.realestate].protection
@@ -235,8 +242,10 @@ function choice() {
                             xvt.outln()
                             xvt.waste(600)
 
-                            if ($.player.email === opponent.user.email || !$.lock(opponent.user.id))
+                            if ($.player.email === opponent.user.email || !$.lock(opponent.user.id)) {
+                                $.player.coward = true
                                 skill = 0
+                            }
 
                             if (skill > lock) {
                                 $.steal++

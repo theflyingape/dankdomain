@@ -216,14 +216,12 @@ function choice() {
 				$.sound('quaff', 6)
 				$.sound('yum')
 				xvt.outln('Yum!  You feel stronger and healthier.\n')
-				$.PC.adjust('str', $.dice(10))
+				$.PC.adjust('str', 101)
 				xvt.out(`Stamina = ${$.online.str}     `)
-				$.online.hp += $.player.level + $.dice($.player.level)
-					+ Math.trunc($.player.str / 10) + ($.player.str > 90 ? $.player.str - 90 : 0)
+				$.online.hp += $.int($.PC.hp() / 2) + $.dice($.PC.hp() / 2)
 				xvt.out(`Hit points = ${$.online.hp}     `)
 				if ($.player.sp) {
-					$.online.sp += $.player.level + $.dice($.player.level)
-						+ Math.trunc($.player.int / 10) + ($.player.int > 90 ? $.player.int - 90 : 0)
+					$.online.sp += $.int($.PC.sp() / 2) + $.dice($.PC.sp() / 2)
 					xvt.out(`Spell points = ${$.online.sp}`)
 				}
 				xvt.outln()
