@@ -252,7 +252,7 @@ export function attack(retry = false) {
             how = 'hynoptize'
             color = xvt.white
         }
-        else if (enemy == $.online) {
+        else if (enemy == $.online || enemy.user.gender !== 'I') {
             how = 'dodge'
             color = xvt.red
         }
