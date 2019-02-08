@@ -1402,7 +1402,8 @@ export function playerPC(points = 200, immortal = false) {
 
 export function reroll(user: user, dd?: string, level = 1) {
     //  reset essential character attributes
-    user.level = level > 99 ? 99 : level < 1 ? 1: level
+    level = level > 99 ? 99 : level < 1 ? 1: level
+    user.level = level
     user.pc = dd ? dd : Object.keys(PC.name['player'])[0]
     user.status = ''
 
@@ -1498,7 +1499,7 @@ export function reroll(user: user, dd?: string, level = 1) {
     else
         user.xplevel = user.level
 
-    for (let n = 2; n <= user.xplevel; n++) {
+    for (let n = 2; n <= level; n++) {
         user.level = n
         if (user.level == 50 && user.gender !== 'I' && user.id[0] !== '_') {
             xvt.out(xvt.reset, xvt.bright, xvt.yellow, '+', xvt.reset, ' Bonus ')
