@@ -334,14 +334,14 @@ export function menu(suppress = false) {
 			$.Armor.equip($.online, $.Armor.merchant[0])
 		}
 		xvt.outln()
-		if ($.reason) {
-			scroll()
-			xvt.hangup()
-		}
 	}
 
 	//  insert any wall messages here
 	if ($.tty == 'web') xvt.out('\x06')
+	if ($.reason) {
+		scroll()
+		xvt.hangup()
+	}
 
 	//	user input
 	xvt.app.form = {
