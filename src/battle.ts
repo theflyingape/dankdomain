@@ -1139,7 +1139,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             //  collect some of the mana spent by the enemy?
             if (nme) {
                 const spent = +(+$.Ring.power(nme.user.rings, 'sp', 'pc', nme.user.pc).power && !$.Ring.power(rpc.user.rings, 'ring').power) * (+$.Ring.power(nme.user.rings, 'ring').power + 1)
-                if (mana = spent * $.dice(mana >>1)) {
+                if (mana = spent * $.dice(mana / 3)) {
                     if (nme.sp + mana > nme.user.sp) {
                         mana = nme.user.sp - nme.sp
                         if (mana < 0) mana = 0
@@ -2129,7 +2129,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         xvt.waste(50)
 
         //  any bonus restore health from the hit off enemy?
-        if (hit = life * $.dice(hit >>1)) {
+        if (hit = life * $.dice(hit / 3)) {
             if (rpc.hp + hit > rpc.user.hp) {
                 hit = rpc.user.hp - rpc.hp
                 if (hit < 0) hit = 0
