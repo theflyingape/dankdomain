@@ -48,7 +48,7 @@ export function menu(suppress = true) {
 
 	if (!$.player.novice && $.player.level > 1 && $.player.coin.value > 0
 		&& $.dice($.online.cha / 2 + 5 * $.player.steal) == 1) {
-		let bump = $.PC.encounter(`AND novice = 0 AND (id NOT GLOB '_*' OR id = '_TAX')`
+		let bump = $.PC.encounter(`AND coward = 0 AND novice = 0 AND (id NOT GLOB '_*' OR id = '_TAX')`
 			, $.player.level - 9, $.player.level + 9)
 		if (bump.user.id && !bump.user.status) {
 			$.PC.profile(bump)
@@ -56,12 +56,10 @@ export function menu(suppress = true) {
 				, xvt.normal, ' into you from'
 				, xvt.bright, ' out of the shadows'
 				, xvt.reset, ' ... ')
-			xvt.waste(1500)
-			$.animated('fadeOutRight')
+			$.beep()
 			if ($.dice($.online.cha / 10 + 2 * ($.player.steal + 1)) > 2 * bump.user.steal + 1)
-				xvt.out('\nwaves a pardon and moves along.\n')
+				xvt.outln('{waves}\n ... and moves along.')
 			else {
-				$.beep()
 				let pouch = $.player.coin.amount.split(',')
 				let p = $.dice(pouch.length) - 1
 				let i = 'csgp'.indexOf(pouch[p].substr(-1))
@@ -71,12 +69,15 @@ export function menu(suppress = true) {
 				$.log(bump.user.id, `\nYou picked ${$.player.handle}'s pouch holding ${v.carry()}!`)
 				$.player.coin.value -= v.value
 				xvt.outln(xvt.faint, '{sigh}')
+				xvt.out('Your pouch of ')
 				$.sound('oops', 8)
-				xvt.out('You notice your pouch of '
-					, xvt.bright, [xvt.red,xvt.cyan,xvt.yellow,xvt.magenta][i], ['copper','silver','gold','platinum'][i]
-					, xvt.reset, ' pieces has gone missing!\n')
-				xvt.waste(2000)
+				if ($.tty == 'web') xvt.out('💰  ')
+				xvt.outln(xvt.bright, [xvt.red,xvt.cyan,xvt.yellow,xvt.magenta][i], ['copper','silver','gold','platinum'][i]
+					, xvt.reset, ' pieces goes missing!')
+				xvt.waste(800)
 			}
+			xvt.waste(1200)
+			$.animated('fadeOutRight')
 		}
 	}
 
@@ -386,9 +387,14 @@ function choice() {
 
 			xvt.outln('\n\nYou pick ', pocket.handle, '\'s pocket and steal ', credit.carry(), '!\n')
 			xvt.waste(1000)
-			if ($.int(16 * $.player.steal + $.player.level / 10 + $.player.dex / 10) < $.dice(100)) {
+			let effort = 100
+			if ($.Ring.power($.player.rings, 'steal').power) {
+				effort -= 10
+				if ($.Ring.power($.player.rings, 'ring').power)
+					effort -= 5
+			}
+			if ($.int(16 * $.player.steal + $.player.level / 10 + $.online.dex / 10) < $.dice(effort)) {
 				$.player.status = 'jail'
-				$.player.xplevel = 0
 				$.reason = `caught picking ${pocket.handle}'s pocket`
 				$.action('clear')
 				$.profile({ png:'npc/jailer', effect:'fadeIn' })
@@ -544,9 +550,14 @@ function Bank() {
 			xvt.out('\nYou attempt to sneak into the vault...')
 			xvt.waste(2500)
 
-			if ($.dice(100) > ++c) {
+			let effort = 100
+			if ($.Ring.power($.player.rings, 'steal').power) {
+				effort--
+				if ($.Ring.power($.player.rings, 'ring').power)
+					effort--
+			}
+			if ($.dice(effort) > ++c) {
 				$.player.status = 'jail'
-				$.player.xplevel = 0
 				$.reason = 'caught getting into the vault'
 				$.action('clear')
 				$.profile({ png:'npc/jailer', effect:'fadeIn' })
@@ -580,9 +591,8 @@ function Bank() {
 			}
 
 			c /= 15 - ($.player.steal * 3)
-			if ($.dice(100) > ++c) {
+			if ($.dice(effort) > ++c) {
 				$.player.status = 'jail'
-				$.player.xplevel = 0
 				$.reason = 'caught inside the vault'
 				xvt.out(xvt.faint, ' something jingles.', xvt.normal)
 				$.action('clear')

@@ -232,10 +232,16 @@ function choice() {
                             let lock = 5 * ($.Security.name[opponent.user.security].protection + 1)
                                 + $.RealEstate.name[opponent.user.realestate].protection
                             let skill = Math.round($.player.steal * $.online.dex * $.online.int / 10000)
+                            let effort = 100
+                            if ($.Ring.power($.player.rings, 'steal').power) {
+                                effort--
+                                if ($.Ring.power($.player.rings, 'ring').power)
+                                    effort--
+                            }
                             for (let pick = 0; pick < $.player.steal; pick++) {
                                 xvt.out('.')
                                 xvt.waste(400)
-                                skill += $.dice(100 + $.player.steal) < 100
+                                skill += $.dice(100 + $.player.steal) < effort
                                     ? $.dice($.player.level + $.player.steal - $.steal)
                                     : lock
                             }
@@ -248,7 +254,7 @@ function choice() {
                             }
 
                             if (skill > lock) {
-                                $.steal++
+                                if (!$.Ring.power($.player.rings, 'ring').power) $.steal++
                                 $.player.coin.value += prize
                                 xvt.outln('You break in and make off with ', new $.coins(prize).carry(), ' worth of stuff!')
                                 xvt.waste(1000)
@@ -286,7 +292,6 @@ function choice() {
                                 $.log(opponent.user.id, `\n${$.player.handle} was caught robbing you!`)
                                 $.reason = `caught robbing ${opponent.user.handle}`
                                 $.player.status = 'jail'
-                                $.player.xplevel = 0
                                 $.action('clear')
                                 $.profile({ png:'npc/city_guard_2', effect:'fadeIn' })
 								xvt.outln('A city guard catches you and throws you into jail!')
@@ -308,7 +313,7 @@ function choice() {
 
         case 'T':
             if (!$.tiny) {
-                xvt.out(`\nThe tavern is closed for the day.\n`)
+                xvt.outln(`\nThe tavern is closed for the day.`)
                 suppress = true
                 break
             }

@@ -854,7 +854,7 @@ export function spoils() {
         //  accruing money is always eligible
         if ($.player.coin.value) {
             winner.user.coin.value += $.player.coin.value
-            xvt.outln(xvt.reset, $.who(winner, 'He'), 'gets ', $.player.coin.carry(), ' you were carrying.')
+            xvt.outln(xvt.reset, $.who(winner, 'He'), 'gets ', $.player.coin.carry(), ' you were carrying.\n')
             $.player.coin.value = 0
         }
         xvt.out(600)
@@ -868,11 +868,10 @@ export function spoils() {
             else {
                 $.player.coward = false
                 $.player.cursed = winner.user.id
-                winner.user.coward = false
                 winner.user.cursed = ''
                 xvt.out(xvt.bright, xvt.black, 'A dark cloud hovers over', xvt.reset)
             }
-            xvt.outln(xvt.faint, ' you.')
+            xvt.outln(xvt.faint, ' you.\n')
             xvt.waste(600)
         }
 
@@ -885,7 +884,7 @@ export function spoils() {
             if ($.player.blessed) {
                 winner.user.blessed = $.player.id
                 $.player.blessed = ''
-                xvt.outln(xvt.bright, xvt.yellow, 'Your shining aura ', xvt.normal, 'leaves ', xvt.faint, 'you.')
+                xvt.outln(xvt.bright, xvt.yellow, 'Your shining aura ', xvt.normal, 'leaves ', xvt.faint, 'you.\n')
                 xvt.waste(600)
             }
             if ($.Weapon.swap(winner, $.online)) {
@@ -925,7 +924,7 @@ export function spoils() {
                     gang.members[n] = $.player.id
                     $.saveGang(gang)
                     $.player.cha--
-                    xvt.outln($.who(winner,'He'), `takes over as the leader of ${gang.name}.`)
+                    xvt.outln($.who(winner,'He'), `takes over as the leader of ${gang.name}.\n`)
                     xvt.waste(600)
                 }
             }
@@ -2264,12 +2263,13 @@ export function user(venue: string, cb:Function) {
                 if (/Bail|Brawl|Curse|Drop|Joust|Resurrect|Rob/.test(venue) && !rpc.user.xplevel) {
                     rpc.user.id = ''
                     xvt.beep()
-                    xvt.out(' ', $.bracket(rpc.user.status == 'jail' ? '🔒 jail' : 'inactive', false))
+                    xvt.out(' ', $.bracket('inactive', false))
                 }
-                else if (/Brawl|Joust|Resurrect/.test(venue) && rpc.user.status == 'jail') {
+                else if (/Brawl|Fight|Joust|Resurrect/.test(venue) && rpc.user.status == 'jail') {
                     rpc.user.id = ''
                     xvt.beep()
-                    xvt.out(' ', $.bracket('🔒 jail', false))
+                    if ($.tty == 'web') xvt.out(' 🔒 ')
+                    xvt.out(' ', $.bracket(rpc.user.status, false))
                 }
             }
             xvt.outln()

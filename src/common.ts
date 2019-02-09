@@ -162,6 +162,7 @@ export class Character {
         let rpc = <active>{ user:{id:''} }
         let rs = query(`SELECT id FROM Players WHERE id != '${player.id}'
             AND xplevel BETWEEN ${lo} AND ${hi}
+            AND status != 'jail'
             ${where} ORDER BY level`)
         if (rs.length) {
             let n = dice(rs.length) - 1
