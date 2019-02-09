@@ -57,7 +57,7 @@ export function menu(suppress = true) {
 				, xvt.bright, ' out of the shadows'
 				, xvt.reset, ' ... ')
 			$.beep()
-			if ($.dice($.online.cha / 10 + 2 * ($.player.steal + 1)) > 2 * bump.user.steal + 1)
+			if (!$.Ring.power(bump.user.rings, 'steal').power && $.dice($.online.cha / 10 + 2 * ($.player.steal + 1)) > 2 * bump.user.steal + 1)
 				xvt.outln('{waves}\n ... and moves along.')
 			else {
 				let pouch = $.player.coin.amount.split(',')
