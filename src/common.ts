@@ -1388,13 +1388,13 @@ export function playerPC(points = 200, immortal = false) {
                     xvt.hangup()
                 }
                 else {
-                    xvt.outln(`... and you get to complete any remaining parts to this play.`)
+                    xvt.outln(xvt.yellow, `\n... and you get to complete any remaining parts to this play.`)
                     require('./tty/main').menu(true)
                 }
                 return
         }
 
-        xvt.outln('\n\nYou have ', left.toString(), ' ability points left.')
+        xvt.outln('\n\nYou have ', xvt.bright, left.toString(), xvt.normal, ' ability points left.')
         xvt.app.form[p].prompt += ' ' + bracket(xvt.app.form[p].enter, false) + ': '
         xvt.app.focus = p
     }
@@ -1733,7 +1733,7 @@ export function riddle() {
             xvt.waste(12)
         }
 
-        xvt.out(xvt.reset, '\nHappy hunting tomorrow!\n')
+        xvt.outln(xvt.reset, '\nHappy hunting tomorrow!\n')
         sound('winner', 51)
         xvt.hangup()
     }
@@ -1742,10 +1742,10 @@ export function riddle() {
     xvt.out(xvt.bright, xvt.yellow, '\nYou are rewarded'
         , xvt.normal, ` ${access.calls} `, xvt.bright, 'more calls today.\n', xvt.reset)
 
-    xvt.out(xvt.green, xvt.bright, `\nOl' Mighty One!  `
+    xvt.outln(xvt.green, xvt.bright, `\nOl' Mighty One!  `
         , xvt.normal, 'Solve the'
         , xvt.faint, ' Ancient Riddle of the Keys '
-        , xvt.normal, 'and you will become\nan immortal being.\n\n')
+        , xvt.normal, 'and you will become\nan immortal being.\n')
 
     let slot: number
     for (let i in player.keyhints) {
@@ -1779,49 +1779,56 @@ export function riddle() {
         keyhint(online)
 
     action('riddle')
+    let combo = player.keyseq
+
     xvt.app.form = {
         'key': { cb:() => {
+            let attempt = xvt.entry.toUpperCase()
             xvt.out(' ...you insert and twist the key... ')
             xvt.waste(1234)
-            if (xvt.entry.toUpperCase() === player.keyseq[slot]) {
+            if (attempt === combo[slot]) {
                 sound('click')
-                if (player.emulation === 'XT') xvt.out('🔓 ')
+                if (tty == 'web') xvt.out('🔓 ')
                 xvt.outln(xvt.cyan, '{', xvt.bright, 'Click!', xvt.normal, '}')
+
                 player.pc = Object.keys(PC.name['immortal'])[slot]
                 profile({ png:'player/' + player.pc.toLowerCase() + (player.gender === 'F' ? '_f' : ''), pc:player.pc })
-                xvt.outln(xvt.bright, [ xvt.cyan, xvt.blue, xvt.magenta ][slot], `You are now a ${player.pc}.`)
+                xvt.outln([ xvt.red, xvt.blue, xvt.magenta ][slot]
+                    , 'You ', [ 'advance to', 'succeed as', 'transcend into'][slot]
+                    , xvt.bright, an(player.pc), xvt.normal, '.')
+                reroll(player, player.pc)
+                newkeys(player)
+                player.coward = true
+                saveUser(player)
+
                 if (slot++ < max) {
                     xvt.app.form['key'].prompt = `Insert key #${slot + 1}? `
                     xvt.app.refocus()
                     return
                 }
-                reroll(player, player.pc)
-                newkeys(player)
+
+                player.coward = false
                 playerPC([200,210,220,240][slot], true)
                 return
             }
             else {
                 sound('thunder')
-                if (player.emulation === 'XT') xvt.out('💀 ')
+                if (tty == 'web') xvt.out('💀 ')
                 xvt.outln(xvt.bright, xvt.black, '^', xvt.white, 'Boom!', xvt.black, '^')
+
                 if (slot == 0) {
                     for (let i = 3 * slot; i < 3 * (slot + 1); i++) {
-                        if (player.keyhints[i] === xvt.entry.toUpperCase())
+                        if (player.keyhints[i] === attempt)
                             break
                         if (!player.keyhints[i]) {
-                            player.keyhints[i] = xvt.entry.toUpperCase()
+                            player.keyhints[i] = attempt
                             break
                         }
                     }
-                    reroll(player)
-                    playerPC(200 + 4 * player.wins + int(player.immortal / 4))
+                    playerPC(200 + 4 * player.wins + int(player.immortal / 3))
                 }
-                else {
-                    reroll(player, player.pc)
-                    newkeys(player)
+                else
                     playerPC([200,210,220,240][slot], true)
-                }
-                return
             }
         }, eol:false, match:/P|G|S|C/i }
     }

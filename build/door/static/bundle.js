@@ -82,7 +82,7 @@ document.getElementById('lurker-list').onchange = (ev) => {
     document.getElementById('terminal').hidden = false;
     term = new xterm_1.Terminal({
         bellStyle: 'none', cursorBlink: false, scrollback: 0,
-        fontFamily: 'Consolas,monospace', fontSize: 20,
+        fontFamily: 'tty,Consolas,monospace', fontSize: 22,
         fontWeight: '400', fontWeightBold: '500',
         theme: {
             foreground: '#a3a7af', background: '#23272f', cursor: '#e0c8e0',
