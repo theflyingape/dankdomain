@@ -1,12 +1,11 @@
-[22;36mDate:[22;37m Tue 15-Jan-2019  8:10am
+[22;36mDate:[22;37m Tue 09-Feb-2019  2:30pm
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
 New announcements as missing features get implemented or tweaked:
 
+ - arena monster class change to its Ogre, Troll, and Beholder
  - updated web client: http://play.DDgame.us
  - improved dungeon mapping as it relates to map type or a blessed state
  - improved dungeon mapping as it relates to player's intellect
- - new items making their way in: rings with magical properties, some unique
- - real estate + security tax credits on collection checkpoint
 
 Happy hunting!

@@ -32,8 +32,8 @@ function end() {
     $.unlock($.player.id, true)
 
     //  diminish any temporary buff
-    if ($.online.toAC > 0) $.online.toAC--
-    if ($.online.toWC > 0) $.online.toWC--
+    if ($.online.toAC > 0 && !$.Ring.power($.player.rings, 'buff').power) $.online.toAC--
+    if ($.online.toWC > 0 && !$.Ring.power($.player.rings, 'buff').power) $.online.toWC--
 
     if (from === 'Naval') {
         if ($.online.hp > 0) {
@@ -257,7 +257,7 @@ export function attack(retry = false) {
             color = xvt.red
         }
         xvt.outln(xvt.faint, color, '>> ', xvt.normal
-            , xvt.bright, $.who(enemy, 'You'), ' ', $.what(enemy, how), xvt.normal, $.who(rpc, 'you')
+            , $.who(enemy, 'You'), ' ', xvt.bright, $.what(enemy, how), xvt.normal, $.who(rpc, 'you')
             , xvt.faint, ' <<')
         xvt.waste(600)
         next()
