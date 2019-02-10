@@ -2861,7 +2861,7 @@ function occupying(room: room, o = '', reveal = false, identify = false) {
 				break
 
 			case 'wheel':
-				if (identify && !icon) o = xvt.attr(xvt.reset, `  ${$.tty == 'web' ? xvt.attr(xvt.lgreen, '☸') : xvt.attr(xvt.bright, xvt.blink, xvt.green, '@')}  `)
+				if (identify && !icon) o = xvt.attr(xvt.reset, `  ${$.tty == 'web' ? xvt.attr(xvt.lmagenta, '☸') : xvt.attr(xvt.bright, xvt.blink, xvt.magenta, '@')}  `)
 				break
 
 			case 'thief':

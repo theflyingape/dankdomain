@@ -1433,7 +1433,7 @@ export function reroll(user: user, dd?: string, level = 1) {
         user.calls = 0
         user.today = 0
         user.expert = false
-        user.rows = process.stdout.rows || 24
+        user.rows = process.stdout.rows || 25
         user.remote = ''
         user.novice = xvt.validator.isEmpty(user.id) && user.gender !== 'I'
         user.gang = ''
@@ -1447,6 +1447,7 @@ export function reroll(user: user, dd?: string, level = 1) {
         user.who = ''
         user.security = ''
         user.realestate = ''
+        user.keyhints = []
     }
 
     if (level == 1) {
