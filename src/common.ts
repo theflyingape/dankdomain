@@ -706,14 +706,15 @@ export function checkXP(rpc: active, cb: Function): boolean {
             if (rpc.user.novice) {
                 xvt.outln('You are no longer a novice.  Welcome to the next level of play.')
                 rpc.user.novice = false
+                rpc.user.pc = sysop.pc
                 rpc.user.expert = true
-                //  adjust character attributes to match 8 skill points
-                rpc.user.melee--
-                rpc.user.backstab++
-                rpc.user.magic++
-                rpc.user.steal++
+                //  adjust character attributes to match
+                rpc.user.melee = PC.card(rpc.user.pc).melee
+                rpc.user.backstab = PC.card(rpc.user.pc).backstab
+                rpc.user.magic = PC.card(rpc.user.pc).magic
+                rpc.user.steal = PC.card(rpc.user.pc).steal
                 sound('cheer', 20)
-                xvt.outln(); xvt.waste(250)
+                xvt.outln('You morph into', an(rpc.user.pc), '.'); xvt.waste(250)
             }
             sound('demon', 18)
             break
@@ -1214,7 +1215,7 @@ export function now(): {date: number, time: number} {
 
 export function newkeys(user: user) {
     let keys = [ 'P', 'G', 'S', 'C' ]
-    user.keyhints = [ '','','',  '','','',  '','','',  '','','' ]
+    user.keyhints = [ '','','',  '','','',  '','','',  '','','', ...user.keyhints.slice(12) ]
     user.keyseq = ''
     while (keys.length) {
         let k = dice(keys.length)
@@ -1274,7 +1275,7 @@ export function playerPC(points = 200, immortal = false) {
     for (let pc in PC.name['player']) {
         let rpc = PC.card(pc)
         if (++n > 2) {
-            if (player.keyhints.indexOf(pc) < 0) {
+            if (player.keyhints.indexOf(pc, 12) < 0) {
                 xvt.out(bracket(classes.length))
                 classes.push(pc)
             }
@@ -1305,12 +1306,6 @@ export function playerPC(points = 200, immortal = false) {
         let n: number = int(xvt.entry)
         if (n < 1 || n >= classes.length) {
             xvt.beep()
-            xvt.app.refocus()
-            return
-        }
-        if (player.keyhints.indexOf(classes[n]) >= 0) {
-            xvt.beep()
-            xvt.out(` - you cannot re-play ${classes[n]} until after you make an Immortal class.`)
             xvt.app.refocus()
             return
         }
@@ -1675,14 +1670,18 @@ export function riddle() {
     }
 
     if (bonus) xvt.outln()
-    xvt.out(xvt.bright, xvt.cyan, '\nYou have become so powerful that you are now immortal and you leave your\n')
-    xvt.outln('worldly possessions behind.')
-    run(`UPDATE Players set bank=bank+${player.bank.value + player.coin.value} WHERE id='${taxman.user.id}'`)
+    xvt.out(xvt.bright, xvt.cyan, '\nYou have become so powerful that you are now immortal and you leave your')
+    xvt.outln('\nworldly possessions behind.')
+    run(`UPDATE Players SET bank=bank+${player.bank.value + player.coin.value} WHERE id='${taxman.user.id}'`)
     xvt.waste(2000)
 
     let max = Object.keys(PC.name['immortal']).indexOf(player.pc) + 1
     player.immortal++
-    player.keyhints.push(player.pc)
+    if (max || player.keyhints.slice(12).length > int(PC.name['player'].length / 2))
+        player.keyhints.splice(12, 1)
+    else
+        player.keyhints.push(player.pc)
+
     reroll(player)
     saveUser(player)
 
@@ -1699,7 +1698,7 @@ export function riddle() {
         saveUser(sysop)
 
         player.wins++
-        run(`UPDATE Players set wins=${player.wins} WHERE id='${player.id}'`)
+        run(`UPDATE Players SET wins=${player.wins} WHERE id='${player.id}'`)
         reason = 'WON THE GAME !!'
         xvt.waste(player.emulation === 'XT' ? 4321 : 432)
 
@@ -1729,6 +1728,7 @@ export function riddle() {
             loadUser(user)
             reroll(user)
             newkeys(user)
+            user.keyhints.splice(12)
             saveUser(user)
             xvt.out('.')
             xvt.waste(12)
@@ -2027,7 +2027,7 @@ export function logoff() {
         }
         reason = xvt.reason || 'mystery'
         if (player && player.id) {
-            if (run(`UPDATE Players set coward=1 WHERE id='${player.id}'`).changes)
+            if (run(`UPDATE Players SET coward=1 WHERE id='${player.id}'`).changes)
                 news(`\tthe coward logged off ${time(player.lasttime)} (${reason})\n`, true)
             access.roleplay = false
         }
@@ -2422,7 +2422,7 @@ export function newDay() {
     rs = query(`SELECT id, access, lastdate, level, xplevel, novice, jl, jw, gang FROM Players WHERE id NOT GLOB '_*'`)
     for (let row in rs) {
         if ((rs[row].level == 1 || rs[row].novice) && (rs[row].jl > (2 * rs[row].jw))) {
-            run(`UPDATE Players set jl=0,jw=0 WHERE id='${rs[row].id}'`)
+            run(`UPDATE Players SET jl=0,jw=0 WHERE id='${rs[row].id}'`)
         }
         //  manually rolled back system date _after_ some player visited?
         if (!(now().date - rs[row].lastdate))
@@ -2431,7 +2431,7 @@ export function newDay() {
         if ((now().date - rs[row].lastdate) > 10) {
             if (Access.name[rs[row].access].roleplay) {
                 if (+rs[row].xplevel > 1) {
-                    run(`UPDATE Players set xplevel=1,remote='' WHERE id='${rs[row].id}'`)
+                    run(`UPDATE Players SET xplevel=1,remote='' WHERE id='${rs[row].id}'`)
                     let p:user = { id: rs[row].id }
                     loadUser(p)
                     require('./email').rejoin(p)
@@ -2469,7 +2469,7 @@ export function newDay() {
         }
 
         if ((now().date - rs[row].lastdate) % 50 == 0) {
-            run(`UPDATE Players set pc='${Object.keys(PC.name['player'])[0]}',level=1,xplevel=0,remote='' WHERE id='${rs[row].id}'`)
+            run(`UPDATE Players SET pc='${Object.keys(PC.name['player'])[0]}',level=1,xplevel=0,remote='' WHERE id='${rs[row].id}'`)
             let p:user = { id: rs[row].id }
             loadUser(p)
             require('./email').rejoin(p)
@@ -2618,7 +2618,7 @@ export function loadDeed(pc: string, what?: string): deed[] {
 export function saveDeed(deed: deed) {
     deed.date = now().date
     deed.hero = player.handle
-    run(`UPDATE Deeds set date=${deed.date}, hero='${deed.hero}', value=${deed.value} WHERE pc='${deed.pc}' AND deed='${deed.deed}'`)
+    run(`UPDATE Deeds SET date=${deed.date}, hero='${deed.hero}', value=${deed.value} WHERE pc='${deed.pc}' AND deed='${deed.deed}'`)
 }
 
 export function loadGang(rs: any): gang {
@@ -2687,7 +2687,7 @@ export function saveGang(g: gang, insert = false) {
     else {
         if (g.members.length > 4) g.members.splice(0,4)
         run(`UPDATE Gangs
-                set members = '${g.members.join()}', win = ${g.win}, loss = ${g.loss}
+                SET members = '${g.members.join()}', win = ${g.win}, loss = ${g.loss}
                 , banner = ${(g.banner <<4) + g.trim}, color = ${(g.back <<4) + g.fore}
             WHERE name = '${g.name}'`)
     }
@@ -2720,10 +2720,10 @@ export function saveRing(name: string, bearer = '', rings?: string[]) {
 
     //  primarily maintain the one ring's active bearer here
     if (Ring.name[name].unique)
-        run(`UPDATE Rings set bearer = "${theRing.bearer}" WHERE name = "${theRing.name}"`)
+        run(`UPDATE Rings SET bearer = "${theRing.bearer}" WHERE name = "${theRing.name}"`)
 
     if (theRing.bearer.length && rings)
-        run(`UPDATE Players set rings = "${rings.toString()}" WHERE id = "${theRing.bearer}"`)
+        run(`UPDATE Players SET rings = "${rings.toString()}" WHERE id = "${theRing.bearer}"`)
 }
 
 }

@@ -1104,7 +1104,7 @@ function doMove(): boolean {
 			xvt.waste(600)
 			ROOM.occupant = ''
 
-			if ((Z + 1) == $.taxman.user.level && $.player.level < $.taxman.user.level) {
+			if ((Z + 1) >= $.taxman.user.level && $.player.level < $.taxman.user.level) {
 				$.loadUser($.taxman)
 				xvt.out(xvt.reset, $.who($.taxman, 'He'), 'is the '
 					, xvt.bright, xvt.cyan, 'Master of Coin'
