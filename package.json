@@ -14,7 +14,7 @@
     "build": "./build.sh",
     "debug": "npm run build && ./debug.sh",
     "mono": "npm run build && env REMOTEHOST=localhost TERM=vt100 ./build/logins.sh",
-    "test": "env REMOTEHOST=localhost ./build/logins.sh"
+    "test": "./build/tty.sh"
   },
   "repository": {
     "type": "git",
