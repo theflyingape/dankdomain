@@ -24,7 +24,7 @@ if (process.stdin.isTTY) process.stdin.setRawMode(true)
 
 const app = new Promise<number>((resolve, reject) => {
     try {
-        require('got')(URL + `?tty=VT`, Object.assign({ method: 'POST'}, ssl))
+        require('got')(URL + `?tty=VT`, Object.assign({ method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME } }, ssl))
             .then(response => { resolve(response.body) })
     }
     catch (err) {
