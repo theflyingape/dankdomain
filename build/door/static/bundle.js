@@ -201,9 +201,9 @@ function newSession(ev) {
     window.dispatchEvent(new Event('resize')); // gratuituous
     term.writeln('\x07\x1B[16C🔥  🌨   \x1B[1;36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain \x1B[m🌙  💫');
     if (ev === 'Logon') {
-        pid = 0;
         term.write(`\n\x1B[0;2mConnecting terminal WebSocket ... `);
         XT('@tune(dankdomain)');
+        pid = 0;
         fetch(`${app}/player/?cols=${term.cols}&rows=${term.rows}`, { method: 'POST' }).then(function (res) {
             res.text().then(function (session) {
                 pid = parseInt(session);
@@ -293,7 +293,8 @@ function XT(data) {
         let x = replace.exec(data);
         let s = x.index, e = s + x[0].length;
         data = data.substr(0, s) + data.substr(e);
-        eval(`${match[1]}(match[2])`);
+        if (pid)
+            eval(`${match[1]}(match[2])`);
     }
     term.write(data);
     function action(menu) {
@@ -320,8 +321,6 @@ function XT(data) {
         audio.play();
     }
     function profile(panel) {
-        if (!pid)
-            return;
         if (typeof panel === 'string')
             panel = JSON.parse(panel);
         if (window.frames['Info'])

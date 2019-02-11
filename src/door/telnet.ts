@@ -18,13 +18,14 @@ let ssl = {
     key: fs.readFileSync('key.pem'), cert: fs.readFileSync('cert.pem'),
     requestCert: false, rejectUnauthorized: false
 }
+let rows = process.argv.length > 3 ? +process.argv[3] : 25
 const URL = `https://${host}:${port}/xterm/door/player/`
 
 if (process.stdin.isTTY) process.stdin.setRawMode(true)
 
 const app = new Promise<number>((resolve, reject) => {
     try {
-        require('got')(URL + `?tty=VT`, Object.assign({ method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME } }, ssl))
+        require('got')(URL + `?rows=${rows}&tty=VT`, Object.assign({ method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME } }, ssl))
             .then(response => { resolve(response.body) })
     }
     catch (err) {
