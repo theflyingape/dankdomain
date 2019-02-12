@@ -38,9 +38,9 @@
     "@types/better-sqlite3": "^5.2.2",
     "@types/express": "^4.16.1",
     "@types/fs-extra": "^5.0.4",
-    "@types/node": "^10.12.21",
+    "@types/node": "^10.12.24",
     "@types/ws": "^6.0.1",
     "browserify": "^16.2.3",
-    "typescript": "^3.3.1"
+    "typescript": "^3.3.3"
   }
 }

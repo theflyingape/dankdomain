@@ -13,7 +13,7 @@
   "scripts": {
     "build": "./build.sh",
     "debug": "npm run build && ./debug.sh",
-    "mono": "npm run build && env REMOTEHOST=localhost TERM=vt100 ./build/logins.sh",
+    "game": "node ./build/telnet",
     "test": "./build/tty.sh"
   },
   "repository": {

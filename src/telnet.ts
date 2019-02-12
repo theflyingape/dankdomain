@@ -12,13 +12,13 @@ import ws = require('ws')
 process.title = 'ddclient'
 process.chdir(__dirname)
 
-let host = process.argv.length > 2 ? process.argv[2] : 'localhost'
-let port = parseInt(process.env.PORT) || 1939
+let host = process.argv.length > 2 ? process.argv[2] : 'robert.hurst-ri.us'
+let port = process.argv.length > 3 ? parseInt(process.argv[3]) : 443
 let ssl = {
-    key: fs.readFileSync('key.pem'), cert: fs.readFileSync('cert.pem'),
+    key: fs.readFileSync('./door/key.pem'), cert: fs.readFileSync('./door/cert.pem'),
     requestCert: false, rejectUnauthorized: false
 }
-let rows = process.argv.length > 3 ? +process.argv[3] : 25
+let rows = process.argv.length > 4 ? parseInt(process.argv[4]) : 25
 const URL = `https://${host}:${port}/xterm/door/player/`
 
 if (process.stdin.isTTY) process.stdin.setRawMode(true)

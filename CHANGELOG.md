@@ -1,13 +1,22 @@
-# 🤴 **[Dank Domain](https://sites.google.com/view/dankdomain)** 👸
+# 🤴 **[Dank Domain](https://DDgame.us)** 👸
 
 ## *the return of Hack & Slash*
 
-🇺🇸 ©️1991-2019 [Robert Hurst](https://robert.hurst-ri.us)
-> [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](http://Play.DDgame.us) on an Intel Atom-powered Linux server using a Verizon FiOS 100mb Internet service
+🇺🇸 ©️1991 - 2019 [Robert Hurst](https://robert.hurst-ri.us)
+> [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](http://play.DDgame.us) on an Intel Atom-powered Linux server using a Verizon FiOS 100mb Internet service
 
-### **02-Feb-2019** `v1.8.0`
+### **14-Feb-2019** `v1.8.2`
+
+* Valentine's Day 💘
+* `node telnet` connects same as the browser client without requiring a telnet service
+* Novice player transforms into a Fighter at level 50
+* JSON data file fixes
+
+#### **02-Feb-2019** `v1.8.0`
 
 * Groundhog Day 🐿
+* added a dwarven merchant in place of dungeon armor & weapon shops
+* added extra armor & weapon items as dungeon gifts
 * enhances to dungeon map and its mapping as it relates to player's blessed state
 * updated detection for Chrome add to homescreen (A2HS) option
 * improved error traps & handling
@@ -135,8 +144,6 @@
 ```
  --=:)) HISTORY ((:=--
 ```
-
----
 
 ### **RPGD**
 
@@ -383,7 +390,7 @@ SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
 
 #### **RPGBBS** *DELUXE*
 
-> [developed](https://github.com/theflyingape/rpgbbs/tree/master/v7) using SAS/C on an Amiga 3000T with a SupraFAXModem 28.8k
+> [developed](https://github.com/theflyingape/rpgbbs/tree/master/v7) using SAS/C on an Amiga 3000T with a Supra FAX Modem 28.8k
 
 ---
 
@@ -488,7 +495,7 @@ SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
 
 ### **RPGBBS**
 
-> [developed](https://github.com/theflyingape/rpgbbs/tree/master/v6) using SAS/C on an Amiga 3000/16 with a SupraFAXModem 14400
+> [developed](https://github.com/theflyingape/rpgbbs/tree/master/v6) using SAS/C on an Amiga 3000/16 with a Supra FAX Modem 14400
 
 ---
 
@@ -639,7 +646,7 @@ SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
 
 #### 19-Jun-1992 `v1.00`
 
-* Hack & Slash BBS goes online for the first time using the new SupraFAXModem 14400: `(401) 787-1437` with Caller ID.
+* Hack & Slash BBS goes online at Patricia Court in Warwick, Rhode Island: `(401) 787-1437` with Caller ID.
 
 ---
 
@@ -650,7 +657,7 @@ SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
 ---
 #### 24-Dec-1991 ####
 
-* BBS went online on Manton Avenue in Providence, Rhode Island
+* BBS went online at Manton Avenue in Providence, Rhode Island
 * added blessed / cursed state on a player
 * added Go Fishing to Naval section
 * ported from Apple ][ BASIC TproBBS Guy T. Rice
