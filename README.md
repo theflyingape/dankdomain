@@ -6,6 +6,17 @@
 
 ### Play from the [official web site](https://ddgame.us)
 
+To run a local game copy:
+
+```bash
+npm install dankdomain
+./install.sh
+./debug.sh
+npm test
+```
+
+You can also play DDgame.us from the command-line: `node telnet`
+
 [![Downloads](https://img.shields.io/npm/dy/dankdomain.svg)](https://www.npmjs.com/package/dankdomain)
 [![GitHub release](https://img.shields.io/github/release/theflyingape/dankdomain.svg)](https://github.com/theflyingape/dankdomain/releases) [![npm version](https://badge.fury.io/js/dankdomain.svg)](https://www.npmjs.com/package/dankdomain)
 

@@ -1976,9 +1976,9 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     let action: string
     let hit = 0
 
-    if (from !== 'Party' && rpc !== $.online && rpc.user.coward && rpc.hp < (rpc.user.hp / 5)) {
+    if (from !== 'Party' && rpc !== $.online && rpc.user.coward && rpc.hp < (rpc.user.hp / 5) && !rpc.user.cursed) {
         rpc.hp = -1
-        xvt.out(xvt.bright, xvt.green
+        xvt.outln(xvt.bright, xvt.green
             , rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle
             , xvt.normal, ' runs away from '
             , xvt.faint, 'the battle!')

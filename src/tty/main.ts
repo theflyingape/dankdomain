@@ -225,9 +225,9 @@ function choice() {
                     'yn': { cb: () => {
                         xvt.outln()
                         if (/Y/i.test(xvt.entry)) {
-                            xvt.out(xvt.bright, '\nYou slide into '
-                                , xvt.normal, 'the shadows and '
-                                , xvt.faint, 'make your attempt ')
+                            xvt.out(xvt.cyan, '\nYou slide into '
+                                , xvt.faint, 'the shadows and '
+                                , xvt.white, 'make your attempt ', xvt.blue)
                             xvt.waste(1000)
                             let lock = 5 * ($.Security.name[opponent.user.security].protection + 1)
                                 + $.RealEstate.name[opponent.user.realestate].protection
@@ -239,6 +239,7 @@ function choice() {
                                     effort--
                             }
                             for (let pick = 0; pick < $.player.steal; pick++) {
+                                $.sound('click')
                                 xvt.out('.')
                                 xvt.waste(400)
                                 skill += $.dice(100 + $.player.steal) < effort
@@ -254,6 +255,7 @@ function choice() {
                             }
 
                             if (skill > lock) {
+                                $.sound('max')
                                 if (!$.Ring.power($.player.rings, 'ring').power) $.steal++
                                 $.player.coin.value += prize
                                 xvt.outln('You break in and make off with ', new $.coins(prize).carry(), ' worth of stuff!')
@@ -289,6 +291,7 @@ function choice() {
                                 $.log(opponent.user.id, `\n${$.player.handle} robbed you!`)
                             }
 							else {
+                                $.beep()
                                 $.log(opponent.user.id, `\n${$.player.handle} was caught robbing you!`)
                                 $.reason = `caught robbing ${opponent.user.handle}`
                                 $.player.status = 'jail'
