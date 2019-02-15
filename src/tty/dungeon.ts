@@ -1228,7 +1228,7 @@ function doMove(): boolean {
 			let cost = new $.coins($.int(($.player.hp - $.online.hp) * $.money(Z) / mod / $.player.hp))
 			if (cost.value < 1) cost.value = 1
 			cost.value *= ($.int(deep / 3) + 1)
-			if ($.player.maxcha > 98)	//	typically a Cleric and God
+			if (!$.player.coward && $.player.maxcha > 98)	//	typically a Cleric and God
 				cost.value = 0
 			cost = new $.coins(cost.carry(1, true))	//	just from 1-pouch
 
@@ -2183,7 +2183,7 @@ function generateLevel() {
 			x = $.dice(DL.width) - 1
 		} while (DL.rooms[y][x].giftItem || DL.rooms[y][x].occupant == 'wizard')
 
-		if ($.dice(deep + 10) > (deep + 1)) {
+		if ($.dice(deep + 9 + +$.player.coward) > (deep + 1)) {
 			DL.rooms[y][x].giftItem = 'potion'
 			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⚱' : dot
 			n = $.dice(130 - deep)
@@ -2222,7 +2222,7 @@ function generateLevel() {
 		}
 
 		//	potential gold is a cheap prize at any level
-		if ($.dice(8 + 2 * (deep - $.player.steal)) > deep) {
+		if ($.dice(10 + 2 * (deep - $.player.steal)) > (deep + 1)) {
 			DL.rooms[y][x].giftItem = 'chest'
 			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⌂' : dot
 			DL.rooms[y][x].giftValue = $.dice(8 + 2 * (deep + $.player.steal)) - 1
@@ -2230,7 +2230,7 @@ function generateLevel() {
 		}
 
 		//	special treasures for going deeper & danker into the dungeon
-		if ($.dice(deep * ($.player.melee + 4)) - $.dice($.player.magic) > deep) {
+		if ($.dice(10 + 2 * (deep - $.player.magic)) > (deep + 1)) {
 			DL.rooms[y][x].giftItem = 'armor'
 			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⛨' : dot
 			n = $.Armor.special.length - 1
@@ -2239,7 +2239,7 @@ function generateLevel() {
 			continue
 		}
 
-		if ($.dice(deep * ($.player.melee + 2)) - $.dice($.player.magic) > deep) {
+		if ($.dice(10 + 2 * (deep - $.player.melee)) > (deep + 1)) {
 			DL.rooms[y][x].giftItem = 'weapon'
 			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⚸' : dot
 			n = $.Weapon.special.length - 1
@@ -2251,7 +2251,7 @@ function generateLevel() {
 		if ($.Ring.power($.player.rings, 'ring').power) DL.rooms[y][x].map = true
 		DL.rooms[y][x].giftItem = 'ring'
 		DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⍥' : dot
-		if ($.dice(11 - deep) > 1) {
+		if ($.dice(6 - $.int(deep / 2)) > 1) {
 			let ring = $.Ring.common[$.dice($.Ring.common.length) - 1]
 			DL.rooms[y][x].giftValue = ring
 		}
@@ -2576,8 +2576,8 @@ function putMonster(r = -1, c = -1): boolean {
 		$.PC.adjust('cha', deep - 2, 0, deep >>2, m)
 
 		let gold = new $.coins($.int($.money(level) / (11 - deep)))
-		gold.value += $.worth(new $.coins(m.weapon.value).value, $.dice($.online.cha / 5) + $.dice(deep))
-		gold.value += $.worth(new $.coins(m.armor.value).value, $.dice($.online.cha / 5) + $.dice(deep))
+		gold.value += $.worth(new $.coins(m.weapon.value).value, $.dice($.online.cha / 5) + $.dice(deep) - +$.player.coward)
+		gold.value += $.worth(new $.coins(m.armor.value).value, $.dice($.online.cha / 5) + $.dice(deep) - +$.player.coward)
 		gold.value *= $.dice(deep * 2 / 3)
 		m.user.coin = new $.coins(gold.carry(1, true))
 
