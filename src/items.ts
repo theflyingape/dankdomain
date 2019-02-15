@@ -51,7 +51,7 @@ export class Armor {
         return ac
     }
 
-    equip(rpc: active, what: string|number, keep = false, worth?: string) {
+    equip(rpc: active, what: string|number, keep = false) {
         let armor: armor
 
         if (isNaN(+what)) {
@@ -62,12 +62,8 @@ export class Armor {
             if (what >= this.merchant.length)
                 what = this.merchant.length - 1
             rpc.user.armor = +what
-            armor = <armor>{ ac:+what, value:'0c' }
+            armor = <armor>{ ac:+what, value:this.merchant[+what] ? this.name[this.merchant[+what]].value : '0c' }
         }
-        if (worth)
-            armor.value = worth
-        else if (this.name[armor.ac])
-            armor.value = this.name[armor.ac].value
         if (!keep) rpc.user.toAC = 0
         rpc.armor = armor
         rpc.toAC = 0
@@ -311,7 +307,7 @@ export class Weapon {
         return wc
     }
 
-    equip(rpc: active, what: string|number, keep = false, worth?: string) {
+    equip(rpc: active, what: string|number, keep = false) {
         let weapon: weapon
 
         if (isNaN(+what)) {
@@ -322,13 +318,9 @@ export class Weapon {
             if (what >= this.merchant.length)
                 what = this.merchant.length - 1
             rpc.user.weapon = +what
-            weapon = <weapon>{ wc:+what, value:'0c', hit:'hit', stab:'stab', smash:'smash', plunge:'plunge' }
+            weapon = <weapon>{ wc:+what, value:this.merchant[+what] ? this.name[this.merchant[+what]].value : '0c'
+                , hit:'hit', stab:'stab', smash:'smash', plunge:'plunge' }
         }
-        if (worth)
-            weapon.value = worth
-        else if (this.name[weapon.wc])
-            weapon.value = this.name[weapon.wc].value
-
         if (!keep) rpc.user.toWC = 0
         rpc.weapon = weapon
         rpc.toWC = 0

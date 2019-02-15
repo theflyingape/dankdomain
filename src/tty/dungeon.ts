@@ -2576,8 +2576,8 @@ function putMonster(r = -1, c = -1): boolean {
 		$.PC.adjust('cha', deep - 2, 0, deep >>2, m)
 
 		let gold = new $.coins($.int($.money(level) / (11 - deep)))
-		gold.value += $.worth(new $.coins(m.weapon.value).value, $.dice($.online.cha / 5) + 5)
-		gold.value += $.worth(new $.coins(m.armor.value).value, $.dice($.online.cha / 5) + 5)
+		gold.value += $.worth(new $.coins(m.weapon.value).value, $.dice($.online.cha / 5) + $.dice(deep))
+		gold.value += $.worth(new $.coins(m.armor.value).value, $.dice($.online.cha / 5) + $.dice(deep))
 		gold.value *= $.dice(deep * 2 / 3)
 		m.user.coin = new $.coins(gold.carry(1, true))
 
