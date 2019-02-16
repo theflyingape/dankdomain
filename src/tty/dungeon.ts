@@ -762,7 +762,7 @@ function doMove(): boolean {
 						Battle.user('Curse', (opponent: active) => {
 							if (opponent.user.id === $.player.id) {
 								opponent.user.id = ''
-								xvt.outln(`\nYou can't curse yourself.`)
+								xvt.outln(`You can't curse yourself.`)
 							}
 							if (opponent.user.id) {
 								$.log(opponent.user.id, `\n${$.player.handle} cursed you!`)
@@ -850,18 +850,18 @@ function doMove(): boolean {
 							$.online.sp = $.player.sp
 						if ($.online.hull < $.player.hull)
 							$.online.hull = $.player.hull
-						xvt.out(xvt.bright, xvt.cyan, '\nYou are completely healed and all damage is repaired.\n')
+						xvt.out(xvt.bright, xvt.cyan, 'You are completely healed and all damage is repaired.\n')
 						break
 
 					case 'L':
 						Battle.user('Loot', (opponent: active) => {
 							if (opponent.user.id === $.player.id) {
 								opponent.user.id = ''
-								xvt.outln(`\nYou can't loot yourself.`)
+								xvt.outln(`You can't loot yourself.`)
 							}
 							else if (opponent.user.novice) {
 								opponent.user.id = ''
-								xvt.outln(`\nYou can't loot novice players.`)
+								xvt.outln(`You can't loot novice players.`)
 							}
 							if (opponent.user.id) {
 								let loot = new $.coins(opponent.user.coin.value + opponent.user.bank.value)
@@ -871,6 +871,7 @@ function doMove(): boolean {
 								opponent.user.coin.value = 0
 								opponent.user.bank.value = 0
 								$.saveUser(opponent)
+								$.sound('max')
 							}
 							menu()
 							return
@@ -881,11 +882,11 @@ function doMove(): boolean {
 						if ($.player.today) {
 							$.sound('shimmer')
 							$.player.today--
-							xvt.out('\nYou are granted another call for the day.\n')
+							xvt.outln('You are granted another call for the day.')
 							$.news(`\twished for an extra call`)
 						}
 						else {
-							xvt.out('A deep laughter bellows... ')
+							xvt.outln('A deep laughter bellows... ')
 							$.sound('morph', 12)
 						}
 						break
@@ -942,7 +943,6 @@ function doMove(): boolean {
 						}
 						break
 					}
-					xvt.outln()
 					pause = true
 					menu()
 				}, prompt:'What is thy bidding, my master? ', cancel:'O', enter:'B', eol:false, max:1, timeout:60 }
@@ -2087,42 +2087,27 @@ function generateLevel() {
 			n--
 
 	let wow = 1
-
+	let dank = deep + 1, level = Z + 1
 	//	potential bonus(es) for the more experienced adventurer
 	if (!$.player.novice) {
-		//	gift map
-		if ($.dice($.player.immortal) > Z && $.dice($.player.wins) > deep) {
-			y = $.dice(DL.rooms.length) - 1
-			x = $.dice(DL.width) - 1
-			DL.rooms[y][x].giftItem = 'map'
-			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⎅' : dot
-			if (Math.trunc($.dice(100 * (Z + 1)) / (deep + 1)) < (deep + 4))
-				wow = $.dice($.int(DL.rooms.length * DL.width / 2))
-		}
-
-		//	wheel of life
-		if ($.dice((110 - Z) / 3 + deep) == 1) {
-			for (let i = 0; i < wow; i++) {
-				y = $.dice(DL.rooms.length) - 1
-				x = $.dice(DL.width) - 1
-				DL.rooms[y][x].occupant = 'wheel'
-			}
-		}
-
-		//	wishing well
-		if ($.dice((110 - Z) / 3 + deep) == 1) {
-			y = $.dice(DL.rooms.length) - 1
-			x = $.dice(DL.width) - 1
-			DL.rooms[y][x].occupant = 'well'
-		}
-
 		//	dwarven merchant
-		if ($.dice(24 + 2 * $.player.melee) < (deep + 2)) {
+		if ($.dice($.online.str - dank) <= dank) {
 			y = $.dice(DL.rooms.length) - 1
 			x = $.dice(DL.width) - 1
 			DL.rooms[y][x].occupant = 'dwarf'
 		}
-
+		//	wheel of life
+		if ($.dice(100 - level + dank) <= dank) {
+			y = $.dice(DL.rooms.length) - 1
+			x = $.dice(DL.width) - 1
+			DL.rooms[y][x].occupant = 'wheel'
+		}
+		//	wishing well
+		if ($.dice((130 - level) / 3 - dank) == 1) {
+			y = $.dice(DL.rooms.length) - 1
+			x = $.dice(DL.width) - 1
+			DL.rooms[y][x].occupant = 'well'
+		}
 		//	deep dank dungeon portal
 		if (deep < 9 && deep < $.player.immortal && Z / 9 < $.player.immortal) {
 			y = $.dice(DL.rooms.length) - 1
@@ -2130,9 +2115,10 @@ function generateLevel() {
 			DL.rooms[y][x].occupant = 'portal'
 		}
 	}
-
 	//	thief(s) in other spaces
-	wow--
+	if (!$.player.novice && $.dice(10000 / dank * level) <= dank)
+		wow = $.int($.dice(DL.rooms.length) * $.dice(DL.width) / 2)
+	if (!$.player.coward) wow--
 	n = $.dice(deep / 4) + wow
 	for (let i = 0; i < n; i++) {
 		do {
@@ -2156,109 +2142,130 @@ function generateLevel() {
 	} while (DL.rooms[y][x].type == 'cavern' || DL.rooms[y][x].monster.length || DL.rooms[y][x].occupant)
 	DL.rooms[y][x].occupant = 'wizard'
 
-	//	set some trapdoors in empty corridors only
+	//	set some trapdoors
 	n = $.int(DL.rooms.length * DL.width / 10)
 	if ($.dice(100 - Z) > (deep + 1))
 		n += $.dice(Z / 16 + 2)
-	while (n) {
+	while (n--) {
 		y = $.dice(DL.rooms.length) - 1
 		x = $.dice(DL.width) - 1
-		if (!DL.rooms[y][x].occupant) {
+		if (!DL.rooms[y][x].occupant)
 			DL.rooms[y][x].occupant = 'trapdoor'
-			n--
-		}
 	}
 
+	//	help will always be given at Hogwarts to those who deserve it
+	if (!$.player.coward)
+		if ($.player.novice || $.dice($.player.wins * dank + $.player.immortal + 1) >= (dank + level)) {
+			y = $.dice(DL.rooms.length) - 1
+			x = $.dice(DL.width) - 1
+			DL.rooms[y][x].giftItem = 'map'
+			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⎅' : dot
+		}
+
+	//	generate treasure(s)
 	wow = 1
+	if (!$.player.novice && !$.player.coward)
+		if ($.dice(100 / dank * level) <= dank)
+			wow = $.int($.dice(DL.rooms.length) * $.dice(DL.width) / 2)
+	wow += $.dice(level / 33) + $.dice(dank / 3) - 2
+	if ($.dice($.player.wins) > dank) wow++
 
-	//	potential bonus(es) for the more experienced adventurer
-	if (!$.player.novice && $.dice($.player.immortal) > Z)
-		if ($.int($.dice(100 * (Z + 1)) / (deep + 1)) < (deep + 2))
-			wow = $.int(DL.rooms.length * DL.width / 2)
+	let gift: GIFT[] = [ 'map' ]
+	for (let j = 5; j > 0; j--) {
+		if (j > $.player.magic) gift.push('armor')
+		if (j > $.player.steal) gift.push('chest')
+		if ($.player.magic == 1 || $.player.magic == 2)
+			gift.push($.dice(10 + dank - 2 * $.player.magic) > dank ? 'magic' : 'xmagic')
+		if ($.player.poison) gift.push('poison')
+		if (j > $.player.melee) gift.push('weapon')
+	}
+	gift.push('ring')
 
-	wow = $.dice(Z / 33) + $.dice(deep / 3) + wow - 2
 	for (let i = 0; i < wow; i++) {
 		do {
 			y = $.dice(DL.rooms.length) - 1
 			x = $.dice(DL.width) - 1
 		} while (DL.rooms[y][x].giftItem || DL.rooms[y][x].occupant == 'wizard')
+		if ($.Ring.power($.player.rings, 'identify').power) DL.rooms[y][x].map = true
 
-		if ($.dice(deep + 9 + +$.player.coward) > (deep + 1)) {
+		//	potion
+		if ($.dice(110 - $.online.cha + dank + +$.player.coward) > dank) {
 			DL.rooms[y][x].giftItem = 'potion'
 			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⚱' : dot
 			n = $.dice(130 - deep)
-			for (let i = 0; i < 16 && n > 0; i++) {
-				let v = 15 - i
+			for (let j = 0; j < 16 && n > 0; j++) {
+				let v = 15 - j
 				DL.rooms[y][x].giftValue = v
 				if ($.player.magic < 2 && (v == 10 || v == 11))
 					DL.rooms[y][x].giftValue = (v == 11) ? 9 : 0
-				n -= i + 1
+				n -= j + 1
 			}
 			continue
 		}
 
-		if ($.Ring.power($.player.rings, 'identify').power) DL.rooms[y][x].map = true
+		DL.rooms[y][x].giftItem = gift[$.dice(gift.length) - 1]
+		DL.rooms[y][x].giftValue = 0
+		switch (DL.rooms[y][x].giftItem) {
+			case 'armor':
+				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⛨' : dot
+				n = $.Armor.special.length - 1
+				for (v = 0; v < n && $.online.armor.ac >= $.Armor.name[$.Armor.special[v]].ac; v++);
+				break
 
-		if ($.player.poison && $.dice(deep + $.player.poison + 1) > (deep + 1)) {
-			DL.rooms[y][x].giftItem = 'poison'
-			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⚱' : dot
-			DL.rooms[y][x].giftValue = $.dice(Math.round($.Poison.merchant.length * Z / 100))
-			continue
-		}
+			case 'chest':
+				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⌂' : dot
+				v = $.dice(8 + 2 * (deep + $.player.steal)) - 1
+				break
 
-		if ($.player.magic == 1 || $.player.magic == 2) {
-			if ($.dice(3 * (deep + $.player.magic)) > (deep + 1)) {
-				DL.rooms[y][x].giftItem = 'magic'
+			case 'magic':
 				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⚹' : dot
-				DL.rooms[y][x].giftValue = $.dice(Math.round($.Magic.merchant.length * Z / 100))
-				continue
-			}
-			if ($.dice(2 * (deep + $.player.magic)) > (deep + 1)) {
-				DL.rooms[y][x].giftItem = 'xmagic'
+				n = $.dice($.Magic.merchant.length * 16)
+				for (let j = 0; j < $.Magic.merchant.length && n > 0; j++) {
+					v = $.Magic.merchant.length - j
+					n -= j + 1
+				}
+				break
+
+			case 'map':
+				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⎅' : dot
+				v = 1
+				break
+
+			case 'poison':
+				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⚱' : dot
+				n = $.dice($.Poison.merchant.length * 16)
+				for (let j = 0; j < $.Poison.merchant.length && n > 0; j++) {
+					v = $.Poison.merchant.length - j
+					n -= j + 1
+				}
+				break
+
+			case 'ring':
+				if ($.Ring.power($.player.rings, 'ring').power) DL.rooms[y][x].map = true
+				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⍥' : dot
+				if ($.dice(6 - $.int(dank / 2)) > 1) {
+					let ring = $.Ring.common[$.dice($.Ring.common.length) - 1]
+					DL.rooms[y][x].giftValue = ring
+				}
+				else {
+					let ring = $.Ring.unique[$.dice($.Ring.unique.length) - 1]
+					DL.rooms[y][x].giftValue = ring
+				}
+				break
+
+			case 'weapon':
+				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⚸' : dot
+				n = $.Weapon.special.length - 1
+				for (v = 0; v < n && $.online.weapon.wc >= $.Weapon.name[$.Weapon.special[v]].wc; v++);
+				break
+
+			case 'xmagic':
 				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '☀' : dot
-				DL.rooms[y][x].giftValue = $.Magic.merchant.length + $.dice($.Magic.special.length)
-				continue
-			}
-		}
+				v = $.Magic.merchant.length + $.dice($.Magic.special.length)
+				break
 
-		//	potential gold is a cheap prize at any level
-		if ($.dice(10 + 2 * (deep - $.player.steal)) > (deep + 1)) {
-			DL.rooms[y][x].giftItem = 'chest'
-			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⌂' : dot
-			DL.rooms[y][x].giftValue = $.dice(8 + 2 * (deep + $.player.steal)) - 1
-			continue
 		}
-
-		//	special treasures for going deeper & danker into the dungeon
-		if ($.dice(10 + 2 * (deep - $.player.magic)) > (deep + 1)) {
-			DL.rooms[y][x].giftItem = 'armor'
-			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⛨' : dot
-			n = $.Armor.special.length - 1
-			for (v = 0; v < n && $.online.armor.ac >= $.Armor.name[$.Armor.special[v]].ac; v++);
-			DL.rooms[y][x].giftValue = v
-			continue
-		}
-
-		if ($.dice(10 + 2 * (deep - $.player.melee)) > (deep + 1)) {
-			DL.rooms[y][x].giftItem = 'weapon'
-			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⚸' : dot
-			n = $.Weapon.special.length - 1
-			for (v = 0; v < n && $.online.weapon.wc >= $.Weapon.name[$.Weapon.special[v]].wc; v++);
-			DL.rooms[y][x].giftValue = v
-			continue
-		}
-
-		if ($.Ring.power($.player.rings, 'ring').power) DL.rooms[y][x].map = true
-		DL.rooms[y][x].giftItem = 'ring'
-		DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⍥' : dot
-		if ($.dice(6 - $.int(deep / 2)) > 1) {
-			let ring = $.Ring.common[$.dice($.Ring.common.length) - 1]
-			DL.rooms[y][x].giftValue = ring
-		}
-		else {
-			let ring = $.Ring.unique[$.dice($.Ring.unique.length) - 1]
-			DL.rooms[y][x].giftValue = ring
-		}
+		if (v) DL.rooms[y][x].giftValue = v
 	}
 
 	function spider(r:number, c:number) {
