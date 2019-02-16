@@ -2586,6 +2586,7 @@ function putMonster(r = -1, c = -1): boolean {
 		gold.value += $.worth(new $.coins(m.weapon.value).value, $.dice($.online.cha / 5) + $.dice(deep) - +$.player.coward)
 		gold.value += $.worth(new $.coins(m.armor.value).value, $.dice($.online.cha / 5) + $.dice(deep) - +$.player.coward)
 		gold.value *= $.dice(deep * 2 / 3)
+		gold.value++
 		m.user.coin = new $.coins(gold.carry(1, true))
 
 		if (+m.user.weapon) {
