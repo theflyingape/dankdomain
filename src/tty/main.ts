@@ -97,8 +97,8 @@ function choice() {
             return
 
         case 'M':
-            xvt.out('\n')
-            xvt.outln(xvt.Blue, xvt.white, ' ID   Player\'s Handle           Class    Lvl  Status  Party               ')
+            xvt.outln()
+            xvt.outln(xvt.Blue, xvt.white, ` ID   Player's Handle           Class    Lvl  Status  Party               `)
             xvt.outln(xvt.Blue, xvt.white, '--------------------------------------------------------------------------')
 
             let rs = $.query(`

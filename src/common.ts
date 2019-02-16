@@ -251,6 +251,8 @@ export class Character {
 
         xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
         xvt.out('    Title: ', xvt.white)
+        if (player.emulation === 'XT')
+            xvt.out('\r\x1B[2C', Access.name[profile.user.access].emoji, '\r\x1B[12C')
         xvt.out(sprintf('%-20s', profile.user.access))
         xvt.out(xvt.cyan, ' Born: ', xvt.white, date2full(profile.user.dob))
         xvt.out(' ', xvt.reset, xvt.blue, '|\n')

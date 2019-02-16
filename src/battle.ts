@@ -2362,7 +2362,7 @@ export function yourstats(profile = true) {
 
     for (let i in $.player.rings) {
         let ring = $.player.rings[i]
-        xvt.out(xvt.cyan, xvt.Empty[$.player.emulation]
+        xvt.out(xvt.cyan, $.player.emulation === 'XT' ? '⍥' : xvt.Empty[$.player.emulation]
             , ' ' , xvt.bright, ring, xvt.normal)
         if ($.tty == 'web') xvt.out(' ', $.Ring.name[ring].emoji, ' 💍')
         xvt.outln(' ring:', xvt.reset, ' can ', $.Ring.name[ring].description)
