@@ -140,10 +140,11 @@ function choice() {
                     if (/Y/i.test(xvt.entry)) {
                         $.player.gang = g.name
                         $.online.altered = true
+                        xvt.outln()
                         $.saveGang(g, true)
+                        $.sound('click')
                         $.cat('gang')
-                        xvt.waste(1200)
-                        $.sound('click', 12)
+                        xvt.waste(2000)
                         menu()
                     }
                     else {
@@ -165,7 +166,7 @@ function choice() {
             if (!$.player.gang) break
             if (!$.party) {
                 xvt.beep()
-				xvt.out('\nYou cannot resign from your gang after party fights.\n')
+				xvt.outln('\nYou cannot resign from your gang after party fights.')
 				suppress = true
                 break
             }

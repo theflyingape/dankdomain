@@ -1,4 +1,4 @@
-[22;36mDate:[22;37m Sun 08-Apr-2018 3:00pm
-[22;36mFrom:[22;37m Tigress[1;37m
+[2;36mDate:[m Sun 08-Apr-2018 3:00pm
+[2;36mFrom:[m Tigress[1m
 
 Old school is not for everyone.
