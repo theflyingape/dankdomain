@@ -2205,6 +2205,7 @@ function generateLevel() {
 
 		DL.rooms[y][x].giftItem = gift[$.dice(gift.length) - 1]
 		DL.rooms[y][x].giftValue = 0
+		v = 0
 		switch (DL.rooms[y][x].giftItem) {
 			case 'armor':
 				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⛨' : dot

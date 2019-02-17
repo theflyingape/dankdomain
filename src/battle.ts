@@ -257,9 +257,10 @@ export function attack(retry = false) {
             color = xvt.red
         }
         xvt.outln(xvt.faint, color, '>> ', xvt.normal
-            , $.who(enemy, 'You'), ' ', xvt.bright, $.what(enemy, how), xvt.normal, $.who(rpc, 'you')
-            , xvt.faint, ' <<')
-        xvt.waste(600)
+            , $.who(enemy, 'You'), ' ', xvt.bright, $.what(enemy, how)
+            , xvt.normal, $.who(rpc, 'you')
+            , xvt.faint, color, ' <<')
+        xvt.waste(400)
         next()
         return
     }
@@ -939,11 +940,11 @@ export function brawl(rpc:active, nme:active) {
     if ($.dice(100) >= (50 + $.int(rpc.dex / 2))) {
         $.sound(rpc.user.id === $.player.id ? 'whoosh' : 'swoosh')
         xvt.outln(`\n${$.who(nme, 'He')}${$.what(nme, 'duck')}${$.who(rpc,'his')}punch.`)
-        xvt.waste(600)
+        xvt.waste(400)
         let patron = $.PC.encounter()
         if (patron.user.id && patron.user.id != rpc.user.id && patron.user.id != nme.user.id && !patron.user.status) {
             xvt.outln(`\n${$.who(rpc, 'He')}${$.what(rpc, 'hit')}${patron.user.handle}!`)
-            xvt.waste(600)
+            $.sound('duck', 6)
             let bp = punch(rpc)
             patron.bp -= bp
             if (patron.bp > 0) {
@@ -967,8 +968,8 @@ export function brawl(rpc:active, nme:active) {
 
     function knockout(winner:active, loser:active) {
         let xp = $.experience(loser.user.xplevel, 9)
-        $.run(`UPDATE Players set tw=tw+1,xp=xp+${xp},coin=coin+${loser.user.coin.value} WHERE id='${winner.user.id}'`)
-        $.run(`UPDATE Players set tl=tl+1,coin=0 WHERE id='${loser.user.id}'`)
+        $.run(`UPDATE Players SET tw=tw+1,xp=xp+${xp},coin=coin+${loser.user.coin.value} WHERE id='${winner.user.id}'`)
+        $.run(`UPDATE Players SET tl=tl+1,coin=0 WHERE id='${loser.user.id}'`)
 
         xvt.outln('\n', winner.user.id === $.player.id ? 'You' : winner.user.handle
             , ` ${$.what(winner, 'knock')}${$.who(loser, 'him')}out!`)
@@ -1017,8 +1018,12 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
     let tricks = Object.assign([], rpc.user.spells)
     let Summons = [ 'Teleport', 'Resurrect' ]
     Object.assign([], Summons).forEach(summon => {
-        if ($.Ring.power(rpc.user.rings, summon.toLowerCase()).power && !$.Ring.power(nme.user.rings, 'ring').power)
-            $.Magic.add(tricks, summon)
+        if ($.Ring.power(rpc.user.rings, summon.toLowerCase()).power) {
+            if (nme && $.Ring.power(nme.user.rings, 'ring').power)
+                Summons.splice(Summons.indexOf(summon), 1)
+            else
+                $.Magic.add(tricks, summon)
+        }
         else
             Summons.splice(Summons.indexOf(summon), 1)
     })
@@ -2160,15 +2165,37 @@ export function poison(rpc: active, cb?:Function) {
         $.action('list')
         xvt.app.form = {
             'poison': { cb: () => {
-                xvt.out('\n')
+                xvt.outln()
                 if (xvt.entry === '') {
                     cb()
                     return
                 }
                 if (!$.Poison.have(rpc.user.poisons, +xvt.entry)) {
                 	for (let i in $.player.poisons) {
-                        let p = $.player.poisons[i]
-				    	xvt.out($.bracket(p), $.Poison.merchant[p - 1])
+                        let vial = $.player.poisons[i]
+                        xvt.out($.bracket(vial), $.Poison.merchant[vial - 1], ' '.repeat(20 - $.Poison.merchant[vial - 1].length))
+
+                        let p = $.int($.player.poison / 2)
+                        let t = $.player.poison - p
+                        p *= vial
+                        t *= vial
+                        let toWC = $.player.toWC, WC = $.online.toWC
+                        if (p > 0 && toWC >= 0)     //  cannot augment a damaged weapon
+                            if (p >= toWC) toWC = p
+                        if (t > 0) {
+                            if (toWC > 0)           //  apply buff to an augmented weapon
+                                WC = WC + t <= toWC ? WC + t
+                                    : ($.player.poison == 3 && WC + $.int(t / 2) <= toWC) ? WC + t
+                                    : t
+                            else                    //  apply buff to a damaged weapon
+                                WC = WC >= 0 ? t : WC + t
+                        }
+
+                        if (3 * (WC + toWC + 1) / $.player.poison > $.online.weapon.wc)
+                            xvt.out(xvt.yellow, ' ', $.tty == 'web' ? ' 💀 ' : 'XXX', ' ')
+                        else
+                            xvt.out(xvt.faint, ' -=> ', xvt.normal)
+                        xvt.out($.buff(toWC, WC))
                     }
                     xvt.outln()
                     xvt.app.refocus()
@@ -2184,7 +2211,7 @@ export function poison(rpc: active, cb?:Function) {
         return
     }
 
-    if ((rpc.toWC + rpc.user.toWC) < Math.trunc(rpc.weapon.wc / (6 - rpc.user.poison))) {
+    if ((rpc.toWC + rpc.user.toWC) < $.int(rpc.weapon.wc / (6 - rpc.user.poison))) {
         let vial = $.dice(rpc.user.poisons.length) - 1
         if (vial) apply(rpc, rpc.user.poisons[vial])
     }
@@ -2203,7 +2230,7 @@ export function poison(rpc: active, cb?:Function) {
                     : (rpc.user.poison == 3 && rpc.toWC + $.int(t / 2) <= rpc.user.toWC) ? rpc.toWC + t
                     : t
             else                            //  apply buff to a damaged weapon
-                rpc.toWC = rpc.toWC >=0 ? t : rpc.toWC + t
+                rpc.toWC = rpc.toWC >= 0 ? t : rpc.toWC + t
         }
 
         if (!$.Poison.have(rpc.user.poisons, vial) || +rpc.user.weapon > 0) {
@@ -2212,8 +2239,10 @@ export function poison(rpc: active, cb?:Function) {
         }
         else {
             xvt.outln('\n', $.who(rpc, 'He'), $.what(rpc, 'pour')
-                , 'some ', $.Poison.merchant[vial - 1]
-                , ' on ', $.who(rpc, 'his'), rpc.user.weapon, '.')
+                , 'some ', xvt.faint, $.Poison.merchant[vial - 1]
+                , xvt.reset, ' on ', $.who(rpc, 'his')
+                , xvt.bright, xvt.cyan, rpc.user.weapon
+                , xvt.reset, $.buff(rpc.user.toWC, rpc.toWC))
             $.sound('hone', 6)
             if (/^[A-Z]/.test(rpc.user.id)) {
                 if ($.dice(3 * (rpc.toWC + rpc.user.toWC + 1)) / rpc.user.poison > rpc.weapon.wc) {
@@ -2287,9 +2316,9 @@ export function user(venue: string, cb:Function) {
             let n = +xvt.entry
             if (n >= start && n < 100) end = n
 
-            xvt.out('\n', xvt.Blue, xvt.bright)
-            xvt.out(` ID   Player's Handle          Class     Lvl      Last On       Access Level  \n`)
-            xvt.out('------------------------------------------------------------------------------')
+            xvt.outln()
+            xvt.outln(xvt.Blue, xvt.bright, ` ID   Player's Handle          Class     Lvl      Last On       Access Level  `)
+            xvt.outln(xvt.Blue, xvt.bright, '------------------------------------------------------------------------------')
             xvt.outln()
 
             let rs = $.query(`
