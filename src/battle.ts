@@ -249,10 +249,10 @@ export function attack(retry = false) {
             color = xvt.yellow
         }
         else if (enemy.user.pc == 'Undead') {
-            how = 'hynoptize'
+            how = 'hypnotize'
             color = xvt.white
         }
-        else if (enemy == $.online || enemy.user.gender !== 'I') {
+        else if (enemy == $.online || enemy.user.gender !== 'I' || enemy.user.pc == rpc.user.pc) {
             how = 'dodge'
             color = xvt.red
         }
@@ -264,7 +264,7 @@ export function attack(retry = false) {
         next()
         return
     }
-
+    
     if (rpc === $.online) {
         $.action('battle')
         xvt.app.form = {

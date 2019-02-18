@@ -2170,16 +2170,16 @@ function generateLevel() {
 	wow += $.dice(level / 33) + $.dice(dank / 3) - 2
 	if ($.dice($.player.wins) > dank) wow++
 
-	let gift: GIFT[] = [ 'map' ]
+	let gift: GIFT[] = [ 'ring', 'map' ]
 	for (let j = 5; j > 0; j--) {
 		if (j > $.player.magic) gift.push('armor')
 		if (j > $.player.steal) gift.push('chest')
 		if ($.player.magic == 1 || $.player.magic == 2)
 			gift.push($.dice(10 + dank - 2 * $.player.magic) > dank ? 'magic' : 'xmagic')
-		if ($.player.poison) gift.push('poison')
+		if ($.player.poison && j > $.player.poison) gift.push('poison')
 		if (j > $.player.melee) gift.push('weapon')
 	}
-	gift.push('ring')
+	gift.push('map', 'ring')
 
 	for (let i = 0; i < wow; i++) {
 		do {
@@ -2203,9 +2203,14 @@ function generateLevel() {
 			continue
 		}
 
-		DL.rooms[y][x].giftItem = gift[$.dice(gift.length) - 1]
+		//	what else ya got?
+		if (gift.length) {
+			v = $.dice(gift.length) - 1
+			DL.rooms[y][x].giftItem = gift.splice(v, 1)[0]
+		}
 		DL.rooms[y][x].giftValue = 0
 		v = 0
+
 		switch (DL.rooms[y][x].giftItem) {
 			case 'armor':
 				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⛨' : dot
