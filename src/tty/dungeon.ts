@@ -1071,14 +1071,14 @@ function doMove(): boolean {
 							break
 						case 7:
 							$.player.level = $.dice(Z)
-							if ($.online.adept)
-								$.player.level += $.dice($.player.level)
+							if ($.online.adept) $.player.level += $.dice($.player.level)
 							$.reroll($.player, $.PC.random('monster'), $.player.level)
 							$.activate($.online)
 							$.online.altered = true
 							$.player.gender = ['F','M'][$.dice(2) - 1]
 							$.saveUser($.player)
-							xvt.out(`You got morphed into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!\n`)
+							$.news(`\t${$.player.handle} got morphed into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
+							xvt.outln(`You got morphed into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
 							$.sound('morph', 10)
 							break
 						case 8:
