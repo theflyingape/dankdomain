@@ -96,7 +96,8 @@ interface user {
 	jw?: number
 	killed?: number
 	kills?: number
-	retreats?: number
+    retreats?: number
+    steals?: number
 	tl?: number
 	tw?: number
 }

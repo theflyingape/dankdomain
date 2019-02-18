@@ -36,7 +36,7 @@ function choice() {
             xvt.out(' - ', hall[choice].description)
             suppress = $.player.expert
         }
-    xvt.out('\n')
+    xvt.outln()
 
     switch (choice) {
         case 'C':
@@ -48,7 +48,7 @@ function choice() {
                     let deeds = $.loadDeed(pc)
                     if (deeds.length) {
                         xvt.out(sprintf('%-9s  ', pc))
-                        let keys = ['plays', 'retreats', 'killed', 'kills', 'jw', 'jl', 'tw', 'tl']
+                        let keys = ['plays', 'retreats', 'killed', 'kills', 'jw', 'jl', 'tw', 'tl', 'steals']
                         for (let best in keys) {
                             let deed = deeds.find((x) => { return x.deed === keys[best] })
                             if (deed) {
@@ -71,7 +71,7 @@ function choice() {
             let type = 'GOAT'
             let deeds = $.loadDeed(type)
             if (deeds.length) {
-                let keys = ['plays', 'retreats', 'killed', 'kills', 'jw', 'jl', 'tw', 'tl']
+                let keys = ['plays', 'retreats', 'killed', 'kills', 'jw', 'jl', 'tw', 'tl', 'steals']
                 for (let goat in keys) {
                     let deed = deeds.find((x) => { return x.deed === keys[goat] })
                     if (deed) {

@@ -408,6 +408,7 @@ function choice() {
 			else {
 				$.beep()
 				$.player.coin.value += credit.value
+				$.player.steals++
 				if (pocket.id) $.saveUser(pocket)
 				suppress = true
 				break
@@ -608,8 +609,9 @@ function Bank() {
 
 			$.beep()
 			$.player.coin.value += carry.value + deposits.value
+			$.player.steals++
 			xvt.outln()
-			$.run(`UPDATE Players set bank=0 WHERE id NOT GLOB '_*'`)
+			$.run(`UPDATE Players SET bank=0 WHERE id NOT GLOB '_*'`)
 			menu(true)
 			break
 

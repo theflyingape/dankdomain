@@ -258,6 +258,7 @@ function choice() {
                                 $.sound('max')
                                 if (!$.Ring.power($.player.rings, 'ring').power) $.steal++
                                 $.player.coin.value += prize
+                                $.player.steals++
                                 xvt.outln('You break in and make off with ', new $.coins(prize).carry(), ' worth of stuff!')
                                 xvt.waste(1000)
 

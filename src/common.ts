@@ -1485,6 +1485,7 @@ export function reroll(user: user, dd?: string, level = 1) {
         user.killed = 0
         user.kills = 0
         user.retreats = 0
+        user.steals = 0
         user.tl = 0
         user.tw = 0
         user.bounty = new coins(0)
@@ -1616,7 +1617,7 @@ export function riddle() {
     }
 
     let bonus = 0
-    let deeds = ['plays', 'jl', 'jw', 'killed', 'kills', 'retreats', 'tl', 'tw']
+    let deeds = ['plays', 'jl', 'jw', 'killed', 'kills', 'retreats', 'steals', 'tl', 'tw']
 
     mydeeds = loadDeed(player.pc)
     xvt.out(xvt.blue, '\nChecking your deeds for the ', xvt.bright, player.pc, xvt.normal, ' list...\n')
@@ -2160,7 +2161,7 @@ export function wall(msg: string) {
             spells text, poisons text, rings text, realestate text, security text,
             hull numeric, cannon numeric, ram integer, wins numeric, immortal numeric,
           	plays numeric, jl numeric, jw numeric, killed numeric, kills numeric,
-            retreats numeric, tl numeric, tw numeric)`)
+            retreats numeric, steals numeric, tl numeric, tw numeric)`)
     }
 
     let npc = <user>{}
@@ -2355,7 +2356,7 @@ export function saveUser(rpc, insert = false, locked = false) {
         , spells, poisons, rings, realestate, security
         , hull, cannon, ram, wins, immortal
         , plays, jl, jw, killed, kills
-        , retreats, tl, tw
+        , retreats, steals, tl, tw
         ) VALUES
         ('${user.id}', '${user.handle}', '${user.name}', '${user.email}', '${user.password}'
         , ${user.dob}, '${user.sex}', ${user.joined}, ${user.expires}, ${user.lastdate}
@@ -2371,7 +2372,7 @@ export function saveUser(rpc, insert = false, locked = false) {
         ,'${user.spells.toString()}', '${user.poisons.toString()}', "${user.rings.toString()}", '${user.realestate}', '${user.security}'
         , ${user.hull}, ${user.cannon}, ${+user.ram}, ${user.wins}, ${user.immortal}
         , ${user.plays}, ${user.jl}, ${user.jw}, ${user.killed}, ${user.kills}
-        , ${user.retreats}, ${user.tl}, ${user.tw}
+        , ${user.retreats}, ${user.steals}, ${user.tl}, ${user.tw}
         )`
         : `UPDATE Players SET
         handle='${user.handle}', name='${user.name}', email='${user.email}', password='${user.password}',
@@ -2388,7 +2389,7 @@ export function saveUser(rpc, insert = false, locked = false) {
         spells='${user.spells.toString()}', poisons='${user.poisons.toString()}', rings="${user.rings.toString()}", realestate='${user.realestate}', security='${user.security}',
         hull=${user.hull}, cannon=${user.cannon}, ram=${+user.ram}, wins=${user.wins}, immortal=${user.immortal},
         plays=${user.plays}, jl=${user.jl}, jw=${user.jw}, killed=${user.killed}, kills=${user.kills},
-        retreats=${user.retreats}, tl=${user.tl}, tw=${user.tw}
+        retreats=${user.retreats}, steals=${user.steals}, tl=${user.tl}, tw=${user.tw}
         WHERE id='${user.id}'`
 
     run(sql)
