@@ -1626,7 +1626,7 @@ export function riddle() {
     xvt.waste(1000)
     for (let i in deeds) {
         let deed = mydeeds.find((x) => { return x.deed === deeds[i] })
-        if (deeds[i] == 'jw' || deeds[i] == 'tw') {
+        if (deeds[i] == 'jw' || deeds[i] == 'steals' || deeds[i] == 'tw') {
             if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, deeds[i])[0]) - 1]
             if (player[deeds[i]] >= deed.value) {
                 deed.value = player[deeds[i]]
@@ -1653,7 +1653,7 @@ export function riddle() {
     xvt.waste(1000)
     for (let i in deeds) {
         let deed = mydeeds.find((x) => { return x.deed === deeds[i] })
-        if (deeds[i] == 'jw' || deeds[i] == 'tw') {
+        if (deeds[i] == 'jw' || deeds[i] == 'steals' || deeds[i] == 'tw') {
             if (!deed) deed = mydeeds[mydeeds.push(loadDeed('GOAT', deeds[i])[0]) - 1]
             if (player[deeds[i]] >= deed.value) {
                 deed.value = player[deeds[i]]
