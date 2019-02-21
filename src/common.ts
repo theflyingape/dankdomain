@@ -29,6 +29,7 @@ module Common
 
     //  maintain usual suspects
     export let barkeep: active = { user: { id:'_BAR' } }
+    export let dwarf: active = { user: { id:'_DM' } }
     export let neptune: active = { user: { id:'_NEP' } }
     export let seahag: active = { user: { id:'_OLD' } }
     export let taxman: active = { user: { id:'_TAX' } }
@@ -1217,7 +1218,8 @@ export function now(): {date: number, time: number} {
 
 export function newkeys(user: user) {
     let keys = [ 'P', 'G', 'S', 'C' ]
-    user.keyhints = [ '','','',  '','','',  '','','',  '','','', ...user.keyhints.slice(12) ]
+    let prior = user.keyhints || []
+    user.keyhints = [ '','','',  '','','',  '','','',  '','','', ...prior.slice(12) ]
     user.keyseq = ''
     while (keys.length) {
         let k = dice(keys.length)
@@ -2207,7 +2209,7 @@ export function wall(msg: string) {
         xvt.out('done.')
         xvt.waste(250)
     }
-    
+
     //  customize the Master of Whisperers NPC
     npc = <user>{}
     Object.assign(npc, require('./etc/barkeep.json'))
@@ -2219,6 +2221,18 @@ export function wall(msg: string) {
         reroll(barkeep.user, barkeep.user.pc, barkeep.user.level)
         Object.assign(barkeep.user, npc)
         saveUser(barkeep, true)
+    }
+    //  customize the Master at Arms NPC
+    npc = <user>{}
+    Object.assign(npc, require('./etc/merchant.json'))
+    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
+    if (!rs.length) {
+        xvt.out(`\n[${npc.handle}]`)
+        Object.assign(dwarf.user, npc)
+        newkeys(dwarf.user)
+        reroll(dwarf.user,dwarf.user.pc, dwarf.user.level)
+        Object.assign(dwarf.user, npc)
+        saveUser(dwarf, true)
     }
     //  customize the Big Kahuna NPC
     npc = <user>{}

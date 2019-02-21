@@ -35,6 +35,29 @@ function end() {
     if ($.online.toAC > 0 && !$.Ring.power($.player.rings, 'buff').power) $.online.toAC--
     if ($.online.toWC > 0 && !$.Ring.power($.player.rings, 'buff').power) $.online.toWC--
 
+    if (/Merchant/.test(from)) {
+        if ($.online.hp < 1) {
+            $.player.coin.value -= $.taxman.user.coin.value
+            if ($.player.coin.value < 0) {
+                $.player.bank.value += $.player.coin.value
+                $.player.coin.value = 0
+                if ($.player.bank.value < 0) {
+                    $.player.loan.value -= $.player.bank.value
+                    $.player.bank.value = 0
+                }
+            }
+            $.beep()
+            $.death($.reason || `refused ${$.dwarf.user.handle}`)
+            xvt.outln('  ', xvt.bright, xvt.yellow, '"Next time bring friends."')
+            $.sound('punk', 8)
+        }
+        else {
+            $.news(`\tdefeated ${$.dwarf.user.handle}`)
+            $.wall(`defeated ${$.dwarf.user.handle}`)
+        }
+        $.player.coward = false
+    }
+
     if (from === 'Naval') {
         if ($.online.hp > 0) {
             $.sound('naval' + (parties[1][0].user.id === '_OLD' ? '_f' : ''), 32)
@@ -57,19 +80,19 @@ function end() {
             $.reason = `schooled by ${$.barkeep.user.handle}`
 
             $.run(`UPDATE Players
-                set kills=kills+1, status='${$.player.id}', weapon='${$.barkeep.user.weapon}'
+                SET kills=kills+1, status='${$.player.id}', weapon='${$.barkeep.user.weapon}'
                 WHERE id='${$.barkeep.user.id}'`)
 
             xvt.outln(`He picks up your ${$.barkeep.user.weapon} and triumphantly waves it around to`)
             xvt.outln(`the cheering crowd.  He struts toward the mantelpiece to hang his new trophy.\n`)
             $.sound('winner', 32)
-            xvt.outln(xvt.bright, xvt.green, '"Drinks are on the house!"')
+            xvt.outln('  ', xvt.bright, xvt.green, '"Drinks are on the house!"')
             xvt.waste(2250)
         }
         else {
             $.music('barkeep')
             $.run(`UPDATE Players
-                set killed=killed+1, status='', weapon='${$.barkeep.user.weapon}'
+                SET killed=killed+1, status='', weapon='${$.barkeep.user.weapon}'
                 WHERE id='${$.barkeep.user.id}'`)
             $.news(`\tdefeated ${$.barkeep.user.handle}`)
             $.wall(`defeated ${$.barkeep.user.handle}`)
@@ -96,7 +119,7 @@ function end() {
             }
             $.beep()
             $.death($.reason || 'tax evasion')
-            xvt.outln(xvt.bright, xvt.blue, '"Thanks for the taxes!"')
+            xvt.outln('  ', xvt.bright, xvt.blue, '"Thanks for the taxes!"')
             $.sound('thief2', 16)
         }
         else if (from === 'Taxman') {
@@ -264,7 +287,7 @@ export function attack(retry = false) {
         next()
         return
     }
-    
+
     if (rpc === $.online) {
         $.action('battle')
         xvt.app.form = {
@@ -277,14 +300,17 @@ export function attack(retry = false) {
 
                 xvt.outln()
                 if (/R/i.test(xvt.entry)) {
-                    if (/Naval|Tavern|Taxman/.test(from)) {
+                    if (/Merchant|Naval|Tavern|Taxman/.test(from)) {
+                        xvt.out('  ')
+                        if (from === 'Merchant')
+                            xvt.outln(xvt.bright, xvt.yellow, `"You should've accepted my kind offer, ${$.player.pc}."`)
                         if (from === 'Naval')
                             xvt.outln(xvt.bright, xvt.cyan, '"You cannot escape me, mortal."')
                         if (from === 'Tavern')
                             xvt.outln(xvt.bright, xvt.green, 'You try to escape, but the crowd throws you back to witness the slaughter!')
                         if (from === 'Taxman')
                             xvt.outln(xvt.bright, xvt.blue, '"You can never escape the taxman!"')
-                        $.sound({ _BAR:'growl', _NEP:'thunder', _OLD:'crone', _TAX:'thief2' }[enemy.user.id], 12)
+                        $.sound({ _BAR:'growl', _DM:'punk', _NEP:'thunder', _OLD:'crone', _TAX:'thief2' }[enemy.user.id], 12)
 						$.PC.adjust('cha', -2, -1)
                         $.saveUser($.player)
                         next()
@@ -763,7 +789,7 @@ export function spoils() {
                     result = $.Armor.swap(winner, loser, credit)
                     if (xvt.validator.isBoolean(result) && result) {
                         xvt.outln($.who(winner, 'He'), 'also ', $.what(winner, 'take'), $.who(loser, 'his'), winner.user.armor, '.')
-                        if (/_NEP|_OLD|_TAX/.test(loser.user.id)) $.sound('shield', 16)
+                        if (/_DM|_NEP|_OLD|_TAX/.test(loser.user.id)) $.sound('shield', 16)
                     }
                     else if (from === 'Monster' && result)
                         xvt.outln($.who(winner, 'He'), 'also ', $.what(winner, 'get'), credit.carry(), ' for ', $.who(loser, 'his'), loser.user.armor, '.')
@@ -1111,7 +1137,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 cb(!rpc.confused)
                 return
             }
-            if (/Naval|Tavern|Taxman/.test(from) && [ 8,12,17,18,22 ].indexOf(spell.cast) >= 0) {
+            if (/Merchant|Naval|Tavern|Taxman/.test(from) && [ 8,12,17,18,22 ].indexOf(spell.cast) >= 0) {
                 if (spell.cast == 8 && rpc === $.online) {
                     xvt.outln('You cannot cast that spell to retreat!')
                     cb(!rpc.confused)

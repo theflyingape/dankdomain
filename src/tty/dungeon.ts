@@ -106,6 +106,8 @@ module Dungeon
 		containers.splice(c, 1)
 	}
 
+    $.loadUser($.dwarf)
+
 
 export function DeepDank(start: number, cb: Function) {
 	pause = false
@@ -609,8 +611,9 @@ function doMove(): boolean {
 	switch (ROOM.occupant) {
 		case 'trapdoor':
 			if ($.dice(100 - Z) > 1) {
-				xvt.outln('You have stepped onto a trapdoor!\n')
+				xvt.outln('You have stepped onto a trapdoor!')
 				xvt.waste(300)
+				xvt.outln()
 				let u = ($.dice(127 + deep - ($.player.backstab <<1) - ($.player.steal <<2)) < $.online.dex)
 				for (let m = party.length - 1; m > 0; m--) {
 					if ($.dice(120) < party[m].dex)
@@ -1106,17 +1109,17 @@ function doMove(): boolean {
 
 			if ((Z + 1) >= $.taxman.user.level && $.player.level < $.taxman.user.level) {
 				$.loadUser($.taxman)
-				xvt.out(xvt.reset, $.who($.taxman, 'He'), 'is the '
+				xvt.outln(xvt.reset, $.who($.taxman, 'He'), 'is the '
 					, xvt.bright, xvt.cyan, 'Master of Coin'
 					, xvt.reset, ' for '
 					, xvt.bright, xvt.magenta, $.king.handle
-					, xvt.reset, '!\n')
+					, xvt.reset, '!')
 				$.profile({ png:'player/' + $.taxman.user.pc.toLowerCase() + ($.taxman.user.gender === 'F' ? '_f' : '')
 					, handle:$.taxman.user.handle
 					, level:$.taxman.user.level, pc:$.taxman.user.pc
 					, effect:'bounceInDown'
 				})
-				$.sound('oops', 8)
+				$.sound('oops')
 				$.activate($.taxman)
 				$.taxman.user.coin.value = $.player.coin.value
 				if (isNaN(+$.taxman.user.weapon)) xvt.outln('\n', $.who($.taxman, 'He'), $.Weapon.wearing($.taxman), '.')
@@ -1150,7 +1153,7 @@ function doMove(): boolean {
 				}
 				else {
 					xvt.out(xvt.normal, xvt.magenta, 'He teleports away!')
-					$.sound('teleport', 8)
+					$.sound('teleport')
 				}
 				xvt.outln()
 			}
@@ -1383,14 +1386,15 @@ function doMove(): boolean {
 		case 'dwarf':
 			$.profile({ jpg:'npc/dwarf', effect:'fadeIn' })
 			$.beep()
-			xvt.outln(xvt.yellow, 'You run into a ', xvt.bright, 'dwarven merchant', xvt.reset, '.')
+			xvt.outln(xvt.yellow, 'You run into a ', xvt.bright, 'dwarven merchant', xvt.normal, ', ', $.dwarf.user.handle, '.')
 			xvt.waste(1000)
-			let hi = 0, credit = new $.coins(0)
+			let hi = 0, credit = new $.coins(0), ring = $.dwarf.user.rings[0]
 
 			$.action('ny')
 			xvt.app.form = {
 			'armor': { cb: () => {
 					xvt.outln()
+					ROOM.occupant = ''
 					if (/Y/i.test(xvt.entry)) {
 						$.player.coin = new $.coins(0)
 						$.Armor.equip($.online, $.Armor.dwarf[hi])
@@ -1398,11 +1402,27 @@ function doMove(): boolean {
 						$.online.toAC = $.dice($.online.armor.ac) - 2
 						$.sound('click')
 					}
-					ROOM.occupant = ''
+					else {
+						xvt.outln()
+						xvt.out(xvt.yellow, $.dwarf.user.handle, ' eyes you suspicously ... ')
+						xvt.waste(600)
+						if ($.player.level > $.dwarf.user.level) {
+							if ($.Ring.wear($.player.rings, ring)) {
+								$.getRing('inherit', ring)
+								$.saveRing(ring, $.player.id)
+								$.sound('click', 8)
+							}
+						}
+						else {
+							merchant()
+							return
+						}
+					}
 					menu()
 				}, prompt:'Ok (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:20 },
 			'weapon': { cb: () => {
 					xvt.outln()
+					ROOM.occupant = ''
 					if (/Y/i.test(xvt.entry)) {
 						$.player.coin = new $.coins(0)
 						$.Weapon.equip($.online, $.Weapon.dwarf[hi])
@@ -1410,7 +1430,21 @@ function doMove(): boolean {
 						$.online.toWC = $.dice($.online.weapon.wc) - 2
 						$.sound('click')
 					}
-					ROOM.occupant = ''
+					else {
+						xvt.out(xvt.yellow, $.dwarf.user.handle, ' evaluates the situation ... ')
+						xvt.waste(600)
+						if ($.player.level > $.dwarf.user.level) {
+							if ($.Ring.wear($.player.rings, ring)) {
+								$.getRing('inherit', ring)
+								$.saveRing(ring, $.player.id)
+								$.sound('click', 8)
+							}
+						}
+						else {
+							merchant()
+							return
+						}
+					}
 					menu()
 				}, prompt:'Ok (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:20 }
 			}
@@ -1419,6 +1453,7 @@ function doMove(): boolean {
 				let ac = $.Armor.name[$.player.armor].ac
 				xvt.out('\nI see you have a class ', $.bracket(ac, false), ' '
 					, xvt.bright, $.player.armor, xvt.normal, $.buff($.player.toAC, $.online.toAC))
+				ac += $.player.toAC
 				if (ac) {
 					let cv = new $.coins($.Armor.name[$.player.armor].value)
 					credit.value = $.worth(cv.value, $.online.cha)
@@ -1449,6 +1484,7 @@ function doMove(): boolean {
 				let wc = $.Weapon.name[$.player.weapon].wc
 				xvt.out('\nI see you carrying a class ', $.bracket(wc, false), ' '
 					, xvt.bright, $.player.weapon, xvt.normal, $.buff($.player.toWC, $.online.toWC))
+				wc += $.player.toWC
 				if (wc) {
 					let cv = new $.coins($.Weapon.name[$.player.weapon].value)
 					credit.value = $.worth(cv.value, $.online.cha)
@@ -1474,7 +1510,7 @@ function doMove(): boolean {
 					return false
 				}
 			}
-			xvt.outln(`I've got nothing of interest for trading.  Perhaps next time, friend?`)
+			xvt.outln(`I've got nothing of interest for trading.  Perhaps next time, my friend?`)
 			ROOM.occupant = ''
 		}
 
@@ -1763,10 +1799,11 @@ function doSpoils() {
 		if ((b4 !== 0 && (!DL.map || DL.map !== 'map') && DL.cleric.sp == DL.cleric.user.sp) &&
 			((b4 > 0 && b4 / $.player.hp < 0.67 && $.online.hp / $.player.hp < 0.067)
 			|| ($.online.hp <= Z + deep + 1))) {
-			xvt.out(xvt.lred, '+ bonus strength\n', xvt.reset)
+			xvt.outln(xvt.lred, '+ bonus strength')
 			$.sound('bravery', 20)
 			$.PC.adjust('str', deep + 2, deep + 1, 1)
 			DL.map = `Marauder's map`
+			xvt.outln(xvt.bright, xvt.yellow, 'and ', DL.map, '!')
 			pause = true
 		}
 	}
@@ -2091,7 +2128,7 @@ function generateLevel() {
 	//	potential bonus(es) for the more experienced adventurer
 	if (!$.player.novice) {
 		//	dwarven merchant
-		if ($.dice($.online.str - dank) <= dank) {
+		if ($.dice($.online.str - dank) <= dank || true) {
 			y = $.dice(DL.rooms.length) - 1
 			x = $.dice(DL.width) - 1
 			DL.rooms[y][x].occupant = 'dwarf'
@@ -2602,6 +2639,20 @@ function putMonster(r = -1, c = -1): boolean {
 	} while (DL.rooms[r][c].monster.length < 10 && DL.rooms[r][c].monster.length * m.user.level < Z + deep - 12)
 
 	return true
+}
+
+function merchant() {
+	$.sound('ddd')
+	let dwarf = <active>{ user:{id:''} }
+	Object.assign(dwarf.user, $.dwarf.user)
+	$.activate(dwarf)
+	xvt.outln(xvt.yellow, $.who(dwarf, 'He'), 'scowls in disgust,')
+	xvt.outln(xvt.bright, xvt.yellow, `  "Never trust a ${$.player.pc}!"`)
+	xvt.waste(300)
+	if (isNaN(+dwarf.user.weapon)) xvt.outln('\n', $.who(dwarf, 'He'), $.Weapon.wearing(dwarf), '.')
+	if (isNaN(+dwarf.user.armor)) xvt.outln('\n', $.who(dwarf, 'He'), $.Armor.wearing(dwarf), '.')
+	xvt.waste(300)
+	Battle.engage('Merchant', party, dwarf, doSpoils)
 }
 
 function teleport() {

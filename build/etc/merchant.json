@@ -1,0 +1,23 @@
+{
+    "id": "_DM",
+    "handle": "Manu",
+    "name": "Dwarven Merchant",
+    "dob": 123014,
+    "sex": "M",
+    "access": "Inactive",
+    "email": "ronhurst39@gmail.com",
+    "password": "\n",
+  	"expires": 0,
+    "pc": "Alchemist",
+    "level": 54,
+    "magic": 1,
+    "weapon": "Battle Axe of Lords",
+    "armor": "Spiked Leather",
+    "spells": [ 17, 18, 23, 24 ],
+    "poisons": [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ],
+    "rings": [ "Cursed", "Detection" ],
+    "toAC": 5,
+    "toWC": 15,
+    "realestate": "Cave",
+    "security": "Burglar Alarm"
+}
