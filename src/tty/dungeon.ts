@@ -2128,7 +2128,7 @@ function generateLevel() {
 	//	potential bonus(es) for the more experienced adventurer
 	if (!$.player.novice) {
 		//	dwarven merchant
-		if ($.dice($.online.str - dank) <= dank || true) {
+		if ($.dice($.online.str - dank) <= dank) {
 			y = $.dice(DL.rooms.length) - 1
 			x = $.dice(DL.width) - 1
 			DL.rooms[y][x].occupant = 'dwarf'
