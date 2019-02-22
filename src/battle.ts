@@ -54,8 +54,8 @@ function end() {
         else {
             $.news(`\tdefeated ${$.dwarf.user.handle}`)
             $.wall(`defeated ${$.dwarf.user.handle}`)
+            $.player.coward = false
         }
-        $.player.coward = false
     }
 
     if (from === 'Naval') {
@@ -98,12 +98,9 @@ function end() {
             $.wall(`defeated ${$.barkeep.user.handle}`)
             xvt.waste(1234)
             $.sound('ko')
-            if ($.player.cha > 49)
-                $.PC.adjust('cha', -22, -20, -2)
-            else
-                $.player.coward = true
+            if ($.player.cha > 49) $.PC.adjust('cha', -22, -20, -2)
+            $.player.coward = false
         }
-        $.player.coward = false
     }
 
     if (/Gates|Taxman/.test(from)) {
@@ -122,11 +119,13 @@ function end() {
             xvt.outln('  ', xvt.bright, xvt.blue, '"Thanks for the taxes!"')
             $.sound('thief2', 16)
         }
-        else if (from === 'Taxman') {
-            $.news(`\tdefeated ${$.taxman.user.handle}`)
-            $.wall(`defeated ${$.taxman.user.handle}`)
+        else {
+            if (from === 'Taxman') {
+                $.news(`\tdefeated ${$.taxman.user.handle}`)
+                $.wall(`defeated ${$.taxman.user.handle}`)
+            }
+            $.player.coward = false
         }
-        $.player.coward = false
     }
 
     if (from === 'User') {
@@ -217,7 +216,7 @@ export function attack(retry = false) {
     if (!round.length) {
         if (volley > 1) {
             xvt.outln()
-            xvt.out('    -=', $.bracket('*', false), '=-\n')
+            xvt.outln('    -=', $.bracket('*', false), '=-')
             xvt.waste($.online.hp > 0 ? 80 : 800)
         }
 
@@ -349,7 +348,7 @@ export function attack(retry = false) {
                     if ($.online.confused)
                         $.activate($.online, false, true)
                     if (from === 'Party' && $.player.gang)
-                        $.run(`UPDATE Gangs SET loss = loss + 1 WHERE name = '${$.player.gang}'`)
+                        $.run(`UPDATE Gangs SET loss=loss+1 WHERE name = '${$.player.gang}'`)
                     if (from === 'User' && enemy.user.gender !== 'I') {
 						$.PC.adjust('cha', -2, -1)
                         $.log(enemy.user.id, `\n${$.player.handle}, the coward, retreated from you.`)
@@ -841,7 +840,7 @@ export function spoils() {
                             gang.members[0] = $.player.id
                             gang.members[n] = loser.user.id
                             $.saveGang(gang)
-                            xvt.out(`You take over as the leader of ${gang.name}.\n`)
+                            xvt.outln(`You take over as the leader of ${gang.name}.`)
                             xvt.waste(600)
                         }
                         else {
@@ -2344,8 +2343,7 @@ export function user(venue: string, cb:Function) {
 
             xvt.outln()
             xvt.outln(xvt.Blue, xvt.bright, ` ID   Player's Handle          Class     Lvl      Last On       Access Level  `)
-            xvt.outln(xvt.Blue, xvt.bright, '------------------------------------------------------------------------------')
-            xvt.outln()
+            xvt.outln(xvt.Blue, xvt.bright, '-'.repeat(78))
 
             let rs = $.query(`
                 SELECT id, handle, pc, level, xplevel, status, lastdate, access FROM Players
@@ -2374,7 +2372,7 @@ export function user(venue: string, cb:Function) {
             }
 
             if ($.access.roleplay && $.dice(+$.player.expert * ($.player.immortal + 1) * $.player.level) == 1)
-                xvt.outln('\n', xvt.green, '> ', xvt.bright, 'double-click (tap) the Player ID to send your selection.')
+                xvt.outln('\n', xvt.green, '> ', xvt.bright, 'double-click (tap) the Player ID to pick your selection.')
 
             $.action('freetext')
             xvt.app.focus = 'user'

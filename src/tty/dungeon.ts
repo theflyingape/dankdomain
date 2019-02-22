@@ -279,7 +279,7 @@ export function menu(suppress = false) {
 	if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
 		x /= $.player.level
 	if (x < 6) x = 6
-	if ($.dice(x) == 1) {
+	if (DL.moves > DL.width && $.dice(x) == 1) {
 		let rng = $.dice(16)
 		if (rng > 8) {
 			if ($.tty == 'web') xvt.out(' 🦇  ')
@@ -1168,7 +1168,7 @@ function doMove(): boolean {
 				xvt.out('As he passes by, he steals your ')
 				x = $.online.cha + deep + 1
 				if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
-					x = Math.trunc(x / $.player.level)
+					x = $.int(x / $.player.level)
 				if ($.online.weapon.wc && $.dice(x) == 1) {
 					xvt.out($.player.weapon, $.buff($.player.toWC, $.online.toWC))
 					$.Weapon.equip($.online, $.Weapon.merchant[0])
@@ -1390,7 +1390,6 @@ function doMove(): boolean {
 			xvt.waste(1000)
 			let hi = 0, credit = new $.coins(0), ring = $.dwarf.user.rings[0]
 
-			$.action('ny')
 			xvt.app.form = {
 			'armor': { cb: () => {
 					xvt.outln()
@@ -1419,7 +1418,7 @@ function doMove(): boolean {
 						}
 					}
 					menu()
-				}, prompt:'Ok (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:20 },
+				}, prompt:'Ok (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:20 },
 			'weapon': { cb: () => {
 					xvt.outln()
 					ROOM.occupant = ''
@@ -1475,6 +1474,7 @@ function doMove(): boolean {
 						, ['exceptional', 'precious', 'remarkable', 'special', 'uncommon'][$.dice(5) - 1], ' '
 						, $.bracket($.Armor.name[$.Armor.dwarf[hi]].ac, false), ' ')
 					xvt.outln(xvt.bright, xvt.yellow, $.Armor.dwarf[hi])
+					$.action('yn')
 					xvt.waste(1000)
 					xvt.app.focus = 'armor'
 					return false
@@ -1505,24 +1505,29 @@ function doMove(): boolean {
 						, ['exquisite', 'fine', 'jeweled', 'rare', 'splendid'][$.dice(5) - 1], ' '
 						, $.bracket($.Weapon.name[$.Weapon.dwarf[hi]].wc, false), ' ')
 					xvt.outln(xvt.bright, xvt.cyan, $.Weapon.dwarf[hi])
+					$.action('yn')
 					xvt.waste(1000)
 					xvt.app.focus = 'weapon'
 					return false
 				}
 			}
+
+			$.beep()
 			xvt.outln(`I've got nothing of interest for trading.  Perhaps next time, my friend?`)
+			xvt.waste(1000)
+			$.animated('fadeOut')
 			ROOM.occupant = ''
 		}
 
 	//	items?
 	switch (ROOM.giftItem) {
 		case 'armor':
-			let aname = $.Armor.special[ROOM.giftValue]
-			let armor = $.Armor.name[aname]
-			let ac = $.Armor.name[$.player.armor].ac + $.player.toAC + $.online.toAC
-			if (ac < armor.ac) {
-				$.Armor.equip($.online, aname)
-				xvt.outln(xvt.faint, xvt.yellow, 'You find', xvt.normal, $.an(aname), xvt.bright, '!')
+			let xarmor = <active>{ user:Object.assign({}, $.player) }
+			$.reroll(xarmor.user)
+			xarmor.user.armor = $.Armor.special[ROOM.giftValue]
+			$.activate(xarmor)
+			if ($.Armor.swap($.online, xarmor)) {
+				xvt.outln(xvt.faint, xvt.yellow, 'You find', xvt.normal, $.an($.player.armor.toString()), xvt.bright, '!')
 				$.sound('max')
 				pause = true
 				ROOM.giftItem = ''
@@ -1648,13 +1653,12 @@ function doMove(): boolean {
 			break
 
 		case 'weapon':
-			let wname = $.Weapon.special[ROOM.giftValue]
-			let weapon = $.Weapon.name[wname]
-			let wc = $.Weapon.name[$.player.weapon].wc + $.player.toWC + $.online.toWC
-
-			if (wc < weapon.wc) {
-				$.Weapon.equip($.online, wname)
-				xvt.outln(xvt.faint, xvt.cyan, 'You find', xvt.normal, $.an(wname), xvt.bright, '!')
+			let xweapon = <active>{ user:Object.assign({}, $.player) }
+			$.reroll(xweapon.user)
+			xweapon.user.weapon = $.Weapon.special[ROOM.giftValue]
+			$.activate(xweapon)
+			if ($.Weapon.swap($.online, xweapon)) {
+				xvt.outln(xvt.faint, xvt.cyan, 'You find', xvt.normal, $.an($.player.weapon.toString()), xvt.bright, '!')
 				$.sound('max')
 				pause = true
 				ROOM.giftItem = ''
@@ -2153,7 +2157,7 @@ function generateLevel() {
 		}
 	}
 	//	thief(s) in other spaces
-	if (!$.player.novice && $.dice(10000 / dank * level) <= dank)
+	if (!$.player.novice && $.dice(100 / dank * level) <= dank)
 		wow = $.int($.dice(DL.rooms.length) * $.dice(DL.width) / 2)
 	if (!$.player.coward) wow--
 	n = $.dice(deep / 4) + wow
@@ -2205,7 +2209,6 @@ function generateLevel() {
 		if ($.dice(100 / dank * level) <= dank)
 			wow = $.int($.dice(DL.rooms.length) * $.dice(DL.width) / 2)
 	wow += $.dice(level / 33) + $.dice(dank / 3) - 2
-	if ($.dice($.player.wins) > dank) wow++
 
 	let gift: GIFT[] = [ 'ring', 'map' ]
 	for (let j = 5; j > 0; j--) {
@@ -2646,8 +2649,8 @@ function merchant() {
 	let dwarf = <active>{ user:{id:''} }
 	Object.assign(dwarf.user, $.dwarf.user)
 	$.activate(dwarf)
-	xvt.outln(xvt.yellow, $.who(dwarf, 'He'), 'scowls in disgust,')
-	xvt.outln(xvt.bright, xvt.yellow, `  "Never trust a ${$.player.pc}!"`)
+	xvt.outln(xvt.yellow, $.who(dwarf, 'he'), 'scowls in disgust,')
+	xvt.outln(xvt.bright, xvt.yellow, `  "Never trust${$.an($.player.pc)}!"`)
 	xvt.waste(300)
 	if (isNaN(+dwarf.user.weapon)) xvt.outln('\n', $.who(dwarf, 'He'), $.Weapon.wearing(dwarf), '.')
 	if (isNaN(+dwarf.user.armor)) xvt.outln('\n', $.who(dwarf, 'He'), $.Armor.wearing(dwarf), '.')
