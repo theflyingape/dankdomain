@@ -622,8 +622,9 @@ export function activate(one: active, keep = false, confused = false): boolean {
         one.user.rings.forEach(ring => {
             if (Ring.power([ ring ], 'degrade', 'ability', ability).power && !Ring.power(one.user.rings, 'ring').power)
                 PC.adjust(ability, -2 * PC.card(one.user.pc)[a], 0, 0, one)
-            if (Ring.power([ ring ], 'upgrade', 'ability', ability).power)
-                PC.adjust(ability, (+Ring.power(one.user.rings, 'ring').power + 1) * PC.card(one.user.pc)[a], 0, 0, one)
+            if (Ring.power([ ring ], 'upgrade', 'ability', ability).power) {
+                PC.adjust(ability, 100 + (+Ring.power(one.user.rings, 'ring').power + 1) * PC.card(one.user.pc)[a], 0, 0, one)
+            }
         })
     })
     one.confused = false

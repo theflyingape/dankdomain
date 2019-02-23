@@ -52,9 +52,11 @@
         "emoji":"🧝",
         "ability":[
             { "id":"upgrade", "power":true, "ability":"dex" },
-            { "id":"skip", "power":true, "pc":"Barbarian" },
-            { "id":"skip", "power":true, "pc":"Ogre" },
-            { "id":"skip", "power":true, "pc":"Undead" }
+            { "id":"skip", "power":true },
+            { "id":"skip", "power":false, "pc":"Assassin" },
+            { "id":"skip", "power":false, "pc":"Demon" },
+            { "id":"skip", "power":false, "pc":"Fighter" },
+            { "id":"skip", "power":false, "pc":"Ranger" }
         ]
     },
     "Faith": {

@@ -279,7 +279,11 @@
             "toStr":1, "toInt":1, "toDex":1, "toCha":2,
             "maxStr":90, "maxInt":90, "maxDex":90, "maxCha":90,
             "bonusStr":0, "bonusInt":0, "bonusDex":0, "bonusCha":1,
-            "unicode":"Ѫ", "color":34
+            "unicode":"Ѫ", "color":34,
+            "specialty": "Ranger",
+            "description": [
+                "A scary and vicious animal."
+            ]
         },
         "Demon": {
             "melee":3, "backstab":1, "poison":1, "magic":1, "steal":2,
@@ -287,7 +291,11 @@
             "toStr":1, "toInt":1, "toDex":2, "toCha":1,
             "maxStr":95, "maxInt":92, "maxDex":90, "maxCha":75,
             "bonusStr":1, "bonusInt":1, "bonusDex":0, "bonusCha":0,
-            "unicode":"☿", "color":31
+            "unicode":"☿", "color":31,
+            "specialty": "Fighter",
+            "description": [
+                "A supernatural and malevolent entity conjured or controlled."
+            ]
         },
         "Dragon": {
             "melee":4, "backstab":0, "poison":0, "magic":3, "steal":4,
@@ -295,7 +303,11 @@
             "toStr":3, "toInt":1, "toDex":1, "toCha":1,
             "maxStr":99, "maxInt":90, "maxDex":88, "maxCha":85,
             "bonusStr":2, "bonusInt":0, "bonusDex":0, "bonusCha":0,
-            "unicode":"☫", "color":36
+            "unicode":"☫", "color":36,
+            "specialty": "Barbarian/Magician",
+            "description": [
+                "A large, serpent-like creature possessing legendary powers."
+            ]
         },
         "Lizard": {
             "melee":1, "backstab":1, "poison":3, "magic":1, "steal":3,
@@ -303,7 +315,11 @@
             "toStr":1, "toInt":2, "toDex":3, "toCha":1,
             "maxStr":92, "maxInt":88, "maxDex":92, "maxCha":80,
             "bonusStr":0, "bonusInt":0, "bonusDex":2, "bonusCha":0,
-            "unicode":"☡", "color":32
+            "unicode":"☡", "color":32,
+            "specialty": "Rogue",
+            "description": [
+                "A stealth predator with strong defenses."
+            ]
         },
         "Psionic": {
             "melee":1, "backstab":1, "poison":1, "magic":4, "steal":1,
@@ -311,7 +327,11 @@
             "toStr":1, "toInt":3, "toDex":1, "toCha":1,
             "maxStr":82, "maxInt":96, "maxDex":90, "maxCha":90,
             "bonusStr":0, "bonusInt":2, "bonusDex":0, "bonusCha":0,
-            "unicode":"⚧", "color":35
+            "unicode":"⚧", "color":35,
+            "specialty": "Magus",
+            "description": [
+                "A lesser demon with supernatural abilities."
+            ]
         },
         "Undead": {
             "melee":4, "backstab":0, "poison":1, "magic":2, "steal":2,
@@ -319,7 +339,11 @@
             "toStr":2, "toInt":1, "toDex":1, "toCha":1,
             "maxStr":98, "maxInt":90, "maxDex":88, "maxCha":70,
             "bonusStr":1, "bonusInt":0, "bonusDex":0, "bonusCha":1,
-            "unicode":"☠", "color":37
+            "unicode":"☠", "color":37,
+            "specialty": "Barbarian/Ranger",
+            "description": [
+                "A corpse reanimated by supernatural forces."
+            ]
         }
     },
 
@@ -333,7 +357,7 @@
             "unicode":"♜", "color":33,
             "specialty": "Barbarian/Ranger",
             "description": [
-                "Tiny, the 7'2\" barkeep"
+                "A large, hideous, man-like being that eats players."
             ]
         }
     }
