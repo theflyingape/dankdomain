@@ -4,7 +4,7 @@
 
 ## the return of Hack &amp; Slash
 
-### Play from the [official web site](https://ddgame.us)
+### Play from the [Official Web Site](https://ddgame.us) - https://DDgame.us
 
 To run a local game copy:
 
@@ -16,6 +16,8 @@ npm test
 ```
 
 You can also play DDgame.us from the command-line: `node telnet`
+
+#### Original Amiga Hack & Slash enthusiasts can visit: [HackNslash.Online](https://www.telnetbbsguide.com/bbs/hacknslash-online/)
 
 [![Downloads](https://img.shields.io/npm/dy/dankdomain.svg)](https://www.npmjs.com/package/dankdomain)
 [![GitHub release](https://img.shields.io/github/release/theflyingape/dankdomain.svg)](https://github.com/theflyingape/dankdomain/releases) [![npm version](https://badge.fury.io/js/dankdomain.svg)](https://www.npmjs.com/package/dankdomain)
