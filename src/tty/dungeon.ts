@@ -280,6 +280,7 @@ export function menu(suppress = false) {
 		x /= $.player.level
 	if (x < 6) x = 6
 	if (DL.moves > DL.width && $.dice(x) == 1) {
+		$.music('.')
 		let rng = $.dice(16)
 		if (rng > 8) {
 			if ($.tty == 'web') xvt.out(' 🦇  ')
@@ -305,17 +306,16 @@ export function menu(suppress = false) {
 		}
 		else if (rng > 1) {
 			if ($.tty == 'web') xvt.out(' 🐝  🐝  🐝  🐝  ')
-			xvt.out(xvt.bright, xvt.red, 'You are attacked by a swarm of bees')
-			if ($.tty == 'web') xvt.out(xvt.reset, ' 🐝  🐝  🐝  🐝')
-			else
-				xvt.out('!')
-			$.sound('crack', 12)
+			$.sound('crack', 6)
+			xvt.out(xvt.red, 'You are attacked by a ', xvt.bright, 'swarm of bees', xvt.normal)
+			if ($.tty == 'web') xvt.out(' 🐝  🐝  🐝  🐝')
+			else xvt.out('!!')
 			for (x = 0, y = $.dice(Z); x < y; x++)
 				$.online.hp -= $.dice(Z)
+			xvt.waste(600)
 			if ($.online.hp < 1) $.death('killer bees')
 		}
 		else {
-			$.music('.')
 			xvt.out(xvt.bright, xvt.white)
 			if ($.tty == 'web') xvt.out(' ⚡  ')
 			xvt.out('A bolt of lightning strikes you!')
@@ -324,7 +324,7 @@ export function menu(suppress = false) {
 			$.player.toWC -= $.dice($.online.weapon.wc / 2)
 			$.online.toWC -= $.dice($.online.weapon.wc / 2)
 			$.online.hp -= $.dice($.player.hp / 2)
-			$.sound('boom', 10)
+			$.sound('boom', 12)
 			if ($.online.hp < 1) $.death('struck by lightning')
 		}
 		if ($.online.weapon.wc > 0 && $.online.weapon.wc + $.online.toWC + $.player.toWC < 0) {
@@ -341,6 +341,7 @@ export function menu(suppress = false) {
 	//  insert any wall messages here
 	if ($.tty == 'web') xvt.out('\x06')
 	if ($.reason) {
+		drawHero()
 		scroll()
 		xvt.hangup()
 	}
@@ -393,9 +394,8 @@ function command() {
 	let suppress = $.player.expert
 	let choice = xvt.entry.toUpperCase()
 	if (/\[.*\]/.test(xvt.terminator)) {
-		choice = 'NSEW'['UDRL'.indexOf(xvt.terminator[1])]
-		if (choice)
-			xvt.out(choice)
+		if ((choice = 'NSEW'['UDRL'.indexOf(xvt.terminator[1])]))
+			xvt.out(xvt.bright, xvt.white, choice, xvt.normal)
 		else {
 			menu(true)
 			return
@@ -561,11 +561,8 @@ function doMove(): boolean {
 		xvt.waste(800)
 
 		for (let n = 0; n < ROOM.monster.length; n++) {
-			if (ROOM.monster.length < 4) {
+			if (ROOM.monster.length < 4)
 				$.cat('dungeon/' + ROOM.monster[n].user.handle)
-				xvt.outln()
-			}
-
 			let what = ROOM.monster[n].user.handle
 			if (ROOM.monster[n].user.xplevel > 0)
 				what = [xvt.attr(xvt.faint, 'lesser '), '', xvt.attr(xvt.bright, xvt.white, 'greater ')]
@@ -607,6 +604,7 @@ function doMove(): boolean {
 	}
 
 	//	npc?
+	let loot = new $.coins(0)
 	if (ROOM.occupant && !refresh) drawRoom(Y, X)
 	switch (ROOM.occupant) {
 		case 'trapdoor':
@@ -705,24 +703,27 @@ function doMove(): boolean {
 			scroll(1, false)
 			$.music('well')
 			xvt.waste(600)
-			xvt.outln(xvt.magenta, 'You have found a legendary Wishing Well.')
+			xvt.outln(xvt.magenta, 'You have found a legendary ', xvt.bright, 'Wishing Well', xvt.normal, '.')
 			xvt.waste(600)
 			xvt.outln(); xvt.waste(600)			
 			xvt.outln(xvt.bright, xvt.yellow, 'What do you wish to do?')
 			xvt.waste(600)
 
-			let well = 'BCFORT'
+			let well = 'BFORT'
 			xvt.out($.bracket('B'), 'Bless yourself')
-			xvt.out($.bracket('C'), 'Curse another player')
 			xvt.out($.bracket('F'), 'Fix all your damage')
 			xvt.out($.bracket('O'), 'Teleport all the way out')
 			xvt.out($.bracket('R'), 'Resurrect all the dead players')
 			xvt.out($.bracket('T'), 'Teleport to another level')
+			if (!$.player.coward && deep) {
+				well += 'C'
+				xvt.out($.bracket('C'), 'Curse another player')
+			}
 			if (deep > 1) { xvt.out($.bracket('L'), `Loot another player's money`); well += 'L' }
 			if (deep > 3) { xvt.out($.bracket('G'), 'Grant another call'); well += 'G' }
 			if (deep > 5) { xvt.out($.bracket('K'), 'Key hint(s)'); well += 'K' }
 			if (deep > 7) {
-				xvt.out($.bracket('D'), 'Destroy dank dungeon'); well += 'D'
+				xvt.out($.bracket('D'), 'Destroy dungeon visit'); well += 'D'
 				xvt.out($.bracket('M'), 'Magical spell(s) or device(s)'); well += 'M'
 			}
 			xvt.outln()
@@ -808,7 +809,7 @@ function doMove(): boolean {
 						return
 
 					case 'D':
-						xvt.outln(xvt.bright, xvt.black, 'Your past time in this dungeon is eradicated and reset.')
+						xvt.outln(xvt.bright, xvt.black, 'Your past time in this dungeon visit is eradicated and reset.')
 						$.sound('destroy', 32)
 						for (let i in dd)
 							delete dd[i]
@@ -867,7 +868,7 @@ function doMove(): boolean {
 								xvt.outln(`You can't loot novice players.`)
 							}
 							if (opponent.user.id) {
-								let loot = new $.coins(opponent.user.coin.value + opponent.user.bank.value)
+								loot.value = opponent.user.coin.value + opponent.user.bank.value
 								$.log(opponent.user.id, `\n${$.player.handle} wished for your ${loot.carry()}`)
 								$.news(`\tlooted ${opponent.user.handle}`)
 								$.player.coin.value += loot.value
@@ -956,7 +957,7 @@ function doMove(): boolean {
 		case 'wheel':
 			$.music('wol')
 			xvt.waste(600)
-			xvt.outln(xvt.magenta, 'You have found a Mystical Wheel of Life.')
+			xvt.outln(xvt.magenta, 'You have found a ', xvt.bright, 'Mystical Wheel of Life', xvt.normal, '.')
 			xvt.waste(600)
 			xvt.outln(); xvt.waste(600)
 			xvt.outln(xvt.bright, xvt.yellow, 'The runes are ',
@@ -972,39 +973,43 @@ function doMove(): boolean {
 					xvt.outln()
 					if (/Y/i.test(xvt.entry)) {
 						$.animated('infinite rotateIn')
-						let i, m, n, t, z
-						z = (deep < 3) ? 4 : (deep < 6) ? 6 : (deep < 9) ? 8 : 9
-						t = 0
-						for (i = 0; i < 5; i++) {
-							n = $.int($.online.str / 5 - 5 * i + $.dice(5) + 1)
-							for (m = 0; m < n; m++) {
-								t = $.dice(z)
+						let z = (deep < 3) ? 3 : (deep < 6) ? 6 : 9
+						let t = 0
+						for (let i = 0; i < 5; i++) {
+							let n = $.int($.online.str / 5 - 5 * i + $.dice(5) + 1)
+							for (let m = 0; m < n; m++) {
 								$.beep()
 								xvt.out('\r', '-\\|/'[m % 4])
-								xvt.waste(5 * i)
 							}
 						}
-						n = $.dice($.online.str / 20) + 2
-						for (i = 1; i <= n; i++) {
-							t = $.dice(z)
-							if (i == n && $.player.coward) t = 5
-							if (t % 2 && $.access.sysop) t--
-							xvt.out(xvt.bright, xvt.blue, '[', xvt.cyan, [
-								' Grace ', ' Doom! ',
-								'Fortune', ' Taxes ',
-								' Power ', ' Death ',
-								' =Key= ', ' Morph '
-								, '+Skill+'][t % z],
+						let n = $.dice($.online.str / 20) + 2
+						for (let i = 1; i <= n; i++) {
+							t = $.dice(z + 1) - 1
+							if (i == n) {
+								z = 9
+								if ($.player.coward) t = [0,3,5][$.dice(3) - 1]
+								if ($.access.sysop) t = [1,2,4,6,7][$.dice(5) - 1]
+							}
+							xvt.out(xvt.bright, xvt.blue, '\r [', xvt.cyan, [
+								' Death ', ' Grace ', ' Power ',
+								' Doom! ', 'Fortune', ' Taxes ',
+								' =Key= ', '+Skill+', ' Morph ']
+								[t % z],
 								xvt.blue, '] \r')
 							$.sound('click', 5 * i)
 						}
 						$.animated('rotateOut')
-						xvt.out(xvt.reset)
+						xvt.outln()
 
 						switch (t % z) {
 						case 0:
+							$.online.hp = 0
+							$.online.sp = 0
+							$.death('Wheel of Death')
+							break
+						case 1:
 							if ($.player.cursed) {
-								xvt.out(xvt.faint, '\nThe dark cloud has been lifted.', xvt.reset)
+								xvt.out(xvt.faint, 'The dark cloud has been lifted.', xvt.reset)
 								$.player.cursed = ''
 							}
 							else {
@@ -1013,14 +1018,24 @@ function doMove(): boolean {
 								$.PC.adjust('dex', 0, 2, 1)
 								$.PC.adjust('cha', 0, 2, 1)
 							}
-							$.PC.adjust('str', 10)
-							$.PC.adjust('int', 10)
-							$.PC.adjust('dex', 10)
-							$.PC.adjust('cha', 10)
+							$.PC.adjust('str', 110)
+							$.PC.adjust('int', 110)
+							$.PC.adjust('dex', 110)
+							$.PC.adjust('cha', 110)
+							$.sound('shimmer')
 							break
-						case 1:
+						case 2:
+							$.online.hp += $.int($.player.hp / 2) + $.dice($.player.hp / 2)
+							if ($.player.magic > 1)	$.online.sp += $.int($.player.sp / 2) + $.dice($.player.sp / 2)
+							$.player.toWC += $.dice($.online.weapon.wc - $.player.toWC)
+							$.online.toWC += $.int($.online.weapon.wc / 2) + 1
+							$.player.toAC += $.dice($.online.armor.ac - $.player.toAC)
+							$.online.toAC += $.int($.online.armor.ac / 2) + 1
+							$.sound('hone')
+							break
+						case 3:
 							if ($.player.blessed) {
-								xvt.out(xvt.bright, xvt.yellow, '\nYour shining aura ', xvt.normal, 'has left ', xvt.faint, 'you.', xvt.reset)
+								xvt.out(xvt.bright, xvt.yellow, 'Your shining aura ', xvt.normal, 'has left ', xvt.faint, 'you.', xvt.reset)
 								$.player.blessed = ''
 							}
 							else {
@@ -1029,50 +1044,39 @@ function doMove(): boolean {
 								$.PC.adjust('dex', 0, -2, -1)
 								$.PC.adjust('cha', 0, -2, -1)
 							}
-							$.PC.adjust('str', -10)
-							$.PC.adjust('int', -10)
-							$.PC.adjust('dex', -10)
-							$.PC.adjust('cha', -10)
+							$.PC.adjust('str', -5 - $.dice(5))
+							$.PC.adjust('int', -5 - $.dice(5))
+							$.PC.adjust('dex', -5 - $.dice(5))
+							$.PC.adjust('cha', -5 - $.dice(5))
 							$.sound('crack')
 							break
-						case 2:
-							n = new $.coins($.money(Z))
-							n.value += $.worth(new $.coins($.online.weapon.value).value, $.online.cha)
-							n.value += $.worth(new $.coins($.online.armor.value).value, $.online.cha)
-							n.value *= (Z + 1)
-							$.player.coin.value += new $.coins(n.carry(1, true)).value
+						case 4:
+							loot.value = $.money(Z)
+							loot.value += $.worth(new $.coins($.online.weapon.value).value, $.online.cha)
+							loot.value += $.worth(new $.coins($.online.armor.value).value, $.online.cha)
+							loot.value *= (Z + 1)
+							$.player.coin.value += new $.coins(loot.carry(1, true)).value
 							$.sound('yahoo')
 							break
-						case 3:
+						case 5:
 							$.player.coin.value = 0
 							$.player.bank.value = 0
-							n = new $.coins($.money(Z))
-							n.value += $.worth(new $.coins($.online.weapon.value).value, $.online.cha)
-							n.value += $.worth(new $.coins($.online.armor.value).value, $.online.cha)
-							n.value *= (Z + 1)
-							$.player.loan.value += new $.coins(n.carry(1, true)).value
-							break
-						case 4:
-							$.online.hp += $.int($.player.hp / 2) + $.dice($.player.hp / 2)
-							if ($.player.magic > 1)
-								$.online.sp += $.int($.player.sp / 2) + $.dice($.player.sp / 2)
-							$.player.toWC += $.dice($.online.weapon.wc)
-							$.online.toWC += $.int($.online.weapon.wc / 2) + 1
-							$.player.toAC += $.dice($.online.armor.ac)
-							$.online.toAC += $.int($.online.armor.ac / 2) + 1
-							$.sound('hone')
-							break
-						case 5:
-							$.online.hp = 0
-							$.online.sp = 0
-							$.sound('killed')
-							$.death('Wheel of Death')
+							loot.value = $.money(Z)
+							loot.value += $.worth(new $.coins($.online.weapon.value).value, $.online.cha)
+							loot.value += $.worth(new $.coins($.online.armor.value).value, $.online.cha)
+							loot.value *= (Z + 1)
+							$.player.loan.value += new $.coins(loot.carry(1, true)).value
+							$.sound('thief2')
 							break
 						case 6:
 							$.keyhint($.online)
-							$.sound('shimmer', 12)
+							$.sound('click')
 							break
 						case 7:
+							$.sound('level')
+							$.skillplus($.online, menu)
+							return
+						case 8:
 							$.player.level = $.dice(Z)
 							if ($.online.adept) $.player.level += $.dice($.player.level)
 							$.reroll($.player, $.PC.random('monster'), $.player.level)
@@ -1084,10 +1088,6 @@ function doMove(): boolean {
 							xvt.outln(`You got morphed into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
 							$.sound('morph', 10)
 							break
-						case 8:
-							$.sound('level')
-							$.skillplus($.online, menu)
-							return
 						}
 					}
 					else
@@ -1357,7 +1357,7 @@ function doMove(): boolean {
 
 				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : ''), effect:'flip' })
 				xvt.waste(1800)
-				xvt.out(xvt.faint, 'It waves a hand at you ... '); xvt.waste(1200)
+				xvt.out(xvt.faint, 'It waves a hand at you ... '); xvt.waste(800)
 				xvt.outln()
 
 				//	vacate
@@ -1937,7 +1937,7 @@ function drawHero(peek = false) {
 		else
 			xvt.out(xvt.faint, xvt.reverse, '  X  ')
 		xvt.plot(Y * 2 + 2, X * 6 + 4)
-		xvt.waste(800)
+		$.sound('killed', 8)
 	}
 	xvt.restore()
 }
@@ -2847,6 +2847,14 @@ function quaff(v: number, it = true) {
 				, $.online.cha > 40 ? -$.dice(6) - 4 : -3
 				, $.player.cha > 60 ? -$.dice(3) - 2 : -2
 				, $.player.maxcha > 80 ? -2 : -1)
+			$.online.hp -= $.PC.hp()
+			$.online.sp -= $.PC.sp()
+			if ($.online.hp < 0) {
+				$.online.hp = 0
+				$.reason = `quaffed${$.an(potion[v])}`
+				xvt.waste(600)
+				drawHero()
+			}
 			break
 
 	//	Potion of Augment

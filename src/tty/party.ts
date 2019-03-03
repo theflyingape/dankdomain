@@ -182,6 +182,7 @@ function choice() {
                     xvt.outln()
                     if (/Y/i.test(xvt.entry)) {
                         $.player.gang = ''
+                        $.player.coward = true
                         $.online.altered = true
                         let i = g.members.indexOf($.player.id)
                         if (i > 0) {
@@ -189,6 +190,7 @@ function choice() {
                             $.saveGang(g)
                         }
                         else {
+                            $.PC.adjust('cha', -2, -1)
                             xvt.out('\nDissolving the gang... ')
                             $.run(`UPDATE Players SET gang = '' WHERE gang = '${g.name}'`)
                             $.run(`DELETE FROM Gangs WHERE name = '${g.name}'`)
@@ -236,7 +238,7 @@ function choice() {
                             xvt.outln()
                             $.cat('gang')
                             xvt.waste(1200)
-                            xvt.outln(`\nYou are now a member of ${g.name}.`)
+                            xvt.outln(`You are now a member of ${g.name}.`)
                             $.sound('click', 12)
                         }
                         else {

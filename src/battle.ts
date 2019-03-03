@@ -61,10 +61,10 @@ function end() {
     if (from === 'Naval') {
         if ($.online.hp > 0) {
             $.sound('naval' + (parties[1][0].user.id === '_OLD' ? '_f' : ''), 32)
-            $.PC.adjust('str', 2, 1, 1)
-            $.PC.adjust('int', 2, 1, 1)
-            $.PC.adjust('dex', 2, 1, 1)
-            $.PC.adjust('cha', 2, 1, 1)
+            $.PC.adjust('str', 102, 1, 1)
+            $.PC.adjust('int', 102, 1, 1)
+            $.PC.adjust('dex', 102, 1, 1)
+            $.PC.adjust('cha', 102, 1, 1)
             $.beep()
             xvt.outln(); xvt.waste(500)
             Battle.yourstats(); xvt.waste(500)
@@ -347,8 +347,10 @@ export function attack(retry = false) {
                         ][$.dice(5) - 1])
                     if ($.online.confused)
                         $.activate($.online, false, true)
-                    if (from === 'Party' && $.player.gang)
+                    if (from === 'Party' && $.player.gang) {
+                        $.player.coward = true
                         $.run(`UPDATE Gangs SET loss=loss+1 WHERE name = '${$.player.gang}'`)
+                    }
                     if (from === 'User' && enemy.user.gender !== 'I') {
 						$.PC.adjust('cha', -2, -1)
                         $.log(enemy.user.id, `\n${$.player.handle}, the coward, retreated from you.`)
@@ -371,7 +373,8 @@ export function attack(retry = false) {
             }, cancel:'R', enter:'A', eol:false, max:1, match:/A|C|R|Y/i, timeout:30 },
             'backstab': {cb:() => {
                 if (/N/i.test(xvt.entry)) bs = 1
-                xvt.out('\n\n', xvt.bright, xvt.white)
+                xvt.outln('\n')
+                xvt.out(xvt.bright, xvt.white)
                 melee(rpc, enemy, bs)
                 next()
                 return
@@ -396,7 +399,8 @@ export function attack(retry = false) {
                 return
             }
             else {
-                xvt.out('\n', xvt.bright)
+                xvt.outln()
+                xvt.out(xvt.bright, xvt.white)
             }
             melee(rpc, enemy)
         }
@@ -1500,7 +1504,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                         xvt.waste(600)
                         $.music('winner')
                         xvt.outln(xvt.faint, 'You raise the ', xvt.yellow, DL.cleric.user.handle, xvt.reset, ' from the dead!')
-                        $.PC.adjust('cha', 4, 2, 1)
+                        $.PC.adjust('cha', 104, 2, 1)
                         xvt.waste(600)
                         cb()
                         return
@@ -1968,7 +1972,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 xvt.outln('A magical field glitters around ', isNaN(+rpc.user.armor) ? `${$.who(rpc, 'his')}${rpc.user.armor}` : `${$.who(rpc, 'him')}...`)
                 if (rpc.user.magic > 2 && rpc.user.toAC >= 0)
                     rpc.user.toAC++
-                rpc.toAC += $.dice(rpc.armor.ac)
+                rpc.toAC += $.int(rpc.armor.ac / 2) + $.dice(rpc.armor.ac / 2)
             }
             rpc.altered = true
             break
@@ -1988,7 +1992,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 xvt.outln($.who(rpc, 'His'), isNaN(+rpc.user.weapon) ? rpc.user.weapon : 'attack', ' emanates magical sharpness.')
                 if (rpc.user.magic > 2 && rpc.user.toWC >= 0)
                     rpc.user.toWC++
-                rpc.toWC += $.dice(rpc.weapon.wc)
+                rpc.toWC += $.int(rpc.weapon.wc / 2) + $.dice(rpc.weapon.wc / 2)
             }
             rpc.altered = true
             break
@@ -2000,7 +2004,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
 export function melee(rpc: active, enemy: active, blow = 1) {
     const melee = +($.Ring.power(rpc.user.rings, 'melee', 'pc', rpc.user.pc).power && !$.Ring.power(enemy.user.rings, 'ring').power)
-        * (+$.Ring.power($.player.rings, 'ring').power + 1)
+        * (+$.Ring.power($.player.rings, 'ring').power + rpc.user.magic + 1)
     const life = +($.Ring.power(rpc.user.rings, 'hp', 'pc', rpc.user.pc).power && !$.Ring.power(enemy.user.rings, 'ring').power)
         * (+$.Ring.power($.player.rings, 'ring').power + 1)
     let action: string
@@ -2071,7 +2075,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     }
 
     // melee
-    hit = Math.trunc(rpc.str / 10) + melee
+    hit = $.int(rpc.str / 10) + melee
     hit += $.dice(rpc.user.level + melee)
     hit += rpc.user.melee * $.dice(rpc.user.level + melee)
 
@@ -2088,7 +2092,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
 		n += $.dice(rpc.user.melee)
     }
     if (!period) period = '.'
-    hit *= 50 + Math.trunc(rpc.user.str / 2) + melee
+    hit *= 50 + $.int(rpc.user.str / 2) + melee
     hit = Math.round(hit / 100)
 
     // my stuff vs your stuff
@@ -2098,7 +2102,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     ac = ac < 0 ? 0 : ac
 
     hit += 2 * (wc + $.dice(wc))
-    hit *= 50 + Math.trunc(rpc.user.str / 2)
+    hit *= 50 + $.int(rpc.user.str / 2)
     hit = Math.round(hit / 100)
     hit -= ac + $.dice(ac)
     hit = (hit > 0) ? hit * blow : melee
@@ -2134,9 +2138,9 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                 deed.value = hit
                 $.sound('outstanding')
                 $.saveDeed(deed)
-                xvt.out(xvt.lyellow, '+', xvt.white)
+                xvt.out(xvt.yellow, '+', xvt.white)
             }
-            xvt.out('You ', action ,' ')
+            xvt.out('You ', melee ? xvt.uline : '', action, melee ? xvt.nouline : '', ' ')
             if (alive[0] == 1 && alive[1] == 1)
                 xvt.out($.who(enemy, 'him'))
             else
@@ -2148,9 +2152,9 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             if (alive[0] == 1 && alive[1] == 1)
                 xvt.out($.who(rpc, 'He'))
             else
-                xvt.out(rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle, ' ')
-            xvt.out($.what(rpc, w[0]), w.slice(1).join(' '), enemy == $.online ? 'you'
-                : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
+                xvt.out('  ', rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle, ' ')
+            xvt.out(melee ? xvt.uline : '', $.what(rpc, w[0]), w.slice(1).join(' '), melee ? xvt.nouline : ''
+                , enemy == $.online ? 'you' : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
                 , ' '
             )
         }
@@ -2358,12 +2362,14 @@ export function user(venue: string, cb:Function) {
                 if ((+rs[i].xplevel !== +rs[i].level && +rs[i].xplevel < 2)) xvt.out(xvt.faint)
                 else xvt.out(xvt.reset)
                 //  paint a target on any player that is winning
-                if (rs[i].pc === $.PC.winning)
-                    xvt.out(xvt.bright, xvt.yellow)
-                xvt.out(sprintf('%-4s  %-22s  %-9s', rs[i].id, rs[i].handle, rs[i].pc))
+                if (rs[i].pc === $.PC.winning) xvt.out(xvt.bright, xvt.yellow)
+
+                xvt.out(sprintf('%-4s  %-22s  %-9s', rs[i].id, rs[i].handle, rs[i].pc), xvt.reset)
+
                 if (rs[i].status) xvt.out(xvt.faint)
                 xvt.out(sprintf('  %3d  ', rs[i].xplevel))
                 if (rs[i].status) xvt.out(xvt.normal)
+
                 xvt.out($.date2full(rs[i].lastdate), '  ', rs[i].access)
                 if ($.player.emulation === 'XT' && $.Access.name[rs[i].access].emoji)
                     xvt.out(' ', $.Access.name[rs[i].access].sysop ? xvt.cyan : xvt.faint

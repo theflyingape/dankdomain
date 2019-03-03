@@ -150,8 +150,7 @@ function newSession(ev) {
 	const options: ITerminalOptions = {
 		bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false, drawBoldTextInBrightColors: true,
 		cols: cols, rows: rows, scrollback: 500,
-		fontFamily: 'tty,Consolas,monospace', fontSize: 24,
-		fontWeight: '400', fontWeightBold: '500',
+		fontFamily: 'tty,Consolas,monospace', fontSize: 24, fontWeight: '400', fontWeightBold: '500',
 		theme: {
 			foreground: '#a8a8a8', background: '#020408', cursor: '#a0c8f0',
 			black: '#000000', red: '#a80000', green: '#00a800', yellow: '#c8a800',

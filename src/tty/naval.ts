@@ -142,7 +142,7 @@ function choice() {
 					xvt.outln('n old sea hag!')
 					$.cat(`naval/${$.seahag}`.toLowerCase())
 					xvt.waste(600)
-					xvt.outln(xvt.bright, xvt.green, '\nShe cackles as you are sent spinning elsewhere ... ')
+					xvt.outln(xvt.bright, xvt.green, 'She cackles as you are sent spinning elsewhere ... ')
 					$.sound('crone', 24)
 					require('./dungeon').DeepDank($.player.level + 3 * $.dice($.player.level), () => {
 						$.action('clear')

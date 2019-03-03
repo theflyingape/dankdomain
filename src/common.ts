@@ -708,19 +708,18 @@ export function checkXP(rpc: active, cb: Function): boolean {
             bonus = true
             music('.')
             if (rpc.user.novice) {
-                xvt.outln('You are no longer a novice.  Welcome to the next level of play.')
+                reroll(rpc.user, sysop.pc, rpc.user.level)
                 rpc.user.novice = false
-                rpc.user.pc = sysop.pc
                 rpc.user.expert = true
-                //  adjust character attributes to match
-                rpc.user.melee = PC.card(rpc.user.pc).melee
-                rpc.user.backstab = PC.card(rpc.user.pc).backstab
-                rpc.user.magic = PC.card(rpc.user.pc).magic
-                rpc.user.steal = PC.card(rpc.user.pc).steal
-                sound('cheer', 20)
-                xvt.outln('You morph into', an(rpc.user.pc), '.'); xvt.waste(250)
+                xvt.outln(xvt.cyan, xvt.bright, 'You are no longer a novice.  Welcome to the next level of play!')
+                sound('welcome', 9)
+                xvt.outln('You morph into', xvt.yellow, an(rpc.user.pc), xvt.reset, '.'); xvt.waste(250)
+                profile({ png:'player/' + rpc.user.pc.toLowerCase() + (rpc.user.gender === 'F' ? '_f' : '')
+                    , handle:rpc.user.handle, level:rpc.user.level, pc:rpc.user.pc
+                })
+                sound('cheer', 21)
             }
-            sound('demon', 18)
+            sound('demon', 17)
             break
         }
     }
@@ -1504,7 +1503,7 @@ export function reroll(user: user, dd?: string, level = 1) {
 
     for (let n = 2; n <= level; n++) {
         user.level = n
-        if (user.level == 50 && user.gender !== 'I' && user.id[0] !== '_') {
+        if (user.level == 50 && user.gender !== 'I' && user.id[0] !== '_' && !user.novice) {
             xvt.out(xvt.reset, xvt.bright, xvt.yellow, '+', xvt.reset, ' Bonus ')
             let d: number = 0
             while (!d) {
@@ -1922,14 +1921,14 @@ export function	cat(filename: string): boolean {
 
     try {
         fs.accessSync(path, fs.constants.F_OK)
-        xvt.out(fs.readFileSync(path), xvt.reset)
+        xvt.outln(fs.readFileSync(path), xvt.white)
         return true
     } catch (e) {
         if (xvt.emulation.match('PC|XT')) {
             let path = folder + filename + '.txt'
             try {
                 fs.accessSync(path, fs.constants.F_OK)
-                xvt.out(fs.readFileSync(path), xvt.reset)
+                xvt.outln(fs.readFileSync(path), xvt.white)
                 return true
             } catch (e) {
                 return false

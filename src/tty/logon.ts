@@ -292,8 +292,7 @@ function welcome() {
 
     if ($.player.today <= $.access.calls && $.access.roleplay && $.sysop.dob <= $.now().date) {
         $.profile({ png:'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : '')
-            , handle:$.player.handle
-            , level:$.player.level, pc:$.player.pc
+            , handle:$.player.handle, level:$.player.level, pc:$.player.pc
         })
         $.sound('welcome')
 
@@ -391,7 +390,7 @@ function welcome() {
             )
             $.cat('announcement')
 
-            xvt.outln('\n\n', xvt.cyan, '--=:))', xvt.LGradient[xvt.emulation]
+            xvt.outln('\n', xvt.cyan, '--=:))', xvt.LGradient[xvt.emulation]
                 , xvt.Cyan, xvt.bright, xvt.white, 'Auto Message', xvt.reset
                 , xvt.cyan, xvt.RGradient[xvt.emulation], '((:=--\n'
             )
