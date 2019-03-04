@@ -231,7 +231,7 @@ function password() {
     if ($.now().date >= $.sysop.dob)
         xvt.out(xvt.faint, $.sysop.plays.toString(), ' plays since this game started')
     else
-        xvt.out('new game starts', xvt.bright, xvt.yellow)
+        xvt.out(xvt.bright, 'new game starts', xvt.cyan)
     xvt.outln(' ', $.date2full($.sysop.dob))
     xvt.outln(xvt.cyan, 'Last on: ', xvt.bright, xvt.white, $.date2full($.player.lastdate))
     xvt.outln(xvt.cyan, ' Online: ', xvt.bright, xvt.white, $.player.handle
@@ -375,6 +375,20 @@ function welcome() {
         $.saveUser($.player)
         $.unlock($.player.id)
         $.news('', true)
+
+        $.wall(`logged on as a level ${$.player.level} ${$.player.pc}`)
+
+        xvt.out(xvt.cyan, '\nLast callers were: ', xvt.white)
+        try {
+            $.callers = JSON.parse(fs.readFileSync('./users/callers.json').toString())
+            for (let last in $.callers) {
+                xvt.outln(xvt.bright, $.callers[last].who, xvt.normal, ' (', $.callers[last].reason, ')')
+                xvt.out('                   ')
+            }
+        }
+        catch(err) {
+            xvt.outln(`not available (${err})`)
+        }
     }
 
     xvt.app.form = {
