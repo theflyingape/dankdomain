@@ -84,11 +84,10 @@
     },
 	"Hell's Fury": {
         "unique": false,
-        "description":"enhance fighting ability, except for Cleric,\n   Paladin and God classes, or against Demons",
+        "description":"enhance fighting ability, except for Cleric,\n   Paladin and God classes",
         "emoji":"👿",
         "ability":[
             { "id":"melee", "power":true },
-            { "id":"melee", "power":false, "pc":"Demon" },
             { "id":"melee", "power":false, "pc":"Cleric" },
             { "id":"melee", "power":false, "pc":"Paladin" },
             { "id":"melee", "power":false, "pc":"God" }

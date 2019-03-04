@@ -1172,7 +1172,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             //  collect some of the mana spent by the enemy?
             if (nme) {
                 const spent = +(+$.Ring.power(nme.user.rings, 'sp', 'pc', nme.user.pc).power && !$.Ring.power(rpc.user.rings, 'ring').power) * (+$.Ring.power(nme.user.rings, 'ring').power + 1)
-                if (mana = spent * $.dice(mana / 3)) {
+                if (mana = spent * $.dice(mana / 6) * $.dice(nme.user.magic)) {
                     if (nme.sp + mana > nme.user.sp) {
                         mana = nme.user.sp - nme.sp
                         if (mana < 0) mana = 0
@@ -2011,7 +2011,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
 export function melee(rpc: active, enemy: active, blow = 1) {
     const melee = +($.Ring.power(rpc.user.rings, 'melee', 'pc', rpc.user.pc).power && !$.Ring.power(enemy.user.rings, 'ring').power)
-        * (+$.Ring.power($.player.rings, 'ring').power + rpc.user.magic + 1)
+        * (+$.Ring.power($.player.rings, 'ring').power + 1) * (rpc.user.melee + 1)
     const life = +($.Ring.power(rpc.user.rings, 'hp', 'pc', rpc.user.pc).power && !$.Ring.power(enemy.user.rings, 'ring').power)
         * (+$.Ring.power($.player.rings, 'ring').power + 1)
     let action: string
@@ -2096,7 +2096,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             hit += $.dice(rpc.user.level)
         }
         period += '!'
-		n += $.dice(rpc.user.melee)
+		n += melee + 1
     }
     if (!period) period = '.'
     hit *= 50 + $.int(rpc.user.str / 2) + melee
