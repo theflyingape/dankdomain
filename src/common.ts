@@ -1958,8 +1958,8 @@ export function display(title:string, back:number, fore:number, suppress:boolean
             xvt.outln('\n')
             for (let i in menu) {
                 if (xvt.validator.isNotEmpty(menu[i].description))
-                    xvt.out(xvt.faint, fore, '<', xvt.bright, xvt.white, i, xvt.faint, fore, '> ',
-                        xvt.reset, menu[i].description , '\n')
+                    xvt.outln(xvt.faint, fore, '<', xvt.bright, xvt.white, i, xvt.faint, fore, '> ',
+                        xvt.reset, menu[i].description)
             }
         }
     }

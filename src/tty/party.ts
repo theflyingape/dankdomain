@@ -235,10 +235,10 @@ function choice() {
                             if (g.members.indexOf($.player.id) < 0)
                                 g.members.push($.player.id)
                             $.run(`UPDATE Gangs SET members = '${g.members.join()}' WHERE name = '${g.name}'`)
-                            xvt.outln()
+                            xvt.outln('\n')
                             $.cat('gang')
                             xvt.waste(1200)
-                            xvt.outln(`You are now a member of ${g.name}.`)
+                            xvt.outln(xvt.cyan, 'You are now a member of ', xvt.bright, g.name, xvt.normal, '.')
                             $.sound('click', 12)
                         }
                         else {
