@@ -406,17 +406,16 @@ export class Ring {
         for (let f in rings) {
             let abilities = this.name[rings[f]].ability
             for (let a in abilities) {
+                //  got POWER?
                 if (abilities[a].id == id) {
-                    if (typeof abilities[a][match] == 'undefined') {
-                        name = rings[f]
-                        power = abilities[a].power
-                    }
+                    name = rings[f]
+                    if (Object.keys(abilities[a]).length == 2)
+                        power = abilities[a].power || false
                     else if (match && abilities[a][match]) {
-                        if (value && abilities[a][match] == value) {
-                            name = rings[f]
-                            power = abilities[a].power
-                        }
+                        if (value && abilities[a][match] == value)
+                            power = abilities[a].power || false
                     }
+//console.log(a, name, id, match || '', value || '', '->', power)
                 }
             }
         }

@@ -290,6 +290,7 @@ interface character {
     maxCha: number      //  baseCha-99
     unicode: string     //  dungeon map symbol
     color?: number      //  symbol's color
+    skip?: string       //  action
     specialty?: string  //  meta
     description?: string[]
     bonusStr?: number    //  0-2

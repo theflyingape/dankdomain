@@ -185,7 +185,8 @@ function choice() {
 								}
 							}
 							else {
-								if ($.Ring.power($.player.rings, 'joust').power && !$.Ring.power(opponent.user.rings, 'ring').power && $.dice(3) == 1) {
+								if ($.Ring.power($.player.rings, 'joust').power && !$.Ring.power(opponent.user.rings, 'ring').power
+								&& !$.Ring.power(opponent.user.rings, 'joust').power && $.dice(3) == 1) {
 									$.sound('swoosh')
 									xvt.outln(xvt.magenta, '^>', xvt.bright, xvt.white, ' SWOOSH! ', xvt.normal, xvt.magenta,'<^  ', xvt.reset
 									, $.who(opponent, 'He'), 'missed!  You both pass and try again!')

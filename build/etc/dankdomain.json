@@ -40,7 +40,7 @@
             "toStr":1, "toInt":2, "toDex":1, "toCha":1, 
             "maxStr":90, "maxInt":95, "maxDex":90, "maxCha":90, 
             "bonusStr":0, "bonusInt":1, "bonusDex":1, "bonusCha":1,
-            "unicode":"♀",
+            "unicode":"♀", "skip":"disengage",
             "specialty": "Powerful Venenum",
             "description": [
                 "The Alchemist depends greatly on the ability to use poisons.  This skill",
@@ -58,7 +58,7 @@
             "toStr":1, "toInt":1, "toDex":2, "toCha":1, 
             "maxStr":90, "maxInt":90, "maxDex":95, "maxCha":90, 
             "bonusStr":1, "bonusInt":0, "bonusDex":1, "bonusCha":1,
-            "unicode":"⚴",
+            "unicode":"⚴", "skip":"elude",
             "specialty": "Backstab/Poison",
             "description": [
                 "A ninja-style fighter, the Assassin has extra fighting ability making them",
@@ -73,7 +73,7 @@
             "toStr":4, "toInt":1, "toDex":1, "toCha":1, 
             "maxStr":99, "maxInt":80, "maxDex":90, "maxCha":90, 
             "bonusStr":1, "bonusInt":2, "bonusDex":0, "bonusCha":0,
-            "unicode":"⚵",
+            "unicode":"⚵", "skip":"squeeze",
             "specialty": "Brutal Combatant",
             "description": [
                 "The strongest, combat-class fighter in the game, but the most susceptible",
@@ -90,7 +90,7 @@
             "maxStr":90, "maxInt":90, "maxDex":85, "maxCha":98, 
             "bonusStr":0, "bonusInt":0, "bonusDex":2, "bonusCha":1,
             "specialty": "Artisan Enchanter",
-            "unicode":"☨",
+            "unicode":"☨", "skip":"lose",
             "description": [
                 "The Bard-class enjoys every aspect of the game: backstabbing, magic,",
                 "stealing, and fighting.  However, the Bard does not specialize in any",
@@ -105,7 +105,7 @@
             "toStr":1, "toInt":1, "toDex":1, "toCha":4, 
             "maxStr":90, "maxInt":90, "maxDex":80, "maxCha":99, 
             "bonusStr":0, "bonusInt":0, "bonusDex":2, "bonusCha":1,
-            "unicode":"♱",
+            "unicode":"♱", "skip":"fend off",
             "specialty": "Skillful Magic/Melee",
             "description": [
                 "A Cleric has good combat and magic abilities, but honing skills are",
@@ -119,7 +119,7 @@
             "toStr":3, "toInt":1, "toDex":1, "toCha":1, 
             "maxStr":98, "maxInt":90, "maxDex":90, "maxCha":85,
             "bonusStr":1, "bonusInt":0, "bonusDex":0, "bonusCha":2,
-            "unicode":"☥",
+            "unicode":"☥", "skip":"sidestep",
             "specialty": "Warrior Combatant",
             "description": [
                 "Fighters are excellent killers.  Their extra-ordinary combat ability makes",
@@ -134,7 +134,7 @@
             "toStr":1, "toInt":1, "toDex":3, "toCha":1, 
             "maxStr":90, "maxInt":85, "maxDex":98, "maxCha":90,
             "bonusStr":0, "bonusInt":2, "bonusDex":1, "bonusCha":0,
-            "unicode":"⛢",
+            "unicode":"⛢", "skip":"dodge",
             "specialty": "Magic/Dodge/Steal",
             "description": [
                 "Jesters are annoying pests.  They lack serious hand-to-hand combat power,",
@@ -149,7 +149,7 @@
             "toStr":1, "toInt":3, "toDex":1, "toCha":1, 
             "maxStr":85, "maxInt":98, "maxDex":90, "maxCha":90, 
             "bonusStr":2, "bonusInt":1, "bonusDex":0, "bonusCha":0,
-            "unicode":"☧",
+            "unicode":"☧", "skip":"trick",
             "specialty": "Arcane Magic/Poison",
             "description": [
                 "The Magician is the opposite of the Fighter; powerful magic opposed to",
@@ -164,7 +164,7 @@
             "toStr":2, "toInt":1, "toDex":1, "toCha":1, 
             "maxStr":95, "maxInt":90, "maxDex":90, "maxCha":90, 
             "bonusStr":1, "bonusInt":0, "bonusDex":1, "bonusCha":1,
-            "unicode":"♂",
+            "unicode":"♂", "skip":"duck",
             "specialty": "Skillful Melee/Scroll",
             "description": [
                 "Rangers are great survivors, because they must depend on their ability to",
@@ -180,7 +180,7 @@
             "toStr":1, "toInt":1, "toDex":1, "toCha":2, 
             "maxStr":95, "maxInt":95, "maxDex":95, "maxCha":95, 
             "bonusStr":0, "bonusInt":1, "bonusDex":1, "bonusCha":1,
-            "unicode":"♝",
+            "unicode":"♝", "skip":"cheat",
             "specialty": "Skillful/Wizardry",
             "description": [
                 "A Rogue is similar to a Thief class with a backstab, poison, and stealing.",
@@ -195,7 +195,7 @@
             "toStr":1, "toInt":4, "toDex":1, "toCha":1, 
             "maxStr":80, "maxInt":99, "maxDex":90, "maxCha":90, 
             "bonusStr":2, "bonusInt":1, "bonusDex":0, "bonusCha":0,
-            "unicode":"⛣",
+            "unicode":"⛣", "skip":"avoid",
             "specialty": "Divine Magicae",
             "description": [
                 "The weakest combat-class is the Sage.  While hand-to-hand abilities leave",
@@ -210,7 +210,7 @@
             "toStr":1, "toInt":1, "toDex":4, "toCha":1, 
             "maxStr":90, "maxInt":90, "maxDex":99, "maxCha":80, 
             "bonusStr":0, "bonusInt":0, "bonusDex":1, "bonusCha":2,
-            "unicode":"⚗",
+            "unicode":"⚗", "skip":"deceive",
             "specialty": "Master Steal/Backstab",
             "description": [
                 "The Thief class relies on the ability to stealth approach an enemy and",
@@ -229,7 +229,7 @@
             "toStr":2, "toInt":2, "toDex":2, "toCha":2, 
             "maxStr":95, "maxInt":95, "maxDex":95, "maxCha":95, 
             "bonusStr":1, "bonusInt":1, "bonusDex":1, "bonusCha":1,
-            "unicode":"♰",
+            "unicode":"♰", "skip":"evade",
             "specialty": "Ranger/Rogue",
             "description": [
                 "A Paladin class can only be achieved by becoming immortal (100th level) and",
@@ -245,7 +245,7 @@
             "toStr":2, "toInt":2, "toDex":2, "toCha":2, 
             "maxStr":98, "maxInt":98, "maxDex":98, "maxCha":98, 
             "bonusStr":1, "bonusInt":1, "bonusDex":1, "bonusCha":1,
-            "unicode":"♆",
+            "unicode":"♆", "skip":"laugh at",
             "specialty": "Fighter/Magician",
             "description": [
                 "You can only ascend to a Titan class from immortalizing a Paladin class and",
@@ -261,7 +261,7 @@
             "toStr":2, "toInt":2, "toDex":2, "toCha":2,
             "maxStr":99, "maxInt":99, "maxDex":99, "maxCha":99,
             "bonusStr":1, "bonusInt":1, "bonusDex":1, "bonusCha":1,
-            "unicode":"♛",
+            "unicode":"♛", "skip":"halt",
             "specialty": "Barbarian/Sage",
             "description": [
                 "The highest superbeing of them all, you can only ascend to a God from a",
@@ -279,7 +279,7 @@
             "toStr":1, "toInt":1, "toDex":1, "toCha":2,
             "maxStr":90, "maxInt":90, "maxDex":90, "maxCha":90,
             "bonusStr":0, "bonusInt":0, "bonusDex":0, "bonusCha":1,
-            "unicode":"Ѫ", "color":34,
+            "unicode":"Ѫ", "color":34, "skip":"corner",
             "specialty": "Ranger",
             "description": [
                 "A scary and vicious animal."
@@ -291,7 +291,7 @@
             "toStr":1, "toInt":1, "toDex":2, "toCha":1,
             "maxStr":95, "maxInt":92, "maxDex":90, "maxCha":75,
             "bonusStr":1, "bonusInt":1, "bonusDex":0, "bonusCha":0,
-            "unicode":"☿", "color":31,
+            "unicode":"☿", "color":31, "skip":"outmaneuver",
             "specialty": "Fighter",
             "description": [
                 "A supernatural and malevolent entity conjured or controlled."
@@ -303,7 +303,7 @@
             "toStr":3, "toInt":1, "toDex":1, "toCha":1,
             "maxStr":99, "maxInt":90, "maxDex":88, "maxCha":85,
             "bonusStr":2, "bonusInt":0, "bonusDex":0, "bonusCha":0,
-            "unicode":"☫", "color":36,
+            "unicode":"☫", "color":36, "skip":"pin",
             "specialty": "Barbarian/Magician",
             "description": [
                 "A large, serpent-like creature possessing legendary powers."
@@ -315,7 +315,7 @@
             "toStr":1, "toInt":2, "toDex":3, "toCha":1,
             "maxStr":92, "maxInt":88, "maxDex":92, "maxCha":80,
             "bonusStr":0, "bonusInt":0, "bonusDex":2, "bonusCha":0,
-            "unicode":"☡", "color":32,
+            "unicode":"☡", "color":32, "skip":"freeze",
             "specialty": "Rogue",
             "description": [
                 "A stealth predator with strong defenses."
@@ -327,7 +327,7 @@
             "toStr":1, "toInt":3, "toDex":1, "toCha":1,
             "maxStr":82, "maxInt":96, "maxDex":90, "maxCha":90,
             "bonusStr":0, "bonusInt":2, "bonusDex":0, "bonusCha":0,
-            "unicode":"⚧", "color":35,
+            "unicode":"⚧", "color":35, "skip":"paralyze",
             "specialty": "Magus",
             "description": [
                 "A lesser demon with supernatural abilities."
@@ -339,7 +339,7 @@
             "toStr":2, "toInt":1, "toDex":1, "toCha":1,
             "maxStr":98, "maxInt":90, "maxDex":88, "maxCha":70,
             "bonusStr":1, "bonusInt":0, "bonusDex":0, "bonusCha":1,
-            "unicode":"☠", "color":37,
+            "unicode":"☠", "color":37, "skip":"hypnotize",
             "specialty": "Barbarian/Ranger",
             "description": [
                 "A corpse reanimated by supernatural forces."
@@ -354,7 +354,7 @@
             "toStr":2, "toInt":1, "toDex":1, "toCha":1,
             "maxStr":99, "maxInt":85, "maxDex":66, "maxCha":85,
             "bonusStr":0, "bonusInt":0, "bonusDex":0, "bonusCha":2,
-            "unicode":"♜", "color":33,
+            "unicode":"♜", "color":33, "skip":"grab",
             "specialty": "Barbarian/Ranger",
             "description": [
                 "A large, hideous, man-like being that eats players."

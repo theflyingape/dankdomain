@@ -98,5 +98,5 @@
 	"slaad lord": { "pc":"Lizard", "armor":"Cloak of Elvenlords", "weapon":"Battle Axe of Lords", "poisons":[ 11,12,13 ], "spells":[ "Illusion", "Super Shield", "Super Hone" ], "rings":[ "Elven" ], "effect":"rubberBand" },
 	"demon prince": { "pc":"Demon", "hit":"hit", "smash":"smash", "spells":[ "Heal", "Super Shield" ], "effect":"tada" },
 	"archdevil": { "pc":"Demon", "hit":"hit", "smash":"smash", "spells":[ "Blast", "Super Hone" ], "rings":[ "Hell's Fury" ], "effect":"tada" },
-	"elemental prince": { "pc":"God", "hit":"strike", "smash":"smite", "spells":[ "Confusion", "Cure", "Armor Rusting", "Weapon Decay", "Mana Stealing" ], "rings":[ "Faith", "White Wizard" ], "effect":"flipInX" }
+	"elemental prince": { "pc":"God", "hit":"strike", "smash":"smite", "spells":[ "Confusion", "Cure", "Armor Rusting", "Weapon Decay", "Mana Stealing" ], "rings":[ "White Wizard" ], "effect":"flipInX" }
 }

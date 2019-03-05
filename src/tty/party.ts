@@ -461,7 +461,7 @@ function choice() {
                             nme.push(<active>{})
                             nme[i].user = <user>{id: ''}
 
-                            let mon = $.dice(7) - 2 + (posse[i] ? posse[i].user.level : $.dice(Object.keys(monsters).length))
+                            let mon = $.dice(3) - 2 + (posse[i] ? posse[i].user.level : $.dice(Object.keys(monsters).length / 2))
                             mon = mon < 0 ? 0 : mon >= Object.keys(monsters).length ? Object.keys(monsters).length - 1 : mon
                             let dm = Object.keys(monsters)[mon]
                             let ml = mon + $.dice(3) - 2
@@ -473,12 +473,14 @@ function choice() {
                             nme[i].user.weapon = monsters[dm].weapon ? monsters[dm].weapon : $.Weapon.merchant[Math.trunc(($.Weapon.merchant.length - 1) * ml / 100) + 1]
                             nme[i].user.armor = monsters[dm].armor ? monsters[dm].armor : $.Armor.merchant[Math.trunc(($.Armor.merchant.length - 1) * ml / 100) + 1]
 
-                            nme[i].user.poisons = [ 1 ]
+                            nme[i].user.poisons = []
                             if (monsters[dm].poisons)
                                 for (let vials in monsters[dm].poisons)
                                     $.Poison.add(nme[i].user.poisons, monsters[dm].poisons[vials])
 
-                            nme[i].user.spells = [ 8 ]
+                            nme[i].user.rings = monsters[dm].rings || []
+
+                            nme[i].user.spells = []
                             if (monsters[dm].spells)
                                 for (let magic in monsters[dm].spells)
                                     $.Magic.add(nme[i].user.spells, monsters[dm].spells[magic])

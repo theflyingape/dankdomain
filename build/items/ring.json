@@ -48,30 +48,34 @@
     },
     "Elven": {
         "unique": false,
-        "description":"enhance dexterous speed attacks",
+        "description":"enhance dexterous speed attacks, except for\n  Assassin, Fighter, Ranger and Demon classes",
         "emoji":"🧝",
         "ability":[
-            { "id":"upgrade", "power":true, "ability":"dex" },
             { "id":"skip", "power":true },
             { "id":"skip", "power":false, "pc":"Assassin" },
             { "id":"skip", "power":false, "pc":"Demon" },
             { "id":"skip", "power":false, "pc":"Fighter" },
-            { "id":"skip", "power":false, "pc":"Ranger" }
+            { "id":"skip", "power":false, "pc":"Ranger" },
+            { "id":"upgrade", "power":true, "ability":"dex" }
         ]
     },
     "Faith": {
         "unique": true,
-        "description":"life-steal hit points; added mana-steal for Cleric,\n   Paladin and God classes",
+        "description":"life-steal hit points; added powers for Cleric,\n   Paladin and God classes",
         "emoji":"✝️",
         "ability":[
             { "id":"degrade", "power":true, "pc":"Undead" },
             { "id":"hp", "power":true },
             { "id":"hp", "power":false, "pc":"Undead" },
-            { "id":"skip", "power":true },
-            { "id":"skip", "power":false, "pc":"Undead" },
+            { "id":"resurrect", "power":true, "pc":"Cleric" },
+            { "id":"resurrect", "power":true, "pc":"Paladin" },
+            { "id":"skip", "power":true, "pc":"Undead" },
             { "id":"sp", "power":true, "pc":"Cleric" },
             { "id":"sp", "power":true, "pc":"Paladin" },
-            { "id":"sp", "power":true, "pc":"God" }
+            { "id":"sp", "power":true, "pc":"God" },
+            { "id":"upgrade", "power":true, "pc":"Cleric" },
+            { "id":"upgrade", "power":true, "pc":"Paladin" },
+            { "id":"upgrade", "power":true, "pc":"God" }
         ]
     },
     "Forbiddance": {
@@ -87,6 +91,9 @@
         "description":"enhance fighting ability, except for Cleric,\n   Paladin and God classes",
         "emoji":"👿",
         "ability":[
+            { "id":"degrade", "power":true, "pc":"Cleric" },
+            { "id":"degrade", "power":true, "pc":"Paladin" },
+            { "id":"degrade", "power":true, "pc":"God" },
             { "id":"melee", "power":true },
             { "id":"melee", "power":false, "pc":"Cleric" },
             { "id":"melee", "power":false, "pc":"Paladin" },

@@ -23,12 +23,13 @@ module Battle
     }
     let parties: [ active[], active[] ]
     let alive: number[]
-    let round: { party:number, member:number, react:number }[]
+    let round: { party:number, member:number, react:number }[] = []
     let bs: number
     let volley: number
 
 
 function end() {
+    round = []
     $.unlock($.player.id, true)
 
     //  diminish any temporary buff
@@ -261,23 +262,7 @@ export function attack(retry = false) {
     if (!skip.power && $.dice(enemy.dex) > 94 && $.dice(enemy.user.steal + 1) > $.dice(rpc.user.steal + 2))
         skip.power = true
     if (skip.power && !$.Ring.power(rpc.user.rings, 'ring').power) {
-        let how = 'paralyze', color = xvt.magenta
-        if (enemy.user.pc == 'Lizard') {
-            how = 'freeze'
-            color = xvt.cyan
-        }
-        else if (enemy.user.pc == 'Ogre') {
-            how = 'grab'
-            color = xvt.yellow
-        }
-        else if (enemy.user.pc == 'Undead') {
-            how = 'hypnotize'
-            color = xvt.white
-        }
-        else if (enemy == $.online || enemy.user.gender !== 'I' || enemy.user.pc == rpc.user.pc) {
-            how = 'dodge'
-            color = xvt.red
-        }
+        let how = enemy.pc.skip || 'suspend', color = enemy.pc.color || xvt.white
         xvt.outln(xvt.faint, color, '>> ', xvt.normal
             , $.who(enemy, 'You'), ' ', xvt.bright, $.what(enemy, how)
             , xvt.normal, $.who(rpc, 'you')
@@ -567,11 +552,11 @@ export function attack(retry = false) {
         if (typeof enemy !== 'undefined' && enemy.hp < 1) {
             enemy.hp = 0    // killed
             if (enemy == $.online) {
-                $.player.killed++
-                $.run(`UPDATE Players set killed=${$.player.killed} WHERE id='${$.player.id}'`)
-                xvt.outln('\n', xvt.bright, xvt.yellow, rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle
-                    , ' killed you!\n')
                 if (from !== 'Party') {
+                    $.player.killed++
+                    $.run(`UPDATE Players set killed=${$.player.killed} WHERE id='${$.player.id}'`)
+                        xvt.outln('\n', xvt.bright, xvt.yellow, rpc.user.gender === 'I' ? 'The ' : '', rpc.user.handle
+                    , ' killed you!\n')
                     $.death($.reason || (rpc.user.id.length
                         ? `defeated by ${rpc.user.handle}`
                         : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`))
@@ -1047,7 +1032,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
     let tricks = Object.assign([], rpc.user.spells)
     let Summons = [ 'Teleport', 'Resurrect' ]
     Object.assign([], Summons).forEach(summon => {
-        if ($.Ring.power(rpc.user.rings, summon.toLowerCase()).power) {
+        if ($.Ring.power(rpc.user.rings, summon.toLowerCase()).power, "pc", rpc.user.pc) {
             if (nme && $.Ring.power(nme.user.rings, 'ring').power)
                 Summons.splice(Summons.indexOf(summon), 1)
             else
@@ -1056,6 +1041,9 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
         else
             Summons.splice(Summons.indexOf(summon), 1)
     })
+
+    //  a God can always attempt to raise the dead
+    if (!$.Magic.have(tricks, 'Resurrect') && rpc.user.pc == $.PC.winning) $.Magic.add(tricks, 'Resurrect')
 
     if (!tricks.length) {
         if (rpc === $.online) {
@@ -1173,7 +1161,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             if (nme) {
                 const spent = +(+$.Ring.power(nme.user.rings, 'sp', 'pc', nme.user.pc).power && !$.Ring.power(rpc.user.rings, 'ring').power) * (+$.Ring.power(nme.user.rings, 'ring').power + 1)
                 if (mana = spent * $.dice(mana / 6) * $.dice(nme.user.magic)) {
-                    if (nme.sp + mana > nme.user.sp) {
+                    if (nme.user.sp > 0 && nme.sp + mana > nme.user.sp) {
                         mana = nme.user.sp - nme.sp
                         if (mana < 0) mana = 0
                     }
@@ -1255,7 +1243,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             }
         }
 
-        if (spell.cast < 17 && round[0].party) {
+        if (spell.cast < 17 && round.length > 1 && round[0].party) {
             if (alive[1] > 1)
                 xvt.out(xvt.faint, xvt.Empty[$.player.emulation], xvt.normal
                     , rpc.user.gender === 'I' ? ' the ' : ' ')
@@ -2121,8 +2109,9 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             enemy.hp = 0
             if (enemy == $.online)
                 $.sound('kill', 5)
-            xvt.out(xvt.bright, enemy == $.online ? xvt.lyellow : round[0].party == 0 ? xvt.lcyan : xvt.lred)
-            xvt.outln(rpc.user.handle, ' ', sprintf([
+            if (round[0].party) xvt.out(xvt.faint, '> ')
+            xvt.out(xvt.bright, enemy == $.online ? xvt.yellow : round[0].party == 0 ? xvt.cyan : xvt.magenta)
+            xvt.outln(rpc.user.gender === 'I' ? 'the ' + rpc.user.handle : rpc.user.handle, ' ', sprintf([
                 'makes a fatal blow to %s',
                 'blows %s away',
                 'laughs, then kills %s',
@@ -2147,7 +2136,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                 $.saveDeed(deed)
                 xvt.out(xvt.yellow, '+', xvt.white)
             }
-            xvt.out('You ', melee ? xvt.red : '', action, melee ? xvt.white : '', ' ')
+            xvt.out('You ', melee ? xvt.uline : '', action, melee ? xvt.nouline : '', ' ')
             if (alive[0] == 1 && alive[1] == 1)
                 xvt.out($.who(enemy, 'him'))
             else
@@ -2160,12 +2149,12 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                 xvt.out($.who(rpc, 'He'))
             else
                 xvt.out(round[0].party ? xvt.attr(xvt.faint, xvt.Empty[$.player.emulation], xvt.normal, ' ') : '', rpc.user.gender === 'I' ? 'the ' : '', rpc.user.handle, ' ')
-            xvt.out(melee ? xvt.red : '', $.what(rpc, w[0]), w.slice(1).join(' '), melee ? xvt.white : ''
+            xvt.out(melee ? rpc.pc.color || xvt.faint : '', $.what(rpc, w[0]), w.slice(1).join(' '), xvt.reset
                 , enemy == $.online ? 'you' : enemy.user.gender === 'I' ? 'the ' + enemy.user.handle : enemy.user.handle
                 , ' '
             )
         }
-        xvt.outln('for ', hit.toString(), ' hit points', period)
+        xvt.out('for ', hit.toString(), ' hit points')
         xvt.waste(50)
 
         //  any bonus restore health from the hit off enemy?
@@ -2176,11 +2165,11 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             }
             if (hit) {
                 rpc.hp += hit
-                xvt.outln(rpc == $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
-                    , ' ', $.what(rpc, 'absorb'), xvt.bright, xvt.red, hit.toString(), xvt.reset, ' off the hit.')
+                xvt.out(' and ', $.what(rpc, 'absorb'), xvt.bright, xvt.red, hit.toString(), xvt.reset, ' off the hit')
                 xvt.waste(100)
             }
         }
+        xvt.outln(period)
     }
     else {
         xvt.outln(rpc == $.online ? 'Your ' + rpc.user.weapon : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
