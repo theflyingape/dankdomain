@@ -1031,7 +1031,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
     let tricks = Object.assign([], rpc.user.spells)
     let Summons = [ 'Teleport', 'Resurrect' ]
-    Object.assign([], Summons).forEach(summon => {
+    if (rpc.user.magic) Object.assign([], Summons).forEach(summon => {
         if ($.Ring.power(rpc.user.rings, summon.toLowerCase()).power, "pc", rpc.user.pc) {
             if (nme && $.Ring.power(nme.user.rings, 'ring').power)
                 Summons.splice(Summons.indexOf(summon), 1)
@@ -1043,7 +1043,9 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
     })
 
     //  a God can always attempt to raise the dead
-    if (!$.Magic.have(tricks, 'Resurrect') && rpc.user.pc == $.PC.winning) $.Magic.add(tricks, 'Resurrect')
+    if (!$.Magic.have(tricks, 'Resurrect')
+        && (rpc.user.pc == $.PC.winning || $.access.sysop))
+            $.Magic.add(tricks, 'Resurrect')
 
     if (!tricks.length) {
         if (rpc === $.online) {
