@@ -934,14 +934,13 @@ export function spoils() {
 
             if (winner.user.gang && winner.user.gang === $.player.gang) {
                 $.music('punk')
-                $.player.maxcha--
-                $.player.cha--
+                $.PC.adjust('cha', -1, -1, -1)
 
                 gang = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                 let n = gang.members.indexOf(winner.user.id)
                 if (n == 0) {
-                    xvt.outln($.who(winner,'He'), 'says, "', xvt.bright, 'Let that be a lesson to you punk!', xvt.reset, '"')
-                    xvt.waste(600)
+                    xvt.outln(xvt.cyan, $.who(winner,'He'), 'says, ', xvt.white, '"Let that be a lesson to you punk!"')
+                    xvt.waste(800)
                 }
                 if (gang.members[0] === $.player.id) {
                     gang.members[0] = winner.user.id

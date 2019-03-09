@@ -1896,9 +1896,8 @@ export function beep() {
 
 export function bracket(item: number|string, nl = true): string {
     var framed: string = item.toString()
-    framed = xvt.attr(xvt.reset, xvt.faint, nl ? '\n' : ''
-        , framed.length == 1 && nl ? ' ' : ''
-        , '<', xvt.normal, xvt.bright, xvt.white, framed, xvt.faint, '>'
+    framed = xvt.attr(nl ? '\n' : '', framed.length == 1 && nl ? ' ' : ''
+        , xvt.white, xvt.faint, '<', xvt.bright, framed, xvt.faint, '>'
         , nl ? ' ' : '', xvt.reset)
     return framed
 }
