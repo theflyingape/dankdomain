@@ -53,15 +53,15 @@
     "nodemailer-smtp-transport": "^2.7.4",
     "sprintf-js": "^1.1.2",
     "title-case": "^2.1.1",
-    "ws": "^6.1.4",
-    "xterm": "^3.11.0",
+    "ws": "^6.2.0",
+    "xterm": "^3.12.0",
     "xvt": "^1.0.31"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^5.2.2",
     "@types/express": "^4.16.1",
     "@types/fs-extra": "^5.0.5",
-    "@types/node": "^10.12.29",
+    "@types/node": "^10.12.30",
     "@types/nodemailer": "^4.6.6",
     "@types/nodemailer-smtp-transport": "^2.7.4",
     "@types/sprintf-js": "^1.1.2",
