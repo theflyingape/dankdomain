@@ -225,8 +225,9 @@ export function attack(retry = false) {
             for (let m in parties[p]) {
                 if (parties[p][m].hp > 0) {
                     let rpc = parties[p][m]
-                    let x = 4 - rpc.user.backstab / 2
-                    let s = Math.round(rpc.user.level / (x > 0 ? x : 1) + rpc.dex / 2 + $.dice(rpc.dex / 2))
+                    let x = 11 - rpc.user.backstab - +$.Ring.power(rpc.user.rings, 'initiate').power
+                    x -= rpc.user.steal - +$.Ring.power(rpc.user.rings, 'steal').power
+                    let s = $.dice(rpc.user.level / x) + $.int(rpc.dex / 2) + $.dice(rpc.dex / 2)
                     round.push({party:+p, member:+m, react:+s})
                 }
             }
@@ -261,8 +262,10 @@ export function attack(retry = false) {
     if ($.Ring.power(rpc.user.rings, 'ring').power || $.dice(8 + 2 * rpc.user.magic) > $.dice(enemy.user.magic))
         skip.power = false
     //  by skillful means
-    if (!skip.power && $.dice(enemy.dex + enemy.user.steal) > 94)
-        skip.power = $.dice(8 + 2 * enemy.user.steal) > $.dice(rpc.dex - 94 + rpc.user.steal)
+    if (!skip.power && $.dice(enemy.dex + enemy.user.steal + +$.Ring.power(enemy.user.rings, 'steal').power)
+        > (94 +  + (2 * +$.Ring.power(rpc.user.rings, 'steal').power)))
+        skip.power = $.dice(8 + 2 * (enemy.user.steal + +$.Ring.power(enemy.user.rings, 'steal').power))
+            > $.dice(rpc.dex - 94 + rpc.user.steal + (2 * +$.Ring.power(rpc.user.rings, 'steal').power))
     if (skip.power) {
         let how = enemy.pc.skip || 'suspend', color = enemy.pc.color || xvt.white
         let w = how.split(' ')
@@ -375,6 +378,7 @@ export function attack(retry = false) {
         if (volley == 1) {
             bs = $.player.backstab
             let roll = $.dice(100 + bs * $.player.level / (2 * ($.player.melee + 2)))
+            roll += 2 * +($.Ring.power($.player.rings, 'initiate').power && !$.Ring.power(enemy.user.rings, 'ring').power)
             bs += (roll < bs) ? -1 : (roll > 99) ? +1 : 0
             do {
                 roll = $.dice(100 + bs * $.player.backstab)
