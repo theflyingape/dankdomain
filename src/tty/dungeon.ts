@@ -905,7 +905,7 @@ function doMove(): boolean {
 
 					case 'M':
 						if ($.player.magic) {
-							let m = $.dice($.player.magic / 2 + 1)
+							let m = $.dice($.player.magic / 2 + 2)
 							let retry = $.player.magic
 							for (let i = 0; i < m; i++) {
 								let p = $.dice(Object.keys($.Magic.spells).length - 4) + 4

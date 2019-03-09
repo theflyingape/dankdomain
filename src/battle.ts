@@ -2249,9 +2249,10 @@ export function poison(rpc: active, cb?:Function) {
     }
 
     function apply(rpc: active, vial: number) {
+        let skill = rpc.user.poison || 1
         rpc.altered = true
-        let p = $.int(rpc.user.poison / 2)
-        let t = rpc.user.poison - p
+        let p = $.int(skill / 2)
+        let t = skill - p
         p *= vial
         t *= vial
         if (p > 0 && rpc.user.toWC >= 0)    //  cannot augment a damaged weapon
@@ -2259,7 +2260,7 @@ export function poison(rpc: active, cb?:Function) {
         if (t > 0) {
             if (rpc.user.toWC > 0)          //  apply buff to an augmented weapon
                 rpc.toWC = rpc.toWC + t <= rpc.user.toWC ? rpc.toWC + t
-                    : (rpc.user.poison == 3 && rpc.toWC + $.int(t / 2) <= rpc.user.toWC) ? rpc.toWC + t
+                    : (skill == 3 && rpc.toWC + $.int(t / 2) <= rpc.user.toWC) ? rpc.toWC + t
                     : t
             else                            //  apply buff to a damaged weapon
                 rpc.toWC = rpc.toWC >= 0 ? t : rpc.toWC + t
@@ -2273,17 +2274,17 @@ export function poison(rpc: active, cb?:Function) {
             xvt.outln('\n', $.who(rpc, 'He'), $.what(rpc, 'pour')
                 , 'some ', xvt.faint, $.Poison.merchant[vial - 1]
                 , xvt.reset, ' on ', $.who(rpc, 'his')
-                , xvt.bright, xvt.cyan, rpc.user.weapon
+                , xvt.bright, (rpc.weapon.shoppe ? xvt.white : rpc.weapon.dwarf ? xvt.yellow : xvt.cyan), rpc.user.weapon
                 , xvt.reset, $.buff(rpc.user.toWC, rpc.toWC))
             $.sound('hone', 6)
             if (/^[A-Z]/.test(rpc.user.id)) {
-                if ($.dice(3 * (rpc.toWC + rpc.user.toWC + 1)) / rpc.user.poison > rpc.weapon.wc) {
+                if ($.dice(3 * (rpc.toWC + rpc.user.toWC + 1)) / skill > rpc.weapon.wc) {
                     xvt.outln(xvt.bright, $.who(rpc, 'His'), rpc.user.weapon, ' vaporizes!')
                     if (rpc == $.online && $.online.weapon.wc > 1) $.sound('crack', 6)
                     $.Weapon.equip(rpc, $.Weapon.merchant[0])
                 }
             }
-            if (rpc.user.id !== $.player.id || ($.dice(rpc.user.poison) == 1 && $.dice(105 - rpc.cha) > 1)) {
+            if (rpc.user.id !== $.player.id || ($.dice(skill) == 1 && $.dice(105 - rpc.cha) > 1)) {
                 $.Poison.remove(rpc.user.poisons, vial)
                 if (rpc.user.id === $.player.id) {
                     xvt.outln('You toss the empty vial aside.')
