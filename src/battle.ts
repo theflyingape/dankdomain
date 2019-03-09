@@ -265,8 +265,11 @@ export function attack(retry = false) {
         skip.power = $.dice(8 + 2 * enemy.user.steal) > $.dice(rpc.dex - 94 + rpc.user.steal)
     if (skip.power) {
         let how = enemy.pc.skip || 'suspend', color = enemy.pc.color || xvt.white
+        let w = how.split(' ')
+        if (w.length > 1) w.push('')
+
         xvt.outln(xvt.faint, color, '>> ', xvt.normal
-            , $.who(enemy, 'You'), ' ', xvt.bright, $.what(enemy, how)
+            , $.who(enemy, 'You'), ' ', xvt.bright, $.what(enemy, w[0]), w.slice(1).join(' ')
             , xvt.normal, $.who(rpc, 'you')
             , xvt.faint, color, ' <<')
         xvt.waste(400)
