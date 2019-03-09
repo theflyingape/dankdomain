@@ -143,6 +143,7 @@ export class Magic {
     }
 
     ability(spell: string, rpc: active, nme?: active): { fail:number, backfire:number } {
+        let skill = rpc.user.magic || 1
         let fail: number
         let backfire: number
 
@@ -150,7 +151,7 @@ export class Magic {
         if (xvt.validator.isDefined(nme) && [ 9,11,12,14,15,16,19,20,21,22 ].indexOf(this.spells[spell].cast) >= 0) {
             let m = rpc.int - nme.int
             m = (m < -10) ? -10 : (m > 10) ? 10 : m
-            m += 2 * (rpc.user.magic - nme.user.magic)
+            m += 2 * (skill - nme.user.magic)
             fail += m
         }
 
@@ -158,7 +159,7 @@ export class Magic {
 
         //  integrate any rings of power that can affect casting spells
         if (nme && nme.user.rings.length) {
-            let mod = this.ring.power(nme.user.rings, 'cast', 'magic', rpc.user.magic)
+            let mod = this.ring.power(nme.user.rings, 'cast', 'magic', skill)
             if (mod.power && !this.ring.power(rpc.user.rings, 'ring').power)
                 fail -= 2 * (5 - nme.user.magic)
         }

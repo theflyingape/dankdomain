@@ -1,12 +1,14 @@
-[22;36mDate:[22;37m Sun 03-Mar-2019  1:00pm
+[22;36mDate:[22;37m Sat 09-Mar-2019  2:45pm
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
 New announcements as missing features get implemented or tweaked:
 
+ - bumping into a character in the square is subject to any material loss
+ - an alchemist can find(take) wands; ranger and thief can find(take) poisons
+ - supernatural or skillful means to avoid a hit are more meaningful
  - a Novice player becomes a Fighter at level 50 and eligible for PVP
  - more even distribution of dungeon treasure(s)
  - arena monster class change to its Ogre, Troll, and Beholder
  - updated web client: http://play.DDgame.us
- - improved dungeon mapping as it relates to map type or a blessed state
 
 Happy hunting!

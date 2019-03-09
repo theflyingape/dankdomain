@@ -75,7 +75,7 @@ function choice() {
             $.action('payment')
             xvt.app.form = {
                 'tip': { cb:() => {
-                    xvt.out('\n\n')
+                    xvt.outln('\n')
                     if ((+xvt.entry).toString() === xvt.entry) xvt.entry += 'c'
                     let tip = (/=|max/i.test(xvt.entry)) ? $.player.coin.value : new $.coins(xvt.entry).value
                     if (tip < 1 || tip > $.player.coin.value) {

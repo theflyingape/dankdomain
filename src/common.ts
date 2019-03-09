@@ -352,7 +352,7 @@ export class Character {
             xvt.out(' ', xvt.reset, xvt.blue, '|\n')
         }
 
-        if (profile.user.magic && profile.user.spells.length) {
+        if (profile.user.spells.length) {
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
             xvt.out(sprintf(' %8s: ', ['Wands', 'Scrolls', 'Spells', 'Magus'][profile.user.magic - 1]), xvt.white)
             let text = ''
@@ -391,10 +391,10 @@ export class Character {
 
         xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
         xvt.out('  Alchemy: ', xvt.white)
-        xvt.out(sprintf('%-42s', ['none', 'apprentice', 'expert (+1x,+1x)', 'artisan (+1x,+2x)', 'master (+2x,+2x)'][profile.user.poison]))
+        xvt.out(sprintf('%-42s', ['banned', 'apprentice', 'expert (+1x,+1x)', 'artisan (+1x,+2x)', 'master (+2x,+2x)'][profile.user.poison]))
         xvt.out(' ', xvt.reset, xvt.blue, '|\n')
 
-        if (profile.user.poison && profile.user.poisons.length) {
+        if (profile.user.poisons.length) {
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
             xvt.out(sprintf(' %8s: ', ['Toxins', 'Poisons', 'Banes', 'Venena'][profile.user.poison - 1]), xvt.white)
             xvt.out(sprintf('%-42s', profile.user.poisons.toString()))
@@ -864,12 +864,12 @@ export function skillplus(rpc: active, cb: Function) {
     ); xvt.waste(200)
     xvt.out(bracket(7, false), xvt.yellow, ' Improve Poison skill from ', xvt.reset
         , rpc.user.poison.toString(), 'x '
-        , [ '[NONE]', '-Average-', '+Good+', '=Masterful=', '#MAX#' ][rpc.user.poison]
+        , [ '[BAN]', '-Average-', '+Good+', '=Masterful=', '#MAX#' ][rpc.user.poison]
         , '\n'
     ); xvt.waste(200)
     if (rpc.user.magic < 2) {
         xvt.out(bracket(8, false), xvt.yellow, ' Improve Magic skill from ', xvt.reset)
-        xvt.out([ '[NONE]', '-Wands-' ][rpc.user.magic])
+        xvt.out([ '[BAN]', '-Wands-' ][rpc.user.magic])
     }
     else {
         xvt.out(bracket(8, false), xvt.yellow, ' Increase Mana power for ', xvt.reset)

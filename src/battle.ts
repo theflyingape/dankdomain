@@ -966,7 +966,7 @@ export function brawl(rpc:active, nme:active) {
         let patron = $.PC.encounter()
         if (patron.user.id && patron.user.id != rpc.user.id && patron.user.id != nme.user.id && !patron.user.status) {
             xvt.outln(`\n${$.who(rpc, 'He')}${$.what(rpc, 'hit')}${patron.user.handle}!`)
-            $.sound('duck', 6)
+            $.sound('duck', 8)
             let bp = punch(rpc)
             patron.bp -= bp
             if (patron.bp > 0) {
@@ -1098,7 +1098,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     xvt.outln()
                     invoke(spell, Summons.includes(spell))
                 }
-            }, prompt:['Use wand', 'Read scroll', 'Cast spell', 'Uti magicae'][$.player.magic - 1] + ' (?=list): ', max:2 }
+            }, prompt:['Try wand', 'Use wand', 'Read scroll', 'Cast spell', 'Uti magicae'][$.player.magic] + ' (?=list): ', max:2 }
         }
         xvt.app.focus = 'magic'
         return
@@ -1192,7 +1192,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             }
         }
 
-        if (rpc.user.magic == 1 && !summon && $.dice(100) < 50 + (spell.cast < 17 ? 2 * spell.cast : 2 * spell.cast - 16)) {
+        if (rpc.user.magic < 2 && !summon && $.dice(100) < 50 + (spell.cast < 17 ? 2 * spell.cast : 2 * spell.cast - 16)) {
             rpc.altered = true
             $.Magic.remove(rpc.user.spells, spell.cast)
             xvt.outln($.who(rpc, 'His'), 'wand smokes as ', $.who(rpc, 'he')
@@ -2204,11 +2204,12 @@ export function poison(rpc: active, cb?:Function) {
                 }
                 if (!$.Poison.have(rpc.user.poisons, +xvt.entry)) {
                 	for (let i in $.player.poisons) {
+                        let skill = $.player.poison || 1
                         let vial = $.player.poisons[i]
                         xvt.out($.bracket(vial), $.Poison.merchant[vial - 1], ' '.repeat(20 - $.Poison.merchant[vial - 1].length))
 
-                        let p = $.int($.player.poison / 2)
-                        let t = $.player.poison - p
+                        let p = $.int(skill / 2)
+                        let t = skill - p
                         p *= vial
                         t *= vial
                         let toWC = $.player.toWC, WC = $.online.toWC
@@ -2217,13 +2218,13 @@ export function poison(rpc: active, cb?:Function) {
                         if (t > 0) {
                             if (toWC > 0)           //  apply buff to an augmented weapon
                                 WC = WC + t <= toWC ? WC + t
-                                    : ($.player.poison == 3 && WC + $.int(t / 2) <= toWC) ? WC + t
+                                    : (skill == 3 && WC + $.int(t / 2) <= toWC) ? WC + t
                                     : t
                             else                    //  apply buff to a damaged weapon
                                 WC = WC >= 0 ? t : WC + t
                         }
 
-                        if (3 * (WC + toWC + 1) / $.player.poison > $.online.weapon.wc)
+                        if (3 * (WC + toWC + 1) / skill > $.online.weapon.wc)
                             xvt.out(xvt.yellow, ' ', $.tty == 'web' ? ' 💀 ' : 'XXX', ' ')
                         else
                             xvt.out(xvt.faint, ' -=> ', xvt.normal)

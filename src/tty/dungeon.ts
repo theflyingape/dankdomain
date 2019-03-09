@@ -354,11 +354,11 @@ export function menu(suppress = false) {
 	if (suppress)
 		xvt.app.form['command'].prompt += `${deep ? xvt.attr(xvt.faint, iii[deep], xvt.normal) : ''}:`
 	else {
-		if ($.player.magic && $.player.spells.length)
+		if ($.player.spells.length)
 			xvt.app.form['command'].prompt += xvt.attr(
 				$.bracket('C', false), xvt.cyan, 'ast, '
 			)
-		if ($.player.poison && $.player.poisons.length)
+		if ($.player.poisons.length)
 			xvt.app.form['command'].prompt += xvt.attr(
 				$.bracket('P', false), xvt.cyan, 'oison, '
 			)
@@ -1558,7 +1558,7 @@ function doMove(): boolean {
 			if (!$.Magic.have($.player.spells, +ROOM.giftValue)) {
 				xvt.outln(xvt.bright, xvt.yellow, 'You find a '
 					, xvt.cyan, $.Magic.merchant[+ROOM.giftValue - 1], xvt.yellow
-					, ' ', $.player.magic == 1 ? 'wand' : 'scroll', '!')
+					, ' ', $.player.magic == 2 ? 'scroll' : 'wand', '!')
 				$.Magic.add($.player.spells, +ROOM.giftValue)
 				pause = true
 				ROOM.giftItem = ''
@@ -2214,9 +2214,8 @@ function generateLevel() {
 	for (let j = 5; j > 0; j--) {
 		if (j > $.player.magic) gift.push('armor')
 		if (j > $.player.steal) gift.push('chest')
-		if ($.player.magic == 1 || $.player.magic == 2)
-			gift.push($.dice(10 + dank - 2 * $.player.magic) > dank ? 'magic' : 'xmagic')
-		if ($.player.poison && j > $.player.poison) gift.push('poison')
+		if ($.player.magic < 3) gift.push($.dice(10 + dank - 2 * $.player.magic) > dank ? 'magic' : 'xmagic')
+		if (j > $.player.poison) gift.push('poison')
 		if (j > $.player.melee) gift.push('weapon')
 	}
 	gift.push('map', 'ring')

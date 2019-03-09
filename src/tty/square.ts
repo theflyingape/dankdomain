@@ -46,7 +46,7 @@ export function menu(suppress = true) {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }
 
-	if (!$.player.novice && $.player.level > 1 && $.player.coin.value > 0
+	if (!$.player.novice && $.player.level > 1 && ($.player.coin.value > 0 || $.player.poisons.length || ($.player.magic < 2 && $.player.spells.length))
 		&& $.dice($.online.cha / 2 + 5 * $.player.steal) == 1) {
 		let bump = $.PC.encounter(`AND coward = 0 AND novice = 0 AND (id NOT GLOB '_*' OR id = '_TAX')`
 			, $.player.level - 9, $.player.level + 9)
@@ -57,23 +57,53 @@ export function menu(suppress = true) {
 				, xvt.bright, ' out of the shadows'
 				, xvt.reset, ' ... ')
 			$.beep()
-			if (!$.Ring.power(bump.user.rings, 'steal').power && $.dice($.online.cha / 10 + 2 * ($.player.steal + 1)) > 2 * bump.user.steal + 1)
+			if ($.dice(+$.Ring.power(bump.user.rings, 'steal').power * 3) == 1 && $.dice($.online.cha / 10 + 2 * ($.player.steal + 1)) > 2 * bump.user.steal + 1)
 				xvt.outln('{waves}\n ... and moves along.')
 			else {
-				let pouch = $.player.coin.amount.split(',')
-				let p = $.dice(pouch.length) - 1
-				let i = 'csgp'.indexOf(pouch[p].substr(-1))
-				let v = new $.coins(pouch[p])
-				bump.user.coin.value += v.value
+				let p:number, i:number
+				if ($.player.coin.value > 0) {
+					let pouch = $.player.coin.amount.split(',')
+					p = $.dice(pouch.length) - 1
+					i = 'csgp'.indexOf(pouch[p].substr(-1))
+					let v = new $.coins(pouch[p])
+					bump.user.coin.value += v.value
+					$.log(bump.user.id, `\nYou picked ${$.player.handle}'s pouch holding ${v.carry()}!`)
+					$.player.coin.value -= v.value
+					xvt.outln(xvt.faint, '{sigh}')
+					xvt.out('Your pouch of ')
+					$.sound('oops', 8)
+					if ($.tty == 'web') xvt.out('💰  ')
+					xvt.outln(xvt.bright, [xvt.red,xvt.cyan,xvt.yellow,xvt.magenta][i], ['copper','silver','gold','platinum'][i]
+						, xvt.reset, ' pieces goes missing!')
+				}
+				else if ($.player.poisons.length) {
+					xvt.out(xvt.faint, '\nYou hear vials rattle.')
+					xvt.waste(800)
+					p = $.player.poisons[$.dice($.player.poisons.length) - 1]
+					if (!$.Poison.have(bump.user.poisons, p)) {
+						$.Poison.remove($.player.poisons, p)
+						$.Poison.add(bump.user.poisons, p)
+						$.log(bump.user.id, `\nYou lifted a vial of ${$.Poison.merchant[p - 1]} from ${$.player.handle}!`)
+						xvt.out(xvt.reset, '  Your vial of ')
+						$.sound('oops', 8)
+						if ($.tty == 'web') xvt.out('💀  ')
+						xvt.outln(xvt.faint, $.Poison.merchant[p - 1], xvt.reset, ' goes missing!')
+					}
+				}
+				else if ($.player.magic < 2 && $.player.spells.length) {
+					xvt.out(xvt.faint, '\nYou hear wands rattle.')
+					xvt.waste(800)
+					p = $.player.spells[$.dice($.player.spells.length) - 1]
+					if (!$.Magic.have(bump.user.spells, p)) {
+						$.Magic.remove($.player.spells, p)
+						$.Magic.add(bump.user.spells, p)
+						$.log(bump.user.id, `\nYou lifted a wand of ${$.Magic.merchant[p - 1]} from ${$.player.handle}!`)
+						xvt.out(xvt.reset, '  Your wand of ')
+						$.sound('oops', 8)
+						xvt.outln($.Magic.merchant[p - 1], ' goes missing!')
+					}
+				}
 				$.saveUser(bump)
-				$.log(bump.user.id, `\nYou picked ${$.player.handle}'s pouch holding ${v.carry()}!`)
-				$.player.coin.value -= v.value
-				xvt.outln(xvt.faint, '{sigh}')
-				xvt.out('Your pouch of ')
-				$.sound('oops', 8)
-				if ($.tty == 'web') xvt.out('💰  ')
-				xvt.outln(xvt.bright, [xvt.red,xvt.cyan,xvt.yellow,xvt.magenta][i], ['copper','silver','gold','platinum'][i]
-					, xvt.reset, ' pieces goes missing!')
 				xvt.waste(800)
 			}
 			xvt.waste(1200)
