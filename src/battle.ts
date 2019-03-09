@@ -256,12 +256,14 @@ export function attack(retry = false) {
     if (volley == 1 && rpc !== $.online) xvt.outln()
 
     //  a frozen treat?
+    //  by supernatural means
     let skip = $.Ring.power(enemy.user.rings, 'skip', 'pc', rpc.user.pc)
-    if (skip.power && $.dice(16 - 2 * enemy.user.magic) > 1)
+    if ($.Ring.power(rpc.user.rings, 'ring').power || $.dice(8 + 2 * rpc.user.magic) > $.dice(enemy.user.magic))
         skip.power = false
-    if (!skip.power && $.dice(enemy.dex) > 94 && $.dice(enemy.user.steal + 1) > $.dice(rpc.user.steal + 2))
-        skip.power = true
-    if (skip.power && !$.Ring.power(rpc.user.rings, 'ring').power) {
+    //  by skillful means
+    if (!skip.power && $.dice(enemy.dex + enemy.user.steal) > 94)
+        skip.power = $.dice(8 + 2 * enemy.user.steal) > $.dice(rpc.dex - 94 + rpc.user.steal)
+    if (skip.power) {
         let how = enemy.pc.skip || 'suspend', color = enemy.pc.color || xvt.white
         xvt.outln(xvt.faint, color, '>> ', xvt.normal
             , $.who(enemy, 'You'), ' ', xvt.bright, $.what(enemy, how)

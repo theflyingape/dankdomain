@@ -40,7 +40,7 @@
             "toStr":1, "toInt":2, "toDex":1, "toCha":1, 
             "maxStr":90, "maxInt":95, "maxDex":90, "maxCha":90, 
             "bonusStr":0, "bonusInt":1, "bonusDex":1, "bonusCha":1,
-            "unicode":"♀", "skip":"disengage",
+            "unicode":"♀", "skip":"disengage from",
             "specialty": "Powerful Venenum",
             "description": [
                 "The Alchemist depends greatly on the ability to use poisons.  This skill",
