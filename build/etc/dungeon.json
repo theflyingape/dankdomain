@@ -94,7 +94,7 @@
 	"death slaad": { "pc":"Lizard", "weapon":"Staff of RAH", "poisons":[ 10 ], "spells":[ "Heal", "Cure" ], "rings":[ "Shade" ], "effect":"rubberBand" },
 	"cloud dragon": { "pc":"Dragon", "hit":"claw", "smash":"bite", "spells":[ "Teleport", "Big Blast", "Mana Stealing" ], "effect":"shake" },
 	"elder titan": { "pc":"Titan", "hit":"hammer", "smash":"nail", "spells":[ "Blast" ], "effect":"fadeInUpBig" },
-	"lich": { "pc":"Psionic", "hit":"touch", "smash":"overwhelm", "spells":[ "Teleport", "Armor Rusting", "Weapon Decay", "Big Blast", "Mana Stealing", "Level Stealing" ], "rings":[ "Cursed", "Magus" ], "effect":"fadeInDown" },
+	"lich": { "pc":"Undead", "hit":"touch", "smash":"overwhelm", "spells":[ "Teleport", "Armor Rusting", "Weapon Decay", "Big Blast", "Mana Stealing", "Level Stealing" ], "rings":[ "Cursed", "Undying" ], "effect":"fadeInDown" },
 	"slaad lord": { "pc":"Lizard", "armor":"Cloak of Elvenlords", "weapon":"Battle Axe of Lords", "poisons":[ 11,12,13 ], "spells":[ "Illusion", "Super Shield", "Super Hone" ], "rings":[ "Elven" ], "effect":"rubberBand" },
 	"demon prince": { "pc":"Demon", "hit":"hit", "smash":"smash", "spells":[ "Heal", "Super Shield" ], "effect":"tada" },
 	"archdevil": { "pc":"Demon", "hit":"hit", "smash":"smash", "spells":[ "Blast", "Super Hone" ], "rings":[ "Hell's Fury" ], "effect":"tada" },

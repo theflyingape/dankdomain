@@ -212,8 +212,7 @@
             { "id":"skip", "power":false, "pc":"Cleric" },
             { "id":"skip", "power":false, "pc":"Paladin" },
             { "id":"skip", "power":false, "pc":"God" },
-            { "id":"sp", "power":true, "pc":"Undead" },
-            { "id":"upgrade", "power":true, "pc":"Undead" }
+            { "id":"sp", "power":true, "pc":"Undead" }
         ]
     },
     "White Wizard": {

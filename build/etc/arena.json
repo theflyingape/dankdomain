@@ -8,7 +8,7 @@
   { "name":"Hydra", "level":34, "pc":"Dragon", "weapon":25, "armor":"Dragon Scale Mail", "money":"1000s", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"fadeInUpBig" },
   { "name":"Nycadaemon", "level":41, "pc":"Demon", "weapon":"Staff of Striking", "armor":18, "money":"10g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"rotateInDownLeft" },
   { "name":"Red Dragon", "level":44, "pc":"Dragon", "weapon":32, "armor":20, "money":"500g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"shake" },
-  { "name":"Lich", "level":47, "pc":"Undead", "adept":1, "weapon":35, "armor":23, "money":"2500g", "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Magus", "Undying" ], "effect":"rotateInDownRight" },
+  { "name":"Lich", "level":47, "pc":"Undead", "adept":1, "weapon":35, "armor":23, "money":"2500g", "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Cursed", "Undying" ], "effect":"rotateInDownRight" },
   { "name":"Beholder", "level":50, "pc":"Psionic", "adept":1, "weapon":40, "armor":25, "money":"1p", "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Medusa's" ], "effect":"flip" },
   { "name":"Demogorgon", "level":99, "pc":"Beast", "adept":2, "weapon":"Staff of the Magi", "armor":25, "money":"1000p", "spells":[ "Heal", "Teleport", "Blast", "Confusion", "Transmute", "Cure", "Illusion", "Disintegrate", "Morph" ], "rings":[ "Augmenting", "White Wizard" ], "effect":"zoomIn" }
 ]
