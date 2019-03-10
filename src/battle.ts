@@ -264,7 +264,7 @@ export function attack(retry = false) {
     //  if not, by skillful means
     if (!skip.power
         && $.dice(90 + (enemy.dex > 90 ? (enemy.dex - 90)>> 1 : 0) + enemy.user.steal + $.Ring.power(rpc.user.rings, enemy.user.rings, 'steal').power)
-        > 90 + (rpc.dex > 90 ? rpc.dex - 90 : 0))
+        > (rpc.dex < 80 ? (rpc.dex + 100)>> 1 : rpc.dex))
         skip.power = 1
     if (skip.power) {
         let how = enemy.pc.skip || 'suspend', color = enemy.pc.color || xvt.white
