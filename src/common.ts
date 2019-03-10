@@ -117,7 +117,7 @@ export class Character {
         return ability
     }
 
-    adjust(ability: ABILITY, rt: number, pc = 0, max = 0, rpc = online) {
+    adjust(ability: ABILITY, rt = 0, pc = 0, max = 0, rpc = online) {
         if (max) {
             rpc.user[`max${ability}`] = this.ability(rpc.user[`max${ability}`], max, 99)
             rpc.altered = true
@@ -126,23 +126,21 @@ export class Character {
             rpc.user[ability] = this.ability(rpc.user[ability], pc, rpc.user[`max${ability}`])
             rpc.altered = true
         }
-        if (rt) {
-            const a = `to${titleCase(ability)}`
-            let mod = rpc.user.blessed ? 10 : 0
-            mod -= rpc.user.cursed ? 10 : 0
-            if (rt > 100) {
-                mod++
-                rt %= 100
-            }
-            //  iterate each ring, ability mods are additive
-            rpc.user.rings.forEach(ring => {
-                mod -= Ring.power(rpc.user.rings, [ ring ], 'degrade', 'ability', ability).power * PC.card(rpc.user.pc)[a]
-                mod -= Ring.power(rpc.user.rings, [ ring ], 'degrade', 'pc', rpc.user.pc).power * PC.card(rpc.user.pc)[a]
-                mod += (100 + Ring.power(rpc.user.rings, [ ring ], 'upgrade', 'ability', ability).power) * PC.card(rpc.user.pc)[a]
-                mod += (100 + Ring.power([], [ ring ], 'upgrade', 'pc', rpc.user.pc).power) * PC.card(rpc.user.pc)[a]
-            })
-            rpc[ability] = this.ability(rpc[ability], rt, rpc.user[`max${ability}`], mod)
+        const a = `to${titleCase(ability)}`
+        let mod = rpc.user.blessed ? 10 : 0
+        mod -= rpc.user.cursed ? 10 : 0
+        if (rt > 100) {
+            mod++
+            rt %= 100
         }
+        //  iterate each ring, ability mods are additive
+        rpc.user.rings.forEach(ring => {
+            mod -= Ring.power(rpc.user.rings, [ ring ], 'degrade', 'ability', ability).power * PC.card(rpc.user.pc)[a]
+            mod -= Ring.power(rpc.user.rings, [ ring ], 'degrade', 'pc', rpc.user.pc).power * PC.card(rpc.user.pc)[a]
+            mod += Ring.power([], [ ring ], 'upgrade', 'ability', ability).power * PC.card(rpc.user.pc)[a]
+            mod += Ring.power([], [ ring ], 'upgrade', 'pc', rpc.user.pc).power * PC.card(rpc.user.pc)[a]
+        })
+        rpc[ability] = this.ability(rpc[ability], rt, rpc.user[`max${ability}`], mod)
     }
 
     card(dd = 'None'): character {
@@ -350,7 +348,7 @@ export class Character {
 
         if (profile.user.spells.length) {
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out(sprintf(' %8s: ', ['Wands', 'Scrolls', 'Spells', 'Magus'][profile.user.magic - 1]), xvt.white)
+            xvt.out(sprintf(' %8s: ', ['Wands', 'Wands', 'Scrolls', 'Spells', 'Magus'][profile.user.magic]), xvt.white)
             let text = ''
             n = 0
             for (let p = 0; p < profile.user.spells.length; p++) {
@@ -616,17 +614,15 @@ export function activate(one: active, keep = false, confused = false): boolean {
     one.cha = one.user.cha
     Abilities.forEach(ability => {
         const a = `to${titleCase(ability)}`
-        if (one.user.blessed) PC.adjust(ability, +10, 0, 0, one)
-        if (one.user.cursed)  PC.adjust(ability, -10, 0, 0, one)
-        //  iterate each ring, ability mods are additive
+        let rt = 0
+        //  iterate each ring, ability runtimes are additive
         one.user.rings.forEach(ring => {
-            let mod = -Ring.power(one.user.rings, [ ring ], 'degrade', 'pc', one.user.pc).power
-                - Ring.power(one.user.rings, [ ring ], 'degrade', 'pc', one.user.pc).power
-            PC.adjust(ability, mod * one.pc[a], 0, 0, one)
-            mod = 100 + Ring.power([], [ ring ], 'upgrade', 'ability', ability).power
-                + Ring.power([], [ ring ], 'upgrade', 'pc', one.user.pc).power
-            PC.adjust(ability, mod * one.pc[a], 0, 0, one)
+            rt -= Ring.power(one.user.rings, [ ring ], 'degrade', 'ability', ability).power * PC.card(one.user.pc)[a]
+            rt -= Ring.power(one.user.rings, [ ring ], 'degrade', 'pc', one.user.pc).power * PC.card(one.user.pc)[a]
+            rt += Ring.power([], [ ring ], 'upgrade', 'ability', ability).power * PC.card(one.user.pc)[a]
+            rt += Ring.power([], [ ring ], 'upgrade', 'pc', one.user.pc).power * PC.card(one.user.pc)[a]
         })
+        PC.adjust(ability, rt, 0, 0, one)
     })
     one.confused = false
     if (confused) return true
