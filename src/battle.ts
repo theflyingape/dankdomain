@@ -259,13 +259,13 @@ export function attack(retry = false) {
     //  a frozen treat?
     //  by supernatural means
     let skip = $.Ring.power(rpc.user.rings, enemy.user.rings, 'skip', 'pc', rpc.user.pc)
-    if ($.dice(8 + 2 * rpc.user.magic) > $.dice(enemy.user.magic))
-        skip.power = 0
-    //  by skillful means
-    if (!skip.power && $.dice(enemy.dex + enemy.user.steal + $.Ring.power(rpc.user.rings, enemy.user.rings, 'steal').power)
-        > (94 +  + (2 * $.Ring.power(enemy.user.rings, rpc.user.rings, 'steal').power)))
-        skip.power = +($.dice(8 + 2 * (enemy.user.steal + $.Ring.power(rpc.user.rings, enemy.user.rings, 'steal').power))
-            > $.dice(rpc.dex - 94 + rpc.user.steal + (2 * $.Ring.power(enemy.user.rings, rpc.user.rings, 'steal').power)))
+    if (skip.power && $.dice(10 + 1.5 * rpc.user.magic) > $.dice(enemy.user.magic))
+        skip.power = 0  //  saving throw
+    //  if not, by skillful means
+    if (!skip.power
+        && $.dice(90 + (enemy.dex > 90 ? (enemy.dex - 90)>> 1 : 0) + enemy.user.steal + $.Ring.power(rpc.user.rings, enemy.user.rings, 'steal').power)
+        > 90 + (rpc.dex > 90 ? rpc.dex - 90 : 0))
+        skip.power = 1
     if (skip.power) {
         let how = enemy.pc.skip || 'suspend', color = enemy.pc.color || xvt.white
         let w = how.split(' ')

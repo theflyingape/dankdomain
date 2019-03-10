@@ -310,7 +310,7 @@
             ]
         },
         "Lizard": {
-            "melee":1, "backstab":1, "poison":3, "magic":1, "steal":3,
+            "melee":1, "backstab":0, "poison":3, "magic":1, "steal":3,
             "baseStr":50, "baseInt":50, "baseDex":50, "baseCha":50,
             "toStr":1, "toInt":2, "toDex":3, "toCha":1,
             "maxStr":92, "maxInt":88, "maxDex":92, "maxCha":80,
@@ -334,7 +334,7 @@
             ]
         },
         "Undead": {
-            "melee":4, "backstab":0, "poison":1, "magic":2, "steal":2,
+            "melee":4, "backstab":0, "poison":1, "magic":2, "steal":1,
             "baseStr":62, "baseInt":38, "baseDex":62, "baseCha":38,
             "toStr":2, "toInt":1, "toDex":1, "toCha":1,
             "maxStr":98, "maxInt":90, "maxDex":88, "maxCha":70,
@@ -349,7 +349,7 @@
 
     "tavern": {
         "Ogre": {
-            "melee":4, "backstab":1, "poison":1, "magic":2, "steal":1,
+            "melee":4, "backstab":1, "poison":0, "magic":2, "steal":1,
             "baseStr":65, "baseInt":55, "baseDex":55, "baseCha":25,
             "toStr":2, "toInt":1, "toDex":1, "toCha":1,
             "maxStr":99, "maxInt":85, "maxDex":66, "maxCha":85,
