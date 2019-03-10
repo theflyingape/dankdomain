@@ -1395,7 +1395,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             if (xvt.validator.isDefined(nme)) {
                 xvt.out(xvt.bright, xvt.magenta)
                 if (backfire) {
-                    xvt.out(nme === $.online ? 'You' : nme.user.gender === 'I' ? 'The ' + nme.user.handle : nme.user.handle
+                    xvt.out(nme === $.online ? 'You' : nme.user.handle
                         , $.what(nme, ' teleport'))
                     if (nme !== $.online)
                         nme.hp = -nme.hp
@@ -1403,7 +1403,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                         teleported = true
                 }
                 else {
-                    xvt.out(rpc === $.online ? 'You' : rpc.user.gender === 'I' ? 'The ' + rpc.user.handle : rpc.user.handle
+                    xvt.out(rpc === $.online ? 'You' : rpc.user.handle
                         , $.what(rpc, ' teleport'))
                     if (rpc === $.online) {
                         teleported = true
