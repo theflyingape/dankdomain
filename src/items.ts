@@ -158,11 +158,9 @@ export class Magic {
         fail = (fail < 11) ? 11 : (fail > 99) ? 99 : fail
 
         //  integrate any rings of power that can affect casting spells
-        if (nme && nme.user.rings.length) {
-            let mod = this.ring.power(nme.user.rings, 'cast', 'magic', skill)
-            if (mod.power && !this.ring.power(rpc.user.rings, 'ring').power)
-                fail -= 2 * (5 - nme.user.magic)
-        }
+        if (nme && nme.user.rings.length) fail -= 2
+            * this.ring.power(rpc.user.rings, nme.user.rings, 'cast', 'magic', skill).power
+            * (5 - nme.user.magic)
 
         backfire = 50 + (fail >>1)
         return { fail, backfire }

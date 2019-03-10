@@ -578,7 +578,7 @@ function Bank() {
 			xvt.out(xvt.faint, '\nYou attempt to sneak into the vault...', xvt.reset)
 			xvt.waste(2500)
 
-			let effort = 100 + $.steals
+			let effort = 100 + $.steal
 			effort -= 8 * $.Ring.power([], $.player.rings, 'steal').power
 			if ($.dice(effort) > ++c) {
 				$.player.status = 'jail'
