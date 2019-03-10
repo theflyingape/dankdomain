@@ -15,9 +15,10 @@
     },
     "Augmenting": {
         "unique": false,
-        "description":"enhance active level of ability",
+        "description":"enhance active level of ability and melee",
         "emoji":"🆙",
         "ability":[
+            { "id":"melee", "power":true },
             { "id":"upgrade", "power":true }
         ]
     },
