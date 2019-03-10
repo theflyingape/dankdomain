@@ -1141,7 +1141,7 @@ function doMove(): boolean {
 			let x = $.dice(DL.width) - 1, y = $.dice(DL.rooms.length) - 1
 			let escape = DL.rooms[y][x]
 			if (escape.occupant || $.dice(Z * ($.player.steal / 2 + 1) - deep) > Z) {
-				if (!escape.occupant) {
+				if (!escape.occupant && $.player.pc !== $.taxman.user.pc) {
 					escape.occupant = 'thief'
 					xvt.out([
 						'He silently ignores you',
@@ -1225,13 +1225,13 @@ function doMove(): boolean {
 
 			let cast = 7
 			let mod = 6 + $.int($.player.melee / 2) - $.int($.player.magic / 2)
-			if ($.Ring.power($.player.rings, 'taxes').power) mod++
+			if ($.Ring.power([], $.player.rings, 'taxes').power) mod++
 			if ($.access.sysop) mod++
 			if ($.player.coward) mod--
 			let cost = new $.coins($.int(($.player.hp - $.online.hp) * $.money(Z) / mod / $.player.hp))
 			if (cost.value < 1) cost.value = 1
 			cost.value *= ($.int(deep / 3) + 1)
-			if (!$.player.coward && $.player.maxcha > 98)	//	typically a Cleric and God
+			if (!$.player.coward && !$.player.steals && ($.player.pc == DL.cleric.user.pc || $.player.maxcha > 98))
 				cost.value = 0
 			cost = new $.coins(cost.carry(1, true))	//	just from 1-pouch
 
@@ -1591,7 +1591,7 @@ function doMove(): boolean {
 					: 0))
 			$.sound('bubbles')
 			xvt.out(xvt.bright, xvt.cyan, 'On the ground, you find a ')
-			if ($.Ring.power($.player.rings, 'identify').power) potions[ROOM.giftValue].identified = true
+			if ($.Ring.power([], $.player.rings, 'identify').power) potions[ROOM.giftValue].identified = true
 			if (potions[ROOM.giftValue].identified || ROOM.giftID || $.access.sysop) {
 				$.profile({ png:potions[ROOM.giftValue].image, handle:potion[ROOM.giftValue], effect:'fadeInUp' })
 				xvt.out(potion[ROOM.giftValue], '.')
@@ -1986,7 +1986,7 @@ function drawLevel() {
 					occupying(DL.rooms[r][x], xvt.attr(xvt.reset, xvt.faint)
 						, (DL.map && DL.map !== 'map')
 							|| (DL.rooms[r][x].map && Math.abs(Y - r) < Math.trunc($.online.int / 15) && Math.abs(X - x) < Math.trunc($.online.int / 15))
-						, DL.map == `Marauder's map` || $.Ring.power($.player.rings, 'identify').power)
+						, DL.map == `Marauder's map` || ($.Ring.power([], $.player.rings, 'identify').power > 0))
 				}
 				if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[y].substr(-1), '\x1B(B')
 				else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y].substr(-1))
@@ -2031,7 +2031,7 @@ function drawRoom(r:number, c:number, keep = true, peek = false) {
 
 	occupying(ROOM, peek ? xvt.attr(xvt.reset) : xvt.attr(xvt.reset, xvt.faint), (DL.map && DL.map !== 'map')
 		|| (ROOM.map && Math.abs(Y - r) < Math.trunc($.online.int / 15) && Math.abs(X - c) < Math.trunc($.online.int / 15)),
-		DL.map == `Marauder's map` || $.Ring.power($.player.rings, 'identify').power || peek)
+		peek || DL.map == `Marauder's map` || ($.Ring.power([], $.player.rings, 'identify').power > 0))
 
 	if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col + 6, 1), '\x1B(B')
 	else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[row].substr(col + 6, 1))
@@ -2225,7 +2225,7 @@ function generateLevel() {
 			y = $.dice(DL.rooms.length) - 1
 			x = $.dice(DL.width) - 1
 		} while (DL.rooms[y][x].giftItem || DL.rooms[y][x].occupant == 'wizard')
-		if ($.Ring.power($.player.rings, 'identify').power) DL.rooms[y][x].map = true
+		if ($.Ring.power([], $.player.rings, 'identify').power) DL.rooms[y][x].map = true
 
 		//	potion
 		if ($.dice(110 - $.online.cha + dank + +$.player.coward) > dank) {
@@ -2286,7 +2286,7 @@ function generateLevel() {
 				break
 
 			case 'ring':
-				if ($.Ring.power($.player.rings, 'ring').power) DL.rooms[y][x].map = true
+				if ($.Ring.have($.player.rings, $.Ring.theOne)) DL.rooms[y][x].map = true
 				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⍥' : dot
 				if ($.dice(6 - $.int(dank / 2)) > 1) {
 					let ring = $.Ring.common[$.dice($.Ring.common.length) - 1]
@@ -2970,7 +2970,7 @@ function occupying(room: room, o = '', reveal = false, identify = false) {
 
 	xvt.out(o, xvt.reset)
 
-	if (room.giftItem && (DL.map == `Marauder's map` || $.Ring.power($.player.rings, 'identify').power))
+	if (room.giftItem && (DL.map == `Marauder's map` || $.Ring.power([], $.player.rings, 'identify').power))
 		xvt.out('\x08', xvt.faint, room.giftIcon, xvt.reset)
 }
 

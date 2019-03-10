@@ -70,7 +70,7 @@ export function cityguards() {
             + $.worth(new $.coins($.Security.name[$.player.security].value).value, 15)
 
     if ($.access.roleplay && checkpoint($.player.coin.value + $.player.bank.value)) {
-        let exempt = $.Ring.power($.player.rings, 'taxes')
+        let exempt = $.Ring.power([], $.player.rings, 'taxes')
         if (exempt.power) {
             xvt.out('\nYour hand extends to show', xvt.cyan, xvt.bright, $.an(exempt.name), xvt.normal)
             if ($.player.emulation === 'XT') xvt.out(' ', $.Ring.name[exempt.name].emoji, ' 💍')

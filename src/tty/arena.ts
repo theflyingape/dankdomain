@@ -174,7 +174,7 @@ function choice() {
 									xvt.waste(250)
 									$.animated('hinge')
 									if ($.player.jw > 14 && $.player.jw / ($.player.jw + $.player.jl) > 0.9) {
-										let ring = $.Ring.power(null, 'joust')
+										let ring = $.Ring.power([], null, 'joust')
 										if ($.Ring.wear($.player.rings, ring.name)) {
 											$.getRing('win', ring.name)
 											$.saveRing(ring.name, $.player.id, $.player.rings)
@@ -185,8 +185,8 @@ function choice() {
 								}
 							}
 							else {
-								if ($.Ring.power($.player.rings, 'joust').power && !$.Ring.power(opponent.user.rings, 'ring').power
-								&& !$.Ring.power(opponent.user.rings, 'joust').power && $.dice(3) == 1) {
+								if ($.Ring.power(opponent.user.rings, $.player.rings, 'joust').power
+								&& !$.Ring.power($.player.rings, opponent.user.rings, 'joust').power && $.dice(3) == 1) {
 									$.sound('swoosh')
 									xvt.outln(xvt.magenta, '^>', xvt.bright, xvt.white, ' SWOOSH! ', xvt.normal, xvt.magenta,'<^  ', xvt.reset
 									, $.who(opponent, 'He'), 'missed!  You both pass and try again!')

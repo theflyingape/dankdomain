@@ -377,6 +377,7 @@ export class Ring {
     name: ring[]
     common: string[] = []
     unique: string[] = []
+    theOne: string
 
     constructor() {
         this.name = require('./items/ring.json')
@@ -385,6 +386,7 @@ export class Ring {
                 this.unique.push(i)
             else
                 this.common.push(i)
+        this.theOne = this.power([], null, 'ring').name
     }
 
     have(rings: string[], name: string): boolean {
@@ -396,29 +398,31 @@ export class Ring {
         if (i >= 0) rings.splice(i, 1)
     }
 
-    power(rings: string[]|null, id: POWER, match?: POWTO, value?: any)
-        : { name: string, power: boolean } {
+    power(vs:string[], rings: string[]|null, id: POWER, match?: POWTO, value?: any)
+        : { name: string, power: number } {
 
+        let mine = (rings === null) ? Object.keys(this.name) : rings
         let name = ''
-        let power = false
-        if (rings === null)
-            rings = Object.keys(this.name)
+        let power = 0
 
-        for (let f in rings) {
-            let abilities = this.name[rings[f]].ability
-            for (let a in abilities) {
-                //  got POWER?
-                if (abilities[a].id == id) {
-                    name = rings[f]
-                    if (Object.keys(abilities[a]).length == 2)
-                        power = abilities[a].power || false
-                    else if (match && abilities[a][match]) {
-                        if (value && abilities[a][match] == value)
-                            power = abilities[a].power || false
+        if (!vs.length || !this.have(vs, this.theOne)) {
+            for (let f in mine) {
+                let abilities = this.name[mine[f]].ability
+                for (let a in abilities) {
+                    //  got POWER?
+                    if (abilities[a].id == id) {
+                        name = mine[f]
+                        if (Object.keys(abilities[a]).length == 2)
+                            power = +abilities[a].power || 0
+                        else if (match && abilities[a][match]) {
+                            if (value && abilities[a][match] == value)
+                                power = +abilities[a].power || 0
+                        }
+//  console.log(a, name, id, match || '', value || '', '->', power)
                     }
-//console.log(a, name, id, match || '', value || '', '->', power)
                 }
             }
+            if (rings !== null && this.have(mine, this.theOne)) power *= 2
         }
 
         return { name:name, power:power }

@@ -233,11 +233,7 @@ function choice() {
                                 + $.RealEstate.name[opponent.user.realestate].protection
                             let skill = Math.round($.player.steal * $.online.dex * $.online.int / 10000)
                             let effort = 100
-                            if ($.Ring.power($.player.rings, 'steal').power) {
-                                effort--
-                                if ($.Ring.power($.player.rings, 'ring').power)
-                                    effort--
-                            }
+                            effort -= $.Ring.power(opponent.user.rings, $.player.rings, 'steal').power
                             for (let pick = 0; pick < $.player.steal; pick++) {
                                 $.sound('click')
                                 xvt.out('.')
@@ -256,7 +252,7 @@ function choice() {
 
                             if (skill > lock) {
                                 $.sound('max')
-                                if (!$.Ring.power($.player.rings, 'ring').power) $.steal++
+                                if (!$.Ring.have($.player.rings, $.Ring.theOne)) $.steal++
                                 $.player.coin.value += prize
                                 $.player.steals++
                                 xvt.outln('You break in and make off with ', new $.coins(prize).carry(), ' worth of stuff!')

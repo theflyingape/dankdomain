@@ -57,7 +57,7 @@ export function menu(suppress = true) {
 				, xvt.bright, ' out of the shadows'
 				, xvt.reset, ' ... ')
 			$.beep()
-			if ($.dice(+$.Ring.power(bump.user.rings, 'steal').power * 3) == 1 && $.dice($.online.cha / 10 + 2 * ($.player.steal + 1)) > 2 * bump.user.steal + 1)
+			if ($.dice($.Ring.power($.player.rings, bump.user.rings, 'steal').power * 3) == 1 && $.dice($.online.cha / 10 + 2 * ($.player.steal + 1)) > 2 * bump.user.steal + 1)
 				xvt.outln('{waves}\n ... and moves along.')
 			else {
 				let p:number, i:number
@@ -397,7 +397,7 @@ function choice() {
 				xvt.out('\nNovice players cannot rob.\n')
 				break
 			}
-			xvt.out('\nYou attempt to pick a passerby\'s pocket... ')
+			xvt.out(xvt.faint, '\nYou attempt to pick a passerby\'s pocket... ', xvt.reset)
 			xvt.waste(1000)
 
 			credit.value = $.dice(6 * $.money($.player.level) / $.dice(10))
@@ -417,12 +417,8 @@ function choice() {
 
 			xvt.outln('\n\nYou pick ', pocket.handle, '\'s pocket and steal ', credit.carry(), '!\n')
 			xvt.waste(1000)
-			let effort = 100
-			if ($.Ring.power($.player.rings, 'steal').power) {
-				effort -= 10
-				if ($.Ring.power($.player.rings, 'ring').power)
-					effort -= 5
-			}
+			let effort = 100 + $.steal
+			effort -= 8 * $.Ring.power([], $.player.rings, 'steal').power
 			if ($.int(16 * $.player.steal + $.player.level / 10 + $.online.dex / 10) < $.dice(effort)) {
 				$.player.status = 'jail'
 				$.reason = `caught picking ${pocket.handle}'s pocket`
@@ -436,6 +432,7 @@ function choice() {
 				return
 			}
 			else {
+				if (!$.Ring.have($.player.rings, $.Ring.theOne)) $.steal++
 				$.beep()
 				$.player.coin.value += credit.value
 				$.player.steals++
@@ -578,15 +575,11 @@ function Bank() {
 		case 'R':
             $.music('ddd')
 			let c = ($.player.level / 5) * ($.player.steal + 1)
-			xvt.out('\nYou attempt to sneak into the vault...')
+			xvt.out(xvt.faint, '\nYou attempt to sneak into the vault...', xvt.reset)
 			xvt.waste(2500)
 
-			let effort = 100
-			if ($.Ring.power($.player.rings, 'steal').power) {
-				effort--
-				if ($.Ring.power($.player.rings, 'ring').power)
-					effort--
-			}
+			let effort = 100 + $.steals
+			effort -= 8 * $.Ring.power([], $.player.rings, 'steal').power
 			if ($.dice(effort) > ++c) {
 				$.player.status = 'jail'
 				$.reason = 'caught getting into the vault'
@@ -605,27 +598,28 @@ function Bank() {
 			let carry = new $.coins(vault)
 
 			$.sound('creak2', 12)
-			xvt.outln(xvt.yellow, ' you open a chest and find ', carry.carry(), '!')
-			xvt.waste(1200)
+			xvt.outln(xvt.yellow, ' you open a chest and find ', carry.carry(), xvt.bright, '!')
 
-			xvt.outln()
-			xvt.out('You try to make your way out of the vault')
 			let deposits = new $.coins($.int($.query(`SELECT SUM(bank) AS bank FROM Players WHERE id NOT GLOB '_*' AND id <> '${$.player.id}'`)[0].bank, true))
 			if (deposits.value) {
-				xvt.outln(' grabbing ', deposits.carry(), ' more in deposits!')
-				$.sound('yahoo')
+				xvt.waste(1200)
+				xvt.outln('And you grab ', deposits.carry(), ' more in deposits!')
 			}
+			$.sound('yahoo', 12)
 
-			for (let i = 0; i < 3; i++) {
+			xvt.outln()
+			xvt.out(xvt.faint, 'You try to make your way out of the vault ')
+			xvt.waste(1200)
+			for (let i = 0; i < 6 - $.player.steal; i++) {
 				xvt.out('.')
-				xvt.waste(750)
+				$.sound('click', 6)
 			}
 
 			c /= 15 - ($.player.steal * 3)
 			if ($.dice(effort) > ++c) {
 				$.player.status = 'jail'
 				$.reason = 'caught inside the vault'
-				xvt.out(xvt.faint, ' something jingles.', xvt.normal)
+				xvt.out(xvt.reset, ' something jingles.')
 				$.action('clear')
 				$.sound('max', 12)
 				$.profile({ png:'npc/jailer', effect:'fadeIn' })
@@ -637,11 +631,11 @@ function Bank() {
 				return
 			}
 
-			$.beep()
 			$.player.coin.value += carry.value + deposits.value
 			$.player.steals++
 			xvt.outln()
 			$.run(`UPDATE Players SET bank=0 WHERE id NOT GLOB '_*'`)
+			$.beep()
 			menu(true)
 			break
 

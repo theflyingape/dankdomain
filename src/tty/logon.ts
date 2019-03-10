@@ -319,12 +319,12 @@ function welcome() {
         }
 
         if ($.player.today < 2) {
-            if ($.player.blessed && !$.Ring.power($.player.rings, 'ring').power) {
+            if ($.player.blessed && !$.Ring.have($.player.rings, $.Ring.theOne)) {
                 $.player.blessed = ''
                 xvt.out(xvt.bright, xvt.yellow, '\nYour shining aura ', xvt.normal, 'left ', xvt.faint, 'you.', xvt.reset)
                 $.activate($.online)
             }
-            if ($.player.cursed && (!$.Ring.power($.player.rings, 'degrade').power || $.Ring.power($.player.rings, 'ring').power)) {
+            if ($.player.cursed && !$.Ring.power([], $.player.rings, 'degrade').power) {
                 $.player.coward = false
                 $.player.cursed = ''
                 xvt.out(xvt.bright, xvt.black, '\nThe dark cloud has left you.', xvt.reset)
@@ -338,7 +338,7 @@ function welcome() {
             $.player.jw = 0
         }
         if ($.access.sysop) {
-            let ring = $.Ring.power(null, 'joust')
+            let ring = $.Ring.power([], null, 'joust')
             if ($.Ring.wear($.player.rings, ring.name)) {
                 $.getRing('win', ring.name)
                 $.saveRing(ring.name, $.player.id, $.player.rings)

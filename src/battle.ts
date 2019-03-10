@@ -33,8 +33,8 @@ function end() {
     $.unlock($.player.id, true)
 
     //  diminish any temporary buff
-    if ($.online.toAC > 0 && !$.Ring.power($.player.rings, 'buff').power) $.online.toAC--
-    if ($.online.toWC > 0 && !$.Ring.power($.player.rings, 'buff').power) $.online.toWC--
+    if ($.online.toAC > 0 && !$.Ring.power([], $.player.rings, 'buff').power) $.online.toAC--
+    if ($.online.toWC > 0 && !$.Ring.power([], $.player.rings, 'buff').power) $.online.toWC--
 
     if (/Merchant/.test(from)) {
         if ($.online.hp < 1) {
@@ -225,8 +225,8 @@ export function attack(retry = false) {
             for (let m in parties[p]) {
                 if (parties[p][m].hp > 0) {
                     let rpc = parties[p][m]
-                    let x = 11 - rpc.user.backstab - +$.Ring.power(rpc.user.rings, 'initiate').power
-                    x -= rpc.user.steal - +$.Ring.power(rpc.user.rings, 'steal').power
+                    let x = 11 - rpc.user.backstab - $.Ring.power([], rpc.user.rings, 'initiate').power
+                    x -= rpc.user.steal - $.Ring.power([], rpc.user.rings, 'steal').power
                     let s = $.dice(rpc.user.level / x) + $.int(rpc.dex / 2) + $.dice(rpc.dex / 2)
                     round.push({party:+p, member:+m, react:+s})
                 }
@@ -258,19 +258,18 @@ export function attack(retry = false) {
 
     //  a frozen treat?
     //  by supernatural means
-    let skip = $.Ring.power(enemy.user.rings, 'skip', 'pc', rpc.user.pc)
-    if ($.Ring.power(rpc.user.rings, 'ring').power || $.dice(8 + 2 * rpc.user.magic) > $.dice(enemy.user.magic))
-        skip.power = false
+    let skip = $.Ring.power(rpc.user.rings, enemy.user.rings, 'skip', 'pc', rpc.user.pc)
+    if ($.dice(8 + 2 * rpc.user.magic) > $.dice(enemy.user.magic))
+        skip.power = 0
     //  by skillful means
-    if (!skip.power && $.dice(enemy.dex + enemy.user.steal + +$.Ring.power(enemy.user.rings, 'steal').power)
-        > (94 +  + (2 * +$.Ring.power(rpc.user.rings, 'steal').power)))
-        skip.power = $.dice(8 + 2 * (enemy.user.steal + +$.Ring.power(enemy.user.rings, 'steal').power))
-            > $.dice(rpc.dex - 94 + rpc.user.steal + (2 * +$.Ring.power(rpc.user.rings, 'steal').power))
+    if (!skip.power && $.dice(enemy.dex + enemy.user.steal + $.Ring.power(rpc.user.rings, enemy.user.rings, 'steal').power)
+        > (94 +  + (2 * $.Ring.power(enemy.user.rings, rpc.user.rings, 'steal').power)))
+        skip.power = +($.dice(8 + 2 * (enemy.user.steal + $.Ring.power(rpc.user.rings, enemy.user.rings, 'steal').power))
+            > $.dice(rpc.dex - 94 + rpc.user.steal + (2 * $.Ring.power(enemy.user.rings, rpc.user.rings, 'steal').power)))
     if (skip.power) {
         let how = enemy.pc.skip || 'suspend', color = enemy.pc.color || xvt.white
         let w = how.split(' ')
         if (w.length > 1) w.push('')
-
         xvt.outln(xvt.faint, color, '>> ', xvt.normal
             , $.who(enemy, 'You'), ' ', xvt.bright, $.what(enemy, w[0]), w.slice(1).join(' ')
             , xvt.normal, $.who(rpc, 'you')
@@ -378,7 +377,7 @@ export function attack(retry = false) {
         if (volley == 1) {
             bs = $.player.backstab
             let roll = $.dice(100 + bs * $.player.level / (2 * ($.player.melee + 2)))
-            roll += 2 * +($.Ring.power($.player.rings, 'initiate').power && !$.Ring.power(enemy.user.rings, 'ring').power)
+            roll += 2 * $.Ring.power(enemy.user.rings, $.player.rings, 'initiate').power
             bs += (roll < bs) ? -1 : (roll > 99) ? +1 : 0
             do {
                 roll = $.dice(100 + bs * $.player.backstab)
@@ -1041,13 +1040,9 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
     let Summons = [ 'Teleport', 'Resurrect' ]
     Object.assign([], Summons).forEach(summon => {
         let i = Summons.indexOf(summon)
-        if ($.Ring.power(rpc.user.rings, summon.toLowerCase(), "pc", rpc.user.pc).power
-            || rpc.user.pc == $.PC.winning || $.access.sysop) {
-            if (nme && $.Ring.power(nme.user.rings, 'ring').power)
-                Summons.splice(i, 1)
-            else
+        if ($.Ring.power(nme ? nme.user.rings : [], rpc.user.rings, summon.toLowerCase(), "pc", rpc.user.pc).power
+            || rpc.user.pc == $.PC.winning || $.access.sysop)
                 $.Magic.add(tricks, summon)
-        }
         else
             Summons.splice(i, 1)
     })
@@ -1166,7 +1161,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
             //  collect some of the mana spent by the enemy?
             if (nme) {
-                const spent = +(+$.Ring.power(nme.user.rings, 'sp', 'pc', nme.user.pc).power && !$.Ring.power(rpc.user.rings, 'ring').power) * (+$.Ring.power(nme.user.rings, 'ring').power + 1)
+                const spent = $.Ring.power(rpc.user.rings, nme.user.rings, 'sp', 'pc', nme.user.pc).power
                 if (mana = spent * $.dice(mana / 6) * $.dice(nme.user.magic)) {
                     if (nme.user.sp > 0 && nme.sp + mana > nme.user.sp) {
                         mana = nme.user.sp - nme.sp
@@ -1214,9 +1209,9 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
         }
 
         if (xvt.validator.isDefined(nme)) {
-            let mod = $.Ring.power(nme.user.rings, 'resist', 'spell', name)
+            let mod = $.Ring.power([], nme.user.rings, 'resist', 'spell', name)
             if (mod.power) {
-                if (!$.Ring.power(rpc.user.rings, 'ring').power) {
+                if (!$.Ring.have(rpc.user.rings, $.Ring.theOne)) {
                     xvt.outln(xvt.faint, '>> ', xvt.normal, `${$.who(rpc, 'His')}`
                         , xvt.bright, xvt.magenta, name, xvt.normal, ' spell ', xvt.reset, 'attempt is ineffective against')
                     xvt.out(`   ${$.who(nme, 'his')}`, xvt.bright, xvt.cyan, mod.name, xvt.normal)
@@ -1227,10 +1222,11 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 }
                 else {
                     xvt.out(xvt.faint, '>> ', xvt.normal, `${$.who(rpc, 'His')}`
-                        , xvt.bright, xvt.magenta, $.Ring.power(rpc.user.rings, 'ring').name, xvt.normal, ' ring '
-                        , xvt.reset, `negates ${$.who(nme, 'his')}`, xvt.bright, xvt.cyan, mod.name, xvt.normal)
+                        , xvt.bright, xvt.magenta, $.Ring.theOne, xvt.normal, ' ring '
+                        , xvt.reset, `dispels ${$.who(nme, 'his')}`, xvt.bright, xvt.cyan, mod.name, xvt.normal)
                     if ($.player.emulation === 'XT') xvt.out(' ', $.Ring.name[mod.name].emoji, ' 💍')
                     xvt.outln(' ring', xvt.reset, '!', xvt.faint, ' <<')
+                    xvt.waste(400)
                 }
             }
         }
@@ -2005,10 +2001,9 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 }
 
 export function melee(rpc: active, enemy: active, blow = 1) {
-    const melee = +($.Ring.power(rpc.user.rings, 'melee', 'pc', rpc.user.pc).power && !$.Ring.power(enemy.user.rings, 'ring').power)
-        * (+$.Ring.power($.player.rings, 'ring').power + 1) * (rpc.user.melee + 1)
-    const life = +($.Ring.power(rpc.user.rings, 'hp', 'pc', rpc.user.pc).power && !$.Ring.power(enemy.user.rings, 'ring').power)
-        * (+$.Ring.power($.player.rings, 'ring').power + 1)
+    const melee = $.Ring.power(enemy.user.rings, rpc.user.rings, 'melee', 'pc', rpc.user.pc).power * (rpc.user.melee + 1)
+    const life = $.Ring.power(enemy.user.rings, rpc.user.rings, 'hp', 'pc', rpc.user.pc).power
+
     let action: string
     let hit = 0
 
