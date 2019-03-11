@@ -50,8 +50,7 @@ function check() {
     $.player.password = String.fromCharCode(64 + $.dice(26)) + String.fromCharCode(96 + $.dice(26)) + $.dice(999) + '!@#$%^&*'[$.dice(8) - 1]
 
     let rs = $.query(`SELECT count(email) AS n FROM Players WHERE email = '${$.player.email}' GROUP BY email`)
-    if (rs.length && rs[0].n > 2)
-        $.player.access = Object.keys($.Access.name)[1]
+    if (rs.length && rs[0].n > 2) $.player.access = Object.keys($.Access.name)[1]
 
     try {
         let message = JSON.parse(fs.readFileSync('./etc/newuser.json').toString())
@@ -113,7 +112,15 @@ export async function Deliver(player: user, what: string, repeat: boolean, mailO
 
 async function Message(player: user, mailOptions: nodemailer.SendMailOptions) {
 
-	let smtpOptions: smtpTransport.SmtpOptions = require('./etc/smtp.json')
+    let smtpOptions: smtpTransport.SmtpOptions
+    try { smtpOptions = require('./etc/smtp.json') }
+    catch (err) {
+        xvt.outln(xvt.red, xvt.bright, './etc/smtp.json not configured for sending email')
+        player.password = 'local'
+        $.saveUser(player, true)
+        xvt.outln('\nYour user ID (', xvt.white, xvt.bright, player.id, xvt.normal, ') was saved, ', $.Access.name[player.access][player.gender], '.')
+        xvt.outln('Your local password assigned: ', xvt.white, xvt.bright, player.password)
+    }
     let smtp = nodemailer.createTransport(smtpTransport(smtpOptions))
 	mailOptions.from = `"${$.sysop.handle} @ ${$.sysop.name}" <${$.sysop.email}>`
     mailOptions.to = `${player.name} <${player.email}>`

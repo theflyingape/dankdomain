@@ -47,9 +47,9 @@
                 "enables applying 4x the poison value yielding the greatest effect on a",
                 "weapon.  Without that aid, the Alchemist leaves much to be desired as far",
                 "as natural fighting skills are concerned.  Being a creature of science,",
-                "this is the one class that cannot use any magical device.  The Alchemist",
-                "may, however, resist the effects of a spell or magical device.  Alchemists",
-                "receive an extra bonus in Intellect per experience level."
+                "this class cannot use any magical device.  The Alchemist may, however, ",
+                "resist the effects of a spell or magical device.  Alchemists receive",
+                "an extra bonus in Intellect per experience level."
             ]
         },
         "Assassin": {
@@ -79,7 +79,7 @@
                 "The strongest, combat-class fighter in the game, but the most susceptible",
                 "to the effects of magic.  As the Barbarian grows in experience, hitting",
                 "power augments.  There will be a point where a Barbarian's essence can",
-                "match the power of any crafted weapon.  Barbarians recieve extra bonuses",
+                "match the power of any crafted weapon.  Barbarians receive extra bonuses",
                 "in Stamina per experience level."
             ]
         },
@@ -175,18 +175,18 @@
             ]
         },
         "Rogue": {
-            "melee":1, "backstab":1, "poison":1, "magic":2, "steal":3, 
-            "baseStr":40, "baseInt":50, "baseDex":75, "baseCha":35, 
-            "toStr":1, "toInt":1, "toDex":1, "toCha":2, 
-            "maxStr":95, "maxInt":95, "maxDex":95, "maxCha":95, 
+            "melee":1, "backstab":1, "poison":1, "magic":2, "steal":3,
+            "baseStr":45, "baseInt":45, "baseDex":75, "baseCha":35,
+            "toStr":2, "toInt":2, "toDex":2, "toCha":2,
+            "maxStr":95, "maxInt":95, "maxDex":95, "maxCha":95,
             "bonusStr":0, "bonusInt":1, "bonusDex":1, "bonusCha":1,
             "unicode":"♝", "skip":"cheat",
-            "specialty": "Skillful/Wizardry",
+            "specialty": "Skillful Dodge/Scroll",
             "description": [
-                "A Rogue is similar to a Thief class with a backstab, poison, and stealing.",
+                "A Rogue is similar to a Thief, but with some magic and backstab.",
                 "Their advantage lies within honed abilities and use of magic scrolls.",
-                "Rogues can achieve better than average abilities, and also",
-                "receive an extra bonus in Charisma per experience level."
+                "Rogues can achieve better than average abilities, as such, they",
+                "receive extra bonus in all abilities per experience level."
             ]
         },
         "Sage": {
@@ -206,7 +206,7 @@
         },
         "Thief": {
             "melee":1, "backstab":3, "poison":0, "magic":0, "steal":4, 
-            "baseStr":63, "baseInt":35, "baseDex":67, "baseCha":35, 
+            "baseStr":66, "baseInt":33, "baseDex":71, "baseCha":30, 
             "toStr":1, "toInt":1, "toDex":4, "toCha":1, 
             "maxStr":90, "maxInt":90, "maxDex":99, "maxCha":80, 
             "bonusStr":0, "bonusInt":0, "bonusDex":1, "bonusCha":2,

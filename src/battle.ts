@@ -3,7 +3,6 @@
  *  BATTLE authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import fs = require('fs')
 import {sprintf} from 'sprintf-js'
 
 import $ = require('./common')
@@ -2234,7 +2233,7 @@ export function poison(rpc: active, cb?:Function) {
                     apply(rpc, +xvt.entry)
                 cb(true)
                 return
-            }, prompt:['Make toxic', 'Apply poison', 'Use bane', 'Uti venenum'][$.player.poison - 1] + ' (?=list): ', max:2 }
+            }, prompt:['Try vial', 'Make toxic', 'Apply poison', 'Use bane', 'Uti venenum'][$.player.poison] + ' (?=list): ', max:2 }
         }
         xvt.app.focus = 'poison'
         return
