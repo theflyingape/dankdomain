@@ -19,7 +19,7 @@ function checkpoint(scratch: number): boolean {
 
     if (scratch > tax.value) {
         $.loadUser($.taxman)
-        $.profile({ png:'npc/taxman', handle:$.taxman.user.handle
+        $.profile({ jpg:'npc/taxman', handle:$.taxman.user.handle
             , level:$.taxman.user.level, pc:$.taxman.user.pc, effect:'fadeIn'
         })
 
