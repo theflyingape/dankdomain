@@ -129,10 +129,6 @@ export class Character {
         const a = `to${titleCase(ability)}`
         let mod = rpc.user.blessed ? 10 : 0
         mod -= rpc.user.cursed ? 10 : 0
-        if (rt > 100) {
-            mod++
-            rt %= 100
-        }
         //  iterate each ring, ability mods are additive
         rpc.user.rings.forEach(ring => {
             mod -= Ring.power(rpc.user.rings, [ ring ], 'degrade', 'ability', ability).power * PC.card(rpc.user.pc)[a]
@@ -140,6 +136,10 @@ export class Character {
             mod += Ring.power([], [ ring ], 'upgrade', 'ability', ability).power * PC.card(rpc.user.pc)[a]
             mod += Ring.power([], [ ring ], 'upgrade', 'pc', rpc.user.pc).power * PC.card(rpc.user.pc)[a]
         })
+        if (rt > 100) {
+            mod++
+            rt %= 100
+        }
         rpc[ability] = this.ability(rpc[ability], rt, rpc.user[`max${ability}`], mod)
     }
 
@@ -614,8 +614,9 @@ export function activate(one: active, keep = false, confused = false): boolean {
     one.cha = one.user.cha
     Abilities.forEach(ability => {
         const a = `to${titleCase(ability)}`
-        let rt = 0
-        //  iterate each ring, ability runtimes are additive
+        let rt = one.user.blessed ? 10 : 0
+        rt -= one.user.cursed ? 10 : 0
+            //  iterate each ring, ability runtimes are additive
         one.user.rings.forEach(ring => {
             rt -= Ring.power(one.user.rings, [ ring ], 'degrade', 'ability', ability).power * PC.card(one.user.pc)[a]
             rt -= Ring.power(one.user.rings, [ ring ], 'degrade', 'pc', one.user.pc).power * PC.card(one.user.pc)[a]
