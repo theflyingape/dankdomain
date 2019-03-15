@@ -340,7 +340,7 @@ export function attack(retry = false) {
                     if ($.online.confused)
                         $.activate($.online, false, true)
                     if (from === 'Party' && $.player.gang) {
-                        $.player.coward = true
+                        if (enemy.user.gender !== 'I') $.player.coward = true
                         $.run(`UPDATE Gangs SET loss=loss+1 WHERE name = '${$.player.gang}'`)
                     }
                     if (from === 'User' && enemy.user.gender !== 'I') {

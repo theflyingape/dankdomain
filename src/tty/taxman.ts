@@ -35,6 +35,7 @@ function checkpoint(scratch: number): boolean {
         xvt.outln(`guards who stand ready to enforce ${$.king.handle}'s will.\n`)
         xvt.waste(2500)
         tax.value = scratch - tax.value
+        tax = new $.coins(tax.carry(1, true))
         xvt.outln(`The tax will cost you ${tax.carry()}.`)
         xvt.waste(1500)
         return true

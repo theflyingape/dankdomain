@@ -324,7 +324,7 @@ function choice() {
 				if (!$.Access.name[opponent.user.access].roleplay) {
 					xvt.outln('You are allowed only to fight other players.')
 					if (opponent.user.id[0] === '_') {
-						$.PC.adjust('cha', -1)
+						$.PC.adjust('cha', -2, -1)
 						$.player.coward = true
 						$.online.altered = true
 					}

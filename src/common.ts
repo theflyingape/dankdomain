@@ -131,10 +131,10 @@ export class Character {
         mod -= rpc.user.cursed ? 10 : 0
         //  iterate each ring, ability mods are additive
         rpc.user.rings.forEach(ring => {
-            mod -= Ring.power(rpc.user.rings, [ ring ], 'degrade', 'ability', ability).power * PC.card(rpc.user.pc)[a]
-            mod -= Ring.power(rpc.user.rings, [ ring ], 'degrade', 'pc', rpc.user.pc).power * PC.card(rpc.user.pc)[a]
-            mod += Ring.power([], [ ring ], 'upgrade', 'ability', ability).power * PC.card(rpc.user.pc)[a]
-            mod += Ring.power([], [ ring ], 'upgrade', 'pc', rpc.user.pc).power * PC.card(rpc.user.pc)[a]
+            mod -= Ring.power(rpc.user.rings, [ ring ], 'degrade', 'ability', ability).power * 2
+            mod -= Ring.power(rpc.user.rings, [ ring ], 'degrade', 'pc', rpc.user.pc).power * 3
+            mod += Ring.power([], [ ring ], 'upgrade', 'ability', ability).power * PC.card(rpc.user.pc)[a] * 2
+            mod += Ring.power([], [ ring ], 'upgrade', 'pc', rpc.user.pc).power * PC.card(rpc.user.pc)[a] * 3
         })
         if (rt > 100) {
             mod++
@@ -618,10 +618,10 @@ export function activate(one: active, keep = false, confused = false): boolean {
         rt -= one.user.cursed ? 10 : 0
             //  iterate each ring, ability runtimes are additive
         one.user.rings.forEach(ring => {
-            rt -= Ring.power(one.user.rings, [ ring ], 'degrade', 'ability', ability).power * PC.card(one.user.pc)[a]
-            rt -= Ring.power(one.user.rings, [ ring ], 'degrade', 'pc', one.user.pc).power * PC.card(one.user.pc)[a]
-            rt += Ring.power([], [ ring ], 'upgrade', 'ability', ability).power * PC.card(one.user.pc)[a]
-            rt += Ring.power([], [ ring ], 'upgrade', 'pc', one.user.pc).power * PC.card(one.user.pc)[a]
+            rt -= Ring.power(one.user.rings, [ ring ], 'degrade', 'ability', ability).power * 2
+            rt -= Ring.power(one.user.rings, [ ring ], 'degrade', 'pc', one.user.pc).power * 3
+            rt += Ring.power([], [ ring ], 'upgrade', 'ability', ability).power * PC.card(one.user.pc)[a] * 2
+            rt += Ring.power([], [ ring ], 'upgrade', 'pc', one.user.pc).power * PC.card(one.user.pc)[a] * 3
         })
         PC.adjust(ability, rt, 0, 0, one)
     })

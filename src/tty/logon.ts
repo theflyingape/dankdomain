@@ -319,21 +319,26 @@ function welcome() {
         }
 
         if ($.player.today < 2) {
-            if ($.player.blessed && !$.Ring.have($.player.rings, $.Ring.theOne)) {
-                $.player.blessed = ''
-                xvt.out(xvt.bright, xvt.yellow, '\nYour shining aura ', xvt.normal, 'left ', xvt.faint, 'you.', xvt.reset)
-                $.activate($.online)
+            if ($.player.blessed) {
+                if (!$.Ring.have($.player.rings, $.Ring.theOne) && !$.access.sysop) {
+                    $.player.blessed = ''
+                    xvt.out(xvt.bright, xvt.yellow, '\nYour shining aura ', xvt.normal, 'left ', xvt.faint, 'you.')
+                    $.activate($.online)
+                }
             }
-            if ($.player.cursed && !$.Ring.power([], $.player.rings, 'degrade').power) {
-                $.player.coward = false
-                $.player.cursed = ''
-                xvt.out(xvt.bright, xvt.black, '\nThe dark cloud has left you.', xvt.reset)
-                $.activate($.online)
+            if ($.player.cursed) {
+                if ($.player.coward)
+                    $.player.coward = false
+                else {
+                    $.player.cursed = ''
+                    xvt.out(xvt.bright, xvt.black, '\nThe dark cloud has left you.')
+                    $.activate($.online)
+                }
             }
         }
 
         if (2 * $.player.jw < $.player.jl) {
-            xvt.out('\n', xvt.magenta, 'Helpful: ', xvt.bright, `Your poor jousting stats have been reset.`)
+            xvt.out(xvt.reset, '\n', xvt.magenta, 'Helpful: ', xvt.bright, `Your poor jousting stats have been reset.`)
             $.player.jl = 0
             $.player.jw = 0
         }

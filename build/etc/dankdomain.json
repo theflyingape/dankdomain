@@ -229,7 +229,7 @@
             "toStr":2, "toInt":2, "toDex":2, "toCha":2, 
             "maxStr":95, "maxInt":95, "maxDex":95, "maxCha":95, 
             "bonusStr":1, "bonusInt":1, "bonusDex":1, "bonusCha":1,
-            "unicode":"♰", "skip":"evade",
+            "unicode":"♰", "color":96, "skip":"evade",
             "specialty": "Ranger/Rogue",
             "description": [
                 "A Paladin class can only be achieved by becoming immortal (100th level) and",
@@ -245,7 +245,7 @@
             "toStr":2, "toInt":2, "toDex":2, "toCha":2, 
             "maxStr":98, "maxInt":98, "maxDex":98, "maxCha":98, 
             "bonusStr":1, "bonusInt":1, "bonusDex":1, "bonusCha":1,
-            "unicode":"♆", "skip":"laugh at",
+            "unicode":"♆", "color":94, "skip":"laugh at",
             "specialty": "Fighter/Magician",
             "description": [
                 "You can only ascend to a Titan class from immortalizing a Paladin class and",
@@ -261,7 +261,7 @@
             "toStr":2, "toInt":2, "toDex":2, "toCha":2,
             "maxStr":99, "maxInt":99, "maxDex":99, "maxCha":99,
             "bonusStr":1, "bonusInt":1, "bonusDex":1, "bonusCha":1,
-            "unicode":"♛", "skip":"halt",
+            "unicode":"♛", "color":93, "skip":"halt",
             "specialty": "Barbarian/Sage",
             "description": [
                 "The highest superbeing of them all, you can only ascend to a God from a",
@@ -303,7 +303,7 @@
             "toStr":3, "toInt":1, "toDex":1, "toCha":1,
             "maxStr":99, "maxInt":90, "maxDex":88, "maxCha":85,
             "bonusStr":2, "bonusInt":0, "bonusDex":0, "bonusCha":0,
-            "unicode":"☫", "color":36, "skip":"pin",
+            "unicode":"☫", "color":32, "skip":"pin",
             "specialty": "Barbarian/Magician",
             "description": [
                 "A large, serpent-like creature possessing legendary powers."
@@ -315,7 +315,7 @@
             "toStr":1, "toInt":2, "toDex":3, "toCha":1,
             "maxStr":92, "maxInt":88, "maxDex":92, "maxCha":80,
             "bonusStr":0, "bonusInt":0, "bonusDex":2, "bonusCha":0,
-            "unicode":"☡", "color":32, "skip":"freeze",
+            "unicode":"☡", "color":36, "skip":"freeze",
             "specialty": "Rogue",
             "description": [
                 "A stealth predator with strong defenses."
