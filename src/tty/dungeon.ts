@@ -2122,7 +2122,8 @@ function generateLevel() {
 	} while (ROOM.type)
 
 	//	populate this new floor with monsters, no corridors or hallways
-	let n = $.int(DL.rooms.length * DL.width / 6 + deep / 2 + $.dice(Z / 11) + $.dice(deep / 2))
+	let n = $.int(DL.rooms.length * DL.width / 6) + $.dice(Z / 9) + $.dice(deep)
+		+ $.dice(Z < 50 && $.online.cha < 80 ? ((80 - $.online.cha) / 9) : ((100 - $.online.cha) / 3))
 	while (n)
 		if (putMonster())
 			n--
@@ -2498,9 +2499,8 @@ function putMonster(r = -1, c = -1): boolean {
 	let level: number = 0
 	let m:active
 
-	for (j = 0; j < 4; j++)
-		level += $.dice(7)
-	switch ($.int(level / 4)) {
+	for (j = 0; j < 4; j++) level += $.dice(7)
+	switch (level >> 2) {
 		case 1:
 			level = $.dice(Z)
 			break
@@ -2520,12 +2520,11 @@ function putMonster(r = -1, c = -1): boolean {
 			level = Z + 3 + $.dice(3)
 			break
 		case 7:
-			level = Z + $.dice(100 - Z)
+			level = Z + $.dice(100 - Z) - 1
 			break
 	}
-	level = (level < 1) ? 1 : (level > 99) ? 99 : level
-	level = (i == 1) ? $.int(level / 2) + $.dice(level / 2 + 1) : (i == 2) ? $.dice(level + 1) : level
-	level = (level < 1) ? 1 : (level > 99) ? 99 : level
+	if (level < 1) level = $.dice(Z)
+	if (level > 99) level = 100 - $.dice(10)
 
 	do {
 		//	add a monster level relative to this floor, including any lower "strays" as fodder

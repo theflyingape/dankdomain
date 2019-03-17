@@ -65,6 +65,7 @@ function choice() {
 			return
 
 		case 'G':
+			$.action('clear')
             require('./square').menu($.player.expert)
             return
 
@@ -311,6 +312,7 @@ function choice() {
 					return
 				}
 				xvt.out(`is a level ${opponent.user.level} ${opponent.user.pc}`)
+				if ($.tty == 'web') xvt.out(' ', opponent.pc.color || xvt.white, opponent.pc.unicode, xvt.reset)
 				if (opponent.user.level !== opponent.user.xplevel)
 					xvt.out(' ', $.bracket(opponent.user.xplevel, false))
 				xvt.outln()
@@ -516,7 +518,9 @@ function MonsterFights(): boolean {
 			, effect:monsters[mon].effect
 		})
 
-		xvt.outln(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}.`)
+		xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}`)
+		if ($.tty == 'web') xvt.out(' ', monster.pc.color || xvt.white, monster.pc.unicode)
+		xvt.outln()
 		if (isNaN(+monster.user.weapon)) xvt.outln('\n', $.who(monster, 'He'), $.Weapon.wearing(monster), '.')
 		if (isNaN(+monster.user.armor)) xvt.outln('\n', $.who(monster, 'He'), $.Armor.wearing(monster), '.')
 		for (let i in monster.user.rings) {

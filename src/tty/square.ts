@@ -51,12 +51,13 @@ export function menu(suppress = true) {
 		let bump = $.PC.encounter(`AND coward = 0 AND novice = 0 AND (id NOT GLOB '_*' OR id = '_TAX')`
 			, $.player.level - 9, $.player.level + 9)
 		if (bump.user.id && !bump.user.status) {
+			$.beep()
+			xvt.outln()
 			$.PC.profile(bump)
-			xvt.out(xvt.magenta, xvt.faint, `${bump.user.handle} bumps`
+			xvt.out(xvt.cyan, xvt.faint, `${bump.user.handle} bumps`
 				, xvt.normal, ' into you from'
 				, xvt.bright, ' out of the shadows'
 				, xvt.reset, ' ... ')
-			$.beep()
 			if ($.dice($.Ring.power($.player.rings, bump.user.rings, 'steal').power * 3) == 1 && $.dice($.online.cha / 10 + 2 * ($.player.steal + 1)) > 2 * bump.user.steal + 1)
 				xvt.outln('{waves}\n ... and moves along.')
 			else {
@@ -106,7 +107,7 @@ export function menu(suppress = true) {
 				$.saveUser(bump)
 				xvt.waste(800)
 			}
-			xvt.waste(1200)
+			xvt.waste(1600)
 			$.animated('fadeOutRight')
 		}
 	}
@@ -192,6 +193,7 @@ function choice() {
 			return
 
 		case 'G':
+			$.action('clear')
             require('./arena').menu($.player.expert)
             return
 
@@ -756,7 +758,11 @@ function list(choice: string) {
 	xvt.app.form['start'].prompt = xvt.attr('Start list at ', (lo < 10 && hi > 9) ? ' ' : '', $.bracket(lo, false), ': ')
 	xvt.app.form['end'].enter = hi.toString()
 	xvt.app.form['end'].prompt = xvt.attr('  End list at ', $.bracket(hi, false), ': ')
-	xvt.app.focus = 'start'
+
+	if (lo < hi)
+		xvt.app.focus = 'start'
+	else
+		listing()
 }
 
 function listStart() {
@@ -786,9 +792,13 @@ function listEnd() {
 	let n = +xvt.entry >>0
 	if (n < lo) n = lo
 	if (n > max) n = max
-
 	hi = n
+
 	xvt.outln()
+	listing()
+}
+
+function listing() {
 	for (let i = lo; i <= hi; i++) {
 		switch (want) {
 			case 'A':
@@ -832,7 +842,7 @@ function listEnd() {
 				break
 		}
 	}
-	xvt.out('\n')
+	xvt.outln()
 	xvt.app.focus = 'buy'
 }
 
