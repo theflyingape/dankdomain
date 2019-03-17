@@ -1114,11 +1114,7 @@ function doMove(): boolean {
 					, xvt.reset, ' for '
 					, xvt.bright, xvt.magenta, $.king.handle
 					, xvt.reset, '!')
-				$.profile({ png:'player/' + $.taxman.user.pc.toLowerCase() + ($.taxman.user.gender === 'F' ? '_f' : '')
-					, handle:$.taxman.user.handle
-					, level:$.taxman.user.level, pc:$.taxman.user.pc
-					, effect:'bounceInDown'
-				})
+				$.profile({ jpg:'npc/taxman', handle:$.taxman.user.handle, level:$.taxman.user.level, pc:$.taxman.user.pc, effect:'bounceInDown' })
 				$.sound('oops')
 				$.activate($.taxman)
 				$.taxman.user.coin.value = $.player.coin.value
@@ -1309,8 +1305,6 @@ function doMove(): boolean {
 			return false
 
 		case 'wizard':
-			$.profile({ jpg:'npc/wizard', effect:'flash' })
-			xvt.waste(800)
 			xvt.out(xvt.magenta, 'You encounter a ', xvt.bright)
 
 			if (!$.player.cursed && !$.player.novice && $.dice((Z > $.player.level ? Z : 1) + 20 * $.player.immortal + $.player.level + $.online.cha) == 1) {
@@ -1373,6 +1367,7 @@ function doMove(): boolean {
 				DL.rooms[y][x].occupant = 'wizard'
 			}
 			else {
+				$.profile({ jpg:'npc/wizard', effect:'flash', handle:'Pops', level:77, pc:'crackpot' })
 				xvt.outln('wizard', xvt.normal, ' in this room.\n')
 				scroll(1, false)
 				xvt.waste(300)

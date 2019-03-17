@@ -1857,19 +1857,20 @@ export function what(rpc: active, action: string): string {
     return action + (rpc !== online ? (/.*ch$|.*sh$|.*s$|.*z$/i.test(action) ? 'es ' : 's ') : ' ')
 }
 
-export function who(rpc: active, word: string): string {
-    let result = {
-        He:  { M:'He ',  F:'She ', I:'It ',  U:'You '  },
-        His: { M:'His ', F:'Her ', I:'Its ', U:'Your ' },
-        he:  { M:'he ',  F:'she ', I:'it ',  U:'you '  },
-        him: { M:'him ', F:'her ', I:'it ',  U:'you '  },
-        his: { M:'his ', F:'her ', I:'its ', U:'your ' },
-        self:{ M:'himself ', F:'herself ', I:'itself ', U:'yourself ' },
-        You: { M:rpc.user.handle, F:rpc.user.handle, I:`The ${rpc.user.handle}`, U:'You'},
-        you: { M:rpc.user.handle, F:rpc.user.handle, I:`the ${rpc.user.handle}`, U:'you'}
+export function who(rpc: active, word: string, from = '', mob = false): string {
+    const gender = rpc == online ? 'U' : rpc.user.gender
+    const Handle = `${gender == 'I' && from !== 'Party' ? 'The ' : ''}${rpc.user.handle}`
+    const handle = `${gender == 'I' && from !== 'Party' ? 'the ' : ''}${rpc.user.handle}`
+    const result = {
+        He: { M:`${mob ? Handle : 'He'} `, F:`${mob ? Handle : 'She'} `, I:`${mob ? Handle : 'It'} `,  U:'You '  },
+        he: { M:`${mob ? handle : 'he'} `, F:`${mob ? handle : 'she'} `, I:`${mob ? handle : 'it'} `,  U:'you '  },
+        him: { M:`${mob ? handle : 'him'} `, F:`${mob ? handle : 'her'} `, I:`${mob ? handle : 'it'} `,  U:'you '  },
+        His: { M:`${mob ? Handle + `'s` : 'His'} `, F:`${mob ? Handle + `'s` : 'Her'} `, I:`${mob ? Handle + `'s` : 'Its'} `, U:'Your ' },
+        his: { M:`${mob ? handle + `'s` : 'his'} `, F:`${mob ? handle + `'s` : 'her'} `, I:`${mob ? handle + `'s` : 'its'} `, U:'your ' },
+        self: { M:'himself ', F:'herself ', I:'itself ', U:'yourself ' },
+        You: { M:Handle, F:Handle, I:Handle, U:'You'},
+        you: { M:handle, F:handle, I:handle, U:'you'}
     }
-
-    let gender = rpc == online ? 'U' : rpc.user.gender
     return result[word][gender]
 }
 
@@ -1899,14 +1900,14 @@ export function buff(perm: number, temp:number, text = false): string {
     let buff = ''
     if (perm || temp) {
         buff = xvt.attr(xvt.normal, xvt.magenta, ' (')
-        if (perm > 0) buff += xvt.attr(xvt.bright, xvt.yellow, '+', perm.toString())
-        else if (perm < 0) buff += xvt.attr(xvt.bright, xvt.red, perm.toString())
-        else buff += xvt.attr(xvt.normal, xvt.white, '+0')
-        buff += xvt.attr(xvt.normal, xvt.white, ',')
-        if (temp > 0) buff += xvt.attr(xvt.bright, xvt.yellow, '+', temp.toString())
-        else if (temp < 0) buff += xvt.attr(xvt.bright, xvt.red, temp.toString())
-        else buff += xvt.attr(xvt.normal, xvt.white, '+0')
-        buff += xvt.attr(xvt.normal, xvt.magenta, ')', xvt.white)
+        if (perm > 0) buff += xvt.attr(xvt.bright, xvt.yellow, '+', perm.toString(), xvt.normal, xvt.white)
+        else if (perm < 0) buff += xvt.attr(xvt.bright, xvt.red, perm.toString(), xvt.normal, xvt.white)
+        else buff += xvt.attr(xvt.white, '+0')
+        buff += xvt.attr(',')
+        if (temp > 0) buff += xvt.attr(xvt.bright, xvt.yellow, '+', temp.toString(), xvt.normal)
+        else if (temp < 0) buff += xvt.attr(xvt.bright, xvt.red, temp.toString(), xvt.normal)
+        else buff += xvt.attr(xvt.white, '+0')
+        buff += xvt.attr(xvt.magenta, ')', xvt.white)
     }
     if (text) xvt.emulation = keep
     return buff
