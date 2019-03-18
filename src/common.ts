@@ -1845,7 +1845,7 @@ export function riddle() {
 export function time(t: number): string {
     const ap = t < 1200 ? 'am' : 'pm'
     const m = t % 100
-    const h = Math.trunc((t < 100 ? t + 1200 : t >= 1300 ? t - 1200 : t) / 100)
+    const h = int((t < 100 ? t + 1200 : t >= 1300 ? t - 1200 : t) / 100)
     return sprintf('%u:%02u%s', h, m, ap)
 }
 

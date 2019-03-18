@@ -1,6 +1,6 @@
 {
   "name": "dankdomain-door",
-  "version": "1.8.0",
+  "version": "2.0.0",
   "description": "💻 Dank Domain: the return of Hack & Slash",
   "main": "app",
   "publisher": "theflyingape",
@@ -24,23 +24,23 @@
   "bugs": {
     "url": "https://github.com/theflyingape/dankdomain/issues"
   },
-  "homepage": "https://DDgame.us",
+  "homepage": "http://play.DDgame.us",
   "dependencies": {
     "animate.css": "^3.7.0",
     "better-sqlite3": "^5.4.0",
     "express": "^4.16.4",
     "fs-extra": "^7.0.1",
     "node-pty": "^0.8.1",
-    "ws": "^6.1.3",
-    "xterm": "^3.11.0"
+    "ws": "^6.2.0",
+    "xterm": "^3.12.0"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^5.2.2",
     "@types/express": "^4.16.1",
-    "@types/fs-extra": "^5.0.4",
-    "@types/node": "^10.12.24",
+    "@types/fs-extra": "^5.0.5",
+    "@types/node": "^10.14.1",
     "@types/ws": "^6.0.1",
     "browserify": "^16.2.3",
-    "typescript": "^3.3.3"
+    "typescript": "^3.3.3333"
   }
 }
