@@ -245,7 +245,7 @@
             "toStr":2, "toInt":2, "toDex":2, "toCha":2, 
             "maxStr":98, "maxInt":98, "maxDex":98, "maxCha":98, 
             "bonusStr":1, "bonusInt":1, "bonusDex":1, "bonusCha":1,
-            "unicode":"♆", "color":94, "skip":"laugh at",
+            "unicode":"♆", "color":94, "skip":"taunt",
             "specialty": "Fighter/Magician",
             "description": [
                 "You can only ascend to a Titan class from immortalizing a Paladin class and",
@@ -261,7 +261,7 @@
             "toStr":2, "toInt":2, "toDex":2, "toCha":2,
             "maxStr":99, "maxInt":99, "maxDex":99, "maxCha":99,
             "bonusStr":1, "bonusInt":1, "bonusDex":1, "bonusCha":1,
-            "unicode":"♛", "color":93, "skip":"halt",
+            "unicode":"♛", "color":93, "skip":"stop",
             "specialty": "Barbarian/Sage",
             "description": [
                 "The highest superbeing of them all, you can only ascend to a God from a",

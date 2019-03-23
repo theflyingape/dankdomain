@@ -299,10 +299,22 @@ interface character {
     bonusCha?: number    //  0-2
 }
 
+interface who {
+    He: string
+    he: string
+    him: string
+    His: string
+    his: string
+    self: string
+    You: string
+    you: string
+}
+
 interface active {
     user: user
     altered?: boolean
     pc?: character
+    who?: who
     weapon?: weapon
     armor?: armor
     toAC?: number

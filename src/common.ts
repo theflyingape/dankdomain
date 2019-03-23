@@ -14,6 +14,7 @@ module Common
 {
     //  mode of operation
     export let tty: TTY = 'telnet'
+    export let from = 'Common'
 
     //  items
     export const Abilities = [ 'str', 'int', 'dex', 'cha' ]
@@ -102,6 +103,7 @@ export class Character {
         }
     }
 
+    online: active
     name: character[]
     types: number
     classes: { key?:string, value?:number }[]
@@ -498,9 +500,26 @@ export class Character {
         let rich = xvt.attr(xvt.bright, xvt.white, profile.user.weapon + buff(profile.user.toWC, profile.toWC))
         return { text:text, rich:rich }
     }
+
+    who(pc: active, mob = false): who {
+        const gender = pc == online ? 'U' : pc.user.gender
+        const Handle = `${gender == 'I' && from !== 'Party' ? 'The ' : ''}${pc.user.handle}`
+        const handle = `${gender == 'I' && from !== 'Party' ? 'the ' : ''}${pc.user.handle}`
+        //  if there are multiple PCs engaged on a side (mob), replace pronouns for clarification
+        return {
+             He: `${{ M:mob ? Handle : 'He', F:mob ? Handle : 'She', I:mob ? Handle : 'It',  U:'You' }[gender]} `,
+             he: `${{ M:mob ? handle : 'he', F:mob ? handle : 'she', I:mob ? handle : 'it',  U:'you' }[gender]} `,
+            him: `${{ M:mob ? handle : 'him', F:mob ? handle : 'her', I:mob ? handle : 'it',  U:'you' }[gender]} `,
+            His: `${{ M:mob ? Handle + `'s` : 'His', F:mob ? Handle + `'s` : 'Her', I:mob ? Handle + `'s` : 'Its',  U:'Your' }[gender]} `,
+            his: `${{ M:mob ? handle + `'s`: 'his', F:mob ? handle + `'s` : 'her', I:mob ? handle + `'s` : 'its',  U:'your' }[gender]} `,
+           self: `${{ M:'him', F:'her', I:'it',  U:'your' }[gender]}self `,
+            You: `${{ M:Handle, F:Handle, I:Handle, U:'You'}[gender]} `,
+            you: `${{ M:handle, F:handle, I:handle, U:'you'}[gender]}`
+        }
+    }
 }
 
-    export const PC = new Character
+    export const PC = new Character()
 
 export class coins {
     constructor (money: string | number) {
@@ -628,6 +647,7 @@ export function activate(one: active, keep = false, confused = false): boolean {
     one.confused = false
     if (confused) return true
 
+    one.who = PC.who(one)
     one.altered = true
     one.hp = one.user.hp
     one.sp = one.user.sp
@@ -1862,9 +1882,9 @@ export function who(rpc: active, word: string, from = '', mob = false): string {
     const Handle = `${gender == 'I' && from !== 'Party' ? 'The ' : ''}${rpc.user.handle}`
     const handle = `${gender == 'I' && from !== 'Party' ? 'the ' : ''}${rpc.user.handle}`
     const result = {
-        He: { M:`${mob ? Handle : 'He'} `, F:`${mob ? Handle : 'She'} `, I:`${mob ? Handle : 'It'} `,  U:'You '  },
-        he: { M:`${mob ? handle : 'he'} `, F:`${mob ? handle : 'she'} `, I:`${mob ? handle : 'it'} `,  U:'you '  },
-        him: { M:`${mob ? handle : 'him'} `, F:`${mob ? handle : 'her'} `, I:`${mob ? handle : 'it'} `,  U:'you '  },
+        He: { M:`${mob ? Handle : 'He'} `, F:`${mob ? Handle : 'She'} `, I:`${mob ? Handle : 'It'} `,  U:'You ' },
+        he: { M:`${mob ? handle : 'he'} `, F:`${mob ? handle : 'she'} `, I:`${mob ? handle : 'it'} `,  U:'you ' },
+        him: { M:`${mob ? handle : 'him'} `, F:`${mob ? handle : 'her'} `, I:`${mob ? handle : 'it'} `,  U:'you ' },
         His: { M:`${mob ? Handle + `'s` : 'His'} `, F:`${mob ? Handle + `'s` : 'Her'} `, I:`${mob ? Handle + `'s` : 'Its'} `, U:'Your ' },
         his: { M:`${mob ? handle + `'s` : 'his'} `, F:`${mob ? handle + `'s` : 'her'} `, I:`${mob ? handle + `'s` : 'its'} `, U:'your ' },
         self: { M:'himself ', F:'herself ', I:'itself ', U:'yourself ' },
