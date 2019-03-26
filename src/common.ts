@@ -508,7 +508,7 @@ export class Character {
         //  if there are multiple PCs engaged on a side (mob), replace pronouns for clarification
         return {
              He: `${{ M:mob ? Handle : 'He', F:mob ? Handle : 'She', I:mob ? Handle : 'It',  U:'You' }[gender]} `,
-             he: `${{ M:mob ? handle : 'he', F:mob ? handle : 'she', I:mob ? handle : 'it',  U:'you' }[gender]} `,
+             he: `${{ M:'he', F:'she', I:'it',  U:'you' }[gender]} `,
             him: `${{ M:mob ? handle : 'him', F:mob ? handle : 'her', I:mob ? handle : 'it',  U:'you' }[gender]} `,
             His: `${{ M:mob ? Handle + `'s` : 'His', F:mob ? Handle + `'s` : 'Her', I:mob ? Handle + `'s` : 'Its',  U:'Your' }[gender]} `,
             his: `${{ M:mob ? handle + `'s`: 'his', F:mob ? handle + `'s` : 'her', I:mob ? handle + `'s` : 'its',  U:'your' }[gender]} `,
