@@ -53,7 +53,10 @@ export function menu(suppress = true) {
 		if (bump.user.id && !bump.user.status) {
 			$.beep()
 			xvt.outln()
-			$.PC.profile(bump)
+			if (bump.user.id == $.taxman.user.id)
+				$.profile({ jpg:'npc/taxman', handle:$.taxman.user.handle, level:$.taxman.user.level, pc:$.taxman.user.pc, effect:'fadeInLeft'})
+			else
+				$.PC.profile(bump)
 			xvt.out(xvt.cyan, xvt.faint, `${bump.user.handle} bumps`
 				, xvt.normal, ' into you from'
 				, xvt.bright, ' out of the shadows'
