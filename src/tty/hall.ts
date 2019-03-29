@@ -41,8 +41,8 @@ function choice() {
     switch (choice) {
         case 'C':
             xvt.outln()
-            xvt.outln(xvt.Red, xvt.white, xvt.bright, '  Class      CHAMPION                  Date      BEST        Deed      ')
-            xvt.outln(xvt.Red, xvt.white, '-----------------------------------------------------------------------')
+            xvt.outln(xvt.Red, xvt.bright, '  Class      CHAMPION                  Date      BEST           Deed      ')
+            xvt.outln(xvt.Red, '--------------------------------------------------------------------------')
             for (let type in $.PC.name)
                 for (let pc in $.PC.name[type]) {
                     let deeds = $.loadDeed(pc)
@@ -52,9 +52,25 @@ function choice() {
                         for (let best in keys) {
                             let deed = deeds.find((x) => { return x.deed === keys[best] })
                             if (deed) {
-                                xvt.outln(sprintf('%-22.22s  %-11s %6d  '
+                                let q =`SELECT value FROM Deeds WHERE deed='${deed.deed}' GROUP BY value ORDER BY value`
+                                if (/jw|steals|tw/.test(deed.deed)) q += ' DESC'
+                                q += ' LIMIT 3'
+                                let top3 = $.query(q), medal = '  '
+                                if (top3.length > 0 && deed.value == top3[0].value) {
+                                    xvt.out(xvt.bright, xvt.yellow)
+                                    if ($.tty == 'web') medal = '🥇'
+                                }
+                                if (top3.length > 1 && deed.value == top3[1].value) {
+                                    xvt.out(xvt.bright, xvt.cyan)
+                                    if ($.tty == 'web') medal = '🥈'
+                                }
+                                if (top3.length > 2 && deed.value == top3[2].value) {
+                                    xvt.out(xvt.yellow)
+                                    if ($.tty == 'web') medal = '🥉'
+                                }
+                                xvt.outln(sprintf('%-22.22s  %-11s %6d '
                                     , deed.hero, $.date2full(deed.date).slice(4), deed.value)
-                                    , $.Deed.name[deed.deed].description)
+                                    , medal, '  ', $.Deed.name[deed.deed].description)
                                 xvt.out('           ')
                             }
                         }
@@ -66,8 +82,8 @@ function choice() {
 
         case 'H':
             xvt.outln()
-            xvt.outln(xvt.Magenta, xvt.white, xvt.bright, '  HERO                      Date      GOAT        Deed      ')
-            xvt.outln(xvt.Magenta, xvt.white, '------------------------------------------------------------')
+            xvt.outln(xvt.Magenta, xvt.bright, '  HERO                      Date      GOAT        Deed      ')
+            xvt.outln(xvt.Magenta, '------------------------------------------------------------')
             let type = 'GOAT'
             let deeds = $.loadDeed(type)
             if (deeds.length) {
@@ -86,7 +102,7 @@ function choice() {
             xvt.outln(xvt.Magenta, xvt.yellow, xvt.bright, '   TOP HERO                Deeds   ')
             xvt.outln(xvt.Magenta, xvt.yellow, '-----------------------------------')
             let rd = $.query(`
-                SELECT hero, count(*) as n FROM Deeds
+                SELECT hero, count(*) AS n FROM Deeds
                 GROUP BY hero HAVING n > 1
                 ORDER BY n DESC LIMIT 10
             `)
