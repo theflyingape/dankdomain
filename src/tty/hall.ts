@@ -38,11 +38,13 @@ function choice() {
         }
     xvt.outln()
 
+    let q:string, medal:string
+
     switch (choice) {
         case 'C':
             xvt.outln()
-            xvt.outln(xvt.Red, xvt.bright, '  Class      CHAMPION                  Date      BEST           Deed      ')
-            xvt.outln(xvt.Red, '--------------------------------------------------------------------------')
+            xvt.outln(xvt.bright, xvt.Red, '  Class      CHAMPION                  Date      BEST          Deed      ')
+            xvt.outln(xvt.Red, '-------------------------------------------------------------------------')
             for (let type in $.PC.name)
                 for (let pc in $.PC.name[type]) {
                     let deeds = $.loadDeed(pc)
@@ -52,25 +54,25 @@ function choice() {
                         for (let best in keys) {
                             let deed = deeds.find((x) => { return x.deed === keys[best] })
                             if (deed) {
-                                let q =`SELECT value FROM Deeds WHERE deed='${deed.deed}' GROUP BY value ORDER BY value`
+                                xvt.out(sprintf('%-22.22s  %-11s %6d ', deed.hero, $.date2full(deed.date).slice(4), deed.value))
+                                q =`SELECT value FROM Deeds WHERE deed='${deed.deed}' GROUP BY value ORDER BY value`
                                 if (/jw|steals|tw/.test(deed.deed)) q += ' DESC'
                                 q += ' LIMIT 3'
-                                let top3 = $.query(q), medal = '  '
+                                medal = ' '
+                                let top3 = $.query(q)
                                 if (top3.length > 0 && deed.value == top3[0].value) {
                                     xvt.out(xvt.bright, xvt.yellow)
-                                    if ($.tty == 'web') medal = '🥇'
+                                    medal = $.tty == 'web' ? '🥇' : xvt.attr(xvt.reverse, '1', xvt.noreverse)
                                 }
                                 if (top3.length > 1 && deed.value == top3[1].value) {
                                     xvt.out(xvt.bright, xvt.cyan)
-                                    if ($.tty == 'web') medal = '🥈'
+                                    medal = $.tty == 'web' ? '🥈' : xvt.attr(xvt.reverse, '2', xvt.noreverse)
                                 }
                                 if (top3.length > 2 && deed.value == top3[2].value) {
                                     xvt.out(xvt.yellow)
-                                    if ($.tty == 'web') medal = '🥉'
+                                    medal = $.tty == 'web' ? '🥉' : xvt.attr(xvt.reverse, '3', xvt.noreverse)
                                 }
-                                xvt.outln(sprintf('%-22.22s  %-11s %6d '
-                                    , deed.hero, $.date2full(deed.date).slice(4), deed.value)
-                                    , medal, '  ', $.Deed.name[deed.deed].description)
+                                xvt.outln(medal, '  ', $.Deed.name[deed.deed].description)
                                 xvt.out('           ')
                             }
                         }
@@ -82,7 +84,7 @@ function choice() {
 
         case 'H':
             xvt.outln()
-            xvt.outln(xvt.Magenta, xvt.bright, '  HERO                      Date      GOAT        Deed      ')
+            xvt.outln(xvt.bright, xvt.Magenta, '  HERO                      Date      GOAT        Deed      ')
             xvt.outln(xvt.Magenta, '------------------------------------------------------------')
             let type = 'GOAT'
             let deeds = $.loadDeed(type)
@@ -115,8 +117,8 @@ function choice() {
 
         case 'M':
             xvt.outln()
-            xvt.outln(xvt.Blue, xvt.white, xvt.bright, '  Class      OUTSTANDING               Date      HURT               ')
-            xvt.outln(xvt.Blue, xvt.white, '--------------------------------------------------------------------')
+            xvt.outln(xvt.bright, xvt.Blue, '  Class      OUTSTANDING               Date      BEST                 ')
+            xvt.outln(xvt.Blue, '----------------------------------------------------------------------')
             for (let type in $.PC.name) {
                 for (let pc in $.PC.name[type]) {
                     let deeds = $.loadDeed(pc)
@@ -126,9 +128,23 @@ function choice() {
                         for (let hurt in keys) {
                             let deed = deeds.find((x) => { return x.deed === keys[hurt] })
                             if (deed) {
-                                xvt.outln(sprintf('%-22.22s  %-11s %6d  '
-                                    , deed.hero, $.date2full(deed.date).slice(4), deed.value)
-                                    , $.Deed.name[deed.deed].description)
+                                xvt.out(sprintf('%-22.22s  %-11s %6d ', deed.hero, $.date2full(deed.date).slice(4), deed.value))
+                                q =`SELECT value FROM Deeds WHERE deed='${deed.deed}' GROUP BY value ORDER BY value DESC LIMIT 3`
+                                medal = ' '
+                                let top3 = $.query(q)
+                                if (top3.length > 0 && deed.value == top3[0].value) {
+                                    xvt.out(xvt.bright, xvt.yellow)
+                                    medal = $.tty == 'web' ? '🥇' : xvt.attr(xvt.reverse, '1', xvt.noreverse)
+                                }
+                                if (top3.length > 1 && deed.value == top3[1].value) {
+                                    xvt.out(xvt.bright, xvt.cyan)
+                                    medal = $.tty == 'web' ? '🥈' : xvt.attr(xvt.reverse, '2', xvt.noreverse)
+                                }
+                                if (top3.length > 2 && deed.value == top3[2].value) {
+                                    xvt.out(xvt.yellow)
+                                    medal = $.tty == 'web' ? '🥉' : xvt.attr(xvt.reverse, '3', xvt.noreverse)
+                                }
+                                xvt.outln(medal, '  ', $.Deed.name[deed.deed].description)
                                 xvt.out('           ')
                             }
                         }

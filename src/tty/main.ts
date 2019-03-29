@@ -98,8 +98,8 @@ function choice() {
 
         case 'M':
             xvt.outln()
-            xvt.outln(xvt.Blue, xvt.white, ` ID   Player's Handle           Class    Lvl  Status  Party               `)
-            xvt.outln(xvt.Blue, xvt.white, '--------------------------------------------------------------------------')
+            xvt.outln(xvt.bright, xvt.Blue, ` ID   Player's Handle           Class    Lvl  Status  Party               `)
+            xvt.outln(xvt.Blue, '--------------------------------------------------------------------------')
 
             let rs = $.query(`
                 SELECT id, handle, pc, level, xplevel, status, gang, access FROM Players
@@ -111,10 +111,11 @@ function choice() {
             for (let n in rs) {
                 //  paint a target on any player that is winning
                 if (rs[n].pc === $.PC.winning)
-                    xvt.out(xvt.bright, xvt.yellow)
+                    xvt.out(xvt.yellow, xvt.bright)
                 else if (rs[n].id === $.player.id)
-                    xvt.out(xvt.bright, xvt.white)
-                xvt.out(sprintf('%-4s  %-22.22s  %-9s  %3d  ', rs[n].id, rs[n].handle, rs[n].pc, rs[n].level))
+                    xvt.out(xvt.bright)
+                xvt.out(sprintf('%-4s  %-22.22s  %-9s  %3d  '
+                    , rs[n].id, rs[n].handle, rs[n].pc, rs[n].level))
                 if (!rs[n].status.length) xvt.out('Alive!')
                 else {
                     if ($.player.emulation === 'XT')
@@ -127,7 +128,7 @@ function choice() {
                 xvt.out(rs[n].gang)
                 //  paint highest badge of honor achieved
                 if ($.Access.name[rs[n].access].promote == 0)
-                    xvt.out(' ', $.Access.name[rs[n].access].emoji)
+                    xvt.out(xvt.Black, ' ', $.Access.name[rs[n].access].emoji)
                 xvt.outln()
             }
             suppress = true

@@ -2268,8 +2268,8 @@ export function user(venue: string, cb:Function) {
             if (n >= start && n < 100) end = n
 
             xvt.outln()
-            xvt.outln(xvt.Blue, xvt.bright, ` ID   Player's Handle          Class     Lvl      Last On       Access Level  `)
-            xvt.outln(xvt.Blue, xvt.bright, '-'.repeat(78))
+            xvt.outln(xvt.bright, xvt.Blue, ` ID   Player's Handle          Class     Lvl      Last On       Access Level  `)
+            xvt.outln(xvt.Blue, '-'.repeat(78))
 
             let rs = $.query(`
                 SELECT id, handle, pc, level, xplevel, status, lastdate, access FROM Players
@@ -2284,12 +2284,12 @@ export function user(venue: string, cb:Function) {
                 if ((+rs[i].xplevel !== +rs[i].level && +rs[i].xplevel < 2)) xvt.out(xvt.faint)
                 else xvt.out(xvt.reset)
                 //  paint a target on any player that is winning
-                if (rs[i].pc === $.PC.winning) xvt.out(xvt.bright, xvt.yellow)
+                if (rs[i].pc === $.PC.winning) xvt.out(xvt.yellow, xvt.bright)
 
                 xvt.out(sprintf('%-4s  %-22s  %-9s', rs[i].id, rs[i].handle, rs[i].pc), xvt.reset)
 
                 if (rs[i].status) xvt.out(xvt.faint)
-                xvt.out(sprintf('  %3d  ', rs[i].xplevel))
+                xvt.out(sprintf('  %3s  ', rs[i].xplevel ? rs[i].xplevel.toString() : xvt.Empty[xvt.emulation]))
                 if (rs[i].status) xvt.out(xvt.normal)
 
                 xvt.out($.date2full(rs[i].lastdate), '  ', rs[i].access)
