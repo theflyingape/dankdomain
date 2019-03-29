@@ -184,9 +184,9 @@ function choice() {
 			if (credit.value < 1) credit.value = 0
 
 			$.action('bank')
-			bank['D'] = { description: 'Money in hand: ' + $.player.coin.carry() }
-			bank['W'] = { description: 'Money in bank: ' + $.player.bank.carry() }
-			bank['L'] = { description: 'Money on loan: ' + $.player.loan.carry() }
+			bank['D'] = { description: 'Money in hand: ' + $.player.coin.carry(4) }
+			bank['W'] = { description: 'Money in bank: ' + $.player.bank.carry(4) }
+			bank['L'] = { description: 'Money on loan: ' + $.player.loan.carry(4) }
 
 			xvt.app.form = {
 				'menu': { cb:Bank, cancel:'q', enter:'?', eol:false }

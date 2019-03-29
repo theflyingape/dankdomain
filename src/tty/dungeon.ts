@@ -565,9 +565,9 @@ function doMove(): boolean {
 				$.cat('dungeon/' + ROOM.monster[n].user.handle)
 			let what = ROOM.monster[n].user.handle
 			if (ROOM.monster[n].user.xplevel > 0)
-				what = [xvt.attr(xvt.faint, 'lesser '), '', xvt.attr(xvt.bright, xvt.white, 'greater ')]
+				what = [xvt.attr(xvt.faint, 'lesser ', xvt.reset), '', xvt.attr(xvt.bright, 'greater ', xvt.reset)]
 					[ROOM.monster[n].user.xplevel - ROOM.monster[n].user.level + 1] + what
-			xvt.out(`It's`, $.an(what), xvt.reset, '... ')
+			xvt.out(`It's`, $.an(what), '... ')
 			xvt.waste(ROOM.monster.length < 4 ? 400 : 100)
 
 			if ($.player.novice || ($.dice(ROOM.monster[n].user.xplevel / 5 + 5) * (101 - $.online.cha + deep) > 1)) {
@@ -585,7 +585,7 @@ function doMove(): boolean {
 					, [ 'awesomeness', 'elegance', 'presence', $.player.armor, $.player.weapon ][$.dice(5) - 1]
 					, '!')
 				ROOM.monster[n].user.gender = 'FM'[$.dice(2) - 1]
-				ROOM.monster[n].user.handle = xvt.attr(xvt.faint, xvt.cyan, 'charmed ', ROOM.monster[n].user.handle, xvt.reset)
+				ROOM.monster[n].user.handle = xvt.attr(xvt.bright, xvt.blue, 'charmed ', ROOM.monster[n].user.handle, xvt.reset)
 				ROOM.monster[n].user.xplevel = $.dice(4) - 2
 				party.push(ROOM.monster[n])
 				ROOM.monster.splice(n, 1)
@@ -1585,18 +1585,18 @@ function doMove(): boolean {
 					&& $.dice(100 + +ROOM.giftValue) < ($.online.int / 20 * (1 << $.player.poison) + ($.online.int > 90 ? ($.online.int % 90) <<1
 					: 0))
 			$.sound('bubbles')
-			xvt.out(xvt.bright, xvt.cyan, 'On the ground, you find a ')
+			xvt.out(xvt.cyan, 'On the ground, you find a ')
 			if ($.Ring.power([], $.player.rings, 'identify').power) potions[ROOM.giftValue].identified = true
 			if (potions[ROOM.giftValue].identified || ROOM.giftID || $.access.sysop) {
 				$.profile({ png:potions[ROOM.giftValue].image, handle:potion[ROOM.giftValue], effect:'fadeInUp' })
-				xvt.out(potion[ROOM.giftValue], '.')
+				xvt.out(xvt.bright, potion[ROOM.giftValue], xvt.normal, '.')
 				if (!potions[ROOM.giftValue].identified)	//	recall seeing this before
 					potions[ROOM.giftValue].identified = $.player.novice || $.online.int > (85 - 4 * $.player.poison)
 				id = true
 			}
 			else {
 				$.profile({ png:potions[ROOM.giftValue].image, handle:'Is it ' + 'nt'[$.dice(2) - 1] + 'asty, precious?', effect:'fadeInUp' })
-				xvt.out(potions[ROOM.giftValue].description, xvt.bright, xvt.cyan, ' potion', xvt.reset, '.')
+				xvt.out(potions[ROOM.giftValue].description, xvt.bright, xvt.cyan, ' potion', xvt.normal, '.')
 			}
 
 			if (id ||
@@ -1610,12 +1610,9 @@ function doMove(): boolean {
 							menu()
 							return
 						}
-						if (/Y/i.test(xvt.entry)) {
-							xvt.out(xvt.bright)
+						if (/Y/i.test(xvt.entry))
 							quaff(+ROOM.giftValue)
-						}
 						else if (/T/i.test(xvt.entry)) {
-							xvt.out(xvt.faint)
 							quaff(+ROOM.giftValue, false)
 							$.sound('click')
 							pause = false
@@ -1975,20 +1972,20 @@ function drawLevel() {
 			if (y % 2) {
 				for (x = 0; x < DL.width; x++) {
 					if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[y].substr(6 * x, 1), '\x1B(B')
-					else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y].substr(6 * x, 1))
+					else xvt.out(xvt.black, xvt.bright, paper[y].substr(6 * x, 1))
 
 					let r = $.int(y / 2)
-					occupying(DL.rooms[r][x], xvt.attr(xvt.reset, xvt.faint)
+					occupying(DL.rooms[r][x], xvt.attr(xvt.faint)
 						, (DL.map && DL.map !== 'map')
 							|| (DL.rooms[r][x].map && Math.abs(Y - r) < Math.trunc($.online.int / 15) && Math.abs(X - x) < Math.trunc($.online.int / 15))
 						, DL.map == `Marauder's map` || ($.Ring.power([], $.player.rings, 'identify').power > 0))
 				}
 				if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[y].substr(-1), '\x1B(B')
-				else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y].substr(-1))
+				else xvt.out(xvt.black, xvt.bright, paper[y].substr(-1))
 			}
 			else {
 				if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[y], '\x1B(B')
-				else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[y])
+				else xvt.out(xvt.black, xvt.bright, paper[y])
 			}
 			xvt.outln()
 		}
@@ -2016,26 +2013,26 @@ function drawRoom(r:number, c:number, keep = true, peek = false) {
 	if (!DL.map) {
 		xvt.plot(row + 1, col + 1)
 		if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col, 7), '\x1B(B')
-		else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[row].substr(col, 7))
+		else xvt.out(xvt.black, xvt.bright, paper[row].substr(col, 7))
 	}
 
 	row++
 	xvt.plot(row + 1, col + 1)
 	if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col, 1), '\x1B(B')
-	else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[row].substr(col, 1))
+	else xvt.out(xvt.black, xvt.bright, paper[row].substr(col, 1))
 
-	occupying(ROOM, peek ? xvt.attr(xvt.reset) : xvt.attr(xvt.reset, xvt.faint), (DL.map && DL.map !== 'map')
+	occupying(ROOM, peek ? xvt.attr(xvt.reset) : xvt.attr(xvt.faint), (DL.map && DL.map !== 'map')
 		|| (ROOM.map && Math.abs(Y - r) < Math.trunc($.online.int / 15) && Math.abs(X - c) < Math.trunc($.online.int / 15)),
 		peek || DL.map == `Marauder's map` || ($.Ring.power([], $.player.rings, 'identify').power > 0))
 
 	if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col + 6, 1), '\x1B(B')
-	else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[row].substr(col + 6, 1))
+	else xvt.out(xvt.black, xvt.bright, paper[row].substr(col + 6, 1))
 
 	if (!DL.map) {
 		row++
 		xvt.plot(row + 1, col + 1)
 		if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col, 7), '\x1B(B')
-		else xvt.out(xvt.reset, xvt.bright, xvt.black, paper[row].substr(col, 7))
+		else xvt.out(xvt.black, xvt.bright, paper[row].substr(col, 7))
 	}
 	if (keep) xvt.restore()
 }
@@ -2917,7 +2914,7 @@ function occupying(room: room, o = '', reveal = false, identify = false) {
 
 		switch (room.occupant) {
 			case 'trapdoor':
-				if (identify && !icon) o = xvt.attr(xvt.reset, `  ${$.tty == 'web' ? xvt.attr(xvt.lcyan, '☒') : xvt.attr(xvt.bright, xvt.blink, xvt.cyan, '?')}  `)
+				if (identify && !icon) o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lcyan, '☒') : xvt.attr(xvt.cyan, xvt.bright, '?')}  `)
 				break
 
 			case 'portal':
