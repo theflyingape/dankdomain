@@ -1160,19 +1160,19 @@ export function keyhint(rpc: active) {
         if (rpc == online) {
             xvt.out(xvt.reset, `Key #${slot + 1} is not `)
             if (player.emulation === 'XT') xvt.out(' 🗝️  ')
-            xvt.out(xvt.bright, xvt.reverse)
+            xvt.out(xvt.white, xvt.bright, xvt.reverse)
             switch (player.keyhints[i]) {
             case 'P':
                 xvt.out(xvt.magenta, ' Platinum ')
                 break
             case 'G':
-                xvt.out(xvt.yellow, ' Gold ')
+                xvt.out(xvt.yellow, ' = Gold = ')
                 break
             case 'S':
-                xvt.out(xvt.cyan, ' Silver ')
+                xvt.out(xvt.cyan, '- Silver -')
                 break
             case 'C':
-                xvt.out(xvt.red, ' Copper ')
+                xvt.out(xvt.red, xvt.Empty[xvt.emulation], ' Copper ', xvt.Empty[xvt.emulation])
                 break
             default:
                 xvt.out(xvt.black, `${player.keyhints[i]} from here`)
@@ -1246,6 +1246,7 @@ export function newkeys(user: user) {
 }
 
 export function playerPC(points = 200, immortal = false) {
+
     music('reroll')
     if (points > 240) points = 240
     xvt.outln(); xvt.waste(1000)
@@ -1306,17 +1307,26 @@ export function playerPC(points = 200, immortal = false) {
 
             let rs = query(`SELECT COUNT(id) AS n FROM Players WHERE pc = '${pc}'`)[0]
 
-            xvt.out(sprintf(' %-9s  %s  %3d   %2d %+d   %2d %+d   %2d %+d   %2d %+d   %s',
-                pc, tty == 'web' ? rpc.unicode : ' ', +rs.n,
-                rpc.baseStr, rpc.toStr, rpc.baseInt, rpc.toInt, rpc.baseDex, rpc.toDex, rpc.baseCha, rpc.toCha,
-                rpc.specialty))
+            xvt.out(sprintf(' %-9s  %s  %3s   %2d +%s   %2d +%s   %2d +%s   %2d +%s   %s'
+                , pc, tty == 'web' ? rpc.unicode : ' ', +rs.n ? rs.n : xvt.attr(xvt.red, '  ', xvt.Empty[xvt.emulation], xvt.white)
+                , rpc.baseStr, xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toStr - 1], rpc.toStr.toString(), xvt.white)
+                , rpc.baseInt, xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toInt - 1], rpc.toInt.toString(), xvt.white)
+                , rpc.baseDex, xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toDex - 1], rpc.toDex.toString(), xvt.white)
+                , rpc.baseCha, xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toCha - 1], rpc.toCha.toString(), xvt.white)
+                , rpc.specialty)
+            )
         }
     }
     xvt.outln()
+
+    let a = { str:20, int:20, dex:20, cha:20 }
     xvt.app.form['pc'].prompt = `Enter class (1-${(classes.length - 1)}): `
     xvt.app.focus = 'pc'
 
     function show() {
+        profile({ png:'player/' + player.pc.toLowerCase() + (player.gender === 'F' ? '_f' : '')
+            , handle:player.handle, level:player.level, pc:player.pc
+        })
         xvt.outln()
         cat('player/' + player.pc.toLowerCase())
         let rpc = PC.card(player.pc)
@@ -1359,43 +1369,49 @@ export function playerPC(points = 200, immortal = false) {
         switch(p) {
             case 'str':
                 left -= n
-                player.str = n
+                a.str = n
                 p = 'int'
                 xvt.app.form[p].prompt = 'Enter your Intellect'
                 xvt.app.form[p].enter = player.int.toString()
                 break
 
             case 'int':
-                left -= player.str + n
-                player.int = n
+                left -= a.str + n
+                a.int = n
                 p = 'dex'
                 xvt.app.form[p].prompt = 'Enter your Dexterity'
                 xvt.app.form[p].enter = player.dex.toString()
                 break
 
             case 'dex':
-                left -= player.str + player.int + n
+                left -= a.str + a.int + n
                 if (left < 20 || left > 80) {
                     xvt.beep()
+                    xvt.outln()
                     reroll(player, player.pc)
                     ability('str')
                     return
                 }
-                player.dex = n
+                a.dex = n
                 p = 'cha'
                 xvt.app.form[p].prompt = 'Enter your Charisma'
                 xvt.app.form[p].enter = left.toString()
                 break
 
             case 'cha':
-                left -= player.str + player.int + player.dex + n
+                left -= a.str + a.int + a.dex + n
                 if (left) {
                     xvt.beep()
                     reroll(player, player.pc)
                     ability('str')
                     return
                 }
-                player.cha = n
+                a.cha = n
+
+                player.str = a.str
+                player.int = a.int
+                player.dex = a.dex
+                player.cha = a.cha
                 activate(online)
 
                 xvt.outln()

@@ -264,19 +264,23 @@ function choice() {
 			}
 			hi = $.player.hp - $.online.hp
 			if (hi < 1) {
+				$.beep()
 				xvt.outln(`\nYou don't need any hit points.`)
 				break
 			}
 			xvt.outln('\nWelcome to Butler Hospital.\n')
-			xvt.outln('Hit points cost ', $.player.level.toString(), ' each.')
-			xvt.outln('You need ', hi.toString(), ' hit points.')
+			xvt.outln('Hit points cost ', xvt.bright, $.player.level.toString(), xvt.normal, ' each.')
+			xvt.outln('You need ', xvt.bright, hi.toString(), xvt.normal, ' hit points.')
 			lo = Math.trunc($.player.coin.value / $.player.level)
-			xvt.outln('You can afford ', lo < hi ? lo.toString() : 'all your', ' hit points.')
+			xvt.outln('You can afford '
+				, xvt.bright, lo < hi ? lo.toString() : 'all your', xvt.normal, ' hit points.')
 			if (lo < hi) {
 				if ($.player.novice)
-					xvt.outln('Normally, you would be billed for the remaining ', (hi - lo).toString(), ' hit points.')
+					xvt.out('Normally, you would be billed for the remaining ')
+						
 				else
-					xvt.outln('You can be billed for the remaining ', (hi - lo).toString(), ' hit points.')
+					xvt.out('You can be billed for the remaining ')
+				xvt.outln(xvt.bright, (hi - lo).toString(), xvt.normal, ' hit points.')
 			}
 			$.action('listall')
 			xvt.app.form = {
