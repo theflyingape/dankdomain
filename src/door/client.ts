@@ -148,15 +148,15 @@ function newSession(ev) {
 	const protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://'
 	let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/player/'
 	const options: ITerminalOptions = {
-		bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false,
+		bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false, drawBoldTextInBrightColors: true,
 		cols: cols, rows: rows, scrollback: 500,
 		fontFamily: 'tty,Consolas,monospace', fontSize: 24, fontWeight: '400', fontWeightBold: '500',
 		theme: {
 			foreground: 'Silver', background: 'Black', cursor: 'PowderBlue',
-			black: 'Black', red: 'FireBrick', green: 'ForestGreen', yellow: 'SandyBrown',
-			blue: 'MediumBlue', magenta: 'MediumOrchid', cyan: 'MediumTurquoise', white: 'Silver',
-			brightBlack: 'Gray', brightRed: 'Red', brightGreen: 'LimeGreen', brightYellow: 'Gold',
-			brightBlue: 'DodgerBlue', brightMagenta: 'Violet', brightCyan: 'Cyan', brightWhite: 'Snow'
+			black: 'Black', red: 'DarkRed', green: 'ForestGreen', yellow: 'SandyBrown',
+			blue: 'MediumBlue', magenta: 'MediumOrchid', cyan: 'DarkCyan', white: 'Silver',
+			brightBlack: 'DimGray', brightRed: 'Red', brightGreen: 'LightGreen', brightYellow: 'Gold',
+			brightBlue: 'RoyalBlue', brightMagenta: 'Violet', brightCyan: 'Cyan', brightWhite: 'Snow'
 		}
 	}
 

@@ -1975,9 +1975,9 @@ function drawLevel() {
 					else xvt.out(xvt.black, xvt.bright, paper[y].substr(6 * x, 1))
 
 					let r = $.int(y / 2)
-					occupying(DL.rooms[r][x], xvt.attr(xvt.faint)
+					occupying(DL.rooms[r][x], xvt.attr(xvt.reset, xvt.faint)
 						, (DL.map && DL.map !== 'map')
-							|| (DL.rooms[r][x].map && Math.abs(Y - r) < Math.trunc($.online.int / 15) && Math.abs(X - x) < Math.trunc($.online.int / 15))
+							|| (DL.rooms[r][x].map && Math.abs(Y - r) < $.int($.online.int / 15) && Math.abs(X - x) < $.int($.online.int / 15))
 						, DL.map == `Marauder's map` || ($.Ring.power([], $.player.rings, 'identify').power > 0))
 				}
 				if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[y].substr(-1), '\x1B(B')
@@ -2021,7 +2021,7 @@ function drawRoom(r:number, c:number, keep = true, peek = false) {
 	if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col, 1), '\x1B(B')
 	else xvt.out(xvt.black, xvt.bright, paper[row].substr(col, 1))
 
-	occupying(ROOM, peek ? xvt.attr(xvt.reset) : xvt.attr(xvt.faint), (DL.map && DL.map !== 'map')
+	occupying(ROOM, peek ? xvt.attr(xvt.reset) : xvt.attr(xvt.reset, xvt.faint), (DL.map && DL.map !== 'map')
 		|| (ROOM.map && Math.abs(Y - r) < Math.trunc($.online.int / 15) && Math.abs(X - c) < Math.trunc($.online.int / 15)),
 		peek || DL.map == `Marauder's map` || ($.Ring.power([], $.player.rings, 'identify').power > 0))
 
@@ -2884,8 +2884,8 @@ function quaff(v: number, it = true) {
 	if (!$.reason) pause = true
 }
 
-function occupying(room: room, o = '', reveal = false, identify = false) {
-	let icon = ''
+function occupying(room: room, a = '', reveal = false, identify = false) {
+	let icon = '', o = a
 	if (reveal) {
 		let m = room.monster.length > 4 ? 4 : room.monster.length
 		if (m) {
@@ -2905,8 +2905,7 @@ function occupying(room: room, o = '', reveal = false, identify = false) {
 			o += ` ${icon} `
 		}
 		else if (room.map) {
-			if (!room.type || room.type == 'cavern')
-				o += xvt.attr(!room.type ? xvt.yellow : xvt.red)
+			if (!room.type || room.type == 'cavern') o += xvt.attr(!room.type ? xvt.yellow : xvt.red)
 			o += `  ${dot}  `
 		}
 		else
@@ -2914,55 +2913,57 @@ function occupying(room: room, o = '', reveal = false, identify = false) {
 
 		switch (room.occupant) {
 			case 'trapdoor':
-				if (identify && !icon) o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lcyan, '☒') : xvt.attr(xvt.cyan, xvt.bright, '?')}  `)
+				if (identify && !icon) o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lcyan, '☒', xvt.reset) : xvt.attr(xvt.bright, xvt.cyan, '?')}  `)
 				break
 
 			case 'portal':
-				if (!icon) icon = xvt.attr('v', xvt.bright, xvt.blink, 'V', xvt.noblink, xvt.normal, 'v')
-				o = xvt.attr(xvt.reset, xvt.faint, xvt.blue, 'v', xvt.normal, icon, xvt.reset, xvt.faint, xvt.blue, 'v')
+				o = a + xvt.attr(xvt.blue)
+				if (!icon) icon = xvt.attr('v', xvt.bright, 'V', xvt.normal, 'v')
+				o += xvt.attr(xvt.faint, 'v', xvt.normal, icon, xvt.faint, 'v')
 				break
 
 			case 'well':
-				if (identify && !icon) o = xvt.attr(xvt.reset, `  ${$.tty == 'web' ? xvt.attr(xvt.lblue, '⛃') : xvt.attr(xvt.bright, xvt.blink, xvt.blue, '*')}  `)
+				if (identify && !icon) o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lblue, '⛃', xvt.reset) : xvt.attr(xvt.blue, xvt.bright, '*')}  `)
 				break
 
 			case 'wheel':
-				if (identify && !icon) o = xvt.attr(xvt.reset, `  ${$.tty == 'web' ? xvt.attr(xvt.lmagenta, '☸') : xvt.attr(xvt.bright, xvt.blink, xvt.magenta, '@')}  `)
+				if (identify && !icon) o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lmagenta, '☸', xvt.reset) : xvt.attr(xvt.magenta, xvt.bright, '@')}  `)
 				break
 
 			case 'thief':
-				if ((identify || $.player.steal == 4) && !icon)
-					o = xvt.attr(xvt.reset, xvt.faint, `  ${$.tty == 'web' ? $.PC.card('Thief').unicode : '&'}  `)
+				if ((identify || $.player.steal == 4) && !icon) o = a + xvt.attr(`  ${$.tty == 'web' ? $.PC.card('Thief').unicode : '&'}  `)
 				break
 
 			case 'cleric':
 				if (DL.cleric.sp) {
-					if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_')
-					o = xvt.attr(xvt.reset, xvt.faint, xvt.yellow, ':', xvt.normal, icon, xvt.reset, xvt.faint, xvt.yellow, ':')
+					o = a + xvt.attr(xvt.yellow)
+					if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
+					o += xvt.attr(xvt.faint, ':', xvt.normal, icon, xvt.faint, ':')
 				}
 				else {
 					if (!icon) icon = `_${$.tty == 'web' ? '⚰' : Cleric[$.player.emulation]}_`
-					o = xvt.attr(xvt.reset, xvt.faint, ':', icon, xvt.reset, xvt.faint, ':')
+					o = xvt.attr(xvt.faint, ':', icon, xvt.faint, ':')
 				}
 				break
 
 			case 'wizard':
-				if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Teleport[$.player.emulation], xvt.normal, '_')
-				o = xvt.attr(xvt.reset, xvt.faint, xvt.magenta, '<', xvt.normal, icon, xvt.reset, xvt.faint, xvt.magenta, '>')
+				o = a + xvt.attr(xvt.magenta)
+				if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Teleport[$.player.emulation], xvt.normal, '_', xvt.nouline)
+				o += xvt.attr(xvt.faint, '<', xvt.normal, icon, xvt.faint, '>')
 				break
 
 			case 'dwarf':
-				if (identify && !icon) o = xvt.attr(xvt.reset, xvt.faint, xvt.blink, xvt.yellow, `  ${$.tty == 'web' ? '⚘' : '$'}  `)
+				if (identify && !icon) o = a + xvt.attr(xvt.yellow, `  ${$.tty == 'web' ? '⚘' : '$'}  `)
 				break
 		}
 	}
 	else
 		o = '     '
 
-	xvt.out(o, xvt.reset)
+	xvt.out(o)
 
 	if (room.giftItem && (DL.map == `Marauder's map` || $.Ring.power([], $.player.rings, 'identify').power))
-		xvt.out('\x08', xvt.faint, room.giftIcon, xvt.reset)
+		xvt.out('\x08', xvt.faint, room.giftIcon)
 }
 
 function scroll(top = 1, redraw = true, escape = false) {
