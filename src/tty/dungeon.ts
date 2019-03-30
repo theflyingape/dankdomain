@@ -2918,7 +2918,10 @@ function occupying(room: room, a = '', reveal = false, identify = false) {
 
 			case 'portal':
 				o = a + xvt.attr(xvt.blue)
-				if (!icon) icon = xvt.attr('v', xvt.bright, 'V', xvt.normal, 'v')
+				if (!icon)
+					icon = xvt.attr('v', xvt.bright, 'V', xvt.normal, 'v')
+				else
+					icon += xvt.attr(xvt.blue)
 				o += xvt.attr(xvt.faint, 'v', xvt.normal, icon, xvt.faint, 'v')
 				break
 
@@ -2937,18 +2940,27 @@ function occupying(room: room, a = '', reveal = false, identify = false) {
 			case 'cleric':
 				if (DL.cleric.sp) {
 					o = a + xvt.attr(xvt.yellow)
-					if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
+					if (!icon)
+						icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
+					else
+						icon += xvt.attr(xvt.yellow)
 					o += xvt.attr(xvt.faint, ':', xvt.normal, icon, xvt.faint, ':')
 				}
 				else {
-					if (!icon) icon = `_${$.tty == 'web' ? '⚰' : Cleric[$.player.emulation]}_`
+					if (!icon)
+						icon = `_${$.tty == 'web' ? '⚰' : Cleric[$.player.emulation]}_`
+					else
+						icon += xvt.attr(xvt.white)
 					o = xvt.attr(xvt.faint, ':', icon, xvt.faint, ':')
 				}
 				break
 
 			case 'wizard':
 				o = a + xvt.attr(xvt.magenta)
-				if (!icon) icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Teleport[$.player.emulation], xvt.normal, '_', xvt.nouline)
+				if (!icon)
+					icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Teleport[$.player.emulation], xvt.normal, '_', xvt.nouline)
+				else
+					icon += xvt.attr(xvt.magenta)
 				o += xvt.attr(xvt.faint, '<', xvt.normal, icon, xvt.faint, '>')
 				break
 
