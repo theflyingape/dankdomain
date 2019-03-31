@@ -585,7 +585,7 @@ function doMove(): boolean {
 					, [ 'awesomeness', 'elegance', 'presence', $.player.armor, $.player.weapon ][$.dice(5) - 1]
 					, '!')
 				ROOM.monster[n].user.gender = 'FM'[$.dice(2) - 1]
-				ROOM.monster[n].user.handle = xvt.attr(xvt.bright, xvt.blue, 'charmed ', ROOM.monster[n].user.handle, xvt.reset)
+				ROOM.monster[n].user.handle = xvt.attr(ROOM.monster[n].pc.color || xvt.white, xvt.bright, 'charmed ', ROOM.monster[n].user.handle, xvt.reset)
 				ROOM.monster[n].user.xplevel = $.dice(4) - 2
 				party.push(ROOM.monster[n])
 				ROOM.monster.splice(n, 1)

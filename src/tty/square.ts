@@ -560,14 +560,14 @@ function Bank() {
 		return
     }
 	xvt.app.form = {
-		'coin': { cb:amount, max:24 }
+		'coin': { cb:amount, max:6 }
 	}
 
 	xvt.outln()
 
     switch (choice) {
 		case 'D':
-			xvt.app.form['coin'].prompt = xvt.attr('Deposit ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.player.coin.carry(), ']? ')
+			xvt.app.form['coin'].prompt = xvt.attr('Deposit ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.player.coin.carry(1), ']? ')
 			xvt.app.focus = 'coin'
 			break
 
@@ -577,7 +577,7 @@ function Bank() {
 			break
 
 		case 'W':
-			xvt.app.form['coin'].prompt = xvt.attr('Withdraw ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.player.bank.carry(), ']? ')
+			xvt.app.form['coin'].prompt = xvt.attr('Withdraw ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.player.bank.carry(4), ']? ')
 			xvt.app.focus = 'coin'
 			break
 
@@ -678,9 +678,9 @@ function amount() {
 
 	switch (action) {
 		case 'Deposit':
-			amount.value = Math.trunc(
-				(/=|max/i.test(xvt.entry)) ? $.player.coin.value : new $.coins(xvt.entry).value
-			)
+			amount.value = $.int((/=|max/i.test(xvt.entry))
+				? new $.coins($.player.coin.carry(1, true)).value
+				: new $.coins(xvt.entry).value)
 			if (amount.value > 0 && amount.value <= $.player.coin.value) {
 				$.player.coin.value -= amount.value
 				if ($.player.loan.value > 0) {
@@ -699,9 +699,9 @@ function amount() {
 			break
 
 		case 'Loan':
-			amount.value = Math.trunc(
-				(/=|max/i.test(xvt.entry)) ? credit.value : new $.coins(xvt.entry).value
-			)
+			amount.value = $.int((/=|max/i.test(xvt.entry))
+				? new $.coins(credit.carry(2, true)).value
+				: new $.coins(xvt.entry).value)
 			if (amount.value > 0 && amount.value <= credit.value) {
 				$.player.loan.value += amount.value
 				$.player.coin.value += amount.value
@@ -711,9 +711,9 @@ function amount() {
 			break
 
 		case 'Withdraw':
-			amount.value = Math.trunc(
-				(/=|max/i.test(xvt.entry)) ? $.player.bank.value : new $.coins(xvt.entry).value
-			)
+			amount.value = $.int((/=|max/i.test(xvt.entry))
+				? $.player.bank.value
+				: new $.coins(xvt.entry).value)
 			if (amount.value > 0 && amount.value <= $.player.bank.value) {
 				$.player.bank.value -= amount.value
 				$.player.coin.value += amount.value
@@ -723,9 +723,9 @@ function amount() {
 			break
 
 		case 'Treasury':
-			amount.value = Math.trunc(
-				(/=|max/i.test(xvt.entry)) ? $.taxman.user.bank.value : new $.coins(xvt.entry).value
-			)
+			amount.value = $.int((/=|max/i.test(xvt.entry))
+				? $.taxman.user.bank.value
+				: new $.coins(xvt.entry).value)
 			if (amount.value > 0 && amount.value <= $.taxman.user.bank.value) {
 				$.taxman.user.bank.value -= amount.value
 				$.player.coin.value += amount.value
@@ -735,9 +735,9 @@ function amount() {
 			break
 
 		case 'Vault':
-			amount.value = Math.trunc(
-				(/=|max/i.test(xvt.entry)) ? new $.coins('1000p').value : new $.coins(xvt.entry).value
-			)
+			amount.value = $.int((/=|max/i.test(xvt.entry))
+				? new $.coins('1000p').value
+				: new $.coins(xvt.entry).value)
 			if (amount.value > 0) {
 				$.taxman.user.bank.value += amount.value
 				$.beep()

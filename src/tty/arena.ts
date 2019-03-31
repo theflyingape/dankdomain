@@ -189,8 +189,8 @@ function choice() {
 								if ($.Ring.power(opponent.user.rings, $.player.rings, 'joust').power
 								&& !$.Ring.power($.player.rings, opponent.user.rings, 'joust').power && $.dice(3) == 1) {
 									$.sound('swoosh')
-									xvt.outln(xvt.magenta, '^>', xvt.bright, xvt.white, ' SWOOSH! ', xvt.normal, xvt.magenta,'<^  ', xvt.reset
-									, $.who(opponent, 'He'), 'missed!  You both pass and try again!')
+									xvt.out(xvt.magenta, '^>', xvt.white, ' SWOOSH ', xvt.magenta,'<^  ', xvt.reset
+										, $.who(opponent, 'He'), 'missed!  You both pass and try again!')
 									xvt.app.refocus()
 									return
 								}

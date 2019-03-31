@@ -1303,7 +1303,7 @@ export function playerPC(points = 200, immortal = false) {
                 classes.push(pc)
             }
             else
-                xvt.out(bracket('x'), xvt.faint)
+                xvt.out(bracket(xvt.attr(xvt.red, 'x')), xvt.faint)
 
             let rs = query(`SELECT COUNT(id) AS n FROM Players WHERE pc = '${pc}'`)[0]
 

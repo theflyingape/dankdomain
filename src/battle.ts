@@ -1800,10 +1800,6 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             break
 
         case 20:
-            if (nme.user.magic < 2) {
-                cb(true)
-                return
-            }
             xvt.out(xvt.cyan, 'A glowing '
                 , xvt.lcyan, xvt.LGradient[xvt.emulation]
                 , xvt.bright, xvt.lblack, xvt.lCyan, 'orb', xvt.reset
@@ -1812,7 +1808,12 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 , xvt.faint, 'above ', backfire ? p2.him : p1.him, xvt.white, '... ')
             $.sound('mana', 8)
             xvt.outln()
+
             let mana = 0
+            if (nme.user.magic < 2) {
+                cb(true)
+                return
+            }
             if (backfire) {
                 mana = $.int(rpc.sp * 1. / ((5. - rpc.user.magic) + $.dice(2)))
                 if (mana + nme.sp > nme.user.sp)
@@ -2341,13 +2342,14 @@ export function yourstats(profile = true) {
     xvt.out($.buff($.player.toAC, $.online.toAC))
     xvt.outln()
 
-    for (let i in $.player.rings) {
-        let ring = $.player.rings[i]
-        xvt.out(xvt.cyan, $.player.emulation === 'XT' ? '⍥' : xvt.Empty[$.player.emulation]
-            , ' ' , xvt.bright, ring, xvt.normal)
-        if ($.tty == 'web') xvt.out(' ', $.Ring.name[ring].emoji, ' 💍')
-        xvt.outln(' ring:', xvt.reset, ' can ', $.Ring.name[ring].description)
-    }
+    if ($.from !== 'Dungeon' || $.player.rows > (24 + 2 * $.player.rings.length))
+        for (let i in $.player.rings) {
+            let ring = $.player.rings[i]
+            xvt.out(xvt.cyan, $.player.emulation === 'XT' ? '⍥' : xvt.Empty[$.player.emulation]
+                , ' ' , xvt.bright, ring, xvt.normal)
+            if ($.tty == 'web') xvt.out(' ', $.Ring.name[ring].emoji, ' 💍')
+            xvt.outln(' ring:', xvt.reset, ' can ', $.Ring.name[ring].description)
+        }
 }
 
 }
