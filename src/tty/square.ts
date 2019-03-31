@@ -159,10 +159,10 @@ function choice() {
 			}
 			else
 				credit.value = 0
-			xvt.out(' worth ', credit.carry(), '\n')
+			xvt.outln(' worth ', credit.carry())
 
 			if (ac == 0 && ($.player.toAC < 0 || $.online.toAC < 0)) {
-				xvt.out(xvt.yellow, 'You look like a leper; go to the hospital for treatment.\n')
+				xvt.outln(xvt.yellow, 'You look like a leper; go to the hospital for treatment.')
 				break
 			}
 
@@ -459,7 +459,7 @@ function choice() {
 			let re = $.RealEstate.name[$.player.realestate].protection
 			xvt.out('\nYou live in a ', $.player.realestate)
 			credit.value = $.worth(new $.coins($.RealEstate.name[$.player.realestate].value).value, $.online.cha)
-			xvt.out(' worth ', credit.carry(), '\n')
+			xvt.outln(' worth ', credit.carry())
 
 			max = $.RealEstate.merchant.length - 1
 			lo = re - $.realestate
@@ -477,7 +477,7 @@ function choice() {
 			let s = $.Security.name[$.player.security].protection
 			xvt.out('\nYou are guarded by a ', $.player.security)
 			credit.value = $.worth(new $.coins($.Security.name[$.player.security].value).value, $.online.cha)
-			xvt.out(' worth ', credit.carry(), '\n')
+			xvt.outln(' worth ', credit.carry())
 
 			max = $.Security.merchant.length - 1
 			lo = s - $.security
@@ -531,7 +531,7 @@ function choice() {
 			}
 			else
 				credit.value = 0
-			xvt.out(' worth ', credit.carry(), '\n')
+			xvt.outln(' worth ', credit.carry())
 
 			if (wc == 0 && ($.player.toWC < 0 || $.online.toWC < 0)) {
 				xvt.out(xvt.yellow, 'Your hands are broken; go to the hospital for treatment.\n')
@@ -567,7 +567,7 @@ function Bank() {
 
     switch (choice) {
 		case 'D':
-			xvt.app.form['coin'].prompt = xvt.attr('Deposit ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.player.coin.carry(1), ']? ')
+			xvt.app.form['coin'].prompt = xvt.attr('Deposit ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.player.coin.carry(), ']? ')
 			xvt.app.focus = 'coin'
 			break
 
@@ -577,7 +577,7 @@ function Bank() {
 			break
 
 		case 'W':
-			xvt.app.form['coin'].prompt = xvt.attr('Withdraw ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.player.bank.carry(4), ']? ')
+			xvt.app.form['coin'].prompt = xvt.attr('Withdraw ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.player.bank.carry(), ']? ')
 			xvt.app.focus = 'coin'
 			break
 
@@ -679,7 +679,7 @@ function amount() {
 	switch (action) {
 		case 'Deposit':
 			amount.value = $.int((/=|max/i.test(xvt.entry))
-				? new $.coins($.player.coin.carry(1, true)).value
+				? new $.coins($.player.coin.carry(2, true)).value
 				: new $.coins(xvt.entry).value)
 			if (amount.value > 0 && amount.value <= $.player.coin.value) {
 				$.player.coin.value -= amount.value
@@ -712,7 +712,7 @@ function amount() {
 
 		case 'Withdraw':
 			amount.value = $.int((/=|max/i.test(xvt.entry))
-				? $.player.bank.value
+				? new $.coins($.player.bank.carry(2, true)).value
 				: new $.coins(xvt.entry).value)
 			if (amount.value > 0 && amount.value <= $.player.bank.value) {
 				$.player.bank.value -= amount.value

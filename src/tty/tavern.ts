@@ -142,7 +142,7 @@ function choice() {
         case 'P':
             if (!$.access.roleplay) break
             if ($.player.coin.value < 1) {
-                xvt.outln('\nYou\'ll need some cash to post a bounty.')
+                xvt.outln(`\nYou'll need some cash to post a bounty.`)
                 suppress = true
                 break
             }
@@ -159,35 +159,34 @@ function choice() {
                     menu()
                     return
                 }
-                xvt.out('\n')
+                xvt.outln()
                 if (opponent.user.bounty.value) {
                     xvt.outln(`${opponent.user.handle} already has a bounty posted.`)
                     menu()
                     return
                 }
-
-                let max = new $.coins(10 * $.money(opponent.user.level))
-                if (max.value > $.player.coin.value)
-                    max.value = $.player.coin.value
+                let max = new $.coins(new $.coins(10 * $.money(opponent.user.level)).carry(1, true))
+                if (max.value > $.player.coin.value) max = new $.coins($.player.coin.carry(1, true))
 
                 $.action('payment')
                 xvt.app.form = {
                     'coin': { cb: () => {
-                        let post = Math.abs(Math.trunc(/=|max/i.test(xvt.entry) ? max.value : +xvt.entry))
+                        xvt.outln()
+                        let post = $.int(/=|max/i.test(xvt.entry) ? max.value : new $.coins(xvt.entry).value)
                         if (post > 0 && post <= max.value) {
                             $.player.coin.value -= post
                             opponent.user.bounty = new $.coins(post)
                             opponent.user.who = $.player.id
-                            $.sound('click')
-                            xvt.outln(`\n\nYour bounty is posted for all to see.`)
+                            $.beep()
+                            xvt.outln(`\nYour bounty is posted for all to see.`)
                             $.news(`\tposted a bounty on ${opponent.user.handle}`)
                             $.saveUser(opponent)
                             xvt.waste(500)
                         }
                         menu(true)
-                    }, max:24 }
+                    }, max:6 }
                 }
-                xvt.app.form['coin'].prompt = `Bounty [MAX=${max.carry()}]? `
+                xvt.app.form['coin'].prompt = `Bounty [MAX=${max.carry(1)}]? `
                 xvt.app.focus = 'coin'
                 return
             })
