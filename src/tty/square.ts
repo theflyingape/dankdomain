@@ -47,7 +47,7 @@ export function menu(suppress = true) {
     }
 
 	if (!$.player.novice && $.player.level > 1 && ($.player.coin.value > 0 || $.player.poisons.length || ($.player.magic < 2 && $.player.spells.length))
-		&& $.dice($.online.cha / 2 + 5 * $.player.steal) == 1) {
+		&& $.dice($.online.cha / 3 + 4 * $.player.steal) == 1) {
 		let bump = $.PC.encounter(`AND coward = 0 AND novice = 0 AND (id NOT GLOB '_*' OR id = '_TAX')`
 			, $.player.level - 9, $.player.level + 9)
 		if (bump.user.id && !bump.user.status) {
@@ -61,7 +61,8 @@ export function menu(suppress = true) {
 				, xvt.normal, ' into you from'
 				, xvt.bright, ' out of the shadows'
 				, xvt.reset, ' ... ')
-			if ($.dice($.Ring.power($.player.rings, bump.user.rings, 'steal').power * 3) == 1 && $.dice($.online.cha / 10 + 2 * ($.player.steal + 1)) > 2 * bump.user.steal + 1)
+			if ($.dice($.online.cha / 9 + 2 * $.player.steal)
+				> 2 * $.Ring.power($.player.rings, bump.user.rings, 'steal').power + bump.user.steal)
 				xvt.outln('{waves}\n ... and moves along.')
 			else {
 				let p:number, i:number
