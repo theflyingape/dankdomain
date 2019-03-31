@@ -555,10 +555,13 @@ function doMove(): boolean {
 				, ' . . .')
 			let m = {}
 			for (let i = 0; i < ROOM.monster.length; i++)
-				m['mob' + (i+1)] = 'monster/' + ($.PC.name['monster'][ROOM.monster[i].user.pc] || $.PC.name['tavern'][ROOM.monster[i].user.pc] ? ROOM.monster[i].user.pc.toLowerCase() : 'monster')
+				m['mob' + (i+1)] = 'monster/'
+					+ ($.PC.name['monster'][ROOM.monster[i].user.pc] || $.PC.name['tavern'][ROOM.monster[i].user.pc]
+					? ROOM.monster[i].user.pc.toLowerCase()
+					: 'monster')
 			$.profile(m)
 		}
-		xvt.waste(800)
+		xvt.waste(750)
 
 		for (let n = 0; n < ROOM.monster.length; n++) {
 			if (ROOM.monster.length < 4)
@@ -568,7 +571,7 @@ function doMove(): boolean {
 				what = [xvt.attr(xvt.faint, 'lesser ', xvt.reset), '', xvt.attr(xvt.bright, 'greater ', xvt.reset)]
 					[ROOM.monster[n].user.xplevel - ROOM.monster[n].user.level + 1] + what
 			xvt.out(`It's`, $.an(what), '... ')
-			xvt.waste(ROOM.monster.length < 4 ? 400 : 100)
+			xvt.waste(ROOM.monster.length < 4 ? 300 : 100)
 
 			if ($.player.novice || ($.dice(ROOM.monster[n].user.xplevel / 5 + 5) * (101 - $.online.cha + deep) > 1)) {
 				if (ROOM.monster[n].user.xplevel > 0)
@@ -590,7 +593,7 @@ function doMove(): boolean {
 				party.push(ROOM.monster[n])
 				ROOM.monster.splice(n, 1)
 			}
-			xvt.waste(ROOM.monster.length < 4 ? 400 : 200)
+			xvt.waste(ROOM.monster.length < 4 ? 300 : 150)
 		}
 
 		if (ROOM.monster.length) {
@@ -2913,7 +2916,8 @@ function occupying(room: room, a = '', reveal = false, identify = false) {
 
 		switch (room.occupant) {
 			case 'trapdoor':
-				if (identify && !icon) o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lcyan, '☒', xvt.reset) : xvt.attr(xvt.bright, xvt.cyan, '?')}  `)
+				if (identify && !icon)
+					o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lcyan, '☒', xvt.reset) : xvt.attr(xvt.bright, xvt.cyan, '?')}  `)
 				break
 
 			case 'portal':
@@ -2926,15 +2930,18 @@ function occupying(room: room, a = '', reveal = false, identify = false) {
 				break
 
 			case 'well':
-				if (identify && !icon) o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lblue, '⛃', xvt.reset) : xvt.attr(xvt.blue, xvt.bright, '*')}  `)
+				if (identify && !icon)
+					o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lblue, '⛃', xvt.reset) : xvt.attr(xvt.blue, xvt.bright, '*')}  `)
 				break
 
 			case 'wheel':
-				if (identify && !icon) o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lmagenta, '☸', xvt.reset) : xvt.attr(xvt.magenta, xvt.bright, '@')}  `)
+				if (identify && !icon)
+					o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lmagenta, '☸', xvt.reset) : xvt.attr(xvt.magenta, xvt.bright, '@')}  `)
 				break
 
 			case 'thief':
-				if ((identify || $.player.steal == 4) && !icon) o = a + xvt.attr(`  ${$.tty == 'web' ? $.PC.card('Thief').unicode : '&'}  `)
+				if ((DL.map == `Marauder's map` || $.player.steal == 4) && !icon)
+					o = xvt.attr(xvt.reset, xvt.faint, `  ${$.tty == 'web' ? $.PC.card('Thief').unicode : '&'}  `)
 				break
 
 			case 'cleric':
@@ -2965,7 +2972,8 @@ function occupying(room: room, a = '', reveal = false, identify = false) {
 				break
 
 			case 'dwarf':
-				if (identify && !icon) o = a + xvt.attr(xvt.yellow, `  ${$.tty == 'web' ? '⚘' : '$'}  `)
+				if (identify && !icon)
+					o = a + xvt.attr(xvt.yellow, `  ${$.tty == 'web' ? '⚘' : '$'}  `)
 				break
 		}
 	}
@@ -2975,7 +2983,7 @@ function occupying(room: room, a = '', reveal = false, identify = false) {
 	xvt.out(o)
 
 	if (room.giftItem && (DL.map == `Marauder's map` || $.Ring.power([], $.player.rings, 'identify').power))
-		xvt.out('\x08', xvt.faint, room.giftIcon)
+		xvt.out('\x08', xvt.reset, xvt.faint, room.giftIcon)
 }
 
 function scroll(top = 1, redraw = true, escape = false) {
