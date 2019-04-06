@@ -221,8 +221,8 @@ export function attack(retry = false) {
     if (!round.length) {
         if (volley > 1) {
             xvt.outln()
-            xvt.outln('    -=', $.bracket('*', false), '=-')
             xvt.waste($.online.hp > 0 ? 80 : 800)
+            xvt.outln('    -=', $.bracket('*', false), '=-')
         }
 
         for (let p in parties) {
@@ -364,7 +364,7 @@ export function attack(retry = false) {
                     return
                 }
 
-                xvt.out(xvt.bright, xvt.white)
+                xvt.out(xvt.bright)
                 melee(rpc, enemy)
                 next()
                 return
@@ -372,7 +372,7 @@ export function attack(retry = false) {
             'backstab': {cb:() => {
                 if (/N/i.test(xvt.entry)) bs = 1
                 xvt.outln('\n')
-                xvt.out(xvt.bright, xvt.white)
+                xvt.out(xvt.bright)
                 melee(rpc, enemy, bs)
                 next()
                 return
@@ -399,7 +399,7 @@ export function attack(retry = false) {
             }
             else {
                 xvt.outln()
-                xvt.out(xvt.bright, xvt.white)
+                xvt.out(xvt.bright)
             }
             melee(rpc, enemy)
         }

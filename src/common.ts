@@ -392,7 +392,7 @@ export class Character {
 
         if (profile.user.poisons.length) {
             xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out(sprintf(' %8s: ', ['Toxins', 'Poisons', 'Banes', 'Venena'][profile.user.poison - 1]), xvt.white)
+            xvt.out(sprintf(' %8s: ', ['Vials', 'Toxins', 'Poisons', 'Banes', 'Venena'][profile.user.poison]), xvt.white)
             xvt.out(sprintf('%-42s', profile.user.poisons.toString()))
             xvt.out(' ', xvt.reset, xvt.blue, '|\n')
         }
@@ -785,23 +785,22 @@ export function checkXP(rpc: active, cb: Function): boolean {
     }
 
     if (player.level < sysop.level) {
-        xvt.outln(xvt.bright, xvt.white, sprintf('%+6d', award.hp), xvt.reset, ' Hit points'); xvt.waste(100)
+        xvt.outln(xvt.bright, sprintf('%+6d', award.hp), xvt.reset, ' Hit points'); xvt.waste(100)
         if (award.sp) {
-            xvt.outln(xvt.bright, xvt.white, sprintf('%+6d', award.sp), xvt.reset, ' Spell points'); xvt.waste(100)
+            xvt.outln(xvt.bright, sprintf('%+6d', award.sp), xvt.reset, ' Spell points'); xvt.waste(100)
         }
         if (award.str) {
-            xvt.outln(xvt.bright, xvt.white, sprintf('%+6d', award.str), xvt.reset, ' Strength'); xvt.waste(100)
+            xvt.outln(xvt.bright, sprintf('%+6d', award.str), xvt.reset, ' Strength'); xvt.waste(100)
         }
         if (award.int) {
-            xvt.outln(xvt.bright, xvt.white, sprintf('%+6d', award.int), xvt.reset, ' Intellect'); xvt.waste(100)
+            xvt.outln(xvt.bright, sprintf('%+6d', award.int), xvt.reset, ' Intellect'); xvt.waste(100)
         }
         if (award.dex) {
-            xvt.outln(xvt.bright, xvt.white, sprintf('%+6d', award.dex), xvt.reset, ' Dexterity'); xvt.waste(100)
+            xvt.outln(xvt.bright, sprintf('%+6d', award.dex), xvt.reset, ' Dexterity'); xvt.waste(100)
         }
         if (award.cha) {
-            xvt.outln(xvt.bright, xvt.white, sprintf('%+6d', award.cha), xvt.reset, ' Charisma'); xvt.waste(100)
+            xvt.outln(xvt.bright, sprintf('%+6d', award.cha), xvt.reset, ' Charisma'); xvt.waste(100)
         }
-        xvt.outln(); xvt.waste(100)
         if (eligible && bonus) {
             skillplus(rpc, cb)
             return true

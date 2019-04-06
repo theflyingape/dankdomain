@@ -167,7 +167,6 @@ function choice() {
 							if ($.tty == 'web') xvt.out(' ', $.Ring.name[ring].emoji, ' ')
 							xvt.outln(' powers ', xvt.reset, 'that can ', $.Ring.name[ring].description)
 						}
-						xvt.outln()
 						$.seahag.user.cursed = $.player.id
 						Battle.engage('Naval', $.online, $.seahag, menu)
 						return
@@ -201,7 +200,6 @@ function choice() {
 						if ($.tty == 'web') xvt.out(' ', $.Ring.name[ring].emoji, ' ')
 						xvt.outln(' powers ', xvt.reset, 'that can ', $.Ring.name[ring].description)
 					}
-					xvt.outln()
 					Battle.engage('Naval', $.online, $.neptune, menu)
 					return
 				}

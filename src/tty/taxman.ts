@@ -140,7 +140,7 @@ export function cityguards() {
                         l++
                 } while (xhp > 0)
 
-                xvt.outln(xvt.yellow, `The Master of Coin points ${$.who($.taxman, 'his')}${$.taxman.user.weapon} at you,\n`, xvt.bright, xvt.blue,`  "Shall we begin?"\n`)
+                xvt.outln(xvt.yellow, `The Master of Coin points ${$.who($.taxman, 'his')}${$.taxman.user.weapon} at you,\n`, xvt.bright, xvt.blue,`  "Shall we begin?"`)
                 $.sound('ddd', 15)
                 $.music('taxman')
 
@@ -177,18 +177,17 @@ export function cityguards() {
             `${xvt.attr('sighs,', xvt.bright, xvt.blue)} "If you want a job done right..."`,
             `${xvt.attr('swears,', xvt.bright, xvt.blue)} "That's gonna cost you."`
             ][$.dice(3) - 1])
-        xvt.waste(750)
+        xvt.waste(800)
 
         $.activate($.taxman)
         //$.taxman.sp >>= 1
         //$.taxman.user.id = ''
         $.taxman.user.coin = tax
 
-        if (isNaN(+$.taxman.user.weapon)) xvt.out('\n', $.who($.taxman, 'He'), $.Weapon.wearing($.taxman), '.\n')
-        xvt.waste(750)
-        if (isNaN(+$.taxman.user.armor)) xvt.out('\n', $.who($.taxman, 'He'), $.Armor.wearing($.taxman), '.\n')
-        xvt.waste(750)
-        xvt.out('\n')
+        if (isNaN(+$.taxman.user.weapon)) xvt.outln('\n', $.who($.taxman, 'He'), $.Weapon.wearing($.taxman), '.')
+        xvt.waste(900)
+        if (isNaN(+$.taxman.user.armor)) xvt.outln('\n', $.who($.taxman, 'He'), $.Armor.wearing($.taxman), '.')
+        xvt.waste(1000)
 
         Battle.engage('Taxman', $.online, $.taxman, require('./main').menu)
     }

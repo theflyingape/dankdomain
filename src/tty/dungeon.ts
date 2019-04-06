@@ -534,7 +534,7 @@ function doMove(): boolean {
 		scroll(1, false)
 
 		if (ROOM.monster.length == 1) {
-			xvt.outln(`There's something lurking in here . . .`)
+			xvt.out(`There's something lurking in here . . .`)
 			let img = 'dungeon/' + ROOM.monster[0].user.handle
 			try {
 				fs.accessSync('door/static/images/' + img + '.jpg', fs.constants.F_OK)
@@ -550,7 +550,7 @@ function doMove(): boolean {
 			}
 		}
 		else {
-			xvt.outln(`There's a party waiting for `
+			xvt.out(`There's a party waiting for `
 				, ['you', 'the main course', 'the entertainment', 'meat', 'a good chew'][$.dice(5) - 1]
 				, ' . . .')
 			let m = {}
@@ -561,7 +561,8 @@ function doMove(): boolean {
 					: 'monster')
 			$.profile(m)
 		}
-		xvt.waste(750)
+		xvt.waste(600)
+		xvt.outln()
 
 		for (let n = 0; n < ROOM.monster.length; n++) {
 			if (ROOM.monster.length < 4)
@@ -571,7 +572,7 @@ function doMove(): boolean {
 				what = [xvt.attr(xvt.faint, 'lesser ', xvt.reset), '', xvt.attr(xvt.bright, 'greater ', xvt.reset)]
 					[ROOM.monster[n].user.xplevel - ROOM.monster[n].user.level + 1] + what
 			xvt.out(`It's`, $.an(what), '... ')
-			xvt.waste(ROOM.monster.length < 4 ? 300 : 100)
+			xvt.waste(ROOM.monster.length < 4 ? 360 : 120)
 
 			if ($.player.novice || ($.dice(ROOM.monster[n].user.xplevel / 5 + 5) * (101 - $.online.cha + deep) > 1)) {
 				if (ROOM.monster[n].user.xplevel > 0)
@@ -593,7 +594,7 @@ function doMove(): boolean {
 				party.push(ROOM.monster[n])
 				ROOM.monster.splice(n, 1)
 			}
-			xvt.waste(ROOM.monster.length < 4 ? 300 : 150)
+			xvt.waste(ROOM.monster.length < 4 ? 360 : 120)
 		}
 
 		if (ROOM.monster.length) {
@@ -1118,14 +1119,13 @@ function doMove(): boolean {
 					, xvt.bright, xvt.magenta, $.king.handle
 					, xvt.reset, '!')
 				$.profile({ jpg:'npc/taxman', handle:$.taxman.user.handle, level:$.taxman.user.level, pc:$.taxman.user.pc, effect:'bounceInDown' })
-				$.sound('oops')
+				$.sound('oops', 8)
 				$.activate($.taxman)
 				$.taxman.user.coin.value = $.player.coin.value
 				if (isNaN(+$.taxman.user.weapon)) xvt.outln('\n', $.who($.taxman, 'He'), $.Weapon.wearing($.taxman), '.')
-				xvt.waste(750)
+				xvt.waste(900)
 				if (isNaN(+$.taxman.user.armor)) xvt.outln('\n', $.who($.taxman, 'He'), $.Armor.wearing($.taxman), '.')
-				xvt.waste(750)
-				xvt.outln()
+				xvt.waste(1000)
 
 				b4 = 0
 				Battle.engage('Taxman', $.online, $.taxman, () => {
