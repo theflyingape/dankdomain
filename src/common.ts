@@ -1278,6 +1278,7 @@ export function playerPC(points = 200, immortal = false) {
         'dex': { cb:ability, min:2, max:2, match:/^[2-8][0-9]$/ },
         'cha': { cb:ability, min:2, max:2, match:/^[2-8][0-9]$/ }
     }
+    let a = { str:20, int:20, dex:20, cha:20 }
 
     if (immortal) {
         show()
@@ -1318,7 +1319,6 @@ export function playerPC(points = 200, immortal = false) {
     }
     xvt.outln()
 
-    let a = { str:20, int:20, dex:20, cha:20 }
     xvt.app.form['pc'].prompt = `Enter class (1-${(classes.length - 1)}): `
     xvt.app.focus = 'pc'
 
