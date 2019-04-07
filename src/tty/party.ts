@@ -453,7 +453,8 @@ function choice() {
                             if ((o.validated[i] || typeof o.validated[i] == 'undefined') && !o.status[i]) {
                                 let n = nme.push(<active>{ user:{ id:o.members[i]} }) - 1
                                 $.loadUser(nme[n])
-                                if (nme[n].user.gang !== o.name || nme[n].user.status || !$.lock(nme[n].user.id, 2))
+                                if (nme[n].user.gang !== o.name
+                                || !nme[n].user.xplevel || nme[n].user.status || !$.lock(nme[n].user.id, 2))
                                     nme.pop()
                             }
                         }
