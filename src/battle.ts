@@ -1465,7 +1465,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 if (rpc === $.online) {
                     let deed = $.mydeeds.find((x) => { return x.deed === 'blast' })
                     if (!deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'blast')[0]) - 1]
-                    if ((deed && br > deed.value)) {
+                    if (deed && br > deed.value && !rpc.user.novice) {
                         deed.value = br
                         $.sound('outstanding')
                         $.saveDeed(deed)
@@ -1777,7 +1777,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 if (rpc === $.online) {
                     let deed = $.mydeeds.find((x) => { return x.deed === 'big blast' })
                     if (!deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'big blast')[0]) - 1]
-                    if ((deed && bbr > deed.value)) {
+                    if (deed && bbr > deed.value && !rpc.user.novice) {
                         deed.value = bbr
                         $.sound('outstanding')
                         $.saveDeed(deed)
@@ -2070,7 +2070,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         if (rpc == $.online) {
             let deed = $.mydeeds.find((x) => { return x.deed === 'melee' })
             if (!deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'melee')[0]) - 1]
-            if (hit > deed.value) {
+            if (hit > deed.value && !rpc.user.novice) {
                 deed.value = hit
                 $.sound('outstanding')
                 $.saveDeed(deed)
