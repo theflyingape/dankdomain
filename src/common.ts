@@ -2453,7 +2453,7 @@ export function newDay() {
     run(`UPDATE Players SET coin=0`)
     xvt.out('-')
 
-    let rs = query(`SELECT id FROM Players WHERE id NOT GLOB '_*' AND status = '' AND magic > 0 AND bank > 99999 AND level > 19`)
+    let rs = query(`SELECT id FROM Players WHERE id NOT GLOB '_*' AND status = '' AND (magic = 1 OR magic = 2) AND bank > 9999999 AND level > 15`)
     let user: user = { id:'' }
     for (let row in rs) {
         user.id = rs[row].id

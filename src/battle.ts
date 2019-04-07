@@ -454,9 +454,11 @@ export function attack(retry = false) {
         if (roll / odds > odds) roll = odds * odds
 
         if (rpc.user.magic == 1 && $.dice(roll) > odds) {
-            if ($.Magic.have(rpc.user.spells, 8)
+            if (($.Magic.have(rpc.user.spells, 8)
                 && rpc.hp < rpc.user.hp / (rpc.user.level / (11 - rpc.adept)  + 1)
                 && ($.dice(6 - rpc.adept) == 1 || rpc.user.coward))
+            || ($.Ring.power(enemy.user.rings, rpc.user.rings, 'teleport', 'pc', rpc.user.pc).power)
+                && rpc.hp < rpc.user.hp / 4)
                     mm = 8
             else if ($.Magic.have(rpc.user.spells, 7)
                     && rpc.hp < $.int(rpc.user.hp / 2)
