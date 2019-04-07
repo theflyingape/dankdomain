@@ -457,8 +457,8 @@ export function attack(retry = false) {
             if (($.Magic.have(rpc.user.spells, 8)
                 && rpc.hp < rpc.user.hp / (rpc.user.level / (11 - rpc.adept)  + 1)
                 && ($.dice(6 - rpc.adept) == 1 || rpc.user.coward))
-            || ($.Ring.power(enemy.user.rings, rpc.user.rings, 'teleport', 'pc', rpc.user.pc).power)
-                && rpc.hp < rpc.user.hp / 4)
+            || ($.Ring.power(enemy.user.rings, rpc.user.rings, 'teleport', 'pc', rpc.user.pc).power
+                && rpc.hp < rpc.user.hp / 5))
                     mm = 8
             else if ($.Magic.have(rpc.user.spells, 7)
                     && rpc.hp < $.int(rpc.user.hp / 2)
@@ -520,10 +520,12 @@ export function attack(retry = false) {
                     && rpc.sp >= $.Magic.power(rpc, 13)
                     && rpc.hp < (rpc.user.hp / 5))
                         mm = 13
-                else if ($.Magic.have(rpc.user.spells, 8)
+                else if (($.Magic.have(rpc.user.spells, 8)
                     && rpc.sp >= $.Magic.power(rpc, 8)
                     && rpc.hp < rpc.user.hp / (rpc.user.level / (11 - rpc.adept) + 1)
                     && ($.dice(5 - rpc.adept) == 1 || rpc.user.coward))
+                || ($.Ring.power(enemy.user.rings, rpc.user.rings, 'teleport', 'pc', rpc.user.pc).power
+                    && rpc.hp < rpc.user.hp / 4))
                         mm = 8
                 else if ($.Magic.have(rpc.user.spells, 7)
                     && rpc.sp >= $.Magic.power(rpc, 7)
