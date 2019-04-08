@@ -58,19 +58,19 @@ function choice() {
                                 q =`SELECT value FROM Deeds WHERE deed='${deed.deed}' GROUP BY value ORDER BY value`
                                 if (/jw|steals|tw/.test(deed.deed)) q += ' DESC'
                                 q += ' LIMIT 3'
-                                medal = ' '
+                                medal = $.Deed.medal[0]
                                 let top3 = $.query(q)
                                 if (top3.length > 0 && deed.value == top3[0].value) {
                                     xvt.out(xvt.bright, xvt.yellow)
-                                    medal = $.tty == 'web' ? '🥇' : xvt.attr(xvt.reverse, '1', xvt.noreverse)
+                                    medal = $.Deed.medal[1]
                                 }
                                 if (top3.length > 1 && deed.value == top3[1].value) {
                                     xvt.out(xvt.bright, xvt.cyan)
-                                    medal = $.tty == 'web' ? '🥈' : xvt.attr(xvt.reverse, '2', xvt.noreverse)
+                                    medal = $.Deed.medal[2]
                                 }
                                 if (top3.length > 2 && deed.value == top3[2].value) {
                                     xvt.out(xvt.yellow)
-                                    medal = $.tty == 'web' ? '🥉' : xvt.attr(xvt.reverse, '3', xvt.noreverse)
+                                    medal = $.Deed.medal[3]
                                 }
                                 xvt.outln(medal, '  ', $.Deed.name[deed.deed].description)
                                 xvt.out('           ')
@@ -105,7 +105,7 @@ function choice() {
             xvt.outln(xvt.Magenta, xvt.yellow, '-----------------------------------')
             let rd = $.query(`
                 SELECT hero, count(*) AS n FROM Deeds
-                GROUP BY hero HAVING n > 1
+                GROUP BY hero HAVING n > 0
                 ORDER BY n DESC LIMIT 10
             `)
             for (let n in rd) {
@@ -130,19 +130,19 @@ function choice() {
                             if (deed) {
                                 xvt.out(sprintf('%-22.22s  %-11s %6d ', deed.hero, $.date2full(deed.date).slice(4), deed.value))
                                 q =`SELECT value FROM Deeds WHERE deed='${deed.deed}' GROUP BY value ORDER BY value DESC LIMIT 3`
-                                medal = ' '
+                                medal = $.Deed.medal[0]
                                 let top3 = $.query(q)
                                 if (top3.length > 0 && deed.value == top3[0].value) {
                                     xvt.out(xvt.bright, xvt.yellow)
-                                    medal = $.tty == 'web' ? '🥇' : xvt.attr(xvt.reverse, '1', xvt.noreverse)
+                                    medal = $.Deed.medal[1]
                                 }
                                 if (top3.length > 1 && deed.value == top3[1].value) {
                                     xvt.out(xvt.bright, xvt.cyan)
-                                    medal = $.tty == 'web' ? '🥈' : xvt.attr(xvt.reverse, '2', xvt.noreverse)
+                                    medal = $.Deed.medal[2]
                                 }
                                 if (top3.length > 2 && deed.value == top3[2].value) {
                                     xvt.out(xvt.yellow)
-                                    medal = $.tty == 'web' ? '🥉' : xvt.attr(xvt.reverse, '3', xvt.noreverse)
+                                    medal = $.Deed.medal[3]
                                 }
                                 xvt.outln(medal, '  ', $.Deed.name[deed.deed].description)
                                 xvt.out('           ')

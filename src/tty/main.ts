@@ -98,8 +98,16 @@ function choice() {
 
         case 'M':
             xvt.outln()
-            xvt.outln(xvt.bright, xvt.Blue, ` ID   Player's Handle           Class    Lvl  Status  Party               `)
-            xvt.outln(xvt.Blue, '--------------------------------------------------------------------------')
+            xvt.outln('  ', xvt.bright, xvt.Blue, ` ID   Player's Handle           Class    Lvl  Status  Party                 `)
+            xvt.outln('  ', xvt.Blue, '----------------------------------------------------------------------------')
+
+            let rd = $.query(`
+                SELECT hero, count(*) AS n FROM Deeds
+                GROUP BY hero HAVING n > 0
+                ORDER BY n DESC LIMIT 3
+            `)
+            let top3 = {}
+            for (let n in rd) top3[rd[n].hero] = $.Deed.medal[n + 1]
 
             let rs = $.query(`
                 SELECT id, handle, pc, level, xplevel, status, gang, access FROM Players
@@ -109,6 +117,7 @@ function choice() {
             `)
 
             for (let n in rs) {
+                xvt.out(top3[rs[n].handle] || ' ', ' ')
                 //  paint a target on any player that is winning
                 if (rs[n].pc === $.PC.winning)
                     xvt.out(xvt.yellow, xvt.bright)
@@ -125,10 +134,10 @@ function choice() {
                 }
                 xvt.out('  ', rs[n].id === $.player.id ? xvt.bright : xvt.normal)
                 if (rs[n].gang === $.player.gang) xvt.out(xvt.Red)
-                xvt.out(rs[n].gang)
+                xvt.out(sprintf('%-22.22s', rs[n].gang))
                 //  paint highest badge of honor achieved
                 if ($.Access.name[rs[n].access].promote == 0)
-                    xvt.out(xvt.Black, ' ', $.Access.name[rs[n].access].emoji)
+                    xvt.out(xvt.Black, $.Access.name[rs[n].access].emoji)
                 xvt.outln()
             }
             suppress = true

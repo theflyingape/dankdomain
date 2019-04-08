@@ -469,7 +469,9 @@ export class Character {
 
         xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
         xvt.out(' Brawling: ', xvt.white)
-        xvt.out(sprintf('%-42s', profile.user.tw + ':' + profile.user.tl))
+        xvt.out(sprintf('%-19s', profile.user.tw + ':' + profile.user.tl))
+        xvt.out(xvt.cyan, 'Steals: ', xvt.white)
+        xvt.out(sprintf('%-15s', profile.user.steals))
         xvt.out(' ', xvt.reset, xvt.blue, '|\n')
 
         xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
@@ -1290,8 +1292,8 @@ export function playerPC(points = 200, immortal = false) {
     xvt.waste(1500)
 
     xvt.outln(xvt.lcyan, '      Character          (Recommended abilities + bonus)')
-    xvt.outln(xvt.lcyan, '        Class      Users   Str     Int     Dex     Cha       Special Feature')
-    xvt.out(xvt.cyan,  '      ---------     ---   -----   -----   -----   -----   ---------------------')
+    xvt.outln(xvt.cyan, '        Class      Users   Str     Int     Dex     Cha       Special Feature')
+    xvt.out(xvt.faint, xvt.cyan,  '      ---------     ---   -----   -----   -----   -----   ---------------------')
 
     let classes = [ '' ]
     let n = 0

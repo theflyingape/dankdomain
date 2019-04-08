@@ -116,11 +116,21 @@ export class Armor {
 }
 
 export class Deed {
-    
+
     name: deeds[]
 
     constructor () {
         this.name = require('./items/deed.json')
+    }
+
+    get medal() {
+        return xvt.emulation == 'XT'
+            ? [ ' ', '🥇', '🥈', '🥉' ]
+            : [ ' ',
+                xvt.attr(xvt.bright, xvt.reverse, '1', xvt.noreverse, xvt.normal),
+                xvt.attr(xvt.reverse, '2', xvt.noreverse),
+                xvt.attr(xvt.faint, xvt.reverse, '3', xvt.noreverse, xvt.normal)
+            ]
     }
 }
 
