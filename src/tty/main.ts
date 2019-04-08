@@ -101,15 +101,15 @@ function choice() {
             xvt.outln('  ', xvt.bright, xvt.Blue, ` ID   Player's Handle           Class    Lvl  Status  Party                 `)
             xvt.outln('  ', xvt.Blue, '----------------------------------------------------------------------------')
 
-            let rd = $.query(`
+            let top3 = {}
+            let rs = $.query(`
                 SELECT hero, count(*) AS n FROM Deeds
                 GROUP BY hero HAVING n > 0
                 ORDER BY n DESC LIMIT 3
             `)
-            let top3 = {}
-            for (let n in rd) top3[rd[n].hero] = $.Deed.medal[n + 1]
+            for (let n in rs) top3[rs[n].hero] = $.Deed.medal[+n + 1]
 
-            let rs = $.query(`
+            rs = $.query(`
                 SELECT id, handle, pc, level, xplevel, status, gang, access FROM Players
                 WHERE id NOT GLOB '_*' AND level > 1
                 ORDER BY xplevel DESC, level DESC, wins DESC, immortal DESC

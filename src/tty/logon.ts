@@ -291,9 +291,7 @@ function welcome() {
     }
 
     if ($.player.today <= $.access.calls && $.access.roleplay && $.sysop.dob <= $.now().date) {
-        $.profile({ png:'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : '')
-            , handle:$.player.handle, level:$.player.level, pc:$.player.pc
-        })
+        $.PC.profile($.online)
         $.sound('welcome')
 
         xvt.outln(xvt.bright, xvt.black, '(', xvt.normal, xvt.white, 'Welcome back, '

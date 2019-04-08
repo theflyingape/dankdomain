@@ -123,7 +123,7 @@ export class Deed {
         this.name = require('./items/deed.json')
     }
 
-    get medal() {
+    get medal(): string[] {
         return xvt.emulation == 'XT'
             ? [ ' ', '🥇', '🥈', '🥉' ]
             : [ ' ',

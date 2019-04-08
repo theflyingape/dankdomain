@@ -260,6 +260,8 @@ export class Character {
 
         xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
         xvt.out('    Class: ', xvt.white)
+        if (player.emulation === 'XT' && profile.user.wins > 0)
+            xvt.out('\r\x1B[2C🎖️\r\x1B[12C')
         xvt.out(sprintf('%-21s', profile.user.pc + ' (' + profile.user.gender + ')'))
         xvt.out(xvt.cyan, ' Exp: ', xvt.white)
         if (profile.user.xp < 1e+8)
@@ -1291,7 +1293,7 @@ export function playerPC(points = 200, immortal = false) {
     xvt.outln('You have been rerolled.  You must pick a class.\n')
     xvt.waste(1500)
 
-    xvt.outln(xvt.lcyan, '      Character          (Recommended abilities + bonus)')
+    xvt.outln(xvt.cyan, '      Character          ', xvt.faint, '(Recommended abilities + bonus)')
     xvt.outln(xvt.cyan, '        Class      Users   Str     Int     Dex     Cha       Special Feature')
     xvt.out(xvt.faint, xvt.cyan,  '      ---------     ---   -----   -----   -----   -----   ---------------------')
 
@@ -1305,7 +1307,7 @@ export function playerPC(points = 200, immortal = false) {
                 classes.push(pc)
             }
             else
-                xvt.out(bracket(xvt.attr(xvt.red, 'x')), xvt.faint)
+                xvt.out('\n', n < 12 ? ' ' : '', xvt.faint, '<', xvt.red, 'x', xvt.white, '> ')
 
             let rs = query(`SELECT COUNT(id) AS n FROM Players WHERE pc = '${pc}'`)[0]
 
@@ -1326,7 +1328,7 @@ export function playerPC(points = 200, immortal = false) {
 
     function show() {
         profile({ png:'player/' + player.pc.toLowerCase() + (player.gender === 'F' ? '_f' : '')
-            , handle:player.handle, level:player.level, pc:player.pc
+            , handle:player.handle, level:player.level, pc:player.pc, effect:'zoomInDown'
         })
         xvt.outln()
         cat('player/' + player.pc.toLowerCase())

@@ -44,7 +44,7 @@ function choice() {
         case 'C':
             xvt.outln()
             xvt.outln(xvt.bright, xvt.Red, '  Class      CHAMPION                  Date      BEST          Deed      ')
-            xvt.outln(xvt.Red, '-------------------------------------------------------------------------')
+            xvt.outln(xvt.faint, xvt.Red, '-------------------------------------------------------------------------')
             for (let type in $.PC.name)
                 for (let pc in $.PC.name[type]) {
                     let deeds = $.loadDeed(pc)
@@ -85,7 +85,7 @@ function choice() {
         case 'H':
             xvt.outln()
             xvt.outln(xvt.bright, xvt.Magenta, '  HERO                      Date      GOAT        Deed      ')
-            xvt.outln(xvt.Magenta, '------------------------------------------------------------')
+            xvt.outln(xvt.faint, xvt.Magenta, '------------------------------------------------------------')
             let type = 'GOAT'
             let deeds = $.loadDeed(type)
             if (deeds.length) {
@@ -109,7 +109,7 @@ function choice() {
                 ORDER BY n DESC LIMIT 10
             `)
             for (let n in rd) {
-                xvt.outln(sprintf('%-22.22s     %4d', rd[n].hero, rd[n].n))
+                xvt.outln(sprintf('%-22.22s     %4d', rd[n].hero, rd[n].n), ' ', +n < 3 ? $.Deed.medal[+n + 1] : '')
             }
 
             suppress = true
@@ -118,7 +118,7 @@ function choice() {
         case 'M':
             xvt.outln()
             xvt.outln(xvt.bright, xvt.Blue, '  Class      OUTSTANDING               Date      BEST                 ')
-            xvt.outln(xvt.Blue, '----------------------------------------------------------------------')
+            xvt.outln(xvt.faint, xvt.Blue, '----------------------------------------------------------------------')
             for (let type in $.PC.name) {
                 for (let pc in $.PC.name[type]) {
                     let deeds = $.loadDeed(pc)

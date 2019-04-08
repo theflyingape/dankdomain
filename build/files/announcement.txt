@@ -1,8 +1,9 @@
-[22;36mDate:[22;37m Sat 29-Mar-2019 12:40pm
+[22;36mDate:[22;37m Mon 8-Apr-2019 4:30pm
 [22;36mFrom:[22;37m The Flying Ape[1;37m
 
 New announcements as missing features get implemented or tweaked:
 
+ - added medals for gamification
  - updated client color scheme
  - bumping into a character in the square is subject to any material loss
  - an alchemist can find(take) wands; ranger and thief can find(take) poisons

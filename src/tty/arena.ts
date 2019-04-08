@@ -83,7 +83,7 @@ function choice() {
 				xvt.outln()
 				if (opponent.user.id === $.player.id) {
 					opponent.user.id = ''
-					xvt.outln(`You can't joust a wimp like `, $.who(opponent, 'him'))
+					xvt.outln(`You can't joust a wimp like `, $.online.who.him)
 					menu()
 					return
 				}
