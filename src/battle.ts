@@ -2196,7 +2196,7 @@ export function poison(rpc: active, cb?:Function) {
         }
         else {
             xvt.outln('\n', p1.He, $.what(rpc, 'pour'), 'some ', xvt.faint, $.Poison.merchant[vial - 1]
-                , xvt.reset, ' on ', p1.his
+                , xvt.reset, ' on ', rpc.who.his
                 , xvt.bright, (rpc.weapon.shoppe ? xvt.white : rpc.weapon.dwarf ? xvt.yellow : xvt.cyan), rpc.user.weapon
                 , xvt.reset, $.buff(rpc.user.toWC, rpc.toWC))
             $.sound('hone', 6)

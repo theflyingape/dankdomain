@@ -958,6 +958,7 @@ function MonsterHunt() {
 				xvt.outln('It gets all your money!')
 				xvt.waste(500)
 			}
+			xvt.outln()
 			return true
 		}
 		return false

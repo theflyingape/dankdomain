@@ -123,12 +123,28 @@ export class Deed {
         this.name = require('./items/deed.json')
     }
 
+    get key(): {} {
+        const oldkey = '🗝️  '
+        return xvt.emulation == 'XT'
+            ? {
+                P: xvt.attr(oldkey, xvt.bright, xvt.Magenta, ' Platinum ', xvt.reset),
+                G: xvt.attr(oldkey, xvt.normal, xvt.Yellow, ' = Gold = ', xvt.reset),
+                S: xvt.attr(oldkey, xvt.bright, xvt.Cyan, '- Silver -', xvt.reset),
+                C: xvt.attr(oldkey, xvt.faint, xvt.Red, xvt.Empty[xvt.emulation], ' Copper ', xvt.Empty[xvt.emulation], xvt.reset)
+            } : {
+                P: xvt.attr(xvt.bright, xvt.reverse, xvt.magenta, ' Platinum ', xvt.reset),
+                G: xvt.attr(xvt.bright, xvt.reverse, xvt.yellow, ' = Gold = ', xvt.reset),
+                S: xvt.attr(xvt.bright, xvt.reverse, xvt.cyan, '- Silver -', xvt.reset),
+                C: xvt.attr(xvt.bright, xvt.reverse, xvt.red, xvt.Empty[xvt.emulation], ' Copper ', xvt.Empty[xvt.emulation], xvt.reset)
+            }
+    }
+
     get medal(): string[] {
         return xvt.emulation == 'XT'
             ? [ ' ', '🥇', '🥈', '🥉' ]
             : [ ' ',
                 xvt.attr(xvt.bright, xvt.reverse, '1', xvt.noreverse, xvt.normal),
-                xvt.attr(xvt.reverse, '2', xvt.noreverse),
+                xvt.attr(xvt.normal, xvt.reverse, '2', xvt.noreverse),
                 xvt.attr(xvt.faint, xvt.reverse, '3', xvt.noreverse, xvt.normal)
             ]
     }

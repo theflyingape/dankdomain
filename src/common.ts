@@ -97,7 +97,7 @@ export class Character {
             let i = Object.keys(this.name[type]).length
             this.classes.push({ key:type, value:i })
             this.total += i
-            if (type === 'immortal')
+            if (type == 'immortal')
                 for (let dd in this.name[type])
                     this.winning = dd
         }
@@ -188,7 +188,7 @@ export class Character {
                 fs.accessSync(userPNG, fs.constants.F_OK)
                 userPNG = `user/${rpc.user.id}`
             } catch(e) {
-                userPNG = 'player/' + rpc.user.pc.toLowerCase() + (rpc.user.gender === 'F' ? '_f' : '')
+                userPNG = 'player/' + rpc.user.pc.toLowerCase() + (rpc.user.gender == 'F' ? '_f' : '')
             }
             Common.profile({ png:userPNG, handle:rpc.user.handle, level:rpc.user.level, pc:rpc.user.pc, effect:effect })
             Common.title(`${rpc.user.handle}: level ${rpc.user.level} ${rpc.user.pc}`)
@@ -238,29 +238,29 @@ export class Character {
         i = 22 - profile.user.handle.length
         n = 11 + i / 2
         xvt.out(xvt.clear)
-        xvt.out(xvt.blue, '+', line.slice(0, n), '=:))')
-        xvt.out(xvt.Blue, xvt.bright, xvt.yellow, ' ', profile.user.handle, ' ', xvt.reset)
+        xvt.out(xvt.blue, '+', xvt.faint, line.slice(0, n), xvt.normal, '=:))')
+        xvt.out(xvt.Blue, xvt.yellow, xvt.bright, ' ', profile.user.handle, ' ', xvt.reset)
         n = 11 + i / 2 + i % 2
-        xvt.out(xvt.blue, '((:=', line.slice(0, n), '+\n')
+        xvt.outln(xvt.blue, '((:=', xvt.faint, line.slice(0, n), xvt.normal, '+')
 
         i = 30 - Access.name[profile.user.access][sex].length
         n = 11 + i / 2
-        xvt.out(xvt.blue, '|', xvt.Blue, xvt.white, space.slice(0, n))
+        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.white, xvt.normal, space.slice(0, n))
         xvt.out('"', Access.name[profile.user.access][sex], '"')
         n = 11 + i / 2 + i % 2
-        xvt.out(xvt.blue, space.slice(0, n), xvt.reset, xvt.blue, '|\n')
+        xvt.outln(xvt.blue, space.slice(0, n), xvt.reset, xvt.blue, xvt.faint, '|')
 
-        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out('    Title: ', xvt.white)
-        if (player.emulation === 'XT')
+        if (player.emulation == 'XT')
             xvt.out('\r\x1B[2C', Access.name[profile.user.access].emoji, '\r\x1B[12C')
         xvt.out(sprintf('%-20s', profile.user.access))
         xvt.out(xvt.cyan, ' Born: ', xvt.white, date2full(profile.user.dob))
-        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
-        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out('    Class: ', xvt.white)
-        if (player.emulation === 'XT' && profile.user.wins > 0)
+        if (player.emulation == 'XT' && profile.user.wins > 0)
             xvt.out('\r\x1B[2C🎖️\r\x1B[12C')
         xvt.out(sprintf('%-21s', profile.user.pc + ' (' + profile.user.gender + ')'))
         xvt.out(xvt.cyan, ' Exp: ', xvt.white)
@@ -268,90 +268,94 @@ export class Character {
             xvt.out(sprintf('%-15f', profile.user.xp))
         else
             xvt.out(sprintf('%-15.7e', profile.user.xp))
-        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
-        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out(' Immortal: ', xvt.white)
-        xvt.out(sprintf('%-20s', profile.user.immortal + '.' + profile.user.level + ` (${profile.user.calls})`))
+        xvt.out(sprintf('%-20s'
+            , (profile.user.wins ? `${xvt.romanize(profile.user.wins)}.` : '')
+                + profile.user.immortal
+                + '.' + profile.user.level + ` (${profile.user.calls})`
+        ))
         xvt.out(xvt.cyan, ' Need: ', xvt.white)
         if (experience(profile.user.level, undefined, profile.user.int) < 1e+8)
             xvt.out(sprintf('%-15f', experience(profile.user.level, undefined, profile.user.int)))
         else
             xvt.out(sprintf('%-15.7e', experience(profile.user.level, undefined, profile.user.int)))
-        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
-        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out('      Str: ', xvt.white)
-        if (player.emulation === 'XT')
+        if (player.emulation == 'XT')
             xvt.out('\r\x1B[2C💪\r\x1B[12C')
         xvt.out(sprintf('%-20s', profile.str + ' (' + profile.user.str + ',' + profile.user.maxstr + ')'))
         xvt.out(xvt.cyan, ' Hand: ', xvt.white)
         xvt.out(profile.user.coin.carry(), xvt.bright, ' '.repeat(15 - profile.user.coin.amount.length))
-        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
-        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out('      Int: ', xvt.white)
         xvt.out(sprintf('%-20s', profile.int + ' (' + profile.user.int + ',' + profile.user.maxint + ')'))
         xvt.out(xvt.cyan, ' Bank: ', xvt.white)
         xvt.out(profile.user.bank.carry(), xvt.bright, ' '.repeat(15 - profile.user.bank.amount.length))
-        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
-        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out('      Dex: ', xvt.white)
         xvt.out(sprintf('%-20s', profile.dex + ' (' + profile.user.dex + ',' + profile.user.maxdex + ')'))
         xvt.out(xvt.cyan, ' Loan: ', xvt.white)
         xvt.out(profile.user.loan.carry(), xvt.bright, ' '.repeat(15 - profile.user.loan.amount.length))
-        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
-        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out('      Cha: ', xvt.white)
         xvt.out(sprintf('%-19s', profile.cha + ' (' + profile.user.cha + ',' + profile.user.maxcha + ')'))
-        xvt.out(xvt.cyan, ' Steal: ', xvt.white)
+        xvt.out(xvt.faint, ' Steal: ', xvt.normal)
         xvt.out(sprintf('%-15s', ['lawful', 'desperate', 'trickster', 'adept', 'master'][profile.user.steal]))
-        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
         if (profile.user.blessed) {
             let who: user = { id:profile.user.blessed }
             if (!loadUser(who)) {
-                if (profile.user.blessed === 'well')
+                if (profile.user.blessed == 'well')
                     who.handle = 'a wishing well'
                 else
                     who.handle = profile.user.blessed
             }
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.yellow)
-            xvt.out(' +Blessed:', xvt.white, ' by ', sprintf('%-39s', who.handle))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+            xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.yellow, xvt.bright)
+            xvt.out(' +Blessed:', xvt.white, xvt.normal, ' by ', sprintf('%-39s', who.handle))
+            xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
         }
 
         if (profile.user.cursed) {
             let who: user = { id:profile.user.cursed }
             if (!loadUser(who)) {
-                if (profile.user.cursed === 'wiz!')
+                if (profile.user.cursed == 'wiz!')
                     who.handle = 'a doppleganger!'
                 else
                     who.handle = profile.user.cursed
             }
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.black)
-            xvt.out('  -Cursed:', xvt.white,' by ', sprintf('%-39s', who.handle))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+            xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.white)
+            xvt.out('  -Cursed:', xvt.normal,' by ', sprintf('%-39s', who.handle))
+            xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
         }
 
-        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out('       HP: ', xvt.white)
         xvt.out(sprintf('%-42s', profile.hp + '/' + profile.user.hp + ' (' 
             + ['weak', 'normal', 'adept', 'warrior', 'brute', 'hero'][profile.user.melee] + ', '
             + ['a rare', 'occasional', 'deliberate', 'angry', 'murderous'][profile.user.backstab] + ' backstab)'))
-        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
         if (profile.user.magic > 1) {
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+            xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.magenta, xvt.bright)
             xvt.out('       SP: ', xvt.white)
             xvt.out(sprintf('%-42s', profile.sp + '/' + profile.user.sp + ' (' + ['wizardry', 'arcane', 'divine'][profile.user.magic - 2] + ')'))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+            xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
         }
 
         if (profile.user.spells.length) {
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+            xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.magenta, xvt.bright)
             xvt.out(sprintf(' %8s: ', ['Wands', 'Wands', 'Scrolls', 'Spells', 'Magus'][profile.user.magic]), xvt.white)
             let text = ''
             n = 0
@@ -365,11 +369,11 @@ export class Character {
                 n++
             }
             xvt.out(sprintf('%-42s', text))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+            xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
             while (n < profile.user.spells.length) {
                 text = ''
                 i = 0
-                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.white, '           ')
+                xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.white, xvt.bright)
                 for (let p = 0; p < profile.user.spells.length; p++) {
                     i++
                     if (i > n) {
@@ -383,26 +387,14 @@ export class Character {
                     }
                 }
                 xvt.out(sprintf('%-42s', text))
-                xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+                xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
             }
         }
 
-        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-        xvt.out('  Alchemy: ', xvt.white)
-        xvt.out(sprintf('%-42s', ['banned', 'apprentice', 'expert (+1x,+1x)', 'artisan (+1x,+2x)', 'master (+2x,+2x)'][profile.user.poison]))
-        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-
-        if (profile.user.poisons.length) {
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
-            xvt.out(sprintf(' %8s: ', ['Vials', 'Toxins', 'Poisons', 'Banes', 'Venena'][profile.user.poison]), xvt.white)
-            xvt.out(sprintf('%-42s', profile.user.poisons.toString()))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
-        }
-
         if (profile.user.rings.length) {
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+            xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.magenta, xvt.bright)
             xvt.out('    Rings: ', xvt.white)
-            if (player.emulation === 'XT')
+            if (player.emulation == 'XT')
                 xvt.out('\r\x1B[2C💍\r\x1B[12C')
             let text = ''
             n = 0
@@ -414,11 +406,11 @@ export class Character {
                 n++
             }
             xvt.out(sprintf('%-42s', text))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+            xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
             while (n < profile.user.rings.length) {
                 text = ''
                 i = 0
-                xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.white, '           ')
+                xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.white, xvt.bright, '           ')
                 for (let p = 0; p < profile.user.rings.length; p++) {
                     i++
                     if (i > n) {
@@ -430,67 +422,79 @@ export class Character {
                     }
                 }
                 xvt.out(sprintf('%-42s', text))
-                xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+                xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
             }
         }
 
-        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.white)
+        xvt.out('  Alchemy: ', xvt.normal)
+        xvt.out(sprintf('%-42s', ['banned', 'apprentice', 'expert (+1x,+1x)', 'artisan (+1x,+2x)', 'master (+2x,+2x)'][profile.user.poison]))
+        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+
+        if (profile.user.poisons.length) {
+            xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.white)
+            xvt.out(sprintf(' %8s: ', ['Vials', 'Toxins', 'Poisons', 'Banes', 'Venena'][profile.user.poison]), xvt.normal)
+            xvt.out(sprintf('%-42s', profile.user.poisons.toString()))
+            xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+        }
+
+        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out('   Weapon: ', this.weapon(profile).rich)
         xvt.out(' '.repeat(42 - this.weapon(profile).text.length))
-        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
-        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out('    Armor: ')
-        if (player.emulation === 'XT')
+        if (player.emulation == 'XT')
             xvt.out('\r\x1B[2C🛡\r\x1B[12C')
         xvt.out(this.armor(profile).rich, ' '.repeat(42 - this.armor(profile).text.length))
-        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
-        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out(' Lives in: ', xvt.white)
         xvt.out(sprintf('%-42s', profile.user.realestate + ' (' + profile.user.security + ')'))
-        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
         if (xvt.validator.isNotEmpty(profile.user.gang)) {
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+            xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
             xvt.out('    Party: ', xvt.white)
-            if (player.emulation === 'XT')
+            if (player.emulation == 'XT')
                 xvt.out('\r\x1B[2C🏴\r\x1B[12C')
             xvt.out(sprintf('%-42s', profile.user.gang))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+            xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
         }
 
         if (+profile.user.hull) {
-            xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+            xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
             xvt.out('  Warship: ', xvt.white)
             xvt.out(sprintf('%-18s', profile.hull.toString() + ':' +  profile.user.hull.toString()))
             xvt.out(xvt.cyan, ' Cannon: ', xvt.white)
             xvt.out(sprintf('%-15s', profile.user.cannon.toString() + ':' +  (profile.user.hull / 50).toString() + (profile.user.ram ? ' (RAM)' : '')))
-            xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+            xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
         }
 
-        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out(' Brawling: ', xvt.white)
         xvt.out(sprintf('%-19s', profile.user.tw + ':' + profile.user.tl))
         xvt.out(xvt.cyan, 'Steals: ', xvt.white)
         xvt.out(sprintf('%-15s', profile.user.steals))
-        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
-        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out(' Jousting: ', xvt.white)
         xvt.out(sprintf('%-20s', profile.user.jw + ':' + profile.user.jl + ` (${this.jousting(profile)})`))
         xvt.out(xvt.cyan, 'Plays: ', xvt.white)
         xvt.out(sprintf('%-15s', profile.user.plays))
-        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
-        xvt.out(xvt.blue, '|', xvt.Blue, xvt.bright, xvt.cyan)
+        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out('    Kills: ', xvt.white)
-        if (player.emulation === 'XT')
+        if (player.emulation == 'XT')
             xvt.out('\r\x1B[2C💀\r\x1B[12C')
         xvt.out(sprintf('%-42s', profile.user.kills + ' with ' + profile.user.retreats + ' retreats and killed ' + profile.user.killed +'x'))
-        xvt.out(' ', xvt.reset, xvt.blue, '|\n')
+        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
-        xvt.out(xvt.blue, '+', line, '+', xvt.reset)
+        xvt.outln(xvt.blue, '+', xvt.faint, line, xvt.normal, '+')
     }
 
     armor(profile: active): { text:string, rich:string } {
@@ -527,7 +531,7 @@ export class Character {
 
 export class coins {
     constructor (money: string | number) {
-        if (typeof money === 'number') {
+        if (typeof money == 'number') {
             this.value = money
         }
         else {
@@ -588,28 +592,28 @@ export class coins {
         let n = this.value
         let bags:string[] = []
 
-        if (this.pouch(n) === 'p') {
+        if (this.pouch(n) == 'p') {
             n = Math.trunc(n / 1e+13)
             bags.push(text ? n + 'p'
                 : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.magenta, 'p', xvt.white, xvt.normal)
             )
             n = this.value % 1e+13
         }
-        if (this.pouch(n) === 'g') {
+        if (this.pouch(n) == 'g') {
             n = Math.trunc(n / 1e+09)
             bags.push(text ? n + 'g'
                 : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.yellow, 'g', xvt.white, xvt.normal)
             )
             n = this.value % 1e+09
         }
-        if (this.pouch(n) === 's') {
+        if (this.pouch(n) == 's') {
             n = Math.trunc(n / 1e+05)
             bags.push(text ? n + 's'
                 : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.cyan, 's', xvt.white, xvt.normal)
             )
             n = this.value % 1e+05
         }
-        if ((n > 0 && this.pouch(n) === 'c') || bags.length == 0)
+        if ((n > 0 && this.pouch(n) == 'c') || bags.length == 0)
             bags.push(text ? n + 'c'
                 : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.red, 'c', xvt.white, xvt.normal)
             )
@@ -663,7 +667,7 @@ export function activate(one: active, keep = false, confused = false): boolean {
         one.user.access = Object.keys(Access.name)[0]
 
     if (keep) {
-        if (!lock(one.user.id, one.user.id === player.id ? 1 : 2) && one.user.id !== player.id) {
+        if (!lock(one.user.id, one.user.id == player.id ? 1 : 2) && one.user.id !== player.id) {
             xvt.beep()
             xvt.outln('\n', xvt.cyan, xvt.bright, one.user.handle, ' is engaged elsewhere.')
             xvt.waste(500)
@@ -736,7 +740,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
                 xvt.outln(xvt.cyan, xvt.bright, 'You are no longer a novice.  Welcome to the next level of play!')
                 sound('welcome', 9)
                 xvt.outln('You morph into', xvt.yellow, an(rpc.user.pc), xvt.reset, '.'); xvt.waste(250)
-                profile({ png:'player/' + rpc.user.pc.toLowerCase() + (rpc.user.gender === 'F' ? '_f' : '')
+                profile({ png:'player/' + rpc.user.pc.toLowerCase() + (rpc.user.gender == 'F' ? '_f' : '')
                     , handle:rpc.user.handle, level:rpc.user.level, pc:rpc.user.pc
                 })
                 sound('cheer', 21)
@@ -775,7 +779,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
     xvt.outln(); xvt.waste(125)
     wall(`is now a level ${player.level} ${player.pc}`)
 
-    let deed = mydeeds.find((x) => { return x.deed === 'levels' })
+    let deed = mydeeds.find((x) => { return x.deed == 'levels' })
     if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, 'levels')[0]) - 1]
     if ((deed && jumped >= deed.value)) {
         beep()
@@ -1136,7 +1140,7 @@ export function experience(level: number, factor = 1, wisdom = 1000): number {
 
     return factor == 1
         ? Math.round(wisdom * Math.pow(2, level - 1))
-        : Math.trunc(wisdom * Math.pow(2, level - 2) / factor)
+        : int(wisdom * Math.pow(2, level - 2) / factor)
 }
 
 export function keyhint(rpc: active) {
@@ -1150,39 +1154,21 @@ export function keyhint(rpc: active) {
     if (open.length) {
         do {
             i = open[dice(open.length) - 1]
-            slot = Math.trunc(i / 3)
+            slot = int(i / 3)
             let key = [ 'P', 'G', 'S', 'C' ][dice(4) - 1]
             if (key !== rpc.user.keyseq[slot]) {
                 for (let n = 3 * slot; n < 3 * (slot + 1); n++)
-                    if (key === rpc.user.keyhints[n])
+                    if (key == rpc.user.keyhints[n])
                         key = ''
                 if (key) rpc.user.keyhints[i] = key
             }
         } while(!rpc.user.keyhints[i])
 
-        if (rpc == online) {
-            xvt.out(xvt.reset, `Key #${slot + 1} is not `)
-            if (player.emulation === 'XT') xvt.out(' 🗝️  ')
-            xvt.out(xvt.white, xvt.bright, xvt.reverse)
-            switch (player.keyhints[i]) {
-            case 'P':
-                xvt.out(xvt.magenta, ' Platinum ')
-                break
-            case 'G':
-                xvt.out(xvt.yellow, ' = Gold = ')
-                break
-            case 'S':
-                xvt.out(xvt.cyan, '- Silver -')
-                break
-            case 'C':
-                xvt.out(xvt.red, xvt.Empty[xvt.emulation], ' Copper ', xvt.Empty[xvt.emulation])
-                break
-            default:
-                xvt.out(xvt.black, `${player.keyhints[i]} from here`)
-                break
-            }
-            xvt.outln()
-        }
+        if (rpc === online)
+            xvt.outln(xvt.reset
+                , 'Key #', xvt.bright, `${slot + 1}`, xvt.normal, ' is not '
+                , Deed.key[player.keyhints[i]] || xvt.attr(xvt.faint, `${player.keyhints[i]} from here`
+            ))
     }
     else
         xvt.outln(xvt.reset, 'There are no more key hints available to you.')
@@ -1312,7 +1298,8 @@ export function playerPC(points = 200, immortal = false) {
             let rs = query(`SELECT COUNT(id) AS n FROM Players WHERE pc = '${pc}'`)[0]
 
             xvt.out(sprintf(' %-9s  %s  %3s   %2d +%s   %2d +%s   %2d +%s   %2d +%s   %s'
-                , pc, tty == 'web' ? rpc.unicode : ' ', +rs.n ? rs.n : xvt.attr(xvt.red, '  ', xvt.Empty[xvt.emulation], xvt.white)
+                , pc, player.emulation == 'XT' ? rpc.unicode : ' '
+                , +rs.n ? rs.n : xvt.attr(player.keyhints.indexOf(pc, 12) < 0 ? xvt.red : xvt.yellow, '  ', xvt.Empty[xvt.emulation], xvt.white)
                 , rpc.baseStr, xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toStr - 1], rpc.toStr.toString(), xvt.white)
                 , rpc.baseInt, xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toInt - 1], rpc.toInt.toString(), xvt.white)
                 , rpc.baseDex, xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toDex - 1], rpc.toDex.toString(), xvt.white)
@@ -1327,7 +1314,7 @@ export function playerPC(points = 200, immortal = false) {
     xvt.app.focus = 'pc'
 
     function show() {
-        profile({ png:'player/' + player.pc.toLowerCase() + (player.gender === 'F' ? '_f' : '')
+        profile({ png:'player/' + player.pc.toLowerCase() + (player.gender == 'F' ? '_f' : '')
             , handle:player.handle, level:player.level, pc:player.pc, effect:'zoomInDown'
         })
         xvt.outln()
@@ -1463,7 +1450,7 @@ export function reroll(user: user, dd?: string, level = 1) {
     user.sp = user.magic > 1 ? 15 : 0
 
     //  reset for new or non player
-    if (xvt.validator.isEmpty(user.id) || user.id[0] === '_') {
+    if (xvt.validator.isEmpty(user.id) || user.id[0] == '_') {
         if (isNaN(user.dob)) user.dob = now().date
         if (isNaN(user.joined)) user.joined = now().date
         user.lastdate = now().date
@@ -1504,7 +1491,7 @@ export function reroll(user: user, dd?: string, level = 1) {
         // if (!user.novice && !Access.name[player.access].sysop) user.email = ''
     }
 
-    if (level == 1 || xvt.validator.isEmpty(user.id) || user.id[0] === '_') {
+    if (level == 1 || xvt.validator.isEmpty(user.id) || user.id[0] == '_') {
         //  no extra free or augmented stuff
         user.poisons = []
         user.spells = []
@@ -1533,7 +1520,7 @@ export function reroll(user: user, dd?: string, level = 1) {
 
     if (user.level > 1)
         user.xp = experience(user.level - 1, 1, user.int)
-    if (user.pc === Object.keys(PC.name['player'])[0])
+    if (user.pc == Object.keys(PC.name['player'])[0])
         user.xplevel = 0
     else
         user.xplevel = user.level
@@ -1662,7 +1649,7 @@ export function riddle() {
     xvt.outln('\nChecking your deeds for the ', xvt.bright, player.pc, xvt.normal, ' list...')
     xvt.waste(1000)
     for (let i in deeds) {
-        let deed = mydeeds.find((x) => { return x.deed === deeds[i] })
+        let deed = mydeeds.find((x) => { return x.deed == deeds[i] })
         if (deeds[i] == 'jw' || deeds[i] == 'steals' || deeds[i] == 'tw') {
             if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, deeds[i])[0]) - 1]
             if (player[deeds[i]] >= deed.value) {
@@ -1689,7 +1676,7 @@ export function riddle() {
     xvt.outln(xvt.magenta, '\nChecking your deeds for the ', xvt.bright, 'GOAT', xvt.normal,' list...')
     xvt.waste(1000)
     for (let i in deeds) {
-        let deed = mydeeds.find((x) => { return x.deed === deeds[i] })
+        let deed = mydeeds.find((x) => { return x.deed == deeds[i] })
         if (/jw|steals|tw/.test(deeds[i])) {
             if (!deed) deed = mydeeds[mydeeds.push(loadDeed('GOAT', deeds[i])[0]) - 1]
             if (player[deeds[i]] >= deed.value) {
@@ -1742,7 +1729,7 @@ export function riddle() {
         player.wins++
         run(`UPDATE Players SET wins=${player.wins} WHERE id='${player.id}'`)
         reason = 'WON THE GAME !!'
-        xvt.waste(player.emulation === 'XT' ? 4321 : 432)
+        xvt.waste(player.emulation == 'XT' ? 4321 : 432)
 
         xvt.outln()
         xvt.outln(xvt.bright, xvt.yellow, 'CONGRATULATIONS!!'
@@ -1795,7 +1782,7 @@ export function riddle() {
         if (+i < 12 && player.keyhints[i]) {
             slot = Math.trunc(+i / 3) + 1
             xvt.out(xvt.reset, `Key #${slot} is not `)
-            if (player.emulation === 'XT') xvt.out(' 🗝️  ')
+            if (player.emulation == 'XT') xvt.out(' 🗝️  ')
             xvt.out(xvt.bright, xvt.reverse)
             switch (player.keyhints[i]) {
             case 'P':
@@ -1829,14 +1816,14 @@ export function riddle() {
             let attempt = xvt.entry.toUpperCase()
             xvt.out(' ...you insert and twist the key... ')
             xvt.waste(1234)
-            if (attempt === combo[slot]) {
+            if (attempt == combo[slot]) {
                 sound('click')
                 if (tty == 'web') xvt.out('🔓 ')
                 xvt.outln(xvt.cyan, '{', xvt.bright, 'Click!', xvt.normal, '}')
 
                 player.pc = Object.keys(PC.name['immortal'])[slot]
-                profile({ png:'player/' + player.pc.toLowerCase() + (player.gender === 'F' ? '_f' : ''), pc:player.pc })
-                xvt.outln([ xvt.red, xvt.blue, xvt.magenta ][slot]
+                profile({ png:'player/' + player.pc.toLowerCase() + (player.gender == 'F' ? '_f' : ''), pc:player.pc })
+                xvt.out([ xvt.red, xvt.blue, xvt.magenta ][slot]
                     , 'You ', [ 'advance to', 'succeed as', 'transcend into'][slot]
                     , xvt.bright, an(player.pc), xvt.normal, '.')
                 reroll(player, player.pc)
@@ -1861,7 +1848,7 @@ export function riddle() {
 
                 if (slot == 0) {
                     for (let i = 3 * slot; i < 3 * (slot + 1); i++) {
-                        if (player.keyhints[i] === attempt)
+                        if (player.keyhints[i] == attempt)
                             break
                         if (!player.keyhints[i]) {
                             player.keyhints[i] = attempt
@@ -1917,7 +1904,7 @@ export function worth(n: number, p: number): number {
 }
 
 export function beep() {
-    if (player.emulation === 'XT')
+    if (player.emulation == 'XT')
         sound('max')
     else
         xvt.beep()
@@ -2024,11 +2011,11 @@ export function emulator(cb:Function) {
         'term': { cb:() => {
             if (xvt.validator.isNotEmpty(xvt.entry) && xvt.entry.length == 2) xvt.emulation = xvt.entry.toUpperCase()
             player.emulation = xvt.emulation
-            process.stdin.setEncoding(player.emulation === 'XT' ? 'utf8' : 'ascii')
+            process.stdin.setEncoding(player.emulation == 'XT' ? 'utf8' : 'ascii')
             xvt.outln('\n\n', xvt.reset, xvt.magenta, xvt.LGradient[xvt.emulation], xvt.reverse, 'TEST BANNER', xvt.noreverse, xvt.RGradient[xvt.emulation])
             xvt.outln(xvt.red,'R', xvt.green,'G', xvt.blue,'B', xvt.reset, xvt.bright,' bold ', xvt.normal, 'normal', xvt.faint, ' dark')
             online.altered = true
-            if (player.emulation === 'XT') {
+            if (player.emulation == 'XT') {
                 sound('yahoo', 20)
                 cb()
                 return
@@ -2102,7 +2089,7 @@ export function logoff() {
             PC.profile(online)
         }
         if (tty == 'web') xvt.outln('\x06')
-        xvt.outln('Goodbye, please play again!  Also visit:')
+        xvt.outln(xvt.off, 'Goodbye, please play again!  Also visit:')
         xvt.waste(750)
         xvt.out(xvt.cyan, '  ___                               ___  \n')
         xvt.out(xvt.cyan, '  \\_/   ', xvt.red, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Red, xvt.white, 'Never Program Mad', xvt.reset, xvt.red, xvt.RGradient[xvt.emulation], xvt.cyan, '   \\_/  \n')
@@ -2111,8 +2098,8 @@ export function logoff() {
         xvt.out(xvt.cyan, 'I\\___/I    ', xvt.green, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Green, xvt.white, 'RAH-CoCo\'s', xvt.reset, xvt.green, xvt.RGradient[xvt.emulation], xvt.cyan, '     I\\___/I\n')
         xvt.out(xvt.cyan, '\\/   \\/ ', xvt.reset, '   http://rahcocos.com  ', xvt.cyan, '  \\/   \\/\n')
         xvt.out(xvt.cyan, ' \\ : /                           ', xvt.cyan, '  \\ : / \n')
-        xvt.out(xvt.cyan, '  I:I    ', xvt.blue, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Blue, xvt.white, `${player.emulation === 'XT' ? 'ℛ ' : ' R'}obert ${player.emulation == 'XT' ? 'ℋ ' : ' H'}urst`, xvt.reset, xvt.blue, xvt.RGradient[xvt.emulation], xvt.cyan, '     I:I  \n')
-        xvt.out(xvt.cyan, ' .I:I. ', xvt.reset, '     https://ddgame.us    ', xvt.cyan, '  .I:I. \n')
+        xvt.out(xvt.cyan, '  I:I    ', xvt.blue, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Blue, xvt.white, `${player.emulation == 'XT' ? 'ℛ ' : ' R'}obert ${player.emulation == 'XT' ? 'ℋ ' : ' H'}urst`, xvt.reset, xvt.blue, xvt.RGradient[xvt.emulation], xvt.cyan, '     I:I  \n')
+        xvt.outln(xvt.cyan, ' .I:I. ', xvt.reset, '     https://ddgame.us    ', xvt.cyan, '  .I:I.')
         xvt.outln(); xvt.waste(500)
         xvt.outln(xvt.bright, xvt.black, process.title
             , ' running on ', xvt.bright, xvt.green, 'Node.js ', xvt.normal, process.version, xvt.reset
@@ -2615,16 +2602,16 @@ export function run(sql: string, errOk = false): { changes: number, lastInsertRO
             if (!errOk) {
                 xvt.out('\n?FATAL SQL operation: ', sql)
 /*
-                if (user.id === player.id || user.id[0] === '_') {
+                if (user.id == player.id || user.id[0] == '_') {
                     let trace = users + user.id + '.json'
-                    if (reason === '')
+                    if (reason == '')
                         fs.writeFileSync(trace, JSON.stringify(user, null, 2))
                     else
                         fs.unlink(trace, () => {})
                 }
 
                 sql = users + user.id + '.sql'
-                if (process.platform === 'linux') {
+                if (process.platform == 'linux') {
                     require('child_process').exec(`
                         sqlite3 ${DD} <<-EOD
                         .mode insert
@@ -2701,9 +2688,9 @@ export function loadGang(rs: any): gang {
             if (gang.members[n] !== player.id && !who[0].status && !lock(gang.members[n]))
                 who[0].status = 'locked'
             gang.status.push(who[0].status)
-            gang.validated.push(who[0].gang ? who[0].gang === rs.name : undefined)
+            gang.validated.push(who[0].gang ? who[0].gang == rs.name : undefined)
         }
-        else if (gang.members[n][0] === '_') {
+        else if (gang.members[n][0] == '_') {
             gang.handles.push('')
             gang.genders.push('I')
             gang.melee.push(0)
@@ -2763,7 +2750,7 @@ export function getRing(how: string, what: string) {
     xvt.outln()
     xvt.out(xvt.bright, xvt.yellow, 'You ', how, an(what, false))
     xvt.out(xvt.cyan, what, xvt.normal)
-    if (player.emulation === 'XT') xvt.out(' ', Ring.name[what].emoji, ' 💍')
+    if (player.emulation == 'XT') xvt.out(' ', Ring.name[what].emoji, ' 💍')
     xvt.outln(' ring', xvt.reset, ', which can\n'
         , xvt.bright, xvt.yellow, Ring.name[what].description)
     if (Ring.name[what].unique) profile({ jpg:`ring/${what}`, handle:`${what} ${Ring.name[what].emoji} 💍 ring`, effect:'tada' })

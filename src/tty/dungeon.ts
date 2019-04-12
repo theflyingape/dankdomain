@@ -66,7 +66,6 @@ module Dungeon
 		'Y': { description:'our status' }
 	}
 
-	const iii = ['I','II','III','IV','V','VI','VII','VIII','IX','X']
 	const potion = [
 		'Potion of Cure Light Wounds',
 		'Vial of Weakness',
@@ -352,7 +351,7 @@ export function menu(suppress = false) {
 	}
 	xvt.app.form['command'].prompt = ''
 	if (suppress)
-		xvt.app.form['command'].prompt += `${deep ? xvt.attr(xvt.faint, iii[deep], xvt.normal) : ''}:`
+		xvt.app.form['command'].prompt += `${deep ? xvt.attr(xvt.white, xvt.faint, xvt.romanize(deep + 1), xvt.cyan) : xvt.attr(xvt.cyan)}:`
 	else {
 		if ($.player.spells.length)
 			xvt.app.form['command'].prompt += xvt.attr(
@@ -497,7 +496,7 @@ function oof(wall:string) {
 		xvt.outln(xvt.faint, '\nYou take too many hits and die!')
 		xvt.waste(600)
 		$.death(Battle.retreat ? 'running into a wall' : 'banged head against a wall')
-		if (deep) $.reason += `-${iii[deep]}`
+		if (deep) $.reason += `-${xvt.romanize(deep + 1)}`
 	}
 }
 
@@ -532,6 +531,7 @@ function doMove(): boolean {
 		$.action('battle')
 		if (!refresh) drawRoom(Y, X, true, true)
 		scroll(1, false)
+		xvt.out(xvt.off)
 
 		if (ROOM.monster.length == 1) {
 			xvt.out(`There's something lurking in here . . .`)
@@ -689,7 +689,7 @@ function doMove(): boolean {
 					ROOM.occupant = ''
 					xvt.outln()
 					if (/Y/i.test(xvt.entry)) {
-						xvt.out(xvt.bright, xvt.white, `You vanish `, xvt.normal, `into dungeon `, xvt.faint, `${iii[++deep]} ... `)
+						xvt.out(xvt.bright, xvt.white, `You vanish `, xvt.normal, `into dungeon `, xvt.faint, xvt.romanize(++deep), ' ... ')
 						$.animated('flipOutY')
 						$.sound('portal', 12)
 						generateLevel()
@@ -768,18 +768,24 @@ function doMove(): boolean {
 
 					case 'C':
 						Battle.user('Curse', (opponent: active) => {
-							if (opponent.user.id === $.player.id) {
+							if (opponent.user.id == $.player.id) {
 								opponent.user.id = ''
 								xvt.outln(`You can't curse yourself.`)
 							}
 							if (opponent.user.id) {
-								$.log(opponent.user.id, `\n${$.player.handle} cursed you!`)
 								$.news(`\tcursed ${opponent.user.handle}`)
-								if (opponent.user.blessed)
+								if (opponent.user.blessed) {
+									$.log(opponent.user.id, `\n${$.player.handle} vanquished your blessedness!`)
 									opponent.user.blessed = ''
-								else
+									xvt.out(xvt.yellow, xvt.bright, opponent.who.His, 'shining aura', xvt.normal, ' fades ', xvt.faint, 'away.')
+								}
+								else {
+									$.log(opponent.user.id, `\n${$.player.handle} cursed you!`)
 									opponent.user.cursed = $.player.id
+									xvt.out(xvt.faint, 'A dark cloud hovers over ', opponent.who.him, '.')
+								}
 								$.saveUser(opponent)
+								$.sound('morph', 12)
 							}
 							menu()
 							return
@@ -900,7 +906,7 @@ function doMove(): boolean {
 						break
 
 					case 'K':
-						let k = $.dice(deep / 4)
+						let k = $.dice($.player.wins < 3 ? 1 : 3)
 						for (let i = 0; i < k; i++) {
 							$.keyhint($.online)
 							$.sound("shimmer", 12)
@@ -1677,7 +1683,7 @@ function doMove(): boolean {
 
 function doSpoils() {
 	if ($.reason) {
-		if (deep) $.reason += `-${iii[deep]}`
+		if (deep) $.reason += `-${xvt.romanize(deep + 1)}`
 		xvt.hangup()
 	}
 	looked = false
@@ -2059,8 +2065,8 @@ function generateLevel() {
 		return
 	}
 
-	$.wall(`is entering dungeon level ${iii[deep]}.${Z + 1}`)
-	$.title(`Dungeon ${iii[deep]}.${Z + 1}`)
+	$.wall(`is entering dungeon level ${xvt.romanize(deep + 1)}.${Z + 1}`)
+	$.title(`Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
 
 	let y:number, x:number
 	let result: boolean
@@ -2732,7 +2738,7 @@ function teleport() {
 			menu()
 		}, cancel:'O', enter:'R', eol:false, match:/U|D|O|R/i, timeout:20 }
 	}
-	xvt.app.form['wizard'].prompt = `Teleport #${iii[deep]}.${Z + 1}: `
+	xvt.app.form['wizard'].prompt = `Teleport #${xvt.romanize(deep + 1)}.${Z + 1}: `
 	xvt.app.focus = 'wizard'
 }
 
@@ -2917,7 +2923,7 @@ function occupying(room: room, a = '', reveal = false, identify = false) {
 		switch (room.occupant) {
 			case 'trapdoor':
 				if (identify && !icon)
-					o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lcyan, '☒', xvt.reset) : xvt.attr(xvt.bright, xvt.cyan, '?')}  `)
+					o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lblack, '⛋', xvt.reset) : xvt.attr(xvt.cyan, xvt.bright, '?')}  `)
 				break
 
 			case 'portal':
@@ -2955,10 +2961,10 @@ function occupying(room: room, a = '', reveal = false, identify = false) {
 				}
 				else {
 					if (!icon)
-						icon = `_${$.tty == 'web' ? '⚰' : Cleric[$.player.emulation]}_`
+						icon = xvt.attr(xvt.normal, `_${$.tty == 'web' ? '⚰' : Cleric[$.player.emulation]}_`)
 					else
-						icon += xvt.attr(xvt.white)
-					o = xvt.attr(xvt.faint, ':', icon, xvt.faint, ':')
+						icon += xvt.attr(xvt.reset)
+					o = xvt.attr(xvt.faint, ':', xvt.normal, icon, xvt.faint, ':')
 				}
 				break
 
