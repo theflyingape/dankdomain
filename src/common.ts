@@ -1659,7 +1659,7 @@ export function riddle() {
     let deeds = ['plays', 'jl', 'jw', 'killed', 'kills', 'retreats', 'steals', 'tl', 'tw']
 
     mydeeds = loadDeed(player.pc)
-    xvt.out(xvt.white, '\nChecking your deeds for the ', xvt.bright, player.pc, xvt.normal, ' list...\n')
+    xvt.outln('\nChecking your deeds for the ', xvt.bright, player.pc, xvt.normal, ' list...')
     xvt.waste(1000)
     for (let i in deeds) {
         let deed = mydeeds.find((x) => { return x.deed === deeds[i] })
@@ -1669,7 +1669,7 @@ export function riddle() {
                 deed.value = player[deeds[i]]
                 saveDeed(deed)
                 bonus = 1
-                xvt.out(' +', xvt.bright, deeds[i], xvt.normal)
+                xvt.outln(xvt.cyan, ' + ', xvt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
                 sound('click', 5)
             }
         }
@@ -1679,14 +1679,14 @@ export function riddle() {
                 deed.value = player[deeds[i]]
                 saveDeed(deed)
                 bonus = 1
-                xvt.out(' +', xvt.bright, deeds[i], xvt.normal)
+                xvt.outln(xvt.cyan, ' + ', xvt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
                 sound('click', 5)
             }
         }
     }
 
     mydeeds = loadDeed('GOAT')
-    xvt.out(xvt.magenta, '\nChecking your deeds for the ', xvt.bright, 'GOAT', xvt.normal,' list...\n')
+    xvt.outln(xvt.magenta, '\nChecking your deeds for the ', xvt.bright, 'GOAT', xvt.normal,' list...')
     xvt.waste(1000)
     for (let i in deeds) {
         let deed = mydeeds.find((x) => { return x.deed === deeds[i] })
@@ -1696,7 +1696,7 @@ export function riddle() {
                 deed.value = player[deeds[i]]
                 saveDeed(deed)
                 bonus = 3
-                xvt.out(' +', xvt.bright, deeds[i], xvt.normal)
+                xvt.outln(xvt.yellow, ' + ', xvt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
                 sound('click', 5)
             }
         }
@@ -1706,13 +1706,12 @@ export function riddle() {
                 deed.value = player[deeds[i]]
                 saveDeed(deed)
                 bonus = 3
-                xvt.out(' +', xvt.bright, deeds[i], xvt.normal)
+                xvt.outln(xvt.yellow, ' + ', xvt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
                 sound('click', 5)
             }
         }
     }
 
-    if (bonus) xvt.outln()
     xvt.out(xvt.bright, xvt.cyan, '\nYou have become so powerful that you are now immortal and you leave your')
     xvt.outln('\nworldly possessions behind.')
     run(`UPDATE Players SET bank=bank+${player.bank.value + player.coin.value} WHERE id='${taxman.user.id}'`)

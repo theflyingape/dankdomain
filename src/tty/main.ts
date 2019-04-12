@@ -119,24 +119,24 @@ function choice() {
             for (let n in rs) {
                 xvt.out(top3[rs[n].handle] || ' ', ' ')
                 //  paint a target on any player that is winning
-                if (rs[n].pc === $.PC.winning)
+                if (rs[n].pc == $.PC.winning)
                     xvt.out(xvt.yellow, xvt.bright)
-                else if (rs[n].id === $.player.id)
+                else if (rs[n].id == $.player.id)
                     xvt.out(xvt.bright)
                 xvt.out(sprintf('%-4s  %-22.22s  %-9s  %3d  '
                     , rs[n].id, rs[n].handle, rs[n].pc, rs[n].level))
                 if (!rs[n].status.length) xvt.out('Alive!')
                 else {
-                    if ($.player.emulation === 'XT')
-                        xvt.out(rs[n].status === 'jail' ? '🔒' : '🍺', ' ', xvt.faint, rs[n].status === 'jail' ? 'jail' : 'beer')
+                    if ($.player.emulation == 'XT')
+                        xvt.out(rs[n].status == 'jail' ? '🔒' : '🍺', ' ', xvt.faint, rs[n].status == 'jail' ? 'jail' : 'beer')
                     else
-                        xvt.out(xvt.faint, rs[n].status === 'jail' ? '#jail#' : '^beer^')
+                        xvt.out(xvt.faint, rs[n].status == 'jail' ? '#jail#' : '^beer^')
                 }
-                xvt.out('  ', rs[n].id === $.player.id ? xvt.bright : xvt.normal)
-                if (rs[n].gang === $.player.gang) xvt.out(xvt.Red)
-                xvt.out(sprintf('%-22.22s', rs[n].gang))
+                xvt.out('  ', rs[n].id == $.player.id ? xvt.bright : xvt.normal)
+                if (rs[n].gang == $.player.gang) xvt.out(xvt.Red)
+                xvt.out(sprintf('%-22.22s', rs[n].gang), xvt.reset)
                 //  paint highest badge of honor achieved
-                if ($.Access.name[rs[n].access].promote == 0)
+                if ($.player.emulation == 'XT' && $.Access.name[rs[n].access].promote == 0)
                     xvt.out(xvt.Black, $.Access.name[rs[n].access].emoji)
                 xvt.outln()
             }
