@@ -1449,6 +1449,13 @@ export function reroll(user: user, dd?: string, level = 1) {
     user.hp = 15
     user.sp = user.magic > 1 ? 15 : 0
 
+    //  reset these prior experiences
+    user.jl = 0
+    user.jw = 0
+    user.steals = 0
+    user.tl = 0
+    user.tw = 0
+
     //  reset for new or non player
     if (xvt.validator.isEmpty(user.id) || user.id[0] == '_') {
         if (isNaN(user.dob)) user.dob = now().date
@@ -1506,14 +1513,9 @@ export function reroll(user: user, dd?: string, level = 1) {
         user.cursed = ''
         user.coward = false
         user.plays = 0
-        user.jl = 0
-        user.jw = 0
+        user.retreats = 0
         user.killed = 0
         user.kills = 0
-        user.retreats = 0
-        user.steals = 0
-        user.tl = 0
-        user.tw = 0
         user.bounty = new coins(0)
         user.who = ''
     }
