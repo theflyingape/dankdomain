@@ -373,7 +373,7 @@ export class Character {
             while (n < profile.user.spells.length) {
                 text = ''
                 i = 0
-                xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.white, xvt.bright)
+                xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.white, xvt.bright, '           ')
                 for (let p = 0; p < profile.user.spells.length; p++) {
                     i++
                     if (i > n) {

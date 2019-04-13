@@ -689,7 +689,7 @@ function doMove(): boolean {
 					ROOM.occupant = ''
 					xvt.outln()
 					if (/Y/i.test(xvt.entry)) {
-						xvt.out(xvt.bright, xvt.white, `You vanish `, xvt.normal, `into dungeon `, xvt.faint, xvt.romanize(++deep), ' ... ')
+						xvt.out(xvt.bright, xvt.white, `You vanish `, xvt.normal, `into dungeon `, xvt.faint, xvt.romanize(++deep + 1), ' ... ')
 						$.animated('flipOutY')
 						$.sound('portal', 12)
 						generateLevel()

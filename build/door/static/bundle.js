@@ -801,7 +801,7 @@ var Buffer = (function () {
         }
     };
     Buffer.prototype._reflowLarger = function (newCols, newRows) {
-        var toRemove = BufferReflow_1.reflowLargerGetLinesToRemove(this.lines, newCols, this.ybase + this.y);
+        var toRemove = BufferReflow_1.reflowLargerGetLinesToRemove(this.lines, this._cols, newCols, this.ybase + this.y);
         if (toRemove.length > 0) {
             var newLayoutResult = BufferReflow_1.reflowLargerCreateNewLayout(this.lines, toRemove);
             BufferReflow_1.reflowLargerApplyNewLayout(this.lines, newLayoutResult.layout);
@@ -886,7 +886,8 @@ var Buffer = (function () {
                 srcCol -= cellsToCopy;
                 if (srcCol === 0) {
                     srcLineIndex--;
-                    srcCol = wrappedLines[Math.max(srcLineIndex, 0)].getTrimmedLength();
+                    var wrappedLinesIndex = Math.max(srcLineIndex, 0);
+                    srcCol = BufferReflow_1.getWrappedLineTrimmedLength(wrappedLines, wrappedLinesIndex, this._cols);
                 }
             }
             for (var i = 0; i < wrappedLines.length; i++) {
@@ -1342,7 +1343,7 @@ exports.BufferLine = BufferLine;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Buffer_1 = require("./Buffer");
-function reflowLargerGetLinesToRemove(lines, newCols, bufferAbsoluteY) {
+function reflowLargerGetLinesToRemove(lines, oldCols, newCols, bufferAbsoluteY) {
     var toRemove = [];
     for (var y = 0; y < lines.length - 1; y++) {
         var i = y;
@@ -1360,11 +1361,11 @@ function reflowLargerGetLinesToRemove(lines, newCols, bufferAbsoluteY) {
             continue;
         }
         var destLineIndex = 0;
-        var destCol = wrappedLines[destLineIndex].getTrimmedLength();
+        var destCol = getWrappedLineTrimmedLength(wrappedLines, destLineIndex, oldCols);
         var srcLineIndex = 1;
         var srcCol = 0;
         while (srcLineIndex < wrappedLines.length) {
-            var srcTrimmedTineLength = wrappedLines[srcLineIndex].getTrimmedLength();
+            var srcTrimmedTineLength = getWrappedLineTrimmedLength(wrappedLines, srcLineIndex, oldCols);
             var srcRemainingCells = srcTrimmedTineLength - srcCol;
             var destRemainingCells = newCols - destCol;
             var cellsToCopy = Math.min(srcRemainingCells, destRemainingCells);
@@ -1444,7 +1445,7 @@ function reflowLargerApplyNewLayout(lines, newLayout) {
 exports.reflowLargerApplyNewLayout = reflowLargerApplyNewLayout;
 function reflowSmallerGetNewLineLengths(wrappedLines, oldCols, newCols) {
     var newLineLengths = [];
-    var cellsNeeded = wrappedLines.map(function (l) { return l.getTrimmedLength(); }).reduce(function (p, c) { return p + c; });
+    var cellsNeeded = wrappedLines.map(function (l, i) { return getWrappedLineTrimmedLength(wrappedLines, i, oldCols); }).reduce(function (p, c) { return p + c; });
     var srcCol = 0;
     var srcLine = 0;
     var cellsAvailable = 0;
@@ -1454,7 +1455,7 @@ function reflowSmallerGetNewLineLengths(wrappedLines, oldCols, newCols) {
             break;
         }
         srcCol += newCols;
-        var oldTrimmedLength = wrappedLines[srcLine].getTrimmedLength();
+        var oldTrimmedLength = getWrappedLineTrimmedLength(wrappedLines, srcLine, oldCols);
         if (srcCol > oldTrimmedLength) {
             srcCol -= oldTrimmedLength;
             srcLine++;
@@ -1470,6 +1471,19 @@ function reflowSmallerGetNewLineLengths(wrappedLines, oldCols, newCols) {
     return newLineLengths;
 }
 exports.reflowSmallerGetNewLineLengths = reflowSmallerGetNewLineLengths;
+function getWrappedLineTrimmedLength(lines, i, cols) {
+    if (i === lines.length - 1) {
+        return lines[i].getTrimmedLength();
+    }
+    var cell = lines[i].get(cols - 1);
+    var endsInNull = cell[Buffer_1.CHAR_DATA_CHAR_INDEX] === '' && cell[Buffer_1.CHAR_DATA_WIDTH_INDEX] === 1;
+    var followingLineStartsWithWide = lines[i + 1].getWidth(0) === 2;
+    if (endsInNull && followingLineStartsWithWide) {
+        return cols - 1;
+    }
+    return cols;
+}
+exports.getWrappedLineTrimmedLength = getWrappedLineTrimmedLength;
 
 },{"./Buffer":3}],6:[function(require,module,exports){
 "use strict";
