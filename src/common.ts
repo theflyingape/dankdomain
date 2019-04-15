@@ -1970,7 +1970,7 @@ export function death(by: string) {
 //  render a menu of options and return the prompt
 export function display(title:string, back:number, fore:number, suppress:boolean, menu:choices, hint?: string): string {
     menu['Q'] = {}  //  Q=Quit
-    if(!suppress) {
+    if (!suppress) {
         xvt.out(xvt.reset, xvt.clear)
         if (!cat(title)) {
             xvt.out('    ')
@@ -1986,6 +1986,9 @@ export function display(title:string, back:number, fore:number, suppress:boolean
                     xvt.outln(xvt.faint, fore, '<', xvt.bright, xvt.white, i, xvt.faint, fore, '> ',
                         xvt.reset, menu[i].description)
             }
+        }
+        else {
+            if (title == 'main') cat('border')
         }
     }
 

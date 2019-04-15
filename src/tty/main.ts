@@ -437,8 +437,29 @@ function choice() {
         case 'Z':
             xvt.out(xvt.bright, xvt.green, '\n')
             $.cat('system')
-            suppress = true
-            break
+            $.action('ny')
+            xvt.app.form = {
+                'yn': { cb:() => {
+                    if (/Y/i.test(xvt.entry))
+                        xvt.app.focus = 'message'
+                    else {
+                        xvt.outln()
+                        menu(true)
+                    }
+                    }, cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:20 },
+                'message': { cb:() => {
+                    xvt.outln()
+                    if ($.cuss(xvt.entry)) {
+                        $.player.coward = true
+                        xvt.hangup()
+                    }
+                    if (xvt.entry) fs.writeFileSync('./files/border.txt', xvt.entry)
+                    menu(true)
+                }, prompt:'>', max:78 }
+            }
+            xvt.app.form['yn'].prompt = `Change border message (Y/N)? `
+            xvt.app.focus = 'yn'
+            return
     }
     menu(suppress)
 }

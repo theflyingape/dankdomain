@@ -8,5 +8,5 @@
    : {P} Party/Gang Wars                   {R} Rob/Burglarize other users  :
    : {S} Public Square (Shops, etc.)       {T} Tiny's Tavern               :
    : {U} User Configuration                {X} X-terminate: Reroll         :
-   : {Y} Your Statistics                   {Z} System Status               :
+   : {Y} Your Statistics                   {Z} System Status/Border Change :
 -=[-]=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=[-]=-
