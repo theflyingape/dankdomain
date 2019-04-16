@@ -1262,7 +1262,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
         if (spell.cast < 17 && round.length > 1 && round[0].party)
             if (alive[1] > 1)
-                xvt.out(xvt.faint, xvt.Empty[$.player.emulation], xvt.normal, ' ')
+                xvt.out(xvt.faint, xvt.app.Empty, xvt.normal, ' ')
 
         switch(spell.cast) {
         case 1:
@@ -1805,9 +1805,9 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
         case 20:
             xvt.out(xvt.cyan, 'A glowing '
-                , xvt.lcyan, xvt.LGradient[xvt.emulation]
+                , xvt.lcyan, xvt.app.LGradient
                 , xvt.bright, xvt.lblack, xvt.lCyan, 'orb', xvt.reset
-                , xvt.lcyan, xvt.RGradient[xvt.emulation]
+                , xvt.lcyan, xvt.app.RGradient
                 , xvt.cyan, ' radiates '
                 , xvt.faint, 'above ', backfire ? p2.him : p1.him, xvt.white, '... ')
             $.sound('mana', 8)
@@ -1995,7 +1995,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             }
             else {
                 $.sound(rpc.user.melee < 2 ? 'whoosh' : rpc.user.gender === 'I' ? 'swoosh' : 'swords')
-                if (round[0].party && alive[1] > 1) xvt.out(xvt.faint, xvt.Empty[$.player.emulation], xvt.normal, ' ')
+                if (round[0].party && alive[1] > 1) xvt.out(xvt.faint, xvt.app.Empty, xvt.normal, ' ')
                 if (isNaN(+rpc.user.weapon))
                     xvt.outln(p1.His, rpc.user.weapon, ' whistles by ', p2.you, '.')
                 else
@@ -2081,7 +2081,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         else {
             let w = action.split(' ')
             if (w.length > 1) w.push('')
-            if (round[0].party && alive[1] > 1) xvt.out(xvt.faint, xvt.Empty[$.player.emulation], xvt.normal, ' ')
+            if (round[0].party && alive[1] > 1) xvt.out(xvt.faint, xvt.app.Empty, xvt.normal, ' ')
             xvt.out(p1.He, melee ? rpc.pc.color || xvt.faint : '', $.what(rpc, w[0]), w.slice(1).join(' ')
                 , xvt.reset, p2.him)
         }
@@ -2294,7 +2294,7 @@ export function user(venue: string, cb:Function) {
                 xvt.out(sprintf('%-4s  %-22s  %-9s', rs[i].id, rs[i].handle, rs[i].pc), xvt.reset)
 
                 if (rs[i].status) xvt.out(xvt.faint)
-                xvt.out(sprintf('  %3s  ', rs[i].xplevel ? rs[i].xplevel.toString() : xvt.Empty[xvt.emulation]))
+                xvt.out(sprintf('  %3s  ', rs[i].xplevel ? rs[i].xplevel.toString() : xvt.app.Empty))
                 if (rs[i].status) xvt.out(xvt.normal)
 
                 xvt.out($.date2full(rs[i].lastdate), '  ', rs[i].access)
@@ -2349,7 +2349,7 @@ export function yourstats(profile = true) {
     if ($.from !== 'Dungeon' || $.player.rows > (24 + 2 * $.player.rings.length))
         for (let i in $.player.rings) {
             let ring = $.player.rings[i]
-            xvt.out(xvt.cyan, $.player.emulation === 'XT' ? '⍥' : xvt.Empty[$.player.emulation]
+            xvt.out(xvt.cyan, $.player.emulation === 'XT' ? '⍥' : xvt.app.Empty
                 , ' ' , xvt.bright, ring, xvt.normal)
             if ($.tty == 'web') xvt.out(' ', $.Ring.name[ring].emoji, ' 💍')
             xvt.outln(' ring:', xvt.reset, ' can ', $.Ring.name[ring].description)

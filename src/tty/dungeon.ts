@@ -24,7 +24,7 @@ module Dungeon
 	let skillkill: boolean
 
 	let paper: string[]
-	let dot = xvt.Empty[$.player.emulation]
+	let dot = xvt.app.Empty
 	let dd = new Array(10)
 	let deep: number
 	let DL: ddd
@@ -2338,7 +2338,7 @@ function generateLevel() {
 			$.music('dungeon' + $.dice(9))
 		}
 
-		const box = xvt.Draw[$.player.emulation]
+		const box = xvt.app.Draw
 		let r: number, c: number
 		paper = new Array(2 * DL.rooms.length + 1)
 

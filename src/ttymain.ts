@@ -25,13 +25,14 @@ module ttyMain
     xvt.defaultTimeout = 100
     xvt.pollingMS = 20
 
-    xvt.emulation = process.argv.length > 2 && process.argv[2] ? process.argv[2].toUpperCase()
+    xvt.app.emulation = <xvt.emulator> ( process.argv.length > 2 && process.argv[2]
+        ? process.argv[2].toUpperCase()
         : (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM)) ? 'dumb'
         : (/^linux|^lisa|^ncsa|^pcvt|^vt|^xt/i.test(process.env.TERM)) ? 'VT'
         : (/ansi|cygwin|^pc/i.test(process.env.TERM)) ? 'PC'
-        : ''
+        : '' )
     if ((xvt.modem = xvt.validator.isEmpty(process.env.REMOTEHOST)))
-        xvt.out(xvt.reset, xvt.bright
+        xvt.out(xvt.off, xvt.bright
             , xvt.red,      'C'
             , xvt.yellow,   'A'
             , xvt.green,    'R'
@@ -46,20 +47,20 @@ module ttyMain
 	    'enq1': { cb:() => { 
 		//  console.log('ENQ response =', xvt.entry.split('').map((c) => { return c.charCodeAt(0) }))
             if (/^.*\[.*R$/i.test(xvt.entry)) {
-                xvt.emulation = 'XT'
+                xvt.app.emulation = 'XT'
                 logon()
             }
             else xvt.app.focus = 'enq2'
         }, prompt:'\x1B[6n', enq:true },
 	    'enq2': { cb:() => { 
 		//  console.log('ENQ response =', xvt.entry.split('').map((c) => { return c.charCodeAt(0) }))
-            if (xvt.entry.length) xvt.emulation = 'VT'
+            if (xvt.entry.length) xvt.app.emulation = 'VT'
             logon()
         }, prompt:'\x05', enq:true }
     }
 
     //  old-school enquire the terminal to identify itself
-    if (xvt.emulation) logon()
+    if (xvt.app.emulation) logon()
     else xvt.app.focus = 'enq1'
 
     function logon() {

@@ -13,9 +13,9 @@ import Battle = require('../battle')
 
 module Party
 {
-    const le = [ xvt.Empty[$.player.emulation], '>', '<', '(' ,')', '+', '*', ']' ]
-    const re = [ xvt.Empty[$.player.emulation], '<', '>', ')', '(', '+', '*', '[' ]
-    const tb = [ xvt.Empty[$.player.emulation], '-', '=', '~', ':', '+', '*', 'X' ]
+    const le = [ xvt.app.Empty, '>', '<', '(' ,')', '+', '*', ']' ]
+    const re = [ xvt.app.Empty, '<', '>', ')', '(', '+', '*', '[' ]
+    const tb = [ xvt.app.Empty, '-', '=', '~', ':', '+', '*', 'X' ]
     const mp = [ 'M:M', ' @ ', '{#}', '($)', '[&]', '<^>', '_V_', '-X-' ]
 
     let g: gang = {

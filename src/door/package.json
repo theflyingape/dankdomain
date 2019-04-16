@@ -32,7 +32,7 @@
     "fs-extra": "^7.0.1",
     "node-pty": "^0.8.1",
     "ws": "^6.2.1",
-    "xterm": "^3.12.0"
+    "xterm": "^3.12.1"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^5.2.3",
@@ -41,6 +41,6 @@
     "@types/node": "^10.14.4",
     "@types/ws": "^6.0.1",
     "browserify": "^16.2.3",
-    "typescript": "^3.4.1"
+    "typescript": "^3.4.3"
   }
 }

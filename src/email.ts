@@ -159,7 +159,7 @@ async function Message(player: user, mailOptions: nodemailer.SendMailOptions) {
     })
 
     while (result === undefined) {
-        if (echo) xvt.out(xvt.Empty[xvt.emulation])
+        if (echo) xvt.out(xvt.app.Empty)
         await xvt.wait(500)
     }
 }

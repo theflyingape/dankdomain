@@ -1299,7 +1299,7 @@ export function playerPC(points = 200, immortal = false) {
 
             xvt.out(sprintf(' %-9s  %s  %3s   %2d +%s   %2d +%s   %2d +%s   %2d +%s   %s'
                 , pc, player.emulation == 'XT' ? rpc.unicode : ' '
-                , +rs.n ? rs.n : xvt.attr(player.keyhints.indexOf(pc, 12) < 0 ? xvt.red : xvt.yellow, '  ', xvt.Empty[xvt.emulation], xvt.white)
+                , +rs.n ? rs.n : xvt.attr(player.keyhints.indexOf(pc, 12) < 0 ? xvt.red : xvt.yellow, '  ', xvt.app.Empty, xvt.white)
                 , rpc.baseStr, xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toStr - 1], rpc.toStr.toString(), xvt.white)
                 , rpc.baseInt, xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toInt - 1], rpc.toInt.toString(), xvt.white)
                 , rpc.baseDex, xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toDex - 1], rpc.toDex.toString(), xvt.white)
@@ -1464,7 +1464,7 @@ export function reroll(user: user, dd?: string, level = 1) {
         user.lasttime = now().time
         user.gender = user.sex || 'I'
 
-        user.emulation = xvt.emulation
+        user.emulation = xvt.app.emulation
         user.calls = 0
         user.today = 0
         user.expert = false
@@ -1922,8 +1922,8 @@ export function bracket(item: number|string, nl = true): string {
 }
 
 export function buff(perm: number, temp:number, text = false): string {
-    let keep = xvt.emulation
-    if (text) xvt.emulation = 'dumb'
+    let keep = xvt.app.emulation
+    if (text) xvt.app.emulation = 'dumb'
     let buff = ''
     if (perm || temp) {
         buff = xvt.attr(xvt.normal, xvt.magenta, ' (')
@@ -1936,20 +1936,20 @@ export function buff(perm: number, temp:number, text = false): string {
         else buff += xvt.attr(xvt.white, '+0')
         buff += xvt.attr(xvt.magenta, ')', xvt.white)
     }
-    if (text) xvt.emulation = keep
+    if (text) xvt.app.emulation = keep
     return buff
 }
 
 export function	cat(filename: string): boolean {
     const folder = './files/'
-    let path = folder + filename + (xvt.emulation.match('PC|XT') ? '.ans' : '.txt')
+    let path = folder + filename + (xvt.app.emulation.match('PC|XT') ? '.ans' : '.txt')
 
     try {
         fs.accessSync(path, fs.constants.F_OK)
         xvt.outln(fs.readFileSync(path), xvt.white)
         return true
     } catch (e) {
-        if (xvt.emulation.match('PC|XT')) {
+        if (xvt.app.emulation.match('PC|XT')) {
             let path = folder + filename + '.txt'
             try {
                 fs.accessSync(path, fs.constants.F_OK)
@@ -1975,9 +1975,9 @@ export function display(title:string, back:number, fore:number, suppress:boolean
         if (!cat(title)) {
             xvt.out('    ')
             if(back)
-                xvt.out(fore, '--=:))', xvt.LGradient[xvt.emulation],
+                xvt.out(fore, '--=:))', xvt.app.LGradient,
                     back, xvt.bright, xvt.white, titlecase(title), xvt.reset,
-                    fore, xvt.RGradient[xvt.emulation], '((:=--')
+                    fore, xvt.app.RGradient, '((:=--')
             else
                 xvt.out(titlecase(title))
             xvt.outln('\n')
@@ -1993,7 +1993,7 @@ export function display(title:string, back:number, fore:number, suppress:boolean
     }
 
     if (process.stdout.rows && process.stdout.rows !== player.rows) {
-        if (!player.expert) xvt.out('\n', xvt.yellow, xvt.Empty[xvt.emulation], xvt.bright
+        if (!player.expert) xvt.out('\n', xvt.yellow, xvt.app.Empty, xvt.bright
             , `Resetting your USER ROW setting (${player.rows}) to detected size ${process.stdout.rows}`
             , xvt.reset)
         player.rows = process.stdout.rows
@@ -2014,10 +2014,9 @@ export function emulator(cb:Function) {
     action('list')
     xvt.app.form = {
         'term': { cb:() => {
-            if (xvt.validator.isNotEmpty(xvt.entry) && xvt.entry.length == 2) xvt.emulation = xvt.entry.toUpperCase()
-            player.emulation = xvt.emulation
-            process.stdin.setEncoding(player.emulation == 'XT' ? 'utf8' : 'ascii')
-            xvt.outln('\n\n', xvt.reset, xvt.magenta, xvt.LGradient[xvt.emulation], xvt.reverse, 'TEST BANNER', xvt.noreverse, xvt.RGradient[xvt.emulation])
+            if (xvt.validator.isNotEmpty(xvt.entry) && xvt.entry.length == 2) xvt.app.emulation = <xvt.emulator>xvt.entry.toUpperCase()
+            player.emulation = xvt.app.emulation
+            xvt.outln('\n\n', xvt.reset, xvt.magenta, xvt.app.LGradient)
             xvt.outln(xvt.red,'R', xvt.green,'G', xvt.blue,'B', xvt.reset, xvt.bright,' bold ', xvt.normal, 'normal', xvt.faint, ' dark')
             online.altered = true
             if (player.emulation == 'XT') {
@@ -2097,14 +2096,14 @@ export function logoff() {
         xvt.outln(xvt.off, 'Goodbye, please play again!  Also visit:')
         xvt.waste(750)
         xvt.out(xvt.cyan, '  ___                               ___  \n')
-        xvt.out(xvt.cyan, '  \\_/   ', xvt.red, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Red, xvt.white, 'Never Program Mad', xvt.reset, xvt.red, xvt.RGradient[xvt.emulation], xvt.cyan, '   \\_/  \n')
+        xvt.out(xvt.cyan, '  \\_/   ', xvt.red, xvt.app.LGradient, xvt.bright, xvt.Red, xvt.white, 'Never Program Mad', xvt.reset, xvt.red, xvt.app.RGradient, xvt.cyan, '   \\_/  \n')
         xvt.out(xvt.cyan, ' _(', xvt.bright, '-', xvt.normal, ')_     ', xvt.reset, ' https://npmjs.com    ', xvt.cyan, '  _(', xvt.bright, '-', xvt.normal, ')_ \n')
         xvt.out(xvt.cyan, '(/ ', xvt.bright, ':', xvt.normal, ' \\)                          ', xvt.cyan, ' (/ ', xvt.bright, ':', xvt.normal, ' \\)\n')
-        xvt.out(xvt.cyan, 'I\\___/I    ', xvt.green, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Green, xvt.white, 'RAH-CoCo\'s', xvt.reset, xvt.green, xvt.RGradient[xvt.emulation], xvt.cyan, '     I\\___/I\n')
+        xvt.out(xvt.cyan, 'I\\___/I    ', xvt.green, xvt.app.LGradient, xvt.bright, xvt.Green, xvt.white, `RAH-CoCo's`, xvt.reset, xvt.green, xvt.app.RGradient, xvt.cyan, '     I\\___/I\n')
         xvt.out(xvt.cyan, '\\/   \\/ ', xvt.reset, '   http://rahcocos.com  ', xvt.cyan, '  \\/   \\/\n')
         xvt.out(xvt.cyan, ' \\ : /                           ', xvt.cyan, '  \\ : / \n')
-        xvt.out(xvt.cyan, '  I:I    ', xvt.blue, xvt.LGradient[xvt.emulation], xvt.bright, xvt.Blue, xvt.white, `${player.emulation == 'XT' ? 'ℛ ' : ' R'}obert ${player.emulation == 'XT' ? 'ℋ ' : ' H'}urst`, xvt.reset, xvt.blue, xvt.RGradient[xvt.emulation], xvt.cyan, '     I:I  \n')
-        xvt.outln(xvt.cyan, ' .I:I. ', xvt.reset, '     https://ddgame.us    ', xvt.cyan, '  .I:I.')
+        xvt.out(xvt.cyan, '  I:I    ', xvt.blue, xvt.app.LGradient, xvt.bright, xvt.Blue, xvt.white, `${player.emulation == 'XT' ? 'ℛ ' : ' R'}obert ${player.emulation == 'XT' ? 'ℋ ' : ' H'}urst`, xvt.reset, xvt.blue, xvt.app.RGradient, xvt.cyan, '     I:I  \n')
+        xvt.outln(xvt.cyan, ' .I:I. ', xvt.reset, '     https://DDgame.us    ', xvt.cyan, '  .I:I.')
         xvt.outln(); xvt.waste(500)
         xvt.outln(xvt.bright, xvt.black, process.title
             , ' running on ', xvt.bright, xvt.green, 'Node.js ', xvt.normal, process.version, xvt.reset
@@ -2146,7 +2145,7 @@ export function sound(effect: string, sync = 2) {
 }
 
 export function title(name: string) {
-    if (xvt.emulation == 'XT') xvt.out('\x1B]2;', name, '\x07')
+    if (xvt.app.emulation == 'XT') xvt.out('\x1B]2;', name, '\x07')
     if (tty == 'web') xvt.out('@title(', name, ')')
 }
 

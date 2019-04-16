@@ -11,23 +11,20 @@ import $ = require('../common')
 
 module Logon
 {
-    switch (xvt.emulation) {
+    switch (xvt.app.emulation) {
     case 'PC':
         $.tty = 'rlogin'
-        process.stdin.setEncoding('ascii')
         break
     case 'XT':
         $.tty = 'web'
-        process.stdin.setEncoding('utf8')
         xvt.out('\x1B]2;', process.title, '\x07')
         break
     default:
-        process.stdin.setEncoding('ascii')
-        xvt.emulation = 'VT'
+        xvt.app.emulation = 'VT'
         xvt.out('\f')
     }
 
-    xvt.outln(xvt.bright, xvt.cyan, xvt.emulation
+    xvt.outln(xvt.bright, xvt.cyan, xvt.app.emulation
         , xvt.normal, ' emulation ', xvt.faint, 'enabled\n')
 
     $.loadUser($.sysop)
@@ -95,7 +92,7 @@ function who() {
         // a bit hack for now, but...
         $.reroll($.player)
         $.newkeys($.player)
-        $.player.emulation = xvt.emulation
+        $.player.emulation = xvt.app.emulation
         $.player.rows = process.stdout.rows || 25
         if ($.tty == 'web') {
             $.sound('yahoo', 20)
@@ -103,7 +100,7 @@ function who() {
         }
         else {
             $.emulator(() => {
-                $.player.emulation = xvt.emulation
+                $.player.emulation = xvt.app.emulation
                 require('./newuser')
             })
         }
@@ -123,7 +120,7 @@ function who() {
     }
 
     $.access = $.Access.name[$.player.access]
-    xvt.emulation = $.player.emulation
+    xvt.app.emulation = <xvt.emulator>$.player.emulation
     $.player.rows = process.stdout.rows || 25
     $.player.remote = $.remote
 
@@ -179,7 +176,7 @@ function password() {
     else {
         //  old school BBS tactic (usually 5 minutes) for Millennials to experience
         let t = $.now().time
-        t = 1440 * ($.now().date - $.player.lastdate) + 60 * Math.trunc(t / 100) + (t % 100) - (60 * Math.trunc($.player.lasttime / 100) + ($.player.lasttime % 100))
+        t = 1440 * ($.now().date - $.player.lastdate) + 60 * $.int(t / 100) + (t % 100) - (60 * $.int($.player.lasttime / 100) + ($.player.lasttime % 100))
         if (!$.access.sysop && $.player.novice && t < 2) {
             $.access.roleplay = false; $.news('', true)
             xvt.beep()
@@ -214,18 +211,12 @@ function password() {
     }
     $.saveUser($.sysop)
 
-    $.player.today++
-    $.player.lastdate = $.now().date
-    $.player.lasttime = $.now().time
-    $.player.expires = $.player.lastdate + $.sysop.expires
-    $.activate($.online, true)
-    $.online.altered = true
     $.access = $.Access.name[$.player.access]
     $.player.rows = process.stdout.rows
 
-    xvt.outln(xvt.clear, xvt.red, '--=:))', xvt.LGradient[xvt.emulation]
+    xvt.outln(xvt.clear, xvt.red, '--=:))', xvt.app.LGradient
         , xvt.Red, xvt.bright, xvt.white, $.sysop.name, xvt.reset
-        , xvt.red, xvt.RGradient[xvt.emulation], '((:=--\n')
+        , xvt.red, xvt.app.RGradient, '((:=--\n')
     xvt.out(xvt.cyan, 'Visitor: ', xvt.bright, xvt.white, $.sysop.calls.toString()
         , xvt.reset, '  -  ')
     if ($.now().date >= $.sysop.dob)
@@ -233,7 +224,7 @@ function password() {
     else
         xvt.out(xvt.bright, 'new game starts', xvt.cyan)
     xvt.outln(' ', $.date2full($.sysop.dob))
-    xvt.outln(xvt.cyan, 'Last on: ', xvt.bright, xvt.white, $.date2full($.player.lastdate))
+    xvt.outln(xvt.cyan, 'Last on: ', xvt.bright, xvt.white, $.date2full($.player.lastdate), ' ', $.time($.player.lasttime))
     xvt.outln(xvt.cyan, ' Online: ', xvt.bright, xvt.white, $.player.handle
         , xvt.normal, '  -  ', $.whereis)
     xvt.out(xvt.cyan, ' Access: ', xvt.bright, xvt.white, $.player.access)
@@ -241,6 +232,12 @@ function password() {
         xvt.out(' ', $.access.emoji)
     xvt.out(xvt.normal, '  ')
 
+    $.player.today++
+    $.player.lastdate = $.now().date
+    $.player.lasttime = $.now().time
+    $.player.expires = $.player.lastdate + $.sysop.expires
+    $.activate($.online, true)
+    $.online.altered = true
     $.saveUser($.player)
     welcome()
 }
@@ -401,20 +398,59 @@ function welcome() {
                 xvt.app.refocus()
                 return
             }
-            xvt.outln(xvt.clear, xvt.blue, '--=:))', xvt.LGradient[xvt.emulation]
+            xvt.outln(xvt.clear, xvt.blue, '--=:))', xvt.app.LGradient
                 , xvt.Blue, xvt.bright, xvt.cyan, 'Announcement', xvt.reset
-                , xvt.blue, xvt.RGradient[xvt.emulation], '((:=--\n'
-            )
+                , xvt.blue, xvt.app.RGradient, '((:=--\n')
             $.cat('announcement')
+            if ($.access.sysop)
+                xvt.app.focus = 'announce'
+            else {
+                xvt.outln('\n\n', xvt.cyan, '--=:))', xvt.app.LGradient
+                    , xvt.Cyan, xvt.bright, xvt.white, 'Auto Message', xvt.reset
+                    , xvt.cyan, xvt.app.RGradient, '((:=--\n')
+                $.cat('auto-message')
+                xvt.app.focus = 'auto'
+            }
+        }, pause:true },
 
-            xvt.outln('\n', xvt.cyan, '--=:))', xvt.LGradient[xvt.emulation]
+        'announce': { cb: () => {
+            xvt.outln()
+            if (/Y/i.test(xvt.entry)) {
+                xvt.app.focus = 'sysop'
+                return
+            }
+            xvt.app.focus = 'auto'
+        }, prompt:'Change (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i },
+
+        'sysop': { cb: () => {
+            if (xvt.entry) fs.writeFileSync('./files/announcement.txt', xvt.attr(
+                xvt.cyan, 'Date: ', xvt.off, $.date2full($.player.lastdate), ' ', $.time($.player.lasttime) + '\n',
+                xvt.cyan, 'From: ',xvt.off, $.player.handle, '\n',
+                xvt.bright, xvt.entry))
+            xvt.outln('\n', xvt.cyan, '--=:))', xvt.app.LGradient
                 , xvt.Cyan, xvt.bright, xvt.white, 'Auto Message', xvt.reset
-                , xvt.cyan, xvt.RGradient[xvt.emulation], '((:=--\n'
-            )
+                , xvt.cyan, xvt.app.RGradient, '((:=--\n')
             $.cat('auto-message')
+            xvt.app.focus = 'auto'
+        }, prompt:'Enter your new announcement', lines: 12 },
 
+        'auto': { cb: () => {
+            xvt.outln()
+            if (/Y/i.test(xvt.entry)) {
+                xvt.app.focus = 'user'
+                return
+            }
             require('./taxman').cityguards()
-        }, pause:true }
+        }, prompt:'Update (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i },
+
+        'user': { cb: () => {
+            xvt.outln()
+            if (xvt.entry) fs.writeFileSync('./files/auto-message.txt', xvt.attr(
+                xvt.cyan, 'Date: ', xvt.off, $.date2full($.player.lastdate), ' ', $.time($.player.lasttime), '\n',
+                xvt.cyan, 'From: ', xvt.off, $.player.handle + '\n',
+                xvt.bright, xvt.entry))
+            require('./taxman').cityguards()
+        }, prompt:'Enter your public message', lines: 6 }
     }
     xvt.app.focus = 'pause'
 }

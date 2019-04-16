@@ -32,6 +32,8 @@ module Main
     }
 
     $.profile({ png:'castle', effect:'pulse' })
+    xvt.outln()
+    $.cat('border')
 
 export function menu(suppress = true) {
     if ($.checkXP($.online, menu)) return
