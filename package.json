@@ -55,7 +55,7 @@
     "title-case": "^2.1.1",
     "ws": "^6.2.1",
     "xterm": "^3.12.2",
-    "xvt": "^1.1.0"
+    "xvt": "^1.1.1-a"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^5.2.3",
@@ -67,7 +67,7 @@
     "@types/sprintf-js": "^1.1.2",
     "@types/ws": "^6.0.1",
     "browserify": "^16.2.3",
-    "tslint": "^5.15.0",
+    "tslint": "^5.16.0",
     "typescript": "^3.4.3"
   }
 }

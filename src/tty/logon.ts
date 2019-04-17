@@ -248,7 +248,7 @@ function welcome() {
     if ($.player.today <= $.access.calls && ($.player.status === 'jail' || !$.Access.name[$.player.access].roleplay)) {
         $.profile({ png:'npc/jailer', effect:'fadeIn' })
         $.sound('ddd')
-        if ($.player.emulation === 'XT') xvt.out('🔒 ')
+        if ($.player.emulation == 'XT') xvt.out('🔒 ')
         xvt.outln(xvt.bright, xvt.black, '(', xvt.magenta, 'PRISONER', xvt.black, ')')
         xvt.outln(xvt.red, '\nYou are locked-up in jail.')
         xvt.waste(1250)
@@ -399,14 +399,14 @@ function welcome() {
                 return
             }
             xvt.outln(xvt.clear, xvt.blue, '--=:))', xvt.app.LGradient
-                , xvt.Blue, xvt.bright, xvt.cyan, 'Announcement', xvt.reset
+                , xvt.Blue, xvt.cyan, xvt.bright, 'Announcement', xvt.reset
                 , xvt.blue, xvt.app.RGradient, '((:=--\n')
             $.cat('announcement')
             if ($.access.sysop)
                 xvt.app.focus = 'announce'
             else {
                 xvt.outln('\n\n', xvt.cyan, '--=:))', xvt.app.LGradient
-                    , xvt.Cyan, xvt.bright, xvt.white, 'Auto Message', xvt.reset
+                    , xvt.Cyan, xvt.white, xvt.bright, 'Auto Message', xvt.reset
                     , xvt.cyan, xvt.app.RGradient, '((:=--\n')
                 $.cat('auto-message')
                 xvt.app.focus = 'auto'
@@ -424,8 +424,8 @@ function welcome() {
 
         'sysop': { cb: () => {
             if (xvt.entry) fs.writeFileSync('./files/announcement.txt', xvt.attr(
-                xvt.cyan, 'Date: ', xvt.off, $.date2full($.player.lastdate), ' ', $.time($.player.lasttime) + '\n',
-                xvt.cyan, 'From: ',xvt.off, $.player.handle, '\n',
+                xvt.magenta, 'Date: ', xvt.off, $.date2full($.player.lastdate), ' ', $.time($.player.lasttime) + '\n',
+                xvt.magenta, 'From: ',xvt.off, $.player.handle, '\n\n',
                 xvt.bright, xvt.entry))
             xvt.outln('\n', xvt.cyan, '--=:))', xvt.app.LGradient
                 , xvt.Cyan, xvt.bright, xvt.white, 'Auto Message', xvt.reset
@@ -445,12 +445,12 @@ function welcome() {
 
         'user': { cb: () => {
             xvt.outln()
-            if (xvt.entry) {
+            if (xvt.entry && !$.cuss(xvt.entry)) {
                 fs.writeFileSync('./files/auto-message.txt', xvt.attr(
                     xvt.cyan, 'Date: ', xvt.off, $.date2full($.player.lastdate), ' ', $.time($.player.lasttime), '\n',
-                    xvt.cyan, 'From: ', xvt.off, $.player.handle + '\n',
+                    xvt.cyan, 'From: ', xvt.off, $.player.handle + '\n\n',
                     xvt.bright, xvt.entry))
-                $.news(`\tupdated the auto message to read:${xvt.entry}`)
+                $.news(`\tupdated the auto message to read:\n${xvt.entry}`)
             }
             require('./taxman').cityguards()
         }, prompt:'Enter your public message', lines: 6 }

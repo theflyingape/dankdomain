@@ -107,7 +107,9 @@ function choice() {
 				}
 
 				xvt.outln('Jousting ability:\n')
-				xvt.outln(xvt.bright, xvt.green, sprintf('%-25s', opponent.user.handle), xvt.white, sprintf('%4d', versus))
+				xvt.out(xvt.bright, xvt.green, sprintf('%-25s', opponent.user.handle), xvt.white, sprintf('%4d', versus))
+				if (opponent.user.id == $.king.id) xvt.out(xvt.normal, ' - ', xvt.magenta, 'The Crown')
+				xvt.outln()
 				xvt.outln(xvt.bright, xvt.green, sprintf('%-25s', $.player.handle), xvt.white, sprintf('%4d', ability))
 				xvt.outln()
 				if ((ability + factor * $.player.level) < (versus + 1)) {
@@ -119,18 +121,26 @@ function choice() {
 				$.action('ny')
 				xvt.app.form = {
 					'compete': { cb:() => {
-						xvt.out('\n')
+						xvt.outln()
 						if (/Y/i.test(xvt.entry)) {
+							xvt.out('\nThe trumpets blare! You and your opponent ride into the arena. ')
+							xvt.waste(500)
+							if (opponent.user.id == $.king.id) {
+								xvt.outln('\nThe crowd goes silent.')
+								$.PC.adjust('cha', -2, -1)
+							}
+							else
+								xvt.outln('The crowd roars!')
 							$.online.altered = true
-							if ($.joust-- > 2)
-								$.music('joust')
+							if ($.joust-- > 2) $.music('joust')
 							$.action('joust')
 							$.profile({ jpg:'arena/joust'
 								, handle:opponent.user.handle
 								, level:opponent.user.level, pc:opponent.user.pc
 								, effect:'slideInLeft'
 							})
-							xvt.outln('\nThe trumpets blare! You and your opponent ride into the arena. The crowd roars!')
+							xvt.waste(500)
+
 							round()
 							xvt.app.focus = 'joust'
 							return
@@ -164,8 +174,10 @@ function choice() {
 								if (++jw == 3) {
 									xvt.outln('\nYou have won the joust!')
 									xvt.waste(250)
-									$.sound('cheer')
-									xvt.outln('The crowd cheers!')
+									if (opponent.user.id !== $.king.id) {
+										$.sound('cheer')
+										xvt.outln('The crowd cheers!')
+									}
 									let reward = new $.coins($.money(opponent.user.level))
 									xvt.outln('You win ', reward.carry(), '!')
 									$.player.coin.value += reward.value
@@ -222,11 +234,11 @@ function choice() {
 						xvt.app.refocus()
 					}, prompt:xvt.attr('        ', $.bracket('J', false), xvt.bright, xvt.yellow, ' Joust', xvt.normal, xvt.magenta, ' * ', $.bracket('F', false), xvt.bright, xvt.yellow, ' Forfeit: '), cancel:'F', enter:'J', eol:false, match:/F|J/i }
 				}
-				xvt.out('You grab a horse and prepare yourself to joust.\n')
+				xvt.outln('You grab a horse and prepare yourself to joust.')
 				xvt.app.focus = 'compete'
 
 				function round() {
-					xvt.out('\n', xvt.green, '--=:)) Round ', ['I', 'II', 'III', 'IV', 'V'][pass++], ' of V: Won:', xvt.bright, xvt.white, jw.toString(), xvt.normal, xvt.magenta, ' ^', xvt.green, ' Lost:', xvt.bright, xvt.white, jl.toString(), xvt.normal, xvt.green, ' ((:=--')
+					xvt.out('\n', xvt.green, '--=:)) Round ', xvt.romanize(++pass), ' of V: Won:', xvt.bright, xvt.white, jw.toString(), xvt.normal, xvt.magenta, ' ^', xvt.green, ' Lost:', xvt.bright, xvt.white, jl.toString(), xvt.normal, xvt.green, ' ((:=--')
 				}
 			})
 			return

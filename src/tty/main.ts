@@ -46,7 +46,7 @@ export function menu(suppress = true) {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
     }
 
-    xvt.app.form['menu'].prompt = 
+    xvt.app.form['menu'].prompt =
         xvt.attr('Time Left: ', xvt.bright, xvt.white,
             Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60).toString())
         + xvt.attr(xvt.normal, xvt.cyan, ' min.\n', xvt.reset)
@@ -136,11 +136,7 @@ function choice() {
                 }
                 xvt.out('  ', rs[n].id == $.player.id ? xvt.bright : xvt.normal)
                 if (rs[n].gang == $.player.gang) xvt.out(xvt.Red)
-                xvt.out(sprintf('%-22.22s', rs[n].gang), xvt.reset)
-                //  paint highest badge of honor achieved
-                if ($.player.emulation == 'XT' && $.Access.name[rs[n].access].promote == 0)
-                    xvt.out('\x08', $.Access.name[rs[n].access].emoji)
-                xvt.outln()
+                xvt.outln(rs[n].gang)
             }
             suppress = true
             break
