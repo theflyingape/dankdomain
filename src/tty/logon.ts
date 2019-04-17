@@ -445,10 +445,13 @@ function welcome() {
 
         'user': { cb: () => {
             xvt.outln()
-            if (xvt.entry) fs.writeFileSync('./files/auto-message.txt', xvt.attr(
-                xvt.cyan, 'Date: ', xvt.off, $.date2full($.player.lastdate), ' ', $.time($.player.lasttime), '\n',
-                xvt.cyan, 'From: ', xvt.off, $.player.handle + '\n',
-                xvt.bright, xvt.entry))
+            if (xvt.entry) {
+                fs.writeFileSync('./files/auto-message.txt', xvt.attr(
+                    xvt.cyan, 'Date: ', xvt.off, $.date2full($.player.lastdate), ' ', $.time($.player.lasttime), '\n',
+                    xvt.cyan, 'From: ', xvt.off, $.player.handle + '\n',
+                    xvt.bright, xvt.entry))
+                $.news(`\tupdated the auto message to read:${xvt.entry}`)
+            }
             require('./taxman').cityguards()
         }, prompt:'Enter your public message', lines: 6 }
     }

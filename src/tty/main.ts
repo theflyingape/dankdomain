@@ -139,7 +139,7 @@ function choice() {
                 xvt.out(sprintf('%-22.22s', rs[n].gang), xvt.reset)
                 //  paint highest badge of honor achieved
                 if ($.player.emulation == 'XT' && $.Access.name[rs[n].access].promote == 0)
-                    xvt.out(xvt.Black, $.Access.name[rs[n].access].emoji)
+                    xvt.out('\x08', $.Access.name[rs[n].access].emoji)
                 xvt.outln()
             }
             suppress = true
@@ -455,7 +455,10 @@ function choice() {
                         $.player.coward = true
                         xvt.hangup()
                     }
-                    if (xvt.entry) fs.writeFileSync('./files/border.txt', xvt.entry)
+                    if (xvt.entry) {
+                        fs.writeFileSync('./files/border.txt', xvt.entry)
+                        $.news(`\tupdated the border to:\n${xvt.entry}`)
+                    }
                     menu(true)
                 }, prompt:'>', max:78 }
             }

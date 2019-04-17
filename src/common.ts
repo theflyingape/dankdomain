@@ -1042,10 +1042,11 @@ export function cuss(text: string): boolean {
     let words = titlecase(text).split(' ')
 
     for (var i = 0; i < words.length; i++) {
-        if (words[i].match('Asshole|Cock|Cunt|Fck|Fu|Fuc|Fuck|Fuk|Phuc|Phuck|Phuk|Twat'))
+        if (words[i].match('Asshole|Cock|Cunt|Fck|Fu|Fuc|Fuck|Fuk|Phuc|Phuck|Phuk|Twat')) {
+            reason = 'needs a timeout'
             return true
+        }
     }
-
     return false
 }
 
