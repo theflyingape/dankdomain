@@ -1469,7 +1469,7 @@ function doMove(): boolean {
 				xvt.outln(' worth ', credit.carry())
 				xvt.waste(1000)
 
-				for (hi = 0; hi < $.Armor.dwarf.length - 1 && ac < $.Armor.name[$.Armor.dwarf[hi]].ac; hi++);
+				for (hi = 0; hi < $.Armor.dwarf.length - 1 && ac >= $.Armor.name[$.Armor.dwarf[hi]].ac; hi++);
 				if (new $.coins($.Armor.name[$.Armor.dwarf[hi]].value).value <= credit.value + $.player.coin.value) {
 					if ($.player.coin.value) xvt.outln('  and all your coin worth ', $.player.coin.carry())
 					xvt.waste(1000)
@@ -1499,7 +1499,7 @@ function doMove(): boolean {
 					credit.value = 0
 				xvt.outln(' worth ', credit.carry())
 
-				for (hi = 0; hi < $.Weapon.dwarf.length - 1 && wc < $.Weapon.name[$.Weapon.dwarf[hi]].wc; hi++);
+				for (hi = 0; hi < $.Weapon.dwarf.length - 1 && wc >= $.Weapon.name[$.Weapon.dwarf[hi]].wc; hi++);
 				if (new $.coins($.Weapon.name[$.Weapon.dwarf[hi]].value).value <= credit.value + $.player.coin.value) {
 					if ($.player.coin.value) xvt.outln('  and all your coin worth ', $.player.coin.carry())
 					xvt.waste(1000)
@@ -1682,6 +1682,7 @@ function doMove(): boolean {
 function doSpoils() {
 	if ($.reason) {
 		if (deep) $.reason += `-${xvt.romanize(deep + 1)}`
+		scroll()
 		xvt.hangup()
 	}
 	looked = false
