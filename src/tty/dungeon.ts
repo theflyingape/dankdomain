@@ -253,7 +253,7 @@ export function menu(suppress = false) {
 				DL.cleric.sp = 0
 				DL.cleric.user.status = 'dead'
 				ROOM.giftItem = 'chest'
-				ROOM.giftIcon = $.player.emulation === 'XT' ? '⌂' : dot
+				ROOM.giftIcon = $.player.emulation == 'XT' ? '⌂' : dot
 				ROOM.giftValue = 0
 				DL.cleric.user.coin.value = 0
 				if (DL.map && DL.map !== 'map')
@@ -544,8 +544,8 @@ function doMove(): boolean {
 				fs.accessSync('door/static/images/' + img + '.jpg', fs.constants.F_OK)
 				$.profile({ jpg:img, effect:ROOM.monster[0].effect })
 			} catch(e) {
-				if ($.PC.name['player'][ROOM.monster[0].user.pc] && ROOM.monster[0].user.pc === $.player.pc)
-					$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : ''), effect:ROOM.monster[0].effect })
+				if ($.PC.name['player'][ROOM.monster[0].user.pc] && ROOM.monster[0].user.pc == $.player.pc)
+					$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect:ROOM.monster[0].effect })
 				else
 					$.profile({
 						png:'monster/' + ($.PC.name['monster'][ROOM.monster[0].user.pc] || $.PC.name['tavern'][ROOM.monster[0].user.pc] ? ROOM.monster[0].user.pc.toLowerCase() : 'monster'),
@@ -642,13 +642,13 @@ function doMove(): boolean {
 						if ($.dice($.online.cha / 10 + deep) <= (deep + 1))
 							$.player.toWC -= $.dice(Math.abs(Z - $.player.level))
 						$.online.toWC -= $.dice(Math.round($.online.weapon.wc / 10) + 1)
-						xvt.outln(`Your ${$.player.weapon} is damaged from the fall!`)
+						xvt.outln(`Your ${$.PC.weapon().rich} is damaged from the fall!`)
 					}
 					if ($.dice(100 + $.player.level - Z) > $.online.dex) {
 						if ($.dice($.online.cha / 10 + deep) <= (deep + 1))
 							$.player.toAC -= $.dice(Math.abs(Z - $.player.level))
 						$.online.toAC -= $.dice(Math.round($.online.armor.ac / 10) + 1)
-						xvt.outln(`Your ${$.player.armor} is damaged from the fall!`)
+						xvt.outln(`Your ${$.PC.armor().rich} is damaged from the fall!`)
 					}
 					Z++
 					generateLevel()
@@ -741,7 +741,7 @@ function doMove(): boolean {
 					ROOM.occupant = ''
 					xvt.outln()
 					let wish = xvt.entry.toUpperCase()
-					if (wish === '' || well.indexOf(wish) < 0) {
+					if (wish == '' || well.indexOf(wish) < 0) {
 						$.sound('oops')
 						xvt.app.refocus()
 						return
@@ -872,7 +872,7 @@ function doMove(): boolean {
 
 					case 'L':
 						Battle.user('Loot', (opponent: active) => {
-							if (opponent.user.id === $.player.id) {
+							if (opponent.user.id == $.player.id) {
 								opponent.user.id = ''
 								xvt.outln(`You can't loot yourself.`)
 							}
@@ -1261,13 +1261,13 @@ function doMove(): boolean {
 			if ($.online.hp > $.int($.player.hp / 3) || DL.cleric.sp < $.Magic.power(DL.cleric, 13)) {
 				xvt.out('"I can ', DL.cleric.sp < $.Magic.power(DL.cleric, 13) ? 'only' : 'surely'
 					, ' cast a Heal spell on your wounds for '
-					, cost.value ? cost.carry() : `you, ${$.player.gender === 'F' ? 'sister' : 'brother'}`
+					, cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
 					, '."')
 			}
 			else if (DL.cleric.sp >= $.Magic.power(DL.cleric, 13)) {
 				cast = 13
 				xvt.out('"I can restore your health for '
-					, cost.value ? cost.carry() : `you, ${$.player.gender === 'F' ? 'sister' : 'brother'}`
+					, cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
 					, '."')
 			}
 
@@ -1321,7 +1321,7 @@ function doMove(): boolean {
 				$.player.coward = true
 				xvt.waste(1200)
 
-				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : ''), effect:'flip' })
+				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect:'flip' })
 				xvt.outln(xvt.bright, 'It curses you!')
 				$.sound('morph', 18)
 				$.PC.adjust('str', -10)
@@ -1358,7 +1358,7 @@ function doMove(): boolean {
 				xvt.outln('mimic', xvt.normal, ' occupying this space.\n')
 				xvt.waste(1200)
 
-				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender === 'F' ? '_f' : ''), effect:'flip' })
+				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect:'flip' })
 				xvt.waste(1800)
 				xvt.out(xvt.faint, 'It waves a hand at you ... '); xvt.waste(800)
 				xvt.outln()
@@ -1910,7 +1910,7 @@ function drawHero(peek = false) {
 	if (!DL.map) drawRoom(Y, X, false, peek)
 
 	xvt.plot(Y * 2 + 2, X * 6 + 2)
-	if ($.player.emulation === 'XT')
+	if ($.player.emulation == 'XT')
 		xvt.out($.player.blessed ? xvt.Cyan : $.player.cursed ? xvt.lBlue : xvt.lBlack
 			, ' '
 			, ($.player.toWC + $.online.toWC) > 0 ? xvt.attr(xvt.bright, xvt.cyan)
@@ -1933,7 +1933,7 @@ function drawHero(peek = false) {
 		xvt.plot(Y * 2 + 2, X * 6 + 4)
 		xvt.waste(800)
 		xvt.plot(Y * 2 + 2, X * 6 + 2)
-		if ($.player.emulation === 'XT')
+		if ($.player.emulation == 'XT')
 			xvt.out(xvt.lBlack, xvt.black, `  ${$.PC.card($.player.pc).unicode}  `)
 		else
 			xvt.out(xvt.faint, xvt.reverse, '  X  ')
@@ -1980,7 +1980,7 @@ function drawLevel() {
 		for (y = 0; y < paper.length; y++) {
 			if (y % 2) {
 				for (x = 0; x < DL.width; x++) {
-					if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[y].substr(6 * x, 1), '\x1B(B')
+					if ($.player.emulation == 'VT') xvt.out('\x1B(0', xvt.faint, paper[y].substr(6 * x, 1), '\x1B(B')
 					else xvt.out(xvt.black, xvt.bright, paper[y].substr(6 * x, 1))
 
 					let r = $.int(y / 2)
@@ -1989,11 +1989,11 @@ function drawLevel() {
 							|| (DL.rooms[r][x].map && Math.abs(Y - r) < $.int($.online.int / 15) && Math.abs(X - x) < $.int($.online.int / 15))
 						, DL.map == `Marauder's map` || ($.Ring.power([], $.player.rings, 'identify').power > 0))
 				}
-				if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[y].substr(-1), '\x1B(B')
+				if ($.player.emulation == 'VT') xvt.out('\x1B(0', xvt.faint, paper[y].substr(-1), '\x1B(B')
 				else xvt.out(xvt.black, xvt.bright, paper[y].substr(-1))
 			}
 			else {
-				if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[y], '\x1B(B')
+				if ($.player.emulation == 'VT') xvt.out('\x1B(0', xvt.faint, paper[y], '\x1B(B')
 				else xvt.out(xvt.black, xvt.bright, paper[y])
 			}
 			xvt.outln()
@@ -2021,26 +2021,26 @@ function drawRoom(r:number, c:number, keep = true, peek = false) {
 	let row = r * 2, col = c * 6
 	if (!DL.map) {
 		xvt.plot(row + 1, col + 1)
-		if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col, 7), '\x1B(B')
+		if ($.player.emulation == 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col, 7), '\x1B(B')
 		else xvt.out(xvt.black, xvt.bright, paper[row].substr(col, 7))
 	}
 
 	row++
 	xvt.plot(row + 1, col + 1)
-	if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col, 1), '\x1B(B')
+	if ($.player.emulation == 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col, 1), '\x1B(B')
 	else xvt.out(xvt.black, xvt.bright, paper[row].substr(col, 1))
 
 	occupying(ROOM, peek ? xvt.attr(xvt.reset) : xvt.attr(xvt.reset, xvt.faint), (DL.map && DL.map !== 'map')
 		|| (ROOM.map && Math.abs(Y - r) < Math.trunc($.online.int / 15) && Math.abs(X - c) < Math.trunc($.online.int / 15)),
 		peek || DL.map == `Marauder's map` || ($.Ring.power([], $.player.rings, 'identify').power > 0))
 
-	if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col + 6, 1), '\x1B(B')
+	if ($.player.emulation == 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col + 6, 1), '\x1B(B')
 	else xvt.out(xvt.black, xvt.bright, paper[row].substr(col + 6, 1))
 
 	if (!DL.map) {
 		row++
 		xvt.plot(row + 1, col + 1)
-		if ($.player.emulation === 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col, 7), '\x1B(B')
+		if ($.player.emulation == 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col, 7), '\x1B(B')
 		else xvt.out(xvt.black, xvt.bright, paper[row].substr(col, 7))
 	}
 	if (keep) xvt.restore()
@@ -2202,7 +2202,7 @@ function generateLevel() {
 			y = $.dice(DL.rooms.length) - 1
 			x = $.dice(DL.width) - 1
 			DL.rooms[y][x].giftItem = 'map'
-			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⎅' : dot
+			DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⎅' : dot
 		}
 
 	//	generate treasure(s)
@@ -2232,7 +2232,7 @@ function generateLevel() {
 		//	potion
 		if ($.dice(110 - $.online.cha + dank + +$.player.coward) > dank) {
 			DL.rooms[y][x].giftItem = 'potion'
-			DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⚱' : dot
+			DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⚱' : dot
 			n = $.dice(130 - deep)
 			for (let j = 0; j < 16 && n > 0; j++) {
 				let v = 15 - j
@@ -2254,18 +2254,18 @@ function generateLevel() {
 
 		switch (DL.rooms[y][x].giftItem) {
 			case 'armor':
-				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⛨' : dot
+				DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⛨' : dot
 				n = $.Armor.special.length - 1
 				for (v = 0; v < n && $.online.armor.ac >= $.Armor.name[$.Armor.special[v]].ac; v++);
 				break
 
 			case 'chest':
-				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⌂' : dot
+				DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⌂' : dot
 				v = $.dice(8 + 2 * (deep + $.player.steal)) - 1
 				break
 
 			case 'magic':
-				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⚹' : dot
+				DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⚹' : dot
 				n = $.dice($.Magic.merchant.length * 16)
 				for (let j = 0; j < $.Magic.merchant.length && n > 0; j++) {
 					v = $.Magic.merchant.length - j
@@ -2274,12 +2274,12 @@ function generateLevel() {
 				break
 
 			case 'map':
-				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⎅' : dot
+				DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⎅' : dot
 				v = 1
 				break
 
 			case 'poison':
-				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⚱' : dot
+				DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⚱' : dot
 				n = $.dice($.Poison.merchant.length * 16)
 				for (let j = 0; j < $.Poison.merchant.length && n > 0; j++) {
 					v = $.Poison.merchant.length - j
@@ -2289,7 +2289,7 @@ function generateLevel() {
 
 			case 'ring':
 				if ($.Ring.have($.player.rings, $.Ring.theOne)) DL.rooms[y][x].map = true
-				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⍥' : dot
+				DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⍥' : dot
 				if ($.dice(6 - $.int(dank / 2)) > 1) {
 					let ring = $.Ring.common[$.dice($.Ring.common.length) - 1]
 					DL.rooms[y][x].giftValue = ring
@@ -2301,13 +2301,13 @@ function generateLevel() {
 				break
 
 			case 'weapon':
-				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '⚸' : dot
+				DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⚸' : dot
 				n = $.Weapon.special.length - 1
 				for (v = 0; v < n && $.online.weapon.wc >= $.Weapon.name[$.Weapon.special[v]].wc; v++);
 				break
 
 			case 'xmagic':
-				DL.rooms[y][x].giftIcon = $.player.emulation === 'XT' ? '☀' : dot
+				DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '☀' : dot
 				v = $.Magic.merchant.length + $.dice($.Magic.special.length)
 				break
 
