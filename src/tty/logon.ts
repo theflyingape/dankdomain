@@ -417,6 +417,7 @@ function welcome() {
         'announce': { cb: () => {
             xvt.outln()
             if (/Y/i.test(xvt.entry)) {
+                $.action('freetext')
                 xvt.app.focus = 'sysop'
                 return
             }
@@ -436,12 +437,14 @@ function welcome() {
                 , xvt.Cyan, xvt.bright, xvt.white, 'Auto Message', xvt.reset
                 , xvt.cyan, xvt.app.RGradient, '((:=--\n')
             $.cat('auto-message')
+            $.action('ny')
             xvt.app.focus = 'auto'
         }, prompt:'Enter your new announcement', lines: 12 },
 
         'auto': { cb: () => {
             xvt.outln()
             if (/Y/i.test(xvt.entry)) {
+                $.action('freetext')
                 xvt.app.focus = 'user'
                 return
             }
@@ -460,6 +463,7 @@ function welcome() {
             require('./taxman').cityguards()
         }, prompt:'Enter your public message', lines: 6 }
     }
+    $.action('ny')
     xvt.app.focus = 'pause'
 }
 

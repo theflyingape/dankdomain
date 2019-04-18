@@ -532,6 +532,7 @@ function doMove(): boolean {
 
 	//	monsters?
 	if (ROOM.monster.length) {
+		$.from = 'Dungeon'
 		$.action('battle')
 		if (!refresh) drawRoom(Y, X, true, true)
 		scroll(1, false)
@@ -1732,7 +1733,7 @@ function doSpoils() {
 					}
 					$.PC.adjust('cha', m)
 					xvt.outln('\n'); xvt.waste(500)
-					Battle.yourstats(); xvt.waste(500)
+					Battle.yourstats(false); xvt.waste(500)
 					xvt.outln(); xvt.waste(500)
 					DL.moves >>= 1
 				}
