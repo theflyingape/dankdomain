@@ -89,7 +89,7 @@ export function cityguards() {
             xvt.waste(1500)
         }
 
-        xvt.outln(`\nYou weigh the chances with your ${$.player.weapon} against the Crown.`)
+        xvt.outln(`\nYou weigh the chances with your ${$.PC.weapon().rich} against the Crown.`)
         xvt.waste(1500)
         $.action('yn')
         xvt.app.form = {

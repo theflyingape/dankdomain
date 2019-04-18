@@ -2031,8 +2031,8 @@ export function emulator(cb:Function) {
         'term': { cb:() => {
             if (xvt.validator.isNotEmpty(xvt.entry) && xvt.entry.length == 2) xvt.app.emulation = <xvt.emulator>xvt.entry.toUpperCase()
             player.emulation = xvt.app.emulation
-            xvt.outln('\n\n', xvt.reset, xvt.magenta, xvt.app.LGradient)
-            xvt.outln(xvt.red,'R', xvt.green,'G', xvt.blue,'B', xvt.reset, xvt.bright,' bold ', xvt.normal, 'normal', xvt.faint, ' dark')
+            xvt.outln('\n\n', xvt.reset, xvt.magenta, xvt.app.LGradient, xvt.reverse, 'BANNER', xvt.noreverse, xvt.app.RGradient)
+            xvt.outln(xvt.red,'R', xvt.green,'G', xvt.blue,'B', xvt.reset, xvt.bright,' bold ', xvt.normal, 'normal', xvt.faint, ' dim')
             online.altered = true
             if (player.emulation == 'XT') {
                 sound('yahoo', 20)

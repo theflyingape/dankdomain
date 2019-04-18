@@ -235,8 +235,7 @@ function choice() {
 				xvt.waste(600)
 				$.player.toAC++
 				$.online.toAC += $.dice($.online.armor.ac / 5 + 1)
-				xvt.out('The turtle turns and smiles and enhances your ', $.player.armor)
-				xvt.outln($.buff($.player.toAC, $.online.toAC))
+				xvt.outln('The turtle turns and smiles and enhances your ', $.PC.armor().rich)
 				$.sound('shield')
 				break
 			}
@@ -245,8 +244,7 @@ function choice() {
 				xvt.waste(600)
 				$.player.toWC++
 				$.online.toWC += $.dice($.online.weapon.wc / 10 + 1)
-				xvt.out('The tortoise shows it gratitude by enchanting your ', $.player.weapon)
-				xvt.outln($.buff($.player.toWC, $.online.toWC))
+				xvt.outln('The tortoise shows it gratitude by enchanting your ', $.PC.weapon().rich)
 				$.sound('hone')
 				break
 			}

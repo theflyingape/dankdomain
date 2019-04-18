@@ -597,7 +597,7 @@ function doMove(): boolean {
 				ROOM.monster.splice(n, 1)
 			}
 			xvt.waste(ROOM.monster.length < 4 ? 350 : 150)
-			$.PC.wearing(ROOM.monster[n])
+			if (ROOM.monster[n]) $.PC.wearing(ROOM.monster[n])
 		}
 
 		if (ROOM.monster.length) {
@@ -1175,7 +1175,7 @@ function doMove(): boolean {
 				if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
 					x = $.int(x / $.player.level)
 				if ($.online.weapon.wc && $.dice(x) == 1) {
-					xvt.out($.player.weapon, $.buff($.player.toWC, $.online.toWC))
+					xvt.out($.PC.weapon().rich)
 					$.Weapon.equip($.online, $.Weapon.merchant[0])
 					xvt.waste(600)
 					$.sound('thief2')
@@ -1454,14 +1454,13 @@ function doMove(): boolean {
 
 			if ($.dice(2) == 1) {
 				let ac = $.Armor.name[$.player.armor].ac
-				xvt.out('\nI see you have a class ', $.bracket(ac, false), ' '
-					, xvt.bright, $.player.armor, xvt.normal, $.buff($.player.toAC, $.online.toAC))
+				xvt.out('\nI see you have a class ', $.bracket(ac, false), ' ', $.PC.armor().rich)
 				ac += $.player.toAC
 				if (ac) {
 					let cv = new $.coins($.Armor.name[$.player.armor].value)
 					credit.value = $.worth(cv.value, $.online.cha)
-					if ($.player.toAC) credit.value = Math.trunc(credit.value * (ac + $.player.toAC / ($.player.poison + 1)) / ac)
-					if ($.online.toAC < 0) credit.value = Math.trunc(credit.value * (ac + $.online.toAC) / ac)
+					if ($.player.toAC) credit.value = $.int(credit.value * (ac + $.player.toAC / ($.player.poison + 1)) / ac)
+					if ($.online.toAC < 0) credit.value = $.int(credit.value * (ac + $.online.toAC) / ac)
 					if (credit.value > cv.value)
 						credit.value = cv.value
 				}
@@ -1470,8 +1469,8 @@ function doMove(): boolean {
 				xvt.outln(' worth ', credit.carry())
 				xvt.waste(1000)
 
-				for (hi = 0; hi < $.Armor.dwarf.length - 1 && ac >= $.Armor.name[$.Armor.dwarf[hi]].ac; hi++);
-				if (new $.coins($.Armor.name[$.Armor.dwarf[hi]].value).value < credit.value + $.player.coin.value) {
+				for (hi = 0; hi < $.Armor.dwarf.length - 1 && ac < $.Armor.name[$.Armor.dwarf[hi]].ac; hi++);
+				if (new $.coins($.Armor.name[$.Armor.dwarf[hi]].value).value <= credit.value + $.player.coin.value) {
 					if ($.player.coin.value) xvt.outln('  and all your coin worth ', $.player.coin.carry())
 					xvt.waste(1000)
 					xvt.out(`I'll trade you for my `, xvt.bright
@@ -1486,14 +1485,13 @@ function doMove(): boolean {
 			}
 			else {
 				let wc = $.Weapon.name[$.player.weapon].wc
-				xvt.out('\nI see you carrying a class ', $.bracket(wc, false), ' '
-					, xvt.bright, $.player.weapon, xvt.normal, $.buff($.player.toWC, $.online.toWC))
+				xvt.out('\nI see you carrying a class ', $.bracket(wc, false), ' ', $.PC.weapon().rich)
 				wc += $.player.toWC
 				if (wc) {
 					let cv = new $.coins($.Weapon.name[$.player.weapon].value)
 					credit.value = $.worth(cv.value, $.online.cha)
-					if ($.player.toWC) credit.value = Math.trunc(credit.value * (wc + $.player.toWC / ($.player.poison + 1)) / wc)
-					if ($.online.toWC < 0) credit.value = Math.trunc(credit.value * (wc + $.online.toWC) / wc)
+					if ($.player.toWC) credit.value = $.int(credit.value * (wc + $.player.toWC / ($.player.poison + 1)) / wc)
+					if ($.online.toWC < 0) credit.value = $.int(credit.value * (wc + $.online.toWC) / wc)
 					if (credit.value > cv.value)
 						credit.value = cv.value
 				}
@@ -1501,8 +1499,8 @@ function doMove(): boolean {
 					credit.value = 0
 				xvt.outln(' worth ', credit.carry())
 
-				for (hi = 0; hi < $.Weapon.dwarf.length - 1 && wc >= $.Weapon.name[$.Weapon.dwarf[hi]].wc; hi++);
-				if (new $.coins($.Weapon.name[$.Weapon.dwarf[hi]].value).value < credit.value + $.player.coin.value) {
+				for (hi = 0; hi < $.Weapon.dwarf.length - 1 && wc < $.Weapon.name[$.Weapon.dwarf[hi]].wc; hi++);
+				if (new $.coins($.Weapon.name[$.Weapon.dwarf[hi]].value).value <= credit.value + $.player.coin.value) {
 					if ($.player.coin.value) xvt.outln('  and all your coin worth ', $.player.coin.carry())
 					xvt.waste(1000)
 					xvt.out(`I'll trade you for my `, xvt.bright

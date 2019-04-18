@@ -1543,12 +1543,12 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 rpc.dex >>= 1
             }
             else {
-                xvt.out(recipient)
+                xvt.out(recipient, ' ')
                 nme.confused = true
                 nme.int >>= 1
                 nme.dex >>= 1
             }
-            xvt.outln(' with exploding ', xvt.bright
+            xvt.outln('with exploding ', xvt.bright
                 , xvt.red, 'c', xvt.yellow, 'o', xvt.green, 'l', xvt.cyan, 'o', xvt.blue, 'r', xvt.magenta, 's'
                 , xvt.reset, '!')
             break
@@ -2101,7 +2101,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         }
     }
     else
-        xvt.out(isNaN(+rpc.user.weapon) ? p1.His + rpc.user.weapon : p1.You, ' does not even scratch ', p2.you)
+        xvt.out(isNaN(+rpc.user.weapon) ? p1.His + $.PC.weapon(rpc).text + ' ' : p1.You, 'does not even scratch ', p2.you)
 
     xvt.outln(period)
     xvt.waste(50)
@@ -2191,14 +2191,12 @@ export function poison(rpc: active, cb?:Function) {
         }
 
         if (!$.Poison.have(rpc.user.poisons, vial) || +rpc.user.weapon > 0) {
-            xvt.outln(xvt.bright, xvt.green, p1.He, $.what(rpc, 'secrete'), 'a caustic ooze', xvt.reset, $.buff(p, t))
+            xvt.outln(xvt.green, xvt.bright, p1.He, $.what(rpc, 'secrete'), 'a caustic ooze', xvt.reset, $.buff(p, t))
             $.sound('ooze', 6)
         }
         else {
             xvt.outln('\n', p1.He, $.what(rpc, 'pour'), 'some ', xvt.faint, $.Poison.merchant[vial - 1]
-                , xvt.reset, ' on ', rpc.who.his
-                , (rpc.weapon.shoppe ? xvt.white : rpc.weapon.dwarf ? xvt.yellow : xvt.cyan), xvt.bright, rpc.user.weapon
-                , xvt.reset, $.buff(rpc.user.toWC, rpc.toWC))
+                , xvt.reset, ' on ', rpc.who.his, $.PC.weapon(rpc).rich)
             $.sound('hone', 6)
             if (/^[A-Z]/.test(rpc.user.id)) {
                 if ($.dice(3 * (rpc.toWC + rpc.user.toWC + 1)) / skill > rpc.weapon.wc) {
@@ -2326,26 +2324,23 @@ export function yourstats(full = true) {
     xvt.out(sprintf('%3d', $.online.dex), xvt.reset, sprintf(' (%d,%d)    ', $.player.dex, $.player.maxdex))
     xvt.out(xvt.cyan, 'Cha:', xvt.bright, $.online.cha > $.player.cha ? xvt.yellow : $.online.cha < $.player.cha ? xvt.red : xvt.white)
     xvt.outln(sprintf('%3d', $.online.cha), xvt.reset, sprintf(' (%d,%d)', $.player.cha, $.player.maxcha))
+    xvt.out(xvt.cyan, 'Hit points: '
+        , xvt.bright, $.online.hp > $.player.hp ? xvt.yellow : $.online.hp == $.player.hp ? xvt.white : xvt.red, $.online.hp.toString()
+        , xvt.reset, '/', $.player.hp.toString()
+    )
+    if ($.player.sp) {
+        xvt.out(xvt.cyan, '    Spell points: '
+            , xvt.bright, $.online.sp > $.player.sp ? xvt.yellow : $.online.sp == $.player.sp ? xvt.white : xvt.red, $.online.sp.toString()
+            , xvt.reset, '/', $.player.sp.toString()
+        )
+    }
+    if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry())
+    xvt.outln()
+    xvt.outln(xvt.cyan, 'Weapon: ', $.PC.weapon().rich, xvt.cyan, '   Armor: ', $.PC.armor().rich)
 
     if (full) {
         $.PC.profile()
-        xvt.out(xvt.cyan, 'Hit points: '
-            , xvt.bright, $.online.hp > $.player.hp ? xvt.yellow : $.online.hp == $.player.hp ? xvt.white : xvt.red, $.online.hp.toString()
-            , xvt.reset, '/', $.player.hp.toString()
-        )
-        if ($.player.sp) {
-            xvt.out(xvt.cyan, '    Spell points: '
-                , xvt.bright, $.online.sp > $.player.sp ? xvt.yellow : $.online.sp == $.player.sp ? xvt.white : xvt.red, $.online.sp.toString()
-                , xvt.reset, '/', $.player.sp.toString()
-            )
-        }
-        if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry())
-        xvt.outln()
-
-        xvt.outln(xvt.cyan, 'Weapon: ', $.PC.weapon().rich, xvt.cyan, '   Armor: ', $.PC.armor().rich)
-
-        if ($.from !== 'Dungeon' || $.player.rows > (24 + 2 * $.player.rings.length))
-            $.PC.rings()
+        $.PC.rings()
     }
 }
 

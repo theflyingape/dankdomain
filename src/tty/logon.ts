@@ -136,7 +136,7 @@ function password() {
         return
     }
 
-    if ($.player.email === '' && $.access.verify) {
+    if ($.player.email == '' && $.access.verify) {
         require('../email')
         return
     }
@@ -151,7 +151,7 @@ function password() {
             $.unlock(rs[row].id)
             $.news(`\tremoved an expired lock: ${rs[row].id} from ${$.time(rs[row].locktime)}`)
         }
-        else if (rs[row].id === $.player.id) {
+        else if (rs[row].id == $.player.id) {
             $.news(`\tkicked simultaneous player off: ${rs[row].id} lock from ${$.time(rs[row].locktime)}`)
             try {
                 process.kill(rs[row].pid, 'SIGHUP')
@@ -199,7 +199,7 @@ function password() {
     xvt.ondrop = $.logoff
     $.loadUser($.sysop)
     if (!$.loadKing()) {
-        $.player.access = Object.keys($.Access.name).slice($.player.gender === 'F' ? -2 : -1)[0]
+        $.player.access = Object.keys($.Access.name).slice($.player.gender == 'F' ? -2 : -1)[0]
         $.player.novice = false
         $.sysop.email = $.player.email
     }
@@ -228,7 +228,7 @@ function password() {
     xvt.outln(xvt.cyan, ' Online: ', xvt.bright, xvt.white, $.player.handle
         , xvt.normal, '  -  ', $.whereis)
     xvt.out(xvt.cyan, ' Access: ', xvt.bright, xvt.white, $.player.access)
-    if ($.player.emulation === 'XT' && $.access.emoji)
+    if ($.player.emulation == 'XT' && $.access.emoji)
         xvt.out(' ', $.access.emoji)
     xvt.out(xvt.normal, '  ')
 
@@ -239,13 +239,15 @@ function password() {
     $.activate($.online, true)
     $.online.altered = true
     $.saveUser($.player)
+
+    $.mydeeds = $.loadDeed($.player.pc)
     welcome()
 }
 
 function welcome() {
     $.action('yn')
 
-    if ($.player.today <= $.access.calls && ($.player.status === 'jail' || !$.Access.name[$.player.access].roleplay)) {
+    if ($.player.today <= $.access.calls && ($.player.status == 'jail' || !$.Access.name[$.player.access].roleplay)) {
         $.profile({ png:'npc/jailer', effect:'fadeIn' })
         $.sound('ddd')
         if ($.player.emulation == 'XT') xvt.out('🔒 ')
@@ -352,10 +354,9 @@ function welcome() {
         $.player.xplevel = $.player.level
         let play = JSON.parse(fs.readFileSync('./etc/play.json').toString())
         Object.assign($, play)
-        $.mydeeds = $.loadDeed($.player.pc)
         $.music('logon')
 
-        if ($.player.pc === 'None') {
+        if ($.player.pc == 'None') {
             if ($.player.novice) {
                 xvt.outln()
                 xvt.out(xvt.bright)
@@ -405,7 +406,7 @@ function welcome() {
             if ($.access.sysop)
                 xvt.app.focus = 'announce'
             else {
-                xvt.outln('\n\n', xvt.cyan, '--=:))', xvt.app.LGradient
+                xvt.outln('\n', xvt.cyan, '--=:))', xvt.app.LGradient
                     , xvt.Cyan, xvt.white, xvt.bright, 'Auto Message', xvt.reset
                     , xvt.cyan, xvt.app.RGradient, '((:=--\n')
                 $.cat('auto-message')
