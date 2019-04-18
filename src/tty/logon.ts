@@ -419,6 +419,10 @@ function welcome() {
                 xvt.app.focus = 'sysop'
                 return
             }
+            xvt.outln('\n', xvt.cyan, '--=:))', xvt.app.LGradient
+                , xvt.Cyan, xvt.bright, xvt.white, 'Auto Message', xvt.reset
+                , xvt.cyan, xvt.app.RGradient, '((:=--\n')
+            $.cat('auto-message')
             xvt.app.focus = 'auto'
         }, prompt:'Change (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i },
 
