@@ -299,11 +299,11 @@ function choice() {
 				break
 			}
 			Battle.user('Fight', (opponent: active) => {
-				if (opponent.user.id === '') {
+				if (opponent.user.id == '') {
 					menu()
 					return
 				}
-				if (opponent.user.id === $.player.id) {
+				if (opponent.user.id == $.player.id) {
 					opponent.user.id = ''
 					xvt.outln(`\nYou can't fight a wimp like `, $.PC.who(opponent).him)
 					menu()
@@ -378,11 +378,11 @@ function choice() {
 							}
 							else {
 								$.unlock($.player.id, true)
-								menu(!$.player.expert)
+								menu($.player.expert)
 							}
 						}
 						else
-							menu(!$.player.expert)
+							menu($.player.expert)
 					}, prompt:`Will you fight ${$.PC.who(opponent).him}(Y/N)? `, cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
 				}
 				xvt.app.focus = 'fight'

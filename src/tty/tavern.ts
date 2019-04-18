@@ -355,9 +355,8 @@ function choice() {
                             menu($.player.expert)
                             return
                         }
-						if (/Y/i.test(xvt.entry)) {
+						if (/Y/i.test(xvt.entry))
                             xvt.outln(`\nYour knock out points: ${$.online.bp}`)
-                        }
                         if ($.online.bp > 0 && opponent.bp > 0)
                             xvt.app.refocus()
                         else {

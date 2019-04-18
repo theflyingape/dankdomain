@@ -149,7 +149,7 @@ function choice() {
 		case 'A':
 			if (!$.access.roleplay) break
 			let ac = $.Armor.name[$.player.armor].ac
-			xvt.out('\nYou own a class ', $.bracket(ac, false), ' ', $.player.armor, $.buff($.player.toAC, $.online.toAC))
+			xvt.out('\nYou own a class ', $.bracket(ac, false), ' ', $.PC.armor().rich)
 			if (ac) {
 				let cv = new $.coins($.Armor.name[$.player.armor].value)
 				credit.value = $.worth(cv.value, $.online.cha)
@@ -521,7 +521,7 @@ function choice() {
 		case 'W':
 			if (!$.access.roleplay) break
 			let wc = $.Weapon.name[$.player.weapon].wc
-			xvt.out('\nYou own a class ', $.bracket(wc, false), ' ', $.player.weapon, $.buff($.player.toWC, $.online.toWC))
+			xvt.out('\nYou own a class ', $.bracket(wc, false), ' ', $.PC.weapon().rich)
 			if (wc) {
 				let cv = new $.coins($.Weapon.name[$.player.weapon].value)
 				credit.value = $.worth(cv.value, $.online.cha)
@@ -535,7 +535,7 @@ function choice() {
 			xvt.outln(' worth ', credit.carry())
 
 			if (wc == 0 && ($.player.toWC < 0 || $.online.toWC < 0)) {
-				xvt.out(xvt.yellow, 'Your hands are broken; go to the hospital for treatment.\n')
+				xvt.outln(xvt.yellow, 'Your hands are broken; go to the hospital for treatment.')
 				break
 			}
 

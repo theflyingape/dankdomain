@@ -2316,8 +2316,7 @@ export function user(venue: string, cb:Function) {
     xvt.app.focus = 'user'
 }
 
-export function yourstats(profile = true) {
-    profile && $.PC.profile()
+export function yourstats(full = true) {
     xvt.out(xvt.reset)
     xvt.out(xvt.cyan, 'Str:', xvt.bright, $.online.str > $.player.str ? xvt.yellow : $.online.str < $.player.str ? xvt.red : xvt.white)
     xvt.out(sprintf('%3d', $.online.str), xvt.reset, sprintf(' (%d,%d)    ', $.player.str, $.player.maxstr))
@@ -2326,24 +2325,28 @@ export function yourstats(profile = true) {
     xvt.out(xvt.cyan, 'Dex:', xvt.bright, $.online.dex > $.player.dex ? xvt.yellow : $.online.dex < $.player.dex ? xvt.red : xvt.white)
     xvt.out(sprintf('%3d', $.online.dex), xvt.reset, sprintf(' (%d,%d)    ', $.player.dex, $.player.maxdex))
     xvt.out(xvt.cyan, 'Cha:', xvt.bright, $.online.cha > $.player.cha ? xvt.yellow : $.online.cha < $.player.cha ? xvt.red : xvt.white)
-    xvt.out(sprintf('%3d', $.online.cha), xvt.reset, sprintf(' (%d,%d)', $.player.cha, $.player.maxcha), '\n')
-    xvt.out(xvt.cyan, 'Hit points: '
-        , xvt.bright, $.online.hp > $.player.hp ? xvt.yellow : $.online.hp == $.player.hp ? xvt.white : xvt.red, $.online.hp.toString()
-        , xvt.reset, '/', $.player.hp.toString()
-    )
-    if ($.player.sp) {
-        xvt.out(xvt.cyan, '    Spell points: '
-            , xvt.bright, $.online.sp > $.player.sp ? xvt.yellow : $.online.sp == $.player.sp ? xvt.white : xvt.red, $.online.sp.toString()
-            , xvt.reset, '/', $.player.sp.toString()
+    xvt.outln(sprintf('%3d', $.online.cha), xvt.reset, sprintf(' (%d,%d)', $.player.cha, $.player.maxcha))
+
+    if (full) {
+        $.PC.profile()
+        xvt.out(xvt.cyan, 'Hit points: '
+            , xvt.bright, $.online.hp > $.player.hp ? xvt.yellow : $.online.hp == $.player.hp ? xvt.white : xvt.red, $.online.hp.toString()
+            , xvt.reset, '/', $.player.hp.toString()
         )
+        if ($.player.sp) {
+            xvt.out(xvt.cyan, '    Spell points: '
+                , xvt.bright, $.online.sp > $.player.sp ? xvt.yellow : $.online.sp == $.player.sp ? xvt.white : xvt.red, $.online.sp.toString()
+                , xvt.reset, '/', $.player.sp.toString()
+            )
+        }
+        if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry())
+        xvt.outln()
+
+        xvt.outln(xvt.cyan, 'Weapon: ', $.PC.weapon().rich, xvt.cyan, '   Armor: ', $.PC.armor().rich)
+
+        if ($.from !== 'Dungeon' || $.player.rows > (24 + 2 * $.player.rings.length))
+            $.PC.rings()
     }
-    if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry())
-    xvt.outln()
-
-    xvt.outln(xvt.cyan, 'Weapon: ', $.PC.weapon().rich, xvt.cyan, '   Armor: ', $.PC.armor().rich)
-
-    if ($.from !== 'Dungeon' || $.player.rows > (24 + 2 * $.player.rings.length))
-        $.PC.rings()
 }
 
 }

@@ -210,12 +210,12 @@ export function menu(suppress = false) {
 		xvt.outln()
 		xvt.out(xvt.faint, ['Your skin crawls'
 			, 'Your pulse quickens', 'You feel paranoid', 'Your grip tightens'
-			, 'You stand ready'][s], ' from hearing a ')
+			, 'You stand ready'][s], ' from a ')
 		//	only play sound when pairing is close to its description
 		if (s == 1) $.sound('pulse')
 		switch ($.dice(5)) {
 			case 1:
-				if (s == 0) $.sound('creak' + $.dice(2))
+				if (s !== 1) $.sound('creak' + $.dice(2))
 				xvt.out('creaking sound')
 				break
 			case 2:
@@ -231,7 +231,7 @@ export function menu(suppress = false) {
 				xvt.out('beast growl')
 				break
 			case 5:
-				$.sound('laugh')
+				if (s == 0) $.sound('laugh')
 				xvt.out('maniacal laugh')
 				break
 		}
@@ -247,7 +247,7 @@ export function menu(suppress = false) {
 				drawRoom(y, x)
 			if (ROOM.occupant == 'cleric' && DL.cleric.hp) {
 				$.sound('agony', 10)
-				xvt.outln(xvt.bright, xvt.yellow, 'You hear a dying cry of agony!!')
+				xvt.outln(xvt.yellow, 'You hear a dying cry of agony!!')
 				xvt.waste(1000)
 				DL.cleric.hp = 0
 				DL.cleric.sp = 0
@@ -284,7 +284,7 @@ export function menu(suppress = false) {
 		if (rng > 8) {
 			if ($.tty == 'web') xvt.out(' 🦇  ')
 			$.sound('splat', 6)
-			xvt.out(xvt.faint, 'A bat flies by and soils' , xvt.normal, 'your ')
+			xvt.out(xvt.faint, 'A bat flies by and soils ' , xvt.normal, 'your ')
 			$.player.toAC -= $.dice(deep)
 			xvt.out($.PC.armor($.online).rich)
 			if ($.tty == 'web') xvt.out(' 💩')
