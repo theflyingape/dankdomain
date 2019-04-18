@@ -2317,7 +2317,7 @@ export function user(venue: string, cb:Function) {
 }
 
 export function yourstats(profile = true) {
-    profile && $.PC.profile($.online)
+    profile && $.PC.profile()
     xvt.out(xvt.reset)
     xvt.out(xvt.cyan, 'Str:', xvt.bright, $.online.str > $.player.str ? xvt.yellow : $.online.str < $.player.str ? xvt.red : xvt.white)
     xvt.out(sprintf('%3d', $.online.str), xvt.reset, sprintf(' (%d,%d)    ', $.player.str, $.player.maxstr))
@@ -2340,20 +2340,10 @@ export function yourstats(profile = true) {
     if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry())
     xvt.outln()
 
-    xvt.out(xvt.cyan, 'Weapon: ', xvt.bright, xvt.white, $.player.weapon)
-    xvt.out($.buff($.player.toWC, $.online.toWC), xvt.normal)
-    xvt.out(xvt.cyan, '   Armor: ', xvt.bright, xvt.white, $.player.armor)
-    xvt.out($.buff($.player.toAC, $.online.toAC))
-    xvt.outln()
+    xvt.outln(xvt.cyan, 'Weapon: ', $.PC.weapon().rich, xvt.cyan, '   Armor: ', $.PC.armor().rich)
 
     if ($.from !== 'Dungeon' || $.player.rows > (24 + 2 * $.player.rings.length))
-        for (let i in $.player.rings) {
-            let ring = $.player.rings[i]
-            xvt.out(xvt.cyan, $.player.emulation == 'XT' ? '⍥' : xvt.app.Empty
-                , ' ' , xvt.bright, ring, xvt.normal)
-            if ($.tty == 'web') xvt.out(' ', $.Ring.name[ring].emoji, ' 💍')
-            xvt.outln(' ring:', xvt.reset, ' can ', $.Ring.name[ring].description)
-        }
+        $.PC.rings()
 }
 
 }

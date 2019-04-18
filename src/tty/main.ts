@@ -83,7 +83,7 @@ function choice() {
                 require('./dungeon').DeepDank($.player.level - 1, menu)
             }
             else {
-                xvt.out('\nYou have run out of dungeon turns.\n')
+                xvt.outln('\nYou have run out of dungeon turns.')
                 suppress = true
                 break
             }
@@ -100,8 +100,10 @@ function choice() {
 
         case 'M':
             xvt.outln()
-            xvt.outln('  ', xvt.bright, xvt.Blue, ` ID   Player's Handle           Class    Lvl  Status  Party                 `)
-            xvt.outln('  ', xvt.Blue, '----------------------------------------------------------------------------')
+            xvt.outln('  ', xvt.bright, $.player.emulation == 'XT' ? xvt.Blue : xvt.white
+                , ` ID   Player's Handle           Class    Lvl  Status  Party                 `)
+            xvt.outln('  ', $.player.emulation == 'XT' ? xvt.Blue : xvt.faint
+                , '----------------------------------------------------------------------------')
 
             let top3 = {}
             let rs = $.query(`

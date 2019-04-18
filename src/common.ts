@@ -181,7 +181,7 @@ export class Character {
         return Math.round(rpc.dex * rpc.user.level / 10 + 2 * rpc.user.jw - rpc.user.jl + 10)
     }
 
-    profile(rpc: active, effect = 'fadeInLeft') {
+    profile(rpc = online, effect = 'fadeInLeft') {
         if (rpc.user.id) {
             let userPNG = `door/static/images/user/${rpc.user.id}.png`
             try {
@@ -497,18 +497,27 @@ export class Character {
         xvt.outln(xvt.blue, '+', xvt.faint, line, xvt.normal, '+')
     }
 
-    armor(profile: active): { text:string, rich:string } {
+    armor(profile = online): { text:string, rich:string } {
         let text = profile.user.armor + buff(profile.toAC, profile.user.toAC, true)
-        let rich = xvt.attr(profile.armor.armoury ? xvt.off : profile.armor.dwarf ? xvt.yellow : xvt.lcyan
+        let rich = xvt.attr(profile.armor.armoury ? xvt.white : profile.armor.dwarf ? xvt.yellow : xvt.lcyan
             , profile.user.armor, buff(profile.user.toAC, profile.toAC))
         return { text:text, rich:rich }
     }
 
-    weapon(profile: active): { text:string, rich:string } {
+    weapon(profile = online): { text:string, rich:string } {
         let text = profile.user.weapon + buff(profile.toWC, profile.user.toWC, true)
-        let rich = xvt.attr(profile.weapon.shoppe ? xvt.off : profile.weapon.dwarf ? xvt.yellow : xvt.lcyan
+        let rich = xvt.attr(profile.weapon.shoppe ? xvt.white : profile.weapon.dwarf ? xvt.yellow : xvt.lcyan
             , profile.user.weapon, buff(profile.user.toWC, profile.toWC))
         return { text:text, rich:rich }
+    }
+
+    rings(profile = online) {
+        for (let i in profile.user.rings) {
+            let ring = profile.user.rings[i]
+            xvt.out(xvt.cyan, player.emulation == 'XT' ? '⍥' : xvt.app.Empty, ' ' , xvt.bright, ring, xvt.normal)
+            if (tty == 'web') xvt.out(' ', Ring.name[ring].emoji, ' 💍')
+            xvt.outln(' ring:', xvt.reset, ' can ', Ring.name[ring].description)
+        }
     }
 
     wearing(profile: active) {
