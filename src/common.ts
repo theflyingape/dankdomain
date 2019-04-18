@@ -505,7 +505,7 @@ export class Character {
     }
 
     weapon(profile = online): { text:string, rich:string } {
-        let text = profile.user.weapon + buff(profile.toWC, profile.user.toWC, true)
+        let text = profile.user.weapon + buff(profile.user.toWC, profile.toWC, true)
         let rich = xvt.attr(profile.weapon.shoppe ? xvt.white : profile.weapon.dwarf ? xvt.yellow : xvt.lcyan
             , profile.user.weapon, buff(profile.user.toWC, profile.toWC))
         return { text:text, rich:rich }
