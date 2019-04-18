@@ -2102,7 +2102,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     }
     else
         xvt.out(isNaN(+rpc.user.weapon) ? `${p1.His}${$.PC.weapon(rpc).rich} ` : p1.You
-            , `${rpc === $.online} ? 'do' : 'does'} not even scratch `, p2.you)
+            , `${rpc === $.online ? 'do' : 'does'} not even scratch `, p2.you)
 
     xvt.outln(period)
     xvt.waste(50)
