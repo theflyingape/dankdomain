@@ -342,7 +342,7 @@ export class Character {
 
         xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out('       HP: ', xvt.white)
-        xvt.out(sprintf('%-42s', profile.hp + '/' + profile.user.hp + ' (' 
+        xvt.out(sprintf('%-42s', profile.hp + '/' + profile.user.hp + ' ('
             + ['weak', 'normal', 'adept', 'warrior', 'brute', 'hero'][profile.user.melee] + ', '
             + ['a rare', 'occasional', 'deliberate', 'angry', 'murderous'][profile.user.backstab] + ' backstab)'))
         xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
@@ -499,14 +499,36 @@ export class Character {
 
     armor(profile: active): { text:string, rich:string } {
         let text = profile.user.armor + buff(profile.toAC, profile.user.toAC, true)
-        let rich = xvt.attr(xvt.bright, xvt.white, profile.user.armor + buff(profile.user.toAC, profile.toAC))
+        let rich = xvt.attr(profile.armor.armoury ? xvt.off : profile.armor.dwarf ? xvt.yellow : xvt.lcyan
+            , profile.user.armor, buff(profile.user.toAC, profile.toAC))
         return { text:text, rich:rich }
     }
 
     weapon(profile: active): { text:string, rich:string } {
         let text = profile.user.weapon + buff(profile.toWC, profile.user.toWC, true)
-        let rich = xvt.attr(xvt.bright, xvt.white, profile.user.weapon + buff(profile.user.toWC, profile.toWC))
+        let rich = xvt.attr(profile.weapon.shoppe ? xvt.off : profile.weapon.dwarf ? xvt.yellow : xvt.lcyan
+            , profile.user.weapon, buff(profile.user.toWC, profile.toWC))
         return { text:text, rich:rich }
+    }
+
+    wearing(profile: active) {
+        if (isNaN(+profile.user.weapon)) {
+            xvt.outln('\n', this.who(profile).He, profile.weapon.text, ' '
+                , this.weapon(profile).rich)
+            xvt.waste(from == 'Dungeon' ? 600 : !profile.weapon.shoppe ? 900 : 200)
+        }
+        if (isNaN(+profile.user.armor)) {
+            xvt.outln('\n', this.who(profile).He, profile.armor.text, ' '
+                , this.armor(profile).rich)
+                xvt.waste(from == 'Dungeon' ? 600 : !profile.armor.armoury ? 900 : 200)
+        }
+        if (from !== 'Dungeon' && profile.user.sex == 'I') for (let i in profile.user.rings) {
+            let ring = profile.user.rings[i]
+            if (!+i) xvt.outln()
+            xvt.out(this.who(profile).He, 'has ', xvt.cyan, xvt.bright, ring, xvt.normal)
+            if (tty == 'web') xvt.out(' ', Ring.name[ring].emoji, ' ')
+            xvt.outln(' powers ', xvt.reset, 'that can ', Ring.name[ring].description)
+        }
     }
 
     who(pc: active, mob = false): who {
@@ -1340,7 +1362,7 @@ export function playerPC(points = 200, immortal = false) {
     function ability(field?: string) {
         if (xvt.validator.isNotEmpty(field)) {
             xvt.out('\n', xvt.yellow, 'You have ', xvt.bright, points.toString(), xvt.normal, ' points to distribute between 4 abilities: Strength, Intellect,\n')
-            xvt.out('Dexterity, Charisma.  Each ability must be between ', xvt.bright, '20', xvt.normal, ' and ', xvt.bright, '80', xvt.normal, ' points.\n')
+            xvt.outln('Dexterity, Charisma.  Each ability must be between ', xvt.bright, '20', xvt.normal, ' and ', xvt.bright, '80', xvt.normal, ' points.')
             xvt.app.form[field].enter = player.str.toString()
             xvt.app.form[field].prompt = 'Enter your Strength  ' + bracket(player.str, false) + ': '
             xvt.app.focus = field
@@ -1885,23 +1907,6 @@ export function what(rpc: active, action: string): string {
     return action + (rpc !== online ? (/.*ch$|.*sh$|.*s$|.*z$/i.test(action) ? 'es ' : 's ') : ' ')
 }
 
-export function who(rpc: active, word: string, from = '', mob = false): string {
-    const gender = rpc == online ? 'U' : rpc.user.gender
-    const Handle = `${gender == 'I' && from !== 'Party' ? 'The ' : ''}${rpc.user.handle}`
-    const handle = `${gender == 'I' && from !== 'Party' ? 'the ' : ''}${rpc.user.handle}`
-    const result = {
-        He: { M:`${mob ? Handle : 'He'} `, F:`${mob ? Handle : 'She'} `, I:`${mob ? Handle : 'It'} `,  U:'You ' },
-        he: { M:`${mob ? handle : 'he'} `, F:`${mob ? handle : 'she'} `, I:`${mob ? handle : 'it'} `,  U:'you ' },
-        him: { M:`${mob ? handle : 'him'} `, F:`${mob ? handle : 'her'} `, I:`${mob ? handle : 'it'} `,  U:'you ' },
-        His: { M:`${mob ? Handle + `'s` : 'His'} `, F:`${mob ? Handle + `'s` : 'Her'} `, I:`${mob ? Handle + `'s` : 'Its'} `, U:'Your ' },
-        his: { M:`${mob ? handle + `'s` : 'his'} `, F:`${mob ? handle + `'s` : 'her'} `, I:`${mob ? handle + `'s` : 'its'} `, U:'your ' },
-        self: { M:'himself ', F:'herself ', I:'itself ', U:'yourself ' },
-        You: { M:Handle, F:Handle, I:Handle, U:'You'},
-        you: { M:handle, F:handle, I:handle, U:'you'}
-    }
-    return result[word][gender]
-}
-
 export function worth(n: number, p: number): number {
     return int(n * p / 100)
 }
@@ -2196,7 +2201,7 @@ export function wall(msg: string) {
 
     let npc = <user>{}
     Object.assign(npc, require('./etc/sysop.json'))
-    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
+    rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`[${npc.handle}]`)
         Object.assign(sysop, npc)
@@ -2241,7 +2246,7 @@ export function wall(msg: string) {
     //  customize the Master of Whisperers NPC
     npc = <user>{}
     Object.assign(npc, require('./etc/barkeep.json'))
-    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
+    rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
         Object.assign(barkeep.user, npc)
@@ -2253,7 +2258,7 @@ export function wall(msg: string) {
     //  customize the Master at Arms NPC
     npc = <user>{}
     Object.assign(npc, require('./etc/merchant.json'))
-    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
+    rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
         Object.assign(dwarf.user, npc)
@@ -2265,7 +2270,7 @@ export function wall(msg: string) {
     //  customize the Big Kahuna NPC
     npc = <user>{}
     Object.assign(npc, require('./etc/neptune.json'))
-    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
+    rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
         Object.assign(neptune.user, npc)
@@ -2277,7 +2282,7 @@ export function wall(msg: string) {
     //  customize the Queen B NPC
     npc = <user>{}
     Object.assign(npc, require('./etc/seahag.json'))
-    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
+    rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
         Object.assign(seahag.user, npc)
@@ -2289,7 +2294,7 @@ export function wall(msg: string) {
     //  customize the Master of Coin NPC
     npc = <user>{}
     Object.assign(npc, require('./etc/taxman.json'))
-    rs = query(`SELECT id FROM Players WHERE id = '${npc.id}'`)
+    rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
         Object.assign(taxman.user, npc)
@@ -2383,7 +2388,7 @@ export function saveUser(rpc, insert = false, locked = false) {
 
     let sql: string = ''
 
-    sql = insert ? `INSERT INTO Players 
+    sql = insert ? `INSERT INTO Players
         ( id, handle, name, email, password
         , dob, sex, joined, expires, lastdate
         , lasttime, calls, today, expert, emulation
@@ -2448,9 +2453,10 @@ export function newDay() {
     run(`UPDATE Players SET coin=0`)
     xvt.out('-')
 
-    let rs = query(`SELECT id FROM Players WHERE id NOT GLOB '_*' AND status = '' AND (magic = 1 OR magic = 2) AND bank > 9999999 AND level > 15`)
+    let rs = query(`SELECT id FROM Players WHERE id NOT GLOB '_*' AND status='' AND (magic=1 OR magic=2) AND bank>9999999 AND level>15`)
     let user: user = { id:'' }
     for (let row in rs) {
+        let altered = false
         user.id = rs[row].id
         loadUser(user)
         for (let item = 7; item < 16; item++) {
@@ -2459,9 +2465,10 @@ export function newDay() {
             if (user.bank.value >= cost.value && !Magic.have(user.spells, item)) {
                 Magic.add(user.spells, item)
                 user.bank.value -= cost.value
+                altered = true
             }
         }
-        saveUser(user)
+        if (altered) saveUser(user)
     }
     xvt.out('=')
 
@@ -2496,15 +2503,15 @@ export function newDay() {
 
         if ((now().date - rs[row].lastdate) > 180) {
             if (rs[row].gang) {
-                let g = loadGang(query(`SELECT * FROM Gangs WHERE name = '${rs[row].gang}'`)[0])
+                let g = loadGang(query(`SELECT * FROM Gangs WHERE name='${rs[row].gang}'`)[0])
                 let i = g.members.indexOf(rs[row].id)
                 if (i > 0) {
                     g.members.splice(i, 1)
                     saveGang(g)
                 }
                 else {
-                    run(`UPDATE Players SET gang = '' WHERE gang = '${g.name}'`)
-                    run(`DELETE FROM Gangs WHERE name = '${g.name}'`)
+                    run(`UPDATE Players SET gang='' WHERE gang='${g.name}'`)
+                    run(`DELETE FROM Gangs WHERE name='${g.name}'`)
                     xvt.out('&')
                 }
             }
@@ -2536,6 +2543,7 @@ export function newDay() {
     saveUser(sysop)
     xvt.outln(xvt.bright, xvt.yellow, '*')
     xvt.outln('All set -- thank you!\n')
+    beep()
 }
 
 export function lock(id: string, owner = 0): boolean {
@@ -2567,8 +2575,8 @@ export function lock(id: string, owner = 0): boolean {
 }
 
 export function unlock(id: string, mine = false): number {
-    if (mine) return run(`DELETE FROM Online WHERE id != '${id}' AND pid = ${process.pid}`).changes
-    return run(`DELETE FROM Online WHERE id = '${id}'`).changes
+    if (mine) return run(`DELETE FROM Online WHERE id!='${id}' AND pid=${process.pid}`).changes
+    return run(`DELETE FROM Online WHERE id='${id}'`).changes
 }
 
 export function query(q: string, errOk = false): any {

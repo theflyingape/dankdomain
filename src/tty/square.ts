@@ -278,7 +278,7 @@ function choice() {
 			if (lo < hi) {
 				if ($.player.novice)
 					xvt.out('Normally, you would be billed for the remaining ')
-						
+
 				else
 					xvt.out('You can be billed for the remaining ')
 				xvt.outln(xvt.bright, (hi - lo).toString(), xvt.normal, ' hit points.')
@@ -320,14 +320,14 @@ function choice() {
 				xvt.outln(`"What `, ['cur', 'knave', 'scum', 'toad', 'villain'][$.dice(5) - 1]
 					, ` do you come for, ${$.access[$.player.gender] || $.access[$.player.sex]}?"`)
 				Battle.user('Bail', (opponent: active) => {
-					if (opponent.user.id === '') {
+					if (opponent.user.id == '') {
 						menu()
 						return
 					}
 					xvt.outln()
-					if (opponent.user.id === $.player.id) {
+					if (opponent.user.id == $.player.id) {
 						opponent.user.id = ''
-						xvt.outln(`You can't bail ${$.who(opponent, 'him')}out.`)
+						xvt.outln(`You can't bail ${$.PC.who(opponent).him}out.`)
 						menu()
 						return
 					}
@@ -348,7 +348,7 @@ function choice() {
 					$.action('ny')
 					xvt.app.form = {
 						'pay': { cb:() => {
-							xvt.out('\n')
+							xvt.outln()
 							if (/Y/i.test(xvt.entry)) {
 								$.profile({ png:'payment', effect:'tada' })
 								$.sound('click')
@@ -673,7 +673,7 @@ function Bank() {
 }
 
 function amount() {
-	if ((+xvt.entry).toString() === xvt.entry) xvt.entry += 'c'
+	if ((+xvt.entry).toString() == xvt.entry) xvt.entry += 'c'
 	let action = xvt.app.form['coin'].prompt.split(' ')[0]
 	let amount = new $.coins(0)
 
@@ -860,8 +860,8 @@ function buy() {
 		return
 	}
 
-	if (xvt.entry === '') {
-		xvt.out('\n')
+	if (xvt.entry == '') {
+		xvt.outln()
 		menu(false)
 		return
 	}

@@ -64,18 +64,18 @@ function choice() {
 			}
 			Battle.user('Battle', (opponent: active) => {
 				xvt.outln()
-				if (opponent.user.id === '' || opponent.user.id === $.player.id) {
+				if (opponent.user.id == '' || opponent.user.id == $.player.id) {
 					menu(true)
 					return
 				}
 				if (!opponent.user.hull) {
-					xvt.outln(`${$.who(opponent, 'He')}doesn't have a ship.`)
+					xvt.outln(`${$.PC.who(opponent).He}doesn't have a ship.`)
 					menu(true)
 					return
 				}
 				if (!$.lock(opponent.user.id)) {
 					$.beep()
-					xvt.outln(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.`)
+					xvt.outln(`${$.PC.who(opponent).He}is currently engaged elsewhere and not available.`)
 					menu(true)
 					return
 				}
@@ -85,7 +85,7 @@ function choice() {
 				xvt.outln(`It has ${opponent.user.hull} hull points.`)
 				xvt.waste(500)
 
-				$.action('ny')				
+				$.action('ny')
 				xvt.app.form = {
 					'battle': { cb:() => {
 						xvt.outln()
@@ -99,7 +99,7 @@ function choice() {
 						}
 						else
 							menu(!$.player.expert)
-					}, prompt:'Will you battle ' + $.who(opponent, 'him') + '(Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
+					}, prompt:`Will you battle ${$.PC.who(opponent).him}(Y/N)? `, cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
 				}
 				xvt.app.focus = 'battle'
 			})
@@ -156,17 +156,7 @@ function choice() {
 						$.loadUser($.seahag)
 						$.cat(`naval/${$.seahag}`.toLowerCase())
 						xvt.waste(600)
-						if (isNaN(+$.seahag.user.weapon)) xvt.outln('\n', $.who($.seahag, 'He'), $.Weapon.wearing($.seahag), '.')
-						xvt.waste(600)
-						if (isNaN(+$.seahag.user.armor)) xvt.outln('\n', $.who($.seahag, 'He'), $.Armor.wearing($.seahag), '.')
-						xvt.waste(600)
-						for (let i in $.seahag.user.rings) {
-							let ring = $.seahag.user.rings[i]
-							if (!+i) xvt.outln()
-							xvt.out($.who($.seahag, 'He'), 'has ', xvt.bright, xvt.cyan, ring, xvt.normal)
-							if ($.tty == 'web') xvt.out(' ', $.Ring.name[ring].emoji, ' ')
-							xvt.outln(' powers ', xvt.reset, 'that can ', $.Ring.name[ring].description)
-						}
+						$.PC.wearing($.seahag)
 						$.seahag.user.cursed = $.player.id
 						Battle.engage('Naval', $.online, $.seahag, menu)
 						return
@@ -188,18 +178,8 @@ function choice() {
                     $.profile({ jpg:'npc/neptune', effect:'fadeInUp'
                         , handle:$.neptune.user.handle, level:$.neptune.user.level, pc:$.neptune.user.pc })
 					$.sound('neptune', 32)
+					$.PC.wearing($.neptune)
 
-					if (isNaN(+$.neptune.user.weapon)) xvt.outln('\n', $.who($.neptune, 'He'), $.Weapon.wearing($.neptune), '.')
-					xvt.waste(600)
-					if (isNaN(+$.neptune.user.armor)) xvt.outln('\n', $.who($.neptune, 'He'), $.Armor.wearing($.neptune), '.')
-					xvt.waste(600)
-					for (let i in $.neptune.user.rings) {
-						let ring = $.neptune.user.rings[i]
-						if (!+i) xvt.outln()
-						xvt.out($.who($.neptune, 'He'), 'has ', xvt.bright, xvt.cyan, ring, xvt.normal)
-						if ($.tty == 'web') xvt.out(' ', $.Ring.name[ring].emoji, ' ')
-						xvt.outln(' powers ', xvt.reset, 'that can ', $.Ring.name[ring].description)
-					}
 					Battle.engage('Naval', $.online, $.neptune, menu)
 					return
 				}
@@ -393,7 +373,7 @@ function Shipyard(suppress = true) {
 		let cost = Math.round(Math.pow(2, ship / 150) * 7937)
 		let max: number
 		let afford: number
-		
+
 		switch (choice) {
 			case 'B':
 				if ($.player.hull + 50 > 8000) {
@@ -590,14 +570,14 @@ function BattleUser(nme: active) {
 
 	xvt.outln()
 	if ($.dice(100) + $.online.int >= $.dice(100) + nme.int) {
-		xvt.outln(`You approach ${$.who(nme, 'him')}and quickly open fire.`)
+		xvt.outln(`You approach ${$.PC.who(nme).him}and quickly open fire.`)
 		if (you()) {
 			menu()
 			return
 		}
 	}
 	else
-		xvt.outln(`${$.who(nme, 'He')}spots you coming and attacks.`)
+		xvt.outln(`${$.PC.who(nme).He}spots you coming and attacks.`)
 
 	if (him()) {
 		menu()
@@ -620,7 +600,7 @@ function BattleUser(nme: active) {
 					xvt.outln()
 					if (!outrun($.online.hull / nme.hull, $.online.int - nme.int)) {
 						$.sound('oops')
-						xvt.outln(`${$.who(nme, 'He')}outruns you and stops your retreat!`)
+						xvt.outln(`${$.PC.who(nme).He}outruns you and stops your retreat!`)
 						xvt.waste(500)
 						if (him()) {
 							menu()
@@ -645,7 +625,7 @@ function BattleUser(nme: active) {
 					if ($.player.ram) {
 						xvt.outln()
 						if (outmaneuvered(nme.int - $.online.int, nme.hull / $.online.hull)) {
-							xvt.outln(`${$.who(nme, 'He')}quickly outmaneuvers your ship.`)
+							xvt.outln(`${$.PC.who(nme).He}quickly outmaneuvers your ship.`)
 							xvt.waste(400)
 							xvt.outln(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
 								[ 'Your aim is going to kill us all!'
@@ -658,7 +638,7 @@ function BattleUser(nme: active) {
 						}
 						else {
 							damage = $.dice($.player.hull / 2) + $.dice($.online.hull / 2)
-							xvt.outln(xvt.green, `You ram ${$.who(nme, 'him')}for `
+							xvt.outln(xvt.green, `You ram ${$.PC.who(nme).him}for `
 								, xvt.bright, `${damage}`
 								, xvt.normal, ` hull points of damage!`)
 							if ((nme.hull -= damage) < 1) {
@@ -1063,7 +1043,7 @@ function outrun(dhull: number, dint: number): boolean {
 function ram(a: active, d: active) {
 	if (a.user.id) xvt.out(xvt.yellow)
 	else xvt.out(xvt.bright, xvt.blue)
-	xvt.out(`\n${a.user.handle} ${$.what(a, 'ram')}${$.who(d, 'him')}for`)
+	xvt.out(`\n${a.user.handle} ${$.what(a, 'ram')}${$.PC.who(d).him}for`)
 
 	let damage = $.dice(a.user.hull / 2) + $.dice(a.hull / 2)
 	if (a.user.id) xvt.out(xvt.bright)

@@ -74,7 +74,7 @@ export function cityguards() {
         let exempt = $.Ring.power([], $.player.rings, 'taxes')
         if (exempt.power) {
             xvt.out('\nYour hand extends to show', xvt.cyan, xvt.bright, $.an(exempt.name), xvt.normal)
-            if ($.player.emulation === 'XT') xvt.out(' ', $.Ring.name[exempt.name].emoji, ' 💍')
+            if ($.player.emulation == 'XT') xvt.out(' ', $.Ring.name[exempt.name].emoji, ' 💍')
             xvt.outln(' ring')
             xvt.waste(1500)
             xvt.out(xvt.yellow, xvt.bright, $.taxman.user.handle, xvt.normal, ' ')
@@ -140,7 +140,7 @@ export function cityguards() {
                         l++
                 } while (xhp > 0)
 
-                xvt.outln(xvt.yellow, `The Master of Coin points ${$.who($.taxman, 'his')}${$.taxman.user.weapon} at you,\n`, xvt.bright, xvt.blue,`  "Shall we begin?"`)
+                xvt.outln(xvt.yellow, `The Master of Coin points ${$.PC.who($.taxman).his}${$.taxman.user.weapon} at you,\n`, xvt.bright, xvt.blue,`  "Shall we begin?"`)
                 $.sound('ddd', 15)
                 $.music('taxman')
 
@@ -183,11 +183,7 @@ export function cityguards() {
         //$.taxman.sp >>= 1
         //$.taxman.user.id = ''
         $.taxman.user.coin = tax
-
-        if (isNaN(+$.taxman.user.weapon)) xvt.outln('\n', $.who($.taxman, 'He'), $.Weapon.wearing($.taxman), '.')
-        xvt.waste(900)
-        if (isNaN(+$.taxman.user.armor)) xvt.outln('\n', $.who($.taxman, 'He'), $.Armor.wearing($.taxman), '.')
-        xvt.waste(1000)
+        $.PC.wearing($.taxman)
 
         Battle.engage('Taxman', $.online, $.taxman, require('./main').menu)
     }

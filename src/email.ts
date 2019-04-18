@@ -49,7 +49,7 @@ function check() {
 
     $.player.password = String.fromCharCode(64 + $.dice(26)) + String.fromCharCode(96 + $.dice(26)) + $.dice(999) + '!@#$%^&*'[$.dice(8) - 1]
 
-    let rs = $.query(`SELECT count(email) AS n FROM Players WHERE email = '${$.player.email}' GROUP BY email`)
+    let rs = $.query(`SELECT COUNT(email) AS n FROM Players WHERE email='${$.player.email}' GROUP BY email`)
     if (rs.length && rs[0].n > 2) $.player.access = Object.keys($.Access.name)[1]
 
     try {
@@ -92,14 +92,14 @@ export function resend() {
 
 export async function Deliver(player: user, what: string, repeat: boolean, mailOptions: nodemailer.SendMailOptions) {
     xvt.out('\n\n', xvt.magenta, xvt.bright)
-    let royalty = Object.keys($.Access.name).slice($.player.gender === 'F' ? -2 : -1)[0]
+    let royalty = Object.keys($.Access.name).slice($.player.gender == 'F' ? -2 : -1)[0]
     if ($.tty == 'web') xvt.out('👑 ')
     xvt.out(`The ${royalty} orders the royal scribe to dispatch ${what}\nfor ${$.player.handle} ` + (!repeat ? `<${$.player.email}> ` : ''), xvt.reset)
     if ($.player.email !== $.sysop.email)
         await Message(player, mailOptions)
     else {
         xvt.outln(' ...skipping delivery... \nCheck SQLite3 table for relevant information.')
-        xvt.out(`select id,handle,access,password from Players where id='${player.id}';`)
+        xvt.out(`SELECT id,handle,access,password FROM Players WHERE id='${player.id}'`)
         if ($.reason.length)
             $.saveUser(player, true)
     }
@@ -115,12 +115,16 @@ async function Message(player: user, mailOptions: nodemailer.SendMailOptions) {
     let smtpOptions: smtpTransport.SmtpOptions
     try { smtpOptions = require('./etc/smtp.json') }
     catch (err) {
-        xvt.outln(xvt.red, xvt.bright, './etc/smtp.json not configured for sending email')
-        player.password = 'local'
-        $.saveUser(player, true)
-        xvt.outln('\nYour user ID (', xvt.white, xvt.bright, player.id, xvt.normal, ') was saved, ', $.Access.name[player.access][player.gender], '.')
-        xvt.outln('Your local password assigned: ', xvt.white, xvt.bright, player.password)
+        if (echo) {
+            xvt.outln(xvt.red, xvt.bright, './etc/smtp.json not configured for sending email')
+            player.password = 'local'
+            $.saveUser(player, true)
+            xvt.outln('\nYour user ID (', xvt.bright, player.id, xvt.normal, ') was saved, ', $.Access.name[player.access][player.gender], '.')
+            xvt.outln('Your local password assigned: ', xvt.bright, player.password)
+        }
+        return
     }
+
     let smtp = nodemailer.createTransport(smtpTransport(smtpOptions))
 	mailOptions.from = `"${$.sysop.handle} @ ${$.sysop.name}" <${$.sysop.email}>`
     mailOptions.to = `${player.name} <${player.email}>`

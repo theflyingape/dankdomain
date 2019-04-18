@@ -24,14 +24,14 @@ module Arena
 	}
 
 export function menu(suppress = true) {
-    if ($.checkXP($.online, menu)) return
+	if ($.checkXP($.online, menu)) return
 	if ($.online.altered) $.saveUser($.online)
 	if ($.reason) xvt.hangup()
 
 	$.action('arena')
-    xvt.app.form = {
-        'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
-    }
+	xvt.app.form = {
+		'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
+	}
 
 	let hints = ''
 	if (!suppress) {
@@ -121,16 +121,11 @@ function choice() {
 				$.action('ny')
 				xvt.app.form = {
 					'compete': { cb:() => {
-						xvt.outln()
+						xvt.outln('\n')
 						if (/Y/i.test(xvt.entry)) {
-							xvt.out('\nThe trumpets blare! You and your opponent ride into the arena. ')
+							xvt.out('The trumpets blare! You and your opponent ride into the arena. ')
 							xvt.waste(500)
-							if (opponent.user.id == $.king.id) {
-								xvt.outln('\nThe crowd goes silent.')
-								$.PC.adjust('cha', -2, -1)
-							}
-							else
-								xvt.outln('The crowd roars!')
+							xvt.outln(opponent.user.id == $.king.id ? '\nThe crowd goes silent.' : 'The crowd roars!')
 							$.online.altered = true
 							if ($.joust-- > 2) $.music('joust')
 							$.action('joust')
@@ -149,20 +144,27 @@ function choice() {
 						return
 					}, prompt:'Are you sure (Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 },
 					'joust': { cb:() => {
+						xvt.outln('\n')
 						if (/F/i.test(xvt.entry)) {
+							$.log(opponent.user.id, `\n${$.player.handle} forfeited to you in a joust.`)
 							$.animated('pulse')
-							$.sound('boo')
-							xvt.outln('\n\nThe crowd throws rocks at you as you ride out of the arena.')
-							$.player.jl++
-							if ($.run(`UPDATE Players set jw=jw+1 WHERE id='${opponent.user.id}'`).changes)
-								$.log(opponent.user.id, `\n${$.player.handle} forfeited to you in a joust.`)
+							if (opponent.user.id == $.king.id) {
+								$.sound('cheer')
+								$.PC.adjust('cha', 101)
+							}
+							else {
+								$.sound('boo')
+								xvt.outln('The crowd throws rocks at you as you ride out of the arena.')
+								$.player.jl++
+								$.run(`UPDATE Players set jw=jw+1 WHERE id='${opponent.user.id}'`)
+							}
 							xvt.waste(250)
 							$.animated('slideOutRight')
 							menu()
 							return
 						}
 						if (/J/i.test(xvt.entry)) {
-							xvt.outln('\n\nYou spur the horse.  The tension mounts.')
+							xvt.outln('You spur the horse.  The tension mounts.')
 							xvt.waste(250)
 							let result = 0
 							while (!result)
@@ -174,7 +176,11 @@ function choice() {
 								if (++jw == 3) {
 									xvt.outln('\nYou have won the joust!')
 									xvt.waste(250)
-									if (opponent.user.id !== $.king.id) {
+									if (opponent.user.id == $.king.id) {
+										$.sound('boo')
+										$.PC.adjust('cha', -2, -1)
+									}
+									else {
 										$.sound('cheer')
 										xvt.outln('The crowd cheers!')
 									}
@@ -202,7 +208,7 @@ function choice() {
 								&& !$.Ring.power($.player.rings, opponent.user.rings, 'joust').power && $.dice(3) == 1) {
 									$.sound('swoosh')
 									xvt.out(xvt.magenta, '^>', xvt.white, ' SWOOSH ', xvt.magenta,'<^  ', xvt.reset
-										, $.who(opponent, 'He'), 'missed!  You both pass and try again!')
+										, $.PC.who(opponent).He, 'missed!  You both pass and try again!')
 									xvt.app.refocus()
 									return
 								}
@@ -210,7 +216,7 @@ function choice() {
 								$.animated(['bounce', 'shake', 'tada'][jl])
 								$.sound('oof')
 								xvt.outln(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.normal, xvt.magenta,'<^  ', xvt.reset
-									, $.who(opponent, 'He'), 'hits!  You lose this pass!')
+									, $.PC.who(opponent).He, 'hits!  You lose this pass!')
 								if (++jl == 3) {
 									xvt.outln('\nYou have lost the joust!')
 									$.sound('boo')
@@ -299,7 +305,7 @@ function choice() {
 				}
 				if (opponent.user.id === $.player.id) {
 					opponent.user.id = ''
-					xvt.outln(`\nYou can't fight a wimp like `, $.who(opponent, 'him'))
+					xvt.outln(`\nYou can't fight a wimp like `, $.PC.who(opponent).him)
 					menu()
 					return
 				}
@@ -337,7 +343,7 @@ function choice() {
 
 				if (!$.Access.name[opponent.user.access].roleplay) {
 					xvt.outln('You are allowed only to fight other players.')
-					if (opponent.user.id[0] === '_') {
+					if (opponent.user.id[0] == '_') {
 						$.PC.adjust('cha', -2, -1)
 						$.player.coward = true
 						$.online.altered = true
@@ -354,13 +360,12 @@ function choice() {
 
 				if (!$.lock(opponent.user.id)) {
 					$.beep()
-					xvt.outln(xvt.faint, xvt.cyan, `${$.who(opponent, 'He')}is currently engaged elsewhere and not available.`)
+					xvt.outln(xvt.cyan, xvt.faint, `${$.PC.who(opponent).He}is currently engaged elsewhere and not available.`)
 					menu()
 					return
 				}
 
-				if (isNaN(+opponent.user.weapon)) xvt.outln('\n', $.who(opponent, 'He'), $.Weapon.wearing(opponent), '.')
-				if (isNaN(+opponent.user.armor)) xvt.outln('\n', $.who(opponent, 'He'), $.Armor.wearing(opponent), '.')
+				$.PC.wearing(opponent)
 
 				$.action('ny')
 				xvt.app.form = {
@@ -378,7 +383,7 @@ function choice() {
 						}
 						else
 							menu(!$.player.expert)
-					}, prompt:'Will you fight ' + $.who(opponent, 'him') + '(Y/N)? ', cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
+					}, prompt:`Will you fight ${$.PC.who(opponent).him}(Y/N)? `, cancel:'N', enter:'N', eol:false, match:/Y|N/i, max:1, timeout:10 }
 				}
 				xvt.app.focus = 'fight'
 			})
@@ -476,16 +481,15 @@ function MonsterFights(): boolean {
 					})
 					$.cat('arena/' + monster.user.handle)
 
-					xvt.outln(`The old necromancer summons you a level ${monster.user.level} monster.`)
-					if (isNaN(monster.user.weapon)) xvt.outln('\n', $.who(monster, 'He'), $.Weapon.wearing(monster), '.')
-					if (isNaN(monster.user.armor)) xvt.outln('\n', $.who(monster, 'He'), $.Armor.wearing(monster), '.')
+					xvt.outln(`The old necromancer summons you a level ${monster.user.level} creature.`)
+					$.PC.wearing(monster)
 
 					$.action('ny')
 					xvt.app.focus = 'fight'
 					return
 				}
-				xvt.outln(xvt.cyan, 'His eyes glow ', xvt.bright, xvt.red, 'red', xvt.normal
-					, xvt.cyan, ' and he says, "', xvt.bright, xvt.white, `I don't make deals!`, xvt.normal, xvt.cyan, '"')
+				xvt.outln(xvt.cyan, 'His eyes glow ', xvt.red, xvt.bright, 'red', xvt.normal
+					, xvt.cyan, ' and says, "', xvt.white, xvt.bright, `I don't make deals!`, xvt.normal, xvt.cyan, '"')
 				menu()
 			}, prompt:'Will you pay (Y/N)? ', cancel:'N', enter:'Y', eol:false, match:/Y|N/i, max:1, timeout:10 },
 			'fight': { cb:() => {
@@ -533,15 +537,7 @@ function MonsterFights(): boolean {
 		xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}`)
 		if ($.tty == 'web') xvt.out(' ', monster.pc.color || xvt.white, monster.pc.unicode)
 		xvt.outln()
-		if (isNaN(+monster.user.weapon)) xvt.outln('\n', $.who(monster, 'He'), $.Weapon.wearing(monster), '.')
-		if (isNaN(+monster.user.armor)) xvt.outln('\n', $.who(monster, 'He'), $.Armor.wearing(monster), '.')
-		for (let i in monster.user.rings) {
-			let ring = monster.user.rings[i]
-			if (!+i) xvt.outln()
-			xvt.out($.who(monster, 'He'), 'has ', xvt.bright, xvt.cyan, ring, xvt.normal)
-			if ($.tty == 'web') xvt.out(' ', $.Ring.name[ring].emoji, ' ')
-			xvt.outln(' powers ', xvt.reset, 'that can ', $.Ring.name[ring].description)
-		}
+		$.PC.wearing(monster)
 
 		$.action('ny')
 		xvt.app.form = {

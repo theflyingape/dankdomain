@@ -184,7 +184,7 @@ function choice() {
 
             Battle.user('Rob', (opponent: active) => {
                 xvt.outln()
-				if (opponent.user.id === $.player.id) {
+				if (opponent.user.id == $.player.id) {
 					opponent.user.id = ''
 					xvt.outln(`You can't rob yourself.`)
 				}
@@ -196,13 +196,13 @@ function choice() {
 					opponent.user.id = ''
 					xvt.outln('You can only rob someone higher or up to three levels below you.')
 				}
-				if (opponent.user.id === '') {
+				if (opponent.user.id == '') {
 					menu()
 					return
 				}
                 if (!$.lock(opponent.user.id)) {
                     $.beep()
-                    xvt.outln(`${$.who(opponent, 'He')}is currently engaged elsewhere and not available.`)
+                    xvt.outln(`${$.PC.who(opponent).He}is currently engaged elsewhere and not available.`)
 					menu()
 					return
                 }

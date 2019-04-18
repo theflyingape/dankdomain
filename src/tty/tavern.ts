@@ -27,12 +27,12 @@ module Tavern
 	}
 
     $.loadUser($.barkeep)
-        
+
 export function menu(suppress = true) {
     if ($.checkXP($.online, menu)) return
     if ($.online.altered) $.saveUser($.online)
     Taxman.bar()
-    
+
     $.action('tavern')
     xvt.app.form = {
         'menu': { cb:choice, cancel:'q', enter:'?', eol:false }
@@ -56,7 +56,7 @@ function choice() {
             suppress = $.player.expert
         }
     xvt.out('\n')
-    
+
     switch (choice) {
         case 'T':
             $.cat('tavern/today')
@@ -80,41 +80,41 @@ function choice() {
                     let tip = (/=|max/i.test(xvt.entry)) ? $.player.coin.value : new $.coins(xvt.entry).value
                     if (tip < 1 || tip > $.player.coin.value) {
                         $.sound('oops')
-                        xvt.outln($.who($.barkeep, 'He'), 'pours the beer on you and kicks you out of his bar.')
+                        xvt.outln($.PC.who($.barkeep).He, 'pours the beer on you and kicks you out of his bar.')
                         xvt.waste(1000)
                         $.brawl = 0
                         require('./main').menu(true)
                         return
                     }
                     xvt.beep()
-                    xvt.out($.who($.barkeep, 'He'), 'grunts and hands you your beer.')
-                    if ($.player.emulation === 'XT') xvt.out(' \u{1F37A}')
+                    xvt.out($.PC.who($.barkeep).He, 'grunts and hands you your beer.')
+                    if ($.player.emulation == 'XT') xvt.out(' \u{1F37A}')
                     xvt.outln()
                     $.online.altered = true
                     $.player.coin.value -= tip
                     xvt.waste(1000)
-                    xvt.out($.who($.barkeep, 'He'), 'says, "', [
+                    xvt.out($.PC.who($.barkeep).He, 'says, "', [
                         'More stamina will yield more hit points',
                         'More intellect will yield more spell power',
-                        'You don\'t miss as often with higher agility',
+                        `You don't miss as often with higher agility`,
                         'You can sell items for more money with higher charisma',
                         'You can do more damage in battle with higher stamina',
-                        'Spells don\'t fail as often with higher intellect',
+                        `Spells don't fail as often with higher intellect`,
                         'Higher agility yields higher jousting ability',
                         'Fishing can get better results from higher charisma',
                         'Real Estate and Security help protect your investments',
                         'Higher baud rates yield faster screen displays',
                         'Crying will not change the world',
                         'Backstabs swish more than you wish',
-                        'Dungeon maps find more in the hands of the lucky',
-                        'Higher intellect calculates opponent\'s hit points more accurately',
-                        'At least 50 Intellect points are needed to recall where you\'ve been walking',
+                        'Dungeon maps fall more often into lucky hands',
+                        `Higher intellect calculates opponent's hit points more accurately`,
+                        `At least 50 Intellect points are needed to recall where you've been walking`,
                         'Resurrect works on ALL dead folk, but not creatures',
-                        'Take over as your gang\'s leader in the Arena',
+                        `Take over as your gang's leader in the Arena`,
                         'Blessed/Cursed does not stick on your new day here',
-                        'Killing the town\'s barkeep will lose you favor with its folks',
+                        `Killing the town's barkeep will lose you favor with its folks`,
                         'Deeper dungeon portals is a key to victory',
-                        'I\'ll have more hints tomorrow.  Maybe'
+                        `I'll have more hints tomorrow.  Maybe`
                     ][tip % 21])
                     xvt.outln('."')
                     xvt.waste(1000)
@@ -203,7 +203,7 @@ function choice() {
                     if ($.player.level < 60)
                         xvt.outln('The barkeep stares off into empty space, ignoring your wimpy comment.')
                     else
-                        xvt.outln(`The barkeep points at ${$.who($.barkeep,'he')}massive, flexed bicep and laughs at your jest.`)
+                        xvt.outln(`The barkeep points at ${$.PC.who($.barkeep).he}massive, flexed bicep and laughs at your jest.`)
                     suppress = true
                     break
 
@@ -211,9 +211,9 @@ function choice() {
                     xvt.outln('thumb your nose.')
                     xvt.waste(1000)
                     if ($.player.level < 60)
-                        xvt.outln(`Annoyed, the barkeep looks down at ${$.who($.barkeep, 'his')}furry feet and counts, \"100, 99, 98,...\"`)
+                        xvt.outln(`Annoyed, the barkeep looks down at ${$.PC.who($.barkeep).his}furry feet and counts, \"100, 99, 98,...\"`)
                     else
-                        xvt.outln(`The former Champion Ogre grunts to ${$.who($.barkeep, 'self')} "Not good for business."`)
+                        xvt.outln(`The former Champion Ogre grunts to ${$.PC.who($.barkeep).self} "Not good for business."`)
                     suppress = true
                     break
 
@@ -229,9 +229,9 @@ function choice() {
                         , handle:$.barkeep.user.handle, level:$.barkeep.user.level, pc:$.barkeep.user.pc })
                     xvt.out('  Here comes Tiny!')
                     $.sound('challenge', 12)
-                    xvt.outln(`  And ${$.who($.barkeep, 'he')}doesn't look friendly...\n`)
+                    xvt.outln(`  And ${$.PC.who($.barkeep).he}doesn't look friendly...\n`)
                     xvt.waste(600)
-                    xvt.outln(xvt.bright, xvt.green, [
+                    xvt.outln(xvt.green, xvt.bright, [
                         `"When I'm through with you, your mama won't be able to identify the remains."`,
                         `"I am getting too old for this."`,
                         `"Never rub another man\'s rhubarb!"`][$.dice(3) - 1])
@@ -241,7 +241,7 @@ function choice() {
                     $.barkeep.toWC += $.Weapon.merchant.length - $.barkeep.weapon.wc
                     $.barkeep.toAC += $.Armor.merchant.length - $.barkeep.armor.ac
                     $.barkeep.user.spells = JSON.parse(fs.readFileSync('./etc/barkeep.json').toString()).spells
-                    xvt.outln(`\n${$.barkeep.user.handle} towels ${$.who($.barkeep,'his')}hands dry from washing the day\'s\nglasses, ${$.who($.barkeep, 'he')}warns,\n`)
+                    xvt.outln(`\n${$.barkeep.user.handle} towels ${$.PC.who($.barkeep).his}hands dry from washing the day\'s\nglasses, ${$.PC.who($.barkeep).he}warns,\n`)
                     xvt.outln(xvt.bright, xvt.green, '"Another fool said something like that to me, once, and got all busted up."\n')
                     xvt.waste(5000)
                     let fool = <active>{ user:{ id:$.barkeep.user.status, gender:'M' }}
@@ -252,9 +252,9 @@ function choice() {
                     }
 
                     $.music('tiny')
-                    xvt.out(`${$.who($.barkeep,'He')}points to a buffed weapon hanging over the mantlepiece and says, `
-                        , xvt.bright, xvt.green, '"Lookee\n')
-                    xvt.outln(`there, ${$.who(fool,'he')}tried to use that ${$.barkeep.user.weapon}, but it wasn't enough\nto take me.\"\n`)
+                    xvt.out(`${$.PC.who($.barkeep).He}points to a buffed weapon hanging over the mantlepiece and says, `
+                        , xvt.green, xvt.bright, '"Lookee\n')
+                    xvt.outln(`there, ${$.PC.who(fool).he}tried to use that ${$.barkeep.user.weapon}, but it wasn't enough\nto take me.\"\n`)
                     xvt.waste(6000)
                     xvt.out('The patrons move in closer to witness the forthcoming slaughter, except for\n')
                     xvt.outln(`${$.taxman.user.handle} who is busy raiding the bar of its beer and nuts.`)
@@ -266,7 +266,7 @@ function choice() {
                     xvt.waste(3000)
                     xvt.outln('you are not amused.')
                     xvt.waste(2000)
-                    xvt.outln(`\n${$.barkeep.user.handle} removes ${$.who($.barkeep,'his')}tunic to reveal a massive, but\nheavily scarred chest.`)
+                    xvt.outln(`\n${$.barkeep.user.handle} removes ${$.PC.who($.barkeep).his}tunic to reveal a massive, but\nheavily scarred chest.`)
                     xvt.waste(2500)
                     xvt.out('\nYou look for an exit, but there is none to be found... ')
                     xvt.waste(2500)
@@ -313,7 +313,7 @@ function choice() {
 				}
                 if (!$.lock(opponent.user.id)) {
                     $.beep()
-                    xvt.outln(xvt.faint, xvt.cyan, `\n${$.who(opponent, 'He')}is currently engaged elsewhere and not available.`)
+                    xvt.outln(xvt.cyan, xvt.faint, `\n${$.PC.who(opponent).He}is currently engaged elsewhere and not available.`)
 					menu(true)
 					return
                 }
@@ -329,7 +329,7 @@ function choice() {
                                 Battle.brawl($.online, opponent)
                             }
                             else
-                                xvt.outln(`${$.who(opponent, 'He')}gets the first punch.`)
+                                xvt.outln(`${$.PC.who(opponent).He}gets the first punch.`)
                             if ($.online.bp > 0 && opponent.bp > 0)
                                 Battle.brawl(opponent, $.online)
                             if ($.online.bp > 0 && opponent.bp > 0) {
@@ -364,7 +364,7 @@ function choice() {
                             $.unlock($.player.id, true)
                             menu($.player.expert)
                         }
-                    }, prompt:xvt.attr($.bracket('P', false), xvt.cyan, `unch ${$.who(opponent, 'him')}`, $.bracket('G', false), xvt.cyan, 'ive it up, ', $.bracket('Y', false), xvt.cyan, 'our status: ' )
+                    }, prompt:xvt.attr($.bracket('P', false), xvt.cyan, `unch ${$.PC.who(opponent).him}`, $.bracket('G', false), xvt.cyan, 'ive it up, ', $.bracket('Y', false), xvt.cyan, 'our status: ' )
                         , cancel:'G', enter:'P', eol:false, match:/P|G|Y/i, timeout:30 }
 				}
                 xvt.app.focus = 'brawl'

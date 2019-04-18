@@ -314,7 +314,7 @@ function choice() {
 				suppress = true
                 break
             }
-            
+
             g = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
             showGang(g)
             if (g.members.indexOf($.player.id) != 0) {
@@ -338,12 +338,12 @@ function choice() {
                                 else {
                                     if (!$.lock(member.user.id)) {
                                         $.beep()
-                                        xvt.outln(`\n${$.who(member, 'He')}is currently engaged elsewhere and not available.`)
+                                        xvt.outln(`\n${$.PC.who(member).He}is currently engaged elsewhere and not available.`)
                                     }
                                     else {
-                                        if (member.user.gang === g.name) {
+                                        if (member.user.gang == g.name) {
                                             member.user.gang = ''
-                                            $.run(`UPDATE Players SET gang = '' WHERE id = '${member.user.id}'`)
+                                            $.run(`UPDATE Players SET gang='' WHERE id='${member.user.id}'`)
                                         }
                                         g.members.splice(n, 1)
                                         g.handles.splice(n ,1)
@@ -485,7 +485,7 @@ function choice() {
                             if (monsters[dm].spells)
                                 for (let magic in monsters[dm].spells)
                                     $.Magic.add(nme[i].user.spells, monsters[dm].spells[magic])
-        
+
                             $.activate(nme[i])
                             nme[i].toWC = $.int(nme[i].weapon.wc / 5) + 1
                             nme[i].user.coin = new $.coins($.money(ml))
@@ -516,9 +516,9 @@ function choice() {
 
                         if (!$.cat('dungeon/' + nme[0].user.handle.toLowerCase()))
                             $.cat('player/' + nme[0].user.pc.toLowerCase())
-                        xvt.outln(xvt.bright, xvt.magenta, nme[0].user.handle, xvt.reset
-                            , ' grins as ', $.who(nme[0], 'he'), 'pulls out '
-                            , $.who(nme[0], 'his'), nme[0].user.weapon, '.')
+                        xvt.outln(xvt.magenta, xvt.bright, nme[0].user.handle, xvt.reset
+                            , ' grins as ', $.PC.who(nme[0]).he, 'pulls out '
+                            , $.PC.who(nme[0]).his, nme[0].user.weapon, '.')
                         xvt.waste(1200)
 
                         Battle.engage('Party', posse, nme, menu)

@@ -84,7 +84,7 @@ module Dungeon
 		'Potion of Augment',
 		'Beaker of Death'
 	]
-	//	make some magic brew & bottle it up . . . 
+	//	make some magic brew & bottle it up . . .
 	let containers = [ 'beaker filled with', 'bottle containing', 'flask of', 'vial holding' ]
 	let v = 0
 	while (containers.length) {
@@ -283,23 +283,26 @@ export function menu(suppress = false) {
 		let rng = $.dice(16)
 		if (rng > 8) {
 			if ($.tty == 'web') xvt.out(' 🦇  ')
-			xvt.out(xvt.faint, 'A bat flies by and soils your ', xvt.normal)
-			$.sound('splat', 4)
+			$.sound('splat', 6)
+			xvt.out(xvt.faint, 'A bat flies by and soils' , xvt.normal, 'your ')
 			$.player.toAC -= $.dice(deep)
-			xvt.out(xvt.yellow, $.player.armor, $.buff($.player.toAC, $.online.toAC))
+			xvt.out($.PC.armor($.online).rich)
 			if ($.tty == 'web') xvt.out(' 💩')
+			xvt.waste(600)
 		}
 		else if (rng > 4) {
 			if ($.tty == 'web') xvt.out(' 💧  ')
-			xvt.out(xvt.blue, 'A drop of ', xvt.bright, 'acid water', xvt.normal, ' lands on your ')
-			$.sound('drop', 4)
+			$.sound('drop', 6)
+			xvt.out(xvt.blue, 'A drop of ', xvt.bright, 'acid water burns ', xvt.normal, 'your ')
+			xvt.waste(600)
 			$.player.toWC -= $.dice(deep)
-			xvt.out(xvt.bright, xvt.cyan, $.player.weapon, $.buff($.player.toWC, $.online.toWC))
+			xvt.out($.PC.weapon($.online).rich)
 		}
 		else if (rng > 2) {
 			if ($.tty == 'web') xvt.out(' 😬  ')
+			$.sound('hurt', 6)
 			xvt.out(xvt.yellow, 'You trip on the rocky surface and hurt yourself.')
-			$.sound('hurt', 5)
+			xvt.waste(600)
 			$.online.hp -= $.dice(Z)
 			if ($.online.hp < 1) $.death('fell down')
 		}
@@ -309,21 +312,21 @@ export function menu(suppress = false) {
 			xvt.out(xvt.red, 'You are attacked by a ', xvt.bright, 'swarm of bees', xvt.normal)
 			if ($.tty == 'web') xvt.out(' 🐝  🐝  🐝  🐝')
 			else xvt.out('!!')
+			xvt.waste(600)
 			for (x = 0, y = $.dice(Z); x < y; x++)
 				$.online.hp -= $.dice(Z)
-			xvt.waste(600)
 			if ($.online.hp < 1) $.death('killer bees')
 		}
 		else {
-			xvt.out(xvt.bright, xvt.white)
 			if ($.tty == 'web') xvt.out(' ⚡  ')
-			xvt.out('A bolt of lightning strikes you!')
+			$.sound('boom', 6)
+			xvt.out(xvt.bright, 'A bolt of lightning strikes you!')
+			xvt.waste(600)
 			$.player.toAC -= $.dice($.online.armor.ac / 2)
 			$.online.toAC -= $.dice($.online.armor.ac / 2)
 			$.player.toWC -= $.dice($.online.weapon.wc / 2)
 			$.online.toWC -= $.dice($.online.weapon.wc / 2)
 			$.online.hp -= $.dice($.player.hp / 2)
-			$.sound('boom', 12)
 			if ($.online.hp < 1) $.death('struck by lightning')
 		}
 		if ($.online.weapon.wc > 0 && $.online.weapon.wc + $.online.toWC + $.player.toWC < 0) {
@@ -335,6 +338,7 @@ export function menu(suppress = false) {
 			$.Armor.equip($.online, $.Armor.merchant[0])
 		}
 		xvt.outln()
+		xvt.waste(600)
 	}
 
 	//  insert any wall messages here
@@ -579,11 +583,9 @@ function doMove(): boolean {
 					xvt.outln(`and it doesn't look friendly.`)
 				else
 					xvt.outln('and it looks harmless, for now.')
-				if (isNaN(+ROOM.monster[n].user.weapon)) xvt.outln('\n', $.who(ROOM.monster[n], 'He'), $.Weapon.wearing(ROOM.monster[n]), '.')
-				if (isNaN(+ROOM.monster[n].user.armor)) xvt.outln('\n', $.who(ROOM.monster[n], 'He'), $.Armor.wearing(ROOM.monster[n]), '.')
 			}
 			else {
-				xvt.outln(xvt.bright, xvt.yellow, `and it's `
+				xvt.outln(xvt.yellow, xvt.bright, `and it's `
 					, [ 'bewitched', 'charmed', 'dazzled', 'impressed', 'seduced' ][$.dice(5) - 1]
 					, ' by your '
 					, [ 'awesomeness', 'elegance', 'presence', $.player.armor, $.player.weapon ][$.dice(5) - 1]
@@ -594,7 +596,8 @@ function doMove(): boolean {
 				party.push(ROOM.monster[n])
 				ROOM.monster.splice(n, 1)
 			}
-			xvt.waste(ROOM.monster.length < 4 ? 360 : 120)
+			xvt.waste(ROOM.monster.length < 4 ? 350 : 150)
+			$.PC.wearing(ROOM.monster[n])
 		}
 
 		if (ROOM.monster.length) {
@@ -709,7 +712,7 @@ function doMove(): boolean {
 			xvt.waste(600)
 			xvt.outln(xvt.magenta, 'You have found a legendary ', xvt.bright, 'Wishing Well', xvt.normal, '.')
 			xvt.waste(600)
-			xvt.outln(); xvt.waste(600)			
+			xvt.outln(); xvt.waste(600)
 			xvt.outln(xvt.bright, xvt.yellow, 'What do you wish to do?')
 			xvt.waste(600)
 
@@ -1119,19 +1122,16 @@ function doMove(): boolean {
 
 			if ((Z + 1) >= $.taxman.user.level && $.player.level < $.taxman.user.level) {
 				$.loadUser($.taxman)
-				xvt.outln(xvt.reset, $.who($.taxman, 'He'), 'is the '
-					, xvt.bright, xvt.cyan, 'Master of Coin'
+				xvt.outln(xvt.reset, $.PC.who($.taxman).He, 'is the '
+					, xvt.cyan, xvt.bright, 'Master of Coin'
 					, xvt.reset, ' for '
-					, xvt.bright, xvt.magenta, $.king.handle
+					, xvt.magenta, xvt.bright, $.king.handle
 					, xvt.reset, '!')
 				$.profile({ jpg:'npc/taxman', handle:$.taxman.user.handle, level:$.taxman.user.level, pc:$.taxman.user.pc, effect:'bounceInDown' })
-				$.sound('oops', 8)
+				$.sound('oops', 16)
 				$.activate($.taxman)
 				$.taxman.user.coin.value = $.player.coin.value
-				if (isNaN(+$.taxman.user.weapon)) xvt.outln('\n', $.who($.taxman, 'He'), $.Weapon.wearing($.taxman), '.')
-				xvt.waste(900)
-				if (isNaN(+$.taxman.user.armor)) xvt.outln('\n', $.who($.taxman, 'He'), $.Armor.wearing($.taxman), '.')
-				xvt.waste(1000)
+				$.PC.wearing($.taxman)
 
 				b4 = 0
 				Battle.engage('Taxman', $.online, $.taxman, () => {
@@ -2648,12 +2648,10 @@ function merchant() {
 	let dwarf = <active>{ user:{id:''} }
 	Object.assign(dwarf.user, $.dwarf.user)
 	$.activate(dwarf)
-	xvt.outln(xvt.yellow, $.who(dwarf, 'he'), 'scowls in disgust,')
-	xvt.outln(xvt.bright, xvt.yellow, `  "Never trust${$.an($.player.pc)}!"`)
-	xvt.waste(300)
-	if (isNaN(+dwarf.user.weapon)) xvt.outln('\n', $.who(dwarf, 'He'), $.Weapon.wearing(dwarf), '.')
-	if (isNaN(+dwarf.user.armor)) xvt.outln('\n', $.who(dwarf, 'He'), $.Armor.wearing(dwarf), '.')
-	xvt.waste(300)
+	xvt.outln(xvt.yellow, $.PC.who(dwarf).he, 'scowls in disgust, '
+		, xvt.bright, `"Never trust${$.an($.player.pc)}!"`)
+	xvt.waste(600)
+	$.PC.wearing(dwarf)
 	Battle.engage('Merchant', party, dwarf, doSpoils)
 }
 
@@ -2661,7 +2659,7 @@ function teleport() {
 	let min =  Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
 	$.action('teleport')
 
-	xvt.outln(xvt.bright, xvt.yellow, 'What do you wish to do?')
+	xvt.outln(xvt.yellow, xvt.bright, 'What do you wish to do?')
 	xvt.out($.bracket('U'), 'Teleport up 1 level')
 	if (Z < 99) xvt.out($.bracket('D'), 'Teleport down 1 level')
 	xvt.out($.bracket('O'), `Teleport out of this ${deep ? 'dank' : ''} dungeon`)
