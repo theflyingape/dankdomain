@@ -2318,11 +2318,11 @@ export function user(venue: string, cb:Function) {
 export function yourstats(full = true) {
     xvt.out(xvt.reset)
     xvt.out(xvt.cyan, 'Str:', xvt.bright, $.online.str > $.player.str ? xvt.yellow : $.online.str < $.player.str ? xvt.red : xvt.white)
-    xvt.out(sprintf('%3d', $.online.str), xvt.reset, sprintf(' (%d,%d)    ', $.player.str, $.player.maxstr))
+    xvt.out(sprintf('%3d', $.online.str), xvt.reset, sprintf(' (%d,%d)   ', $.player.str, $.player.maxstr))
     xvt.out(xvt.cyan, 'Int:', xvt.bright, $.online.int > $.player.int ? xvt.yellow : $.online.int < $.player.int ? xvt.red : xvt.white)
-    xvt.out(sprintf('%3d', $.online.int), xvt.reset, sprintf(' (%d,%d)    ', $.player.int, $.player.maxint))
+    xvt.out(sprintf('%3d', $.online.int), xvt.reset, sprintf(' (%d,%d)   ', $.player.int, $.player.maxint))
     xvt.out(xvt.cyan, 'Dex:', xvt.bright, $.online.dex > $.player.dex ? xvt.yellow : $.online.dex < $.player.dex ? xvt.red : xvt.white)
-    xvt.out(sprintf('%3d', $.online.dex), xvt.reset, sprintf(' (%d,%d)    ', $.player.dex, $.player.maxdex))
+    xvt.out(sprintf('%3d', $.online.dex), xvt.reset, sprintf(' (%d,%d)   ', $.player.dex, $.player.maxdex))
     xvt.out(xvt.cyan, 'Cha:', xvt.bright, $.online.cha > $.player.cha ? xvt.yellow : $.online.cha < $.player.cha ? xvt.red : xvt.white)
     xvt.outln(sprintf('%3d', $.online.cha), xvt.reset, sprintf(' (%d,%d)', $.player.cha, $.player.maxcha))
     xvt.out(xvt.cyan, 'Hit points: '
@@ -2330,12 +2330,12 @@ export function yourstats(full = true) {
         , xvt.reset, '/', $.player.hp.toString()
     )
     if ($.player.sp) {
-        xvt.out(xvt.cyan, '    Spell points: '
+        xvt.out(xvt.cyan, '   Spell points: '
             , xvt.bright, $.online.sp > $.player.sp ? xvt.yellow : $.online.sp == $.player.sp ? xvt.white : xvt.red, $.online.sp.toString()
             , xvt.reset, '/', $.player.sp.toString()
         )
     }
-    if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry(4))
+    if ($.player.coin.value) xvt.out(xvt.cyan, '   Coin: ', $.player.coin.carry(4))
     xvt.outln()
     xvt.outln(xvt.cyan, 'Weapon: ', $.PC.weapon(), xvt.cyan, '   Armor: ', $.PC.armor())
 
