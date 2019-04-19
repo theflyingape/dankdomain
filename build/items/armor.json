@@ -27,7 +27,7 @@
 
 	"tan": { "text":"has a remarkable", "value":"1c", "ac":1 },
 	"Holy Mail": { "text":"wears", "value":"100c", "ac":5 },
-	"Giant Turtle Shell": { "text":"covered by a", "value":"10000c", "ac":10 },
+	"Giant Turtle Shell": { "text":"is covered by a", "value":"10000c", "ac":10 },
 	"Fleece of Gold": { "text":"glimmers in a", "value":"100g", "ac":15 },
 	"Cloak of Wonder": { "text":"wears a shining", "value":"1000g", "ac":20 },
 	"Amulet of Protection": { "text":"wears a mysterious", "value":"1000g", "ac":21 },
@@ -36,11 +36,11 @@
 	"Titanium Armor": { "text":"is armored with", "value":"35p", "ac":27 },
 
 	"Spiked Leather": { "text":"wears fitted", "value":"4c", "ac":5, "dwarf":true },
-	"Armodillo Husk": { "text":"covered by an", "value":"400c", "ac":10, "dwarf":true },
+	"Armodillo Husk": { "text":"is covered by an", "value":"400c", "ac":10, "dwarf":true },
 	"Half Plate Armor": { "text":"is protected by", "value":"4s", "ac":15, "dwarf":true },
 	"Red Dragon Scale Mail": { "text":"sports", "value":"4000s", "ac":20, "dwarf":true },
 	"Cloak of Elvenlords": { "text":"wears a shimmering", "value":"400g", "ac":24, "dwarf":true },
 	"Adamantite Chain Mail": { "text":"shows off", "value":"4p", "ac":25, "dwarf":true },
-	"Helm of Hades": { "text":"topped with", "value":"40p", "ac":28, "dwarf":true },
-	"Helm of Heroes": { "text":"topped with a", "value":"400p", "ac":30, "dwarf":true }
+	"Helm of Hades": { "text":"looks evil with", "value":"40p", "ac":28, "dwarf":true },
+	"Helm of Heroes": { "text":"is formidable with", "value":"50p", "ac":30, "dwarf":true }
 }

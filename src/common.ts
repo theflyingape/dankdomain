@@ -500,13 +500,13 @@ export class Character {
     armor(profile = online, text = false): string {
         return text ? profile.user.armor + buff(profile.user.toAC, profile.toAC, true)
             : xvt.attr(profile.armor.armoury ? xvt.white : profile.armor.dwarf ? xvt.yellow : xvt.lcyan
-                , profile.user.armor, buff(profile.user.toAC, profile.toAC))
+                , profile.user.armor, xvt.white, buff(profile.user.toAC, profile.toAC))
     }
 
     weapon(profile = online, text = false): string {
         return text ? profile.user.weapon + buff(profile.user.toWC, profile.toWC, true)
             : xvt.attr(profile.weapon.shoppe ? xvt.white : profile.weapon.dwarf ? xvt.yellow : xvt.lcyan
-                , profile.user.weapon, buff(profile.user.toWC, profile.toWC))
+                , profile.user.weapon, xvt.white, buff(profile.user.toWC, profile.toWC))
     }
 
     rings(profile = online) {
