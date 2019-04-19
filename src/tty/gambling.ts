@@ -1,7 +1,7 @@
 /*****************************************************************************\
  *  Dank Domain: the return of Hack & Slash                                  *
  *  GAMBLING authored by: Robert Hurst <theflyingape@gmail.com>              *
-\*****************************************************************************/ 
+\*****************************************************************************/
 
 import {sprintf} from 'sprintf-js'
 
@@ -104,7 +104,7 @@ export function menu(suppress = true) {
 }
 
 function choice() {
-    if ((game = xvt.entry.toUpperCase()) === 'Q') {
+    if ((game = xvt.entry.toUpperCase()) == 'Q') {
 		xvt.outln()
 		require('./main').menu($.player.expert)
 		return
@@ -137,7 +137,7 @@ function amount() {
 	let ace:number = 0
 	xvt.outln()
 
-	if ((+xvt.entry).toString() === xvt.entry) xvt.entry += 'c'
+	if ((+xvt.entry).toString() == xvt.entry) xvt.entry += 'c'
 	let amount = new $.coins(0)
 	if (/=|max/i.test(xvt.entry))
 		amount.value = max.value
@@ -165,7 +165,7 @@ function amount() {
 			player.push(deck[pile++])
 			dealer.push(deck[pile++])
 			xvt.out(xvt.green, '\nDealer\'s hand:')
-			if ($.player.emulation === 'XT') xvt.out(xvt.white, ' 🂠 ', card[dealer[1]].emoji)
+			if ($.player.emulation == 'XT') xvt.out(xvt.white, ' 🂠 ', card[dealer[1]].emoji)
 			xvt.out(' '.repeat(8))
 			xvt.out(xvt.red, '[', xvt.white, 'DOWN', xvt.red, '] [', xvt.white, card[dealer[1]].face, xvt.red, ']\n')
 			myhand = ShowHand(1, player)
@@ -318,7 +318,7 @@ function amount() {
 			xvt.app.form = {
 				'baby': { cb: () => {
 					xvt.out('\n', xvt.cll)
-					if ((+xvt.entry).toString() === xvt.entry) xvt.entry += 'c'
+					if ((+xvt.entry).toString() == xvt.entry) xvt.entry += 'c'
 					let side = new $.coins(0)
 					if (/=|max/i.test(xvt.entry))
 						side.value = max.value
@@ -479,13 +479,13 @@ function amount() {
 							xvt.out(' none         5\n')
 							break
 					}
-					xvt.out(xvt.reset, '\nodds of winning a prize in this game are 1:', 
+					xvt.out(xvt.reset, '\nodds of winning a prize in this game are 1:',
 						`${[4, 16.6, 6.55, 3.86, 10.33, 6.19, 4.22, 9.79, 6.55, 9.04][point - 1]}\n`)
 					xvt.app.focus = 'pick'
 				}, prompt:'How many numbers (1-10)? ', max:2 },
 				'pick': { cb: () => {
 					let pick = +xvt.entry
-					if (xvt.entry === '') {
+					if (xvt.entry == '') {
 						do {
 							pick = $.dice(80)
 						} while (picks.indexOf(pick) >= 0)
@@ -650,7 +650,7 @@ function amount() {
 
 		case 'S':
 			xvt.outln(xvt.bright, xvt.blue, '\nSlot Machine Payout Line:\n')
-			if ($.player.emulation === 'XT') {
+			if ($.player.emulation == 'XT') {
 				xvt.out(xvt.red,     ' any 2  ', xvt.normal, ' 🍒  🍒', xvt.reset, '    2x     ', xvt.yellow, 'Orange  ', xvt.normal, '🍊 🍊 🍊', xvt.reset, '    50x\n')
 				xvt.out(xvt.red,     'Cherry  ', xvt.normal, '🍒 🍒 🍒', xvt.reset, '    5x     ', xvt.bright, xvt.yellow, '<Bell>  ', '🔔 🔔 🔔', xvt.reset, '   100x\n')
 				xvt.out(xvt.magenta, 'Grapes  ', xvt.normal, '🍇 🍇 🍇', xvt.reset, '   10x     ', xvt.green,  '=Luck=  ', xvt.normal, '🍀 🍀 🍀', xvt.reset, '   400x\n')
@@ -678,7 +678,7 @@ function amount() {
 				$.beep()
 				let face = dial[i][bandit[i]]
 				xvt.out(xvt.blue, '[', xvt.attr(slot[face].attr, slot[face].color), face)
-				if ($.player.emulation === 'XT') xvt.out(` ${slot[face].emoji} `)
+				if ($.player.emulation == 'XT') xvt.out(` ${slot[face].emoji} `)
 				xvt.out(xvt.reset, xvt.blue, '] ')
 			}
 			xvt.out(xvt.reset, '\n\n')
@@ -702,7 +702,7 @@ function amount() {
 			else if ((face[0] == '@BOMB@' || face[0] == '*WILD*')
 					&& (face[1] == '@BOMB@' || face[1] == '*WILD*')
 					&& (face[2] == '@BOMB@' || face[2] == '*WILD*')) {
-				if ($.player.emulation === 'XT') xvt.out ('💀  ')
+				if ($.player.emulation == 'XT') xvt.out ('💀  ')
 				$.sound('boom', 8)
 				xvt.out('You die.\n')
 				$.music('wild')
@@ -786,7 +786,7 @@ function amount() {
 	menu()
 
 	function CherryBomb() {
-		if ($.player.emulation === 'XT') {
+		if ($.player.emulation == 'XT') {
 			$.music('cherry')
 			xvt.out(xvt.red)
 			for (let i = 0; i < 6; i++) {
@@ -818,8 +818,8 @@ function amount() {
 		let value:number = 0
 		ace = 0
 
-		xvt.out(who ? xvt.bright : xvt.reset, xvt.green, ['Dealer', 'Player'][who], '\'s hand:', xvt.white)
-		if ($.player.emulation === 'XT')
+		xvt.out(who ? xvt.bright : xvt.reset, xvt.green, ['Dealer', 'Player'][who], `'s hand:`, xvt.white)
+		if ($.player.emulation == 'XT')
 			for (let i = 0; i < hand.length; i++)
 				xvt.out(' ', card[hand[i]].emoji)
 		xvt.out(' '.repeat(12 - 2 * hand.length))

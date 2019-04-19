@@ -38,12 +38,12 @@ dns.lookup('localhost', (err, addr, family) => {
 
   server.on('upgrade', (req, socket, head) => {
     const pathname = new URL(req.url, 'https://localhost').pathname
-    if (pathname === '/xterm/door/player/') {
+    if (pathname == '/xterm/door/player/') {
       wssActive.handleUpgrade(req, socket, head, (ws) => {
         wssActive.emit('connection', ws, req)
       })
     }
-    else if (pathname === '/xterm/door/lurker/') {
+    else if (pathname == '/xterm/door/lurker/') {
       wssLurker.handleUpgrade(req, socket, head, (ws) => {
         wssLurker.emit('connection', ws, req)
       })
@@ -149,7 +149,7 @@ dns.lookup('localhost', (err, addr, family) => {
     const what = new URL(req.url, 'https://localhost')
     let pid = parseInt(what.searchParams.get('pid'))
     let term = sessions[pid]
-  
+
     //  app --> browser client
     term.on('data', (data) => {
       //  inspect for app's ACK ...

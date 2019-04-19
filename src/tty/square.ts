@@ -149,7 +149,7 @@ function choice() {
 		case 'A':
 			if (!$.access.roleplay) break
 			let ac = $.Armor.name[$.player.armor].ac
-			xvt.out('\nYou own a class ', $.bracket(ac, false), ' ', $.PC.armor().rich)
+			xvt.out('\nYou own a class ', $.bracket(ac, false), ' ', $.PC.armor())
 			if (ac) {
 				let cv = new $.coins($.Armor.name[$.player.armor].value)
 				credit.value = $.worth(cv.value, $.online.cha)
@@ -445,8 +445,11 @@ function choice() {
 				if (!$.Ring.have($.player.rings, $.Ring.theOne)) $.steal++
 				$.beep()
 				$.player.coin.value += credit.value
-				$.player.steals++
-				if (pocket.id) $.saveUser(pocket)
+				if (pocket.id) {
+					$.online.altered = true
+					$.player.steals++
+					$.saveUser(pocket)
+				}
 				suppress = true
 				break
 			}
@@ -521,7 +524,7 @@ function choice() {
 		case 'W':
 			if (!$.access.roleplay) break
 			let wc = $.Weapon.name[$.player.weapon].wc
-			xvt.out('\nYou own a class ', $.bracket(wc, false), ' ', $.PC.weapon().rich)
+			xvt.out('\nYou own a class ', $.bracket(wc, false), ' ', $.PC.weapon())
 			if (wc) {
 				let cv = new $.coins($.Weapon.name[$.player.weapon].value)
 				credit.value = $.worth(cv.value, $.online.cha)

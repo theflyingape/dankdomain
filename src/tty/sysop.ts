@@ -57,9 +57,9 @@ function choice() {
             rs = $.query(`SELECT * FROM Players WHERE blessed !='' OR cursed !='' OR coward != 0`)
             for (let n in rs) {
                 //  paint a target on any player that is winning
-                if (rs[n].pc === $.PC.winning)
+                if (rs[n].pc == $.PC.winning)
                     xvt.out(xvt.bright, xvt.yellow)
-                else if (rs[n].id === $.player.id)
+                else if (rs[n].id == $.player.id)
                     xvt.out(xvt.bright, xvt.white)
                 xvt.out(sprintf('%-4s  %-22s  %-9s  %3d ', rs[n].id, rs[n].handle, rs[n].pc, rs[n].level))
                 if (rs[n].blessed) xvt.out(` blessed by ${rs[n].blessed} `)

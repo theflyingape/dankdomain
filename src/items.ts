@@ -39,7 +39,7 @@ export class Armor {
 
     baseAC(name: string|number): number {
         let ac = 0
-        if (typeof this.name[name] === 'undefined')
+        if (typeof this.name[name] == 'undefined')
             ac = Math.abs(+name)
         else
             ac = this.name[name].ac
@@ -196,7 +196,7 @@ export class Magic {
         let m = +n
         if (isNaN(m)) {
             for (let i in this.spells) {
-                if (n === i) {
+                if (n == i) {
                     n = this.spells[i].cast
                     break
                 }
@@ -212,11 +212,11 @@ export class Magic {
 
     have(spells: number[], n: number|string): boolean {
         let have = false
-        if (typeof n === 'number' && spells.indexOf(n) >= 0)
+        if (typeof n == 'number' && spells.indexOf(n) >= 0)
             have = true
         else {
             for (let i = 0; i < spells.length; i++) {
-                if (n === this.pick(spells[i])) {
+                if (n == this.pick(spells[i])) {
                     have = true
                     break
                 }
@@ -270,11 +270,11 @@ export class Poison {
 
     have(vials: number[], n: number|string): boolean {
         let have = false
-        if (typeof n === 'number' && vials.indexOf(n) >= 0)
+        if (typeof n == 'number' && vials.indexOf(n) >= 0)
             have = true
         else {
             for (let i = 0; i < vials.length; i++) {
-                if (n === this.pick(vials[i])) {
+                if (n == this.pick(vials[i])) {
                     have = true
                     break
                 }
@@ -320,7 +320,7 @@ export class Weapon {
 
     baseWC(name: string|number): number {
         let wc = 0
-        if (typeof this.name[name] === 'undefined')
+        if (typeof this.name[name] == 'undefined')
             wc = Math.abs(+name)
         else
             wc = this.name[name].wc
@@ -425,7 +425,7 @@ export class Ring {
     power(vs:string[], rings: string[]|null, id: POWER, match?: POWTO, value?: any)
         : { name: string, power: number } {
 
-        let mine = (rings === null) ? Object.keys(this.name) : rings
+        let mine = (rings == null) ? Object.keys(this.name) : rings
         let name = ''
         let power = 0
 

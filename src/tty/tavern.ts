@@ -76,7 +76,7 @@ function choice() {
             xvt.app.form = {
                 'tip': { cb:() => {
                     xvt.outln('\n')
-                    if ((+xvt.entry).toString() === xvt.entry) xvt.entry += 'c'
+                    if ((+xvt.entry).toString() == xvt.entry) xvt.entry += 'c'
                     let tip = (/=|max/i.test(xvt.entry)) ? $.player.coin.value : new $.coins(xvt.entry).value
                     if (tip < 1 || tip > $.player.coin.value) {
                         $.sound('oops')
@@ -155,7 +155,7 @@ function choice() {
                 break
             }
             Battle.user('Bounty', (opponent: active) => {
-                if (opponent.user.id === '' || opponent.user.id === $.player.id) {
+                if (opponent.user.id == '' || opponent.user.id == $.player.id) {
                     menu()
                     return
                 }
@@ -284,12 +284,12 @@ function choice() {
             if (!$.brawl) break
             $.online.bp = $.online.hp > 9 ? $.int($.online.hp / 10) : 1
             Battle.user('Brawl', (opponent: active) => {
-                if (opponent.user.id === '') {
+                if (opponent.user.id == '') {
                     menu(true)
                     return
                 }
                 xvt.outln()
-                if (opponent.user.id === $.player.id) {
+                if (opponent.user.id == $.player.id) {
 					xvt.outln('You want to hit yourself?')
 					menu(true)
 					return
@@ -304,7 +304,7 @@ function choice() {
                 xvt.outln(xvt.green, 'Knock out points: ', xvt.white, sprintf('%-15d %-3d', opponent.bp, $.online.bp))
 				if (!$.Access.name[opponent.user.access].roleplay) {
 					xvt.outln('\nYou are allowed only to brawl other players.')
-					if (opponent.user.id[0] === '_') {
+					if (opponent.user.id[0] == '_') {
                         $.PC.adjust('cha', -2, -1)
 						$.player.coward = true
 					}

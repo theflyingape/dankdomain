@@ -439,15 +439,15 @@ export class Character {
         }
 
         xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
-        xvt.out('   Weapon: ', this.weapon(profile).rich)
-        xvt.out(' '.repeat(42 - this.weapon(profile).text.length))
+        xvt.out('   Weapon: ', this.weapon(profile))
+        xvt.out(' '.repeat(42 - this.weapon(profile, true).length))
         xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
         xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out('    Armor: ')
         if (player.emulation == 'XT')
             xvt.out('\r\x1B[2C🛡\r\x1B[12C')
-        xvt.out(this.armor(profile).rich, ' '.repeat(42 - this.armor(profile).text.length))
+        xvt.out(this.armor(profile), ' '.repeat(42 - this.armor(profile, true).length))
         xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
         xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
@@ -497,18 +497,16 @@ export class Character {
         xvt.outln(xvt.blue, '+', xvt.faint, line, xvt.normal, '+')
     }
 
-    armor(profile = online): { text:string, rich:string } {
-        let text = profile.user.armor + buff(profile.toAC, profile.user.toAC, true)
-        let rich = xvt.attr(profile.armor.armoury ? xvt.white : profile.armor.dwarf ? xvt.yellow : xvt.lcyan
-            , profile.user.armor, buff(profile.user.toAC, profile.toAC))
-        return { text:text, rich:rich }
+    armor(profile = online, text = false): string {
+        return text ? profile.user.armor + buff(profile.user.toAC, profile.toAC, true)
+            : xvt.attr(profile.armor.armoury ? xvt.white : profile.armor.dwarf ? xvt.yellow : xvt.lcyan
+                , profile.user.armor, buff(profile.user.toAC, profile.toAC))
     }
 
-    weapon(profile = online): { text:string, rich:string } {
-        let text = profile.user.weapon + buff(profile.user.toWC, profile.toWC, true)
-        let rich = xvt.attr(profile.weapon.shoppe ? xvt.white : profile.weapon.dwarf ? xvt.yellow : xvt.lcyan
-            , profile.user.weapon, buff(profile.user.toWC, profile.toWC))
-        return { text:text, rich:rich }
+    weapon(profile = online, text = false): string {
+        return text ? profile.user.weapon + buff(profile.user.toWC, profile.toWC, true)
+            : xvt.attr(profile.weapon.shoppe ? xvt.white : profile.weapon.dwarf ? xvt.yellow : xvt.lcyan
+                , profile.user.weapon, buff(profile.user.toWC, profile.toWC))
     }
 
     rings(profile = online) {
@@ -522,14 +520,12 @@ export class Character {
 
     wearing(profile: active) {
         if (isNaN(+profile.user.weapon)) {
-            xvt.outln('\n', this.who(profile).He, profile.weapon.text, ' '
-                , this.weapon(profile).rich)
+            xvt.outln('\n', this.who(profile).He, profile.weapon.text, ' ', this.weapon(profile))
             xvt.waste(from == 'Dungeon' ? 600 : !profile.weapon.shoppe ? 900 : 200)
         }
         if (isNaN(+profile.user.armor)) {
-            xvt.outln('\n', this.who(profile).He, profile.armor.text, ' '
-                , this.armor(profile).rich)
-                xvt.waste(from == 'Dungeon' ? 600 : !profile.armor.armoury ? 900 : 200)
+            xvt.outln('\n', this.who(profile).He, profile.armor.text, ' ', this.armor(profile))
+            xvt.waste(from == 'Dungeon' ? 600 : !profile.armor.armoury ? 900 : 200)
         }
         if (from !== 'Dungeon' && profile.user.sex == 'I') for (let i in profile.user.rings) {
             let ring = profile.user.rings[i]
@@ -541,7 +537,7 @@ export class Character {
     }
 
     who(pc: active, mob = false): who {
-        const gender = pc == online ? 'U' : pc.user.gender
+        const gender = pc === online ? 'U' : pc.user.gender
         const Handle = `${gender == 'I' && from !== 'Party' ? 'The ' : ''}${pc.user.handle}`
         const handle = `${gender == 'I' && from !== 'Party' ? 'the ' : ''}${pc.user.handle}`
         //  if there are multiple PCs engaged on a side (mob), replace pronouns for clarification

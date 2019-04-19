@@ -93,7 +93,7 @@ function choice() {
                 let ratio = '  ' + (crown ? 'GOAT' : rs[i].loss ? sprintf('%5.3f', rs[i].win / (rs[i].win + rs[i].loss)).substr(1) : ' ---')
                 xvt.out(sprintf('%-22s %5u-%-5u ', rs[i].name, rs[i].win, rs[i].loss), ratio)
                 if (crown) {
-                    xvt.out(' ', xvt.bright, xvt.yellow, $.player.emulation === 'XT' ? '👑' : '+')
+                    xvt.out(' ', xvt.bright, xvt.yellow, $.player.emulation == 'XT' ? '👑' : '+')
                     crown = false
                 }
                 xvt.outln()
@@ -117,7 +117,7 @@ function choice() {
                 'new': { cb:() => {
                     xvt.outln()
                     g.name = $.titlecase(xvt.entry)
-                    if (g.name === 'New' || $.cuss(g.name))
+                    if (g.name == 'New' || $.cuss(g.name))
                         xvt.hangup()
                     if (!g.name || /King|Mash|Mon|Queen/.test(g.name)) {
                         menu()
@@ -287,7 +287,7 @@ function choice() {
                     }
                 }
                 else {
-                    if (member.user.gang === g.name) {
+                    if (member.user.gang == g.name) {
                         g.members[0] = member.user.id
                         g.members[n] = $.player.id
                         $.saveGang(g)
@@ -416,7 +416,7 @@ function choice() {
                     xvt.outln()
                     let i = (+xvt.entry >>0) - 1
                     if (/M/i.test(xvt.entry)) {
-                        rs = [ rs.find((x) => { return x.name === 'Monster Mash' }) ]
+                        rs = [ rs.find((x) => { return x.name == 'Monster Mash' }) ]
                         i = 0
                     }
                     if (!rs[i]) {
@@ -427,7 +427,7 @@ function choice() {
 
                     g = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                     o = $.loadGang(rs[i])
-                    if (o.name === g.name) {
+                    if (o.name == g.name) {
                         xvt.app.refocus()
                         return
                     }

@@ -57,7 +57,7 @@ module NewUser
 
 function handle() {
 	xvt.entry = $.titlecase(xvt.entry)
-	if (xvt.entry === 'New' || $.cuss(xvt.entry))
+	if (xvt.entry == 'New' || $.cuss(xvt.entry))
 		xvt.hangup()
 
 	let words = xvt.entry.split(' ')
@@ -153,7 +153,7 @@ function edit() {
 	else
 		$.player.id = $.player.handle.slice(0, 3).toUpperCase()
 
-	if ($.player.id === 'NEW' || $.cuss($.player.id)) {
+	if ($.player.id == 'NEW' || $.cuss($.player.id)) {
 		$.action('freetext')
 		xvt.beep()
 		xvt.app.focus = 1
@@ -170,7 +170,7 @@ function edit() {
 	if (retry > 1) $.player.id = `${$.player.id}${retry}`
 	if (retry > 3) $.player.id = ''
 
-	if ($.player.id === '') {
+	if ($.player.id == '') {
 		$.action('freetext')
 		xvt.beep()
 		xvt.app.focus = 1

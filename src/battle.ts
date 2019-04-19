@@ -569,7 +569,7 @@ export function attack(retry = false) {
         //  was opponent defeated?
         if (typeof enemy !== 'undefined' && enemy.hp < 1) {
             enemy.hp = 0    // killed
-            if (enemy == $.online) {
+            if (enemy === $.online) {
                 if ($.from !== 'Party') {
                     $.player.killed++
                     $.run(`UPDATE Players set killed=${$.player.killed} WHERE id='${$.player.id}'`)
@@ -582,7 +582,7 @@ export function attack(retry = false) {
                 }
             }
             else {
-                if (rpc == $.online) {
+                if (rpc === $.online) {
                     $.player.kills++
                     if ($.from !== 'Party' ) {
                         xvt.outln('You ', enemy.user.xplevel < 1 ? 'eliminated' : 'killed'
@@ -1342,7 +1342,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             if ($.dice(3 * (rpc.user.toAC + rpc.toAC + 1) / rpc.user.magic) > rpc.armor.ac) {
                 xvt.outln(p1.His, isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' vaporizes!')
                 $.Armor.equip(rpc, $.Armor.merchant[0])
-                if (rpc == $.online) $.sound('crack', 6)
+                if (rpc === $.online) $.sound('crack', 6)
             }
             rpc.altered = true
             break
@@ -1368,7 +1368,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             if ($.dice(3 * (rpc.user.toWC + rpc.toWC + 1) / rpc.user.magic) > rpc.weapon.wc) {
                 xvt.outln(p1.His, rpc.user.weapon ? rpc.user.weapon : 'attack', ' vaporizes!')
                 $.Weapon.equip(rpc, $.Weapon.merchant[0])
-                if (rpc == $.online) $.sound('crack', 6)
+                if (rpc === $.online) $.sound('crack', 6)
             }
             rpc.altered = true
             break
@@ -1988,8 +1988,8 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     // saving throw
     if ($.dice(100) > n) {
         if (blow == 1) {
-            if (rpc == $.online) {
-                xvt.outln('Your ', rpc.user.weapon, ' passes through thin air.')
+            if (rpc === $.online) {
+                xvt.outln('Your ', $.PC.weapon(), ' passes through thin air.')
                 $.sound('miss')
                 return
             }
@@ -1997,7 +1997,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
                 $.sound(rpc.user.melee < 2 ? 'whoosh' : rpc.user.gender == 'I' ? 'swoosh' : 'swords')
                 if (round[0].party && alive[1] > 1) xvt.out(xvt.faint, xvt.app.Empty, xvt.normal, ' ')
                 if (isNaN(+rpc.user.weapon))
-                    xvt.outln(p1.His, rpc.user.weapon, ' whistles by ', p2.you, '.')
+                    xvt.outln(p1.His, $.PC.weapon(rpc), ' whistles by ', p2.you, '.')
                 else
                     xvt.outln(p1.He, 'attacks ', p2.you, ', but misses.')
                 return
@@ -2048,9 +2048,9 @@ export function melee(rpc: active, enemy: active, blow = 1) {
     if (hit > 0) {
         if ($.from == 'Party' && enemy.hp <= 0) {
             enemy.hp = 0
-            if (enemy == $.online) $.sound('kill', 5)
+            if (enemy === $.online) $.sound('kill', 5)
             if (round[0].party) xvt.out(xvt.faint, '> ')
-            xvt.out(xvt.bright, enemy == $.online ? xvt.yellow : round[0].party == 0 ? xvt.cyan : xvt.magenta)
+            xvt.out(xvt.bright, enemy === $.online ? xvt.yellow : round[0].party == 0 ? xvt.cyan : xvt.magenta)
             xvt.outln(p1.He, sprintf([
                 `${$.what(rpc, 'make')}a fatal blow to %s`,
                 `${$.what(rpc, 'blow')}%s away`,
@@ -2067,7 +2067,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             ? (period[0] == '.') ? rpc.weapon.hit : rpc.weapon.smash
             : (period[0] == '.') ? rpc.weapon.stab : rpc.weapon.plunge
 
-        if (rpc == $.online) {
+        if (rpc === $.online) {
             let deed = $.mydeeds.find((x) => { return x.deed == 'melee' })
             if (!deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'melee')[0]) - 1]
             if (hit > deed.value && !rpc.user.novice) {
@@ -2101,7 +2101,7 @@ export function melee(rpc: active, enemy: active, blow = 1) {
         }
     }
     else
-        xvt.out(isNaN(+rpc.user.weapon) ? `${p1.His}${$.PC.weapon(rpc).rich} ` : p1.You
+        xvt.out(isNaN(+rpc.user.weapon) ? `${p1.His}${$.PC.weapon(rpc)} ` : p1.You
             , `${rpc === $.online ? 'do' : 'does'} not even scratch `, p2.you)
 
     xvt.outln(period)
@@ -2197,12 +2197,12 @@ export function poison(rpc: active, cb?:Function) {
         }
         else {
             xvt.outln('\n', p1.He, $.what(rpc, 'pour'), 'some ', xvt.faint, $.Poison.merchant[vial - 1]
-                , xvt.reset, ' on ', rpc.who.his, $.PC.weapon(rpc).rich)
+                , xvt.reset, ' on ', rpc.who.his, $.PC.weapon(rpc))
             $.sound('hone', 6)
             if (/^[A-Z]/.test(rpc.user.id)) {
                 if ($.dice(3 * (rpc.toWC + rpc.user.toWC + 1)) / skill > rpc.weapon.wc) {
                     xvt.outln(xvt.bright, p1.His, rpc.user.weapon, ' vaporizes!')
-                    if (rpc == $.online && $.online.weapon.wc > 1) $.sound('crack', 6)
+                    if (rpc === $.online && $.online.weapon.wc > 1) $.sound('crack', 6)
                     $.Weapon.equip(rpc, $.Weapon.merchant[0])
                 }
             }
@@ -2337,7 +2337,7 @@ export function yourstats(full = true) {
     }
     if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry())
     xvt.outln()
-    xvt.outln(xvt.cyan, 'Weapon: ', $.PC.weapon().rich, xvt.cyan, '   Armor: ', $.PC.armor().rich)
+    xvt.outln(xvt.cyan, 'Weapon: ', $.PC.weapon(), xvt.cyan, '   Armor: ', $.PC.armor())
 
     if (full) {
         $.PC.profile()

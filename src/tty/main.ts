@@ -255,7 +255,7 @@ function choice() {
                             xvt.outln()
                             xvt.waste(600)
 
-                            if ($.player.email === opponent.user.email || !$.lock(opponent.user.id)) {
+                            if ($.player.email == opponent.user.email || !$.lock(opponent.user.id)) {
                                 $.player.coward = true
                                 skill = 0
                             }
@@ -338,7 +338,7 @@ function choice() {
             xvt.app.form = {
                 'yn': { cb: () => {
                     xvt.outln()
-                    if (xvt.entry.toUpperCase() === 'Y') {
+                    if (xvt.entry.toUpperCase() == 'Y') {
                         xvt.app.focus = 'new'
                         return
                     }
@@ -355,7 +355,7 @@ function choice() {
                     xvt.app.focus = 'check'
                 }, prompt:'Enter new password: ', echo:false, max:26 },
                 'check': { cb: () => {
-                    if (xvt.entry === newpassword) {
+                    if (xvt.entry == newpassword) {
                         $.player.password = newpassword
                         $.saveUser($.player)
                         xvt.out('...saved...')

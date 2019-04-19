@@ -76,12 +76,12 @@ function choice() {
 				break
 			}
 			Battle.user('Joust', (opponent: active) => {
-				if (opponent.user.id === '') {
+				if (opponent.user.id == '') {
 					menu()
 					return
 				}
 				xvt.outln()
-				if (opponent.user.id === $.player.id) {
+				if (opponent.user.id == $.player.id) {
 					opponent.user.id = ''
 					xvt.outln(`You can't joust a wimp like `, $.online.who.him)
 					menu()

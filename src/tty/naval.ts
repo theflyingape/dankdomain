@@ -235,7 +235,7 @@ function choice() {
 				xvt.waste(600)
 				$.player.toAC++
 				$.online.toAC += $.dice($.online.armor.ac / 5 + 1)
-				xvt.outln('The turtle turns and smiles and enhances your ', $.PC.armor().rich)
+				xvt.outln('The turtle turns and smiles and enhances your ', $.PC.armor())
 				$.sound('shield')
 				break
 			}
@@ -244,7 +244,7 @@ function choice() {
 				xvt.waste(600)
 				$.player.toWC++
 				$.online.toWC += $.dice($.online.weapon.wc / 10 + 1)
-				xvt.outln('The tortoise shows it gratitude by enchanting your ', $.PC.weapon().rich)
+				xvt.outln('The tortoise shows it gratitude by enchanting your ', $.PC.weapon())
 				$.sound('hone')
 				break
 			}
@@ -994,7 +994,7 @@ function fire(a: active, d: active): {  hits:number, damage:number, hull:number,
 	}
 
 	xvt.outln('\n')
-	if (a == $.online) {
+	if (a === $.online) {
 		xvt.out(xvt.green, 'You hit ', d.user.id ? 'them' : 'it', ` ${hits} times for`
 			, xvt.bright,` ${damage} `, xvt.normal
 			, `hull points of damage.`, xvt.reset)

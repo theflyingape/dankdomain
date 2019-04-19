@@ -286,7 +286,7 @@ export function menu(suppress = false) {
 			$.sound('splat', 6)
 			xvt.out(xvt.faint, 'A bat flies by and soils ' , xvt.normal, 'your ')
 			$.player.toAC -= $.dice(deep)
-			xvt.out($.PC.armor($.online).rich)
+			xvt.out($.PC.armor())
 			if ($.tty == 'web') xvt.out(' 💩')
 			xvt.waste(600)
 		}
@@ -296,7 +296,7 @@ export function menu(suppress = false) {
 			xvt.out(xvt.blue, 'A drop of ', xvt.bright, 'acid water burns ', xvt.normal, 'your ')
 			xvt.waste(600)
 			$.player.toWC -= $.dice(deep)
-			xvt.out($.PC.weapon($.online).rich)
+			xvt.out($.PC.weapon())
 		}
 		else if (rng > 2) {
 			if ($.tty == 'web') xvt.out(' 😬  ')
@@ -643,13 +643,13 @@ function doMove(): boolean {
 						if ($.dice($.online.cha / 10 + deep) <= (deep + 1))
 							$.player.toWC -= $.dice(Math.abs(Z - $.player.level))
 						$.online.toWC -= $.dice(Math.round($.online.weapon.wc / 10) + 1)
-						xvt.outln(`Your ${$.PC.weapon().rich} is damaged from the fall!`)
+						xvt.outln(`Your ${$.PC.weapon()} is damaged from the fall!`)
 					}
 					if ($.dice(100 + $.player.level - Z) > $.online.dex) {
 						if ($.dice($.online.cha / 10 + deep) <= (deep + 1))
 							$.player.toAC -= $.dice(Math.abs(Z - $.player.level))
 						$.online.toAC -= $.dice(Math.round($.online.armor.ac / 10) + 1)
-						xvt.outln(`Your ${$.PC.armor().rich} is damaged from the fall!`)
+						xvt.outln(`Your ${$.PC.armor()} is damaged from the fall!`)
 					}
 					Z++
 					generateLevel()
@@ -1176,7 +1176,7 @@ function doMove(): boolean {
 				if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
 					x = $.int(x / $.player.level)
 				if ($.online.weapon.wc && $.dice(x) == 1) {
-					xvt.out($.PC.weapon().rich)
+					xvt.out($.PC.weapon())
 					$.Weapon.equip($.online, $.Weapon.merchant[0])
 					xvt.waste(600)
 					$.sound('thief2')
@@ -1455,7 +1455,7 @@ function doMove(): boolean {
 
 			if ($.dice(2) == 1) {
 				let ac = $.Armor.name[$.player.armor].ac
-				xvt.out('\nI see you have a class ', $.bracket(ac, false), ' ', $.PC.armor().rich)
+				xvt.out('\nI see you have a class ', $.bracket(ac, false), ' ', $.PC.armor())
 				ac += $.player.toAC
 				if (ac) {
 					let cv = new $.coins($.Armor.name[$.player.armor].value)
@@ -1486,7 +1486,7 @@ function doMove(): boolean {
 			}
 			else {
 				let wc = $.Weapon.name[$.player.weapon].wc
-				xvt.out('\nI see you carrying a class ', $.bracket(wc, false), ' ', $.PC.weapon().rich)
+				xvt.out('\nI see you carrying a class ', $.bracket(wc, false), ' ', $.PC.weapon())
 				wc += $.player.toWC
 				if (wc) {
 					let cv = new $.coins($.Weapon.name[$.player.weapon].value)
@@ -1588,10 +1588,8 @@ function doMove(): boolean {
 
 		case 'potion':
 			let id = false
-			if (ROOM.giftID === undefined && !$.player.coward)
-				ROOM.giftID = !$.player.novice
-					&& $.dice(100 + +ROOM.giftValue) < ($.online.int / 20 * (1 << $.player.poison) + ($.online.int > 90 ? ($.online.int % 90) <<1
-					: 0))
+			if (!ROOM.giftID && !$.player.coward) ROOM.giftID = !$.player.novice
+				&& $.dice(100 + +ROOM.giftValue) < ($.online.int / 20 * (1 << $.player.poison) + ($.online.int > 90 ? ($.online.int % 90) <<1 : 0))
 			$.sound('bubbles')
 			xvt.out(xvt.cyan, 'On the ground, you find a ')
 			if ($.Ring.power([], $.player.rings, 'identify').power) potions[ROOM.giftValue].identified = true
@@ -2232,6 +2230,7 @@ function generateLevel() {
 		//	potion
 		if ($.dice(110 - $.online.cha + dank + +$.player.coward) > dank) {
 			DL.rooms[y][x].giftItem = 'potion'
+			DL.rooms[y][x].giftID = false
 			DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⚱' : dot
 			n = $.dice(130 - deep)
 			for (let j = 0; j < 16 && n > 0; j++) {

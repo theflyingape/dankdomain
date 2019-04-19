@@ -130,7 +130,7 @@ async function Message(player: user, mailOptions: nodemailer.SendMailOptions) {
     mailOptions.to = `${player.name} <${player.email}>`
     mailOptions.text = eval('`' + mailOptions.text.toString() + '`')
 
-    var result: boolean
+    let result: boolean
 
     smtp.verify(error => {
         if (error) {
@@ -162,7 +162,7 @@ async function Message(player: user, mailOptions: nodemailer.SendMailOptions) {
         }
     })
 
-    while (result === undefined) {
+    while (typeof result == 'undefined') {
         if (echo) xvt.out(xvt.app.Empty)
         await xvt.wait(500)
     }

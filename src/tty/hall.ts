@@ -52,7 +52,7 @@ function choice() {
                         xvt.out(sprintf('%-9s  ', pc))
                         let keys = ['plays', 'retreats', 'killed', 'kills', 'jw', 'jl', 'tw', 'tl', 'steals']
                         for (let best in keys) {
-                            let deed = deeds.find((x) => { return x.deed === keys[best] })
+                            let deed = deeds.find((x) => { return x.deed == keys[best] })
                             if (deed) {
                                 xvt.out(sprintf('%-22.22s  %-11s %6d ', deed.hero, $.date2full(deed.date).slice(4), deed.value))
                                 q =`SELECT value FROM Deeds WHERE deed='${deed.deed}' GROUP BY value ORDER BY value`
@@ -91,7 +91,7 @@ function choice() {
             if (deeds.length) {
                 let keys = ['plays', 'retreats', 'killed', 'kills', 'jw', 'jl', 'tw', 'tl', 'steals']
                 for (let goat in keys) {
-                    let deed = deeds.find((x) => { return x.deed === keys[goat] })
+                    let deed = deeds.find((x) => { return x.deed == keys[goat] })
                     if (deed) {
                         xvt.outln(sprintf('%-22.22s  %-11s %6d  '
                             , deed.hero, $.date2full(deed.date).slice(4), deed.value)
@@ -126,7 +126,7 @@ function choice() {
                         xvt.out(sprintf('%-9s  ', pc))
                         let keys = ['levels', 'melee', 'blast', 'big blast']
                         for (let hurt in keys) {
-                            let deed = deeds.find((x) => { return x.deed === keys[hurt] })
+                            let deed = deeds.find((x) => { return x.deed == keys[hurt] })
                             if (deed) {
                                 xvt.out(sprintf('%-22.22s  %-11s %6d ', deed.hero, $.date2full(deed.date).slice(4), deed.value))
                                 q =`SELECT value FROM Deeds WHERE deed='${deed.deed}' GROUP BY value ORDER BY value DESC LIMIT 3`
