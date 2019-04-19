@@ -883,7 +883,7 @@ function doMove(): boolean {
 							}
 							if (opponent.user.id) {
 								loot.value = opponent.user.coin.value + opponent.user.bank.value
-								$.log(opponent.user.id, `\n${$.player.handle} wished for your ${loot.carry()}`)
+								$.log(opponent.user.id, `\n${$.player.handle} wished for your ${loot.carry(2, true)}`)
 								$.news(`\tlooted ${opponent.user.handle}`)
 								$.player.coin.value += loot.value
 								opponent.user.coin.value = 0
@@ -2658,10 +2658,10 @@ function teleport() {
 	if (Z < 99) xvt.out($.bracket('D'), 'Teleport down 1 level')
 	xvt.out($.bracket('O'), `Teleport out of this ${deep ? 'dank' : ''} dungeon`)
 	xvt.out($.bracket('R'), 'Random teleport')
-	xvt.out(xvt.cyan, '\n\nTime Left: ', xvt.bright, xvt.white, min.toString(), xvt.normal, xvt.cyan, ' min.', xvt.reset)
-	if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry())
+	xvt.out(xvt.cyan, '\n\nTime Left: ', xvt.bright, xvt.white, min.toString(), xvt.faint, xvt.cyan, ' min.', xvt.reset)
+	if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry(4))
 	if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
-		xvt.out(xvt.faint, '\nThe feeling of in', xvt.uline, 'security', xvt.nouline, ' overwhelms you.', xvt.reset)
+		xvt.out(xvt.faint, '\nThe feeling of in', xvt.normal, xvt.uline, 'security', xvt.nouline, xvt.faint, ' overwhelms you.', xvt.reset)
 
 	xvt.app.form = {
 		'wizard': { cb:() => {

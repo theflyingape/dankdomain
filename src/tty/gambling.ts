@@ -289,7 +289,7 @@ function amount() {
 			if (point == 7 || point == 11) {
 				$.sound('cheer')
 				payoff.value = 2 * amount.value
-				xvt.out('A natural!  You win ', payoff.carry(), '!\n')
+				xvt.outln('A natural!  You win ', payoff.carry(), '!')
 				$.player.coin.value += payoff.value + amount.value
 				xvt.waste(500)
 				break
@@ -382,7 +382,7 @@ function amount() {
 							? Math.trunc((card[deck[pick]].value - card[deck[dealer]].value - 1) / 4) + 1
 							: 25
 						)
-						xvt.out('You win ', payoff.carry(), '!\n')
+						xvt.outln('You win ', payoff.carry(), '!')
 						$.player.coin.value += payoff.value + amount.value
 					}
 					else if (card[deck[pick]].value < card[deck[dealer]].value) {
@@ -631,7 +631,7 @@ function amount() {
 						}
 						if (payoff.value) {
 							$.sound('cheer')
-							xvt.out('\nYou win ', payoff.carry(), '!\n')
+							xvt.outln('\nYou win ', payoff.carry(), '!')
 							$.player.coin.value += payoff.value
 							xvt.waste(500)
 						}
@@ -775,7 +775,7 @@ function amount() {
 
 			if (payoff.value) {
 				$.sound('cheer')
-				xvt.out('You win ', payoff.carry(), '!\n')
+				xvt.outln('You win ', payoff.carry(), '!')
 				$.player.coin.value += payoff.value
 				xvt.waste(500)
 			}
@@ -863,7 +863,7 @@ function amount() {
 				: 5
 			$.sound('cheer')
 			payoff.value = side * baby
-			xvt.out('You make your side bet!  You win ', payoff.carry(), '!\n')
+			xvt.outln('You make your side bet!  You win ', payoff.carry(), '!')
 			$.player.coin.value += payoff.value
 		}
 		xvt.waste(1000)
@@ -877,7 +877,7 @@ function amount() {
 		if (d1 + d2 == point) {
 			$.sound('cheer')
 			payoff.value = amount.value
-			xvt.out('You make your point!  You win ', payoff.carry(), '!\n')
+			xvt.outln('You make your point!  You win ', payoff.carry(), '!')
 			$.player.coin.value += payoff.value + amount.value
 			xvt.waste(500)
 			menu()

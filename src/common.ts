@@ -289,22 +289,19 @@ export class Character {
         if (player.emulation == 'XT')
             xvt.out('\r\x1B[2C💪\r\x1B[12C')
         xvt.out(sprintf('%-20s', profile.str + ' (' + profile.user.str + ',' + profile.user.maxstr + ')'))
-        xvt.out(xvt.cyan, ' Hand: ', xvt.white)
-        xvt.out(profile.user.coin.carry(), xvt.bright, ' '.repeat(15 - profile.user.coin.amount.length))
+        xvt.out(xvt.cyan, ' Hand: ', profile.user.coin.carry(), ' '.repeat(15 - profile.user.coin.amount.length))
         xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
         xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out('      Int: ', xvt.white)
         xvt.out(sprintf('%-20s', profile.int + ' (' + profile.user.int + ',' + profile.user.maxint + ')'))
-        xvt.out(xvt.cyan, ' Bank: ', xvt.white)
-        xvt.out(profile.user.bank.carry(), xvt.bright, ' '.repeat(15 - profile.user.bank.amount.length))
+        xvt.out(xvt.cyan, ' Bank: ', profile.user.bank.carry(), ' '.repeat(15 - profile.user.bank.amount.length))
         xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
         xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out('      Dex: ', xvt.white)
         xvt.out(sprintf('%-20s', profile.dex + ' (' + profile.user.dex + ',' + profile.user.maxdex + ')'))
-        xvt.out(xvt.cyan, ' Loan: ', xvt.white)
-        xvt.out(profile.user.loan.carry(), xvt.bright, ' '.repeat(15 - profile.user.loan.amount.length))
+        xvt.out(xvt.cyan, ' Loan: ', profile.user.loan.carry(), ' '.repeat(15 - profile.user.loan.amount.length))
         xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
         xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
@@ -621,21 +618,21 @@ export class coins {
 
         if (this.pouch(n) == 'p') {
             n = int(n / 1e+13)
-            bags.push(text ? n + 'p' : xvt.attr(xvt.bright, n.toString(), xvt.magenta, 'p', xvt.normal, xvt.white))
+            bags.push(text ? n + 'p' : xvt.attr(xvt.white, xvt.bright, n.toString(), xvt.magenta, 'p', xvt.normal, xvt.white))
             n = this.value % 1e+13
         }
         if (this.pouch(n) == 'g') {
             n = int(n / 1e+09)
-            bags.push(text ? n + 'g' : xvt.attr(xvt.bright, n.toString(), xvt.yellow, 'g', xvt.normal, xvt.white))
+            bags.push(text ? n + 'g' : xvt.attr(xvt.white, xvt.bright, n.toString(), xvt.yellow, 'g', xvt.normal, xvt.white))
             n = this.value % 1e+09
         }
         if (this.pouch(n) == 's') {
             n = int(n / 1e+05)
-            bags.push(text ? n + 's' : xvt.attr(xvt.bright, n.toString(), xvt.cyan, 's', xvt.normal, xvt.white))
+            bags.push(text ? n + 's' : xvt.attr(xvt.white, xvt.bright, n.toString(), xvt.cyan, 's', xvt.normal, xvt.white))
             n = this.value % 1e+05
         }
         if ((n > 0 && this.pouch(n) == 'c') || bags.length == 0)
-            bags.push(text ? n + 'c' : xvt.attr(xvt.bright, n.toString(), xvt.red, 'c', xvt.normal, xvt.white))
+            bags.push(text ? n + 'c' : xvt.attr(xvt.white, xvt.bright, n.toString(), xvt.red, 'c', xvt.normal, xvt.white))
 
         return bags.slice(0, max).toString()
     }
@@ -1175,7 +1172,7 @@ export function experience(level: number, factor = 1, wisdom = 1000): number {
         : int(wisdom * Math.pow(2, level - 2) / factor)
 }
 
-export function keyhint(rpc = online) {
+export function keyhint(rpc = online, echo = true) {
     let i:number
     let open = []
     let slot: number
@@ -1195,7 +1192,7 @@ export function keyhint(rpc = online) {
             }
         } while(!rpc.user.keyhints[i])
 
-        if (rpc === online)
+        if (rpc === online && echo)
             xvt.outln('Key #', xvt.bright, `${slot + 1}`, xvt.normal, ' is not ', Deed.key[player.keyhints[i]])
     }
     else
@@ -1807,6 +1804,8 @@ export function riddle() {
         , xvt.faint, ' Ancient Riddle of the Keys '
         , xvt.normal, 'and you will become\nan immortal being.\n')
 
+    for (let i = 0; i <= max + bonus; i++) keyhint(online, false)
+
     let slot: number
     for (let i in player.keyhints) {
         if (+i < 12 && player.keyhints[i]) {
@@ -1814,8 +1813,6 @@ export function riddle() {
             xvt.outln('Key #', xvt.bright, `${slot + 1}`, xvt.normal, ' is not ', Deed.key[player.keyhints[i]])
         }
     }
-    for (let i = 0; i <= max + bonus; i++)
-        keyhint()
 
     action('riddle')
     let combo = player.keyseq

@@ -131,7 +131,7 @@ function choice() {
                 let adversary = <active>{ user:{ id:rs[i].who } }
                 $.loadUser(adversary)
                 let bounty = new $.coins(rs[i].bounty)
-                xvt.out(`${rs[i].handle} has a ${bounty.carry()} bounty from ${adversary.user.handle}\n`)
+                xvt.outln(`${rs[i].handle} has a ${bounty.carry()} bounty from ${adversary.user.handle}`)
             }
             xvt.app.form = {
                 'pause': { cb:menu, pause:true }
@@ -186,7 +186,7 @@ function choice() {
                         menu(true)
                     }, max:6 }
                 }
-                xvt.app.form['coin'].prompt = `Bounty [MAX=${max.carry(1)}]? `
+                xvt.app.form['coin'].prompt = `Bounty [MAX=${max.carry()}]? `
                 xvt.app.focus = 'coin'
                 return
             })

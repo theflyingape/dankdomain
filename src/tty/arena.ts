@@ -189,7 +189,7 @@ function choice() {
 									$.player.coin.value += reward.value
 									$.player.jw++
 									if ($.run(`UPDATE Players set jl=jl+1 WHERE id='${opponent.user.id}'`).changes)
-										$.log(opponent.user.id, `\n${$.player.handle} beat you in a joust and got ${reward.carry()}.`)
+										$.log(opponent.user.id, `\n${$.player.handle} beat you in a joust and got ${reward.carry(2, true)}.`)
 									xvt.waste(250)
 									$.animated('hinge')
 									if ($.player.jw > 14 && $.player.jw / ($.player.jw + $.player.jl) > 0.9) {
@@ -226,7 +226,7 @@ function choice() {
 									xvt.outln(opponent.user.handle, ' spits on your face.')
 									$.player.jl++
 									if ($.run(`UPDATE Players set jw=jw+1, coin=coin+${reward.value} WHERE id='${opponent.user.id}'`).changes)
-										$.log(opponent.user.id, `\n${$.player.handle} lost to you in a joust.  You got ${reward.carry()}.`)
+										$.log(opponent.user.id, `\n${$.player.handle} lost to you in a joust.  You got ${reward.carry(2, true)}.`)
 									$.news(`\tlost to ${opponent.user.handle} in a joust`)
 									$.wall(`lost to ${opponent.user.handle} in a joust`)
 									xvt.waste(250)

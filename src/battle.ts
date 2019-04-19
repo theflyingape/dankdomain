@@ -675,7 +675,7 @@ export function spoils() {
                 coin.value += loser.user.coin.value
                 $.log(loser.user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`)
                 if (loser.user.coin.value)
-                    $.log(loser.user.id, `You lost ${loser.user.coin.carry()} you were carrying.`)
+                    $.log(loser.user.id, `You lost ${loser.user.coin.carry(2, true)} you were carrying.`)
                 loser.user.coin.value = 0
                 $.saveUser(loser)
             }
@@ -705,7 +705,7 @@ export function spoils() {
             }
             else {
                 $.log(parties[w][m].user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`)
-                $.log(parties[w][m].user.id, `You got ${sprintf(xp < 1e+8 ? '%d' : '%.7e', xp)} experience and ${new $.coins(award).carry()}.`)
+                $.log(parties[w][m].user.id, `You got ${sprintf(xp < 1e+8 ? '%d' : '%.7e', xp)} experience and ${new $.coins(award).carry(2, true)}.`)
                 $.saveUser(parties[w][m])
             }
         }
@@ -720,7 +720,7 @@ export function spoils() {
             $.run(`UPDATE Players
                 set bank = ${$.taxman.user.bank.value}
                 WHERE id='${$.taxman.user.id}'`).changes
-            xvt.outln($.taxman.user.handle, ' took ', $.taxman.who.his, 'cut worth ', coin.carry(), '.')
+            xvt.outln($.taxman.user.handle, ' took ', $.taxman.who.his, 'cut worth ', coin.carry(1), '.')
             xvt.waste(600)
         }
 
@@ -856,7 +856,7 @@ export function spoils() {
                         }
                     }
                     if (loser.user.bounty.value) {
-                        xvt.out(`You get the ${loser.user.bounty.carry()} bounty posted by ${loser.user.who}, too.\n`)
+                        xvt.outln(`You get the ${loser.user.bounty.carry()} bounty posted by ${loser.user.who}, too.`)
                         $.log(loser.user.id, `... and got paid the bounty posted by ${loser.user.who}.`)
                         winner.user.coin.value += loser.user.bounty.value
                         loser.user.bounty.value = 0
@@ -2335,7 +2335,7 @@ export function yourstats(full = true) {
             , xvt.reset, '/', $.player.sp.toString()
         )
     }
-    if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry())
+    if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry(4))
     xvt.outln()
     xvt.outln(xvt.cyan, 'Weapon: ', $.PC.weapon(), xvt.cyan, '   Armor: ', $.PC.armor())
 

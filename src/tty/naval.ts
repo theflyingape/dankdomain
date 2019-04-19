@@ -692,15 +692,15 @@ function BattleUser(nme: active) {
 		booty.value = Math.trunc(booty.value * nme.user.cannon)
 		if (nme.user.coin.value > booty.value) {
 			$.sound('boo')
-			xvt.out(`${new $.coins(nme.user.coin.value - booty.value).carry()} of the booty has settled on the ocean floor...\n`)
+			xvt.outln(`${new $.coins(nme.user.coin.value - booty.value).carry()} of the booty has settled on the ocean floor...`)
 			xvt.waste(500)
 			nme.user.coin.value = booty.value
 		}
 		booty.value += nme.user.coin.value
 		if (booty.value) {
 			$.sound('booty', 5)
-			xvt.out('You get ', booty.carry(), '.\n')
-			$.log(nme.user.id, `... and got ${booty.carry()}.\n`)
+			xvt.outln('You get ', booty.carry(), '.')
+			$.log(nme.user.id, `... and got ${booty.carry(2, true)}.\n`)
 			$.player.coin.value += booty.value
 			xvt.waste(500)
 			nme.user.coin.value = 0
@@ -760,7 +760,7 @@ function BattleUser(nme: active) {
 				$.player.coin.value = booty.value
 			booty.value += $.player.coin.value
 			if (booty.value) {
-				$.log(nme.user.id, `... and you got ${booty.carry()}.\n`)
+				$.log(nme.user.id, `... and you got ${booty.carry(2, true)}.\n`)
 				nme.user.coin.value += booty.value
 				$.player.coin.value = 0
 			}

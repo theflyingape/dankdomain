@@ -393,7 +393,7 @@ function choice() {
             return
 
         case 'Y':
-            let cost = new $.coins($.int($.money($.player.level) / 5))
+            let cost = new $.coins(new $.coins($.int($.money($.player.level) / 5)).carry(1, true))
             xvt.app.form = {
                 'yn': { cb: () => {
                     if (/Y/i.test(xvt.entry)) {
