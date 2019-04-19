@@ -191,6 +191,7 @@ interface coins {
     value: number
     amount: string
     carry(number?, boolean?): string
+    pieces(string?): string
     pouch(number): string
 }
 
@@ -230,7 +231,7 @@ interface ring {
 interface room {
     map: boolean		//	explored?
     occupant: NPC
-    type: ROOM  		
+    type: ROOM
     giftItem?: GIFT
     giftValue?: number|string
     giftID?: boolean	//	undefined, or identified?

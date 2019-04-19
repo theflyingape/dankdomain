@@ -1202,12 +1202,7 @@ function doMove(): boolean {
 				else if ($.player.coin.value) {
 					let pouch = $.player.coin.amount.split(',')
 					x = $.dice(pouch.length) - 1
-					y = 'csgp'.indexOf(pouch[x].substr(-1))
-					xvt.out('pouch of ')
-					if ($.tty == 'web') xvt.out('💰  ')
-					xvt.out(xvt.bright, [xvt.red,xvt.cyan,xvt.yellow,xvt.magenta][y]
-						, ['copper','silver','gold','platinum'][y]
-						, xvt.reset, ' pieces')
+					xvt.out($.player.coin.pieces(pouch[x].substr(-1)))
 					$.player.coin.value -= new $.coins(pouch[x]).value
 				}
 				else

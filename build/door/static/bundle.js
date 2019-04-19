@@ -38,9 +38,9 @@ window.onresize = () => {
     let stylesheet = document.styleSheets[0];
     for (let i in stylesheet.cssRules) {
         let css = stylesheet.cssRules[i];
-        if (css.selectorText === '#terminal')
+        if (css.selectorText == '#terminal')
             t = css;
-        if (css.selectorText === '#Info')
+        if (css.selectorText == '#Info')
             I = css;
     }
     //  tweak side panel sizing within reason
@@ -76,7 +76,7 @@ document.getElementById('lurker-list').onchange = (ev) => {
     let stylesheet = document.styleSheets[0];
     for (let i in stylesheet.cssRules) {
         let css = stylesheet.cssRules[i];
-        if (css.selectorText === '#terminal')
+        if (css.selectorText == '#terminal')
             Object.assign(css.style, { 'top': '0%', 'left': '0%', 'height': '100%', 'width': '100%' });
     }
     document.getElementById('terminal').hidden = false;
@@ -98,7 +98,7 @@ document.getElementById('lurker-list').onchange = (ev) => {
     webLinks.webLinksInit(term);
     fit.fit(term);
     term.write('\n\x1B[1;34mConnecting your terminal to ' + watch[watch.selectedIndex].text + ' WebSocket ... ');
-    let protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://';
+    let protocol = (location.protocol == 'https:') ? 'wss://' : 'ws://';
     let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/lurker/';
     //	any keystroke sent will signal for this WebSocket to close
     term.on('data', function (data) { socket.send(data); });
@@ -127,7 +127,7 @@ document.getElementById('lurker-list').onchange = (ev) => {
 };
 newSession('Logoff');
 function newSession(ev) {
-    const protocol = (location.protocol === 'https:') ? 'wss://' : 'ws://';
+    const protocol = (location.protocol == 'https:') ? 'wss://' : 'ws://';
     let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/player/';
     const options = {
         bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false, drawBoldTextInBrightColors: true,
@@ -141,7 +141,7 @@ function newSession(ev) {
             brightBlue: 'RoyalBlue', brightMagenta: 'Violet', brightCyan: 'Cyan', brightWhite: 'Snow'
         }
     };
-    carrier = (ev === 'Logon');
+    carrier = (ev == 'Logon');
     recheck = 0;
     if (lurking)
         clearInterval(lurking);
@@ -161,7 +161,7 @@ function newSession(ev) {
             XT('@tune(.)');
             pid = 0;
             term.dispose();
-            if (data === '\r' || data === ' ') {
+            if (data == '\r' || data == ' ') {
                 tty = true;
                 newSession('Logon');
             }
@@ -199,7 +199,7 @@ function newSession(ev) {
     fit.fit(term);
     window.dispatchEvent(new Event('resize')); // gratuituous
     term.writeln('\x07\x1B[16C🔥  🌨   \x1B[1;36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain \x1B[m🌙  💫');
-    if (ev === 'Logon') {
+    if (ev == 'Logon') {
         term.write(`\n\x1B[0;2mConnecting terminal WebSocket ... `);
         XT('@tune(dankdomain)');
         pid = 0;
@@ -306,7 +306,7 @@ function XT(data) {
     }
     function play(fileName) {
         let audio = document.getElementById('play');
-        if (!fileName.length || fileName === '.') {
+        if (!fileName.length || fileName == '.') {
             audio.pause();
             audio.currentTime = 0;
             return;
@@ -320,7 +320,7 @@ function XT(data) {
         audio.play();
     }
     function profile(panel) {
-        if (typeof panel === 'string')
+        if (typeof panel == 'string')
             panel = JSON.parse(panel);
         if (window.frames['Info'])
             window.frames['Info'].postMessage(panel, location.href);
@@ -330,7 +330,7 @@ function XT(data) {
     }
     function tune(fileName) {
         let audio = document.getElementById('tune');
-        if (!fileName.length || fileName === '.') {
+        if (!fileName.length || fileName == '.') {
             audio.pause();
             audio.currentTime = 0;
             return;

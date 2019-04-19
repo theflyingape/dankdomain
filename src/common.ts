@@ -620,32 +620,36 @@ export class coins {
         let bags:string[] = []
 
         if (this.pouch(n) == 'p') {
-            n = Math.trunc(n / 1e+13)
-            bags.push(text ? n + 'p'
-                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.magenta, 'p', xvt.white, xvt.normal)
-            )
+            n = int(n / 1e+13)
+            bags.push(text ? n + 'p' : xvt.attr(xvt.bright, n.toString(), xvt.magenta, 'p', xvt.normal, xvt.white))
             n = this.value % 1e+13
         }
         if (this.pouch(n) == 'g') {
-            n = Math.trunc(n / 1e+09)
-            bags.push(text ? n + 'g'
-                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.yellow, 'g', xvt.white, xvt.normal)
-            )
+            n = int(n / 1e+09)
+            bags.push(text ? n + 'g' : xvt.attr(xvt.bright, n.toString(), xvt.yellow, 'g', xvt.normal, xvt.white))
             n = this.value % 1e+09
         }
         if (this.pouch(n) == 's') {
-            n = Math.trunc(n / 1e+05)
-            bags.push(text ? n + 's'
-                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.cyan, 's', xvt.white, xvt.normal)
-            )
+            n = int(n / 1e+05)
+            bags.push(text ? n + 's' : xvt.attr(xvt.bright, n.toString(), xvt.cyan, 's', xvt.normal, xvt.white))
             n = this.value % 1e+05
         }
         if ((n > 0 && this.pouch(n) == 'c') || bags.length == 0)
-            bags.push(text ? n + 'c'
-                : xvt.attr(xvt.bright, xvt.white, n.toString(), xvt.red, 'c', xvt.white, xvt.normal)
-            )
+            bags.push(text ? n + 'c' : xvt.attr(xvt.bright, n.toString(), xvt.red, 'c', xvt.normal, xvt.white))
 
         return bags.slice(0, max).toString()
+    }
+
+    pieces(p = this.pouch(this.value)): string {
+        return 'pouch of '
+            + (tty == 'web' ? '💰  ' : '')
+            + {
+                'p': xvt.attr(xvt.magenta, xvt.bright, 'platinum', xvt.normal),
+                'g': xvt.attr(xvt.yellow, xvt.bright, 'gold', xvt.normal),
+                's': xvt.attr(xvt.cyan, xvt.bright, 'silver', xvt.normal),
+                'c': xvt.attr(xvt.red, xvt.bright, 'copper', xvt.normal)
+            }[p]
+            + xvt.attr(' pieces', xvt.reset)
     }
 
     pouch(coins:number): string {
@@ -1171,11 +1175,10 @@ export function experience(level: number, factor = 1, wisdom = 1000): number {
         : int(wisdom * Math.pow(2, level - 2) / factor)
 }
 
-export function keyhint(rpc: active) {
-
+export function keyhint(rpc = online) {
+    let i:number
     let open = []
     let slot: number
-    let i:number
 
     for (let i in rpc.user.keyhints)
         if (+i < 12 && !rpc.user.keyhints[i]) open.push(i)
@@ -1193,10 +1196,7 @@ export function keyhint(rpc: active) {
         } while(!rpc.user.keyhints[i])
 
         if (rpc === online)
-            xvt.outln(xvt.reset
-                , 'Key #', xvt.bright, `${slot + 1}`, xvt.normal, ' is not '
-                , Deed.key[player.keyhints[i]] || xvt.attr(xvt.faint, `${player.keyhints[i]} from here`
-            ))
+            xvt.outln('Key #', xvt.bright, `${slot + 1}`, xvt.normal, ' is not ', Deed.key[player.keyhints[i]])
     }
     else
         xvt.outln(xvt.reset, 'There are no more key hints available to you.')
@@ -1810,33 +1810,12 @@ export function riddle() {
     let slot: number
     for (let i in player.keyhints) {
         if (+i < 12 && player.keyhints[i]) {
-            slot = Math.trunc(+i / 3) + 1
-            xvt.out(xvt.reset, `Key #${slot} is not `)
-            if (player.emulation == 'XT') xvt.out(' 🗝️  ')
-            xvt.out(xvt.bright, xvt.reverse)
-            switch (player.keyhints[i]) {
-            case 'P':
-                xvt.out(xvt.magenta, ' Platinum')
-                break
-            case 'G':
-                xvt.out(xvt.yellow, ' Gold')
-                break
-            case 'S':
-                xvt.out(xvt.cyan, ' Silver')
-                break
-            case 'C':
-                xvt.out(xvt.red, ' Copper')
-                break
-            default:
-                xvt.out(xvt.black, 'from around here')
-                break
-            }
-            xvt.outln(' ')
+            slot = int(+i / 3)
+            xvt.outln('Key #', xvt.bright, `${slot + 1}`, xvt.normal, ' is not ', Deed.key[player.keyhints[i]])
         }
     }
-
     for (let i = 0; i <= max + bonus; i++)
-        keyhint(online)
+        keyhint()
 
     action('riddle')
     let combo = player.keyseq

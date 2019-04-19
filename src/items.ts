@@ -128,14 +128,14 @@ export class Deed {
         return xvt.app.emulation == 'XT'
             ? {
                 P: xvt.attr(oldkey, xvt.bright, xvt.Magenta, ' Platinum ', xvt.reset),
-                G: xvt.attr(oldkey, xvt.normal, xvt.Yellow, ' = Gold = ', xvt.reset),
+                G: xvt.attr(oldkey, xvt.black, xvt.Yellow, ' = Gold = ', xvt.reset),
                 S: xvt.attr(oldkey, xvt.bright, xvt.Cyan, '- Silver -', xvt.reset),
-                C: xvt.attr(oldkey, xvt.faint, xvt.Red, xvt.app.Empty, xvt.reset)
+                C: xvt.attr(oldkey, xvt.black, xvt.Red, xvt.app.Empty, ' Copper ', xvt.app.Empty, xvt.reset)
             } : {
-                P: xvt.attr(xvt.bright, xvt.reverse, xvt.magenta, ' Platinum ', xvt.reset),
-                G: xvt.attr(xvt.bright, xvt.reverse, xvt.yellow, ' = Gold = ', xvt.reset),
-                S: xvt.attr(xvt.bright, xvt.reverse, xvt.cyan, '- Silver -', xvt.reset),
-                C: xvt.attr(xvt.bright, xvt.reverse, xvt.red, xvt.app.Empty, xvt.reset)
+                P: xvt.attr(xvt.off, xvt.magenta, xvt.bright, xvt.reverse, ' Platinum ', xvt.reset),
+                G: xvt.attr(xvt.off, xvt.yellow, xvt.bright, xvt.reverse, ' = Gold = ', xvt.reset),
+                S: xvt.attr(xvt.off, xvt.cyan, xvt.bright, xvt.reverse, '- Silver -', xvt.reset),
+                C: xvt.attr(xvt.off, xvt.red, xvt.bright, xvt.reverse, xvt.app.Empty, ' Copper ', xvt.app.Empty, xvt.reset)
             }
     }
 

@@ -75,38 +75,30 @@ export function menu(suppress = true) {
 					$.log(bump.user.id, `\nYou picked ${$.player.handle}'s pouch holding ${v.carry()}!`)
 					$.player.coin.value -= v.value
 					xvt.outln(xvt.faint, '{sigh}')
-					xvt.out('Your pouch of ')
 					$.sound('oops', 8)
-					if ($.tty == 'web') xvt.out('💰  ')
-					xvt.outln(xvt.bright, [xvt.red,xvt.cyan,xvt.yellow,xvt.magenta][i], ['copper','silver','gold','platinum'][i]
-						, xvt.reset, ' pieces goes missing!')
+					xvt.outln('Your ', v.pieces(), ' is gone!')
 				}
 				else if ($.player.poisons.length) {
 					xvt.out(xvt.faint, '\nYou hear vials rattle.')
 					xvt.waste(800)
 					p = $.player.poisons[$.dice($.player.poisons.length) - 1]
-					if (!$.Poison.have(bump.user.poisons, p)) {
-						$.Poison.remove($.player.poisons, p)
-						$.Poison.add(bump.user.poisons, p)
-						$.log(bump.user.id, `\nYou lifted a vial of ${$.Poison.merchant[p - 1]} from ${$.player.handle}!`)
-						xvt.out(xvt.reset, '  Your vial of ')
-						$.sound('oops', 8)
-						if ($.tty == 'web') xvt.out('💀  ')
-						xvt.outln(xvt.faint, $.Poison.merchant[p - 1], xvt.reset, ' goes missing!')
-					}
+					$.Poison.remove($.player.poisons, p)
+					$.Poison.add(bump.user.poisons, p)
+					$.log(bump.user.id, `\nYou lifted a vial of ${$.Poison.merchant[p - 1]} from ${$.player.handle}!`)
+					$.sound('oops', 8)
+					xvt.out(xvt.reset, '  Your vial of ')
+					if ($.tty == 'web') xvt.out('💀  ')
+					xvt.outln(xvt.faint, $.Poison.merchant[p - 1], xvt.reset, ' goes missing!')
 				}
-				else if ($.player.magic < 2 && $.player.spells.length) {
-					xvt.out(xvt.faint, '\nYou hear wands rattle.')
+				else if ($.player.magic < 3 && $.player.spells.length) {
+					xvt.out(xvt.faint, '\nYou hear something rattle.')
 					xvt.waste(800)
 					p = $.player.spells[$.dice($.player.spells.length) - 1]
-					if (!$.Magic.have(bump.user.spells, p)) {
-						$.Magic.remove($.player.spells, p)
-						$.Magic.add(bump.user.spells, p)
-						$.log(bump.user.id, `\nYou lifted a wand of ${$.Magic.merchant[p - 1]} from ${$.player.handle}!`)
-						xvt.out(xvt.reset, '  Your wand of ')
-						$.sound('oops', 8)
-						xvt.outln($.Magic.merchant[p - 1], ' goes missing!')
-					}
+					$.Magic.remove($.player.spells, p)
+					$.Magic.add(bump.user.spells, p)
+					$.log(bump.user.id, `\nYou lifted a  ${$.Magic.merchant[p - 1]} from ${$.player.handle}!`)
+					$.sound('oops', 8)
+					xvt.outln(xvt.reset, '  Your ', $.Magic.merchant[p - 1], ' magic has disappeared!')
 				}
 				$.saveUser(bump)
 				xvt.waste(800)

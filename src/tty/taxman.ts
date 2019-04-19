@@ -24,19 +24,17 @@ function checkpoint(scratch: number): boolean {
         })
 
         $.sound('oops', 8)
-        let p = 'csgp'.indexOf(new $.coins(scratch).amount.split(',')[0].substr(-1))
-        let pouch = xvt.attr(xvt.bright, [xvt.red,xvt.cyan,xvt.yellow,xvt.magenta][p]
-            , ['copper','silver','gold','platinum'][p], xvt.normal, xvt.yellow)
+        let pouch = new $.coins(scratch).pieces()
 
         xvt.out('\n\n', xvt.yellow, xvt.bright, $.taxman.user.handle, xvt.normal)
-        xvt.out(`, our Master of Coin, looks at your bulging ${pouch} pouch\n`)
-        xvt.out('and says, ', xvt.bright, xvt.blue, '"Ah, it is time to pay your taxes!"', xvt.normal)
+        xvt.outln(', our Master of Coin, looks at your bulging ', pouch)
+        xvt.out(xvt.yellow, 'and says, ', xvt.blue, xvt.bright, '"Ah, it is time to pay your taxes!"', xvt.normal)
         xvt.out(xvt.yellow, '  You check out the burly\n')
         xvt.outln(`guards who stand ready to enforce ${$.king.handle}'s will.\n`)
         xvt.waste(2500)
         tax.value = scratch - tax.value
         tax = new $.coins(tax.carry(1, true))
-        xvt.outln(`The tax will cost you ${tax.carry()}.`)
+        xvt.outln(`The tax will cost you ${tax.carry()}`)
         xvt.waste(1500)
         return true
     }
@@ -67,8 +65,8 @@ export function bar() {
 export function cityguards() {
 
     tax.value = 1000 * $.money($.player.level)
-            + $.worth(new $.coins($.RealEstate.name[$.player.realestate].value).value, 35)
-            + $.worth(new $.coins($.Security.name[$.player.security].value).value, 15)
+        + $.worth(new $.coins($.RealEstate.name[$.player.realestate].value).value, 35)
+        + $.worth(new $.coins($.Security.name[$.player.security].value).value, 15)
 
     if ($.access.roleplay && checkpoint($.player.coin.value + $.player.bank.value)) {
         let exempt = $.Ring.power([], $.player.rings, 'taxes')
@@ -80,7 +78,7 @@ export function cityguards() {
             xvt.out(xvt.yellow, xvt.bright, $.taxman.user.handle, xvt.normal, ' ')
             if ($.dice(100) < ($.online.cha - 10)) {
                 xvt.outln('nods approval while the guards stand down to let you pass.')
-                xvt.waste(1500)
+                xvt.waste(1200)
                 require('./main').menu()
                 return
             }
