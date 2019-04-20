@@ -48,6 +48,7 @@ export function menu(suppress = true) {
 }
 
 function choice() {
+    let js:argument[] = []
     let suppress = false
     let choice = xvt.entry.toUpperCase()
     if (xvt.validator.isNotEmpty(tavern[choice]))
@@ -55,9 +56,45 @@ function choice() {
             xvt.out(' - ', tavern[choice].description)
             suppress = $.player.expert
         }
-    xvt.out('\n')
+    xvt.outln()
 
     switch (choice) {
+        case 'J':
+            if (!$.argue) {
+                xvt.outln(`\nYou've made your argument already -- go have a beer.`)
+                suppress = true
+                break
+            }
+            xvt.app.form = {
+                'argue': { cb: () => {
+                    xvt.outln()
+                    if (xvt.entry && !$.cuss(xvt.entry)) {
+                        try { js = JSON.parse(fs.readFileSync('./users/arguments.json').toString()) } catch {}
+                        js = js.splice(+(js.length > 9), 9).concat(<argument>{who: $.player.id, text: xvt.entry})
+                        fs.writeFileSync('./users/arguments.json', JSON.stringify(js))
+                        $.argue--
+                        menu()
+                    }
+                }, prompt:'Enter your argument', lines: 6 }
+            }
+            xvt.app.focus = 'argue'
+            return
+
+        case 'E':
+            try {
+                js = JSON.parse(fs.readFileSync('./users/arguments.json').toString())
+                for (let argument in js) {
+                    xvt.outln()
+                    xvt.outln('    -=', $.bracket(js[argument].who, false), '=-')
+                    xvt.outln(+argument % 2 ? xvt.lyellow : xvt.lcyan, js[argument].text)
+                }
+            }
+            catch(err) {
+                xvt.outln(`not available (${err})`)
+            }
+            suppress = true
+            break
+
         case 'T':
             $.cat('tavern/today')
             suppress = true
@@ -80,7 +117,7 @@ function choice() {
                     let tip = (/=|max/i.test(xvt.entry)) ? $.player.coin.value : new $.coins(xvt.entry).value
                     if (tip < 1 || tip > $.player.coin.value) {
                         $.sound('oops')
-                        xvt.outln($.PC.who($.barkeep).He, 'pours the beer on you and kicks you out of his bar.')
+                        xvt.outln($.PC.who($.barkeep).He, 'pours the beer on you and kicks you out of ', $.barkeep.who.his , 'bar.')
                         xvt.waste(1000)
                         $.brawl = 0
                         require('./main').menu(true)

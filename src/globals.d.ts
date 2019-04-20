@@ -7,6 +7,11 @@ type NPC = '' | 'cleric' | 'wizard' | 'trapdoor' | 'thief' | 'portal' | 'well' |
 type ROOM = '' | 'n-s' | 'w-e' | 'cavern'
 type TTY = 'rlogin' | 'telnet' | 'web'
 
+interface argument {
+    who?: string
+    text?: string
+}
+
 interface caller {
     who?: string
     reason?: string

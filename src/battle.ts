@@ -578,7 +578,7 @@ export function attack(retry = false) {
                     $.death($.reason || (rpc.user.id.length
                         ? `defeated by ${rpc.user.handle}`
                         : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`))
-                    $.sound('killed', 12)
+                    $.sound('killed', 11)
                 }
             }
             else {

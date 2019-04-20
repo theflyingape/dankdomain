@@ -142,13 +142,11 @@ function choice() {
             xvt.app.form = {
             'taxman': { cb:() => {
                 $.loadUser($.taxman)
-                $.activate($.taxman)
                 $.PC.stats($.taxman)
                 xvt.app.focus = 'pause'
             }, pause:true },
             'pause': { cb:menu, pause:true } }
             $.loadUser($.barkeep)
-            $.activate($.barkeep)
             $.PC.stats($.barkeep)
             xvt.app.focus = 'taxman'
             return

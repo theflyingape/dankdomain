@@ -173,7 +173,6 @@ function choice() {
 						$.reroll($.neptune.user, $.neptune.user.pc, $.player.level - 1)
 						$.neptune.user.spells = keep
 					}
-					$.activate($.neptune)
 					xvt.outln(xvt.bright, xvt.cyan, 'He looks at you angrily as he removes a hook from his shorts!')
                     $.profile({ jpg:'npc/neptune', effect:'fadeInUp'
                         , handle:$.neptune.user.handle, level:$.neptune.user.level, pc:$.neptune.user.pc })

@@ -42,6 +42,7 @@ module Common
     //  player runtime features
     export let access: access
     export let arena: number = 0
+    export let argue: number = 0
     export let bail: number = 0
     export let brawl: number = 0
     export let dungeon: number = 0
@@ -252,16 +253,14 @@ export class Character {
 
         xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out('    Title: ', xvt.white)
-        if (player.emulation == 'XT')
-            xvt.out('\r\x1B[2C', Access.name[profile.user.access].emoji, '\r\x1B[12C')
+        if (player.emulation == 'XT') xvt.out('\r\x1B[2C', Access.name[profile.user.access].emoji, '\r\x1B[12C')
         xvt.out(sprintf('%-20s', profile.user.access))
         xvt.out(xvt.cyan, ' Born: ', xvt.white, date2full(profile.user.dob))
         xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
         xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out('    Class: ', xvt.white)
-        if (player.emulation == 'XT' && profile.user.wins > 0)
-            xvt.out('\r\x1B[2C🎖️\r\x1B[12C')
+        if (player.emulation == 'XT' && profile.user.wins > 0) xvt.out('\r\x1B[2C🎖️\r\x1B[12C')
         xvt.out(sprintf('%-21s', profile.user.pc + ' (' + profile.user.gender + ')'))
         xvt.out(xvt.cyan, ' Exp: ', xvt.white)
         if (profile.user.xp < 1e+8)
@@ -272,11 +271,8 @@ export class Character {
 
         xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out(' Immortal: ', xvt.white)
-        xvt.out(sprintf('%-20s'
-            , (profile.user.wins ? `${xvt.romanize(profile.user.wins)}.` : '')
-                + profile.user.immortal
-                + '.' + profile.user.level + ` (${profile.user.calls})`
-        ))
+        xvt.out(sprintf('%-20s', (profile.user.wins ? `${xvt.romanize(profile.user.wins)}.` : '')
+            + profile.user.immortal + '.' + profile.user.level + ` (${profile.user.calls})`))
         xvt.out(xvt.cyan, ' Need: ', xvt.white)
         if (experience(profile.user.level, undefined, profile.user.int) < 1e+8)
             xvt.out(sprintf('%-15f', experience(profile.user.level, undefined, profile.user.int)))
@@ -286,8 +282,7 @@ export class Character {
 
         xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out('      Str: ', xvt.white)
-        if (player.emulation == 'XT')
-            xvt.out('\r\x1B[2C💪\r\x1B[12C')
+        if (player.emulation == 'XT') xvt.out('\r\x1B[2C💪\r\x1B[12C')
         xvt.out(sprintf('%-20s', profile.str + ' (' + profile.user.str + ',' + profile.user.maxstr + ')'))
         xvt.out(xvt.cyan, ' Hand: ', profile.user.coin.carry(), ' '.repeat(15 - profile.user.coin.amount.length))
         xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
@@ -391,8 +386,7 @@ export class Character {
         if (profile.user.rings.length) {
             xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.magenta, xvt.bright)
             xvt.out('    Rings: ', xvt.white)
-            if (player.emulation == 'XT')
-                xvt.out('\r\x1B[2C💍\r\x1B[12C')
+            if (player.emulation == 'XT') xvt.out('\r\x1B[2C💍\r\x1B[12C')
             let text = ''
             n = 0
             for (let p = 0; p < profile.user.rings.length; p++) {
@@ -442,8 +436,7 @@ export class Character {
 
         xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out('    Armor: ')
-        if (player.emulation == 'XT')
-            xvt.out('\r\x1B[2C🛡\r\x1B[12C')
+        if (player.emulation == 'XT') xvt.out('\r\x1B[2C🛡\r\x1B[12C')
         xvt.out(this.armor(profile), ' '.repeat(42 - this.armor(profile, true).length))
         xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
@@ -455,8 +448,7 @@ export class Character {
         if (xvt.validator.isNotEmpty(profile.user.gang)) {
             xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
             xvt.out('    Party: ', xvt.white)
-            if (player.emulation == 'XT')
-                xvt.out('\r\x1B[2C🏴\r\x1B[12C')
+            if (player.emulation == 'XT') xvt.out('\r\x1B[2C🏴\r\x1B[12C')
             xvt.out(sprintf('%-42s', profile.user.gang))
             xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
         }
@@ -486,8 +478,7 @@ export class Character {
 
         xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
         xvt.out('    Kills: ', xvt.white)
-        if (player.emulation == 'XT')
-            xvt.out('\r\x1B[2C💀\r\x1B[12C')
+        if (player.emulation == 'XT') xvt.out('\r\x1B[2C💀\r\x1B[12C')
         xvt.out(sprintf('%-42s', profile.user.kills + ' with ' + profile.user.retreats + ' retreats and killed ' + profile.user.killed +'x'))
         xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
@@ -1802,14 +1793,19 @@ export function riddle() {
     xvt.outln(xvt.green, xvt.bright, `\nOl' Mighty One!  `
         , xvt.normal, 'Solve the'
         , xvt.faint, ' Ancient Riddle of the Keys '
-        , xvt.normal, 'and you will become\nan immortal being.\n')
+        , xvt.normal, 'and you will become\nan immortal being.')
 
     for (let i = 0; i <= max + bonus; i++) keyhint(online, false)
 
+    let prior: number = -1
     let slot: number
     for (let i in player.keyhints) {
         if (+i < 12 && player.keyhints[i]) {
             slot = int(+i / 3)
+            if (slot !== prior) {
+                prior = slot
+                xvt.outln()
+            }
             xvt.outln('Key #', xvt.bright, `${slot + 1}`, xvt.normal, ' is not ', Deed.key[player.keyhints[i]])
         }
     }
@@ -1853,7 +1849,7 @@ export function riddle() {
                 xvt.outln(xvt.bright, xvt.black, '^', xvt.white, 'Boom!', xvt.black, '^')
 
                 if (slot == 0) {
-                    for (let i = 3 * slot; i < 3 * (slot + 1); i++) {
+                    for (let i = 0; i < 3; i++) {
                         if (player.keyhints[i] == attempt)
                             break
                         if (!player.keyhints[i]) {

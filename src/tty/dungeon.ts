@@ -145,6 +145,7 @@ export function menu(suppress = false) {
 
 	if ($.online.altered) $.saveUser($.player)
 	if ($.reason) {
+		DL.map = `Marauder's map`
 		scroll()
 		xvt.hangup()
 	}
@@ -344,6 +345,7 @@ export function menu(suppress = false) {
 	//  insert any wall messages here
 	if ($.tty == 'web') xvt.out('\x06')
 	if ($.reason) {
+		DL.map = `Marauder's map`
 		drawHero()
 		scroll()
 		xvt.hangup()
@@ -498,9 +500,9 @@ function oof(wall:string) {
 		$.online.hp = 0
 		$.music('.')
 		xvt.outln(xvt.faint, '\nYou take too many hits and die!')
-		xvt.waste(600)
 		$.death(Battle.retreat ? 'running into a wall' : 'banged head against a wall')
 		if (deep) $.reason += `-${xvt.romanize(deep + 1)}`
+		xvt.waste(700)
 	}
 }
 
@@ -1020,6 +1022,7 @@ function doMove(): boolean {
 							$.online.hp = 0
 							$.online.sp = 0
 							$.death('Wheel of Death')
+							$.sound('killed', 11)
 							break
 						case 1:
 							if ($.player.cursed) {
@@ -1676,6 +1679,7 @@ function doMove(): boolean {
 function doSpoils() {
 	if ($.reason) {
 		if (deep) $.reason += `-${xvt.romanize(deep + 1)}`
+		DL.map = `Marauder's map`
 		scroll()
 		xvt.hangup()
 	}
@@ -1924,14 +1928,13 @@ function drawHero(peek = false) {
 
 	if (!$.online.hp) {
 		xvt.plot(Y * 2 + 2, X * 6 + 4)
-		xvt.waste(800)
+		xvt.waste(1100)
 		xvt.plot(Y * 2 + 2, X * 6 + 2)
 		if ($.player.emulation == 'XT')
 			xvt.out(xvt.lBlack, xvt.black, `  ${$.PC.card($.player.pc).unicode}  `)
 		else
 			xvt.out(xvt.faint, xvt.reverse, '  X  ')
 		xvt.plot(Y * 2 + 2, X * 6 + 4)
-		$.sound('killed', 8)
 	}
 	xvt.restore()
 }
@@ -2000,7 +2003,7 @@ function drawLevel() {
 	}
 
 	xvt.plot(paper.length + 1, 1)
-	scroll(paper.length + 1, false)
+	if ($.online.hp > 0) scroll(paper.length + 1, false)
 	refresh = false
 }
 
@@ -2659,7 +2662,7 @@ function teleport() {
 	xvt.out($.bracket('O'), `Teleport out of this ${deep ? 'dank' : ''} dungeon`)
 	xvt.out($.bracket('R'), 'Random teleport')
 	xvt.out(xvt.cyan, '\n\nTime Left: ', xvt.bright, xvt.white, min.toString(), xvt.faint, xvt.cyan, ' min.', xvt.reset)
-	if ($.player.coin.value) xvt.out(xvt.cyan, '    Money: ', $.player.coin.carry(4))
+	if ($.player.coin.value) xvt.out(xvt.cyan, '    Coin: ', $.player.coin.carry(4))
 	if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
 		xvt.out(xvt.faint, '\nThe feeling of in', xvt.normal, xvt.uline, 'security', xvt.nouline, xvt.faint, ' overwhelms you.', xvt.reset)
 
@@ -2796,6 +2799,7 @@ function quaff(v: number, it = true) {
 				$.online.hp = 0
 				$.online.sp = 0
 				$.death(`quaffed${$.an(potion[v])}`)
+				$.sound('killed', 11)
 			}
 			break
 
@@ -2874,11 +2878,11 @@ function quaff(v: number, it = true) {
 
 	//	Beaker of Death
 		case 15:
-			$.profile({ png:'potion/beaker', handle: `💀 ${potion[v]} 💀`, effect:'fadeInDown' })
-			$.sound('killed', 12)
 			$.online.hp = 0
 			$.online.sp = 0
 			$.reason = `quaffed${$.an(potion[v])}`
+			$.profile({ png:'potion/beaker', handle: `💀 ${potion[v]} 💀`, effect:'fadeInDown' })
+			$.sound('killed', 11)
 			break
 		}
 	}
