@@ -453,7 +453,7 @@ function welcome() {
 
         'user': { cb: () => {
             xvt.outln()
-            if (xvt.entry && !$.cuss(xvt.entry)) {
+            if (xvt.entry.length && !$.cuss(xvt.entry)) {
                 fs.writeFileSync('./files/auto-message.txt', xvt.attr(
                     xvt.cyan, 'Date: ', xvt.off, $.date2full($.player.lastdate), ' ', $.time($.player.lasttime), '\n',
                     xvt.cyan, 'From: ', xvt.off, $.player.handle + '\n\n',

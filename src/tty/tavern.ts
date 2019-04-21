@@ -68,7 +68,7 @@ function choice() {
             xvt.app.form = {
                 'argue': { cb: () => {
                     xvt.outln()
-                    if (xvt.entry && !$.cuss(xvt.entry)) {
+                    if (xvt.entry.length && !$.cuss(xvt.entry)) {
                         try { js = JSON.parse(fs.readFileSync('./users/arguments.json').toString()) } catch {}
                         js = js.splice(+(js.length > 9), 9).concat(<argument>{who: $.player.id, text: xvt.entry})
                         fs.writeFileSync('./users/arguments.json', JSON.stringify(js))
