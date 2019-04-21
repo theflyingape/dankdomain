@@ -127,7 +127,7 @@ function Bet() {
 
 	$.action('wager')
 	xvt.app.form = {
-		'coin': { cb:amount, max:24 }
+		'coin': { cb:amount, max:6 }
 	}
 	xvt.app.form['coin'].prompt = xvt.attr('Bet ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', max.carry(), ']? ')
 	xvt.app.focus = 'coin'
@@ -142,7 +142,7 @@ function amount() {
 	if (/=|max/i.test(xvt.entry))
 		amount.value = max.value
 	else
-		amount.value = Math.trunc(new $.coins(xvt.entry).value)
+		amount.value = $.int(new $.coins(xvt.entry).value)
 	if (amount.value < 1 || amount.value > $.player.coin.value || amount.value > max.value) {
 		xvt.beep()
 		menu($.player.expert)

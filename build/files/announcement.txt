@@ -1,13 +1,12 @@
-Date: [mTue 18-Apr-2019 10:00am
+Date: [mTue 21-Apr-2019 12:00pm
 From: [mThe Flying Ape
 [1;37m
 New announcements as missing features get implemented or tweaked:
 
+ - more evenly distributed monsters for dungeon levels 50+
  - reorganized materials
- - allow updates to the Auto Message and Main Menu border
+ - Auto Message, Main Menu border, and Tavern arguments
  - added medals for gamification
- - updated client color scheme
  - bumping into a character in the square is subject to any material loss
- - an alchemist can find(take) wands; ranger and thief can find(take) poisons
 
 Happy hunting!

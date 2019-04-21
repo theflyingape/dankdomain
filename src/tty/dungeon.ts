@@ -2488,7 +2488,8 @@ function putMonster(r = -1, c = -1): boolean {
 	}
 
 	//	check for overcrowding
-	if (DL.rooms[r][c].monster.length >= (!DL.rooms[r][c].type ? 2 : DL.rooms[r][c].type == 'cavern' ? 3 : 1))
+	const mob = Z < 50 ? 3 : 2
+	if (DL.rooms[r][c].monster.length >= (!DL.rooms[r][c].type ? mob - 1 : DL.rooms[r][c].type == 'cavern' ? mob : 1))
 		return false
 
 	let i:number = DL.rooms[r][c].monster.length
@@ -2518,7 +2519,7 @@ function putMonster(r = -1, c = -1): boolean {
 			level = Z + 3 + $.dice(3)
 			break
 		case 7:
-			level = Z + $.dice(100 - Z) - 1
+			level = Z + $.dice(Z)
 			break
 	}
 	if (level < 1) level = $.dice(Z)

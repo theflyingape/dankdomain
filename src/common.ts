@@ -799,16 +799,12 @@ export function checkXP(rpc: active, cb: Function): boolean {
     wall(`is now a level ${player.level} ${player.pc}`)
 
     let deed = mydeeds.find((x) => { return x.deed == 'levels' })
-    if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, 'levels')[0]) - 1]
+    if (!player.novice && !deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, 'levels')[0]) - 1]
     if ((deed && jumped >= deed.value)) {
-        beep()
         deed.value = jumped
+        xvt.outln(xvt.cyan, ' + ', xvt.bright, Deed.name[deed.deed].description, ' ', bracket(deed.value, false))
+        beep()
         saveDeed(deed)
-        PC.adjust('str', 1)
-        PC.adjust('int', 1)
-        PC.adjust('dex', 1)
-        PC.adjust('cha', 1)
-        sound('outstanding')
     }
 
     if (player.level < sysop.level) {
@@ -1717,14 +1713,14 @@ export function riddle() {
         }
     }
 
+    player.immortal++
     xvt.out(xvt.bright, xvt.cyan, '\nYou have become so powerful that you are now immortal and you leave your')
     xvt.outln('\nworldly possessions behind.')
     run(`UPDATE Players SET bank=bank+${player.bank.value + player.coin.value} WHERE id='${taxman.user.id}'`)
     xvt.waste(2000)
 
     let max = Object.keys(PC.name['immortal']).indexOf(player.pc) + 1
-    player.immortal++
-    if (max || player.keyhints.slice(12).length > int(PC.name['player'].length / 2))
+    if (max || player.keyhints.slice(12).length > int(Object.keys(PC.name['player']).length / 2))
         player.keyhints.splice(12, 1)
     else
         player.keyhints.push(player.pc)
@@ -1796,6 +1792,7 @@ export function riddle() {
         , xvt.normal, 'and you will become\nan immortal being.')
 
     for (let i = 0; i <= max + bonus; i++) keyhint(online, false)
+    saveUser(player)
 
     let prior: number = -1
     let slot: number
@@ -2647,9 +2644,18 @@ export function loadDeed(pc: string, what?: string): deed[] {
 }
 
 export function saveDeed(deed: deed) {
-    deed.date = now().date
-    deed.hero = player.handle
-    run(`UPDATE Deeds SET date=${deed.date}, hero='${deed.hero}', value=${deed.value} WHERE pc='${deed.pc}' AND deed='${deed.deed}'`)
+    if (!player.novice) {
+        deed.date = now().date
+        deed.hero = player.handle
+        run(`UPDATE Deeds SET date=${deed.date}, hero='${deed.hero}', value=${deed.value} WHERE pc='${deed.pc}' AND deed='${deed.deed}'`)
+        if (player.level < 100) {
+            PC.adjust('str', 101)
+            PC.adjust('int', 101)
+            PC.adjust('dex', 101)
+            PC.adjust('cha', 101)
+            sound('outstanding')
+        }
+    }
 }
 
 export function loadGang(rs: any): gang {

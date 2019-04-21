@@ -265,13 +265,14 @@ export function attack(retry = false) {
     //  a frozen treat?
     //  by supernatural means
     let skip = $.Ring.power(rpc.user.rings, enemy.user.rings, 'skip', 'pc', rpc.user.pc)
-    if (skip.power && $.dice(10 + 1.5 * rpc.user.magic) > $.dice(enemy.user.magic))
+    if (skip.power && $.dice(12 + 2 * rpc.user.magic) > $.dice(enemy.user.magic / 2 + 2))
         skip.power = 0  //  saving throw
     //  if not, by skillful means
     if (!skip.power
-        && $.dice(2 * (enemy.user.steal + $.Ring.power(rpc.user.rings, enemy.user.rings, 'steal').power)
-        + (enemy.user.level < 50 && enemy.dex < 80 ? (enemy.dex + 100)>> 1 : (enemy.dex + 90)>> 1))
-        > (rpc.user.level < 50 && rpc.dex < 80 ? (rpc.dex + 100)>> 1 : (rpc.dex + 90)>> 1))
+        && $.dice(100 + $.int(enemy.user.level / 9)
+            + $.int(2 * (enemy.user.steal + $.Ring.power(rpc.user.rings, enemy.user.rings, 'steal').power))
+            + $.int((enemy.dex > 90 ? enemy.dex : enemy.user.maxdex - 4) - 90, true))
+        > (100 + $.int(rpc.user.level / 9) + $.int((rpc.dex > 90 ? rpc.dex : rpc.user.maxdex - 4) - 90, true)))
         skip.power = 1
     if (skip.power) {
         let how = enemy.pc.skip || 'kiss', color = enemy.pc.color || xvt.white
@@ -1464,10 +1465,9 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             else {
                 if (rpc === $.online) {
                     let deed = $.mydeeds.find((x) => { return x.deed == 'blast' })
-                    if (!deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'blast')[0]) - 1]
+                    if (!$.player.novice && !deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'blast')[0]) - 1]
                     if (deed && br > deed.value && !rpc.user.novice) {
                         deed.value = br
-                        $.sound('outstanding')
                         $.saveDeed(deed)
                         xvt.out(xvt.yellow, '+', xvt.white)
                     }
@@ -1776,10 +1776,9 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             else {
                 if (rpc === $.online) {
                     let deed = $.mydeeds.find((x) => { return x.deed == 'big blast' })
-                    if (!deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'big blast')[0]) - 1]
+                    if (!$.player.novice && !deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'big blast')[0]) - 1]
                     if (deed && bbr > deed.value && !rpc.user.novice) {
                         deed.value = bbr
-                        $.sound('outstanding')
                         $.saveDeed(deed)
                         xvt.out(xvt.yellow, '+', xvt.white)
                     }
@@ -2069,10 +2068,9 @@ export function melee(rpc: active, enemy: active, blow = 1) {
 
         if (rpc === $.online) {
             let deed = $.mydeeds.find((x) => { return x.deed == 'melee' })
-            if (!deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'melee')[0]) - 1]
+            if (!$.player.novice && !deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'melee')[0]) - 1]
             if (hit > deed.value && !rpc.user.novice) {
                 deed.value = hit
-                $.sound('outstanding')
                 $.saveDeed(deed)
                 xvt.out(xvt.yellow, '+', xvt.white)
             }
