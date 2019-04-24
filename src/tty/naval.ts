@@ -25,8 +25,9 @@ module Naval
 	}
 
 export function menu(suppress = true) {
-    if ($.checkXP($.online, menu)) return
-    if ($.online.altered) $.saveUser($.online)
+	$.from = 'Naval'
+	if ($.checkXP($.online, menu)) return
+	if ($.online.altered) $.saveUser($.online)
 	if ($.reason) xvt.hangup()
 
 	$.action('naval')
@@ -145,6 +146,7 @@ function choice() {
 					xvt.outln(xvt.bright, xvt.green, 'She cackles as you are sent spinning elsewhere ... ')
 					$.sound('crone', 24)
 					require('./dungeon').DeepDank($.player.level + 3 * $.dice($.player.level), () => {
+						$.from = 'Naval'
 						$.action('clear')
 						xvt.waste(1000)
 						$.profile({ jpg:'npc/seahag', effect:'fadeInUp'

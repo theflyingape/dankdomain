@@ -24,6 +24,7 @@ module Arena
 	}
 
 export function menu(suppress = true) {
+	$.from = 'Arena'
 	if ($.checkXP($.online, menu)) return
 	if ($.online.altered) $.saveUser($.online)
 	if ($.reason) xvt.hangup()
@@ -510,9 +511,7 @@ function MonsterFights(): boolean {
 		let mon = $.int(xvt.entry) - 1
 		if (mon == monsters.length - 1) $.sound('demogorgon')
 		monster = <active>{}
-		monster.user = <user>{id: ''}
-		monster.user.handle = monsters[mon].name
-		monster.user.sex = 'I'
+		monster.user = <user>{id: '', handle:monsters[mon].name, sex:'I' }
 		$.reroll(monster.user, monsters[mon].pc, monsters[mon].level)
 
 		monster.user.weapon = monsters[mon].weapon
