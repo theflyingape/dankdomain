@@ -264,26 +264,28 @@ export function attack(retry = false) {
 
     //  a frozen treat?
     //  by supernatural means
-    let skip = $.Ring.power(rpc.user.rings, enemy.user.rings, 'skip', 'pc', rpc.user.pc)
-    if (skip.power && $.dice(12 + 2 * rpc.user.magic) > $.dice(enemy.user.magic / 2 + 2))
-        skip.power = 0  //  saving throw
-    //  if not, by skillful means
-    if (!skip.power
-        && $.dice(100 + $.int(enemy.user.level / 9)
-            + $.int(2 * (enemy.user.steal + $.Ring.power(rpc.user.rings, enemy.user.rings, 'steal').power))
-            + $.int((enemy.dex > 90 ? enemy.dex : enemy.user.maxdex - 4) - 90, true))
-        > (100 + $.int(rpc.user.level / 9) + $.int((rpc.dex > 90 ? rpc.dex : rpc.user.maxdex - 4) - 90, true)))
-        skip.power = 1
-    if (skip.power) {
-        let how = enemy.pc.skip || 'kiss', color = enemy.pc.color || xvt.white
-        let w = how.split(' ')
-        if (w.length > 1) w.push('')
-        xvt.outln(xvt.faint, color, '>> ', xvt.normal
-            , p2.You, xvt.bright, $.what(enemy, w[0]), w.slice(1).join(' ')
-            , xvt.normal, p1.you, xvt.faint, color, ' <<')
-        xvt.waste(400)
-        next()
-        return
+    if (!enemy.confused) {
+        let skip = $.Ring.power(rpc.user.rings, enemy.user.rings, 'skip', 'pc', rpc.user.pc)
+        if (skip.power && $.dice(12 + 2 * rpc.user.magic) > $.dice(enemy.user.magic / 2 + 2))
+            skip.power = 0  //  saving throw
+        //  if not, by skillful means
+        if (!skip.power
+            && $.dice(100 + $.int(enemy.user.level / 9)
+                + $.int(2 * (enemy.user.steal + $.Ring.power(rpc.user.rings, enemy.user.rings, 'steal').power))
+                + $.int((enemy.dex > 90 ? enemy.dex : enemy.user.maxdex - 4) - 90, true))
+            > (100 + $.int(rpc.user.level / 9) + $.int((rpc.dex > 90 ? rpc.dex : rpc.user.maxdex - 4) - 90, true)))
+            skip.power = 1
+        if (skip.power) {
+            let how = enemy.pc.skip || 'kiss', color = enemy.pc.color || xvt.white
+            let w = how.split(' ')
+            if (w.length > 1) w.push('')
+            xvt.outln(xvt.faint, color, '>> ', xvt.normal
+                , p2.You, xvt.bright, $.what(enemy, w[0]), w.slice(1).join(' ')
+                , xvt.normal, p1.you, xvt.faint, color, ' <<')
+            xvt.waste(400)
+            next()
+            return
+        }
     }
 
     if (rpc === $.online) {
@@ -656,8 +658,8 @@ export function spoils() {
 
     // had a little help from my friends (maybe)
     if ($.from == 'Party') {
-        $.run(`UPDATE Gangs SET win = win + 1 WHERE name = '${parties[w][0].user.gang}'`)
-        $.run(`UPDATE Gangs SET loss = loss + 1 WHERE name = '${parties[l][0].user.gang}'`)
+        $.run(`UPDATE Gangs SET win=win+1 WHERE name='${parties[w][0].user.gang}'`)
+        $.run(`UPDATE Gangs SET loss=loss+1 WHERE name='${parties[l][0].user.gang}'`)
 
         // player(s) can collect off each corpse
         let tl = [ 1, 1 ]

@@ -73,8 +73,8 @@ function choice() {
                         js = js.splice(+(js.length > 9), 9).concat(<argument>{who: $.player.id, text: xvt.entry})
                         fs.writeFileSync('./users/arguments.json', JSON.stringify(js))
                         $.argue--
-                        menu()
                     }
+                    menu()
                 }, prompt:'Enter your argument', lines: 6 }
             }
             xvt.app.focus = 'argue'
