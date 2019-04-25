@@ -2647,7 +2647,7 @@ export function saveDeed(deed: deed) {
     if (!player.novice) {
         deed.date = now().date
         deed.hero = player.handle
-        run(`UPDATE Deeds SET date=${deed.date}, hero='${deed.hero}', value=${deed.value} WHERE pc='${deed.pc}' AND deed='${deed.deed}'`)
+        run(`UPDATE Deeds SET date=${deed.date},hero='${deed.hero}', value=${deed.value} WHERE pc='${deed.pc}' AND deed='${deed.deed}'`)
         if (player.level < 100) {
             PC.adjust('str', 101)
             PC.adjust('int', 101)
@@ -2676,7 +2676,7 @@ export function loadGang(rs: any): gang {
     }
 
     for (let n = 0; n < 4 && n < gang.members.length; n++) {
-        let who = query(`SELECT handle, gender, melee, status, gang FROM Players WHERE id = '${gang.members[n]}'`)
+        let who = query(`SELECT handle,gender,melee,status,gang FROM Players WHERE id='${gang.members[n]}'`)
         if (who.length) {
             gang.handles.push(who[0].handle)
             gang.genders.push(who[0].gender)
@@ -2708,7 +2708,7 @@ export function loadGang(rs: any): gang {
 export function saveGang(g: gang, insert = false) {
     if (insert) {
         try {
-            sqlite3.exec(`INSERT INTO Gangs (name, members, win, loss, banner, color)
+            sqlite3.exec(`INSERT INTO Gangs (name,members,win,loss,banner,color)
                 VALUES ('${g.name}', '${g.members.join()}', ${g.win}, ${g.loss},
                 ${(g.banner <<4) + g.trim}, ${(g.back <<4) + g.fore})`)
         }
@@ -2724,17 +2724,17 @@ export function saveGang(g: gang, insert = false) {
     else {
         if (g.members.length > 4) g.members.splice(0,4)
         run(`UPDATE Gangs
-                SET members = '${g.members.join()}', win = ${g.win}, loss = ${g.loss}
-                , banner = ${(g.banner <<4) + g.trim}, color = ${(g.back <<4) + g.fore}
+                SET members='${g.members.join()}',win=${g.win},loss=${g.loss}
+                ,banner=${(g.banner <<4) + g.trim},color=${(g.back <<4) + g.fore}
             WHERE name = '${g.name}'`)
     }
 }
 
 export function ringBearer(name: string): string {
     if (Ring.name[name].unique) {
-        let rs = query(`SELECT bearer FROM Rings WHERE name = "${name}"`)
+        let rs = query(`SELECT bearer FROM Rings WHERE name="${name}"`)
         if (!rs.length) {
-            run(`INSERT INTO Rings (name, bearer) VALUES ("${name}", "")`)
+            run(`INSERT INTO Rings (name,bearer) VALUES ("${name}","")`)
             return ''
         }
         return rs[0].bearer
@@ -2757,10 +2757,10 @@ export function saveRing(name: string, bearer = '', rings?: string[]) {
 
     //  primarily maintain the one ring's active bearer here
     if (Ring.name[name].unique)
-        run(`UPDATE Rings SET bearer = "${theRing.bearer}" WHERE name = "${theRing.name}"`)
+        run(`UPDATE Rings SET bearer="${theRing.bearer}" WHERE name="${theRing.name}"`)
 
     if (theRing.bearer.length && rings)
-        run(`UPDATE Players SET rings = "${rings.toString()}" WHERE id = "${theRing.bearer}"`)
+        run(`UPDATE Players SET rings="${rings.toString()}" WHERE id="${theRing.bearer}"`)
 }
 
 }

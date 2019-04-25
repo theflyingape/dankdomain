@@ -843,7 +843,7 @@ export function spoils() {
                         $.log(loser.user.id, `... and took your blessedness.`)
                     }
                     if (loser.user.gang && loser.user.gang == $.player.gang) {
-                        gang = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+                        gang = $.loadGang($.query(`SELECT * FROM Gangs WHERE name='${$.player.gang}'`)[0])
                         let n = gang.members.indexOf(loser.user.id)
                         if (n == 0) {
                             n = gang.members.indexOf($.player.id)
@@ -913,9 +913,10 @@ export function spoils() {
 
         //  manage any asset upgrades for PC
         if (winner.user.id && winner.user.id[0] !== '_') {
-            $.log(winner.user.id, `\nYou killed ${$.player.handle}!`)
             $.player.coward = true
             $.saveUser($.online)
+            $.log(winner.user.id, `\nYou killed ${$.player.handle}!`)
+            winner.user.xp += $.experience($.player.xplevel, 2)
 
             if ($.player.blessed) {
                 winner.user.blessed = $.player.id
@@ -951,7 +952,7 @@ export function spoils() {
             if (winner.user.gang && winner.user.gang == $.player.gang) {
                 $.PC.adjust('cha', -1, -1, -1)
                 $.music('punk')
-                gang = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+                gang = $.loadGang($.query(`SELECT * FROM Gangs WHERE name='${$.player.gang}'`)[0])
                 let n = gang.members.indexOf(winner.user.id)
                 if (n == 0) {
                     xvt.outln(xvt.cyan, winner.who.He, 'says, ', xvt.white, '"Let that be a lesson to you punk!"')
