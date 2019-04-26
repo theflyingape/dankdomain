@@ -930,7 +930,7 @@ function MonsterHunt() {
 			$.online.hull = 0
 			$.player.killed++
 			$.reason = `sunk by the ${sm.name}`
-			xvt.outln(`The ${sm.name} sank your ship!`)
+			xvt.outln(xvt.yellow, xvt.bright, `The ${sm.name} sank your ship!`)
 			$.sound('bubbles', 15)
 			if ($.player.coin.value) {
 				$.player.coin.value = 0
