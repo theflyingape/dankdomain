@@ -10,5 +10,5 @@
   { "name":"Red Dragon", "level":44, "pc":"Dragon", "weapon":32, "armor":"Red Dragon Scale Mail", "money":"500g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"shake" },
   { "name":"Lich", "level":47, "pc":"Undead", "adept":1, "weapon":35, "armor":"Amulet of Protection", "money":"2500g", "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Cursed", "Undying" ], "effect":"rotateInDownRight" },
   { "name":"Beholder", "level":50, "pc":"Psionic", "adept":1, "weapon":40, "armor":22, "money":"1p", "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Medusa's" ], "effect":"flip" },
-  { "name":"Demogorgon", "level":99, "pc":"Titan", "adept":2, "weapon":"Staff of the Magi", "armor":23, "money":"1000p", "spells":[ "Heal", "Blast", "Confusion", "Transmute", "Cure" ], "rings":[ "Cursed", "White Wizard" ], "effect":"zoomIn" }
+  { "name":"Demogorgon", "level":99, "pc":"Titan", "adept":2, "weapon":"Staff of the Magi", "armor":"Ring of Invisibility", "money":"1000p", "spells":[ "Confusion", "Transmute", "Cure" ], "rings":[ "Cursed", "White Wizard" ], "effect":"zoomIn" }
 ]
