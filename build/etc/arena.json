@@ -4,11 +4,11 @@
   { "name":"Gnoll", "level":7, "pc":"Beast", "weapon":"Mace", "armor":"Leather", "money":"500c", "effect":"bounceInLeft" },
   { "name":"Troglodyte", "level":9, "pc":"Beast", "weapon":"Spear", "armor":"Padded Leather", "money":"1000c", "effect":"zoomInDown" },
   { "name":"Gargoyle", "level":12, "pc":"Demon", "weapon":"Axe", "armor":6, "money":"10000c", "spells":[ "Teleport" ], "effect":"lightSpeedIn" },
-  { "name":"Troll", "level":23, "pc":"Ogre", "weapon":"Heavy Crossbow", "armor":12, "money":"1s", "spells":[ "Heal" ], "rings":[ "Ogre" ], "effect":"rubberBand" },
+  { "name":"Troll", "level":23, "pc":"Ogre", "weapon":"Heavy Crossbow", "armor":12, "money":"1s", "spells":[ "Heal" ], "rings":[ "Cursed", "Ogre" ], "effect":"rubberBand" },
   { "name":"Hydra", "level":34, "pc":"Dragon", "weapon":25, "armor":"Dragon Scale Mail", "money":"1000s", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"fadeInUpBig" },
   { "name":"Nycadaemon", "level":41, "pc":"Demon", "weapon":"Staff of Striking", "armor":18, "money":"10g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"rotateInDownLeft" },
   { "name":"Red Dragon", "level":44, "pc":"Dragon", "weapon":32, "armor":"Red Dragon Scale Mail", "money":"500g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"shake" },
   { "name":"Lich", "level":47, "pc":"Undead", "adept":1, "weapon":35, "armor":"Amulet of Protection", "money":"2500g", "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Cursed", "Undying" ], "effect":"rotateInDownRight" },
   { "name":"Beholder", "level":50, "pc":"Psionic", "adept":1, "weapon":40, "armor":22, "money":"1p", "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Medusa's" ], "effect":"flip" },
-  { "name":"Demogorgon", "level":99, "pc":"Titan", "adept":2, "weapon":"Staff of the Magi", "armor":"Ring of Invisibility", "money":"1000p", "spells":[ "Confusion", "Transmute", "Cure" ], "rings":[ "Cursed", "White Wizard" ], "effect":"zoomIn" }
+  { "name":"Demogorgon", "level":99, "pc":"Demon", "adept":2, "weapon":"Staff of the Magi", "armor":"Ring of Invisibility", "money":"1000p", "spells":[ "Confusion", "Transmute", "Cure" ], "rings":[ "Cursed", "White Wizard" ], "effect":"zoomIn" }
 ]

@@ -268,20 +268,24 @@ export function attack(retry = false) {
         let skip = $.Ring.power(rpc.user.rings, enemy.user.rings, 'skip', 'pc', rpc.user.pc)
         if (skip.power && $.dice(12 + 2 * rpc.user.magic) > $.dice(enemy.user.magic / 2 + 2))
             skip.power = 0  //  saving throw
-        //  if not, by skillful means
+        //  if not, by skillful escape means
         if (!skip.power
-            && $.dice(100 + $.int(enemy.user.level / 9)
-                + $.int(2 * (enemy.user.steal + $.Ring.power(rpc.user.rings, enemy.user.rings, 'steal').power))
-                + $.int((enemy.dex > 90 ? enemy.dex : enemy.user.maxdex - 4) - 90, true))
-            > (100 + $.int(rpc.user.level / 9) + $.int((rpc.dex > 90 ? rpc.dex : rpc.user.maxdex - 4) - 90, true)))
+            //  d[15-25] > 3-14, 80% typical win-rate, allow for the smallest 6% win for a lesser escaping a greater
+            && $.dice(enemy.user.level / 9 + 15) > $.int(rpc.user.level / 9 + 3)
+            //  d[22-32] > 11-21, coin-flip typical, true: 5% min - 66% max
+            && $.dice((enemy.dex > 90 ? enemy.dex - 89 : 1) + 21) > ((rpc.dex > 90 ? rpc.dex - 89 : 1) + 10)
+            //  d[3-11(+rings)] > 2d[12], 6% always false, mean chance to be true for a master: 14%
+            //  max chance to be true for lawful: 1%, desperate: 11%, trickster: 50%, adept: 67%, master: 92%
+            && $.dice(2 * (enemy.user.steal + $.Ring.power(rpc.user.rings, enemy.user.rings, 'steal').power) + 3)
+             > ($.dice(6) + $.dice(6)))
             skip.power = 1
         if (skip.power) {
             let how = enemy.pc.skip || 'kiss', color = enemy.pc.color || xvt.white
             let w = how.split(' ')
             if (w.length > 1) w.push('')
-            xvt.outln(xvt.faint, color, '>> ', xvt.normal
+            xvt.outln(xvt.faint, color, `${$.player.emulation == 'XT' ? '≫' : '>>'} `, xvt.normal
                 , p2.You, xvt.bright, $.what(enemy, w[0]), w.slice(1).join(' ')
-                , xvt.normal, p1.you, xvt.faint, color, ' <<')
+                , xvt.normal, p1.you, xvt.faint, color, ` ${$.player.emulation == 'XT' ? '≪' : '<<'}`)
             xvt.waste(400)
             next()
             return

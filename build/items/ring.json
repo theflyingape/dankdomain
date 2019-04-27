@@ -131,7 +131,7 @@
             { "id":"upgrade", "power":true, "ability":"int" }
         ]
     },
-	"Medusa's": { 
+	"Medusa's": {
         "unique": true,
         "description":"freeze opponent, except against Magus-level\n   spellcasters; a Titan's weapon",
         "emoji":"🐍",
@@ -171,11 +171,12 @@
             { "id":"upgrade", "power":true, "ability":"cha" }
         ]
     },
-	"Ogre": { 
+	"Ogre": {
         "unique": true,
         "description":"add to melee attacks",
         "emoji":"👹",
         "ability":[
+            { "id":"degrade", "power":true, "ability":"dex" },
             { "id":"melee", "power":true },
             { "id":"skip", "power":true },
             { "id":"skip", "power":false, "pc":"Jester" },
@@ -185,7 +186,7 @@
             { "id":"upgrade", "power":true, "ability":"str" }
         ]
     },
-	"Shade": { 
+	"Shade": {
         "unique": false,
         "description":"enhance stealth ability for 1st swing and stealing,\n   at some personal cost",
         "emoji":"⚡",
@@ -196,7 +197,7 @@
             { "id":"degrade", "power":true, "ability":"cha" }
         ]
     },
-	"Undying": { 
+	"Undying": {
         "unique": true,
         "description":"allow for necromancing; augments the Undead",
         "emoji":"🖤",

@@ -1,10 +1,10 @@
 {
     "player": {
         "None": {
-            "melee":0, "backstab":0, "poison":0, "magic":0, "steal":0, 
-            "baseStr":50, "baseInt":50, "baseDex":50, "baseCha":50, 
-            "toStr":0, "toInt":0, "toDex":0, "toCha":0, 
-            "maxStr":50, "maxInt":50, "maxDex":50, "maxCha":50, 
+            "melee":0, "backstab":0, "poison":0, "magic":0, "steal":0,
+            "baseStr":50, "baseInt":50, "baseDex":50, "baseCha":50,
+            "toStr":0, "toInt":0, "toDex":0, "toCha":0,
+            "maxStr":50, "maxInt":50, "maxDex":50, "maxCha":50,
             "unicode":"⚨",
             "specialty": "npc",
             "description": [
@@ -35,12 +35,12 @@
             ]
         },
         "Alchemist": {
-            "melee":1, "backstab":1, "poison":4, "magic":0, "steal":2, 
-            "baseStr":60, "baseInt":35, "baseDex":65, "baseCha":40, 
-            "toStr":1, "toInt":2, "toDex":1, "toCha":1, 
-            "maxStr":90, "maxInt":95, "maxDex":90, "maxCha":90, 
+            "melee":1, "backstab":1, "poison":4, "magic":0, "steal":2,
+            "baseStr":60, "baseInt":35, "baseDex":65, "baseCha":40,
+            "toStr":1, "toInt":2, "toDex":1, "toCha":1,
+            "maxStr":90, "maxInt":95, "maxDex":90, "maxCha":90,
             "bonusStr":0, "bonusInt":1, "bonusDex":1, "bonusCha":1,
-            "unicode":"♀", "skip":"disengage from",
+            "unicode":"♀", "skip":"elude",
             "specialty": "Powerful Venenum",
             "description": [
                 "The Alchemist depends greatly on the ability to use poisons.  This skill",
@@ -53,12 +53,12 @@
             ]
         },
         "Assassin": {
-            "melee":1, "backstab":2, "poison":2, "magic":1, "steal":2, 
-            "baseStr":55, "baseInt":30, "baseDex":75, "baseCha":40, 
-            "toStr":1, "toInt":1, "toDex":2, "toCha":1, 
-            "maxStr":90, "maxInt":90, "maxDex":95, "maxCha":90, 
+            "melee":1, "backstab":2, "poison":2, "magic":1, "steal":2,
+            "baseStr":55, "baseInt":30, "baseDex":75, "baseCha":40,
+            "toStr":1, "toInt":1, "toDex":2, "toCha":1,
+            "maxStr":90, "maxInt":90, "maxDex":95, "maxCha":90,
             "bonusStr":1, "bonusInt":0, "bonusDex":1, "bonusCha":1,
-            "unicode":"⚴", "skip":"elude",
+            "unicode":"⚴", "skip":"slip",
             "specialty": "Backstab/Poison",
             "description": [
                 "A ninja-style fighter, the Assassin has extra fighting ability making them",
@@ -68,12 +68,12 @@
             ]
         },
         "Barbarian": {
-            "melee":4, "backstab":1, "poison":1, "magic":1, "steal":1, 
-            "baseStr":75, "baseInt":25, "baseDex":65, "baseCha":35, 
-            "toStr":4, "toInt":1, "toDex":1, "toCha":1, 
-            "maxStr":99, "maxInt":80, "maxDex":90, "maxCha":90, 
+            "melee":4, "backstab":1, "poison":1, "magic":1, "steal":1,
+            "baseStr":75, "baseInt":25, "baseDex":65, "baseCha":35,
+            "toStr":4, "toInt":1, "toDex":1, "toCha":1,
+            "maxStr":99, "maxInt":80, "maxDex":90, "maxCha":90,
             "bonusStr":1, "bonusInt":2, "bonusDex":0, "bonusCha":0,
-            "unicode":"⚵", "skip":"squeeze",
+            "unicode":"⚵", "skip":"bounce",
             "specialty": "Brutal Combatant",
             "description": [
                 "The strongest, combat-class fighter in the game, but the most susceptible",
@@ -84,10 +84,10 @@
             ]
         },
         "Bard": {
-            "melee":1, "backstab":2, "poison":1, "magic":2, "steal":2, 
-            "baseStr":50, "baseInt":50, "baseDex":65, "baseCha":35, 
-            "toStr":1, "toInt":1, "toDex":1, "toCha":3, 
-            "maxStr":90, "maxInt":90, "maxDex":85, "maxCha":98, 
+            "melee":1, "backstab":2, "poison":1, "magic":2, "steal":2,
+            "baseStr":50, "baseInt":50, "baseDex":65, "baseCha":35,
+            "toStr":1, "toInt":1, "toDex":1, "toCha":3,
+            "maxStr":90, "maxInt":90, "maxDex":85, "maxCha":98,
             "bonusStr":0, "bonusInt":0, "bonusDex":2, "bonusCha":1,
             "specialty": "Artisan Enchanter",
             "unicode":"☨", "skip":"lose",
@@ -97,15 +97,15 @@
                 "ability, thus the experiences can be either rewarding or frustrating.",
                 "An entertainer by trade, Bards receive extra bonuses in Charisma per",
                 "experience level."
-            ] 
+            ]
         },
         "Cleric": {
-            "melee":2, "backstab":1, "poison":1, "magic":3, "steal":1, 
-            "baseStr":50, "baseInt":55, "baseDex":60, "baseCha":35, 
-            "toStr":1, "toInt":1, "toDex":1, "toCha":4, 
-            "maxStr":90, "maxInt":90, "maxDex":80, "maxCha":99, 
+            "melee":2, "backstab":1, "poison":1, "magic":3, "steal":1,
+            "baseStr":50, "baseInt":55, "baseDex":60, "baseCha":35,
+            "toStr":1, "toInt":1, "toDex":1, "toCha":4,
+            "maxStr":90, "maxInt":90, "maxDex":80, "maxCha":99,
             "bonusStr":0, "bonusInt":0, "bonusDex":2, "bonusCha":1,
-            "unicode":"♱", "skip":"fend off",
+            "unicode":"♱", "skip":"lecture",
             "specialty": "Skillful Magic/Melee",
             "description": [
                 "A Cleric has good combat and magic abilities, but honing skills are",
@@ -114,9 +114,9 @@
             ]
         },
         "Fighter": {
-            "melee":3, "backstab":2, "poison":1, "magic":1, "steal":1, 
-            "baseStr":65, "baseInt":30, "baseDex":70, "baseCha":35, 
-            "toStr":3, "toInt":1, "toDex":1, "toCha":1, 
+            "melee":3, "backstab":2, "poison":1, "magic":1, "steal":1,
+            "baseStr":65, "baseInt":30, "baseDex":70, "baseCha":35,
+            "toStr":3, "toInt":1, "toDex":1, "toCha":1,
             "maxStr":98, "maxInt":90, "maxDex":90, "maxCha":85,
             "bonusStr":1, "bonusInt":0, "bonusDex":0, "bonusCha":2,
             "unicode":"☥", "skip":"sidestep",
@@ -129,9 +129,9 @@
             ]
         },
         "Jester": {
-            "melee":0, "backstab":1, "poison":1, "magic":3, "steal":3, 
-            "baseStr":50, "baseInt":45, "baseDex":65, "baseCha":40, 
-            "toStr":1, "toInt":1, "toDex":3, "toCha":1, 
+            "melee":0, "backstab":1, "poison":1, "magic":3, "steal":3,
+            "baseStr":50, "baseInt":45, "baseDex":65, "baseCha":40,
+            "toStr":1, "toInt":1, "toDex":3, "toCha":1,
             "maxStr":90, "maxInt":85, "maxDex":98, "maxCha":90,
             "bonusStr":0, "bonusInt":2, "bonusDex":1, "bonusCha":0,
             "unicode":"⛢", "skip":"dodge",
@@ -144,10 +144,10 @@
             ]
         },
         "Magician": {
-            "melee":0, "backstab":1, "poison":2, "magic":3, "steal":2, 
-            "baseStr":40, "baseInt":65, "baseDex":65, "baseCha":30, 
-            "toStr":1, "toInt":3, "toDex":1, "toCha":1, 
-            "maxStr":85, "maxInt":98, "maxDex":90, "maxCha":90, 
+            "melee":0, "backstab":1, "poison":2, "magic":3, "steal":2,
+            "baseStr":40, "baseInt":65, "baseDex":65, "baseCha":30,
+            "toStr":1, "toInt":3, "toDex":1, "toCha":1,
+            "maxStr":85, "maxInt":98, "maxDex":90, "maxCha":90,
             "bonusStr":2, "bonusInt":1, "bonusDex":0, "bonusCha":0,
             "unicode":"☧", "skip":"trick",
             "specialty": "Arcane Magic/Poison",
@@ -159,10 +159,10 @@
             ]
         },
         "Ranger": {
-            "melee":2, "backstab":2, "poison":0, "magic":2, "steal":2, 
-            "baseStr":65, "baseInt":35, "baseDex":65, "baseCha":35, 
-            "toStr":2, "toInt":1, "toDex":1, "toCha":1, 
-            "maxStr":95, "maxInt":90, "maxDex":90, "maxCha":90, 
+            "melee":2, "backstab":2, "poison":0, "magic":2, "steal":2,
+            "baseStr":65, "baseInt":35, "baseDex":65, "baseCha":35,
+            "toStr":2, "toInt":1, "toDex":1, "toCha":1,
+            "maxStr":95, "maxInt":90, "maxDex":90, "maxCha":90,
             "bonusStr":1, "bonusInt":0, "bonusDex":1, "bonusCha":1,
             "unicode":"♂", "skip":"duck",
             "specialty": "Skillful Melee/Scroll",
@@ -190,10 +190,10 @@
             ]
         },
         "Sage": {
-            "melee":0, "backstab":0, "poison":2, "magic":4, "steal":2, 
-            "baseStr":40, "baseInt":55, "baseDex":70, "baseCha":35, 
-            "toStr":1, "toInt":4, "toDex":1, "toCha":1, 
-            "maxStr":80, "maxInt":99, "maxDex":90, "maxCha":90, 
+            "melee":0, "backstab":0, "poison":2, "magic":4, "steal":2,
+            "baseStr":40, "baseInt":55, "baseDex":70, "baseCha":35,
+            "toStr":1, "toInt":4, "toDex":1, "toCha":1,
+            "maxStr":80, "maxInt":99, "maxDex":90, "maxCha":90,
             "bonusStr":2, "bonusInt":1, "bonusDex":0, "bonusCha":0,
             "unicode":"⛣", "skip":"avoid",
             "specialty": "Divine Magicae",
@@ -205,12 +205,12 @@
             ]
         },
         "Thief": {
-            "melee":1, "backstab":3, "poison":0, "magic":0, "steal":4, 
-            "baseStr":66, "baseInt":33, "baseDex":71, "baseCha":30, 
-            "toStr":1, "toInt":1, "toDex":4, "toCha":1, 
-            "maxStr":90, "maxInt":90, "maxDex":99, "maxCha":80, 
+            "melee":1, "backstab":3, "poison":0, "magic":0, "steal":4,
+            "baseStr":66, "baseInt":33, "baseDex":71, "baseCha":30,
+            "toStr":1, "toInt":1, "toDex":4, "toCha":1,
+            "maxStr":90, "maxInt":90, "maxDex":99, "maxCha":80,
             "bonusStr":0, "bonusInt":0, "bonusDex":1, "bonusCha":2,
-            "unicode":"⚗", "skip":"deceive",
+            "unicode":"⚗", "skip":"escape",
             "specialty": "Master Steal/Backstab",
             "description": [
                 "The Thief class relies on the ability to stealth approach an enemy and",
@@ -224,10 +224,10 @@
 
     "immortal": {
         "Paladin": {
-            "melee":2, "backstab":2, "poison":2, "magic":2, "steal":2, 
-            "baseStr":55, "baseInt":45, "baseDex":75, "baseCha":45, 
-            "toStr":2, "toInt":2, "toDex":2, "toCha":2, 
-            "maxStr":95, "maxInt":95, "maxDex":95, "maxCha":95, 
+            "melee":2, "backstab":2, "poison":2, "magic":2, "steal":2,
+            "baseStr":55, "baseInt":45, "baseDex":75, "baseCha":45,
+            "toStr":2, "toInt":2, "toDex":2, "toCha":2,
+            "maxStr":95, "maxInt":95, "maxDex":95, "maxCha":95,
             "bonusStr":1, "bonusInt":1, "bonusDex":1, "bonusCha":1,
             "unicode":"♰", "color":96, "skip":"evade",
             "specialty": "Ranger/Rogue",
@@ -240,10 +240,10 @@
             ]
         },
         "Titan": {
-            "melee":3, "backstab":1, "poison":2, "magic":3, "steal":1, 
-            "baseStr":60, "baseInt":50, "baseDex":80, "baseCha":30, 
-            "toStr":2, "toInt":2, "toDex":2, "toCha":2, 
-            "maxStr":98, "maxInt":98, "maxDex":98, "maxCha":98, 
+            "melee":3, "backstab":1, "poison":2, "magic":3, "steal":1,
+            "baseStr":60, "baseInt":50, "baseDex":80, "baseCha":30,
+            "toStr":2, "toInt":2, "toDex":2, "toCha":2,
+            "maxStr":98, "maxInt":98, "maxDex":98, "maxCha":98,
             "bonusStr":1, "bonusInt":1, "bonusDex":1, "bonusCha":1,
             "unicode":"♆", "color":94, "skip":"taunt",
             "specialty": "Fighter/Magician",
@@ -352,7 +352,7 @@
             "melee":4, "backstab":1, "poison":0, "magic":2, "steal":1,
             "baseStr":65, "baseInt":55, "baseDex":55, "baseCha":25,
             "toStr":2, "toInt":1, "toDex":1, "toCha":1,
-            "maxStr":99, "maxInt":85, "maxDex":66, "maxCha":85,
+            "maxStr":99, "maxInt":88, "maxDex":77, "maxCha":66,
             "bonusStr":0, "bonusInt":0, "bonusDex":0, "bonusCha":2,
             "unicode":"♜", "color":33, "skip":"grab",
             "specialty": "Barbarian/Ranger",

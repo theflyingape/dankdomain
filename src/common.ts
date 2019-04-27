@@ -509,11 +509,11 @@ export class Character {
     wearing(profile: active) {
         if (isNaN(+profile.user.weapon)) {
             xvt.outln('\n', this.who(profile).He, profile.weapon.text, ' ', this.weapon(profile))
-            xvt.waste(from == 'Dungeon' ? 600 : !profile.weapon.shoppe ? 900 : 200)
+            xvt.waste(from == 'Dungeon' ? 500 : !profile.weapon.shoppe ? 800 : 200)
         }
         if (isNaN(+profile.user.armor)) {
             xvt.outln('\n', this.who(profile).He, profile.armor.text, ' ', this.armor(profile))
-            xvt.waste(from == 'Dungeon' ? 600 : !profile.armor.armoury ? 900 : 200)
+            xvt.waste(from == 'Dungeon' ? 500 : !profile.armor.armoury ? 800 : 200)
         }
         if (from !== 'Dungeon' && profile.user.sex == 'I') for (let i in profile.user.rings) {
             let ring = profile.user.rings[i]
