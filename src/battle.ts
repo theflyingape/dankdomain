@@ -270,14 +270,14 @@ export function attack(retry = false) {
             skip.power = 0  //  saving throw
         //  if not, by skillful escape means
         if (!skip.power
-            //  d[15-25] > 3-14, 80% typical win-rate, allow for the smallest 6% win for a lesser escaping a greater
+            //  d[15-25] > 3-14, 73 to 46% diminishing win-rate, allow for the smallest 6% win for a lesser escaping a greater
             && $.dice(enemy.user.level / 9 + 15) > $.int(rpc.user.level / 9 + 3)
             //  d[22-32] > 11-21, coin-flip typical, true: 5% min - 66% max
             && $.dice((enemy.dex > 90 ? enemy.dex - 89 : 1) + 21) > ((rpc.dex > 90 ? rpc.dex - 89 : 1) + 10)
-            //  d[3-11(+rings)] > 2d[12], 6% always false, mean chance to be true for a master: 14%
+            //  d[4-12(+rings)] > 3d[6], 1% always false, mean chance to be true for a master: 14%
             //  max chance to be true for lawful: 1%, desperate: 11%, trickster: 50%, adept: 67%, master: 92%
-            && $.dice(2 * (enemy.user.steal + $.Ring.power(rpc.user.rings, enemy.user.rings, 'steal').power) + 3)
-             > ($.dice(6) + $.dice(6)))
+            && $.dice(2 * (enemy.user.steal + $.Ring.power(rpc.user.rings, enemy.user.rings, 'steal').power) + 4)
+             > ($.dice(6) + $.dice(6) + $.dice(6)))
             skip.power = 1
         if (skip.power) {
             let how = enemy.pc.skip || 'kiss', color = enemy.pc.color || xvt.white
