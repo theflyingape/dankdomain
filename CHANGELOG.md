@@ -5,7 +5,18 @@
 🇺🇸 ©️1991 - 2019 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](http://play.DDgame.us) on an Intel Atom-powered Linux server using a Verizon FiOS 100mb Internet service
 
-### **14-Feb-2019** `v1.8.2`
+### **27-Apr-2019** `v2.0`
+
+* Babe Ruth Day ⚾
+* more evenly distributed monsters for dungeon levels 50+
+* reorganized materials in Items, Arena, and Dungeon
+* users can post Auto Message, Main Menu border, and Tavern arguments
+* added Victory & Deed medals for gamification
+* bumping into a character in the square may incur any material loss
+* PC saving throw to avert an attacker's turn by supernatural or skillful means
+* xterm.js v3.12.2 release with outdated package updates
+
+#### **14-Feb-2019** `v1.8.2`
 
 * Valentine's Day 💘
 * `node telnet` connects same as the browser client without requiring a telnet service

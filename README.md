@@ -6,7 +6,7 @@
 
 ### Play from the [Official Web Site](https://ddgame.us) - https://DDgame.us
 
-To run a local game copy:
+To run a local game copy (Linux only):
 
 ```bash
 npm install dankdomain
