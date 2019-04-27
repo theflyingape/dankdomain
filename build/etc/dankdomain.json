@@ -73,7 +73,7 @@
             "toStr":4, "toInt":1, "toDex":1, "toCha":1,
             "maxStr":99, "maxInt":80, "maxDex":90, "maxCha":90,
             "bonusStr":1, "bonusInt":2, "bonusDex":0, "bonusCha":0,
-            "unicode":"⚵", "skip":"bounce",
+            "unicode":"⚵", "skip":"thump",
             "specialty": "Brutal Combatant",
             "description": [
                 "The strongest, combat-class fighter in the game, but the most susceptible",
