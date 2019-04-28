@@ -104,7 +104,6 @@ export class Character {
         }
     }
 
-    online: active
     name: character[]
     types: number
     classes: { key?:string, value?:number }[]
@@ -1910,10 +1909,10 @@ export function buff(perm: number, temp:number, text = false): string {
         if (perm > 0) buff += xvt.attr(xvt.bright, xvt.yellow, '+', perm.toString(), xvt.normal, xvt.white)
         else if (perm < 0) buff += xvt.attr(xvt.bright, xvt.red, perm.toString(), xvt.normal, xvt.white)
         else buff += xvt.attr(xvt.white, '+0')
-        buff += xvt.attr(',')
-        if (temp > 0) buff += xvt.attr(xvt.bright, xvt.yellow, '+', temp.toString(), xvt.normal)
-        else if (temp < 0) buff += xvt.attr(xvt.bright, xvt.red, temp.toString(), xvt.normal)
-        else buff += xvt.attr(xvt.white, '+0')
+        if (temp) buff += xvt.attr(','
+            , (temp > 0) ? xvt.attr(xvt.yellow, xvt.bright, '+', temp.toString())
+            : xvt.attr(xvt.red, xvt.bright, temp.toString())
+            , xvt.normal)
         buff += xvt.attr(xvt.magenta, ')', xvt.white)
     }
     if (text) xvt.app.emulation = keep

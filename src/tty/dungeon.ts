@@ -776,6 +776,8 @@ function doMove(): boolean {
 							if (opponent.user.id == $.player.id) {
 								opponent.user.id = ''
 								xvt.outln(`You can't curse yourself.`)
+								xvt.app.refocus()
+								return
 							}
 							if (opponent.user.id) {
 								$.news(`\tcursed ${opponent.user.handle}`)
@@ -824,7 +826,7 @@ function doMove(): boolean {
 						return
 
 					case 'D':
-						xvt.outln(xvt.bright, xvt.black, 'Your past time in this dungeon visit is eradicated and reset.')
+						xvt.outln(xvt.black, xvt.bright, 'Your past time in this dungeon visit is eradicated and reset.')
 						$.sound('destroy', 32)
 						for (let i in dd)
 							delete dd[i]
@@ -841,35 +843,24 @@ function doMove(): boolean {
 
 					case 'R':
 		                $.sound('resurrect')
-						$.run(`UPDATE Players SET status = '' WHERE id NOT GLOB '_*' AND status != 'jail'`)
+						$.run(`UPDATE Players SET status='' WHERE id NOT GLOB '_*' AND status!='jail'`)
 						$.news(`\twished all the dead resurrected`)
 						break
 
 					case 'F':
 						$.music('elixir')
-						if ($.online.str < $.player.str)
-							$.online.str = $.player.str
-						if ($.online.int < $.player.int)
-							$.online.int = $.player.int
-						if ($.online.dex < $.player.dex)
-							$.online.dex = $.player.dex
-						if ($.online.cha < $.player.cha)
-							$.online.cha = $.player.cha
-						if ($.player.toAC < 0)
-							$.player.toAC = 0
-						if ($.player.toWC < 0)
-							$.player.toWC = 0
-						if ($.online.toAC < 0)
-							$.online.toAC = 0
-						if ($.online.toWC < 0)
-							$.online.toWC = 0
-						if ($.online.hp < $.player.hp)
-							$.online.hp = $.player.hp
-						if ($.online.sp < $.player.sp)
-							$.online.sp = $.player.sp
-						if ($.online.hull < $.player.hull)
-							$.online.hull = $.player.hull
-						xvt.out(xvt.bright, xvt.cyan, 'You are completely healed and all damage is repaired.\n')
+						if ($.online.str < $.player.str) $.online.str = $.player.str
+						if ($.online.int < $.player.int) $.online.int = $.player.int
+						if ($.online.dex < $.player.dex) $.online.dex = $.player.dex
+						if ($.online.cha < $.player.cha) $.online.cha = $.player.cha
+						if ($.player.toAC < 0) $.player.toAC = 0
+						if ($.player.toWC < 0) $.player.toWC = 0
+						if ($.online.toAC < 0) $.online.toAC = 0
+						if ($.online.toWC < 0) $.online.toWC = 0
+						if ($.online.hp < $.player.hp) $.online.hp = $.player.hp
+						if ($.online.sp < $.player.sp) $.online.sp = $.player.sp
+						if ($.online.hull < $.player.hull) $.online.hull = $.player.hull
+						xvt.outln(xvt.cyan, xvt.bright, 'You are completely healed and all damage is repaired.')
 						break
 
 					case 'L':
@@ -877,10 +868,14 @@ function doMove(): boolean {
 							if (opponent.user.id == $.player.id) {
 								opponent.user.id = ''
 								xvt.outln(`You can't loot yourself.`)
+								xvt.app.refocus()
+								return
 							}
 							else if (opponent.user.novice) {
 								opponent.user.id = ''
 								xvt.outln(`You can't loot novice players.`)
+								xvt.app.refocus()
+								return
 							}
 							if (opponent.user.id) {
 								loot.value = opponent.user.coin.value + opponent.user.bank.value
