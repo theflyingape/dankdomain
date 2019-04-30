@@ -471,8 +471,8 @@ function choice() {
                             nme[i].user.sex = 'I'
                             $.reroll(nme[i].user, monsters[dm].pc ? monsters[dm].pc : $.player.pc, ml)
 
-                            nme[i].user.weapon = monsters[dm].weapon ? monsters[dm].weapon : $.Weapon.merchant[Math.trunc(($.Weapon.merchant.length - 1) * ml / 100) + 1]
-                            nme[i].user.armor = monsters[dm].armor ? monsters[dm].armor : $.Armor.merchant[Math.trunc(($.Armor.merchant.length - 1) * ml / 100) + 1]
+                            nme[i].user.weapon = monsters[dm].weapon ? monsters[dm].weapon : $.Weapon.merchant[$.int(($.Weapon.merchant.length - 1) * ml / 100) + 1]
+                            nme[i].user.armor = monsters[dm].armor ? monsters[dm].armor : $.Armor.merchant[$.int(($.Armor.merchant.length - 1) * ml / 100) + 1]
 
                             nme[i].user.poisons = []
                             if (monsters[dm].poisons)
@@ -487,7 +487,7 @@ function choice() {
                                     $.Magic.add(nme[i].user.spells, monsters[dm].spells[magic])
 
                             $.activate(nme[i])
-                            nme[i].toWC = $.int(nme[i].weapon.wc / 5) + 1
+                            nme[i].user.toWC = $.int(nme[i].weapon.wc / 4) + 1
                             nme[i].user.coin = new $.coins($.money(ml))
                             nme[i].user.handle = titleCase(dm)
                             nme[i].user.gang = o.name
