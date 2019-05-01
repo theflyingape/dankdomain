@@ -2815,7 +2815,14 @@ function quaff(v: number, it = true) {
 			$.music('elixir')
 			$.online.hp = $.player.hp
 			$.online.sp = $.player.sp
-			$.activate($.online, false, true)
+			if ($.online.str < $.player.str) $.online.str = $.player.str
+			if ($.online.int < $.player.int) $.online.int = $.player.int
+			if ($.online.dex < $.player.dex) $.online.dex = $.player.dex
+			if ($.online.cha < $.player.cha) $.online.cha = $.player.cha
+			$.PC.adjust('str', 100 + $.dice(10), 1, +($.player.str == $.player.maxstr))
+			$.PC.adjust('int', 100 + $.dice(10), 1, +($.player.int == $.player.maxint))
+			$.PC.adjust('dex', 100 + $.dice(10), 1, +($.player.dex == $.player.maxdex))
+			$.PC.adjust('cha', 100 + $.dice(10), 1, +($.player.cha == $.player.maxcha))
 			break
 
 	//	Vial of Crack
@@ -2837,8 +2844,9 @@ function quaff(v: number, it = true) {
 				, $.online.cha > 40 ? -$.dice(6) - 4 : -3
 				, $.player.cha > 60 ? -$.dice(3) - 2 : -2
 				, $.player.maxcha > 80 ? -2 : -1)
-			$.online.hp -= $.PC.hp()
 			$.online.sp -= $.PC.sp()
+			if ($.online.sp < 0) $.online.sp = 0
+			$.online.hp -= $.PC.hp()
 			if ($.online.hp < 0) {
 				$.online.hp = 0
 				$.reason = `quaffed${$.an(potion[v])}`
