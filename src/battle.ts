@@ -1471,12 +1471,14 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             }
             else {
                 if (rpc === $.online) {
-                    let deed = $.mydeeds.find((x) => { return x.deed == 'blast' })
-                    if (!$.player.novice && !deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'blast')[0]) - 1]
-                    if (deed && br > deed.value && !rpc.user.novice) {
-                        deed.value = br
-                        $.saveDeed(deed)
-                        xvt.out(xvt.yellow, '+', xvt.white)
+                    if (!$.player.novice) {
+                        let deed = $.mydeeds.find((x) => { return x.deed == 'blast' })
+                        if (!deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'blast')[0]) - 1]
+                        if (deed && br > deed.value) {
+                            deed.value = br
+                            $.saveDeed(deed)
+                            xvt.out(xvt.yellow, '+', xvt.white)
+                        }
                     }
                 }
                 xvt.out(Caster, $.what(rpc, 'blast'), recipient, ` for ${br} hit points!`)
