@@ -1470,15 +1470,13 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 }
             }
             else {
-                if (rpc === $.online) {
-                    if (!$.player.novice) {
-                        let deed = $.mydeeds.find((x) => { return x.deed == 'blast' })
-                        if (!deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'blast')[0]) - 1]
-                        if (deed && br > deed.value) {
-                            deed.value = br
-                            $.saveDeed(deed)
-                            xvt.out(xvt.yellow, '+', xvt.white)
-                        }
+                if (rpc === $.online && !$.player.novice) {
+                    let deed = $.mydeeds.find((x) => { return x.deed == 'blast' })
+                    if (!deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'blast')[0]) - 1]
+                    if (deed && br > deed.value) {
+                        deed.value = br
+                        $.saveDeed(deed)
+                        xvt.out(xvt.yellow, '+', xvt.white)
                     }
                 }
                 xvt.out(Caster, $.what(rpc, 'blast'), recipient, ` for ${br} hit points!`)
@@ -1783,10 +1781,10 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 }
             }
             else {
-                if (rpc === $.online) {
+                if (rpc === $.online && !$.player.novice) {
                     let deed = $.mydeeds.find((x) => { return x.deed == 'big blast' })
-                    if (!$.player.novice && !deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'big blast')[0]) - 1]
-                    if (deed && bbr > deed.value && !rpc.user.novice) {
+                    if (!deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'big blast')[0]) - 1]
+                    if (deed && bbr > deed.value) {
                         deed.value = bbr
                         $.saveDeed(deed)
                         xvt.out(xvt.yellow, '+', xvt.white)
@@ -2076,12 +2074,14 @@ export function melee(rpc: active, enemy: active, blow = 1) {
             : (period[0] == '.') ? rpc.weapon.stab : rpc.weapon.plunge
 
         if (rpc === $.online) {
-            let deed = $.mydeeds.find((x) => { return x.deed == 'melee' })
-            if (!$.player.novice && !deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'melee')[0]) - 1]
-            if (hit > deed.value && !rpc.user.novice) {
-                deed.value = hit
-                $.saveDeed(deed)
-                xvt.out(xvt.yellow, '+', xvt.white)
+            if (!$.player.novice) {
+                let deed = $.mydeeds.find((x) => { return x.deed == 'melee' })
+                if (!deed) deed = $.mydeeds[$.mydeeds.push($.loadDeed($.player.pc, 'melee')[0]) - 1]
+                if (hit > deed.value) {
+                    deed.value = hit
+                    $.saveDeed(deed)
+                    xvt.out(xvt.yellow, '+', xvt.white)
+                }
             }
             xvt.out('You ', melee ? xvt.uline : '', action, melee ? xvt.nouline : '', ' ', p2.him)
         }

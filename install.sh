@@ -16,6 +16,7 @@ echo "Installing into ${TARGET}"
 
 # let's start with the services
 [ -n "`which node-gyp`" ] || sudo dnf install node-gyp nodejs-typescript
+[ -n "`which resize`" ] || sudo dnf install xterm-resize
 
 # this.package install script
 npm install
@@ -128,6 +129,7 @@ if https / wss is used, SSL Proxy works for me like this:
     </Location>
 
 # generate a self-signed key
-$ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem
+$ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem \
+    -subj "/C=US/ST=Rhode Island/L=Providence/O=Dank Domain/OU=Game/CN=localhost"
 EOD
 exit
