@@ -2284,10 +2284,9 @@ export function user(venue: string, cb:Function) {
 
             let rs = $.query(`
                 SELECT id, handle, pc, level, xplevel, status, lastdate, access FROM Players
-                WHERE id NOT GLOB '_*'
+                WHERE id NOT GLOB '_*' AND xplevel > 0
                 AND level BETWEEN ${start} AND ${end}
-                ORDER BY xplevel DESC, level DESC, wins DESC, immortal DESC
-                `)
+                ORDER BY xplevel DESC, level DESC, wins DESC, immortal DESC`)
 
             for (let i in rs) {
                 if (rs[i].id == $.player.id)
