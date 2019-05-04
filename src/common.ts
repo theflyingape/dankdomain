@@ -1265,8 +1265,7 @@ export function playerPC(points = 200, immortal = false) {
         xvt.out('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.')
         show()
         activate(online)
-        news(`\trerolled as${an(player.pc)}`)
-        wall(`reroll as${an(player.pc)}`)
+        news(`Welcome a new player`)
         require('./tty/main').menu(true)
         return
     }
@@ -1290,9 +1289,9 @@ export function playerPC(points = 200, immortal = false) {
     xvt.outln('You have been rerolled.  You must pick a class.\n')
     xvt.waste(1500)
 
-    xvt.outln(xvt.cyan, '      Character          ', xvt.faint, '(Recommended abilities + bonus)')
-    xvt.outln(xvt.cyan, '        Class      Users   Str     Int     Dex     Cha       Special Feature')
-    xvt.out(xvt.faint, xvt.cyan,  '      ---------     ---   -----   -----   -----   -----   ---------------------')
+    xvt.outln(xvt.cyan, '      Character                       ', xvt.faint, '>> ', xvt.normal, 'Ability bonus')
+    xvt.outln(xvt.cyan, '        Class      Users  Difficulty  Str  Int  Dex  Cha     Notable Feature')
+    xvt.out(xvt.faint, xvt.cyan,  '      ---------     ---   ----------  ---  ---  ---  ---  ---------------------')
 
     let classes = [ '' ]
     let n = 0
@@ -1306,15 +1305,16 @@ export function playerPC(points = 200, immortal = false) {
             else
                 xvt.out('\n', n < 12 ? ' ' : '', xvt.faint, '<', xvt.red, 'x', xvt.white, '> ')
 
-            let rs = query(`SELECT COUNT(id) AS n FROM Players WHERE pc = '${pc}'`)[0]
+            let rs = query(`SELECT COUNT(id) AS n FROM Players WHERE pc='${pc}'`)[0]
 
-            xvt.out(sprintf(' %-9s  %s  %3s   %2d +%s   %2d +%s   %2d +%s   %2d +%s   %s'
+            xvt.out(sprintf(' %-9s  %s  %3s    %-8s    +%s   +%s   +%s   +%s  %s'
                 , pc, player.emulation == 'XT' ? rpc.unicode : ' '
-                , +rs.n ? rs.n : xvt.attr(player.keyhints.indexOf(pc, 12) < 0 ? xvt.red : xvt.yellow, '  ', xvt.app.Empty, xvt.white)
-                , rpc.baseStr, xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toStr - 1], rpc.toStr.toString(), xvt.white)
-                , rpc.baseInt, xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toInt - 1], rpc.toInt.toString(), xvt.white)
-                , rpc.baseDex, xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toDex - 1], rpc.toDex.toString(), xvt.white)
-                , rpc.baseCha, xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toCha - 1], rpc.toCha.toString(), xvt.white)
+                , +rs.n ? rs.n : xvt.attr(xvt.blue, '  ', xvt.app.Empty, xvt.white)
+                , rpc.difficulty
+                , xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toStr - 1], rpc.toStr.toString(), xvt.white)
+                , xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toInt - 1], rpc.toInt.toString(), xvt.white)
+                , xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toDex - 1], rpc.toDex.toString(), xvt.white)
+                , xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toCha - 1], rpc.toCha.toString(), xvt.white)
                 , rpc.specialty)
             )
         }

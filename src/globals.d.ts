@@ -297,6 +297,7 @@ interface character {
     unicode: string     //  dungeon map symbol
     color?: number      //  symbol's color
     skip?: string       //  action
+    difficulty?: string //  playing level
     specialty?: string  //  meta
     description?: string[]
     bonusStr?: number    //  0-2

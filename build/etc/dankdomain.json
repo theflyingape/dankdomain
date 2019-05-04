@@ -6,7 +6,7 @@
             "toStr":0, "toInt":0, "toDex":0, "toCha":0,
             "maxStr":50, "maxInt":50, "maxDex":50, "maxCha":50,
             "unicode":"⚨",
-            "specialty": "npc",
+            "difficulty":"n/a", "specialty": "npc",
             "description": [
                 "An uninitialized player that becomes re-rolled on next login."
             ]
@@ -18,7 +18,7 @@
             "maxStr":90, "maxInt":90, "maxDex":90, "maxCha":90,
             "bonusStr":1, "bonusInt":1, "bonusDex":1, "bonusCha":1,
             "unicode":"☥",
-            "specialty": "Newbie versus newbies",
+            "difficulty":"easiest", "specialty": "Newbie versus newbies",
             "description": [
                 "You start off as a novice fighter.  A Novice class adventurer is quite",
                 "capable of defeating any of the toughest creatures, but you are not",
@@ -41,7 +41,7 @@
             "maxStr":90, "maxInt":95, "maxDex":90, "maxCha":90,
             "bonusStr":0, "bonusInt":1, "bonusDex":1, "bonusCha":1,
             "unicode":"♀", "skip":"elude",
-            "specialty": "Powerful Venenum",
+            "difficulty":"simple", "specialty": "Powerful Venenum",
             "description": [
                 "The Alchemist depends greatly on the ability to use poisons.  This skill",
                 "enables applying 4x the poison value yielding the greatest effect on a",
@@ -59,7 +59,7 @@
             "maxStr":90, "maxInt":90, "maxDex":95, "maxCha":90,
             "bonusStr":1, "bonusInt":0, "bonusDex":1, "bonusCha":1,
             "unicode":"⚴", "skip":"slip",
-            "specialty": "Backstab/Poison",
+            "difficulty":"basic", "specialty": "Backstab/Poison",
             "description": [
                 "A ninja-style fighter, the Assassin has extra fighting ability making them",
                 "tough to defeat.  With the use of poisons and backstabs, the Assassin will",
@@ -74,7 +74,7 @@
             "maxStr":99, "maxInt":80, "maxDex":90, "maxCha":90,
             "bonusStr":1, "bonusInt":2, "bonusDex":0, "bonusCha":0,
             "unicode":"⚵", "skip":"thump",
-            "specialty": "Brutal Combatant",
+            "difficulty":"erratic", "specialty": "Brutal Combatant",
             "description": [
                 "The strongest, combat-class fighter in the game, but the most susceptible",
                 "to the effects of magic.  As the Barbarian grows in experience, hitting",
@@ -89,7 +89,7 @@
             "toStr":1, "toInt":1, "toDex":1, "toCha":3,
             "maxStr":90, "maxInt":90, "maxDex":85, "maxCha":98,
             "bonusStr":0, "bonusInt":0, "bonusDex":2, "bonusCha":1,
-            "specialty": "Artisan Enchanter",
+            "difficulty":"moderate", "specialty": "Artisan Enchanter",
             "unicode":"☨", "skip":"lose",
             "description": [
                 "The Bard-class enjoys every aspect of the game: backstabbing, magic,",
@@ -106,7 +106,7 @@
             "maxStr":90, "maxInt":90, "maxDex":80, "maxCha":99,
             "bonusStr":0, "bonusInt":0, "bonusDex":2, "bonusCha":1,
             "unicode":"♱", "skip":"lecture",
-            "specialty": "Skillful Magic/Melee",
+            "difficulty":"hard", "specialty": "Skillful Magic/Melee",
             "description": [
                 "A Cleric has good combat and magic abilities, but honing skills are",
                 "typically less than average.  Clerics receive extra bonuses in Charisma",
@@ -120,7 +120,7 @@
             "maxStr":98, "maxInt":90, "maxDex":90, "maxCha":85,
             "bonusStr":1, "bonusInt":0, "bonusDex":0, "bonusCha":2,
             "unicode":"☥", "skip":"sidestep",
-            "specialty": "Warrior Combatant",
+            "difficulty":"easy", "specialty": "Warrior Combatant",
             "description": [
                 "Fighters are excellent killers.  Their extra-ordinary combat ability makes",
                 "them difficult opponents.  Though their class has no extra abilities, there",
@@ -135,7 +135,7 @@
             "maxStr":90, "maxInt":85, "maxDex":98, "maxCha":90,
             "bonusStr":0, "bonusInt":2, "bonusDex":1, "bonusCha":0,
             "unicode":"⛢", "skip":"dodge",
-            "specialty": "Magic/Dodge/Steal",
+            "difficulty":"hardest", "specialty": "Evasive Trickster",
             "description": [
                 "Jesters are annoying pests.  They lack serious hand-to-hand combat power,",
                 "but their acrobatic-like abilities gives them edge in dodging attacks.",
@@ -150,7 +150,7 @@
             "maxStr":85, "maxInt":98, "maxDex":90, "maxCha":90,
             "bonusStr":2, "bonusInt":1, "bonusDex":0, "bonusCha":0,
             "unicode":"☧", "skip":"trick",
-            "specialty": "Arcane Magic/Poison",
+            "difficulty":"vintage", "specialty": "Arcane Magic/Poison",
             "description": [
                 "The Magician is the opposite of the Fighter; powerful magic opposed to",
                 "combat abilities.  Magicians can consistently cast spells effectively and",
@@ -165,7 +165,7 @@
             "maxStr":95, "maxInt":90, "maxDex":90, "maxCha":90,
             "bonusStr":1, "bonusInt":0, "bonusDex":1, "bonusCha":1,
             "unicode":"♂", "skip":"duck",
-            "specialty": "Skillful Melee/Scroll",
+            "difficulty":"painless", "specialty": "Skillful Melee/Scroll",
             "description": [
                 "Rangers are great survivors, because they must depend on their ability to",
                 "live off the land.  Like Bards, they have many special abilities, though",
@@ -181,7 +181,7 @@
             "maxStr":95, "maxInt":95, "maxDex":95, "maxCha":95,
             "bonusStr":0, "bonusInt":1, "bonusDex":1, "bonusCha":1,
             "unicode":"♝", "skip":"cheat",
-            "specialty": "Skillful Dodge/Scroll",
+            "difficulty":"standard", "specialty": "Advanced Ability",
             "description": [
                 "A Rogue is similar to a Thief, but with some magic and backstab.",
                 "Their advantage lies within honed abilities and use of magic scrolls.",
@@ -196,7 +196,7 @@
             "maxStr":80, "maxInt":99, "maxDex":90, "maxCha":90,
             "bonusStr":2, "bonusInt":1, "bonusDex":0, "bonusCha":0,
             "unicode":"⛣", "skip":"avoid",
-            "specialty": "Divine Magicae",
+            "difficulty":"complex", "specialty": "Divine Magicae",
             "description": [
                 "The weakest combat-class is the Sage.  While hand-to-hand abilities leave",
                 "much to be desired, spell casting abilities can dominate any class,",
@@ -211,7 +211,7 @@
             "maxStr":90, "maxInt":90, "maxDex":99, "maxCha":80,
             "bonusStr":0, "bonusInt":0, "bonusDex":1, "bonusCha":2,
             "unicode":"⚗", "skip":"escape",
-            "specialty": "Master Steal/Backstab",
+            "difficulty":"classic", "specialty": "Master Steal/Backstab",
             "description": [
                 "The Thief class relies on the ability to stealth approach an enemy and",
                 "deliver a powerful backstab.  Without it, the Thief is quite ordinary.",

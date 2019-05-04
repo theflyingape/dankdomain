@@ -10,6 +10,7 @@ build/etc/smtp.json
 build/images/**
 build/sounds/**
 build/files/auto-message.txt
+build/files/border.txt
 build/files/tavern
 build/files/user
 build/users
