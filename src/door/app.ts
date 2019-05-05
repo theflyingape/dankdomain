@@ -74,9 +74,9 @@ dns.lookup('localhost', (err, addr, family) => {
       { handle:'Rob and pick pockets', png:'connect/human_battlemage_by_peachyco', effect:'fadeInRight' },
       { handle:'Magic can be fun', png:'connect/human_enchantress_mage_by_peachyco', effect:'fadeInRight' },
       { handle:'I hit like a girl, heh.', png:'connect/human_warpriest_by_peachyco', effect:'fadeInRight' },
-      { handle:'Collect magic rings', png:'connect/human_wizard_by_peachyco', effect:'fadeInRight' },
+      { handle:'Discover all 20 magic rings', png:'connect/human_wizard_by_peachyco', effect:'fadeInRight' },
       { handle:'Come join our gang!', png:'connect/kashaw_and_zahra_by_peachyco', effect:'fadeInRight' },
-      { handle:'Special weapon and armor', png:'connect/krauser_dragonborn_warlord_by_peachyco', effect:'fadeInRight' },
+      { handle:'Weapon and Armor specials', png:'connect/krauser_dragonborn_warlord_by_peachyco', effect:'fadeInRight' },
       { handle:'Special magicks', png:'connect/lucien2_human_wizard_by_peachyco', effect:'fadeInRight' },
       { handle:'Magic potions and poisons', png:'connect/lucien_human_wizard_by_peachyco', effect:'fadeInRight' },
       { handle:`Let's brawl in the tavern`, png:'connect/orc_pirate_by_peachyco', effect:'fadeInRight' },
@@ -85,6 +85,20 @@ dns.lookup('localhost', (err, addr, family) => {
       { handle:'Become an immortal God', png:'connect/warforged_fighter_and_human_wizard_by_peachyco', effect:'fadeInRight' },
       { handle:'Shall we begin?', png:'connect/yuriel_genasi_warlord_by_peachyco', effect:'fadeInRight' }
     )
+
+    const monsters = require('../etc/dungeon.json')
+    let level = 0
+    for (let n in monsters) {
+      let pc = monsters[n].pc
+      let profile = { handle:`The ${n}`, pc:`${pc}:`, level:++level, effect:monsters[n].effect || 'fadeIn' }
+      if (pc)
+        profile['jpg'] = `dungeon/${n}`
+      else {
+        profile['png'] = `monster/monster`
+        profile['pc'] = `same class`
+      }
+      list.push(profile)
+    }
 
     let rs = query(`SELECT id,handle,pc,gender,level FROM Players WHERE xplevel>1`)
     for (let n in rs) {
@@ -100,20 +114,6 @@ dns.lookup('localhost', (err, addr, family) => {
             userPNG = 'player/' + pc.toLowerCase() + (gender == 'F' ? '_f' : '')
         }
         profile['png'] = userPNG
-      }
-      list.push(profile)
-    }
-
-    const monsters = require('../etc/dungeon.json')
-    let level = 0
-    for (let n in monsters) {
-      let pc = monsters[n].pc
-      let profile = { handle:`The ${n}`, pc:pc, level:++level, effect:monsters[n].effect || 'fadeIn' }
-      if (pc)
-        profile['jpg'] = `dungeon/${n}`
-      else {
-        profile['png'] = `monster/monster`
-        profile['pc'] = `same class`
       }
       list.push(profile)
     }

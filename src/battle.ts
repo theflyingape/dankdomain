@@ -1873,7 +1873,11 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             xvt.out(xvt.bright, xvt.black, 'A shroud of blackness engulfs ', backfire ? p1.him : p2.him, '... ')
             xvt.waste(800)
             xvt.outln()
-            if (backfire && rpc.user.level > 1) {
+            if (backfire) {
+                if (rpc.user.level < 2) {
+                    $.reroll(rpc.user)
+                    break
+                }
                 $.PC.adjust('str', -$.PC.card(rpc.user.pc).toStr, -1, 0 ,rpc)
                 $.PC.adjust('int', -$.PC.card(rpc.user.pc).toInt, -1, 0 ,rpc)
                 $.PC.adjust('dex', -$.PC.card(rpc.user.pc).toDex, -1, 0 ,rpc)
@@ -1886,9 +1890,13 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     rpc.user.sp -= Math.round(rpc.user.level + $.dice(rpc.user.level) + rpc.user.int / 10 + (rpc.user.int > 90 ? rpc.user.int - 90 : 0))
                 nme.user.xp *= 2
                 xvt.outln(Recipient, $.what(nme, 'gain'), 'an experience level off ', caster, '.')
-                if ($.checkXP(nme, cb)) return
+                if (nme !== $.online && nme.user.level + 1 < $.sysop.level && $.checkXP(nme, cb)) return
             }
-            else if (!backfire && nme.user.level > 1) {
+            else {
+                if (nme.user.level < 2) {
+                    $.reroll(nme.user)
+                    break
+                }
                 nme.user.xp = Math.round(nme.user.xp / 2)
                 nme.user.xplevel--
                 nme.user.level--
@@ -1901,11 +1909,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     nme.user.sp -= Math.round(nme.user.level + $.dice(nme.user.level) + nme.user.int / 10 + (nme.user.int > 90 ? nme.user.int - 90 : 0))
                 rpc.user.xp *= 2
                 xvt.outln(Caster, $.what(rpc, 'gain'), 'an experience level off ', recipient, '.')
-                if ($.checkXP(rpc, cb)) return
-            }
-            else {
-                cb(true)
-                return
+                if (rpc !== $.online && rpc.user.level + 1 < $.sysop.level && $.checkXP(rpc, cb)) return
             }
             break
 

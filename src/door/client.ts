@@ -24,6 +24,7 @@ let pid = 0, wpid = 0, tty = false
 let socket: WebSocket
 let carrier = false, recheck = 0
 let reconnect: NodeJS.Timer, lurking: NodeJS.Timer
+let wall = ''
 
 if (window.addEventListener)
 	window.addEventListener("message", receive, false)
@@ -272,13 +273,14 @@ function newSession(ev) {
 			return res.text().then(function (data) {
 				term.write(data)
 				setTimeout(() => {
-					term.writeln('\r\n \x1B[1;36m\u00B7\x1B[22;2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1B[22m')
+					term.writeln(wall)
+					term.writeln(' \x1B[1;36m\u00B7\x1B[22;2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1B[22m')
 					term.focus()
 					term.blur()
 					XT(`@play(${['demon','demogorgon','portal','thief2'][Math.trunc(4*Math.random())]})`)
 					XT('@action(welcome)')
 					window.frames['Info'].focus()
-				}, 500)
+				}, wall ? 500 : 1500)
 			})
 		})
 	}
@@ -435,7 +437,7 @@ function receive(event) {
 					socket.send('\r')
 				break
 			case 'wall':
-				term.write(event.data.message)
+				wall = event.data.message
 				break
 		}
 	}
