@@ -65,25 +65,25 @@ dns.lookup('localhost', (err, addr, family) => {
 
     let list = []
     list.push(
-      { png:'connect/arexielite_by_peachyco', effect:'fadeInRight' },
-      { png:'connect/dragonborn_dagger_sorcerer_by_peachyco', effect:'fadeInRight' },
-      { png:'connect/dragonborn_hexblade_by_peachyco', effect:'fadeInRight' },
-      { png:'connect/elf_cleric_by_peachyco', effect:'fadeInRight' },
-      { png:'connect/elf_fighter_by_peachyco', effect:'fadeInRight' },
-      { png:'connect/guild_findsman_by_peachyco', effect:'fadeInRight' },
-      { png:'connect/human_battlemage_by_peachyco', effect:'fadeInRight' },
-      { png:'connect/human_enchantress_mage_by_peachyco', effect:'fadeInRight' },
-      { png:'connect/human_warpriest_by_peachyco', effect:'fadeInRight' },
-      { png:'connect/human_wizard_by_peachyco', effect:'fadeInRight' },
-      { png:'connect/kashaw_and_zahra_by_peachyco', effect:'fadeInRight' },
-      { png:'connect/krauser_dragonborn_warlord_by_peachyco', effect:'fadeInRight' },
-      { png:'connect/lucien2_human_wizard_by_peachyco', effect:'fadeInRight' },
-      { png:'connect/lucien_human_wizard_by_peachyco', effect:'fadeInRight' },
-      { png:'connect/orc_pirate_by_peachyco', effect:'fadeInRight' },
-      { png:'connect/paladin_by_peachyco', effect:'fadeInRight' },
-      { png:'connect/thrask_goliath_fighter_by_peachyco', effect:'fadeInRight' },
-      { png:'connect/warforged_fighter_and_human_wizard_by_peachyco', effect:'fadeInRight' },
-      { png:'connect/yuriel_genasi_warlord_by_peachyco', effect:'fadeInRight' }
+      { handle:`Read the <a href="https://ddgame.us" target="_blank">Players's manual</a>`, png:'connect/arexielite_by_peachyco', effect:'fadeInRight' },
+      { handle:'100 dungeon levels', png:'connect/dragonborn_dagger_sorcerer_by_peachyco', effect:'fadeInRight' },
+      { handle:'Take on the Monster Mash', png:'connect/dragonborn_hexblade_by_peachyco', effect:'fadeInRight' },
+      { handle:'Come get some', png:'connect/elf_cleric_by_peachyco', effect:'fadeInRight' },
+      { handle:'Crying will not help you', png:'connect/elf_fighter_by_peachyco', effect:'fadeInRight' },
+      { handle:'Naval battles', png:'connect/guild_findsman_by_peachyco', effect:'fadeInRight' },
+      { handle:'Rob and pick pockets', png:'connect/human_battlemage_by_peachyco', effect:'fadeInRight' },
+      { handle:'Magic can be fun', png:'connect/human_enchantress_mage_by_peachyco', effect:'fadeInRight' },
+      { handle:'I hit like a girl, heh.', png:'connect/human_warpriest_by_peachyco', effect:'fadeInRight' },
+      { handle:'Collect magic rings', png:'connect/human_wizard_by_peachyco', effect:'fadeInRight' },
+      { handle:'Come join our gang!', png:'connect/kashaw_and_zahra_by_peachyco', effect:'fadeInRight' },
+      { handle:'Special weapon and armor', png:'connect/krauser_dragonborn_warlord_by_peachyco', effect:'fadeInRight' },
+      { handle:'Special magicks', png:'connect/lucien2_human_wizard_by_peachyco', effect:'fadeInRight' },
+      { handle:'Magic potions and poisons', png:'connect/lucien_human_wizard_by_peachyco', effect:'fadeInRight' },
+      { handle:`Let's brawl in the tavern`, png:'connect/orc_pirate_by_peachyco', effect:'fadeInRight' },
+      { handle:'Advance to a Paladin', png:'connect/paladin_by_peachyco', effect:'fadeInRight' },
+      { handle:'Taunt others as a Titan', png:'connect/thrask_goliath_fighter_by_peachyco', effect:'fadeInRight' },
+      { handle:'Become an immortal God', png:'connect/warforged_fighter_and_human_wizard_by_peachyco', effect:'fadeInRight' },
+      { handle:'Shall we begin?', png:'connect/yuriel_genasi_warlord_by_peachyco', effect:'fadeInRight' }
     )
 
     let rs = query(`SELECT id,handle,pc,gender,level FROM Players WHERE xplevel>1`)
