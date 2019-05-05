@@ -2482,40 +2482,44 @@ function putMonster(r = -1, c = -1): boolean {
 	}
 
 	//	check for overcrowding
+	let i:number = DL.rooms[r][c].monster.length
 	const mob = Z < 50 ? 3 : 2
-	if (DL.rooms[r][c].monster.length >= (!DL.rooms[r][c].type ? mob - 1 : DL.rooms[r][c].type == 'cavern' ? mob : 1))
+	if (i >= (!DL.rooms[r][c].type ? mob - 1 : DL.rooms[r][c].type == 'cavern' ? mob : 1))
 		return false
 
-	let i:number = DL.rooms[r][c].monster.length
 	let j:number = 0
 	let dm:monster = { name:'', pc:'' }
 	let level: number = 0
 	let m:active
 
-	for (j = 0; j < 4; j++) level += $.dice(7)
-	switch (level >> 2) {
-		case 1:
-			level = $.dice(Z)
-			break
-		case 2:
-			level = Z - 3 - $.dice(3)
-			break
-		case 3:
-			level = Z - $.dice(3)
-			break
-		case 4:
-			level = Z
-			break
-		case 5:
-			level = Z + $.dice(3)
-			break
-		case 6:
-			level = Z + 3 + $.dice(3)
-			break
-		case 7:
-			level = Z + $.dice(Z)
-			break
+	if (!i) {
+		for (j = 0; j < 4; j++) level += $.dice(7)
+		switch (level >> 2) {
+			case 1:
+				level = $.dice(Z)
+				break
+			case 2:
+				level = Z - 3 - $.dice(3)
+				break
+			case 3:
+				level = Z - $.dice(3)
+				break
+			case 4:
+				level = Z
+				break
+			case 5:
+				level = Z + $.dice(3)
+				break
+			case 6:
+				level = Z + 3 + $.dice(3)
+				break
+			case 7:
+				level = Z + $.dice(Z)
+				break
+		}
 	}
+	else
+		level = $.dice(level / mob) + (level >= 6 && level <= 60 ? $.dice(level / 6) : level > 60 ? 30 : 0)
 	if (level < 1) level = $.dice(Z)
 	if (level > 99) level = 100 - $.dice(10)
 
