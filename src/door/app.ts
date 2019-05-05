@@ -90,7 +90,7 @@ dns.lookup('localhost', (err, addr, family) => {
     let level = 0
     for (let n in monsters) {
       let pc = monsters[n].pc
-      let profile = { handle:`The ${n}`, pc:`${pc}:`, level:++level, effect:monsters[n].effect || 'fadeIn' }
+      let profile = { handle:`The <span style="color:brown !important;">${n}</span>:`, level:++level, pc:pc, effect:monsters[n].effect || 'fadeIn' }
       if (pc)
         profile['jpg'] = `dungeon/${n}`
       else {
@@ -103,7 +103,7 @@ dns.lookup('localhost', (err, addr, family) => {
     let rs = query(`SELECT id,handle,pc,gender,level FROM Players WHERE xplevel>1`)
     for (let n in rs) {
       let id = rs[n].id, handle = rs[n].handle, pc = rs[n].pc, gender = rs[n].gender, level = rs[n].level
-      let profile = { handle:handle, pc:pc, level:level, effect:'fadeInLeft' }
+      let profile = { handle:handle, level:level, pc:pc, effect:'fadeInLeft' }
       if (id[0] == '_')
         profile['jpg'] = `npc/${{ _BAR:'barkeep', _DM:'dwarf', _NEP:'neptune', _OLD:'seahag', _TAX:'taxman' }[id]}`
       else {
