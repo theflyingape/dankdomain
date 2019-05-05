@@ -278,7 +278,7 @@ function rotateImage() {
     setTimeout(function () { nme(html); }, 1000);
   }
   else
-    window.frames.parent.location.reload(true);
+    send('\x15');
 }
 
 function send(keystrokes, cr = false, et = 'emit') {

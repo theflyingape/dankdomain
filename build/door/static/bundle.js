@@ -246,14 +246,14 @@ function newSession(ev) {
             return res.text().then(function (data) {
                 term.write(data);
                 setTimeout(() => {
+                    term.focus();
                     term.writeln(wall);
                     term.writeln(' \x1B[1;36m\u00B7\x1B[22;2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1B[22m');
-                    term.focus();
-                    term.blur();
                     XT(`@play(${['demon', 'demogorgon', 'portal', 'thief2'][Math.trunc(4 * Math.random())]})`);
                     XT('@action(welcome)');
+                    term.blur();
                     window.frames['Info'].focus();
-                }, wall ? 500 : 1500);
+                }, wall ? 500 : 2000);
             });
         });
     }
