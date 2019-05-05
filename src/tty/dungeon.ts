@@ -2519,7 +2519,7 @@ function putMonster(r = -1, c = -1): boolean {
 		}
 	}
 	else
-		level = $.dice(level / mob) + (level >= 6 && level <= 60 ? $.dice(level / 6) : level > 60 ? 30 : 0)
+		level = $.dice(Z / mob) + (Z >= 6 && Z <= 60 ? $.dice(Z / 6) : Z > 60 ? 30 : 0)
 	if (level < 1) level = $.dice(Z)
 	if (level > 99) level = 100 - $.dice(10)
 
