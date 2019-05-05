@@ -56,10 +56,10 @@
     padding: 0px 0px 0px 0px;
     border: none;
   }
-  hr { 
+  hr {
     background-image: linear-gradient(to left, gainsboro, steelblue, gainsboro);
-    border: 0; 
-    height: 1px; 
+    border: 0;
+    height: 1px;
   }
   img {
     max-height: 100%;
@@ -86,6 +86,7 @@ let cookies = cookie.split('; ');
 let id = 'new';
 if (cookies[0]) id = cookies[0].split('=')[1] || '';
 art = null;
+let images = [];
 currentCMD = null;
 fontSize = 24;
 input = false;
@@ -120,27 +121,6 @@ money = `<table>
 <tr><td><input class="Keycap" type="button" value="0" onclick="send('0');"><td colspan=2>${Enter}</td></td><td><input class="Copper" type="button" value="C" onclick="send('c');"></td></tr>
 <tr><td colspan=2>${Cancel}</td><td colspan=2>${Max}</td>
 </tr></table>`;
-images = [
-  'arexielite_by_peachyco.png',
-  'dragonborn_dagger_sorcerer_by_peachyco.png',
-  'dragonborn_hexblade_by_peachyco.png',
-  'elf_cleric_by_peachyco.png',
-  'elf_fighter_by_peachyco.png',
-  'guild_findsman_by_peachyco.png',
-  'human_battlemage_by_peachyco.png',
-  'human_enchantress_mage_by_peachyco.png',
-  'human_warpriest_by_peachyco.png',
-  'human_wizard_by_peachyco.png',
-  'kashaw_and_zahra_by_peachyco.png',
-  'krauser_dragonborn_warlord_by_peachyco.png',
-  'lucien2_human_wizard_by_peachyco.png',
-  'lucien_human_wizard_by_peachyco.png',
-  'orc_pirate_by_peachyco.png',
-  'paladin_by_peachyco.png',
-  'thrask_goliath_fighter_by_peachyco.png',
-  'warforged_fighter_and_human_wizard_by_peachyco.png',
-  'yuriel_genasi_warlord_by_peachyco.png'
-];
 
 if (window.addEventListener)
   window.addEventListener("message", receive, false);
@@ -284,11 +264,18 @@ function Logoff() {
 function rotateImage() {
   animated('fadeOutLeft');
   if (images.length) {
-    n = Math.trunc(Math.random() * images.length);
-    pic = images.splice(n,1);
-    setTimeout(function () {
-      nme(`<img src="images/connect/${pic}" onload="nmeResize(\'fadeInRight\');" style="display:none; filter:opacity(40%);" />`);
-    }, 1000);
+    const n = Math.trunc(Math.random() * images.length);
+    const profile = images.splice(n, 1)[0];
+
+    let html = '';
+    if (profile.handle) html += `${profile.handle}`;
+    if (profile.level) html += ` a level ${profile.level} `;
+    if (profile.pc) html += ` ${profile.pc} `;
+    if (html.length) html += '<br>';
+    if (profile.jpg) html += `<img src="images/${profile.jpg}.jpg" onload="nmeResize(\'${profile.effect}\');" style="display:none;" />`;
+    if (profile.png) html += `<img src="images/${profile.png}.png" onload="nmeResize(\'${profile.effect}\');" style="display:none; filter:opacity(${/^connect/.test(profile.png) ? '40%' : '100%'});" />`;
+
+    setTimeout(function () { nme(html); }, 1000);
   }
   else
     window.frames.parent.location.reload(true);
@@ -631,6 +618,15 @@ function keydown(event) {
       break;
   }
 }
+
+const app = location.pathname.replace(/info.html$/, "")
+fetch(`${app}player/`, { method: 'GET' }).then(function (res) {
+		res.json().then(function (knock) {
+      Object.assign(images, knock.list);
+      if (knock.wall) send(knock.wall, false, 'wall');
+    })
+  })
+
 </script>
   <div id="nme"></div>
   <div id="command" style="background: linear-gradient(to bottom, rgba(223, 247, 255, 0.04), rgba(215, 241, 247, 0.96)); position: relative; text-align: right; width:99%;"></div>

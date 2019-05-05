@@ -16,6 +16,7 @@ console.log(`cwd: ${__dirname}`)
 
 let sessions = {}
 let broadcasts = {}
+let latest = { now:0, msg:'' }
 
 //dns.lookup('0.0.0.0', (err, addr, family) => {
 dns.lookup('localhost', (err, addr, family) => {
@@ -58,8 +59,70 @@ dns.lookup('localhost', (err, addr, family) => {
 
   //  REST services
   //  Player API
-  app.post('/xterm/door/player', function (req, res) {
+  app.get('/xterm/door/player/', (req, res) => {
+    let client = req.header('x-forwarded-for') || req.connection.remoteAddress
+    console.log(`Door knocked from remote host: ${client} (${req.hostname})`)
 
+    let list = []
+    list.push(
+      { png:'connect/arexielite_by_peachyco', effect:'fadeInRight' },
+      { png:'connect/dragonborn_dagger_sorcerer_by_peachyco', effect:'fadeInRight' },
+      { png:'connect/dragonborn_hexblade_by_peachyco', effect:'fadeInRight' },
+      { png:'connect/elf_cleric_by_peachyco', effect:'fadeInRight' },
+      { png:'connect/elf_fighter_by_peachyco', effect:'fadeInRight' },
+      { png:'connect/guild_findsman_by_peachyco', effect:'fadeInRight' },
+      { png:'connect/human_battlemage_by_peachyco', effect:'fadeInRight' },
+      { png:'connect/human_enchantress_mage_by_peachyco', effect:'fadeInRight' },
+      { png:'connect/human_warpriest_by_peachyco', effect:'fadeInRight' },
+      { png:'connect/human_wizard_by_peachyco', effect:'fadeInRight' },
+      { png:'connect/kashaw_and_zahra_by_peachyco', effect:'fadeInRight' },
+      { png:'connect/krauser_dragonborn_warlord_by_peachyco', effect:'fadeInRight' },
+      { png:'connect/lucien2_human_wizard_by_peachyco', effect:'fadeInRight' },
+      { png:'connect/lucien_human_wizard_by_peachyco', effect:'fadeInRight' },
+      { png:'connect/orc_pirate_by_peachyco', effect:'fadeInRight' },
+      { png:'connect/paladin_by_peachyco', effect:'fadeInRight' },
+      { png:'connect/thrask_goliath_fighter_by_peachyco', effect:'fadeInRight' },
+      { png:'connect/warforged_fighter_and_human_wizard_by_peachyco', effect:'fadeInRight' },
+      { png:'connect/yuriel_genasi_warlord_by_peachyco', effect:'fadeInRight' }
+    )
+
+    let rs = query(`SELECT id,handle,pc,gender,level FROM Players WHERE xplevel>1`)
+    for (let n in rs) {
+      let id = rs[n].id, handle = rs[n].handle, pc = rs[n].pc, gender = rs[n].gender, level = rs[n].level
+      let profile = { handle:handle, pc:pc, level:level, effect:'fadeInLeft' }
+      if (id[0] == '_')
+        profile['jpg'] = `npc/${{ _BAR:'barkeep', _DM:'dwarf', _NEP:'neptune', _OLD:'seahag', _TAX:'taxman' }[id]}`
+      else {
+        let userPNG = `user/${id}`
+        try {
+            fs.accessSync(`./static/images/${userPNG}.png`, fs.constants.F_OK)
+        } catch(e) {
+            userPNG = 'player/' + pc.toLowerCase() + (gender == 'F' ? '_f' : '')
+        }
+        profile['png'] = userPNG
+      }
+      list.push(profile)
+    }
+
+    const monsters = require('../etc/dungeon.json')
+    let level = 0
+    for (let n in monsters) {
+      let pc = monsters[n].pc
+      let profile = { handle:`The ${n}`, pc:pc, level:++level, effect:monsters[n].effect || 'fadeIn' }
+      if (pc)
+        profile['jpg'] = `dungeon/${n}`
+      else {
+        profile['png'] = `monster/monster`
+        profile['pc'] = `same class`
+      }
+      list.push(profile)
+    }
+
+    res.send(JSON.stringify({ list:list, wall:latest.msg }))
+    res.end()
+  })
+
+  app.post('/xterm/door/player', function (req, res) {
     let client = req.header('x-forwarded-for') || req.connection.remoteAddress
     let cols = parseInt(req.query.cols)
     let rows = parseInt(req.query.rows)
@@ -69,7 +132,7 @@ dns.lookup('localhost', (err, addr, family) => {
     let term = pty.spawn('sh', [ "-l", "../logins.sh", tty ], {
           name: 'xterm-256color',
           cols: cols || 80,
-          rows: rows || 24,
+          rows: rows || 25,
           cwd: __dirname,
           env: process.env
         })
@@ -102,9 +165,21 @@ dns.lookup('localhost', (err, addr, family) => {
     let term = sessions[pid]
     if (!term) return
 
+    const line = `\r\n\x1B[0;36m\u00B7\x1B[1m${msg}\x1B[m`
+
+    //  buffer up to the latest 5-minutes of activity
+    let now = new Date().getTime()
+    if (Math.round((now - latest.now) / 1000 / 60) > 5) {
+      latest.msg = ''
+      latest.now = now
+    }
+    latest.msg += line
+
+    //  buffer for all active player session(s)
     for (let o in sessions)
       if (+o !== pid)
-        broadcasts[o] += `\r\n\x1B[0;36m\u00B7\x1B[1m${msg}\x1B[m`
+        broadcasts[o] += line
+
     res.end()
   })
 
@@ -272,7 +347,7 @@ dns.lookup('localhost', (err, addr, family) => {
 
   function unlock(pid: number) {
     console.log(`Unlocking ${pid}`)
-    sqlite3.prepare(`DELETE FROM Online WHERE pid = ${pid}`).run().changes
+    sqlite3.prepare(`DELETE FROM Online WHERE pid=${pid}`).run().changes
   }
 })
 

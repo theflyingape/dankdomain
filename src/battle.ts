@@ -1741,7 +1741,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             else {
                 nme.toWC -= $.dice(nme.weapon.wc / 5 + 1)
                 nme.user.toWC -= $.dice(nme.weapon.wc / 10 + 1)
-                xvt.outln(xvt.bright, 'it damages ', p2.his, isNaN(+nme.user.weapon) ? nme.user.weapon : 'attack'
+                xvt.outln(xvt.bright, caster, $.what(rpc, 'damage'), p2.his, isNaN(+nme.user.weapon) ? nme.user.weapon : 'attack'
                     , $.buff(nme.user.toWC, nme.toWC), '!')
                 xvt.waste(400)
                 if (-nme.user.toWC >= nme.weapon.wc || -(nme.user.toWC + nme.toWC) >= nme.weapon.wc) {

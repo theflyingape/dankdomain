@@ -270,9 +270,9 @@ function newSession(ev) {
 	else {
 		fetch(`${app}/title.txt`, { method: 'GET' }).then(function (res) {
 			return res.text().then(function (data) {
-				term.writeln(data)
+				term.write(data)
 				setTimeout(() => {
-					term.writeln(' \x1B[1;36m\u00B7\x1B[22;2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1B[22m')
+					term.writeln('\r\n \x1B[1;36m\u00B7\x1B[22;2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1B[22m')
 					term.focus()
 					term.blur()
 					XT(`@play(${['demon','demogorgon','portal','thief2'][Math.trunc(4*Math.random())]})`)
@@ -433,6 +433,9 @@ function receive(event) {
 					socket.send(event.data.message)
 				if (event.data.return)
 					socket.send('\r')
+				break
+			case 'wall':
+				term.write(event.data.message)
 				break
 		}
 	}
