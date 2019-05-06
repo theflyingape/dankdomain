@@ -23,7 +23,6 @@ let pid = 0, wpid = 0, tty = false;
 let socket;
 let carrier = false, recheck = 0;
 let reconnect, lurking;
-let wall = '';
 if (window.addEventListener)
     window.addEventListener("message", receive, false);
 /*	else {
@@ -244,16 +243,23 @@ function newSession(ev) {
     else {
         fetch(`${app}/title.txt`, { method: 'GET' }).then(function (res) {
             return res.text().then(function (data) {
+                term.focus();
                 term.write(data);
-                setTimeout(() => {
-                    term.focus();
-                    term.writeln(wall);
-                    term.writeln(' \x1B[1;36m\u00B7\x1B[22;2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1B[22m');
-                    XT(`@play(${['demon', 'demogorgon', 'portal', 'thief2'][Math.trunc(4 * Math.random())]})`);
-                    XT('@action(welcome)');
-                    term.blur();
-                    window.frames['Info'].focus();
-                }, wall ? 500 : 2000);
+                const app = location.pathname.replace(/info.html$/, "");
+                fetch(`${app}player/`, { method: 'GET' }).then(function (res) {
+                    res.json().then(function (knock) {
+                        setTimeout(() => {
+                            term.focus();
+                            term.writeln(knock.wall);
+                            term.writeln(' \x1B[1;36m\u00B7\x1B[22;2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1B[22m');
+                            XT(`@play(${['demon', 'demogorgon', 'portal', 'thief2'][Math.trunc(4 * Math.random())]})`);
+                            XT('@action(welcome)');
+                            term.blur();
+                            window.frames['Info'].focus();
+                            window.frames['Info'].postMessage({ images: knock.list }, location.href);
+                        }, 500);
+                    });
+                });
             });
         });
     }
@@ -400,9 +406,6 @@ function receive(event) {
                     socket.send(event.data.message);
                 if (event.data.return)
                     socket.send('\r');
-                break;
-            case 'wall':
-                wall = event.data.message;
                 break;
         }
     }

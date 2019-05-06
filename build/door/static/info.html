@@ -148,6 +148,11 @@ function receive(event) {
       return;
     }
 
+    if (event.data.images) {
+      images = event.data.images;
+      return;
+    }
+
     if (event.data.leader) {
       var html = `<table>
     <tr><td rowspan=2><img src="images/${event.data.banner}.png"></td><td><img src="images/${event.data.leader}.png" /></td></tr>`
@@ -618,15 +623,6 @@ function keydown(event) {
       break;
   }
 }
-
-const app = location.pathname.replace(/info.html$/, "")
-fetch(`${app}player/`, { method: 'GET' }).then(function (res) {
-		res.json().then(function (knock) {
-      Object.assign(images, knock.list);
-      if (knock.wall) send(knock.wall, false, 'wall');
-    })
-  })
-
 </script>
   <div id="nme"></div>
   <div id="command" style="background: linear-gradient(to bottom, rgba(223, 247, 255, 0.04), rgba(215, 241, 247, 0.96)); position: relative; text-align: right; width:99%;"></div>
