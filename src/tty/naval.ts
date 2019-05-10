@@ -210,8 +210,8 @@ function choice() {
 				xvt.outln('n oyster and you eat it.')
 				xvt.waste(600)
 				n = Math.round(Math.pow(2., $.player.hull / 150.) * 7937)
-				n = Math.trunc(n / $.player.hull / 10 * $.dice($.online.hull))
-				n = Math.trunc(n * ($.player.cannon + 1) / ($.player.hull / 50))
+				n = $.int(n / $.player.hull / 10 * $.dice($.online.hull))
+				n = $.int(n * ($.player.cannon + 1) / ($.player.hull / 50))
 				n = $.worth(n, $.online.cha)
 				$.sound('oof')
 				xvt.outln(`Ouch!  You bit into a pearl and sell it for ${new $.coins(n).carry()}.`)
@@ -222,8 +222,8 @@ function choice() {
 				xvt.outln('n oyster and you eat it.')
 				xvt.waste(600)
 				n = Math.round(Math.pow(2., $.player.hull / 150.) * 7937)
-				n = Math.trunc(n / $.player.hull * $.dice($.online.hull))
-				n = Math.trunc(n * ($.player.cannon + 1) / ($.player.hull / 50))
+				n = $.int(n / $.player.hull * $.dice($.online.hull))
+				n = $.int(n * ($.player.cannon + 1) / ($.player.hull / 50))
 				n = $.worth(n, $.online.cha)
 				$.sound('oof')
 				xvt.outln(`Ouch!  You bit into a diamond and sell it for ${new $.coins(n).carry()}.`)
@@ -458,16 +458,16 @@ function Shipyard(suppress = true) {
 				max = $.player.hull - $.online.hull
 				xvt.outln(`You need ${max} hull points of repair.`)
 				cost = Math.round(Math.pow(2, $.player.hull / 150) * 7937)
-				cost = Math.trunc(cost / $.player.hull / 10)
+				cost = $.int(cost / $.player.hull / 10)
 				xvt.outln(`Each hull point costs ${new $.coins(cost).carry()}.`)
-				afford = Math.trunc($.player.coin.value / cost)
+				afford = $.int($.player.coin.value / cost)
 				if (afford < max)
 					max = afford
 				$.action('listall')
 				xvt.app.form = {
 					'hp': { cb: () => {
 						xvt.outln('\n')
-						let buy = Math.abs(Math.trunc(/=|max/i.test(xvt.entry) ? max : +xvt.entry))
+						let buy = $.int(/=|max/i.test(xvt.entry) ? max : +xvt.entry, true)
 						if (buy > 0 && buy <= max) {
 							$.player.coin.value -= buy * cost
 							if ($.player.coin.value < 0)
@@ -489,19 +489,19 @@ function Shipyard(suppress = true) {
 					xvt.outln(`You don't have a ship!`)
 					break
 				}
-				max = Math.trunc($.player.hull / 50) - $.player.cannon
+				max = $.int($.player.hull / 50) - $.player.cannon
 				xvt.outln(`You can mount up to ${max} more cannons.`)
 				cost = Math.round(Math.pow(2, $.player.hull / 150) * 7937)
-				cost = Math.trunc(cost / 250)
+				cost = $.int(cost / 250)
 				xvt.outln(`Each cannon costs ${new $.coins(cost).carry()}.`)
-				afford = Math.trunc($.player.coin.value / cost)
+				afford = $.int($.player.coin.value / cost)
 				if (afford < max)
 					max = afford
 				$.action('listbest')
 				xvt.app.form = {
 					'cannon': { cb: () => {
 						xvt.outln('\n')
-						let buy = Math.abs(Math.trunc(/=|max/i.test(xvt.entry) ? max : +xvt.entry))
+						let buy = $.int(/=|max/i.test(xvt.entry) ? max : +xvt.entry, true)
 						if (buy > 0 && buy <= max) {
 							$.player.coin.value -= buy * cost
 							if ($.player.coin.value < 0)
@@ -529,9 +529,9 @@ function Shipyard(suppress = true) {
 					break
 				}
 				cost = Math.round(Math.pow(2, $.player.hull / 150) * 7937)
-				cost = Math.trunc(cost / 10)
+				cost = $.int(cost / 10)
 				xvt.outln(`We can equip your ship with a ram for ${new $.coins(cost).carry()}.`)
-				afford = Math.trunc($.player.coin.value / cost)
+				afford = $.int($.player.coin.value / cost)
 				if (!afford) {
 					xvt.outln(`You don't have enough money!`)
 					break
@@ -690,7 +690,7 @@ function BattleUser(nme: active) {
 		$.news(`\tsank ${nme.user.handle}'s ship`)
 
 		let booty = new $.coins(Math.round(Math.pow(2, $.player.hull / 150) * 7937 / 250))
-		booty.value = Math.trunc(booty.value * nme.user.cannon)
+		booty.value = $.int(booty.value * nme.user.cannon)
 		if (nme.user.coin.value > booty.value) {
 			$.sound('boo')
 			xvt.outln(`${new $.coins(nme.user.coin.value - booty.value).carry()} of the booty has settled on the ocean floor...`)
@@ -756,7 +756,7 @@ function BattleUser(nme: active) {
 			$.online.hull = 0
 
 			let booty = new $.coins(Math.round(Math.pow(2, nme.user.hull / 150) * 7937 / 250))
-			booty.value = Math.trunc(booty.value * $.player.cannon)
+			booty.value = $.int(booty.value * $.player.cannon)
 			if ($.player.coin.value > booty.value)
 				$.player.coin.value = booty.value
 			booty.value += $.player.coin.value
