@@ -8,6 +8,7 @@ sudo -v || exit
 
 rm ./build/door/static/bundle.js
 git pull
+npm install
 npm run build
 
 sudo rsync -av --chown=root:games ./build/ ${TARGET}

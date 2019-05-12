@@ -65,7 +65,7 @@ dns.lookup('localhost', (err, addr, family) => {
 
     let list = []
     list.push(
-      { handle:`Read the <a href="https://ddgame.us" target="_blank">Players's manual</a>`, png:'connect/arexielite_by_peachyco', effect:'fadeInRight' },
+      { handle:`The <span style="color:brown !important;">Player manual</span>: <a href="https://ddgame.us" target="_blank">DDgame.us</a>`, png:'connect/arexielite_by_peachyco', effect:'fadeInRight' },
       { handle:'100 dungeon levels', png:'connect/dragonborn_dagger_sorcerer_by_peachyco', effect:'fadeInRight' },
       { handle:'Take on the Monster Mash', png:'connect/dragonborn_hexblade_by_peachyco', effect:'fadeInRight' },
       { handle:'Come get some', png:'connect/elf_cleric_by_peachyco', effect:'fadeInRight' },
@@ -73,7 +73,7 @@ dns.lookup('localhost', (err, addr, family) => {
       { handle:'Naval battles', png:'connect/guild_findsman_by_peachyco', effect:'fadeInRight' },
       { handle:'Rob and pick pockets', png:'connect/human_battlemage_by_peachyco', effect:'fadeInRight' },
       { handle:'Magic can be fun', png:'connect/human_enchantress_mage_by_peachyco', effect:'fadeInRight' },
-      { handle:'I hit like a girl, heh.', png:'connect/human_warpriest_by_peachyco', effect:'fadeInRight' },
+      { handle:'I hit like a girl. Heh.', png:'connect/human_warpriest_by_peachyco', effect:'fadeInRight' },
       { handle:'Discover all 20 magic rings', png:'connect/human_wizard_by_peachyco', effect:'fadeInRight' },
       { handle:'Come join our gang!', png:'connect/kashaw_and_zahra_by_peachyco', effect:'fadeInRight' },
       { handle:'Weapon and Armor specials', png:'connect/krauser_dragonborn_warlord_by_peachyco', effect:'fadeInRight' },
@@ -82,7 +82,7 @@ dns.lookup('localhost', (err, addr, family) => {
       { handle:`Let's brawl in the tavern`, png:'connect/orc_pirate_by_peachyco', effect:'fadeInRight' },
       { handle:'Advance to a Paladin', png:'connect/paladin_by_peachyco', effect:'fadeInRight' },
       { handle:'Taunt others as a Titan', png:'connect/thrask_goliath_fighter_by_peachyco', effect:'fadeInRight' },
-      { handle:'Become an immortal God', png:'connect/warforged_fighter_and_human_wizard_by_peachyco', effect:'fadeInRight' },
+      { handle:'Transcend to a God', png:'connect/warforged_fighter_and_human_wizard_by_peachyco', effect:'fadeInRight' },
       { handle:'Shall we begin?', png:'connect/yuriel_genasi_warlord_by_peachyco', effect:'fadeInRight' }
     )
 
