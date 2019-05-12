@@ -1010,7 +1010,7 @@ export function brawl(rpc:active, nme:active, vs = false) {
     }
 
     function knockout(winner:active, loser:active) {
-        let xp = $.experience(loser.user.xplevel, 9)
+        let xp = $.experience(loser.user.level, 9)
         $.run(`UPDATE Players SET tw=tw+1,xp=xp+${xp},coin=coin+${loser.user.coin.value} WHERE id='${winner.user.id}'`)
         $.run(`UPDATE Players SET tl=tl+1,coin=0 WHERE id='${loser.user.id}'`)
 
@@ -1697,7 +1697,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 xvt.waste(600)
                 rpc.toAC -= $.dice(rpc.armor.ac / 5 + 1)
                 rpc.user.toAC -= $.dice(rpc.armor.ac / 10 + 1)
-                xvt.outln(xvt.bright, caster, $.what(rpc, 'damage'), 'own ', isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense'
+                xvt.outln(xvt.bright, caster, ' ', $.what(rpc, 'damage'), 'own ', isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense'
                     , $.buff(rpc.user.toAC, rpc.toAC), '!')
                 xvt.waste(400)
                 if (-rpc.user.toAC >= rpc.armor.ac || -(rpc.user.toAC + rpc.toAC) >= rpc.armor.ac) {
@@ -1729,7 +1729,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             if (backfire) {
                 rpc.toWC -= $.dice(rpc.weapon.wc / 5 + 1)
                 rpc.user.toWC -= $.dice(rpc.weapon.wc / 10 + 1)
-                xvt.outln(xvt.bright, caster, $.what(rpc, 'damage'), 'own ', isNaN(+rpc.user.weapon) ? rpc.user.weapon : 'attack'
+                xvt.outln(xvt.bright, caster, ' ', $.what(rpc, 'damage'), 'own ', isNaN(+rpc.user.weapon) ? rpc.user.weapon : 'attack'
                     , $.buff(rpc.user.toWC, rpc.toWC), '!')
                 xvt.waste(400)
                 if (-rpc.user.toWC >= rpc.weapon.wc || -(rpc.user.toWC + rpc.toWC) >= rpc.weapon.wc) {
@@ -1741,7 +1741,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
             else {
                 nme.toWC -= $.dice(nme.weapon.wc / 5 + 1)
                 nme.user.toWC -= $.dice(nme.weapon.wc / 10 + 1)
-                xvt.outln(xvt.bright, caster, $.what(rpc, 'damage'), p2.his, isNaN(+nme.user.weapon) ? nme.user.weapon : 'attack'
+                xvt.outln(xvt.bright, caster, ' ', $.what(rpc, 'damage'), p2.his, isNaN(+nme.user.weapon) ? nme.user.weapon : 'attack'
                     , $.buff(nme.user.toWC, nme.toWC), '!')
                 xvt.waste(400)
                 if (-nme.user.toWC >= nme.weapon.wc || -(nme.user.toWC + nme.toWC) >= nme.weapon.wc) {
@@ -1828,7 +1828,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 mana = $.int(rpc.sp * 1. / ((5. - rpc.user.magic) + $.dice(2)))
                 if (mana + nme.sp > nme.user.sp)
                     mana = nme.user.sp - nme.sp
-                xvt.out(Recipient, $.what(rpc, 'absorb'), 'spell power (', xvt.bright, xvt.cyan, mana.toString(), xvt.reset, ') '
+                xvt.out(Recipient, $.what(rpc, 'absorb'), 'spell power (', xvt.cyan, xvt.bright, mana.toString(), xvt.reset, ') '
                     , 'from ', caster)
                 rpc.sp -= mana
                 if (nme.user.magic > 1)
@@ -1838,7 +1838,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                 mana = $.int(nme.sp * 1. / ((5. - rpc.user.magic) + $.dice(2)))
                 if (mana + rpc.sp > rpc.user.sp)
                     mana = rpc.user.sp - rpc.sp
-                xvt.out(Caster, $.what(rpc, 'absorb'), 'spell power (', xvt.bright, xvt.cyan, mana.toString(), xvt.reset, ') '
+                xvt.out(Caster, $.what(rpc, 'absorb'), 'spell power (', xvt.cyan, xvt.bright, mana.toString(), xvt.reset, ') '
                     , 'from ', recipient)
                 nme.sp -= mana
                 if (rpc.user.magic > 1)
@@ -1849,18 +1849,18 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
         case 21:
             $.sound('life')
-            xvt.out(xvt.bright, xvt.black, 'A black finger extends and touches ', backfire ? p1.him : p2.him, '... ')
+            xvt.out(xvt.black, xvt.bright, 'A black finger extends and touches ', backfire ? p1.him : p2.him, '... ')
             xvt.waste(800)
             xvt.outln()
             let xp = 0
             if (backfire) {
-                xp = Math.trunc(rpc.user.xp / 2)
+                xp = $.int(rpc.user.xp / 2)
                 rpc.user.xp -= xp
                 nme.user.xp += (nme.user.level > rpc.user.level) ? xp : Math.trunc(nme.user.xp / 2)
                 xvt.out(Recipient, $.what(nme, 'absorb'), 'some life experience from ', caster)
             }
             else {
-                xp = Math.trunc(nme.user.xp / 2)
+                xp = $.int(nme.user.xp / 2)
                 nme.user.xp -= xp
                 rpc.user.xp += (rpc.user.level > nme.user.level) ? xp : Math.trunc(rpc.user.xp / 2)
                 xvt.out(Caster, $.what(rpc, 'absorb'), 'some life experience from ', recipient)
@@ -1870,7 +1870,7 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
 
         case 22:
             $.sound('lose')
-            xvt.out(xvt.bright, xvt.black, 'A shroud of blackness engulfs ', backfire ? p1.him : p2.him, '... ')
+            xvt.out(xvt.black, xvt.bright, 'A shroud of blackness engulfs ', backfire ? p1.him : p2.him, '... ')
             xvt.waste(800)
             xvt.outln()
             if (backfire) {

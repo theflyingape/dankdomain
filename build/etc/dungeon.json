@@ -70,7 +70,7 @@
 	"roper": { "pc":"Beast", "hit":"thrash", "smash":"whip" },
 	"umber hulk": { "pc":"Ogre", "hit":"bash", "smash":"smash", "rings":[ "Ogre" ], "effect":"wobble" },
 	"pyrohydra": { "pc":"Dragon", "hit":"claw", "smash":"burn", "spells":[ "Blast" ], "effect":"shake" },
-	"will-o-wisp": { "pc":"None", "hit":"flame", "smash":"torch" ,"poisons":[ 16 ], "spells":[ "Teleport", "Illusion", "Cure", "Disintegrate", "Morph", "Armor Rusting", "Weapon Decay", "Big Blast" ], "rings":[ "Shade" ] },
+	"will-o-wisp": { "pc":"None", "hit":"flame", "smash":"torch" ,"poisons":[ 16 ], "spells":[ "Teleport", "Illusion", "Cure", "Disintegrate", "Morph", "Armor Rusting", "Weapon Decay", "Life Stealing", "Level Stealing", "Big Blast" ], "rings":[ "Shade" ] },
 	"vampire": { "pc":"Undead", "hit":"touch", "smash":"bite", "spells":[ "Heal", "Teleport", "Mana Stealing", "Life Stealing" ], "rings":[ "Undying" ], "effect":"fadeIn" },
 	"ghost": { "pc":"Undead", "hit":"scare", "smash":"frighten", "spells":[ "Teleport", "Blast", "Mana Stealing", "Level Stealing" ], "rings":[ "Cursed" ], "effect":"fadeIn" },
 	"dracolisk": { "pc":"Lizard", "hit":"claw", "smash":"bite", "poisons":[ 8,9,10,11 ], "spells":[ "Heal", "Teleport" ], "effect":"rubberBand" },

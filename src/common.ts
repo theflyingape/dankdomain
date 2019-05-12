@@ -532,8 +532,10 @@ export class Character {
              He: `${{ M:mob ? Handle : 'He', F:mob ? Handle : 'She', I:mob ? Handle : 'It',  U:'You' }[gender]} `,
              he: `${{ M:'he', F:'she', I:'it',  U:'you' }[gender]} `,
             him: `${{ M:mob ? handle : 'him', F:mob ? handle : 'her', I:mob ? handle : 'it',  U:'you' }[gender]} `,
-            His: `${{ M:mob ? Handle + `'s` : 'His', F:mob ? Handle + `'s` : 'Her', I:mob ? Handle + `'s` : 'Its',  U:'Your' }[gender]} `,
-            his: `${{ M:mob ? handle + `'s`: 'his', F:mob ? handle + `'s` : 'her', I:mob ? handle + `'s` : 'its',  U:'your' }[gender]} `,
+            His: `${{ M:mob ? (Handle + `'` + Handle.substr(-1) !== 's' ? 's' : '') : 'His'
+                    , F:mob ? (Handle + `'` + Handle.substr(-1) !== 's' ? 's' : '') : 'Her', I:mob ? Handle + `'s` : 'Its',  U:'Your' }[gender]} `,
+            his: `${{ M:mob ? (handle + `'` + handle.substr(-1) !== 's' ? 's' : '') : 'his'
+                    , F:mob ? (handle + `'` + handle.substr(-1) !== 's' ? 's' : '') : 'her', I:mob ? handle + `'s` : 'its',  U:'your' }[gender]} `,
            self: `${{ M:'him', F:'her', I:'it',  U:'your' }[gender]}self `,
             You: `${{ M:Handle, F:Handle, I:Handle, U:'You'}[gender]} `,
             you: `${{ M:handle, F:handle, I:handle, U:'you'}[gender]}`

@@ -127,8 +127,10 @@ function choice() {
                     xvt.out(xvt.yellow, xvt.bright)
                 else if (rs[n].id == $.player.id)
                     xvt.out(xvt.bright)
+                if (rs[n].xplevel < rs[n].level)
+                    xvt.out(xvt.faint)
                 xvt.out(sprintf('%-4s  %-22.22s  %-9s  %3d  '
-                    , rs[n].id, rs[n].handle, rs[n].pc, rs[n].level))
+                    , rs[n].id, rs[n].handle, rs[n].pc, rs[n].xplevel))
                 if (!rs[n].status.length) xvt.out('Alive!')
                 else {
                     if ($.player.emulation == 'XT')
