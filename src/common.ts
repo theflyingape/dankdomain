@@ -1269,7 +1269,7 @@ export function playerPC(points = 200, immortal = false) {
         xvt.out('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.')
         show()
         activate(online)
-        news(`Welcome a new player`)
+        news(`Welcome a new player, ${player.handle}`)
         require('./tty/main').menu(true)
         return
     }

@@ -3,7 +3,6 @@
  *  ITEM authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
 
-import $ = require('./common')
 import xvt = require('xvt')
 
 module Items
