@@ -3,6 +3,7 @@ build/*.d.ts
 build/*.js
 build/door/*.d.ts
 build/door/*.js
+build/door/static/bundle.js
 build/tty/*.d.ts
 build/tty/*.js
 build/etc/ipstack.key

@@ -6,7 +6,6 @@ TARGET="${TARGET}/`basename ${PWD}`"
 # let's prompt for admin credentials now, if necessary
 sudo -v || exit
 
-rm ./build/door/static/bundle.js
 git pull
 npm install
 npm run build
