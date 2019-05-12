@@ -508,11 +508,11 @@ export class Character {
     wearing(profile: active) {
         if (isNaN(+profile.user.weapon)) {
             xvt.outln('\n', this.who(profile).He, profile.weapon.text, ' ', this.weapon(profile))
-            xvt.waste(from == 'Dungeon' ? 500 : !profile.weapon.shoppe ? 800 : 200)
+            xvt.waste(from == 'Dungeon' ? 400 : !profile.weapon.shoppe ? 600 : 200)
         }
         if (isNaN(+profile.user.armor)) {
             xvt.outln('\n', this.who(profile).He, profile.armor.text, ' ', this.armor(profile))
-            xvt.waste(from == 'Dungeon' ? 500 : !profile.armor.armoury ? 800 : 200)
+            xvt.waste(from == 'Dungeon' ? 400 : !profile.armor.armoury ? 600 : 200)
         }
         if (from !== 'Dungeon' && profile.user.sex == 'I') for (let i in profile.user.rings) {
             let ring = profile.user.rings[i]
@@ -532,10 +532,12 @@ export class Character {
              He: `${{ M:mob ? Handle : 'He', F:mob ? Handle : 'She', I:mob ? Handle : 'It',  U:'You' }[gender]} `,
              he: `${{ M:'he', F:'she', I:'it',  U:'you' }[gender]} `,
             him: `${{ M:mob ? handle : 'him', F:mob ? handle : 'her', I:mob ? handle : 'it',  U:'you' }[gender]} `,
-            His: `${{ M:mob ? (Handle + `'` + Handle.substr(-1) !== 's' ? 's' : '') : 'His'
-                    , F:mob ? (Handle + `'` + Handle.substr(-1) !== 's' ? 's' : '') : 'Her', I:mob ? Handle + `'s` : 'Its',  U:'Your' }[gender]} `,
-            his: `${{ M:mob ? (handle + `'` + handle.substr(-1) !== 's' ? 's' : '') : 'his'
-                    , F:mob ? (handle + `'` + handle.substr(-1) !== 's' ? 's' : '') : 'her', I:mob ? handle + `'s` : 'its',  U:'your' }[gender]} `,
+            His: `${{ M:mob ? Handle + `'` + (Handle.substr(-1) !== 's' ? 's' : '') : 'His'
+                    , F:mob ? Handle + `'` + (Handle.substr(-1) !== 's' ? 's' : '') : 'Her'
+                    , I:mob ? Handle + `'` + (Handle.substr(-1) !== 's' ? 's' : '') : 'Its',  U:'Your' }[gender]} `,
+            his: `${{ M:mob ? handle + `'` + (handle.substr(-1) !== 's' ? 's' : '') : 'his'
+                    , F:mob ? handle + `'` + (handle.substr(-1) !== 's' ? 's' : '') : 'her'
+                    , I:mob ? handle + `'` + (handle.substr(-1) !== 's' ? 's' : '') : 'its',  U:'your' }[gender]} `,
            self: `${{ M:'him', F:'her', I:'it',  U:'your' }[gender]}self `,
             You: `${{ M:Handle, F:Handle, I:Handle, U:'You'}[gender]} `,
             you: `${{ M:handle, F:handle, I:handle, U:'you'}[gender]}`
