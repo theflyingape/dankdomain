@@ -2482,7 +2482,8 @@ function putMonster(r = -1, c = -1): boolean {
 	}
 
 	//	check for overcrowding
-	let i:number = DL.rooms[r][c].monster.length
+	let room = DL.rooms[r][c]
+	let i:number = room.monster.length
 	const mob = Z < 50 ? 3 : 2
 	if (i >= (!DL.rooms[r][c].type ? mob - 1 : DL.rooms[r][c].type == 'cavern' ? mob : 1))
 		return false
@@ -2491,12 +2492,13 @@ function putMonster(r = -1, c = -1): boolean {
 	let dm:monster = { name:'', pc:'' }
 	let level: number = 0
 	let m:active
+	let sum = 0
 
 	if (!i) {
 		for (j = 0; j < 4; j++) level += $.dice(7)
 		switch (level >> 2) {
 			case 1:
-				level = $.dice(Z)
+				level = $.dice(Z / 2)
 				break
 			case 2:
 				level = Z - 3 - $.dice(3)
@@ -2514,20 +2516,23 @@ function putMonster(r = -1, c = -1): boolean {
 				level = Z + 3 + $.dice(3)
 				break
 			case 7:
-				level = Z + $.dice(Z)
+				level = Z + $.dice(Z / 2)
 				break
 		}
 	}
-	else
-		level = $.dice(Z / mob) + (Z >= 6 && Z <= 60 ? $.dice(Z / 6) : Z > 60 ? 30 : 0)
-	if (level < 1) level = $.dice(Z)
-	if (level > 99) level = 100 - $.dice(10)
+	else {
+		level = $.dice(Z / mob) + (Z <= 60 ? $.int(Z / 6) : 30) + $.dice(deep) - 1
+		sum = room.monster[0].user.level
+	}
 
 	do {
+		if (level < 1) level = $.dice(Z)
+		if (level > 99) level = 100 - $.dice(10)
+
 		//	add a monster level relative to this floor, including any lower "strays" as fodder
-		let room = DL.rooms[r][c]
 		i = room.monster.push(<active>{ user:{ id: '', sex:'I', level:level } }) - 1
 		m = room.monster[i]
+		sum += m.user.level
 
 		//	pick and generate monster relative to its level
 		let v = 1
@@ -2634,7 +2639,9 @@ function putMonster(r = -1, c = -1): boolean {
 			if (dm.hit) m.weapon.hit = dm.hit
 			if (dm.smash) m.weapon.smash = dm.smash
 		}
-	} while (DL.rooms[r][c].monster.length < 10 && DL.rooms[r][c].monster.length * m.user.level < Z + deep - 12)
+
+		level += $.dice(room.monster.length + 2) - (room.monster.length + 1)
+	} while (room.monster.length < 10 && sum < (Z - 3 - room.monster.length))
 
 	return true
 }
