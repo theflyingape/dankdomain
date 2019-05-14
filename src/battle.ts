@@ -399,7 +399,7 @@ export function attack(retry = false) {
             if (bs > 1) {
                 $.action('yn')
                 xvt.app.form['backstab'].prompt = 'Attempt to backstab'
-                    + (bs > 2 && bs != $.player.backstab ? ' for ' + bs.toString() + 'x' : '')
+                    + (bs > 2 && bs != $.player.backstab ? ' for ' + xvt.attr(xvt.cyan, xvt.bright, bs.toString(), xvt.faint, 'x', xvt.normal) : '')
                     + ' (Y/N)? '
                 xvt.app.focus = 'backstab'
                 return
