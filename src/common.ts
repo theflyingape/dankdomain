@@ -753,6 +753,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
         PC.adjust('cha', 0, PC.card(rpc.user.pc).toCha, 0, rpc)
 
         if (eligible && rpc.user.level == 50) {
+            player.xplevel = player.level
             bonus = true
             music('.')
             if (rpc.user.novice) {
