@@ -724,6 +724,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
 
     while (rpc.user.xp >= experience(rpc.user.level, undefined, rpc.user.int) && rpc.user.level < sysop.level) {
         rpc.user.level++
+        rpc.user.xplevel++
 
         if (rpc.user.level == Access.name[rpc.user.access].promote) {
             let title = Object.keys(Access.name).indexOf(rpc.user.access)
