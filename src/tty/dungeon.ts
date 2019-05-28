@@ -117,7 +117,7 @@ export function DeepDank(start: number, cb: Function) {
 	tl = Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60) + 3
 
 	deep = 0
-	Z = start < 0 ? 0 : start > 99 ? 99 : start
+	Z = start < 0 ? 0 : start > 99 ? 99 : $.int(start)
 	fini = cb
 
 	if ($.access.sysop) crawling['M'] = { description: 'y liege' }
@@ -2559,28 +2559,26 @@ function putMonster(r = -1, c = -1): boolean {
 		if (dm.weapon)
 			m.user.weapon = dm.weapon
 		else {
-			if ($.player.level <= Z && $.dice($.player.level / 4 - $.online.cha / 10 + 12) == 1) {
+			m.user.weapon = $.int((level + deep) / 100 * $.int($.sysop.weapon))
+			m.user.weapon = $.int((m.user.weapon + $.online.weapon.wc) / 2)
+			if ($.player.level <= Z
+			&& $.dice(12 + deep / 2 + $.player.level / 4 - $.online.cha / 10) <= $.dice(deep / 3 + 1)) {
 				i = $.online.weapon.wc + $.dice(3) - 2
 				i = i < 1 ? 1 : i >= $.Weapon.merchant.length ? $.Weapon.merchant.length - 1 : i
 				m.user.weapon = $.Weapon.merchant[i]
-			}
-			else {
-				m.user.weapon = $.int((level + deep) / 100 * $.int($.sysop.weapon))
-				m.user.weapon = $.int((m.user.weapon + $.online.weapon.wc) / 2)
 			}
 		}
 
 		if (dm.armor)
 			m.user.armor = dm.armor
 		else {
-			if ($.player.level <= Z && $.dice($.player.level / 3 - $.online.cha / 10 + 12) == 1) {
+			m.user.armor = $.int((level + deep) / 100 * $.int($.sysop.armor))
+			m.user.armor = $.int((m.user.armor + $.online.armor.ac) / 2)
+			if ($.player.level <= Z
+			&& $.dice(11 + deep / 3 + $.player.level / 3 - $.online.cha / 11) <= $.dice(deep / 3 + 1)) {
 				i = $.online.armor.ac + $.dice(3) - 2
 				i = i < 1 ? 1 : i >= $.Armor.merchant.length ? $.Armor.merchant.length - 1 : i
 				m.user.armor = $.Armor.merchant[i]
-			}
-			else {
-				m.user.armor = $.int((level + deep) / 100 * $.int($.sysop.armor))
-				m.user.armor = $.int((m.user.armor + $.online.armor.ac) / 2)
 			}
 		}
 
