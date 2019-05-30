@@ -86,6 +86,24 @@ dns.lookup('localhost', (err, addr, family) => {
       { handle:'Shall we begin?', png:'connect/yuriel_genasi_warlord_by_peachyco', effect:'fadeInRight' }
     )
 
+    const armor = require('../items/armor.json')
+    for (let i in armor) {
+      if (!armor[i].armoury) {
+        let profile = { handle:`<span style="color:brown !important;">${i}</span>`, level:armor[i].ac, pc:'armor', effect:'fadeInUpBig' }
+        profile['jpg'] = `specials/${i}`
+        list.push(profile)
+      }
+    }
+
+    const weapon = require('../items/weapon.json')
+    for (let i in weapon) {
+      if (!weapon[i].shoppe) {
+        let profile = { handle:`<span style="color:brown !important;">${i}</span>`, level:weapon[i].wc, pc:'weapon', effect:'fadeInUpBig' }
+        profile['jpg'] = `specials/${i}`
+        list.push(profile)
+      }
+    }
+
     const monsters = require('../etc/dungeon.json')
     let level = 0
     for (let n in monsters) {
@@ -116,6 +134,15 @@ dns.lookup('localhost', (err, addr, family) => {
         profile['png'] = userPNG
       }
       list.push(profile)
+    }
+
+    const ring = require('../items/ring.json')
+    for (let i in ring) {
+      if (ring[i].unique) {
+        let profile = { handle:`The <span style="color:brown !important;">${i}</span> ${ring[i].emoji} ring:`, pc:ring[i].description, effect:'fadeInUpBig' }
+        profile['jpg'] = `ring/${i}`
+        list.push(profile)
+      }
     }
 
     res.send(JSON.stringify({ list:list, wall:latest.msg }))
