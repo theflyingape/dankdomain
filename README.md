@@ -17,7 +17,7 @@ npm test
 
 You can also play DDgame.us from the command-line: `node telnet`
 
-#### Original Amiga Hack & Slash enthusiasts can visit: [HackNslash.Online](https://www.telnetbbsguide.com/bbs/hacknslash-online/)
+#### Original Amiga Hack & Slash enthusiasts can visit:  [Absinthe BBS](https://www.telnetbbsguide.com/bbs/absinthe-bbs/) by Anachronist
 
 [![Downloads](https://img.shields.io/npm/dy/dankdomain.svg)](https://www.npmjs.com/package/dankdomain)
 [![GitHub release](https://img.shields.io/github/release/theflyingape/dankdomain.svg)](https://github.com/theflyingape/dankdomain/releases) [![npm version](https://badge.fury.io/js/dankdomain.svg)](https://www.npmjs.com/package/dankdomain)
@@ -27,4 +27,4 @@ and [sounds](https://drive.google.com/open?id=1UvqQJbN61VbWVduONXgo1gm9yvGI0Qp8)
 
 **Dank Domain** is basically a bulletin board built around a medieval role-playing atmosphere (or is it the other way around?). Instead, you _live_ the online game as you kill, steal, brawl, and joust the other members to gain levels and fortune. The success of this game is dependent upon the users that play it. Your involvment will not only provide you with entertainment, but also shares your activity with the other players. Please take some time to read the other sections from the [official web site](https://ddgame.us)
 
-:us: :copyright: 1991 - 2019 [Robert Hurst](https://robert.hurst-ri.us)
+:us: :copyright: 1991 - 2019 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
