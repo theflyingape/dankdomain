@@ -8,7 +8,7 @@
 ### **30-May-2019** `v2.1`
 
 * 150th day of the year
-* large internal maintenance release
+* large internal maintenance release: merge to master
 * web client rest call to show an expanded gallery
 * `node telnet` client error handling
 * xterm.js v3.13.2 release with outdated package updates
