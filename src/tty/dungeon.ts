@@ -1396,6 +1396,7 @@ function doMove(): boolean {
 						$.Armor.equip($.online, $.Armor.dwarf[hi])
 						$.player.toAC = 2 - $.dice(3)
 						$.online.toAC = $.dice($.online.armor.ac) - 2
+						$.profile({ jpg:`specials/${$.player.armor}`, effect:'fadeInUpBig' })
 						$.sound('click')
 					}
 					else {
@@ -1424,6 +1425,7 @@ function doMove(): boolean {
 						$.Weapon.equip($.online, $.Weapon.dwarf[hi])
 						$.player.toWC = 2 - $.dice(3)
 						$.online.toWC = $.dice($.online.weapon.wc) - 2
+						$.profile({ jpg:`specials/${$.player.weapon}`, effect:'fadeInUpBig' })
 						$.sound('click')
 					}
 					else {
@@ -1522,6 +1524,7 @@ function doMove(): boolean {
 			xarmor.user.armor = $.Armor.special[ROOM.giftValue]
 			$.activate(xarmor)
 			if ($.Armor.swap($.online, xarmor)) {
+				$.profile({ jpg:`specials/${$.player.armor}`, effect:'fadeInUpBig' })
 				xvt.outln(xvt.faint, xvt.yellow, 'You find', xvt.normal, $.an($.player.armor.toString()), xvt.bright, '!')
 				$.sound('max')
 				pause = true
@@ -1648,6 +1651,7 @@ function doMove(): boolean {
 			xweapon.user.weapon = $.Weapon.special[ROOM.giftValue]
 			$.activate(xweapon)
 			if ($.Weapon.swap($.online, xweapon)) {
+				$.profile({ jpg:`specials/${$.player.weapon}`, effect:'fadeInUpBig' })
 				xvt.outln(xvt.faint, xvt.cyan, 'You find', xvt.normal, $.an($.player.weapon.toString()), xvt.bright, '!')
 				$.sound('max')
 				pause = true
@@ -2056,7 +2060,7 @@ function generateLevel() {
 	}
 
 	$.wall(`is entering dungeon level ${xvt.romanize(deep + 1)}.${Z + 1}`)
-	$.title(`Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
+	$.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
 
 	let y:number, x:number
 	let result: boolean

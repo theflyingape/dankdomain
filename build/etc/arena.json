@@ -6,7 +6,7 @@
   { "name":"Gargoyle", "level":12, "pc":"Demon", "weapon":"Axe", "armor":6, "money":"10000c", "spells":[ "Teleport" ], "effect":"lightSpeedIn" },
   { "name":"Troll", "level":23, "pc":"Ogre", "weapon":"Heavy Crossbow", "armor":12, "money":"1s", "spells":[ "Heal" ], "rings":[ "Cursed", "Ogre" ], "effect":"rubberBand" },
   { "name":"Hydra", "level":32, "pc":"Dragon", "weapon":25, "armor":"Dragon Scale Mail", "money":"1000s", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"fadeInUpBig" },
-  { "name":"Nycadaemon", "level":36, "pc":"Demon", "weapon":"Staff of Striking", "armor":18, "money":"10g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"rotateInDownLeft" },
+  { "name":"Nycadaemon", "level":36, "pc":"Demon", "weapon":"Staff of Striking", "armor":18, "money":"10g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"heartBeat" },
   { "name":"Red Dragon", "level":40, "pc":"Dragon", "weapon":32, "armor":"Red Dragon Scale Mail", "money":"500g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"shake" },
   { "name":"Lich", "level":45, "pc":"Undead", "adept":1, "weapon":35, "armor":"Amulet of Protection", "money":"2500g", "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Cursed", "Undying" ], "effect":"rotateInDownRight" },
   { "name":"Beholder", "level":50, "pc":"Psionic", "adept":1, "weapon":40, "armor":22, "money":"1p", "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Medusa's" ], "effect":"flip" },

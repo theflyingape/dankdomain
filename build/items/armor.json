@@ -36,7 +36,7 @@
 	"Titanium Armor": { "text":"is armored with", "value":"35p", "ac":27 },
 
 	"Spiked Leather": { "text":"wears fitted", "value":"4c", "ac":5, "dwarf":true },
-	"Armodillo Husk": { "text":"is covered by an", "value":"400c", "ac":10, "dwarf":true },
+	"Armadillo Husk": { "text":"is covered by an", "value":"400c", "ac":10, "dwarf":true },
 	"Half Plate Armor": { "text":"is protected by", "value":"4s", "ac":15, "dwarf":true },
 	"Red Dragon Scale Mail": { "text":"sports", "value":"4000s", "ac":20, "dwarf":true },
 	"Cloak of Elvenlords": { "text":"wears a shimmering", "value":"400g", "ac":24, "dwarf":true },
