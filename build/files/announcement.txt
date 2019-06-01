@@ -1,12 +1,12 @@
-Date: [mTue 21-Apr-2019 12:00pm
+Date: [mFri 31-May-2019 8:40pm
 From: [mThe Flying Ape
 [1;37m
 New announcements as missing features get implemented or tweaked:
 
+ - updated web client
  - more evenly distributed monsters for dungeon levels 50+
  - reorganized materials
  - Auto Message, Main Menu border, and Tavern arguments
  - added medals for gamification
- - bumping into a character in the square is subject to any material loss
 
 Happy hunting!
