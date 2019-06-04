@@ -118,6 +118,8 @@ export function menu(suppress = true) {
 			hints += `> Alleviate paranoia from bad luck and thieves with better Security.\n`
 		if ($.player.coin.value && $.player.level / 9 > $.RealEstate.name[$.player.realestate].protection + 1)
 			hints += `> Increase your standing with the community by moving into a better dwelling.\n`
+		if (!$.player.coin.value && $.player.bank.value > 100000 && ($.player.poisons.length || $.player.spells.length))
+			hints += `> Carry small pocket change to misdirect thieving of more valuable items\n`
 		if ($.dice(10) == 1 && $.player.loan.value && $.player.steal > 1)
 			hints += `> Perhaps pick a pocket? Or two?\n`
 		if ($.dice(100) == 1 && $.player.loan.value && $.player.ram && $.player.steal)

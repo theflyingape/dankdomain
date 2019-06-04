@@ -32,6 +32,7 @@ module Dungeon
 	let Y: number
 	let X: number
 	let b4: number
+	let levels: number
 
 	//  £
     const Cleric = {
@@ -108,6 +109,7 @@ module Dungeon
 
 
 export function DeepDank(start: number, cb: Function) {
+	levels = $.player.level
 	pause = false
 	skillkill = false
 	Battle.teleported = false
@@ -3008,6 +3010,7 @@ function scroll(top = 1, redraw = true, escape = false) {
 	if (escape) {
 		$.music('thief2')
 		xvt.outln(xvt.lblue, `\n"Next time you won't escape so easily... moo-hahahahaha!!"`)
+		$.news(`escaped dungeon ${xvt.romanize(deep + 1)}.${Z}${levels < $.player.level && ` ascending ${levels} levels`}`)
 	}
 	else if (redraw) {
 		drawLevel()
