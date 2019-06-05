@@ -3010,7 +3010,7 @@ function scroll(top = 1, redraw = true, escape = false) {
 	if (escape) {
 		$.music('thief2')
 		xvt.outln(xvt.lblue, `\n"Next time you won't escape so easily... moo-hahahahaha!!"`)
-		$.news(`escaped dungeon ${xvt.romanize(deep + 1)}.${Z}${levels < $.player.level && ` ascending ${levels} levels`}`)
+		$.news(`\tescaped dungeon ${xvt.romanize(deep + 1)}.${Z} ${levels < $.player.level && `ascending +${$.player.level - levels}` || 'expeditiously'}`)
 	}
 	else if (redraw) {
 		drawLevel()
