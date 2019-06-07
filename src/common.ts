@@ -2754,7 +2754,7 @@ export function getRing(how: string, what: string) {
     if (player.emulation == 'XT') xvt.out(' ', Ring.name[what].emoji, ' 💍')
     xvt.outln(' ring', xvt.reset, ', which can\n'
         , xvt.bright, xvt.yellow, Ring.name[what].description)
-    if (Ring.name[what].unique) profile({ jpg:`ring/${what}`, handle:`${what} ${Ring.name[what].emoji} 💍 ring`, effect:'tada' })
+    profile({ jpg:`ring/${what}`, handle:`${what} ${Ring.name[what].emoji} 💍 ring`, effect:'tada' })
 }
 
 export function saveRing(name: string, bearer = '', rings?: string[]) {

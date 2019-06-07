@@ -42,7 +42,7 @@
   },
   "homepage": "https://DDgame.us",
   "dependencies": {
-    "animate.css": "^3.7.1",
+    "animate.css": "^3.7.2",
     "better-sqlite3": "^5.4.0",
     "express": "^4.17.1",
     "fs-extra": "^8.0.1",
@@ -59,7 +59,7 @@
   },
   "devDependencies": {
     "@types/better-sqlite3": "^5.4.0",
-    "@types/express": "^4.16.1",
+    "@types/express": "^4.17.0",
     "@types/fs-extra": "^7.0.0",
     "@types/node": "^10.14.8",
     "@types/nodemailer": "^6.2.0",

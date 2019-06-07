@@ -138,11 +138,9 @@ dns.lookup('localhost', (err, addr, family) => {
 
     const ring = require('../items/ring.json')
     for (let i in ring) {
-      if (ring[i].unique) {
-        let profile = { handle:`The <span style="color:brown !important;">${i}</span> ${ring[i].emoji} ring:`, pc:ring[i].description, effect:'fadeInUpBig' }
-        profile['jpg'] = `ring/${i}`
-        list.push(profile)
-      }
+      let profile = { handle:`The <span style="color:brown !important;">${i}</span> ${ring[i].emoji} ring:`, pc:ring[i].description, effect:'fadeInUpBig' }
+      profile['jpg'] = `ring/${i}`
+      list.push(profile)
     }
 
     res.send(JSON.stringify({ list:list, wall:latest.msg }))
