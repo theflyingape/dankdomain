@@ -274,8 +274,8 @@ function rotateImage() {
 
     let html = '';
     if (profile.handle) html += `${profile.handle}`;
-    if (profile.level) html += ` a level ${profile.level} `;
-    if (profile.pc) html += ` ${profile.pc} `;
+    if (profile.level) html += ` a level ${profile.level}`;
+    if (profile.pc) html += profile.level ? ` ${profile.pc}` : ` (${profile.pc})`;
     if (html.length) html += '<br>';
     if (profile.jpg) html += `<img src="images/${profile.jpg}.jpg" onload="nmeResize(\'${profile.effect}\');" style="display:none;" />`;
     if (profile.png) html += `<img src="images/${profile.png}.png" onload="nmeResize(\'${profile.effect}\');" style="display:none; filter:opacity(${/^connect/.test(profile.png) ? '40%' : '100%'});" />`;

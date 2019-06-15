@@ -61,13 +61,13 @@
     "@types/better-sqlite3": "^5.4.0",
     "@types/express": "^4.17.0",
     "@types/fs-extra": "^7.0.0",
-    "@types/node": "^10.14.8",
+    "@types/node": "^10.14.9",
     "@types/nodemailer": "^6.2.0",
     "@types/nodemailer-smtp-transport": "^2.7.4",
     "@types/sprintf-js": "^1.1.2",
     "@types/ws": "^6.0.1",
     "browserify": "^16.2.3",
     "tslint": "^5.17.0",
-    "typescript": "^3.5.1"
+    "typescript": "^3.5.2"
   }
 }

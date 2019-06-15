@@ -2061,7 +2061,7 @@ function generateLevel() {
 		return
 	}
 
-	$.wall(`is entering dungeon level ${xvt.romanize(deep + 1)}.${Z + 1}`)
+	$.wall(`enters dungeon level ${xvt.romanize(deep + 1)}.${Z + 1}`)
 	$.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
 
 	let y:number, x:number
