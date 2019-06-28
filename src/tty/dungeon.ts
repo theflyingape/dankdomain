@@ -2588,8 +2588,7 @@ function putMonster(r = -1, c = -1): boolean {
 			}
 		}
 
-		m.user.hp = $.int(m.user.hp / 4)
-		m.user.hp += $.int(deep * Z / 4)
+		m.user.hp = $.int(m.user.hp / (4 + (m.user.level / 100)) + (deep * Z / 4))
 		i = 5 - $.dice(deep / 3)
 		m.user.sp = $.int(m.user.sp / i)
 
