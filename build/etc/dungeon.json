@@ -43,7 +43,7 @@
 	"cockatrice": { "pc":"Lizard", "hit":"peck", "smash":"bite", "poisons":[ 5,6,7,8 ], "effect":"rubberBand" },
 	"minotaur": { "pc":"Beast", "hit":"shoot", "smash":"charge into", "weapon":"Light Crossbow" },
 	"displacer beast": { "pc":"Beast", "hit":"hit", "smash":"smash", "armor":"Dancing Shield", "spells":[ "Teleport", "Super Shield" ] },
-	"doppleganger": { "pc":null, "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Faith", "Magus" ] },
+	"doppelganger": { "pc":null, "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Faith", "Magus" ] },
 	"imp": { "pc":"Demon", "hit":"hit", "smash":"smash", "spells":[ "Heal", "Teleport", "Blast", "Big Blast" ], "effect":"tada" },
 	"quasit": { "pc":"Demon", "hit":"hit", "smash":"smash", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"tada" },
 	"ice lizard": { "pc":"Lizard", "hit":"hit", "smash":"smash", "poisons":[ 6,7,8,9 ], "spells":[ "Transmute", "Super Shield", "Super Hone" ], "rings":[ "Elven" ], "effect":"rubberBand" },
