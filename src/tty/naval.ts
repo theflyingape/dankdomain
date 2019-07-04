@@ -140,10 +140,11 @@ function choice() {
 					}
 				}
 				if ($.dice($.player.level / 3 + 2) == 1) {
+					$.loadUser($.seahag)
 					xvt.outln(`n ${$.seahag.user.handle}!`)
 					$.cat(`naval/${$.seahag.user.handle}`.toLowerCase())
 					xvt.waste(600)
-					xvt.outln(xvt.bright, xvt.green, 'She cackles as you are sent spinning elsewhere ... ')
+					xvt.outln(xvt.green, xvt.bright, 'She cackles as you are sent spinning elsewhere ... ')
 					$.sound('crone', 24)
 					require('./dungeon').DeepDank($.player.level + 3 * $.dice($.player.level), () => {
 						$.from = 'Naval'
@@ -155,7 +156,6 @@ function choice() {
 						xvt.outln(xvt.magenta, '\n"', xvt.bright, xvt.yellow
 							, 'You have escaped my magic, mortal?  Now try me!', xvt.normal, xvt.magenta, '"')
 						xvt.waste(1200)
-						$.loadUser($.seahag)
 						$.cat(`naval/${$.seahag}`.toLowerCase())
 						xvt.waste(600)
 						$.PC.wearing($.seahag)
@@ -165,22 +165,22 @@ function choice() {
 					})
 					return
 				}
-				if ($.dice($.player.level / 3 + 2) == 1) {
+				if (true || $.dice($.player.level / 3 + 2) == 1) {
+					$.loadUser($.neptune)
 					xvt.outln(` ${$.neptune.user.pc}: ${$.neptune.user.handle}!`)
 					$.cat(`naval/${$.neptune.user.handle}`.toLowerCase())
 					xvt.waste(600)
-					$.loadUser($.neptune)
 					if ($.player.level > $.neptune.user.level) {
 						let keep = $.neptune.user.spells
 						$.reroll($.neptune.user, $.neptune.user.pc, $.player.level - 1)
+						$.activate($.neptune)
 						$.neptune.user.spells = keep
 					}
-					xvt.outln(xvt.bright, xvt.cyan, 'He looks at you angrily as he removes a hook from his shorts!')
+					xvt.outln(xvt.cyan, xvt.bright, 'He looks at you angrily as he removes a hook from his shorts!')
                     $.profile({ jpg:'npc/neptune', effect:'fadeInUp'
                         , handle:$.neptune.user.handle, level:$.neptune.user.level, pc:$.neptune.user.pc })
 					$.sound('neptune', 32)
 					$.PC.wearing($.neptune)
-
 					Battle.engage('Naval', $.online, $.neptune, menu)
 					return
 				}
