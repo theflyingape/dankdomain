@@ -2060,7 +2060,7 @@ function generateLevel() {
 			Y = $.dice(DL.rooms.length) - 1
 			X = $.dice(DL.width) - 1
 			ROOM = DL.rooms[Y][X]
-		} while (ROOM.type == 'cavern')	//	cannot teleport into a cavern
+		} while (ROOM.type)	//	teleport into a chamber only
 		DL.moves >>= 1
 		return
 	}
@@ -2084,8 +2084,7 @@ function generateLevel() {
  			rooms:	new Array(maxRow),
 			map:	'',
 			moves:	0,
-			spawn:	Math.trunc(deep / 3 + Z / 9 + maxRow / 3)
-					+ $.dice(Math.round($.online.cha / 20) + 1) + 3,
+			spawn:	$.int(deep / 3 + Z / 9 + maxRow / 3) + $.dice(Math.round($.online.cha / 20) + 1) + 3,
 			width:	maxCol
 		}
 
@@ -2494,7 +2493,7 @@ function putMonster(r = -1, c = -1): boolean {
 	//	check for overcrowding
 	let room = DL.rooms[r][c]
 	let i:number = room.monster.length
-	const mob = Z < 50 ? 3 : 2
+	const mob = (Z > 9 && Z < 50) ? 3 : 2	// how big are these caverns?
 	if (i >= (!DL.rooms[r][c].type ? mob - 1 : DL.rooms[r][c].type == 'cavern' ? mob : 1))
 		return false
 
@@ -2648,7 +2647,7 @@ function putMonster(r = -1, c = -1): boolean {
 		}
 
 		level += $.dice(room.monster.length + 2) - (room.monster.length + 1)
-	} while (room.monster.length < 10 && sum < (Z - 3 - room.monster.length))
+	} while (room.monster.length < $.int(3 + mob + deep / 3) && sum < (Z - 3 - room.monster.length))
 
 	return true
 }

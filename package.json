@@ -53,7 +53,7 @@
     "nodemailer-smtp-transport": "^2.7.4",
     "sprintf-js": "^1.1.2",
     "title-case": "^2.1.1",
-    "ws": "^7.0.1",
+    "ws": "^7.1.0",
     "xterm": "^3.14.4",
     "xvt": "^1.1.2"
   },
@@ -61,13 +61,13 @@
     "@types/better-sqlite3": "^5.4.0",
     "@types/express": "^4.17.0",
     "@types/fs-extra": "^8.0.0",
-    "@types/node": "^10.14.10",
+    "@types/node": "^10.14.12",
     "@types/nodemailer": "^6.2.0",
     "@types/nodemailer-smtp-transport": "^2.7.4",
     "@types/sprintf-js": "^1.1.2",
     "@types/ws": "^6.0.1",
-    "browserify": "^16.2.3",
+    "browserify": "^16.3.0",
     "tslint": "^5.18.0",
-    "typescript": "^3.5.2"
+    "typescript": "^3.5.3"
   }
 }

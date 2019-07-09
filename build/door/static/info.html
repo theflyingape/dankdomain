@@ -257,7 +257,7 @@ function sendLogin() {
 }
 
 function Logoff() {
-  if (!art) art = setInterval(rotateImage, 17500);
+  if (!art) art = setInterval(rotateImage, 14400);
   window.focus();
   input = false;
   cmd(`<input type="button" id="cancel" value="Disconnect" onclick="currentCMD = ''; send('\x1B');"> <input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"><br>
