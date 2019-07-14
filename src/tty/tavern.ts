@@ -277,7 +277,7 @@ function choice() {
                     $.loadUser($.barkeep)
                     $.barkeep.toWC += $.Weapon.merchant.length - $.barkeep.weapon.wc
                     $.barkeep.toAC += $.Armor.merchant.length - $.barkeep.armor.ac
-                    $.barkeep.user.spells = JSON.parse(fs.readFileSync('./etc/barkeep.json').toString()).spells
+                    $.barkeep.user.spells = JSON.parse(fs.readFileSync('./users/barkeep.json').toString()).spells
                     xvt.outln(`\n${$.barkeep.user.handle} towels ${$.PC.who($.barkeep).his}hands dry from washing the day\'s\nglasses, ${$.PC.who($.barkeep).he}warns,\n`)
                     xvt.outln(xvt.bright, xvt.green, '"Another fool said something like that to me, once, and got all busted up."\n')
                     xvt.waste(5000)

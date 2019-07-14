@@ -1260,7 +1260,7 @@ export function playerPC(points = 200, immortal = false) {
 
     if (player.novice) {
         let novice = <user>{ novice:true }
-        Object.assign(novice, require('./etc/novice'))
+        Object.assign(novice, require('./users/novice'))
         reroll(player, novice.pc)
         Object.assign(player, novice)
         player.coin = new coins(novice.coin.toString())
@@ -1503,7 +1503,7 @@ export function reroll(user: user, dd?: string, level = 1) {
     }
 
     if (level == 1) {
-        Object.assign(user, require('./etc/reroll'))
+        Object.assign(user, require('./users/reroll'))
         user.gender = user.sex
         user.coin = new coins(user.coin.toString())
         user.bank = new coins(user.bank.toString())
@@ -2179,7 +2179,7 @@ export function wall(msg: string) {
     }
 
     let npc = <user>{}
-    Object.assign(npc, require('./etc/sysop.json'))
+    Object.assign(npc, require('./users/sysop.json'))
     rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`[${npc.handle}]`)
@@ -2224,7 +2224,7 @@ export function wall(msg: string) {
 
     //  customize the Master of Whisperers NPC
     npc = <user>{}
-    Object.assign(npc, require('./etc/barkeep.json'))
+    Object.assign(npc, require('./users/barkeep.json'))
     rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
@@ -2236,7 +2236,7 @@ export function wall(msg: string) {
     }
     //  customize the Master at Arms NPC
     npc = <user>{}
-    Object.assign(npc, require('./etc/merchant.json'))
+    Object.assign(npc, require('./users/merchant.json'))
     rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
@@ -2248,7 +2248,7 @@ export function wall(msg: string) {
     }
     //  customize the Big Kahuna NPC
     npc = <user>{}
-    Object.assign(npc, require('./etc/neptune.json'))
+    Object.assign(npc, require('./users/neptune.json'))
     rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
@@ -2260,7 +2260,7 @@ export function wall(msg: string) {
     }
     //  customize the Queen B NPC
     npc = <user>{}
-    Object.assign(npc, require('./etc/seahag.json'))
+    Object.assign(npc, require('./users/seahag.json'))
     rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
@@ -2272,7 +2272,7 @@ export function wall(msg: string) {
     }
     //  customize the Master of Coin NPC
     npc = <user>{}
-    Object.assign(npc, require('./etc/taxman.json'))
+    Object.assign(npc, require('./users/taxman.json'))
     rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
