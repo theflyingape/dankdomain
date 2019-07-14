@@ -1292,6 +1292,7 @@ export function playerPC(points = 200, immortal = false) {
         return
     }
 
+    profile({ jpg:'classes', handle:'Reroll!', effect:'tada' })
     xvt.outln('You have been rerolled.  You must pick a class.\n')
     xvt.waste(1500)
 
