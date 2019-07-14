@@ -165,7 +165,7 @@ function choice() {
 					})
 					return
 				}
-				if (true || $.dice($.player.level / 3 + 2) == 1) {
+				if ($.dice($.player.level / 3 + 2) == 1) {
 					$.loadUser($.neptune)
 					xvt.outln(` ${$.neptune.user.pc}: ${$.neptune.user.handle}!`)
 					$.cat(`naval/${$.neptune.user.handle}`.toLowerCase())
