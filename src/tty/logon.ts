@@ -312,7 +312,8 @@ function welcome() {
             }
         }
         catch(err) {
-            xvt.outln(`not available (${err})`)
+            xvt.outln(xvt.red, xvt.bright, 'not available')
+            xvt.outln(xvt.faint, `(${err})`)
         }
 
         if ($.player.today < 2) {

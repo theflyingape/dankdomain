@@ -1311,7 +1311,7 @@ export function playerPC(points = 200, immortal = false) {
             else
                 xvt.out('\n', n < 12 ? ' ' : '', xvt.faint, '<', xvt.red, 'x', xvt.white, '> ')
 
-            let rs = query(`SELECT COUNT(id) AS n FROM Players WHERE pc='${pc}'`)[0]
+            let rs = query(`SELECT COUNT(id) AS n FROM Players WHERE pc='${pc}' and id NOT GLOB '_*'`)[0]
 
             xvt.out(sprintf(' %-9s  %s  %3s    %-8s    +%s   +%s   +%s   +%s  %s'
                 , pc, player.emulation == 'XT' ? rpc.unicode : ' '

@@ -99,7 +99,8 @@ export async function Deliver(player: user, what: string, repeat: boolean, mailO
         await Message(player, mailOptions)
     else {
         xvt.outln(' ...skipping delivery... \nCheck SQLite3 table for relevant information.')
-        xvt.out(`SELECT id,handle,access,password FROM Players WHERE id='${player.id}'`)
+        xvt.outln(`$ sqlite3 ./users/dankdomain.sql`)
+        xvt.out(`SELECT id,handle,access,password FROM Players WHERE id='${player.id}';`)
         if ($.reason.length)
             $.saveUser(player, true)
     }

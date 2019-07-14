@@ -115,7 +115,7 @@ function choice() {
 
             rs = $.query(`
                 SELECT id, handle, pc, level, xplevel, status, gang, access FROM Players
-                WHERE id NOT GLOB '_*' AND level > 1
+                WHERE id NOT GLOB '_*' AND (id = '${$.player.id}' OR level > 1)
                 ORDER BY xplevel DESC, level DESC, wins DESC, immortal DESC
                 LIMIT ${$.player.rows - 5}
             `)
@@ -382,9 +382,10 @@ function choice() {
                     if (/Y/i.test(xvt.entry)) {
                         $.reroll($.player)
                         $.activate($.online)
+                        $.player.coward = true
+                        $.saveUser($.player)
                         xvt.outln()
                         $.playerPC()
-                        $.player.coward = true
                         return
                     }
                     xvt.outln()
