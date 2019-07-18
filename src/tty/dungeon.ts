@@ -547,9 +547,12 @@ function doMove(): boolean {
 			try {
 				fs.accessSync('door/static/images/' + img + '.jpg', fs.constants.F_OK)
 				$.profile({ jpg:img, effect:ROOM.monster[0].effect })
-				if (!ROOM.monster[0].monster.pc && $.PC.name['player'][ROOM.monster[0].user.pc] && ROOM.monster[0].user.pc == $.player.pc) {
+				if (!ROOM.monster[0].monster.pc && ROOM.monster[0].user.pc == $.player.pc) {
 					xvt.waste(900)
-					$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect:'flash' })
+					if ($.PC.name['monster'][ROOM.monster[0].user.pc])
+						$.profile({ png: 'monster/' + ($.PC.name['monster'][ROOM.monster[0].user.pc] || $.PC.name['tavern'][ROOM.monster[0].user.pc] ? ROOM.monster[0].user.pc.toLowerCase() : 'monster'), effect:'flash' })
+					else
+						$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect:'flash' })
 				}
 			} catch(e) {
 				if ($.PC.name['player'][ROOM.monster[0].user.pc] && ROOM.monster[0].user.pc == $.player.pc)

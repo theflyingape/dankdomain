@@ -27,3 +27,4 @@ npm install
 # xterm door service
 sudo systemctl stop dankdomain-door
 sudo systemctl start dankdomain-door
+sudo systemctl status dankdomain-door -l
