@@ -90,21 +90,21 @@ let images = [];
 currentCMD = null;
 fontSize = 24;
 input = false;
-all = `<input class="platinum" type="button" value="ALL" onclick="send('=', true);">`
-best = `<input class="platinum" type="button" value="BEST" onclick="send('=', true);">`
-ByeBye = `<input class="Copper" type="button" id="cancel" value="LOGOFF" onclick="send('Q');">`;
-Cancel = `<input class="Copper" type="button" id="cancel" value="Clear" onclick="send('\x15');">`;
-Enter = `<input class="Slate" type="button" id="default" value="Enter" onclick="send('', true);">`;
-Max = `<input class="Platinum" type="button" value="MAX" onclick="send('MAX', true);">`
-quit = `<input class="copper" type="button" id="cancel" value="Quit" onclick="send('Q');">`;
-keypad = `<table>
+const allOpt = `<input class="platinum" type="button" value="ALL" onclick="send('=', true);">`
+const bestOpt = `<input class="platinum" type="button" value="BEST" onclick="send('=', true);">`
+const maxOpt = `<input class="Platinum" type="button" value="MAX" onclick="send('MAX', true);">`
+const ByeBye = `<input class="Copper" type="button" id="cancel" value="LOGOFF" onclick="send('Q');">`;
+const Cancel = `<input class="Copper" type="button" id="cancel" value="Clear" onclick="send('\x15');">`;
+const Enter = `<input class="Slate" type="button" id="default" value="Enter" onclick="send('', true);">`;
+const quit = `<input class="copper" type="button" id="cancel" value="Quit" onclick="send('Q');">`;
+const keypad = `<table>
   <tr><td><input class="Keycap" type="button" value="7" onclick="send('7');"></td><td><input class="Keycap" type="button" value="8" onclick="send('8');"></td><td><input class="Keycap" type="button" value="9" onclick="send('9');"></td></tr>
   <tr><td><input class="Keycap" type="button" value="4" onclick="send('4');"></td><td><input class="Keycap" type="button" value="5" onclick="send('5');"></td><td><input class="Keycap" type="button" value="6" onclick="send('6');"></td></tr>
   <tr><td><input class="Keycap" type="button" value="1" onclick="send('1');"></td><td><input class="Keycap" type="button" value="2" onclick="send('2');"></td><td><input class="Keycap" type="button" value="3" onclick="send('3');"></td></tr>
   <tr><td><input class="Keycap" type="button" value="0" onclick="send('0');"></td><td colspan=2>${Enter}</td></tr>
   <tr><td><input class="Silver" type="button" value="?" onclick="send('?', true);"></td><td colspan=2>${Cancel}</td></tr>
 </table>`;
-keyboard = `<table>
+const keyboard = `<table>
 <tr><td><input class="Keycap" type="button" value="a" onclick="send('a');"></td><td><input class="Keycap" type="button" value="b " onclick="send('b');"></td><td><input class="Keycap" type="button" value="c " onclick="send('c');"></td><td><input class="Keycap" type="button" value="d " onclick="send('d');"></td><td><input class="Keycap" type="button" value="e " onclick="send('e');"></td></tr>
 <tr><td><input class="Keycap" type="button" value="f" onclick="send('f');"></td><td><input class="Keycap" type="button" value="g " onclick="send('g');"></td><td><input class="Keycap" type="button" value="h " onclick="send('h');"></td><td><input class="Keycap" type="button" value="i " onclick="send('i');"></td><td><input class="Keycap" type="button" value="j " onclick="send('j');"></td></tr>
 <tr><td><input class="Keycap" type="button" value="k" onclick="send('k');"></td><td><input class="Keycap" type="button" value="l " onclick="send('l');"></td><td><input class="Keycap" type="button" value="m " onclick="send('m');"></td><td><input class="Keycap" type="button" value="n " onclick="send('n');"></td><td><input class="Keycap" type="button" value="o " onclick="send('o');"></td></tr>
@@ -114,12 +114,12 @@ keyboard = `<table>
 <tr><td><input class="Slate" type="button" value="_" onclick="send('_');"></td><td colspan=3><input class="Slate" type="button" value="SPACE BAR" onclick="send(' ');"></td><td><input class="Slate" type="button" value="⇐" onclick="send('\x08');"></td></tr>
 <tr><td colspan=2>${Cancel}</td><td><input class="Silver" type="button" value="?" onclick="send('?', true);"></td><td colspan=2>${Enter}</td></tr>
 </table>`;
-money = `<table>
+const money = `<table>
 <tr><td><input class="Keycap" type="button" value="7" onclick="send('7');"></td><td><input class="Keycap" type="button" value="8" onclick="send('8');"></td><td><input class="Keycap" type="button" value="9" onclick="send('9');"></td><td><input class="Platinum" type="button" value="P" onclick="send('p');"></td></tr>
 <tr><td><input class="Keycap" type="button" value="4" onclick="send('4');"></td><td><input class="Keycap" type="button" value="5" onclick="send('5');"></td><td><input class="Keycap" type="button" value="6" onclick="send('6');"></td><td><input class="Gold" type="button" value="G" onclick="send('g');"></td></tr>
 <tr><td><input class="Keycap" type="button" value="1" onclick="send('1');"></td><td><input class="Keycap" type="button" value="2" onclick="send('2');"></td><td><input class="Keycap" type="button" value="3" onclick="send('3');"></td><td><input class="Silver" type="button" value="S" onclick="send('s');"></td></tr>
 <tr><td><input class="Keycap" type="button" value="0" onclick="send('0');"><td colspan=2>${Enter}</td></td><td><input class="Copper" type="button" value="C" onclick="send('c');"></td></tr>
-<tr><td colspan=2>${Cancel}</td><td colspan=2>${Max}</td>
+<tr><td colspan=2>${Cancel}</td><td colspan=2>${maxOpt}</td>
 </tr></table>`;
 
 if (window.addEventListener)
@@ -320,12 +320,12 @@ function list() {
 
 function listall() {
   input = true;
-  cmd(`${keypad}<br>${all}`);
+  cmd(`${keypad}<br>${allOpt}`);
 }
 
 function listbest() {
   input = true;
-  cmd(`${keypad}<br>${best}`);
+  cmd(`${keypad}<br>${bestOpt}`);
 }
 
 function listmm() {
