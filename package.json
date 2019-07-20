@@ -43,7 +43,7 @@
   "homepage": "https://DDgame.us",
   "dependencies": {
     "animate.css": "^3.7.2",
-    "better-sqlite3": "^5.4.0",
+    "better-sqlite3": "^5.4.1",
     "express": "^4.17.1",
     "fs-extra": "^8.1.0",
     "got": "^9.6.0",
@@ -53,7 +53,7 @@
     "nodemailer-smtp-transport": "^2.7.4",
     "sprintf-js": "^1.1.2",
     "title-case": "^2.1.1",
-    "ws": "^7.1.0",
+    "ws": "^7.1.1",
     "xterm": "^3.14.5",
     "xvt": "^1.1.2"
   },
