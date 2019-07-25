@@ -223,7 +223,9 @@
         "ability":[
             { "id":"cast", "power":true },
             { "id":"resist", "power":true, "spell":"Confusion" },
+            { "id":"resist", "power":true, "spell":"Level Stealing" },
             { "id":"resist", "power":true, "spell":"Mana Stealing" },
+            { "id":"resist", "power":true, "spell":"Morph" },
             { "id":"teleport", "power":true },
             { "id":"upgrade", "power":true, "ability":"int" }
         ]
