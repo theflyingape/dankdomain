@@ -2439,7 +2439,7 @@ export function newDay() {
         let altered = false
         user.id = rs[row].id
         loadUser(user)
-        for (let item = 7; item < 16; item++) {
+        for (let item = 7; item < 15; item++) {
             let cost = user.magic == 1 ? new coins(Magic.spells[Magic.merchant[item]].wand)
                 : new coins(Magic.spells[Magic.merchant[item]].cost)
             if (user.bank.value >= cost.value && !Magic.have(user.spells, item)) {
