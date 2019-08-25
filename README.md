@@ -27,7 +27,7 @@ npm test
 
 You can also play DDgame.us from the command-line: `node telnet`
 
-```
+```linux
 [rhurst@atom dankdomain]$ pwd
 /usr/local/games/dankdomain
 etc/                game app & system support files
