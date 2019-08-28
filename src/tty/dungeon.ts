@@ -2336,7 +2336,11 @@ function generateLevel() {
 
 	function renderMap() {
 		let min =  Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
-		if (tl - min > 4) {
+		if (Z == 99 || Z - $.player.level > 8) {
+			tl = min
+			$.music('tension' + $.dice(3))
+		}
+		else if (tl - min > 4) {
 			tl = min
 			$.music('dungeon' + $.dice(9))
 		}

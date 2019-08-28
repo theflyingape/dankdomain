@@ -543,7 +543,10 @@ function MonsterFights(): boolean {
 			'fight': { cb:() => {
 				xvt.outln()
 				if (/Y/i.test(xvt.entry)) {
-					$.music('combat' + $.arena--)
+					if (mon == monsters.length - 1)
+						$.music('boss' + $.arena--)
+					else
+						$.music('combat' + $.arena--)
 					Battle.engage('Monster', $.online, monster, menu)
 				}
 				else {

@@ -767,8 +767,9 @@ function BattleUser(nme: active) {
 			}
 			$.saveUser(nme, false, true)
 
+			$.sound('sunk', 30)
 			xvt.outln(xvt.faint, `\n${nme.user.handle} smiles as a shark approaches you.`)
-			$.sound('bubbles', 15)
+			xvt.waste(6000)
 			xvt.hangup()
 		}
 		return ($.online.hull < 1)

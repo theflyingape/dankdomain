@@ -178,13 +178,14 @@ function choice() {
                 suppress = true
                 break
             }
-            $.music('.')
-            xvt.outln('It is a hot, moonless night.')
-            xvt.outln('A city guard walks down another street.')
+            $.music('steal')
+            xvt.outln(xvt.faint, 'It is a hot, moonless night.'); xvt.waste(500)
+            xvt.outln('A city guard walks down another street.'); xvt.waste(500)
+
             let self = $.worth(new $.coins($.online.armor.value).value, $.online.cha)
             self += $.worth(new $.coins($.online.weapon.value).value, $.online.cha)
             self += $.player.coin.value + $.player.bank.value - $.player.loan.value
-            self = Math.trunc(self / (6 + $.player.steal))
+            self = $.int(self / (6 + $.player.steal))
 
             Battle.user('Rob', (opponent: active) => {
                 xvt.outln()
