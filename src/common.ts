@@ -188,7 +188,7 @@ export class Character {
                 fs.accessSync(userPNG, fs.constants.F_OK)
                 userPNG = `user/${rpc.user.id}`
             } catch(e) {
-                userPNG = 'player/' + rpc.user.pc.toLowerCase() + (rpc.user.gender == 'F' ? '_f' : '')
+                userPNG = (PC.name['player'][rpc.user.pc] ? 'player' : 'monster') + '/' + rpc.user.pc.toLowerCase() + (rpc.user.gender == 'F' ? '_f' : '')
             }
             Common.profile({ png:userPNG, handle:rpc.user.handle, level:rpc.user.level, pc:rpc.user.pc, effect:effect })
             Common.title(`${rpc.user.handle}: level ${rpc.user.level} ${rpc.user.pc}`)
@@ -727,19 +727,20 @@ export function checkXP(rpc: active, cb: Function): boolean {
         rpc.user.xplevel++
 
         if (rpc.user.level == Access.name[rpc.user.access].promote) {
+            music('promote')
             let title = Object.keys(Access.name).indexOf(rpc.user.access)
             do {
                 rpc.user.access = Object.keys(Access.name)[++title]
             } while (!xvt.validator.isDefined(Access.name[rpc.user.access][rpc.user.gender]))
-            xvt.waste(250)
-            xvt.outln(); xvt.waste(250)
-            xvt.outln(xvt.bright, xvt.yellow
+            xvt.waste(500)
+            xvt.outln(); xvt.waste(500)
+            xvt.outln(xvt.yellow
                 , Access.name[king.access][king.sex], ' the ', king.access.toLowerCase()
-                , ', ', king.handle
+                , ', ', xvt.bright, king.handle, xvt.normal
                 , ', is pleased with your accomplishments\n'
-                , 'and promotes you to', an(rpc.user.access), '!')
-            xvt.waste(250)
-            xvt.outln(); xvt.waste(250)
+                , 'and promotes you to', xvt.bright, an(rpc.user.access), xvt.normal, '!')
+            xvt.waste(500)
+            xvt.outln(); xvt.waste(500)
             news(`\twas promoted to ${rpc.user.access}`)
             wall(`promoted to ${rpc.user.access}`)
             xvt.sessionAllowed += 300
@@ -764,9 +765,7 @@ export function checkXP(rpc: active, cb: Function): boolean {
                 xvt.outln(xvt.cyan, xvt.bright, 'You are no longer a novice.  Welcome to the next level of play!')
                 sound('welcome', 9)
                 xvt.outln('You morph into', xvt.yellow, an(rpc.user.pc), xvt.reset, '.'); xvt.waste(250)
-                profile({ png:'player/' + rpc.user.pc.toLowerCase() + (rpc.user.gender == 'F' ? '_f' : '')
-                    , handle:rpc.user.handle, level:rpc.user.level, pc:rpc.user.pc
-                })
+                PC.profile()
                 sound('cheer', 21)
             }
             sound('demon', 17)
@@ -1719,11 +1718,12 @@ export function riddle() {
         }
     }
 
+    music('immortal')
     player.immortal++
     xvt.out(xvt.bright, xvt.cyan, '\nYou have become so powerful that you are now immortal and you leave your')
     xvt.outln('\nworldly possessions behind.')
     run(`UPDATE Players SET bank=bank+${player.bank.value + player.coin.value} WHERE id='${taxman.user.id}'`)
-    xvt.waste(2000)
+    xvt.waste(5000)
 
     let max = Object.keys(PC.name['immortal']).indexOf(player.pc) + 1
     if (max || player.keyhints.slice(12).length > int(Object.keys(PC.name['player']).length / 2))
@@ -1819,10 +1819,16 @@ export function riddle() {
     xvt.app.form = {
         'key': { cb:() => {
             let attempt = xvt.entry.toUpperCase()
-            xvt.out(' ...you insert and twist the key... ')
+            music('steal')
+            xvt.out(' ... you insert and twist the key ')
             xvt.waste(1234)
-            if (attempt == combo[slot]) {
+            for (let i = 0; i < 3; i++) {
+                xvt.out('.')
                 sound('click')
+                xvt.waste(1234)
+            }
+            if (attempt == combo[slot]) {
+                sound('max')
                 if (tty == 'web') xvt.out('🔓 ')
                 xvt.outln(xvt.cyan, '{', xvt.bright, 'Click!', xvt.normal, '}')
 

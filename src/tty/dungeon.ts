@@ -559,7 +559,7 @@ function doMove(): boolean {
 					$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect:ROOM.monster[0].effect })
 				else
 					$.profile({
-						png:'monster/' + ($.PC.name['monster'][ROOM.monster[0].user.pc] || $.PC.name['tavern'][ROOM.monster[0].user.pc] ? ROOM.monster[0].user.pc.toLowerCase() : 'monster'),
+						png:'monster/' + ($.PC.name['monster'][ROOM.monster[0].user.pc] || $.PC.name['tavern'][ROOM.monster[0].user.pc] ? ROOM.monster[0].user.pc.toLowerCase() : 'monster') + (ROOM.monster[0].user.gender == 'F' ? '_f' : ''),
 						effect:ROOM.monster[0].effect
 					})
 			}
@@ -573,7 +573,7 @@ function doMove(): boolean {
 				m['mob' + (i+1)] = 'monster/'
 					+ ($.PC.name['monster'][ROOM.monster[i].user.pc] || $.PC.name['tavern'][ROOM.monster[i].user.pc]
 					? ROOM.monster[i].user.pc.toLowerCase()
-					: 'monster')
+					: 'monster') + (ROOM.monster[0].user.gender == 'F' ? '_f' : '')
 			$.profile(m)
 		}
 		xvt.waste(600)
@@ -1323,7 +1323,7 @@ function doMove(): boolean {
 				$.player.coward = true
 				xvt.waste(1200)
 
-				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect:'flip' })
+				$.profile({ png: ($.PC.name['player'][$.player.pc] ? 'player' : 'monster') + '/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect:'flip' })
 				xvt.outln(xvt.bright, 'It curses you!')
 				$.sound('morph', 18)
 				$.PC.adjust('str', -10)
@@ -1360,7 +1360,7 @@ function doMove(): boolean {
 				xvt.outln('mimic', xvt.normal, ' occupying this space.\n')
 				xvt.waste(1200)
 
-				$.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect:'flip' })
+				$.profile({ png: ($.PC.name['player'][$.player.pc] ? 'player' : 'monster') + '/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect:'flip' })
 				xvt.waste(1800)
 				xvt.out(xvt.faint, 'It waves a hand at you ... '); xvt.waste(800)
 				xvt.outln()
@@ -2687,7 +2687,7 @@ function teleport() {
 
 	xvt.app.form = {
 		'wizard': { cb:() => {
-			$.PC.profile($.online)
+			$.PC.profile()
 
 			if ($.dice(10 * deep + Z + 5 * $.player.magic + $.online.int + $.online.cha) == 1) {
 				xvt.outln(' ... "', xvt.bright, xvt.cyan, 'Huh?', xvt.reset, '"')
@@ -3017,7 +3017,7 @@ function occupying(room: room, a = '', reveal = false, identify = false) {
 
 function scroll(top = 1, redraw = true, escape = false) {
 	if (escape) {
-		$.music('thief2')
+		$.music(['escape','thief2','thief'][$.dungeon])
 		xvt.outln(xvt.lblue, `\n"Next time you won't escape so easily... moo-hahahahaha!!"`)
 		$.news(`\tescaped dungeon ${xvt.romanize(deep + 1)}.${Z} ${levels < $.player.level && `ascending +${$.player.level - levels}` || 'expeditiously'}`)
 	}
