@@ -1244,10 +1244,10 @@ export function cast(rpc: active, cb:Function, nme?: active, magic?: number, DL?
                     return
                 }
                 else {
-                    xvt.out(xvt.faint, '>> ', xvt.normal, p1.His, xvt.bright, xvt.magenta, $.Ring.theOne, xvt.normal, ' ring '
-                        , xvt.reset, 'dispels ', p2.his, xvt.bright, xvt.cyan, mod.name, xvt.normal)
+                    xvt.out(xvt.magenta, xvt.faint, '>> ', xvt.normal, p1.His, xvt.bright, $.Ring.theOne, xvt.normal, ' ring '
+                        , 'dispels ', p2.his, xvt.bright, xvt.cyan, mod.name, xvt.normal)
                     if ($.player.emulation == 'XT') xvt.out(' ', $.Ring.name[mod.name].emoji, ' 💍')
-                    xvt.outln(' ring', xvt.reset, '!', xvt.faint, ' <<')
+                    xvt.outln(' ring', xvt.magenta, '!', xvt.faint, ' <<')
                     xvt.waste(400)
                 }
             }

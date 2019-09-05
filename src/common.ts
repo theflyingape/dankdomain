@@ -207,7 +207,7 @@ export class Character {
                 }
         }
         else {
-            let i = dice(this.total - 1) + 1    //  any (except None and Novice)
+            let i = dice(this.total - 1) + 2    //  any (except None and Novice)
             let n = i
             for (type in this.name) {
                 for (let dd in this.name[type])
