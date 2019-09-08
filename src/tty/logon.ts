@@ -325,14 +325,13 @@ function welcome() {
                 }
             }
             if ($.player.cursed) {
-                if ($.player.coward)
-                    $.player.coward = false
-                else {
+                if (!$.player.coward || $.Ring.have($.player.rings, $.Ring.theOne) || $.access.sysop) {
                     $.player.cursed = ''
                     xvt.out(xvt.bright, xvt.black, '\nThe dark cloud has left you.')
                     $.activate($.online)
                 }
             }
+            $.player.coward = false
         }
 
         if (2 * $.player.jw < $.player.jl) {

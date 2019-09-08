@@ -745,6 +745,7 @@ function doMove(): boolean {
 				xvt.out($.bracket('M'), 'Magical spell(s) or device(s)'); well += 'M'
 			}
 			xvt.outln()
+			xvt.waste(600)
 
 			$.action('well')
 			xvt.app.form = {
@@ -781,6 +782,7 @@ function doMove(): boolean {
 						break
 
 					case 'C':
+						$.sound('steal')
 						Battle.user('Curse', (opponent: active) => {
 							if (opponent.user.id == $.player.id) {
 								opponent.user.id = ''
@@ -800,8 +802,15 @@ function doMove(): boolean {
 									opponent.user.cursed = $.player.id
 									xvt.out(xvt.faint, 'A dark cloud hovers over ', opponent.who.him, '.')
 								}
+								opponent.user.coward = true
 								$.saveUser(opponent)
-								$.sound('morph', 12)
+								if (opponent.user.id == $.king.id) {
+									$.player.coward = true
+									$.online.altered = true
+									$.sound('boom', 6)
+								}
+								else
+									$.sound('morph', 12)
 							}
 							menu()
 							return
@@ -873,6 +882,7 @@ function doMove(): boolean {
 						break
 
 					case 'L':
+						$.sound('steal')
 						Battle.user('Loot', (opponent: active) => {
 							if (opponent.user.id == $.player.id) {
 								opponent.user.id = ''
@@ -991,6 +1001,7 @@ function doMove(): boolean {
 					ROOM.occupant = ''
 					xvt.outln()
 					if (/Y/i.test(xvt.entry)) {
+						$.music('tension' + $.dice(3))
 						$.animated('infinite rotateIn')
 						let z = (deep < 3) ? 3 : (deep < 6) ? 6 : 9
 						let t = 0
@@ -1319,9 +1330,10 @@ function doMove(): boolean {
 			xvt.out(xvt.magenta, 'You encounter a ', xvt.bright)
 
 			if (!$.player.cursed && !$.player.novice && $.dice((Z > $.player.level ? Z : 1) + 20 * $.player.immortal + $.player.level + $.online.cha) == 1) {
-				xvt.outln('doppleganger', xvt.normal, ' waiting for you.\n')
-				$.player.coward = true
+				xvt.outln('doppleganger', xvt.normal, ' waiting for you.')
+				$.player.coward = true; $.online.altered = true
 				xvt.waste(1200)
+				xvt.outln()
 
 				$.profile({ png: ($.PC.name['player'][$.player.pc] ? 'player' : 'monster') + '/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect:'flip' })
 				xvt.outln(xvt.bright, 'It curses you!')
@@ -1341,8 +1353,6 @@ function doMove(): boolean {
 				$.saveUser($.player)
 				xvt.outln(' you.')
 				$.news(`\tcursed by a doppleganger!`)
-				$.player.coward = false
-				$.online.altered = true
 
 				//	vacate
 				drawHero()
@@ -1355,10 +1365,12 @@ function doMove(): boolean {
 					x = $.dice(DL.width) - 1
 				} while (DL.rooms[y][x].type == 'cavern' || DL.rooms[y][x].occupant)
 				DL.rooms[y][x].occupant = 'wizard'
+				$.player.coward = false; $.online.altered = true
 			}
 			else if (!$.player.novice && $.dice(Z + $.online.cha) == 1) {
-				xvt.outln('mimic', xvt.normal, ' occupying this space.\n')
+				xvt.outln('mimic', xvt.normal, ' occupying this space.')
 				xvt.waste(1200)
+				xvt.outln()
 
 				$.profile({ png: ($.PC.name['player'][$.player.pc] ? 'player' : 'monster') + '/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect:'flip' })
 				xvt.waste(1800)
@@ -1935,13 +1947,11 @@ function drawHero(peek = false) {
 
 	if (!$.online.hp) {
 		xvt.plot(Y * 2 + 2, X * 6 + 4)
-		xvt.waste(1100)
+		xvt.waste(600)
 		xvt.plot(Y * 2 + 2, X * 6 + 2)
-		if ($.player.emulation == 'XT')
-			xvt.out(xvt.lBlack, xvt.black, `  ${$.PC.card($.player.pc).unicode}  `)
-		else
-			xvt.out(xvt.faint, xvt.reverse, '  X  ')
-		xvt.plot(Y * 2 + 2, X * 6 + 4)
+		xvt.out(xvt.reset, xvt.Blue, xvt.cyan, xvt.bright, xvt.reverse
+			, `  ${$.player.emulation == 'XT' ? $.PC.card($.player.pc).unicode : 'X'}  `)
+		xvt.waste(600)
 	}
 	xvt.restore()
 }
@@ -2034,7 +2044,7 @@ function drawRoom(r:number, c:number, keep = true, peek = false) {
 	else xvt.out(xvt.black, xvt.bright, paper[row].substr(col, 1))
 
 	occupying(ROOM, peek ? xvt.attr(xvt.reset) : xvt.attr(xvt.reset, xvt.faint), (DL.map && DL.map !== 'map')
-		|| (ROOM.map && Math.abs(Y - r) < Math.trunc($.online.int / 15) && Math.abs(X - c) < Math.trunc($.online.int / 15)),
+		|| (ROOM.map && Math.abs(Y - r) < $.int($.online.int / 15) && Math.abs(X - c) < $.int($.online.int / 15)),
 		peek || DL.map == `Marauder's map` || ($.Ring.power([], $.player.rings, 'identify').power > 0))
 
 	if ($.player.emulation == 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col + 6, 1), '\x1B(B')
@@ -2970,25 +2980,18 @@ function occupying(room: room, a = '', reveal = false, identify = false) {
 
 			case 'thief':
 				if ((DL.map == `Marauder's map` || $.player.steal == 4) && !icon)
-					o = xvt.attr(xvt.reset, xvt.faint, `  ${$.tty == 'web' ? $.PC.card('Thief').unicode : '&'}  `)
+					o = xvt.attr(xvt.off, xvt.faint, `  ${$.tty == 'web' ? $.PC.card('Thief').unicode : '&'}  `)
 				break
 
 			case 'cleric':
-				if (DL.cleric.sp) {
-					o = a + xvt.attr(xvt.yellow)
-					if (!icon)
-						icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
-					else
-						icon += xvt.attr(xvt.yellow)
-					o += xvt.attr(xvt.faint, ':', xvt.normal, icon, xvt.faint, ':')
-				}
-				else {
-					if (!icon)
-						icon = xvt.attr(xvt.normal, `_${$.tty == 'web' ? '⚰' : Cleric[$.player.emulation]}_`)
-					else
-						icon += xvt.attr(xvt.reset)
-					o = xvt.attr(xvt.faint, ':', xvt.normal, icon, xvt.faint, ':')
-				}
+				o = a + xvt.attr(xvt.yellow)
+				if (!icon)
+					icon = DL.cleric.sp
+						? xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
+						: xvt.attr(xvt.off, xvt.faint, xvt.uline, `_${$.tty == 'web' ? '⚰' : Cleric[$.player.emulation]}_`, xvt.nouline, xvt.normal, xvt.yellow)
+				else
+					icon += xvt.attr(xvt.yellow)
+				o += xvt.attr(xvt.faint, ':', xvt.normal, icon, xvt.faint, ':')
 				break
 
 			case 'wizard':
