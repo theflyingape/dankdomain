@@ -65,7 +65,7 @@ dns.lookup('localhost', (err, addr, family) => {
 
     let list = []
     list.push(
-      { handle:`The <span style="color:brown !important;">Player manual</span>: <a href="https://ddgame.us" target="_blank">DDgame.us</a>`, png:'connect/arexielite_by_peachyco', effect:'fadeInRight' },
+      { handle:`The <span style="color:brown !important;">Player manual</span>: <a href="https://manual.ddgame.us" target="_blank">DDgame.us</a>`, png:'connect/arexielite_by_peachyco', effect:'fadeInRight' },
       { handle:'100 dungeon levels, 10 dank domains', png:'connect/dragonborn_dagger_sorcerer_by_peachyco', effect:'fadeInRight' },
       { handle:'Take on the Monster Mash', png:'connect/dragonborn_hexblade_by_peachyco', effect:'fadeInRight' },
       { handle:'Come get some', png:'connect/elf_cleric_by_peachyco', effect:'fadeInRight' },

@@ -2095,7 +2095,7 @@ export function logoff() {
         xvt.out(xvt.cyan, '\\/   \\/ ', xvt.reset, '   http://rahcocos.com  ', xvt.cyan, '  \\/   \\/\n')
         xvt.out(xvt.cyan, ' \\ : /                           ', xvt.cyan, '  \\ : / \n')
         xvt.out(xvt.cyan, '  I:I    ', xvt.blue, xvt.app.LGradient, xvt.bright, xvt.Blue, xvt.white, `${player.emulation == 'XT' ? 'ℛ ' : ' R'}obert ${player.emulation == 'XT' ? 'ℋ ' : ' H'}urst`, xvt.reset, xvt.blue, xvt.app.RGradient, xvt.cyan, '     I:I  \n')
-        xvt.outln(xvt.cyan, ' .I:I. ', xvt.reset, '     https://DDgame.us    ', xvt.cyan, '  .I:I.')
+        xvt.outln(xvt.cyan, ' .I:I. ', xvt.reset, '   http://www.ddgame.us   ', xvt.cyan, '  .I:I.')
         xvt.outln(); xvt.waste(500)
         xvt.outln(xvt.bright, xvt.black, process.title
             , ' running on ', xvt.bright, xvt.green, 'Node.js ', xvt.normal, process.version, xvt.reset
