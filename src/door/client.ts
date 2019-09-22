@@ -15,7 +15,6 @@
 import { Terminal, ITerminalOptions } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import { WebLinksAddon } from 'xterm-addon-web-links'
-import { WebfontLoader } from 'xterm-webfont'
 
 let term: Terminal
 let cols = 80, rows = 25
@@ -103,7 +102,6 @@ document.getElementById('lurker-list').onchange = (ev) => {
 			brightBlue: '#0000ff', brightMagenta: '#ff00ff', brightCyan: '#00ffff', brightWhite: '#ffffff'
 		}
 	})
-	term.loadAddon(new WebfontLoader())
 	term.loadAddon(new WebLinksAddon())
 	term.loadAddon(fit)
 	term.open(document.getElementById('terminal'))

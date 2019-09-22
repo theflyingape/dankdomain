@@ -1,6 +1,6 @@
 {
   "name": "dankdomain",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "Dank Domain: the return of Hack & Slash",
   "main": "ttymain",
   "publisher": "theflyingape",
@@ -29,13 +29,11 @@
     "xterm"
   ],
   "author": "Robert Hurst",
-  "contributors": [
-    {
-      "name": "Ronald Hurst",
-      "email": "ronhurst39@gmail.com",
-      "url": "https://robert.hurst-ri.us/2016/09/23/ronald-hurst/"
-    }
-  ],
+  "contributors": [{
+    "name": "Ronald Hurst",
+    "email": "ronhurst39@gmail.com",
+    "url": "https://robert.hurst-ri.us/2016/09/23/ronald-hurst/"
+  }],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/theflyingape/dankdomain/issues"
@@ -57,7 +55,6 @@
     "xterm": "^4.0.1",
     "xterm-addon-fit": "^0.2.0",
     "xterm-addon-web-links": "^0.2.0",
-    "xterm-webfont": "^1.1.1",
     "xvt": "^1.1.2"
   },
   "devDependencies": {
