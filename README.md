@@ -6,7 +6,7 @@
 
 **Dank Domain** is basically a bulletin board built around a medieval role-playing atmosphere (or is it the other way around?). Instead, you _live_ the online game as you kill, steal, brawl, and joust the other members to gain levels and fortune. The success of this game is dependent upon the users that play it. Your involvment will not only provide you with entertainment, but also shares your activity with the other players.
 
-### Read, then play on [https://DDgame.us](https://ddgame.us)
+### Read, then play on [https://www.DDgame.us](https://www.ddgame.us)
 
 #### Original Amiga Hack & Slash enthusiasts can visit:  [Absinthe BBS](https://www.telnetbbsguide.com/bbs/absinthe-bbs/) by Anachronist
 

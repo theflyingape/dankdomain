@@ -1,4 +1,4 @@
-# 🤴 **[Dank Domain](https://DDgame.us)** 👸
+# 🤴 **[Dank Domain](https://www.DDgame.us)** 👸
 
 ## *the return of Hack & Slash*
 
