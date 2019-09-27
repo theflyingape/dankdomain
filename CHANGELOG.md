@@ -3,9 +3,15 @@
 ## *the return of Hack & Slash*
 
 🇺🇸 ©️1991 - 2019 [Robert Hurst](https://robert.hurst-ri.us)
-> [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](http://play.DDgame.us) on an Intel Atom-powered Linux server using a Verizon FiOS 100mb Internet service
+> [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](http://play.DDgame.us) on an Intel Atom-powered Linux server using a Verizon FiOS 400mb Internet service
 
-### **30-May-2019** `v2.1`
+### **13-Sep-2019** `v2.2`
+
+* cursing a player sticks for their next play, regardless
+* more sound effects added
+* xterm.js v4 release with outdated package updates
+
+#### **30-May-2019** `v2.1`
 
 * 150th day of the year
 * large internal maintenance release: merge to master
