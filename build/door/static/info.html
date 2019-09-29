@@ -66,6 +66,10 @@
     max-width: 100%;
     object-fit: contain;
   }
+  .mob {
+    max-height:unset;
+    max-width:unset;
+  }
 
   p, table {
     border: none;
@@ -77,6 +81,11 @@
     height: 100%;
     width: 19vw;
   }
+  .mob {
+    height:unset;
+    width:unset;
+  }
+
 </style>
 </head>
 <body onkeydown="keydown(event);">
@@ -164,10 +173,11 @@ function receive(event) {
     }
 
     if (event.data.mob1) {
-      var html = `<table>
-    <tr><td><img src="images/${event.data.mob1}.png"></td><td><img src="images/${event.data.mob2}.png" /></td></tr>`
+      h = window.innerWidth - 4;
+      var html = `<table width="${h}px">
+    <tr><td class="mob"><img class="mob" style="max-width:${h/2}px;" src="images/${event.data.mob1}.png" /></td><td class="mob"><img class="mob" style="max-width:${h/2}px;" src="images/${event.data.mob2}.png" /></td></tr>`
       if (event.data.mob3)
-        html += `<tr><td colspan=2><img src="images/${event.data.mob3}.png" /></td></tr>`
+        html += `<tr><td class="mob" colspan=2><img class="mob" src="images/${event.data.mob3}.png" /></td></tr>`
       html += `</table>`
       nme(html)
       return;
