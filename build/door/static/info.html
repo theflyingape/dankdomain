@@ -177,7 +177,7 @@ function receive(event) {
       var html = `<table width="${h}px">
     <tr><td class="mob"><img class="mob" style="max-width:${h/2}px;" src="images/${event.data.mob1}.png" /></td><td class="mob"><img class="mob" style="max-width:${h/2}px;" src="images/${event.data.mob2}.png" /></td></tr>`
       if (event.data.mob3)
-        html += `<tr><td class="mob" colspan=2><img class="mob" src="images/${event.data.mob3}.png" /></td></tr>`
+        html += `<tr><td class="mob" colspan=2><img class="mob" style="max-width:${h*.75}px;" src="images/${event.data.mob3}.png" /></td></tr>`
       html += `</table>`
       nme(html)
       return;
