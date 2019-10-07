@@ -49,7 +49,7 @@
     },
     "Elven": {
         "unique": false,
-        "description":"enhance dexterous speed attacks, except for\n  Assassin, Fighter, Ranger and Demon classes",
+        "description":"enhance dexterous speed attacks, except for an\n  Assassin, Fighter, Ranger or Demon",
         "emoji":"🧝",
         "ability":[
             { "id":"skip", "power":true },
@@ -62,7 +62,7 @@
     },
     "Faith": {
         "unique": true,
-        "description":"life-steal hit points; added powers for Cleric,\n   Paladin and God classes",
+        "description":"life-steal hit points; added powers for a\n   Cleric, Paladin and God",
         "emoji":"✝️",
         "ability":[
             { "id":"degrade", "power":true, "pc":"Undead" },
@@ -89,7 +89,7 @@
     },
 	"Hell's Fury": {
         "unique": false,
-        "description":"enhance fighting ability, except for Cleric,\n   Paladin and God classes",
+        "description":"enhance fighting ability, except for a\n   Cleric, Paladin and God",
         "emoji":"👿",
         "ability":[
             { "id":"degrade", "power":true, "pc":"Cleric" },
@@ -103,7 +103,7 @@
     },
     "Infinity": {
         "unique": true,
-        "description":"neutralize opponent's rings and enhance your rings",
+        "description":"neutralize opponent's rings while enhancing\n    the power in your rings",
         "emoji":"♾️",
         "ability":[
             { "id":"resist", "power":true, "spell":"Teleport" },
@@ -133,7 +133,7 @@
     },
 	"Medusa's": {
         "unique": true,
-        "description":"freeze opponent, except against Magus-level\n   spellcasters; a Titan's weapon",
+        "description":"freeze opponent, except against Magus-level\n   spell casters; a Titan's weapon",
         "emoji":"🐍",
         "ability":[
             { "id":"melee", "power":true, "pc":"Titan" },
@@ -164,7 +164,7 @@
     },
     "Nobility": {
         "unique": false,
-        "description":"exempt bearer from taxes to the Crown",
+        "description":"exempt bearer from paying taxes to the Crown",
         "emoji":"💸",
         "ability":[
             { "id":"taxes", "power":true },
@@ -199,7 +199,7 @@
     },
 	"Undying": {
         "unique": true,
-        "description":"allow for necromancing; augments the Undead",
+        "description":"augment the Undead and prodides necromancy;\n    its anti-life power affects a Cleric, Paladin, and God",
         "emoji":"🖤",
         "ability":[
             { "id":"degrade", "power":true, "pc":"Cleric" },
@@ -218,7 +218,7 @@
     },
     "White Wizard": {
         "unique": true,
-        "description":"enhance defense against all attack spells",
+        "description":"enhance defense against every attack spell;\n    allows the ring bearer to teleport, anytime",
         "emoji":"⚪",
         "ability":[
             { "id":"cast", "power":true },

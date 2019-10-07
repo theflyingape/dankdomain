@@ -30,9 +30,15 @@ function end() {
     round = []
     $.unlock($.player.id, true)
 
+    if ($.Ring.power([], $.player.rings, 'buff').power) {
+        if ($.online.toAC < 0) $.online.toAC++
+        if ($.online.toWC < 0) $.online.toWC++
+    }
+    else {
     //  diminish any temporary buff
-    if ($.online.toAC > 0 && !$.Ring.power([], $.player.rings, 'buff').power) $.online.toAC--
-    if ($.online.toWC > 0 && !$.Ring.power([], $.player.rings, 'buff').power) $.online.toWC--
+        if ($.online.toAC > 0) $.online.toAC--
+        if ($.online.toWC > 0) $.online.toWC--
+    }
 
     if (/Merchant/.test($.from)) {
         if ($.online.hp < 1) {
