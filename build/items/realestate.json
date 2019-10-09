@@ -14,5 +14,7 @@
 	"Tower": { "value": "1p", "protection":12 },
 	"Castle": { "value": "10p", "protection":13 },
 	"Palace": { "value": "100p", "protection":14 },
-	"Fortress": { "value": "1000p", "protection":15 }
+	"Fortress": { "value": "1000p", "protection":15 },
+	"Red Keep": { "value": "2500p", "protection":16 },
+	"Citadel": { "value": "5000p", "protection":17 }
 }

@@ -14,5 +14,7 @@
 	"Security guard": { "value": "1p", "protection":12 },
 	"Moat": { "value": "10p", "protection":13 },
 	"Garrison": { "value": "100p", "protection":14 },
-	"Magical barrier": { "value": "1000p", "protection":15 }
+	"Magical barrier": { "value": "1000p", "protection":15 },
+	"Scorpion": { "value": "2500p", "protection":16 },
+	"pair of Scorpions": { "value": "5000p", "protection":17 }
 }
