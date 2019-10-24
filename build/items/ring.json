@@ -199,7 +199,7 @@
     },
 	"Undying": {
         "unique": true,
-        "description":"augment the Undead and prodides necromancy;\n    its anti-life power affects a Cleric, Paladin, and God",
+        "description":"augment the Undead and provides necromancy;\n    its anti-life power affects a Cleric, Paladin, and God",
         "emoji":"🖤",
         "ability":[
             { "id":"degrade", "power":true, "pc":"Cleric" },
