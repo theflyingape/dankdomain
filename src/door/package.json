@@ -1,6 +1,6 @@
 {
   "name": "dankdomain-door",
-  "version": "2.2.1",
+  "version": "2.2.2",
   "description": "💻 Dank Domain: the return of Hack & Slash",
   "main": "app",
   "publisher": "theflyingape",
@@ -32,8 +32,8 @@
     "fs-extra": "^8.1.0",
     "node-pty": "^0.8.1",
     "ws": "^7.2.0",
-    "xterm": "^4.1.0",
-    "xterm-addon-fit": "^0.2.0",
+    "xterm": "^4.2.0",
+    "xterm-addon-fit": "^0.3.0",
     "xterm-addon-web-links": "^0.2.0"
   },
   "devDependencies": {
