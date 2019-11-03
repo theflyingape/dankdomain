@@ -1485,7 +1485,7 @@ export function reroll(user: user, dd?: string, level = 1) {
         user.calls = 0
         user.today = 0
         user.expert = false
-        user.rows = process.stdout.rows || 25
+        user.rows = process.stdout.rows || 24
         user.remote = ''
         user.novice = xvt.validator.isEmpty(user.id) && user.gender !== 'I'
         user.gang = ''
@@ -2019,7 +2019,7 @@ export function emulator(cb:Function) {
             xvt.waste(2000)
             beep()
             for (let rows = player.rows + 5; rows > 1; rows--)
-                xvt.out(bracket(rows > 24 ? rows : '..'))
+                xvt.out(bracket(rows >= 24 ? rows : '..'))
             xvt.app.focus = 'rows'
         }, prompt:xvt.attr('Select ', xvt.faint, '[', xvt.reset, xvt.bright, `${player.emulation}`, xvt.faint, xvt.cyan, ']', xvt.reset, ': ')
         , enter:player.emulation, match:/VT|PC|XT/i, max:2 },
