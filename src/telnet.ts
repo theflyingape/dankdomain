@@ -14,7 +14,7 @@ process.chdir(__dirname)
 
 let host = process.argv.length > 2 ? process.argv[2] : 'robert.hurst-ri.us'
 let port = process.argv.length > 3 ? parseInt(process.argv[3]) : 443
-let rows = process.argv.length > 4 ? parseInt(process.argv[4]) : 25
+let rows = process.argv.length > 4 ? parseInt(process.argv[4]) : 24
 const URL = `https://${host}:${port}/xterm/door/player/`
 let ssl = {
     key: fs.readFileSync('./door/key.pem'), cert: fs.readFileSync('./door/cert.pem'),

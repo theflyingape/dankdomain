@@ -93,7 +93,7 @@ function who() {
         $.reroll($.player)
         $.newkeys($.player)
         $.player.emulation = xvt.app.emulation
-        $.player.rows = process.stdout.rows || 25
+        $.player.rows = process.stdout.rows || 24
         if ($.tty == 'web') {
             $.sound('yahoo', 20)
             require('./newuser')
@@ -121,7 +121,7 @@ function who() {
 
     $.access = $.Access.name[$.player.access]
     xvt.app.emulation = <xvt.emulator>$.player.emulation
-    $.player.rows = process.stdout.rows || 25
+    $.player.rows = process.stdout.rows || 24
     $.player.remote = $.remote
 
     xvt.app.form['password'].prompt = $.player.handle + ', enter your password: '
