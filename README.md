@@ -23,10 +23,9 @@ npm install dankdomain
 ./install.sh
 ./debug.sh
 npm test
-npm run mame
 ```
 
-You can also play www.DDgame.us from the command-line: `node telnet`
+You can also play www.DDgame.us from the command-line: `node telnet` or `npm run mame`
 
 ```linux
 [rhurst@atom dankdomain]$ pwd
