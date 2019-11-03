@@ -26,7 +26,7 @@ if (process.stdin.isTTY) process.stdin.setRawMode(true)
 dns.lookup(host, (err, addr, family) => {
     if (err) console.log(err)
     else {
-        process.stdout.write(`\n\x1B[mRequesting ${URL} to start new DD client ... `)
+        process.stdout.write(`\r\n\x1B[mRequesting ${URL}\r\n  to start new DD client ... `)
         const app = new Promise<number>((resolve, reject) => {
             if (resolve)
                 try {
@@ -48,7 +48,7 @@ dns.lookup(host, (err, addr, family) => {
         })
 
         app.then(pid => {
-            process.stdout.write(`app ${pid} started\n`)
+            process.stdout.write(`app ${pid} started\r\n`)
             process.stdout.write(`\n\x1B[0;2mConnecting terminal WebSocket (${addr}:${port}) ... `)
 
             try {
@@ -59,16 +59,16 @@ dns.lookup(host, (err, addr, family) => {
                 }
 
                 wss.onopen = () => {
-                    process.stdout.write('open\x1B[m\n')
+                    process.stdout.write('open\x1B[m\r\n')
                 }
 
                 wss.onclose = (ev) => {
-                    process.stdout.write('\x1B[0;2mWebSocket close\x1B[m\n')
+                    process.stdout.write('\x1B[0;2mWebSocket close\x1B[m\r\n')
                     process.exit(0)
                 }
 
                 wss.onerror = (ev) => {
-                    process.stdout.write(`\x1B[0;1;31merror \x1B[m${ev.message}\n`)
+                    process.stdout.write(`\x1B[0;1;31merror \x1B[m${ev.message}\r\n`)
                     process.exit(1)
                 }
 
@@ -77,10 +77,10 @@ dns.lookup(host, (err, addr, family) => {
                 })
             }
             catch(err) {
-                console.log(err)
+                process.stdout.write(err)
             }
         }).catch(err => {
-            console.log(err)
+            process.stdout.write(err)
         })
     }
 })

@@ -23,9 +23,10 @@ npm install dankdomain
 ./install.sh
 ./debug.sh
 npm test
+npm run mame
 ```
 
-You can also play DDgame.us from the command-line: `node telnet`
+You can also play www.DDgame.us from the command-line: `node telnet`
 
 ```linux
 [rhurst@atom dankdomain]$ pwd
@@ -42,6 +43,7 @@ items/              game artifacts
 users/              player data files
 package.json        Node.js manifest
 node_modules/       Node.js support libraries
+console/            MAME support files
 door/               web services & client for browser
 ../static           web browser client content
    ../images        visual media for artifacts, creatures, and players
@@ -55,6 +57,7 @@ telnet.js           telnet client - via web services
 ttymain.js          game app - startup entry point
 door-startup.sh     web services - sysctl startup script
 logins.sh           player - startup script into game app
+mame.sh             player - MAME VT240 terminal + solcat startup script
 tty.sh              player - startup script into web services
 ```
 
