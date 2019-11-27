@@ -21,8 +21,8 @@ let sessions = {}
 let broadcasts = {}
 let latest = { now: 0, msg: '' }
 
-//dns.lookup('0.0.0.0', (err, addr, family) => {
-dns.lookup('localhost', (err, addr, family) => {
+//dns.lookup('localhost', (err, addr, family) => {
+dns.lookup('0.0.0.0', (err, addr, family) => {
 
   const app = express()
   app.set('trust proxy', ['loopback', addr])

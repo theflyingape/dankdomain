@@ -7,4 +7,4 @@ path=$PWD
 
 sudo -v || exit 2
 sudo killall door 2> /dev/null
-sudo -b -u nobody /opt/node/bin/node $path/door/app &> door.log
+sudo -b -u nobody /usr/bin/node $path/door/app &> door.log
