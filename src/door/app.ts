@@ -5,18 +5,21 @@
 import dns = require('dns')
 import express = require('express')
 import fs = require('fs')
+import http = require('http')
 import https = require('https')
 import pty = require('node-pty')
 import ws = require('ws')
 const { URL } = require('url')
+const DOOR = '/'
 
 process.title = 'door'
 process.chdir(__dirname)
 console.log(`cwd: ${__dirname}`)
 
+let server, ssl
 let sessions = {}
 let broadcasts = {}
-let latest = { now:0, msg:'' }
+let latest = { now: 0, msg: '' }
 
 //dns.lookup('0.0.0.0', (err, addr, family) => {
 dns.lookup('localhost', (err, addr, family) => {
@@ -24,28 +27,33 @@ dns.lookup('localhost', (err, addr, family) => {
   const app = express()
   app.set('trust proxy', ['loopback', addr])
 
-  let ssl = { key: fs.readFileSync('key.pem'), cert: fs.readFileSync('cert.pem') }
-  let server = https.createServer(ssl, app)
+  try {
+    ssl = { key: fs.readFileSync('key.pem'), cert: fs.readFileSync('cert.pem') }
+    server = https.createServer(ssl, app)
+  }
+  catch (e) {
+    server = http.createServer(app)
+  }
   let port = parseInt(process.env.PORT) || 1939
 
   //  enable REST services
   server.listen(port, addr)
-  console.log(`Dank Domain Door on https|wss://${addr}:${port}`)
+  console.log(`Dank Domain Door on ${ssl ? 'https|wss' : 'http|ws'}://${addr}:${port}`)
 
   //  enable WebSocket endpoints
-  const wssActive = new ws.Server({ noServer:true, path:'/xterm/door/player/', clientTracking: true })
-  const wssLurker = new ws.Server({ noServer:true, path:'/xterm/door/lurker/', clientTracking: true })
+  const wsActive = new ws.Server({ noServer: true, path: `${DOOR}player/`, clientTracking: true })
+  const wsLurker = new ws.Server({ noServer: true, path: `${DOOR}lurker/`, clientTracking: true })
 
   server.on('upgrade', (req, socket, head) => {
     const pathname = new URL(req.url, 'https://localhost').pathname
-    if (pathname == '/xterm/door/player/') {
-      wssActive.handleUpgrade(req, socket, head, (ws) => {
-        wssActive.emit('connection', ws, req)
+    if (pathname == `${DOOR}player/`) {
+      wsActive.handleUpgrade(req, socket, head, (ws) => {
+        wsActive.emit('connection', ws, req)
       })
     }
-    else if (pathname == '/xterm/door/lurker/') {
-      wssLurker.handleUpgrade(req, socket, head, (ws) => {
-        wssLurker.emit('connection', ws, req)
+    else if (pathname == `${DOOR}lurker/`) {
+      wsLurker.handleUpgrade(req, socket, head, (ws) => {
+        wsLurker.emit('connection', ws, req)
       })
     } else {
       console.log(`?FATAL WebSocket request: ${pathname}`)
@@ -54,41 +62,41 @@ dns.lookup('localhost', (err, addr, family) => {
   })
 
   //  web services
-  app.use('/xterm/door', express.static(__dirname + '/static'))
+  app.use(DOOR, express.static(__dirname + '/static'))
 
   //  REST services
   //  Player API
-  app.get('/xterm/door/player/', (req, res) => {
+  app.get(`${DOOR}player/`, (req, res) => {
     let client = req.header('x-forwarded-for') || req.connection.remoteAddress
     console.log(`Door knocked from remote host: ${client} (${req.hostname})`)
 
     let list = []
     list.push(
-      { handle:`The <span style="color:brown !important;">Player manual</span>: <a href="https://manual.ddgame.us" target="_blank">DDgame.us</a>`, png:'connect/arexielite_by_peachyco', effect:'fadeInRight' },
-      { handle:'100 dungeon levels, 10 dank domains', png:'connect/dragonborn_dagger_sorcerer_by_peachyco', effect:'fadeInRight' },
-      { handle:'Take on the Monster Mash', png:'connect/dragonborn_hexblade_by_peachyco', effect:'fadeInRight' },
-      { handle:'Come get some', png:'connect/elf_cleric_by_peachyco', effect:'fadeInRight' },
-      { handle:'Crying will not help you', png:'connect/elf_fighter_by_peachyco', effect:'fadeInRight' },
-      { handle:'Naval battles', png:'connect/guild_findsman_by_peachyco', effect:'fadeInRight' },
-      { handle:'Rob and pick pockets', png:'connect/human_battlemage_by_peachyco', effect:'fadeInRight' },
-      { handle:'Magic can be fun', png:'connect/human_enchantress_mage_by_peachyco', effect:'fadeInRight' },
-      { handle:'I hit like a girl. Heh.', png:'connect/human_warpriest_by_peachyco', effect:'fadeInRight' },
-      { handle:'Discover all 20 magic rings', png:'connect/human_wizard_by_peachyco', effect:'fadeInRight' },
-      { handle:'Come join our gang!', png:'connect/kashaw_and_zahra_by_peachyco', effect:'fadeInRight' },
-      { handle:'Weapon and Armor specials', png:'connect/krauser_dragonborn_warlord_by_peachyco', effect:'fadeInRight' },
-      { handle:'Special magicks', png:'connect/lucien2_human_wizard_by_peachyco', effect:'fadeInRight' },
-      { handle:'Magic potions and poisons', png:'connect/lucien_human_wizard_by_peachyco', effect:'fadeInRight' },
-      { handle:`Let's brawl in the tavern`, png:'connect/orc_pirate_by_peachyco', effect:'fadeInRight' },
-      { handle:'Advance to a Paladin', png:'connect/paladin_by_peachyco', effect:'fadeInRight' },
-      { handle:'Taunt others as a Titan', png:'connect/thrask_goliath_fighter_by_peachyco', effect:'fadeInRight' },
-      { handle:'Transcend to a God', png:'connect/warforged_fighter_and_human_wizard_by_peachyco', effect:'fadeInRight' },
-      { handle:'Shall we begin?', png:'connect/yuriel_genasi_warlord_by_peachyco', effect:'fadeInRight' }
+      { handle: `The <span style="color:brown !important;">Player manual</span>: <a href="https://manual.DDgame.us" target="_blank">DDgame.us</a>`, png: 'connect/arexielite_by_peachyco', effect: 'fadeInRight' },
+      { handle: '100 dungeon levels, 10 dank domains', png: 'connect/dragonborn_dagger_sorcerer_by_peachyco', effect: 'fadeInRight' },
+      { handle: 'Take on the Monster Mash', png: 'connect/dragonborn_hexblade_by_peachyco', effect: 'fadeInRight' },
+      { handle: 'Come get some', png: 'connect/elf_cleric_by_peachyco', effect: 'fadeInRight' },
+      { handle: 'Crying will not help you', png: 'connect/elf_fighter_by_peachyco', effect: 'fadeInRight' },
+      { handle: 'Naval battles', png: 'connect/guild_findsman_by_peachyco', effect: 'fadeInRight' },
+      { handle: 'Rob and pick pockets', png: 'connect/human_battlemage_by_peachyco', effect: 'fadeInRight' },
+      { handle: 'Magic can be fun', png: 'connect/human_enchantress_mage_by_peachyco', effect: 'fadeInRight' },
+      { handle: 'I hit like a girl. Heh.', png: 'connect/human_warpriest_by_peachyco', effect: 'fadeInRight' },
+      { handle: 'Discover all 20 magic rings', png: 'connect/human_wizard_by_peachyco', effect: 'fadeInRight' },
+      { handle: 'Come join our gang!', png: 'connect/kashaw_and_zahra_by_peachyco', effect: 'fadeInRight' },
+      { handle: 'Weapon and Armor specials', png: 'connect/krauser_dragonborn_warlord_by_peachyco', effect: 'fadeInRight' },
+      { handle: 'Special magicks', png: 'connect/lucien2_human_wizard_by_peachyco', effect: 'fadeInRight' },
+      { handle: 'Magic potions and poisons', png: 'connect/lucien_human_wizard_by_peachyco', effect: 'fadeInRight' },
+      { handle: `Let's brawl in the tavern`, png: 'connect/orc_pirate_by_peachyco', effect: 'fadeInRight' },
+      { handle: 'Advance to a Paladin', png: 'connect/paladin_by_peachyco', effect: 'fadeInRight' },
+      { handle: 'Taunt others as a Titan', png: 'connect/thrask_goliath_fighter_by_peachyco', effect: 'fadeInRight' },
+      { handle: 'Transcend to a God', png: 'connect/warforged_fighter_and_human_wizard_by_peachyco', effect: 'fadeInRight' },
+      { handle: 'Shall we begin?', png: 'connect/yuriel_genasi_warlord_by_peachyco', effect: 'fadeInRight' }
     )
 
     const armor = require('../items/armor.json')
     for (let i in armor) {
       if (!armor[i].armoury) {
-        let profile = { handle:`<span style="color:${armor[i].dwarf ? 'black' : 'brown'} !important;">${i}</span>`, level:armor[i].ac, pc:(armor[i].dwarf ? 'dwarven' : 'uncommon') + ' armor', effect:'fadeInUpBig' }
+        let profile = { handle: `<span style="color:${armor[i].dwarf ? 'black' : 'brown'} !important;">${i}</span>`, level: armor[i].ac, pc: (armor[i].dwarf ? 'dwarven' : 'uncommon') + ' armor', effect: 'fadeInUpBig' }
         profile['jpg'] = `specials/${i}`
         list.push(profile)
       }
@@ -97,7 +105,7 @@ dns.lookup('localhost', (err, addr, family) => {
     const weapon = require('../items/weapon.json')
     for (let i in weapon) {
       if (!weapon[i].shoppe) {
-        let profile = { handle:`<span style="color:${weapon[i].dwarf ? 'black' : 'brown'} !important;">${i}</span>`, level:weapon[i].wc, pc:(weapon[i].dwarf ? 'dwarven' : 'uncommon') + ' weapon', effect:'fadeInUpBig' }
+        let profile = { handle: `<span style="color:${weapon[i].dwarf ? 'black' : 'brown'} !important;">${i}</span>`, level: weapon[i].wc, pc: (weapon[i].dwarf ? 'dwarven' : 'uncommon') + ' weapon', effect: 'fadeInUpBig' }
         profile['jpg'] = `specials/${i}`
         list.push(profile)
       }
@@ -107,7 +115,7 @@ dns.lookup('localhost', (err, addr, family) => {
     let level = 0
     for (let n in monsters) {
       let pc = monsters[n].pc
-      let profile = { handle:`The <span style="color:brown !important;">${n}</span>:`, level:++level, pc:pc, effect:monsters[n].effect || 'fadeIn' }
+      let profile = { handle: `The <span style="color:brown !important;">${n}</span>:`, level: ++level, pc: pc, effect: monsters[n].effect || 'fadeIn' }
       profile['jpg'] = `dungeon/${n}`
       if (!pc) profile['pc'] = `(same class)`
       list.push(profile)
@@ -116,17 +124,17 @@ dns.lookup('localhost', (err, addr, family) => {
     let rs = query(`SELECT id,handle,pc,gender,level FROM Players WHERE xplevel>1`)
     for (let n in rs) {
       let id = rs[n].id, handle = rs[n].handle, pc = rs[n].pc, gender = rs[n].gender, level = rs[n].level
-      let profile = { handle:handle, level:level, pc:pc, effect:'fadeInLeft' }
+      let profile = { handle: handle, level: level, pc: pc, effect: 'fadeInLeft' }
       if (id[0] == '_') {
-        profile['jpg'] = `npc/${{ _BAR:'barkeep', _DM:'dwarf', _NEP:'neptune', _OLD:'seahag', _TAX:'taxman' }[id]}`
+        profile['jpg'] = `npc/${{ _BAR: 'barkeep', _DM: 'dwarf', _NEP: 'neptune', _OLD: 'seahag', _TAX: 'taxman' }[id]}`
         delete profile.level
       }
       else {
         let userPNG = `user/${id}`
         try {
-            fs.accessSync(`./static/images/${userPNG}.png`, fs.constants.F_OK)
-        } catch(e) {
-            userPNG = 'player/' + pc.toLowerCase() + (gender == 'F' ? '_f' : '')
+          fs.accessSync(`./static/images/${userPNG}.png`, fs.constants.F_OK)
+        } catch (e) {
+          userPNG = 'player/' + pc.toLowerCase() + (gender == 'F' ? '_f' : '')
         }
         profile['png'] = userPNG
       }
@@ -135,29 +143,29 @@ dns.lookup('localhost', (err, addr, family) => {
 
     const ring = require('../items/ring.json')
     for (let i in ring) {
-      let profile = { handle:`<h2>${ring[i].unique ? 'The <span style="color:black' : 'Special <span style="color:brown'} !important">${i}</span> ${ring[i].emoji} ring</h2>`, pc:ring[i].description, effect:'fadeInUpBig' }
+      let profile = { handle: `<h2>${ring[i].unique ? 'The <span style="color:black' : 'Special <span style="color:brown'} !important">${i}</span> ${ring[i].emoji} ring</h2>`, pc: ring[i].description, effect: 'fadeInUpBig' }
       profile['jpg'] = `ring/${i}`
       list.push(profile)
     }
 
-    res.send(JSON.stringify({ list:list, wall:latest.msg }))
+    res.send(JSON.stringify({ list: list, wall: latest.msg }))
     res.end()
   })
 
-  app.post('/xterm/door/player', function (req, res) {
+  app.post(`${DOOR}player`, function (req, res) {
     let client = req.header('x-forwarded-for') || req.connection.remoteAddress
     let cols = parseInt(req.query.cols)
     let rows = parseInt(req.query.rows)
     let tty = req.query.tty || "XT"
 
     process.env.SSH_CLIENT = client
-    let term = pty.spawn('sh', [ "-l", "../logins.sh", tty ], {
-          name: 'xterm-256color',
-          cols: cols || 80,
-          rows: rows || 25,
-          cwd: __dirname,
-          env: process.env
-        })
+    let term = pty.spawn('sh', ["-l", "../logins.sh", tty], {
+      name: 'xterm-256color',
+      cols: cols || 80,
+      rows: rows || 25,
+      cwd: __dirname,
+      env: process.env
+    })
     let pid: number = term.pid
 
     console.log(`Create PLAYER session ${pid} using ${tty} from remote host: ${client} (${req.hostname})`)
@@ -169,11 +177,11 @@ dns.lookup('localhost', (err, addr, family) => {
     res.end()
   })
 
-  app.post('/xterm/door/player/:pid/size', function (req, res) {
+  app.post(`${DOOR}player/:pid/size`, function (req, res) {
     let pid = parseInt(req.params.pid),
-        cols = parseInt(req.query.cols),
-        rows = parseInt(req.query.rows),
-        term = sessions[pid]
+      cols = parseInt(req.query.cols),
+      rows = parseInt(req.query.rows),
+      term = sessions[pid]
 
     if (!term) return
     console.log(`Resize PLAYER session ${pid} (${rows}x${cols})`)
@@ -181,7 +189,7 @@ dns.lookup('localhost', (err, addr, family) => {
     res.end()
   })
 
-  app.post('/xterm/door/player/:pid/wall', function (req, res) {
+  app.post(`${DOOR}player/:pid/wall`, function (req, res) {
     let pid = parseInt(req.params.pid)
     let msg = req.query.msg
     let term = sessions[pid]
@@ -208,7 +216,7 @@ dns.lookup('localhost', (err, addr, family) => {
   //  Lurker API
   var lurkers = []
 
-  app.post('/xterm/door/lurker', function (req, res) {
+  app.post(`${DOOR}lurker`, function (req, res) {
     var pid = parseInt(req.query.pid)
 
     if (pid) {
@@ -229,7 +237,7 @@ dns.lookup('localhost', (err, addr, family) => {
         let rs = query(`SELECT id FROM Online WHERE pid = ${pid}`)
         if (rs.length) {
           sessions[pid].who = rs[0].id
-          who.push({id:rs[0].id, pid:pid})
+          who.push({ id: rs[0].id, pid: pid })
         }
       }
       res.send(JSON.stringify(who))
@@ -242,7 +250,7 @@ dns.lookup('localhost', (err, addr, family) => {
 
   //  WebSocket endpoints: utilize upgraded socket connection to serve I/O between app pty and browser client
   //  ... for the active player
-  wssActive.on('connection', (browser, req) => {
+  wsActive.on('connection', (browser, req) => {
     const what = new URL(req.url, 'https://localhost')
     let pid = parseInt(what.searchParams.get('pid'))
     let term = sessions[pid]
@@ -305,7 +313,7 @@ dns.lookup('localhost', (err, addr, family) => {
   })
 
   //  ... for the casual lurker
-  wssLurker.on('connection', (browser, req) => {
+  wsLurker.on('connection', (browser, req) => {
     const what = new URL(req.url, 'https://localhost')
     let lurker = parseInt(what.searchParams.get('lurker'))
     let term = sessions[lurkers[lurker]]
@@ -356,14 +364,14 @@ dns.lookup('localhost', (err, addr, family) => {
 
   function query(q: string, errOk = false): any {
     try {
-        let cmd = sqlite3.prepare(q)
-        return cmd.all()
+      let cmd = sqlite3.prepare(q)
+      return cmd.all()
     }
-    catch(err) {
-        if (!errOk) {
-            console.log(`?Unexpected error ${err.code} :: ${String(err)}`)
-        }
-        return []
+    catch (err) {
+      if (!errOk) {
+        console.log(`?Unexpected error ${err.code} :: ${String(err)}`)
+      }
+      return []
     }
   }
 

@@ -3,9 +3,24 @@
 ## *the return of Hack & Slash*
 
 🇺🇸 ©️1991 - 2019 [Robert Hurst](https://robert.hurst-ri.us)
+> [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](http://play.DDgame.us) on the Google Cloud Platform
+
+### **27-Sep-2019** `v2.2.3`
+
+* moved into Google Cloud Platform
+* updated node package dependencies
+
+---
+
+```
+ --=:)) HISTORY ((:=--
+```
+
+---
+
 > [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](http://play.DDgame.us) on an Intel Atom-powered Linux server using a Verizon FiOS 400mb Internet service
 
-### **13-Sep-2019** `v2.2`
+#### **13-Sep-2019** `v2.2`
 
 * cursing a player sticks for their next play, regardless
 * more sound effects added
@@ -165,10 +180,6 @@
 * alpha development using Node.js 6
 
 ---
-
-```
- --=:)) HISTORY ((:=--
-```
 
 ### **RPGD**
 

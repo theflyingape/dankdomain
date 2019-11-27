@@ -1,12 +1,9 @@
-Date: [mFri 31-May-2019 8:40pm
+Date: [Wed 27-Nov-2019 6:30pm
 From: [mThe Flying Ape
 [1;37m
 New announcements as missing features get implemented or tweaked:
 
- - updated web client
- - more evenly distributed monsters for dungeon levels 50+
- - reorganized materials
- - Auto Message, Main Menu border, and Tavern arguments
- - added medals for gamification
+ - moved into Google Cloud Platform
+ - updated node packages
 
 Happy hunting!
