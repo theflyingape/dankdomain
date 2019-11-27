@@ -62,7 +62,7 @@ service dankdomain
         env             = TERM=linux
         cps             = 2 5
         log_on_success  += HOST
-        log_on_failure  = 
+        log_on_failure  =
         instances       = 2
         per_source      = 1
 }
@@ -80,6 +80,8 @@ if sudo service iptables status ; then
         sudo iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 23 -j ACCEPT
         sudo service iptables save
 	fi
+else
+    firewall-cmd --permanent --direct --add-rule ipv4 nat OUTPUT 0 -p tcp -o lo --dport 80 -j REDIRECT --to-ports 1939
 fi
 
 sudo cp -v "${TARGET}/etc/dankdomain-door.service" /etc/systemd/system/
