@@ -5,8 +5,9 @@
 🇺🇸 ©️1991 - 2019 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](http://play.DDgame.us) on the Google Cloud Platform
 
-### **27-Sep-2019** `v2.2.3`
+### **27-Nov-2019** `v2.2.3`
 
+* Happy Thanksgiving! 🦃
 * moved into Google Cloud Platform
 * updated node package dependencies
 
