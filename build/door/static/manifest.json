@@ -1,24 +1,29 @@
 {
   "name": "👑 DDgame.us",
   "short_name": "DDgame.us",
-  "start_url": "/xterm/door/",
-  "icons": [{
-    "src": "images/DDgame_144.png",
-    "sizes": "144x144",
-    "type":"image/png"
-  }, {
-    "src": "images/DDgame_192.png",
-    "sizes": "192x192",
-    "type":"image/png"
-  }, {
-    "src": "images/DDgame_256.png",
-    "sizes": "256x256",
-    "type":"image/png"
-  }, {
-    "src": "images/DDgame_512.png",
-    "sizes": "512x512",
-    "type":"image/png"
-  }],
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "images/DDgame_144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "images/DDgame_192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "images/DDgame_256.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "images/DDgame_512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
   "background_color": "#000000",
   "display": "fullscreen",
   "orientation": "landscape",
