@@ -81,7 +81,7 @@ if sudo service iptables status ; then
         sudo service iptables save
 	fi
 else
-    firewall-cmd --permanent --direct --add-rule ipv4 nat OUTPUT 0 -p tcp -o lo --dport 80 -j REDIRECT --to-ports 1939
+    firewall-cmd --permanent --direct --add-rule ipv4 nat OUTPUT 0 -p tcp -o lo --dport 443 -j REDIRECT --to-ports 1939
 fi
 
 sudo cp -v "${TARGET}/etc/dankdomain-door.service" /etc/systemd/system/

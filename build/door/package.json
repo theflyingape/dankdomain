@@ -25,7 +25,7 @@
   "bugs": {
     "url": "https://github.com/theflyingape/dankdomain/issues"
   },
-  "homepage": "http://Play.DDgame.us",
+  "homepage": "https://play.DDgame.us",
   "dependencies": {
     "better-sqlite3": "^5.0.1",
     "express": "^4.16.4",
