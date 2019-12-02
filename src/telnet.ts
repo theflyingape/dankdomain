@@ -12,13 +12,24 @@ import ws = require('ws')
 process.title = 'ddclient'
 process.chdir(__dirname)
 
-let host = process.argv.length > 2 ? process.argv[2] : 'robert.hurst-ri.us'
+let host = process.argv.length > 2 ? process.argv[2] : 'play.ddgame.us'
 let port = process.argv.length > 3 ? parseInt(process.argv[3]) : 443
 let rows = process.argv.length > 4 ? parseInt(process.argv[4]) : 24
-const URL = `https://${host}:${port}/xterm/door/player/`
-let ssl = {
-    key: fs.readFileSync('./door/key.pem'), cert: fs.readFileSync('./door/cert.pem'),
-    requestCert: false, rejectUnauthorized: false
+const URL = `https://${host}:${port}/player/`
+let ssl
+
+try {
+    ssl = {
+        key: fs.readFileSync(process.env.HOME + '/key.pem'), cert: fs.readFileSync(process.env.HOME + '/cert.pem'),
+        requestCert: false, rejectUnauthorized: false
+    }
+}
+catch (err) {
+    console.log(err)
+    console.log(`
+# generate a self-signed key in HOME: ${process.env.HOME}
+$ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem \\
+  -subj "/C=US/ST=Rhode Island/L=Providence/O=Dank Domain/OU=Game/CN=localhost"`)
 }
 
 if (process.stdin.isTTY) process.stdin.setRawMode(true)
@@ -72,11 +83,11 @@ dns.lookup(host, (err, addr, family) => {
                     process.exit(1)
                 }
 
-                process.stdin.on('data', function(key: Buffer) {
+                process.stdin.on('data', function (key: Buffer) {
                     wss.send(key)
                 })
             }
-            catch(err) {
+            catch (err) {
                 process.stdout.write(err)
             }
         }).catch(err => {

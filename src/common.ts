@@ -4,10 +4,10 @@
 \*****************************************************************************/
 
 import fs = require('fs')
-import { sprintf } from 'sprintf-js'
-import titleCase = require('title-case')
 import xvt = require('xvt')
 import Items = require('./items')
+import { sprintf } from 'sprintf-js'
+import { titleCase } from 'title-case'
 
 
 module Common {
@@ -2620,7 +2620,7 @@ module Common {
                                         else
                                             fs.unlink(trace, () => {})
                                     }
-                    
+
                                     sql = users + user.id + '.sql'
                                     if (process.platform == 'linux') {
                                         require('child_process').exec(`
