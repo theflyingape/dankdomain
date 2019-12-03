@@ -70,21 +70,22 @@ module Common {
         const apikey = './etc/ipstack.key'
         fs.accessSync(apikey, fs.constants.F_OK)
         let key = fs.readFileSync(apikey).toString()
-        require('got')(`http://api.ipstack.com/${remote}?access_key=${key}`, { json: true }).then(response => {
+        const got = require('got')
+        got(`http://api.ipstack.com/${remote}?access_key=${key}`).then(response => {
             whereis = ''
             let result = ''
             if (response.body) {
-                if (response.body.ip) result = response.body.ip
-                if (response.body.city) result = response.body.city
-                if (response.body.region_code) result += (result ? ', ' : '') + response.body.region_code
-                if (response.body.country_code) result += (result ? ' ' : '') + response.body.country_code
-                if (response.body.location)
-                    if (response.body.location.country_flag_emoji) result += ` ${response.body.location.country_flag_emoji} `
+                let ipstack = JSON.parse(response.body)
+                if (ipstack.ip) result = ipstack.ip
+                if (ipstack.city) result = ipstack.city
+                if (ipstack.region_code) result += (result ? ', ' : '') + ipstack.region_code
+                if (response.body.country_code) result += (result ? ' ' : '') + ipstack.country_code
+                if (ipstack.location)
+                    if (ipstack.location.country_flag_emoji) result += ` ${ipstack.location.country_flag_emoji} `
             }
             whereis += result ? result : remote
         }).catch(error => { whereis += ' ⚠️ ' })
     } catch (e) { }
-
 
     //  all player characters
     export class Character {
