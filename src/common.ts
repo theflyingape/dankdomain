@@ -1408,7 +1408,7 @@ module Common {
                     }
                     a.dex = n
                     p = 'cha'
-                    xvt.app.form[p].prompt = 'Enter your Charisma'
+                    xvt.app.form[p].prompt = 'Enter your Charisma '
                     xvt.app.form[p].enter = left.toString()
                     break
 

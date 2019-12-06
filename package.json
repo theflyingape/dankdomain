@@ -50,12 +50,12 @@
     "got": "^10.0.1",
     "integer": "^2.1.0",
     "node-pty": "^0.9.0",
-    "nodemailer": "^6.3.1",
+    "nodemailer": "^6.4.0",
     "nodemailer-smtp-transport": "^2.7.4",
     "sprintf-js": "^1.1.2",
-    "title-case": "^3.0.0",
+    "title-case": "^3.0.2",
     "ws": "^7.2.0",
-    "xterm": "^4.2.0",
+    "xterm": "^4.3.0",
     "xterm-addon-fit": "^0.3.0",
     "xterm-addon-web-links": "^0.2.0",
     "xvt": "^1.1.2"
@@ -71,6 +71,6 @@
     "@types/ws": "^6.0.4",
     "browserify": "^16.5.0",
     "tslint": "^5.20.1",
-    "typescript": "^3.7.2"
+    "typescript": "^3.7.3"
   }
 }

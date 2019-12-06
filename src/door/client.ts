@@ -4,11 +4,11 @@
 \*****************************************************************************/
 
 //	CLIENT start
-//	https://webserver/xterm/door/
+//	https://webserver/
 
 //	REST API
-//	https://webserver/xterm/door/player/
-//	https://webserver/xterm/door/lurker/
+//	https://webserver/player/
+//	https://webserver/lurker/
 //	params: :pid
 //	params: size?cols=:cols&rows=:rows
 
@@ -112,7 +112,7 @@ document.getElementById('lurker-list').onchange = (ev) => {
 	let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/lurker/'
 
 	//	any keystroke sent will signal for this WebSocket to close
-	term.onData(data => { socket.send(data)	})
+	term.onData(data => { socket.send(data) })
 
 	fetch(`${app}/lurker/?pid=${wpid}`, { method: 'POST' }).then(function (res) {
 		res.text().then(function (lurker) {
@@ -216,7 +216,7 @@ function newSession(ev) {
 
 	term.writeln('\x07\x1B[16C🔥  🌨   \x1B[1;36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain \x1B[m🌙  💫')
 
-	if (ev == 'Logon')	{
+	if (ev == 'Logon') {
 		term.write(`\n\x1B[0;2mConnecting terminal WebSocket ... `)
 		XT('@tune(dankdomain)')
 		pid = 0
@@ -269,16 +269,16 @@ function newSession(ev) {
 				const app = location.pathname.replace(/info.html$/, "")
 				fetch(`${app}player/`, { method: 'GET' }).then(function (res) {
 					res.json().then(function (knock) {
-					setTimeout(() => {
-						term.focus()
-						term.writeln(knock.wall)
-						term.writeln(' \x1B[1;36m\u00B7\x1B[22;2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1B[22m')
-						XT(`@play(${['demon','demogorgon','portal','thief2'][Math.trunc(4*Math.random())]})`)
-						XT('@action(welcome)')
-						term.blur()
-						window.frames['Info'].focus()
-						window.frames['Info'].postMessage({ images: knock.list }, location.href)
-					}, 500)
+						setTimeout(() => {
+							term.focus()
+							term.writeln(knock.wall)
+							term.writeln(' \x1B[1;36m\u00B7\x1B[22;2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1B[22m')
+							XT(`@play(${['demon', 'demogorgon', 'portal', 'thief2'][Math.trunc(4 * Math.random())]})`)
+							XT('@action(welcome)')
+							term.blur()
+							window.frames['Info'].focus()
+							window.frames['Info'].postMessage({ images: knock.list }, location.href)
+						}, 500)
 					})
 				})
 			})
@@ -328,12 +328,12 @@ function XT(data) {
 
 	function action(menu) {
 		if (window.frames['Info'])
-			window.frames['Info'].postMessage({ 'func': menu, 'fontSize':term.getOption('fontSize') }, location.href)
+			window.frames['Info'].postMessage({ 'func': menu, 'fontSize': term.getOption('fontSize') }, location.href)
 	}
 
 	function animated(effect) {
 		if (window.frames['Info'])
-			window.frames['Info'].postMessage({ 'anim': effect}, location.href)
+			window.frames['Info'].postMessage({ 'anim': effect }, location.href)
 	}
 
 	function play(fileName) {
@@ -381,7 +381,7 @@ function XT(data) {
 	function wall(msg) {
 		if (!pid) return
 		let url = `${app}/player/${pid}/wall?msg=${msg}`
-		fetch(url, {method: 'POST'})
+		fetch(url, { method: 'POST' })
 	}
 }
 
