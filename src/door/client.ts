@@ -15,6 +15,7 @@
 import { Terminal, ITerminalOptions } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import { WebLinksAddon } from 'xterm-addon-web-links'
+import { WebglAddon } from 'xterm-addon-webgl'
 
 let term: Terminal
 let cols = 80, rows = 24
@@ -158,7 +159,8 @@ function newSession(ev) {
 			blue: 'MediumBlue', magenta: 'MediumOrchid', cyan: 'DarkCyan', white: 'Silver',
 			brightBlack: 'DimGray', brightRed: 'Red', brightGreen: 'LightGreen', brightYellow: 'Gold',
 			brightBlue: 'RoyalBlue', brightMagenta: 'Violet', brightCyan: 'Cyan', brightWhite: 'Snow'
-		}
+		},
+		wordSeparator: ` .:;?!"'<>(/)[=]`
 	}
 
 	carrier = (ev == 'Logon')
@@ -170,7 +172,7 @@ function newSession(ev) {
 	term = new Terminal(options)
 	if (carrier) term.setOption('fontFamily', 'IBM Plex Mono,Consolas,monospace')
 
-	term.loadAddon(new WebLinksAddon())
+	//term.loadAddon(new WebLinksAddon())
 	term.loadAddon(fit)
 
 	term.onData(data => {
@@ -202,15 +204,17 @@ function newSession(ev) {
 
 	term.onSelectionChange(() => {
 		if (carrier) {
-			let nme = term.getSelection()
-			term.clearSelection()
-			if (nme.length > 1 && nme.length < 5)
-				socket.send(nme + '\x0D')
+			let word = term.getSelection()
+			if (word.length > 0 && word.length < 64) {
+				socket.send(word + '\x0D')
+				term.clearSelection()
+			}
 		}
 	})
 
 	//	light it up, Bert!
 	term.open(document.getElementById('terminal'))
+	term.loadAddon(new WebglAddon())
 	fit.fit()
 	window.dispatchEvent(new Event('resize'))	// gratuituous
 
