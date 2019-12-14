@@ -17,7 +17,12 @@
   <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="animate.min.css">
   <link rel="stylesheet" href="command.css">
-  <style>
+  <style type='text/css'>
+    @font-face {
+      font-family: 'tty';
+      src: url('vt220.woff2') format('woff2'), url('vt220.woff') format('woff'), url('vt220.ttf') format('ttf');
+    }
+
     body {
       background: linear-gradient(to bottom right, skyblue, aliceblue);
       font-family: 'Carter One', cursive;
@@ -284,7 +289,8 @@
       cmd(`<input type="button" id="cancel" value="Disconnect" onclick="currentCMD = ''; send('\x1B');"> <input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"><br>
 <span style="font-size:larger">🤴 <a href="https://www.ddgame.us" target="_new"><span style="color:black !important">Dank Domain</span></a> 👸</span><br>
 <span style="color:gray !important;">the return of Hack &amp; Slash</span><br>
-🇺🇸 <span style="color:brown !important; font-size:smaller;">&copy;2017-2019 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a></span> 🧙`);
+🇺🇸 <span style="color:brown !important; font-size:smaller;">&copy;2017-2019 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a></span> 🧙<br>
+⚡ <span style="color:black !important; font-family:tty, Consolas, monospace;">Powered by <a href="https://xtermjs.org" target="_blank">Xterm.js</a></span> 🖥`);
     }
 
     function rotateImage() {
