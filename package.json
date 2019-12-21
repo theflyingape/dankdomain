@@ -74,6 +74,6 @@
     "@types/ws": "^6.0.4",
     "browserify": "^16.5.0",
     "tslint": "^5.20.1",
-    "typescript": "^3.7.3"
+    "typescript": "^3.7.4"
   }
 }
