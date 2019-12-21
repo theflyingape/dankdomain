@@ -1673,9 +1673,7 @@ module Battle {
                 case 16:
                     $.sound('morph', 10)
                     if (backfire) {
-                        rpc.user.level = $.dice(98) + 1
-                        if (rpc.adept)
-                            rpc.user.level += $.dice(rpc.user.level)
+                        rpc.user.level = $.dice(99)
                         $.reroll(rpc.user, $.PC.random('monster'), rpc.user.level)
                         $.activate(rpc)
                         rpc.altered = true
@@ -1689,8 +1687,7 @@ module Battle {
                         }
                     }
                     else {
-                        nme.user.level = $.dice(nme.user.level / 2) + 1
-                        if (nme.adept) nme.user.level += $.dice(nme.user.level)
+                        nme.user.level = $.dice(nme.user.level / 2) + $.dice(nme.user.level / 2) - 1
                         $.reroll(nme.user, $.PC.random(), nme.user.level)
                         $.activate(nme)
                         nme.altered = true

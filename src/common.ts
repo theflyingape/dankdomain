@@ -207,8 +207,8 @@ module Common {
                     }
             }
             else {
-                let i = dice(this.total - 1) + 2    //  any (except None and Novice)
-                let n = i
+                let i = dice(this.total - 2)    //  less None and Novice
+                let n = i + 2
                 for (type in this.name) {
                     for (let dd in this.name[type])
                         if (!--n) {

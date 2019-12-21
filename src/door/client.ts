@@ -15,7 +15,7 @@
 import { Terminal, ITerminalOptions } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import { WebLinksAddon } from 'xterm-addon-web-links'
-import { WebglAddon } from 'xterm-addon-webgl'
+//import { WebglAddon } from 'xterm-addon-webgl'
 
 let term: Terminal
 let cols = 80, rows = 24
@@ -172,7 +172,7 @@ function newSession(ev) {
 	term = new Terminal(options)
 	if (carrier) term.setOption('fontFamily', 'IBM Plex Mono,Consolas,monospace')
 
-	//term.loadAddon(new WebLinksAddon())
+	term.loadAddon(new WebLinksAddon())
 	term.loadAddon(fit)
 
 	term.onData(data => {
@@ -214,7 +214,8 @@ function newSession(ev) {
 
 	//	light it up, Bert!
 	term.open(document.getElementById('terminal'))
-	term.loadAddon(new WebglAddon())
+	//let's try something new when auto-detection is bette suppported
+	//term.loadAddon(new WebglAddon())
 	fit.fit()
 	window.dispatchEvent(new Event('resize'))	// gratuituous
 
