@@ -1,5 +1,5 @@
-Date: [Sat 21-Dec-2019 10:40am
-From: [mThe Flying Ape
+[mDate: [1;33mSat 21-Dec-2019 12:00pm
+[mFrom: [1;33mThe Flying Ape
 [1;37m
 After moving into Google Cloud Platform, a faulty script erased all users.
 I could restore an older one, but I think reinitializing the game board is
