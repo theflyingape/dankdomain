@@ -1,9 +1,10 @@
-Date: [Wed 27-Nov-2019 6:30pm
+Date: [Sat 21-Dec-2019 10:40am
 From: [mThe Flying Ape
 [1;37m
-New announcements as missing features get implemented or tweaked:
+After moving into Google Cloud Platform, a faulty script erased all users.
+I could restore an older one, but I think reinitializing the game board is
+a good idea.
 
- - moved into Google Cloud Platform
- - updated node packages
+Steps have been taken to avoid this particular DevOps error again.  :/
 
 Happy hunting!

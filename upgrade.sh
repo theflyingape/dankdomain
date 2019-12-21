@@ -7,7 +7,7 @@ TARGET="${TARGET}/`basename ${PWD}`"
 git pull || exit
 
 sudo systemctl stop dankdomain-door
-npm install
+env PYTHON=`which python2` npm install
 npm run build
 
 sudo rsync -av --chown=root:games ./build/ ${TARGET}
@@ -22,7 +22,7 @@ sudo find ${TARGET} -type d -exec chmod u+x,g+xs {} \;
 #sudo rsync -anv --delete --exclude node_modules --exclude files ./build/ ${TARGET}
 
 cd ${TARGET}
-npm install
+env PYTHON=`which python2` npm install
 
 # xterm door service
 sudo systemctl start dankdomain-door
