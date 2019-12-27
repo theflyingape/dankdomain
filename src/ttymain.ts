@@ -3,7 +3,7 @@
  *  🖥 TTY MAIN authored by: Robert Hurst <theflyingape@gmail.com>           *
  *  💫 in memory of Ronald Hurst, aka, Imagination and Nobody [ 1939-2016 ]  *
  *                                                                           *
- *  Node.js dankdomain                          (C) 2017-2019 Robert Hurst   *
+ *  Node.js dankdomain                          (C) 2017-2020 Robert Hurst   *
  *   Linux  rpgd                                (C) 1999-2014 Robert Hurst   *
  *   Amiga  RPGBBS Deluxe                       (C) 1994-1997 Robert Hurst   *
  *   🖱 🕹  Hack & Slash door                            with Mark Montminy  *
