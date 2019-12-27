@@ -25,7 +25,11 @@ npm install dankdomain
 npm test
 ```
 
-You can also play www.DDgame.us from the command-line: `node telnet` or `npm run mame`
+You can also play www.DDgame.us from the command-line:
+
+ * `node telnet`
+ * `npm run mame`
+ * `telnet play.ddgame.us`
 
 ```linux
 [rhurst@atom dankdomain]$ pwd
@@ -60,7 +64,7 @@ mame.sh             player - MAME VT240 terminal + solcat startup script
 tty.sh              player - startup script into web services
 ```
 
-:us: :copyright: 1991 - 2019 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
+ 🇺🇸 ©️1991 - 2020 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
 
 #### Dank Domain image gallery
 

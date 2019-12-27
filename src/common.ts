@@ -745,7 +745,7 @@ module Common {
                     , 'and promotes you to', xvt.bright, an(rpc.user.access), xvt.normal, '!')
                 xvt.waste(500)
                 xvt.outln(); xvt.waste(500)
-                news(`\twas promoted to ${rpc.user.access}`)
+                news(`\tpromoted to ${rpc.user.access}`)
                 wall(`promoted to ${rpc.user.access}`)
                 xvt.sessionAllowed += 300
             }
@@ -1671,59 +1671,63 @@ module Common {
         let bonus = 0
         let deeds = ['plays', 'jl', 'jw', 'killed', 'kills', 'retreats', 'steals', 'tl', 'tw']
 
-        mydeeds = loadDeed(player.pc)
-        xvt.outln('\nChecking your deeds for the ', xvt.bright, player.pc, xvt.normal, ' list...')
-        xvt.waste(1000)
-        for (let i in deeds) {
-            let deed = mydeeds.find((x) => { return x.deed == deeds[i] })
-            if (deeds[i] == 'jw' || deeds[i] == 'steals' || deeds[i] == 'tw') {
-                if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, deeds[i])[0]) - 1]
-                if (player[deeds[i]] >= deed.value) {
-                    deed.value = player[deeds[i]]
-                    saveDeed(deed)
-                    bonus = 1
-                    xvt.outln(xvt.cyan, ' + ', xvt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
-                    sound('click', 5)
+        if (!Access.name[player.access].sysop) {
+            mydeeds = loadDeed(player.pc)
+            xvt.outln('\nChecking your deeds for the ', xvt.bright, player.pc, xvt.normal, ' list...')
+            xvt.waste(1000)
+            for (let i in deeds) {
+                let deed = mydeeds.find((x) => { return x.deed == deeds[i] })
+                if (/jw|steals|tw/.test(deeds[i])) {
+                    if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, deeds[i])[0]) - 1]
+                    if (player[deeds[i]] >= deed.value) {
+                        deed.value = player[deeds[i]]
+                        saveDeed(deed)
+                        bonus = 1
+                        xvt.outln(xvt.cyan, ' + ', xvt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
+                        sound('click', 5)
+                    }
+                }
+                else {
+                    if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, deeds[i])[0]) - 1]
+                    if (player[deeds[i]] <= deed.value) {
+                        deed.value = player[deeds[i]]
+                        saveDeed(deed)
+                        bonus = 1
+                        xvt.outln(xvt.cyan, ' + ', xvt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
+                        sound('click', 5)
+                    }
                 }
             }
-            else {
-                if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, deeds[i])[0]) - 1]
-                if (player[deeds[i]] <= deed.value) {
-                    deed.value = player[deeds[i]]
-                    saveDeed(deed)
-                    bonus = 1
-                    xvt.outln(xvt.cyan, ' + ', xvt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
-                    sound('click', 5)
-                }
-            }
-        }
 
-        mydeeds = loadDeed('GOAT')
-        xvt.outln(xvt.magenta, '\nChecking your deeds for the ', xvt.bright, 'GOAT', xvt.normal, ' list...')
-        xvt.waste(1000)
-        for (let i in deeds) {
-            let deed = mydeeds.find((x) => { return x.deed == deeds[i] })
-            if (/jw|steals|tw/.test(deeds[i])) {
-                if (!deed) deed = mydeeds[mydeeds.push(loadDeed('GOAT', deeds[i])[0]) - 1]
-                if (player[deeds[i]] >= deed.value) {
-                    deed.value = player[deeds[i]]
-                    saveDeed(deed)
-                    bonus = 3
-                    xvt.outln(xvt.yellow, ' + ', xvt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
-                    sound('click', 5)
+            mydeeds = loadDeed('GOAT')
+            xvt.outln(xvt.magenta, '\nChecking your deeds for the ', xvt.bright, 'GOAT', xvt.normal, ' list...')
+            xvt.waste(1000)
+            for (let i in deeds) {
+                let deed = mydeeds.find((x) => { return x.deed == deeds[i] })
+                if (/jw|steals|tw/.test(deeds[i])) {
+                    if (!deed) deed = mydeeds[mydeeds.push(loadDeed('GOAT', deeds[i])[0]) - 1]
+                    if (player[deeds[i]] >= deed.value) {
+                        deed.value = player[deeds[i]]
+                        saveDeed(deed)
+                        bonus = 2
+                        xvt.outln(xvt.yellow, ' + ', xvt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
+                        sound('click', 5)
+                    }
                 }
-            }
-            else {
-                if (!deed) deed = mydeeds[mydeeds.push(loadDeed('GOAT', deeds[i])[0]) - 1]
-                if (player[deeds[i]] <= deed.value) {
-                    deed.value = player[deeds[i]]
-                    saveDeed(deed)
-                    bonus = 3
-                    xvt.outln(xvt.yellow, ' + ', xvt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
-                    sound('click', 5)
+                else {
+                    if (!deed) deed = mydeeds[mydeeds.push(loadDeed('GOAT', deeds[i])[0]) - 1]
+                    if (player[deeds[i]] <= deed.value) {
+                        deed.value = player[deeds[i]]
+                        saveDeed(deed)
+                        bonus = 3
+                        xvt.outln(xvt.yellow, ' + ', xvt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
+                        sound('click', 5)
+                    }
                 }
             }
         }
+        else
+            bonus = 2
 
         music('immortal')
         player.immortal++

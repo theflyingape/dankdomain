@@ -2,22 +2,26 @@
 
 ## *the return of Hack & Slash*
 
-🇺🇸 ©️1991 - 2019 [Robert Hurst](https://robert.hurst-ri.us)
-> [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](http://play.DDgame.us) on the Google Cloud Platform
+🇺🇸 ©️1991 - 2020 [Robert Hurst](https://robert.hurst-ri.us)
+> [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](https://play.DDgame.us) within the Google Cloud Platform (us-central1)
 
-### **27-Nov-2019** `v2.2.3`
+### **01-Jan-2020** `v2.3.0`
+
+* Happy New Year! 🔔
+* re-instated telnet service
+* tweaks to cosmetics, final deeds
+* updated node package dependencies
+
+#### **27-Nov-2019** `v2.2.3`
 
 * Happy Thanksgiving! 🦃
 * moved into Google Cloud Platform
+* package requires Linux OS and Node 10.16
 * updated node package dependencies
 
 ---
 
-```
- --=:)) HISTORY ((:=--
-```
-
----
+## **--=:)) HISTORY ((:=--**
 
 > [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](http://play.DDgame.us) on an Intel Atom-powered Linux server using a Verizon FiOS 400mb Internet service
 

@@ -49,7 +49,7 @@
     },
     "Elven": {
         "unique": false,
-        "description":"enhance dexterous speed attacks, except for an\n  Assassin, Fighter, Ranger or Demon",
+        "description":"enhance dexterous speed attacks, except for an\n   Assassin, Fighter, Ranger or Demon",
         "emoji":"🧝",
         "ability":[
             { "id":"skip", "power":true },
@@ -103,7 +103,7 @@
     },
     "Infinity": {
         "unique": true,
-        "description":"neutralize opponent's rings while enhancing\n    the power in your rings",
+        "description":"neutralize opponent's rings while enhancing\n   the power in your rings",
         "emoji":"♾️",
         "ability":[
             { "id":"resist", "power":true, "spell":"Teleport" },
@@ -199,7 +199,7 @@
     },
 	"Undying": {
         "unique": true,
-        "description":"augment the Undead and provides necromancy;\n    its anti-life power affects a Cleric, Paladin, and God",
+        "description":"augment the Undead with necromancy;\n   anti-life powers affect Cleric, Paladin, and God",
         "emoji":"🖤",
         "ability":[
             { "id":"degrade", "power":true, "pc":"Cleric" },
@@ -218,7 +218,7 @@
     },
     "White Wizard": {
         "unique": true,
-        "description":"enhance defense against every attack spell;\n    allows the ring bearer to teleport, anytime",
+        "description":"enhance defense against every attack spell;\n   allows the ring bearer to teleport, anytime",
         "emoji":"⚪",
         "ability":[
             { "id":"cast", "power":true },

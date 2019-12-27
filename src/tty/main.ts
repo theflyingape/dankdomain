@@ -393,6 +393,7 @@ module Main {
                                 $.reroll($.player)
                                 $.activate($.online)
                                 $.player.coward = true
+                                $.player.plays++
                                 $.saveUser($.player)
                                 xvt.outln()
                                 $.playerPC()
