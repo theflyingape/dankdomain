@@ -69,6 +69,8 @@ module Battle {
                 $.PC.adjust('int', 102, 1, 1)
                 $.PC.adjust('dex', 102, 1, 1)
                 $.PC.adjust('cha', 102, 1, 1)
+                $.news(`\tsurvived ${parties[1][0].user.handle}`)
+                $.wall(`survived ${parties[1][0].user.handle}`)
             }
             else {
                 $.PC.adjust('str', -2, -1, -1)

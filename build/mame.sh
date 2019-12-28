@@ -13,7 +13,7 @@ cd console
 mame -inipath . vt240 -host pty &> /dev/null &
 cd - > /dev/null
 
-echo -e "  ****  Press \x1B[7m Scroll Lock \x1B[m key to TOGGLE keyboard emulation ON"
+echo -e "  ****  Press a key to skip \x1B[7m WARNING \x1B[m message and WAIT"
 sleep 5
 echo -e "  ****  After '\x1B[1mVT240 OK\x1B[m' shows, the terminal is ready (10-seconds)"
 sleep 10
@@ -49,10 +49,10 @@ while [ "$YN" != "N" -a "$YN" != "n" ]; do
 	socat /dev/pts/$PTS exec:"$EXEC"
 
 	echo
-	echo -e "  ****  Either press \x1B[7m Scroll Lock \x1B[m key to TOGGLE keyboard emulation OFF"
-	echo -e "  ****  and then press \x1B[1mESC\x1B[mape key to exit MAME (close window)"
+	echo -e "  ****  Press \x1B[7m Scroll Lock \x1B[m key to TOGGLE keyboard emulation OFF"
+	echo -e "  ****  and then press \x1B[1mESC\x1B[mape key to exit MAME"
 	echo
-	echo -n "... or, try attaching again (y/N)? "
+	echo -en "... or, attach to \x1B[2mD\x1B[mank \x1B[2mD\x1B[momain door again (y/N)? "
 
 	read YN
 	[ -z "$YN" ] && YN="N"
