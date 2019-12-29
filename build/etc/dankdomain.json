@@ -40,7 +40,7 @@
             "toStr":1, "toInt":2, "toDex":1, "toCha":1,
             "maxStr":90, "maxInt":95, "maxDex":90, "maxCha":90,
             "bonusStr":0, "bonusInt":1, "bonusDex":1, "bonusCha":1,
-            "unicode":"♀", "skip":"elude",
+            "unicode":"⚗", "skip":"elude",
             "difficulty":"simple", "specialty": "Powerful Venenum",
             "description": [
                 "The Alchemist depends greatly on the ability to use poisons.  This skill",
@@ -58,7 +58,7 @@
             "toStr":1, "toInt":1, "toDex":2, "toCha":1,
             "maxStr":90, "maxInt":90, "maxDex":95, "maxCha":90,
             "bonusStr":1, "bonusInt":0, "bonusDex":1, "bonusCha":1,
-            "unicode":"⚴", "skip":"slip",
+            "unicode":"⚳", "skip":"slip",
             "difficulty":"basic", "specialty": "Backstab/Poison",
             "description": [
                 "A ninja-style fighter, the Assassin has extra fighting ability making them",
@@ -90,7 +90,7 @@
             "maxStr":90, "maxInt":90, "maxDex":85, "maxCha":98,
             "bonusStr":0, "bonusInt":0, "bonusDex":2, "bonusCha":1,
             "difficulty":"moderate", "specialty": "Artisan Enchanter",
-            "unicode":"☨", "skip":"lose",
+            "unicode":"♭", "skip":"lose",
             "description": [
                 "The Bard-class enjoys every aspect of the game: backstabbing, magic,",
                 "stealing, and fighting.  However, the Bard does not specialize in any",
@@ -119,7 +119,7 @@
             "toStr":3, "toInt":1, "toDex":1, "toCha":1,
             "maxStr":98, "maxInt":90, "maxDex":90, "maxCha":85,
             "bonusStr":1, "bonusInt":0, "bonusDex":0, "bonusCha":2,
-            "unicode":"☥", "skip":"sidestep",
+            "unicode":"⚸", "skip":"sidestep",
             "difficulty":"easy", "specialty": "Warrior Combatant",
             "description": [
                 "Fighters are excellent killers.  Their extra-ordinary combat ability makes",
@@ -149,7 +149,7 @@
             "toStr":1, "toInt":3, "toDex":1, "toCha":1,
             "maxStr":85, "maxInt":98, "maxDex":90, "maxCha":90,
             "bonusStr":2, "bonusInt":1, "bonusDex":0, "bonusCha":0,
-            "unicode":"☧", "skip":"trick",
+            "unicode":"⛭", "skip":"trick",
             "difficulty":"vintage", "specialty": "Arcane Magic/Poison",
             "description": [
                 "The Magician is the opposite of the Fighter; powerful magic opposed to",
@@ -180,7 +180,7 @@
             "toStr":2, "toInt":2, "toDex":2, "toCha":2,
             "maxStr":95, "maxInt":95, "maxDex":95, "maxCha":95,
             "bonusStr":0, "bonusInt":1, "bonusDex":1, "bonusCha":1,
-            "unicode":"♝", "skip":"cheat",
+            "unicode":"☩", "skip":"cheat",
             "difficulty":"standard", "specialty": "Advanced Ability",
             "description": [
                 "A Rogue is similar to a Thief, but with some magic and backstab.",
@@ -210,7 +210,7 @@
             "toStr":1, "toInt":1, "toDex":4, "toCha":1,
             "maxStr":90, "maxInt":90, "maxDex":99, "maxCha":80,
             "bonusStr":0, "bonusInt":0, "bonusDex":1, "bonusCha":2,
-            "unicode":"⚗", "skip":"escape",
+            "unicode":"⚷", "skip":"escape",
             "difficulty":"classic", "specialty": "Master Steal/Backstab",
             "description": [
                 "The Thief class relies on the ability to stealth approach an enemy and",
