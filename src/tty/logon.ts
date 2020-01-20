@@ -9,18 +9,6 @@ import xvt = require('xvt')
 
 
 module Logon {
-    switch (xvt.app.emulation) {
-        case 'PC':
-            $.tty = 'rlogin'
-            break
-        case 'XT':
-            $.tty = 'web'
-            xvt.out('\x1B]2;', process.title, '\x07')
-            break
-        default:
-            xvt.app.emulation = 'VT'
-            xvt.out('\f')
-    }
 
     xvt.outln(xvt.bright, xvt.cyan, xvt.app.emulation
         , xvt.normal, ' emulation ', xvt.faint, 'enabled\n')

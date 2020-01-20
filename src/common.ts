@@ -12,8 +12,20 @@ import { titleCase } from 'title-case'
 
 module Common {
     //  mode of operation
-    export let tty: TTY = 'telnet'
     export let from = 'Common'
+    export let tty: TTY = 'telnet'
+    switch (xvt.app.emulation) {
+        case 'PC':
+            tty = 'rlogin'
+            break
+        case 'XT':
+            tty = 'web'
+            xvt.out('\x1B]2;', process.title, '\x07')
+            break
+        default:
+            xvt.app.emulation = 'VT'
+            xvt.out('\f')
+    }
 
     //  items
     export const Abilities = ['str', 'int', 'dex', 'cha']
@@ -64,7 +76,9 @@ module Common {
         'Meereen', 'Norvos', 'Oldtown', 'Pentos', 'Qohor',
         'Riverrun', 'The Twins', 'The Wall', 'Winterfell', 'Volantis'
     ][dice(20) - 1]
-    if (/^([1][0]|[1][2][7]|[1][7][2]|[1][9][2])[.]/.test(remote) || !xvt.validator.isIP(remote))
+    if (/^([1][0]|[1][2][7]|[1][7][2]|[1][9][2])[.]/.test(remote)
+        || !xvt.validator.isIP(remote)
+        || tty == 'telnet')
         whereis += ' 🖥 '
     else try {
         const apikey = './etc/ipstack.key'
