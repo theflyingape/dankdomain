@@ -76,8 +76,13 @@ module Logon {
     function who() {
         xvt.outln()
 
+        if (! /^[A-Z][A-Z23\s]*$/i.test(xvt.entry)) {
+            if (guards())
+                xvt.app.refocus()
+            return
+        }
+
         if (/new/i.test(xvt.entry)) {
-            // a bit hack for now, but...
             $.reroll($.player)
             $.newkeys($.player)
             $.player.emulation = xvt.app.emulation
