@@ -2286,7 +2286,7 @@ module Battle {
                     }
                     xvt.outln()
                     cb(rpc)
-                }, max: 22
+                }, max: 22, match: /^[A-Z][A-Z23\s]*$/i
             },
             'start': {
                 cb: () => {
@@ -2308,10 +2308,10 @@ module Battle {
                     xvt.outln(xvt.Blue, '-'.repeat(78))
 
                     let rs = $.query(`
-                SELECT id, handle, pc, level, xplevel, status, lastdate, access FROM Players
-                WHERE id NOT GLOB '_*' AND xplevel > 0
-                AND level BETWEEN ${start} AND ${end}
-                ORDER BY xplevel DESC, level DESC, wins DESC, immortal DESC`)
+                        SELECT id, handle, pc, level, xplevel, status, lastdate, access FROM Players
+                        WHERE id NOT GLOB '_*' AND xplevel > 0
+                        AND level BETWEEN ${start} AND ${end}
+                        ORDER BY xplevel DESC, level DESC, wins DESC, immortal DESC`)
 
                     for (let i in rs) {
                         if (rs[i].id == $.player.id)
@@ -2334,7 +2334,8 @@ module Battle {
                         xvt.outln()
                     }
 
-                    if ($.access.roleplay && $.dice(+$.player.expert * ($.player.immortal + 1) * $.player.level) == 1)
+                    if ($.access.roleplay
+                        && $.dice(+$.player.expert * ($.player.immortal + 1) * $.player.level) == 1)
                         xvt.outln('\n', xvt.green, '> ', xvt.bright, 'double-click (tap) the Player ID to pick your selection.')
 
                     $.action('freetext')
