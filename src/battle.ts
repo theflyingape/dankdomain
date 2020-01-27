@@ -2259,34 +2259,38 @@ module Battle {
                         return
                     }
                     let rpc: active = { user: { id: xvt.entry } }
-                    if (!$.loadUser(rpc)) {
-                        rpc.user.id = ''
-                        rpc.user.handle = xvt.entry
+                    if (/^[A-Z][A-Z23\s]*$/i.test(xvt.entry)) {
                         if (!$.loadUser(rpc)) {
-                            xvt.beep()
-                            xvt.out(' ?? ')
+                            rpc.user.id = ''
+                            rpc.user.handle = xvt.entry
+                            if (!$.loadUser(rpc)) {
+                                xvt.beep()
+                                xvt.out(' ?? ')
+                            }
+                        }
+                        //  paint profile
+                        if (rpc.user.id) {
+                            $.action('clear')
+                            $.PC.profile(rpc)
+                            //  the inert player does not fully participate in the fun ...
+                            if (/Bail|Brawl|Curse|Drop|Joust|Resurrect|Rob/.test(venue) && !rpc.user.xplevel) {
+                                rpc.user.id = ''
+                                xvt.beep()
+                                xvt.out(' ', $.bracket('inactive', false))
+                            }
+                            else if (/Brawl|Fight|Joust|Resurrect/.test(venue) && rpc.user.status == 'jail') {
+                                rpc.user.id = ''
+                                xvt.beep()
+                                if ($.tty == 'web') xvt.out(' 🔒 ')
+                                xvt.out(' ', $.bracket(rpc.user.status, false))
+                            }
                         }
                     }
-                    //  paint profile
-                    if (rpc.user.id) {
-                        $.action('clear')
-                        $.PC.profile(rpc)
-                        //  the inert player does not fully participate in the fun ...
-                        if (/Bail|Brawl|Curse|Drop|Joust|Resurrect|Rob/.test(venue) && !rpc.user.xplevel) {
-                            rpc.user.id = ''
-                            xvt.beep()
-                            xvt.out(' ', $.bracket('inactive', false))
-                        }
-                        else if (/Brawl|Fight|Joust|Resurrect/.test(venue) && rpc.user.status == 'jail') {
-                            rpc.user.id = ''
-                            xvt.beep()
-                            if ($.tty == 'web') xvt.out(' 🔒 ')
-                            xvt.out(' ', $.bracket(rpc.user.status, false))
-                        }
-                    }
+                    else
+                        rpc.user.id = ''
                     xvt.outln()
                     cb(rpc)
-                }, max: 22, match: /^[A-Z][A-Z23\s]*$/i
+                }, max: 22
             },
             'start': {
                 cb: () => {
