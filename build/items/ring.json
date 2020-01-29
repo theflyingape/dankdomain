@@ -218,7 +218,7 @@
     },
     "White Wizard": {
         "unique": true,
-        "description":"enhance defense against every attack spell;\n   allows the ring bearer to teleport, anytime",
+        "description":"resist higher attack spells;\n   allows the ring bearer to teleport, anytime",
         "emoji":"⚪",
         "ability":[
             { "id":"cast", "power":true },
