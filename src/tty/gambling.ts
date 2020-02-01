@@ -378,7 +378,7 @@ module Gambling {
 							while ((dealer = $.dice(54)) - 1 == pick);
 							$.sound(card[deck[--dealer]].value > 0 ? 'click' : 'boom', 6)
 							xvt.out((dealer + 1).toString(), ' - ', card[deck[dealer]].emoji, xvt.bright, xvt.red, ' [', xvt.white, card[deck[dealer]].face, xvt.red, ']')
-							xvt.out(xvt.reset, '\n\n')
+							xvt.outln('\n')
 							xvt.waste(500)
 
 							if (card[deck[pick]].value > card[deck[dealer]].value) {
@@ -392,18 +392,18 @@ module Gambling {
 							}
 							else if (card[deck[pick]].value < card[deck[dealer]].value) {
 								if (card[deck[pick]].value < 0) {
-									xvt.out('The joke is on you.\n\n')
+									xvt.outln('The joke is on you.\n')
 									$.sound('oops', 12)
-									xvt.out(xvt.bright, xvt.yellow, 'You die laughing.\n', xvt.reset)
+									xvt.outln(xvt.bright, xvt.yellow, 'You die laughing.')
 									$.sound('laugh', 24)
 									$.reason = 'died laughing'
 									xvt.hangup()
 								}
 								$.sound('boo')
-								xvt.out('You lose.\n')
+								xvt.outln('You lose.')
 							}
 							else {
-								xvt.out('You tie.  It\'s a push.\n')
+								xvt.outln(`You tie.  It's a push.`)
 								$.player.coin.value += amount.value
 							}
 							xvt.waste(500)

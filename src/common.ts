@@ -1983,7 +1983,7 @@ module Common {
 
     export function death(by: string) {
         reason = by
-        profile({ handle: reason, png: `death${player.today}`, effect: 'fadeInDownBig' })
+        profile({ handle: `💀 ${reason} 💀`, png: `death${player.today}`, effect: 'fadeInDownBig' })
     }
 
     //  render a menu of options and return the prompt
