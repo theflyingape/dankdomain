@@ -197,9 +197,9 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
 
     const line = `\r\n\x1B[0;36m\u00B7\x1B[1m${msg}\x1B[m`
 
-    //  buffer up to the latest 5-minutes of activity
+    //  buffer up to the latest 2-minutes of activity
     let now = new Date().getTime()
-    if (Math.round((now - latest.now) / 1000 / 60) > 5) {
+    if (Math.round((now - latest.now) / 1000 / 60) > 2) {
       latest.msg = ''
       latest.now = now
     }

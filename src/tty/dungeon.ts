@@ -1134,7 +1134,7 @@ module Dungeon {
 							else
 								$.animated('rotateOut')
 							menu()
-						}, prompt: 'Will you spin it (Y/N)? ', cancel: 'N', enter: 'Y', eol: false, match: /Y|N/i, max: 1, timeout: 15
+						}, prompt: 'Will you spin it (Y/N)? ', cancel: 'Y', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 20
 					}
 				}
 				xvt.app.focus = 'wheel'

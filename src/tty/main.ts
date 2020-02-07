@@ -105,21 +105,21 @@ module Main {
 
                 let top3 = {}
                 let rs = $.query(`
-                SELECT hero, count(*) AS n FROM Deeds
-                GROUP BY hero HAVING n > 0
-                ORDER BY n DESC LIMIT 3
-            `)
+                    SELECT hero, count(*) AS n FROM Deeds
+                    GROUP BY hero HAVING n > 0
+                    ORDER BY n DESC LIMIT 3
+                `)
                 for (let n in rs) top3[rs[n].hero] = $.Deed.medal[+n + 1]
 
                 rs = $.query(`
-                SELECT id, handle, pc, level, xplevel, status, gang, access FROM Players
-                WHERE id NOT GLOB '_*' AND (id = '${$.player.id}' OR level > 1)
-                ORDER BY xplevel DESC, level DESC, wins DESC, immortal DESC
-                LIMIT ${$.player.rows - 5}
-            `)
+                    SELECT id, handle, pc, level, xplevel, status, gang, access FROM Players
+                    WHERE id NOT GLOB '_*' AND (id = '${$.player.id}' OR level > 1)
+                    ORDER BY xplevel DESC, level DESC, wins DESC, immortal DESC
+                    LIMIT ${$.player.rows - 5}
+                `)
 
                 for (let n in rs) {
-                    xvt.out(top3[rs[n].handle] || ' ', ' ')
+                    xvt.out(top3[rs[n].handle] || '  ')
                     //  paint a target on any player that is winning
                     if (rs[n].pc == $.PC.winning)
                         xvt.out(xvt.yellow, xvt.bright)
@@ -132,7 +132,7 @@ module Main {
                     if (!rs[n].status.length) xvt.out('Alive!')
                     else {
                         if ($.player.emulation == 'XT')
-                            xvt.out(rs[n].status == 'jail' ? '🔒' : '🍺', ' ', xvt.faint, rs[n].status == 'jail' ? 'jail' : 'beer')
+                            xvt.out(rs[n].status == 'jail' ? '🔒' : '🍺', xvt.faint, rs[n].status == 'jail' ? 'jail' : 'beer')
                         else
                             xvt.out(xvt.faint, rs[n].status == 'jail' ? '#jail#' : '^beer^')
                     }

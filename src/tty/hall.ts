@@ -70,7 +70,7 @@ module Hall {
                                         xvt.out(xvt.yellow)
                                         medal = $.Deed.medal[3]
                                     }
-                                    xvt.outln(medal, '  ', $.Deed.name[deed.deed].description)
+                                    xvt.outln(medal, ' ', $.Deed.name[deed.deed].description)
                                     xvt.out('           ')
                                 }
                             }
@@ -99,13 +99,13 @@ module Hall {
                 }
 
                 xvt.outln()
-                xvt.outln(xvt.Magenta, xvt.yellow, xvt.bright, '   TOP HERO                Deeds   ')
-                xvt.outln(xvt.Magenta, xvt.yellow, '-----------------------------------')
+                xvt.outln(xvt.Magenta, xvt.yellow, xvt.bright, '   TOP HERO                Deeds  ')
+                xvt.outln(xvt.Magenta, xvt.yellow, '----------------------------------')
                 let rd = $.query(`
-                SELECT hero, count(*) AS n FROM Deeds
-                GROUP BY hero HAVING n > 0
-                ORDER BY n DESC LIMIT 10
-            `)
+                    SELECT hero, count(*) AS n FROM Deeds
+                    GROUP BY hero HAVING n > 0
+                    ORDER BY n DESC LIMIT 10
+                `)
                 for (let n in rd) {
                     xvt.outln(sprintf('%-22.22s     %4d', rd[n].hero, rd[n].n), ' ', +n < 3 ? $.Deed.medal[+n + 1] : '')
                 }
@@ -142,7 +142,7 @@ module Hall {
                                         xvt.out(xvt.yellow)
                                         medal = $.Deed.medal[3]
                                     }
-                                    xvt.outln(medal, '  ', $.Deed.name[deed.deed].description)
+                                    xvt.outln(medal, ' ', $.Deed.name[deed.deed].description)
                                     xvt.out('           ')
                                 }
                             }

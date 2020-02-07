@@ -14,6 +14,7 @@
 
 import { Terminal, ITerminalOptions } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
+import { Unicode11Addon } from 'xterm-addon-unicode11'
 import { WebLinksAddon } from 'xterm-addon-web-links'
 //import { WebglAddon } from 'xterm-addon-webgl'
 
@@ -103,8 +104,10 @@ document.getElementById('lurker-list').onchange = (ev) => {
 			brightBlue: '#0000ff', brightMagenta: '#ff00ff', brightCyan: '#00ffff', brightWhite: '#ffffff'
 		}
 	})
+	term.loadAddon(new Unicode11Addon())
 	term.loadAddon(new WebLinksAddon())
 	term.loadAddon(fit)
+	term.unicode.activeVersion = '11'
 	term.open(document.getElementById('terminal'))
 	fit.fit()
 
@@ -172,6 +175,7 @@ function newSession(ev) {
 	term = new Terminal(options)
 	if (carrier) term.setOption('fontFamily', 'IBM Plex Mono,Consolas,monospace')
 
+	term.loadAddon(new Unicode11Addon())
 	term.loadAddon(new WebLinksAddon())
 	term.loadAddon(fit)
 
@@ -213,13 +217,14 @@ function newSession(ev) {
 	})
 
 	//	light it up, Bert!
+	term.unicode.activeVersion = '11'
 	term.open(document.getElementById('terminal'))
-	//let's try something new when auto-detection is bette suppported
+	//let's try something new when auto-detection is better suppported
 	//term.loadAddon(new WebglAddon())
 	fit.fit()
 	window.dispatchEvent(new Event('resize'))	// gratuituous
-
-	term.writeln('\x07\x1B[16C🔥  🌨   \x1B[1;36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain \x1B[m🌙  💫')
+	term.writeln('\x07')
+	term.writeln('\x1B[16C🔥 🌨\r\x1B[23C\x1B[1;36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain \x1B[m🌙 💫')
 
 	if (ev == 'Logon') {
 		term.write(`\n\x1B[0;2mConnecting terminal WebSocket ... `)

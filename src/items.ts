@@ -123,7 +123,7 @@ module Items {
         }
 
         get key(): {} {
-            const oldkey = '🗝️  '
+            const oldkey = '🗝️ '
             return xvt.app.emulation == 'XT'
                 ? {
                     P: xvt.attr(oldkey, xvt.bright, xvt.Magenta, ' Platinum ', xvt.reset),
@@ -142,9 +142,9 @@ module Items {
             return xvt.app.emulation == 'XT'
                 ? [' ', '🥇', '🥈', '🥉']
                 : [' ',
-                    xvt.attr(xvt.bright, xvt.reverse, '1', xvt.noreverse, xvt.normal),
-                    xvt.attr(xvt.normal, xvt.reverse, '2', xvt.noreverse),
-                    xvt.attr(xvt.faint, xvt.reverse, '3', xvt.noreverse, xvt.normal)
+                    xvt.attr(xvt.bright, xvt.reverse, '1', xvt.noreverse, xvt.normal, ' '),
+                    xvt.attr(xvt.normal, xvt.reverse, '2', xvt.noreverse, ' '),
+                    xvt.attr(xvt.faint, xvt.reverse, '3', xvt.noreverse, xvt.normal, ' ')
                 ]
         }
     }

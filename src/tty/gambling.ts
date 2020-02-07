@@ -661,11 +661,11 @@ module Gambling {
 			case 'S':
 				xvt.outln(xvt.bright, xvt.blue, '\nSlot Machine Payout Line:\n')
 				if ($.player.emulation == 'XT') {
-					xvt.out(xvt.red, ' any 2  ', xvt.normal, ' 🍒  🍒', xvt.reset, '    2x     ', xvt.yellow, 'Orange  ', xvt.normal, '🍊 🍊 🍊', xvt.reset, '    50x\n')
-					xvt.out(xvt.red, 'Cherry  ', xvt.normal, '🍒 🍒 🍒', xvt.reset, '    5x     ', xvt.bright, xvt.yellow, '<Bell>  ', '🔔 🔔 🔔', xvt.reset, '   100x\n')
-					xvt.out(xvt.magenta, 'Grapes  ', xvt.normal, '🍇 🍇 🍇', xvt.reset, '   10x     ', xvt.green, '=Luck=  ', xvt.normal, '🍀 🍀 🍀', xvt.reset, '   400x\n')
-					xvt.out(xvt.bright, xvt.green, ':Kiwi:  ', '🥝 🥝 🥝', xvt.reset, '   20x     ', xvt.cyan, '*Wild*  ', xvt.normal, '💎 💎 💎', xvt.reset, '   500x\n')
-					xvt.out(xvt.bright, xvt.uline, xvt.red, 'Exacta', xvt.nouline, '  ', xvt.normal, '🍒 🍒 💣', xvt.reset, '   25x     ', xvt.faint, '@Bomb@  ', xvt.normal, '💣 💣 💣', xvt.reset, '    💀 \n')
+					xvt.out(xvt.red, ' any 2  ', xvt.normal, ' 🍒🍒 ', xvt.reset, '    2x     ', xvt.yellow, 'Orange  ', xvt.normal, '🍊🍊🍊', xvt.reset, '    50x\n')
+					xvt.out(xvt.red, 'Cherry  ', xvt.normal, '🍒🍒🍒', xvt.reset, '    5x     ', xvt.bright, xvt.yellow, '<Bell>  ', '🔔🔔🔔', xvt.reset, '   100x\n')
+					xvt.out(xvt.magenta, 'Grapes  ', xvt.normal, '🍇🍇🍇', xvt.reset, '   10x     ', xvt.green, '=Luck=  ', xvt.normal, '🍀🍀🍀', xvt.reset, '   400x\n')
+					xvt.out(xvt.bright, xvt.green, ':Kiwi:  ', '🥝🥝🥝', xvt.reset, '   20x     ', xvt.cyan, '*Wild*  ', xvt.normal, '💎💎💎', xvt.reset, '   500x\n')
+					xvt.out(xvt.bright, xvt.uline, xvt.red, 'Exacta', xvt.nouline, '  ', xvt.normal, '🍒🍒💣', xvt.reset, '   25x     ', xvt.faint, '@Bomb@  ', xvt.normal, '💣💣💣', xvt.reset, '    💀\n')
 				}
 				else {
 					xvt.out('Any 2 ', xvt.red, 'Cherry', xvt.reset, '  2x     3 ', xvt.yellow, 'Orange  ', xvt.reset, '   50x\n')
@@ -688,7 +688,7 @@ module Gambling {
 					$.beep()
 					let face = dial[i][bandit[i]]
 					xvt.out(xvt.blue, '[', xvt.attr(slot[face].attr, slot[face].color), face)
-					if ($.player.emulation == 'XT') xvt.out(` ${slot[face].emoji} `)
+					if ($.player.emulation == 'XT') xvt.out(` ${slot[face].emoji}`)
 					xvt.out(xvt.reset, xvt.blue, '] ')
 				}
 				xvt.out(xvt.reset, '\n\n')
@@ -712,9 +712,9 @@ module Gambling {
 				else if ((face[0] == '@BOMB@' || face[0] == '*WILD*')
 					&& (face[1] == '@BOMB@' || face[1] == '*WILD*')
 					&& (face[2] == '@BOMB@' || face[2] == '*WILD*')) {
-					if ($.player.emulation == 'XT') xvt.out('💀  ')
+					if ($.player.emulation == 'XT') xvt.out('💀 ')
 					$.sound('boom', 8)
-					xvt.out('You die.\n')
+					xvt.outln('You die.')
 					$.music('wild')
 					xvt.waste(800)
 					$.reason = 'defeated by a one-armed bandit'
@@ -745,8 +745,8 @@ module Gambling {
 						xvt.out(i % 8 + 30, 'YOU WIN! ')
 						xvt.out(20)
 					}
-					CherryBomb()
 					xvt.outln()
+					CherryBomb()
 				}
 				else if ((face[0] == 'ORANGE' || face[0] == '*WILD*')
 					&& (face[1] == 'ORANGE' || face[1] == '*WILD*')
@@ -802,21 +802,21 @@ module Gambling {
 				for (let i = 0; i < 6; i++) {
 					xvt.out(' ', xvt.faint)
 					for (let j = 0; j < i; j++)
-						xvt.out('🍒 ')
+						xvt.out('🍒')
 					xvt.out(xvt.normal)
-					xvt.out('🍒 \r')
+					xvt.out('🍒\r')
 					xvt.waste(250)
 				}
-				xvt.outln(xvt.bright, xvt.red, '🍒  CHERRY 🍒  ')
+				xvt.outln(xvt.bright, xvt.red, '🍒 CHERRY 🍒 ')
 				for (let i = 0; i < 4; i++) {
 					xvt.out(' ', xvt.faint)
 					for (let j = 0; j < i; j++)
-						xvt.out('💣 ')
+						xvt.out('💣')
 					xvt.out(xvt.normal)
-					xvt.out('💣 \r')
+					xvt.out('💣\r')
 					xvt.waste(400)
 				}
-				xvt.outln(xvt.bright, xvt.black, '💣  BOMB!! 💣  ')
+				xvt.outln(xvt.bright, xvt.black, '💣 BOMB!! 💣 ')
 			}
 			else {
 				$.beep()
