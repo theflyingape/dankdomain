@@ -138,10 +138,11 @@ module Items {
                 }
         }
 
+        //  returns 2-character width
         get medal(): string[] {
             return xvt.app.emulation == 'XT'
-                ? [' ', '🥇', '🥈', '🥉']
-                : [' ',
+                ? ['  ', '🥇', '🥈', '🥉']
+                : ['  ',
                     xvt.attr(xvt.bright, xvt.reverse, '1', xvt.noreverse, xvt.normal, ' '),
                     xvt.attr(xvt.normal, xvt.reverse, '2', xvt.noreverse, ' '),
                     xvt.attr(xvt.faint, xvt.reverse, '3', xvt.noreverse, xvt.normal, ' ')

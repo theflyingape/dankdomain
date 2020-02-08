@@ -5,7 +5,12 @@
 🇺🇸 ©️1991 - 2020 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](https://play.DDgame.us) within the Google Cloud Platform (us-central1)
 
-### **01-Jan-2020** `v2.3.0`
+### **08-Feb-2020** `v2.3.1`
+
+* xterm.js v4.4 release with Unicode 11 support
+* other outdated package updates
+
+#### **01-Jan-2020** `v2.3.0`
 
 * Happy New Year! 🔔
 * re-instated telnet service

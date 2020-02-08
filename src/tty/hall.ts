@@ -70,7 +70,7 @@ module Hall {
                                         xvt.out(xvt.yellow)
                                         medal = $.Deed.medal[3]
                                     }
-                                    xvt.outln(medal, ' ', $.Deed.name[deed.deed].description)
+                                    xvt.outln(medal, $.Deed.name[deed.deed].description)
                                     xvt.out('           ')
                                 }
                             }
@@ -142,7 +142,7 @@ module Hall {
                                         xvt.out(xvt.yellow)
                                         medal = $.Deed.medal[3]
                                     }
-                                    xvt.outln(medal, ' ', $.Deed.name[deed.deed].description)
+                                    xvt.outln(medal, $.Deed.name[deed.deed].description)
                                     xvt.out('           ')
                                 }
                             }
@@ -159,11 +159,11 @@ module Hall {
                 xvt.outln(xvt.Yellow, xvt.black, '-----------------------------------------------------')
 
                 let rs = $.query(`
-                SELECT id, handle, pc, level, tw FROM Players
-                WHERE xplevel > 1 AND tw > 0
-                ORDER BY tw DESC, level DESC, immortal DESC
-                LIMIT 10
-            `)
+                    SELECT id, handle, pc, level, tw FROM Players
+                    WHERE xplevel > 1 AND tw > 0
+                    ORDER BY tw DESC, level DESC, immortal DESC
+                    LIMIT 10
+                `)
 
                 for (let n in rs) {
                     xvt.outln(sprintf('%-4s  %-23.23s  %-9s  %3d  %4d'

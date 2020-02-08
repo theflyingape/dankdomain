@@ -1,6 +1,6 @@
 {
   "name": "dankdomain-door",
-  "version": "2.2.2",
+  "version": "2.3.1",
   "description": "💻 Dank Domain: the return of Hack & Slash",
   "main": "app",
   "publisher": "theflyingape",
@@ -30,20 +30,22 @@
     "better-sqlite3": "^5.4.3",
     "express": "^4.17.1",
     "fs-extra": "^8.1.0",
-    "node-pty": "^0.8.1",
-    "ws": "^7.2.0",
-    "xterm": "^4.2.0",
+    "node-pty": "^0.9.0",
+    "ws": "^7.2.1",
+    "xterm": "^4.4.0",
     "xterm-addon-fit": "^0.3.0",
-    "xterm-addon-web-links": "^0.2.0"
+    "xterm-addon-unicode11": "^0.1.1",
+    "xterm-addon-web-links": "^0.2.0",
+    "xterm-addon-webgl": "^0.5.0"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^5.4.0",
-    "@types/express": "^4.17.1",
+    "@types/express": "^4.17.2",
     "@types/fs-extra": "^8.0.1",
-    "@types/node": "^10.14.22",
-    "@types/ws": "^6.0.3",
+    "@types/node": "^12.12.26",
+    "@types/ws": "^7.2.1",
     "browserify": "^16.5.0",
-    "tslint": "^5.20.0",
-    "typescript": "^3.6.4"
+    "tslint": "^6.0.0",
+    "typescript": "^3.7.5"
   }
 }
