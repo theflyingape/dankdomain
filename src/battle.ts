@@ -310,7 +310,7 @@ module Battle {
                     cb: () => {
                         xvt.outln()
                         if (/C/i.test(xvt.entry)) {
-                            Battle.cast($.online, next, enemy)
+                            cast($.online, next, enemy)
                             return
                         }
 
@@ -1091,7 +1091,7 @@ module Battle {
                 cb(true)
             }
             else {
-                xvt.out('cast() failure :: ', rpc)
+                xvt.out('cast() failure :: ', `${rpc.user.level} ${rpc.user.pc} ${rpc.user.handle} ${rpc.user.magic} ${rpc.sp} ${rpc.user.spells}`)
                 cb()
             }
             return

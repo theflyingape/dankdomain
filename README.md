@@ -58,7 +58,7 @@ email.js            support module for dispatching email notifications
 items.js            support module for loading artifacts
 telnet.js           telnet client - via web services
 ttymain.js          game app - startup entry point
-door-startup.sh     web services - sysctl startup script
+door-startup.sh     web services - systemctl startup script
 logins.sh           player - startup script into game app
 mame.sh             player - MAME VT240 terminal + solcat startup script
 tty.sh              player - startup script into web services

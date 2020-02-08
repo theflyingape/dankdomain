@@ -287,7 +287,7 @@ module Dungeon {
 			$.music('.')
 			let rng = $.dice(16)
 			if (rng > 8) {
-				if ($.tty == 'web') xvt.out(' 🦇  ')
+				if ($.tty == 'web') xvt.out(' 🦇 ')
 				$.sound('splat', 6)
 				xvt.out(xvt.faint, 'A bat flies by and soils ', xvt.normal, 'your ')
 				$.player.toAC -= $.dice(deep)
@@ -296,7 +296,7 @@ module Dungeon {
 				xvt.waste(600)
 			}
 			else if (rng > 4) {
-				if ($.tty == 'web') xvt.out(' 💧  ')
+				if ($.tty == 'web') xvt.out(' 💧 ')
 				$.sound('drop', 6)
 				xvt.out(xvt.blue, 'A drop of ', xvt.bright, 'acid water burns ', xvt.normal, 'your ')
 				xvt.waste(600)
@@ -304,7 +304,7 @@ module Dungeon {
 				xvt.out($.PC.weapon())
 			}
 			else if (rng > 2) {
-				if ($.tty == 'web') xvt.out(' 😬  ')
+				if ($.tty == 'web') xvt.out(' 😬 ')
 				$.sound('hurt', 6)
 				xvt.out(xvt.yellow, 'You trip on the rocky surface and hurt yourself.')
 				xvt.waste(600)
@@ -312,10 +312,10 @@ module Dungeon {
 				if ($.online.hp < 1) $.death('fell down')
 			}
 			else if (rng > 1) {
-				if ($.tty == 'web') xvt.out(' 🐝  🐝  🐝  🐝  ')
+				if ($.tty == 'web') xvt.out(' 🐝 🐝 🐝 🐝 ')
 				$.sound('crack', 6)
 				xvt.out(xvt.red, 'You are attacked by a ', xvt.bright, 'swarm of bees', xvt.normal)
-				if ($.tty == 'web') xvt.out(' 🐝  🐝  🐝  🐝')
+				if ($.tty == 'web') xvt.out(' 🐝 🐝 🐝 🐝')
 				else xvt.out('!!')
 				xvt.waste(600)
 				for (x = 0, y = $.dice(Z); x < y; x++)
@@ -323,7 +323,7 @@ module Dungeon {
 				if ($.online.hp < 1) $.death('killer bees')
 			}
 			else {
-				if ($.tty == 'web') xvt.out(' ⚡  ')
+				if ($.tty == 'web') xvt.out(' ⚡ ')
 				$.sound('boom', 6)
 				xvt.out(xvt.bright, 'A bolt of lightning strikes you!')
 				xvt.waste(600)
@@ -1215,7 +1215,7 @@ module Dungeon {
 						refresh = true
 					}
 					else if ($.player.magic < 3 && $.player.spells.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
-						if ($.tty == 'web') xvt.out('📜  ')
+						if ($.tty == 'web') xvt.out('📜 ')
 						y = $.player.spells[$.dice($.player.spells.length) - 1]
 						xvt.out(Object.keys($.Magic.spells)[y - 1], ' ', ['wand', 'scroll'][$.player.magic - 1])
 						$.Magic.remove($.player.spells, y)
@@ -1223,7 +1223,7 @@ module Dungeon {
 					else if ($.player.poisons.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
 						y = $.player.poisons[$.dice($.player.poisons.length) - 1]
 						xvt.out('vial of ')
-						if ($.tty == 'web') xvt.out('💀  ')
+						if ($.tty == 'web') xvt.out('💀 ')
 						xvt.out(Object.keys($.Poison.vials)[y - 1])
 						$.Poison.remove($.player.poisons, y)
 					}
@@ -1247,7 +1247,7 @@ module Dungeon {
 					xvt.outln(xvt.yellow, 'You find the ', xvt.white, 'bones'
 						, xvt.yellow, ' of an ', xvt.faint, 'old cleric', xvt.normal, '.')
 					xvt.waste(600)
-					if ($.tty == 'web') xvt.out('⚰️  ')
+					if ($.tty == 'web') xvt.out('⚰️ ')
 					xvt.outln('You pray for him.')
 					break
 				}

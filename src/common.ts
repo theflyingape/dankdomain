@@ -532,7 +532,7 @@ module Common {
                 let ring = profile.user.rings[i]
                 if (!+i) xvt.outln()
                 xvt.out(this.who(profile).He, 'has ', xvt.cyan, xvt.bright, ring, xvt.normal)
-                if (tty == 'web') xvt.out(' ', Ring.name[ring].emoji, ' ')
+                if (tty == 'web') xvt.out(' ', Ring.name[ring].emoji)
                 xvt.outln(' powers ', xvt.reset, 'that can ', Ring.name[ring].description)
             }
         }
@@ -651,7 +651,7 @@ module Common {
 
         pieces(p = this.pouch(this.value)): string {
             return 'pouch of '
-                + (tty == 'web' ? '💰  ' : '')
+                + (tty == 'web' ? '💰 ' : '')
                 + {
                     'p': xvt.attr(xvt.magenta, xvt.bright, 'platinum', xvt.normal),
                     'g': xvt.attr(xvt.yellow, xvt.bright, 'gold', xvt.normal),
