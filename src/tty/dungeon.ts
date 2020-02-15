@@ -2102,7 +2102,7 @@ module Dungeon {
 		}
 
 		if (deep > hideep) hideep = deep
-		if (Z > hiZ) hiZ = deep
+		if (Z > hiZ) hiZ = Z
 
 		$.wall(`enters dungeon level ${xvt.romanize(deep + 1)}.${Z + 1}`)
 		$.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
