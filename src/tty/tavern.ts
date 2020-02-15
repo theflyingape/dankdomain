@@ -74,7 +74,7 @@ module Tavern {
                                 $.argue--
                             }
                             menu()
-                        }, prompt: 'Enter your argument', lines: 6
+                        }, prompt: 'Enter your argument', lines: 6, timeout: 600
                     }
                 }
                 xvt.app.focus = 'argue'
@@ -125,13 +125,13 @@ module Tavern {
                                 return
                             }
                             xvt.beep()
-                            xvt.out($.PC.who($.barkeep).He, 'grunts and hands you your beer.')
+                            xvt.out(xvt.yellow, $.PC.who($.barkeep).He, 'grunts and hands you your beer.')
                             if ($.player.emulation == 'XT') xvt.out(' \u{1F37A}')
                             xvt.outln()
                             $.online.altered = true
                             $.player.coin.value -= tip
                             xvt.waste(1000)
-                            xvt.out($.PC.who($.barkeep).He, 'says, "', [
+                            xvt.out(xvt.green, $.PC.who($.barkeep).He, 'says, ', xvt.white, '"', [
                                 'More stamina will yield more hit points',
                                 'More intellect will yield more spell power',
                                 `You don't miss as often with higher agility`,
@@ -141,19 +141,20 @@ module Tavern {
                                 'Higher agility yields higher jousting ability',
                                 'Fishing can get better results from higher charisma',
                                 'Real Estate and Security help protect your investments',
+                                'Dodging an attack is your ability to steal with dexterity',
                                 'Higher baud rates yield faster screen displays',
                                 'Crying will not change the world',
                                 'Backstabs swish more than you wish',
                                 'Dungeon maps fall more often into lucky hands',
                                 `Higher intellect calculates opponent's hit points more accurately`,
-                                `At least 50 Intellect points are needed to recall where you've been walking`,
-                                'Resurrect works on ALL dead folk, but not creatures',
-                                `Take over as your gang's leader in the Arena`,
-                                'Blessed/Cursed does not stick on your new day here',
+                                `50+ Intellect points are needed to map where you've been walking`,
+                                'Resurrect works on ALL dead folk, not creatures',
+                                `Death challenge your gang's leader in the Arena`,
+                                'Blessed/Cursed does not carry over to the next day',
                                 `Killing the town's barkeep will lose you favor with its folks`,
                                 'Deeper dungeon portals is a key to victory',
                                 `I'll have more hints tomorrow.  Maybe`
-                            ][tip % 21])
+                            ][tip % 22])
                             xvt.outln('."')
                             xvt.waste(1000)
                             menu()

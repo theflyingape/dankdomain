@@ -31,6 +31,8 @@ module Dungeon {
 	let Y: number
 	let X: number
 	let b4: number
+	let hideep: number
+	let hiZ: number
 	let levels: number
 
 	//  £
@@ -120,7 +122,9 @@ module Dungeon {
 		tl = Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60) + 3
 
 		deep = 0
+		hideep = 0
 		Z = start < 0 ? 0 : start > 99 ? 99 : $.int(start)
+		hiZ = Z
 		fini = cb
 
 		if ($.access.sysop) crawling['M'] = { description: 'y liege' }
@@ -2097,6 +2101,9 @@ module Dungeon {
 			return
 		}
 
+		if (deep > hideep) hideep = deep
+		if (Z > hiZ) hiZ = deep
+
 		$.wall(`enters dungeon level ${xvt.romanize(deep + 1)}.${Z + 1}`)
 		$.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
 
@@ -3047,7 +3054,7 @@ module Dungeon {
 		if (escape) {
 			$.music(['escape', 'thief2', 'thief'][$.dungeon])
 			xvt.outln(xvt.lblue, `\n"Next time you won't escape so easily... moo-hahahahaha!!"`)
-			$.news(`\tescaped dungeon ${xvt.romanize(deep + 1)}.${Z} ${levels < $.player.level && `ascending +${$.player.level - levels}` || 'expeditiously'}`)
+			$.news(`\tescaped dungeon ${xvt.romanize(hideep + 1)}.${hiZ} ${levels < $.player.level && `ascending +${$.player.level - levels}` || 'expeditiously'}`)
 		}
 		else if (redraw) {
 			drawLevel()

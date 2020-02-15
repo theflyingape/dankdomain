@@ -22,7 +22,7 @@
     "Chancellor": { "F":"Lady Chancellor", "M":"Lord Chancellor", "calls":3, "minutes":60, "promote":0, "verify":false, "bulletin":true, "roleplay":true, "emoji":"📜" },
     "Kingsguard": { "F":"Lady", "M":"Sir", "calls":3, "minutes":60, "promote":0, "verify":false, "bulletin":true, "roleplay":true, "emoji":"⚔️" },
     "Lord Commander": { "F":"Lady", "M":"Sir", "calls":3, "minutes":60, "promote":0, "verify":false, "bulletin":true, "roleplay":true, "emoji":"🛡️" },
-    "Maester": { "M":"Your Grace", "calls":3, "minutes":60, "promote":0, "verify":false, "bulletin":true, "roleplay":true, "emoji":"⛓️" },
+    "Maester": { "M":"Your Grace", "calls":3, "minutes":60, "promote":0, "verify":false, "bulletin":true, "roleplay":true, "emoji":"🔮" },
     "Hand": { "F":"Your Grace", "M":"Your Grace", "calls":3, "minutes":60, "promote":0, "verify":false, "bulletin":true, "roleplay":true, "emoji":"🤚" },
     "Princess": { "F":"Your Royal Highness", "calls":3, "minutes":60, "promote":0, "verify":false, "bulletin":true, "roleplay":true, "emoji":"👸" },
     "Prince": { "M":"Your Royal Highness", "calls":3, "minutes":60, "promote":0, "verify":false, "bulletin":true, "roleplay":true, "emoji":"🤴" },
