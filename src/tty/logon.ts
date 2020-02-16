@@ -41,10 +41,9 @@ module Logon {
                 break
             default:
                 $.sound('stranger')
-                $.action('yn')
-                $.profile({ jpg: 'npc/stranger', effect: 'zoomIn' })
+                $.profile({ handle: '💀 🏹 💘 🏹 💀', jpg: 'npc/stranger', effect: 'zoomIn' })
                 xvt.outln('The last thing you ever feel is several quarrels cutting deep into your chest.')
-                xvt.waste(1000)
+                xvt.waste(1200)
                 xvt.app.form = {
                     'forgot': {
                         cb: () => {
@@ -63,8 +62,10 @@ module Logon {
                         }, prompt: 'DOH!!  Re-send the password to your email account (Y/N)? ', cancel: 'N', enter: 'Y', eol: false, match: /Y|N/i, timeout: 10
                     }
                 }
-                if (xvt.validator.isNotEmpty($.player.id) && $.player.lastdate != $.now().date)
+                if (xvt.validator.isNotEmpty($.player.id) && $.player.lastdate != $.now().date) {
+                    $.action('yn')
                     xvt.app.focus = 'forgot'
+                }
                 else
                     process.exit()
                 return false

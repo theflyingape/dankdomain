@@ -426,6 +426,7 @@ module Battle {
                 melee(rpc, enemy)
             }
             else {
+                if ($.online.hp - 2 < 2 * $.player.level) $.sound('weak')
                 let choices = xvt.attr(xvt.reset, xvt.blue, '[')
                 choices += xvt.attr(xvt.bright
                     , $.online.hp > $.player.hp * 2 / 3 ? xvt.green

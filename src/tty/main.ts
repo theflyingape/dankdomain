@@ -70,7 +70,7 @@ module Main {
                 }
 
             case 'A':
-                require('./arena').menu(false)
+                require('./arena').menu($.player.expert)
                 return
 
             case 'D':
@@ -89,11 +89,11 @@ module Main {
 
             case 'G':
                 $.music('casino')
-                require('./gambling').menu(false)
+                require('./gambling').menu($.player.expert)
                 return
 
             case 'L':
-                require('./hall').menu(false)
+                require('./hall').menu($.player.expert)
                 return
 
             case 'M':
@@ -323,7 +323,7 @@ module Main {
                 return
 
             case 'S':
-                require('./square').menu(false)
+                require('./square').menu($.player.expert)
                 return
 
             case 'T':
@@ -333,7 +333,7 @@ module Main {
                     break
                 }
                 $.music('tavern' + $.dice(4))
-                require('./tavern').menu(false)
+                require('./tavern').menu($.player.expert)
                 return
 
             case 'U':

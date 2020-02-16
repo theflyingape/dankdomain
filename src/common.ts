@@ -65,6 +65,8 @@ module Common {
     export let security: number = 0
     export let steal: number = 0
     export let tiny: number = 0
+    export let timeleft: number = 0
+    export let warning: number = 2
 
     export let callers: caller[] = []
     export let mydeeds: deed[]
@@ -719,14 +721,29 @@ module Common {
 
     export function checkXP(rpc: active, cb: Function): boolean {
 
-        jumped = 0
+        let t = Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
+        if (t !== timeleft) {
+            timeleft = t
+            if (timeleft < 0) {
+                reason = 'got exhausted'
+            }
+            else if (timeleft <= warning) {
+                warning = timeleft
+                beep()
+                xvt.outln(xvt.bright, `\n *** `, xvt.faint, `${warning}-minute${warning !== 1 ? 's' : ''} remain${warning == 1 ? 's' : ''}`, xvt.bright, ` *** `)
+                sound('hurry')
+            }
+        }
+
         if (!Access.name[rpc.user.access].roleplay) return false
         if (rpc.user.level >= sysop.level) {
             riddle()
             return true
         }
+
         if (rpc.user.xp < experience(rpc.user.level, 1, rpc.user.int)) return false
         reason = ''
+        jumped = 0
 
         let award = {
             hp: rpc.user.hp,

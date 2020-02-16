@@ -20,8 +20,8 @@ module Tavern {
         'L': { description: 'List user bounties' },
         'P': { description: 'Post your own bounty' },
         'S': { description: 'Swear at Tiny' },
-        'T': { description: 'Today\'s news' },
-        'Y': { description: 'Yesterday\'s news' }
+        'T': { description: `Today's news` },
+        'Y': { description: `Yesterday's news` }
     }
 
     $.loadUser($.barkeep)
@@ -30,6 +30,7 @@ module Tavern {
         if ($.checkXP($.online, menu)) return
         if ($.online.altered) $.saveUser($.online)
         Taxman.bar()
+        if ($.reason) xvt.hangup()
 
         $.action('tavern')
         xvt.app.form = {

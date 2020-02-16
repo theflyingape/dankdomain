@@ -1,5 +1,5 @@
 type ABILITY = string | 'str' | 'int' | 'dex' | 'cha'
-type POWER = string | 'buff' | 'cast' | 'degrade' | 'initiate' | 'hp' | 'identify' | 'joust' | 'melee' | 'resist' | 'resurrect' | 'ring' | 'skip' |'sp' |'steal' | 'taxes' | 'teleport' | 'upgrade'
+type POWER = string | 'buff' | 'cast' | 'degrade' | 'hp' | 'identify' | 'initiate' | 'joust' | 'melee' | 'resist' | 'resurrect' | 'ring' | 'skip' | 'sp' | 'steal' | 'taxes' | 'teleport' | 'upgrade'
 type POWTO = 'ability' | 'magic' | 'melee' | 'pc' | 'spell'
 type GIFT = '' | 'armor' | 'chest' | 'magic' | 'map' | 'poison' | 'potion' | 'ring' | 'weapon' | 'xmagic'
 type MAP = '' | 'map' | 'magic map' | `Marauder's map`
@@ -79,9 +79,9 @@ interface user {
     coin?: coins
     bank?: coins
     loan?: coins
-    weapon?: string|number
+    weapon?: string | number
     toWC?: number
-    armor?: string|number
+    armor?: string | number
     toAC?: number
     spells?: number[]
     poisons?: number[]
@@ -96,15 +96,15 @@ interface user {
     wins?: number
     immortal?: number
     //  per roll
-  	plays?: number
-	jl?: number
-	jw?: number
-	killed?: number
-	kills?: number
+    plays?: number
+    jl?: number
+    jw?: number
+    killed?: number
+    kills?: number
     retreats?: number
     steals?: number
-	tl?: number
-	tw?: number
+    tl?: number
+    tw?: number
 }
 
 interface gang {
@@ -145,7 +145,7 @@ interface choices {
 }
 
 interface monster {
-	name: string
+    name: string
     pc: string
     adept?: number
     hit?: string
@@ -154,9 +154,9 @@ interface monster {
     rings?: string[]
     spells?: string[]
     level?: number
-    weapon?: string|number
-    armor?: string|number
-    money?: string|number
+    weapon?: string | number
+    armor?: string | number
+    money?: string | number
     effect?: string
 }
 
@@ -167,7 +167,7 @@ interface naval {
     shot: number
     powder: number
     ram: boolean
-    money?: string|number
+    money?: string | number
 }
 
 interface access {
@@ -202,7 +202,7 @@ interface coins {
 
 interface ddd {
     cleric: active
-    rooms: [ room[] ]	//	7-10
+    rooms: [room[]]	//	7-10
     map: MAP
     moves: number       //  hero steps (2x backtracking)
     spawn: number       //  2-23
@@ -238,7 +238,7 @@ interface room {
     occupant: NPC
     type: ROOM
     giftItem?: GIFT
-    giftValue?: number|string
+    giftValue?: number | string
     giftID?: boolean	//	undefined, or identified?
     giftIcon?: string
     monster?: active[]
