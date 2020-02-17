@@ -721,6 +721,8 @@ module Common {
 
     export function checkXP(rpc: active, cb: Function): boolean {
 
+        jumped = 0
+
         let t = Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
         if (t !== timeleft) {
             timeleft = t
@@ -743,7 +745,6 @@ module Common {
 
         if (rpc.user.xp < experience(rpc.user.level, 1, rpc.user.int)) return false
         reason = ''
-        jumped = 0
 
         let award = {
             hp: rpc.user.hp,
