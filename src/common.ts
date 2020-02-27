@@ -2422,6 +2422,11 @@ module Common {
         if (xvt.validator.isEmpty(user.id)) return
 
         let sql: string = ''
+        let v = []
+        if (user.rings) {
+            v = user.rings
+            v.length && user.rings.forEach((s, i) => { v[i] = s.replace(/'/g, "''") })
+        }
 
         sql = insert ? `INSERT INTO Players
         ( id, handle, name, email, password
@@ -2435,7 +2440,7 @@ module Common {
         , str, maxstr, int, maxint, dex
         , maxdex, cha, maxcha, coin, bank
         , loan, weapon, toWC, armor, toAC
-        , spells, poisons, rings, realestate, security
+        , spells, poisons, realestate, rings, security
         , hull, cannon, ram, wins, immortal
         , plays, jl, jw, killed, kills
         , retreats, steals, tl, tw
@@ -2451,7 +2456,7 @@ module Common {
         , ${user.str}, ${user.maxstr}, ${user.int}, ${user.maxint}, ${user.dex}
         , ${user.maxdex}, ${user.cha}, ${user.maxcha}, ${user.coin.value}, ${user.bank.value}
         , ${user.loan.value}, '${user.weapon}', ${user.toWC}, '${user.armor}', ${user.toAC}
-        ,'${user.spells.toString()}', '${user.poisons.toString()}', "${user.rings.toString()}", '${user.realestate}', '${user.security}'
+        ,'${user.spells.toString()}', '${user.poisons.toString()}', '${user.realestate}', '${v}', '${user.security}'
         , ${user.hull}, ${user.cannon}, ${+user.ram}, ${user.wins}, ${user.immortal}
         , ${user.plays}, ${user.jl}, ${user.jw}, ${user.killed}, ${user.kills}
         , ${user.retreats}, ${user.steals}, ${user.tl}, ${user.tw}
@@ -2468,7 +2473,7 @@ module Common {
         str=${user.str}, maxstr=${user.maxstr}, int=${user.int}, maxint=${user.maxint}, dex=${user.dex},
         maxdex=${user.maxdex}, cha=${user.cha}, maxcha=${user.maxcha}, coin=${user.coin.value}, bank=${user.bank.value},
         loan=${user.loan.value}, weapon='${user.weapon}', toWC=${user.toWC}, armor='${user.armor}', toAC=${user.toAC},
-        spells='${user.spells.toString()}', poisons='${user.poisons.toString()}', rings="${user.rings.toString()}", realestate='${user.realestate}', security='${user.security}',
+        spells='${user.spells.toString()}', poisons='${user.poisons.toString()}', realestate='${user.realestate}', rings='${v}', security='${user.security}',
         hull=${user.hull}, cannon=${user.cannon}, ram=${+user.ram}, wins=${user.wins}, immortal=${user.immortal},
         plays=${user.plays}, jl=${user.jl}, jw=${user.jw}, killed=${user.killed}, kills=${user.kills},
         retreats=${user.retreats}, steals=${user.steals}, tl=${user.tl}, tw=${user.tw}
@@ -2793,9 +2798,10 @@ module Common {
 
     export function ringBearer(name: string): string {
         if (Ring.name[name].unique) {
-            let rs = query(`SELECT bearer FROM Rings WHERE name="${name}"`)
+            let v = name.replace(/'/g, "''")
+            let rs = query(`SELECT bearer FROM Rings WHERE name='${v}'`)
             if (!rs.length) {
-                run(`INSERT INTO Rings (name,bearer) VALUES ("${name}","")`)
+                run(`INSERT INTO Rings (name,bearer) VALUES ('${v}',"")`)
                 return ''
             }
             return rs[0].bearer
@@ -2815,13 +2821,16 @@ module Common {
 
     export function saveRing(name: string, bearer = '', rings?: string[]) {
         let theRing = { name: name, bearer: bearer[0] == '_' ? '' : bearer }
+        let v = name.replace(/'/g, "''")
 
         //  primarily maintain the one ring's active bearer here
         if (Ring.name[name].unique)
-            run(`UPDATE Rings SET bearer="${theRing.bearer}" WHERE name="${theRing.name}"`)
-
-        if (theRing.bearer.length && rings)
-            run(`UPDATE Players SET rings="${rings.toString()}" WHERE id="${theRing.bearer}"`)
+            run(`UPDATE Rings SET bearer='${theRing.bearer}' WHERE name='${v}'`)
+        if (theRing.bearer.length && rings) {
+            let v = rings
+            rings.forEach((s, i) => { v[i] = s.replace(/'/g, "''") })
+            run(`UPDATE Players SET rings='${v.toString()}' WHERE id='${theRing.bearer}'`)
+        }
     }
 
 }
