@@ -1,6 +1,6 @@
 {
   "name": "dankdomain",
-  "version": "2.3.2",
+  "version": "2.3.3",
   "description": "Dank Domain: the return of Hack & Slash",
   "main": "ttymain",
   "publisher": "theflyingape",
@@ -44,14 +44,14 @@
   "homepage": "https://www.DDgame.us",
   "dependencies": {
     "animate.css": "^3.7.2",
-    "better-sqlite3": "^5.4.3",
+    "better-sqlite3": "^6.0.1",
     "bufferutil": "^4.0.1",
     "express": "^4.17.1",
     "fs-extra": "^8.1.0",
-    "got": "^10.5.5",
-    "integer": "^2.1.0",
+    "got": "^10.6.0",
+    "integer": "^3.0.1",
     "node-pty": "^0.9.0",
-    "nodemailer": "^6.4.2",
+    "nodemailer": "^6.4.3",
     "nodemailer-smtp-transport": "^2.7.4",
     "sprintf-js": "^1.1.2",
     "title-case": "^3.0.2",
@@ -67,14 +67,14 @@
   "devDependencies": {
     "@types/better-sqlite3": "^5.4.0",
     "@types/express": "^4.17.2",
-    "@types/fs-extra": "^8.0.1",
-    "@types/node": "^12.12.27",
+    "@types/fs-extra": "^8.1.0",
+    "@types/node": "^12.12.28",
     "@types/nodemailer": "^6.4.0",
     "@types/nodemailer-smtp-transport": "^2.7.4",
     "@types/sprintf-js": "^1.1.2",
-    "@types/ws": "^7.2.1",
+    "@types/ws": "^7.2.2",
     "browserify": "^16.5.0",
     "tslint": "^6.0.0",
-    "typescript": "^3.7.5"
+    "typescript": "^3.8.2"
   }
 }

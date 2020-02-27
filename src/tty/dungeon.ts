@@ -755,6 +755,7 @@ module Dungeon {
 				}
 				xvt.outln()
 				xvt.waste(600)
+				xvt.typeahead = ''
 
 				$.action('well')
 				xvt.app.form = {
@@ -1006,6 +1007,7 @@ module Dungeon {
 					['cryptic', 'familiar', 'foreign', 'speaking out', 'strange'][$.dice(5) - 1],
 					' to you.')
 				xvt.waste(600)
+				xvt.typeahead = ''
 
 				$.action('yn')
 				$.profile({ png: 'wol', effect: 'rotateIn' })
