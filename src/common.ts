@@ -2403,7 +2403,7 @@ module Common {
             if (rs[0].rings.length) {
                 let rings = rs[0].rings.split(',')
                 for (let i = 0; i < rings.length; i++)
-                    Ring.wear(user.rings, rings[i])
+                    Ring.wear(user.rings, rings[i].replace(/''/g, `'`))
             }
 
             if (isActive(rpc)) activate(rpc)
@@ -2422,11 +2422,6 @@ module Common {
         if (xvt.validator.isEmpty(user.id)) return
 
         let sql: string = ''
-        let v = []
-        if (user.rings) {
-            v = user.rings
-            v.length && user.rings.forEach((s, i) => { v[i] = s.replace(/'/g, "''") })
-        }
 
         sql = insert ? `INSERT INTO Players
         ( id, handle, name, email, password
@@ -2456,7 +2451,7 @@ module Common {
         , ${user.str}, ${user.maxstr}, ${user.int}, ${user.maxint}, ${user.dex}
         , ${user.maxdex}, ${user.cha}, ${user.maxcha}, ${user.coin.value}, ${user.bank.value}
         , ${user.loan.value}, '${user.weapon}', ${user.toWC}, '${user.armor}', ${user.toAC}
-        ,'${user.spells.toString()}', '${user.poisons.toString()}', '${user.realestate}', '${v}', '${user.security}'
+        ,'${user.spells.toString()}', '${user.poisons.toString()}', '${user.realestate}', ?, '${user.security}'
         , ${user.hull}, ${user.cannon}, ${+user.ram}, ${user.wins}, ${user.immortal}
         , ${user.plays}, ${user.jl}, ${user.jw}, ${user.killed}, ${user.kills}
         , ${user.retreats}, ${user.steals}, ${user.tl}, ${user.tw}
@@ -2473,13 +2468,13 @@ module Common {
         str=${user.str}, maxstr=${user.maxstr}, int=${user.int}, maxint=${user.maxint}, dex=${user.dex},
         maxdex=${user.maxdex}, cha=${user.cha}, maxcha=${user.maxcha}, coin=${user.coin.value}, bank=${user.bank.value},
         loan=${user.loan.value}, weapon='${user.weapon}', toWC=${user.toWC}, armor='${user.armor}', toAC=${user.toAC},
-        spells='${user.spells.toString()}', poisons='${user.poisons.toString()}', realestate='${user.realestate}', rings='${v}', security='${user.security}',
+        spells='${user.spells.toString()}', poisons='${user.poisons.toString()}', realestate='${user.realestate}', rings=?, security='${user.security}',
         hull=${user.hull}, cannon=${user.cannon}, ram=${+user.ram}, wins=${user.wins}, immortal=${user.immortal},
         plays=${user.plays}, jl=${user.jl}, jw=${user.jw}, killed=${user.killed}, kills=${user.kills},
         retreats=${user.retreats}, steals=${user.steals}, tl=${user.tl}, tw=${user.tw}
         WHERE id='${user.id}'`
 
-        run(sql)
+        run(sql, false, user.rings.toString())
 
         if (isActive(rpc)) rpc.altered = false
         if (locked) unlock(user.id.toLowerCase())
@@ -2619,10 +2614,10 @@ module Common {
         return run(`DELETE FROM Online WHERE id='${id}'`).changes
     }
 
-    export function query(q: string, errOk = false): any {
+    export function query(q: string, errOk = false, ...params): any {
         try {
             let cmd = sqlite3.prepare(q)
-            return cmd.all()
+            return cmd.all(...params)
         }
         catch (err) {
             if (!errOk) {
@@ -2637,19 +2632,19 @@ module Common {
         }
     }
 
-    export function run(sql: string, errOk = false): { changes: number, lastInsertROWID: number } {
+    export function run(sql: string, errOk = false, ...params): { changes: number, lastInsertROWID: number } {
         let retry = 3
 
         while (retry) {
             try {
                 let cmd = sqlite3.prepare(sql)
-                return cmd.run()
+                return cmd.run(...params)
             }
             catch (err) {
                 xvt.beep()
                 xvt.out(xvt.reset, '\n?Unexpected SQL error: ', String(err))
                 if (--retry) {
-                    xvt.out(' -- retrying\n')
+                    xvt.outln(' -- retrying')
                     continue
                 }
                 if (!errOk) {
@@ -2798,10 +2793,9 @@ module Common {
 
     export function ringBearer(name: string): string {
         if (Ring.name[name].unique) {
-            let v = name.replace(/'/g, "''")
-            let rs = query(`SELECT bearer FROM Rings WHERE name='${v}'`)
+            let rs = query(`SELECT bearer FROM Rings WHERE name=?`, false, name)
             if (!rs.length) {
-                run(`INSERT INTO Rings (name,bearer) VALUES ('${v}',"")`)
+                run(`INSERT INTO Rings (name,bearer) VALUES (?,'')`, false, name)
                 return ''
             }
             return rs[0].bearer
@@ -2821,18 +2815,15 @@ module Common {
 
     export function saveRing(name: string, bearer = '', rings?: string[]) {
         let theRing = { name: name, bearer: bearer[0] == '_' ? '' : bearer }
-        let v = name.replace(/'/g, "''")
 
         //  primarily maintain the one ring's active bearer here
-        if (Ring.name[name].unique)
-            run(`UPDATE Rings SET bearer='${theRing.bearer}' WHERE name='${v}'`)
+        if (Ring.name[name].unique) {
+            run(`UPDATE Rings SET bearer='${theRing.bearer}' WHERE name=?`, false, name)
+        }
         if (theRing.bearer.length && rings) {
-            let v = rings
-            rings.forEach((s, i) => { v[i] = s.replace(/'/g, "''") })
-            run(`UPDATE Players SET rings='${v.toString()}' WHERE id='${theRing.bearer}'`)
+            run(`UPDATE Players SET rings=? WHERE id=?`, false, rings.toString(), theRing.bearer)
         }
     }
-
 }
 
 export = Common

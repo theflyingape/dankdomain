@@ -342,6 +342,8 @@ module Logon {
                     $.saveRing(ring.name, $.player.id, $.player.rings)
                 }
             }
+            $.Ring.wear($.player.rings, `Hell's Fury`)
+            $.saveRing(`Hell's Fury`, $.player.id, $.player.rings)
             xvt.outln()
 
             $.player.calls++
