@@ -9,8 +9,8 @@ git pull || exit
 sudo systemctl stop xinetd
 sudo systemctl stop dankdomain-door
 sudo systemctl status dankdomain-door -l
-env PYTHON=`which python2` npm install
-npm run build
+#env PYTHON=`which python2` npm install
+#npm run build
 
 #sudo rsync -av --chown=root:games ./build/ ${TARGET}
 #sudo rsync -av --chown=root:games package.json ${TARGET}
