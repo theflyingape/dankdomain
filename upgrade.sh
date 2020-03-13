@@ -12,8 +12,8 @@ sudo systemctl status dankdomain-door -l
 env PYTHON=`which python2` npm install
 npm run build
 
-sudo rsync -av --chown=root:games ./build/ ${TARGET}
-sudo rsync -av --chown=root:games package.json ${TARGET}
+#sudo rsync -av --chown=root:games ./build/ ${TARGET}
+#sudo rsync -av --chown=root:games package.json ${TARGET}
 sudo chown -R root.games ${TARGET}
 sudo chmod -R u+rw,g+rw,o-rwx ${TARGET}
 sudo find ${TARGET} -type d -exec chmod u+x,g+xs {} \;
