@@ -262,7 +262,7 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
     let pid = parseInt(what.searchParams.get('pid'))
     let term = sessions[pid]
     term.spawn.dispose()
-    if (term.startup) browser.send(`[initial wss latency]\n\n${term.startup}`)
+    if (term.startup) browser.send(term.startup)
 
     //  app --> browser client
     term.onData((data) => {
