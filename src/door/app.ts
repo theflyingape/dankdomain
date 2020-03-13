@@ -72,7 +72,7 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
 
     let list = []
     list.push(
-      { handle: `The <span style="color:brown !important;">Player manual</span>: <a href="https://manual.DDgame.us" target="_blank">DDgame.us</a>`, png: 'connect/arexielite_by_peachyco', effect: 'fadeInRight' },
+      { handle: `The <span style="color:brown !important;">Player manual</span>: <a href="https://manual.DDgame.us" target="_blank">manual.DDgame.us</a>`, png: 'connect/arexielite_by_peachyco', effect: 'fadeInRight' },
       { handle: '100 dungeon levels, 10 dank domains', png: 'connect/dragonborn_dagger_sorcerer_by_peachyco', effect: 'fadeInRight' },
       { handle: 'Take on the Monster Mash', png: 'connect/dragonborn_hexblade_by_peachyco', effect: 'fadeInRight' },
       { handle: 'Come get some', png: 'connect/elf_cleric_by_peachyco', effect: 'fadeInRight' },
@@ -166,15 +166,22 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
       cwd: __dirname,
       env: process.env
     })
-    let pid: number = term.pid
 
-    console.log(`Create PLAYER session ${pid} using ${tty} from remote host: ${client} (${req.hostname})`)
+    let pid: number = term.pid
+    broadcasts[pid] = ''
     sessions[pid] = term
     sessions[pid].client = process.env.SSH_CLIENT
-    broadcasts[pid] = ''
+    //  buffer any initial output from forked process
+    //  between this post and ensuing client wss connection
+    sessions[pid].spawn = term.onData(function (data) {
+      sessions[pid].startup = (sessions[pid].startup || '') + data
+    })
+    //require('child_process').execSync(`sleep .3`)
 
     res.send(pid.toString())
     res.end()
+
+    console.log(`Create PLAYER session ${pid} using ${tty} from remote host: ${client} (${req.hostname})`)
   })
 
   app.post(`${DOOR}player/:pid/size`, function (req, res) {
@@ -254,9 +261,11 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
     const what = new URL(req.url, 'https://localhost')
     let pid = parseInt(what.searchParams.get('pid'))
     let term = sessions[pid]
+    term.spawn.dispose()
+    if (term.startup) browser.send(`[initial wss latency]\n\n${term.startup}`)
 
     //  app --> browser client
-    term.on('data', (data) => {
+    term.onData((data) => {
       //  inspect for app's ACK ...
       let msg = data.toString()
       let ack = msg.indexOf('\x06')
@@ -279,8 +288,8 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
     })
 
     //  app shutdown
-    term.on('close', () => {
-      console.log(`Close PLAYER session ${term.pid} from remote host: ${term.client}`)
+    term.onExit(() => {
+      console.log(`Exit PLAYER session ${term.pid} for remote host: ${term.client}`)
       // Clean things up
       delete broadcasts[term.pid]
       delete sessions[term.pid]

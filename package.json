@@ -51,12 +51,12 @@
     "got": "^10.6.0",
     "integer": "^3.0.1",
     "node-pty": "^0.9.0",
-    "nodemailer": "^6.4.3",
+    "nodemailer": "^6.4.5",
     "nodemailer-smtp-transport": "^2.7.4",
     "sprintf-js": "^1.1.2",
     "title-case": "^3.0.2",
     "utf-8-validate": "^5.0.2",
-    "ws": "^7.2.1",
+    "ws": "^7.2.3",
     "xterm": "^4.4.0",
     "xterm-addon-fit": "^0.3.0",
     "xterm-addon-unicode11": "^0.1.1",
@@ -66,15 +66,15 @@
   },
   "devDependencies": {
     "@types/better-sqlite3": "^5.4.0",
-    "@types/express": "^4.17.2",
+    "@types/express": "^4.17.3",
     "@types/fs-extra": "^8.1.0",
-    "@types/node": "^12.12.29",
+    "@types/node": "^12.12.30",
     "@types/nodemailer": "^6.4.0",
     "@types/nodemailer-smtp-transport": "^2.7.4",
     "@types/sprintf-js": "^1.1.2",
     "@types/ws": "^7.2.2",
     "browserify": "^16.5.0",
-    "tslint": "^6.0.0",
+    "tslint": "^6.1.0",
     "typescript": "^3.8.3"
   }
 }
