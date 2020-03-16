@@ -173,7 +173,7 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
     sessions[pid].client = process.env.SSH_CLIENT
     //  buffer any initial output from forked process
     //  between this post and ensuing client wss connection
-    sessions[pid].spawn = term.onData(function (data) {
+    sessions[pid].spawn = term.onData((data) => {
       sessions[pid].startup = (sessions[pid].startup || '') + data
     })
     //require('child_process').execSync(`sleep .3`)
@@ -329,6 +329,23 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
     let player = ` (${sessions[term.pid].who})`
     console.log(`Lurker session ${term.pid}${player} connected as #${(lurker + 1)}`)
 
+    //  app --> browser client
+    let lurk = term.onData((data) => {
+      try {
+        browser.send(data)
+      } catch (ex) {
+        if (term.pid)
+          console.log(`?FATAL session ${term.pid}${player} lurker/ws error: ${ex.message}`)
+      }
+    })
+    term.onExit(() => {
+      try {
+        browser.close()
+      } catch (ex) {
+        console.log(`?FATAL browser session ${term.pid}${player} lurker/ws error: ${ex.message}`)
+      }
+    })
+
     //  browser client --> any key terminates lurking
     browser.on('message', (msg) => {
       browser.close()
@@ -337,27 +354,8 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
     browser.on('close', () => {
       console.log(`Lurker session ${term.pid}${player} closed #${(lurker + 1)}`)
       delete lurkers[lurker]
-      term.removeListener('data', send)
+      lurk.dispose()
     })
-
-    //  app --> browser client
-    const close = () => {
-      try {
-        browser.close()
-      } catch (ex) {
-        console.log(`?FATAL browser session ${term.pid}${player} lurker/ws error: ${ex.message}`)
-      }
-    }
-    const send = (data) => {
-      try {
-        browser.send(data)
-      } catch (ex) {
-        if (term.pid)
-          console.log(`?FATAL session ${term.pid}${player} lurker/ws error: ${ex.message}`)
-      }
-    }
-    term.on('close', close)
-    term.on('data', send)
   })
 
   //  database support
