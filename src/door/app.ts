@@ -382,10 +382,22 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
       }
 
       Object.assign(user, require(path))
-      user.bounty.value = user.bounty._value
-      user.coin.value = user.coin._value
-      user.bank.value = user.bank._value
-      user.loan.value = user.loan._value
+      if (user.bounty.value)
+        user.bounty.value = user.bounty._value
+      else
+        user.bounty = new coins(user.bounty.toString())
+      if (user.coin.value)
+        user.coin.value = user.coin._value
+      else
+        user.coin = new coins(user.coin.toString())
+      if (user.bank.value)
+        user.bank.value = user.bank._value
+      else
+        user.bank = new coins(user.bank.toString())
+      if (user.loan.value)
+        user.loan.value = user.loan._value
+      else
+        user.loan = new coins(user.loan.toString())
       fs.unlink(path, () => { })
 
       sqlite3.prepare(`UPDATE Players SET
