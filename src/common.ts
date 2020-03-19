@@ -2109,8 +2109,7 @@ module Common {
         if (xvt.validator.isNotEmpty(player.id)) {
             player.lasttime = now().time
             if (access.roleplay) {
-                saveUser(player)
-                unlock(player.id)
+                saveUser(player, false, true)
                 news(`\tlogged off ${time(player.lasttime)} as a level ${player.level} ${player.pc}`)
                 news(`\t(${reason})\n`, true)
 
@@ -2477,7 +2476,11 @@ module Common {
         run(sql, false, user.rings.toString())
 
         if (isActive(rpc)) rpc.altered = false
-        if (locked) unlock(user.id.toLowerCase())
+        if (locked || user.id[0] == '_') {
+            unlock(user.id.toLowerCase())
+            let trace = users + '.' + user.id + '.json'
+            fs.writeFileSync(trace, JSON.stringify(user, null, 2))
+        }
     }
 
     export function newDay() {
@@ -2650,24 +2653,24 @@ module Common {
                 if (!errOk) {
                     xvt.out('\n?FATAL SQL operation: ', sql)
                     /*
-                                    if (user.id == player.id || user.id[0] == '_') {
-                                        let trace = users + user.id + '.json'
-                                        if (reason == '')
-                                            fs.writeFileSync(trace, JSON.stringify(user, null, 2))
-                                        else
-                                            fs.unlink(trace, () => {})
-                                    }
+                                        if (user.id == player.id || user.id[0] == '_') {
+                                            let trace = users + user.id + '.json'
+                                            if (reason == '')
+                                                fs.writeFileSync(trace, JSON.stringify(user, null, 2))
+                                            else
+                                                fs.unlink(trace, () => {})
+                                        }
 
-                                    sql = users + user.id + '.sql'
-                                    if (process.platform == 'linux') {
-                                        require('child_process').exec(`
-                                            sqlite3 ${DD} <<-EOD
-                                            .mode insert
-                                            .output ${sql}
-                                            select * from Players where id = '${user.id}';
-                                            EOD
-                                        `)
-                                    }
+                                        sql = users + user.id + '.sql'
+                                        if (process.platform == 'linux') {
+                                            require('child_process').exec(`
+                                                sqlite3 ${DD} <<-EOD
+                                                .mode insert
+                                                .output ${sql}
+                                                select * from Players where id = '${user.id}';
+                                                EOD
+                                            `)
+                                        }
                     */
                     reason = 'defect - ' + err.code
                     xvt.hangup()

@@ -2,6 +2,7 @@
  *  Dank Domain: the return of Hack & Slash                                  *
  *  DOOR authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
+import chokidar = require('chokidar')
 import dns = require('dns')
 import express = require('express')
 import fs = require('fs')
@@ -9,6 +10,7 @@ import http = require('http')
 import https = require('https')
 import pty = require('node-pty')
 import ws = require('ws')
+import { coins } from '../common'
 const { URL } = require('url')
 const DOOR = '/'
 
@@ -362,6 +364,50 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
   const DD = '../users/dankdomain.sql'
   let better = require('better-sqlite3')
   let sqlite3 = new better(DD)
+
+  chokidar.watch('../users/save.json')
+    .on('add', (path, stats) => {
+      interface save extends user {
+        bounty?: coins
+        coin?: coins
+        bank?: coins
+        loan?: coins
+      }
+      let user: save = {
+        id: '',
+        bounty: new coins(0),
+        coin: new coins(0),
+        bank: new coins(0),
+        loan: new coins(0)
+      }
+
+      Object.assign(user, require(path))
+      user.bounty.value = user.bounty._value
+      user.coin.value = user.coin._value
+      user.bank.value = user.bank._value
+      user.loan.value = user.loan._value
+      fs.unlink(path, () => { })
+
+      sqlite3.prepare(`UPDATE Players SET
+        handle='${user.handle}', name='${user.name}', email='${user.email}', password='${user.password}',
+        dob=${user.dob}, sex='${user.sex}', joined=${user.joined}, expires=${user.expires}, lastdate=${user.lastdate},
+        lasttime=${user.lasttime}, calls=${user.calls}, today=${user.today}, expert=${+user.expert}, emulation='${user.emulation}',
+        rows=${user.rows}, access='${user.access}', remote='${user.remote}', pc='${user.pc}', gender='${user.gender}',
+        novice=${+user.novice}, level=${user.level}, xp=${user.xp}, xplevel=${user.xplevel}, status='${user.status}',
+        blessed='${user.blessed}', cursed='${user.cursed}', coward=${+user.coward}, bounty=${user.bounty.value}, who='${user.who}',
+        gang='${user.gang}', keyseq='${user.keyseq}', keyhints='${user.keyhints.toString()}', melee=${user.melee}, backstab=${user.backstab},
+        poison=${user.poison}, magic=${user.magic}, steal=${user.steal}, hp=${user.hp}, sp=${user.sp},
+        str=${user.str}, maxstr=${user.maxstr}, int=${user.int}, maxint=${user.maxint}, dex=${user.dex},
+        maxdex=${user.maxdex}, cha=${user.cha}, maxcha=${user.maxcha}, coin=${user.coin.value}, bank=${user.bank.value},
+        loan=${user.loan.value}, weapon='${user.weapon}', toWC=${user.toWC}, armor='${user.armor}', toAC=${user.toAC},
+        spells='${user.spells.toString()}', poisons='${user.poisons.toString()}', realestate='${user.realestate}', rings=?, security='${user.security}',
+        hull=${user.hull}, cannon=${user.cannon}, ram=${+user.ram}, wins=${user.wins}, immortal=${user.immortal},
+        plays=${user.plays}, jl=${user.jl}, jw=${user.jw}, killed=${user.killed}, kills=${user.kills},
+        retreats=${user.retreats}, steals=${user.steals}, tl=${user.tl}, tw=${user.tw}
+        WHERE id = '${user.id}'`).run(user.rings.toString())
+      console.log(`Player (${user.id}) updated`)
+    })
+
   try {
     sqlite3.prepare(`DELETE FROM Online`).run().changes
   }

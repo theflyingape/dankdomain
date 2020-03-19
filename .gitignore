@@ -1,11 +1,8 @@
 .vscode/**
 **/node_modules/**
-build/*.d.ts
 build/*.js
-build/door/*.d.ts
 build/door/*.js
 build/door/static/bundle.js
-build/tty/*.d.ts
 build/tty/*.js
 build/etc/ipstack.key
 build/etc/smtp.json
@@ -15,6 +12,7 @@ build/files/auto-message.txt
 build/files/border.txt
 build/files/tavern
 build/files/user
+build/users/.*
 build/users/arguments.json
 build/users/callers.json
 build/users/dankdomain.sql
