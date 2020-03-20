@@ -2474,13 +2474,13 @@ module Common {
         WHERE id='${user.id}'`
 
         run(sql, false, user.rings.toString())
-
-        if (isActive(rpc)) rpc.altered = false
-        if (locked || user.id[0] == '_') {
-            unlock(user.id.toLowerCase())
+        if (insert || locked || user.id[0] == '_') {
             let trace = users + '.' + user.id + '.json'
             fs.writeFileSync(trace, JSON.stringify(user, null, 2))
         }
+
+        if (isActive(rpc)) rpc.altered = false
+        if (locked) unlock(user.id.toLowerCase())
     }
 
     export function newDay() {
