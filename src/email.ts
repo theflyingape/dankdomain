@@ -99,7 +99,8 @@ module Email {
         else {
             xvt.outln(' ...skipping delivery... \nCheck SQLite3 table for relevant information.')
             xvt.outln(`$ sqlite3 ./users/dankdomain.sql`)
-            xvt.out(`SELECT id,handle,access,password FROM Players WHERE id='${player.id}';`)
+            xvt.outln(`SELECT id,handle,access,password FROM Players WHERE id='${player.id}';`)
+            xvt.out(`$ grep password ./users/.${player.id}.json`)
             if ($.reason.length)
                 $.saveUser(player, true)
         }

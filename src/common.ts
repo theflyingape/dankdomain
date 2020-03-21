@@ -1795,10 +1795,9 @@ module Common {
             xvt.waste(player.emulation == 'XT' ? 4321 : 432)
 
             xvt.outln()
-            xvt.outln(xvt.bright, xvt.yellow, 'CONGRATULATIONS!!'
+            xvt.outln(xvt.yellow, xvt.bright, 'CONGRATULATIONS!!'
                 , xvt.reset, '  You have won the game!\n')
             profile({ jpg: 'winner', effect: 'fadeInUp' })
-            sound('winner', 21)
 
             xvt.out(xvt.yellow, 'The board will now reset ')
             let rs = query(`SELECT id, pid FROM Online WHERE id != '${player.id}'`)
@@ -1812,6 +1811,8 @@ module Common {
                 }
                 unlock(rs[row].id)
             }
+
+            sound('winner', 21)
 
             rs = query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
             let user: user = { id: '' }
@@ -1832,7 +1833,7 @@ module Common {
         }
 
         player.today = 0
-        xvt.out(xvt.bright, xvt.yellow, '\nYou are rewarded'
+        xvt.out(xvt.yellow, xvt.bright, '\nYou are rewarded'
             , xvt.normal, ` ${access.calls} `, xvt.bright, 'more calls today.\n', xvt.reset)
 
         xvt.outln(xvt.green, xvt.bright, `\nOl' Mighty One!  `
@@ -2124,6 +2125,7 @@ module Common {
 
             wall(`logged off: ${reason}`)
             unlock(player.id, true)
+            unlock(player.id)
 
             //  logoff banner
             if (online.hp < 1)
@@ -2419,10 +2421,12 @@ module Common {
         let user: user = isActive(rpc) ? rpc.user : rpc
 
         if (xvt.validator.isEmpty(user.id)) return
+        if (insert || locked || user.id[0] == '_') {
+            let trace = users + '.' + user.id + '.json'
+            fs.writeFileSync(trace, JSON.stringify(user, null, 2))
+        }
 
-        let sql: string = ''
-
-        sql = insert ? `INSERT INTO Players
+        let sql = insert ? `INSERT INTO Players
         ( id, handle, name, email, password
         , dob, sex, joined, expires, lastdate
         , lasttime, calls, today, expert, emulation
@@ -2472,12 +2476,7 @@ module Common {
         plays=${user.plays}, jl=${user.jl}, jw=${user.jw}, killed=${user.killed}, kills=${user.kills},
         retreats=${user.retreats}, steals=${user.steals}, tl=${user.tl}, tw=${user.tw}
         WHERE id='${user.id}'`
-
         run(sql, false, user.rings.toString())
-        if (insert || locked || user.id[0] == '_') {
-            let trace = users + '.' + user.id + '.json'
-            fs.writeFileSync(trace, JSON.stringify(user, null, 2))
-        }
 
         if (isActive(rpc)) rpc.altered = false
         if (locked) unlock(user.id.toLowerCase())
