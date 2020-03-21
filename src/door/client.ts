@@ -94,7 +94,7 @@ document.getElementById('lurker-list').onchange = (ev) => {
 	document.getElementById('terminal').hidden = false
 	term = new Terminal({
 		bellStyle: 'none', cursorBlink: false, scrollback: 0,
-		fontFamily: 'tty,Consolas,monospace', fontSize: 22,
+		fontFamily: 'notoemoji,tty', fontSize: 22,
 		fontWeight: '400', fontWeightBold: '500',
 		theme: {
 			foreground: '#a3a7af', background: '#23272f', cursor: '#e0c8e0',
@@ -155,7 +155,7 @@ function newSession(ev) {
 	const options: ITerminalOptions = {
 		bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false, drawBoldTextInBrightColors: true,
 		cols: cols, rows: rows, scrollback: 500,
-		fontFamily: 'tty,Consolas,monospace', fontSize: 24, fontWeight: '400', fontWeightBold: '500',
+		fontFamily: 'tty,notoemoji', fontSize: 24, fontWeight: '400', fontWeightBold: '500',
 		theme: {
 			foreground: 'Silver', background: 'Black', cursor: 'PowderBlue',
 			black: 'Black', red: 'DarkRed', green: 'ForestGreen', yellow: 'SandyBrown',
@@ -173,7 +173,7 @@ function newSession(ev) {
 
 	pid = -1
 	term = new Terminal(options)
-	if (carrier) term.setOption('fontFamily', 'IBM Plex Mono,Consolas,monospace')
+	if (carrier) term.setOption('fontFamily', 'notomono,notoemoji')
 
 	term.loadAddon(new Unicode11Addon())
 	term.loadAddon(new WebLinksAddon())
