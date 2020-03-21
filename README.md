@@ -64,6 +64,8 @@ mame.sh             player - MAME VT240 terminal + solcat startup script
 tty.sh              player - startup script into web services
 ```
 
+NOTE: *in **`users`** folder, you can edit any hidden (dot) trace file and save as **`save.json`** for auto-update into the dankdomain.sql **`Players`** table*
+
  🇺🇸 ©️1991 - 2020 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
 
 #### Dank Domain image gallery

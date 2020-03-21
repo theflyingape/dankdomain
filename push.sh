@@ -4,3 +4,4 @@
 TARGET="${TARGET}/`basename ${PWD}`"
 
 rsync -av --exclude=files --exclude=users ./build/ ${TARGET}
+rsync -av package.json ${TARGET}

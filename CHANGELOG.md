@@ -5,7 +5,12 @@
 🇺🇸 ©️1991 - 2020 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](https://play.DDgame.us) within the Google Cloud Platform (us-central1)
 
-### **08-Feb-2020** `v2.3.1`
+#### **21-Mar-2020** `v2.3.6`
+
+* bundled with Google Noto mono + emoji fonts
+* user trace files can be edited and copied over as save.json file, which will auto-update the Players table
+
+#### **08-Feb-2020** `v2.3.1`
 
 * xterm.js v4.4 release with Unicode 11 support
 * other outdated package updates
@@ -26,7 +31,7 @@
 
 ---
 
-## **--=:)) HISTORY ((:=--**
+## **--=:)) `HISTORY` ((:=--**
 
 > [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](http://play.DDgame.us) on an Intel Atom-powered Linux server using a Verizon FiOS 400mb Internet service
 
@@ -191,7 +196,7 @@
 
 ---
 
-### **RPGD**
+### **`RPGD`**
 
 > [developed](https://github.com/theflyingape/rpgd) using GCC on a SuperMicro Linux server with a Cox cable modem
 
@@ -432,7 +437,7 @@ SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
 
 ---
 
-### **Commodore Amiga**
+### **`Commodore Amiga`**
 
 #### **RPGBBS** *DELUXE*
 
@@ -696,7 +701,7 @@ SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
 
 ---
 
-### **The Rhode Warrior**
+### **`The Rhode Warrior`**
 
 > [developed](https://github.com/theflyingape/the-rhode-warrior) using GW-BASIC on an IBM XT MS-DOS PC with a Supra 2400 baud modem
 

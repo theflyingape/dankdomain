@@ -24,6 +24,7 @@ sudo find ${TARGET} -type d -exec chmod u+x,g+xs {} \;
 #sudo rsync -anv --delete --exclude node_modules --exclude files ./build/ ${TARGET}
 
 cd ${TARGET}
+rm package-lock.json
 env PYTHON=`which python2` npm install
 
 # xterm door service
