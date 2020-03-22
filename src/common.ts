@@ -79,8 +79,7 @@ module Common {
         'Riverrun', 'The Twins', 'The Wall', 'Winterfell', 'Volantis'
     ][dice(20) - 1]
     if (/^([1][0]|[1][2][7]|[1][7][2]|[1][9][2])[.]/.test(remote)
-        || !xvt.validator.isIP(remote)
-        || tty == 'telnet')
+        || !xvt.validator.isIP(remote))
         whereis += ' 🖥 '
     else try {
         const apikey = './etc/ipstack.key'
@@ -515,8 +514,8 @@ module Common {
         rings(profile = online) {
             for (let i in profile.user.rings) {
                 let ring = profile.user.rings[i]
-                xvt.out(xvt.cyan, player.emulation == 'XT' ? '⍥' : xvt.app.Empty, ' ', xvt.bright, ring, xvt.normal)
-                if (tty == 'web') xvt.out(' ', Ring.name[ring].emoji, '💍')
+                xvt.out(xvt.cyan, player.emulation == 'XT' ? '⍥' : xvt.app.Empty, ' ', xvt.bright, ring, xvt.normal, ' ')
+                if (tty == 'web') xvt.out(Ring.name[ring].emoji, '💍')
                 xvt.outln('ring:', xvt.reset, ' can ', Ring.name[ring].description)
             }
         }

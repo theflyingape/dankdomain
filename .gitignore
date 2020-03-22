@@ -12,6 +12,7 @@ build/files/auto-message.txt
 build/files/border.txt
 build/files/tavern
 build/files/user
+build/files/winners.txt
 build/users/.*
 build/users/arguments.json
 build/users/callers.json
