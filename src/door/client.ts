@@ -94,8 +94,7 @@ document.getElementById('lurker-list').onchange = (ev) => {
 	document.getElementById('terminal').hidden = false
 	term = new Terminal({
 		bellStyle: 'none', cursorBlink: false, scrollback: 0,
-		fontFamily: 'notoemoji,tty', fontSize: 22,
-		fontWeight: '400', fontWeightBold: '500',
+		fontFamily: 'notomono,notoemoji', fontSize: 22, fontWeight: '400', fontWeightBold: '500',
 		theme: {
 			foreground: '#a3a7af', background: '#23272f', cursor: '#e0c8e0',
 			black: '#000000', red: '#a00000', green: '#00a000', yellow: '#c8a000',

@@ -5,7 +5,7 @@
 🇺🇸 ©️1991 - 2020 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](https://play.DDgame.us) within the Google Cloud Platform (us-central1)
 
-#### **21-Mar-2020** `v2.3.6`
+### **21-Mar-2020** `v2.3.6`
 
 * bundled with Google Noto mono + emoji fonts
 * user trace files can be edited and copied over as save.json file, which will auto-update the Players table

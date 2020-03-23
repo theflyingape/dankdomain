@@ -1,6 +1,6 @@
 {
   "name": "dankdomain",
-  "version": "2.3.7",
+  "version": "2.4.0",
   "description": "Dank Domain: the return of Hack & Slash",
   "main": "ttymain",
   "publisher": "theflyingape",
@@ -8,7 +8,7 @@
     "linux"
   ],
   "engines": {
-    "node": ">=10.16"
+    "node": ">=12.13"
   },
   "scripts": {
     "build": "./build.sh",
