@@ -1784,6 +1784,7 @@ module Common {
                 `${player.handle} won on ${date2full(now().date)}  -  game took ${now().date - sysop.dob + 1} days\n`)
 
             loadUser(sysop)
+            sysop.who = player.handle
             sysop.dob = now().date + 1
             sysop.plays = 0
             saveUser(sysop)
@@ -2089,7 +2090,8 @@ module Common {
     }
 
     export function logoff() {
-        if (!reason) {
+        loadUser(sysop)
+        if (!reason && sysop.dob <= now().date) {
             if (access.roleplay) {
                 player.lasttime = now().time
                 PC.adjust('str', -1, -1, -1)
@@ -2105,6 +2107,12 @@ module Common {
                     news(`\tthe coward logged off ${time(player.lasttime)} (${reason})\n`, true)
                 access.roleplay = false
             }
+        }
+        else {
+            access.roleplay = false
+            loadUser(player)
+            player.lasttime = now().time
+            news(`\tonline player dropped ${time(player.lasttime)} (${reason})\n`, true)
         }
         if (xvt.validator.isNotEmpty(player.id)) {
             player.lasttime = now().time

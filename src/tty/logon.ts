@@ -213,8 +213,13 @@ module Logon {
             , xvt.red, xvt.app.RGradient, '((:=--\n')
         xvt.out(xvt.cyan, 'Visitor: ', xvt.bright, xvt.white, $.sysop.calls.toString()
             , xvt.reset, '  -  ')
-        if ($.now().date >= $.sysop.dob)
-            xvt.out(xvt.faint, $.sysop.plays.toString(), ' plays since this game started')
+        if ($.now().date >= $.sysop.dob) {
+            xvt.out(xvt.faint, $.sysop.plays.toString(), ' plays since ')
+            if ($.sysop.who)
+                xvt.out($.sysop.who, ' won ')
+            else
+                xvt.out('this game started')
+        }
         else
             xvt.out(xvt.bright, 'new game starts', xvt.cyan)
         xvt.outln(' ', $.date2full($.sysop.dob))
