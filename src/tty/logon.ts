@@ -216,7 +216,7 @@ module Logon {
         if ($.now().date >= $.sysop.dob) {
             xvt.out(xvt.faint, $.sysop.plays.toString(), ' plays since ')
             if ($.sysop.who)
-                xvt.out($.sysop.who, ' won ')
+                xvt.out($.sysop.who, ' won')
             else
                 xvt.out('this game started')
         }
