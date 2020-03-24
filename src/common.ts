@@ -2090,29 +2090,31 @@ module Common {
     }
 
     export function logoff() {
-        loadUser(sysop)
-        if (!reason && sysop.dob <= now().date) {
-            if (access.roleplay) {
-                player.lasttime = now().time
-                PC.adjust('str', -1, -1, -1)
-                PC.adjust('int', -1, -1, -1)
-                PC.adjust('dex', -1, -1, -1)
-                PC.adjust('cha', -1, -1, -1)
-                saveUser(player)
-                unlock(player.id)
+        if (!reason) {
+            loadUser(sysop)
+            if (sysop.dob <= now().date) {
+                if (access.roleplay) {
+                    player.lasttime = now().time
+                    PC.adjust('str', -1, -1, -1)
+                    PC.adjust('int', -1, -1, -1)
+                    PC.adjust('dex', -1, -1, -1)
+                    PC.adjust('cha', -1, -1, -1)
+                    saveUser(player)
+                    unlock(player.id)
+                }
+                reason = xvt.reason || 'mystery'
+                if (player && player.id) {
+                    if (run(`UPDATE Players SET coward=1 WHERE id='${player.id}'`).changes)
+                        news(`\tthe coward logged off ${time(player.lasttime)} (${reason})\n`, true)
+                    access.roleplay = false
+                }
             }
-            reason = xvt.reason || 'mystery'
-            if (player && player.id) {
-                if (run(`UPDATE Players SET coward=1 WHERE id='${player.id}'`).changes)
-                    news(`\tthe coward logged off ${time(player.lasttime)} (${reason})\n`, true)
+            else {  //  game was won
                 access.roleplay = false
+                loadUser(player)
+                player.lasttime = now().time
+                news(`\tonline player dropped by ${sysop.who} ${time(player.lasttime)} (${reason})\n`, true)
             }
-        }
-        else {
-            access.roleplay = false
-            loadUser(player)
-            player.lasttime = now().time
-            news(`\tonline player dropped ${time(player.lasttime)} (${reason})\n`, true)
         }
         if (xvt.validator.isNotEmpty(player.id)) {
             player.lasttime = now().time
