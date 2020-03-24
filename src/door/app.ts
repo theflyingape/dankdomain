@@ -381,7 +381,7 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
         loan: new coins(0)
       }
 
-      Object.assign(user, require(path))
+      Object.assign(user, JSON.parse(fs.readFileSync(path).toString()))
       if (user.bounty.value)
         user.bounty.value = user.bounty._value
       else
@@ -400,7 +400,7 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
         user.loan = new coins(user.loan.toString())
       fs.unlink(path, () => { })
 
-      console.log(`Player (${user.id}) updated: `, sqlite3.prepare(`UPDATE Players SET
+      let sql = `UPDATE Players SET
         handle='${user.handle}', name='${user.name}', email='${user.email}', password='${user.password}',
         dob=${user.dob}, sex='${user.sex}', joined=${user.joined}, expires=${user.expires}, lastdate=${user.lastdate},
         lasttime=${user.lasttime}, calls=${user.calls}, today=${user.today}, expert=${+user.expert}, emulation='${user.emulation}',
@@ -416,7 +416,8 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
         hull=${user.hull}, cannon=${user.cannon}, ram=${+user.ram}, wins=${user.wins}, immortal=${user.immortal},
         plays=${user.plays}, jl=${user.jl}, jw=${user.jw}, killed=${user.killed}, kills=${user.kills},
         retreats=${user.retreats}, steals=${user.steals}, tl=${user.tl}, tw=${user.tw}
-        WHERE id='${user.id}'`).run(user.rings.toString()).changes)
+        WHERE id='${user.id}'`
+      console.log(`Player (${user.id}) updated:`, sqlite3.prepare(sql).run(user.rings.toString()).changes)
     })
 
   try {
