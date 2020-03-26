@@ -15,14 +15,14 @@ process.chdir(__dirname)
 let host = process.argv.length > 2 ? process.argv[2] : 'play.ddgame.us'
 let port = process.argv.length > 3 ? parseInt(process.argv[3]) : 443
 let rows = process.argv.length > 4 ? parseInt(process.argv[4]) : 24
-const URL = `https://${host}:${port}/player/`
-let ssl
+let URL, ssl
 
 try {
     ssl = {
         key: fs.readFileSync(process.env.HOME + '/key.pem'), cert: fs.readFileSync(process.env.HOME + '/cert.pem'),
         requestCert: false, rejectUnauthorized: false
     }
+    URL = `https://${host}:${port}/player/`
 }
 catch (err) {
     console.log(err)
@@ -30,6 +30,7 @@ catch (err) {
 # generate a self-signed key in HOME: ${process.env.HOME}
 $ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem \\
   -subj "/C=US/ST=Rhode Island/L=Providence/O=Dank Domain/OU=Game/CN=localhost"`)
+    URL = `http://${host}:${port}/player/`
 }
 
 if (process.stdin.isTTY) process.stdin.setRawMode(true)

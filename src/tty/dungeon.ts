@@ -2965,7 +2965,7 @@ module Dungeon {
 		if (reveal) {
 			let m = room.monster.length > 4 ? 4 : room.monster.length
 			if (m) {
-				if (Monster[$.tty])
+				if ($.player.emulation !== 'XT' && Monster[$.tty])
 					icon += Monster[$.tty][m]
 				else {
 					if (identify) {
