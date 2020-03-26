@@ -173,14 +173,13 @@ interface naval {
 interface access {
     F?: string
     M?: string
+    bot?: boolean
     calls: number
     minutes: number
     promote: number
     verify: boolean
-    bulletin: boolean
     roleplay: boolean
     sysop?: boolean
-    weekend?: boolean
     emoji?: string
 }
 

@@ -1296,7 +1296,7 @@ module Common {
 
         if (player.novice) {
             let novice = <user>{ novice: true }
-            Object.assign(novice, require('./users/novice'))
+            Object.assign(novice, JSON.parse(fs.readFileSync('./users/novice.json').toString()))
             reroll(player, novice.pc)
             Object.assign(player, novice)
             player.coin = new coins(novice.coin.toString())
@@ -1541,7 +1541,7 @@ module Common {
         }
 
         if (level == 1) {
-            Object.assign(user, require('./users/reroll'))
+            Object.assign(user, JSON.parse(fs.readFileSync('./users/reroll.json').toString()))
             user.gender = user.sex
             user.coin = new coins(user.coin.toString())
             user.bank = new coins(user.bank.toString())
@@ -2245,7 +2245,7 @@ module Common {
     }
 
     let npc = <user>{}
-    Object.assign(npc, require('./users/sysop.json'))
+    Object.assign(npc, JSON.parse(fs.readFileSync('./users/sysop.json').toString()))
     rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`[${npc.handle}]`)
@@ -2290,7 +2290,7 @@ module Common {
 
     //  customize the Master of Whisperers NPC
     npc = <user>{}
-    Object.assign(npc, require('./users/barkeep.json'))
+    Object.assign(npc, JSON.parse(fs.readFileSync('./users/barkeep.json').toString()))
     rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
@@ -2302,7 +2302,7 @@ module Common {
     }
     //  customize the Master at Arms NPC
     npc = <user>{}
-    Object.assign(npc, require('./users/merchant.json'))
+    Object.assign(npc, JSON.parse(fs.readFileSync('./users/merchant.json').toString()))
     rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
@@ -2314,7 +2314,7 @@ module Common {
     }
     //  customize the Big Kahuna NPC
     npc = <user>{}
-    Object.assign(npc, require('./users/neptune.json'))
+    Object.assign(npc, JSON.parse(fs.readFileSync('./users/neptune.json').toString()))
     rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
@@ -2326,7 +2326,7 @@ module Common {
     }
     //  customize the Queen B NPC
     npc = <user>{}
-    Object.assign(npc, require('./users/seahag.json'))
+    Object.assign(npc, JSON.parse(fs.readFileSync('./users/seahag.json').toString()))
     rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
@@ -2338,7 +2338,7 @@ module Common {
     }
     //  customize the Master of Coin NPC
     npc = <user>{}
-    Object.assign(npc, require('./users/taxman.json'))
+    Object.assign(npc, JSON.parse(fs.readFileSync('./users/taxman.json').toString()))
     rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
@@ -2348,8 +2348,31 @@ module Common {
         Object.assign(taxman.user, npc)
         saveUser(taxman, true)
     }
+    //  instantiate bot(s)
+    let i = 0
+    while (++i) {
+        try {
+            npc = <user>{}
+            Object.assign(npc, JSON.parse(fs.readFileSync(`./users/bot${i}.json`).toString()))
+            rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
+            if (!rs.length) {
+                xvt.out(`\nbot #${i} - ${npc.handle}`)
+                let bot = <user>{}
+                Object.assign(bot, npc)
+                newkeys(bot)
+                bot.id = `_BOT${i}`
+                reroll(bot, bot.pc, bot.level)
+                Object.assign(bot, npc)
+                saveUser(bot, true)
+            }
+        }
+        catch (err) {
+            break
+        }
+    }
 
-    //  ah, that's where the newline comes from after CARRIER DETECTED
+
+    //  ah, this is where the newline comes from after CARRIER DETECTED
     xvt.outln()
 
 
