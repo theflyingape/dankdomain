@@ -196,9 +196,9 @@ interface armor {
 interface coins {
     value: number
     amount: string
-    carry(number?, boolean?): string
-    pieces(string?): string
-    pouch(number): string
+    carry?(number?, boolean?): string
+    pieces?(string?): string
+    pouch?(number): string
 }
 
 interface ddd {

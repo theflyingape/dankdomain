@@ -10,11 +10,11 @@ import http = require('http')
 import https = require('https')
 import pty = require('node-pty')
 import ws = require('ws')
-import { coins } from '../common'
+
 const { URL } = require('url')
 const DOOR = '/'
 
-process.title = 'door'
+process.title = 'ddgame'
 process.chdir(__dirname)
 console.log(`cwd: ${__dirname}`)
 
@@ -40,7 +40,7 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
 
   //  enable REST services
   server.listen(port, addr)
-  console.log(`Dank Domain Door on ${ssl ? 'https|wss' : 'http|ws'}://${addr}:${port}`)
+  console.log(`Dank Domain Game door on ${ssl ? 'https|wss' : 'http|ws'}://${addr}:${port}`)
 
   //  enable WebSocket endpoints
   const wsActive = new ws.Server({ noServer: true, path: `${DOOR}player/`, clientTracking: true })
@@ -367,11 +367,64 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
 
   chokidar.watch('../users/save.json')
     .on('add', (path, stats) => {
+      class coins {
+        constructor(money: string | number) {
+          if (typeof money == 'number') {
+            this.value = money
+          }
+          else {
+            this.amount = money
+          }
+        }
+
+        _value: number
+
+        get value(): number {
+          return this._value
+        }
+
+        set value(newValue: number) {
+          const MAX = (1e+18 - 1e+13)
+          this._value = newValue < MAX ? newValue
+            : newValue == Infinity ? 1 : MAX
+        }
+
+        set amount(newAmount: string) {
+          this.value = 0
+          let coins = 0
+
+          for (var i = 0; i < newAmount.length; i++) {
+            let c = newAmount.charAt(i)
+            switch (c) {
+              case 'c':
+                coins *= 1
+                break
+              case 's':
+                coins *= 1e+05
+                break
+              case 'g':
+                coins *= 1e+09
+                break
+              case 'p':
+                coins *= 1e+13
+                break
+            }
+            if (c >= '0' && c <= '9') {
+              coins *= 10
+              coins += +c
+            }
+            else {
+              this.value += coins
+              coins = 0
+            }
+          }
+        }
+      }
       interface save extends user {
-        bounty?: coins
-        coin?: coins
-        bank?: coins
-        loan?: coins
+        bounty?: coins | any
+        coin?: coins | any
+        bank?: coins | any
+        loan?: coins | any
       }
       let user: save = {
         id: '',

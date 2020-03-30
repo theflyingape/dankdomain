@@ -2,7 +2,7 @@
   "name": "dankdomain",
   "version": "2.4.2",
   "description": "Dank Domain: the return of Hack & Slash",
-  "main": "ttymain",
+  "main": "telnet",
   "publisher": "theflyingape",
   "os": [
     "linux"
@@ -15,6 +15,7 @@
     "debug": "npm run build && ./debug.sh",
     "game": "node ./build/telnet",
     "mame": "./build/mame.sh",
+    "start": "node ./build/door/app",
     "test": "./build/tty.sh"
   },
   "repository": {

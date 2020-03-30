@@ -583,10 +583,10 @@ module Common {
         }
 
         set value(newValue: number) {
+            const MAX = (1e+18 - 1e+13)
             //  cap coin accruals at 99999p, because the needs of the many...
-            this._value = newValue < (1e+18 - 1e+13) ? newValue
-                : newValue == Infinity ? 1
-                    : dice(100)
+            this._value = newValue < MAX ? newValue
+                : newValue == Infinity ? 1 : MAX
         }
 
         //  top valued coin bag (+ a lesser)
