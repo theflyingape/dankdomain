@@ -13,7 +13,7 @@ module Logon {
         , xvt.normal, ' emulation ', xvt.faint, 'enabled\n')
 
     $.loadUser($.sysop)
-    if ($.sysop.lastdate != $.now().date || ($.sysop.lasttime < 1200 && $.now().time >= 1200)) {
+    if ($.sysop.lastdate != $.now().date) {
         $.newDay()
         $.run(`UPDATE Players SET today=0 WHERE id NOT GLOB '_*'`)
     }
@@ -181,6 +181,7 @@ module Logon {
             }
         }
 
+        //  did midnight or noon crossed since last visit?
         if ($.player.lastdate != $.now().date || ($.player.lasttime < 1200 && $.now().time >= 1200))
             $.player.today = 0
 
