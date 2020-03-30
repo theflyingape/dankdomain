@@ -1355,14 +1355,14 @@ module Battle {
                         if (rpc.user.magic > 2 && rpc.user.toAC > 0)
                             rpc.user.toAC--
                         rpc.toAC--
-                        xvt.outln(p1.His, isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' loses some of its effectiveness')
+                        xvt.outln(p1.His, isNaN(+rpc.user.armor) ? $.PC.armor(rpc) : 'defense', ' loses some of its effectiveness')
                     }
                     else {
                         $.sound('shield')
-                        xvt.outln('A magical field shimmers around ', rpc.user.armor ? p1.his + rpc.user.armor : p1.him)
                         if (rpc.user.magic > 2 && rpc.user.toAC >= 0)
                             rpc.user.toAC++
                         rpc.toAC++
+                        xvt.outln('A magical field shimmers around ', isNaN(+rpc.user.armor) ? p1.his + $.PC.armor(rpc) : p1.him)
                     }
                     if (-rpc.user.toAC >= rpc.armor.ac || -(rpc.user.toAC + rpc.toAC) >= rpc.armor.ac) {
                         xvt.outln(p1.His, isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' crumbles!')
@@ -1378,17 +1378,17 @@ module Battle {
 
                 case 6:
                     if (backfire) {
-                        xvt.outln(p1.His, rpc.user.weapon ? rpc.user.weapon : 'attack', ' loses some of its effectiveness')
                         if (rpc.user.magic > 2 && rpc.user.toWC > 0)
                             rpc.user.toWC--
                         rpc.toWC--
+                        xvt.outln(p1.His, isNaN(+rpc.user.weapon) ? $.PC.weapon(rpc) : 'attack', ' loses some of its effectiveness')
                     }
                     else {
                         $.sound('hone')
-                        xvt.outln(p1.His, rpc.user.weapon ? rpc.user.weapon : 'attack', ' glows with magical sharpness')
                         if (rpc.user.magic > 2 && rpc.user.toWC >= 0)
                             rpc.user.toWC++
                         rpc.toWC++
+                        xvt.outln(p1.His, isNaN(+rpc.user.weapon) ? $.PC.weapon(rpc) : 'attack', ' glows with magical sharpness')
                     }
                     if (-rpc.user.toWC >= rpc.weapon.wc || -(rpc.user.toWC + rpc.toWC) >= rpc.weapon.wc) {
                         xvt.outln(p1.His, rpc.user.weapon ? rpc.user.weapon : 'attack', ' crumbles!')
@@ -1715,7 +1715,7 @@ module Battle {
                         xvt.waste(600)
                         rpc.toAC -= $.dice(rpc.armor.ac / 5 + 1)
                         rpc.user.toAC -= $.dice(rpc.armor.ac / 10 + 1)
-                        xvt.outln(xvt.bright, caster, ' ', $.what(rpc, 'damage'), 'own ', isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense'
+                        xvt.outln(xvt.bright, caster, ' ', $.what(rpc, 'damage'), 'own ', isNaN(+rpc.user.armor) ? $.PC.armor(rpc) : 'defense'
                             , $.buff(rpc.user.toAC, rpc.toAC), '!')
                         xvt.waste(400)
                         if (-rpc.user.toAC >= rpc.armor.ac || -(rpc.user.toAC + rpc.toAC) >= rpc.armor.ac) {
@@ -1729,7 +1729,7 @@ module Battle {
                         xvt.waste(600)
                         nme.toAC -= $.dice(nme.armor.ac / 5 + 1)
                         nme.user.toAC -= $.dice(nme.armor.ac / 10 + 1)
-                        xvt.outln(xvt.bright, p2.his, isNaN(+nme.user.armor) ? nme.user.armor + ' is damaged' : 'defense lessens'
+                        xvt.outln(xvt.bright, p2.his, isNaN(+nme.user.armor) ? $.PC.armor(nme) + ' is damaged' : 'defense lessens'
                             , $.buff(nme.user.toAC, nme.toAC), '!')
                         xvt.waste(400)
                         if (-nme.user.toAC >= nme.armor.ac || -(nme.user.toAC + nme.toAC) >= nme.armor.ac) {
@@ -1747,7 +1747,7 @@ module Battle {
                     if (backfire) {
                         rpc.toWC -= $.dice(rpc.weapon.wc / 5 + 1)
                         rpc.user.toWC -= $.dice(rpc.weapon.wc / 10 + 1)
-                        xvt.outln(xvt.bright, caster, ' ', $.what(rpc, 'damage'), 'own ', isNaN(+rpc.user.weapon) ? rpc.user.weapon : 'attack'
+                        xvt.outln(xvt.bright, caster, ' ', $.what(rpc, 'damage'), 'own ', isNaN(+rpc.user.weapon) ? $.PC.weapon(rpc) : 'attack'
                             , $.buff(rpc.user.toWC, rpc.toWC), '!')
                         xvt.waste(400)
                         if (-rpc.user.toWC >= rpc.weapon.wc || -(rpc.user.toWC + rpc.toWC) >= rpc.weapon.wc) {
@@ -1759,7 +1759,7 @@ module Battle {
                     else {
                         nme.toWC -= $.dice(nme.weapon.wc / 5 + 1)
                         nme.user.toWC -= $.dice(nme.weapon.wc / 10 + 1)
-                        xvt.outln(xvt.bright, caster, ' ', $.what(rpc, 'damage'), p2.his, isNaN(+nme.user.weapon) ? nme.user.weapon : 'attack'
+                        xvt.outln(xvt.bright, caster, ' ', $.what(rpc, 'damage'), p2.his, isNaN(+nme.user.weapon) ? $.PC.armor(nme) : 'attack'
                             , $.buff(nme.user.toWC, nme.toWC), '!')
                         xvt.waste(400)
                         if (-nme.user.toWC >= nme.weapon.wc || -(nme.user.toWC + nme.toWC) >= nme.weapon.wc) {

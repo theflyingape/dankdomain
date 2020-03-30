@@ -642,7 +642,7 @@ module Dungeon {
 						if ($.dice(120) < party[m].dex)
 							xvt.outln(party[m].user.handle, xvt.faint, ' manages to catch the edge and stop from falling.')
 						else {
-							xvt.outln(xvt.yellow, party[m].user.handle
+							xvt.outln(party[m].user.handle, xvt.reset
 								, xvt.bright, ' falls'
 								, xvt.normal, ' down a'
 								, xvt.faint, ' level!')
