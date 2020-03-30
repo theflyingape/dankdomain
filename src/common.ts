@@ -160,7 +160,7 @@ module Common {
             rpc[ability] = this.ability(rpc[ability], rt, rpc.user[`max${ability}`], mod)
         }
 
-        card(dd = 'None'): character {
+        card(dd = 'Spirit'): character {
             let rpc = <character>{}
             for (let type in this.name) {
                 if (this.name[type][dd]) {
@@ -222,7 +222,7 @@ module Common {
                     }
             }
             else {
-                let i = dice(this.total - 2)    //  less None and Novice
+                let i = dice(this.total - 2)    //  less Spirit and Novice
                 let n = i + 2
                 for (type in this.name) {
                     for (let dd in this.name[type])

@@ -13,7 +13,7 @@ module Logon {
         , xvt.normal, ' emulation ', xvt.faint, 'enabled\n')
 
     $.loadUser($.sysop)
-    if ($.sysop.lastdate != $.now().date)
+    if ($.sysop.lastdate != $.now().date || ($.sysop.lasttime < 1200 && $.now().time >= 1200))
         $.newDay()
 
     $.cat('logon')
@@ -197,6 +197,7 @@ module Logon {
             $.sysop.email = $.player.email
         }
         if ($.now().date >= $.sysop.dob) {
+            $.sysop.lasttime = $.now().time
             $.sysop.calls++
             $.sysop.today++
             if ($.player.today <= $.access.calls && $.access.roleplay)
@@ -320,14 +321,14 @@ module Logon {
                 if ($.player.blessed) {
                     if (!$.Ring.have($.player.rings, $.Ring.theOne) && !$.access.sysop) {
                         $.player.blessed = ''
-                        xvt.out(xvt.bright, xvt.yellow, '\nYour shining aura ', xvt.normal, 'left ', xvt.faint, 'you.')
+                        xvt.out(xvt.bright, xvt.yellow, '\nYour shining aura ', xvt.normal, 'fades ', xvt.faint, 'away.')
                         $.activate($.online)
                     }
                 }
                 if ($.player.cursed) {
                     if (!$.player.coward || $.Ring.have($.player.rings, $.Ring.theOne) || $.access.sysop) {
                         $.player.cursed = ''
-                        xvt.out(xvt.bright, xvt.black, '\nThe dark cloud has left you.')
+                        xvt.out(xvt.bright, xvt.black, '\nThe dark cloud has been lifted.')
                         $.activate($.online)
                     }
                 }
@@ -338,12 +339,14 @@ module Logon {
                 xvt.out(xvt.reset, '\n', xvt.magenta, 'Helpful: ', xvt.bright, `Your poor jousting stats have been reset.`)
                 $.player.jl = 0
                 $.player.jw = 0
+                $.sound('shimmer', 22)
             }
             if ($.access.sysop) {
                 let ring = $.Ring.power([], null, 'joust')
                 if ($.Ring.wear($.player.rings, ring.name)) {
                     $.getRing('win', ring.name)
                     $.saveRing(ring.name, $.player.id, $.player.rings)
+                    $.sound('promote', 22)
                 }
             }
             xvt.outln()
@@ -356,7 +359,7 @@ module Logon {
             Object.assign($, play)
             $.music('logon')
 
-            if ($.player.pc == 'None') {
+            if ($.player.pc == Object.keys($.Access.name)[0]) {
                 if ($.player.novice) {
                     xvt.outln()
                     xvt.out(xvt.bright)

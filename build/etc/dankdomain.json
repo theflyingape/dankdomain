@@ -1,6 +1,6 @@
 {
     "player": {
-        "None": {
+        "Spirit": {
             "melee":0, "backstab":0, "poison":0, "magic":0, "steal":0,
             "baseStr":50, "baseInt":50, "baseDex":50, "baseCha":50,
             "toStr":0, "toInt":0, "toDex":0, "toCha":0,

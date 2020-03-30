@@ -1,8 +1,8 @@
-This game runs on in the Google Cloud Platform using 1 shared vCPU core
+This game runs on the Google Cloud Platform, using 1 shared vCPU core
 with 0.6gb RAM out of Iowa (us-central1).
 
-The game was re-imagined using Node.js and the TypeScript transpiler.
-The portal door uses the latest xterm.js with a node-pty implementation.
+The game was re-imagined using Node.js with the TypeScript transpiler.
+The portal door uses the Xterm.js emulator with a node-pty implementation.
 The telnet service allows for a classic, "old school" gaming experience.
 
 Source: https://github.com/theflyingape/dankdomain

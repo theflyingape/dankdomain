@@ -1,10 +1,8 @@
-[mDate: [1;33mSat 21-Dec-2019 12:00pm
-[mFrom: [1;33mThe Flying Ape
+[mDate: [1;33mMon 30-Mar-2020  8:10am
+[mFrom: [1;33mMaester
 [1;37m
-After moving into Google Cloud Platform, a faulty script erased all users.
-I could restore an older one, but I think reinitializing the game board is
-a good idea.
-
-Steps have been taken to avoid this particular DevOps error again.  :/
+While Rhode Island is under this COVID-19 executive order, the game is
+resetting your allowed calls, twice per day: 12:00am and 12:00pm.  To
+minimize burn-out, minutes per visit have been reduced -- better hurry!
 
 Happy hunting!
