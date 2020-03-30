@@ -7,8 +7,8 @@ import $ = require('../common')
 import xvt = require('xvt')
 import { sprintf } from 'sprintf-js'
 
-
 module Gambling {
+
 	let casino: choices = {
 		'B': { description: 'Blackjack' },
 		'C': { description: 'Craps' },

@@ -9,9 +9,8 @@ import nodemailer = require('nodemailer')
 import smtpTransport = require('nodemailer-smtp-transport')
 import xvt = require('xvt')
 
-
 module Email {
-    //let ematch: RegExp = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
+
     let echo = true
 
     $.action('freetext')

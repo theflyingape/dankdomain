@@ -7,8 +7,8 @@ import $ = require('../common')
 import Battle = require('../battle')
 import xvt = require('xvt')
 
-
 module Taxman {
+
     let irs: active[]
     let tax: coins = new $.coins(0)
     $.loadUser($.taxman)

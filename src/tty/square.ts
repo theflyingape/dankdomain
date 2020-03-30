@@ -8,8 +8,8 @@ import xvt = require('xvt')
 import Battle = require('../battle')
 import { sprintf } from 'sprintf-js'
 
-
 module Square {
+
 	let square: choices = {
 		'A': { description: 'Armoury' },
 		'W': { description: 'Weapons Shoppe' },

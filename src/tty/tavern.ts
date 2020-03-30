@@ -10,8 +10,8 @@ import Battle = require('../battle')
 import Taxman = require('./taxman')
 import { sprintf } from 'sprintf-js'
 
-
 module Tavern {
+
     let tavern: choices = {
         'B': { description: 'Brawl another user' },
         'E': { description: 'Eavesdrop on the arguments' },

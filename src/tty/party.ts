@@ -9,8 +9,8 @@ import Battle = require('../battle')
 import { sprintf } from 'sprintf-js'
 import { titleCase } from 'title-case'
 
-
 module Party {
+
     const le = [xvt.app.Empty, '>', '<', '(', ')', '+', '*', ']']
     const re = [xvt.app.Empty, '<', '>', ')', '(', '+', '*', '[']
     const tb = [xvt.app.Empty, '-', '=', '~', ':', '+', '*', 'X']

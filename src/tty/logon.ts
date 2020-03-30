@@ -7,7 +7,6 @@ import $ = require('../common')
 import fs = require('fs')
 import xvt = require('xvt')
 
-
 module Logon {
 
     xvt.outln(xvt.bright, xvt.cyan, xvt.app.emulation

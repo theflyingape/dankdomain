@@ -8,7 +8,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="preload" href="notoemoji.woff2" as="font" type="font/woff2" crossorigin="anonymous">
   <link rel="preload" href="notomono.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="vt323.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="vt220.woff2" as="font" type="font/woff2" crossorigin="anonymous">
   <meta charset="UTF-8">
   <meta name="application-name" content="dankdomain">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -31,7 +31,7 @@
 
     @font-face {
       font-family: 'tty';
-      src: url('vt323.woff2') format('woff2');
+      src: url('vt220.woff2') format('woff2');
     }
 
     html {
@@ -51,6 +51,8 @@
       border: 0;
       top: 0;
       left: 0;
+      min-height: 400px;
+      min-width: 640px;
       width: 70%;
       height: 100%;
       position: fixed;

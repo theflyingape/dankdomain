@@ -9,8 +9,8 @@ import Battle = require('../battle')
 import Email = require('../email')
 import { sprintf } from 'sprintf-js'
 
-
 module Sysop {
+
     let sysop: choices = {
         'B': { description: 'Blessed/Cursed and Cowards' },
         'D': { description: 'Deep Dank Dungeon' },

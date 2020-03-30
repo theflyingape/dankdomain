@@ -5,7 +5,6 @@
 
 import xvt = require('xvt')
 
-
 module Items {
 
     export class Access {

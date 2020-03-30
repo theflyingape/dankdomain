@@ -1,3 +1,5 @@
+//  the power TypeScript provides to simplify it all
+
 type ABILITY = string | 'str' | 'int' | 'dex' | 'cha'
 type POWER = string | 'buff' | 'cast' | 'degrade' | 'hp' | 'identify' | 'initiate' | 'joust' | 'melee' | 'resist' | 'resurrect' | 'ring' | 'skip' | 'sp' | 'steal' | 'taxes' | 'teleport' | 'upgrade'
 type POWTO = 'ability' | 'magic' | 'melee' | 'pc' | 'spell'

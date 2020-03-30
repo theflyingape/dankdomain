@@ -8,8 +8,8 @@ import fs = require('fs')
 import Battle = require('../battle')
 import xvt = require('xvt')
 
-
 module Dungeon {
+
 	let fini: Function
 	let monsters: monster = require('../etc/dungeon.json')
 	let party: active[]
@@ -642,7 +642,10 @@ module Dungeon {
 						if ($.dice(120) < party[m].dex)
 							xvt.outln(party[m].user.handle, xvt.faint, ' manages to catch the edge and stop from falling.')
 						else {
-							xvt.outln(xvt.yellow, party[m].user.handle, xvt.bright, ' falls down a level!')
+							xvt.outln(xvt.yellow, party[m].user.handle
+								, xvt.bright, ' falls'
+								, xvt.normal, ' down a'
+								, xvt.faint, ' level!')
 							if (u) party.splice(m, 1)
 						}
 						xvt.waste(300)

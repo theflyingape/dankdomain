@@ -6,8 +6,8 @@
 import $ = require('../common')
 import xvt = require('xvt')
 
-
 module NewUser {
+
 	let editmode: boolean = false
 
 	$.music('newuser')

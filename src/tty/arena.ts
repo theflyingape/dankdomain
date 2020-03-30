@@ -8,8 +8,8 @@ import xvt = require('xvt')
 import Battle = require('../battle')
 import { sprintf } from 'sprintf-js'
 
-
 module Arena {
+
 	let monsters: monster[] = require('../etc/arena.json')
 	let arena: choices = {
 		'U': { description: 'User fights' },

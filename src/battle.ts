@@ -7,8 +7,8 @@ import $ = require('./common')
 import xvt = require('xvt')
 import { sprintf } from 'sprintf-js'
 
-
 module Battle {
+
     export let retreat: boolean
     export let teleported: boolean
 

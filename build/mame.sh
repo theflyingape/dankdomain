@@ -1,4 +1,8 @@
 #!/bin/sh
+#
+# going old school with this VT240 terminal emulator
+# its serial port bridges to a socat process'
+# pty port into dankdomain ...
 
 # set this to override the default to my door
 URL=

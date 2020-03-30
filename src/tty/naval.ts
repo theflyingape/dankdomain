@@ -8,8 +8,8 @@ import xvt = require('xvt')
 import Battle = require('../battle')
 import { sprintf } from 'sprintf-js'
 
-
 module Naval {
+
 	let mon: number
 	let monsters: naval[] = require('../etc/naval.json')
 	let sm: naval

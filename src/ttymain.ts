@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  👑 Dank Domain: the return of Hack & Slash                               *
+ *  👑 Dank Domain: the return of Hack & Slash    [ https://www.DDgame.us ]  *
  *  🖥 TTY MAIN authored by: Robert Hurst <theflyingape@gmail.com>           *
  *  💫 in memory of Ronald Hurst, aka, Imagination and Nobody [ 1939-2016 ]  *
  *                                                                           *
@@ -17,9 +17,9 @@ process.chdir(__dirname)
 
 import xvt = require('xvt')
 
-
 //  classic terminal user interface entry point
 module ttyMain {
+
     xvt.sessionAllowed = 150
     xvt.defaultTimeout = 100
     xvt.pollingMS = 20

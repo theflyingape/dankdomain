@@ -9,8 +9,8 @@ import Items = require('./items')
 import { sprintf } from 'sprintf-js'
 import { titleCase } from 'title-case'
 
-
 module Common {
+
     //  mode of operation
     export let from = 'Common'
     export let tty: TTY = 'telnet'

@@ -7,8 +7,8 @@ import $ = require('../common')
 import xvt = require('xvt')
 import { sprintf } from 'sprintf-js'
 
-
 module Hall {
+
     let hall: choices = {
         'C': { description: 'Class Champions' },
         'H': { description: 'Hall of Heroes' },

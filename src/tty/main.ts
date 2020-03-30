@@ -9,8 +9,8 @@ import xvt = require('xvt')
 import Battle = require('../battle')
 import { sprintf } from 'sprintf-js'
 
-
 module Main {
+
     let mainmenu: choices = {
         '@': { description: 'Sysop' },
         'A': { description: 'Arena: Fight and Joust' },
