@@ -12,6 +12,7 @@ import { titleCase } from 'title-case'
 module Common {
 
     //  mode of operation
+    export const got = require('got')
     export let from = 'Common'
     export let tty: TTY = 'telnet'
     switch (xvt.app.emulation) {
@@ -85,7 +86,6 @@ module Common {
         const apikey = './etc/ipstack.key'
         fs.accessSync(apikey, fs.constants.F_OK)
         let key = fs.readFileSync(apikey).toString()
-        const got = require('got')
         got(`http://api.ipstack.com/${remote}?access_key=${key}`).then(response => {
             whereis = ''
             let result = ''
@@ -2041,7 +2041,7 @@ module Common {
             xvt.out('\n', xvt.bright, xvt.green, hint, xvt.reset)
 
         //  insert any wall messages here
-        if (tty == 'web') xvt.out('\x06')
+        xvt.out('\x06')
 
         return xvt.attr(fore, '[', xvt.bright, xvt.yellow, back ? titlecase(title) : 'Iron Bank', xvt.normal, fore, ']'
             , xvt.faint, ' Option '
@@ -2201,7 +2201,7 @@ module Common {
     }
 
     export function wall(msg: string) {
-        if (tty == 'web') xvt.out(`@wall(${player.handle} ${msg})`)
+        xvt.out(`@wall(${player.handle} ${msg})`)
     }
 
     /***********

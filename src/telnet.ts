@@ -8,6 +8,7 @@
 import dns = require('dns')
 import fs = require('fs')
 import ws = require('ws')
+const got = require('got')
 
 process.title = 'ddclient'
 process.chdir(__dirname)
@@ -42,7 +43,7 @@ dns.lookup(host, (err, addr, family) => {
         const app = new Promise<number>((resolve, reject) => {
             if (resolve)
                 try {
-                    require('got')(URL + `?rows=${rows}&tty=VT`, Object.assign({ method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME } }, ssl))
+                    got(URL + `?rows=${rows}&tty=VT`, Object.assign({ method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME } }, ssl))
                         .then(response => {
                             resolve(response.body)
                         }).catch(err => {
@@ -67,7 +68,28 @@ dns.lookup(host, (err, addr, family) => {
                 const wss = new ws(URL + `?pid=${pid}`, ssl)
 
                 wss.onmessage = (ev) => {
-                    process.stdout.write(ev.data.toString('ascii'))
+                    let data = ev.data.toString('ascii')
+                    let copy = data + ''
+                    // find any occurrences of @func(data), and for each: call func(data)
+                    const re = '[@](?:(action|animated|profile|play|title|tune|wall)[(](.+?)[)])'
+                    let search = new RegExp(re, 'g'); let replace = new RegExp(re)
+                    let match: RegExpMatchArray
+                    while (match = search.exec(copy)) {
+                        let x = replace.exec(data)
+                        let s = x.index, e = s + x[0].length
+                        data = data.substr(0, s) + data.substr(e)
+                        eval(`${match[1]}(match[2])`)
+                    }
+                    process.stdout.write(data)
+
+                    function wall(msg) {
+                        try {
+                            got(`${URL}${pid}/wall?msg=${msg}`, Object.assign({ method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME } }, ssl))
+                        }
+                        catch (err) {
+                            console.log(err.response)
+                        }
+                    }
                 }
 
                 wss.onopen = () => {

@@ -351,7 +351,7 @@ module Dungeon {
 		}
 
 		//  insert any wall messages here
-		if ($.tty == 'web') xvt.out('\x06')
+		xvt.out('\x06')
 		if ($.reason) {
 			DL.map = `Marauder's map`
 			drawHero()
