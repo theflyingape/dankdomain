@@ -2056,13 +2056,17 @@ module Common {
                     if (xvt.validator.isNotEmpty(xvt.entry) && xvt.entry.length == 2) xvt.app.emulation = <xvt.emulator>xvt.entry.toUpperCase()
                     player.emulation = xvt.app.emulation
                     xvt.outln('\n\n', xvt.reset, xvt.magenta, xvt.app.LGradient, xvt.reverse, 'BANNER', xvt.noreverse, xvt.app.RGradient)
-                    xvt.outln(xvt.red, 'R', xvt.green, 'G', xvt.blue, 'B', xvt.reset, xvt.bright, ' bold ', xvt.normal, 'normal', xvt.faint, ' dim')
+                    xvt.outln(xvt.red, 'R', xvt.green, 'G', xvt.blue, 'B', xvt.reset, xvt.bright, ' bold ', xvt.normal, 'normal', xvt.blink, ' flash ', xvt.noblink, xvt.faint, 'dim')
+                    xvt.out(xvt.yellow, 'Cleric: ', xvt.bright, { VT: '\x1B(0\x7D\x1B(B', PC: '\x9C', XT: '\u00A3', dumb: '$' }[player.emulation]
+                        , xvt.normal, xvt.magenta, '  Teleport: ', xvt.bright, { VT: '\x1B(0\x67\x1B(B', PC: '\xF1', XT: '\u00B1', dumb: '%' }[player.emulation])
                     online.altered = true
                     if (player.emulation == 'XT') {
+                        xvt.outln(xvt.black, '  Bat: 🦇')
                         sound('yahoo', 20)
                         cb()
                         return
                     }
+                    xvt.outln()
                     xvt.waste(2000)
                     beep()
                     for (let rows = player.rows + 5; rows > 1; rows--)
@@ -2085,7 +2089,7 @@ module Common {
         xvt.outln('\n', xvt.cyan, 'Which emulation / character encoding are you using?')
         xvt.out(bracket('VT'), ' classic VT terminal with DEC drawing (telnet b&w)')
         xvt.out(bracket('PC'), ' former ANSI color with IBM CP850 encoding (telnet color)')
-        xvt.outln(bracket('XT'), ' modern ANSI color with UTF-8 encoding (browser multimedia)')
+        xvt.outln(bracket('XT'), ' modern ANSI color with UTF-8 encoding & emojis (browser multimedia)')
         xvt.app.focus = 'term'
     }
 
