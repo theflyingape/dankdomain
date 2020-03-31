@@ -2143,7 +2143,7 @@ module Common {
                 if (player.plays) sound(online.hull < 1 ? 'comeagain' : 'invite')
                 PC.profile(online)
             }
-            if (tty == 'web') xvt.outln('\x06')
+            xvt.outln('\x06')
             xvt.outln(xvt.off, 'Goodbye, please play again!  Also visit:')
             xvt.waste(750)
             xvt.out(xvt.cyan, '  ___                               ___  \n')
