@@ -181,7 +181,7 @@ module Logon {
             }
         }
 
-        //  did midnight or noon crossed since last visit?
+        //  did midnight or noon cross since last visit?
         if ($.player.lastdate != $.now().date || ($.player.lasttime < 1200 && $.now().time >= 1200))
             $.player.today = 0
 

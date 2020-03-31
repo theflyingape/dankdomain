@@ -2117,8 +2117,11 @@ module Common {
             }
         }
         if (xvt.validator.isNotEmpty(player.id)) {
-            player.lasttime = now().time
             if (access.roleplay) {
+                //  did midnight or noon cross since last visit?
+                if (player.lastdate != now().date || (player.lasttime < 1200 && now().time >= 1200))
+                    player.today = 0
+                player.lasttime = now().time
                 saveUser(player, false, true)
                 news(`\tlogged off ${time(player.lasttime)} as a level ${player.level} ${player.pc}`)
                 news(`\t(${reason})\n`, true)
