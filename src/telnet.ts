@@ -82,6 +82,12 @@ dns.lookup(host, (err, addr, family) => {
                     }
                     process.stdout.write(data)
 
+                    function action(menu) { }
+                    function animated(effect) { }
+                    function play(fileName) { }
+                    function profile(panel) { }
+                    function title(name) { }
+                    function tune(fileName) { }
                     function wall(msg) {
                         try {
                             got(`${URL}${pid}/wall?msg=${msg}`, Object.assign({ method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME } }, ssl))

@@ -362,7 +362,7 @@ module Logon {
             Object.assign($, play)
             $.music('logon')
 
-            if ($.player.pc == Object.keys($.Access.name)[0]) {
+            if ($.player.pc == Object.keys($.PC.name['player'])[0]) {
                 if ($.player.novice) {
                     xvt.outln()
                     xvt.out(xvt.bright)
