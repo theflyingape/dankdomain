@@ -1793,14 +1793,20 @@ module Battle {
                     break
 
                 case 20:
-                    xvt.out(xvt.cyan, 'A glowing '
-                        , xvt.lcyan, xvt.app.LGradient
-                        , xvt.bright, xvt.lblack, xvt.lCyan, 'orb', xvt.reset
-                        , xvt.lcyan, xvt.app.RGradient
-                        , xvt.cyan, ' radiates '
-                        , xvt.faint, 'above ', backfire ? p2.him : p1.him, xvt.white, '... ')
-                    $.sound('mana', 8)
-                    xvt.outln()
+                    xvt.out(xvt.cyan, 'A glowing ', xvt.faint
+                        , '   ', xvt.app.LGradient, xvt.app.RGradient, '\b'.repeat(11), -450)
+                    xvt.out('  '
+                        , xvt.app.LGradient, xvt.lCyan, ' ', xvt.Black, xvt.app.RGradient, '\b'.repeat(11), -300)
+                    xvt.out(' '
+                        , xvt.app.LGradient, xvt.lCyan, '  ', xvt.Black, xvt.app.RGradient, '\b'.repeat(11), -150)
+                    xvt.out(xvt.normal
+                        , xvt.app.LGradient, xvt.lCyan, ' O ', xvt.Black, xvt.app.RGradient, '\b'.repeat(11), -100)
+                    xvt.out(xvt.lcyan, xvt.app.LGradient
+                        , xvt.lblack, xvt.lCyan, 'orb', xvt.Black
+                        , xvt.lcyan, xvt.app.RGradient)
+                    $.sound('mana')
+                    xvt.outln(xvt.cyan, ' radiates ', xvt.faint, 'above ', backfire ? p2.him : p1.him
+                        , xvt.white, '... ', -200)
 
                     let mana = 0
                     if (nme.user.magic < 2) {
