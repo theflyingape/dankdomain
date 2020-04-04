@@ -79,9 +79,8 @@ module Battle {
                 $.PC.adjust('cha', -2, -1, -1)
             }
             $.beep()
-            xvt.outln(); xvt.waste(500)
-            Battle.yourstats(); xvt.waste(500)
-            xvt.outln(); xvt.waste(500)
+            Battle.yourstats()
+            xvt.outln(-1000)
         }
 
         if ($.from == 'Tavern') {
@@ -98,8 +97,7 @@ module Battle {
                 xvt.outln(`He picks up your ${$.barkeep.user.weapon} and triumphantly waves it around to`)
                 xvt.outln(`the cheering crowd.  He struts toward the mantelpiece to hang his new trophy.\n`)
                 $.sound('winner', 32)
-                xvt.outln('  ', xvt.bright, xvt.green, '"Drinks are on the house!"')
-                xvt.waste(2250)
+                xvt.outln('  ', xvt.bright, xvt.green, '"Drinks are on the house!"', -2250)
             }
             else {
                 $.music('barkeep')
@@ -108,8 +106,7 @@ module Battle {
                 WHERE id='${$.barkeep.user.id}'`)
                 $.news(`\tdefeated ${$.barkeep.user.handle}`)
                 $.wall(`defeated ${$.barkeep.user.handle}`)
-                xvt.waste(1234)
-                $.sound('ko')
+                $.sound('ko', 12)
                 if ($.player.cha > 49) $.PC.adjust('cha', -22, -20, -2)
                 $.player.coward = false
             }
@@ -231,8 +228,7 @@ module Battle {
 
         if (!round.length) {
             if (volley > 1) {
-                xvt.outln()
-                xvt.waste($.online.hp > 0 ? 80 : 800)
+                xvt.outln($.online.hp > 0 ? -80 : -800)
                 xvt.outln('    -=', $.bracket('*', false), '=-')
             }
 
@@ -296,8 +292,8 @@ module Battle {
                 if (w.length > 1) w.push('')
                 xvt.outln(xvt.faint, color, `${$.player.emulation == 'XT' ? '≫' : '>>'} `, xvt.normal
                     , p2.You, xvt.bright, $.what(enemy, w[0]), w.slice(1).join(' ')
-                    , xvt.normal, p1.you, xvt.faint, color, ` ${$.player.emulation == 'XT' ? '≪' : '<<'}`)
-                xvt.waste(400)
+                    , xvt.normal, p1.you, xvt.faint, color, ` ${$.player.emulation == 'XT' ? '≪' : '<<'}`
+                    , -400)
                 next()
                 return
             }
@@ -338,16 +334,15 @@ module Battle {
                             trip += 5 * (alive[0] - alive[1])
                             trip = trip < 5 ? 5 : trip > 95 ? 95 : trip
                             if ($.dice(100) > trip) {
+                                $.beep()
                                 let who = (enemy.user.gender == 'I' ? 'The ' : '') + enemy.user.handle
-                                xvt.outln(xvt.lcyan, [
+                                xvt.outln(xvt.cyan, [
                                     'You trip and fail in your attempt to retreat.',
                                     `${who} pulls you back into the battle.`,
-                                    `${who} prevents your retreat and says,\n  ${xvt.attr(xvt.cyan, "I'm not through with you yet!")}`,
-                                    `${who} outmaneuvers you and says,\n  ${xvt.attr(xvt.cyan, "You started this, I'm finishing it.")}`,
-                                    `${who} blocks your path and says,\n  ${xvt.attr(xvt.cyan, "Where do you want to go today?")}`,
-                                ][$.dice(5) - 1])
-                                $.beep()
-                                xvt.outln()
+                                    `${who} prevents your retreat and shouts,\n ${xvt.attr(xvt.cyan, xvt.bright, '"I\'m not through with you yet!"')}`,
+                                    `${who} outmaneuvers you and says,\n ${xvt.attr(xvt.normal, '"You started this, I\'m finishing it."')}`,
+                                    `${who} blocks your path and whispers,\n ${xvt.attr(xvt.faint, '"Where do you want to go today?"')}`,
+                                ][$.dice(5) - 1], '\n', -250)
                                 next()
                                 return
                             }
@@ -355,13 +350,13 @@ module Battle {
                             retreat = true
                             $.player.retreats++
                             let who = $.player.gender == 'F' ? 'She' : 'He'
-                            xvt.outln(xvt.lblue, [
+                            xvt.outln(xvt.blue, xvt.bright, [
                                 'You are successful in your attempt to retreat.',
                                 'You limp away from the battle.',
                                 `You decide this isn't worth the effort.`,
-                                `You listen to the voice in your head yelling, ${xvt.bright, xvt.attr(xvt.red)}"Run!"`,
-                                `You say, ${xvt.attr(xvt.bright, xvt.cyan)}"${who} who fights and runs away lives to fight another day!"`
-                            ][$.dice(5) - 1])
+                                `You listen to that voice in your head, ${xvt.attr(xvt.red)}"Run."`,
+                                `You shout back, ${xvt.attr(xvt.cyan)}"${who} who fights and runs away lives to fight another day!"`
+                            ][$.dice(5) - 1], -250)
                             if ($.online.confused)
                                 $.activate($.online, false, true)
                             if ($.from == 'Party' && $.player.gang) {
@@ -625,7 +620,6 @@ module Battle {
                             $.wall(`defeated a level ${enemy.user.level} ${enemy.user.handle}`)
                         }
                         if ($.from == 'Dungeon') $.animated(['bounceOut', 'fadeOut', 'flipOutX', 'flipOutY', 'rollOut', 'rotateOut', 'zoomOut'][$.dice(7) - 1])
-                        xvt.waste(200)
                     }
                 }
             }
@@ -724,10 +718,10 @@ module Battle {
 
                 if (parties[w][m] === $.online) {
                     if (xp)
-                        xvt.outln('\nYou get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.')
+                        xvt.out('\nYou get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.')
                     if (award)
-                        xvt.outln('You get your cut worth ', new $.coins(award).carry(), '.')
-                    xvt.waste(600)
+                        xvt.out('You get your cut worth ', new $.coins(award).carry(), '.')
+                    xvt.outln(-600)
                 }
                 else {
                     $.log(parties[w][m].user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`)
@@ -746,8 +740,7 @@ module Battle {
                 $.run(`UPDATE Players
                 set bank = ${$.taxman.user.bank.value}
                 WHERE id='${$.taxman.user.id}'`).changes
-                xvt.outln($.taxman.user.handle, ' took ', $.taxman.who.his, 'cut worth ', coin.carry(1), '.')
-                xvt.waste(600)
+                xvt.outln($.taxman.user.handle, ' took ', $.taxman.who.his, 'cut worth ', coin.carry(1), '.', -600)
             }
 
             if (winner === $.online) {
@@ -828,13 +821,11 @@ module Battle {
                     }
                     else {
                         if ($.Weapon.swap(winner, loser)) {
-                            xvt.outln(winner.who.He, $.what(winner, 'take'), loser.who.his, winner.user.weapon, '.')
-                            xvt.waste(250)
+                            xvt.outln(winner.who.He, $.what(winner, 'take'), loser.who.his, winner.user.weapon, '.', -250)
                             $.log(loser.user.id, `... and took your ${winner.user.weapon}.`)
                         }
                         if ($.Armor.swap(winner, loser)) {
-                            xvt.outln(winner.who.He, 'also ', $.what(winner, 'take'), loser.who.his, winner.user.armor, '.')
-                            xvt.waste(250)
+                            xvt.outln(winner.who.He, 'also ', $.what(winner, 'take'), loser.who.his, winner.user.armor, '.', -250)
                             $.log(loser.user.id, `... and took your ${winner.user.armor}.`)
                         }
                         if (winner.user.cursed) {
@@ -845,8 +836,7 @@ module Battle {
                             $.PC.adjust('cha', 10, 0, 0, winner)
                             loser.user.cursed = winner.user.id
                             loser.altered = true
-                            xvt.outln(xvt.bright, xvt.black, 'A dark cloud has lifted and shifted.')
-                            xvt.waste(600)
+                            xvt.outln(xvt.bright, xvt.black, 'A dark cloud has lifted and shifted.', -600)
                             $.log(loser.user.id, `... and left you with a dark cloud.`)
                         }
                         if (loser.user.blessed) {
@@ -860,8 +850,7 @@ module Battle {
                                 $.PC.adjust('int', 10, 0, 0, winner)
                                 $.PC.adjust('dex', 10, 0, 0, winner)
                                 $.PC.adjust('cha', 10, 0, 0, winner)
-                                xvt.outln(xvt.bright, xvt.yellow, 'A shining aura ', xvt.normal, 'surrounds you.')
-                                xvt.waste(600)
+                                xvt.outln(xvt.bright, xvt.yellow, 'A shining aura ', xvt.normal, 'surrounds you.', -600)
                             }
                             $.log(loser.user.id, `... and took your blessedness.`)
                         }
@@ -873,8 +862,7 @@ module Battle {
                                 gang.members[0] = $.player.id
                                 gang.members[n] = loser.user.id
                                 $.saveGang(gang)
-                                xvt.outln(`You take over as the leader of ${gang.name}.`)
-                                xvt.waste(600)
+                                xvt.outln(`You take over as the leader of ${gang.name}.`, -600)
                             }
                             else {
                                 $.player.maxcha--
@@ -930,8 +918,7 @@ module Battle {
                     winner.user.cursed = ''
                     xvt.out(xvt.bright, xvt.black, 'A dark cloud hovers over', xvt.reset)
                 }
-                xvt.outln(xvt.faint, ' you.\n')
-                xvt.waste(600)
+                xvt.outln(xvt.faint, ' you.\n', -600)
             }
 
             //  manage any asset upgrades for PC
@@ -944,8 +931,7 @@ module Battle {
                 if ($.player.blessed) {
                     winner.user.blessed = $.player.id
                     $.player.blessed = ''
-                    xvt.outln(xvt.bright, xvt.yellow, 'Your shining aura ', xvt.normal, 'leaves ', xvt.faint, 'you.\n')
-                    xvt.waste(600)
+                    xvt.outln(xvt.bright, xvt.yellow, 'Your shining aura ', xvt.normal, 'leaves ', xvt.faint, 'you.\n', -600)
                 }
 
                 if ($.Weapon.swap(winner, $.online)) {
@@ -978,16 +964,14 @@ module Battle {
                     gang = $.loadGang($.query(`SELECT * FROM Gangs WHERE name='${$.player.gang}'`)[0])
                     let n = gang.members.indexOf(winner.user.id)
                     if (n == 0) {
-                        xvt.outln(xvt.cyan, winner.who.He, 'says, ', xvt.white, '"Let that be a lesson to you punk!"')
-                        xvt.waste(800)
+                        xvt.outln(xvt.cyan, winner.who.He, 'says, ', xvt.white, '"Let that be a lesson to you punk!"', -800)
                     }
                     if (gang.members[0] == $.player.id) {
                         $.PC.adjust('cha', -1, -1, -1)
                         gang.members[0] = winner.user.id
                         gang.members[n] = $.player.id
                         $.saveGang(gang)
-                        xvt.outln(winner.who.He, `takes over as the leader of ${gang.name}.\n`)
-                        xvt.waste(600)
+                        xvt.outln(winner.who.He, `takes over as the leader of ${gang.name}.\n`, -600)
                     }
                 }
                 $.saveUser(winner)
@@ -1001,8 +985,7 @@ module Battle {
         const p1 = $.PC.who(rpc, vs), p2 = $.PC.who(nme, vs)
         if ($.dice(100) >= (50 + $.int(rpc.dex / 2))) {
             $.sound(rpc.user.id == $.player.id ? 'whoosh' : 'swoosh')
-            xvt.outln(`\n${p2.He}${$.what(nme, 'duck')}${p1.his}punch.`)
-            xvt.waste(400)
+            xvt.outln(`\n${p2.He}${$.what(nme, 'duck')}${p1.his}punch.`, -400)
             let patron = $.PC.encounter()
             if (patron.user.id && patron.user.id !== rpc.user.id && patron.user.id !== nme.user.id && !patron.user.status) {
                 xvt.outln(`\n${p1.He}${$.what(rpc, 'hit')}${patron.user.handle}!`)
@@ -1010,10 +993,8 @@ module Battle {
                 let bp = punch(rpc)
                 patron.bp -= bp
                 if (patron.bp > 0) {
-                    xvt.out('\nUh oh! ')
-                    xvt.waste(600)
-                    xvt.outln(` Here comes ${patron.user.handle}!`)
-                    xvt.waste(600)
+                    xvt.out('\nUh oh! ', -600)
+                    xvt.outln(` Here comes ${patron.user.handle}!`, -600)
                     this.brawl(patron, rpc, true)
                 }
                 else
@@ -1034,19 +1015,17 @@ module Battle {
             $.run(`UPDATE Players SET tl=tl+1,coin=0 WHERE id='${loser.user.id}'`)
 
             xvt.outln('\n', winner.user.id == $.player.id ? 'You' : winner.user.handle
-                , ` ${$.what(winner, 'knock')}${loser.who.him}out!`)
-            xvt.waste(600)
+                , ` ${$.what(winner, 'knock')}${loser.who.him}out!`, -600)
             if (xp) {
-                xvt.outln(`\n${winner.who.He}${$.what(winner, 'get')}`, sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.')
+                xvt.outln(`\n${winner.who.He}${$.what(winner, 'get')}`, sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.', -600)
                 winner.user.xp += xp
             }
             if (loser.user.coin.value) {
-                xvt.outln(`${loser.who.He}was carrying ${loser.user.coin.carry()}`)
+                xvt.outln(`${loser.who.He}was carrying ${loser.user.coin.carry()}`, -600)
                 winner.user.coin.value += loser.user.coin.value
                 loser.user.coin.value = 0
             }
             winner.user.tw++
-            xvt.waste(600)
 
             loser.user.tl++
             if (loser.user.id == $.player.id) {
@@ -1055,12 +1034,11 @@ module Battle {
                 while (m > 9)
                     m >>= 1
                 m++
+                let wtf = m > 5 ? '!!kcuF ehT tahW' : 'z.z.z.z.z.'
                 xvt.sessionAllowed = $.int(xvt.sessionAllowed - 60 * m, true) + 60
-                xvt.out(`\nYou are unconscious for ${m} minute`, m != 1 ? 's' : '')
-                while (m--) {
-                    xvt.out('.')
-                    xvt.waste(300)
-                }
+                xvt.out(`\nYou are unconscious for ${m} minute`, m !== 1 ? 's' : '')
+                while (m--)
+                    xvt.out(wtf[m + 5], -250)
                 xvt.outln()
                 $.news(`\tgot knocked out by ${winner.user.handle}`)
             }
@@ -1154,7 +1132,7 @@ module Battle {
             let Recipient = ''
             let recipient = ''
             let spell = $.Magic.spells[name]
-            if (rpc.user.id !== $.player.id) xvt.waste(200)
+            if (rpc.user.id !== $.player.id) xvt.waste(150)
 
             if (rpc.user.magic > 1 && !summon)
                 if (rpc.sp < $.Magic.power(rpc, spell.cast)) {
@@ -1164,7 +1142,7 @@ module Battle {
                     return
                 }
 
-            //  some sensible ground rules to avoid known muling exploits (by White Knights passing gas)
+            //  some sensible ground rules to avoid known muling exploits, aka White Knights passing gas
             if (xvt.validator.isDefined(nme)) {
                 if ([1, 2, 3, 4, 5, 6, 10].indexOf(spell.cast) >= 0) {
                     if (rpc === $.online)
@@ -1238,18 +1216,16 @@ module Battle {
             if (rpc.user.magic < 2 && !summon && $.dice(100) < 50 + (spell.cast < 17 ? 2 * spell.cast : 2 * spell.cast - 16)) {
                 rpc.altered = true
                 $.Magic.remove(rpc.user.spells, spell.cast)
-                xvt.outln(p1.His, 'wand smokes as ', p1.he, $.what(rpc, 'cast'), 'the spell.')
                 if (!(rpc.user.id[0] == '_' || rpc.user.gender == 'I')) $.saveUser(rpc)
-                xvt.waste(100 + 20 * spell.cast)
+                xvt.outln(p1.His, 'wand smokes as ', p1.he, $.what(rpc, 'cast'), 'the spell ... ', -33 * spell.cast)
             }
 
             //  Tigress prefers the Ranger (and Paladin) class, because it comes with a coupon and a better warranty
-            if (rpc.user.magic == 2 && !summon && $.dice(5 + +xvt.validator.isDefined($.Access.name[rpc.user.access].sysop)) == 1) {
+            if (rpc.user.magic == 2 && !summon && $.dice(+xvt.validator.isDefined($.Access.name[rpc.user.access].sysop) + 5) == 1) {
                 rpc.altered = true
                 $.Magic.remove(rpc.user.spells, spell.cast)
-                xvt.outln(p1.His, 'scroll burns as ', p1.he, $.what(rpc, 'cast'), 'the spell.')
                 if (!(rpc.user.id[0] == '_' || rpc.user.gender == 'I')) $.saveUser(rpc)
-                xvt.waste(100 + 20 * spell.cast)
+                xvt.outln(p1.His, 'scroll burns as ', p1.he, $.what(rpc, 'cast'), 'the spell ... ', -44 * spell.cast)
             }
 
             if (xvt.validator.isDefined(nme)) {
@@ -1268,8 +1244,7 @@ module Battle {
                         xvt.out(xvt.magenta, xvt.faint, '>> ', xvt.normal, p1.His, xvt.bright, $.Ring.theOne, xvt.normal, ' ring '
                             , 'dispels ', p2.his, xvt.bright, xvt.cyan, mod.name, xvt.normal)
                         if ($.player.emulation == 'XT') xvt.out(' ', $.Ring.name[mod.name].emoji, ' 💍')
-                        xvt.outln(' ring', xvt.magenta, '!', xvt.faint, ' <<')
-                        xvt.waste(400)
+                        xvt.outln(' ring', xvt.magenta, '!', xvt.faint, ' <<', -400)
                     }
                 }
             }
@@ -1430,6 +1405,7 @@ module Battle {
 
                 case 8:
                     if (xvt.validator.isDefined(nme)) {
+                        $.sound('teleport')
                         xvt.out(xvt.bright, xvt.magenta)
                         if (backfire) {
                             xvt.out(Caster, $.what(rpc, 'teleport'), recipient, ' ')
@@ -1448,12 +1424,10 @@ module Battle {
                             else
                                 rpc.hp = -1
                         }
-                        xvt.outln(xvt.normal, 'away from the ', xvt.faint, 'battle!')
-                        $.sound('teleport', 8)
-                        if ($.dice(100) == 1) {
-                            xvt.outln(xvt.lred, `Nearby is the Crown's Champion shaking his head and texting his Maker.`)
-                            xvt.waste(+'0212' * 10)     // The Conqueror was here
-                        }
+                        xvt.outln(-600, xvt.normal, 'away from ', -400, xvt.faint, 'the battle!', -200)
+                        // The Conqueror was here, heh
+                        if ($.dice(100) == 1)
+                            xvt.outln(xvt.lred, `Nearby is the Crown's Champion shaking his head and texting his Grace.`, -2000)
                     }
                     else {
                         if (rpc === $.online)
@@ -1522,7 +1496,7 @@ module Battle {
                 case 10:
                     if (backfire) {
                         rpc.hp = 0
-                        xvt.outln(xvt.faint, 'You die by your own doing.')
+                        xvt.outln(xvt.faint, 'You die by your own doing.', -200)
                         $.death(`resurrect backfired`)
                         break
                     }
@@ -1530,14 +1504,12 @@ module Battle {
                         $.sound('resurrect')
                         if (DL) {
                             if (DL.cleric.user.status) {
+                                $.music('winner')
+                                $.profile({ jpg: 'npc/old cleric', effect: 'fadeInUpBig' })
                                 DL.cleric.user.status = ''
                                 $.activate(DL.cleric)
-                                $.profile({ jpg: 'npc/old cleric', effect: 'fadeInUpBig' })
-                                xvt.waste(600)
-                                $.music('winner')
-                                xvt.outln(xvt.faint, 'You raise the ', xvt.yellow, DL.cleric.user.handle, xvt.reset, ' from the dead!')
                                 $.PC.adjust('cha', 104, 2, 1)
-                                xvt.waste(600)
+                                xvt.outln(-200, xvt.faint, 'You raise ', -300, 'the ', xvt.yellow, DL.cleric.user.handle, xvt.reset, -400, ' from the dead!', -500)
                                 cb()
                                 return
                             }
@@ -1576,18 +1548,23 @@ module Battle {
                         nme.int >>= 1
                         nme.dex >>= 1
                     }
-                    xvt.outln('with exploding ', xvt.bright
-                        , xvt.red, 'c', xvt.yellow, 'o', xvt.green, 'l', xvt.cyan, 'o', xvt.blue, 'r', xvt.magenta, 's'
-                        , xvt.reset, '!')
+                    xvt.outln('with exploding ', -25, xvt.bright
+                        , xvt.red, 'c', -25
+                        , xvt.yellow, 'o', -25
+                        , xvt.green, 'l', -25
+                        , xvt.cyan, 'o', -25
+                        , xvt.blue, 'r', -25
+                        , xvt.magenta, 's', -25
+                        , xvt.reset, '!', -25)
                     break
 
                 case 12:
                     $.sound('transmute', 4)
                     if (backfire) {
                         if (isNaN(+rpc.user.weapon))
-                            xvt.out(Caster, $.what(rpc, 'transform'), p1.his, rpc.user.weapon, ' into')
+                            xvt.out(Caster, $.what(rpc, 'transform'), p1.his, $.PC.weapon(rpc), ' into', -600, '\n   ')
                         else
-                            xvt.out(`A new weapon materializes... it's`)
+                            xvt.out(`A new weapon materializes... it's`, -600)
                         let n = Math.round(($.dice(rpc.weapon.wc) + $.dice(rpc.weapon.wc)
                             + $.dice($.Weapon.merchant.length)) / 3)
                         if (++n > $.Weapon.merchant.length - 1)
@@ -1595,14 +1572,14 @@ module Battle {
                         else
                             rpc.user.weapon = $.Weapon.merchant[n]
                         $.Weapon.equip(rpc, rpc.user.weapon)
-                        xvt.outln($.an(rpc.user.weapon.toString()), '!')
                         $.saveUser(rpc)
+                        xvt.outln(xvt.bright, $.an(rpc.user.weapon.toString()), '!', -900)
                     }
                     else {
                         if (isNaN(+nme.user.weapon))
-                            xvt.out(Caster, $.what(rpc, 'transform'), p2.his, nme.user.weapon, ' into')
+                            xvt.out(Caster, $.what(rpc, 'transform'), p2.his, $.PC.weapon(nme), ' into', -600, '\n   ')
                         else
-                            xvt.out(`A new weapon materializes... it's`)
+                            xvt.out(`A new weapon materializes... it's`, -600)
                         let n = Math.round(($.dice(nme.weapon.wc) + $.dice(nme.weapon.wc)
                             + $.dice($.Weapon.merchant.length)) / 3)
                         if (++n > $.Weapon.merchant.length - 1)
@@ -1610,26 +1587,25 @@ module Battle {
                         else
                             nme.user.weapon = $.Weapon.merchant[n]
                         $.Weapon.equip(nme, nme.user.weapon)
-                        xvt.outln($.an(nme.user.weapon.toString()), '!')
                         $.saveUser(nme)
+                        xvt.outln(xvt.bright, $.an(nme.user.weapon.toString()), '!', -600)
                     }
-                    xvt.waste(500)
                     break
 
                 case 13:
                     $.sound('cure', 6)
                     if (backfire) {
-                        xvt.outln(Caster, $.what(rpc, 'cure'), recipient, '!')
+                        xvt.out(Caster, $.what(rpc, 'cure'), recipient)
                         nme.hp = nme.user.hp
                     }
                     else {
                         if (rpc === $.online)
-                            xvt.outln('You feel your vitality completed restored.')
+                            xvt.out('You feel your vitality completed restored')
                         else
-                            xvt.outln(Caster, $.what(rpc, 'cure'), p1.self, '!')
+                            xvt.out(Caster, $.what(rpc, 'cure'), p1.self)
                         rpc.hp = rpc.user.hp
                     }
-                    xvt.waste(500)
+                    xvt.outln('!', -400)
                     break
 
                 case 14:
@@ -1656,8 +1632,7 @@ module Battle {
                         parties[p].push(iou)
                         xvt.out(p1.self)
                     }
-                    xvt.outln('!')
-                    xvt.waste(500)
+                    xvt.outln('!', -400)
                     break
 
                 case 15:
@@ -1672,8 +1647,7 @@ module Battle {
                         nme.hp = 0
                         xvt.out(recipient)
                     }
-                    xvt.outln('!')
-                    xvt.waste(500)
+                    xvt.outln('!', -400)
                     break
 
                 case 16:
@@ -1685,7 +1659,7 @@ module Battle {
                         rpc.altered = true
                         rpc.user.gender = ['F', 'M'][$.dice(2) - 1]
                         $.saveUser(rpc)
-                        xvt.outln(Caster, $.what(rpc, 'morph'), p1.self, `into a level ${rpc.user.level} ${rpc.user.pc}!`)
+                        xvt.out(Caster, $.what(rpc, 'morph'), p1.self, `into a level ${rpc.user.level} ${rpc.user.pc}`)
                         if (rpc.user.gender !== 'I') {
                             $.news(`\t${rpc.user.handle} morphed into a level ${rpc.user.level} ${rpc.user.pc}!`)
                             if (rpc !== $.online)
@@ -1699,59 +1673,52 @@ module Battle {
                         nme.altered = true
                         nme.user.gender = ['F', 'M'][$.dice(2) - 1]
                         $.saveUser(nme)
-                        xvt.outln(Caster, $.what(rpc, 'morph'), recipient, ` into a level ${nme.user.level} ${nme.user.pc}!`)
+                        xvt.out(Caster, $.what(rpc, 'morph'), recipient, ` into a level ${nme.user.level} ${nme.user.pc}`)
                         if (nme.user.gender !== 'I') {
                             $.news(`\t${nme.user.handle} got morphed into a level ${nme.user.level} ${nme.user.pc}!`)
                             if (nme !== $.online)
                                 $.log(nme.user.id, `\nYou got morphed into a level ${nme.user.level} ${nme.user.pc} by ${rpc.user.handle}!\n`)
                         }
                     }
-                    xvt.waste(1000)
+                    xvt.outln('!', -1000)
                     break
 
                 case 17:
                     if (backfire) {
-                        xvt.out(xvt.yellow, Caster, $.what(rpc, 'get'), 'swallowed by an acid mist... ')
-                        xvt.waste(600)
+                        xvt.out(xvt.yellow, Caster, $.what(rpc, 'get'), 'swallowed by an acid mist... ', -500)
                         rpc.toAC -= $.dice(rpc.armor.ac / 5 + 1)
                         rpc.user.toAC -= $.dice(rpc.armor.ac / 10 + 1)
-                        xvt.outln(xvt.bright, caster, ' ', $.what(rpc, 'damage'), 'own ', isNaN(+rpc.user.armor) ? $.PC.armor(rpc) : 'defense'
-                            , $.buff(rpc.user.toAC, rpc.toAC), '!')
-                        xvt.waste(400)
+                        xvt.outln(xvt.bright, caster, ' ', $.what(rpc, 'damage'), 'own '
+                            , isNaN(+rpc.user.armor) ? $.PC.armor(rpc) : 'defense', '!', -400)
                         if (-rpc.user.toAC >= rpc.armor.ac || -(rpc.user.toAC + rpc.toAC) >= rpc.armor.ac) {
-                            xvt.outln(p1.His, rpc.user.armor ? isNaN(+rpc.user.armor) : 'defense', ' crumbles!')
+                            xvt.outln(p1.His, rpc.user.armor ? isNaN(+rpc.user.armor) : 'defense', ' crumbles!', -1000)
                             $.Armor.equip(rpc, $.Armor.merchant[0])
                         }
                         rpc.altered = true
                     }
                     else {
-                        xvt.out(xvt.yellow, 'An acid mist surrounds ', recipient, '... ', xvt.reset)
-                        xvt.waste(600)
+                        xvt.out(xvt.yellow, 'An acid mist surrounds ', recipient, '... ', xvt.reset, -500)
                         nme.toAC -= $.dice(nme.armor.ac / 5 + 1)
                         nme.user.toAC -= $.dice(nme.armor.ac / 10 + 1)
-                        xvt.outln(xvt.bright, p2.his, isNaN(+nme.user.armor) ? $.PC.armor(nme) + ' is damaged' : 'defense lessens'
-                            , $.buff(nme.user.toAC, nme.toAC), '!')
-                        xvt.waste(400)
+                        xvt.outln(xvt.bright, p2.his
+                            , isNaN(+nme.user.armor) ? $.PC.armor(nme) + ' is damaged' : 'defense lessens', '!', -400)
                         if (-nme.user.toAC >= nme.armor.ac || -(nme.user.toAC + nme.toAC) >= nme.armor.ac) {
-                            xvt.outln(p2.His, isNaN(+nme.user.armor) ? nme.user.armor : 'defense', ' crumbles!')
+                            xvt.outln(p2.His, isNaN(+nme.user.armor) ? nme.user.armor : 'defense', ' crumbles!', -1000)
                             $.Armor.equip(nme, $.Armor.merchant[0])
                         }
                         nme.altered = true
                     }
-                    xvt.waste(500)
                     break
 
                 case 18:
-                    xvt.out(xvt.magenta, 'An ', xvt.faint, 'ultraviolet', xvt.normal, ' beam emits... ', xvt.reset)
-                    xvt.waste(600)
+                    xvt.out(xvt.magenta, 'An ', xvt.faint, 'ultraviolet', xvt.normal, ' beam emits... ', xvt.reset, -500)
                     if (backfire) {
                         rpc.toWC -= $.dice(rpc.weapon.wc / 5 + 1)
                         rpc.user.toWC -= $.dice(rpc.weapon.wc / 10 + 1)
-                        xvt.outln(xvt.bright, caster, ' ', $.what(rpc, 'damage'), 'own ', isNaN(+rpc.user.weapon) ? $.PC.weapon(rpc) : 'attack'
-                            , $.buff(rpc.user.toWC, rpc.toWC), '!')
-                        xvt.waste(400)
+                        xvt.outln(xvt.bright, caster, ' ', $.what(rpc, 'damage'), 'own '
+                            , isNaN(+rpc.user.weapon) ? $.PC.weapon(rpc) : 'attack', '!', -400)
                         if (-rpc.user.toWC >= rpc.weapon.wc || -(rpc.user.toWC + rpc.toWC) >= rpc.weapon.wc) {
-                            xvt.outln(p1.His, rpc.user.weapon ? isNaN(+rpc.user.weapon) : 'attack', ' crumbles!')
+                            xvt.outln(p1.His, rpc.user.weapon ? isNaN(+rpc.user.weapon) : 'attack', ' crumbles!', -1000)
                             $.Weapon.equip(rpc, $.Weapon.merchant[0])
                         }
                         rpc.altered = true
@@ -1759,16 +1726,14 @@ module Battle {
                     else {
                         nme.toWC -= $.dice(nme.weapon.wc / 5 + 1)
                         nme.user.toWC -= $.dice(nme.weapon.wc / 10 + 1)
-                        xvt.outln(xvt.bright, caster, ' ', $.what(rpc, 'damage'), p2.his, isNaN(+nme.user.weapon) ? $.PC.armor(nme) : 'attack'
-                            , $.buff(nme.user.toWC, nme.toWC), '!')
-                        xvt.waste(400)
+                        xvt.outln(xvt.bright, caster, ' ', $.what(rpc, 'damage'), p2.his
+                            , isNaN(+nme.user.weapon) ? $.PC.armor(nme) : 'attack', '!', -400)
                         if (-nme.user.toWC >= nme.weapon.wc || -(nme.user.toWC + nme.toWC) >= nme.weapon.wc) {
-                            xvt.outln(p2.His, isNaN(+nme.user.weapon) ? nme.user.weapon : 'attack', ' crumbles!')
+                            xvt.outln(p2.His, isNaN(+nme.user.weapon) ? nme.user.weapon : 'attack', ' crumbles!', -1000)
                             $.Weapon.equip(nme, $.Weapon.merchant[0])
                         }
                         nme.altered = true
                     }
-                    xvt.waste(500)
                     break
 
                 case 19:
@@ -1867,9 +1832,7 @@ module Battle {
 
                 case 21:
                     $.sound('life')
-                    xvt.out(xvt.black, xvt.bright, 'A black finger extends and touches ', backfire ? p1.him : p2.him, '... ')
-                    xvt.waste(800)
-                    xvt.outln()
+                    xvt.outln(xvt.black, xvt.bright, 'A black finger extends and touches ', backfire ? p1.him : p2.him, '... ', -750)
                     let xp = 0
                     if (backfire) {
                         xp = $.int(rpc.user.xp / 2)
@@ -1888,9 +1851,7 @@ module Battle {
 
                 case 22:
                     $.sound('lose')
-                    xvt.out(xvt.black, xvt.bright, 'A shroud of blackness engulfs ', backfire ? p1.him : p2.him, '... ')
-                    xvt.waste(800)
-                    xvt.outln()
+                    xvt.outln(xvt.black, xvt.bright, 'A shroud of blackness engulfs ', backfire ? p1.him : p2.him, '... ', 750)
                     if (backfire) {
                         if (rpc.user.level < 2) {
                             $.reroll(rpc.user)
@@ -1986,11 +1947,8 @@ module Battle {
         if ($.from !== 'Party' && rpc !== $.online && rpc.user.coward && rpc.hp < (rpc.user.hp / 5) && !rpc.user.cursed) {
             rpc.hp = -1
             xvt.outln(xvt.bright, xvt.green
-                , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
-                , xvt.normal, ' runs away from '
-                , xvt.faint, 'the battle!')
-            xvt.waste(1000)
-
+                , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle, -600
+                , xvt.normal, ' runs away from ', -400, xvt.faint, 'the battle!', -200)
             if ($.from == 'User') {
                 rpc.user.blessed = ''
                 rpc.user.coward = false
@@ -2086,8 +2044,7 @@ module Battle {
                     `easily ${$.what(rpc, 'slay')}%s`,
                     `${$.what(rpc, 'make')}minced-meat out of %s`,
                     `${$.what(rpc, 'run')}%s through`
-                ][$.dice(6) - 1], enemy.user.handle), '.')
-                xvt.waste(600)
+                ][$.dice(6) - 1], enemy.user.handle), '.', -500)
                 return
             }
 
@@ -2133,8 +2090,7 @@ module Battle {
             xvt.out(isNaN(+rpc.user.weapon) ? `${p1.His}${$.PC.weapon(rpc)} ` : p1.You
                 , `${rpc === $.online ? 'do' : 'does'} not even scratch `, p2.you)
 
-        xvt.outln(period)
-        xvt.waste(50)
+        xvt.outln(period, -40)
 
         return
     }
@@ -2143,6 +2099,7 @@ module Battle {
         if (rpc.user.id == $.player.id) {
             if (!$.player.poisons.length) {
                 xvt.outln(`\nYou don't have any poisons.`)
+                $.beep()
                 cb(true)
                 return
             }
@@ -2223,13 +2180,13 @@ module Battle {
             }
 
             if (!$.Poison.have(rpc.user.poisons, vial) || +rpc.user.weapon > 0) {
-                xvt.outln(xvt.green, xvt.bright, p1.He, $.what(rpc, 'secrete'), 'a caustic ooze', xvt.reset, $.buff(p, t))
-                $.sound('ooze', 6)
+                $.sound('ooze')
+                xvt.outln(xvt.green, xvt.bright, p1.He, $.what(rpc, 'secrete'), 'a caustic ooze', xvt.reset, $.buff(p, t), -400)
             }
             else {
+                $.sound('hone')
                 xvt.outln('\n', p1.He, $.what(rpc, 'pour'), 'some ', xvt.faint, $.Poison.merchant[vial - 1]
-                    , xvt.reset, ' on ', rpc.who.his, $.PC.weapon(rpc))
-                $.sound('hone', 6)
+                    , xvt.reset, ' on ', rpc.who.his, $.PC.weapon(rpc), -400)
                 if (/^[A-Z]/.test(rpc.user.id)) {
                     if ($.dice(3 * (rpc.toWC + rpc.user.toWC + 1)) / skill > rpc.weapon.wc) {
                         xvt.outln(xvt.bright, p1.His, rpc.user.weapon, ' vaporizes!')
@@ -2239,10 +2196,8 @@ module Battle {
                 }
                 if (rpc.user.id !== $.player.id || ($.dice(skill) == 1 && $.dice(105 - rpc.cha) > 1)) {
                     $.Poison.remove(rpc.user.poisons, vial)
-                    if (rpc.user.id == $.player.id) {
-                        xvt.outln('You toss the empty vial aside.')
-                        xvt.waste(500)
-                    }
+                    if (rpc.user.id == $.player.id)
+                        xvt.outln('You toss the empty vial aside.', -400)
                 }
             }
         }

@@ -1,6 +1,6 @@
 {
   "name": "dankdomain",
-  "version": "2.4.2",
+  "version": "2.5.0",
   "description": "Dank Domain: the return of Hack & Slash",
   "main": "telnet",
   "publisher": "theflyingape",
@@ -64,7 +64,7 @@
     "xterm-addon-unicode11": "^0.1.1",
     "xterm-addon-web-links": "^0.2.0",
     "xterm-addon-webgl": "^0.5.1",
-    "xvt": "^1.1.3"
+    "xvt": "^1.1.5"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^5.4.0",

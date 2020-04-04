@@ -145,9 +145,8 @@ module Party {
                                 $.online.altered = true
                                 xvt.outln()
                                 $.saveGang(g, true)
-                                $.sound('click')
                                 $.cat('gang')
-                                xvt.waste(2000)
+                                $.sound('click', 20)
                                 menu()
                             }
                             else {
@@ -246,9 +245,8 @@ module Party {
                                     $.run(`UPDATE Gangs SET members = '${g.members.join()}' WHERE name = '${g.name}'`)
                                     xvt.outln('\n')
                                     $.cat('gang')
-                                    xvt.waste(1200)
-                                    xvt.outln(xvt.cyan, 'You are now a member of ', xvt.bright, g.name, xvt.normal, '.')
                                     $.sound('click', 12)
+                                    xvt.outln(xvt.cyan, 'You are now a member of ', xvt.bright, g.name, xvt.normal, '.', -1200)
                                 }
                                 else {
                                     g.members = []
@@ -535,8 +533,7 @@ module Party {
                                     $.cat('player/' + nme[0].user.pc.toLowerCase())
                                 xvt.outln(xvt.magenta, xvt.bright, nme[0].user.handle, xvt.reset
                                     , ' grins as ', $.PC.who(nme[0]).he, 'pulls out '
-                                    , $.PC.who(nme[0]).his, nme[0].user.weapon, '.')
-                                xvt.waste(1200)
+                                    , $.PC.who(nme[0]).his, $.PC.weapon(nme[0]), '.', -1200)
 
                                 Battle.engage('Party', posse, nme, menu)
                             }

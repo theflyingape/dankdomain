@@ -30,8 +30,7 @@ module Logon {
 
     function guards(): boolean {
         xvt.beep()
-        xvt.outln(xvt.reset, 'Invalid response.\n')
-        xvt.waste(500)
+        xvt.outln(xvt.reset, 'Invalid response.\n', -400)
 
         switch (--retry) {
             case 2:
@@ -43,8 +42,7 @@ module Logon {
             default:
                 $.sound('stranger')
                 $.profile({ handle: '💀 🏹 💘 🏹 💀', jpg: 'npc/stranger', effect: 'zoomIn' })
-                xvt.outln('The last thing you ever feel is several quarrels cutting deep into your chest.')
-                xvt.waste(1200)
+                xvt.outln('The last thing you ever feel is several quarrels cutting deep into your chest.', -800)
                 xvt.app.form = {
                     'forgot': {
                         cb: () => {
@@ -254,8 +252,7 @@ module Logon {
             $.sound('ddd')
             if ($.player.emulation == 'XT') xvt.out('🔒 ')
             xvt.outln(xvt.bright, xvt.black, '(', xvt.magenta, 'PRISONER', xvt.black, ')')
-            xvt.outln(xvt.red, '\nYou are locked-up in jail.')
-            xvt.waste(1250)
+            xvt.outln(xvt.red, '\nYou are locked-up in jail.', -1200)
             if ($.access.roleplay && $.dice(2 * $.online.cha) > (10 - 2 * $.player.steal)) {
                 let bail = new $.coins(Math.round($.money($.player.level) * (101 - $.online.cha) / 100))
                 xvt.outln('\nIt will cost you ', bail.carry(), ' to get bailed-out and to continue play.')
@@ -278,8 +275,7 @@ module Logon {
                                 $.player.status = ''
                             }
                             else {
-                                xvt.outln(xvt.bright, xvt.red, 'You are left brooding with your fellow cellmates.')
-                                xvt.waste(1234)
+                                xvt.outln(xvt.bright, xvt.red, 'You are left brooding with your fellow cellmates.', -1200)
                                 $.access = $.Access.name['Prisoner']
                             }
                             welcome()

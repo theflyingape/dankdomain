@@ -75,13 +75,14 @@ module Sysop {
                 return
 
             case 'N':
-                rs = $.query(`SELECT id FROM Players WHERE id NOT GLOB '_*' AND remote = ''`)
+                rs = $.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
                 for (let row in rs) {
                     rpc.user.id = rs[row].id
                     $.loadUser(rpc)
                     Email.newsletter(rpc.user)
-                    xvt.waste(2500)
+                    xvt.out('.', -2500)
                 }
+                xvt.outln('done.', -1000)
                 break
 
             case 'R':

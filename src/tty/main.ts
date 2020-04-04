@@ -179,8 +179,8 @@ module Main {
                     break
                 }
                 $.music('steal')
-                xvt.outln(xvt.faint, 'It is a hot, moonless night.'); xvt.waste(500)
-                xvt.outln('A city guard walks down another street.'); xvt.waste(500)
+                xvt.outln(xvt.faint, 'It is a hot, moonless night.', -600)
+                xvt.outln('A city guard walks down another street.', -600)
 
                 let self = $.worth(new $.coins($.online.armor.value).value, $.online.cha)
                 self += $.worth(new $.coins($.online.weapon.value).value, $.online.cha)
@@ -212,8 +212,7 @@ module Main {
                         return
                     }
 
-                    xvt.outln(xvt.faint, `You case ${opponent.user.handle}'s joint out.`)
-                    xvt.waste(600)
+                    xvt.outln(xvt.faint, `You case ${opponent.user.handle}'s joint out.`, -600)
                     let prize = $.worth(new $.coins($.Armor.name[opponent.user.armor].value).value, $.online.cha)
                     prize += $.worth(new $.coins($.Weapon.name[opponent.user.weapon].value).value, $.online.cha)
                     if (opponent.user.cannon) prize += $.money(opponent.user.level)
@@ -221,8 +220,7 @@ module Main {
                     prize = $.int(prize / (6 - $.player.steal))
 
                     if ($.dice($.online.int) > 5 && prize < self) {
-                        xvt.outln('But you decide it is not worth the effort.')
-                        xvt.waste(600)
+                        xvt.outln('But you decide it is not worth the effort.', -600)
                         menu()
                         return
                     }
@@ -239,10 +237,9 @@ module Main {
                             cb: () => {
                                 xvt.outln()
                                 if (/Y/i.test(xvt.entry)) {
-                                    xvt.out(xvt.cyan, '\nYou slide into '
-                                        , xvt.faint, 'the shadows and '
-                                        , xvt.white, 'make your attempt ', xvt.blue)
-                                    xvt.waste(1000)
+                                    xvt.out(xvt.cyan, '\nYou slide into ', -200
+                                        , xvt.faint, 'the shadows and ', -400
+                                        , xvt.white, 'make your attempt ', xvt.blue, -600)
                                     let lock = 5 * ($.Security.name[opponent.user.security].protection + 1)
                                         + $.RealEstate.name[opponent.user.realestate].protection
                                     let skill = Math.round($.player.steal * $.online.dex * $.online.int / 10000)
@@ -250,14 +247,12 @@ module Main {
                                     effort -= $.Ring.power(opponent.user.rings, $.player.rings, 'steal').power
                                     for (let pick = 0; pick < $.player.steal; pick++) {
                                         $.sound('click')
-                                        xvt.out('.')
-                                        xvt.waste(400)
+                                        xvt.out('.', -400)
                                         skill += $.dice(100 + $.player.steal) < effort
                                             ? $.dice($.player.level + $.player.steal - $.steal)
                                             : lock
                                     }
-                                    xvt.outln()
-                                    xvt.waste(600)
+                                    xvt.outln(-600)
 
                                     if ($.player.email == opponent.user.email || !$.lock(opponent.user.id)) {
                                         $.player.coward = true
@@ -269,8 +264,7 @@ module Main {
                                         if (!$.Ring.have($.player.rings, $.Ring.theOne)) $.steal++
                                         $.player.coin.value += prize
                                         $.player.steals++
-                                        xvt.outln('You break in and make off with ', new $.coins(prize).carry(), ' worth of stuff!')
-                                        xvt.waste(1000)
+                                        xvt.outln('You break in and make off with ', new $.coins(prize).carry(), ' worth of stuff!', -1000)
 
                                         opponent.user.coin.value = 0
 
@@ -310,8 +304,7 @@ module Main {
                                         $.profile({ png: 'npc/city_guard_2', effect: 'fadeIn' })
                                         xvt.outln('A city guard catches you and throws you into jail!')
                                         $.sound('arrested', 20)
-                                        xvt.outln('You might be released by your next call.\n')
-                                        xvt.waste(1000)
+                                        xvt.outln('You might be released by your next call.\n', -1000)
                                     }
                                 }
                                 menu()

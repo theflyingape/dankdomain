@@ -103,9 +103,8 @@ module Email {
             if ($.reason.length)
                 $.saveUser(player, true)
         }
-        xvt.outln()
         $.music('.')
-        xvt.waste(1000)
+        xvt.outln(-1000)
         $.logoff()
         xvt.hangup()
     }

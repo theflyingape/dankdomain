@@ -516,25 +516,25 @@ module Common {
                 let ring = profile.user.rings[i]
                 xvt.out(xvt.cyan, player.emulation == 'XT' ? '⍥' : xvt.app.Empty, ' ', xvt.bright, ring, xvt.normal, ' ')
                 if (tty == 'web') xvt.out(Ring.name[ring].emoji, '💍')
-                xvt.outln('ring:', xvt.reset, ' can ', Ring.name[ring].description)
+                xvt.outln('ring:', xvt.reset, ' can ', Ring.name[ring].description, -100)
             }
         }
 
         wearing(profile: active) {
             if (isNaN(+profile.user.weapon)) {
-                xvt.outln('\n', this.who(profile).He, profile.weapon.text, ' ', this.weapon(profile))
-                xvt.waste(from == 'Dungeon' ? 400 : !profile.weapon.shoppe ? 600 : 200)
+                xvt.outln('\n', this.who(profile).He, profile.weapon.text, ' ', this.weapon(profile)
+                    , from == 'Dungeon' ? -300 : !profile.weapon.shoppe ? -500 : -100)
             }
             if (isNaN(+profile.user.armor)) {
-                xvt.outln('\n', this.who(profile).He, profile.armor.text, ' ', this.armor(profile))
-                xvt.waste(from == 'Dungeon' ? 400 : !profile.armor.armoury ? 600 : 200)
+                xvt.outln('\n', this.who(profile).He, profile.armor.text, ' ', this.armor(profile)
+                    , from == 'Dungeon' ? -300 : !profile.armor.armoury ? -500 : -100)
             }
-            if (from !== 'Dungeon' && profile.user.sex == 'I') for (let i in profile.user.rings) {
+            if (!player.novice && from !== 'Dungeon' && profile.user.sex == 'I') for (let i in profile.user.rings) {
                 let ring = profile.user.rings[i]
                 if (!+i) xvt.outln()
                 xvt.out(this.who(profile).He, 'has ', xvt.cyan, xvt.bright, ring, xvt.normal)
                 if (tty == 'web') xvt.out(' ', Ring.name[ring].emoji)
-                xvt.outln(' powers ', xvt.reset, 'that can ', Ring.name[ring].description)
+                xvt.outln(' powers ', xvt.reset, 'that can ', Ring.name[ring].description, -100)
             }
         }
 
@@ -710,8 +710,7 @@ module Common {
         if (keep) {
             if (!lock(one.user.id, one.user.id == player.id ? 1 : 2) && one.user.id !== player.id) {
                 xvt.beep()
-                xvt.outln('\n', xvt.cyan, xvt.bright, one.user.handle, ' is engaged elsewhere.')
-                xvt.waste(500)
+                xvt.outln('\n', xvt.cyan, xvt.bright, one.user.handle, ' is engaged elsewhere.', -500)
                 return false
             }
         }
@@ -767,15 +766,13 @@ module Common {
                 do {
                     rpc.user.access = Object.keys(Access.name)[++title]
                 } while (!xvt.validator.isDefined(Access.name[rpc.user.access][rpc.user.gender]))
-                xvt.waste(500)
-                xvt.outln(); xvt.waste(500)
+                xvt.outln(-500)
                 xvt.outln(xvt.yellow
                     , Access.name[king.access][king.sex], ' the ', king.access.toLowerCase()
                     , ', ', xvt.bright, king.handle, xvt.normal
                     , ', is pleased with your accomplishments\n'
-                    , 'and promotes you to', xvt.bright, an(rpc.user.access), xvt.normal, '!')
-                xvt.waste(500)
-                xvt.outln(); xvt.waste(500)
+                    , 'and promotes you to', xvt.bright, an(rpc.user.access), xvt.normal, '!', -500)
+                xvt.outln(-500)
                 news(`\tpromoted to ${rpc.user.access}`)
                 wall(`promoted to ${rpc.user.access}`)
                 xvt.sessionAllowed += 300
@@ -799,7 +796,7 @@ module Common {
                     rpc.user.expert = true
                     xvt.outln(xvt.cyan, xvt.bright, 'You are no longer a novice.  Welcome to the next level of play!')
                     sound('welcome', 9)
-                    xvt.outln('You morph into', xvt.yellow, an(rpc.user.pc), xvt.reset, '.'); xvt.waste(250)
+                    xvt.outln('You morph into', xvt.yellow, an(rpc.user.pc), xvt.reset, '.', -250)
                     PC.profile()
                     sound('cheer', 21)
                 }
@@ -829,12 +826,12 @@ module Common {
         sound('level')
         access = Access.name[player.access]
         online.altered = true
-        xvt.outln(); xvt.waste(125)
+        xvt.outln(-125)
         xvt.outln('      ', xvt.magenta, '-=', xvt.blue, '>', xvt.bright, xvt.yellow, '*', xvt.normal
-            , xvt.blue, '<', xvt.magenta, '=-'); xvt.waste(125)
-        xvt.outln(); xvt.waste(125)
-        xvt.outln(xvt.bright, xvt.yellow, 'Welcome to level ', player.level.toString(), '!'); xvt.waste(125)
-        xvt.outln(); xvt.waste(125)
+            , xvt.blue, '<', xvt.magenta, '=-', -125)
+        xvt.outln(-125)
+        xvt.outln(xvt.bright, xvt.yellow, 'Welcome to level ', player.level.toString(), '!', -125)
+        xvt.outln(-125)
         wall(`is now a level ${player.level} ${player.pc}`)
 
         let deed = mydeeds.find((x) => { return x.deed == 'levels' })
@@ -847,22 +844,17 @@ module Common {
         }
 
         if (player.level < sysop.level) {
-            xvt.outln(xvt.bright, sprintf('%+6d', award.hp), xvt.reset, ' Hit points'); xvt.waste(100)
-            if (award.sp) {
-                xvt.outln(xvt.bright, sprintf('%+6d', award.sp), xvt.reset, ' Spell points'); xvt.waste(100)
-            }
-            if (award.str) {
-                xvt.outln(xvt.bright, sprintf('%+6d', award.str), xvt.reset, ' Strength'); xvt.waste(100)
-            }
-            if (award.int) {
-                xvt.outln(xvt.bright, sprintf('%+6d', award.int), xvt.reset, ' Intellect'); xvt.waste(100)
-            }
-            if (award.dex) {
-                xvt.outln(xvt.bright, sprintf('%+6d', award.dex), xvt.reset, ' Dexterity'); xvt.waste(100)
-            }
-            if (award.cha) {
-                xvt.outln(xvt.bright, sprintf('%+6d', award.cha), xvt.reset, ' Charisma'); xvt.waste(100)
-            }
+            xvt.outln(xvt.bright, sprintf('%+6d', award.hp), xvt.reset, ' Hit points', -100)
+            if (award.sp)
+                xvt.outln(xvt.bright, sprintf('%+6d', award.sp), xvt.reset, ' Spell points', -100)
+            if (award.str)
+                xvt.outln(xvt.bright, sprintf('%+6d', award.str), xvt.reset, ' Strength', -100)
+            if (award.int)
+                xvt.outln(xvt.bright, sprintf('%+6d', award.int), xvt.reset, ' Intellect', -100)
+            if (award.dex)
+                xvt.outln(xvt.bright, sprintf('%+6d', award.dex), xvt.reset, ' Dexterity', -100)
+            if (award.cha)
+                xvt.outln(xvt.bright, sprintf('%+6d', award.cha), xvt.reset, ' Charisma', -100)
             if (eligible && bonus) {
                 skillplus(rpc, cb)
                 return true
@@ -883,62 +875,53 @@ module Common {
         rpc.user.expert = true
 
         //  slow-roll endowment choices for a dramatic effect  :)
-        xvt.outln(); xvt.waste(600)
+        xvt.outln(-500)
         xvt.outln(xvt.bright, xvt.yellow, ' + ', xvt.normal, 'You earn a gift to endow your '
-            , xvt.faint, rpc.user.pc, xvt.normal, ' character', xvt.bright, ' +'); xvt.waste(1200)
-        xvt.outln(); xvt.waste(600)
+            , xvt.faint, rpc.user.pc, xvt.normal, ' character', xvt.bright, ' +', -1000)
+        xvt.outln(-500)
 
-        if (rpc.user.maxstr < 97 || rpc.user.maxint < 97 || rpc.user.maxdex < 97 || rpc.user.maxcha < 97) {
-            xvt.out(bracket(0, false), xvt.yellow, ' Increase ALL abilities by ', xvt.reset, '+3\n')
-            xvt.waste(200)
-        }
-        xvt.out(bracket(1, false), xvt.yellow, ' Increase Strength ability from ', xvt.reset
+        if (rpc.user.maxstr < 97 || rpc.user.maxint < 97 || rpc.user.maxdex < 97 || rpc.user.maxcha < 97)
+            xvt.outln(bracket(0, false), xvt.yellow, ' Increase ALL abilities by ', xvt.reset, '+3', -125)
+        xvt.outln(bracket(1, false), xvt.yellow, ' Increase Strength ability from ', xvt.reset
             , rpc.user.maxstr.toString(), ' '
             , rpc.user.maxstr < 90 ? '[WEAK]'
                 : rpc.user.maxstr < 95 ? '-Average-'
                     : rpc.user.maxstr < 99 ? '=Strong='
                         : '#MAX#'
-            , '\n'
-        ); xvt.waste(200)
-        xvt.out(bracket(2, false), xvt.yellow, ' Increase Intellect ability from ', xvt.reset
+            , -125)
+        xvt.outln(bracket(2, false), xvt.yellow, ' Increase Intellect ability from ', xvt.reset
             , rpc.user.maxint.toString(), ' '
             , rpc.user.maxint < 90 ? '[MORON]'
                 : rpc.user.maxint < 95 ? '-Average-'
                     : rpc.user.maxint < 99 ? '=Smart='
                         : '#MAX#'
-            , '\n'
-        ); xvt.waste(200)
-        xvt.out(bracket(3, false), xvt.yellow, ' Increase Dexterity ability from ', xvt.reset
+            , -125)
+        xvt.outln(bracket(3, false), xvt.yellow, ' Increase Dexterity ability from ', xvt.reset
             , rpc.user.maxdex.toString(), ' '
             , rpc.user.maxdex < 90 ? '[SLOW]'
                 : rpc.user.maxdex < 95 ? '-Average-'
                     : rpc.user.maxdex < 99 ? '=Swift='
                         : '#MAX#'
-            , '\n'
-        ); xvt.waste(200)
-        xvt.out(bracket(4, false), xvt.yellow, ' Increase Charisma ability from ', xvt.reset
+            , -125)
+        xvt.outln(bracket(4, false), xvt.yellow, ' Increase Charisma ability from ', xvt.reset
             , rpc.user.maxcha.toString(), ' '
             , rpc.user.maxcha < 90 ? '[SURLY]'
                 : rpc.user.maxcha < 95 ? '-Average-'
                     : rpc.user.maxcha < 99 ? '=Affable='
                         : '#MAX#'
-            , '\n'
-        ); xvt.waste(200)
-        xvt.out(bracket(5, false), xvt.yellow, ' Improve Melee skill from ', xvt.reset
+            , -125)
+        xvt.outln(bracket(5, false), xvt.yellow, ' Improve Melee skill from ', xvt.reset
             , rpc.user.melee.toString(), 'x '
             , ['[POOR]', '-Average-', '+Good+', '=Masterful=', '#MAX#'][rpc.user.melee]
-            , '\n'
-        ); xvt.waste(200)
-        xvt.out(bracket(6, false), xvt.yellow, ' Improve Backstab skill from ', xvt.reset
+            , -125)
+        xvt.outln(bracket(6, false), xvt.yellow, ' Improve Backstab skill from ', xvt.reset
             , rpc.user.backstab.toString(), 'x '
             , ['[RARE]', '-Average-', '+Good+', '=Masterful=', '#MAX#'][rpc.user.backstab]
-            , '\n'
-        ); xvt.waste(200)
-        xvt.out(bracket(7, false), xvt.yellow, ' Improve Poison skill from ', xvt.reset
+            , -125)
+        xvt.outln(bracket(7, false), xvt.yellow, ' Improve Poison skill from ', xvt.reset
             , rpc.user.poison.toString(), 'x '
             , ['[BAN]', '-Average-', '+Good+', '=Masterful=', '#MAX#'][rpc.user.poison]
-            , '\n'
-        ); xvt.waste(200)
+            , -125)
         if (rpc.user.magic < 2) {
             xvt.out(bracket(8, false), xvt.yellow, ' Improve Magic skill from ', xvt.reset)
             xvt.out(['[BAN]', '-Wands-'][rpc.user.magic])
@@ -947,12 +930,11 @@ module Common {
             xvt.out(bracket(8, false), xvt.yellow, ' Increase Mana power for ', xvt.reset)
             xvt.out(['+Scrolls+', '=Spells=', '#MAX#'][rpc.user.magic - 2])
         }
-        xvt.out('\n'); xvt.waste(200)
-        xvt.out(bracket(9, false), xvt.yellow, ' Improve Stealing skill from ', xvt.reset
+        xvt.outln(-125)
+        xvt.outln(bracket(9, false), xvt.yellow, ' Improve Stealing skill from ', xvt.reset
             , rpc.user.steal.toString(), 'x '
             , ['[RARE]', '-Average-', '+Good+', '=Masterful=', '#MAX#'][rpc.user.steal]
-            , '\n'
-        ); xvt.waste(200)
+            , -125)
 
         action('list')
 
@@ -1082,7 +1064,7 @@ module Common {
                     }
 
                     online.altered = true
-                    xvt.outln(); xvt.waste(2000)
+                    xvt.outln(-2000)
                     cb()
                 }, prompt: 'Choose which: ', cancel: '0', min: 1, max: 1, match: /^[0-9]/
             }
@@ -1291,7 +1273,7 @@ module Common {
 
         music('reroll')
         if (points > 240) points = 240
-        xvt.outln(); xvt.waste(1000)
+        xvt.outln(-1000)
         if (!Access.name[player.access].roleplay) return
 
         if (player.novice) {
@@ -1329,8 +1311,7 @@ module Common {
         }
 
         profile({ jpg: 'classes', handle: 'Reroll!', effect: 'tada' })
-        xvt.outln('You have been rerolled.  You must pick a class.\n')
-        xvt.waste(1500)
+        xvt.outln(player.pc, ', you have been rerolled.  You must pick a class.\n', -1500)
 
         xvt.outln(xvt.cyan, '      Character                       ', xvt.faint, '>> ', xvt.normal, 'Ability bonus')
         xvt.outln(xvt.cyan, '        Class      Users  Difficulty  Str  Int  Dex  Cha     Notable Feature')
@@ -1345,8 +1326,12 @@ module Common {
                     xvt.out(bracket(classes.length))
                     classes.push(pc)
                 }
-                else
-                    xvt.out('\n', n < 12 ? ' ' : '', xvt.faint, '<', xvt.red, 'x', xvt.white, '> ')
+                else {
+                    const framed = n < 12
+                        ? xvt.attr(xvt.faint, ' <', xvt.red, 'x')
+                        : xvt.attr(xvt.faint, '<', xvt.red, 'xx')
+                    xvt.out('\n', framed, xvt.white, '> ')
+                }
 
                 let rs = query(`SELECT COUNT(id) AS n FROM Players WHERE pc='${pc}' and id NOT GLOB '_*'`)[0]
 
@@ -1688,15 +1673,13 @@ module Common {
 
         if (player.coward) {
             player.coward = false
-            xvt.outln('Welcome back to play with the rest of us.')
-            xvt.waste(2000)
+            xvt.outln('Welcome back to play with the rest of us.', -2000)
         }
 
         if (player.novice) {
-            xvt.outln('You are no longer a novice.  Welcome to the next level of play.')
             player.novice = false
             player.expert = true
-            xvt.waste(2000)
+            xvt.outln('You are no longer a novice.  Welcome to the next level of play.', -2000)
         }
 
         let bonus = 0
@@ -1704,8 +1687,7 @@ module Common {
 
         if (!Access.name[player.access].sysop) {
             mydeeds = loadDeed(player.pc)
-            xvt.outln('\nChecking your deeds for the ', xvt.bright, player.pc, xvt.normal, ' list...')
-            xvt.waste(1000)
+            xvt.outln('\nChecking your deeds for the ', xvt.bright, player.pc, xvt.normal, ' list ... ', -1000)
             for (let i in deeds) {
                 let deed = mydeeds.find((x) => { return x.deed == deeds[i] })
                 if (/jw|steals|tw/.test(deeds[i])) {
@@ -1731,8 +1713,7 @@ module Common {
             }
 
             mydeeds = loadDeed('GOAT')
-            xvt.outln(xvt.magenta, '\nChecking your deeds for the ', xvt.bright, 'GOAT', xvt.normal, ' list...')
-            xvt.waste(1000)
+            xvt.outln(xvt.magenta, '\nChecking your deeds for the ', xvt.bright, 'GOAT', xvt.normal, ' list ... ', -1000)
             for (let i in deeds) {
                 let deed = mydeeds.find((x) => { return x.deed == deeds[i] })
                 if (/jw|steals|tw/.test(deeds[i])) {
@@ -1762,10 +1743,9 @@ module Common {
 
         music('immortal')
         player.immortal++
-        xvt.out(xvt.bright, xvt.cyan, '\nYou have become so powerful that you are now immortal and you leave your')
-        xvt.outln('\nworldly possessions behind.')
+        xvt.outln(xvt.cyan, xvt.bright, '\nYou have become so powerful that you are now immortal ', -3000)
         run(`UPDATE Players SET bank=bank+${player.bank.value + player.coin.value} WHERE id='${taxman.user.id}'`)
-        xvt.waste(5000)
+        xvt.outln(xvt.cyan, '    and you leave your worldly possessions behind.', -2000)
 
         let max = Object.keys(PC.name['immortal']).indexOf(player.pc) + 1
         if (max || player.keyhints.slice(12).length > int(Object.keys(PC.name['player']).length / 2))
@@ -1792,19 +1772,18 @@ module Common {
             player.wins++
             run(`UPDATE Players SET wins=${player.wins} WHERE id='${player.id}'`)
             reason = 'WON THE GAME !!'
-            xvt.waste(player.emulation == 'XT' ? 4321 : 432)
+            xvt.outln(tty == 'web' ? -4321 : -432)
 
-            xvt.outln()
-            xvt.outln(xvt.yellow, xvt.bright, 'CONGRATULATIONS!!'
-                , xvt.reset, '  You have won the game!\n')
             profile({ jpg: 'winner', effect: 'fadeInUp' })
+            xvt.outln(xvt.yellow, xvt.bright, 'CONGRATULATIONS!! ', -600
+                , xvt.reset, ' You have won the game!\n', -600)
 
-            xvt.out(xvt.yellow, 'The board will now reset ')
+            xvt.out(xvt.yellow, 'The board will now reset ', -600, xvt.faint)
             let rs = query(`SELECT id, pid FROM Online WHERE id != '${player.id}'`)
             for (let row in rs) {
                 try {
                     process.kill(rs[row].pid, 'SIGHUP')
-                    xvt.out('+')
+                    xvt.out('x')
                 }
                 catch {
                     xvt.out('?')
@@ -1812,7 +1791,8 @@ module Common {
                 unlock(rs[row].id)
             }
 
-            sound('winner', 21)
+            sound('winner', 22)
+            xvt.out(xvt.bright)
 
             rs = query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
             let user: user = { id: '' }
@@ -1823,8 +1803,7 @@ module Common {
                 newkeys(user)
                 user.keyhints.splice(12)
                 saveUser(user)
-                xvt.out('.')
-                xvt.waste(12)
+                xvt.out('.', -10)
             }
 
             xvt.outln(xvt.reset, '\nHappy hunting tomorrow!\n')
@@ -1865,12 +1844,10 @@ module Common {
                 cb: () => {
                     let attempt = xvt.entry.toUpperCase()
                     music('steal')
-                    xvt.out(' ... you insert and twist the key ')
-                    xvt.waste(1234)
+                    xvt.out(' ... you insert and twist the key ', -1234)
                     for (let i = 0; i < 3; i++) {
                         xvt.out('.')
-                        sound('click')
-                        xvt.waste(1234)
+                        sound('click', 12)
                     }
                     if (attempt == combo[slot]) {
                         sound('max')
@@ -1948,7 +1925,6 @@ module Common {
             sound('max')
         else
             xvt.beep()
-        xvt.waste(86)   //  magical year
     }
 
     export function bracket(item: number | string, nl = true): string {
@@ -2062,12 +2038,11 @@ module Common {
                     online.altered = true
                     if (player.emulation == 'XT') {
                         xvt.outln(xvt.black, '  Bat: 🦇')
-                        sound('yahoo', 20)
+                        sound('yahoo', 22)
                         cb()
                         return
                     }
-                    xvt.outln()
-                    xvt.waste(2000)
+                    xvt.outln(-2200)
                     beep()
                     for (let rows = player.rows + 5; rows > 1; rows--)
                         xvt.out(bracket(rows >= 24 ? rows : '..'))
@@ -2151,22 +2126,20 @@ module Common {
                 PC.profile(online)
             }
             xvt.outln('\x06')
-            xvt.outln(xvt.off, 'Goodbye, please play again!  Also visit:')
-            xvt.waste(750)
+            xvt.outln('Goodbye, please play again! ', -500, ' Also visit: ', -250)
             xvt.out(xvt.cyan, '  ___                               ___  \n')
-            xvt.out(xvt.cyan, '  \\_/   ', xvt.red, xvt.app.LGradient, xvt.bright, xvt.Red, xvt.white, 'Never Program Mad', xvt.reset, xvt.red, xvt.app.RGradient, xvt.cyan, '   \\_/  \n')
-            xvt.out(xvt.cyan, ' _(', xvt.bright, '-', xvt.normal, ')_     ', xvt.reset, ' https://npmjs.com    ', xvt.cyan, '  _(', xvt.bright, '-', xvt.normal, ')_ \n')
-            xvt.out(xvt.cyan, '(/ ', xvt.bright, ':', xvt.normal, ' \\)                          ', xvt.cyan, ' (/ ', xvt.bright, ':', xvt.normal, ' \\)\n')
-            xvt.out(xvt.cyan, 'I\\___/I    ', xvt.green, xvt.app.LGradient, xvt.bright, xvt.Green, xvt.white, `RAH-CoCo's`, xvt.reset, xvt.green, xvt.app.RGradient, xvt.cyan, '     I\\___/I\n')
-            xvt.out(xvt.cyan, '\\/   \\/ ', xvt.reset, '   http://rahcocos.com  ', xvt.cyan, '  \\/   \\/\n')
-            xvt.out(xvt.cyan, ' \\ : /                           ', xvt.cyan, '  \\ : / \n')
-            xvt.out(xvt.cyan, '  I:I    ', xvt.blue, xvt.app.LGradient, xvt.bright, xvt.Blue, xvt.white, `${player.emulation == 'XT' ? 'ℛ ' : ' R'}obert ${player.emulation == 'XT' ? 'ℋ ' : ' H'}urst`, xvt.reset, xvt.blue, xvt.app.RGradient, xvt.cyan, '     I:I  \n')
-            xvt.outln(xvt.cyan, ' .I:I. ', xvt.reset, '   https://www.DDgame.us   ', xvt.cyan, ' .I:I.')
-            xvt.outln(); xvt.waste(500)
+            xvt.out('  \\_/   ', xvt.red, xvt.app.LGradient, xvt.bright, xvt.Red, xvt.white, 'Never Program Mad', xvt.reset, xvt.red, xvt.app.RGradient, xvt.cyan, '   \\_/  \n')
+            xvt.out(' _(', xvt.bright, '-', xvt.normal, ')_     ', xvt.reset, ' https://npmjs.com    ', xvt.cyan, '  _(', xvt.bright, '-', xvt.normal, ')_ \n')
+            xvt.out('(/ ', player.emulation == 'XT' ? '⚨' : ':', ' \\)                          ', xvt.cyan, ' (/ ', player.emulation == 'XT' ? '⚨' : ':', ' \\)\n')
+            xvt.out('I\\___/I    ', xvt.green, xvt.app.LGradient, xvt.bright, xvt.Green, xvt.white, `RAH-CoCo's`, xvt.reset, xvt.green, xvt.app.RGradient, xvt.cyan, '     I\\___/I\n')
+            xvt.out('\\/   \\/ ', xvt.reset, '   http://rahcocos.com  ', xvt.cyan, '  \\/   \\/\n')
+            xvt.out(' \\ : /                           ', xvt.cyan, '  \\ : / \n')
+            xvt.out('  I:I    ', xvt.blue, xvt.app.LGradient, xvt.bright, xvt.Blue, xvt.white, `${player.emulation == 'XT' ? 'ℛ ' : ' R'}obert ${player.emulation == 'XT' ? 'ℋ ' : ' H'}urst`, xvt.reset, xvt.blue, xvt.app.RGradient, xvt.cyan, '     I:I  \n')
+            xvt.outln(' .I:I. ', xvt.reset, '   https://www.DDgame.us   ', xvt.cyan, ' .I:I.')
+            xvt.outln(-500)
             xvt.outln(xvt.bright, xvt.black, process.title
                 , ' running on ', xvt.bright, xvt.green, 'Node.js ', xvt.normal, process.version, xvt.reset
-                , xvt.faint, ' (', xvt.cyan, process.platform, xvt.white, xvt.faint, ')')
-            xvt.waste(1965)
+                , xvt.faint, ' (', xvt.cyan, process.platform, xvt.white, xvt.faint, ')', -1965)
             if (player.today && player.level > 1)
                 music(online.hp > 0 ? 'logoff' : 'death')
         }
@@ -2198,8 +2171,10 @@ module Common {
     }
 
     export function sound(effect: string, sync = 2) {
-        if (tty == 'web') xvt.out('@play(', effect, ')')
-        xvt.waste(sync * 100)
+        if (tty == 'web')
+            xvt.out('@play(', effect, ')', -100 * sync)
+        else
+            xvt.beep()
     }
 
     export function title(name: string) {
@@ -2226,8 +2201,7 @@ module Common {
         xvt.out('\ninitializing online ... ')
         run(`CREATE TABLE IF NOT EXISTS Online (id text PRIMARY KEY, pid numeric, lockdate numeric, locktime numeric)`)
 
-        xvt.out('done.')
-        xvt.waste(250)
+        xvt.out('done.', -250)
     }
 
     rs = query(`SELECT * FROM sqlite_master WHERE name='Players' AND type='table'`)
@@ -2268,8 +2242,7 @@ module Common {
     if (!rs.length) {
         xvt.out('\ninitializing (unique) rings ... ')
         run(`CREATE TABLE IF NOT EXISTS Rings (name text PRIMARY KEY, bearer text)`)
-        xvt.out('done.')
-        xvt.waste(250)
+        xvt.out('done.', -250)
     }
     for (let i in Ring.name)
         ringBearer(i)
@@ -2281,8 +2254,7 @@ module Common {
             name text PRIMARY KEY, members text, win numeric, loss numeric, banner numeric, color numeric
         )`)
         run(`INSERT INTO Gangs VALUES ( 'Monster Mash', '_MM1,_MM2,_MM3,_MM4', 0, 0, 0, 0 )`)
-        xvt.out('done.')
-        xvt.waste(250)
+        xvt.out('done.', -250)
     }
 
     rs = query(`SELECT * FROM sqlite_master WHERE name='Deeds' AND type='table'`)
@@ -2291,8 +2263,7 @@ module Common {
         run(`CREATE TABLE IF NOT EXISTS Deeds (pc text KEY,
             deed text KEY, date numeric, hero text, value numeric
         )`)
-        xvt.out('done.')
-        xvt.waste(250)
+        xvt.out('done.', -250)
     }
 
     //  customize the Master of Whisperers NPC
@@ -2564,8 +2535,7 @@ module Common {
                         let p: user = { id: rs[row].id }
                         loadUser(p)
                         require('./email').rejoin(p)
-                        xvt.waste(1000)
-                        xvt.out('_')
+                        xvt.out('_', -1000)
                         continue
                     }
                 }
@@ -2818,8 +2788,7 @@ module Common {
                 if (err.code !== 'SQLITE_CONSTRAINT_PRIMARYKEY') {
                     xvt.outln()
                     beep()
-                    xvt.outln(xvt.red, '?Unexpected error: ', xvt.bright, String(err))
-                    xvt.waste(2000)
+                    xvt.outln(xvt.red, '?Unexpected error: ', xvt.bright, String(err), -2000)
                 }
             }
         }
