@@ -718,10 +718,10 @@ module Battle {
 
                 if (parties[w][m] === $.online) {
                     if (xp)
-                        xvt.out('\nYou get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.')
+                        xvt.out('\nYou get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.', -400)
                     if (award)
-                        xvt.out('You get your cut worth ', new $.coins(award).carry(), '.')
-                    xvt.outln(-600)
+                        xvt.out('\nYou get your cut worth ', new $.coins(award).carry(), '.', 400)
+                    xvt.outln(-200)
                 }
                 else {
                     $.log(parties[w][m].user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`)

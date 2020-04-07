@@ -4,7 +4,10 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "declaration": false,
-    "sourceMap": false
+    "outDir": "../build",
+    "removeComments": true,
+    "preserveConstEnums": true,
+    "sourceMap": true
   },
   "exclude": [
         "node_modules",

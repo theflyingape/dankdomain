@@ -27,6 +27,7 @@ module Common {
             xvt.app.emulation = 'VT'
             xvt.out('\f')
     }
+    export const users = './users'
 
     //  items
     export const Abilities = ['str', 'int', 'dex', 'cha']
@@ -1278,7 +1279,7 @@ module Common {
 
         if (player.novice) {
             let novice = <user>{ novice: true }
-            Object.assign(novice, JSON.parse(fs.readFileSync('./users/novice.json').toString()))
+            Object.assign(novice, JSON.parse(fs.readFileSync(`${users}/novice.json`).toString()))
             reroll(player, novice.pc)
             Object.assign(player, novice)
             player.coin = new coins(novice.coin.toString())
@@ -1526,7 +1527,7 @@ module Common {
         }
 
         if (level == 1) {
-            Object.assign(user, JSON.parse(fs.readFileSync('./users/reroll.json').toString()))
+            Object.assign(user, JSON.parse(fs.readFileSync(`${users}/reroll.json`).toString()))
             user.gender = user.sex
             user.coin = new coins(user.coin.toString())
             user.bank = new coins(user.bank.toString())
@@ -1924,7 +1925,7 @@ module Common {
         if (player.emulation == 'XT')
             sound('max')
         else
-            xvt.beep()
+            xvt.out('\x07', -125)
     }
 
     export function bracket(item: number | string, nl = true): string {
@@ -2106,12 +2107,12 @@ module Common {
                 news(`\t(${reason})\n`, true)
 
                 try {
-                    callers = JSON.parse(fs.readFileSync('./users/callers.json').toString())
+                    callers = JSON.parse(fs.readFileSync(`${users}/callers.json`).toString())
                 } catch (e) { }
                 while (callers.length > 7)
                     callers.pop()
                 callers = [<caller>{ who: player.handle, reason: reason }].concat(callers)
-                fs.writeFileSync('./users/callers.json', JSON.stringify(callers))
+                fs.writeFileSync(`${users}/callers.json`, JSON.stringify(callers))
             }
 
             wall(`logged off: ${reason}`)
@@ -2189,11 +2190,7 @@ module Common {
     /***********
      *  DATABASE support functions
      ***********/
-    const users = './users/'
-    if (!fs.existsSync(users))
-        fs.mkdirSync(users)
-
-    const DD = users + 'dankdomain.sql'
+    const DD = `${users}/dankdomain.sql`
     let better = require('better-sqlite3')
     export let sqlite3 = new better(DD)
     let rs = query(`SELECT * FROM sqlite_master WHERE name='Online' AND type='table'`)
@@ -2226,7 +2223,7 @@ module Common {
     }
 
     let npc = <user>{}
-    Object.assign(npc, JSON.parse(fs.readFileSync('./users/sysop.json').toString()))
+    Object.assign(npc, JSON.parse(fs.readFileSync(`${users}/sysop.json`).toString()))
     rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`[${npc.handle}]`)
@@ -2268,7 +2265,7 @@ module Common {
 
     //  customize the Master of Whisperers NPC
     npc = <user>{}
-    Object.assign(npc, JSON.parse(fs.readFileSync('./users/barkeep.json').toString()))
+    Object.assign(npc, JSON.parse(fs.readFileSync(`${users}/barkeep.json`).toString()))
     rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
@@ -2280,7 +2277,7 @@ module Common {
     }
     //  customize the Master at Arms NPC
     npc = <user>{}
-    Object.assign(npc, JSON.parse(fs.readFileSync('./users/merchant.json').toString()))
+    Object.assign(npc, JSON.parse(fs.readFileSync(`${users}/merchant.json`).toString()))
     rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
@@ -2292,7 +2289,7 @@ module Common {
     }
     //  customize the Big Kahuna NPC
     npc = <user>{}
-    Object.assign(npc, JSON.parse(fs.readFileSync('./users/neptune.json').toString()))
+    Object.assign(npc, JSON.parse(fs.readFileSync(`${users}/neptune.json`).toString()))
     rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
@@ -2304,7 +2301,7 @@ module Common {
     }
     //  customize the Queen B NPC
     npc = <user>{}
-    Object.assign(npc, JSON.parse(fs.readFileSync('./users/seahag.json').toString()))
+    Object.assign(npc, JSON.parse(fs.readFileSync(`${users}/seahag.json`).toString()))
     rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
@@ -2316,7 +2313,7 @@ module Common {
     }
     //  customize the Master of Coin NPC
     npc = <user>{}
-    Object.assign(npc, JSON.parse(fs.readFileSync('./users/taxman.json').toString()))
+    Object.assign(npc, JSON.parse(fs.readFileSync(`${users}/taxman.json`).toString()))
     rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
     if (!rs.length) {
         xvt.out(`\n[${npc.handle}]`)
@@ -2331,7 +2328,7 @@ module Common {
     while (++i) {
         try {
             npc = <user>{}
-            Object.assign(npc, JSON.parse(fs.readFileSync(`./users/bot${i}.json`).toString()))
+            Object.assign(npc, JSON.parse(fs.readFileSync(`${users}/bot${i}.json`).toString()))
             rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
             if (!rs.length) {
                 xvt.out(`\nbot #${i} - ${npc.handle}`)
@@ -2432,7 +2429,7 @@ module Common {
 
         if (xvt.validator.isEmpty(user.id)) return
         if (insert || locked || user.id[0] == '_') {
-            let trace = users + '.' + user.id + '.json'
+            let trace = `${users}/.${user.id}.json`
             fs.writeFileSync(trace, JSON.stringify(user, null, 2))
         }
 
@@ -2660,26 +2657,18 @@ module Common {
                 }
                 if (!errOk) {
                     xvt.out('\n?FATAL SQL operation: ', sql)
-                    /*
-                                        if (user.id == player.id || user.id[0] == '_') {
-                                            let trace = users + user.id + '.json'
-                                            if (reason == '')
-                                                fs.writeFileSync(trace, JSON.stringify(user, null, 2))
-                                            else
-                                                fs.unlink(trace, () => {})
-                                        }
-
-                                        sql = users + user.id + '.sql'
-                                        if (process.platform == 'linux') {
-                                            require('child_process').exec(`
-                                                sqlite3 ${DD} <<-EOD
-                                                .mode insert
-                                                .output ${sql}
-                                                select * from Players where id = '${user.id}';
-                                                EOD
-                                            `)
-                                        }
-                    */
+                    /***
+                    sql = users + user.id + '.sql'
+                    if (process.platform == 'linux') {
+                        require('child_process').exec(`
+                            sqlite3 ${DD} <<-EOD
+                            .mode insert
+                            .output ${sql}
+                            select * from Players where id = '${user.id}';
+                            EOD
+                        `)
+                    }
+                    ***/
                     reason = 'defect - ' + err.code
                     xvt.hangup()
                 }

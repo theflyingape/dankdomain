@@ -12,11 +12,9 @@
   },
   "scripts": {
     "build": "./build.sh",
-    "debug": "npm run build && ./debug.sh",
-    "game": "node ./build/telnet",
     "mame": "./build/mame.sh",
-    "start": "node ./build/door/app",
-    "test": "./build/tty.sh"
+    "start": "killall ddgame; node ./build/door/app &",
+    "test": "node --inspect=localhost:9230 ./build/telnet localhost 1939"
   },
   "repository": {
     "type": "git",

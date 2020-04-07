@@ -1,6 +1,6 @@
-.vscode/**
 **/node_modules/**
 build/*.js
+build/**/*.js.map
 build/door/*.js
 build/door/static/bundle.js
 build/tty/*.js

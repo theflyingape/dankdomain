@@ -5,4 +5,4 @@ export HOME=$PWD/door
 umask 0002
 eval `resize | grep LINES`
 
-exec node telnet localhost 1939 $LINES
+exec node $1 telnet localhost 1939 $LINES

@@ -1023,7 +1023,6 @@ module Dungeon {
                                     t = $.dice(z + 1) - 1
                                     if (i == n) {
                                         z = 9
-                                        if ($.player.coward) t = [0, 3, 5][$.dice(3) - 1]
                                         if ($.access.sysop) t = [1, 2, 4, 6, 7][$.dice(5) - 1]
                                     }
                                     xvt.out(xvt.bright, xvt.blue, '\r [', xvt.cyan, [
@@ -1031,8 +1030,8 @@ module Dungeon {
                                         ' Doom! ', 'Fortune', ' Taxes ',
                                         ' =Key= ', '+Skill+', ' Morph ']
                                     [t % z],
-                                        xvt.blue, '] \r')
-                                    $.sound('click', 5 * i)
+                                        xvt.blue, '] \r', -100 * 3 * i)
+                                    $.sound('click')
                                 }
                                 $.animated('rotateOut')
                                 xvt.outln()
