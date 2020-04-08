@@ -12,7 +12,7 @@
  *  Apple2  TproBBS                                written by Guy T. Rice    *
 \*****************************************************************************/
 
-process.title = 'dankdomain'
+process.title = 'ddclient'
 process.chdir(__dirname)
 
 import xvt = require('xvt')

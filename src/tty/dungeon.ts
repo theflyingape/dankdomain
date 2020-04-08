@@ -2517,8 +2517,9 @@ module Dungeon {
         //	check for overcrowding
         let room = DL.rooms[r][c]
         let i: number = room.monster.length
-        const mob = (Z > 9 && Z < 50) ? 3 : 2	// how big are these caverns?
-        if (i >= (!DL.rooms[r][c].type ? mob - 1 : DL.rooms[r][c].type == 'cavern' ? mob : 1))
+        // how big are these caverns?
+        const mob = (deep < 4 && Z < 4) ? 1 : (Z > 9 && Z < 50) || (deep > 7) ? 3 : 2
+        if (i >= (mob > 1 && !DL.rooms[r][c].type ? mob - 1 : DL.rooms[r][c].type == 'cavern' ? mob : 1))
             return false
 
         let j: number = 0
