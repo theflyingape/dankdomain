@@ -1034,12 +1034,13 @@ module Battle {
                 while (m > 9)
                     m >>= 1
                 m++
-                let wtf = m > 5 ? '!!kcuF ehT tahW' : 'z.z.z.z.z.'
+                let wtf = m > 5 ? 'f eht tahw' : 'z.Z.z'
                 xvt.sessionAllowed = $.int(xvt.sessionAllowed - 60 * m, true) + 60
-                xvt.out(`\nYou are unconscious for ${m} minute`, m !== 1 ? 's' : '')
-                while (m--)
-                    xvt.out(wtf[m + 5], -250)
-                xvt.outln()
+                xvt.out(`\nYou are unconscious for ${m} minute`, m !== 1 ? 's' : '', '...'
+                    , -600, xvt.faint)
+                for (let i = 0; i < m; i++)
+                    xvt.out(wtf[wtf.length - i - 1], -250)
+                xvt.outln(xvt.normal, '...')
                 $.news(`\tgot knocked out by ${winner.user.handle}`)
             }
             else

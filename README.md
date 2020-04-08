@@ -17,23 +17,22 @@ Download packs: [images](https://drive.google.com/open?id=1jjLPtGf_zld416pxytZfb
 and [sounds](https://drive.google.com/open?id=1UvqQJbN61VbWVduONXgo1gm9yvGI0Qp8) :sound:
 
 To run a local game copy (Linux only):
-
 ```bash
-npm install dankdomain
-./install.sh
-./debug.sh
-npm test
+$ npm install dankdomain
+$ ./install.sh
+$ npm start
 ```
-
 You can also play www.DDgame.us from the command-line:
-
- * `node telnet`
- * `npm run mame`
- * `telnet play.ddgame.us`
-
+```bash
+$ npm test
+$ npm run mame
+$ telnet play.ddgame.us
+```
+File directory structure:
 ```linux
 [rhurst@atom dankdomain]$ pwd
 /usr/local/games/dankdomain
+.vscode             Visual Studio Code: settings & debug profiles
 etc/                game app & system support files
 files/              game & player support files: ANSI and/or text formats
 ../arena            ASCII art files
@@ -63,7 +62,6 @@ logins.sh           player - startup script into game app
 mame.sh             player - MAME VT240 terminal + solcat startup script
 tty.sh              player - startup script into web services
 ```
-
 NOTE: *in **`users`** folder, you can edit any hidden (dot) trace file and save as **`save.json`** for auto-update into the dankdomain.sql **`Players`** table*
 
  🇺🇸 ©️1991 - 2020 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
