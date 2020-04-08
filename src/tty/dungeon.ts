@@ -146,7 +146,10 @@ module Dungeon {
                 pause = true
                 return
             }
-            else if ($.jumped > (19 - deep)) skillkill = true
+            else if ($.jumped) {
+                $.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
+                if ($.jumped > (19 - $.int(deep / 3))) skillkill = true
+            }
         }
 
         if ($.online.altered) $.saveUser($.player)
@@ -2056,6 +2059,9 @@ module Dungeon {
     }
 
     function generateLevel() {
+
+        $.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
+
         looked = false
         refresh = true
 
@@ -2076,9 +2082,6 @@ module Dungeon {
 
         if (deep > hideep) hideep = deep
         if (Z > hiZ) hiZ = Z
-
-        $.wall(`enters dungeon level ${xvt.romanize(deep + 1)}.${Z + 1}`)
-        $.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
 
         let y: number, x: number
         let result: boolean
@@ -2129,6 +2132,7 @@ module Dungeon {
 
         $.reroll(DL.cleric.user, DL.cleric.user.pc, DL.cleric.user.level)
         $.activate(DL.cleric)
+        $.wall(`enters dungeon level ${xvt.romanize(deep + 1)}.${Z + 1}`)
 
         renderMap()
         do {

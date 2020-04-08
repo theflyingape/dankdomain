@@ -742,7 +742,10 @@ module Common {
             return true
         }
 
-        if (rpc.user.xp < experience(rpc.user.level, 1, rpc.user.int)) return false
+        if (rpc.user.xp < experience(rpc.user.level, 1, rpc.user.int)) {
+            rpc.user.xplevel = rpc.user.level
+            return false
+        }
         reason = ''
 
         let award = {
@@ -759,7 +762,6 @@ module Common {
 
         while (rpc.user.xp >= experience(rpc.user.level, undefined, rpc.user.int) && rpc.user.level < sysop.level) {
             rpc.user.level++
-            rpc.user.xplevel++
 
             if (rpc.user.level == Access.name[rpc.user.access].promote) {
                 music('promote')
@@ -788,7 +790,6 @@ module Common {
             PC.adjust('cha', 0, PC.card(rpc.user.pc).toCha, 0, rpc)
 
             if (eligible && rpc.user.level == 50) {
-                rpc.user.xplevel = rpc.user.level
                 bonus = true
                 music('.')
                 if (rpc.user.novice) {
@@ -1674,7 +1675,7 @@ module Common {
 
         if (player.coward) {
             player.coward = false
-            xvt.outln('Welcome back to play with the rest of us.', -2000)
+            xvt.outln('Welcome back to play with the rest of us. ', -1400, 'Heh.', -600)
         }
 
         if (player.novice) {
@@ -1930,7 +1931,7 @@ module Common {
 
     export function bracket(item: number | string, nl = true): string {
         var framed: string = item.toString()
-        framed = xvt.attr(nl ? '\n' : '', framed.length == 1 && nl ? ' ' : ''
+        framed = xvt.attr(xvt.off, nl ? '\n' : '', framed.length == 1 && nl ? ' ' : ''
             , xvt.white, xvt.faint, '<', xvt.bright, framed, xvt.faint, '>'
             , nl ? ' ' : '', xvt.reset)
         return framed

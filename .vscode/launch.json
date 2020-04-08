@@ -12,7 +12,7 @@
       "cwd": "${workspaceFolder}",
       "outFiles": [ "${workspaceFolder}/build/door" ],
       "sourceMaps": true,
-      "stopOnEntry": true,
+      "stopOnEntry": false,
       "skipFiles": [
         "<node_internals>/**"
       ]
@@ -26,7 +26,7 @@
       "cwd": "${workspaceFolder}",
       "outFiles": [ "${workspaceFolder}/build" ],
       "sourceMaps": true,
-      "stopOnEntry": true,
+      "stopOnEntry": false,
       "skipFiles": [
         "<node_internals>/**"
       ]

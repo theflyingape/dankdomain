@@ -14,7 +14,7 @@
     "build": "./build.sh",
     "mame": "./build/mame.sh",
     "start": "killall ddgame; node ./build/door/app &",
-    "test": "node --inspect=localhost:9230 ./build/telnet localhost 1939"
+    "test": "./build/tty.sh"
   },
   "repository": {
     "type": "git",
