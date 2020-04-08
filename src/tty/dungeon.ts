@@ -2141,12 +2141,15 @@ module Dungeon {
             ROOM = DL.rooms[Y][X]
         } while (ROOM.type)
 
-        //	populate this new floor with monsters, no corridors or hallways
+        //	populate this new floor with monsters ...
         let n = $.int(DL.rooms.length * DL.width / 6) + $.dice(Z / 9) + $.dice(deep)
             + $.dice(Z < 50 && $.online.cha < 80 ? ((80 - $.online.cha) / 9) : ((100 - $.online.cha) / 3))
         while (n)
             if (putMonster())
                 n--
+        //  ... and let's be nicer to the hero entering a new level
+        if (ROOM.monster.length > 1)
+            ROOM.monster.splice(1, ROOM.monster.length - 1)
 
         let wow = 1
         let dank = deep + 1, level = Z + 1
