@@ -349,6 +349,7 @@ module Common {
 
             xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
             xvt.out('       HP: ', xvt.white)
+            if (player.emulation == 'XT') xvt.out('\r\x1B[2C🌡️\r\x1B[12C')
             xvt.out(sprintf('%-42s', profile.hp + '/' + profile.user.hp + ' ('
                 + ['weak', 'normal', 'adept', 'warrior', 'brute', 'hero'][profile.user.melee] + ', '
                 + ['a rare', 'occasional', 'deliberate', 'angry', 'murderous'][profile.user.backstab] + ' backstab)'))
@@ -439,14 +440,16 @@ module Common {
 
             if (profile.user.poisons.length) {
                 xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.white)
-                xvt.out(sprintf(' %8s: ', ['Vials', 'Toxins', 'Poisons', 'Banes', 'Venena'][profile.user.poison]), xvt.normal)
+                xvt.out(sprintf(' %8s: ', ['Vial', 'Toxin', 'Poison', 'Bane', 'Venena'][profile.user.poison]), xvt.normal)
+                if (player.emulation == 'XT') xvt.out('\r\x1B[2C🧪\r\x1B[12C')
                 xvt.out(sprintf('%-42s', profile.user.poisons.toString()))
                 xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
             }
 
             xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
-            xvt.out('   Weapon: ', this.weapon(profile))
-            xvt.out(' '.repeat(42 - this.weapon(profile, true).length))
+            xvt.out('   Weapon: ')
+            if (player.emulation == 'XT') xvt.out('\r\x1B[2C🗡️\r\x1B[12C')
+            xvt.out(this.weapon(profile), ' '.repeat(42 - this.weapon(profile, true).length))
             xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
             xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
