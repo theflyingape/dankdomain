@@ -5,16 +5,25 @@
 🇺🇸 ©️1991 - 2020 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](https://play.DDgame.us) within the Google Cloud Platform (us-central1)
 
-### **01-Apr-2020** `v2.4.2`
+### **12-Apr-2020** `v2.5.0`
 
-* [April Fools' Day](https://en.wikipedia.org/wiki/April_Fools%27_Day)
+* [Easter](https://en.wikipedia.org/wiki/Easter) 🐣
+* refactor class 'None' as 'Spirit'
+* instantiate Imagination and Nobody as "Elemental" player bots (coming soon)
+* xterm.js v4.5 release
+* xvt word-wrap fix
+* add Visual Code debug launch ddgame & ddclient settings
+
+#### **01-Apr-2020** `v2.4.2`
+
+* [April Fools' Day](https://en.wikipedia.org/wiki/April_Fools%27_Day) 🃏
 * improved telnet client service to allow expanded use of the "XT" emulation mode and wall messages pass between concurrent players: both browsers and telnet
-* re-make access.json that's better aligned for midnight/noon resets on player visits -- gives COVID-19 quarantined players more opportunity to play
+* re-make `access.json` that's better aligned for midnight/noon resets on player visits -- gives COVID-19 quarantined players more opportunity to play
 
 #### **21-Mar-2020** `v2.3.6`
 
 * bundled with Google Noto mono + emoji fonts
-* user trace files can be edited and copied over as save.json file, which will auto-update the Players table
+* user trace files can be edited and copied over as `save.json` file, which will auto-update the Players table
 
 #### **08-Feb-2020** `v2.3.1`
 

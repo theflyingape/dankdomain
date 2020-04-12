@@ -2522,9 +2522,10 @@ module Common {
 
         rs = query(`SELECT id, access, lastdate, level, xplevel, novice, jl, jw, gang FROM Players WHERE id NOT GLOB '_*'`)
         for (let row in rs) {
-            if ((rs[row].level == 1 || rs[row].novice) && (rs[row].jl > (2 * rs[row].jw))) {
+            if ((rs[row].level == 1 || rs[row].novice) && (rs[row].jl > (2 * rs[row].jw)))
                 run(`UPDATE Players SET jl=0,jw=0 WHERE id='${rs[row].id}'`)
-            }
+            if (Access.name[rs[row].access].bot)
+                continue
             //  manually rolled back system date _after_ some player visited?
             if (!(now().date - rs[row].lastdate))
                 continue
