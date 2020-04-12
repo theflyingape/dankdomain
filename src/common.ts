@@ -1765,9 +1765,10 @@ module Common {
             music('victory')
 
             const log = `./files/winners.txt`
-            fs.appendFileSync(log,
-                `${player.handle} won on ${date2full(now().date)}  -  game took ${now().date - sysop.dob + 1} days\n`)
-
+            fs.appendFileSync(log, sprintf(`%22s won on %s  -  game took %3d days\n`
+                , player.handle
+                , date2full(now().date)
+                , now().date - sysop.dob + 1))
             loadUser(sysop)
             sysop.who = player.handle
             sysop.dob = now().date + 1
@@ -1809,6 +1810,25 @@ module Common {
                 user.keyhints.splice(12)
                 saveUser(user)
                 xvt.out('.', -10)
+            }
+
+            let i = 0
+            while (++i) {
+                try {
+                    npc = <user>{}
+                    Object.assign(npc, JSON.parse(fs.readFileSync(`${users}/bot${i}.json`).toString()))
+                    let bot = <user>{}
+                    Object.assign(bot, npc)
+                    newkeys(bot)
+                    bot.id = `_BOT${i}`
+                    reroll(bot, bot.pc, bot.level)
+                    Object.assign(bot, npc)
+                    saveUser(bot)
+                    xvt.out('&')
+                }
+                catch (err) {
+                    break
+                }
             }
 
             xvt.outln(xvt.reset, '\nHappy hunting tomorrow!\n')
