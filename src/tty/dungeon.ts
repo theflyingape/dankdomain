@@ -2362,7 +2362,7 @@ module Dungeon {
             }
             else if (tl - min > 4) {
                 tl = min
-                $.music('dungeon' + $.dice(9))
+                $.music((deep % 2 ? 'ddd' : 'dungeon') + $.dice(9))
             }
 
             const box = xvt.app.Draw
