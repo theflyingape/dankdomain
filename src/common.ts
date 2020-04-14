@@ -587,9 +587,8 @@ module Common {
         }
 
         set value(newValue: number) {
-            const MAX = (1e+18 - 1e+13)
-            //  cap coin accruals at 99999p, because the needs of the many...
-            this._value = newValue < MAX ? newValue
+            const MAX = (1e+18 - 1e+09)
+            this._value = newValue < 0 ? 0 : newValue < MAX ? newValue
                 : newValue == Infinity ? 1 : MAX
         }
 

@@ -386,8 +386,8 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
                 }
 
                 set value(newValue: number) {
-                    const MAX = (1e+18 - 1e+13)
-                    this._value = newValue < MAX ? newValue
+                    const MAX = (1e+18 - 1e+09)
+                    this._value = newValue < 0 ? 0 : newValue < MAX ? newValue
                         : newValue == Infinity ? 1 : MAX
                 }
 

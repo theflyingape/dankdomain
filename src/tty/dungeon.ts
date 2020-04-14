@@ -22,7 +22,6 @@ module Dungeon {
     let skillkill: boolean
 
     let paper: string[]
-    let dot = xvt.app.Empty
     let dd = new Array(10)
     let deep: number
     let DL: ddd
@@ -42,6 +41,9 @@ module Dungeon {
         XT: '\u00A3',
         dumb: '$'
     }
+
+    //  ·
+    const Dot = xvt.app.Empty
 
     const Mask = ['   ', ' ♗ ', '♗ ♗', '♗♗♗', '☨♝☨']
     const Monster = {
@@ -264,7 +266,7 @@ module Dungeon {
                     DL.cleric.sp = 0
                     DL.cleric.user.status = 'dead'
                     ROOM.giftItem = 'chest'
-                    ROOM.giftIcon = $.player.emulation == 'XT' ? '⌂' : dot
+                    ROOM.giftIcon = $.player.emulation == 'XT' ? '⌂' : Dot
                     ROOM.giftValue = 0
                     DL.cleric.user.coin.value = 0
                     if (DL.map && DL.map !== 'map')
@@ -1981,12 +1983,9 @@ module Dungeon {
     function drawLevel() {
         let y: number, x: number, m: number
 
-        xvt.out(xvt.reset)
-        if ($.tty == 'web') {
-            xvt.plot($.player.rows, 1)
-            xvt.out('\n'.repeat($.player.rows))
-        }
-        xvt.out(xvt.clear)
+        xvt.plot($.player.rows, 1)
+        xvt.outln(''.repeat($.player.rows))
+        xvt.out(xvt.off, xvt.clear)
 
         if (DL.map) {
             for (y = 0; y < paper.length; y++) {
@@ -2224,7 +2223,7 @@ module Dungeon {
                 y = $.dice(DL.rooms.length) - 1
                 x = $.dice(DL.width) - 1
                 DL.rooms[y][x].giftItem = 'map'
-                DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⎅' : dot
+                DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⎅' : Dot
             }
 
         //	generate treasure(s)
@@ -2255,7 +2254,7 @@ module Dungeon {
             if ($.dice(110 - $.online.cha + dank + +$.player.coward) > dank) {
                 DL.rooms[y][x].giftItem = 'potion'
                 DL.rooms[y][x].giftID = false
-                DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⚱' : dot
+                DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⚱' : Dot
                 n = $.dice(130 - deep)
                 for (let j = 0; j < 16 && n > 0; j++) {
                     let v = 15 - j
@@ -2277,18 +2276,18 @@ module Dungeon {
 
             switch (DL.rooms[y][x].giftItem) {
                 case 'armor':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⛨' : dot
+                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⛨' : Dot
                     n = $.Armor.special.length - 1
                     for (v = 0; v < n && $.online.armor.ac >= $.Armor.name[$.Armor.special[v]].ac; v++);
                     break
 
                 case 'chest':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⌂' : dot
+                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⌂' : Dot
                     v = $.dice(8 + 2 * (deep + $.player.steal)) - 1
                     break
 
                 case 'magic':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⚹' : dot
+                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⚹' : Dot
                     n = $.dice($.Magic.merchant.length * 16)
                     for (let j = 0; j < $.Magic.merchant.length && n > 0; j++) {
                         v = $.Magic.merchant.length - j
@@ -2297,12 +2296,12 @@ module Dungeon {
                     break
 
                 case 'map':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⎅' : dot
+                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⎅' : Dot
                     v = 1
                     break
 
                 case 'poison':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⚱' : dot
+                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⚱' : Dot
                     n = $.dice($.Poison.merchant.length * 16)
                     for (let j = 0; j < $.Poison.merchant.length && n > 0; j++) {
                         v = $.Poison.merchant.length - j
@@ -2312,7 +2311,7 @@ module Dungeon {
 
                 case 'ring':
                     if ($.Ring.have($.player.rings, $.Ring.theOne)) DL.rooms[y][x].map = true
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⍥' : dot
+                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⍥' : Dot
                     if ($.dice(6 - $.int(dank / 2)) > 1) {
                         let ring = $.Ring.common[$.dice($.Ring.common.length) - 1]
                         DL.rooms[y][x].giftValue = ring
@@ -2324,13 +2323,13 @@ module Dungeon {
                     break
 
                 case 'weapon':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⚸' : dot
+                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⚸' : Dot
                     n = $.Weapon.special.length - 1
                     for (v = 0; v < n && $.online.weapon.wc >= $.Weapon.name[$.Weapon.special[v]].wc; v++);
                     break
 
                 case 'xmagic':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '☀' : dot
+                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '☀' : Dot
                     v = $.Magic.merchant.length + $.dice($.Magic.special.length)
                     break
 
@@ -2795,42 +2794,42 @@ module Dungeon {
 
                 //	Vial of Weakness
                 case 1:
-                    $.PC.adjust('str', -$.dice(10), -1)
+                    $.PC.adjust('str', -$.dice(10), -$.PC.card($.player.pc).toStr)
                     break
 
                 //	Potion of Charm
                 case 2:
-                    $.PC.adjust('cha', 100 + $.dice(10), 1, +($.player.cha == $.player.maxcha))
+                    $.PC.adjust('cha', 100 + $.dice(10), $.PC.card($.player.pc).toCha, +($.player.cha == $.player.maxcha))
                     break
 
                 //	Vial of Stupidity
                 case 3:
-                    $.PC.adjust('int', -$.dice(10), -1)
+                    $.PC.adjust('int', -$.dice(10), -$.PC.card($.player.pc).toInt)
                     break
 
                 //	Potion of Agility
                 case 4:
-                    $.PC.adjust('dex', 100 + $.dice(10), 1, +($.player.dex == $.player.maxdex))
+                    $.PC.adjust('dex', 100 + $.dice(10), $.PC.card($.player.pc).toDex, +($.player.dex == $.player.maxdex))
                     break
 
                 //	Vial of Clumsiness
                 case 5:
-                    $.PC.adjust('dex', -$.dice(10), -1)
+                    $.PC.adjust('dex', -$.dice(10), -$.PC.card($.player.pc).toDex)
                     break
 
                 //	Potion of Wisdom
                 case 6:
-                    $.PC.adjust('int', 100 + $.dice(10), 1, +($.player.int == $.player.maxint))
+                    $.PC.adjust('int', 100 + $.dice(10), $.PC.card($.player.pc).toInt, +($.player.int == $.player.maxint))
                     break
 
                 //	Vile Vial
                 case 7:
-                    $.PC.adjust('cha', -$.dice(10), -1)
+                    $.PC.adjust('cha', -$.dice(10), -$.PC.card($.player.pc).toCha)
                     break
 
                 //	Potion of Stamina
                 case 8:
-                    $.PC.adjust('str', 100 + $.dice(10), 1, +($.player.str == $.player.maxstr))
+                    $.PC.adjust('str', 100 + $.dice(10), $.PC.card($.player.pc).toStr, +($.player.str == $.player.maxstr))
                     break
 
                 //	Vial of Slaad Secretions
@@ -2859,16 +2858,16 @@ module Dungeon {
                 //	Elixir of Restoration
                 case 12:
                     $.music('elixir')
-                    $.online.hp = $.player.hp
-                    $.online.sp = $.player.sp
+                    if ($.online.hp < $.player.hp) $.online.hp = $.player.hp
+                    if ($.online.sp < $.player.sp) $.online.sp = $.player.sp
                     if ($.online.str < $.player.str) $.online.str = $.player.str
                     if ($.online.int < $.player.int) $.online.int = $.player.int
                     if ($.online.dex < $.player.dex) $.online.dex = $.player.dex
                     if ($.online.cha < $.player.cha) $.online.cha = $.player.cha
-                    $.PC.adjust('str', 100 + $.dice(10), 1, +($.player.str == $.player.maxstr))
-                    $.PC.adjust('int', 100 + $.dice(10), 1, +($.player.int == $.player.maxint))
-                    $.PC.adjust('dex', 100 + $.dice(10), 1, +($.player.dex == $.player.maxdex))
-                    $.PC.adjust('cha', 100 + $.dice(10), 1, +($.player.cha == $.player.maxcha))
+                    $.PC.adjust('str', 100 + $.dice(10), $.PC.card($.player.pc).toStr, +($.player.str == $.player.maxstr))
+                    $.PC.adjust('int', 100 + $.dice(10), $.PC.card($.player.pc).toInt, +($.player.int == $.player.maxint))
+                    $.PC.adjust('dex', 100 + $.dice(10), $.PC.card($.player.pc).toDex, +($.player.dex == $.player.maxdex))
+                    $.PC.adjust('cha', 100 + $.dice(10), $.PC.card($.player.pc).toCha, +($.player.cha == $.player.maxcha))
                     break
 
                 //	Vial of Crack
@@ -2960,7 +2959,7 @@ module Dungeon {
             }
             else if (room.map) {
                 if (!room.type || room.type == 'cavern') o += xvt.attr(!room.type ? xvt.yellow : xvt.red)
-                o += `  ${dot}  `
+                o += `  ${Dot}  `
             }
             else
                 o = '     '

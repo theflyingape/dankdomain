@@ -1645,8 +1645,8 @@ module Battle {
                         if (rpc === $.online) $.reason = `disintegrate backfired`
                     }
                     else {
-                        nme.hp = 0
                         xvt.out(recipient)
+                        nme.hp = 0
                     }
                     xvt.outln('!', -400)
                     break

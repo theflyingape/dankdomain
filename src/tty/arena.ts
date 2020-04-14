@@ -130,8 +130,8 @@ module Arena {
                                         , level: opponent.user.level, pc: opponent.user.pc
                                         , effect: 'slideInLeft'
                                     })
-                                    xvt.out('The trumpets blare! ', -600, 'You and your opponent ride into the arena. ', -600)
-                                    xvt.outln(opponent.user.id == $.king.id ? '\nThe crowd goes silent.' : 'The crowd roars!', -600)
+                                    xvt.out('The trumpets blare! ', -400, 'You and your opponent ride into the arena. ', -400)
+                                    xvt.outln(opponent.user.id == $.king.id ? '\nThe crowd goes silent.' : 'The crowd roars!', -400)
                                     $.online.altered = true
                                     $.action('joust')
 
@@ -152,39 +152,39 @@ module Arena {
                                     if (opponent.user.id == $.king.id) {
                                         $.sound('cheer')
                                         $.PC.adjust('cha', 101)
-                                        xvt.outln('The crowd is delighted by your show of respect to the Crown.', -250)
+                                        xvt.outln('The crowd is delighted by your show of respect to the Crown.', -300)
                                     }
                                     else {
                                         $.sound('boo')
                                         $.animated('slideOutRight')
                                         $.player.jl++
                                         $.run(`UPDATE Players set jw=jw+1 WHERE id='${opponent.user.id}'`)
-                                        xvt.outln('The crowd throws rocks at you as you ride out of the arena.', -250)
+                                        xvt.outln('The crowd throws rocks at you as you ride out of the arena.', -300)
                                     }
                                     menu()
                                     return
                                 }
                                 if (/J/i.test(xvt.entry)) {
-                                    xvt.outln('You spur the horse. ', -200, 'The tension mounts. ', -300)
+                                    xvt.outln('You spur the horse. ', -200, 'The tension mounts. ', -200)
                                     let result = 0
                                     while (!result)
                                         result = (ability + $.dice(factor * $.player.level)) - (versus + $.dice(factor * opponent.user.level))
                                     if (result > 0) {
                                         $.sound('wall')
                                         $.animated(['flash', 'jello', 'rubberBand'][jw])
-                                        xvt.outln(xvt.green, '-*>', xvt.bright, xvt.white, ' Thud! ', xvt.normal, xvt.green, '<*-  ', xvt.reset, 'A hit!  You win this pass!')
+                                        xvt.outln(xvt.green, '-*>', xvt.bright, xvt.white, ' Thud! ', xvt.normal, xvt.green, '<*-  ', xvt.reset, 'A hit! ', -100, ' You win this pass!', -100)
                                         if (++jw == 3) {
-                                            xvt.outln('\nYou have won the joust!', -250)
+                                            xvt.outln('\nYou have won the joust!')
                                             if (opponent.user.id == $.king.id) {
                                                 $.sound('boo')
                                                 $.animated('fadeOut')
                                                 $.PC.adjust('cha', -2, -1)
-                                                xvt.outln('The crowd is furious!')
+                                                xvt.outln('The crowd is furious!', -250)
                                             }
                                             else {
                                                 $.sound('cheer')
                                                 $.animated('hinge')
-                                                xvt.outln('The crowd cheers!')
+                                                xvt.outln('The crowd cheers!', -250)
                                             }
                                             let reward = new $.coins($.money(opponent.user.level))
                                             $.player.coin.value += reward.value
@@ -208,7 +208,7 @@ module Arena {
                                             && !$.Ring.power($.player.rings, opponent.user.rings, 'joust').power && $.dice(3) == 1) {
                                             $.sound('swoosh')
                                             xvt.out(xvt.magenta, '^>', xvt.white, ' SWOOSH ', xvt.magenta, '<^  ', xvt.reset
-                                                , $.PC.who(opponent).He, 'missed!  You both pass and try again!')
+                                                , $.PC.who(opponent).He, 'missed! ', -100, ' You both pass and try again!', -100)
                                             xvt.app.refocus()
                                             return
                                         }
@@ -216,19 +216,19 @@ module Arena {
                                         $.animated(['bounce', 'shake', 'tada'][jl])
                                         $.sound('oof')
                                         xvt.outln(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.normal, xvt.magenta, '<^  ', xvt.reset
-                                            , $.PC.who(opponent).He, 'hits!  You lose this pass!')
+                                            , $.PC.who(opponent).He, 'hits! ', -100, ' You lose this pass!', -100)
                                         if (++jl == 3) {
                                             xvt.outln('\nYou have lost the joust!')
                                             $.sound('boo')
-                                            xvt.outln('The crowd boos you!', -250)
+                                            xvt.outln('The crowd boos you!', -200)
                                             let reward = new $.coins($.money($.player.level))
                                             $.player.jl++
                                             if ($.run(`UPDATE Players set jw=jw+1, coin=coin+${reward.value} WHERE id='${opponent.user.id}'`).changes)
                                                 $.log(opponent.user.id, `\n${$.player.handle} lost to you in a joust.  You got ${reward.carry(2, true)}.`)
                                             $.news(`\tlost to ${opponent.user.handle} in a joust`)
                                             $.wall(`lost to ${opponent.user.handle} in a joust`)
-                                            xvt.outln(opponent.user.handle, ' spits on your face.', -250)
                                             $.animated('slideOutRight')
+                                            xvt.outln(opponent.user.handle, ' spits on your face.', -300)
                                             menu()
                                             return
                                         }
