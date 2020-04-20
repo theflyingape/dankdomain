@@ -228,7 +228,7 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
     var lurkers = []
 
     app.post(`${DOOR}lurker`, function (req, res) {
-        var pid = parseInt(req.query.pid.toString())
+        var pid = parseInt(req.query.pid ? req.query.pid.toString() : '')
 
         if (pid) {
             var player = ''
@@ -423,10 +423,10 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
                 }
             }
             interface save extends user {
-                bounty?: coins | any
-                coin?: coins | any
-                bank?: coins | any
-                loan?: coins | any
+                bounty?: coins
+                coin?: coins
+                bank?: coins
+                loan?: coins
             }
             let user: save = {
                 id: '',

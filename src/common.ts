@@ -588,7 +588,7 @@ module Common {
 
         set value(newValue: number) {
             const MAX = (1e+18 - 1e+09)
-            this._value = newValue < 0 ? 0 : newValue < MAX ? newValue
+            this._value = newValue < MAX ? newValue
                 : newValue == Infinity ? 1 : MAX
         }
 
