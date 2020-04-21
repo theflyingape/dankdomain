@@ -11,12 +11,14 @@ import https = require('https')
 import pty = require('node-pty')
 import ws = require('ws')
 
-const { URL } = require('url')
-const DOOR = '/'
-
 process.title = 'ddgame'
 process.chdir(__dirname)
 console.log(`cwd: ${__dirname}`)
+if (process.env.PORT)
+    console.log(`env PORT=${process.env.PORT}`)
+
+const { URL } = require('url')
+const DOOR = '/'
 
 let server, ssl
 let sessions = {}
