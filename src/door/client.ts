@@ -27,7 +27,7 @@ const fit = new FitAddon()
 let pid = 0, wpid = 0, tty = false
 let socket: WebSocket
 let carrier = false, recheck = 0
-let reconnect: NodeJS.Timer, lurking: NodeJS.Timer
+let idle: NodeJS.Timer, reconnect: NodeJS.Timer, lurking: NodeJS.Timer
 
 if (window.addEventListener)
     window.addEventListener("message", receive, false)
@@ -226,6 +226,7 @@ function newSession(ev) {
     term.writeln('\x1B[16C🔥 🌨\r\x1B[23C\x1B[1;36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain \x1B[m🌙 💫')
 
     if (ev == 'Logon') {
+        if (idle) clearInterval(idle)
         term.write(`\n\x1B[0;2mConnecting terminal WebSocket ... `)
         XT('@tune(dankdomain)')
         pid = 0
@@ -263,7 +264,7 @@ function newSession(ev) {
                 }
 
                 socket.onerror = (ev) => {
-                    term.writeln('\x1B[1;31merror\x1B[m\r\nNO DIALTONE\r\n')
+                    term.writeln('\x1B[1;37;41m error \x1B[m\x07\r\nNO DIALTONE')
                     console.log(ev)
                     carrier = false
                 }
@@ -271,6 +272,11 @@ function newSession(ev) {
         })
     }
     else {
+        idle = setInterval(() => {
+            pid = -1
+            XT(`@tune(1985)`)
+            pid = 0
+        }, 180000)
         fetch(`${app}/title.txt`, { method: 'GET' }).then(function (res) {
             return res.text().then(function (data) {
                 term.focus()

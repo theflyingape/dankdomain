@@ -15,7 +15,12 @@
       "stopOnEntry": false,
       "skipFiles": [
         "<node_internals>/**"
-      ]
+      ],
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "ws://0.0.0.0:([0-9]+)",
+        "uriFormat": "http://localhost:%s"
+      }
     },
     {
       "type": "node",
