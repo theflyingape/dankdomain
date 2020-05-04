@@ -1706,6 +1706,8 @@ module Common {
                 }
                 else {
                     if (!deed) deed = mydeeds[mydeeds.push(loadDeed(player.pc, deeds[i])[0]) - 1]
+                    if (deeds[i] == 'jl' && player.jl == 0 && player.jw < 3) continue
+                    if (deeds[i] == 'tl' && player.tl == 0 && player.tw < 3) continue
                     if (player[deeds[i]] <= deed.value) {
                         deed.value = player[deeds[i]]
                         saveDeed(deed)

@@ -183,6 +183,7 @@ function newSession(ev) {
             socket.send(data)
         }
         else {
+            if (idle) clearInterval(idle)
             XT('@tune(.)')
             pid = 0
             term.dispose()
@@ -272,11 +273,10 @@ function newSession(ev) {
         })
     }
     else {
-        idle = setInterval(() => {
-            pid = -1
-            XT(`@tune(1985)`)
-            pid = 0
-        }, 180000)
+        //  when it all started: Adventure Construction Set on the Commodore 64
+        //  demo mode "Sir Handsome" struck me as a flying ape, thus the handle
+        idle = setInterval(() => { XT(`@tune(1985)`) }, 300000)
+
         fetch(`${app}/title.txt`, { method: 'GET' }).then(function (res) {
             return res.text().then(function (data) {
                 term.focus()

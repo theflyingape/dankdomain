@@ -334,7 +334,7 @@ module Logon {
                 $.player.coward = false
             }
 
-            if (2 * $.player.jw < $.player.jl) {
+            if ($.player.level < 50 && 2 * $.player.jw < $.player.jl) {
                 xvt.out(xvt.reset, '\n', xvt.magenta, 'Helpful: ', xvt.bright, `Your poor jousting stats have been reset.`)
                 $.player.jl = 0
                 $.player.jw = 0

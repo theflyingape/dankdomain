@@ -555,16 +555,20 @@ module Dungeon {
             xvt.out(xvt.off)
 
             if (ROOM.monster.length == 1) {
-                xvt.out(`There's something lurking in here . . . `, -600)
+                xvt.out(`There's something lurking in here . . . `)
                 let img = 'dungeon/' + ROOM.monster[0].user.handle
                 try {
                     fs.accessSync('door/static/images/' + img + '.jpg', fs.constants.F_OK)
                     $.profile({ jpg: img, effect: ROOM.monster[0].effect })
                     if (!ROOM.monster[0].monster.pc && ROOM.monster[0].user.pc == $.player.pc) {
+                        xvt.waste(750)
                         if ($.PC.name['monster'][ROOM.monster[0].user.pc])
                             $.profile({ png: 'monster/' + ($.PC.name['monster'][ROOM.monster[0].user.pc] || $.PC.name['tavern'][ROOM.monster[0].user.pc] ? ROOM.monster[0].user.pc.toLowerCase() : 'monster'), effect: 'flash' })
                         else
                             $.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect: 'flash' })
+                    }
+                    else {
+                        xvt.waste(600)
                     }
                 } catch (e) {
                     if ($.PC.name['player'][ROOM.monster[0].user.pc] && ROOM.monster[0].user.pc == $.player.pc)
@@ -574,6 +578,7 @@ module Dungeon {
                             png: 'monster/' + ($.PC.name['monster'][ROOM.monster[0].user.pc] || $.PC.name['tavern'][ROOM.monster[0].user.pc] ? ROOM.monster[0].user.pc.toLowerCase() : 'monster') + (ROOM.monster[0].user.gender == 'F' ? '_f' : ''),
                             effect: ROOM.monster[0].effect
                         })
+                    xvt.waste(500)
                 }
             }
             else {
@@ -1824,11 +1829,11 @@ module Dungeon {
             if ((b4 !== 0 && (!DL.map || DL.map !== 'map') && DL.cleric.sp == DL.cleric.user.sp) &&
                 ((b4 > 0 && b4 / $.player.hp < 0.67 && $.online.hp / $.player.hp < 0.067)
                     || ($.online.hp <= Z + deep + 1))) {
-                xvt.outln(xvt.lred, '+ bonus strength')
+                xvt.out(xvt.lred, '+ bonus strength')
                 $.sound('bravery', 20)
                 $.PC.adjust('str', deep + 2, deep + 1, 1)
                 DL.map = `Marauder's map`
-                xvt.outln(xvt.bright, xvt.yellow, 'and ', DL.map, '!')
+                xvt.outln(xvt.bright, xvt.yellow, ' and ', DL.map, '!')
                 pause = true
             }
         }
