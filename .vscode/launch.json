@@ -8,19 +8,21 @@
       "type": "node",
       "request": "launch",
       "name": "launch ddgame app",
+      "cwd": "${workspaceFolder}/build",
       "program": "${workspaceFolder}/build/door/app.js",
-      "cwd": "${workspaceFolder}",
       "outFiles": [ "${workspaceFolder}/build/door" ],
       "sourceMaps": true,
       "stopOnEntry": false,
       "skipFiles": [
         "<node_internals>/**"
-      ],
-      "serverReadyAction": {
-        "action": "openExternally",
-        "pattern": "ws://0.0.0.0:([0-9]+)",
-        "uriFormat": "http://localhost:%s"
-      }
+      ]
+    },
+    {
+      "name": "Launch localhost",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:1939",
+      "webRoot": "${workspaceFolder}/build/door"
     },
     {
       "type": "node",
