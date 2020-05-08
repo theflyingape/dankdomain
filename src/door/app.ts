@@ -44,11 +44,12 @@ dns.lookup('0.0.0.0', (err, addr, family) => {
 
     //  enable REST services
     server.listen(port, addr)
-    console.log(`Dank Domain Game door on ${ssl ? 'https|wss' : 'http|ws'}://${addr}:${port}`)
+    console.log(`Dank Domain Game door on http${ssl ? 's' : ''}://${addr}:${port}`)
 
     //  enable WebSocket endpoints
     const wsActive = new ws.Server({ noServer: true, path: `${DOOR}player/`, clientTracking: true })
     const wsLurker = new ws.Server({ noServer: true, path: `${DOOR}lurker/`, clientTracking: true })
+    console.log(`WebSocket endpoints enabled`)
 
     server.on('upgrade', (req, socket, head) => {
         const pathname = new URL(req.url, 'https://localhost').pathname

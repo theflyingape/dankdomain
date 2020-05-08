@@ -252,10 +252,10 @@
       if (img.length == 1) {
         while (pic.classList.length)
           pic.classList.remove(pic.classList.item(0));
-        pic.classList.add('animated');
+        pic.classList.add('animate__animated');
         var effects = effect.split(' ');
         for (var i in effects)
-          pic.classList.add(effects[i]);
+          pic.classList.add('animate__' + effects[i]);
         pic.style.display = 'inline-block';
       }
       else {
@@ -266,10 +266,10 @@
         }
       }
 
-      pic.classList.add('animated');
+      pic.classList.add('animate__animated');
       var effects = effect.split(' ');
       for (var i in effects)
-        pic.classList.add(effects[i]);
+        pic.classList.add('animate__' + effects[i]);
       pic.style.display = 'inline-block';
     }
 

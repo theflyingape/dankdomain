@@ -719,7 +719,7 @@ module Dungeon {
                             xvt.outln()
                             if (/Y/i.test(xvt.entry)) {
                                 xvt.out(xvt.bright, xvt.white, `You vanish `, xvt.normal, `into dungeon `, xvt.faint, xvt.romanize(++deep + 1), ' ... ')
-                                $.animated('flipOutY')
+                                $.animated('fadeOutDown')
                                 $.sound('portal', 12)
                                 generateLevel()
                                 xvt.outln()
@@ -1328,7 +1328,7 @@ module Dungeon {
                                     $.sound('teleport', 8)
                                 }
                                 else {
-                                    xvt.outln(xvt.lyellow, '"I need to rest.  Go in peace."')
+                                    xvt.outln(xvt.lyellow, '"I need to rest. ', -300, ' Go in peace."', -300)
                                     looked = true
                                 }
                             }
@@ -1405,7 +1405,7 @@ module Dungeon {
                     DL.rooms[y][x].occupant = 'wizard'
                 }
                 else {
-                    $.profile({ jpg: 'npc/wizard', effect: 'flash', handle: 'Pops', level: 77, pc: 'crackpot' })
+                    $.profile({ jpg: 'npc/wizard', effect: 'backInLeft', handle: 'Pops', level: 77, pc: 'crackpot' })
                     xvt.outln('wizard', xvt.normal, ' in this room.\n', -300)
                     scroll(1, false)
                     teleport()
@@ -2712,14 +2712,12 @@ module Dungeon {
         xvt.app.form = {
             'wizard': {
                 cb: () => {
-                    $.PC.profile()
-
                     if ($.dice(10 * deep + Z + 5 * $.player.magic + $.online.int + $.online.cha) == 1) {
                         xvt.outln(' ... "', xvt.bright, xvt.cyan, 'Huh?', xvt.reset, '"')
+                        $.animated('headShake')
                         $.sound('miss', 6)
-                        $.animated('wobble')
-                        $.sound('lose', 12)
                         $.animated('rubberBand')
+                        $.sound('lose', 12)
                         $.music('crack')
                         xvt.waste(1250)
                         $.animated('bounceOutUp')
@@ -2738,6 +2736,7 @@ module Dungeon {
                         }
                     }
                     else {
+                        $.PC.profile()
                         xvt.outln()
                         $.sound('teleport')
                     }
@@ -2746,7 +2745,7 @@ module Dungeon {
                         case 'D':
                             if (Z < 99) {
                                 Z++
-                                $.animated('fadeOutDown')
+                                $.animated('backOutDown')
                                 break
                             }
                         case 'R':
@@ -2756,7 +2755,7 @@ module Dungeon {
                         case 'U':
                             if (Z > 0) {
                                 Z--
-                                $.animated('fadeOutUp')
+                                $.animated('backOutUp')
                                 break
                             }
                         case 'O':
