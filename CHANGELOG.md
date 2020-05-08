@@ -5,7 +5,13 @@
 🇺🇸 ©️1991 - 2020 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](https://play.DDgame.us) within the Google Cloud Platform (us-central1)
 
-### **12-Apr-2020** `v2.5.0`
+### **8-May-2020** `v2.5.2`
+
+* RI last day of its "Stay At Home" order
+* refactor for animate.css v4
+* changes to joust lost deed eligibility
+
+#### **12-Apr-2020** `v2.5.0`
 
 * [Easter](https://en.wikipedia.org/wiki/Easter) 🐣
 * refactor class 'None' as 'Spirit'
