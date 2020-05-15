@@ -1,13 +1,22 @@
 import playwright = require('playwright')
+import fs = require('fs')
 
 (async () => {
+  fs.unlinkSync('*-?.png')
   for (const browserType of ['chromium', 'firefox', 'webkit']) {
-    console.log(`Testing ${browserType}`)
+    process.stdout.write(`Testing ${browserType}: `)
     const browser = await playwright[browserType].launch()
+    const context = await browser.newContext({ viewport: { width: 1280, height: 1024 } })
+    const page = await context.newPage()
     try {
-      const context = await browser.newContext({ viewport: { width: 1280, height: 1024 } })
-      const page = await context.newPage()
       await page.goto('http://localhost:1939/', 'networkidle')
+    }
+    catch (err) {
+      process.stdout.write(err.message, '\r\n')
+      process.stdout.write('forgot to `npm start`?')
+      process.exit(1)
+    }
+    try {
       await page.setViewportSize({ width: 1920, height: 1080 })
       const frame = page.frames().find(frame => frame.name() === 'Info')
       await frame.focus('text=Xterm.js')
@@ -37,7 +46,7 @@ import playwright = require('playwright')
       await page.screenshot({ path: `${browserType}-4.png` })
     }
     catch (err) {
-      console.log(`${browserType}: `, err.message)
+      process.stdout.write(err.message, '\r\n')
     }
     await browser.close()
   }
