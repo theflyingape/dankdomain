@@ -1,8 +1,9 @@
-[mDate: [1;33mMon 30-Mar-2020  8:10am
+[mDate: [1;33mMon 19-May-2020  6:30pm
 [mFrom: [1;33mMaester
 [1;37m
-While Rhode Island is under this COVID-19 executive order, the game is
-resetting your allowed calls, twice per day: 12:00am and 12:00pm.  To
-minimize burn-out, minutes per visit have been reduced -- better hurry!
+The twice-per-day allowances will continue as the "new normal" until
+further notice.  With the Xterm.js v4.6 release comes its re-enabled
+WebGL renderer in your browser session.  It looks solid enough to me
+to give it another go.  Feedback is always welcome.
 
 Happy hunting!

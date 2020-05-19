@@ -27,10 +27,10 @@ try {
 }
 catch (err) {
     console.log(err.message)
-    console.log(`
-# you might consider generating a self-signed key in HOME: ${process.env.HOME}
-$ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem \\
-  -subj "/C=US/ST=Rhode Island/L=Providence/O=Dank Domain/OU=Game/CN=localhost"`)
+    console.log(`\r\n
+# you might consider generating a self-signed key in HOME: ${process.env.HOME}\r\n
+$ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem \\\r\n
+  -subj "/C=US/ST=Rhode Island/L=Providence/O=Dank Domain/OU=Game/CN=localhost"\r\n`)
     host = 'localhost'
     port = 1939
     URL = `http://${host}:${port}/player/`

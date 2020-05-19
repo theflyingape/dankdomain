@@ -16,7 +16,7 @@ import { Terminal, ITerminalOptions } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import { Unicode11Addon } from 'xterm-addon-unicode11'
 import { WebLinksAddon } from 'xterm-addon-web-links'
-//import { WebglAddon } from 'xterm-addon-webgl'
+import { WebglAddon } from 'xterm-addon-webgl'
 
 let term: Terminal
 let cols = 80, rows = 24
@@ -220,7 +220,7 @@ function newSession(ev) {
     term.unicode.activeVersion = '11'
     term.open(document.getElementById('terminal'))
     //let's try something new when auto-detection is better suppported
-    //term.loadAddon(new WebglAddon())
+    term.loadAddon(new WebglAddon())
     fit.fit()
     window.dispatchEvent(new Event('resize'))	// gratuituous
     term.writeln('\x07')

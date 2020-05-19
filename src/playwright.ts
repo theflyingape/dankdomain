@@ -12,7 +12,7 @@ import fs = require('fs')
       await page.goto('http://localhost:1939/', 'networkidle')
     }
     catch (err) {
-      process.stdout.write(err.message, '\r\n')
+      process.stdout.write(`${err.message}\r\n`)
       process.stdout.write('forgot to `npm start`?')
       process.exit(1)
     }
@@ -46,7 +46,7 @@ import fs = require('fs')
       await page.screenshot({ path: `${browserType}-4.png` })
     }
     catch (err) {
-      process.stdout.write(err.message, '\r\n')
+      process.stdout.write(`${err.message}\r\n`)
     }
     await browser.close()
   }
