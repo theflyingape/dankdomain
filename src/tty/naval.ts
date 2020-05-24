@@ -47,6 +47,7 @@ module Naval {
         xvt.outln()
 
         let rs: any[]
+        let cap: number
         let n: number
 
         switch (choice) {
@@ -213,10 +214,12 @@ module Naval {
                 if (hook < 75) {
                     xvt.outln('n oyster and you eat it.')
                     xvt.waste(600)
+                    cap = $.money($.player.level)
                     n = Math.round(Math.pow(2., $.player.hull / 150.) * 7937)
                     n = $.int(n / $.player.hull / 10 * $.dice($.online.hull))
                     n = $.int(n * ($.player.cannon + 1) / ($.player.hull / 50))
                     n = $.worth(n, $.online.cha)
+                    if (n > cap) n = cap
                     $.sound('oof')
                     xvt.outln(`Ouch!  You bit into a pearl and sell it for ${new $.coins(n).carry()}.`)
                     $.player.coin.value += n
@@ -225,10 +228,12 @@ module Naval {
                 if (hook < 90) {
                     xvt.outln('n oyster and you eat it.')
                     xvt.waste(600)
+                    cap = 3 * $.money($.player.level)
                     n = Math.round(Math.pow(2., $.player.hull / 150.) * 7937)
                     n = $.int(n / $.player.hull * $.dice($.online.hull))
                     n = $.int(n * ($.player.cannon + 1) / ($.player.hull / 50))
                     n = $.worth(n, $.online.cha)
+                    if (n > cap) n = cap
                     $.sound('oof')
                     xvt.outln(`Ouch!  You bit into a diamond and sell it for ${new $.coins(n).carry()}.`)
                     $.player.coin.value += n

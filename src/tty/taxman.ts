@@ -27,9 +27,9 @@ module Taxman {
 
             xvt.out('\n\n', xvt.yellow, xvt.bright, $.taxman.user.handle, xvt.normal, -400)
             xvt.outln(', our Master of Coin, looks at your bulging ', pouch, -1200)
-            xvt.out(xvt.yellow, 'and says, ', xvt.blue, xvt.bright, '"Ah, it is time to pay your taxes!"', xvt.normal)
+            xvt.out(xvt.yellow, 'and says, ', xvt.blue, xvt.bright, '"Time to pay taxes!"', xvt.normal, -800)
             xvt.out(xvt.yellow, '  You check out the burly\n')
-            xvt.outln(`guards who stand ready to enforce ${$.king.handle}'s will.\n`, -1600)
+            xvt.outln(`guards who stand ready to enforce ${$.king.handle}'${$.king.handle.substr(-1) !== 's' ? 's' : ''} will.\n`, -1600)
 
             tax.value = scratch - tax.value
             tax = new $.coins(tax.carry(1, true))
@@ -60,9 +60,39 @@ module Taxman {
         }
     }
 
-    //  tax checkpoint at the front gate
+    //  loan & tax checkpoint at the front gate
     export function cityguards() {
 
+        //  do any loan first
+        if ($.player.loan.value > 0 && $.player.coin.value > 0) {
+            $.player.loan.value -= $.player.coin.value
+            if ($.player.loan.value < 0) {
+                $.player.coin.value = -$.player.loan.value
+                $.player.loan.value = 0
+            }
+            else
+                $.player.coin.value = 0
+            $.player.bank.value += $.player.coin.value
+        }
+        if ($.player.loan.value > 0 && $.player.bank.value > 0) {
+            $.player.loan.value -= $.player.bank.value
+            if ($.player.loan.value < 0) {
+                $.player.bank.value = -$.player.loan.value
+                $.player.loan.value = 0
+            }
+            else
+                $.player.bank.value = 0
+        }
+        if ($.player.loan.value > 9) {
+            xvt.outln(xvt.green, '\nYour bank loan ', $.player.loan.carry(), xvt.red, ' is past due.', -1200)
+            $.beep()
+            let interest = new $.coins($.int($.player.loan.value * .05 + 1))
+            $.player.loan.value += interest.value
+            $.online.altered = true
+            xvt.outln('An interest charge of ', interest.carry(), ' was added.', -1200)
+        }
+
+        //  now tax if necessary
         tax.value = 1000 * $.money($.player.level)
             + $.worth(new $.coins($.RealEstate.name[$.player.realestate].value).value, 35)
             + $.worth(new $.coins($.Security.name[$.player.security].value).value, 15)
@@ -174,8 +204,6 @@ module Taxman {
             ][$.dice(3) - 1], -900)
 
             $.activate($.taxman)
-            //$.taxman.sp >>= 1
-            //$.taxman.user.id = ''
             $.taxman.user.coin = tax
             $.PC.wearing($.taxman)
 

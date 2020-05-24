@@ -686,12 +686,17 @@ module Dungeon {
                 }
                 else {
                     ROOM.occupant = ''
-                    xvt.out(xvt.cyan, xvt.bright, 'A fairie ')
-                    if ($.dice(50 + Z - deep) > $.online.cha)
-                        xvt.outln('flies by you.', -200)
+                    $.profile({ png: 'npc/faery spirit', effect: 'fadeInRight' })
+                    xvt.out(xvt.cyan, xvt.bright, 'A faery spirit appears ', -600, xvt.normal)
+                    if ($.dice(50 + Z - deep) > $.online.cha) {
+                        xvt.out('then ', -500)
+                        $.animated('fadeOut')
+                        xvt.outln(xvt.faint, 'vanishes.', -500)
+                    }
                     else {
-                        xvt.outln('brushes by you.')
-                        $.sound('heal')
+                        xvt.out('and passes ', -500)
+                        $.animated('fadeOutLeft')
+                        xvt.outln(xvt.faint, 'through you.')
                         for (let i = 0; i <= Z; i++)
                             $.online.hp += $.dice($.int(DL.cleric.user.level / 9)) + $.dice($.int(Z / 9 + deep / 3))
                         if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
@@ -700,6 +705,7 @@ module Dungeon {
                                 $.online.sp += $.dice($.int(DL.cleric.user.level / 9)) + $.dice($.int(Z / 9 + deep / 3))
                             if ($.online.sp > $.player.sp) $.online.sp = $.player.sp
                         }
+                        $.sound('heal', 5)
                     }
                     if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
                         DL.cleric.sp += $.Magic.power(DL.cleric, 7)
@@ -960,19 +966,19 @@ module Dungeon {
                                                 switch ($.player.magic) {
                                                     case 1:
                                                         $.beep()
-                                                        xvt.out(`A Wand of ${spell} appears in your hand.`)
+                                                        xvt.outln('A ', xvt.white, xvt.bright, `Wand of ${spell}`, xvt.reset, ' appears in your hand.')
                                                         break
                                                     case 2:
                                                         $.beep()
-                                                        xvt.out(`You add a Scroll of ${spell} to your arsenal.`)
+                                                        xvt.outln('You add a ', xvt.yellow, xvt.bright, `Scroll of ${spell}`, ' to your arsenal.')
                                                         break
                                                     case 3:
                                                         $.sound('shimmer')
-                                                        xvt.out(`The Spell of ${spell} is revealed to you.`)
+                                                        xvt.outln('The ', xvt.cyan, xvt.bright, `Spell of ${spell}`, xvt.reset, ' is revealed to you.')
                                                         break
                                                     case 4:
                                                         $.sound('shimmer')
-                                                        xvt.out(`${spell} is known to you.`)
+                                                        xvt.outln(xvt.magenta, xvt.bright, spell, xvt.reset, ' is known to you.')
                                                         break
                                                 }
                                             }
@@ -982,7 +988,7 @@ module Dungeon {
                                                 else
                                                     $.sound('boo')
                                             }
-                                            xvt.outln(-600)
+                                            xvt.waste(-600)
                                         }
                                     }
                                     else {
@@ -2697,8 +2703,13 @@ module Dungeon {
 
     function teleport() {
         let min = Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
-        $.action('teleport')
+        if (min < 0) {
+            $.death('failed to escape')
+            menu()
+            return
+        }
 
+        $.action('teleport')
         xvt.outln(xvt.yellow, xvt.bright, 'What do you wish to do?')
         xvt.out($.bracket('U'), 'Teleport up 1 level')
         if (Z < 99) xvt.out($.bracket('D'), 'Teleport down 1 level')

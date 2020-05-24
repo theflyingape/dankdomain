@@ -1,9 +1,6 @@
-[mDate: [1;33mMon 19-May-2020  6:30pm
+[mDate: [1;33mMon 24-May-2020  12:00pm
 [mFrom: [1;33mMaester
 [1;37m
-The twice-per-day allowances will continue as the "new normal" until
-further notice.  With the Xterm.js v4.6 release comes its re-enabled
-WebGL renderer in your browser session.  It looks solid enough to me
-to give it another go.  Feedback is always welcome.
+Some minor economic tweaks.
 
 Happy hunting!

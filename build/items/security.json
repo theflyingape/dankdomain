@@ -14,7 +14,8 @@
 	"Security guard": { "value": "1p", "protection":12 },
 	"Moat": { "value": "10p", "protection":13 },
 	"Garrison": { "value": "100p", "protection":14 },
-	"Magical barrier": { "value": "1000p", "protection":15 },
-	"Scorpion": { "value": "4000p", "protection":16 },
-	"pair of Scorpions": { "value": "8000p", "protection":17 }
+	"Magical barrier": { "value": "500p", "protection":15 },
+	"Scorpion": { "value": "3000p", "protection":16 },
+	"White Wizard": { "value": "12500p", "protection":17 },
+	"Red Dragon": { "value": "50000p", "protection":18 }
 }
