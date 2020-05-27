@@ -803,7 +803,7 @@ module Naval {
         sm = Object.assign({}, monsters[mon])
         let damage: number
 
-        $.profile({ jpg: 'naval/sea monster', effect: 'fadeInUp' })
+        $.profile({ jpg: `naval/${sm.name.toLowerCase()}`, handle: sm.name, effect: 'fadeInUp' })
         xvt.outln(`\nYou sail out until you spot${$.an(sm.name)} on the horizon.\n`)
         xvt.outln(`It has ${sm.hull} hull points.`)
 
