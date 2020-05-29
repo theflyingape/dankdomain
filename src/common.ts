@@ -80,28 +80,6 @@ module Common {
         'Meereen', 'Norvos', 'Oldtown', 'Pentos', 'Qohor',
         'Riverrun', 'The Twins', 'The Wall', 'Winterfell', 'Volantis'
     ][dice(20) - 1]
-    if (/^([1][0]|[1][2][7]|[1][7][2]|[1][9][2])[.]/.test(remote)
-        || !xvt.validator.isIP(remote))
-        whereis += ' 🖥 '
-    else try {
-        const apikey = './etc/ipstack.key'
-        fs.accessSync(apikey, fs.constants.F_OK)
-        let key = fs.readFileSync(apikey).toString()
-        got(`http://api.ipstack.com/${remote}?access_key=${key}`).then(response => {
-            whereis = ''
-            let result = ''
-            if (response.body) {
-                let ipstack = JSON.parse(response.body)
-                if (ipstack.ip) result = ipstack.ip
-                if (ipstack.city) result = ipstack.city
-                if (ipstack.region_code) result += (result ? ', ' : '') + ipstack.region_code
-                if (response.body.country_code) result += (result ? ' ' : '') + ipstack.country_code
-                if (ipstack.location)
-                    if (ipstack.location.country_flag_emoji) result += ` ${ipstack.location.country_flag_emoji} `
-            }
-            whereis += result ? result : remote
-        }).catch(error => { whereis += ' ⚠️ ' })
-    } catch (e) { }
 
     //  all player characters
     export class Character {
@@ -2130,7 +2108,7 @@ module Common {
                     player.today = 0
                 player.lasttime = now().time
                 saveUser(player, false, true)
-                news(`\tlogged off ${time(player.lasttime)} as a level ${player.level} ${player.pc}`)
+                news(`\treturned to ${whereis} at ${time(player.lasttime)} as a level ${player.level} ${player.pc}`)
                 news(`\t(${reason})\n`, true)
 
                 try {

@@ -2,7 +2,7 @@ import playwright = require('playwright')
 import fs = require('fs')
 
 (async () => {
-  fs.unlinkSync('*-?.png')
+  try { fs.unlinkSync('*-?.png') } catch (e) { }
   for (const browserType of ['chromium', 'firefox', 'webkit']) {
     process.stdout.write(`Testing ${browserType}: `)
     const browser = await playwright[browserType].launch()

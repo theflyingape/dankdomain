@@ -134,7 +134,7 @@ module Logon {
             return
         }
 
-        $.news(`${$.player.handle} ${$.access.emoji} logged in from ${$.whereis}\n\tat ${$.time($.now().time)} as a level ${$.player.level} ${$.player.pc}:`)
+        $.news(`${$.player.handle} ${$.access.emoji} logged in at ${$.time($.now().time)} as a level ${$.player.level} ${$.player.pc}:`)
         let rs = $.query(`SELECT * FROM Online`)
         for (let row = 0; row < rs.length; row++) {
             let t = $.now().time
@@ -191,6 +191,30 @@ module Logon {
         }
 
         xvt.ondrop = $.logoff
+
+        if (/^([1][0]|[1][2][7]|[1][7][2]|[1][9][2])[.]/.test($.remote)
+            || !xvt.validator.isIP($.remote))
+            $.whereis += ' 🖥 '
+        else try {
+            const apikey = './etc/ipstack.key'
+            fs.accessSync(apikey, fs.constants.F_OK)
+            let key = fs.readFileSync(apikey).toString()
+            $.got(`http://api.ipstack.com/${$.remote}?access_key=${key}`).then(response => {
+                $.whereis = ''
+                let result = ''
+                if (response.body) {
+                    let ipstack = JSON.parse(response.body)
+                    if (ipstack.ip) result = ipstack.ip
+                    if (ipstack.city) result = ipstack.city
+                    if (ipstack.region_code) result += (result ? ', ' : '') + ipstack.region_code
+                    if (response.body.country_code) result += (result ? ' ' : '') + ipstack.country_code
+                    if (ipstack.location)
+                        if (ipstack.location.country_flag_emoji) result += ` ${ipstack.location.country_flag_emoji} `
+                }
+                $.whereis += result ? result : $.remote
+            }).catch(error => { $.whereis += ' ⚠️ ' })
+        } catch (e) { }
+
         $.loadUser($.sysop)
         if (!$.loadKing()) {
             $.player.access = Object.keys($.Access.name).slice($.player.gender == 'F' ? -2 : -1)[0]
