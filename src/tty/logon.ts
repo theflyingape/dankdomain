@@ -196,7 +196,7 @@ module Logon {
             || !xvt.validator.isIP($.remote))
             $.whereis += ' 🖥 '
         else try {
-            const apikey = './etc/ipstack.key'
+            const apikey = '../etc/ipstack.key'
             fs.accessSync(apikey, fs.constants.F_OK)
             let key = fs.readFileSync(apikey).toString()
             $.got(`http://api.ipstack.com/${$.remote}?access_key=${key}`).then(response => {
