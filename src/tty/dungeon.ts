@@ -988,7 +988,7 @@ module Dungeon {
                                                 else
                                                     $.sound('boo')
                                             }
-                                            xvt.waste(-600)
+                                            xvt.waste(600)
                                         }
                                     }
                                     else {
