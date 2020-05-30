@@ -2265,7 +2265,7 @@ module Dungeon {
             if ($.dice(110 - $.online.cha + dank + +$.player.coward) > dank) {
                 DL.rooms[y][x].giftItem = 'potion'
                 DL.rooms[y][x].giftID = false
-                DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⚱' : Dot
+                DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '🍷' : Dot
                 n = $.dice(130 - deep)
                 for (let j = 0; j < 16 && n > 0; j++) {
                     let v = 15 - j
@@ -2312,7 +2312,7 @@ module Dungeon {
                     break
 
                 case 'poison':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⚱' : Dot
+                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '🧪' : Dot
                     n = $.dice($.Poison.merchant.length * 16)
                     for (let j = 0; j < $.Poison.merchant.length && n > 0; j++) {
                         v = $.Poison.merchant.length - j
