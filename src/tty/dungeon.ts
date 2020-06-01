@@ -38,14 +38,14 @@ module Dungeon {
     const Cleric = {
         VT: '\x1B(0\x7D\x1B(B',
         PC: '\x9C',
-        XT: '\u00A3',
+        XT: '✟',
         dumb: '$'
     }
 
     //  ·
     const Dot = xvt.app.Empty
 
-    const Mask = ['   ', ' ♗ ', '♗ ♗', '♗♗♗', '☨♝☨']
+    const Mask = ['   ', ' ѩ ', 'ѩ ѩ', 'ѩѩѩ', 'ѩӂѩ']
     const Monster = {
         rlogin: ['   ', 'Mon', 'M+M', 'Mob', 'MOB'],
         telnet: ['   ', 'Mon', 'M+M', 'Mob', 'MOB']
@@ -55,7 +55,7 @@ module Dungeon {
     const Teleport = {
         VT: '\x1B(0\x67\x1B(B',
         PC: '\xF1',
-        XT: '\u00B1',
+        XT: '↨',
         dumb: '%'
     }
 
@@ -2265,7 +2265,7 @@ module Dungeon {
             if ($.dice(110 - $.online.cha + dank + +$.player.coward) > dank) {
                 DL.rooms[y][x].giftItem = 'potion'
                 DL.rooms[y][x].giftID = false
-                DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '🍷' : Dot
+                DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '≬' : Dot
                 n = $.dice(130 - deep)
                 for (let j = 0; j < 16 && n > 0; j++) {
                     let v = 15 - j
@@ -2312,7 +2312,7 @@ module Dungeon {
                     break
 
                 case 'poison':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '🧪' : Dot
+                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⏽' : Dot
                     n = $.dice($.Poison.merchant.length * 16)
                     for (let j = 0; j < $.Poison.merchant.length && n > 0; j++) {
                         v = $.Poison.merchant.length - j
@@ -2964,7 +2964,7 @@ module Dungeon {
                         icon += Mask[m]
                         for (let i = 0; i < m; i++) {
                             let dm = $.PC.card(room.monster[i].user.pc)
-                            icon = icon.replace('♗', xvt.attr(dm.color || xvt.white, dm.unicode))
+                            icon = icon.replace('ѩ', xvt.attr(dm.color || xvt.white, dm.unicode))
                         }
                     }
                     else
