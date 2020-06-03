@@ -7,6 +7,7 @@ import $ = require('../common')
 import fs = require('fs')
 import xvt = require('xvt')
 import Battle = require('../battle')
+import { isNotEmpty } from 'class-validator'
 import { sprintf } from 'sprintf-js'
 
 module Main {
@@ -55,8 +56,8 @@ module Main {
     function choice() {
         let suppress = false
         let choice = xvt.entry.toUpperCase()
-        if (xvt.validator.isNotEmpty(mainmenu[choice]))
-            if (xvt.validator.isNotEmpty(mainmenu[choice].description)) {
+        if (isNotEmpty(mainmenu[choice]))
+            if (isNotEmpty(mainmenu[choice].description)) {
                 xvt.out(' - ', mainmenu[choice].description)
                 suppress = $.player.expert
             }

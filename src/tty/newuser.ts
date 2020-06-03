@@ -15,7 +15,7 @@ module NewUser {
         png: 'npc/city_guard_1', effect: 'bounceInLeft'
         , handle: 'Shall we begin?'
     })
-    xvt.out(xvt.clear)
+    $.clear()
     xvt.plot(1, 17)
 
     if ($.tty == 'rlogin') {

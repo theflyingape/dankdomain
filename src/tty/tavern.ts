@@ -8,6 +8,7 @@ import fs = require('fs')
 import xvt = require('xvt')
 import Battle = require('../battle')
 import Taxman = require('./taxman')
+import { isNotEmpty } from 'class-validator'
 import { sprintf } from 'sprintf-js'
 
 module Tavern {
@@ -50,8 +51,8 @@ module Tavern {
         let js: argument[] = []
         let suppress = false
         let choice = xvt.entry.toUpperCase()
-        if (xvt.validator.isNotEmpty(tavern[choice]))
-            if (xvt.validator.isNotEmpty(tavern[choice].description)) {
+        if (isNotEmpty(tavern[choice]))
+            if (isNotEmpty(tavern[choice].description)) {
                 xvt.out(' - ', tavern[choice].description)
                 suppress = $.player.expert
             }

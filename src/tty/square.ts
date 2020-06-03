@@ -6,6 +6,7 @@
 import $ = require('../common')
 import xvt = require('xvt')
 import Battle = require('../battle')
+import { isEmpty, isNotEmpty } from 'class-validator'
 import { sprintf } from 'sprintf-js'
 
 module Square {
@@ -130,8 +131,8 @@ module Square {
     function choice() {
         let suppress = false
         let choice = xvt.entry.toUpperCase()
-        if (xvt.validator.isNotEmpty(square[choice]))
-            if (xvt.validator.isNotEmpty(square[choice].description)) {
+        if (isNotEmpty(square[choice]))
+            if (isNotEmpty(square[choice].description)) {
                 xvt.out(' - ', square[choice].description)
                 suppress = $.player.expert
             }
@@ -558,7 +559,7 @@ module Square {
     function Bank() {
         let suppress = $.player.expert
         let choice = xvt.entry.toUpperCase()
-        if (xvt.validator.isEmpty(bank[choice])) {
+        if (isEmpty(bank[choice])) {
             $.beep()
             xvt.app.refocus()
             return

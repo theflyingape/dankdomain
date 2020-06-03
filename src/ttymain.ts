@@ -30,7 +30,7 @@ module ttyMain {
             : (/^linux|^lisa|^ncsa|^pcvt|^vt|^xt/i.test(process.env.TERM)) ? 'VT'
                 : (/ansi|cygwin|^pc/i.test(process.env.TERM)) ? 'PC'
                     : '')
-    if ((xvt.modem = xvt.validator.isEmpty(process.env.REMOTEHOST)))
+    if ((xvt.modem = process.env.REMOTEHOST ? true : false))
         xvt.out(xvt.off, xvt.bright
             , xvt.red, 'C'
             , xvt.yellow, 'A'

@@ -5,7 +5,13 @@
 🇺🇸 ©️1991 - 2020 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](https://play.DDgame.us) within the Google Cloud Platform (us-central1)
 
-### **8-May-2020** `v2.5.2`
+### **3-Jun-2020** `v2.6.0`
+
+* dungeon map enhancements
+* xterm.js v4.6 release
+* xvt v1.2 release for scrollback enhancements
+
+#### **8-May-2020** `v2.5.2`
 
 * RI last day of its "Stay At Home" order
 * refactor for animate.css v4

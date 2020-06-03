@@ -5,6 +5,7 @@
 
 import $ = require('../common')
 import xvt = require('xvt')
+import { isNotEmpty } from 'class-validator'
 import { sprintf } from 'sprintf-js'
 
 module Gambling {
@@ -108,8 +109,8 @@ module Gambling {
             return
         }
 
-        if (xvt.validator.isNotEmpty(casino[game]))
-            if (xvt.validator.isNotEmpty(casino[game].description)) {
+        if (isNotEmpty(casino[game]))
+            if (isNotEmpty(casino[game].description)) {
                 xvt.outln(' - ', casino[game].description)
                 if ($.access.roleplay) {
                     Bet()
@@ -301,8 +302,8 @@ module Gambling {
                     break
                 }
 
-                xvt.out(xvt.clear,
-                    xvt.cyan, 'Your point to make is: ', xvt.bright, xvt.white, point.toString(),
+                $.clear()
+                xvt.out(xvt.cyan, 'Your point to make is: ', xvt.bright, xvt.white, point.toString(),
                     xvt.normal, '\n\n',
                     'Press RETURN to roll dice and try to make your point\n',
                     'or bet on another number for additional payoffs:\n\n',

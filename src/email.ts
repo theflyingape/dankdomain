@@ -8,6 +8,7 @@ import fs = require('fs')
 import nodemailer = require('nodemailer')
 import smtpTransport = require('nodemailer-smtp-transport')
 import xvt = require('xvt')
+import { isEmail } from 'class-validator'
 
 module Email {
 
@@ -27,7 +28,7 @@ module Email {
 
     function email() {
         $.player.email = xvt.entry.toLowerCase()
-        if (!xvt.validator.isEmail($.player.email)) {
+        if (!isEmail($.player.email)) {
             xvt.app.refocus()
             return
         }

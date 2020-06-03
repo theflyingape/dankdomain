@@ -7,6 +7,7 @@ import $ = require('../common')
 import fs = require('fs')
 import Battle = require('../battle')
 import xvt = require('xvt')
+import { isNotEmpty } from 'class-validator'
 
 module Dungeon {
 
@@ -324,11 +325,11 @@ module Dungeon {
             }
             else if (rng > 1) {
                 if ($.player.emulation == 'XT') {
-                    xvt.out(' 🐝 🐝 🐝 🐝 ')
-                    $.sound('crack', 6)
+                    $.sound('crack')
+                    xvt.out(' 🐝 ', -300, '🐝 ', -200, '🐝 ', -100, '🐝 ', -50, '🐝 ', -25)
                 }
                 xvt.out(xvt.red, 'You are attacked by a ', xvt.bright, 'swarm of bees', xvt.normal)
-                if ($.player.emulation == 'XT') xvt.out(' 🐝 🐝 🐝 🐝', -600)
+                if ($.player.emulation == 'XT') xvt.out(' 🐝', -25, ' 🐝', -50, ' 🐝', -100, ' 🐝', -200, ' 🐝', -300)
                 else xvt.out('!!', -600)
                 for (x = 0, y = $.dice(Z); x < y; x++)
                     $.online.hp -= $.dice(Z)
@@ -422,7 +423,7 @@ module Dungeon {
                 return
             }
         }
-        if (xvt.validator.isNotEmpty(crawling[choice])) {
+        if (isNotEmpty(crawling[choice])) {
             xvt.out(crawling[choice].description)
             DL.moves++
             if (DL.spawn > 2 && !(DL.moves % DL.width))
@@ -724,11 +725,11 @@ module Dungeon {
                             ROOM.occupant = ''
                             xvt.outln()
                             if (/Y/i.test(xvt.entry)) {
-                                xvt.out(xvt.bright, xvt.white, `You vanish `, xvt.normal, `into dungeon `, xvt.faint, xvt.romanize(++deep + 1), ' ... ')
+                                $.sound('portal')
                                 $.animated('fadeOutDown')
-                                $.sound('portal', 12)
+                                xvt.out(xvt.bright, xvt.white, `You vanish `, -400, xvt.normal, `into dungeon `, -300, xvt.faint, xvt.romanize(++deep + 1), ' ... ', -200)
                                 generateLevel()
-                                xvt.outln()
+                                xvt.outln(-100)
                             }
                             else
                                 $.animated('fadeOut')
@@ -1959,8 +1960,6 @@ module Dungeon {
                 , '-YOU-')
 
         if (!$.online.hp) {
-            xvt.plot(Y * 2 + 2, X * 6 + 4)
-            xvt.out(xvt.reset, -600)
             xvt.plot(Y * 2 + 2, X * 6 + 2)
             xvt.out(xvt.Blue, xvt.cyan, xvt.bright, xvt.reverse
                 , `  ${$.player.emulation == 'XT' ? $.PC.card($.player.pc).unicode : 'X'}  `, -600)
@@ -1994,9 +1993,7 @@ module Dungeon {
     function drawLevel() {
         let y: number, x: number, m: number
 
-        xvt.plot($.player.rows, 1)
-        xvt.outln(''.repeat($.player.rows))
-        xvt.out(xvt.off, xvt.clear)
+        $.clear()
 
         if (DL.map) {
             for (y = 0; y < paper.length; y++) {
@@ -2982,7 +2979,7 @@ module Dungeon {
             switch (room.occupant) {
                 case 'trapdoor':
                     if (identify && !icon)
-                        o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lblack, '⛋', xvt.reset) : xvt.attr(xvt.cyan, xvt.bright, '?')}  `)
+                        o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lblack, '⛋') : xvt.attr(xvt.reset, xvt.faint, '?')}  `)
                     break
 
                 case 'portal':
@@ -3013,7 +3010,7 @@ module Dungeon {
                     o = a + xvt.attr(xvt.yellow)
                     if (!icon)
                         icon = DL.cleric.sp
-                            ? xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
+                            ? xvt.attr(xvt.normal, xvt.uline, '_', xvt.faint, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
                             : xvt.attr(xvt.off, xvt.faint, xvt.uline, `_${$.tty == 'web' ? '⚰' : Cleric[$.player.emulation]}_`, xvt.nouline, xvt.normal, xvt.yellow)
                     else
                         icon += xvt.attr(xvt.yellow)
@@ -3023,7 +3020,7 @@ module Dungeon {
                 case 'wizard':
                     o = a + xvt.attr(xvt.magenta)
                     if (!icon)
-                        icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Teleport[$.player.emulation], xvt.normal, '_', xvt.nouline)
+                        icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.blink, Teleport[$.player.emulation], xvt.noblink, '_', xvt.nouline)
                     else
                         icon += xvt.attr(xvt.magenta)
                     o += xvt.attr(xvt.faint, '<', xvt.normal, icon, xvt.faint, '>')
@@ -3045,6 +3042,9 @@ module Dungeon {
     }
 
     function scroll(top = 1, redraw = true, escape = false) {
+        xvt.save()
+        xvt.out(`\x1B[${top};${$.player.rows}r`)
+        xvt.restore()
         if (escape) {
             $.music(['escape', 'thief2', 'thief'][$.dungeon])
             xvt.outln(xvt.lblue, `\n"Next time you won't escape so easily... moo-hahahahaha!!"`)
@@ -3054,9 +3054,6 @@ module Dungeon {
             drawLevel()
             drawHero()
         }
-        xvt.save()
-        xvt.out(`\x1B[${top};${$.player.rows}r`)
-        xvt.restore()
         refresh = (top == 1)
     }
 

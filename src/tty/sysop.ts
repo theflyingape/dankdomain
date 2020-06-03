@@ -7,6 +7,7 @@ import $ = require('../common')
 import xvt = require('xvt')
 import Battle = require('../battle')
 import Email = require('../email')
+import { isNotEmpty } from 'class-validator'
 import { sprintf } from 'sprintf-js'
 
 module Sysop {
@@ -33,8 +34,8 @@ module Sysop {
     function choice() {
         let suppress = false
         let choice = xvt.entry.toUpperCase()
-        if (xvt.validator.isNotEmpty(sysop[choice]))
-            if (xvt.validator.isNotEmpty(sysop[choice].description)) {
+        if (isNotEmpty(sysop[choice]))
+            if (isNotEmpty(sysop[choice].description)) {
                 xvt.out(' - ', sysop[choice].description)
                 suppress = $.player.expert
             }

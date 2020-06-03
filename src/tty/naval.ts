@@ -6,6 +6,7 @@
 import $ = require('../common')
 import xvt = require('xvt')
 import Battle = require('../battle')
+import { isDefined, isEmpty, isNotEmpty } from 'class-validator'
 import { sprintf } from 'sprintf-js'
 
 module Naval {
@@ -39,8 +40,8 @@ module Naval {
     function choice() {
         let suppress = false
         let choice = xvt.entry.toUpperCase()
-        if (xvt.validator.isNotEmpty(naval[choice]))
-            if (xvt.validator.isNotEmpty(naval[choice].description)) {
+        if (isNotEmpty(naval[choice]))
+            if (isNotEmpty(naval[choice].description)) {
                 xvt.out(' - ', naval[choice].description)
                 suppress = $.player.expert
             }
@@ -372,8 +373,8 @@ module Naval {
         function master() {
             let suppress = false
             let choice = xvt.entry.toUpperCase()
-            if (xvt.validator.isNotEmpty(shipyard[choice]))
-                if (xvt.validator.isNotEmpty(shipyard[choice].description)) {
+            if (isNotEmpty(shipyard[choice]))
+                if (isNotEmpty(shipyard[choice].description)) {
                     xvt.out(' - ', shipyard[choice].description)
                     suppress = true
                 }

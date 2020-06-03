@@ -6,6 +6,7 @@
 import $ = require('../common')
 import fs = require('fs')
 import xvt = require('xvt')
+import { isDefined, isIP, isNotEmpty } from 'class-validator'
 
 module Logon {
 
@@ -61,7 +62,7 @@ module Logon {
                         }, prompt: 'DOH!!  Re-send the password to your email account (Y/N)? ', cancel: 'N', enter: 'Y', eol: false, match: /Y|N/i, timeout: 10
                     }
                 }
-                if (xvt.validator.isNotEmpty($.player.id) && $.player.lastdate != $.now().date) {
+                if (isNotEmpty($.player.id) && $.player.lastdate != $.now().date) {
                     $.action('yn')
                     xvt.app.focus = 'forgot'
                 }
@@ -163,7 +164,7 @@ module Logon {
             do {
                 $.player.access = Object.keys($.Access.name)[++title]
                 $.access = $.Access.name[$.player.access]
-            } while (!xvt.validator.isDefined($.access[$.player.gender]))
+            } while (!isDefined($.access[$.player.gender]))
         }
         else {
             //  old school BBS tactic (usually 5 minutes) for Millennials to experience
@@ -192,7 +193,7 @@ module Logon {
         xvt.ondrop = $.logoff
 
         if (/^([1][0]|[1][2][7]|[1][7][2]|[1][9][2])[.]/.test($.remote)
-            || !xvt.validator.isIP($.remote))
+            || !isIP($.remote))
             $.whereis += ' 🖥 '
         else try {
             const apikey = `./etc/ipstack.key`
@@ -231,8 +232,9 @@ module Logon {
 
         $.access = $.Access.name[$.player.access]
         $.player.rows = process.stdout.rows
+        $.clear()
 
-        xvt.outln(xvt.clear, xvt.red, '--=:))', xvt.app.LGradient
+        xvt.outln(xvt.red, '--=:))', xvt.app.LGradient
             , xvt.Red, xvt.bright, xvt.white, $.sysop.name, xvt.reset
             , xvt.red, xvt.app.RGradient, '((:=--\n')
         xvt.out(xvt.cyan, 'Visitor: ', xvt.bright, xvt.white, $.sysop.calls.toString()
@@ -425,7 +427,8 @@ module Logon {
                         xvt.app.refocus()
                         return
                     }
-                    xvt.outln(xvt.clear, xvt.blue, '--=:))', xvt.app.LGradient
+                    $.clear()
+                    xvt.outln(xvt.blue, '--=:))', xvt.app.LGradient
                         , xvt.Blue, xvt.cyan, xvt.bright, 'Announcement', xvt.reset
                         , xvt.blue, xvt.app.RGradient, '((:=--\n')
                     $.cat('announcement')

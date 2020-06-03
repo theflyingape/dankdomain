@@ -6,6 +6,7 @@
 import $ = require('../common')
 import xvt = require('xvt')
 import Battle = require('../battle')
+import { isNotEmpty } from 'class-validator'
 import { sprintf } from 'sprintf-js'
 import { titleCase } from 'title-case'
 
@@ -60,8 +61,8 @@ module Party {
     function choice() {
         let suppress = false
         let choice = xvt.entry.toUpperCase()
-        if (xvt.validator.isNotEmpty(party[choice]))
-            if (xvt.validator.isNotEmpty(party[choice].description)) {
+        if (isNotEmpty(party[choice]))
+            if (isNotEmpty(party[choice].description)) {
                 xvt.out(' - ', party[choice].description)
                 suppress = $.player.expert
             }

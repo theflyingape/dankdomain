@@ -5,6 +5,7 @@
 
 import $ = require('./common')
 import xvt = require('xvt')
+import { isArray, isBoolean, isDefined } from 'class-validator'
 import { sprintf } from 'sprintf-js'
 
 module Battle {
@@ -189,12 +190,12 @@ module Battle {
         $.from = menu
 
         let a: active[], b: active[]
-        if (xvt.validator.isArray(party))
+        if (isArray(party))
             a = <active[]>party
         else
             a = new Array(<active>party)
 
-        if (xvt.validator.isArray(mob))
+        if (isArray(mob))
             b = <active[]>mob
         else
             b = new Array(<active>mob)
@@ -804,7 +805,7 @@ module Battle {
                         let credit = new $.coins(loser.weapon.value)
                         credit.value = $.worth(credit.value, winner.cha)
                         let result = $.Weapon.swap(winner, loser, credit)
-                        if (xvt.validator.isBoolean(result) && result)
+                        if (isBoolean(result) && result)
                             xvt.outln(winner.who.He, $.what(winner, 'take'), loser.who.his, winner.user.weapon, '.')
                         else if ($.from == 'Monster' && result)
                             xvt.outln(winner.who.He, $.what(winner, 'get'), credit.carry(), ' for ', loser.who.his, loser.user.weapon, '.')
@@ -812,7 +813,7 @@ module Battle {
                         credit = new $.coins(loser.armor.value)
                         credit.value = $.worth(credit.value, winner.cha)
                         result = $.Armor.swap(winner, loser, credit)
-                        if (xvt.validator.isBoolean(result) && result) {
+                        if (isBoolean(result) && result) {
                             xvt.outln(winner.who.He, 'also ', $.what(winner, 'take'), loser.who.his, winner.user.armor, '.')
                             if (/_DM|_NEP|_OLD|_TAX/.test(loser.user.id)) $.sound('shield', 16)
                         }
@@ -1144,7 +1145,7 @@ module Battle {
                 }
 
             //  some sensible ground rules to avoid known muling exploits, aka White Knights passing gas
-            if (xvt.validator.isDefined(nme)) {
+            if (isDefined(nme)) {
                 if ([1, 2, 3, 4, 5, 6, 10].indexOf(spell.cast) >= 0) {
                     if (rpc === $.online)
                         xvt.outln('You cannot cast that spell during a battle!')
@@ -1222,30 +1223,30 @@ module Battle {
             }
 
             //  Tigress prefers the Ranger (and Paladin) class, because it comes with a coupon and a better warranty
-            if (rpc.user.magic == 2 && !summon && $.dice(+xvt.validator.isDefined($.Access.name[rpc.user.access].sysop) + 5) == 1) {
+            if (rpc.user.magic == 2 && !summon && $.dice(+isDefined($.Access.name[rpc.user.access].sysop) + 5) == 1) {
                 rpc.altered = true
                 $.Magic.remove(rpc.user.spells, spell.cast)
                 if (!(rpc.user.id[0] == '_' || rpc.user.gender == 'I')) $.saveUser(rpc)
                 xvt.outln(p1.His, 'scroll burns as ', p1.he, $.what(rpc, 'cast'), 'the spell ... ', -44 * spell.cast)
             }
 
-            if (xvt.validator.isDefined(nme)) {
+            if (isDefined(nme)) {
                 let mod = $.Ring.power([], nme.user.rings, 'resist', 'spell', name)
                 if (mod.power) {
                     if (!$.Ring.have(rpc.user.rings, $.Ring.theOne)) {
                         xvt.outln(xvt.faint, '>> ', xvt.normal, p1.His, xvt.bright, xvt.magenta, name, xvt.normal, ' spell '
-                            , xvt.reset, 'attempt is ineffective against')
-                        xvt.out('   ', p2.his, xvt.bright, xvt.cyan, mod.name, xvt.normal)
+                            , -300, xvt.reset, 'attempt is ineffective against', -200)
+                        xvt.out('   ', p2.his, xvt.bright, xvt.cyan, mod.name, xvt.normal, -100)
                         if ($.player.emulation == 'XT' && nme.user.sex !== 'I') xvt.out(' ', $.Ring.name[mod.name].emoji, ' 💍')
                         xvt.outln(nme.user.sex == 'I' ? ' power' : ' ring', xvt.reset, '!', xvt.faint, ' <<')
                         cb()
                         return
                     }
                     else {
-                        xvt.out(xvt.magenta, xvt.faint, '>> ', xvt.normal, p1.His, xvt.bright, $.Ring.theOne, xvt.normal, ' ring '
-                            , 'dispels ', p2.his, xvt.bright, xvt.cyan, mod.name, xvt.normal)
+                        xvt.out(xvt.magenta, xvt.faint, '>> ', xvt.normal, p1.His, xvt.bright, $.Ring.theOne, xvt.normal, ' ring ', -300
+                            , 'dispels ', p2.his, xvt.bright, xvt.cyan, mod.name, xvt.normal, -200)
                         if ($.player.emulation == 'XT') xvt.out(' ', $.Ring.name[mod.name].emoji, ' 💍')
-                        xvt.outln(' ring', xvt.magenta, '!', xvt.faint, ' <<', -400)
+                        xvt.outln(' ring', xvt.magenta, '!', xvt.faint, ' <<', -100)
                     }
                 }
             }
@@ -1405,7 +1406,7 @@ module Battle {
                     break
 
                 case 8:
-                    if (xvt.validator.isDefined(nme)) {
+                    if (isDefined(nme)) {
                         $.sound('teleport')
                         xvt.out(xvt.bright, xvt.magenta)
                         if (backfire) {

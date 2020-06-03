@@ -1,6 +1,6 @@
 {
   "name": "dankdomain",
-  "version": "2.5.4",
+  "version": "2.6.0",
   "description": "Dank Domain: the return of Hack & Slash",
   "main": "telnet",
   "publisher": "theflyingape",
@@ -46,6 +46,7 @@
     "animate.css": "^4.1.0",
     "better-sqlite3": "^7.0.1",
     "chokidar": "^3.4.0",
+    "class-validator": "^0.12.2",
     "express": "^4.17.1",
     "fs-extra": "^9.0.0",
     "got": "^11.2.0",
@@ -61,7 +62,7 @@
     "xterm-addon-unicode11": "^0.2.0",
     "xterm-addon-web-links": "^0.4.0",
     "xterm-addon-webgl": "^0.7.0",
-    "xvt": "^1.1.6"
+    "xvt": "^1.2.1"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^5.4.0",

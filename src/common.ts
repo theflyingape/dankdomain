@@ -6,6 +6,7 @@
 import fs = require('fs')
 import xvt = require('xvt')
 import Items = require('./items')
+import { isDefined, isEmpty, isNotEmpty } from 'class-validator'
 import { sprintf } from 'sprintf-js'
 import { titleCase } from 'title-case'
 
@@ -231,7 +232,7 @@ module Common {
 
             i = 22 - profile.user.handle.length
             n = 11 + i / 2
-            xvt.out(xvt.clear)
+            clear()
             xvt.out(xvt.blue, '+', xvt.faint, line.slice(0, n), xvt.normal, '=:))')
             xvt.out(xvt.Blue, xvt.yellow, xvt.bright, ' ', profile.user.handle, ' ', xvt.reset)
             n = 11 + i / 2 + i % 2
@@ -441,7 +442,7 @@ module Common {
             xvt.out(sprintf('%-42s', profile.user.realestate + ' (' + profile.user.security + ')'))
             xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
 
-            if (xvt.validator.isNotEmpty(profile.user.gang)) {
+            if (profile.user.gang) {
                 xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
                 xvt.out('    Party: ', xvt.white)
                 if (player.emulation == 'XT') xvt.out('\r\x1B[2C🏴\r\x1B[12C')
@@ -685,7 +686,7 @@ module Common {
         one.hull = one.user.hull
         Weapon.equip(one, one.user.weapon, true)
         Armor.equip(one, one.user.armor, true)
-        if (!xvt.validator.isDefined(one.user.access))
+        if (!isDefined(one.user.access))
             one.user.access = Object.keys(Access.name)[0]
 
         if (keep) {
@@ -748,7 +749,7 @@ module Common {
                 let title = Object.keys(Access.name).indexOf(rpc.user.access)
                 do {
                     rpc.user.access = Object.keys(Access.name)[++title]
-                } while (!xvt.validator.isDefined(Access.name[rpc.user.access][rpc.user.gender]))
+                } while (!isDefined(Access.name[rpc.user.access][rpc.user.gender]))
                 xvt.outln(-500)
                 xvt.outln(xvt.yellow
                     , Access.name[king.access][king.sex], ' the ', king.access.toLowerCase()
@@ -1359,7 +1360,7 @@ module Common {
         }
 
         function ability(field?: string) {
-            if (xvt.validator.isNotEmpty(field)) {
+            if (isNotEmpty(field)) {
                 xvt.out('\n', xvt.yellow, 'You have ', xvt.bright, points.toString(), xvt.normal, ' points to distribute between 4 abilities: Strength, Intellect,\n')
                 xvt.outln('Dexterity, Charisma.  Each ability must be between ', xvt.bright, '20', xvt.normal, ' and ', xvt.bright, '80', xvt.normal, ' points.')
                 xvt.app.form[field].enter = player.str.toString()
@@ -1479,7 +1480,7 @@ module Common {
         user.tw = 0
 
         //  reset for new or non player
-        if (xvt.validator.isEmpty(user.id) || user.id[0] == '_') {
+        if (isEmpty(user.id) || user.id[0] == '_') {
             if (isNaN(user.dob)) user.dob = now().date
             if (isNaN(user.joined)) user.joined = now().date
             user.lastdate = now().date
@@ -1492,7 +1493,7 @@ module Common {
             user.expert = false
             user.rows = process.stdout.rows || 24
             user.remote = ''
-            user.novice = xvt.validator.isEmpty(user.id) && user.gender !== 'I'
+            user.novice = isEmpty(user.id) && user.gender !== 'I'
             user.gang = ''
             user.wins = 0
             user.immortal = 0
@@ -1520,7 +1521,7 @@ module Common {
             // if (!user.novice && !Access.name[player.access].sysop) user.email = ''
         }
 
-        if (level == 1 || xvt.validator.isEmpty(user.id) || user.id[0] == '_') {
+        if (level == 1 || isEmpty(user.id) || user.id[0] == '_') {
             //  no extra free or augmented stuff
             user.poisons = []
             user.spells = []
@@ -1982,6 +1983,14 @@ module Common {
         }
     }
 
+    export function clear() {
+        const scroll = xvt.row - (xvt.col == 1 ? 1 : 0)
+        xvt.out(xvt.off)
+        xvt.plot(player.rows, 1)
+        xvt.outln('\n'.repeat(scroll))
+        xvt.out(xvt.clear)
+    }
+
     export function death(by: string) {
         reason = by
         profile({ handle: `💀 ${reason} 💀`, png: `death${player.today}`, effect: 'fadeInDownBig' })
@@ -1991,7 +2000,7 @@ module Common {
     export function display(title: string, back: number, fore: number, suppress: boolean, menu: choices, hint?: string): string {
         menu['Q'] = {}  //  Q=Quit
         if (!suppress) {
-            xvt.out(xvt.reset, xvt.clear)
+            clear()
             if (!cat(title)) {
                 xvt.out('    ')
                 if (back)
@@ -2002,7 +2011,7 @@ module Common {
                     xvt.out(titlecase(title))
                 xvt.outln('\n')
                 for (let i in menu) {
-                    if (xvt.validator.isNotEmpty(menu[i].description))
+                    if (isNotEmpty(menu[i].description))
                         xvt.outln(xvt.faint, fore, '<', xvt.bright, xvt.white, i, xvt.faint, fore, '> ',
                             xvt.reset, menu[i].description)
                 }
@@ -2035,7 +2044,7 @@ module Common {
         xvt.app.form = {
             'term': {
                 cb: () => {
-                    if (xvt.validator.isNotEmpty(xvt.entry) && xvt.entry.length == 2) xvt.app.emulation = <xvt.emulator>xvt.entry.toUpperCase()
+                    if (isNotEmpty(xvt.entry) && xvt.entry.length == 2) xvt.app.emulation = <xvt.emulator>xvt.entry.toUpperCase()
                     player.emulation = xvt.app.emulation
                     xvt.outln('\n\n', xvt.reset, xvt.magenta, xvt.app.LGradient, xvt.reverse, 'BANNER', xvt.noreverse, xvt.app.RGradient)
                     xvt.outln(xvt.red, 'R', xvt.green, 'G', xvt.blue, 'B', xvt.reset, xvt.bright, ' bold ', xvt.normal, 'normal', xvt.blink, ' flash ', xvt.noblink, xvt.faint, 'dim')
@@ -2101,7 +2110,7 @@ module Common {
                 news(`\tonline player dropped by ${sysop.who} ${time(player.lasttime)} (${reason})\n`, true)
             }
         }
-        if (xvt.validator.isNotEmpty(player.id)) {
+        if (isNotEmpty(player.id)) {
             if (access.roleplay) {
                 //  did midnight or noon cross since last visit?
                 if (player.lastdate != now().date || (player.lasttime < 1200 && now().time >= 1200))
@@ -2433,7 +2442,7 @@ module Common {
 
         let user: user = isActive(rpc) ? rpc.user : rpc
 
-        if (xvt.validator.isEmpty(user.id)) return
+        if (isEmpty(user.id)) return
         if (insert || locked || user.id[0] == '_') {
             let trace = `${users}/.${user.id}.json`
             fs.writeFileSync(trace, JSON.stringify(user, null, 2))
