@@ -2107,6 +2107,7 @@ module Common {
                 if (player.lastdate != now().date || (player.lasttime < 1200 && now().time >= 1200))
                     player.today = 0
                 player.lasttime = now().time
+                player.remote = remote
                 saveUser(player, false, true)
                 news(`\treturned to ${whereis} at ${time(player.lasttime)} as a level ${player.level} ${player.pc}`)
                 news(`\t(${reason})\n`, true)

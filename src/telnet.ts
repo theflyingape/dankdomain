@@ -45,7 +45,7 @@ dns.lookup(host, (err, addr, family) => {
         const app = new Promise<number>((resolve, reject) => {
             if (resolve)
                 try {
-                    got(URL + `?rows=${rows}&tty=VT`, Object.assign({ method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME } }, ssl))
+                    got(URL + `?rows=${rows}&tty=VT`, { method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME }, https: ssl })
                         .then(response => {
                             resolve(response.body)
                         }).catch(err => {
