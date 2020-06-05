@@ -134,7 +134,7 @@ module Logon {
             return
         }
 
-        $.news(`${$.player.handle} ${$.access.emoji} logged in at ${$.time($.now().time)} as a level ${$.player.level} ${$.player.pc}:`)
+        $.news(`${$.player.handle} ${$.access.emoji} arrived in ${$.whereis} at ${$.time($.now().time)} as a level ${$.player.level} ${$.player.pc}:`)
         let rs = $.query(`SELECT * FROM Online`)
         for (let row = 0; row < rs.length; row++) {
             let t = $.now().time

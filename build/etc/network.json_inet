@@ -1,0 +1,6 @@
+{
+  "address": "localhost",
+  "telnet": true, "socket": 1986, "limit": 2,
+  "web": true, "ws": 1939, "path": "/",
+  "emulator": "VT", "rows": 25
+}

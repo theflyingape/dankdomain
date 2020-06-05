@@ -2048,8 +2048,8 @@ module Common {
                     player.emulation = xvt.app.emulation
                     xvt.outln('\n\n', xvt.reset, xvt.magenta, xvt.app.LGradient, xvt.reverse, 'BANNER', xvt.noreverse, xvt.app.RGradient)
                     xvt.outln(xvt.red, 'R', xvt.green, 'G', xvt.blue, 'B', xvt.reset, xvt.bright, ' bold ', xvt.normal, 'normal', xvt.blink, ' flash ', xvt.noblink, xvt.faint, 'dim')
-                    xvt.out(xvt.yellow, 'Cleric: ', xvt.bright, { VT: '\x1B(0\x7D\x1B(B', PC: '\x9C', XT: '\u00A3', dumb: '$' }[player.emulation]
-                        , xvt.normal, xvt.magenta, '  Teleport: ', xvt.bright, { VT: '\x1B(0\x67\x1B(B', PC: '\xF1', XT: '\u00B1', dumb: '%' }[player.emulation])
+                    xvt.out(xvt.yellow, 'Cleric: ', xvt.bright, { VT: '\x1B(0\x7D\x1B(B', PC: '\x9C', XT: '✟', dumb: '$' }[player.emulation]
+                        , xvt.normal, xvt.magenta, '  Teleport: ', xvt.bright, { VT: '\x1B(0\x67\x1B(B', PC: '\xF1', XT: '↨', dumb: '%' }[player.emulation])
                     online.altered = true
                     if (player.emulation == 'XT') {
                         xvt.outln(xvt.black, '  Bat: 🦇')

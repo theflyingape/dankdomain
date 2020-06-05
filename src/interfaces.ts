@@ -8,6 +8,7 @@ type MAP = '' | 'map' | 'magic map' | `Marauder's map`
 type NPC = '' | 'cleric' | 'wizard' | 'trapdoor' | 'thief' | 'portal' | 'well' | 'wheel' | 'dwarf'
 type ROOM = '' | 'n-s' | 'w-e' | 'cavern'
 type TTY = 'rlogin' | 'telnet' | 'web'
+type EMULATION = 'dumb' | 'VT' | 'PC' | 'XT'
 
 interface argument {
     who?: string

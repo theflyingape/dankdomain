@@ -5,6 +5,7 @@ build/door/*.js
 build/door/static/bundle.js
 build/tty/*.js
 build/etc/ipstack.key
+build/etc/network.json
 build/etc/smtp.json
 build/images/**
 build/sounds/**

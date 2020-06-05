@@ -9,7 +9,7 @@
  *   🖱 🕹  Hack & Slash door                            with Mark Montminy  *
  *   Amiga  RPGBBS                              (C) 1992-1993 Robert Hurst   *
  *  MS-DOS  The Rhode Warrior BBS               (C) 1991-1992 Robert Hurst   *
- *  Apple2  TproBBS                                written by Guy T. Rice    *
+ *  Apple Ⅱ TproBBS                                written by Guy T. Rice    *
 \*****************************************************************************/
 
 process.title = 'ddclient'
