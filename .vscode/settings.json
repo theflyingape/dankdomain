@@ -1,3 +1,11 @@
 {
-    "typescript.tsdk": "node_modules/typescript/lib"
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "terminal.integrated.fontFamily": "'Noto Sans Mono','Noto Color Emoji','Lucida Console',Consolas,monospace",
+    "terminal.integrated.fontWeight": "400",
+    "terminal.integrated.fontWeightBold": "500",
+    "terminal.integrated.experimentalUseTitleEvent": true,
+    "terminal.integrated.experimentalLinkProvider": true,
+    "terminal.integrated.enableBell": true,
+    "terminal.integrated.cursorBlinking": true,
+    "terminal.integrated.copyOnSelection": true
 }

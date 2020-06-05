@@ -30,9 +30,14 @@ $ telnet play.ddgame.us
 ```
 File directory structure:
 ```linux
-[rhurst@atom dankdomain]$ pwd
+[theflyingape@ddgame dankdomain]$ pwd
 /usr/local/games/dankdomain
-.vscode             Visual Studio Code: settings & debug profiles
+.vscode/            Visual Studio Code: settings & debug profiles
+console/            MAME support files
+door/               web services & client for browser
+../static           web browser client content
+   ../images        visual media for artifacts, creatures, and players
+   ../sounds        audio media for event notifications
 etc/                game app & system support files
 files/              game & player support files: ANSI and/or text formats
 ../arena            ASCII art files
@@ -43,14 +48,9 @@ files/              game & player support files: ANSI and/or text formats
 ../user             each player’s events logged since last visit
 items/              game artifacts
 users/              player data files
-package.json        Node.js manifest
 node_modules/       Node.js support libraries
-console/            MAME support files
-door/               web services & client for browser
-../static           web browser client content
-   ../images        visual media for artifacts, creatures, and players
-   ../sounds        audio media for event notifications
 tty/                game modules for each main menu item
+package.json        Node.js manifest
 battle.js           support module for player engagements
 common.js           global support module for game
 email.js            support module for dispatching email notifications
@@ -71,6 +71,7 @@ NOTE: *in **`users`** folder, you can edit any hidden (dot) trace file and save 
 + [Arena](https://photos.app.goo.gl/sZS7xx6rpyoG4CYBA)
 + [Connect](https://photos.app.goo.gl/AeZZXrC8VKnMFuqj8)
 + [Dungeon](https://photos.app.goo.gl/XfQTJ2NrKdVWJext9)
++ [Images](https://photos.app.goo.gl/wXpBUtrY2L64SrEH6)
 + [Monster](https://photos.app.goo.gl/rTRm8xDbF2wGJDFZ7)
 + [Naval](https://photos.app.goo.gl/w6v8Zk4GVBc3CbAA6)
 + [NPC](https://photos.app.goo.gl/T4QQT87U1eZK6EHk8)
