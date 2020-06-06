@@ -634,7 +634,7 @@ module Common {
 
         pieces(p = this.pouch(this.value)): string {
             return 'pouch of '
-                + (tty == 'web' ? '💰 ' : '')
+                + (player.emulation == 'XT' ? '💰 ' : '')
                 + {
                     'p': xvt.attr(xvt.magenta, xvt.bright, 'platinum', xvt.normal),
                     'g': xvt.attr(xvt.yellow, xvt.bright, 'gold', xvt.normal),
@@ -1487,7 +1487,7 @@ module Common {
             user.lasttime = now().time
             user.gender = user.sex || 'I'
 
-            user.emulation = xvt.app.emulation
+            user.emulation = <EMULATION>xvt.app.emulation
             user.calls = 0
             user.today = 0
             user.expert = false
@@ -2045,7 +2045,7 @@ module Common {
             'term': {
                 cb: () => {
                     if (isNotEmpty(xvt.entry) && xvt.entry.length == 2) xvt.app.emulation = <xvt.emulator>xvt.entry.toUpperCase()
-                    player.emulation = xvt.app.emulation
+                    player.emulation = <EMULATION>xvt.app.emulation
                     xvt.outln('\n\n', xvt.reset, xvt.magenta, xvt.app.LGradient, xvt.reverse, 'BANNER', xvt.noreverse, xvt.app.RGradient)
                     xvt.outln(xvt.red, 'R', xvt.green, 'G', xvt.blue, 'B', xvt.reset, xvt.bright, ' bold ', xvt.normal, 'normal', xvt.blink, ' flash ', xvt.noblink, xvt.faint, 'dim')
                     xvt.out(xvt.yellow, 'Cleric: ', xvt.bright, { VT: '\x1B(0\x7D\x1B(B', PC: '\x9C', XT: '✟', dumb: '$' }[player.emulation]

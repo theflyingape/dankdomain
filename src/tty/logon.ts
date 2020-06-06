@@ -86,7 +86,7 @@ module Logon {
         if (/new/i.test(xvt.entry)) {
             $.reroll($.player)
             $.newkeys($.player)
-            $.player.emulation = xvt.app.emulation
+            $.player.emulation = <EMULATION>xvt.app.emulation
             $.player.rows = process.stdout.rows || 24
             if ($.tty == 'web') {
                 $.sound('yahoo', 20)
@@ -94,7 +94,7 @@ module Logon {
             }
             else {
                 $.emulator(() => {
-                    $.player.emulation = xvt.app.emulation
+                    $.player.emulation = <EMULATION>xvt.app.emulation
                     require('./newuser')
                 })
             }

@@ -85,6 +85,45 @@ function login(client: string, rows: number, cols: number, emulator: EMULATION):
     return pid
 }
 
+function message(term: pty.IPty, data: string, classic = true): string {
+    let msg = data + ''
+    let pid: number = term.pid
+
+    //  inspect for app's ACK ...
+    let ack = msg.indexOf('\x06')
+    //  ... to appropriately replace it with any pending broadcast message(s)
+    if (broadcasts[term.pid] && ack >= 0) {
+        msg = `${msg.substr(0, ack)}${broadcasts[term.pid]}\n${msg.substr(ack)}`
+        broadcasts[term.pid] = ''
+    }
+
+    //  intercept client actions ...
+    if (classic) {
+        let copy = msg + ''
+        // find any occurrences of @func(data), and for each: call func(data)
+        const re = '[@](?:(action|animated|profile|play|title|tune|wall)[(](.+?)[)])'
+        let search = new RegExp(re, 'g'); let replace = new RegExp(re)
+        let match: RegExpMatchArray
+        while (match = search.exec(copy)) {
+            let x = replace.exec(msg)
+            let s = x.index, e = s + x[0].length
+            msg = msg.substr(0, s) + msg.substr(e)
+            eval(`${match[1]}(match[2])`)
+        }
+        function action(menu) { }
+        function animated(effect) { }
+        function play(fileName) { }
+        function profile(panel) { }
+        function title(name) { }
+        function tune(fileName) { }
+        function wall(msg) {
+            broadcast(pid, msg)
+        }
+    }
+
+    return msg
+}
+
 interface network {
     address: string
     telnet: boolean
@@ -151,27 +190,7 @@ dns.lookup(network.address, (err, addr, family) => {
 
             //  app --> browser client
             term.onData((data) => {
-                //  inspect for app's ACK ...
-                let msg = data.toString()
-                let ack = msg.indexOf('\x06')
-                //  ... to appropriately replace it with any pending broadcast message(s)
-                if (broadcasts[term.pid] && ack >= 0) {
-                    msg = `${msg.substr(0, ack)}${broadcasts[term.pid]}\n${msg.substr(ack)}`
-                    broadcasts[term.pid] = ''
-                }
-
-                let copy = msg + ''
-                // find any occurrences of @func(data), and for each: call func(data)
-                const re = '[@](?:(action|animated|profile|play|title|tune|wall)[(](.+?)[)])'
-                let search = new RegExp(re, 'g'); let replace = new RegExp(re)
-                let match: RegExpMatchArray
-                while (match = search.exec(copy)) {
-                    let x = replace.exec(msg)
-                    let s = x.index, e = s + x[0].length
-                    msg = msg.substr(0, s) + msg.substr(e)
-                    eval(`${match[1]}(match[2])`)
-                }
-
+                let msg = message(term, data)
                 try {
                     socket.write(msg)
                 } catch (err) {
@@ -181,16 +200,6 @@ dns.lookup(network.address, (err, addr, family) => {
                         unlock(term.pid)
                         socket.destroy()
                     }
-                }
-
-                function action(menu) { }
-                function animated(effect) { }
-                function play(fileName) { }
-                function profile(panel) { }
-                function title(name) { }
-                function tune(fileName) { }
-                function wall(msg) {
-                    broadcast(pid, msg)
                 }
             })
 
@@ -211,22 +220,26 @@ dns.lookup(network.address, (err, addr, family) => {
             })
 
             let telnet = new TelnetSocket(socket)
-            telnet.do.sga()     //
-            telnet.do.ttype()   // accept terminal type
-            telnet.do.new_environ()   // accept environment
+            telnet.do.naws()
+            telnet.do.sga()
+            telnet.do.ttype()
+            telnet.do.new_environ()
             telnet.dont.echo()  // client don't local echo
             telnet.will.echo()  // app will echo
             telnet.will.sga()
+
             telnet.on('WILL', command => {
-                switch (command.option) {
-                    case TelnetSpec.Options.TTYPE:
-                        telnet.sb.send.ttype()
-                        break
-                    case TelnetSpec.Options.NEW_ENVIRON:
-                        //telnet.sb.send.new_environ()
+                switch (command.optionName) {
+                    case 'NAWS':
+                        let buf = telnet.buffers.splice(0, 9).toBuffer()
+                        let rows = 256 * buf[5] + buf[6]
+                        let cols = 256 * buf[3] + buf[4]
+                        console.log(`Resize CLASSIC session ${pid} (${rows}x${cols})`)
+                        term.resize(cols, rows)
                         break
                 }
             })
+
             telnet.on('data', (buff) => {
                 let data = buff.toString().replace(/\x00/g, '')
                 try {
@@ -464,15 +477,7 @@ dns.lookup(network.address, (err, addr, family) => {
 
             //  app --> browser client
             term.onData((data) => {
-                //  inspect for app's ACK ...
-                let msg = data.toString()
-                let ack = msg.indexOf('\x06')
-                //  ... to appropriately replace it with any pending broadcast message(s)
-                if (broadcasts[term.pid] && ack >= 0) {
-                    msg = `${msg.substr(0, ack)}${broadcasts[term.pid]}\n${msg.substr(ack)}`
-                    broadcasts[term.pid] = ''
-                }
-
+                let msg = message(term, data, false)
                 try {
                     browser.send(msg)
                 } catch (ex) {

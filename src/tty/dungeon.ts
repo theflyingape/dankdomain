@@ -2985,7 +2985,7 @@ module Dungeon {
                 case 'portal':
                     o = a + xvt.attr(xvt.blue)
                     if (!icon)
-                        icon = xvt.attr('v', xvt.bright, 'V', xvt.normal, 'v')
+                        icon = xvt.attr('v', xvt.bright, xvt.blink, 'V', xvt.noblink, xvt.normal, 'v')
                     else
                         icon += xvt.attr(xvt.blue)
                     o += xvt.attr(xvt.faint, 'v', xvt.normal, icon, xvt.faint, 'v')
@@ -3020,7 +3020,7 @@ module Dungeon {
                 case 'wizard':
                     o = a + xvt.attr(xvt.magenta)
                     if (!icon)
-                        icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.blink, Teleport[$.player.emulation], xvt.noblink, '_', xvt.nouline)
+                        icon = xvt.attr(xvt.normal, xvt.uline, '_', xvt.bright, Teleport[$.player.emulation], xvt.normal, '_', xvt.nouline)
                     else
                         icon += xvt.attr(xvt.magenta)
                     o += xvt.attr(xvt.faint, '<', xvt.normal, icon, xvt.faint, '>')

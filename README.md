@@ -21,10 +21,12 @@ To run a local game copy (Linux only):
 $ npm install dankdomain
 $ ./install.sh
 $ npm start
+$ google-chrome http://localhost:1939
+$ telnet localhost 1986
 ```
 You can also play www.DDgame.us from the command-line:
 ```bash
-$ npm test
+$ npm run tty
 $ npm run mame
 $ telnet play.ddgame.us
 ```

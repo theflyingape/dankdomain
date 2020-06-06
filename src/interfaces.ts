@@ -37,7 +37,7 @@ interface user {
     calls?: number
     today?: number
     expert?: boolean
-    emulation?: string
+    emulation?: EMULATION
     rows?: number
     access?: string
     remote?: string
