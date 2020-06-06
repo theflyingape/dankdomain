@@ -231,9 +231,9 @@ dns.lookup(network.address, (err, addr, family) => {
             telnet.on('WILL', command => {
                 switch (command.optionName) {
                     case 'NAWS':
-                        let buf = telnet.buffers.splice(0, 9).toBuffer()
-                        let rows = 256 * buf[5] + buf[6]
-                        let cols = 256 * buf[3] + buf[4]
+                        let buff = telnet.buffers.splice(0, 9).toBuffer()
+                        let rows = 256 * buff[5] + buff[6]
+                        let cols = 256 * buff[3] + buff[4]
                         console.log(`Resize CLASSIC session ${pid} (${rows}x${cols})`)
                         term.resize(cols, rows)
                         break
