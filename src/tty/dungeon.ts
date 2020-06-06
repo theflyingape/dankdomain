@@ -971,7 +971,7 @@ module Dungeon {
                                                         break
                                                     case 2:
                                                         $.beep()
-                                                        xvt.outln('You add a ', xvt.yellow, xvt.bright, `Scroll of ${spell}`, ' to your arsenal.')
+                                                        xvt.outln('You add a ', xvt.yellow, xvt.bright, `Scroll of ${spell}`, xvt.reset, ' to your arsenal.')
                                                         break
                                                     case 3:
                                                         $.sound('shimmer')
