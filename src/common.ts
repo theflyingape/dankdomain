@@ -2059,8 +2059,11 @@ module Common {
                     }
                     xvt.outln(-2200)
                     beep()
+                    if (process.stdout.rows && process.stdout.rows !== player.rows)
+                        player.rows = process.stdout.rows
                     for (let rows = player.rows + 5; rows > 1; rows--)
                         xvt.out(bracket(rows >= 24 ? rows : '..'))
+                    xvt.app.form['rows'].prompt = xvt.attr('Enter top visible row number ', xvt.faint, '[', xvt.reset, xvt.bright, `${player.rows}`, xvt.faint, xvt.cyan, ']', xvt.reset, ': ')
                     xvt.app.focus = 'rows'
                 }, prompt: xvt.attr('Select ', xvt.faint, '[', xvt.reset, xvt.bright, `${player.emulation}`, xvt.faint, xvt.cyan, ']', xvt.reset, ': ')
                 , enter: player.emulation, match: /VT|PC|XT/i, max: 2
@@ -2070,8 +2073,7 @@ module Common {
                     player.rows = +xvt.entry
                     xvt.outln()
                     xvt.app.focus = 'pause'
-                }, prompt: xvt.attr('Enter top visible row number ', xvt.faint, '[', xvt.reset, xvt.bright, `${player.rows}`, xvt.faint, xvt.cyan, ']', xvt.reset, ': ')
-                , enter: player.rows.toString(), max: 2, match: /^[2-9][0-9]$/
+                }, enter: player.rows.toString(), max: 2, match: /^[2-9][0-9]$/
             },
             'pause': { cb: cb, pause: true }
         }
