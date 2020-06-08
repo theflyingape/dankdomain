@@ -35,6 +35,10 @@ process.on('SIGTERM', () => {
     process.exit()
 })
 
+process.on('uncaughtException', (err, origin) => {
+    console.log(`${origin} ${err}`)
+})
+
 process.chdir(__dirname)
 console.log(`cwd: ${__dirname}`)
 
@@ -152,8 +156,7 @@ dns.lookup(network.address, (err, addr, family) => {
 
     //  start telnet service
     if (network.telnet) {
-        const got = require('got')
-        const { TelnetSocket, TelnetSpec } = require('telnet-socket')
+        const { TelnetSocket } = require('telnet-socket')
 
         let tty = net.createServer()
         tty.maxConnections = network.limit
@@ -163,58 +166,57 @@ dns.lookup(network.address, (err, addr, family) => {
         })
 
         tty.on('connection', (socket) => {
-            console.log(`Classic Gate knocked from remote host: ${socket.remoteAddress}`)
+            let client = socket.remoteAddress || 'scan'
+            console.log(`Classic Gate knocked from remote host: ${client}`)
             socket.setKeepAlive(false)
             socket.setTimeout(150000)
 
-            process.env.REMOTEHOST = socket.remoteAddress
-            let pid = login(socket.remoteAddress, network.rows, 80, network.emulator)
+            process.env.REMOTEHOST = client
+            let pid = login(client, network.rows, 80, network.emulator)
             let term = sessions[pid]
 
             socket.on('close', (err) => {
-                if (err) console.log(`?FATAL ACTIVE classic session ${term.pid} close error`)
-            })
-
-            socket.on('end', (data) => {
-                delete broadcasts[term.pid]
-                delete sessions[term.pid]
-                pid = 0
+                if (err) {
+                    console.log(`Classic error on close for session ${pid}`)
+                    if (pid > 1) term.destroy()
+                }
             })
 
             socket.on('error', (err) => {
-                console.log('error', err)
+                console.log(`${err.message} for session ${pid}`)
+                if (pid > 1) term.destroy()
             })
 
             term.spawn.dispose()
-            if (term.startup) socket.write(term.startup)
+            if (term.startup) try { socket.write(term.startup) } catch { }
 
-            //  app --> browser client
+            //  app --> telnet client
             term.onData((data) => {
                 let msg = message(term, data)
                 try {
                     socket.write(msg)
                 } catch (err) {
-                    if (term.pid) {
-                        console.log(`?FATAL ACTIVE CLASSIC session ${term.pid} pty -> socket error:`, err.message)
-                        console.log(msg)
-                        unlock(term.pid)
-                        socket.destroy()
-                    }
+                    console.log(`${err.message} for session ${pid}`)
                 }
             })
 
             //  app shutdown
             term.onExit(() => {
                 console.log(`Exit CLASSIC session ${term.pid} for remote host: ${term.client}`)
-                socket.end()
+                try {
+                    delete broadcasts[term.pid]
+                    delete sessions[term.pid]
+                    pid = 0
+                    socket.end()
+                } catch { }
             })
 
             socket.on('timeout', () => {
                 if (pid > 1) try {
                     term.destroy()   // process.kill(pid, 1)
-                    console.log(`Forced close CLASSIC session ${term.pid} from remote host: ${term.client}`)
+                    console.log(`Timeout CLASSIC session ${pid} from remote host: ${term.client}`)
                 } catch (err) {
-                    console.log(`?FATAL term destroy event ${term.pid}: ${err.message}`)
+                    console.log(`?FATAL term destroy event ${pid}: ${err.message}`)
                 }
                 socket.end()
             })
