@@ -17,7 +17,6 @@ process.title = 'ddgame'
 //  process signal traps
 process.on('SIGHUP', () => {
     console.log(new Date() + ' :: received hangup')
-    process.exit()
 })
 
 process.on('SIGINT', () => {
@@ -168,7 +167,6 @@ dns.lookup(network.address, (err, addr, family) => {
         tty.on('connection', (socket) => {
             let client = socket.remoteAddress || 'scan'
             console.log(`Classic Gate knocked from remote host: ${client}`)
-            socket.setKeepAlive(false)
             socket.setTimeout(150000)
 
             process.env.REMOTEHOST = client
@@ -183,7 +181,7 @@ dns.lookup(network.address, (err, addr, family) => {
             })
 
             socket.on('error', (err) => {
-                console.log(`${err.message} for session ${pid}`)
+                console.log(`Classic error: ${err.message} for session ${pid}`)
                 if (pid > 1) term.destroy()
             })
 
@@ -202,7 +200,7 @@ dns.lookup(network.address, (err, addr, family) => {
 
             //  app shutdown
             term.onExit(() => {
-                console.log(`Exit CLASSIC session ${term.pid} for remote host: ${term.client}`)
+                console.log(`Exit CLASSIC session ${pid} for remote host: ${term.client}`)
                 try {
                     delete broadcasts[term.pid]
                     delete sessions[term.pid]
