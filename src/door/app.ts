@@ -156,6 +156,7 @@ dns.lookup(network.address, (err, addr, family) => {
     //  start telnet service
     if (network.telnet) {
         const { TelnetSocket } = require('telnet-socket')
+        const nka = require('net-keepalive')
 
         let tty = net.createServer()
         tty.maxConnections = network.limit
@@ -167,6 +168,9 @@ dns.lookup(network.address, (err, addr, family) => {
         tty.on('connection', (socket) => {
             let client = socket.remoteAddress || 'scan'
             console.log(`Classic Gate knocked from remote host: ${client}`)
+            socket.setKeepAlive(true, 4000)
+            nka.setKeepAliveInterval(socket, 21000)
+            nka.setKeepAliveProbes(socket, 2)
             socket.setTimeout(150000)
 
             process.env.REMOTEHOST = client
