@@ -28,8 +28,8 @@ module Taxman {
             xvt.out('\n\n', xvt.yellow, xvt.bright, $.taxman.user.handle, xvt.normal, -400)
             xvt.outln(', our Master of Coin, looks at your bulging ', pouch, -1200)
             xvt.out(xvt.yellow, 'and says, ', xvt.blue, xvt.bright, '"Time to pay taxes!"', xvt.normal, -800)
-            xvt.out(xvt.yellow, '  You check out the burly\n')
-            xvt.outln(`guards who stand ready to enforce ${$.king.handle}'${$.king.handle.substr(-1) !== 's' ? 's' : ''} will.\n`, -1600)
+            xvt.out(xvt.yellow, '  You check out the burly guards who stand ready\n')
+            xvt.outln(`to enforce `, xvt.bright, `${$.king.handle}'${$.king.handle.substr(-1) !== 's' ? 's' : ''}`, xvt.normal, ` will.\n`, -1600)
 
             tax.value = scratch - tax.value
             tax = new $.coins(tax.carry(1, true))

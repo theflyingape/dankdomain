@@ -308,7 +308,10 @@ module Tavern {
                 break
 
             case 'B':
-                if (!$.brawl) break
+                if (!$.brawl) {
+                    xvt.outln('\nYou have run out of brawls.')
+                    break
+                }
                 $.online.bp = $.online.hp > 9 ? $.int($.online.hp / 10) : 1
                 Battle.user('Brawl', (opponent: active) => {
                     if (opponent.user.id == '') {

@@ -510,6 +510,7 @@ module Dungeon {
     }
 
     function oof(wall: string) {
+        $.PC.profile($.online, 'bounce', ` - Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
         $.sound('wall')
         xvt.outln(xvt.bright, xvt.yellow, 'Oof!', xvt.normal, ` There is a wall to the ${wall}.`, -400)
         if (($.online.hp -= $.dice(deep + Z + 1)) < 1) {
@@ -549,10 +550,7 @@ module Dungeon {
 
         //	monsters?
         if (ROOM.monster.length) {
-            $.from = 'Dungeon'
-            $.action('battle')
             if (!refresh) drawRoom(Y, X, true, true)
-            scroll(1, false)
             xvt.out(xvt.off)
 
             if (ROOM.monster.length == 1) {
@@ -587,11 +585,14 @@ module Dungeon {
                     , ['you', 'the main course', 'the entertainment', 'meat', 'a good chew'][$.dice(5) - 1]
                     , ' . . . ', -600)
                 let m = {}
-                for (let i = 0; i < ROOM.monster.length; i++)
+                for (let i = 0; i < ROOM.monster.length; i++) {
                     m['mob' + (i + 1)] = 'monster/'
                         + ($.PC.name['monster'][ROOM.monster[i].user.pc] || $.PC.name['tavern'][ROOM.monster[i].user.pc]
                             ? ROOM.monster[i].user.pc.toLowerCase()
-                            : 'monster') + (ROOM.monster[0].user.gender == 'F' ? '_f' : '')
+                            : 'monster') + (ROOM.monster[i].user.gender == 'F' ? '_f' : '')
+                    if (!ROOM.monster[i].monster.pc && ROOM.monster[i].user.pc == $.player.pc)
+                        m['mob' + (i + 1)] = 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : '')
+                }
                 $.profile(m)
             }
             xvt.outln()
@@ -628,6 +629,9 @@ module Dungeon {
             }
 
             if (ROOM.monster.length) {
+                $.from = 'Dungeon'
+                $.action('battle')
+                scroll(1, false)
                 b4 = ROOM.monster.length > 3 ? -ROOM.monster.length : ROOM.monster.length > 2 ? $.online.hp : 0
                 Battle.engage('Dungeon', party, ROOM.monster, doSpoils)
                 return false
@@ -1289,7 +1293,7 @@ module Dungeon {
                     break
                 }
 
-                if ((!DL.map || DL.map == 'map') && power > 95) $.profile({ jpg: 'npc/old cleric', effect: 'zoomInUp' })
+                if (power > 95 || (!DL.map || DL.map == 'map')) $.profile({ jpg: 'npc/old cleric', effect: 'zoomInUp' })
                 if ($.online.hp > $.int($.player.hp / 3) || DL.cleric.sp < $.Magic.power(DL.cleric, 13)) {
                     xvt.out('"I can ', DL.cleric.sp < $.Magic.power(DL.cleric, 13) ? 'only' : 'surely'
                         , ' cast a Heal spell on your wounds for '
@@ -1351,7 +1355,7 @@ module Dungeon {
 
                 if (!$.player.cursed && !$.player.novice && $.dice((Z > $.player.level ? Z : 1) + 20 * $.player.immortal + $.player.level + $.online.cha) == 1) {
                     $.profile({
-                        png: ($.PC.name['player'][$.player.pc] ? 'player' : 'monster') + '/' + $.player.pc.toLowerCase()
+                        png: ($.PC.name['player'][$.player.pc] || $.PC.name['immortal'][$.player.pc] ? 'player' : 'monster') + '/' + $.player.pc.toLowerCase()
                             + ($.player.gender == 'F' ? '_f' : ''), effect: 'flip'
                     })
                     $.player.coward = true; $.online.altered = true
@@ -1391,7 +1395,7 @@ module Dungeon {
                 }
                 else if (!$.player.novice && $.dice(Z + $.online.cha) == 1) {
                     $.profile({
-                        png: ($.PC.name['player'][$.player.pc] ? 'player' : 'monster') + '/' + $.player.pc.toLowerCase()
+                        png: ($.PC.name['player'][$.player.pc] || $.PC.name['immortal'][$.player.pc] ? 'player' : 'monster') + '/' + $.player.pc.toLowerCase()
                             + ($.player.gender == 'F' ? '_f' : ''), effect: 'flip'
                     })
                     xvt.outln('mimic', xvt.normal, ' occupying this space.', -1000)
@@ -1846,7 +1850,7 @@ module Dungeon {
         }
 
         if (Battle.teleported) {
-            $.PC.profile($.online, 'lightSpeedOut')
+            $.PC.profile($.online, 'lightSpeedOut', ` - Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
             Battle.teleported = false
             Y = $.dice(DL.rooms.length) - 1
             X = $.dice(DL.width) - 1
@@ -1854,7 +1858,7 @@ module Dungeon {
             return
         }
 
-        if (Battle.retreat) $.PC.profile($.online, 'heartBeat')
+        if (Battle.retreat) $.PC.profile($.online, 'heartBeat', ` - Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
 
         let d = ['N', 'S', 'E', 'W']
         while (Battle.retreat && !$.reason) {
@@ -2744,7 +2748,6 @@ module Dungeon {
                         }
                     }
                     else {
-                        $.PC.profile()
                         xvt.outln()
                         $.sound('teleport')
                     }
@@ -2753,21 +2756,21 @@ module Dungeon {
                         case 'D':
                             if (Z < 99) {
                                 Z++
-                                $.animated('backOutDown')
+                                $.PC.profile($.online, 'backOutDown')
                                 break
                             }
                         case 'R':
-                            $.animated('flipOutY')
+                            $.PC.profile($.online, 'flipOutY')
                             break
 
                         case 'U':
                             if (Z > 0) {
                                 Z--
-                                $.animated('backOutUp')
+                                $.PC.profile($.online, 'backOutUp')
                                 break
                             }
                         case 'O':
-                            $.animated('flipOutX')
+                            $.PC.profile($.online, 'flipOutX')
                             if (deep > 0)
                                 deep--
                             else {
@@ -3046,9 +3049,10 @@ module Dungeon {
         xvt.out(`\x1B[${top};${$.player.rows}r`)
         xvt.restore()
         if (escape) {
-            $.music(['escape', 'thief2', 'thief'][$.dungeon])
-            xvt.outln(xvt.lblue, `\n"Next time you won't escape so easily... moo-hahahahaha!!"`)
             $.news(`\tescaped dungeon ${xvt.romanize(hideep + 1)}.${hiZ} ${levels < $.player.level && `ascending +${$.player.level - levels}` || 'expeditiously'}`)
+            $.music(['escape', 'thief2', 'thief'][$.dungeon])
+            xvt.outln(xvt.lblue, `\n"Next time you won't escape so easily... moo-hahahahaha!!"`, -600)
+            $.profile({ png: 'castle', effect: 'pulse' })
         }
         else if (redraw) {
             drawLevel()

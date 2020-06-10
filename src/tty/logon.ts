@@ -315,7 +315,7 @@ module Logon {
         }
 
         if ($.player.today <= $.access.calls && $.access.roleplay && $.sysop.dob <= $.now().date) {
-            $.PC.profile($.online)
+            $.PC.profile(<active>{ user: { id: '', pc: $.player.pc, gender: $.player.gender, handle: $.player.handle, level: $.player.level } }, 'fadeIn', ' - Dank Domain')
             $.sound('welcome')
 
             xvt.outln(xvt.bright, xvt.black, '(', xvt.normal, xvt.white, 'Welcome back, '

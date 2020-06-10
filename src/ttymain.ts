@@ -17,6 +17,10 @@ process.chdir(__dirname)
 
 import xvt = require('xvt')
 
+process.on('uncaughtException', (err, origin) => {
+    xvt.outln(`${origin} ${err}`)
+})
+
 //  classic terminal user interface entry point
 module ttyMain {
 

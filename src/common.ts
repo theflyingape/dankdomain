@@ -176,18 +176,16 @@ module Common {
             return Math.round(rpc.dex * rpc.user.level / 10 + 2 * rpc.user.jw - rpc.user.jl + 10)
         }
 
-        profile(rpc = online, effect = 'fadeInLeft') {
-            if (rpc.user.id) {
-                let userPNG = `door/static/images/user/${rpc.user.id}.png`
-                try {
-                    fs.accessSync(userPNG, fs.constants.F_OK)
-                    userPNG = `user/${rpc.user.id}`
-                } catch (e) {
-                    userPNG = (PC.name['player'][rpc.user.pc] ? 'player' : 'monster') + '/' + rpc.user.pc.toLowerCase() + (rpc.user.gender == 'F' ? '_f' : '')
-                }
-                Common.profile({ png: userPNG, handle: rpc.user.handle, level: rpc.user.level, pc: rpc.user.pc, effect: effect })
-                Common.title(`${rpc.user.handle}: level ${rpc.user.level} ${rpc.user.pc}`)
+        profile(rpc = online, effect = 'fadeInLeft', meta = '') {
+            let userPNG = `door/static/images/user/${rpc.user.id}.png`
+            try {
+                fs.accessSync(userPNG, fs.constants.F_OK)
+                userPNG = `user/${rpc.user.id}`
+            } catch (e) {
+                userPNG = (PC.name['player'][rpc.user.pc] || PC.name['immortal'][rpc.user.pc] ? 'player' : 'monster') + '/' + rpc.user.pc.toLowerCase() + (rpc.user.gender == 'F' ? '_f' : '')
             }
+            Common.profile({ png: userPNG, handle: rpc.user.handle, level: rpc.user.level, pc: rpc.user.pc, effect: effect })
+            Common.title(`${rpc.user.handle}: level ${rpc.user.level} ${rpc.user.pc} ${meta}`)
         }
 
         random(type?: string): string {
