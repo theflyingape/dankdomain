@@ -339,7 +339,7 @@
             "toStr":2, "toInt":1, "toDex":1, "toCha":1,
             "maxStr":98, "maxInt":90, "maxDex":88, "maxCha":70,
             "bonusStr":1, "bonusInt":0, "bonusDex":0, "bonusCha":1,
-            "unicode":"☠", "color":37, "skip":"hypnotize",
+            "unicode":"🕱", "color":37, "skip":"hypnotize",
             "specialty": "Barbarian/Ranger",
             "description": [
                 "A corpse reanimated by supernatural forces."
@@ -354,7 +354,7 @@
             "toStr":2, "toInt":1, "toDex":1, "toCha":1,
             "maxStr":99, "maxInt":88, "maxDex":77, "maxCha":66,
             "bonusStr":0, "bonusInt":0, "bonusDex":0, "bonusCha":2,
-            "unicode":"♜", "color":33, "skip":"grab",
+            "unicode":"🜟", "color":33, "skip":"grab",
             "specialty": "Barbarian/Ranger",
             "description": [
                 "A large, hideous, man-like being that eats players."

@@ -2300,7 +2300,7 @@ module Dungeon {
                     break
 
                 case 'magic':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⚹' : Dot
+                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⭒' : Dot
                     n = $.dice($.Magic.merchant.length * 16)
                     for (let j = 0; j < $.Magic.merchant.length && n > 0; j++) {
                         v = $.Magic.merchant.length - j
@@ -2342,7 +2342,7 @@ module Dungeon {
                     break
 
                 case 'xmagic':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '☀' : Dot
+                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⭑' : Dot
                     v = $.Magic.merchant.length + $.dice($.Magic.special.length)
                     break
 
@@ -3002,7 +3002,7 @@ module Dungeon {
 
                 case 'wheel':
                     if (identify && !icon)
-                        o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lmagenta, '☸', xvt.reset) : xvt.attr(xvt.magenta, xvt.bright, '@')}  `)
+                        o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lmagenta, '࿋', xvt.reset) : xvt.attr(xvt.magenta, xvt.bright, '@')}  `)
                     break
 
                 case 'thief':

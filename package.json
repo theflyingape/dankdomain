@@ -1,6 +1,6 @@
 {
   "name": "dankdomain",
-  "version": "2.6.2",
+  "version": "2.6.3",
   "description": "Dank Domain: the return of Hack & Slash",
   "main": "telnet",
   "publisher": "theflyingape",
@@ -59,11 +59,11 @@
     "telnet-socket": "^0.2.3",
     "title-case": "^3.0.2",
     "ws": "^7.3.0",
-    "xterm": "^4.6.0",
+    "xterm": "^4.7.0",
     "xterm-addon-fit": "^0.4.0",
     "xterm-addon-unicode11": "^0.2.0",
     "xterm-addon-web-links": "^0.4.0",
-    "xterm-addon-webgl": "^0.7.0",
+    "xterm-addon-webgl": "^0.8.0",
     "xvt": "^1.2.1"
   },
   "devDependencies": {
