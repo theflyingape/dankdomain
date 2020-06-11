@@ -1796,6 +1796,7 @@ module Dungeon {
                         avenger.int = 99
                         avenger.dex = 99
                         avenger.cha = 99
+                        avenger.monster = monsters[avenger.user.pc]
                         ROOM.monster.push(avenger)
                     }
                 }
