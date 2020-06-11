@@ -44,7 +44,7 @@
   "homepage": "https://www.DDgame.us",
   "dependencies": {
     "animate.css": "^4.1.0",
-    "better-sqlite3": "^7.0.1",
+    "better-sqlite3": "^7.1.0",
     "chokidar": "^3.4.0",
     "class-validator": "^0.12.2",
     "express": "^4.17.1",
@@ -54,7 +54,7 @@
     "node-pty": "^0.9.0",
     "nodemailer": "^6.4.8",
     "nodemailer-smtp-transport": "^2.7.4",
-    "playwright": "^1.1.0",
+    "playwright": "^1.1.1",
     "sprintf-js": "^1.1.2",
     "telnet-socket": "^0.2.3",
     "title-case": "^3.0.2",
