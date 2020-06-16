@@ -1781,7 +1781,7 @@ module Dungeon {
                     monsters[mon.user.handle].pc = '*'	//	chaos
                     $.activate(mon)
                     for (let i = 0; i < $.dice(3); i++) {
-                        let avenger = <active>{ user: { id: '' } }
+                        let avenger = <active>{ monster: { name: '', pc: '' }, user: { id: '' } }
                         Object.assign(avenger.user, mon.user)
                         avenger.user.pc = $.PC.random('monster')
                         avenger.user.handle += xvt.attr(' ', xvt.uline, 'avenger', xvt.nouline)
@@ -1796,7 +1796,8 @@ module Dungeon {
                         avenger.int = 99
                         avenger.dex = 99
                         avenger.cha = 99
-                        avenger.monster = monsters[avenger.user.pc]
+                        Object.assign(avenger.monster, monsters[mon.user.handle])
+                        avenger.monster.pc = avenger.user.pc
                         ROOM.monster.push(avenger)
                     }
                 }

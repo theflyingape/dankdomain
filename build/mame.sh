@@ -5,11 +5,13 @@
 # pty port into dankdomain ...
 
 # set this to override the default to my door
-URL=
+DDGAME=localhost
+DDGAME=play.ddgame.us
 
 path=`dirname $0`; cd $path || exit 1
 rpm -q mame > /dev/null || sudo dnf install mame
 rpm -q socat > /dev/null || sudo dnf install socat
+rpm -q telnet > /dev/null || sudo dnf install telnet
 
 declare -i PTS
 
@@ -38,13 +40,14 @@ while [ $PTS -lt 1 ]; do
 	socat /dev/pts/$PTS exec:/bin/true || PTS=0
 done
 
-TELNET="telnet"
-if [ `basename $PWD` = "build" ]; then
-       cd ..
-       TELNET="./build/telnet"
-fi
-EXEC="node $TELNET"
-[ -n "$URL" ] && EXEC="$EXEC $URL"
+#TELNET="telnet"
+#if [ `basename $PWD` = "build" ]; then
+#       cd ..
+#       TELNET="./build/telnet"
+#fi
+#EXEC="node $TELNET"
+#[ -n "$URL" ] && EXEC="$EXEC $URL"
+EXEC="telnet $DDGAME"
 
 YN="Y"
 while [ "$YN" != "N" -a "$YN" != "n" ]; do
