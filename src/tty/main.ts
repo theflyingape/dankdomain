@@ -89,7 +89,6 @@ module Main {
                 return
 
             case 'G':
-                $.music('casino')
                 require('./gambling').menu($.player.expert)
                 return
 

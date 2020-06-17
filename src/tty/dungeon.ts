@@ -721,7 +721,7 @@ module Dungeon {
 
             case 'portal':
                 $.action('ny')
-                $.profile({ jpg: 'ddd', effect: 'fadeIn' })
+                $.profile({ jpg: 'ddd', effect: 'fadeIn', level: xvt.romanize(deep + 2), pc: 'domain portal' })
                 xvt.out(xvt.bright, xvt.blue, `You've found a portal to a deeper and more dank dungeon.`)
                 xvt.app.form = {
                     'deep': {
@@ -1257,6 +1257,7 @@ module Dungeon {
 
             case 'cleric':
                 if (!DL.cleric.hp) {
+                    $.profile({ jpg: 'npc/rip', effect: 'fadeInUp' })
                     xvt.outln(xvt.yellow, 'You find the ', xvt.white, 'bones'
                         , xvt.yellow, ' of an ', xvt.faint, 'old cleric', xvt.normal, '.', -600)
                     if ($.player.emulation == 'XT') xvt.out('⚰️ ')
@@ -1289,11 +1290,13 @@ module Dungeon {
                 xvt.out('He says, ')
 
                 if ($.online.hp >= $.player.hp || cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, cast)) {
+                    if (DL.cleric.sp < $.Magic.power(DL.cleric, cast))
+                        $.profile({ jpg: 'npc/prayer', effect: 'fadeInUp' })
                     xvt.outln(xvt.yellow, '"I will pray for you."')
                     break
                 }
 
-                if (power > 95 || (!DL.map || DL.map == 'map')) $.profile({ jpg: 'npc/old cleric', effect: 'zoomInUp' })
+                if (power > 95) $.profile({ jpg: 'npc/old cleric', effect: 'zoomInUp', level: DL.cleric.user.level, pc: DL.cleric.user.pc })
                 if ($.online.hp > $.int($.player.hp / 3) || DL.cleric.sp < $.Magic.power(DL.cleric, 13)) {
                     xvt.out('"I can ', DL.cleric.sp < $.Magic.power(DL.cleric, 13) ? 'only' : 'surely'
                         , ' cast a Heal spell on your wounds for '
@@ -1339,6 +1342,7 @@ module Dungeon {
                                     $.sound('teleport', 8)
                                 }
                                 else {
+                                    $.profile({ jpg: 'npc/prayer', effect: 'fadeInUp' })
                                     xvt.outln(xvt.lyellow, '"I need to rest. ', -300, ' Go in peace."', -300)
                                     looked = true
                                 }

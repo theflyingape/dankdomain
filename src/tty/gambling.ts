@@ -18,14 +18,15 @@ module Gambling {
         'S': { description: 'Cherry Bomb Slots' }
     }
 	/*
-			'G': { description:'Greyhound race' },
-					'R': { description:'Roulette' },
+		'G': { description:'Greyhound race' },
+		'R': { description:'Roulette' },
 	*/
 
     let game: string
     let max = new $.coins(0)
     let payoff = new $.coins(0)
     let point: number
+    let sting: boolean = true
 
     interface card {
         face: string
@@ -113,6 +114,10 @@ module Gambling {
             if (isNotEmpty(casino[game].description)) {
                 xvt.outln(' - ', casino[game].description)
                 if ($.access.roleplay) {
+                    if (sting) {
+                        $.music('casino')
+                        sting = false
+                    }
                     Bet()
                     return
                 }

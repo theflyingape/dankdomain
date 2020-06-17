@@ -19,7 +19,7 @@ cd console
 mame -inipath . vt240 -host pty &> /dev/null &
 cd - > /dev/null
 
-echo -e "  ****  Press a key to skip \x1B[7m WARNING \x1B[m message and WAIT"
+echo -e "  ****  Press a key to skip \x1B[7m WARNING \x1B[m message and \x1B[31m\x1B(0a\x1B(B Wait\x1B[m"
 sleep 5
 echo -e "  ****  After '\x1B[1mVT240 OK\x1B[m' shows, the terminal is ready (10-seconds)"
 sleep 10
@@ -47,13 +47,22 @@ done
 #fi
 #EXEC="node $TELNET"
 #[ -n "$URL" ] && EXEC="$EXEC $URL"
+
 EXEC="telnet $DDGAME"
+INFO="printf \\\"\\r\\n$EXEC as VT240 using /dev/pts/$PTS ...\\r\\n\\n\\\""
+KB="printf \\\"\\r\\nPress Scroll Lock key to TOGGLE keyboard emulation OFF\\r\\nand then press ESCape key to exit MAME\\r\\n\\\""
 
 YN="Y"
 while [ "$YN" != "N" -a "$YN" != "n" ]; do
 	echo
 	echo "[`date +'%H:%M%P'`]  Attaching '$EXEC' session to VT240 /dev/pts/$PTS ... "
+
+	socat /dev/pts/$PTS exec:"$INFO"
+	sleep 1
 	socat /dev/pts/$PTS exec:"$EXEC"
+	sleep 1
+	socat /dev/pts/$PTS exec:"$KB"
+	sleep 1
 
 	echo
 	echo -e "  ****  Press \x1B[7m Scroll Lock \x1B[m key to TOGGLE keyboard emulation OFF"

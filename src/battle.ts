@@ -1497,8 +1497,10 @@ module Battle {
 
                 case 10:
                     if (backfire) {
+                        $.music('crack')
+                        xvt.outln(xvt.faint, 'You die by your own doing.', -600)
+                        $.sound('killed', 4)
                         rpc.hp = 0
-                        xvt.outln(xvt.faint, 'You die by your own doing.', -200)
                         $.death(`resurrect backfired`)
                         break
                     }
@@ -1507,7 +1509,7 @@ module Battle {
                         if (DL) {
                             if (DL.cleric.user.status) {
                                 $.music('winner')
-                                $.profile({ jpg: 'npc/old cleric', effect: 'fadeInUpBig' })
+                                $.profile({ jpg: 'npc/resurrect', effect: 'fadeInUp' })
                                 DL.cleric.user.status = ''
                                 $.activate(DL.cleric)
                                 $.PC.adjust('cha', 104, 2, 1)
@@ -1522,7 +1524,7 @@ module Battle {
                             }
                             else {
                                 $.PC.profile(opponent, 'fadeInUpBig')
-                                xvt.out(xvt.magenta, xvt.bright, 'Now raising ', xvt.normal, opponent.user.handle, xvt.faint, ' from the dead ... ')
+                                xvt.out(-200, xvt.magenta, xvt.bright, 'Now raising ', -300, xvt.normal, opponent.user.handle, -400, xvt.faint, ' from the dead ... ', -500)
                                 opponent.user.status = ''
                                 $.saveUser(opponent)
                                 $.news(`\tresurrected ${opponent.user.handle}`)
