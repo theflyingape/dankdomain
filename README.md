@@ -1,6 +1,6 @@
 <img src="https://avatars.githubusercontent.com/theflyingape" title="Robert Hurst" align="right">
 
-# :crown: Dank Domain
+# :crown: Ɗank Ɗomain
 
 ## the return of Hack &amp; Slash
 
