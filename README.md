@@ -1,6 +1,6 @@
 <img src="https://avatars.githubusercontent.com/theflyingape" title="Robert Hurst" align="right">
 
-# :crown: Ɗank Ɗomain
+# :crown: Ɗanƙ Ɗomaiƞ
 
 ## the return of Hack &amp; Slash
 
