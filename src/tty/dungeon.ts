@@ -1584,6 +1584,8 @@ module Dungeon {
                 gold.value *= +ROOM.giftValue
                 gold = new $.coins(gold.carry(1, true))
                 if (gold.value) {
+                    if (gold.value > 1e+17)
+                        gold.value = 1e+17
                     $.sound('yahoo', 10)
                     xvt.outln(xvt.yellow, 'You find a ', xvt.bright, 'treasure chest'
                         , xvt.normal, ' holding ', gold.carry(), '!')
