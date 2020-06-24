@@ -1809,7 +1809,7 @@ module Battle {
                         , xvt.lblack, xvt.lCyan, 'orb', xvt.Black
                         , xvt.lcyan, xvt.app.RGradient)
                     $.sound('mana')
-                    xvt.outln(xvt.cyan, ' radiates ', xvt.faint, 'above ', backfire ? p2.him : p1.him
+                    xvt.outln(xvt.reset, xvt.cyan, ' radiates ', xvt.faint, 'above ', backfire ? p2.him : p1.him
                         , xvt.white, '... ', -200)
 
                     let mana = 0

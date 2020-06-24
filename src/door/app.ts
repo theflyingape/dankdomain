@@ -63,7 +63,7 @@ function broadcast(pid: number, msg: string) {
 }
 
 function login(client: string, rows: number, cols: number, emulator: EMULATION): number {
-    process.env.SSH_CLIENT = client
+    process.env.REMOTEHOST = client
     let term = pty.spawn('sh', ["-l", "../logins.sh", emulator], {
         name: 'xterm-256color',
         cols: cols,
@@ -173,7 +173,6 @@ dns.lookup(network.address, (err, addr, family) => {
             nka.setKeepAliveProbes(socket, 2)
             socket.setTimeout(150000)
 
-            process.env.REMOTEHOST = client
             let pid = login(client, network.rows, 80, network.emulator)
             let term = sessions[pid]
 
@@ -370,13 +369,13 @@ dns.lookup(network.address, (err, addr, family) => {
                 list.push(profile)
             }
 
-            let rs = query(`SELECT id,handle,pc,gender,level FROM Players WHERE xplevel>1`)
+            let rs = query(`SELECT id,handle,pc,gender,level FROM Players WHERE xplevel>1 AND NOT novice`)
             for (let n in rs) {
                 let id = rs[n].id, handle = rs[n].handle, pc = rs[n].pc, gender = rs[n].gender, level = rs[n].level
                 let profile = { handle: handle, level: level, pc: pc, effect: 'fadeInLeft' }
                 if (id[0] == '_') {
                     profile['jpg'] = `npc/${{ _BAR: 'barkeep', _DM: 'dwarf', _NEP: 'neptune', _OLD: 'seahag', _TAX: 'taxman' }[id]}`
-                    delete profile.level
+                    list.push(profile)
                 }
                 else {
                     let userPNG = `user/${id}`
@@ -386,8 +385,11 @@ dns.lookup(network.address, (err, addr, family) => {
                         userPNG = 'player/' + pc.toLowerCase() + (gender == 'F' ? '_f' : '')
                     }
                     profile['png'] = userPNG
+                    try {
+                        fs.accessSync(`./static/images/${userPNG}.png`, fs.constants.F_OK)
+                        list.push(profile)
+                    } catch (e) { }
                 }
-                list.push(profile)
             }
 
             const ring = require('../items/ring.json')

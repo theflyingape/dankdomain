@@ -28,6 +28,7 @@ let pid = 0, wpid = 0, tty = false
 let socket: WebSocket
 let carrier = false, recheck = 0
 let idle: NodeJS.Timer, reconnect: NodeJS.Timer, lurking: NodeJS.Timer
+let tbt = 1
 
 if (window.addEventListener)
     window.addEventListener("message", receive, false)
@@ -273,9 +274,10 @@ function newSession(ev) {
         })
     }
     else {
-        //  when it all started: Adventure Construction Set on the Commodore 64
+        //  it started 1985: Adventure Construction Set on the Commodore 64
         //  demo mode "Sir Handsome" struck me as a flying ape, thus the handle
-        idle = setInterval(() => { XT(`@tune(1985)`) }, 300000)
+        //  ... added some more throwback tunes to rotate in
+        idle = setInterval(() => { XT(`@tune(throwback${tbt++})`) }, 300000)
 
         fetch(`${app}/title.txt`, { method: 'GET' }).then(function (res) {
             return res.text().then(function (data) {

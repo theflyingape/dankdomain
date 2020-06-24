@@ -1,6 +1,6 @@
 {
   "name": "dankdomain",
-  "version": "2.6.4",
+  "version": "3.0.0",
   "description": "Dank Domain: the return of Hack & Slash",
   "main": "telnet",
   "publisher": "theflyingape",
@@ -76,7 +76,7 @@
     "@types/sprintf-js": "^1.1.2",
     "@types/ws": "^7.2.5",
     "browserify": "^16.5.1",
-    "eslint": "^7.2.0",
+    "eslint": "^7.3.1",
     "typescript": "^3.9.5"
   }
 }
