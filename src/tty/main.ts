@@ -39,7 +39,7 @@ module Main {
         if ($.online.altered) $.saveUser($.online)
         if ($.reason) xvt.hangup()
 
-        if (!suppress) $.profile({ png: 'castle', effect: 'pulse' })
+        if (!suppress) $.profile({ png: ['castle', 'joust', 'dragon'][$.dice(3) - 1], effect: 'pulse' })
         $.action('menu')
         xvt.app.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
