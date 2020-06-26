@@ -1453,11 +1453,14 @@ module Dungeon {
                                 xvt.outln()
                                 xvt.out(xvt.yellow, $.dwarf.user.handle, ' eyes you suspicously ... ', -600)
                                 if ($.player.level > $.dwarf.user.level) {
-                                    if ($.Ring.wear($.player.rings, ring)) {
+                                    if ($.Ring.wear($.player.rings, ring))
                                         $.getRing('inherit', ring)
-                                        $.saveRing(ring, $.player.id)
-                                        $.sound('click', 8)
+                                    else {
+                                        xvt.outln('takes back his ring!')
+                                        $.Ring.remove($.player.rings, ring)
                                     }
+                                    $.saveRing(ring, $.player.id)
+                                    $.sound('click', 8)
                                 }
                                 else {
                                     merchant()
@@ -1484,9 +1487,13 @@ module Dungeon {
                                 if ($.player.level > $.dwarf.user.level) {
                                     if ($.Ring.wear($.player.rings, ring)) {
                                         $.getRing('inherit', ring)
-                                        $.saveRing(ring, $.player.id)
-                                        $.sound('click', 8)
                                     }
+                                    else {
+                                        xvt.outln('takes back his ring!')
+                                        $.Ring.remove($.player.rings, ring)
+                                    }
+                                    $.saveRing(ring, $.player.id)
+                                    $.sound('click', 8)
                                 }
                                 else {
                                     merchant()

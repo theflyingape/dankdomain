@@ -225,7 +225,6 @@ function newSession(ev) {
     fit.fit()
     window.dispatchEvent(new Event('resize'))	// gratuituous
     term.writeln('\x07')
-    term.writeln('\x1B[16C🔥 🌨\r\x1B[23C\x1B[1;36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain \x1B[m🌙 💫')
 
     if (ev == 'Logon') {
         if (idle) clearInterval(idle)
@@ -282,6 +281,7 @@ function newSession(ev) {
         fetch(`${app}/title.txt`, { method: 'GET' }).then(function (res) {
             return res.text().then(function (data) {
                 term.focus()
+                term.writeln('\x1B[16C🔥 🌨\r\x1B[23C\x1B[1;36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain \x1B[m🌙 💫')
                 term.write(data)
                 const app = location.pathname.replace(/info.html$/, "")
                 fetch(`${app}player/`, { method: 'GET' }).then(function (res) {
