@@ -179,7 +179,7 @@ module Hall {
                 return
 
             case 'W':
-                xvt.outln(xvt.green, '\n        --=:)) ', xvt.bright, 'WINNERS', xvt.normal, ' Only Noted ((:=--\n')
+                xvt.outln(xvt.green, '\n             --=:)) ', xvt.bright, 'WINNERS', xvt.normal, ' Only Noted ((:=--\n')
                 $.cat('winners')
                 suppress = true
                 break

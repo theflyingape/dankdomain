@@ -75,7 +75,7 @@ function login(client: string, rows: number, cols: number, emulator: EMULATION):
     let pid: number = term.pid
     broadcasts[pid] = ''
     sessions[pid] = term
-    sessions[pid].client = process.env.SSH_CLIENT
+    sessions[pid].client = client
     //  buffer any initial output from forked process
     //  between this post and ensuing client wss connection
     sessions[pid].spawn = term.onData((data) => {
@@ -83,8 +83,6 @@ function login(client: string, rows: number, cols: number, emulator: EMULATION):
     })
 
     console.log(`Create PLAYER session ${pid} using ${emulator} from remote host: ${client}`)
-    // (${req.hostname})
-
     return pid
 }
 
