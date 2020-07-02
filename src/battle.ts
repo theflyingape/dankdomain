@@ -95,7 +95,7 @@ module Battle {
                 SET kills=kills+1, status='${$.player.id}', weapon='${$.barkeep.user.weapon}'
                 WHERE id='${$.barkeep.user.id}'`)
 
-                xvt.outln(`He picks up your ${$.barkeep.user.weapon} and triumphantly waves it around to`)
+                xvt.outln(`He picks up your ${$.PC.weapon()} and triumphantly waves it around to`)
                 xvt.outln(`the cheering crowd.  He struts toward the mantelpiece to hang his new trophy.\n`)
                 $.sound('winner', 32)
                 xvt.outln('  ', xvt.bright, xvt.green, '"Drinks are on the house!"', -2250)
