@@ -237,6 +237,10 @@ module Tavern {
                 $.tiny--
                 switch ($.tiny) {
                     case 2:
+                        $.profile({
+                            jpg: 'npc/barkeep', effect: 'fadeInRight'
+                            , handle: $.barkeep.user.handle, level: $.barkeep.user.level, pc: $.barkeep.user.pc
+                        })
                         xvt.outln('yell, "Freak!"', -1000)
                         if ($.player.level < 60)
                             xvt.outln('The barkeep stares off into empty space, ignoring your wimpy comment.')
@@ -246,6 +250,10 @@ module Tavern {
                         break
 
                     case 1:
+                        $.profile({
+                            jpg: 'npc/barkeep', effect: 'shakeX'
+                            , handle: $.barkeep.user.handle, level: $.barkeep.user.level, pc: $.barkeep.user.pc
+                        })
                         xvt.outln('thumb your nose.', -1000)
                         if ($.player.level < 60)
                             xvt.outln(`Annoyed, the barkeep looks down at ${$.PC.who($.barkeep).his}furry feet and counts, \"100, 99, 98,...\"`)
@@ -262,9 +270,10 @@ module Tavern {
                         xvt.out('Uh, oh!')
                         $.sound('ddd', 22)
                         $.profile({
-                            jpg: 'npc/barkeep'
+                            jpg: 'npc/barkeep', effect: 'shakeY'
                             , handle: $.barkeep.user.handle, level: $.barkeep.user.level, pc: $.barkeep.user.pc
                         })
+                        $.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} death match with ${$.barkeep.user.handle}`)
                         xvt.out('  Here comes Tiny!')
                         $.sound('challenge', 12)
                         xvt.outln(`  And ${$.PC.who($.barkeep).he}doesn't look friendly...\n`, -600)
