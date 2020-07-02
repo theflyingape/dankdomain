@@ -4,7 +4,7 @@
 
 ## the return of Hack &amp; Slash
 
-**Dank Domain** is basically a bulletin board built around a medieval role-playing atmosphere (or is it the other way around?). Instead, you _live_ the online game as you kill, steal, brawl, and joust the other members to gain levels and fortune. The success of this game is dependent upon the users that play it. Your involvment will not only provide you with entertainment, but also shares your activity with the other players.
+**Ɗanƙ Ɗomaiƞ** is basically a bulletin board built around a medieval role-playing atmosphere (or is it the other way around?). Instead, you _live_ the online game as you kill, steal, brawl, and joust the other members to gain levels and fortune. The success of this game is dependent upon the users that play it. Your involvment will not only provide you with entertainment, but also shares your activity with the other players.
 
 ### Read, then play on [https://www.DDgame.us](https://www.ddgame.us)
 
@@ -68,7 +68,7 @@ NOTE: *in **`users`** folder, you can edit any hidden (dot) trace file and save 
 
  🇺🇸 ©️1991 - 2020 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
 
-#### Dank Domain image gallery
+#### Ɗanƙ Ɗomaiƞ image gallery
 
 + [Arena](https://photos.app.goo.gl/sZS7xx6rpyoG4CYBA)
 + [Connect](https://photos.app.goo.gl/AeZZXrC8VKnMFuqj8)

@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  Dank Domain: the return of Hack & Slash                                  *
+ *  Ɗanƙ Ɗomaiƞ: the return of Hack & Slash                                  *
  *  DOOR authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
 import chokidar = require('chokidar')
@@ -13,6 +13,7 @@ import pty = require('node-pty')
 import ws = require('ws')
 
 process.title = 'ddgame'
+console.log(`Ɗanƙ Ɗomaiƞ (${process.title}) started on ${process.platform} #${process.pid}`)
 
 //  process signal traps
 process.on('SIGHUP', () => {
@@ -260,6 +261,7 @@ dns.lookup(network.address, (err, addr, family) => {
         })
 
         tty.listen(network.socket, addr)
+        console.log(` - listening on telnet ${addr}:${network.socket}`)
     }
 
     //  start web service
@@ -276,19 +278,18 @@ dns.lookup(network.address, (err, addr, family) => {
         catch (e) {
             console.log(e.message)
             server = http.createServer(app)
-            console.log('Reverting to http')
         }
         let port = network.ws
 
         //  enable REST services
         server.listen(port, addr)
         const WEBROOT = `http${ssl ? 's' : ''}://${addr}:${port}${network.path}`
-        console.log(`Dank Domain (${process.title}) listening on ${WEBROOT}`)
+        console.log(` - listening on ${WEBROOT}`)
 
         //  enable WebSocket endpoints
         const wsActive = new ws.Server({ noServer: true, path: `${network.path}player/`, clientTracking: true })
         const wsLurker = new ws.Server({ noServer: true, path: `${network.path}lurker/`, clientTracking: true })
-        console.log(`WebSocket endpoints enabled`)
+        console.log(` - WebSocket endpoints enabled`)
 
         server.on('upgrade', (req, socket, head) => {
             const pathname = new URL(req.url, WEBROOT).pathname

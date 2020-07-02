@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  Dank Domain: the return of Hack & Slash                                  *
+ *  Ɗanƙ Ɗomaiƞ: the return of Hack & Slash                                  *
  *  DOOR authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
 
@@ -281,7 +281,7 @@ function newSession(ev) {
         fetch(`${app}/title.txt`, { method: 'GET' }).then(function (res) {
             return res.text().then(function (data) {
                 term.focus()
-                term.writeln('\x1B[16C🔥 🌨\r\x1B[23C\x1B[1;36mW\x1B[22melcome to D\x1B[2mank \x1B[22mD\x1B[2momain \x1B[m🌙 💫')
+                term.writeln('\x1B[16C🔥 🌨\r\x1B[23C\x1B[1;36mW\x1B[22melcome to Ɗ \x1B[2manƙ \x1B[22mƊ \x1B[2momaiƞ \x1B[m🌙 💫')
                 term.write(data)
                 const app = location.pathname.replace(/info.html$/, "")
                 fetch(`${app}player/`, { method: 'GET' }).then(function (res) {
