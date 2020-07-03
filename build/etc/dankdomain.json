@@ -40,7 +40,7 @@
             "toStr":1, "toInt":2, "toDex":1, "toCha":1,
             "maxStr":90, "maxInt":95, "maxDex":90, "maxCha":90,
             "bonusStr":0, "bonusInt":1, "bonusDex":1, "bonusCha":1,
-            "unicode":"⚗", "skip":"elude",
+            "unicode":"⍺", "skip":"elude",
             "difficulty":"simple", "specialty": "Powerful Venenum",
             "description": [
                 "The Alchemist depends greatly on the ability to use poisons.  This skill",
@@ -119,7 +119,7 @@
             "toStr":3, "toInt":1, "toDex":1, "toCha":1,
             "maxStr":98, "maxInt":90, "maxDex":90, "maxCha":85,
             "bonusStr":1, "bonusInt":0, "bonusDex":0, "bonusCha":2,
-            "unicode":"⚸", "skip":"sidestep",
+            "unicode":"⏧", "skip":"sidestep",
             "difficulty":"easy", "specialty": "Warrior Combatant",
             "description": [
                 "Fighters are excellent killers.  Their extra-ordinary combat ability makes",
@@ -134,7 +134,7 @@
             "toStr":1, "toInt":1, "toDex":3, "toCha":1,
             "maxStr":90, "maxInt":85, "maxDex":98, "maxCha":90,
             "bonusStr":0, "bonusInt":2, "bonusDex":1, "bonusCha":0,
-            "unicode":"⛢", "skip":"dodge",
+            "unicode":"⏈", "skip":"dodge",
             "difficulty":"hardest", "specialty": "Evasive Trickster",
             "description": [
                 "Jesters are annoying pests.  They lack serious hand-to-hand combat power,",
@@ -149,7 +149,7 @@
             "toStr":1, "toInt":3, "toDex":1, "toCha":1,
             "maxStr":85, "maxInt":98, "maxDex":90, "maxCha":90,
             "bonusStr":2, "bonusInt":1, "bonusDex":0, "bonusCha":0,
-            "unicode":"⛭", "skip":"trick",
+            "unicode":"⍣", "skip":"trick",
             "difficulty":"vintage", "specialty": "Arcane Magic/Poison",
             "description": [
                 "The Magician is the opposite of the Fighter; powerful magic opposed to",
@@ -164,7 +164,7 @@
             "toStr":2, "toInt":1, "toDex":1, "toCha":1,
             "maxStr":95, "maxInt":90, "maxDex":90, "maxCha":90,
             "bonusStr":1, "bonusInt":0, "bonusDex":1, "bonusCha":1,
-            "unicode":"♂", "skip":"duck",
+            "unicode":"⚦", "skip":"duck",
             "difficulty":"painless", "specialty": "Skillful Melee/Scroll",
             "description": [
                 "Rangers are great survivors, because they must depend on their ability to",
@@ -195,7 +195,7 @@
             "toStr":1, "toInt":4, "toDex":1, "toCha":1,
             "maxStr":80, "maxInt":99, "maxDex":90, "maxCha":90,
             "bonusStr":2, "bonusInt":1, "bonusDex":0, "bonusCha":0,
-            "unicode":"⛣", "skip":"avoid",
+            "unicode":"⎎", "skip":"avoid",
             "difficulty":"complex", "specialty": "Divine Magicae",
             "description": [
                 "The weakest combat-class is the Sage.  While hand-to-hand abilities leave",
