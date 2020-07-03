@@ -1,6 +1,6 @@
 /*****************************************************************************\
- *  Dank Domain: the return of Hack & Slash                                  *
- *  ITEM authored by: Robert Hurst <theflyingape@gmail.com>                  *
+ *  Ɗanƙ Ɗomaiƞ: the return of Hack & Slash                                  *
+ *  ITEMS authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
 import xvt = require('xvt')

@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  Dank Domain: the return of Hack & Slash                                  *
+ *  Ɗanƙ Ɗomaiƞ: the return of Hack & Slash                                  *
  *  ARENA authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 

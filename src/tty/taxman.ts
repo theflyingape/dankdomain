@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  Dank Domain: the return of Hack & Slash                                  *
+ *  Ɗanƙ Ɗomaiƞ: the return of Hack & Slash                                  *
  *  TAXMAN authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
@@ -15,7 +15,7 @@ module Taxman {
 
     function checkpoint(scratch: number): boolean {
 
-        if (scratch > tax.value) {
+        if ($.int(1000 * scratch / tax.value) / 1000 > 1) {
             $.loadUser($.taxman)
             $.profile({
                 jpg: 'npc/taxman', handle: $.taxman.user.handle
@@ -44,6 +44,7 @@ module Taxman {
     export function bar() {
 
         tax.value = 10 * $.money($.player.level)
+
         if (checkpoint($.player.coin.value)) {
             xvt.outln('\nYou really want a drink, so you pay the shakedown.')
             $.beep()

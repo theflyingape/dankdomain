@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  👑 Dank Domain: the return of Hack & Slash    [ https://www.DDgame.us ]  *
+ *  👑 Ɗanƙ Ɗomaiƞ: the return of Hack & Slash    [ https://www.DDgame.us ]  *
  *  🖥 TTY MAIN authored by: Robert Hurst <theflyingape@gmail.com>           *
  *  💫 in memory of Ronald Hurst, aka, Imagination and Nobody [ 1939-2016 ]  *
  *                                                                           *

@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  Dank Domain: the return of Hack & Slash                                  *
+ *  Ɗanƙ Ɗomaiƞ: the return of Hack & Slash                                  *
  *  LOGON authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
@@ -315,7 +315,7 @@ module Logon {
         }
 
         if ($.player.today <= $.access.calls && $.access.roleplay && $.sysop.dob <= $.now().date) {
-            $.PC.profile(<active>{ user: { id: '', pc: $.player.pc, gender: $.player.gender, handle: $.player.handle, level: $.player.level } }, 'fadeIn', ' - Dank Domain')
+            $.PC.profile(<active>{ user: { id: '', pc: $.player.pc, gender: $.player.gender, handle: $.player.handle, level: $.player.level } }, 'fadeIn', ' - Ɗanƙ Ɗomaiƞ')
             $.sound('welcome')
 
             xvt.outln(xvt.bright, xvt.black, '(', xvt.normal, xvt.white, 'Welcome back, '

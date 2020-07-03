@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  Dank Domain: the return of Hack & Slash                                  *
+ *  Ɗanƙ Ɗomaiƞ: the return of Hack & Slash                                  *
  *  DDCLIENT authored by: Robert Hurst <theflyingape@gmail.com>              *
  *                                                                           *
  *  tty <-> websocket client interface into app                              *
