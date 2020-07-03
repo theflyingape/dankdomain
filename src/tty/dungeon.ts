@@ -3021,7 +3021,7 @@ module Dungeon {
 
                 case 'thief':
                     if ((DL.map == `Marauder's map` || $.player.steal == 4) && !icon)
-                        o = xvt.attr(xvt.off, xvt.faint, `  ${$.tty == 'web' ? $.PC.card('Thief').unicode : '&'}  `)
+                        o = xvt.attr(xvt.off, xvt.faint, `  ${$.tty == 'web' ? '∞' : '&'}  `)
                     break
 
                 case 'cleric':
