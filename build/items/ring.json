@@ -188,7 +188,7 @@
     },
 	"Shade": {
         "unique": false,
-        "description":"enhance stealth ability for 1st swing and stealing,\n   at some personal cost",
+        "description":"enhance stealth ability for 1st swing\n   and stealing, at some personal cost",
         "emoji":"⚡",
         "ability":[
             { "id":"initiate", "power":true },
