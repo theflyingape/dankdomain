@@ -98,7 +98,7 @@
   <link rel="stylesheet" href="xterm.css">
 </head>
 
-<body>
+<body onload="window.dispatchEvent(new Event('resize'));">
   <div id="terminal"></div>
   <iframe seamless id="Info" name="Info" src="./info.html" style="border: none;" allow="autoplay"></iframe>
   <div id="wall" hidden>
