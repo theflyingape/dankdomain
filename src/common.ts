@@ -857,8 +857,9 @@ module Common {
 
         //  slow-roll endowment choices for a dramatic effect  :)
         xvt.outln(-500)
-        xvt.outln(xvt.bright, xvt.yellow, ' + ', xvt.normal, 'You earn a gift to endow your '
-            , xvt.faint, rpc.user.pc, xvt.normal, ' character', xvt.bright, ' +', -1000)
+        let hero = ` ${player.emulation == 'XT' ? PC.card(player.pc).unicode : '+'} `
+        xvt.outln(xvt.bright, xvt.yellow, hero, xvt.normal, 'You earn a gift to endow your '
+            , xvt.faint, rpc.user.pc, xvt.normal, ' character', xvt.bright, hero, -1000)
         xvt.outln(-500)
 
         if (rpc.user.maxstr < 97 || rpc.user.maxint < 97 || rpc.user.maxdex < 97 || rpc.user.maxcha < 97)
@@ -2150,7 +2151,7 @@ module Common {
             xvt.out('I\\___/I    ', xvt.green, xvt.app.LGradient, xvt.bright, xvt.Green, xvt.white, `RAH-CoCo's`, xvt.reset, xvt.green, xvt.app.RGradient, xvt.cyan, '     I\\___/I\n')
             xvt.out('\\/   \\/ ', xvt.reset, '   http://rahcocos.com  ', xvt.cyan, '  \\/   \\/\n')
             xvt.out(' \\ : /                           ', xvt.cyan, '  \\ : / \n')
-            xvt.out('  I:I    ', xvt.blue, xvt.app.LGradient, xvt.bright, xvt.Blue, xvt.white, `${player.emulation == 'XT' ? 'ℛ ' : ' R'}obert ${player.emulation == 'XT' ? 'ℋ ' : ' H'}urst`, xvt.reset, xvt.blue, xvt.app.RGradient, xvt.cyan, '     I:I  \n')
+            xvt.out('  I:I     ', xvt.blue, xvt.app.LGradient, xvt.bright, xvt.Blue, xvt.white, `${player.emulation == 'XT' ? 'Ɍ' : 'R'}ober${player.emulation == 'XT' ? 'ƭ Ҥ' : 't H'}urs${player.emulation == 'XT' ? 'ƭ' : 't'}`, xvt.reset, xvt.blue, xvt.app.RGradient, xvt.cyan, '      I:I  \n')
             xvt.outln(' .I:I. ', xvt.reset, '   https://www.DDgame.us   ', xvt.cyan, ' .I:I.')
             xvt.outln(-500)
             xvt.outln(xvt.bright, xvt.black, process.title

@@ -613,11 +613,11 @@ module Dungeon {
                         xvt.out('and it looks harmless, for now.', -100)
                 }
                 else {
-                    xvt.out(xvt.yellow, xvt.bright, `and it's `
+                    xvt.out(`and it's `, xvt.yellow, xvt.bright
                         , ['bewitched', 'charmed', 'dazzled', 'impressed', 'seduced'][$.dice(5) - 1]
                         , ' by your '
                         , ['awesomeness', 'elegance', 'presence', $.player.armor, $.player.weapon][$.dice(5) - 1]
-                        , '!')
+                        , xvt.reset, '!')
                     ROOM.monster[n].user.gender = 'FM'[$.dice(2) - 1]
                     ROOM.monster[n].user.handle = xvt.attr(ROOM.monster[n].pc.color || xvt.white, xvt.bright, 'charmed ', ROOM.monster[n].user.handle, xvt.reset)
                     ROOM.monster[n].user.xplevel = $.dice(4) - 2

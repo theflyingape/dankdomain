@@ -23,10 +23,11 @@
   },
   "keywords": [
     "bbs",
-    "door",
     "dungeon",
     "game",
+    "multi-user",
     "telnet",
+    "web",
     "xterm"
   ],
   "author": "Robert Hurst",
