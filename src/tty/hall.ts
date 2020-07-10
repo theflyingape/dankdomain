@@ -13,9 +13,10 @@ module Hall {
     let hall: choices = {
         'C': { description: 'Class Champions' },
         'H': { description: 'Hall of Heroes' },
+        'I': { description: 'Immortals' },
         'M': { description: 'Most Memorable Hits' },
         'T': { description: 'Top Ten Tavern Thugs' },
-        'W': { description: 'Winners Only Noted' }
+        'W': { description: 'Winners' }
     }
 
     export function menu(suppress = false) {
@@ -109,6 +110,23 @@ module Hall {
                 `)
                 for (let n in rd) {
                     xvt.outln(sprintf('%-22.22s     %4d', rd[n].hero, rd[n].n), ' ', +n < 3 ? $.Deed.medal[+n + 1] : '')
+                }
+
+                suppress = true
+                break
+
+            case 'I':
+                xvt.outln()
+                xvt.outln(xvt.Black, xvt.white, xvt.bright, '   IMMORTAL                Rolls   Levels')
+                xvt.outln(xvt.Black, xvt.white, '-----------------------------------------')
+                let rh = $.query(`
+                    SELECT handle, immortal, level, calls FROM Players
+                    WHERE immortal > 0 AND level > 1 AND calls > 0
+                    ORDER BY immortal DESC LIMIT 10
+                `)
+                for (let n in rh) {
+                    xvt.outln(sprintf(`%-22.22s     %4d ${+n < 3 ? $.Deed.medal[+n + 1] : '  '}  %5.2f`
+                        , rh[n].handle, rh[n].immortal, (100 * rh[n].immortal + rh[n].level) / rh[n].calls))
                 }
 
                 suppress = true
