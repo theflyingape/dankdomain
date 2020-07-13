@@ -39,40 +39,6 @@ sudo chmod 660 "${TARGET}/users/*"
 echo -e "\n${PWD}"
 ls -lh "${TARGET}"
 
-# practical, but use at your own risk
-[ -n "`which in.telnetd`" ] || sudo dnf install telnet-server
-
-cat > dankdomain << EOD
-# default: on
-# description: Dank Domain TTY service allows for remote user logins to play
-#              Return of Hack & Slash.
-service dankdomain
-{
-        disable         = no
-        port            = 23
-        socket_type     = stream
-        type            = UNLISTED
-        wait            = no
-        umask           = 117
-        user            = nobody
-        group           = games
-        server          = `which in.telnetd`
-        server_args     = -h -i -N -L ${TARGET}/tty.sh
-#       server_args     = -h -N -L ${TARGET}/logins.sh
-        env             = TERM=linux
-        cps             = 2 5
-        log_on_success  += HOST
-        log_on_failure  =
-        instances       = 2
-        per_source      = 1
-}
-EOD
-
-sudo mv -v dankdomain /etc/xinetd.d/
-sudo systemctl enable xinetd
-sudo systemctl restart xinetd
-echo -e "\nOld school gaming door added:\n$ telnet localhost\n"
-
 if sudo service iptables status ; then
 	hole=`sudo iptables -L INPUT -n | grep -c 'dpt:23'`
 	if [ $hole -eq 0 ]; then
@@ -81,16 +47,16 @@ if sudo service iptables status ; then
         sudo service iptables save
 	fi
 else
+    firewall-cmd --permanent --direct --add-rule ipv4 nat OUTPUT 0 -p tcp -o lo --dport 23 -j REDIRECT --to-ports 1986
     firewall-cmd --permanent --direct --add-rule ipv4 nat OUTPUT 0 -p tcp -o lo --dport 443 -j REDIRECT --to-ports 1939
 fi
 
 sudo cp -v "${TARGET}/etc/dankdomain-door.service" /etc/systemd/system/
 sudo systemctl daemon-reload
 sudo systemctl enable dankdomain-door
-#sudo systemctl start dankdomain-door
 sudo systemctl status dankdomain-door -l
 
-echo -n "Press RETURN to continue for Apache DOOR instructions: "
+echo -n "Press RETURN for an Apache proxy to a NodeJs app example: "
 read n
 
 echo

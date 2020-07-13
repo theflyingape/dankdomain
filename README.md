@@ -19,10 +19,16 @@ and [sounds](https://drive.google.com/open?id=1UvqQJbN61VbWVduONXgo1gm9yvGI0Qp8)
 To run a local game copy (Linux only):
 ```bash
 $ npm install dankdomain
-$ ./install.sh
+$ ./install.sh /usr/local/games
 $ npm start
 $ google-chrome http://localhost:1939
 $ telnet localhost 1986
+```
+Modify your game networking settings:
+```
+$ cd /usr/local/games/dankdomain
+$ mv etc/network.json_inet etc/network.json
+$ vim etc/network.json
 ```
 You can also play www.DDgame.us from the command-line:
 ```bash
