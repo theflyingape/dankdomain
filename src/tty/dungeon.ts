@@ -436,6 +436,7 @@ module Dungeon {
         }
         else {
             xvt.beep()
+            xvt.drain()
             menu(false)
             return
         }
@@ -520,6 +521,7 @@ module Dungeon {
             if (deep) $.reason += `-${xvt.romanize(deep + 1)}`
             xvt.outln(xvt.faint, '\nYou take too many hits and die!', -600)
         }
+        xvt.drain()
     }
 
     //	look around, return whether done or not
@@ -769,7 +771,7 @@ module Dungeon {
                     xvt.out($.bracket('M'), 'Magical spell(s) or device(s)', -300); well += 'M'
                 }
                 xvt.outln(-500)
-                xvt.typeahead = ''
+                xvt.drain()
 
                 $.action('well')
                 xvt.app.form = {
@@ -1008,6 +1010,7 @@ module Dungeon {
                         }, prompt: 'What is thy bidding, my master? ', cancel: 'O', enter: 'B', eol: false, max: 1, timeout: 60
                     }
                 }
+                xvt.drain()
                 xvt.app.focus = 'well'
                 return false
 
@@ -1018,7 +1021,6 @@ module Dungeon {
                 xvt.outln(xvt.bright, xvt.yellow, 'The runes are ',
                     ['cryptic', 'familiar', 'foreign', 'speaking out', 'strange'][$.dice(5) - 1],
                     ' to you.', -600)
-                xvt.typeahead = ''
 
                 $.action('yn')
                 $.profile({ png: 'wol', effect: 'rotateIn' })
@@ -1153,6 +1155,7 @@ module Dungeon {
                         }, prompt: 'Will you spin it (Y/N)? ', cancel: 'Y', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 20
                     }
                 }
+                xvt.drain()
                 xvt.app.focus = 'wheel'
                 pause = true
                 refresh = true
@@ -1737,6 +1740,7 @@ module Dungeon {
         }
         looked = false
         pause = false
+        xvt.drain()
 
         //	remove any dead carcass, displace teleported creatures
         for (let n = ROOM.monster.length - 1; n >= 0; n--) {
@@ -2795,6 +2799,7 @@ module Dungeon {
                             }
                             break
                         default:
+                            xvt.drain()
                             break
                     }
                     xvt.waste(1250)

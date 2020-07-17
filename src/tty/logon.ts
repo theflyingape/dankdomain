@@ -32,6 +32,7 @@ module Logon {
     function guards(): boolean {
         xvt.beep()
         xvt.outln(xvt.reset, 'Invalid response.\n', -400)
+        xvt.drain()
 
         switch (--retry) {
             case 2:

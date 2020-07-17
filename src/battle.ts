@@ -424,7 +424,7 @@ module Battle {
             else {
                 if ($.online.hp - 2 < 2 * $.player.level) {
                     $.sound('weak', 8)
-                    xvt.typeahead = ''
+                    xvt.drain()
                 }
                 let choices = xvt.attr(xvt.reset, xvt.blue, '[')
                 choices += xvt.attr(xvt.bright

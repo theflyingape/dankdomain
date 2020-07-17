@@ -1051,6 +1051,7 @@ module Common {
                 }, prompt: 'Choose which: ', cancel: '0', min: 1, max: 1, match: /^[0-9]/
             }
         }
+        xvt.drain()
         xvt.app.focus = 'skill'
     }
 
@@ -1903,6 +1904,7 @@ module Common {
             }
         }
         slot = 0
+        xvt.drain()
         xvt.app.form['key'].prompt = `Insert key #${slot + 1}? `
         xvt.app.focus = 'key'
     }
@@ -2051,7 +2053,7 @@ module Common {
                         , xvt.normal, xvt.magenta, '  Teleport: ', xvt.bright, { VT: '\x1B(0\x67\x1B(B', PC: '\xF1', XT: '↨', dumb: '%' }[player.emulation])
                     online.altered = true
                     if (player.emulation == 'XT') {
-                        xvt.outln(xvt.black, '  Bat: 🦇')
+                        xvt.outln(xvt.lblack, '  Bat: 🦇')
                         sound('yahoo', 22)
                         cb()
                         return

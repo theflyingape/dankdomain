@@ -157,7 +157,7 @@ module Main {
                 xvt.app.form = {
                     'yn': {
                         cb: () => {
-                            xvt.outln('\n')
+                            xvt.outln()
                             if (/Y/i.test(xvt.entry)) {
                                 if (!$.reason.length) $.reason = 'logged off as a level ' + $.player.level + ' ' + $.player.pc
                                 xvt.hangup()

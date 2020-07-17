@@ -131,17 +131,16 @@ interface network {
     telnet: boolean
     socket: number
     limit: number
+    emulator: EMULATION
+    rows: number
     web: boolean
     ws: number
     path: string
-    emulator: EMULATION
-    rows: number
 }
 let network: network = {
     address: 'localhost',
-    telnet: true, socket: 1986, limit: 2,
-    web: true, ws: 1939, path: '/',
-    emulator: 'VT', rows: 25
+    telnet: true, socket: 1986, limit: 2, emulator: 'VT', rows: 25,
+    web: true, ws: 1939, path: '/'
 }
 try {
     Object.assign(network, JSON.parse(fs.readFileSync('../etc/network.json').toString()))
@@ -289,7 +288,7 @@ dns.lookup(network.address, (err, addr, family) => {
         //  enable WebSocket endpoints
         const wsActive = new ws.Server({ noServer: true, path: `${network.path}player/`, clientTracking: true })
         const wsLurker = new ws.Server({ noServer: true, path: `${network.path}lurker/`, clientTracking: true })
-        console.log(` - WebSocket endpoints enabled`)
+        console.log(` + WebSocket endpoints enabled`)
 
         server.on('upgrade', (req, socket, head) => {
             const pathname = new URL(req.url, WEBROOT).pathname
