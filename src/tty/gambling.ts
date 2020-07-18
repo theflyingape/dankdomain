@@ -28,34 +28,37 @@ module Gambling {
     let point: number
     let sting: boolean = true
 
-    interface card {
-        face: string
-        value: number
-        emoji: string
-    }
-    const card: card[] = [
-        { face: '*Joker*', value: -1, emoji: '\uD83C\uDCBF' },
-        { face: '=Ace=', value: 1, emoji: '\uD83C\uDCA1' },
-        { face: 'Two', value: 2, emoji: '\uD83C\uDCA2' }, { face: 'Three', value: 3, emoji: '\uD83C\uDCA3' }, { face: 'Four', value: 4, emoji: '\uD83C\uDCA4' },
-        { face: 'Five', value: 5, emoji: '\uD83C\uDCA5' }, { face: 'Six', value: 6, emoji: '\uD83C\uDCA6' }, { face: 'Seven', value: 7, emoji: '\uD83C\uDCA7' },
-        { face: 'Eight', value: 8, emoji: '\uD83C\uDCA8' }, { face: 'Nine', value: 9, emoji: '\uD83C\uDCA9' }, { face: 'Ten', value: 10, emoji: '\uD83C\uDCAA' },
-        { face: ':Jack:', value: 10, emoji: '\uD83C\uDCAB' }, { face: '-Queen-', value: 10, emoji: '\uD83C\uDCAC' }, { face: '+King+', value: 10, emoji: '\uD83C\uDCAE' },
-        { face: '=Ace=', value: 1, emoji: '\uD83C\uDCB1' },
-        { face: 'Two', value: 2, emoji: '\uD83C\uDCB2' }, { face: 'Three', value: 3, emoji: '\uD83C\uDCB3' }, { face: 'Four', value: 4, emoji: '\uD83C\uDCB4' },
-        { face: 'Five', value: 5, emoji: '\uD83C\uDCB5' }, { face: 'Six', value: 6, emoji: '\uD83C\uDCB6' }, { face: 'Seven', value: 7, emoji: '\uD83C\uDCB7' },
-        { face: 'Eight', value: 8, emoji: '\uD83C\uDCB8' }, { face: 'Nine', value: 9, emoji: '\uD83C\uDCB9' }, { face: 'Ten', value: 10, emoji: '\uD83C\uDCBA' },
-        { face: ':Jack:', value: 10, emoji: '\uD83C\uDCBB' }, { face: '-Queen-', value: 10, emoji: '\uD83C\uDCBC' }, { face: '+King+', value: 10, emoji: '\uD83C\uDCBE' },
-        { face: '=Ace=', value: 1, emoji: '\uD83C\uDCC1' },
-        { face: 'Two', value: 2, emoji: '\uD83C\uDCC2' }, { face: 'Three', value: 3, emoji: '\uD83C\uDCC3' }, { face: 'Four', value: 4, emoji: '\uD83C\uDCC4' },
-        { face: 'Five', value: 5, emoji: '\uD83C\uDCC5' }, { face: 'Six', value: 6, emoji: '\uD83C\uDCC6' }, { face: 'Seven', value: 7, emoji: '\uD83C\uDCC7' },
-        { face: 'Eight', value: 8, emoji: '\uD83C\uDCC8' }, { face: 'Nine', value: 9, emoji: '\uD83C\uDCC9' }, { face: 'Ten', value: 10, emoji: '\uD83C\uDCCA' },
-        { face: ':Jack:', value: 10, emoji: '\uD83C\uDCCB' }, { face: '-Queen-', value: 10, emoji: '\uD83C\uDCCC' }, { face: '+King+', value: 10, emoji: '\uD83C\uDCCE' },
-        { face: '=Ace=', value: 1, emoji: '\uD83C\uDCD1' },
-        { face: 'Two', value: 2, emoji: '\uD83C\uDCD2' }, { face: 'Three', value: 3, emoji: '\uD83C\uDCD3' }, { face: 'Four', value: 4, emoji: '\uD83C\uDCD4' },
-        { face: 'Five', value: 5, emoji: '\uD83C\uDCD5' }, { face: 'Six', value: 6, emoji: '\uD83C\uDCD6' }, { face: 'Seven', value: 7, emoji: '\uD83C\uDCD7' },
-        { face: 'Eight', value: 8, emoji: '\uD83C\uDCD8' }, { face: 'Nine', value: 9, emoji: '\uD83C\uDCD9' }, { face: 'Ten', value: 10, emoji: '\uD83C\uDCDA' },
-        { face: ':Jack:', value: 10, emoji: '\uD83C\uDCDB' }, { face: '-Queen-', value: 10, emoji: '\uD83C\uDCDC' }, { face: '+King+', value: 10, emoji: '\uD83C\uDCDE' },
-        { face: '*Joker*', value: -1, emoji: '\uD83C\uDCCF' }
+    const card: cards[] = [
+        { face: '*Joker*', suit: '⚜', value: -1, uni: '🂿' },
+        { face: '=Ace=', suit: '♠', value: 1, uni: '🂡' },
+        { face: 'Two', suit: '♠', value: 2, uni: '🂢' }, { face: 'Three', suit: '♠', value: 3, uni: '🂣' },
+        { face: 'Four', suit: '♠', value: 4, uni: '🂤' }, { face: 'Five', suit: '♠', value: 5, uni: '🂥' },
+        { face: 'Six', suit: '♠', value: 6, uni: '🂦' }, { face: 'Seven', suit: '♠', value: 7, uni: '🂧' },
+        { face: 'Eight', suit: '♠', value: 8, uni: '🂨' }, { face: 'Nine', suit: '♠', value: 9, uni: '🂩' },
+        { face: 'Ten', suit: '♠', value: 10, uni: '🂪' }, { face: '-Jack-', suit: '♠', value: 10, uni: '🂫' },
+        { face: '~Queen~', suit: '♠', value: 10, uni: '🂭' }, { face: '+King+', suit: '♠', value: 10, uni: '🂮' },
+        { face: '=Ace=', suit: '♥', value: 1, uni: '🂱' },
+        { face: 'Two', suit: '♥', value: 2, uni: '🂲' }, { face: 'Three', suit: '♥', value: 3, uni: '🂳' },
+        { face: 'Four', suit: '♥', value: 4, uni: '🂴' }, { face: 'Five', suit: '♥', value: 5, uni: '🂵' },
+        { face: 'Six', suit: '♥', value: 6, uni: '🂶' }, { face: 'Seven', suit: '♥', value: 7, uni: '🂷' },
+        { face: 'Eight', suit: '♥', value: 8, uni: '🂸' }, { face: 'Nine', suit: '♥', value: 9, uni: '🂹' },
+        { face: 'Ten', suit: '♥', value: 10, uni: '🂺' }, { face: '-Jack-', suit: '♥', value: 10, uni: '🂻' },
+        { face: '~Queen~', suit: '♥', value: 10, uni: '🂽' }, { face: '+King+', suit: '♥', value: 10, uni: '🂾' },
+        { face: '=Ace=', suit: '♣', value: 1, uni: '🃑' },
+        { face: 'Two', suit: '♣', value: 2, uni: '🃒' }, { face: 'Three', suit: '♣', value: 3, uni: '🃓' },
+        { face: 'Four', suit: '♣', value: 4, uni: '🃔' }, { face: 'Five', suit: '♣', value: 5, uni: '🃕' },
+        { face: 'Six', suit: '♣', value: 6, uni: '🃖' }, { face: 'Seven', suit: '♣', value: 7, uni: '🃗' },
+        { face: 'Eight', suit: '♣', value: 8, uni: '🃘' }, { face: 'Nine', suit: '♣', value: 9, uni: '🃙' },
+        { face: 'Ten', suit: '♣', value: 10, uni: '🃚' }, { face: '-Jack-', suit: '♣', value: 10, uni: '🃛' },
+        { face: '~Queen~', suit: '♣', value: 10, uni: '🃝' }, { face: '+King+', suit: '♣', value: 10, uni: '🃞' },
+        { face: '=Ace=', suit: '♦', value: 1, uni: '🃁' },
+        { face: 'Two', suit: '♦', value: 2, uni: '🃂' }, { face: 'Three', suit: '♦', value: 3, uni: '🃃' },
+        { face: 'Four', suit: '♦', value: 4, uni: '🃄' }, { face: 'Five', suit: '♦', value: 5, uni: '🃅' },
+        { face: 'Six', suit: '♦', value: 6, uni: '🃆' }, { face: 'Seven', suit: '♦', value: 7, uni: '🃇' },
+        { face: 'Eight', suit: '♦', value: 8, uni: '🃈' }, { face: 'Nine', suit: '♦', value: 9, uni: '🃉' },
+        { face: 'Ten', suit: '♦', value: 10, uni: '🃊' }, { face: '-Jack-', suit: '♦', value: 10, uni: '🃋' },
+        { face: '~Queen~', suit: '♦', value: 10, uni: '🃍' }, { face: '+King+', suit: '♦', value: 10, uni: '🃎' },
+        { face: '*Joker*', suit: '⚜', value: -1, uni: '🃏' }
     ]
     let deck: number[]
     let pile: number
@@ -63,20 +66,20 @@ module Gambling {
     interface slot {
         attr: number
         color: number
-        emoji: string
+        uni: string
     }
     interface slots {
         [key: string]: slot
     }
     const slot: slots = {
-        'CHERRY': { attr: xvt.normal, color: xvt.red, emoji: '🍒' },
-        'GRAPES': { attr: xvt.normal, color: xvt.magenta, emoji: '🍇' },
-        ':KIWI:': { attr: xvt.bright, color: xvt.green, emoji: '🥝' },
-        'ORANGE': { attr: xvt.normal, color: xvt.yellow, emoji: '🍊' },
-        '<BELL>': { attr: xvt.bright, color: xvt.yellow, emoji: '🔔' },
-        '=LUCK=': { attr: xvt.normal, color: xvt.green, emoji: '🍀' },
-        '*WILD*': { attr: xvt.normal, color: xvt.cyan, emoji: '💎' },
-        '@BOMB@': { attr: xvt.faint, color: xvt.white, emoji: '💣' }
+        'CHERRY': { attr: xvt.normal, color: xvt.red, uni: '🍒' },
+        'GRAPES': { attr: xvt.normal, color: xvt.magenta, uni: '🍇' },
+        ':KIWI:': { attr: xvt.bright, color: xvt.green, uni: '🥝' },
+        'ORANGE': { attr: xvt.normal, color: xvt.yellow, uni: '🍊' },
+        '<BELL>': { attr: xvt.bright, color: xvt.yellow, uni: '🔔' },
+        '=LUCK=': { attr: xvt.normal, color: xvt.green, uni: '🍀' },
+        '*WILD*': { attr: xvt.normal, color: xvt.cyan, uni: '💎' },
+        '@BOMB@': { attr: xvt.faint, color: xvt.white, uni: '💣' }
     }
 
     const dial: string[][] = [
@@ -168,23 +171,21 @@ module Gambling {
                 dealer.push(deck[pile++])
                 player.push(deck[pile++])
                 dealer.push(deck[pile++])
-                xvt.out(xvt.green, '\nDealer\'s hand:')
-                if ($.player.emulation == 'XT') xvt.out(xvt.white, ' 🂠 ', card[dealer[1]].emoji)
+                xvt.out(xvt.green, `\nDealer's hand:`)
+                if ($.player.emulation == 'XT') xvt.out(xvt.white, ' 🂠 ', card[dealer[1]].uni)
                 xvt.out(' '.repeat(8))
-                xvt.out(xvt.red, '[', xvt.white, 'DOWN', xvt.red, '] [', xvt.white, card[dealer[1]].face, xvt.red, ']\n')
+                xvt.outln(xvt.red, '[', xvt.white, 'DOWN', xvt.red, '] [', xvt.white, card[dealer[1]].face, xvt.red, ']')
                 myhand = ShowHand(1, player)
 
                 if (myhand == 21) {
                     $.sound('cheer')
                     payoff.value = 2 * amount.value
-                    xvt.outln(xvt.bright, xvt.cyan, '\nBlackjack!!')
-                    xvt.waste(1000)
+                    xvt.outln(xvt.bright, xvt.cyan, '\nBlackjack!!', -1000)
 
                     value = ShowHand(0, dealer)
                     if (value == 21) {
                         $.sound('boo')
-                        xvt.outln('\nDealer has Blackjack!  You\'re a loser.')
-                        xvt.waste(1000)
+                        xvt.outln(`\nDealer has Blackjack!  You're a loser.`, -1000)
                     }
                     else {
                         xvt.outln('\nYou win ', payoff.carry(), '!')
@@ -363,6 +364,12 @@ module Gambling {
                 return
 
             case 'H':
+                xvt.outln(xvt.blue, xvt.bright, '\nHigh Stakes Draw Payouts:\n')
+                xvt.outln(xvt.green, xvt.bright, 'Aces are low and all face cards are the same as 10s')
+                xvt.outln(xvt.green, 'If your card is higher: winnings are based on how low your pick is')
+                xvt.outln(xvt.green, '                        and double that if Dealer picks a Joker')
+                xvt.outln(xvt.cyan, xvt.bright, 'Matching cards must draw again, unless Jokers, which payout '
+                    , xvt.white, '1000:1')
                 shuffle(true)
 
                 $.action('list')
@@ -371,50 +378,64 @@ module Gambling {
                         cb: () => {
                             let dealer: number
                             let pick = +xvt.entry
-                            if (isNaN(pick) || pick < 1 || pick > 54) {
+                            if (isNaN(pick) || pick < 1 || pick > deck.length) {
                                 xvt.out(' ?? ')
                                 xvt.app.refocus()
                                 return
                             }
-                            $.sound(card[deck[--pick]].value > 0 ? 'click' : 'boom', 6)
-                            xvt.out(' - ', card[deck[pick]].emoji, xvt.bright, xvt.red, ' [', xvt.white, card[deck[pick]].face, xvt.red, ']')
-                            xvt.outln(); xvt.waste(500)
+                            let mine = deck.splice(--pick, 1)[0]
+                            $.sound(card[mine].value > 0 ? 'click' : 'boom')
+                            xvt.out(' - ', card[mine].uni, xvt.bright, xvt.red, ' [', xvt.white, card[mine].face, xvt.red, ']')
+                            if ($.player.emulation == 'XT') xvt.out(card[mine].suit)
+                            xvt.outln(-600)
 
-                            xvt.out('Dealer picks card #')
-                            while ((dealer = $.dice(54)) - 1 == pick);
-                            $.sound(card[deck[--dealer]].value > 0 ? 'click' : 'boom', 6)
-                            xvt.out((dealer + 1).toString(), ' - ', card[deck[dealer]].emoji, xvt.bright, xvt.red, ' [', xvt.white, card[deck[dealer]].face, xvt.red, ']')
-                            xvt.outln('\n')
-                            xvt.waste(500)
+                            dealer = $.dice(deck.length)
+                            xvt.out('Dealer picks card #', dealer.toString())
+                            let house = deck.splice(--dealer, 1)[0]
+                            $.sound(card[house].value > 0 ? 'click' : 'boom')
+                            xvt.out(' - ', card[house].uni, xvt.bright, xvt.red, ' [', xvt.white, card[house].face, xvt.red, ']')
+                            if ($.player.emulation == 'XT') xvt.out(card[house].suit)
+                            xvt.outln('\n', -600)
 
-                            if (card[deck[pick]].value > card[deck[dealer]].value) {
+                            if (card[mine].value > card[house].value) {
                                 $.sound('cheer')
-                                payoff.value = amount.value * (card[deck[dealer]].value > 0
-                                    ? Math.trunc((card[deck[pick]].value - card[deck[dealer]].value - 1) / 4) + 1
-                                    : 25
-                                )
+                                payoff.value = amount.value * $.int((11 - card[mine].value) / 4 + 1)
+                                if (card[house].value < 0) payoff.value *= 2
                                 xvt.outln('You win ', payoff.carry(), '!')
                                 $.player.coin.value += payoff.value + amount.value
                             }
-                            else if (card[deck[pick]].value < card[deck[dealer]].value) {
-                                if (card[deck[pick]].value < 0) {
-                                    xvt.outln('The joke is on you.\n')
-                                    $.sound('oops', 12)
-                                    xvt.outln(xvt.bright, xvt.yellow, 'You die laughing.')
-                                    $.sound('laugh', 24)
+                            else if (card[mine].value < card[house].value) {
+                                if (card[mine].value < 0) {
+                                    $.sound('oops')
+                                    xvt.out(xvt.yellow, 'The joke is on you ... ', -1000)
+                                    $.sound('laugh')
+                                    xvt.outln(xvt.faint, 'and you die laughing!!', -2000)
                                     $.reason = 'died laughing'
                                     xvt.hangup()
                                 }
-                                $.sound('boo')
-                                xvt.outln('You lose.')
+                                else {
+                                    $.sound('boo')
+                                    xvt.outln('You lose.', -500)
+                                }
                             }
                             else {
-                                xvt.outln(`You tie.  It's a push.`)
-                                $.player.coin.value += amount.value
+                                xvt.out('You match ... ', -500)
+                                if (card[house].value < 0) {
+                                    payoff.value = amount.value * 1000
+                                    xvt.outln('and win ', payoff.carry(), '!')
+                                    $.sound('cheer')
+                                }
+                                else {
+                                    xvt.outln(`it's a push.`, -500)
+                                    xvt.outln(`You must pick again.`, -500)
+                                    xvt.app.form['pick'].prompt = `Pick a card (1-${deck.length})? `
+                                    xvt.app.refocus()
+                                    return
+                                }
+                                $.player.coin.value += payoff.value + amount.value
                             }
-                            xvt.waste(500)
                             menu()
-                        }, prompt: 'Pick a card (1-54)? ', max: 2
+                        }, prompt: `Pick a card (1-${deck.length})? `, max: 2
                     }
                 }
                 xvt.app.focus = 'pick'
@@ -694,7 +715,7 @@ module Gambling {
                     $.beep()
                     let face = dial[i][bandit[i]]
                     xvt.out(xvt.blue, '[', xvt.attr(slot[face].attr, slot[face].color), face)
-                    if ($.player.emulation == 'XT') xvt.out(` ${slot[face].emoji}`)
+                    if ($.player.emulation == 'XT') xvt.out(` ${slot[face].uni}`)
                     xvt.out(xvt.reset, xvt.blue, '] ')
                 }
                 xvt.out(xvt.reset, '\n\n')
@@ -837,7 +858,7 @@ module Gambling {
             xvt.out(who ? xvt.bright : xvt.reset, xvt.green, ['Dealer', 'Player'][who], `'s hand:`, xvt.white)
             if ($.player.emulation == 'XT')
                 for (let i = 0; i < hand.length; i++)
-                    xvt.out(' ', card[hand[i]].emoji)
+                    xvt.out(' ', card[hand[i]].uni)
             xvt.out(' '.repeat(12 - 2 * hand.length))
             for (let i = 0; i < hand.length; i++) {
                 xvt.out(xvt.red, '[', xvt.white, card[hand[i]].face, xvt.red, '] ')
@@ -868,7 +889,7 @@ module Gambling {
             xvt.outln(xvt.white, ' = ', xvt.bright, (d1 + d2).toString())
             if (baby && d1 + d2 !== baby) {
                 $.sound('boo')
-                xvt.out('You lose on the side bet.\n')
+                xvt.outln('You lose on the side bet.')
             }
             if (d1 + d2 == baby) {
                 baby = (baby == 2 || baby == 12) ? 35
