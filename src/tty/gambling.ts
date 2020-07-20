@@ -426,16 +426,14 @@ module Gambling {
                                     $.sound('cheer')
                                 }
                                 else {
-                                    xvt.outln(`it's a push.`, -500)
-                                    xvt.outln(`You must pick again.`, -500)
-                                    xvt.app.form['pick'].prompt = `Pick a card (1-${deck.length})? `
-                                    xvt.app.refocus()
+                                    xvt.outln(`it's a push. `, -500, ' You must pick again.', -500)
+                                    xvt.app.refocus(`Pick a card (1-${deck.length})? `)
                                     return
                                 }
                                 $.player.coin.value += payoff.value + amount.value
                             }
                             menu()
-                        }, prompt: `Pick a card (1-${deck.length})? `, max: 2
+                        }, prompt: `Pick a card (1-54)? `, max: 2
                     }
                 }
                 xvt.app.focus = 'pick'
@@ -676,8 +674,7 @@ module Gambling {
                                 menu()
                             }
                             else {
-                                xvt.app.form['pick'].prompt = `Pick #${picks.length + 1} [1-80]: `
-                                xvt.app.refocus()
+                                xvt.app.refocus(`Pick #${picks.length + 1} [1-80]: `)
                             }
                         }, prompt: 'Pick #1 [1-80]: ', max: 2
                     }

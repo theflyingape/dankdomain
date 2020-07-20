@@ -223,7 +223,6 @@ function newSession(ev) {
     //let's try something new when auto-detection is better suppported
     //term.loadAddon(new WebglAddon())
     fit.fit()
-    window.dispatchEvent(new Event('resize'))	// gratuituous
     term.writeln('\x07')
 
     if (ev == 'Logon') {
@@ -232,6 +231,7 @@ function newSession(ev) {
         XT('@tune(dankdomain)')
         pid = 0
         fetch(`${app}/player/?cols=${term.cols}&rows=${term.rows}`, { method: 'POST' }).then(function (res) {
+            window.dispatchEvent(new Event('resize'))	// gratuituous
             res.text().then(function (session) {
                 pid = parseInt(session)
                 socketURL += `?pid=${pid}`
@@ -279,6 +279,7 @@ function newSession(ev) {
         idle = setInterval(() => { XT(`@tune(throwback${tbt++})`) }, 300000)
 
         fetch(`${app}/title.txt`, { method: 'GET' }).then(function (res) {
+            window.dispatchEvent(new Event('resize'))	// gratuituous
             return res.text().then(function (data) {
                 term.focus()
                 term.writeln('\x1B[16C🔥 🌨\r\x1B[23C\x1B[1;36mW\x1B[22melcome to Ɗ \x1B[2manƙ \x1B[22mƊ \x1B[2momaiƞ \x1B[m🌙 💫')

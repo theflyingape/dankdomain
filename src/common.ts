@@ -1872,8 +1872,7 @@ module Common {
                         saveUser(player)
 
                         if (slot++ < max) {
-                            xvt.app.form['key'].prompt = `Insert key #${slot + 1}? `
-                            xvt.app.refocus()
+                            xvt.app.refocus(`Insert key #${slot + 1}? `)
                             return
                         }
 
