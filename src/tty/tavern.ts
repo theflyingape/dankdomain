@@ -264,15 +264,14 @@ module Tavern {
 
                     default:
                         $.brawl = 0
-                        $.action('clear')
                         $.music('.')
                         xvt.outln(`jest, "What you looking at, wart-face!"`, -1200)
-                        xvt.out('Uh, oh!')
-                        $.sound('ddd', 22)
                         $.profile({
                             jpg: 'npc/barkeep', effect: 'shakeY'
                             , handle: $.barkeep.user.handle, level: $.barkeep.user.level, pc: $.barkeep.user.pc
                         })
+                        xvt.out('Uh, oh!')
+                        $.sound('ddd', 22)
                         $.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} death match with ${$.barkeep.user.handle}`)
                         xvt.out('  Here comes Tiny!')
                         $.sound('challenge', 12)
@@ -297,7 +296,7 @@ module Tavern {
                         $.music('tiny')
                         xvt.out(`${$.PC.who($.barkeep).He}points to a buffed weapon hanging over the mantlepiece and says, `
                             , xvt.green, xvt.bright, '"Lookee\n')
-                        xvt.outln(`there, ${$.PC.who(fool).he}tried to use that ${$.PC.weapon($.barkeep)}, but it wasn't enough\nto take me.\"\n`, -6000)
+                        xvt.outln(`there, ${$.PC.who(fool).he}tried to use that ${$.PC.weapon($.barkeep)}`, xvt.green, xvt.bright, `, but it wasn't enough\nto take me.\"\n`, -6000)
                         xvt.out('The patrons move in closer to witness the forthcoming slaughter, except for\n')
                         xvt.outln(`${$.taxman.user.handle} who is busy raiding the bar of its beer and nuts.`, -5000)
                         xvt.outln(`\nYou hear a cry, "I'll pay fifteen-to-one on the challenger!"`, -4000)
