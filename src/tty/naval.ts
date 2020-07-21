@@ -145,23 +145,19 @@ module Naval {
                         $.loadUser($.seahag)
                         xvt.outln(`n ${$.seahag.user.handle}!`)
                         $.cat(`naval/${$.seahag.user.handle}`.toLowerCase())
-                        xvt.waste(600)
-                        xvt.outln(xvt.green, xvt.bright, 'She cackles as you are sent spinning elsewhere ... ')
+                        xvt.outln(-600, xvt.green, xvt.bright, 'She cackles as you are sent spinning elsewhere ... ')
                         $.sound('crone', 24)
                         require('./dungeon').DeepDank($.player.level + 3 * $.dice($.player.level), () => {
                             $.from = 'Naval'
-                            $.action('clear')
-                            xvt.waste(1000)
                             $.profile({
                                 jpg: 'npc/seahag', effect: 'fadeInUp'
                                 , handle: $.seahag.user.handle, level: $.seahag.user.level, pc: $.seahag.user.pc
                             })
                             $.sound('god', 12)
                             xvt.outln(xvt.magenta, '\n"', xvt.bright, xvt.yellow
-                                , 'You have escaped my magic, mortal?  Now try me!', xvt.normal, xvt.magenta, '"')
-                            xvt.waste(1200)
-                            $.cat(`naval/${$.seahag}`.toLowerCase())
-                            xvt.waste(600)
+                                , 'You have escaped my magic, mortal?  Now try me!'
+                                , xvt.normal, xvt.magenta, '"', -1200)
+                            $.cat(`naval/${$.seahag.user.handle}`.toLowerCase())
                             $.PC.wearing($.seahag)
                             $.seahag.user.cursed = $.player.id
                             Battle.engage('Naval', $.online, $.seahag, menu)

@@ -117,16 +117,17 @@ module Hall {
 
             case 'I':
                 xvt.outln()
-                xvt.outln(xvt.Black, xvt.white, xvt.bright, '   IMMORTAL                Rolls   Levels')
-                xvt.outln(xvt.Black, xvt.white, '-----------------------------------------')
+                xvt.outln(xvt.Black, xvt.white, xvt.bright, '   IMMORTAL                Wins   Rolls   Levels  Calls')
+                xvt.outln(xvt.Black, xvt.white, '-------------------------------------------------------')
                 let rh = $.query(`
-                    SELECT handle, immortal, level, calls FROM Players
-                    WHERE immortal > 0 AND level > 1 AND calls > 0
-                    ORDER BY immortal DESC LIMIT 10
+                    SELECT handle, wins, immortal, level, calls FROM Players
+                    WHERE immortal > 0 AND calls > 0
+                    ORDER BY immortal DESC, level DESC LIMIT 20
                 `)
                 for (let n in rh) {
-                    xvt.outln(sprintf(`%-22.22s     %4d ${+n < 3 ? $.Deed.medal[+n + 1] : '  '}  %5.2f`
-                        , rh[n].handle, rh[n].immortal, (100 * rh[n].immortal + rh[n].level) / rh[n].calls))
+                    xvt.outln(sprintf(`%-22.22s     %3d   %4d ${+n < 3 ? $.Deed.medal[+n + 1] : '  '}  %5.2f  %5d`
+                        , rh[n].handle, rh[n].wins, rh[n].immortal
+                        , (100 * rh[n].immortal + rh[n].level) / rh[n].calls, rh[n].calls))
                 }
 
                 suppress = true

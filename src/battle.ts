@@ -80,8 +80,8 @@ module Battle {
                 $.PC.adjust('cha', -2, -1, -1)
             }
             $.beep()
-            Battle.yourstats()
             xvt.outln(-1000)
+            Battle.yourstats()
         }
 
         if ($.from == 'Tavern') {
