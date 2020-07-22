@@ -13,7 +13,7 @@
 
 #### **8-May-2020** `v2.5.2`
 
-* RI last day of its "Stay At Home" order
+* Rhode Island last day of its illegal sequestering of healthy residents (coined as "Stay At Home") order 😷
 * refactor for animate.css v4
 * changes to joust lost deed eligibility
 
@@ -21,7 +21,7 @@
 
 * [Easter](https://en.wikipedia.org/wiki/Easter) 🐣
 * refactor class 'None' as 'Spirit'
-* instantiate Imagination and Nobody as "Elemental" player bots (coming soon)
+* instantiate Imagination and Nobody as "Elemental" player bots 🤖 (coming soon?)
 * xterm.js v4.5 release
 * xvt word-wrap fix
 * add Visual Code debug launch ddgame & ddclient settings
@@ -34,7 +34,7 @@
 
 #### **21-Mar-2020** `v2.3.6`
 
-* bundled with Google Noto mono + emoji fonts
+* bundled with Google Noto mono + emoji fonts for improved Unicode 11 support
 * user trace files can be edited and copied over as `save.json` file, which will auto-update the Players table
 
 #### **08-Feb-2020** `v2.3.1`
