@@ -164,10 +164,24 @@ module Dungeon {
 
         //	did player cast teleport?
         if (!Battle.retreat && Battle.teleported) {
+            Battle.teleported = false
+            if (Battle.expel) {
+                Battle.expel = false
+                $.PC.profile($.online, 'flipOutX')
+                if (deep > 0)
+                    deep--
+                else {
+                    scroll(1, false, true)
+                    fini()
+                    return
+                }
+                generateLevel()
+                menu()
+                return
+            }
             scroll(1, false)
             xvt.outln(xvt.magenta, 'You open a ', xvt.bright, 'mystic portal', xvt.normal, '.\n')
             $.sound('portal', 4)
-            Battle.teleported = false
             teleport()
             return
         }
@@ -1640,8 +1654,9 @@ module Dungeon {
 
             case 'potion':
                 let id = false
-                if (!ROOM.giftID && !$.player.coward) ROOM.giftID = !$.player.novice
-                    && $.dice(100 + +ROOM.giftValue) < ($.online.int / 20 * (1 << $.player.poison) + ($.online.int > 90 ? ($.online.int % 90) << 1 : 0))
+                if (DL.moves < DL.width && !ROOM.giftID)
+                    ROOM.giftID = !$.player.novice
+                        && $.dice(100 + +ROOM.giftValue) < ($.online.int / 20 * (1 << $.player.poison) + ($.online.int > 90 ? ($.online.int % 90) << 1 : 0))
                 $.sound('bubbles')
                 xvt.out(xvt.cyan, 'On the ground, you find a ')
                 if ($.Ring.power([], $.player.rings, 'identify').power) potions[ROOM.giftValue].identified = true
@@ -1757,7 +1772,7 @@ module Dungeon {
                 }
                 else {
                     //	defeated a significantly larger denizen on this level, check for any added bonus(es)
-                    if ((mon.user.xplevel - Z) > 5) {
+                    if (!$.player.coward && (mon.user.xplevel - Z) > 5) {
                         if ($.player.cursed) {
                             xvt.outln(xvt.bright, xvt.black, 'The dark cloud has left you.')
                             $.player.cursed = ''
@@ -1869,10 +1884,24 @@ module Dungeon {
         }
 
         if (Battle.teleported) {
-            $.PC.profile($.online, 'lightSpeedOut', ` - Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
             Battle.teleported = false
-            Y = $.dice(DL.rooms.length) - 1
-            X = $.dice(DL.width) - 1
+            if (Battle.expel) {
+                Battle.expel = false
+                $.PC.profile($.online, 'flipOutX')
+                if (deep > 0)
+                    deep--
+                else {
+                    scroll(1, false, true)
+                    fini()
+                    return
+                }
+                generateLevel()
+            }
+            else {
+                $.PC.profile($.online, 'lightSpeedOut', ` - Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
+                Y = $.dice(DL.rooms.length) - 1
+                X = $.dice(DL.width) - 1
+            }
             menu()
             return
         }

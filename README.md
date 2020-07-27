@@ -86,5 +86,5 @@ NOTE: *in **`users`** folder, you can edit any hidden (dot) trace file and save 
 + [Player](https://photos.app.goo.gl/BCEAJjynqHZKxpaX9)
 + [Potion](https://photos.app.goo.gl/Gj9HYSXQUDGVcviJ7)
 + [Ring](https://photos.app.goo.gl/SWQDdytqjdXNfT4m7)
-+ [Special](https://photos.app.goo.gl/Dn2g2BtdwtKSbudu7)
-+ [Users](https://photos.app.goo.gl/hfTJ8EstLPSp4Kry6)
++ [Specials](https://photos.app.goo.gl/Dn2g2BtdwtKSbudu7)
++ [User](https://photos.app.goo.gl/hfTJ8EstLPSp4Kry6)

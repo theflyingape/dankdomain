@@ -9,6 +9,7 @@ WorkingDirectory=/usr/local/games/dankdomain
 Environment=TERM=xterm-256color
 ExecStart=/usr/bin/node ./door/app
 KillMode=process
+SyslogIdentifier=ddgame
 TasksMax=200
 
 [Install]

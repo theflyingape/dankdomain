@@ -10,6 +10,7 @@ import { sprintf } from 'sprintf-js'
 
 module Battle {
 
+    export let expel: boolean
     export let retreat: boolean
     export let teleported: boolean
 
@@ -206,6 +207,7 @@ module Battle {
         //  initialize for first encounter in engagement
         alive = [parties[0].length, parties[1].length]
         round = []
+        expel = false
         retreat = false
         teleported = false
         volley = 0
@@ -590,35 +592,39 @@ module Battle {
 
             //  was opponent defeated?
             if (typeof enemy !== 'undefined' && enemy.hp < 1) {
-                enemy.hp = 0    // killed
                 if (enemy === $.online) {
+                    enemy.hp = 0    // killed
                     if ($.from !== 'Party') {
                         $.player.killed++
                         $.run(`UPDATE Players set killed=${$.player.killed} WHERE id='${$.player.id}'`)
                         xvt.outln('\n', xvt.bright, xvt.yellow, rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle
-                            , ' killed you!\n')
+                            , ' killed you!')
                         $.death($.reason || (rpc.user.id.length
                             ? `defeated by ${rpc.user.handle}`
                             : `defeated by a level ${rpc.user.level} ${rpc.user.handle}`))
-                        $.sound('killed', 11)
+                        $.sound('killed')
+                        xvt.outln(-800)
                     }
                 }
                 else {
                     if (rpc === $.online) {
-                        $.player.kills++
-                        if ($.from !== 'Party') {
-                            xvt.outln('You ', enemy.user.xplevel < 1 ? 'eliminated' : 'killed'
-                                , enemy.user.gender == 'I' ? ' the ' : ' ', enemy.user.handle, '!\n')
-                            if (enemy.user.id !== '' && enemy.user.id[0] !== '_') {
-                                $.sound('kill', 15)
-                                $.music($.player.gender == 'M' ? 'bitedust' : 'queen')
-                                $.news(`\tdefeated ${enemy.user.handle}, a level ${enemy.user.xplevel} ${enemy.user.pc}`)
-                                $.wall(`defeated ${enemy.user.handle}`)
+                        if (!expel) {
+                            enemy.hp = 0    // killed
+                            $.player.kills++
+                            if ($.from !== 'Party') {
+                                xvt.outln('You ', enemy.user.xplevel < 1 ? 'eliminated' : 'killed'
+                                    , enemy.user.gender == 'I' ? ' the ' : ' ', enemy.user.handle, '!\n')
+                                if (enemy.user.id !== '' && enemy.user.id[0] !== '_') {
+                                    $.sound('kill', 15)
+                                    $.music($.player.gender == 'M' ? 'bitedust' : 'queen')
+                                    $.news(`\tdefeated ${enemy.user.handle}, a level ${enemy.user.xplevel} ${enemy.user.pc}`)
+                                    $.wall(`defeated ${enemy.user.handle}`)
+                                }
                             }
-                        }
-                        if ($.from == 'Monster' && enemy.user.xplevel > 0) {
-                            $.news(`\tdefeated a level ${enemy.user.xplevel} ${enemy.user.handle}`)
-                            $.wall(`defeated a level ${enemy.user.level} ${enemy.user.handle}`)
+                            if ($.from == 'Monster' && enemy.user.xplevel > 0) {
+                                $.news(`\tdefeated a level ${enemy.user.xplevel} ${enemy.user.handle}`)
+                                $.wall(`defeated a level ${enemy.user.level} ${enemy.user.handle}`)
+                            }
                         }
                         if ($.from == 'Dungeon') $.animated(['bounceOut', 'fadeOut', 'flipOutX', 'flipOutY', 'rollOut', 'rotateOut', 'zoomOut'][$.dice(7) - 1])
                     }
@@ -1413,8 +1419,10 @@ module Battle {
                             xvt.out(Caster, $.what(rpc, 'teleport'), recipient, ' ')
                             if (nme !== $.online)
                                 nme.hp = -nme.hp
-                            else
+                            else {
                                 teleported = true
+                                retreat = true
+                            }
                         }
                         else {
                             xvt.out(Caster, $.what(rpc, 'teleport'))
@@ -1437,6 +1445,7 @@ module Battle {
                         else
                             rpc.hp = -1
                     }
+                    expel = backfire
                     break
 
                 case 9:
