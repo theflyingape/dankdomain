@@ -201,6 +201,22 @@ module Party {
                                     $.run(`DELETE FROM Gangs WHERE name = '${g.name}'`)
                                     xvt.outln()
                                 }
+                                $.PC.adjust('str'
+                                    , $.online.str > 40 ? -$.dice(6) - 4 : -3
+                                    , $.player.str > 60 ? -$.dice(3) - 2 : -2
+                                    , $.player.maxstr > 80 ? -2 : -1)
+                                $.PC.adjust('int'
+                                    , $.online.int > 40 ? -$.dice(6) - 4 : -3
+                                    , $.player.int > 60 ? -$.dice(3) - 2 : -2
+                                    , $.player.maxint > 80 ? -2 : -1)
+                                $.PC.adjust('dex'
+                                    , $.online.dex > 40 ? -$.dice(6) - 4 : -3
+                                    , $.player.dex > 60 ? -$.dice(3) - 2 : -2
+                                    , $.player.maxdex > 80 ? -2 : -1)
+                                $.PC.adjust('cha'
+                                    , $.online.cha > 40 ? -$.dice(6) - 4 : -3
+                                    , $.player.cha > 60 ? -$.dice(3) - 2 : -2
+                                    , $.player.maxcha > 80 ? -2 : -1)
                             }
                             g = {
                                 name: '', members: [], handles: [], genders: [], melee: [], status: [], validated: []
