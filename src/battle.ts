@@ -1440,8 +1440,10 @@ module Battle {
                             xvt.outln(xvt.lred, `Nearby is the Crown's Champion shaking his head and texting his Grace.`, -2000)
                     }
                     else {
-                        if (rpc === $.online)
+                        if (rpc === $.online) {
+                            xvt.sessionAllowed = $.int(xvt.sessionAllowed - 50, true) + 3
                             teleported = true
+                        }
                         else
                             rpc.hp = -1
                     }
