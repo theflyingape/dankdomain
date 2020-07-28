@@ -1046,7 +1046,7 @@ module Dungeon {
                             if (/Y/i.test(xvt.entry)) {
                                 $.music('tension' + $.dice(3))
                                 $.animated('infinite rotateIn')
-                                let z = (deep < 3) ? 3 : (deep < 6) ? 6 : 9
+                                let z = (deep < 3) ? 3 : (deep < 5) ? 5 : (deep < 7) ? 7 : 10
                                 let t = 0
                                 for (let i = 0; i < 5; i++) {
                                     let n = $.int($.online.str / 5 - 5 * i + $.dice(5) + 1)
@@ -1059,12 +1059,13 @@ module Dungeon {
                                 for (let i = 1; i <= n; i++) {
                                     t = $.dice(z + 1) - 1
                                     if (i == n) {
-                                        z = 9
-                                        if ($.access.sysop) t = [1, 2, 4, 6, 7][$.dice(5) - 1]
+                                        z = 10
+                                        if ($.access.sysop) t = [0, 2, 3, 5, 7, 8][$.dice(6) - 1]
                                     }
                                     xvt.out(xvt.bright, xvt.blue, '\r [', xvt.cyan, [
-                                        ' Death ', ' Grace ', ' Power ',
-                                        ' Doom! ', 'Fortune', ' Taxes ',
+                                        ' +Time ', ' Death ', ' Grace ',
+                                        ' Power ', ' Doom! ',
+                                        'Fortune', ' Taxes ',
                                         ' =Key= ', '+Skill+', ' Morph ']
                                     [t % z],
                                         xvt.blue, '] \r', -100 * 3 * i)
@@ -1075,12 +1076,15 @@ module Dungeon {
 
                                 switch (t % z) {
                                     case 0:
+                                        xvt.sessionAllowed += 300
+                                        break
+                                    case 1:
                                         $.online.hp = 0
                                         $.online.sp = 0
                                         $.death('Wheel of Death')
                                         $.sound('killed', 11)
                                         break
-                                    case 1:
+                                    case 2:
                                         if ($.player.cursed) {
                                             xvt.out(xvt.faint, 'The dark cloud has been lifted.', xvt.reset)
                                             $.player.cursed = ''
@@ -1097,7 +1101,7 @@ module Dungeon {
                                         $.PC.adjust('cha', 110)
                                         $.sound('shimmer')
                                         break
-                                    case 2:
+                                    case 3:
                                         $.online.hp += $.int($.player.hp / 2) + $.dice($.player.hp / 2)
                                         if ($.player.magic > 1) $.online.sp += $.int($.player.sp / 2) + $.dice($.player.sp / 2)
                                         $.player.toWC += $.dice($.online.weapon.wc - $.player.toWC)
@@ -1106,7 +1110,7 @@ module Dungeon {
                                         $.online.toAC += $.int($.online.armor.ac / 2) + 1
                                         $.sound('hone')
                                         break
-                                    case 3:
+                                    case 4:
                                         if ($.player.blessed) {
                                             xvt.out(xvt.bright, xvt.yellow, 'Your shining aura ', xvt.normal, 'has left ', xvt.faint, 'you.', xvt.reset)
                                             $.player.blessed = ''
@@ -1123,7 +1127,7 @@ module Dungeon {
                                         $.PC.adjust('cha', -5 - $.dice(5))
                                         $.sound('crack')
                                         break
-                                    case 4:
+                                    case 5:
                                         loot.value = $.money(Z)
                                         loot.value += $.worth(new $.coins($.online.weapon.value).value, $.online.cha)
                                         loot.value += $.worth(new $.coins($.online.armor.value).value, $.online.cha)
@@ -1131,7 +1135,7 @@ module Dungeon {
                                         $.player.coin.value += new $.coins(loot.carry(1, true)).value
                                         $.sound('yahoo')
                                         break
-                                    case 5:
+                                    case 6:
                                         $.player.coin.value = 0
                                         $.player.bank.value = 0
                                         loot.value = $.money(Z)
@@ -1141,15 +1145,15 @@ module Dungeon {
                                         $.player.loan.value += new $.coins(loot.carry(1, true)).value
                                         $.sound('thief2')
                                         break
-                                    case 6:
+                                    case 7:
                                         $.keyhint($.online)
                                         $.sound('click')
                                         break
-                                    case 7:
+                                    case 8:
                                         $.sound('level')
                                         $.skillplus($.online, menu)
                                         return
-                                    case 8:
+                                    case 9:
                                         $.player.level = $.dice(Z)
                                         if ($.online.adept) $.player.level += $.dice($.player.level)
                                         $.reroll($.player, $.PC.random('monster'), $.player.level)
@@ -2286,22 +2290,33 @@ module Dungeon {
                 DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⎅' : Dot
             }
 
-        //	generate treasure(s)
+        //	populate treasure(s)
         wow = 1
         if (!$.player.novice && !$.player.coward)
             if ($.dice(100 / dank * level) <= dank)
-                wow = $.int($.dice(DL.rooms.length) * $.dice(DL.width) / 2)
+                wow += $.int($.dice(DL.rooms.length) * $.dice(DL.width) / 2)
         wow += $.dice(level / 33) + $.dice(dank / 3) - 2
 
-        let gift: GIFT[] = ['ring', 'map']
+        //  generate a roulette (12-25) of gift types
+        //  relative to character class better interests
+        let gift: GIFT[] = ['map', 'armor', 'chest', 'poison', 'weapon']
+        //  allow for any non-spell caster a chance for a magical item
+        if ($.player.magic < 3)
+            gift.push('ring', $.dice(10 + dank - 2 * $.player.magic) > dank ? 'magic' : 'xmagic')
         for (let j = 5; j > 0; j--) {
-            if (j > $.player.magic) gift.push('armor')
-            if (j > $.player.steal) gift.push('chest')
-            if ($.player.magic < 3) gift.push($.dice(10 + dank - 2 * $.player.magic) > dank ? 'magic' : 'xmagic')
-            if (j > $.player.poison) gift.push('poison')
-            if (j > $.player.melee) gift.push('weapon')
+            if (j > $.player.magic) {
+                if ($.player.magic > 2)
+                    gift.push('ring')
+                if ($.player.magic > 0 && $.player.magic < 3)
+                    gift.push($.dice(10 + dank - 2 * $.player.magic) > dank ? 'magic' : 'xmagic')
+            }
+            else
+                gift.push('armor', 'weapon')
+            if ($.player.poison)
+                gift.push('poison')
+            else
+                gift.push('chest')
         }
-        gift.push('map', 'ring')
 
         for (let i = 0; i < wow; i++) {
             do {
@@ -2310,8 +2325,8 @@ module Dungeon {
             } while (DL.rooms[y][x].giftItem || DL.rooms[y][x].occupant == 'wizard')
             if ($.Ring.power([], $.player.rings, 'identify').power) DL.rooms[y][x].map = true
 
-            //	potion
-            if ($.dice(110 - $.online.cha + dank + +$.player.coward) > dank) {
+            //	magic potion
+            if ($.dice(111 - $.online.cha) > $.dice(dank) - +$.player.coward) {
                 DL.rooms[y][x].giftItem = 'potion'
                 DL.rooms[y][x].giftID = false
                 DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '≬' : Dot
@@ -2622,7 +2637,7 @@ module Dungeon {
         }
 
         do {
-            if (level < 1) level = $.dice(Z)
+            if (level < 1) level = $.dice(10)
             if (level > 99) level = 100 - $.dice(10)
 
             //	add a monster level relative to this floor, including any lower "strays" as fodder

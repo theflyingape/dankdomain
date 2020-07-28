@@ -173,14 +173,14 @@ module Items {
             let fail: number
             let backfire: number
 
-            fail = rpc.int + Math.trunc(rpc.user.level / 10) - (this.spells[spell].cast < 17 ? this.spells[spell].cast : this.spells[spell].cast - 10)
+            fail = rpc.int + Math.trunc(rpc.user.level / 10) - (this.spells[spell].cast < 17 ? this.spells[spell].cast : this.spells[spell].cast - 8) - (5 - skill) - +rpc.user.coward
+            //  is this an attack spell against an opponent?
             if (isDefined(nme) && [9, 11, 12, 14, 15, 16, 19, 20, 21, 22].indexOf(this.spells[spell].cast) >= 0) {
                 let m = rpc.int - nme.int
                 m = (m < -10) ? -10 : (m > 10) ? 10 : m
                 m += 2 * (skill - nme.user.magic)
                 fail += m
             }
-
             fail = (fail < 11) ? 11 : (fail > 99) ? 99 : fail
 
             //  integrate any rings of power that can affect casting spells
@@ -188,7 +188,7 @@ module Items {
                 * this.ring.power(rpc.user.rings, nme.user.rings, 'cast', 'magic', skill).power
                 * (5 - nme.user.magic)
 
-            backfire = 50 + (fail >> 1)
+            backfire = 50 + (fail >> 1) - +rpc.user.coward
             return { fail, backfire }
         }
 

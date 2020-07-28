@@ -1,6 +1,8 @@
-[mDate: [1;33mMon 24-May-2020  12:00pm
+[mDate: [1;33mTue 28-Jul-2020  1:00pm
 [mFrom: [1;33mMaester
 [1;37m
-Some minor economic tweaks.
+Genko dominates!  OK, there were some esoteric exploits in the game discovered.
+I patched up a few holes that should make for less 'free' rides and the correct
+outcomes with all Teleport attempts.
 
 Happy hunting!
