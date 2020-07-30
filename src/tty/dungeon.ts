@@ -122,7 +122,7 @@ module Dungeon {
 
         party = []
         party.push($.online)
-        tl = Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60) + 3
+        tl = $.checkTime() + 3
 
         deep = 0
         hideep = 0
@@ -146,6 +146,8 @@ module Dungeon {
         //	check player status: level up, changed, dead
         if ($.player.level + 1 < $.sysop.level) {
             if ($.checkXP($.online, menu)) {
+                DL.exit = false
+                DL.moves -= DL.width
                 pause = true
                 return
             }
@@ -280,6 +282,7 @@ module Dungeon {
                     DL.cleric.hp = 0
                     DL.cleric.sp = 0
                     DL.cleric.user.status = 'dead'
+                    DL.exit = false
                     ROOM.giftItem = 'chest'
                     ROOM.giftIcon = $.player.emulation == 'XT' ? '⌂' : Dot
                     ROOM.giftValue = 0
@@ -302,10 +305,19 @@ module Dungeon {
         $.action('dungeon')
         drawHero($.player.blessed ? true : false)
 
-        x = $.online.cha * $.online.int / 10 + $.online.dex / (deep + 1) - DL.moves + deep
+        x = $.online.cha + $.online.int / 2 + $.online.dex / 4 + deep - DL.moves
         if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
             x /= $.player.level
-        if (x < 6) x = 6
+        if (x < 6 - +$.player.coward) {
+            if (!DL.exit) {
+                DL.exit = true
+                if ($.player.emulation == 'XT') xvt.out(' 🏃 ')
+                xvt.outln(xvt.faint, 'find the exit')
+                $.sound('exit', 20)
+                xvt.drain()
+            }
+            x = 6 - +$.player.coward
+        }
         if (DL.moves > DL.width && $.dice(x) == 1) {
             $.music('.')
             let rng = $.dice(16)
@@ -348,6 +360,7 @@ module Dungeon {
                 for (x = 0, y = $.dice(Z); x < y; x++)
                     $.online.hp -= $.dice(Z)
                 if ($.online.hp < 1) $.death('killer bees')
+                DL.exit = false
             }
             else {
                 if ($.player.emulation == 'XT') {
@@ -361,16 +374,20 @@ module Dungeon {
                 $.online.toWC -= $.dice($.online.weapon.wc / 2)
                 $.online.hp -= $.dice($.player.hp / 2)
                 if ($.online.hp < 1) $.death('struck by lightning')
+                DL.exit = false
             }
             if ($.online.weapon.wc > 0 && $.online.weapon.wc + $.online.toWC + $.player.toWC < 0) {
                 xvt.out(`\nYour ${$.player.weapon} is damaged beyond repair; you toss it aside.`)
                 $.Weapon.equip($.online, $.Weapon.merchant[0])
+                DL.exit = false
             }
             if ($.online.armor.ac > 0 && $.online.armor.ac + $.online.toAC + $.player.toAC < 0) {
                 xvt.out(`\nYour ${$.player.armor} is damaged beyond repair; you toss it aside.`)
                 $.Armor.equip($.online, $.Armor.merchant[0])
+                DL.exit = false
             }
             xvt.outln(-600)
+            xvt.drain()
         }
 
         //  insert any wall messages here
@@ -1243,9 +1260,11 @@ module Dungeon {
                         xvt.out($.PC.weapon(), -600)
                         $.Weapon.equip($.online, $.Weapon.merchant[0])
                         $.sound('thief2')
+                        DL.exit = false
                     }
                     else if (DL.map && $.dice($.online.cha / 9) - 1 <= $.int(deep / 3)) {
                         xvt.out('map')
+                        DL.exit = false
                         DL.map = ''
                         refresh = true
                     }
@@ -1283,6 +1302,7 @@ module Dungeon {
                         , xvt.yellow, ' of an ', xvt.faint, 'old cleric', xvt.normal, '.', -600)
                     if ($.player.emulation == 'XT') xvt.out('⚰️ ')
                     xvt.outln('You pray for him.')
+                    DL.exit = false
                     break
                 }
 
@@ -1367,6 +1387,7 @@ module Dungeon {
                                     xvt.outln(xvt.lyellow, '"I need to rest. ', -300, ' Go in peace."', -300)
                                     looked = true
                                 }
+                                DL.exit = false
                             }
                             menu()
                         }, prompt: `${cost.value ? 'Pay' : 'Receive'} (Y/N)? `, cancel: 'N', enter: 'Y', eol: false, match: /Y|N/i, max: 1, timeout: 20
@@ -2139,7 +2160,8 @@ module Dungeon {
                 X = $.dice(DL.width) - 1
                 ROOM = DL.rooms[Y][X]
             } while (ROOM.type)	//	teleport into a chamber only
-            DL.moves >>= 1
+            DL.moves -= DL.width
+            DL.exit = false
             return
         }
 
@@ -2163,9 +2185,10 @@ module Dungeon {
                         , sex: 'I', weapon: 0, armor: 1, magic: 3, spells: [7, 8, 13]
                     }
                 },
-                rooms: new Array(maxRow),
+                exit: false,
                 map: '',
                 moves: 0,
+                rooms: new Array(maxRow),
                 spawn: $.int(deep / 3 + Z / 9 + maxRow / 3) + $.dice(Math.round($.online.cha / 20) + 1) + 3,
                 width: maxCol
             }
@@ -2429,7 +2452,7 @@ module Dungeon {
         }
 
         function renderMap() {
-            let min = Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
+            let min = $.checkTime()
             if (Z == 99 || Z - $.player.level > 8) {
                 tl = min
                 $.music('tension' + $.dice(3))
@@ -2637,7 +2660,7 @@ module Dungeon {
         }
 
         do {
-            if (level < 1) level = $.dice(10)
+            while (level < 1) level += $.dice(4) + $.dice(3) - 1
             if (level > 99) level = 100 - $.dice(10)
 
             //	add a monster level relative to this floor, including any lower "strays" as fodder
@@ -2766,7 +2789,7 @@ module Dungeon {
     }
 
     function teleport() {
-        let min = Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
+        let min = $.checkTime()
         if (min < 0) {
             $.death('failed to escape')
             menu()

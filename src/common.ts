@@ -697,11 +697,15 @@ module Common {
         return true
     }
 
+    export function checkTime(): number {
+        return Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
+    }
+
     export function checkXP(rpc: active, cb: Function): boolean {
 
         jumped = 0
 
-        let t = Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
+        let t = checkTime()
         if (t !== timeleft) {
             timeleft = t
             if (timeleft < 0) {

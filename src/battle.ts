@@ -1441,7 +1441,7 @@ module Battle {
                     }
                     else {
                         if (rpc === $.online) {
-                            xvt.sessionAllowed = $.int(xvt.sessionAllowed - 50, true) + 3
+                            xvt.sessionAllowed = $.int(xvt.sessionAllowed - 60, true) + 3 * $.dungeon + 1
                             teleported = true
                         }
                         else

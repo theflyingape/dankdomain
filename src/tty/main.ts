@@ -46,9 +46,7 @@ module Main {
         }
 
         xvt.app.form['menu'].prompt =
-            xvt.attr('Time Left: ', xvt.bright, xvt.white,
-                Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60).toString())
-            + xvt.attr(xvt.normal, xvt.cyan, ' min.\n', xvt.reset)
+            xvt.attr('Time Left: ', xvt.bright, xvt.white, $.checkTime().toString(), xvt.normal, xvt.cyan, ' min.\n', xvt.reset)
             + $.display('main', xvt.Blue, xvt.blue, suppress, mainmenu)
         xvt.app.focus = 'menu'
     }

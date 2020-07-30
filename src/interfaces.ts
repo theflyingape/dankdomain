@@ -1,6 +1,7 @@
 //  the power TypeScript provides to simplify it all
 
 type ABILITY = string | 'str' | 'int' | 'dex' | 'cha'
+type DEED = 'big blast' | 'blast' | 'jl' | 'jw' | 'killed' | 'kills' | 'levels' | 'melee' | 'plays' | 'retreats' | 'steals' | 'tl' | 'tw'
 type POWER = string | 'buff' | 'cast' | 'degrade' | 'hp' | 'identify' | 'initiate' | 'joust' | 'melee' | 'resist' | 'resurrect' | 'ring' | 'skip' | 'sp' | 'steal' | 'taxes' | 'teleport' | 'upgrade'
 type POWTO = 'ability' | 'magic' | 'melee' | 'pc' | 'spell'
 type GIFT = '' | 'armor' | 'chest' | 'magic' | 'map' | 'poison' | 'potion' | 'ring' | 'weapon' | 'xmagic'
@@ -129,7 +130,7 @@ interface gang {
 
 interface deed {
     pc: string
-    deed: string
+    deed: DEED
     date: number
     hero: string
     value: number
@@ -212,9 +213,10 @@ interface coins {
 
 interface ddd {
     cleric: active
-    rooms: [room[]]	//	7-10
+    exit: boolean
     map: MAP
     moves: number       //  hero steps (2x backtracking)
+    rooms: [room[]]     //	7-10
     spawn: number       //  2-23
     width: number		//	7-13
 }
