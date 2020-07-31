@@ -305,10 +305,12 @@ module Dungeon {
         $.action('dungeon')
         drawHero($.player.blessed ? true : false)
 
-        x = $.online.cha + $.online.int / 2 + $.online.dex / 4 + deep - DL.moves
-        if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
-            x /= $.player.level
-        if (x < 6 - +$.player.coward) {
+        //  keep it organic relative to class skill + luck with player asset protection
+        x = $.int((DL.rooms.length * DL.width + $.online.cha)
+            * (.9 + deep / 10) * (1 + Z / 100) * $.online.dex / 100)
+            - DL.moves
+        x *= 1 + ($.Security.name[$.player.security].protection - $.player.level / 9) / 12
+        if (x < ($.online.int + DL.width) / 2) {
             if (!DL.exit) {
                 DL.exit = true
                 if ($.player.emulation == 'XT') xvt.out(' 🏃 ')
@@ -316,8 +318,8 @@ module Dungeon {
                 $.sound('exit', 20)
                 xvt.drain()
             }
-            x = 6 - +$.player.coward
         }
+        x = x < DL.width ? DL.width - +$.player.coward : $.int(x)
         if (DL.moves > DL.width && $.dice(x) == 1) {
             $.music('.')
             let rng = $.dice(16)
@@ -360,7 +362,7 @@ module Dungeon {
                 for (x = 0, y = $.dice(Z); x < y; x++)
                     $.online.hp -= $.dice(Z)
                 if ($.online.hp < 1) $.death('killer bees')
-                DL.exit = false
+                if ($.player.novice) DL.exit = false
             }
             else {
                 if ($.player.emulation == 'XT') {
@@ -457,8 +459,10 @@ module Dungeon {
         if (isNotEmpty(crawling[choice])) {
             xvt.out(crawling[choice].description)
             DL.moves++
-            if (DL.spawn > 2 && !(DL.moves % DL.width))
+            if (DL.spawn > 2 && !(DL.moves % DL.width)) {
                 DL.spawn--
+                DL.exit = false
+            }
             //	old cleric mana recovery
             if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
                 DL.cleric.sp += 10 * $.dice(deep) + $.dice(Z / 2)
@@ -564,8 +568,10 @@ module Dungeon {
         }
         else {
             DL.moves++	//	backtracking
-            if (DL.spawn > 2 && !(DL.moves % DL.width))
+            if (DL.spawn > 2 && !(DL.moves % DL.width)) {
                 DL.spawn--
+                DL.exit = false
+            }
         }
 
         //	nothing special in here, done
@@ -639,22 +645,24 @@ module Dungeon {
                     [ROOM.monster[n].user.xplevel - ROOM.monster[n].user.level + 1] + what
                 xvt.out(`It's`, $.an(what), '... ', ROOM.monster.length < 4 ? -250 : -50)
 
-                if ($.player.novice || ($.dice(ROOM.monster[n].user.xplevel / 5 + 5) * (101 - $.online.cha + deep) > 1)) {
+                if ($.player.novice || party.length > 3 || ($.dice(ROOM.monster[n].user.xplevel / 5 + 5) * (101 - $.online.cha + deep) > 1)) {
                     if (ROOM.monster[n].user.xplevel > 0)
                         xvt.out(`and it doesn't look friendly.`, -50)
                     else
                         xvt.out('and it looks harmless, for now.', -100)
                 }
                 else {
-                    xvt.out(`and it's `, xvt.yellow, xvt.bright
+                    xvt.outln(`and it's `, xvt.yellow, xvt.bright
                         , ['bewitched', 'charmed', 'dazzled', 'impressed', 'seduced'][$.dice(5) - 1]
                         , ' by your '
-                        , ['awesomeness', 'elegance', 'presence', $.player.armor, $.player.weapon][$.dice(5) - 1]
-                        , xvt.reset, '!')
+                        , ['awesomeness', 'elegance', 'presence', $.player.armor, $.player.weapon][$.dice(5) - 1])
                     ROOM.monster[n].user.gender = 'FM'[$.dice(2) - 1]
                     ROOM.monster[n].user.handle = xvt.attr(ROOM.monster[n].pc.color || xvt.white, xvt.bright, 'charmed ', ROOM.monster[n].user.handle, xvt.reset)
-                    ROOM.monster[n].user.xplevel = $.dice(4) - 2
+                    let x = $.dice(3 + $.online.adept + +$.access.sysop - +$.player.coward) - 2
+                    ROOM.monster[n].user.xplevel = x > 1 ? 1 : x
                     party.push(ROOM.monster[n])
+                    xvt.out(' to join ', ['you', 'your party'][+(party.length > 2)], ' in '
+                        , ['spirit ... ', 'defense.', 'arms!'][ROOM.monster[n].user.xplevel + 1], -300)
                     ROOM.monster.splice(n, 1)
                 }
                 xvt.outln(ROOM.monster.length < 4 ? -250 : -50)
@@ -1996,7 +2004,6 @@ module Dungeon {
     }
 
     function drawHero(peek = false) {
-        xvt.out(xvt.reset)
         xvt.save()
 
         ROOM = DL.rooms[Y][X]
@@ -2042,6 +2049,7 @@ module Dungeon {
                 , `  ${$.player.emulation == 'XT' ? $.PC.card($.player.pc).unicode : 'X'}  `, -600)
         }
         xvt.restore()
+        xvt.out(xvt.off)
     }
 
     function eraseHero(peek = false) {
@@ -2160,7 +2168,7 @@ module Dungeon {
                 X = $.dice(DL.width) - 1
                 ROOM = DL.rooms[Y][X]
             } while (ROOM.type)	//	teleport into a chamber only
-            DL.moves -= DL.width
+            DL.moves = DL.moves > DL.rooms.length * DL.width ? DL.rooms.length * DL.width : DL.moves - DL.width
             DL.exit = false
             return
         }
@@ -2847,6 +2855,7 @@ module Dungeon {
                             }
                         case 'R':
                             $.PC.profile($.online, 'flipOutY')
+                            DL.exit = false
                             break
 
                         case 'U':
