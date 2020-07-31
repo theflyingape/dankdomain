@@ -319,7 +319,12 @@ module Dungeon {
                 xvt.drain()
             }
         }
-        x = x < DL.width ? DL.width - +$.player.coward : $.int(x)
+        x = x < DL.width ? DL.width - (DL.moves >> 8) : $.int(x)
+        if (x < 6) {
+            x = 6
+            DL.exit = $.player.coward
+            $.player.coward = true
+        }
         if (DL.moves > DL.width && $.dice(x) == 1) {
             $.music('.')
             let rng = $.dice(16)
