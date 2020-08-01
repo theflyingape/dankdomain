@@ -368,8 +368,7 @@ module Gambling {
                 xvt.outln(xvt.green, xvt.bright, 'Aces are low and all face cards are the same as 10s')
                 xvt.outln(xvt.green, 'If your card is higher: winnings are based on how low your pick is')
                 xvt.outln(xvt.green, '                        and double that if Dealer picks a Joker')
-                xvt.outln(xvt.cyan, xvt.bright, 'Matching cards must draw again, unless Jokers, which payout '
-                    , xvt.white, '1000:1')
+                xvt.outln(xvt.cyan, xvt.bright, 'Matching cards must draw again; unless Jokers which payout ', xvt.white, '1000:1')
                 shuffle(true)
 
                 $.action('list')

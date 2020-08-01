@@ -327,7 +327,7 @@
             "toStr":1, "toInt":3, "toDex":1, "toCha":1,
             "maxStr":82, "maxInt":96, "maxDex":90, "maxCha":90,
             "bonusStr":0, "bonusInt":2, "bonusDex":0, "bonusCha":0,
-            "unicode":"⚧", "color":35, "skip":"paralyze",
+            "unicode":"⚥", "color":35, "skip":"paralyze",
             "specialty": "Magus",
             "description": [
                 "A lesser demon with supernatural abilities."
