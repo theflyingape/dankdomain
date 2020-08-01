@@ -495,7 +495,7 @@ module Common {
         rings(profile = online) {
             for (let i in profile.user.rings) {
                 let ring = profile.user.rings[i]
-                xvt.out(xvt.cyan, player.emulation == 'XT' ? '⍥' : xvt.app.Empty, ' ', xvt.bright, ring, xvt.normal, ' ')
+                xvt.out(xvt.cyan, player.emulation == 'XT' ? '⍤' : xvt.app.Empty, ' ', xvt.bright, ring, xvt.normal, ' ')
                 if (tty == 'web') xvt.out(Ring.name[ring].emoji, '💍')
                 xvt.outln('ring:', xvt.reset, ' can ', Ring.name[ring].description, -100)
             }
