@@ -278,28 +278,28 @@ function newSession(ev) {
         //  ... added some more throwback tunes to rotate in
         idle = setInterval(() => { XT(`@tune(throwback${tbt++})`) }, 300000)
 
-        fetch(`${app}/title.txt`, { method: 'GET' }).then(function (res) {
-            return res.text().then(function (data) {
-                term.focus()
-                term.writeln('\x1B[16C🔥 🌨\r\x1B[23C\x1B[1;36mW\x1B[22melcome to Ɗ \x1B[2manƙ \x1B[22mƊ \x1B[2momaiƞ \x1B[m🌙 💫')
-                term.write(data)
-                const app = location.pathname.replace(/info.html$/, "")
-                fetch(`${app}player/`, { method: 'GET' }).then(function (res) {
-                    res.json().then(function (knock) {
-                        setTimeout(() => {
+        setTimeout(() => {
+            fetch(`${app}/title.txt`, { method: 'GET' }).then(function (res) {
+                return res.text().then(function (data) {
+                    term.focus()
+                    term.writeln('\t\t🔥 🌨\r\x1b[23C\x1b[1;36mW\x1b[22melcome to Ɗ \x1b[2manƙ \x1b[22mƊ \x1b[2momaiƞ \x1b[m🌙 💫')
+                    term.write(data)
+                    const app = location.pathname.replace(/info.html$/, "")
+                    fetch(`${app}player/`, { method: 'GET' }).then(function (res) {
+                        res.json().then(function (knock) {
                             term.focus()
-                            term.writeln(knock.wall)
-                            term.writeln(' \x1B[1;36m\u00B7\x1B[22;2m press either \x1B[22mENTER\x1B[2m or \x1B[22mSPACE\x1B[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1B[22m')
+                            term.writeln(knock.wall || '\t\t\x1b[36mCan you defeat the Demogorgon?')
+                            term.writeln('\x1b[1;36m \u00B7 \x1b[22;2mpress either \x1b[22mENTER\x1b[2m or \x1b[22mSPACE\x1b[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1b[22m')
                             XT(`@play(${['demon', 'demogorgon', 'portal', 'thief2'][Math.trunc(4 * Math.random())]})`)
                             XT('@action(welcome)')
                             term.blur()
                             window.frames['Info'].focus()
                             window.frames['Info'].postMessage({ images: knock.list }, location.href)
-                        }, 500)
+                        })
                     })
                 })
             })
-        })
+        }, 600)
     }
 }
 

@@ -595,6 +595,7 @@ module Dungeon {
         //	monsters?
         if (ROOM.monster.length) {
             if (!refresh) drawRoom(Y, X, true, true)
+            scroll(1, false)
             xvt.out(xvt.off)
 
             if (ROOM.monster.length == 1) {
@@ -677,7 +678,6 @@ module Dungeon {
             if (ROOM.monster.length) {
                 $.from = 'Dungeon'
                 $.action('battle')
-                scroll(1, false)
                 b4 = ROOM.monster.length > 3 ? -ROOM.monster.length : ROOM.monster.length > 2 ? $.online.hp : 0
                 Battle.engage('Dungeon', party, ROOM.monster, doSpoils)
                 return false

@@ -1988,7 +1988,7 @@ module Common {
     }
 
     export function clear() {
-        const scroll = xvt.row - (xvt.col == 1 ? 1 : 0)
+        const scroll = (xvt.row < player.rows ? xvt.row : player.rows) - (xvt.col == 1 ? 2 : 1)
         xvt.out(xvt.off)
         xvt.plot(player.rows, 1)
         xvt.outln('\n'.repeat(scroll))
