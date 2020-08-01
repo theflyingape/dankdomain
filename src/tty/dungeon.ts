@@ -2398,7 +2398,7 @@ module Dungeon {
                     break
 
                 case 'magic':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⭒' : Dot
+                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '∗' : Dot
                     n = $.dice($.Magic.merchant.length * 16)
                     for (let j = 0; j < $.Magic.merchant.length && n > 0; j++) {
                         v = $.Magic.merchant.length - j
@@ -2422,7 +2422,7 @@ module Dungeon {
 
                 case 'ring':
                     if ($.Ring.have($.player.rings, $.Ring.theOne)) DL.rooms[y][x].map = true
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⍥' : Dot
+                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⍤' : Dot
                     if ($.dice(6 - $.int(dank / 2)) > 1) {
                         let ring = $.Ring.common[$.dice($.Ring.common.length) - 1]
                         DL.rooms[y][x].giftValue = ring
@@ -2440,7 +2440,7 @@ module Dungeon {
                     break
 
                 case 'xmagic':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⭑' : Dot
+                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⋇' : Dot
                     v = $.Magic.merchant.length + $.dice($.Magic.special.length)
                     break
 

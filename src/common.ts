@@ -2156,7 +2156,7 @@ module Common {
             xvt.out('I\\___/I    ', xvt.green, xvt.app.LGradient, xvt.bright, xvt.Green, xvt.white, `RAH-CoCo's`, xvt.reset, xvt.green, xvt.app.RGradient, xvt.cyan, '     I\\___/I\n')
             xvt.out('\\/   \\/ ', xvt.reset, '   http://rahcocos.com  ', xvt.cyan, '  \\/   \\/\n')
             xvt.out(' \\ : /                           ', xvt.cyan, '  \\ : / \n')
-            xvt.out('  I:I     ', xvt.blue, xvt.app.LGradient, xvt.bright, xvt.Blue, xvt.white, `${player.emulation == 'XT' ? 'Ɍ' : 'R'}ober${player.emulation == 'XT' ? 'ƭ Ҥ' : 't H'}urs${player.emulation == 'XT' ? 'ƭ' : 't'}`, xvt.reset, xvt.blue, xvt.app.RGradient, xvt.cyan, '      I:I  \n')
+            xvt.out('  I:I     ', xvt.blue, xvt.app.LGradient, xvt.bright, xvt.Blue, xvt.white, `${player.emulation == 'XT' ? 'ℝ' : 'R'}ober${player.emulation == 'XT' ? 'ƭ ℍ' : 't H'}urs${player.emulation == 'XT' ? 'ƭ' : 't'}`, xvt.reset, xvt.blue, xvt.app.RGradient, xvt.cyan, '      I:I  \n')
             xvt.outln(' .I:I. ', xvt.reset, '   https://www.DDgame.us   ', xvt.cyan, ' .I:I.')
             xvt.outln(-500)
             xvt.outln(xvt.bright, xvt.black, process.title
