@@ -65,7 +65,7 @@
     "xterm-addon-unicode11": "^0.2.0",
     "xterm-addon-web-links": "^0.4.0",
     "xterm-addon-webgl": "^0.8.0",
-    "xvt": "^1.2.3"
+    "xvt": "^1.2.4"
   },
   "devDependencies": {
     "@types/better-sqlite3": "^5.4.0",
@@ -76,7 +76,7 @@
     "@types/nodemailer-smtp-transport": "^2.7.4",
     "@types/sprintf-js": "^1.1.2",
     "@types/ws": "^7.2.6",
-    "browserify": "^16.5.1",
+    "browserify": "^16.5.2",
     "eslint": "^7.6.0",
     "typescript": "^3.9.7"
   }

@@ -554,6 +554,7 @@ module Dungeon {
         $.PC.profile($.online, 'bounce', ` - Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
         $.sound('wall')
         xvt.outln(xvt.bright, xvt.yellow, 'Oof!', xvt.normal, ` There is a wall to the ${wall}.`, -400)
+        xvt.drain()
         if (($.online.hp -= $.dice(deep + Z + 1)) < 1) {
             $.online.hp = 0
             $.music('.')
@@ -561,7 +562,6 @@ module Dungeon {
             if (deep) $.reason += `-${xvt.romanize(deep + 1)}`
             xvt.outln(xvt.faint, '\nYou take too many hits and die!', -600)
         }
-        xvt.drain()
     }
 
     //	look around, return whether done or not
@@ -1066,7 +1066,6 @@ module Dungeon {
                     ['cryptic', 'familiar', 'foreign', 'speaking out', 'strange'][$.dice(5) - 1],
                     ' to you.', -600)
 
-                $.action('yn')
                 $.profile({ png: 'wol', effect: 'rotateIn' })
                 xvt.app.form = {
                     'wheel': {
@@ -1584,6 +1583,7 @@ module Dungeon {
                             , $.bracket($.Armor.name[$.Armor.dwarf[hi]].ac, false), ' ')
                         xvt.outln(xvt.bright, xvt.yellow, $.Armor.dwarf[hi], -1000)
                         $.action('yn')
+                        xvt.drain()
                         xvt.app.focus = 'armor'
                         return false
                     }
@@ -1612,6 +1612,7 @@ module Dungeon {
                             , $.bracket($.Weapon.name[$.Weapon.dwarf[hi]].wc, false), ' ')
                         xvt.outln(xvt.bright, xvt.cyan, $.Weapon.dwarf[hi], -1000)
                         $.action('yn')
+                        xvt.drain()
                         xvt.app.focus = 'weapon'
                         return false
                     }
@@ -1793,7 +1794,6 @@ module Dungeon {
         }
         looked = false
         pause = false
-        xvt.drain()
 
         //	remove any dead carcass, displace teleported creatures
         for (let n = ROOM.monster.length - 1; n >= 0; n--) {
@@ -2880,7 +2880,6 @@ module Dungeon {
                             }
                             break
                         default:
-                            xvt.drain()
                             break
                     }
                     xvt.waste(1250)
@@ -2890,6 +2889,7 @@ module Dungeon {
             }
         }
         xvt.app.form['wizard'].prompt = `Teleport #${xvt.romanize(deep + 1)}.${Z + 1}: `
+        xvt.drain()
         xvt.app.focus = 'wizard'
     }
 
