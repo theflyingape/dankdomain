@@ -65,7 +65,7 @@ function broadcast(pid: number, msg: string) {
 
 function login(client: string, rows: number, cols: number, emulator: EMULATION): number {
     process.env.REMOTEHOST = client
-    let term = pty.spawn('sh', ["-l", "../logins.sh", emulator], {
+    let term = pty.spawn('../logins.sh', [emulator], {
         name: 'xterm-256color',
         cols: cols,
         rows: rows,
