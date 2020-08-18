@@ -10,9 +10,6 @@ import { isDefined, isIP, isNotEmpty } from 'class-validator'
 
 module Logon {
 
-    xvt.outln(xvt.bright, xvt.cyan, xvt.app.emulation
-        , xvt.normal, ' emulation ', xvt.faint, 'enabled\n')
-
     $.loadUser($.sysop)
     if ($.sysop.lastdate != $.now().date) {
         $.newDay()
