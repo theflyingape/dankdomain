@@ -384,12 +384,12 @@ module Dungeon {
                 DL.exit = false
             }
             if ($.online.weapon.wc > 0 && $.online.weapon.wc + $.online.toWC + $.player.toWC < 0) {
-                xvt.out(`\nYour ${$.player.weapon} is damaged beyond repair; you toss it aside.`)
+                xvt.out(`\nYour ${$.player.weapon} is damaged beyond repair; `, -300, `you toss it aside.`)
                 $.Weapon.equip($.online, $.Weapon.merchant[0])
                 DL.exit = false
             }
             if ($.online.armor.ac > 0 && $.online.armor.ac + $.online.toAC + $.player.toAC < 0) {
-                xvt.out(`\nYour ${$.player.armor} is damaged beyond repair; you toss it aside.`)
+                xvt.out(`\nYour ${$.player.armor} is damaged beyond repair; `, -300, `you toss it aside.`)
                 $.Armor.equip($.online, $.Armor.merchant[0])
                 DL.exit = false
             }
@@ -500,6 +500,7 @@ module Dungeon {
             case 'Y':
                 xvt.outln()
                 Battle.yourstats(false)
+                DL.exit = false
                 break
 
             case 'N':
