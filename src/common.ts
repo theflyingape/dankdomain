@@ -2155,7 +2155,7 @@ module Common {
             xvt.out(xvt.cyan, '  ___                               ___  \n')
             xvt.out('  \\_/   ', xvt.red, xvt.app.LGradient, xvt.bright, xvt.Red, xvt.white, 'Never Program Mad', xvt.reset, xvt.red, xvt.app.RGradient, xvt.cyan, '   \\_/  \n')
             xvt.out(' _(', xvt.bright, '-', xvt.normal, ')_     ', xvt.reset, ' https://npmjs.com    ', xvt.cyan, '  _(', xvt.bright, '-', xvt.normal, ')_ \n')
-            xvt.out('(/ ', player.emulation == 'XT' ? xvt.attr(xvt.faint, '⚨', xvt.normal) : ':', ' \\)                          ', xvt.cyan, ' (/ ', player.emulation == 'XT' ? '⚨' : ':', ' \\)\n')
+            xvt.out('(/ ', player.emulation == 'XT' ? xvt.attr(xvt.faint, '⚨', xvt.normal) : ':', ' \\)                          ', xvt.cyan, ' (/ ', player.emulation == 'XT' ? xvt.attr(xvt.faint, '⚨', xvt.normal) : ':', ' \\)\n')
             xvt.out('I\\___/I    ', xvt.green, xvt.app.LGradient, xvt.bright, xvt.Green, xvt.white, `RAH-CoCo's`, xvt.reset, xvt.green, xvt.app.RGradient, xvt.cyan, '     I\\___/I\n')
             xvt.out('\\/   \\/ ', xvt.reset, '   http://rahcocos.com  ', xvt.cyan, '  \\/   \\/\n')
             xvt.out(' \\ : /                           ', xvt.cyan, '  \\ : / \n')
