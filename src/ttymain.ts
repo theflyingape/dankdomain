@@ -35,7 +35,7 @@ module ttyMain {
                 : (/ansi|cygwin|^pc/i.test(process.env.TERM)) ? 'PC'
                     : '')
     if ((xvt.modem = process.env.REMOTEHOST ? true : false))
-        xvt.out(xvt.off, xvt.bright
+        xvt.outln(xvt.off, xvt.bright
             , xvt.red, 'C'
             , xvt.yellow, 'A'
             , xvt.green, 'R'
@@ -44,7 +44,7 @@ module ttyMain {
             , xvt.magenta, 'E'
             , xvt.white, 'R'
             , xvt.normal, ' '
-            , xvt.faint, 'DETECTED', xvt.reset)
+            , xvt.faint, 'DETECTED')
 
     xvt.app.form = {
         'enq1': {

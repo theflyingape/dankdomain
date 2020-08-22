@@ -2370,11 +2370,6 @@ module Common {
         }
     }
 
-
-    //  ah, this is where the newline comes from after CARRIER DETECTED
-    xvt.outln()
-
-
     function isActive(arg: any): arg is active {
         return (<active>arg).user !== undefined
     }
