@@ -165,18 +165,21 @@ dns.lookup(network.address, (err, addr, family) => {
 
         tty.on('connection', (socket) => {
             let client = socket.remoteAddress || 'scan'
-            console.log(`Classic Gate knocked from remote host: ${client}`)
+            let pid = login(client, network.rows, 80, network.emulator)
+            let term = sessions[pid]
+            console.log(`Classic Gate knock from remote host ${client} - session ${pid}`)
+
             socket.setKeepAlive(true, 4000)
             nka.setKeepAliveInterval(socket, 21000)
             nka.setKeepAliveProbes(socket, 2)
-            socket.setTimeout(150000)
 
-            let pid = login(client, network.rows, 80, network.emulator)
-            let term = sessions[pid]
+            socket.setTimeout(150000, () => {
+                console.log(`Classic socket: timeout for session ${pid}`)
+            })
 
             socket.on('close', (err) => {
                 if (err) {
-                    console.log(`Classic error on close for session ${pid}`)
+                    console.log(`Classic error: on close for session ${pid}`)
                     if (pid > 1) term.destroy()
                 }
             })
