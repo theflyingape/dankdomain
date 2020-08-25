@@ -1649,6 +1649,7 @@ module Dungeon {
                 if (gold.value) {
                     if (gold.value > 1e+17)
                         gold.value = 1e+17
+                    $.profile({ jpg: `specials/chest`, effect: 'fadeInUpBig' })
                     $.sound('yahoo', 10)
                     xvt.outln(xvt.yellow, 'You find a ', xvt.bright, 'treasure chest'
                         , xvt.normal, ' holding ', gold.carry(), '!')
