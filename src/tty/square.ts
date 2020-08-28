@@ -444,6 +444,7 @@ module Square {
                 }
                 else {
                     if (!$.Ring.have($.player.rings, $.Ring.theOne)) $.steal++
+                    if (!$.arena || !$.dungeon) $.steal++
                     $.beep()
                     $.player.coin.value += credit.value
                     if (pocket.id) {

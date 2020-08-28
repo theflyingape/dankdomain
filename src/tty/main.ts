@@ -213,8 +213,8 @@ module Main {
                     xvt.outln(xvt.faint, `You case ${opponent.user.handle}'s joint out.`, -600)
                     let prize = $.worth(new $.coins($.Armor.name[opponent.user.armor].value).value, $.online.cha)
                     prize += $.worth(new $.coins($.Weapon.name[opponent.user.weapon].value).value, $.online.cha)
-                    if (opponent.user.cannon) prize += $.money(opponent.user.level)
-                    prize += opponent.user.coin.value
+                    if ($.dungeon && opponent.user.cannon) prize += $.money(opponent.user.level)
+                    if ($.arena) prize += opponent.user.coin.value
                     prize = $.int(prize / (6 - $.player.steal))
 
                     if ($.dice($.online.int) > 5 && prize < self) {
@@ -240,6 +240,7 @@ module Main {
                                         , xvt.white, 'make your attempt ', xvt.blue, -600)
                                     let lock = 5 * ($.Security.name[opponent.user.security].protection + 1)
                                         + $.RealEstate.name[opponent.user.realestate].protection
+                                        + opponent.user.steal + +!$.arena + +!$.dungeon
                                     let skill = Math.round($.player.steal * $.online.dex * $.online.int / 10000)
                                     let effort = 100
                                     effort -= $.Ring.power(opponent.user.rings, $.player.rings, 'steal').power
@@ -258,13 +259,14 @@ module Main {
                                     }
 
                                     if (skill > lock) {
-                                        $.sound('max')
                                         if (!$.Ring.have($.player.rings, $.Ring.theOne)) $.steal++
+                                        if (!$.arena || !$.dungeon) $.steal++
                                         $.player.coin.value += prize
                                         $.player.steals++
-                                        xvt.outln('You break in and make off with ', new $.coins(prize).carry(), ' worth of stuff!', -1000)
+                                        xvt.outln('You break in and make off with ', new $.coins(prize).carry(), ' worth of stuff!')
+                                        $.sound('max', 12)
 
-                                        opponent.user.coin.value = 0
+                                        if ($.arena) opponent.user.coin.value = 0
 
                                         if (opponent.armor.ac > 0) {
                                             if (opponent.armor.ac > $.Armor.merchant.length)

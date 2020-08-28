@@ -2,8 +2,8 @@
 build/*.js
 build/**/*.js.map
 build/door/*.js
-build/door/static/images/**
-build/door/static/sounds/**
+build/door/static/images
+build/door/static/sounds
 build/door/static/bundle.js
 build/tty/*.js
 build/etc/ipstack.key
