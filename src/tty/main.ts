@@ -238,20 +238,21 @@ module Main {
                                     xvt.out(xvt.cyan, '\nYou slide into ', -200
                                         , xvt.faint, 'the shadows and ', -400
                                         , xvt.white, 'make your attempt ', xvt.blue, -600)
+
                                     let lock = 5 * ($.Security.name[opponent.user.security].protection + 1)
                                         + $.RealEstate.name[opponent.user.realestate].protection
                                         + opponent.user.steal + +!$.arena + +!$.dungeon
                                     let skill = Math.round($.player.steal * $.online.dex * $.online.int / 10000)
                                     let effort = 100
                                     effort -= $.Ring.power(opponent.user.rings, $.player.rings, 'steal').power
+
                                     for (let pick = 0; pick < $.player.steal; pick++) {
-                                        $.sound('click')
-                                        xvt.out('.', -400)
+                                        xvt.out('.')
+                                        $.sound('click', 6)
                                         skill += $.dice(100 + $.player.steal) < effort
                                             ? $.dice($.player.level + $.player.steal - $.steal)
                                             : lock
                                     }
-                                    xvt.outln(-600)
 
                                     if ($.player.email == opponent.user.email || !$.lock(opponent.user.id)) {
                                         $.player.coward = true

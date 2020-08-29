@@ -2172,39 +2172,34 @@ module Common {
             sound('invite')
     }
 
+    //  *****************************************
+    //  my web client extended emulation commands
     export function action(menu: string) {
-        if (tty == 'web') xvt.out('@action(', menu, ')')
+        if (tty == 'web') xvt.out(`@action(${menu})`)
     }
 
     export function animated(effect: string) {
-        if (tty == 'web') xvt.out('@animated(', effect, ')')
+        if (tty == 'web') xvt.out(`@animated(${effect})`)
     }
 
     export function music(tune: string) {
-        if (tty == 'web') xvt.out('@tune(', tune, ')')
+        if (tty == 'web') xvt.out(`@tune(${tune})`)
     }
 
     export function profile(params) {
-        /*
-            let result = { }
-            params.forEach(x => {
-                const a = x.split('=')
-                result[a[0]] = a[1]
-            })
-        */
-        if (tty == 'web') xvt.out('@profile(', JSON.stringify(params), ')')
+        if (tty == 'web') xvt.out(`@profile(${JSON.stringify(params)})`)
     }
 
     export function sound(effect: string, sync = 2) {
         if (tty == 'web')
-            xvt.out('@play(', effect, ')', -100 * sync)
+            xvt.out(`@play(${effect})`, -100 * sync)
         else
             xvt.beep()
     }
 
     export function title(name: string) {
-        if (xvt.app.emulation == 'XT') xvt.out('\x1B]2;', name, '\x07')
-        if (tty == 'web') xvt.out('@title(', name, ')')
+        if (xvt.app.emulation == 'XT') xvt.out(`\x1B]2;${name}\x07`)
+        if (tty == 'web') xvt.out(`@title(${name})`)
     }
 
     export function wall(msg: string) {

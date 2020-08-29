@@ -315,16 +315,17 @@ module Dungeon {
                 DL.exit = true
                 if ($.player.emulation == 'XT') xvt.out(' 🏃 ')
                 xvt.outln(xvt.faint, 'find the exit')
-                $.sound('exit', 20)
+                $.sound('exit', 12)
                 xvt.drain()
             }
         }
         x = x < DL.width ? DL.width - (DL.moves >> 8) : $.int(x)
-        if (x < 6) {
-            x = 6
+        if (x < DL.width) {
             DL.exit = $.player.coward
-            $.player.coward = true
+            if (x < 6) $.player.coward = true
+            x = DL.width - +$.player.coward
         }
+
         if (DL.moves > DL.width && $.dice(x) == 1) {
             $.music('.')
             let rng = $.dice(16)
@@ -778,9 +779,10 @@ module Dungeon {
                             if (/Y/i.test(xvt.entry)) {
                                 $.sound('portal')
                                 $.animated('fadeOutDown')
-                                xvt.out(xvt.bright, xvt.white, `You vanish `, -400, xvt.normal, `into dungeon `, -300, xvt.faint, xvt.romanize(++deep + 1), ' ... ', -200)
+                                xvt.out(xvt.bright, xvt.white, `You descend `, -400, xvt.normal, `into domain `, -300, xvt.faint, xvt.romanize(++deep + 1), -200, ' ... ', -100)
                                 generateLevel()
-                                xvt.outln(-100)
+                                xvt.drain()
+                                xvt.outln()
                             }
                             else
                                 $.animated('fadeOut')
@@ -1522,7 +1524,7 @@ module Dungeon {
                                 }
                             }
                             menu()
-                        }, prompt: 'Ok (Y/N)? ', cancel: 'N', enter: 'Y', eol: false, match: /Y|N/i, max: 1, timeout: 20
+                        }, prompt: 'Ok (Y/N)? ', cancel: 'Y', enter: 'Y', eol: false, match: /Y|N/i, max: 1, timeout: 20
                     },
                     'weapon': {
                         cb: () => {
@@ -1555,7 +1557,7 @@ module Dungeon {
                                 }
                             }
                             menu()
-                        }, prompt: 'Ok (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 20
+                        }, prompt: 'Ok (Y/N)? ', cancel: 'Y', enter: 'Y', eol: false, match: /Y|N/i, max: 1, timeout: 20
                     }
                 }
 
@@ -2174,7 +2176,8 @@ module Dungeon {
                 X = $.dice(DL.width) - 1
                 ROOM = DL.rooms[Y][X]
             } while (ROOM.type)	//	teleport into a chamber only
-            DL.moves = DL.moves > DL.rooms.length * DL.width ? DL.rooms.length * DL.width : DL.moves - DL.width
+            DL.moves = (DL.moves > DL.rooms.length * DL.width ? DL.rooms.length * DL.width
+                : DL.moves > DL.width ? DL.moves - DL.width : 1) - 1
             DL.exit = false
             return
         }
@@ -2218,6 +2221,7 @@ module Dungeon {
                 for (x = 0; x < DL.width; x++) {
                     let n: number
                     while ((n = $.int(($.dice(4) + $.dice(4)) / 2) - 1) == 3);
+                    if (n == 1 && $.dice(10 - deep) == n) n += 2 - $.dice(3)
                     DL.rooms[y][x].type = (n == 0) ? 'cavern' : (n == 1) ? '' : $.dice(2) == 1 ? 'n-s' : 'w-e'
                 }
             }
