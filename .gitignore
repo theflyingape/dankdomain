@@ -1,7 +1,6 @@
+**/*.js
+**/*.js.*
 **/node_modules/**
-build/*.js
-build/**/*.js.map
-build/door/*.js
 build/door/static/images
 build/door/static/sounds
 build/door/static/bundle.js
