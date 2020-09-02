@@ -244,7 +244,8 @@ module Main {
                                         + opponent.user.steal + +!$.arena + +!$.dungeon
                                     let skill = Math.round($.player.steal * $.online.dex * $.online.int / 10000)
                                     let effort = 100
-                                    effort -= $.Ring.power(opponent.user.rings, $.player.rings, 'steal').power
+                                        - $.Ring.power(opponent.user.rings, $.player.rings, 'steal').power
+                                        + $.Ring.power($.player.rings, opponent.user.rings, 'steal').power
 
                                     for (let pick = 0; pick < $.player.steal; pick++) {
                                         xvt.out('.')
@@ -253,6 +254,7 @@ module Main {
                                             ? $.dice($.player.level + $.player.steal - $.steal)
                                             : lock
                                     }
+                                    xvt.outln(-300)
 
                                     if ($.player.email == opponent.user.email || !$.lock(opponent.user.id)) {
                                         $.player.coward = true

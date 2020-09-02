@@ -777,9 +777,9 @@ module Dungeon {
                             ROOM.occupant = ''
                             xvt.outln()
                             if (/Y/i.test(xvt.entry)) {
-                                $.sound('portal')
                                 $.animated('fadeOutDown')
-                                xvt.out(xvt.bright, xvt.white, `You descend `, -400, xvt.normal, `into domain `, -300, xvt.faint, xvt.romanize(++deep + 1), -200, ' ... ', -100)
+                                $.sound('portal')
+                                xvt.out(xvt.bright, xvt.white, `You descend `, -400, xvt.normal, `into domain `, -300, xvt.faint, xvt.romanize(++deep + 1), ' ... ', -200)
                                 generateLevel()
                                 xvt.drain()
                                 xvt.outln()
