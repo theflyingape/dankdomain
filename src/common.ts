@@ -2157,7 +2157,7 @@ module Common {
             xvt.out(' _(', xvt.bright, '-', xvt.normal, ')_     ', xvt.reset, ' https://npmjs.com    ', xvt.cyan, '  _(', xvt.bright, '-', xvt.normal, ')_ \n')
             xvt.out('(/ ', player.emulation == 'XT' ? xvt.attr(xvt.faint, '⚨', xvt.normal) : ':', ' \\)                          ', xvt.cyan, ' (/ ', player.emulation == 'XT' ? xvt.attr(xvt.faint, '⚨', xvt.normal) : ':', ' \\)\n')
             xvt.out('I\\___/I    ', xvt.green, xvt.app.LGradient, xvt.bright, xvt.Green, xvt.white, `RAH-CoCo's`, xvt.reset, xvt.green, xvt.app.RGradient, xvt.cyan, '     I\\___/I\n')
-            xvt.out('\\/   \\/ ', xvt.reset, '   http://rahcocos.com  ', xvt.cyan, '  \\/   \\/\n')
+            xvt.out('\\/   \\/ ', xvt.reset, '   http://rb.gy/bruelx  ', xvt.cyan, '  \\/   \\/\n')
             xvt.out(' \\ : /                           ', xvt.cyan, '  \\ : / \n')
             xvt.out('  I:I     ', xvt.blue, xvt.app.LGradient, xvt.bright, xvt.Blue, xvt.white, `${player.emulation == 'XT' ? 'ℝ' : 'R'}ober${player.emulation == 'XT' ? 'ƭ ℍ' : 't H'}urs${player.emulation == 'XT' ? 'ƭ' : 't'}`, xvt.reset, xvt.blue, xvt.app.RGradient, xvt.cyan, '      I:I  \n')
             xvt.outln(' .I:I. ', xvt.reset, '   https://www.DDgame.us   ', xvt.cyan, ' .I:I.')
