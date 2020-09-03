@@ -157,6 +157,7 @@ module Square {
 
                 if (ac == 0 && ($.player.toAC < 0 || $.online.toAC < 0)) {
                     xvt.outln(xvt.yellow, 'You look like a leper; go to the hospital for treatment.')
+                    suppress = true
                     break
                 }
 
@@ -541,6 +542,7 @@ module Square {
 
                 if (wc == 0 && ($.player.toWC < 0 || $.online.toWC < 0)) {
                     xvt.outln(xvt.yellow, 'Your hands are broken; go to the hospital for treatment.')
+                    suppress = true
                     break
                 }
 
