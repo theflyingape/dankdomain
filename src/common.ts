@@ -729,7 +729,9 @@ module Common {
             rpc.user.xplevel = rpc.user.level
             return false
         }
+
         reason = ''
+        xvt.drain()
 
         let award = {
             hp: rpc.user.hp,
@@ -865,6 +867,7 @@ module Common {
         xvt.outln(xvt.bright, xvt.yellow, hero, xvt.normal, 'You earn a gift to endow your '
             , xvt.faint, rpc.user.pc, xvt.normal, ' character', xvt.bright, hero, -1000)
         xvt.outln(-500)
+        xvt.drain()
 
         if (rpc.user.maxstr < 97 || rpc.user.maxint < 97 || rpc.user.maxdex < 97 || rpc.user.maxcha < 97)
             xvt.outln(bracket(0, false), xvt.yellow, ' Increase ALL abilities by ', xvt.reset, '+3', -125)

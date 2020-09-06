@@ -223,6 +223,29 @@ module Dungeon {
         }
         if (refresh) drawLevel()
 
+        //  keep it organic relative to class skill + luck with player asset protection
+        let me = $.int((DL.rooms.length * DL.width + $.online.cha)
+            * (.9 + deep / 10) * (1 + Z / 100) * $.online.dex / 100)
+            - DL.moves
+        me *= 1 + ($.Security.name[$.player.security].protection - $.player.level / 9) / 12
+        if (me < ($.online.int + DL.width) / 2) {
+            if (!DL.exit) {
+                DL.exit = true
+                xvt.out(' ', $.player.emulation == 'XT' ? '🏃' : '<<')
+                xvt.outln(xvt.faint, ' find the exit', -100)
+                if ($.dice(deep + 2) == 1) {
+                    $.sound('exit', 12)
+                    xvt.drain()
+                }
+            }
+        }
+        me = me < DL.width ? DL.width - (DL.moves >> 8) : $.int(me)
+        if (me < DL.width) {
+            DL.exit = $.player.coward
+            if (me < 6) $.player.coward = true
+            me = DL.width - +$.player.coward
+        }
+
         //	is a monster spawning needed?
         let x = $.dice(DL.width) - 1, y = $.dice(DL.rooms.length) - 1
         if ($.dice($.online.cha) < Z / (deep + 2)) {
@@ -305,28 +328,7 @@ module Dungeon {
         $.action('dungeon')
         drawHero($.player.blessed ? true : false)
 
-        //  keep it organic relative to class skill + luck with player asset protection
-        x = $.int((DL.rooms.length * DL.width + $.online.cha)
-            * (.9 + deep / 10) * (1 + Z / 100) * $.online.dex / 100)
-            - DL.moves
-        x *= 1 + ($.Security.name[$.player.security].protection - $.player.level / 9) / 12
-        if (x < ($.online.int + DL.width) / 2) {
-            if (!DL.exit) {
-                DL.exit = true
-                if ($.player.emulation == 'XT') xvt.out(' 🏃 ')
-                xvt.outln(xvt.faint, 'find the exit')
-                $.sound('exit', 12)
-                xvt.drain()
-            }
-        }
-        x = x < DL.width ? DL.width - (DL.moves >> 8) : $.int(x)
-        if (x < DL.width) {
-            DL.exit = $.player.coward
-            if (x < 6) $.player.coward = true
-            x = DL.width - +$.player.coward
-        }
-
-        if (DL.moves > DL.width && $.dice(x) == 1) {
+        if (DL.moves > DL.width && $.dice(me) == 1) {
             $.music('.')
             let rng = $.dice(16)
             if (rng > 8) {
@@ -2177,7 +2179,8 @@ module Dungeon {
                 ROOM = DL.rooms[Y][X]
             } while (ROOM.type)	//	teleport into a chamber only
             DL.moves = (DL.moves > DL.rooms.length * DL.width ? DL.rooms.length * DL.width
-                : DL.moves > DL.width ? DL.moves - DL.width : 1) - 1
+                : DL.moves > DL.width ? DL.moves - DL.width : 1)
+                - ($.player.novice ? 20 : 1)
             DL.exit = false
             return
         }
@@ -2204,7 +2207,7 @@ module Dungeon {
                 },
                 exit: false,
                 map: '',
-                moves: 0,
+                moves: $.player.novice ? -maxRow - maxCol : -$.player.wins,
                 rooms: new Array(maxRow),
                 spawn: $.int(deep / 3 + Z / 9 + maxRow / 3) + $.dice(Math.round($.online.cha / 20) + 1) + 3,
                 width: maxCol
@@ -3094,10 +3097,14 @@ module Dungeon {
                 case 'portal':
                     o = a + xvt.attr(xvt.blue)
                     if (!icon)
-                        icon = xvt.attr('v', xvt.bright, xvt.blink, 'V', xvt.noblink, xvt.normal, 'v')
+                        icon = $.tty == 'web'
+                            ? xvt.attr('⌄', xvt.bright, '⋎', xvt.normal, '⌄')
+                            : xvt.attr('v', xvt.bright, xvt.blink, 'V', xvt.noblink, xvt.normal, 'v')
                     else
                         icon += xvt.attr(xvt.blue)
-                    o += xvt.attr(xvt.faint, 'v', xvt.normal, icon, xvt.faint, 'v')
+                    o += $.tty == 'web'
+                        ? xvt.attr(xvt.faint, '⌄', xvt.normal, icon, xvt.faint, '⌄')
+                        : xvt.attr(xvt.faint, 'v', xvt.normal, icon, xvt.faint, 'v')
                     break
 
                 case 'well':
@@ -3120,7 +3127,7 @@ module Dungeon {
                     if (!icon)
                         icon = DL.cleric.sp
                             ? xvt.attr(xvt.normal, xvt.uline, '_', xvt.faint, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
-                            : xvt.attr(xvt.off, xvt.faint, xvt.uline, `_${$.tty == 'web' ? '⚰' : Cleric[$.player.emulation]}_`, xvt.nouline, xvt.normal, xvt.yellow)
+                            : xvt.attr(xvt.off, xvt.faint, xvt.uline, $.tty == 'web' ? '🪦🕱' : `_${Cleric[$.player.emulation]}_`, xvt.nouline, xvt.normal, xvt.yellow)
                     else
                         icon += xvt.attr(xvt.yellow)
                     o += xvt.attr(xvt.faint, ':', xvt.normal, icon, xvt.faint, ':')

@@ -184,7 +184,7 @@ module Logon {
         if ($.player.today > $.access.calls) {
             $.beep()
             xvt.outln(`\nYou played all ${$.access.calls} calls for today.  Please visit again after ${$.now().time < 1200 ? 'noon' : 'midnight'}!`)
-            $.sound('comegain')
+            $.sound('comeagain')
             $.news('', true)
             xvt.hangup()
         }

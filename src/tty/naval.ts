@@ -469,7 +469,8 @@ module Naval {
                     xvt.outln(`You need ${max} hull points of repair.`)
                     cost = Math.round(Math.pow(2, $.player.hull / 150) * 7937)
                     cost = $.int(cost / $.player.hull / 10)
-                    xvt.outln(`Each hull point costs ${new $.coins(cost).carry()}.`)
+                    xvt.outln(`Each hull point costs ${new $.coins(cost).carry()} to repair.`)
+                    if (!max) break
                     afford = $.int($.player.coin.value / cost)
                     if (afford < max)
                         max = afford
