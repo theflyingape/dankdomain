@@ -244,6 +244,7 @@ module Dungeon {
             DL.exit = $.player.coward
             if (me < 6) $.player.coward = true
             me = DL.width - +$.player.coward
+            if ($.player.novice) me <<= 1
         }
 
         //	is a monster spawning needed?

@@ -108,13 +108,11 @@ module Square {
         }
 
         let hints = ''
-        if ($.player.coin.value && $.player.level / 9 > $.Security.name[$.player.security].protection + 1) {
+        if ($.online.hp < $.player.hp)
+            hints += `> You are battle weary.  Heal yourself at the hospital.\n`
+        if ($.player.coin.value && $.int($.player.level / 9) > ($.Security.name[$.player.security].protection + 1))
             hints += `> Alleviate paranoia from bad luck and thieves with better Security.\n`
-            suppress = false
-        }
         if (!suppress) {
-            if ($.online.hp < $.player.hp)
-                hints += `> You are battle weary.  Heal yourself at the hospital.\n`
             if ($.player.coin.value && $.player.poison && !$.player.poisons.length)
                 hints += `> Try buying a poison for your weapon.\n`
             if ($.player.coin.value && $.player.level / 9 > $.RealEstate.name[$.player.realestate].protection + 1)

@@ -2035,7 +2035,7 @@ module Common {
             player.rows = process.stdout.rows
         }
 
-        if (hint && access.roleplay && dice(+player.expert * (player.immortal + 1) * player.level) == 1)
+        if (hint && access.roleplay && dice(+player.expert * (player.immortal + 1) + player.level / 10) == 1)
             xvt.out('\n', xvt.bright, xvt.green, hint, xvt.reset)
 
         //  insert any wall messages here
