@@ -44,7 +44,7 @@
   },
   "homepage": "https://www.DDgame.us",
   "dependencies": {
-    "animate.css": "^4.1.0",
+    "animate.css": "^4.1.1",
     "better-sqlite3": "^7.1.0",
     "chokidar": "^3.4.2",
     "class-validator": "^0.12.2",
