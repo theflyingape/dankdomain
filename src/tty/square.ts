@@ -110,20 +110,18 @@ module Square {
         let hints = ''
         if ($.online.hp < $.player.hp)
             hints += `> You are battle weary.  Heal yourself at the hospital.\n`
+        if ($.player.coin.value && $.player.poison && !$.player.poisons.length)
+            hints += `> Try buying a poison for your weapon.\n`
+        if ($.player.coin.value && $.player.level / 9 > $.RealEstate.name[$.player.realestate].protection + 1)
+            hints += `> Increase your standing with the community by moving into a better dwelling.\n`
+        if (!$.player.coin.value && $.player.bank.value > 100000 && ($.player.poisons.length || $.player.spells.length))
+            hints += `> Carry small pocket change to misdirect thieving of more valuable items\n`
+        if ($.dice(10) == 1 && $.player.loan.value && $.player.steal > 1)
+            hints += `> Perhaps pick a pocket? Or two?\n`
         if ($.player.coin.value && $.int($.player.level / 9) > ($.Security.name[$.player.security].protection + 1))
             hints += `> Alleviate paranoia from bad luck and thieves with better Security.\n`
-        if (!suppress) {
-            if ($.player.coin.value && $.player.poison && !$.player.poisons.length)
-                hints += `> Try buying a poison for your weapon.\n`
-            if ($.player.coin.value && $.player.level / 9 > $.RealEstate.name[$.player.realestate].protection + 1)
-                hints += `> Increase your standing with the community by moving into a better dwelling.\n`
-            if (!$.player.coin.value && $.player.bank.value > 100000 && ($.player.poisons.length || $.player.spells.length))
-                hints += `> Carry small pocket change to misdirect thieving of more valuable items\n`
-            if ($.dice(10) == 1 && $.player.loan.value && $.player.steal > 1)
-                hints += `> Perhaps pick a pocket? Or two?\n`
-            if ($.dice(100) == 1 && $.player.loan.value && $.player.ram && $.player.steal)
-                hints += `> Try using your ram on the bank for big money.\n`
-        }
+        if ($.dice(100) == 1 && $.player.loan.value && $.player.ram && $.player.steal)
+            hints += `> Try using your ram on the bank for big money.\n`
         xvt.app.form['menu'].prompt = $.display('square', xvt.Yellow, xvt.yellow, suppress, square, hints)
         xvt.app.focus = 'menu'
     }
