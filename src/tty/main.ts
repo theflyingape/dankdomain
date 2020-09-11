@@ -239,7 +239,8 @@ module Main {
                                         , xvt.faint, 'the shadows and ', -400
                                         , xvt.white, 'make your attempt ', xvt.blue, -600)
 
-                                    let lock = 5 * ($.Security.name[opponent.user.security].protection + 1)
+                                    let lock = 5 *
+                                        ($.Security.name[opponent.user.security].protection + +(opponent.user.status !== 'jail'))
                                         + $.RealEstate.name[opponent.user.realestate].protection
                                         + opponent.user.steal + +!$.arena + +!$.dungeon
                                     let skill = Math.round($.player.steal * $.online.dex * $.online.int / 10000)
