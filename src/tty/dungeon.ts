@@ -243,7 +243,7 @@ module Dungeon {
         if (me < DL.width) {
             DL.exit = $.player.coward
             if (me < 6) $.player.coward = true
-            me = DL.width - +$.player.coward
+            me = DL.width + 3 - +$.player.coward
             if ($.player.novice) me <<= 1
         }
 
@@ -502,9 +502,10 @@ module Dungeon {
                 return
 
             case 'Y':
+                xvt.drain()
                 xvt.outln()
                 Battle.yourstats(false)
-                DL.exit = false
+                DL.exit = $.dice(3 + +$.online.adept - +$.player.novice) - 1 ? true : false
                 break
 
             case 'N':
@@ -1318,7 +1319,7 @@ module Dungeon {
                     $.profile({ jpg: 'npc/rip', effect: 'fadeInUp' })
                     xvt.outln(xvt.yellow, 'You find the ', xvt.white, 'bones'
                         , xvt.yellow, ' of an ', xvt.faint, 'old cleric', xvt.normal, '.', -600)
-                    if ($.player.emulation == 'XT') xvt.out('⚰️ ')
+                    if ($.player.emulation == 'XT') xvt.out(' 🪦 🕱 ')
                     xvt.outln('You pray for him.')
                     DL.exit = false
                     break
@@ -3128,7 +3129,7 @@ module Dungeon {
                     if (!icon)
                         icon = DL.cleric.sp
                             ? xvt.attr(xvt.normal, xvt.uline, '_', xvt.faint, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
-                            : xvt.attr(xvt.off, xvt.faint, xvt.uline, $.tty == 'web' ? '🪦🕱' : `_${Cleric[$.player.emulation]}_`, xvt.nouline, xvt.normal, xvt.yellow)
+                            : xvt.attr(xvt.off, xvt.faint, xvt.uline, $.tty == 'web' ? '⛼🕱⛼' : `_${Cleric[$.player.emulation]}_`, xvt.nouline, xvt.normal, xvt.yellow)
                     else
                         icon += xvt.attr(xvt.yellow)
                     o += xvt.attr(xvt.faint, ':', xvt.normal, icon, xvt.faint, ':')
