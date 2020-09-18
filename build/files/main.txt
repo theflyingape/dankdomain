@@ -3,7 +3,7 @@
    +                --   Dank Domain Main Command Menu   --                +
 -=[-]=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=[-]=-
    : {A} Arena: Fight and Joust            {D} Deep Dank Dungeon           :
-   : {G} Gambling Casino                   {L} List of Top Users & Winners :
+   : {G} Gambling Casino                   {L} Library: Halls of History   :
    : {M} Most Wanted List                  {N} Naval Battles/Fishing       :
    : {P} Party/Gang Wars                   {R} Rob/Burglarize other users  :
    : {S} Public Square (Shops, etc.)       {T} Tiny's Tavern               :
