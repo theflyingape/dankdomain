@@ -1,7 +1,10 @@
+# 👑 Ɗanƙ Ɗomaiƞ: the return of Hack & Slash    [ https://www.DDgame.us ]
+# Dockerfile authored by: Robert Hurst <theflyingape@gmail.com>
+#
 # docker build -t ddgame .
 FROM centos:8
-MAINTAINER Robert Hurst <theflyingape@gmail.com>
 EXPOSE 1939
+EXPOSE 1986
 
 ENV LANG=C.UTF-8
 RUN dnf -y upgrade-minimal
