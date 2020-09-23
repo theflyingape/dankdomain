@@ -2054,7 +2054,8 @@ module Common {
                 cb: () => {
                     if (isNotEmpty(xvt.entry) && xvt.entry.length == 2) xvt.app.emulation = <xvt.emulator>xvt.entry.toUpperCase()
                     player.emulation = <EMULATION>xvt.app.emulation
-                    xvt.outln('\n\n', xvt.reset, xvt.magenta, xvt.app.LGradient, xvt.reverse, 'BANNER', xvt.noreverse, xvt.app.RGradient)
+                    xvt.outln(`@title(${player.emulation})`)
+                    xvt.outln('\n', xvt.reset, xvt.magenta, xvt.app.LGradient, xvt.reverse, 'BANNER', xvt.noreverse, xvt.app.RGradient)
                     xvt.outln(xvt.red, 'R', xvt.green, 'G', xvt.blue, 'B', xvt.reset, xvt.bright, ' bold ', xvt.normal, 'normal', xvt.blink, ' flash ', xvt.noblink, xvt.faint, 'dim')
                     xvt.out(xvt.yellow, 'Cleric: ', xvt.bright, { VT: '\x1B(0\x7D\x1B(B', PC: '\x9C', XT: '✟', dumb: '$' }[player.emulation]
                         , xvt.normal, xvt.magenta, '  Teleport: ', xvt.bright, { VT: '\x1B(0\x67\x1B(B', PC: '\xF1', XT: '↨', dumb: '%' }[player.emulation])
@@ -2065,7 +2066,6 @@ module Common {
                         cb()
                         return
                     }
-                    xvt.out(`@title(${player.emulation})`)
                     xvt.outln(-2200)
                     beep()
                     if (process.stdout.rows && process.stdout.rows !== player.rows)

@@ -118,10 +118,10 @@ function message(term: pty.IPty, data: string, classic = true): string {
         function play(fileName) { }
         function profile(panel) { }
         function title(name) {
-            let b4 = sessions[pid].encoding
+            let b4 = sessions[pid].encoding || 'utf8'
             sessions[pid].encoding = name == 'XT' ? 'utf8' : 'ascii'
             if (sessions[pid].encoding !== b4)
-                console.log(`CLASSIC session ${pid} encoding switched from ${b4} to ${name}`)
+                console.log(`CLASSIC session ${pid} encoding switched from ${b4} to ${sessions[pid].encoding}`)
         }
         function tune(fileName) { }
         function wall(msg) {
