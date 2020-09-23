@@ -1,8 +1,8 @@
-[mDate: [1;33mTue 28-Jul-2020  1:00pm
+[mDate: [1;33mTue 22-Sep-2020  5:25pm
 [mFrom: [1;33mMaester
 [1;37m
-Genko dominates!  OK, there were some esoteric exploits in the game discovered.
-I patched up a few holes that should make for less 'free' rides and the correct
-outcomes with all Teleport attempts.
+Those running 'PC' emulators should see the Main Menu corrected without any
+Unicode characters.  Post Facebook screenshot if you find other places that
+can use compatible character encoding, thanks.
 
 Happy hunting!

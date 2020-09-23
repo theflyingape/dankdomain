@@ -1970,7 +1970,8 @@ module Common {
 
     export function cat(filename: string): boolean {
         const folder = './files/'
-        let path = folder + filename + (xvt.app.emulation.match('PC|XT') ? '.ans' : '.txt')
+        let path = folder + filename
+            + (xvt.app.emulation == 'PC' ? '.ibm' : xvt.app.emulation == 'XT' ? '.ans' : '.txt')
 
         try {
             fs.accessSync(path, fs.constants.F_OK)
@@ -2064,6 +2065,7 @@ module Common {
                         cb()
                         return
                     }
+                    xvt.out(`@title(${player.emulation})`)
                     xvt.outln(-2200)
                     beep()
                     if (process.stdout.rows && process.stdout.rows !== player.rows)

@@ -77,6 +77,7 @@ function login(client: string, rows: number, cols: number, emulator: EMULATION):
     broadcasts[pid] = ''
     sessions[pid] = term
     sessions[pid].client = client
+    sessions[pid].encoding = emulator == 'XT' ? 'utf8' : 'ascii'
     //  buffer any initial output from forked process
     //  between this post and ensuing client wss connection
     sessions[pid].spawn = term.onData((data) => {
@@ -116,7 +117,12 @@ function message(term: pty.IPty, data: string, classic = true): string {
         function animated(effect) { }
         function play(fileName) { }
         function profile(panel) { }
-        function title(name) { }
+        function title(name) {
+            let b4 = sessions[pid].encoding
+            sessions[pid].encoding = name == 'XT' ? 'utf8' : 'ascii'
+            if (sessions[pid].encoding !== b4)
+                console.log(`CLASSIC session ${pid} encoding switched from ${b4} to ${name}`)
+        }
         function tune(fileName) { }
         function wall(msg) {
             broadcast(pid, msg)
@@ -190,13 +196,13 @@ dns.lookup(network.address, (err, addr, family) => {
             })
 
             term.spawn.dispose()
-            if (term.startup) try { socket.write(term.startup) } catch { }
+            if (term.startup) try { socket.write(term.startup, term.encoding) } catch { }
 
             //  app --> telnet client
             term.onData((data) => {
                 let msg = message(term, data)
                 try {
-                    socket.write(msg)
+                    socket.write(msg, term.encoding)
                 } catch (err) {
                     console.log(`${err.message} for session ${pid}`)
                 }
