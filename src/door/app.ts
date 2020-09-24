@@ -550,7 +550,7 @@ dns.lookup(network.address, (err, addr, family) => {
             //  app --> browser client
             let lurk = term.onData((data) => {
                 try {
-                    browser.send(data)
+                    browser.send(new TextDecoder().decode(data))
                 } catch (ex) {
                     if (term.pid)
                         console.log(`?FATAL session ${term.pid}${player} lurker/ws error: ${ex.message}`)
