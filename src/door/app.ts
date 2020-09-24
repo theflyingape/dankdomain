@@ -47,7 +47,7 @@ let broadcasts = {}
 let latest = { now: 0, msg: '' }
 
 function broadcast(pid: number, msg: string) {
-    const line = `\r\n\x1B[0;36m\u00B7\x1B[1m${msg}\x1B[m`
+    const line = `\r\n\x1B[0;36m~ \x1B[1m${msg}\x1B[m`
 
     //  buffer up to the latest 2-minutes of activity
     let now = new Date().getTime()
@@ -70,7 +70,8 @@ function login(client: string, rows: number, cols: number, emulator: EMULATION):
         cols: cols,
         rows: rows,
         cwd: __dirname,
-        env: process.env
+        env: process.env,
+        encoding: null
     })
 
     let pid: number = term.pid
@@ -88,15 +89,16 @@ function login(client: string, rows: number, cols: number, emulator: EMULATION):
     return pid
 }
 
-function message(term: pty.IPty, data: string, classic = true): string {
-    let msg = data + ''
+function message(term: pty.IPty, msg: Uint8Array, classic = true): Uint8Array {
+    //let msg = data + ''
     let pid: number = term.pid
 
     //  inspect for app's ACK ...
-    let ack = msg.indexOf('\x06')
+    let ack = msg.indexOf(0x06)
     //  ... to appropriately replace it with any pending broadcast message(s)
     if (broadcasts[term.pid] && ack >= 0) {
-        msg = `${msg.substr(0, ack)}${broadcasts[term.pid]}\n${msg.substr(ack)}`
+        let wall = new TextEncoder().encode(broadcasts[term.pid] + '\n')
+        msg = new Uint8Array([...msg.slice(0, ack), ...wall, ...msg.slice(ack)])
         broadcasts[term.pid] = ''
     }
 
@@ -108,9 +110,9 @@ function message(term: pty.IPty, data: string, classic = true): string {
         let search = new RegExp(re, 'g'); let replace = new RegExp(re)
         let match: RegExpMatchArray
         while (match = search.exec(copy)) {
-            let x = replace.exec(msg)
+            let x = replace.exec(msg.toString())
             let s = x.index, e = s + x[0].length
-            msg = msg.substr(0, s) + msg.substr(e)
+            msg = new Uint8Array([...msg.slice(0, s), ...msg.slice(e)])
             eval(`${match[1]}(match[2])`)
         }
         function action(menu) { }
@@ -124,8 +126,8 @@ function message(term: pty.IPty, data: string, classic = true): string {
                 console.log(`CLASSIC session ${pid} encoding switched from ${b4} to ${sessions[pid].encoding}`)
         }
         function tune(fileName) { }
-        function wall(msg) {
-            broadcast(pid, msg)
+        function wall(notify) {
+            broadcast(pid, notify)
         }
     }
 
@@ -199,6 +201,7 @@ dns.lookup(network.address, (err, addr, family) => {
             if (term.startup) try { socket.write(term.startup, <BufferEncoding>term.encoding) } catch { }
 
             //  app --> telnet client
+            //term.pipe(socket)
             term.onData((data) => {
                 let msg = message(term, data)
                 try {
@@ -249,6 +252,7 @@ dns.lookup(network.address, (err, addr, family) => {
                 }
             })
 
+            //  telnet client --> app
             telnet.on('data', (buff) => {
                 let data = buff.toString().replace(/\x00/g, '')
                 try {
@@ -434,11 +438,10 @@ dns.lookup(network.address, (err, addr, family) => {
 
         app.post(`${network.path}player/:pid/wall`, function (req, res) {
             let pid = parseInt(req.params.pid)
-            let msg = req.query.msg
+            let msg = req.query.msg + ''
             let term = sessions[pid]
             if (!term) return
-
-            broadcast(pid, msg.toString())
+            broadcast(pid, msg)
 
             res.end()
         })
@@ -491,7 +494,7 @@ dns.lookup(network.address, (err, addr, family) => {
             term.onData((data) => {
                 let msg = message(term, data, false)
                 try {
-                    browser.send(msg)
+                    browser.send(new TextDecoder().decode(msg))
                 } catch (ex) {
                     if (term.pid) {
                         console.log(`?FATAL ACTIVE app session ${term.pid} pty -> ws error:`, ex.message)

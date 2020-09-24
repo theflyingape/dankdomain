@@ -1975,7 +1975,7 @@ module Common {
 
         try {
             fs.accessSync(path, fs.constants.F_OK)
-            xvt.outln(fs.readFileSync(path), xvt.white)
+            xvt.outln(fs.readFileSync(path, xvt.app.emulation == 'XT' ? 'utf8' : 'binary'), xvt.white)
             return true
         } catch (e) {
             if (xvt.app.emulation.match('PC|XT')) {

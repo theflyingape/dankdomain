@@ -33,8 +33,8 @@ let tbt = 1
 if (window.addEventListener)
     window.addEventListener("message", receive, false)
 /*	else {
-	if (window.attachEvent)
-		window.attachEvent("onmessage", receive, false)
+    if (window.attachEvent)
+        window.attachEvent("onmessage", receive, false)
 }
 */
 
@@ -398,6 +398,7 @@ function XT(data) {
     function wall(msg) {
         if (!pid) return
         let url = `${app}/player/${pid}/wall?msg=${msg}`
+        console.log(msg)
         fetch(url, { method: 'POST' })
     }
 }
