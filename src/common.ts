@@ -2434,6 +2434,17 @@ module Common {
             }
 
             if (isActive(rpc)) activate(rpc)
+
+            //  restore NPC to static state
+            if (user.id[0] == '_' && user.id !== "_SYS") {
+                let npc = <user>{ id: user.id }
+                Object.assign(npc, JSON.parse(fs.readFileSync(`./users/${{ "_BAR": "barkeep", "_DM": "merchant", "_NEP": "neptune", "_OLD": "seahag", "_TAX": "taxman" }[user.id]}.json`).toString()))
+                Object.assign(rpc.user, npc)
+                reroll(rpc.user, rpc.user.pc, rpc.user.level)
+                Object.assign(rpc.user, npc)
+                saveUser(rpc)
+            }
+
             return true
         }
         else {

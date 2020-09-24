@@ -282,16 +282,17 @@ module Tavern {
                             `"Never rub another man\'s rhubarb!"`][$.dice(3) - 1], -3000)
 
                         $.loadUser($.barkeep)
-                        $.barkeep.toWC += $.Weapon.merchant.length - $.barkeep.weapon.wc
-                        $.barkeep.toAC += $.Armor.merchant.length - $.barkeep.armor.ac
-                        $.barkeep.user.spells = JSON.parse(fs.readFileSync('./users/barkeep.json').toString()).spells
+                        let trophy = JSON.parse(fs.readFileSync(`./files/tavern/trophy.json`).toString())
+                        $.Weapon.equip($.barkeep, trophy.weapon)
+                        $.barkeep.user.toWC = $.int(trophy.toWC, true)
+                        if ($.barkeep.weapon.wc < $.Weapon.merchant.length)
+                            $.barkeep.toWC += $.int(($.Weapon.merchant.length - $.barkeep.weapon.wc) / 10) + 1
+
                         xvt.outln(`\n${$.barkeep.user.handle} towels ${$.PC.who($.barkeep).his}hands dry from washing the day\'s\nglasses, ${$.PC.who($.barkeep).he}warns,\n`)
                         xvt.outln(xvt.bright, xvt.green, '"Another fool said something like that to me, once, and got all busted up."\n', -5000)
-                        let fool = <active>{ user: { id: $.barkeep.user.status, gender: 'M' } }
-                        if ($.barkeep.user.status) {
-                            $.loadUser(fool)
-                            xvt.outln(xvt.bright, xvt.green, `"I think it was ${fool.user.handle}, and it took me a week to clean up the blood!"\n`, -4000)
-                        }
+                        let fool = <active>{ user: { id: trophy.who, handle: 'a pirate', gender: 'M' } }
+                        $.loadUser(fool)
+                        xvt.outln(xvt.bright, xvt.green, `"I think it was ${fool.user.handle}, and it took me a week to clean up the blood!"\n`, -4000)
 
                         $.music('tiny')
                         xvt.out(`${$.PC.who($.barkeep).He}points to a buffed weapon hanging over the mantlepiece and says, `

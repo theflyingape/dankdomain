@@ -4,6 +4,7 @@
 \*****************************************************************************/
 
 import $ = require('./common')
+import fs = require('fs')
 import xvt = require('xvt')
 import { isArray, isBoolean, isDefined } from 'class-validator'
 import { sprintf } from 'sprintf-js'
@@ -87,7 +88,12 @@ module Battle {
 
         if ($.from == 'Tavern') {
             if ($.online.hp < 1) {
-                $.barkeep.user.weapon = $.player.weapon
+                let trophy = {
+                    who: $.player.id,
+                    weapon: $.player.weapon,
+                    toWC: $.player.toWC
+                }
+                fs.writeFileSync('./files/tavern/trophy.json', JSON.stringify(trophy))
                 $.Weapon.equip($.online, $.Weapon.merchant[0])
                 $.saveUser($.player)
                 $.reason = `schooled by ${$.barkeep.user.handle}`
@@ -96,7 +102,7 @@ module Battle {
                 SET kills=kills+1, status='${$.player.id}', weapon='${$.barkeep.user.weapon}'
                 WHERE id='${$.barkeep.user.id}'`)
 
-                xvt.outln(`He picks up your ${$.PC.weapon()} and triumphantly waves it around to`)
+                xvt.outln(`He picks up your ${trophy.weapon} and triumphantly waves it around to`)
                 xvt.outln(`the cheering crowd.  He struts toward the mantelpiece to hang his new trophy.\n`)
                 $.sound('winner', 32)
                 xvt.outln('  ', xvt.bright, xvt.green, '"Drinks are on the house!"', -2250)
