@@ -191,9 +191,10 @@ module Logon {
 
         xvt.ondrop = $.logoff
 
-        if (/^([1][0]|[1][2][7]|[1][7][2]|[1][9][2])[.]/.test($.remote)
-            || !isIP($.remote))
-            $.whereis += ' 🖥 '
+        if (/^([1][0]|[1][2][7]|[1][7][2]|[1][9][2])[.]/.test($.remote) || !isIP($.remote)) {
+            if ($.player.emulation == 'XT')
+                $.whereis += ' 🖥 '
+        }
         else try {
             const apikey = `./etc/ipstack.key`
             fs.accessSync(apikey, fs.constants.F_OK)
