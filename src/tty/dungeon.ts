@@ -661,7 +661,7 @@ module Dungeon {
                     if (ROOM.monster[n].user.xplevel > 0)
                         xvt.out(`and it doesn't look friendly.`, -50)
                     else
-                        xvt.out('and it looks harmless, for now.', -100)
+                        xvt.out('and it looks harmless', -100, ', for now.', -50)
                 }
                 else {
                     xvt.outln(`and it's `, xvt.yellow, xvt.bright
@@ -674,6 +674,7 @@ module Dungeon {
                     ROOM.monster[n].user.xplevel = x > 1 ? 1 : x
                     party.push(ROOM.monster[n])
                     xvt.out(' to join ', ['you', 'your party'][+(party.length > 2)], ' in '
+                        , [xvt.white, xvt.cyan, xvt.red][ROOM.monster[n].user.xplevel + 1]
                         , ['spirit ... ', 'defense.', 'arms!'][ROOM.monster[n].user.xplevel + 1], -300)
                     ROOM.monster.splice(n, 1)
                 }

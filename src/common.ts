@@ -1501,7 +1501,7 @@ module Common {
             user.rows = process.stdout.rows || 24
             user.remote = ''
             user.novice = isEmpty(user.id) && user.gender !== 'I'
-            user.gang = ''
+            user.gang = user.gang || ''
             user.wins = 0
             user.immortal = 0
 
