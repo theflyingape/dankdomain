@@ -1,4 +1,4 @@
-[mDate: [1;33mTue 23-Sep-2020  8:00am
+[mDate: [1;33mWed 23-Sep-2020  8:00am
 [mFrom: [1;33mMaester
 [1;37m
 Those running 'PC' emulators should see the Main Menu corrected without any

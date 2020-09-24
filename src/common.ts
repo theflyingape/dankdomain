@@ -2009,7 +2009,7 @@ module Common {
         menu['Q'] = {}  //  Q=Quit
         if (!suppress) {
             clear()
-            if (!cat(title)) {
+            if (!cat(`${title}/menu`)) {
                 xvt.out('    ')
                 if (back)
                     xvt.out(fore, '--=:))', xvt.app.LGradient,

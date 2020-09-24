@@ -146,7 +146,7 @@ module Party {
                                 $.online.altered = true
                                 xvt.outln()
                                 $.saveGang(g, true)
-                                $.cat('gang')
+                                $.cat('party/gang')
                                 $.sound('click', 20)
                                 menu()
                             }
@@ -261,7 +261,7 @@ module Party {
                                         g.members.push($.player.id)
                                     $.run(`UPDATE Gangs SET members = '${g.members.join()}' WHERE name = '${g.name}'`)
                                     xvt.outln('\n')
-                                    $.cat('gang')
+                                    $.cat('party/gang')
                                     $.sound('click', 12)
                                     xvt.outln(xvt.cyan, 'You are now a member of ', xvt.bright, g.name, xvt.normal, '.', -1200)
                                 }

@@ -17,7 +17,7 @@ module Main {
         'A': { description: 'Arena: Fight and Joust' },
         'D': { description: 'Deep Dank Dungeon' },
         'G': { description: 'Gambling Casino' },
-        'L': { description: 'List of Top Users: Fame & Lame' },
+        'L': { description: 'Library: Halls of History' },
         'M': { description: 'Most Wanted List' },
         'N': { description: 'Naval Adventures' },
         'P': { description: 'Party/Gang Wars' },
@@ -450,7 +450,7 @@ module Main {
 
             case 'Z':
                 xvt.out(xvt.bright, xvt.green, '\n')
-                $.cat('system')
+                $.cat('main/system')
                 $.action('ny')
                 xvt.app.form = {
                     'yn': {
