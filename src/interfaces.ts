@@ -182,6 +182,7 @@ interface access {
     calls: number
     minutes: number
     promote: number
+    message?: string
     verify: boolean
     roleplay: boolean
     sysop?: boolean

@@ -168,7 +168,7 @@ module Logon {
             //  old school BBS tactic (usually 5 minutes) for Millennials to experience
             let t = $.now().time
             t = 1440 * ($.now().date - $.player.lastdate) + 60 * $.int(t / 100) + (t % 100) - (60 * $.int($.player.lasttime / 100) + ($.player.lasttime % 100))
-            if (!$.access.sysop && $.player.novice && t < 2) {
+            if (!$.access.sysop && $.player.novice && $.player.calls < 5 && t < 2) {
                 $.access.roleplay = false; $.news('', true)
                 xvt.beep()
                 xvt.outln('\nYou were last on just ', t == 1 ? 'a minute' : t.toString() + ' minutes', ' ago.')

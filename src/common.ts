@@ -519,10 +519,11 @@ module Common {
             }
         }
 
-        who(pc: active, mob = false): who {
-            const gender = pc === online ? 'U' : pc.user.gender
-            const Handle = `${gender == 'I' && from !== 'Party' ? 'The ' : ''}${pc.user.handle}`
-            const handle = `${gender == 'I' && from !== 'Party' ? 'the ' : ''}${pc.user.handle}`
+        who(pc: active | user, mob = false): who {
+            let user: user = isActive(pc) ? pc.user : pc
+            const gender = pc === online ? 'U' : user.gender
+            const Handle = `${gender == 'I' && from !== 'Party' ? 'The ' : ''}${user.handle}`
+            const handle = `${gender == 'I' && from !== 'Party' ? 'the ' : ''}${user.handle}`
             //  if there are multiple PCs engaged on a side (mob), replace pronouns for clarification
             return {
                 He: `${{ M: mob ? Handle : 'He', F: mob ? Handle : 'She', I: mob ? Handle : 'It', U: 'You' }[gender]} `,
@@ -759,8 +760,14 @@ module Common {
                     , Access.name[king.access][king.sex], ' the ', king.access.toLowerCase()
                     , ', ', xvt.bright, king.handle, xvt.normal
                     , ', is pleased with your accomplishments\n'
-                    , 'and promotes you to', xvt.bright, an(rpc.user.access), xvt.normal, '!', -500)
-                xvt.outln(-500)
+                    , `and ${PC.who(king).he}promotes you to`, xvt.bright, an(rpc.user.access), xvt.normal, '!', -2000)
+                if (Access.name[rpc.user.access].message)
+                    xvt.outln(xvt.yellow, `${PC.who(king).He}whispers, `, xvt.reset, xvt.faint, `"${eval('`' + Access.name[rpc.user.access].message + '`')}"`, -2000)
+                let nme = PC.encounter(`AND id NOT GLOB '_*' AND id != '${king.id}'`)
+                xvt.outln(`The mob goes crazy`, -500, nme.user.id
+                    ? `, except for ${nme.user.handle} seen buffing ${nme.who.his}${PC.weapon(nme)}`
+                    : `!!`, -2000)
+                xvt.outln([`${taxman.user.handle} nods an approval.`, `${barkeep.user.handle} slaughters a pig for tonight's feast.`, `${king.handle} gives you a hug.`, `${Access.name[king.access][king.sex]}'s guard salute you.`, `${king.handle} orders ${PC.who(king).his} Executioner to hang ${player.level} prisoners in your honor.`][dice(5) - 1], -2000)
                 news(`\tpromoted to ${rpc.user.access}`)
                 wall(`promoted to ${rpc.user.access}`)
                 xvt.sessionAllowed += 300
@@ -2299,6 +2306,8 @@ module Common {
         Object.assign(barkeep.user, npc)
         saveUser(barkeep, true)
     }
+    loadUser(barkeep)
+
     //  customize the Master at Arms NPC
     npc = <user>{}
     Object.assign(npc, JSON.parse(fs.readFileSync(`${users}/merchant.json`).toString()))
@@ -2311,6 +2320,8 @@ module Common {
         Object.assign(dwarf.user, npc)
         saveUser(dwarf, true)
     }
+    loadUser(dwarf)
+
     //  customize the Big Kahuna NPC
     npc = <user>{}
     Object.assign(npc, JSON.parse(fs.readFileSync(`${users}/neptune.json`).toString()))
@@ -2323,6 +2334,8 @@ module Common {
         Object.assign(neptune.user, npc)
         saveUser(neptune, true)
     }
+    loadUser(neptune)
+
     //  customize the Queen B NPC
     npc = <user>{}
     Object.assign(npc, JSON.parse(fs.readFileSync(`${users}/seahag.json`).toString()))
@@ -2335,6 +2348,8 @@ module Common {
         Object.assign(seahag.user, npc)
         saveUser(seahag, true)
     }
+    loadUser(seahag)
+
     //  customize the Master of Coin NPC
     npc = <user>{}
     Object.assign(npc, JSON.parse(fs.readFileSync(`${users}/taxman.json`).toString()))
@@ -2347,6 +2362,8 @@ module Common {
         Object.assign(taxman.user, npc)
         saveUser(taxman, true)
     }
+    loadUser(taxman)
+
     //  instantiate bot(s)
     let i = 0
     while (++i) {
