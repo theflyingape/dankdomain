@@ -132,7 +132,7 @@ module Logon {
             return
         }
 
-        if ($.tty = 'telnet') xvt.out(`@title(${$.player.emulation})`)
+        if ($.tty == 'telnet') xvt.out(`@title(${$.player.emulation})`)
         $.news(`${$.player.handle} ${$.access.emoji} arrived in ${$.whereis} at ${$.time($.now().time)} as a level ${$.player.level} ${$.player.pc}:`)
         let rs = $.query(`SELECT * FROM Online`)
         for (let row = 0; row < rs.length; row++) {
