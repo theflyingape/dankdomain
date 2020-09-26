@@ -3094,35 +3094,31 @@ module Dungeon {
             switch (room.occupant) {
                 case 'trapdoor':
                     if (identify && !icon)
-                        o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lblack, '⛋') : xvt.attr(xvt.reset, xvt.faint, '?')}  `)
+                        o = xvt.attr(`  ${$.player.emulation == 'XT' ? xvt.attr(xvt.lblack, '⛋') : xvt.attr(xvt.reset, xvt.faint, '?')}  `)
                     break
 
                 case 'portal':
                     o = a + xvt.attr(xvt.blue)
                     if (!icon)
-                        icon = $.tty == 'web'
-                            ? xvt.attr('⌄', xvt.bright, '⋎', xvt.normal, '⌄')
-                            : xvt.attr('v', xvt.bright, xvt.blink, 'V', xvt.noblink, xvt.normal, 'v')
+                        icon = xvt.attr('v', xvt.bright, xvt.blink, 'V', xvt.noblink, xvt.normal, 'v')
                     else
                         icon += xvt.attr(xvt.blue)
-                    o += $.tty == 'web'
-                        ? xvt.attr(xvt.faint, '⌄', xvt.normal, icon, xvt.faint, '⌄')
-                        : xvt.attr(xvt.faint, 'v', xvt.normal, icon, xvt.faint, 'v')
+                    o += xvt.attr(xvt.faint, 'v', xvt.normal, icon, xvt.faint, 'v')
                     break
 
                 case 'well':
                     if (identify && !icon)
-                        o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lblue, '⛃', xvt.reset) : xvt.attr(xvt.blue, xvt.bright, '*')}  `)
+                        o = xvt.attr(`  ${$.player.emulation == 'XT' ? xvt.attr(xvt.lblue, '⛃', xvt.reset) : xvt.attr(xvt.blue, xvt.bright, '*')}  `)
                     break
 
                 case 'wheel':
                     if (identify && !icon)
-                        o = xvt.attr(`  ${$.tty == 'web' ? xvt.attr(xvt.lmagenta, '࿋', xvt.reset) : xvt.attr(xvt.magenta, xvt.bright, '@')}  `)
+                        o = xvt.attr(`  ${$.player.emulation == 'XT' ? xvt.attr(xvt.lmagenta, '࿋', xvt.reset) : xvt.attr(xvt.magenta, xvt.bright, '@')}  `)
                     break
 
                 case 'thief':
                     if ((DL.map == `Marauder's map` || $.player.steal == 4) && !icon)
-                        o = xvt.attr(xvt.off, xvt.faint, `  ${$.tty == 'web' ? '∞' : '&'}  `)
+                        o = xvt.attr(xvt.off, xvt.faint, `  ${$.player.emulation == 'XT' ? '∞' : '&'}  `)
                     break
 
                 case 'cleric':
@@ -3130,7 +3126,7 @@ module Dungeon {
                     if (!icon)
                         icon = DL.cleric.sp
                             ? xvt.attr(xvt.normal, xvt.uline, '_', xvt.faint, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
-                            : xvt.attr(xvt.off, xvt.faint, xvt.uline, $.tty == 'web' ? '⛼🕱⛼' : `_${Cleric[$.player.emulation]}_`, xvt.nouline, xvt.normal, xvt.yellow)
+                            : xvt.attr(xvt.off, xvt.faint, xvt.uline, $.player.emulation == 'XT' ? '⛼🕱⛼' : `_${Cleric[$.player.emulation]}_`, xvt.nouline, xvt.normal, xvt.yellow)
                     else
                         icon += xvt.attr(xvt.yellow)
                     o += xvt.attr(xvt.faint, ':', xvt.normal, icon, xvt.faint, ':')
@@ -3147,7 +3143,7 @@ module Dungeon {
 
                 case 'dwarf':
                     if (identify && !icon)
-                        o = a + xvt.attr(xvt.yellow, `  ${$.tty == 'web' ? '⚘' : '$'}  `)
+                        o = a + xvt.attr(xvt.yellow, `  ${$.player.emulation == 'XT' ? '⚘' : '$'}  `)
                     break
             }
         }

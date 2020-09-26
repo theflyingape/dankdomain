@@ -332,7 +332,7 @@ module Arena {
                         return
                     }
                     xvt.out(`is a level ${opponent.user.level} ${opponent.user.pc}`)
-                    if ($.tty == 'web') xvt.out(' ', opponent.pc.color || xvt.white, opponent.pc.unicode, xvt.reset)
+                    if ($.player.emulation == 'XT') xvt.out(' ', opponent.pc.color || xvt.white, opponent.pc.unicode, xvt.reset)
                     if (opponent.user.level !== opponent.user.xplevel)
                         xvt.out(' ', $.bracket(opponent.user.xplevel, false))
                     xvt.outln()
@@ -542,7 +542,7 @@ module Arena {
             })
 
             xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}`)
-            if ($.tty == 'web') xvt.out(' ', monster.pc.color || xvt.white, monster.pc.unicode)
+            if ($.player.emulation == 'XT') xvt.out(' ', monster.pc.color || xvt.white, monster.pc.unicode)
             xvt.outln()
             $.PC.wearing(monster)
 

@@ -86,7 +86,7 @@ module Square {
                         $.log(bump.user.id, `\nYou lifted a vial of ${$.Poison.merchant[p - 1]} from ${$.player.handle}!`)
                         $.sound('oops', 8)
                         xvt.out(xvt.reset, '  Your vial of ')
-                        if ($.tty == 'web') xvt.out('💀 ')
+                        if ($.player.emulation == 'XT') xvt.out('💀 ')
                         xvt.outln(xvt.faint, $.Poison.merchant[p - 1], xvt.reset, ' goes missing!')
                     }
                     else if ($.player.magic < 3 && $.player.spells.length) {

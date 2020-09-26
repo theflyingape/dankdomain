@@ -496,7 +496,7 @@ module Common {
             for (let i in profile.user.rings) {
                 let ring = profile.user.rings[i]
                 xvt.out(xvt.cyan, player.emulation == 'XT' ? '⍤' : xvt.app.Empty, ' ', xvt.bright, ring, xvt.normal, ' ')
-                if (tty == 'web') xvt.out(Ring.name[ring].emoji, '💍')
+                if (player.emulation == 'XT') xvt.out(Ring.name[ring].emoji, '💍')
                 xvt.outln('ring:', xvt.reset, ' can ', Ring.name[ring].description, -100)
             }
         }
@@ -514,7 +514,7 @@ module Common {
                 let ring = profile.user.rings[i]
                 if (!+i) xvt.outln()
                 xvt.out(this.who(profile).He, 'has ', xvt.cyan, xvt.bright, ring, xvt.normal)
-                if (tty == 'web') xvt.out(' ', Ring.name[ring].emoji)
+                if (player.emulation == 'XT') xvt.out(' ', Ring.name[ring].emoji)
                 xvt.outln(' powers ', xvt.reset, 'that can ', Ring.name[ring].description, -100)
             }
         }
@@ -1872,7 +1872,7 @@ module Common {
                     }
                     if (attempt == combo[slot]) {
                         sound('max')
-                        if (tty == 'web') xvt.out('🔓 ')
+                        if (player.emulation == 'XT') xvt.out('🔓 ')
                         xvt.outln(xvt.cyan, '{', xvt.bright, 'Click!', xvt.normal, '}')
 
                         player.pc = Object.keys(PC.name['immortal'])[slot]
@@ -1896,7 +1896,7 @@ module Common {
                     }
                     else {
                         sound('thunder')
-                        if (tty == 'web') xvt.out('💀 ')
+                        if (player.emulation == 'XT') xvt.out('💀 ')
                         xvt.outln(xvt.bright, xvt.black, '^', xvt.white, 'Boom!', xvt.black, '^')
 
                         if (slot == 0) {

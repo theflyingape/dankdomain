@@ -2163,7 +2163,7 @@ module Battle {
                                 }
 
                                 if (3 * (WC + toWC + 1) / skill > $.online.weapon.wc)
-                                    xvt.out(xvt.yellow, ' ', $.tty == 'web' ? ' 💀' : 'XXX', ' ')
+                                    xvt.out(xvt.yellow, ' ', $.player.emulation == 'XT' ? ' 💀' : 'XXX', ' ')
                                 else
                                     xvt.out(xvt.faint, ' -=> ', xvt.normal)
                                 xvt.out($.buff(toWC, WC))
@@ -2267,7 +2267,7 @@ module Battle {
                             else if (/Brawl|Fight|Joust|Resurrect/.test(venue) && rpc.user.status == 'jail') {
                                 rpc.user.id = ''
                                 xvt.beep()
-                                if ($.tty == 'web') xvt.out(' 🔒')
+                                if ($.player.emulation == 'XT') xvt.out(' 🔒')
                                 xvt.out(' ', $.bracket(rpc.user.status, false))
                             }
                         }
