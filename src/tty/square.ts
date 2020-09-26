@@ -30,8 +30,7 @@ module Square {
         'W': {},
         'L': {},
         'R': { description: 'Rob the bank' },
-        'T': {},
-        'V': {}
+        'T': {}
     }
 
     let credit = new $.coins(0)
@@ -656,16 +655,7 @@ module Square {
 
             case 'T':
                 if ($.access.sysop) {
-                    $.loadUser($.taxman)
-                    xvt.app.form['coin'].prompt = xvt.attr('Treasury ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.taxman.user.bank.carry(), ']? ')
-                    xvt.app.focus = 'coin'
-                    break
-                }
-
-            case 'V':
-                if ($.access.sysop) {
-                    $.loadUser($.taxman)
-                    xvt.app.form['coin'].prompt = xvt.attr('Vault ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=1000p]? ')
+                    xvt.app.form['coin'].prompt = xvt.attr('Treasury ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=99999p]? ')
                     xvt.app.focus = 'coin'
                     break
                 }
@@ -730,24 +720,11 @@ module Square {
 
             case 'Treasury':
                 amount.value = $.int((/=|max/i.test(xvt.entry))
-                    ? $.taxman.user.bank.value
+                    ? (1e+18 - 1e+09)
                     : new $.coins(xvt.entry).value)
-                if (amount.value > 0 && amount.value <= $.taxman.user.bank.value) {
-                    $.taxman.user.bank.value -= amount.value
+                if (amount.value > 0 && amount.value <= (1e+18 - 1e+09)) {
                     $.player.coin.value += amount.value
                     $.beep()
-                    $.saveUser($.taxman)
-                }
-                break
-
-            case 'Vault':
-                amount.value = $.int((/=|max/i.test(xvt.entry))
-                    ? new $.coins('1000p').value
-                    : new $.coins(xvt.entry).value)
-                if (amount.value > 0) {
-                    $.taxman.user.bank.value += amount.value
-                    $.beep()
-                    $.saveUser($.taxman)
                 }
                 break
         }
