@@ -74,18 +74,19 @@ function login(client: string, rows: number, cols: number, emulator: EMULATION):
         encoding: null
     })
 
+    let encoding: BufferEncoding = emulator == 'XT' ? 'utf8' : 'latin1'
     let pid: number = term.pid
     broadcasts[pid] = ''
     sessions[pid] = term
     sessions[pid].client = client
-    sessions[pid].encoding = <BufferEncoding>(emulator == 'XT' ? 'utf8' : 'ascii')
+    sessions[pid].encoding = encoding
     //  buffer any initial output from forked process
     //  between this post and ensuing client wss connection
     sessions[pid].spawn = term.onData((data) => {
         sessions[pid].startup = (sessions[pid].startup || '') + data
     })
 
-    console.log(`Create PLAYER session ${pid} using ${emulator} from remote host: ${client}`)
+    console.log(`Create PLAYER session ${pid} using ${emulator}/${encoding} from remote host: ${client}`)
     return pid
 }
 
@@ -96,8 +97,8 @@ function message(term: pty.IPty, msg: Uint8Array, classic = true): Uint8Array {
     //  inspect for app's ACK ...
     let ack = msg.indexOf(0x06)
     //  ... to appropriately replace it with any pending broadcast message(s)
-    if (broadcasts[term.pid] && ack >= 0) {
-        let wall = new TextEncoder().encode(broadcasts[term.pid] + '\n')
+    if (ack >= 0) {
+        let wall = new TextEncoder().encode(broadcasts[term.pid] ? `${broadcasts[term.pid]}\n` : '')
         msg = new Uint8Array([...msg.slice(0, ack), ...wall, ...msg.slice(ack)])
         broadcasts[term.pid] = ''
     }
@@ -121,7 +122,7 @@ function message(term: pty.IPty, msg: Uint8Array, classic = true): Uint8Array {
         function profile(panel) { }
         function title(name) {
             let b4: BufferEncoding = sessions[pid].encoding || 'utf8'
-            sessions[pid].encoding = <BufferEncoding>(name == 'XT' ? 'utf8' : 'ascii')
+            sessions[pid].encoding = <BufferEncoding>(name == 'XT' ? 'utf8' : 'latin1')
             if (sessions[pid].encoding !== b4)
                 console.log(`CLASSIC session ${pid} encoding switched from ${b4} to ${sessions[pid].encoding}`)
         }

@@ -55,7 +55,7 @@
     "node-pty": "^0.9.0",
     "nodemailer": "^6.4.11",
     "nodemailer-smtp-transport": "^2.7.4",
-    "playwright": "^1.4.1",
+    "playwright": "^1.4.2",
     "sprintf-js": "^1.1.2",
     "telnet-socket": "^0.2.3",
     "title-case": "^3.0.2",
