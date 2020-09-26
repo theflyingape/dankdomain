@@ -14,13 +14,13 @@ module Gambling {
         'B': { description: 'Blackjack' },
         'C': { description: 'Craps' },
         'H': { description: 'High Stakes Draw' },
-        'K': { description: 'Keno' },
+        'K': { description: 'Keno Lottery' },
         'S': { description: 'Cherry Bomb Slots' }
     }
-	/*
-		'G': { description:'Greyhound race' },
-		'R': { description:'Roulette' },
-	*/
+    /*
+        'G': { description:'Greyhound race' },
+        'R': { description:'Roulette' },
+    */
 
     let game: string
     let max = new $.coins(0)
