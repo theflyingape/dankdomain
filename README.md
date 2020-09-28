@@ -47,11 +47,11 @@ door/               web services & client for browser
    ../images        visual media for artifacts, creatures, and players
    ../sounds        audio media for event notifications
 etc/                game app & system support files
-files/              game & player support files: ANSI and/or text formats
-../arena            ASCII art files
-../dungeon          ASCII art files
-../naval            ASCII art files
-../player           ASCII art files
+files/              game, menu & player support files: ANSI and/or text formats
+../arena            ASCII art & menu files
+../dungeon          ASCII art & menu files
+../naval            ASCII art & menu files
+../player           ASCII art & menu files
 ../tavern           all player events logged for the day
 ../user             each player’s events logged since last visit
 items/              game artifacts

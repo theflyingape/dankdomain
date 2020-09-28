@@ -5,7 +5,29 @@
 🇺🇸 ©️1991 - 2020 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](https://play.DDgame.us) within the Google Cloud Platform (us-central1)
 
-### **3-Jun-2020** `v2.6.0`
+### **3-Jun-2020** `v2.7.0`
+
+* general browser client improvements
+  * add Facebook Group URL: http://www.originalhackandslash.net
+  * web page "wall" zooms to fill 80% device window width
+  * added Noto fonts for unicode 13 character support and renamed Dank Domain as Ɗanƙ Ɗomaiƞ
+* general terminal emulation improvements
+  * pass Uint8Array in place of String for classic PC ANSI support
+  * optimize xvt input handling; added drain() to empty typeahead to critical spots
+  * added telnet-socket for an integrated telnet service
+  * added net-keepalive to address telnet hackers
+  * xterm.js v4.9 release
+* general dungeon improvements
+  * added '🏃 find the exit' alert to prompt player that it's time to move on to another level
+  * casting teleport consumes some online time to mitigate 'unlimited' teleporting with a magical ring
+  * added +Time (5-minutes) to Wheel of Life
+  * deeper dank dungeon mazes become increasingly more complex
+  * corrected will-o-wisp _avenger_ generator
+* reintroduce menu files that override internal rendering
+* access promotion celebration messages
+* renamed main menu Lists to Library
+
+#### **3-Jun-2020** `v2.6.0`
 
 * dungeon map enhancements
 * xterm.js v4.6 release
