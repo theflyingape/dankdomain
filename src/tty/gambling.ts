@@ -384,7 +384,9 @@ module Gambling {
                             }
                             let mine = deck.splice(--pick, 1)[0]
                             $.sound(card[mine].value > 0 ? 'click' : 'boom')
-                            xvt.out(' - ', card[mine].uni, xvt.bright, xvt.red, ' [', xvt.white, card[mine].face, xvt.red, ']')
+                            xvt.out(' - ')
+                            if ($.player.emulation == 'XT') xvt.out(card[mine].uni)
+                            xvt.out(xvt.bright, xvt.red, ' [', xvt.white, card[mine].face, xvt.red, ']')
                             if ($.player.emulation == 'XT') xvt.out(card[mine].suit)
                             xvt.outln(-600)
 
@@ -392,7 +394,9 @@ module Gambling {
                             xvt.out('Dealer picks card #', dealer.toString())
                             let house = deck.splice(--dealer, 1)[0]
                             $.sound(card[house].value > 0 ? 'click' : 'boom')
-                            xvt.out(' - ', card[house].uni, xvt.bright, xvt.red, ' [', xvt.white, card[house].face, xvt.red, ']')
+                            xvt.out(' - ')
+                            if ($.player.emulation == 'XT') xvt.out(card[house].uni)
+                            xvt.out(xvt.bright, xvt.red, ' [', xvt.white, card[house].face, xvt.red, ']')
                             if ($.player.emulation == 'XT') xvt.out(card[house].suit)
                             xvt.outln('\n', -600)
 

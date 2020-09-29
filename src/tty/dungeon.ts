@@ -2037,30 +2037,30 @@ module Dungeon {
         if (!DL.map) drawRoom(Y, X, false, peek)
 
         xvt.plot(Y * 2 + 2, X * 6 + 2)
-        if ($.player.emulation == 'XT')
-            xvt.out($.player.blessed ? xvt.Cyan : $.player.cursed ? xvt.lBlue : xvt.lBlack
-                , ' '
-                , ($.player.toWC + $.online.toWC) > 0 ? xvt.attr(xvt.bright, xvt.cyan)
-                    : ($.player.toWC + $.online.toWC) < 0 ? xvt.attr(xvt.bright, xvt.magenta)
-                        : xvt.cyan
-                , $.online.weapon.wc ? '⚸' : ' '
-                , $.player.blessed ? xvt.bright : xvt.normal
-                , $.online.hp > $.player.hp * 2 / 3 ? xvt.white : $.online.hp > $.player.hp / 3 ? xvt.yellow : xvt.red
-                , $.PC.card($.player.pc).unicode
-                , ($.player.toAC + $.online.toAC) > 0 ? xvt.attr(xvt.normal, xvt.bright)
-                    : ($.player.toAC + $.online.toAC) < 0 ? xvt.attr(xvt.normal, xvt.faint)
-                        : xvt.normal, xvt.yellow
-                , $.online.armor.ac ? '⛨' : ' '
-                , ' ')
+        if ($.online.hp > 0) {
+            if ($.player.emulation == 'XT')
+                xvt.out($.player.blessed ? xvt.Cyan : $.player.cursed ? xvt.lBlue : xvt.lBlack
+                    , ' '
+                    , ($.player.toWC + $.online.toWC) > 0 ? xvt.attr(xvt.bright, xvt.cyan)
+                        : ($.player.toWC + $.online.toWC) < 0 ? xvt.attr(xvt.bright, xvt.magenta)
+                            : xvt.cyan
+                    , $.online.weapon.wc ? '⚸' : ' '
+                    , $.player.blessed ? xvt.bright : xvt.normal
+                    , $.online.hp > $.player.hp * 2 / 3 ? xvt.white : $.online.hp > $.player.hp / 3 ? xvt.yellow : xvt.red
+                    , $.PC.card($.player.pc).unicode
+                    , ($.player.toAC + $.online.toAC) > 0 ? xvt.attr(xvt.normal, xvt.bright)
+                        : ($.player.toAC + $.online.toAC) < 0 ? xvt.attr(xvt.normal, xvt.faint)
+                            : xvt.normal, xvt.yellow
+                    , $.online.armor.ac ? '⛨' : ' '
+                    , ' ')
+            else
+                xvt.out($.player.blessed ? xvt.bright : $.player.cursed ? xvt.faint : xvt.off
+                    , xvt.reverse, '-YOU-')
+        }
         else
-            xvt.out(xvt.reverse, $.player.blessed ? xvt.bright : $.player.cursed ? xvt.faint : xvt.normal
-                , '-YOU-')
-
-        if (!$.online.hp) {
-            xvt.plot(Y * 2 + 2, X * 6 + 2)
             xvt.out(xvt.Blue, xvt.cyan, xvt.bright, xvt.reverse
                 , `  ${$.player.emulation == 'XT' ? $.PC.card($.player.pc).unicode : 'X'}  `, -600)
-        }
+
         xvt.restore()
         xvt.out(xvt.off)
     }
@@ -3172,7 +3172,6 @@ module Dungeon {
         }
         refresh = (top == 1)
     }
-
 }
 
 export = Dungeon
