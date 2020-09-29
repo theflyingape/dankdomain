@@ -455,15 +455,14 @@ module Dungeon {
     }
 
     function command() {
-        let suppress = $.player.expert
+        let suppress = false
         let choice = xvt.entry.toUpperCase()
         if (/\[.*\]/.test(xvt.terminator)) {
             if ((choice = 'NSEW'['UDRL'.indexOf(xvt.terminator[1])]))
-                xvt.out(xvt.bright, xvt.white, choice, xvt.normal)
-            else {
-                menu(true)
-                return
-            }
+                suppress = true
+            else
+                choice = '??'
+            xvt.out(xvt.bright, xvt.white, choice, xvt.normal)
         }
         if (isNotEmpty(crawling[choice])) {
             xvt.out(crawling[choice].description)
