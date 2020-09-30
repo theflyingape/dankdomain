@@ -121,7 +121,7 @@ module Square {
             hints += `> Alleviate paranoia from bad luck and thieves with better Security.\n`
         if ($.dice(100) == 1 && $.player.loan.value && $.player.ram && $.player.steal)
             hints += `> Try using your ram on the bank for big money.\n`
-        xvt.app.form['menu'].prompt = $.display('square', xvt.Yellow, xvt.yellow, suppress, square, hints)
+        xvt.app.form['menu'].prompt = $.display('square', xvt.White, xvt.lblack, suppress, square, hints)
         xvt.app.focus = 'menu'
     }
 
