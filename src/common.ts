@@ -1377,6 +1377,11 @@ module Common {
             if (isNotEmpty(field)) {
                 xvt.out('\n', xvt.yellow, 'You have ', xvt.bright, points.toString(), xvt.normal, ' points to distribute between 4 abilities: Strength, Intellect,\n')
                 xvt.outln('Dexterity, Charisma.  Each ability must be between ', xvt.bright, '20', xvt.normal, ' and ', xvt.bright, '80', xvt.normal, ' points.')
+                if (player.immortal < 3) {
+                    xvt.outln('This tracks how hard a character hits. Characters with higher Strength gain')
+                    xvt.outln('more Hit Points when advancing in Experience Levels. More Strength yields more')
+                    xvt.outln('damage in melee attacks.\n')
+                }
                 xvt.app.form[field].enter = player.str.toString()
                 xvt.app.form[field].prompt = 'Enter your Strength  ' + bracket(player.str, false) + ': '
                 xvt.app.focus = field
@@ -1397,6 +1402,13 @@ module Common {
                 case 'str':
                     left -= n
                     a.str = n
+
+                    if (player.immortal < 3) {
+                        xvt.outln('This statistic comes into play mainly in casting and resisting magic. It is also')
+                        xvt.outln(`calculated into approximating an opponent's Hit Points and ability to remember`)
+                        xvt.outln('visited dungeon levels. Bonus Spell Power is awarded to those with a high')
+                        xvt.outln('Intellect upon gaining a level.\n')
+                    }
                     p = 'int'
                     xvt.app.form[p].prompt = 'Enter your Intellect'
                     xvt.app.form[p].enter = player.int.toString()
@@ -1405,6 +1417,12 @@ module Common {
                 case 'int':
                     left -= a.str + n
                     a.int = n
+
+                    if (player.immortal < 3) {
+                        xvt.outln('Your overall fighting ability is measured by how dexterous you are. It is used')
+                        xvt.outln('to calculate who gets the first attack in a battle round, whether a hit was')
+                        xvt.outln('made, jousting ability, and in other applicable instances.\n')
+                    }
                     p = 'dex'
                     xvt.app.form[p].prompt = 'Enter your Dexterity'
                     xvt.app.form[p].enter = player.dex.toString()
@@ -1420,6 +1438,12 @@ module Common {
                         return
                     }
                     a.dex = n
+
+                    if (player.immortal < 3) {
+                        xvt.outln('A high Charisma will get you more money when selling items in the Square and')
+                        xvt.outln('from defeated foes. Some of the random events that occur tend to favor those')
+                        xvt.outln('with a high Charisma as well.\n')
+                    }
                     p = 'cha'
                     xvt.app.form[p].prompt = 'Enter your Charisma '
                     xvt.app.form[p].enter = left.toString()

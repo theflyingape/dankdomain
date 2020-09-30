@@ -2209,7 +2209,7 @@ module Dungeon {
                 },
                 exit: false,
                 map: '',
-                moves: $.player.novice ? -maxRow - maxCol : -$.player.wins,
+                moves: $.int(Z / 3) - maxCol - ($.player.novice ? maxRow + maxCol : $.player.wins) - deep,
                 rooms: new Array(maxRow),
                 spawn: $.int(deep / 3 + Z / 9 + maxRow / 3) + $.dice(Math.round($.online.cha / 20) + 1) + 3,
                 width: maxCol
