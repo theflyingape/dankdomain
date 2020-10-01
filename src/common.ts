@@ -1290,10 +1290,14 @@ module Common {
             require('./tty/main').menu(true)
             return
         }
+        else {
+            xvt.sessionAllowed += 300
+            warning = 2
+        }
 
         action('list')
         xvt.app.form = {
-            'pc': { cb: pick, min: 1, max: 2, timeout: 240 },
+            'pc': { cb: pick, min: 1, max: 2, cancel: '!' },
             'str': { cb: ability, min: 2, max: 2, match: /^[2-8][0-9]$/ },
             'int': { cb: ability, min: 2, max: 2, match: /^[2-8][0-9]$/ },
             'dex': { cb: ability, min: 2, max: 2, match: /^[2-8][0-9]$/ },
@@ -1383,6 +1387,7 @@ module Common {
                     xvt.outln('damage in melee attacks.')
                 }
                 xvt.app.form[field].enter = player.str.toString()
+                xvt.app.form[field].cancel = xvt.app.form[field].enter
                 xvt.app.form[field].prompt = 'Enter your Strength  ' + bracket(player.str, false) + ': '
                 xvt.app.focus = field
                 return
@@ -1412,6 +1417,7 @@ module Common {
                     p = 'int'
                     xvt.app.form[p].prompt = 'Enter your Intellect'
                     xvt.app.form[p].enter = player.int.toString()
+                    xvt.app.form[p].cancel = xvt.app.form[p].enter
                     break
 
                 case 'int':
@@ -1426,6 +1432,7 @@ module Common {
                     p = 'dex'
                     xvt.app.form[p].prompt = 'Enter your Dexterity'
                     xvt.app.form[p].enter = player.dex.toString()
+                    xvt.app.form[p].cancel = xvt.app.form[p].enter
                     break
 
                 case 'dex':
@@ -1447,6 +1454,7 @@ module Common {
                     p = 'cha'
                     xvt.app.form[p].prompt = 'Enter your Charisma '
                     xvt.app.form[p].enter = left.toString()
+                    xvt.app.form[p].cancel = xvt.app.form[p].enter
                     break
 
                 case 'cha':
@@ -1780,6 +1788,8 @@ module Common {
 
         reroll(player)
         saveUser(player)
+        xvt.sessionAllowed += 300
+        warning = 2
 
         if (max > 2) {
             music('victory')
@@ -1898,6 +1908,7 @@ module Common {
                         sound('max')
                         if (player.emulation == 'XT') xvt.out('🔓 ')
                         xvt.outln(xvt.cyan, '{', xvt.bright, 'Click!', xvt.normal, '}')
+                        xvt.sessionAllowed += 60
 
                         player.pc = Object.keys(PC.name['immortal'])[slot]
                         profile({ png: 'player/' + player.pc.toLowerCase() + (player.gender == 'F' ? '_f' : ''), pc: player.pc })
@@ -1937,7 +1948,7 @@ module Common {
                         else
                             playerPC([200, 210, 220, 240][slot], true)
                     }
-                }, eol: false, match: /P|G|S|C/i
+                }, cancel: '!', eol: false, match: /P|G|S|C/i
             }
         }
         slot = 0
