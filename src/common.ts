@@ -2131,8 +2131,8 @@ module Common {
 
         xvt.outln('\n', xvt.cyan, 'Which emulation / character encoding are you using?')
         xvt.out(bracket('VT'), ' classic VT terminal with DEC drawing (telnet b&w)')
-        xvt.out(bracket('PC'), ' former ANSI color with IBM CP850 encoding (telnet color)')
-        xvt.outln(bracket('XT'), ' modern ANSI color with UTF-8 encoding & emojis (browser multimedia)')
+        xvt.out(bracket('PC'), ' former ANSI color with Western IBM CP850 (telnet color)')
+        xvt.outln(bracket('XT'), ' modern ANSI color with UTF-8 & emojis (browser multimedia)')
         xvt.app.focus = 'term'
     }
 
