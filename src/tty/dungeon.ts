@@ -2637,21 +2637,24 @@ module Dungeon {
             } while (DL.rooms[r][c].type && DL.rooms[r][c].type !== 'cavern')
         }
 
-        //	check for overcrowding
+        //	check size(s) for overcrowding
         let room = DL.rooms[r][c]
         let i: number = room.monster.length
-        // how big are these caverns?
+        let j: number = 0
+        for (i = 0; i < room.monster.length; i++)
+            j += room.monster[i].monster.size || 1
+
+        // how big are these rooms anyway?
         const mob = (deep < 4 && Z < 4) ? 1 : (Z > 9 && Z < 50) || (deep > 7) ? 3 : 2
-        if (i >= (mob > 1 && !DL.rooms[r][c].type ? mob - 1 : DL.rooms[r][c].type == 'cavern' ? mob : 1))
+        if (j >= (mob > 1 && !DL.rooms[r][c].type ? mob - 1 : DL.rooms[r][c].type == 'cavern' ? mob : 1))
             return false
 
-        let j: number = 0
         let dm: monster = { name: '', pc: '' }
         let level: number = 0
         let m: active
         let sum = 0
 
-        if (!i) {
+        if (j <= room.monster.length) {
             for (j = 0; j < 4; j++) level += $.dice(7)
             switch (level >> 2) {
                 case 1:

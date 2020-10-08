@@ -153,6 +153,7 @@ interface monster {
     name: string
     pc: string
     adept?: number
+    size?: number
     hit?: string
     smash?: string
     poisons?: string[]

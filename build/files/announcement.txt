@@ -1,8 +1,9 @@
-[mDate: [1;33mWed 23-Sep-2020  8:00am
+[mDate: [1;33mWed 08-Oct-2020  4:00pm
 [mFrom: [1;33mMaester
 [1;37m
-Those running 'PC' emulators should see the Main Menu corrected without any
-Unicode characters.  Post Facebook screenshot if you find other places that
-can use compatible character encoding, thanks.
+Dungeon spawning now takes better account of room type size to hold its
+denizens, i.e., expect to see less rooms filled with multiple oversized
+monsters, such as 2 dragons.  That said, there are smaller monsters that
+occupy less space, such as a goblin (1/2), ghost (1/4), or will-o-wisp (1/10).
 
 Happy hunting!
