@@ -2654,7 +2654,8 @@ module Dungeon {
         let m: active
         let sum = 0
 
-        if (j <= room.monster.length) {
+        //  is it empty or room for another?
+        if (j < mob) {
             for (j = 0; j < 4; j++) level += $.dice(7)
             switch (level >> 2) {
                 case 1:
@@ -2680,6 +2681,7 @@ module Dungeon {
                     break
             }
         }
+        //  no room, but maybe squeeze in a lesser stray?
         else {
             level = $.dice(Z / mob) + (Z <= 60 ? $.int(Z / 6) : 30) + $.dice(deep) - 1
             sum = room.monster[0].user.level
