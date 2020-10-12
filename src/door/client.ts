@@ -146,9 +146,6 @@ document.getElementById('lurker-list').onchange = (ev) => {
     })
 }
 
-newSession('Logoff')
-
-
 function newSession(ev) {
     const protocol = (location.protocol == 'https:') ? 'wss://' : 'ws://'
     let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/player/'
@@ -273,33 +270,30 @@ function newSession(ev) {
         })
     }
     else {
+        term.focus()
+        fetch(`${app}/title.txt`, { method: 'GET' }).then(function (res) {
+            return res.text().then(function (data) {
+                term.writeln('\t\t🔥 🌨\r\x1b[23C\x1b[1;36mW\x1b[22melcome to Ɗ \x1b[2manƙ \x1b[22mƊ \x1b[2momaiƞ \x1b[m🌙 💫')
+                term.write(data)
+                const app = location.pathname.replace(/info.html$/, "")
+                fetch(`${app}player/`, { method: 'GET' }).then(function (res) {
+                    term.blur()
+                    res.json().then(function (knock) {
+                        let i = Math.trunc(4 * Math.random())
+                        XT(`\r@play(${['demon', 'demogorgon', 'portal', 'thief2'][i]})\r`)
+                        term.writeln(knock.wall || `\t\t\x1b[2;35mCan you defeat the Demogorgon${'?'.repeat(i + 1)}\x1b[m`)
+                        term.writeln('\x1b[1;36m \u00B7 \x1b[22;2mpress either \x1b[22mENTER\x1b[2m or \x1b[22mSPACE\x1b[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1b[22m')
+                        XT('@action(welcome)')
+                        window.frames['Info'].focus()
+                        window.frames['Info'].postMessage({ images: knock.list }, location.href)
+                    })
+                })
+            })
+        })
         //  it started 1985: Adventure Construction Set on the Commodore 64
         //  demo mode "Sir Handsome" struck me as a flying ape, thus the handle
         //  ... added some more throwback tunes to rotate in
         idle = setInterval(() => { XT(`@tune(throwback${tbt++})`) }, 300000)
-
-        setTimeout(() => {
-            fetch(`${app}/title.txt`, { method: 'GET' }).then(function (res) {
-                return res.text().then(function (data) {
-                    term.focus()
-                    term.writeln('\t\t🔥 🌨\r\x1b[23C\x1b[1;36mW\x1b[22melcome to Ɗ \x1b[2manƙ \x1b[22mƊ \x1b[2momaiƞ \x1b[m🌙 💫')
-                    term.write(data)
-                    const app = location.pathname.replace(/info.html$/, "")
-                    fetch(`${app}player/`, { method: 'GET' }).then(function (res) {
-                        res.json().then(function (knock) {
-                            term.focus()
-                            term.writeln(knock.wall || '\t\t\x1b[36mCan you defeat the Demogorgon?')
-                            term.writeln('\x1b[1;36m \u00B7 \x1b[22;2mpress either \x1b[22mENTER\x1b[2m or \x1b[22mSPACE\x1b[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1b[22m')
-                            XT(`@play(${['demon', 'demogorgon', 'portal', 'thief2'][Math.trunc(4 * Math.random())]})`)
-                            XT('@action(welcome)')
-                            term.blur()
-                            window.frames['Info'].focus()
-                            window.frames['Info'].postMessage({ images: knock.list }, location.href)
-                        })
-                    })
-                })
-            })
-        }, 600)
     }
 }
 
@@ -366,7 +360,7 @@ function XT(data) {
         source[1].src = `sounds/${fileName}.mp3`
         source[1].type = 'audio/mp3'
         audio.load()
-        audio.play()
+        audio.play().catch(err => { console.log(err) })
     }
 
     function profile(panel) {
@@ -392,7 +386,7 @@ function XT(data) {
         source[1].src = `sounds/${fileName}.mp3`
         source[1].type = 'audio/mp3'
         audio.load()
-        audio.play()
+        audio.play().catch(err => { console.log(err) })
     }
 
     function wall(msg) {
@@ -421,7 +415,7 @@ function lurk() {
                     el.blur()
                     let audio = <HTMLAudioElement>document.getElementById('play')
                     audio.src = BELL_SOUND
-                    audio.play()
+                    audio.play().catch(err => { console.log(err) })
                 }
                 watch.selectedIndex = -1
             })
@@ -459,3 +453,5 @@ function receive(event) {
         }
     }
 }
+
+newSession('Logoff')

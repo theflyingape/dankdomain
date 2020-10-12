@@ -6,9 +6,9 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon">
   <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
   <link rel="manifest" href="manifest.json">
-  <link rel="preload" href="notoemoji.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="notomono.woff2" as="font" type="font/woff2" crossorigin="anonymous">
   <link rel="preload" href="vt220.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="notomono.woff2" as="font" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" href="notoemoji.woff2" as="font" type="font/woff2" crossorigin="anonymous">
   <meta charset="UTF-8">
   <meta name="application-name" content="dankdomain">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -20,6 +20,11 @@
     content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=1.0, shrink-to-fit=yes, user-scalable=no">
   <style type='text/css'>
     @font-face {
+      font-family: 'tty';
+      src: url('vt220.woff2') format('woff2');
+    }
+
+    @font-face {
       font-family: 'notomono';
       src: url('notomono.woff2') format('woff2');
     }
@@ -27,11 +32,6 @@
     @font-face {
       font-family: 'notoemoji';
       src: url('notoemoji.woff2') format('woff2');
-    }
-
-    @font-face {
-      font-family: 'tty';
-      src: url('vt220.woff2') format('woff2');
     }
 
     html {
@@ -98,7 +98,7 @@
   <link rel="stylesheet" href="xterm.css">
 </head>
 
-<body onload="window.dispatchEvent(new Event('resize'));">
+<body>
   <div id="terminal"></div>
   <iframe seamless id="Info" name="Info" src="info.html" style="border:none;" allow="autoplay"></iframe>
   <div id="wall">
