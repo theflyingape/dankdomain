@@ -82,7 +82,6 @@ module Battle {
                 $.PC.adjust('cha', -2, -1, -1)
             }
             $.beep()
-            xvt.outln(-1000)
             Battle.yourstats()
         }
 
