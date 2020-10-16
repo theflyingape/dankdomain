@@ -81,71 +81,6 @@ window.onresize = () => {
     term.scrollToBottom()
 }
 
-document.getElementById('lurker-list').onchange = (ev) => {
-    let watch: HTMLOptionsCollection = <any>ev.target
-    wpid = parseInt(watch[watch.selectedIndex].value)
-
-    let stylesheet = <CSSStyleSheet>document.styleSheets[0]
-    for (let i in stylesheet.cssRules) {
-        let css: CSSStyleRule = <any>stylesheet.cssRules[i]
-        if (css.selectorText == '#terminal')
-            Object.assign(css.style, { 'top': '0%', 'left': '0%', 'height': '100%', 'width': '100%' })
-    }
-
-    document.getElementById('terminal').hidden = false
-    term = new Terminal({
-        bellStyle: 'none', cursorBlink: false, scrollback: 0,
-        fontFamily: 'notomono,notoemoji', fontSize: 22, fontWeight: '400', fontWeightBold: '500',
-        theme: {
-            foreground: '#a3a7af', background: '#23272f', cursor: '#e0c8e0',
-            black: '#000000', red: '#a00000', green: '#00a000', yellow: '#c8a000',
-            blue: '#0000a0', magenta: '#a000a0', cyan: '#00a0a0', white: '#b0b0b0',
-            brightBlack: '#646464', brightRed: '#ff0000', brightGreen: '#00ff00', brightYellow: '#ffff00',
-            brightBlue: '#0000ff', brightMagenta: '#ff00ff', brightCyan: '#00ffff', brightWhite: '#ffffff'
-        }
-    })
-    term.loadAddon(new Unicode11Addon())
-    term.loadAddon(new WebLinksAddon())
-    term.loadAddon(fit)
-    term.unicode.activeVersion = '11'
-    term.open(document.getElementById('terminal'))
-    fit.fit()
-
-    term.write('\n\x1B[1;34mConnecting your terminal to ' + watch[watch.selectedIndex].text + ' WebSocket ... ')
-    let protocol = (location.protocol == 'https:') ? 'wss://' : 'ws://'
-    let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/lurker/'
-
-    //	any keystroke sent will signal for this WebSocket to close
-    term.onData(data => { socket.send(data) })
-
-    fetch(`${app}/lurker/?pid=${wpid}`, { method: 'POST' }).then(function (res) {
-        res.text().then(function (lurker) {
-            socketURL += `?lurker=${lurker}`
-            socket = new WebSocket(socketURL)
-
-            socket.onmessage = (ev) => {
-                XT(ev.data)
-            }
-
-            socket.onopen = () => {
-                term.writeln('open\x1B[m')
-            }
-
-            socket.onclose = (ev) => {
-                XT('@tune(.)')
-                term.dispose()
-                wpid = 0
-                document.getElementById('terminal').hidden = true
-                lurk()
-            }
-
-            socket.onerror = (ev) => {
-                term.writeln('\x1B[1;31merror')
-            }
-        })
-    })
-}
-
 function newSession(ev) {
     const protocol = (location.protocol == 'https:') ? 'wss://' : 'ws://'
     let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/player/'
@@ -401,19 +336,8 @@ function lurk() {
     if (document.getElementById('terminal').hidden) {
         fetch(`${app}/lurker/`, { method: 'POST' }).then(function (res) {
             return res.json().then(function (data) {
-                const es = document.getElementById('lurker-state')
-                const el = document.getElementById('lurker-list')
-                let watch: HTMLOptionsCollection = <any>el
-                for (let i = watch.length - 1; i >= 0; i--)
-                    watch.remove(i)
-                for (let i in data) {
-                    let option = document.createElement("option")
-                    option.text = data[i].id
-                    option.value = data[i].pid
-                    watch.add(option)
-                }
-                if (watch.length) {
-                    el.blur()
+                let es = document.getElementById('lurker-state')
+                if (data.length) {
                     es.innerHTML = `&nbsp;· Watch an online player: <select id="lurker-list"></select>`
                     let audio = <HTMLAudioElement>document.getElementById('play')
                     audio.src = BELL_SOUND
@@ -421,7 +345,83 @@ function lurk() {
                 }
                 else
                     es.innerHTML = `&nbsp;· Waiting for an online player ...<select id="lurker-list" hidden></select>`
+
+                let el = document.getElementById('lurker-list')
+                let watch: HTMLOptionsCollection = <any>el
+                for (let i in data) {
+                    let option = document.createElement("option")
+                    option.text = data[i].id
+                    option.value = data[i].pid
+                    watch.add(option)
+                }
                 watch.selectedIndex = -1
+                el.blur()
+
+                el.onchange = (ev) => {
+                    let watch: HTMLOptionsCollection = <any>ev.target
+                    wpid = parseInt(watch[watch.selectedIndex].value)
+
+                    let stylesheet = <CSSStyleSheet>document.styleSheets[0]
+                    for (let i in stylesheet.cssRules) {
+                        let css: CSSStyleRule = <any>stylesheet.cssRules[i]
+                        if (css.selectorText == '#terminal')
+                            Object.assign(css.style, { 'top': '0%', 'left': '0%', 'height': '100%', 'width': '100%' })
+                    }
+
+                    document.getElementById('terminal').hidden = false
+                    term = new Terminal({
+                        bellStyle: 'none', cursorBlink: false, scrollback: 0,
+                        fontFamily: 'notomono,notoemoji', fontSize: 22, fontWeight: '400', fontWeightBold: '500',
+                        theme: {
+                            foreground: '#a3a7af', background: '#23272f', cursor: '#e0c8e0',
+                            black: '#000000', red: '#a00000', green: '#00a000', yellow: '#c8a000',
+                            blue: '#0000a0', magenta: '#a000a0', cyan: '#00a0a0', white: '#b0b0b0',
+                            brightBlack: '#646464', brightRed: '#ff0000', brightGreen: '#00ff00', brightYellow: '#ffff00',
+                            brightBlue: '#0000ff', brightMagenta: '#ff00ff', brightCyan: '#00ffff', brightWhite: '#ffffff'
+                        }
+                    })
+                    term.loadAddon(new Unicode11Addon())
+                    term.loadAddon(new WebLinksAddon())
+                    term.loadAddon(fit)
+                    term.unicode.activeVersion = '11'
+                    term.open(document.getElementById('terminal'))
+                    fit.fit()
+
+                    term.write('\n\x1B[1;34mConnecting your terminal to ' + watch[watch.selectedIndex].text + ' WebSocket ... ')
+                    let protocol = (location.protocol == 'https:') ? 'wss://' : 'ws://'
+                    let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/lurker/'
+
+                    //	any keystroke sent will signal for this WebSocket to close
+                    term.onData(data => { socket.send(data) })
+
+                    fetch(`${app}/lurker/?pid=${wpid}`, { method: 'POST' }).then(function (res) {
+                        res.text().then(function (lurker) {
+                            socketURL += `?lurker=${lurker}`
+                            socket = new WebSocket(socketURL)
+
+                            socket.onmessage = (ev) => {
+                                XT(ev.data)
+                            }
+
+                            socket.onopen = () => {
+                                term.writeln('open\x1B[m')
+                            }
+
+                            socket.onclose = (ev) => {
+                                XT('@tune(.)')
+                                term.dispose()
+                                wpid = 0
+                                document.getElementById('terminal').hidden = true
+                                lurk()
+                            }
+
+                            socket.onerror = (ev) => {
+                                term.writeln('\x1B[1;31merror')
+                            }
+                        })
+                    })
+                }
+
             })
         })
     }

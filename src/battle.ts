@@ -2314,12 +2314,10 @@ module Battle {
 
                         if (rs[i].status) xvt.out(xvt.faint)
                         xvt.out(sprintf('  %3s  ', rs[i].xplevel ? rs[i].xplevel.toString() : xvt.app.Empty))
-                        if (rs[i].status) xvt.out(xvt.normal)
 
-                        xvt.out($.date2full(rs[i].lastdate), '  ', rs[i].access)
+                        xvt.out(xvt.reset, $.date2full(rs[i].lastdate), '  ', $.Access.name[rs[i].access].sysop ? xvt.cyan : xvt.faint, rs[i].access, xvt.off)
                         if ($.player.emulation == 'XT' && $.Access.name[rs[i].access].emoji)
-                            xvt.out(' ', $.Access.name[rs[i].access].sysop ? xvt.cyan : xvt.faint
-                                , $.Access.name[rs[i].access].emoji)
+                            xvt.out(' ', $.Access.name[rs[i].access].emoji)
                         xvt.outln()
                     }
 
