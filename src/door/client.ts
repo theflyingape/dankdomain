@@ -401,7 +401,8 @@ function lurk() {
     if (document.getElementById('terminal').hidden) {
         fetch(`${app}/lurker/`, { method: 'POST' }).then(function (res) {
             return res.json().then(function (data) {
-                let el = document.getElementById('lurker-list')
+                const es = document.getElementById('lurker-state')
+                const el = document.getElementById('lurker-list')
                 let watch: HTMLOptionsCollection = <any>el
                 for (let i = watch.length - 1; i >= 0; i--)
                     watch.remove(i)
@@ -413,10 +414,13 @@ function lurk() {
                 }
                 if (watch.length) {
                     el.blur()
+                    es.innerHTML = `&nbsp;· Watch an online player: <select id="lurker-list"></select>`
                     let audio = <HTMLAudioElement>document.getElementById('play')
                     audio.src = BELL_SOUND
                     audio.play().catch(err => { console.log(err) })
                 }
+                else
+                    es.innerHTML = `&nbsp;· Waiting for an online player ...<select id="lurker-list" hidden></select>`
                 watch.selectedIndex = -1
             })
         })
