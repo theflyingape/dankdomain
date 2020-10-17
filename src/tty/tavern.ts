@@ -245,7 +245,7 @@ module Tavern {
                         if ($.player.level < 60)
                             xvt.outln('The barkeep stares off into empty space, ignoring your wimpy comment.')
                         else
-                            xvt.outln(`The barkeep points at ${$.PC.who($.barkeep).he}massive, flexed bicep and laughs at your jest.`)
+                            xvt.outln(`The barkeep points at ${$.PC.who($.barkeep).his}massive, flexed bicep and laughs at your jest.`)
                         suppress = true
                         break
 
