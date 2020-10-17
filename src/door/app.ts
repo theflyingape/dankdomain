@@ -332,7 +332,7 @@ dns.lookup(network.address, (err, addr, family) => {
 
             let list = []
             list.push(
-                { handle: `The <span style="color:brown !important;">Player manual</span>: <a href="https://manual.DDgame.us" target="_blank">manual.DDgame.us</a>`, png: 'connect/arexielite_by_peachyco', effect: 'fadeInRight' },
+                { handle: `The Player manual: <a href="https://manual.DDgame.us" target="_blank">manual.DDgame.us</a>`, png: 'connect/arexielite_by_peachyco', effect: 'fadeInRight' },
                 { handle: '100 dungeon levels, 10 dank domains', png: 'connect/dragonborn_dagger_sorcerer_by_peachyco', effect: 'fadeInRight' },
                 { handle: 'Take on the Monster Mash', png: 'connect/dragonborn_hexblade_by_peachyco', effect: 'fadeInRight' },
                 { handle: 'Come get some', png: 'connect/elf_cleric_by_peachyco', effect: 'fadeInRight' },
@@ -356,7 +356,7 @@ dns.lookup(network.address, (err, addr, family) => {
             const armor = require('../items/armor.json')
             for (let i in armor) {
                 if (!armor[i].armoury) {
-                    let profile = { handle: `<span style="color:${armor[i].dwarf ? 'black' : 'brown'} !important;">${i}</span>`, level: armor[i].ac, pc: (armor[i].dwarf ? 'dwarven' : 'uncommon') + ' armor', effect: 'fadeInUpBig' }
+                    let profile = { handle: `<span style="color:${armor[i].dwarf ? 'black' : 'brown'};">${i}</span>`, level: armor[i].ac, pc: (armor[i].dwarf ? 'dwarven' : 'uncommon') + ' armor', effect: 'fadeInUpBig' }
                     profile['jpg'] = `specials/${i}`
                     list.push(profile)
                 }
@@ -365,7 +365,7 @@ dns.lookup(network.address, (err, addr, family) => {
             const weapon = require('../items/weapon.json')
             for (let i in weapon) {
                 if (!weapon[i].shoppe) {
-                    let profile = { handle: `<span style="color:${weapon[i].dwarf ? 'black' : 'brown'} !important;">${i}</span>`, level: weapon[i].wc, pc: (weapon[i].dwarf ? 'dwarven' : 'uncommon') + ' weapon', effect: 'fadeInUpBig' }
+                    let profile = { handle: `<span style="color:${weapon[i].dwarf ? 'black' : 'brown'};">${i}</span>`, level: weapon[i].wc, pc: (weapon[i].dwarf ? 'dwarven' : 'uncommon') + ' weapon', effect: 'fadeInUpBig' }
                     profile['jpg'] = `specials/${i}`
                     list.push(profile)
                 }
@@ -375,7 +375,7 @@ dns.lookup(network.address, (err, addr, family) => {
             let level = 0
             for (let n in monsters) {
                 let pc = monsters[n].pc
-                let profile = { handle: `The <span style="color:brown !important;">${n}</span>:`, level: ++level, pc: pc, effect: monsters[n].effect || 'fadeIn' }
+                let profile = { handle: `The <span style="color:brown;">${n}</span>:`, level: ++level, pc: pc, effect: monsters[n].effect || 'fadeIn' }
                 profile['jpg'] = `dungeon/${n}`
                 if (!pc) profile['pc'] = `(same class)`
                 list.push(profile)
@@ -406,7 +406,7 @@ dns.lookup(network.address, (err, addr, family) => {
 
             const ring = require('../items/ring.json')
             for (let i in ring) {
-                let profile = { handle: `<h2>${ring[i].unique ? 'The <span style="color:black' : 'Special <span style="color:brown'} !important">${i}</span> ${ring[i].emoji} ring</h2>`, pc: ring[i].description, effect: 'fadeInUpBig' }
+                let profile = { handle: `${ring[i].unique ? 'The <span style="color:black' : 'Special <span style="color:darkslategray'}">${i}</span><br>${ring[i].emoji} ring<br>`, pc: ring[i].description, effect: 'fadeInUpBig' }
                 profile['jpg'] = `ring/${i}`
                 list.push(profile)
             }

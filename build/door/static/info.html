@@ -3,6 +3,12 @@
 
 <head>
   <title>Ɗanƙ Ɗomaiƞ: the return of Hack & Slash</title>
+  <link href="animate.min.css" rel="stylesheet">
+  <link href="command.css" rel="stylesheet">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Carter+One&family=Grenze+Gotisch:wght@500&family=VT323&display=swap"
+    rel="stylesheet">
   <meta charset="utf-8">
   <meta name="author" content="Robert Hurst">
   <meta name="mobile-web-app-capable" content="yes">
@@ -13,13 +19,6 @@
   <meta name="msapplication-starturl" content="https://play.ddgame.us/">
   <meta name="viewport"
     content="width=device-width,initial-scale=1,minimum-scale=0.5,maximum-scale=1,shrink-to-fit=yes,user-scalable=no">
-  <link href='https://fonts.googleapis.com/css?family=Carter+One' rel='stylesheet'>
-  <link rel="manifest" href="manifest.json">
-  <link rel="preload" href="notoemoji.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="notomono.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="preload" href="vt323.woff2" as="font" type="font/woff2" crossorigin="anonymous">
-  <link rel="stylesheet" href="animate.min.css">
-  <link rel="stylesheet" href="command.css">
   <style type='text/css'>
     @font-face {
       font-family: 'notomono';
@@ -31,19 +30,12 @@
       src: url('notoemoji.woff2') format('woff2');
     }
 
-    @font-face {
-      font-family: 'tty';
-      src: url('vt323.woff2') format('woff2');
-    }
-
-    html {
-      font-family: 'Carter One', 'notomono', 'notoemoji';
-    }
-
     body {
       background: linear-gradient(to bottom right, skyblue, aliceblue);
-      font-size: 100%;
       color: midnightblue;
+      font-display: swap;
+      font-family: 'Grenze Gotisch', cursive;
+      font-weight: 500;
       text-align: center;
       border: none;
       margin: 0px;
@@ -215,17 +207,17 @@
           return;
         }
 
-        var html = '';
+        var html = '<span style="font-size:larger;">';
         if (event.data.handle) {
-          html += `${event.data.handle}`;
+          html += `<span style="font-size:larger;">${event.data.handle}</span>`;
         }
         if (event.data.level) {
-          html += ` a level ${event.data.level} `;
+          html += `<span style="font-family:VT323, monospace;">&nbsp;a level ${event.data.level}</span>`;
         }
         if (event.data.pc) {
-          html += ` ${event.data.pc} `;
+          html += `<span style="font-family:VT323, monospace;">&nbsp;${event.data.pc}</span>`;
         }
-        if (html.length) html += '<br>';
+        html += '</span>';
         if (event.data.jpg) {
           html += `<img src="images/${event.data.jpg}.jpg" onload="nmeResize(\'${event.data.effect}\');" style="display:none;" />`;
         }
@@ -302,11 +294,11 @@
       if (!art) art = setInterval(rotateImage, 14400);
       window.focus();
       input = false;
-      cmd(`<input type="button" id="cancel" value="Disconnect" onclick="currentCMD = ''; send('\x1B');"> <input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"><br>
-<span style="font-size:larger; font-family:notomono; font-weight:600;">🤴 <a href="https://www.ddgame.us" target="_new"><span style="color:black !important">Ɗanƙ Ɗomaiƞ</span></a> 👸</span><br>
-<span style="color:gray !important;">the return of Hack &amp; Slash</span><br>
-🇺🇸 <span style="color:brown !important; font-size:smaller;">&copy; 2017 - 2020 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a></span> 🧙<br>
-⚡ <span style="color:black !important; font-family:tty, Consolas, monospace;">Powered by <a href="https://xtermjs.org" target="_blank">Xterm.js</a></span> 🖥`, '150%');
+      cmd(`<input type="button" class="slate" id="cancel" value="Disconnect" onclick="currentCMD = ''; send('\x1B');"> <input type="button" class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"><br>
+<span style="font-size:larger; font-family:notomono; font-weight:600;">🤴 <a href="https://www.ddgame.us" target="_new"><span style="color:black">Ɗanƙ Ɗomaiƞ</span></a> 👸</span><br>
+<span style="color:darkslategray;">the return of Hack &amp; Slash</span><br>
+<span style="color:brown; font-size:smaller;">🇺🇸 &copy; 2017 - 2020 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a> 🧙</span><br>
+<span style="color:black; font-family:VT323, monospace;">⚡ Powered by <a href="https://xtermjs.org" target="_blank">Xterm.js</a> 🖥</span>`, '150%');
       window.dispatchEvent(new Event('resize'))	// gratuituous
     }
 
@@ -316,11 +308,11 @@
         const n = Math.trunc(Math.random() * images.length);
         const profile = images.splice(n, 1)[0];
 
-        let html = '';
-        if (profile.handle) html += `${profile.handle}`;
-        if (profile.level) html += ` a level ${profile.level}`;
-        if (profile.pc) html += profile.level ? ` ${profile.pc}` : ` (${profile.pc})`;
-        if (html.length) html += '<br>';
+        let html = '<span style="font-size:larger;">';
+        if (profile.handle) html += `<span style="font-size:larger;">${profile.handle}</span>`;
+        if (profile.level) html += `<span style="font-family:VT323, monospace;">&nbsp;a level ${profile.level}</span>`;
+        if (profile.pc) html += `<span style="font-family:VT323, monospace;">&nbsp;${profile.pc}</span>`;
+        html += '</span>';
         if (profile.jpg) html += `<img src="images/${profile.jpg}.jpg" onload="nmeResize(\'${profile.effect}\');" style="display:none;" />`;
         if (profile.png) html += `<img src="images/${profile.png}.png" onload="nmeResize(\'${profile.effect}\');" style="display:none; filter:opacity(${/^connect/.test(profile.png) ? '40%' : '100%'});" />`;
 
@@ -380,12 +372,12 @@
     function menu() {
       input = false;
       cmd(`<table>
-<tr><td colspan=2>${ByeBye}</td><td colspan=2><input class="Gold" type="button" value="Most Wanted" onclick="send('M');"></td></tr>
+<tr><td colspan=2>${ByeBye}</td><td colspan=2><input class="Platinum" type="button" value="Most Wanted" onclick="send('M');"></td></tr>
 <tr><td colspan=4><hr></td></tr>
 <tr><td><input type="button" value="Reroll" onclick="send('X');"></td><td><input type="button" value="Rob" onclick="send('R');"></td><td><input class="Silver" type="button" value="Naval" onclick="send('N');"></td><td><input class="Silver" type="button" value="Arena" onclick="send('A');"></td></tr>
-<tr><td><input type="button" value="Halls" onclick="send('L');"></td><td><input type="button" value="Casino" onclick="send('G');"></td><td><input class="Slate" type="button" value="Party" onclick="send('P');"></td><td><input class="Slate" type="button" value="Dungeon" onclick="send('D');"></td></tr>
+<tr><td><input type="button" value="Library" onclick="send('L');"></td><td><input type="button" value="Casino" onclick="send('G');"></td><td><input class="Slate" type="button" value="Party" onclick="send('P');"></td><td><input class="Slate" type="button" value="Dungeon" onclick="send('D');"></td></tr>
 <tr><td><input type="button" value="System" onclick="send('Z');"></td><td><input type="button" value="Status" onclick="send('Y');"></td><td><input class="Tavern" type="button" value="Tavern" onclick="send('T');"></td><td><input class="Tavern" type="button" value="Square" onclick="send('S');"></td></tr>
-</table>`, '110%');
+</table>`, '120%');
     }
 
     function ny() {
@@ -647,7 +639,7 @@
     }
 
     function welcome() {
-      nme('Can you defeat the Demogorgon?<br><img src="title.jpg" onload="nmeResize(\'jackInTheBox\');" style="display:none;" />');
+      nme('<span style="color:darkred; font-size:150%">Can you defeat the Demogorgon?</span><img src="title.jpg" onload="nmeResize(\'jackInTheBox\');" style="display:none;" />');
       Logoff();
     }
 
