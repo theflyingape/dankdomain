@@ -207,17 +207,16 @@
           return;
         }
 
-        var html = '<span style="font-size:larger;">';
+        var html = '';
         if (event.data.handle) {
-          html += `<span style="font-size:larger;">${event.data.handle}</span>`;
+          html += `<span style="font-size:175%;">${event.data.handle}</span>`;
         }
         if (event.data.level) {
-          html += `<span style="font-family:VT323, monospace;">&nbsp;a level ${event.data.level}</span>`;
+          html += `<span style="font-family:VT323, monospace; font-size:150%;">&nbsp;a level ${event.data.level}</span>`;
         }
         if (event.data.pc) {
-          html += `<span style="font-family:VT323, monospace;">&nbsp;${event.data.pc}</span>`;
+          html += `<span style="font-family:VT323, monospace; font-size:150%;">&nbsp;${event.data.pc}</span>`;
         }
-        html += '</span>';
         if (event.data.jpg) {
           html += `<img src="images/${event.data.jpg}.jpg" onload="nmeResize(\'${event.data.effect}\');" style="display:none;" />`;
         }
@@ -278,7 +277,7 @@
 <input type="text" placeholder="Enter ID or Handle" id="id" name="id" required><br>
 <input type="password" placeholder="Enter password" name="password" required><br>
 <input type="button" value="NEW" onclick="send('NEW', true);"> <button id="default" class="silver" type="submit">Login</button>
-</form><span style="font-size:smaller;">⬅️ or click left window for cursor</span>`);
+</form>⬅️ or click left window for cursor`);
       nme(`<img src="images/npc/city_guard_2.png" onload="nmeResize(\'bounceInDown\');" style="display:none;" />`);
       document.getElementById('id').value = id;
     }
@@ -308,11 +307,10 @@
         const n = Math.trunc(Math.random() * images.length);
         const profile = images.splice(n, 1)[0];
 
-        let html = '<span style="font-size:larger;">';
-        if (profile.handle) html += `<span style="font-size:larger;">${profile.handle}</span>`;
-        if (profile.level) html += `<span style="font-family:VT323, monospace;">&nbsp;a level ${profile.level}</span>`;
-        if (profile.pc) html += `<span style="font-family:VT323, monospace;">&nbsp;${profile.pc}</span>`;
-        html += '</span>';
+        let html = '';
+        if (profile.handle) html += `<span style="font-size:175%;">${profile.handle}</span>`;
+        if (profile.level) html += `<span style="font-family:VT323, monospace; font-size:150%;">&nbsp;a level ${profile.level}</span>`;
+        if (profile.pc) html += `<span style="font-family:VT323, monospace; font-size:150%;">&nbsp;${profile.pc}</span>`;
         if (profile.jpg) html += `<img src="images/${profile.jpg}.jpg" onload="nmeResize(\'${profile.effect}\');" style="display:none;" />`;
         if (profile.png) html += `<img src="images/${profile.png}.png" onload="nmeResize(\'${profile.effect}\');" style="display:none; filter:opacity(${/^connect/.test(profile.png) ? '40%' : '100%'});" />`;
 
@@ -639,7 +637,7 @@
     }
 
     function welcome() {
-      nme('<span style="color:darkred; font-size:150%">Can you defeat the Demogorgon?</span><img src="title.jpg" onload="nmeResize(\'jackInTheBox\');" style="display:none;" />');
+      nme('<span style="color:darkred; font-size:175%;">Can you defeat the Demogorgon?</span><img src="title.jpg" onload="nmeResize(\'jackInTheBox\');" style="display:none;" />');
       Logoff();
     }
 

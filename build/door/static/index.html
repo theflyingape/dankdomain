@@ -72,9 +72,9 @@
       background-color: #0f1e3c;
       color: rosybrown;
       display: inline-block;
-      font-family: 'Dancing Script', cursive;
+      font-family: 'Grenze Gotisch', cursive;
       font-size: 125%;
-      font-weight: bolder;
+      font-weight: 300;
       text-decoration: none;
     }
 
@@ -94,23 +94,24 @@
       opacity: 0.35;
     }
   </style>
-  <link href="https://fonts.googleapis.com/css?family=Dancing+Script" rel="stylesheet">
-  <!--link href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono" rel="stylesheet"-->
-  <link rel="stylesheet" href="xterm.css">
+  <link href="xterm.css" rel="stylesheet">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@300&display=swap" rel="stylesheet">
 </head>
 
 <body>
   <div id="terminal"></div>
   <iframe seamless id="Info" name="Info" src="info.html" style="border:none;" allow="autoplay"></iframe>
   <div id="wall">
-    <table id="splash" style="margin:0px auto; vertical-align:bottom; white-space:nowrap;">
+    <p>
+    <table id="splash" style="margin:2px auto; vertical-align:bottom; white-space:nowrap;">
       <tr>
         <td></td>
-        <td style="text-align:center">
-          <h2 title="Rob & Lois">🤴 <a href="https://www.ddgame.us" title="Player's Manual"><span
-                style="color:gray !important; font-family:notomono;">Ɗanƙ Ɗomaiƞ</span></a> 👸<br><span
-              style="color:rosybrown !important; font-size:smaller">the return of Hack
-              &amp; Slash</span></h2>
+        <td style="text-align:center; font-size:200%;" title="Rob & Lois">
+          🤴 <a href="https://www.ddgame.us" title="Player's Manual">
+            <span style="font-family:notomono; color:slategray !important;">Ɗanƙ Ɗomaiƞ</span></a> 👸<br>
+          <span style="color:dimgray; font-family:'Grenze Gotisch';font-size:smaller;">
+            the return of Hack &amp; Slash</span>
         </td>
         <td><img src="images/castle.png" style="height:96px; width:96px;" title="Fortune & Glory"></td>
       </tr>
@@ -149,12 +150,13 @@
       <tr>
         <td style="text-align:center;"><span style="font-size:smaller">Come visit us<br>on <a
               href="http://www.originalhackandslash.net/" target="_blank">Facebook</a></span></td>
-        <td style="text-align:center">🇺🇸 <span style=" color:gray !important; font-size:smaller">&copy; 2017
+        <td style="text-align:center; font-size:smaller;">🇺🇸 <span style=" color:gray !important;">&copy; 2017
             - 2020 <a href="https://robert.hurst-ri.us">Robert
               Hurst</a> 🧙</span></td>
         <td></td>
       </tr>
     </table>
+    </p>
   </div>
   <audio id="play">
     <source id="oggPlay" type="audio/ogg" />
