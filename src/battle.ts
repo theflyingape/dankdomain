@@ -88,7 +88,7 @@ module Battle {
         if ($.from == 'Tavern') {
             if ($.online.hp < 1) {
                 xvt.outln(`He picks up your ${$.player.weapon} and triumphantly waves it around to`)
-                xvt.outln(`the cheering crowd. `, -600, ` He struts toward the mantelpiece `, -600)
+                xvt.out(`the cheering crowd. `, -1600, ` He struts toward the mantelpiece `, -600)
                 if ($.online.weapon.wc > $.barkeep.weapon.wc) {
                     let trophy = { who: $.player.id, weapon: $.player.weapon }
                     fs.writeFileSync('./files/tavern/trophy.json', JSON.stringify(trophy))
@@ -109,12 +109,12 @@ module Battle {
                 $.wall(`defeated ${$.barkeep.user.handle}`)
 
                 let trophy = JSON.parse(fs.readFileSync(`./files/tavern/trophy.json`).toString())
-                $.Weapon.equip($.barkeep, trophy)
+                $.Weapon.equip($.barkeep, trophy.weapon)
                 let credit = new $.coins($.barkeep.weapon.value)
                 credit.value = $.worth(credit.value, $.online.cha)
                 let result = $.Weapon.swap($.online, $.barkeep, credit)
                 if (isBoolean(result) && result) {
-                    $.PC.wearing($.online)
+                    xvt.outln('You also take his trophy, ', $.PC.weapon(), -600)
                     fs.writeFileSync('./files/tavern/trophy.json', JSON.stringify({ "who": "_TAX", "weapon": "Needle" }))
                 }
                 //  no entertainment
