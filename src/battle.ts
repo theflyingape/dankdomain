@@ -87,32 +87,37 @@ module Battle {
 
         if ($.from == 'Tavern') {
             if ($.online.hp < 1) {
-                let trophy = {
-                    who: $.player.id,
-                    weapon: $.player.weapon,
-                    toWC: $.player.toWC
+                xvt.outln(`He picks up your ${$.player.weapon} and triumphantly waves it around to`)
+                xvt.outln(`the cheering crowd. `, -600, ` He struts toward the mantelpiece `, -600)
+                if ($.online.weapon.wc > $.barkeep.weapon.wc) {
+                    let trophy = { who: $.player.id, weapon: $.player.weapon }
+                    fs.writeFileSync('./files/tavern/trophy.json', JSON.stringify(trophy))
+                    xvt.outln(`and hangs his new trophy.`)
                 }
-                fs.writeFileSync('./files/tavern/trophy.json', JSON.stringify(trophy))
+                else
+                    xvt.outln(`and burns it!`, -600, 'Heh.')
                 $.Weapon.equip($.online, $.Weapon.merchant[0])
                 $.saveUser($.player)
                 $.reason = `schooled by ${$.barkeep.user.handle}`
-
-                $.run(`UPDATE Players
-                SET kills=kills+1, status='${$.player.id}', weapon='${$.barkeep.user.weapon}'
-                WHERE id='${$.barkeep.user.id}'`)
-
-                xvt.outln(`He picks up your ${trophy.weapon} and triumphantly waves it around to`)
-                xvt.outln(`the cheering crowd.  He struts toward the mantelpiece to hang his new trophy.\n`)
+                //  go crazy!
                 $.sound('winner', 32)
-                xvt.outln('  ', xvt.bright, xvt.green, '"Drinks are on the house!"', -2250)
+                xvt.outln('\n  ', xvt.bright, xvt.green, '"Drinks are on the house!"', -2250)
             }
             else {
                 $.music('barkeep')
-                $.run(`UPDATE Players
-                SET killed=killed+1, status='', weapon='${$.barkeep.user.weapon}'
-                WHERE id='${$.barkeep.user.id}'`)
                 $.news(`\tdefeated ${$.barkeep.user.handle}`)
                 $.wall(`defeated ${$.barkeep.user.handle}`)
+
+                let trophy = JSON.parse(fs.readFileSync(`./files/tavern/trophy.json`).toString())
+                $.Weapon.equip($.barkeep, trophy)
+                let credit = new $.coins($.barkeep.weapon.value)
+                credit.value = $.worth(credit.value, $.online.cha)
+                let result = $.Weapon.swap($.online, $.barkeep, credit)
+                if (isBoolean(result) && result) {
+                    $.PC.wearing($.online)
+                    fs.writeFileSync('./files/tavern/trophy.json', JSON.stringify({ "who": "_TAX", "weapon": "Needle" }))
+                }
+                //  no entertainment
                 $.sound('ko', 12)
                 if ($.player.cha > 49) $.PC.adjust('cha', -22, -20, -2)
                 $.player.coward = false

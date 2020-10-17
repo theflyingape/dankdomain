@@ -283,8 +283,7 @@ module Tavern {
 
                         $.loadUser($.barkeep)
                         let trophy = JSON.parse(fs.readFileSync(`./files/tavern/trophy.json`).toString())
-                        $.Weapon.equip($.barkeep, trophy.weapon)
-                        $.barkeep.user.toWC = $.int(trophy.toWC, true)
+                        $.barkeep.user.toWC = $.int($.barkeep.weapon.wc / 5, true)
                         if ($.barkeep.weapon.wc < $.Weapon.merchant.length)
                             $.barkeep.toWC += $.int(($.Weapon.merchant.length - $.barkeep.weapon.wc) / 10) + 1
 
@@ -297,7 +296,7 @@ module Tavern {
                         $.music('tiny')
                         xvt.out(`${$.PC.who($.barkeep).He}points to a buffed weapon hanging over the mantlepiece and says, `
                             , xvt.green, xvt.bright, '"Lookee\n')
-                        xvt.outln(`there, ${$.PC.who(fool).he}tried to use that ${$.PC.weapon($.barkeep)}`, xvt.green, xvt.bright, `, but it wasn't enough\nto take me.\"\n`, -6000)
+                        xvt.outln(`there, ${$.PC.who(fool).he}tried to use that ${trophy.weapon}`, xvt.green, xvt.bright, `, but it wasn't enough\nto take me.\"\n`, -6000)
                         xvt.out('The patrons move in closer to witness the forthcoming slaughter, except for\n')
                         xvt.outln(`${$.taxman.user.handle} who is busy raiding the bar of its beer and nuts.`, -5000)
                         xvt.outln(`\nYou hear a cry, "I'll pay fifteen-to-one on the challenger!"`, -4000)
