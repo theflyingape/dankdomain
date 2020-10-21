@@ -40,7 +40,7 @@ module Main {
         if ($.reason) xvt.hangup()
 
         if (!suppress) $.profile({ png: ['castle', 'joust', 'dragon'][$.dice(3) - 1], effect: 'pulse' })
-        $.action('menu')
+        $.action('main')
         xvt.app.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }

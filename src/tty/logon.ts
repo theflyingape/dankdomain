@@ -25,7 +25,6 @@ module Logon {
     let retry = 3
     xvt.app.focus = 'who'
 
-
     function guards(): boolean {
         xvt.beep()
         xvt.outln(xvt.reset, 'Invalid response.\n', -400)

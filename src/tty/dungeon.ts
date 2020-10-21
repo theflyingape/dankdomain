@@ -1350,8 +1350,9 @@ module Dungeon {
                 xvt.out('He says, ')
 
                 if ($.online.hp >= $.player.hp || cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, cast)) {
-                    $.profile({ jpg: DL.cleric.sp < $.Magic.power(DL.cleric, cast) ? 'npc/prayer' : 'payment', effect: 'fadeInUp' })
                     xvt.outln(xvt.yellow, '"I will pray for you."')
+                    if ($.online.hp < $.player.hp)
+                        $.profile({ jpg: 'npc/prayer', effect: 'fadeInUp' })
                     break
                 }
 

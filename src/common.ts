@@ -2038,7 +2038,7 @@ module Common {
         xvt.out(xvt.off)
         xvt.plot(player.rows, 1)
         xvt.outln('\n'.repeat(scroll))
-        xvt.out(xvt.clear)
+        xvt.out(xvt.clear, -10)
     }
 
     export function death(by: string) {

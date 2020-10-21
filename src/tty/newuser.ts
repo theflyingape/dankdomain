@@ -11,10 +11,7 @@ module NewUser {
     let editmode: boolean = false
 
     $.music('newuser')
-    $.profile({
-        png: 'npc/city_guard_1', effect: 'bounceInLeft'
-        , handle: 'Shall we begin?'
-    })
+    $.profile({ handle: 'Shall we begin?', png: 'npc/city_guard_1', effect: 'bounceInLeft' })
     $.clear()
     xvt.plot(1, 17)
 

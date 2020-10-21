@@ -1,0 +1,319 @@
+/*****************************************************************************\
+ *  Ɗanƙ Ɗomaiƞ: the return of Hack & Slash                                  *
+ *  CSS authored by: Robert Hurst <theflyingape@gmail.com>                   *
+\*****************************************************************************/
+
+@font-face {
+    font-family: emoji;
+    src: url('assets/notoemoji.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: mono;
+    src: url('assets/notomono.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: tty;
+    src: url('assets/vt220.woff2') format('woff2');
+}
+
+body {
+    background-color: black;
+    border: none;
+    color: antiquewhite;
+    font-display: swap;
+    font-family: mono, emoji;
+    margin: 0px;
+    touch-action: none;
+}
+
+a:link, a:visited {
+    background-color: #0f1e3c;
+    color: rosybrown;
+    font-family: 'Grenze Gotisch', cursive;
+    font-size: 125%;
+    font-weight: 300;
+    text-decoration: none;
+}
+
+a:hover, a:active {
+    background-color: #112244;
+    color: aliceblue;
+}
+
+td img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#a2hs-button.disabled {
+    opacity: 0.35;
+}
+
+/*
+#monitor {
+    margin: 3vmin auto;
+    padding: 5.5vmin;
+    width: min-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #3f3933;
+    border-radius: 0.5rem;
+}
+*/
+
+#monitor {
+    align-items: center;
+    background: #3f3933;
+    border-radius: 2rem;
+    left: 0;
+    margin: 0 auto;
+    min-height: 200px;
+    min-width: 512px;
+    overflow: hidden;
+    width: 70%;
+    height: 100%;
+    position: absolute;
+}
+
+#terminal {
+    font-display: swap;
+    font-family: tty, emoji;
+    margin: 20px auto;
+    height: 98%;
+    width: 97%;
+}
+
+#wall {
+    background-color: #102040;
+    border-radius: 0.5rem;
+    margin: 12px auto;
+    height: 92%;
+    width: 96%;
+}
+
+#splash {
+    margin: 12px auto;
+    vertical-align: bottom;
+    white-space: nowrap;
+    width: 50%;
+}
+
+#info {
+    background: linear-gradient(to bottom right, skyblue, aliceblue);
+    color: midnightblue;
+    font-display: swap;
+    font-family: 'Grenze Gotisch', cursive;
+    font-weight: 500;
+    text-align: center;
+    border: none;
+    margin: 0px;
+    max-height: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    width: 30%;
+    height: 100%;
+    right: 0;
+    position: fixed;
+}
+
+#info div {
+    padding: 0px 0px 0px 0px;
+    border: none;
+}
+
+#info img {
+    max-height: 80%;
+    max-width: 100%;
+    object-fit: contain;
+    height: 80%;
+    width: 100%;
+}
+
+#info .mob {
+    max-height: unset;
+    max-width: unset;
+    height: unset;
+    width: unset;
+}
+
+#info p, #info table {
+    border: none;
+    border-spacing: 0px 2px;
+    display: inline-block;
+    text-align: center;
+}
+
+#info td {
+    height: 100%;
+    width: 19vw;
+}
+
+#menu {
+    width: 100%;
+    position: absolute;
+}
+
+#command {
+    background: linear-gradient(to bottom, rgba(223, 247, 255, 0.04), rgba(215, 241, 247, 0.96));
+    position: fixed;
+}
+
+#command a:link, #command a:visited {
+    background-color: unset;
+    color: midnightblue;
+    font-family: unset;
+    font-size: unset;
+    font-weight: unset;
+    text-decoration: none;
+    display: inline-block;
+}
+
+#command a:hover, #command a:active {
+    background-color: skyblue;
+    color: darkslategray;
+}
+
+#command hr {
+    background-image: linear-gradient(to left, gainsboro, steelblue, gainsboro);
+    border: 0;
+    height: 1px;
+}
+
+#command input[type=text], #command input[type=password] {
+    width: 80%;
+    padding: 12px 18px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+#command input, #command button {
+    background: antiquewhite;
+    background-image: linear-gradient(to bottom, cornsilk, darkkhaki);
+    border-radius: 10px 4px 2px 6px;
+    box-shadow: 1px 3px 5px darkslategray;
+    font-display: swap;
+    font-family: 'Carter One', cursive;
+    font-size: 100%;
+    color: midnightblue;
+    padding-top: 0.4em;
+    padding-left: 0.3em;
+    padding-bottom: 0.4em;
+    padding-right: 0.3em;
+    border: solid darkolivegreen;
+    border-width: 2px;
+    outline: 0;
+    text-decoration: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#command input:active, #command button:active {
+    box-shadow: 2px 6px 10px darkslategray;
+    transform: scale(1.20) translateY(-0.2em);
+}
+
+#command input:hover, #command button:hover {
+    background-image: linear-gradient(to bottom, antiquewhite, olive);
+    text-decoration: none;
+    text-shadow: 1px 1px 2px black;
+    border: solid darkolivegreen;
+    border-width: 1px 3px 3px 1px;
+    color: ghostwhite;
+}
+
+#command .Keycap {
+    padding-top: 0.10em;
+    padding-left: 0.15em;
+    padding-bottom: 0.90em;
+    padding-right: 2.85em;
+    font-size: 110%;
+    width: 98%;
+}
+
+#command .platinum, #command .Platinum {
+    background: hotpink;
+    border: solid darkorchid;
+    color: indigo;
+    font-size: 120%;
+}
+
+#command .platinum:hover, #command .Platinum:hover {
+    background-image: linear-gradient(to bottom, hotpink, darkorchid);
+    border: solid darkorchid;
+    border-width: 1px 3px 3px 1px;
+}
+
+#command .gold, #command .Gold {
+    background: gold;
+    border: solid darkgoldenrod;
+    color: goldenrod;
+    font-size: 120%;
+}
+
+#command .gold:hover, #command .Gold:hover {
+    background-image: linear-gradient(to bottom, lightgoldenrodyellow, gold);
+    border: solid goldenrod;
+    border-width: 1px 3px 3px 1px;
+}
+
+#command .silver, #command .Silver {
+    background: turquoise;
+    border: solid darkturquoise;
+    color: steelblue;
+    font-size: 120%;
+}
+
+#command .silver:hover, #command .Silver:hover {
+    background-image: linear-gradient(to bottom, lightcyan, darkturquoise);
+    border: solid darkturquoise;
+    border-width: 1px 3px 3px 1px;
+}
+
+#command .copper, #command .Copper {
+    background: coral;
+    border: solid darkred;
+    color: crimson;
+    font-size: 120%;
+}
+
+#command .copper:hover, #command .Copper:hover {
+    background-image: linear-gradient(to bottom, lightsalmon, darkred);
+    border: solid darkred;
+    border-width: 1px 3px 3px 1px;
+}
+
+#command .slate, #command .Slate {
+    background: lightgray;
+    border: solid darkslategray;
+    color: slategray;
+    font-size: 120%;
+}
+
+#command .slate:hover, #command .Slate:hover {
+    background-image: linear-gradient(to bottom, whitesmoke, darkslategray);
+    border: solid darkslategray;
+    border-width: 1px 3px 3px 1px;
+}
+
+#command .tavern, #command .Tavern {
+    background: burlywood;
+    border: solid saddlebrown;
+    color: chocolate;
+    font-size: 120%;
+}
+
+#command .tavern:hover, #command .Tavern:hover {
+    background-image: linear-gradient(to bottom, bisque, saddlebrown);
+    border: solid saddlebrown;
+    border-width: 1px 3px 3px 1px;
+}
+
+#command .Platinum, #command .Gold, #command .Silver, #command .Copper, #command .Slate, #command .Tavern {
+    width: 99%;
+}

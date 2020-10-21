@@ -3,13 +3,21 @@
 
 <head>
   <title>Ɗanƙ Ɗomaiƞ: the return of Hack & Slash</title>
-  <link href="favicon.ico" rel="icon" type="image/x-icon">
-  <link href="favicon.ico" rel="shortcut icon" type="image/x-icon">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Carter+One&family=Grenze+Gotisch:wght@300;500&family=VT323&display=swap"
+    rel="stylesheet">
+  <link href="assets/vt220.woff2" rel="preload" as="font" type="font/woff2" crossorigin>
+  <link href="assets/notomono.woff2" rel="preload" as="font" type="font/woff2" crossorigin>
+  <link href="assets/notoemoji.woff2" rel="preload" as="font" type="font/woff2" crossorigin>
+  <link href="assets/favicon.ico" rel="icon" type="image/x-icon">
+  <link href="assets/favicon.ico" rel="shortcut icon" type="image/x-icon">
   <link href="manifest.json" rel="manifest">
-  <link href="vt220.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous">
-  <link href="notomono.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous">
-  <link href="notoemoji.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous">
+  <link href="animate.min.css" rel="stylesheet">
+  <link href="ddgame.css" rel="stylesheet">
+  <link href="xterm.css" rel="stylesheet">
   <meta charset="UTF-8">
+  <meta name="author" content="Robert Hurst">
   <meta name="application-name" content="dankdomain">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
@@ -18,145 +26,79 @@
   <meta name="theme-color" content="#102040" />
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=1.0, shrink-to-fit=yes, user-scalable=no">
-  <style type='text/css'>
-    @font-face {
-      font-family: 'tty';
-      src: url('vt220.woff2') format('woff2');
-    }
-
-    @font-face {
-      font-family: 'notomono';
-      src: url('notomono.woff2') format('woff2');
-    }
-
-    @font-face {
-      font-family: 'notoemoji';
-      src: url('notoemoji.woff2') format('woff2');
-    }
-
-    html {
-      font-family: 'notomono', 'notoemoji';
-    }
-
-    body {
-      background-color: #102040;
-      color: antiquewhite;
-      border: none;
-      margin: 0px;
-      touch-action: none;
-    }
-
-    #terminal {
-      font-display: swap;
-      font-family: 'notoemoji', 'tty';
-      border: 0;
-      top: 0;
-      left: 0;
-      min-height: 200px;
-      min-width: 512px;
-      width: 70%;
-      height: 100%;
-      position: fixed;
-    }
-
-    #Info {
-      top: 0;
-      right: 0;
-      width: 30%;
-      height: 100%;
-      position: fixed;
-    }
-
-    a:link,
-    a:visited {
-      background-color: #0f1e3c;
-      color: rosybrown;
-      display: inline-block;
-      font-family: 'Grenze Gotisch', cursive;
-      font-size: 125%;
-      font-weight: 300;
-      text-decoration: none;
-    }
-
-    a:hover,
-    a:active {
-      background-color: #112244;
-      color: aliceblue;
-    }
-
-    td img {
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    #a2hs-button.disabled {
-      opacity: 0.35;
-    }
-  </style>
-  <link href="xterm.css" rel="stylesheet">
-  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@300&display=swap" rel="stylesheet">
 </head>
 
 <body>
-  <div id="terminal"></div>
-  <iframe seamless id="Info" name="Info" src="info.html" style="border:none;" allow="autoplay"></iframe>
-  <div id="wall">
-    <p>
-    <table id="splash" style="margin:2px auto; vertical-align:bottom; white-space:nowrap;">
-      <tr>
-        <td></td>
-        <td style="text-align:center; font-size:200%;" title="Rob & Lois">
-          🤴 <a href="https://www.ddgame.us" title="Player's Manual">
-            <span style="font-family:notomono; color:slategray !important;">Ɗanƙ Ɗomaiƞ</span></a> 👸<br>
-          <span style="color:dimgray; font-family:'Grenze Gotisch';font-size:smaller;">
-            the return of Hack &amp; Slash</span>
-        </td>
-        <td><img src="images/castle.png" style="height:96px; width:96px;" title="Fortune & Glory"></td>
-      </tr>
-      <tr>
-        <td rowspan=4><img src="images/joust.png" style="height:96px; width:96px;" title="Player versus Player"></td>
-        <td colspan=2>&nbsp;· Press <button onclick="window.location.reload(true);"> REFRESH </button> to re-connect
-        </td>
-      </tr>
-      <tr>
-        <td colspan=2>&nbsp;· Read today's <a href="today.txt" target="_blank">The Olde Tavern</a> news</td>
-      </tr>
-      <tr>
-        <td colspan=2 id="lurker-state">&nbsp;· <em>loading</em> ...<select id="lurker-list" hidden></select></select>
-        </td>
-      </tr>
-      <tr>
-        <td>
-          <hr>
-        </td>
-        <td rowspan=2 style="vertical-align:middle"><img src="images/dragon.png" style="height:96px; width:96px;"
-            title="Classic gaming"></td>
-      </tr>
-      <tr hidden id="a2hs">
-        <td style="text-align:center"><a href="#" id="a2hs-button" title="Add app to homescreen" tabindex=-1><img
-              src="a2hs.svg" style="height:36px; width:36px;"></a></td>
-        <td><span style="color:lightgray !important; font-size:smaller">Google <b>Chrome</b> for Android, mobile or
-            desktop&nbsp;<br>can use <b>Install 👑 DDgame.us…</b> menu option<br>to play game as a fullscreen
-            <b>app</b></span></td>
-      </tr>
-      <tr id="desktop" hidden>
-        <td></td>
-        <td>Any of the <a href="https://en.wikipedia.org/wiki/Chromium_(web_browser)#Licensing"
-            target="_blank">Chromium</a>-based browsers work best<br>Microsoft <b>I</b>nternet <b>E</b>xplorer is <b>no
-            longer supported</b></td>
-      </tr>
-      <tr>
-        <td style="text-align:center;"><span style="font-size:smaller">Come visit us<br>on <a
-              href="http://www.originalhackandslash.net/" target="_blank">Facebook</a></span></td>
-        <td style="text-align:center; font-size:smaller;">🇺🇸 <span style=" color:gray !important;">&copy; 2017
-            - 2020 <a href="https://robert.hurst-ri.us">Robert
-              Hurst</a> 🧙</span></td>
-        <td></td>
-      </tr>
-    </table>
-    </p>
+  <div class="row">
+    <div id="monitor" class="column">
+      <div id="terminal"></div>
+      <div id="wall" hidden>
+        <table id="splash">
+          <tr>
+            <td></td>
+            <td style="text-align:center; font-size:200%; " title="Rob & Lois">
+              🤴 <a href="https://www.ddgame.us" title="Player's Manual">
+                <span style="font-family:notomono; font-weight: 500; color:slategray;">Ɗanƙ Ɗomaiƞ</span></a> 👸<br>
+              <span style="color:dimgray; font-family:'Grenze Gotisch';font-size:smaller;">
+                the return of Hack &amp; Slash</span>
+            </td>
+            <td><img src="images/castle.png" style="height:96px; width:96px;" title="Fortune & Glory"></td>
+          </tr>
+          <tr>
+            <td rowspan=4><img src="images/joust.png" style="height:96px; width:96px;" title="Player versus Player">
+            </td>
+            <td colspan=2>&nbsp;· Press <button onclick="window.location.reload(true);"> REFRESH </button> to
+              re-connect
+            </td>
+          </tr>
+          <tr>
+            <td colspan=2>&nbsp;· Read today's <a href="today.txt" target="_blank">The Olde Tavern</a> news</td>
+          </tr>
+          <tr>
+            <td colspan=2 id="lurker-state">&nbsp;· <em>loading</em> ...<select id="lurker-list"
+                hidden></select></select>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <hr>
+            </td>
+            <td rowspan=2 style="vertical-align:middle"><img src="images/dragon.png" style="height:96px; width:96px;"
+                title="Classic gaming"></td>
+          </tr>
+          <tr hidden id="a2hs">
+            <td style="text-align:center"><a href="#" id="a2hs-button" title="Add app to homescreen" tabindex=-1><img
+                  src="assets/a2hs.svg" style="height:36px; width:36px;"></a></td>
+            <td>
+              <span style="color:lightgray; font-size:smaller;">
+                &nbsp;Google <b>Chrome</b> for Android, mobile or desktop can&nbsp;<br>
+                &nbsp;use <b>Install 👑 DDgame.us…</b> menu option to play&nbsp;<br>
+                &nbsp;game as a fullscreen <b>app</b>&nbsp;</span>
+            </td>
+          </tr>
+          <tr id="desktop" hidden>
+            <td></td>
+            <td>Any of the <a href="https://en.wikipedia.org/wiki/Chromium_(web_browser)#Licensing"
+                target="_blank">Chromium</a>-based browsers work best<br>
+              Microsoft <b>I</b>nternet <b>E</b>xplorer is <b>no longer supported</b>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align:center;"><span style="font-size:smaller">Come visit us<br>on <a
+                  href="http://www.originalhackandslash.net/" target="_blank">Facebook</a></span></td>
+            <td style="text-align:center;"><span style="color:gray; font-size:smaller">🇺🇸 &copy; 2017 - 2020 <a
+                  href="https://robert.hurst-ri.us">Robert Hurst</a></span> 🧙</td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div id="info" class="column">
+      <div id="profile"></div>
+      <div id="menu">
+        <div id="command"></div>
+      </div>
+    </div>
   </div>
   <audio id="play">
     <source id="oggPlay" type="audio/ogg" />
@@ -167,60 +109,6 @@
     <source id="mp3Tune" type="audio/mp3" />
   </audio>
   <noscript>https://www.google.com/chrome/</noscript>
-  <script type="text/javascript">
-    let a = document.querySelector("#a2hs-button");
-    let t;
-    let wall = document.getElementById('wall');
-    let splash = document.getElementById('splash');
-    wall.style.zoom = `${80 * window.innerWidth / splash.clientWidth}%`;
-
-    if (! /MSIE \d|Trident.*rv:/.test(navigator.userAgent)) {
-      document.getElementById('terminal').hidden = false;
-      document.getElementById('Info').hidden = false;
-      document.getElementById('desktop').hidden = true;
-      wall.hidden = true;
-
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function () {
-          navigator.serviceWorker.register('sw.js').then(function (registration) {
-            // Registration was successful
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-          }, function (err) {
-            // registration failed :(
-            console.log('ServiceWorker registration failed: ', err);
-          });
-        });
-      }
-
-      window.addEventListener('beforeinstallprompt', function (e) {
-        // Prevent Chrome 67 and earlier from automatically showing the prompt
-        e.preventDefault();
-        // Stash the event so it can be triggered later.
-        t = e;
-        // Update UI notify the user they can add to home screen
-        document.getElementById("a2hs").hidden = false;
-
-        a.classList.add("available");
-        a.addEventListener("click", function (e) {
-          e.preventDefault();
-          t && !a.classList.contains("disabled") && t.prompt().then(function () {
-            t.userChoice.then(function (e) {
-              "accepted" === e.outcome
-                ? (a.classList.add("disabled"), a.setAttribute("title", "App already installed"), t = null)
-                : a.setAttribute("title", "Refresh the page and click again to install app");
-              a.classList.add("disabled");
-            })
-          });
-        });
-      });
-    }
-    else {
-      document.getElementById('terminal').hidden = true;
-      document.getElementById('Info').hidden = true;
-      document.getElementById('desktop').hidden = false;
-      wall.hidden = false;
-    }
-  </script>
   <script src="bundle.js"></script>
 </body>
 
