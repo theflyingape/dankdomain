@@ -162,7 +162,7 @@ module Logon {
             do {
                 $.player.access = Object.keys($.Access.name)[++title]
                 $.access = $.Access.name[$.player.access]
-            } while (!isDefined($.access[$.player.gender]))
+            } while (!isDefined($.access[$.player.sex]))
         }
         else {
             //  old school BBS tactic (usually 5 minutes) for Millennials to experience
@@ -217,7 +217,7 @@ module Logon {
 
         $.loadUser($.sysop)
         if (!$.loadKing()) {
-            $.player.access = Object.keys($.Access.name).slice($.player.gender == 'F' ? -2 : -1)[0]
+            $.player.access = Object.keys($.Access.name).slice($.player.sex == 'F' ? -2 : -1)[0]
             $.player.novice = false
             $.sysop.email = $.player.email
         }

@@ -754,7 +754,7 @@ module Common {
                 let title = Object.keys(Access.name).indexOf(rpc.user.access)
                 do {
                     rpc.user.access = Object.keys(Access.name)[++title]
-                } while (!isDefined(Access.name[rpc.user.access][rpc.user.gender]))
+                } while (!isDefined(Access.name[rpc.user.access][rpc.user.sex]))
                 xvt.outln(-500)
                 xvt.outln(xvt.yellow
                     , Access.name[king.access][king.sex], ' the ', king.access.toLowerCase()
