@@ -15,7 +15,7 @@
 import { Terminal, ITerminalOptions } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import { Unicode11Addon } from 'xterm-addon-unicode11'
-import { WebLinksAddon } from 'xterm-addon-web-links'
+//import { WebLinksAddon } from 'xterm-addon-web-links'
 //import { WebglAddon } from 'xterm-addon-webgl'
 
 //  document elements
@@ -204,6 +204,7 @@ function newSession(ev) {
     let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/player/'
     let options: ITerminalOptions = {
         bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false, drawBoldTextInBrightColors: true,
+
         cols: cols, rows: rows, scrollback: 500,
         fontFamily: 'tty,emoji', fontSize: 24, fontWeight: '400', fontWeightBold: '500',
         theme: {
@@ -226,7 +227,7 @@ function newSession(ev) {
     term = new Terminal(options)
 
     term.loadAddon(new Unicode11Addon())
-    term.loadAddon(new WebLinksAddon())
+    //term.loadAddon(new WebLinksAddon())
     term.loadAddon(fit)
 
     term.onData(data => {
@@ -488,7 +489,7 @@ function lurk() {
                         }
                     })
                     term.loadAddon(new Unicode11Addon())
-                    term.loadAddon(new WebLinksAddon())
+                    //term.loadAddon(new WebLinksAddon())
                     term.loadAddon(fit)
                     term.unicode.activeVersion = '11'
                     term.open(document.getElementById('terminal'))

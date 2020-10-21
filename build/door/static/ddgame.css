@@ -80,6 +80,10 @@ td img {
 }
 
 #terminal {
+    border-color: #2f2922;
+    border-radius: 1rem;
+    border-style: ridge;
+    border-width: 4px;
     font-display: swap;
     font-family: tty, emoji;
     margin: 20px auto;
