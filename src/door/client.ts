@@ -102,7 +102,7 @@ let tbt = 1
 window.onresize = () => {
     if (!wall.hidden) {
         if (!wall.style.zoom) setImmediate(() => window.dispatchEvent(new Event('resize')))
-        wall.style.zoom = `${96 / (splash.clientWidth / window.innerWidth)}%`
+        wall.style.zoom = `${95 / (splash.clientWidth / window.innerWidth)}%`
     }
     if (!pid) return
 
@@ -144,7 +144,7 @@ function doCommand(event) {
             if (currentCMD !== event.data.func) {
                 currentCMD = event.data.func
                 eval(`${currentCMD}()`)
-                nmeResize(undefined, true)
+                //nmeResize(undefined, true)
             }
             return
         }
@@ -616,14 +616,20 @@ function nmeResize(effect: string, func = false) {
     }
     if (/^<table.*/.test(profile.innerHTML)) return
     if (!func) animated(effect || 'fadeIn')
+    cmdResize()
 }
 
 function cmdResize() {
     menu.style.top = `${window.innerHeight - command.clientHeight}px`
-    let y = Math.trunc(94 / (command.clientHeight / window.innerHeight) * .6) / 100
+    //  stretch height any (up to 11% overlap)?
+    let flex = 1 - Math.trunc(100 * profile.clientHeight / window.innerHeight) / 100 + .11
+    flex = flex > .67 ? .67 : flex < .33 ? .33 : flex
+    let y = Math.trunc(94 / (command.clientHeight / window.innerHeight) * flex) / 100
     y = y > 3 ? 3 : y
+    //  stretch width any?
     let x = Math.trunc(94 / (command.clientWidth / info.clientWidth)) / 100
     x = x > 3 ? 3 : x
+    //  try to position @ bottom-centered
     let tx = 53 - 50 / x
     let ty = 53 - 50 / y
     command.style.transform = `scale(${x},${y}) translate(${tx}%,${-ty}%)`
@@ -691,10 +697,10 @@ function animated(effect) {
 function Logon() {
     clearInterval(art)
     art = null
+    nme(`<img src="images/npc/city_guard_2.png" />`, 'bounceInDown')
     cmd(`<input type="text" placeholder="your ID or handle" id="playerID" name="id" required><br>
 <input type="password" placeholder="your password" id="password" name="password" required><br>
 <input type="button" class="slate" value="NEW" onclick="send('NEW', true);">&nbsp;<input type="button" class="silver" value="Login" onclick="sendLogin();"><br>⬅️ or click left window for cursor`)
-    nme(`<img src="images/npc/city_guard_2.png" />`, 'bounceInDown')
 }
 
 function sendLogin() {
@@ -706,7 +712,7 @@ function sendLogin() {
 function Logoff() {
     if (!art) art = setInterval(rotateImage, 14400)
     window.focus()
-    cmd(`<input type="button" class="slate" id="cancel" value="Disconnect" onclick="currentCMD = ''; send('\x1B');">&nbsp;<input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"><br>
+    cmd(`<input type="button" class="slate" id="cancel" value="Disconnect" onclick="currentCMD = ''; send('\x1B');">&nbsp;&nbsp;&nbsp;<input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"><br>
 <span style="font-size:larger; font-family:mono; font-weight:600;">🤴 <a href="https://www.ddgame.us" target="_new"><span style="color:black">Ɗanƙ Ɗomaiƞ</span></a> 👸</span><br>
 <span style="color:darkslategray;">the return of Hack &amp; Slash</span><br>
 <span style="color:brown; font-size:smaller;">🇺🇸 &copy; 2017 - 2020 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a> 🧙</span><br>
