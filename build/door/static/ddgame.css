@@ -67,7 +67,7 @@ td img {
 }
 
 #terminal {
-    background: #000000;
+    background: black;
     border-color: #2f2922;
     border-radius: 1rem;
     border-style: ridge;
@@ -81,7 +81,10 @@ td img {
 
 #wall {
     background-color: #102040;
-    border-radius: 0.5rem;
+    border-color: #2f2922;
+    border-radius: 1rem;
+    border-style: ridge;
+    border-width: 4px;
     margin: 12px auto;
     height: 92%;
     width: 96%;

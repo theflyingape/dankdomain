@@ -102,7 +102,7 @@ let tbt = 1
 window.onresize = () => {
     if (!wall.hidden) {
         if (!wall.style.zoom) setImmediate(() => window.dispatchEvent(new Event('resize')))
-        wall.style.zoom = `${95 / (splash.clientWidth / window.innerWidth)}%`
+        wall.style.zoom = `${90 / (splash.clientWidth / window.innerWidth)}%`
     }
     if (!pid) return
 
@@ -207,7 +207,6 @@ function newSession(ev) {
     let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/player/'
     let options: ITerminalOptions = {
         bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false, drawBoldTextInBrightColors: true,
-
         cols: cols, rows: rows, scrollback: 500,
         fontFamily: 'tty,emoji', fontSize: 24, fontWeight: '400', fontWeightBold: '500',
         theme: {
