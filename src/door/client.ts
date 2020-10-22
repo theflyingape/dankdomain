@@ -109,6 +109,8 @@ window.onresize = () => {
     //  tweak side panel sizing within reason
     monitor.style.left = '0'
     monitor.style.width = '70%'
+    terminal.style.top = `0px`
+    terminal.style.height = `100%`
     info.style.width = '30%'
     term.setOption('fontSize', 24)
     let xy = fit.proposeDimensions()
@@ -119,7 +121,10 @@ window.onresize = () => {
     info.style.width = w
     //	adjust font to fit for standard width
     xy = fit.proposeDimensions()
-    term.setOption('fontSize', Math.trunc(24 * (xy.cols || 80) / 80))
+    let fontSize = Math.trunc(24 * (xy.cols || 80) / 80)
+    term.setOption('fontSize', fontSize)
+    terminal.style.height = `${window.innerHeight - 2 * (fontSize - 1)}px`
+    terminal.style.top = `${Math.round((window.innerHeight - terminal.clientHeight) / 2)}px`
 
     //  and make it stick
     xy = fit.proposeDimensions()
@@ -133,7 +138,6 @@ window.onresize = () => {
     rows = xy.rows
     term.resize(cols, rows)
     term.scrollToBottom()
-    terminal.style.top = `${Math.trunc((window.innerHeight - terminal.clientHeight) / 2) + 6}px`
     cmdResize()
 }
 
@@ -143,7 +147,7 @@ function doCommand(event) {
         if (event.data.func) {
             if (currentCMD !== event.data.func) {
                 currentCMD = event.data.func
-                eval(`${currentCMD}()`)
+                eval(`${currentCMD} ()`)
                 //nmeResize(undefined, true)
             }
             return
@@ -160,8 +164,8 @@ function doCommand(event) {
         }
 
         if (event.data.leader) {
-            html = `<table>
-    <tr><td rowspan=2><img src="images/${event.data.banner}.png"></td><td><img src="images/${event.data.leader}.png" /></td></tr>`
+            html = `< table >
+    <tr><td rowspan=2 > <img src="images/${event.data.banner}.png" > </td><td><img src="images/${event.data.leader}.png" /></td></tr>`
             if (event.data.leader)
                 html += `<tr><td><img src="images/${event.data.coat}.png" /></td></tr>`
             html += `</table>`
@@ -495,7 +499,7 @@ function lurk() {
                     term.open(document.getElementById('terminal'))
                     fit.fit()
 
-                    term.write('\n\x1B[1;34mConnecting your terminal to ' + watch[watch.selectedIndex].text + ' WebSocket ... ')
+                    term.write('\n\x1B[1;32mConnecting your terminal to ' + watch[watch.selectedIndex].text + ' WebSocket ... ')
                     let protocol = (location.protocol == 'https:') ? 'wss://' : 'ws://'
                     let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/lurker/'
 
