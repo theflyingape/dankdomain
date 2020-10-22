@@ -599,6 +599,7 @@ module Dungeon {
 
         //	monsters?
         if (ROOM.monster.length) {
+            $.action('clear')
             if (!refresh) drawRoom(Y, X, true, true)
             scroll(1, false)
             xvt.out(xvt.off)

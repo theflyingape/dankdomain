@@ -123,8 +123,7 @@ window.onresize = () => {
     xy = fit.proposeDimensions()
     let fontSize = Math.trunc(24 * (xy.cols || 80) / 80)
     term.setOption('fontSize', fontSize)
-    terminal.style.height = `${window.innerHeight - 2 * (fontSize - 1)}px`
-    terminal.style.top = `${Math.round((window.innerHeight - terminal.clientHeight) / 2)}px`
+    terminal.style.height = `${window.innerHeight - 2 * fontSize}px`
 
     //  and make it stick
     xy = fit.proposeDimensions()
@@ -630,7 +629,7 @@ function cmdResize() {
     let flex = 1 - Math.trunc(100 * profile.clientHeight / window.innerHeight) / 100 + .11
     flex = flex > .67 ? .67 : flex < .33 ? .33 : flex
     let y = Math.trunc(94 / (command.clientHeight / window.innerHeight) * flex) / 100
-    y = y > 3 ? 3 : y
+    y = y > 2.25 ? 2.25 : y
     //  stretch width any?
     let x = Math.trunc(94 / (command.clientWidth / info.clientWidth)) / 100
     x = x > 3 ? 3 : x
@@ -891,8 +890,7 @@ function hunt() {
 }
 
 function joust() {
-    cmd(`<input class="copper" id="cancel" type="button" value="Forfeit" onclick="send('F');"><br>
-<input class="slate" id="default" type="button" value="Joust" onclick="send('J');">`)
+    cmd(`<input class="copper" id="cancel" type="button" value="Forfeit" onclick="send('F');">&nbsp;<input class="slate" id="default" type="button" value="Joust" onclick="send('J');">`)
 }
 
 function monster() {
