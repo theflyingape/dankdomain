@@ -158,7 +158,8 @@ td img {
 }
 
 #command .emoji {
-    transform: scale(4.5, 2.25);
+    transform: scale(3, 2.25);
+    pointer-events: none;
 }
 
 #command a:link, #command a:visited {

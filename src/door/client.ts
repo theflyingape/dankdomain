@@ -848,7 +848,7 @@ function casino() {
 <tr><td class="emoji">🎲</td><td><input class="Slate" type="button" value="Craps" onclick="send('C');"></td><td class="emoji">🎲</td></tr>
 <tr><td class="emoji">🃏</td><td><input class="Slate" type="button" value="High Stakes" onclick="send('H');"></td><td class="emoji">🃏</td></tr>
 <tr><td class="emoji">🔢</td><td><input class="Slate" type="button" value="Keno" onclick="send('K');"></td><td class="emoji">🔟</td></tr>
-<tr><td class="emoji">🍒💣</td><td><input class="Slate" type="button" value="Slots" onclick="send('S');"></td><td class="emoji">🎰</td></tr>
+<tr><td class="emoji">🎰</td><td><input class="Slate" type="button" value="Slots" onclick="send('S');"></td><td class="emoji">🍒💣</td></tr>
 <tr><td colspan=2></td><td>${quit}</td></tr>
 </table>`)
 }
