@@ -617,7 +617,7 @@ function nmeResize(effect: string, func = false) {
         })
         return
     }
-    if (/^<table.*/.test(profile.innerHTML)) return
+    if (/<table/.test(profile.innerHTML)) return
     if (!func) animated(effect || 'fadeIn')
     cmdResize()
 }
@@ -627,14 +627,14 @@ function cmdResize() {
     //  stretch height any (up to 11% overlap)?
     let flex = 1 - Math.trunc(100 * profile.clientHeight / window.innerHeight) / 100 + .11
     flex = flex > .67 ? .67 : flex < .33 ? .33 : flex
-    let y = Math.trunc(94 / (command.clientHeight / window.innerHeight) * flex) / 100
+    let y = Math.trunc(96 / (command.clientHeight / window.innerHeight) * flex) / 100
     y = y > 2.25 ? 2.25 : y
     //  stretch width any?
-    let x = Math.trunc(94 / (command.clientWidth / info.clientWidth)) / 100
+    let x = Math.trunc(96 / (command.clientWidth / info.clientWidth)) / 100
     x = x > 3 ? 3 : x
     //  try to position @ bottom-centered
-    let tx = 53 - 50 / x
-    let ty = 53 - 50 / y
+    let tx = 52 - 50 / x
+    let ty = 50 - 50 / y
     command.style.transform = `scale(${x},${y}) translate(${tx}%,${-ty}%)`
 }
 
@@ -703,7 +703,7 @@ function Logon() {
     nme(`<img src="images/npc/city_guard_2.png" />`, 'bounceInDown')
     cmd(`<input type="text" placeholder="your ID or handle" id="playerID" name="id" required><br>
 <input type="password" placeholder="your password" id="password" name="password" required><br>
-<input type="button" class="slate" value="NEW" onclick="send('NEW', true);">&nbsp;<input type="button" class="silver" value="Login" onclick="sendLogin();"><br>⬅️ or click left window for cursor`)
+<input type="button" class="slate" value="NEW" onclick="send('NEW', true);">&nbsp;&nbsp;&nbsp;<input type="button" class="silver" value="Login" onclick="sendLogin();"><br>⬅️ or click left window for cursor`)
 }
 
 function sendLogin() {
@@ -804,9 +804,8 @@ function arena() {
     cmd(`<table>
 <tr><td><input class="Gold" type="button" value="User" onclick="send('U');"></td><td><input class="Silver" type="button" value="Monster" onclick="send('M');"></td></tr>
 <tr><td colspan=2><hr></td></tr>
-<tr><td><input class="Slate" type="button" value="Poison" onclick="send('P');"></td><td><input class="Platinum" type="button" value="Cast" onclick="send('C');"></td></tr>
+<tr><td><input class="Platinum" type="button" value="Cast" onclick="send('C');"></td><td><input class="Slate" type="button" value="Poison" onclick="send('P');"></td></tr>
 <tr><td><input type="button" value="Status" onclick="send('Y');"></td><td><input class="Gold" type="button" value="Joust" onclick="send('J');"></td></tr>
-<tr><td colspan=2><hr></td></tr>
 <tr><td><input class="Tavern" type="button" value="SQUARE" onclick="send('G');"></td><td>${quit}</td></tr>
 </table>`)
 }
@@ -815,7 +814,7 @@ function bank() {
     nme(`<img src="images/bank.jpg" />`, 'pulse');
     cmd(`${money}<table>
 <tr><td colspan=2></td><td colspan=2><input class="Slate" type="button" value="Deposit" onclick="send('D');"></td></tr>
-<tr><td><input type="button" value="Rob" onclick="send('R');"></td><td><h1>💰</h1></td><td colspan=2><input class="Slate" type="button" value="Withdraw" onclick="send('W');"></td></tr>
+<tr><td><input type="button" value="Rob" onclick="send('R');"></td><td class="emoji">💰</td><td colspan=2><input class="Slate" type="button" value="Withdraw" onclick="send('W');"></td></tr>
 <tr><td colspan=2></td><td><input class="Slate" type="button" value="Loan" onclick="send('L');"></td><td>${quit}</td></tr>
 </table>`)
 }
@@ -845,11 +844,11 @@ function brawl() {
 function casino() {
     nme('')
     cmd(`<table>
-<tr><td><h1>🂡</h1></td><td><input class="Slate" type="button" value="Black Jack" onclick="send('B');"></td><td><h1>🂫</h1></td></tr>
-<tr><td><h1>🎲</h1></td><td><input class="Slate" type="button" value="Craps" onclick="send('C');"></td><td><h1>🎲</h1></td></tr>
-<tr><td><h1>🃏</h1></td><td><input class="Slate" type="button" value="High Stakes" onclick="send('H');"></td><td><h1>🃏</h1></td></tr>
-<tr><td><h1>🔢</h1></td><td><input class="Slate" type="button" value="Keno" onclick="send('K');"></td><td><h1>🔟</h1></td></tr>
-<tr><td><h1>🍒💣</h1></td><td><input class="Slate" type="button" value="Slots" onclick="send('S');"></td><td><h1>🎰</h1></td></tr>
+<tr><td class="emoji">🂡</td><td><input class="Slate" type="button" value="Black Jack" onclick="send('B');"></td><td class="emoji">🂫</td></tr>
+<tr><td class="emoji">🎲</td><td><input class="Slate" type="button" value="Craps" onclick="send('C');"></td><td class="emoji">🎲</td></tr>
+<tr><td class="emoji">🃏</td><td><input class="Slate" type="button" value="High Stakes" onclick="send('H');"></td><td class="emoji">🃏</td></tr>
+<tr><td class="emoji">🔢</td><td><input class="Slate" type="button" value="Keno" onclick="send('K');"></td><td class="emoji">🔟</td></tr>
+<tr><td class="emoji">🍒💣</td><td><input class="Slate" type="button" value="Slots" onclick="send('S');"></td><td class="emoji">🎰</td></tr>
 <tr><td colspan=2></td><td>${quit}</td></tr>
 </table>`)
 }
@@ -863,7 +862,7 @@ function deeds() {
     cmd(`<table>
 <tr><td><input class="Silver" type="button" value="Champions" onclick="send('C');"></td><td><input class="Platinum" type="button" value="Heroes" onclick="send('H');"></td></tr>
 <tr><td colspan=2><hr></td></tr>
-<tr><td colspan=2><input class="Gold" type="button" value="Memorable" onclick="send('M');"></td></tr>
+<tr><td colspan=2><input class="Gold" type="button" value="Memorable Hits" onclick="send('M');"></td></tr>
 <tr><td colspan=2><hr></td></tr>
 <tr><td><input class="Tavern" type="button" value="Thugs" onclick="send('T');"></td><td><input class="Slate" type="button" value="Winners" onclick="send('W');"></td></tr>
 <tr><td></td><td>${quit}</td></tr>
@@ -874,7 +873,7 @@ function deeds() {
 function dungeon() {
     cmd(`<table>
 <tr><td><input class="Platinum" type="button" value="Cast" onclick="send('C');"></td><td><input class="Slate" type="button" value="North" onclick="send('N');"></td><td><input class="Copper" type="button" value="Poison" onclick="send('P');"></td></tr>
-<tr><td><input class="Slate" type="button" value="West" onclick="send('W');"></td><td><H1>🧭</H1></td><td><input class="Slate" type="button" value="East" onclick="send('E');"></td></tr>
+<tr><td><input class="Slate" type="button" value="West" onclick="send('W');"></td><td class="emoji">🧭</td><td><input class="Slate" type="button" value="East" onclick="send('E');"></td></tr>
 <tr><td></td><td><input class="Slate" type="button" value="South" onclick="send('S');"></td><td><input type="button" class="Silver" value="Status" onclick="send('Y');"></td></tr>
 </table>`)
 }
@@ -889,7 +888,7 @@ function hunt() {
 }
 
 function joust() {
-    cmd(`<input class="copper" id="cancel" type="button" value="Forfeit" onclick="send('F');">&nbsp;<input class="slate" id="default" type="button" value="Joust" onclick="send('J');">`)
+    cmd(`<input class="copper" id="cancel" type="button" value="Forfeit" onclick="send('F');">&nbsp;&nbsp;&nbsp;<input class="slate" id="default" type="button" value="Joust" onclick="send('J');">`)
 }
 
 function monster() {
@@ -898,7 +897,7 @@ function monster() {
 
 function naval() {
     cmd(`<table>
-<tr><td><input type="button" value="Go fishing" onclick="send('G');"></td><td><h1>🐟</h1></td></tr>
+<tr><td><input type="button" value="Go fishing" onclick="send('G');"></td><td class="emoji">🐟</td></tr>
 <tr><td><input class="Slate" type="button" value="List" onclick="send('L');"></td><td><input class="Slate" type="button" value="Status" onclick="send('Y');"></td></tr>
 <tr><td><input class="Silver" type="button" value="Hunt" onclick="send('H');"></td><td><input class="Tavern" type="button" value="Shipyard" onclick="send('S');"></td></tr>
 <tr><td><input class="Gold" type="button" value="Battle" onclick="send('B');"></td><td>${quit}</td></tr>
@@ -910,11 +909,10 @@ function party() {
     cmd(`<table>
 <tr><td><input type="button" value="Edit" onclick="send('E');"></td><td><input type="button" value="List" onclick="send('L');"></td></tr>
 <tr><td><input type="button" value="Resign" onclick="send('R');"></td><td><input type="button" value="Transfer" onclick="send('T');"></td></tr>
-<tr><td colspan=2><hr></td></tr>
 <tr><td colspan=2><input class="Gold" type="button" value="Most Wanted" onclick="send('M');"></td></tr>
 <tr><td colspan=2><hr></td></tr>
-<tr><td><input class="Silver" type="button" value="Start" onclick="send('S');"></td><td><input class="Platinum" type="button" value="Join" onclick="send('J');"></td></tr>
-<tr><td><input class="Slate" type="button" value="Fight!" onclick="send('F');"></td><td>${quit}</td></tr>
+<tr><td><input class="Platinum" type="button" value="Join" onclick="send('J');"></td><td><input class="Slate" type="button" value="Fight!" onclick="send('F');"></td></tr>
+<tr><td><input class="Silver" type="button" value="Start" onclick="send('S');"></td><td>${quit}</td></tr>
 </table>`)
 }
 
@@ -949,16 +947,13 @@ function shipyard() {
 
 function square() {
     cmd(`<table>
-<tr><td colspan=2><input type="button" value="Pick pockets" onclick="send('P');"></td></tr>
+<tr><td><input type="button" value="Pick pockets" onclick="send('P');"></td><td><input type="button" value="Jail" onclick="send('J');"></tr>
+<tr><td><input class="Tavern" type="button" value="Real Estate" onclick="send('R');"></td><td><input class="Slate" type="button" value="Armoury" onclick="send('A');"></td></tr>
+<tr><td><input class="Tavern" type="button" value="Security" onclick="send('S');"></td><td><input class="Slate" type="button" value="Apothecary" onclick="send('V');"></td></tr>
+<tr><td><input class="Platinum" type="button" value="Mage" onclick="send('M');"></td><td><input class="Slate" type="button" value="Weapon" onclick="send('W');"></td></tr>
 <tr><td colspan=2><hr></td></tr>
-<tr><td><input class="Slate" type="button" value="Armoury" onclick="send('A');"></td><td><input class="Slate" type="button" value="Weapon" onclick="send('W');"></td></tr>
-<tr><td><input class="Tavern" type="button" value="Real Estate" onclick="send('R');"></td><td><input class="Tavern" type="button" value="Security" onclick="send('S');"></td></tr>
-<tr><td><input class="Slate" type="button" value="Apothecary" onclick="send('V');"></td><td><input class="Platinum" type="button" value="Mage" onclick="send('M');"></td></tr>
-<tr><td colspan=2><hr></td></tr>
-<tr><td colspan=2><input class="Silver" type="button" value="Hospital" onclick="send('H');"></td></tr>
-<tr><td colspan=2><hr></td></tr>
-<tr><td><input class="Slate" type="button" value="Jail" onclick="send('J');"></td><td><input class="Slate" type="button" value="Bank" onclick="send('B');"></td></tr>
-<tr><td><input class="Silver" type="button" value="ARENA" onclick="send('G');"></td><td>${quit}</td></tr>
+<tr><td><input class="Slate" type="button" value="Bank" onclick="send('B');"></td><td><input class="Silver" type="button" value="Hospital" onclick="send('H');"></td></tr>
+<tr><td><input class="Copper" type="button" value="ARENA" onclick="send('G');"></td><td>${quit}</td></tr>
 </table>`)
 }
 

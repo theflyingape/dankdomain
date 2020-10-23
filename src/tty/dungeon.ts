@@ -2915,7 +2915,9 @@ module Dungeon {
         if (it) {
             if (!potions[v].identified) {
                 potions[v].identified = $.online.int > (85 - 4 * $.player.poison)
-                xvt.outln(v % 2 ? xvt.red : xvt.green, 'It was', xvt.bright, $.an(potion[v]), xvt.normal, '.')
+                xvt.out(v % 2 ? xvt.red : xvt.green, 'It was', xvt.bright)
+                if ($.player.emulation == 'XT') xvt.out(' 🧪')
+                xvt.outln($.an(potion[v]), xvt.normal, '.')
             }
             $.sound('quaff', 6)
             switch (v) {

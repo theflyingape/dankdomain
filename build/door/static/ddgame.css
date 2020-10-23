@@ -157,6 +157,10 @@ td img {
     position: fixed;
 }
 
+#command .emoji {
+    transform: scale(4.5, 2.25);
+}
+
 #command a:link, #command a:visited {
     background-color: unset;
     color: midnightblue;
@@ -190,18 +194,19 @@ td img {
 #command input, #command button {
     background: antiquewhite;
     background-image: linear-gradient(to bottom, cornsilk, darkkhaki);
+    border: solid darkolivegreen;
     border-radius: 10px 4px 2px 6px;
+    border-width: 2px;
     box-shadow: 1px 3px 5px darkslategray;
+    color: midnightblue;
     font-display: swap;
     font-family: 'Carter One', cursive;
     font-size: 100%;
-    color: midnightblue;
+    min-width: 40%;
     padding-top: 0.4em;
     padding-left: 0.3em;
     padding-bottom: 0.4em;
     padding-right: 0.3em;
-    border: solid darkolivegreen;
-    border-width: 2px;
     outline: 0;
     text-decoration: none;
     user-select: none;
@@ -310,5 +315,5 @@ td img {
 }
 
 #command .Platinum, #command .Gold, #command .Silver, #command .Copper, #command .Slate, #command .Tavern {
-    width: 99%;
+    width: 98%;
 }
