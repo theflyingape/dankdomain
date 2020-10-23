@@ -1717,6 +1717,7 @@ module Dungeon {
                 }
                 else {
                     $.profile({ png: potions[ROOM.giftValue].image, handle: 'Is it ' + 'nt'[$.dice(2) - 1] + 'asty, precious?', effect: 'fadeInUp' })
+                    if ($.player.emulation == 'XT') xvt.out('🧪 ')
                     xvt.out(potions[ROOM.giftValue].description, xvt.bright, xvt.cyan, ' potion', xvt.normal, '.')
                 }
 
