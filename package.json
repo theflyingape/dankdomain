@@ -78,7 +78,7 @@
     "@types/sprintf-js": "^1.1.2",
     "@types/ws": "^7.2.7",
     "browserify": "^17.0.0",
-    "eslint": "^7.11.0",
+    "eslint": "^7.12.0",
     "typescript": "^4.0.3"
   }
 }

@@ -96,47 +96,47 @@ let carrier = false, recheck = 0
 let idle: NodeJS.Timer, reconnect: NodeJS.Timer, lurking: NodeJS.Timer
 let tbt = 1
 
-
 //  monitor with terminal
 //  =====================
 window.onresize = () => {
+    //  check for idle client state
     if (!wall.hidden) {
         if (!wall.style.zoom) setImmediate(() => window.dispatchEvent(new Event('resize')))
         wall.style.zoom = `${90 / (splash.clientWidth / window.innerWidth)}%`
     }
     if (!pid) return
 
+    //  check for a resize between minimum terminal width requirements
+    info.hidden = (window.innerWidth < 960)
+
     //  tweak side panel sizing within reason
-    monitor.style.left = '0'
-    monitor.style.width = '70%'
-    terminal.style.top = `0px`
-    terminal.style.height = `100%`
+    monitor.style.width = info.hidden ? '100%' : '70%'
     info.style.width = '30%'
+    terminal.style.top = '22px'
+    terminal.style.bottom = '22px'
     term.setOption('fontSize', 24)
     let xy = fit.proposeDimensions()
-    let w = Math.trunc(parseInt(info.style.width) * (xy.cols || 80) / 80) + '%'
-    w = parseInt(w) < 26 ? '26%' : parseInt(w) > 34 ? '34%' : w
-    let v = (100 - parseInt(w)) + '%'
-    monitor.style.width = v
-    info.style.width = w
+    let w = Math.trunc(parseInt(info.style.width) * (xy.cols || 80) / 80)
+    w = w < 26 ? 26 : w > 34 ? 34 : w
+    monitor.style.width = info.hidden ? '100%' : `${100 - w}%`
+    info.style.width = `${w}%`
     //	adjust font to fit for standard width
     xy = fit.proposeDimensions()
     let fontSize = Math.trunc(24 * (xy.cols || 80) / 80)
     term.setOption('fontSize', fontSize)
-    terminal.style.height = `${window.innerHeight - 2 * fontSize}px`
-
     //  and make it stick
     xy = fit.proposeDimensions()
-    if (xy.cols > 80) {
-        v = Math.round(parseInt(v) * 80 / xy.cols) + '%'
-        w = (100 - parseInt(v)) + '%'
-        monitor.style.width = v
-        info.style.width = w
+    if (!info.hidden && xy.cols > 80) {
+        monitor.style.width = `${Math.round(parseInt(monitor.style.width) * 80 / xy.cols)}%`
+        info.style.width = `${100 - parseInt(monitor.style.width)}%`
     }
     cols = 80
     rows = xy.rows
     term.resize(cols, rows)
     term.scrollToBottom()
+    const viewport = <HTMLDivElement>document.getElementsByClassName('xterm-viewport')[0]
+    terminal.style.top = `${Math.trunc(22 + (terminal.clientHeight - viewport.clientHeight) / 2)}px`
+    terminal.style.bottom = terminal.style.top
     cmdResize()
 }
 
@@ -628,10 +628,10 @@ function cmdResize() {
     let flex = 1 - Math.trunc(100 * profile.clientHeight / window.innerHeight) / 100 + .11
     flex = flex > .67 ? .67 : flex < .33 ? .33 : flex
     let y = Math.trunc(96 / (command.clientHeight / window.innerHeight) * flex) / 100
-    y = y > 2.25 ? 2.25 : y
     //  stretch width any?
     let x = Math.trunc(96 / (command.clientWidth / info.clientWidth)) / 100
-    x = x > 3 ? 3 : x
+    x = x > 3.2 ? 3.2 : x
+    y = y > 3 ? 3 : y < x ? x : y
     //  try to position @ bottom-centered
     let tx = 52 - 50 / x
     let ty = 50 - 50 / y
