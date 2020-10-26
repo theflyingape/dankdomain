@@ -129,13 +129,6 @@ td img {
     width: 100%;
 }
 
-#info .mob {
-    max-height: unset;
-    max-width: unset;
-    height: unset;
-    width: unset;
-}
-
 #info p, #info table {
     border: none;
     border-spacing: 0px 2px;
@@ -156,13 +149,6 @@ td img {
 #command {
     background: linear-gradient(to bottom, rgba(223, 247, 255, 0.04), rgba(215, 241, 247, 0.96));
     position: fixed;
-}
-
-#command .emoji {
-    font-size: 150%;
-    font-stretch: ultra-expanded;
-    /*pointer-events: none;*/
-    /*transform: scale(3, 2.25);*/
 }
 
 #command a:link, #command a:visited {

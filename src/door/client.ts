@@ -162,8 +162,8 @@ function doCommand(event) {
         }
 
         if (event.data.leader) {
-            html = `< table >
-    <tr><td rowspan=2 > <img src="images/${event.data.banner}.png" > </td><td><img src="images/${event.data.leader}.png" /></td></tr>`
+            html = `${event.data.handle}<table>
+    <tr><td rowspan=2><img src="images/${event.data.banner}.png" /></td><td><img src="images/${event.data.leader}.png" /></td></tr>`
             if (event.data.leader)
                 html += `<tr><td><img src="images/${event.data.coat}.png" /></td></tr>`
             html += `</table>`
@@ -174,9 +174,9 @@ function doCommand(event) {
         if (event.data.mob1) {
             var h = window.innerWidth - 4
             html = `<table width="${h}px">
-    <tr><td class="mob"><img class="mob" style="max-width:${h / 2}px;" src="images/${event.data.mob1}.png" /></td><td class="mob"><img class="mob" style="max-width:${h / 2}px;" src="images/${event.data.mob2}.png" /></td></tr>`
+    <tr><td><img style="max-width:${h >> 1}px;" src="images/${event.data.mob1}.png" /></td><td><img style="max-width:${h >> 1}px;" src="images/${event.data.mob2}.png" /></td></tr>`
             if (event.data.mob3)
-                html += `<tr><td class="mob" colspan=2><img class="mob" style="max-width:${h * .75}px;" src="images/${event.data.mob3}.png" /></td></tr>`
+                html += `<tr><td colspan=2><img style="max-width:${(h * 3) >> 2}px;" src="images/${event.data.mob3}.png" /></td></tr>`
             html += `</table>`
             nme(html)
             return
@@ -608,6 +608,15 @@ let art = null
 let images = []
 let currentCMD = null
 
+function nme(html: string, effect?: string) {
+    profile.innerHTML = html || ''
+    let img = profile.getElementsByTagName('img')
+    if (img.length == 1) {
+        img.item(0).onload = () => { nmeResize(`${effect}`); }
+        img.item(0).style.display = 'none';
+    }
+}
+
 function nmeResize(effect: string, func = false) {
     if (recheck < 0) {
         window.dispatchEvent(new Event('resize'))
@@ -643,7 +652,7 @@ function reSize() {
 }
 
 function cmd(html) {
-    command.innerHTML = `<br>${html}<br>`
+    command.innerHTML = `<br>${html}`
     cmdResize()
 
     //  remove HTML onclick event to instantiate good practice ...
@@ -656,15 +665,6 @@ function cmd(html) {
                 eval(`${code}; onclick();`)
             })
         }
-    }
-}
-
-function nme(html: string, effect?: string) {
-    profile.innerHTML = html || ''
-    let img = profile.getElementsByTagName('img')
-    if (img.length == 1) {
-        img.item(0).onload = () => { nmeResize(`${effect}`); }
-        img.item(0).style.display = 'none';
     }
 }
 
@@ -814,7 +814,7 @@ function bank() {
     nme(`<img src="images/bank.jpg" />`, 'pulse');
     cmd(`${money}<table>
 <tr><td colspan=2></td><td colspan=2><input class="Slate" type="button" value="Deposit" onclick="send('D');"></td></tr>
-<tr><td><input type="button" value="Rob" onclick="send('R');"></td><td class="emoji">💰</td><td colspan=2><input class="Slate" type="button" value="Withdraw" onclick="send('W');"></td></tr>
+<tr><td><input type="button" value="Rob 💰" onclick="send('R');"></td><td></td><td colspan=2><input class="Slate" type="button" value="Withdraw" onclick="send('W');"></td></tr>
 <tr><td colspan=2></td><td><input class="Slate" type="button" value="Loan" onclick="send('L');"></td><td>${quit}</td></tr>
 </table>`)
 }
@@ -844,12 +844,12 @@ function brawl() {
 function casino() {
     nme('')
     cmd(`<table>
-<tr><td class="emoji">🂡</td><td><input class="Slate" type="button" value="Black Jack" onclick="send('B');"></td><td class="emoji">🂫</td></tr>
-<tr><td class="emoji">🎲</td><td><input class="Slate" type="button" value="Craps" onclick="send('C');"></td><td class="emoji">🎲</td></tr>
-<tr><td class="emoji">🃏</td><td><input class="Slate" type="button" value="High Stakes" onclick="send('H');"></td><td class="emoji">🃏</td></tr>
-<tr><td class="emoji">🔢</td><td><input class="Slate" type="button" value="Keno" onclick="send('K');"></td><td class="emoji">🔟</td></tr>
-<tr><td class="emoji">🎰</td><td><input class="Slate" type="button" value="Slots" onclick="send('S');"></td><td class="emoji">🍒💣</td></tr>
-<tr><td colspan=2></td><td>${quit}</td></tr>
+<tr><td><input class="Slate" type="button" value="🂡 Black Jack 🂫" onclick="send('B');"></td></tr>
+<tr><td><input class="Slate" type="button" value="🎲 Craps 🎲" onclick="send('C');"></td></tr>
+<tr><td><input class="Slate" type="button" value="🃏 High Stakes 🃏" onclick="send('H');"></td></tr>
+<tr><td><input class="Slate" type="button" value="🔢 Keno 🔟" onclick="send('K');"></td></tr>
+<tr><td><input class="Slate" type="button" value="🍒💣 Slots 🎰" onclick="send('S');"></td></tr>
+<tr><td>${quit}</td></tr>
 </table>`)
 }
 
@@ -861,9 +861,7 @@ function craps() {
 function deeds() {
     cmd(`<table>
 <tr><td><input class="Silver" type="button" value="Champions" onclick="send('C');"></td><td><input class="Platinum" type="button" value="Heroes" onclick="send('H');"></td></tr>
-<tr><td colspan=2><hr></td></tr>
 <tr><td colspan=2><input class="Gold" type="button" value="Memorable Hits" onclick="send('M');"></td></tr>
-<tr><td colspan=2><hr></td></tr>
 <tr><td><input class="Tavern" type="button" value="Thugs" onclick="send('T');"></td><td><input class="Slate" type="button" value="Winners" onclick="send('W');"></td></tr>
 <tr><td></td><td>${quit}</td></tr>
 </table>`)
@@ -873,7 +871,7 @@ function deeds() {
 function dungeon() {
     cmd(`<table>
 <tr><td><input class="Platinum" type="button" value="Cast" onclick="send('C');"></td><td><input class="Slate" type="button" value="North" onclick="send('N');"></td><td><input class="Copper" type="button" value="Poison" onclick="send('P');"></td></tr>
-<tr><td><input class="Slate" type="button" value="West" onclick="send('W');"></td><td class="emoji">🧭</td><td><input class="Slate" type="button" value="East" onclick="send('E');"></td></tr>
+<tr><td><input class="Slate" type="button" value="West" onclick="send('W');"></td><td style="font-size:xx-large">🧭</td><td><input class="Slate" type="button" value="East" onclick="send('E');"></td></tr>
 <tr><td></td><td><input class="Slate" type="button" value="South" onclick="send('S');"></td><td><input type="button" class="Silver" value="Status" onclick="send('Y');"></td></tr>
 </table>`)
 }
@@ -897,7 +895,7 @@ function monster() {
 
 function naval() {
     cmd(`<table>
-<tr><td><input type="button" value="Go fishing" onclick="send('G');"></td><td class="emoji">🐟</td></tr>
+<tr><td colspan=2><input type="button" value="Go fishing 🐟" onclick="send('G');"></td></tr>
 <tr><td><input class="Slate" type="button" value="List" onclick="send('L');"></td><td><input class="Slate" type="button" value="Status" onclick="send('Y');"></td></tr>
 <tr><td><input class="Silver" type="button" value="Hunt" onclick="send('H');"></td><td><input class="Tavern" type="button" value="Shipyard" onclick="send('S');"></td></tr>
 <tr><td><input class="Gold" type="button" value="Battle" onclick="send('B');"></td><td>${quit}</td></tr>

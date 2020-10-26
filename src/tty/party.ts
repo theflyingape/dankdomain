@@ -133,7 +133,7 @@ module Party {
                             g.back = $.dice(7)
                             g.fore = $.dice(7)
                             showGang(g)
-                            xtGang($.player.gender, $.player.melee, g.banner, g.trim)
+                            xtGang(g.name, $.player.gender, $.player.melee, g.banner, g.trim)
                             $.action('yn')
                             xvt.app.focus = 'accept'
                         }, prompt: 'New gang name? ', min: 2, max: 22
@@ -177,7 +177,7 @@ module Party {
 
                 g = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                 showGang(g)
-                xtGang($.player.gender, $.player.melee, g.banner, g.trim)
+                xtGang(g.name, $.player.gender, $.player.melee, g.banner, g.trim)
                 $.sound('ddd', 6)
 
                 $.action('ny')
@@ -299,7 +299,7 @@ module Party {
                     xvt.outln('\nYou are not its leader.')
                     break
                 }
-                xtGang($.player.gender, $.player.melee, g.banner, g.trim)
+                xtGang(g.name, $.player.gender, $.player.melee, g.banner, g.trim)
                 $.sound('ddd', 6)
 
                 Battle.user('Transfer leadership to', (member: active) => {
@@ -347,7 +347,7 @@ module Party {
                     xvt.outln('\nYou are not its leader.')
                     break
                 }
-                xtGang($.player.gender, $.player.melee, g.banner, g.trim)
+                xtGang(g.name, $.player.gender, $.player.melee, g.banner, g.trim)
                 $.action('ny')
 
                 xvt.app.form = {
@@ -535,7 +535,7 @@ module Party {
 
                             $.action('ny')
                             showGang(g, o, true)
-                            xtGang(o.genders[0], o.melee[0], o.banner, o.trim)
+                            xtGang(o.name, o.genders[0], o.melee[0], o.banner, o.trim)
                             xvt.app.focus = 'fight'
                         }, prompt: '\nFight which gang? ', max: 2
                     },
@@ -693,23 +693,22 @@ module Party {
         }
     }
 
-    function xtGang(sex: string, melee: number, banner: number, coat: number) {
+    function xtGang(name: string, sex: string, melee: number, banner: number, coat: number) {
 
         switch (sex) {
             case 'I':
-                $.profile({ leader: 'gang/leadermm', banner: 'gang/bannermm', coat: 'gang/coatmm' })
+                $.profile({ handle: name, leader: 'gang/leadermm', banner: 'gang/bannermm', coat: 'gang/coatmm' })
                 break
 
             case 'F':
-                $.profile({ leader: `gang/leader${melee}_f`, banner: `gang/banner${banner}`, coat: `gang/coat${coat}` })
+                $.profile({ handle: name, leader: `gang/leader${melee}_f`, banner: `gang/banner${banner}`, coat: `gang/coat${coat}` })
                 break
 
             default:
-                $.profile({ leader: `gang/leader${melee}`, banner: `gang/banner${banner}`, coat: `gang/coat${coat}` })
+                $.profile({ handle: name, leader: `gang/leader${melee}`, banner: `gang/banner${banner}`, coat: `gang/coat${coat}` })
                 break
         }
     }
-
 }
 
 export = Party
