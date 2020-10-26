@@ -104,10 +104,10 @@ window.onresize = () => {
         if (!wall.style.zoom) setImmediate(() => window.dispatchEvent(new Event('resize')))
         wall.style.zoom = `${90 / (splash.clientWidth / window.innerWidth)}%`
     }
-    if (!pid) return
+    if (!pid && !wpid) return
 
     //  check for a resize between minimum terminal width requirements
-    info.hidden = (window.innerWidth < 960)
+    info.hidden = (wpid > 0 || window.innerWidth < 960)
 
     //  tweak side panel sizing within reason
     monitor.style.width = info.hidden ? '100%' : '70%'
@@ -122,8 +122,7 @@ window.onresize = () => {
     info.style.width = `${w}%`
     //	adjust font to fit for standard width
     xy = fit.proposeDimensions()
-    let fontSize = Math.trunc(24 * (xy.cols || 80) / 80)
-    term.setOption('fontSize', fontSize)
+    term.setOption('fontSize', Math.trunc((pid ? 24 : 16) * (xy.cols || 80) / 80))
     //  and make it stick
     xy = fit.proposeDimensions()
     if (!info.hidden && xy.cols > 80) {
@@ -480,8 +479,8 @@ function lurk() {
 
                     terminal.hidden = false
                     term = new Terminal({
-                        bellStyle: 'none', cursorBlink: false, scrollback: 0,
-                        fontFamily: 'tty,emoji', fontSize: 22, fontWeight: '400', fontWeightBold: '500',
+                        bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false, scrollback: 0,
+                        fontFamily: 'tty,emoji', fontSize: 24, fontWeight: '400', fontWeightBold: '500',
                         theme: {
                             foreground: '#a3a7af', background: '#23272f', cursor: '#e0c8e0',
                             black: '#000000', red: '#a00000', green: '#00a000', yellow: '#c8a000',
@@ -497,6 +496,7 @@ function lurk() {
                     term.open(document.getElementById('terminal'))
                     fit.fit()
 
+                    setImmediate(() => window.dispatchEvent(new Event('resize')))
                     term.write('\n\x1B[1;32mConnecting your terminal to ' + watch[watch.selectedIndex].text + ' WebSocket ... ')
                     let protocol = (location.protocol == 'https:') ? 'wss://' : 'ws://'
                     let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/lurker/'
@@ -514,7 +514,7 @@ function lurk() {
                             }
 
                             socket.onopen = () => {
-                                term.writeln('open\x1B[m')
+                                term.writeln('open\x1B[m\x07')
                             }
 
                             socket.onclose = (ev) => {
