@@ -239,7 +239,7 @@ module Dungeon {
                 }
             }
         }
-        me = me < DL.width ? DL.width - (DL.moves >> 8) : $.int(me)
+        me = (me < DL.width ? DL.width - (DL.moves >> 8) : $.int(me)) - +$.player.coward
         if (me < DL.width) {
             DL.exit = $.player.coward
             if (me < 6) $.player.coward = true
@@ -371,7 +371,7 @@ module Dungeon {
                 for (x = 0, y = $.dice(Z); x < y; x++)
                     $.online.hp -= $.dice(Z)
                 if ($.online.hp < 1) $.death('killer bees')
-                if ($.player.novice) DL.exit = false
+                DL.exit = !$.player.novice
             }
             else {
                 if ($.player.emulation == 'XT') {
@@ -467,10 +467,8 @@ module Dungeon {
         if (isNotEmpty(crawling[choice])) {
             xvt.out(crawling[choice].description)
             DL.moves++
-            if (DL.spawn > 2 && !(DL.moves % DL.width)) {
+            if (DL.spawn > 2 && !(DL.moves % DL.width))
                 DL.spawn--
-                DL.exit = false
-            }
             //	old cleric mana recovery
             if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
                 DL.cleric.sp += 10 * $.dice(deep) + $.dice(Z / 2)
@@ -578,10 +576,8 @@ module Dungeon {
         }
         else {
             DL.moves++	//	backtracking
-            if (DL.spawn > 2 && !(DL.moves % DL.width)) {
+            if (DL.spawn > 2 && !(DL.moves % DL.width))
                 DL.spawn--
-                DL.exit = false
-            }
         }
 
         //	nothing special in here, done
