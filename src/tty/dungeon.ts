@@ -3093,8 +3093,13 @@ module Dungeon {
                 o += ` ${icon} `
             }
             else if (room.map) {
-                if (!room.type || room.type == 'cavern') o += xvt.attr(!room.type ? xvt.yellow : xvt.red)
-                o += `  ${Dot}  `
+                let tile = Dot
+                if (!room.type || room.type == 'cavern') {
+                    o += xvt.attr(!room.type ? xvt.yellow : xvt.red)
+                    if ($.player.emulation == 'XT')
+                        tile = '\u2022' //  use a bullet to emphasize capacity
+                }
+                o += `  ${tile}  `
             }
             else
                 o = '     '
