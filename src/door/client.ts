@@ -162,7 +162,7 @@ function doCommand(event) {
         }
 
         if (event.data.leader) {
-            html = `${event.data.handle}<table>
+            html = `<h2>${event.data.handle}</h2><table>
     <tr><td rowspan=2><img src="images/${event.data.banner}.png" /></td><td><img src="images/${event.data.leader}.png" /></td></tr>`
             if (event.data.leader)
                 html += `<tr><td><img src="images/${event.data.coat}.png" /></td></tr>`
@@ -183,13 +183,13 @@ function doCommand(event) {
         }
 
         if (event.data.handle) {
-            html += `<span style="font-size:175%;">${event.data.handle}</span>`
+            html += `<span style="font-size:xx-large;">${event.data.handle}</span>`
         }
         if (event.data.level) {
-            html += `<span style="font-family:VT323, monospace; font-size:150%;">&nbsp;a level ${event.data.level}</span>`
+            html += `<span style="font-family:VT323, monospace; font-size:x-large;">&nbsp;a level ${event.data.level}</span>`
         }
         if (event.data.pc) {
-            html += `<span style="font-family:VT323, monospace; font-size:150%;">&nbsp;${event.data.pc}</span>`
+            html += `<span style="font-family:VT323, monospace; font-size:x-large;">&nbsp;${event.data.pc}</span>`
         }
         if (event.data.jpg) {
             html += `<br><img src="images/${event.data.jpg}.jpg" />`

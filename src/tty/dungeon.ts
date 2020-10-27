@@ -261,43 +261,43 @@ module Dungeon {
         }
         ROOM = DL.rooms[y][x]
         if ($.dice(DL.spawn * (!ROOM.type ? 2 : ROOM.type == 'cavern' ? 1 : 3)) == 1) {
-            let s = $.dice(5) - 1
-            xvt.outln()
-            xvt.out(xvt.faint, ['Your skin crawls'
-                , 'Your pulse quickens', 'You feel paranoid', 'Your grip tightens'
-                , 'You stand ready'][s], ' from a ')
-            //	only play sound when pairing is close to its description
-            if (s == 1) $.sound('pulse')
-            switch ($.dice(5)) {
-                case 1:
-                    if (s !== 1) $.sound('creak' + $.dice(2))
-                    xvt.out('creaking sound')
-                    break
-                case 2:
-                    if (s == 2) $.sound('thunder')
-                    xvt.out('clap of thunder')
-                    break
-                case 3:
-                    if (s == 3) $.sound('ghostly')
-                    xvt.out('ghostly whisper')
-                    break
-                case 4:
-                    if (s == 4) $.sound('growl')
-                    xvt.out('beast growl')
-                    break
-                case 5:
-                    if (s == 0) $.sound('laugh')
-                    xvt.out('maniacal laugh')
-                    break
-            }
-            if (Math.abs(Y - y) < 3 && Math.abs(X - x) < 3)
-                xvt.outln(' nearby!')
-            else if (Math.abs(Y - y) < 6 && Math.abs(X - x) < 6)
-                xvt.outln(' off in the distance.')
-            else
-                xvt.outln(' as a faint echo.')
-
             if (putMonster(y, x)) {
+                let s = $.dice(5) - 1
+                xvt.outln()
+                xvt.out(xvt.faint, ['Your skin crawls'
+                    , 'Your pulse quickens', 'You feel paranoid', 'Your grip tightens'
+                    , 'You stand ready'][s], ' from a ')
+                //	only play sound when pairing is close to its description
+                if (s == 1) $.sound('pulse')
+                switch ($.dice(5)) {
+                    case 1:
+                        xvt.out('creaking sound')
+                        if (s !== 1) $.sound('creak' + $.dice(2))
+                        break
+                    case 2:
+                        xvt.out('clap of thunder')
+                        if (s == 2) $.sound('thunder')
+                        break
+                    case 3:
+                        xvt.out('ghostly whisper')
+                        if (s == 3) $.sound('ghostly')
+                        break
+                    case 4:
+                        xvt.out('beast growl')
+                        if (s == 4) $.sound('growl')
+                        break
+                    case 5:
+                        xvt.out('maniacal laugh')
+                        if (s == 0) $.sound('laugh')
+                        break
+                }
+                if (Math.abs(Y - y) < 3 && Math.abs(X - x) < 3)
+                    xvt.outln(' nearby!', -100)
+                else if (Math.abs(Y - y) < 6 && Math.abs(X - x) < 6)
+                    xvt.outln(' off in the distance.', -200)
+                else
+                    xvt.outln(' as a faint echo.', -300)
+
                 if (DL.map && DL.map !== 'map')
                     drawRoom(y, x)
                 if (ROOM.occupant == 'cleric' && DL.cleric.hp) {
@@ -658,6 +658,8 @@ module Dungeon {
                         xvt.out(`and it doesn't look friendly.`, -50)
                     else
                         xvt.out('and it looks harmless', -100, ', for now.', -50)
+                    xvt.outln(ROOM.monster.length < 4 ? -250 : -50)
+                    if (ROOM.monster[n]) $.PC.wearing(ROOM.monster[n])
                 }
                 else {
                     xvt.outln(`and it's `, xvt.yellow, xvt.bright
@@ -666,16 +668,14 @@ module Dungeon {
                         , ['awesomeness', 'elegance', 'presence', $.player.armor, $.player.weapon][$.dice(5) - 1])
                     ROOM.monster[n].user.gender = 'FM'[$.dice(2) - 1]
                     ROOM.monster[n].user.handle = xvt.attr(ROOM.monster[n].pc.color || xvt.white, xvt.bright, 'charmed ', ROOM.monster[n].user.handle, xvt.reset)
-                    let x = $.dice(3 + $.online.adept + +$.access.sysop - +$.player.coward) - 2
-                    ROOM.monster[n].user.xplevel = x > 1 ? 1 : x
+                    const xp = $.dice(3 + $.online.adept + +$.access.sysop - +$.player.coward) - 2
+                    ROOM.monster[n].user.xplevel = xp > 1 ? 1 : xp
+                    xvt.out(' to join ', ['you', 'your party'][+(party.length > 1)], ' in '
+                        , [xvt.white, xvt.cyan, xvt.red][ROOM.monster[n].user.xplevel + 1], xvt.bright
+                        , ['spirit ... ', 'defense.', 'arms!'][ROOM.monster[n].user.xplevel + 1], -400)
                     party.push(ROOM.monster[n])
-                    xvt.out(' to join ', ['you', 'your party'][+(party.length > 2)], ' in '
-                        , [xvt.white, xvt.cyan, xvt.red][ROOM.monster[n].user.xplevel + 1]
-                        , ['spirit ... ', 'defense.', 'arms!'][ROOM.monster[n].user.xplevel + 1], -300)
-                    ROOM.monster.splice(n, 1)
+                    ROOM.monster.splice(n--, 1)
                 }
-                xvt.outln(ROOM.monster.length < 4 ? -250 : -50)
-                if (ROOM.monster[n]) $.PC.wearing(ROOM.monster[n])
             }
 
             if (ROOM.monster.length) {
@@ -1231,7 +1231,7 @@ module Dungeon {
                     $.taxman.user.coin.value = $.player.coin.value
                     $.PC.wearing($.taxman)
 
-                    b4 = 0
+                    b4 = -1
                     Battle.engage('Taxman', $.online, $.taxman, () => {
                         looked = false
                         pause = true
@@ -1908,7 +1908,8 @@ module Dungeon {
             }
             //	> 3 monsters
             if (b4 < 0) {
-                xvt.outln(xvt.lgreen, '+ bonus charisma')
+                $.beep()
+                xvt.outln(xvt.green, xvt.bright, '+ ', xvt.normal, 'bonus charisma', -200)
                 $.sound('effort', 20)
                 $.PC.adjust('cha', $.dice(Math.abs(b4)), 1, 1)
                 pause = true
@@ -1918,7 +1919,8 @@ module Dungeon {
             if ((b4 !== 0 && (!DL.map || DL.map !== 'map') && DL.cleric.sp == DL.cleric.user.sp) &&
                 ((b4 > 0 && b4 / $.player.hp < 0.67 && $.online.hp / $.player.hp < 0.067)
                     || ($.online.hp <= Z + deep + 1))) {
-                xvt.out(xvt.lred, '+ bonus strength')
+                $.beep()
+                xvt.outln(xvt.red, xvt.bright, '+ ', xvt.normal, 'bonus strength', -200)
                 $.sound('bravery', 20)
                 $.PC.adjust('str', deep + 2, deep + 1, 1)
                 DL.map = `Marauder's map`
@@ -2651,11 +2653,12 @@ module Dungeon {
         let dm: monster = { name: '', pc: '' }
         let level: number = 0
         let m: active
+        let n: number
         let sum = 0
 
         //  is it empty or room for another?
         if (j < mob) {
-            for (j = 0; j < 4; j++) level += $.dice(7)
+            for (n = 0; n < 4; n++) level += $.dice(7)
             switch (level >> 2) {
                 case 1:
                     level = $.dice(Z / 2)
@@ -2701,9 +2704,9 @@ module Dungeon {
                 v = $.dice(12)
                 v = v == 12 ? 2 : v > 1 ? 1 : 0
             }
-            j = level + v - 1
+            n = level + v - 1
 
-            m.user.handle = Object.keys(monsters)[j]
+            m.user.handle = Object.keys(monsters)[n]
             Object.assign(dm, monsters[m.user.handle])
             if (dm.pc == '*') {		//	chaos
                 dm.pc = $.PC.random('monster')
@@ -2713,7 +2716,7 @@ module Dungeon {
             m.monster = dm
             m.effect = dm.effect || 'pulse'
 
-            $.reroll(m.user, dm.pc ? dm.pc : $.player.pc, j)
+            $.reroll(m.user, dm.pc ? dm.pc : $.player.pc, n)
             if (m.user.xplevel) m.user.xplevel = level
             if (!dm.pc) m.user.steal = $.player.steal + 1
 
