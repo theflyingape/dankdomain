@@ -1902,12 +1902,15 @@ module Dungeon {
                 let m = <MAP>['', 'map', 'magic map'][($.dice(Z / 33 + 2) > 1 ? 1 : 2)]
                 if (DL.map.length < m.length) {
                     DL.map = m
-                    xvt.outln('\n', xvt.bright, xvt.yellow, 'You find a ', m, '!')
+                    xvt.outln()
+                    $.beep()
+                    xvt.outln(xvt.yellow, xvt.bright, 'You find a ', m, '!')
                     pause = true
                 }
             }
             //	> 3 monsters
             if (b4 < 0) {
+                xvt.outln()
                 $.beep()
                 xvt.outln(xvt.green, xvt.bright, '+ ', xvt.normal, 'bonus charisma', -200)
                 $.sound('effort', 20)
@@ -1919,6 +1922,7 @@ module Dungeon {
             if ((b4 !== 0 && (!DL.map || DL.map !== 'map') && DL.cleric.sp == DL.cleric.user.sp) &&
                 ((b4 > 0 && b4 / $.player.hp < 0.67 && $.online.hp / $.player.hp < 0.067)
                     || ($.online.hp <= Z + deep + 1))) {
+                xvt.outln()
                 $.beep()
                 xvt.outln(xvt.red, xvt.bright, '+ ', xvt.normal, 'bonus strength', -200)
                 $.sound('bravery', 20)

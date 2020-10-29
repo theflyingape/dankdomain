@@ -12,12 +12,13 @@
     "node": ">=12.13"
   },
   "scripts": {
-    "build": "./tsc -b ./src -w",
+    "build": "./build.sh",
     "bundle": "./watchify ./build/door/client.js -v -o ./build/door/static/bundle.js",
     "mame": "./build/mame.sh",
     "start": "node ./build/door/app",
     "test": "node ./build/playwright",
-    "tty": "./build/tty.sh"
+    "tty": "./build/tty.sh",
+    "watch": "./tsc -b ./src -w"
   },
   "repository": {
     "type": "git",
