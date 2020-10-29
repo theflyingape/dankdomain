@@ -2257,13 +2257,12 @@ module Common {
      *  DATABASE support functions
      ***********/
     const DD = `${users}/dankdomain.sql`
-    let better = require('better-sqlite3')
-    export let sqlite3 = new better(DD)
+    export const sqlite3 = require('better-sqlite3')(DD, { timeout: 10000 })
+
     let rs = query(`SELECT * FROM sqlite_master WHERE name='Online' AND type='table'`)
     if (!rs.length) {
         xvt.out('\ninitializing online ... ')
         run(`CREATE TABLE IF NOT EXISTS Online (id text PRIMARY KEY, pid numeric, lockdate numeric, locktime numeric)`)
-
         xvt.out('done.', -250)
     }
 
