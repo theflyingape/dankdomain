@@ -224,9 +224,9 @@ module Dungeon {
         if (refresh) drawLevel()
 
         //  keep it organic relative to class skill + luck with player asset protection
-        let me = $.int((DL.rooms.length * DL.width + $.online.cha)
-            * (.9 + deep / 10) * (1 + Z / 100) * $.online.dex / 100)
-            - DL.moves
+        let me = $.int(
+            $.int((Z / 3 + DL.rooms.length * DL.width + $.online.dex / 2 + $.online.cha) * (.6 + deep / 23))
+            - DL.moves, true)
         me *= 1 + ($.Security.name[$.player.security].protection - $.player.level / 9) / 12
         if (me < ($.online.int + DL.width) / 2) {
             if (!DL.exit) {
@@ -670,7 +670,7 @@ module Dungeon {
                     ROOM.monster[n].user.handle = xvt.attr(ROOM.monster[n].pc.color || xvt.white, xvt.bright, 'charmed ', ROOM.monster[n].user.handle, xvt.reset)
                     const xp = $.dice(3 + $.online.adept + +$.access.sysop - +$.player.coward) - 2
                     ROOM.monster[n].user.xplevel = xp > 1 ? 1 : xp
-                    xvt.out(' to join ', ['you', 'your party'][+(party.length > 1)], ' in '
+                    xvt.outln(' to join ', ['you', 'your party'][+(party.length > 1)], ' in '
                         , [xvt.white, xvt.cyan, xvt.red][ROOM.monster[n].user.xplevel + 1], xvt.bright
                         , ['spirit ... ', 'defense.', 'arms!'][ROOM.monster[n].user.xplevel + 1], -400)
                     party.push(ROOM.monster[n])
@@ -741,14 +741,13 @@ module Dungeon {
                 else {
                     ROOM.occupant = ''
                     $.profile({ png: 'npc/faery spirit', effect: 'fadeInRight' })
-                    xvt.out(xvt.cyan, xvt.bright, 'A faery spirit appears ', -600, xvt.normal)
-                    if ($.dice(50 + Z - deep) > $.online.cha) {
-                        xvt.out('then ', -500)
+                    xvt.out(xvt.cyan, xvt.bright, 'A faery spirit appears ', -600
+                        , xvt.normal, 'and passes ', -500)
+                    if ($.dice(50 + Z - deep) > ($.online.cha - 10 * +$.player.coward)) {
                         $.animated('fadeOut')
-                        xvt.outln(xvt.faint, 'vanishes.', -500)
+                        xvt.outln(xvt.faint, 'by you.')
                     }
                     else {
-                        xvt.out('and passes ', -500)
                         $.animated('fadeOutLeft')
                         xvt.outln(xvt.faint, 'through you.')
                         for (let i = 0; i <= Z; i++)
@@ -759,7 +758,7 @@ module Dungeon {
                                 $.online.sp += $.dice($.int(DL.cleric.user.level / 9)) + $.dice($.int(Z / 9 + deep / 3))
                             if ($.online.sp > $.player.sp) $.online.sp = $.player.sp
                         }
-                        $.sound('heal', 5)
+                        $.sound('heal')
                     }
                     if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
                         DL.cleric.sp += $.Magic.power(DL.cleric, 7)
@@ -2198,6 +2197,7 @@ module Dungeon {
         let y: number, x: number
         let result: boolean
         do {
+            //  size level
             let maxRow = 6 + $.dice(Z / 32 + 1)
             while (maxRow < 10 && $.dice($.online.cha / 10) == 1)
                 maxRow++
@@ -2205,6 +2205,7 @@ module Dungeon {
             while (maxCol < 13 && $.dice($.online.cha / 10) == 1)
                 maxCol++
 
+            //  template level
             dd[deep][Z] = <ddd>{
                 cleric: {
                     user: {
@@ -2214,34 +2215,41 @@ module Dungeon {
                 },
                 exit: false,
                 map: '',
-                moves: $.int(Z / 3) - maxCol - ($.player.novice ? maxRow + maxCol : $.player.wins) - deep,
+                mob: (deep < 4 && Z < 4) ? 1 : (Z > 9 && Z < 50) || (deep > 7) ? 3 : 2,
+                moves: -maxCol - ($.player.novice ? maxRow + maxCol : $.player.wins),
                 rooms: new Array(maxRow),
                 spawn: $.int(deep / 3 + Z / 9 + maxRow / 3) + $.dice(Math.round($.online.cha / 20) + 1) + 3,
                 width: maxCol
             }
 
+            //  allocate level
             DL = dd[deep][Z]
-            for (y = 0; y < DL.rooms.length; y++) {
-                DL.rooms[y] = new Array(DL.width)
-                for (x = 0; x < DL.width; x++)
+            for (y = 0; y < maxRow; y++) {
+                DL.rooms[y] = new Array(maxCol)
+                for (x = 0; x < maxCol; x++)
                     DL.rooms[y][x] = <room>{ map: true, monster: [], occupant: '', type: '' }
             }
 
-            for (y = 0; y < DL.rooms.length; y++) {
-                for (x = 0; x < DL.width; x++) {
+            //  shape level
+            for (y = 0; y < maxRow; y++) {
+                for (x = 0; x < maxCol; x++) {
                     let n: number
+                    ROOM = DL.rooms[y][x]
                     while ((n = $.int(($.dice(4) + $.dice(4)) / 2) - 1) == 3);
                     if (n == 1 && $.dice(10 - deep) == n) n += 2 - $.dice(3)
-                    DL.rooms[y][x].type = (n == 0) ? 'cavern' : (n == 1) ? '' : $.dice(2) == 1 ? 'n-s' : 'w-e'
+                    ROOM.type = (n == 0) ? 'cavern' : (n == 1) ? '' : $.dice(2) == 1 ? 'n-s' : 'w-e'
+                    ROOM.size = (!ROOM.type ? 2 : ROOM.type == 'cavern' ? 3 : 1)
                 }
             }
 
+            //  validate level
             result = false
             spider(0, 0)
-            for (y = 0; y < DL.rooms.length; y++)
-                for (x = 0; x < DL.width; x++)
+            for (y = 0; y < maxRow; y++)
+                for (x = 0; x < maxCol; x++)
                     if (DL.rooms[y][x].map)
                         result = true
+
         } while (result)
 
         $.reroll(DL.cleric.user, DL.cleric.user.pc, DL.cleric.user.level)
@@ -2633,36 +2641,13 @@ module Dungeon {
         }
     }
 
-    function putMonster(r = -1, c = -1): boolean {
-        // attempt to add to a room or cavern only
-        if (r < 0 && c < 0) {
-            do {
-                r = $.dice(DL.rooms.length) - 1
-                c = $.dice(DL.width) - 1
-            } while (DL.rooms[r][c].type && DL.rooms[r][c].type !== 'cavern')
-        }
+    //	generate a monster: relative to this dungeon level or as fodder
+    function genMonster(dm: monster, m: active, capacity = 0, level = 0) {
 
-        //	check size(s) for overcrowding
-        let room = DL.rooms[r][c]
-        let i: number = room.monster.length
-        let j: number = 0
-        for (i = 0; i < room.monster.length; i++)
-            j += room.monster[i].monster.size || 1
-
-        // how big are these rooms anyway?
-        const mob = (deep < 4 && Z < 4) ? 1 : (Z > 9 && Z < 50) || (deep > 7) ? 3 : 2
-        if (j >= (mob > 1 && !DL.rooms[r][c].type ? mob - 1 : DL.rooms[r][c].type == 'cavern' ? mob : 1))
-            return false
-
-        let dm: monster = { name: '', pc: '' }
-        let level: number = 0
-        let m: active
         let n: number
-        let sum = 0
-
-        //  is it empty or room for another?
-        if (j < mob) {
+        if (!level) {
             for (n = 0; n < 4; n++) level += $.dice(7)
+
             switch (level >> 2) {
                 case 1:
                     level = $.dice(Z / 2)
@@ -2683,107 +2668,146 @@ module Dungeon {
                     level = Z + 3 + $.dice(3)
                     break
                 case 7:
-                    level = Z + $.dice(Z / 2)
+                    level = Z + $.dice(Z < 40 ? Z / 2 : Z < 60 ? Z / 3 : Z < 80 ? Z / 4 : Z / 5)
                     break
             }
         }
-        //  no room, but maybe squeeze in a lesser stray?
+
+        while (level < 1) level += $.dice(4) + $.dice(3) - 1
+        if (level > 99) level = 100 - $.dice(10)
+
+        let v = 1
+        if (level > 9 && level < 90) {
+            v = $.dice(12)
+            v = v == 12 ? 2 : v > 1 ? 1 : 0
+        }
+        n = level + v - 1
+
+        m.user.handle = Object.keys(monsters)[n]
+        Object.assign(dm, monsters[m.user.handle])
+        dm.level = 0
+        dm.size = monsters[m.user.handle].size || 1
+        if (capacity && dm.size > capacity)
+            return
+
+        dm.level = level
+        if (dm.pc == '*') {		//	chaos
+            dm.pc = $.PC.random('monster')
+            m.user.handle += ' avenger'
+            m.user.steal = $.player.steal + 1
+        }
+        m.monster = dm
+        m.effect = dm.effect || 'pulse'
+        $.reroll(m.user, dm.pc ? dm.pc : $.player.pc, n)
+        if (m.user.xplevel) m.user.xplevel = level
+        if (!dm.pc) m.user.steal = $.player.steal + 1
+
+        if (dm.weapon)
+            m.user.weapon = dm.weapon
         else {
-            level = $.dice(Z / mob) + (Z <= 60 ? $.int(Z / 6) : 30) + $.dice(deep) - 1
-            sum = room.monster[0].user.level
+            m.user.weapon = $.int((level + deep) / 100 * $.int($.sysop.weapon))
+            m.user.weapon = $.int((m.user.weapon + $.online.weapon.wc) / 2)
+            if ($.player.level <= Z
+                && $.dice(12 + deep / 2 + $.player.level / 4 - $.online.cha / 10) <= $.dice(deep / 3 + 1)) {
+                n = $.online.weapon.wc + $.dice(3) - 2
+                n = n < 1 ? 1 : n >= $.Weapon.merchant.length ? $.Weapon.merchant.length - 1 : n
+                m.user.weapon = $.Weapon.merchant[n]
+            }
+        }
+
+        if (dm.armor)
+            m.user.armor = dm.armor
+        else {
+            m.user.armor = $.int((level + deep) / 100 * $.int($.sysop.armor))
+            m.user.armor = $.int((m.user.armor + $.online.armor.ac) / 2)
+            if ($.player.level <= Z
+                && $.dice(11 + deep / 3 + $.player.level / 3 - $.online.cha / 11) <= $.dice(deep / 3 + 1)) {
+                n = $.online.armor.ac + $.dice(3) - 2
+                n = n < 1 ? 1 : n >= $.Armor.merchant.length ? $.Armor.merchant.length - 1 : n
+                m.user.armor = $.Armor.merchant[n]
+            }
+        }
+
+        m.user.hp = $.int(m.user.hp / (4 + (m.user.level / 100)) + (deep * Z / 4))
+        n = 5 - $.dice(deep / 3)
+        m.user.sp = $.int(m.user.sp / n)
+
+        m.user.poisons = []
+        if (m.user.poison) {
+            if (dm.poisons)
+                for (let vials in dm.poisons)
+                    $.Poison.add(m.user.poisons, dm.poisons[vials])
+            for (n = 0; n < Object.keys($.Poison.vials).length - (9 - deep); n++) {
+                if ($.dice($.int($.player.cha / (deep + 1)) + (n << 2)) < (+$.player.coward + 2)) {
+                    let vial = $.Poison.pick(n)
+                    if (!$.Poison.have(m.user.poisons, vial))
+                        $.Poison.add(m.user.poisons, n)
+                }
+            }
+        }
+
+        m.user.rings = dm.rings || []
+
+        m.user.spells = []
+        if (m.user.magic) {
+            if (dm.spells)
+                for (let magic in dm.spells)
+                    $.Magic.add(m.user.spells, dm.spells[magic])
+            for (n = 0; n < Object.keys($.Magic.spells).length - (9 - deep); n++) {
+                if ($.dice($.int($.player.cha / (deep + 1)) + (n << 2)) < (+$.player.coward + 2)) {
+                    let spell = $.Magic.pick(n)
+                    if (!$.Magic.have(m.user.spells, spell))
+                        $.Magic.add(m.user.spells, n)
+                }
+            }
+        }
+    }
+
+    function putMonster(r = -1, c = -1): boolean {
+        let respawn: boolean
+        let room: room
+        if (r < 0 && c < 0) {
+            respawn = true
+            do {
+                r = $.dice(DL.rooms.length) - 1
+                c = $.dice(DL.width) - 1
+                room = DL.rooms[r][c]
+            } while (room.monster.length >= DL.mob)
+        }
+        else {
+            respawn = false
+            room = DL.rooms[r][c]
+            if (room.monster.length >= DL.mob)
+                return false
+        }
+
+        let i: number
+        let j: number
+        for (i = 0, j = 0; i < room.monster.length; i++)
+            j += room.monster[i].monster.size || 1
+        if (j >= room.size)
+            return false
+
+        let dm: monster = { name: '', pc: '' }
+        let m: active = { user: { id: '', sex: 'I' } }
+        let level = 0
+        let sum = 0
+
+        genMonster(dm, m, room.size - j)
+        if (!dm.level) {
+            if (respawn) return false
+            //  regular capacity exceeded, let's squeeze in a lesser stray
+            level = $.dice(Z / DL.mob) + (Z <= 60 ? $.int(Z / 6) : 30) + $.dice(deep) - 1
+            genMonster(dm, m, 0, level)
+            if (room.monster.length) sum = room.monster[0].user.level
         }
 
         do {
-            while (level < 1) level += $.dice(4) + $.dice(3) - 1
-            if (level > 99) level = 100 - $.dice(10)
-
-            //	add a monster level relative to this floor, including any lower "strays" as fodder
-            i = room.monster.push(<active>{ user: { id: '', sex: 'I', level: level } }) - 1
+            //	add the monster, including any lower "strays" as fodder
+            i = room.monster.push(m) - 1
             m = room.monster[i]
-            sum += m.user.level
-
-            //	pick and generate monster relative to its level
-            let v = 1
-            if (level > 9 && level < 90) {
-                v = $.dice(12)
-                v = v == 12 ? 2 : v > 1 ? 1 : 0
-            }
-            n = level + v - 1
-
-            m.user.handle = Object.keys(monsters)[n]
-            Object.assign(dm, monsters[m.user.handle])
-            if (dm.pc == '*') {		//	chaos
-                dm.pc = $.PC.random('monster')
-                m.user.handle += xvt.attr(' ', xvt.uline, 'avenger', xvt.nouline)
-                m.user.steal = 2
-            }
-            m.monster = dm
-            m.effect = dm.effect || 'pulse'
-
-            $.reroll(m.user, dm.pc ? dm.pc : $.player.pc, n)
-            if (m.user.xplevel) m.user.xplevel = level
-            if (!dm.pc) m.user.steal = $.player.steal + 1
-
-            if (dm.weapon)
-                m.user.weapon = dm.weapon
-            else {
-                m.user.weapon = $.int((level + deep) / 100 * $.int($.sysop.weapon))
-                m.user.weapon = $.int((m.user.weapon + $.online.weapon.wc) / 2)
-                if ($.player.level <= Z
-                    && $.dice(12 + deep / 2 + $.player.level / 4 - $.online.cha / 10) <= $.dice(deep / 3 + 1)) {
-                    i = $.online.weapon.wc + $.dice(3) - 2
-                    i = i < 1 ? 1 : i >= $.Weapon.merchant.length ? $.Weapon.merchant.length - 1 : i
-                    m.user.weapon = $.Weapon.merchant[i]
-                }
-            }
-
-            if (dm.armor)
-                m.user.armor = dm.armor
-            else {
-                m.user.armor = $.int((level + deep) / 100 * $.int($.sysop.armor))
-                m.user.armor = $.int((m.user.armor + $.online.armor.ac) / 2)
-                if ($.player.level <= Z
-                    && $.dice(11 + deep / 3 + $.player.level / 3 - $.online.cha / 11) <= $.dice(deep / 3 + 1)) {
-                    i = $.online.armor.ac + $.dice(3) - 2
-                    i = i < 1 ? 1 : i >= $.Armor.merchant.length ? $.Armor.merchant.length - 1 : i
-                    m.user.armor = $.Armor.merchant[i]
-                }
-            }
-
-            m.user.hp = $.int(m.user.hp / (4 + (m.user.level / 100)) + (deep * Z / 4))
-            i = 5 - $.dice(deep / 3)
-            m.user.sp = $.int(m.user.sp / i)
-
-            m.user.poisons = []
-            if (m.user.poison) {
-                if (dm.poisons)
-                    for (let vials in dm.poisons)
-                        $.Poison.add(m.user.poisons, dm.poisons[vials])
-                for (let i = 0; i < Object.keys($.Poison.vials).length - (9 - deep); i++) {
-                    if ($.dice($.int($.player.cha / (deep + 1)) + (i << 2)) < (+$.player.coward + 2)) {
-                        let vial = $.Poison.pick(i)
-                        if (!$.Poison.have(m.user.poisons, vial))
-                            $.Poison.add(m.user.poisons, i)
-                    }
-                }
-            }
-
-            m.user.rings = dm.rings || []
-
-            m.user.spells = []
-            if (m.user.magic) {
-                if (dm.spells)
-                    for (let magic in dm.spells)
-                        $.Magic.add(m.user.spells, dm.spells[magic])
-                for (let i = 0; i < Object.keys($.Magic.spells).length - (9 - deep); i++) {
-                    if ($.dice($.int($.player.cha / (deep + 1)) + (i << 2)) < (+$.player.coward + 2)) {
-                        let spell = $.Magic.pick(i)
-                        if (!$.Magic.have(m.user.spells, spell))
-                            $.Magic.add(m.user.spells, i)
-                    }
-                }
-            }
-
+            level = m.user.level
+            sum += level
             $.activate(m)
 
             m.user.immortal = deep
@@ -2805,8 +2829,11 @@ module Dungeon {
                 if (dm.smash) m.weapon.smash = dm.smash
             }
 
+            //  prep next should this event be spawning a lesser mob
             level += $.dice(room.monster.length + 2) - (room.monster.length + 1)
-        } while (room.monster.length < $.int(3 + mob + deep / 3) && sum < (Z - 3 - room.monster.length))
+            m = { user: { id: '', sex: 'I' } }
+            genMonster(dm, m, 0, level)
+        } while (room.monster.length < $.int(3 + DL.mob + deep / 3) && sum < (Z - 3 - room.monster.length))
 
         return true
     }

@@ -217,6 +217,7 @@ interface ddd {
     cleric: active
     exit: boolean
     map: MAP
+    mob: number         //  max monster capacity in a cavern
     moves: number       //  hero steps (2x backtracking)
     rooms: [room[]]     //	7-10
     spawn: number       //  2-23
@@ -250,6 +251,7 @@ interface ring {
 interface room {
     map: boolean		//	explored?
     occupant: NPC
+    size: number
     type: ROOM
     giftItem?: GIFT
     giftValue?: number | string

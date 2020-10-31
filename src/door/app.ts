@@ -653,7 +653,13 @@ chokidar.watch('../users/save.json')
             loan: new coins(0)
         }
 
-        Object.assign(user, JSON.parse(fs.readFileSync(path).toString()))
+        try {
+            Object.assign(user, JSON.parse(fs.readFileSync(path).toString()))
+        }
+        catch (err) {
+            console.log(`Player (${user.id}) exception in ${path}:`)
+            console.log(err.message)
+        }
         user.bounty.value = isNaN(user.bounty._value) ? new coins(user.bounty._value).value : user.bounty._value
         user.coin.value = isNaN(user.coin._value) ? new coins(user.coin._value).value : user.coin._value
         user.bank.value = isNaN(user.bank._value) ? new coins(user.bank._value).value : user.bank._value

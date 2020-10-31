@@ -9,7 +9,7 @@
     "linux"
   ],
   "engines": {
-    "node": ">=12.13"
+    "node": ">=12.18"
   },
   "scripts": {
     "build": "./build.sh",

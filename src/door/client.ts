@@ -804,8 +804,8 @@ function arena() {
     cmd(`<table>
 <tr><td><input class="Gold" type="button" value="User" onclick="send('U');"></td><td><input class="Silver" type="button" value="Monster" onclick="send('M');"></td></tr>
 <tr><td colspan=2><hr></td></tr>
-<tr><td><input class="Platinum" type="button" value="Cast" onclick="send('C');"></td><td><input class="Slate" type="button" value="Poison" onclick="send('P');"></td></tr>
-<tr><td><input type="button" value="Status" onclick="send('Y');"></td><td><input class="Gold" type="button" value="Joust" onclick="send('J');"></td></tr>
+<tr><td><input class="platinum" type="button" value="Cast" onclick="send('C');"></td><td><input class="slate" type="button" value="Poison" onclick="send('P');"></td></tr>
+<tr><td><input type="button" value="Status" onclick="send('Y');"></td><td><input class="gold" type="button" value="Joust" onclick="send('J');"></td></tr>
 <tr><td><input class="Tavern" type="button" value="SQUARE" onclick="send('G');"></td><td>${quit}</td></tr>
 </table>`)
 }

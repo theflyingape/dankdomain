@@ -1700,11 +1700,6 @@ module Common {
         action('clear')
         xvt.outln()
 
-        if (player.coward) {
-            player.coward = false
-            xvt.outln('Welcome back to play with the rest of us. ', -1400, 'Heh.', -600)
-        }
-
         if (player.novice) {
             player.novice = false
             player.expert = true
@@ -1773,6 +1768,16 @@ module Common {
         }
         else
             bonus = 2
+
+        if (player.coward) {
+            player.coward = false
+            xvt.out('Welcome back to play with the rest of us ... ')
+            if (bonus) {
+                bonus--
+                xvt.out(-600, xvt.faint, 'Heh.')
+            }
+            xvt.outln(-900)
+        }
 
         music('immortal')
         player.immortal++
