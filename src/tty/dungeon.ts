@@ -132,6 +132,7 @@ module Dungeon {
 
         if ($.access.sysop) crawling['M'] = { description: 'y liege' }
         generateLevel()
+        if (DL.moves > Z) DL.moves = 0
         menu()
     }
 
@@ -2414,7 +2415,7 @@ module Dungeon {
                 DL.rooms[y][x].occupant = 'well'
             }
             //	wicked old witch
-            if (Z > 50 && dank > 4 && $.dice((120 - level) / 3 - dank) == 1) {
+            if (Z > 20 && dank > 4 && $.dice((120 - level) / 3 - dank) == 1) {
                 y = $.dice(DL.rooms.length) - 1
                 x = $.dice(DL.width) - 1
                 DL.rooms[y][x].occupant = 'witch'
