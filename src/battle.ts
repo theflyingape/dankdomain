@@ -42,18 +42,9 @@ module Battle {
             if ($.online.toWC > 0) $.online.toWC--
         }
 
-        if (/Merchant/.test($.from)) {
+        if ($.from == 'Merchant') {
             if ($.online.hp < 1) {
-                $.player.coin.value -= $.taxman.user.coin.value
-                if ($.player.coin.value < 0) {
-                    $.player.bank.value += $.player.coin.value
-                    $.player.coin.value = 0
-                    if ($.player.bank.value < 0) {
-                        $.player.loan.value -= $.player.bank.value
-                        $.player.bank.value = 0
-                    }
-                }
-                $.beep()
+                $.player.coin.value = 0
                 $.death($.reason || `refused ${$.dwarf.user.handle}`)
                 xvt.outln('  ', xvt.bright, xvt.yellow, '"Next time bring friends."')
                 $.sound('punk', 8)
@@ -81,6 +72,7 @@ module Battle {
                 $.PC.adjust('dex', -2, -1, -1)
                 $.PC.adjust('cha', -2, -1, -1)
             }
+            $.player.coin.value = 0
             $.beep()
             Battle.yourstats()
         }
@@ -101,6 +93,7 @@ module Battle {
                 $.reason = `schooled by ${$.barkeep.user.handle}`
                 //  go crazy!
                 $.sound('winner', 32)
+                $.player.coin.value = 0
                 xvt.outln('\n  ', xvt.bright, xvt.green, '"Drinks are on the house!"', -2250)
             }
             else {
@@ -145,6 +138,22 @@ module Battle {
                     $.news(`\tdefeated ${$.taxman.user.handle}`)
                     $.wall(`defeated ${$.taxman.user.handle}`)
                 }
+                $.player.coward = false
+            }
+        }
+
+        if ($.from == 'Witch') {
+            if ($.online.hp < 1) {
+                $.player.coin.value = 0
+                $.death($.reason || `refused ${$.witch.user.handle}`)
+                xvt.outln('  ', xvt.bright, xvt.green, '"Hell hath no fury like a woman scorned."')
+                $.sound('crone', 30)
+            }
+            else {
+                $.animated('fadeOut')
+                $.sound('naval_f', 25)
+                $.news(`\tdefeated ${$.witch.user.handle}`)
+                $.wall(`defeated ${$.witch.user.handle}`)
                 $.player.coward = false
             }
         }

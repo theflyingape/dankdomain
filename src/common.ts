@@ -48,6 +48,7 @@ module Common {
     export let neptune: active = { user: { id: '_NEP' } }
     export let seahag: active = { user: { id: '_OLD' } }
     export let taxman: active = { user: { id: '_TAX' } }
+    export let witch: active = { user: { id: '_WOW' } }
     export let king: user = { id: '' }
     export let online: active = { user: { id: '' } }
     export let player: user = online.user
@@ -2403,6 +2404,20 @@ module Common {
     }
     loadUser(taxman)
 
+    //  customize the wicked witch
+    npc = <user>{}
+    Object.assign(npc, JSON.parse(fs.readFileSync(`${users}/witch.json`).toString()))
+    rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
+    if (!rs.length) {
+        xvt.out(`\n[${npc.handle}]`)
+        Object.assign(witch.user, npc)
+        newkeys(witch.user)
+        reroll(witch.user, witch.user.pc, witch.user.level)
+        Object.assign(witch.user, npc)
+        saveUser(witch, true)
+    }
+    loadUser(witch)
+
     //  instantiate bot(s)
     let i = 0
     while (++i) {
@@ -2494,7 +2509,7 @@ module Common {
             //  restore NPC to static state
             if (user.id[0] == '_' && user.id !== "_SYS") {
                 let npc = <user>{ id: user.id }
-                Object.assign(npc, JSON.parse(fs.readFileSync(`./users/${{ "_BAR": "barkeep", "_DM": "merchant", "_NEP": "neptune", "_OLD": "seahag", "_TAX": "taxman" }[user.id]}.json`).toString()))
+                Object.assign(npc, JSON.parse(fs.readFileSync(`./users/${{ "_BAR": "barkeep", "_DM": "merchant", "_NEP": "neptune", "_OLD": "seahag", "_TAX": "taxman", "_WOW": "witch" }[user.id]}.json`).toString()))
                 Object.assign(rpc.user, npc)
                 reroll(rpc.user, rpc.user.pc, rpc.user.level)
                 Object.assign(rpc.user, npc)

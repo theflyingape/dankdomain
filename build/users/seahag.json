@@ -15,7 +15,7 @@
     "int": 97,
     "dex": 87,
     "cha": 67,
-    "hp": 2010,
+    "hp": 2020,
     "sp": 9005,
     "poison": 2,
     "weapon": "Flaming Sword",
@@ -23,7 +23,7 @@
     "poisons": [ 12 ],
     "spells": [ 11, 13, 19 ],
     "rings": [ "Magus", "Medusa's" ],
-    "realestate": "Cave",
-    "security": "Boulder",
+    "realestate": "Cabin",
+    "security": "Moat",
     "xplevel": 90
 }

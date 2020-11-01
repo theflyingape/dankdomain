@@ -980,8 +980,7 @@ function wager() {
 function well() {
     nme(`<img src="images/well.jpg" />`, 'fadeIn')
     cmd(`<table>
-<tr><td colspan=2><input class="Slate" type="button" value="Destroy Dungeon" onclick="send('D');"></td></tr>
-<tr><td><input class="Tavern" type="button" value="Key" onclick="send('K');"></td><td><input class="Platinum" type="button" value="Magic" onclick="send('M');"></td></tr>
+<tr><td><input class="Tavern" type="button" value="Key" onclick="send('K');"></td><td><input class="Slate" type="button" value="Destroy Dungeon" onclick="send('D');"></td></tr>
 <tr><td><input class="Gold" type="button" value="Loot" onclick="send('L');"></td><td><input class="Silver" type="button" value="Grant" onclick="send('G');"></td></tr>
 <tr><td><input class="Slate" type="button" value="Resurrect" onclick="send('R');"></td><td><input class="Platinum" type="button" value="Teleport" onclick="send('T');"></td></tr>
 <tr><td><input class="Silver" type="button" id="cancel" value="Fix" onclick="send('F');"></td><td><input class="Slate" type="button" value="Out" onclick="send('O');"></td></tr>
