@@ -2264,6 +2264,7 @@ module Common {
      ***********/
     const DD = `${users}/dankdomain.sql`
     export const sqlite3 = require('better-sqlite3')(DD, { timeout: 10000 })
+    sqlite3.pragma('journal_mode = WAL')
 
     let rs = query(`SELECT * FROM sqlite_master WHERE name='Online' AND type='table'`)
     if (!rs.length) {
