@@ -1586,11 +1586,9 @@ module Dungeon {
                 $.music('.')
                 $.profile({ jpg: 'npc/witch', effect: 'fadeIn' })
                 xvt.outln(xvt.green, 'You encounter the ', xvt.bright, 'witch', xvt.normal, ', ', $.witch.user.handle, '.')
-                $.action('yn')
-                xvt.drain()
                 $.cat(`dungeon/witch`)
                 $.PC.wearing($.witch)
-                $.sound('steal', 22)
+                $.sound('steal', 10)
 
                 let choice: string
                 xvt.app.form = {
@@ -1612,7 +1610,7 @@ module Dungeon {
                                 xvt.out(xvt.faint, '"', xvt.normal, xvt.green, "Your price is ")
                                 if ($.player.steal > 1) {
                                     xvt.out('your ability to steal diminishes')
-                                    $.player.steal = 1
+                                    $.player.steal--
                                 }
                                 else if ($.player.magic > 3) {
                                     xvt.out('your divine spellcasting ability is mine')
@@ -1624,7 +1622,7 @@ module Dungeon {
                                     $.PC.adjust('str', -5 - $.dice(5), -2, -2)
                                 }
                                 else if ($.player.str > 80 && $.player.int > 80 && $.player.dex > 80 && $.player.cha > 80) {
-                                    xvt.out('your overall ability is drained')
+                                    xvt.out('allowing me to drain your overall ability')
                                     $.player.blessed = ''
                                     $.PC.adjust('str', -5 - $.dice(5), -2, -2)
                                     $.PC.adjust('int', -5 - $.dice(5), -2, -2)
@@ -1639,7 +1637,7 @@ module Dungeon {
                                     $.online.altered = true
                                     $.player.gender = ['F', 'M'][$.dice(2) - 1]
                                     $.saveUser($.player)
-                                    xvt.out(`my morph you into a level ${$.player.level} ${$.player.pc} (${$.player.gender})`)
+                                    xvt.out(`me morphing you into a level ${$.player.level} ${$.player.pc} (${$.player.gender})`)
                                     $.news(`\tgot morphed by ${$.witch.user.handle} into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
                                 }
                                 xvt.outln('!', xvt.reset, xvt.faint, '"')
@@ -1700,7 +1698,7 @@ module Dungeon {
                                     case 'curse':
                                         $.sound('resurrect')
                                         $.run(`UPDATE Players SET status='' WHERE id NOT GLOB '_*' AND status!='jail'`)
-                                        $.run(`UPDATE Players SET coward=1,cursed='${$.witch.user.id}' WHERE id NOT GLOB '_*' AND id != '${$.player.id}'`)
+                                        $.run(`UPDATE Players SET blessed='',coward=1,cursed='${$.witch.user.id}' WHERE id NOT GLOB '_*' AND id != '${$.player.id}'`)
                                         $.news(`\t${$.witch.user.handle} resurrected all the dead and cursed everyone!`)
                                         xvt.outln('The deed is done.')
                                         break
@@ -1719,7 +1717,10 @@ module Dungeon {
                     }
                 }
 
-                xvt.outln(xvt.faint, 'She says, "'
+                $.action('yn')
+                xvt.drain()
+                xvt.outln(-1000)
+                xvt.outln(xvt.faint, `${$.PC.who($.witch).He}says, "`
                     , xvt.green, xvt.normal, "Come hither. ", -1200
                     , ['I am niece to Circe known for her vengeful morph', 'My grandfather is the sun god Helios', 'My grandmother is a daughter of the titan Oceanus', 'I am priestess to Hecate, source of my special magicks', 'I trusted an Argonaut. Once'][$.dice(5) - 1], '.'
                     , xvt.reset, xvt.faint, '"', -2400)
@@ -1742,8 +1743,7 @@ module Dungeon {
                     choice = 'curse'
                 }
                 xvt.outln('.', xvt.reset, xvt.faint, '"', -1200)
-                xvt.outln(xvt.faint, '"', xvt.normal, xvt.green, 'Of course, there is a price to pay, something you may hold dear.', xvt.reset, xvt.faint, '"', -2400)
-
+                xvt.out(xvt.faint, '"', xvt.normal, xvt.green, 'Of course, there is a price to pay, something you may hold dear.', xvt.reset, xvt.faint, '"')
                 xvt.app.focus = 'offer'
                 ROOM.occupant = ''
                 return false
