@@ -17,5 +17,5 @@ build/files/winners.txt
 build/users/.*
 build/users/arguments.json
 build/users/callers.json
-build/users/dankdomain.sql
+build/users/dankdomain.sql*
 package-lock.json
