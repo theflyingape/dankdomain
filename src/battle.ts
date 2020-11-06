@@ -1304,7 +1304,7 @@ module Battle {
                     else {
                         $.PC.adjust('str', $.dice(10))
                         if (rpc.str < rpc.user.maxstr)
-                            xvt.outln(`You feel much more stronger (${rpc.str})`)
+                            xvt.outln(`You feel much stronger (${rpc.str})`)
                         else
                             xvt.outln(`This game prohibits the use of steroids.`)
                     }
