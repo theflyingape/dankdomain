@@ -379,7 +379,7 @@ module Logon {
             $.player.plays++
             $.player.status = ''
             $.player.xplevel = $.player.level
-            let play = JSON.parse(fs.readFileSync('./etc/play.json').toString())
+            const play = JSON.parse(fs.readFileSync('./etc/play.json').toString())
             Object.assign($, play)
             $.music('logon')
 

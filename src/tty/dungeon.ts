@@ -1171,7 +1171,8 @@ module Dungeon {
                     , '! ', xvt.white, -600)
                 ROOM.occupant = ''
 
-                if ((Z + 1) >= $.taxman.user.level && $.player.level < $.taxman.user.level) {
+                if ($.taxboss && (Z + 1) >= $.taxman.user.level && $.player.level < $.taxman.user.level) {
+                    $.taxboss--
                     $.loadUser($.taxman)
                     xvt.outln(xvt.reset, $.PC.who($.taxman).He, 'is the '
                         , xvt.cyan, xvt.bright, 'Master of Coin'
@@ -1585,7 +1586,7 @@ module Dungeon {
                 scroll(1, false)
                 $.music('.')
                 $.profile({ jpg: 'npc/witch', effect: 'fadeIn' })
-                xvt.outln(xvt.green, 'You encounter the ', xvt.bright, 'witch', xvt.normal, ', ', $.witch.user.handle, '.')
+                xvt.outln(xvt.green, 'You encounter the ', xvt.bright, 'sorceress', xvt.normal, ', ', $.witch.user.handle, '.')
                 $.cat(`dungeon/witch`)
                 $.PC.wearing($.witch)
                 $.sound('steal', 10)
@@ -1595,7 +1596,7 @@ module Dungeon {
                     offer: {
                         cb: () => {
                             xvt.outln()
-                            $.sound('click')
+                            $.sound('click', 8)
                             if (/Y/i.test(xvt.entry)) {
                                 let result = $.Weapon.swap($.online, $.witch)
                                 if (isBoolean(result) && result) {
@@ -1608,20 +1609,25 @@ module Dungeon {
                                     $.sound('click', 13)
                                 }
                                 xvt.out(xvt.faint, '"', xvt.normal, xvt.green, "Your price is ")
+
                                 if ($.player.steal > 1) {
+                                    $.sound('mana', 8)
                                     xvt.out('your ability to steal diminishes')
                                     $.player.steal--
                                 }
                                 else if ($.player.magic > 3) {
+                                    $.sound('mana', 8)
                                     xvt.out('your divine spellcasting ability is mine')
                                     $.player.magic--
                                 }
                                 else if ($.player.melee > 3) {
+                                    $.sound('mana', 8)
                                     xvt.out('your barbaric powers are halved')
                                     $.player.melee = 2
                                     $.PC.adjust('str', -5 - $.dice(5), -2, -2)
                                 }
                                 else if ($.player.str > 80 && $.player.int > 80 && $.player.dex > 80 && $.player.cha > 80) {
+                                    $.sound('mana', 8)
                                     xvt.out('allowing me to drain your overall ability')
                                     $.player.blessed = ''
                                     $.PC.adjust('str', -5 - $.dice(5), -2, -2)
@@ -1637,11 +1643,14 @@ module Dungeon {
                                     $.online.altered = true
                                     $.player.gender = ['F', 'M'][$.dice(2) - 1]
                                     $.saveUser($.player)
+                                    $.sound('crone', 21)
                                     xvt.out(`me morphing you into a level ${$.player.level} ${$.player.pc} (${$.player.gender})`)
                                     $.news(`\tgot morphed by ${$.witch.user.handle} into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
                                 }
-                                xvt.outln('!', xvt.reset, xvt.faint, '"')
-                                $.sound('crack', 28)
+
+                                $.music('crack')
+                                xvt.outln('!', xvt.reset, xvt.faint, '"', -2100)
+                                $.sound('click')
 
                                 switch (choice) {
                                     case 'rings':
@@ -1654,7 +1663,7 @@ module Dungeon {
                                             $.saveUser(rpc)
                                             $.Ring.wear(rpc.user.rings, rs[row].name)
                                             $.saveRing(rs[row].name, $.player.id, $.player.rings)
-                                            $.sound('click', 5)
+                                            $.sound('click', 8)
                                         }
                                         $.news(`\tgot ${rs.length} magical ring${rs.length > 1 ? 's' : ''} of power from ${$.witch.user.handle}!`)
                                         break
@@ -1670,19 +1679,19 @@ module Dungeon {
                                                 switch ($.player.magic) {
                                                     case 1:
                                                         $.beep()
-                                                        xvt.outln('A ', xvt.white, xvt.bright, `Wand of ${spell}`, xvt.reset, ' appears in your hand.')
+                                                        xvt.outln('A ', xvt.white, xvt.bright, `Wand of ${spell}`, xvt.reset, ' appears in your hand.', -600)
                                                         break
                                                     case 2:
                                                         $.beep()
-                                                        xvt.outln('You add a ', xvt.yellow, xvt.bright, `Scroll of ${spell}`, xvt.reset, ' to your arsenal.')
+                                                        xvt.outln('You add a ', xvt.yellow, xvt.bright, `Scroll of ${spell}`, xvt.reset, ' to your arsenal.', -600)
                                                         break
                                                     case 3:
-                                                        $.sound('shimmer')
-                                                        xvt.outln('The ', xvt.cyan, xvt.bright, `Spell of ${spell}`, xvt.reset, ' is revealed to you.')
+                                                        $.sound('shimmer', 8)
+                                                        xvt.outln('The ', xvt.cyan, xvt.bright, `Spell of ${spell}`, xvt.reset, ' is revealed to you.', -600)
                                                         break
                                                     case 4:
-                                                        $.sound('shimmer')
-                                                        xvt.outln(xvt.magenta, xvt.bright, spell, xvt.reset, ' is known to you.')
+                                                        $.sound('shimmer', 8)
+                                                        xvt.outln(xvt.magenta, xvt.bright, spell, xvt.reset, ' is known to you.', -600)
                                                         break
                                                 }
                                             }
@@ -1700,7 +1709,7 @@ module Dungeon {
                                         $.run(`UPDATE Players SET status='' WHERE id NOT GLOB '_*' AND status!='jail'`)
                                         $.run(`UPDATE Players SET blessed='',coward=1,cursed='${$.witch.user.id}' WHERE id NOT GLOB '_*' AND id != '${$.player.id}'`)
                                         $.news(`\t${$.witch.user.handle} resurrected all the dead and cursed everyone!`)
-                                        xvt.outln('The deed is done.')
+                                        xvt.outln(xvt.faint, 'The deed is done.', -200)
                                         break
                                 }
                             }
@@ -1746,6 +1755,7 @@ module Dungeon {
                 xvt.out(xvt.faint, '"', xvt.normal, xvt.green, 'Of course, there is a price to pay, something you may hold dear.', xvt.reset, xvt.faint, '"')
                 xvt.app.focus = 'offer'
                 ROOM.occupant = ''
+                $.sorceress--
                 return false
         }
 
@@ -2415,7 +2425,7 @@ module Dungeon {
                 DL.rooms[y][x].occupant = 'well'
             }
             //	wicked old witch
-            if (Z > 20 && dank > 4 && $.dice((120 - level) / 3 - dank) == 1) {
+            if ($.sorceress && Z > 20 && dank > 4 && $.dice((120 - level) / 3 - dank) == 1) {
                 y = $.dice(DL.rooms.length) - 1
                 x = $.dice(DL.width) - 1
                 DL.rooms[y][x].occupant = 'witch'
