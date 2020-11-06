@@ -316,7 +316,7 @@ module Common {
                 let who: user = { id: profile.user.cursed }
                 if (!loadUser(who)) {
                     if (profile.user.cursed == 'wiz!')
-                        who.handle = 'a doppleganger!'
+                        who.handle = 'a doppelganger!'
                     else
                         who.handle = profile.user.cursed
                 }
@@ -2510,11 +2510,17 @@ module Common {
             //  restore NPC to static state
             if (user.id[0] == '_' && user.id !== "_SYS") {
                 let npc = <user>{ id: user.id }
-                Object.assign(npc, JSON.parse(fs.readFileSync(`./users/${{ "_BAR": "barkeep", "_DM": "merchant", "_NEP": "neptune", "_OLD": "seahag", "_TAX": "taxman", "_WOW": "witch" }[user.id]}.json`).toString()))
-                Object.assign(rpc.user, npc)
-                reroll(rpc.user, rpc.user.pc, rpc.user.level)
-                Object.assign(rpc.user, npc)
-                saveUser(rpc)
+                try {
+                    const js = JSON.parse(fs.readFileSync(`./users/${{ "_BAR": "barkeep", "_DM": "merchant", "_NEP": "neptune", "_OLD": "seahag", "_TAX": "taxman", "_WOW": "witch" }[npc.id]}.json`).toString())
+                    if (js) {
+                        Object.assign(npc, js)
+                        Object.assign(user, npc)
+                        reroll(user, user.pc, user.level)
+                        Object.assign(user, npc)
+                        saveUser(user)
+                    }
+                }
+                catch (err) { }
             }
 
             return true
