@@ -1159,6 +1159,7 @@ module Dungeon {
                         }, prompt: 'Will you spin it (Y/N)? ', cancel: 'Y', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 20
                     }
                 }
+                $.action('ny')
                 xvt.drain()
                 xvt.app.focus = 'wheel'
                 pause = true

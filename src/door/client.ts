@@ -631,6 +631,7 @@ function nmeResize(effect: string, func = false) {
 }
 
 function cmdResize() {
+    command.hidden = false
     menu.style.top = `${window.innerHeight - command.clientHeight}px`
     menu.style.left = `${Math.trunc((info.clientWidth - command.clientWidth) / 2)}px`
     //  stretch height any (up to 11% overlap)?
@@ -651,9 +652,11 @@ function reSize() {
 }
 
 function cmd(html) {
-    command.style.transform = ''
+    command.hidden = true
+    command.style.transform = 'unset'
+    menu.style.top = '0px'
+    menu.style.left = '0px'
     command.innerHTML = `<br>${html}`
-    menu.style.left = `0px`
 
     //  remove HTML onclick event to instantiate good practice ...
     let inputs = command.getElementsByTagName('input')
