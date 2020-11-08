@@ -642,9 +642,8 @@ function cmdResize() {
     x = x > 3.2 ? 3.2 : x
     y = y > 3 ? 3 : y < x ? x : y
     //  try to position @ bottom
-    //let tx = 50 - 50 / x
     let ty = 50 - 50 / y
-    command.style.transform = `scale(${x},${y}) translate(1%,${-ty}%)`
+    command.style.transform = `scale(${x},${y}) translate(0%,${-ty}%)`
 }
 
 function reSize() {
@@ -652,7 +651,9 @@ function reSize() {
 }
 
 function cmd(html) {
+    command.style.transform = ''
     command.innerHTML = `<br>${html}`
+    menu.style.left = `0px`
 
     //  remove HTML onclick event to instantiate good practice ...
     let inputs = command.getElementsByTagName('input')
@@ -666,7 +667,6 @@ function cmd(html) {
         }
     }
 
-    menu.style.left = `0px`
     setImmediate(() => cmdResize())
 }
 
