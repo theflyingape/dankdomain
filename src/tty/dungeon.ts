@@ -1016,14 +1016,14 @@ module Dungeon {
                 return false
 
             case 'wheel':
+                $.profile({ png: 'wol', effect: 'rotateIn' })
+                xvt.outln(xvt.magenta, 'You have found a ', xvt.bright, 'Mystical Wheel of Life', xvt.normal, '.', -600)
                 $.music('wol')
-                xvt.outln(-600, xvt.magenta, 'You have found a ', xvt.bright, 'Mystical Wheel of Life', xvt.normal, '.', -600)
                 xvt.outln(-600)
                 xvt.outln(xvt.bright, xvt.yellow, 'The runes are ',
                     ['cryptic', 'familiar', 'foreign', 'speaking out', 'strange'][$.dice(5) - 1],
                     ' to you.', -600)
 
-                $.profile({ png: 'wol', effect: 'rotateIn' })
                 xvt.app.form = {
                     'wheel': {
                         cb: () => {

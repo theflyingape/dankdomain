@@ -18,12 +18,13 @@
     src: url('assets/vt220.woff2') format('woff2');
 }
 
-body {
+html, body {
     background-color: black;
     border: none;
     color: antiquewhite;
     font-display: swap;
     font-family: mono, emoji;
+    height: 100%;
     margin: 0px;
     min-height: 300px;
     touch-action: none;
@@ -116,17 +117,14 @@ td img {
     right: 0;
 }
 
+#info a:hover, #info a:active {
+    background-color: skyblue;
+    color: midnightblue;
+}
+
 #info div {
     padding: 0px 0px 0px 0px;
     border: none;
-}
-
-#info img {
-    max-height: 80%;
-    max-width: 100%;
-    object-fit: contain;
-    height: 80%;
-    width: 100%;
 }
 
 #info p, #info table {
@@ -141,8 +139,19 @@ td img {
     width: 19vw;
 }
 
-#menu {
+#profile {
+    height: 100%;
     width: 100%;
+}
+
+#profile img {
+    max-height: 99%;
+    max-width: 99%;
+    object-fit: contain;
+    width: 99%;
+}
+
+#menu {
     position: absolute;
 }
 

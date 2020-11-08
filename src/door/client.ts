@@ -146,7 +146,6 @@ function doCommand(event) {
             if (currentCMD !== event.data.func) {
                 currentCMD = event.data.func
                 eval(`${currentCMD} ()`)
-                //nmeResize(undefined, true)
             }
             return
         }
@@ -633,6 +632,7 @@ function nmeResize(effect: string, func = false) {
 
 function cmdResize() {
     menu.style.top = `${window.innerHeight - command.clientHeight}px`
+    menu.style.left = `${Math.trunc((info.clientWidth - command.clientWidth) / 2)}px`
     //  stretch height any (up to 11% overlap)?
     let flex = 1 - Math.trunc(100 * profile.clientHeight / window.innerHeight) / 100 + .11
     flex = flex > .67 ? .67 : flex < .33 ? .33 : flex
@@ -641,10 +641,10 @@ function cmdResize() {
     let x = Math.trunc(96 / (command.clientWidth / info.clientWidth)) / 100
     x = x > 3.2 ? 3.2 : x
     y = y > 3 ? 3 : y < x ? x : y
-    //  try to position @ bottom-centered
-    let tx = 52 - 50 / x
+    //  try to position @ bottom
+    //let tx = 50 - 50 / x
     let ty = 50 - 50 / y
-    command.style.transform = `scale(${x},${y}) translate(${tx}%,${-ty}%)`
+    command.style.transform = `scale(${x},${y}) translate(1%,${-ty}%)`
 }
 
 function reSize() {
@@ -653,7 +653,6 @@ function reSize() {
 
 function cmd(html) {
     command.innerHTML = `<br>${html}`
-    cmdResize()
 
     //  remove HTML onclick event to instantiate good practice ...
     let inputs = command.getElementsByTagName('input')
@@ -666,10 +665,15 @@ function cmd(html) {
             })
         }
     }
+
+    menu.style.left = `0px`
+    setImmediate(() => cmdResize())
 }
 
 function animated(effect) {
     let img = profile.getElementsByTagName('img')
+    if (!img.length) return
+
     let pic: HTMLImageElement
 
     if (img.length == 1) {
@@ -729,9 +733,9 @@ function rotateImage() {
         const banner = images.splice(n, 1)[0]
 
         let html = ''
-        if (banner.handle) html += `<span style="font-size:175%;">${banner.handle}</span>`
-        if (banner.level) html += `<span style="font-family:VT323, monospace; font-size:150%;">&nbsp;a level ${banner.level}</span>`
-        if (banner.pc) html += `<span style="font-family:VT323, monospace; font-size:150%;">&nbsp;${banner.pc}</span>`
+        if (banner.handle) html += `<span style="font-size:xx-large;">${banner.handle}</span>`
+        if (banner.level) html += `<span style="font-family:VT323, monospace; font-size:x-large;">&nbsp;a level ${banner.level}</span>`
+        if (banner.pc) html += `<span style="font-family:VT323, monospace; font-size:x-large;">&nbsp;${banner.pc}</span>`
         if (banner.jpg) html += `<br><img src="images/${banner.jpg}.jpg" />`
         if (banner.png) html += `<br><img src="images/${banner.png}.png" style="filter:opacity(${/^connect/.test(banner.png) ? '45%' : '100%'});" />`
 
@@ -827,7 +831,6 @@ function battle() {
 }
 
 function blackjack() {
-    nme('')
     cmd(`<table>
 <tr><td colspan=2><input class="Slate" type="button" value="Hit me!" onclick="send('H');"></td></tr>
 <tr><td><input class="gold" type="button" value="Double" onclick="send('D');"></td><td><input class="silver" id="cancel" type="button" value="Stay" onclick="send('S');"></td></tr>
@@ -842,7 +845,6 @@ function brawl() {
 }
 
 function casino() {
-    nme('')
     cmd(`<table>
 <tr><td><input class="Slate" type="button" value="🂡 Black Jack 🂫" onclick="send('B');"></td></tr>
 <tr><td><input class="Slate" type="button" value="🎲 Craps 🎲" onclick="send('C');"></td></tr>
@@ -854,7 +856,6 @@ function casino() {
 }
 
 function craps() {
-    nme('')
     cmd(`${money}<br><input class="slate" type="button" value="Roll!" onclick="send('', true);">`)
 }
 
@@ -903,7 +904,6 @@ function naval() {
 }
 
 function party() {
-    nme('')
     cmd(`<table>
 <tr><td><input type="button" value="Edit" onclick="send('E');"></td><td><input type="button" value="List" onclick="send('L');"></td></tr>
 <tr><td><input type="button" value="Resign" onclick="send('R');"></td><td><input type="button" value="Transfer" onclick="send('T');"></td></tr>
@@ -956,7 +956,6 @@ function square() {
 }
 
 function tavern() {
-    nme('')
     cmd(`<table>
 <tr><td><input type="button" value="Swear" onclick="send('S');"></td><td><input type="button" value="List" onclick="send('L');"></td><td><input type="button" value="Post" onclick="send('P');"></td></tr>
 <tr><td><input class="Slate" type="button" value="Old" onclick="send('Y');"></td><td><input class="Gold" type="button" value="Guzzle" onclick="send('G');"></td><td><input class="Slate" type="button" value="News" onclick="send('T');"></td></tr>
@@ -989,7 +988,7 @@ function well() {
 }
 
 function welcome() {
-    nme(`<span style="color:darkred; font-size:175%;">Can you defeat the Demogorgon?</span><img src="assets/title.jpg" />`, 'jackInTheBox')
+    nme(`<span style="color:darkred; font-size:xx-large;">Can you defeat the Demogorgon?</span><img src="assets/title.jpg" />`, 'jackInTheBox')
     Logoff()
 }
 

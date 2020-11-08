@@ -64,15 +64,18 @@ module Main {
         switch (choice) {
             case '@':
                 if ($.access.sysop) {
+                    $.animated('fadeOut')
                     require('./sysop').menu($.player.expert)
                     return
                 }
 
             case 'A':
+                $.animated('fadeOut')
                 require('./arena').menu($.player.expert)
                 return
 
             case 'D':
+                $.animated('fadeOut')
                 if ($.dungeon) {
                     $.music('.')
                     $.sound(`dt${$.dungeon}`)
@@ -87,10 +90,12 @@ module Main {
                 return
 
             case 'G':
+                $.animated('fadeOut')
                 require('./gambling').menu($.player.expert)
                 return
 
             case 'L':
+                $.animated('fadeOut')
                 require('./hall').menu($.player.expert)
                 return
 
@@ -142,10 +147,12 @@ module Main {
                 break
 
             case 'N':
+                $.animated('fadeOut')
                 require('./naval').menu($.player.expert)
                 return
 
             case 'P':
+                $.animated('fadeOut')
                 require('./party').menu($.player.expert)
                 return
 
@@ -320,6 +327,7 @@ module Main {
                 return
 
             case 'S':
+                $.animated('fadeOut')
                 require('./square').menu($.player.expert)
                 return
 
@@ -329,6 +337,7 @@ module Main {
                     suppress = true
                     break
                 }
+                $.animated('fadeOut')
                 $.music('tavern' + $.dice(4))
                 require('./tavern').menu($.player.expert)
                 return

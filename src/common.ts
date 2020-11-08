@@ -2046,7 +2046,7 @@ module Common {
         xvt.out(xvt.off)
         xvt.plot(player.rows, 1)
         xvt.outln('\n'.repeat(scroll))
-        xvt.out(xvt.clear, -10)
+        xvt.out(xvt.clear, -10) // allow XTerm to flush
     }
 
     export function death(by: string) {
@@ -2220,7 +2220,7 @@ module Common {
             xvt.outln(xvt.bright, xvt.black, process.title
                 , ' running on ', xvt.bright, xvt.green, 'Node.js ', xvt.normal, process.version, xvt.reset
                 , xvt.faint, ' (', xvt.cyan, process.platform, xvt.white, xvt.faint, ')', -1965)
-            if (player.today && player.level > 1)
+            if (access.roleplay && player.today && player.level > 1)
                 music(online.hp > 0 ? 'logoff' : 'death')
         }
         else
@@ -2233,12 +2233,12 @@ module Common {
         if (tty == 'web') xvt.out(`@action(${menu})`)
     }
 
-    export function animated(effect: string) {
-        if (tty == 'web') xvt.out(`@animated(${effect})`)
+    export function animated(effect: string, sync = 2) {
+        if (tty == 'web') xvt.out(`@animated(${effect})`, -10 * sync)
     }
 
-    export function music(tune: string) {
-        if (tty == 'web') xvt.out(`@tune(${tune})`)
+    export function music(tune: string, sync = 2) {
+        if (tty == 'web') xvt.out(`@tune(${tune})`, -10 * sync)
     }
 
     export function profile(params) {
