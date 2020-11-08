@@ -386,7 +386,7 @@ dns.lookup(network.address, (err, addr, family) => {
                 let id = rs[n].id, handle = rs[n].handle, pc = rs[n].pc, gender = rs[n].gender, level = rs[n].level
                 let profile = { handle: handle, level: level, pc: pc, effect: 'fadeInLeft' }
                 if (id[0] == '_') {
-                    profile['jpg'] = `npc/${{ _BAR: 'barkeep', _DM: 'dwarf', _NEP: 'neptune', _OLD: 'seahag', _TAX: 'taxman' }[id]}`
+                    profile['jpg'] = `npc/${{ _BAR: 'barkeep', _DM: 'dwarf', _NEP: 'neptune', _OLD: 'seahag', _TAX: 'taxman', '_WOW': 'witch' }[id]}`
                     list.push(profile)
                 }
                 else {
