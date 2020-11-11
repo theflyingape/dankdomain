@@ -918,7 +918,7 @@ function party() {
 }
 
 function payment() {
-    nme(`<img src="images/payment.png" />`, 'bounce');
+    nme(`<img src="images/payment.png" />`, 'bounce')
     cmd(`${money}`)
 }
 
@@ -931,10 +931,12 @@ function potion() {
 
 function riddle() {
     nme(`<img src="images/riddle.jpg" />`, 'zoomInUp')
-    cmd(`<input class="platinum" type="button" value=" Platinum " onclick="send('P');"><br>
-<input class="gold"     type="button" value="   Gold   " onclick="send('G');"><br>
-<input class="silver"   type="button" value="  Silver  " onclick="send('S');"><br>
-<input class="copper"   type="button" value="  Copper  " onclick="send('C');">`)
+    cmd(`<table>
+<tr><td><input class="platinum" type="button" value=" Platinum " onclick="send('P');"></td></tr>
+<tr><td><input class="gold" type="button" value="   Gold   " onclick="send('G');"></td></tr>
+<tr><td><input class="silver" type="button" value="  Silver  " onclick="send('S');"></td></tr>
+<tr><td><input class="copper" type="button" value="  Copper  " onclick="send('C');"></td></tr>
+</table>`)
 }
 
 function shipyard() {

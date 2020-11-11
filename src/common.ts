@@ -2205,8 +2205,12 @@ module Common {
                 if (player.plays) sound(online.hull < 1 ? 'comeagain' : 'invite')
                 PC.profile(online)
             }
-            xvt.outln('\x06')
-            xvt.outln('Goodbye, please play again! ', -500, ' Also visit: ', -250)
+
+            xvt.outln(-20, '\x06', -20)
+            xvt.save()
+            xvt.out(`\x1B[1;${player.rows}r`)
+            xvt.restore()
+            xvt.outln('Goodbye, please play again! ', -300, ' Also visit: ', -300)
             xvt.out(xvt.cyan, '  ___                               ___  \n')
             xvt.out('  \\_/   ', xvt.red, xvt.app.LGradient, xvt.bright, xvt.Red, xvt.white, 'Never Program Mad', xvt.reset, xvt.red, xvt.app.RGradient, xvt.cyan, '   \\_/  \n')
             xvt.out(' _(', xvt.bright, '-', xvt.normal, ')_     ', xvt.reset, ' https://npmjs.com    ', xvt.cyan, '  _(', xvt.bright, '-', xvt.normal, ')_ \n')

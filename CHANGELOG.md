@@ -5,13 +5,22 @@
 🇺🇸 ©️1991 - 2020 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](https://play.DDgame.us) within the Google Cloud Platform (us-central1)
 
-### **20-Oct-2020**  `v2.8.0` 🎉
+### **11-Nov-2020** `v2.8.1` 🎖️
+
+* [Veterans Day](https://en.wikipedia.org/wiki/Veterans_Day) and [DJT #45](https://www.whitehouse.gov/people/donald-j-trump/) is still Alive!
+* maintenance release: UI fixes and corrected limit to "boss" encounters in play.json
+* new boss encounter: *Medea*, an old witch/sorceress that can "help" adventurer for a price
+  * any unique rings are taken away from other players and given to you; or
+  * if player does not possess Morph, provide advanced Magic (replaces wish from the well); or
+  * resurrect the dead & curse the land
+
+#### **20-Oct-2020** `v2.8.0` 🎉
 
 * UI and client code completely refactored
   * removed iframes into a single page app
   * rewrote an improved CSS layout
 
-#### 28-Sep-2020 `v2.7.0`
+#### **28-Sep-2020** `v2.7.0`
 
 * general browser client improvements
   * add Facebook Group URL: http://www.originalhackandslash.net
@@ -39,9 +48,9 @@
 * xterm.js v4.6 release
 * xvt v1.2 release for scrollback enhancements
 
-#### **8-May-2020** `v2.5.2`
+#### **8-May-2020** `v2.5.2` 😷
 
-* Rhode Island last day of its illegal sequestering of healthy residents (coined as "Stay At Home") order 😷
+* Rhode Island last day of its illegal sequestering of healthy residents (coined as "Stay At Home") order
 * refactor for animate.css v4
 * changes to joust lost deed eligibility
 

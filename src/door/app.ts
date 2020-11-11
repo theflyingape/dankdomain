@@ -98,8 +98,10 @@ function message(term: pty.IPty, msg: Uint8Array, classic = true): Uint8Array {
     let ack = msg.indexOf(0x06)
     //  ... to appropriately replace it with any pending broadcast message(s)
     if (ack >= 0) {
-        let wall = new TextEncoder().encode(broadcasts[term.pid] ? `${broadcasts[term.pid]}\n` : '')
-        msg = new Uint8Array([...msg.slice(0, ack), ...wall, ...msg.slice(ack)])
+        let wall = new TextEncoder().encode(broadcasts[term.pid]
+            ? `${broadcasts[term.pid]}\n`.split('~').join(classic ? '-' : '↣')
+            : '')
+        msg = new Uint8Array([...msg.slice(0, ack), ...wall, ...msg.slice(ack + 1)])
         broadcasts[term.pid] = ''
     }
 
@@ -169,14 +171,14 @@ dns.lookup(network.address, (err, addr, family) => {
         tty.maxConnections = network.limit
 
         tty.on('close', (c) => {
-            console.log('Classic Gate is closed -', c)
+            console.log('Classic Gate is closed →', c)
         })
 
         tty.on('connection', (socket) => {
             let client = socket.remoteAddress || 'scan'
             let pid = login(client, network.rows, 80, network.emulator)
             let term = sessions[pid]
-            console.log(`Classic Gate knock from remote host ${client} - session ${pid}`)
+            console.log(`Classic Gate knock from remote host ${client} → session ${pid}`)
 
             socket.setKeepAlive(true, 4000)
             nka.setKeepAliveInterval(socket, 21000)
@@ -201,7 +203,7 @@ dns.lookup(network.address, (err, addr, family) => {
             term.spawn.dispose()
             if (term.startup) try { socket.write(term.startup, <BufferEncoding>term.encoding) } catch { }
 
-            //  app --> telnet client
+            //  app → telnet client
             //term.pipe(socket)
             term.onData((data) => {
                 let msg = message(term, data)
@@ -253,14 +255,14 @@ dns.lookup(network.address, (err, addr, family) => {
                 }
             })
 
-            //  telnet client --> app
+            //  telnet client → app
             telnet.on('data', (buff) => {
                 let data = buff.toString().replace(/\x00/g, '')
                 try {
                     term.write(data)
                 } catch (err) {
                     if (term.pid) {
-                        console.log(`?FATAL ACTIVE CLASSIC session ${term.pid} socket -> pty error:`, err.message)
+                        console.log(`?FATAL ACTIVE CLASSIC session ${term.pid} socket → pty error:`, err.message)
                         unlock(term.pid)
                         socket.destroy()
                     }
@@ -269,12 +271,12 @@ dns.lookup(network.address, (err, addr, family) => {
         })
 
         tty.on('error', (err) => {
-            console.log('Classic Gate is blocked -', err.message)
+            console.log('Classic Gate is blocked →', err.message)
             tty.close()
         })
 
         tty.listen(network.socket, addr)
-        console.log(` - listening on telnet ${addr}:${network.socket}`)
+        console.log(`→ listening on telnet ${addr}:${network.socket}`)
     }
 
     //  start web service
@@ -297,12 +299,12 @@ dns.lookup(network.address, (err, addr, family) => {
         //  enable REST services
         server.listen(port, addr)
         const WEBROOT = `http${ssl ? 's' : ''}://${addr}:${port}${network.path}`
-        console.log(` - listening on ${WEBROOT}`)
+        console.log(`→ listening on ${WEBROOT}`)
 
         //  enable WebSocket endpoints
         const wsActive = new ws.Server({ noServer: true, path: `${network.path}player/`, clientTracking: true })
         const wsLurker = new ws.Server({ noServer: true, path: `${network.path}lurker/`, clientTracking: true })
-        console.log(` + WebSocket endpoints enabled`)
+        console.log(`↔ WebSocket endpoints enabled`)
 
         server.on('upgrade', (req, socket, head) => {
             const pathname = new URL(req.url, WEBROOT).pathname
@@ -491,14 +493,14 @@ dns.lookup(network.address, (err, addr, family) => {
             term.spawn.dispose()
             if (term.startup) browser.send(term.startup)
 
-            //  app --> browser client
+            //  app → browser client
             term.onData((data) => {
                 let msg = message(term, data, false)
                 try {
                     browser.send(new TextDecoder().decode(msg))
                 } catch (ex) {
                     if (term.pid) {
-                        console.log(`?FATAL ACTIVE app session ${term.pid} pty -> ws error:`, ex.message)
+                        console.log(`?FATAL ACTIVE app session ${term.pid} pty → ws error:`, ex.message)
                         console.log(msg)
                         unlock(term.pid)
                         browser.close()
@@ -516,13 +518,13 @@ dns.lookup(network.address, (err, addr, family) => {
                 browser.close()
             })
 
-            //  browser client --> app
+            //  browser client → app
             browser.on('message', (msg) => {
                 try {
                     term.write(msg)
                 } catch (ex) {
                     if (term.pid) {
-                        console.log(`?FATAL ACTIVE browser session ${term.pid} ws -> pty error:`, ex.message)
+                        console.log(`?FATAL ACTIVE browser session ${term.pid} ws → pty error:`, ex.message)
                         unlock(term.pid)
                         browser.close()
                     }
@@ -548,7 +550,7 @@ dns.lookup(network.address, (err, addr, family) => {
             let player = ` (${sessions[term.pid].who})`
             console.log(`Lurker session ${term.pid}${player} connected as #${(lurker + 1)}`)
 
-            //  app --> browser client
+            //  app → browser client
             let lurk = term.onData((data) => {
                 try {
                     browser.send(new TextDecoder().decode(data))
@@ -565,7 +567,7 @@ dns.lookup(network.address, (err, addr, family) => {
                 }
             })
 
-            //  browser client --> any key terminates lurking
+            //  browser client → any key terminates lurking
             browser.on('message', (msg) => {
                 browser.close()
             })
