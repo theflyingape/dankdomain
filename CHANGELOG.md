@@ -97,7 +97,7 @@
 
 ## **--=:)) `HISTORY` ((:=--**
 
-> [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](http://play.DDgame.us) on an Intel Atom-powered Linux server using a Verizon FiOS 400mb Internet service
+> [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](http://play.DDgame.us) on an **Intel Atom-powered Linux server** using a Verizon FiOS 400mb Internet service
 
 #### **13-Sep-2019** `v2.2`
 
@@ -262,7 +262,7 @@
 
 ### **`RPGD`**
 
-> [developed](https://github.com/theflyingape/rpgd) using GCC on a SuperMicro Linux server with a Cox cable modem
+> [developed](https://github.com/theflyingape/rpgd) using GCC on a **SuperMicro dual P3 Linux server** with a Cox cable modem
 
 ---
 
@@ -505,7 +505,7 @@ SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
 
 #### **RPGBBS** *DELUXE*
 
-> [developed](https://github.com/theflyingape/rpgbbs/tree/master/v7) using SAS/C on an Amiga 3000T with a Supra FAX Modem 28.8k
+> [developed](https://github.com/theflyingape/rpgbbs/tree/master/v7) using SAS/C on an **Amiga 3000T** with a Supra FAX Modem 28.8k
 
 ---
 
@@ -610,7 +610,7 @@ SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
 
 ### **RPGBBS**
 
-> [developed](https://github.com/theflyingape/rpgbbs/tree/master/v6) using SAS/C on an Amiga 3000/16 with a Supra FAX Modem 14400
+> [developed](https://github.com/theflyingape/rpgbbs/tree/master/v6) using SAS/C on an **Amiga 3000/16** with a Supra FAX Modem 14400
 
 ---
 
@@ -767,10 +767,11 @@ SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
 
 ### **`The Rhode Warrior`**
 
-> [developed](https://github.com/theflyingape/the-rhode-warrior) using GW-BASIC on an IBM XT MS-DOS PC with a Supra 2400 baud modem
+> [developed](https://github.com/theflyingape/the-rhode-warrior) using GW-BASIC on an **IBM XT MS-DOS PC** with a Supra 2400 baud modem
 
 ---
-#### 24-Dec-1991 ####
+
+#### 24-Dec-1991 until 01-May-1992 ####
 
 * BBS went online at Manton Avenue in Providence, Rhode Island
 * added blessed / cursed state on a player

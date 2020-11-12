@@ -161,8 +161,7 @@ function doCommand(event) {
         }
 
         if (event.data.leader) {
-            html = `<h2>${event.data.handle}</h2><table>
-    <tr><td rowspan=2><img src="images/${event.data.banner}.png" /></td><td><img src="images/${event.data.leader}.png" /></td></tr>`
+            html = `<h2>${event.data.handle}</h2><table><tr><td rowspan=2><img src="images/${event.data.banner}.png" /></td><td><img src="images/${event.data.leader}.png" /></td></tr>`
             if (event.data.leader)
                 html += `<tr><td><img src="images/${event.data.coat}.png" /></td></tr>`
             html += `</table>`
@@ -171,9 +170,8 @@ function doCommand(event) {
         }
 
         if (event.data.mob1) {
-            var h = window.innerWidth - 4
-            html = `<table width="${h}px">
-    <tr><td><img style="max-width:${h >> 1}px;" src="images/${event.data.mob1}.png" /></td><td><img style="max-width:${h >> 1}px;" src="images/${event.data.mob2}.png" /></td></tr>`
+            const h = profile.clientWidth - 4
+            html = `<table width="${h}px"><tr><td><img style="max-width:${h >> 1}px;" src="images/${event.data.mob1}.png" /></td><td><img style="max-width:${h >> 1}px;" src="images/${event.data.mob2}.png" /></td></tr>`
             if (event.data.mob3)
                 html += `<tr><td colspan=2><img style="max-width:${(h * 3) >> 2}px;" src="images/${event.data.mob3}.png" /></td></tr>`
             html += `</table>`
@@ -181,21 +179,17 @@ function doCommand(event) {
             return
         }
 
-        if (event.data.handle) {
+        if (event.data.handle)
             html += `<span style="font-size:xx-large;">${event.data.handle}</span>`
-        }
-        if (event.data.level) {
-            html += `<span style="font-family:VT323, monospace; font-size:x-large;">&nbsp;a level ${event.data.level}</span>`
-        }
-        if (event.data.pc) {
-            html += `<span style="font-family:VT323, monospace; font-size:x-large;">&nbsp;${event.data.pc}</span>`
-        }
-        if (event.data.jpg) {
+        if (event.data.level)
+            html += `<span style="font-family:VT323,tty; font-size:x-large;">&nbsp;a level ${event.data.level}</span>`
+        if (event.data.pc)
+            html += `<span style="font-family:VT323,tty; font-size:x-large;">&nbsp;${event.data.pc}</span>`
+        if (event.data.jpg)
             html += `<br><img src="images/${event.data.jpg}.jpg" />`
-        }
-        if (event.data.png) {
+        if (event.data.png)
             html += `<br><img src="images/${event.data.png}.png" />`
-        }
+
         nme(html, event.data.effect || 'fadeIn')
     }
 }
@@ -726,7 +720,7 @@ function Logoff() {
 <span style="font-size:larger; font-family:mono; font-weight:600;">🤴 <a href="https://www.ddgame.us" target="_new"><span style="color:black">Ɗanƙ Ɗomaiƞ</span></a> 👸</span><br>
 <span style="color:darkslategray;">the return of Hack &amp; Slash</span><br>
 <span style="color:brown; font-size:smaller;">🇺🇸 &copy; 2017 - 2020 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a> 🧙</span><br>
-<span style="color:black; font-family:VT323, monospace;">⚡ Powered by <a href="https://xtermjs.org" target="_blank">Xterm.js</a> 🖥</span>`)
+<span style="color:black; font-family:VT323,tty;">⚡ Powered by <a href="https://xtermjs.org" target="_blank">Xterm.js</a> 🖥</span>`)
 }
 
 function rotateImage() {
@@ -737,8 +731,8 @@ function rotateImage() {
 
         let html = ''
         if (banner.handle) html += `<span style="font-size:xx-large;">${banner.handle}</span>`
-        if (banner.level) html += `<span style="font-family:VT323, monospace; font-size:x-large;">&nbsp;a level ${banner.level}</span>`
-        if (banner.pc) html += `<span style="font-family:VT323, monospace; font-size:x-large;">&nbsp;${banner.pc}</span>`
+        if (banner.level) html += `<span style="font-family:VT323,tty; font-size:x-large;">&nbsp;a level ${banner.level}</span>`
+        if (banner.pc) html += `<span style="font-family:VT323,tty; font-size:x-large;">&nbsp;${banner.pc}</span>`
         if (banner.jpg) html += `<br><img src="images/${banner.jpg}.jpg" />`
         if (banner.png) html += `<br><img src="images/${banner.png}.png" style="filter:opacity(${/^connect/.test(banner.png) ? '45%' : '100%'});" />`
 

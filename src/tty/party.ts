@@ -565,6 +565,7 @@ module Party {
                 return
 
             case 'Q':
+                $.action('clear')
                 require('./main').menu($.player.expert)
                 return
         }
