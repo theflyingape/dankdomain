@@ -132,7 +132,10 @@ module Dungeon {
 
         if ($.access.sysop) crawling['M'] = { description: 'y liege' }
         generateLevel()
-        if (DL.moves > Z) DL.moves = 0
+        if (DL.moves > Z) {
+            DL.moves = 0
+            DL.thief = true
+        }
         menu()
     }
 
@@ -398,8 +401,10 @@ module Dungeon {
                 $.Armor.equip($.online, $.Armor.merchant[0])
                 DL.exit = false
             }
-            xvt.outln(-600)
+
             xvt.drain()
+            drawHero($.player.blessed ? true : false)
+            xvt.outln(-600)
         }
 
         //  insert any wall messages here
@@ -1196,18 +1201,36 @@ module Dungeon {
                     return
                 }
 
+                if (DL.map == `Marauder's map` || ($.Ring.power([], $.player.rings, 'identify').power > 0)) {
+                    xvt.outln('He does not surprise you', xvt.cyan, '.')
+                    break
+                }
+
                 let x = $.dice(DL.width) - 1, y = $.dice(DL.rooms.length) - 1
                 let escape = DL.rooms[y][x]
                 if (escape.occupant || $.dice(Z * ($.player.steal / 2 + 1) - deep) > Z) {
                     if (!escape.occupant && $.player.pc !== $.taxman.user.pc) {
                         escape.occupant = 'thief'
+                        const t = $.dice(5) - 1
                         xvt.out([
-                            'He silently ignores you',
+                            'He decides to ignore you',
                             'He recognizes your skill and winks',
                             'He slaps your back, but your wallet remains',
                             'He offers you a drink, and you accept',
                             xvt.attr(`"I'll be seeing you again"`, xvt.cyan, ' as he leaves')
-                        ][$.dice(5) - 1], xvt.cyan, '.')
+                        ][t])
+                        if (DL.thief) {
+                            $.PC.adjust(['', 'dex', 'str', 'int', 'cha'][t], -1)
+                            DL.thief = false
+                            if (t) {
+                                $.sound('click')
+                                xvt.out(xvt.red, '.')
+                            }
+                            else
+                                xvt.out(xvt.cyan, '.')
+                        }
+                        else
+                            xvt.out(xvt.cyan, '.')
                     }
                     else {
                         xvt.out(xvt.normal, xvt.magenta, 'He teleports away!')
@@ -1217,10 +1240,7 @@ module Dungeon {
                 }
                 else {
                     escape.occupant = 'thief'
-                    if (DL.map && DL.map !== 'map')
-                        xvt.outln('You expect nothing less from the coward.')
-                    else
-                        xvt.outln(xvt.bright, xvt.white, 'He surprises you!')
+                    xvt.outln(xvt.bright, xvt.white, 'He surprises you!')
                     $.sound('thief', 4)
 
                     xvt.out('As he passes by, he steals your ')
@@ -2349,6 +2369,7 @@ module Dungeon {
                 moves: -maxCol - ($.player.novice ? maxRow + maxCol : $.player.wins),
                 rooms: new Array(maxRow),
                 spawn: $.int(deep / 3 + Z / 9 + maxRow / 3) + $.dice(Math.round($.online.cha / 20) + 1) + 3,
+                thief: !$.access.sysop && !$.player.novice,
                 width: maxCol
             }
 

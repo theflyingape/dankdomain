@@ -221,6 +221,7 @@ interface ddd {
     moves: number       //  hero steps (2x backtracking)
     rooms: [room[]]     //	7-10
     spawn: number       //  2-23
+    thief: boolean      //  1st encounter
     width: number		//	7-13
 }
 
