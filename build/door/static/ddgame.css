@@ -134,11 +134,6 @@ td img {
     text-align: center;
 }
 
-#info td {
-    height: 100%;
-    width: 19vw;
-}
-
 #profile {
     height: 100%;
     width: 100%;
@@ -226,20 +221,11 @@ td img {
     color: ghostwhite;
 }
 
-#command .Keycap {
-    padding-top: 0.10em;
-    padding-left: 0.15em;
-    padding-bottom: 0.90em;
-    padding-right: 2.85em;
-    font-size: 110%;
-    width: 98%;
-}
-
 #command .platinum, #command .Platinum {
     background: hotpink;
     border: solid darkorchid;
     color: indigo;
-    font-size: 120%;
+    font-size: large;
 }
 
 #command .platinum:hover, #command .Platinum:hover {
@@ -252,7 +238,7 @@ td img {
     background: gold;
     border: solid darkgoldenrod;
     color: goldenrod;
-    font-size: 120%;
+    font-size: large;
 }
 
 #command .gold:hover, #command .Gold:hover {
@@ -265,7 +251,7 @@ td img {
     background: turquoise;
     border: solid darkturquoise;
     color: steelblue;
-    font-size: 120%;
+    font-size: large;
 }
 
 #command .silver:hover, #command .Silver:hover {
@@ -278,7 +264,7 @@ td img {
     background: coral;
     border: solid darkred;
     color: crimson;
-    font-size: 120%;
+    font-size: large;
 }
 
 #command .copper:hover, #command .Copper:hover {
@@ -291,7 +277,7 @@ td img {
     background: lightgray;
     border: solid darkslategray;
     color: slategray;
-    font-size: 120%;
+    font-size: large;
 }
 
 #command .slate:hover, #command .Slate:hover {
@@ -304,13 +290,22 @@ td img {
     background: burlywood;
     border: solid saddlebrown;
     color: chocolate;
-    font-size: 120%;
+    font-size: large;
 }
 
 #command .tavern:hover, #command .Tavern:hover {
     background-image: linear-gradient(to bottom, bisque, saddlebrown);
     border: solid saddlebrown;
     border-width: 1px 3px 3px 1px;
+}
+
+#command .Keycap {
+    padding-top: 0.10em;
+    padding-left: 0.15em;
+    padding-bottom: 0.90em;
+    padding-right: 2.85em;
+    font-size: large;
+    width: 98%;
 }
 
 #command .Platinum, #command .Gold, #command .Silver, #command .Copper, #command .Slate, #command .Tavern {

@@ -65,6 +65,7 @@ module Tavern {
                     suppress = true
                     break
                 }
+                $.action('freetext')
                 xvt.app.form = {
                     'argue': {
                         cb: () => {

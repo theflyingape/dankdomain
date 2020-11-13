@@ -4,7 +4,7 @@
   { "name":"Ogre", "level":5, "pc":"Ogre", "weapon":"Club", "armor":"Large Shield", "money":"100c", "effect":"bounceInDown" },
   { "name":"Gnoll", "level":7, "pc":"Beast", "weapon":"Mace", "armor":"Leather", "money":"500c", "effect":"bounceInLeft" },
   { "name":"Troglodyte", "level":9, "pc":"Beast", "weapon":"Spear", "armor":"Padded Leather", "money":"1000c", "effect":"zoomInDown" },
-  { "name":"Gargoyle", "level":12, "pc":"Demon", "weapon":"Axe", "armor":6, "money":"10000c", "spells":[ "Teleport" ], "effect":"lightSpeedIn" },
+  { "name":"Gargoyle", "level":12, "pc":"Demon", "weapon":"Axe", "armor":6, "money":"10000c", "spells":[ "Teleport" ], "effect":"fadeInUp" },
   { "name":"Troll", "level":23, "pc":"Ogre", "weapon":"Heavy Crossbow", "armor":10, "money":"1s", "spells":[ "Heal" ], "rings":[ "Cursed", "Ogre" ], "effect":"rubberBand" },
   { "name":"Hydra", "level":32, "pc":"Dragon", "weapon":25, "armor":"Dragon Scale Mail", "money":"1000s", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"fadeInUpBig" },
   { "name":"Nycadaemon", "level":36, "pc":"Demon", "weapon":"Staff of Striking", "armor":18, "money":"10g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"heartBeat" },

@@ -572,16 +572,19 @@ module Square {
 
         switch (choice) {
             case 'D':
+                $.action('payment')
                 xvt.app.form['coin'].prompt = xvt.attr('Deposit ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.player.coin.carry(), ']? ')
                 xvt.app.focus = 'coin'
                 break
 
             case 'L':
+                $.action('payment')
                 xvt.app.form['coin'].prompt = xvt.attr('Loan ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', credit.carry(), ']? ')
                 xvt.app.focus = 'coin'
                 break
 
             case 'W':
+                $.action('payment')
                 xvt.app.form['coin'].prompt = xvt.attr('Withdraw ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.player.bank.carry(), ']? ')
                 xvt.app.focus = 'coin'
                 break

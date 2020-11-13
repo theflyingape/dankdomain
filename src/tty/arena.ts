@@ -408,6 +408,7 @@ module Arena {
         let monster: active
         let n: number
 
+        $.action('clear')
         if (/D/i.test(xvt.entry)) {
             if ($.player.level < 50) {
                 xvt.outln('\nYou are not powerful enough to fight demons yet.  Go fight some monsters.')

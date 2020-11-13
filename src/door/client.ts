@@ -701,10 +701,10 @@ function animated(effect) {
 function Logon() {
     clearInterval(art)
     art = null
-    nme(`<img src="images/npc/city_guard_2.png" />`, 'bounceInDown')
     cmd(`<input type="text" placeholder="your ID or handle" id="playerID" name="id" required><br>
 <input type="password" placeholder="your password" id="password" name="password" required><br>
 <input type="button" class="slate" value="NEW" onclick="send('NEW', true);">&nbsp;&nbsp;&nbsp;<input type="button" class="silver" value="Login" onclick="sendLogin();"><br>⬅️ or click left window for cursor`)
+    nme(`<img src="images/npc/city_guard_2.png" />`, 'bounceInDown')
 }
 
 function sendLogin() {
@@ -716,7 +716,10 @@ function sendLogin() {
 function Logoff() {
     if (!art) art = setInterval(rotateImage, 14400)
     window.focus()
-    cmd(`<input type="button" class="slate" id="cancel" value="Disconnect" onclick="currentCMD = ''; send('\x1B');">&nbsp;&nbsp;&nbsp;<input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"><br>
+    cmd(`<table>
+<tr><td><input type="button" class="slate" id="cancel" value="Disconnect" onclick="currentCMD = ''; send('\x1B');"></td><td><input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"></td></tr>
+</table>
+<hr>
 <span style="font-size:larger; font-family:mono; font-weight:600;">🤴 <a href="https://www.ddgame.us" target="_new"><span style="color:black">Ɗanƙ Ɗomaiƞ</span></a> 👸</span><br>
 <span style="color:darkslategray;">the return of Hack &amp; Slash</span><br>
 <span style="color:brown; font-size:smaller;">🇺🇸 &copy; 2017 - 2020 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a> 🧙</span><br>
@@ -789,14 +792,14 @@ function main() {
 
 function ny() {
     cmd(`<table>
-<tr><td><input class="Slate" type="button" id="cancel" value="Yes" onclick="send('Y');"></td><td><input class="Silver" type="button" value="NO" onclick="send('N');"></td></tr>
+<tr><td><input class="Slate" type="button" id="cancel" value="Yes" onclick="send('Y');"></td><td><input class="Silver" type="button" value="&nbsp;&nbsp;NO&nbsp;&nbsp;" onclick="send('N');"></td></tr>
 <tr><td colspan=2>${Enter}</td></tr>
 </table>`)
 }
 
 function yn() {
     cmd(`<table>
-<tr><td><input class="Slate" type="button" id="cancel" value="No" onclick="send('N');"></td><td><input class="Silver" type="button" value="YES" onclick="send('Y');"></td></tr>
+<tr><td><input class="Slate" type="button" id="cancel" value="No" onclick="send('N');"></td><td><input class="Silver" type="button" value="&nbsp;&nbsp;YES&nbsp;&nbsp;" onclick="send('Y');"></td></tr>
 <tr><td colspan=2>${Enter}</td></tr>
 </table>`)
 }
@@ -804,7 +807,6 @@ function yn() {
 function arena() {
     cmd(`<table>
 <tr><td><input class="Gold" type="button" value="User" onclick="send('U');"></td><td><input class="Silver" type="button" value="Monster" onclick="send('M');"></td></tr>
-<tr><td colspan=2><hr></td></tr>
 <tr><td><input class="platinum" type="button" value="Cast" onclick="send('C');"></td><td><input class="slate" type="button" value="Poison" onclick="send('P');"></td></tr>
 <tr><td><input type="button" value="Status" onclick="send('Y');"></td><td><input class="gold" type="button" value="Joust" onclick="send('J');"></td></tr>
 <tr><td><input class="Tavern" type="button" value="SQUARE" onclick="send('G');"></td><td>${quit}</td></tr>
@@ -812,12 +814,12 @@ function arena() {
 }
 
 function bank() {
-    nme(`<img src="images/bank.jpg" />`, 'pulse');
-    cmd(`${money}<table>
-<tr><td colspan=2></td><td colspan=2><input class="Slate" type="button" value="Deposit" onclick="send('D');"></td></tr>
-<tr><td><input type="button" value="Rob 💰" onclick="send('R');"></td><td></td><td colspan=2><input class="Slate" type="button" value="Withdraw" onclick="send('W');"></td></tr>
-<tr><td colspan=2></td><td><input class="Slate" type="button" value="Loan" onclick="send('L');"></td><td>${quit}</td></tr>
+    cmd(`<table>
+<tr><td colspan=2><input type="button" value="Rob 💰" onclick="send('R');"></td></tr>
+<tr><td><input class="Slate" type="button" value="Withdraw" onclick="send('W');"></td><td><input class="Slate" type="button" value="Deposit" onclick="send('D');"></td></tr>
+<tr><td><input class="Slate" type="button" value="Loan" onclick="send('L');"></td><td>${quit}</td></tr>
 </table>`)
+    nme(`<img src="images/bank.jpg" />`, 'pulse')
 }
 
 function battle() {
@@ -884,7 +886,9 @@ function hunt() {
 }
 
 function joust() {
-    cmd(`<input class="copper" id="cancel" type="button" value="Forfeit" onclick="send('F');">&nbsp;&nbsp;&nbsp;<input class="slate" id="default" type="button" value="Joust" onclick="send('J');">`)
+    cmd(`<table>
+<tr><td><input class="copper" id="cancel" type="button" value="Forfeit" onclick="send('F');"></td><td><input class="slate" id="default" type="button" value="Joust" onclick="send('J');"></td></tr>
+</table>`)
 }
 
 function monster() {
@@ -912,8 +916,8 @@ function party() {
 }
 
 function payment() {
-    nme(`<img src="images/payment.png" />`, 'bounce')
     cmd(`${money}`)
+    nme(`<img src="images/payment.png" />`, 'bounce')
 }
 
 function potion() {
@@ -924,22 +928,22 @@ function potion() {
 }
 
 function riddle() {
-    nme(`<img src="images/riddle.jpg" />`, 'zoomInUp')
     cmd(`<table>
 <tr><td><input class="platinum" type="button" value=" Platinum " onclick="send('P');"></td></tr>
 <tr><td><input class="gold" type="button" value="   Gold   " onclick="send('G');"></td></tr>
 <tr><td><input class="silver" type="button" value="  Silver  " onclick="send('S');"></td></tr>
 <tr><td><input class="copper" type="button" value="  Copper  " onclick="send('C');"></td></tr>
 </table>`)
+    nme(`<img src="images/riddle.jpg" />`, 'zoomInUp')
 }
 
 function shipyard() {
-    nme(`<img src="images/naval/shipyard.png" />`, 'swing')
     cmd(`<table>
 <tr><td><input class="Platinum" type="button" value="Buy" onclick="send('B');"></td><td><input class="Tavern" type="button" value="Fix" onclick="send('F');"></td></tr>
 <tr><td><input class="Slate" type="button" value="Cannon" onclick="send('C');"></td><td><input class="Slate" type="button" value="Ram" onclick="send('R');"></td></tr>
 <tr><td></td><td>${quit}</td></tr>
 </table>`)
+    nme(`<img src="images/naval/shipyard.png" />`, 'swing')
 }
 
 function square() {
@@ -958,7 +962,8 @@ function tavern() {
     cmd(`<table>
 <tr><td><input type="button" value="Swear" onclick="send('S');"></td><td><input type="button" value="List" onclick="send('L');"></td><td><input type="button" value="Post" onclick="send('P');"></td></tr>
 <tr><td><input class="Slate" type="button" value="Old" onclick="send('Y');"></td><td><input class="Gold" type="button" value="Guzzle" onclick="send('G');"></td><td><input class="Slate" type="button" value="News" onclick="send('T');"></td></tr>
-<tr><td colspan=2><input class="Silver" type="button" value="Brawl" onclick="send('B');"></td><td>${quit}</td></tr>
+<tr><td><input type="button" value="Argue" onclick="send('J');"></td><td colspan=2><input class="Platinum" type="button" value="Eavesdrop" onclick="send('E');"></td></tr>
+<tr><td colspan=2><input class="Tavern" type="button" value="Brawl" onclick="send('B');"></td><td>${quit}</td></tr>
 </table>`)
 }
 
@@ -971,12 +976,11 @@ function teleport() {
 }
 
 function wager() {
-    nme(`<img src="images/wager.jpg" />`, 'pulse')
     cmd(`${money}`)
+    nme(`<img src="images/wager.jpg" />`, 'pulse')
 }
 
 function well() {
-    nme(`<img src="images/well.jpg" />`, 'fadeIn')
     cmd(`<table>
 <tr><td><input class="Tavern" type="button" value="Key" onclick="send('K');"></td><td><input class="Slate" type="button" value="Destroy Dungeon" onclick="send('D');"></td></tr>
 <tr><td><input class="Gold" type="button" value="Loot" onclick="send('L');"></td><td><input class="Silver" type="button" value="Grant" onclick="send('G');"></td></tr>
@@ -984,11 +988,12 @@ function well() {
 <tr><td><input class="Silver" type="button" id="cancel" value="Fix" onclick="send('F');"></td><td><input class="Slate" type="button" value="Out" onclick="send('O');"></td></tr>
 <tr><td><input class="Slate" type="button" value="Curse" onclick="send('C');"></td><td><input class="Gold" type="button" id="default" value="Bless" onclick="send('B');"></td></tr>
 </table>`)
+    nme(`<img src="images/well.jpg" />`, 'fadeIn')
 }
 
 function welcome() {
-    nme(`<span style="color:darkred; font-size:xx-large;">Can you defeat the Demogorgon?</span><img src="assets/title.jpg" />`, 'jackInTheBox')
     Logoff()
+    nme(`<span style="color:darkred; font-size:xx-large;">Can you defeat the Demogorgon?</span><img src="assets/title.jpg" />`, 'jackInTheBox')
 }
 
 //  start here
