@@ -215,13 +215,13 @@ interface coins {
 
 interface ddd {
     cleric: active
+    events: number      //  max motivations for lingering
     exit: boolean
     map: MAP
     mob: number         //  max monster capacity in a cavern
     moves: number       //  hero steps (2x backtracking)
     rooms: [room[]]     //	7-10
     spawn: number       //  2-23
-    thief: boolean      //  1st encounter
     width: number		//	7-13
 }
 

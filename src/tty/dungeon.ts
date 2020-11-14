@@ -113,7 +113,7 @@ module Dungeon {
 
     $.loadUser($.dwarf)
 
-
+    //  entry point
     export function DeepDank(start: number, cb: Function) {
         levels = $.player.level
         pause = false
@@ -132,10 +132,13 @@ module Dungeon {
 
         if ($.access.sysop) crawling['M'] = { description: 'y liege' }
         generateLevel()
+
+        //  re-entry?
         if (DL.moves > Z) {
             DL.moves = 0
-            DL.thief = true
+            DL.events++
         }
+
         menu()
     }
 
@@ -234,13 +237,13 @@ module Dungeon {
         me *= 1 + ($.Security.name[$.player.security].protection - $.player.level / 9) / 12
         if (me < ($.online.int + DL.width) / 2) {
             if (!DL.exit) {
-                DL.exit = true
-                xvt.out(' ', $.player.emulation == 'XT' ? '🏃' : '<<')
-                xvt.outln(xvt.faint, ' find the exit', -100)
-                if ($.dice(deep + 2) == 1) {
-                    $.sound('exit', 12)
+                if (DL.events) {
+                    $.sound('exit', 8)
                     xvt.drain()
                 }
+                xvt.out(' ', $.player.emulation == 'XT' ? '🏃' : '<<')
+                xvt.outln(xvt.faint, ' find the exit', -200)
+                DL.exit = true
             }
         }
         me = (me < DL.width ? DL.width - (DL.moves >> 8) : $.int(me)) - +$.player.coward
@@ -333,7 +336,9 @@ module Dungeon {
         $.action('dungeon')
         drawHero($.player.blessed ? true : false)
 
-        if (DL.moves > DL.width && $.dice(me) == 1) {
+        if (DL.events > 0 && DL.moves > DL.width && $.dice(me) == 1) {
+            DL.events--
+            if (!$.player.novice && !$.access.sysop && !DL.events) DL.moves += Z
             $.music('.')
             let rng = $.dice(16)
             if (rng > 8) {
@@ -1076,6 +1081,7 @@ module Dungeon {
                                         $.sound('killed', 11)
                                         break
                                     case 2:
+                                        DL.events = 0
                                         if ($.player.cursed) {
                                             xvt.out(xvt.faint, 'The dark cloud has been lifted.', xvt.reset)
                                             $.player.cursed = ''
@@ -1102,6 +1108,7 @@ module Dungeon {
                                         $.sound('hone')
                                         break
                                     case 4:
+                                        DL.events += $.dice(Z)
                                         if ($.player.blessed) {
                                             xvt.out(xvt.bright, xvt.yellow, 'Your shining aura ', xvt.normal, 'has left ', xvt.faint, 'you.', xvt.reset)
                                             $.player.blessed = ''
@@ -1219,18 +1226,11 @@ module Dungeon {
                             'He offers you a drink, and you accept',
                             xvt.attr(`"I'll be seeing you again"`, xvt.cyan, ' as he leaves')
                         ][t])
-                        if (DL.thief) {
+                        xvt.out(xvt.cyan, '.')
+                        if (t) {
                             $.PC.adjust(['', 'dex', 'str', 'int', 'cha'][t], -1)
-                            DL.thief = false
-                            if (t) {
-                                $.sound('click')
-                                xvt.out(xvt.red, '.')
-                            }
-                            else
-                                xvt.out(xvt.cyan, '.')
+                            if (t) $.sound('thief')
                         }
-                        else
-                            xvt.out(xvt.cyan, '.')
                     }
                     else {
                         xvt.out(xvt.normal, xvt.magenta, 'He teleports away!')
@@ -1240,7 +1240,7 @@ module Dungeon {
                 }
                 else {
                     escape.occupant = 'thief'
-                    xvt.outln(xvt.bright, xvt.white, 'He surprises you!')
+                    xvt.outln(xvt.reset, 'He surprises you!')
                     $.sound('thief', 4)
 
                     xvt.out('As he passes by, he steals your ')
@@ -1254,7 +1254,7 @@ module Dungeon {
                         DL.exit = false
                     }
                     else if (DL.map && $.dice($.online.cha / 9) - 1 <= $.int(deep / 3)) {
-                        xvt.out('map')
+                        xvt.out(xvt.yellow, xvt.bright, 'map')
                         DL.exit = false
                         DL.map = ''
                         refresh = true
@@ -1262,14 +1262,14 @@ module Dungeon {
                     else if ($.player.magic < 3 && $.player.spells.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
                         if ($.player.emulation == 'XT') xvt.out('📜 ')
                         y = $.player.spells[$.dice($.player.spells.length) - 1]
-                        xvt.out(Object.keys($.Magic.spells)[y - 1], ' ', ['wand', 'scroll'][$.player.magic - 1])
+                        xvt.out(xvt.magenta, xvt.bright, Object.keys($.Magic.spells)[y - 1], ' ', ['wand', 'scroll'][$.player.magic - 1])
                         $.Magic.remove($.player.spells, y)
                     }
                     else if ($.player.poisons.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
                         y = $.player.poisons[$.dice($.player.poisons.length) - 1]
                         xvt.out('vial of ')
                         if ($.player.emulation == 'XT') xvt.out('💀 ')
-                        xvt.out(Object.keys($.Poison.vials)[y - 1])
+                        xvt.out(xvt.faint, Object.keys($.Poison.vials)[y - 1])
                         $.Poison.remove($.player.poisons, y)
                     }
                     else if ($.player.coin.value) {
@@ -1279,7 +1279,7 @@ module Dungeon {
                         $.player.coin.value -= new $.coins(pouch[x]).value
                     }
                     else
-                        xvt.out(`Reese's pieces`)
+                        xvt.out(xvt.yellow, `Reese's pieces`)
                     xvt.outln(xvt.reset, '!', -600)
                 }
                 pause = true
@@ -1853,6 +1853,7 @@ module Dungeon {
                 if (DL.moves < DL.width && !ROOM.giftID)
                     ROOM.giftID = !$.player.novice
                         && $.dice(100 + +ROOM.giftValue) < ($.online.int / 20 * (1 << $.player.poison) + ($.online.int > 90 ? ($.online.int % 90) << 1 : 0))
+
                 $.sound('bubbles')
                 xvt.out(xvt.cyan, 'On the ground, you find a ')
                 if ($.Ring.power([], $.player.rings, 'identify').power) potions[ROOM.giftValue].identified = true
@@ -1865,8 +1866,7 @@ module Dungeon {
                 }
                 else {
                     $.profile({ png: potions[ROOM.giftValue].image, handle: 'Is it ' + 'nt'[$.dice(2) - 1] + 'asty, precious?', effect: 'fadeInUp' })
-                    if ($.player.emulation == 'XT') xvt.out('🧪 ')
-                    xvt.out(potions[ROOM.giftValue].description, xvt.bright, xvt.cyan, ' potion', xvt.normal, '.')
+                    xvt.out(potions[ROOM.giftValue].description, xvt.cyan, xvt.bright, ' potion', xvt.normal, '.')
                 }
 
                 if (id ||
@@ -2363,13 +2363,14 @@ module Dungeon {
                         , sex: 'I', weapon: 0, armor: 1, magic: 3, spells: [7, 8, 13]
                     }
                 },
+                events: $.dice(6 - $.int($.online.cha / 20)) + $.dice(deep / 3 + 1) + +$.player.coward
+                    - +$.player.novice - +$.access.sysop,
                 exit: false,
                 map: '',
                 mob: (deep < 4 && Z < 4) ? 1 : (Z > 9 && Z < 50) || (deep > 7) ? 3 : 2,
-                moves: -maxCol - ($.player.novice ? maxRow + maxCol : $.player.wins),
+                moves: -maxCol - (($.player.novice || $.access.sysop) ? maxRow + maxCol : $.player.wins),
                 rooms: new Array(maxRow),
                 spawn: $.int(deep / 3 + Z / 9 + maxRow / 3) + $.dice(Math.round($.online.cha / 20) + 1) + 3,
-                thief: !$.access.sysop && !$.player.novice,
                 width: maxCol
             }
 
@@ -3078,6 +3079,7 @@ module Dungeon {
                             }
                         case 'R':
                             $.PC.profile($.online, 'flipOutY')
+                            DL.events++
                             DL.exit = false
                             break
 
@@ -3100,7 +3102,7 @@ module Dungeon {
                         default:
                             break
                     }
-                    xvt.waste(1250)
+                    xvt.waste(1234)
                     generateLevel()
                     menu()
                 }, cancel: 'O', enter: 'R', eol: false, match: /U|D|O|R/i, timeout: 20
@@ -3117,7 +3119,7 @@ module Dungeon {
             if (!potions[v].identified) {
                 potions[v].identified = $.online.int > (85 - 4 * $.player.poison)
                 xvt.out(v % 2 ? xvt.red : xvt.green, 'It was', xvt.bright)
-                if ($.player.emulation == 'XT') xvt.out(' 🧪')
+                if ($.player.emulation == 'XT') xvt.out(' ', v % 2 ? '🌡️' : '🧪')
                 xvt.outln($.an(potion[v]), xvt.normal, '.')
             }
             $.sound('quaff', 6)
