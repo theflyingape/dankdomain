@@ -3092,6 +3092,7 @@ module Dungeon {
                         case 'U':
                             if (Z > 0) {
                                 DL.events++
+                                DL.exit = false
                                 Z--
                                 $.PC.profile($.online, 'backOutUp')
                                 break
@@ -3109,7 +3110,7 @@ module Dungeon {
                         default:
                             break
                     }
-                    xvt.waste(1500)
+                    xvt.waste(1400)
                     generateLevel()
                     menu()
                 }, cancel: 'O', enter: 'R', eol: false, match: /U|D|O|R/i, timeout: 20
@@ -3371,7 +3372,7 @@ module Dungeon {
 
                 case 'witch':
                     if (identify && !icon)
-                        o = a + xvt.attr(xvt.green, xvt.faint, `  ${$.player.emulation == 'XT' ? '⏿' : '%'}  `, xvt.normal)
+                        o = a + xvt.attr(xvt.green, xvt.faint, `  ${$.player.emulation == 'XT' ? '∢' : '%'}  `, xvt.normal)
                     break
             }
         }
