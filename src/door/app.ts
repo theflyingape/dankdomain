@@ -16,25 +16,6 @@ process.title = 'ddgame'
 console.log(`Ɗanƙ Ɗomaiƞ (${process.title}) started on ${process.platform} #${process.pid}`)
 
 //  process signal traps
-process.on('SIGHUP', () => {
-    console.log(new Date() + ' :: received hangup')
-})
-
-process.on('SIGINT', () => {
-    console.log(new Date() + ' :: received interrupt')
-    process.exit()
-})
-
-process.on('SIGQUIT', () => {
-    console.log(new Date() + ' :: received quit')
-    process.exit()
-})
-
-process.on('SIGTERM', () => {
-    console.log(new Date() + ' :: received terminate')
-    process.exit()
-})
-
 process.on('uncaughtException', (err, origin) => {
     console.log(`${origin} ${err}`)
 })
