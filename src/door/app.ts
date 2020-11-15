@@ -26,9 +26,11 @@ console.log(`cwd: ${__dirname}`)
 let sessions = {}
 let broadcasts = {}
 let latest = { now: 0, msg: '' }
+let chalk = 0
 
 function broadcast(pid: number, msg: string) {
-    const line = `\r\n\x1B[0;36m~ \x1B[1m${msg}\x1B[m`
+    if (!sessions[pid].chalk) sessions[pid].chalk = [36, 33, 37, 32, 35, 31, 34][chalk++ % 7]
+    const line = `\r\n\x1B[0;${sessions[pid].chalk}m~ \x1B[1m${msg}\x1B[m`
 
     //  buffer up to the latest 2-minutes of activity
     let now = new Date().getTime()
