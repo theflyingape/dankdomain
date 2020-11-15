@@ -75,10 +75,10 @@ module Main {
                 return
 
             case 'D':
-                $.animated('fadeOut')
                 if ($.dungeon) {
+                    $.PC.profile($.online, 'backOutDown')
                     $.music('.')
-                    $.sound(`dt${$.dungeon}`)
+                    $.sound(`dt${$.dungeon}`, -10)
                     $.dungeon--
                     require('./dungeon').DeepDank($.player.level - 1, menu)
                 }

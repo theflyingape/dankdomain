@@ -1563,9 +1563,6 @@ module Common {
             user.coin = new coins(user.coin.toString())
             user.bank = new coins(user.bank.toString())
             user.loan = new coins(0)
-            if (user.rings && user.rings.length)
-                for (let i in user.rings)
-                    saveRing(user.rings[i])
             //  force a verify if their access allows it
             // if (!user.novice && !Access.name[player.access].sysop) user.email = ''
         }
@@ -1574,7 +1571,7 @@ module Common {
             //  no extra free or augmented stuff
             user.poisons = []
             user.spells = []
-            if (user.rings) user.rings.forEach(ring => { saveRing(ring, '') })
+            if (user.rings) user.rings.forEach(ring => { saveRing(ring) })
             user.rings = []
             user.toAC = 0
             user.toWC = 0
@@ -1592,12 +1589,8 @@ module Common {
             user.who = ''
         }
 
-        if (user.level > 1)
-            user.xp = experience(user.level - 1, 1, user.int)
-        if (user.pc == Object.keys(PC.name['player'])[0])
-            user.xplevel = 0
-        else
-            user.xplevel = user.level
+        if (user.level > 1) user.xp = experience(user.level - 1, 1, user.int)
+        user.xplevel = (user.pc == Object.keys(PC.name['player'])[0]) ? 0 : user.level
 
         for (let n = 2; n <= level; n++) {
             user.level = n
@@ -1835,7 +1828,7 @@ module Common {
                 unlock(rs[row].id)
             }
 
-            sound('winner', 22)
+            sound('winner')
             xvt.out(xvt.bright)
 
             rs = query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
@@ -1849,6 +1842,7 @@ module Common {
                 saveUser(user)
                 xvt.out('.', -10)
             }
+            run(`UPDATE Rings SET bearer=''`)   // should be cleared by rerolls
 
             let i = 0
             while (++i) {
@@ -1869,8 +1863,7 @@ module Common {
                 }
             }
 
-            xvt.outln(xvt.reset, '\nHappy hunting tomorrow!\n')
-            sound('winner', 51)
+            xvt.outln('Happy hunting tomorrow!\n', -5000)
             xvt.hangup()
         }
 

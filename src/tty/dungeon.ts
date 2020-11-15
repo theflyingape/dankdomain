@@ -313,6 +313,7 @@ module Dungeon {
                     DL.cleric.hp = 0
                     DL.cleric.sp = 0
                     DL.cleric.user.status = 'dead'
+                    DL.events = 0
                     DL.exit = false
                     ROOM.giftItem = 'chest'
                     ROOM.giftIcon = $.player.emulation == 'XT' ? '⌂' : Dot
@@ -338,7 +339,7 @@ module Dungeon {
 
         if (DL.events > 0 && DL.moves > DL.width && $.dice(me) == 1) {
             DL.events--
-            if (!$.player.novice && !$.access.sysop && !DL.events) DL.moves += Z
+            if (!$.player.novice && !$.access.sysop && !DL.events) DL.moves += DL.width
             $.music('.')
             let rng = $.dice(16)
             if (rng > 8) {
@@ -482,7 +483,7 @@ module Dungeon {
                 DL.spawn--
             //	old cleric mana recovery
             if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
-                DL.cleric.sp += 10 * $.dice(deep) + $.dice(Z / 2)
+                DL.cleric.sp += (DL.exit ? DL.events + 2 : 10) * $.dice(deep) + $.dice(Z / 2)
                 if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
             }
         }
@@ -754,9 +755,13 @@ module Dungeon {
                     $.profile({ png: 'npc/faery spirit', effect: 'fadeInRight' })
                     xvt.out(xvt.cyan, xvt.bright, 'A faery spirit appears ', -600
                         , xvt.normal, 'and passes ', -500)
-                    if ($.dice(50 + Z - deep) > ($.online.cha - 10 * +$.player.coward)) {
+                    if ((!DL.events && DL.exit) || $.dice(50 + Z - deep) > ($.online.cha - 10 * +$.player.coward)) {
                         $.animated('fadeOut')
                         xvt.outln(xvt.faint, 'by you.')
+                        if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
+                            DL.cleric.sp += $.Magic.power(DL.cleric, 7)
+                            if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
+                        }
                     }
                     else {
                         $.animated('fadeOutLeft')
@@ -770,10 +775,6 @@ module Dungeon {
                             if ($.online.sp > $.player.sp) $.online.sp = $.player.sp
                         }
                         $.sound('heal')
-                    }
-                    if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
-                        DL.cleric.sp += $.Magic.power(DL.cleric, 7)
-                        if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
                     }
                 }
                 break
@@ -857,10 +858,13 @@ module Dungeon {
                                         xvt.out(xvt.yellow, 'You feel ', xvt.bright, 'a shining aura', xvt.normal, ' surround you.')
                                         $.news(`\twished for a blessing`)
                                     }
-                                    $.PC.adjust('str', 10)
-                                    $.PC.adjust('int', 10)
-                                    $.PC.adjust('dex', 10)
-                                    $.PC.adjust('cha', 10)
+                                    $.PC.adjust('str', 110)
+                                    $.PC.adjust('int', 110)
+                                    $.PC.adjust('dex', 110)
+                                    $.PC.adjust('cha', 110)
+                                    $.sound('shimmer')
+                                    DL.events = 0
+                                    DL.exit = false
                                     break
 
                                 case 'C':
@@ -1081,7 +1085,6 @@ module Dungeon {
                                         $.sound('killed', 11)
                                         break
                                     case 2:
-                                        DL.events = 0
                                         if ($.player.cursed) {
                                             xvt.out(xvt.faint, 'The dark cloud has been lifted.', xvt.reset)
                                             $.player.cursed = ''
@@ -1097,6 +1100,8 @@ module Dungeon {
                                         $.PC.adjust('dex', 110)
                                         $.PC.adjust('cha', 110)
                                         $.sound('shimmer')
+                                        DL.events = 0
+                                        DL.exit = false
                                         break
                                     case 3:
                                         $.online.hp += $.int($.player.hp / 2) + $.dice($.player.hp / 2)
@@ -2319,6 +2324,7 @@ module Dungeon {
     function generateLevel() {
 
         $.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
+        $.action('clear')
 
         looked = false
         refresh = true
@@ -3085,6 +3091,7 @@ module Dungeon {
 
                         case 'U':
                             if (Z > 0) {
+                                DL.events++
                                 Z--
                                 $.PC.profile($.online, 'backOutUp')
                                 break
@@ -3102,7 +3109,7 @@ module Dungeon {
                         default:
                             break
                     }
-                    xvt.waste(1234)
+                    xvt.waste(1500)
                     generateLevel()
                     menu()
                 }, cancel: 'O', enter: 'R', eol: false, match: /U|D|O|R/i, timeout: 20
@@ -3119,7 +3126,7 @@ module Dungeon {
             if (!potions[v].identified) {
                 potions[v].identified = $.online.int > (85 - 4 * $.player.poison)
                 xvt.out(v % 2 ? xvt.red : xvt.green, 'It was', xvt.bright)
-                if ($.player.emulation == 'XT') xvt.out(' ', v % 2 ? '🌡️' : '🧪')
+                if ($.player.emulation == 'XT') xvt.out(' ', v % 2 ? '🌡️ ' : '🧪')
                 xvt.outln($.an(potion[v]), xvt.normal, '.')
             }
             $.sound('quaff', 6)
