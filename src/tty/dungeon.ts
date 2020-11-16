@@ -313,7 +313,6 @@ module Dungeon {
                     DL.cleric.hp = 0
                     DL.cleric.sp = 0
                     DL.cleric.user.status = 'dead'
-                    DL.events = 0
                     DL.exit = false
                     ROOM.giftItem = 'chest'
                     ROOM.giftIcon = $.player.emulation == 'XT' ? '⌂' : Dot
@@ -381,7 +380,6 @@ module Dungeon {
                 for (x = 0, y = $.dice(Z); x < y; x++)
                     $.online.hp -= $.dice(Z)
                 if ($.online.hp < 1) $.death('killer bees')
-                DL.exit = !$.player.novice
             }
             else {
                 if ($.player.emulation == 'XT') {
@@ -395,17 +393,14 @@ module Dungeon {
                 $.online.toWC -= $.dice($.online.weapon.wc / 2)
                 $.online.hp -= $.dice($.player.hp / 2)
                 if ($.online.hp < 1) $.death('struck by lightning')
-                DL.exit = false
             }
             if ($.online.weapon.wc > 0 && $.online.weapon.wc + $.online.toWC + $.player.toWC < 0) {
                 xvt.out(`\nYour ${$.player.weapon} is damaged beyond repair; `, -300, `you toss it aside.`)
                 $.Weapon.equip($.online, $.Weapon.merchant[0])
-                DL.exit = false
             }
             if ($.online.armor.ac > 0 && $.online.armor.ac + $.online.toAC + $.player.toAC < 0) {
                 xvt.out(`\nYour ${$.player.armor} is damaged beyond repair; `, -300, `you toss it aside.`)
                 $.Armor.equip($.online, $.Armor.merchant[0])
-                DL.exit = false
             }
 
             xvt.drain()
@@ -482,8 +477,8 @@ module Dungeon {
             if (DL.spawn > 2 && !(DL.moves % DL.width))
                 DL.spawn--
             //	old cleric mana recovery
-            if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
-                DL.cleric.sp += (DL.exit ? DL.events + 2 : 10) * $.dice(deep) + $.dice(Z / 2)
+            if (!DL.exit && !DL.cleric.user.status) {
+                DL.cleric.sp += $.int($.Magic.power(DL.cleric, 7) * DL.cleric.user.level / 300)
                 if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
             }
         }
@@ -514,7 +509,6 @@ module Dungeon {
                 xvt.drain()
                 xvt.outln()
                 Battle.yourstats(false)
-                DL.exit = $.dice(3 + +$.online.adept - +$.player.novice) - 1 ? true : false
                 break
 
             case 'N':
@@ -597,8 +591,8 @@ module Dungeon {
             return true
 
         //	old cleric mana recovery
-        if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
-            DL.cleric.sp += DL.cleric.user.level + deep
+        if (!DL.cleric.user.status && ROOM.occupant !== 'cleric') {
+            DL.cleric.sp += $.int($.Magic.power(DL.cleric, 7) * DL.cleric.user.level / 200)
             if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
         }
 
@@ -758,6 +752,7 @@ module Dungeon {
                     if ((!DL.events && DL.exit) || $.dice(50 + Z - deep) > ($.online.cha - 10 * +$.player.coward)) {
                         $.animated('fadeOut')
                         xvt.outln(xvt.faint, 'by you.')
+                        //  old cleric mana recovery
                         if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
                             DL.cleric.sp += $.Magic.power(DL.cleric, 7)
                             if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp

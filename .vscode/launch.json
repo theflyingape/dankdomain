@@ -33,7 +33,7 @@
       "cwd": "${workspaceFolder}",
       "outFiles": [ "${workspaceFolder}/build" ],
       "sourceMaps": true,
-      "stopOnEntry": false,
+      "stopOnEntry": true,
       "skipFiles": [
         "<node_internals>/**"
       ]
