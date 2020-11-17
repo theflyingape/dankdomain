@@ -133,12 +133,6 @@ module Dungeon {
         if ($.access.sysop) crawling['M'] = { description: 'y liege' }
         generateLevel()
 
-        //  re-entry?
-        if (DL.moves > Z) {
-            DL.moves = 0
-            DL.events++
-        }
-
         menu()
     }
 
@@ -476,11 +470,8 @@ module Dungeon {
             DL.moves++
             if (DL.spawn > 2 && !(DL.moves % DL.width))
                 DL.spawn--
-            //	old cleric mana recovery
-            if (!DL.exit && !DL.cleric.user.status) {
-                DL.cleric.sp += $.int($.Magic.power(DL.cleric, 7) * DL.cleric.user.level / 300)
-                if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
-            }
+            if (!DL.exit)
+                recovery(300)
         }
         else {
             xvt.beep()
@@ -577,6 +568,7 @@ module Dungeon {
     function doMove(): boolean {
         ROOM = DL.rooms[Y][X]
         if (!ROOM.map) {
+            recovery(600)
             if ($.online.int > 49)
                 ROOM.map = true
         }
@@ -590,14 +582,9 @@ module Dungeon {
         if (!ROOM.occupant && !ROOM.monster.length && !ROOM.giftItem)
             return true
 
-        //	old cleric mana recovery
-        if (!DL.cleric.user.status && ROOM.occupant !== 'cleric') {
-            DL.cleric.sp += $.int($.Magic.power(DL.cleric, 7) * DL.cleric.user.level / 200)
-            if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
-        }
-
         xvt.outln()
         if (looked) return true
+        recovery(ROOM.occupant == 'cleric' ? 600 : 200)
 
         //	monsters?
         if (ROOM.monster.length) {
@@ -752,11 +739,7 @@ module Dungeon {
                     if ((!DL.events && DL.exit) || $.dice(50 + Z - deep) > ($.online.cha - 10 * +$.player.coward)) {
                         $.animated('fadeOut')
                         xvt.outln(xvt.faint, 'by you.')
-                        //  old cleric mana recovery
-                        if (!DL.cleric.user.status && DL.cleric.sp < DL.cleric.user.sp) {
-                            DL.cleric.sp += $.Magic.power(DL.cleric, 7)
-                            if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
-                        }
+                        recovery()
                     }
                     else {
                         $.animated('fadeOutLeft')
@@ -2069,8 +2052,8 @@ module Dungeon {
             }
             //	the wounded warrior just surviving any mob size
             //	and without a magic map nor any visit to the cleric yet ...
-            if ((b4 !== 0 && (!DL.map || DL.map !== 'map') && DL.cleric.sp == DL.cleric.user.sp) &&
-                ((b4 > 0 && b4 / $.player.hp < 0.67 && $.online.hp / $.player.hp < 0.067)
+            if ((b4 !== 0 && (!DL.map || DL.map !== 'map') && DL.cleric.sp == DL.cleric.user.sp)
+                && ((b4 > 0 && b4 / $.player.hp < 0.67 && $.online.hp / $.player.hp < 0.067)
                     || ($.online.hp <= Z + deep + 1))) {
                 xvt.outln(-100)
                 $.sound('bravery')
@@ -2325,20 +2308,27 @@ module Dungeon {
         refresh = true
 
         if (!dd[deep])
-            dd[deep] = new Array(100)
+            dd[deep] = new Array($.sysop.level)
 
+        //  re-entry?
         if (dd[deep][Z]) {
             DL = dd[deep][Z]
             renderMap()
+
             do {
                 Y = $.dice(DL.rooms.length) - 1
                 X = $.dice(DL.width) - 1
                 ROOM = DL.rooms[Y][X]
-            } while (ROOM.type)	//	teleport into a chamber only
-            DL.moves = (DL.moves > DL.rooms.length * DL.width ? DL.rooms.length * DL.width
-                : DL.moves > DL.width ? DL.moves - DL.width : 1)
-                - ($.player.novice ? 20 : 1)
+            } while (ROOM.type) //  teleport into a chamber only
+
             DL.exit = false
+            DL.events++
+            DL.moves = DL.moves > DL.rooms.length * DL.width
+                ? DL.rooms.length * DL.width
+                : DL.moves > DL.width
+                    ? DL.moves - DL.width
+                    : 1
+            recovery()
             return
         }
 
@@ -3021,6 +3011,14 @@ module Dungeon {
         Battle.engage('Witch', party, witch, doSpoils)
     }
 
+    //  old cleric mana recovery
+    function recovery(factor = DL.cleric.user.level) {
+        if (!DL.cleric.user.status) {
+            DL.cleric.sp += $.int($.Magic.power(DL.cleric, 7) * DL.cleric.user.level / factor)
+            if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
+        }
+    }
+
     function teleport() {
         let min = $.checkTime()
         if (min < 0) {
@@ -3343,9 +3341,9 @@ module Dungeon {
                 case 'cleric':
                     o = a + xvt.attr(xvt.yellow)
                     if (!icon)
-                        icon = DL.cleric.sp
-                            ? xvt.attr(xvt.normal, xvt.uline, '_', xvt.faint, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
-                            : xvt.attr(xvt.off, xvt.faint, xvt.uline, $.player.emulation == 'XT' ? '⛼🕱⛼' : `_${Cleric[$.player.emulation]}_`, xvt.nouline, xvt.normal, xvt.yellow)
+                        icon = DL.cleric.user.status
+                            ? xvt.attr(xvt.off, xvt.faint, xvt.uline, $.player.emulation == 'XT' ? '⛼🕱⛼' : `_${Cleric[$.player.emulation]}_`, xvt.nouline, xvt.normal, xvt.yellow)
+                            : xvt.attr(xvt.normal, xvt.uline, '_', xvt.faint, Cleric[$.player.emulation], xvt.normal, '_', xvt.nouline)
                     else
                         icon += xvt.attr(xvt.yellow)
                     o += xvt.attr(xvt.faint, ':', xvt.normal, icon, xvt.faint, ':')
