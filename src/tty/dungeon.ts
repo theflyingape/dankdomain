@@ -2056,11 +2056,11 @@ module Dungeon {
                 && ((b4 > 0 && b4 / $.player.hp < 0.67 && $.online.hp / $.player.hp < 0.067)
                     || ($.online.hp <= Z + deep + 1))) {
                 xvt.outln(-100)
-                $.sound('bravery')
-                xvt.outln(xvt.red, xvt.bright, '+ ', xvt.normal, 'bonus strength', -200)
+                $.sound('bravery', 20)
+                xvt.outln(xvt.red, xvt.bright, '+ ', xvt.normal, 'bonus strength', -600)
                 $.PC.adjust('str', deep + 2, deep + 1, 1)
                 DL.map = `Marauder's map`
-                xvt.outln(xvt.bright, xvt.yellow, ' and ', DL.map, '!', -200)
+                xvt.outln(xvt.bright, xvt.yellow, ' and ', DL.map, '!', -600)
                 pause = true
             }
         }
