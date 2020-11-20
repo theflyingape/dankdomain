@@ -167,8 +167,10 @@ module Battle {
                     xvt.app.form = {
                         'yn': {
                             cb: () => {
-                                if (/Y/i.test(xvt.entry))
+                                if (/Y/i.test(xvt.entry)) {
+                                    $.action('freetext')
                                     xvt.app.focus = 'message'
+                                }
                                 else {
                                     xvt.outln()
                                     fini()

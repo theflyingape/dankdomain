@@ -231,12 +231,11 @@ module Dungeon {
         me *= 1 + ($.Security.name[$.player.security].protection - $.player.level / 9) / 12
         if (me < ($.online.int + DL.width) / 2) {
             if (!DL.exit) {
-                if (DL.events) {
-                    $.sound('exit', 8)
-                    xvt.drain()
-                }
-                xvt.out(' ', $.player.emulation == 'XT' ? '🏃' : '<<')
-                xvt.outln(xvt.faint, ' find the exit', -200)
+                const t = $.player.expert ? 10 : 100
+                xvt.out(-t, ' ', -2 * t, $.player.emulation == 'XT' ? '🏃' : '<<', -3 * t, xvt.faint, ' find ')
+                $.sound((DL.events || !$.player.expert) ? 'exit' : '.', 4)
+                xvt.outln('the ', -4 * t, 'exit ', -8 * t)
+                xvt.drain()
                 DL.exit = true
             }
         }
@@ -594,20 +593,19 @@ module Dungeon {
             xvt.out(xvt.off)
 
             if (ROOM.monster.length == 1) {
-                xvt.out(`There's something lurking in here . . . `)
-                let img = 'dungeon/' + ROOM.monster[0].user.handle
                 try {
+                    let img = 'dungeon/' + ROOM.monster[0].user.handle
                     fs.accessSync('door/static/images/' + img + '.jpg', fs.constants.F_OK)
                     $.profile({ jpg: img, effect: ROOM.monster[0].effect })
+
+                    xvt.out(`There's something lurking in here `, -10, '. ', -20, '. ')
+                    //  dramatic pause if profile change is needed to match player's class
                     if (!ROOM.monster[0].monster.pc && ROOM.monster[0].user.pc == $.player.pc) {
-                        xvt.waste(750)
+                        xvt.out(-900)
                         if ($.PC.name['monster'][ROOM.monster[0].user.pc])
                             $.profile({ png: 'monster/' + ($.PC.name['monster'][ROOM.monster[0].user.pc] || $.PC.name['tavern'][ROOM.monster[0].user.pc] ? ROOM.monster[0].user.pc.toLowerCase() : 'monster'), effect: 'flash' })
                         else
                             $.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect: 'flash' })
-                    }
-                    else {
-                        xvt.waste(600)
                     }
                 } catch (e) {
                     if ($.PC.name['player'][ROOM.monster[0].user.pc] && ROOM.monster[0].user.pc == $.player.pc)
@@ -617,8 +615,8 @@ module Dungeon {
                             png: 'monster/' + ($.PC.name['monster'][ROOM.monster[0].user.pc] || $.PC.name['tavern'][ROOM.monster[0].user.pc] ? ROOM.monster[0].user.pc.toLowerCase() : 'monster') + (ROOM.monster[0].user.gender == 'F' ? '_f' : ''),
                             effect: ROOM.monster[0].effect
                         })
-                    xvt.waste(500)
                 }
+                xvt.out(-30, '. ')
             }
             else {
                 xvt.out(`There's a party waiting for `
@@ -1420,8 +1418,7 @@ module Dungeon {
                     })
                     xvt.outln('mimic', xvt.normal, ' occupying this space.', -1000)
                     xvt.outln(-1200)
-                    xvt.out(xvt.faint, 'It waves a hand at you ... ')
-                    xvt.outln(-800)
+                    xvt.outln(xvt.faint, 'It waves a hand at you ... ', -800)
 
                     //	vacate
                     drawHero()
