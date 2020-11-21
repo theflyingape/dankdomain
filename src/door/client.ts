@@ -330,9 +330,11 @@ function newSession(ev) {
                         XT(`\r@play(${['demon', 'demogorgon', 'portal', 'thief2'][i]})\r`)
                         term.writeln(knock.wall || `\t\t\x1b[2;35mCan you defeat the Demogorgon${'?'.repeat(i + 1)}\x1b[m`)
                         term.writeln('\x1b[1;36m \u00B7 \x1b[22;2mpress either \x1b[22mENTER\x1b[2m or \x1b[22mSPACE\x1b[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1b[22m')
-                        XT('@action(welcome)')
                         doCommand({ data: { images: knock.list } })
-                    }).finally(() => { term.focus(); })
+                    }).finally(() => {
+                        term.focus()
+                        XT('@action(welcome)')
+                    })
                 })
             })
         }).finally(() => {
@@ -605,15 +607,18 @@ function nme(html = '', effect?: string) {
     profile.innerHTML = html
     let img = profile.getElementsByTagName('img')
     if (img.length == 1) {
-        img.item(0).onload = () => { nmeResize(`${effect}`); }
-        img.item(0).style.display = 'none';
+        img.item(0).style.display = 'none'
+        img.item(0).onload = () => { nmeResize(`${effect}`) }
     }
 }
 
 function nmeResize(effect: string, func = false) {
     if (recheck < 0) {
         recheck = 0
-        setImmediate(() => { window.dispatchEvent(new Event('resize')) })
+        setImmediate(() => {
+            window.dispatchEvent(new Event('resize'))
+            nmeResize(effect)
+        })
         return
     }
     if (/<table/.test(profile.innerHTML)) return
@@ -672,7 +677,6 @@ function animated(effect) {
 
     if (img.length == 1) {
         pic = img[0]
-        pic.style.display = 'inline-block'
         while (pic.classList.length)
             pic.classList.remove(pic.classList.item(0))
     }
@@ -694,9 +698,9 @@ function animated(effect) {
 function Logon() {
     clearInterval(art)
     art = null
-    cmd(`<input type="text" placeholder="your ID or handle" id="playerID" name="id" required><br>
-<input type="password" placeholder="your password" id="password" name="password" required><br>
-<input type="button" class="slate" value="NEW" onclick="send('NEW', true);">&nbsp;&nbsp;&nbsp;<input type="button" class="silver" value="Login" onclick="sendLogin();"><br>⬅️ or click left window for cursor`)
+    cmd(`<form><input type="text" placeholder="your ID or handle" id="playerID" name="id" autocomplete="username" required><br>
+<input type="password" placeholder="your password" id="password" name="password" autocomplete="current-password" required><br>
+<input type="button" class="slate" value="NEW" onclick="send('NEW', true);">&nbsp;&nbsp;&nbsp;<input type="button" class="silver" value="Login" onclick="sendLogin();"></form><br>⬅️ or click left window for cursor`)
     nme(`<img src="images/npc/city_guard_2.png" />`, 'bounceInDown')
 }
 
@@ -708,7 +712,6 @@ function sendLogin() {
 
 function Logoff() {
     if (!art) art = setInterval(rotateImage, 14400)
-    window.focus()
     cmd(`<table>
 <tr><td><input type="button" class="slate" id="cancel" value="Disconnect" onclick="currentCMD = ''; send('\x1B');"></td><td><input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"></td></tr>
 </table>
@@ -732,7 +735,7 @@ function rotateImage() {
         if (banner.jpg) html += `<br><img src="images/${banner.jpg}.jpg" />`
         if (banner.png) html += `<br><img src="images/${banner.png}.png" style="filter:opacity(${/^connect/.test(banner.png) ? '45%' : '100%'});" />`
 
-        setTimeout(function () { nme(html, banner.effect); }, 1000)
+        setTimeout(() => { nme(html, banner.effect) }, 1000)
     }
     else
         send('\x15')
