@@ -204,6 +204,7 @@ module Dungeon {
 
         //	does last output(s) need a pause?
         if (pause) {
+            $.action('yn')
             pause = false
             xvt.app.form = {
                 'pause': {
@@ -233,9 +234,10 @@ module Dungeon {
             if (!DL.exit) {
                 const t = $.player.expert ? 10 : 100
                 xvt.out(-t, ' ', -2 * t, $.player.emulation == 'XT' ? '🏃' : '<<', -3 * t, xvt.faint, ' find ')
-                $.sound((DL.events || !$.player.expert) ? 'exit' : '.', 4)
+                $.sound(DL.alert ? 'exit' : '.', 4)
                 xvt.outln('the ', -4 * t, 'exit ', -8 * t)
                 xvt.drain()
+                DL.alert = false
                 DL.exit = true
             }
         }
@@ -598,7 +600,7 @@ module Dungeon {
                     fs.accessSync('door/static/images/' + img + '.jpg', fs.constants.F_OK)
                     $.profile({ jpg: img, effect: ROOM.monster[0].effect })
 
-                    xvt.out(`There's something lurking in here `, -10, '. ', -20, '. ')
+                    xvt.out(`There's something lurking in here `, -40, '. ', -50, '. ')
                     //  dramatic pause if profile change is needed to match player's class
                     if (!ROOM.monster[0].monster.pc && ROOM.monster[0].user.pc == $.player.pc) {
                         xvt.out(-900)
@@ -616,7 +618,7 @@ module Dungeon {
                             effect: ROOM.monster[0].effect
                         })
                 }
-                xvt.out(-30, '. ')
+                xvt.out(-60, '. ')
             }
             else {
                 xvt.out(`There's a party waiting for `
@@ -1274,6 +1276,7 @@ module Dungeon {
                         , xvt.yellow, ' of an ', xvt.faint, 'old cleric', xvt.normal, '.', -600)
                     if ($.player.emulation == 'XT') xvt.out(' 🪦 🕱 ')
                     xvt.outln('You pray for him.')
+                    DL.alert = true
                     DL.exit = false
                     break
                 }
@@ -2345,6 +2348,7 @@ module Dungeon {
 
             //  template level
             dd[deep][Z] = <ddd>{
+                alert: true,
                 cleric: {
                     user: {
                         id: '_Clr', handle: 'old cleric', pc: 'Cleric', level: $.int(65 + Z / 4 + deep)
@@ -3019,7 +3023,7 @@ module Dungeon {
     function teleport() {
         let min = $.checkTime()
         if (min < 0) {
-            $.death('failed to escape')
+            $.death(`failed to escape ${xvt.romanize(deep + 1)}.${Z + 1}`)
             menu()
             return
         }

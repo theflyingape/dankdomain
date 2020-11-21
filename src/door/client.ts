@@ -601,8 +601,8 @@ let art = null
 let images = []
 let currentCMD = null
 
-function nme(html: string, effect?: string) {
-    profile.innerHTML = html || ''
+function nme(html = '', effect?: string) {
+    profile.innerHTML = html
     let img = profile.getElementsByTagName('img')
     if (img.length == 1) {
         img.item(0).onload = () => { nmeResize(`${effect}`); }
@@ -612,11 +612,8 @@ function nme(html: string, effect?: string) {
 
 function nmeResize(effect: string, func = false) {
     if (recheck < 0) {
-        window.dispatchEvent(new Event('resize'))
         recheck = 0
-        setImmediate(() => {
-            nmeResize(effect, func)
-        })
+        setImmediate(() => { window.dispatchEvent(new Event('resize')) })
         return
     }
     if (/<table/.test(profile.innerHTML)) return
@@ -675,13 +672,9 @@ function animated(effect) {
 
     if (img.length == 1) {
         pic = img[0]
+        pic.style.display = 'inline-block'
         while (pic.classList.length)
             pic.classList.remove(pic.classList.item(0))
-        pic.classList.add('animate__animated')
-        var effects = effect.split(' ');
-        for (var i in effects)
-            pic.classList.add('animate__' + effects[i])
-        pic.style.display = 'inline-block'
     }
     else {
         for (var i in img) {
@@ -691,11 +684,11 @@ function animated(effect) {
         }
     }
 
+    pic.style.display = 'inline-block'
     pic.classList.add('animate__animated')
     var effects = effect.split(' ')
     for (var i in effects)
         pic.classList.add('animate__' + effects[i])
-    pic.style.display = 'inline-block'
 }
 
 function Logon() {
@@ -993,7 +986,8 @@ function well() {
 
 function welcome() {
     Logoff()
-    nme(`<span style="color:darkred; font-size:xx-large;">Can you defeat the Demogorgon?</span><img src="assets/title.jpg" />`, 'jackInTheBox')
+    nme(`<span style="color:darkred; font-size:xx-large;">Can you defeat the Demogorgon?</span><br>
+    <img src="assets/title.jpg" />`, 'jackInTheBox')
 }
 
 //  start here

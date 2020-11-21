@@ -214,9 +214,10 @@ interface coins {
 }
 
 interface ddd {
+    alert: boolean      //  play sound 'find the exit'
     cleric: active
     events: number      //  max motivations for lingering
-    exit: boolean
+    exit: boolean       //  prompt user to expedite effort to another level
     map: MAP
     mob: number         //  max monster capacity in a cavern
     moves: number       //  hero steps (2x backtracking)
