@@ -15,6 +15,7 @@ module Common {
     //  mode of operation
     export const got = require('got')
     export let from = 'Common'
+    export const romanize = require('romanize')
     export let tty: TTY = 'telnet'
     switch (xvt.app.emulation) {
         case 'PC':
@@ -266,7 +267,7 @@ module Common {
 
             xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
             xvt.out(' Immortal: ', xvt.white)
-            xvt.out(sprintf('%-20s', (profile.user.wins ? `${xvt.romanize(profile.user.wins)}.` : '')
+            xvt.out(sprintf('%-20s', (profile.user.wins ? `${romanize(profile.user.wins)}.` : '')
                 + profile.user.immortal + '.' + profile.user.level + ` (${profile.user.calls})`))
             xvt.out(xvt.cyan, ' Need: ', xvt.white)
             if (experience(profile.user.level, undefined, profile.user.int) < 1e+8)

@@ -244,7 +244,7 @@ module Arena {
                     xvt.app.focus = 'compete'
 
                     function round() {
-                        xvt.out('\n', xvt.green, '--=:)) Round ', xvt.romanize(++pass), ' of V: Won:', xvt.bright, xvt.white, jw.toString(), xvt.normal, xvt.magenta, ' ^', xvt.green, ' Lost:', xvt.bright, xvt.white, jl.toString(), xvt.normal, xvt.green, ' ((:=--')
+                        xvt.out('\n', xvt.green, '--=:)) Round ', $.romanize(++pass), ' of V: Won:', xvt.bright, xvt.white, jw.toString(), xvt.normal, xvt.magenta, ' ^', xvt.green, ' Lost:', xvt.bright, xvt.white, jl.toString(), xvt.normal, xvt.green, ' ((:=--')
                     }
                 })
                 return

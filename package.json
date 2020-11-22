@@ -59,6 +59,7 @@
     "nodemailer": "^6.4.16",
     "nodemailer-smtp-transport": "^2.7.4",
     "playwright": "^1.6.2",
+    "romanize": "^1.1.1",
     "sprintf-js": "^1.1.2",
     "telnet-socket": "^0.2.3",
     "title-case": "^3.0.2",

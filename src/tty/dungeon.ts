@@ -153,7 +153,7 @@ module Dungeon {
                 return
             }
             else if ($.jumped) {
-                $.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
+                $.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${$.romanize(deep + 1)}.${Z + 1}`)
                 if ($.jumped > (19 - $.int(deep / 3))) skillkill = true
             }
         }
@@ -418,7 +418,7 @@ module Dungeon {
         }
         xvt.app.form['command'].prompt = ''
         if (suppress)
-            xvt.app.form['command'].prompt += `${deep ? xvt.attr(xvt.white, xvt.faint, xvt.romanize(deep + 1), xvt.cyan) : xvt.attr(xvt.cyan)}:`
+            xvt.app.form['command'].prompt += `${deep ? xvt.attr(xvt.white, xvt.faint, $.romanize(deep + 1), xvt.cyan) : xvt.attr(xvt.cyan)}:`
         else {
             if ($.player.spells.length)
                 xvt.app.form['command'].prompt += xvt.attr(
@@ -552,7 +552,7 @@ module Dungeon {
     }
 
     function oof(wall: string) {
-        $.PC.profile($.online, 'bounce', ` - Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
+        $.PC.profile($.online, 'bounce', ` - Dungeon ${$.romanize(deep + 1)}.${Z + 1}`)
         $.sound('wall')
         xvt.outln(xvt.bright, xvt.yellow, 'Oof!', xvt.normal, ` There is a wall to the ${wall}.`, -400)
         xvt.drain()
@@ -560,7 +560,7 @@ module Dungeon {
             $.online.hp = 0
             $.music('.')
             $.death(Battle.retreat ? 'running into a wall' : 'banged head against a wall')
-            if (deep) $.reason += `-${xvt.romanize(deep + 1)}`
+            if (deep) $.reason += `-${$.romanize(deep + 1)}`
             xvt.outln(xvt.faint, '\nYou take too many hits and die!', -600)
         }
     }
@@ -759,7 +759,7 @@ module Dungeon {
 
             case 'portal':
                 $.action('ny')
-                $.profile({ jpg: 'ddd', effect: 'fadeIn', level: xvt.romanize(deep + 2), pc: 'domain portal' })
+                $.profile({ jpg: 'ddd', effect: 'fadeIn', level: $.romanize(deep + 2), pc: 'domain portal' })
                 xvt.out(xvt.bright, xvt.blue, `You've found a portal to a deeper and more dank dungeon.`)
                 xvt.app.form = {
                     'deep': {
@@ -769,7 +769,7 @@ module Dungeon {
                             if (/Y/i.test(xvt.entry)) {
                                 $.animated('fadeOutDown')
                                 $.sound('portal')
-                                xvt.out(xvt.bright, xvt.white, `You descend `, -400, xvt.normal, `into domain `, -300, xvt.faint, xvt.romanize(++deep + 1), ' ... ', -200)
+                                xvt.out(xvt.bright, xvt.white, `You descend `, -400, xvt.normal, `into domain `, -300, xvt.faint, $.romanize(++deep + 1), ' ... ', -200)
                                 generateLevel()
                                 xvt.drain()
                                 xvt.outln()
@@ -1928,7 +1928,7 @@ module Dungeon {
 
     function doSpoils() {
         if ($.reason) {
-            if (deep) $.reason += `-${xvt.romanize(deep + 1)}`
+            if (deep) $.reason += `-${$.romanize(deep + 1)}`
             DL.map = `Marauder's map`
             scroll()
             xvt.hangup()
@@ -2080,7 +2080,7 @@ module Dungeon {
                 generateLevel()
             }
             else {
-                $.PC.profile($.online, 'lightSpeedOut', ` - Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
+                $.PC.profile($.online, 'lightSpeedOut', ` - Dungeon ${$.romanize(deep + 1)}.${Z + 1}`)
                 Y = $.dice(DL.rooms.length) - 1
                 X = $.dice(DL.width) - 1
             }
@@ -2088,7 +2088,7 @@ module Dungeon {
             return
         }
 
-        if (Battle.retreat) $.PC.profile($.online, 'heartBeat', ` - Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
+        if (Battle.retreat) $.PC.profile($.online, 'heartBeat', ` - Dungeon ${$.romanize(deep + 1)}.${Z + 1}`)
 
         let d = ['N', 'S', 'E', 'W']
         while (Battle.retreat && !$.reason) {
@@ -2301,7 +2301,7 @@ module Dungeon {
 
     function generateLevel() {
 
-        $.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${xvt.romanize(deep + 1)}.${Z + 1}`)
+        $.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${$.romanize(deep + 1)}.${Z + 1}`)
         $.action('clear')
 
         looked = false
@@ -2398,7 +2398,7 @@ module Dungeon {
 
         $.reroll(DL.cleric.user, DL.cleric.user.pc, DL.cleric.user.level)
         $.activate(DL.cleric)
-        $.wall(`enters dungeon level ${xvt.romanize(deep + 1)}.${Z + 1}`)
+        $.wall(`enters dungeon level ${$.romanize(deep + 1)}.${Z + 1}`)
 
         renderMap()
         do {
@@ -3023,7 +3023,7 @@ module Dungeon {
     function teleport() {
         let min = $.checkTime()
         if (min < 0) {
-            $.death(`failed to escape ${xvt.romanize(deep + 1)}.${Z + 1}`)
+            $.death(`failed to escape ${$.romanize(deep + 1)}.${Z + 1}`)
             menu()
             return
         }
@@ -3110,7 +3110,7 @@ module Dungeon {
                 }, cancel: 'O', enter: 'R', eol: false, match: /U|D|O|R/i, timeout: 20
             }
         }
-        xvt.app.form['wizard'].prompt = `Teleport #${xvt.romanize(deep + 1)}.${Z + 1}: `
+        xvt.app.form['wizard'].prompt = `Teleport #${$.romanize(deep + 1)}.${Z + 1}: `
         xvt.drain()
         xvt.app.focus = 'wizard'
     }
@@ -3384,7 +3384,7 @@ module Dungeon {
         xvt.out(`\x1B[${top};${$.player.rows}r`)
         xvt.restore()
         if (escape) {
-            $.news(`\tescaped dungeon ${xvt.romanize(hideep + 1)}.${hiZ} ${levels < $.player.level && `ascending +${$.player.level - levels}` || 'expeditiously'}`)
+            $.news(`\tescaped dungeon ${$.romanize(hideep + 1)}.${hiZ} ${levels < $.player.level && `ascending +${$.player.level - levels}` || 'expeditiously'}`)
             $.music(['escape', 'thief2', 'thief'][$.dungeon])
             xvt.outln(xvt.lblue, `\n"Next time you won't escape so easily... moo-hahahahaha!!"`, -600)
             $.profile({ png: 'castle', effect: 'pulse' })

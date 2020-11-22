@@ -273,10 +273,10 @@ function newSession(ev) {
 
     if (ev == 'Logon') {
         if (idle) clearInterval(idle)
-        term.write(`\n\x1B[0;2mConnecting terminal WebSocket ... `)
         XT('@tune(dankdomain)')
         pid = 0
         fetch(`${app}/player/?cols=${term.cols}&rows=${term.rows}`, { method: 'POST' }).then(function (res) {
+            term.write(`\n\x1B[0;2mConnecting terminal WebSocket ... `)
             res.text().then(function (session) {
                 pid = parseInt(session)
                 socketURL += `?pid=${pid}`
@@ -314,6 +314,8 @@ function newSession(ev) {
                     carrier = false
                 }
             })
+        }).finally(() => {
+            setImmediate(() => window.dispatchEvent(new Event('resize')))
         })
     }
     else {
