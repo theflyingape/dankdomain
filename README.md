@@ -5,13 +5,12 @@
 ## the return of Hack &amp; Slash
 
 ![screenshot](build/door/static/assets/title.jpg "Can you defeat the Demogorgon?")
+***Read*** *the* [Player's Manual](https://www.ddgame.us) *and* ***Play*** *the* [online game](https://play.ddgame.us)
+---
 
 >**Ɗanƙ Ɗomaiƞ** is basically a bulletin board built around a medieval role-playing atmosphere (or is it the other way around?). Instead, you _live_ the online game as you kill, steal, brawl, and joust the other members to gain levels and fortune. The success of this game is dependent upon the users that play it. Your involvment will not only provide you with entertainment, but also shares your activity with the other players.
-
-***Read*** *the* [Player's Manual](https://www.ddgame.us) *and* ***Play*** *the* [online game](https://play.ddgame.us)
-
->#### Original Amiga Hack & Slash enthusiasts can visit:  [Absinthe BBS](https://www.telnetbbsguide.com/bbs/absinthe-bbs/) by Anachronist
-
+---
+>*Original Amiga* **Hack & Slash** *enthusiasts can visit:*  [Absinthe BBS](https://www.telnetbbsguide.com/bbs/absinthe-bbs/) *by Anachronist*
 ---
 
 ## Installation
