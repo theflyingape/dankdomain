@@ -1,21 +1,26 @@
-<img src="https://avatars.githubusercontent.com/theflyingape" title="Robert Hurst" align="right">
+<a href="https://robert.hurst-ri.us"><img src="https://avatars.githubusercontent.com/theflyingape" title="Robert Hurst" align="right"></a>
 
 # :crown: Ɗanƙ Ɗomaiƞ
 
 ## the return of Hack &amp; Slash
 
-![screenshot](build/door/static/assets/title.jpg)
+![screenshot](build/door/static/assets/title.jpg "Can you defeat the Demogorgon?")
 
-**Ɗanƙ Ɗomaiƞ** is basically a bulletin board built around a medieval role-playing atmosphere (or is it the other way around?). Instead, you _live_ the online game as you kill, steal, brawl, and joust the other members to gain levels and fortune. The success of this game is dependent upon the users that play it. Your involvment will not only provide you with entertainment, but also shares your activity with the other players.
+>**Ɗanƙ Ɗomaiƞ** is basically a bulletin board built around a medieval role-playing atmosphere (or is it the other way around?). Instead, you _live_ the online game as you kill, steal, brawl, and joust the other members to gain levels and fortune. The success of this game is dependent upon the users that play it. Your involvment will not only provide you with entertainment, but also shares your activity with the other players.
 
-### Read, then play on [https://www.DDgame.us](https://www.ddgame.us)
+***Read*** *the* [Player's Manual](https://www.ddgame.us) *and* ***Play*** *the* [online game](https://play.ddgame.us)
 
-#### Original Amiga Hack & Slash enthusiasts can visit:  [Absinthe BBS](https://www.telnetbbsguide.com/bbs/absinthe-bbs/) by Anachronist
+>#### Original Amiga Hack & Slash enthusiasts can visit:  [Absinthe BBS](https://www.telnetbbsguide.com/bbs/absinthe-bbs/) by Anachronist
+
+---
+
+## Installation
+Requires `Linux` or `Chrome OS` running a container with the `Node.js` runtime
 
 [![Downloads](https://img.shields.io/npm/dy/dankdomain.svg)](https://www.npmjs.com/package/dankdomain)
 [![GitHub release](https://img.shields.io/github/release/theflyingape/dankdomain.svg)](https://github.com/theflyingape/dankdomain/releases) [![npm version](https://badge.fury.io/js/dankdomain.svg)](https://www.npmjs.com/package/dankdomain) [![Dependencies](http://img.shields.io/david/theflyingape/dankdomain.svg?style=flat)](https://david-dm.org/theflyingape/dankdomain) [![Issues](http://img.shields.io/github/issues/theflyingape/dankdomain.svg)](https://github.com/theflyingape/dankdomain/issues)
 
-Download packs: [images](https://drive.google.com/open?id=1jjLPtGf_zld416pxytZfbfCHREZTghkW) :camera:
+Download packs: [images](https://drive.google.com/open?id=1jjLPtGf_zld416pxytZfbfCHREZTghkW) @icon-camera
 and [sounds](https://drive.google.com/open?id=1UvqQJbN61VbWVduONXgo1gm9yvGI0Qp8) :sound:
 
 To run a local game copy (Linux only):
