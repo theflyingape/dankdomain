@@ -328,7 +328,7 @@ module Logon {
 
             $.wall(`logged on as a level ${$.player.level} ${$.player.pc}`)
 
-            xvt.out(xvt.cyan, '\nLast callers were: ', xvt.white)
+            xvt.out(xvt.cyan, '\nLast callers were: ', xvt.reset)
             try {
                 $.callers = JSON.parse(fs.readFileSync('./users/callers.json').toString())
                 for (let last in $.callers) {

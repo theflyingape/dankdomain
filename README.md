@@ -19,10 +19,10 @@ Requires `Linux` or `Chrome OS` running a container with the `Node.js` runtime
 [![Downloads](https://img.shields.io/npm/dy/dankdomain.svg)](https://www.npmjs.com/package/dankdomain)
 [![GitHub release](https://img.shields.io/github/release/theflyingape/dankdomain.svg)](https://github.com/theflyingape/dankdomain/releases) [![npm version](https://badge.fury.io/js/dankdomain.svg)](https://www.npmjs.com/package/dankdomain) [![Dependencies](http://img.shields.io/david/theflyingape/dankdomain.svg?style=flat)](https://david-dm.org/theflyingape/dankdomain) [![Issues](http://img.shields.io/github/issues/theflyingape/dankdomain.svg)](https://github.com/theflyingape/dankdomain/issues)
 
-Download packs: [images](https://drive.google.com/open?id=1jjLPtGf_zld416pxytZfbfCHREZTghkW) @icon-camera
+Download packs: [images](https://drive.google.com/open?id=1jjLPtGf_zld416pxytZfbfCHREZTghkW) :camera:
 and [sounds](https://drive.google.com/open?id=1UvqQJbN61VbWVduONXgo1gm9yvGI0Qp8) :sound:
 
-To run a local game copy (Linux only):
+To run a local game copy:
 ```bash
 $ npm install dankdomain
 $ ./install.sh /usr/local/games

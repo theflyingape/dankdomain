@@ -71,7 +71,7 @@ module ttyMain {
     else xvt.app.focus = 'enq1'
 
     function logon() {
-        xvt.outln(xvt.bright, xvt.cyan, xvt.app.emulation, xvt.normal, ' emulation ', xvt.faint, 'enabled\n')
+        xvt.outln(xvt.cyan, xvt.bright, xvt.app.emulation, xvt.normal, ' emulation ', xvt.faint, 'enabled\n')
         require('./tty/logon')
     }
 }

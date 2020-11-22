@@ -208,10 +208,7 @@ module Dungeon {
             pause = false
             xvt.app.form = {
                 'pause': {
-                    cb: () => {
-                        $.action('nme')
-                        menu()
-                    }, cancel: ' ', enter: '\x0D', pause: true, timeout: 20
+                    cb: () => { menu() }, pause: true, timeout: 20
                 }
             }
             xvt.app.focus = 'pause'
