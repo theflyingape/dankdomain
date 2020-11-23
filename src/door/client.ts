@@ -748,8 +748,8 @@ function send(keystrokes, cr = false, et = 'emit') {
 }
 
 function clear() {
-    nme('')
     cmd('')
+    nme('')
 }
 
 function freetext() {
@@ -991,8 +991,7 @@ function well() {
 
 function welcome() {
     Logoff()
-    nme(`<span style="color:darkred; font-size:xx-large;">Can you defeat the Demogorgon?</span><br>
-    <img src="assets/title.jpg" />`, 'jackInTheBox')
+    animated('jackInTheBox')
 }
 
 //  start here
