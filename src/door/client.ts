@@ -7,6 +7,7 @@
 //	https://webserver/
 
 //	REST API (POST)
+//	https://webserver/gallery/
 //	https://webserver/player/?cols={x}&rows={y}
 //	https://webserver/player/{pid}/size/?cols={x}&rows={y}
 //	https://webserver/lurker/
@@ -90,6 +91,7 @@ const fit = new FitAddon()
 
 //  application
 const app = location.pathname.replace(/\/+$/, "")
+const socketURL = `${location.protocol == 'https:' ? 'wss://' : 'ws://'}${location.hostname}${location.port ? ':' + location.port : ''}`
 let pid = 0, wpid = 0, tty = false
 let socket: WebSocket
 let carrier = false, recheck = 0
@@ -195,8 +197,6 @@ function doCommand(event) {
 }
 
 function newSession(ev) {
-    const protocol = (location.protocol == 'https:') ? 'wss://' : 'ws://'
-    let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/player/'
     let options: ITerminalOptions = {
         bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false, drawBoldTextInBrightColors: true,
         cols: cols, rows: rows, scrollback: 500,
@@ -212,14 +212,13 @@ function newSession(ev) {
     }
 
     carrier = (ev == 'Logon')
-    recheck = -1
     if (lurking) clearInterval(lurking)
     if (reconnect) clearInterval(reconnect)
-
     pid = -1
+    recheck = -1
+
     if (carrier) options.fontFamily = 'mono,emoji'
     term = new Terminal(options)
-
     term.loadAddon(new Unicode11Addon())
     //term.loadAddon(new WebLinksAddon())
     term.loadAddon(fit)
@@ -279,8 +278,7 @@ function newSession(ev) {
             term.write(`\n\x1B[0;2mConnecting terminal WebSocket ... `)
             res.text().then(function (session) {
                 pid = parseInt(session)
-                socketURL += `?pid=${pid}`
-                socket = new WebSocket(socketURL)
+                socket = new WebSocket(`${socketURL}${app}/player/?pid=${pid}`)
 
                 socket.onmessage = function (ev) {
                     XT(ev.data)
@@ -325,14 +323,13 @@ function newSession(ev) {
                 term.blur()
                 term.writeln('\t\t🔥 🌨\r\x1b[23C\x1b[1;36mW\x1b[22melcome to Ɗ \x1b[2manƙ \x1b[22mƊ \x1b[2momaiƞ \x1b[m🌙 💫')
                 term.write(data)
-                const app = location.pathname.replace(/index.html$/, "")
-                fetch(`${app}player/`, { method: 'GET' }).then((res) => {
+                fetch(`${app}/gallery/`, { method: 'POST' }).then((res) => {
                     res.json().then((knock) => {
                         let i = Math.trunc(4 * Math.random())
-                        XT(`\r@play(${['demon', 'demogorgon', 'portal', 'thief2'][i]})\r`)
                         term.writeln(knock.wall || `\t\t\x1b[2;35mCan you defeat the Demogorgon${'?'.repeat(i + 1)}\x1b[m`)
                         term.writeln('\x1b[1;36m \u00B7 \x1b[22;2mpress either \x1b[22mENTER\x1b[2m or \x1b[22mSPACE\x1b[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1b[22m')
                         doCommand({ data: { images: knock.list } })
+                        XT(`@play(${['demon', 'demogorgon', 'portal', 'thief2'][i]})`)
                     }).finally(() => {
                         term.focus()
                         XT('@action(welcome)')
@@ -439,9 +436,7 @@ function XT(data) {
     }
 
     function wall(msg) {
-        if (!pid) return
-        let url = `${app}/player/${pid}/wall?msg=${msg}`
-        fetch(url, { method: 'POST' })
+        if (pid) fetch(`${app}/player/${pid}/wall?msg=${msg}`, { method: 'POST' })
     }
 }
 
@@ -495,16 +490,13 @@ function lurk() {
 
                     setImmediate(() => window.dispatchEvent(new Event('resize')))
                     term.write('\n\x1B[1;32mConnecting your terminal to ' + watch[watch.selectedIndex].text + ' WebSocket ... ')
-                    let protocol = (location.protocol == 'https:') ? 'wss://' : 'ws://'
-                    let socketURL = protocol + location.hostname + ((location.port) ? (':' + location.port) : '') + app + '/lurker/'
 
                     //	any keystroke sent will signal for this WebSocket to close
                     term.onData(data => { socket.send(data) })
 
                     fetch(`${app}/lurker/?pid=${wpid}`, { method: 'POST' }).then(function (res) {
                         res.text().then(function (lurker) {
-                            socketURL += `?lurker=${lurker}`
-                            socket = new WebSocket(socketURL)
+                            socket = new WebSocket(`${socketURL}${app}/lurker/?lurker=${lurker}`)
 
                             socket.onmessage = (ev) => {
                                 XT(ev.data)
@@ -991,7 +983,7 @@ function well() {
 
 function welcome() {
     Logoff()
-    animated('jackInTheBox')
+    nmeResize('jackInTheBox')
 }
 
 //  start here

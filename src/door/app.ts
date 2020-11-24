@@ -311,7 +311,7 @@ dns.lookup(network.address, (err, addr, family) => {
 
         //  REST services
         //  Player API
-        app.get(`${network.path}player/`, (req, res) => {
+        app.post(`${network.path}gallery/`, (req, res) => {
             let client = req.header('x-forwarded-for') || req.connection.remoteAddress
             console.log(`City Gates knocked from remote host: ${client} (${req.hostname})`)
 
