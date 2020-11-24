@@ -391,7 +391,7 @@ dns.lookup(network.address, (err, addr, family) => {
 
             const ring = require('../items/ring.json')
             for (let i in ring) {
-                let profile = { handle: `${ring[i].unique ? 'The <span style="color:black' : 'Special <span style="color:darkslategray'}">${i}</span><br>${ring[i].emoji} ring<br>`, pc: ring[i].description, effect: 'fadeInUpBig' }
+                let profile = { handle: `${ring[i].unique ? 'The <span style="color:black' : 'Special <span style="color:darkslategray'}">${i}</span> ${ring[i].emoji} ring<br>`, pc: ring[i].description, effect: 'fadeInUpBig' }
                 profile['jpg'] = `ring/${i}`
                 list.push(profile)
             }
