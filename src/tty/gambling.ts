@@ -277,34 +277,34 @@ module Gambling {
 
             case 'C':
                 xvt.out('Rolling dice for your point ', xvt.faint)
-                xvt.waste(100)
+                xvt.sleep(100)
                 let d1 = $.dice(6), d2 = $.dice(6)
                 for (let i = 0; i < d1 + 1; i++) {
                     $.sound('click')
                     xvt.out('.')
                 }
-                xvt.waste(100)
+                xvt.sleep(100)
                 point = d1 + d2
                 xvt.out(xvt.normal, xvt.blue, '[',
                     xvt.bright, xvt.cyan, d1.toString(),
                     xvt.normal, xvt.blue, '] [',
                     xvt.bright, xvt.cyan, d2.toString(),
                     xvt.normal, xvt.blue, ']')
-                xvt.waste(600)
+                xvt.sleep(600)
                 xvt.outln(xvt.white, ' = ', xvt.bright, point.toString())
-                xvt.waste(1000)
+                xvt.sleep(1000)
                 if (point == 7 || point == 11) {
                     $.sound('cheer')
                     payoff.value = 2 * amount.value
                     xvt.outln('A natural!  You win ', payoff.carry(), '!')
                     $.player.coin.value += payoff.value + amount.value
-                    xvt.waste(500)
+                    xvt.sleep(500)
                     break
                 }
                 if (point == 2 || point == 3 || point == 12) {
                     $.sound('boo')
                     xvt.out('Crapped out!  You lose.\n')
-                    xvt.waste(500)
+                    xvt.sleep(500)
                     break
                 }
 
@@ -543,7 +543,7 @@ module Gambling {
                             if (picks.length == point) {
                                 xvt.out('\n\n', xvt.bright, xvt.yellow,
                                     'Here comes those lucky numbers!\n', xvt.reset)
-                                xvt.waste(500)
+                                xvt.sleep(500)
 
                                 let balls: number[] = []
                                 let hits = 0
@@ -566,7 +566,7 @@ module Gambling {
                                             xvt.normal, sprintf('%02d', pick),
                                             xvt.faint, ']  ', xvt.reset)
                                     }
-                                    xvt.waste(250)
+                                    xvt.sleep(250)
                                 }
 
                                 xvt.out('\n')
@@ -670,7 +670,7 @@ module Gambling {
                                     $.sound('cheer')
                                     xvt.outln('\nYou win ', payoff.carry(), '!')
                                     $.player.coin.value += payoff.value
-                                    xvt.waste(500)
+                                    xvt.sleep(500)
                                 }
                                 else
                                     $.sound('boo')
@@ -709,7 +709,7 @@ module Gambling {
                 for (let i = 0; i < 3; i++) {
                     for (let spin = $.dice(16) + 16; spin; spin--) {
                         xvt.out('-\\|/'[spin % 4], '\x08')
-                        xvt.waste(20)
+                        xvt.sleep(20)
                         bandit[i] = ++bandit[i] % 16
                     }
                     $.beep()
@@ -743,7 +743,7 @@ module Gambling {
                     $.sound('boom', 8)
                     xvt.outln('You die.')
                     $.music('wild')
-                    xvt.waste(800)
+                    xvt.sleep(800)
                     $.reason = 'defeated by a one-armed bandit'
                     $.logoff()
                     return
@@ -781,7 +781,7 @@ module Gambling {
                     payoff.value = 50 * amount.value
                     $.beep()
                     $.music('wild')
-                    xvt.waste(2500)
+                    xvt.sleep(2500)
                 }
                 else if (face[0] == 'CHERRY' && face[1] == 'CHERRY' && face[2] == '@BOMB@') {
                     payoff.value = 25 * amount.value
@@ -814,7 +814,7 @@ module Gambling {
                     $.sound('cheer')
                     xvt.outln('You win ', payoff.carry(), '!')
                     $.player.coin.value += payoff.value
-                    xvt.waste(500)
+                    xvt.sleep(500)
                 }
                 else
                     $.sound('boo')
@@ -832,7 +832,7 @@ module Gambling {
                         xvt.out('🍒')
                     xvt.out(xvt.normal)
                     xvt.out('🍒\r')
-                    xvt.waste(250)
+                    xvt.sleep(250)
                 }
                 xvt.outln(xvt.bright, xvt.red, '🍒 CHERRY 🍒 ')
                 for (let i = 0; i < 4; i++) {
@@ -841,7 +841,7 @@ module Gambling {
                         xvt.out('💣')
                     xvt.out(xvt.normal)
                     xvt.out('💣\r')
-                    xvt.waste(400)
+                    xvt.sleep(400)
                 }
                 xvt.outln(xvt.bright, xvt.black, '💣 BOMB!! 💣 ')
             }
@@ -869,7 +869,7 @@ module Gambling {
             for (let i = 0; i < ace && value + 10 < 22; i++)
                 value += 10
             xvt.outln(xvt.reset, '= ', xvt.bright, who ? xvt.cyan : xvt.green, `${value}`)
-            xvt.waste(500)
+            xvt.sleep(500)
             return (value)
         }
 
@@ -903,11 +903,11 @@ module Gambling {
                 xvt.outln('You make your side bet!  You win ', payoff.carry(), '!')
                 $.player.coin.value += payoff.value
             }
-            xvt.waste(1000)
+            xvt.sleep(1000)
             if (d1 + d2 == 7) {
                 $.sound('boo')
                 xvt.out('Crapped out!  You lose on your point.\n')
-                xvt.waste(500)
+                xvt.sleep(500)
                 menu()
                 return true
             }
@@ -916,7 +916,7 @@ module Gambling {
                 payoff.value = amount.value
                 xvt.outln('You make your point!  You win ', payoff.carry(), '!')
                 $.player.coin.value += payoff.value + amount.value
-                xvt.waste(500)
+                xvt.sleep(500)
                 menu()
                 return true
             }
@@ -932,7 +932,7 @@ module Gambling {
             40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52,
             53]
         xvt.out(xvt.faint, '\nShuffling a new deck ')
-        xvt.waste(250)
+        xvt.sleep(250)
         let cut = $.dice(6) + 4
         for (let n = 0; n < cut; n++) {
             if (jokers)
@@ -946,10 +946,10 @@ module Gambling {
                         ;[deck[i], deck[j]] = [deck[j], deck[i]];
                 }
             xvt.out('.')
-            xvt.waste(20)
+            xvt.sleep(20)
         }
         xvt.outln(' Ok.')
-        xvt.waste(250)
+        xvt.sleep(250)
         pile = 1
     }
 

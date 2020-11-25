@@ -2678,7 +2678,7 @@ module Common {
                 let p: user = { id: rs[row].id }
                 loadUser(p)
                 require('./email').rejoin(p)
-                xvt.waste(1000)
+                xvt.sleep(1000)
             }
         }
 
@@ -2694,8 +2694,8 @@ module Common {
         sysop.lasttime = now().time
         saveUser(sysop)
         xvt.outln(xvt.bright, xvt.yellow, '*')
-        xvt.outln('All set -- thank you!\n')
         beep()
+        xvt.outln('All set -- thank you!\n')
     }
 
     export function lock(id: string, owner = 0): boolean {

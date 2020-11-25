@@ -164,7 +164,7 @@ module Email {
 
         while (typeof result == 'undefined') {
             if (echo) xvt.out(xvt.app.Empty)
-            await xvt.wait(500)
+            xvt.sleep(500)
         }
     }
 

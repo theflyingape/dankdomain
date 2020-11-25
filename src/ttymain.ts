@@ -26,7 +26,6 @@ module ttyMain {
 
     xvt.sessionAllowed = 150
     xvt.defaultTimeout = 100
-    xvt.pollingMS = 20
 
     xvt.app.emulation = <xvt.emulator>(process.argv.length > 2 && process.argv[2]
         ? process.argv[2].toUpperCase()

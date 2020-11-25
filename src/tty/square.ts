@@ -78,7 +78,7 @@ module Square {
                     }
                     else if ($.player.poisons.length) {
                         xvt.out(xvt.faint, '\nYou hear vials rattle.')
-                        xvt.waste(800)
+                        xvt.sleep(800)
                         p = $.player.poisons[$.dice($.player.poisons.length) - 1]
                         $.Poison.remove($.player.poisons, p)
                         $.Poison.add(bump.user.poisons, p)
@@ -90,7 +90,7 @@ module Square {
                     }
                     else if ($.player.magic < 3 && $.player.spells.length) {
                         xvt.out(xvt.faint, '\nYou hear something rattle.')
-                        xvt.waste(800)
+                        xvt.sleep(800)
                         p = $.player.spells[$.dice($.player.spells.length) - 1]
                         $.Magic.remove($.player.spells, p)
                         $.Magic.add(bump.user.spells, p)
@@ -99,9 +99,9 @@ module Square {
                         xvt.outln(xvt.reset, '  Your ', $.Magic.merchant[p - 1], ' magic has disappeared!')
                     }
                     $.saveUser(bump)
-                    xvt.waste(800)
+                    xvt.sleep(800)
                 }
-                xvt.waste(1600)
+                xvt.sleep(1600)
                 $.animated('fadeOutRight')
             }
         }
@@ -313,7 +313,7 @@ module Square {
                 if ($.bail) {
                     $.profile({ png: 'npc/jailer', effect: 'fadeIn' })
                     xvt.outln('\nA deputy greets you in front of the County Jail.')
-                    xvt.waste(600)
+                    xvt.sleep(600)
                     xvt.outln(`"What `, ['cur', 'knave', 'scum', 'toad', 'villain'][$.dice(5) - 1]
                         , ` do you come for, ${$.access[$.player.gender] || $.access[$.player.sex]}?"`)
                     Battle.user('Bail', (opponent: active) => {
@@ -407,7 +407,7 @@ module Square {
                     break
                 }
                 xvt.out(xvt.faint, '\nYou attempt to pick a passerby\'s pocket... ', xvt.reset)
-                xvt.waste(1000)
+                xvt.sleep(1000)
 
                 credit.value = $.dice(6 * $.money($.player.level) / $.dice(10))
                 let pocket = $.PC.encounter(`AND novice = 0 AND id NOT GLOB '_*'`).user
@@ -425,7 +425,7 @@ module Square {
                     pocket.handle = 'somebody'
 
                 xvt.outln('\n\nYou pick ', pocket.handle, '\'s pocket and steal ', credit.carry(), '!\n')
-                xvt.waste(1000)
+                xvt.sleep(1000)
                 let effort = 100 + $.steal
                 effort -= 8 * $.Ring.power([], $.player.rings, 'steal').power
                 if ($.int(16 * $.player.steal + $.player.level / 10 + $.online.dex / 10) < $.dice(effort)) {
@@ -436,7 +436,7 @@ module Square {
                     xvt.outln('A guard catches you and throws you into jail!')
                     $.sound('arrested', 20)
                     xvt.outln('You might be released by your next call.\n')
-                    xvt.waste(1000)
+                    xvt.sleep(1000)
                     xvt.hangup()
                     return
                 }
@@ -593,7 +593,7 @@ module Square {
                 $.music('ddd')
                 let c = ($.player.level / 5) * ($.player.steal + 1)
                 xvt.out(xvt.faint, '\nYou attempt to sneak into the vault...', xvt.reset)
-                xvt.waste(2500)
+                xvt.sleep(2500)
 
                 let effort = 100 + $.steal
                 effort -= 8 * $.Ring.power([], $.player.rings, 'steal').power
@@ -605,7 +605,7 @@ module Square {
                     xvt.outln('\n\nA guard catches you and throws you into jail!')
                     $.sound('arrested', 20)
                     xvt.outln('\nYou might be released by your next call.\n')
-                    xvt.waste(1000)
+                    xvt.sleep(1000)
                     xvt.hangup()
                     return
                 }
@@ -619,14 +619,14 @@ module Square {
 
                 let deposits = new $.coins($.int($.query(`SELECT SUM(bank) AS bank FROM Players WHERE id NOT GLOB '_*' AND id <> '${$.player.id}'`)[0].bank, true))
                 if (deposits.value) {
-                    xvt.waste(1200)
+                    xvt.sleep(1200)
                     xvt.outln('And you grab ', deposits.carry(), ' more in deposits!')
                 }
                 $.sound('yahoo', 12)
 
                 xvt.outln()
                 xvt.out(xvt.faint, 'You try to make your way out of the vault ')
-                xvt.waste(1200)
+                xvt.sleep(1200)
                 for (let i = 0; i < 6 - $.player.steal; i++) {
                     xvt.out('.')
                     $.sound('click', 6)
@@ -643,7 +643,7 @@ module Square {
                     xvt.outln('\n\nA guard laughs as he closes the vault door on you!')
                     $.sound('arrested', 20)
                     xvt.outln('\nYou might be released by your next call.')
-                    xvt.waste(1000)
+                    xvt.sleep(1000)
                     xvt.hangup()
                     return
                 }

@@ -3046,9 +3046,9 @@ module Dungeon {
                         $.animated('rubberBand')
                         $.sound('lose', 12)
                         $.music('crack')
-                        xvt.waste(1250)
+                        xvt.sleep(1250)
                         $.animated('bounceOutUp')
-                        xvt.waste(1250)
+                        xvt.sleep(1250)
                         let pops = 'UDOR'[$.dice(4) - 1]
                         if (xvt.entry.toUpperCase() == pops) {
                             $.sound('oops', 6)
@@ -3101,7 +3101,7 @@ module Dungeon {
                         default:
                             break
                     }
-                    xvt.waste(1400)
+                    xvt.sleep(1400)
                     generateLevel()
                     menu()
                 }, cancel: 'O', enter: 'R', eol: false, match: /U|D|O|R/i, timeout: 20
@@ -3232,7 +3232,7 @@ module Dungeon {
                     if ($.online.hp < 0) {
                         $.online.hp = 0
                         $.reason = `quaffed${$.an(potion[v])}`
-                        xvt.waste(600)
+                        xvt.sleep(600)
                         drawHero()
                     }
                     break

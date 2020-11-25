@@ -82,9 +82,9 @@ module Naval {
                     }
 
                     xvt.outln(`You sail out until you spot ${opponent.user.handle}'s ship on the horizon.`)
-                    xvt.waste(500)
+                    xvt.sleep(500)
                     xvt.outln(`It has ${opponent.user.hull} hull points.`)
-                    xvt.waste(500)
+                    xvt.sleep(500)
 
                     $.action('ny')
                     xvt.app.form = {
@@ -118,9 +118,9 @@ module Naval {
                 }
                 xvt.outln('It is a fine day for sailing.  You cast your reel into the ocean and feel')
                 xvt.out('a gentle tug... ')
-                xvt.waste(600)
+                xvt.sleep(600)
                 xvt.out('you caught a')
-                xvt.waste(600)
+                xvt.sleep(600)
                 let cast = 100 * $.online.cha / $.player.maxcha
                 cast = (cast < 15) ? 15 : (cast > 100) ? 100 : cast >> 0
                 let hook = $.dice(cast)
@@ -131,7 +131,7 @@ module Naval {
                         if ($.loadUser(leftby)) {
                             $.PC.profile(floater, 'fadeInUpBig')
                             xvt.out(' floating carcass!')
-                            xvt.waste(500)
+                            xvt.sleep(500)
                             $.loadUser(floater)
                             xvt.outln(`\nIt is ${floater.user.handle}'s body in the ocean left there by ${leftby.handle}, and`)
                             xvt.outln(`you're able to bring the player back to an Alive! state.`)
@@ -169,7 +169,7 @@ module Naval {
                         $.loadUser($.neptune)
                         xvt.outln(` ${$.neptune.user.pc}: ${$.neptune.user.handle}!`)
                         $.cat(`naval/${$.neptune.user.handle}`.toLowerCase())
-                        xvt.waste(600)
+                        xvt.sleep(600)
                         if ($.player.level > $.neptune.user.level) {
                             let keep = $.neptune.user.spells
                             $.reroll($.neptune.user, $.neptune.user.pc, $.player.level - 1)
@@ -210,7 +210,7 @@ module Naval {
                 }
                 if (hook < 75) {
                     xvt.outln('n oyster and you eat it.')
-                    xvt.waste(600)
+                    xvt.sleep(600)
                     cap = $.money($.player.level)
                     n = Math.round(Math.pow(2., $.player.hull / 150.) * 7937)
                     n = $.int(n / $.player.hull / 10 * $.dice($.online.hull))
@@ -224,7 +224,7 @@ module Naval {
                 }
                 if (hook < 90) {
                     xvt.outln('n oyster and you eat it.')
-                    xvt.waste(600)
+                    xvt.sleep(600)
                     cap = 3 * $.money($.player.level)
                     n = Math.round(Math.pow(2., $.player.hull / 150.) * 7937)
                     n = $.int(n / $.player.hull * $.dice($.online.hull))
@@ -239,7 +239,7 @@ module Naval {
                 if (hook < 95) {
                     $.profile({ jpg: 'naval/turtle', effect: 'fadeInUp' })
                     xvt.outln(' turtle and you let it go.')
-                    xvt.waste(600)
+                    xvt.sleep(600)
                     $.player.toAC++
                     $.online.toAC += $.dice($.online.armor.ac / 5 + 1)
                     xvt.outln('The turtle turns and smiles and enhances your ', $.PC.armor())
@@ -248,7 +248,7 @@ module Naval {
                 }
                 if (hook < 100) {
                     xvt.outln(' tortoise and you let it go.')
-                    xvt.waste(600)
+                    xvt.sleep(600)
                     $.player.toWC++
                     $.online.toWC += $.dice($.online.weapon.wc / 10 + 1)
                     xvt.outln('The tortoise shows it gratitude by enchanting your ', $.PC.weapon())
@@ -256,7 +256,7 @@ module Naval {
                     break
                 }
                 xvt.outln(' mermaid!')
-                xvt.waste(600)
+                xvt.sleep(600)
                 $.profile({ jpg: 'naval/mermaid', effect: 'bounceInUp' })
                 $.cat('naval/mermaid')
                 if ($.player.today) {
@@ -618,7 +618,7 @@ module Naval {
                             if (!outrun($.online.hull / nme.hull, $.online.int - nme.int)) {
                                 $.sound('oops')
                                 xvt.outln(`${$.PC.who(nme).He}outruns you and stops your retreat!`)
-                                xvt.waste(500)
+                                xvt.sleep(500)
                                 if (him()) {
                                     menu()
                                     return
@@ -643,7 +643,7 @@ module Naval {
                                 xvt.outln()
                                 if (outmaneuvered(nme.int - $.online.int, nme.hull / $.online.hull)) {
                                     xvt.outln(`${$.PC.who(nme).He}quickly outmaneuvers your ship.`)
-                                    xvt.waste(400)
+                                    xvt.sleep(400)
                                     xvt.outln(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
                                         ['Your aim is going to kill us all!'
                                             , 'I said port, bastard, not starboard!'
@@ -651,7 +651,7 @@ module Naval {
                                             , 'Someone throw this traitor overboard!'
                                             , 'She\'s turning onto US now!'][$.dice(5) - 1]
                                         , xvt.cyan, '"')
-                                    xvt.waste(600)
+                                    xvt.sleep(600)
                                 }
                                 else {
                                     damage = $.dice($.player.hull / 2) + $.dice($.online.hull / 2)
@@ -669,10 +669,10 @@ module Naval {
                                 $.sound('oops')
                                 xvt.outln()
                                 xvt.outln(`Your first mate cries back, "But we don't have a ram!"`)
-                                xvt.waste(2000)
+                                xvt.sleep(2000)
                                 $.sound('fire', 8)
                                 xvt.outln('You shoot your first mate.')
-                                xvt.waste(800)
+                                xvt.sleep(800)
                             }
                             if (him()) {
                                 menu()
@@ -704,7 +704,7 @@ module Naval {
                 `${nme.user.handle} is now sleeping with the fishes!`,
                 `${nme.user.handle} is now chum for the sharks!`
             ][$.dice(5) - 1], '!\n')
-            xvt.waste(500)
+            xvt.sleep(500)
             $.log(nme.user.id, `\n${$.player.handle} sank your ship!`)
             $.news(`\tsank ${nme.user.handle}'s ship`)
 
@@ -713,7 +713,7 @@ module Naval {
             if (nme.user.coin.value > booty.value) {
                 $.sound('boo')
                 xvt.outln(`${new $.coins(nme.user.coin.value - booty.value).carry()} of the booty has settled on the ocean floor...`)
-                xvt.waste(500)
+                xvt.sleep(500)
                 nme.user.coin.value = booty.value
             }
             booty.value += nme.user.coin.value
@@ -722,7 +722,7 @@ module Naval {
                 xvt.outln('You get ', booty.carry(), '.')
                 $.log(nme.user.id, `... and got ${booty.carry(2, true)}.\n`)
                 $.player.coin.value += booty.value
-                xvt.waste(500)
+                xvt.sleep(500)
                 nme.user.coin.value = 0
             }
             booty.value += nme.user.coin.value
@@ -740,7 +740,7 @@ module Naval {
                             , 'Get me my red shirt!'
                             , `Y'all fight like the will-o-wisp!`][$.dice(5) - 1]
                         , xvt.cyan, '"')
-                    xvt.waste(600)
+                    xvt.sleep(600)
                 }
                 return false
             }
@@ -751,15 +751,15 @@ module Naval {
         function him(): boolean {
             if (!nme.user.cannon && !nme.user.ram) {
                 xvt.out('They are defenseless and attempt to flee . . . ')
-                xvt.waste(1000)
+                xvt.sleep(1000)
                 if (!outrun(nme.hull / $.online.hull, nme.int - $.online.int)) {
                     xvt.outln(`\nYou outrun them and stop their retreat!`)
-                    xvt.waste(500)
+                    xvt.sleep(500)
                     return false
                 }
                 xvt.outln('\nThey sail away over the horizon.')
                 $.saveUser(nme, false, true)
-                xvt.waste(500)
+                xvt.sleep(500)
                 return true
             }
             if (!nme.user.ram || (nme.user.cannon && $.dice(2 * nme.hull / (nme.hull - $.online.hull) + 4) > 1))
@@ -788,7 +788,7 @@ module Naval {
 
                 $.sound('sunk', 30)
                 xvt.outln(xvt.faint, `\n${nme.user.handle} smiles as a shark approaches you.`)
-                xvt.waste(6000)
+                xvt.sleep(6000)
                 xvt.hangup()
             }
             return ($.online.hull < 1)
@@ -852,7 +852,7 @@ module Naval {
                             if (!outrun($.online.hull / sm.hull, $.online.int - sm.int)) {
                                 $.sound('oops')
                                 xvt.out('\nIt outruns you and stops your retreat!\n')
-                                xvt.waste(500)
+                                xvt.sleep(500)
                                 if (it()) {
                                     menu()
                                     return
@@ -869,7 +869,7 @@ module Naval {
                             if ($.player.ram) {
                                 if (outmaneuvered(sm.int - $.online.int, sm.hull / $.online.hull)) {
                                     xvt.outln('\nIt quickly outmaneuvers your ship.')
-                                    xvt.waste(400)
+                                    xvt.sleep(400)
                                     xvt.out(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
                                         ['Not the tail, aim for the beastie\'s head!'
                                             , 'I said starboard, bitch, not port!'
@@ -877,7 +877,7 @@ module Naval {
                                             , 'Get me my brown pants!'
                                             , 'Whose side are you on anyways?!'][$.dice(5) - 1]
                                         , xvt.cyan, '"\n')
-                                    xvt.waste(600)
+                                    xvt.sleep(600)
                                 }
                                 else {
                                     damage = $.dice($.player.hull / 2) + $.dice($.online.hull / 2)
@@ -894,7 +894,7 @@ module Naval {
                             else {
                                 $.sound('oops')
                                 xvt.outln(`\nYour first mate cries back, "But we don't have a ram!"`)
-                                xvt.waste(500)
+                                xvt.sleep(500)
                             }
                             if (it()) {
                                 menu()
@@ -923,7 +923,7 @@ module Naval {
             coin.value = $.worth(coin.value, $.online.cha)
             xvt.outln('You get ', coin.carry(), ' for bringing home the carcass.')
             $.player.coin.value += coin.value
-            xvt.waste(500)
+            xvt.sleep(500)
         }
 
         function you(): boolean {
@@ -943,7 +943,7 @@ module Naval {
                     damage += $.dice(sm.powder) + $.dice(sm.powder)
                 xvt.outln('\n', xvt.bright, xvt.blue, `The ${sm.name} attacks your ship, causing`
                     , xvt.cyan, ` ${damage} `, xvt.blue, `hull points of damage.\n`)
-                xvt.waste(250)
+                xvt.sleep(250)
             }
             else
                 ram(<active>{ hull: sm.hull, user: { id: '', handle: monsters[mon].name, hull: monsters[mon].hull, cannon: sm.shot, ram: sm.ram } }, $.online)
@@ -959,7 +959,7 @@ module Naval {
                 if ($.player.coin.value) {
                     $.player.coin.value = 0
                     xvt.outln('It gets all your money!')
-                    xvt.waste(500)
+                    xvt.sleep(500)
                 }
                 xvt.outln()
                 return true
@@ -1015,7 +1015,7 @@ module Naval {
                 default:
                     xvt.out(xvt.reset, '-')
             }
-            xvt.waste(12)
+            xvt.sleep(12)
         }
 
         xvt.outln('\n')
@@ -1042,7 +1042,7 @@ module Naval {
                 xvt.out(`\nThey also hit your ram.`)
         }
         xvt.outln()
-        xvt.waste(250)
+        xvt.sleep(250)
 
         return { hits, damage, hull, cannon, ram }
     }
@@ -1076,7 +1076,7 @@ module Naval {
         if (a.user.id) xvt.out(xvt.normal)
         else xvt.out(xvt.blue)
         xvt.outln(`hull points of damage!`)
-        xvt.waste(500)
+        xvt.sleep(500)
 
         d.hull -= damage
     }

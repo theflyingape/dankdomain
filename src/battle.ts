@@ -1161,7 +1161,7 @@ module Battle {
             let Recipient = ''
             let recipient = ''
             let spell = $.Magic.spells[name]
-            if (rpc.user.id !== $.player.id) xvt.waste(150)
+            if (rpc.user.id !== $.player.id) xvt.sleep(150)
 
             if (rpc.user.magic > 1 && !summon)
                 if (rpc.sp < $.Magic.power(rpc, spell.cast)) {

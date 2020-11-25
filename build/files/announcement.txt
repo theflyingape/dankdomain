@@ -1,9 +1,10 @@
-[mDate: [1;33mWed 08-Oct-2020  4:00pm
+[mDate: [1;33mWed 25-Nov-2020  12:00pm
 [mFrom: [1;33mMaester
 [1;37m
-Dungeon spawning now takes better account of room type size to hold its
-denizens, i.e., expect to see less rooms filled with multiple oversized
-monsters, such as 2 dragons.  That said, there are smaller monsters that
-occupy less space, such as a goblin (1/2), ghost (1/4), or will-o-wisp (1/10).
+Happy holidays!
+
+There's been a lot of code refactoring with several UI annoyances addressed
+to deliver a more consistent user experience.  We hope you find the game's
+maturity and playability to your liking.
 
 Happy hunting!
