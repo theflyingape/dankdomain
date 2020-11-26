@@ -71,8 +71,25 @@ module Sysop {
                 return
 
             case 'D':
-                $.music('dungeon' + $.dice(9))
-                require('./dungeon').DeepDank($.player.level - 1, sysop)
+                $.action('list')
+                xvt.app.form = {
+                    'level': {
+                        cb: () => {
+                            let i = parseInt(xvt.entry)
+                            if (isNaN(i)) {
+                                xvt.app.refocus()
+                                return
+                            }
+                            if (i < 1 || i > 100) {
+                                xvt.app.refocus()
+                                return
+                            }
+                            $.sound('teleport')
+                            require('./dungeon').DeepDank(i - 1, menu)
+                        }, prompt: `Level (1-100): `, min: 1, max: 3
+                    }
+                }
+                xvt.app.focus = 'level'
                 return
 
             case 'N':

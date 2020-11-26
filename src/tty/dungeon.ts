@@ -592,42 +592,38 @@ module Dungeon {
             xvt.out(xvt.off)
 
             if (ROOM.monster.length == 1) {
-                try {
-                    let img = 'dungeon/' + ROOM.monster[0].user.handle
-                    fs.accessSync('door/static/images/' + img + '.jpg', fs.constants.F_OK)
-                    $.profile({ jpg: img, effect: ROOM.monster[0].effect })
-
-                    xvt.out(`There's something lurking in here `, -40, '. ', -50, '. ')
-                    //  dramatic pause if profile change is needed to match player's class
-                    if (!ROOM.monster[0].monster.pc && ROOM.monster[0].user.pc == $.player.pc) {
-                        xvt.out(-900)
-                        if ($.PC.name['monster'][ROOM.monster[0].user.pc])
-                            $.profile({ png: 'monster/' + ($.PC.name['monster'][ROOM.monster[0].user.pc] || $.PC.name['tavern'][ROOM.monster[0].user.pc] ? ROOM.monster[0].user.pc.toLowerCase() : 'monster'), effect: 'flash' })
-                        else
-                            $.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect: 'flash' })
-                    }
-                } catch (e) {
-                    if ($.PC.name['player'][ROOM.monster[0].user.pc] && ROOM.monster[0].user.pc == $.player.pc)
-                        $.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect: ROOM.monster[0].effect })
+                let img = `dungeon/${ROOM.monster[0].user.handle}`
+                $.profile({ jpg: img, effect: ROOM.monster[0].effect })
+                xvt.out(`There's something lurking in here . . . `)
+                //  dramatic pause if profile change is needed to match player's class
+                if (!ROOM.monster[0].monster.pc && ROOM.monster[0].user.pc == $.player.pc) {
+                    xvt.sleep(900)
+                    if ($.PC.name['player'][ROOM.monster[0].user.pc])
+                        $.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect: 'flash' })
                     else
                         $.profile({
-                            png: 'monster/' + ($.PC.name['monster'][ROOM.monster[0].user.pc] || $.PC.name['tavern'][ROOM.monster[0].user.pc] ? ROOM.monster[0].user.pc.toLowerCase() : 'monster') + (ROOM.monster[0].user.gender == 'F' ? '_f' : ''),
-                            effect: ROOM.monster[0].effect
+                            png: 'monster/'
+                                + ($.PC.name['monster'][ROOM.monster[0].user.pc]
+                                    || $.PC.name['tavern'][ROOM.monster[0].user.pc]
+                                    ? ROOM.monster[0].user.pc.toLowerCase() : 'monster')
+                                + (ROOM.monster[0].user.gender == 'F' ? '_f' : ''),
+                            effect: 'flash'
                         })
                 }
-                xvt.out(-60, '. ')
+                xvt.sleep(400)
             }
             else {
-                xvt.out(`There's a party waiting for `
+                xvt.out(`There's a party waiting `
                     , ['you', 'the main course', 'the entertainment', 'meat', 'a good chew'][$.dice(5) - 1]
-                    , ' . . . ', -600)
+                    , '. . . ', -500)
                 let m = {}
                 for (let i = 0; i < ROOM.monster.length; i++) {
                     m['mob' + (i + 1)] = 'monster/'
-                        + ($.PC.name['monster'][ROOM.monster[i].user.pc] || $.PC.name['tavern'][ROOM.monster[i].user.pc]
-                            ? ROOM.monster[i].user.pc.toLowerCase()
-                            : 'monster') + (ROOM.monster[i].user.gender == 'F' ? '_f' : '')
-                    if (!ROOM.monster[i].monster.pc && ROOM.monster[i].user.pc == $.player.pc)
+                        + ($.PC.name['monster'][ROOM.monster[i].user.pc]
+                            || $.PC.name['tavern'][ROOM.monster[i].user.pc]
+                            ? ROOM.monster[i].user.pc.toLowerCase() : 'monster')
+                        + (ROOM.monster[i].user.gender == 'F' ? '_f' : '')
+                    if ($.PC.name['player'][ROOM.monster[i].user.pc])
                         m['mob' + (i + 1)] = 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : '')
                 }
                 $.profile(m)
@@ -2936,7 +2932,7 @@ module Dungeon {
             return false
 
         let dm: monster = { name: '', pc: '' }
-        let m: active = { user: { id: '', sex: 'I' } }
+        let m: active = { monster: { name: '', pc: '' }, user: { id: '', sex: 'I' } }
         let level = 0
         let sum = 0
 
@@ -2978,7 +2974,8 @@ module Dungeon {
 
             //  prep next should this event be spawning a lesser mob
             level += $.dice(room.monster.length + 2) - (room.monster.length + 1)
-            m = { user: { id: '', sex: 'I' } }
+            dm = { name: '', pc: '' }
+            m = { monster: { name: '', pc: '' }, user: { id: '', sex: 'I' } }
             genMonster(dm, m, 0, level)
         } while (room.monster.length < $.int(3 + DL.mob + deep / 3) && sum < (Z - 3 - room.monster.length))
 
