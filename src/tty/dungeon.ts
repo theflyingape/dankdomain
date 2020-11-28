@@ -411,7 +411,7 @@ module Dungeon {
 
         //	user input
         xvt.app.form = {
-            'command': { cb: command, cancel: 'Y', enter: '?', eol: false, timeout: 20 }
+            'command': { cb: command, cancel: 'Y', eol: false, timeout: 20 }
         }
         xvt.app.form['command'].prompt = ''
         if (suppress)

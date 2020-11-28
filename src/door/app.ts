@@ -443,11 +443,11 @@ dns.lookup(network.address, (err, addr, family) => {
                 if (sessions[pid]) {
                     if (sessions[pid].who)
                         player = ` (${sessions[pid].who})`
-                    console.log(`Lurker session ${pid}${player} request from remote host: ${req.header('x-forwarded-for') || req.connection.remoteAddress} (${req.hostname})`)
+                    console.log(`Create LURKER session ${pid}${player} request from remote host: ${req.header('x-forwarded-for') || req.connection.remoteAddress} → ${req.hostname}`)
                     res.send((lurkers.push(pid) - 1).toString())
                 }
                 else {
-                    console.log(`?FATAL lurker session ${pid} request from remote host: ${req.header('x-forwarded-for') || req.connection.remoteAddress} (${req.hostname})`)
+                    console.log(`?FATAL LURKER session ${pid} request from remote host: ${req.header('x-forwarded-for') || req.connection.remoteAddress} → ${req.hostname}`)
                 }
             }
             else if (Object.keys(sessions).length) {
@@ -531,7 +531,7 @@ dns.lookup(network.address, (err, addr, family) => {
             let lurker = parseInt(what.searchParams.get('lurker'))
             let term = sessions[lurkers[lurker]]
             let player = ` (${sessions[term.pid].who})`
-            console.log(`Lurker session ${term.pid}${player} connected as #${(lurker + 1)}`)
+            console.log(`Create LURKER #${(lurker + 1)} session → ${term.pid}${player}`)
 
             //  app → browser client
             let lurk = term.onData((data) => {
@@ -556,7 +556,7 @@ dns.lookup(network.address, (err, addr, family) => {
             })
 
             browser.on('close', () => {
-                console.log(`Lurker session ${term.pid}${player} closed #${(lurker + 1)}`)
+                console.log(`Exit LURKER #${(lurker + 1)} session → ${term.pid}${player}`)
                 delete lurkers[lurker]
                 lurk.dispose()
             })

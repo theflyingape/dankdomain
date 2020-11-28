@@ -985,7 +985,8 @@ module Naval {
                     if (d.user.ram) {
                         ram = true
                         d.user.ram = false
-                        xvt.out(xvt.bright, xvt.magenta, '^')
+                        $.beep()
+                        xvt.out(xvt.magenta, xvt.bright, '^', -30)
                         break
                     }
                 case 2:
@@ -993,7 +994,7 @@ module Naval {
                         if (d.user.cannon) {
                             cannon++
                             d.user.cannon--
-                            xvt.out(xvt.bright, xvt.green, '@')
+                            xvt.out(xvt.green, xvt.bright, '@', -25)
                             break
                         }
                     }
@@ -1003,19 +1004,18 @@ module Naval {
                     damage += n
                     d.hull -= n
                     if (n < 50 || d.user.hull < 1 || !d.user.id) {
-                        xvt.out(xvt.bright, xvt.red, '*')
+                        xvt.out(xvt.red, xvt.bright, '*', -20)
                         break
                     }
                     else {
                         hull += 50
                         d.user.hull -= 50
-                        xvt.out(xvt.bright, xvt.yellow, d.user.hull ? '#' : '&')
+                        xvt.out(xvt.yellow, xvt.bright, d.user.hull ? '#' : '&', -30)
                         break
                     }
                 default:
-                    xvt.out(xvt.reset, '-')
+                    xvt.out(xvt.reset, '~', -15)
             }
-            xvt.sleep(12)
         }
 
         xvt.outln('\n')
