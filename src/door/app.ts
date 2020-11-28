@@ -17,7 +17,7 @@ console.log(`Ɗanƙ Ɗomaiƞ (${process.title}) started on ${process.platform} #
 
 //  process signal traps
 process.on('uncaughtException', (err, origin) => {
-    console.log(`${origin} ${err}`)
+    console.log(`DOOR ${origin} ${err}`)
 })
 
 process.chdir(__dirname)

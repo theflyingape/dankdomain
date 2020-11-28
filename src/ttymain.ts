@@ -17,7 +17,7 @@ process.chdir(__dirname)
 
 import xvt = require('xvt')
 
-process.on('uncaughtException', (err, origin) => {
+process.on('ttyMain uncaughtException', (err, origin) => {
     xvt.outln(`${origin} ${err}`)
 })
 
