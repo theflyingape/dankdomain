@@ -53,7 +53,7 @@ module Email {
 
         try {
             let message = JSON.parse(fs.readFileSync('./etc/newuser.json').toString())
-            Deliver($.player, 'secret keys to the gate', false, message)
+            Deliver($.player, 'a secret key for the City Gate', false, message)
         } catch (e) { }
     }
 
@@ -82,7 +82,7 @@ module Email {
             }
             try {
                 let message = JSON.parse(fs.readFileSync('./etc/resend.json').toString())
-                Deliver($.player, 'secret keys (again) to the gate', true, message)
+                Deliver($.player, 'a secret key (again) for the City Gate', true, message)
             } catch (e) { }
         }
         xvt.app.form['check'].max = $.player.email.length
@@ -93,13 +93,14 @@ module Email {
         xvt.out('\n\n', xvt.magenta, xvt.bright)
         let royalty = Object.keys($.Access.name).slice($.player.gender == 'F' ? -2 : -1)[0]
         if ($.player.emulation == 'XT') xvt.out('👑 ')
-        xvt.out(`The ${royalty} orders the royal scribe to dispatch ${what}\nfor ${$.player.handle} ` + (!repeat ? `<${$.player.email}> ` : ''), xvt.reset)
+        xvt.out(`The ${royalty} orders the royal scribe to dispatch ${what}\naddressed to ${$.player.handle} ` + (!repeat ? `<${$.player.email}> ` : ''), xvt.reset)
         if ($.player.email !== $.sysop.email)
             await Message(player, mailOptions)
         else {
-            xvt.outln(' ...skipping delivery... \nCheck SQLite3 table for relevant information.')
+            xvt.outln(' ...skipping delivery... \nCheck SQLite3 table for relevant information:')
             xvt.outln(`$ sqlite3 ./users/dankdomain.sql`)
             xvt.outln(`SELECT id,handle,access,password FROM Players WHERE id='${player.id}';`)
+            xvt.outln(`...or its exported save file:`)
             xvt.out(`$ grep password ./users/.${player.id}.json`)
             if ($.reason.length)
                 $.saveUser(player, true)
@@ -132,42 +133,39 @@ module Email {
 
         let result: boolean
 
-        smtp.verify(error => {
-            if (error) {
-                xvt.out(error)
+        await smtp.verify().then(async () => {
+            if (echo) {
+                xvt.out('→ 📨 ')
+                $.sound('click')
+            }
+            await smtp.sendMail(mailOptions).then((msg) => {
+                if (echo) {
+                    xvt.outln('📬')
+                    xvt.outln(msg.response)
+                    if ($.reason.length) {
+                        $.saveUser(player, true)
+                        xvt.outln('\nYour user ID (', xvt.bright, player.id, xvt.normal, ') was saved, ', $.Access.name[player.access][player.gender], '.')
+                        $.sound('yahoo')
+                    }
+                }
+                result = true
+            }).catch((err) => {
+                if (echo) {
+                    xvt.outln('💣')
+                    xvt.outln(err.response)
+                    player.id = ''
+                    player.email = ''
+                    xvt.outln('\nSorry -- your user registration was aborted.')
+                    xvt.outln(`Please contact ${mailOptions.from} with this error message.`)
+                    $.sound('boom')
+                }
                 result = false
-            }
-            else {
-                smtp.sendMail(mailOptions, (error, info) => {
-                    if (error) {
-                        xvt.outln(xvt.reset, '\nEmail Deliver Message to ', player.handle, '\n', error)
-                        if (echo) {
-                            player.id = ''
-                            player.email = ''
-                            xvt.outln('\nSorry -- your user registration was aborted.')
-                            xvt.outln('Please contact the sysop with this error message.')
-                        }
-                        result = false
-                    }
-                    else {
-                        xvt.out('\n', info.response)
-                        if ($.reason.length) {
-                            $.saveUser(player, true)
-                            if (echo)
-                                xvt.outln('\nYour user ID (', xvt.bright, player.id, xvt.normal, ') was saved, ', $.Access.name[player.access][player.gender], '.')
-                        }
-                        result = true
-                    }
-                })
-            }
+            })
+        }).catch(err => {
+            console.error(err)
+            result = false
         })
-
-        while (typeof result == 'undefined') {
-            if (echo) xvt.out(xvt.app.Empty)
-            xvt.sleep(500)
-        }
     }
-
 }
 
 export = Email
