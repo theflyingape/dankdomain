@@ -49,6 +49,7 @@ module Logon {
                                 $.player.lastdate = $.now().date
                                 $.player.lasttime = $.now().time
                                 $.run(`UPDATE Players SET lastdate=${$.player.lastdate},lasttime=${$.player.lasttime},today=${$.player.today} WHERE id='${$.player.id}'`)
+                                $.reason = 'forgot password'
                                 require('../email').resend()
                                 return
                             }

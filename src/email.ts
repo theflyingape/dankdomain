@@ -82,7 +82,7 @@ module Email {
             }
             try {
                 let message = JSON.parse(fs.readFileSync('./etc/resend.json').toString())
-                Deliver($.player, 'a secret key (again) for the City Gate', true, message)
+                Deliver($.player, 'your key for the City Gate', true, message)
             } catch (e) { }
         }
         xvt.app.form['check'].max = $.player.email.length
