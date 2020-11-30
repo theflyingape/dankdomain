@@ -398,8 +398,10 @@ function XT(data) {
     function play(fileName) {
         let audio = <HTMLAudioElement>document.getElementById('play')
         if (!fileName.length || fileName == '.') {
-            if (playPromise) playPromise.then(_ => { audio.pause() }).catch(err => { console.log(err) })
-            audio.currentTime = 0
+            if (!audio.paused && playPromise) playPromise.then(_ => {
+                audio.pause()
+                audio.currentTime = 0
+            }).catch(err => { console.log(err) })
             return
         }
         let source = audio.getElementsByTagName('source')
@@ -408,7 +410,7 @@ function XT(data) {
         source[1].src = `sounds/${fileName}.mp3`
         source[1].type = 'audio/mp3'
         audio.load()
-        playPromise = audio.play()
+        playPromise = audio.play().catch(err => { console.log(err) })
     }
 
     function profile(panel) {
@@ -423,8 +425,10 @@ function XT(data) {
     function tune(fileName) {
         let audio = <HTMLAudioElement>document.getElementById('tune')
         if (!fileName.length || fileName == '.') {
-            if (tunePromise) tunePromise.then(_ => { audio.pause() }).catch(err => { console.log(err) })
-            audio.currentTime = 0
+            if (!audio.paused && tunePromise) tunePromise.then(_ => {
+                audio.pause()
+                audio.currentTime = 0
+            }).catch(err => { console.log(err) })
             return
         }
         let source = audio.getElementsByTagName('source')
