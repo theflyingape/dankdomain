@@ -17,6 +17,7 @@ module Dungeon {
     let potions: vial[] = []
     let tl: number
 
+    let idle: number = -1
     let looked: boolean
     let pause: boolean
     let refresh: boolean
@@ -160,6 +161,8 @@ module Dungeon {
 
         if ($.online.altered) $.saveUser($.player)
         if ($.reason) {
+            if ($.checkTime() < 0 && $.online.hp > 0) $.online.hp = idle
+            $.death(`failed to escape ${$.romanize(deep + 1)}.${Z + 1} - ${$.reason}`)
             DL.map = `Marauder's map`
             scroll()
             xvt.hangup()
@@ -461,8 +464,10 @@ module Dungeon {
                 suppress = true
                 xvt.out(xvt.bright, xvt.white, choice, xvt.normal)
             }
-            else
+            else {
                 choice = 'Y'
+                idle++
+            }
         }
         if (isNotEmpty(crawling[choice])) {
             xvt.out(crawling[choice].description)
@@ -588,6 +593,7 @@ module Dungeon {
             return true
 
         xvt.outln()
+        if (idle > 0) idle--
         if (looked) return true
         recovery(ROOM.occupant == 'cleric' ? 600 : 200)
 
@@ -3023,12 +3029,6 @@ module Dungeon {
 
     function teleport() {
         let min = $.checkTime()
-        if (min < 0) {
-            $.online.hp = 0
-            $.death(`failed to escape ${$.romanize(deep + 1)}.${Z + 1}`)
-            menu()
-            return
-        }
 
         $.action('teleport')
         xvt.outln(xvt.yellow, xvt.bright, 'What do you wish to do?')
