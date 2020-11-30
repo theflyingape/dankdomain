@@ -457,11 +457,12 @@ module Dungeon {
         let suppress = false
         let choice = xvt.entry.toUpperCase()
         if (/\[.*\]/.test(xvt.terminator)) {
-            if ((choice = 'NSEW'['UDRL'.indexOf(xvt.terminator[1])]))
+            if ((choice = 'NSEW'['UDRL'.indexOf(xvt.terminator[1])])) {
                 suppress = true
+                xvt.out(xvt.bright, xvt.white, choice, xvt.normal)
+            }
             else
-                choice = '??'
-            xvt.out(xvt.bright, xvt.white, choice, xvt.normal)
+                choice = 'Y'
         }
         if (isNotEmpty(crawling[choice])) {
             xvt.out(crawling[choice].description)
