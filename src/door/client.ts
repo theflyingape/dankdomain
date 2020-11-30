@@ -96,6 +96,7 @@ let pid = 0, wpid = 0, tty = false
 let socket: WebSocket
 let carrier = false, recheck = 0
 let idle: NodeJS.Timer, reconnect: NodeJS.Timer, lurking: NodeJS.Timer
+let playPromise: Promise<void>, tunePromise: Promise<void>
 let tbt = 1
 
 //  monitor with terminal
@@ -397,7 +398,7 @@ function XT(data) {
     function play(fileName) {
         let audio = <HTMLAudioElement>document.getElementById('play')
         if (!fileName.length || fileName == '.') {
-            audio.pause()
+            if (playPromise) playPromise.then(_ => { audio.pause() }).catch(err => { console.log(err) })
             audio.currentTime = 0
             return
         }
@@ -407,7 +408,7 @@ function XT(data) {
         source[1].src = `sounds/${fileName}.mp3`
         source[1].type = 'audio/mp3'
         audio.load()
-        audio.play().catch(err => { console.log(err) })
+        playPromise = audio.play()
     }
 
     function profile(panel) {
@@ -422,7 +423,7 @@ function XT(data) {
     function tune(fileName) {
         let audio = <HTMLAudioElement>document.getElementById('tune')
         if (!fileName.length || fileName == '.') {
-            audio.pause()
+            if (tunePromise) tunePromise.then(_ => { audio.pause() }).catch(err => { console.log(err) })
             audio.currentTime = 0
             return
         }
@@ -432,7 +433,7 @@ function XT(data) {
         source[1].src = `sounds/${fileName}.mp3`
         source[1].type = 'audio/mp3'
         audio.load()
-        audio.play().catch(err => { console.log(err) })
+        tunePromise = audio.play()
     }
 
     function wall(msg) {

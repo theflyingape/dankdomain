@@ -48,7 +48,6 @@ module ttyMain {
     xvt.app.form = {
         'enq1': {
             cb: () => {
-                //  console.log('ENQ response =', xvt.entry.split('').map((c) => { return c.charCodeAt(0) }))
                 if (/^.*\[.*R$/i.test(xvt.entry)) {
                     xvt.app.emulation = 'XT'
                     logon()
@@ -58,7 +57,6 @@ module ttyMain {
         },
         'enq2': {
             cb: () => {
-                //  console.log('ENQ response =', xvt.entry.split('').map((c) => { return c.charCodeAt(0) }))
                 if (xvt.entry.length) xvt.app.emulation = 'VT'
                 logon()
             }, prompt: '\x05', enq: true

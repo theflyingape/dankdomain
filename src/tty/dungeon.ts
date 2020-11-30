@@ -557,7 +557,13 @@ module Dungeon {
         if (($.online.hp -= $.dice(deep + Z + 1)) < 1) {
             $.online.hp = 0
             $.music('.')
-            $.death(Battle.retreat ? 'running into a wall' : 'banged head against a wall')
+            if (Battle.retreat)
+                $.death('running into a wall')
+            else {
+                $.online.hp = 1
+                $.player.killed++
+                $.death('banged head against a wall')
+            }
             if (deep) $.reason += `-${$.romanize(deep + 1)}`
             xvt.outln(xvt.faint, '\nYou take too many hits and die!', -600)
         }
@@ -3018,6 +3024,7 @@ module Dungeon {
     function teleport() {
         let min = $.checkTime()
         if (min < 0) {
+            $.online.hp = 0
             $.death(`failed to escape ${$.romanize(deep + 1)}.${Z + 1}`)
             menu()
             return

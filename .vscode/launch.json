@@ -10,7 +10,9 @@
       "name": "launch ddgame app",
       "cwd": "${workspaceFolder}/build",
       "program": "${workspaceFolder}/build/door/app.js",
-      "outFiles": [ "${workspaceFolder}/build/door" ],
+      "outFiles": [
+        "${workspaceFolder}/build/door"
+      ],
       "sourceMaps": true,
       "stopOnEntry": false,
       "skipFiles": [
@@ -31,7 +33,9 @@
       "console": "integratedTerminal",
       "program": "${workspaceFolder}/build/ttymain.js",
       "cwd": "${workspaceFolder}",
-      "outFiles": [ "${workspaceFolder}/build" ],
+      "outFiles": [
+        "${workspaceFolder}/build"
+      ],
       "sourceMaps": true,
       "stopOnEntry": true,
       "skipFiles": [

@@ -2167,6 +2167,21 @@ module Common {
                 news(`\tonline player dropped by ${sysop.who} ${time(player.lasttime)} (${reason})\n`, true)
             }
         }
+        else if (access.roleplay) {
+            if (from == 'Dungeon' && online.hp > 0) {
+                reason = `failure to escape the dungeon - ${reason}`
+                PC.adjust('cha', -1, -1, -1)
+                player.coin = new coins(0)
+                if (checkTime() >= 0) {
+                    if (player.coward && !player.cursed) {
+                        player.blessed = ''
+                        player.cursed = player.id
+                    }
+                    player.coward = true
+                }
+                saveUser(player)
+            }
+        }
 
         if (isNotEmpty(player.id)) {
             if (access.roleplay) {

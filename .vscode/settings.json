@@ -1,4 +1,9 @@
 {
+    "editor.fontFamily": "'Noto Sans Mono','Noto Color Emoji','Lucida Console',Consolas,monospace",
+    "editor.formatOnSave": true,
+    "editor.minimap.enabled": false,
+    "editor.tabSize": 4,
+    "editor.wordWrap": "on",
     "typescript.tsdk": "node_modules/typescript/lib",
     "terminal.integrated.fontFamily": "'Noto Sans Mono','Noto Color Emoji','Lucida Console',Consolas,monospace",
     "terminal.integrated.fontWeight": "400",
