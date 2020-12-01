@@ -96,7 +96,6 @@ let pid = 0, wpid = 0, tty = false
 let socket: WebSocket
 let carrier = false, recheck = 0
 let idle: NodeJS.Timer, reconnect: NodeJS.Timer, lurking: NodeJS.Timer
-let playPromise: Promise<void>, tunePromise: Promise<void>
 let tbt = 1
 
 //  monitor with terminal
@@ -397,20 +396,19 @@ function XT(data) {
 
     function play(fileName) {
         let audio = <HTMLAudioElement>document.getElementById('play')
-        if (!fileName.length || fileName == '.') {
-            if (!audio.paused && playPromise) playPromise.then(_ => {
-                audio.pause()
-                audio.currentTime = 0
-            }).catch(err => { console.log(err) })
-            return
+        if (!audio.paused) {
+            audio.pause()
+            audio.currentTime = 0
         }
+        if (!fileName.length || fileName == '.') return
+
         let source = audio.getElementsByTagName('source')
         source[0].src = `sounds/${fileName}.ogg`
         source[0].type = 'audio/ogg'
         source[1].src = `sounds/${fileName}.mp3`
         source[1].type = 'audio/mp3'
         audio.load()
-        playPromise = audio.play().catch(err => { console.log(err) })
+        audio.play().catch()
     }
 
     function profile(panel) {
@@ -424,20 +422,19 @@ function XT(data) {
 
     function tune(fileName) {
         let audio = <HTMLAudioElement>document.getElementById('tune')
-        if (!fileName.length || fileName == '.') {
-            if (!audio.paused && tunePromise) tunePromise.then(_ => {
-                audio.pause()
-                audio.currentTime = 0
-            }).catch(err => { console.log(err) })
-            return
+        if (!audio.paused) {
+            audio.pause()
+            audio.currentTime = 0
         }
+        if (!fileName.length || fileName == '.') return
+
         let source = audio.getElementsByTagName('source')
         source[0].src = `sounds/${fileName}.ogg`
         source[0].type = 'audio/ogg'
         source[1].src = `sounds/${fileName}.mp3`
         source[1].type = 'audio/mp3'
         audio.load()
-        tunePromise = audio.play()
+        audio.play().catch()
     }
 
     function wall(msg) {
@@ -605,7 +602,7 @@ let currentCMD = null
 function nme(html = '', effect?: string) {
     profile.innerHTML = html
     let img = profile.getElementsByTagName('img')
-    if (img.length == 1) {
+    if (img && img.length == 1) {
         img.item(0).style.display = 'none'
         img.item(0).onload = () => { nmeResize(`${effect}`) }
     }
@@ -670,7 +667,7 @@ function cmd(html) {
 
 function animated(effect) {
     let img = profile.getElementsByTagName('img')
-    if (!img.length) return
+    if (!img || !img.length) return
 
     let pic: HTMLImageElement
 
@@ -687,11 +684,13 @@ function animated(effect) {
         }
     }
 
-    pic.style.display = 'inline-block'
-    pic.classList.add('animate__animated')
-    var effects = effect.split(' ')
-    for (var i in effects)
-        pic.classList.add('animate__' + effects[i])
+    if (pic) {
+        pic.style.display = 'inline-block'
+        pic.classList.add('animate__animated')
+        var effects = effect.split(' ')
+        for (var i in effects)
+            pic.classList.add('animate__' + effects[i])
+    }
 }
 
 function Logon() {

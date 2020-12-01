@@ -160,9 +160,9 @@ module Dungeon {
         }
 
         if ($.online.altered) $.saveUser($.player)
-        if ($.reason) {
+        if ($.reason || xvt.reason) {
             if ($.checkTime() < 0 && $.online.hp > 0) $.online.hp = idle
-            $.death(`failed to escape ${$.romanize(deep + 1)}.${Z + 1} - ${$.reason}`)
+            $.death(`failed to escape ${$.romanize(deep + 1)}.${Z + 1} - ${$.reason || xvt.reason}`)
             DL.map = `Marauder's map`
             scroll()
             xvt.hangup()
