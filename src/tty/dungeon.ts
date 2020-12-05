@@ -133,9 +133,9 @@ module Dungeon {
         if ($.access.sysop) crawling['M'] = { description: 'y liege' }
         generateLevel()
 
-        $.profile({ jpg: `dungeon/level${$.int($.player.level / 100)}`, handle: "Entering", level: $.player.level, pc: 'dungeon' })
+        $.profile({ jpg: `dungeon/level${$.int($.player.level / 10)}`, handle: "Entering", level: $.player.level, pc: 'dungeon' })
         ROOM = DL.rooms[Y][X]
-        if (ROOM.occupant || !ROOM.monster.length || !ROOM.giftItem) xvt.sleep(1500)
+        if (ROOM.occupant || !ROOM.monster.length || !ROOM.giftItem) xvt.sleep(2500)
 
         menu()
     }
