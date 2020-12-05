@@ -20,6 +20,8 @@ import { Unicode11Addon } from 'xterm-addon-unicode11'
 //import { WebglAddon } from 'xterm-addon-webgl'
 
 //  document elements
+let audioPlay = <HTMLAudioElement>document.getElementById('play')
+let audioTune = <HTMLAudioElement>document.getElementById('tune')
 const monitor = <HTMLDivElement>document.getElementById('monitor')
 const terminal = <HTMLDivElement>document.getElementById('terminal')
 const wall = <HTMLDivElement>document.getElementById('wall')
@@ -395,20 +397,19 @@ function XT(data) {
     }
 
     function play(fileName) {
-        let audio = <HTMLAudioElement>document.getElementById('play')
-        if (!audio.paused) {
-            audio.pause()
-            audio.currentTime = 0
+        if (!audioPlay.paused) {
+            audioPlay.pause()
+            audioPlay.currentTime = 0
         }
         if (!fileName.length || fileName == '.') return
 
-        let source = audio.getElementsByTagName('source')
+        let source = audioPlay.getElementsByTagName('source')
         source[0].src = `sounds/${fileName}.ogg`
         source[0].type = 'audio/ogg'
         source[1].src = `sounds/${fileName}.mp3`
         source[1].type = 'audio/mp3'
-        audio.load()
-        audio.play().catch()
+        audioPlay.load()
+        audioPlay.play().catch(err => { })
     }
 
     function profile(panel) {
@@ -421,20 +422,19 @@ function XT(data) {
     }
 
     function tune(fileName) {
-        let audio = <HTMLAudioElement>document.getElementById('tune')
-        if (!audio.paused) {
-            audio.pause()
-            audio.currentTime = 0
+        if (!audioTune.paused) {
+            audioTune.pause()
+            audioTune.currentTime = 0
         }
         if (!fileName.length || fileName == '.') return
 
-        let source = audio.getElementsByTagName('source')
+        let source = audioTune.getElementsByTagName('source')
         source[0].src = `sounds/${fileName}.ogg`
         source[0].type = 'audio/ogg'
         source[1].src = `sounds/${fileName}.mp3`
         source[1].type = 'audio/mp3'
-        audio.load()
-        audio.play().catch()
+        audioTune.load()
+        audioTune.play().catch(err => { })
     }
 
     function wall(msg) {
@@ -449,9 +449,8 @@ function lurk() {
                 let es = document.getElementById('lurker-state')
                 if (data.length) {
                     es.innerHTML = `&nbsp;· Watch an online player: <select id="lurker-list"></select>`
-                    let audio = <HTMLAudioElement>document.getElementById('play')
-                    audio.src = BELL_SOUND
-                    audio.play().catch(err => { console.log(err) })
+                    audioPlay.src = BELL_SOUND
+                    audioPlay.play().catch()
                 }
                 else
                     es.innerHTML = `&nbsp;· Waiting for an online player ...<select id="lurker-list" hidden></select>`

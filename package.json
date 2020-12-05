@@ -1,6 +1,6 @@
 {
 	"name": "dankdomain",
-	"version": "2.9.0",
+	"version": "2.9.1",
 	"description": "Ɗanƙ Ɗomaiƞ: the return of Hack & Slash",
 	"main": "telnet",
 	"publisher": "theflyingape",
@@ -62,8 +62,8 @@
 		"romanize": "^1.1.1",
 		"sprintf-js": "^1.1.2",
 		"telnet-socket": "^0.2.3",
-		"title-case": "^3.0.2",
-		"ws": "^7.4.0",
+		"title-case": "^3.0.3",
+		"ws": "^7.4.1",
 		"xterm": "^4.9.0",
 		"xterm-addon-fit": "^0.4.0",
 		"xterm-addon-unicode11": "^0.2.0",
@@ -81,7 +81,7 @@
 		"@types/sprintf-js": "^1.1.2",
 		"@types/ws": "^7.4.0",
 		"browserify": "^17.0.0",
-		"eslint": "^7.14.0",
+		"eslint": "^7.15.0",
 		"typescript": "^4.1.2",
 		"watchify": "^3.11.1"
 	}

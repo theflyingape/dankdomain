@@ -742,18 +742,19 @@ module Battle {
 
                 let xp = $.int($.experience(parties[w][m].user.xplevel)
                     * tl[l] / tl[w] / ((4 + parties[w].length - parties[l].length) / 2))
-                parties[w][m].user.xp += xp
 
                 if (parties[w][m] === $.online) {
                     if (xp)
-                        xvt.out('\nYou get ', sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.', -400)
+                        xvt.out('\nYou get ', $.expout(xp), -400)
                     if (award)
                         xvt.out('\nYou get your cut worth ', new $.coins(award).carry(), '.', 400)
                     xvt.outln(-200)
+                    $.player.xp += xp
                 }
                 else {
                     $.log(parties[w][m].user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`)
-                    $.log(parties[w][m].user.id, `You got ${sprintf(xp < 1e+8 ? '%d' : '%.7e', xp)} experience and ${new $.coins(award).carry(2, true)}.`)
+                    $.log(parties[w][m].user.id, `You got ${$.expout(xp, false)} and ${new $.coins(award).carry(2, true)}.`)
+                    parties[w][m].user.xp += xp
                     $.saveUser(parties[w][m])
                 }
             }
@@ -909,20 +910,20 @@ module Battle {
                 }
             }
             if (xp) {
-                winner.user.xp += xp
                 xvt.outln('You get'
                     , parties[l].length > 1 ? ' a total of ' : ' '
-                    , sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.'
+                    , $.expout(xp, winner === $.online)
                 )
+                winner.user.xp += xp
             }
             if (coin.value) {
-                winner.user.coin.value += coin.value
                 xvt.outln('You get'
                     , parties[l].length > 1 ? ' a total of ' : ' '
                     , coin.carry(), ' '
                     , parties[l].length > 1 ? 'they were ' : loser.who.he + 'was '
                     , 'carrying.'
                 )
+                winner.user.coin.value += coin.value
             }
         }
         else {
@@ -1045,7 +1046,7 @@ module Battle {
             xvt.outln('\n', winner.user.id == $.player.id ? 'You' : winner.user.handle
                 , ` ${$.what(winner, 'knock')}${loser.who.him}out!`, -600)
             if (xp) {
-                xvt.outln(`\n${winner.who.He}${$.what(winner, 'get')}`, sprintf(xp < 1e+8 ? '%d' : '%.7e', xp), ' experience.', -600)
+                xvt.outln(`\n${winner.who.He}${$.what(winner, 'get')}`, $.expout(xp, winner.user.id == $.player.id), -600)
                 winner.user.xp += xp
             }
             if (loser.user.coin.value) {

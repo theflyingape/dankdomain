@@ -1173,7 +1173,7 @@ module Common {
         return int(Math.random() * int(faces, true)) + 1
     }
 
-    export function experience(level: number, factor = 1, wisdom = 1000): number {
+    export function experience(level: number, factor = 1, wisdom = player.int): number {
         if (level < 1) return 0
         // calculate need to accrue based off PC intellect capacity
         if (wisdom < 1000) wisdom = (1100 + level - 2 * wisdom)
@@ -1181,6 +1181,20 @@ module Common {
         return factor == 1
             ? Math.round(wisdom * Math.pow(2, level - 1))
             : int(wisdom * Math.pow(2, level - 2) / factor)
+    }
+
+    export function expout(xp: number, awarded = true): string {
+        const gain = int(1000 * xp / (experience(player.level) - experience(player.level - 1))) / 10
+        let out = (xp < 1e+8 ? xp.toString() : sprintf('%.3e', xp)) + ' '
+        if (awarded && gain && online.int > 80) {
+            out += xvt.attr(xvt.off, xvt.faint, '(', xvt.bright
+                , gain < 4 ? xvt.black : gain < 11 ? xvt.red : gain < 35 ? xvt.yellow
+                    : gain < 40 ? xvt.lgreen : gain < 80 ? xvt.lcyan : gain < 400 ? xvt.blue
+                        : xvt.magenta, sprintf('%+01.01f%%', gain)
+                , xvt.white, xvt.faint, ') ', xvt.reset)
+        }
+        out += 'experience'
+        return out
     }
 
     export function keyhint(rpc = online, echo = true) {

@@ -976,7 +976,7 @@ module Naval {
         let ram: boolean = false
 
         if (a.user == $.player) $.sound('fire')
-        xvt.out('\n', xvt.cyan, a.user == $.player ? 'Attacker: ' : 'Defender: ')
+        xvt.out('\n', xvt.cyan, a.user == $.player ? 'Attacker: ' : 'Defender: ', xvt.bright)
         for (let i = 0; i < a.user.cannon && d.user.hull; i++) {
             let n = $.dice(100)
             n = (n < 66) ? 0 : (n < 96) ? 1 : (n < 100 || !d.user.id) ? 2 : 3
@@ -986,7 +986,7 @@ module Naval {
                         ram = true
                         d.user.ram = false
                         $.beep()
-                        xvt.out(xvt.magenta, xvt.bright, '^', -30)
+                        xvt.out(xvt.magenta, '^', -35)
                         break
                     }
                 case 2:
@@ -994,7 +994,7 @@ module Naval {
                         if (d.user.cannon) {
                             cannon++
                             d.user.cannon--
-                            xvt.out(xvt.green, xvt.bright, '@', -25)
+                            xvt.out(xvt.green, '@', -30)
                             break
                         }
                     }
@@ -1004,17 +1004,17 @@ module Naval {
                     damage += n
                     d.hull -= n
                     if (n < 50 || d.user.hull < 1 || !d.user.id) {
-                        xvt.out(xvt.red, xvt.bright, '*', -20)
+                        xvt.out(xvt.red, '*', -25)
                         break
                     }
                     else {
                         hull += 50
                         d.user.hull -= 50
-                        xvt.out(xvt.yellow, xvt.bright, d.user.hull ? '#' : '&', -30)
+                        xvt.out(xvt.yellow, d.user.hull ? '#' : '&', -30)
                         break
                     }
                 default:
-                    xvt.out(xvt.reset, '~', -15)
+                    xvt.out(xvt.blue, '~', -20)
             }
         }
 

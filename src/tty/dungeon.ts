@@ -117,7 +117,6 @@ module Dungeon {
     //  entry point
     export function DeepDank(start: number, cb: Function) {
         levels = $.player.level
-        pause = false
         skillkill = false
         Battle.teleported = false
 
@@ -133,6 +132,10 @@ module Dungeon {
 
         if ($.access.sysop) crawling['M'] = { description: 'y liege' }
         generateLevel()
+
+        $.profile({ jpg: `dungeon/level${$.int($.player.level / 100)}`, handle: "Entering", level: $.player.level, pc: 'dungeon' })
+        ROOM = DL.rooms[Y][X]
+        if (ROOM.occupant || !ROOM.monster.length || !ROOM.giftItem) xvt.sleep(1500)
 
         menu()
     }
@@ -921,7 +924,11 @@ module Dungeon {
                                     for (let i in dd)
                                         delete dd[i]
                                     $.dungeon++
+                                    if (!$.sorceress) $.sorceress++
+                                    if (!$.taxboss) $.taxboss++
                                     generateLevel()
+                                    $.warning = 2
+                                    xvt.sessionAllowed += $.warning * 60
                                     break
 
                                 case 'O':
