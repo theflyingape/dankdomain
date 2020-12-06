@@ -744,11 +744,11 @@ module Battle {
                     * tl[l] / tl[w] / ((4 + parties[w].length - parties[l].length) / 2))
 
                 if (parties[w][m] === $.online) {
-                    if (xp)
-                        xvt.out('\nYou get ', $.expout(xp), -400)
-                    if (award)
-                        xvt.out('\nYou get your cut worth ', new $.coins(award).carry(), '.', 400)
                     xvt.outln(-200)
+                    if (xp)
+                        xvt.outln('You get ', $.expout(xp), -400)
+                    if (award)
+                        xvt.outln('You get your cut worth ', new $.coins(award).carry(), '.', 400)
                     $.player.xp += xp
                 }
                 else {
@@ -910,19 +910,15 @@ module Battle {
                 }
             }
             if (xp) {
-                xvt.outln('You get'
-                    , parties[l].length > 1 ? ' a total of ' : ' '
-                    , $.expout(xp, winner === $.online)
-                )
+                xvt.outln('You get', parties[l].length > 1 ? ' a total of ' : ' '
+                    , $.expout(xp, winner === $.online), -100)
                 winner.user.xp += xp
             }
             if (coin.value) {
-                xvt.outln('You get'
-                    , parties[l].length > 1 ? ' a total of ' : ' '
+                xvt.outln(-100, 'You get', parties[l].length > 1 ? ' a total of ' : ' '
                     , coin.carry(), ' '
                     , parties[l].length > 1 ? 'they were ' : loser.who.he + 'was '
-                    , 'carrying.'
-                )
+                    , 'carrying.')
                 winner.user.coin.value += coin.value
             }
         }
@@ -933,7 +929,7 @@ module Battle {
                 xvt.outln(xvt.reset, winner.who.He, 'gets ', $.player.coin.carry(), ' you were carrying.\n')
                 $.player.coin.value = 0
             }
-            xvt.out(600)
+            xvt.sleep(600)
 
             //  manage grace modifiers, but not sticky for NPC
             if (winner.user.cursed) {

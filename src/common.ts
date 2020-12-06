@@ -1184,16 +1184,16 @@ module Common {
     }
 
     export function expout(xp: number, awarded = true): string {
-        const gain = int(1000 * xp / (experience(player.level) - experience(player.level - 1))) / 10
-        let out = (xp < 1e+8 ? xp.toString() : sprintf('%.3e', xp)) + ' '
-        if (awarded && gain && online.int > 80) {
+        const gain = int(100 * xp / (experience(player.level) - experience(player.level - 1)))
+        let out = (xp < 1e+8 ? xp.toString() : sprintf('%.4e', xp)) + ' '
+        if (awarded && gain && online.int >= 90) {
             out += xvt.attr(xvt.off, xvt.faint, '(', xvt.bright
-                , gain < 4 ? xvt.black : gain < 11 ? xvt.red : gain < 35 ? xvt.yellow
-                    : gain < 40 ? xvt.lgreen : gain < 80 ? xvt.lcyan : gain < 400 ? xvt.blue
-                        : xvt.magenta, sprintf('%+01.01f%%', gain)
-                , xvt.white, xvt.faint, ') ', xvt.reset)
+                , gain < 4 ? xvt.black : gain < 10 ? xvt.red : gain < 40 ? xvt.yellow
+                    : gain < 80 ? xvt.green : gain < 130 ? xvt.cyan : gain < 400 ? xvt.blue
+                        : xvt.magenta, sprintf('%+d', gain)
+                , xvt.normal, '%', xvt.faint, xvt.white, ') ', xvt.reset)
         }
-        out += 'experience'
+        out += 'experience.'
         return out
     }
 

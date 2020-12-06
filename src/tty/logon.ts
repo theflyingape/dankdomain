@@ -329,13 +329,12 @@ module Logon {
 
             $.wall(`logged on as a level ${$.player.level} ${$.player.pc}`)
 
-            xvt.out(xvt.cyan, '\nLast callers were: ', xvt.reset)
+            xvt.outln(xvt.cyan, '\nLast callers were: ')
             try {
                 $.callers = JSON.parse(fs.readFileSync('./users/callers.json').toString())
-                for (let last in $.callers) {
-                    xvt.outln(xvt.bright, $.callers[last].who, xvt.normal, ' (', $.callers[last].reason, ')')
-                    xvt.out('                   ')
-                }
+                for (let last in $.callers)
+                    xvt.outln('     ', xvt.bright
+                        , $.callers[last].who, xvt.normal, ' (', $.callers[last].reason, ')')
             }
             catch (err) {
                 xvt.outln(xvt.red, xvt.bright, 'not available')
