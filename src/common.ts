@@ -1191,7 +1191,7 @@ module Common {
                 , gain < 4 ? xvt.black : gain < 10 ? xvt.red : gain < 40 ? xvt.yellow
                     : gain < 80 ? xvt.green : gain < 130 ? xvt.cyan : gain < 400 ? xvt.blue
                         : xvt.magenta, sprintf('%+d', gain)
-                , xvt.normal, '%', xvt.faint, xvt.white, ') ', xvt.reset)
+                , gain > 3 ? xvt.normal : '', '%', xvt.faint, xvt.white, ') ', xvt.reset)
         }
         out += 'experience.'
         return out
