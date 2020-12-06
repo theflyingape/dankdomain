@@ -8,6 +8,7 @@ import fs = require('fs')
 import Battle = require('../battle')
 import xvt = require('xvt')
 import { isBoolean, isNotEmpty } from 'class-validator'
+import { sprintf } from 'sprintf-js'
 
 module Dungeon {
 
@@ -133,9 +134,9 @@ module Dungeon {
         if ($.access.sysop) crawling['M'] = { description: 'y liege' }
         generateLevel()
 
-        $.profile({ jpg: `dungeon/level${$.int($.player.level / 10)}`, handle: "Entering", level: $.player.level, pc: 'dungeon' })
+        $.profile({ jpg: `dungeon/level${sprintf('%x', $.int($.player.level / 9 - 1, true))}`, handle: "Entering", level: $.player.level, pc: 'dungeon' })
         ROOM = DL.rooms[Y][X]
-        if (ROOM.occupant || !ROOM.monster.length || !ROOM.giftItem) xvt.sleep(2500)
+        if (ROOM.occupant || ROOM.monster.length || ROOM.giftItem) xvt.sleep(2800)
 
         menu()
     }

@@ -78,7 +78,7 @@ module Main {
                 if ($.dungeon) {
                     $.PC.profile($.online, 'backOutDown')
                     $.music('.')
-                    $.sound(`dt${$.dungeon}`, -10)
+                    $.sound(`dt${$.dungeon}`, -11)
                     $.dungeon--
                     require('./dungeon').DeepDank($.player.level - 1, menu)
                 }
