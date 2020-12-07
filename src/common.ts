@@ -2697,6 +2697,7 @@ module Common {
                 }
                 run(`DELETE FROM Players WHERE id='${rs[row].id}'`)
                 fs.unlink(`./files/user/${rs[row].id}.txt`, () => { })
+                fs.unlink(`./users/.${rs[row].id}.json`, () => { })
                 xvt.out('x')
                 continue
             }

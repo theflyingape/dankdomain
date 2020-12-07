@@ -13,7 +13,7 @@ sudo find ${TARGET} -type d -exec chmod u+x,g+xs {} \;
 
 cd ${TARGET}
 rm package-lock.json
-env PYTHON=`which python2` npm install
+npm install
 
 # xterm door service
 sudo systemctl start dankdomain-door
