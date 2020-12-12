@@ -1709,8 +1709,10 @@ module Common {
     export function riddle() {
 
         action('clear')
+        PC.profile(online, 'tada', ' - our winner!')
         xvt.outln()
 
+        //  should never occur
         if (player.novice) {
             player.novice = false
             player.expert = true
@@ -1827,7 +1829,7 @@ module Common {
             xvt.outln(tty == 'web' ? -4321 : -432)
 
             profile({ jpg: 'winner', effect: 'fadeInUp' })
-            xvt.outln(xvt.yellow, xvt.bright, 'CONGRATULATIONS!! ', -600
+            xvt.outln(xvt.cyan, xvt.bright, 'CONGRATULATIONS!! ', -600
                 , xvt.reset, ' You have won the game!\n', -600)
 
             xvt.out(xvt.yellow, 'The board will now reset ', -600, xvt.faint)
@@ -1835,10 +1837,11 @@ module Common {
             for (let row in rs) {
                 try {
                     process.kill(rs[row].pid, 'SIGHUP')
-                    xvt.out('x')
+                    xvt.out('x', -10)
                 }
                 catch {
-                    xvt.out('?')
+                    beep()
+                    xvt.out('?', -100)
                 }
                 unlock(rs[row].id)
             }
@@ -1855,6 +1858,7 @@ module Common {
                 newkeys(user)
                 user.keyhints.splice(12)
                 saveUser(user)
+                fs.unlink(`./users/.${user.id}.json`, () => { })
                 xvt.out('.', -10)
             }
             run(`UPDATE Rings SET bearer=''`)   // should be cleared by rerolls
@@ -1871,14 +1875,18 @@ module Common {
                     reroll(bot, bot.pc, bot.level)
                     Object.assign(bot, npc)
                     saveUser(bot)
-                    xvt.out('&')
+                    xvt.out('&', -10)
                 }
                 catch (err) {
+                    beep()
+                    xvt.out('?', -100)
                     break
                 }
             }
 
-            xvt.outln('Happy hunting tomorrow!\n', -5000)
+            xvt.outln(-1250)
+            xvt.outln('Happy hunting ', xvt.uline, 'tomorrow', xvt.nouline, '!')
+            xvt.outln(-2500)
             xvt.hangup()
         }
 
