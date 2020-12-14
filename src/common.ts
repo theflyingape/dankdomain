@@ -1709,7 +1709,7 @@ module Common {
     export function riddle() {
 
         action('clear')
-        PC.profile(online, 'tada', ' - our winner!')
+        PC.profile(online, 'tada')
         xvt.outln()
 
         //  should never occur
@@ -1829,6 +1829,7 @@ module Common {
             xvt.outln(tty == 'web' ? -4321 : -432)
 
             profile({ jpg: 'winner', effect: 'fadeInUp' })
+            title(`${player.handle} is our winner!`)
             xvt.outln(xvt.cyan, xvt.bright, 'CONGRATULATIONS!! ', -600
                 , xvt.reset, ' You have won the game!\n', -600)
 
