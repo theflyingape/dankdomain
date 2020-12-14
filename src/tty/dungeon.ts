@@ -573,7 +573,6 @@ module Dungeon {
                 $.player.killed++
                 $.death('banged head against a wall')
             }
-            if (deep) $.reason += `-${$.romanize(deep + 1)}`
             xvt.outln(xvt.faint, '\nYou take too many hits and die!', -600)
         }
     }
