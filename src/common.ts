@@ -2483,10 +2483,6 @@ module Common {
         return (<active>arg).user !== undefined
     }
 
-    function isUser(arg: any): arg is user {
-        return (<user>arg).id !== undefined
-    }
-
     export function loadKing(): boolean {
         //  King
         let ruler = Object.keys(Access.name).slice(-1)[0]
@@ -2505,7 +2501,7 @@ module Common {
         return false
     }
 
-    export function loadUser(rpc): boolean {
+    export function loadUser(rpc: active | user): boolean {
         let user: user = isActive(rpc) ? rpc.user : rpc
         let sql = 'SELECT * FROM Players WHERE '
         if (user.handle) user.handle = titlecase(user.handle)
@@ -2568,7 +2564,7 @@ module Common {
         }
     }
 
-    export function saveUser(rpc, insert = false, locked = false) {
+    export function saveUser(rpc: active | user, insert = false, locked = false) {
 
         let user: user = isActive(rpc) ? rpc.user : rpc
 

@@ -23,6 +23,7 @@ module Dungeon {
     let pause: boolean
     let refresh: boolean
     let skillkill: boolean
+    let well: boolean
 
     let paper: string[]
     let dd = new Array(10)
@@ -120,6 +121,7 @@ module Dungeon {
         levels = $.player.level
         skillkill = false
         Battle.teleported = false
+        well = true
 
         party = []
         party.push($.online)
@@ -242,6 +244,7 @@ module Dungeon {
                 xvt.outln('the ', -4 * t, 'exit ', -8 * t)
                 xvt.drain()
                 DL.alert = false
+                DL.events++
                 DL.exit = true
             }
         }
@@ -337,7 +340,6 @@ module Dungeon {
 
         if (DL.events > 0 && DL.moves > DL.width && $.dice(me) == 1) {
             DL.events--
-            if (!$.player.novice && !$.access.sysop && !DL.events) DL.moves += DL.width
             $.music('.')
             let rng = $.dice(16)
             if (rng > 8) {
@@ -799,20 +801,20 @@ module Dungeon {
                 xvt.outln(-500)
                 xvt.outln(-500, xvt.bright, xvt.yellow, 'What do you wish to do?', -500)
 
-                let well = 'BFORT'
+                let wishes = 'BFORT'
                 xvt.out($.bracket('B'), 'Bless yourself', -25)
                 xvt.out($.bracket('F'), 'Fix all your damage', -25)
                 xvt.out($.bracket('O'), 'Teleport all the way out', -25)
                 xvt.out($.bracket('R'), 'Resurrect all the dead players', -25)
                 xvt.out($.bracket('T'), 'Teleport to another level', -25)
                 if (!$.player.coward && deep) {
-                    well += 'C'
+                    wishes += 'C'
                     xvt.out($.bracket('C'), 'Curse another player', -50)
                 }
-                if (deep > 1) { xvt.out($.bracket('L'), `Loot another player's money`, -75); well += 'L' }
-                if (deep > 3) { xvt.out($.bracket('G'), 'Grant another call', -100); well += 'G' }
-                if (deep > 5) { xvt.out($.bracket('K'), 'Key hint(s)', -200); well += 'K' }
-                if (deep > 7) { xvt.out($.bracket('D'), 'Destroy dungeon visit', -250); well += 'D' }
+                if (deep > 1) { xvt.out($.bracket('L'), `Loot another player's money`, -75); wishes += 'L' }
+                if (deep > 3) { xvt.out($.bracket('G'), 'Grant another call', -100); wishes += 'G' }
+                if (deep > 5) { xvt.out($.bracket('K'), 'Key hint(s)', -200); wishes += 'K' }
+                if (deep > 7) { xvt.out($.bracket('D'), 'Destroy dungeon visit', -250); wishes += 'D' }
                 xvt.outln(-500)
                 xvt.drain()
 
@@ -821,9 +823,10 @@ module Dungeon {
                     'well': {
                         cb: () => {
                             ROOM.occupant = ''
+                            well = false
                             xvt.outln()
                             let wish = xvt.entry.toUpperCase()
-                            if (wish == '' || well.indexOf(wish) < 0) {
+                            if (wish == '' || wishes.indexOf(wish) < 0) {
                                 $.sound('oops')
                                 xvt.app.refocus()
                                 return
@@ -926,6 +929,7 @@ module Dungeon {
                                     $.dungeon++
                                     if (!$.sorceress) $.sorceress++
                                     if (!$.taxboss) $.taxboss++
+                                    if (!well) well = true
                                     generateLevel()
                                     $.warning = 2
                                     xvt.sessionAllowed += $.warning * 60
@@ -1772,7 +1776,6 @@ module Dungeon {
                 xvt.out(xvt.faint, '"', xvt.normal, xvt.green, 'Of course, there is a price to pay, something you may hold dear.', xvt.reset, xvt.faint, '"')
                 xvt.app.focus = 'offer'
                 ROOM.occupant = ''
-                $.sorceress--
                 return false
         }
 
@@ -2447,7 +2450,7 @@ module Dungeon {
                 DL.rooms[y][x].occupant = 'wheel'
             }
             //	wishing well
-            if ($.dice((120 - level) / 3 - dank) == 1) {
+            if (well && $.dice((120 - level) / 3 - dank) == 1) {
                 y = $.dice(DL.rooms.length) - 1
                 x = $.dice(DL.width) - 1
                 DL.rooms[y][x].occupant = 'well'
@@ -3334,8 +3337,10 @@ module Dungeon {
                     break
 
                 case 'well':
-                    if (identify && !icon)
+                    if (identify && !icon) {
                         o = xvt.attr(`  ${$.player.emulation == 'XT' ? xvt.attr(xvt.lblue, '⛃', xvt.reset) : xvt.attr(xvt.blue, xvt.bright, $.player.emulation == 'PC' ? '\xF5' : '*')}  `)
+                        well = false
+                    }
                     break
 
                 case 'wheel':
@@ -3374,8 +3379,10 @@ module Dungeon {
                     break
 
                 case 'witch':
-                    if (identify && !icon)
+                    if (identify && !icon) {
                         o = a + xvt.attr(xvt.green, xvt.faint, `  ${$.player.emulation == 'XT' ? '∢' : '%'}  `, xvt.normal)
+                        if ($.sorceress) $.sorceress--
+                    }
                     break
             }
         }

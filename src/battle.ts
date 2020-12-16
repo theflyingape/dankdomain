@@ -150,11 +150,12 @@ module Battle {
                 $.sound('crone', 30)
             }
             else {
-                $.animated('fadeOut')
+                $.animated('hinge')
                 $.sound('naval_f', 25)
                 $.news(`\tdefeated ${$.witch.user.handle}`)
                 $.wall(`defeated ${$.witch.user.handle}`)
                 $.player.coward = false
+                $.sorceress = 0
             }
         }
 
