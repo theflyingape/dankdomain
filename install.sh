@@ -19,7 +19,7 @@ echo "Installing into ${TARGET}"
 [ -n "`which resize`" ] || sudo dnf install xterm-resize
 
 # this.package install script
-env PYTHON=`which python2` npm install
+npm install
 
 # transpile
 npm run build

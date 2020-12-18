@@ -1,16 +1,38 @@
 {
+    "editor.cursorBlinking": "smooth",
+    "editor.cursorSmoothCaretAnimation": true,
     "editor.fontFamily": "'Noto Sans Mono','Noto Color Emoji','Lucida Console',Consolas,monospace",
+    "editor.fontSize": 16,
+    "editor.formatOnPaste": true,
     "editor.formatOnSave": true,
     "editor.minimap.enabled": false,
     "editor.tabSize": 4,
     "editor.wordWrap": "on",
+    "explorer.confirmDelete": false,
+    "files.exclude": {
+        "**/.DS_Store": true,
+        "**/.git": true,
+        "**/*.js": {
+            "when": "$(basename).ts"
+        },
+        "node_modules/": true
+    },
+    "git.confirmSync": false,
+    "git.enableSmartCommit": true,
+    "git.autofetch": true,
+    "markdown.extension.preview.autoShowPreviewToSide": true,
     "typescript.tsdk": "node_modules/typescript/lib",
     "terminal.integrated.fontFamily": "'Noto Sans Mono','Noto Color Emoji','Lucida Console',Consolas,monospace",
+    "terminal.integrated.fontSize": 14,
     "terminal.integrated.fontWeight": "400",
     "terminal.integrated.fontWeightBold": "500",
     "terminal.integrated.experimentalUseTitleEvent": true,
     "terminal.integrated.experimentalLinkProvider": true,
     "terminal.integrated.enableBell": true,
     "terminal.integrated.cursorBlinking": true,
-    "terminal.integrated.copyOnSelection": true
+    "terminal.integrated.cursorStyle": "block",
+    "terminal.integrated.copyOnSelection": true,
+    "window.zoomLevel": 2.5,
+    "window.titleSeparator": " :: ",
+    "workbench.colorTheme": "Default Light+"
 }

@@ -1,6 +1,6 @@
 {
 	"name": "dankdomain",
-	"version": "2.9.1",
+	"version": "2.9.2",
 	"description": "Ɗanƙ Ɗomaiƞ: the return of Hack & Slash",
 	"main": "telnet",
 	"publisher": "theflyingape",
@@ -15,7 +15,7 @@
 		"build": "./build.sh",
 		"bundle": "./watchify ./build/door/client.js -v -o ./build/door/static/bundle.js",
 		"mame": "./build/mame.sh",
-		"start": "node ./build/door/app",
+		"start": "[ -n \"${TARGET}\" ] && node ${TARGET}/door/app || node ./build/door/app",
 		"test": "node ./build/playwright",
 		"tty": "./build/tty.sh",
 		"watch": "./tsc -b ./src -w"
@@ -58,7 +58,6 @@
 		"node-pty": "^0.9.0",
 		"nodemailer": "^6.4.17",
 		"nodemailer-smtp-transport": "^2.7.4",
-		"playwright": "^1.7.0",
 		"romanize": "^1.1.1",
 		"sprintf-js": "^1.1.2",
 		"telnet-socket": "^0.2.3",
