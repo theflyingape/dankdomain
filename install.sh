@@ -1,13 +1,28 @@
 #!/bin/sh
 #
+# workstation/server install script - consider using docker
+uname -on
+[ -s /etc/os-release ] && source /etc/os-release
+if [ -n "${ID}" ]; then
+    [ -n "${PRETTY_NAME}" ] && echo -e "\e[${ANSI_COLOR}m${PRETTY_NAME}\e[m" || echo "${NAME} ${VERSION}"
+fi
+
+# dnf package management?
+[ -n "`which dnf`" ] || exit
+
 # let's prompt for admin credentials now, if necessary
-sudo -v || exit
+[ -n "$1" ] && TARGET="$1" || TARGET=/usr/local/games
+echo "Install into ${TARGET} ?"
+echo -n "Enter 'Y' to continue: "
+read cont
+[ "${cont}" == "Y" ] || exit
+sudo -B -v || exit
+
 member=`sudo groupmems -g games -l | grep -c nobody`
 [ $member -eq 0 ] && sudo groupmems -g games -a nobody
 member=`sudo groupmems -g games -l | grep -c $USER`
 [ $member -eq 0 ] && sudo groupmems -g games -a $USER
 
-[ -n "$1" ] && TARGET="$1" || TARGET=/usr/local/games
 [ -d "${TARGET}" ] || sudo mkdir -v "${TARGET}"
 TARGET="${TARGET}/`basename ${PWD}`"
 echo "Installing into ${TARGET}"
@@ -15,7 +30,7 @@ echo "Installing into ${TARGET}"
 [ -d "${TARGET}/users" ] || sudo mkdir -v "${TARGET}/users"
 
 # let's start with the services
-[ -n "`which node-gyp`" ] || sudo dnf install node-gyp nodejs-typescript
+[ -n "`which node-gyp`" ] || sudo dnf install node-gyp nodejs-typescript rsync
 [ -n "`which resize`" ] || sudo dnf install xterm-resize
 
 # this.package install script
