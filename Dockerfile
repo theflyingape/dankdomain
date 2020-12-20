@@ -3,20 +3,10 @@
 #
 # docker build -t dankdomain .
 FROM node:buster
-EXPOSE 1939
-EXPOSE 1986
-
-ENV LANG=C.UTF-8
-ENV TERM=xterm-256color
-
-STOPSIGNAL SIGINT
 
 # set the working directory
 ENV TARGET=/usr/games/dankdomain
 WORKDIR ${TARGET}
-CMD ["node", "door/app"]
-
-#RUN apt-get update
 
 #
 # add package manifest
@@ -32,3 +22,14 @@ COPY build ${TARGET}
 # optional use: ./etc/network.json
 RUN openssl req -newkey rsa:2048 -nodes -keyout door/key.pem -x509 -days 365 -out door/cert.pem \
     -subj "/C=US/ST=Rhode Island/L=Providence/O=Dank Domain/OU=Game/CN=localhost"
+
+# cli tools
+RUN apt-get update && apt-get install -y rsync telnet
+
+# app runtime
+EXPOSE 1939
+EXPOSE 1986
+STOPSIGNAL SIGINT
+ENV LANG=C.UTF-8
+ENV TERM=xterm-256color
+CMD ["node", "door/app"]
