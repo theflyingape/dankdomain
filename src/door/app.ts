@@ -20,6 +20,11 @@ process.on('uncaughtException', (err, origin) => {
     console.log(`DOOR ${origin} ${err}`)
 })
 
+process.on('SIGINT', () => {
+    console.log(`interrupted - shutting down`)
+    process.exit()
+})
+
 process.chdir(__dirname)
 console.log(`cwd: ${__dirname}`)
 

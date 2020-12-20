@@ -14,8 +14,9 @@
 	"scripts": {
 		"build": "./build.sh",
 		"bundle": "./watchify ./build/door/client.js -v -o ./build/door/static/bundle.js",
+		"debug": "node ./build/door/app",
 		"mame": "./build/mame.sh",
-		"start": "[ -n \"${TARGET}\" ] && node ${TARGET}/door/app || node ./build/door/app",
+		"start": "node ./door/app",
 		"test": "node ./build/playwright",
 		"tty": "./build/tty.sh",
 		"watch": "./tsc -b ./src -w"
