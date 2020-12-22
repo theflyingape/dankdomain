@@ -18,7 +18,7 @@ module Dungeon {
     let potions: vial[] = []
     let tl: number
 
-    let idle: number = -1
+    let idle: number
     let looked: boolean
     let pause: boolean
     let refresh: boolean
@@ -118,6 +118,7 @@ module Dungeon {
 
     //  entry point
     export function DeepDank(start: number, cb: Function) {
+        idle = -1
         levels = $.player.level
         skillkill = false
         Battle.teleported = false
@@ -143,7 +144,7 @@ module Dungeon {
         menu()
     }
 
-    //	check player status: level up, changed, dead
+    //	check player status: changed, dead, level up
     //	did player cast teleport?
     //	did player enter a room?
     //	does last output(s) need a pause?
@@ -153,11 +154,12 @@ module Dungeon {
     export function menu(suppress = false) {
 
         //	check player status
+        if ($.online.altered) $.saveUser($.player)
         if ($.reason || xvt.reason) {
             $.death(`failed to escape ${$.romanize(deep + 1)}.${Z + 1} - ${$.reason || xvt.reason}`)
             DL.map = `Marauder's map`
             scroll()
-            if ($.checkTime() < 0 && $.online.hp > 0) {
+            if ($.online.hp > 0) {
                 if (idle > 0) $.sound('thief2', 6)
                 $.online.hp = idle
             }
@@ -175,7 +177,6 @@ module Dungeon {
                 if ($.jumped > (19 - $.int(deep / 3))) skillkill = true
             }
         }
-        if ($.online.altered) $.saveUser($.player)
 
         //	did player cast teleport?
         if (!Battle.retreat && Battle.teleported) {
@@ -603,7 +604,7 @@ module Dungeon {
             return true
 
         xvt.outln()
-        if (idle > 0) idle--
+        if (idle >= 0) idle--
         if (looked) return true
         recovery(ROOM.occupant == 'cleric' ? 600 : 200)
 
