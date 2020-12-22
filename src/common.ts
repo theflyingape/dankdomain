@@ -714,13 +714,15 @@ module Common {
         if (t !== timeleft) {
             timeleft = t
             if (timeleft < 0) {
-                reason = 'got exhausted'
+                if (online.hp > 0) online.hp = 0
+                reason = reason || 'got exhausted'
             }
             else if (timeleft <= warning) {
                 warning = timeleft
+                xvt.outln()
                 beep()
-                xvt.outln(xvt.bright, `\n *** `, xvt.faint, `${warning}-minute${warning !== 1 ? 's' : ''} remain${warning == 1 ? 's' : ''}`, xvt.bright, ` *** `)
-                sound('hurry')
+                xvt.outln(xvt.bright, ` *** `, xvt.faint, `${warning}-minute${warning !== 1 ? 's' : ''} remain${warning == 1 ? 's' : ''}`, xvt.bright, ` *** `, -100)
+                sound('hurry', 4)
             }
         }
 
@@ -1495,11 +1497,13 @@ module Common {
                     saveUser(player)
                     news(`\trerolled as${an(player.pc)}`)
                     if (immortal) {
+                        online.hp = 0
                         reason = 'became immortal'
                         xvt.hangup()
                     }
                     else {
-                        xvt.outln(xvt.yellow, `\n... and you get to complete any remaining parts to this play.`)
+                        xvt.outln()
+                        xvt.outln(xvt.yellow, '... ', xvt.bright, 'and you get to complete any remaining parts to this play.')
                         require('./tty/main').menu(true)
                     }
                     return
@@ -2066,9 +2070,16 @@ module Common {
         xvt.out(xvt.clear, -10) // allow XTerm to flush
     }
 
-    export function death(by: string) {
+    export function death(by: string, killed = false) {
+        online.hp = 0
+        online.sp = 0
+        online.altered = true
         reason = by
         profile({ handle: `💀 ${reason} 💀`, png: `death${player.today}`, effect: 'fadeInDownBig' })
+        if (killed) {
+            player.killed++
+            sound('killed', 11)
+        }
     }
 
     //  render a menu of options and return the prompt
@@ -2307,7 +2318,7 @@ module Common {
     if (!rs.length) {
         xvt.out('\ninitializing online ... ')
         run(`CREATE TABLE IF NOT EXISTS Online (id text PRIMARY KEY, pid numeric, lockdate numeric, locktime numeric)`)
-        xvt.out('done.', -250)
+        xvt.out('done.')
     }
 
     rs = query(`SELECT * FROM sqlite_master WHERE name='Players' AND type='table'`)
@@ -2331,24 +2342,11 @@ module Common {
             retreats numeric, steals numeric, tl numeric, tw numeric)`)
     }
 
-    let npc = <user>{}
-    Object.assign(npc, JSON.parse(fs.readFileSync(`${users}/sysop.json`).toString()))
-    rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
-    if (!rs.length) {
-        xvt.out(`[${npc.handle}]`)
-        Object.assign(sysop, npc)
-        newkeys(sysop)
-        reroll(sysop, sysop.pc, sysop.level)
-        sysop.xplevel = 0
-        sysop.level = npc.level
-        saveUser(sysop, true)
-    }
-
     rs = query(`SELECT * FROM sqlite_master WHERE name='Rings' AND type='table'`)
     if (!rs.length) {
         xvt.out('\ninitializing (unique) rings ... ')
         run(`CREATE TABLE IF NOT EXISTS Rings (name text PRIMARY KEY, bearer text)`)
-        xvt.out('done.', -250)
+        xvt.out('done.')
     }
     for (let i in Ring.name)
         ringBearer(i)
@@ -2360,7 +2358,7 @@ module Common {
             name text PRIMARY KEY, members text, win numeric, loss numeric, banner numeric, color numeric
         )`)
         run(`INSERT INTO Gangs VALUES ( 'Monster Mash', '_MM1,_MM2,_MM3,_MM4', 0, 0, 0, 0 )`)
-        xvt.out('done.', -250)
+        xvt.out('done.')
     }
 
     rs = query(`SELECT * FROM sqlite_master WHERE name='Deeds' AND type='table'`)
@@ -2369,7 +2367,21 @@ module Common {
         run(`CREATE TABLE IF NOT EXISTS Deeds (pc text KEY,
             deed text KEY, date numeric, hero text, value numeric
         )`)
-        xvt.out('done.', -250)
+        xvt.out('done.')
+    }
+
+    //  customize the Dank Domain waiting for its ruler (1st player to register)
+    let npc = <user>{}
+    Object.assign(npc, JSON.parse(fs.readFileSync(`${users}/sysop.json`).toString()))
+    rs = query(`SELECT id FROM Players WHERE id='${npc.id}'`)
+    if (!rs.length) {
+        xvt.out(`[${npc.handle}]`)
+        Object.assign(sysop, npc)
+        newkeys(sysop)
+        reroll(sysop, sysop.pc, sysop.level)
+        sysop.xplevel = 0
+        sysop.level = npc.level
+        saveUser(sysop, true)
     }
 
     //  customize the Master of Whisperers NPC
@@ -2741,9 +2753,11 @@ module Common {
             }
             catch (err) {
                 if (err.code !== 'SQLITE_CONSTRAINT_PRIMARYKEY') {
+                    xvt.outln()
                     xvt.beep()
-                    xvt.outln(xvt.reset, '\n?Unexpected error: ', String(err))
-                    reason = 'defect - ' + err.code
+                    xvt.outln(xvt.red, xvt.bright, '?Unexpected error: ', xvt.reset, String(err))
+                    if (online.hp) online.hp = 0
+                    reason = `defect - ${err.code}`
                     xvt.hangup()
                 }
                 return false
@@ -2774,9 +2788,9 @@ module Common {
             if (!errOk) {
                 xvt.outln()
                 beep()
-                xvt.outln(xvt.red, '?Unexpected error: ', xvt.bright, String(err))
+                xvt.outln(xvt.red, xvt.bright, '?Unexpected error: ', xvt.reset, String(err))
                 xvt.out(q)
-                reason = 'defect - ' + err.code
+                reason = `defect - ${err.code}`
                 xvt.hangup()
             }
             return []
@@ -2792,27 +2806,17 @@ module Common {
                 return cmd.run(...params)
             }
             catch (err) {
+                xvt.outln()
                 xvt.beep()
-                xvt.out(xvt.reset, '\n?Unexpected SQL error: ', String(err))
+                xvt.out(xvt.red, xvt.bright, '?Unexpected SQL error: ', xvt.reset, String(err))
                 if (--retry) {
                     xvt.outln(' -- retrying')
                     continue
                 }
                 if (!errOk) {
-                    xvt.out('\n?FATAL SQL operation: ', sql)
-                    /***
-                    sql = users + user.id + '.sql'
-                    if (process.platform == 'linux') {
-                        require('child_process').exec(`
-                            sqlite3 ${DD} <<-EOD
-                            .mode insert
-                            .output ${sql}
-                            select * from Players where id = '${user.id}';
-                            EOD
-                        `)
-                    }
-                    ***/
-                    reason = 'defect - ' + err.code
+                    xvt.out(' -- FATAL SQL operation: ', sql)
+                    if (online.hp) online.hp = 0
+                    reason = `defect - ${err.code}`
                     xvt.hangup()
                 }
                 return { changes: 0, lastInsertROWID: 0 }

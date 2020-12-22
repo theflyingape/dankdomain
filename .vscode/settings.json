@@ -1,8 +1,8 @@
 {
     "editor.cursorBlinking": "smooth",
     "editor.cursorSmoothCaretAnimation": true,
+    "editor.cursorStyle": "block",
     "editor.fontFamily": "'Noto Sans Mono','Noto Color Emoji','Lucida Console',Consolas,monospace",
-    "editor.fontSize": 16,
     "editor.formatOnPaste": true,
     "editor.formatOnSave": true,
     "editor.minimap.enabled": false,
@@ -23,7 +23,6 @@
     "markdown.extension.preview.autoShowPreviewToSide": true,
     "typescript.tsdk": "node_modules/typescript/lib",
     "terminal.integrated.fontFamily": "'Noto Sans Mono','Noto Color Emoji','Lucida Console',Consolas,monospace",
-    "terminal.integrated.fontSize": 14,
     "terminal.integrated.fontWeight": "400",
     "terminal.integrated.fontWeightBold": "500",
     "terminal.integrated.experimentalUseTitleEvent": true,
@@ -32,7 +31,6 @@
     "terminal.integrated.cursorBlinking": true,
     "terminal.integrated.cursorStyle": "block",
     "terminal.integrated.copyOnSelection": true,
-    "window.zoomLevel": 2.5,
     "window.titleSeparator": " :: ",
     "workbench.colorTheme": "Default Light+"
 }

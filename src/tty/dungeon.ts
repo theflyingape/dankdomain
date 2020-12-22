@@ -151,7 +151,18 @@ module Dungeon {
     //	is a monster spawning needed?
     //	position Hero and get user command
     export function menu(suppress = false) {
-        //	check player status: level up, changed, dead
+
+        //	check player status
+        if ($.reason || xvt.reason) {
+            $.death(`failed to escape ${$.romanize(deep + 1)}.${Z + 1} - ${$.reason || xvt.reason}`)
+            DL.map = `Marauder's map`
+            scroll()
+            if ($.checkTime() < 0 && $.online.hp > 0) {
+                if (idle > 0) $.sound('thief2', 6)
+                $.online.hp = idle
+            }
+            xvt.hangup()
+        }
         if ($.player.level + 1 < $.sysop.level) {
             if ($.checkXP($.online, menu)) {
                 DL.exit = false
@@ -164,15 +175,7 @@ module Dungeon {
                 if ($.jumped > (19 - $.int(deep / 3))) skillkill = true
             }
         }
-
         if ($.online.altered) $.saveUser($.player)
-        if ($.reason || xvt.reason) {
-            if ($.checkTime() < 0 && $.online.hp > 0) $.online.hp = idle
-            $.death(`failed to escape ${$.romanize(deep + 1)}.${Z + 1} - ${$.reason || xvt.reason}`)
-            DL.map = `Marauder's map`
-            scroll()
-            xvt.hangup()
-        }
 
         //	did player cast teleport?
         if (!Battle.retreat && Battle.teleported) {
@@ -349,6 +352,7 @@ module Dungeon {
                 }
                 xvt.out(xvt.faint, 'A bat flies by and soils ', xvt.normal, 'your ')
                 $.player.toAC -= $.dice(deep)
+                $.online.altered = true
                 xvt.out($.PC.armor())
                 if ($.player.emulation == 'XT') xvt.out(' 💩', -600)
             }
@@ -359,6 +363,7 @@ module Dungeon {
                 }
                 xvt.out(xvt.blue, 'A drop of ', xvt.bright, 'acid water burns ', xvt.normal, 'your ')
                 $.player.toWC -= $.dice(deep)
+                $.online.altered = true
                 xvt.out($.PC.weapon(), -600)
             }
             else if (rng > 2) {
@@ -562,20 +567,20 @@ module Dungeon {
 
     function oof(wall: string) {
         $.PC.profile($.online, 'bounce', ` - Dungeon ${$.romanize(deep + 1)}.${Z + 1}`)
-        $.sound('wall')
-        xvt.outln(xvt.bright, xvt.yellow, 'Oof!', xvt.normal, ` There is a wall to the ${wall}.`, -400)
+        xvt.out(xvt.yellow, xvt.bright, 'Oof! ')
+        $.sound('wall', 3)
+        xvt.outln(xvt.normal, `There is a wall to the ${wall}.`, -300)
         xvt.drain()
         if (($.online.hp -= $.dice(deep + Z + 1)) < 1) {
-            $.online.hp = 0
+            xvt.outln()
             $.music('.')
+            xvt.outln(xvt.faint, 'You take too many hits and die!')
             if (Battle.retreat)
-                $.death('running into a wall')
+                $.death('running into a wall', true)
             else {
+                $.death('banged head against a wall', true)
                 $.online.hp = 1
-                $.player.killed++
-                $.death('banged head against a wall')
             }
-            xvt.outln(xvt.faint, '\nYou take too many hits and die!', -600)
         }
     }
 
@@ -1074,10 +1079,7 @@ module Dungeon {
                                         xvt.sessionAllowed += 300
                                         break
                                     case 1:
-                                        $.online.hp = 0
-                                        $.online.sp = 0
-                                        $.death('Wheel of Death')
-                                        $.sound('killed', 11)
+                                        $.death('Wheel of Death', true)
                                         break
                                     case 2:
                                         if ($.player.cursed) {
@@ -1156,7 +1158,6 @@ module Dungeon {
                                         if ($.online.adept) $.player.level += $.dice($.player.level)
                                         $.reroll($.player, $.PC.random('monster'), $.player.level)
                                         $.activate($.online)
-                                        $.online.altered = true
                                         $.player.gender = ['F', 'M'][$.dice(2) - 1]
                                         $.saveUser($.player)
                                         $.news(`\t${$.player.handle} got morphed into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
@@ -1393,10 +1394,11 @@ module Dungeon {
 
                 if (!$.player.cursed && !$.player.novice && $.dice((Z > $.player.level ? Z : 1) + 20 * $.player.immortal + $.player.level + $.online.cha) == 1) {
                     $.profile({
-                        png: ($.PC.name['player'][$.player.pc] || $.PC.name['immortal'][$.player.pc] ? 'player' : 'monster') + '/' + $.player.pc.toLowerCase()
-                            + ($.player.gender == 'F' ? '_f' : ''), effect: 'flip'
+                        png: ($.PC.name['player'][$.player.pc] || $.PC.name['immortal'][$.player.pc] ? 'player' : 'monster') + '/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''),
+                        effect: 'flip'
                     })
-                    $.player.coward = true; $.online.altered = true
+                    $.player.coward = true
+                    $.online.altered = true
                     xvt.outln('doppelganger', xvt.normal, ' waiting for you.', -1000)
                     xvt.outln(-1200)
 
@@ -1412,9 +1414,8 @@ module Dungeon {
                     }
                     else {
                         $.player.cursed = 'wiz!'
-                        xvt.out(xvt.bright, xvt.black, 'A dark cloud hovers over')
+                        xvt.out(xvt.black, xvt.bright, 'A dark cloud hovers over')
                     }
-                    $.saveUser($.player)
                     xvt.outln(' you.')
                     $.news(`\tcursed by a doppelganger!`)
 
@@ -1429,7 +1430,8 @@ module Dungeon {
                         x = $.dice(DL.width) - 1
                     } while (DL.rooms[y][x].type == 'cavern' || DL.rooms[y][x].occupant)
                     DL.rooms[y][x].occupant = 'wizard'
-                    $.player.coward = false; $.online.altered = true
+                    $.player.coward = false
+                    $.online.altered = true
                 }
                 else if (!$.player.novice && $.dice(Z + $.online.cha) == 1) {
                     $.profile({
@@ -1661,7 +1663,6 @@ module Dungeon {
                                     if ($.online.adept) $.player.level += $.dice($.player.level)
                                     $.reroll($.player, $.PC.random('monster'), $.player.level)
                                     $.activate($.online)
-                                    $.online.altered = true
                                     $.player.gender = ['F', 'M'][$.dice(2) - 1]
                                     $.saveUser($.player)
                                     $.sound('crone', 21)
@@ -3136,12 +3137,12 @@ module Dungeon {
                 if ($.player.emulation == 'XT') xvt.out(' ', v % 2 ? '🌡️ ' : '🧪')
                 xvt.outln($.an(potion[v]), xvt.normal, '.')
             }
-            $.sound('quaff', 6)
+            $.sound('quaff', 5)
             switch (v) {
                 //	Potion of Cure Light Wounds
                 case 0:
-                    $.sound('yum')
                     $.online.hp += $.PC.hp() + $.dice($.player.hp - $.online.hp)
+                    $.sound('yum', 3)
                     break
 
                 //	Vial of Weakness
@@ -3186,13 +3187,10 @@ module Dungeon {
 
                 //	Vial of Slaad Secretions
                 case 9:
-                    $.sound('hurt')
-                    if (($.online.hp -= $.dice($.player.hp / 2)) < 1) {
-                        $.online.hp = 0
-                        $.online.sp = 0
+                    $.online.hp -= $.dice($.player.hp / 2)
+                    $.sound('hurt', 3)
+                    if ($.online.hp < 1)
                         $.death(`quaffed${$.an(potion[v])}`)
-                        $.sound('killed', 11)
-                    }
                     break
 
                 //	Potion of Mana
@@ -3224,7 +3222,6 @@ module Dungeon {
 
                 //	Vial of Crack
                 case 13:
-                    $.music('crack')
                     $.PC.adjust('str'
                         , $.online.str > 40 ? -$.dice(6) - 4 : -3
                         , $.player.str > 60 ? -$.dice(3) - 2 : -2
@@ -3244,17 +3241,14 @@ module Dungeon {
                     $.online.sp -= $.PC.sp()
                     if ($.online.sp < 0) $.online.sp = 0
                     $.online.hp -= $.PC.hp()
-                    if ($.online.hp < 0) {
-                        $.online.hp = 0
-                        $.reason = `quaffed${$.an(potion[v])}`
-                        xvt.sleep(600)
-                        drawHero()
-                    }
+                    $.music('crack', 6)
+                    if ($.online.hp < 1)
+                        $.death(`quaffed${$.an(potion[v])}`)
                     break
 
                 //	Potion of Augment
                 case 14:
-                    $.sound('hone', 12)
+                    $.sound('hone', 11)
                     $.PC.adjust('str'
                         , 100 + $.dice(100 - $.online.str)
                         , $.dice(3) + 2
@@ -3271,18 +3265,15 @@ module Dungeon {
                         , 100 + $.dice(100 - $.online.cha)
                         , $.dice(3) + 2
                         , $.player.maxcha < 95 ? 2 : 1)
-                    $.sound('heal')
                     $.online.hp += $.PC.hp()
                     $.online.sp += $.PC.sp()
+                    $.online.altered = true
+                    $.sound('heal', 3)
                     break
 
                 //	Beaker of Death
                 case 15:
-                    $.online.hp = 0
-                    $.online.sp = 0
-                    $.reason = `quaffed${$.an(potion[v])}`
-                    $.profile({ png: 'potion/beaker', handle: `💀 ${potion[v]} 💀`, effect: 'fadeInDown' })
-                    $.sound('killed', 11)
+                    $.death(`quaffed${$.an(potion[v])}`, true)
                     break
             }
         }
