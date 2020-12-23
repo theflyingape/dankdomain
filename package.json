@@ -1,6 +1,6 @@
 {
-	"name": "dankdomain",
-	"version": "2.9.2",
+	"name": "@theflyingape/dankdomain",
+	"version": "2.9.3",
 	"description": "Ɗanƙ Ɗomaiƞ: the return of Hack & Slash",
 	"main": "telnet",
 	"publisher": "theflyingape",
@@ -17,7 +17,7 @@
 		"debug": "node ./build/door/app",
 		"mame": "./build/mame.sh",
 		"start": "node ./door/app",
-		"test": "node ./build/playwright",
+		"test": "exit 0",
 		"tty": "./build/tty.sh",
 		"watch": "./tsc -b ./src -w"
 	},
