@@ -1,0 +1,38 @@
+{
+    "id": "_OLD",
+    "handle": "old sea hag",
+    "name": "Susan Clara Marcie",
+    "dob": 716396,
+    "sex": "I",
+    "gender": "F",
+    "access": "Inactive",
+    "email": "nobody@mail.com",
+    "password": "\n",
+    "expires": 0,
+    "pc": "Psionic",
+    "level": 97,
+    "str": 77,
+    "int": 97,
+    "dex": 87,
+    "cha": 67,
+    "hp": 2020,
+    "sp": 9005,
+    "poison": 2,
+    "weapon": "Flaming Sword",
+    "armor": "Ring of Insanity",
+    "poisons": [
+        12
+    ],
+    "spells": [
+        11,
+        13,
+        19
+    ],
+    "rings": [
+        "Magus",
+        "Medusa's"
+    ],
+    "realestate": "Cabin",
+    "security": "Moat",
+    "xplevel": 90
+}

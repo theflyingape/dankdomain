@@ -1,0 +1,6 @@
+{
+	"host": "atom",
+	"port": 25,
+	"secure": false,
+	"connectionTimeout": 5000
+}

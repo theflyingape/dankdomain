@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+  <title>Ɗanƙ Ɗomaiƞ</title>
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Carter+One&family=Grenze+Gotisch:wght@300;500&family=VT323&display=swap"
+    rel="stylesheet">
+  <link href="assets/vt220.woff2" rel="preload" as="font" type="font/woff2" crossorigin>
+  <link href="assets/notomono.woff2" rel="preload" as="font" type="font/woff2" crossorigin>
+  <link href="assets/notoemoji.woff2" rel="preload" as="font" type="font/woff2" crossorigin>
+  <link href="favicon.ico" rel="icon" type="image/x-icon">
+  <link href="favicon.ico" rel="shortcut icon" type="image/x-icon">
+  <link href="manifest.json" rel="manifest">
+  <link href="animate.min.css" rel="stylesheet">
+  <link href="ddgame.css" rel="stylesheet">
+  <link href="xterm.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="author" content="Robert Hurst">
+  <meta name="application-name" content="dankdomain">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="dankdomain">
+  <meta name="msapplication-starturl" content="https://play.ddgame.us/">
+  <meta name="theme-color" content="#102040" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, minimum-scale=0.5, maximum-scale=1.0, shrink-to-fit=yes, user-scalable=no">
+</head>
+
+<body>
+  <div class="row">
+    <div id="monitor" class="column">
+      <div id="terminal"></div>
+      <div id="wall">
+        <table id="splash">
+          <tr>
+            <td></td>
+            <td style="text-align:center; font-size:200%; " title="Rob & Lois">
+              🤴 <a href="https://www.ddgame.us" title="Player's Manual">
+                <span style="font-family:notomono; font-weight: 500; color:slategray;">Ɗanƙ Ɗomaiƞ</span></a> 👸<br>
+              <span style="color:dimgray; font-family:'Grenze Gotisch';font-size:smaller;">
+                the return of Hack &amp; Slash</span>
+            </td>
+            <td><img src="images/castle.png" style="height:96px; width:96px;" title="Fortune & Glory"></td>
+          </tr>
+          <tr>
+            <td rowspan=4><img src="images/joust.png" style="height:96px; width:96px;" title="Player versus Player">
+            </td>
+            <td colspan=2>&nbsp;· Press <button onclick="window.location.reload(true);"> REFRESH </button> to
+              re-connect
+            </td>
+          </tr>
+          <tr>
+            <td colspan=2>&nbsp;· Read today's <a href="today.txt" target="_blank">The Olde Tavern</a> news</td>
+          </tr>
+          <tr>
+            <td colspan=2 id="lurker-state">
+              &nbsp;· <em>loading</em> ...<select id="lurker-list" hidden></select>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <hr>
+            </td>
+            <td rowspan=2 style="vertical-align:middle"><img src="images/dragon.png" style="height:96px; width:96px;"
+                title="Classic gaming"></td>
+          </tr>
+          <tr id="a2hs" hidden>
+            <td style="text-align:center"><a href="#" id="a2hs-button" title="Add app to homescreen" tabindex=-1><img
+                  src="assets/a2hs.svg" style="height:36px; width:36px;"></a></td>
+            <td>
+              <span style="color:lightgray; font-size:smaller;">
+                &nbsp;Google <b>Chrome</b> for Android, mobile or desktop can&nbsp;<br>
+                &nbsp;use <b>Install 👑 DDgame.us…</b> menu option to play&nbsp;<br>
+                &nbsp;game as a fullscreen <b>app</b>&nbsp;</span>
+            </td>
+          </tr>
+          <tr id="desktop" hidden>
+            <td></td>
+            <td>Any of the <a href="https://en.wikipedia.org/wiki/Chromium_(web_browser)#Licensing"
+                target="_blank">Chromium</a>-based browsers work best<br>
+              Microsoft <b>I</b>nternet <b>E</b>xplorer is <b>no longer supported</b>
+            </td>
+          </tr>
+          <tr>
+            <td style="text-align:center;"><span style="font-size:smaller">Come visit us<br>on <a
+                  href="http://www.originalhackandslash.net/" target="_blank">Facebook</a></span></td>
+            <td style="text-align:center;"><span style="color:gray; font-size:smaller">🇺🇸 &copy; 2017 - 2021 <a
+                  href="https://robert.hurst-ri.us">Robert Hurst</a></span> 🧙</td>
+            <td></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div id="info" class="column">
+      <div id="profile"><span style="color:darkred; font-size:xx-large;">
+          Can you defeat the Demogorgon?</span><br><img src="assets/title.jpg" style="display: none;" />
+      </div>
+      <div id="menu">
+        <div id="command"></div>
+      </div>
+    </div>
+  </div>
+  <audio id="play">
+    <source id="oggPlay" type="audio/ogg" />
+    <source id="mp3Play" type="audio/mp3" />
+  </audio>
+  <audio id="tune">
+    <source id="oggTune" type="audio/ogg" />
+    <source id="mp3Tune" type="audio/mp3" />
+  </audio>
+  <noscript>https://www.google.com/chrome/</noscript>
+  <script src="bundle.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,15 @@
+{
+	"pc": "Novice",
+	"novice": 1,
+	"plays": 1,
+	"str": 56,
+	"int": 48,
+	"dex": 68,
+	"cha": 28,
+	"coin": "2c",
+	"bank": "20c",
+	"realestate": "Cardboard box",
+	"security": "Baseball bat",
+	"weapon": "Sling",
+	"armor": "Small Shield"
+}

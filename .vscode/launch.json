@@ -1,0 +1,46 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "launch ddgame app",
+      "cwd": "${workspaceFolder}/build",
+      "program": "${workspaceFolder}/build/door/app.js",
+      "outFiles": [
+        "${workspaceFolder}/build/door"
+      ],
+      "sourceMaps": true,
+      "stopOnEntry": false,
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "name": "Launch localhost",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:1939",
+      "webRoot": "${workspaceFolder}/build/door"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "launch telnet client",
+      "console": "integratedTerminal",
+      "program": "${workspaceFolder}/build/ttymain.js",
+      "cwd": "${workspaceFolder}",
+      "outFiles": [
+        "${workspaceFolder}/build"
+      ],
+      "sourceMaps": true,
+      "stopOnEntry": true,
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    }
+  ]
+}

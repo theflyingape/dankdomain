@@ -1,0 +1,18 @@
+{
+	"DDT": { "power":1, "cost":"10c", "vial":"100c" },
+	"Gnat bite": { "power":2, "cost":"100c", "vial":"10000c" },
+	"Lizard Lotion": { "power":3, "cost":"1000c", "vial":"10s" },
+	"Gargoyle Surprise": { "power":4, "cost":"10000c", "vial":"100s" },
+	"Jester Pestilent": { "power":5, "cost":"1s", "vial":"1000s" },
+	"Cleric Contagion": { "power":6, "cost":"10s", "vial":"1g" },
+	"Sea Serpent Venom": { "power":7, "cost":"1000s", "vial":"10g" },
+	"Hydra Blood": { "power":8, "cost":"1g", "vial":"100g" },
+	"Assassin Delight": { "power":9, "cost":"10g", "vial":"1000g" },
+	"Apothecary Brew": { "power":10, "cost":"100g", "vial":"1p" },
+	"Dragon Virulent": { "power":11, "cost":"1000g", "vial":"10p" },
+	"Alchemist Bane": { "power":12, "cost":"1p", "vial":"100p" },
+	"Undead Molder": { "power":13, "cost":"10p", "vial":"1000p" },
+	"Slaad Secretions": { "power":14, "cost":"100p", "vial":"5000p" },
+	"Paladin Malignant": { "power":15, "cost":"1000p", "vial":"10000p" },
+	"Tear of the Sea Hag": { "power":16, "cost":"10000p", "vial":"50000p" }
+}

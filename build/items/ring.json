@@ -1,0 +1,233 @@
+{
+    "Atomic": {
+        "unique": true,
+        "description":"resist all transforming attacks & buff decay",
+        "emoji":"⚛️",
+        "ability":[
+            { "id":"buff", "power":true },
+            { "id":"resist", "power":true, "spell":"Transmute" },
+            { "id":"resist", "power":true, "spell":"Disintegrate" },
+            { "id":"resist", "power":true, "spell":"Morph" },
+            { "id":"resist", "power":true, "spell":"Armor Rusting" },
+            { "id":"resist", "power":true, "spell":"Weapon Decay" },
+            { "id":"resist", "power":true, "spell":"Level Stealing" }
+        ]
+    },
+    "Augmenting": {
+        "unique": false,
+        "description":"enhance active level of ability and melee",
+        "emoji":"🆙",
+        "ability":[
+            { "id":"melee", "power":true },
+            { "id":"upgrade", "power":true }
+        ]
+    },
+    "Champion": {
+        "unique": false,
+        "description":"enhance lance handling",
+        "emoji":"🦄",
+        "ability":[
+            { "id":"joust", "power":true },
+            { "id":"upgrade", "power":true, "ability":"dex" }
+        ]
+    },
+    "Cursed": {
+        "unique": false,
+        "description":"lessen active level of ability",
+        "emoji":"😠",
+        "ability":[
+            { "id":"degrade", "power":true }
+        ]
+    },
+    "Detection": {
+        "unique": false,
+        "description":"detect dungeon objects and identify potions",
+        "emoji":"🔎",
+        "ability":[
+            { "id":"identify", "power":true }
+        ]
+    },
+    "Elven": {
+        "unique": false,
+        "description":"enhance dexterous speed attacks, except for an\n   Assassin, Fighter, Ranger or Demon",
+        "emoji":"🧝",
+        "ability":[
+            { "id":"skip", "power":true },
+            { "id":"skip", "power":false, "pc":"Assassin" },
+            { "id":"skip", "power":false, "pc":"Demon" },
+            { "id":"skip", "power":false, "pc":"Fighter" },
+            { "id":"skip", "power":false, "pc":"Ranger" },
+            { "id":"upgrade", "power":true, "ability":"dex" }
+        ]
+    },
+    "Faith": {
+        "unique": true,
+        "description":"life-steal hit points; added powers for a\n   Cleric, Paladin and God",
+        "emoji":"✝️",
+        "ability":[
+            { "id":"degrade", "power":true, "pc":"Undead" },
+            { "id":"hp", "power":true },
+            { "id":"hp", "power":false, "pc":"Undead" },
+            { "id":"resurrect", "power":true, "pc":"Cleric" },
+            { "id":"resurrect", "power":true, "pc":"Paladin" },
+            { "id":"skip", "power":true, "pc":"Undead" },
+            { "id":"sp", "power":true, "pc":"Cleric" },
+            { "id":"sp", "power":true, "pc":"Paladin" },
+            { "id":"sp", "power":true, "pc":"God" },
+            { "id":"upgrade", "power":true, "pc":"Cleric" },
+            { "id":"upgrade", "power":true, "pc":"Paladin" },
+            { "id":"upgrade", "power":true, "pc":"God" }
+        ]
+    },
+    "Forbiddance": {
+        "unique": false,
+        "description":"prevent an opponent from teleporting away",
+        "emoji":"🧿",
+        "ability":[
+            { "id":"resist", "power":true, "spell":"Teleport" }
+        ]
+    },
+	"Hell's Fury": {
+        "unique": false,
+        "description":"enhance fighting ability, except for a\n   Cleric, Paladin and God",
+        "emoji":"👿",
+        "ability":[
+            { "id":"degrade", "power":true, "pc":"Cleric" },
+            { "id":"degrade", "power":true, "pc":"Paladin" },
+            { "id":"degrade", "power":true, "pc":"God" },
+            { "id":"melee", "power":true },
+            { "id":"melee", "power":false, "pc":"Cleric" },
+            { "id":"melee", "power":false, "pc":"Paladin" },
+            { "id":"melee", "power":false, "pc":"God" }
+        ]
+    },
+    "Infinity": {
+        "unique": true,
+        "description":"neutralize opponent's rings while enhancing\n   the power in your rings",
+        "emoji":"♾️",
+        "ability":[
+            { "id":"resist", "power":true, "spell":"Teleport" },
+            { "id":"resist", "power":true, "spell":"Level Stealing" },
+            { "id":"ring", "power":true }
+        ]
+    },
+    "Lucky": {
+        "unique": false,
+        "description":"enhance charisma ability",
+        "emoji":"🍀",
+        "ability":[
+            { "id":"upgrade", "power":true, "ability":"cha" }
+        ]
+    },
+    "Magus": {
+        "unique": false,
+        "description":"enhance defense against mortal-made\n   attack spells, not incantations",
+        "emoji":"🎱",
+        "ability":[
+            { "id":"cast", "power":true, "magic":1 },
+            { "id":"cast", "power":true, "magic":2 },
+            { "id":"cast", "power":false, "magic":3 },
+            { "id":"cast", "power":false, "magic":4 },
+            { "id":"upgrade", "power":true, "ability":"int" }
+        ]
+    },
+	"Medusa's": {
+        "unique": true,
+        "description":"freeze opponent, except against Magus-level\n   spell casters; a Titan's weapon",
+        "emoji":"🐍",
+        "ability":[
+            { "id":"melee", "power":true, "pc":"Titan" },
+            { "id":"skip", "power":true },
+            { "id":"skip", "power":false, "pc":"Psionic" },
+            { "id":"skip", "power":false, "pc":"Sage" },
+            { "id":"skip", "power":false, "pc":"God" }
+        ]
+    },
+    "Moon": {
+        "unique": false,
+        "description":"absorb mana from opponent, but not against\n   the Undead",
+        "emoji":"🌓",
+        "ability":[
+            { "id":"sp", "power":true },
+            { "id":"sp", "power":false, "pc":"Undead" }
+        ]
+    },
+    "Mystic Portal": {
+        "unique": true,
+        "description":"teleport, anytime, at some personal cost",
+        "emoji":"🕳️",
+        "ability":[
+            { "id":"teleport", "power":true },
+            { "id":"degrade", "power":true, "ability":"str" },
+            { "id":"degrade", "power":true, "ability":"dex" }
+        ]
+    },
+    "Nobility": {
+        "unique": false,
+        "description":"exempt bearer from paying taxes to the Crown",
+        "emoji":"💸",
+        "ability":[
+            { "id":"taxes", "power":true },
+            { "id":"upgrade", "power":true, "ability":"cha" }
+        ]
+    },
+	"Ogre": {
+        "unique": true,
+        "description":"add to melee attacks",
+        "emoji":"👹",
+        "ability":[
+            { "id":"degrade", "power":true, "ability":"dex" },
+            { "id":"melee", "power":true },
+            { "id":"skip", "power":true },
+            { "id":"skip", "power":false, "pc":"Jester" },
+            { "id":"skip", "power":false, "pc":"Magician" },
+            { "id":"skip", "power":false, "pc":"Rogue" },
+            { "id":"skip", "power":false, "pc":"Thief" },
+            { "id":"upgrade", "power":true, "ability":"str" }
+        ]
+    },
+	"Shade": {
+        "unique": false,
+        "description":"enhance stealth ability for 1st swing\n   and stealing, at some personal cost",
+        "emoji":"⚡",
+        "ability":[
+            { "id":"initiate", "power":true },
+            { "id":"steal", "power":true },
+            { "id":"upgrade", "power":true, "ability":"dex" },
+            { "id":"degrade", "power":true, "ability":"cha" }
+        ]
+    },
+	"Undying": {
+        "unique": true,
+        "description":"augment the Undead with necromancy;\n   anti-life powers affect Cleric, Paladin, and God",
+        "emoji":"🖤",
+        "ability":[
+            { "id":"degrade", "power":true, "pc":"Cleric" },
+            { "id":"degrade", "power":true, "pc":"Paladin" },
+            { "id":"degrade", "power":true, "pc":"God" },
+            { "id":"hp", "power":true, "pc":"Undead" },
+            { "id":"melee", "power":true, "pc":"Undead" },
+            { "id":"resist", "power":true, "spell":"Life Stealing" },
+            { "id":"resurrect", "power":true },
+            { "id":"skip", "power":true },
+            { "id":"skip", "power":false, "pc":"Cleric" },
+            { "id":"skip", "power":false, "pc":"Paladin" },
+            { "id":"skip", "power":false, "pc":"God" },
+            { "id":"sp", "power":true, "pc":"Undead" }
+        ]
+    },
+    "White Wizard": {
+        "unique": true,
+        "description":"resist higher attack spells;\n   allows the ring bearer to teleport, anytime",
+        "emoji":"⚪",
+        "ability":[
+            { "id":"cast", "power":true },
+            { "id":"resist", "power":true, "spell":"Confusion" },
+            { "id":"resist", "power":true, "spell":"Level Stealing" },
+            { "id":"resist", "power":true, "spell":"Mana Stealing" },
+            { "id":"resist", "power":true, "spell":"Morph" },
+            { "id":"teleport", "power":true },
+            { "id":"upgrade", "power":true, "ability":"int" }
+        ]
+    }
+}

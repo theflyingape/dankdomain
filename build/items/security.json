@@ -1,0 +1,21 @@
+{
+	"Whiskey bottle": { "value": "0c", "protection":0 },
+	"Baseball bat": { "value": "100c", "protection":1 },
+	"Boulder": { "value": "1000c", "protection":2 },
+	"Fence": { "value": "10000c", "protection":3 },
+	"Padlock": { "value": "1s", "protection":4 },
+	"Dead bolt lock": { "value": "10s", "protection":5 },
+	"Trip wire trap": { "value": "100s", "protection":6 },
+	"Barbed wire fence": { "value": "1000s", "protection":7 },
+	"Dog": { "value": "1g", "protection":8 },
+	"Shotgun": { "value": "10g", "protection":9 },
+	"Stone wall": { "value": "100g", "protection":10 },
+	"Burglar alarm": { "value": "1000g", "protection":11 },
+	"Security guard": { "value": "1p", "protection":12 },
+	"Moat": { "value": "10p", "protection":13 },
+	"Garrison": { "value": "100p", "protection":14 },
+	"Magical barrier": { "value": "500p", "protection":15 },
+	"Scorpion": { "value": "3000p", "protection":16 },
+	"White Wizard": { "value": "12500p", "protection":17 },
+	"Red Dragon": { "value": "50000p", "protection":18 }
+}

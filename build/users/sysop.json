@@ -1,0 +1,14 @@
+{
+	"id": "_SYS",
+	"handle": "\uD83D\uDC51 Sysop",
+	"name": "Dank Domain",
+	"sex": "I",
+	"access": "Inactive",
+	"email": "sysop@ddgame.us",
+	"password": "\n",
+ 	"expires": 100,
+	"pc": "Fighter",
+	"level": 100,
+	"weapon": 48,
+	"armor": 24
+}

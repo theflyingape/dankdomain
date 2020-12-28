@@ -1,0 +1,313 @@
+/*****************************************************************************\
+ *  Ɗanƙ Ɗomaiƞ: the return of Hack & Slash                                  *
+ *  CSS authored by: Robert Hurst <theflyingape@gmail.com>                   *
+\*****************************************************************************/
+
+@font-face {
+    font-family: emoji;
+    src: url('assets/notoemoji.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: mono;
+    src: url('assets/notomono.woff2') format('woff2');
+}
+
+@font-face {
+    font-family: tty;
+    src: url('assets/vt220.woff2') format('woff2');
+}
+
+html, body {
+    background-color: black;
+    border: none;
+    color: antiquewhite;
+    font-display: swap;
+    font-family: mono, emoji;
+    height: 100%;
+    margin: 0px;
+    min-height: 300px;
+    touch-action: none;
+}
+
+a:link, a:visited {
+    background-color: #0f1e3c;
+    color: rosybrown;
+    font-family: 'Grenze Gotisch', cursive;
+    font-size: 125%;
+    font-weight: 300;
+    text-decoration: none;
+}
+
+a:hover, a:active {
+    background-color: #112244;
+    color: aliceblue;
+}
+
+td img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#a2hs-button.disabled {
+    opacity: 0.35;
+}
+
+#monitor {
+    align-items: center;
+    background: #3f3933;
+    border-radius: 2rem;
+    margin: 0 auto;
+    height: 100%;
+    width: 70%;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#terminal {
+    background: black;
+    border-color: #2f2922;
+    border-radius: 1rem;
+    border-style: ridge;
+    border-width: 4px;
+    font-display: swap;
+    font-family: tty, emoji;
+    position: absolute;
+    top: 22px;
+    bottom: 22px;
+    left: 24px;
+    right: 22px;
+}
+
+#wall {
+    background-color: #102040;
+    border-color: #2f2922;
+    border-radius: 1rem;
+    border-style: ridge;
+    border-width: 4px;
+    margin: 12px auto;
+    height: 92%;
+    width: 96%;
+}
+
+#splash {
+    margin: 12px auto;
+    vertical-align: bottom;
+    white-space: nowrap;
+    width: 50%;
+}
+
+#info {
+    background: linear-gradient(to bottom right, skyblue, aliceblue);
+    color: midnightblue;
+    font-display: swap;
+    font-family: 'Grenze Gotisch', cursive;
+    font-weight: 500;
+    text-align: center;
+    border: none;
+    margin: 0 auto;
+    height: 100%;
+    width: 30%;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+#info a:hover, #info a:active {
+    background-color: skyblue;
+    color: midnightblue;
+}
+
+#info div {
+    padding: 0px 0px 0px 0px;
+    border: none;
+}
+
+#info p, #info table {
+    border: none;
+    border-spacing: 0px 2px;
+    display: inline-block;
+    text-align: center;
+}
+
+#profile {
+    height: 100%;
+    width: 100%;
+}
+
+#profile img {
+    max-height: 99%;
+    max-width: 99%;
+    object-fit: contain;
+    width: 99%;
+}
+
+#menu {
+    position: absolute;
+}
+
+#command {
+    background: linear-gradient(to bottom, rgba(223, 247, 255, 0.04), rgba(215, 241, 247, 0.96));
+    position: fixed;
+}
+
+#command a:link, #command a:visited {
+    background-color: unset;
+    color: midnightblue;
+    font-family: unset;
+    font-size: unset;
+    font-weight: unset;
+    text-decoration: none;
+    display: inline-block;
+}
+
+#command a:hover, #command a:active {
+    background-color: skyblue;
+    color: darkslategray;
+}
+
+#command hr {
+    background-image: linear-gradient(to left, gainsboro, steelblue, gainsboro);
+    border: 0;
+    height: 1px;
+}
+
+#command input[type=text], #command input[type=password] {
+    width: 80%;
+    padding: 12px 18px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+#command input, #command button {
+    background: antiquewhite;
+    background-image: linear-gradient(to bottom, cornsilk, darkkhaki);
+    border: solid darkolivegreen;
+    border-radius: 10px 4px 2px 6px;
+    border-width: 2px;
+    box-shadow: 1px 3px 5px darkslategray;
+    color: midnightblue;
+    font-display: swap;
+    font-family: 'Carter One', cursive;
+    font-size: 100%;
+    min-width: 40%;
+    padding-top: 0.4em;
+    padding-left: 0.3em;
+    padding-bottom: 0.4em;
+    padding-right: 0.3em;
+    outline: 0;
+    text-decoration: none;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#command input:active, #command button:active {
+    box-shadow: 2px 6px 10px darkslategray;
+    transform: scale(1.20) translateY(-0.2em);
+}
+
+#command input:hover, #command button:hover {
+    background-image: linear-gradient(to bottom, antiquewhite, olive);
+    text-decoration: none;
+    text-shadow: 1px 1px 2px black;
+    border: solid darkolivegreen;
+    border-width: 1px 3px 3px 1px;
+    color: ghostwhite;
+}
+
+#command .platinum, #command .Platinum {
+    background: hotpink;
+    border: solid darkorchid;
+    color: indigo;
+    font-size: large;
+}
+
+#command .platinum:hover, #command .Platinum:hover {
+    background-image: linear-gradient(to bottom, hotpink, darkorchid);
+    border: solid darkorchid;
+    border-width: 1px 3px 3px 1px;
+}
+
+#command .gold, #command .Gold {
+    background: gold;
+    border: solid darkgoldenrod;
+    color: goldenrod;
+    font-size: large;
+}
+
+#command .gold:hover, #command .Gold:hover {
+    background-image: linear-gradient(to bottom, lightgoldenrodyellow, gold);
+    border: solid goldenrod;
+    border-width: 1px 3px 3px 1px;
+}
+
+#command .silver, #command .Silver {
+    background: turquoise;
+    border: solid darkturquoise;
+    color: steelblue;
+    font-size: large;
+}
+
+#command .silver:hover, #command .Silver:hover {
+    background-image: linear-gradient(to bottom, lightcyan, darkturquoise);
+    border: solid darkturquoise;
+    border-width: 1px 3px 3px 1px;
+}
+
+#command .copper, #command .Copper {
+    background: coral;
+    border: solid darkred;
+    color: crimson;
+    font-size: large;
+}
+
+#command .copper:hover, #command .Copper:hover {
+    background-image: linear-gradient(to bottom, lightsalmon, darkred);
+    border: solid darkred;
+    border-width: 1px 3px 3px 1px;
+}
+
+#command .slate, #command .Slate {
+    background: lightgray;
+    border: solid darkslategray;
+    color: slategray;
+    font-size: large;
+}
+
+#command .slate:hover, #command .Slate:hover {
+    background-image: linear-gradient(to bottom, whitesmoke, darkslategray);
+    border: solid darkslategray;
+    border-width: 1px 3px 3px 1px;
+}
+
+#command .tavern, #command .Tavern {
+    background: burlywood;
+    border: solid saddlebrown;
+    color: chocolate;
+    font-size: large;
+}
+
+#command .tavern:hover, #command .Tavern:hover {
+    background-image: linear-gradient(to bottom, bisque, saddlebrown);
+    border: solid saddlebrown;
+    border-width: 1px 3px 3px 1px;
+}
+
+#command .Keycap {
+    padding-top: 0.10em;
+    padding-left: 0.15em;
+    padding-bottom: 0.90em;
+    padding-right: 2.85em;
+    font-size: large;
+    width: 98%;
+}
+
+#command .Platinum, #command .Gold, #command .Silver, #command .Copper, #command .Slate, #command .Tavern {
+    width: 98%;
+}

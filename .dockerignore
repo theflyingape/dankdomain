@@ -1,0 +1,9 @@
+build/files/auto-message.txt
+build/files/border.txt
+build/files/tavern/*.txt
+build/files/user
+build/files/winners.txt
+build/users/.*
+build/users/arguments.json
+build/users/callers.json
+build/users/dankdomain.sql*

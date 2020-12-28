@@ -1,0 +1,10 @@
+[mDate: [1;33mWed 25-Nov-2020  12:00pm
+[mFrom: [1;33mMaester
+[1;37m
+Happy holidays!
+
+There's been a lot of code refactoring with several UI annoyances addressed
+to deliver a more consistent user experience.  We hope you find the game's
+maturity and playability to your liking.
+
+Happy hunting!
