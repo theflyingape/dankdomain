@@ -3,7 +3,7 @@
  *  ITEMS authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import xvt = require('xvt')
+import xvt = require('@theflyingape/xvt')
 import { isDefined } from 'class-validator'
 
 module Items {

@@ -15,7 +15,7 @@
 process.title = 'ddclient'
 process.chdir(__dirname)
 
-import xvt = require('xvt')
+import xvt = require('@theflyingape/xvt')
 
 process.on('ttyMain uncaughtException', (err, origin) => {
     xvt.outln(`${origin} ${err}`)

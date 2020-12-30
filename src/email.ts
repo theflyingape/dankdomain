@@ -7,7 +7,7 @@ import $ = require('./common')
 import fs = require('fs')
 import nodemailer = require('nodemailer')
 import smtpTransport = require('nodemailer-smtp-transport')
-import xvt = require('xvt')
+import xvt = require('@theflyingape/xvt')
 import { isEmail } from 'class-validator'
 
 module Email {

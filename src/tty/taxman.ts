@@ -5,7 +5,7 @@
 
 import $ = require('../common')
 import Battle = require('../battle')
-import xvt = require('xvt')
+import xvt = require('@theflyingape/xvt')
 
 module Taxman {
 

@@ -4,7 +4,7 @@
 \*****************************************************************************/
 
 import fs = require('fs')
-import xvt = require('xvt')
+import xvt = require('@theflyingape/xvt')
 import Items = require('./items')
 import { isDefined, isEmpty, isNotEmpty } from 'class-validator'
 import { sprintf } from 'sprintf-js'
@@ -2263,6 +2263,11 @@ module Common {
         }
         else
             sound('invite')
+    }
+
+    export function prompt(focus: string | number, speed = 8) {
+        xvt.app.focus = focus
+        if (access.bot) xvt.sleep(0.125 * dice(speed) * dice(speed))
     }
 
     //  *****************************************

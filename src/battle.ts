@@ -5,7 +5,7 @@
 
 import $ = require('./common')
 import fs = require('fs')
-import xvt = require('xvt')
+import xvt = require('@theflyingape/xvt')
 import { isArray, isBoolean, isDefined } from 'class-validator'
 import { sprintf } from 'sprintf-js'
 

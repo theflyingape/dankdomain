@@ -5,7 +5,7 @@
 
 import $ = require('../common')
 import fs = require('fs')
-import xvt = require('xvt')
+import xvt = require('@theflyingape/xvt')
 import { isDefined, isIP, isNotEmpty } from 'class-validator'
 
 module Logon {

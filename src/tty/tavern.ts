@@ -5,7 +5,7 @@
 
 import $ = require('../common')
 import fs = require('fs')
-import xvt = require('xvt')
+import xvt = require('@theflyingape/xvt')
 import Battle = require('../battle')
 import Taxman = require('./taxman')
 import { isNotEmpty } from 'class-validator'

@@ -4,7 +4,7 @@
 \*****************************************************************************/
 
 import $ = require('../common')
-import xvt = require('xvt')
+import xvt = require('@theflyingape/xvt')
 import Battle = require('../battle')
 import { isEmpty, isNotEmpty } from 'class-validator'
 import { sprintf } from 'sprintf-js'
