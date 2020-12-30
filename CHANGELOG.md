@@ -3,14 +3,14 @@
 ## *the return of Hack & Slash*
 
 🇺🇸 ©️1991 - 2021 [Robert Hurst](https://robert.hurst-ri.us)
-> [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](https://play.DDgame.us) within the Google Cloud Platform (us-central1)
+> [developed](https://github.com/theflyingape/dankdomain) on a **Chromebook** using Visual Code and TypeScript/html/css for the browser with [terminal emulator](https:/xtermjs.org) and telnet clients; and to run the resulting Node.js full stack [services and app](https://play.DDgame.us) on the **Google Cloud Platform** (us-central1) or in a **Docker** container.
 
 ### **01-Jan-2021** `v2.9.4`
 
 * Happy New Year! 🔔
 * player fairness corrections
 * updated dungeon specials distribution pattern
-* Dockerfile to run app in a container
+* Dockerfile to run app in a [container](https://hub.docker.com/repository/docker/theflyingape/dankdomain)
 * tweaks to cosmetics, final deeds
 * updated node package dependencies
 
@@ -31,6 +31,7 @@
 
 #### **28-Sep-2020** `v2.7.0`
 
+* moved development onto a Samsung Galaxy Chromebook
 * general browser client improvements
   * add Facebook Group URL: http://www.originalhackandslash.net
   * web page "wall" zooms to fill 80% device window width
@@ -98,7 +99,7 @@
 #### **27-Nov-2019** `v2.2.3`
 
 * Happy Thanksgiving! 🦃
-* moved into Google Cloud Platform
+* moved into Google Cloud Platform (us-central1)
 * package requires Linux OS and Node 10.16
 * updated node package dependencies
 
@@ -106,7 +107,7 @@
 
 ## **--=:)) `HISTORY` ((:=--**
 
-> [developed](https://github.com/theflyingape/dankdomain) using TypeScript for the web client with terminal emulator; and to run the Node.js [app and service](http://play.DDgame.us) on an **Intel Atom-powered Linux server** using a Verizon FiOS 400mb Internet service
+> [developed](https://github.com/theflyingape/dankdomain) on a **Linux Intel i7 workstation** using Visual Code and TypeScript/html/css for the web client with [terminal emulator](https:/xtermjs.org); and to run the Node.js [service and app](http://play.DDgame.us) behind an Apache SSL Proxy on an **Linux Intel Atom server** using a Verizon FiOS 400mb Internet service
 
 #### **13-Sep-2019** `v2.2`
 
@@ -684,7 +685,7 @@ SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
 
 #### 04-Apr-1993 `v5.20`
 
-* `RPGclient` is now RESIDENTable.
+* `RPGclient` is now memory RESIDENTable.
 * Top 3 Immortals have their level highlighted in lists.
 * Added Bounty feature in Tavern.
 * Open screen & windows with 2.0 tags for 3d look.
@@ -766,7 +767,7 @@ SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
 
 * First release to Steve Hostettler of Toledo, OH.
 * Supports ANSI mode.  Local mode now uses `console.device`.
-* Don't call verify a number starting with 911, ugh.
+* Don't call verify a number starting with **911**, ugh.
 
 #### 19-Jun-1992 `v1.00`
 
@@ -785,4 +786,4 @@ SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
 * BBS went online at Manton Avenue in Providence, Rhode Island
 * added blessed / cursed state on a player
 * added Go Fishing to Naval section
-* ported from Apple ][ BASIC TproBBS Guy T. Rice
+* ported from Apple Ⅱ BASIC TproBBS Guy T. Rice

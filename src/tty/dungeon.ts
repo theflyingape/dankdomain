@@ -239,17 +239,20 @@ module Dungeon {
             $.int((Z / 3 + DL.rooms.length * DL.width + $.online.dex / 2 + $.online.cha) * (.6 + deep / 23))
             - DL.moves, true)
         me *= 1 + ($.Security.name[$.player.security].protection - $.player.level / 9) / 12
-        if (me < ($.online.int + DL.width) / 2) {
+        if (me < $.int(($.online.int + DL.width) / 2)) {
             if (!DL.exit) {
                 const t = $.player.expert ? 10 : 100
-                xvt.out(-t, ' ', -2 * t, $.player.emulation == 'XT' ? '🏃' : '<<', -3 * t, xvt.faint, ' find ')
-                $.sound(DL.alert ? 'exit' : '.', 4)
-                xvt.outln('the ', -4 * t, 'exit ', -8 * t)
+                xvt.out(-t, ' ', -2 * t, $.player.emulation == 'XT' ? '🏃' : '<<', ' ', -t)
+                if (DL.alert) $.sound('exit')
+                xvt.outln(xvt.faint, 'find ', -5 * t, 'the ', -4 * t, 'exit', -8 * t, xvt.normal, '!')
                 xvt.drain()
                 DL.alert = false
                 DL.events++
                 DL.exit = true
+                me *= 2
             }
+            else
+                me = $.int(me / 2)
         }
         me = (me < DL.width ? DL.width - (DL.moves >> 8) : $.int(me)) - +$.player.coward
         if (me < DL.width) {
@@ -1110,9 +1113,8 @@ module Dungeon {
                                         $.sound('hone')
                                         break
                                     case 4:
-                                        DL.events += $.dice(Z)
                                         if ($.player.blessed) {
-                                            xvt.out(xvt.bright, xvt.yellow, 'Your shining aura ', xvt.normal, 'has left ', xvt.faint, 'you.', xvt.reset)
+                                            xvt.out(xvt.yellow, xvt.bright, 'Your shining aura ', xvt.normal, 'has left ', xvt.faint, 'you.', xvt.reset)
                                             $.player.blessed = ''
                                         }
                                         else {
@@ -1126,6 +1128,7 @@ module Dungeon {
                                         $.PC.adjust('dex', -5 - $.dice(5))
                                         $.PC.adjust('cha', -5 - $.dice(5))
                                         $.sound('crack')
+                                        DL.events += $.dice(Z) + deep
                                         break
                                     case 5:
                                         loot.value = $.money(Z)
@@ -2338,6 +2341,7 @@ module Dungeon {
                 ROOM = DL.rooms[Y][X]
             } while (ROOM.type) //  teleport into a chamber only
 
+            DL.alert = true
             DL.exit = false
             DL.events++
             DL.moves = DL.moves > DL.rooms.length * DL.width
@@ -3084,6 +3088,7 @@ module Dungeon {
                             }
                         case 'R':
                             $.PC.profile($.online, 'flipOutY')
+                            DL.alert = true
                             DL.events++
                             DL.exit = false
                             break

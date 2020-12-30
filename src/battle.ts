@@ -386,7 +386,7 @@ module Battle {
                                 $.activate($.online, false, true)
                             if ($.from == 'Party' && $.player.gang) {
                                 if (enemy.user.gender !== 'I') $.player.coward = true
-                                $.run(`UPDATE Gangs SET loss=loss+1 WHERE name = '${$.player.gang}'`)
+                                $.run(`UPDATE Gangs SET loss=loss+1 WHERE name='${$.player.gang}'`)
                             }
                             if ($.from == 'User' && enemy.user.gender !== 'I') {
                                 $.PC.adjust('cha', -2, -1)
@@ -1699,9 +1699,9 @@ module Battle {
                     else {
                         nme.user.level = $.dice(nme.user.level / 2) + $.dice(nme.user.level / 2) - 1
                         $.reroll(nme.user, $.PC.random(), nme.user.level)
+                        nme.user.gender = ['F', 'M'][$.dice(2) - 1]
                         $.activate(nme)
                         nme.altered = true
-                        nme.user.gender = ['F', 'M'][$.dice(2) - 1]
                         $.saveUser(nme)
                         xvt.out(Caster, $.what(rpc, 'morph'), recipient, ` into a level ${nme.user.level} ${nme.user.pc}`)
                         if (nme.user.gender !== 'I') {
@@ -1710,7 +1710,7 @@ module Battle {
                                 $.log(nme.user.id, `\nYou got morphed into a level ${nme.user.level} ${nme.user.pc} by ${rpc.user.handle}!\n`)
                         }
                     }
-                    xvt.outln('!', -1000)
+                    xvt.outln(-150, xvt.blue, xvt.bright, '!', -450, xvt.normal, '!', -450, xvt.faint, '!', -450)
                     break
 
                 case 17:

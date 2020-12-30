@@ -16,8 +16,7 @@
 ## Installation
 Requires `Linux` or `Chrome OS` running a container with the `Node.js` runtime
 
-[![Downloads](https://img.shields.io/npm/dy/dankdomain.svg)](https://www.npmjs.com/package/dankdomain)
-[![GitHub release](https://img.shields.io/github/release/theflyingape/dankdomain.svg)](https://github.com/theflyingape/dankdomain/releases) [![npm version](https://badge.fury.io/js/dankdomain.svg)](https://www.npmjs.com/package/dankdomain) [![Dependencies](https://img.shields.io/david/theflyingape/dankdomain.svg)](https://david-dm.org/theflyingape/dankdomain) [![Issues](http://img.shields.io/github/issues/theflyingape/dankdomain.svg)](https://github.com/theflyingape/dankdomain/issues)
+[![GitHub release](https://img.shields.io/github/release/theflyingape/dankdomain.svg)](https://github.com/theflyingape/dankdomain/releases) [![npm version](https://badge.fury.io/js/dankdomain.svg)](https://www.npmjs.com/package/dankdomain) ![npm version](https://img.shields.io/node/v/dankdomain) [![Dependencies](https://img.shields.io/david/theflyingape/dankdomain.svg)](https://david-dm.org/theflyingape/dankdomain) [![Issues](http://img.shields.io/github/issues/theflyingape/dankdomain.svg)](https://github.com/theflyingape/dankdomain/issues)
 
 Download packs: [images](https://drive.google.com/open?id=1jjLPtGf_zld416pxytZfbfCHREZTghkW) 📷 and [sounds](https://drive.google.com/open?id=1UvqQJbN61VbWVduONXgo1gm9yvGI0Qp8) 🔉
 
@@ -42,6 +41,10 @@ You can also play www.DDgame.us from the command-line:
 $ npm run tty
 $ npm run mame
 $ telnet play.ddgame.us
+```
+Docker
+```
+$ docker pull theflyingape/dankdomain
 ```
 File directory structure:
 ```linux

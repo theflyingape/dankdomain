@@ -682,24 +682,23 @@ module Common {
         if (confused) return true
 
         one.who = PC.who(one)
-        one.altered = true
+        one.altered = keep
         one.hp = one.user.hp
         one.sp = one.user.sp
         one.bp = int(one.user.hp / 10)
         one.hull = one.user.hull
         Weapon.equip(one, one.user.weapon, true)
         Armor.equip(one, one.user.armor, true)
-        if (!isDefined(one.user.access))
-            one.user.access = Object.keys(Access.name)[0]
+        one.user.access = one.user.access || Object.keys(Access.name)[0]
 
         if (keep) {
             if (!lock(one.user.id, one.user.id == player.id ? 1 : 2) && one.user.id !== player.id) {
+                xvt.outln('\n', xvt.cyan, xvt.bright, one.user.handle, ' is engaged elsewhere.')
                 xvt.beep()
-                xvt.outln('\n', xvt.cyan, xvt.bright, one.user.handle, ' is engaged elsewhere.', -500)
-                return false
+                one.altered = false
             }
         }
-        return true
+        return one.altered
     }
 
     export function checkTime(): number {

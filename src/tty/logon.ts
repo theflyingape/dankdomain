@@ -263,7 +263,6 @@ module Logon {
         $.player.lasttime = $.now().time
         $.player.expires = $.player.lastdate + $.sysop.expires
         $.activate($.online, true)
-        $.online.altered = true
         $.saveUser($.player)
 
         $.mydeeds = $.loadDeed($.player.pc)

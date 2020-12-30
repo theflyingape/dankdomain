@@ -17,7 +17,7 @@
 		"debug": "node ./build/door/app",
 		"mame": "./build/mame.sh",
 		"start": "test -s ./door/app.js && node ./door/app || node ./build/door/app",
-		"test": "exit 0",
+		"test": "npm start test",
 		"tty": "./build/tty.sh",
 		"watch": "./tsc -b ./src -w"
 	},
@@ -39,14 +39,14 @@
 		{
 			"name": "Ronald Hurst",
 			"email": "ronhurst39@gmail.com",
-			"url": "https://manual.ddgame.us/"
+			"url": "https://robert.hurst-ri.us/ronald"
 		}
 	],
 	"license": "MIT",
 	"bugs": {
 		"url": "https://github.com/theflyingape/dankdomain/issues"
 	},
-	"homepage": "https://www.DDgame.us",
+	"homepage": "https://www.ddgame.us",
 	"dependencies": {
 		"animate.css": "^4.1.1",
 		"better-sqlite3": "^7.1.2",
@@ -63,7 +63,7 @@
 		"sprintf-js": "^1.1.2",
 		"telnet-socket": "^0.2.3",
 		"title-case": "^3.0.3",
-		"ws": "^7.4.1",
+		"ws": "^7.4.2",
 		"xterm": "^4.9.0",
 		"xterm-addon-fit": "^0.4.0",
 		"xterm-addon-unicode11": "^0.2.0",

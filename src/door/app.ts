@@ -22,11 +22,17 @@ process.on('uncaughtException', (err, origin) => {
 
 process.on('SIGINT', () => {
     console.log(`interrupted - shutting down`)
-    process.exit()
+    process.exit(0)
 })
 
 process.chdir(__dirname)
 console.log(`cwd: ${__dirname}`)
+
+let passed = ''
+if (process.argv.length > 2 && process.argv[2]) {
+    passed = process.argv[2].toLowerCase()
+    console.log(`parameter passed: '${passed}'`)
+}
 
 let sessions = {}
 let broadcasts = {}
@@ -294,6 +300,9 @@ dns.lookup(network.address, (err, addr, family) => {
         const wsLurker = new ws.Server({ noServer: true, path: `${network.path}lurker/`, clientTracking: true })
         console.log(`↔ WebSocket endpoints enabled`)
 
+        if (passed == 'test' && process.kill(process.pid, 'SIGINT'))
+            console.log(`self-interrupted ${passed}`)
+
         server.on('upgrade', (req, socket, head) => {
             const pathname = new URL(req.url, WEBROOT).pathname
             if (pathname == `${network.path}player/`) {
@@ -458,7 +467,7 @@ dns.lookup(network.address, (err, addr, family) => {
             else if (Object.keys(sessions).length) {
                 var who = []
                 for (let pid in sessions) {
-                    let rs = query(`SELECT id FROM Online WHERE pid = ${pid}`)
+                    let rs = query(`SELECT id FROM Online WHERE pid=${pid}`)
                     if (rs.length) {
                         sessions[pid].who = rs[0].id
                         who.push({ id: rs[0].id, pid: pid })
@@ -571,8 +580,9 @@ dns.lookup(network.address, (err, addr, family) => {
 
 //  game/sysop database interfaces
 const DD = '../users/dankdomain.sql'
-let better = require('better-sqlite3')
-let sqlite3 = new better(DD)
+const sqlite3 = require('better-sqlite3')(DD, { timeout: 10000 })
+sqlite3.pragma('journal_mode = WAL')
+console.log(`SQLite3 ${DD} opened`)
 
 chokidar.watch('../users/save.json')
     .on('add', (path, stats) => {
