@@ -3,11 +3,14 @@
  *  NAVAL authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import $ = require('../common')
 import xvt = require('@theflyingape/xvt')
 import Battle = require('../battle')
-import { isDefined, isEmpty, isNotEmpty } from 'class-validator'
-import { sprintf } from 'sprintf-js'
+import db = require('../db')
+import $ = require('../runtime')
+import { Coin, action, activate, armor, bracket, cat, checkXP, display, keyhint, loadUser, music, portrait, profile, reroll, sound, weapon, wearing } from '../io'
+import { encounter, log, news, what } from '../lib'
+import { PC } from '../pc'
+import { an, dice, int, money, sprintf, worth } from '../sys'
 
 module Naval {
 
@@ -25,26 +28,25 @@ module Naval {
 
     export function menu(suppress = true) {
         $.from = 'Naval'
-        if ($.checkXP($.online, menu)) return
-        if ($.online.altered) $.saveUser($.online)
+        if (checkXP($.online, menu)) return
+        if ($.online.altered) PC.saveUser($.online)
         if ($.reason) xvt.hangup()
 
-        $.action('naval')
+        action('naval')
         xvt.app.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
-        xvt.app.form['menu'].prompt = $.display('naval', xvt.Cyan, xvt.cyan, suppress, naval)
+        xvt.app.form['menu'].prompt = display('naval', xvt.Cyan, xvt.cyan, suppress, naval)
         xvt.app.focus = 'menu'
     }
 
     function choice() {
         let suppress = false
         let choice = xvt.entry.toUpperCase()
-        if (isNotEmpty(naval[choice]))
-            if (isNotEmpty(naval[choice].description)) {
-                xvt.out(' - ', naval[choice].description)
-                suppress = $.player.expert
-            }
+        if (naval[choice]?.description) {
+            xvt.out(' - ', naval[choice].description)
+            suppress = $.player.expert
+        }
         xvt.outln()
 
         let rs: any[]
@@ -70,13 +72,13 @@ module Naval {
                         return
                     }
                     if (!opponent.user.hull) {
-                        xvt.outln(`${$.PC.who(opponent).He}doesn't have a ship.`)
+                        xvt.outln(`${PC.who(opponent).He}doesn't have a ship.`)
                         menu(true)
                         return
                     }
-                    if (!$.lock(opponent.user.id)) {
-                        $.beep()
-                        xvt.outln(`${$.PC.who(opponent).He}is currently engaged elsewhere and not available.`)
+                    if (!db.lock(opponent.user.id)) {
+                        xvt.beep()
+                        xvt.outln(`${PC.who(opponent).He}is currently engaged elsewhere and not available.`)
                         menu(true)
                         return
                     }
@@ -86,13 +88,13 @@ module Naval {
                     xvt.outln(`It has ${opponent.user.hull} hull points.`)
                     xvt.sleep(500)
 
-                    $.action('ny')
+                    action('ny')
                     xvt.app.form = {
                         'battle': {
                             cb: () => {
                                 xvt.outln()
                                 if (/Y/i.test(xvt.entry)) {
-                                    if ($.activate(opponent, true)) {
+                                    if (activate(opponent, true)) {
                                         $.naval--
                                         BattleUser(opponent)
                                     }
@@ -101,7 +103,7 @@ module Naval {
                                 }
                                 else
                                     menu(!$.player.expert)
-                            }, prompt: `Will you battle ${$.PC.who(opponent).him}(Y/N)? `, cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
+                            }, prompt: `Will you battle ${PC.who(opponent).him}(Y/N)? `, cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
                         }
                     }
                     xvt.app.focus = 'battle'
@@ -123,86 +125,86 @@ module Naval {
                 xvt.sleep(600)
                 let cast = 100 * $.online.cha / $.player.maxcha
                 cast = (cast < 15) ? 15 : (cast > 100) ? 100 : cast >> 0
-                let hook = $.dice(cast)
+                let hook = dice(cast)
                 if (hook < 15) {
-                    let floater = $.PC.encounter(`AND id NOT GLOB '_*'`)
+                    let floater = encounter(`AND id NOT GLOB '_*'`)
                     if (floater.user.id && floater.user.status) {
                         let leftby = <user>{ id: floater.user.status }
-                        if ($.loadUser(leftby)) {
-                            $.PC.profile(floater, 'fadeInUpBig')
+                        if (loadUser(leftby)) {
+                            portrait(floater, 'fadeInUpBig')
                             xvt.out(' floating carcass!')
                             xvt.sleep(500)
-                            $.loadUser(floater)
+                            loadUser(floater)
                             xvt.outln(`\nIt is ${floater.user.handle}'s body in the ocean left there by ${leftby.handle}, and`)
                             xvt.outln(`you're able to bring the player back to an Alive! state.`)
-                            $.run(`UPDATE Players set status='' WHERE id='${floater.user.id}'`)
-                            $.news(`\trecovered ${floater.user.handle}'s body from the ocean`)
+                            db.run(`UPDATE Players set status='' WHERE id='${floater.user.id}'`)
+                            news(`\trecovered ${floater.user.handle}'s body from the ocean`)
                             menu()
                             return
                         }
                     }
-                    if ($.dice($.player.level / 3 + 2) == 1) {
-                        $.loadUser($.seahag)
+                    if (dice($.player.level / 3 + 2) == 1) {
+                        loadUser($.seahag)
                         xvt.outln(`n ${$.seahag.user.handle}!`)
-                        $.cat(`naval/${$.seahag.user.handle}`.toLowerCase())
+                        cat(`naval/${$.seahag.user.handle}`.toLowerCase())
                         xvt.outln(-600, xvt.green, xvt.bright, 'She cackles as you are sent spinning elsewhere ... ')
-                        $.sound('crone', 24)
-                        require('./dungeon').DeepDank($.player.level + 3 * $.dice($.player.level), () => {
+                        sound('crone', 24)
+                        require('./dungeon').DeepDank($.player.level + 3 * dice($.player.level), () => {
                             $.from = 'Naval'
-                            $.profile({
+                            profile({
                                 jpg: 'npc/seahag', effect: 'fadeInUp'
                                 , handle: $.seahag.user.handle, level: $.seahag.user.level, pc: $.seahag.user.pc
                             })
-                            $.sound('god', 12)
+                            sound('god', 12)
                             xvt.outln(xvt.magenta, '\n"', xvt.bright, xvt.yellow
                                 , 'You have escaped my magic, mortal?  Now try me!'
                                 , xvt.normal, xvt.magenta, '"', -1200)
-                            $.cat(`naval/${$.seahag.user.handle}`.toLowerCase())
-                            $.PC.wearing($.seahag)
+                            cat(`naval/${$.seahag.user.handle}`.toLowerCase())
+                            wearing($.seahag)
                             $.seahag.user.cursed = $.player.id
                             Battle.engage('Naval', $.online, $.seahag, menu)
                             return
                         })
                         return
                     }
-                    if ($.dice($.player.level / 3 + 2) == 1) {
-                        $.loadUser($.neptune)
+                    if (dice($.player.level / 3 + 2) == 1) {
+                        loadUser($.neptune)
                         xvt.outln(` ${$.neptune.user.pc}: ${$.neptune.user.handle}!`)
-                        $.cat(`naval/${$.neptune.user.handle}`.toLowerCase())
+                        cat(`naval/${$.neptune.user.handle}`.toLowerCase())
                         xvt.sleep(600)
                         if ($.player.level > $.neptune.user.level) {
                             let keep = $.neptune.user.spells
-                            $.reroll($.neptune.user, $.neptune.user.pc, $.player.level - 1)
-                            $.activate($.neptune)
+                            reroll($.neptune.user, $.neptune.user.pc, $.player.level - 1)
+                            activate($.neptune)
                             $.neptune.user.spells = keep
                         }
                         xvt.outln(xvt.cyan, xvt.bright, 'He looks at you angrily as he removes a hook from his shorts!')
-                        $.profile({
+                        profile({
                             jpg: 'npc/neptune', effect: 'fadeInUp'
                             , handle: $.neptune.user.handle, level: $.neptune.user.level, pc: $.neptune.user.pc
                         })
-                        $.sound('neptune', 32)
-                        $.PC.wearing($.neptune)
+                        sound('neptune', 32)
+                        wearing($.neptune)
                         Battle.engage('Naval', $.online, $.neptune, menu)
                         return
                     }
                     xvt.outln(' fish and you eat it.')
-                    $.sound('quaff', 6)
+                    sound('quaff', 6)
                     xvt.outln('Ugh!  You feel sick and die!')
                     $.reason = `ate yesterday's catch of the day`
                     break
                 }
                 if (hook < 50) {
                     xvt.outln(' fish and you eat it.')
-                    $.sound('quaff', 6)
-                    $.sound('yum')
+                    sound('quaff', 6)
+                    sound('yum')
                     xvt.outln('Yum!  You feel stronger and healthier.\n')
-                    $.PC.adjust('str', 101)
+                    PC.adjust('str', 101)
                     xvt.out(`Stamina = ${$.online.str}     `)
-                    $.online.hp += $.int($.PC.hp() / 2) + $.dice($.PC.hp() / 2)
+                    $.online.hp += int(PC.hp() / 2) + dice(PC.hp() / 2)
                     xvt.out(`Hit points = ${$.online.hp}     `)
                     if ($.player.sp) {
-                        $.online.sp += $.int($.PC.sp() / 2) + $.dice($.PC.sp() / 2)
+                        $.online.sp += int(PC.sp() / 2) + dice(PC.sp() / 2)
                         xvt.out(`Spell points = ${$.online.sp}`)
                     }
                     xvt.outln()
@@ -211,62 +213,62 @@ module Naval {
                 if (hook < 75) {
                     xvt.outln('n oyster and you eat it.')
                     xvt.sleep(600)
-                    cap = $.money($.player.level)
+                    cap = money($.player.level)
                     n = Math.round(Math.pow(2., $.player.hull / 150.) * 7937)
-                    n = $.int(n / $.player.hull / 10 * $.dice($.online.hull))
-                    n = $.int(n * ($.player.cannon + 1) / ($.player.hull / 50))
-                    n = $.worth(n, $.online.cha)
+                    n = int(n / $.player.hull / 10 * dice($.online.hull))
+                    n = int(n * ($.player.cannon + 1) / ($.player.hull / 50))
+                    n = worth(n, $.online.cha)
                     if (n > cap) n = cap
-                    $.sound('oof')
-                    xvt.outln(`Ouch!  You bit into a pearl and sell it for ${new $.coins(n).carry()}.`)
+                    sound('oof')
+                    xvt.outln(`Ouch!  You bit into a pearl and sell it for ${new Coin(n).carry()}.`)
                     $.player.coin.value += n
                     break
                 }
                 if (hook < 90) {
                     xvt.outln('n oyster and you eat it.')
                     xvt.sleep(600)
-                    cap = 3 * $.money($.player.level)
+                    cap = 3 * money($.player.level)
                     n = Math.round(Math.pow(2., $.player.hull / 150.) * 7937)
-                    n = $.int(n / $.player.hull * $.dice($.online.hull))
-                    n = $.int(n * ($.player.cannon + 1) / ($.player.hull / 50))
-                    n = $.worth(n, $.online.cha)
+                    n = int(n / $.player.hull * dice($.online.hull))
+                    n = int(n * ($.player.cannon + 1) / ($.player.hull / 50))
+                    n = worth(n, $.online.cha)
                     if (n > cap) n = cap
-                    $.sound('oof')
-                    xvt.outln(`Ouch!  You bit into a diamond and sell it for ${new $.coins(n).carry()}.`)
+                    sound('oof')
+                    xvt.outln(`Ouch!  You bit into a diamond and sell it for ${new Coin(n).carry()}.`)
                     $.player.coin.value += n
                     break
                 }
                 if (hook < 95) {
-                    $.profile({ jpg: 'naval/turtle', effect: 'fadeInUp' })
+                    profile({ jpg: 'naval/turtle', effect: 'fadeInUp' })
                     xvt.outln(' turtle and you let it go.')
                     xvt.sleep(600)
                     $.player.toAC++
-                    $.online.toAC += $.dice($.online.armor.ac / 5 + 1)
-                    xvt.outln('The turtle turns and smiles and enhances your ', $.PC.armor())
-                    $.sound('shield')
+                    $.online.toAC += dice($.online.armor.ac / 5 + 1)
+                    xvt.outln('The turtle turns and smiles and enhances your ', armor())
+                    sound('shield')
                     break
                 }
                 if (hook < 100) {
                     xvt.outln(' tortoise and you let it go.')
                     xvt.sleep(600)
                     $.player.toWC++
-                    $.online.toWC += $.dice($.online.weapon.wc / 10 + 1)
-                    xvt.outln('The tortoise shows it gratitude by enchanting your ', $.PC.weapon())
-                    $.sound('hone')
+                    $.online.toWC += dice($.online.weapon.wc / 10 + 1)
+                    xvt.outln('The tortoise shows it gratitude by enchanting your ', weapon())
+                    sound('hone')
                     break
                 }
                 xvt.outln(' mermaid!')
                 xvt.sleep(600)
-                $.profile({ jpg: 'naval/mermaid', effect: 'bounceInUp' })
-                $.cat('naval/mermaid')
+                profile({ jpg: 'naval/mermaid', effect: 'bounceInUp' })
+                cat('naval/mermaid')
                 if ($.player.today) {
                     xvt.outln('She grants you an extra call for today!')
                     $.player.today--
-                    $.news('\tcaught an extra call')
+                    news('\tcaught an extra call')
                 }
                 else {
                     xvt.outln(`She says, "Here's a key hint:"`)
-                    $.keyhint($.online)
+                    keyhint($.online)
                 }
                 xvt.app.form = {
                     'pause': { cb: menu, pause: true }
@@ -287,16 +289,16 @@ module Naval {
                 }
 
                 for (let i in monsters)
-                    xvt.out($.bracket(+i + 1), xvt.cyan, monsters[i].name)
+                    xvt.out(bracket(+i + 1), xvt.cyan, monsters[i].name)
                 xvt.outln()
 
-                $.action('list')
+                action('list')
                 xvt.app.form = {
                     pick: {
                         cb: () => {
                             xvt.outln()
                             if (xvt.entry.length) {
-                                let mon = $.int(xvt.entry)
+                                let mon = int(xvt.entry)
                                 if (mon < 1 || mon > monsters.length) {
                                     xvt.app.refocus()
                                     return
@@ -318,7 +320,7 @@ module Naval {
                 xvt.outln()
                 xvt.outln(xvt.Blue, xvt.bright, ' ID             Username            Hull     Cannons     Ram')
                 xvt.outln(xvt.Blue, xvt.bright, '----     ----------------------     ----     -------     ---')
-                rs = $.query(`SELECT id,handle,hull,cannon,ram FROM Players WHERE hull > 0 ORDER BY hull DESC`)
+                rs = db.query(`SELECT id,handle,hull,cannon,ram FROM Players WHERE hull > 0 ORDER BY hull DESC`)
                 for (let i in rs) {
                     xvt.outln(sprintf('%-4s     %-22s     %4u     %5u        %s'
                         , rs[i].id, rs[i].handle, rs[i].hull, rs[i].cannon, rs[i].ram ? 'Y' : 'N')
@@ -352,7 +354,7 @@ module Naval {
     }
 
     function Shipyard(suppress = true) {
-        $.action('shipyard')
+        action('shipyard')
         let shipyard: choices = {
             'B': { description: 'Buy a new ship' },
             'F': { description: 'Fix battle damage' },
@@ -363,17 +365,16 @@ module Naval {
         xvt.app.form = {
             'menu': { cb: master, cancel: 'q', enter: '?', eol: false }
         }
-        xvt.app.form['menu'].prompt = $.display('shipyard', xvt.Cyan, xvt.cyan, suppress, shipyard)
+        xvt.app.form['menu'].prompt = display('shipyard', xvt.Cyan, xvt.cyan, suppress, shipyard)
         xvt.app.focus = 'menu'
 
         function master() {
             let suppress = false
             let choice = xvt.entry.toUpperCase()
-            if (isNotEmpty(shipyard[choice]))
-                if (isNotEmpty(shipyard[choice].description)) {
-                    xvt.out(' - ', shipyard[choice].description)
-                    suppress = true
-                }
+            if (shipyard[choice]?.description) {
+                xvt.out(' - ', shipyard[choice].description)
+                suppress = true
+            }
             xvt.outln('\n')
 
             let ship = 50
@@ -384,35 +385,35 @@ module Naval {
             switch (choice) {
                 case 'B':
                     if ($.player.hull + 50 > 8000) {
-                        $.beep()
+                        xvt.beep()
                         xvt.outln(`They don't make ships any bigger than the one you have now.`)
                         break
                     }
                     if (!$.player.hull) {
                         if ($.player.coin.value < cost) {
-                            xvt.outln('You need at least ', new $.coins(cost).carry(), ' to buy a ship.')
+                            xvt.outln('You need at least ', new Coin(cost).carry(), ' to buy a ship.')
                             break
                         }
                     }
-                    if ($.naval > 2) $.music('sailing')
+                    if ($.naval > 2) music('sailing')
 
                     xvt.outln('List of affordable ships:\n')
                     max = $.player.hull + 50
                     cost = Math.round(Math.pow(2, max / 150) * 7937)
                     while (max <= 8000 && cost < $.player.coin.value) {
-                        xvt.outln(sprintf('Hull size: %-4d     Cost: ', max), new $.coins(cost).carry())
+                        xvt.outln(sprintf('Hull size: %-4d     Cost: ', max), new Coin(cost).carry())
                         max += 50
                         cost = Math.round(Math.pow(2, max / 150) * 7937)
                     }
 
-                    $.action('listbest')
+                    action('listbest')
                     xvt.app.form = {
                         'size': {
                             cb: () => {
                                 xvt.outln('\n')
                                 if (xvt.entry.length) {
                                     if (/=|max/i.test(xvt.entry)) {
-                                        $.beep()
+                                        xvt.beep()
                                         xvt.entry = (max - 50).toString()
                                     }
                                     ship = +xvt.entry
@@ -441,16 +442,16 @@ module Naval {
                                         return
                                     }
 
-                                    $.profile({ png: 'payment', effect: 'tada' })
-                                    $.sound('click', 5)
+                                    profile({ png: 'payment', effect: 'tada' })
+                                    sound('click', 5)
                                     cost = Math.round(Math.pow(2, ship / 150) * 7937)
                                     $.player.coin.value -= cost
                                     $.player.hull = ship
                                     $.player.ram = false
                                     $.online.hull = $.player.hull
-                                    $.run(`UPDATE Players set hull=${ship},ram=0 WHERE id='${$.player.id}'`)
+                                    db.run(`UPDATE Players set hull=${ship},ram=0 WHERE id='${$.player.id}'`)
                                     xvt.outln(`You now have a brand new ${$.player.hull} hull point ship, with no ram.`)
-                                    $.sound('boat')
+                                    sound('boat')
                                 }
                                 Shipyard()
                             }
@@ -468,24 +469,24 @@ module Naval {
                     max = $.player.hull - $.online.hull
                     xvt.outln(`You need ${max} hull points of repair.`)
                     cost = Math.round(Math.pow(2, $.player.hull / 150) * 7937)
-                    cost = $.int(cost / $.player.hull / 10)
-                    xvt.outln(`Each hull point costs ${new $.coins(cost).carry()} to repair.`)
+                    cost = int(cost / $.player.hull / 10)
+                    xvt.outln(`Each hull point costs ${new Coin(cost).carry()} to repair.`)
                     if (!max) break
-                    afford = $.int($.player.coin.value / cost)
+                    afford = int($.player.coin.value / cost)
                     if (afford < max)
                         max = afford
-                    $.action('listall')
+                    action('listall')
                     xvt.app.form = {
                         'hp': {
                             cb: () => {
                                 xvt.outln('\n')
-                                let buy = $.int(/=|max/i.test(xvt.entry) ? max : +xvt.entry, true)
+                                let buy = int(/=|max/i.test(xvt.entry) ? max : +xvt.entry, true)
                                 if (buy > 0 && buy <= max) {
                                     $.player.coin.value -= buy * cost
                                     if ($.player.coin.value < 0)
                                         $.player.coin.value = 0
                                     $.online.hull += buy
-                                    $.beep()
+                                    xvt.beep()
                                     xvt.outln(`Hull points = ${$.online.hull}`)
                                 }
                                 Shipyard()
@@ -502,28 +503,28 @@ module Naval {
                         xvt.outln(`You don't have a ship!`)
                         break
                     }
-                    max = $.int($.player.hull / 50) - $.player.cannon
+                    max = int($.player.hull / 50) - $.player.cannon
                     xvt.outln(`You can mount up to ${max} more cannons.`)
                     cost = Math.round(Math.pow(2, $.player.hull / 150) * 7937)
-                    cost = $.int(cost / 250)
-                    xvt.outln(`Each cannon costs ${new $.coins(cost).carry()}.`)
-                    afford = $.int($.player.coin.value / cost)
+                    cost = int(cost / 250)
+                    xvt.outln(`Each cannon costs ${new Coin(cost).carry()}.`)
+                    afford = int($.player.coin.value / cost)
                     if (afford < max)
                         max = afford
-                    $.action('listbest')
+                    action('listbest')
                     xvt.app.form = {
                         'cannon': {
                             cb: () => {
                                 xvt.outln('\n')
-                                let buy = $.int(/=|max/i.test(xvt.entry) ? max : +xvt.entry, true)
+                                let buy = int(/=|max/i.test(xvt.entry) ? max : +xvt.entry, true)
                                 if (buy > 0 && buy <= max) {
                                     $.player.coin.value -= buy * cost
                                     if ($.player.coin.value < 0)
                                         $.player.coin.value = 0
                                     $.player.cannon += buy
-                                    $.beep()
+                                    xvt.beep()
                                     xvt.outln(`Cannons = ${$.player.cannon}`)
-                                    $.run(`UPDATE Players set cannon=${$.player.cannon} WHERE id='${$.player.id}'`)
+                                    db.run(`UPDATE Players set cannon=${$.player.cannon} WHERE id='${$.player.id}'`)
                                 }
                                 Shipyard()
                                 return
@@ -544,14 +545,14 @@ module Naval {
                         break
                     }
                     cost = Math.round(Math.pow(2, $.player.hull / 150) * 7937)
-                    cost = $.int(cost / 10)
-                    xvt.outln(`We can equip your ship with a ram for ${new $.coins(cost).carry()}.`)
-                    afford = $.int($.player.coin.value / cost)
+                    cost = int(cost / 10)
+                    xvt.outln(`We can equip your ship with a ram for ${new Coin(cost).carry()}.`)
+                    afford = int($.player.coin.value / cost)
                     if (!afford) {
                         xvt.outln(`You don't have enough money!`)
                         break
                     }
-                    $.action('yn')
+                    action('yn')
                     xvt.app.form = {
                         'ram': {
                             cb: () => {
@@ -561,9 +562,9 @@ module Naval {
                                     if ($.player.coin.value < 0)
                                         $.player.coin.value = 0
                                     $.player.ram = true
-                                    $.beep()
+                                    xvt.beep()
                                     xvt.outln('You now have a ram.')
-                                    $.run(`UPDATE Players set ram=1 WHERE id='${$.player.id}'`)
+                                    db.run(`UPDATE Players set ram=1 WHERE id='${$.player.id}'`)
                                 }
                                 Shipyard()
                                 return
@@ -585,22 +586,22 @@ module Naval {
         let damage: number
 
         xvt.outln()
-        if ($.dice(100) + $.online.int >= $.dice(100) + nme.int) {
-            xvt.outln(`You approach ${$.PC.who(nme).him}and quickly open fire.`)
+        if (dice(100) + $.online.int >= dice(100) + nme.int) {
+            xvt.outln(`You approach ${PC.who(nme).him}and quickly open fire.`)
             if (you()) {
                 menu()
                 return
             }
         }
         else
-            xvt.outln(`${$.PC.who(nme).He}spots you coming and attacks.`)
+            xvt.outln(`${PC.who(nme).He}spots you coming and attacks.`)
 
         if (him()) {
             menu()
             return
         }
 
-        $.action('hunt')
+        action('hunt')
         xvt.app.form = {
             'attack': {
                 cb: () => {
@@ -616,8 +617,8 @@ module Naval {
                         case 'S':
                             xvt.outln()
                             if (!outrun($.online.hull / nme.hull, $.online.int - nme.int)) {
-                                $.sound('oops')
-                                xvt.outln(`${$.PC.who(nme).He}outruns you and stops your retreat!`)
+                                sound('oops')
+                                xvt.outln(`${PC.who(nme).He}outruns you and stops your retreat!`)
                                 xvt.sleep(500)
                                 if (him()) {
                                     menu()
@@ -625,14 +626,14 @@ module Naval {
                                 }
                             }
                             else {
-                                $.PC.adjust('cha', -2, -1)
+                                PC.adjust('cha', -2, -1)
                                 $.player.retreats++
                                 xvt.outln(xvt.bright, xvt.cyan, 'You sail '
                                     , xvt.normal, 'away safely '
                                     , xvt.faint, 'out of range.')
-                                $.saveUser(nme, false, true)
-                                $.run(`UPDATE Players set hull=${$.player.hull},cannon=${$.player.cannon},ram=${+$.player.ram},retreats=${$.player.retreats} WHERE id='${$.player.id}'`)
-                                $.log(nme.user.id, `\n${$.player.handle}, the coward, sailed away from you.`)
+                                PC.saveUser(nme, false, true)
+                                db.run(`UPDATE Players set hull=${$.player.hull},cannon=${$.player.cannon},ram=${+$.player.ram},retreats=${$.player.retreats} WHERE id='${$.player.id}'`)
+                                log(nme.user.id, `\n${$.player.handle}, the coward, sailed away from you.`)
                                 menu()
                                 return
                             }
@@ -642,20 +643,20 @@ module Naval {
                             if ($.player.ram) {
                                 xvt.outln()
                                 if (outmaneuvered(nme.int - $.online.int, nme.hull / $.online.hull)) {
-                                    xvt.outln(`${$.PC.who(nme).He}quickly outmaneuvers your ship.`)
+                                    xvt.outln(`${PC.who(nme).He}quickly outmaneuvers your ship.`)
                                     xvt.sleep(400)
                                     xvt.outln(xvt.cyan, 'You yell at your helmsman, "', xvt.reset,
                                         ['Your aim is going to kill us all!'
                                             , 'I said port, bastard, not starboard!'
                                             , 'Get me my brown pants!'
                                             , 'Someone throw this traitor overboard!'
-                                            , 'She\'s turning onto US now!'][$.dice(5) - 1]
+                                            , 'She\'s turning onto US now!'][dice(5) - 1]
                                         , xvt.cyan, '"')
                                     xvt.sleep(600)
                                 }
                                 else {
-                                    damage = $.dice($.player.hull / 2) + $.dice($.online.hull / 2)
-                                    xvt.outln(xvt.green, `You ram ${$.PC.who(nme).him}for `
+                                    damage = dice($.player.hull / 2) + dice($.online.hull / 2)
+                                    xvt.outln(xvt.green, `You ram ${PC.who(nme).him}for `
                                         , xvt.bright, `${damage}`
                                         , xvt.normal, ` hull points of damage!`)
                                     if ((nme.hull -= damage) < 1) {
@@ -666,11 +667,11 @@ module Naval {
                                 }
                             }
                             else {
-                                $.sound('oops')
+                                sound('oops')
                                 xvt.outln()
                                 xvt.outln(`Your first mate cries back, "But we don't have a ram!"`)
                                 xvt.sleep(2000)
-                                $.sound('fire', 8)
+                                sound('fire', 8)
                                 xvt.outln('You shoot your first mate.')
                                 xvt.sleep(800)
                             }
@@ -688,8 +689,8 @@ module Naval {
                             break
                     }
                     xvt.app.refocus()
-                }, prompt: xvt.attr($.bracket('F', false), xvt.cyan, 'ire cannons, ', $.bracket('R', false), xvt.cyan, 'am, '
-                    , $.bracket('S', false), xvt.cyan, 'ail off, ', $.bracket('Y', false), xvt.cyan, 'our status: ')
+                }, prompt: xvt.attr(bracket('F', false), xvt.cyan, 'ire cannons, ', bracket('R', false), xvt.cyan, 'am, '
+                    , bracket('S', false), xvt.cyan, 'ail off, ', bracket('Y', false), xvt.cyan, 'our status: ')
                 , cancel: 'S', enter: 'F', eol: false, match: /F|R|S|Y/i, timeout: 20
             }
         }
@@ -703,42 +704,42 @@ module Naval {
                 `You've made splinters out of ${nme.user.handle}\'s ship!`,
                 `${nme.user.handle} is now sleeping with the fishes!`,
                 `${nme.user.handle} is now chum for the sharks!`
-            ][$.dice(5) - 1], '!\n')
+            ][dice(5) - 1], '!\n')
             xvt.sleep(500)
-            $.log(nme.user.id, `\n${$.player.handle} sank your ship!`)
-            $.news(`\tsank ${nme.user.handle}'s ship`)
+            log(nme.user.id, `\n${$.player.handle} sank your ship!`)
+            news(`\tsank ${nme.user.handle}'s ship`)
 
-            let booty = new $.coins(Math.round(Math.pow(2, $.player.hull / 150) * 7937 / 250))
-            booty.value = $.int(booty.value * nme.user.cannon)
+            let booty = new Coin(Math.round(Math.pow(2, $.player.hull / 150) * 7937 / 250))
+            booty.value = int(booty.value * nme.user.cannon)
             if (nme.user.coin.value > booty.value) {
-                $.sound('boo')
-                xvt.outln(`${new $.coins(nme.user.coin.value - booty.value).carry()} of the booty has settled on the ocean floor...`)
+                sound('boo')
+                xvt.outln(`${new Coin(nme.user.coin.value - booty.value).carry()} of the booty has settled on the ocean floor...`)
                 xvt.sleep(500)
                 nme.user.coin.value = booty.value
             }
             booty.value += nme.user.coin.value
             if (booty.value) {
-                $.sound('booty', 5)
+                sound('booty', 5)
                 xvt.outln('You get ', booty.carry(), '.')
-                $.log(nme.user.id, `... and got ${booty.carry(2, true)}.\n`)
+                log(nme.user.id, `... and got ${booty.carry(2, true)}.\n`)
                 $.player.coin.value += booty.value
                 xvt.sleep(500)
                 nme.user.coin.value = 0
             }
             booty.value += nme.user.coin.value
-            $.saveUser(nme, false, true)
+            PC.saveUser(nme, false, true)
         }
 
         function you(): boolean {
             let result = fire($.online, nme)
             if (nme.hull > 0) {
-                if ($.dice(10) == 1) {
+                if (dice(10) == 1) {
                     xvt.outln(xvt.cyan, 'You call out to your crew, "', xvt.reset,
                         ['Fire at crest to hit the best!'
                             , 'Crying will not save you!'
                             , `Look alive, or I'll kill you first!`
                             , 'Get me my red shirt!'
-                            , `Y'all fight like the will-o-wisp!`][$.dice(5) - 1]
+                            , `Y'all fight like the will-o-wisp!`][dice(5) - 1]
                         , xvt.cyan, '"')
                     xvt.sleep(600)
                 }
@@ -758,35 +759,35 @@ module Naval {
                     return false
                 }
                 xvt.outln('\nThey sail away over the horizon.')
-                $.saveUser(nme, false, true)
+                PC.saveUser(nme, false, true)
                 xvt.sleep(500)
                 return true
             }
-            if (!nme.user.ram || (nme.user.cannon && $.dice(2 * nme.hull / (nme.hull - $.online.hull) + 4) > 1))
+            if (!nme.user.ram || (nme.user.cannon && dice(2 * nme.hull / (nme.hull - $.online.hull) + 4) > 1))
                 fire(nme, $.online)
             else
                 ram(nme, $.online)
 
             if ($.online.hull < 1) {
                 $.online.altered = true
-                $.log(nme.user.id, `\nYou sank ${$.player.handle}'s ship!`)
+                log(nme.user.id, `\nYou sank ${$.player.handle}'s ship!`)
                 $.reason = `sunk by ${nme.user.handle}`
                 $.online.hp = 0
                 $.online.hull = 0
 
-                let booty = new $.coins(Math.round(Math.pow(2, nme.user.hull / 150) * 7937 / 250))
-                booty.value = $.int(booty.value * $.player.cannon)
+                let booty = new Coin(Math.round(Math.pow(2, nme.user.hull / 150) * 7937 / 250))
+                booty.value = int(booty.value * $.player.cannon)
                 if ($.player.coin.value > booty.value)
                     $.player.coin.value = booty.value
                 booty.value += $.player.coin.value
                 if (booty.value) {
-                    $.log(nme.user.id, `... and you got ${booty.carry(2, true)}.\n`)
+                    log(nme.user.id, `... and you got ${booty.carry(2, true)}.\n`)
                     nme.user.coin.value += booty.value
                     $.player.coin.value = 0
                 }
-                $.saveUser(nme, false, true)
+                PC.saveUser(nme, false, true)
 
-                $.sound('sunk', 30)
+                sound('sunk', 30)
                 xvt.outln(xvt.faint, `\n${nme.user.handle} smiles as a shark approaches you.`)
                 xvt.sleep(6000)
                 xvt.hangup()
@@ -801,11 +802,11 @@ module Naval {
         sm = Object.assign({}, monsters[mon])
         let damage: number
 
-        $.profile({ jpg: `naval/${sm.name.toLowerCase()}`, handle: sm.name, effect: 'fadeInUp' })
-        xvt.outln(`\nYou sail out until you spot${$.an(sm.name)} on the horizon.\n`)
+        profile({ jpg: `naval/${sm.name.toLowerCase()}`, handle: sm.name, effect: 'fadeInUp' })
+        xvt.outln(`\nYou sail out until you spot${an(sm.name)} on the horizon.\n`)
         xvt.outln(`It has ${sm.hull} hull points.`)
 
-        $.action('ny')
+        action('ny')
         xvt.app.form = {
             'fight': {
                 cb: () => {
@@ -816,7 +817,7 @@ module Naval {
                     }
 
                     $.naval--
-                    if ($.dice(100) + $.online.int >= $.dice(100) + sm.int) {
+                    if (dice(100) + $.online.int >= dice(100) + sm.int) {
                         xvt.outln('\nYou approach it and quickly open fire.')
                         if (you()) {
                             menu()
@@ -833,7 +834,7 @@ module Naval {
                         }
                     }
 
-                    $.action('hunt')
+                    action('hunt')
                     xvt.app.focus = 'attack'
                 }, prompt: 'Continue (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 20
             },
@@ -850,7 +851,7 @@ module Naval {
 
                         case 'S':
                             if (!outrun($.online.hull / sm.hull, $.online.int - sm.int)) {
-                                $.sound('oops')
+                                sound('oops')
                                 xvt.out('\nIt outruns you and stops your retreat!\n')
                                 xvt.sleep(500)
                                 if (it()) {
@@ -875,12 +876,12 @@ module Naval {
                                             , 'I said starboard, bitch, not port!'
                                             , 'Look alive, or it\'ll be fine dining yer bones!'
                                             , 'Get me my brown pants!'
-                                            , 'Whose side are you on anyways?!'][$.dice(5) - 1]
+                                            , 'Whose side are you on anyways?!'][dice(5) - 1]
                                         , xvt.cyan, '"\n')
                                     xvt.sleep(600)
                                 }
                                 else {
-                                    damage = $.dice($.player.hull / 2) + $.dice($.online.hull / 2)
+                                    damage = dice($.player.hull / 2) + dice($.online.hull / 2)
                                     xvt.outln(xvt.green, '\nYou ram it for '
                                         , xvt.bright, `${damage}`
                                         , xvt.normal, ` hull points of damage!`)
@@ -892,7 +893,7 @@ module Naval {
                                 }
                             }
                             else {
-                                $.sound('oops')
+                                sound('oops')
                                 xvt.outln(`\nYour first mate cries back, "But we don't have a ram!"`)
                                 xvt.sleep(500)
                             }
@@ -909,8 +910,8 @@ module Naval {
                             break
                     }
                     xvt.app.refocus()
-                }, prompt: xvt.attr($.bracket('F', false), xvt.cyan, 'ire cannons, ', $.bracket('R', false), xvt.cyan, 'am it, '
-                    , $.bracket('S', false), xvt.cyan, 'ail off, ', $.bracket('Y', false), xvt.cyan, 'our status: ')
+                }, prompt: xvt.attr(bracket('F', false), xvt.cyan, 'ire cannons, ', bracket('R', false), xvt.cyan, 'am it, '
+                    , bracket('S', false), xvt.cyan, 'ail off, ', bracket('Y', false), xvt.cyan, 'our status: ')
                 , cancel: 'S', enter: 'F', eol: false, match: /F|R|S|Y/i, timeout: 20
             }
         }
@@ -918,9 +919,9 @@ module Naval {
 
         function booty() {
             sm.hull = 0
-            $.sound('booty', 5)
-            let coin = new $.coins(sm.money)
-            coin.value = $.worth(coin.value, $.online.cha)
+            sound('booty', 5)
+            let coin = new Coin(sm.money)
+            coin.value = worth(coin.value, $.online.cha)
             xvt.outln('You get ', coin.carry(), ' for bringing home the carcass.')
             $.player.coin.value += coin.value
             xvt.sleep(500)
@@ -938,9 +939,9 @@ module Naval {
         function it(): boolean {
             let damage = 0
 
-            if (!sm.ram || ($.dice(sm.shot * sm.hull / (sm.hull - $.online.hull) + 3 * sm.shot) > 1)) {
+            if (!sm.ram || (dice(sm.shot * sm.hull / (sm.hull - $.online.hull) + 3 * sm.shot) > 1)) {
                 for (let i = 0; i < sm.shot; i++)
-                    damage += $.dice(sm.powder) + $.dice(sm.powder)
+                    damage += dice(sm.powder) + dice(sm.powder)
                 xvt.outln('\n', xvt.bright, xvt.blue, `The ${sm.name} attacks your ship, causing`
                     , xvt.cyan, ` ${damage} `, xvt.blue, `hull points of damage.\n`)
                 xvt.sleep(250)
@@ -955,7 +956,7 @@ module Naval {
                 $.player.killed++
                 $.reason = `sunk by the ${sm.name}`
                 xvt.outln(xvt.yellow, xvt.bright, `The ${sm.name} sank your ship!`)
-                $.sound('bubbles', 15)
+                sound('bubbles', 15)
                 if ($.player.coin.value) {
                     $.player.coin.value = 0
                     xvt.outln('It gets all your money!')
@@ -975,17 +976,17 @@ module Naval {
         let cannon: number = 0
         let ram: boolean = false
 
-        if (a.user == $.player) $.sound('fire')
+        if (a.user == $.player) sound('fire')
         xvt.out('\n', xvt.cyan, a.user == $.player ? 'Attacker: ' : 'Defender: ', xvt.bright)
         for (let i = 0; i < a.user.cannon && d.user.hull; i++) {
-            let n = $.dice(100)
+            let n = dice(100)
             n = (n < 66) ? 0 : (n < 96) ? 1 : (n < 100 || !d.user.id) ? 2 : 3
             switch (n) {
                 case 3:
                     if (d.user.ram) {
                         ram = true
                         d.user.ram = false
-                        $.beep()
+                        xvt.beep()
                         xvt.out(xvt.magenta, '^', -35)
                         break
                     }
@@ -1000,7 +1001,7 @@ module Naval {
                     }
                 case 1:
                     hits++
-                    n = $.dice(50)
+                    n = dice(50)
                     damage += n
                     d.hull -= n
                     if (n < 50 || d.user.hull < 1 || !d.user.id) {
@@ -1051,24 +1052,24 @@ module Naval {
     function outmaneuvered(dint: number, dhull: number): boolean {
         dint >>= 2
         const outstmart = 100 + dint
-        let bigger = $.int(100 * dhull)
-        return $.dice(outstmart) + $.dice(bigger) > 66
+        let bigger = int(100 * dhull)
+        return dice(outstmart) + dice(bigger) > 66
     }
 
     //	sail away: can my ship (+ wit) outrun yours?
     function outrun(dhull: number, dint: number): boolean {
         dint = dint > 0 ? dint >> 1 : 0
-        let run = $.int(50 + (100 * dhull + dint) / 2)
+        let run = int(50 + (100 * dhull + dint) / 2)
         run = run > 100 ? 100 : run
-        return run > $.dice(100)
+        return run > dice(100)
     }
 
     function ram(a: active, d: active) {
         if (a.user.id) xvt.out(xvt.yellow)
         else xvt.out(xvt.bright, xvt.blue)
-        xvt.out(`\n${a.user.handle} ${$.what(a, 'ram')}${$.PC.who(d).him}for`)
+        xvt.out(`\n${a.user.handle} ${what(a, 'ram')}${PC.who(d).him}for`)
 
-        let damage = $.dice(a.user.hull / 2) + $.dice(a.hull / 2)
+        let damage = dice(a.user.hull / 2) + dice(a.hull / 2)
         if (a.user.id) xvt.out(xvt.bright)
         else xvt.out(xvt.cyan)
         xvt.out(` ${damage} `)

@@ -33,5 +33,19 @@
   "cha": 30,
   "maxcha": 90,
   "weapon": "Club",
-  "armor": "Wooden Shield"
+  "armor": "Wooden Shield",
+  "gang": "AB Original",
+  "bot": {
+    "backstab": 0,
+    "brawl": 0,
+    "dungeon": 0,
+    "gamble": 0,
+    "joust": 0,
+    "fish": 0,
+    "monster": 0,
+    "naval": 0,
+    "party": 0,
+    "steal": 0,
+    "user": 0
+  }
 }

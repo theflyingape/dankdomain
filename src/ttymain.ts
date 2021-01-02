@@ -12,22 +12,20 @@
  *  Apple Ⅱ TproBBS                                written by Guy T. Rice    *
 \*****************************************************************************/
 
-process.title = 'ddclient'
-process.chdir(__dirname)
-
 import xvt = require('@theflyingape/xvt')
 
-process.on('ttyMain uncaughtException', (err, origin) => {
-    xvt.outln(`${origin} ${err}`)
-})
+module ttymain {
 
-//  classic terminal user interface entry point
-module ttyMain {
+    process.title = 'ddclient'
+    process.chdir(__dirname)
+    process.on('ttyMain uncaughtException', (err, origin) => {
+        xvt.outln(`${origin} ${err}`)
+    })
 
     xvt.sessionAllowed = 150
     xvt.defaultTimeout = 100
 
-    xvt.app.emulation = <xvt.emulator>(process.argv.length > 2 && process.argv[2]
+    xvt.app.emulation = (process.argv.length > 2 && process.argv[2]
         ? process.argv[2].toUpperCase()
         : (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM)) ? 'dumb'
             : (/^linux|^lisa|^ncsa|^pcvt|^vt|^xt/i.test(process.env.TERM)) ? 'VT'
@@ -63,14 +61,18 @@ module ttyMain {
         }
     }
 
-    //  old-school enquire the terminal to identify itself
+    const bot = process.argv.length > 3 && process.argv[3] ? process.argv[3].toUpperCase() : ''
     if (xvt.app.emulation) logon()
+    //  old-school enquire the terminal to identify itself
     else xvt.app.focus = 'enq1'
 
     function logon() {
         xvt.outln(xvt.cyan, xvt.bright, xvt.app.emulation, xvt.normal, ' emulation ', xvt.faint, 'enabled')
-        require('./tty/logon')
+        if (bot)
+            require('./tty/logon').startup(bot)
+        else
+            require('./tty/logon').user()
     }
 }
 
-export = ttyMain
+export = ttymain

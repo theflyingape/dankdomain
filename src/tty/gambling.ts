@@ -3,10 +3,12 @@
  *  GAMBLING authored by: Robert Hurst <theflyingape@gmail.com>              *
 \*****************************************************************************/
 
-import $ = require('../common')
 import xvt = require('@theflyingape/xvt')
-import { isNotEmpty } from 'class-validator'
-import { sprintf } from 'sprintf-js'
+import $ = require('../runtime')
+import { RealEstate, Security } from '../items'
+import { Coin, action, bracket, clear, display, music, sound } from '../io'
+import { PC } from '../pc'
+import { dice, int, money, sprintf, worth } from '../sys'
 
 module Gambling {
 
@@ -23,8 +25,8 @@ module Gambling {
     */
 
     let game: string
-    let max = new $.coins(0)
-    let payoff = new $.coins(0)
+    let max = new Coin(0)
+    let payoff = new Coin(0)
     let point: number
     let sting: boolean = true
 
@@ -89,21 +91,21 @@ module Gambling {
     ]
 
     export function menu(suppress = true) {
-        if ($.online.altered) $.saveUser($.online)
+        if ($.online.altered) PC.saveUser($.online)
         if ($.reason) xvt.hangup()
 
-        $.action('casino')
+        action('casino')
         xvt.app.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
-        xvt.app.form['menu'].prompt = $.display('casino', xvt.Green, xvt.green, suppress, casino)
+        xvt.app.form['menu'].prompt = display('casino', xvt.Green, xvt.green, suppress, casino)
         xvt.app.focus = 'menu'
-        max.value = $.worth(new $.coins($.RealEstate.name[$.player.realestate].value).value, $.online.cha)
-        max.value += $.worth(new $.coins($.Security.name[$.player.security].value).value, $.online.cha)
-        max.value = $.int(max.value / 10)
-        max.value += $.worth(($.player.level * $.money($.player.level)), $.online.cha)
+        max.value = worth(new Coin(RealEstate.name[$.player.realestate].value).value, $.online.cha)
+        max.value += worth(new Coin(Security.name[$.player.security].value).value, $.online.cha)
+        max.value = int(max.value / 10)
+        max.value += worth(($.player.level * money($.player.level)), $.online.cha)
         if (max.value > 1e+16) max.value = 1e+16
-        max = new $.coins(max.carry(1, true))
+        max = new Coin(max.carry(1, true))
     }
 
     function choice() {
@@ -113,18 +115,17 @@ module Gambling {
             return
         }
 
-        if (isNotEmpty(casino[game]))
-            if (isNotEmpty(casino[game].description)) {
-                xvt.outln(' - ', casino[game].description)
-                if ($.access.roleplay) {
-                    if (sting) {
-                        $.music('casino')
-                        sting = false
-                    }
-                    Bet()
-                    return
+        if (casino[game]?.description) {
+            xvt.outln(' - ', casino[game].description)
+            if ($.access.roleplay) {
+                if (sting) {
+                    music('casino')
+                    sting = false
                 }
+                Bet()
+                return
             }
+        }
         menu(false)
     }
 
@@ -132,7 +133,7 @@ module Gambling {
         if (max.value > $.player.coin.value)
             max.value = $.player.coin.value
 
-        $.action('wager')
+        action('wager')
         xvt.app.form = {
             'coin': { cb: amount, max: 6 }
         }
@@ -145,11 +146,11 @@ module Gambling {
         xvt.outln()
 
         if ((+xvt.entry).toString() == xvt.entry) xvt.entry += 'c'
-        let amount = new $.coins(0)
+        let amount = new Coin(0)
         if (/=|max/i.test(xvt.entry))
             amount.value = max.value
         else
-            amount.value = $.int(new $.coins(xvt.entry).value)
+            amount.value = int(new Coin(xvt.entry).value)
         if (amount.value < 1 || amount.value > $.player.coin.value || amount.value > max.value) {
             xvt.beep()
             menu($.player.expert)
@@ -178,13 +179,13 @@ module Gambling {
                 myhand = ShowHand(1, player)
 
                 if (myhand == 21) {
-                    $.sound('cheer')
+                    sound('cheer')
                     payoff.value = 2 * amount.value
                     xvt.outln(xvt.bright, xvt.cyan, '\nBlackjack!!', -1000)
 
                     value = ShowHand(0, dealer)
                     if (value == 21) {
-                        $.sound('boo')
+                        sound('boo')
                         xvt.outln(`\nDealer has Blackjack!  You're a loser.`, -1000)
                     }
                     else {
@@ -194,7 +195,7 @@ module Gambling {
                     break
                 }
 
-                $.action('blackjack')
+                action('blackjack')
                 xvt.app.form = {
                     'draw': {
                         cb: () => {
@@ -215,7 +216,7 @@ module Gambling {
                                         amount.value = 0
                                     }
                                     else if (player.length == 5) {
-                                        $.sound('cheer')
+                                        sound('cheer')
                                         payoff.value = 2 * amount.value
                                         xvt.outln('Five card charley!  You win ', payoff.carry(), '!')
                                         $.player.coin.value += payoff.value + amount.value
@@ -234,24 +235,24 @@ module Gambling {
                             if (/S/i.test(xvt.entry)) {
                                 while ((value = ShowHand(0, dealer)) < 17 && amount.value) {
                                     dealer.push(deck[pile++])
-                                    $.sound('click', 8)
+                                    sound('click', 8)
                                 }
                                 xvt.outln()
                                 if (amount.value) {
                                     if (value > 21) {
-                                        $.sound('cheer')
+                                        sound('cheer')
                                         payoff.value = amount.value
                                         xvt.outln('Dealer breaks!  You win ', payoff.carry(), '!')
                                         $.player.coin.value += payoff.value + amount.value
                                     }
                                     else if (myhand > value) {
-                                        $.sound('cheer')
+                                        sound('cheer')
                                         payoff.value = amount.value
                                         xvt.outln('You win ', payoff.carry(), '!')
                                         $.player.coin.value += payoff.value + amount.value
                                     }
                                     else if (myhand < value) {
-                                        $.sound('boo')
+                                        sound('boo')
                                         xvt.outln('You lose.')
                                     }
                                     else {
@@ -264,11 +265,11 @@ module Gambling {
                         }, cancel: 'S', eol: false, max: 1
                     }
                 }
-                xvt.app.form['draw'].prompt = xvt.attr($.bracket('H', false), xvt.cyan, 'it, ',
-                    $.bracket('S', false), xvt.cyan, 'tand')
+                xvt.app.form['draw'].prompt = xvt.attr(bracket('H', false), xvt.cyan, 'it, ',
+                    bracket('S', false), xvt.cyan, 'tand')
                 xvt.app.form['draw'].match = /H|S/i
                 if ($.player.coin.value >= amount.value && (ace > 0 || myhand < 12)) {
-                    xvt.app.form['draw'].prompt += xvt.attr(', ', $.bracket('D', false), xvt.cyan, 'ouble down')
+                    xvt.app.form['draw'].prompt += xvt.attr(', ', bracket('D', false), xvt.cyan, 'ouble down')
                     xvt.app.form['draw'].match = /D|H|S/i
                 }
                 xvt.app.form['draw'].prompt += ': '
@@ -278,9 +279,9 @@ module Gambling {
             case 'C':
                 xvt.out('Rolling dice for your point ', xvt.faint)
                 xvt.sleep(100)
-                let d1 = $.dice(6), d2 = $.dice(6)
+                let d1 = dice(6), d2 = dice(6)
                 for (let i = 0; i < d1 + 1; i++) {
-                    $.sound('click')
+                    sound('click')
                     xvt.out('.')
                 }
                 xvt.sleep(100)
@@ -294,7 +295,7 @@ module Gambling {
                 xvt.outln(xvt.white, ' = ', xvt.bright, point.toString())
                 xvt.sleep(1000)
                 if (point == 7 || point == 11) {
-                    $.sound('cheer')
+                    sound('cheer')
                     payoff.value = 2 * amount.value
                     xvt.outln('A natural!  You win ', payoff.carry(), '!')
                     $.player.coin.value += payoff.value + amount.value
@@ -302,13 +303,13 @@ module Gambling {
                     break
                 }
                 if (point == 2 || point == 3 || point == 12) {
-                    $.sound('boo')
+                    sound('boo')
                     xvt.out('Crapped out!  You lose.\n')
                     xvt.sleep(500)
                     break
                 }
 
-                $.clear()
+                clear()
                 xvt.out(xvt.cyan, 'Your point to make is: ', xvt.bright, xvt.white, point.toString(),
                     xvt.normal, '\n\n',
                     'Press RETURN to roll dice and try to make your point\n',
@@ -321,19 +322,19 @@ module Gambling {
                     '  [7] to break pays 5:1\n'
                 )
 
-                $.action('craps')
+                action('craps')
                 xvt.app.form = {
                     'baby': {
                         cb: () => {
                             xvt.out('\n', xvt.cll)
                             if ((+xvt.entry).toString() == xvt.entry) xvt.entry += 'c'
-                            let side = new $.coins(0)
+                            let side = new Coin(0)
                             if (/=|max/i.test(xvt.entry))
                                 side.value = max.value
                             else
-                                side.value = $.int(new $.coins(xvt.entry).value)
+                                side.value = int(new Coin(xvt.entry).value)
                             if (side.value < 1 || side.value > $.player.coin.value || amount.value > max.value) {
-                                $.beep()
+                                xvt.beep()
                                 side.value = 0
                             }
                             $.player.coin.value -= side.value
@@ -344,7 +345,7 @@ module Gambling {
                     'roll': {
                         cb: () => {
                             xvt.out('\n', xvt.cll)
-                            baby = $.int(xvt.entry, true)
+                            baby = int(xvt.entry, true)
                             if ($.player.coin.value > 0 && baby > 1 && baby < 13) {
                                 if (max.value > $.player.coin.value)
                                     max.value = $.player.coin.value
@@ -371,7 +372,7 @@ module Gambling {
                 xvt.outln(xvt.cyan, xvt.bright, 'Matching cards must draw again; unless Jokers which payout ', xvt.white, '1000:1')
                 shuffle(true)
 
-                $.action('list')
+                action('list')
                 xvt.app.form = {
                     'pick': {
                         cb: () => {
@@ -383,17 +384,17 @@ module Gambling {
                                 return
                             }
                             let mine = deck.splice(--pick, 1)[0]
-                            $.sound(card[mine].value > 0 ? 'click' : 'boom')
+                            sound(card[mine].value > 0 ? 'click' : 'boom')
                             xvt.out(' - ')
                             if ($.player.emulation == 'XT') xvt.out(card[mine].uni)
                             xvt.out(xvt.bright, xvt.red, ' [', xvt.white, card[mine].face, xvt.red, ']')
                             if ($.player.emulation == 'XT') xvt.out(card[mine].suit)
                             xvt.outln(-600)
 
-                            dealer = $.dice(deck.length)
+                            dealer = dice(deck.length)
                             xvt.out('Dealer picks card #', dealer.toString())
                             let house = deck.splice(--dealer, 1)[0]
-                            $.sound(card[house].value > 0 ? 'click' : 'boom')
+                            sound(card[house].value > 0 ? 'click' : 'boom')
                             xvt.out(' - ')
                             if ($.player.emulation == 'XT') xvt.out(card[house].uni)
                             xvt.out(xvt.bright, xvt.red, ' [', xvt.white, card[house].face, xvt.red, ']')
@@ -401,23 +402,23 @@ module Gambling {
                             xvt.outln('\n', -600)
 
                             if (card[mine].value > card[house].value) {
-                                $.sound('cheer')
-                                payoff.value = amount.value * $.int((11 - card[mine].value) / 4 + 1)
+                                sound('cheer')
+                                payoff.value = amount.value * int((11 - card[mine].value) / 4 + 1)
                                 if (card[house].value < 0) payoff.value *= 2
                                 xvt.outln('You win ', payoff.carry(), '!')
                                 $.player.coin.value += payoff.value + amount.value
                             }
                             else if (card[mine].value < card[house].value) {
                                 if (card[mine].value < 0) {
-                                    $.sound('oops')
+                                    sound('oops')
                                     xvt.out(xvt.yellow, 'The joke is on you ... ', -1000)
-                                    $.sound('laugh')
+                                    sound('laugh')
                                     xvt.outln(xvt.faint, 'and you die laughing!!', -2000)
                                     $.reason = 'died laughing'
                                     xvt.hangup()
                                 }
                                 else {
-                                    $.sound('boo')
+                                    sound('boo')
                                     xvt.outln('You lose.', -500)
                                 }
                             }
@@ -426,7 +427,7 @@ module Gambling {
                                 if (card[house].value < 0) {
                                     payoff.value = amount.value * 1000
                                     xvt.outln('and win ', payoff.carry(), '!')
-                                    $.sound('cheer')
+                                    sound('cheer')
                                 }
                                 else {
                                     xvt.outln(`it's a push. `, -500, ' You must pick again.', -500)
@@ -444,7 +445,7 @@ module Gambling {
 
             case 'K':
                 let picks: number[] = []
-                $.action('list')
+                action('list')
                 xvt.app.form = {
                     'point': {
                         cb: () => {
@@ -524,21 +525,21 @@ module Gambling {
                             let pick = +xvt.entry
                             if (xvt.entry == '') {
                                 do {
-                                    pick = $.dice(80)
+                                    pick = dice(80)
                                 } while (picks.indexOf(pick) >= 0)
                                 xvt.out(`${pick}`)
                             }
                             if (pick < 1 || pick > 80) {
-                                $.beep()
+                                xvt.beep()
                                 xvt.app.refocus()
                                 return
                             }
                             if (picks.indexOf(pick) >= 0) {
-                                $.beep()
+                                xvt.beep()
                                 xvt.app.refocus()
                                 return
                             }
-                            $.sound('click')
+                            sound('click')
                             picks.push(pick)
                             if (picks.length == point) {
                                 xvt.out('\n\n', xvt.bright, xvt.yellow,
@@ -552,11 +553,11 @@ module Gambling {
                                 for (let i = 0; i < 20; i++) {
                                     if (i % 5 == 0) xvt.out('\n')
                                     do {
-                                        pick = $.dice(80)
+                                        pick = dice(80)
                                     } while (balls.indexOf(pick) >= 0)
                                     if (picks.indexOf(pick) >= 0) {
                                         hits++
-                                        $.sound('max')
+                                        sound('max')
                                         xvt.out(' *', xvt.bright, xvt.blue, '[',
                                             xvt.yellow, sprintf('%02d', pick),
                                             xvt.blue, ']', xvt.reset, '* ')
@@ -667,13 +668,13 @@ module Gambling {
                                         break
                                 }
                                 if (payoff.value) {
-                                    $.sound('cheer')
+                                    sound('cheer')
                                     xvt.outln('\nYou win ', payoff.carry(), '!')
                                     $.player.coin.value += payoff.value
                                     xvt.sleep(500)
                                 }
                                 else
-                                    $.sound('boo')
+                                    sound('boo')
                                 menu()
                             }
                             else {
@@ -703,16 +704,16 @@ module Gambling {
                 }
 
                 xvt.out('\nYou pull its arm and the wheels spin ... ')
-                $.sound('click', 4)
+                sound('click', 4)
 
-                let bandit = [$.dice(16) % 16, $.dice(16) % 16, $.dice(16) % 16]
+                let bandit = [dice(16) % 16, dice(16) % 16, dice(16) % 16]
                 for (let i = 0; i < 3; i++) {
-                    for (let spin = $.dice(16) + 16; spin; spin--) {
+                    for (let spin = dice(16) + 16; spin; spin--) {
                         xvt.out('-\\|/'[spin % 4], '\x08')
                         xvt.sleep(20)
                         bandit[i] = ++bandit[i] % 16
                     }
-                    $.beep()
+                    xvt.beep()
                     let face = dial[i][bandit[i]]
                     xvt.out(xvt.blue, '[', xvt.attr(slot[face].attr, slot[face].color), face)
                     if ($.player.emulation == 'XT') xvt.out(` ${slot[face].uni}`)
@@ -725,7 +726,7 @@ module Gambling {
                 if (face[0] == '*WILD*' && face[1] == '*WILD*' && face[2] == '*WILD*') {
                     payoff.value = 500 * amount.value
                     for (let i = 0; i < 8; i++) {
-                        $.beep()
+                        xvt.beep()
                         for (let j = 0; j < 8; j++) {
                             xvt.out((i + j) % 2 ? xvt.blink : xvt.noblink)
                             xvt.out((i + j) % 8 + 30, 'YOU WIN! ')
@@ -734,18 +735,18 @@ module Gambling {
                         xvt.outln()
                     }
                     CherryBomb()
-                    $.sound('wild', 50)
+                    sound('wild', 50)
                 }
                 else if ((face[0] == '@BOMB@' || face[0] == '*WILD*')
                     && (face[1] == '@BOMB@' || face[1] == '*WILD*')
                     && (face[2] == '@BOMB@' || face[2] == '*WILD*')) {
-                    if ($.player.emulation == 'XT') xvt.out('💀 ')
-                    $.sound('boom', 8)
-                    xvt.outln('You die.')
-                    $.music('wild')
-                    xvt.sleep(800)
+                    $.online.hp = 0
                     $.reason = 'defeated by a one-armed bandit'
-                    $.logoff()
+                    if ($.player.emulation == 'XT') xvt.out('💀 ')
+                    sound('boom', 6)
+                    xvt.outln(xvt.faint, 'You die.')
+                    xvt.sleep(600)
+                    xvt.hangup()
                     return
                 }
                 else if ((face[0] == '=LUCK=' || face[0] == '*WILD*')
@@ -753,7 +754,7 @@ module Gambling {
                     && (face[2] == '=LUCK=' || face[2] == '*WILD*')) {
                     payoff.value = 400 * amount.value
                     for (let i = 0; i < 4; i++) {
-                        $.beep()
+                        xvt.beep()
                         for (let j = 0; j < 8; j++) {
                             xvt.out((i + j) % 8 + 30, 'YOU WIN! ')
                             xvt.out(15)
@@ -761,14 +762,14 @@ module Gambling {
                         xvt.outln()
                     }
                     CherryBomb()
-                    $.sound('wild', 50)
+                    sound('wild', 50)
                 }
                 else if ((face[0] == '<BELL>' || face[0] == '*WILD*')
                     && (face[1] == '<BELL>' || face[1] == '*WILD*')
                     && (face[2] == '<BELL>' || face[2] == '*WILD*')) {
                     payoff.value = 100 * amount.value
                     for (let i = 0; i < 8; i++) {
-                        $.beep()
+                        xvt.beep()
                         xvt.out(i % 8 + 30, 'YOU WIN! ')
                         xvt.out(20)
                     }
@@ -779,8 +780,8 @@ module Gambling {
                     && (face[1] == 'ORANGE' || face[1] == '*WILD*')
                     && (face[2] == 'ORANGE' || face[2] == '*WILD*')) {
                     payoff.value = 50 * amount.value
-                    $.beep()
-                    $.music('wild')
+                    xvt.beep()
+                    music('wild')
                     xvt.sleep(2500)
                 }
                 else if (face[0] == 'CHERRY' && face[1] == 'CHERRY' && face[2] == '@BOMB@') {
@@ -811,20 +812,20 @@ module Gambling {
                 }
 
                 if (payoff.value) {
-                    $.sound('cheer')
+                    sound('cheer')
                     xvt.outln('You win ', payoff.carry(), '!')
                     $.player.coin.value += payoff.value
                     xvt.sleep(500)
                 }
                 else
-                    $.sound('boo')
+                    sound('boo')
         }
 
         menu()
 
         function CherryBomb() {
             if ($.player.emulation == 'XT') {
-                $.music('cherry')
+                music('cherry')
                 xvt.out(xvt.red)
                 for (let i = 0; i < 6; i++) {
                     xvt.out(' ', xvt.faint)
@@ -846,7 +847,7 @@ module Gambling {
                 xvt.outln(xvt.bright, xvt.black, '💣 BOMB!! 💣 ')
             }
             else {
-                $.beep()
+                xvt.beep()
                 xvt.out(xvt.bright, xvt.red, 'Cherry ', xvt.black, 'BOMB', xvt.reset, '!!\n')
             }
         }
@@ -874,10 +875,10 @@ module Gambling {
         }
 
         function RollDice(baby = 0, side = 0): boolean {
-            let d1 = $.dice(6), d2 = $.dice(6), n = $.dice(2) + $.dice(2)
+            let d1 = dice(6), d2 = dice(6), n = dice(2) + dice(2)
             xvt.out('\x1B[J', xvt.faint)
             for (let i = 0; i < n; i++) {
-                $.sound('click')
+                sound('click')
                 xvt.out('.')
             }
             xvt.out(xvt.normal, xvt.blue, ' [',
@@ -885,10 +886,10 @@ module Gambling {
                 xvt.normal, xvt.blue, '] [',
                 xvt.bright, xvt.cyan, d2.toString(),
                 xvt.normal, xvt.blue, ']')
-            $.beep()
+            xvt.beep()
             xvt.outln(xvt.white, ' = ', xvt.bright, (d1 + d2).toString())
             if (baby && d1 + d2 !== baby) {
-                $.sound('boo')
+                sound('boo')
                 xvt.outln('You lose on the side bet.')
             }
             if (d1 + d2 == baby) {
@@ -898,21 +899,21 @@ module Gambling {
                             : (baby == 5 || baby == 9) ? 8
                                 : (baby == 6 || baby == 8) ? 6
                                     : 5
-                $.sound('cheer')
+                sound('cheer')
                 payoff.value = side * baby
                 xvt.outln('You make your side bet!  You win ', payoff.carry(), '!')
                 $.player.coin.value += payoff.value
             }
             xvt.sleep(1000)
             if (d1 + d2 == 7) {
-                $.sound('boo')
+                sound('boo')
                 xvt.out('Crapped out!  You lose on your point.\n')
                 xvt.sleep(500)
                 menu()
                 return true
             }
             if (d1 + d2 == point) {
-                $.sound('cheer')
+                sound('cheer')
                 payoff.value = amount.value
                 xvt.outln('You make your point!  You win ', payoff.carry(), '!')
                 $.player.coin.value += payoff.value + amount.value
@@ -933,16 +934,16 @@ module Gambling {
             53]
         xvt.out(xvt.faint, '\nShuffling a new deck ')
         xvt.sleep(250)
-        let cut = $.dice(6) + 4
+        let cut = dice(6) + 4
         for (let n = 0; n < cut; n++) {
             if (jokers)
                 for (let i = 0; i < 54; i++) {
-                    let j = $.dice(54) - 1
+                    let j = dice(54) - 1
                         ;[deck[i], deck[j]] = [deck[j], deck[i]];
                 }
             else
                 for (let i = 1; i < 53; i++) {
-                    let j = $.dice(52)
+                    let j = dice(52)
                         ;[deck[i], deck[j]] = [deck[j], deck[i]];
                 }
             xvt.out('.')

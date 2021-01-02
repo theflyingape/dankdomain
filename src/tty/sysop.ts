@@ -3,12 +3,14 @@
  *  SYSOP authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import $ = require('../common')
 import xvt = require('@theflyingape/xvt')
 import Battle = require('../battle')
 import Email = require('../email')
-import { isNotEmpty } from 'class-validator'
-import { sprintf } from 'sprintf-js'
+import db = require('../db')
+import $ = require('../runtime')
+import { action, bracket, display, keyhint, loadUser, music, reroll, sound, status } from '../io'
+import { PC } from '../pc'
+import { now, sprintf, titlecase } from '../sys'
 
 module Sysop {
 
@@ -23,22 +25,21 @@ module Sysop {
 
     export function menu(suppress = false) {
         if ($.reason) xvt.hangup()
-        $.music('.')
+        music('.')
         xvt.app.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
-        xvt.app.form['menu'].prompt = $.display('sysop', xvt.Red, xvt.red, suppress, sysop)
+        xvt.app.form['menu'].prompt = display('sysop', xvt.Red, xvt.red, suppress, sysop)
         xvt.app.focus = 'menu'
     }
 
     function choice() {
         let suppress = false
         let choice = xvt.entry.toUpperCase()
-        if (isNotEmpty(sysop[choice]))
-            if (isNotEmpty(sysop[choice].description)) {
-                xvt.out(' - ', sysop[choice].description)
-                suppress = $.player.expert
-            }
+        if (sysop[choice]?.description) {
+            xvt.out(' - ', sysop[choice].description)
+            suppress = $.player.expert
+        }
         xvt.outln()
 
         let rpc: active = { user: { id: '' } }
@@ -53,17 +54,17 @@ module Sysop {
                 xvt.outln()
                 xvt.outln(xvt.Blue, xvt.white, ` ID   Player's Handle           Class    Lvl  `)
                 xvt.outln(xvt.Blue, xvt.white, '----------------------------------------------')
-                rs = $.query(`SELECT * FROM Players WHERE blessed !='' OR cursed !='' OR coward != 0`)
+                rs = db.query(`SELECT * FROM Players WHERE blessed !='' OR cursed !='' OR coward != 0`)
                 for (let n in rs) {
                     //  paint a target on any player that is winning
-                    if (rs[n].pc == $.PC.winning)
+                    if (rs[n].pc == PC.winning)
                         xvt.out(xvt.bright, xvt.yellow)
                     else if (rs[n].id == $.player.id)
                         xvt.out(xvt.bright, xvt.white)
                     xvt.out(sprintf('%-4s  %-22s  %-9s  %3d ', rs[n].id, rs[n].handle, rs[n].pc, rs[n].level))
                     if (rs[n].blessed) xvt.out(` blessed by ${rs[n].blessed} `)
                     if (rs[n].cursed) xvt.out(` cursed by ${rs[n].cursed} `)
-                    if (rs[n].coward) xvt.out($.bracket('COWARD', false))
+                    if (rs[n].coward) xvt.out(bracket('COWARD', false))
                     xvt.outln()
                 }
                 xvt.app.form['pause'] = { cb: menu, pause: true }
@@ -71,7 +72,7 @@ module Sysop {
                 return
 
             case 'D':
-                $.action('list')
+                action('list')
                 xvt.app.form = {
                     'level': {
                         cb: () => {
@@ -84,7 +85,7 @@ module Sysop {
                                 xvt.app.refocus()
                                 return
                             }
-                            $.sound('teleport')
+                            sound('teleport')
                             require('./dungeon').DeepDank(i - 1, menu)
                         }, prompt: `Level (1-100): `, min: 1, max: 3
                     }
@@ -93,10 +94,10 @@ module Sysop {
                 return
 
             case 'N':
-                rs = $.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
+                rs = db.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
                 for (let row in rs) {
                     rpc.user.id = rs[row].id
-                    $.loadUser(rpc)
+                    loadUser(rpc)
                     Email.newsletter(rpc.user)
                     xvt.out('.', -2500)
                 }
@@ -107,13 +108,13 @@ module Sysop {
                 let pc: string
                 let kh: number
                 let k: number
-                $.action('ny')
+                action('ny')
                 xvt.app.form = {
                     'pc': {
                         cb: () => {
                             if (!xvt.entry)
-                                xvt.entry = Object.keys($.PC.name['player'])[0]
-                            pc = $.titlecase(xvt.entry)
+                                xvt.entry = Object.keys(PC.name['player'])[0]
+                            pc = titlecase(xvt.entry)
                             xvt.app.focus = 'kh'
                         }, prompt: 'Enter starting player class? ', max: 20
                     },
@@ -128,26 +129,26 @@ module Sysop {
                         cb: () => {
                             xvt.outln()
                             if (/Y/i.test(xvt.entry)) {
-                                $.loadUser($.sysop)
-                                $.sysop.dob = $.now().date + 1
+                                loadUser($.sysop)
+                                $.sysop.dob = now().date + 1
                                 $.sysop.plays = 0
-                                $.saveUser($.sysop)
-                                rs = $.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
+                                PC.saveUser($.sysop)
+                                rs = db.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
                                 for (let row in rs) {
                                     rpc.user.id = rs[row].id
-                                    $.loadUser(rpc)
-                                    $.reroll(rpc.user, pc)
-                                    $.newkeys(rpc.user)
+                                    loadUser(rpc)
+                                    reroll(rpc.user, pc)
+                                    PC.newkeys(rpc.user)
                                     for (k = 0; k < kh; k++)
-                                        $.keyhint(rpc)
+                                        keyhint(rpc)
                                     rpc.user.plays = 0
-                                    $.saveUser(rpc)
+                                    PC.saveUser(rpc)
                                     xvt.out('.')
                                 }
-                                $.reroll($.player, pc)
-                                $.newkeys($.player)
+                                reroll($.player, pc)
+                                PC.newkeys($.player)
                                 for (k = 0; k < kh; k++)
-                                    $.keyhint($.online)
+                                    keyhint($.online)
                                 rpc.user.plays = 0
                                 xvt.outln(xvt.reset, '\nHappy hunting tomorrow!')
                                 $.reason = 'reroll'
@@ -165,22 +166,22 @@ module Sysop {
                 xvt.app.form = {
                     'taxman': {
                         cb: () => {
-                            $.loadUser($.taxman)
-                            $.PC.stats($.taxman)
+                            loadUser($.taxman)
+                            status($.taxman)
                             xvt.app.focus = 'pause'
                         }, pause: true
                     },
                     'pause': { cb: menu, pause: true }
                 }
-                $.loadUser($.barkeep)
-                $.PC.stats($.barkeep)
+                loadUser($.barkeep)
+                status($.barkeep)
                 xvt.app.focus = 'taxman'
                 return
 
             case 'Y':
                 Battle.user('Scout', (opponent: active) => {
                     if (opponent.user.id) {
-                        $.PC.stats(opponent)
+                        status(opponent)
                         xvt.app.form['pause'] = { cb: menu, pause: true }
                         xvt.app.focus = 'pause'
                     }

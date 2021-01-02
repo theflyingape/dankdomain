@@ -3,11 +3,15 @@
  *  DUNGEON authored by: Robert Hurst <theflyingape@gmail.com>               *
 \*****************************************************************************/
 
-import $ = require('../common')
-import Battle = require('../battle')
 import xvt = require('@theflyingape/xvt')
-import { isBoolean, isNotEmpty } from 'class-validator'
-import { sprintf } from 'sprintf-js'
+import Battle = require('../battle')
+import db = require('../db')
+import $ = require('../runtime')
+import { Coin, action, animated, activate, armor, bracket, cat, checkTime, checkXP, clear, death, getRing, keyhint, loadUser, music, portrait, profile, reroll, skillplus, sound, title, wall, weapon, wearing } from '../io'
+import { Armor, Magic, Poison, Ring, Security, Weapon } from '../items'
+import { log, news } from '../lib'
+import { PC } from '../pc'
+import { an, dice, int, money, romanize, sprintf, worth } from '../sys'
 
 module Dungeon {
 
@@ -94,13 +98,13 @@ module Dungeon {
     let containers = ['beaker filled with', 'bottle containing', 'flask of', 'vial holding']
     let v = 0
     while (containers.length) {
-        let c = $.dice(containers.length) - 1
+        let c = dice(containers.length) - 1
         let liquids = ['bubbling', 'clear', 'milky', 'sparkling']
         let colors = ['amber', 'sapphire', 'crimson', 'emerald', 'amethyst']
         let coded = [xvt.yellow, xvt.blue, xvt.red, xvt.green, xvt.magenta]
         while (liquids.length) {
-            let l = $.dice(liquids.length) - 1
-            let i = $.dice(colors.length) - 1
+            let l = dice(liquids.length) - 1
+            let i = dice(colors.length) - 1
             potions.push({
                 potion: v++, identified: false
                 , image: 'potion/' + (containers[c].startsWith('beaker') ? 'beaker' : colors[i])
@@ -113,7 +117,7 @@ module Dungeon {
         containers.splice(c, 1)
     }
 
-    $.loadUser($.dwarf)
+    loadUser($.dwarf)
 
     //  entry point
     export function DeepDank(start: number, cb: Function) {
@@ -125,18 +129,18 @@ module Dungeon {
 
         party = []
         party.push($.online)
-        tl = $.checkTime() + 3
+        tl = checkTime() + 3
 
         deep = 0
         hideep = 0
-        Z = start < 0 ? 0 : start > 99 ? 99 : $.int(start)
+        Z = start < 0 ? 0 : start > 99 ? 99 : int(start)
         hiZ = Z
         fini = cb
 
         if ($.access.sysop) crawling['M'] = { description: 'y liege' }
         generateLevel()
 
-        $.profile({ jpg: `dungeon/level${sprintf('%x', $.int((Z + 1) / 10, true))}`, handle: "Entering", level: $.player.level, pc: 'dungeon' })
+        profile({ jpg: `dungeon/level${sprintf('%x', int((Z + 1) / 10, true))}`, handle: "Entering", level: $.player.level, pc: 'dungeon' })
         ROOM = DL.rooms[Y][X]
         if (ROOM.occupant || ROOM.monster.length || ROOM.giftItem) xvt.sleep(2800)
 
@@ -153,27 +157,27 @@ module Dungeon {
     export function menu(suppress = false) {
 
         //	check player status
-        if ($.online.altered) $.saveUser($.player)
+        if ($.online.altered) PC.saveUser($.player)
         if ($.reason || xvt.reason) {
-            $.death(`failed to escape ${$.romanize(deep + 1)}.${Z + 1} - ${$.reason || xvt.reason}`)
+            death(`failed to escape ${romanize(deep + 1)}.${Z + 1} - ${$.reason || xvt.reason}`)
             DL.map = `Marauder's map`
             scroll()
             if ($.online.hp > 0) {
-                $.online.hp = $.int(idle, true)
-                if ($.online.hp) $.sound('thief2', 6)
+                $.online.hp = int(idle, true)
+                if ($.online.hp) sound('thief2', 6)
             }
             xvt.hangup()
         }
         if ($.player.level + 1 < $.sysop.level) {
-            if ($.checkXP($.online, menu)) {
+            if (checkXP($.online, menu)) {
                 DL.exit = false
                 DL.moves -= DL.width
                 pause = true
                 return
             }
             else if ($.jumped) {
-                $.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${$.romanize(deep + 1)}.${Z + 1}`)
-                if ($.jumped > (19 - $.int(deep / 3))) skillkill = true
+                title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${romanize(deep + 1)}.${Z + 1}`)
+                if ($.jumped > (19 - int(deep / 3))) skillkill = true
             }
         }
 
@@ -182,7 +186,7 @@ module Dungeon {
             Battle.teleported = false
             if (Battle.expel) {
                 Battle.expel = false
-                $.PC.profile($.online, 'flipOutX')
+                portrait($.online, 'flipOutX')
                 if (deep > 0)
                     deep--
                 else {
@@ -196,16 +200,16 @@ module Dungeon {
             }
             scroll(1, false)
             xvt.outln(xvt.magenta, 'You open a ', xvt.bright, 'mystic portal', xvt.normal, '.\n')
-            $.sound('portal', 4)
+            sound('portal', 4)
             teleport()
             return
         }
 
         //	did player just do something eventful worthy of the big bonus?
         if (skillkill) {
-            $.sound('winner')
+            sound('winner')
             skillkill = false
-            $.skillplus($.online, menu)
+            skillplus($.online, menu)
             return
         }
 
@@ -216,7 +220,7 @@ module Dungeon {
 
         //	does last output(s) need a pause?
         if (pause) {
-            $.action('yn')
+            action('yn')
             pause = false
             xvt.app.form = {
                 'pause': {
@@ -235,15 +239,15 @@ module Dungeon {
         if (refresh) drawLevel()
 
         //  keep it organic relative to class skill + luck with player asset protection
-        let me = $.int(
-            $.int((Z / 3 + DL.rooms.length * DL.width + $.online.dex / 2 + $.online.cha) * (.6 + deep / 23))
+        let me = int(
+            int((Z / 3 + DL.rooms.length * DL.width + $.online.dex / 2 + $.online.cha) * (.6 + deep / 23))
             - DL.moves, true)
-        me *= 1 + ($.Security.name[$.player.security].protection - $.player.level / 9) / 12
-        if (me < $.int(($.online.int + DL.width) / 2)) {
+        me *= 1 + (Security.name[$.player.security].protection - $.player.level / 9) / 12
+        if (me < int(($.online.int + DL.width) / 2)) {
             if (!DL.exit) {
                 const t = $.player.expert ? 10 : 100
                 xvt.out(-t, ' ', -2 * t, $.player.emulation == 'XT' ? '🏃' : '<<', ' ', -t)
-                if (DL.alert) $.sound('exit')
+                if (DL.alert) sound('exit')
                 xvt.outln(xvt.faint, 'find ', -5 * t, 'the ', -4 * t, 'exit', -8 * t, xvt.normal, '!')
                 xvt.drain()
                 DL.alert = false
@@ -252,9 +256,9 @@ module Dungeon {
                 me *= 2
             }
             else
-                me = $.int(me / 2)
+                me = int(me / 2)
         }
-        me = (me < DL.width ? DL.width - (DL.moves >> 8) : $.int(me)) - +$.player.coward
+        me = (me < DL.width ? DL.width - (DL.moves >> 8) : int(me)) - +$.player.coward
         if (me < DL.width) {
             DL.exit = $.player.coward
             if (me < 6) $.player.coward = true
@@ -263,47 +267,47 @@ module Dungeon {
         }
 
         //	is a monster spawning needed?
-        let x = $.dice(DL.width) - 1, y = $.dice(DL.rooms.length) - 1
-        if ($.dice($.online.cha) < Z / (deep + 2)) {
+        let x = dice(DL.width) - 1, y = dice(DL.rooms.length) - 1
+        if (dice($.online.cha) < Z / (deep + 2)) {
             let d = Math.round($.online.cha / 19) + 2
-            y = Y + ($.dice(d) - 1) - ($.dice(d) - 1)
+            y = Y + (dice(d) - 1) - (dice(d) - 1)
             if (y < 0 || y >= DL.rooms.length)
-                y = $.dice(DL.rooms.length) - 1
+                y = dice(DL.rooms.length) - 1
             d++
-            x = X + ($.dice(d) - 1) - ($.dice(d) - 1)
+            x = X + (dice(d) - 1) - (dice(d) - 1)
             if (x < 0 || x >= DL.width)
-                x = $.dice(DL.width) - 1
+                x = dice(DL.width) - 1
         }
         ROOM = DL.rooms[y][x]
-        if ($.dice(DL.spawn * (!ROOM.type ? 2 : ROOM.type == 'cavern' ? 1 : 3)) == 1) {
+        if (dice(DL.spawn * (!ROOM.type ? 2 : ROOM.type == 'cavern' ? 1 : 3)) == 1) {
             if (putMonster(y, x)) {
-                let s = $.dice(5) - 1
+                let s = dice(5) - 1
                 xvt.outln()
                 xvt.out(xvt.faint, ['Your skin crawls'
                     , 'Your pulse quickens', 'You feel paranoid', 'Your grip tightens'
                     , 'You stand ready'][s], ' from a ')
                 //	only play sound when pairing is close to its description
-                if (s == 1) $.sound('pulse')
-                switch ($.dice(5)) {
+                if (s == 1) sound('pulse')
+                switch (dice(5)) {
                     case 1:
                         xvt.out('creaking sound')
-                        if (s !== 1) $.sound('creak' + $.dice(2))
+                        if (s !== 1) sound('creak' + dice(2))
                         break
                     case 2:
                         xvt.out('clap of thunder')
-                        if (s == 2) $.sound('thunder')
+                        if (s == 2) sound('thunder')
                         break
                     case 3:
                         xvt.out('ghostly whisper')
-                        if (s == 3) $.sound('ghostly')
+                        if (s == 3) sound('ghostly')
                         break
                     case 4:
                         xvt.out('beast growl')
-                        if (s == 4) $.sound('growl')
+                        if (s == 4) sound('growl')
                         break
                     case 5:
                         xvt.out('maniacal laugh')
-                        if (s == 0) $.sound('laugh')
+                        if (s == 0) sound('laugh')
                         break
                 }
                 if (Math.abs(Y - y) < 3 && Math.abs(X - x) < 3)
@@ -316,7 +320,7 @@ module Dungeon {
                 if (DL.map && DL.map !== 'map')
                     drawRoom(y, x)
                 if (ROOM.occupant == 'cleric' && DL.cleric.hp) {
-                    $.sound('agony', 10)
+                    sound('agony', 10)
                     xvt.out(xvt.yellow, 'You hear a dying cry of agony !! ', -900)
                     DL.cleric.hp = 0
                     DL.cleric.sp = 0
@@ -329,7 +333,7 @@ module Dungeon {
                     if (DL.map && DL.map !== 'map')
                         drawRoom(y, x)
                     xvt.outln(-900)
-                    $.beep()
+                    xvt.beep()
                 }
                 //	look who came for dinner?
                 if (y == Y && x == X) {
@@ -341,75 +345,75 @@ module Dungeon {
         }
 
         //	position Hero and get user command
-        $.action('dungeon')
+        action('dungeon')
         drawHero($.player.blessed ? true : false)
 
-        if (DL.events > 0 && DL.moves > DL.width && $.dice(me) == 1) {
+        if (DL.events > 0 && DL.moves > DL.width && dice(me) == 1) {
             DL.events--
-            $.music('.')
-            let rng = $.dice(16)
+            music('.')
+            let rng = dice(16)
             if (rng > 8) {
                 if ($.player.emulation == 'XT') {
                     xvt.out(' 🦇 ')
-                    $.sound('splat', 6)
+                    sound('splat', 6)
                 }
                 xvt.out(xvt.faint, 'A bat flies by and soils ', xvt.normal, 'your ')
-                $.player.toAC -= $.dice(deep)
+                $.player.toAC -= dice(deep)
                 $.online.altered = true
-                xvt.out($.PC.armor())
+                xvt.out(armor())
                 if ($.player.emulation == 'XT') xvt.out(' 💩', -600)
             }
             else if (rng > 4) {
                 if ($.player.emulation == 'XT') {
                     xvt.out(' 💧 ')
-                    $.sound('drop', 6)
+                    sound('drop', 6)
                 }
                 xvt.out(xvt.blue, 'A drop of ', xvt.bright, 'acid water burns ', xvt.normal, 'your ')
-                $.player.toWC -= $.dice(deep)
+                $.player.toWC -= dice(deep)
                 $.online.altered = true
-                xvt.out($.PC.weapon(), -600)
+                xvt.out(weapon(), -600)
             }
             else if (rng > 2) {
                 if ($.player.emulation == 'XT') {
                     xvt.out(' 😬 ')
-                    $.sound('hurt', 6)
+                    sound('hurt', 6)
                 }
                 xvt.out(xvt.yellow, 'You trip on the rocky surface and hurt yourself.', -600)
-                $.online.hp -= $.dice(Z)
-                if ($.online.hp < 1) $.death('fell down')
+                $.online.hp -= dice(Z)
+                if ($.online.hp < 1) death('fell down')
             }
             else if (rng > 1) {
                 if ($.player.emulation == 'XT') {
-                    $.sound('crack')
+                    sound('crack')
                     xvt.out(' 🐝 ', -300, '🐝 ', -200, '🐝 ', -100, '🐝 ', -50, '🐝 ', -25)
                 }
                 xvt.out(xvt.red, 'You are attacked by a ', xvt.bright, 'swarm of bees', xvt.normal)
                 if ($.player.emulation == 'XT') xvt.out(' 🐝', -25, ' 🐝', -50, ' 🐝', -100, ' 🐝', -200, ' 🐝', -300)
                 else xvt.out('!!', -600)
-                for (x = 0, y = $.dice(Z); x < y; x++)
-                    $.online.hp -= $.dice(Z)
-                if ($.online.hp < 1) $.death('killer bees')
+                for (x = 0, y = dice(Z); x < y; x++)
+                    $.online.hp -= dice(Z)
+                if ($.online.hp < 1) death('killer bees')
             }
             else {
                 if ($.player.emulation == 'XT') {
                     xvt.out(' ⚡ ')
-                    $.sound('boom', 6)
+                    sound('boom', 6)
                 }
                 xvt.out(xvt.bright, 'A bolt of lightning strikes you!', -600)
-                $.player.toAC -= $.dice($.online.armor.ac / 2)
-                $.online.toAC -= $.dice($.online.armor.ac / 2)
-                $.player.toWC -= $.dice($.online.weapon.wc / 2)
-                $.online.toWC -= $.dice($.online.weapon.wc / 2)
-                $.online.hp -= $.dice($.player.hp / 2)
-                if ($.online.hp < 1) $.death('struck by lightning')
+                $.player.toAC -= dice($.online.armor.ac / 2)
+                $.online.toAC -= dice($.online.armor.ac / 2)
+                $.player.toWC -= dice($.online.weapon.wc / 2)
+                $.online.toWC -= dice($.online.weapon.wc / 2)
+                $.online.hp -= dice($.player.hp / 2)
+                if ($.online.hp < 1) death('struck by lightning')
             }
             if ($.online.weapon.wc > 0 && $.online.weapon.wc + $.online.toWC + $.player.toWC < 0) {
                 xvt.out(`\nYour ${$.player.weapon} is damaged beyond repair; `, -300, `you toss it aside.`)
-                $.Weapon.equip($.online, $.Weapon.merchant[0])
+                Weapon.equip($.online, Weapon.merchant[0])
             }
             if ($.online.armor.ac > 0 && $.online.armor.ac + $.online.toAC + $.player.toAC < 0) {
                 xvt.out(`\nYour ${$.player.armor} is damaged beyond repair; `, -300, `you toss it aside.`)
-                $.Armor.equip($.online, $.Armor.merchant[0])
+                Armor.equip($.online, Armor.merchant[0])
             }
 
             xvt.drain()
@@ -432,39 +436,39 @@ module Dungeon {
         }
         xvt.app.form['command'].prompt = ''
         if (suppress)
-            xvt.app.form['command'].prompt += `${deep ? xvt.attr(xvt.white, xvt.faint, $.romanize(deep + 1), xvt.cyan) : xvt.attr(xvt.cyan)}:`
+            xvt.app.form['command'].prompt += `${deep ? xvt.attr(xvt.white, xvt.faint, romanize(deep + 1), xvt.cyan) : xvt.attr(xvt.cyan)}:`
         else {
             if ($.player.spells.length)
                 xvt.app.form['command'].prompt += xvt.attr(
-                    $.bracket('C', false), xvt.cyan, 'ast, '
+                    bracket('C', false), xvt.cyan, 'ast, '
                 )
             if ($.player.poisons.length)
                 xvt.app.form['command'].prompt += xvt.attr(
-                    $.bracket('P', false), xvt.cyan, 'oison, '
+                    bracket('P', false), xvt.cyan, 'oison, '
                 )
             if (Y > 0 && DL.rooms[Y][X].type !== 'w-e')
                 if (DL.rooms[Y - 1][X].type !== 'w-e')
                     xvt.app.form['command'].prompt += xvt.attr(
-                        $.bracket('N', false), xvt.cyan, 'orth, '
+                        bracket('N', false), xvt.cyan, 'orth, '
                     )
             if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 'w-e')
                 if (DL.rooms[Y + 1][X].type !== 'w-e')
                     xvt.app.form['command'].prompt += xvt.attr(
-                        $.bracket('S', false), xvt.cyan, 'outh, ',
+                        bracket('S', false), xvt.cyan, 'outh, ',
                     )
             if (X < DL.width - 1 && DL.rooms[Y][X].type !== 'n-s')
                 if (DL.rooms[Y][X + 1].type !== 'n-s')
                     xvt.app.form['command'].prompt += xvt.attr(
-                        $.bracket('E', false), xvt.cyan, 'ast, ',
+                        bracket('E', false), xvt.cyan, 'ast, ',
                     )
             if (X > 0 && DL.rooms[Y][X].type !== 'n-s')
                 if (DL.rooms[Y][X - 1].type !== 'n-s')
                     xvt.app.form['command'].prompt += xvt.attr(
-                        $.bracket('W', false), xvt.cyan, 'est, ',
+                        bracket('W', false), xvt.cyan, 'est, ',
                     )
 
             xvt.app.form['command'].prompt += xvt.attr(
-                $.bracket('Y', false), xvt.cyan, 'our status: '
+                bracket('Y', false), xvt.cyan, 'our status: '
             )
         }
         xvt.app.focus = 'command'
@@ -481,7 +485,7 @@ module Dungeon {
             else
                 choice = 'Y'
         }
-        if (isNotEmpty(crawling[choice])) {
+        if (crawling[choice]) {
             xvt.out(crawling[choice].description)
             DL.moves++
             if (DL.spawn > 2 && !(DL.moves % DL.width))
@@ -567,21 +571,21 @@ module Dungeon {
     }
 
     function oof(wall: string) {
-        $.PC.profile($.online, 'bounce', ` - Dungeon ${$.romanize(deep + 1)}.${Z + 1}`)
+        portrait($.online, 'bounce', ` - Dungeon ${romanize(deep + 1)}.${Z + 1}`)
         xvt.out(xvt.yellow, xvt.bright, 'Oof! ')
-        $.sound('wall', 3)
+        sound('wall', 3)
         xvt.outln(xvt.normal, `There is a wall to the ${wall}.`, -300)
         xvt.drain()
         if (!Battle.retreat && idle < 3) idle++
-        if (($.online.hp -= $.dice(deep + Z + 1)) < 1) {
+        if (($.online.hp -= dice(deep + Z + 1)) < 1) {
             xvt.outln()
-            $.music('.')
+            music('.')
             xvt.outln(xvt.faint, 'You take too many hits and die!')
             if (Battle.retreat)
-                $.death('running into a wall', true)
+                death('running into a wall', true)
             else {
-                $.death('banged head against a wall')
-                $.online.hp = $.int(idle, true)
+                death('banged head against a wall')
+                $.online.hp = int(idle, true)
             }
         }
     }
@@ -612,25 +616,25 @@ module Dungeon {
 
         //	monsters?
         if (ROOM.monster.length) {
-            $.action('clear')
+            action('clear')
             if (!refresh) drawRoom(Y, X, true, true)
             scroll(1, false)
             xvt.out(xvt.off)
 
             if (ROOM.monster.length == 1) {
                 let img = `dungeon/${ROOM.monster[0].user.handle}`
-                $.profile({ jpg: img, effect: ROOM.monster[0].effect })
+                profile({ jpg: img, effect: ROOM.monster[0].effect })
                 xvt.out(`There's something lurking in here . . . `)
                 //  dramatic pause if profile change is needed to match player's class
                 if (!ROOM.monster[0].monster.pc && ROOM.monster[0].user.pc == $.player.pc) {
                     xvt.sleep(900)
-                    if ($.PC.name['player'][ROOM.monster[0].user.pc])
-                        $.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect: 'flash' })
+                    if (PC.name['player'][ROOM.monster[0].user.pc])
+                        profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect: 'flash' })
                     else
-                        $.profile({
+                        profile({
                             png: 'monster/'
-                                + ($.PC.name['monster'][ROOM.monster[0].user.pc]
-                                    || $.PC.name['tavern'][ROOM.monster[0].user.pc]
+                                + (PC.name['monster'][ROOM.monster[0].user.pc]
+                                    || PC.name['tavern'][ROOM.monster[0].user.pc]
                                     ? ROOM.monster[0].user.pc.toLowerCase() : 'monster')
                                 + (ROOM.monster[0].user.gender == 'F' ? '_f' : ''),
                             effect: 'flash'
@@ -640,47 +644,47 @@ module Dungeon {
             }
             else {
                 xvt.out(`There's a party waiting `
-                    , ['you', 'the main course', 'the entertainment', 'meat', 'a good chew'][$.dice(5) - 1]
+                    , ['you', 'the main course', 'the entertainment', 'meat', 'a good chew'][dice(5) - 1]
                     , '. . . ', -500)
                 let m = {}
                 for (let i = 0; i < ROOM.monster.length; i++) {
                     m['mob' + (i + 1)] = 'monster/'
-                        + ($.PC.name['monster'][ROOM.monster[i].user.pc]
-                            || $.PC.name['tavern'][ROOM.monster[i].user.pc]
+                        + (PC.name['monster'][ROOM.monster[i].user.pc]
+                            || PC.name['tavern'][ROOM.monster[i].user.pc]
                             ? ROOM.monster[i].user.pc.toLowerCase() : 'monster')
                         + (ROOM.monster[i].user.gender == 'F' ? '_f' : '')
-                    if ($.PC.name['player'][ROOM.monster[i].user.pc])
+                    if (PC.name['player'][ROOM.monster[i].user.pc])
                         m['mob' + (i + 1)] = 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : '')
                 }
-                $.profile(m)
+                profile(m)
             }
             xvt.outln()
 
             for (let n = 0; n < ROOM.monster.length; n++) {
                 if (ROOM.monster.length < 4)
-                    $.cat(`dungeon/${ROOM.monster[n].user.handle}`)
+                    cat(`dungeon/${ROOM.monster[n].user.handle}`)
                 let what = ROOM.monster[n].user.handle
                 if (ROOM.monster[n].user.xplevel > 0)
                     what = [xvt.attr(xvt.faint, 'lesser ', xvt.reset), '', xvt.attr(xvt.bright, 'greater ', xvt.reset)]
                     [ROOM.monster[n].user.xplevel - ROOM.monster[n].user.level + 1] + what
-                xvt.out(`It's`, $.an(what), '... ', ROOM.monster.length < 4 ? -250 : -50)
+                xvt.out(`It's`, an(what), '... ', ROOM.monster.length < 4 ? -250 : -50)
 
-                if ($.player.novice || party.length > 3 || ($.dice(ROOM.monster[n].user.xplevel / 5 + 5) * (101 - $.online.cha + deep) > 1)) {
+                if ($.player.novice || party.length > 3 || (dice(ROOM.monster[n].user.xplevel / 5 + 5) * (101 - $.online.cha + deep) > 1)) {
                     if (ROOM.monster[n].user.xplevel > 0)
                         xvt.out(`and it doesn't look friendly.`, -50)
                     else
                         xvt.out('and it looks harmless', -100, ', for now.', -50)
                     xvt.outln(ROOM.monster.length < 4 ? -250 : -50)
-                    if (ROOM.monster[n]) $.PC.wearing(ROOM.monster[n])
+                    if (ROOM.monster[n]) wearing(ROOM.monster[n])
                 }
                 else {
                     xvt.outln(`and it's `, xvt.yellow, xvt.bright
-                        , ['bewitched', 'charmed', 'dazzled', 'impressed', 'seduced'][$.dice(5) - 1]
+                        , ['bewitched', 'charmed', 'dazzled', 'impressed', 'seduced'][dice(5) - 1]
                         , ' by your '
-                        , ['awesomeness', 'elegance', 'presence', $.player.armor, $.player.weapon][$.dice(5) - 1])
-                    ROOM.monster[n].user.gender = 'FM'[$.dice(2) - 1]
+                        , ['awesomeness', 'elegance', 'presence', $.player.armor, $.player.weapon][dice(5) - 1])
+                    ROOM.monster[n].user.gender = 'FM'[dice(2) - 1]
                     ROOM.monster[n].user.handle = xvt.attr(ROOM.monster[n].pc.color || xvt.white, xvt.bright, 'charmed ', ROOM.monster[n].user.handle, xvt.reset)
-                    const xp = $.dice(3 + $.online.adept + +$.access.sysop - +$.player.coward) - 2
+                    const xp = dice(3 + $.online.adept + +$.access.sysop - +$.player.coward) - 2
                     ROOM.monster[n].user.xplevel = xp > 1 ? 1 : xp
                     xvt.outln(' to join ', ['you', 'your party'][+(party.length > 1)], ' in '
                         , [xvt.white, xvt.cyan, xvt.red][ROOM.monster[n].user.xplevel + 1], xvt.bright
@@ -692,7 +696,7 @@ module Dungeon {
 
             if (ROOM.monster.length) {
                 $.from = 'Dungeon'
-                $.action('battle')
+                action('battle')
                 b4 = ROOM.monster.length > 3 ? -ROOM.monster.length : ROOM.monster.length > 2 ? $.online.hp : 0
                 Battle.engage('Dungeon', party, ROOM.monster, doSpoils)
                 return false
@@ -703,16 +707,16 @@ module Dungeon {
         }
 
         //	npc?
-        let loot = new $.coins(0)
+        let loot = new Coin(0)
         if (ROOM.occupant && !refresh) drawRoom(Y, X)
         switch (ROOM.occupant) {
             case 'trapdoor':
-                if ($.dice(100 - Z) > 1) {
+                if (dice(100 - Z) > 1) {
                     xvt.outln('You have stepped onto a trapdoor!')
                     xvt.outln(-300)
-                    let u = ($.dice(127 + deep - ($.player.backstab << 1) - ($.player.steal << 2)) < $.online.dex)
+                    let u = (dice(127 + deep - ($.player.backstab << 1) - ($.player.steal << 2)) < $.online.dex)
                     for (let m = party.length - 1; m > 0; m--) {
-                        if ($.dice(120) < party[m].dex)
+                        if (dice(120) < party[m].dex)
                             xvt.out(party[m].user.handle, xvt.faint, ' manages to catch the edge and stop from falling.')
                         else {
                             xvt.out(party[m].user.handle, xvt.reset
@@ -731,17 +735,17 @@ module Dungeon {
                         party = []
                         party.push($.online)
                         xvt.outln(xvt.bright, xvt.yellow, 'You fall down a level!', -500)
-                        if ($.dice(100 + $.player.level - Z) > $.online.dex) {
-                            if ($.dice($.online.cha / 10 + deep) <= (deep + 1))
-                                $.player.toWC -= $.dice(Math.abs(Z - $.player.level))
-                            $.online.toWC -= $.dice(Math.round($.online.weapon.wc / 10) + 1)
-                            xvt.outln(`Your ${$.PC.weapon()} is damaged from the fall!`, -50)
+                        if (dice(100 + $.player.level - Z) > $.online.dex) {
+                            if (dice($.online.cha / 10 + deep) <= (deep + 1))
+                                $.player.toWC -= dice(Math.abs(Z - $.player.level))
+                            $.online.toWC -= dice(Math.round($.online.weapon.wc / 10) + 1)
+                            xvt.outln(`Your ${weapon()} is damaged from the fall!`, -50)
                         }
-                        if ($.dice(100 + $.player.level - Z) > $.online.dex) {
-                            if ($.dice($.online.cha / 10 + deep) <= (deep + 1))
-                                $.player.toAC -= $.dice(Math.abs(Z - $.player.level))
-                            $.online.toAC -= $.dice(Math.round($.online.armor.ac / 10) + 1)
-                            xvt.outln(`Your ${$.PC.armor()} is damaged from the fall!`, -50)
+                        if (dice(100 + $.player.level - Z) > $.online.dex) {
+                            if (dice($.online.cha / 10 + deep) <= (deep + 1))
+                                $.player.toAC -= dice(Math.abs(Z - $.player.level))
+                            $.online.toAC -= dice(Math.round($.online.armor.ac / 10) + 1)
+                            xvt.outln(`Your ${armor()} is damaged from the fall!`, -50)
                         }
                         Z++
                         generateLevel()
@@ -752,33 +756,33 @@ module Dungeon {
                 }
                 else {
                     ROOM.occupant = ''
-                    $.profile({ png: 'npc/faery spirit', effect: 'fadeInRight' })
+                    profile({ png: 'npc/faery spirit', effect: 'fadeInRight' })
                     xvt.out(xvt.cyan, xvt.bright, 'A faery spirit appears ', -600
                         , xvt.normal, 'and passes ', -500)
-                    if ((!DL.events && DL.exit) || $.dice(50 + Z - deep) > ($.online.cha - 10 * +$.player.coward)) {
-                        $.animated('fadeOut')
+                    if ((!DL.events && DL.exit) || dice(50 + Z - deep) > ($.online.cha - 10 * +$.player.coward)) {
+                        animated('fadeOut')
                         xvt.outln(xvt.faint, 'by you.')
                         recovery()
                     }
                     else {
-                        $.animated('fadeOutLeft')
+                        animated('fadeOutLeft')
                         xvt.outln(xvt.faint, 'through you.')
                         for (let i = 0; i <= Z; i++)
-                            $.online.hp += $.dice($.int(DL.cleric.user.level / 9)) + $.dice($.int(Z / 9 + deep / 3))
+                            $.online.hp += dice(int(DL.cleric.user.level / 9)) + dice(int(Z / 9 + deep / 3))
                         if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
                         if ($.player.magic > 1) {
                             for (let i = 0; i <= Z; i++)
-                                $.online.sp += $.dice($.int(DL.cleric.user.level / 9)) + $.dice($.int(Z / 9 + deep / 3))
+                                $.online.sp += dice(int(DL.cleric.user.level / 9)) + dice(int(Z / 9 + deep / 3))
                             if ($.online.sp > $.player.sp) $.online.sp = $.player.sp
                         }
-                        $.sound('heal')
+                        sound('heal')
                     }
                 }
                 break
 
             case 'portal':
-                $.action('ny')
-                $.profile({ jpg: 'ddd', effect: 'fadeIn', level: $.romanize(deep + 2), pc: 'domain portal' })
+                action('ny')
+                profile({ jpg: 'ddd', effect: 'fadeIn', level: romanize(deep + 2), pc: 'domain portal' })
                 xvt.out(xvt.bright, xvt.blue, `You've found a portal to a deeper and more dank dungeon.`)
                 xvt.app.form = {
                     'deep': {
@@ -786,15 +790,15 @@ module Dungeon {
                             ROOM.occupant = ''
                             xvt.outln()
                             if (/Y/i.test(xvt.entry)) {
-                                $.animated('fadeOutDown')
-                                $.sound('portal')
-                                xvt.out(xvt.bright, xvt.white, `You descend `, -400, xvt.normal, `into domain `, -300, xvt.faint, $.romanize(++deep + 1), ' ... ', -200)
+                                animated('fadeOutDown')
+                                sound('portal')
+                                xvt.out(xvt.bright, xvt.white, `You descend `, -400, xvt.normal, `into domain `, -300, xvt.faint, romanize(++deep + 1), ' ... ', -200)
                                 generateLevel()
                                 xvt.drain()
                                 xvt.outln()
                             }
                             else
-                                $.animated('fadeOut')
+                                animated('fadeOut')
                             menu()
                         }, prompt: 'Descend even deeper (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 20
                     }
@@ -804,29 +808,29 @@ module Dungeon {
 
             case 'well':
                 scroll(1, false)
-                $.music('well')
+                music('well')
                 xvt.outln(-500, xvt.magenta, 'You have found a legendary ', xvt.bright, 'Wishing Well', xvt.normal, '.')
                 xvt.outln(-500)
                 xvt.outln(-500, xvt.bright, xvt.yellow, 'What do you wish to do?', -500)
 
                 let wishes = 'BFORT'
-                xvt.out($.bracket('B'), 'Bless yourself', -25)
-                xvt.out($.bracket('F'), 'Fix all your damage', -25)
-                xvt.out($.bracket('O'), 'Teleport all the way out', -25)
-                xvt.out($.bracket('R'), 'Resurrect all the dead players', -25)
-                xvt.out($.bracket('T'), 'Teleport to another level', -25)
+                xvt.out(bracket('B'), 'Bless yourself', -25)
+                xvt.out(bracket('F'), 'Fix all your damage', -25)
+                xvt.out(bracket('O'), 'Teleport all the way out', -25)
+                xvt.out(bracket('R'), 'Resurrect all the dead players', -25)
+                xvt.out(bracket('T'), 'Teleport to another level', -25)
                 if (!$.player.coward && deep) {
                     wishes += 'C'
-                    xvt.out($.bracket('C'), 'Curse another player', -50)
+                    xvt.out(bracket('C'), 'Curse another player', -50)
                 }
-                if (deep > 1) { xvt.out($.bracket('L'), `Loot another player's money`, -75); wishes += 'L' }
-                if (deep > 3) { xvt.out($.bracket('G'), 'Grant another call', -100); wishes += 'G' }
-                if (deep > 5) { xvt.out($.bracket('K'), 'Key hint(s)', -200); wishes += 'K' }
-                if (deep > 7) { xvt.out($.bracket('D'), 'Destroy dungeon visit', -250); wishes += 'D' }
+                if (deep > 1) { xvt.out(bracket('L'), `Loot another player's money`, -75); wishes += 'L' }
+                if (deep > 3) { xvt.out(bracket('G'), 'Grant another call', -100); wishes += 'G' }
+                if (deep > 5) { xvt.out(bracket('K'), 'Key hint(s)', -200); wishes += 'K' }
+                if (deep > 7) { xvt.out(bracket('D'), 'Destroy dungeon visit', -250); wishes += 'D' }
                 xvt.outln(-500)
                 xvt.drain()
 
-                $.action('well')
+                action('well')
                 xvt.app.form = {
                     'well': {
                         cb: () => {
@@ -835,11 +839,11 @@ module Dungeon {
                             xvt.outln()
                             let wish = xvt.entry.toUpperCase()
                             if (wish == '' || wishes.indexOf(wish) < 0) {
-                                $.sound('oops')
+                                sound('oops')
                                 xvt.app.refocus()
                                 return
                             }
-                            $.animated('flipOutX')
+                            animated('flipOutX')
                             xvt.outln()
 
                             switch (wish) {
@@ -848,25 +852,25 @@ module Dungeon {
                                         $.player.coward = false
                                         $.player.cursed = ''
                                         xvt.out(xvt.bright, xvt.black, 'The dark cloud has left you.')
-                                        $.news(`\tlifted curse`)
+                                        news(`\tlifted curse`)
                                     }
                                     else {
-                                        $.sound('shimmer')
+                                        sound('shimmer')
                                         $.player.blessed = 'well'
                                         xvt.out(xvt.yellow, 'You feel ', xvt.bright, 'a shining aura', xvt.normal, ' surround you.')
-                                        $.news(`\twished for a blessing`)
+                                        news(`\twished for a blessing`)
                                     }
-                                    $.PC.adjust('str', 110)
-                                    $.PC.adjust('int', 110)
-                                    $.PC.adjust('dex', 110)
-                                    $.PC.adjust('cha', 110)
-                                    $.sound('shimmer')
+                                    PC.adjust('str', 110)
+                                    PC.adjust('int', 110)
+                                    PC.adjust('dex', 110)
+                                    PC.adjust('cha', 110)
+                                    sound('shimmer')
                                     DL.events = 0
                                     DL.exit = false
                                     break
 
                                 case 'C':
-                                    $.sound('steal')
+                                    sound('steal')
                                     Battle.user('Curse', (opponent: active) => {
                                         if (opponent.user.id == $.player.id) {
                                             opponent.user.id = ''
@@ -875,26 +879,26 @@ module Dungeon {
                                             return
                                         }
                                         if (opponent.user.id) {
-                                            $.news(`\tcursed ${opponent.user.handle}`)
+                                            news(`\tcursed ${opponent.user.handle}`)
                                             if (opponent.user.blessed) {
-                                                $.log(opponent.user.id, `\n${$.player.handle} vanquished your blessedness!`)
+                                                log(opponent.user.id, `\n${$.player.handle} vanquished your blessedness!`)
                                                 opponent.user.blessed = ''
                                                 xvt.out(xvt.yellow, xvt.bright, opponent.who.His, 'shining aura', xvt.normal, ' fades ', xvt.faint, 'away.')
                                             }
                                             else {
-                                                $.log(opponent.user.id, `\n${$.player.handle} cursed you!`)
+                                                log(opponent.user.id, `\n${$.player.handle} cursed you!`)
                                                 opponent.user.cursed = $.player.id
                                                 xvt.out(xvt.faint, 'A dark cloud hovers over ', opponent.who.him, '.')
                                             }
                                             opponent.user.coward = true
-                                            $.saveUser(opponent)
+                                            PC.saveUser(opponent)
                                             if (opponent.user.id == $.king.id) {
                                                 $.player.coward = true
                                                 $.online.altered = true
-                                                $.sound('boom', 6)
+                                                sound('boom', 6)
                                             }
                                             else
-                                                $.sound('morph', 12)
+                                                sound('morph', 12)
                                         }
                                         menu()
                                         return
@@ -902,11 +906,11 @@ module Dungeon {
                                     return
 
                                 case 'T':
-                                    let start = $.int(Z - $.dice(deep))
+                                    let start = int(Z - dice(deep))
                                     if (start < 1) start = 1
-                                    let end = $.int(Z + $.dice(deep) + $.dice(Z) + $.dice(Z))
+                                    let end = int(Z + dice(deep) + dice(Z) + dice(Z))
                                     if (end > 100) end = 100
-                                    $.action('list')
+                                    action('list')
                                     xvt.app.form = {
                                         'level': {
                                             cb: () => {
@@ -919,7 +923,7 @@ module Dungeon {
                                                     xvt.app.refocus()
                                                     return
                                                 }
-                                                $.sound('teleport')
+                                                sound('teleport')
                                                 Z = i - 1
                                                 generateLevel()
                                                 menu()
@@ -931,7 +935,7 @@ module Dungeon {
 
                                 case 'D':
                                     xvt.outln(xvt.black, xvt.bright, 'Your past time in this dungeon visit is eradicated and reset.')
-                                    $.sound('destroy', 32)
+                                    sound('destroy', 32)
                                     for (let i in dd)
                                         delete dd[i]
                                     $.dungeon++
@@ -944,20 +948,20 @@ module Dungeon {
                                     break
 
                                 case 'O':
-                                    $.sound('teleport')
+                                    sound('teleport')
                                     scroll(1, false, true)
                                     xvt.outln()
                                     fini()
                                     return
 
                                 case 'R':
-                                    $.sound('resurrect')
-                                    $.run(`UPDATE Players SET status='' WHERE id NOT GLOB '_*' AND status!='jail'`)
-                                    $.news(`\twished all the dead resurrected`)
+                                    sound('resurrect')
+                                    db.run(`UPDATE Players SET status='' WHERE id NOT GLOB '_*' AND status!='jail'`)
+                                    news(`\twished all the dead resurrected`)
                                     break
 
                                 case 'F':
-                                    $.music('elixir')
+                                    music('elixir')
                                     if ($.online.str < $.player.str) $.online.str = $.player.str
                                     if ($.online.int < $.player.int) $.online.int = $.player.int
                                     if ($.online.dex < $.player.dex) $.online.dex = $.player.dex
@@ -973,7 +977,7 @@ module Dungeon {
                                     break
 
                                 case 'L':
-                                    $.sound('steal')
+                                    sound('steal')
                                     Battle.user('Loot', (opponent: active) => {
                                         if (opponent.user.id == $.player.id) {
                                             opponent.user.id = ''
@@ -989,13 +993,13 @@ module Dungeon {
                                         }
                                         if (opponent.user.id) {
                                             loot.value = opponent.user.coin.value + opponent.user.bank.value
-                                            $.log(opponent.user.id, `\n${$.player.handle} wished for your ${loot.carry(2, true)}`)
-                                            $.news(`\tlooted ${opponent.user.handle}`)
+                                            log(opponent.user.id, `\n${$.player.handle} wished for your ${loot.carry(2, true)}`)
+                                            news(`\tlooted ${opponent.user.handle}`)
                                             $.player.coin.value += loot.value
                                             opponent.user.coin.value = 0
                                             opponent.user.bank.value = 0
-                                            $.saveUser(opponent)
-                                            $.sound('max')
+                                            PC.saveUser(opponent)
+                                            sound('max')
                                         }
                                         menu()
                                         return
@@ -1004,22 +1008,22 @@ module Dungeon {
 
                                 case 'G':
                                     if ($.player.today) {
-                                        $.sound('shimmer')
+                                        sound('shimmer')
                                         $.player.today--
                                         xvt.outln('You are granted another call for the day.')
-                                        $.news(`\twished for an extra call`)
+                                        news(`\twished for an extra call`)
                                     }
                                     else {
                                         xvt.outln('A deep laughter bellows... ')
-                                        $.sound('morph', 12)
+                                        sound('morph', 12)
                                     }
                                     break
 
                                 case 'K':
-                                    let k = $.dice($.player.wins < 3 ? 1 : 3)
+                                    let k = dice($.player.wins < 3 ? 1 : 3)
                                     for (let i = 0; i < k; i++) {
-                                        $.keyhint($.online)
-                                        $.sound("shimmer", 12)
+                                        keyhint($.online)
+                                        sound("shimmer", 12)
                                     }
                                     break
                             }
@@ -1033,12 +1037,12 @@ module Dungeon {
                 return false
 
             case 'wheel':
-                $.profile({ png: 'wol', effect: 'rotateIn' })
+                profile({ png: 'wol', effect: 'rotateIn' })
                 xvt.outln(xvt.magenta, 'You have found a ', xvt.bright, 'Mystical Wheel of Life', xvt.normal, '.', -600)
-                $.music('wol')
+                music('wol')
                 xvt.outln(-600)
                 xvt.outln(xvt.bright, xvt.yellow, 'The runes are ',
-                    ['cryptic', 'familiar', 'foreign', 'speaking out', 'strange'][$.dice(5) - 1],
+                    ['cryptic', 'familiar', 'foreign', 'speaking out', 'strange'][dice(5) - 1],
                     ' to you.', -600)
 
                 xvt.app.form = {
@@ -1047,23 +1051,23 @@ module Dungeon {
                             ROOM.occupant = ''
                             xvt.outln()
                             if (/Y/i.test(xvt.entry)) {
-                                $.music('tension' + $.dice(3))
-                                $.animated('infinite rotateIn')
+                                music('tension' + dice(3))
+                                animated('infinite rotateIn')
                                 let z = (deep < 3) ? 3 : (deep < 5) ? 5 : (deep < 7) ? 7 : 10
                                 let t = 0
                                 for (let i = 0; i < 5; i++) {
-                                    let n = $.int($.online.str / 5 - 5 * i + $.dice(5) + 1)
+                                    let n = int($.online.str / 5 - 5 * i + dice(5) + 1)
                                     for (let m = 0; m < n; m++) {
-                                        $.beep()
+                                        xvt.beep()
                                         xvt.out('\r', '-\\|/'[m % 4])
                                     }
                                 }
-                                let n = $.dice($.online.str / 20) + 2
+                                let n = dice($.online.str / 20) + 2
                                 for (let i = 1; i <= n; i++) {
-                                    t = $.dice(z + 1) - 1
+                                    t = dice(z + 1) - 1
                                     if (i == n) {
                                         z = 10
-                                        if ($.access.sysop) t = [0, 2, 3, 5, 7, 8][$.dice(6) - 1]
+                                        if ($.access.sysop) t = [0, 2, 3, 5, 7, 8][dice(6) - 1]
                                     }
                                     xvt.out(xvt.bright, xvt.blue, '\r [', xvt.cyan, [
                                         ' +Time ', ' Death ', ' Grace ',
@@ -1072,9 +1076,9 @@ module Dungeon {
                                         ' =Key= ', '+Skill+', ' Morph ']
                                     [t % z],
                                         xvt.blue, '] \r', -100 * 3 * i)
-                                    $.sound('click')
+                                    sound('click')
                                 }
-                                $.animated('rotateOut')
+                                animated('rotateOut')
                                 xvt.outln()
 
                                 switch (t % z) {
@@ -1082,7 +1086,7 @@ module Dungeon {
                                         xvt.sessionAllowed += 300
                                         break
                                     case 1:
-                                        $.death('Wheel of Death', true)
+                                        death('Wheel of Death', true)
                                         break
                                     case 2:
                                         if ($.player.cursed) {
@@ -1090,27 +1094,27 @@ module Dungeon {
                                             $.player.cursed = ''
                                         }
                                         else {
-                                            $.PC.adjust('str', 0, 2, 1)
-                                            $.PC.adjust('int', 0, 2, 1)
-                                            $.PC.adjust('dex', 0, 2, 1)
-                                            $.PC.adjust('cha', 0, 2, 1)
+                                            PC.adjust('str', 0, 2, 1)
+                                            PC.adjust('int', 0, 2, 1)
+                                            PC.adjust('dex', 0, 2, 1)
+                                            PC.adjust('cha', 0, 2, 1)
                                         }
-                                        $.PC.adjust('str', 110)
-                                        $.PC.adjust('int', 110)
-                                        $.PC.adjust('dex', 110)
-                                        $.PC.adjust('cha', 110)
-                                        $.sound('shimmer')
+                                        PC.adjust('str', 110)
+                                        PC.adjust('int', 110)
+                                        PC.adjust('dex', 110)
+                                        PC.adjust('cha', 110)
+                                        sound('shimmer')
                                         DL.events = 0
                                         DL.exit = false
                                         break
                                     case 3:
-                                        $.online.hp += $.int($.player.hp / 2) + $.dice($.player.hp / 2)
-                                        if ($.player.magic > 1) $.online.sp += $.int($.player.sp / 2) + $.dice($.player.sp / 2)
-                                        $.player.toWC += $.dice($.online.weapon.wc - $.player.toWC)
-                                        $.online.toWC += $.int($.online.weapon.wc / 2) + 1
-                                        $.player.toAC += $.dice($.online.armor.ac - $.player.toAC)
-                                        $.online.toAC += $.int($.online.armor.ac / 2) + 1
-                                        $.sound('hone')
+                                        $.online.hp += int($.player.hp / 2) + dice($.player.hp / 2)
+                                        if ($.player.magic > 1) $.online.sp += int($.player.sp / 2) + dice($.player.sp / 2)
+                                        $.player.toWC += dice($.online.weapon.wc - $.player.toWC)
+                                        $.online.toWC += int($.online.weapon.wc / 2) + 1
+                                        $.player.toAC += dice($.online.armor.ac - $.player.toAC)
+                                        $.online.toAC += int($.online.armor.ac / 2) + 1
+                                        sound('hone')
                                         break
                                     case 4:
                                         if ($.player.blessed) {
@@ -1118,64 +1122,64 @@ module Dungeon {
                                             $.player.blessed = ''
                                         }
                                         else {
-                                            $.PC.adjust('str', 0, -2, -1)
-                                            $.PC.adjust('int', 0, -2, -1)
-                                            $.PC.adjust('dex', 0, -2, -1)
-                                            $.PC.adjust('cha', 0, -2, -1)
+                                            PC.adjust('str', 0, -2, -1)
+                                            PC.adjust('int', 0, -2, -1)
+                                            PC.adjust('dex', 0, -2, -1)
+                                            PC.adjust('cha', 0, -2, -1)
                                         }
-                                        $.PC.adjust('str', -5 - $.dice(5))
-                                        $.PC.adjust('int', -5 - $.dice(5))
-                                        $.PC.adjust('dex', -5 - $.dice(5))
-                                        $.PC.adjust('cha', -5 - $.dice(5))
-                                        $.sound('crack')
-                                        DL.events += $.dice(Z) + deep
+                                        PC.adjust('str', -5 - dice(5))
+                                        PC.adjust('int', -5 - dice(5))
+                                        PC.adjust('dex', -5 - dice(5))
+                                        PC.adjust('cha', -5 - dice(5))
+                                        sound('crack')
+                                        DL.events += dice(Z) + deep
                                         break
                                     case 5:
-                                        loot.value = $.money(Z)
-                                        loot.value += $.worth(new $.coins($.online.weapon.value).value, $.online.cha)
-                                        loot.value += $.worth(new $.coins($.online.armor.value).value, $.online.cha)
+                                        loot.value = money(Z)
+                                        loot.value += worth(new Coin($.online.weapon.value).value, $.online.cha)
+                                        loot.value += worth(new Coin($.online.armor.value).value, $.online.cha)
                                         loot.value *= (Z + 1)
-                                        $.player.coin.value += new $.coins(loot.carry(1, true)).value
-                                        $.sound('yahoo')
+                                        $.player.coin.value += new Coin(loot.carry(1, true)).value
+                                        sound('yahoo')
                                         break
                                     case 6:
                                         $.player.coin.value = 0
                                         $.player.bank.value = 0
-                                        loot.value = $.money(Z)
-                                        loot.value += $.worth(new $.coins($.online.weapon.value).value, $.online.cha)
-                                        loot.value += $.worth(new $.coins($.online.armor.value).value, $.online.cha)
+                                        loot.value = money(Z)
+                                        loot.value += worth(new Coin($.online.weapon.value).value, $.online.cha)
+                                        loot.value += worth(new Coin($.online.armor.value).value, $.online.cha)
                                         loot.value *= (Z + 1)
-                                        $.player.loan.value += new $.coins(loot.carry(1, true)).value
-                                        $.sound('thief2')
+                                        $.player.loan.value += new Coin(loot.carry(1, true)).value
+                                        sound('thief2')
                                         break
                                     case 7:
-                                        $.keyhint($.online)
-                                        $.sound('click')
+                                        keyhint($.online)
+                                        sound('click')
                                         break
                                     case 8:
-                                        $.sound('level')
-                                        $.skillplus($.online, menu)
+                                        sound('level')
+                                        skillplus($.online, menu)
                                         return
                                     case 9:
-                                        $.player.level = $.dice(Z)
-                                        if ($.online.adept) $.player.level += $.dice($.player.level)
-                                        $.reroll($.player, $.PC.random('monster'), $.player.level)
-                                        $.activate($.online)
-                                        $.player.gender = ['F', 'M'][$.dice(2) - 1]
-                                        $.saveUser($.player)
-                                        $.news(`\t${$.player.handle} got morphed into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
+                                        $.player.level = dice(Z)
+                                        if ($.online.adept) $.player.level += dice($.player.level)
+                                        reroll($.player, PC.random('monster'), $.player.level)
+                                        activate($.online)
+                                        $.player.gender = ['F', 'M'][dice(2) - 1]
+                                        PC.saveUser($.player)
+                                        news(`\t${$.player.handle} got morphed into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
                                         xvt.outln(`You got morphed into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
-                                        $.sound('morph', 10)
+                                        sound('morph', 10)
                                         break
                                 }
                             }
                             else
-                                $.animated('rotateOut')
+                                animated('rotateOut')
                             menu()
                         }, prompt: 'Will you spin it (Y/N)? ', cancel: 'Y', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 20
                     }
                 }
-                $.action('ny')
+                action('ny')
                 xvt.drain()
                 xvt.app.focus = 'wheel'
                 pause = true
@@ -1190,17 +1194,17 @@ module Dungeon {
 
                 if ($.taxboss && (Z + 1) >= $.taxman.user.level && $.player.level < $.taxman.user.level) {
                     $.taxboss--
-                    $.loadUser($.taxman)
-                    xvt.outln(xvt.reset, $.PC.who($.taxman).He, 'is the '
+                    loadUser($.taxman)
+                    xvt.outln(xvt.reset, PC.who($.taxman).He, 'is the '
                         , xvt.cyan, xvt.bright, 'Master of Coin'
                         , xvt.reset, ' for '
                         , xvt.magenta, xvt.bright, $.king.handle
                         , xvt.reset, '!')
-                    $.profile({ jpg: 'npc/taxman', handle: $.taxman.user.handle, level: $.taxman.user.level, pc: $.taxman.user.pc, effect: 'bounceInDown' })
-                    $.sound('oops', 16)
-                    $.activate($.taxman)
+                    profile({ jpg: 'npc/taxman', handle: $.taxman.user.handle, level: $.taxman.user.level, pc: $.taxman.user.pc, effect: 'bounceInDown' })
+                    sound('oops', 16)
+                    activate($.taxman)
                     $.taxman.user.coin.value = $.player.coin.value
-                    $.PC.wearing($.taxman)
+                    wearing($.taxman)
 
                     b4 = -1
                     Battle.engage('Taxman', $.online, $.taxman, () => {
@@ -1212,17 +1216,17 @@ module Dungeon {
                     return
                 }
 
-                if (DL.map == `Marauder's map` || ($.Ring.power([], $.player.rings, 'identify').power > 0)) {
+                if (DL.map == `Marauder's map` || (Ring.power([], $.player.rings, 'identify').power > 0)) {
                     xvt.outln('He does not surprise you', xvt.cyan, '.')
                     break
                 }
 
-                let x = $.dice(DL.width) - 1, y = $.dice(DL.rooms.length) - 1
+                let x = dice(DL.width) - 1, y = dice(DL.rooms.length) - 1
                 let escape = DL.rooms[y][x]
-                if (escape.occupant || $.dice(Z * ($.player.steal / 2 + 1) - deep) > Z) {
+                if (escape.occupant || dice(Z * ($.player.steal / 2 + 1) - deep) > Z) {
                     if (!escape.occupant && $.player.pc !== $.taxman.user.pc) {
                         escape.occupant = 'thief'
-                        const t = $.dice(5) - 1
+                        const t = dice(5) - 1
                         xvt.out([
                             'He decides to ignore you',
                             'He recognizes your skill and winks',
@@ -1232,55 +1236,55 @@ module Dungeon {
                         ][t])
                         xvt.out(xvt.cyan, '.')
                         if (t) {
-                            $.PC.adjust(['', 'dex', 'str', 'int', 'cha'][t], -1)
-                            if (t) $.sound('thief')
+                            PC.adjust(['', 'dex', 'str', 'int', 'cha'][t], -1)
+                            if (t) sound('thief')
                         }
                     }
                     else {
                         xvt.out(xvt.normal, xvt.magenta, 'He teleports away!')
-                        $.sound('teleport')
+                        sound('teleport')
                     }
                     xvt.outln()
                 }
                 else {
                     escape.occupant = 'thief'
                     xvt.outln(xvt.reset, 'He surprises you!')
-                    $.sound('thief', 4)
+                    sound('thief', 4)
 
                     xvt.out('As he passes by, he steals your ')
                     x = $.online.cha + deep + 1
-                    if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
-                        x = $.int(x / $.player.level)
-                    if ($.online.weapon.wc && $.dice(x) == 1) {
-                        xvt.out($.PC.weapon(), -600)
-                        $.Weapon.equip($.online, $.Weapon.merchant[0])
-                        $.sound('thief2')
+                    if ($.player.level / 9 - deep > Security.name[$.player.security].protection + 1)
+                        x = int(x / $.player.level)
+                    if ($.online.weapon.wc && dice(x) == 1) {
+                        xvt.out(weapon(), -600)
+                        Weapon.equip($.online, Weapon.merchant[0])
+                        sound('thief2')
                         DL.exit = false
                     }
-                    else if (DL.map && $.dice($.online.cha / 9) - 1 <= $.int(deep / 3)) {
+                    else if (DL.map && dice($.online.cha / 9) - 1 <= int(deep / 3)) {
                         xvt.out(xvt.yellow, xvt.bright, 'map')
                         DL.exit = false
                         DL.map = ''
                         refresh = true
                     }
-                    else if ($.player.magic < 3 && $.player.spells.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
+                    else if ($.player.magic < 3 && $.player.spells.length && dice($.online.cha / 10 + deep + 1) - 1 <= int(deep / 2)) {
                         if ($.player.emulation == 'XT') xvt.out('📜 ')
-                        y = $.player.spells[$.dice($.player.spells.length) - 1]
-                        xvt.out(xvt.magenta, xvt.bright, Object.keys($.Magic.spells)[y - 1], ' ', ['wand', 'scroll'][$.player.magic - 1])
-                        $.Magic.remove($.player.spells, y)
+                        y = $.player.spells[dice($.player.spells.length) - 1]
+                        xvt.out(xvt.magenta, xvt.bright, Object.keys(Magic.spells)[y - 1], ' ', ['wand', 'scroll'][$.player.magic - 1])
+                        Magic.remove($.player.spells, y)
                     }
-                    else if ($.player.poisons.length && $.dice($.online.cha / 10 + deep + 1) - 1 <= $.int(deep / 2)) {
-                        y = $.player.poisons[$.dice($.player.poisons.length) - 1]
+                    else if ($.player.poisons.length && dice($.online.cha / 10 + deep + 1) - 1 <= int(deep / 2)) {
+                        y = $.player.poisons[dice($.player.poisons.length) - 1]
                         xvt.out('vial of ')
                         if ($.player.emulation == 'XT') xvt.out('💀 ')
-                        xvt.out(xvt.faint, Object.keys($.Poison.vials)[y - 1])
-                        $.Poison.remove($.player.poisons, y)
+                        xvt.out(xvt.faint, Object.keys(Poison.vials)[y - 1])
+                        Poison.remove($.player.poisons, y)
                     }
                     else if ($.player.coin.value) {
                         let pouch = $.player.coin.amount.split(',')
-                        x = $.dice(pouch.length) - 1
+                        x = dice(pouch.length) - 1
                         xvt.out($.player.coin.pieces(pouch[x].substr(-1)))
-                        $.player.coin.value -= new $.coins(pouch[x]).value
+                        $.player.coin.value -= new Coin(pouch[x]).value
                     }
                     else
                         xvt.out(xvt.yellow, `Reese's pieces`)
@@ -1292,7 +1296,7 @@ module Dungeon {
 
             case 'cleric':
                 if (!DL.cleric.hp) {
-                    $.profile({ jpg: 'npc/rip', effect: 'fadeInUp' })
+                    profile({ jpg: 'npc/rip', effect: 'fadeInUp' })
                     xvt.outln(xvt.yellow, 'You find the ', xvt.white, 'bones'
                         , xvt.yellow, ' of an ', xvt.faint, 'old cleric', xvt.normal, '.', -600)
                     if ($.player.emulation == 'XT') xvt.out(' 🪦 🕱 ')
@@ -1303,51 +1307,51 @@ module Dungeon {
                 }
 
                 let cast = 7
-                let mod = 6 + $.int($.player.melee / 2) - $.int($.player.magic / 2)
-                if ($.Ring.power([], $.player.rings, 'taxes').power) mod++
+                let mod = 6 + int($.player.melee / 2) - int($.player.magic / 2)
+                if (Ring.power([], $.player.rings, 'taxes').power) mod++
                 if ($.access.sysop) mod++
                 if ($.player.coward) mod--
-                let cost = new $.coins($.int(($.player.hp - $.online.hp) * $.money(Z) / mod / $.player.hp))
+                let cost = new Coin(int(($.player.hp - $.online.hp) * money(Z) / mod / $.player.hp))
                 if (cost.value < 1) cost.value = 1
-                cost.value *= ($.int(deep / 3) + 1)
+                cost.value *= (int(deep / 3) + 1)
                 if (!$.player.coward && !$.player.steals && ($.player.pc == DL.cleric.user.pc || $.player.maxcha > 98))
                     cost.value = 0
-                cost = new $.coins(cost.carry(1, true))	//	just from 1-pouch
+                cost = new Coin(cost.carry(1, true))	//	just from 1-pouch
 
                 if (ROOM.giftItem == 'chest') {
-                    ROOM.giftValue = $.dice(6 - $.player.magic) - 1
+                    ROOM.giftValue = dice(6 - $.player.magic) - 1
                     cost.value = 0	//	this one is free of charge
                 }
 
-                let power = $.int(100 * DL.cleric.sp / DL.cleric.user.sp)
+                let power = int(100 * DL.cleric.sp / DL.cleric.user.sp)
                 xvt.outln(xvt.yellow, 'There is an ', xvt.faint, 'old cleric', xvt.normal
                     , xvt.normal, ' in this room with '
                     , power < 40 ? xvt.faint : power < 80 ? xvt.normal : xvt.bright, `${power}`
                     , xvt.normal, '% spell power.')
                 xvt.out('He says, ')
 
-                if ($.online.hp >= $.player.hp || cost.value > $.player.coin.value || DL.cleric.sp < $.Magic.power(DL.cleric, cast)) {
+                if ($.online.hp >= $.player.hp || cost.value > $.player.coin.value || DL.cleric.sp < Magic.power(DL.cleric, cast)) {
                     xvt.outln(xvt.yellow, '"I will pray for you."')
                     if ($.online.hp < $.player.hp)
-                        $.profile({ jpg: 'npc/prayer', effect: 'fadeInUp' })
+                        profile({ jpg: 'npc/prayer', effect: 'fadeInUp' })
                     break
                 }
 
-                if (power > 95) $.profile({ jpg: 'npc/old cleric', effect: 'zoomInUp', level: DL.cleric.user.level, pc: DL.cleric.user.pc })
-                if ($.online.hp > $.int($.player.hp / 3) || DL.cleric.sp < $.Magic.power(DL.cleric, 13)) {
-                    xvt.out('"I can ', DL.cleric.sp < $.Magic.power(DL.cleric, 13) ? 'only' : 'surely'
+                if (power > 95) profile({ jpg: 'npc/old cleric', effect: 'zoomInUp', level: DL.cleric.user.level, pc: DL.cleric.user.pc })
+                if ($.online.hp > int($.player.hp / 3) || DL.cleric.sp < Magic.power(DL.cleric, 13)) {
+                    xvt.out('"I can ', DL.cleric.sp < Magic.power(DL.cleric, 13) ? 'only' : 'surely'
                         , ' cast a Heal spell on your wounds for '
                         , cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
                         , '."')
                 }
-                else if (DL.cleric.sp >= $.Magic.power(DL.cleric, 13)) {
+                else if (DL.cleric.sp >= Magic.power(DL.cleric, 13)) {
                     cast = 13
                     xvt.out('"I can restore your health for '
                         , cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
                         , '."')
                 }
 
-                $.action('yn')
+                action('yn')
                 xvt.app.form = {
                     'pay': {
                         cb: () => {
@@ -1355,12 +1359,12 @@ module Dungeon {
                             if (/Y/i.test(xvt.entry)) {
                                 $.player.coin.value -= cost.value
                                 DL.cleric.user.coin.value += cost.value
-                                xvt.out(`He casts a ${Object.keys($.Magic.spells)[cast - 1]} spell on you.`)
-                                DL.cleric.sp -= $.Magic.power(DL.cleric, cast)
+                                xvt.out(`He casts a ${Object.keys(Magic.spells)[cast - 1]} spell on you.`)
+                                DL.cleric.sp -= Magic.power(DL.cleric, cast)
                                 if (cast == 7) {
-                                    $.sound('heal')
+                                    sound('heal')
                                     for (let i = 0; i <= Z; i++)
-                                        $.online.hp += $.dice(DL.cleric.user.level / 9) + $.dice(Z / 9 + deep / 3)
+                                        $.online.hp += dice(DL.cleric.user.level / 9) + dice(Z / 9 + deep / 3)
                                     if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
                                     xvt.out('  Your hit points: '
                                         , xvt.bright, $.online.hp == $.player.hp ? xvt.white : $.online.hp > $.player.hp * 0.85 ? xvt.yellow : xvt.red, $.online.hp.toString()
@@ -1368,7 +1372,7 @@ module Dungeon {
                                 }
                                 else {
                                     $.online.hp = $.player.hp
-                                    $.sound('shimmer', 4)
+                                    sound('shimmer', 4)
                                 }
                             }
                             else {
@@ -1376,10 +1380,10 @@ module Dungeon {
                                     xvt.outln(xvt.lyellow, '"God save you."', -300)
                                     ROOM.occupant = ''
                                     xvt.outln(xvt.magenta, 'He teleports away!')
-                                    $.sound('teleport', 8)
+                                    sound('teleport', 8)
                                 }
                                 else {
-                                    $.profile({ jpg: 'npc/prayer', effect: 'fadeInUp' })
+                                    profile({ jpg: 'npc/prayer', effect: 'fadeInUp' })
                                     xvt.outln(xvt.lyellow, '"I need to rest. ', -300, ' Go in peace."', -300)
                                     looked = true
                                 }
@@ -1395,9 +1399,9 @@ module Dungeon {
             case 'wizard':
                 xvt.out(xvt.magenta, 'You encounter a ', xvt.bright)
 
-                if (!$.player.cursed && !$.player.novice && $.dice((Z > $.player.level ? Z : 1) + 20 * $.player.immortal + $.player.level + $.online.cha) == 1) {
-                    $.profile({
-                        png: ($.PC.name['player'][$.player.pc] || $.PC.name['immortal'][$.player.pc] ? 'player' : 'monster') + '/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''),
+                if (!$.player.cursed && !$.player.novice && dice((Z > $.player.level ? Z : 1) + 20 * $.player.immortal + $.player.level + $.online.cha) == 1) {
+                    profile({
+                        png: (PC.name['player'][$.player.pc] || PC.name['immortal'][$.player.pc] ? 'player' : 'monster') + '/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''),
                         effect: 'flip'
                     })
                     $.player.coward = true
@@ -1405,12 +1409,12 @@ module Dungeon {
                     xvt.outln('doppelganger', xvt.normal, ' waiting for you.', -1000)
                     xvt.outln(-1200)
 
-                    $.PC.adjust('str', -10)
-                    $.PC.adjust('int', -10)
-                    $.PC.adjust('dex', -10)
-                    $.PC.adjust('cha', -10)
+                    PC.adjust('str', -10)
+                    PC.adjust('int', -10)
+                    PC.adjust('dex', -10)
+                    PC.adjust('cha', -10)
                     xvt.outln(xvt.bright, 'It curses you!')
-                    $.sound('morph', 18)
+                    sound('morph', 18)
                     if ($.player.blessed) {
                         $.player.blessed = ''
                         xvt.out(xvt.yellow, 'Your ', -100, xvt.bright, 'shining aura ', -100, xvt.normal, 'left', -100, xvt.faint)
@@ -1420,25 +1424,25 @@ module Dungeon {
                         xvt.out(xvt.black, xvt.bright, 'A dark cloud hovers over')
                     }
                     xvt.outln(' you.')
-                    $.news(`\tcursed by a doppelganger!`)
+                    news(`\tcursed by a doppelganger!`)
 
                     //	vacate
                     drawHero()
-                    $.animated('flipOutY')
-                    $.sound('teleport', 12)
+                    animated('flipOutY')
+                    sound('teleport', 12)
                     ROOM.occupant = ''
                     let x: number, y: number
                     do {
-                        y = $.dice(DL.rooms.length) - 1
-                        x = $.dice(DL.width) - 1
+                        y = dice(DL.rooms.length) - 1
+                        x = dice(DL.width) - 1
                     } while (DL.rooms[y][x].type == 'cavern' || DL.rooms[y][x].occupant)
                     DL.rooms[y][x].occupant = 'wizard'
                     $.player.coward = false
                     $.online.altered = true
                 }
-                else if (!$.player.novice && $.dice(Z + $.online.cha) == 1) {
-                    $.profile({
-                        png: ($.PC.name['player'][$.player.pc] || $.PC.name['immortal'][$.player.pc] ? 'player' : 'monster') + '/' + $.player.pc.toLowerCase()
+                else if (!$.player.novice && dice(Z + $.online.cha) == 1) {
+                    profile({
+                        png: (PC.name['player'][$.player.pc] || PC.name['immortal'][$.player.pc] ? 'player' : 'monster') + '/' + $.player.pc.toLowerCase()
                             + ($.player.gender == 'F' ? '_f' : ''), effect: 'flip'
                     })
                     xvt.outln('mimic', xvt.normal, ' occupying this space.', -1000)
@@ -1447,18 +1451,18 @@ module Dungeon {
 
                     //	vacate
                     drawHero()
-                    $.animated('flipOutY')
-                    $.sound('teleport', 12)
+                    animated('flipOutY')
+                    sound('teleport', 12)
                     ROOM.occupant = ''
                     let x: number, y: number
                     do {
-                        y = $.dice(DL.rooms.length) - 1
-                        x = $.dice(DL.width) - 1
+                        y = dice(DL.rooms.length) - 1
+                        x = dice(DL.width) - 1
                     } while (DL.rooms[y][x].type == 'cavern' || DL.rooms[y][x].occupant)
                     DL.rooms[y][x].occupant = 'wizard'
                 }
                 else {
-                    $.profile({ jpg: 'npc/wizard', effect: 'backInLeft', handle: 'Pops', level: 77, pc: 'crackpot' })
+                    profile({ jpg: 'npc/wizard', effect: 'backInLeft', handle: 'Pops', level: 77, pc: 'crackpot' })
                     xvt.outln('wizard', xvt.normal, ' in this room.\n', -300)
                     scroll(1, false)
                     teleport()
@@ -1469,10 +1473,10 @@ module Dungeon {
                 break
 
             case 'dwarf':
-                $.profile({ jpg: 'npc/dwarf', effect: 'fadeIn' })
-                $.beep()
+                profile({ jpg: 'npc/dwarf', effect: 'fadeIn' })
+                xvt.beep()
                 xvt.outln(xvt.yellow, 'You run into a ', xvt.bright, 'dwarven merchant', xvt.normal, ', ', $.dwarf.user.handle, '.', -1000)
-                let hi = 0, credit = new $.coins(0), ring = $.dwarf.user.rings[0]
+                let hi = 0, credit = new Coin(0), ring = $.dwarf.user.rings[0]
 
                 xvt.app.form = {
                     'armor': {
@@ -1480,25 +1484,25 @@ module Dungeon {
                             xvt.outln()
                             ROOM.occupant = ''
                             if (/Y/i.test(xvt.entry)) {
-                                $.player.coin = new $.coins(0)
-                                $.Armor.equip($.online, $.Armor.dwarf[hi])
-                                $.player.toAC = 2 - $.dice(3)
-                                $.online.toAC = $.dice($.online.armor.ac) - 2
-                                $.profile({ jpg: `specials/${$.player.armor}`, effect: 'fadeInUpBig' })
-                                $.sound('click')
+                                $.player.coin = new Coin(0)
+                                Armor.equip($.online, Armor.dwarf[hi])
+                                $.player.toAC = 2 - dice(3)
+                                $.online.toAC = dice($.online.armor.ac) - 2
+                                profile({ jpg: `specials/${$.player.armor}`, effect: 'fadeInUpBig' })
+                                sound('click')
                             }
                             else {
                                 xvt.outln()
                                 xvt.out(xvt.yellow, $.dwarf.user.handle, ' eyes you suspicously ... ', -600)
                                 if ($.player.level > $.dwarf.user.level) {
-                                    if ($.Ring.wear($.player.rings, ring))
-                                        $.getRing('inherit', ring)
+                                    if (Ring.wear($.player.rings, ring))
+                                        getRing('inherit', ring)
                                     else {
                                         xvt.outln('takes back his ring!')
-                                        $.Ring.remove($.player.rings, ring)
+                                        Ring.remove($.player.rings, ring)
                                     }
-                                    $.saveRing(ring, $.player.id)
-                                    $.sound('click', 8)
+                                    Ring.save(ring, $.player.id)
+                                    sound('click', 8)
                                 }
                                 else {
                                     merchant()
@@ -1513,25 +1517,25 @@ module Dungeon {
                             xvt.outln()
                             ROOM.occupant = ''
                             if (/Y/i.test(xvt.entry)) {
-                                $.player.coin = new $.coins(0)
-                                $.Weapon.equip($.online, $.Weapon.dwarf[hi])
-                                $.player.toWC = 2 - $.dice(3)
-                                $.online.toWC = $.dice($.online.weapon.wc) - 2
-                                $.profile({ jpg: `specials/${$.player.weapon}`, effect: 'fadeInUpBig' })
-                                $.sound('click')
+                                $.player.coin = new Coin(0)
+                                Weapon.equip($.online, Weapon.dwarf[hi])
+                                $.player.toWC = 2 - dice(3)
+                                $.online.toWC = dice($.online.weapon.wc) - 2
+                                profile({ jpg: `specials/${$.player.weapon}`, effect: 'fadeInUpBig' })
+                                sound('click')
                             }
                             else {
                                 xvt.out(xvt.yellow, $.dwarf.user.handle, ' evaluates the situation ... ', -600)
                                 if ($.player.level > $.dwarf.user.level) {
-                                    if ($.Ring.wear($.player.rings, ring)) {
-                                        $.getRing('inherit', ring)
+                                    if (Ring.wear($.player.rings, ring)) {
+                                        getRing('inherit', ring)
                                     }
                                     else {
                                         xvt.outln('takes back his ring!')
-                                        $.Ring.remove($.player.rings, ring)
+                                        Ring.remove($.player.rings, ring)
                                     }
-                                    $.saveRing(ring, $.player.id)
-                                    $.sound('click', 8)
+                                    Ring.save(ring, $.player.id)
+                                    sound('click', 8)
                                 }
                                 else {
                                     merchant()
@@ -1543,15 +1547,15 @@ module Dungeon {
                     }
                 }
 
-                if ($.dice(2) == 1) {
-                    let ac = $.Armor.name[$.player.armor].ac
-                    xvt.out('\nI see you have a class ', $.bracket(ac, false), ' ', $.PC.armor())
+                if (dice(2) == 1) {
+                    let ac = Armor.name[$.player.armor].ac
+                    xvt.out('\nI see you have a class ', bracket(ac, false), ' ', armor())
                     ac += $.player.toAC
                     if (ac) {
-                        let cv = new $.coins($.Armor.name[$.player.armor].value)
-                        credit.value = $.worth(cv.value, $.online.cha)
-                        if ($.player.toAC) credit.value = $.int(credit.value * (ac + $.player.toAC / ($.player.poison + 1)) / ac)
-                        if ($.online.toAC < 0) credit.value = $.int(credit.value * (ac + $.online.toAC) / ac)
+                        let cv = new Coin(Armor.name[$.player.armor].value)
+                        credit.value = worth(cv.value, $.online.cha)
+                        if ($.player.toAC) credit.value = int(credit.value * (ac + $.player.toAC / ($.player.poison + 1)) / ac)
+                        if ($.online.toAC < 0) credit.value = int(credit.value * (ac + $.online.toAC) / ac)
                         if (credit.value > cv.value)
                             credit.value = cv.value
                     }
@@ -1559,28 +1563,28 @@ module Dungeon {
                         credit.value = 0
                     xvt.outln(' worth ', credit.carry(), -1000)
 
-                    for (hi = 0; hi < $.Armor.dwarf.length - 1 && ac >= $.Armor.name[$.Armor.dwarf[hi]].ac; hi++);
-                    if (new $.coins($.Armor.name[$.Armor.dwarf[hi]].value).value <= credit.value + $.player.coin.value) {
+                    for (hi = 0; hi < Armor.dwarf.length - 1 && ac >= Armor.name[Armor.dwarf[hi]].ac; hi++);
+                    if (new Coin(Armor.name[Armor.dwarf[hi]].value).value <= credit.value + $.player.coin.value) {
                         if ($.player.coin.value) xvt.outln('  and all your coin worth ', $.player.coin.carry(), -1000)
                         xvt.out(`I'll trade you for my `, xvt.bright
-                            , ['exceptional', 'precious', 'remarkable', 'special', 'uncommon'][$.dice(5) - 1], ' '
-                            , $.bracket($.Armor.name[$.Armor.dwarf[hi]].ac, false), ' ')
-                        xvt.outln(xvt.bright, xvt.yellow, $.Armor.dwarf[hi], -1000)
-                        $.action('yn')
+                            , ['exceptional', 'precious', 'remarkable', 'special', 'uncommon'][dice(5) - 1], ' '
+                            , bracket(Armor.name[Armor.dwarf[hi]].ac, false), ' ')
+                        xvt.outln(xvt.bright, xvt.yellow, Armor.dwarf[hi], -1000)
+                        action('yn')
                         xvt.drain()
                         xvt.app.focus = 'armor'
                         return false
                     }
                 }
                 else {
-                    let wc = $.Weapon.name[$.player.weapon].wc
-                    xvt.out('\nI see you carrying a class ', $.bracket(wc, false), ' ', $.PC.weapon())
+                    let wc = Weapon.name[$.player.weapon].wc
+                    xvt.out('\nI see you carrying a class ', bracket(wc, false), ' ', weapon())
                     wc += $.player.toWC
                     if (wc) {
-                        let cv = new $.coins($.Weapon.name[$.player.weapon].value)
-                        credit.value = $.worth(cv.value, $.online.cha)
-                        if ($.player.toWC) credit.value = $.int(credit.value * (wc + $.player.toWC / ($.player.poison + 1)) / wc)
-                        if ($.online.toWC < 0) credit.value = $.int(credit.value * (wc + $.online.toWC) / wc)
+                        let cv = new Coin(Weapon.name[$.player.weapon].value)
+                        credit.value = worth(cv.value, $.online.cha)
+                        if ($.player.toWC) credit.value = int(credit.value * (wc + $.player.toWC / ($.player.poison + 1)) / wc)
+                        if ($.online.toWC < 0) credit.value = int(credit.value * (wc + $.online.toWC) / wc)
                         if (credit.value > cv.value)
                             credit.value = cv.value
                     }
@@ -1588,134 +1592,134 @@ module Dungeon {
                         credit.value = 0
                     xvt.outln(' worth ', credit.carry())
 
-                    for (hi = 0; hi < $.Weapon.dwarf.length - 1 && wc >= $.Weapon.name[$.Weapon.dwarf[hi]].wc; hi++);
-                    if (new $.coins($.Weapon.name[$.Weapon.dwarf[hi]].value).value <= credit.value + $.player.coin.value) {
+                    for (hi = 0; hi < Weapon.dwarf.length - 1 && wc >= Weapon.name[Weapon.dwarf[hi]].wc; hi++);
+                    if (new Coin(Weapon.name[Weapon.dwarf[hi]].value).value <= credit.value + $.player.coin.value) {
                         if ($.player.coin.value) xvt.outln('  and all your coin worth ', $.player.coin.carry(), -1000)
                         xvt.out(`I'll trade you for my `, xvt.bright
-                            , ['exquisite', 'fine', 'jeweled', 'rare', 'splendid'][$.dice(5) - 1], ' '
-                            , $.bracket($.Weapon.name[$.Weapon.dwarf[hi]].wc, false), ' ')
-                        xvt.outln(xvt.bright, xvt.cyan, $.Weapon.dwarf[hi], -1000)
-                        $.action('yn')
+                            , ['exquisite', 'fine', 'jeweled', 'rare', 'splendid'][dice(5) - 1], ' '
+                            , bracket(Weapon.name[Weapon.dwarf[hi]].wc, false), ' ')
+                        xvt.outln(xvt.bright, xvt.cyan, Weapon.dwarf[hi], -1000)
+                        action('yn')
                         xvt.drain()
                         xvt.app.focus = 'weapon'
                         return false
                     }
                 }
 
-                $.beep()
-                $.animated('fadeOut')
+                xvt.beep()
+                animated('fadeOut')
                 xvt.outln(`I've got nothing of interest for trading.  Perhaps next time, my friend?`, -1000)
                 ROOM.occupant = ''
                 break
 
             case 'witch':
                 scroll(1, false)
-                $.music('.')
-                $.profile({ jpg: 'npc/witch', effect: 'fadeIn' })
+                music('.')
+                profile({ jpg: 'npc/witch', effect: 'fadeIn' })
                 xvt.outln(xvt.green, 'You encounter the ', xvt.bright, 'sorceress', xvt.normal, ', ', $.witch.user.handle, '.')
-                $.cat(`dungeon/witch`)
-                $.PC.wearing($.witch)
-                $.sound('steal', 10)
+                cat(`dungeon/witch`)
+                wearing($.witch)
+                sound('steal', 10)
 
                 let choice: string
                 xvt.app.form = {
                     offer: {
                         cb: () => {
                             xvt.outln()
-                            $.sound('click', 8)
+                            sound('click', 8)
                             if (/Y/i.test(xvt.entry)) {
-                                let result = $.Weapon.swap($.online, $.witch)
-                                if (isBoolean(result) && result) {
-                                    xvt.outln(xvt.faint, '"', xvt.normal, xvt.green, 'A gift from the gods, I give you ', xvt.reset, $.PC.weapon(), xvt.reset, xvt.faint, '"')
-                                    $.sound('click', 13)
+                                let result = Weapon.swap($.online, $.witch)
+                                if (typeof result == 'boolean' && result) {
+                                    xvt.outln(xvt.faint, '"', xvt.normal, xvt.green, 'A gift from the gods, I give you ', xvt.reset, weapon(), xvt.reset, xvt.faint, '"')
+                                    sound('click', 13)
                                 }
-                                result = $.Armor.swap($.online, $.witch)
-                                if (isBoolean(result) && result) {
-                                    xvt.outln(xvt.faint, '"', xvt.normal, xvt.green, `I offer my crafted `, xvt.reset, $.PC.armor(), xvt.reset, xvt.faint, '"')
-                                    $.sound('click', 13)
+                                result = Armor.swap($.online, $.witch)
+                                if (typeof result == 'boolean' && result) {
+                                    xvt.outln(xvt.faint, '"', xvt.normal, xvt.green, `I offer my crafted `, xvt.reset, armor(), xvt.reset, xvt.faint, '"')
+                                    sound('click', 13)
                                 }
                                 xvt.out(xvt.faint, '"', xvt.normal, xvt.green, "Your price is ")
 
                                 if ($.player.steal > 1) {
-                                    $.sound('mana', 8)
+                                    sound('mana', 8)
                                     xvt.out('your ability to steal diminishes')
                                     $.player.steal--
                                 }
                                 else if ($.player.magic > 3) {
-                                    $.sound('mana', 8)
+                                    sound('mana', 8)
                                     xvt.out('your divine spellcasting ability is mine')
                                     $.player.magic--
                                 }
                                 else if ($.player.melee > 3) {
-                                    $.sound('mana', 8)
+                                    sound('mana', 8)
                                     xvt.out('your barbaric powers are halved')
                                     $.player.melee = 2
-                                    $.PC.adjust('str', -5 - $.dice(5), -2, -2)
+                                    PC.adjust('str', -5 - dice(5), -2, -2)
                                 }
                                 else if ($.player.str > 80 && $.player.int > 80 && $.player.dex > 80 && $.player.cha > 80) {
-                                    $.sound('mana', 8)
+                                    sound('mana', 8)
                                     xvt.out('allowing me to drain your overall ability')
                                     $.player.blessed = ''
-                                    $.PC.adjust('str', -5 - $.dice(5), -2, -2)
-                                    $.PC.adjust('int', -5 - $.dice(5), -2, -2)
-                                    $.PC.adjust('dex', -5 - $.dice(5), -2, -2)
-                                    $.PC.adjust('cha', -5 - $.dice(5), -2, -2)
+                                    PC.adjust('str', -5 - dice(5), -2, -2)
+                                    PC.adjust('int', -5 - dice(5), -2, -2)
+                                    PC.adjust('dex', -5 - dice(5), -2, -2)
+                                    PC.adjust('cha', -5 - dice(5), -2, -2)
                                 }
                                 else {
-                                    $.player.level = $.dice(Z)
-                                    if ($.online.adept) $.player.level += $.dice($.player.level)
-                                    $.reroll($.player, $.PC.random('monster'), $.player.level)
-                                    $.activate($.online)
-                                    $.player.gender = ['F', 'M'][$.dice(2) - 1]
-                                    $.saveUser($.player)
-                                    $.sound('crone', 21)
+                                    $.player.level = dice(Z)
+                                    if ($.online.adept) $.player.level += dice($.player.level)
+                                    reroll($.player, PC.random('monster'), $.player.level)
+                                    activate($.online)
+                                    $.player.gender = ['F', 'M'][dice(2) - 1]
+                                    PC.saveUser($.player)
+                                    sound('crone', 21)
                                     xvt.out(`me morphing you into a level ${$.player.level} ${$.player.pc} (${$.player.gender})`)
-                                    $.news(`\tgot morphed by ${$.witch.user.handle} into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
+                                    news(`\tgot morphed by ${$.witch.user.handle} into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
                                 }
 
-                                $.music('crack')
+                                music('crack')
                                 xvt.outln('!', xvt.reset, xvt.faint, '"', -2100)
-                                $.sound('click')
+                                sound('click')
 
                                 switch (choice) {
                                     case 'rings':
                                         let rpc = <active>{ user: { id: '' } }
                                         for (let row in rs) {
                                             rpc.user.id = rs[row].bearer
-                                            $.loadUser(rpc)
+                                            loadUser(rpc)
                                             xvt.outln(`You are given the ${rs[row].name} ring from ${rpc.user.handle}.`)
-                                            $.Ring.remove(rpc.user.rings, rs[row].name)
-                                            $.saveUser(rpc)
-                                            $.Ring.wear(rpc.user.rings, rs[row].name)
-                                            $.saveRing(rs[row].name, $.player.id, $.player.rings)
-                                            $.sound('click', 8)
+                                            Ring.remove(rpc.user.rings, rs[row].name)
+                                            PC.saveUser(rpc)
+                                            Ring.wear(rpc.user.rings, rs[row].name)
+                                            Ring.save(rs[row].name, $.player.id, $.player.rings)
+                                            sound('click', 8)
                                         }
-                                        $.news(`\tgot ${rs.length} magical ring${rs.length > 1 ? 's' : ''} of power from ${$.witch.user.handle}!`)
+                                        news(`\tgot ${rs.length} magical ring${rs.length > 1 ? 's' : ''} of power from ${$.witch.user.handle}!`)
                                         break
 
                                     case 'magic':
-                                        let m = $.dice($.player.magic + 1)
+                                        let m = dice($.player.magic + 1)
                                         let retry = 8
                                         for (let i = 0; i < m; i++) {
-                                            let p = $.dice(Object.keys($.Magic.spells).length - 12) + 12
-                                            let spell = $.Magic.pick(p)
-                                            if (!$.Magic.have($.player.spells, spell)) {
-                                                $.Magic.add($.player.spells, p)
+                                            let p = dice(Object.keys(Magic.spells).length - 12) + 12
+                                            let spell = Magic.pick(p)
+                                            if (!Magic.have($.player.spells, spell)) {
+                                                Magic.add($.player.spells, p)
                                                 switch ($.player.magic) {
                                                     case 1:
-                                                        $.beep()
+                                                        xvt.beep()
                                                         xvt.outln('A ', xvt.white, xvt.bright, `Wand of ${spell}`, xvt.reset, ' appears in your hand.', -600)
                                                         break
                                                     case 2:
-                                                        $.beep()
+                                                        xvt.beep()
                                                         xvt.outln('You add a ', xvt.yellow, xvt.bright, `Scroll of ${spell}`, xvt.reset, ' to your arsenal.', -600)
                                                         break
                                                     case 3:
-                                                        $.sound('shimmer', 8)
+                                                        sound('shimmer', 8)
                                                         xvt.outln('The ', xvt.cyan, xvt.bright, `Spell of ${spell}`, xvt.reset, ' is revealed to you.', -600)
                                                         break
                                                     case 4:
-                                                        $.sound('shimmer', 8)
+                                                        sound('shimmer', 8)
                                                         xvt.outln(xvt.magenta, xvt.bright, spell, xvt.reset, ' is known to you.', -600)
                                                         break
                                                 }
@@ -1730,10 +1734,10 @@ module Dungeon {
                                         break
 
                                     case 'curse':
-                                        $.sound('resurrect')
-                                        $.run(`UPDATE Players SET status='' WHERE id NOT GLOB '_*' AND status!='jail'`)
-                                        $.run(`UPDATE Players SET blessed='',coward=1,cursed='${$.witch.user.id}' WHERE id NOT GLOB '_*' AND id != '${$.player.id}'`)
-                                        $.news(`\t${$.witch.user.handle} resurrected all the dead and cursed everyone!`)
+                                        sound('resurrect')
+                                        db.run(`UPDATE Players SET status='' WHERE id NOT GLOB '_*' AND status!='jail'`)
+                                        db.run(`UPDATE Players SET blessed='',coward=1,cursed='${$.witch.user.id}' WHERE id NOT GLOB '_*' AND id != '${$.player.id}'`)
+                                        news(`\t${$.witch.user.handle} resurrected all the dead and cursed everyone!`)
                                         xvt.outln(xvt.faint, 'The deed is done.', -200)
                                         break
                                 }
@@ -1743,7 +1747,7 @@ module Dungeon {
                                 witch()
                                 return
                             }
-                            $.animated('fadeOut')
+                            animated('fadeOut')
                             pause = true
                             refresh = true
                             menu()
@@ -1751,20 +1755,20 @@ module Dungeon {
                     }
                 }
 
-                $.action('yn')
+                action('yn')
                 xvt.drain()
                 xvt.outln(-1000)
-                xvt.outln(xvt.faint, `${$.PC.who($.witch).He}says, "`
+                xvt.outln(xvt.faint, `${PC.who($.witch).He}says, "`
                     , xvt.green, xvt.normal, "Come hither. ", -1200
-                    , ['I am niece to Circe known for her vengeful morph', 'My grandfather is the sun god Helios', 'My grandmother is a daughter of the titan Oceanus', 'I am priestess to Hecate, source of my special magicks', 'I trusted an Argonaut. Once'][$.dice(5) - 1], '.'
+                    , ['I am niece to Circe known for her vengeful morph', 'My grandfather is the sun god Helios', 'My grandmother is a daughter of the titan Oceanus', 'I am priestess to Hecate, source of my special magicks', 'I trusted an Argonaut. Once'][dice(5) - 1], '.'
                     , xvt.reset, xvt.faint, '"', -2400)
                 xvt.out(xvt.faint, '"', xvt.normal, xvt.green)
-                let rs = $.query(`SELECT name,bearer FROM Rings WHERE bearer != '' AND bearer != '${$.player.id}'`)
+                let rs = db.query(`SELECT name,bearer FROM Rings WHERE bearer != '' AND bearer != '${$.player.id}'`)
                 if (rs.length) {
                     xvt.out('I see powerful rings for the taking')
                     choice = 'rings'
                 }
-                else if (!$.Magic.have($.player.spells, 'Morph')) {
+                else if (!Magic.have($.player.spells, 'Morph')) {
                     xvt.out(`I can ${$.player.magic < 3 ? 'provide' : 'teach'} you advanced magic`)
                     choice = 'magic'
                 }
@@ -1787,35 +1791,35 @@ module Dungeon {
         switch (ROOM.giftItem) {
             case 'armor':
                 let xarmor = <active>{ user: Object.assign({}, $.player) }
-                $.reroll(xarmor.user)
-                xarmor.user.armor = $.Armor.special[ROOM.giftValue]
-                $.activate(xarmor)
-                if ($.Armor.swap($.online, xarmor)) {
-                    $.profile({ jpg: `specials/${$.player.armor}`, effect: 'fadeInUpBig' })
-                    xvt.outln(xvt.faint, xvt.yellow, 'You find', xvt.normal, $.an($.player.armor.toString()), xvt.bright, '!')
-                    $.sound('max')
+                reroll(xarmor.user)
+                xarmor.user.armor = Armor.special[ROOM.giftValue]
+                activate(xarmor)
+                if (Armor.swap($.online, xarmor)) {
+                    profile({ jpg: `specials/${$.player.armor}`, effect: 'fadeInUpBig' })
+                    xvt.outln(xvt.faint, xvt.yellow, 'You find', xvt.normal, an($.player.armor.toString()), xvt.bright, '!')
+                    sound('max')
                     pause = true
                     ROOM.giftItem = ''
                 }
                 break
 
             case 'chest':
-                let gold = new $.coins($.money(Z))
-                gold.value += $.worth(new $.coins($.online.weapon.value).value, $.online.cha)
-                gold.value += $.worth(new $.coins($.online.armor.value).value, $.online.cha)
+                let gold = new Coin(money(Z))
+                gold.value += worth(new Coin($.online.weapon.value).value, $.online.cha)
+                gold.value += worth(new Coin($.online.armor.value).value, $.online.cha)
                 gold.value *= +ROOM.giftValue
-                gold = new $.coins(gold.carry(1, true))
+                gold = new Coin(gold.carry(1, true))
                 if (gold.value) {
                     if (gold.value > 1e+17)
                         gold.value = 1e+17
-                    $.profile({ jpg: `specials/chest`, effect: 'fadeInUpBig' })
-                    $.sound('yahoo', 10)
+                    profile({ jpg: `specials/chest`, effect: 'fadeInUpBig' })
+                    sound('yahoo', 10)
                     xvt.outln(xvt.yellow, 'You find a ', xvt.bright, 'treasure chest'
                         , xvt.normal, ' holding ', gold.carry(), '!')
                 }
                 else {
                     xvt.outln(xvt.faint, xvt.yellow, 'You find an empty, treasure chest.')
-                    $.sound('boo')
+                    sound('boo')
                 }
                 $.player.coin.value += gold.value
                 pause = true
@@ -1823,11 +1827,11 @@ module Dungeon {
                 break
 
             case 'magic':
-                if (!$.Magic.have($.player.spells, +ROOM.giftValue)) {
+                if (!Magic.have($.player.spells, +ROOM.giftValue)) {
                     xvt.outln(xvt.bright, xvt.yellow, 'You find a '
-                        , xvt.cyan, $.Magic.merchant[+ROOM.giftValue - 1], xvt.yellow
+                        , xvt.cyan, Magic.merchant[+ROOM.giftValue - 1], xvt.yellow
                         , ' ', $.player.magic == 2 ? 'scroll' : 'wand', '!')
-                    $.Magic.add($.player.spells, +ROOM.giftValue)
+                    Magic.add($.player.spells, +ROOM.giftValue)
                     pause = true
                     ROOM.giftItem = ''
                 }
@@ -1842,10 +1846,10 @@ module Dungeon {
                 break
 
             case 'poison':
-                if (!$.Poison.have($.player.poisons, +ROOM.giftValue)) {
+                if (!Poison.have($.player.poisons, +ROOM.giftValue)) {
                     xvt.outln(xvt.bright, xvt.yellow, 'You find a vial of '
-                        , $.Poison.merchant[+ROOM.giftValue - 1], '!')
-                    $.Poison.add($.player.poisons, +ROOM.giftValue)
+                        , Poison.merchant[+ROOM.giftValue - 1], '!')
+                    Poison.add($.player.poisons, +ROOM.giftValue)
                     pause = true
                     ROOM.giftItem = ''
                 }
@@ -1855,26 +1859,26 @@ module Dungeon {
                 let id = false
                 if (DL.moves < DL.width && !ROOM.giftID)
                     ROOM.giftID = !$.player.novice
-                        && $.dice(100 + +ROOM.giftValue) < ($.online.int / 20 * (1 << $.player.poison) + ($.online.int > 90 ? ($.online.int % 90) << 1 : 0))
+                        && dice(100 + +ROOM.giftValue) < ($.online.int / 20 * (1 << $.player.poison) + ($.online.int > 90 ? ($.online.int % 90) << 1 : 0))
 
-                $.sound('bubbles')
+                sound('bubbles')
                 xvt.out(xvt.cyan, 'On the ground, you find a ')
-                if ($.Ring.power([], $.player.rings, 'identify').power) potions[ROOM.giftValue].identified = true
+                if (Ring.power([], $.player.rings, 'identify').power) potions[ROOM.giftValue].identified = true
                 if (potions[ROOM.giftValue].identified || ROOM.giftID || $.access.sysop) {
-                    $.profile({ png: potions[ROOM.giftValue].image, handle: potion[ROOM.giftValue], effect: 'fadeInUp' })
+                    profile({ png: potions[ROOM.giftValue].image, handle: potion[ROOM.giftValue], effect: 'fadeInUp' })
                     xvt.out(xvt.bright, potion[ROOM.giftValue], xvt.normal, '.')
                     if (!potions[ROOM.giftValue].identified)	//	recall seeing this before
                         potions[ROOM.giftValue].identified = $.player.novice || $.online.int > (85 - 4 * $.player.poison)
                     id = true
                 }
                 else {
-                    $.profile({ png: potions[ROOM.giftValue].image, handle: 'Is it ' + 'nt'[$.dice(2) - 1] + 'asty, precious?', effect: 'fadeInUp' })
+                    profile({ png: potions[ROOM.giftValue].image, handle: 'Is it ' + 'nt'[dice(2) - 1] + 'asty, precious?', effect: 'fadeInUp' })
                     xvt.out(potions[ROOM.giftValue].description, xvt.cyan, xvt.bright, ' potion', xvt.normal, '.')
                 }
 
                 if (id ||
-                    ($.dice(100 + 10 * +ROOM.giftValue * +$.player.coward) + $.dice(deep / 2) < (50 + $.int($.online.int / 2)) && $.dice(100) > 1)) {
-                    $.action('potion')
+                    (dice(100 + 10 * +ROOM.giftValue * +$.player.coward) + dice(deep / 2) < (50 + int($.online.int / 2)) && dice(100) > 1)) {
+                    action('potion')
                     xvt.app.form = {
                         'quaff': {
                             cb: () => {
@@ -1888,7 +1892,7 @@ module Dungeon {
                                     quaff(+ROOM.giftValue)
                                 else if (/T/i.test(xvt.entry)) {
                                     quaff(+ROOM.giftValue, false)
-                                    $.sound('click')
+                                    sound('click')
                                     pause = false
                                 }
                                 ROOM.giftItem = ''
@@ -1900,7 +1904,7 @@ module Dungeon {
                     return false
                 }
                 else {
-                    let auto = $.dice(2) < 2
+                    let auto = dice(2) < 2
                     xvt.outln(xvt.faint, '\nYou ', -500, auto ? 'quaff' : 'toss', ' it without hesitation.', -500)
                     quaff(+ROOM.giftValue, auto)
                     ROOM.giftItem = ''
@@ -1909,9 +1913,11 @@ module Dungeon {
 
             case 'ring':
                 let ring = ROOM.giftValue.toString()
-                if (!$.ringBearer(ring) && $.Ring.wear($.player.rings, ring)) {
-                    $.getRing('find', ring)
-                    $.saveRing(ring, $.player.id, $.player.rings)
+                //  enforce uniquess
+                if (!db.query(`SELECT bearer FROM Rings WHERE name='${ring}' AND bearer != ''`).length
+                    && Ring.wear($.player.rings, ring)) {
+                    getRing('find', ring)
+                    Ring.save(ring, $.player.id, $.player.rings)
                     pause = true
                     ROOM.giftItem = ''
                 }
@@ -1919,24 +1925,24 @@ module Dungeon {
 
             case 'weapon':
                 let xweapon = <active>{ user: Object.assign({}, $.player) }
-                $.reroll(xweapon.user)
-                xweapon.user.weapon = $.Weapon.special[ROOM.giftValue]
-                $.activate(xweapon)
-                if ($.Weapon.swap($.online, xweapon)) {
-                    $.profile({ jpg: `specials/${$.player.weapon}`, effect: 'fadeInUpBig' })
-                    xvt.outln(xvt.faint, xvt.cyan, 'You find', xvt.normal, $.an($.player.weapon.toString()), xvt.bright, '!')
-                    $.sound('max')
+                reroll(xweapon.user)
+                xweapon.user.weapon = Weapon.special[ROOM.giftValue]
+                activate(xweapon)
+                if (Weapon.swap($.online, xweapon)) {
+                    profile({ jpg: `specials/${$.player.weapon}`, effect: 'fadeInUpBig' })
+                    xvt.outln(xvt.faint, xvt.cyan, 'You find', xvt.normal, an($.player.weapon.toString()), xvt.bright, '!')
+                    sound('max')
                     pause = true
                     ROOM.giftItem = ''
                 }
                 break
 
             case 'xmagic':
-                if (!$.Magic.have($.player.spells, ROOM.giftValue)) {
+                if (!Magic.have($.player.spells, ROOM.giftValue)) {
                     xvt.outln(xvt.bright, xvt.yellow, 'You find a '
-                        , xvt.magenta, $.Magic.special[+ROOM.giftValue - $.Magic.merchant.length - 1], xvt.yellow
+                        , xvt.magenta, Magic.special[+ROOM.giftValue - Magic.merchant.length - 1], xvt.yellow
                         , ' ', $.player.magic == 1 ? 'wand' : 'scroll', '!')
-                    $.Magic.add($.player.spells, +ROOM.giftValue)
+                    Magic.add($.player.spells, +ROOM.giftValue)
                     pause = true
                     ROOM.giftItem = ''
                 }
@@ -1948,7 +1954,7 @@ module Dungeon {
 
     function doSpoils() {
         if ($.reason) {
-            $.reason = `failed to escape ${$.romanize(deep + 1)}.${Z + 1} - ${$.reason}`
+            $.reason = `failed to escape ${romanize(deep + 1)}.${Z + 1} - ${$.reason}`
             DL.map = `Marauder's map`
             scroll()
             xvt.hangup()
@@ -1963,10 +1969,10 @@ module Dungeon {
                 Object.assign(mon, ROOM.monster[n])
                 //	teleported?
                 if (mon.hp < 0) {
-                    let y = $.dice(DL.rooms.length) - 1
-                    let x = $.dice(DL.width) - 1
-                    mon.hp = Math.abs(mon.hp) + $.int(mon.user.hp / ($.dice(5) + 5))
-                    mon.sp += $.int(mon.user.sp / ($.dice(5) + 5))
+                    let y = dice(DL.rooms.length) - 1
+                    let x = dice(DL.width) - 1
+                    mon.hp = Math.abs(mon.hp) + int(mon.user.hp / (dice(5) + 5))
+                    mon.sp += int(mon.user.sp / (dice(5) + 5))
                     DL.rooms[y][x].monster.push(mon)
                 }
                 else {
@@ -1976,29 +1982,29 @@ module Dungeon {
                             xvt.outln(xvt.bright, xvt.black, 'The dark cloud has left you.')
                             $.player.cursed = ''
                         }
-                        let m = $.int((mon.user.xplevel - Z) / 6)
-                        $.beep()
+                        let m = int((mon.user.xplevel - Z) / 6)
+                        xvt.beep()
                         xvt.out(xvt.lyellow, `+ ${mon.user.pc} bonus`)
-                        if ($.int(mon.pc.bonusStr)) {
-                            $.PC.adjust('str', m * mon.pc.bonusStr, m * mon.pc.bonusStr, m * mon.pc.bonusStr)
-                            xvt.out(xvt.lred, ' strength', $.bracket(`+${m * mon.pc.bonusStr}`, false))
+                        if (int(mon.pc.bonusStr)) {
+                            PC.adjust('str', m * mon.pc.bonusStr, m * mon.pc.bonusStr, m * mon.pc.bonusStr)
+                            xvt.out(xvt.lred, ' strength', bracket(`+${m * mon.pc.bonusStr}`, false))
                         }
-                        $.PC.adjust('str', m)
-                        if ($.int(mon.pc.bonusInt)) {
-                            $.PC.adjust('int', m * mon.pc.bonusInt, m * mon.pc.bonusInt, m * mon.pc.bonusInt)
-                            xvt.out(xvt.lmagenta, ' intellect', $.bracket(`+${m * mon.pc.bonusInt}`, false))
+                        PC.adjust('str', m)
+                        if (int(mon.pc.bonusInt)) {
+                            PC.adjust('int', m * mon.pc.bonusInt, m * mon.pc.bonusInt, m * mon.pc.bonusInt)
+                            xvt.out(xvt.lmagenta, ' intellect', bracket(`+${m * mon.pc.bonusInt}`, false))
                         }
-                        $.PC.adjust('int', m)
-                        if ($.int(mon.pc.bonusDex)) {
-                            $.PC.adjust('dex', m * mon.pc.bonusDex, m * mon.pc.bonusDex, m * mon.pc.bonusDex)
-                            xvt.out(xvt.lcyan, ' dexterity', $.bracket(`+${m * mon.pc.bonusDex}`, false))
+                        PC.adjust('int', m)
+                        if (int(mon.pc.bonusDex)) {
+                            PC.adjust('dex', m * mon.pc.bonusDex, m * mon.pc.bonusDex, m * mon.pc.bonusDex)
+                            xvt.out(xvt.lcyan, ' dexterity', bracket(`+${m * mon.pc.bonusDex}`, false))
                         }
-                        $.PC.adjust('dex', m)
-                        if ($.int(mon.pc.bonusCha)) {
-                            $.PC.adjust('cha', m * mon.pc.bonusCha, m * mon.pc.bonusCha, m * mon.pc.bonusCha)
-                            xvt.out(xvt.lgreen, ' charisma', $.bracket(`+${m * mon.pc.bonusCha}`, false))
+                        PC.adjust('dex', m)
+                        if (int(mon.pc.bonusCha)) {
+                            PC.adjust('cha', m * mon.pc.bonusCha, m * mon.pc.bonusCha, m * mon.pc.bonusCha)
+                            xvt.out(xvt.lgreen, ' charisma', bracket(`+${m * mon.pc.bonusCha}`, false))
                         }
-                        $.PC.adjust('cha', m)
+                        PC.adjust('cha', m)
                         xvt.outln('\n', -500)
                         Battle.yourstats(false)
                         xvt.outln(-500)
@@ -2007,22 +2013,22 @@ module Dungeon {
                 }
                 //	activate this monster's avenge?
                 if (mon.user.xplevel == 0) {
-                    $.sound('oops')
+                    sound('oops')
                     ROOM.monster[n].monster.effect = 'flip'
                     monsters[mon.user.handle].pc = '*'	//	chaos
-                    $.activate(mon)
-                    for (let i = 0; i < $.dice(3); i++) {
+                    activate(mon)
+                    for (let i = 0; i < dice(3); i++) {
                         let avenger = <active>{ monster: { name: '', pc: '' }, user: { id: '' } }
                         Object.assign(avenger.user, mon.user)
-                        avenger.user.pc = $.PC.random('monster')
+                        avenger.user.pc = PC.random('monster')
                         avenger.user.handle += xvt.attr(' ', xvt.uline, 'avenger', xvt.nouline)
-                        $.reroll(avenger.user, avenger.user.pc, $.int(avenger.user.level / 2))
+                        reroll(avenger.user, avenger.user.pc, int(avenger.user.level / 2))
                         for (let magic in ROOM.monster[n].monster.spells)
-                            $.Magic.add(avenger.user.spells, ROOM.monster[n].monster.spells[magic])
+                            Magic.add(avenger.user.spells, ROOM.monster[n].monster.spells[magic])
                         for (let poison in ROOM.monster[n].monster.poisons)
-                            $.Poison.add(avenger.user.poisons, ROOM.monster[n].monster.poisons[poison])
+                            Poison.add(avenger.user.poisons, ROOM.monster[n].monster.poisons[poison])
                         avenger.user.steal = 2
-                        $.activate(avenger)
+                        activate(avenger)
                         avenger.str = 99
                         avenger.int = 99
                         avenger.dex = 99
@@ -2038,11 +2044,11 @@ module Dungeon {
             else {
                 //	retreated from a harmless creature, good
                 if (ROOM.monster[n].user.xplevel == 0) {
-                    $.sound('heal', 3)
-                    let ha = $.player.magic > 2 ? $.int($.player.level / 16) + 13 : 16
+                    sound('heal', 3)
+                    let ha = $.player.magic > 2 ? int($.player.level / 16) + 13 : 16
                     let hr = 0
                     for (let i = 0; i < $.player.level; i++)
-                        hr += $.dice(ha)
+                        hr += dice(ha)
                     $.online.hp += hr
                     if ($.online.hp > $.player.hp)
                         $.online.hp = $.player.hp
@@ -2053,11 +2059,11 @@ module Dungeon {
         }
 
         if (!ROOM.monster.length) {
-            if ((!DL.map || DL.map == 'map') && $.dice((15 - $.online.cha / 10) / 2) == 1) {
-                let m = <MAP>['', 'map', 'magic map'][($.dice(Z / 33 + 2) > 1 ? 1 : 2)]
+            if ((!DL.map || DL.map == 'map') && dice((15 - $.online.cha / 10) / 2) == 1) {
+                let m = <MAP>['', 'map', 'magic map'][(dice(Z / 33 + 2) > 1 ? 1 : 2)]
                 if (DL.map.length < m.length) {
                     DL.map = m
-                    $.sound('click')
+                    sound('click')
                     xvt.outln(xvt.yellow, xvt.bright, 'You find a ', m, '!')
                     pause = true
                 }
@@ -2065,9 +2071,9 @@ module Dungeon {
             //	> 3 monsters
             if (b4 < 0) {
                 xvt.outln(-100)
-                $.sound('effort')
+                sound('effort')
                 xvt.outln(xvt.green, xvt.bright, '+ ', xvt.normal, 'bonus charisma', -200)
-                $.PC.adjust('cha', $.dice(Math.abs(b4)), 1, 1)
+                PC.adjust('cha', dice(Math.abs(b4)), 1, 1)
                 pause = true
             }
             //	the wounded warrior just surviving any mob size
@@ -2076,9 +2082,9 @@ module Dungeon {
                 && ((b4 > 0 && b4 / $.player.hp < 0.67 && $.online.hp / $.player.hp < 0.067)
                     || ($.online.hp <= Z + deep + 1))) {
                 xvt.outln(-100)
-                $.sound('bravery', 20)
+                sound('bravery', 20)
                 xvt.outln(xvt.red, xvt.bright, '+ ', xvt.normal, 'bonus strength', -600)
-                $.PC.adjust('str', deep + 2, deep + 1, 1)
+                PC.adjust('str', deep + 2, deep + 1, 1)
                 DL.map = `Marauder's map`
                 xvt.outln(xvt.bright, xvt.yellow, ' and ', DL.map, '!', -600)
                 pause = true
@@ -2089,7 +2095,7 @@ module Dungeon {
             Battle.teleported = false
             if (Battle.expel) {
                 Battle.expel = false
-                $.PC.profile($.online, 'flipOutX')
+                portrait($.online, 'flipOutX')
                 if (deep > 0)
                     deep--
                 else {
@@ -2100,22 +2106,22 @@ module Dungeon {
                 generateLevel()
             }
             else {
-                $.PC.profile($.online, 'lightSpeedOut', ` - Dungeon ${$.romanize(deep + 1)}.${Z + 1}`)
-                Y = $.dice(DL.rooms.length) - 1
-                X = $.dice(DL.width) - 1
+                portrait($.online, 'lightSpeedOut', ` - Dungeon ${romanize(deep + 1)}.${Z + 1}`)
+                Y = dice(DL.rooms.length) - 1
+                X = dice(DL.width) - 1
             }
             menu()
             return
         }
 
-        if (Battle.retreat) $.PC.profile($.online, 'heartBeat', ` - Dungeon ${$.romanize(deep + 1)}.${Z + 1}`)
+        if (Battle.retreat) portrait($.online, 'heartBeat', ` - Dungeon ${romanize(deep + 1)}.${Z + 1}`)
 
         let d = ['N', 'S', 'E', 'W']
         while (Battle.retreat && !$.reason) {
-            $.music('pulse')
+            music('pulse')
             xvt.out(-375, xvt.bright, xvt.red, 'You frantically look to escape . . . ', -375)
 
-            let i = $.dice(d.length) - 1
+            let i = dice(d.length) - 1
             switch (d[i]) {
                 case 'N':
                     if (Y > 0 && DL.rooms[Y][X].type !== 'w-e')
@@ -2123,7 +2129,7 @@ module Dungeon {
                             Battle.retreat = false
                             Y--
                             looked = false
-                            $.animated('fadeOutUp')
+                            animated('fadeOutUp')
                             break
                         }
                     oof('north')
@@ -2135,7 +2141,7 @@ module Dungeon {
                             Battle.retreat = false
                             Y++
                             looked = false
-                            $.animated('fadeOutDown')
+                            animated('fadeOutDown')
                             break
                         }
                     oof('south')
@@ -2147,7 +2153,7 @@ module Dungeon {
                             Battle.retreat = false
                             X++
                             looked = false
-                            $.animated('fadeOutRight')
+                            animated('fadeOutRight')
                             break
                         }
                     oof('east')
@@ -2159,7 +2165,7 @@ module Dungeon {
                             Battle.retreat = false
                             X--
                             looked = false
-                            $.animated('fadeOutLeft')
+                            animated('fadeOutLeft')
                             break
                         }
                     oof('west')
@@ -2203,7 +2209,7 @@ module Dungeon {
                     , $.online.weapon.wc ? '⚸' : ' '
                     , $.player.blessed ? xvt.bright : xvt.normal
                     , $.online.hp > $.player.hp * 2 / 3 ? xvt.white : $.online.hp > $.player.hp / 3 ? xvt.yellow : xvt.red
-                    , $.PC.card($.player.pc).unicode
+                    , PC.card($.player.pc).unicode
                     , ($.player.toAC + $.online.toAC) > 0 ? xvt.attr(xvt.normal, xvt.bright)
                         : ($.player.toAC + $.online.toAC) < 0 ? xvt.attr(xvt.normal, xvt.faint)
                             : xvt.normal, xvt.yellow
@@ -2215,7 +2221,7 @@ module Dungeon {
         }
         else
             xvt.out(xvt.Blue, xvt.cyan, xvt.bright, xvt.reverse
-                , `  ${$.player.emulation == 'XT' ? $.PC.card($.player.pc).unicode : 'X'}  `, -600)
+                , `  ${$.player.emulation == 'XT' ? PC.card($.player.pc).unicode : 'X'}  `, -600)
 
         xvt.restore()
         xvt.out(xvt.off)
@@ -2247,7 +2253,7 @@ module Dungeon {
     function drawLevel() {
         let y: number, x: number, m: number
 
-        $.clear()
+        clear()
 
         if (DL.map) {
             for (y = 0; y < paper.length; y++) {
@@ -2256,11 +2262,11 @@ module Dungeon {
                         if ($.player.emulation == 'VT') xvt.out('\x1B(0', xvt.faint, paper[y].substr(6 * x, 1), '\x1B(B')
                         else xvt.out(xvt.black, xvt.bright, paper[y].substr(6 * x, 1))
 
-                        let r = $.int(y / 2)
+                        let r = int(y / 2)
                         occupying(DL.rooms[r][x], xvt.attr(xvt.reset, xvt.faint)
                             , (DL.map && DL.map !== 'map')
-                            || (DL.rooms[r][x].map && Math.abs(Y - r) < $.int($.online.int / 15) && Math.abs(X - x) < $.int($.online.int / 15))
-                            , DL.map == `Marauder's map` || ($.Ring.power([], $.player.rings, 'identify').power > 0))
+                            || (DL.rooms[r][x].map && Math.abs(Y - r) < int($.online.int / 15) && Math.abs(X - x) < int($.online.int / 15))
+                            , DL.map == `Marauder's map` || (Ring.power([], $.player.rings, 'identify').power > 0))
                     }
                     if ($.player.emulation == 'VT') xvt.out('\x1B(0', xvt.faint, paper[y].substr(-1), '\x1B(B')
                     else xvt.out(xvt.black, xvt.bright, paper[y].substr(-1))
@@ -2304,8 +2310,8 @@ module Dungeon {
         else xvt.out(xvt.black, xvt.bright, paper[row].substr(col, 1))
 
         occupying(ROOM, peek ? xvt.attr(xvt.reset) : xvt.attr(xvt.reset, xvt.faint), (DL.map && DL.map !== 'map')
-            || (ROOM.map && Math.abs(Y - r) < $.int($.online.int / 15) && Math.abs(X - c) < $.int($.online.int / 15)),
-            peek || DL.map == `Marauder's map` || ($.Ring.power([], $.player.rings, 'identify').power > 0))
+            || (ROOM.map && Math.abs(Y - r) < int($.online.int / 15) && Math.abs(X - c) < int($.online.int / 15)),
+            peek || DL.map == `Marauder's map` || (Ring.power([], $.player.rings, 'identify').power > 0))
 
         if ($.player.emulation == 'VT') xvt.out('\x1B(0', xvt.faint, paper[row].substr(col + 6, 1), '\x1B(B')
         else xvt.out(xvt.black, xvt.bright, paper[row].substr(col + 6, 1))
@@ -2321,8 +2327,8 @@ module Dungeon {
 
     function generateLevel() {
 
-        $.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${$.romanize(deep + 1)}.${Z + 1}`)
-        $.action('clear')
+        title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${romanize(deep + 1)}.${Z + 1}`)
+        action('clear')
 
         looked = false
         refresh = true
@@ -2336,8 +2342,8 @@ module Dungeon {
             renderMap()
 
             do {
-                Y = $.dice(DL.rooms.length) - 1
-                X = $.dice(DL.width) - 1
+                Y = dice(DL.rooms.length) - 1
+                X = dice(DL.width) - 1
                 ROOM = DL.rooms[Y][X]
             } while (ROOM.type) //  teleport into a chamber only
 
@@ -2360,11 +2366,11 @@ module Dungeon {
         let result: boolean
         do {
             //  size level
-            let maxRow = 6 + $.dice(Z / 32 + 1)
-            while (maxRow < 10 && $.dice($.online.cha / 10) == 1)
+            let maxRow = 6 + dice(Z / 32 + 1)
+            while (maxRow < 10 && dice($.online.cha / 10) == 1)
                 maxRow++
-            let maxCol = 6 + $.dice(Z / 16 + 1)
-            while (maxCol < 13 && $.dice($.online.cha / 10) == 1)
+            let maxCol = 6 + dice(Z / 16 + 1)
+            while (maxCol < 13 && dice($.online.cha / 10) == 1)
                 maxCol++
 
             //  template level
@@ -2372,18 +2378,18 @@ module Dungeon {
                 alert: true,
                 cleric: {
                     user: {
-                        id: '_Clr', handle: 'old cleric', pc: 'Cleric', level: $.int(65 + Z / 4 + deep)
+                        id: '_Clr', handle: 'old cleric', pc: 'Cleric', level: int(65 + Z / 4 + deep)
                         , sex: 'I', weapon: 0, armor: 1, magic: 3, spells: [7, 8, 13]
                     }
                 },
-                events: $.dice(6 - $.int($.online.cha / 20)) + $.dice(deep / 3 + 1) + +$.player.coward
+                events: dice(6 - int($.online.cha / 20)) + dice(deep / 3 + 1) + +$.player.coward
                     - +$.player.novice - +$.access.sysop,
                 exit: false,
                 map: '',
                 mob: (deep < 4 && Z < 4) ? 1 : (Z > 9 && Z < 50) || (deep > 7) ? 3 : 2,
                 moves: -maxCol - (($.player.novice || $.access.sysop) ? maxRow + maxCol : $.player.wins),
                 rooms: new Array(maxRow),
-                spawn: $.int(deep / 3 + Z / 9 + maxRow / 3) + $.dice(Math.round($.online.cha / 20) + 1) + 3,
+                spawn: int(deep / 3 + Z / 9 + maxRow / 3) + dice(Math.round($.online.cha / 20) + 1) + 3,
                 width: maxCol
             }
 
@@ -2400,9 +2406,9 @@ module Dungeon {
                 for (x = 0; x < maxCol; x++) {
                     let n: number
                     ROOM = DL.rooms[y][x]
-                    while ((n = $.int(($.dice(4) + $.dice(4)) / 2) - 1) == 3);
-                    if (n == 1 && $.dice(10 - deep) == n) n += 2 - $.dice(3)
-                    ROOM.type = (n == 0) ? 'cavern' : (n == 1) ? '' : $.dice(2) == 1 ? 'n-s' : 'w-e'
+                    while ((n = int((dice(4) + dice(4)) / 2) - 1) == 3);
+                    if (n == 1 && dice(10 - deep) == n) n += 2 - dice(3)
+                    ROOM.type = (n == 0) ? 'cavern' : (n == 1) ? '' : dice(2) == 1 ? 'n-s' : 'w-e'
                     ROOM.size = (!ROOM.type ? 2 : ROOM.type == 'cavern' ? 3 : 1)
                 }
             }
@@ -2417,20 +2423,20 @@ module Dungeon {
 
         } while (result)
 
-        $.reroll(DL.cleric.user, DL.cleric.user.pc, DL.cleric.user.level)
-        $.activate(DL.cleric)
-        $.wall(`enters dungeon level ${$.romanize(deep + 1)}.${Z + 1}`)
+        reroll(DL.cleric.user, DL.cleric.user.pc, DL.cleric.user.level)
+        activate(DL.cleric)
+        wall(`enters dungeon level ${romanize(deep + 1)}.${Z + 1}`)
 
         renderMap()
         do {
-            Y = $.dice(DL.rooms.length) - 1
-            X = $.dice(DL.width) - 1
+            Y = dice(DL.rooms.length) - 1
+            X = dice(DL.width) - 1
             ROOM = DL.rooms[Y][X]
         } while (ROOM.type)
 
         //	populate this new floor with monsters ...
-        let n = $.int(DL.rooms.length * DL.width / 6) + $.dice(Z / 9) + $.dice(deep)
-            + $.dice(Z < 50 && $.online.cha < 80 ? ((80 - $.online.cha) / 9) : ((100 - $.online.cha) / 3))
+        let n = int(DL.rooms.length * DL.width / 6) + dice(Z / 9) + dice(deep)
+            + dice(Z < 50 && $.online.cha < 80 ? ((80 - $.online.cha) / 9) : ((100 - $.online.cha) / 3))
         while (n)
             if (putMonster())
                 n--
@@ -2443,79 +2449,79 @@ module Dungeon {
         //	potential bonus(es) for the more experienced adventurer
         if (!$.player.novice) {
             //	dwarven merchant
-            if ($.dice($.online.str - dank) <= dank) {
-                y = $.dice(DL.rooms.length) - 1
-                x = $.dice(DL.width) - 1
+            if (dice($.online.str - dank) <= dank) {
+                y = dice(DL.rooms.length) - 1
+                x = dice(DL.width) - 1
                 DL.rooms[y][x].occupant = 'dwarf'
             }
             //	wheel of life
-            if ($.dice(100 - level + dank) <= dank) {
-                y = $.dice(DL.rooms.length) - 1
-                x = $.dice(DL.width) - 1
+            if (dice(100 - level + dank) <= dank) {
+                y = dice(DL.rooms.length) - 1
+                x = dice(DL.width) - 1
                 DL.rooms[y][x].occupant = 'wheel'
             }
             //	wishing well
-            if (well && $.dice((120 - level) / 3 - dank) == 1) {
-                y = $.dice(DL.rooms.length) - 1
-                x = $.dice(DL.width) - 1
+            if (well && dice((120 - level) / 3 - dank) == 1) {
+                y = dice(DL.rooms.length) - 1
+                x = dice(DL.width) - 1
                 DL.rooms[y][x].occupant = 'well'
             }
             //	wicked old witch
-            if ($.sorceress && Z > 20 && dank > 4 && $.dice((120 - level) / 3 - dank) == 1) {
-                y = $.dice(DL.rooms.length) - 1
-                x = $.dice(DL.width) - 1
+            if ($.sorceress && Z > 20 && dank > 4 && dice((120 - level) / 3 - dank) == 1) {
+                y = dice(DL.rooms.length) - 1
+                x = dice(DL.width) - 1
                 DL.rooms[y][x].occupant = 'witch'
             }
             //	deep dank dungeon portal
             if (deep < 9 && deep < $.player.immortal && Z / 9 < $.player.immortal) {
-                y = $.dice(DL.rooms.length) - 1
-                x = $.dice(DL.width) - 1
+                y = dice(DL.rooms.length) - 1
+                x = dice(DL.width) - 1
                 DL.rooms[y][x].occupant = 'portal'
             }
         }
         //	thief(s) in other spaces
-        if (!$.player.novice && $.dice(100 / dank * level) <= dank)
-            wow = $.int($.dice(DL.rooms.length) * $.dice(DL.width) / 2)
+        if (!$.player.novice && dice(100 / dank * level) <= dank)
+            wow = int(dice(DL.rooms.length) * dice(DL.width) / 2)
         if (!$.player.coward) wow--
-        n = $.dice(deep / 4) + wow
+        n = dice(deep / 4) + wow
         for (let i = 0; i < n; i++) {
             do {
-                y = $.dice(DL.rooms.length) - 1
-                x = $.dice(DL.width) - 1
+                y = dice(DL.rooms.length) - 1
+                x = dice(DL.width) - 1
             } while (DL.rooms[y][x].type == 'cavern')
             DL.rooms[y][x].occupant = 'thief'
         }
 
         //	a cleric in another space
         do {
-            y = $.dice(DL.rooms.length) - 1
-            x = $.dice(DL.width) - 1
+            y = dice(DL.rooms.length) - 1
+            x = dice(DL.width) - 1
         } while (DL.rooms[y][x].type == 'cavern' || DL.rooms[y][x].monster.length || DL.rooms[y][x].occupant)
         DL.rooms[y][x].occupant = 'cleric'
 
         //	a wizard in another space
         do {
-            y = $.dice(DL.rooms.length) - 1
-            x = $.dice(DL.width) - 1
+            y = dice(DL.rooms.length) - 1
+            x = dice(DL.width) - 1
         } while (DL.rooms[y][x].type == 'cavern' || DL.rooms[y][x].monster.length || DL.rooms[y][x].occupant)
         DL.rooms[y][x].occupant = 'wizard'
 
         //	set some trapdoors
-        n = $.int(DL.rooms.length * DL.width / 10)
-        if ($.dice(100 - Z) > (deep + 1))
-            n += $.dice(Z / 16 + 2)
+        n = int(DL.rooms.length * DL.width / 10)
+        if (dice(100 - Z) > (deep + 1))
+            n += dice(Z / 16 + 2)
         while (n--) {
-            y = $.dice(DL.rooms.length) - 1
-            x = $.dice(DL.width) - 1
+            y = dice(DL.rooms.length) - 1
+            x = dice(DL.width) - 1
             if (!DL.rooms[y][x].occupant)
                 DL.rooms[y][x].occupant = 'trapdoor'
         }
 
         //	help will always be given at Hogwarts to those who deserve it
         if (!$.player.coward)
-            if ($.player.novice || $.dice($.player.wins * dank + $.player.immortal + 1) >= (dank + level)) {
-                y = $.dice(DL.rooms.length) - 1
-                x = $.dice(DL.width) - 1
+            if ($.player.novice || dice($.player.wins * dank + $.player.immortal + 1) >= (dank + level)) {
+                y = dice(DL.rooms.length) - 1
+                x = dice(DL.width) - 1
                 DL.rooms[y][x].giftItem = 'map'
                 DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⎅' : Dot
             }
@@ -2523,9 +2529,9 @@ module Dungeon {
         //	populate treasure(s)
         wow = 1
         if (!$.player.novice && !$.player.coward)
-            if ($.dice(100 / dank * level) <= dank)
-                wow += $.int($.dice(DL.rooms.length) * $.dice(DL.width) / 2)
-        wow += $.dice(level / 33) + $.dice(dank / 3) - 2
+            if (dice(100 / dank * level) <= dank)
+                wow += int(dice(DL.rooms.length) * dice(DL.width) / 2)
+        wow += dice(level / 33) + dice(dank / 3) - 2
 
         //  generate a roulette wheel of specials
         let gift: GIFT[] = ['map', 'chest', 'armor']
@@ -2534,9 +2540,9 @@ module Dungeon {
             gift.push(j % 2 ? 'map' : 'chest')
             //  relative to might & magic needs
             gift.push(j > $.player.melee ? 'weapon' : 'armor')
-            gift.push($.dice(level + 11 * ($.player.magic + j)) > ($.sysop.level - dank - j)
+            gift.push(dice(level + 11 * ($.player.magic + j)) > ($.sysop.level - dank - j)
                 ? 'ring' : $.player.magic > 2 ? (j > $.player.melee ? 'armor' : 'chest')
-                    : $.dice(10 + dank - 2 * $.player.magic) > dank
+                    : dice(10 + dank - 2 * $.player.magic) > dank
                         ? 'magic' : 'xmagic')
         }
         gift.push('weapon', 'chest', 'map')
@@ -2544,17 +2550,17 @@ module Dungeon {
 
         for (let i = 0; i < wow && gift.length; i++) {
             do {
-                y = $.dice(DL.rooms.length) - 1
-                x = $.dice(DL.width) - 1
+                y = dice(DL.rooms.length) - 1
+                x = dice(DL.width) - 1
             } while (DL.rooms[y][x].giftItem || DL.rooms[y][x].occupant == 'wizard')
-            if ($.Ring.power([], $.player.rings, 'identify').power) DL.rooms[y][x].map = true
+            if (Ring.power([], $.player.rings, 'identify').power) DL.rooms[y][x].map = true
 
             //	magic potion
-            if ($.dice(111 - $.online.cha) > $.dice(dank) - +$.player.coward) {
+            if (dice(111 - $.online.cha) > dice(dank) - +$.player.coward) {
                 DL.rooms[y][x].giftItem = 'potion'
                 DL.rooms[y][x].giftID = false
                 DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '≬' : Dot
-                n = $.dice(130 - deep)
+                n = dice(130 - deep)
                 for (let j = 0; j < 16 && n > 0; j++) {
                     let v = 15 - j
                     DL.rooms[y][x].giftValue = v
@@ -2566,7 +2572,7 @@ module Dungeon {
             }
 
             //	what else ya got?
-            v = $.dice(gift.length) - 1
+            v = dice(gift.length) - 1
             DL.rooms[y][x].giftItem = gift.splice(v, 1)[0]
             DL.rooms[y][x].giftValue = 0
             v = 0
@@ -2574,20 +2580,20 @@ module Dungeon {
             switch (DL.rooms[y][x].giftItem) {
                 case 'armor':
                     DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⛨' : Dot
-                    n = $.Armor.special.length - 1
-                    for (v = 0; v < n && $.online.armor.ac >= $.Armor.name[$.Armor.special[v]].ac; v++);
+                    n = Armor.special.length - 1
+                    for (v = 0; v < n && $.online.armor.ac >= Armor.name[Armor.special[v]].ac; v++);
                     break
 
                 case 'chest':
                     DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⌂' : Dot
-                    v = $.dice(8 + 2 * (deep + $.player.steal)) - 1
+                    v = dice(8 + 2 * (deep + $.player.steal)) - 1
                     break
 
                 case 'magic':
                     DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '∗' : Dot
-                    n = $.dice($.Magic.merchant.length * 16)
-                    for (let j = 0; j < $.Magic.merchant.length && n > 0; j++) {
-                        v = $.Magic.merchant.length - j
+                    n = dice(Magic.merchant.length * 16)
+                    for (let j = 0; j < Magic.merchant.length && n > 0; j++) {
+                        v = Magic.merchant.length - j
                         n -= j + 1
                     }
                     break
@@ -2599,35 +2605,35 @@ module Dungeon {
 
                 case 'poison':
                     DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⏽' : Dot
-                    n = $.dice($.Poison.merchant.length * 16)
-                    for (let j = 0; j < $.Poison.merchant.length && n > 0; j++) {
-                        v = $.Poison.merchant.length - j
+                    n = dice(Poison.merchant.length * 16)
+                    for (let j = 0; j < Poison.merchant.length && n > 0; j++) {
+                        v = Poison.merchant.length - j
                         n -= j + 1
                     }
                     break
 
                 case 'ring':
-                    if ($.Ring.have($.player.rings, $.Ring.theOne)) DL.rooms[y][x].map = true
+                    if (Ring.have($.player.rings, Ring.theOne)) DL.rooms[y][x].map = true
                     DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⍤' : Dot
-                    if ($.dice(6 - $.int(dank / 2)) > 1) {
-                        let ring = $.Ring.common[$.dice($.Ring.common.length) - 1]
+                    if (dice(6 - int(dank / 2)) > 1) {
+                        let ring = Ring.common[dice(Ring.common.length) - 1]
                         DL.rooms[y][x].giftValue = ring
                     }
                     else {
-                        let ring = $.Ring.unique[$.dice($.Ring.unique.length) - 1]
+                        let ring = Ring.unique[dice(Ring.unique.length) - 1]
                         DL.rooms[y][x].giftValue = ring
                     }
                     break
 
                 case 'weapon':
                     DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⚸' : Dot
-                    n = $.Weapon.special.length - 1
-                    for (v = 0; v < n && $.online.weapon.wc >= $.Weapon.name[$.Weapon.special[v]].wc; v++);
+                    n = Weapon.special.length - 1
+                    for (v = 0; v < n && $.online.weapon.wc >= Weapon.name[Weapon.special[v]].wc; v++);
                     break
 
                 case 'xmagic':
                     DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⋇' : Dot
-                    v = $.Magic.merchant.length + $.dice($.Magic.special.length)
+                    v = Magic.merchant.length + dice(Magic.special.length)
                     break
 
             }
@@ -2651,14 +2657,14 @@ module Dungeon {
         }
 
         function renderMap() {
-            let min = $.checkTime()
+            let min = checkTime()
             if (Z == 99 || Z - $.player.level > 8) {
                 tl = min
-                $.music('tension' + $.dice(3))
+                music('tension' + dice(3))
             }
             else if (tl - min > 4) {
                 tl = min
-                $.music((deep % 2 ? 'ddd' : 'dungeon') + $.dice(9))
+                music((deep % 2 ? 'ddd' : 'dungeon') + dice(9))
             }
 
             const box = xvt.app.Draw
@@ -2809,39 +2815,39 @@ module Dungeon {
 
         let n: number
         if (!level) {
-            for (n = 0; n < 4; n++) level += $.dice(7)
+            for (n = 0; n < 4; n++) level += dice(7)
 
             switch (level >> 2) {
                 case 1:
-                    level = $.dice(Z / 2)
+                    level = dice(Z / 2)
                     break
                 case 2:
-                    level = Z - 3 - $.dice(3)
+                    level = Z - 3 - dice(3)
                     break
                 case 3:
-                    level = Z - $.dice(3)
+                    level = Z - dice(3)
                     break
                 case 4:
                     level = Z
                     break
                 case 5:
-                    level = Z + $.dice(3)
+                    level = Z + dice(3)
                     break
                 case 6:
-                    level = Z + 3 + $.dice(3)
+                    level = Z + 3 + dice(3)
                     break
                 case 7:
-                    level = Z + $.dice(Z < 40 ? Z / 2 : Z < 60 ? Z / 3 : Z < 80 ? Z / 4 : Z / 5)
+                    level = Z + dice(Z < 40 ? Z / 2 : Z < 60 ? Z / 3 : Z < 80 ? Z / 4 : Z / 5)
                     break
             }
         }
 
-        while (level < 1) level += $.dice(4) + $.dice(3) - 1
-        if (level > 99) level = 100 - $.dice(10)
+        while (level < 1) level += dice(4) + dice(3) - 1
+        if (level > 99) level = 100 - dice(10)
 
         let v = 1
         if (level > 9 && level < 90) {
-            v = $.dice(12)
+            v = dice(12)
             v = v == 12 ? 2 : v > 1 ? 1 : 0
         }
         n = level + v - 1
@@ -2855,56 +2861,56 @@ module Dungeon {
 
         dm.level = level
         if (dm.pc == '*') {		//	chaos
-            dm.pc = $.PC.random('monster')
+            dm.pc = PC.random('monster')
             m.user.handle += ' avenger'
             m.user.steal = $.player.steal + 1
         }
         m.monster = dm
         m.effect = dm.effect || 'pulse'
-        $.reroll(m.user, dm.pc ? dm.pc : $.player.pc, n)
+        reroll(m.user, dm.pc ? dm.pc : $.player.pc, n)
         if (m.user.xplevel) m.user.xplevel = level
         if (!dm.pc) m.user.steal = $.player.steal + 1
 
         if (dm.weapon)
             m.user.weapon = dm.weapon
         else {
-            m.user.weapon = $.int((level + deep) / 100 * $.int($.sysop.weapon))
-            m.user.weapon = $.int((m.user.weapon + $.online.weapon.wc) / 2)
+            m.user.weapon = int((level + deep) / 100 * int($.sysop.weapon))
+            m.user.weapon = int((m.user.weapon + $.online.weapon.wc) / 2)
             if ($.player.level <= Z
-                && $.dice(12 + deep / 2 + $.player.level / 4 - $.online.cha / 10) <= $.dice(deep / 3 + 1)) {
-                n = $.online.weapon.wc + $.dice(3) - 2
-                n = n < 1 ? 1 : n >= $.Weapon.merchant.length ? $.Weapon.merchant.length - 1 : n
-                m.user.weapon = $.Weapon.merchant[n]
+                && dice(12 + deep / 2 + $.player.level / 4 - $.online.cha / 10) <= dice(deep / 3 + 1)) {
+                n = $.online.weapon.wc + dice(3) - 2
+                n = n < 1 ? 1 : n >= Weapon.merchant.length ? Weapon.merchant.length - 1 : n
+                m.user.weapon = Weapon.merchant[n]
             }
         }
 
         if (dm.armor)
             m.user.armor = dm.armor
         else {
-            m.user.armor = $.int((level + deep) / 100 * $.int($.sysop.armor))
-            m.user.armor = $.int((m.user.armor + $.online.armor.ac) / 2)
+            m.user.armor = int((level + deep) / 100 * int($.sysop.armor))
+            m.user.armor = int((m.user.armor + $.online.armor.ac) / 2)
             if ($.player.level <= Z
-                && $.dice(11 + deep / 3 + $.player.level / 3 - $.online.cha / 11) <= $.dice(deep / 3 + 1)) {
-                n = $.online.armor.ac + $.dice(3) - 2
-                n = n < 1 ? 1 : n >= $.Armor.merchant.length ? $.Armor.merchant.length - 1 : n
-                m.user.armor = $.Armor.merchant[n]
+                && dice(11 + deep / 3 + $.player.level / 3 - $.online.cha / 11) <= dice(deep / 3 + 1)) {
+                n = $.online.armor.ac + dice(3) - 2
+                n = n < 1 ? 1 : n >= Armor.merchant.length ? Armor.merchant.length - 1 : n
+                m.user.armor = Armor.merchant[n]
             }
         }
 
-        m.user.hp = $.int(m.user.hp / (4 + (m.user.level / 100)) + (deep * Z / 4))
-        n = 5 - $.dice(deep / 3)
-        m.user.sp = $.int(m.user.sp / n)
+        m.user.hp = int(m.user.hp / (4 + (m.user.level / 100)) + (deep * Z / 4))
+        n = 5 - dice(deep / 3)
+        m.user.sp = int(m.user.sp / n)
 
         m.user.poisons = []
         if (m.user.poison) {
             if (dm.poisons)
                 for (let vials in dm.poisons)
-                    $.Poison.add(m.user.poisons, dm.poisons[vials])
-            for (n = 0; n < Object.keys($.Poison.vials).length - (9 - deep); n++) {
-                if ($.dice($.int($.player.cha / (deep + 1)) + (n << 2)) < (+$.player.coward + 2)) {
-                    let vial = $.Poison.pick(n)
-                    if (!$.Poison.have(m.user.poisons, vial))
-                        $.Poison.add(m.user.poisons, n)
+                    Poison.add(m.user.poisons, dm.poisons[vials])
+            for (n = 0; n < Object.keys(Poison.vials).length - (9 - deep); n++) {
+                if (dice(int($.player.cha / (deep + 1)) + (n << 2)) < (+$.player.coward + 2)) {
+                    let vial = Poison.pick(n)
+                    if (!Poison.have(m.user.poisons, vial))
+                        Poison.add(m.user.poisons, n)
                 }
             }
         }
@@ -2915,12 +2921,12 @@ module Dungeon {
         if (m.user.magic) {
             if (dm.spells)
                 for (let magic in dm.spells)
-                    $.Magic.add(m.user.spells, dm.spells[magic])
-            for (n = 0; n < Object.keys($.Magic.spells).length - (9 - deep); n++) {
-                if ($.dice($.int($.player.cha / (deep + 1)) + (n << 2)) < (+$.player.coward + 2)) {
-                    let spell = $.Magic.pick(n)
-                    if (!$.Magic.have(m.user.spells, spell))
-                        $.Magic.add(m.user.spells, n)
+                    Magic.add(m.user.spells, dm.spells[magic])
+            for (n = 0; n < Object.keys(Magic.spells).length - (9 - deep); n++) {
+                if (dice(int($.player.cha / (deep + 1)) + (n << 2)) < (+$.player.coward + 2)) {
+                    let spell = Magic.pick(n)
+                    if (!Magic.have(m.user.spells, spell))
+                        Magic.add(m.user.spells, n)
                 }
             }
         }
@@ -2932,8 +2938,8 @@ module Dungeon {
         if (r < 0 && c < 0) {
             respawn = true
             do {
-                r = $.dice(DL.rooms.length) - 1
-                c = $.dice(DL.width) - 1
+                r = dice(DL.rooms.length) - 1
+                c = dice(DL.width) - 1
                 room = DL.rooms[r][c]
             } while (room.monster.length >= DL.mob)
         }
@@ -2960,7 +2966,7 @@ module Dungeon {
         if (!dm.level) {
             if (respawn) return false
             //  regular capacity exceeded, let's squeeze in a lesser stray
-            level = $.dice(Z / DL.mob) + (Z <= 60 ? $.int(Z / 6) : 30) + $.dice(deep) - 1
+            level = dice(Z / DL.mob) + (Z <= 60 ? int(Z / 6) : 30) + dice(deep) - 1
             genMonster(dm, m, 0, level)
             if (room.monster.length) sum = room.monster[0].user.level
         }
@@ -2971,21 +2977,21 @@ module Dungeon {
             m = room.monster[i]
             level = m.user.level
             sum += level
-            $.activate(m)
+            activate(m)
 
             m.user.immortal = deep
-            m.adept = $.dice(Z / 30 + deep / 4 + 1) - 1
-            $.PC.adjust('str', deep - 2, 0, deep >> 2, m)
-            $.PC.adjust('int', deep - 2, 0, deep >> 2, m)
-            $.PC.adjust('dex', deep - 2, 0, deep >> 2, m)
-            $.PC.adjust('cha', deep - 2, 0, deep >> 2, m)
+            m.adept = dice(Z / 30 + deep / 4 + 1) - 1
+            PC.adjust('str', deep - 2, 0, deep >> 2, m)
+            PC.adjust('int', deep - 2, 0, deep >> 2, m)
+            PC.adjust('dex', deep - 2, 0, deep >> 2, m)
+            PC.adjust('cha', deep - 2, 0, deep >> 2, m)
 
-            let gold = new $.coins($.int($.money(level) / (11 - deep)))
-            gold.value += $.worth(new $.coins(m.weapon.value).value, $.dice($.online.cha / 5) + $.dice(deep) - +$.player.coward)
-            gold.value += $.worth(new $.coins(m.armor.value).value, $.dice($.online.cha / 5) + $.dice(deep) - +$.player.coward)
-            gold.value *= $.dice(deep * 2 / 3)
+            let gold = new Coin(int(money(level) / (11 - deep)))
+            gold.value += worth(new Coin(m.weapon.value).value, dice($.online.cha / 5) + dice(deep) - +$.player.coward)
+            gold.value += worth(new Coin(m.armor.value).value, dice($.online.cha / 5) + dice(deep) - +$.player.coward)
+            gold.value *= dice(deep * 2 / 3)
             gold.value++
-            m.user.coin = new $.coins(gold.carry(1, true))
+            m.user.coin = new Coin(gold.carry(1, true))
 
             if (+m.user.weapon) {
                 if (dm.hit) m.weapon.hit = dm.hit
@@ -2993,11 +2999,11 @@ module Dungeon {
             }
 
             //  prep next should this event be spawning a lesser mob
-            level += $.dice(room.monster.length + 2) - (room.monster.length + 1)
+            level += dice(room.monster.length + 2) - (room.monster.length + 1)
             dm = { name: '', pc: '' }
             m = { monster: { name: '', pc: '' }, user: { id: '', sex: 'I' } }
             genMonster(dm, m, 0, level)
-        } while (room.monster.length < $.int(3 + DL.mob + deep / 3) && sum < (Z - 3 - room.monster.length))
+        } while (room.monster.length < int(3 + DL.mob + deep / 3) && sum < (Z - 3 - room.monster.length))
 
         return true
     }
@@ -3006,88 +3012,88 @@ module Dungeon {
         scroll(1, false)
         let dwarf = <active>{ user: { id: '' } }
         Object.assign(dwarf.user, $.dwarf.user)
-        $.activate(dwarf)
-        xvt.outln(xvt.yellow, $.PC.who(dwarf).He, 'scowls in disgust, '
-            , xvt.bright, `"Never trust${$.an($.player.pc)}!"`)
-        $.PC.wearing(dwarf)
-        $.sound('ddd', 20)
+        activate(dwarf)
+        xvt.outln(xvt.yellow, PC.who(dwarf).He, 'scowls in disgust, '
+            , xvt.bright, `"Never trust${an($.player.pc)}!"`)
+        wearing(dwarf)
+        sound('ddd', 20)
         Battle.engage('Merchant', party, dwarf, doSpoils)
     }
 
     function witch() {
         let witch = <active>{ user: { id: '' } }
         Object.assign(witch.user, $.witch.user)
-        $.activate(witch)
+        activate(witch)
         xvt.outln()
-        xvt.outln(xvt.green, $.PC.who(witch).His, 'disdained look sends a chill down your back.', -1200)
+        xvt.outln(xvt.green, PC.who(witch).His, 'disdained look sends a chill down your back.', -1200)
         xvt.outln(xvt.green, xvt.bright, `"Puny ${$.player.pc} -- you earned my wrath!"`)
-        $.sound('god', 28)
-        $.music('boss' + $.dice(3))
+        sound('god', 28)
+        music('boss' + dice(3))
         Battle.engage('Witch', party, witch, doSpoils)
     }
 
     //  old cleric mana recovery
     function recovery(factor = DL.cleric.user.level) {
         if (!DL.cleric.user.status) {
-            DL.cleric.sp += $.int($.Magic.power(DL.cleric, 7) * DL.cleric.user.level / factor)
+            DL.cleric.sp += int(Magic.power(DL.cleric, 7) * DL.cleric.user.level / factor)
             if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
         }
     }
 
     function teleport() {
-        let min = $.checkTime()
+        let min = checkTime()
 
-        $.action('teleport')
+        action('teleport')
         xvt.outln(xvt.yellow, xvt.bright, 'What do you wish to do?')
-        xvt.out($.bracket('U'), 'Teleport up 1 level')
-        if (Z < 99) xvt.out($.bracket('D'), 'Teleport down 1 level')
-        xvt.out($.bracket('O'), `Teleport out of this ${deep ? 'dank' : ''} dungeon`)
-        xvt.out($.bracket('R'), 'Random teleport')
+        xvt.out(bracket('U'), 'Teleport up 1 level')
+        if (Z < 99) xvt.out(bracket('D'), 'Teleport down 1 level')
+        xvt.out(bracket('O'), `Teleport out of this ${deep ? 'dank' : ''} dungeon`)
+        xvt.out(bracket('R'), 'Random teleport')
         xvt.out(xvt.cyan, '\n\nTime Left: ', xvt.bright, xvt.white, min.toString(), xvt.faint, xvt.cyan, ' min.', xvt.reset)
         if ($.player.coin.value) xvt.out(xvt.cyan, '    Coin: ', $.player.coin.carry(4))
-        if ($.player.level / 9 - deep > $.Security.name[$.player.security].protection + 1)
+        if ($.player.level / 9 - deep > Security.name[$.player.security].protection + 1)
             xvt.out(xvt.faint, '\nThe feeling of in', xvt.normal, xvt.uline, 'security', xvt.nouline, xvt.faint, ' overwhelms you.', xvt.reset)
 
         xvt.app.form = {
             'wizard': {
                 cb: () => {
-                    if ($.dice(10 * deep + Z + 5 * $.player.magic + $.online.int + $.online.cha) == 1) {
+                    if (dice(10 * deep + Z + 5 * $.player.magic + $.online.int + $.online.cha) == 1) {
                         xvt.outln(' ... "', xvt.bright, xvt.cyan, 'Huh?', xvt.reset, '"')
-                        $.animated('headShake')
-                        $.sound('miss', 6)
-                        $.animated('rubberBand')
-                        $.sound('lose', 12)
-                        $.music('crack')
+                        animated('headShake')
+                        sound('miss', 6)
+                        animated('rubberBand')
+                        sound('lose', 12)
+                        music('crack')
                         xvt.sleep(1250)
-                        $.animated('bounceOutUp')
+                        animated('bounceOutUp')
                         xvt.sleep(1250)
-                        let pops = 'UDOR'[$.dice(4) - 1]
+                        let pops = 'UDOR'[dice(4) - 1]
                         if (xvt.entry.toUpperCase() == pops) {
-                            $.sound('oops', 6)
-                            deep = $.dice(10) - 1
-                            Z += $.dice(20) - 10
+                            sound('oops', 6)
+                            deep = dice(10) - 1
+                            Z += dice(20) - 10
                             Z = Z < 0 ? 0 : Z > 99 ? 99 : Z
-                            $.sound('portal', 12)
+                            sound('portal', 12)
                         }
                         else {
                             xvt.entry = pops
-                            $.sound('teleport')
+                            sound('teleport')
                         }
                     }
                     else {
                         xvt.outln()
-                        $.sound('teleport')
+                        sound('teleport')
                     }
 
                     switch (xvt.entry.toUpperCase()) {
                         case 'D':
                             if (Z < 99) {
                                 Z++
-                                $.PC.profile($.online, 'backOutDown')
+                                portrait($.online, 'backOutDown')
                                 break
                             }
                         case 'R':
-                            $.PC.profile($.online, 'flipOutY')
+                            portrait($.online, 'flipOutY')
                             DL.alert = true
                             DL.events++
                             DL.exit = false
@@ -3098,11 +3104,11 @@ module Dungeon {
                                 DL.events++
                                 DL.exit = false
                                 Z--
-                                $.PC.profile($.online, 'backOutUp')
+                                portrait($.online, 'backOutUp')
                                 break
                             }
                         case 'O':
-                            $.PC.profile($.online, 'flipOutX')
+                            portrait($.online, 'flipOutX')
                             if (deep > 0)
                                 deep--
                             else {
@@ -3120,157 +3126,157 @@ module Dungeon {
                 }, cancel: 'O', enter: 'R', eol: false, match: /U|D|O|R/i, timeout: 20
             }
         }
-        xvt.app.form['wizard'].prompt = `Teleport #${$.romanize(deep + 1)}.${Z + 1}: `
+        xvt.app.form['wizard'].prompt = `Teleport #${romanize(deep + 1)}.${Z + 1}: `
         xvt.drain()
         xvt.app.focus = 'wizard'
     }
 
     function quaff(v: number, it = true) {
-        if (!(v % 2) && !potions[v].identified) $.news(`\t${it ? 'quaffed' : 'tossed'}${$.an(potion[v])}`)
+        if (!(v % 2) && !potions[v].identified) news(`\t${it ? 'quaffed' : 'tossed'}${an(potion[v])}`)
         if (it) {
             if (!potions[v].identified) {
                 potions[v].identified = $.online.int > (85 - 4 * $.player.poison)
                 xvt.out(v % 2 ? xvt.red : xvt.green, 'It was', xvt.bright)
                 if ($.player.emulation == 'XT') xvt.out(' ', v % 2 ? '🌡️ ' : '🧪')
-                xvt.outln($.an(potion[v]), xvt.normal, '.')
+                xvt.outln(an(potion[v]), xvt.normal, '.')
             }
-            $.sound('quaff', 5)
+            sound('quaff', 5)
             switch (v) {
                 //	Potion of Cure Light Wounds
                 case 0:
-                    $.online.hp += $.PC.hp() + $.dice($.player.hp - $.online.hp)
-                    $.sound('yum', 3)
+                    $.online.hp += PC.hp() + dice($.player.hp - $.online.hp)
+                    sound('yum', 3)
                     break
 
                 //	Vial of Weakness
                 case 1:
-                    $.PC.adjust('str', -$.dice(10), -$.PC.card($.player.pc).toStr)
+                    PC.adjust('str', -dice(10), -PC.card($.player.pc).toStr)
                     break
 
                 //	Potion of Charm
                 case 2:
-                    $.PC.adjust('cha', 100 + $.dice(10), $.PC.card($.player.pc).toCha, +($.player.cha == $.player.maxcha))
+                    PC.adjust('cha', 100 + dice(10), PC.card($.player.pc).toCha, +($.player.cha == $.player.maxcha))
                     break
 
                 //	Vial of Stupidity
                 case 3:
-                    $.PC.adjust('int', -$.dice(10), -$.PC.card($.player.pc).toInt)
+                    PC.adjust('int', -dice(10), -PC.card($.player.pc).toInt)
                     break
 
                 //	Potion of Agility
                 case 4:
-                    $.PC.adjust('dex', 100 + $.dice(10), $.PC.card($.player.pc).toDex, +($.player.dex == $.player.maxdex))
+                    PC.adjust('dex', 100 + dice(10), PC.card($.player.pc).toDex, +($.player.dex == $.player.maxdex))
                     break
 
                 //	Vial of Clumsiness
                 case 5:
-                    $.PC.adjust('dex', -$.dice(10), -$.PC.card($.player.pc).toDex)
+                    PC.adjust('dex', -dice(10), -PC.card($.player.pc).toDex)
                     break
 
                 //	Potion of Wisdom
                 case 6:
-                    $.PC.adjust('int', 100 + $.dice(10), $.PC.card($.player.pc).toInt, +($.player.int == $.player.maxint))
+                    PC.adjust('int', 100 + dice(10), PC.card($.player.pc).toInt, +($.player.int == $.player.maxint))
                     break
 
                 //	Vile Vial
                 case 7:
-                    $.PC.adjust('cha', -$.dice(10), -$.PC.card($.player.pc).toCha)
+                    PC.adjust('cha', -dice(10), -PC.card($.player.pc).toCha)
                     break
 
                 //	Potion of Stamina
                 case 8:
-                    $.PC.adjust('str', 100 + $.dice(10), $.PC.card($.player.pc).toStr, +($.player.str == $.player.maxstr))
+                    PC.adjust('str', 100 + dice(10), PC.card($.player.pc).toStr, +($.player.str == $.player.maxstr))
                     break
 
                 //	Vial of Slaad Secretions
                 case 9:
-                    $.online.hp -= $.dice($.player.hp / 2)
-                    $.sound('hurt', 3)
+                    $.online.hp -= dice($.player.hp / 2)
+                    sound('hurt', 3)
                     if ($.online.hp < 1)
-                        $.death(`quaffed${$.an(potion[v])}`)
+                        death(`quaffed${an(potion[v])}`)
                     break
 
                 //	Potion of Mana
                 case 10:
-                    $.sound('shimmer')
-                    $.online.sp += $.PC.sp() + $.dice($.player.sp - $.online.sp)
+                    sound('shimmer')
+                    $.online.sp += PC.sp() + dice($.player.sp - $.online.sp)
                     break
 
                 //	Flask of Fire Water
                 case 11:
-                    if (($.online.sp -= $.dice($.online.sp / 2)) < 1)
+                    if (($.online.sp -= dice($.online.sp / 2)) < 1)
                         $.online.sp = 0
                     break
 
                 //	Elixir of Restoration
                 case 12:
-                    $.music('elixir')
+                    music('elixir')
                     if ($.online.hp < $.player.hp) $.online.hp = $.player.hp
                     if ($.online.sp < $.player.sp) $.online.sp = $.player.sp
                     if ($.online.str < $.player.str) $.online.str = $.player.str
                     if ($.online.int < $.player.int) $.online.int = $.player.int
                     if ($.online.dex < $.player.dex) $.online.dex = $.player.dex
                     if ($.online.cha < $.player.cha) $.online.cha = $.player.cha
-                    $.PC.adjust('str', 100 + $.dice(10), $.PC.card($.player.pc).toStr, +($.player.str == $.player.maxstr))
-                    $.PC.adjust('int', 100 + $.dice(10), $.PC.card($.player.pc).toInt, +($.player.int == $.player.maxint))
-                    $.PC.adjust('dex', 100 + $.dice(10), $.PC.card($.player.pc).toDex, +($.player.dex == $.player.maxdex))
-                    $.PC.adjust('cha', 100 + $.dice(10), $.PC.card($.player.pc).toCha, +($.player.cha == $.player.maxcha))
+                    PC.adjust('str', 100 + dice(10), PC.card($.player.pc).toStr, +($.player.str == $.player.maxstr))
+                    PC.adjust('int', 100 + dice(10), PC.card($.player.pc).toInt, +($.player.int == $.player.maxint))
+                    PC.adjust('dex', 100 + dice(10), PC.card($.player.pc).toDex, +($.player.dex == $.player.maxdex))
+                    PC.adjust('cha', 100 + dice(10), PC.card($.player.pc).toCha, +($.player.cha == $.player.maxcha))
                     break
 
                 //	Vial of Crack
                 case 13:
-                    $.PC.adjust('str'
-                        , $.online.str > 40 ? -$.dice(6) - 4 : -3
-                        , $.player.str > 60 ? -$.dice(3) - 2 : -2
+                    PC.adjust('str'
+                        , $.online.str > 40 ? -dice(6) - 4 : -3
+                        , $.player.str > 60 ? -dice(3) - 2 : -2
                         , $.player.maxstr > 80 ? -2 : -1)
-                    $.PC.adjust('int'
-                        , $.online.int > 40 ? -$.dice(6) - 4 : -3
-                        , $.player.int > 60 ? -$.dice(3) - 2 : -2
+                    PC.adjust('int'
+                        , $.online.int > 40 ? -dice(6) - 4 : -3
+                        , $.player.int > 60 ? -dice(3) - 2 : -2
                         , $.player.maxint > 80 ? -2 : -1)
-                    $.PC.adjust('dex'
-                        , $.online.dex > 40 ? -$.dice(6) - 4 : -3
-                        , $.player.dex > 60 ? -$.dice(3) - 2 : -2
+                    PC.adjust('dex'
+                        , $.online.dex > 40 ? -dice(6) - 4 : -3
+                        , $.player.dex > 60 ? -dice(3) - 2 : -2
                         , $.player.maxdex > 80 ? -2 : -1)
-                    $.PC.adjust('cha'
-                        , $.online.cha > 40 ? -$.dice(6) - 4 : -3
-                        , $.player.cha > 60 ? -$.dice(3) - 2 : -2
+                    PC.adjust('cha'
+                        , $.online.cha > 40 ? -dice(6) - 4 : -3
+                        , $.player.cha > 60 ? -dice(3) - 2 : -2
                         , $.player.maxcha > 80 ? -2 : -1)
-                    $.online.sp -= $.PC.sp()
+                    $.online.sp -= PC.sp()
                     if ($.online.sp < 0) $.online.sp = 0
-                    $.online.hp -= $.PC.hp()
-                    $.music('crack', 6)
+                    $.online.hp -= PC.hp()
+                    music('crack', 6)
                     if ($.online.hp < 1)
-                        $.death(`quaffed${$.an(potion[v])}`)
+                        death(`quaffed${an(potion[v])}`)
                     break
 
                 //	Potion of Augment
                 case 14:
-                    $.sound('hone', 11)
-                    $.PC.adjust('str'
-                        , 100 + $.dice(100 - $.online.str)
-                        , $.dice(3) + 2
+                    sound('hone', 11)
+                    PC.adjust('str'
+                        , 100 + dice(100 - $.online.str)
+                        , dice(3) + 2
                         , $.player.maxstr < 95 ? 2 : 1)
-                    $.PC.adjust('int'
-                        , 100 + $.dice(100 - $.online.int)
-                        , $.dice(3) + 2
+                    PC.adjust('int'
+                        , 100 + dice(100 - $.online.int)
+                        , dice(3) + 2
                         , $.player.maxint < 95 ? 2 : 1)
-                    $.PC.adjust('dex'
-                        , 100 + $.dice(100 - $.online.dex)
-                        , $.dice(3) + 2
+                    PC.adjust('dex'
+                        , 100 + dice(100 - $.online.dex)
+                        , dice(3) + 2
                         , $.player.maxdex < 95 ? 2 : 1)
-                    $.PC.adjust('cha'
-                        , 100 + $.dice(100 - $.online.cha)
-                        , $.dice(3) + 2
+                    PC.adjust('cha'
+                        , 100 + dice(100 - $.online.cha)
+                        , dice(3) + 2
                         , $.player.maxcha < 95 ? 2 : 1)
-                    $.online.hp += $.PC.hp()
-                    $.online.sp += $.PC.sp()
+                    $.online.hp += PC.hp()
+                    $.online.sp += PC.sp()
                     $.online.altered = true
-                    $.sound('heal', 3)
+                    sound('heal', 3)
                     break
 
                 //	Beaker of Death
                 case 15:
-                    $.death(`quaffed${$.an(potion[v])}`, true)
+                    death(`quaffed${an(potion[v])}`, true)
                     break
             }
         }
@@ -3288,7 +3294,7 @@ module Dungeon {
                     if (identify) {
                         icon += Mask[m]
                         for (let i = 0; i < m; i++) {
-                            let dm = $.PC.card(room.monster[i].user.pc)
+                            let dm = PC.card(room.monster[i].user.pc)
                             icon = icon.replace('ѩ', xvt.attr(dm.color || xvt.white, dm.unicode))
                         }
                     }
@@ -3379,7 +3385,7 @@ module Dungeon {
 
         xvt.out(o)
 
-        if (room.giftItem && (DL.map == `Marauder's map` || $.Ring.power([], $.player.rings, 'identify').power))
+        if (room.giftItem && (DL.map == `Marauder's map` || Ring.power([], $.player.rings, 'identify').power))
             xvt.out('\x08', xvt.reset, xvt.faint, room.giftIcon)
     }
 
@@ -3388,10 +3394,10 @@ module Dungeon {
         xvt.out(`\x1B[${top};${$.player.rows}r`)
         xvt.restore()
         if (escape) {
-            $.news(`\tescaped dungeon ${$.romanize(hideep + 1)}.${hiZ} ${levels < $.player.level && `ascending +${$.player.level - levels}` || 'expeditiously'}`)
-            $.music(['escape', 'thief2', 'thief'][$.dungeon])
+            news(`\tescaped dungeon ${romanize(hideep + 1)}.${hiZ} ${levels < $.player.level && `ascending +${$.player.level - levels}` || 'expeditiously'}`)
+            music(['escape', 'thief2', 'thief'][$.dungeon])
             xvt.outln(xvt.lblue, `\n"Next time you won't escape so easily... moo-hahahahaha!!"`, -600)
-            $.profile({ png: 'castle', effect: 'pulse' })
+            profile({ png: 'castle', effect: 'pulse' })
         }
         else if (redraw) {
             drawLevel()

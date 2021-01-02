@@ -28,6 +28,11 @@ process.on('SIGINT', () => {
 process.chdir(__dirname)
 console.log(`cwd: ${__dirname}`)
 
+import db = require('../db')
+import { Coin, PC } from '../pc'
+//let xvt = require.resolve('@theflyingape/xvt')
+//delete require.cache[xvt]
+
 let passed = ''
 if (process.argv.length > 2 && process.argv[2]) {
     passed = process.argv[2].toLowerCase()
@@ -257,7 +262,7 @@ dns.lookup(network.address, (err, addr, family) => {
                 } catch (err) {
                     if (term.pid) {
                         console.log(`?FATAL ACTIVE CLASSIC session ${term.pid} socket → pty error:`, err.message)
-                        unlock(term.pid)
+                        db.unlock(term.pid)
                         socket.destroy()
                     }
                 }
@@ -352,19 +357,19 @@ dns.lookup(network.address, (err, addr, family) => {
                 { handle: 'Shall we begin?', png: 'connect/yuriel_genasi_warlord_by_peachyco', effect: 'fadeInRight' }
             )
 
-            const armor = require('../items/armor.json')
-            for (let i in armor) {
-                if (!armor[i].armoury) {
-                    let profile = { handle: `<span style="color:${armor[i].dwarf ? 'black' : 'brown'};">${i}</span>`, level: armor[i].ac, pc: (armor[i].dwarf ? 'dwarven' : 'uncommon') + ' armor', effect: 'fadeInUpBig' }
+            const Armor = require('../items/armor.json')
+            for (let i in Armor) {
+                if (!Armor[i].armoury) {
+                    let profile = { handle: `<span style="color:${Armor[i].dwarf ? 'black' : 'brown'};">${i}</span>`, level: Armor[i].ac, pc: (Armor[i].dwarf ? 'dwarven' : 'uncommon') + ' armor', effect: 'fadeInUpBig' }
                     profile['jpg'] = `specials/${i}`
                     list.push(profile)
                 }
             }
 
-            const weapon = require('../items/weapon.json')
-            for (let i in weapon) {
-                if (!weapon[i].shoppe) {
-                    let profile = { handle: `<span style="color:${weapon[i].dwarf ? 'black' : 'brown'};">${i}</span>`, level: weapon[i].wc, pc: (weapon[i].dwarf ? 'dwarven' : 'uncommon') + ' weapon', effect: 'fadeInUpBig' }
+            const Weapon = require('../items/weapon.json')
+            for (let i in Weapon) {
+                if (!Weapon[i].shoppe) {
+                    let profile = { handle: `<span style="color:${Weapon[i].dwarf ? 'black' : 'brown'};">${i}</span>`, level: Weapon[i].wc, pc: (Weapon[i].dwarf ? 'dwarven' : 'uncommon') + ' weapon', effect: 'fadeInUpBig' }
                     profile['jpg'] = `specials/${i}`
                     list.push(profile)
                 }
@@ -380,7 +385,7 @@ dns.lookup(network.address, (err, addr, family) => {
                 list.push(profile)
             }
 
-            let rs = query(`SELECT id,handle,pc,gender,level FROM Players WHERE xplevel>1 AND NOT novice`)
+            let rs = db.query(`SELECT id,handle,pc,gender,level FROM Players WHERE xplevel>1 AND NOT novice`)
             for (let n in rs) {
                 let id = rs[n].id, handle = rs[n].handle, pc = rs[n].pc, gender = rs[n].gender, level = rs[n].level
                 let profile = { handle: handle, level: level, pc: pc, effect: 'fadeInLeft' }
@@ -403,9 +408,9 @@ dns.lookup(network.address, (err, addr, family) => {
                 }
             }
 
-            const ring = require('../items/ring.json')
-            for (let i in ring) {
-                let profile = { handle: `${ring[i].unique ? 'The <span style="color:black' : '<span style="color:darkslategray'}">${i}</span> ${ring[i].emoji} ring<br>`, pc: ring[i].description, effect: 'fadeInUpBig' }
+            const Ring = require('../items/ring.json')
+            for (let i in Ring) {
+                let profile = { handle: `${Ring[i].unique ? 'The <span style="color:black' : '<span style="color:darkslategray'}">${i}</span> ${Ring[i].emoji} ring<br>`, pc: Ring[i].description, effect: 'fadeInUpBig' }
                 profile['jpg'] = `ring/${i}`
                 list.push(profile)
             }
@@ -467,7 +472,7 @@ dns.lookup(network.address, (err, addr, family) => {
             else if (Object.keys(sessions).length) {
                 var who = []
                 for (let pid in sessions) {
-                    let rs = query(`SELECT id FROM Online WHERE pid=${pid}`)
+                    let rs = db.query(`SELECT id FROM Online WHERE pid=${pid}`)
                     if (rs.length) {
                         sessions[pid].who = rs[0].id
                         who.push({ id: rs[0].id, pid: pid })
@@ -499,7 +504,7 @@ dns.lookup(network.address, (err, addr, family) => {
                     if (term.pid) {
                         console.log(`?FATAL ACTIVE app session ${term.pid} pty → ws error:`, ex.message)
                         console.log(msg)
-                        unlock(term.pid)
+                        db.unlock(term.pid)
                         browser.close()
                     }
                 }
@@ -522,7 +527,7 @@ dns.lookup(network.address, (err, addr, family) => {
                 } catch (ex) {
                     if (term.pid) {
                         console.log(`?FATAL ACTIVE browser session ${term.pid} ws → pty error:`, ex.message)
-                        unlock(term.pid)
+                        db.unlock(term.pid)
                         browser.close()
                     }
                 }
@@ -578,135 +583,30 @@ dns.lookup(network.address, (err, addr, family) => {
     }
 })
 
-//  game/sysop database interfaces
-const DD = '../users/dankdomain.sql'
-const sqlite3 = require('better-sqlite3')(DD, { timeout: 10000 })
-sqlite3.pragma('journal_mode = WAL')
-console.log(`SQLite3 ${DD} opened`)
-
-chokidar.watch('../users/save.json')
+chokidar.watch(`../users/save.json`)
     .on('add', (path, stats) => {
-        class coins {
-            constructor(money: string | number) {
-                if (typeof money == 'number') {
-                    this.value = money
-                }
-                else {
-                    this.amount = money
-                }
-            }
-
-            _value: number
-
-            get value(): number {
-                return this._value
-            }
-
-            set value(newValue: number) {
-                const MAX = (1e+18 - 1e+09)
-                this._value = newValue < 0 ? 0 : newValue < MAX ? newValue
-                    : newValue == Infinity ? 1 : MAX
-            }
-
-            set amount(newAmount: string) {
-                this.value = 0
-                let coins = 0
-
-                for (var i = 0; i < newAmount.length; i++) {
-                    let c = newAmount.charAt(i)
-                    switch (c) {
-                        case 'c':
-                            coins *= 1
-                            break
-                        case 's':
-                            coins *= 1e+05
-                            break
-                        case 'g':
-                            coins *= 1e+09
-                            break
-                        case 'p':
-                            coins *= 1e+13
-                            break
-                    }
-                    if (c >= '0' && c <= '9') {
-                        coins *= 10
-                        coins += +c
-                    }
-                    else {
-                        this.value += coins
-                        coins = 0
-                    }
-                }
-            }
-        }
-        interface save extends user {
-            bounty?: coins
-            coin?: coins
-            bank?: coins
-            loan?: coins
-        }
-        let user: save = {
-            id: '',
-            bounty: new coins(0),
-            coin: new coins(0),
-            bank: new coins(0),
-            loan: new coins(0)
-        }
-
+        let save: any = {}
+        let user: user
         try {
-            Object.assign(user, JSON.parse(fs.readFileSync(path).toString()))
+            Object.assign(save, JSON.parse(fs.readFileSync(path).toString()))
+            fs.unlink(path, () => { })
+            save.bounty = new Coin(save.bounty)
+            save.coin = new Coin(save.coin)
+            save.bank = new Coin(save.bank)
+            save.loan = new Coin(save.loan)
+            Object.assign(user, save)
+            PC.saveUser(user)
+            console.log(`Player (${user.id}) updated`)
         }
         catch (err) {
-            console.log(`Player (${user.id}) exception in ${path}:`)
+            console.log(`Player file has an exception in ${path}:`)
             console.log(err.message)
         }
-        user.bounty.value = isNaN(user.bounty._value) ? new coins(user.bounty._value).value : user.bounty._value
-        user.coin.value = isNaN(user.coin._value) ? new coins(user.coin._value).value : user.coin._value
-        user.bank.value = isNaN(user.bank._value) ? new coins(user.bank._value).value : user.bank._value
-        user.loan.value = isNaN(user.loan._value) ? new coins(user.loan._value).value : user.loan._value
-        fs.unlink(path, () => { })
-
-        let sql = `UPDATE Players SET
-        handle='${user.handle}', name='${user.name}', email='${user.email}', password='${user.password}',
-        dob=${user.dob}, sex='${user.sex}', joined=${user.joined}, expires=${user.expires}, lastdate=${user.lastdate},
-        lasttime=${user.lasttime}, calls=${user.calls}, today=${user.today}, expert=${+user.expert}, emulation='${user.emulation}',
-        rows=${user.rows}, access='${user.access}', remote='${user.remote}', pc='${user.pc}', gender='${user.gender}',
-        novice=${+user.novice}, level=${user.level}, xp=${user.xp}, xplevel=${user.xplevel}, status='${user.status}',
-        blessed='${user.blessed}', cursed='${user.cursed}', coward=${+user.coward}, bounty=${user.bounty.value}, who='${user.who}',
-        gang='${user.gang}', keyseq='${user.keyseq}', keyhints='${user.keyhints.toString()}', melee=${user.melee}, backstab=${user.backstab},
-        poison=${user.poison}, magic=${user.magic}, steal=${user.steal}, hp=${user.hp}, sp=${user.sp},
-        str=${user.str}, maxstr=${user.maxstr}, int=${user.int}, maxint=${user.maxint}, dex=${user.dex},
-        maxdex=${user.maxdex}, cha=${user.cha}, maxcha=${user.maxcha}, coin=${user.coin.value}, bank=${user.bank.value},
-        loan=${user.loan.value}, weapon='${user.weapon}', toWC=${user.toWC}, armor='${user.armor}', toAC=${user.toAC},
-        spells='${user.spells.toString()}', poisons='${user.poisons.toString()}', realestate='${user.realestate}', rings=?, security='${user.security}',
-        hull=${user.hull}, cannon=${user.cannon}, ram=${+user.ram}, wins=${user.wins}, immortal=${user.immortal},
-        plays=${user.plays}, jl=${user.jl}, jw=${user.jw}, killed=${user.killed}, kills=${user.kills},
-        retreats=${user.retreats}, steals=${user.steals}, tl=${user.tl}, tw=${user.tw}
-        WHERE id='${user.id}'`
-        console.log(`Player (${user.id}) updated:`, sqlite3.prepare(sql).run(user.rings.toString()).changes)
     })
 
 try {
-    sqlite3.prepare(`DELETE FROM Online`).run().changes
+    db.run(`DELETE FROM Online`)
 }
 catch (err) {
     console.log(`warning ${err.code} :: ${String(err)}`)
-}
-
-function query(q: string, errOk = false): any {
-    try {
-        let cmd = sqlite3.prepare(q)
-        return cmd.all()
-    }
-    catch (err) {
-        if (!errOk) {
-            console.log(`?Unexpected error ${err.code} :: ${String(err)}`)
-        }
-        return []
-    }
-}
-
-function unlock(pid: number) {
-    console.log(`Unlocking ${pid}`)
-    sqlite3.prepare(`DELETE FROM Online WHERE pid=${pid}`).run().changes
 }

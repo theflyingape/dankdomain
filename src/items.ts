@@ -3,21 +3,31 @@
  *  ITEMS authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import xvt = require('@theflyingape/xvt')
-import { isDefined } from 'class-validator'
+import db = require('./db')
+import fs = require('fs')
+import $ = require('./runtime')
+import { now } from './sys'
 
 module Items {
 
-    export class Access {
+    //  determine if running door service or client app
+    let PATH = './items'
+    try {
+        fs.existsSync(PATH)
+    } catch (e) {
+        PATH = `.${PATH}`
+    }
+
+    class _access {
 
         name: access[]
 
         constructor() {
-            this.name = require('./items/access.json')
+            this.name = require(`${PATH}/access.json`)
         }
     }
 
-    export class Armor {
+    class _armor {
 
         name: armor[]
         dwarf: string[] = []
@@ -25,7 +35,7 @@ module Items {
         special: string[] = []
 
         constructor() {
-            this.name = require('./items/armor.json')
+            this.name = require(`${PATH}/armor.json`)
             for (let i in this.name) {
                 if (this.name[i].armoury)
                     this.merchant.push(i)
@@ -114,52 +124,69 @@ module Items {
         }
     }
 
-    export class Deed {
+    class _deed {
 
         name: deeds[]
 
         constructor() {
-            this.name = require('./items/deed.json')
+            this.name = require(`${PATH}/deed.json`)
         }
 
-        get key(): {} {
-            const oldkey = '🗝️ '
-            return xvt.app.emulation == 'XT'
-                ? {
-                    P: xvt.attr(oldkey, xvt.bright, xvt.Magenta, ' Platinum ', xvt.reset),
-                    G: xvt.attr(oldkey, xvt.black, xvt.Yellow, ' = Gold = ', xvt.reset),
-                    S: xvt.attr(oldkey, xvt.bright, xvt.Cyan, '- Silver -', xvt.reset),
-                    C: xvt.attr(oldkey, xvt.black, xvt.Red, xvt.app.Empty, ' Copper ', xvt.app.Empty, xvt.reset)
-                } : {
-                    P: xvt.attr(xvt.off, xvt.magenta, xvt.bright, xvt.reverse, ' Platinum ', xvt.reset),
-                    G: xvt.attr(xvt.off, xvt.yellow, xvt.bright, xvt.reverse, ' = Gold = ', xvt.reset),
-                    S: xvt.attr(xvt.off, xvt.cyan, xvt.bright, xvt.reverse, '- Silver -', xvt.reset),
-                    C: xvt.attr(xvt.off, xvt.red, xvt.bright, xvt.reverse, xvt.app.Empty, ' Copper ', xvt.app.Empty, xvt.reset)
+        load(pc: string, what?: string): deed[] {
+
+            let deed = []
+            let sql = `SELECT * FROM Deeds WHERE pc='${pc}'`
+            if (what) sql += ` AND deed='${what}'`
+            let rs = db.query(sql)
+
+            if (rs.length) {
+                for (let i = 0; i < rs.length; i++)
+                    deed.push({
+                        pc: rs[i].pc,
+                        deed: rs[i].deed,
+                        date: rs[i].date,
+                        hero: rs[i].hero,
+                        value: rs[i].value
+                    })
+            }
+            else if (what) {
+                let start = 0
+                if (Deed.name[what]) start = Deed.name[what].starting
+                db.run(`INSERT INTO Deeds VALUES ('${pc}', '${what}', ${now().date}, 'Nobody', ${start})`)
+                deed = this.load(pc, what)
+            }
+
+            return deed
+        }
+
+        save(deed: deed) {
+            if (!$.player.novice) {
+                deed.date = now().date
+                deed.hero = $.player.handle
+                db.run(`UPDATE Deeds SET date=${deed.date},hero='${deed.hero}', value=${deed.value} WHERE pc='${deed.pc}' AND deed='${deed.deed}'`)
+                /*
+                if ($.player.level < 100) {
+                    PC.adjust('str', 101)
+                    PC.adjust('int', 101)
+                    PC.adjust('dex', 101)
+                    PC.adjust('cha', 101)
+                    sound('outstanding')
                 }
-        }
-
-        //  returns 2-character width
-        get medal(): string[] {
-            return xvt.app.emulation == 'XT'
-                ? ['  ', '🥇', '🥈', '🥉']
-                : ['  ',
-                    xvt.attr(xvt.bright, xvt.reverse, '1', xvt.noreverse, xvt.normal, ' '),
-                    xvt.attr(xvt.normal, xvt.reverse, '2', xvt.noreverse, ' '),
-                    xvt.attr(xvt.faint, xvt.reverse, '3', xvt.noreverse, xvt.normal, ' ')
-                ]
+                */
+            }
         }
     }
 
-    export class Magic {
+    class _magic {
 
-        ring: Ring
+        ring: _ring
         spells: spell[]
         merchant: string[] = []
         special: string[] = []
 
-        constructor(ring: Ring) {
+        constructor(ring: _ring) {
             this.ring = ring
-            this.spells = require('./items/magic.json')
+            this.spells = require(`${PATH}/magic.json`)
             for (let i in this.spells) {
                 if (this.spells[i].cost)
                     this.merchant.push(i)
@@ -175,7 +202,7 @@ module Items {
 
             fail = rpc.int + Math.trunc(rpc.user.level / 10) - (this.spells[spell].cast < 17 ? this.spells[spell].cast : this.spells[spell].cast - 8) - (5 - skill) - +rpc.user.coward
             //  is this an attack spell against an opponent?
-            if (isDefined(nme) && [9, 11, 12, 14, 15, 16, 19, 20, 21, 22].indexOf(this.spells[spell].cast) >= 0) {
+            if (nme && [9, 11, 12, 14, 15, 16, 19, 20, 21, 22].indexOf(this.spells[spell].cast) >= 0) {
                 let m = rpc.int - nme.int
                 m = (m < -10) ? -10 : (m > 10) ? 10 : m
                 m += 2 * (skill - nme.user.magic)
@@ -247,13 +274,13 @@ module Items {
         }
     }
 
-    export class Poison {
+    class _poison {
 
         vials: poison[]
         merchant: string[] = []
 
         constructor() {
-            this.vials = require('./items/poison.json')
+            this.vials = require(`${PATH}/poison.json`)
             for (let i in this.vials) {
                 if (this.vials[i].cost)
                     this.merchant.push(i)
@@ -300,14 +327,118 @@ module Items {
         }
     }
 
-    export class Weapon {
+    class _realestate {
+
+        name: realestate[]
+        merchant: string[] = []
+
+        constructor() {
+            this.name = require(`${PATH}/realestate.json`)
+            for (let i in this.name)
+                this.merchant.push(i)
+        }
+    }
+
+    class _ring {
+        name: ring[]
+        common: string[] = []
+        unique: string[] = []
+        theOne: string
+
+        constructor() {
+            this.name = require(`${PATH}/ring.json`)
+            for (let i in this.name)
+                if (this.name[i].unique) {
+                    this.unique.push(i)
+                    db.run(`INSERT INTO Rings (name,bearer) VALUES (?,'')`, true, this.name[i])
+                }
+                else
+                    this.common.push(i)
+            this.theOne = this.power([], null, 'ring').name
+        }
+
+        have(rings: string[], name: string): boolean {
+            return rings.indexOf(name) >= 0
+        }
+
+        remove(rings: string[], name: string) {
+            let i = rings.indexOf(name)
+            if (i >= 0) rings.splice(i, 1)
+        }
+
+        power(vs: string[], rings: string[] | null, id: POWER, match?: POWTO, value?: any)
+            : { name: string, power: number } {
+
+            let mine = (rings == null) ? Object.keys(this.name) : rings
+            let name = ''
+            let power = 0
+
+            if (!vs.length || !this.have(vs, this.theOne)) {
+                for (let f in mine) {
+                    let abilities = this.name[mine[f]].ability
+                    for (let a in abilities) {
+                        //  got POWER?
+                        if (abilities[a].id == id) {
+                            name = mine[f]
+                            if (Object.keys(abilities[a]).length == 2)
+                                power = +abilities[a].power || 0
+                            else if (match && abilities[a][match]) {
+                                if (value && abilities[a][match] == value)
+                                    power = +abilities[a].power || 0
+                            }
+                            //  console.log(a, name, id, match || '', value || '', '->', power)
+                        }
+                    }
+                }
+                if (rings !== null && this.have(mine, this.theOne)) power *= 2
+            }
+
+            return { name: name, power: power }
+        }
+
+        wear(rings: string[], name: string): boolean {
+            if (!this.have(rings, name)) {
+                rings.push(name)
+                rings.sort()
+                return true
+            }
+            return false
+        }
+
+        save(name: string, bearer = '', rings?: string[]) {
+            let theRing = { name: name, bearer: bearer[0] == '_' ? '' : bearer }
+
+            //  primarily maintain the one ring's active bearer here
+            if (Ring.name[name].unique) {
+                db.run(`UPDATE Rings SET bearer='${theRing.bearer}' WHERE name=?`, false, name)
+            }
+            if (theRing.bearer.length && rings) {
+                db.run(`UPDATE Players SET rings=? WHERE id=?`, false, rings.toString(), theRing.bearer)
+            }
+        }
+    }
+
+    class _security {
+
+        name: security[]
+        merchant: string[] = []
+
+        constructor() {
+            this.name = require(`${PATH}/security.json`)
+            for (let i in this.name)
+                this.merchant.push(i)
+        }
+    }
+
+    class _weapon {
+
         name: weapon[]
         dwarf: string[] = []
         merchant: string[] = []
         special: string[] = []
 
         constructor() {
-            this.name = require('./items/weapon.json')
+            this.name = require(`${PATH}/weapon.json`)
             for (let i in this.name) {
                 if (this.name[i].shoppe)
                     this.merchant.push(i)
@@ -399,95 +530,15 @@ module Items {
         }
     }
 
-    export class Ring {
-        name: ring[]
-        common: string[] = []
-        unique: string[] = []
-        theOne: string
-
-        constructor() {
-            this.name = require('./items/ring.json')
-            for (let i in this.name)
-                if (this.name[i].unique)
-                    this.unique.push(i)
-                else
-                    this.common.push(i)
-            this.theOne = this.power([], null, 'ring').name
-        }
-
-        have(rings: string[], name: string): boolean {
-            return rings.indexOf(name) >= 0
-        }
-
-        remove(rings: string[], name: string) {
-            let i = rings.indexOf(name)
-            if (i >= 0) rings.splice(i, 1)
-        }
-
-        power(vs: string[], rings: string[] | null, id: POWER, match?: POWTO, value?: any)
-            : { name: string, power: number } {
-
-            let mine = (rings == null) ? Object.keys(this.name) : rings
-            let name = ''
-            let power = 0
-
-            if (!vs.length || !this.have(vs, this.theOne)) {
-                for (let f in mine) {
-                    let abilities = this.name[mine[f]].ability
-                    for (let a in abilities) {
-                        //  got POWER?
-                        if (abilities[a].id == id) {
-                            name = mine[f]
-                            if (Object.keys(abilities[a]).length == 2)
-                                power = +abilities[a].power || 0
-                            else if (match && abilities[a][match]) {
-                                if (value && abilities[a][match] == value)
-                                    power = +abilities[a].power || 0
-                            }
-                            //  console.log(a, name, id, match || '', value || '', '->', power)
-                        }
-                    }
-                }
-                if (rings !== null && this.have(mine, this.theOne)) power *= 2
-            }
-
-            return { name: name, power: power }
-        }
-
-        wear(rings: string[], name: string): boolean {
-            if (!this.have(rings, name)) {
-                rings.push(name)
-                rings.sort()
-                return true
-            }
-            return false
-        }
-    }
-
-    export class RealEstate {
-
-        name: realestate[]
-        merchant: string[] = []
-
-        constructor() {
-            this.name = require('./items/realestate.json')
-            for (let i in this.name)
-                this.merchant.push(i)
-        }
-    }
-
-    export class Security {
-
-        name: security[]
-        merchant: string[] = []
-
-        constructor() {
-            this.name = require('./items/security.json')
-            for (let i in this.name)
-                this.merchant.push(i)
-        }
-    }
-
+    export const Access = new _access
+    export const Armor = new _armor
+    export const Deed = new _deed
+    export const Ring = new _ring
+    export const Magic = new _magic(Ring)
+    export const Poison = new _poison
+    export const RealEstate = new _realestate
+    export const Security = new _security
+    export const Weapon = new _weapon
 }
 
 export = Items

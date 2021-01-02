@@ -3,10 +3,13 @@
  *  HALL authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
 
-import $ = require('../common')
 import xvt = require('@theflyingape/xvt')
-import { isNotEmpty } from 'class-validator'
-import { sprintf } from 'sprintf-js'
+import db = require('../db')
+import $ = require('../runtime')
+import { Award, action, cat, display } from '../io'
+import { Deed } from '../items'
+import { PC } from '../pc'
+import { date2full, sprintf } from '../sys'
 
 module Hall {
 
@@ -20,22 +23,21 @@ module Hall {
     }
 
     export function menu(suppress = false) {
-        $.action('deeds')
+        action('deeds')
         xvt.app.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
-        xvt.app.form['menu'].prompt = $.display('hall', xvt.Cyan, xvt.cyan, suppress, hall)
+        xvt.app.form['menu'].prompt = display('hall', xvt.Cyan, xvt.cyan, suppress, hall)
         xvt.app.focus = 'menu'
     }
 
     function choice() {
         let suppress = false
         let choice = xvt.entry.toUpperCase()
-        if (isNotEmpty(hall[choice]))
-            if (isNotEmpty(hall[choice].description)) {
-                xvt.out(' - ', hall[choice].description)
-                suppress = $.player.expert
-            }
+        if (hall[choice]?.description) {
+            xvt.out(' - ', hall[choice].description)
+            suppress = $.player.expert
+        }
         xvt.outln()
 
         let q: string, medal: string
@@ -45,34 +47,34 @@ module Hall {
                 xvt.outln()
                 xvt.outln(xvt.bright, xvt.Red, '  Class      CHAMPION                  Date      BEST          Deed      ')
                 xvt.outln(xvt.faint, xvt.Red, '-------------------------------------------------------------------------')
-                for (let type in $.PC.name)
-                    for (let pc in $.PC.name[type]) {
-                        let deeds = $.loadDeed(pc)
+                for (let type in PC.name)
+                    for (let pc in PC.name[type]) {
+                        let deeds = Deed.load(pc)
                         if (deeds.length) {
                             xvt.out(sprintf('%-9s  ', pc))
                             let keys = ['plays', 'retreats', 'killed', 'kills', 'jw', 'jl', 'tw', 'tl', 'steals']
                             for (let best in keys) {
                                 let deed = deeds.find((x) => { return x.deed == keys[best] })
                                 if (deed) {
-                                    xvt.out(sprintf('%-22.22s  %-11s %6d ', deed.hero, $.date2full(deed.date).slice(4), deed.value))
+                                    xvt.out(sprintf('%-22.22s  %-11s %6d ', deed.hero, date2full(deed.date).slice(4), deed.value))
                                     q = `SELECT value FROM Deeds WHERE deed='${deed.deed}' GROUP BY value ORDER BY value`
                                     if (/jw|steals|tw/.test(deed.deed)) q += ' DESC'
                                     q += ' LIMIT 3'
-                                    medal = $.Deed.medal[0]
-                                    let top3 = $.query(q)
+                                    medal = Award.medal[0]
+                                    let top3 = db.query(q)
                                     if (top3.length > 0 && deed.value == top3[0].value) {
                                         xvt.out(xvt.bright, xvt.yellow)
-                                        medal = $.Deed.medal[1]
+                                        medal = Award.medal[1]
                                     }
                                     if (top3.length > 1 && deed.value == top3[1].value) {
                                         xvt.out(xvt.bright, xvt.cyan)
-                                        medal = $.Deed.medal[2]
+                                        medal = Award.medal[2]
                                     }
                                     if (top3.length > 2 && deed.value == top3[2].value) {
                                         xvt.out(xvt.yellow)
-                                        medal = $.Deed.medal[3]
+                                        medal = Award.medal[3]
                                     }
-                                    xvt.outln(medal, $.Deed.name[deed.deed].description)
+                                    xvt.outln(medal, Deed.name[deed.deed].description)
                                     xvt.out('           ')
                                 }
                             }
@@ -87,15 +89,15 @@ module Hall {
                 xvt.outln(xvt.bright, xvt.Magenta, '  HERO                      Date      GOAT        Deed      ')
                 xvt.outln(xvt.faint, xvt.Magenta, '------------------------------------------------------------')
                 let type = 'GOAT'
-                let deeds = $.loadDeed(type)
+                let deeds = Deed.load(type)
                 if (deeds.length) {
                     let keys = ['plays', 'retreats', 'killed', 'kills', 'jw', 'jl', 'tw', 'tl', 'steals']
                     for (let goat in keys) {
                         let deed = deeds.find((x) => { return x.deed == keys[goat] })
                         if (deed) {
                             xvt.outln(sprintf('%-22.22s  %-11s %6d  '
-                                , deed.hero, $.date2full(deed.date).slice(4), deed.value)
-                                , $.Deed.name[deed.deed].description)
+                                , deed.hero, date2full(deed.date).slice(4), deed.value)
+                                , Deed.name[deed.deed].description)
                         }
                     }
                 }
@@ -103,13 +105,13 @@ module Hall {
                 xvt.outln()
                 xvt.outln(xvt.Magenta, xvt.yellow, xvt.bright, '   TOP HERO                Deeds  ')
                 xvt.outln(xvt.Magenta, xvt.yellow, '----------------------------------')
-                let rd = $.query(`
+                let rd = db.query(`
                     SELECT hero, count(*) AS n FROM Deeds
                     GROUP BY hero HAVING n > 0
                     ORDER BY n DESC LIMIT 10
                 `)
                 for (let n in rd) {
-                    xvt.outln(sprintf('%-22.22s     %4d', rd[n].hero, rd[n].n), ' ', +n < 3 ? $.Deed.medal[+n + 1] : '')
+                    xvt.outln(sprintf('%-22.22s     %4d', rd[n].hero, rd[n].n), ' ', +n < 3 ? Award.medal[+n + 1] : '')
                 }
 
                 suppress = true
@@ -119,13 +121,13 @@ module Hall {
                 xvt.outln()
                 xvt.outln(xvt.Black, xvt.white, xvt.bright, '   IMMORTAL                Wins   Rolls   Levels  Calls')
                 xvt.outln(xvt.Black, xvt.white, '-------------------------------------------------------')
-                let rh = $.query(`
+                let rh = db.query(`
                     SELECT handle, wins, immortal, level, calls FROM Players
                     WHERE immortal > 0 AND calls > 0
                     ORDER BY immortal DESC, level DESC LIMIT 20
                 `)
                 for (let n in rh) {
-                    xvt.outln(sprintf(`%-22.22s     %3d   %4d ${+n < 3 ? $.Deed.medal[+n + 1] : '  '}  %5.2f  %5d`
+                    xvt.outln(sprintf(`%-22.22s     %3d   %4d ${+n < 3 ? Award.medal[+n + 1] : '  '}  %5.2f  %5d`
                         , rh[n].handle, rh[n].wins, rh[n].immortal
                         , (100 * rh[n].immortal + rh[n].level) / rh[n].calls, rh[n].calls))
                 }
@@ -137,32 +139,32 @@ module Hall {
                 xvt.outln()
                 xvt.outln(xvt.bright, xvt.Blue, '  Class      OUTSTANDING               Date      BEST                 ')
                 xvt.outln(xvt.faint, xvt.Blue, '----------------------------------------------------------------------')
-                for (let type in $.PC.name) {
-                    for (let pc in $.PC.name[type]) {
-                        let deeds = $.loadDeed(pc)
+                for (let type in PC.name) {
+                    for (let pc in PC.name[type]) {
+                        let deeds = Deed.load(pc)
                         if (deeds.length) {
                             xvt.out(sprintf('%-9s  ', pc))
                             let keys = ['levels', 'melee', 'blast', 'big blast']
                             for (let hurt in keys) {
                                 let deed = deeds.find((x) => { return x.deed == keys[hurt] })
                                 if (deed) {
-                                    xvt.out(sprintf('%-22.22s  %-11s %6d ', deed.hero, $.date2full(deed.date).slice(4), deed.value))
+                                    xvt.out(sprintf('%-22.22s  %-11s %6d ', deed.hero, date2full(deed.date).slice(4), deed.value))
                                     q = `SELECT value FROM Deeds WHERE deed='${deed.deed}' GROUP BY value ORDER BY value DESC LIMIT 3`
-                                    medal = $.Deed.medal[0]
-                                    let top3 = $.query(q)
+                                    medal = Award.medal[0]
+                                    let top3 = db.query(q)
                                     if (top3.length > 0 && deed.value == top3[0].value) {
                                         xvt.out(xvt.bright, xvt.yellow)
-                                        medal = $.Deed.medal[1]
+                                        medal = Award.medal[1]
                                     }
                                     if (top3.length > 1 && deed.value == top3[1].value) {
                                         xvt.out(xvt.bright, xvt.cyan)
-                                        medal = $.Deed.medal[2]
+                                        medal = Award.medal[2]
                                     }
                                     if (top3.length > 2 && deed.value == top3[2].value) {
                                         xvt.out(xvt.yellow)
-                                        medal = $.Deed.medal[3]
+                                        medal = Award.medal[3]
                                     }
-                                    xvt.outln(medal, $.Deed.name[deed.deed].description)
+                                    xvt.outln(medal, Deed.name[deed.deed].description)
                                     xvt.out('           ')
                                 }
                             }
@@ -178,7 +180,7 @@ module Hall {
                 xvt.outln(xvt.Yellow, xvt.black, ` ID   Player's Handle           Class    Lvl  Brawls `)
                 xvt.outln(xvt.Yellow, xvt.black, '-----------------------------------------------------')
 
-                let rs = $.query(`
+                let rs = db.query(`
                     SELECT id, handle, pc, level, tw FROM Players
                     WHERE xplevel > 1 AND tw > 0
                     ORDER BY tw DESC, level DESC, immortal DESC
@@ -199,7 +201,7 @@ module Hall {
 
             case 'W':
                 xvt.outln(xvt.green, '\n             --=:)) ', xvt.bright, 'WINNERS', xvt.normal, ' Only Noted ((:=--\n')
-                $.cat('winners')
+                cat('winners')
                 suppress = true
                 break
         }

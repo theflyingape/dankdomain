@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "incremental": true,
     "target": "ES2018",
     "module": "commonjs",
     "moduleResolution": "node",
@@ -7,6 +8,7 @@
     "outDir": "../build",
     "removeComments": true,
     "preserveConstEnums": true,
+    "pretty": true,
     "sourceMap": true
   },
   "exclude": [

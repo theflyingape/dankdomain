@@ -3,12 +3,15 @@
  *  PARTY authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import $ = require('../common')
 import xvt = require('@theflyingape/xvt')
 import Battle = require('../battle')
-import { isNotEmpty } from 'class-validator'
-import { sprintf } from 'sprintf-js'
-import { titleCase } from 'title-case'
+import db = require('../db')
+import $ = require('../runtime')
+import { Coin, action, activate, bracket, cat, checkXP, death, display, loadUser, music, profile, reroll, sound, weapon } from '../io'
+import { Armor, Magic, Poison, Weapon } from '../items'
+import { cuss, log } from '../lib'
+import { PC } from '../pc'
+import { dice, int, money, sprintf, titlecase } from '../sys'
 
 module Party {
 
@@ -40,12 +43,12 @@ module Party {
     }
 
     export function menu(suppress = true) {
-        if ($.checkXP($.online, menu)) return
-        if ($.online.altered) $.saveUser($.online)
-        if (!$.reason && $.online.hp < 1) $.death('fought bravely?')
+        if (checkXP($.online, menu)) return
+        if ($.online.altered) PC.saveUser($.online)
+        if (!$.reason && $.online.hp < 1) death('fought bravely?')
         if ($.reason) xvt.hangup()
 
-        $.action('party')
+        action('party')
         xvt.app.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
@@ -54,30 +57,29 @@ module Party {
         if (!$.player.gang)
             hints += `> Join an existing gang or start a new one.\n`
 
-        xvt.app.form['menu'].prompt = $.display('party', xvt.Magenta, xvt.magenta, suppress, party, hints)
+        xvt.app.form['menu'].prompt = display('party', xvt.Magenta, xvt.magenta, suppress, party, hints)
         xvt.app.focus = 'menu'
     }
 
     function choice() {
         let suppress = false
         let choice = xvt.entry.toUpperCase()
-        if (isNotEmpty(party[choice]))
-            if (isNotEmpty(party[choice].description)) {
-                xvt.out(' - ', party[choice].description)
-                suppress = $.player.expert
-            }
+        if (party[choice]?.description) {
+            xvt.out(' - ', party[choice].description)
+            suppress = $.player.expert
+        }
         xvt.outln()
 
         let rs: any[]
 
         switch (choice) {
             case 'L':
-                rs = $.query(`SELECT * FROM Gangs`)
+                rs = db.query(`SELECT * FROM Gangs`)
                 for (let i = 0; i < rs.length; i += 2) {
                     if (i + 1 < rs.length)
-                        showGang($.loadGang(rs[i]), $.loadGang(rs[i + 1]))
+                        showGang(PC.loadGang(rs[i]), PC.loadGang(rs[i + 1]))
                     else
-                        showGang($.loadGang(rs[i]))
+                        showGang(PC.loadGang(rs[i]))
                 }
                 suppress = true
                 break
@@ -86,7 +88,7 @@ module Party {
                 xvt.outln()
                 xvt.outln(xvt.Blue, xvt.bright, '        Party            Win-Loss   Ratio ')
                 xvt.outln(xvt.Blue, xvt.bright, '------------------------------------------')
-                rs = $.query(`SELECT * FROM Gangs ORDER BY win DESC, loss ASC`)
+                rs = db.query(`SELECT * FROM Gangs ORDER BY win DESC, loss ASC`)
                 let crown = true
                 for (let i in rs) {
                     let ratio = '  ' + (crown ? 'GOAT' : rs[i].loss ? sprintf('%5.3f', rs[i].win / (rs[i].win + rs[i].loss)).substr(1) : ' ---')
@@ -113,13 +115,13 @@ module Party {
                     , win: 0, loss: 0, banner: 0, trim: 0, back: 0, fore: 0
                 }
 
-                $.action('freetext')
+                action('freetext')
                 xvt.app.form = {
                     'new': {
                         cb: () => {
                             xvt.outln()
-                            g.name = $.titlecase(xvt.entry)
-                            if (g.name == 'New' || $.cuss(g.name))
+                            g.name = titlecase(xvt.entry)
+                            if (g.name == 'New' || cuss(g.name))
                                 xvt.hangup()
                             if (!g.name || /King|Mash|Mon|Queen/.test(g.name)) {
                                 menu()
@@ -128,13 +130,13 @@ module Party {
                             g.members = [$.player.id]
                             g.handles = [$.player.handle]
                             g.validated = [true]
-                            g.banner = $.dice(7)
-                            g.trim = $.dice(7)
-                            g.back = $.dice(7)
-                            g.fore = $.dice(7)
+                            g.banner = dice(7)
+                            g.trim = dice(7)
+                            g.back = dice(7)
+                            g.fore = dice(7)
                             showGang(g)
                             xtGang(g.name, $.player.gender, $.player.melee, g.banner, g.trim)
-                            $.action('yn')
+                            action('yn')
                             xvt.app.focus = 'accept'
                         }, prompt: 'New gang name? ', min: 2, max: 22
                     },
@@ -145,16 +147,16 @@ module Party {
                                 $.player.gang = g.name
                                 $.online.altered = true
                                 xvt.outln()
-                                $.saveGang(g, true)
-                                $.cat('party/gang')
-                                $.sound('click', 20)
+                                PC.saveGang(g, true)
+                                cat('party/gang')
+                                sound('click', 20)
                                 menu()
                             }
                             else {
-                                g.banner = $.dice(7)
-                                g.trim = $.dice(7)
-                                g.back = $.dice(7)
-                                g.fore = $.dice(7)
+                                g.banner = dice(7)
+                                g.trim = dice(7)
+                                g.back = dice(7)
+                                g.fore = dice(7)
                                 showGang(g)
                                 xvt.app.refocus()
                             }
@@ -175,12 +177,12 @@ module Party {
                     break
                 }
 
-                g = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+                g = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                 showGang(g)
                 xtGang(g.name, $.player.gender, $.player.melee, g.banner, g.trim)
-                $.sound('ddd', 6)
+                sound('ddd', 6)
 
-                $.action('ny')
+                action('ny')
                 xvt.app.form = {
                     'resign': {
                         cb: () => {
@@ -192,30 +194,30 @@ module Party {
                                 let i = g.members.indexOf($.player.id)
                                 if (i > 0) {
                                     g.members.splice(i, 1)
-                                    $.saveGang(g)
+                                    PC.saveGang(g)
                                 }
                                 else {
-                                    $.PC.adjust('cha', -2, -1)
+                                    PC.adjust('cha', -2, -1)
                                     xvt.out('\nDissolving the gang... ')
-                                    $.run(`UPDATE Players SET gang = '' WHERE gang = '${g.name}'`)
-                                    $.run(`DELETE FROM Gangs WHERE name = '${g.name}'`)
+                                    db.run(`UPDATE Players SET gang = '' WHERE gang = '${g.name}'`)
+                                    db.run(`DELETE FROM Gangs WHERE name = '${g.name}'`)
                                     xvt.outln()
                                 }
-                                $.PC.adjust('str'
-                                    , $.online.str > 40 ? -$.dice(6) - 4 : -3
-                                    , $.player.str > 60 ? -$.dice(3) - 2 : -2
+                                PC.adjust('str'
+                                    , $.online.str > 40 ? -dice(6) - 4 : -3
+                                    , $.player.str > 60 ? -dice(3) - 2 : -2
                                     , $.player.maxstr > 80 ? -2 : -1)
-                                $.PC.adjust('int'
-                                    , $.online.int > 40 ? -$.dice(6) - 4 : -3
-                                    , $.player.int > 60 ? -$.dice(3) - 2 : -2
+                                PC.adjust('int'
+                                    , $.online.int > 40 ? -dice(6) - 4 : -3
+                                    , $.player.int > 60 ? -dice(3) - 2 : -2
                                     , $.player.maxint > 80 ? -2 : -1)
-                                $.PC.adjust('dex'
-                                    , $.online.dex > 40 ? -$.dice(6) - 4 : -3
-                                    , $.player.dex > 60 ? -$.dice(3) - 2 : -2
+                                PC.adjust('dex'
+                                    , $.online.dex > 40 ? -dice(6) - 4 : -3
+                                    , $.player.dex > 60 ? -dice(3) - 2 : -2
                                     , $.player.maxdex > 80 ? -2 : -1)
-                                $.PC.adjust('cha'
-                                    , $.online.cha > 40 ? -$.dice(6) - 4 : -3
-                                    , $.player.cha > 60 ? -$.dice(3) - 2 : -2
+                                PC.adjust('cha'
+                                    , $.online.cha > 40 ? -dice(6) - 4 : -3
+                                    , $.player.cha > 60 ? -dice(3) - 2 : -2
                                     , $.player.maxcha > 80 ? -2 : -1)
                             }
                             g = {
@@ -239,9 +241,9 @@ module Party {
                 }
 
                 g.members = []
-                rs = $.query(`SELECT * FROM Gangs ORDER BY name`)
+                rs = db.query(`SELECT * FROM Gangs ORDER BY name`)
                 do {
-                    g = $.loadGang(rs[0])
+                    g = PC.loadGang(rs[0])
                     rs.splice(0, 1)
                     if (g.members.length < 4 || g.members.indexOf($.player.id) > 0)
                         break
@@ -250,7 +252,7 @@ module Party {
                 if (g.members.length > 0 && (g.members.length < 4 || g.members.indexOf($.player.id) > 0)) {
                     showGang(g)
 
-                    $.action('ny')
+                    action('ny')
                     xvt.app.form = {
                         'join': {
                             cb: () => {
@@ -259,16 +261,16 @@ module Party {
                                     $.online.altered = true
                                     if (g.members.indexOf($.player.id) < 0)
                                         g.members.push($.player.id)
-                                    $.run(`UPDATE Gangs SET members = '${g.members.join()}' WHERE name = '${g.name}'`)
+                                    db.run(`UPDATE Gangs SET members = '${g.members.join()}' WHERE name = '${g.name}'`)
                                     xvt.outln('\n')
-                                    $.cat('party/gang')
-                                    $.sound('click', 12)
+                                    cat('party/gang')
+                                    sound('click', 12)
                                     xvt.outln(xvt.cyan, 'You are now a member of ', xvt.bright, g.name, xvt.normal, '.', -1200)
                                 }
                                 else {
                                     g.members = []
                                     while (rs.length) {
-                                        g = $.loadGang(rs[0])
+                                        g = PC.loadGang(rs[0])
                                         rs.splice(0, 1)
                                         if (g.members.length < 4 || g.members.indexOf($.player.id) > 0)
                                             break
@@ -292,7 +294,7 @@ module Party {
                 if (!$.access.roleplay) break
                 if (!$.player.gang) break
 
-                g = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+                g = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                 showGang(g)
                 if (g.members.indexOf($.player.id) != 0) {
                     xvt.beep()
@@ -300,14 +302,14 @@ module Party {
                     break
                 }
                 xtGang(g.name, $.player.gender, $.player.melee, g.banner, g.trim)
-                $.sound('ddd', 6)
+                sound('ddd', 6)
 
                 Battle.user('Transfer leadership to', (member: active) => {
                     let n = g.members.indexOf(member.user.id)
                     if (n < 0) {
                         xvt.beep()
                         if (member.user.id) {
-                            $.profile(member)
+                            profile(member)
                             xvt.outln(`\n${member.user.handle} is not a member.`)
                         }
                     }
@@ -315,8 +317,8 @@ module Party {
                         if (member.user.gang == g.name) {
                             g.members[0] = member.user.id
                             g.members[n] = $.player.id
-                            $.saveGang(g)
-                            g = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+                            PC.saveGang(g)
+                            g = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                             showGang(g)
                             xvt.outln()
                             xvt.outln(xvt.bright, member.user.handle, ' is now leader of ', g.name, '.')
@@ -340,7 +342,7 @@ module Party {
                     break
                 }
 
-                g = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+                g = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                 showGang(g)
                 if (g.members.indexOf($.player.id) != 0) {
                     xvt.beep()
@@ -348,7 +350,7 @@ module Party {
                     break
                 }
                 xtGang(g.name, $.player.gender, $.player.melee, g.banner, g.trim)
-                $.action('ny')
+                action('ny')
 
                 xvt.app.form = {
                     'drop': {
@@ -362,20 +364,20 @@ module Party {
                                             if (member.user.handle) xvt.outln(`\n${member.user.handle} is not a member.`)
                                         }
                                         else {
-                                            if (!$.lock(member.user.id)) {
-                                                $.beep()
-                                                xvt.outln(`\n${$.PC.who(member).He}is currently engaged elsewhere and not available.`)
+                                            if (!db.lock(member.user.id)) {
+                                                xvt.beep()
+                                                xvt.outln(`\n${PC.who(member).He}is currently engaged elsewhere and not available.`)
                                             }
                                             else {
                                                 if (member.user.gang == g.name) {
                                                     member.user.gang = ''
-                                                    $.run(`UPDATE Players SET gang='' WHERE id='${member.user.id}'`)
+                                                    db.run(`UPDATE Players SET gang='' WHERE id='${member.user.id}'`)
                                                 }
                                                 g.members.splice(n, 1)
                                                 g.handles.splice(n, 1)
-                                                $.saveGang(g)
+                                                PC.saveGang(g)
                                                 showGang(g)
-                                                $.sound('click')
+                                                sound('click')
                                                 xvt.outln()
                                                 xvt.outln(xvt.bright, member.user.handle, ' is no longer on ', g.name, '.')
                                             }
@@ -402,10 +404,10 @@ module Party {
                                             if (!member.user.gang) {
                                                 g.members.push(member.user.id)
                                                 g.handles.push(member.user.handle)
-                                                $.saveGang(g)
+                                                PC.saveGang(g)
                                                 showGang(g)
-                                                $.log(member.user.id, `\n${$.player.handle} invites you to join ${g.name}`)
-                                                $.sound('click')
+                                                log(member.user.id, `\n${$.player.handle} invites you to join ${g.name}`)
+                                                sound('click')
                                                 xvt.outln()
                                                 xvt.outln(xvt.bright, member.user.handle, ' is invited to join ', g.name, '.')
                                             }
@@ -432,14 +434,14 @@ module Party {
                     break
                 }
 
-                rs = $.query(`SELECT * FROM Gangs ORDER BY name`)
+                rs = db.query(`SELECT * FROM Gangs ORDER BY name`)
                 for (let i = 0; i < rs.length; i++) {
-                    o = $.loadGang(rs[i])
+                    o = PC.loadGang(rs[i])
                     if (o.name !== $.player.gang)
-                        xvt.out($.bracket(i + 1), o.name)
+                        xvt.out(bracket(i + 1), o.name)
                 }
 
-                $.action('listmm')
+                action('listmm')
                 xvt.app.form = {
                     'gang': {
                         cb: () => {
@@ -455,8 +457,8 @@ module Party {
                                 return
                             }
 
-                            g = $.loadGang($.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
-                            o = $.loadGang(rs[i])
+                            g = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+                            o = PC.loadGang(rs[i])
                             if (o.name == g.name) {
                                 xvt.app.refocus()
                                 return
@@ -468,11 +470,11 @@ module Party {
                                     && (g.validated[i] || typeof g.validated[i] == 'undefined')
                                     && !g.status[i]) {
                                     let n = posse.push(<active>{ user: { id: g.members[i] } }) - 1
-                                    $.loadUser(posse[n])
+                                    loadUser(posse[n])
                                     if (posse[n].user.gang !== g.name || posse[n].user.status)
                                         posse.pop()
                                     else
-                                        $.activate(posse[n], true)
+                                        activate(posse[n], true)
                                 }
                             }
 
@@ -482,9 +484,9 @@ module Party {
                                 if (!/_MM.$/.test(o.members[i])) {
                                     if ((o.validated[i] || typeof o.validated[i] == 'undefined') && !o.status[i]) {
                                         let n = nme.push(<active>{ user: { id: o.members[i] } }) - 1
-                                        $.loadUser(nme[n])
+                                        loadUser(nme[n])
                                         if (nme[n].user.gang !== o.name
-                                            || !nme[n].user.xplevel || nme[n].user.status || !$.lock(nme[n].user.id, 2))
+                                            || !nme[n].user.xplevel || nme[n].user.status || !db.lock(nme[n].user.id, 2))
                                             nme.pop()
                                     }
                                 }
@@ -492,34 +494,34 @@ module Party {
                                     nme.push(<active>{})
                                     nme[i].user = <user>{ id: '' }
 
-                                    let mon = $.dice(3) - 2 + (posse[i] ? posse[i].user.level : $.dice(Object.keys(monsters).length / 2))
+                                    let mon = dice(3) - 2 + (posse[i] ? posse[i].user.level : dice(Object.keys(monsters).length / 2))
                                     mon = mon < 0 ? 0 : mon >= Object.keys(monsters).length ? Object.keys(monsters).length - 1 : mon
                                     let dm = Object.keys(monsters)[mon]
-                                    let ml = mon + $.dice(3) - 2
+                                    let ml = mon + dice(3) - 2
                                     ml = ml < 1 ? 1 : ml > 99 ? 99 : ml
                                     nme[i].user.handle = dm
                                     nme[i].user.sex = 'I'
-                                    $.reroll(nme[i].user, monsters[dm].pc ? monsters[dm].pc : $.player.pc, ml)
+                                    reroll(nme[i].user, monsters[dm].pc ? monsters[dm].pc : $.player.pc, ml)
 
-                                    nme[i].user.weapon = monsters[dm].weapon ? monsters[dm].weapon : $.Weapon.merchant[$.int(($.Weapon.merchant.length - 1) * ml / 100) + 1]
-                                    nme[i].user.armor = monsters[dm].armor ? monsters[dm].armor : $.Armor.merchant[$.int(($.Armor.merchant.length - 1) * ml / 100) + 1]
+                                    nme[i].user.weapon = monsters[dm].weapon ? monsters[dm].weapon : Weapon.merchant[int((Weapon.merchant.length - 1) * ml / 100) + 1]
+                                    nme[i].user.armor = monsters[dm].armor ? monsters[dm].armor : Armor.merchant[int((Armor.merchant.length - 1) * ml / 100) + 1]
 
                                     nme[i].user.poisons = []
                                     if (monsters[dm].poisons)
                                         for (let vials in monsters[dm].poisons)
-                                            $.Poison.add(nme[i].user.poisons, monsters[dm].poisons[vials])
+                                            Poison.add(nme[i].user.poisons, monsters[dm].poisons[vials])
 
                                     nme[i].user.rings = monsters[dm].rings || []
 
                                     nme[i].user.spells = []
                                     if (monsters[dm].spells)
                                         for (let magic in monsters[dm].spells)
-                                            $.Magic.add(nme[i].user.spells, monsters[dm].spells[magic])
+                                            Magic.add(nme[i].user.spells, monsters[dm].spells[magic])
 
-                                    $.activate(nme[i])
-                                    nme[i].user.toWC = $.int(nme[i].weapon.wc / 4) + 1
-                                    nme[i].user.coin = new $.coins($.money(ml))
-                                    nme[i].user.handle = titleCase(dm)
+                                    activate(nme[i])
+                                    nme[i].user.toWC = int(nme[i].weapon.wc / 4) + 1
+                                    nme[i].user.coin = new Coin(money(ml))
+                                    nme[i].user.handle = titlecase(dm)
                                     nme[i].user.gang = o.name
                                     o.handles[i] = nme[i].user.handle
                                     o.status[i] = ''
@@ -533,7 +535,7 @@ module Party {
                                 return
                             }
 
-                            $.action('ny')
+                            action('ny')
                             showGang(g, o, true)
                             xtGang(o.name, o.genders[0], o.melee[0], o.banner, o.trim)
                             xvt.app.focus = 'fight'
@@ -544,18 +546,18 @@ module Party {
                             xvt.outln('\n')
                             if (/Y/i.test(xvt.entry)) {
                                 $.party--
-                                $.music('party')
+                                music('party')
 
-                                if (!$.cat('dungeon/' + nme[0].user.handle.toLowerCase()))
-                                    $.cat('player/' + nme[0].user.pc.toLowerCase())
+                                if (!cat('dungeon/' + nme[0].user.handle.toLowerCase()))
+                                    cat('player/' + nme[0].user.pc.toLowerCase())
                                 xvt.outln(xvt.magenta, xvt.bright, nme[0].user.handle, xvt.reset
-                                    , ' grins as ', $.PC.who(nme[0]).he, 'pulls out '
-                                    , $.PC.who(nme[0]).his, $.PC.weapon(nme[0]), '.', -1200)
+                                    , ' grins as ', PC.who(nme[0]).he, 'pulls out '
+                                    , PC.who(nme[0]).his, weapon(nme[0]), '.', -1200)
 
                                 Battle.engage('Party', posse, nme, menu)
                             }
                             else {
-                                $.unlock($.player.id, true)
+                                db.unlock($.player.id, true)
                                 menu()
                             }
                         }, prompt: 'Fight this gang (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
@@ -565,7 +567,7 @@ module Party {
                 return
 
             case 'Q':
-                $.action('clear')
+                action('clear')
                 require('./main').menu($.player.expert)
                 return
         }
@@ -698,15 +700,15 @@ module Party {
 
         switch (sex) {
             case 'I':
-                $.profile({ handle: name, leader: 'gang/leadermm', banner: 'gang/bannermm', coat: 'gang/coatmm' })
+                profile({ handle: name, leader: 'gang/leadermm', banner: 'gang/bannermm', coat: 'gang/coatmm' })
                 break
 
             case 'F':
-                $.profile({ handle: name, leader: `gang/leader${melee}_f`, banner: `gang/banner${banner}`, coat: `gang/coat${coat}` })
+                profile({ handle: name, leader: `gang/leader${melee}_f`, banner: `gang/banner${banner}`, coat: `gang/coat${coat}` })
                 break
 
             default:
-                $.profile({ handle: name, leader: `gang/leader${melee}`, banner: `gang/banner${banner}`, coat: `gang/coat${coat}` })
+                profile({ handle: name, leader: `gang/leader${melee}`, banner: `gang/banner${banner}`, coat: `gang/coat${coat}` })
                 break
         }
     }

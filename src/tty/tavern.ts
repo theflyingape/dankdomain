@@ -3,13 +3,17 @@
  *  TAVERN authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import $ = require('../common')
-import fs = require('fs')
 import xvt = require('@theflyingape/xvt')
 import Battle = require('../battle')
 import Taxman = require('./taxman')
-import { isNotEmpty } from 'class-validator'
-import { sprintf } from 'sprintf-js'
+import fs = require('fs')
+import db = require('../db')
+import $ = require('../runtime')
+import { Coin, action, bracket, cat, checkXP, display, loadUser, music, profile, sound, title } from '../io'
+import { Access, Weapon } from '../items'
+import { cuss, news } from '../lib'
+import { PC } from '../pc'
+import { dice, money, int, sprintf } from '../sys'
 
 module Tavern {
 
@@ -25,15 +29,15 @@ module Tavern {
         'Y': { description: `Yesterday's news` }
     }
 
-    $.loadUser($.barkeep)
+    loadUser($.barkeep)
 
     export function menu(suppress = true) {
-        if ($.checkXP($.online, menu)) return
-        if ($.online.altered) $.saveUser($.online)
+        if (checkXP($.online, menu)) return
+        if ($.online.altered) PC.saveUser($.online)
         Taxman.bar()
         if ($.reason) xvt.hangup()
 
-        $.action('tavern')
+        action('tavern')
         xvt.app.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
@@ -43,7 +47,7 @@ module Tavern {
             if ($.player.coin.value)
                 hints += '> Carrying extra money around here is only good for posting a bounty\n  on someone or buying drinks & tips from the barkeep.\n'
         }
-        xvt.app.form['menu'].prompt = $.display('tavern', xvt.Yellow, xvt.yellow, suppress, tavern, hints)
+        xvt.app.form['menu'].prompt = display('tavern', xvt.Yellow, xvt.yellow, suppress, tavern, hints)
         xvt.app.focus = 'menu'
     }
 
@@ -51,11 +55,10 @@ module Tavern {
         let js: argument[] = []
         let suppress = false
         let choice = xvt.entry.toUpperCase()
-        if (isNotEmpty(tavern[choice]))
-            if (isNotEmpty(tavern[choice].description)) {
-                xvt.out(' - ', tavern[choice].description)
-                suppress = $.player.expert
-            }
+        if (tavern[choice]?.description) {
+            xvt.out(' - ', tavern[choice].description)
+            suppress = $.player.expert
+        }
         xvt.outln()
 
         switch (choice) {
@@ -65,12 +68,12 @@ module Tavern {
                     suppress = true
                     break
                 }
-                $.action('freetext')
+                action('freetext')
                 xvt.app.form = {
                     'argue': {
                         cb: () => {
                             xvt.outln()
-                            if (xvt.entry.length && !$.cuss(xvt.entry)) {
+                            if (xvt.entry.length && !cuss(xvt.entry)) {
                                 try { js = JSON.parse(fs.readFileSync('./users/arguments.json').toString()) } catch { }
                                 js = js.splice(+(js.length > 9), 9).concat(<argument>{ who: $.player.id, text: xvt.entry })
                                 fs.writeFileSync('./users/arguments.json', JSON.stringify(js))
@@ -88,7 +91,7 @@ module Tavern {
                     js = JSON.parse(fs.readFileSync('./users/arguments.json').toString())
                     for (let argument in js) {
                         xvt.outln()
-                        xvt.outln('    -=', $.bracket(js[argument].who, false), '=-')
+                        xvt.outln('    -=', bracket(js[argument].who, false), '=-')
                         xvt.outln(+argument % 2 ? xvt.lyellow : xvt.lcyan, js[argument].text)
                     }
                 }
@@ -99,39 +102,39 @@ module Tavern {
                 break
 
             case 'T':
-                $.cat('tavern/today')
+                cat('tavern/today')
                 suppress = true
                 break
 
             case 'Y':
-                $.cat('tavern/yesterday')
+                cat('tavern/yesterday')
                 suppress = true
                 break
 
             case 'G':
                 xvt.outln(`\n${$.barkeep.user.handle} pours you a beer.`, -500)
 
-                $.action('payment')
+                action('payment')
                 xvt.app.form = {
                     'tip': {
                         cb: () => {
                             xvt.outln('\n')
                             if ((+xvt.entry).toString() == xvt.entry) xvt.entry += 'c'
-                            let tip = (/=|max/i.test(xvt.entry)) ? $.player.coin.value : new $.coins(xvt.entry).value
+                            let tip = (/=|max/i.test(xvt.entry)) ? $.player.coin.value : new Coin(xvt.entry).value
                             if (tip < 1 || tip > $.player.coin.value) {
-                                $.sound('oops')
-                                xvt.outln($.PC.who($.barkeep).He, 'pours the beer on you and kicks you out of ', $.barkeep.who.his, 'bar.', -1000)
+                                sound('oops')
+                                xvt.outln(PC.who($.barkeep).He, 'pours the beer on you and kicks you out of ', $.barkeep.who.his, 'bar.', -1000)
                                 $.brawl = 0
                                 require('./main').menu(true)
                                 return
                             }
                             xvt.beep()
-                            xvt.out(xvt.yellow, $.PC.who($.barkeep).He, 'grunts and hands you your beer.')
+                            xvt.out(xvt.yellow, PC.who($.barkeep).He, 'grunts and hands you your beer.')
                             if ($.player.emulation == 'XT') xvt.out(' \u{1F37A}')
                             xvt.outln(-1000)
                             $.online.altered = true
                             $.player.coin.value -= tip
-                            xvt.out(xvt.green, $.PC.who($.barkeep).He, 'says, ', xvt.white, '"', [
+                            xvt.out(xvt.green, PC.who($.barkeep).He, 'says, ', xvt.white, '"', [
                                 'More stamina will yield more hit points',
                                 'More intellect will yield more spell power',
                                 `You don't miss as often with higher agility`,
@@ -165,11 +168,11 @@ module Tavern {
 
             case 'L':
                 xvt.outln(xvt.green, '\n        --=:)) Tavern Bounty List ((:=--\n')
-                let rs = $.query(`SELECT handle,bounty,who FROM Players WHERE bounty > 0 ORDER BY level DESC`)
+                let rs = db.query(`SELECT handle,bounty,who FROM Players WHERE bounty > 0 ORDER BY level DESC`)
                 for (let i in rs) {
                     let adversary = <active>{ user: { id: rs[i].who } }
-                    $.loadUser(adversary)
-                    let bounty = new $.coins(rs[i].bounty)
+                    loadUser(adversary)
+                    let bounty = new Coin(rs[i].bounty)
                     xvt.outln(`${rs[i].handle} has a ${bounty.carry()} bounty from ${adversary.user.handle}`)
                 }
                 xvt.app.form = {
@@ -186,7 +189,7 @@ module Tavern {
                     break
                 }
                 if ($.player.novice || $.player.level < 10) {
-                    $.sound('crowd')
+                    sound('crowd')
                     xvt.outln('\nThe crowd laughs at your gesture.', -1000)
                     xvt.outln(`${$.barkeep.user.handle} snorts, "Be for real."`)
                     suppress = true
@@ -203,24 +206,24 @@ module Tavern {
                         menu()
                         return
                     }
-                    let max = new $.coins(new $.coins(10 * $.money(opponent.user.level)).carry(1, true))
-                    if (max.value > $.player.coin.value) max = new $.coins($.player.coin.carry(1, true))
+                    let max = new Coin(new Coin(10 * money(opponent.user.level)).carry(1, true))
+                    if (max.value > $.player.coin.value) max = new Coin($.player.coin.carry(1, true))
 
-                    $.action('payment')
+                    action('payment')
                     xvt.app.form = {
                         'coin': {
                             cb: () => {
                                 xvt.outln()
                                 if ((+xvt.entry).toString() == xvt.entry) xvt.entry += 'c'
-                                let post = $.int((/=|max/i.test(xvt.entry)) ? max.value : new $.coins(xvt.entry).value)
+                                let post = int((/=|max/i.test(xvt.entry)) ? max.value : new Coin(xvt.entry).value)
                                 if (post > 0 && post <= max.value) {
                                     $.player.coin.value -= post
-                                    opponent.user.bounty = new $.coins(post)
+                                    opponent.user.bounty = new Coin(post)
                                     opponent.user.who = $.player.id
-                                    $.beep()
+                                    xvt.beep()
                                     xvt.outln(`\nYour bounty is posted for all to see.`, -500)
-                                    $.news(`\tposted a bounty on ${opponent.user.handle}`)
-                                    $.saveUser(opponent)
+                                    news(`\tposted a bounty on ${opponent.user.handle}`)
+                                    PC.saveUser(opponent)
                                 }
                                 menu(true)
                             }, max: 6
@@ -238,7 +241,7 @@ module Tavern {
                 $.tiny--
                 switch ($.tiny) {
                     case 2:
-                        $.profile({
+                        profile({
                             jpg: 'npc/barkeep', effect: 'fadeInRight'
                             , handle: $.barkeep.user.handle, level: $.barkeep.user.level, pc: $.barkeep.user.pc
                         })
@@ -246,70 +249,70 @@ module Tavern {
                         if ($.player.level < 60)
                             xvt.outln('The barkeep stares off into empty space, ignoring your wimpy comment.')
                         else
-                            xvt.outln(`The barkeep points at ${$.PC.who($.barkeep).his}massive, flexed bicep and laughs at your jest.`)
+                            xvt.outln(`The barkeep points at ${PC.who($.barkeep).his}massive, flexed bicep and laughs at your jest.`)
                         suppress = true
                         break
 
                     case 1:
-                        $.profile({
+                        profile({
                             jpg: 'npc/barkeep', effect: 'shakeX'
                             , handle: $.barkeep.user.handle, level: $.barkeep.user.level, pc: $.barkeep.user.pc
                         })
                         xvt.outln('thumb your nose.', -1000)
                         if ($.player.level < 60)
-                            xvt.outln(`Annoyed, the barkeep looks down at ${$.PC.who($.barkeep).his}furry feet and counts, \"100, 99, 98,...\"`)
+                            xvt.outln(`Annoyed, the barkeep looks down at ${PC.who($.barkeep).his}furry feet and counts, \"100, 99, 98,...\"`)
                         else
-                            xvt.outln(`The former Champion Ogre grunts to ${$.PC.who($.barkeep).self} "Not good for business."`)
+                            xvt.outln(`The former Champion Ogre grunts to ${PC.who($.barkeep).self} "Not good for business."`)
                         suppress = true
                         break
 
                     default:
                         $.brawl = 0
-                        $.music('.')
+                        music('.')
                         xvt.outln(`jest, "What you looking at, wart-face!"`, -1200)
-                        $.profile({
+                        profile({
                             jpg: 'npc/barkeep', effect: 'shakeY'
                             , handle: $.barkeep.user.handle, level: $.barkeep.user.level, pc: $.barkeep.user.pc
                         })
                         xvt.out('Uh, oh!')
-                        $.sound('ddd', 22)
-                        $.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} death match with ${$.barkeep.user.handle}`)
+                        sound('ddd', 22)
+                        title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} death match with ${$.barkeep.user.handle}`)
                         xvt.out('  Here comes Tiny!')
-                        $.sound('challenge', 12)
-                        xvt.outln(`  And ${$.PC.who($.barkeep).he}doesn't look friendly...\n`, -600)
+                        sound('challenge', 12)
+                        xvt.outln(`  And ${PC.who($.barkeep).he}doesn't look friendly...\n`, -600)
                         xvt.outln(xvt.green, xvt.bright, [
                             `"When I'm through with you, your mama won't be able to identify the remains."`,
                             `"I am getting too old for this."`,
-                            `"Never rub another man\'s rhubarb!"`][$.dice(3) - 1], -3000)
+                            `"Never rub another man\'s rhubarb!"`][dice(3) - 1], -3000)
 
-                        $.loadUser($.barkeep)
+                        loadUser($.barkeep)
                         let trophy = JSON.parse(fs.readFileSync(`./files/tavern/trophy.json`).toString())
-                        $.barkeep.user.toWC = $.int($.barkeep.weapon.wc / 5, true)
-                        if ($.barkeep.weapon.wc < $.Weapon.merchant.length)
-                            $.barkeep.toWC += $.int(($.Weapon.merchant.length - $.barkeep.weapon.wc) / 10) + 1
+                        $.barkeep.user.toWC = int($.barkeep.weapon.wc / 5, true)
+                        if ($.barkeep.weapon.wc < Weapon.merchant.length)
+                            $.barkeep.toWC += int((Weapon.merchant.length - $.barkeep.weapon.wc) / 10) + 1
 
-                        xvt.outln(`\n${$.barkeep.user.handle} towels ${$.PC.who($.barkeep).his}hands dry from washing the day\'s\nglasses, ${$.PC.who($.barkeep).he}warns,\n`)
+                        xvt.outln(`\n${$.barkeep.user.handle} towels ${PC.who($.barkeep).his}hands dry from washing the day\'s\nglasses, ${PC.who($.barkeep).he}warns,\n`)
                         xvt.outln(xvt.bright, xvt.green, '"Another fool said something like that to me, once, and got all busted up."\n', -5000)
                         let fool = <active>{ user: { id: trophy.who, handle: 'a pirate', gender: 'M' } }
-                        $.loadUser(fool)
+                        loadUser(fool)
                         xvt.outln(xvt.bright, xvt.green, `"I think it was ${fool.user.handle}, and it took me a week to clean up the blood!"\n`, -4000)
 
-                        $.music('tiny')
-                        xvt.out(`${$.PC.who($.barkeep).He}points to a buffed weapon hanging over the mantlepiece and says, `
+                        music('tiny')
+                        xvt.out(`${PC.who($.barkeep).He}points to a buffed weapon hanging over the mantlepiece and says, `
                             , xvt.green, xvt.bright, '"Lookee\n')
-                        xvt.outln(`there, ${$.PC.who(fool).he}tried to use that ${trophy.weapon}`, xvt.green, xvt.bright, `, but it wasn't enough\nto take me.\"\n`, -6000)
+                        xvt.outln(`there, ${PC.who(fool).he}tried to use that ${trophy.weapon}`, xvt.green, xvt.bright, `, but it wasn't enough\nto take me.\"\n`, -6000)
                         xvt.out('The patrons move in closer to witness the forthcoming slaughter, except for\n')
                         xvt.outln(`${$.taxman.user.handle} who is busy raiding the bar of its beer and nuts.`, -5000)
                         xvt.outln(`\nYou hear a cry, "I'll pay fifteen-to-one on the challenger!"`, -4000)
-                        $.sound('crowd')
+                        sound('crowd')
                         xvt.out('The crowd roars with laughter... ', -3000)
                         xvt.outln('you are not amused.', -2000)
-                        xvt.outln(`\n${$.barkeep.user.handle} removes ${$.PC.who($.barkeep).his}tunic to reveal a massive, but\nheavily scarred chest.`, -2500)
+                        xvt.outln(`\n${$.barkeep.user.handle} removes ${PC.who($.barkeep).his}tunic to reveal a massive, but\nheavily scarred chest.`, -2500)
                         xvt.out('\nYou look for an exit, but there is none to be found... ', -2500)
                         xvt.outln()
 
                         $.player.coward = true
-                        $.saveUser($.online)
+                        PC.saveUser($.online)
                         $.online.altered = true
                         Battle.engage('Tavern', $.online, $.barkeep, require('./main').menu)
                         return
@@ -321,7 +324,7 @@ module Tavern {
                     xvt.outln('\nYou have run out of brawls.')
                     break
                 }
-                $.online.bp = $.online.hp > 9 ? $.int($.online.hp / 10) : 1
+                $.online.bp = $.online.hp > 9 ? int($.online.hp / 10) : 1
                 Battle.user('Brawl', (opponent: active) => {
                     if (opponent.user.id == '') {
                         menu(true)
@@ -341,39 +344,39 @@ module Tavern {
                     xvt.outln(xvt.green, 'Name: ', xvt.white, sprintf('%-22s      You:', opponent.user.handle))
                     xvt.outln(xvt.green, 'Level: ', xvt.white, sprintf('%-22d     %-2d', opponent.user.level, $.player.level))
                     xvt.outln(xvt.green, 'Knock out points: ', xvt.white, sprintf('%-15d %-3d', opponent.bp, $.online.bp))
-                    if (!$.Access.name[opponent.user.access].roleplay) {
+                    if (!Access.name[opponent.user.access].roleplay) {
                         xvt.outln('\nYou are allowed only to brawl other players.')
                         if (opponent.user.id[0] == '_') {
-                            $.PC.adjust('cha', -2, -1)
+                            PC.adjust('cha', -2, -1)
                             $.player.coward = true
                         }
                         menu(true)
                         return
                     }
-                    if (!$.lock(opponent.user.id)) {
-                        $.beep()
-                        xvt.outln(xvt.cyan, xvt.faint, `\n${$.PC.who(opponent).He}is currently engaged elsewhere and not available.`)
+                    if (!db.lock(opponent.user.id)) {
+                        xvt.beep()
+                        xvt.outln(xvt.cyan, xvt.faint, `\n${PC.who(opponent).He}is currently engaged elsewhere and not available.`)
                         menu(true)
                         return
                     }
 
-                    $.action('ny')
+                    action('ny')
                     xvt.app.form = {
                         'brawl': {
                             cb: () => {
                                 xvt.outln('\n')
                                 if (/Y/i.test(xvt.entry)) {
                                     $.brawl--
-                                    if (($.online.dex / 2 + $.dice($.online.dex / 2)) > (opponent.dex / 2 + $.dice(opponent.dex / 2))) {
+                                    if (($.online.dex / 2 + dice($.online.dex / 2)) > (opponent.dex / 2 + dice(opponent.dex / 2))) {
                                         xvt.outln('You get the first punch.')
                                         Battle.brawl($.online, opponent)
                                     }
                                     else
-                                        xvt.outln(`${$.PC.who(opponent).He}gets the first punch.`)
+                                        xvt.outln(`${PC.who(opponent).He}gets the first punch.`)
                                     if ($.online.bp > 0 && opponent.bp > 0)
                                         Battle.brawl(opponent, $.online)
                                     if ($.online.bp > 0 && opponent.bp > 0) {
-                                        $.action('brawl')
+                                        action('brawl')
                                         xvt.app.focus = 'punch'
                                     }
                                     else
@@ -392,7 +395,7 @@ module Tavern {
                                         Battle.brawl(opponent, $.online)
                                 }
                                 if (/G/i.test(xvt.entry)) {
-                                    $.unlock($.player.id, true)
+                                    db.unlock($.player.id, true)
                                     xvt.outln(`\nWe can't all be Rocky, eh?`)
                                     menu($.player.expert)
                                     return
@@ -402,10 +405,10 @@ module Tavern {
                                 if ($.online.bp > 0 && opponent.bp > 0)
                                     xvt.app.refocus()
                                 else {
-                                    $.unlock($.player.id, true)
+                                    db.unlock($.player.id, true)
                                     menu($.player.expert)
                                 }
-                            }, prompt: xvt.attr($.bracket('P', false), xvt.cyan, `unch ${$.PC.who(opponent).him}`, $.bracket('G', false), xvt.cyan, 'ive it up, ', $.bracket('Y', false), xvt.cyan, 'our status: ')
+                            }, prompt: xvt.attr(bracket('P', false), xvt.cyan, `unch ${PC.who(opponent).him}`, bracket('G', false), xvt.cyan, 'ive it up, ', bracket('Y', false), xvt.cyan, 'our status: ')
                             , cancel: 'G', enter: 'P', eol: false, match: /P|G|Y/i, timeout: 30
                         }
                     }

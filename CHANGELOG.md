@@ -5,9 +5,15 @@
 🇺🇸 ©️1991 - 2021 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) on a **Chromebook** using Visual Code and TypeScript/html/css for the browser with [terminal emulator](https:/xtermjs.org) and telnet clients; and to run the resulting Node.js full stack [services and app](https://play.DDgame.us) on the **Google Cloud Platform** (us-central1) or in a **Docker** container.
 
-### **01-Jan-2021** `v2.9.4`
+### **01-Jan-2021** `v3.0.0`
 
 * Happy New Year! 🔔
+* major code refactoring
+* automated player bot integration begins
+
+#### **24-Dec-2020** `v2.9.3`
+
+* Merry Christmas! 🎅 🎄
 * player fairness corrections
 * updated dungeon specials distribution pattern
 * Dockerfile to run app in a [container](https://hub.docker.com/repository/docker/theflyingape/dankdomain)
@@ -18,7 +24,7 @@
 
 * [Veterans Day](https://en.wikipedia.org/wiki/Veterans_Day) and [DJT #45](https://www.whitehouse.gov/people/donald-j-trump/) is still Alive!
 * maintenance release: UI fixes and corrected limit to "boss" encounters in play.json
-* new boss encounter: *Medea*, an old witch/sorceress that can "help" adventurer for a price
+* new boss encounter: *Medea*, an old witch/sorceress that can "help" adventurer (for a price):
   * any unique rings are taken away from other players and given to you; or
   * if player does not possess Morph, provide advanced Magic (replaces wish from the well); or
   * resurrect the dead & curse the land

@@ -3,18 +3,22 @@
  *  EMAIL authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import $ = require('./common')
+import xvt = require('@theflyingape/xvt')
 import fs = require('fs')
 import nodemailer = require('nodemailer')
 import smtpTransport = require('nodemailer-smtp-transport')
-import xvt = require('@theflyingape/xvt')
-import { isEmail } from 'class-validator'
+import db = require('./db')
+import $ = require('./runtime')
+import { action, music, sound } from './io'
+import { Access } from './items'
+import { PC } from './pc'
+import { dice } from './sys'
 
 module Email {
 
     let echo = true
 
-    $.action('freetext')
+    action('freetext')
     xvt.app.form = {
         'email': { cb: email, prompt: 'Enter your e-mail address now: ', min: 8 },
         'check': { cb: check, prompt: 'Re-enter email to verify: ' }
@@ -28,11 +32,12 @@ module Email {
 
     function email() {
         $.player.email = xvt.entry.toLowerCase()
+        /*
         if (!isEmail($.player.email)) {
             xvt.app.refocus()
             return
         }
-
+        */
         xvt.app.form['check'].max = $.player.email.length
         xvt.app.focus = 'check'
     }
@@ -46,10 +51,10 @@ module Email {
             return
         }
 
-        $.player.password = String.fromCharCode(64 + $.dice(26)) + String.fromCharCode(96 + $.dice(26)) + $.dice(999) + '!@#$%^&*'[$.dice(8) - 1]
+        $.player.password = String.fromCharCode(64 + dice(26)) + String.fromCharCode(96 + dice(26)) + dice(999) + '!@#$%^&*'[dice(8) - 1]
 
-        let rs = $.query(`SELECT COUNT(email) AS n FROM Players WHERE email='${$.player.email}' GROUP BY email`)
-        if (rs.length && rs[0].n > 2) $.player.access = Object.keys($.Access.name)[1]
+        let rs = db.query(`SELECT COUNT(email) AS n FROM Players WHERE email='${$.player.email}' GROUP BY email`)
+        if (rs.length && rs[0].n > 2) $.player.access = Object.keys(Access.name)[1]
 
         try {
             let message = JSON.parse(fs.readFileSync('./etc/newuser.json').toString())
@@ -91,7 +96,7 @@ module Email {
 
     export async function Deliver(player: user, what: string, repeat: boolean, mailOptions: nodemailer.SendMailOptions) {
         xvt.out('\n\n', xvt.magenta, xvt.bright)
-        let royalty = Object.keys($.Access.name).slice($.player.gender == 'F' ? -2 : -1)[0]
+        let royalty = Object.keys(Access.name).slice($.player.gender == 'F' ? -2 : -1)[0]
         if ($.player.emulation == 'XT') xvt.out('👑 ')
         xvt.out(`The ${royalty} orders the royal scribe to dispatch ${what}\naddressed to ${$.player.handle} ` + (!repeat ? `<${$.player.email}> ` : ''), xvt.reset)
         if ($.player.email !== $.sysop.email)
@@ -103,11 +108,10 @@ module Email {
             xvt.outln(`...or its exported save file:`)
             xvt.out(`$ grep password ./users/.${player.id}.json`)
             if ($.reason.length)
-                $.saveUser(player, true)
+                PC.saveUser(player, true)
         }
-        $.music('.')
+        music('.')
         xvt.outln(-1000)
-        $.logoff()
         xvt.hangup()
     }
 
@@ -119,8 +123,8 @@ module Email {
             if (echo) {
                 xvt.outln(xvt.red, xvt.bright, './etc/smtp.json not configured for sending email')
                 player.password = 'local'
-                $.saveUser(player, true)
-                xvt.outln('\nYour user ID (', xvt.bright, player.id, xvt.normal, ') was saved, ', $.Access.name[player.access][player.gender], '.')
+                PC.saveUser(player, true)
+                xvt.outln('\nYour user ID (', xvt.bright, player.id, xvt.normal, ') was saved, ', Access.name[player.access][player.gender], '.')
                 xvt.outln('Your local password assigned: ', xvt.bright, player.password)
             }
             return
@@ -136,16 +140,16 @@ module Email {
         await smtp.verify().then(async () => {
             if (echo) {
                 xvt.out('→ 📨 ')
-                $.sound('click')
+                sound('click')
             }
             await smtp.sendMail(mailOptions).then((msg) => {
                 if (echo) {
                     xvt.outln('📬')
                     xvt.outln(msg.response)
                     if ($.reason.length) {
-                        $.saveUser(player, true)
-                        xvt.outln('\nYour user ID (', xvt.bright, player.id, xvt.normal, ') was saved, ', $.Access.name[player.access][player.gender], '.')
-                        $.sound('yahoo')
+                        PC.saveUser(player, true)
+                        xvt.outln('\nYour user ID (', xvt.bright, player.id, xvt.normal, ') was saved, ', Access.name[player.access][player.gender], '.')
+                        sound('yahoo')
                     }
                 }
                 result = true
@@ -157,7 +161,7 @@ module Email {
                     player.email = ''
                     xvt.outln('\nSorry -- your user registration was aborted.')
                     xvt.outln(`Please contact ${mailOptions.from} with this error message.`)
-                    $.sound('boom')
+                    sound('boom')
                 }
                 result = false
             })
