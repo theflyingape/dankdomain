@@ -3,16 +3,15 @@
  *  MAIN authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
 
-import xvt = require('@theflyingape/xvt')
 import Battle = require('../battle')
 import fs = require('fs')
 import db = require('../db')
 import $ = require('../runtime')
-import { Award, Coin, action, activate, animated, cat, checkTime, checkXP, display, emulator, input, music, playerPC, portrait, profile, reroll, sound, status } from '../io'
+import { vt, Award, Coin, action, activate, animated, cat, checkTime, checkXP, display, emulator, input, music, playerPC, portrait, profile, reroll, sound, status } from '../io'
 import { Armor, Weapon, Security, RealEstate, Ring } from '../items'
 import { cuss, log, news } from '../lib'
 import { PC } from '../pc'
-import { an, dice, int, money, sprintf, worth } from '../sys'
+import { an, dice, int, money, sprintf, tradein } from '../sys'
 
 module Main {
 
@@ -35,34 +34,34 @@ module Main {
     }
 
     profile({ png: 'castle', effect: 'pulse' })
-    xvt.outln()
+    vt.outln()
     cat('border')
 
     export function menu(suppress = true) {
         if (checkXP($.online, menu)) return
         if ($.online.altered) PC.saveUser($.online)
-        if ($.reason) xvt.hangup()
+        if ($.reason) vt.hangup()
 
         if (!suppress) profile({ png: ['castle', 'joust', 'dragon'][dice(3) - 1], effect: 'pulse' })
         action('main')
-        xvt.app.form = {
+        vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
 
-        xvt.app.form['menu'].prompt =
-            xvt.attr('Time Left: ', xvt.white, xvt.bright, checkTime().toString(), xvt.normal, xvt.cyan, ' min.\n', xvt.reset)
-            + display('main', xvt.Blue, xvt.blue, suppress, mainmenu)
+        vt.form['menu'].prompt =
+            vt.attr('Time Left: ', vt.white, vt.bright, checkTime().toString(), vt.normal, vt.cyan, ' min.\n', vt.reset)
+            + display('main', vt.Blue, vt.blue, suppress, mainmenu)
         input('menu', 'q')
     }
 
     function choice() {
         let suppress = false
-        let choice = xvt.entry.toUpperCase()
+        let choice = vt.entry.toUpperCase()
         if (mainmenu[choice]?.description) {
-            xvt.out(' - ', mainmenu[choice].description)
+            vt.out(' - ', mainmenu[choice].description)
             suppress = $.player.expert
         }
-        xvt.outln()
+        vt.outln()
 
         switch (choice) {
             case '@':
@@ -86,7 +85,7 @@ module Main {
                     require('./dungeon').DeepDank($.player.level - 1, menu)
                 }
                 else {
-                    xvt.outln('\nYou have run out of dungeon turns.')
+                    vt.outln('\nYou have run out of dungeon turns.')
                     suppress = true
                     break
                 }
@@ -103,10 +102,10 @@ module Main {
                 return
 
             case 'M':
-                xvt.outln()
-                xvt.outln('  ', xvt.bright, $.player.emulation == 'XT' ? xvt.Blue : xvt.white
+                vt.outln()
+                vt.outln('  ', vt.bright, $.player.emulation == 'XT' ? vt.Blue : vt.white
                     , ` ID   Player's Handle           Class    Lvl  Status  Party                 `)
-                xvt.outln('  ', $.player.emulation == 'XT' ? xvt.Blue : xvt.faint
+                vt.outln('  ', $.player.emulation == 'XT' ? vt.Blue : vt.faint
                     , '----------------------------------------------------------------------------')
 
                 let top3 = {}
@@ -125,26 +124,26 @@ module Main {
                 `)
 
                 for (let n in rs) {
-                    xvt.out(top3[rs[n].handle] || '  ')
+                    vt.out(top3[rs[n].handle] || '  ')
                     //  paint a target on any player that is winning
                     if (rs[n].pc == PC.winning)
-                        xvt.out(xvt.yellow, xvt.bright)
+                        vt.out(vt.yellow, vt.bright)
                     else if (rs[n].id == $.player.id)
-                        xvt.out(xvt.bright)
+                        vt.out(vt.bright)
                     if (rs[n].xplevel < rs[n].level)
-                        xvt.out(xvt.faint)
-                    xvt.out(sprintf('%-4s  %-22.22s  %-9s  %3d  '
+                        vt.out(vt.faint)
+                    vt.out(sprintf('%-4s  %-22.22s  %-9s  %3d  '
                         , rs[n].id, rs[n].handle, rs[n].pc, rs[n].xplevel))
-                    if (!rs[n].status.length) xvt.out('Alive!')
+                    if (!rs[n].status.length) vt.out('Alive!')
                     else {
                         if ($.player.emulation == 'XT')
-                            xvt.out(rs[n].status == 'jail' ? '🔒' : '🍺', xvt.faint, rs[n].status == 'jail' ? 'jail' : 'beer')
+                            vt.out(rs[n].status == 'jail' ? '🔒' : '🍺', vt.faint, rs[n].status == 'jail' ? 'jail' : 'beer')
                         else
-                            xvt.out(xvt.faint, rs[n].status == 'jail' ? '#jail#' : '^beer^')
+                            vt.out(vt.faint, rs[n].status == 'jail' ? '#jail#' : '^beer^')
                     }
-                    xvt.out('  ', rs[n].id == $.player.id ? xvt.bright : xvt.normal)
-                    if (rs[n].gang == $.player.gang) xvt.out(xvt.Red)
-                    xvt.outln(rs[n].gang)
+                    vt.out('  ', rs[n].id == $.player.id ? vt.bright : vt.normal)
+                    if (rs[n].gang == $.player.gang) vt.out(vt.Red)
+                    vt.outln(rs[n].gang)
                 }
                 suppress = true
                 break
@@ -160,15 +159,15 @@ module Main {
                 return
 
             case 'Q':
-                xvt.beep()
+                vt.beep()
                 action('ny')
-                xvt.app.form = {
+                vt.form = {
                     'yn': {
                         cb: () => {
-                            xvt.outln()
-                            if (/Y/i.test(xvt.entry)) {
+                            vt.outln()
+                            if (/Y/i.test(vt.entry)) {
                                 if (!$.reason.length) $.reason = 'logged off as a level ' + $.player.level + ' ' + $.player.pc
-                                xvt.hangup()
+                                vt.hangup()
                             }
                             menu()
                         }, prompt: 'Are you sure (Y/N)? ', cancel: 'Y', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
@@ -180,74 +179,74 @@ module Main {
 
             case 'R':
                 if (!$.access.roleplay) break
-                xvt.outln()
+                vt.outln()
                 if ($.player.novice) {
-                    xvt.outln('Novice players cannot rob.')
+                    vt.outln('Novice players cannot rob.')
                     suppress = true
                     break
                 }
                 music('steal')
-                xvt.outln(xvt.faint, 'It is a hot, moonless night.', -600)
-                xvt.outln('A city guard walks down another street.', -600)
+                vt.outln(vt.faint, 'It is a hot, moonless night.', -600)
+                vt.outln('A city guard walks down another street.', -600)
 
-                let self = worth(new Coin($.online.armor.value).value, $.online.cha)
-                self += worth(new Coin($.online.weapon.value).value, $.online.cha)
+                let self = tradein(new Coin($.online.armor.value).value, $.online.cha)
+                self += tradein(new Coin($.online.weapon.value).value, $.online.cha)
                 self += $.player.coin.value + $.player.bank.value - $.player.loan.value
                 self = int(self / (6 + $.player.steal))
 
                 Battle.user('Rob', (opponent: active) => {
-                    xvt.outln()
+                    vt.outln()
                     if (opponent.user.id == $.player.id) {
                         opponent.user.id = ''
-                        xvt.outln(`You can't rob yourself.`)
+                        vt.outln(`You can't rob yourself.`)
                     }
                     else if (opponent.user.novice) {
                         opponent.user.id = ''
-                        xvt.outln(`You can't rob novice players.`)
+                        vt.outln(`You can't rob novice players.`)
                     }
                     else if ($.player.level - opponent.user.level > 3) {
                         opponent.user.id = ''
-                        xvt.outln('You can only rob someone higher or up to three levels below you.')
+                        vt.outln('You can only rob someone higher or up to three levels below you.')
                     }
                     if (opponent.user.id == '') {
                         menu()
                         return
                     }
                     if (!db.lock(opponent.user.id)) {
-                        xvt.beep()
-                        xvt.outln(`${PC.who(opponent).He}is currently engaged elsewhere and not available.`)
+                        vt.beep()
+                        vt.outln(`${PC.who(opponent).He}is currently engaged elsewhere and not available.`)
                         menu()
                         return
                     }
 
-                    xvt.outln(xvt.faint, `You case ${opponent.user.handle}'s joint out.`, -600)
-                    let prize = worth(new Coin(Armor.name[opponent.user.armor].value).value, $.online.cha)
-                    prize += worth(new Coin(Weapon.name[opponent.user.weapon].value).value, $.online.cha)
+                    vt.outln(vt.faint, `You case ${opponent.user.handle}'s joint out.`, -600)
+                    let prize = tradein(new Coin(Armor.name[opponent.user.armor].value).value, $.online.cha)
+                    prize += tradein(new Coin(Weapon.name[opponent.user.weapon].value).value, $.online.cha)
                     if ($.dungeon && opponent.user.cannon) prize += money(opponent.user.level)
                     if ($.arena) prize += opponent.user.coin.value
                     prize = int(prize / (6 - $.player.steal))
 
                     if (dice($.online.int) > 5 && prize < self) {
-                        xvt.outln('But you decide it is not worth the effort.', -600)
+                        vt.outln('But you decide it is not worth the effort.', -600)
                         menu()
                         return
                     }
 
-                    xvt.outln(xvt.faint, xvt.cyan, 'The goods are in'
-                        , xvt.normal, an(opponent.user.realestate)
-                        , xvt.faint, ' protected by'
-                        , xvt.normal, an(opponent.user.security)
-                        , xvt.faint, '.')
+                    vt.outln(vt.faint, vt.cyan, 'The goods are in'
+                        , vt.normal, an(opponent.user.realestate)
+                        , vt.faint, ' protected by'
+                        , vt.normal, an(opponent.user.security)
+                        , vt.faint, '.')
 
                     action('ny')
-                    xvt.app.form = {
+                    vt.form = {
                         'yn': {
                             cb: () => {
-                                xvt.outln()
-                                if (/Y/i.test(xvt.entry)) {
-                                    xvt.out(xvt.cyan, '\nYou slide into ', -200
-                                        , xvt.faint, 'the shadows and ', -400
-                                        , xvt.white, 'make your attempt ', xvt.blue, -600)
+                                vt.outln()
+                                if (/Y/i.test(vt.entry)) {
+                                    vt.out(vt.cyan, '\nYou slide into ', -200
+                                        , vt.faint, 'the shadows and ', -400
+                                        , vt.white, 'make your attempt ', vt.blue, -600)
 
                                     let lock = 5 *
                                         (Security.name[opponent.user.security].protection + +(opponent.user.status !== 'jail'))
@@ -259,13 +258,13 @@ module Main {
                                         + Ring.power($.player.rings, opponent.user.rings, 'steal').power
 
                                     for (let pick = 0; pick < $.player.steal; pick++) {
-                                        xvt.out('.')
+                                        vt.out('.')
                                         sound('click', 6)
                                         skill += dice(100 + $.player.steal) < effort
                                             ? dice($.player.level + $.player.steal - $.steal)
                                             : lock
                                     }
-                                    xvt.outln(-300)
+                                    vt.outln(-300)
 
                                     if ($.player.email == opponent.user.email || !db.lock(opponent.user.id)) {
                                         $.player.coward = true
@@ -277,7 +276,7 @@ module Main {
                                         if (!$.arena || !$.dungeon) $.steal++
                                         $.player.coin.value += prize
                                         $.player.steals++
-                                        xvt.outln('You break in and make off with ', new Coin(prize).carry(), ' worth of stuff!')
+                                        vt.outln('You break in and make off with ', new Coin(prize).carry(), ' worth of stuff!')
                                         sound('max', 12)
 
                                         if ($.arena) opponent.user.coin.value = 0
@@ -310,22 +309,22 @@ module Main {
                                         log(opponent.user.id, `\n${$.player.handle} robbed you!`)
                                     }
                                     else {
-                                        xvt.beep()
+                                        vt.beep()
                                         log(opponent.user.id, `\n${$.player.handle} was caught robbing you!`)
                                         $.reason = `caught robbing ${opponent.user.handle}`
                                         $.player.status = 'jail'
                                         action('clear')
                                         profile({ png: 'npc/city_guard_2', effect: 'fadeIn' })
-                                        xvt.outln('A city guard catches you and throws you into jail!')
+                                        vt.outln('A city guard catches you and throws you into jail!')
                                         sound('arrested', 20)
-                                        xvt.outln('You might be released by your next call.\n', -1000)
+                                        vt.outln('You might be released by your next call.\n', -1000)
                                     }
                                 }
                                 menu()
                             }, prompt: 'Attempt to steal (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
                         }
                     }
-                    xvt.app.focus = 'yn'
+                    vt.focus = 'yn'
                 })
                 return
 
@@ -336,7 +335,7 @@ module Main {
 
             case 'T':
                 if (!$.tiny) {
-                    xvt.outln(`\nThe tavern is closed for the day.`)
+                    vt.outln(`\nThe tavern is closed for the day.`)
                     suppress = true
                     break
                 }
@@ -349,12 +348,12 @@ module Main {
                 music('.')
                 action('ny')
                 let newpassword: string = ''
-                xvt.app.form = {
+                vt.form = {
                     'yn': {
                         cb: () => {
-                            xvt.outln()
-                            if (xvt.entry.toUpperCase() == 'Y') {
-                                xvt.app.focus = 'new'
+                            vt.outln()
+                            if (vt.entry.toUpperCase() == 'Y') {
+                                vt.focus = 'new'
                                 return
                             }
                             emulator(menu)
@@ -362,32 +361,32 @@ module Main {
                     },
                     'new': {
                         cb: () => {
-                            if (xvt.entry.length < 4) {
-                                xvt.beep()
+                            if (vt.entry.length < 4) {
+                                vt.beep()
                                 menu()
                                 return
                             }
-                            newpassword = xvt.entry
-                            xvt.app.form['check'].max = xvt.entry.length
-                            xvt.app.focus = 'check'
+                            newpassword = vt.entry
+                            vt.form['check'].max = vt.entry.length
+                            vt.focus = 'check'
                         }, prompt: 'Enter new password: ', echo: false, max: 26
                     },
                     'check': {
                         cb: () => {
-                            if (xvt.entry == newpassword) {
+                            if (vt.entry == newpassword) {
                                 $.player.password = newpassword
                                 PC.saveUser($.player)
-                                xvt.out('...saved...')
+                                vt.out('...saved...')
                             }
                             else {
-                                xvt.beep()
-                                xvt.out('...aborted...')
+                                vt.beep()
+                                vt.out('...aborted...')
                             }
                             emulator(menu)
                         }, prompt: 'Re-enter to verify: ', echo: false
                     }
                 }
-                xvt.app.focus = 'yn'
+                vt.focus = 'yn'
                 return
 
             case 'X':
@@ -395,33 +394,33 @@ module Main {
                 portrait($.online)
                 music('ddd')
                 action('ny')
-                xvt.app.form = {
+                vt.form = {
                     'yn': {
                         cb: () => {
-                            if (/Y/i.test(xvt.entry)) {
+                            if (/Y/i.test(vt.entry)) {
                                 reroll($.player)
                                 activate($.online)
                                 $.player.coward = true
                                 $.player.plays++
                                 PC.saveUser($.player)
-                                xvt.outln()
+                                vt.outln()
                                 playerPC()
                                 return
                             }
-                            xvt.outln()
+                            vt.outln()
                             menu()
                         }, prompt: 'Reroll (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
                     }
                 }
-                xvt.app.focus = 'yn'
+                vt.focus = 'yn'
                 return
 
             case 'Y':
                 let cost = new Coin(new Coin(int(money($.player.level) / 5)).carry(1, true))
-                xvt.app.form = {
+                vt.form = {
                     'yn': {
                         cb: () => {
-                            if (/Y/i.test(xvt.entry)) {
+                            if (/Y/i.test(vt.entry)) {
                                 $.player.coin.value -= cost.value
                                 if ($.player.coin.value < 0) {
                                     $.player.bank.value += $.player.coin.value
@@ -431,12 +430,12 @@ module Main {
                                         $.player.bank.value = 0
                                     }
                                 }
-                                xvt.outln()
+                                vt.outln()
                                 Battle.user('Scout', (opponent: active) => {
                                     if (opponent.user.id) {
                                         status(opponent)
                                         action('freetext')
-                                        xvt.app.refocus()
+                                        vt.refocus()
                                     }
                                     else
                                         menu(true)
@@ -451,8 +450,8 @@ module Main {
                 }
                 if ($.access.roleplay) {
                     action('ny')
-                    xvt.app.form['yn'].prompt = 'Scout other users for ' + cost.carry() + ' (Y/N)? '
-                    xvt.app.focus = 'yn'
+                    vt.form['yn'].prompt = 'Scout other users for ' + cost.carry() + ' (Y/N)? '
+                    vt.focus = 'yn'
                     return
                 }
                 else
@@ -461,37 +460,37 @@ module Main {
                 break
 
             case 'Z':
-                xvt.out(xvt.bright, xvt.green, '\n')
+                vt.out(vt.bright, vt.green, '\n')
                 cat('main/system')
                 action('ny')
-                xvt.app.form = {
+                vt.form = {
                     'yn': {
                         cb: () => {
-                            if (/Y/i.test(xvt.entry))
-                                xvt.app.focus = 'message'
+                            if (/Y/i.test(vt.entry))
+                                vt.focus = 'message'
                             else {
-                                xvt.outln()
+                                vt.outln()
                                 menu(true)
                             }
                         }, cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 20
                     },
                     'message': {
                         cb: () => {
-                            xvt.outln()
-                            if (cuss(xvt.entry)) {
+                            vt.outln()
+                            if (cuss(vt.entry)) {
                                 $.player.coward = true
-                                xvt.hangup()
+                                vt.hangup()
                             }
-                            if (xvt.entry) {
-                                fs.writeFileSync('./files/border.txt', xvt.entry)
-                                news(`\tupdated the border to:\n${xvt.entry}`)
+                            if (vt.entry) {
+                                fs.writeFileSync('./files/border.txt', vt.entry)
+                                news(`\tupdated the border to:\n${vt.entry}`)
                             }
                             menu(true)
                         }, prompt: '>', max: 78
                     }
                 }
-                xvt.app.form['yn'].prompt = `Change border message (Y/N)? `
-                xvt.app.focus = 'yn'
+                vt.form['yn'].prompt = `Change border message (Y/N)? `
+                vt.focus = 'yn'
                 return
         }
         menu(suppress)

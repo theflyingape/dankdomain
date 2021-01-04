@@ -3,15 +3,14 @@
  *  SQUARE authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import xvt = require('@theflyingape/xvt')
 import Battle = require('../battle')
 import db = require('../db')
 import $ = require('../runtime')
-import { Coin, action, animated, armor, bracket, display, loadUser, music, portrait, profile, sound, weapon } from '../io'
+import { vt, Coin, action, animated, armor, bracket, display, loadUser, music, portrait, profile, sound, weapon } from '../io'
 import { Armor, Magic, Poison, Ring, RealEstate, Security, Weapon } from '../items'
 import { encounter, log, news } from '../lib'
 import { PC } from '../pc'
-import { dice, int, money, sprintf, worth } from '../sys'
+import { dice, int, money, sprintf, tradein, whole } from '../sys'
 
 module Square {
 
@@ -44,7 +43,7 @@ module Square {
 
     export function menu(suppress = true) {
         action('square')
-        xvt.app.form = {
+        vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
 
@@ -53,19 +52,19 @@ module Square {
             let bump = encounter(`AND coward = 0 AND novice = 0 AND (id NOT GLOB '_*' OR id = '_TAX')`
                 , $.player.level - 9, $.player.level + 9)
             if (bump.user.id && !bump.user.status) {
-                xvt.beep()
-                xvt.outln()
+                vt.beep()
+                vt.outln()
                 if (bump.user.id == $.taxman.user.id)
                     profile({ jpg: 'npc/taxman', handle: $.taxman.user.handle, level: $.taxman.user.level, pc: $.taxman.user.pc, effect: 'fadeInLeft' })
                 else
                     portrait(bump)
-                xvt.out(xvt.cyan, xvt.faint, `${bump.user.handle} bumps`
-                    , xvt.normal, ' into you from'
-                    , xvt.bright, ' out of the shadows'
-                    , xvt.reset, ' ... ')
+                vt.out(vt.cyan, vt.faint, `${bump.user.handle} bumps`
+                    , vt.normal, ' into you from'
+                    , vt.bright, ' out of the shadows'
+                    , vt.reset, ' ... ')
                 if (dice($.online.cha / 9 + 2 * $.player.steal)
                     > 2 * Ring.power($.player.rings, bump.user.rings, 'steal').power + bump.user.steal)
-                    xvt.outln('{waves}\n ... and moves along.')
+                    vt.outln('{waves}\n ... and moves along.')
                 else {
                     let p: number, i: number
                     if ($.player.coin.value > 0) {
@@ -76,36 +75,36 @@ module Square {
                         bump.user.coin.value += v.value
                         log(bump.user.id, `\nYou picked ${$.player.handle}'s pouch holding ${v.carry()}!`)
                         $.player.coin.value -= v.value
-                        xvt.outln(xvt.faint, '{sigh}')
+                        vt.outln(vt.faint, '{sigh}')
                         sound('oops', 8)
-                        xvt.outln('Your ', v.pieces(), ' is gone!')
+                        vt.outln('Your ', v.pieces(), ' is gone!')
                     }
                     else if ($.player.poisons.length) {
-                        xvt.out(xvt.faint, '\nYou hear vials rattle.')
-                        xvt.sleep(800)
+                        vt.out(vt.faint, '\nYou hear vials rattle.')
+                        vt.sleep(800)
                         p = $.player.poisons[dice($.player.poisons.length) - 1]
                         Poison.remove($.player.poisons, p)
                         Poison.add(bump.user.poisons, p)
                         log(bump.user.id, `\nYou lifted a vial of ${Poison.merchant[p - 1]} from ${$.player.handle}!`)
                         sound('oops', 8)
-                        xvt.out(xvt.reset, '  Your vial of ')
-                        if ($.player.emulation == 'XT') xvt.out('💀 ')
-                        xvt.outln(xvt.faint, Poison.merchant[p - 1], xvt.reset, ' goes missing!')
+                        vt.out(vt.reset, '  Your vial of ')
+                        if ($.player.emulation == 'XT') vt.out('💀 ')
+                        vt.outln(vt.faint, Poison.merchant[p - 1], vt.reset, ' goes missing!')
                     }
                     else if ($.player.magic < 3 && $.player.spells.length) {
-                        xvt.out(xvt.faint, '\nYou hear something rattle.')
-                        xvt.sleep(800)
+                        vt.out(vt.faint, '\nYou hear something rattle.')
+                        vt.sleep(800)
                         p = $.player.spells[dice($.player.spells.length) - 1]
                         Magic.remove($.player.spells, p)
                         Magic.add(bump.user.spells, p)
                         log(bump.user.id, `\nYou lifted a  ${Magic.merchant[p - 1]} from ${$.player.handle}!`)
                         sound('oops', 8)
-                        xvt.outln(xvt.reset, '  Your ', Magic.merchant[p - 1], ' magic has disappeared!')
+                        vt.outln(vt.reset, '  Your ', Magic.merchant[p - 1], ' magic has disappeared!')
                     }
                     PC.saveUser(bump)
-                    xvt.sleep(800)
+                    vt.sleep(800)
                 }
-                xvt.sleep(1600)
+                vt.sleep(1600)
                 animated('fadeOutRight')
             }
         }
@@ -125,27 +124,27 @@ module Square {
             hints += `> Alleviate paranoia from bad luck and thieves with better Security.\n`
         if (dice(100) == 1 && $.player.loan.value && $.player.ram && $.player.steal)
             hints += `> Try using your ram on the bank for big money.\n`
-        xvt.app.form['menu'].prompt = display('square', xvt.White, xvt.lblack, suppress, square, hints)
-        xvt.app.focus = 'menu'
+        vt.form['menu'].prompt = display('square', vt.White, vt.lblack, suppress, square, hints)
+        vt.focus = 'menu'
     }
 
     function choice() {
         let suppress = false
-        let choice = xvt.entry.toUpperCase()
+        let choice = vt.entry.toUpperCase()
         if (square[choice]?.description) {
-            xvt.out(' - ', square[choice].description)
+            vt.out(' - ', square[choice].description)
             suppress = $.player.expert
         }
-        xvt.outln()
+        vt.outln()
 
         switch (choice) {
             case 'A':
                 if (!$.access.roleplay) break
                 let ac = Armor.name[$.player.armor].ac
-                xvt.out('\nYou own a class ', bracket(ac, false), ' ', armor())
+                vt.out('\nYou own a class ', bracket(ac, false), ' ', armor())
                 if (ac) {
                     let cv = new Coin(Armor.name[$.player.armor].value)
-                    credit.value = worth(cv.value, $.online.cha)
+                    credit.value = tradein(cv.value, $.online.cha)
                     if ($.player.toAC) credit.value = int(credit.value * (ac + $.player.toAC / ($.player.poison + 1)) / ac)
                     if ($.online.toAC < 0) credit.value = int(credit.value * (ac + $.online.toAC) / ac)
                     if (credit.value > cv.value)
@@ -153,10 +152,10 @@ module Square {
                 }
                 else
                     credit.value = 0
-                xvt.outln(' worth ', credit.carry())
+                vt.outln(' worth ', credit.carry())
 
                 if (ac == 0 && ($.player.toAC < 0 || $.online.toAC < 0)) {
-                    xvt.outln(xvt.yellow, 'You look like a leper; go to the hospital for treatment.')
+                    vt.outln(vt.yellow, 'You look like a leper; go to the hospital for treatment.')
                     suppress = true
                     break
                 }
@@ -173,8 +172,8 @@ module Square {
 
             case 'B':
                 if (!$.access.roleplay) break
-                credit.value = worth(new Coin(RealEstate.name[$.player.realestate].value).value, $.online.cha)
-                credit.value += worth(new Coin(Security.name[$.player.security].value).value, $.online.cha)
+                credit.value = tradein(new Coin(RealEstate.name[$.player.realestate].value).value, $.online.cha)
+                credit.value += tradein(new Coin(Security.name[$.player.security].value).value, $.online.cha)
                 credit.value -= $.player.loan.value
                 if (credit.value < 1) credit.value = 0
 
@@ -183,11 +182,11 @@ module Square {
                 bank['W'] = { description: 'Money in bank: ' + $.player.bank.carry(4) }
                 bank['L'] = { description: 'Money on loan: ' + $.player.loan.carry(4) }
 
-                xvt.app.form = {
+                vt.form = {
                     'menu': { cb: Bank, cancel: 'q', enter: '?', eol: false }
                 }
-                xvt.app.form['menu'].prompt = display('Welcome to the Iron Bank', null, xvt.green, false, bank)
-                xvt.app.focus = 'menu'
+                vt.form['menu'].prompt = display('Welcome to the Iron Bank', null, vt.green, false, bank)
+                vt.focus = 'menu'
                 return
 
             case 'G':
@@ -200,11 +199,11 @@ module Square {
                 if (Armor.name[$.player.armor].ac == 0 && ($.online.toAC < 0 || $.player.toAC < 0)) {
                     credit = new Coin(Math.abs($.online.toAC + $.player.toAC) * money($.player.level) + 1)
                     action('yn')
-                    xvt.app.form = {
+                    vt.form = {
                         'skin': {
                             cb: () => {
-                                xvt.outln('\n')
-                                if (/Y/i.test(xvt.entry)) {
+                                vt.outln('\n')
+                                if (/Y/i.test(vt.entry)) {
                                     sound('click')
                                     $.online.toAC = 0
                                     $.player.toAC = 0
@@ -225,18 +224,18 @@ module Square {
                             }, cancel: 'Y', enter: 'Y', max: 1, eol: false, match: /Y|N/i, timeout: 10
                         }
                     }
-                    xvt.app.form['skin'].prompt = 'Heal your skin for ' + credit.carry() + ' (Y/N)? '
-                    xvt.app.focus = 'skin'
+                    vt.form['skin'].prompt = 'Heal your skin for ' + credit.carry() + ' (Y/N)? '
+                    vt.focus = 'skin'
                     return
                 }
                 if (Weapon.name[$.player.weapon].wc == 0 && ($.online.toWC < 0 || $.player.toWC < 0)) {
                     credit = new Coin(Math.abs($.online.toWC + $.player.toWC) * money($.player.level) + 1)
                     action('yn')
-                    xvt.app.form = {
+                    vt.form = {
                         'hands': {
                             cb: () => {
-                                xvt.outln('\n')
-                                if (/Y/i.test(xvt.entry)) {
+                                vt.outln('\n')
+                                if (/Y/i.test(vt.entry)) {
                                     sound('click')
                                     $.online.toWC = 0
                                     $.player.toWC = 0
@@ -257,36 +256,36 @@ module Square {
                             }, cancel: 'Y', enter: 'Y', max: 1, eol: false, match: /Y|N/i, timeout: 10
                         }
                     }
-                    xvt.app.form['hands'].prompt = 'Fix your hands for ' + credit.carry() + ' (Y/N)? '
-                    xvt.app.focus = 'hands'
+                    vt.form['hands'].prompt = 'Fix your hands for ' + credit.carry() + ' (Y/N)? '
+                    vt.focus = 'hands'
                     return
                 }
                 hi = $.player.hp - $.online.hp
                 if (hi < 1) {
-                    xvt.beep()
-                    xvt.outln(`\nYou don't need any hit points.`)
+                    vt.beep()
+                    vt.outln(`\nYou don't need any hit points.`)
                     break
                 }
-                xvt.outln('\nWelcome to Butler Hospital.\n')
-                xvt.outln('Hit points cost ', xvt.bright, $.player.level.toString(), xvt.normal, ' each.')
-                xvt.outln('You need ', xvt.bright, hi.toString(), xvt.normal, ' hit points.')
+                vt.outln('\nWelcome to Butler Hospital.\n')
+                vt.outln('Hit points cost ', vt.bright, $.player.level.toString(), vt.normal, ' each.')
+                vt.outln('You need ', vt.bright, hi.toString(), vt.normal, ' hit points.')
                 lo = Math.trunc($.player.coin.value / $.player.level)
-                xvt.outln('You can afford '
-                    , xvt.bright, lo < hi ? lo.toString() : 'all your', xvt.normal, ' hit points.')
+                vt.outln('You can afford '
+                    , vt.bright, lo < hi ? lo.toString() : 'all your', vt.normal, ' hit points.')
                 if (lo < hi) {
                     if ($.player.novice)
-                        xvt.out('Normally, you would be billed for the remaining ')
+                        vt.out('Normally, you would be billed for the remaining ')
 
                     else
-                        xvt.out('You can be billed for the remaining ')
-                    xvt.outln(xvt.bright, (hi - lo).toString(), xvt.normal, ' hit points.')
+                        vt.out('You can be billed for the remaining ')
+                    vt.outln(vt.bright, (hi - lo).toString(), vt.normal, ' hit points.')
                 }
                 action('listall')
-                xvt.app.form = {
+                vt.form = {
                     'hp': {
                         cb: () => {
-                            xvt.outln()
-                            let buy = Math.abs(Math.trunc(/=|max/i.test(xvt.entry) ? hi : +xvt.entry))
+                            vt.outln()
+                            let buy = Math.abs(Math.trunc(/=|max/i.test(vt.entry) ? hi : +vt.entry))
                             if (buy > 0 && buy <= hi) {
                                 $.player.coin.value -= buy * $.player.level
                                 if ($.player.coin.value < 0) {
@@ -298,62 +297,62 @@ module Square {
                                     }
                                 }
                                 $.online.hp += buy
-                                xvt.beep()
-                                xvt.outln('\nHit points = ', $.online.hp.toString())
+                                vt.beep()
+                                vt.outln('\nHit points = ', $.online.hp.toString())
                             }
                             menu()
                             return
                         }, max: 5
                     }
                 }
-                xvt.app.form['hp'].prompt = xvt.attr('How many do you want ['
-                    , xvt.white, xvt.uline, 'MAX', xvt.nouline, '=', xvt.bright, hi.toString()
-                    , xvt.normal, xvt.cyan, ']? ')
-                xvt.app.focus = 'hp'
+                vt.form['hp'].prompt = vt.attr('How many do you want ['
+                    , vt.white, vt.uline, 'MAX', vt.nouline, '=', vt.bright, hi.toString()
+                    , vt.normal, vt.cyan, ']? ')
+                vt.focus = 'hp'
                 return
 
             case 'J':
                 if ($.bail) {
                     profile({ png: 'npc/jailer', effect: 'fadeIn' })
-                    xvt.outln('\nA deputy greets you in front of the County Jail.')
-                    xvt.sleep(600)
-                    xvt.outln(`"What `, ['cur', 'knave', 'scum', 'toad', 'villain'][dice(5) - 1]
+                    vt.outln('\nA deputy greets you in front of the County Jail.')
+                    vt.sleep(600)
+                    vt.outln(`"What `, ['cur', 'knave', 'scum', 'toad', 'villain'][dice(5) - 1]
                         , ` do you come for, ${$.access[$.player.gender] || $.access[$.player.sex]}?"`)
                     Battle.user('Bail', (opponent: active) => {
                         if (opponent.user.id == '') {
                             menu()
                             return
                         }
-                        xvt.outln()
+                        vt.outln()
                         if (opponent.user.id == $.player.id) {
                             opponent.user.id = ''
-                            xvt.outln(`You can't bail ${PC.who(opponent).him}out.`)
+                            vt.outln(`You can't bail ${PC.who(opponent).him}out.`)
                             menu()
                             return
                         }
                         if (opponent.user.status !== 'jail') {
                             opponent.user.id = ''
-                            xvt.outln(`${opponent.user.handle} is not in jail.`)
+                            vt.outln(`${opponent.user.handle} is not in jail.`)
                             menu()
                             return
                         }
 
                         credit.value = int(money(opponent.user.level) * (100 - $.online.cha + 1) / 100 + 1)
-                        xvt.out(`It will cost you ${credit.carry()} to bail out ${opponent.user.handle}.\n`)
+                        vt.out(`It will cost you ${credit.carry()} to bail out ${opponent.user.handle}.\n`)
                         if ($.player.coin.value < credit.value) {
                             menu()
                             return
                         }
 
                         action('ny')
-                        xvt.app.form = {
+                        vt.form = {
                             'pay': {
                                 cb: () => {
-                                    xvt.outln()
-                                    if (/Y/i.test(xvt.entry)) {
+                                    vt.outln()
+                                    if (/Y/i.test(vt.entry)) {
                                         profile({ png: 'payment', effect: 'tada' })
                                         sound('click')
-                                        xvt.outln(`${opponent.user.handle} is set free.`)
+                                        vt.outln(`${opponent.user.handle} is set free.`)
                                         $.player.coin.value -= credit.value
                                         opponent.user.status = ''
                                         opponent.user.xplevel = opponent.user.level
@@ -370,21 +369,21 @@ module Square {
                                 , cancel: 'N', enter: 'N', max: 1, eol: false, match: /Y|N/i, timeout: 10
                             }
                         }
-                        xvt.app.focus = 'pay'
+                        vt.focus = 'pay'
                     })
                     return
                 }
-                xvt.out(`The jail house is closed for the day.\n`)
+                vt.out(`The jail house is closed for the day.\n`)
                 break
 
             case 'M':
-                xvt.out('\nThe ', xvt.bright, xvt.blue, 'old mage ', xvt.reset)
+                vt.out('\nThe ', vt.bright, vt.blue, 'old mage ', vt.reset)
                 max = Magic.merchant.length
                 for (lo = 1; lo <= max; lo++)
                     if (!Magic.have($.player.spells, lo))
                         break
                 if (lo > Magic.merchant.length || !$.player.magic || !$.access.roleplay) {
-                    xvt.outln('says, "Get outta here!"')
+                    vt.outln('says, "Get outta here!"')
                     suppress = true
                     break
                 }
@@ -394,7 +393,7 @@ module Square {
                             $.player.magic == 1 ? new Coin(Magic.spells[Magic.merchant[hi - 1]].wand).value
                                 : new Coin(Magic.spells[Magic.merchant[hi - 1]].cost).value))
                         break
-                xvt.out(['offers to sell you a magic wand'
+                vt.out(['offers to sell you a magic wand'
                     , 'offers to make you a scroll, for a price'
                     , 'offers to teach you a spell, for a price'
                     , 'wants to endow you with a spell, for a price'
@@ -406,11 +405,11 @@ module Square {
             case 'P':
                 if (!$.access.roleplay) break
                 if ($.player.novice) {
-                    xvt.out('\nNovice players cannot rob.\n')
+                    vt.out('\nNovice players cannot rob.\n')
                     break
                 }
-                xvt.out(xvt.faint, '\nYou attempt to pick a passerby\'s pocket... ', xvt.reset)
-                xvt.sleep(1000)
+                vt.out(vt.faint, '\nYou attempt to pick a passerby\'s pocket... ', vt.reset)
+                vt.sleep(1000)
 
                 credit.value = dice(6 * money($.player.level) / dice(10))
                 let pocket = encounter(`AND novice = 0 AND id NOT GLOB '_*'`).user
@@ -427,8 +426,8 @@ module Square {
                 else
                     pocket.handle = 'somebody'
 
-                xvt.outln('\n\nYou pick ', pocket.handle, '\'s pocket and steal ', credit.carry(), '!\n')
-                xvt.sleep(1000)
+                vt.outln('\n\nYou pick ', pocket.handle, '\'s pocket and steal ', credit.carry(), '!\n')
+                vt.sleep(1000)
                 let effort = 100 + $.steal
                 effort -= 8 * Ring.power([], $.player.rings, 'steal').power
                 if (int(16 * $.player.steal + $.player.level / 10 + $.online.dex / 10) < dice(effort)) {
@@ -436,17 +435,17 @@ module Square {
                     $.reason = `caught picking ${pocket.handle}'s pocket`
                     action('clear')
                     profile({ png: 'npc/jailer', effect: 'fadeIn' })
-                    xvt.outln('A guard catches you and throws you into jail!')
+                    vt.outln('A guard catches you and throws you into jail!')
                     sound('arrested', 20)
-                    xvt.outln('You might be released by your next call.\n')
-                    xvt.sleep(1000)
-                    xvt.hangup()
+                    vt.outln('You might be released by your next call.\n')
+                    vt.sleep(1000)
+                    vt.hangup()
                     return
                 }
                 else {
                     if (!Ring.have($.player.rings, Ring.theOne)) $.steal++
                     if (!$.arena || !$.dungeon) $.steal++
-                    xvt.beep()
+                    vt.beep()
                     $.player.coin.value += credit.value
                     if (pocket.id) {
                         $.online.altered = true
@@ -464,9 +463,9 @@ module Square {
             case 'R':
                 if (!$.access.roleplay) break
                 let re = RealEstate.name[$.player.realestate].protection
-                xvt.out('\nYou live in a ', $.player.realestate)
-                credit.value = worth(new Coin(RealEstate.name[$.player.realestate].value).value, $.online.cha)
-                xvt.outln(' worth ', credit.carry())
+                vt.out('\nYou live in a ', $.player.realestate)
+                credit.value = tradein(new Coin(RealEstate.name[$.player.realestate].value).value, $.online.cha)
+                vt.outln(' worth ', credit.carry())
 
                 max = RealEstate.merchant.length - 1
                 lo = re - $.realestate
@@ -482,9 +481,9 @@ module Square {
             case 'S':
                 if (!$.access.roleplay) break
                 let s = Security.name[$.player.security].protection
-                xvt.out('\nYou are guarded by a ', $.player.security)
-                credit.value = worth(new Coin(Security.name[$.player.security].value).value, $.online.cha)
-                xvt.outln(' worth ', credit.carry())
+                vt.out('\nYou are guarded by a ', $.player.security)
+                credit.value = tradein(new Coin(Security.name[$.player.security].value).value, $.online.cha)
+                vt.outln(' worth ', credit.carry())
 
                 max = Security.merchant.length - 1
                 lo = s - $.security
@@ -498,14 +497,14 @@ module Square {
                 return
 
             case 'V':
-                xvt.outln('\n', xvt.faint, '... you enter the back door of the shop ...')
-                xvt.out('The ', xvt.bright, xvt.magenta, 'apothecary ', xvt.reset)
+                vt.outln('\n', vt.faint, '... you enter the back door of the shop ...')
+                vt.out('The ', vt.bright, vt.magenta, 'apothecary ', vt.reset)
                 max = Poison.merchant.length
                 for (lo = 1; lo <= max; lo++)
                     if (!Poison.have($.player.poisons, lo))
                         break
                 if (lo > Poison.merchant.length || !$.player.poison || !$.access.roleplay) {
-                    xvt.outln('says, "Get outta here!"')
+                    vt.outln('says, "Get outta here!"')
                     suppress = true
                     break
                 }
@@ -515,7 +514,7 @@ module Square {
                             $.player.poison == 1 ? new Coin(Poison.vials[Poison.merchant[hi - 1]].vial).value
                                 : new Coin(Poison.vials[Poison.merchant[hi - 1]].cost).value))
                         break
-                xvt.out(['scoffs at your apparent lack of skill'
+                vt.out(['scoffs at your apparent lack of skill'
                     , 'casts a suspicious look your way'
                     , 'offers to sell you his contraband'
                     , 'admires your expert eye on his wares'
@@ -527,10 +526,10 @@ module Square {
             case 'W':
                 if (!$.access.roleplay) break
                 let wc = Weapon.name[$.player.weapon].wc
-                xvt.out('\nYou own a class ', bracket(wc, false), ' ', weapon())
+                vt.out('\nYou own a class ', bracket(wc, false), ' ', weapon())
                 if (wc) {
                     let cv = new Coin(Weapon.name[$.player.weapon].value)
-                    credit.value = worth(cv.value, $.online.cha)
+                    credit.value = tradein(cv.value, $.online.cha)
                     if ($.player.toWC) credit.value = int(credit.value * (wc + $.player.toWC / ($.player.poison + 1)) / wc)
                     if ($.online.toWC < 0) credit.value = int(credit.value * (wc + $.online.toWC) / wc)
                     if (credit.value > cv.value)
@@ -538,10 +537,10 @@ module Square {
                 }
                 else
                     credit.value = 0
-                xvt.outln(' worth ', credit.carry())
+                vt.outln(' worth ', credit.carry())
 
                 if (wc == 0 && ($.player.toWC < 0 || $.online.toWC < 0)) {
-                    xvt.outln(xvt.yellow, 'Your hands are broken; go to the hospital for treatment.')
+                    vt.outln(vt.yellow, 'Your hands are broken; go to the hospital for treatment.')
                     suppress = true
                     break
                 }
@@ -561,42 +560,42 @@ module Square {
 
     function Bank() {
         let suppress = $.player.expert
-        let choice = xvt.entry.toUpperCase()
+        let choice = vt.entry.toUpperCase()
         if (!bank[choice]) {
-            xvt.beep()
-            xvt.app.refocus()
+            vt.beep()
+            vt.refocus()
             return
         }
-        xvt.app.form = {
+        vt.form = {
             'coin': { cb: amount, max: 6 }
         }
 
-        xvt.outln()
+        vt.outln()
 
         switch (choice) {
             case 'D':
                 action('payment')
-                xvt.app.form['coin'].prompt = xvt.attr('Deposit ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.player.coin.carry(), ']? ')
-                xvt.app.focus = 'coin'
+                vt.form['coin'].prompt = vt.attr('Deposit ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=', $.player.coin.carry(), ']? ')
+                vt.focus = 'coin'
                 break
 
             case 'L':
                 action('payment')
-                xvt.app.form['coin'].prompt = xvt.attr('Loan ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', credit.carry(), ']? ')
-                xvt.app.focus = 'coin'
+                vt.form['coin'].prompt = vt.attr('Loan ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=', credit.carry(), ']? ')
+                vt.focus = 'coin'
                 break
 
             case 'W':
                 action('payment')
-                xvt.app.form['coin'].prompt = xvt.attr('Withdraw ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=', $.player.bank.carry(), ']? ')
-                xvt.app.focus = 'coin'
+                vt.form['coin'].prompt = vt.attr('Withdraw ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=', $.player.bank.carry(), ']? ')
+                vt.focus = 'coin'
                 break
 
             case 'R':
                 music('ddd')
                 let c = ($.player.level / 5) * ($.player.steal + 1)
-                xvt.out(xvt.faint, '\nYou attempt to sneak into the vault...', xvt.reset)
-                xvt.sleep(2500)
+                vt.out(vt.faint, '\nYou attempt to sneak into the vault...', vt.reset)
+                vt.sleep(2500)
 
                 let effort = 100 + $.steal
                 effort -= 8 * Ring.power([], $.player.rings, 'steal').power
@@ -605,11 +604,11 @@ module Square {
                     $.reason = 'caught getting into the vault'
                     action('clear')
                     profile({ png: 'npc/jailer', effect: 'fadeIn' })
-                    xvt.outln('\n\nA guard catches you and throws you into jail!')
+                    vt.outln('\n\nA guard catches you and throws you into jail!')
                     sound('arrested', 20)
-                    xvt.outln('\nYou might be released by your next call.\n')
-                    xvt.sleep(1000)
-                    xvt.hangup()
+                    vt.outln('\nYou might be released by your next call.\n')
+                    vt.sleep(1000)
+                    vt.hangup()
                     return
                 }
 
@@ -618,20 +617,20 @@ module Square {
                 let carry = new Coin(vault)
 
                 sound('creak2', 12)
-                xvt.outln(xvt.yellow, ' you open a chest and find ', carry.carry(), xvt.bright, '!')
+                vt.outln(vt.yellow, ' you open a chest and find ', carry.carry(), vt.bright, '!')
 
-                let deposits = new Coin(int(db.query(`SELECT SUM(bank) AS bank FROM Players WHERE id NOT GLOB '_*' AND id <> '${$.player.id}'`)[0].bank, true))
+                let deposits = new Coin(whole(db.query(`SELECT SUM(bank) AS bank FROM Players WHERE id NOT GLOB '_*' AND id <> '${$.player.id}'`)[0].bank))
                 if (deposits.value) {
-                    xvt.sleep(1200)
-                    xvt.outln('And you grab ', deposits.carry(), ' more in deposits!')
+                    vt.sleep(1200)
+                    vt.outln('And you grab ', deposits.carry(), ' more in deposits!')
                 }
                 sound('yahoo', 12)
 
-                xvt.outln()
-                xvt.out(xvt.faint, 'You try to make your way out of the vault ')
-                xvt.sleep(1200)
+                vt.outln()
+                vt.out(vt.faint, 'You try to make your way out of the vault ')
+                vt.sleep(1200)
                 for (let i = 0; i < 6 - $.player.steal; i++) {
-                    xvt.out('.')
+                    vt.out('.')
                     sound('click', 6)
                 }
 
@@ -639,30 +638,30 @@ module Square {
                 if (dice(effort) > ++c) {
                     $.player.status = 'jail'
                     $.reason = 'caught inside the vault'
-                    xvt.out(xvt.reset, ' something jingles.')
+                    vt.out(vt.reset, ' something jingles.')
                     action('clear')
                     sound('max', 12)
                     profile({ png: 'npc/jailer', effect: 'fadeIn' })
-                    xvt.outln('\n\nA guard laughs as he closes the vault door on you!')
+                    vt.outln('\n\nA guard laughs as he closes the vault door on you!')
                     sound('arrested', 20)
-                    xvt.outln('\nYou might be released by your next call.')
-                    xvt.sleep(1000)
-                    xvt.hangup()
+                    vt.outln('\nYou might be released by your next call.')
+                    vt.sleep(1000)
+                    vt.hangup()
                     return
                 }
 
                 $.player.coin.value += carry.value + deposits.value
                 $.player.steals++
-                xvt.outln()
+                vt.outln()
                 db.run(`UPDATE Players SET bank=0 WHERE id NOT GLOB '_*'`)
-                xvt.beep()
+                vt.beep()
                 menu(true)
                 break
 
             case 'T':
                 if ($.access.sysop) {
-                    xvt.app.form['coin'].prompt = xvt.attr('Treasury ', xvt.white, '[', xvt.uline, 'MAX', xvt.nouline, '=99999p]? ')
-                    xvt.app.focus = 'coin'
+                    vt.form['coin'].prompt = vt.attr('Treasury ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=99999p]? ')
+                    vt.focus = 'coin'
                     break
                 }
 
@@ -674,15 +673,15 @@ module Square {
     }
 
     function amount() {
-        if ((+xvt.entry).toString() == xvt.entry) xvt.entry += 'c'
-        let action = xvt.app.form['coin'].prompt.split(' ')[0]
+        if ((+vt.entry).toString() == vt.entry) vt.entry += 'c'
+        let action = vt.form['coin'].prompt.split(' ')[0]
         let amount = new Coin(0)
 
         switch (action) {
             case 'Deposit':
-                amount.value = int((/=|max/i.test(xvt.entry))
+                amount.value = int((/=|max/i.test(vt.entry))
                     ? new Coin($.player.coin.carry(2, true)).value
-                    : new Coin(xvt.entry).value)
+                    : new Coin(vt.entry).value)
                 if (amount.value > 0 && amount.value <= $.player.coin.value) {
                     $.player.coin.value -= amount.value
                     if ($.player.loan.value > 0) {
@@ -696,46 +695,46 @@ module Square {
                     }
                     $.player.bank.value += amount.value
                     $.online.altered = true
-                    xvt.beep()
+                    vt.beep()
                 }
                 break
 
             case 'Loan':
-                amount.value = int((/=|max/i.test(xvt.entry))
+                amount.value = int((/=|max/i.test(vt.entry))
                     ? new Coin(credit.carry(2, true)).value
-                    : new Coin(xvt.entry).value)
+                    : new Coin(vt.entry).value)
                 if (amount.value > 0 && amount.value <= credit.value) {
                     $.player.loan.value += amount.value
                     $.player.coin.value += amount.value
                     $.online.altered = true
-                    xvt.beep()
+                    vt.beep()
                 }
                 break
 
             case 'Withdraw':
-                amount.value = int((/=|max/i.test(xvt.entry))
+                amount.value = int((/=|max/i.test(vt.entry))
                     ? new Coin($.player.bank.carry(2, true)).value
-                    : new Coin(xvt.entry).value)
+                    : new Coin(vt.entry).value)
                 if (amount.value > 0 && amount.value <= $.player.bank.value) {
                     $.player.bank.value -= amount.value
                     $.player.coin.value += amount.value
                     $.online.altered = true
-                    xvt.beep()
+                    vt.beep()
                 }
                 break
 
             case 'Treasury':
-                amount.value = int((/=|max/i.test(xvt.entry))
+                amount.value = int((/=|max/i.test(vt.entry))
                     ? (1e+18 - 1e+09)
-                    : new Coin(xvt.entry).value)
+                    : new Coin(vt.entry).value)
                 if (amount.value > 0 && amount.value <= (1e+18 - 1e+09)) {
                     $.player.coin.value += amount.value
-                    xvt.beep()
+                    vt.beep()
                 }
                 break
         }
 
-        xvt.entry = 'B'
+        vt.entry = 'B'
         choice()
     }
 
@@ -745,52 +744,52 @@ module Square {
             action('listall')
         else
             action('listbest')
-        xvt.app.form = {
+        vt.form = {
             'start': { cb: listStart, prompt: 'Start list at ', max: 3 },
             'end': { cb: listEnd, prompt: 'Start list at ', max: 3 },
             'buy': { cb: buy, prompt: 'Buy which? ', max: 3 }
         }
-        xvt.app.form['start'].enter = lo.toString()
-        xvt.app.form['start'].prompt = xvt.attr('Start list at ', (lo < 10 && hi > 9) ? ' ' : '', bracket(lo, false), ': ')
-        xvt.app.form['end'].enter = hi.toString()
-        xvt.app.form['end'].prompt = xvt.attr('  End list at ', bracket(hi, false), ': ')
+        vt.form['start'].enter = lo.toString()
+        vt.form['start'].prompt = vt.attr('Start list at ', (lo < 10 && hi > 9) ? ' ' : '', bracket(lo, false), ': ')
+        vt.form['end'].enter = hi.toString()
+        vt.form['end'].prompt = vt.attr('  End list at ', bracket(hi, false), ': ')
 
         if (lo < hi)
-            xvt.app.focus = 'start'
+            vt.focus = 'start'
         else
             listing()
     }
 
     function listStart() {
-        if (/=|max/i.test(xvt.entry)) {
+        if (/=|max/i.test(vt.entry)) {
             buyall()
             return
         }
 
-        let n = +xvt.entry >> 0
+        let n = +vt.entry >> 0
         if (n < 1) n = 1
         if ((/R|S/.test(want) && n < lo) || n > max) {
-            xvt.beep()
-            xvt.app.refocus()
+            vt.beep()
+            vt.refocus()
             return
         }
 
         lo = n
-        xvt.app.focus = 'end'
+        vt.focus = 'end'
     }
 
     function listEnd() {
-        if (/=|max/i.test(xvt.entry)) {
+        if (/=|max/i.test(vt.entry)) {
             buyall()
             return
         }
 
-        let n = +xvt.entry >> 0
+        let n = +vt.entry >> 0
         if (n < lo) n = lo
         if (n > max) n = max
         hi = n
 
-        xvt.outln()
+        vt.outln()
         listing()
     }
 
@@ -798,65 +797,65 @@ module Square {
         for (let i = lo; i <= hi; i++) {
             switch (want) {
                 case 'A':
-                    xvt.out(bracket(i), sprintf('%-24s ', Armor.merchant[i]))
-                    xvt.out(new Coin(Armor.name[Armor.merchant[i]].value).carry())
+                    vt.out(bracket(i), sprintf('%-24s ', Armor.merchant[i]))
+                    vt.out(new Coin(Armor.name[Armor.merchant[i]].value).carry())
                     break
 
                 case 'M':
                     if (!Magic.have($.player.spells, i)) {
-                        xvt.out(bracket(i), sprintf('%-24s ', Magic.merchant[i - 1]))
+                        vt.out(bracket(i), sprintf('%-24s ', Magic.merchant[i - 1]))
                         if ($.player.magic == 1)
-                            xvt.out(new Coin(Magic.spells[Magic.merchant[i - 1]].wand).carry())
+                            vt.out(new Coin(Magic.spells[Magic.merchant[i - 1]].wand).carry())
                         else
-                            xvt.out(new Coin(Magic.spells[Magic.merchant[i - 1]].cost).carry())
+                            vt.out(new Coin(Magic.spells[Magic.merchant[i - 1]].cost).carry())
                     }
                     break
 
                 case 'R':
-                    xvt.out(bracket(i), sprintf('%-24s ', RealEstate.merchant[i]))
-                    xvt.out(new Coin(RealEstate.name[RealEstate.merchant[i]].value).carry())
+                    vt.out(bracket(i), sprintf('%-24s ', RealEstate.merchant[i]))
+                    vt.out(new Coin(RealEstate.name[RealEstate.merchant[i]].value).carry())
                     break
 
                 case 'S':
-                    xvt.out(bracket(i), sprintf('%-24s ', Security.merchant[i]))
-                    xvt.out(new Coin(Security.name[Security.merchant[i]].value).carry())
+                    vt.out(bracket(i), sprintf('%-24s ', Security.merchant[i]))
+                    vt.out(new Coin(Security.name[Security.merchant[i]].value).carry())
                     break
 
                 case 'V':
                     if (!Poison.have($.player.poisons, i)) {
-                        xvt.out(bracket(i), sprintf('%-24s ', Poison.merchant[i - 1]))
+                        vt.out(bracket(i), sprintf('%-24s ', Poison.merchant[i - 1]))
                         if ($.player.poison == 1)
-                            xvt.out(new Coin(Poison.vials[Poison.merchant[i - 1]].vial).carry())
+                            vt.out(new Coin(Poison.vials[Poison.merchant[i - 1]].vial).carry())
                         else
-                            xvt.out(new Coin(Poison.vials[Poison.merchant[i - 1]].cost).carry())
+                            vt.out(new Coin(Poison.vials[Poison.merchant[i - 1]].cost).carry())
                     }
                     break
 
                 case 'W':
-                    xvt.out(bracket(i), sprintf('%-24s ', Weapon.merchant[i]))
-                    xvt.out(new Coin(Weapon.name[Weapon.merchant[i]].value).carry())
+                    vt.out(bracket(i), sprintf('%-24s ', Weapon.merchant[i]))
+                    vt.out(new Coin(Weapon.name[Weapon.merchant[i]].value).carry())
                     break
             }
         }
-        xvt.outln()
-        xvt.app.focus = 'buy'
+        vt.outln()
+        vt.focus = 'buy'
     }
 
     function buy() {
-        if (/=|max/i.test(xvt.entry)) {
+        if (/=|max/i.test(vt.entry)) {
             buyall()
             return
         }
 
-        if (xvt.entry == '') {
-            xvt.outln()
+        if (vt.entry == '') {
+            vt.outln()
             menu(false)
             return
         }
 
-        let buy = +xvt.entry >> 0
+        let buy = +vt.entry >> 0
         if (buy < lo || buy > hi) {
-            xvt.app.refocus()
+            vt.refocus()
             return
         }
         let cost: Coin
@@ -871,7 +870,7 @@ module Square {
                     $.player.armor = Armor.merchant[item]
                     $.player.toAC = 0
                     $.online.toAC = 0
-                    xvt.out(' - ', $.player.armor, '\n')
+                    vt.out(' - ', $.player.armor, '\n')
                     $.player.coin.value += credit.value - cost.value
                     Armor.equip($.online, $.player.armor)
                 }
@@ -885,7 +884,7 @@ module Square {
                     profile({ png: 'payment', effect: 'tada' })
                     sound('click')
                     Magic.add($.player.spells, buy)
-                    xvt.out(' - ', Magic.merchant[item], '\n')
+                    vt.out(' - ', Magic.merchant[item], '\n')
                     $.player.coin.value -= cost.value
                     $.online.altered = true
                 }
@@ -897,7 +896,7 @@ module Square {
                     profile({ png: 'payment', effect: 'tada' })
                     sound('click')
                     $.player.realestate = RealEstate.merchant[item]
-                    xvt.out(' - ', $.player.realestate, '\n')
+                    vt.out(' - ', $.player.realestate, '\n')
                     $.player.coin.value += credit.value - cost.value
                     if (item == lo && $.realestate) $.realestate--
                     $.online.altered = true
@@ -910,7 +909,7 @@ module Square {
                     profile({ png: 'payment', effect: 'tada' })
                     sound('click')
                     $.player.security = Security.merchant[item]
-                    xvt.out(' - ', $.player.security, '\n')
+                    vt.out(' - ', $.player.security, '\n')
                     $.player.coin.value += credit.value - cost.value
                     if (item == lo && $.security) $.security--
                     $.online.altered = true
@@ -925,7 +924,7 @@ module Square {
                     profile({ png: 'payment', effect: 'tada' })
                     sound('click')
                     Poison.add($.player.poisons, buy)
-                    xvt.out('\nHe slips you a vial of ', Poison.merchant[item], '\n')
+                    vt.out('\nHe slips you a vial of ', Poison.merchant[item], '\n')
                     $.player.coin.value -= cost.value
                     $.online.altered = true
                 }
@@ -939,7 +938,7 @@ module Square {
                     $.player.weapon = Weapon.merchant[buy]
                     $.player.toWC = 0
                     $.online.toWC = 0
-                    xvt.out(' - ', $.player.weapon, '\n')
+                    vt.out(' - ', $.player.weapon, '\n')
                     $.player.coin.value += credit.value - cost.value
                     Weapon.equip($.online, $.player.weapon)
                 }
@@ -961,8 +960,8 @@ module Square {
                         if (Armor.name[Armor.merchant[item]].ac > $.online.armor.ac
                             || ($.online.armor.ac == Armor.name[Armor.merchant[item]].ac
                                 && ($.online.toAC < 0 || $.player.toAC < 0))) {
-                            xvt.entry = item.toString()
-                            xvt.out(' ', xvt.entry)
+                            vt.entry = item.toString()
+                            vt.out(' ', vt.entry)
                             buy()
                             return
                         }
@@ -978,7 +977,7 @@ module Square {
                     if ($.player.coin.value >= cost.value && !Magic.have($.player.spells, spell)) {
                         sound('click')
                         Magic.add($.player.spells, spell)
-                        xvt.out(bracket(spell), Magic.merchant[item])
+                        vt.out(bracket(spell), Magic.merchant[item])
                         $.player.coin.value -= cost.value
                     }
                 }
@@ -990,8 +989,8 @@ module Square {
                     cost = new Coin(RealEstate.name[RealEstate.merchant[item]].value)
                     if ($.player.coin.value + credit.value >= cost.value) {
                         if (RealEstate.name[RealEstate.merchant[item]].protection > RealEstate.name[$.player.realestate].protection) {
-                            xvt.entry = item.toString()
-                            xvt.out(' ', xvt.entry)
+                            vt.entry = item.toString()
+                            vt.out(' ', vt.entry)
                             buy()
                             return
                         }
@@ -1004,8 +1003,8 @@ module Square {
                     cost = new Coin(Security.name[Security.merchant[item]].value)
                     if ($.player.coin.value + credit.value >= cost.value) {
                         if (Security.name[Security.merchant[item]].protection > Security.name[$.player.security].protection) {
-                            xvt.entry = item.toString()
-                            xvt.out(' ', xvt.entry)
+                            vt.entry = item.toString()
+                            vt.out(' ', vt.entry)
                             buy()
                             return
                         }
@@ -1021,7 +1020,7 @@ module Square {
                     if ($.player.coin.value >= cost.value && !Poison.have($.player.poisons, vial)) {
                         sound('click')
                         Poison.add($.player.poisons, vial)
-                        xvt.out('\nHe slips you a vial of ', Poison.merchant[item])
+                        vt.out('\nHe slips you a vial of ', Poison.merchant[item])
                         $.player.coin.value -= cost.value
                     }
                 }
@@ -1035,8 +1034,8 @@ module Square {
                         if (Weapon.name[Weapon.merchant[item]].wc > $.online.weapon.wc
                             || ($.online.weapon.wc == Weapon.name[Weapon.merchant[item]].wc
                                 && ($.online.toWC < 0 || $.player.toWC < 0))) {
-                            xvt.entry = item.toString()
-                            xvt.out(' ', xvt.entry)
+                            vt.entry = item.toString()
+                            vt.out(' ', vt.entry)
                             buy()
                             return
                         }
@@ -1045,7 +1044,7 @@ module Square {
                 break
         }
 
-        xvt.out('\n')
+        vt.out('\n')
         menu()
     }
 

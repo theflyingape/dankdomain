@@ -3,11 +3,10 @@
  *  PARTY authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import xvt = require('@theflyingape/xvt')
 import Battle = require('../battle')
 import db = require('../db')
 import $ = require('../runtime')
-import { Coin, action, activate, bracket, cat, checkXP, death, display, loadUser, music, profile, reroll, sound, weapon } from '../io'
+import { vt, Coin, action, activate, bracket, cat, checkXP, death, display, loadUser, music, profile, reroll, sound, weapon } from '../io'
 import { Armor, Magic, Poison, Weapon } from '../items'
 import { cuss, log } from '../lib'
 import { PC } from '../pc'
@@ -15,9 +14,9 @@ import { dice, int, money, sprintf, titlecase } from '../sys'
 
 module Party {
 
-    const le = [xvt.app.Empty, '>', '<', '(', ')', '+', '*', ']']
-    const re = [xvt.app.Empty, '<', '>', ')', '(', '+', '*', '[']
-    const tb = [xvt.app.Empty, '-', '=', '~', ':', '+', '*', 'X']
+    const le = [vt.Empty, '>', '<', '(', ')', '+', '*', ']']
+    const re = [vt.Empty, '<', '>', ')', '(', '+', '*', '[']
+    const tb = [vt.Empty, '-', '=', '~', ':', '+', '*', 'X']
     const mp = ['M:M', ' @ ', '{#}', '($)', '[&]', '<^>', '_V_', '-X-']
 
     let g: gang = {
@@ -46,10 +45,10 @@ module Party {
         if (checkXP($.online, menu)) return
         if ($.online.altered) PC.saveUser($.online)
         if (!$.reason && $.online.hp < 1) death('fought bravely?')
-        if ($.reason) xvt.hangup()
+        if ($.reason) vt.hangup()
 
         action('party')
-        xvt.app.form = {
+        vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
 
@@ -57,18 +56,18 @@ module Party {
         if (!$.player.gang)
             hints += `> Join an existing gang or start a new one.\n`
 
-        xvt.app.form['menu'].prompt = display('party', xvt.Magenta, xvt.magenta, suppress, party, hints)
-        xvt.app.focus = 'menu'
+        vt.form['menu'].prompt = display('party', vt.Magenta, vt.magenta, suppress, party, hints)
+        vt.focus = 'menu'
     }
 
     function choice() {
         let suppress = false
-        let choice = xvt.entry.toUpperCase()
+        let choice = vt.entry.toUpperCase()
         if (party[choice]?.description) {
-            xvt.out(' - ', party[choice].description)
+            vt.out(' - ', party[choice].description)
             suppress = $.player.expert
         }
-        xvt.outln()
+        vt.outln()
 
         let rs: any[]
 
@@ -85,19 +84,19 @@ module Party {
                 break
 
             case 'M':
-                xvt.outln()
-                xvt.outln(xvt.Blue, xvt.bright, '        Party            Win-Loss   Ratio ')
-                xvt.outln(xvt.Blue, xvt.bright, '------------------------------------------')
+                vt.outln()
+                vt.outln(vt.Blue, vt.bright, '        Party            Win-Loss   Ratio ')
+                vt.outln(vt.Blue, vt.bright, '------------------------------------------')
                 rs = db.query(`SELECT * FROM Gangs ORDER BY win DESC, loss ASC`)
                 let crown = true
                 for (let i in rs) {
                     let ratio = '  ' + (crown ? 'GOAT' : rs[i].loss ? sprintf('%5.3f', rs[i].win / (rs[i].win + rs[i].loss)).substr(1) : ' ---')
-                    xvt.out(sprintf('%-22s %5u-%-5u ', rs[i].name, rs[i].win, rs[i].loss), ratio)
+                    vt.out(sprintf('%-22s %5u-%-5u ', rs[i].name, rs[i].win, rs[i].loss), ratio)
                     if (crown) {
-                        xvt.out(' ', xvt.bright, xvt.yellow, $.player.emulation == 'XT' ? '👑' : '+')
+                        vt.out(' ', vt.bright, vt.yellow, $.player.emulation == 'XT' ? '👑' : '+')
                         crown = false
                     }
-                    xvt.outln()
+                    vt.outln()
                 }
                 suppress = true
                 break
@@ -105,8 +104,8 @@ module Party {
             case 'S':
                 if (!$.access.roleplay) break
                 if ($.player.gang) {
-                    xvt.beep()
-                    xvt.outln(`\nYou are already a member of ${$.player.gang}.`)
+                    vt.beep()
+                    vt.outln(`\nYou are already a member of ${$.player.gang}.`)
                     suppress = true
                     break
                 }
@@ -116,13 +115,13 @@ module Party {
                 }
 
                 action('freetext')
-                xvt.app.form = {
+                vt.form = {
                     'new': {
                         cb: () => {
-                            xvt.outln()
-                            g.name = titlecase(xvt.entry)
+                            vt.outln()
+                            g.name = titlecase(vt.entry)
                             if (g.name == 'New' || cuss(g.name))
-                                xvt.hangup()
+                                vt.hangup()
                             if (!g.name || /King|Mash|Mon|Queen/.test(g.name)) {
                                 menu()
                                 return
@@ -137,16 +136,16 @@ module Party {
                             showGang(g)
                             xtGang(g.name, $.player.gender, $.player.melee, g.banner, g.trim)
                             action('yn')
-                            xvt.app.focus = 'accept'
+                            vt.focus = 'accept'
                         }, prompt: 'New gang name? ', min: 2, max: 22
                     },
                     'accept': {
                         cb: () => {
-                            xvt.outln()
-                            if (/Y/i.test(xvt.entry)) {
+                            vt.outln()
+                            if (/Y/i.test(vt.entry)) {
                                 $.player.gang = g.name
                                 $.online.altered = true
-                                xvt.outln()
+                                vt.outln()
                                 PC.saveGang(g, true)
                                 cat('party/gang')
                                 sound('click', 20)
@@ -158,21 +157,21 @@ module Party {
                                 g.back = dice(7)
                                 g.fore = dice(7)
                                 showGang(g)
-                                xvt.app.refocus()
+                                vt.refocus()
                             }
                         }, prompt: 'Accept this banner (Y/N)? '
                         , cancel: 'N', enter: 'Y', eol: false, match: /Y|N/i, timeout: 20
                     }
                 }
-                xvt.app.focus = 'new'
+                vt.focus = 'new'
                 return
 
             case 'R':
                 if (!$.access.roleplay) break
                 if (!$.player.gang) break
                 if (!$.party) {
-                    xvt.beep()
-                    xvt.outln('\nYou cannot resign from your gang after party fights.')
+                    vt.beep()
+                    vt.outln('\nYou cannot resign from your gang after party fights.')
                     suppress = true
                     break
                 }
@@ -183,11 +182,11 @@ module Party {
                 sound('ddd', 6)
 
                 action('ny')
-                xvt.app.form = {
+                vt.form = {
                     'resign': {
                         cb: () => {
-                            xvt.outln()
-                            if (/Y/i.test(xvt.entry)) {
+                            vt.outln()
+                            if (/Y/i.test(vt.entry)) {
                                 $.player.gang = ''
                                 $.player.coward = true
                                 $.online.altered = true
@@ -198,10 +197,10 @@ module Party {
                                 }
                                 else {
                                     PC.adjust('cha', -2, -1)
-                                    xvt.out('\nDissolving the gang... ')
+                                    vt.out('\nDissolving the gang... ')
                                     db.run(`UPDATE Players SET gang = '' WHERE gang = '${g.name}'`)
                                     db.run(`DELETE FROM Gangs WHERE name = '${g.name}'`)
-                                    xvt.outln()
+                                    vt.outln()
                                 }
                                 PC.adjust('str'
                                     , $.online.str > 40 ? -dice(6) - 4 : -3
@@ -228,14 +227,14 @@ module Party {
                         }, prompt: 'Resign (Y/N)? ', enter: 'N', eol: false, match: /Y|N/i
                     }
                 }
-                xvt.app.focus = 'resign'
+                vt.focus = 'resign'
                 return
 
             case 'J':
                 if (!$.access.roleplay) break
                 if ($.player.gang) {
-                    xvt.beep()
-                    xvt.outln(`\nYou are already a member of ${$.player.gang}.`)
+                    vt.beep()
+                    vt.outln(`\nYou are already a member of ${$.player.gang}.`)
                     suppress = true
                     break
                 }
@@ -253,19 +252,19 @@ module Party {
                     showGang(g)
 
                     action('ny')
-                    xvt.app.form = {
+                    vt.form = {
                         'join': {
                             cb: () => {
-                                if (/Y/i.test(xvt.entry)) {
+                                if (/Y/i.test(vt.entry)) {
                                     $.player.gang = g.name
                                     $.online.altered = true
                                     if (g.members.indexOf($.player.id) < 0)
                                         g.members.push($.player.id)
                                     db.run(`UPDATE Gangs SET members = '${g.members.join()}' WHERE name = '${g.name}'`)
-                                    xvt.outln('\n')
+                                    vt.outln('\n')
                                     cat('party/gang')
                                     sound('click', 12)
-                                    xvt.outln(xvt.cyan, 'You are now a member of ', xvt.bright, g.name, xvt.normal, '.', -1200)
+                                    vt.outln(vt.cyan, 'You are now a member of ', vt.bright, g.name, vt.normal, '.', -1200)
                                 }
                                 else {
                                     g.members = []
@@ -277,7 +276,7 @@ module Party {
                                     }
                                     if (g.members.length > 0 && (g.members.length < 4 || g.members.indexOf($.player.id) > 0)) {
                                         showGang(g)
-                                        xvt.app.refocus()
+                                        vt.refocus()
                                         return
                                     }
                                 }
@@ -285,7 +284,7 @@ module Party {
                             }, prompt: 'Join (Y/N)? ', enter: 'N', eol: false, match: /Y|N/i
                         }
                     }
-                    xvt.app.focus = 'join'
+                    vt.focus = 'join'
                     return
                 }
                 break
@@ -297,8 +296,8 @@ module Party {
                 g = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                 showGang(g)
                 if (g.members.indexOf($.player.id) != 0) {
-                    xvt.beep()
-                    xvt.outln('\nYou are not its leader.')
+                    vt.beep()
+                    vt.outln('\nYou are not its leader.')
                     break
                 }
                 xtGang(g.name, $.player.gender, $.player.melee, g.banner, g.trim)
@@ -307,10 +306,10 @@ module Party {
                 Battle.user('Transfer leadership to', (member: active) => {
                     let n = g.members.indexOf(member.user.id)
                     if (n < 0) {
-                        xvt.beep()
+                        vt.beep()
                         if (member.user.id) {
                             profile(member)
-                            xvt.outln(`\n${member.user.handle} is not a member.`)
+                            vt.outln(`\n${member.user.handle} is not a member.`)
                         }
                     }
                     else {
@@ -320,12 +319,12 @@ module Party {
                             PC.saveGang(g)
                             g = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                             showGang(g)
-                            xvt.outln()
-                            xvt.outln(xvt.bright, member.user.handle, ' is now leader of ', g.name, '.')
+                            vt.outln()
+                            vt.outln(vt.bright, member.user.handle, ' is now leader of ', g.name, '.')
                         }
                         else {
-                            xvt.beep()
-                            xvt.outln(`\n${member.user.handle} has not accepted membership.`)
+                            vt.beep()
+                            vt.outln(`\n${member.user.handle} has not accepted membership.`)
                         }
                     }
                     menu()
@@ -336,8 +335,8 @@ module Party {
                 if (!$.access.roleplay) break
                 if (!$.player.gang) break
                 if (!$.party) {
-                    xvt.beep()
-                    xvt.outln('\nYou cannot edit your gang after party fights.')
+                    vt.beep()
+                    vt.outln('\nYou cannot edit your gang after party fights.')
                     suppress = true
                     break
                 }
@@ -345,28 +344,28 @@ module Party {
                 g = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                 showGang(g)
                 if (g.members.indexOf($.player.id) != 0) {
-                    xvt.beep()
-                    xvt.outln('\nYou are not its leader.')
+                    vt.beep()
+                    vt.outln('\nYou are not its leader.')
                     break
                 }
                 xtGang(g.name, $.player.gender, $.player.melee, g.banner, g.trim)
                 action('ny')
 
-                xvt.app.form = {
+                vt.form = {
                     'drop': {
                         cb: () => {
-                            if (/Y/i.test(xvt.entry)) {
+                            if (/Y/i.test(vt.entry)) {
                                 Battle.user('Drop', (member: active) => {
                                     if (member.user.id !== '') {
                                         let n = g.members.indexOf(member.user.id)
                                         if (n < 0) {
-                                            xvt.beep()
-                                            if (member.user.handle) xvt.outln(`\n${member.user.handle} is not a member.`)
+                                            vt.beep()
+                                            if (member.user.handle) vt.outln(`\n${member.user.handle} is not a member.`)
                                         }
                                         else {
                                             if (!db.lock(member.user.id)) {
-                                                xvt.beep()
-                                                xvt.outln(`\n${PC.who(member).He}is currently engaged elsewhere and not available.`)
+                                                vt.beep()
+                                                vt.outln(`\n${PC.who(member).He}is currently engaged elsewhere and not available.`)
                                             }
                                             else {
                                                 if (member.user.gang == g.name) {
@@ -378,8 +377,8 @@ module Party {
                                                 PC.saveGang(g)
                                                 showGang(g)
                                                 sound('click')
-                                                xvt.outln()
-                                                xvt.outln(xvt.bright, member.user.handle, ' is no longer on ', g.name, '.')
+                                                vt.outln()
+                                                vt.outln(vt.bright, member.user.handle, ' is no longer on ', g.name, '.')
                                             }
                                         }
                                     }
@@ -387,18 +386,18 @@ module Party {
                                 })
                             }
                             else
-                                xvt.app.focus = 'invite'
+                                vt.focus = 'invite'
                         }, prompt: 'Drop a member (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
                     },
                     'invite': {
                         cb: () => {
-                            if (/Y/i.test(xvt.entry)) {
+                            if (/Y/i.test(vt.entry)) {
                                 Battle.user('Invite', (member: active) => {
                                     if (member.user.id !== '') {
                                         let n = g.members.indexOf(member.user.id)
                                         if (n >= 0) {
-                                            xvt.beep()
-                                            xvt.outln(`\n${member.user.handle} is already a member.`)
+                                            vt.beep()
+                                            vt.outln(`\n${member.user.handle} is already a member.`)
                                         }
                                         else {
                                             if (!member.user.gang) {
@@ -408,8 +407,8 @@ module Party {
                                                 showGang(g)
                                                 log(member.user.id, `\n${$.player.handle} invites you to join ${g.name}`)
                                                 sound('click')
-                                                xvt.outln()
-                                                xvt.outln(xvt.bright, member.user.handle, ' is invited to join ', g.name, '.')
+                                                vt.outln()
+                                                vt.outln(vt.bright, member.user.handle, ' is invited to join ', g.name, '.')
                                             }
                                         }
                                     }
@@ -421,15 +420,15 @@ module Party {
                         }, prompt: 'Invite another player (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
                     }
                 }
-                xvt.app.focus = 'drop'
+                vt.focus = 'drop'
                 return
 
             case 'F':
                 if (!$.access.roleplay) break
                 if (!$.player.gang) break
                 if (!$.party) {
-                    xvt.beep()
-                    xvt.outln('\nYou have no more party fights.')
+                    vt.beep()
+                    vt.outln('\nYou have no more party fights.')
                     suppress = true
                     break
                 }
@@ -438,21 +437,21 @@ module Party {
                 for (let i = 0; i < rs.length; i++) {
                     o = PC.loadGang(rs[i])
                     if (o.name !== $.player.gang)
-                        xvt.out(bracket(i + 1), o.name)
+                        vt.out(bracket(i + 1), o.name)
                 }
 
                 action('listmm')
-                xvt.app.form = {
+                vt.form = {
                     'gang': {
                         cb: () => {
-                            xvt.outln()
-                            let i = (+xvt.entry >> 0) - 1
-                            if (/M/i.test(xvt.entry)) {
+                            vt.outln()
+                            let i = (+vt.entry >> 0) - 1
+                            if (/M/i.test(vt.entry)) {
                                 rs = [rs.find((x) => { return x.name == 'Monster Mash' })]
                                 i = 0
                             }
                             if (!rs[i]) {
-                                xvt.beep()
+                                vt.beep()
                                 menu()
                                 return
                             }
@@ -460,7 +459,7 @@ module Party {
                             g = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                             o = PC.loadGang(rs[i])
                             if (o.name == g.name) {
-                                xvt.app.refocus()
+                                vt.refocus()
                                 return
                             }
 
@@ -530,7 +529,7 @@ module Party {
                             }
 
                             if (!nme.length) {
-                                xvt.outln('\nThat gang is not active!')
+                                vt.outln('\nThat gang is not active!')
                                 menu()
                                 return
                             }
@@ -538,19 +537,19 @@ module Party {
                             action('ny')
                             showGang(g, o, true)
                             xtGang(o.name, o.genders[0], o.melee[0], o.banner, o.trim)
-                            xvt.app.focus = 'fight'
+                            vt.focus = 'fight'
                         }, prompt: '\nFight which gang? ', max: 2
                     },
                     'fight': {
                         cb: () => {
-                            xvt.outln('\n')
-                            if (/Y/i.test(xvt.entry)) {
+                            vt.outln('\n')
+                            if (/Y/i.test(vt.entry)) {
                                 $.party--
                                 music('party')
 
                                 if (!cat('dungeon/' + nme[0].user.handle.toLowerCase()))
                                     cat('player/' + nme[0].user.pc.toLowerCase())
-                                xvt.outln(xvt.magenta, xvt.bright, nme[0].user.handle, xvt.reset
+                                vt.outln(vt.magenta, vt.bright, nme[0].user.handle, vt.reset
                                     , ' grins as ', PC.who(nme[0]).he, 'pulls out '
                                     , PC.who(nme[0]).his, weapon(nme[0]), '.', -1200)
 
@@ -563,7 +562,7 @@ module Party {
                         }, prompt: 'Fight this gang (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
                     }
                 }
-                xvt.app.focus = 'gang'
+                vt.focus = 'gang'
                 return
 
             case 'Q':
@@ -575,123 +574,123 @@ module Party {
     }
 
     function showGang(lg: gang, rg?: gang, engaged = false) {
-        xvt.outln()
+        vt.outln()
 
-        xvt.out(xvt.bright, xvt.white, mp[lg.banner])
+        vt.out(vt.bright, vt.white, mp[lg.banner])
         if (rg)
-            xvt.out(' '.repeat(31), mp[rg.banner])
-        xvt.outln()
+            vt.out(' '.repeat(31), mp[rg.banner])
+        vt.outln()
 
-        xvt.out(' |', xvt.Black + lg.back, xvt.black + lg.fore, xvt.bright)
-        xvt.out(le[lg.trim], tb[lg.trim].repeat(26), re[lg.trim], xvt.reset)
+        vt.out(' |', vt.Black + lg.back, vt.black + lg.fore, vt.bright)
+        vt.out(le[lg.trim], tb[lg.trim].repeat(26), re[lg.trim], vt.reset)
         if (rg) {
-            xvt.out(' '.repeat(4), ' |', xvt.Black + rg.back, xvt.black + rg.fore, xvt.bright)
-            xvt.out(le[rg.trim], tb[rg.trim].repeat(26), re[rg.trim])
+            vt.out(' '.repeat(4), ' |', vt.Black + rg.back, vt.black + rg.fore, vt.bright)
+            vt.out(le[rg.trim], tb[rg.trim].repeat(26), re[rg.trim])
         }
-        xvt.outln()
+        vt.outln()
 
-        xvt.out(' |', xvt.Black + lg.back, xvt.black + lg.fore, xvt.bright)
+        vt.out(' |', vt.Black + lg.back, vt.black + lg.fore, vt.bright)
         let i = 26 - lg.name.length
-        xvt.out(le[lg.trim], ' '.repeat(i >> 1), lg.name, ' '.repeat((i >> 1) + i % 2), re[lg.trim], xvt.reset)
+        vt.out(le[lg.trim], ' '.repeat(i >> 1), lg.name, ' '.repeat((i >> 1) + i % 2), re[lg.trim], vt.reset)
         if (rg) {
-            xvt.out(' '.repeat(4), ' |', xvt.Black + rg.back, xvt.black + rg.fore, xvt.bright)
+            vt.out(' '.repeat(4), ' |', vt.Black + rg.back, vt.black + rg.fore, vt.bright)
             i = 26 - rg.name.length
-            xvt.out(le[rg.trim], ' '.repeat(i >> 1), rg.name, ' '.repeat((i >> 1) + i % 2), re[rg.trim])
+            vt.out(le[rg.trim], ' '.repeat(i >> 1), rg.name, ' '.repeat((i >> 1) + i % 2), re[rg.trim])
         }
-        xvt.outln()
+        vt.outln()
 
-        xvt.out(' |', xvt.Black + lg.back, xvt.black + lg.fore, xvt.bright)
-        xvt.out(le[lg.trim], tb[lg.trim].repeat(26), re[lg.trim], xvt.reset)
+        vt.out(' |', vt.Black + lg.back, vt.black + lg.fore, vt.bright)
+        vt.out(le[lg.trim], tb[lg.trim].repeat(26), re[lg.trim], vt.reset)
         if (rg) {
-            xvt.out(' '.repeat(4), ' |', xvt.Black + rg.back, xvt.black + rg.fore, xvt.bright)
-            xvt.out(le[rg.trim], tb[rg.trim].repeat(26), re[rg.trim])
+            vt.out(' '.repeat(4), ' |', vt.Black + rg.back, vt.black + rg.fore, vt.bright)
+            vt.out(le[rg.trim], tb[rg.trim].repeat(26), re[rg.trim])
         }
-        xvt.outln()
+        vt.outln()
 
         let n = 0
         let who: { handle: string, status: string, gang: string }[]
         while (n < 4 && ((lg && lg.members.length) || (rg && rg.members.length))) {
             if (lg) {
-                xvt.out(' | ')
+                vt.out(' | ')
                 if (n < lg.members.length) {
                     if (lg.handles[n]) {
                         if (lg.validated[n]) {
                             if (lg.status[n]) {
                                 if (engaged)
-                                    xvt.out(xvt.faint, xvt.red, 'x ')
+                                    vt.out(vt.faint, vt.red, 'x ')
                                 else
-                                    xvt.out(xvt.reset, xvt.faint, '^ ')
+                                    vt.out(vt.reset, vt.faint, '^ ')
                             }
                             else
-                                xvt.out(xvt.bright, xvt.white, '  ')
+                                vt.out(vt.bright, vt.white, '  ')
                         }
                         else {
                             if (typeof lg.validated[n] == 'undefined') {
                                 if (engaged)
-                                    xvt.out(xvt.faint, xvt.red, 'x ')
+                                    vt.out(vt.faint, vt.red, 'x ')
                                 else
-                                    xvt.out(xvt.faint, xvt.yellow, '> ')
+                                    vt.out(vt.faint, vt.yellow, '> ')
                             }
                             else {
                                 if (engaged)
-                                    xvt.out(xvt.faint, xvt.red, 'x ')
+                                    vt.out(vt.faint, vt.red, 'x ')
                                 else
-                                    xvt.out(xvt.faint, xvt.red, 'x ', xvt.blue)
+                                    vt.out(vt.faint, vt.red, 'x ', vt.blue)
                             }
                         }
-                        xvt.out(sprintf('%-24s ', lg.handles[n]))
+                        vt.out(sprintf('%-24s ', lg.handles[n]))
                     }
                     else
-                        xvt.out(sprintf('> %-24s ', 'wired for '
+                        vt.out(sprintf('> %-24s ', 'wired for '
                             + ['mashing', 'smashing', 'beatdown', 'pounding'][n]))
                 }
                 else {
                     if (engaged)
-                        xvt.out(sprintf(' '.repeat(27)))
+                        vt.out(sprintf(' '.repeat(27)))
                     else
-                        xvt.out(sprintf(' -open invitation to join- '))
+                        vt.out(sprintf(' -open invitation to join- '))
                 }
             }
 
             if (rg) {
-                xvt.out(xvt.reset, ' '.repeat(4), ' | ')
+                vt.out(vt.reset, ' '.repeat(4), ' | ')
                 if (n < rg.members.length) {
                     if (rg.handles[n]) {
                         if (rg.validated[n]) {
                             if (rg.status[n]) {
                                 if (engaged)
-                                    xvt.out(xvt.faint, xvt.red, 'x ')
+                                    vt.out(vt.faint, vt.red, 'x ')
                                 else
-                                    xvt.out(xvt.reset, xvt.faint, '^ ')
+                                    vt.out(vt.reset, vt.faint, '^ ')
                             }
                             else
-                                xvt.out(xvt.bright, xvt.white, '  ')
+                                vt.out(vt.bright, vt.white, '  ')
                         }
                         else {
                             if (typeof rg.validated[n] == 'undefined') {
                                 if (engaged)
-                                    xvt.out(xvt.faint, xvt.red, 'x ')
+                                    vt.out(vt.faint, vt.red, 'x ')
                                 else
-                                    xvt.out(xvt.faint, xvt.yellow, '> ')
+                                    vt.out(vt.faint, vt.yellow, '> ')
                             }
                             else {
                                 if (engaged)
-                                    xvt.out(xvt.faint, xvt.red, 'x ')
+                                    vt.out(vt.faint, vt.red, 'x ')
                                 else
-                                    xvt.out(xvt.faint, xvt.red, 'x ', xvt.blue)
+                                    vt.out(vt.faint, vt.red, 'x ', vt.blue)
                             }
                         }
-                        xvt.out(sprintf('%-24s ', rg.handles[n]))
+                        vt.out(sprintf('%-24s ', rg.handles[n]))
                     }
                     else
-                        xvt.out(sprintf('> %-24s ', 'wired for '
+                        vt.out(sprintf('> %-24s ', 'wired for '
                             + ['mashing', 'smashing', 'beatdown', 'pounding'][n]))
                 }
                 else
                     if (!engaged)
-                        xvt.out(sprintf(' -open invitation to join- '))
+                        vt.out(sprintf(' -open invitation to join- '))
             }
-            xvt.outln()
+            vt.outln()
             n++
         }
     }

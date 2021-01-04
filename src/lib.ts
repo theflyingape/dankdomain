@@ -7,7 +7,7 @@ import db = require('./db')
 import fs = require('fs')
 import $ = require('./runtime')
 import { loadUser } from './io'
-import { dice, int, titlecase } from './sys'
+import { dice, int, titlecase, whole } from './sys'
 
 module lib {
 
@@ -80,6 +80,11 @@ module lib {
 
     export function what(rpc: active, action: string): string {
         return action + (rpc !== $.online ? (/.*ch$|.*sh$|.*s$|.*z$/i.test(action) ? 'es ' : 's ') : ' ')
+    }
+
+    export function tradein(retail: number, percentage = $.online.cha): number {
+        percentage--
+        return whole(retail * percentage / 100)
     }
 }
 

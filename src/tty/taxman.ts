@@ -3,14 +3,13 @@
  *  TAXMAN authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import xvt = require('@theflyingape/xvt')
 import Battle = require('../battle')
 import $ = require('../runtime')
-import { Coin, action, activate, input, loadUser, music, profile, reroll, sound, wearing, weapon } from '../io'
+import { vt, Coin, action, activate, input, loadUser, music, profile, reroll, sound, wearing, weapon } from '../io'
 import { Armor, RealEstate, Ring, Security, Weapon } from '../items'
 import { news } from '../lib'
 import { PC } from '../pc'
-import { an, dice, int, money, worth } from '../sys'
+import { an, dice, int, money, whole, worth } from '../sys'
 
 module Taxman {
 
@@ -30,15 +29,15 @@ module Taxman {
             sound('oops', 4)
             let pouch = new Coin(scratch).pieces()
 
-            xvt.out('\n\n', xvt.yellow, xvt.bright, $.taxman.user.handle, xvt.normal, -400)
-            xvt.outln(', our Master of Coin, looks at your bulging ', pouch, -1200)
-            xvt.out(xvt.yellow, 'and says, ', xvt.blue, xvt.bright, '"Time to pay taxes!"', xvt.normal, -800)
-            xvt.out(xvt.yellow, '  You check out the burly guards who stand ready\n')
-            xvt.outln(`to enforce `, xvt.bright, `${$.king.handle}'${$.king.handle.substr(-1) !== 's' ? 's' : ''}`, xvt.normal, ` will.\n`, -1600)
+            vt.out('\n\n', vt.yellow, vt.bright, $.taxman.user.handle, vt.normal, -400)
+            vt.outln(', our Master of Coin, looks at your bulging ', pouch, -1200)
+            vt.out(vt.yellow, 'and says, ', vt.blue, vt.bright, '"Time to pay taxes!"', vt.normal, -800)
+            vt.out(vt.yellow, '  You check out the burly guards who stand ready\n')
+            vt.outln(`to enforce `, vt.bright, `${$.king.handle}'${$.king.handle.substr(-1) !== 's' ? 's' : ''}`, vt.normal, ` will.\n`, -1600)
 
             tax.value = scratch - tax.value
             tax = new Coin(tax.carry(1, true))
-            xvt.outln(`The tax will cost you ${tax.carry()}`, -900)
+            vt.outln(`The tax will cost you ${tax.carry()}`, -900)
 
             return true
         }
@@ -51,8 +50,8 @@ module Taxman {
         tax.value = 10 * money($.player.level)
 
         if (checkpoint($.player.coin.value)) {
-            xvt.outln('\nYou really want a drink, so you pay the shakedown.')
-            xvt.beep()
+            vt.outln('\nYou really want a drink, so you pay the shakedown.')
+            vt.beep()
             $.player.coin.value -= tax.value
             if ($.player.coin.value < 0) {
                 $.player.bank.value += $.player.coin.value
@@ -92,12 +91,12 @@ module Taxman {
             }
             //  a Lanister always pay his debt
             if ($.player.loan.value > 9) {
-                xvt.outln(xvt.green, '\nYour bank loan ', $.player.loan.carry(), xvt.red, ' is past due.', -1200)
-                xvt.beep()
+                vt.outln(vt.green, '\nYour bank loan ', $.player.loan.carry(), vt.red, ' is past due.', -1200)
+                vt.beep()
                 let interest = new Coin(int($.player.loan.value * .05 + 1))
                 $.player.loan.value += interest.value
                 $.online.altered = true
-                xvt.outln('An interest charge of ', interest.carry(), ' was added.', -1200)
+                vt.outln('An interest charge of ', interest.carry(), ' was added.', -1200)
             }
             //  now tax if necessary
             tax.value = 1000 * money($.player.level)
@@ -107,28 +106,28 @@ module Taxman {
             if (checkpoint($.player.coin.value + $.player.bank.value)) {
                 let exempt = Ring.power([], $.player.rings, 'taxes')
                 if (exempt.power) {
-                    xvt.out('\nYour hand extends to show', xvt.cyan, xvt.bright, an(exempt.name), xvt.normal)
-                    if ($.player.emulation == 'XT') xvt.out(' ', Ring.name[exempt.name].emoji, ' 💍')
-                    xvt.outln(' ring', -1200)
-                    xvt.out(xvt.yellow, xvt.bright, $.taxman.user.handle, xvt.normal, ' ')
+                    vt.out('\nYour hand extends to show', vt.cyan, vt.bright, an(exempt.name), vt.normal)
+                    if ($.player.emulation == 'XT') vt.out(' ', Ring.name[exempt.name].emoji, ' 💍')
+                    vt.outln(' ring', -1200)
+                    vt.out(vt.yellow, vt.bright, $.taxman.user.handle, vt.normal, ' ')
                     if (dice(100) < ($.online.cha - 10)) {
-                        xvt.outln('nods approval while the guards stand down to let you pass.', -1200)
+                        vt.outln('nods approval while the guards stand down to let you pass.', -1200)
                         require('./main').menu()
                         return
                     }
                     Ring.remove($.player.rings, exempt.name)
-                    xvt.outln('confiscates the ring!', -1500)
+                    vt.outln('confiscates the ring!', -1500)
                 }
 
-                xvt.outln(`\nYou weigh the chances with your ${weapon()} against the Crown.`, -1500)
+                vt.outln(`\nYou weigh the chances with your ${weapon()} against the Crown.`, -1500)
 
                 action('yn')
-                xvt.app.form = {
+                vt.form = {
                     'tax': {
                         cb: () => {
-                            xvt.outln('\n')
-                            if (/Y/i.test(xvt.entry)) {
-                                xvt.outln('You pay the tax.')
+                            vt.outln('\n')
+                            if (/Y/i.test(vt.entry)) {
+                                vt.outln('You pay the tax.')
                                 sound('thief2', 16)
                                 $.player.coin.value -= tax.value
                                 if ($.player.coin.value < 0) {
@@ -143,7 +142,7 @@ module Taxman {
                                 return
                             }
 
-                            let l = 0, xhp = int($.player.hp * ($.player.level - 9) / $.sysop.level, true)
+                            let l = 0, xhp = whole($.player.hp * ($.player.level - 9) / $.sysop.level)
                             irs = new Array()
                             do {
                                 let i = irs.push(<active>{ user: { id: '', sex: 'M' } }) - 1
@@ -172,7 +171,7 @@ module Taxman {
                                     l++
                             } while (xhp > 0)
 
-                            xvt.outln(xvt.yellow, `The Master of Coin points ${PC.who($.taxman).his}${$.taxman.user.weapon} at you,\n`, xvt.bright, xvt.blue, `  "Shall we begin?"`)
+                            vt.outln(vt.yellow, `The Master of Coin points ${PC.who($.taxman).his}${$.taxman.user.weapon} at you,\n`, vt.bright, vt.blue, `  "Shall we begin?"`)
                             sound('ddd', 15)
                             music('taxman')
 
@@ -190,10 +189,10 @@ module Taxman {
         require('./main').menu()
 
         function boss() {
-            if ($.reason) xvt.hangup()
+            if ($.reason) vt.hangup()
             if (Battle.retreat || Battle.teleported) {
                 news(`\tgot schooled on economics`)
-                xvt.outln(xvt.bright, xvt.cyan, '\nYou got schooled on economics, and pay homage to the Crown.', -1000)
+                vt.outln(vt.bright, vt.cyan, '\nYou got schooled on economics, and pay homage to the Crown.', -1000)
                 $.player.coin.value -= tax.value
                 if ($.player.coin.value < 0) {
                     $.player.bank.value += $.player.coin.value
@@ -207,10 +206,10 @@ module Taxman {
                 return
             }
 
-            xvt.outln(xvt.yellow, '\nThe tax collector ', [
-                `${xvt.attr('mutters,', xvt.bright, xvt.blue)} "Good help is hard to find these days..."`,
-                `${xvt.attr('sighs,', xvt.bright, xvt.blue)} "If you want a job done right..."`,
-                `${xvt.attr('swears,', xvt.bright, xvt.blue)} "That's gonna cost you."`
+            vt.outln(vt.yellow, '\nThe tax collector ', [
+                `${vt.attr('mutters,', vt.bright, vt.blue)} "Good help is hard to find these days..."`,
+                `${vt.attr('sighs,', vt.bright, vt.blue)} "If you want a job done right..."`,
+                `${vt.attr('swears,', vt.bright, vt.blue)} "That's gonna cost you."`
             ][dice(3) - 1], -900)
 
             activate($.taxman)

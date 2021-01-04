@@ -12,67 +12,63 @@
  *  Apple Ⅱ TproBBS                                written by Guy T. Rice    *
 \*****************************************************************************/
 
-import xvt = require('@theflyingape/xvt')
+import { vt } from './io'
 
-module ttymain {
+process.title = 'ddclient'
+process.chdir(__dirname)
+process.on('ttyMain uncaughtException', (err, origin) => {
+    vt.outln(`${origin} ${err}`)
+})
 
-    process.title = 'ddclient'
-    process.chdir(__dirname)
-    process.on('ttyMain uncaughtException', (err, origin) => {
-        xvt.outln(`${origin} ${err}`)
-    })
+vt.sessionAllowed = 150
+vt.defaultTimeout = 100
 
-    xvt.sessionAllowed = 150
-    xvt.defaultTimeout = 100
+vt.emulation = <EMULATION>(process.argv.length > 2 && process.argv[2]
+    ? process.argv[2].toUpperCase()
+    : (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM)) ? 'dumb'
+        : (/^linux|^lisa|^ncsa|^pcvt|^vt|^xt/i.test(process.env.TERM)) ? 'VT'
+            : (/ansi|cygwin|^pc/i.test(process.env.TERM)) ? 'PC'
+                : '')
+if ((vt.modem = process.env.REMOTEHOST ? true : false))
+    vt.outln(vt.off, vt.bright
+        , vt.red, 'C'
+        , vt.yellow, 'A'
+        , vt.green, 'R'
+        , vt.cyan, 'R'
+        , vt.blue, 'I'
+        , vt.magenta, 'E'
+        , vt.white, 'R'
+        , vt.normal, ' '
+        , vt.faint, 'DETECTED')
 
-    xvt.app.emulation = (process.argv.length > 2 && process.argv[2]
-        ? process.argv[2].toUpperCase()
-        : (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM)) ? 'dumb'
-            : (/^linux|^lisa|^ncsa|^pcvt|^vt|^xt/i.test(process.env.TERM)) ? 'VT'
-                : (/ansi|cygwin|^pc/i.test(process.env.TERM)) ? 'PC'
-                    : '')
-    if ((xvt.modem = process.env.REMOTEHOST ? true : false))
-        xvt.outln(xvt.off, xvt.bright
-            , xvt.red, 'C'
-            , xvt.yellow, 'A'
-            , xvt.green, 'R'
-            , xvt.cyan, 'R'
-            , xvt.blue, 'I'
-            , xvt.magenta, 'E'
-            , xvt.white, 'R'
-            , xvt.normal, ' '
-            , xvt.faint, 'DETECTED')
-
-    xvt.app.form = {
-        'enq1': {
+const bot = process.argv.length > 3 && process.argv[3] ? process.argv[3].toUpperCase() : ''
+if (vt.emulation)
+    logon()
+else
+    //  old-school enquire the terminal to identify itself
+    vt.form = {
+        0: {
             cb: () => {
-                if (/^.*\[.*R$/i.test(xvt.entry)) {
-                    xvt.app.emulation = 'XT'
+                if (/^.*\[.*R$/i.test(vt.entry)) {
+                    vt.emulation = 'XT'
                     logon()
                 }
-                else xvt.app.focus = 'enq2'
+                else
+                    vt.focus = 2
             }, prompt: '\x1B[6n', enq: true
         },
-        'enq2': {
+        2: {
             cb: () => {
-                if (xvt.entry.length) xvt.app.emulation = 'VT'
+                if (vt.entry.length) vt.emulation = 'VT'
                 logon()
             }, prompt: '\x05', enq: true
         }
     }
 
-    const bot = process.argv.length > 3 && process.argv[3] ? process.argv[3].toUpperCase() : ''
-    if (xvt.app.emulation) logon()
-    //  old-school enquire the terminal to identify itself
-    else xvt.app.focus = 'enq1'
-
-    function logon() {
-        xvt.outln(xvt.cyan, xvt.bright, xvt.app.emulation, xvt.normal, ' emulation ', xvt.faint, 'enabled')
-        if (bot)
-            require('./tty/logon').startup(bot)
-        else
-            require('./tty/logon').user()
-    }
+function logon() {
+    vt.outln(vt.cyan, vt.bright, vt.emulation, vt.normal, ' emulation ', vt.faint, 'enabled')
+    if (bot)
+        require('./tty/logon').startup(bot)
+    else
+        require('./tty/logon').user()
 }
-
-export = ttymain

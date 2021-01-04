@@ -3,50 +3,49 @@
  *  LOGON authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import xvt = require('@theflyingape/xvt')
 import fs = require('fs')
 import db = require('../db')
 import $ = require('../runtime')
-import { Coin, action, activate, bracket, cat, clear, emulator, getRing, getRuler, input, loadUser, logoff, music, playerPC, portrait, profile, reroll, sound, title, wall } from '../io'
+import { vt, Coin, action, activate, bracket, cat, clear, emulator, getRing, getRuler, input, loadUser, logoff, music, playerPC, portrait, profile, reroll, sound, title, wall } from '../io'
 import { Access, Deed, Magic, Ring } from '../items'
 import { cuss, news } from '../lib'
 import { PC } from '../pc'
-import { date2full, dice, got, int, money, now, time, titlecase } from '../sys'
+import { date2full, dice, got, int, money, now, time, titlecase, whole } from '../sys'
 
 module Logon {
 
     init()
 
     export function user() {
-        xvt.app.form = {
-            'who': { cb: who, prompt: xvt.attr('Who dares to enter my dank domain ', bracket('or NEW', false), '? '), max: 22, timeout: 40 },
+        vt.form = {
+            'who': { cb: who, prompt: vt.attr('Who dares to enter my dank domain ', bracket('or NEW', false), '? '), max: 22, timeout: 40 },
             'password': { cb: password, echo: false, max: 26, timeout: 20 },
         }
 
         cat('logon')
         let retry = 3
-        xvt.app.focus = 'who'
+        vt.focus = 'who'
 
         function guards(): boolean {
-            xvt.beep()
-            xvt.outln(xvt.reset, 'Invalid response.\n', -400)
-            xvt.drain()
+            vt.beep()
+            vt.outln(vt.reset, 'Invalid response.\n', -400)
+            vt.drain()
 
             switch (--retry) {
                 case 2:
-                    xvt.outln('The guards eye you suspiciously.')
+                    vt.outln('The guards eye you suspiciously.')
                     break
                 case 1:
-                    xvt.outln('The guards aim their crossbows at you.')
+                    vt.outln('The guards aim their crossbows at you.')
                     break
                 default:
                     sound('stranger')
                     profile({ handle: '💀 🏹 💘 🏹 💀', jpg: 'npc/stranger', effect: 'zoomIn' })
-                    xvt.outln('The last thing you ever feel is several quarrels cutting deep into your chest.', -800)
-                    xvt.app.form = {
+                    vt.outln('The last thing you ever feel is several quarrels cutting deep into your chest.', -800)
+                    vt.form = {
                         'forgot': {
                             cb: () => {
-                                if (/Y/i.test(xvt.entry)) {
+                                if (/Y/i.test(vt.entry)) {
                                     if ($.player.lastdate != now().date) $.player.today = 0
                                     $.player.lastdate = now().date
                                     $.player.lasttime = now().time
@@ -56,7 +55,7 @@ module Logon {
                                     return
                                 }
                                 else {
-                                    xvt.outln()
+                                    vt.outln()
                                     process.exit()
                                 }
                             }, prompt: 'DOH!!  Re-send the password to your email account (Y/N)? ', cancel: 'N', enter: 'Y', eol: false, match: /Y|N/i, timeout: 10
@@ -64,7 +63,7 @@ module Logon {
                     }
                     if ($.player.id && $.player.lastdate != now().date) {
                         action('yn')
-                        xvt.app.focus = 'forgot'
+                        vt.focus = 'forgot'
                     }
                     else
                         process.exit()
@@ -75,18 +74,18 @@ module Logon {
         }
 
         function who() {
-            xvt.outln()
+            vt.outln()
 
-            if (! /^[A-Z][A-Z23\s]*$/i.test(xvt.entry)) {
+            if (! /^[A-Z][A-Z23\s]*$/i.test(vt.entry)) {
                 if (guards())
-                    xvt.app.refocus()
+                    vt.refocus()
                 return
             }
 
-            if (/new/i.test(xvt.entry)) {
+            if (/new/i.test(vt.entry)) {
                 reroll($.player)
                 PC.newkeys($.player)
-                $.player.emulation = <EMULATION>xvt.app.emulation
+                $.player.emulation = <EMULATION>vt.emulation
                 $.player.rows = process.stdout.rows || 24
                 if ($.tty == 'web') {
                     sound('yahoo', 20)
@@ -94,38 +93,38 @@ module Logon {
                 }
                 else {
                     emulator(() => {
-                        $.player.emulation = <EMULATION>xvt.app.emulation
+                        $.player.emulation = <EMULATION>vt.emulation
                         require('./newuser')
                     })
                 }
                 return
             }
 
-            $.player.id = titlecase(xvt.entry)
+            $.player.id = titlecase(vt.entry)
 
             if (!loadUser($.player)) {
                 $.player.id = ''
-                $.player.handle = xvt.entry
+                $.player.handle = vt.entry
                 if (!loadUser($.player)) {
                     if (guards())
-                        xvt.app.refocus()
+                        vt.refocus()
                     return
                 }
             }
 
             $.access = Access.name[$.player.access]
-            xvt.app.emulation = $.player.emulation
+            vt.emulation = $.player.emulation
             $.player.rows = process.stdout.rows || 24
 
-            xvt.app.form['password'].prompt = $.player.handle + ', enter your password: '
-            xvt.app.focus = 'password'
+            vt.form['password'].prompt = $.player.handle + ', enter your password: '
+            vt.focus = 'password'
         }
 
         function password() {
-            xvt.outln()
-            if ($.player.password !== xvt.entry) {
+            vt.outln()
+            if ($.player.password !== vt.entry) {
                 if (guards())
-                    xvt.app.refocus()
+                    vt.refocus()
                 return
             }
 
@@ -150,13 +149,13 @@ module Logon {
         if (bot) {
             $.player.id = bot
             if (!loadUser($.player)) {
-                xvt.outln(`bot id: ${bot} not found`)
+                vt.outln(`bot id: ${bot} not found`)
                 $.access.roleplay = false
-                xvt.carrier = false
-                xvt.hangup()
+                vt.carrier = false
+                vt.hangup()
             }
             $.access = Access.name[$.player.access]
-            xvt.app.emulation = $.player.emulation
+            vt.emulation = $.player.emulation
             $.player.rows = process.stdout.rows || 24
         }
 
@@ -176,14 +175,14 @@ module Logon {
                 news(`\tkicked simultaneous player off: ${rs[row].id} lock from ${time(rs[row].locktime)}`)
                 try {
                     process.kill(rs[row].pid, 'SIGHUP')
-                    xvt.outln(xvt.lcyan, `\nYou're in violation of the space-time continuum: T - ${60 - t} minutes`)
+                    vt.outln(vt.lcyan, `\nYou're in violation of the space-time continuum: T - ${60 - t} minutes`)
                 }
                 catch {
                     db.unlock(rs[row].id)
                 }
                 $.access.roleplay = false
-                xvt.carrier = false
-                xvt.hangup()
+                vt.carrier = false
+                vt.hangup()
             }
         }
 
@@ -201,10 +200,10 @@ module Logon {
             if (!$.access.sysop && $.player.novice && $.player.calls < 5 && t < 2) {
                 $.access.roleplay = false
                 news('', true)
-                xvt.beep()
-                xvt.outln('\nYou were last on just ', t == 1 ? 'a minute' : t.toString() + ' minutes', ' ago.')
-                xvt.outln('Please wait at least 2 minutes between visits (for now).')
-                xvt.hangup()
+                vt.beep()
+                vt.outln('\nYou were last on just ', t == 1 ? 'a minute' : t.toString() + ' minutes', ' ago.')
+                vt.outln('Please wait at least 2 minutes between visits (for now).')
+                vt.hangup()
             }
         }
 
@@ -213,14 +212,14 @@ module Logon {
             $.player.today = 0
 
         if ($.player.today > $.access.calls) {
-            xvt.beep()
-            xvt.outln(`\nYou played all ${$.access.calls} calls for today.  Please visit again after ${now().time < 1200 ? 'noon' : 'midnight'}!`)
+            vt.beep()
+            vt.outln(`\nYou played all ${$.access.calls} calls for today.  Please visit again after ${now().time < 1200 ? 'noon' : 'midnight'}!`)
             sound('comeagain')
             news('', true)
-            xvt.hangup()
+            vt.hangup()
         }
 
-        xvt.ondrop = logoff
+        vt.ondrop = logoff
 
         if (/^([1][0]|[1][2][7]|[1][7][2]|[1][9][2])[.]/.test($.remote) || !$.remote) {
             if ($.player.emulation == 'XT')
@@ -265,28 +264,28 @@ module Logon {
         $.player.rows = process.stdout.rows
         clear()
 
-        xvt.outln(xvt.red, '--=:))', xvt.app.LGradient
-            , xvt.Red, xvt.white, xvt.bright, $.sysop.name, xvt.reset
-            , xvt.red, xvt.app.RGradient, '((:=--\n')
-        xvt.out(xvt.cyan, 'Visitor: ', xvt.white, xvt.bright, $.sysop.calls.toString()
-            , xvt.reset, '  -  ')
+        vt.outln(vt.red, '--=:))', vt.LGradient
+            , vt.Red, vt.white, vt.bright, $.sysop.name, vt.reset
+            , vt.red, vt.RGradient, '((:=--\n')
+        vt.out(vt.cyan, 'Visitor: ', vt.white, vt.bright, $.sysop.calls.toString()
+            , vt.reset, '  -  ')
         if (now().date >= $.sysop.dob) {
-            xvt.out(xvt.faint, $.sysop.plays.toString(), ' plays since ')
+            vt.out(vt.faint, $.sysop.plays.toString(), ' plays since ')
             if ($.sysop.who)
-                xvt.out($.sysop.who, ' won')
+                vt.out($.sysop.who, ' won')
             else
-                xvt.out('this game started')
+                vt.out('this game started')
         }
         else
-            xvt.out(xvt.bright, 'new game starts', xvt.cyan)
-        xvt.outln(' ', date2full($.sysop.dob))
-        xvt.outln(xvt.cyan, 'Last on: ', xvt.white, xvt.bright, date2full($.player.lastdate), ' ', time($.player.lasttime))
-        xvt.outln(xvt.cyan, ' Online: ', xvt.white, xvt.bright, $.player.handle
-            , xvt.normal, '  -  ', $.whereis)
-        xvt.out(xvt.cyan, ' Access: ', xvt.white, xvt.bright, $.player.access)
+            vt.out(vt.bright, 'new game starts', vt.cyan)
+        vt.outln(' ', date2full($.sysop.dob))
+        vt.outln(vt.cyan, 'Last on: ', vt.white, vt.bright, date2full($.player.lastdate), ' ', time($.player.lasttime))
+        vt.outln(vt.cyan, ' Online: ', vt.white, vt.bright, $.player.handle
+            , vt.normal, '  -  ', $.whereis)
+        vt.out(vt.cyan, ' Access: ', vt.white, vt.bright, $.player.access)
         if ($.player.emulation == 'XT' && $.access.emoji)
-            xvt.out(' ', $.access.emoji)
-        xvt.out(xvt.normal, '  ')
+            vt.out(' ', $.access.emoji)
+        vt.out(vt.normal, '  ')
 
         $.player.today++
         $.player.lastdate = now().date
@@ -305,17 +304,17 @@ module Logon {
         if ($.player.today <= $.access.calls && ($.player.status == 'jail' || !Access.name[$.player.access].roleplay)) {
             profile({ png: 'npc/jailer', effect: 'fadeIn' })
             sound('ddd')
-            if ($.player.emulation == 'XT') xvt.out('🔒 ')
-            xvt.outln(xvt.bright, xvt.black, '(', xvt.magenta, 'PRISONER', xvt.black, ')')
-            xvt.outln(xvt.red, '\nYou are locked-up in jail.', -1200)
+            if ($.player.emulation == 'XT') vt.out('🔒 ')
+            vt.outln(vt.bright, vt.black, '(', vt.magenta, 'PRISONER', vt.black, ')')
+            vt.outln(vt.red, '\nYou are locked-up in jail.', -1200)
             if ($.access.roleplay && dice(2 * $.online.cha) > (10 - 2 * $.player.steal)) {
                 let bail = new Coin(Math.round(money($.player.level) * (101 - $.online.cha) / 100))
-                xvt.outln('\nIt will cost you ', bail.carry(), ' to get bailed-out and to continue play.')
-                xvt.app.form = {
+                vt.outln('\nIt will cost you ', bail.carry(), ' to get bailed-out and to continue play.')
+                vt.form = {
                     'bail': {
                         cb: () => {
-                            xvt.outln('\n')
-                            if (/Y/i.test(xvt.entry)) {
+                            vt.outln('\n')
+                            if (/Y/i.test(vt.entry)) {
                                 sound('click')
                                 $.player.coin.value -= bail.value
                                 if ($.player.coin.value < 0) {
@@ -326,11 +325,11 @@ module Logon {
                                         $.player.bank.value = 0
                                     }
                                 }
-                                PC.adjust('cha', -(4 - $.player.steal), -int((4 - $.player.steal) / 2, true))
+                                PC.adjust('cha', -(4 - $.player.steal), -whole((4 - $.player.steal) / 2))
                                 $.player.status = ''
                             }
                             else {
-                                xvt.outln(xvt.bright, xvt.red, 'You are left brooding with your fellow cellmates.', -1200)
+                                vt.outln(vt.bright, vt.red, 'You are left brooding with your fellow cellmates.', -1200)
                                 $.access = Access.name['Prisoner']
                             }
                             welcome()
@@ -348,40 +347,40 @@ module Logon {
             portrait(<active>{ user: { id: '', pc: $.player.pc, gender: $.player.gender, handle: $.player.handle, level: $.player.level } }, 'fadeIn', ' - Ɗanƙ Ɗomaiƞ')
             sound('welcome')
 
-            xvt.outln(xvt.black, xvt.bright, '(', xvt.normal, xvt.white, 'Welcome back, '
-                , $.access[$.player.gender] || 'you', xvt.black, xvt.bright, ')')
-            xvt.outln(xvt.cyan, 'Visit #: ', xvt.white, xvt.bright, $.player.calls.toString(), xvt.reset
-                , '  -  ', xvt.bright, xvt.blink
-                , $.access.calls - $.player.today ? xvt.cyan : xvt.red
-                , `${$.access.calls - $.player.today}`, xvt.reset, ' calls remaining')
-            xvt.sessionAllowed = $.access.minutes * 60
+            vt.outln(vt.black, vt.bright, '(', vt.normal, vt.white, 'Welcome back, '
+                , $.access[$.player.gender] || 'you', vt.black, vt.bright, ')')
+            vt.outln(vt.cyan, 'Visit #: ', vt.white, vt.bright, $.player.calls.toString(), vt.reset
+                , '  -  ', vt.bright, vt.blink
+                , $.access.calls - $.player.today ? vt.cyan : vt.red
+                , `${$.access.calls - $.player.today}`, vt.reset, ' calls remaining')
+            vt.sessionAllowed = $.access.minutes * 60
 
             wall(`logged on as a level ${$.player.level} ${$.player.pc}`)
 
-            xvt.outln(xvt.cyan, '\nLast callers were: ')
+            vt.outln(vt.cyan, '\nLast callers were: ')
             try {
                 $.callers = JSON.parse(fs.readFileSync('./users/callers.json').toString())
                 for (let last in $.callers)
-                    xvt.outln('     ', xvt.bright
-                        , $.callers[last].who, xvt.normal, ' (', $.callers[last].reason, ')')
+                    vt.outln('     ', vt.bright
+                        , $.callers[last].who, vt.normal, ' (', $.callers[last].reason, ')')
             }
             catch (err) {
-                xvt.outln(xvt.red, xvt.bright, 'not available')
-                xvt.outln(xvt.faint, `(${err})`)
+                vt.outln(vt.red, vt.bright, 'not available')
+                vt.outln(vt.faint, `(${err})`)
             }
 
             if ($.player.today < 2) {
                 if ($.player.blessed) {
                     if (!Ring.have($.player.rings, Ring.theOne) && !$.access.sysop) {
                         $.player.blessed = ''
-                        xvt.out(xvt.yellow, xvt.bright, '\nYour shining aura ', xvt.normal, 'fades ', xvt.faint, 'away.')
+                        vt.out(vt.yellow, vt.bright, '\nYour shining aura ', vt.normal, 'fades ', vt.faint, 'away.')
                         activate($.online)
                     }
                 }
                 if ($.player.cursed) {
                     if (!$.player.coward || Ring.have($.player.rings, Ring.theOne) || $.access.sysop) {
                         $.player.cursed = ''
-                        xvt.out(xvt.black, xvt.bright, '\nThe dark cloud has been lifted.')
+                        vt.out(vt.black, vt.bright, '\nThe dark cloud has been lifted.')
                         activate($.online)
                     }
                 }
@@ -389,7 +388,7 @@ module Logon {
             }
 
             if ($.player.level < 50 && 2 * $.player.jw < $.player.jl) {
-                xvt.out(xvt.reset, '\n', xvt.magenta, 'Helpful: ', xvt.bright, `Your poor jousting stats have been reset.`)
+                vt.out(vt.reset, '\n', vt.magenta, 'Helpful: ', vt.bright, `Your poor jousting stats have been reset.`)
                 $.player.jl = 0
                 $.player.jw = 0
                 sound('shimmer', 22)
@@ -402,7 +401,7 @@ module Logon {
                     sound('promote', 22)
                 }
             }
-            xvt.outln()
+            vt.outln()
 
             $.player.calls++
             $.player.plays++
@@ -414,11 +413,11 @@ module Logon {
 
             if ($.player.pc == Object.keys(PC.name['player'])[0]) {
                 if ($.player.novice) {
-                    xvt.outln()
-                    xvt.out(xvt.bright)
+                    vt.outln()
+                    vt.out(vt.bright)
                     cat('intro')
                 }
-                xvt.app.form = {
+                vt.form = {
                     'pause': { cb: playerPC, pause: true, timeout: 200 }
                 }
                 input('pause')
@@ -426,8 +425,8 @@ module Logon {
             }
         }
         else {
-            xvt.outln(xvt.bright, xvt.black, '(', xvt.yellow, 'VISITING', xvt.black, ')')
-            xvt.sessionAllowed = 5 * 60
+            vt.outln(vt.bright, vt.black, '(', vt.yellow, 'VISITING', vt.black, ')')
+            vt.sessionAllowed = 5 * 60
             $.access.roleplay = false
             PC.saveUser($.player)
             db.unlock($.player.id)
@@ -435,20 +434,20 @@ module Logon {
 
             wall(`logged on as a level ${$.player.level} ${$.player.pc}`)
 
-            xvt.out(xvt.cyan, '\nLast callers were: ', xvt.white)
+            vt.out(vt.cyan, '\nLast callers were: ', vt.white)
             try {
                 $.callers = JSON.parse(fs.readFileSync('./users/callers.json').toString())
                 for (let last in $.callers) {
-                    xvt.outln(xvt.bright, $.callers[last].who, xvt.normal, ' (', $.callers[last].reason, ')')
-                    xvt.out('                   ')
+                    vt.outln(vt.bright, $.callers[last].who, vt.normal, ' (', $.callers[last].reason, ')')
+                    vt.out('                   ')
                 }
             }
             catch (err) {
-                xvt.outln(`not available (${err})`)
+                vt.outln(`not available (${err})`)
             }
         }
 
-        xvt.app.form = {
+        vt.form = {
             'pause': {
                 cb: () => {
                     if (cat(`user/${$.player.id}`)) {
@@ -457,16 +456,16 @@ module Logon {
                         return
                     }
                     clear()
-                    xvt.outln(xvt.blue, '--=:))', xvt.app.LGradient
-                        , xvt.Blue, xvt.cyan, xvt.bright, 'Announcement', xvt.reset
-                        , xvt.blue, xvt.app.RGradient, '((:=--\n')
+                    vt.outln(vt.blue, '--=:))', vt.LGradient
+                        , vt.Blue, vt.cyan, vt.bright, 'Announcement', vt.reset
+                        , vt.blue, vt.RGradient, '((:=--\n')
                     cat('announcement')
                     if ($.access.sysop)
-                        xvt.app.focus = 'announce'
+                        vt.focus = 'announce'
                     else {
-                        xvt.outln('\n', xvt.cyan, '--=:))', xvt.app.LGradient
-                            , xvt.Cyan, xvt.white, xvt.bright, 'Auto Message', xvt.reset
-                            , xvt.cyan, xvt.app.RGradient, '((:=--\n')
+                        vt.outln('\n', vt.cyan, '--=:))', vt.LGradient
+                            , vt.Cyan, vt.white, vt.bright, 'Auto Message', vt.reset
+                            , vt.cyan, vt.RGradient, '((:=--\n')
                         cat('auto-message')
                         input('auto', dice(1000) == 1 ? 'y' : 'n', 3000)
                     }
@@ -475,15 +474,15 @@ module Logon {
 
             'announce': {
                 cb: () => {
-                    xvt.outln()
-                    if (/Y/i.test(xvt.entry)) {
+                    vt.outln()
+                    if (/Y/i.test(vt.entry)) {
                         action('freetext')
-                        xvt.app.focus = 'sysop'
+                        vt.focus = 'sysop'
                         return
                     }
-                    xvt.outln('\n', xvt.cyan, '--=:))', xvt.app.LGradient
-                        , xvt.Cyan, xvt.white, xvt.bright, 'Auto Message', xvt.reset
-                        , xvt.cyan, xvt.app.RGradient, '((:=--\n')
+                    vt.outln('\n', vt.cyan, '--=:))', vt.LGradient
+                        , vt.Cyan, vt.white, vt.bright, 'Auto Message', vt.reset
+                        , vt.cyan, vt.RGradient, '((:=--\n')
                     cat('auto-message')
                     input('auto')
                 }, prompt: 'Change (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i
@@ -491,23 +490,23 @@ module Logon {
 
             'sysop': {
                 cb: () => {
-                    if (xvt.entry) fs.writeFileSync('./files/announcement.txt', xvt.attr(
-                        xvt.magenta, 'Date: ', xvt.off, date2full($.player.lastdate), ' ', time($.player.lasttime) + '\n',
-                        xvt.magenta, 'From: ', xvt.off, $.player.handle, '\n\n',
-                        xvt.bright, xvt.entry))
-                    xvt.outln('\n', xvt.cyan, '--=:))', xvt.app.LGradient
-                        , xvt.Cyan, xvt.white, xvt.bright, 'Auto Message', xvt.reset
-                        , xvt.cyan, xvt.app.RGradient, '((:=--\n')
+                    if (vt.entry) fs.writeFileSync('./files/announcement.txt', vt.attr(
+                        vt.magenta, 'Date: ', vt.off, date2full($.player.lastdate), ' ', time($.player.lasttime) + '\n',
+                        vt.magenta, 'From: ', vt.off, $.player.handle, '\n\n',
+                        vt.bright, vt.entry))
+                    vt.outln('\n', vt.cyan, '--=:))', vt.LGradient
+                        , vt.Cyan, vt.white, vt.bright, 'Auto Message', vt.reset
+                        , vt.cyan, vt.RGradient, '((:=--\n')
                     cat('auto-message')
                     action('ny')
-                    xvt.app.focus = 'auto'
+                    vt.focus = 'auto'
                 }, prompt: 'Enter your new announcement', lines: 12
             },
 
             'auto': {
                 cb: () => {
-                    xvt.outln()
-                    if (/Y/i.test(xvt.entry)) {
+                    vt.outln()
+                    if (/Y/i.test(vt.entry)) {
                         action('freetext')
                         input('user', `Where's my dough, Bert!\n`)
                         return
@@ -518,13 +517,13 @@ module Logon {
 
             'user': {
                 cb: () => {
-                    xvt.outln()
-                    if (xvt.entry.length && !cuss(xvt.entry)) {
-                        fs.writeFileSync('./files/auto-message.txt', xvt.attr(
-                            xvt.cyan, 'Date: ', xvt.off, date2full($.player.lastdate), ' ', time($.player.lasttime), '\n',
-                            xvt.cyan, 'From: ', xvt.off, $.player.handle + '\n\n',
-                            xvt.bright, xvt.entry))
-                        news(`\tupdated the auto message to read:\n${xvt.entry}`)
+                    vt.outln()
+                    if (vt.entry.length && !cuss(vt.entry)) {
+                        fs.writeFileSync('./files/auto-message.txt', vt.attr(
+                            vt.cyan, 'Date: ', vt.off, date2full($.player.lastdate), ' ', time($.player.lasttime), '\n',
+                            vt.cyan, 'From: ', vt.off, $.player.handle + '\n\n',
+                            vt.bright, vt.entry))
+                        news(`\tupdated the auto message to read:\n${vt.entry}`)
                     }
                     require('./taxman').cityguards()
                 }, prompt: 'Enter your public message', lines: 6
@@ -536,7 +535,7 @@ module Logon {
 
     function init() {
         //  mode of operation
-        switch (xvt.app.emulation) {
+        switch (vt.emulation) {
             case 'PC':
                 $.tty = 'rlogin'
                 break
@@ -545,8 +544,8 @@ module Logon {
                 title(process.title)
                 break
             default:
-                xvt.app.emulation = 'VT'
-                xvt.out('\f')
+                vt.emulation = 'VT'
+                vt.out('\f')
         }
 
         //  customize the Dank Domain waiting for its ruler (1st player to register)
@@ -683,12 +682,12 @@ module Logon {
     }
 
     function newDay() {
-        xvt.out('One moment: [')
+        vt.out('One moment: [')
 
         db.run(`UPDATE Players SET bank=bank+coin WHERE id NOT GLOB '_*'`)
-        xvt.out('+')
+        vt.out('+')
         db.run(`UPDATE Players SET coin=0`)
-        xvt.out('-')
+        vt.out('-')
 
         let rs = db.query(`SELECT id FROM Players WHERE id NOT GLOB '_*' AND status='' AND (magic=1 OR magic=2) AND bank>9999999 AND level>15`)
         let user: user = { id: '' }
@@ -707,7 +706,7 @@ module Logon {
             }
             if (altered) PC.saveUser(user)
         }
-        xvt.out('=')
+        vt.out('=')
 
         rs = db.query(`SELECT id, access, lastdate, level, xplevel, novice, jl, jw, gang FROM Players WHERE id NOT GLOB '_*'`)
         for (let row in rs) {
@@ -726,14 +725,14 @@ module Logon {
                         let p: user = { id: rs[row].id }
                         loadUser(p)
                         require('./email').rejoin(p)
-                        xvt.out('_', -1000)
+                        vt.out('_', -1000)
                         continue
                     }
                 }
                 else {
                     db.run(`DELETE FROM Players WHERE id='${rs[row].id}'`)
                     fs.unlink(`./files/user/${rs[row].id}.txt`, () => { })
-                    xvt.out('x')
+                    vt.out('x')
                     continue
                 }
             }
@@ -749,13 +748,13 @@ module Logon {
                     else {
                         db.run(`UPDATE Players SET gang='' WHERE gang='${g.name}'`)
                         db.run(`DELETE FROM Gangs WHERE name='${g.name}'`)
-                        xvt.out('&')
+                        vt.out('&')
                     }
                 }
                 db.run(`DELETE FROM Players WHERE id='${rs[row].id}'`)
                 fs.unlink(`./files/user/${rs[row].id}.txt`, () => { })
                 fs.unlink(`./users/.${rs[row].id}.json`, () => { })
-                xvt.out('x')
+                vt.out('x')
                 continue
             }
 
@@ -764,24 +763,24 @@ module Logon {
                 let p: user = { id: rs[row].id }
                 loadUser(p)
                 require('./email').rejoin(p)
-                xvt.sleep(1000)
+                vt.sleep(1000)
             }
         }
 
         try {
             fs.renameSync(`./files/tavern/today.txt`, `./users/tavern/yesterday.txt`)
-            xvt.out('T')
+            vt.out('T')
         } catch (e) {
-            xvt.out('?')
+            vt.out('?')
         }
-        xvt.out(']')
+        vt.out(']')
 
         $.sysop.lastdate = now().date
         $.sysop.lasttime = now().time
         PC.saveUser($.sysop)
-        xvt.out(xvt.bright, xvt.yellow, '*')
-        xvt.beep()
-        xvt.outln('All set -- thank you!')
+        vt.out(vt.bright, vt.yellow, '*')
+        vt.beep()
+        vt.outln('All set -- thank you!')
     }
 }
 

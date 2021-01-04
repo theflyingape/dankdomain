@@ -3,43 +3,45 @@
  *  I/O authored by: Robert Hurst <theflyingape@gmail.com>                   *
 \*****************************************************************************/
 
-import xvt = require('@theflyingape/xvt')
+import xvt from '@theflyingape/xvt'
 import fs = require('fs')
 import db = require('./db')
 import $ = require('./runtime')
 import { Access, Armor, Deed, Magic, Ring, Weapon } from './items'
 import { encounter, experience, news } from './lib'
 import { Abilities, Coin as coinbase, PC } from './pc'
-import { an, date2full, dice, int, now, sprintf, titlecase, time, romanize, isActive } from './sys'
+import { an, date2full, dice, int, isActive, now, romanize, sprintf, titlecase, time, whole } from './sys'
 
 module io {
+
+    export const vt = new xvt('VT', false, false)
 
     export class _award implements award {
         //  coveted
         get key(): {} {
             const oldkey = '🗝️ '
-            return xvt.app.emulation == 'XT'
+            return vt.emulation == 'XT'
                 ? {
-                    P: xvt.attr(oldkey, xvt.bright, xvt.Magenta, ' Platinum ', xvt.reset),
-                    G: xvt.attr(oldkey, xvt.black, xvt.Yellow, ' = Gold = ', xvt.reset),
-                    S: xvt.attr(oldkey, xvt.bright, xvt.Cyan, '- Silver -', xvt.reset),
-                    C: xvt.attr(oldkey, xvt.black, xvt.Red, xvt.app.Empty, ' Copper ', xvt.app.Empty, xvt.reset)
+                    P: vt.attr(oldkey, vt.bright, vt.Magenta, ' Platinum ', vt.reset),
+                    G: vt.attr(oldkey, vt.black, vt.Yellow, ' = Gold = ', vt.reset),
+                    S: vt.attr(oldkey, vt.bright, vt.Cyan, '- Silver -', vt.reset),
+                    C: vt.attr(oldkey, vt.black, vt.Red, vt.Empty, ' Copper ', vt.Empty, vt.reset)
                 } : {
-                    P: xvt.attr(xvt.off, xvt.magenta, xvt.bright, xvt.reverse, ' Platinum ', xvt.reset),
-                    G: xvt.attr(xvt.off, xvt.yellow, xvt.bright, xvt.reverse, ' = Gold = ', xvt.reset),
-                    S: xvt.attr(xvt.off, xvt.cyan, xvt.bright, xvt.reverse, '- Silver -', xvt.reset),
-                    C: xvt.attr(xvt.off, xvt.red, xvt.bright, xvt.reverse, xvt.app.Empty, ' Copper ', xvt.app.Empty, xvt.reset)
+                    P: vt.attr(vt.off, vt.magenta, vt.bright, vt.reverse, ' Platinum ', vt.reset),
+                    G: vt.attr(vt.off, vt.yellow, vt.bright, vt.reverse, ' = Gold = ', vt.reset),
+                    S: vt.attr(vt.off, vt.cyan, vt.bright, vt.reverse, '- Silver -', vt.reset),
+                    C: vt.attr(vt.off, vt.red, vt.bright, vt.reverse, vt.Empty, ' Copper ', vt.Empty, vt.reset)
                 }
         }
 
         //  returns 2-character width
         get medal(): string[] {
-            return xvt.app.emulation == 'XT'
+            return vt.emulation == 'XT'
                 ? ['  ', '🥇', '🥈', '🥉']
                 : ['  ',
-                    xvt.attr(xvt.bright, xvt.reverse, '1', xvt.noreverse, xvt.normal, ' '),
-                    xvt.attr(xvt.normal, xvt.reverse, '2', xvt.noreverse, ' '),
-                    xvt.attr(xvt.faint, xvt.reverse, '3', xvt.noreverse, xvt.normal, ' ')
+                    vt.attr(vt.bright, vt.reverse, '1', vt.noreverse, vt.normal, ' '),
+                    vt.attr(vt.normal, vt.reverse, '2', vt.noreverse, ' '),
+                    vt.attr(vt.faint, vt.reverse, '3', vt.noreverse, vt.normal, ' ')
                 ]
         }
     }
@@ -62,21 +64,21 @@ module io {
 
             if (this._pouch(n) == 'p') {
                 n = int(n / 1e+13)
-                bags.push(text ? n + 'p' : xvt.attr(xvt.white, xvt.bright, n.toString(), xvt.magenta, 'p', xvt.normal, xvt.white))
+                bags.push(text ? n + 'p' : vt.attr(vt.white, vt.bright, n.toString(), vt.magenta, 'p', vt.normal, vt.white))
                 n = this.value % 1e+13
             }
             if (this._pouch(n) == 'g') {
                 n = int(n / 1e+09)
-                bags.push(text ? n + 'g' : xvt.attr(xvt.white, xvt.bright, n.toString(), xvt.yellow, 'g', xvt.normal, xvt.white))
+                bags.push(text ? n + 'g' : vt.attr(vt.white, vt.bright, n.toString(), vt.yellow, 'g', vt.normal, vt.white))
                 n = this.value % 1e+09
             }
             if (this._pouch(n) == 's') {
                 n = int(n / 1e+05)
-                bags.push(text ? n + 's' : xvt.attr(xvt.white, xvt.bright, n.toString(), xvt.cyan, 's', xvt.normal, xvt.white))
+                bags.push(text ? n + 's' : vt.attr(vt.white, vt.bright, n.toString(), vt.cyan, 's', vt.normal, vt.white))
                 n = this.value % 1e+05
             }
             if ((n > 0 && this._pouch(n) == 'c') || bags.length == 0)
-                bags.push(text ? n + 'c' : xvt.attr(xvt.white, xvt.bright, n.toString(), xvt.red, 'c', xvt.normal, xvt.white))
+                bags.push(text ? n + 'c' : vt.attr(vt.white, vt.bright, n.toString(), vt.red, 'c', vt.normal, vt.white))
 
             return bags.slice(0, max).toString()
         }
@@ -85,12 +87,12 @@ module io {
             return 'pouch of '
                 + (emoji ? '💰 ' : '')
                 + {
-                    'p': xvt.attr(xvt.magenta, xvt.bright, 'platinum', xvt.normal),
-                    'g': xvt.attr(xvt.yellow, xvt.bright, 'gold', xvt.normal),
-                    's': xvt.attr(xvt.cyan, xvt.bright, 'silver', xvt.normal),
-                    'c': xvt.attr(xvt.red, xvt.bright, 'copper', xvt.normal)
+                    'p': vt.attr(vt.magenta, vt.bright, 'platinum', vt.normal),
+                    'g': vt.attr(vt.yellow, vt.bright, 'gold', vt.normal),
+                    's': vt.attr(vt.cyan, vt.bright, 'silver', vt.normal),
+                    'c': vt.attr(vt.red, vt.bright, 'copper', vt.normal)
                 }[p]
-                + xvt.attr(' pieces', xvt.reset)
+                + vt.attr(' pieces', vt.reset)
         }
     }
 
@@ -128,7 +130,7 @@ module io {
         one.user.access = one.user.access || Object.keys(Access.name)[0]
 
         if (!db.lock(one.user.id, one.user.id == $.player.id ? 1 : 2) && one.user.id !== $.player.id) {
-            xvt.outln(xvt.cyan, xvt.bright, `\n${one.user.handle} is engaged elsewhere.`)
+            vt.outln(vt.cyan, vt.bright, `\n${one.user.handle} is engaged elsewhere.`)
             beep()
             one.altered = false
         }
@@ -137,59 +139,59 @@ module io {
 
     export function armor(profile = $.online, text = false): string {
         return text ? profile.user.armor + buff(profile.user.toAC, profile.toAC, true)
-            : xvt.attr(profile.armor.armoury ? xvt.white : profile.armor.dwarf ? xvt.yellow : xvt.lcyan
-                , profile.user.armor, xvt.white, buff(profile.user.toAC, profile.toAC))
+            : vt.attr(profile.armor.armoury ? vt.white : profile.armor.dwarf ? vt.yellow : vt.lcyan
+                , profile.user.armor, vt.white, buff(profile.user.toAC, profile.toAC))
     }
 
     export function beep() {
         if ($.player.emulation == 'XT')
             sound('max')
         else
-            xvt.out('\x07', -125)
+            vt.out('\x07', -125)
     }
 
     export function bracket(item: number | string, nl = true): string {
         var framed: string = item.toString()
-        framed = xvt.attr(xvt.off, nl ? '\n' : '', framed.length == 1 && nl ? ' ' : ''
-            , xvt.white, xvt.faint, '<', xvt.bright, framed, xvt.faint, '>'
-            , nl ? ' ' : '', xvt.reset)
+        framed = vt.attr(vt.off, nl ? '\n' : '', framed.length == 1 && nl ? ' ' : ''
+            , vt.white, vt.faint, '<', vt.bright, framed, vt.faint, '>'
+            , nl ? ' ' : '', vt.reset)
         return framed
     }
 
     export function buff(perm: number, temp: number, text = false): string {
-        let keep = xvt.app.emulation
-        if (text) xvt.app.emulation = 'dumb'
+        let keep = vt.emulation
+        if (text) vt.emulation = 'dumb'
         let buff = ''
         if (perm || temp) {
-            buff = xvt.attr(xvt.normal, xvt.magenta, ' (')
-            if (perm > 0) buff += xvt.attr(xvt.bright, xvt.yellow, '+', perm.toString(), xvt.normal, xvt.white)
-            else if (perm < 0) buff += xvt.attr(xvt.bright, xvt.red, perm.toString(), xvt.normal, xvt.white)
-            else buff += xvt.attr(xvt.white, '+0')
-            if (temp) buff += xvt.attr(','
-                , (temp > 0) ? xvt.attr(xvt.yellow, xvt.bright, '+', temp.toString())
-                    : xvt.attr(xvt.red, xvt.bright, temp.toString())
-                , xvt.normal)
-            buff += xvt.attr(xvt.magenta, ')', xvt.white)
+            buff = vt.attr(vt.normal, vt.magenta, ' (')
+            if (perm > 0) buff += vt.attr(vt.bright, vt.yellow, '+', perm.toString(), vt.normal, vt.white)
+            else if (perm < 0) buff += vt.attr(vt.bright, vt.red, perm.toString(), vt.normal, vt.white)
+            else buff += vt.attr(vt.white, '+0')
+            if (temp) buff += vt.attr(','
+                , (temp > 0) ? vt.attr(vt.yellow, vt.bright, '+', temp.toString())
+                    : vt.attr(vt.red, vt.bright, temp.toString())
+                , vt.normal)
+            buff += vt.attr(vt.magenta, ')', vt.white)
         }
-        if (text) xvt.app.emulation = keep
+        if (text) vt.emulation = keep
         return buff
     }
 
     export function cat(filename: string): boolean {
         const folder = './files/'
         let path = folder + filename
-            + (xvt.app.emulation == 'PC' ? '.ibm' : xvt.app.emulation == 'XT' ? '.ans' : '.txt')
+            + (vt.emulation == 'PC' ? '.ibm' : vt.emulation == 'XT' ? '.ans' : '.txt')
 
         try {
             fs.accessSync(path, fs.constants.F_OK)
-            xvt.outln(fs.readFileSync(path, xvt.app.emulation == 'XT' ? 'utf8' : 'binary'), xvt.white)
+            vt.outln(fs.readFileSync(path, vt.emulation == 'XT' ? 'utf8' : 'binary'), vt.white)
             return true
         } catch (e) {
-            if (xvt.app.emulation.match('PC|XT')) {
+            if (vt.emulation.match('PC|XT')) {
                 let path = folder + filename + '.txt'
                 try {
                     fs.accessSync(path, fs.constants.F_OK)
-                    xvt.outln(fs.readFileSync(path), xvt.white)
+                    vt.outln(fs.readFileSync(path), vt.white)
                     return true
                 } catch (e) {
                     return false
@@ -199,7 +201,7 @@ module io {
     }
 
     export function checkTime(): number {
-        return Math.round((xvt.sessionAllowed - ((new Date().getTime() - xvt.sessionStart.getTime()) / 1000)) / 60)
+        return Math.round((vt.sessionAllowed - ((new Date().getTime() - vt.sessionStart.getTime()) / 1000)) / 60)
     }
 
     export function checkXP(rpc: active, cb: Function): boolean {
@@ -215,9 +217,9 @@ module io {
             }
             else if ($.timeleft <= $.warning) {
                 $.warning = $.timeleft
-                xvt.outln()
+                vt.outln()
                 beep()
-                xvt.outln(xvt.bright, ` *** `, xvt.faint, `${$.warning}-minute${$.warning !== 1 ? 's' : ''} remain${$.warning == 1 ? 's' : ''}`, xvt.bright, ` *** `, -100)
+                vt.outln(vt.bright, ` *** `, vt.faint, `${$.warning}-minute${$.warning !== 1 ? 's' : ''} remain${$.warning == 1 ? 's' : ''}`, vt.bright, ` *** `, -100)
                 sound('hurry', 4)
             }
         }
@@ -234,7 +236,7 @@ module io {
         }
 
         $.reason = ''
-        xvt.drain()
+        vt.drain()
 
         let award = {
             hp: rpc.user.hp,
@@ -257,22 +259,22 @@ module io {
                 do {
                     rpc.user.access = Object.keys(Access.name)[++title]
                 } while (!Access.name[rpc.user.access][rpc.user.sex])
-                xvt.outln(-500)
-                xvt.outln(xvt.yellow
+                vt.outln(-500)
+                vt.outln(vt.yellow
                     , Access.name[$.king.access][$.king.sex], ' the ', $.king.access.toLowerCase()
-                    , ', ', xvt.bright, $.king.handle, xvt.normal
+                    , ', ', vt.bright, $.king.handle, vt.normal
                     , ', is pleased with your accomplishments\n'
-                    , `and ${PC.who($.king).he}promotes you to`, xvt.bright, an(rpc.user.access), xvt.normal, '!', -2000)
+                    , `and ${PC.who($.king).he}promotes you to`, vt.bright, an(rpc.user.access), vt.normal, '!', -2000)
                 if (Access.name[rpc.user.access].message)
-                    xvt.outln(xvt.yellow, `${PC.who($.king).He}whispers, `, xvt.reset, xvt.faint, `"${eval('`' + Access.name[rpc.user.access].message + '`')}"`, -2000)
+                    vt.outln(vt.yellow, `${PC.who($.king).He}whispers, `, vt.reset, vt.faint, `"${eval('`' + Access.name[rpc.user.access].message + '`')}"`, -2000)
                 let nme = encounter(`AND id NOT GLOB '_*' AND id != '${$.king.id}'`)
-                xvt.outln(`The mob goes crazy`, -500, nme.user.id
+                vt.outln(`The mob goes crazy`, -500, nme.user.id
                     ? `, except for ${nme.user.handle} seen buffing ${nme.who.his}${weapon(nme)}`
                     : `!!`, -2000)
-                xvt.outln([`${$.taxman.user.handle} nods an approval.`, `${$.barkeep.user.handle} slaughters a pig for tonight's feast.`, `${$.king.handle} gives you a hug.`, `${Access.name[$.king.access][$.king.sex]}'s guard salute you.`, `${$.king.handle} orders ${PC.who($.king).his} Executioner to hang ${$.player.level} prisoners in your honor.`][dice(5) - 1], -2000)
+                vt.outln([`${$.taxman.user.handle} nods an approval.`, `${$.barkeep.user.handle} slaughters a pig for tonight's feast.`, `${$.king.handle} gives you a hug.`, `${Access.name[$.king.access][$.king.sex]}'s guard salute you.`, `${$.king.handle} orders ${PC.who($.king).his} Executioner to hang ${$.player.level} prisoners in your honor.`][dice(5) - 1], -2000)
                 news(`\tpromoted to ${rpc.user.access}`)
                 wall(`promoted to ${rpc.user.access}`)
-                xvt.sessionAllowed += 300
+                vt.sessionAllowed += 300
             }
 
             rpc.user.hp += PC.hp(rpc.user)
@@ -290,9 +292,9 @@ module io {
                     reroll(rpc.user, $.sysop.pc, rpc.user.level)
                     rpc.user.novice = false
                     rpc.user.expert = true
-                    xvt.outln(xvt.cyan, xvt.bright, 'You are no longer a novice.  Welcome to the next level of play!')
+                    vt.outln(vt.cyan, vt.bright, 'You are no longer a novice.  Welcome to the next level of play!')
                     sound('welcome', 9)
-                    xvt.outln('You morph into', xvt.yellow, an(rpc.user.pc), xvt.reset, '.', -250)
+                    vt.outln('You morph into', vt.yellow, an(rpc.user.pc), vt.reset, '.', -250)
                     portrait()
                     sound('cheer', 21)
                 }
@@ -322,35 +324,35 @@ module io {
         sound('level')
         $.access = Access.name[$.player.access]
         $.online.altered = true
-        xvt.outln(-125)
-        xvt.outln('      ', xvt.magenta, '-=', xvt.blue, '>', xvt.bright, xvt.yellow, '*', xvt.normal
-            , xvt.blue, '<', xvt.magenta, '=-', -125)
-        xvt.outln(-125)
-        xvt.outln(xvt.bright, xvt.yellow, 'Welcome to level ', $.player.level.toString(), '!', -125)
-        xvt.outln(-125)
+        vt.outln(-125)
+        vt.outln('      ', vt.magenta, '-=', vt.blue, '>', vt.bright, vt.yellow, '*', vt.normal
+            , vt.blue, '<', vt.magenta, '=-', -125)
+        vt.outln(-125)
+        vt.outln(vt.bright, vt.yellow, 'Welcome to level ', $.player.level.toString(), '!', -125)
+        vt.outln(-125)
         wall(`is now a level ${$.player.level} ${$.player.pc}`)
 
         let deed = $.mydeeds.find((x) => { return x.deed == 'levels' })
         if (!$.player.novice && !deed) deed = $.mydeeds[$.mydeeds.push(Deed.load($.player.pc, 'levels')[0]) - 1]
         if ((deed && $.jumped >= deed.value)) {
             deed.value = $.jumped
-            xvt.outln(xvt.cyan, ' + ', xvt.bright, Deed.name[deed.deed].description, ' ', bracket(deed.value, false))
+            vt.outln(vt.cyan, ' + ', vt.bright, Deed.name[deed.deed].description, ' ', bracket(deed.value, false))
             beep()
             Deed.save(deed)
         }
 
         if ($.player.level < $.sysop.level) {
-            xvt.outln(xvt.bright, sprintf('%+6d', award.hp), xvt.reset, ' Hit points', -100)
+            vt.outln(vt.bright, sprintf('%+6d', award.hp), vt.reset, ' Hit points', -100)
             if (award.sp)
-                xvt.outln(xvt.bright, sprintf('%+6d', award.sp), xvt.reset, ' Spell points', -100)
+                vt.outln(vt.bright, sprintf('%+6d', award.sp), vt.reset, ' Spell points', -100)
             if (award.str)
-                xvt.outln(xvt.bright, sprintf('%+6d', award.str), xvt.reset, ' Strength', -100)
+                vt.outln(vt.bright, sprintf('%+6d', award.str), vt.reset, ' Strength', -100)
             if (award.int)
-                xvt.outln(xvt.bright, sprintf('%+6d', award.int), xvt.reset, ' Intellect', -100)
+                vt.outln(vt.bright, sprintf('%+6d', award.int), vt.reset, ' Intellect', -100)
             if (award.dex)
-                xvt.outln(xvt.bright, sprintf('%+6d', award.dex), xvt.reset, ' Dexterity', -100)
+                vt.outln(vt.bright, sprintf('%+6d', award.dex), vt.reset, ' Dexterity', -100)
             if (award.cha)
-                xvt.outln(xvt.bright, sprintf('%+6d', award.cha), xvt.reset, ' Charisma', -100)
+                vt.outln(vt.bright, sprintf('%+6d', award.cha), vt.reset, ' Charisma', -100)
             if (eligible && bonus) {
                 skillplus(rpc, cb)
                 return true
@@ -366,11 +368,11 @@ module io {
     }
 
     export function clear() {
-        const scroll = (xvt.row < $.player.rows ? xvt.row : $.player.rows) - (xvt.col == 1 ? 2 : 1)
-        xvt.out(xvt.off)
-        xvt.plot($.player.rows, 1)
-        xvt.outln('\n'.repeat(scroll))
-        xvt.out(xvt.clear, -10)  //  allow XTerm to flush
+        const scroll = (vt.row < $.player.rows ? vt.row : $.player.rows) - (vt.col == 1 ? 2 : 1)
+        vt.out(vt.off)
+        vt.plot($.player.rows, 1)
+        vt.outln('\n'.repeat(scroll))
+        vt.out(vt.clear, -10)  //  allow XTerm to flush
     }
 
     export function death(by: string, killed = false) {
@@ -391,18 +393,18 @@ module io {
         if (!suppress) {
             clear()
             if (!cat(`${title}/menu`)) {
-                xvt.out('    ')
+                vt.out('    ')
                 if (back)
-                    xvt.out(fore, '--=:))', xvt.app.LGradient,
-                        back, xvt.white, xvt.bright, titlecase(title), xvt.reset,
-                        fore, xvt.app.RGradient, '((:=--')
+                    vt.out(fore, '--=:))', vt.LGradient,
+                        back, vt.white, vt.bright, titlecase(title), vt.reset,
+                        fore, vt.RGradient, '((:=--')
                 else
-                    xvt.out(titlecase(title))
-                xvt.outln('\n')
+                    vt.out(titlecase(title))
+                vt.outln('\n')
                 for (let i in menu) {
                     if (menu[i].description)
-                        xvt.outln(xvt.faint, fore, '<', xvt.white, xvt.bright, i, xvt.faint, fore, '> ',
-                            xvt.reset, menu[i].description)
+                        vt.outln(vt.faint, fore, '<', vt.white, vt.bright, i, vt.faint, fore, '> ',
+                            vt.reset, menu[i].description)
                 }
             }
             else {
@@ -411,78 +413,78 @@ module io {
         }
 
         if (process.stdout.rows && process.stdout.rows !== $.player.rows) {
-            if (!$.player.expert) xvt.out('\n', xvt.yellow, xvt.app.Empty, xvt.bright
+            if (!$.player.expert) vt.out('\n', vt.yellow, vt.Empty, vt.bright
                 , `Resetting your USER ROW setting (${$.player.rows}) to detected size ${process.stdout.rows}`
-                , xvt.reset)
+                , vt.reset)
             $.player.rows = process.stdout.rows
         }
 
         if (hint && $.access.roleplay && dice(+$.player.expert * ($.player.immortal + 1) + $.player.level / 10) == 1)
-            xvt.out('\n', xvt.green, xvt.bright, hint, xvt.reset)
+            vt.out('\n', vt.green, vt.bright, hint, vt.reset)
 
         //  insert any wall messages here
-        xvt.out('\x06')
+        vt.out('\x06')
 
-        return xvt.attr(fore, '[', xvt.yellow, xvt.bright, back ? titlecase(title) : 'Iron Bank', xvt.normal, fore, ']'
-            , xvt.faint, ' Option '
-            , xvt.normal, xvt.cyan, '(Q=Quit): ')
+        return vt.attr(fore, '[', vt.yellow, vt.bright, back ? titlecase(title) : 'Iron Bank', vt.normal, fore, ']'
+            , vt.faint, ' Option '
+            , vt.normal, vt.cyan, '(Q=Quit): ')
     }
 
     export function emulator(cb: Function) {
         action('list')
-        xvt.app.form = {
+        vt.form = {
             'term': {
                 cb: () => {
-                    if (xvt.entry && xvt.entry.length == 2) xvt.app.emulation = xvt.entry.toUpperCase()
-                    $.player.emulation = <EMULATION>xvt.app.emulation
-                    if ($.tty == 'telnet') xvt.outln(`@title(${$.player.emulation})`, -100)
-                    xvt.outln('\n', xvt.reset, xvt.magenta, xvt.app.LGradient, xvt.reverse, 'BANNER', xvt.noreverse, xvt.app.RGradient)
-                    xvt.outln(xvt.red, 'R', xvt.green, 'G', xvt.blue, 'B', xvt.reset, xvt.bright, ' bold ', xvt.normal, 'normal', xvt.blink, ' flash ', xvt.noblink, xvt.faint, 'dim')
-                    xvt.out(xvt.yellow, 'Cleric: ', xvt.bright, { VT: '\x1B(0\x7D\x1B(B', PC: '\x9C', XT: '✟', dumb: '$' }[$.player.emulation]
-                        , xvt.normal, xvt.magenta, '  Teleport: ', xvt.bright, { VT: '\x1B(0\x67\x1B(B', PC: '\xF1', XT: '↨', dumb: '%' }[$.player.emulation])
+                    if (vt.entry && vt.entry.length == 2) vt.emulation = <EMULATION>vt.entry.toUpperCase()
+                    $.player.emulation = vt.emulation
+                    if ($.tty == 'telnet') vt.outln(`@title(${$.player.emulation})`, -100)
+                    vt.outln('\n', vt.reset, vt.magenta, vt.LGradient, vt.reverse, 'BANNER', vt.noreverse, vt.RGradient)
+                    vt.outln(vt.red, 'R', vt.green, 'G', vt.blue, 'B', vt.reset, vt.bright, ' bold ', vt.normal, 'normal', vt.blink, ' flash ', vt.noblink, vt.faint, 'dim')
+                    vt.out(vt.yellow, 'Cleric: ', vt.bright, { VT: '\x1B(0\x7D\x1B(B', PC: '\x9C', XT: '✟', dumb: '$' }[$.player.emulation]
+                        , vt.normal, vt.magenta, '  Teleport: ', vt.bright, { VT: '\x1B(0\x67\x1B(B', PC: '\xF1', XT: '↨', dumb: '%' }[$.player.emulation])
                     $.online.altered = true
                     if ($.player.emulation == 'XT') {
-                        xvt.outln(xvt.lblack, '  Bat: 🦇')
+                        vt.outln(vt.lblack, '  Bat: 🦇')
                         sound('yahoo', 22)
                         cb()
                         return
                     }
-                    xvt.outln(-2200)
+                    vt.outln(-2200)
                     beep()
                     if (process.stdout.rows && process.stdout.rows !== $.player.rows)
                         $.player.rows = process.stdout.rows
                     for (let rows = $.player.rows + 5; rows > 1; rows--)
-                        xvt.out(bracket(rows >= 24 ? rows : '..'))
-                    xvt.app.form['rows'].prompt = xvt.attr('Enter top visible row number ', xvt.faint, '[', xvt.reset, xvt.bright, `${$.player.rows}`, xvt.faint, xvt.cyan, ']', xvt.reset, ': ')
-                    xvt.app.focus = 'rows'
-                }, prompt: xvt.attr('Select ', xvt.faint, '[', xvt.reset, xvt.bright, `${$.player.emulation}`, xvt.faint, xvt.cyan, ']', xvt.reset, ': ')
+                        vt.out(bracket(rows >= 24 ? rows : '..'))
+                    vt.form['rows'].prompt = vt.attr('Enter top visible row number ', vt.faint, '[', vt.reset, vt.bright, `${$.player.rows}`, vt.faint, vt.cyan, ']', vt.reset, ': ')
+                    vt.focus = 'rows'
+                }, prompt: vt.attr('Select ', vt.faint, '[', vt.reset, vt.bright, `${$.player.emulation}`, vt.faint, vt.cyan, ']', vt.reset, ': ')
                 , enter: $.player.emulation, match: /VT|PC|XT/i, max: 2
             },
             'rows': {
                 cb: () => {
-                    const n = int(xvt.entry, true)
+                    const n = whole(vt.entry)
                     if (n > 23) $.player.rows = n
-                    xvt.outln()
-                    xvt.app.focus = 'pause'
+                    vt.outln()
+                    vt.focus = 'pause'
                 }, enter: $.player.rows.toString(), max: 2, match: /^[2-9][0-9]$/
             },
             'pause': { cb: cb, pause: true }
         }
 
-        xvt.outln('\n', xvt.cyan, 'Which emulation / character encoding are you using?')
-        xvt.out(bracket('VT'), ' classic VT terminal with DEC drawing (telnet b&w)')
-        xvt.out(bracket('PC'), ' former ANSI color with Western IBM CP850 (telnet color)')
-        xvt.outln(bracket('XT'), ' modern ANSI color with UTF-8 & emojis (browser multimedia)')
-        xvt.app.focus = 'term'
+        vt.outln('\n', vt.cyan, 'Which emulation / character encoding are you using?')
+        vt.out(bracket('VT'), ' classic VT terminal with DEC drawing (telnet b&w)')
+        vt.out(bracket('PC'), ' former ANSI color with Western IBM CP850 (telnet color)')
+        vt.outln(bracket('XT'), ' modern ANSI color with UTF-8 & emojis (browser multimedia)')
+        vt.focus = 'term'
     }
 
     export function getRing(how: string, what: string) {
-        xvt.outln()
-        xvt.out(xvt.yellow, xvt.bright, 'You ', how, an(what, false))
-        xvt.out(xvt.cyan, what, xvt.normal)
-        if ($.player.emulation == 'XT') xvt.out(' ', Ring.name[what].emoji, ' 💍')
-        xvt.out(' ring', xvt.reset, ', which can\n'
-            , xvt.bright, xvt.yellow, Ring.name[what].description)
+        vt.outln()
+        vt.out(vt.yellow, vt.bright, 'You ', how, an(what, false))
+        vt.out(vt.cyan, what, vt.normal)
+        if ($.player.emulation == 'XT') vt.out(' ', Ring.name[what].emoji, ' 💍')
+        vt.out(' ring', vt.reset, ', which can\n'
+            , vt.bright, vt.yellow, Ring.name[what].description)
         profile({ jpg: `ring/${what}`, handle: `${what} ${Ring.name[what].emoji} 💍 ring`, effect: 'tada' })
     }
 
@@ -506,12 +508,12 @@ module io {
 
     export function input(focus: string | number, input = '', speed = 8) {
         if ($.access.bot) {
-            const cr = (xvt.app.form[focus].eol || xvt.app.form[focus].lines)
-            xvt.typeahead += input
-            if (cr || !input) xvt.typeahead += '\r'
-            xvt.app.form[focus].delay = speed < 100 ? 125 * dice(speed) * dice(speed) : speed
+            const cr = (vt.form[focus].eol || vt.form[focus].lines)
+            vt.typeahead += input
+            if (cr || !input) vt.typeahead += '\r'
+            vt.form[focus].delay = speed < 100 ? 125 * dice(speed) * dice(speed) : speed
         }
-        xvt.app.focus = focus
+        vt.focus = focus
     }
 
     export function logoff() {
@@ -528,7 +530,7 @@ module io {
                     PC.adjust('dex', -1, -1, -1)
                     PC.adjust('cha', -1, -1, -1)
                 }
-                $.reason = xvt.reason || 'mystery'
+                $.reason = vt.reason || 'mystery'
             }
             else {  //  game was won
                 $.access.roleplay = false
@@ -581,25 +583,25 @@ module io {
                 portrait($.online)
             }
 
-            xvt.save()
-            xvt.out(`\x1B[1;${$.player.rows}r`)
-            xvt.restore()
-            xvt.outln(-100, '\x06')
+            vt.save()
+            vt.out(`\x1B[1;${$.player.rows}r`)
+            vt.restore()
+            vt.outln(-100, '\x06')
 
-            xvt.outln(-200, 'Goodbye, please play again! Also visit: ', -300)
-            xvt.out(xvt.cyan, '  ___                               ___  \n')
-            xvt.out('  \\_/   ', xvt.red, xvt.app.LGradient, xvt.bright, xvt.Red, xvt.white, 'Never Program Mad', xvt.reset, xvt.red, xvt.app.RGradient, xvt.cyan, '   \\_/  \n')
-            xvt.out(' _(', xvt.bright, '-', xvt.normal, ')_     ', xvt.reset, ' https://npmjs.com    ', xvt.cyan, '  _(', xvt.bright, '-', xvt.normal, ')_ \n')
-            xvt.out('(/ ', $.player.emulation == 'XT' ? xvt.attr(xvt.faint, '⚨', xvt.normal) : ':', ' \\)                          ', xvt.cyan, ' (/ ', $.player.emulation == 'XT' ? xvt.attr(xvt.faint, '⚨', xvt.normal) : ':', ' \\)\n')
-            xvt.out('I\\___/I    ', xvt.green, xvt.app.LGradient, xvt.bright, xvt.Green, xvt.white, `RAH-CoCo's`, xvt.reset, xvt.green, xvt.app.RGradient, xvt.cyan, '     I\\___/I\n')
-            xvt.out('\\/   \\/ ', xvt.reset, '   http://rb.gy/bruelx  ', xvt.cyan, '  \\/   \\/\n')
-            xvt.out(' \\ : /                           ', xvt.cyan, '  \\ : / \n')
-            xvt.out('  I:I     ', xvt.blue, xvt.app.LGradient, xvt.bright, xvt.Blue, xvt.white, `${$.player.emulation == 'XT' ? 'ℝ' : 'R'}ober${$.player.emulation == 'XT' ? 'ƭ ℍ' : 't H'}urs${$.player.emulation == 'XT' ? 'ƭ' : 't'}`, xvt.reset, xvt.blue, xvt.app.RGradient, xvt.cyan, '      I:I  \n')
-            xvt.outln(' .I:I. ', xvt.reset, '   https://www.DDgame.us   ', xvt.cyan, ' .I:I.')
-            xvt.outln(-400)
-            xvt.outln(xvt.black, xvt.bright, process.title
-                , ' running on ', xvt.green, 'Node.js ', xvt.normal, process.version, xvt.reset
-                , xvt.faint, ' (', xvt.cyan, process.platform, xvt.white, xvt.faint, ')', -1965)
+            vt.outln(-200, 'Goodbye, please play again! Also visit: ', -300)
+            vt.out(vt.cyan, '  ___                               ___  \n')
+            vt.out('  \\_/   ', vt.red, vt.LGradient, vt.bright, vt.Red, vt.white, 'Never Program Mad', vt.reset, vt.red, vt.RGradient, vt.cyan, '   \\_/  \n')
+            vt.out(' _(', vt.bright, '-', vt.normal, ')_     ', vt.reset, ' https://npmjs.com    ', vt.cyan, '  _(', vt.bright, '-', vt.normal, ')_ \n')
+            vt.out('(/ ', $.player.emulation == 'XT' ? vt.attr(vt.faint, '⚨', vt.normal) : ':', ' \\)                          ', vt.cyan, ' (/ ', $.player.emulation == 'XT' ? vt.attr(vt.faint, '⚨', vt.normal) : ':', ' \\)\n')
+            vt.out('I\\___/I    ', vt.green, vt.LGradient, vt.bright, vt.Green, vt.white, `RAH-CoCo's`, vt.reset, vt.green, vt.RGradient, vt.cyan, '     I\\___/I\n')
+            vt.out('\\/   \\/ ', vt.reset, '   http://rb.gy/bruelx  ', vt.cyan, '  \\/   \\/\n')
+            vt.out(' \\ : /                           ', vt.cyan, '  \\ : / \n')
+            vt.out('  I:I     ', vt.blue, vt.LGradient, vt.bright, vt.Blue, vt.white, `${$.player.emulation == 'XT' ? 'ℝ' : 'R'}ober${$.player.emulation == 'XT' ? 'ƭ ℍ' : 't H'}urs${$.player.emulation == 'XT' ? 'ƭ' : 't'}`, vt.reset, vt.blue, vt.RGradient, vt.cyan, '      I:I  \n')
+            vt.outln(' .I:I. ', vt.reset, '   https://www.DDgame.us   ', vt.cyan, ' .I:I.')
+            vt.outln(-400)
+            vt.outln(vt.black, vt.bright, process.title
+                , ' running on ', vt.green, 'Node.js ', vt.normal, process.version, vt.reset
+                , vt.faint, ' (', vt.cyan, process.platform, vt.white, vt.faint, ')', -1965)
             if ($.access.roleplay && $.player.today && $.player.level > 1)
                 music($.online.hp > 0 ? 'logoff' : 'death')
         }
@@ -611,11 +613,11 @@ module io {
         const gain = int(100 * xp / (experience($.player.level) - experience($.player.level - 1)))
         let out = (xp < 1e+8 ? xp.toString() : sprintf('%.4e', xp)) + ' '
         if (awarded && gain && $.online.int >= 90) {
-            out += xvt.attr(xvt.off, xvt.faint, '(', xvt.bright
-                , gain < 4 ? xvt.black : gain < 10 ? xvt.red : gain < 40 ? xvt.yellow
-                    : gain < 80 ? xvt.green : gain < 130 ? xvt.cyan : gain < 400 ? xvt.blue
-                        : xvt.magenta, sprintf('%+d', gain)
-                , gain > 3 ? xvt.normal : '', '%', xvt.faint, xvt.white, ') ', xvt.reset)
+            out += vt.attr(vt.off, vt.faint, '(', vt.bright
+                , gain < 4 ? vt.black : gain < 10 ? vt.red : gain < 40 ? vt.yellow
+                    : gain < 80 ? vt.green : gain < 130 ? vt.cyan : gain < 400 ? vt.blue
+                        : vt.magenta, sprintf('%+d', gain)
+                , gain > 3 ? vt.normal : '', '%', vt.faint, vt.white, ') ', vt.reset)
         }
         out += 'experience'
         if (awarded) out += '.'
@@ -643,10 +645,10 @@ module io {
             } while (!rpc.user.keyhints[i])
 
             if (rpc === $.online && echo)
-                xvt.outln('Key #', xvt.bright, `${slot + 1}`, xvt.normal, ' is not ', Award.key[$.player.keyhints[i]])
+                vt.outln('Key #', vt.bright, `${slot + 1}`, vt.normal, ' is not ', Award.key[$.player.keyhints[i]])
         }
         else
-            xvt.outln(xvt.reset, 'There are no more key hints available to you.')
+            vt.outln(vt.reset, 'There are no more key hints available to you.')
 
         rpc.altered = true
     }
@@ -718,7 +720,7 @@ module io {
 
         music('reroll')
         if (points > 240) points = 240
-        xvt.outln(-1000)
+        vt.outln(-1000)
         if (!Access.name[$.player.access].roleplay) return
 
         if ($.player.novice) {
@@ -730,8 +732,8 @@ module io {
             $.player.bank = new Coin(novice.bank.toString())
             PC.newkeys($.player)
 
-            xvt.outln('Since you are a new user here, you are automatically assigned a character')
-            xvt.out('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.')
+            vt.outln('Since you are a new user here, you are automatically assigned a character')
+            vt.out('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.')
             show()
             activate($.online)
             news(`Welcome a ${$.player.pc} player, ${$.player.handle}`)
@@ -739,12 +741,12 @@ module io {
             return
         }
         else {
-            xvt.sessionAllowed += 300
+            vt.sessionAllowed += 300
             $.warning = 2
         }
 
         action('list')
-        xvt.app.form = {
+        vt.form = {
             'pc': { cb: pick, min: 1, max: 2, cancel: '!' },
             'str': { cb: ability, min: 2, max: 2, match: /^[2-8][0-9]$/ },
             'int': { cb: ability, min: 2, max: 2, match: /^[2-8][0-9]$/ },
@@ -760,11 +762,11 @@ module io {
         }
 
         profile({ jpg: 'classes', handle: 'Reroll!', effect: 'tada' })
-        xvt.outln($.player.pc, ', you have been rerolled.  You must pick a class.\n', -1500)
+        vt.outln($.player.pc, ', you have been rerolled.  You must pick a class.\n', -1500)
 
-        xvt.outln(xvt.cyan, '      Character                       ', xvt.faint, '>> ', xvt.normal, 'Ability bonus')
-        xvt.outln(xvt.cyan, '        Class      Users  Difficulty  Str  Int  Dex  Cha     Notable Feature')
-        xvt.out(xvt.faint, xvt.cyan, '      ---------     ---   ----------  ---  ---  ---  ---  ---------------------')
+        vt.outln(vt.cyan, '      Character                       ', vt.faint, '>> ', vt.normal, 'Ability bonus')
+        vt.outln(vt.cyan, '        Class      Users  Difficulty  Str  Int  Dex  Cha     Notable Feature')
+        vt.out(vt.faint, vt.cyan, '      ---------     ---   ----------  ---  ---  ---  ---  ---------------------')
 
         let classes = ['']
         let n = 0
@@ -772,52 +774,52 @@ module io {
             let rpc = PC.card(pc)
             if (++n > 2) {
                 if ($.player.keyhints.indexOf(pc, 12) < 0) {
-                    xvt.out(bracket(classes.length))
+                    vt.out(bracket(classes.length))
                     classes.push(pc)
                 }
                 else {
                     const framed = n < 12
-                        ? xvt.attr(xvt.faint, ' <', xvt.red, 'x')
-                        : xvt.attr(xvt.faint, '<', xvt.red, 'xx')
-                    xvt.out('\n', framed, xvt.white, '> ')
+                        ? vt.attr(vt.faint, ' <', vt.red, 'x')
+                        : vt.attr(vt.faint, '<', vt.red, 'xx')
+                    vt.out('\n', framed, vt.white, '> ')
                 }
 
                 let rs = db.query(`SELECT COUNT(id) AS n FROM Players WHERE pc='${pc}' and id NOT GLOB '_*'`)[0]
 
-                xvt.out(sprintf(' %-9s  %s  %3s    %-8s    +%s   +%s   +%s   +%s  %s'
+                vt.out(sprintf(' %-9s  %s  %3s    %-8s    +%s   +%s   +%s   +%s  %s'
                     , pc, $.player.emulation == 'XT' ? rpc.unicode : ' '
-                    , +rs.n ? rs.n : xvt.attr(xvt.blue, '  ', xvt.app.Empty, xvt.white)
+                    , +rs.n ? rs.n : vt.attr(vt.blue, '  ', vt.Empty, vt.white)
                     , rpc.difficulty
-                    , xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toStr - 1], rpc.toStr.toString(), xvt.white)
-                    , xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toInt - 1], rpc.toInt.toString(), xvt.white)
-                    , xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toDex - 1], rpc.toDex.toString(), xvt.white)
-                    , xvt.attr([xvt.white, xvt.green, xvt.cyan, xvt.magenta][rpc.toCha - 1], rpc.toCha.toString(), xvt.white)
+                    , vt.attr([vt.white, vt.green, vt.cyan, vt.magenta][rpc.toStr - 1], rpc.toStr.toString(), vt.white)
+                    , vt.attr([vt.white, vt.green, vt.cyan, vt.magenta][rpc.toInt - 1], rpc.toInt.toString(), vt.white)
+                    , vt.attr([vt.white, vt.green, vt.cyan, vt.magenta][rpc.toDex - 1], rpc.toDex.toString(), vt.white)
+                    , vt.attr([vt.white, vt.green, vt.cyan, vt.magenta][rpc.toCha - 1], rpc.toCha.toString(), vt.white)
                     , rpc.specialty)
                 )
             }
         }
-        xvt.outln()
+        vt.outln()
 
-        xvt.app.form['pc'].prompt = `Enter class (1-${(classes.length - 1)}): `
-        xvt.app.focus = 'pc'
+        vt.form['pc'].prompt = `Enter class (1-${(classes.length - 1)}): `
+        vt.focus = 'pc'
 
         function show() {
             profile({
                 png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : '')
                 , handle: $.player.handle, level: $.player.level, pc: $.player.pc, effect: 'zoomInDown'
             })
-            xvt.outln()
+            vt.outln()
             cat('player/' + $.player.pc.toLowerCase())
             let rpc = PC.card($.player.pc)
             for (let l = 0; l < rpc.description.length; l++)
-                xvt.outln(xvt.bright, xvt.cyan, rpc.description[l])
+                vt.outln(vt.bright, vt.cyan, rpc.description[l])
         }
 
         function pick() {
-            let n: number = int(xvt.entry)
+            let n: number = int(vt.entry)
             if (n < 1 || n >= classes.length) {
-                xvt.beep()
-                xvt.app.refocus()
+                vt.beep()
+                vt.refocus()
                 return
             }
             reroll($.player, classes[n])
@@ -827,29 +829,29 @@ module io {
 
         function ability(field?: string) {
             if (field) {
-                xvt.out('\n', xvt.yellow, 'You have ', xvt.bright, points.toString(), xvt.normal, ' points to distribute between 4 abilities: Strength, Intellect,\n')
-                xvt.outln('Dexterity, Charisma.  Each ability must be between ', xvt.bright, '20', xvt.normal, ' and ', xvt.bright, '80', xvt.normal, ' points.')
+                vt.out('\n', vt.yellow, 'You have ', vt.bright, points.toString(), vt.normal, ' points to distribute between 4 abilities: Strength, Intellect,\n')
+                vt.outln('Dexterity, Charisma.  Each ability must be between ', vt.bright, '20', vt.normal, ' and ', vt.bright, '80', vt.normal, ' points.')
                 if ($.player.immortal < 3) {
-                    xvt.outln('\nThis tracks how hard a character hits. Characters with higher Strength gain')
-                    xvt.outln('more Hit Points when advancing in Experience Levels. More Strength yields more')
-                    xvt.outln('damage in melee attacks.')
+                    vt.outln('\nThis tracks how hard a character hits. Characters with higher Strength gain')
+                    vt.outln('more Hit Points when advancing in Experience Levels. More Strength yields more')
+                    vt.outln('damage in melee attacks.')
                 }
-                xvt.app.form[field].enter = $.player.str.toString()
-                xvt.app.form[field].cancel = xvt.app.form[field].enter
-                xvt.app.form[field].prompt = 'Enter your Strength  ' + bracket($.player.str, false) + ': '
-                xvt.app.focus = field
+                vt.form[field].enter = $.player.str.toString()
+                vt.form[field].cancel = vt.form[field].enter
+                vt.form[field].prompt = 'Enter your Strength  ' + bracket($.player.str, false) + ': '
+                vt.focus = field
                 return
             }
 
-            let n: number = int(xvt.entry, true)
+            let n: number = whole(vt.entry)
             if (n < 20 || n > 80) {
-                xvt.beep()
-                xvt.app.refocus()
+                vt.beep()
+                vt.refocus()
                 return
             }
 
             let left = points
-            let p = xvt.app.focus
+            let p = vt.focus
 
             switch (p) {
                 case 'str':
@@ -857,15 +859,15 @@ module io {
                     a.str = n
 
                     if ($.player.immortal < 3) {
-                        xvt.outln('\n\nThis statistic comes into play mainly in casting and resisting magic. It is also')
-                        xvt.outln(`calculated into approximating an opponent's Hit Points and ability to remember`)
-                        xvt.outln('visited dungeon levels. Bonus Spell Power is awarded to those with a high')
-                        xvt.out('Intellect upon gaining a level.')
+                        vt.outln('\n\nThis statistic comes into play mainly in casting and resisting magic. It is also')
+                        vt.outln(`calculated into approximating an opponent's Hit Points and ability to remember`)
+                        vt.outln('visited dungeon levels. Bonus Spell Power is awarded to those with a high')
+                        vt.out('Intellect upon gaining a level.')
                     }
                     p = 'int'
-                    xvt.app.form[p].prompt = 'Enter your Intellect'
-                    xvt.app.form[p].enter = $.player.int.toString()
-                    xvt.app.form[p].cancel = xvt.app.form[p].enter
+                    vt.form[p].prompt = 'Enter your Intellect'
+                    vt.form[p].enter = $.player.int.toString()
+                    vt.form[p].cancel = vt.form[p].enter
                     break
 
                 case 'int':
@@ -873,21 +875,21 @@ module io {
                     a.int = n
 
                     if ($.player.immortal < 3) {
-                        xvt.outln('\n\nYour overall fighting ability is measured by how dexterous you are. It is used')
-                        xvt.outln('to calculate who gets the first attack in a battle round, whether a hit was')
-                        xvt.out('made, jousting ability, and in other applicable instances.')
+                        vt.outln('\n\nYour overall fighting ability is measured by how dexterous you are. It is used')
+                        vt.outln('to calculate who gets the first attack in a battle round, whether a hit was')
+                        vt.out('made, jousting ability, and in other applicable instances.')
                     }
                     p = 'dex'
-                    xvt.app.form[p].prompt = 'Enter your Dexterity'
-                    xvt.app.form[p].enter = $.player.dex.toString()
-                    xvt.app.form[p].cancel = xvt.app.form[p].enter
+                    vt.form[p].prompt = 'Enter your Dexterity'
+                    vt.form[p].enter = $.player.dex.toString()
+                    vt.form[p].cancel = vt.form[p].enter
                     break
 
                 case 'dex':
                     left -= a.str + a.int + n
                     if (left < 20 || left > 80) {
-                        xvt.beep()
-                        xvt.outln()
+                        vt.beep()
+                        vt.outln()
                         reroll($.player, $.player.pc)
                         ability('str')
                         return
@@ -895,20 +897,20 @@ module io {
                     a.dex = n
 
                     if ($.player.immortal < 3) {
-                        xvt.outln('\n\nA high Charisma will get you more money when selling items in the Square and')
-                        xvt.outln('from defeated foes. Some of the random events that occur tend to favor those')
-                        xvt.out('with a high Charisma as well.')
+                        vt.outln('\n\nA high Charisma will get you more money when selling items in the Square and')
+                        vt.outln('from defeated foes. Some of the random events that occur tend to favor those')
+                        vt.out('with a high Charisma as well.')
                     }
                     p = 'cha'
-                    xvt.app.form[p].prompt = 'Enter your Charisma '
-                    xvt.app.form[p].enter = left.toString()
-                    xvt.app.form[p].cancel = xvt.app.form[p].enter
+                    vt.form[p].prompt = 'Enter your Charisma '
+                    vt.form[p].enter = left.toString()
+                    vt.form[p].cancel = vt.form[p].enter
                     break
 
                 case 'cha':
                     left -= a.str + a.int + a.dex + n
                     if (left) {
-                        xvt.beep()
+                        vt.beep()
                         reroll($.player, $.player.pc)
                         ability('str')
                         return
@@ -921,25 +923,25 @@ module io {
                     $.player.cha = a.cha
                     activate($.online)
 
-                    xvt.outln()
+                    vt.outln()
                     PC.saveUser($.player)
                     news(`\trerolled as${an($.player.pc)}`)
                     if (immortal) {
                         $.online.hp = 0
                         $.reason = 'became immortal'
-                        xvt.hangup()
+                        vt.hangup()
                     }
                     else {
-                        xvt.outln()
-                        xvt.outln(xvt.yellow, '... ', xvt.bright, 'and you get to complete any remaining parts to this play.')
+                        vt.outln()
+                        vt.outln(vt.yellow, '... ', vt.bright, 'and you get to complete any remaining parts to this play.')
                         require('./tty/main').menu(true)
                     }
                     return
             }
 
-            xvt.outln('\n\nYou have ', xvt.bright, left.toString(), xvt.normal, ' ability points left.')
-            xvt.app.form[p].prompt += ' ' + bracket(xvt.app.form[p].enter, false) + ': '
-            xvt.app.focus = p
+            vt.outln('\n\nYou have ', vt.bright, left.toString(), vt.normal, ' ability points left.')
+            vt.form[p].prompt += ' ' + bracket(vt.form[p].enter, false) + ': '
+            vt.focus = p
         }
     }
 
@@ -949,76 +951,76 @@ module io {
         rpc.user.expert = true
 
         //  slow-roll endowment choices for a dramatic effect  :)
-        xvt.outln(-500)
+        vt.outln(-500)
         let hero = ` ${$.player.emulation == 'XT' ? PC.card($.player.pc).unicode : '+'} `
-        xvt.outln(xvt.bright, xvt.yellow, hero, xvt.normal, 'You earn a gift to endow your '
-            , xvt.faint, rpc.user.pc, xvt.normal, ' character', xvt.bright, hero, -1000)
-        xvt.outln(-500)
-        xvt.drain()
+        vt.outln(vt.bright, vt.yellow, hero, vt.normal, 'You earn a gift to endow your '
+            , vt.faint, rpc.user.pc, vt.normal, ' character', vt.bright, hero, -1000)
+        vt.outln(-500)
+        vt.drain()
 
         if (rpc.user.maxstr < 97 || rpc.user.maxint < 97 || rpc.user.maxdex < 97 || rpc.user.maxcha < 97)
-            xvt.outln(bracket(0, false), xvt.yellow, ' Increase ALL abilities by ', xvt.reset, '+3', -125)
-        xvt.outln(bracket(1, false), xvt.yellow, ' Increase Strength ability from ', xvt.reset
+            vt.outln(bracket(0, false), vt.yellow, ' Increase ALL abilities by ', vt.reset, '+3', -125)
+        vt.outln(bracket(1, false), vt.yellow, ' Increase Strength ability from ', vt.reset
             , rpc.user.maxstr.toString(), ' '
             , rpc.user.maxstr < 90 ? '[WEAK]'
                 : rpc.user.maxstr < 95 ? '-Average-'
                     : rpc.user.maxstr < 99 ? '=Strong='
                         : '#MAX#'
             , -125)
-        xvt.outln(bracket(2, false), xvt.yellow, ' Increase Intellect ability from ', xvt.reset
+        vt.outln(bracket(2, false), vt.yellow, ' Increase Intellect ability from ', vt.reset
             , rpc.user.maxint.toString(), ' '
             , rpc.user.maxint < 90 ? '[MORON]'
                 : rpc.user.maxint < 95 ? '-Average-'
                     : rpc.user.maxint < 99 ? '=Smart='
                         : '#MAX#'
             , -125)
-        xvt.outln(bracket(3, false), xvt.yellow, ' Increase Dexterity ability from ', xvt.reset
+        vt.outln(bracket(3, false), vt.yellow, ' Increase Dexterity ability from ', vt.reset
             , rpc.user.maxdex.toString(), ' '
             , rpc.user.maxdex < 90 ? '[SLOW]'
                 : rpc.user.maxdex < 95 ? '-Average-'
                     : rpc.user.maxdex < 99 ? '=Swift='
                         : '#MAX#'
             , -125)
-        xvt.outln(bracket(4, false), xvt.yellow, ' Increase Charisma ability from ', xvt.reset
+        vt.outln(bracket(4, false), vt.yellow, ' Increase Charisma ability from ', vt.reset
             , rpc.user.maxcha.toString(), ' '
             , rpc.user.maxcha < 90 ? '[SURLY]'
                 : rpc.user.maxcha < 95 ? '-Average-'
                     : rpc.user.maxcha < 99 ? '=Affable='
                         : '#MAX#'
             , -125)
-        xvt.outln(bracket(5, false), xvt.yellow, ' Improve Melee skill from ', xvt.reset
+        vt.outln(bracket(5, false), vt.yellow, ' Improve Melee skill from ', vt.reset
             , rpc.user.melee.toString(), 'x '
             , ['[POOR]', '-Average-', '+Good+', '=Masterful=', '#MAX#'][rpc.user.melee]
             , -125)
-        xvt.outln(bracket(6, false), xvt.yellow, ' Improve Backstab skill from ', xvt.reset
+        vt.outln(bracket(6, false), vt.yellow, ' Improve Backstab skill from ', vt.reset
             , rpc.user.backstab.toString(), 'x '
             , ['[RARE]', '-Average-', '+Good+', '=Masterful=', '#MAX#'][rpc.user.backstab]
             , -125)
-        xvt.outln(bracket(7, false), xvt.yellow, ' Improve Poison skill from ', xvt.reset
+        vt.outln(bracket(7, false), vt.yellow, ' Improve Poison skill from ', vt.reset
             , rpc.user.poison.toString(), 'x '
             , ['[BAN]', '-Average-', '+Good+', '=Masterful=', '#MAX#'][rpc.user.poison]
             , -125)
         if (rpc.user.magic < 2) {
-            xvt.out(bracket(8, false), xvt.yellow, ' Improve Magic skill from ', xvt.reset)
-            xvt.out(['[BAN]', '-Wands-'][rpc.user.magic])
+            vt.out(bracket(8, false), vt.yellow, ' Improve Magic skill from ', vt.reset)
+            vt.out(['[BAN]', '-Wands-'][rpc.user.magic])
         }
         else {
-            xvt.out(bracket(8, false), xvt.yellow, ' Increase Mana power for ', xvt.reset)
-            xvt.out(['+Scrolls+', '=Spells=', '#MAX#'][rpc.user.magic - 2])
+            vt.out(bracket(8, false), vt.yellow, ' Increase Mana power for ', vt.reset)
+            vt.out(['+Scrolls+', '=Spells=', '#MAX#'][rpc.user.magic - 2])
         }
-        xvt.outln(-125)
-        xvt.outln(bracket(9, false), xvt.yellow, ' Improve Stealing skill from ', xvt.reset
+        vt.outln(-125)
+        vt.outln(bracket(9, false), vt.yellow, ' Improve Stealing skill from ', vt.reset
             , rpc.user.steal.toString(), 'x '
             , ['[RARE]', '-Average-', '+Good+', '=Masterful=', '#MAX#'][rpc.user.steal]
             , -125)
 
         action('list')
 
-        xvt.app.form = {
+        vt.form = {
             'skill': {
                 cb: () => {
-                    xvt.out('\n', xvt.bright)
-                    switch (+xvt.entry) {
+                    vt.out('\n', vt.bright)
+                    switch (+vt.entry) {
                         case 0:
                             news('\tgot generally better')
                             PC.adjust('str', 3, 3, 3)
@@ -1030,34 +1032,34 @@ module io {
                         case 1:
                             news('\tcan get even Stronger')
                             if (($.player.maxstr += 10) > 100) $.player.maxstr = 100
-                            xvt.out(xvt.red, `Maximum Strength is now ${$.player.maxstr}.`)
+                            vt.out(vt.red, `Maximum Strength is now ${$.player.maxstr}.`)
                             break
 
                         case 2:
                             news('\tcan get even Wiser')
                             if (($.player.maxint += 10) > 100) $.player.maxint = 100
-                            xvt.out(xvt.green, `Maximum Intellect is now ${$.player.maxint}.`)
+                            vt.out(vt.green, `Maximum Intellect is now ${$.player.maxint}.`)
                             break
 
                         case 3:
                             news('\tcan get even Quicker')
                             if (($.player.maxdex += 10) > 100) $.player.maxdex = 100
-                            xvt.out(xvt.magenta, `Maximum Dexterity is now ${$.player.maxdex}.`)
+                            vt.out(vt.magenta, `Maximum Dexterity is now ${$.player.maxdex}.`)
                             break
 
                         case 4:
                             news('\tcan get even Nicer')
                             if (($.player.maxcha += 10) > 100) $.player.maxcha = 100
-                            xvt.out(xvt.yellow, `Maximum Charisma is now ${$.player.maxcha}.`)
+                            vt.out(vt.yellow, `Maximum Charisma is now ${$.player.maxcha}.`)
                             break
 
                         case 5:
                             if ($.player.melee > 3) {
-                                xvt.app.refocus()
+                                vt.refocus()
                                 return
                             }
                             news('\tgot Milk')
-                            xvt.out([xvt.cyan, xvt.blue, xvt.red, xvt.yellow][$.player.melee]
+                            vt.out([vt.cyan, vt.blue, vt.red, vt.yellow][$.player.melee]
                                 , ['You can finally enter the Tavern without fear.'
                                     , 'So you want to be a hero, eh?'
                                     , 'Just what this world needs, another fighter.'
@@ -1067,11 +1069,11 @@ module io {
 
                         case 6:
                             if ($.player.backstab > 3) {
-                                xvt.app.refocus()
+                                vt.refocus()
                                 return
                             }
                             news('\twatch your Back now')
-                            xvt.out([xvt.cyan, xvt.blue, xvt.red, xvt.black][$.player.backstab]
+                            vt.out([vt.cyan, vt.blue, vt.red, vt.black][$.player.backstab]
                                 , ['A backstab is in your future.'
                                     , 'You may backstab more regularly now.'
                                     , 'You will deal a more significant, first blow.'
@@ -1081,11 +1083,11 @@ module io {
 
                         case 7:
                             if ($.player.poison > 3) {
-                                xvt.app.refocus()
+                                vt.refocus()
                                 return
                             }
                             news('\tApothecary visits have more meaning')
-                            xvt.out([xvt.green, xvt.cyan, xvt.red, xvt.magenta][$.player.poison]
+                            vt.out([vt.green, vt.cyan, vt.red, vt.magenta][$.player.poison]
                                 , ['The Apothecary will sell you toxins now, bring money.'
                                     , 'Your poisons can achieve (+1x,+1x) potency now.'
                                     , 'Your banes will add (+1x,+2x) potency now.'
@@ -1095,25 +1097,25 @@ module io {
 
                         case 8:
                             if ($.player.magic > 3) {
-                                xvt.app.refocus()
+                                vt.refocus()
                                 return
                             }
                             news('\tbecame more friendly with the old mage')
                             switch ($.player.magic) {
                                 case 0:
-                                    xvt.out(xvt.cyan, 'The old mage will see you now, bring money.')
+                                    vt.out(vt.cyan, 'The old mage will see you now, bring money.')
                                     $.player.magic++
                                     $.player.spells = []
                                     break
                                 case 1:
-                                    xvt.out(xvt.cyan, 'You can no longer use wands.')
+                                    vt.out(vt.cyan, 'You can no longer use wands.')
                                     $.player.magic++
                                     $.player.spells = []
                                     $.player.sp += 15 + dice(511)
                                     $.online.sp = $.player.sp
                                     break
                                 default:
-                                    xvt.out(xvt.black, 'More mana is better')
+                                    vt.out(vt.black, 'More mana is better')
                                     $.player.sp += 511
                                     $.online.sp += dice(511)
                                     break
@@ -1122,11 +1124,11 @@ module io {
 
                         case 9:
                             if ($.player.steal > 3) {
-                                xvt.app.refocus()
+                                vt.refocus()
                                 return
                             }
                             news('\ttry to avoid in the Square')
-                            xvt.out([xvt.cyan, xvt.blue, xvt.red, xvt.black][$.player.steal]
+                            vt.out([vt.cyan, vt.blue, vt.red, vt.black][$.player.steal]
                                 , ['Your fingers are starting to itch.'
                                     , 'Your eyes widen at the chance for unearned loot.'
                                     , 'Welcome to the Thieves guild: go pick a pocket or two!'
@@ -1135,18 +1137,18 @@ module io {
                             break
 
                         default:
-                            xvt.app.refocus()
+                            vt.refocus()
                             return
                     }
 
                     $.online.altered = true
-                    xvt.outln(-2000)
+                    vt.outln(-2000)
                     cb()
                 }, prompt: 'Choose which: ', cancel: '0', min: 1, max: 1, match: /^[0-9]/
             }
         }
-        xvt.drain()
-        xvt.app.focus = 'skill'
+        vt.drain()
+        vt.focus = 'skill'
     }
 
     export function portrait(rpc = $.online, effect = 'fadeInLeft', meta = '') {
@@ -1201,7 +1203,7 @@ module io {
             user.lasttime = now().time
             user.gender = user.sex || 'I'
 
-            user.emulation = <EMULATION>xvt.app.emulation
+            user.emulation = vt.emulation
             user.calls = 0
             user.today = 0
             user.expert = false
@@ -1260,7 +1262,7 @@ module io {
         for (let n = 2; n <= level; n++) {
             user.level = n
             if (user.level == 50 && user.gender !== 'I' && user.id[0] !== '_' && !user.novice) {
-                xvt.out(xvt.reset, xvt.bright, xvt.yellow, '+', xvt.reset, ' Bonus ')
+                vt.out(vt.reset, vt.bright, vt.yellow, '+', vt.reset, ' Bonus ')
                 let d: number = 0
                 while (!d) {
                     d = dice(9)
@@ -1299,48 +1301,48 @@ module io {
                     case 1:
                         if ((user.maxstr += 10) > 99)
                             user.maxstr = 99
-                        xvt.out('Strength')
+                        vt.out('Strength')
                         break
                     case 2:
                         if ((user.maxint += 10) > 99)
                             user.maxint = 99
-                        xvt.out('Intellect')
+                        vt.out('Intellect')
                         break
                     case 3:
                         if ((user.maxdex += 10) > 99)
                             user.maxdex = 99
-                        xvt.out('Dexterity')
+                        vt.out('Dexterity')
                         break
                     case 4:
                         if ((user.maxcha += 10) > 99)
                             user.maxcha = 99
-                        xvt.out('Charisma')
+                        vt.out('Charisma')
                         break
                     case 5:
                         user.melee++
-                        xvt.out('Melee')
+                        vt.out('Melee')
                         break
                     case 6:
                         user.backstab++
-                        xvt.out('Backstab')
+                        vt.out('Backstab')
                         break
                     case 7:
                         user.poison++
-                        xvt.out('Poison')
+                        vt.out('Poison')
                         break
                     case 8:
                         if (user.magic < 4)
                             user.magic++
-                        xvt.out('Spellcasting')
+                        vt.out('Spellcasting')
                         break
                     case 9:
                         user.steal++
-                        xvt.out('Stealing')
+                        vt.out('Stealing')
                         break
                 }
-                xvt.out(' added')
-                if (user != $.player) xvt.out(' to ', user.handle)
-                xvt.outln(' ', xvt.bright, xvt.yellow, '+')
+                vt.out(' added')
+                if (user != $.player) vt.out(' to ', user.handle)
+                vt.outln(' ', vt.bright, vt.yellow, '+')
             }
             if ((user.str += rpc.toStr) > user.maxstr)
                 user.str = user.maxstr
@@ -1360,13 +1362,13 @@ module io {
 
         action('clear')
         portrait($.online, 'tada')
-        xvt.outln()
+        vt.outln()
 
         //  should never occur
         if ($.player.novice) {
             $.player.novice = false
             $.player.expert = true
-            xvt.outln('You are no longer a novice.  Welcome to the next level of play.', -2000)
+            vt.outln('You are no longer a novice.  Welcome to the next level of play.', -2000)
         }
 
         let bonus = 0
@@ -1374,7 +1376,7 @@ module io {
 
         if (!Access.name[$.player.access].sysop) {
             $.mydeeds = Deed.load($.player.pc)
-            xvt.outln('\nChecking your deeds for the ', xvt.bright, $.player.pc, xvt.normal, ' list ... ', -1000)
+            vt.outln('\nChecking your deeds for the ', vt.bright, $.player.pc, vt.normal, ' list ... ', -1000)
             for (let i in deeds) {
                 let deed = $.mydeeds.find((x) => { return x.deed == deeds[i] })
                 if (/jw|steals|tw/.test(deeds[i])) {
@@ -1383,7 +1385,7 @@ module io {
                         deed.value = $.player[deeds[i]]
                         Deed.save(deed)
                         bonus = 1
-                        xvt.outln(xvt.cyan, ' + ', xvt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
+                        vt.outln(vt.cyan, ' + ', vt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
                         sound('click', 5)
                     }
                 }
@@ -1395,14 +1397,14 @@ module io {
                         deed.value = $.player[deeds[i]]
                         Deed.save(deed)
                         bonus = 1
-                        xvt.outln(xvt.cyan, ' + ', xvt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
+                        vt.outln(vt.cyan, ' + ', vt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
                         sound('click', 5)
                     }
                 }
             }
 
             $.mydeeds = Deed.load('GOAT')
-            xvt.outln(xvt.magenta, '\nChecking your deeds for the ', xvt.bright, 'GOAT', xvt.normal, ' list ... ', -1000)
+            vt.outln(vt.magenta, '\nChecking your deeds for the ', vt.bright, 'GOAT', vt.normal, ' list ... ', -1000)
             for (let i in deeds) {
                 let deed = $.mydeeds.find((x) => { return x.deed == deeds[i] })
                 if (/jw|steals|tw/.test(deeds[i])) {
@@ -1411,7 +1413,7 @@ module io {
                         deed.value = $.player[deeds[i]]
                         Deed.save(deed)
                         bonus = 2
-                        xvt.outln(xvt.yellow, ' + ', xvt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
+                        vt.outln(vt.yellow, ' + ', vt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
                         sound('click', 5)
                     }
                 }
@@ -1423,7 +1425,7 @@ module io {
                         deed.value = $.player[deeds[i]]
                         Deed.save(deed)
                         bonus = 3
-                        xvt.outln(xvt.yellow, ' + ', xvt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
+                        vt.outln(vt.yellow, ' + ', vt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
                         sound('click', 5)
                     }
                 }
@@ -1434,19 +1436,19 @@ module io {
 
         if ($.player.coward) {
             $.player.coward = false
-            xvt.out('Welcome back to play with the rest of us ... ')
+            vt.out('Welcome back to play with the rest of us ... ')
             if (bonus) {
                 bonus--
-                xvt.out(-600, xvt.faint, 'Heh.')
+                vt.out(-600, vt.faint, 'Heh.')
             }
-            xvt.outln(-900)
+            vt.outln(-900)
         }
 
         music('immortal')
         $.player.immortal++
-        xvt.outln(xvt.cyan, xvt.bright, '\nYou have become so powerful that you are now immortal ', -3000)
+        vt.outln(vt.cyan, vt.bright, '\nYou have become so powerful that you are now immortal ', -3000)
         db.run(`UPDATE Players SET bank=bank+${$.player.bank.value + $.player.coin.value} WHERE id='${$.taxman.user.id}'`)
-        xvt.outln(xvt.cyan, '    and you leave your worldly possessions behind.', -2000)
+        vt.outln(vt.cyan, '    and you leave your worldly possessions behind.', -2000)
 
         let max = Object.keys(PC.name['immortal']).indexOf($.player.pc) + 1
         if (max || $.player.keyhints.slice(12).length > int(Object.keys(PC.name['player']).length / 2))
@@ -1456,7 +1458,7 @@ module io {
 
         reroll($.player)
         PC.saveUser($.player)
-        xvt.sessionAllowed += 300
+        vt.sessionAllowed += 300
         $.warning = 2
 
         if (max > 2) {
@@ -1476,29 +1478,29 @@ module io {
             $.player.wins++
             db.run(`UPDATE Players SET wins=${$.player.wins} WHERE id='${$.player.id}'`)
             $.reason = 'WON THE GAME !!'
-            xvt.outln($.tty == 'web' ? -4321 : -432)
+            vt.outln($.tty == 'web' ? -4321 : -432)
 
             profile({ jpg: 'winner', effect: 'fadeInUp' })
             title(`${$.player.handle} is our winner!`)
-            xvt.outln(xvt.cyan, xvt.bright, 'CONGRATULATIONS!! ', -600
-                , xvt.reset, ' You have won the game!\n', -600)
+            vt.outln(vt.cyan, vt.bright, 'CONGRATULATIONS!! ', -600
+                , vt.reset, ' You have won the game!\n', -600)
 
-            xvt.out(xvt.yellow, 'The board will now reset ', -600, xvt.faint)
+            vt.out(vt.yellow, 'The board will now reset ', -600, vt.faint)
             let rs = db.query(`SELECT id, pid FROM Online WHERE id!='${$.player.id}'`)
             for (let row in rs) {
                 try {
                     process.kill(rs[row].pid, 'SIGHUP')
-                    xvt.out('x', -10)
+                    vt.out('x', -10)
                 }
                 catch {
                     beep()
-                    xvt.out('?', -100)
+                    vt.out('?', -100)
                 }
                 db.unlock(rs[row].id)
             }
 
             sound('winner')
-            xvt.out(xvt.bright)
+            vt.out(vt.bright)
 
             rs = db.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
             let user: user = { id: '' }
@@ -1510,7 +1512,7 @@ module io {
                 user.keyhints.splice(12)
                 PC.saveUser(user)
                 fs.unlink(`./users/.${user.id}.json`, () => { })
-                xvt.out('.', -10)
+                vt.out('.', -10)
             }
             db.run(`UPDATE Rings SET bearer=''`)   // should be cleared by rerolls
 
@@ -1525,29 +1527,29 @@ module io {
                     reroll(bot, bot.pc, bot.level)
                     Object.assign(bot, user)
                     PC.saveUser(bot)
-                    xvt.out('&', -10)
+                    vt.out('&', -10)
                 }
                 catch (err) {
                     beep()
-                    xvt.out('?', -100)
+                    vt.out('?', -100)
                     break
                 }
             }
 
-            xvt.outln(-1250)
-            xvt.outln('Happy hunting ', xvt.uline, 'tomorrow', xvt.nouline, '!')
-            xvt.outln(-2500)
-            xvt.hangup()
+            vt.outln(-1250)
+            vt.outln('Happy hunting ', vt.uline, 'tomorrow', vt.nouline, '!')
+            vt.outln(-2500)
+            vt.hangup()
         }
 
         $.player.today = 0
-        xvt.out(xvt.yellow, xvt.bright, '\nYou are rewarded'
-            , xvt.normal, ` ${$.access.calls} `, xvt.bright, 'more calls today.\n', xvt.reset)
+        vt.out(vt.yellow, vt.bright, '\nYou are rewarded'
+            , vt.normal, ` ${$.access.calls} `, vt.bright, 'more calls today.\n', vt.reset)
 
-        xvt.outln(xvt.green, xvt.bright, `\nOl' Mighty One!  `
-            , xvt.normal, 'Solve the'
-            , xvt.faint, ' Ancient Riddle of the Keys '
-            , xvt.normal, 'and you will become\nan immortal being.')
+        vt.outln(vt.green, vt.bright, `\nOl' Mighty One!  `
+            , vt.normal, 'Solve the'
+            , vt.faint, ' Ancient Riddle of the Keys '
+            , vt.normal, 'and you will become\nan immortal being.')
 
         for (let i = 0; i <= max + bonus; i++) keyhint($.online, false)
         PC.saveUser($.player)
@@ -1559,43 +1561,43 @@ module io {
                 slot = int(+i / 3)
                 if (slot !== prior) {
                     prior = slot
-                    xvt.outln()
+                    vt.outln()
                 }
-                xvt.outln('Key #', xvt.bright, `${slot + 1}`, xvt.normal, ' is not ', Award.key[$.player.keyhints[i]])
+                vt.outln('Key #', vt.bright, `${slot + 1}`, vt.normal, ' is not ', Award.key[$.player.keyhints[i]])
             }
         }
 
         action('riddle')
         let combo = $.player.keyseq
 
-        xvt.app.form = {
+        vt.form = {
             'key': {
                 cb: () => {
-                    let attempt = xvt.entry.toUpperCase()
+                    let attempt = vt.entry.toUpperCase()
                     music('steal')
-                    xvt.out(' ... you insert and twist the key ', -1234)
+                    vt.out(' ... you insert and twist the key ', -1234)
                     for (let i = 0; i < 3; i++) {
-                        xvt.out('.')
+                        vt.out('.')
                         sound('click', 12)
                     }
                     if (attempt == combo[slot]) {
                         sound('max')
-                        if ($.player.emulation == 'XT') xvt.out('🔓 ')
-                        xvt.outln(xvt.cyan, '{', xvt.bright, 'Click!', xvt.normal, '}')
-                        xvt.sessionAllowed += 60
+                        if ($.player.emulation == 'XT') vt.out('🔓 ')
+                        vt.outln(vt.cyan, '{', vt.bright, 'Click!', vt.normal, '}')
+                        vt.sessionAllowed += 60
 
                         $.player.pc = Object.keys(PC.name['immortal'])[slot]
                         profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), pc: $.player.pc })
-                        xvt.out([xvt.red, xvt.blue, xvt.magenta][slot]
+                        vt.out([vt.red, vt.blue, vt.magenta][slot]
                             , 'You ', ['advance to', 'succeed as', 'transcend into'][slot]
-                            , xvt.bright, an($.player.pc), xvt.normal, '.')
+                            , vt.bright, an($.player.pc), vt.normal, '.')
                         reroll($.player, $.player.pc)
                         PC.newkeys($.player)
                         $.player.coward = true
                         PC.saveUser($.player)
 
                         if (slot++ < max) {
-                            xvt.app.refocus(`Insert key #${slot + 1}? `)
+                            vt.refocus(`Insert key #${slot + 1}? `)
                             return
                         }
 
@@ -1605,8 +1607,8 @@ module io {
                     }
                     else {
                         sound('thunder')
-                        if ($.player.emulation == 'XT') xvt.out('💀 ')
-                        xvt.outln(xvt.bright, xvt.black, '^', xvt.white, 'Boom!', xvt.black, '^')
+                        if ($.player.emulation == 'XT') vt.out('💀 ')
+                        vt.outln(vt.bright, vt.black, '^', vt.white, 'Boom!', vt.black, '^')
 
                         if (slot == 0) {
                             for (let i = 0; i < 3; i++) {
@@ -1626,17 +1628,17 @@ module io {
             }
         }
         slot = 0
-        xvt.drain()
-        xvt.app.form['key'].prompt = `Insert key #${slot + 1}? `
-        xvt.app.focus = 'key'
+        vt.drain()
+        vt.form['key'].prompt = `Insert key #${slot + 1}? `
+        vt.focus = 'key'
     }
 
     export function rings(profile = $.online) {
         for (let i in profile.user.rings) {
             let ring = profile.user.rings[i]
-            xvt.out(xvt.cyan, $.player.emulation == 'XT' ? '⍤' : xvt.app.Empty, ' ', xvt.bright, ring, xvt.normal, ' ')
-            if ($.player.emulation == 'XT') xvt.out(Ring.name[ring].emoji, '💍')
-            xvt.outln('ring:', xvt.reset, ' can ', Ring.name[ring].description, -100)
+            vt.out(vt.cyan, $.player.emulation == 'XT' ? '⍤' : vt.Empty, ' ', vt.bright, ring, vt.normal, ' ')
+            if ($.player.emulation == 'XT') vt.out(Ring.name[ring].emoji, '💍')
+            vt.outln('ring:', vt.reset, ' can ', Ring.name[ring].description, -100)
         }
     }
 
@@ -1653,72 +1655,72 @@ module io {
         i = 22 - profile.user.handle.length
         n = 11 + i / 2
         clear()
-        xvt.out(xvt.blue, '+', xvt.faint, line.slice(0, n), xvt.normal, '=:))')
-        xvt.out(xvt.Blue, xvt.yellow, xvt.bright, ' ', profile.user.handle, ' ', xvt.reset)
+        vt.out(vt.blue, '+', vt.faint, line.slice(0, n), vt.normal, '=:))')
+        vt.out(vt.Blue, vt.yellow, vt.bright, ' ', profile.user.handle, ' ', vt.reset)
         n = 11 + i / 2 + i % 2
-        xvt.outln(xvt.blue, '((:=', xvt.faint, line.slice(0, n), xvt.normal, '+')
+        vt.outln(vt.blue, '((:=', vt.faint, line.slice(0, n), vt.normal, '+')
 
         i = 30 - Access.name[profile.user.access][sex].length
         n = 11 + i / 2
-        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.white, xvt.normal, space.slice(0, n))
-        xvt.out('"', Access.name[profile.user.access][sex], '"')
+        vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.white, vt.normal, space.slice(0, n))
+        vt.out('"', Access.name[profile.user.access][sex], '"')
         n = 11 + i / 2 + i % 2
-        xvt.outln(xvt.blue, space.slice(0, n), xvt.reset, xvt.blue, xvt.faint, '|')
+        vt.outln(vt.blue, space.slice(0, n), vt.reset, vt.blue, vt.faint, '|')
 
-        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
-        xvt.out('    Title: ', xvt.white)
-        if ($.player.emulation == 'XT') xvt.out('\r\x1B[2C', Access.name[profile.user.access].emoji, '\r\x1B[12C')
-        xvt.out(sprintf('%-20s', profile.user.access))
-        xvt.out(xvt.cyan, ' Born: ', xvt.white, date2full(profile.user.dob))
-        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+        vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+        vt.out('    Title: ', vt.white)
+        if ($.player.emulation == 'XT') vt.out('\r\x1B[2C', Access.name[profile.user.access].emoji, '\r\x1B[12C')
+        vt.out(sprintf('%-20s', profile.user.access))
+        vt.out(vt.cyan, ' Born: ', vt.white, date2full(profile.user.dob))
+        vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
-        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
-        xvt.out('    Class: ', xvt.white)
-        if ($.player.emulation == 'XT' && profile.user.wins > 0) xvt.out('\r\x1B[2C🎖️\r\x1B[12C')
-        xvt.out(sprintf('%-21s', profile.user.pc + ' (' + profile.user.gender + ')'))
-        xvt.out(xvt.cyan, ' Exp: ', xvt.white)
+        vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+        vt.out('    Class: ', vt.white)
+        if ($.player.emulation == 'XT' && profile.user.wins > 0) vt.out('\r\x1B[2C🎖️\r\x1B[12C')
+        vt.out(sprintf('%-21s', profile.user.pc + ' (' + profile.user.gender + ')'))
+        vt.out(vt.cyan, ' Exp: ', vt.white)
         if (profile.user.xp < 1e+8)
-            xvt.out(sprintf('%-15f', profile.user.xp))
+            vt.out(sprintf('%-15f', profile.user.xp))
         else
-            xvt.out(sprintf('%-15.7e', profile.user.xp))
-        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+            vt.out(sprintf('%-15.7e', profile.user.xp))
+        vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
-        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
-        xvt.out(' Immortal: ', xvt.white)
-        xvt.out(sprintf('%-20s', (profile.user.wins ? `${romanize(profile.user.wins)}.` : '')
+        vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+        vt.out(' Immortal: ', vt.white)
+        vt.out(sprintf('%-20s', (profile.user.wins ? `${romanize(profile.user.wins)}.` : '')
             + profile.user.immortal + '.' + profile.user.level + ` (${profile.user.calls})`))
-        xvt.out(xvt.cyan, ' Need: ', xvt.white)
+        vt.out(vt.cyan, ' Need: ', vt.white)
         if (experience(profile.user.level, undefined, profile.user.int) < 1e+8)
-            xvt.out(sprintf('%-15f', experience(profile.user.level, undefined, profile.user.int)))
+            vt.out(sprintf('%-15f', experience(profile.user.level, undefined, profile.user.int)))
         else
-            xvt.out(sprintf('%-15.7e', experience(profile.user.level, undefined, profile.user.int)))
-        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+            vt.out(sprintf('%-15.7e', experience(profile.user.level, undefined, profile.user.int)))
+        vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
-        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
-        xvt.out('      Str: ', xvt.white)
-        if ($.player.emulation == 'XT') xvt.out('\r\x1B[2C💪\r\x1B[12C')
-        xvt.out(sprintf('%-20s', profile.str + ' (' + profile.user.str + ',' + profile.user.maxstr + ')'))
-        xvt.out(xvt.cyan, ' Hand: ', profile.user.coin.carry(), ' '.repeat(15 - profile.user.coin.amount.length))
-        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+        vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+        vt.out('      Str: ', vt.white)
+        if ($.player.emulation == 'XT') vt.out('\r\x1B[2C💪\r\x1B[12C')
+        vt.out(sprintf('%-20s', profile.str + ' (' + profile.user.str + ',' + profile.user.maxstr + ')'))
+        vt.out(vt.cyan, ' Hand: ', profile.user.coin.carry(), ' '.repeat(15 - profile.user.coin.amount.length))
+        vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
-        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
-        xvt.out('      Int: ', xvt.white)
-        xvt.out(sprintf('%-20s', profile.int + ' (' + profile.user.int + ',' + profile.user.maxint + ')'))
-        xvt.out(xvt.cyan, ' Bank: ', profile.user.bank.carry(), ' '.repeat(15 - profile.user.bank.amount.length))
-        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+        vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+        vt.out('      Int: ', vt.white)
+        vt.out(sprintf('%-20s', profile.int + ' (' + profile.user.int + ',' + profile.user.maxint + ')'))
+        vt.out(vt.cyan, ' Bank: ', profile.user.bank.carry(), ' '.repeat(15 - profile.user.bank.amount.length))
+        vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
-        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
-        xvt.out('      Dex: ', xvt.white)
-        xvt.out(sprintf('%-20s', profile.dex + ' (' + profile.user.dex + ',' + profile.user.maxdex + ')'))
-        xvt.out(xvt.cyan, ' Loan: ', profile.user.loan.carry(), ' '.repeat(15 - profile.user.loan.amount.length))
-        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+        vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+        vt.out('      Dex: ', vt.white)
+        vt.out(sprintf('%-20s', profile.dex + ' (' + profile.user.dex + ',' + profile.user.maxdex + ')'))
+        vt.out(vt.cyan, ' Loan: ', profile.user.loan.carry(), ' '.repeat(15 - profile.user.loan.amount.length))
+        vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
-        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
-        xvt.out('      Cha: ', xvt.white)
-        xvt.out(sprintf('%-19s', profile.cha + ' (' + profile.user.cha + ',' + profile.user.maxcha + ')'))
-        xvt.out(xvt.faint, ' Steal: ', xvt.normal)
-        xvt.out(sprintf('%-15s', ['lawful', 'desperate', 'trickster', 'adept', 'master'][profile.user.steal]))
-        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+        vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+        vt.out('      Cha: ', vt.white)
+        vt.out(sprintf('%-19s', profile.cha + ' (' + profile.user.cha + ',' + profile.user.maxcha + ')'))
+        vt.out(vt.faint, ' Steal: ', vt.normal)
+        vt.out(sprintf('%-15s', ['lawful', 'desperate', 'trickster', 'adept', 'master'][profile.user.steal]))
+        vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
         if (profile.user.blessed) {
             let who: user = { id: profile.user.blessed }
@@ -1728,9 +1730,9 @@ module io {
                 else
                     who.handle = profile.user.blessed
             }
-            xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.yellow, xvt.bright)
-            xvt.out(' +Blessed:', xvt.white, xvt.normal, ' by ', sprintf('%-39s', who.handle))
-            xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.yellow, vt.bright)
+            vt.out(' +Blessed:', vt.white, vt.normal, ' by ', sprintf('%-39s', who.handle))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
         }
 
         if (profile.user.cursed) {
@@ -1741,29 +1743,29 @@ module io {
                 else
                     who.handle = profile.user.cursed
             }
-            xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.white)
-            xvt.out('  -Cursed:', xvt.normal, ' by ', sprintf('%-39s', who.handle))
-            xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.white)
+            vt.out('  -Cursed:', vt.normal, ' by ', sprintf('%-39s', who.handle))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
         }
 
-        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
-        xvt.out('       HP: ', xvt.white)
-        if ($.player.emulation == 'XT') xvt.out('\r\x1B[2C🌡️\r\x1B[12C')
-        xvt.out(sprintf('%-42s', profile.hp + '/' + profile.user.hp + ' ('
+        vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+        vt.out('       HP: ', vt.white)
+        if ($.player.emulation == 'XT') vt.out('\r\x1B[2C🌡️\r\x1B[12C')
+        vt.out(sprintf('%-42s', profile.hp + '/' + profile.user.hp + ' ('
             + ['weak', 'normal', 'adept', 'warrior', 'brute', 'hero'][profile.user.melee] + ', '
             + ['a rare', 'occasional', 'deliberate', 'angry', 'murderous'][profile.user.backstab] + ' backstab)'))
-        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+        vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
         if (profile.user.magic > 1) {
-            xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.magenta, xvt.bright)
-            xvt.out('       SP: ', xvt.white)
-            xvt.out(sprintf('%-42s', profile.sp + '/' + profile.user.sp + ' (' + ['wizardry', 'arcane', 'divine'][profile.user.magic - 2] + ')'))
-            xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.magenta, vt.bright)
+            vt.out('       SP: ', vt.white)
+            vt.out(sprintf('%-42s', profile.sp + '/' + profile.user.sp + ' (' + ['wizardry', 'arcane', 'divine'][profile.user.magic - 2] + ')'))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
         }
 
         if (profile.user.spells.length) {
-            xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.magenta, xvt.bright)
-            xvt.out(sprintf(' %8s: ', ['Wands', 'Wands', 'Scrolls', 'Spells', 'Magus'][profile.user.magic]), xvt.white)
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.magenta, vt.bright)
+            vt.out(sprintf(' %8s: ', ['Wands', 'Wands', 'Scrolls', 'Spells', 'Magus'][profile.user.magic]), vt.white)
             let text = ''
             n = 0
             for (let p = 0; p < profile.user.spells.length; p++) {
@@ -1775,12 +1777,12 @@ module io {
                 text += name
                 n++
             }
-            xvt.out(sprintf('%-42s', text))
-            xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+            vt.out(sprintf('%-42s', text))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
             while (n < profile.user.spells.length) {
                 text = ''
                 i = 0
-                xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.white, xvt.bright, '           ')
+                vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.white, vt.bright, '           ')
                 for (let p = 0; p < profile.user.spells.length; p++) {
                     i++
                     if (i > n) {
@@ -1793,15 +1795,15 @@ module io {
                         n++
                     }
                 }
-                xvt.out(sprintf('%-42s', text))
-                xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+                vt.out(sprintf('%-42s', text))
+                vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
             }
         }
 
         if (profile.user.rings.length) {
-            xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.magenta, xvt.bright)
-            xvt.out('    Rings: ', xvt.white)
-            if ($.player.emulation == 'XT') xvt.out('\r\x1B[2C💍\r\x1B[12C')
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.magenta, vt.bright)
+            vt.out('    Rings: ', vt.white)
+            if ($.player.emulation == 'XT') vt.out('\r\x1B[2C💍\r\x1B[12C')
             let text = ''
             n = 0
             for (let p = 0; p < profile.user.rings.length; p++) {
@@ -1811,12 +1813,12 @@ module io {
                 text += name
                 n++
             }
-            xvt.out(sprintf('%-42s', text))
-            xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+            vt.out(sprintf('%-42s', text))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
             while (n < profile.user.rings.length) {
                 text = ''
                 i = 0
-                xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.white, xvt.bright, '           ')
+                vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.white, vt.bright, '           ')
                 for (let p = 0; p < profile.user.rings.length; p++) {
                     i++
                     if (i > n) {
@@ -1827,136 +1829,136 @@ module io {
                         n++
                     }
                 }
-                xvt.out(sprintf('%-42s', text))
-                xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+                vt.out(sprintf('%-42s', text))
+                vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
             }
         }
 
-        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.white)
-        xvt.out('  Alchemy: ', xvt.normal)
-        xvt.out(sprintf('%-42s', ['banned', 'apprentice', 'expert (+1x,+1x)', 'artisan (+1x,+2x)', 'master (+2x,+2x)'][profile.user.poison]))
-        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+        vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.white)
+        vt.out('  Alchemy: ', vt.normal)
+        vt.out(sprintf('%-42s', ['banned', 'apprentice', 'expert (+1x,+1x)', 'artisan (+1x,+2x)', 'master (+2x,+2x)'][profile.user.poison]))
+        vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
         if (profile.user.poisons.length) {
-            xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.white)
-            xvt.out(sprintf(' %8s: ', ['Vial', 'Toxin', 'Poison', 'Bane', 'Venena'][profile.user.poison]), xvt.normal)
-            if ($.player.emulation == 'XT') xvt.out('\r\x1B[2C🧪\r\x1B[12C')
-            xvt.out(sprintf('%-42s', profile.user.poisons.toString()))
-            xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.white)
+            vt.out(sprintf(' %8s: ', ['Vial', 'Toxin', 'Poison', 'Bane', 'Venena'][profile.user.poison]), vt.normal)
+            if ($.player.emulation == 'XT') vt.out('\r\x1B[2C🧪\r\x1B[12C')
+            vt.out(sprintf('%-42s', profile.user.poisons.toString()))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
         }
 
-        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
-        xvt.out('   Weapon: ')
-        if ($.player.emulation == 'XT') xvt.out('\r\x1B[2C🗡️\r\x1B[12C')
-        xvt.out(weapon(profile), ' '.repeat(42 - weapon(profile, true).length))
-        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+        vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+        vt.out('   Weapon: ')
+        if ($.player.emulation == 'XT') vt.out('\r\x1B[2C🗡️\r\x1B[12C')
+        vt.out(weapon(profile), ' '.repeat(42 - weapon(profile, true).length))
+        vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
-        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
-        xvt.out('    Armor: ')
-        if ($.player.emulation == 'XT') xvt.out('\r\x1B[2C🛡\r\x1B[12C')
-        xvt.out(armor(profile), ' '.repeat(42 - armor(profile, true).length))
-        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+        vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+        vt.out('    Armor: ')
+        if ($.player.emulation == 'XT') vt.out('\r\x1B[2C🛡\r\x1B[12C')
+        vt.out(armor(profile), ' '.repeat(42 - armor(profile, true).length))
+        vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
-        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
-        xvt.out(' Lives in: ', xvt.white)
-        xvt.out(sprintf('%-42s', profile.user.realestate + ' (' + profile.user.security + ')'))
-        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+        vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+        vt.out(' Lives in: ', vt.white)
+        vt.out(sprintf('%-42s', profile.user.realestate + ' (' + profile.user.security + ')'))
+        vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
         if (profile.user.gang) {
-            xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
-            xvt.out('    Party: ', xvt.white)
-            if ($.player.emulation == 'XT') xvt.out('\r\x1B[2C🏴\r\x1B[12C')
-            xvt.out(sprintf('%-42s', profile.user.gang))
-            xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+            vt.out('    Party: ', vt.white)
+            if ($.player.emulation == 'XT') vt.out('\r\x1B[2C🏴\r\x1B[12C')
+            vt.out(sprintf('%-42s', profile.user.gang))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
         }
 
         if (+profile.user.hull) {
-            xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
-            xvt.out('  Warship: ', xvt.white)
-            xvt.out(sprintf('%-18s', profile.hull.toString() + ':' + profile.user.hull.toString()))
-            xvt.out(xvt.cyan, ' Cannon: ', xvt.white)
-            xvt.out(sprintf('%-15s', profile.user.cannon.toString() + ':' + (profile.user.hull / 50).toString() + (profile.user.ram ? ' (RAM)' : '')))
-            xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+            vt.out('  Warship: ', vt.white)
+            vt.out(sprintf('%-18s', profile.hull.toString() + ':' + profile.user.hull.toString()))
+            vt.out(vt.cyan, ' Cannon: ', vt.white)
+            vt.out(sprintf('%-15s', profile.user.cannon.toString() + ':' + (profile.user.hull / 50).toString() + (profile.user.ram ? ' (RAM)' : '')))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
         }
 
-        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
-        xvt.out(' Brawling: ', xvt.white)
-        xvt.out(sprintf('%-19s', profile.user.tw + ':' + profile.user.tl))
-        xvt.out(xvt.cyan, 'Steals: ', xvt.white)
-        xvt.out(sprintf('%-15s', profile.user.steals))
-        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+        vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+        vt.out(' Brawling: ', vt.white)
+        vt.out(sprintf('%-19s', profile.user.tw + ':' + profile.user.tl))
+        vt.out(vt.cyan, 'Steals: ', vt.white)
+        vt.out(sprintf('%-15s', profile.user.steals))
+        vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
-        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
-        xvt.out(' Jousting: ', xvt.white)
-        xvt.out(sprintf('%-20s', profile.user.jw + ':' + profile.user.jl + ` (${PC.jousting(profile)})`))
-        xvt.out(xvt.cyan, 'Plays: ', xvt.white)
-        xvt.out(sprintf('%-15s', profile.user.plays))
-        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+        vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+        vt.out(' Jousting: ', vt.white)
+        vt.out(sprintf('%-20s', profile.user.jw + ':' + profile.user.jl + ` (${PC.jousting(profile)})`))
+        vt.out(vt.cyan, 'Plays: ', vt.white)
+        vt.out(sprintf('%-15s', profile.user.plays))
+        vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
-        xvt.out(xvt.blue, xvt.faint, '|', xvt.Blue, xvt.cyan, xvt.bright)
-        xvt.out('    Kills: ', xvt.white)
-        if ($.player.emulation == 'XT') xvt.out('\r\x1B[2C💀\r\x1B[12C')
-        xvt.out(sprintf('%-42s', profile.user.kills + ' with ' + profile.user.retreats + ' retreats and killed ' + profile.user.killed + 'x'))
-        xvt.outln(' ', xvt.reset, xvt.blue, xvt.faint, '|')
+        vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+        vt.out('    Kills: ', vt.white)
+        if ($.player.emulation == 'XT') vt.out('\r\x1B[2C💀\r\x1B[12C')
+        vt.out(sprintf('%-42s', profile.user.kills + ' with ' + profile.user.retreats + ' retreats and killed ' + profile.user.killed + 'x'))
+        vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
-        xvt.outln(xvt.blue, '+', xvt.faint, line, xvt.normal, '+')
+        vt.outln(vt.blue, '+', vt.faint, line, vt.normal, '+')
     }
 
     export function weapon(profile = $.online, text = false): string {
         return text ? profile.user.weapon + buff(profile.user.toWC, profile.toWC, true)
-            : xvt.attr(profile.weapon.shoppe ? xvt.white : profile.weapon.dwarf ? xvt.yellow : xvt.lcyan
-                , profile.user.weapon, xvt.white, buff(profile.user.toWC, profile.toWC))
+            : vt.attr(profile.weapon.shoppe ? vt.white : profile.weapon.dwarf ? vt.yellow : vt.lcyan
+                , profile.user.weapon, vt.white, buff(profile.user.toWC, profile.toWC))
     }
 
     export function wearing(profile: active) {
         if (isNaN(+profile.user.weapon)) {
-            xvt.outln('\n', PC.who(profile).He, profile.weapon.text, ' ', weapon(profile)
+            vt.outln('\n', PC.who(profile).He, profile.weapon.text, ' ', weapon(profile)
                 , $.from == 'Dungeon' ? -300 : !profile.weapon.shoppe ? -500 : -100)
         }
         if (isNaN(+profile.user.armor)) {
-            xvt.outln('\n', PC.who(profile).He, profile.armor.text, ' ', armor(profile)
+            vt.outln('\n', PC.who(profile).He, profile.armor.text, ' ', armor(profile)
                 , $.from == 'Dungeon' ? -300 : !profile.armor.armoury ? -500 : -100)
         }
         if (!$.player.novice && $.from !== 'Dungeon' && profile.user.sex == 'I') for (let i in profile.user.rings) {
             let ring = profile.user.rings[i]
-            if (!+i) xvt.outln()
-            xvt.out(PC.who(profile).He, 'has ', xvt.cyan, xvt.bright, ring, xvt.normal)
-            if ($.player.emulation == 'XT') xvt.out(' ', Ring.name[ring].emoji)
-            xvt.outln(' powers ', xvt.reset, 'that can ', Ring.name[ring].description, -100)
+            if (!+i) vt.outln()
+            vt.out(PC.who(profile).He, 'has ', vt.cyan, vt.bright, ring, vt.normal)
+            if ($.player.emulation == 'XT') vt.out(' ', Ring.name[ring].emoji)
+            vt.outln(' powers ', vt.reset, 'that can ', Ring.name[ring].description, -100)
         }
     }
 
     //  web client extended export functions
     export function action(menu: string) {
-        if ($.tty == 'web') xvt.out(`@action(${menu})`)
+        if ($.tty == 'web') vt.out(`@action(${menu})`)
     }
 
     export function animated(effect: string, sync = 2) {
-        if ($.tty == 'web') xvt.out(`@animated(${effect})`, -10 * sync)
+        if ($.tty == 'web') vt.out(`@animated(${effect})`, -10 * sync)
     }
 
     export function music(tune: string, sync = 2) {
-        if ($.tty == 'web') xvt.out(`@tune(${tune})`, -10 * sync)
+        if ($.tty == 'web') vt.out(`@tune(${tune})`, -10 * sync)
     }
 
     export function profile(params) {
-        if ($.tty == 'web') xvt.out(`@profile(${JSON.stringify(params)})`)
+        if ($.tty == 'web') vt.out(`@profile(${JSON.stringify(params)})`)
     }
 
     export function sound(effect: string, sync = 2) {
         if ($.tty == 'web')
-            xvt.out(`@play(${effect})`, -100 * sync)
+            vt.out(`@play(${effect})`, -100 * sync)
         else
-            xvt.beep()
+            vt.beep()
     }
 
     export function title(name: string) {
-        if (xvt.app.emulation == 'XT') xvt.out(`\x1B]2;${name}\x07`)
-        if ($.tty == 'web') xvt.out(`@title(${name})`)
+        if (vt.emulation == 'XT') vt.out(`\x1B]2;${name}\x07`)
+        if ($.tty == 'web') vt.out(`@title(${name})`)
     }
 
     export function wall(msg: string) {
-        xvt.out(`@wall(${$.player.handle} ${msg})`)
+        vt.out(`@wall(${$.player.handle} ${msg})`)
     }
 
 }

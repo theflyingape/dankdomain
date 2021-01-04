@@ -3,9 +3,8 @@
  *  NEWUSER authored by: Robert Hurst <theflyingape@gmail.com>               *
 \*****************************************************************************/
 
-import xvt = require('@theflyingape/xvt')
 import $ = require('../runtime')
-import { action, bracket, clear, loadUser, music, profile } from '../io'
+import { vt, action, bracket, clear, loadUser, music, profile } from '../io'
 import { Access } from '../items'
 import { cuss } from '../lib'
 import { date2days, date2full, titlecase } from '../sys'
@@ -17,24 +16,24 @@ module NewUser {
     music('newuser')
     profile({ handle: 'Shall we begin?', png: 'npc/city_guard_1', effect: 'bounceInLeft' })
     clear()
-    xvt.plot(1, 17)
+    vt.plot(1, 17)
 
     if ($.tty == 'rlogin') {
-        xvt.outln(xvt.blue, '--=:) ', xvt.bright, 'New BBS Registration', xvt.normal, ' (:=--')
-        xvt.out(bracket(1), xvt.cyan, 'This BBS Name.:')
-        xvt.out(bracket(2), xvt.cyan, 'The Sysop Name:')
-        xvt.out(bracket(3), xvt.cyan, 'BBS Start Date:')
-        xvt.out(bracket(4), xvt.cyan, 'NPC Gender (I):')
+        vt.outln(vt.blue, '--=:) ', vt.bright, 'New BBS Registration', vt.normal, ' (:=--')
+        vt.out(bracket(1), vt.cyan, 'This BBS Name.:')
+        vt.out(bracket(2), vt.cyan, 'The Sysop Name:')
+        vt.out(bracket(3), vt.cyan, 'BBS Start Date:')
+        vt.out(bracket(4), vt.cyan, 'NPC Gender (I):')
     }
     else {
-        xvt.outln(xvt.yellow, '--=:) ', xvt.bright, 'New User Registration', xvt.normal, ' (:=--')
-        xvt.out(bracket(1), xvt.cyan, `Player's Handle:`)
-        xvt.out(bracket(2), xvt.cyan, 'Your REAL Name.:')
-        xvt.out(bracket(3), xvt.cyan, 'Date of Birth..:')
-        xvt.out(bracket(4), xvt.cyan, 'Gender (M/F)...:')
+        vt.outln(vt.yellow, '--=:) ', vt.bright, 'New User Registration', vt.normal, ' (:=--')
+        vt.out(bracket(1), vt.cyan, `Player's Handle:`)
+        vt.out(bracket(2), vt.cyan, 'Your REAL Name.:')
+        vt.out(bracket(3), vt.cyan, 'Date of Birth..:')
+        vt.out(bracket(4), vt.cyan, 'Gender (M/F)...:')
     }
 
-    xvt.app.form = {
+    vt.form = {
         1: { cb: handle, row: 3, col: 23, min: 2, max: 22, match: /^[A-Z][A-Z\s]*$/i },
         2: { cb: name, row: 4, col: 23, min: 5, max: 32, match: /^[A-Z][A-Z\s]*$/i },
         3: { cb: dob, row: 5, col: 23, min: 6, max: 16, enter: '12311999' },
@@ -53,94 +52,94 @@ module NewUser {
     $.player.novice = true
 
     action('freetext')
-    xvt.app.focus = 1
+    vt.focus = 1
 
 
     function handle() {
-        xvt.entry = titlecase(xvt.entry)
-        if (xvt.entry == 'New' || cuss(xvt.entry))
-            xvt.hangup()
+        vt.entry = titlecase(vt.entry)
+        if (vt.entry == 'New' || cuss(vt.entry))
+            vt.hangup()
 
-        let words = xvt.entry.split(' ')
+        let words = vt.entry.split(' ')
         for (let i = 0; i < words.length; i++)
             if (Access.name[words[i]]) {
-                xvt.beep()
-                xvt.app.refocus()
+                vt.beep()
+                vt.refocus()
                 return
             }
 
         $.player.id = ''
-        $.player.handle = xvt.entry
+        $.player.handle = vt.entry
         if (loadUser($.player)) {
-            xvt.beep()
-            xvt.app.refocus()
+            vt.beep()
+            vt.refocus()
             return
         }
 
-        xvt.plot(3, 23)
-        xvt.out(xvt.cll, $.player.handle)
+        vt.plot(3, 23)
+        vt.out(vt.cll, $.player.handle)
 
         action(editmode ? 'list' : 'freetext')
-        xvt.app.focus = editmode ? 'edit' : 2
+        vt.focus = editmode ? 'edit' : 2
     }
 
     function name() {
-        xvt.entry = titlecase(xvt.entry)
-        if (cuss(xvt.entry))
-            xvt.hangup()
+        vt.entry = titlecase(vt.entry)
+        if (cuss(vt.entry))
+            vt.hangup()
 
-        let words = xvt.entry.split(' ')
+        let words = vt.entry.split(' ')
         if (words.length < 2) {
-            xvt.beep()
-            xvt.app.refocus()
+            vt.beep()
+            vt.refocus()
             return
         }
         for (let i = 0; i < words.length; i++) {
             if (words[i].length < 2 || Access.name[words[i]]) {
-                xvt.beep()
-                xvt.app.refocus()
+                vt.beep()
+                vt.refocus()
                 return
             }
         }
 
-        $.player.name = xvt.entry
-        xvt.plot(4, 23)
-        xvt.out(xvt.cll, $.player.name)
+        $.player.name = vt.entry
+        vt.plot(4, 23)
+        vt.out(vt.cll, $.player.name)
 
         action('list')
-        xvt.app.focus = editmode ? 'edit' : 3
+        vt.focus = editmode ? 'edit' : 3
     }
 
     function dob() {
-        $.player.dob = date2days(xvt.entry)
+        $.player.dob = date2days(vt.entry)
         if (isNaN($.player.dob)) {
-            xvt.beep()
-            xvt.app.refocus()
+            vt.beep()
+            vt.refocus()
             return
         }
 
-        xvt.plot(5, 23)
-        xvt.out(xvt.cll, date2full($.player.dob))
+        vt.plot(5, 23)
+        vt.out(vt.cll, date2full($.player.dob))
 
         action(editmode ? 'list' : 'gender')
-        xvt.app.focus = editmode ? 'edit' : 4
+        vt.focus = editmode ? 'edit' : 4
     }
 
     function sex() {
-        $.player.sex = xvt.entry.toUpperCase()
+        $.player.sex = vt.entry.toUpperCase()
         $.player.gender = $.player.sex
-        xvt.plot(6, 23)
-        xvt.out(xvt.cll, $.player.sex)
+        vt.plot(6, 23)
+        vt.out(vt.cll, $.player.sex)
 
         editmode = true
         action('list')
-        xvt.app.focus = 'edit'
+        vt.focus = 'edit'
     }
 
     function edit() {
-        if (xvt.entry.length) {
-            action(['list', 'freetext', 'freetext', 'list', 'gender'][xvt.entry])
-            xvt.app.focus = xvt.entry
+        if (vt.entry.length) {
+            action(['list', 'freetext', 'freetext', 'list', 'gender'][vt.entry])
+            vt.focus = vt.entry
             return
         }
 
@@ -156,8 +155,8 @@ module NewUser {
 
         if ($.player.id == 'NEW' || cuss($.player.id)) {
             action('freetext')
-            xvt.beep()
-            xvt.app.focus = 1
+            vt.beep()
+            vt.focus = 1
             return
         }
 
@@ -173,8 +172,8 @@ module NewUser {
 
         if ($.player.id == '') {
             action('freetext')
-            xvt.beep()
-            xvt.app.focus = 1
+            vt.beep()
+            vt.focus = 1
             return
         }
 

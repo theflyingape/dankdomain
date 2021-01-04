@@ -17,21 +17,19 @@ console.log(`Ɗanƙ Ɗomaiƞ (${process.title}) started on ${process.platform} #
 
 //  process signal traps
 process.on('uncaughtException', (err, origin) => {
-    console.log(`DOOR ${origin} ${err}`)
+    console.error(`DOOR ${origin} ${err}`)
 })
 
 process.on('SIGINT', () => {
-    console.log(`interrupted - shutting down`)
+    console.log(` → signaled to interrupt: shutting down`)
     process.exit(0)
 })
 
+console.log(`cwd ${process.cwd()} → ${__dirname}`)
 process.chdir(__dirname)
-console.log(`cwd: ${__dirname}`)
 
 import db = require('../db')
 import { Coin, PC } from '../pc'
-//let xvt = require.resolve('@theflyingape/xvt')
-//delete require.cache[xvt]
 
 let passed = ''
 if (process.argv.length > 2 && process.argv[2]) {
@@ -608,5 +606,5 @@ try {
     db.run(`DELETE FROM Online`)
 }
 catch (err) {
-    console.log(`warning ${err.code} :: ${String(err)}`)
+    console.error(`warning ${err.code} :: ${String(err)}`)
 }

@@ -3,15 +3,14 @@
  *  ARENA authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import xvt = require('@theflyingape/xvt')
 import Battle = require('../battle')
 import db = require('../db')
 import $ = require('../runtime')
-import { Coin, action, animated, bracket, cat, checkXP, display, getRing, music, profile, reroll, sound, wall, wearing, activate, loadUser } from '../io'
+import { vt, Coin, action, animated, bracket, cat, checkXP, display, getRing, music, profile, reroll, sound, wall, wearing, activate, loadUser } from '../io'
 import { Access, Armor, Magic, Poison, Ring, Weapon } from '../items'
 import { log, news } from '../lib'
 import { PC } from '../pc'
-import { dice, int, money, romanize, sprintf, worth } from '../sys'
+import { dice, int, money, romanize, sprintf, tradein } from '../sys'
 
 module Arena {
 
@@ -30,10 +29,10 @@ module Arena {
         $.from = 'Arena'
         if (checkXP($.online, menu)) return
         if ($.online.altered) PC.saveUser($.online)
-        if ($.reason) xvt.hangup()
+        if ($.reason) vt.hangup()
 
         action('arena')
-        xvt.app.form = {
+        vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
 
@@ -48,18 +47,18 @@ module Arena {
             if ($.player.coin.value)
                 hints += `> Carrying money around here is not a good idea.  Spend it in the Square\n  or deposit it in the Bank for safer keeping.\n`
         }
-        xvt.app.form['menu'].prompt = display('arena', xvt.Red, xvt.red, suppress, arena, hints)
-        xvt.app.focus = 'menu'
+        vt.form['menu'].prompt = display('arena', vt.Red, vt.red, suppress, arena, hints)
+        vt.focus = 'menu'
     }
 
     function choice() {
         let suppress = false
-        let choice = xvt.entry.toUpperCase()
+        let choice = vt.entry.toUpperCase()
         if (arena[choice]?.description) {
-            xvt.out(' - ', arena[choice].description)
+            vt.out(' - ', arena[choice].description)
             suppress = $.player.expert
         }
-        xvt.outln()
+        vt.outln()
 
         switch (choice) {
             case 'C':
@@ -74,7 +73,7 @@ module Arena {
 
             case 'J':
                 if (!$.joust) {
-                    xvt.outln('\nYou have run out of jousts.')
+                    vt.outln('\nYou have run out of jousts.')
                     suppress = true
                     break
                 }
@@ -83,15 +82,15 @@ module Arena {
                         menu()
                         return
                     }
-                    xvt.outln()
+                    vt.outln()
                     if (opponent.user.id == $.player.id) {
                         opponent.user.id = ''
-                        xvt.outln(`You can't joust a wimp like `, $.online.who.him)
+                        vt.outln(`You can't joust a wimp like `, $.online.who.him)
                         menu()
                         return
                     }
                     if ($.player.level - opponent.user.level > 3) {
-                        xvt.outln('You can only joust someone higher or up to three levels below you.')
+                        vt.outln('You can only joust someone higher or up to three levels below you.')
                         menu(true)
                         return
                     }
@@ -104,29 +103,29 @@ module Arena {
                     let pass = 0
 
                     if (!Access.name[opponent.user.access].roleplay || versus < 1 || opponent.user.level > 1 && (opponent.user.jw + 3 * opponent.user.level) < opponent.user.jl) {
-                        xvt.outln('That knight is out practicing right now.')
+                        vt.outln('That knight is out practicing right now.')
                         menu(true)
                         return
                     }
 
-                    xvt.outln('Jousting ability:\n')
-                    xvt.out(xvt.bright, xvt.green, sprintf('%-25s', opponent.user.handle), xvt.white, sprintf('%4d', versus))
-                    if (opponent.user.id == $.king.id) xvt.out(xvt.normal, ' - ', xvt.magenta, 'The Crown')
-                    xvt.outln()
-                    xvt.outln(xvt.bright, xvt.green, sprintf('%-25s', $.player.handle), xvt.white, sprintf('%4d', ability))
-                    xvt.outln()
+                    vt.outln('Jousting ability:\n')
+                    vt.out(vt.bright, vt.green, sprintf('%-25s', opponent.user.handle), vt.white, sprintf('%4d', versus))
+                    if (opponent.user.id == $.king.id) vt.out(vt.normal, ' - ', vt.magenta, 'The Crown')
+                    vt.outln()
+                    vt.outln(vt.bright, vt.green, sprintf('%-25s', $.player.handle), vt.white, sprintf('%4d', ability))
+                    vt.outln()
                     if ((ability + factor * $.player.level) < (versus + 1)) {
-                        xvt.outln(opponent.user.handle, ' laughs rudely in your face!\n')
+                        vt.outln(opponent.user.handle, ' laughs rudely in your face!\n')
                         menu(true)
                         return
                     }
 
                     action('ny')
-                    xvt.app.form = {
+                    vt.form = {
                         'compete': {
                             cb: () => {
-                                xvt.outln('\n')
-                                if (/Y/i.test(xvt.entry)) {
+                                vt.outln('\n')
+                                if (/Y/i.test(vt.entry)) {
                                     if ($.joust-- > 2) music('joust')
                                     profile({
                                         jpg: 'arena/joust'
@@ -134,13 +133,13 @@ module Arena {
                                         , level: opponent.user.level, pc: opponent.user.pc
                                         , effect: 'slideInLeft'
                                     })
-                                    xvt.out('The trumpets blare! ', -400, 'You and your opponent ride into the arena. ', -400)
-                                    xvt.outln(opponent.user.id == $.king.id ? '\nThe crowd goes silent.' : 'The crowd roars!', -400)
+                                    vt.out('The trumpets blare! ', -400, 'You and your opponent ride into the arena. ', -400)
+                                    vt.outln(opponent.user.id == $.king.id ? '\nThe crowd goes silent.' : 'The crowd roars!', -400)
                                     $.online.altered = true
                                     action('joust')
 
                                     round()
-                                    xvt.app.focus = 'joust'
+                                    vt.focus = 'joust'
                                     return
                                 }
                                 menu()
@@ -149,53 +148,53 @@ module Arena {
                         },
                         'joust': {
                             cb: () => {
-                                xvt.outln('\n')
-                                if (/F/i.test(xvt.entry)) {
+                                vt.outln('\n')
+                                if (/F/i.test(vt.entry)) {
                                     log(opponent.user.id, `\n${$.player.handle} forfeited to you in a joust.`)
                                     animated('pulse')
                                     if (opponent.user.id == $.king.id) {
                                         sound('cheer')
                                         PC.adjust('cha', 101)
-                                        xvt.outln('The crowd is delighted by your show of respect to the Crown.', -300)
+                                        vt.outln('The crowd is delighted by your show of respect to the Crown.', -300)
                                     }
                                     else {
                                         sound('boo')
                                         animated('slideOutRight')
                                         $.player.jl++
                                         db.run(`UPDATE Players set jw=jw+1 WHERE id='${opponent.user.id}'`)
-                                        xvt.outln('The crowd throws rocks at you as you ride out of the arena.', -300)
+                                        vt.outln('The crowd throws rocks at you as you ride out of the arena.', -300)
                                     }
                                     menu()
                                     return
                                 }
-                                if (/J/i.test(xvt.entry)) {
-                                    xvt.outln('You spur the horse. ', -200, 'The tension mounts. ', -200)
+                                if (/J/i.test(vt.entry)) {
+                                    vt.outln('You spur the horse. ', -200, 'The tension mounts. ', -200)
                                     let result = 0
                                     while (!result)
                                         result = (ability + dice(factor * $.player.level)) - (versus + dice(factor * opponent.user.level))
                                     if (result > 0) {
                                         sound('wall')
                                         animated(['flash', 'jello', 'rubberBand'][jw])
-                                        xvt.outln(xvt.green, '-*>', xvt.bright, xvt.white, ' Thud! ', xvt.normal, xvt.green, '<*-  ', xvt.reset, 'A hit! ', -100, ' You win this pass!', -100)
+                                        vt.outln(vt.green, '-*>', vt.bright, vt.white, ' Thud! ', vt.normal, vt.green, '<*-  ', vt.reset, 'A hit! ', -100, ' You win this pass!', -100)
                                         if (++jw == 3) {
-                                            xvt.outln('\nYou have won the joust!')
+                                            vt.outln('\nYou have won the joust!')
                                             if (opponent.user.id == $.king.id) {
                                                 sound('boo')
                                                 animated('fadeOut')
                                                 PC.adjust('cha', -2, -1)
-                                                xvt.outln('The crowd is furious!', -250)
+                                                vt.outln('The crowd is furious!', -250)
                                             }
                                             else {
                                                 sound('cheer')
                                                 animated('hinge')
-                                                xvt.outln('The crowd cheers!', -250)
+                                                vt.outln('The crowd cheers!', -250)
                                             }
                                             let reward = new Coin(money(opponent.user.level))
                                             $.player.coin.value += reward.value
                                             $.player.jw++
                                             if (db.run(`UPDATE Players set jl=jl+1 WHERE id='${opponent.user.id}'`).changes)
                                                 log(opponent.user.id, `\n${$.player.handle} beat you in a joust and got ${reward.carry(2, true)}.`)
-                                            xvt.outln('You win ', reward.carry(), '!', -250)
+                                            vt.outln('You win ', reward.carry(), '!', -250)
                                             if ($.player.jw > 14 && $.player.jw / ($.player.jw + $.player.jl) > 0.9) {
                                                 let ring = Ring.power([], null, 'joust')
                                                 if (Ring.wear($.player.rings, ring.name)) {
@@ -211,20 +210,20 @@ module Arena {
                                         if (Ring.power(opponent.user.rings, $.player.rings, 'joust').power
                                             && !Ring.power($.player.rings, opponent.user.rings, 'joust').power && dice(3) == 1) {
                                             sound('swoosh')
-                                            xvt.out(xvt.magenta, '^>', xvt.white, ' SWOOSH ', xvt.magenta, '<^  ', xvt.reset
+                                            vt.out(vt.magenta, '^>', vt.white, ' SWOOSH ', vt.magenta, '<^  ', vt.reset
                                                 , PC.who(opponent).He, 'missed! ', -100, ' You both pass and try again!', -100)
-                                            xvt.app.refocus()
+                                            vt.refocus()
                                             return
                                         }
 
                                         animated(['bounce', 'shake', 'tada'][jl])
                                         sound('oof')
-                                        xvt.outln(xvt.magenta, '^>', xvt.bright, xvt.white, ' Oof! ', xvt.normal, xvt.magenta, '<^  ', xvt.reset
+                                        vt.outln(vt.magenta, '^>', vt.bright, vt.white, ' Oof! ', vt.normal, vt.magenta, '<^  ', vt.reset
                                             , PC.who(opponent).He, 'hits! ', -100, ' You lose this pass!', -100)
                                         if (++jl == 3) {
-                                            xvt.outln('\nYou have lost the joust!')
+                                            vt.outln('\nYou have lost the joust!')
                                             sound('boo')
-                                            xvt.outln('The crowd boos you!', -200)
+                                            vt.outln('The crowd boos you!', -200)
                                             let reward = new Coin(money($.player.level))
                                             $.player.jl++
                                             if (db.run(`UPDATE Players set jw=jw+1, coin=coin+${reward.value} WHERE id='${opponent.user.id}'`).changes)
@@ -232,60 +231,60 @@ module Arena {
                                             news(`\tlost to ${opponent.user.handle} in a joust`)
                                             wall(`lost to ${opponent.user.handle} in a joust`)
                                             animated('slideOutRight')
-                                            xvt.outln(opponent.user.handle, ' spits on your face.', -300)
+                                            vt.outln(opponent.user.handle, ' spits on your face.', -300)
                                             menu()
                                             return
                                         }
                                     }
                                     round()
                                 }
-                                xvt.app.refocus()
-                            }, prompt: xvt.attr('        ', bracket('J', false), xvt.bright, xvt.yellow, ' Joust', xvt.normal, xvt.magenta, ' * ', bracket('F', false), xvt.bright, xvt.yellow, ' Forfeit: '), cancel: 'F', enter: 'J', eol: false, match: /F|J/i
+                                vt.refocus()
+                            }, prompt: vt.attr('        ', bracket('J', false), vt.bright, vt.yellow, ' Joust', vt.normal, vt.magenta, ' * ', bracket('F', false), vt.bright, vt.yellow, ' Forfeit: '), cancel: 'F', enter: 'J', eol: false, match: /F|J/i
                         }
                     }
-                    xvt.outln('You grab a horse and prepare yourself to joust.')
-                    xvt.app.focus = 'compete'
+                    vt.outln('You grab a horse and prepare yourself to joust.')
+                    vt.focus = 'compete'
 
                     function round() {
-                        xvt.out('\n', xvt.green, '--=:)) Round ', romanize(++pass), ' of V: Won:', xvt.bright, xvt.white, jw.toString(), xvt.normal, xvt.magenta, ' ^', xvt.green, ' Lost:', xvt.bright, xvt.white, jl.toString(), xvt.normal, xvt.green, ' ((:=--')
+                        vt.out('\n', vt.green, '--=:)) Round ', romanize(++pass), ' of V: Won:', vt.bright, vt.white, jw.toString(), vt.normal, vt.magenta, ' ^', vt.green, ' Lost:', vt.bright, vt.white, jl.toString(), vt.normal, vt.green, ' ((:=--')
                     }
                 })
                 return
 
             case 'M':
                 if (!$.arena) {
-                    xvt.outln('\nYou have no more arena fights.')
+                    vt.outln('\nYou have no more arena fights.')
                     suppress = true
                     break
                 }
                 action('monster')
-                xvt.app.form = {
+                vt.form = {
                     pick: {
                         cb: () => {
-                            if (xvt.entry.length) {
-                                let mon = int(xvt.entry)
-                                if (! /D/i.test(xvt.entry)) {
+                            if (vt.entry.length) {
+                                let mon = int(vt.entry)
+                                if (! /D/i.test(vt.entry)) {
                                     if (mon < 1 || mon > monsters.length) {
-                                        xvt.out(' ?? ')
-                                        xvt.app.refocus()
+                                        vt.out(' ?? ')
+                                        vt.refocus()
                                         return
                                     }
-                                    xvt.entry = mon.toString()
+                                    vt.entry = mon.toString()
                                 }
-                                xvt.outln()
+                                vt.outln()
                                 if (!MonsterFights())
                                     menu()
                             }
                             else {
-                                xvt.outln()
+                                vt.outln()
                                 menu()
                             }
                         }
-                        , prompt: 'Fight what monster (' + xvt.attr(xvt.white, '1-' + monsters.length, xvt.cyan, ', ', bracket('D', false), xvt.cyan, 'emon)? ')
+                        , prompt: 'Fight what monster (' + vt.attr(vt.white, '1-' + monsters.length, vt.cyan, ', ', bracket('D', false), vt.cyan, 'emon)? ')
                         , min: 0, max: 2
                     }
                 }
-                xvt.app.focus = 'pick'
+                vt.focus = 'pick'
                 return
 
             case 'P':
@@ -299,7 +298,7 @@ module Arena {
 
             case 'U':
                 if (!$.arena) {
-                    xvt.outln('\nYou have no more arena fights.')
+                    vt.outln('\nYou have no more arena fights.')
                     suppress = true
                     break
                 }
@@ -310,44 +309,44 @@ module Arena {
                     }
                     if (opponent.user.id == $.player.id) {
                         opponent.user.id = ''
-                        xvt.outln(`\nYou can't fight a wimp like `, PC.who(opponent).him)
+                        vt.outln(`\nYou can't fight a wimp like `, PC.who(opponent).him)
                         menu()
                         return
                     }
                     if ($.player.level - opponent.user.level > 3) {
-                        xvt.outln('\nYou can only fight someone higher or up to three levels below you.')
+                        vt.outln('\nYou can only fight someone higher or up to three levels below you.')
                         menu()
                         return
                     }
 
                     cat('player/' + opponent.user.pc.toLowerCase())
-                    xvt.out(opponent.user.handle, ' ')
+                    vt.out(opponent.user.handle, ' ')
 
                     if (opponent.user.status.length) {
-                        xvt.out('was defeated by ')
+                        vt.out('was defeated by ')
                         let rpc: active = { user: { id: opponent.user.status } }
                         if (loadUser(rpc))
-                            xvt.out(rpc.user.handle, xvt.cyan, ' (', xvt.bright, xvt.white, opponent.user.xplevel.toString(), xvt.normal, xvt.cyan, ')')
+                            vt.out(rpc.user.handle, vt.cyan, ' (', vt.bright, vt.white, opponent.user.xplevel.toString(), vt.normal, vt.cyan, ')')
                         else
-                            xvt.out(opponent.user.status)
-                        xvt.outln()
+                            vt.out(opponent.user.status)
+                        vt.outln()
                         menu()
                         return
                     }
-                    xvt.out(`is a level ${opponent.user.level} ${opponent.user.pc}`)
-                    if ($.player.emulation == 'XT') xvt.out(' ', opponent.pc.color || xvt.white, opponent.pc.unicode, xvt.reset)
+                    vt.out(`is a level ${opponent.user.level} ${opponent.user.pc}`)
+                    if ($.player.emulation == 'XT') vt.out(' ', opponent.pc.color || vt.white, opponent.pc.unicode, vt.reset)
                     if (opponent.user.level !== opponent.user.xplevel)
-                        xvt.out(' ', bracket(opponent.user.xplevel, false))
-                    xvt.outln()
+                        vt.out(' ', bracket(opponent.user.xplevel, false))
+                    vt.outln()
 
                     if ($.player.novice && !opponent.user.novice) {
-                        xvt.outln('You are allowed only to fight other novices.')
+                        vt.outln('You are allowed only to fight other novices.')
                         menu()
                         return
                     }
 
                     if (!Access.name[opponent.user.access].roleplay) {
-                        xvt.outln('You are allowed only to fight other players.')
+                        vt.outln('You are allowed only to fight other players.')
                         if (opponent.user.id[0] == '_') {
                             PC.adjust('cha', -2, -1)
                             $.player.coward = true
@@ -358,14 +357,14 @@ module Arena {
                     }
 
                     if (!$.player.novice && opponent.user.novice) {
-                        xvt.outln('You are not allowed to fight novices.')
+                        vt.outln('You are not allowed to fight novices.')
                         menu()
                         return
                     }
 
                     if (!db.lock(opponent.user.id)) {
-                        xvt.beep()
-                        xvt.outln(xvt.cyan, xvt.faint, `${PC.who(opponent).He}is currently engaged elsewhere and not available.`)
+                        vt.beep()
+                        vt.outln(vt.cyan, vt.faint, `${PC.who(opponent).He}is currently engaged elsewhere and not available.`)
                         menu()
                         return
                     }
@@ -373,11 +372,11 @@ module Arena {
                     wearing(opponent)
 
                     action('ny')
-                    xvt.app.form = {
+                    vt.form = {
                         'fight': {
                             cb: () => {
-                                xvt.outln()
-                                if (/Y/i.test(xvt.entry)) {
+                                vt.outln()
+                                if (/Y/i.test(vt.entry)) {
                                     if (activate(opponent, true)) {
                                         music('combat' + $.arena--)
                                         Battle.engage('User', $.online, opponent, menu)
@@ -392,12 +391,12 @@ module Arena {
                             }, prompt: `Will you fight ${PC.who(opponent).him}(Y/N)? `, cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
                         }
                     }
-                    xvt.app.focus = 'fight'
+                    vt.focus = 'fight'
                 })
                 return
 
             case 'Y':
-                xvt.outln()
+                vt.outln()
                 Battle.yourstats()
                 suppress = true
                 break
@@ -411,29 +410,29 @@ module Arena {
         let monster: active
 
         action('clear')
-        if (/D/i.test(xvt.entry)) {
+        if (/D/i.test(vt.entry)) {
             if ($.player.level < 50) {
-                xvt.outln('\nYou are not powerful enough to fight demons yet.  Go fight some monsters.')
+                vt.outln('\nYou are not powerful enough to fight demons yet.  Go fight some monsters.')
                 return
             }
 
             cost = new Coin(new Coin(money($.player.level)).carry(1, true))
 
-            xvt.outln('\nThe ancient necromancer will summon you a demon for ', cost.carry())
+            vt.outln('\nThe ancient necromancer will summon you a demon for ', cost.carry())
             if ($.player.coin.value < cost.value) {
-                xvt.outln(`You don't have enough!`)
+                vt.outln(`You don't have enough!`)
                 return
             }
 
             action('yn')
-            xvt.app.form = {
+            vt.form = {
                 'pay': {
                     cb: () => {
-                        xvt.outln('\n')
-                        if (/Y/i.test(xvt.entry)) {
+                        vt.outln('\n')
+                        if (/Y/i.test(vt.entry)) {
                             $.player.coin.value -= cost.value
                             $.online.altered = true
-                            xvt.outln('As you hand him the money, it disappears into thin air ... ', -1200, '\n')
+                            vt.outln('As you hand him the money, it disappears into thin air ... ', -1200, '\n')
 
                             monster = <active>{}
                             monster.user = <user>{ id: '' }
@@ -443,17 +442,17 @@ module Arena {
                                 l = $.sysop.level - 2
                             if ((monster.user.level = l + dice(7) - 4) > 99)
                                 monster.user.level = 99
-                            cost.value += worth(money(monster.user.level), $.player.cha)
+                            cost.value += tradein(money(monster.user.level), $.player.cha)
 
                             let n = int(Weapon.merchant.length * $.player.level / 110)
                             n = n >= Weapon.merchant.length ? Weapon.merchant.length - 1 : n
                             monster.user.weapon = n + 3
-                            cost.value += worth(new Coin(Weapon.name[Weapon.merchant[n]].value).value, $.player.cha)
+                            cost.value += tradein(new Coin(Weapon.name[Weapon.merchant[n]].value).value, $.player.cha)
 
                             n = int(Armor.merchant.length * $.player.level / 110)
                             n = n >= Armor.merchant.length ? Armor.merchant.length - 1 : n
                             monster.user.armor = n + 2
-                            cost.value += worth(new Coin(Armor.name[Armor.merchant[n]].value).value, $.player.cha)
+                            cost.value += tradein(new Coin(Armor.name[Armor.merchant[n]].value).value, $.player.cha)
 
                             reroll(monster.user
                                 , (dice(($.online.int + $.online.cha) / 50) > 1) ? monster.user.pc : PC.random('monster')
@@ -489,22 +488,22 @@ module Arena {
                             })
                             cat('arena/' + monster.user.handle)
 
-                            xvt.outln(`The old necromancer summons you a level ${monster.user.level} creature.`)
+                            vt.outln(`The old necromancer summons you a level ${monster.user.level} creature.`)
                             wearing(monster)
 
                             action('ny')
-                            xvt.app.focus = 'fight'
+                            vt.focus = 'fight'
                             return
                         }
-                        xvt.outln(xvt.cyan, 'His eyes glow ', xvt.red, xvt.bright, 'red', xvt.normal
-                            , xvt.cyan, ' and says, "', xvt.white, xvt.bright, `I don't make deals!`, xvt.normal, xvt.cyan, '"')
+                        vt.outln(vt.cyan, 'His eyes glow ', vt.red, vt.bright, 'red', vt.normal
+                            , vt.cyan, ' and says, "', vt.white, vt.bright, `I don't make deals!`, vt.normal, vt.cyan, '"')
                         menu()
                     }, prompt: 'Will you pay (Y/N)? ', cancel: 'N', enter: 'Y', eol: false, match: /Y|N/i, max: 1, timeout: 10
                 },
                 'fight': {
                     cb: () => {
-                        xvt.outln()
-                        if (/Y/i.test(xvt.entry)) {
+                        vt.outln()
+                        if (/Y/i.test(vt.entry)) {
                             music('combat' + $.arena--)
                             Battle.engage('Monster', $.online, monster, menu)
                         }
@@ -515,10 +514,10 @@ module Arena {
                     }, prompt: 'Fight this demon (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 30
                 }
             }
-            xvt.app.focus = 'pay'
+            vt.focus = 'pay'
         }
         else {
-            let mon = int(xvt.entry) - 1
+            let mon = int(vt.entry) - 1
             if (mon == monsters.length - 1) sound('demogorgon')
             monster = <active>{}
             monster.user = <user>{ id: '', handle: monsters[mon].name, sex: 'I' }
@@ -544,17 +543,17 @@ module Arena {
                 , effect: monsters[mon].effect
             })
 
-            xvt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}`)
-            if ($.player.emulation == 'XT') xvt.out(' ', monster.pc.color || xvt.white, monster.pc.unicode)
-            xvt.outln()
+            vt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}`)
+            if ($.player.emulation == 'XT') vt.out(' ', monster.pc.color || vt.white, monster.pc.unicode)
+            vt.outln()
             wearing(monster)
 
             action('ny')
-            xvt.app.form = {
+            vt.form = {
                 'fight': {
                     cb: () => {
-                        xvt.outln()
-                        if (/Y/i.test(xvt.entry)) {
+                        vt.outln()
+                        if (/Y/i.test(vt.entry)) {
                             if (mon == monsters.length - 1)
                                 music('boss' + $.arena--)
                             else
@@ -568,7 +567,7 @@ module Arena {
                     }, prompt: 'Will you fight it (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
                 }
             }
-            xvt.app.focus = 'fight'
+            vt.focus = 'fight'
         }
 
         return true

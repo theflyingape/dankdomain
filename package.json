@@ -83,5 +83,6 @@
 		"eslint": "^7.16.0",
 		"typescript": "^4.1.3",
 		"watchify": "^3.11.1"
-	}
+	},
+	"types": "src"
 }

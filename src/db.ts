@@ -3,18 +3,11 @@
  *  DB authored by: Robert Hurst <theflyingape@gmail.com>                    *
 \*****************************************************************************/
 
-import fs = require('fs')
-import { now } from './sys'
+import { now, PATH } from './sys'
 
 module db {
 
-    export let PATH = './users'
-    try {
-        fs.accessSync(`${PATH}/dankdomain.sql`, fs.constants.F_OK)
-    } catch (e) {
-        PATH = `.${PATH}`
-    }
-    const sqlite3 = require('better-sqlite3')(`${PATH}/dankdomain.sql`, { timeout: 10000 })
+    const sqlite3 = require('better-sqlite3')(`${PATH}/etc/dankdomain.sql`, { timeout: 10000 })
     sqlite3.pragma('journal_mode = WAL')
 
     let rs = query(`SELECT * FROM sqlite_master WHERE name='Deeds' AND type='table'`)
