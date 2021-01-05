@@ -7,9 +7,9 @@ import Battle = require('../battle')
 import db = require('../db')
 import $ = require('../runtime')
 import { vt, Coin, action, activate, armor, bracket, cat, checkXP, display, keyhint, loadUser, music, portrait, profile, reroll, sound, weapon, wearing } from '../io'
-import { encounter, log, news, what } from '../lib'
+import { encounter, log, news, tradein, what } from '../lib'
 import { PC } from '../pc'
-import { an, dice, int, money, sprintf, tradein, whole } from '../sys'
+import { an, dice, int, money, sprintf, whole } from '../sys'
 
 module Naval {
 

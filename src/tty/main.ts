@@ -9,9 +9,9 @@ import db = require('../db')
 import $ = require('../runtime')
 import { vt, Award, Coin, action, activate, animated, cat, checkTime, checkXP, display, emulator, input, music, playerPC, portrait, profile, reroll, sound, status } from '../io'
 import { Armor, Weapon, Security, RealEstate, Ring } from '../items'
-import { cuss, log, news } from '../lib'
+import { cuss, log, news, tradein } from '../lib'
 import { PC } from '../pc'
-import { an, dice, int, money, sprintf, tradein } from '../sys'
+import { an, dice, int, money, sprintf } from '../sys'
 
 module Main {
 

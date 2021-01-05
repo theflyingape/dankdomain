@@ -8,9 +8,9 @@ import db = require('../db')
 import $ = require('../runtime')
 import { vt, Coin, action, animated, bracket, cat, checkXP, display, getRing, music, profile, reroll, sound, wall, wearing, activate, loadUser } from '../io'
 import { Access, Armor, Magic, Poison, Ring, Weapon } from '../items'
-import { log, news } from '../lib'
+import { log, news, tradein } from '../lib'
 import { PC } from '../pc'
-import { dice, int, money, romanize, sprintf, tradein } from '../sys'
+import { dice, int, money, romanize, sprintf } from '../sys'
 
 module Arena {
 

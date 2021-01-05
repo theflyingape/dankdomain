@@ -8,9 +8,9 @@ import db = require('./db')
 import $ = require('./runtime')
 import { vt, Coin, action, activate, animated, armor, bracket, buff, checkXP, death, expout, getRing, input, loadUser, music, portrait, profile, reroll, rings, sound, wall, weapon } from './io'
 import { Access, Armor, Deed, Magic, Poison, Ring, Weapon } from './items'
-import { cuss, encounter, experience, log, news, what } from './lib'
+import { cuss, encounter, experience, log, news, tradein, what } from './lib'
 import { PC } from './pc'
-import { worth, dice, int, money, sprintf, an, date2full } from './sys'
+import { an, date2full, dice, int, money, sprintf, whole } from './sys'
 
 module Battle {
 
@@ -107,7 +107,7 @@ module Battle {
                 let trophy = JSON.parse(fs.readFileSync(`./files/tavern/trophy.json`).toString())
                 Weapon.equip($.barkeep, trophy.weapon)
                 let credit = new Coin($.barkeep.weapon.value)
-                credit.value = worth(credit.value, $.online.cha)
+                credit.value = tradein(credit.value, $.online.cha)
                 let result = Weapon.swap($.online, $.barkeep, credit)
                 if (typeof result == 'boolean' && result) {
                     vt.outln('You also take his trophy, ', weapon(), -600)
@@ -831,7 +831,7 @@ module Battle {
 
                     if ($.from !== 'User') {
                         let credit = new Coin(loser.weapon.value)
-                        credit.value = worth(credit.value, winner.cha)
+                        credit.value = tradein(credit.value, winner.cha)
                         let result = Weapon.swap(winner, loser, credit)
                         if (typeof result == 'boolean' && result)
                             vt.outln(winner.who.He, what(winner, 'take'), loser.who.his, winner.user.weapon, '.')
@@ -839,7 +839,7 @@ module Battle {
                             vt.outln(winner.who.He, what(winner, 'get'), credit.carry(), ' for ', loser.who.his, loser.user.weapon, '.')
 
                         credit = new Coin(loser.armor.value)
-                        credit.value = worth(credit.value, winner.cha)
+                        credit.value = tradein(credit.value, winner.cha)
                         result = Armor.swap(winner, loser, credit)
                         if (typeof result == 'boolean' && result) {
                             vt.outln(winner.who.He, 'also ', what(winner, 'take'), loser.who.his, winner.user.armor, '.')
@@ -1060,7 +1060,7 @@ module Battle {
                     m >>= 1
                 m++
                 let wtf = m > 5 ? 'f eht tahw' : 'z.Z.z'
-                vt.sessionAllowed = int(vt.sessionAllowed - 60 * m, true) + 60
+                vt.sessionAllowed = whole(vt.sessionAllowed - 60 * m) + 60
                 vt.out(`\nYou are unconscious for ${m} minute`, m !== 1 ? 's' : '', '...'
                     , -600, vt.faint)
                 for (let i = 0; i < m; i++)
@@ -1459,7 +1459,7 @@ module Battle {
                     }
                     else {
                         if (rpc === $.online) {
-                            vt.sessionAllowed = int(vt.sessionAllowed - 60, true) + 3 * $.dungeon + 1
+                            vt.sessionAllowed = whole(vt.sessionAllowed - 60) + 3 * $.dungeon + 1
                             teleported = true
                         }
                         else
@@ -1472,8 +1472,8 @@ module Battle {
                     sound('blast', 3)
                     let ba = rpc.user.magic > 2
                         ? 17 + int(rpc.user.magic / 4) + int(rpc.user.level / 11) - (backfire
-                            ? int(int(rpc.armor.ac + rpc.user.toAC + rpc.toWC, true) / 5)
-                            : int(int(nme.armor.ac + nme.user.toAC + nme.toWC, true) / 5)
+                            ? int(whole(rpc.armor.ac + rpc.user.toAC + rpc.toWC) / 5)
+                            : int(whole(nme.armor.ac + nme.user.toAC + nme.toWC) / 5)
                         ) : 17
                     if (nme.user.melee > 3) ba *= int(nme.user.melee / 2)
                     let br = int(rpc.int / 10)
@@ -1774,8 +1774,8 @@ module Battle {
                     sound('bigblast', 10)
                     let bba = 2 * (rpc.user.magic > 2
                         ? 17 + int(rpc.user.magic / 4) + int(rpc.user.level / 11) - (backfire
-                            ? int(int(rpc.armor.ac + rpc.user.toAC + rpc.toWC, true) / 5)
-                            : int(int(nme.armor.ac + nme.user.toAC + nme.toWC, true) / 5)
+                            ? int(whole(rpc.armor.ac + rpc.user.toAC + rpc.toWC) / 5)
+                            : int(whole(nme.armor.ac + nme.user.toAC + nme.toWC) / 5)
                         ) : 17)
                     if (nme.user.melee > 3) bba *= int(nme.user.melee / 2)
                     let bbr = int(rpc.int / 10)

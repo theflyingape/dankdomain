@@ -78,13 +78,13 @@ module lib {
             fs.unlink(log, () => { })
     }
 
-    export function what(rpc: active, action: string): string {
-        return action + (rpc !== $.online ? (/.*ch$|.*sh$|.*s$|.*z$/i.test(action) ? 'es ' : 's ') : ' ')
-    }
-
     export function tradein(retail: number, percentage = $.online.cha): number {
         percentage--
         return whole(retail * percentage / 100)
+    }
+
+    export function what(rpc: active, action: string): string {
+        return action + (rpc !== $.online ? (/.*ch$|.*sh$|.*s$|.*z$/i.test(action) ? 'es ' : 's ') : ' ')
     }
 }
 

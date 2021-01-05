@@ -131,11 +131,6 @@ module sys {
         return sprintf('%u:%02u%s', h, m, ap)
     }
 
-    export function tradein(retail: number, value: number): number {
-        value--
-        return whole(retail * value / 100)
-    }
-
     //  non-negative integer
     export function whole(n: string | number) {
         let i = int(n)

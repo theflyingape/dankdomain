@@ -7,9 +7,9 @@ import Battle = require('../battle')
 import $ = require('../runtime')
 import { vt, Coin, action, activate, input, loadUser, music, profile, reroll, sound, wearing, weapon } from '../io'
 import { Armor, RealEstate, Ring, Security, Weapon } from '../items'
-import { news } from '../lib'
+import { news, tradein } from '../lib'
 import { PC } from '../pc'
-import { an, dice, int, money, whole, worth } from '../sys'
+import { an, dice, int, money, whole } from '../sys'
 
 module Taxman {
 
@@ -100,8 +100,8 @@ module Taxman {
             }
             //  now tax if necessary
             tax.value = 1000 * money($.player.level)
-                + worth(new Coin(RealEstate.name[$.player.realestate].value).value, 35)
-                + worth(new Coin(Security.name[$.player.security].value).value, 15)
+                + tradein(new Coin(RealEstate.name[$.player.realestate].value).value, 35)
+                + tradein(new Coin(Security.name[$.player.security].value).value, 15)
 
             if (checkpoint($.player.coin.value + $.player.bank.value)) {
                 let exempt = Ring.power([], $.player.rings, 'taxes')

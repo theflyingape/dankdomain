@@ -8,9 +8,9 @@ import db = require('../db')
 import $ = require('../runtime')
 import { vt, Coin, action, animated, armor, bracket, display, loadUser, music, portrait, profile, sound, weapon } from '../io'
 import { Armor, Magic, Poison, Ring, RealEstate, Security, Weapon } from '../items'
-import { encounter, log, news } from '../lib'
+import { encounter, log, news, tradein } from '../lib'
 import { PC } from '../pc'
-import { dice, int, money, sprintf, tradein, whole } from '../sys'
+import { dice, int, money, sprintf, whole } from '../sys'
 
 module Square {
 

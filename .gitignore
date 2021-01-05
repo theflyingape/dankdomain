@@ -1,6 +1,7 @@
 **/*.js
 **/*.js.*
 **/*.log
+**/*.map
 **/node_modules/**
 build/door/static/images
 build/door/static/sounds
@@ -14,6 +15,7 @@ build/files/border.txt
 build/files/tavern/*.txt
 build/files/user
 build/files/winners.txt
+build/tsconfig.tsbuildinfo
 build/users/.*
 build/users/arguments.json
 build/users/callers.json

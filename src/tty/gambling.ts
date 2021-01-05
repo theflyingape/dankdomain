@@ -6,8 +6,9 @@
 import $ = require('../runtime')
 import { RealEstate, Security } from '../items'
 import { vt, Coin, action, bracket, clear, display, music, sound } from '../io'
+import { tradein } from '../lib'
 import { PC } from '../pc'
-import { dice, int, money, sprintf, tradein, whole } from '../sys'
+import { dice, int, money, sprintf, whole } from '../sys'
 
 module Gambling {
 
@@ -99,10 +100,10 @@ module Gambling {
         }
         vt.form['menu'].prompt = display('casino', vt.Green, vt.green, suppress, casino)
         vt.focus = 'menu'
-        max.value = tradein(new Coin(RealEstate.name[$.player.realestate].value).value, $.online.cha)
-        max.value += tradein(new Coin(Security.name[$.player.security].value).value, $.online.cha)
+        max.value = tradein(new Coin(RealEstate.name[$.player.realestate].value).value)
+        max.value += tradein(new Coin(Security.name[$.player.security].value).value)
         max.value = int(max.value / 10)
-        max.value += tradein(($.player.level * money($.player.level)), $.online.cha)
+        max.value += tradein(($.player.level * money($.player.level)))
         if (max.value > 1e+16) max.value = 1e+16
         max = new Coin(max.carry(1, true))
     }

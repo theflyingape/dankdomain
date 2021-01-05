@@ -8,9 +8,9 @@ import db = require('../db')
 import $ = require('../runtime')
 import { vt, Coin, action, animated, activate, armor, bracket, cat, checkTime, checkXP, clear, death, getRing, keyhint, loadUser, music, portrait, profile, reroll, skillplus, sound, title, wall, weapon, wearing } from '../io'
 import { Armor, Magic, Poison, Ring, Security, Weapon } from '../items'
-import { log, news } from '../lib'
+import { log, news, tradein } from '../lib'
 import { PC } from '../pc'
-import { an, dice, int, money, romanize, sprintf, tradein, whole } from '../sys'
+import { an, dice, int, money, romanize, sprintf, whole } from '../sys'
 
 module Dungeon {
 
