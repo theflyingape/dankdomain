@@ -3,14 +3,15 @@
  *  PARTY authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import Battle = require('../battle')
 import db = require('../db')
 import $ = require('../runtime')
-import { vt, Coin, action, activate, bracket, cat, checkXP, death, display, loadUser, music, profile, reroll, sound, weapon } from '../io'
-import { Armor, Magic, Poison, Weapon } from '../items'
+import { action, activate, bracket, cat, checkXP, death, display, loadUser, music, profile, reroll, sound, weapon } from '../io'
+import { Coin, Armor, Magic, Poison, Weapon } from '../items'
 import { cuss, log } from '../lib'
 import { PC } from '../pc'
-import { dice, int, money, sprintf, titlecase } from '../sys'
+import { dice, int, money, sprintf, titlecase, vt } from '../sys'
+
+import Battle = require('../battle')
 
 module Party {
 

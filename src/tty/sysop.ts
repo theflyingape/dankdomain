@@ -3,13 +3,14 @@
  *  SYSOP authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import Battle = require('../battle')
-import Email = require('../email')
+import { now, sprintf, titlecase, vt } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
-import { vt, action, bracket, display, keyhint, loadUser, music, reroll, sound, status } from '../io'
+import { action, bracket, display, keyhint, loadUser, music, reroll, sound, status } from '../io'
 import { PC } from '../pc'
-import { now, sprintf, titlecase } from '../sys'
+
+import Battle = require('../battle')
+import Email = require('../email')
 
 module Sysop {
 

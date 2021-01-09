@@ -3,19 +3,30 @@
  *  SYS authored by: Robert Hurst <theflyingape@gmail.com>                   *
 \*****************************************************************************/
 
-import fs = require('fs')
+//  dependencies
+import xvt from '@theflyingape/xvt'
+import Got from 'got'
+import { sprintf as sf } from 'sprintf-js'
+import { titleCase } from 'title-case'
 
 module sys {
 
+    //  dependencies
+    export const fs = require('fs')
+    export let PATH = __dirname
+    try { fs.existsSync(`${PATH}/etc`) } catch (e) { PATH = `.${PATH}` }
+    export const romanize = require('romanize')
+
+    //  use nice aliases
+    export const got = Got
+    export const sprintf = sf
+    export const titlecase = titleCase
+    export const vt = new xvt('VT', false)
+
+    //  TODO: use locale
     const day: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
     const md: number[] = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]
     const mon: string[] = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
-    //  dependencies
-    export const got = require('got')
-    export const romanize = require('romanize')
-    export const sprintf = require('sprintf-js').sprintf
-    export const titlecase = require('title-case').titleCase
 
     export function an(item: string, show = true) {
         return ' ' + (/a|e|i|o|u/i.test(item[0]) ? 'an' : 'a') + ' ' + (show ? item : '')
@@ -135,13 +146,6 @@ module sys {
     export function whole(n: string | number) {
         let i = int(n)
         return (i < 0) ? 0 : i
-    }
-
-    export let PATH = __dirname
-    try {
-        fs.existsSync(`${PATH}/etc`)
-    } catch (e) {
-        PATH = `.${PATH}`
     }
 }
 

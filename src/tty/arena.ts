@@ -3,14 +3,15 @@
  *  ARENA authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import Battle = require('../battle')
+import { dice, int, money, romanize, sprintf, vt } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
-import { vt, Coin, action, animated, bracket, cat, checkXP, display, getRing, music, profile, reroll, sound, wall, wearing, activate, loadUser } from '../io'
-import { Access, Armor, Magic, Poison, Ring, Weapon } from '../items'
+import { action, animated, bracket, cat, checkXP, display, getRing, music, profile, reroll, sound, wall, wearing, activate, loadUser } from '../io'
+import { Coin, Access, Armor, Magic, Poison, Ring, Weapon } from '../items'
 import { log, news, tradein } from '../lib'
 import { PC } from '../pc'
-import { dice, int, money, romanize, sprintf } from '../sys'
+
+import Battle = require('../battle')
 
 module Arena {
 

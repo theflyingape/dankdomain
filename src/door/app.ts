@@ -5,7 +5,6 @@
 import chokidar = require('chokidar')
 import dns = require('dns')
 import express = require('express')
-import fs = require('fs')
 import http = require('http')
 import https = require('https')
 import net = require('net')
@@ -28,8 +27,10 @@ process.on('SIGINT', () => {
 console.log(`cwd ${process.cwd()} → ${__dirname}`)
 process.chdir(__dirname)
 
+import { fs } from '../sys'
 import db = require('../db')
-import { Coin, PC } from '../pc'
+import { Coin } from '../items'
+import { PC } from '../pc'
 
 let passed = ''
 if (process.argv.length > 2 && process.argv[2]) {

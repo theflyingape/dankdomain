@@ -3,14 +3,13 @@
  *  LOGON authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import fs = require('fs')
+import { PATH, date2full, dice, fs, got, int, money, now, time, titlecase, vt, whole } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
-import { vt, Coin, action, activate, bracket, cat, clear, emulator, getRing, getRuler, input, loadUser, logoff, music, playerPC, portrait, profile, reroll, sound, title, wall } from '../io'
-import { Access, Deed, Magic, Ring } from '../items'
+import { action, activate, bracket, cat, clear, emulator, getRing, getRuler, input, loadUser, logoff, music, playerPC, portrait, profile, reroll, sound, title, wall } from '../io'
+import { Coin, Access, Deed, Magic, Ring } from '../items'
 import { cuss, news } from '../lib'
 import { PC } from '../pc'
-import { date2full, dice, got, int, money, now, time, titlecase, whole } from '../sys'
 
 module Logon {
 
@@ -219,6 +218,7 @@ module Logon {
             vt.hangup()
         }
 
+        //  start new player visit
         vt.ondrop = logoff
 
         if (/^([1][0]|[1][2][7]|[1][7][2]|[1][9][2])[.]/.test($.remote) || !$.remote) {
@@ -237,12 +237,12 @@ module Logon {
                     if (ipstack.ip) result = ipstack.ip
                     if (ipstack.city) result = ipstack.city
                     if (ipstack.region_code) result += (result ? ', ' : '') + ipstack.region_code
-                    if (response.body.country_code) result += (result ? ' ' : '') + ipstack.country_code
-                    if (ipstack.location)
-                        if (ipstack.location.country_flag_emoji) result += ` ${ipstack.location.country_flag_emoji} `
+                    if (ipstack.country_code) result += (result ? ' ' : '') + ipstack.country_code
+                    if (ipstack.location && ipstack.location.country_flag_emoji)
+                        result += ` ${ipstack.location.country_flag_emoji} `
                 }
                 $.whereis += result ? result : $.remote
-            }).catch(error => { $.whereis += ' ⚠️ ' })
+            }).catch(error => { $.whereis += ` ⚠️ ${error.message}` })
         } catch (e) { }
 
         loadUser($.sysop)
@@ -359,7 +359,7 @@ module Logon {
 
             vt.outln(vt.cyan, '\nLast callers were: ')
             try {
-                $.callers = JSON.parse(fs.readFileSync('./users/callers.json').toString())
+                $.callers = JSON.parse(fs.readFileSync(`${PATH}/users/callers.json`).toString())
                 for (let last in $.callers)
                     vt.outln('     ', vt.bright
                         , $.callers[last].who, vt.normal, ' (', $.callers[last].reason, ')')
@@ -407,7 +407,7 @@ module Logon {
             $.player.plays++
             $.player.status = ''
             $.player.xplevel = $.player.level
-            const play = JSON.parse(fs.readFileSync('./etc/play.json').toString())
+            const play = JSON.parse(fs.readFileSync(`${PATH}/etc/play.json`).toString())
             Object.assign($, play)
             music('logon')
 
@@ -436,7 +436,7 @@ module Logon {
 
             vt.out(vt.cyan, '\nLast callers were: ', vt.white)
             try {
-                $.callers = JSON.parse(fs.readFileSync('./users/callers.json').toString())
+                $.callers = JSON.parse(fs.readFileSync(`${PATH}/users/callers.json`).toString())
                 for (let last in $.callers) {
                     vt.outln(vt.bright, $.callers[last].who, vt.normal, ' (', $.callers[last].reason, ')')
                     vt.out('                   ')
@@ -490,7 +490,7 @@ module Logon {
 
             'sysop': {
                 cb: () => {
-                    if (vt.entry) fs.writeFileSync('./files/announcement.txt', vt.attr(
+                    if (vt.entry) fs.writeFileSync(`${PATH}/files/announcement.txt`, vt.attr(
                         vt.magenta, 'Date: ', vt.off, date2full($.player.lastdate), ' ', time($.player.lasttime) + '\n',
                         vt.magenta, 'From: ', vt.off, $.player.handle, '\n\n',
                         vt.bright, vt.entry))
@@ -519,7 +519,7 @@ module Logon {
                 cb: () => {
                     vt.outln()
                     if (vt.entry.length && !cuss(vt.entry)) {
-                        fs.writeFileSync('./files/auto-message.txt', vt.attr(
+                        fs.writeFileSync(`${PATH}/files/auto-message.txt`, vt.attr(
                             vt.cyan, 'Date: ', vt.off, date2full($.player.lastdate), ' ', time($.player.lasttime), '\n',
                             vt.cyan, 'From: ', vt.off, $.player.handle + '\n\n',
                             vt.bright, vt.entry))
@@ -551,7 +551,7 @@ module Logon {
         //  customize the Dank Domain waiting for its ruler (1st player to register)
         let npc = <user>{}
         let player = <user>{}
-        Object.assign(npc, JSON.parse(fs.readFileSync(`./users/sysop.json`).toString()))
+        Object.assign(npc, JSON.parse(fs.readFileSync(`${PATH}/users/sysop.json`).toString()))
         let rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
         if (!rs.length) {
             process.stdout.write(`[${npc.handle}] `)
@@ -566,7 +566,7 @@ module Logon {
         }
 
         //  customize the Master of Whisperers NPC
-        Object.assign(npc, JSON.parse(fs.readFileSync(`./users/barkeep.json`).toString()))
+        Object.assign(npc, JSON.parse(fs.readFileSync(`${PATH}/users/barkeep.json`).toString()))
         rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
         if (!rs.length) {
             process.stdout.write(`[${npc.handle}] `)
@@ -580,7 +580,7 @@ module Logon {
         }
 
         //  customize the Master at Arms NPC
-        Object.assign(npc, JSON.parse(fs.readFileSync(`./users/merchant.json`).toString()))
+        Object.assign(npc, JSON.parse(fs.readFileSync(`${PATH}/users/merchant.json`).toString()))
         rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
         if (!rs.length) {
             process.stdout.write(`[${npc.handle}] `)
@@ -594,7 +594,7 @@ module Logon {
         }
 
         //  customize the Big Kahuna NPC
-        Object.assign(npc, JSON.parse(fs.readFileSync(`./users/neptune.json`).toString()))
+        Object.assign(npc, JSON.parse(fs.readFileSync(`${PATH}/users/neptune.json`).toString()))
         rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
         if (!rs.length) {
             process.stdout.write(`[${npc.handle}] `)
@@ -608,7 +608,7 @@ module Logon {
         }
 
         //  customize the Queen B NPC
-        Object.assign(npc, JSON.parse(fs.readFileSync(`./users/seahag.json`).toString()))
+        Object.assign(npc, JSON.parse(fs.readFileSync(`${PATH}/users/seahag.json`).toString()))
         rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
         if (!rs.length) {
             process.stdout.write(`[${npc.handle}] `)
@@ -623,7 +623,7 @@ module Logon {
 
         //  customize the Master of Coin NPC
         npc = <user>{}
-        Object.assign(npc, JSON.parse(fs.readFileSync(`./users/taxman.json`).toString()))
+        Object.assign(npc, JSON.parse(fs.readFileSync(`${PATH}/users/taxman.json`).toString()))
         rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
         if (!rs.length) {
             process.stdout.write(`[${npc.handle}] `)
@@ -637,7 +637,7 @@ module Logon {
         }
 
         //  customize the wicked witch
-        Object.assign(npc, JSON.parse(fs.readFileSync(`./users/witch.json`).toString()))
+        Object.assign(npc, JSON.parse(fs.readFileSync(`${PATH}/users/witch.json`).toString()))
         rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
         if (!rs.length) {
             process.stdout.write(`[${npc.handle}] `)
@@ -656,7 +656,7 @@ module Logon {
             npc = <user>{}
             player = <user>{}
             try {
-                Object.assign(npc, JSON.parse(fs.readFileSync(`./users/bot${i}.json`).toString()))
+                Object.assign(npc, JSON.parse(fs.readFileSync(`${PATH}/users/bot${i}.json`).toString()))
                 rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
                 if (!rs.length) {
                     process.stdout.write(`\r\nbot #${i} - ${npc.handle}`)
@@ -752,8 +752,8 @@ module Logon {
                     }
                 }
                 db.run(`DELETE FROM Players WHERE id='${rs[row].id}'`)
-                fs.unlink(`./files/user/${rs[row].id}.txt`, () => { })
-                fs.unlink(`./users/.${rs[row].id}.json`, () => { })
+                fs.unlink(`${PATH}/files/user/${rs[row].id}.txt`, () => { })
+                fs.unlink(`${PATH}/users/.${rs[row].id}.json`, () => { })
                 vt.out('x')
                 continue
             }
@@ -768,7 +768,7 @@ module Logon {
         }
 
         try {
-            fs.renameSync(`./files/tavern/today.txt`, `./users/tavern/yesterday.txt`)
+            fs.renameSync(`${PATH}/files/tavern/today.txt`, `${PATH}/files/tavern/yesterday.txt`)
             vt.out('T')
         } catch (e) {
             vt.out('?')

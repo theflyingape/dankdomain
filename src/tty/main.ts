@@ -3,15 +3,16 @@
  *  MAIN authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
 
-import Battle = require('../battle')
+import { an, dice, int, money, sprintf, vt } from '../sys'
 import fs = require('fs')
 import db = require('../db')
 import $ = require('../runtime')
-import { vt, Award, Coin, action, activate, animated, cat, checkTime, checkXP, display, emulator, input, music, playerPC, portrait, profile, reroll, sound, status } from '../io'
-import { Armor, Weapon, Security, RealEstate, Ring } from '../items'
+import { Award, action, activate, animated, cat, checkTime, checkXP, display, emulator, input, music, playerPC, portrait, profile, reroll, sound, status } from '../io'
+import { Coin, Armor, Weapon, Security, RealEstate, Ring } from '../items'
 import { cuss, log, news, tradein } from '../lib'
 import { PC } from '../pc'
-import { an, dice, int, money, sprintf } from '../sys'
+
+import Battle = require('../battle')
 
 module Main {
 

@@ -3,12 +3,12 @@
  *  GAMBLING authored by: Robert Hurst <theflyingape@gmail.com>              *
 \*****************************************************************************/
 
+import { dice, int, money, sprintf, vt, whole } from '../sys'
 import $ = require('../runtime')
-import { RealEstate, Security } from '../items'
-import { vt, Coin, action, bracket, clear, display, music, sound } from '../io'
+import { Coin, RealEstate, Security } from '../items'
+import { action, bracket, clear, display, music, sound } from '../io'
 import { tradein } from '../lib'
 import { PC } from '../pc'
-import { dice, int, money, sprintf, whole } from '../sys'
 
 module Gambling {
 

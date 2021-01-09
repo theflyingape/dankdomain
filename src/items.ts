@@ -3,13 +3,111 @@
  *  ITEMS authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
+import { PATH, int, now, vt } from './sys'
 import db = require('./db')
 import $ = require('./runtime')
-import { now, PATH } from './sys'
 
 module Items {
 
     const ITEMS = `${PATH}/items`
+
+    export class Coin implements coins {
+
+        constructor(money: string | number) {
+            if (typeof money == 'number') {
+                this.value = money
+            }
+            else {
+                this.amount = money
+            }
+        }
+
+        private _value: number
+
+        get value(): number {
+            return this._value
+        }
+
+        set value(newValue: number) {
+            const MAX = (1e+18 - 1e+09)
+            this._value = newValue < MAX ? newValue
+                : newValue == Infinity ? 1 : MAX
+        }
+
+        //  top valued coin bag (+ any lesser)
+        get amount(): string {
+            return this.carry(2, true)
+        }
+
+        set amount(newAmount: string) {
+            this.value = 0
+            let coins = 0
+
+            for (var i = 0; i < newAmount.length; i++) {
+                let c = newAmount.charAt(i)
+                switch (c) {
+                    case 'c':
+                        coins *= 1
+                        break
+                    case 's':
+                        coins *= 1e+05
+                        break
+                    case 'g':
+                        coins *= 1e+09
+                        break
+                    case 'p':
+                        coins *= 1e+13
+                        break
+                }
+                if (c >= '0' && c <= '9') {
+                    coins *= 10
+                    coins += +c
+                }
+                else {
+                    this.value += coins
+                    coins = 0
+                }
+            }
+        }
+
+        _pouch(coins: number): string {
+            return (coins < 1e+05) ? 'c' : (coins < 1e+09) ? 's' : (coins < 1e+13) ? 'g' : 'p'
+        }
+
+        carry(max = 2, text = false): string {
+            let n = this.value
+            let bags: string[] = []
+
+            if (this._pouch(n) == 'p') {
+                n = int(n / 1e+13)
+                bags.push(text ? n + 'p' : vt.attr(vt.white, vt.bright, n.toString(), vt.magenta, 'p', vt.normal, vt.white))
+                n = this.value % 1e+13
+            }
+            if (this._pouch(n) == 'g') {
+                n = int(n / 1e+09)
+                bags.push(text ? n + 'g' : vt.attr(vt.white, vt.bright, n.toString(), vt.yellow, 'g', vt.normal, vt.white))
+                n = this.value % 1e+09
+            }
+            if (this._pouch(n) == 's') {
+                n = int(n / 1e+05)
+                bags.push(text ? n + 's' : vt.attr(vt.white, vt.bright, n.toString(), vt.cyan, 's', vt.normal, vt.white))
+                n = this.value % 1e+05
+            }
+            if ((n > 0 && this._pouch(n) == 'c') || bags.length == 0)
+                bags.push(text ? n + 'c' : vt.attr(vt.white, vt.bright, n.toString(), vt.red, 'c', vt.normal, vt.white))
+
+            return bags.slice(0, max).toString()
+        }
+
+        pieces(p = this._pouch(this.value), emoji = false): string {
+            return 'pouch of ' + (emoji ? '💰 ' : '') + {
+                'p': vt.attr(vt.magenta, vt.bright, 'platinum', vt.normal),
+                'g': vt.attr(vt.yellow, vt.bright, 'gold', vt.normal),
+                's': vt.attr(vt.cyan, vt.bright, 'silver', vt.normal),
+                'c': vt.attr(vt.red, vt.bright, 'copper', vt.normal)
+            }[p] + vt.attr(' pieces', vt.reset)
+        }
+    }
 
     class _access {
 

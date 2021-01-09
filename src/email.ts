@@ -3,15 +3,15 @@
  *  EMAIL authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import fs = require('fs')
-import nodemailer = require('nodemailer')
-import smtpTransport = require('nodemailer-smtp-transport')
+import { dice, fs, vt } from './sys'
 import db = require('./db')
 import $ = require('./runtime')
-import { vt, action, music, sound } from './io'
+import { action, music, sound } from './io'
 import { Access } from './items'
 import { PC } from './pc'
-import { dice } from './sys'
+
+import nodemailer = require('nodemailer')
+import smtpTransport = require('nodemailer-smtp-transport')
 
 module Email {
 

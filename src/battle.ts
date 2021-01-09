@@ -3,14 +3,13 @@
  *  BATTLE authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import fs = require('fs')
+import { an, date2full, dice, fs, int, money, sprintf, whole, vt } from './sys'
 import db = require('./db')
 import $ = require('./runtime')
-import { vt, Coin, action, activate, animated, armor, bracket, buff, checkXP, death, expout, getRing, input, loadUser, music, portrait, profile, reroll, rings, sound, wall, weapon } from './io'
-import { Access, Armor, Deed, Magic, Poison, Ring, Weapon } from './items'
+import { action, activate, animated, armor, bracket, buff, checkXP, death, expout, getRing, input, loadUser, music, portrait, profile, reroll, rings, sound, wall, weapon } from './io'
+import { Coin, Access, Armor, Deed, Magic, Poison, Ring, Weapon } from './items'
 import { cuss, encounter, experience, log, news, tradein, what } from './lib'
 import { PC } from './pc'
-import { an, date2full, dice, int, money, sprintf, whole } from './sys'
 
 module Battle {
 

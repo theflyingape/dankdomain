@@ -41,6 +41,7 @@ module runtime {
     export let timeleft: number = 0
     export let warning: number = 2
 
+    //  global features
     export let callers: caller[] = []
     export let mydeeds: deed[]
     export let remote = process.env.REMOTEHOST || process.env.SSH_CLIENT || ''

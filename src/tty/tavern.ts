@@ -3,16 +3,17 @@
  *  TAVERN authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import Battle = require('../battle')
-import Taxman = require('./taxman')
 import fs = require('fs')
 import db = require('../db')
 import $ = require('../runtime')
-import { vt, Coin, action, bracket, cat, checkXP, display, loadUser, music, profile, sound, title } from '../io'
-import { Access, Weapon } from '../items'
+import { action, bracket, cat, checkXP, display, loadUser, music, profile, sound, title } from '../io'
+import { Coin, Access, Weapon } from '../items'
 import { cuss, news } from '../lib'
 import { PC } from '../pc'
-import { dice, money, int, sprintf, whole } from '../sys'
+import { dice, money, int, sprintf, vt, whole } from '../sys'
+
+import Battle = require('../battle')
+import Taxman = require('./taxman')
 
 module Tavern {
 

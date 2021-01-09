@@ -3,11 +3,10 @@
  *  LIB authored by: Robert Hurst <theflyingape@gmail.com>                   *
 \*****************************************************************************/
 
+import { dice, fs, int, titlecase, whole } from './sys'
 import db = require('./db')
-import fs = require('fs')
 import $ = require('./runtime')
 import { loadUser } from './io'
-import { dice, int, titlecase, whole } from './sys'
 
 module lib {
 

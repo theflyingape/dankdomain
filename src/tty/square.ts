@@ -3,14 +3,15 @@
  *  SQUARE authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import Battle = require('../battle')
+import { dice, int, money, sprintf, vt, whole } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
-import { vt, Coin, action, animated, armor, bracket, display, loadUser, music, portrait, profile, sound, weapon } from '../io'
-import { Armor, Magic, Poison, Ring, RealEstate, Security, Weapon } from '../items'
+import { action, animated, armor, bracket, display, loadUser, music, portrait, profile, sound, weapon } from '../io'
+import { Coin, Armor, Magic, Poison, Ring, RealEstate, Security, Weapon } from '../items'
 import { encounter, log, news, tradein } from '../lib'
 import { PC } from '../pc'
-import { dice, int, money, sprintf, whole } from '../sys'
+
+import Battle = require('../battle')
 
 module Square {
 

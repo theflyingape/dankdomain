@@ -3,13 +3,15 @@
  *  NAVAL authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import Battle = require('../battle')
+import { an, dice, int, money, sprintf, vt, whole } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
-import { vt, Coin, action, activate, armor, bracket, cat, checkXP, display, keyhint, loadUser, music, portrait, profile, reroll, sound, weapon, wearing } from '../io'
+import { action, activate, armor, bracket, cat, checkXP, display, keyhint, loadUser, music, portrait, profile, reroll, sound, weapon, wearing } from '../io'
+import { Coin } from '../items'
 import { encounter, log, news, tradein, what } from '../lib'
 import { PC } from '../pc'
-import { an, dice, int, money, sprintf, whole } from '../sys'
+
+import Battle = require('../battle')
 
 module Naval {
 

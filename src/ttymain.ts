@@ -12,23 +12,26 @@
  *  Apple Ⅱ TproBBS                                written by Guy T. Rice    *
 \*****************************************************************************/
 
-import { vt } from './io'
-
+process.on(`${process.title} uncaughtException`, (err, origin) => {
+    console.error(`${origin} ${err}`)
+})
 process.title = 'ddclient'
 process.chdir(__dirname)
-process.on('ttyMain uncaughtException', (err, origin) => {
-    vt.outln(`${origin} ${err}`)
-})
 
+import { vt } from './sys'
 vt.sessionAllowed = 150
 vt.defaultTimeout = 100
 
 vt.emulation = <EMULATION>(process.argv.length > 2 && process.argv[2]
-    ? process.argv[2].toUpperCase()
-    : (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM)) ? 'dumb'
-        : (/^linux|^lisa|^ncsa|^pcvt|^vt|^xt/i.test(process.env.TERM)) ? 'VT'
-            : (/ansi|cygwin|^pc/i.test(process.env.TERM)) ? 'PC'
-                : '')
+    ? process.argv[2].toUpperCase() : (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM))
+        ? 'dumb' : (/^linux|^lisa|^ncsa|^pcvt|^vt|^xt/i.test(process.env.TERM))
+            ? 'VT' : (/ansi|cygwin|^pc/i.test(process.env.TERM))
+                ? 'PC' : '')
+
+const bot = process.argv.length > 3 && process.argv[3] ? process.argv[3].toUpperCase() : ''
+
+vt.stdio()
+
 if ((vt.modem = process.env.REMOTEHOST ? true : false))
     vt.outln(vt.off, vt.bright
         , vt.red, 'C'
@@ -41,7 +44,6 @@ if ((vt.modem = process.env.REMOTEHOST ? true : false))
         , vt.normal, ' '
         , vt.faint, 'DETECTED')
 
-const bot = process.argv.length > 3 && process.argv[3] ? process.argv[3].toUpperCase() : ''
 if (vt.emulation)
     logon()
 else
@@ -66,7 +68,9 @@ else
     }
 
 function logon() {
+
     vt.outln(vt.cyan, vt.bright, vt.emulation, vt.normal, ' emulation ', vt.faint, 'enabled')
+
     if (bot)
         require('./tty/logon').startup(bot)
     else

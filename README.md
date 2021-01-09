@@ -13,78 +13,92 @@
 
 ---
 
-## Installation
-Requires `Linux` or `Chrome OS` running a container with the `Node.js` runtime
-
 [![GitHub release](https://img.shields.io/github/release/theflyingape/dankdomain.svg)](https://github.com/theflyingape/dankdomain/releases) [![npm version](https://badge.fury.io/js/dankdomain.svg)](https://www.npmjs.com/package/dankdomain) ![npm version](https://img.shields.io/node/v/dankdomain) [![Dependencies](https://img.shields.io/david/theflyingape/dankdomain.svg)](https://david-dm.org/theflyingape/dankdomain) [![Issues](http://img.shields.io/github/issues/theflyingape/dankdomain.svg)](https://github.com/theflyingape/dankdomain/issues)
 
 Download packs: [images](https://drive.google.com/open?id=1jjLPtGf_zld416pxytZfbfCHREZTghkW) 📷 and [sounds](https://drive.google.com/open?id=1UvqQJbN61VbWVduONXgo1gm9yvGI0Qp8) 🔉
 
 With the packs loaded, the game + runtime files will need **440mb** storage.
 
-To run a local game copy:
+## Installation
+Tested on `Linux`, `Chrome OS`, and `Docker`. To run a local game copy (requires the `Node.js` runtime):
+
 ```bash
 $ npm install dankdomain
 $ ./install.sh /usr/local/games
 $ npm start
+```
+
+... or use Docker:
+
+```
+$ docker pull theflyingape/dankdomain
+```
+
+Connect into the game via portal or directly:
+
+```
 $ google-chrome http://localhost:1939
 $ telnet localhost 1986
 ```
-Modify your game networking settings:
+
+Your game networking preferences:
+
 ```
-$ cd /usr/local/games/dankdomain
-$ mv etc/network.json_inet etc/network.json
-$ vim etc/network.json
+$ cd /path/to/dankdomain/etc
+$ cp network.json_inet network.json
+$ vim network.json
 ```
+
 You can also play www.DDgame.us from the command-line:
+
 ```bash
 $ npm run tty
 $ npm run mame
 $ telnet play.ddgame.us
 ```
-Docker
-```
-$ docker pull theflyingape/dankdomain
-```
-File directory structure:
+
+**Files directory structure**
+
 ```linux
-[theflyingape@ddgame dankdomain]$ pwd
+$ pwd
 /usr/local/games/dankdomain
-.vscode/            Visual Studio Code: settings & debug profiles
-console/            MAME support files
-door/               web services & client for browser
-../static           web browser client content
-   ../images        visual media for artifacts, creatures, and players
-   ../sounds        audio media for event notifications
-etc/                game app & system support files
-files/              game, menu & player support files: ANSI and/or text formats
-../arena            ASCII art & menu files
-../casino           menu files
-../dungeon          ASCII art
-../main             about system & menu files
-../naval            ASCII art & menu files
-../party            instruction & menu files
-../player           ASCII art
-../square           menu files
-../tavern           all player events logged for the day
-../user             each player’s events logged since last visit
-items/              game artifacts
-users/              player data files
-node_modules/       Node.js support libraries
-tty/                game modules for each main menu item
-package.json        Node.js manifest
-battle.js           support module for player engagements
-common.js           global support module for game
-email.js            support module for dispatching email notifications
-items.js            support module for loading artifacts
-telnet.js           telnet client - via web services
-ttymain.js          game app - startup entry point
-door-startup.sh     web services - systemctl startup script
-logins.sh           player - startup script into game app
-mame.sh             player - MAME VT240 terminal + solcat startup script
-tty.sh              player - startup script into web services
+.vscode/          Visual Studio Code: settings & debug profiles
+console/          MAME support files
+door/             web services
+../static         game portal
+   ../assets      app install, fonts, etc.
+   ../images      visual media for artifacts, creatures, and players
+   ../sounds      audio media for event notifications
+etc/              game app & system support files
+files/            game, menu & player support files: ANSI and/or text formats
+../arena          ASCII art & menu files
+../casino         menu files
+../dungeon        ASCII art
+../main           about system & menu files
+../naval          ASCII art & menu files
+../party          instruction & menu files
+../player         ASCII art
+../square         menu files
+../tavern         all player events logged for the day
+../user           each player’s events logged since last visit
+items/            game artifacts
+users/            player data files
+node_modules/     Node.js support libraries
+tty/              game modules for each main menu item
+package.json      Node.js manifest
+battle.js         support module for player engagements
+common.js         global support module for game
+email.js          support module for dispatching email notifications
+items.js          support module for loading artifacts
+telnet.js         telnet client - via web services
+ttymain.js        game app - startup entry point
+door-startup.sh   web services - systemctl startup script
+logins.sh         player - startup script into game app
+mame.sh           player - MAME VT240 terminal + solcat startup script
+tty.sh            player - telnet.js wrapper
 ```
-**NOTE**: *in **`users`** folder, edit a hidden (dot) export file and save as **`save.json`**. The game app will auto-import it for a SQL update operation into the dankdomain.sql **`Players`** table.*
+
+**NOTE**: *in **`users`** folder, edit a hidden (dot) export file and save as **`save.json`**. The game app will consume it for a SQL update into the dankdomain.sql **`Players`** table.*
 
  🇺🇸 ©️1991 - 2021 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
 

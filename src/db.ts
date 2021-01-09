@@ -7,46 +7,42 @@ import { now, PATH } from './sys'
 
 module db {
 
-    const sqlite3 = require('better-sqlite3')(`${PATH}/etc/dankdomain.sql`, { timeout: 10000 })
+    const sqlite3 = require('better-sqlite3')(`${PATH}/users/dankdomain.sql`, { timeout: 10000 })
     sqlite3.pragma('journal_mode = WAL')
 
     let rs = query(`SELECT * FROM sqlite_master WHERE name='Deeds' AND type='table'`)
     if (!rs.length) {
-        process.stdout.write('initializing deeds ... ')
+        console.info('initializing Deeds')
         run(`CREATE TABLE IF NOT EXISTS Deeds (pc text KEY,
             deed text KEY, date numeric, hero text, value numeric
         )`)
-        process.stdout.write('done.')
     }
 
     rs = query(`SELECT * FROM sqlite_master WHERE name='Gangs' AND type='table'`)
     if (!rs.length) {
-        process.stdout.write('initializing gangs ... ')
+        console.info('initializing Gangs')
         run(`CREATE TABLE IF NOT EXISTS Gangs (
             name text PRIMARY KEY, members text, win numeric, loss numeric, banner numeric, color numeric
         )`)
         run(`INSERT INTO Gangs VALUES ( 'AB Original', 'IMA,NOB,_DM,_WOW', 0, 0, 86, 99 )`)
         run(`INSERT INTO Gangs VALUES ( 'Monster Mash', '_MM1,_MM2,_MM3,_MM4', 0, 0, 0, 0 )`)
-        process.stdout.write('done.\r\n')
     }
 
     rs = query(`SELECT * FROM sqlite_master WHERE name='Online' AND type='table'`)
     if (!rs.length) {
-        process.stdout.write('initializing online ... ')
+        console.info('initializing Online')
         run(`CREATE TABLE IF NOT EXISTS Online (id text PRIMARY KEY, pid numeric, lockdate numeric, locktime numeric)`)
-        process.stdout.write('done.\r\n')
     }
 
     rs = query(`SELECT * FROM sqlite_master WHERE name='Rings' AND type='table'`)
     if (!rs.length) {
-        process.stdout.write('initializing (unique) rings ... ')
+        console.info('initializing Rings (unique)')
         run(`CREATE TABLE IF NOT EXISTS Rings (name text PRIMARY KEY, bearer text)`)
-        process.stdout.write('done.\r\n')
     }
 
     rs = query(`SELECT * FROM sqlite_master WHERE name='Players' AND type='table'`)
     if (!rs.length) {
-        process.stdout.write('initializing players ... ')
+        console.info('initializing Players')
         run(`CREATE TABLE IF NOT EXISTS Players (
             id text PRIMARY KEY, handle text UNIQUE NOT NULL, name text NOT NULL, email text, password text NOT NULL,
             dob numeric NOT NULL, sex text NOT NULL, joined numeric, expires numeric, lastdate numeric,

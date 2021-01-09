@@ -3,13 +3,14 @@
  *  TAXMAN authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import Battle = require('../battle')
+import { an, dice, int, money, vt, whole } from '../sys'
 import $ = require('../runtime')
-import { vt, Coin, action, activate, input, loadUser, music, profile, reroll, sound, wearing, weapon } from '../io'
-import { Armor, RealEstate, Ring, Security, Weapon } from '../items'
+import { action, activate, input, loadUser, music, profile, reroll, sound, wearing, weapon } from '../io'
+import { Coin, Armor, RealEstate, Ring, Security, Weapon } from '../items'
 import { news, tradein } from '../lib'
 import { PC } from '../pc'
-import { an, dice, int, money, whole } from '../sys'
+
+import Battle = require('../battle')
 
 module Taxman {
 

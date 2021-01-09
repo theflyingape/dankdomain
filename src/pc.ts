@@ -3,99 +3,14 @@
  *  PC authored by: Robert Hurst <theflyingape@gmail.com>                    *
 \*****************************************************************************/
 
-import fs = require('fs')
+import { dice, fs, int, isActive, titlecase } from './sys'
 import db = require('./db')
 import $ = require('./runtime')
 import { Ring } from './items'
-import { dice, int, isActive, titlecase } from './sys'
 
 module pc {
 
     export const Abilities: ABILITY[] = ['str', 'int', 'dex', 'cha']
-
-    export class Coin implements coins {
-
-        constructor(money: string | number) {
-            if (typeof money == 'number') {
-                this.value = money
-            }
-            else {
-                this.amount = money
-            }
-        }
-
-        private _value: number
-
-        get value(): number {
-            return this._value
-        }
-
-        set value(newValue: number) {
-            const MAX = (1e+18 - 1e+09)
-            this._value = newValue < MAX ? newValue
-                : newValue == Infinity ? 1 : MAX
-        }
-
-        set amount(newAmount: string) {
-            this.value = 0
-            let coins = 0
-
-            for (var i = 0; i < newAmount.length; i++) {
-                let c = newAmount.charAt(i)
-                switch (c) {
-                    case 'c':
-                        coins *= 1
-                        break
-                    case 's':
-                        coins *= 1e+05
-                        break
-                    case 'g':
-                        coins *= 1e+09
-                        break
-                    case 'p':
-                        coins *= 1e+13
-                        break
-                }
-                if (c >= '0' && c <= '9') {
-                    coins *= 10
-                    coins += +c
-                }
-                else {
-                    this.value += coins
-                    coins = 0
-                }
-            }
-        }
-
-        _pouch(coins: number): string {
-            return (coins < 1e+05) ? 'c' : (coins < 1e+09) ? 's' : (coins < 1e+13) ? 'g' : 'p'
-        }
-
-        carry(max = 2): string {
-            let n = this.value
-            let bags: string[] = []
-
-            if (this._pouch(n) == 'p') {
-                n = int(n / 1e+13)
-                bags.push(n + 'p')
-                n = this.value % 1e+13
-            }
-            if (this._pouch(n) == 'g') {
-                n = int(n / 1e+09)
-                bags.push(n + 'g')
-                n = this.value % 1e+09
-            }
-            if (this._pouch(n) == 's') {
-                n = int(n / 1e+05)
-                bags.push(n + 's')
-                n = this.value % 1e+05
-            }
-            if ((n > 0 && this._pouch(n) == 'c') || bags.length == 0)
-                bags.push(n + 'c')
-
-            return bags.slice(0, max).toString()
-        }
-    }
 
     class _pc {
 
