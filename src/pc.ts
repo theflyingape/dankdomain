@@ -3,10 +3,12 @@
  *  PC authored by: Robert Hurst <theflyingape@gmail.com>                    *
 \*****************************************************************************/
 
-import { dice, fs, int, isActive, titlecase } from './sys'
+import { date2full, dice, fs, int, isActive, romanize, sprintf, titlecase, vt } from './sys'
 import db = require('./db')
 import $ = require('./runtime')
-import { Ring } from './items'
+import { Access, Magic, Ring } from './items'
+import { armor, loadUser, weapon } from './io'
+import { experience } from './lib'
 
 module pc {
 
@@ -147,6 +149,18 @@ module pc {
             }
         }
 
+        portrait(rpc = $.online, effect = 'fadeInLeft', meta = '') {
+            let userPNG = `door/static/images/user/${rpc.user.id}.png`
+            try {
+                fs.accessSync(userPNG, fs.constants.F_OK)
+                userPNG = `user/${rpc.user.id}`
+            } catch (e) {
+                userPNG = (this.name['player'][rpc.user.pc] || this.name['immortal'][rpc.user.pc] ? 'player' : 'monster') + '/' + rpc.user.pc.toLowerCase() + (rpc.user.gender == 'F' ? '_f' : '')
+            }
+            vt.profile({ png: userPNG, handle: rpc.user.handle, level: rpc.user.level, pc: rpc.user.pc, effect: effect })
+            vt.title(`${rpc.user.handle}: level ${rpc.user.level} ${rpc.user.pc} ${meta}`)
+        }
+
         random(type?: string): string {
             let pc: string = ''
             if (type) {
@@ -270,6 +284,268 @@ module pc {
 
         sp(user = $.player): number {
             return user.magic > 1 ? Math.round(user.level + dice(user.level) + user.int / 10) : 0
+        }
+
+        status(profile: active) {
+            vt.action('clear')
+            this.portrait(profile)
+
+            const line = '------------------------------------------------------'
+            const space = '                                                      '
+            const sex = profile.user.sex == 'I' ? profile.user.gender : profile.user.sex
+            var i: number
+            var n: number
+
+            i = 22 - profile.user.handle.length
+            n = 11 + i / 2
+            vt.cls()
+            vt.out(vt.blue, '+', vt.faint, line.slice(0, n), vt.normal, '=:))')
+            vt.out(vt.Blue, vt.yellow, vt.bright, ' ', profile.user.handle, ' ', vt.reset)
+            n = 11 + i / 2 + i % 2
+            vt.outln(vt.blue, '((:=', vt.faint, line.slice(0, n), vt.normal, '+')
+
+            i = 30 - Access.name[profile.user.access][sex].length
+            n = 11 + i / 2
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.white, vt.normal, space.slice(0, n))
+            vt.out('"', Access.name[profile.user.access][sex], '"')
+            n = 11 + i / 2 + i % 2
+            vt.outln(vt.blue, space.slice(0, n), vt.reset, vt.blue, vt.faint, '|')
+
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+            vt.out('    Title: ', vt.white)
+            if ($.player.emulation == 'XT') vt.out('\r\x1B[2C', Access.name[profile.user.access].emoji, '\r\x1B[12C')
+            vt.out(sprintf('%-20s', profile.user.access))
+            vt.out(vt.cyan, ' Born: ', vt.white, date2full(profile.user.dob))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+            vt.out('    Class: ', vt.white)
+            if ($.player.emulation == 'XT' && profile.user.wins > 0) vt.out('\r\x1B[2C🎖️\r\x1B[12C')
+            vt.out(sprintf('%-21s', profile.user.pc + ' (' + profile.user.gender + ')'))
+            vt.out(vt.cyan, ' Exp: ', vt.white)
+            if (profile.user.xp < 1e+8)
+                vt.out(sprintf('%-15f', profile.user.xp))
+            else
+                vt.out(sprintf('%-15.7e', profile.user.xp))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+            vt.out(' Immortal: ', vt.white)
+            vt.out(sprintf('%-20s', (profile.user.wins ? `${romanize(profile.user.wins)}.` : '')
+                + profile.user.immortal + '.' + profile.user.level + ` (${profile.user.calls})`))
+            vt.out(vt.cyan, ' Need: ', vt.white)
+            if (experience(profile.user.level, undefined, profile.user.int) < 1e+8)
+                vt.out(sprintf('%-15f', experience(profile.user.level, undefined, profile.user.int)))
+            else
+                vt.out(sprintf('%-15.7e', experience(profile.user.level, undefined, profile.user.int)))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+            vt.out('      Str: ', vt.white)
+            if ($.player.emulation == 'XT') vt.out('\r\x1B[2C💪\r\x1B[12C')
+            vt.out(sprintf('%-20s', profile.str + ' (' + profile.user.str + ',' + profile.user.maxstr + ')'))
+            vt.out(vt.cyan, ' Hand: ', profile.user.coin.carry(), ' '.repeat(15 - profile.user.coin.amount.length))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+            vt.out('      Int: ', vt.white)
+            vt.out(sprintf('%-20s', profile.int + ' (' + profile.user.int + ',' + profile.user.maxint + ')'))
+            vt.out(vt.cyan, ' Bank: ', profile.user.bank.carry(), ' '.repeat(15 - profile.user.bank.amount.length))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+            vt.out('      Dex: ', vt.white)
+            vt.out(sprintf('%-20s', profile.dex + ' (' + profile.user.dex + ',' + profile.user.maxdex + ')'))
+            vt.out(vt.cyan, ' Loan: ', profile.user.loan.carry(), ' '.repeat(15 - profile.user.loan.amount.length))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+            vt.out('      Cha: ', vt.white)
+            vt.out(sprintf('%-19s', profile.cha + ' (' + profile.user.cha + ',' + profile.user.maxcha + ')'))
+            vt.out(vt.faint, ' Steal: ', vt.normal)
+            vt.out(sprintf('%-15s', ['lawful', 'desperate', 'trickster', 'adept', 'master'][profile.user.steal]))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+
+            if (profile.user.blessed) {
+                let who: user = { id: profile.user.blessed }
+                if (!loadUser(who)) {
+                    if (profile.user.blessed == 'well')
+                        who.handle = 'a wishing well'
+                    else
+                        who.handle = profile.user.blessed
+                }
+                vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.yellow, vt.bright)
+                vt.out(' +Blessed:', vt.white, vt.normal, ' by ', sprintf('%-39s', who.handle))
+                vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+            }
+
+            if (profile.user.cursed) {
+                let who: user = { id: profile.user.cursed }
+                if (!loadUser(who)) {
+                    if (profile.user.cursed == 'wiz!')
+                        who.handle = 'a doppelganger!'
+                    else
+                        who.handle = profile.user.cursed
+                }
+                vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.white)
+                vt.out('  -Cursed:', vt.normal, ' by ', sprintf('%-39s', who.handle))
+                vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+            }
+
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+            vt.out('       HP: ', vt.white)
+            if ($.player.emulation == 'XT') vt.out('\r\x1B[2C🌡️\r\x1B[12C')
+            vt.out(sprintf('%-42s', profile.hp + '/' + profile.user.hp + ' ('
+                + ['weak', 'normal', 'adept', 'warrior', 'brute', 'hero'][profile.user.melee] + ', '
+                + ['a rare', 'occasional', 'deliberate', 'angry', 'murderous'][profile.user.backstab] + ' backstab)'))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+
+            if (profile.user.magic > 1) {
+                vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.magenta, vt.bright)
+                vt.out('       SP: ', vt.white)
+                vt.out(sprintf('%-42s', profile.sp + '/' + profile.user.sp + ' (' + ['wizardry', 'arcane', 'divine'][profile.user.magic - 2] + ')'))
+                vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+            }
+
+            if (profile.user.spells.length) {
+                vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.magenta, vt.bright)
+                vt.out(sprintf(' %8s: ', ['Wands', 'Wands', 'Scrolls', 'Spells', 'Magus'][profile.user.magic]), vt.white)
+                let text = ''
+                n = 0
+                for (let p = 0; p < profile.user.spells.length; p++) {
+                    let spell = profile.user.spells[p]
+                    let name = Magic.pick(spell)
+                    if (spell < 5 || (spell < 17 && name.length > 7)) name = name.slice(0, 3)
+                    if (text.length + name.length > 40) break
+                    if (text.length) text += ','
+                    text += name
+                    n++
+                }
+                vt.out(sprintf('%-42s', text))
+                vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+                while (n < profile.user.spells.length) {
+                    text = ''
+                    i = 0
+                    vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.white, vt.bright, '           ')
+                    for (let p = 0; p < profile.user.spells.length; p++) {
+                        i++
+                        if (i > n) {
+                            let spell = profile.user.spells[p]
+                            let name = Magic.pick(spell)
+                            if (spell < 17 && name.length > 7) name = name.slice(0, 3)
+                            if (text.length + name.length > 40) break
+                            if (text.length) text += ','
+                            text += name
+                            n++
+                        }
+                    }
+                    vt.out(sprintf('%-42s', text))
+                    vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+                }
+            }
+
+            if (profile.user.rings.length) {
+                vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.magenta, vt.bright)
+                vt.out('    Rings: ', vt.white)
+                if ($.player.emulation == 'XT') vt.out('\r\x1B[2C💍\r\x1B[12C')
+                let text = ''
+                n = 0
+                for (let p = 0; p < profile.user.rings.length; p++) {
+                    let name = profile.user.rings[p]
+                    if (text.length + name.length > 40) break
+                    if (text.length) text += ','
+                    text += name
+                    n++
+                }
+                vt.out(sprintf('%-42s', text))
+                vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+                while (n < profile.user.rings.length) {
+                    text = ''
+                    i = 0
+                    vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.white, vt.bright, '           ')
+                    for (let p = 0; p < profile.user.rings.length; p++) {
+                        i++
+                        if (i > n) {
+                            let name = profile.user.rings[p]
+                            if (text.length + name.length > 40) break
+                            if (text.length) text += ','
+                            text += name
+                            n++
+                        }
+                    }
+                    vt.out(sprintf('%-42s', text))
+                    vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+                }
+            }
+
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.white)
+            vt.out('  Alchemy: ', vt.normal)
+            vt.out(sprintf('%-42s', ['banned', 'apprentice', 'expert (+1x,+1x)', 'artisan (+1x,+2x)', 'master (+2x,+2x)'][profile.user.poison]))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+
+            if (profile.user.poisons.length) {
+                vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.white)
+                vt.out(sprintf(' %8s: ', ['Vial', 'Toxin', 'Poison', 'Bane', 'Venena'][profile.user.poison]), vt.normal)
+                if ($.player.emulation == 'XT') vt.out('\r\x1B[2C🧪\r\x1B[12C')
+                vt.out(sprintf('%-42s', profile.user.poisons.toString()))
+                vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+            }
+
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+            vt.out('   Weapon: ')
+            if ($.player.emulation == 'XT') vt.out('\r\x1B[2C🗡️\r\x1B[12C')
+            vt.out(weapon(profile), ' '.repeat(42 - weapon(profile, true).length))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+            vt.out('    Armor: ')
+            if ($.player.emulation == 'XT') vt.out('\r\x1B[2C🛡\r\x1B[12C')
+            vt.out(armor(profile), ' '.repeat(42 - armor(profile, true).length))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+            vt.out(' Lives in: ', vt.white)
+            vt.out(sprintf('%-42s', profile.user.realestate + ' (' + profile.user.security + ')'))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+
+            if (profile.user.gang) {
+                vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+                vt.out('    Party: ', vt.white)
+                if ($.player.emulation == 'XT') vt.out('\r\x1B[2C🏴\r\x1B[12C')
+                vt.out(sprintf('%-42s', profile.user.gang))
+                vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+            }
+
+            if (+profile.user.hull) {
+                vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+                vt.out('  Warship: ', vt.white)
+                vt.out(sprintf('%-18s', profile.hull.toString() + ':' + profile.user.hull.toString()))
+                vt.out(vt.cyan, ' Cannon: ', vt.white)
+                vt.out(sprintf('%-15s', profile.user.cannon.toString() + ':' + (profile.user.hull / 50).toString() + (profile.user.ram ? ' (RAM)' : '')))
+                vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+            }
+
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+            vt.out(' Brawling: ', vt.white)
+            vt.out(sprintf('%-19s', profile.user.tw + ':' + profile.user.tl))
+            vt.out(vt.cyan, 'Steals: ', vt.white)
+            vt.out(sprintf('%-15s', profile.user.steals))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+            vt.out(' Jousting: ', vt.white)
+            vt.out(sprintf('%-20s', profile.user.jw + ':' + profile.user.jl + ` (${this.jousting(profile)})`))
+            vt.out(vt.cyan, 'Plays: ', vt.white)
+            vt.out(sprintf('%-15s', profile.user.plays))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+
+            vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
+            vt.out('    Kills: ', vt.white)
+            if ($.player.emulation == 'XT') vt.out('\r\x1B[2C💀\r\x1B[12C')
+            vt.out(sprintf('%-42s', profile.user.kills + ' with ' + profile.user.retreats + ' retreats and killed ' + profile.user.killed + 'x'))
+            vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
+
+            vt.outln(vt.blue, '+', vt.faint, line, vt.normal, '+')
         }
 
         who(pc: active | user, mob = false): who {

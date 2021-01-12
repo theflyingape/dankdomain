@@ -5,7 +5,7 @@
 
 import db = require('../db')
 import $ = require('../runtime')
-import { action, activate, bracket, cat, checkXP, death, display, loadUser, music, profile, reroll, sound, weapon } from '../io'
+import { activate, bracket, cat, checkXP, death, display, loadUser, reroll, weapon } from '../io'
 import { Coin, Armor, Magic, Poison, Weapon } from '../items'
 import { cuss, log } from '../lib'
 import { PC } from '../pc'
@@ -48,7 +48,7 @@ module Party {
         if (!$.reason && $.online.hp < 1) death('fought bravely?')
         if ($.reason) vt.hangup()
 
-        action('party')
+        vt.action('party')
         vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
@@ -115,7 +115,7 @@ module Party {
                     , win: 0, loss: 0, banner: 0, trim: 0, back: 0, fore: 0
                 }
 
-                action('freetext')
+                vt.action('freetext')
                 vt.form = {
                     'new': {
                         cb: () => {
@@ -136,7 +136,7 @@ module Party {
                             g.fore = dice(7)
                             showGang(g)
                             xtGang(g.name, $.player.gender, $.player.melee, g.banner, g.trim)
-                            action('yn')
+                            vt.action('yn')
                             vt.focus = 'accept'
                         }, prompt: 'New gang name? ', min: 2, max: 22
                     },
@@ -149,7 +149,7 @@ module Party {
                                 vt.outln()
                                 PC.saveGang(g, true)
                                 cat('party/gang')
-                                sound('click', 20)
+                                vt.sound('click', 20)
                                 menu()
                             }
                             else {
@@ -180,9 +180,9 @@ module Party {
                 g = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                 showGang(g)
                 xtGang(g.name, $.player.gender, $.player.melee, g.banner, g.trim)
-                sound('ddd', 6)
+                vt.sound('ddd', 6)
 
-                action('ny')
+                vt.action('ny')
                 vt.form = {
                     'resign': {
                         cb: () => {
@@ -252,7 +252,7 @@ module Party {
                 if (g.members.length > 0 && (g.members.length < 4 || g.members.indexOf($.player.id) > 0)) {
                     showGang(g)
 
-                    action('ny')
+                    vt.action('ny')
                     vt.form = {
                         'join': {
                             cb: () => {
@@ -264,7 +264,7 @@ module Party {
                                     db.run(`UPDATE Gangs SET members = '${g.members.join()}' WHERE name = '${g.name}'`)
                                     vt.outln('\n')
                                     cat('party/gang')
-                                    sound('click', 12)
+                                    vt.sound('click', 12)
                                     vt.outln(vt.cyan, 'You are now a member of ', vt.bright, g.name, vt.normal, '.', -1200)
                                 }
                                 else {
@@ -302,14 +302,14 @@ module Party {
                     break
                 }
                 xtGang(g.name, $.player.gender, $.player.melee, g.banner, g.trim)
-                sound('ddd', 6)
+                vt.sound('ddd', 6)
 
                 Battle.user('Transfer leadership to', (member: active) => {
                     let n = g.members.indexOf(member.user.id)
                     if (n < 0) {
                         vt.beep()
                         if (member.user.id) {
-                            profile(member)
+                            vt.profile(member)
                             vt.outln(`\n${member.user.handle} is not a member.`)
                         }
                     }
@@ -350,7 +350,7 @@ module Party {
                     break
                 }
                 xtGang(g.name, $.player.gender, $.player.melee, g.banner, g.trim)
-                action('ny')
+                vt.action('ny')
 
                 vt.form = {
                     'drop': {
@@ -377,7 +377,7 @@ module Party {
                                                 g.handles.splice(n, 1)
                                                 PC.saveGang(g)
                                                 showGang(g)
-                                                sound('click')
+                                                vt.sound('click')
                                                 vt.outln()
                                                 vt.outln(vt.bright, member.user.handle, ' is no longer on ', g.name, '.')
                                             }
@@ -407,7 +407,7 @@ module Party {
                                                 PC.saveGang(g)
                                                 showGang(g)
                                                 log(member.user.id, `\n${$.player.handle} invites you to join ${g.name}`)
-                                                sound('click')
+                                                vt.sound('click')
                                                 vt.outln()
                                                 vt.outln(vt.bright, member.user.handle, ' is invited to join ', g.name, '.')
                                             }
@@ -441,7 +441,7 @@ module Party {
                         vt.out(bracket(i + 1), o.name)
                 }
 
-                action('listmm')
+                vt.action('listmm')
                 vt.form = {
                     'gang': {
                         cb: () => {
@@ -535,7 +535,7 @@ module Party {
                                 return
                             }
 
-                            action('ny')
+                            vt.action('ny')
                             showGang(g, o, true)
                             xtGang(o.name, o.genders[0], o.melee[0], o.banner, o.trim)
                             vt.focus = 'fight'
@@ -546,7 +546,7 @@ module Party {
                             vt.outln('\n')
                             if (/Y/i.test(vt.entry)) {
                                 $.party--
-                                music('party')
+                                vt.music('party')
 
                                 if (!cat('dungeon/' + nme[0].user.handle.toLowerCase()))
                                     cat('player/' + nme[0].user.pc.toLowerCase())
@@ -567,7 +567,7 @@ module Party {
                 return
 
             case 'Q':
-                action('clear')
+                vt.action('clear')
                 require('./main').menu($.player.expert)
                 return
         }
@@ -700,15 +700,15 @@ module Party {
 
         switch (sex) {
             case 'I':
-                profile({ handle: name, leader: 'gang/leadermm', banner: 'gang/bannermm', coat: 'gang/coatmm' })
+                vt.profile({ handle: name, leader: 'gang/leadermm', banner: 'gang/bannermm', coat: 'gang/coatmm' })
                 break
 
             case 'F':
-                profile({ handle: name, leader: `gang/leader${melee}_f`, banner: `gang/banner${banner}`, coat: `gang/coat${coat}` })
+                vt.profile({ handle: name, leader: `gang/leader${melee}_f`, banner: `gang/banner${banner}`, coat: `gang/coat${coat}` })
                 break
 
             default:
-                profile({ handle: name, leader: `gang/leader${melee}`, banner: `gang/banner${banner}`, coat: `gang/coat${coat}` })
+                vt.profile({ handle: name, leader: `gang/leader${melee}`, banner: `gang/banner${banner}`, coat: `gang/coat${coat}` })
                 break
         }
     }

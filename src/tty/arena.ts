@@ -6,7 +6,7 @@
 import { dice, int, money, romanize, sprintf, vt } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
-import { action, animated, bracket, cat, checkXP, display, getRing, music, profile, reroll, sound, wall, wearing, activate, loadUser } from '../io'
+import { bracket, cat, checkXP, display, getRing, reroll, wearing, activate, loadUser } from '../io'
 import { Coin, Access, Armor, Magic, Poison, Ring, Weapon } from '../items'
 import { log, news, tradein } from '../lib'
 import { PC } from '../pc'
@@ -32,7 +32,7 @@ module Arena {
         if ($.online.altered) PC.saveUser($.online)
         if ($.reason) vt.hangup()
 
-        action('arena')
+        vt.action('arena')
         vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
@@ -68,7 +68,7 @@ module Arena {
                 return
 
             case 'G':
-                action('clear')
+                vt.action('clear')
                 require('./square').menu($.player.expert)
                 return
 
@@ -121,14 +121,14 @@ module Arena {
                         return
                     }
 
-                    action('ny')
+                    vt.action('ny')
                     vt.form = {
                         'compete': {
                             cb: () => {
                                 vt.outln('\n')
                                 if (/Y/i.test(vt.entry)) {
-                                    if ($.joust-- > 2) music('joust')
-                                    profile({
+                                    if ($.joust-- > 2) vt.music('joust')
+                                    vt.profile({
                                         jpg: 'arena/joust'
                                         , handle: opponent.user.handle
                                         , level: opponent.user.level, pc: opponent.user.pc
@@ -137,7 +137,7 @@ module Arena {
                                     vt.out('The trumpets blare! ', -400, 'You and your opponent ride into the arena. ', -400)
                                     vt.outln(opponent.user.id == $.king.id ? '\nThe crowd goes silent.' : 'The crowd roars!', -400)
                                     $.online.altered = true
-                                    action('joust')
+                                    vt.action('joust')
 
                                     round()
                                     vt.focus = 'joust'
@@ -152,15 +152,15 @@ module Arena {
                                 vt.outln('\n')
                                 if (/F/i.test(vt.entry)) {
                                     log(opponent.user.id, `\n${$.player.handle} forfeited to you in a joust.`)
-                                    animated('pulse')
+                                    vt.animated('pulse')
                                     if (opponent.user.id == $.king.id) {
-                                        sound('cheer')
+                                        vt.sound('cheer')
                                         PC.adjust('cha', 101)
                                         vt.outln('The crowd is delighted by your show of respect to the Crown.', -300)
                                     }
                                     else {
-                                        sound('boo')
-                                        animated('slideOutRight')
+                                        vt.sound('boo')
+                                        vt.animated('slideOutRight')
                                         $.player.jl++
                                         db.run(`UPDATE Players set jw=jw+1 WHERE id='${opponent.user.id}'`)
                                         vt.outln('The crowd throws rocks at you as you ride out of the arena.', -300)
@@ -174,20 +174,20 @@ module Arena {
                                     while (!result)
                                         result = (ability + dice(factor * $.player.level)) - (versus + dice(factor * opponent.user.level))
                                     if (result > 0) {
-                                        sound('wall')
-                                        animated(['flash', 'jello', 'rubberBand'][jw])
+                                        vt.sound('wall')
+                                        vt.animated(['flash', 'jello', 'rubberBand'][jw])
                                         vt.outln(vt.green, '-*>', vt.bright, vt.white, ' Thud! ', vt.normal, vt.green, '<*-  ', vt.reset, 'A hit! ', -100, ' You win this pass!', -100)
                                         if (++jw == 3) {
                                             vt.outln('\nYou have won the joust!')
                                             if (opponent.user.id == $.king.id) {
-                                                sound('boo')
-                                                animated('fadeOut')
+                                                vt.sound('boo')
+                                                vt.animated('fadeOut')
                                                 PC.adjust('cha', -2, -1)
                                                 vt.outln('The crowd is furious!', -250)
                                             }
                                             else {
-                                                sound('cheer')
-                                                animated('hinge')
+                                                vt.sound('cheer')
+                                                vt.animated('hinge')
                                                 vt.outln('The crowd cheers!', -250)
                                             }
                                             let reward = new Coin(money(opponent.user.level))
@@ -210,28 +210,28 @@ module Arena {
                                     else {
                                         if (Ring.power(opponent.user.rings, $.player.rings, 'joust').power
                                             && !Ring.power($.player.rings, opponent.user.rings, 'joust').power && dice(3) == 1) {
-                                            sound('swoosh')
+                                            vt.sound('swoosh')
                                             vt.out(vt.magenta, '^>', vt.white, ' SWOOSH ', vt.magenta, '<^  ', vt.reset
                                                 , PC.who(opponent).He, 'missed! ', -100, ' You both pass and try again!', -100)
                                             vt.refocus()
                                             return
                                         }
 
-                                        animated(['bounce', 'shake', 'tada'][jl])
-                                        sound('oof')
+                                        vt.animated(['bounce', 'shake', 'tada'][jl])
+                                        vt.sound('oof')
                                         vt.outln(vt.magenta, '^>', vt.bright, vt.white, ' Oof! ', vt.normal, vt.magenta, '<^  ', vt.reset
                                             , PC.who(opponent).He, 'hits! ', -100, ' You lose this pass!', -100)
                                         if (++jl == 3) {
                                             vt.outln('\nYou have lost the joust!')
-                                            sound('boo')
+                                            vt.sound('boo')
                                             vt.outln('The crowd boos you!', -200)
                                             let reward = new Coin(money($.player.level))
                                             $.player.jl++
                                             if (db.run(`UPDATE Players set jw=jw+1, coin=coin+${reward.value} WHERE id='${opponent.user.id}'`).changes)
                                                 log(opponent.user.id, `\n${$.player.handle} lost to you in a joust.  You got ${reward.carry(2, true)}.`)
                                             news(`\tlost to ${opponent.user.handle} in a joust`)
-                                            wall(`lost to ${opponent.user.handle} in a joust`)
-                                            animated('slideOutRight')
+                                            vt.wall($.player.handle, `lost to ${opponent.user.handle} in a joust`)
+                                            vt.animated('slideOutRight')
                                             vt.outln(opponent.user.handle, ' spits on your face.', -300)
                                             menu()
                                             return
@@ -258,7 +258,7 @@ module Arena {
                     suppress = true
                     break
                 }
-                action('monster')
+                vt.action('monster')
                 vt.form = {
                     pick: {
                         cb: () => {
@@ -372,14 +372,14 @@ module Arena {
 
                     wearing(opponent)
 
-                    action('ny')
+                    vt.action('ny')
                     vt.form = {
                         'fight': {
                             cb: () => {
                                 vt.outln()
                                 if (/Y/i.test(vt.entry)) {
                                     if (activate(opponent, true)) {
-                                        music('combat' + $.arena--)
+                                        vt.music('combat' + $.arena--)
                                         Battle.engage('User', $.online, opponent, menu)
                                     }
                                     else {
@@ -410,7 +410,7 @@ module Arena {
         let cost: Coin
         let monster: active
 
-        action('clear')
+        vt.action('clear')
         if (/D/i.test(vt.entry)) {
             if ($.player.level < 50) {
                 vt.outln('\nYou are not powerful enough to fight demons yet.  Go fight some monsters.')
@@ -425,7 +425,7 @@ module Arena {
                 return
             }
 
-            action('yn')
+            vt.action('yn')
             vt.form = {
                 'pay': {
                     cb: () => {
@@ -482,7 +482,7 @@ module Arena {
                             activate(monster)
                             monster.user.coin.value += cost.value
 
-                            profile({
+                            vt.profile({
                                 jpg: 'arena/' + monster.user.handle.toLowerCase()
                                 , handle: `${monster.user.handle}`, level: monster.user.level, pc: 'contest'
                                 , effect: 'jello'
@@ -492,7 +492,7 @@ module Arena {
                             vt.outln(`The old necromancer summons you a level ${monster.user.level} creature.`)
                             wearing(monster)
 
-                            action('ny')
+                            vt.action('ny')
                             vt.focus = 'fight'
                             return
                         }
@@ -505,11 +505,11 @@ module Arena {
                     cb: () => {
                         vt.outln()
                         if (/Y/i.test(vt.entry)) {
-                            music('combat' + $.arena--)
+                            vt.music('combat' + $.arena--)
                             Battle.engage('Monster', $.online, monster, menu)
                         }
                         else {
-                            animated('fadeOut')
+                            vt.animated('fadeOut')
                             menu()
                         }
                     }, prompt: 'Fight this demon (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 30
@@ -519,7 +519,7 @@ module Arena {
         }
         else {
             let mon = int(vt.entry) - 1
-            if (mon == monsters.length - 1) sound('demogorgon')
+            if (mon == monsters.length - 1) vt.sound('demogorgon')
             monster = <active>{}
             monster.user = <user>{ id: '', handle: monsters[mon].name, sex: 'I' }
             reroll(monster.user, monsters[mon].pc, monsters[mon].level)
@@ -537,7 +537,7 @@ module Arena {
             monster.user.coin.amount = monsters[mon].money.toString()
 
             cat('arena/' + monster.user.handle.toLowerCase())
-            profile({
+            vt.profile({
                 jpg: 'arena/' + monster.user.handle.toLowerCase()
                 , handle: `#${mon + 1} - ${monster.user.handle}`
                 , level: monster.user.level, pc: monster.user.pc.toLowerCase()
@@ -549,20 +549,20 @@ module Arena {
             vt.outln()
             wearing(monster)
 
-            action('ny')
+            vt.action('ny')
             vt.form = {
                 'fight': {
                     cb: () => {
                         vt.outln()
                         if (/Y/i.test(vt.entry)) {
                             if (mon == monsters.length - 1)
-                                music('boss' + $.arena--)
+                                vt.music('boss' + $.arena--)
                             else
-                                music('combat' + $.arena--)
+                                vt.music('combat' + $.arena--)
                             Battle.engage('Monster', $.online, monster, menu)
                         }
                         else {
-                            animated('fadeOut')
+                            vt.animated('fadeOut')
                             menu()
                         }
                     }, prompt: 'Will you fight it (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10

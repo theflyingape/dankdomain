@@ -6,7 +6,7 @@
 import { an, date2full, dice, fs, int, money, sprintf, whole, vt } from './sys'
 import db = require('./db')
 import $ = require('./runtime')
-import { action, activate, animated, armor, bracket, buff, checkXP, death, expout, getRing, input, loadUser, music, portrait, profile, reroll, rings, sound, wall, weapon } from './io'
+import { activate, armor, bracket, buff, checkXP, death, expout, getRing, input, loadUser, reroll, rings, weapon } from './io'
 import { Coin, Access, Armor, Deed, Magic, Poison, Ring, Weapon } from './items'
 import { cuss, encounter, experience, log, news, tradein, what } from './lib'
 import { PC } from './pc'
@@ -49,24 +49,24 @@ module Battle {
                 $.player.coin.value = 0
                 death($.reason || `refused ${$.dwarf.user.handle}`)
                 vt.outln('  ', vt.bright, vt.yellow, '"Next time bring friends."')
-                sound('punk', 8)
+                vt.sound('punk', 8)
             }
             else {
                 news(`\tdefeated ${$.dwarf.user.handle}`)
-                wall(`defeated ${$.dwarf.user.handle}`)
+                vt.wall($.player.handle, `defeated ${$.dwarf.user.handle}`)
                 $.player.coward = false
             }
         }
 
         if ($.from == 'Naval') {
             if ($.online.hp > 0) {
-                sound('naval' + (parties[1][0].user.id == '_OLD' ? '_f' : ''), 32)
+                vt.sound('naval' + (parties[1][0].user.id == '_OLD' ? '_f' : ''), 32)
                 PC.adjust('str', 102, 1, 1)
                 PC.adjust('int', 102, 1, 1)
                 PC.adjust('dex', 102, 1, 1)
                 PC.adjust('cha', 102, 1, 1)
                 news(`\tsurvived ${parties[1][0].user.handle}`)
-                wall(`survived ${parties[1][0].user.handle}`)
+                vt.wall($.player.handle, `survived ${parties[1][0].user.handle}`)
             }
             else {
                 PC.adjust('str', -2, -1, -1)
@@ -94,14 +94,14 @@ module Battle {
                 PC.saveUser($.player)
                 $.reason = `schooled by ${$.barkeep.user.handle}`
                 //  go crazy!
-                sound('winner', 32)
+                vt.sound('winner', 32)
                 $.player.coin.value = 0
                 vt.outln('\n  ', vt.bright, vt.green, '"Drinks are on the house!"', -2250)
             }
             else {
-                music('barkeep')
+                vt.music('barkeep')
                 news(`\tdefeated ${$.barkeep.user.handle}`)
-                wall(`defeated ${$.barkeep.user.handle}`)
+                vt.wall($.player.handle, `defeated ${$.barkeep.user.handle}`)
 
                 let trophy = JSON.parse(fs.readFileSync(`./files/tavern/trophy.json`).toString())
                 Weapon.equip($.barkeep, trophy.weapon)
@@ -113,7 +113,7 @@ module Battle {
                     fs.writeFileSync('./files/tavern/trophy.json', JSON.stringify({ "who": "_TAX", "weapon": "Needle" }))
                 }
                 //  no entertainment
-                sound('ko', 12)
+                vt.sound('ko', 12)
                 if ($.player.cha > 49) PC.adjust('cha', -22, -20, -2)
                 $.player.coward = false
             }
@@ -133,12 +133,12 @@ module Battle {
                 vt.beep()
                 death($.reason || 'tax evasion')
                 vt.outln('  ', vt.blue, vt.bright, '"Thanks for the taxes!"')
-                sound('thief2', 16)
+                vt.sound('thief2', 16)
             }
             else {
                 if ($.from == 'Taxman') {
                     news(`\tdefeated ${$.taxman.user.handle}`)
-                    wall(`defeated ${$.taxman.user.handle}`)
+                    vt.wall($.player.handle, `defeated ${$.taxman.user.handle}`)
                 }
                 $.player.coward = false
             }
@@ -149,13 +149,13 @@ module Battle {
                 $.player.coin.value = 0
                 death($.reason || `refused ${$.witch.user.handle}`)
                 vt.outln('  ', vt.bright, vt.green, '"Hell hath no fury like a woman scorned."')
-                sound('crone', 30)
+                vt.sound('crone', 30)
             }
             else {
-                animated('hinge')
-                sound('naval_f', 25)
+                vt.animated('hinge')
+                vt.sound('naval_f', 25)
                 news(`\tdefeated ${$.witch.user.handle}`)
-                wall(`defeated ${$.witch.user.handle}`)
+                vt.wall($.player.handle, `defeated ${$.witch.user.handle}`)
                 $.player.coward = false
                 $.sorceress = 0
             }
@@ -166,12 +166,12 @@ module Battle {
             if (!(opponent.user.id[0] == '_' || opponent.user.gender == 'I')) {
                 PC.saveUser(opponent, false, true)
                 if ($.player.hp > 0 && opponent.hp == 0) {
-                    action('ny')
+                    vt.action('ny')
                     vt.form = {
                         'yn': {
                             cb: () => {
                                 if (/Y/i.test(vt.entry)) {
-                                    action('freetext')
+                                    vt.action('freetext')
                                     vt.focus = 'message'
                                 }
                                 else {
@@ -327,7 +327,7 @@ module Battle {
         }
 
         if (rpc === $.online) {
-            action('battle')
+            vt.action('battle')
             vt.form = {
                 'attack': {
                     cb: () => {
@@ -349,7 +349,7 @@ module Battle {
                                     vt.outln(vt.bright, vt.green, 'You try to escape, but the crowd throws you back to witness the slaughter!')
                                 if ($.from == 'Taxman')
                                     vt.outln(vt.bright, vt.blue, '"You can never escape the taxman!"')
-                                sound({ _BAR: 'growl', _DM: 'punk', _NEP: 'thunder', _OLD: 'crone', _TAX: 'thief2' }[enemy.user.id], 12)
+                                vt.sound({ _BAR: 'growl', _DM: 'punk', _NEP: 'thunder', _OLD: 'crone', _TAX: 'thief2' }[enemy.user.id], 12)
                                 PC.adjust('cha', -2, -1)
                                 PC.saveUser($.player)
                                 next()
@@ -434,7 +434,7 @@ module Battle {
                     bs += (roll == 1) ? -1 : (roll > 99) ? dice($.player.backstab) : 0
                 } while (roll == 1 || roll > 99)
                 if (bs > 1) {
-                    action('yn')
+                    vt.action('yn')
                     vt.form['backstab'].prompt = 'Attempt to backstab'
                         + (bs > 2 && bs != $.player.backstab ? ' for ' + vt.attr(vt.cyan, vt.bright, bs.toString(), vt.faint, 'x', vt.normal) : '')
                         + ' (Y/N)? '
@@ -449,7 +449,7 @@ module Battle {
             }
             else {
                 if ($.online.hp - 2 < 2 * $.player.level) {
-                    sound('weak', 8)
+                    vt.sound('weak', 8)
                     vt.drain()
                 }
                 let choices = vt.attr(vt.reset, vt.blue, '[')
@@ -635,18 +635,18 @@ module Battle {
                                 vt.outln('You ', enemy.user.xplevel < 1 ? 'eliminated' : 'killed'
                                     , enemy.user.gender == 'I' ? ' the ' : ' ', enemy.user.handle, '!\n')
                                 if (enemy.user.id !== '' && enemy.user.id[0] !== '_') {
-                                    sound('kill', 15)
-                                    music($.player.gender == 'M' ? 'bitedust' : 'queen')
+                                    vt.sound('kill', 15)
+                                    vt.music($.player.gender == 'M' ? 'bitedust' : 'queen')
                                     news(`\tdefeated ${enemy.user.handle}, a level ${enemy.user.xplevel} ${enemy.user.pc}`)
-                                    wall(`defeated ${enemy.user.handle}`)
+                                    vt.wall($.player.handle, `defeated ${enemy.user.handle}`)
                                 }
                             }
                             if ($.from == 'Monster' && enemy.user.xplevel > 0) {
                                 news(`\tdefeated a level ${enemy.user.xplevel} ${enemy.user.handle}`)
-                                wall(`defeated a level ${enemy.user.level} ${enemy.user.handle}`)
+                                vt.wall($.player.handle, `defeated a level ${enemy.user.level} ${enemy.user.handle}`)
                             }
                         }
-                        if ($.from == 'Dungeon') animated(['bounceOut', 'fadeOut', 'flipOutX', 'flipOutY', 'rollOut', 'rotateOut', 'zoomOut'][dice(7) - 1])
+                        if ($.from == 'Dungeon') vt.animated(['bounceOut', 'fadeOut', 'flipOutX', 'flipOutY', 'rollOut', 'rotateOut', 'zoomOut'][dice(7) - 1])
                     }
                 }
             }
@@ -773,12 +773,12 @@ module Battle {
 
             if (winner === $.online) {
                 news(`\tdefeated the gang, ${parties[l][0].user.gang}`)
-                wall(`defeated the gang, ${parties[l][0].user.gang}`)
+                vt.wall($.player.handle, `defeated the gang, ${parties[l][0].user.gang}`)
             }
             else if ($.online.hp == 0) {
                 death(`defeated by the gang, ${parties[w][0].user.gang}`)
-                music('.')
-                sound('effort', 15)
+                vt.music('.')
+                vt.sound('effort', 15)
             }
             return
         }
@@ -795,7 +795,7 @@ module Battle {
                     log(loser.user.id, `\n${$.player.handle} killed you!`)
 
                     if (/Monster|User/.test($.from)) {
-                        animated(loser.user.id ? 'hinge' : 'rotateOutDownRight')
+                        vt.animated(loser.user.id ? 'hinge' : 'rotateOutDownRight')
                         loser.altered = true
                         loser.user.status = winner.user.id
                         let x = loser.user.id ? 2 : 3
@@ -808,12 +808,12 @@ module Battle {
 
                     if (loser.user.sex !== 'I' && loser.user.rings.length) {
                         vt.out('You start by removing ', loser.user.rings.length > 1 ? 'all of ' : '', loser.who.his, 'rings...')
-                        sound('click', 8)
+                        vt.sound('click', 8)
                         loser.user.rings.forEach(ring => {
                             if (Ring.wear(winner.user.rings, ring)) {
                                 getRing(['fondle', 'polish', 'slip on', 'wear', 'win'][dice(5) - 1], ring)
                                 Ring.save(ring, winner.user.id)
-                                sound('click', 8)
+                                vt.sound('click', 8)
                                 log(loser.user.id, `... took your ${ring} ring.`)
                             }
                         })
@@ -842,7 +842,7 @@ module Battle {
                         result = Armor.swap(winner, loser, credit)
                         if (typeof result == 'boolean' && result) {
                             vt.outln(winner.who.He, 'also ', what(winner, 'take'), loser.who.his, winner.user.armor, '.')
-                            if (/_DM|_NEP|_OLD|_TAX/.test(loser.user.id)) sound('shield', 16)
+                            if (/_DM|_NEP|_OLD|_TAX/.test(loser.user.id)) vt.sound('shield', 16)
                         }
                         else if ($.from == 'Monster' && result)
                             vt.outln(winner.who.He, 'also ', what(winner, 'get'), credit.carry(), ' for ', loser.who.his, loser.user.armor, '.')
@@ -973,7 +973,7 @@ module Battle {
                         , $.player.rings.length > 1 ? 'all of ' : '', $.online.who.his, 'rings...')
                     $.player.rings.forEach(ring => {
                         vt.out(' ', bracket(ring, false), ' ')
-                        sound('click')
+                        vt.sound('click')
                         if (Ring.wear(winner.user.rings, ring))
                             Ring.save(ring, winner.user.id)
                     })
@@ -984,7 +984,7 @@ module Battle {
 
                 if (winner.user.gang && winner.user.gang == $.player.gang) {
                     PC.adjust('cha', -1, -1, -1)
-                    music('punk')
+                    vt.music('punk')
                     gang = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name='${$.player.gang}'`)[0])
                     let n = gang.members.indexOf(winner.user.id)
                     if (n == 0) {
@@ -1008,12 +1008,12 @@ module Battle {
     export function brawl(rpc: active, nme: active, vs = false) {
         const p1 = PC.who(rpc, vs), p2 = PC.who(nme, vs)
         if (dice(100) >= (50 + int(rpc.dex / 2))) {
-            sound(rpc.user.id == $.player.id ? 'whoosh' : 'swoosh')
+            vt.sound(rpc.user.id == $.player.id ? 'whoosh' : 'swoosh')
             vt.outln(`\n${p2.He}${what(nme, 'duck')}${p1.his}punch.`, -400)
             let patron = encounter()
             if (patron.user.id && patron.user.id !== rpc.user.id && patron.user.id !== nme.user.id && !patron.user.status) {
                 vt.outln(`\n${p1.He}${what(rpc, 'hit')}${patron.user.handle}!`)
-                sound('duck', 8)
+                vt.sound('duck', 8)
                 let bp = punch(rpc)
                 patron.bp -= bp
                 if (patron.bp > 0) {
@@ -1053,7 +1053,7 @@ module Battle {
 
             loser.user.tl++
             if (loser.user.id == $.player.id) {
-                sound('ko')
+                vt.sound('ko')
                 let m = Math.abs($.online.bp)
                 while (m > 9)
                     m >>= 1
@@ -1072,7 +1072,7 @@ module Battle {
         }
 
         function punch(p: active): number {
-            sound('punch' + dice(3))
+            vt.sound('punch' + dice(3))
             let punch = int((p.user.level + p.str / 10) / 2)
             punch += dice(punch)
             return punch
@@ -1106,7 +1106,7 @@ module Battle {
 
         if (rpc === $.online) {
             p1 = PC.who(rpc)
-            action('list')
+            vt.action('list')
             vt.form = {
                 'magic': {
                     cb: () => {
@@ -1189,7 +1189,7 @@ module Battle {
                     }
                     if (spell.cast > 8) {
                         if (rpc === $.online) {
-                            sound('oops', 4)
+                            vt.sound('oops', 4)
                             vt.outln('You are too frantic to cast that spell!')
                         }
                         cb(!rpc.confused)
@@ -1232,7 +1232,7 @@ module Battle {
                                 vt.outln(Recipient, what(nme, 'drain'), 'an extra ', vt.bright, vt.cyan, mana.toString(), vt.normal, ' mana '
                                     , vt.reset, 'from ', p1.his, 'spell.')
                             }
-                            sound('mana', 8)
+                            vt.sound('mana', 8)
                         }
                     }
                 }
@@ -1279,11 +1279,11 @@ module Battle {
             if (dice(100) > Magic.ability(name, rpc, nme).fail) {
                 if ((backfire = dice(100) > Magic.ability(name, rpc, nme).backfire)) {
                     vt.outln('Oops!  ', p1.His, ['try', 'wand', 'scroll', 'spell', 'magic'][rpc.user.magic], ' backfires!')
-                    sound('oops', 4)
+                    vt.sound('oops', 4)
                 }
                 else {
                     vt.outln('Fssst!  ', p1.His, 'attempt fails!')
-                    sound('fssst', 4)
+                    vt.sound('fssst', 4)
                     cb()
                     return
                 }
@@ -1358,7 +1358,7 @@ module Battle {
                         vt.outln(p1.His, isNaN(+rpc.user.armor) ? armor(rpc) : 'defense', ' loses some of its effectiveness')
                     }
                     else {
-                        sound('shield')
+                        vt.sound('shield')
                         if (rpc.user.magic > 2 && rpc.user.toAC >= 0)
                             rpc.user.toAC++
                         rpc.toAC++
@@ -1371,7 +1371,7 @@ module Battle {
                     if (dice(3 * (rpc.user.toAC + rpc.toAC + 1) / rpc.user.magic) > rpc.armor.ac) {
                         vt.outln(p1.His, isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' vaporizes!')
                         Armor.equip(rpc, Armor.merchant[0])
-                        if (rpc === $.online) sound('crack', 6)
+                        if (rpc === $.online) vt.sound('crack', 6)
                     }
                     rpc.altered = true
                     break
@@ -1384,7 +1384,7 @@ module Battle {
                         vt.outln(p1.His, isNaN(+rpc.user.weapon) ? weapon(rpc) : 'attack', ' loses some of its effectiveness')
                     }
                     else {
-                        sound('hone')
+                        vt.sound('hone')
                         if (rpc.user.magic > 2 && rpc.user.toWC >= 0)
                             rpc.user.toWC++
                         rpc.toWC++
@@ -1397,7 +1397,7 @@ module Battle {
                     if (dice(3 * (rpc.user.toWC + rpc.toWC + 1) / rpc.user.magic) > rpc.weapon.wc) {
                         vt.outln(p1.His, rpc.user.weapon ? rpc.user.weapon : 'attack', ' vaporizes!')
                         Weapon.equip(rpc, Weapon.merchant[0])
-                        if (rpc === $.online) sound('crack', 6)
+                        if (rpc === $.online) vt.sound('crack', 6)
                     }
                     rpc.altered = true
                     break
@@ -1409,7 +1409,7 @@ module Battle {
                         hr += dice(ha)
 
                     if (backfire) {
-                        sound('hurt', 3)
+                        vt.sound('hurt', 3)
                         rpc.hp -= hr
                         vt.outln(Caster, what(rpc, 'hurt'), p1.self, 'for ', hr.toString(), ' hit points!')
                         if (rpc.hp < 1) {
@@ -1420,7 +1420,7 @@ module Battle {
                         }
                     }
                     else {
-                        sound('heal', 3)
+                        vt.sound('heal', 3)
                         rpc.hp += hr
                         if (rpc.hp > rpc.user.hp)
                             rpc.hp = rpc.user.hp
@@ -1430,7 +1430,7 @@ module Battle {
 
                 case 8:
                     if (nme) {
-                        sound('teleport')
+                        vt.sound('teleport')
                         vt.out(vt.bright, vt.magenta)
                         if (backfire) {
                             vt.out(Caster, what(rpc, 'teleport'), recipient, ' ')
@@ -1468,7 +1468,7 @@ module Battle {
                     break
 
                 case 9:
-                    sound('blast', 3)
+                    vt.sound('blast', 3)
                     let ba = rpc.user.magic > 2
                         ? 17 + int(rpc.user.magic / 4) + int(rpc.user.level / 11) - (backfire
                             ? int(whole(rpc.armor.ac + rpc.user.toAC + rpc.toWC) / 5)
@@ -1525,19 +1525,19 @@ module Battle {
 
                 case 10:
                     if (backfire) {
-                        music('crack')
+                        vt.music('crack')
                         vt.outln(vt.faint, 'You die by your own doing.', -600)
-                        sound('killed', 4)
+                        vt.sound('killed', 4)
                         rpc.hp = 0
                         death(`resurrect backfired`)
                         break
                     }
                     else {
-                        sound('resurrect')
+                        vt.sound('resurrect')
                         if (DL) {
                             if (DL.cleric.user.status) {
-                                music('winner')
-                                profile({ jpg: 'npc/resurrect', effect: 'fadeInUp' })
+                                vt.music('winner')
+                                vt.profile({ jpg: 'npc/resurrect', effect: 'fadeInUp' })
                                 DL.cleric.user.status = ''
                                 activate(DL.cleric)
                                 PC.adjust('cha', 104, 2, 1)
@@ -1551,7 +1551,7 @@ module Battle {
                                 vt.outln(vt.bright, vt.black, '\nGo get some coffee.')
                             }
                             else {
-                                portrait(opponent, 'fadeInUpBig')
+                                PC.portrait(opponent, 'fadeInUpBig')
                                 vt.out(-200, vt.magenta, vt.bright, 'Now raising ', -300, vt.normal, opponent.user.handle, -400, vt.faint, ' from the dead ... ', -500)
                                 opponent.user.status = ''
                                 PC.saveUser(opponent)
@@ -1566,7 +1566,7 @@ module Battle {
                     }
 
                 case 11:
-                    sound('confusion')
+                    vt.sound('confusion')
                     vt.out(Caster, what(rpc, 'blitz'))
                     if (backfire) {
                         vt.out(p1.self)
@@ -1591,7 +1591,7 @@ module Battle {
                     break
 
                 case 12:
-                    sound('transmute', 4)
+                    vt.sound('transmute', 4)
                     if (backfire) {
                         if (isNaN(+rpc.user.weapon))
                             vt.out(Caster, what(rpc, 'transform'), p1.his, weapon(rpc), ' into', -600, '\n   ')
@@ -1625,7 +1625,7 @@ module Battle {
                     break
 
                 case 13:
-                    sound('cure', 6)
+                    vt.sound('cure', 6)
                     if (backfire) {
                         vt.out(Caster, what(rpc, 'cure'), recipient)
                         nme.hp = nme.user.hp
@@ -1641,7 +1641,7 @@ module Battle {
                     break
 
                 case 14:
-                    sound('illusion')
+                    vt.sound('illusion')
                     vt.out(Caster, what(rpc, 'render'), 'an image of ')
                     let iou = <active>{}
                     iou.user = <user>{ id: '', sex: 'I', armor: 0, weapon: 0 }
@@ -1668,7 +1668,7 @@ module Battle {
                     break
 
                 case 15:
-                    sound('disintegrate', 6)
+                    vt.sound('disintegrate', 6)
                     vt.out(Caster, what(rpc, 'completely atomize'))
                     if (backfire) {
                         vt.out(p1.self)
@@ -1683,7 +1683,7 @@ module Battle {
                     break
 
                 case 16:
-                    sound('morph', 10)
+                    vt.sound('morph', 10)
                     if (backfire) {
                         rpc.user.level = dice(99)
                         reroll(rpc.user, PC.random('monster'), rpc.user.level)
@@ -1770,7 +1770,7 @@ module Battle {
 
                 case 19:
                     vt.out('A ', vt.bright, vt.white, 'blinding flash', vt.normal, ' erupts... ')
-                    sound('bigblast', 10)
+                    vt.sound('bigblast', 10)
                     let bba = 2 * (rpc.user.magic > 2
                         ? 17 + int(rpc.user.magic / 4) + int(rpc.user.level / 11) - (backfire
                             ? int(whole(rpc.armor.ac + rpc.user.toAC + rpc.toWC) / 5)
@@ -1836,7 +1836,7 @@ module Battle {
                     vt.out(vt.lcyan, vt.LGradient
                         , vt.lblack, vt.lCyan, 'orb', vt.Black
                         , vt.lcyan, vt.RGradient)
-                    sound('mana')
+                    vt.sound('mana')
                     vt.outln(vt.reset, vt.cyan, ' radiates ', vt.faint, 'above ', backfire ? p2.him : p1.him
                         , vt.white, '... ', -200)
 
@@ -1869,7 +1869,7 @@ module Battle {
                     break
 
                 case 21:
-                    sound('life')
+                    vt.sound('life')
                     vt.outln(vt.black, vt.bright, 'A black finger extends and touches ', backfire ? p1.him : p2.him, '... ', -750)
                     let xp = 0
                     if (backfire) {
@@ -1888,7 +1888,7 @@ module Battle {
                     break
 
                 case 22:
-                    sound('lose')
+                    vt.sound('lose')
                     vt.outln(vt.black, vt.bright, 'A shroud of blackness engulfs ', backfire ? p1.him : p2.him, '... ', 750)
                     if (backfire) {
                         if (rpc.user.level < 2) {
@@ -1941,7 +1941,7 @@ module Battle {
                         vt.outln(p1.His, isNaN(+rpc.user.armor) ? rpc.user.armor : 'defense', ' loses most of its effectiveness')
                     }
                     else {
-                        sound('shield')
+                        vt.sound('shield')
                         vt.outln('A magical field glitters around ', isNaN(+rpc.user.armor) ? `${p1.his}${rpc.user.armor} ` : p1.him, '...')
                         if (rpc.user.magic > 2 && rpc.user.toAC >= 0)
                             rpc.user.toAC++
@@ -1961,7 +1961,7 @@ module Battle {
                             rpc.toWC--
                     }
                     else {
-                        sound('hone')
+                        vt.sound('hone')
                         vt.outln(p1.His, isNaN(+rpc.user.weapon) ? rpc.user.weapon : 'attack', ' emanates magical sharpness')
                         if (rpc.user.magic > 2 && rpc.user.toWC >= 0)
                             rpc.user.toWC++
@@ -2014,11 +2014,11 @@ module Battle {
             if (blow == 1) {
                 if (rpc === $.online) {
                     vt.outln('Your ', weapon(), ' passes through thin air.')
-                    sound('miss')
+                    vt.sound('miss')
                     return
                 }
                 else {
-                    sound(rpc.user.melee < 2 ? 'whoosh' : rpc.user.gender == 'I' ? 'swoosh' : 'swords')
+                    vt.sound(rpc.user.melee < 2 ? 'whoosh' : rpc.user.gender == 'I' ? 'swoosh' : 'swords')
                     if (round[0].party && alive[1] > 1) vt.out(vt.faint, vt.Empty, vt.normal, ' ')
                     if (isNaN(+rpc.user.weapon))
                         vt.outln(p1.His, weapon(rpc), ' whistles by ', p2.you, '.')
@@ -2029,7 +2029,7 @@ module Battle {
             }
             else {
                 vt.outln('Attempt fails!')
-                sound('miss')
+                vt.sound('miss')
                 return
             }
         }
@@ -2072,7 +2072,7 @@ module Battle {
         if (hit > 0) {
             if ($.from == 'Party' && enemy.hp <= 0) {
                 enemy.hp = 0
-                if (enemy === $.online) sound('kill', 5)
+                if (enemy === $.online) vt.sound('kill', 5)
                 if (round[0].party) vt.out(vt.faint, '> ')
                 vt.out(vt.bright, enemy === $.online ? vt.yellow : round[0].party == 0 ? vt.cyan : vt.magenta)
                 vt.outln(p1.He, sprintf([
@@ -2143,7 +2143,7 @@ module Battle {
                 return
             }
             p1 = $.online.who
-            action('list')
+            vt.action('list')
             vt.form = {
                 'poison': {
                     cb: () => {
@@ -2219,17 +2219,17 @@ module Battle {
             }
 
             if (!Poison.have(rpc.user.poisons, vial) || +rpc.user.weapon > 0) {
-                sound('ooze')
+                vt.sound('ooze')
                 vt.outln(vt.green, vt.bright, p1.He, what(rpc, 'secrete'), 'a caustic ooze', vt.reset, buff(p, t), -400)
             }
             else {
-                sound('hone')
+                vt.sound('hone')
                 vt.outln('\n', p1.He, what(rpc, 'pour'), 'some ', vt.faint, Poison.merchant[vial - 1]
                     , vt.reset, ' on ', rpc.who.his, weapon(rpc), -400)
                 if (/^[A-Z]/.test(rpc.user.id)) {
                     if (dice(3 * (rpc.toWC + rpc.user.toWC + 1)) / skill > rpc.weapon.wc) {
                         vt.outln(vt.bright, p1.His, rpc.user.weapon, ' vaporizes!')
-                        if (rpc === $.online && $.online.weapon.wc > 1) sound('crack', 6)
+                        if (rpc === $.online && $.online.weapon.wc > 1) vt.sound('crack', 6)
                         Weapon.equip(rpc, Weapon.merchant[0])
                     }
                 }
@@ -2246,12 +2246,12 @@ module Battle {
         let start = $.player.level > 3 ? $.player.level - 3 : 1
         let end = $.player.level < 97 ? $.player.level + 3 : 99
 
-        action('freetext')
+        vt.action('freetext')
         vt.form = {
             'user': {
                 cb: () => {
                     if (vt.entry == '?') {
-                        action('list')
+                        vt.action('list')
                         vt.form['start'].prompt = 'Starting level ' + bracket(start, false) + ': '
                         input('start', '', 250)
                         return
@@ -2268,8 +2268,8 @@ module Battle {
                         }
                         //  paint profile
                         if (rpc.user.id) {
-                            action('clear')
-                            portrait(rpc)
+                            vt.action('clear')
+                            PC.portrait(rpc)
                             //  the inert player does not fully participate in the fun ...
                             if (/Bail|Brawl|Curse|Drop|Joust|Resurrect|Rob/.test(venue) && !rpc.user.xplevel) {
                                 rpc.user.id = ''
@@ -2338,7 +2338,7 @@ module Battle {
                         && dice(+$.player.expert * ($.player.immortal + 1) * $.player.level) == 1)
                         vt.outln('\n', vt.green, '> ', vt.bright, 'double-click (tap) the Player ID to pick your selection.')
 
-                    action('freetext')
+                    vt.action('freetext')
                     vt.focus = 'user'
                     return
                 }
@@ -2373,7 +2373,7 @@ module Battle {
         vt.outln(vt.cyan, 'Weapon: ', weapon(), vt.cyan, '   Armor: ', armor())
 
         if (full) {
-            portrait()
+            PC.portrait()
             rings()
         }
     }

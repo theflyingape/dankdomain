@@ -261,7 +261,7 @@ module Items {
                     PC.adjust('int', 101)
                     PC.adjust('dex', 101)
                     PC.adjust('cha', 101)
-                    sound('outstanding')
+                    vt.sound( 'outstanding')
                 }
                 */
             }

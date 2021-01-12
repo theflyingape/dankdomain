@@ -6,7 +6,6 @@
 import { dice, fs, vt } from './sys'
 import db = require('./db')
 import $ = require('./runtime')
-import { action, music, sound } from './io'
 import { Access } from './items'
 import { PC } from './pc'
 
@@ -17,7 +16,7 @@ module Email {
 
     let echo = true
 
-    action('freetext')
+    vt.action('freetext')
     vt.form = {
         'email': { cb: email, prompt: 'Enter your e-mail address now: ', min: 8 },
         'check': { cb: check, prompt: 'Re-enter email to verify: ' }
@@ -109,7 +108,7 @@ module Email {
             if ($.reason.length)
                 PC.saveUser(player, true)
         }
-        music('.')
+        vt.music('.')
         vt.outln(-1000)
         vt.hangup()
     }
@@ -139,7 +138,7 @@ module Email {
         await smtp.verify().then(async () => {
             if (echo) {
                 vt.out('→ 📨 ')
-                sound('click')
+                vt.sound('click')
             }
             await smtp.sendMail(mailOptions).then((msg) => {
                 if (echo) {
@@ -148,7 +147,7 @@ module Email {
                     if ($.reason.length) {
                         PC.saveUser(player, true)
                         vt.outln('\nYour user ID (', vt.bright, player.id, vt.normal, ') was saved, ', Access.name[player.access][player.gender], '.')
-                        sound('yahoo')
+                        vt.sound('yahoo')
                     }
                 }
                 result = true
@@ -160,7 +159,7 @@ module Email {
                     player.email = ''
                     vt.outln('\nSorry -- your user registration was aborted.')
                     vt.outln(`Please contact ${mailOptions.from} with this error message.`)
-                    sound('boom')
+                    vt.sound('boom')
                 }
                 result = false
             })

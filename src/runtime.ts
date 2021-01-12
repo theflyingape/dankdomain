@@ -9,7 +9,6 @@ module runtime {
     export let online: active = { user: { id: '' } }
     export let player: user = online.user
     export let reason: string = ''
-    export let tty: TTY = 'telnet'
 
     //  maintain usual suspects
     export let barkeep: active = { user: { id: '_BAR' } }

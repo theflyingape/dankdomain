@@ -6,7 +6,7 @@
 import { an, dice, int, money, sprintf, vt, whole } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
-import { action, activate, armor, bracket, cat, checkXP, display, keyhint, loadUser, music, portrait, profile, reroll, sound, weapon, wearing } from '../io'
+import { activate, armor, bracket, cat, checkXP, display, keyhint, loadUser, reroll, weapon, wearing } from '../io'
 import { Coin } from '../items'
 import { encounter, log, news, tradein, what } from '../lib'
 import { PC } from '../pc'
@@ -33,7 +33,7 @@ module Naval {
         if ($.online.altered) PC.saveUser($.online)
         if ($.reason) vt.hangup()
 
-        action('naval')
+        vt.action('naval')
         vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
@@ -89,7 +89,7 @@ module Naval {
                     vt.outln(`It has ${opponent.user.hull} hull points.`)
                     vt.sleep(500)
 
-                    action('ny')
+                    vt.action('ny')
                     vt.form = {
                         'battle': {
                             cb: () => {
@@ -132,7 +132,7 @@ module Naval {
                     if (floater.user.id && floater.user.status) {
                         let leftby = <user>{ id: floater.user.status }
                         if (loadUser(leftby)) {
-                            portrait(floater, 'fadeInUpBig')
+                            PC.portrait(floater, 'fadeInUpBig')
                             vt.out(' floating carcass!')
                             vt.sleep(500)
                             loadUser(floater)
@@ -149,14 +149,14 @@ module Naval {
                         vt.outln(`n ${$.seahag.user.handle}!`)
                         cat(`naval/${$.seahag.user.handle}`.toLowerCase())
                         vt.outln(-600, vt.green, vt.bright, 'She cackles as you are sent spinning elsewhere ... ')
-                        sound('crone', 24)
+                        vt.sound('crone', 24)
                         require('./dungeon').DeepDank($.player.level + 3 * dice($.player.level), () => {
                             $.from = 'Naval'
-                            profile({
+                            vt.profile({
                                 jpg: 'npc/seahag', effect: 'fadeInUp'
                                 , handle: $.seahag.user.handle, level: $.seahag.user.level, pc: $.seahag.user.pc
                             })
-                            sound('god', 12)
+                            vt.sound('god', 12)
                             vt.outln(vt.magenta, '\n"', vt.bright, vt.yellow
                                 , 'You have escaped my magic, mortal?  Now try me!'
                                 , vt.normal, vt.magenta, '"', -1200)
@@ -180,25 +180,25 @@ module Naval {
                             $.neptune.user.spells = keep
                         }
                         vt.outln(vt.cyan, vt.bright, 'He looks at you angrily as he removes a hook from his shorts!')
-                        profile({
+                        vt.profile({
                             jpg: 'npc/neptune', effect: 'fadeInUp'
                             , handle: $.neptune.user.handle, level: $.neptune.user.level, pc: $.neptune.user.pc
                         })
-                        sound('neptune', 32)
+                        vt.sound('neptune', 32)
                         wearing($.neptune)
                         Battle.engage('Naval', $.online, $.neptune, menu)
                         return
                     }
                     vt.outln(' fish and you eat it.')
-                    sound('quaff', 6)
+                    vt.sound('quaff', 6)
                     vt.outln('Ugh!  You feel sick and die!')
                     $.reason = `ate yesterday's catch of the day`
                     break
                 }
                 if (hook < 50) {
                     vt.outln(' fish and you eat it.')
-                    sound('quaff', 6)
-                    sound('yum')
+                    vt.sound('quaff', 6)
+                    vt.sound('yum')
                     vt.outln('Yum!  You feel stronger and healthier.\n')
                     PC.adjust('str', 101)
                     vt.out(`Stamina = ${$.online.str}     `)
@@ -220,7 +220,7 @@ module Naval {
                     n = int(n * ($.player.cannon + 1) / ($.player.hull / 50))
                     n = tradein(n, $.online.cha)
                     if (n > cap) n = cap
-                    sound('oof')
+                    vt.sound('oof')
                     vt.outln(`Ouch!  You bit into a pearl and sell it for ${new Coin(n).carry()}.`)
                     $.player.coin.value += n
                     break
@@ -234,19 +234,19 @@ module Naval {
                     n = int(n * ($.player.cannon + 1) / ($.player.hull / 50))
                     n = tradein(n, $.online.cha)
                     if (n > cap) n = cap
-                    sound('oof')
+                    vt.sound('oof')
                     vt.outln(`Ouch!  You bit into a diamond and sell it for ${new Coin(n).carry()}.`)
                     $.player.coin.value += n
                     break
                 }
                 if (hook < 95) {
-                    profile({ jpg: 'naval/turtle', effect: 'fadeInUp' })
+                    vt.profile({ jpg: 'naval/turtle', effect: 'fadeInUp' })
                     vt.outln(' turtle and you let it go.')
                     vt.sleep(600)
                     $.player.toAC++
                     $.online.toAC += dice($.online.armor.ac / 5 + 1)
                     vt.outln('The turtle turns and smiles and enhances your ', armor())
-                    sound('shield')
+                    vt.sound('shield')
                     break
                 }
                 if (hook < 100) {
@@ -255,12 +255,12 @@ module Naval {
                     $.player.toWC++
                     $.online.toWC += dice($.online.weapon.wc / 10 + 1)
                     vt.outln('The tortoise shows it gratitude by enchanting your ', weapon())
-                    sound('hone')
+                    vt.sound('hone')
                     break
                 }
                 vt.outln(' mermaid!')
                 vt.sleep(600)
-                profile({ jpg: 'naval/mermaid', effect: 'bounceInUp' })
+                vt.profile({ jpg: 'naval/mermaid', effect: 'bounceInUp' })
                 cat('naval/mermaid')
                 if ($.player.today) {
                     vt.outln('She grants you an extra call for today!')
@@ -293,7 +293,7 @@ module Naval {
                     vt.out(bracket(+i + 1), vt.cyan, monsters[i].name)
                 vt.outln()
 
-                action('list')
+                vt.action('list')
                 vt.form = {
                     pick: {
                         cb: () => {
@@ -355,7 +355,7 @@ module Naval {
     }
 
     function Shipyard(suppress = true) {
-        action('shipyard')
+        vt.action('shipyard')
         let shipyard: choices = {
             'B': { description: 'Buy a new ship' },
             'F': { description: 'Fix battle damage' },
@@ -396,7 +396,7 @@ module Naval {
                             break
                         }
                     }
-                    if ($.naval > 2) music('sailing')
+                    if ($.naval > 2) vt.music('sailing')
 
                     vt.outln('List of affordable ships:\n')
                     max = $.player.hull + 50
@@ -407,7 +407,7 @@ module Naval {
                         cost = Math.round(Math.pow(2, max / 150) * 7937)
                     }
 
-                    action('listbest')
+                    vt.action('listbest')
                     vt.form = {
                         'size': {
                             cb: () => {
@@ -443,8 +443,8 @@ module Naval {
                                         return
                                     }
 
-                                    profile({ png: 'payment', effect: 'tada' })
-                                    sound('click', 5)
+                                    vt.profile({ png: 'payment', effect: 'tada' })
+                                    vt.sound('click', 5)
                                     cost = Math.round(Math.pow(2, ship / 150) * 7937)
                                     $.player.coin.value -= cost
                                     $.player.hull = ship
@@ -452,7 +452,7 @@ module Naval {
                                     $.online.hull = $.player.hull
                                     db.run(`UPDATE Players set hull=${ship},ram=0 WHERE id='${$.player.id}'`)
                                     vt.outln(`You now have a brand new ${$.player.hull} hull point ship, with no ram.`)
-                                    sound('boat')
+                                    vt.sound('boat')
                                 }
                                 Shipyard()
                             }
@@ -476,7 +476,7 @@ module Naval {
                     afford = int($.player.coin.value / cost)
                     if (afford < max)
                         max = afford
-                    action('listall')
+                    vt.action('listall')
                     vt.form = {
                         'hp': {
                             cb: () => {
@@ -512,7 +512,7 @@ module Naval {
                     afford = int($.player.coin.value / cost)
                     if (afford < max)
                         max = afford
-                    action('listbest')
+                    vt.action('listbest')
                     vt.form = {
                         'cannon': {
                             cb: () => {
@@ -553,7 +553,7 @@ module Naval {
                         vt.outln(`You don't have enough money!`)
                         break
                     }
-                    action('yn')
+                    vt.action('yn')
                     vt.form = {
                         'ram': {
                             cb: () => {
@@ -602,7 +602,7 @@ module Naval {
             return
         }
 
-        action('hunt')
+        vt.action('hunt')
         vt.form = {
             'attack': {
                 cb: () => {
@@ -618,7 +618,7 @@ module Naval {
                         case 'S':
                             vt.outln()
                             if (!outrun($.online.hull / nme.hull, $.online.int - nme.int)) {
-                                sound('oops')
+                                vt.sound('oops')
                                 vt.outln(`${PC.who(nme).He}outruns you and stops your retreat!`)
                                 vt.sleep(500)
                                 if (him()) {
@@ -668,11 +668,11 @@ module Naval {
                                 }
                             }
                             else {
-                                sound('oops')
+                                vt.sound('oops')
                                 vt.outln()
                                 vt.outln(`Your first mate cries back, "But we don't have a ram!"`)
                                 vt.sleep(2000)
-                                sound('fire', 8)
+                                vt.sound('fire', 8)
                                 vt.outln('You shoot your first mate.')
                                 vt.sleep(800)
                             }
@@ -713,14 +713,14 @@ module Naval {
             let booty = new Coin(Math.round(Math.pow(2, $.player.hull / 150) * 7937 / 250))
             booty.value = int(booty.value * nme.user.cannon)
             if (nme.user.coin.value > booty.value) {
-                sound('boo')
+                vt.sound('boo')
                 vt.outln(`${new Coin(nme.user.coin.value - booty.value).carry()} of the booty has settled on the ocean floor...`)
                 vt.sleep(500)
                 nme.user.coin.value = booty.value
             }
             booty.value += nme.user.coin.value
             if (booty.value) {
-                sound('booty', 5)
+                vt.sound('booty', 5)
                 vt.outln('You get ', booty.carry(), '.')
                 log(nme.user.id, `... and got ${booty.carry(2, true)}.\n`)
                 $.player.coin.value += booty.value
@@ -788,7 +788,7 @@ module Naval {
                 }
                 PC.saveUser(nme, false, true)
 
-                sound('sunk', 30)
+                vt.sound('sunk', 30)
                 vt.outln(vt.faint, `\n${nme.user.handle} smiles as a shark approaches you.`)
                 vt.sleep(6000)
                 vt.hangup()
@@ -803,11 +803,11 @@ module Naval {
         sm = Object.assign({}, monsters[mon])
         let damage: number
 
-        profile({ jpg: `naval/${sm.name.toLowerCase()}`, handle: sm.name, effect: 'fadeInUp' })
+        vt.profile({ jpg: `naval/${sm.name.toLowerCase()}`, handle: sm.name, effect: 'fadeInUp' })
         vt.outln(`\nYou sail out until you spot${an(sm.name)} on the horizon.\n`)
         vt.outln(`It has ${sm.hull} hull points.`)
 
-        action('ny')
+        vt.action('ny')
         vt.form = {
             'fight': {
                 cb: () => {
@@ -835,7 +835,7 @@ module Naval {
                         }
                     }
 
-                    action('hunt')
+                    vt.action('hunt')
                     vt.focus = 'attack'
                 }, prompt: 'Continue (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 20
             },
@@ -852,7 +852,7 @@ module Naval {
 
                         case 'S':
                             if (!outrun($.online.hull / sm.hull, $.online.int - sm.int)) {
-                                sound('oops')
+                                vt.sound('oops')
                                 vt.out('\nIt outruns you and stops your retreat!\n')
                                 vt.sleep(500)
                                 if (it()) {
@@ -894,7 +894,7 @@ module Naval {
                                 }
                             }
                             else {
-                                sound('oops')
+                                vt.sound('oops')
                                 vt.outln(`\nYour first mate cries back, "But we don't have a ram!"`)
                                 vt.sleep(500)
                             }
@@ -920,7 +920,7 @@ module Naval {
 
         function booty() {
             sm.hull = 0
-            sound('booty', 5)
+            vt.sound('booty', 5)
             let coin = new Coin(sm.money)
             coin.value = tradein(coin.value, $.online.cha)
             vt.outln('You get ', coin.carry(), ' for bringing home the carcass.')
@@ -957,7 +957,7 @@ module Naval {
                 $.player.killed++
                 $.reason = `sunk by the ${sm.name}`
                 vt.outln(vt.yellow, vt.bright, `The ${sm.name} sank your ship!`)
-                sound('bubbles', 15)
+                vt.sound('bubbles', 15)
                 if ($.player.coin.value) {
                     $.player.coin.value = 0
                     vt.outln('It gets all your money!')
@@ -977,7 +977,7 @@ module Naval {
         let cannon: number = 0
         let ram: boolean = false
 
-        if (a.user == $.player) sound('fire')
+        if (a.user == $.player) vt.sound('fire')
         vt.out('\n', vt.cyan, a.user == $.player ? 'Attacker: ' : 'Defender: ', vt.bright)
         for (let i = 0; i < a.user.cannon && d.user.hull; i++) {
             let n = dice(100)

@@ -6,7 +6,7 @@
 import { an, dice, int, money, romanize, sprintf, vt, whole } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
-import { action, animated, activate, armor, bracket, cat, checkTime, checkXP, clear, death, getRing, keyhint, loadUser, music, portrait, profile, reroll, skillplus, sound, title, wall, weapon, wearing } from '../io'
+import { activate, armor, bracket, cat, checkTime, checkXP, death, getRing, keyhint, loadUser, reroll, skillplus, weapon, wearing } from '../io'
 import { Coin, Armor, Magic, Poison, Ring, Security, Weapon } from '../items'
 import { log, news, tradein } from '../lib'
 import { PC } from '../pc'
@@ -140,7 +140,7 @@ module Dungeon {
         if ($.access.sysop) crawling['M'] = { description: 'y liege' }
         generateLevel()
 
-        profile({ jpg: `dungeon/level${sprintf('%x', whole((Z + 1) / 10))}`, handle: "Entering", level: $.player.level, pc: 'dungeon' })
+        vt.profile({ jpg: `dungeon/level${sprintf('%x', whole((Z + 1) / 10))}`, handle: "Entering", level: $.player.level, pc: 'dungeon' })
         ROOM = DL.rooms[Y][X]
         if (ROOM.occupant || ROOM.monster.length || ROOM.giftItem) vt.sleep(2800)
 
@@ -164,7 +164,7 @@ module Dungeon {
             scroll()
             if ($.online.hp > 0) {
                 $.online.hp = whole(idle)
-                if ($.online.hp) sound('thief2', 6)
+                if ($.online.hp) vt.sound('thief2', 6)
             }
             vt.hangup()
         }
@@ -176,7 +176,7 @@ module Dungeon {
                 return
             }
             else if ($.jumped) {
-                title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${romanize(deep + 1)}.${Z + 1}`)
+                vt.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${romanize(deep + 1)}.${Z + 1}`)
                 if ($.jumped > (19 - int(deep / 3))) skillkill = true
             }
         }
@@ -186,7 +186,7 @@ module Dungeon {
             Battle.teleported = false
             if (Battle.expel) {
                 Battle.expel = false
-                portrait($.online, 'flipOutX')
+                PC.portrait($.online, 'flipOutX')
                 if (deep > 0)
                     deep--
                 else {
@@ -200,14 +200,14 @@ module Dungeon {
             }
             scroll(1, false)
             vt.outln(vt.magenta, 'You open a ', vt.bright, 'mystic portal', vt.normal, '.\n')
-            sound('portal', 4)
+            vt.sound('portal', 4)
             teleport()
             return
         }
 
         //	did player just do something eventful worthy of the big bonus?
         if (skillkill) {
-            sound('winner')
+            vt.sound('winner')
             skillkill = false
             skillplus($.online, menu)
             return
@@ -220,7 +220,7 @@ module Dungeon {
 
         //	does last output(s) need a pause?
         if (pause) {
-            action('yn')
+            vt.action('yn')
             pause = false
             vt.form = {
                 'pause': {
@@ -247,7 +247,7 @@ module Dungeon {
             if (!DL.exit) {
                 const t = $.player.expert ? 10 : 100
                 vt.out(-t, ' ', -2 * t, $.player.emulation == 'XT' ? '🏃' : '<<', ' ', -t)
-                if (DL.alert) sound('exit')
+                if (DL.alert) vt.sound('exit')
                 vt.outln(vt.faint, 'find ', -5 * t, 'the ', -4 * t, 'exit', -8 * t, vt.normal, '!')
                 vt.drain()
                 DL.alert = false
@@ -287,27 +287,27 @@ module Dungeon {
                     , 'Your pulse quickens', 'You feel paranoid', 'Your grip tightens'
                     , 'You stand ready'][s], ' from a ')
                 //	only play sound when pairing is close to its description
-                if (s == 1) sound('pulse')
+                if (s == 1) vt.sound('pulse')
                 switch (dice(5)) {
                     case 1:
                         vt.out('creaking sound')
-                        if (s !== 1) sound('creak' + dice(2))
+                        if (s !== 1) vt.sound('creak' + dice(2))
                         break
                     case 2:
                         vt.out('clap of thunder')
-                        if (s == 2) sound('thunder')
+                        if (s == 2) vt.sound('thunder')
                         break
                     case 3:
                         vt.out('ghostly whisper')
-                        if (s == 3) sound('ghostly')
+                        if (s == 3) vt.sound('ghostly')
                         break
                     case 4:
                         vt.out('beast growl')
-                        if (s == 4) sound('growl')
+                        if (s == 4) vt.sound('growl')
                         break
                     case 5:
                         vt.out('maniacal laugh')
-                        if (s == 0) sound('laugh')
+                        if (s == 0) vt.sound('laugh')
                         break
                 }
                 if (Math.abs(Y - y) < 3 && Math.abs(X - x) < 3)
@@ -320,7 +320,7 @@ module Dungeon {
                 if (DL.map && DL.map !== 'map')
                     drawRoom(y, x)
                 if (ROOM.occupant == 'cleric' && DL.cleric.hp) {
-                    sound('agony', 10)
+                    vt.sound('agony', 10)
                     vt.out(vt.yellow, 'You hear a dying cry of agony !! ', -900)
                     DL.cleric.hp = 0
                     DL.cleric.sp = 0
@@ -345,17 +345,17 @@ module Dungeon {
         }
 
         //	position Hero and get user command
-        action('dungeon')
+        vt.action('dungeon')
         drawHero($.player.blessed ? true : false)
 
         if (DL.events > 0 && DL.moves > DL.width && dice(me) == 1) {
             DL.events--
-            music('.')
+            vt.music('.')
             let rng = dice(16)
             if (rng > 8) {
                 if ($.player.emulation == 'XT') {
                     vt.out(' 🦇 ')
-                    sound('splat', 6)
+                    vt.sound('splat', 6)
                 }
                 vt.out(vt.faint, 'A bat flies by and soils ', vt.normal, 'your ')
                 $.player.toAC -= dice(deep)
@@ -366,7 +366,7 @@ module Dungeon {
             else if (rng > 4) {
                 if ($.player.emulation == 'XT') {
                     vt.out(' 💧 ')
-                    sound('drop', 6)
+                    vt.sound('drop', 6)
                 }
                 vt.out(vt.blue, 'A drop of ', vt.bright, 'acid water burns ', vt.normal, 'your ')
                 $.player.toWC -= dice(deep)
@@ -376,7 +376,7 @@ module Dungeon {
             else if (rng > 2) {
                 if ($.player.emulation == 'XT') {
                     vt.out(' 😬 ')
-                    sound('hurt', 6)
+                    vt.sound('hurt', 6)
                 }
                 vt.out(vt.yellow, 'You trip on the rocky surface and hurt yourself.', -600)
                 $.online.hp -= dice(Z)
@@ -384,7 +384,7 @@ module Dungeon {
             }
             else if (rng > 1) {
                 if ($.player.emulation == 'XT') {
-                    sound('crack')
+                    vt.sound('crack')
                     vt.out(' 🐝 ', -300, '🐝 ', -200, '🐝 ', -100, '🐝 ', -50, '🐝 ', -25)
                 }
                 vt.out(vt.red, 'You are attacked by a ', vt.bright, 'swarm of bees', vt.normal)
@@ -397,7 +397,7 @@ module Dungeon {
             else {
                 if ($.player.emulation == 'XT') {
                     vt.out(' ⚡ ')
-                    sound('boom', 6)
+                    vt.sound('boom', 6)
                 }
                 vt.out(vt.bright, 'A bolt of lightning strikes you!', -600)
                 $.player.toAC -= dice($.online.armor.ac / 2)
@@ -571,15 +571,15 @@ module Dungeon {
     }
 
     function oof(wall: string) {
-        portrait($.online, 'bounce', ` - Dungeon ${romanize(deep + 1)}.${Z + 1}`)
+        PC.portrait($.online, 'bounce', ` - Dungeon ${romanize(deep + 1)}.${Z + 1}`)
         vt.out(vt.yellow, vt.bright, 'Oof! ')
-        sound('wall', 3)
+        vt.sound('wall', 3)
         vt.outln(vt.normal, `There is a wall to the ${wall}.`, -300)
         vt.drain()
         if (!Battle.retreat && idle < 3) idle++
         if (($.online.hp -= dice(deep + Z + 1)) < 1) {
             vt.outln()
-            music('.')
+            vt.music('.')
             vt.outln(vt.faint, 'You take too many hits and die!')
             if (Battle.retreat)
                 death('running into a wall', true)
@@ -616,22 +616,22 @@ module Dungeon {
 
         //	monsters?
         if (ROOM.monster.length) {
-            action('clear')
+            vt.action('clear')
             if (!refresh) drawRoom(Y, X, true, true)
             scroll(1, false)
             vt.out(vt.off)
 
             if (ROOM.monster.length == 1) {
                 let img = `dungeon/${ROOM.monster[0].user.handle}`
-                profile({ jpg: img, effect: ROOM.monster[0].effect })
+                vt.profile({ jpg: img, effect: ROOM.monster[0].effect })
                 vt.out(`There's something lurking in here . . . `)
                 //  dramatic pause if profile change is needed to match player's class
                 if (!ROOM.monster[0].monster.pc && ROOM.monster[0].user.pc == $.player.pc) {
                     vt.sleep(900)
                     if (PC.name['player'][ROOM.monster[0].user.pc])
-                        profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect: 'flash' })
+                        vt.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), effect: 'flash' })
                     else
-                        profile({
+                        vt.profile({
                             png: 'monster/'
                                 + (PC.name['monster'][ROOM.monster[0].user.pc]
                                     || PC.name['tavern'][ROOM.monster[0].user.pc]
@@ -656,7 +656,7 @@ module Dungeon {
                     if (PC.name['player'][ROOM.monster[i].user.pc])
                         m['mob' + (i + 1)] = 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : '')
                 }
-                profile(m)
+                vt.profile(m)
             }
             vt.outln()
 
@@ -696,7 +696,7 @@ module Dungeon {
 
             if (ROOM.monster.length) {
                 $.from = 'Dungeon'
-                action('battle')
+                vt.action('battle')
                 b4 = ROOM.monster.length > 3 ? -ROOM.monster.length : ROOM.monster.length > 2 ? $.online.hp : 0
                 Battle.engage('Dungeon', party, ROOM.monster, doSpoils)
                 return false
@@ -756,16 +756,16 @@ module Dungeon {
                 }
                 else {
                     ROOM.occupant = ''
-                    profile({ png: 'npc/faery spirit', effect: 'fadeInRight' })
+                    vt.profile({ png: 'npc/faery spirit', effect: 'fadeInRight' })
                     vt.out(vt.cyan, vt.bright, 'A faery spirit appears ', -600
                         , vt.normal, 'and passes ', -500)
                     if ((!DL.events && DL.exit) || dice(50 + Z - deep) > ($.online.cha - 10 * +$.player.coward)) {
-                        animated('fadeOut')
+                        vt.animated('fadeOut')
                         vt.outln(vt.faint, 'by you.')
                         recovery()
                     }
                     else {
-                        animated('fadeOutLeft')
+                        vt.animated('fadeOutLeft')
                         vt.outln(vt.faint, 'through you.')
                         for (let i = 0; i <= Z; i++)
                             $.online.hp += dice(int(DL.cleric.user.level / 9)) + dice(int(Z / 9 + deep / 3))
@@ -775,14 +775,14 @@ module Dungeon {
                                 $.online.sp += dice(int(DL.cleric.user.level / 9)) + dice(int(Z / 9 + deep / 3))
                             if ($.online.sp > $.player.sp) $.online.sp = $.player.sp
                         }
-                        sound('heal')
+                        vt.sound('heal')
                     }
                 }
                 break
 
             case 'portal':
-                action('ny')
-                profile({ jpg: 'ddd', effect: 'fadeIn', level: romanize(deep + 2), pc: 'domain portal' })
+                vt.action('ny')
+                vt.profile({ jpg: 'ddd', effect: 'fadeIn', level: romanize(deep + 2), pc: 'domain portal' })
                 vt.out(vt.bright, vt.blue, `You've found a portal to a deeper and more dank dungeon.`)
                 vt.form = {
                     'deep': {
@@ -790,15 +790,15 @@ module Dungeon {
                             ROOM.occupant = ''
                             vt.outln()
                             if (/Y/i.test(vt.entry)) {
-                                animated('fadeOutDown')
-                                sound('portal')
+                                vt.animated('fadeOutDown')
+                                vt.sound('portal')
                                 vt.out(vt.bright, vt.white, `You descend `, -400, vt.normal, `into domain `, -300, vt.faint, romanize(++deep + 1), ' ... ', -200)
                                 generateLevel()
                                 vt.drain()
                                 vt.outln()
                             }
                             else
-                                animated('fadeOut')
+                                vt.animated('fadeOut')
                             menu()
                         }, prompt: 'Descend even deeper (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 20
                     }
@@ -808,7 +808,7 @@ module Dungeon {
 
             case 'well':
                 scroll(1, false)
-                music('well')
+                vt.music('well')
                 vt.outln(-500, vt.magenta, 'You have found a legendary ', vt.bright, 'Wishing Well', vt.normal, '.')
                 vt.outln(-500)
                 vt.outln(-500, vt.bright, vt.yellow, 'What do you wish to do?', -500)
@@ -830,7 +830,7 @@ module Dungeon {
                 vt.outln(-500)
                 vt.drain()
 
-                action('well')
+                vt.action('well')
                 vt.form = {
                     'well': {
                         cb: () => {
@@ -839,11 +839,11 @@ module Dungeon {
                             vt.outln()
                             let wish = vt.entry.toUpperCase()
                             if (wish == '' || wishes.indexOf(wish) < 0) {
-                                sound('oops')
+                                vt.sound('oops')
                                 vt.refocus()
                                 return
                             }
-                            animated('flipOutX')
+                            vt.animated('flipOutX')
                             vt.outln()
 
                             switch (wish) {
@@ -855,7 +855,7 @@ module Dungeon {
                                         news(`\tlifted curse`)
                                     }
                                     else {
-                                        sound('shimmer')
+                                        vt.sound('shimmer')
                                         $.player.blessed = 'well'
                                         vt.out(vt.yellow, 'You feel ', vt.bright, 'a shining aura', vt.normal, ' surround you.')
                                         news(`\twished for a blessing`)
@@ -864,13 +864,13 @@ module Dungeon {
                                     PC.adjust('int', 110)
                                     PC.adjust('dex', 110)
                                     PC.adjust('cha', 110)
-                                    sound('shimmer')
+                                    vt.sound('shimmer')
                                     DL.events = 0
                                     DL.exit = false
                                     break
 
                                 case 'C':
-                                    sound('steal')
+                                    vt.sound('steal')
                                     Battle.user('Curse', (opponent: active) => {
                                         if (opponent.user.id == $.player.id) {
                                             opponent.user.id = ''
@@ -895,10 +895,10 @@ module Dungeon {
                                             if (opponent.user.id == $.king.id) {
                                                 $.player.coward = true
                                                 $.online.altered = true
-                                                sound('boom', 6)
+                                                vt.sound('boom', 6)
                                             }
                                             else
-                                                sound('morph', 12)
+                                                vt.sound('morph', 12)
                                         }
                                         menu()
                                         return
@@ -910,7 +910,7 @@ module Dungeon {
                                     if (start < 1) start = 1
                                     let end = int(Z + dice(deep) + dice(Z) + dice(Z))
                                     if (end > 100) end = 100
-                                    action('list')
+                                    vt.action('list')
                                     vt.form = {
                                         'level': {
                                             cb: () => {
@@ -923,7 +923,7 @@ module Dungeon {
                                                     vt.refocus()
                                                     return
                                                 }
-                                                sound('teleport')
+                                                vt.sound('teleport')
                                                 Z = i - 1
                                                 generateLevel()
                                                 menu()
@@ -935,7 +935,7 @@ module Dungeon {
 
                                 case 'D':
                                     vt.outln(vt.black, vt.bright, 'Your past time in this dungeon visit is eradicated and reset.')
-                                    sound('destroy', 32)
+                                    vt.sound('destroy', 32)
                                     for (let i in dd)
                                         delete dd[i]
                                     $.dungeon++
@@ -948,20 +948,20 @@ module Dungeon {
                                     break
 
                                 case 'O':
-                                    sound('teleport')
+                                    vt.sound('teleport')
                                     scroll(1, false, true)
                                     vt.outln()
                                     fini()
                                     return
 
                                 case 'R':
-                                    sound('resurrect')
+                                    vt.sound('resurrect')
                                     db.run(`UPDATE Players SET status='' WHERE id NOT GLOB '_*' AND status!='jail'`)
                                     news(`\twished all the dead resurrected`)
                                     break
 
                                 case 'F':
-                                    music('elixir')
+                                    vt.music('elixir')
                                     if ($.online.str < $.player.str) $.online.str = $.player.str
                                     if ($.online.int < $.player.int) $.online.int = $.player.int
                                     if ($.online.dex < $.player.dex) $.online.dex = $.player.dex
@@ -977,7 +977,7 @@ module Dungeon {
                                     break
 
                                 case 'L':
-                                    sound('steal')
+                                    vt.sound('steal')
                                     Battle.user('Loot', (opponent: active) => {
                                         if (opponent.user.id == $.player.id) {
                                             opponent.user.id = ''
@@ -999,7 +999,7 @@ module Dungeon {
                                             opponent.user.coin.value = 0
                                             opponent.user.bank.value = 0
                                             PC.saveUser(opponent)
-                                            sound('max')
+                                            vt.sound('max')
                                         }
                                         menu()
                                         return
@@ -1008,14 +1008,14 @@ module Dungeon {
 
                                 case 'G':
                                     if ($.player.today) {
-                                        sound('shimmer')
+                                        vt.sound('shimmer')
                                         $.player.today--
                                         vt.outln('You are granted another call for the day.')
                                         news(`\twished for an extra call`)
                                     }
                                     else {
                                         vt.outln('A deep laughter bellows... ')
-                                        sound('morph', 12)
+                                        vt.sound('morph', 12)
                                     }
                                     break
 
@@ -1023,7 +1023,7 @@ module Dungeon {
                                     let k = dice($.player.wins < 3 ? 1 : 3)
                                     for (let i = 0; i < k; i++) {
                                         keyhint($.online)
-                                        sound("shimmer", 12)
+                                        vt.sound("shimmer", 12)
                                     }
                                     break
                             }
@@ -1037,9 +1037,9 @@ module Dungeon {
                 return false
 
             case 'wheel':
-                profile({ png: 'wol', effect: 'rotateIn' })
+                vt.profile({ png: 'wol', effect: 'rotateIn' })
                 vt.outln(vt.magenta, 'You have found a ', vt.bright, 'Mystical Wheel of Life', vt.normal, '.', -600)
-                music('wol')
+                vt.music('wol')
                 vt.outln(-600)
                 vt.outln(vt.bright, vt.yellow, 'The runes are ',
                     ['cryptic', 'familiar', 'foreign', 'speaking out', 'strange'][dice(5) - 1],
@@ -1051,8 +1051,8 @@ module Dungeon {
                             ROOM.occupant = ''
                             vt.outln()
                             if (/Y/i.test(vt.entry)) {
-                                music('tension' + dice(3))
-                                animated('infinite rotateIn')
+                                vt.music('tension' + dice(3))
+                                vt.animated('infinite rotateIn')
                                 let z = (deep < 3) ? 3 : (deep < 5) ? 5 : (deep < 7) ? 7 : 10
                                 let t = 0
                                 for (let i = 0; i < 5; i++) {
@@ -1076,9 +1076,9 @@ module Dungeon {
                                         ' =Key= ', '+Skill+', ' Morph ']
                                     [t % z],
                                         vt.blue, '] \r', -100 * 3 * i)
-                                    sound('click')
+                                    vt.sound('click')
                                 }
-                                animated('rotateOut')
+                                vt.animated('rotateOut')
                                 vt.outln()
 
                                 switch (t % z) {
@@ -1103,7 +1103,7 @@ module Dungeon {
                                         PC.adjust('int', 110)
                                         PC.adjust('dex', 110)
                                         PC.adjust('cha', 110)
-                                        sound('shimmer')
+                                        vt.sound('shimmer')
                                         DL.events = 0
                                         DL.exit = false
                                         break
@@ -1114,7 +1114,7 @@ module Dungeon {
                                         $.online.toWC += int($.online.weapon.wc / 2) + 1
                                         $.player.toAC += dice($.online.armor.ac - $.player.toAC)
                                         $.online.toAC += int($.online.armor.ac / 2) + 1
-                                        sound('hone')
+                                        vt.sound('hone')
                                         break
                                     case 4:
                                         if ($.player.blessed) {
@@ -1131,7 +1131,7 @@ module Dungeon {
                                         PC.adjust('int', -5 - dice(5))
                                         PC.adjust('dex', -5 - dice(5))
                                         PC.adjust('cha', -5 - dice(5))
-                                        sound('crack')
+                                        vt.sound('crack')
                                         DL.events += dice(Z) + deep
                                         break
                                     case 5:
@@ -1140,7 +1140,7 @@ module Dungeon {
                                         loot.value += tradein(new Coin($.online.armor.value).value, $.online.cha)
                                         loot.value *= (Z + 1)
                                         $.player.coin.value += new Coin(loot.carry(1, true)).value
-                                        sound('yahoo')
+                                        vt.sound('yahoo')
                                         break
                                     case 6:
                                         $.player.coin.value = 0
@@ -1150,14 +1150,14 @@ module Dungeon {
                                         loot.value += tradein(new Coin($.online.armor.value).value, $.online.cha)
                                         loot.value *= (Z + 1)
                                         $.player.loan.value += new Coin(loot.carry(1, true)).value
-                                        sound('thief2')
+                                        vt.sound('thief2')
                                         break
                                     case 7:
                                         keyhint($.online)
-                                        sound('click')
+                                        vt.sound('click')
                                         break
                                     case 8:
-                                        sound('level')
+                                        vt.sound('level')
                                         skillplus($.online, menu)
                                         return
                                     case 9:
@@ -1169,17 +1169,17 @@ module Dungeon {
                                         PC.saveUser($.player)
                                         news(`\t${$.player.handle} got morphed into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
                                         vt.outln(`You got morphed into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
-                                        sound('morph', 10)
+                                        vt.sound('morph', 10)
                                         break
                                 }
                             }
                             else
-                                animated('rotateOut')
+                                vt.animated('rotateOut')
                             menu()
                         }, prompt: 'Will you spin it (Y/N)? ', cancel: 'Y', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 20
                     }
                 }
-                action('ny')
+                vt.action('ny')
                 vt.drain()
                 vt.focus = 'wheel'
                 pause = true
@@ -1200,8 +1200,8 @@ module Dungeon {
                         , vt.reset, ' for '
                         , vt.magenta, vt.bright, $.king.handle
                         , vt.reset, '!')
-                    profile({ jpg: 'npc/taxman', handle: $.taxman.user.handle, level: $.taxman.user.level, pc: $.taxman.user.pc, effect: 'bounceInDown' })
-                    sound('oops', 16)
+                    vt.profile({ jpg: 'npc/taxman', handle: $.taxman.user.handle, level: $.taxman.user.level, pc: $.taxman.user.pc, effect: 'bounceInDown' })
+                    vt.sound('oops', 16)
                     activate($.taxman)
                     $.taxman.user.coin.value = $.player.coin.value
                     wearing($.taxman)
@@ -1237,19 +1237,19 @@ module Dungeon {
                         vt.out(vt.cyan, '.')
                         if (t) {
                             PC.adjust(['', 'dex', 'str', 'int', 'cha'][t], -1)
-                            if (t) sound('thief')
+                            if (t) vt.sound('thief')
                         }
                     }
                     else {
                         vt.out(vt.normal, vt.magenta, 'He teleports away!')
-                        sound('teleport')
+                        vt.sound('teleport')
                     }
                     vt.outln()
                 }
                 else {
                     escape.occupant = 'thief'
                     vt.outln(vt.reset, 'He surprises you!')
-                    sound('thief', 4)
+                    vt.sound('thief', 4)
 
                     vt.out('As he passes by, he steals your ')
                     x = $.online.cha + deep + 1
@@ -1258,7 +1258,7 @@ module Dungeon {
                     if ($.online.weapon.wc && dice(x) == 1) {
                         vt.out(weapon(), -600)
                         Weapon.equip($.online, Weapon.merchant[0])
-                        sound('thief2')
+                        vt.sound('thief2')
                         DL.exit = false
                     }
                     else if (DL.map && dice($.online.cha / 9) - 1 <= int(deep / 3)) {
@@ -1296,7 +1296,7 @@ module Dungeon {
 
             case 'cleric':
                 if (!DL.cleric.hp) {
-                    profile({ jpg: 'npc/rip', effect: 'fadeInUp' })
+                    vt.profile({ jpg: 'npc/rip', effect: 'fadeInUp' })
                     vt.outln(vt.yellow, 'You find the ', vt.white, 'bones'
                         , vt.yellow, ' of an ', vt.faint, 'old cleric', vt.normal, '.', -600)
                     if ($.player.emulation == 'XT') vt.out(' 🪦 🕱 ')
@@ -1333,11 +1333,11 @@ module Dungeon {
                 if ($.online.hp >= $.player.hp || cost.value > $.player.coin.value || DL.cleric.sp < Magic.power(DL.cleric, cast)) {
                     vt.outln(vt.yellow, '"I will pray for you."')
                     if ($.online.hp < $.player.hp)
-                        profile({ jpg: 'npc/prayer', effect: 'fadeInUp' })
+                        vt.profile({ jpg: 'npc/prayer', effect: 'fadeInUp' })
                     break
                 }
 
-                if (power > 95) profile({ jpg: 'npc/old cleric', effect: 'zoomInUp', level: DL.cleric.user.level, pc: DL.cleric.user.pc })
+                if (power > 95) vt.profile({ jpg: 'npc/old cleric', effect: 'zoomInUp', level: DL.cleric.user.level, pc: DL.cleric.user.pc })
                 if ($.online.hp > int($.player.hp / 3) || DL.cleric.sp < Magic.power(DL.cleric, 13)) {
                     vt.out('"I can ', DL.cleric.sp < Magic.power(DL.cleric, 13) ? 'only' : 'surely'
                         , ' cast a Heal spell on your wounds for '
@@ -1351,7 +1351,7 @@ module Dungeon {
                         , '."')
                 }
 
-                action('yn')
+                vt.action('yn')
                 vt.form = {
                     'pay': {
                         cb: () => {
@@ -1362,7 +1362,7 @@ module Dungeon {
                                 vt.out(`He casts a ${Object.keys(Magic.spells)[cast - 1]} spell on you.`)
                                 DL.cleric.sp -= Magic.power(DL.cleric, cast)
                                 if (cast == 7) {
-                                    sound('heal')
+                                    vt.sound('heal')
                                     for (let i = 0; i <= Z; i++)
                                         $.online.hp += dice(DL.cleric.user.level / 9) + dice(Z / 9 + deep / 3)
                                     if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
@@ -1372,7 +1372,7 @@ module Dungeon {
                                 }
                                 else {
                                     $.online.hp = $.player.hp
-                                    sound('shimmer', 4)
+                                    vt.sound('shimmer', 4)
                                 }
                             }
                             else {
@@ -1380,10 +1380,10 @@ module Dungeon {
                                     vt.outln(vt.lyellow, '"God save you."', -300)
                                     ROOM.occupant = ''
                                     vt.outln(vt.magenta, 'He teleports away!')
-                                    sound('teleport', 8)
+                                    vt.sound('teleport', 8)
                                 }
                                 else {
-                                    profile({ jpg: 'npc/prayer', effect: 'fadeInUp' })
+                                    vt.profile({ jpg: 'npc/prayer', effect: 'fadeInUp' })
                                     vt.outln(vt.lyellow, '"I need to rest. ', -300, ' Go in peace."', -300)
                                     looked = true
                                 }
@@ -1400,7 +1400,7 @@ module Dungeon {
                 vt.out(vt.magenta, 'You encounter a ', vt.bright)
 
                 if (!$.player.cursed && !$.player.novice && dice((Z > $.player.level ? Z : 1) + 20 * $.player.immortal + $.player.level + $.online.cha) == 1) {
-                    profile({
+                    vt.profile({
                         png: (PC.name['player'][$.player.pc] || PC.name['immortal'][$.player.pc] ? 'player' : 'monster') + '/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''),
                         effect: 'flip'
                     })
@@ -1414,7 +1414,7 @@ module Dungeon {
                     PC.adjust('dex', -10)
                     PC.adjust('cha', -10)
                     vt.outln(vt.bright, 'It curses you!')
-                    sound('morph', 18)
+                    vt.sound('morph', 18)
                     if ($.player.blessed) {
                         $.player.blessed = ''
                         vt.out(vt.yellow, 'Your ', -100, vt.bright, 'shining aura ', -100, vt.normal, 'left', -100, vt.faint)
@@ -1428,8 +1428,8 @@ module Dungeon {
 
                     //	vacate
                     drawHero()
-                    animated('flipOutY')
-                    sound('teleport', 12)
+                    vt.animated('flipOutY')
+                    vt.sound('teleport', 12)
                     ROOM.occupant = ''
                     let x: number, y: number
                     do {
@@ -1441,7 +1441,7 @@ module Dungeon {
                     $.online.altered = true
                 }
                 else if (!$.player.novice && dice(Z + $.online.cha) == 1) {
-                    profile({
+                    vt.profile({
                         png: (PC.name['player'][$.player.pc] || PC.name['immortal'][$.player.pc] ? 'player' : 'monster') + '/' + $.player.pc.toLowerCase()
                             + ($.player.gender == 'F' ? '_f' : ''), effect: 'flip'
                     })
@@ -1451,8 +1451,8 @@ module Dungeon {
 
                     //	vacate
                     drawHero()
-                    animated('flipOutY')
-                    sound('teleport', 12)
+                    vt.animated('flipOutY')
+                    vt.sound('teleport', 12)
                     ROOM.occupant = ''
                     let x: number, y: number
                     do {
@@ -1462,7 +1462,7 @@ module Dungeon {
                     DL.rooms[y][x].occupant = 'wizard'
                 }
                 else {
-                    profile({ jpg: 'npc/wizard', effect: 'backInLeft', handle: 'Pops', level: 77, pc: 'crackpot' })
+                    vt.profile({ jpg: 'npc/wizard', effect: 'backInLeft', handle: 'Pops', level: 77, pc: 'crackpot' })
                     vt.outln('wizard', vt.normal, ' in this room.\n', -300)
                     scroll(1, false)
                     teleport()
@@ -1473,7 +1473,7 @@ module Dungeon {
                 break
 
             case 'dwarf':
-                profile({ jpg: 'npc/dwarf', effect: 'fadeIn' })
+                vt.profile({ jpg: 'npc/dwarf', effect: 'fadeIn' })
                 vt.beep()
                 vt.outln(vt.yellow, 'You run into a ', vt.bright, 'dwarven merchant', vt.normal, ', ', $.dwarf.user.handle, '.', -1000)
                 let hi = 0, credit = new Coin(0), ring = $.dwarf.user.rings[0]
@@ -1488,8 +1488,8 @@ module Dungeon {
                                 Armor.equip($.online, Armor.dwarf[hi])
                                 $.player.toAC = 2 - dice(3)
                                 $.online.toAC = dice($.online.armor.ac) - 2
-                                profile({ jpg: `specials/${$.player.armor}`, effect: 'fadeInUpBig' })
-                                sound('click')
+                                vt.profile({ jpg: `specials/${$.player.armor}`, effect: 'fadeInUpBig' })
+                                vt.sound('click')
                             }
                             else {
                                 vt.outln()
@@ -1502,7 +1502,7 @@ module Dungeon {
                                         Ring.remove($.player.rings, ring)
                                     }
                                     Ring.save(ring, $.player.id)
-                                    sound('click', 8)
+                                    vt.sound('click', 8)
                                 }
                                 else {
                                     merchant()
@@ -1521,8 +1521,8 @@ module Dungeon {
                                 Weapon.equip($.online, Weapon.dwarf[hi])
                                 $.player.toWC = 2 - dice(3)
                                 $.online.toWC = dice($.online.weapon.wc) - 2
-                                profile({ jpg: `specials/${$.player.weapon}`, effect: 'fadeInUpBig' })
-                                sound('click')
+                                vt.profile({ jpg: `specials/${$.player.weapon}`, effect: 'fadeInUpBig' })
+                                vt.sound('click')
                             }
                             else {
                                 vt.out(vt.yellow, $.dwarf.user.handle, ' evaluates the situation ... ', -600)
@@ -1535,7 +1535,7 @@ module Dungeon {
                                         Ring.remove($.player.rings, ring)
                                     }
                                     Ring.save(ring, $.player.id)
-                                    sound('click', 8)
+                                    vt.sound('click', 8)
                                 }
                                 else {
                                     merchant()
@@ -1570,7 +1570,7 @@ module Dungeon {
                             , ['exceptional', 'precious', 'remarkable', 'special', 'uncommon'][dice(5) - 1], ' '
                             , bracket(Armor.name[Armor.dwarf[hi]].ac, false), ' ')
                         vt.outln(vt.bright, vt.yellow, Armor.dwarf[hi], -1000)
-                        action('yn')
+                        vt.action('yn')
                         vt.drain()
                         vt.focus = 'armor'
                         return false
@@ -1599,7 +1599,7 @@ module Dungeon {
                             , ['exquisite', 'fine', 'jeweled', 'rare', 'splendid'][dice(5) - 1], ' '
                             , bracket(Weapon.name[Weapon.dwarf[hi]].wc, false), ' ')
                         vt.outln(vt.bright, vt.cyan, Weapon.dwarf[hi], -1000)
-                        action('yn')
+                        vt.action('yn')
                         vt.drain()
                         vt.focus = 'weapon'
                         return false
@@ -1607,57 +1607,57 @@ module Dungeon {
                 }
 
                 vt.beep()
-                animated('fadeOut')
+                vt.animated('fadeOut')
                 vt.outln(`I've got nothing of interest for trading.  Perhaps next time, my friend?`, -1000)
                 ROOM.occupant = ''
                 break
 
             case 'witch':
                 scroll(1, false)
-                music('.')
-                profile({ jpg: 'npc/witch', effect: 'fadeIn' })
+                vt.music('.')
+                vt.profile({ jpg: 'npc/witch', effect: 'fadeIn' })
                 vt.outln(vt.green, 'You encounter the ', vt.bright, 'sorceress', vt.normal, ', ', $.witch.user.handle, '.')
                 cat(`dungeon/witch`)
                 wearing($.witch)
-                sound('steal', 10)
+                vt.sound('steal', 10)
 
                 let choice: string
                 vt.form = {
                     offer: {
                         cb: () => {
                             vt.outln()
-                            sound('click', 8)
+                            vt.sound('click', 8)
                             if (/Y/i.test(vt.entry)) {
                                 let result = Weapon.swap($.online, $.witch)
                                 if (typeof result == 'boolean' && result) {
                                     vt.outln(vt.faint, '"', vt.normal, vt.green, 'A gift from the gods, I give you ', vt.reset, weapon(), vt.reset, vt.faint, '"')
-                                    sound('click', 13)
+                                    vt.sound('click', 13)
                                 }
                                 result = Armor.swap($.online, $.witch)
                                 if (typeof result == 'boolean' && result) {
                                     vt.outln(vt.faint, '"', vt.normal, vt.green, `I offer my crafted `, vt.reset, armor(), vt.reset, vt.faint, '"')
-                                    sound('click', 13)
+                                    vt.sound('click', 13)
                                 }
                                 vt.out(vt.faint, '"', vt.normal, vt.green, "Your price is ")
 
                                 if ($.player.steal > 1) {
-                                    sound('mana', 8)
+                                    vt.sound('mana', 8)
                                     vt.out('your ability to steal diminishes')
                                     $.player.steal--
                                 }
                                 else if ($.player.magic > 3) {
-                                    sound('mana', 8)
+                                    vt.sound('mana', 8)
                                     vt.out('your divine spellcasting ability is mine')
                                     $.player.magic--
                                 }
                                 else if ($.player.melee > 3) {
-                                    sound('mana', 8)
+                                    vt.sound('mana', 8)
                                     vt.out('your barbaric powers are halved')
                                     $.player.melee = 2
                                     PC.adjust('str', -5 - dice(5), -2, -2)
                                 }
                                 else if ($.player.str > 80 && $.player.int > 80 && $.player.dex > 80 && $.player.cha > 80) {
-                                    sound('mana', 8)
+                                    vt.sound('mana', 8)
                                     vt.out('allowing me to drain your overall ability')
                                     $.player.blessed = ''
                                     PC.adjust('str', -5 - dice(5), -2, -2)
@@ -1672,14 +1672,14 @@ module Dungeon {
                                     activate($.online)
                                     $.player.gender = ['F', 'M'][dice(2) - 1]
                                     PC.saveUser($.player)
-                                    sound('crone', 21)
+                                    vt.sound('crone', 21)
                                     vt.out(`me morphing you into a level ${$.player.level} ${$.player.pc} (${$.player.gender})`)
                                     news(`\tgot morphed by ${$.witch.user.handle} into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
                                 }
 
-                                music('crack')
+                                vt.music('crack')
                                 vt.outln('!', vt.reset, vt.faint, '"', -2100)
-                                sound('click')
+                                vt.sound('click')
 
                                 switch (choice) {
                                     case 'rings':
@@ -1692,7 +1692,7 @@ module Dungeon {
                                             PC.saveUser(rpc)
                                             Ring.wear(rpc.user.rings, rs[row].name)
                                             Ring.save(rs[row].name, $.player.id, $.player.rings)
-                                            sound('click', 8)
+                                            vt.sound('click', 8)
                                         }
                                         news(`\tgot ${rs.length} magical ring${rs.length > 1 ? 's' : ''} of power from ${$.witch.user.handle}!`)
                                         break
@@ -1715,11 +1715,11 @@ module Dungeon {
                                                         vt.outln('You add a ', vt.yellow, vt.bright, `Scroll of ${spell}`, vt.reset, ' to your arsenal.', -600)
                                                         break
                                                     case 3:
-                                                        sound('shimmer', 8)
+                                                        vt.sound('shimmer', 8)
                                                         vt.outln('The ', vt.cyan, vt.bright, `Spell of ${spell}`, vt.reset, ' is revealed to you.', -600)
                                                         break
                                                     case 4:
-                                                        sound('shimmer', 8)
+                                                        vt.sound('shimmer', 8)
                                                         vt.outln(vt.magenta, vt.bright, spell, vt.reset, ' is known to you.', -600)
                                                         break
                                                 }
@@ -1734,7 +1734,7 @@ module Dungeon {
                                         break
 
                                     case 'curse':
-                                        sound('resurrect')
+                                        vt.sound('resurrect')
                                         db.run(`UPDATE Players SET status='' WHERE id NOT GLOB '_*' AND status!='jail'`)
                                         db.run(`UPDATE Players SET blessed='',coward=1,cursed='${$.witch.user.id}' WHERE id NOT GLOB '_*' AND id != '${$.player.id}'`)
                                         news(`\t${$.witch.user.handle} resurrected all the dead and cursed everyone!`)
@@ -1747,7 +1747,7 @@ module Dungeon {
                                 witch()
                                 return
                             }
-                            animated('fadeOut')
+                            vt.animated('fadeOut')
                             pause = true
                             refresh = true
                             menu()
@@ -1755,7 +1755,7 @@ module Dungeon {
                     }
                 }
 
-                action('yn')
+                vt.action('yn')
                 vt.drain()
                 vt.outln(-1000)
                 vt.outln(vt.faint, `${PC.who($.witch).He}says, "`
@@ -1795,9 +1795,9 @@ module Dungeon {
                 xarmor.user.armor = Armor.special[ROOM.giftValue]
                 activate(xarmor)
                 if (Armor.swap($.online, xarmor)) {
-                    profile({ jpg: `specials/${$.player.armor}`, effect: 'fadeInUpBig' })
+                    vt.profile({ jpg: `specials/${$.player.armor}`, effect: 'fadeInUpBig' })
                     vt.outln(vt.faint, vt.yellow, 'You find', vt.normal, an($.player.armor.toString()), vt.bright, '!')
-                    sound('max')
+                    vt.sound('max')
                     pause = true
                     ROOM.giftItem = ''
                 }
@@ -1812,14 +1812,14 @@ module Dungeon {
                 if (gold.value) {
                     if (gold.value > 1e+17)
                         gold.value = 1e+17
-                    profile({ jpg: `specials/chest`, effect: 'fadeInUpBig' })
-                    sound('yahoo', 10)
+                    vt.profile({ jpg: `specials/chest`, effect: 'fadeInUpBig' })
+                    vt.sound('yahoo', 10)
                     vt.outln(vt.yellow, 'You find a ', vt.bright, 'treasure chest'
                         , vt.normal, ' holding ', gold.carry(), '!')
                 }
                 else {
                     vt.outln(vt.faint, vt.yellow, 'You find an empty, treasure chest.')
-                    sound('boo')
+                    vt.sound('boo')
                 }
                 $.player.coin.value += gold.value
                 pause = true
@@ -1861,24 +1861,24 @@ module Dungeon {
                     ROOM.giftID = !$.player.novice
                         && dice(100 + +ROOM.giftValue) < ($.online.int / 20 * (1 << $.player.poison) + ($.online.int > 90 ? ($.online.int % 90) << 1 : 0))
 
-                sound('bubbles')
+                vt.sound('bubbles')
                 vt.out(vt.cyan, 'On the ground, you find a ')
                 if (Ring.power([], $.player.rings, 'identify').power) potions[ROOM.giftValue].identified = true
                 if (potions[ROOM.giftValue].identified || ROOM.giftID || $.access.sysop) {
-                    profile({ png: potions[ROOM.giftValue].image, handle: potion[ROOM.giftValue], effect: 'fadeInUp' })
+                    vt.profile({ png: potions[ROOM.giftValue].image, handle: potion[ROOM.giftValue], effect: 'fadeInUp' })
                     vt.out(vt.bright, potion[ROOM.giftValue], vt.normal, '.')
                     if (!potions[ROOM.giftValue].identified)	//	recall seeing this before
                         potions[ROOM.giftValue].identified = $.player.novice || $.online.int > (85 - 4 * $.player.poison)
                     id = true
                 }
                 else {
-                    profile({ png: potions[ROOM.giftValue].image, handle: 'Is it ' + 'nt'[dice(2) - 1] + 'asty, precious?', effect: 'fadeInUp' })
+                    vt.profile({ png: potions[ROOM.giftValue].image, handle: 'Is it ' + 'nt'[dice(2) - 1] + 'asty, precious?', effect: 'fadeInUp' })
                     vt.out(potions[ROOM.giftValue].description, vt.cyan, vt.bright, ' potion', vt.normal, '.')
                 }
 
                 if (id ||
                     (dice(100 + 10 * +ROOM.giftValue * +$.player.coward) + dice(deep / 2) < (50 + int($.online.int / 2)) && dice(100) > 1)) {
-                    action('potion')
+                    vt.action('potion')
                     vt.form = {
                         'quaff': {
                             cb: () => {
@@ -1892,7 +1892,7 @@ module Dungeon {
                                     quaff(+ROOM.giftValue)
                                 else if (/T/i.test(vt.entry)) {
                                     quaff(+ROOM.giftValue, false)
-                                    sound('click')
+                                    vt.sound('click')
                                     pause = false
                                 }
                                 ROOM.giftItem = ''
@@ -1929,9 +1929,9 @@ module Dungeon {
                 xweapon.user.weapon = Weapon.special[ROOM.giftValue]
                 activate(xweapon)
                 if (Weapon.swap($.online, xweapon)) {
-                    profile({ jpg: `specials/${$.player.weapon}`, effect: 'fadeInUpBig' })
+                    vt.profile({ jpg: `specials/${$.player.weapon}`, effect: 'fadeInUpBig' })
                     vt.outln(vt.faint, vt.cyan, 'You find', vt.normal, an($.player.weapon.toString()), vt.bright, '!')
-                    sound('max')
+                    vt.sound('max')
                     pause = true
                     ROOM.giftItem = ''
                 }
@@ -2013,7 +2013,7 @@ module Dungeon {
                 }
                 //	activate this monster's avenge?
                 if (mon.user.xplevel == 0) {
-                    sound('oops')
+                    vt.sound('oops')
                     ROOM.monster[n].monster.effect = 'flip'
                     monsters[mon.user.handle].pc = '*'	//	chaos
                     activate(mon)
@@ -2044,7 +2044,7 @@ module Dungeon {
             else {
                 //	retreated from a harmless creature, good
                 if (ROOM.monster[n].user.xplevel == 0) {
-                    sound('heal', 3)
+                    vt.sound('heal', 3)
                     let ha = $.player.magic > 2 ? int($.player.level / 16) + 13 : 16
                     let hr = 0
                     for (let i = 0; i < $.player.level; i++)
@@ -2063,7 +2063,7 @@ module Dungeon {
                 let m = <MAP>['', 'map', 'magic map'][(dice(Z / 33 + 2) > 1 ? 1 : 2)]
                 if (DL.map.length < m.length) {
                     DL.map = m
-                    sound('click')
+                    vt.sound('click')
                     vt.outln(vt.yellow, vt.bright, 'You find a ', m, '!')
                     pause = true
                 }
@@ -2071,7 +2071,7 @@ module Dungeon {
             //	> 3 monsters
             if (b4 < 0) {
                 vt.outln(-100)
-                sound('effort')
+                vt.sound('effort')
                 vt.outln(vt.green, vt.bright, '+ ', vt.normal, 'bonus charisma', -200)
                 PC.adjust('cha', dice(Math.abs(b4)), 1, 1)
                 pause = true
@@ -2082,7 +2082,7 @@ module Dungeon {
                 && ((b4 > 0 && b4 / $.player.hp < 0.67 && $.online.hp / $.player.hp < 0.067)
                     || ($.online.hp <= Z + deep + 1))) {
                 vt.outln(-100)
-                sound('bravery', 20)
+                vt.sound('bravery', 20)
                 vt.outln(vt.red, vt.bright, '+ ', vt.normal, 'bonus strength', -600)
                 PC.adjust('str', deep + 2, deep + 1, 1)
                 DL.map = `Marauder's map`
@@ -2095,7 +2095,7 @@ module Dungeon {
             Battle.teleported = false
             if (Battle.expel) {
                 Battle.expel = false
-                portrait($.online, 'flipOutX')
+                PC.portrait($.online, 'flipOutX')
                 if (deep > 0)
                     deep--
                 else {
@@ -2106,7 +2106,7 @@ module Dungeon {
                 generateLevel()
             }
             else {
-                portrait($.online, 'lightSpeedOut', ` - Dungeon ${romanize(deep + 1)}.${Z + 1}`)
+                PC.portrait($.online, 'lightSpeedOut', ` - Dungeon ${romanize(deep + 1)}.${Z + 1}`)
                 Y = dice(DL.rooms.length) - 1
                 X = dice(DL.width) - 1
             }
@@ -2114,11 +2114,11 @@ module Dungeon {
             return
         }
 
-        if (Battle.retreat) portrait($.online, 'heartBeat', ` - Dungeon ${romanize(deep + 1)}.${Z + 1}`)
+        if (Battle.retreat) PC.portrait($.online, 'heartBeat', ` - Dungeon ${romanize(deep + 1)}.${Z + 1}`)
 
         let d = ['N', 'S', 'E', 'W']
         while (Battle.retreat && !$.reason) {
-            music('pulse')
+            vt.music('pulse')
             vt.out(-375, vt.bright, vt.red, 'You frantically look to escape . . . ', -375)
 
             let i = dice(d.length) - 1
@@ -2129,7 +2129,7 @@ module Dungeon {
                             Battle.retreat = false
                             Y--
                             looked = false
-                            animated('fadeOutUp')
+                            vt.animated('fadeOutUp')
                             break
                         }
                     oof('north')
@@ -2141,7 +2141,7 @@ module Dungeon {
                             Battle.retreat = false
                             Y++
                             looked = false
-                            animated('fadeOutDown')
+                            vt.animated('fadeOutDown')
                             break
                         }
                     oof('south')
@@ -2153,7 +2153,7 @@ module Dungeon {
                             Battle.retreat = false
                             X++
                             looked = false
-                            animated('fadeOutRight')
+                            vt.animated('fadeOutRight')
                             break
                         }
                     oof('east')
@@ -2165,7 +2165,7 @@ module Dungeon {
                             Battle.retreat = false
                             X--
                             looked = false
-                            animated('fadeOutLeft')
+                            vt.animated('fadeOutLeft')
                             break
                         }
                     oof('west')
@@ -2253,7 +2253,7 @@ module Dungeon {
     function drawLevel() {
         let y: number, x: number, m: number
 
-        clear()
+        vt.cls()
 
         if (DL.map) {
             for (y = 0; y < paper.length; y++) {
@@ -2327,8 +2327,8 @@ module Dungeon {
 
     function generateLevel() {
 
-        title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${romanize(deep + 1)}.${Z + 1}`)
-        action('clear')
+        vt.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} - Dungeon ${romanize(deep + 1)}.${Z + 1}`)
+        vt.action('clear')
 
         looked = false
         refresh = true
@@ -2425,7 +2425,7 @@ module Dungeon {
 
         reroll(DL.cleric.user, DL.cleric.user.pc, DL.cleric.user.level)
         activate(DL.cleric)
-        wall(`enters dungeon level ${romanize(deep + 1)}.${Z + 1}`)
+        vt.wall($.player.handle, `enters dungeon level ${romanize(deep + 1)}.${Z + 1}`)
 
         renderMap()
         do {
@@ -2660,11 +2660,11 @@ module Dungeon {
             let min = checkTime()
             if (Z == 99 || Z - $.player.level > 8) {
                 tl = min
-                music('tension' + dice(3))
+                vt.music('tension' + dice(3))
             }
             else if (tl - min > 4) {
                 tl = min
-                music((deep % 2 ? 'ddd' : 'dungeon') + dice(9))
+                vt.music((deep % 2 ? 'ddd' : 'dungeon') + dice(9))
             }
 
             const box = vt.Draw
@@ -3016,7 +3016,7 @@ module Dungeon {
         vt.outln(vt.yellow, PC.who(dwarf).He, 'scowls in disgust, '
             , vt.bright, `"Never trust${an($.player.pc)}!"`)
         wearing(dwarf)
-        sound('ddd', 20)
+        vt.sound('ddd', 20)
         Battle.engage('Merchant', party, dwarf, doSpoils)
     }
 
@@ -3027,8 +3027,8 @@ module Dungeon {
         vt.outln()
         vt.outln(vt.green, PC.who(witch).His, 'disdained look sends a chill down your back.', -1200)
         vt.outln(vt.green, vt.bright, `"Puny ${$.player.pc} -- you earned my wrath!"`)
-        sound('god', 28)
-        music('boss' + dice(3))
+        vt.sound('god', 28)
+        vt.music('boss' + dice(3))
         Battle.engage('Witch', party, witch, doSpoils)
     }
 
@@ -3043,7 +3043,7 @@ module Dungeon {
     function teleport() {
         let min = checkTime()
 
-        action('teleport')
+        vt.action('teleport')
         vt.outln(vt.yellow, vt.bright, 'What do you wish to do?')
         vt.out(bracket('U'), 'Teleport up 1 level')
         if (Z < 99) vt.out(bracket('D'), 'Teleport down 1 level')
@@ -3059,41 +3059,41 @@ module Dungeon {
                 cb: () => {
                     if (dice(10 * deep + Z + 5 * $.player.magic + $.online.int + $.online.cha) == 1) {
                         vt.outln(' ... "', vt.bright, vt.cyan, 'Huh?', vt.reset, '"')
-                        animated('headShake')
-                        sound('miss', 6)
-                        animated('rubberBand')
-                        sound('lose', 12)
-                        music('crack')
+                        vt.animated('headShake')
+                        vt.sound('miss', 6)
+                        vt.animated('rubberBand')
+                        vt.sound('lose', 12)
+                        vt.music('crack')
                         vt.sleep(1250)
-                        animated('bounceOutUp')
+                        vt.animated('bounceOutUp')
                         vt.sleep(1250)
                         let pops = 'UDOR'[dice(4) - 1]
                         if (vt.entry.toUpperCase() == pops) {
-                            sound('oops', 6)
+                            vt.sound('oops', 6)
                             deep = dice(10) - 1
                             Z += dice(20) - 10
                             Z = Z < 0 ? 0 : Z > 99 ? 99 : Z
-                            sound('portal', 12)
+                            vt.sound('portal', 12)
                         }
                         else {
                             vt.entry = pops
-                            sound('teleport')
+                            vt.sound('teleport')
                         }
                     }
                     else {
                         vt.outln()
-                        sound('teleport')
+                        vt.sound('teleport')
                     }
 
                     switch (vt.entry.toUpperCase()) {
                         case 'D':
                             if (Z < 99) {
                                 Z++
-                                portrait($.online, 'backOutDown')
+                                PC.portrait($.online, 'backOutDown')
                                 break
                             }
                         case 'R':
-                            portrait($.online, 'flipOutY')
+                            PC.portrait($.online, 'flipOutY')
                             DL.alert = true
                             DL.events++
                             DL.exit = false
@@ -3104,11 +3104,11 @@ module Dungeon {
                                 DL.events++
                                 DL.exit = false
                                 Z--
-                                portrait($.online, 'backOutUp')
+                                PC.portrait($.online, 'backOutUp')
                                 break
                             }
                         case 'O':
-                            portrait($.online, 'flipOutX')
+                            PC.portrait($.online, 'flipOutX')
                             if (deep > 0)
                                 deep--
                             else {
@@ -3140,12 +3140,12 @@ module Dungeon {
                 if ($.player.emulation == 'XT') vt.out(' ', v % 2 ? '🌡️ ' : '🧪')
                 vt.outln(an(potion[v]), vt.normal, '.')
             }
-            sound('quaff', 5)
+            vt.sound('quaff', 5)
             switch (v) {
                 //	Potion of Cure Light Wounds
                 case 0:
                     $.online.hp += PC.hp() + dice($.player.hp - $.online.hp)
-                    sound('yum', 3)
+                    vt.sound('yum', 3)
                     break
 
                 //	Vial of Weakness
@@ -3191,14 +3191,14 @@ module Dungeon {
                 //	Vial of Slaad Secretions
                 case 9:
                     $.online.hp -= dice($.player.hp / 2)
-                    sound('hurt', 3)
+                    vt.sound('hurt', 3)
                     if ($.online.hp < 1)
                         death(`quaffed${an(potion[v])}`)
                     break
 
                 //	Potion of Mana
                 case 10:
-                    sound('shimmer')
+                    vt.sound('shimmer')
                     $.online.sp += PC.sp() + dice($.player.sp - $.online.sp)
                     break
 
@@ -3210,7 +3210,7 @@ module Dungeon {
 
                 //	Elixir of Restoration
                 case 12:
-                    music('elixir')
+                    vt.music('elixir')
                     if ($.online.hp < $.player.hp) $.online.hp = $.player.hp
                     if ($.online.sp < $.player.sp) $.online.sp = $.player.sp
                     if ($.online.str < $.player.str) $.online.str = $.player.str
@@ -3244,14 +3244,14 @@ module Dungeon {
                     $.online.sp -= PC.sp()
                     if ($.online.sp < 0) $.online.sp = 0
                     $.online.hp -= PC.hp()
-                    music('crack', 6)
+                    vt.music('crack', 6)
                     if ($.online.hp < 1)
                         death(`quaffed${an(potion[v])}`)
                     break
 
                 //	Potion of Augment
                 case 14:
-                    sound('hone', 11)
+                    vt.sound('hone', 11)
                     PC.adjust('str'
                         , 100 + dice(100 - $.online.str)
                         , dice(3) + 2
@@ -3271,7 +3271,7 @@ module Dungeon {
                     $.online.hp += PC.hp()
                     $.online.sp += PC.sp()
                     $.online.altered = true
-                    sound('heal', 3)
+                    vt.sound('heal', 3)
                     break
 
                 //	Beaker of Death
@@ -3288,8 +3288,8 @@ module Dungeon {
         if (reveal) {
             let m = room.monster.length > 4 ? 4 : room.monster.length
             if (m) {
-                if ($.player.emulation !== 'XT' && Monster[$.tty])
-                    icon += Monster[$.tty][m]
+                if ($.player.emulation !== 'XT' && Monster[vt.tty])
+                    icon += Monster[vt.tty][m]
                 else {
                     if (identify) {
                         icon += Mask[m]
@@ -3395,9 +3395,9 @@ module Dungeon {
         vt.restore()
         if (escape) {
             news(`\tescaped dungeon ${romanize(hideep + 1)}.${hiZ} ${levels < $.player.level && `ascending +${$.player.level - levels}` || 'expeditiously'}`)
-            music(['escape', 'thief2', 'thief'][$.dungeon])
+            vt.music(['escape', 'thief2', 'thief'][$.dungeon])
             vt.outln(vt.lblue, `\n"Next time you won't escape so easily... moo-hahahahaha!!"`, -600)
-            profile({ png: 'castle', effect: 'pulse' })
+            vt.profile({ png: 'castle', effect: 'pulse' })
         }
         else if (redraw) {
             drawLevel()

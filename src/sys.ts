@@ -21,7 +21,6 @@ module sys {
     export const got = Got
     export const sprintf = sf
     export const titlecase = titleCase
-    export const vt = new xvt('VT', false)
 
     //  TODO: use locale
     const day: string[] = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
@@ -147,6 +146,55 @@ module sys {
         let i = int(n)
         return (i < 0) ? 0 : i
     }
+
+    class _xvt extends xvt {
+
+        tty: TTY = 'telnet'
+
+        cls() {
+            const rows = process.stdout.rows
+            const scroll = (this.row < rows ? vt.row : rows) - (this.col == 1 ? 2 : 1)
+            this.out(this.off)
+            this.plot(rows, 1)
+            this.outln('\n'.repeat(scroll))
+            this.out(this.clear, -10)  //  allow XTerm to flush
+        }
+
+        //  web client extended commands in terminal emulator
+        action(menu: string) {
+            if (this.tty == 'web') vt.out(`@action(${menu})`)
+        }
+
+        animated(effect: string, sync = 2) {
+            if (this.tty == 'web') vt.out(`@animated(${effect})`, -10 * sync)
+        }
+
+        music(tune: string, sync = 2) {
+            if (this.tty == 'web') vt.out(`@tune(${tune})`, -10 * sync)
+        }
+
+        profile(params) {
+            if (this.tty == 'web') vt.out(`@profile(${JSON.stringify(params)})`)
+        }
+
+        sound(effect: string, sync = 2) {
+            if (this.tty == 'web')
+                vt.out(`@play(${effect})`, -100 * sync)
+            else
+                vt.beep()
+        }
+
+        title(name: string) {
+            if (vt.emulation == 'XT') vt.out(`\x1B]2;${name}\x07`)
+            if (this.tty == 'web') vt.out(`@title(${name})`)
+        }
+
+        wall(who: string, msg: string) {
+            vt.out(`@wall(${who} ${msg})`)
+        }
+    }
+
+    export const vt = new _xvt('VT', false)
 }
 
 export = sys

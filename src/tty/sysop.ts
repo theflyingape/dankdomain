@@ -6,7 +6,7 @@
 import { now, sprintf, titlecase, vt } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
-import { action, bracket, display, keyhint, loadUser, music, reroll, sound, status } from '../io'
+import { bracket, display, keyhint, loadUser, reroll } from '../io'
 import { PC } from '../pc'
 
 import Battle = require('../battle')
@@ -25,7 +25,7 @@ module Sysop {
 
     export function menu(suppress = false) {
         if ($.reason) vt.hangup()
-        music('.')
+        vt.music('.')
         vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
@@ -72,7 +72,7 @@ module Sysop {
                 return
 
             case 'D':
-                action('list')
+                vt.action('list')
                 vt.form = {
                     'level': {
                         cb: () => {
@@ -85,7 +85,7 @@ module Sysop {
                                 vt.refocus()
                                 return
                             }
-                            sound('teleport')
+                            vt.sound('teleport')
                             require('./dungeon').DeepDank(i - 1, menu)
                         }, prompt: `Level (1-100): `, min: 1, max: 3
                     }
@@ -108,7 +108,7 @@ module Sysop {
                 let pc: string
                 let kh: number
                 let k: number
-                action('ny')
+                vt.action('ny')
                 vt.form = {
                     'pc': {
                         cb: () => {
@@ -167,21 +167,21 @@ module Sysop {
                     'taxman': {
                         cb: () => {
                             loadUser($.taxman)
-                            status($.taxman)
+                            PC.status($.taxman)
                             vt.focus = 'pause'
                         }, pause: true
                     },
                     'pause': { cb: menu, pause: true }
                 }
                 loadUser($.barkeep)
-                status($.barkeep)
+                PC.status($.barkeep)
                 vt.focus = 'taxman'
                 return
 
             case 'Y':
                 Battle.user('Scout', (opponent: active) => {
                     if (opponent.user.id) {
-                        status(opponent)
+                        PC.portrait(opponent)
                         vt.form['pause'] = { cb: menu, pause: true }
                         vt.focus = 'pause'
                     }

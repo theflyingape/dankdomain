@@ -6,7 +6,7 @@
 import { PATH, date2full, dice, fs, got, int, money, now, time, titlecase, vt, whole } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
-import { action, activate, bracket, cat, clear, emulator, getRing, getRuler, input, loadUser, logoff, music, playerPC, portrait, profile, reroll, sound, title, wall } from '../io'
+import { activate, bracket, cat, emulator, getRing, getRuler, input, loadUser, logoff, playerPC, reroll } from '../io'
 import { Coin, Access, Deed, Magic, Ring } from '../items'
 import { cuss, news } from '../lib'
 import { PC } from '../pc'
@@ -38,8 +38,8 @@ module Logon {
                     vt.outln('The guards aim their crossbows at you.')
                     break
                 default:
-                    sound('stranger')
-                    profile({ handle: '💀 🏹 💘 🏹 💀', jpg: 'npc/stranger', effect: 'zoomIn' })
+                    vt.sound('stranger')
+                    vt.profile({ handle: '💀 🏹 💘 🏹 💀', jpg: 'npc/stranger', effect: 'zoomIn' })
                     vt.outln('The last thing you ever feel is several quarrels cutting deep into your chest.', -800)
                     vt.form = {
                         'forgot': {
@@ -61,7 +61,7 @@ module Logon {
                         }
                     }
                     if ($.player.id && $.player.lastdate != now().date) {
-                        action('yn')
+                        vt.action('yn')
                         vt.focus = 'forgot'
                     }
                     else
@@ -86,8 +86,8 @@ module Logon {
                 PC.newkeys($.player)
                 $.player.emulation = <EMULATION>vt.emulation
                 $.player.rows = process.stdout.rows || 24
-                if ($.tty == 'web') {
-                    sound('yahoo', 20)
+                if (vt.tty == 'web') {
+                    vt.sound('yahoo', 20)
                     require('./newuser')
                 }
                 else {
@@ -158,7 +158,7 @@ module Logon {
             $.player.rows = process.stdout.rows || 24
         }
 
-        title($.player.emulation)
+        vt.title($.player.emulation)
         news(`${$.player.handle} ${$.access.emoji} arrived in ${$.whereis} at ${time(now().time)} as a level ${$.player.level} ${$.player.pc}:`)
 
         let rs = db.query(`SELECT * FROM Online`)
@@ -213,7 +213,7 @@ module Logon {
         if ($.player.today > $.access.calls) {
             vt.beep()
             vt.outln(`\nYou played all ${$.access.calls} calls for today.  Please visit again after ${now().time < 1200 ? 'noon' : 'midnight'}!`)
-            sound('comeagain')
+            vt.sound('comeagain')
             news('', true)
             vt.hangup()
         }
@@ -262,7 +262,7 @@ module Logon {
 
         $.access = Access.name[$.player.access]
         $.player.rows = process.stdout.rows
-        clear()
+        vt.cls()
 
         vt.outln(vt.red, '--=:))', vt.LGradient
             , vt.Red, vt.white, vt.bright, $.sysop.name, vt.reset
@@ -299,11 +299,11 @@ module Logon {
     }
 
     function welcome() {
-        action('yn')
+        vt.action('yn')
 
         if ($.player.today <= $.access.calls && ($.player.status == 'jail' || !Access.name[$.player.access].roleplay)) {
-            profile({ png: 'npc/jailer', effect: 'fadeIn' })
-            sound('ddd')
+            vt.profile({ png: 'npc/jailer', effect: 'fadeIn' })
+            vt.sound('ddd')
             if ($.player.emulation == 'XT') vt.out('🔒 ')
             vt.outln(vt.bright, vt.black, '(', vt.magenta, 'PRISONER', vt.black, ')')
             vt.outln(vt.red, '\nYou are locked-up in jail.', -1200)
@@ -315,7 +315,7 @@ module Logon {
                         cb: () => {
                             vt.outln('\n')
                             if (/Y/i.test(vt.entry)) {
-                                sound('click')
+                                vt.sound('click')
                                 $.player.coin.value -= bail.value
                                 if ($.player.coin.value < 0) {
                                     $.player.bank.value += $.player.coin.value
@@ -340,12 +340,12 @@ module Logon {
                 return
             }
             else
-                sound('boo')
+                vt.sound('boo')
         }
 
         if ($.player.today <= $.access.calls && $.access.roleplay && $.sysop.dob <= now().date) {
-            portrait(<active>{ user: { id: '', pc: $.player.pc, gender: $.player.gender, handle: $.player.handle, level: $.player.level } }, 'fadeIn', ' - Ɗanƙ Ɗomaiƞ')
-            sound('welcome')
+            PC.portrait(<active>{ user: { id: '', pc: $.player.pc, gender: $.player.gender, handle: $.player.handle, level: $.player.level } }, 'fadeIn', ' - Ɗanƙ Ɗomaiƞ')
+            vt.sound('welcome')
 
             vt.outln(vt.black, vt.bright, '(', vt.normal, vt.white, 'Welcome back, '
                 , $.access[$.player.gender] || 'you', vt.black, vt.bright, ')')
@@ -355,7 +355,7 @@ module Logon {
                 , `${$.access.calls - $.player.today}`, vt.reset, ' calls remaining')
             vt.sessionAllowed = $.access.minutes * 60
 
-            wall(`logged on as a level ${$.player.level} ${$.player.pc}`)
+            vt.wall($.player.handle, `logged on as a level ${$.player.level} ${$.player.pc}`)
 
             vt.outln(vt.cyan, '\nLast callers were: ')
             try {
@@ -391,14 +391,14 @@ module Logon {
                 vt.out(vt.reset, '\n', vt.magenta, 'Helpful: ', vt.bright, `Your poor jousting stats have been reset.`)
                 $.player.jl = 0
                 $.player.jw = 0
-                sound('shimmer', 22)
+                vt.sound('shimmer', 22)
             }
             if ($.access.sysop) {
                 let ring = Ring.power([], null, 'joust')
                 if (($.online.altered = Ring.wear($.player.rings, ring.name))) {
                     getRing('win', ring.name)
                     Ring.save(ring.name, $.player.id, $.player.rings)
-                    sound('promote', 22)
+                    vt.sound('promote', 22)
                 }
             }
             vt.outln()
@@ -409,7 +409,7 @@ module Logon {
             $.player.xplevel = $.player.level
             const play = JSON.parse(fs.readFileSync(`${PATH}/etc/play.json`).toString())
             Object.assign($, play)
-            music('logon')
+            vt.music('logon')
 
             if ($.player.pc == Object.keys(PC.name['player'])[0]) {
                 if ($.player.novice) {
@@ -432,7 +432,7 @@ module Logon {
             db.unlock($.player.id)
             news('', true)
 
-            wall(`logged on as a level ${$.player.level} ${$.player.pc}`)
+            vt.wall($.player.handle, `logged on as a level ${$.player.level} ${$.player.pc}`)
 
             vt.out(vt.cyan, '\nLast callers were: ', vt.white)
             try {
@@ -455,7 +455,7 @@ module Logon {
                         input('pause')
                         return
                     }
-                    clear()
+                    vt.cls()
                     vt.outln(vt.blue, '--=:))', vt.LGradient
                         , vt.Blue, vt.cyan, vt.bright, 'Announcement', vt.reset
                         , vt.blue, vt.RGradient, '((:=--\n')
@@ -476,7 +476,7 @@ module Logon {
                 cb: () => {
                     vt.outln()
                     if (/Y/i.test(vt.entry)) {
-                        action('freetext')
+                        vt.action('freetext')
                         vt.focus = 'sysop'
                         return
                     }
@@ -498,7 +498,7 @@ module Logon {
                         , vt.Cyan, vt.white, vt.bright, 'Auto Message', vt.reset
                         , vt.cyan, vt.RGradient, '((:=--\n')
                     cat('auto-message')
-                    action('ny')
+                    vt.action('ny')
                     vt.focus = 'auto'
                 }, prompt: 'Enter your new announcement', lines: 12
             },
@@ -507,7 +507,7 @@ module Logon {
                 cb: () => {
                     vt.outln()
                     if (/Y/i.test(vt.entry)) {
-                        action('freetext')
+                        vt.action('freetext')
                         input('user', `Where's my dough, Bert!\n`)
                         return
                     }
@@ -529,7 +529,7 @@ module Logon {
                 }, prompt: 'Enter your public message', lines: 6
             }
         }
-        action('ny')
+        vt.action('ny')
         input('pause')
     }
 
@@ -537,11 +537,11 @@ module Logon {
         //  mode of operation
         switch (vt.emulation) {
             case 'PC':
-                $.tty = 'rlogin'
+                vt.tty = 'rlogin'
                 break
             case 'XT':
-                $.tty = 'web'
-                title(process.title)
+                vt.tty = 'web'
+                vt.title(process.title)
                 break
             default:
                 vt.emulation = 'VT'

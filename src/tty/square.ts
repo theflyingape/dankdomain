@@ -6,7 +6,7 @@
 import { dice, int, money, sprintf, vt, whole } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
-import { action, animated, armor, bracket, display, loadUser, music, portrait, profile, sound, weapon } from '../io'
+import { armor, bracket, display, loadUser, weapon } from '../io'
 import { Coin, Armor, Magic, Poison, Ring, RealEstate, Security, Weapon } from '../items'
 import { encounter, log, news, tradein } from '../lib'
 import { PC } from '../pc'
@@ -43,7 +43,7 @@ module Square {
     let want = ''
 
     export function menu(suppress = true) {
-        action('square')
+        vt.action('square')
         vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
@@ -56,9 +56,9 @@ module Square {
                 vt.beep()
                 vt.outln()
                 if (bump.user.id == $.taxman.user.id)
-                    profile({ jpg: 'npc/taxman', handle: $.taxman.user.handle, level: $.taxman.user.level, pc: $.taxman.user.pc, effect: 'fadeInLeft' })
+                    vt.profile({ jpg: 'npc/taxman', handle: $.taxman.user.handle, level: $.taxman.user.level, pc: $.taxman.user.pc, effect: 'fadeInLeft' })
                 else
-                    portrait(bump)
+                    PC.portrait(bump)
                 vt.out(vt.cyan, vt.faint, `${bump.user.handle} bumps`
                     , vt.normal, ' into you from'
                     , vt.bright, ' out of the shadows'
@@ -77,7 +77,7 @@ module Square {
                         log(bump.user.id, `\nYou picked ${$.player.handle}'s pouch holding ${v.carry()}!`)
                         $.player.coin.value -= v.value
                         vt.outln(vt.faint, '{sigh}')
-                        sound('oops', 8)
+                        vt.sound('oops', 8)
                         vt.outln('Your ', v.pieces(), ' is gone!')
                     }
                     else if ($.player.poisons.length) {
@@ -87,7 +87,7 @@ module Square {
                         Poison.remove($.player.poisons, p)
                         Poison.add(bump.user.poisons, p)
                         log(bump.user.id, `\nYou lifted a vial of ${Poison.merchant[p - 1]} from ${$.player.handle}!`)
-                        sound('oops', 8)
+                        vt.sound('oops', 8)
                         vt.out(vt.reset, '  Your vial of ')
                         if ($.player.emulation == 'XT') vt.out('💀 ')
                         vt.outln(vt.faint, Poison.merchant[p - 1], vt.reset, ' goes missing!')
@@ -99,14 +99,14 @@ module Square {
                         Magic.remove($.player.spells, p)
                         Magic.add(bump.user.spells, p)
                         log(bump.user.id, `\nYou lifted a  ${Magic.merchant[p - 1]} from ${$.player.handle}!`)
-                        sound('oops', 8)
+                        vt.sound('oops', 8)
                         vt.outln(vt.reset, '  Your ', Magic.merchant[p - 1], ' magic has disappeared!')
                     }
                     PC.saveUser(bump)
                     vt.sleep(800)
                 }
                 vt.sleep(1600)
-                animated('fadeOutRight')
+                vt.animated('fadeOutRight')
             }
         }
 
@@ -178,7 +178,7 @@ module Square {
                 credit.value -= $.player.loan.value
                 if (credit.value < 1) credit.value = 0
 
-                action('bank')
+                vt.action('bank')
                 bank['D'] = { description: 'Money in hand: ' + $.player.coin.carry(4) }
                 bank['W'] = { description: 'Money in bank: ' + $.player.bank.carry(4) }
                 bank['L'] = { description: 'Money on loan: ' + $.player.loan.carry(4) }
@@ -191,7 +191,7 @@ module Square {
                 return
 
             case 'G':
-                action('clear')
+                vt.action('clear')
                 require('./arena').menu($.player.expert)
                 return
 
@@ -199,13 +199,13 @@ module Square {
                 if (!$.access.roleplay) break
                 if (Armor.name[$.player.armor].ac == 0 && ($.online.toAC < 0 || $.player.toAC < 0)) {
                     credit = new Coin(Math.abs($.online.toAC + $.player.toAC) * money($.player.level) + 1)
-                    action('yn')
+                    vt.action('yn')
                     vt.form = {
                         'skin': {
                             cb: () => {
                                 vt.outln('\n')
                                 if (/Y/i.test(vt.entry)) {
-                                    sound('click')
+                                    vt.sound('click')
                                     $.online.toAC = 0
                                     $.player.toAC = 0
                                     $.player.coin.value -= credit.value
@@ -231,13 +231,13 @@ module Square {
                 }
                 if (Weapon.name[$.player.weapon].wc == 0 && ($.online.toWC < 0 || $.player.toWC < 0)) {
                     credit = new Coin(Math.abs($.online.toWC + $.player.toWC) * money($.player.level) + 1)
-                    action('yn')
+                    vt.action('yn')
                     vt.form = {
                         'hands': {
                             cb: () => {
                                 vt.outln('\n')
                                 if (/Y/i.test(vt.entry)) {
-                                    sound('click')
+                                    vt.sound('click')
                                     $.online.toWC = 0
                                     $.player.toWC = 0
                                     $.player.coin.value -= credit.value
@@ -281,7 +281,7 @@ module Square {
                         vt.out('You can be billed for the remaining ')
                     vt.outln(vt.bright, (hi - lo).toString(), vt.normal, ' hit points.')
                 }
-                action('listall')
+                vt.action('listall')
                 vt.form = {
                     'hp': {
                         cb: () => {
@@ -314,7 +314,7 @@ module Square {
 
             case 'J':
                 if ($.bail) {
-                    profile({ png: 'npc/jailer', effect: 'fadeIn' })
+                    vt.profile({ png: 'npc/jailer', effect: 'fadeIn' })
                     vt.outln('\nA deputy greets you in front of the County Jail.')
                     vt.sleep(600)
                     vt.outln(`"What `, ['cur', 'knave', 'scum', 'toad', 'villain'][dice(5) - 1]
@@ -345,14 +345,14 @@ module Square {
                             return
                         }
 
-                        action('ny')
+                        vt.action('ny')
                         vt.form = {
                             'pay': {
                                 cb: () => {
                                     vt.outln()
                                     if (/Y/i.test(vt.entry)) {
-                                        profile({ png: 'payment', effect: 'tada' })
-                                        sound('click')
+                                        vt.profile({ png: 'payment', effect: 'tada' })
+                                        vt.sound('click')
                                         vt.outln(`${opponent.user.handle} is set free.`)
                                         $.player.coin.value -= credit.value
                                         opponent.user.status = ''
@@ -363,7 +363,7 @@ module Square {
                                         $.bail--
                                     }
                                     else
-                                        action('fadeOut')
+                                        vt.action('fadeOut')
                                     menu()
                                     return
                                 }, prompt: 'Will you pay (Y/N)? '
@@ -434,10 +434,10 @@ module Square {
                 if (int(16 * $.player.steal + $.player.level / 10 + $.online.dex / 10) < dice(effort)) {
                     $.player.status = 'jail'
                     $.reason = `caught picking ${pocket.handle}'s pocket`
-                    action('clear')
-                    profile({ png: 'npc/jailer', effect: 'fadeIn' })
+                    vt.action('clear')
+                    vt.profile({ png: 'npc/jailer', effect: 'fadeIn' })
                     vt.outln('A guard catches you and throws you into jail!')
-                    sound('arrested', 20)
+                    vt.sound('arrested', 20)
                     vt.outln('You might be released by your next call.\n')
                     vt.sleep(1000)
                     vt.hangup()
@@ -575,25 +575,25 @@ module Square {
 
         switch (choice) {
             case 'D':
-                action('payment')
+                vt.action('payment')
                 vt.form['coin'].prompt = vt.attr('Deposit ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=', $.player.coin.carry(), ']? ')
                 vt.focus = 'coin'
                 break
 
             case 'L':
-                action('payment')
+                vt.action('payment')
                 vt.form['coin'].prompt = vt.attr('Loan ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=', credit.carry(), ']? ')
                 vt.focus = 'coin'
                 break
 
             case 'W':
-                action('payment')
+                vt.action('payment')
                 vt.form['coin'].prompt = vt.attr('Withdraw ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=', $.player.bank.carry(), ']? ')
                 vt.focus = 'coin'
                 break
 
             case 'R':
-                music('ddd')
+                vt.music('ddd')
                 let c = ($.player.level / 5) * ($.player.steal + 1)
                 vt.out(vt.faint, '\nYou attempt to sneak into the vault...', vt.reset)
                 vt.sleep(2500)
@@ -603,10 +603,10 @@ module Square {
                 if (dice(effort) > ++c) {
                     $.player.status = 'jail'
                     $.reason = 'caught getting into the vault'
-                    action('clear')
-                    profile({ png: 'npc/jailer', effect: 'fadeIn' })
+                    vt.action('clear')
+                    vt.profile({ png: 'npc/jailer', effect: 'fadeIn' })
                     vt.outln('\n\nA guard catches you and throws you into jail!')
-                    sound('arrested', 20)
+                    vt.sound('arrested', 20)
                     vt.outln('\nYou might be released by your next call.\n')
                     vt.sleep(1000)
                     vt.hangup()
@@ -617,7 +617,7 @@ module Square {
                 let vault = Math.pow(d, 7) * dice(d / 3) * dice(d / 11)
                 let carry = new Coin(vault)
 
-                sound('creak2', 12)
+                vt.sound('creak2', 12)
                 vt.outln(vt.yellow, ' you open a chest and find ', carry.carry(), vt.bright, '!')
 
                 let deposits = new Coin(whole(db.query(`SELECT SUM(bank) AS bank FROM Players WHERE id NOT GLOB '_*' AND id <> '${$.player.id}'`)[0].bank))
@@ -625,14 +625,14 @@ module Square {
                     vt.sleep(1200)
                     vt.outln('And you grab ', deposits.carry(), ' more in deposits!')
                 }
-                sound('yahoo', 12)
+                vt.sound('yahoo', 12)
 
                 vt.outln()
                 vt.out(vt.faint, 'You try to make your way out of the vault ')
                 vt.sleep(1200)
                 for (let i = 0; i < 6 - $.player.steal; i++) {
                     vt.out('.')
-                    sound('click', 6)
+                    vt.sound('click', 6)
                 }
 
                 c /= 15 - ($.player.steal * 3)
@@ -640,11 +640,11 @@ module Square {
                     $.player.status = 'jail'
                     $.reason = 'caught inside the vault'
                     vt.out(vt.reset, ' something jingles.')
-                    action('clear')
-                    sound('max', 12)
-                    profile({ png: 'npc/jailer', effect: 'fadeIn' })
+                    vt.action('clear')
+                    vt.sound('max', 12)
+                    vt.profile({ png: 'npc/jailer', effect: 'fadeIn' })
                     vt.outln('\n\nA guard laughs as he closes the vault door on you!')
-                    sound('arrested', 20)
+                    vt.sound('arrested', 20)
                     vt.outln('\nYou might be released by your next call.')
                     vt.sleep(1000)
                     vt.hangup()
@@ -667,7 +667,7 @@ module Square {
                 }
 
             case 'Q':
-                action('nme')
+                vt.action('nme')
                 menu(suppress)
                 break
         }
@@ -742,9 +742,9 @@ module Square {
     function list(choice: string) {
         want = choice.toUpperCase()
         if (/M|V/.test(want))
-            action('listall')
+            vt.action('listall')
         else
-            action('listbest')
+            vt.action('listbest')
         vt.form = {
             'start': { cb: listStart, prompt: 'Start list at ', max: 3 },
             'end': { cb: listEnd, prompt: 'Start list at ', max: 3 },
@@ -866,8 +866,8 @@ module Square {
             case 'A':
                 cost = new Coin(Armor.name[Armor.merchant[item]].value)
                 if ($.player.coin.value + credit.value >= cost.value) {
-                    profile({ png: 'payment', effect: 'tada' })
-                    sound('click')
+                    vt.profile({ png: 'payment', effect: 'tada' })
+                    vt.sound('click')
                     $.player.armor = Armor.merchant[item]
                     $.player.toAC = 0
                     $.online.toAC = 0
@@ -882,8 +882,8 @@ module Square {
                 cost = $.player.magic == 1 ? new Coin(Magic.spells[Magic.merchant[item]].wand)
                     : new Coin(Magic.spells[Magic.merchant[item]].cost)
                 if ($.player.coin.value >= cost.value && !Magic.have($.player.spells, buy)) {
-                    profile({ png: 'payment', effect: 'tada' })
-                    sound('click')
+                    vt.profile({ png: 'payment', effect: 'tada' })
+                    vt.sound('click')
                     Magic.add($.player.spells, buy)
                     vt.out(' - ', Magic.merchant[item], '\n')
                     $.player.coin.value -= cost.value
@@ -894,8 +894,8 @@ module Square {
             case 'R':
                 cost = new Coin(RealEstate.name[RealEstate.merchant[item]].value)
                 if ($.player.coin.value + credit.value >= cost.value) {
-                    profile({ png: 'payment', effect: 'tada' })
-                    sound('click')
+                    vt.profile({ png: 'payment', effect: 'tada' })
+                    vt.sound('click')
                     $.player.realestate = RealEstate.merchant[item]
                     vt.out(' - ', $.player.realestate, '\n')
                     $.player.coin.value += credit.value - cost.value
@@ -907,8 +907,8 @@ module Square {
             case 'S':
                 cost = new Coin(Security.name[Security.merchant[item]].value)
                 if ($.player.coin.value + credit.value >= cost.value) {
-                    profile({ png: 'payment', effect: 'tada' })
-                    sound('click')
+                    vt.profile({ png: 'payment', effect: 'tada' })
+                    vt.sound('click')
                     $.player.security = Security.merchant[item]
                     vt.out(' - ', $.player.security, '\n')
                     $.player.coin.value += credit.value - cost.value
@@ -922,8 +922,8 @@ module Square {
                 cost = $.player.poison == 1 ? new Coin(Poison.vials[Poison.merchant[item]].vial)
                     : new Coin(Poison.vials[Poison.merchant[item]].cost)
                 if ($.player.coin.value >= cost.value && !Poison.have($.player.poisons, buy)) {
-                    profile({ png: 'payment', effect: 'tada' })
-                    sound('click')
+                    vt.profile({ png: 'payment', effect: 'tada' })
+                    vt.sound('click')
                     Poison.add($.player.poisons, buy)
                     vt.out('\nHe slips you a vial of ', Poison.merchant[item], '\n')
                     $.player.coin.value -= cost.value
@@ -934,8 +934,8 @@ module Square {
             case 'W':
                 cost = new Coin(Weapon.name[Weapon.merchant[buy]].value)
                 if ($.player.coin.value + credit.value >= cost.value) {
-                    profile({ png: 'payment', effect: 'tada' })
-                    sound('click')
+                    vt.profile({ png: 'payment', effect: 'tada' })
+                    vt.sound('click')
                     $.player.weapon = Weapon.merchant[buy]
                     $.player.toWC = 0
                     $.online.toWC = 0
@@ -976,7 +976,7 @@ module Square {
                     cost = $.player.magic == 1 ? new Coin(Magic.spells[Magic.merchant[item]].wand)
                         : new Coin(Magic.spells[Magic.merchant[item]].cost)
                     if ($.player.coin.value >= cost.value && !Magic.have($.player.spells, spell)) {
-                        sound('click')
+                        vt.sound('click')
                         Magic.add($.player.spells, spell)
                         vt.out(bracket(spell), Magic.merchant[item])
                         $.player.coin.value -= cost.value
@@ -1019,7 +1019,7 @@ module Square {
                     cost = $.player.poison == 1 ? new Coin(Poison.vials[Poison.merchant[item]].vial)
                         : new Coin(Poison.vials[Poison.merchant[item]].cost)
                     if ($.player.coin.value >= cost.value && !Poison.have($.player.poisons, vial)) {
-                        sound('click')
+                        vt.sound('click')
                         Poison.add($.player.poisons, vial)
                         vt.out('\nHe slips you a vial of ', Poison.merchant[item])
                         $.player.coin.value -= cost.value

@@ -6,7 +6,7 @@
 import { dice, int, money, sprintf, vt, whole } from '../sys'
 import $ = require('../runtime')
 import { Coin, RealEstate, Security } from '../items'
-import { action, bracket, clear, display, music, sound } from '../io'
+import { bracket, display } from '../io'
 import { tradein } from '../lib'
 import { PC } from '../pc'
 
@@ -94,7 +94,7 @@ module Gambling {
         if ($.online.altered) PC.saveUser($.online)
         if ($.reason) vt.hangup()
 
-        action('casino')
+        vt.action('casino')
         vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
@@ -119,7 +119,7 @@ module Gambling {
             vt.outln(' - ', casino[game].description)
             if ($.access.roleplay) {
                 if (sting) {
-                    music('casino')
+                    vt.music('casino')
                     sting = false
                 }
                 Bet()
@@ -133,7 +133,7 @@ module Gambling {
         if (max.value > $.player.coin.value)
             max.value = $.player.coin.value
 
-        action('wager')
+        vt.action('wager')
         vt.form = {
             'coin': { cb: amount, max: 6 }
         }
@@ -179,13 +179,13 @@ module Gambling {
                 myhand = ShowHand(1, player)
 
                 if (myhand == 21) {
-                    sound('cheer')
+                    vt.sound('cheer')
                     payoff.value = 2 * amount.value
                     vt.outln(vt.bright, vt.cyan, '\nBlackjack!!', -1000)
 
                     value = ShowHand(0, dealer)
                     if (value == 21) {
-                        sound('boo')
+                        vt.sound('boo')
                         vt.outln(`\nDealer has Blackjack!  You're a loser.`, -1000)
                     }
                     else {
@@ -195,7 +195,7 @@ module Gambling {
                     break
                 }
 
-                action('blackjack')
+                vt.action('blackjack')
                 vt.form = {
                     'draw': {
                         cb: () => {
@@ -216,7 +216,7 @@ module Gambling {
                                         amount.value = 0
                                     }
                                     else if (player.length == 5) {
-                                        sound('cheer')
+                                        vt.sound('cheer')
                                         payoff.value = 2 * amount.value
                                         vt.outln('Five card charley!  You win ', payoff.carry(), '!')
                                         $.player.coin.value += payoff.value + amount.value
@@ -235,24 +235,24 @@ module Gambling {
                             if (/S/i.test(vt.entry)) {
                                 while ((value = ShowHand(0, dealer)) < 17 && amount.value) {
                                     dealer.push(deck[pile++])
-                                    sound('click', 8)
+                                    vt.sound('click', 8)
                                 }
                                 vt.outln()
                                 if (amount.value) {
                                     if (value > 21) {
-                                        sound('cheer')
+                                        vt.sound('cheer')
                                         payoff.value = amount.value
                                         vt.outln('Dealer breaks!  You win ', payoff.carry(), '!')
                                         $.player.coin.value += payoff.value + amount.value
                                     }
                                     else if (myhand > value) {
-                                        sound('cheer')
+                                        vt.sound('cheer')
                                         payoff.value = amount.value
                                         vt.outln('You win ', payoff.carry(), '!')
                                         $.player.coin.value += payoff.value + amount.value
                                     }
                                     else if (myhand < value) {
-                                        sound('boo')
+                                        vt.sound('boo')
                                         vt.outln('You lose.')
                                     }
                                     else {
@@ -281,7 +281,7 @@ module Gambling {
                 vt.sleep(100)
                 let d1 = dice(6), d2 = dice(6)
                 for (let i = 0; i < d1 + 1; i++) {
-                    sound('click')
+                    vt.sound('click')
                     vt.out('.')
                 }
                 vt.sleep(100)
@@ -295,7 +295,7 @@ module Gambling {
                 vt.outln(vt.white, ' = ', vt.bright, point.toString())
                 vt.sleep(1000)
                 if (point == 7 || point == 11) {
-                    sound('cheer')
+                    vt.sound('cheer')
                     payoff.value = 2 * amount.value
                     vt.outln('A natural!  You win ', payoff.carry(), '!')
                     $.player.coin.value += payoff.value + amount.value
@@ -303,13 +303,13 @@ module Gambling {
                     break
                 }
                 if (point == 2 || point == 3 || point == 12) {
-                    sound('boo')
+                    vt.sound('boo')
                     vt.out('Crapped out!  You lose.\n')
                     vt.sleep(500)
                     break
                 }
 
-                clear()
+                vt.cls()
                 vt.out(vt.cyan, 'Your point to make is: ', vt.bright, vt.white, point.toString(),
                     vt.normal, '\n\n',
                     'Press RETURN to roll dice and try to make your point\n',
@@ -322,7 +322,7 @@ module Gambling {
                     '  [7] to break pays 5:1\n'
                 )
 
-                action('craps')
+                vt.action('craps')
                 vt.form = {
                     'baby': {
                         cb: () => {
@@ -372,7 +372,7 @@ module Gambling {
                 vt.outln(vt.cyan, vt.bright, 'Matching cards must draw again; unless Jokers which payout ', vt.white, '1000:1')
                 shuffle(true)
 
-                action('list')
+                vt.action('list')
                 vt.form = {
                     'pick': {
                         cb: () => {
@@ -384,7 +384,7 @@ module Gambling {
                                 return
                             }
                             let mine = deck.splice(--pick, 1)[0]
-                            sound(card[mine].value > 0 ? 'click' : 'boom')
+                            vt.sound(card[mine].value > 0 ? 'click' : 'boom')
                             vt.out(' - ')
                             if ($.player.emulation == 'XT') vt.out(card[mine].uni)
                             vt.out(vt.bright, vt.red, ' [', vt.white, card[mine].face, vt.red, ']')
@@ -394,7 +394,7 @@ module Gambling {
                             dealer = dice(deck.length)
                             vt.out('Dealer picks card #', dealer.toString())
                             let house = deck.splice(--dealer, 1)[0]
-                            sound(card[house].value > 0 ? 'click' : 'boom')
+                            vt.sound(card[house].value > 0 ? 'click' : 'boom')
                             vt.out(' - ')
                             if ($.player.emulation == 'XT') vt.out(card[house].uni)
                             vt.out(vt.bright, vt.red, ' [', vt.white, card[house].face, vt.red, ']')
@@ -402,7 +402,7 @@ module Gambling {
                             vt.outln('\n', -600)
 
                             if (card[mine].value > card[house].value) {
-                                sound('cheer')
+                                vt.sound('cheer')
                                 payoff.value = amount.value * int((11 - card[mine].value) / 4 + 1)
                                 if (card[house].value < 0) payoff.value *= 2
                                 vt.outln('You win ', payoff.carry(), '!')
@@ -410,15 +410,15 @@ module Gambling {
                             }
                             else if (card[mine].value < card[house].value) {
                                 if (card[mine].value < 0) {
-                                    sound('oops')
+                                    vt.sound('oops')
                                     vt.out(vt.yellow, 'The joke is on you ... ', -1000)
-                                    sound('laugh')
+                                    vt.sound('laugh')
                                     vt.outln(vt.faint, 'and you die laughing!!', -2000)
                                     $.reason = 'died laughing'
                                     vt.hangup()
                                 }
                                 else {
-                                    sound('boo')
+                                    vt.sound('boo')
                                     vt.outln('You lose.', -500)
                                 }
                             }
@@ -427,7 +427,7 @@ module Gambling {
                                 if (card[house].value < 0) {
                                     payoff.value = amount.value * 1000
                                     vt.outln('and win ', payoff.carry(), '!')
-                                    sound('cheer')
+                                    vt.sound('cheer')
                                 }
                                 else {
                                     vt.outln(`it's a push. `, -500, ' You must pick again.', -500)
@@ -445,7 +445,7 @@ module Gambling {
 
             case 'K':
                 let picks: number[] = []
-                action('list')
+                vt.action('list')
                 vt.form = {
                     'point': {
                         cb: () => {
@@ -539,7 +539,7 @@ module Gambling {
                                 vt.refocus()
                                 return
                             }
-                            sound('click')
+                            vt.sound('click')
                             picks.push(pick)
                             if (picks.length == point) {
                                 vt.out('\n\n', vt.bright, vt.yellow,
@@ -557,7 +557,7 @@ module Gambling {
                                     } while (balls.indexOf(pick) >= 0)
                                     if (picks.indexOf(pick) >= 0) {
                                         hits++
-                                        sound('max')
+                                        vt.sound('max')
                                         vt.out(' *', vt.bright, vt.blue, '[',
                                             vt.yellow, sprintf('%02d', pick),
                                             vt.blue, ']', vt.reset, '* ')
@@ -668,13 +668,13 @@ module Gambling {
                                         break
                                 }
                                 if (payoff.value) {
-                                    sound('cheer')
+                                    vt.sound('cheer')
                                     vt.outln('\nYou win ', payoff.carry(), '!')
                                     $.player.coin.value += payoff.value
                                     vt.sleep(500)
                                 }
                                 else
-                                    sound('boo')
+                                    vt.sound('boo')
                                 menu()
                             }
                             else {
@@ -704,7 +704,7 @@ module Gambling {
                 }
 
                 vt.out('\nYou pull its arm and the wheels spin ... ')
-                sound('click', 4)
+                vt.sound('click', 4)
 
                 let bandit = [dice(16) % 16, dice(16) % 16, dice(16) % 16]
                 for (let i = 0; i < 3; i++) {
@@ -735,7 +735,7 @@ module Gambling {
                         vt.outln()
                     }
                     CherryBomb()
-                    sound('wild', 50)
+                    vt.sound('wild', 50)
                 }
                 else if ((face[0] == '@BOMB@' || face[0] == '*WILD*')
                     && (face[1] == '@BOMB@' || face[1] == '*WILD*')
@@ -743,7 +743,7 @@ module Gambling {
                     $.online.hp = 0
                     $.reason = 'defeated by a one-armed bandit'
                     if ($.player.emulation == 'XT') vt.out('💀 ')
-                    sound('boom', 6)
+                    vt.sound('boom', 6)
                     vt.outln(vt.faint, 'You die.')
                     vt.sleep(600)
                     vt.hangup()
@@ -762,7 +762,7 @@ module Gambling {
                         vt.outln()
                     }
                     CherryBomb()
-                    sound('wild', 50)
+                    vt.sound('wild', 50)
                 }
                 else if ((face[0] == '<BELL>' || face[0] == '*WILD*')
                     && (face[1] == '<BELL>' || face[1] == '*WILD*')
@@ -781,7 +781,7 @@ module Gambling {
                     && (face[2] == 'ORANGE' || face[2] == '*WILD*')) {
                     payoff.value = 50 * amount.value
                     vt.beep()
-                    music('wild')
+                    vt.music('wild')
                     vt.sleep(2500)
                 }
                 else if (face[0] == 'CHERRY' && face[1] == 'CHERRY' && face[2] == '@BOMB@') {
@@ -812,20 +812,20 @@ module Gambling {
                 }
 
                 if (payoff.value) {
-                    sound('cheer')
+                    vt.sound('cheer')
                     vt.outln('You win ', payoff.carry(), '!')
                     $.player.coin.value += payoff.value
                     vt.sleep(500)
                 }
                 else
-                    sound('boo')
+                    vt.sound('boo')
         }
 
         menu()
 
         function CherryBomb() {
             if ($.player.emulation == 'XT') {
-                music('cherry')
+                vt.music('cherry')
                 vt.out(vt.red)
                 for (let i = 0; i < 6; i++) {
                     vt.out(' ', vt.faint)
@@ -878,7 +878,7 @@ module Gambling {
             let d1 = dice(6), d2 = dice(6), n = dice(2) + dice(2)
             vt.out('\x1B[J', vt.faint)
             for (let i = 0; i < n; i++) {
-                sound('click')
+                vt.sound('click')
                 vt.out('.')
             }
             vt.out(vt.normal, vt.blue, ' [',
@@ -889,7 +889,7 @@ module Gambling {
             vt.beep()
             vt.outln(vt.white, ' = ', vt.bright, (d1 + d2).toString())
             if (baby && d1 + d2 !== baby) {
-                sound('boo')
+                vt.sound('boo')
                 vt.outln('You lose on the side bet.')
             }
             if (d1 + d2 == baby) {
@@ -899,21 +899,21 @@ module Gambling {
                             : (baby == 5 || baby == 9) ? 8
                                 : (baby == 6 || baby == 8) ? 6
                                     : 5
-                sound('cheer')
+                vt.sound('cheer')
                 payoff.value = side * baby
                 vt.outln('You make your side bet!  You win ', payoff.carry(), '!')
                 $.player.coin.value += payoff.value
             }
             vt.sleep(1000)
             if (d1 + d2 == 7) {
-                sound('boo')
+                vt.sound('boo')
                 vt.out('Crapped out!  You lose on your point.\n')
                 vt.sleep(500)
                 menu()
                 return true
             }
             if (d1 + d2 == point) {
-                sound('cheer')
+                vt.sound('cheer')
                 payoff.value = amount.value
                 vt.outln('You make your point!  You win ', payoff.carry(), '!')
                 $.player.coin.value += payoff.value + amount.value

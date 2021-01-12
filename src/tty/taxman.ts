@@ -5,7 +5,7 @@
 
 import { an, dice, int, money, vt, whole } from '../sys'
 import $ = require('../runtime')
-import { action, activate, input, loadUser, music, profile, reroll, sound, wearing, weapon } from '../io'
+import { activate, input, loadUser, reroll, wearing, weapon } from '../io'
 import { Coin, Armor, RealEstate, Ring, Security, Weapon } from '../items'
 import { news, tradein } from '../lib'
 import { PC } from '../pc'
@@ -22,12 +22,12 @@ module Taxman {
 
         if (int(1000 * scratch / tax.value) / 1000 > 1) {
             loadUser($.taxman)
-            profile({
+            vt.profile({
                 jpg: 'npc/taxman', handle: $.taxman.user.handle
                 , level: $.taxman.user.level, pc: $.taxman.user.pc, effect: 'fadeIn'
             })
 
-            sound('oops', 4)
+            vt.sound('oops', 4)
             let pouch = new Coin(scratch).pieces()
 
             vt.out('\n\n', vt.yellow, vt.bright, $.taxman.user.handle, vt.normal, -400)
@@ -62,7 +62,7 @@ module Taxman {
                     $.player.bank.value = 0
                 }
             }
-            sound('thief', 22)
+            vt.sound('thief', 22)
         }
     }
 
@@ -122,14 +122,14 @@ module Taxman {
 
                 vt.outln(`\nYou weigh the chances with your ${weapon()} against the Crown.`, -1500)
 
-                action('yn')
+                vt.action('yn')
                 vt.form = {
                     'tax': {
                         cb: () => {
                             vt.outln('\n')
                             if (/Y/i.test(vt.entry)) {
                                 vt.outln('You pay the tax.')
-                                sound('thief2', 16)
+                                vt.sound('thief2', 16)
                                 $.player.coin.value -= tax.value
                                 if ($.player.coin.value < 0) {
                                     $.player.bank.value += $.player.coin.value
@@ -173,8 +173,8 @@ module Taxman {
                             } while (xhp > 0)
 
                             vt.outln(vt.yellow, `The Master of Coin points ${PC.who($.taxman).his}${$.taxman.user.weapon} at you,\n`, vt.bright, vt.blue, `  "Shall we begin?"`)
-                            sound('ddd', 15)
-                            music('taxman')
+                            vt.sound('ddd', 15)
+                            vt.music('taxman')
 
                             Battle.engage('Gates', $.online, irs, boss)
                         }, prompt: 'Will you pay the tax (Y/N)? ', cancel: 'Y', enter: 'Y', eol: false, match: /Y|N/i, timeout: 20
@@ -185,7 +185,7 @@ module Taxman {
             }
         }
         else
-            music('visit')
+            vt.music('visit')
 
         require('./main').menu()
 

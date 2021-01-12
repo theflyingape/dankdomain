@@ -6,7 +6,7 @@
 import fs = require('fs')
 import db = require('../db')
 import $ = require('../runtime')
-import { action, bracket, cat, checkXP, display, loadUser, music, profile, sound, title } from '../io'
+import { bracket, cat, checkXP, display, loadUser } from '../io'
 import { Coin, Access, Weapon } from '../items'
 import { cuss, news } from '../lib'
 import { PC } from '../pc'
@@ -37,7 +37,7 @@ module Tavern {
         Taxman.bar()
         if ($.reason) vt.hangup()
 
-        action('tavern')
+        vt.action('tavern')
         vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
@@ -68,7 +68,7 @@ module Tavern {
                     suppress = true
                     break
                 }
-                action('freetext')
+                vt.action('freetext')
                 vt.form = {
                     'argue': {
                         cb: () => {
@@ -114,7 +114,7 @@ module Tavern {
             case 'G':
                 vt.outln(`\n${$.barkeep.user.handle} pours you a beer.`, -500)
 
-                action('payment')
+                vt.action('payment')
                 vt.form = {
                     'tip': {
                         cb: () => {
@@ -122,7 +122,7 @@ module Tavern {
                             if ((+vt.entry).toString() == vt.entry) vt.entry += 'c'
                             let tip = (/=|max/i.test(vt.entry)) ? $.player.coin.value : new Coin(vt.entry).value
                             if (tip < 1 || tip > $.player.coin.value) {
-                                sound('oops')
+                                vt.sound('oops')
                                 vt.outln(PC.who($.barkeep).He, 'pours the beer on you and kicks you out of ', $.barkeep.who.his, 'bar.', -1000)
                                 $.brawl = 0
                                 require('./main').menu(true)
@@ -189,7 +189,7 @@ module Tavern {
                     break
                 }
                 if ($.player.novice || $.player.level < 10) {
-                    sound('crowd')
+                    vt.sound('crowd')
                     vt.outln('\nThe crowd laughs at your gesture.', -1000)
                     vt.outln(`${$.barkeep.user.handle} snorts, "Be for real."`)
                     suppress = true
@@ -209,7 +209,7 @@ module Tavern {
                     let max = new Coin(new Coin(10 * money(opponent.user.level)).carry(1, true))
                     if (max.value > $.player.coin.value) max = new Coin($.player.coin.carry(1, true))
 
-                    action('payment')
+                    vt.action('payment')
                     vt.form = {
                         'coin': {
                             cb: () => {
@@ -241,7 +241,7 @@ module Tavern {
                 $.tiny--
                 switch ($.tiny) {
                     case 2:
-                        profile({
+                        vt.profile({
                             jpg: 'npc/barkeep', effect: 'fadeInRight'
                             , handle: $.barkeep.user.handle, level: $.barkeep.user.level, pc: $.barkeep.user.pc
                         })
@@ -254,7 +254,7 @@ module Tavern {
                         break
 
                     case 1:
-                        profile({
+                        vt.profile({
                             jpg: 'npc/barkeep', effect: 'shakeX'
                             , handle: $.barkeep.user.handle, level: $.barkeep.user.level, pc: $.barkeep.user.pc
                         })
@@ -268,17 +268,17 @@ module Tavern {
 
                     default:
                         $.brawl = 0
-                        music('.')
+                        vt.music('.')
                         vt.outln(`jest, "What you looking at, wart-face!"`, -1200)
-                        profile({
+                        vt.profile({
                             jpg: 'npc/barkeep', effect: 'shakeY'
                             , handle: $.barkeep.user.handle, level: $.barkeep.user.level, pc: $.barkeep.user.pc
                         })
                         vt.out('Uh, oh!')
-                        sound('ddd', 22)
-                        title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} death match with ${$.barkeep.user.handle}`)
+                        vt.sound('ddd', 22)
+                        vt.title(`${$.player.handle}: level ${$.player.level} ${$.player.pc} death match with ${$.barkeep.user.handle}`)
                         vt.out('  Here comes Tiny!')
-                        sound('challenge', 12)
+                        vt.sound('challenge', 12)
                         vt.outln(`  And ${PC.who($.barkeep).he}doesn't look friendly...\n`, -600)
                         vt.outln(vt.green, vt.bright, [
                             `"When I'm through with you, your mama won't be able to identify the remains."`,
@@ -297,14 +297,14 @@ module Tavern {
                         loadUser(fool)
                         vt.outln(vt.bright, vt.green, `"I think it was ${fool.user.handle}, and it took me a week to clean up the blood!"\n`, -4000)
 
-                        music('tiny')
+                        vt.music('tiny')
                         vt.out(`${PC.who($.barkeep).He}points to a buffed weapon hanging over the mantlepiece and says, `
                             , vt.green, vt.bright, '"Lookee\n')
                         vt.outln(`there, ${PC.who(fool).he}tried to use that ${trophy.weapon}`, vt.green, vt.bright, `, but it wasn't enough\nto take me.\"\n`, -6000)
                         vt.out('The patrons move in closer to witness the forthcoming slaughter, except for\n')
                         vt.outln(`${$.taxman.user.handle} who is busy raiding the bar of its beer and nuts.`, -5000)
                         vt.outln(`\nYou hear a cry, "I'll pay fifteen-to-one on the challenger!"`, -4000)
-                        sound('crowd')
+                        vt.sound('crowd')
                         vt.out('The crowd roars with laughter... ', -3000)
                         vt.outln('you are not amused.', -2000)
                         vt.outln(`\n${$.barkeep.user.handle} removes ${PC.who($.barkeep).his}tunic to reveal a massive, but\nheavily scarred chest.`, -2500)
@@ -360,7 +360,7 @@ module Tavern {
                         return
                     }
 
-                    action('ny')
+                    vt.action('ny')
                     vt.form = {
                         'brawl': {
                             cb: () => {
@@ -376,7 +376,7 @@ module Tavern {
                                     if ($.online.bp > 0 && opponent.bp > 0)
                                         Battle.brawl(opponent, $.online)
                                     if ($.online.bp > 0 && opponent.bp > 0) {
-                                        action('brawl')
+                                        vt.action('brawl')
                                         vt.focus = 'punch'
                                     }
                                     else

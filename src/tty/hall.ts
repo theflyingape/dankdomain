@@ -6,7 +6,7 @@
 import { date2full, sprintf, vt } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
-import { Award, action, cat, display } from '../io'
+import { Award, cat, display } from '../io'
 import { Deed } from '../items'
 import { PC } from '../pc'
 
@@ -22,7 +22,7 @@ module Hall {
     }
 
     export function menu(suppress = false) {
-        action('deeds')
+        vt.action('deeds')
         vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }

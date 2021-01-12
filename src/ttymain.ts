@@ -30,7 +30,7 @@ vt.emulation = <EMULATION>(process.argv.length > 2 && process.argv[2]
 
 const bot = process.argv.length > 3 && process.argv[3] ? process.argv[3].toUpperCase() : ''
 
-vt.stdio()
+vt.stdio(false)
 
 if ((vt.modem = process.env.REMOTEHOST ? true : false))
     vt.outln(vt.off, vt.bright

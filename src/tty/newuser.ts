@@ -5,7 +5,7 @@
 
 import { date2days, date2full, titlecase, vt } from '../sys'
 import $ = require('../runtime')
-import { action, bracket, clear, loadUser, music, profile } from '../io'
+import { bracket, loadUser } from '../io'
 import { Access } from '../items'
 import { cuss } from '../lib'
 
@@ -13,12 +13,12 @@ module NewUser {
 
     let editmode: boolean = false
 
-    music('newuser')
-    profile({ handle: 'Shall we begin?', png: 'npc/city_guard_1', effect: 'bounceInLeft' })
-    clear()
+    vt.music('newuser')
+    vt.profile({ handle: 'Shall we begin?', png: 'npc/city_guard_1', effect: 'bounceInLeft' })
+    vt.cls()
     vt.plot(1, 17)
 
-    if ($.tty == 'rlogin') {
+    if (vt.tty == 'rlogin') {
         vt.outln(vt.blue, '--=:) ', vt.bright, 'New BBS Registration', vt.normal, ' (:=--')
         vt.out(bracket(1), vt.cyan, 'This BBS Name.:')
         vt.out(bracket(2), vt.cyan, 'The Sysop Name:')
@@ -51,7 +51,7 @@ module NewUser {
     $.player.expires = $.player.lastdate + $.sysop.expires
     $.player.novice = true
 
-    action('freetext')
+    vt.action('freetext')
     vt.focus = 1
 
 
@@ -79,7 +79,7 @@ module NewUser {
         vt.plot(3, 23)
         vt.out(vt.cll, $.player.handle)
 
-        action(editmode ? 'list' : 'freetext')
+        vt.action(editmode ? 'list' : 'freetext')
         vt.focus = editmode ? 'edit' : 2
     }
 
@@ -106,7 +106,7 @@ module NewUser {
         vt.plot(4, 23)
         vt.out(vt.cll, $.player.name)
 
-        action('list')
+        vt.action('list')
         vt.focus = editmode ? 'edit' : 3
     }
 
@@ -121,7 +121,7 @@ module NewUser {
         vt.plot(5, 23)
         vt.out(vt.cll, date2full($.player.dob))
 
-        action(editmode ? 'list' : 'gender')
+        vt.action(editmode ? 'list' : 'gender')
         vt.focus = editmode ? 'edit' : 4
     }
 
@@ -132,13 +132,13 @@ module NewUser {
         vt.out(vt.cll, $.player.sex)
 
         editmode = true
-        action('list')
+        vt.action('list')
         vt.focus = 'edit'
     }
 
     function edit() {
         if (vt.entry.length) {
-            action(['list', 'freetext', 'freetext', 'list', 'gender'][vt.entry])
+            vt.action(['list', 'freetext', 'freetext', 'list', 'gender'][vt.entry])
             vt.focus = vt.entry
             return
         }
@@ -154,7 +154,7 @@ module NewUser {
             $.player.id = $.player.handle.slice(0, 3).toUpperCase()
 
         if ($.player.id == 'NEW' || cuss($.player.id)) {
-            action('freetext')
+            vt.action('freetext')
             vt.beep()
             vt.focus = 1
             return
@@ -171,7 +171,7 @@ module NewUser {
         if (retry > 3) $.player.id = ''
 
         if ($.player.id == '') {
-            action('freetext')
+            vt.action('freetext')
             vt.beep()
             vt.focus = 1
             return

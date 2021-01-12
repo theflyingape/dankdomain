@@ -7,7 +7,7 @@ import { an, dice, int, money, sprintf, vt } from '../sys'
 import fs = require('fs')
 import db = require('../db')
 import $ = require('../runtime')
-import { Award, action, activate, animated, cat, checkTime, checkXP, display, emulator, input, music, playerPC, portrait, profile, reroll, sound, status } from '../io'
+import { Award, activate, cat, checkTime, checkXP, display, emulator, input, playerPC, reroll } from '../io'
 import { Coin, Armor, Weapon, Security, RealEstate, Ring } from '../items'
 import { cuss, log, news, tradein } from '../lib'
 import { PC } from '../pc'
@@ -34,7 +34,7 @@ module Main {
         'Z': { description: 'System Status' }
     }
 
-    profile({ png: 'castle', effect: 'pulse' })
+    vt.profile({ png: 'castle', effect: 'pulse' })
     vt.outln()
     cat('border')
 
@@ -43,8 +43,8 @@ module Main {
         if ($.online.altered) PC.saveUser($.online)
         if ($.reason) vt.hangup()
 
-        if (!suppress) profile({ png: ['castle', 'joust', 'dragon'][dice(3) - 1], effect: 'pulse' })
-        action('main')
+        if (!suppress) vt.profile({ png: ['castle', 'joust', 'dragon'][dice(3) - 1], effect: 'pulse' })
+        vt.action('main')
         vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
@@ -67,21 +67,21 @@ module Main {
         switch (choice) {
             case '@':
                 if ($.access.sysop) {
-                    animated('fadeOut')
+                    vt.animated('fadeOut')
                     require('./sysop').menu($.player.expert)
                     return
                 }
 
             case 'A':
-                animated('fadeOut')
+                vt.animated('fadeOut')
                 require('./arena').menu($.player.expert)
                 return
 
             case 'D':
                 if ($.dungeon) {
-                    music('.')
-                    portrait($.online, 'backOutDown')
-                    sound(`dt${$.dungeon}`, 10)
+                    vt.music('.')
+                    PC.portrait($.online, 'backOutDown')
+                    vt.sound(`dt${$.dungeon}`, 10)
                     $.dungeon--
                     require('./dungeon').DeepDank($.player.level - 1, menu)
                 }
@@ -93,12 +93,12 @@ module Main {
                 return
 
             case 'G':
-                animated('fadeOut')
+                vt.animated('fadeOut')
                 require('./gambling').menu($.player.expert)
                 return
 
             case 'L':
-                animated('fadeOut')
+                vt.animated('fadeOut')
                 require('./hall').menu($.player.expert)
                 return
 
@@ -150,18 +150,18 @@ module Main {
                 break
 
             case 'N':
-                animated('fadeOut')
+                vt.animated('fadeOut')
                 require('./naval').menu($.player.expert)
                 return
 
             case 'P':
-                animated('fadeOut')
+                vt.animated('fadeOut')
                 require('./party').menu($.player.expert)
                 return
 
             case 'Q':
                 vt.beep()
-                action('ny')
+                vt.action('ny')
                 vt.form = {
                     'yn': {
                         cb: () => {
@@ -174,7 +174,7 @@ module Main {
                         }, prompt: 'Are you sure (Y/N)? ', cancel: 'Y', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
                     }
                 }
-                sound('oops')
+                vt.sound('oops')
                 input('yn', 'y')
                 return
 
@@ -186,7 +186,7 @@ module Main {
                     suppress = true
                     break
                 }
-                music('steal')
+                vt.music('steal')
                 vt.outln(vt.faint, 'It is a hot, moonless night.', -600)
                 vt.outln('A city guard walks down another street.', -600)
 
@@ -239,7 +239,7 @@ module Main {
                         , vt.normal, an(opponent.user.security)
                         , vt.faint, '.')
 
-                    action('ny')
+                    vt.action('ny')
                     vt.form = {
                         'yn': {
                             cb: () => {
@@ -260,7 +260,7 @@ module Main {
 
                                     for (let pick = 0; pick < $.player.steal; pick++) {
                                         vt.out('.')
-                                        sound('click', 6)
+                                        vt.sound('click', 6)
                                         skill += dice(100 + $.player.steal) < effort
                                             ? dice($.player.level + $.player.steal - $.steal)
                                             : lock
@@ -278,7 +278,7 @@ module Main {
                                         $.player.coin.value += prize
                                         $.player.steals++
                                         vt.outln('You break in and make off with ', new Coin(prize).carry(), ' worth of stuff!')
-                                        sound('max', 12)
+                                        vt.sound('max', 12)
 
                                         if ($.arena) opponent.user.coin.value = 0
 
@@ -314,10 +314,10 @@ module Main {
                                         log(opponent.user.id, `\n${$.player.handle} was caught robbing you!`)
                                         $.reason = `caught robbing ${opponent.user.handle}`
                                         $.player.status = 'jail'
-                                        action('clear')
-                                        profile({ png: 'npc/city_guard_2', effect: 'fadeIn' })
+                                        vt.action('clear')
+                                        vt.profile({ png: 'npc/city_guard_2', effect: 'fadeIn' })
                                         vt.outln('A city guard catches you and throws you into jail!')
-                                        sound('arrested', 20)
+                                        vt.sound('arrested', 20)
                                         vt.outln('You might be released by your next call.\n', -1000)
                                     }
                                 }
@@ -330,7 +330,7 @@ module Main {
                 return
 
             case 'S':
-                animated('fadeOut')
+                vt.animated('fadeOut')
                 require('./square').menu($.player.expert)
                 return
 
@@ -340,14 +340,14 @@ module Main {
                     suppress = true
                     break
                 }
-                animated('fadeOut')
-                music('tavern' + dice(4))
+                vt.animated('fadeOut')
+                vt.music('tavern' + dice(4))
                 require('./tavern').menu($.player.expert)
                 return
 
             case 'U':
-                music('.')
-                action('ny')
+                vt.music('.')
+                vt.action('ny')
                 let newpassword: string = ''
                 vt.form = {
                     'yn': {
@@ -392,9 +392,9 @@ module Main {
 
             case 'X':
                 if (!$.access.roleplay) break
-                portrait($.online)
-                music('ddd')
-                action('ny')
+                PC.portrait($.online)
+                vt.music('ddd')
+                vt.action('ny')
                 vt.form = {
                     'yn': {
                         cb: () => {
@@ -434,8 +434,8 @@ module Main {
                                 vt.outln()
                                 Battle.user('Scout', (opponent: active) => {
                                     if (opponent.user.id) {
-                                        status(opponent)
-                                        action('freetext')
+                                        PC.status(opponent)
+                                        vt.action('freetext')
                                         vt.refocus()
                                     }
                                     else
@@ -443,27 +443,27 @@ module Main {
                                 })
                                 return
                             }
-                            status($.online)
+                            PC.status($.online)
                             suppress = true
                             menu()
                         }, cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
                     }
                 }
                 if ($.access.roleplay) {
-                    action('ny')
+                    vt.action('ny')
                     vt.form['yn'].prompt = 'Scout other users for ' + cost.carry() + ' (Y/N)? '
                     vt.focus = 'yn'
                     return
                 }
                 else
-                    status($.online)
+                    PC.status($.online)
                 suppress = true
                 break
 
             case 'Z':
                 vt.out(vt.bright, vt.green, '\n')
                 cat('main/system')
-                action('ny')
+                vt.action('ny')
                 vt.form = {
                     'yn': {
                         cb: () => {
