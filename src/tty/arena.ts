@@ -3,12 +3,11 @@
  *  ARENA authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import { dice, int, money, romanize, sprintf, vt } from '../sys'
+import { dice, int, log, money, news, romanize, sprintf, tradein, vt } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
-import { bracket, cat, checkXP, display, getRing, reroll, wearing, activate, loadUser } from '../io'
+import { bracket, cat, checkXP, display, getRing, loadUser, reroll, wearing } from '../io'
 import { Coin, Access, Armor, Magic, Poison, Ring, Weapon } from '../items'
-import { log, news, tradein } from '../lib'
 import { PC } from '../pc'
 
 import Battle = require('../battle')
@@ -378,7 +377,7 @@ module Arena {
                             cb: () => {
                                 vt.outln()
                                 if (/Y/i.test(vt.entry)) {
-                                    if (activate(opponent, true)) {
+                                    if (PC.activate(opponent, true)) {
                                         vt.music('combat' + $.arena--)
                                         Battle.engage('User', $.online, opponent, menu)
                                     }
@@ -479,7 +478,7 @@ module Arena {
                                 }
                             }
 
-                            activate(monster)
+                            PC.activate(monster)
                             monster.user.coin.value += cost.value
 
                             vt.profile({
@@ -532,7 +531,7 @@ module Arena {
                 for (let i = 0; i < monsters[mon].spells.length; i++)
                     Magic.add(monster.user.spells, monsters[mon].spells[i])
 
-            activate(monster)
+            PC.activate(monster)
             if (monsters[mon].adept) monster.adept = monsters[mon].adept
             monster.user.coin.amount = monsters[mon].money.toString()
 

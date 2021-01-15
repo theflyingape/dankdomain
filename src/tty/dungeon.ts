@@ -3,12 +3,11 @@
  *  DUNGEON authored by: Robert Hurst <theflyingape@gmail.com>               *
 \*****************************************************************************/
 
-import { an, dice, int, money, romanize, sprintf, vt, whole } from '../sys'
+import { an, dice, int, log, money, news, romanize, sprintf, tradein, vt, whole } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
-import { activate, armor, bracket, cat, checkTime, checkXP, death, getRing, keyhint, loadUser, reroll, skillplus, weapon, wearing } from '../io'
+import { armor, bracket, cat, checkTime, checkXP, death, getRing, keyhint, loadUser, reroll, skillplus, weapon, wearing } from '../io'
 import { Coin, Armor, Magic, Poison, Ring, Security, Weapon } from '../items'
-import { log, news, tradein } from '../lib'
 import { PC } from '../pc'
 
 import Battle = require('../battle')
@@ -1164,7 +1163,7 @@ module Dungeon {
                                         $.player.level = dice(Z)
                                         if ($.online.adept) $.player.level += dice($.player.level)
                                         reroll($.player, PC.random('monster'), $.player.level)
-                                        activate($.online)
+                                        PC.activate($.online)
                                         $.player.gender = ['F', 'M'][dice(2) - 1]
                                         PC.saveUser($.player)
                                         news(`\t${$.player.handle} got morphed into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
@@ -1202,7 +1201,7 @@ module Dungeon {
                         , vt.reset, '!')
                     vt.profile({ jpg: 'npc/taxman', handle: $.taxman.user.handle, level: $.taxman.user.level, pc: $.taxman.user.pc, effect: 'bounceInDown' })
                     vt.sound('oops', 16)
-                    activate($.taxman)
+                    PC.activate($.taxman)
                     $.taxman.user.coin.value = $.player.coin.value
                     wearing($.taxman)
 
@@ -1669,7 +1668,7 @@ module Dungeon {
                                     $.player.level = dice(Z)
                                     if ($.online.adept) $.player.level += dice($.player.level)
                                     reroll($.player, PC.random('monster'), $.player.level)
-                                    activate($.online)
+                                    PC.activate($.online)
                                     $.player.gender = ['F', 'M'][dice(2) - 1]
                                     PC.saveUser($.player)
                                     vt.sound('crone', 21)
@@ -1793,7 +1792,7 @@ module Dungeon {
                 let xarmor = <active>{ user: Object.assign({}, $.player) }
                 reroll(xarmor.user)
                 xarmor.user.armor = Armor.special[ROOM.giftValue]
-                activate(xarmor)
+                PC.activate(xarmor)
                 if (Armor.swap($.online, xarmor)) {
                     vt.profile({ jpg: `specials/${$.player.armor}`, effect: 'fadeInUpBig' })
                     vt.outln(vt.faint, vt.yellow, 'You find', vt.normal, an($.player.armor.toString()), vt.bright, '!')
@@ -1927,7 +1926,7 @@ module Dungeon {
                 let xweapon = <active>{ user: Object.assign({}, $.player) }
                 reroll(xweapon.user)
                 xweapon.user.weapon = Weapon.special[ROOM.giftValue]
-                activate(xweapon)
+                PC.activate(xweapon)
                 if (Weapon.swap($.online, xweapon)) {
                     vt.profile({ jpg: `specials/${$.player.weapon}`, effect: 'fadeInUpBig' })
                     vt.outln(vt.faint, vt.cyan, 'You find', vt.normal, an($.player.weapon.toString()), vt.bright, '!')
@@ -2016,7 +2015,7 @@ module Dungeon {
                     vt.sound('oops')
                     ROOM.monster[n].monster.effect = 'flip'
                     monsters[mon.user.handle].pc = '*'	//	chaos
-                    activate(mon)
+                    PC.activate(mon)
                     for (let i = 0; i < dice(3); i++) {
                         let avenger = <active>{ monster: { name: '', pc: '' }, user: { id: '' } }
                         Object.assign(avenger.user, mon.user)
@@ -2028,7 +2027,7 @@ module Dungeon {
                         for (let poison in ROOM.monster[n].monster.poisons)
                             Poison.add(avenger.user.poisons, ROOM.monster[n].monster.poisons[poison])
                         avenger.user.steal = 2
-                        activate(avenger)
+                        PC.activate(avenger)
                         avenger.str = 99
                         avenger.int = 99
                         avenger.dex = 99
@@ -2424,7 +2423,7 @@ module Dungeon {
         } while (result)
 
         reroll(DL.cleric.user, DL.cleric.user.pc, DL.cleric.user.level)
-        activate(DL.cleric)
+        PC.activate(DL.cleric)
         vt.wall($.player.handle, `enters dungeon level ${romanize(deep + 1)}.${Z + 1}`)
 
         renderMap()
@@ -2977,7 +2976,7 @@ module Dungeon {
             m = room.monster[i]
             level = m.user.level
             sum += level
-            activate(m)
+            PC.activate(m)
 
             m.user.immortal = deep
             m.adept = dice(Z / 30 + deep / 4 + 1) - 1
@@ -3012,7 +3011,7 @@ module Dungeon {
         scroll(1, false)
         let dwarf = <active>{ user: { id: '' } }
         Object.assign(dwarf.user, $.dwarf.user)
-        activate(dwarf)
+        PC.activate(dwarf)
         vt.outln(vt.yellow, PC.who(dwarf).He, 'scowls in disgust, '
             , vt.bright, `"Never trust${an($.player.pc)}!"`)
         wearing(dwarf)
@@ -3023,7 +3022,7 @@ module Dungeon {
     function witch() {
         let witch = <active>{ user: { id: '' } }
         Object.assign(witch.user, $.witch.user)
-        activate(witch)
+        PC.activate(witch)
         vt.outln()
         vt.outln(vt.green, PC.who(witch).His, 'disdained look sends a chill down your back.', -1200)
         vt.outln(vt.green, vt.bright, `"Puny ${$.player.pc} -- you earned my wrath!"`)

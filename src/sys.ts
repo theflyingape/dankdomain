@@ -11,14 +11,18 @@ import { titleCase } from 'title-case'
 
 module sys {
 
-    //  dependencies
+    //  dependencies with nice aliases
     export const fs = require('fs')
-    export let PATH = __dirname
-    try { fs.existsSync(`${PATH}/etc`) } catch (e) { PATH = `.${PATH}` }
-    export const romanize = require('romanize')
+    export const PATH = process.cwd() + '/..'
 
-    //  use nice aliases
+    export const NEWS = `${PATH}/files/tavern`
+    if (!fs.existsSync(NEWS)) fs.mkdirSync(NEWS)
+
+    export const LOG = `${PATH}/files/user`
+    if (!fs.existsSync(LOG)) fs.mkdirSync(LOG)
+
     export const got = Got
+    export const romanize = require('romanize')
     export const sprintf = sf
     export const titlecase = titleCase
 
@@ -29,6 +33,13 @@ module sys {
 
     export function an(item: string, show = true) {
         return ' ' + (/a|e|i|o|u/i.test(item[0]) ? 'an' : 'a') + ' ' + (show ? item : '')
+    }
+
+    export function beep() {
+        if (vt.emulation == 'XT')
+            vt.sound('max')
+        else
+            vt.out('\x07', -100)
     }
 
     export function date2days(date: string): number {
@@ -107,6 +118,19 @@ module sys {
         return sprintf('%04d%02d%02d', year, month, day)
     }
 
+
+    export function cuss(text: string): boolean {
+        let words = titlecase(text).split(' ')
+
+        for (let i in words) {
+            if (words[i].match('/^Asshole$|^Cock$|^Cunt$|^Fck$|^Fu$|^Fuc$|^Fuck$|^Fuk$|^Phuc$|^Phuck$|^Phuk$|^Twat$/')) {
+                vt.reason = 'needs a timeout'
+                return true
+            }
+        }
+        return false
+    }
+
     export function dice(faces: number): number {
         return int(Math.random() * whole(faces)) + 1
     }
@@ -124,8 +148,29 @@ module sys {
         return (<active>arg).user !== undefined
     }
 
+    export function log(who: string, message: string) {
+        const log = `${LOG}/${who}.txt`
+        if (who.length && who[0] !== '_' && who !== $.player.id)
+            fs.appendFileSync(log, `${message}\n`)
+    }
+
     export function money(level: number): number {
         return int(Math.pow(2, (level - 1) / 2) * 10 * (101 - level) / 100)
+    }
+
+    export function news(message: string, commit = false) {
+
+        const log = `${PATH}/${$.player.id}.log`
+
+        if ($.access.roleplay) {
+            fs.appendFileSync(log, `${message}\n`)
+            if (message && commit) {
+                const paper = `${PATH}/files/tavern/today.txt`
+                fs.appendFileSync(paper, fs.readFileSync(log))
+            }
+        }
+        if (commit)
+            fs.unlink(log, () => { })
     }
 
     export function now(): { date: number, time: number } {
@@ -139,6 +184,11 @@ module sys {
         const m = t % 100
         const h = int((t < 100 ? t + 1200 : t >= 1300 ? t - 1200 : t) / 100)
         return sprintf('%u:%02u%s', h, m, ap)
+    }
+
+    export function tradein(retail: number, percentage = $.online.cha): number {
+        percentage--
+        return whole(retail * percentage / 100)
     }
 
     //  non-negative integer

@@ -3,11 +3,10 @@
  *  I/O authored by: Robert Hurst <theflyingape@gmail.com>                   *
 \*****************************************************************************/
 
-import { an, date2full, dice, fs, int, isActive, now, sprintf, titlecase, time, vt, whole } from './sys'
+import { fs, PATH, an, date2full, dice, int, isActive, news, now, sprintf, titlecase, time, vt, whole, beep } from './sys'
 import db = require('./db')
 import $ = require('./runtime')
 import { Coin, Access, Armor, Deed, Ring, Weapon } from './items'
-import { encounter, experience, news } from './lib'
 import { Abilities, PC } from './pc'
 
 module io {
@@ -43,62 +42,14 @@ module io {
     }
     export const Award = new _award
 
-    export function activate(one: active, keep = false, confused = false): boolean {
-        one.adept = one.user.wins ? 1 : 0
-        one.pc = PC.card(one.user.pc)
-        one.str = one.user.str
-        one.int = one.user.int
-        one.dex = one.user.dex
-        one.cha = one.user.cha
-        Abilities.forEach(ability => {
-            const a = `to${titlecase(ability)}`
-            let rt = one.user.blessed ? 10 : 0
-            rt -= one.user.cursed ? 10 : 0
-            //  iterate each ring, ability runtimes are additive
-            one.user.rings.forEach(ring => {
-                rt -= Ring.power(one.user.rings, [ring], 'degrade', 'ability', ability).power * 2
-                rt -= Ring.power(one.user.rings, [ring], 'degrade', 'pc', one.user.pc).power * 3
-                rt += Ring.power([], [ring], 'upgrade', 'ability', ability).power * PC.card(one.user.pc)[a] * 2
-                rt += Ring.power([], [ring], 'upgrade', 'pc', one.user.pc).power * PC.card(one.user.pc)[a] * 3
-            })
-            PC.adjust(ability, rt, 0, 0, one)
-        })
-        one.confused = false
-        if (confused) return true
-
-        one.who = PC.who(one)
-        one.altered = keep
-        one.hp = one.user.hp
-        one.sp = one.user.sp
-        one.bp = int(one.user.hp / 10)
-        one.hull = one.user.hull
-        Weapon.equip(one, one.user.weapon, true)
-        Armor.equip(one, one.user.armor, true)
-        one.user.access = one.user.access || Object.keys(Access.name)[0]
-
-        if (!db.lock(one.user.id, one.user.id == $.player.id ? 1 : 2) && one.user.id !== $.player.id) {
-            vt.outln(vt.cyan, vt.bright, `\n${one.user.handle} is engaged elsewhere.`)
-            beep()
-            one.altered = false
-        }
-        return one.altered
-    }
-
     export function armor(profile = $.online, text = false): string {
         return text ? profile.user.armor + buff(profile.user.toAC, profile.toAC, true)
             : vt.attr(profile.armor.armoury ? vt.white : profile.armor.dwarf ? vt.yellow : vt.lcyan
                 , profile.user.armor, vt.white, buff(profile.user.toAC, profile.toAC))
     }
 
-    export function beep() {
-        if ($.player.emulation == 'XT')
-            vt.sound('max')
-        else
-            vt.out('\x07', -125)
-    }
-
     export function bracket(item: number | string, nl = true): string {
-        var framed: string = item.toString()
+        let framed = item.toString()
         framed = vt.attr(vt.off, nl ? '\n' : '', framed.length == 1 && nl ? ' ' : ''
             , vt.white, vt.faint, '<', vt.bright, framed, vt.faint, '>'
             , nl ? ' ' : '', vt.reset)
@@ -125,7 +76,7 @@ module io {
     }
 
     export function cat(filename: string): boolean {
-        const folder = './files/'
+        const folder = `${PATH}/files/`
         let path = folder + filename
             + (vt.emulation == 'PC' ? '.ibm' : vt.emulation == 'XT' ? '.ans' : '.txt')
 
@@ -177,7 +128,7 @@ module io {
             return true
         }
 
-        if (rpc.user.xp < experience(rpc.user.level, 1, rpc.user.int)) {
+        if (rpc.user.xp < PC.experience(rpc.user.level, 1, rpc.user.int)) {
             rpc.user.xplevel = rpc.user.level
             return false
         }
@@ -197,7 +148,7 @@ module io {
         let bonus = false
         let started = rpc.user.xplevel || rpc.user.level
 
-        while (rpc.user.xp >= experience(rpc.user.level, undefined, rpc.user.int) && rpc.user.level < $.sysop.level) {
+        while (rpc.user.xp >= PC.experience(rpc.user.level, undefined, rpc.user.int) && rpc.user.level < $.sysop.level) {
             rpc.user.level++
 
             if (rpc.user.level == Access.name[rpc.user.access].promote) {
@@ -214,7 +165,7 @@ module io {
                     , `and ${PC.who($.king).he}promotes you to`, vt.bright, an(rpc.user.access), vt.normal, '!', -2000)
                 if (Access.name[rpc.user.access].message)
                     vt.outln(vt.yellow, `${PC.who($.king).He}whispers, `, vt.reset, vt.faint, `"${eval('`' + Access.name[rpc.user.access].message + '`')}"`, -2000)
-                let nme = encounter(`AND id NOT GLOB '_*' AND id != '${$.king.id}'`)
+                let nme = PC.encounter(`AND id NOT GLOB '_*' AND id != '${$.king.id}'`)
                 vt.outln(`The mob goes crazy`, -500, nme.user.id
                     ? `, except for ${nme.user.handle} seen buffing ${nme.who.his}${weapon(nme)}`
                     : `!!`, -2000)
@@ -502,12 +453,12 @@ module io {
                 news(`\t(${$.reason})\n`, true)
 
                 try {
-                    $.callers = JSON.parse(fs.readFileSync(`./users/callers.json`).toString())
+                    $.callers = JSON.parse(fs.readFileSync(`${PATH}/users/callers.json`).toString())
                 } catch (e) { }
                 while ($.callers.length > 7)
                     $.callers.pop()
                 $.callers = [<caller>{ who: $.player.handle, reason: $.reason }].concat($.callers)
-                fs.writeFileSync(`./users/callers.json`, JSON.stringify($.callers))
+                fs.writeFileSync(`${PATH}/users/callers.json`, JSON.stringify($.callers))
             }
 
             vt.wall($.player.handle, `logged off: ${$.reason}`)
@@ -549,7 +500,7 @@ module io {
     }
 
     export function expout(xp: number, awarded = true): string {
-        const gain = int(100 * xp / (experience($.player.level) - experience($.player.level - 1)))
+        const gain = int(100 * xp / (PC.experience($.player.level) - PC.experience($.player.level - 1)))
         let out = (xp < 1e+8 ? xp.toString() : sprintf('%.4e', xp)) + ' '
         if (awarded && gain && $.online.int >= 90) {
             out += vt.attr(vt.off, vt.faint, '(', vt.bright
@@ -629,13 +580,13 @@ module io {
                     Ring.wear(user.rings, rings[i].replace(/''/g, `'`))
             }
 
-            if (isActive(rpc)) activate(rpc)
+            if (isActive(rpc)) PC.activate(rpc)
 
             //  restore NPC to static state
             if (user.id[0] == '_' && user.id !== "_SYS") {
                 let npc = <user>{ id: user.id }
                 try {
-                    const js = JSON.parse(fs.readFileSync(`./user/${{ "_BAR": "barkeep", "_DM": "merchant", "_NEP": "neptune", "_OLD": "seahag", "_TAX": "taxman", "_WOW": "witch" }[npc.id]}.json`).toString())
+                    const js = JSON.parse(fs.readFileSync(`${PATH}/user/${{ "_BAR": "barkeep", "_DM": "merchant", "_NEP": "neptune", "_OLD": "seahag", "_TAX": "taxman", "_WOW": "witch" }[npc.id]}.json`).toString())
                     if (js) {
                         Object.assign(npc, js)
                         Object.assign(user, npc)
@@ -664,7 +615,7 @@ module io {
 
         if ($.player.novice) {
             let novice = <user>{ novice: true }
-            Object.assign(novice, JSON.parse(fs.readFileSync(`./users/novice.json`).toString()))
+            Object.assign(novice, JSON.parse(fs.readFileSync(`${PATH}/users/novice.json`).toString()))
             reroll($.player, novice.pc)
             Object.assign($.player, novice)
             $.player.coin = new Coin(novice.coin.toString())
@@ -674,7 +625,7 @@ module io {
             vt.outln('Since you are a new user here, you are automatically assigned a character')
             vt.out('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.')
             show()
-            activate($.online)
+            PC.activate($.online)
             news(`Welcome a ${$.player.pc} player, ${$.player.handle}`)
             require('./tty/main').menu(true)
             return
@@ -860,7 +811,7 @@ module io {
                     $.player.int = a.int
                     $.player.dex = a.dex
                     $.player.cha = a.cha
-                    activate($.online)
+                    PC.activate($.online)
 
                     vt.outln()
                     PC.saveUser($.player)
@@ -1152,7 +1103,7 @@ module io {
         }
 
         if (level == 1) {
-            Object.assign(user, JSON.parse(fs.readFileSync(`./users/reroll.json`).toString()))
+            Object.assign(user, JSON.parse(fs.readFileSync(`${PATH}/users/reroll.json`).toString()))
             user.gender = user.sex
             user.coin = new Coin(user.coin.toString())
             user.bank = new Coin(user.bank.toString())
@@ -1183,7 +1134,7 @@ module io {
             user.who = ''
         }
 
-        if (user.level > 1) user.xp = experience(user.level - 1, 1, user.int)
+        if (user.level > 1) user.xp = PC.experience(user.level - 1, 1, user.int)
         user.xplevel = (user.pc == Object.keys(PC.name['player'])[0]) ? 0 : user.level
 
         for (let n = 2; n <= level; n++) {
@@ -1391,7 +1342,7 @@ module io {
         if (max > 2) {
             vt.music('victory')
 
-            const log = `./files/winners.txt`
+            const log = `${PATH}/files/winners.txt`
             fs.appendFileSync(log, sprintf(`%22s won on %s  -  game took %3d days\n`
                 , $.player.handle
                 , date2full(now().date)
@@ -1438,7 +1389,7 @@ module io {
                 PC.newkeys(user)
                 user.keyhints.splice(12)
                 PC.saveUser(user)
-                fs.unlink(`./users/.${user.id}.json`, () => { })
+                fs.unlink(`${PATH}/users/.${user.id}.json`, () => { })
                 vt.out('.', -10)
             }
             db.run(`UPDATE Rings SET bearer=''`)   // should be cleared by rerolls
@@ -1447,7 +1398,7 @@ module io {
             while (++i) {
                 try {
                     user = <user>{ id: '' }
-                    Object.assign(user, JSON.parse(fs.readFileSync(`./users/bot${i}.json`).toString()))
+                    Object.assign(user, JSON.parse(fs.readFileSync(`${PATH}/users/bot${i}.json`).toString()))
                     let bot = <user>{}
                     Object.assign(bot, user)
                     PC.newkeys(bot)

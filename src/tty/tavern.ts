@@ -3,14 +3,12 @@
  *  TAVERN authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import fs = require('fs')
+import { cuss, dice, fs, int, money, news, sprintf, vt, whole } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
 import { bracket, cat, checkXP, display, loadUser } from '../io'
 import { Coin, Access, Weapon } from '../items'
-import { cuss, news } from '../lib'
 import { PC } from '../pc'
-import { dice, money, int, sprintf, vt, whole } from '../sys'
 
 import Battle = require('../battle')
 import Taxman = require('./taxman')

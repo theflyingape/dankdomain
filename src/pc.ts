@@ -3,12 +3,11 @@
  *  PC authored by: Robert Hurst <theflyingape@gmail.com>                    *
 \*****************************************************************************/
 
-import { date2full, dice, fs, int, isActive, romanize, sprintf, titlecase, vt } from './sys'
+import { beep, date2full, dice, fs, int, isActive, romanize, sprintf, titlecase, vt } from './sys'
 import db = require('./db')
 import $ = require('./runtime')
-import { Access, Magic, Ring } from './items'
+import { Access, Armor, Magic, Ring, Weapon } from './items'
 import { armor, loadUser, weapon } from './io'
-import { experience } from './lib'
 
 module pc {
 
@@ -46,6 +45,47 @@ module pc {
             return ability
         }
 
+        activate(one: active, keep = false, confused = false): boolean {
+            one.adept = one.user.wins ? 1 : 0
+            one.pc = PC.card(one.user.pc)
+            one.str = one.user.str
+            one.int = one.user.int
+            one.dex = one.user.dex
+            one.cha = one.user.cha
+            Abilities.forEach(ability => {
+                const a = `to${titlecase(ability)}`
+                let rt = one.user.blessed ? 10 : 0
+                rt -= one.user.cursed ? 10 : 0
+                //  iterate each ring, ability runtimes are additive
+                one.user.rings.forEach(ring => {
+                    rt -= Ring.power(one.user.rings, [ring], 'degrade', 'ability', ability).power * 2
+                    rt -= Ring.power(one.user.rings, [ring], 'degrade', 'pc', one.user.pc).power * 3
+                    rt += Ring.power([], [ring], 'upgrade', 'ability', ability).power * PC.card(one.user.pc)[a] * 2
+                    rt += Ring.power([], [ring], 'upgrade', 'pc', one.user.pc).power * PC.card(one.user.pc)[a] * 3
+                })
+                PC.adjust(ability, rt, 0, 0, one)
+            })
+            one.confused = false
+            if (confused) return true
+
+            one.who = PC.who(one)
+            one.altered = keep
+            one.hp = one.user.hp
+            one.sp = one.user.sp
+            one.bp = int(one.user.hp / 10)
+            one.hull = one.user.hull
+            Weapon.equip(one, one.user.weapon, true)
+            Armor.equip(one, one.user.armor, true)
+            one.user.access = one.user.access || Object.keys(Access.name)[0]
+
+            if (!db.lock(one.user.id, one.user.id == $.player.id ? 1 : 2) && one.user.id !== $.player.id) {
+                beep()
+                vt.outln(vt.cyan, vt.bright, `\n${one.user.handle} is engaged elsewhere.`)
+                one.altered = false
+            }
+            return one.altered
+        }
+
         adjust(ability: ABILITY, rt = 0, pc = 0, max = 0, rpc = $.online) {
             if (max) {
                 rpc.user[`max${ability}`] = this.ability(rpc.user[`max${ability}`], max, 99)
@@ -81,6 +121,33 @@ module pc {
                 }
             }
             return rpc
+        }
+
+        encounter(where = '', lo = 2, hi = 99): active {
+            lo = lo < 2 ? 2 : lo > 99 ? 99 : lo
+            hi = hi < 2 ? 2 : hi > 99 ? 99 : hi
+
+            let rpc = <active>{ user: { id: '' } }
+            let rs = db.query(`SELECT id FROM Players WHERE id != '${$.player.id}'
+            AND xplevel BETWEEN ${lo} AND ${hi}
+            AND status != 'jail'
+            ${where} ORDER BY level`)
+            if (rs.length) {
+                let n = dice(rs.length) - 1
+                rpc.user.id = rs[n].id
+                loadUser(rpc)
+            }
+            return rpc
+        }
+
+        experience(level: number, factor = 1, wisdom = $.player.int): number {
+            if (level < 1) return 0
+            // calculate need to accrue based off PC intellect capacity
+            if (wisdom < 1000) wisdom = (1100 + level - 2 * wisdom)
+
+            return factor == 1
+                ? Math.round(wisdom * Math.pow(2, level - 1))
+                : int(wisdom * Math.pow(2, level - 2) / factor)
         }
 
         hp(user = $.player): number {
@@ -334,10 +401,10 @@ module pc {
             vt.out(sprintf('%-20s', (profile.user.wins ? `${romanize(profile.user.wins)}.` : '')
                 + profile.user.immortal + '.' + profile.user.level + ` (${profile.user.calls})`))
             vt.out(vt.cyan, ' Need: ', vt.white)
-            if (experience(profile.user.level, undefined, profile.user.int) < 1e+8)
-                vt.out(sprintf('%-15f', experience(profile.user.level, undefined, profile.user.int)))
+            if (this.experience(profile.user.level, undefined, profile.user.int) < 1e+8)
+                vt.out(sprintf('%-15f', this.experience(profile.user.level, undefined, profile.user.int)))
             else
-                vt.out(sprintf('%-15.7e', experience(profile.user.level, undefined, profile.user.int)))
+                vt.out(sprintf('%-15.7e', this.experience(profile.user.level, undefined, profile.user.int)))
             vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
             vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
@@ -546,6 +613,10 @@ module pc {
             vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
             vt.outln(vt.blue, '+', vt.faint, line, vt.normal, '+')
+        }
+
+        what(rpc: active, action: string): string {
+            return action + (rpc !== $.online ? (/.*ch$|.*sh$|.*s$|.*z$/i.test(action) ? 'es ' : 's ') : ' ')
         }
 
         who(pc: active | user, mob = false): who {

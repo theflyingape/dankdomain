@@ -3,11 +3,10 @@
  *  TAXMAN authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import { an, dice, int, money, vt, whole } from '../sys'
+import { an, dice, int, money, news, tradein, vt, whole } from '../sys'
 import $ = require('../runtime')
-import { activate, input, loadUser, reroll, wearing, weapon } from '../io'
+import { input, loadUser, reroll, wearing, weapon } from '../io'
 import { Coin, Armor, RealEstate, Ring, Security, Weapon } from '../items'
-import { news, tradein } from '../lib'
 import { PC } from '../pc'
 
 import Battle = require('../battle')
@@ -164,7 +163,7 @@ module Taxman {
                                 irs[i].user.armor = Armor.merchant[a]
                                 irs[i].user.toAC = dice(irs[i].user.magic * a / 4)
 
-                                activate(irs[i])
+                                PC.activate(irs[i])
                                 xhp -= irs[i].hp
 
                                 i = ($.player.level / 11) >> 0
@@ -213,7 +212,7 @@ module Taxman {
                 `${vt.attr('swears,', vt.bright, vt.blue)} "That's gonna cost you."`
             ][dice(3) - 1], -900)
 
-            activate($.taxman)
+            PC.activate($.taxman)
             $.taxman.user.coin = tax
             wearing($.taxman)
 

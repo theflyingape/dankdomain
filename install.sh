@@ -40,9 +40,9 @@ npm install
 npm run build
 
 # copy over
-sudo cp ./node_modules/animate.css/animate.min.css ./build/door/static
-sudo rsync -a --delete ./build/ "${TARGET}"
-sudo rsync -a --delete ./node_modules "${TARGET}/"
+sudo cp node_modules/animate.css/animate.min.css build/door/static/
+sudo rsync -a --delete build/ "${TARGET}"
+sudo rsync -a --delete node_modules "${TARGET}/"
 sudo chown -R root.games "${TARGET}"
 sudo find "${TARGET}" -type d -exec chmod u+rwx,g+rwxs,o-rwx {} \;
 

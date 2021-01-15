@@ -3,13 +3,12 @@
  *  PARTY authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
+import { cuss, dice, int, log, money, sprintf, titlecase, vt } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
-import { activate, bracket, cat, checkXP, death, display, loadUser, reroll, weapon } from '../io'
+import { bracket, cat, checkXP, death, display, loadUser, reroll, weapon } from '../io'
 import { Coin, Armor, Magic, Poison, Weapon } from '../items'
-import { cuss, log } from '../lib'
 import { PC } from '../pc'
-import { dice, int, money, sprintf, titlecase, vt } from '../sys'
 
 import Battle = require('../battle')
 
@@ -474,7 +473,7 @@ module Party {
                                     if (posse[n].user.gang !== g.name || posse[n].user.status)
                                         posse.pop()
                                     else
-                                        activate(posse[n], true)
+                                        PC.activate(posse[n], true)
                                 }
                             }
 
@@ -518,7 +517,7 @@ module Party {
                                         for (let magic in monsters[dm].spells)
                                             Magic.add(nme[i].user.spells, monsters[dm].spells[magic])
 
-                                    activate(nme[i])
+                                    PC.activate(nme[i])
                                     nme[i].user.toWC = int(nme[i].weapon.wc / 4) + 1
                                     nme[i].user.coin = new Coin(money(ml))
                                     nme[i].user.handle = titlecase(dm)

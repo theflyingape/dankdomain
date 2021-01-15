@@ -3,12 +3,11 @@
  *  SQUARE authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import { dice, int, money, sprintf, vt, whole } from '../sys'
+import { dice, int, log, money, news, sprintf, tradein, vt, whole } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
 import { armor, bracket, display, loadUser, weapon } from '../io'
 import { Coin, Armor, Magic, Poison, Ring, RealEstate, Security, Weapon } from '../items'
-import { encounter, log, news, tradein } from '../lib'
 import { PC } from '../pc'
 
 import Battle = require('../battle')
@@ -50,7 +49,7 @@ module Square {
 
         if (!$.player.novice && $.player.level > 1 && ($.player.coin.value > 0 || $.player.poisons.length || ($.player.magic < 2 && $.player.spells.length))
             && dice($.online.cha / 3 + 4 * $.player.steal) == 1) {
-            let bump = encounter(`AND coward = 0 AND novice = 0 AND (id NOT GLOB '_*' OR id = '_TAX')`
+            let bump = PC.encounter(`AND coward = 0 AND novice = 0 AND (id NOT GLOB '_*' OR id = '_TAX')`
                 , $.player.level - 9, $.player.level + 9)
             if (bump.user.id && !bump.user.status) {
                 vt.beep()
@@ -413,7 +412,7 @@ module Square {
                 vt.sleep(1000)
 
                 credit.value = dice(6 * money($.player.level) / dice(10))
-                let pocket = encounter(`AND novice = 0 AND id NOT GLOB '_*'`).user
+                let pocket = PC.encounter(`AND novice = 0 AND id NOT GLOB '_*'`).user
                 if (pocket.id) {
                     loadUser(pocket)
                     if (pocket.coin.value > 0)

@@ -3,12 +3,11 @@
  *  NAVAL authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import { an, dice, int, money, sprintf, vt, whole } from '../sys'
+import { an, dice, int, log, money, news, sprintf, tradein, vt, whole } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
-import { activate, armor, bracket, cat, checkXP, display, keyhint, loadUser, reroll, weapon, wearing } from '../io'
+import { armor, bracket, cat, checkXP, display, keyhint, loadUser, reroll, weapon, wearing } from '../io'
 import { Coin } from '../items'
-import { encounter, log, news, tradein, what } from '../lib'
 import { PC } from '../pc'
 
 import Battle = require('../battle')
@@ -95,7 +94,7 @@ module Naval {
                             cb: () => {
                                 vt.outln()
                                 if (/Y/i.test(vt.entry)) {
-                                    if (activate(opponent, true)) {
+                                    if (PC.activate(opponent, true)) {
                                         $.naval--
                                         BattleUser(opponent)
                                     }
@@ -128,7 +127,7 @@ module Naval {
                 cast = (cast < 15) ? 15 : (cast > 100) ? 100 : cast >> 0
                 let hook = dice(cast)
                 if (hook < 15) {
-                    let floater = encounter(`AND id NOT GLOB '_*'`)
+                    let floater = PC.encounter(`AND id NOT GLOB '_*'`)
                     if (floater.user.id && floater.user.status) {
                         let leftby = <user>{ id: floater.user.status }
                         if (loadUser(leftby)) {
@@ -176,7 +175,7 @@ module Naval {
                         if ($.player.level > $.neptune.user.level) {
                             let keep = $.neptune.user.spells
                             reroll($.neptune.user, $.neptune.user.pc, $.player.level - 1)
-                            activate($.neptune)
+                            PC.activate($.neptune)
                             $.neptune.user.spells = keep
                         }
                         vt.outln(vt.cyan, vt.bright, 'He looks at you angrily as he removes a hook from his shorts!')
@@ -1068,7 +1067,7 @@ module Naval {
     function ram(a: active, d: active) {
         if (a.user.id) vt.out(vt.yellow)
         else vt.out(vt.bright, vt.blue)
-        vt.out(`\n${a.user.handle} ${what(a, 'ram')}${PC.who(d).him}for`)
+        vt.out(`\n${a.user.handle} ${PC.what(a, 'ram')}${PC.who(d).him}for`)
 
         let damage = dice(a.user.hull / 2) + dice(a.hull / 2)
         if (a.user.id) vt.out(vt.bright)

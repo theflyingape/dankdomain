@@ -3,11 +3,10 @@
  *  NEWUSER authored by: Robert Hurst <theflyingape@gmail.com>               *
 \*****************************************************************************/
 
-import { date2days, date2full, titlecase, vt } from '../sys'
+import { cuss, date2days, date2full, titlecase, vt } from '../sys'
 import $ = require('../runtime')
 import { bracket, loadUser } from '../io'
 import { Access } from '../items'
-import { cuss } from '../lib'
 
 module NewUser {
 

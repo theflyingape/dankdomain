@@ -2,7 +2,7 @@
 	"name": "@theflyingape/dankdomain",
 	"version": "3.0.0",
 	"description": "Ɗanƙ Ɗomaiƞ: the return of Hack & Slash",
-	"main": "telnet",
+	"main": "tty/main",
 	"publisher": "theflyingape",
 	"os": [
 		"cros",
@@ -13,13 +13,13 @@
 	},
 	"scripts": {
 		"build": "./build.sh",
-		"bundle": "./watchify ./build/door/client.js -v -o ./build/door/static/bundle.js",
+		"bundle": "./watchify build/door/client.js -v -o build/door/static/bundle.js",
 		"debug": "node ./build/door/app",
 		"mame": "./build/mame.sh",
-		"start": "test -s ./door/app.js && node ./door/app || node ./build/door/app",
+		"start": "test -s door/app.js && node door/app || node build/door/app",
 		"test": "npm start test",
 		"tty": "./build/tty.sh",
-		"watch": "./tsc -b ./src -w"
+		"watch": "./tsc -b src -w"
 	},
 	"repository": {
 		"type": "git",
@@ -74,7 +74,7 @@
 		"@types/better-sqlite3": "^5.4.1",
 		"@types/express": "^4.17.9",
 		"@types/fs-extra": "^9.0.6",
-		"@types/node": "^14.14.17",
+		"@types/node": "^14.14.21",
 		"@types/nodemailer": "^6.4.0",
 		"@types/nodemailer-smtp-transport": "^2.7.4",
 		"@types/sprintf-js": "^1.1.2",

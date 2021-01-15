@@ -3,12 +3,11 @@
  *  LOGON authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import { PATH, date2full, dice, fs, got, int, money, now, time, titlecase, vt, whole } from '../sys'
+import { fs, PATH, cuss, date2full, dice, got, int, money, news, now, time, titlecase, vt, whole } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
-import { activate, bracket, cat, emulator, getRing, getRuler, input, loadUser, logoff, playerPC, reroll } from '../io'
+import { bracket, cat, emulator, getRing, getRuler, input, loadUser, logoff, playerPC, reroll } from '../io'
 import { Coin, Access, Deed, Magic, Ring } from '../items'
-import { cuss, news } from '../lib'
 import { PC } from '../pc'
 
 module Logon {
@@ -291,7 +290,7 @@ module Logon {
         $.player.lastdate = now().date
         $.player.lasttime = now().time
         $.player.expires = $.player.lastdate + $.sysop.expires
-        activate($.online, true)
+        PC.activate($.online, true)
         PC.saveUser($.player)
 
         $.mydeeds = Deed.load($.player.pc)
@@ -374,14 +373,14 @@ module Logon {
                     if (!Ring.have($.player.rings, Ring.theOne) && !$.access.sysop) {
                         $.player.blessed = ''
                         vt.out(vt.yellow, vt.bright, '\nYour shining aura ', vt.normal, 'fades ', vt.faint, 'away.')
-                        activate($.online)
+                        PC.activate($.online)
                     }
                 }
                 if ($.player.cursed) {
                     if (!$.player.coward || Ring.have($.player.rings, Ring.theOne) || $.access.sysop) {
                         $.player.cursed = ''
                         vt.out(vt.black, vt.bright, '\nThe dark cloud has been lifted.')
-                        activate($.online)
+                        PC.activate($.online)
                     }
                 }
                 $.player.coward = false
