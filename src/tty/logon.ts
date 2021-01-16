@@ -3,12 +3,12 @@
  *  LOGON authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import { fs, PATH, cuss, date2full, dice, got, int, money, news, now, time, titlecase, vt, whole } from '../sys'
-import db = require('../db')
 import $ = require('../runtime')
-import { bracket, cat, emulator, getRing, getRuler, input, loadUser, logoff, playerPC, reroll } from '../io'
+import db = require('../db')
 import { Coin, Access, Deed, Magic, Ring } from '../items'
 import { PC } from '../pc'
+import { logoff, playerPC, reroll } from '../player'
+import { fs, PATH, bracket, cat, cuss, date2full, dice, emulator, getRing, got, input, int, money, news, now, time, titlecase, vt, whole } from '../sys'
 
 module Logon {
 
@@ -100,10 +100,10 @@ module Logon {
 
             $.player.id = titlecase(vt.entry)
 
-            if (!loadUser($.player)) {
+            if (!db.loadUser($.player)) {
                 $.player.id = ''
                 $.player.handle = vt.entry
-                if (!loadUser($.player)) {
+                if (!db.loadUser($.player)) {
                     if (guards())
                         vt.refocus()
                     return
@@ -146,7 +146,7 @@ module Logon {
 
         if (bot) {
             $.player.id = bot
-            if (!loadUser($.player)) {
+            if (!db.loadUser($.player)) {
                 vt.outln(`bot id: ${bot} not found`)
                 $.access.roleplay = false
                 vt.carrier = false
@@ -244,7 +244,7 @@ module Logon {
             }).catch(error => { $.whereis += ` ⚠️ ${error.message}` })
         } catch (e) { }
 
-        loadUser($.sysop)
+        db.loadUser($.sysop)
         if (!getRuler()) {
             $.player.access = Object.keys(Access.name).slice($.player.sex == 'F' ? -2 : -1)[0]
             $.player.novice = false
@@ -532,6 +532,24 @@ module Logon {
         input('pause')
     }
 
+    function getRuler(): boolean {
+        //  King
+        let ruler = Object.keys(Access.name).slice(-1)[0]
+        let rs = <user[]>db.query(`SELECT id FROM Players WHERE access='${ruler}'`)
+        if (rs.length) {
+            $.king.id = rs[0].id
+            return db.loadUser($.king)
+        }
+        //  Queen
+        ruler = Object.keys(Access.name).slice(-2)[0]
+        rs = <user[]>db.query(`SELECT id FROM Players WHERE access='${ruler}'`)
+        if (rs.length) {
+            $.king.id = rs[0].id
+            return db.loadUser($.king)
+        }
+        return false
+    }
+
     function init() {
         //  mode of operation
         switch (vt.emulation) {
@@ -673,7 +691,7 @@ module Logon {
         //  fini
         process.stdout.write('\r')
 
-        loadUser($.sysop)
+        db.loadUser($.sysop)
         if ($.sysop.lastdate != now().date) {
             newDay()
             db.run(`UPDATE Players SET today=0 WHERE id NOT GLOB '_*'`)
@@ -693,7 +711,7 @@ module Logon {
         for (let row in rs) {
             let altered = false
             user.id = rs[row].id
-            loadUser(user)
+            db.loadUser(user)
             for (let item = 7; item < 15; item++) {
                 let cost = user.magic == 1 ? new Coin(Magic.spells[Magic.merchant[item]].wand)
                     : new Coin(Magic.spells[Magic.merchant[item]].cost)
@@ -722,7 +740,7 @@ module Logon {
                     if (+rs[row].xplevel > 1) {
                         db.run(`UPDATE Players SET xplevel=1,remote='' WHERE id='${rs[row].id}'`)
                         let p: user = { id: rs[row].id }
-                        loadUser(p)
+                        db.loadUser(p)
                         require('./email').rejoin(p)
                         vt.out('_', -1000)
                         continue
@@ -760,7 +778,7 @@ module Logon {
             if ((now().date - rs[row].lastdate) % 50 == 0) {
                 db.run(`UPDATE Players SET pc='${Object.keys(PC.name['player'])[0]}',level=1,xplevel=0,remote='' WHERE id='${rs[row].id}'`)
                 let p: user = { id: rs[row].id }
-                loadUser(p)
+                db.loadUser(p)
                 require('./email').rejoin(p)
                 vt.sleep(1000)
             }

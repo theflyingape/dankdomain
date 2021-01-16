@@ -3,13 +3,12 @@
  *  MAIN authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
 
-import { an, cuss, dice, int, log, money, news, sprintf, tradein, vt } from '../sys'
-import fs = require('fs')
-import db = require('../db')
 import $ = require('../runtime')
-import { Award, cat, checkTime, checkXP, display, emulator, input, playerPC, reroll } from '../io'
-import { Coin, Armor, Weapon, Security, RealEstate, Ring } from '../items'
+import db = require('../db')
+import { Coin, Armor, Award, RealEstate, Ring, Security, Weapon } from '../items'
 import { PC } from '../pc'
+import { checkXP, playerPC, reroll } from '../player'
+import { an, cat, checkTime, cuss, dice, display, emulator, fs, input, int, log, money, news, sprintf, tradein, vt } from '../sys'
 
 import Battle = require('../battle')
 

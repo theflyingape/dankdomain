@@ -3,12 +3,12 @@
  *  ARENA authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import { dice, int, log, money, news, romanize, sprintf, tradein, vt } from '../sys'
 import db = require('../db')
 import $ = require('../runtime')
-import { bracket, cat, checkXP, display, getRing, loadUser, reroll, wearing } from '../io'
 import { Coin, Access, Armor, Magic, Poison, Ring, Weapon } from '../items'
 import { PC } from '../pc'
+import { checkXP, reroll } from '../player'
+import { bracket, cat, dice, display, getRing, int, log, money, news, romanize, sprintf, tradein, vt, wearing } from '../sys'
 
 import Battle = require('../battle')
 
@@ -325,7 +325,7 @@ module Arena {
                     if (opponent.user.status.length) {
                         vt.out('was defeated by ')
                         let rpc: active = { user: { id: opponent.user.status } }
-                        if (loadUser(rpc))
+                        if (db.loadUser(rpc))
                             vt.out(rpc.user.handle, vt.cyan, ' (', vt.bright, vt.white, opponent.user.xplevel.toString(), vt.normal, vt.cyan, ')')
                         else
                             vt.out(opponent.user.status)

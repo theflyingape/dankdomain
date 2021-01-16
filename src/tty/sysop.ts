@@ -3,11 +3,11 @@
  *  SYSOP authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import { now, sprintf, titlecase, vt } from '../sys'
-import db = require('../db')
 import $ = require('../runtime')
-import { bracket, display, keyhint, loadUser, reroll } from '../io'
+import db = require('../db')
 import { PC } from '../pc'
+import { reroll } from '../player'
+import { bracket, display, keyhint, now, sprintf, titlecase, vt } from '../sys'
 
 import Battle = require('../battle')
 import Email = require('../email')
@@ -97,7 +97,7 @@ module Sysop {
                 rs = db.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
                 for (let row in rs) {
                     rpc.user.id = rs[row].id
-                    loadUser(rpc)
+                    db.loadUser(rpc)
                     Email.newsletter(rpc.user)
                     vt.out('.', -2500)
                 }
@@ -129,14 +129,14 @@ module Sysop {
                         cb: () => {
                             vt.outln()
                             if (/Y/i.test(vt.entry)) {
-                                loadUser($.sysop)
+                                db.loadUser($.sysop)
                                 $.sysop.dob = now().date + 1
                                 $.sysop.plays = 0
                                 PC.saveUser($.sysop)
                                 rs = db.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
                                 for (let row in rs) {
                                     rpc.user.id = rs[row].id
-                                    loadUser(rpc)
+                                    db.loadUser(rpc)
                                     reroll(rpc.user, pc)
                                     PC.newkeys(rpc.user)
                                     for (k = 0; k < kh; k++)
@@ -166,14 +166,14 @@ module Sysop {
                 vt.form = {
                     'taxman': {
                         cb: () => {
-                            loadUser($.taxman)
+                            db.loadUser($.taxman)
                             PC.status($.taxman)
                             vt.focus = 'pause'
                         }, pause: true
                     },
                     'pause': { cb: menu, pause: true }
                 }
-                loadUser($.barkeep)
+                db.loadUser($.barkeep)
                 PC.status($.barkeep)
                 vt.focus = 'taxman'
                 return

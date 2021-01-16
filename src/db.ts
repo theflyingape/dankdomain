@@ -3,7 +3,10 @@
  *  DB authored by: Robert Hurst <theflyingape@gmail.com>                    *
 \*****************************************************************************/
 
-import { now, PATH } from './sys'
+import { Coin, Ring } from './items'
+import { PC } from './pc'
+import { reroll } from './player'
+import { PATH, fs, isActive, now, titlecase } from './sys'
 
 module db {
 
@@ -59,6 +62,69 @@ module db {
             hull numeric, cannon numeric, ram integer, wins numeric, immortal numeric,
           	plays numeric, jl numeric, jw numeric, killed numeric, kills numeric,
             retreats numeric, steals numeric, tl numeric, tw numeric)`)
+    }
+
+    export function loadUser(rpc: active | user): boolean {
+        let user: user = isActive(rpc) ? rpc.user : rpc
+        let sql = 'SELECT * FROM Players WHERE '
+        if (user.handle) user.handle = titlecase(user.handle)
+        sql += (user.id) ? `id = '${user.id.toUpperCase()}'` : `handle = '${user.handle}'`
+
+        let rs = db.query(sql)
+        if (rs.length) {
+            Object.assign(user, rs[0])
+            user.coin = new Coin(rs[0].coin)
+            user.bank = new Coin(rs[0].bank)
+            user.loan = new Coin(rs[0].loan)
+            user.bounty = new Coin(rs[0].bounty)
+
+            user.keyhints = rs[0].keyhints.split(',')
+
+            user.poisons = []
+            if (rs[0].poisons.length) {
+                let vials = rs[0].poisons.split(',')
+                for (let i = 0; i < vials.length; i++)
+                    user.poisons[i] = +vials[i]
+            }
+
+            user.spells = []
+            if (rs[0].spells.length) {
+                let spells = rs[0].spells.split(',')
+                for (let i = 0; i < spells.length; i++)
+                    user.spells[i] = +spells[i]
+            }
+
+            user.rings = []
+            if (rs[0].rings.length) {
+                let rings = rs[0].rings.split(',')
+                for (let i = 0; i < rings.length; i++)
+                    Ring.wear(user.rings, rings[i].replace(/''/g, `'`))
+            }
+
+            if (isActive(rpc)) PC.activate(rpc)
+
+            //  restore NPC to static state
+            if (user.id[0] == '_' && user.id !== "_SYS") {
+                let npc = <user>{ id: user.id }
+                try {
+                    const js = JSON.parse(fs.readFileSync(`${PATH}/user/${{ "_BAR": "barkeep", "_DM": "merchant", "_NEP": "neptune", "_OLD": "seahag", "_TAX": "taxman", "_WOW": "witch" }[npc.id]}.json`).toString())
+                    if (js) {
+                        Object.assign(npc, js)
+                        Object.assign(user, npc)
+                        reroll(user, user.pc, user.level)
+                        Object.assign(user, npc)
+                        PC.saveUser(user)
+                    }
+                }
+                catch (err) { }
+            }
+
+            return true
+        }
+        else {
+            user.id = ''
+            return false
+        }
     }
 
     export function lock(id: string, owner = 0): boolean {

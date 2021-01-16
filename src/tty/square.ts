@@ -3,12 +3,11 @@
  *  SQUARE authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import { dice, int, log, money, news, sprintf, tradein, vt, whole } from '../sys'
-import db = require('../db')
 import $ = require('../runtime')
-import { armor, bracket, display, loadUser, weapon } from '../io'
+import db = require('../db')
 import { Coin, Armor, Magic, Poison, Ring, RealEstate, Security, Weapon } from '../items'
 import { PC } from '../pc'
+import { armor, bracket, dice, display, int, log, money, news, sprintf, tradein, vt, weapon, whole } from '../sys'
 
 import Battle = require('../battle')
 
@@ -414,7 +413,7 @@ module Square {
                 credit.value = dice(6 * money($.player.level) / dice(10))
                 let pocket = PC.encounter(`AND novice = 0 AND id NOT GLOB '_*'`).user
                 if (pocket.id) {
-                    loadUser(pocket)
+                    db.loadUser(pocket)
                     if (pocket.coin.value > 0)
                         credit.value += pocket.coin.value
                     else {

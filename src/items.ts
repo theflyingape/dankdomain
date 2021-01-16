@@ -3,9 +3,9 @@
  *  ITEMS authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
+import $ = require('./runtime')
 import { PATH, int, now, vt } from './sys'
 import db = require('./db')
-import $ = require('./runtime')
 
 module Items {
 
@@ -212,6 +212,36 @@ module Items {
                 result += rpc.user.armor
             }
             return result
+        }
+    }
+
+    export class _award implements award {
+        //  coveted
+        get key(): {} {
+            const oldkey = '🗝️ '
+            return vt.emulation == 'XT'
+                ? {
+                    P: vt.attr(oldkey, vt.bright, vt.Magenta, ' Platinum ', vt.reset),
+                    G: vt.attr(oldkey, vt.black, vt.Yellow, ' = Gold = ', vt.reset),
+                    S: vt.attr(oldkey, vt.bright, vt.Cyan, '- Silver -', vt.reset),
+                    C: vt.attr(oldkey, vt.black, vt.Red, vt.Empty, ' Copper ', vt.Empty, vt.reset)
+                } : {
+                    P: vt.attr(vt.off, vt.magenta, vt.bright, vt.reverse, ' Platinum ', vt.reset),
+                    G: vt.attr(vt.off, vt.yellow, vt.bright, vt.reverse, ' = Gold = ', vt.reset),
+                    S: vt.attr(vt.off, vt.cyan, vt.bright, vt.reverse, '- Silver -', vt.reset),
+                    C: vt.attr(vt.off, vt.red, vt.bright, vt.reverse, vt.Empty, ' Copper ', vt.Empty, vt.reset)
+                }
+        }
+
+        //  returns 2-character width
+        get medal(): string[] {
+            return vt.emulation == 'XT'
+                ? ['  ', '🥇', '🥈', '🥉']
+                : ['  ',
+                    vt.attr(vt.bright, vt.reverse, '1', vt.noreverse, vt.normal, ' '),
+                    vt.attr(vt.normal, vt.reverse, '2', vt.noreverse, ' '),
+                    vt.attr(vt.faint, vt.reverse, '3', vt.noreverse, vt.normal, ' ')
+                ]
         }
     }
 
@@ -623,6 +653,7 @@ module Items {
 
     export const Access = new _access
     export const Armor = new _armor
+    export const Award = new _award
     export const Deed = new _deed
     export const Ring = new _ring
     export const Magic = new _magic(Ring)

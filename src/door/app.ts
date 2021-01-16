@@ -5,6 +5,7 @@
 import chokidar = require('chokidar')
 import dns = require('dns')
 import express = require('express')
+import fs = require('fs')
 import http = require('http')
 import https = require('https')
 import net = require('net')
@@ -27,7 +28,6 @@ process.on('SIGINT', () => {
 console.log(`cwd ${process.cwd()} → ${__dirname}`)
 process.chdir(__dirname)
 
-import { fs } from '../sys'
 import db = require('../db')
 import { Coin } from '../items'
 import { PC } from '../pc'
@@ -598,8 +598,8 @@ chokidar.watch(`../users/save.json`)
             console.log(`Player (${user.id}) updated`)
         }
         catch (err) {
-            console.log(`Player file has an exception in ${path}:`)
-            console.log(err.message)
+            console.error(`Player file has an exception in ${path}:`)
+            console.error(err.message)
         }
     })
 

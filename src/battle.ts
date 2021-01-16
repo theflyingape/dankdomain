@@ -3,12 +3,12 @@
  *  BATTLE authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import { an, cuss, date2full, dice, fs, int, log, money, news, sprintf, tradein, whole, vt } from './sys'
-import db = require('./db')
 import $ = require('./runtime')
-import { armor, bracket, buff, checkXP, death, expout, getRing, input, loadUser, reroll, rings, weapon } from './io'
+import db = require('./db')
 import { Coin, Access, Armor, Deed, Magic, Poison, Ring, Weapon } from './items'
+import { checkXP, reroll } from './player'
 import { PC } from './pc'
+import { an, armor, bracket, buff, cuss, date2full, death, dice, expout, fs, getRing, input, int, log, money, news, rings, sprintf, tradein, vt, weapon, whole } from './sys'
 
 module Battle {
 
@@ -762,7 +762,7 @@ module Battle {
             if (coin.value) {
                 vt.outln()
                 vt.beep()
-                loadUser($.taxman)
+                db.loadUser($.taxman)
                 $.taxman.user.bank.value += coin.value
                 db.run(`UPDATE Players
                 set bank = ${$.taxman.user.bank.value}
@@ -2257,10 +2257,10 @@ module Battle {
                     }
                     let rpc: active = { user: { id: vt.entry } }
                     if (/^[A-Z][A-Z23\s]*$/i.test(vt.entry)) {
-                        if (!loadUser(rpc)) {
+                        if (!db.loadUser(rpc)) {
                             rpc.user.id = ''
                             rpc.user.handle = vt.entry
-                            if (!loadUser(rpc)) {
+                            if (!db.loadUser(rpc)) {
                                 vt.beep()
                                 vt.out(' ?? ')
                             }

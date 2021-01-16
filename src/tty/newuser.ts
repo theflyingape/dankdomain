@@ -3,10 +3,10 @@
  *  NEWUSER authored by: Robert Hurst <theflyingape@gmail.com>               *
 \*****************************************************************************/
 
-import { cuss, date2days, date2full, titlecase, vt } from '../sys'
 import $ = require('../runtime')
-import { bracket, loadUser } from '../io'
+import db = require('../db')
 import { Access } from '../items'
+import { bracket, cuss, date2days, date2full, titlecase, vt } from '../sys'
 
 module NewUser {
 
@@ -69,7 +69,7 @@ module NewUser {
 
         $.player.id = ''
         $.player.handle = vt.entry
-        if (loadUser($.player)) {
+        if (db.loadUser($.player)) {
             vt.beep()
             vt.refocus()
             return
@@ -161,7 +161,7 @@ module NewUser {
 
         let check: user = { id: $.player.id, handle: '' }
         let retry: number = 1
-        while (retry < 4 && loadUser(check)) {
+        while (retry < 4 && db.loadUser(check)) {
             retry++
             check.id = `${$.player.id}${retry}`
             check.handle = ''

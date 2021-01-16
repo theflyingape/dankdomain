@@ -3,11 +3,10 @@
  *  PC authored by: Robert Hurst <theflyingape@gmail.com>                    *
 \*****************************************************************************/
 
-import { beep, date2full, dice, fs, int, isActive, romanize, sprintf, titlecase, vt } from './sys'
-import db = require('./db')
 import $ = require('./runtime')
+import db = require('./db')
 import { Access, Armor, Magic, Ring, Weapon } from './items'
-import { armor, loadUser, weapon } from './io'
+import { armor, beep, date2full, dice, fs, int, isActive, romanize, sprintf, titlecase, vt, weapon } from './sys'
 
 module pc {
 
@@ -135,7 +134,7 @@ module pc {
             if (rs.length) {
                 let n = dice(rs.length) - 1
                 rpc.user.id = rs[n].id
-                loadUser(rpc)
+                db.loadUser(rpc)
             }
             return rpc
         }
@@ -435,7 +434,7 @@ module pc {
 
             if (profile.user.blessed) {
                 let who: user = { id: profile.user.blessed }
-                if (!loadUser(who)) {
+                if (!db.loadUser(who)) {
                     if (profile.user.blessed == 'well')
                         who.handle = 'a wishing well'
                     else
@@ -448,7 +447,7 @@ module pc {
 
             if (profile.user.cursed) {
                 let who: user = { id: profile.user.cursed }
-                if (!loadUser(who)) {
+                if (!db.loadUser(who)) {
                     if (profile.user.cursed == 'wiz!')
                         who.handle = 'a doppelganger!'
                     else

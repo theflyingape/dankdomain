@@ -3,12 +3,12 @@
  *  DUNGEON authored by: Robert Hurst <theflyingape@gmail.com>               *
 \*****************************************************************************/
 
-import { an, dice, int, log, money, news, romanize, sprintf, tradein, vt, whole } from '../sys'
-import db = require('../db')
 import $ = require('../runtime')
-import { armor, bracket, cat, checkTime, checkXP, death, getRing, keyhint, loadUser, reroll, skillplus, weapon, wearing } from '../io'
+import db = require('../db')
 import { Coin, Armor, Magic, Poison, Ring, Security, Weapon } from '../items'
 import { PC } from '../pc'
+import { checkXP, reroll, skillplus } from '../player'
+import { an, armor, bracket, cat, checkTime, death, dice, getRing, int, keyhint, log, money, news, romanize, sprintf, tradein, vt, weapon, wearing, whole } from '../sys'
 
 import Battle = require('../battle')
 
@@ -116,7 +116,7 @@ module Dungeon {
         containers.splice(c, 1)
     }
 
-    loadUser($.dwarf)
+    db.loadUser($.dwarf)
 
     //  entry point
     export function DeepDank(start: number, cb: Function) {
@@ -1193,7 +1193,7 @@ module Dungeon {
 
                 if ($.taxboss && (Z + 1) >= $.taxman.user.level && $.player.level < $.taxman.user.level) {
                     $.taxboss--
-                    loadUser($.taxman)
+                    db.loadUser($.taxman)
                     vt.outln(vt.reset, PC.who($.taxman).He, 'is the '
                         , vt.cyan, vt.bright, 'Master of Coin'
                         , vt.reset, ' for '
@@ -1685,7 +1685,7 @@ module Dungeon {
                                         let rpc = <active>{ user: { id: '' } }
                                         for (let row in rs) {
                                             rpc.user.id = rs[row].bearer
-                                            loadUser(rpc)
+                                            db.loadUser(rpc)
                                             vt.outln(`You are given the ${rs[row].name} ring from ${rpc.user.handle}.`)
                                             Ring.remove(rpc.user.rings, rs[row].name)
                                             PC.saveUser(rpc)

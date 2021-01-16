@@ -3,12 +3,12 @@
  *  NAVAL authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import { an, dice, int, log, money, news, sprintf, tradein, vt, whole } from '../sys'
-import db = require('../db')
 import $ = require('../runtime')
-import { armor, bracket, cat, checkXP, display, keyhint, loadUser, reroll, weapon, wearing } from '../io'
+import db = require('../db')
 import { Coin } from '../items'
 import { PC } from '../pc'
+import { checkXP, reroll } from '../player'
+import { an, armor, bracket, cat, dice, display, int, keyhint, log, money, news, sprintf, tradein, vt, weapon, wearing, whole } from '../sys'
 
 import Battle = require('../battle')
 
@@ -130,11 +130,11 @@ module Naval {
                     let floater = PC.encounter(`AND id NOT GLOB '_*'`)
                     if (floater.user.id && floater.user.status) {
                         let leftby = <user>{ id: floater.user.status }
-                        if (loadUser(leftby)) {
+                        if (db.loadUser(leftby)) {
                             PC.portrait(floater, 'fadeInUpBig')
                             vt.out(' floating carcass!')
                             vt.sleep(500)
-                            loadUser(floater)
+                            db.loadUser(floater)
                             vt.outln(`\nIt is ${floater.user.handle}'s body in the ocean left there by ${leftby.handle}, and`)
                             vt.outln(`you're able to bring the player back to an Alive! state.`)
                             db.run(`UPDATE Players set status='' WHERE id='${floater.user.id}'`)
@@ -144,7 +144,7 @@ module Naval {
                         }
                     }
                     if (dice($.player.level / 3 + 2) == 1) {
-                        loadUser($.seahag)
+                        db.loadUser($.seahag)
                         vt.outln(`n ${$.seahag.user.handle}!`)
                         cat(`naval/${$.seahag.user.handle}`.toLowerCase())
                         vt.outln(-600, vt.green, vt.bright, 'She cackles as you are sent spinning elsewhere ... ')
@@ -168,7 +168,7 @@ module Naval {
                         return
                     }
                     if (dice($.player.level / 3 + 2) == 1) {
-                        loadUser($.neptune)
+                        db.loadUser($.neptune)
                         vt.outln(` ${$.neptune.user.pc}: ${$.neptune.user.handle}!`)
                         cat(`naval/${$.neptune.user.handle}`.toLowerCase())
                         vt.sleep(600)

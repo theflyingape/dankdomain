@@ -3,12 +3,11 @@
  *  HALL authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
 
-import { date2full, sprintf, vt } from '../sys'
-import db = require('../db')
 import $ = require('../runtime')
-import { Award, cat, display } from '../io'
-import { Deed } from '../items'
+import db = require('../db')
+import { Award, Deed } from '../items'
 import { PC } from '../pc'
+import { cat, date2full, display, sprintf, vt } from '../sys'
 
 module Hall {
 

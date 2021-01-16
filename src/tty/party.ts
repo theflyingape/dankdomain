@@ -3,12 +3,12 @@
  *  PARTY authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import { cuss, dice, int, log, money, sprintf, titlecase, vt } from '../sys'
-import db = require('../db')
 import $ = require('../runtime')
-import { bracket, cat, checkXP, death, display, loadUser, reroll, weapon } from '../io'
+import db = require('../db')
 import { Coin, Armor, Magic, Poison, Weapon } from '../items'
 import { PC } from '../pc'
+import { checkXP, reroll } from '../player'
+import { bracket, cat, cuss, death, dice, display, int, log, money, sprintf, titlecase, vt, weapon } from '../sys'
 
 import Battle = require('../battle')
 
@@ -469,7 +469,7 @@ module Party {
                                     && (g.validated[i] || typeof g.validated[i] == 'undefined')
                                     && !g.status[i]) {
                                     let n = posse.push(<active>{ user: { id: g.members[i] } }) - 1
-                                    loadUser(posse[n])
+                                    db.loadUser(posse[n])
                                     if (posse[n].user.gang !== g.name || posse[n].user.status)
                                         posse.pop()
                                     else
@@ -483,7 +483,7 @@ module Party {
                                 if (!/_MM.$/.test(o.members[i])) {
                                     if ((o.validated[i] || typeof o.validated[i] == 'undefined') && !o.status[i]) {
                                         let n = nme.push(<active>{ user: { id: o.members[i] } }) - 1
-                                        loadUser(nme[n])
+                                        db.loadUser(nme[n])
                                         if (nme[n].user.gang !== o.name
                                             || !nme[n].user.xplevel || nme[n].user.status || !db.lock(nme[n].user.id, 2))
                                             nme.pop()

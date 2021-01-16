@@ -3,12 +3,12 @@
  *  TAVERN authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import { cuss, dice, fs, int, money, news, sprintf, vt, whole } from '../sys'
-import db = require('../db')
 import $ = require('../runtime')
-import { bracket, cat, checkXP, display, loadUser } from '../io'
+import db = require('../db')
 import { Coin, Access, Weapon } from '../items'
 import { PC } from '../pc'
+import { checkXP } from '../player'
+import { bracket, cat, cuss, dice, display, fs, int, money, news, sprintf, vt, whole } from '../sys'
 
 import Battle = require('../battle')
 import Taxman = require('./taxman')
@@ -27,7 +27,7 @@ module Tavern {
         'Y': { description: `Yesterday's news` }
     }
 
-    loadUser($.barkeep)
+    db.loadUser($.barkeep)
 
     export function menu(suppress = true) {
         if (checkXP($.online, menu)) return
@@ -169,7 +169,7 @@ module Tavern {
                 let rs = db.query(`SELECT handle,bounty,who FROM Players WHERE bounty > 0 ORDER BY level DESC`)
                 for (let i in rs) {
                     let adversary = <active>{ user: { id: rs[i].who } }
-                    loadUser(adversary)
+                    db.loadUser(adversary)
                     let bounty = new Coin(rs[i].bounty)
                     vt.outln(`${rs[i].handle} has a ${bounty.carry()} bounty from ${adversary.user.handle}`)
                 }
@@ -283,7 +283,7 @@ module Tavern {
                             `"I am getting too old for this."`,
                             `"Never rub another man\'s rhubarb!"`][dice(3) - 1], -3000)
 
-                        loadUser($.barkeep)
+                        db.loadUser($.barkeep)
                         let trophy = JSON.parse(fs.readFileSync(`./files/tavern/trophy.json`).toString())
                         $.barkeep.user.toWC = whole($.barkeep.weapon.wc / 5)
                         if ($.barkeep.weapon.wc < Weapon.merchant.length)
@@ -292,7 +292,7 @@ module Tavern {
                         vt.outln(`\n${$.barkeep.user.handle} towels ${PC.who($.barkeep).his}hands dry from washing the day\'s\nglasses, ${PC.who($.barkeep).he}warns,\n`)
                         vt.outln(vt.bright, vt.green, '"Another fool said something like that to me, once, and got all busted up."\n', -5000)
                         let fool = <active>{ user: { id: trophy.who, handle: 'a pirate', gender: 'M' } }
-                        loadUser(fool)
+                        db.loadUser(fool)
                         vt.outln(vt.bright, vt.green, `"I think it was ${fool.user.handle}, and it took me a week to clean up the blood!"\n`, -4000)
 
                         vt.music('tiny')

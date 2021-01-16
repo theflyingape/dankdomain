@@ -3,11 +3,12 @@
  *  TAXMAN authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import { an, dice, int, money, news, tradein, vt, whole } from '../sys'
 import $ = require('../runtime')
-import { input, loadUser, reroll, wearing, weapon } from '../io'
+import db = require('../db')
 import { Coin, Armor, RealEstate, Ring, Security, Weapon } from '../items'
 import { PC } from '../pc'
+import { reroll } from '../player'
+import { an, dice, input, int, money, news, tradein, vt, weapon, wearing, whole } from '../sys'
 
 import Battle = require('../battle')
 
@@ -15,12 +16,12 @@ module Taxman {
 
     let irs: active[]
     let tax: coins = new Coin(0)
-    loadUser($.taxman)
+    db.loadUser($.taxman)
 
     function checkpoint(scratch: number): boolean {
 
         if (int(1000 * scratch / tax.value) / 1000 > 1) {
-            loadUser($.taxman)
+            db.loadUser($.taxman)
             vt.profile({
                 jpg: 'npc/taxman', handle: $.taxman.user.handle
                 , level: $.taxman.user.level, pc: $.taxman.user.pc, effect: 'fadeIn'

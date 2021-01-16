@@ -3,104 +3,13 @@
  *  I/O authored by: Robert Hurst <theflyingape@gmail.com>                   *
 \*****************************************************************************/
 
-import { fs, PATH, an, date2full, dice, int, isActive, news, now, sprintf, titlecase, time, vt, whole, beep } from './sys'
-import db = require('./db')
 import $ = require('./runtime')
-import { Coin, Access, Armor, Deed, Ring, Weapon } from './items'
-import { Abilities, PC } from './pc'
+import db = require('./db')
+import { Coin, Access, Deed, Ring, Award } from './items'
+import { PC } from './pc'
+import { PATH, an, beep, bracket, checkTime, cat, date2full, dice, fs, keyhint, int, news, now, sprintf, time, vt, whole, weapon } from './sys'
 
-module io {
-
-    export class _award implements award {
-        //  coveted
-        get key(): {} {
-            const oldkey = '🗝️ '
-            return vt.emulation == 'XT'
-                ? {
-                    P: vt.attr(oldkey, vt.bright, vt.Magenta, ' Platinum ', vt.reset),
-                    G: vt.attr(oldkey, vt.black, vt.Yellow, ' = Gold = ', vt.reset),
-                    S: vt.attr(oldkey, vt.bright, vt.Cyan, '- Silver -', vt.reset),
-                    C: vt.attr(oldkey, vt.black, vt.Red, vt.Empty, ' Copper ', vt.Empty, vt.reset)
-                } : {
-                    P: vt.attr(vt.off, vt.magenta, vt.bright, vt.reverse, ' Platinum ', vt.reset),
-                    G: vt.attr(vt.off, vt.yellow, vt.bright, vt.reverse, ' = Gold = ', vt.reset),
-                    S: vt.attr(vt.off, vt.cyan, vt.bright, vt.reverse, '- Silver -', vt.reset),
-                    C: vt.attr(vt.off, vt.red, vt.bright, vt.reverse, vt.Empty, ' Copper ', vt.Empty, vt.reset)
-                }
-        }
-
-        //  returns 2-character width
-        get medal(): string[] {
-            return vt.emulation == 'XT'
-                ? ['  ', '🥇', '🥈', '🥉']
-                : ['  ',
-                    vt.attr(vt.bright, vt.reverse, '1', vt.noreverse, vt.normal, ' '),
-                    vt.attr(vt.normal, vt.reverse, '2', vt.noreverse, ' '),
-                    vt.attr(vt.faint, vt.reverse, '3', vt.noreverse, vt.normal, ' ')
-                ]
-        }
-    }
-    export const Award = new _award
-
-    export function armor(profile = $.online, text = false): string {
-        return text ? profile.user.armor + buff(profile.user.toAC, profile.toAC, true)
-            : vt.attr(profile.armor.armoury ? vt.white : profile.armor.dwarf ? vt.yellow : vt.lcyan
-                , profile.user.armor, vt.white, buff(profile.user.toAC, profile.toAC))
-    }
-
-    export function bracket(item: number | string, nl = true): string {
-        let framed = item.toString()
-        framed = vt.attr(vt.off, nl ? '\n' : '', framed.length == 1 && nl ? ' ' : ''
-            , vt.white, vt.faint, '<', vt.bright, framed, vt.faint, '>'
-            , nl ? ' ' : '', vt.reset)
-        return framed
-    }
-
-    export function buff(perm: number, temp: number, text = false): string {
-        let keep = vt.emulation
-        if (text) vt.emulation = 'dumb'
-        let buff = ''
-        if (perm || temp) {
-            buff = vt.attr(vt.normal, vt.magenta, ' (')
-            if (perm > 0) buff += vt.attr(vt.bright, vt.yellow, '+', perm.toString(), vt.normal, vt.white)
-            else if (perm < 0) buff += vt.attr(vt.bright, vt.red, perm.toString(), vt.normal, vt.white)
-            else buff += vt.attr(vt.white, '+0')
-            if (temp) buff += vt.attr(','
-                , (temp > 0) ? vt.attr(vt.yellow, vt.bright, '+', temp.toString())
-                    : vt.attr(vt.red, vt.bright, temp.toString())
-                , vt.normal)
-            buff += vt.attr(vt.magenta, ')', vt.white)
-        }
-        if (text) vt.emulation = keep
-        return buff
-    }
-
-    export function cat(filename: string): boolean {
-        const folder = `${PATH}/files/`
-        let path = folder + filename
-            + (vt.emulation == 'PC' ? '.ibm' : vt.emulation == 'XT' ? '.ans' : '.txt')
-
-        try {
-            fs.accessSync(path, fs.constants.F_OK)
-            vt.outln(fs.readFileSync(path, vt.emulation == 'XT' ? 'utf8' : 'binary'), vt.white)
-            return true
-        } catch (e) {
-            if (vt.emulation.match('PC|XT')) {
-                let path = folder + filename + '.txt'
-                try {
-                    fs.accessSync(path, fs.constants.F_OK)
-                    vt.outln(fs.readFileSync(path), vt.white)
-                    return true
-                } catch (e) {
-                    return false
-                }
-            }
-        }
-    }
-
-    export function checkTime(): number {
-        return Math.round((vt.sessionAllowed - ((new Date().getTime() - vt.sessionStart.getTime()) / 1000)) / 60)
-    }
+module player {
 
     export function checkXP(rpc: active, cb: Function): boolean {
 
@@ -265,151 +174,10 @@ module io {
         return false
     }
 
-    export function death(by: string, killed = false) {
-        $.reason = by
-        vt.profile({ handle: `💀 ${$.reason} 💀`, png: `death${$.player.today}`, effect: 'fadeInDownBig' })
-        if (killed) {
-            $.online.hp = 0
-            $.online.sp = 0
-            $.player.killed++
-            vt.sound('killed', 11)
-        }
-        $.online.altered = true
-    }
-
-    //  render a menu of options and return the prompt
-    export function display(title: string, back: number, fore: number, suppress: boolean, menu: choices, hint?: string): string {
-        menu['Q'] = {}  //  Q=Quit
-        if (!suppress) {
-            vt.cls()
-            if (!cat(`${title}/menu`)) {
-                vt.out('    ')
-                if (back)
-                    vt.out(fore, '--=:))', vt.LGradient,
-                        back, vt.white, vt.bright, titlecase(title), vt.reset,
-                        fore, vt.RGradient, '((:=--')
-                else
-                    vt.out(titlecase(title))
-                vt.outln('\n')
-                for (let i in menu) {
-                    if (menu[i].description)
-                        vt.outln(vt.faint, fore, '<', vt.white, vt.bright, i, vt.faint, fore, '> ',
-                            vt.reset, menu[i].description)
-                }
-            }
-            else {
-                if (title == 'main') cat('border')
-            }
-        }
-
-        if (process.stdout.rows && process.stdout.rows !== $.player.rows) {
-            if (!$.player.expert) vt.out('\n', vt.yellow, vt.Empty, vt.bright
-                , `Resetting your USER ROW setting (${$.player.rows}) to detected size ${process.stdout.rows}`
-                , vt.reset)
-            $.player.rows = process.stdout.rows
-        }
-
-        if (hint && $.access.roleplay && dice(+$.player.expert * ($.player.immortal + 1) + $.player.level / 10) == 1)
-            vt.out('\n', vt.green, vt.bright, hint, vt.reset)
-
-        //  insert any wall messages here
-        vt.out('\x06')
-
-        return vt.attr(fore, '[', vt.yellow, vt.bright, back ? titlecase(title) : 'Iron Bank', vt.normal, fore, ']'
-            , vt.faint, ' Option '
-            , vt.normal, vt.cyan, '(Q=Quit): ')
-    }
-
-    export function emulator(cb: Function) {
-        vt.action('list')
-        vt.form = {
-            'term': {
-                cb: () => {
-                    if (vt.entry && vt.entry.length == 2) vt.emulation = <EMULATION>vt.entry.toUpperCase()
-                    $.player.emulation = vt.emulation
-                    if (vt.tty == 'telnet') vt.outln(`@vt.title( ${$.player.emulation})`, -100)
-                    vt.outln('\n', vt.reset, vt.magenta, vt.LGradient, vt.reverse, 'BANNER', vt.noreverse, vt.RGradient)
-                    vt.outln(vt.red, 'R', vt.green, 'G', vt.blue, 'B', vt.reset, vt.bright, ' bold ', vt.normal, 'normal', vt.blink, ' flash ', vt.noblink, vt.faint, 'dim')
-                    vt.out(vt.yellow, 'Cleric: ', vt.bright, { VT: '\x1B(0\x7D\x1B(B', PC: '\x9C', XT: '✟', dumb: '$' }[$.player.emulation]
-                        , vt.normal, vt.magenta, '  Teleport: ', vt.bright, { VT: '\x1B(0\x67\x1B(B', PC: '\xF1', XT: '↨', dumb: '%' }[$.player.emulation])
-                    $.online.altered = true
-                    if ($.player.emulation == 'XT') {
-                        vt.outln(vt.lblack, '  Bat: 🦇')
-                        vt.sound('yahoo', 22)
-                        cb()
-                        return
-                    }
-                    vt.outln(-2200)
-                    beep()
-                    if (process.stdout.rows && process.stdout.rows !== $.player.rows)
-                        $.player.rows = process.stdout.rows
-                    for (let rows = $.player.rows + 5; rows > 1; rows--)
-                        vt.out(bracket(rows >= 24 ? rows : '..'))
-                    vt.form['rows'].prompt = vt.attr('Enter top visible row number ', vt.faint, '[', vt.reset, vt.bright, `${$.player.rows}`, vt.faint, vt.cyan, ']', vt.reset, ': ')
-                    vt.focus = 'rows'
-                }, prompt: vt.attr('Select ', vt.faint, '[', vt.reset, vt.bright, `${$.player.emulation}`, vt.faint, vt.cyan, ']', vt.reset, ': ')
-                , enter: $.player.emulation, match: /VT|PC|XT/i, max: 2
-            },
-            'rows': {
-                cb: () => {
-                    const n = whole(vt.entry)
-                    if (n > 23) $.player.rows = n
-                    vt.outln()
-                    vt.focus = 'pause'
-                }, enter: $.player.rows.toString(), max: 2, match: /^[2-9][0-9]$/
-            },
-            'pause': { cb: cb, pause: true }
-        }
-
-        vt.outln('\n', vt.cyan, 'Which emulation / character encoding are you using?')
-        vt.out(bracket('VT'), ' classic VT terminal with DEC drawing (telnet b&w)')
-        vt.out(bracket('PC'), ' former ANSI color with Western IBM CP850 (telnet color)')
-        vt.outln(bracket('XT'), ' modern ANSI color with UTF-8 & emojis (browser multimedia)')
-        vt.focus = 'term'
-    }
-
-    export function getRing(how: string, what: string) {
-        vt.outln()
-        vt.out(vt.yellow, vt.bright, 'You ', how, an(what, false))
-        vt.out(vt.cyan, what, vt.normal)
-        if ($.player.emulation == 'XT') vt.out(' ', Ring.name[what].emoji, ' 💍')
-        vt.out(' ring', vt.reset, ', which can\n'
-            , vt.bright, vt.yellow, Ring.name[what].description)
-        vt.profile({ jpg: `ring/${what}`, handle: `${what} ${Ring.name[what].emoji} 💍 ring`, effect: 'tada' })
-    }
-
-    export function getRuler(): boolean {
-        //  King
-        let ruler = Object.keys(Access.name).slice(-1)[0]
-        let rs = <user[]>db.query(`SELECT id FROM Players WHERE access='${ruler}'`)
-        if (rs.length) {
-            $.king.id = rs[0].id
-            return loadUser($.king)
-        }
-        //  Queen
-        ruler = Object.keys(Access.name).slice(-2)[0]
-        rs = <user[]>db.query(`SELECT id FROM Players WHERE access='${ruler}'`)
-        if (rs.length) {
-            $.king.id = rs[0].id
-            return loadUser($.king)
-        }
-        return false
-    }
-
-    export function input(focus: string | number, input = '', speed = 8) {
-        if ($.access.bot) {
-            const cr = (vt.form[focus].eol || vt.form[focus].lines)
-            vt.typeahead += input
-            if (cr || !input) vt.typeahead += '\r'
-            vt.form[focus].delay = speed < 100 ? 125 * dice(speed) * dice(speed) : speed
-        }
-        vt.focus = focus
-    }
-
     export function logoff() {
 
         if (!$.reason) {
-            loadUser($.sysop)
+            db.loadUser($.sysop)
             //  caught screwing around?
             if ($.sysop.dob <= now().date) {
                 if ($.access.roleplay) {
@@ -424,7 +192,7 @@ module io {
             }
             else {  //  game was won
                 $.access.roleplay = false
-                loadUser($.player)
+                db.loadUser($.player)
                 $.player.lasttime = now().time
                 news(`\tonline player dropped by ${$.sysop.who} ${time($.player.lasttime)} (${$.reason})\n`, true)
             }
@@ -497,113 +265,6 @@ module io {
         }
         else
             vt.sound('invite')
-    }
-
-    export function expout(xp: number, awarded = true): string {
-        const gain = int(100 * xp / (PC.experience($.player.level) - PC.experience($.player.level - 1)))
-        let out = (xp < 1e+8 ? xp.toString() : sprintf('%.4e', xp)) + ' '
-        if (awarded && gain && $.online.int >= 90) {
-            out += vt.attr(vt.off, vt.faint, '(', vt.bright
-                , gain < 4 ? vt.black : gain < 10 ? vt.red : gain < 40 ? vt.yellow
-                    : gain < 80 ? vt.green : gain < 130 ? vt.cyan : gain < 400 ? vt.blue
-                        : vt.magenta, sprintf('%+d', gain)
-                , gain > 3 ? vt.normal : '', '%', vt.faint, vt.white, ') ', vt.reset)
-        }
-        out += 'experience'
-        if (awarded) out += '.'
-        return out
-    }
-
-    export function keyhint(rpc = $.online, echo = true) {
-        let i: number
-        let open = []
-        let slot: number
-
-        for (let i in rpc.user.keyhints)
-            if (+i < 12 && !rpc.user.keyhints[i]) open.push(i)
-        if (open.length) {
-            do {
-                i = open[dice(open.length) - 1]
-                slot = int(i / 3)
-                let key = ['P', 'G', 'S', 'C'][dice(4) - 1]
-                if (key !== rpc.user.keyseq[slot]) {
-                    for (let n = 3 * slot; n < 3 * (slot + 1); n++)
-                        if (key == rpc.user.keyhints[n])
-                            key = ''
-                    if (key) rpc.user.keyhints[i] = key
-                }
-            } while (!rpc.user.keyhints[i])
-
-            if (rpc === $.online && echo)
-                vt.outln('Key #', vt.bright, `${slot + 1}`, vt.normal, ' is not ', Award.key[$.player.keyhints[i]])
-        }
-        else
-            vt.outln(vt.reset, 'There are no more key hints available to you.')
-
-        rpc.altered = true
-    }
-
-    export function loadUser(rpc: active | user): boolean {
-        let user: user = isActive(rpc) ? rpc.user : rpc
-        let sql = 'SELECT * FROM Players WHERE '
-        if (user.handle) user.handle = titlecase(user.handle)
-        sql += (user.id) ? `id = '${user.id.toUpperCase()}'` : `handle = '${user.handle}'`
-
-        let rs = db.query(sql)
-        if (rs.length) {
-            Object.assign(user, rs[0])
-            user.coin = new Coin(rs[0].coin)
-            user.bank = new Coin(rs[0].bank)
-            user.loan = new Coin(rs[0].loan)
-            user.bounty = new Coin(rs[0].bounty)
-
-            user.keyhints = rs[0].keyhints.split(',')
-
-            user.poisons = []
-            if (rs[0].poisons.length) {
-                let vials = rs[0].poisons.split(',')
-                for (let i = 0; i < vials.length; i++)
-                    user.poisons[i] = +vials[i]
-            }
-
-            user.spells = []
-            if (rs[0].spells.length) {
-                let spells = rs[0].spells.split(',')
-                for (let i = 0; i < spells.length; i++)
-                    user.spells[i] = +spells[i]
-            }
-
-            user.rings = []
-            if (rs[0].rings.length) {
-                let rings = rs[0].rings.split(',')
-                for (let i = 0; i < rings.length; i++)
-                    Ring.wear(user.rings, rings[i].replace(/''/g, `'`))
-            }
-
-            if (isActive(rpc)) PC.activate(rpc)
-
-            //  restore NPC to static state
-            if (user.id[0] == '_' && user.id !== "_SYS") {
-                let npc = <user>{ id: user.id }
-                try {
-                    const js = JSON.parse(fs.readFileSync(`${PATH}/user/${{ "_BAR": "barkeep", "_DM": "merchant", "_NEP": "neptune", "_OLD": "seahag", "_TAX": "taxman", "_WOW": "witch" }[npc.id]}.json`).toString())
-                    if (js) {
-                        Object.assign(npc, js)
-                        Object.assign(user, npc)
-                        reroll(user, user.pc, user.level)
-                        Object.assign(user, npc)
-                        PC.saveUser(user)
-                    }
-                }
-                catch (err) { }
-            }
-
-            return true
-        }
-        else {
-            user.id = ''
-            return false
-        }
     }
 
     export function playerPC(points = 200, immortal = false) {
@@ -1347,7 +1008,7 @@ module io {
                 , $.player.handle
                 , date2full(now().date)
                 , now().date - $.sysop.dob + 1))
-            loadUser($.sysop)
+            db.loadUser($.sysop)
             $.sysop.who = $.player.handle
             $.sysop.dob = now().date + 1
             $.sysop.plays = 0
@@ -1384,7 +1045,7 @@ module io {
             let user: user = { id: '' }
             for (let row in rs) {
                 user.id = rs[row].id
-                loadUser(user)
+                db.loadUser(user)
                 reroll(user)
                 PC.newkeys(user)
                 user.keyhints.splice(12)
@@ -1511,39 +1172,6 @@ module io {
         vt.focus = 'key'
     }
 
-    export function rings(profile = $.online) {
-        for (let i in profile.user.rings) {
-            let ring = profile.user.rings[i]
-            vt.out(vt.cyan, $.player.emulation == 'XT' ? '⍤' : vt.Empty, ' ', vt.bright, ring, vt.normal, ' ')
-            if ($.player.emulation == 'XT') vt.out(Ring.name[ring].emoji, '💍')
-            vt.outln('ring:', vt.reset, ' can ', Ring.name[ring].description, -100)
-        }
-    }
-
-    export function weapon(profile = $.online, text = false): string {
-        return text ? profile.user.weapon + buff(profile.user.toWC, profile.toWC, true)
-            : vt.attr(profile.weapon.shoppe ? vt.white : profile.weapon.dwarf ? vt.yellow : vt.lcyan
-                , profile.user.weapon, vt.white, buff(profile.user.toWC, profile.toWC))
-    }
-
-    export function wearing(profile: active) {
-        if (isNaN(+profile.user.weapon)) {
-            vt.outln('\n', PC.who(profile).He, profile.weapon.text, ' ', weapon(profile)
-                , $.from == 'Dungeon' ? -300 : !profile.weapon.shoppe ? -500 : -100)
-        }
-        if (isNaN(+profile.user.armor)) {
-            vt.outln('\n', PC.who(profile).He, profile.armor.text, ' ', armor(profile)
-                , $.from == 'Dungeon' ? -300 : !profile.armor.armoury ? -500 : -100)
-        }
-        if (!$.player.novice && $.from !== 'Dungeon' && profile.user.sex == 'I') for (let i in profile.user.rings) {
-            let ring = profile.user.rings[i]
-            if (!+i) vt.outln()
-            vt.out(PC.who(profile).He, 'has ', vt.cyan, vt.bright, ring, vt.normal)
-            if ($.player.emulation == 'XT') vt.out(' ', Ring.name[ring].emoji)
-            vt.outln(' powers ', vt.reset, 'that can ', Ring.name[ring].description, -100)
-        }
-    }
-
 }
 
-export = io
+export = player
