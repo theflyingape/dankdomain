@@ -5,10 +5,12 @@
 
 import $ = require('../runtime')
 import db = require('../db')
-import { Coin, Armor, Magic, Poison, Weapon } from '../items'
-import { PC } from '../pc'
-import { checkXP, reroll } from '../player'
-import { bracket, cat, cuss, death, dice, display, int, log, money, sprintf, titlecase, vt, weapon } from '../sys'
+import { loadGang, loadUser, saveGang, saveUser } from '../io'
+import { Armor, Magic, Poison, Weapon } from '../items'
+import { dice, int } from '../lib'
+import { Coin, PC } from '../pc'
+import { checkXP } from '../player'
+import { bracket, cat, cuss, death, display, log, money, sprintf, titlecase, vt, weapon } from '../sys'
 
 import Battle = require('../battle')
 
@@ -43,7 +45,7 @@ module Party {
 
     export function menu(suppress = true) {
         if (checkXP($.online, menu)) return
-        if ($.online.altered) PC.saveUser($.online)
+        if ($.online.altered) saveUser($.online)
         if (!$.reason && $.online.hp < 1) death('fought bravely?')
         if ($.reason) vt.hangup()
 
@@ -76,9 +78,9 @@ module Party {
                 rs = db.query(`SELECT * FROM Gangs`)
                 for (let i = 0; i < rs.length; i += 2) {
                     if (i + 1 < rs.length)
-                        showGang(PC.loadGang(rs[i]), PC.loadGang(rs[i + 1]))
+                        showGang(loadGang(rs[i]), loadGang(rs[i + 1]))
                     else
-                        showGang(PC.loadGang(rs[i]))
+                        showGang(loadGang(rs[i]))
                 }
                 suppress = true
                 break
@@ -146,7 +148,7 @@ module Party {
                                 $.player.gang = g.name
                                 $.online.altered = true
                                 vt.outln()
-                                PC.saveGang(g, true)
+                                saveGang(g, true)
                                 cat('party/gang')
                                 vt.sound('click', 20)
                                 menu()
@@ -176,7 +178,7 @@ module Party {
                     break
                 }
 
-                g = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+                g = loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                 showGang(g)
                 xtGang(g.name, $.player.gender, $.player.melee, g.banner, g.trim)
                 vt.sound('ddd', 6)
@@ -193,7 +195,7 @@ module Party {
                                 let i = g.members.indexOf($.player.id)
                                 if (i > 0) {
                                     g.members.splice(i, 1)
-                                    PC.saveGang(g)
+                                    saveGang(g)
                                 }
                                 else {
                                     PC.adjust('cha', -2, -1)
@@ -242,7 +244,7 @@ module Party {
                 g.members = []
                 rs = db.query(`SELECT * FROM Gangs ORDER BY name`)
                 do {
-                    g = PC.loadGang(rs[0])
+                    g = loadGang(rs[0])
                     rs.splice(0, 1)
                     if (g.members.length < 4 || g.members.indexOf($.player.id) > 0)
                         break
@@ -269,7 +271,7 @@ module Party {
                                 else {
                                     g.members = []
                                     while (rs.length) {
-                                        g = PC.loadGang(rs[0])
+                                        g = loadGang(rs[0])
                                         rs.splice(0, 1)
                                         if (g.members.length < 4 || g.members.indexOf($.player.id) > 0)
                                             break
@@ -293,7 +295,7 @@ module Party {
                 if (!$.access.roleplay) break
                 if (!$.player.gang) break
 
-                g = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+                g = loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                 showGang(g)
                 if (g.members.indexOf($.player.id) != 0) {
                     vt.beep()
@@ -316,8 +318,8 @@ module Party {
                         if (member.user.gang == g.name) {
                             g.members[0] = member.user.id
                             g.members[n] = $.player.id
-                            PC.saveGang(g)
-                            g = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+                            saveGang(g)
+                            g = loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
                             showGang(g)
                             vt.outln()
                             vt.outln(vt.bright, member.user.handle, ' is now leader of ', g.name, '.')
@@ -341,7 +343,7 @@ module Party {
                     break
                 }
 
-                g = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
+                g = loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0], $.player.id)
                 showGang(g)
                 if (g.members.indexOf($.player.id) != 0) {
                     vt.beep()
@@ -374,7 +376,7 @@ module Party {
                                                 }
                                                 g.members.splice(n, 1)
                                                 g.handles.splice(n, 1)
-                                                PC.saveGang(g)
+                                                saveGang(g)
                                                 showGang(g)
                                                 vt.sound('click')
                                                 vt.outln()
@@ -403,7 +405,7 @@ module Party {
                                             if (!member.user.gang) {
                                                 g.members.push(member.user.id)
                                                 g.handles.push(member.user.handle)
-                                                PC.saveGang(g)
+                                                saveGang(g)
                                                 showGang(g)
                                                 log(member.user.id, `\n${$.player.handle} invites you to join ${g.name}`)
                                                 vt.sound('click')
@@ -435,7 +437,7 @@ module Party {
 
                 rs = db.query(`SELECT * FROM Gangs ORDER BY name`)
                 for (let i = 0; i < rs.length; i++) {
-                    o = PC.loadGang(rs[i])
+                    o = loadGang(rs[i], $.player.id)
                     if (o.name !== $.player.gang)
                         vt.out(bracket(i + 1), o.name)
                 }
@@ -456,8 +458,8 @@ module Party {
                                 return
                             }
 
-                            g = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0])
-                            o = PC.loadGang(rs[i])
+                            g = loadGang(db.query(`SELECT * FROM Gangs WHERE name = '${$.player.gang}'`)[0], $.player.id)
+                            o = loadGang(rs[i])
                             if (o.name == g.name) {
                                 vt.refocus()
                                 return
@@ -469,7 +471,7 @@ module Party {
                                     && (g.validated[i] || typeof g.validated[i] == 'undefined')
                                     && !g.status[i]) {
                                     let n = posse.push(<active>{ user: { id: g.members[i] } }) - 1
-                                    db.loadUser(posse[n])
+                                    loadUser(posse[n])
                                     if (posse[n].user.gang !== g.name || posse[n].user.status)
                                         posse.pop()
                                     else
@@ -483,7 +485,7 @@ module Party {
                                 if (!/_MM.$/.test(o.members[i])) {
                                     if ((o.validated[i] || typeof o.validated[i] == 'undefined') && !o.status[i]) {
                                         let n = nme.push(<active>{ user: { id: o.members[i] } }) - 1
-                                        db.loadUser(nme[n])
+                                        loadUser(nme[n])
                                         if (nme[n].user.gang !== o.name
                                             || !nme[n].user.xplevel || nme[n].user.status || !db.lock(nme[n].user.id, 2))
                                             nme.pop()
@@ -500,7 +502,7 @@ module Party {
                                     ml = ml < 1 ? 1 : ml > 99 ? 99 : ml
                                     nme[i].user.handle = dm
                                     nme[i].user.sex = 'I'
-                                    reroll(nme[i].user, monsters[dm].pc ? monsters[dm].pc : $.player.pc, ml)
+                                    PC.reroll(nme[i].user, monsters[dm].pc ? monsters[dm].pc : $.player.pc, ml)
 
                                     nme[i].user.weapon = monsters[dm].weapon ? monsters[dm].weapon : Weapon.merchant[int((Weapon.merchant.length - 1) * ml / 100) + 1]
                                     nme[i].user.armor = monsters[dm].armor ? monsters[dm].armor : Armor.merchant[int((Armor.merchant.length - 1) * ml / 100) + 1]

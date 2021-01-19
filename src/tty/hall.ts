@@ -5,9 +5,10 @@
 
 import $ = require('../runtime')
 import db = require('../db')
-import { Award, Deed } from '../items'
-import { PC } from '../pc'
-import { cat, date2full, display, sprintf, vt } from '../sys'
+import { loadDeed } from '../io'
+import { date2full } from '../lib'
+import { Deed, PC } from '../pc'
+import { cat, display, sprintf, vt } from '../sys'
 
 module Hall {
 
@@ -47,7 +48,7 @@ module Hall {
                 vt.outln(vt.faint, vt.Red, '-------------------------------------------------------------------------')
                 for (let type in PC.name)
                     for (let pc in PC.name[type]) {
-                        let deeds = Deed.load(pc)
+                        let deeds = loadDeed(pc)
                         if (deeds.length) {
                             vt.out(sprintf('%-9s  ', pc))
                             let keys = ['plays', 'retreats', 'killed', 'kills', 'jw', 'jl', 'tw', 'tl', 'steals']
@@ -58,19 +59,19 @@ module Hall {
                                     q = `SELECT value FROM Deeds WHERE deed='${deed.deed}' GROUP BY value ORDER BY value`
                                     if (/jw|steals|tw/.test(deed.deed)) q += ' DESC'
                                     q += ' LIMIT 3'
-                                    medal = Award.medal[0]
+                                    medal = Deed.medal[0]
                                     let top3 = db.query(q)
                                     if (top3.length > 0 && deed.value == top3[0].value) {
                                         vt.out(vt.bright, vt.yellow)
-                                        medal = Award.medal[1]
+                                        medal = Deed.medal[1]
                                     }
                                     if (top3.length > 1 && deed.value == top3[1].value) {
                                         vt.out(vt.bright, vt.cyan)
-                                        medal = Award.medal[2]
+                                        medal = Deed.medal[2]
                                     }
                                     if (top3.length > 2 && deed.value == top3[2].value) {
                                         vt.out(vt.yellow)
-                                        medal = Award.medal[3]
+                                        medal = Deed.medal[3]
                                     }
                                     vt.outln(medal, Deed.name[deed.deed].description)
                                     vt.out('           ')
@@ -87,7 +88,7 @@ module Hall {
                 vt.outln(vt.bright, vt.Magenta, '  HERO                      Date      GOAT        Deed      ')
                 vt.outln(vt.faint, vt.Magenta, '------------------------------------------------------------')
                 let type = 'GOAT'
-                let deeds = Deed.load(type)
+                let deeds = loadDeed(type)
                 if (deeds.length) {
                     let keys = ['plays', 'retreats', 'killed', 'kills', 'jw', 'jl', 'tw', 'tl', 'steals']
                     for (let goat in keys) {
@@ -109,7 +110,7 @@ module Hall {
                     ORDER BY n DESC LIMIT 10
                 `)
                 for (let n in rd) {
-                    vt.outln(sprintf('%-22.22s     %4d', rd[n].hero, rd[n].n), ' ', +n < 3 ? Award.medal[+n + 1] : '')
+                    vt.outln(sprintf('%-22.22s     %4d', rd[n].hero, rd[n].n), ' ', +n < 3 ? Deed.medal[+n + 1] : '')
                 }
 
                 suppress = true
@@ -125,7 +126,7 @@ module Hall {
                     ORDER BY immortal DESC, level DESC LIMIT 20
                 `)
                 for (let n in rh) {
-                    vt.outln(sprintf(`%-22.22s     %3d   %4d ${+n < 3 ? Award.medal[+n + 1] : '  '}  %5.2f  %5d`
+                    vt.outln(sprintf(`%-22.22s     %3d   %4d ${+n < 3 ? Deed.medal[+n + 1] : '  '}  %5.2f  %5d`
                         , rh[n].handle, rh[n].wins, rh[n].immortal
                         , (100 * rh[n].immortal + rh[n].level) / rh[n].calls, rh[n].calls))
                 }
@@ -139,7 +140,7 @@ module Hall {
                 vt.outln(vt.faint, vt.Blue, '----------------------------------------------------------------------')
                 for (let type in PC.name) {
                     for (let pc in PC.name[type]) {
-                        let deeds = Deed.load(pc)
+                        let deeds = loadDeed(pc)
                         if (deeds.length) {
                             vt.out(sprintf('%-9s  ', pc))
                             let keys = ['levels', 'melee', 'blast', 'big blast']
@@ -148,19 +149,19 @@ module Hall {
                                 if (deed) {
                                     vt.out(sprintf('%-22.22s  %-11s %6d ', deed.hero, date2full(deed.date).slice(4), deed.value))
                                     q = `SELECT value FROM Deeds WHERE deed='${deed.deed}' GROUP BY value ORDER BY value DESC LIMIT 3`
-                                    medal = Award.medal[0]
+                                    medal = Deed.medal[0]
                                     let top3 = db.query(q)
                                     if (top3.length > 0 && deed.value == top3[0].value) {
                                         vt.out(vt.bright, vt.yellow)
-                                        medal = Award.medal[1]
+                                        medal = Deed.medal[1]
                                     }
                                     if (top3.length > 1 && deed.value == top3[1].value) {
                                         vt.out(vt.bright, vt.cyan)
-                                        medal = Award.medal[2]
+                                        medal = Deed.medal[2]
                                     }
                                     if (top3.length > 2 && deed.value == top3[2].value) {
                                         vt.out(vt.yellow)
-                                        medal = Award.medal[3]
+                                        medal = Deed.medal[3]
                                     }
                                     vt.outln(medal, Deed.name[deed.deed].description)
                                     vt.out('           ')

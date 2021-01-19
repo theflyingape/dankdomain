@@ -4,9 +4,11 @@
 \*****************************************************************************/
 
 import $ = require('../runtime')
-import { Coin, RealEstate, Security } from '../items'
-import { PC } from '../pc'
-import { bracket, dice, display, int, money, sprintf, tradein, vt, whole } from '../sys'
+import { saveUser } from '../io'
+import { RealEstate, Security } from '../items'
+import { dice, int } from '../lib'
+import { Coin } from '../pc'
+import { bracket, display, money, sprintf, tradein, vt, whole } from '../sys'
 
 module Gambling {
 
@@ -89,7 +91,7 @@ module Gambling {
     ]
 
     export function menu(suppress = true) {
-        if ($.online.altered) PC.saveUser($.online)
+        if ($.online.altered) saveUser($.online)
         if ($.reason) vt.hangup()
 
         vt.action('casino')

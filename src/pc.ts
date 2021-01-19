@@ -5,12 +5,149 @@
 
 import $ = require('./runtime')
 import db = require('./db')
-import { Access, Armor, Magic, Ring, Weapon } from './items'
-import { armor, beep, date2full, dice, fs, int, isActive, romanize, sprintf, titlecase, vt, weapon } from './sys'
+import { loadUser, saveRing } from './io'
+import { ITEMS, Access, Armor, Magic, Ring, Weapon } from './items'
+import { date2full, dice, int, isActive, now } from './lib'
+import { armor, beep, fs, romanize, sprintf, titlecase, vt, weapon } from './sys'
+import pathTo from './path'
 
 module pc {
 
     export const Abilities: ABILITY[] = ['str', 'int', 'dex', 'cha']
+
+    export class Coin implements coin {
+
+        constructor(money: string | number) {
+            if (typeof money == 'number') {
+                this.value = money
+            }
+            else {
+                this.amount = money
+            }
+        }
+
+        private _value: number
+
+        get value(): number {
+            return this._value
+        }
+
+        set value(newValue: number) {
+            const MAX = (1e+18 - 1e+09)
+            this._value = newValue < MAX ? newValue
+                : newValue == Infinity ? 1 : MAX
+        }
+
+        //  top valued coin bag (+ any lesser)
+        get amount(): string {
+            return this.carry(2, true)
+        }
+
+        set amount(newAmount: string) {
+            this.value = 0
+            let coins = 0
+
+            for (var i = 0; i < newAmount.length; i++) {
+                let c = newAmount.charAt(i)
+                switch (c) {
+                    case 'c':
+                        coins *= 1
+                        break
+                    case 's':
+                        coins *= 1e+05
+                        break
+                    case 'g':
+                        coins *= 1e+09
+                        break
+                    case 'p':
+                        coins *= 1e+13
+                        break
+                }
+                if (c >= '0' && c <= '9') {
+                    coins *= 10
+                    coins += +c
+                }
+                else {
+                    this.value += coins
+                    coins = 0
+                }
+            }
+        }
+
+        _pouch(coins: number): string {
+            return (coins < 1e+05) ? 'c' : (coins < 1e+09) ? 's' : (coins < 1e+13) ? 'g' : 'p'
+        }
+
+        carry(max = 2, text = false): string {
+            let n = this.value
+            let bags: string[] = []
+
+            if (this._pouch(n) == 'p') {
+                n = int(n / 1e+13)
+                bags.push(text ? n + 'p' : vt.attr(vt.white, vt.bright, n.toString(), vt.magenta, 'p', vt.normal, vt.white))
+                n = this.value % 1e+13
+            }
+            if (this._pouch(n) == 'g') {
+                n = int(n / 1e+09)
+                bags.push(text ? n + 'g' : vt.attr(vt.white, vt.bright, n.toString(), vt.yellow, 'g', vt.normal, vt.white))
+                n = this.value % 1e+09
+            }
+            if (this._pouch(n) == 's') {
+                n = int(n / 1e+05)
+                bags.push(text ? n + 's' : vt.attr(vt.white, vt.bright, n.toString(), vt.cyan, 's', vt.normal, vt.white))
+                n = this.value % 1e+05
+            }
+            if ((n > 0 && this._pouch(n) == 'c') || bags.length == 0)
+                bags.push(text ? n + 'c' : vt.attr(vt.white, vt.bright, n.toString(), vt.red, 'c', vt.normal, vt.white))
+
+            return bags.slice(0, max).toString()
+        }
+
+        pieces(p = this._pouch(this.value), emoji = false): string {
+            return 'pouch of ' + (emoji ? '💰 ' : '') + {
+                'p': vt.attr(vt.magenta, vt.bright, 'platinum', vt.normal),
+                'g': vt.attr(vt.yellow, vt.bright, 'gold', vt.normal),
+                's': vt.attr(vt.cyan, vt.bright, 'silver', vt.normal),
+                'c': vt.attr(vt.red, vt.bright, 'copper', vt.normal)
+            }[p] + vt.attr(' pieces', vt.reset)
+        }
+    }
+
+    class _deed {
+
+        name: deeds[]
+
+        constructor() {
+            this.name = require(`${ITEMS}/deed.json`)
+        }
+        //  coveted
+        get key(): {} {
+            const oldkey = '🗝️ '
+            return vt.emulation == 'XT'
+                ? {
+                    P: vt.attr(oldkey, vt.bright, vt.Magenta, ' Platinum ', vt.reset),
+                    G: vt.attr(oldkey, vt.black, vt.Yellow, ' = Gold = ', vt.reset),
+                    S: vt.attr(oldkey, vt.bright, vt.Cyan, '- Silver -', vt.reset),
+                    C: vt.attr(oldkey, vt.black, vt.Red, vt.Empty, ' Copper ', vt.Empty, vt.reset)
+                } : {
+                    P: vt.attr(vt.off, vt.magenta, vt.bright, vt.reverse, ' Platinum ', vt.reset),
+                    G: vt.attr(vt.off, vt.yellow, vt.bright, vt.reverse, ' = Gold = ', vt.reset),
+                    S: vt.attr(vt.off, vt.cyan, vt.bright, vt.reverse, '- Silver -', vt.reset),
+                    C: vt.attr(vt.off, vt.red, vt.bright, vt.reverse, vt.Empty, ' Copper ', vt.Empty, vt.reset)
+                }
+        }
+
+        //  returns 2-character width
+        get medal(): string[] {
+            return vt.emulation == 'XT'
+                ? ['  ', '🥇', '🥈', '🥉']
+                : ['  ',
+                    vt.attr(vt.bright, vt.reverse, '1', vt.noreverse, vt.normal, ' '),
+                    vt.attr(vt.normal, vt.reverse, '2', vt.noreverse, ' '),
+                    vt.attr(vt.faint, vt.reverse, '3', vt.noreverse, vt.normal, ' ')
+                ]
+        }
+    }
 
     class _pc {
 
@@ -21,7 +158,7 @@ module pc {
         winning: string
 
         constructor() {
-            this.name = require(`./etc/dankdomain.json`)
+            this.name = require(`${pathTo('etc', 'dankdomain.json')}`)
             this.types = Object.keys(this.name).length
             this.classes = new Array()
             this.total = 0
@@ -46,7 +183,7 @@ module pc {
 
         activate(one: active, keep = false, confused = false): boolean {
             one.adept = one.user.wins ? 1 : 0
-            one.pc = PC.card(one.user.pc)
+            one.pc = this.card(one.user.pc)
             one.str = one.user.str
             one.int = one.user.int
             one.dex = one.user.dex
@@ -59,15 +196,15 @@ module pc {
                 one.user.rings.forEach(ring => {
                     rt -= Ring.power(one.user.rings, [ring], 'degrade', 'ability', ability).power * 2
                     rt -= Ring.power(one.user.rings, [ring], 'degrade', 'pc', one.user.pc).power * 3
-                    rt += Ring.power([], [ring], 'upgrade', 'ability', ability).power * PC.card(one.user.pc)[a] * 2
-                    rt += Ring.power([], [ring], 'upgrade', 'pc', one.user.pc).power * PC.card(one.user.pc)[a] * 3
+                    rt += Ring.power([], [ring], 'upgrade', 'ability', ability).power * this.card(one.user.pc)[a] * 2
+                    rt += Ring.power([], [ring], 'upgrade', 'pc', one.user.pc).power * this.card(one.user.pc)[a] * 3
                 })
-                PC.adjust(ability, rt, 0, 0, one)
+                this.adjust(ability, rt, 0, 0, one)
             })
             one.confused = false
             if (confused) return true
 
-            one.who = PC.who(one)
+            one.who = this.who(one)
             one.altered = keep
             one.hp = one.user.hp
             one.sp = one.user.sp
@@ -134,7 +271,7 @@ module pc {
             if (rs.length) {
                 let n = dice(rs.length) - 1
                 rpc.user.id = rs[n].id
-                db.loadUser(rpc)
+                loadUser(rpc)
             }
             return rpc
         }
@@ -149,6 +286,21 @@ module pc {
                 : int(wisdom * Math.pow(2, level - 2) / factor)
         }
 
+        expout(xp: number, awarded = true): string {
+            const gain = int(100 * xp / (PC.experience($.player.level) - PC.experience($.player.level - 1)))
+            let out = (xp < 1e+8 ? xp.toString() : sprintf('%.4e', xp)) + ' '
+            if (awarded && gain && $.online.int >= 90) {
+                out += vt.attr(vt.off, vt.faint, '(', vt.bright
+                    , gain < 4 ? vt.black : gain < 10 ? vt.red : gain < 40 ? vt.yellow
+                        : gain < 80 ? vt.green : gain < 130 ? vt.cyan : gain < 400 ? vt.blue
+                            : vt.magenta, sprintf('%+d', gain)
+                    , gain > 3 ? vt.normal : '', '%', vt.faint, vt.white, ') ', vt.reset)
+            }
+            out += 'experience'
+            if (awarded) out += '.'
+            return out
+        }
+
         hp(user = $.player): number {
             return Math.round(user.level + dice(user.level) + user.str / 10)
         }
@@ -157,51 +309,33 @@ module pc {
             return Math.round(rpc.dex * rpc.user.level / 10 + 2 * rpc.user.jw - rpc.user.jl + 10)
         }
 
-        loadGang(rs: any): gang {
-            let gang: gang = {
-                name: rs.name,
-                members: rs.members.split(','),
-                handles: [],
-                genders: [],
-                melee: [],
-                status: [],
-                validated: [],
-                win: rs.win,
-                loss: rs.loss,
-                banner: int(rs.banner / 16),
-                trim: rs.banner % 8,
-                back: int(rs.color / 16),
-                fore: rs.color % 8
-            }
+        keyhint(rpc = $.online, echo = true) {
+            let i: number
+            let open = []
+            let slot: number
 
-            for (let n = 0; n < 4 && n < gang.members.length; n++) {
-                let who = db.query(`SELECT handle,gender,melee,status,gang FROM Players WHERE id='${gang.members[n]}'`)
-                if (who.length) {
-                    gang.handles.push(who[0].handle)
-                    gang.genders.push(who[0].gender)
-                    gang.melee.push(who[0].melee)
-                    if (gang.members[n] !== $.player.id && !who[0].status && !db.lock(gang.members[n]))
-                        who[0].status = 'locked'
-                    gang.status.push(who[0].status)
-                    gang.validated.push(who[0].gang ? who[0].gang == rs.name : undefined)
-                }
-                else if (gang.members[n][0] == '_') {
-                    gang.handles.push('')
-                    gang.genders.push('I')
-                    gang.melee.push(0)
-                    gang.status.push('')
-                    gang.validated.push(true)
-                }
-                else {
-                    gang.handles.push(`?unknown ${gang.members[n]}`)
-                    gang.genders.push('M')
-                    gang.melee.push(3)
-                    gang.status.push('?')
-                    gang.validated.push(false)
-                }
-            }
+            for (let i in rpc.user.keyhints)
+                if (+i < 12 && !rpc.user.keyhints[i]) open.push(i)
+            if (open.length) {
+                do {
+                    i = open[dice(open.length) - 1]
+                    slot = int(i / 3)
+                    let key = ['P', 'G', 'S', 'C'][dice(4) - 1]
+                    if (key !== rpc.user.keyseq[slot]) {
+                        for (let n = 3 * slot; n < 3 * (slot + 1); n++)
+                            if (key == rpc.user.keyhints[n])
+                                key = ''
+                        if (key) rpc.user.keyhints[i] = key
+                    }
+                } while (!rpc.user.keyhints[i])
 
-            return gang
+                if (rpc === $.online && echo)
+                    vt.outln('Key #', vt.bright, `${slot + 1}`, vt.normal, ' is not ', Deed.key[$.player.keyhints[i]])
+            }
+            else
+                vt.outln(vt.reset, 'There are no more key hints available to you.')
+
+            rpc.altered = true
         }
 
         newkeys(user: user) {
@@ -253,99 +387,198 @@ module pc {
             return pc
         }
 
-        saveGang(g: gang, insert = false) {
-            if (insert) {
-                try {
-                    db.run(`INSERT INTO Gangs (name,members,win,loss,banner,color)
-                        VALUES ('${g.name}', '${g.members.join()}', ${g.win}, ${g.loss},
-                        ${(g.banner << 4) + g.trim}, ${(g.back << 4) + g.fore})`)
-                }
-                catch (err) {
-                    if (err.code !== 'SQLITE_CONSTRAINT_PRIMARYKEY') {
-                        console.log(`?Unexpected error: ${String(err)}`)
+        reroll(user: user, dd?: string, level = 1) {
+            //  reset essential character attributes
+            level = level > 99 ? 99 : level < 1 ? 1 : level
+            user.level = level
+            user.pc = dd ? dd : Object.keys(this.name['player'])[0]
+            user.status = ''
+
+            let rpc = this.card(user.pc)
+            user.melee = rpc.melee
+            user.backstab = rpc.backstab
+            if (!(user.poison = rpc.poison)) user.poisons = []
+            if (!(user.magic = rpc.magic)) user.spells = []
+            user.steal = rpc.steal
+            user.str = rpc.baseStr
+            user.int = rpc.baseInt
+            user.dex = rpc.baseDex
+            user.cha = rpc.baseCha
+            user.maxstr = rpc.maxStr
+            user.maxint = rpc.maxInt
+            user.maxdex = rpc.maxDex
+            user.maxcha = rpc.maxCha
+            user.xp = 0
+            user.hp = 15
+            user.sp = user.magic > 1 ? 15 : 0
+
+            //  reset these prior experiences
+            user.jl = 0
+            user.jw = 0
+            user.steals = 0
+            user.tl = 0
+            user.tw = 0
+
+            //  reset for new or non player
+            if (!user.id || user.id[0] == '_') {
+                if (isNaN(user.dob)) user.dob = now().date
+                if (isNaN(user.joined)) user.joined = now().date
+                user.lastdate = now().date
+                user.lasttime = now().time
+                user.gender = user.sex || 'I'
+
+                user.emulation = vt.emulation
+                user.calls = 0
+                user.today = 0
+                user.expert = false
+                user.rows = process.stdout.rows || 24
+                user.remote = ''
+                user.novice = !user.id && user.gender !== 'I'
+                user.gang = user.gang || ''
+                user.wins = 0
+                user.immortal = 0
+
+                user.coin = new Coin(0)
+                user.bank = new Coin(0)
+                user.loan = new Coin(0)
+                user.bounty = new Coin(0)
+                user.who = ''
+                user.security = ''
+                user.realestate = ''
+                user.keyhints = []
+            }
+
+            if (level == 1) {
+                Object.assign(user, JSON.parse(fs.readFileSync(`${pathTo('users')}/reroll.json`).toString()))
+                user.gender = user.sex
+                user.coin = new Coin(user.coin.toString())
+                user.bank = new Coin(user.bank.toString())
+                user.loan = new Coin(0)
+                //  force a verify if their access allows it
+                // if (!user.novice && !Access.name[player.access].sysop) user.email = ''
+            }
+
+            if (level == 1 || !user.id || user.id[0] == '_') {
+                //  no extra free or augmented stuff
+                user.poisons = []
+                user.spells = []
+                if (user.rings) user.rings.forEach(ring => { saveRing(ring) })
+                user.rings = []
+                user.toAC = 0
+                user.toWC = 0
+                user.hull = 0
+                user.cannon = 0
+                user.ram = false
+                user.blessed = ''
+                user.cursed = ''
+                user.coward = false
+                user.plays = 0
+                user.retreats = 0
+                user.killed = 0
+                user.kills = 0
+                user.bounty = new Coin(0)
+                user.who = ''
+            }
+
+            if (user.level > 1) user.xp = this.experience(user.level - 1, 1, user.int)
+            user.xplevel = (user.pc == Object.keys(this.name['player'])[0]) ? 0 : user.level
+
+            for (let n = 2; n <= level; n++) {
+                user.level = n
+                if (user.level == 50 && user.gender !== 'I' && user.id[0] !== '_' && !user.novice) {
+                    vt.out(vt.reset, vt.bright, vt.yellow, '+', vt.reset, ' Bonus ')
+                    let d: number = 0
+                    while (!d) {
+                        d = dice(9)
+                        switch (d) {
+                            case 1:
+                                if (user.maxstr > 94) d = 0
+                                break
+                            case 2:
+                                if (user.maxint > 94) d = 0
+                                break
+                            case 3:
+                                if (user.maxdex > 94) d = 0
+                                break
+                            case 4:
+                                if (user.maxcha > 94) d = 0
+                                break
+                            case 5:
+                                if (user.melee > 2) d = 0
+                                break
+                            case 6:
+                                if (user.backstab > 2) d = 0
+                                break
+                            case 7:
+                                if (user.poison > 2) d = 0
+                                break
+                            case 8:
+                                if (user.magic > 2) d = 0
+                                break
+                            case 9:
+                                if (user.steal > 2) d = 0
+                                break
+                        }
                     }
+
+                    switch (d) {
+                        case 1:
+                            if ((user.maxstr += 10) > 99)
+                                user.maxstr = 99
+                            vt.out('Strength')
+                            break
+                        case 2:
+                            if ((user.maxint += 10) > 99)
+                                user.maxint = 99
+                            vt.out('Intellect')
+                            break
+                        case 3:
+                            if ((user.maxdex += 10) > 99)
+                                user.maxdex = 99
+                            vt.out('Dexterity')
+                            break
+                        case 4:
+                            if ((user.maxcha += 10) > 99)
+                                user.maxcha = 99
+                            vt.out('Charisma')
+                            break
+                        case 5:
+                            user.melee++
+                            vt.out('Melee')
+                            break
+                        case 6:
+                            user.backstab++
+                            vt.out('Backstab')
+                            break
+                        case 7:
+                            user.poison++
+                            vt.out('Poison')
+                            break
+                        case 8:
+                            if (user.magic < 4)
+                                user.magic++
+                            vt.out('Spellcasting')
+                            break
+                        case 9:
+                            user.steal++
+                            vt.out('Stealing')
+                            break
+                    }
+                    vt.out(' added')
+                    if (user != $.player) vt.out(' to ', user.handle)
+                    vt.outln(' ', vt.bright, vt.yellow, '+')
                 }
+                if ((user.str += rpc.toStr) > user.maxstr)
+                    user.str = user.maxstr
+                if ((user.int += rpc.toInt) > user.maxint)
+                    user.int = user.maxint
+                if ((user.dex += rpc.toDex) > user.maxdex)
+                    user.dex = user.maxdex
+                if ((user.cha += rpc.toCha) > user.maxcha)
+                    user.cha = user.maxcha
+                user.hp += this.hp(user)
+                user.sp += this.sp(user)
             }
-            else {
-                if (g.members.length > 4) g.members.splice(0, 4)
-                db.run(`UPDATE Gangs
-                    SET members='${g.members.join()}',win=${g.win},loss=${g.loss},
-                        banner=${(g.banner << 4) + g.trim},color=${(g.back << 4) + g.fore}
-                        WHERE name = '${g.name}'`)
-            }
-        }
-
-        saveUser(rpc: active | user, insert = false, locked = false) {
-
-            let user: user = isActive(rpc) ? rpc.user : rpc
-
-            if (!user.id) return
-            if (insert || locked || user.id[0] == '_') {
-                let save = { coin: "", bank: "", loan: "", bounty: "" }
-                let trace = `./users/.${user.id}.json`
-                Object.assign(save, user)
-                save.coin = user.coin.carry(4, true)
-                save.bank = user.bank.carry(4, true)
-                save.loan = user.loan.carry(4, true)
-                save.bounty = user.bounty.carry(4, true)
-                fs.writeFileSync(trace, JSON.stringify(save, null, 2))
-            }
-
-            let sql = insert
-                ? `INSERT INTO Players
-                ( id, handle, name, email, password
-                , dob, sex, joined, expires, lastdate
-                , lasttime, calls, today, expert, emulation
-                , rows, access, remote, pc, gender
-                , novice, level, xp, xplevel, status
-                , blessed, cursed, coward, bounty, who
-                , gang, keyseq, keyhints, melee, backstab
-                , poison, magic, steal, hp, sp
-                , str, maxstr, int, maxint, dex
-                , maxdex, cha, maxcha, coin, bank
-                , loan, weapon, toWC, armor, toAC
-                , spells, poisons, realestate, rings, security
-                , hull, cannon, ram, wins, immortal
-                , plays, jl, jw, killed, kills
-                , retreats, steals, tl, tw
-                ) VALUES
-                ('${user.id}', '${user.handle}', '${user.name}', '${user.email}', '${user.password}'
-                , ${user.dob}, '${user.sex}', ${user.joined}, ${user.expires}, ${user.lastdate}
-                , ${user.lasttime}, ${user.calls}, ${user.today}, ${+user.expert}, '${user.emulation}'
-                , ${user.rows}, '${user.access}', '${user.remote}', '${user.pc}', '${user.gender}'
-                , ${+user.novice}, ${user.level}, ${user.xp}, ${user.xplevel}, '${user.status}'
-                ,'${user.blessed}', '${user.cursed}', ${+user.coward}, ${user.bounty.value}, '${user.who}'
-                ,'${user.gang}', '${user.keyseq}', '${user.keyhints.toString()}', ${user.melee}, ${user.backstab}
-                , ${user.poison}, ${user.magic}, ${user.steal}, ${user.hp}, ${user.sp}
-                , ${user.str}, ${user.maxstr}, ${user.int}, ${user.maxint}, ${user.dex}
-                , ${user.maxdex}, ${user.cha}, ${user.maxcha}, ${user.coin.value}, ${user.bank.value}
-                , ${user.loan.value}, '${user.weapon}', ${user.toWC}, '${user.armor}', ${user.toAC}
-                ,'${user.spells.toString()}', '${user.poisons.toString()}', '${user.realestate}', ?, '${user.security}'
-                , ${user.hull}, ${user.cannon}, ${+user.ram}, ${user.wins}, ${user.immortal}
-                , ${user.plays}, ${user.jl}, ${user.jw}, ${user.killed}, ${user.kills}
-                , ${user.retreats}, ${user.steals}, ${user.tl}, ${user.tw}
-                )`
-                : `UPDATE Players SET
-                handle='${user.handle}', name='${user.name}', email='${user.email}', password='${user.password}',
-                dob=${user.dob}, sex='${user.sex}', joined=${user.joined}, expires=${user.expires}, lastdate=${user.lastdate},
-                lasttime=${user.lasttime}, calls=${user.calls}, today=${user.today}, expert=${+user.expert}, emulation='${user.emulation}',
-                rows=${user.rows}, access='${user.access}', remote='${user.remote}', pc='${user.pc}', gender='${user.gender}',
-                novice=${+user.novice}, level=${user.level}, xp=${user.xp}, xplevel=${user.xplevel}, status='${user.status}',
-                blessed='${user.blessed}', cursed='${user.cursed}', coward=${+user.coward}, bounty=${user.bounty.value}, who='${user.who}',
-                gang='${user.gang}', keyseq='${user.keyseq}', keyhints='${user.keyhints.toString()}', melee=${user.melee}, backstab=${user.backstab},
-                poison=${user.poison}, magic=${user.magic}, steal=${user.steal}, hp=${user.hp}, sp=${user.sp},
-                str=${user.str}, maxstr=${user.maxstr}, int=${user.int}, maxint=${user.maxint}, dex=${user.dex},
-                maxdex=${user.maxdex}, cha=${user.cha}, maxcha=${user.maxcha}, coin=${user.coin.value}, bank=${user.bank.value},
-                loan=${user.loan.value}, weapon='${user.weapon}', toWC=${user.toWC}, armor='${user.armor}', toAC=${user.toAC},
-                spells='${user.spells.toString()}', poisons='${user.poisons.toString()}', realestate='${user.realestate}', rings=?, security='${user.security}',
-                hull=${user.hull}, cannon=${user.cannon}, ram=${+user.ram}, wins=${user.wins}, immortal=${user.immortal},
-                plays=${user.plays}, jl=${user.jl}, jw=${user.jw}, killed=${user.killed}, kills=${user.kills},
-                retreats=${user.retreats}, steals=${user.steals}, tl=${user.tl}, tw=${user.tw}
-                WHERE id='${user.id}'`
-            db.run(sql, false, user.rings.toString())
-
-            if (isActive(rpc)) rpc.altered = false
-            if (locked) db.unlock(user.id.toLowerCase())
         }
 
         sp(user = $.player): number {
@@ -434,7 +667,7 @@ module pc {
 
             if (profile.user.blessed) {
                 let who: user = { id: profile.user.blessed }
-                if (!db.loadUser(who)) {
+                if (!loadUser(who)) {
                     if (profile.user.blessed == 'well')
                         who.handle = 'a wishing well'
                     else
@@ -447,7 +680,7 @@ module pc {
 
             if (profile.user.cursed) {
                 let who: user = { id: profile.user.cursed }
-                if (!db.loadUser(who)) {
+                if (!loadUser(who)) {
                     if (profile.user.cursed == 'wiz!')
                         who.handle = 'a doppelganger!'
                     else
@@ -614,6 +847,24 @@ module pc {
             vt.outln(vt.blue, '+', vt.faint, line, vt.normal, '+')
         }
 
+        wearing(profile: active) {
+            if (isNaN(+profile.user.weapon)) {
+                vt.outln('\n', PC.who(profile).He, profile.weapon.text, ' ', weapon(profile)
+                    , $.from == 'Dungeon' ? -300 : !profile.weapon.shoppe ? -500 : -100)
+            }
+            if (isNaN(+profile.user.armor)) {
+                vt.outln('\n', PC.who(profile).He, profile.armor.text, ' ', armor(profile)
+                    , $.from == 'Dungeon' ? -300 : !profile.armor.armoury ? -500 : -100)
+            }
+            if (!$.player.novice && $.from !== 'Dungeon' && profile.user.sex == 'I') for (let i in profile.user.rings) {
+                let ring = profile.user.rings[i]
+                if (!+i) vt.outln()
+                vt.out(PC.who(profile).He, 'has ', vt.cyan, vt.bright, ring, vt.normal)
+                if ($.player.emulation == 'XT') vt.out(' ', Ring.name[ring].emoji)
+                vt.outln(' powers ', vt.reset, 'that can ', Ring.name[ring].description, -100)
+            }
+        }
+
         what(rpc: active, action: string): string {
             return action + (rpc !== $.online ? (/.*ch$|.*sh$|.*s$|.*z$/i.test(action) ? 'es ' : 's ') : ' ')
         }
@@ -645,6 +896,7 @@ module pc {
         }
     }
 
+    export const Deed = new _deed
     export const PC = new _pc
 }
 

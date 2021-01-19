@@ -5,10 +5,12 @@
 
 import $ = require('../runtime')
 import db = require('../db')
-import { Coin, Armor, Magic, Poison, Ring, Security, Weapon } from '../items'
-import { PC } from '../pc'
-import { checkXP, reroll, skillplus } from '../player'
-import { an, armor, bracket, cat, checkTime, death, dice, getRing, int, keyhint, log, money, news, romanize, sprintf, tradein, vt, weapon, wearing, whole } from '../sys'
+import { loadUser, saveRing, saveUser } from '../io'
+import { Armor, Magic, Poison, Ring, Security, Weapon } from '../items'
+import { dice, int } from '../lib'
+import { Coin, PC } from '../pc'
+import { checkXP, skillplus } from '../player'
+import { an, armor, bracket, cat, checkTime, death, getRing, log, money, news, romanize, sprintf, tradein, vt, weapon, whole } from '../sys'
 
 import Battle = require('../battle')
 
@@ -116,7 +118,7 @@ module Dungeon {
         containers.splice(c, 1)
     }
 
-    db.loadUser($.dwarf)
+    loadUser($.dwarf)
 
     //  entry point
     export function DeepDank(start: number, cb: Function) {
@@ -156,7 +158,7 @@ module Dungeon {
     export function menu(suppress = false) {
 
         //	check player status
-        if ($.online.altered) PC.saveUser($.player)
+        if ($.online.altered) saveUser($.player)
         if ($.reason || vt.reason) {
             death(`failed to escape ${romanize(deep + 1)}.${Z + 1} - ${$.reason || vt.reason}`)
             DL.map = `Marauder's map`
@@ -674,7 +676,7 @@ module Dungeon {
                     else
                         vt.out('and it looks harmless', -100, ', for now.', -50)
                     vt.outln(ROOM.monster.length < 4 ? -250 : -50)
-                    if (ROOM.monster[n]) wearing(ROOM.monster[n])
+                    if (ROOM.monster[n]) PC.wearing(ROOM.monster[n])
                 }
                 else {
                     vt.outln(`and it's `, vt.yellow, vt.bright
@@ -890,7 +892,7 @@ module Dungeon {
                                                 vt.out(vt.faint, 'A dark cloud hovers over ', opponent.who.him, '.')
                                             }
                                             opponent.user.coward = true
-                                            PC.saveUser(opponent)
+                                            saveUser(opponent)
                                             if (opponent.user.id == $.king.id) {
                                                 $.player.coward = true
                                                 $.online.altered = true
@@ -997,7 +999,7 @@ module Dungeon {
                                             $.player.coin.value += loot.value
                                             opponent.user.coin.value = 0
                                             opponent.user.bank.value = 0
-                                            PC.saveUser(opponent)
+                                            saveUser(opponent)
                                             vt.sound('max')
                                         }
                                         menu()
@@ -1021,7 +1023,7 @@ module Dungeon {
                                 case 'K':
                                     let k = dice($.player.wins < 3 ? 1 : 3)
                                     for (let i = 0; i < k; i++) {
-                                        keyhint($.online)
+                                        PC.keyhint($.online)
                                         vt.sound("shimmer", 12)
                                     }
                                     break
@@ -1152,7 +1154,7 @@ module Dungeon {
                                         vt.sound('thief2')
                                         break
                                     case 7:
-                                        keyhint($.online)
+                                        PC.keyhint($.online)
                                         vt.sound('click')
                                         break
                                     case 8:
@@ -1162,10 +1164,10 @@ module Dungeon {
                                     case 9:
                                         $.player.level = dice(Z)
                                         if ($.online.adept) $.player.level += dice($.player.level)
-                                        reroll($.player, PC.random('monster'), $.player.level)
+                                        PC.reroll($.player, PC.random('monster'), $.player.level)
                                         PC.activate($.online)
                                         $.player.gender = ['F', 'M'][dice(2) - 1]
-                                        PC.saveUser($.player)
+                                        saveUser($.player)
                                         news(`\t${$.player.handle} got morphed into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
                                         vt.outln(`You got morphed into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
                                         vt.sound('morph', 10)
@@ -1193,7 +1195,7 @@ module Dungeon {
 
                 if ($.taxboss && (Z + 1) >= $.taxman.user.level && $.player.level < $.taxman.user.level) {
                     $.taxboss--
-                    db.loadUser($.taxman)
+                    loadUser($.taxman)
                     vt.outln(vt.reset, PC.who($.taxman).He, 'is the '
                         , vt.cyan, vt.bright, 'Master of Coin'
                         , vt.reset, ' for '
@@ -1203,7 +1205,7 @@ module Dungeon {
                     vt.sound('oops', 16)
                     PC.activate($.taxman)
                     $.taxman.user.coin.value = $.player.coin.value
-                    wearing($.taxman)
+                    PC.wearing($.taxman)
 
                     b4 = -1
                     Battle.engage('Taxman', $.online, $.taxman, () => {
@@ -1500,7 +1502,7 @@ module Dungeon {
                                         vt.outln('takes back his ring!')
                                         Ring.remove($.player.rings, ring)
                                     }
-                                    Ring.save(ring, $.player.id)
+                                    saveRing(ring, $.player.id)
                                     vt.sound('click', 8)
                                 }
                                 else {
@@ -1533,7 +1535,7 @@ module Dungeon {
                                         vt.outln('takes back his ring!')
                                         Ring.remove($.player.rings, ring)
                                     }
-                                    Ring.save(ring, $.player.id)
+                                    saveRing(ring, $.player.id)
                                     vt.sound('click', 8)
                                 }
                                 else {
@@ -1617,7 +1619,7 @@ module Dungeon {
                 vt.profile({ jpg: 'npc/witch', effect: 'fadeIn' })
                 vt.outln(vt.green, 'You encounter the ', vt.bright, 'sorceress', vt.normal, ', ', $.witch.user.handle, '.')
                 cat(`dungeon/witch`)
-                wearing($.witch)
+                PC.wearing($.witch)
                 vt.sound('steal', 10)
 
                 let choice: string
@@ -1667,10 +1669,10 @@ module Dungeon {
                                 else {
                                     $.player.level = dice(Z)
                                     if ($.online.adept) $.player.level += dice($.player.level)
-                                    reroll($.player, PC.random('monster'), $.player.level)
+                                    PC.reroll($.player, PC.random('monster'), $.player.level)
                                     PC.activate($.online)
                                     $.player.gender = ['F', 'M'][dice(2) - 1]
-                                    PC.saveUser($.player)
+                                    saveUser($.player)
                                     vt.sound('crone', 21)
                                     vt.out(`me morphing you into a level ${$.player.level} ${$.player.pc} (${$.player.gender})`)
                                     news(`\tgot morphed by ${$.witch.user.handle} into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
@@ -1685,12 +1687,12 @@ module Dungeon {
                                         let rpc = <active>{ user: { id: '' } }
                                         for (let row in rs) {
                                             rpc.user.id = rs[row].bearer
-                                            db.loadUser(rpc)
+                                            loadUser(rpc)
                                             vt.outln(`You are given the ${rs[row].name} ring from ${rpc.user.handle}.`)
                                             Ring.remove(rpc.user.rings, rs[row].name)
-                                            PC.saveUser(rpc)
+                                            saveUser(rpc)
                                             Ring.wear(rpc.user.rings, rs[row].name)
-                                            Ring.save(rs[row].name, $.player.id, $.player.rings)
+                                            saveRing(rs[row].name, $.player.id, $.player.rings)
                                             vt.sound('click', 8)
                                         }
                                         news(`\tgot ${rs.length} magical ring${rs.length > 1 ? 's' : ''} of power from ${$.witch.user.handle}!`)
@@ -1790,7 +1792,7 @@ module Dungeon {
         switch (ROOM.giftItem) {
             case 'armor':
                 let xarmor = <active>{ user: Object.assign({}, $.player) }
-                reroll(xarmor.user)
+                PC.reroll(xarmor.user)
                 xarmor.user.armor = Armor.special[ROOM.giftValue]
                 PC.activate(xarmor)
                 if (Armor.swap($.online, xarmor)) {
@@ -1916,7 +1918,7 @@ module Dungeon {
                 if (!db.query(`SELECT bearer FROM Rings WHERE name='${ring}' AND bearer != ''`).length
                     && Ring.wear($.player.rings, ring)) {
                     getRing('find', ring)
-                    Ring.save(ring, $.player.id, $.player.rings)
+                    saveRing(ring, $.player.id, $.player.rings)
                     pause = true
                     ROOM.giftItem = ''
                 }
@@ -1924,7 +1926,7 @@ module Dungeon {
 
             case 'weapon':
                 let xweapon = <active>{ user: Object.assign({}, $.player) }
-                reroll(xweapon.user)
+                PC.reroll(xweapon.user)
                 xweapon.user.weapon = Weapon.special[ROOM.giftValue]
                 PC.activate(xweapon)
                 if (Weapon.swap($.online, xweapon)) {
@@ -2021,7 +2023,7 @@ module Dungeon {
                         Object.assign(avenger.user, mon.user)
                         avenger.user.pc = PC.random('monster')
                         avenger.user.handle += vt.attr(' ', vt.uline, 'avenger', vt.nouline)
-                        reroll(avenger.user, avenger.user.pc, int(avenger.user.level / 2))
+                        PC.reroll(avenger.user, avenger.user.pc, int(avenger.user.level / 2))
                         for (let magic in ROOM.monster[n].monster.spells)
                             Magic.add(avenger.user.spells, ROOM.monster[n].monster.spells[magic])
                         for (let poison in ROOM.monster[n].monster.poisons)
@@ -2422,7 +2424,7 @@ module Dungeon {
 
         } while (result)
 
-        reroll(DL.cleric.user, DL.cleric.user.pc, DL.cleric.user.level)
+        PC.reroll(DL.cleric.user, DL.cleric.user.pc, DL.cleric.user.level)
         PC.activate(DL.cleric)
         vt.wall($.player.handle, `enters dungeon level ${romanize(deep + 1)}.${Z + 1}`)
 
@@ -2866,7 +2868,7 @@ module Dungeon {
         }
         m.monster = dm
         m.effect = dm.effect || 'pulse'
-        reroll(m.user, dm.pc ? dm.pc : $.player.pc, n)
+        PC.reroll(m.user, dm.pc ? dm.pc : $.player.pc, n)
         if (m.user.xplevel) m.user.xplevel = level
         if (!dm.pc) m.user.steal = $.player.steal + 1
 
@@ -3014,7 +3016,7 @@ module Dungeon {
         PC.activate(dwarf)
         vt.outln(vt.yellow, PC.who(dwarf).He, 'scowls in disgust, '
             , vt.bright, `"Never trust${an($.player.pc)}!"`)
-        wearing(dwarf)
+        PC.wearing(dwarf)
         vt.sound('ddd', 20)
         Battle.engage('Merchant', party, dwarf, doSpoils)
     }

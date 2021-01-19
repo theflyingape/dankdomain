@@ -4,24 +4,24 @@
 \*****************************************************************************/
 
 import $ = require('../runtime')
-import db = require('../db')
-import { Coin, Armor, RealEstate, Ring, Security, Weapon } from '../items'
-import { PC } from '../pc'
-import { reroll } from '../player'
-import { an, dice, input, int, money, news, tradein, vt, weapon, wearing, whole } from '../sys'
+import { loadUser } from '../io'
+import { Armor, RealEstate, Ring, Security, Weapon } from '../items'
+import { dice, int } from '../lib'
+import { Coin, PC } from '../pc'
+import { an, input, money, news, tradein, vt, weapon, whole } from '../sys'
 
 import Battle = require('../battle')
 
 module Taxman {
 
     let irs: active[]
-    let tax: coins = new Coin(0)
-    db.loadUser($.taxman)
+    let tax = new Coin(0)
+    loadUser($.taxman)
 
     function checkpoint(scratch: number): boolean {
 
         if (int(1000 * scratch / tax.value) / 1000 > 1) {
-            db.loadUser($.taxman)
+            loadUser($.taxman)
             vt.profile({
                 jpg: 'npc/taxman', handle: $.taxman.user.handle
                 , level: $.taxman.user.level, pc: $.taxman.user.pc, effect: 'fadeIn'
@@ -151,7 +151,7 @@ module Taxman {
                                 let title = ['Reserve', 'Home', 'City', 'Foot', 'Infantry', 'Cavalry', 'Castle', 'Royal'][i < 7 ? i : 7]
                                 irs[i].user.handle = `${title} Guard`
                                 do {
-                                    reroll(irs[i].user, PC.random('player'), irs[i].user.level)
+                                    PC.reroll(irs[i].user, PC.random('player'), irs[i].user.level)
                                 } while (irs[i].user.melee < 1)
 
                                 let w = int(irs[i].user.level / 100 * (Weapon.merchant.length - 1))
@@ -215,7 +215,7 @@ module Taxman {
 
             PC.activate($.taxman)
             $.taxman.user.coin = tax
-            wearing($.taxman)
+            PC.wearing($.taxman)
 
             Battle.engage('Taxman', $.online, $.taxman, require('./main').menu)
         }

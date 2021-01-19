@@ -5,23 +5,26 @@
 
 import $ = require('../runtime')
 import db = require('../db')
-import { Coin, Access, Deed, Magic, Ring } from '../items'
-import { PC } from '../pc'
-import { logoff, playerPC, reroll } from '../player'
-import { fs, PATH, bracket, cat, cuss, date2full, dice, emulator, getRing, got, input, int, money, news, now, time, titlecase, vt, whole } from '../sys'
+import { loadDeed, loadGang, loadUser, saveGang, saveRing, saveUser } from '../io'
+import { Access, Magic, Ring } from '../items'
+import { dice, int, date2full, now, pathTo, time } from '../lib'
+import { Coin, PC } from '../pc'
+import { logoff, playerPC } from '../player'
+import { bracket, cat, cuss, fs, emulator, getRing, got, input, money, news, titlecase, vt, whole } from '../sys'
 
 module Logon {
 
-    init()
+    const USERS = pathTo('users')
+    //init()
 
     export function user() {
+        cat('logon')
+        let retry = 3
+
         vt.form = {
             'who': { cb: who, prompt: vt.attr('Who dares to enter my dank domain ', bracket('or NEW', false), '? '), max: 22, timeout: 40 },
             'password': { cb: password, echo: false, max: 26, timeout: 20 },
         }
-
-        cat('logon')
-        let retry = 3
         vt.focus = 'who'
 
         function guards(): boolean {
@@ -81,7 +84,7 @@ module Logon {
             }
 
             if (/new/i.test(vt.entry)) {
-                reroll($.player)
+                PC.reroll($.player)
                 PC.newkeys($.player)
                 $.player.emulation = <EMULATION>vt.emulation
                 $.player.rows = process.stdout.rows || 24
@@ -100,10 +103,10 @@ module Logon {
 
             $.player.id = titlecase(vt.entry)
 
-            if (!db.loadUser($.player)) {
+            if (!loadUser($.player)) {
                 $.player.id = ''
                 $.player.handle = vt.entry
-                if (!db.loadUser($.player)) {
+                if (!loadUser($.player)) {
                     if (guards())
                         vt.refocus()
                     return
@@ -135,7 +138,7 @@ module Logon {
         }
     }
 
-    //  user or bot startup entry point
+    //  user (or bot) startup entry point
     export function startup(bot = '') {
         $.whereis = [
             'Braavos', 'Casterly Rock', 'Dorne', 'Dragonstone', 'Dreadfort',
@@ -146,7 +149,7 @@ module Logon {
 
         if (bot) {
             $.player.id = bot
-            if (!db.loadUser($.player)) {
+            if (!loadUser($.player)) {
                 vt.outln(`bot id: ${bot} not found`)
                 $.access.roleplay = false
                 vt.carrier = false
@@ -244,7 +247,7 @@ module Logon {
             }).catch(error => { $.whereis += ` ⚠️ ${error.message}` })
         } catch (e) { }
 
-        db.loadUser($.sysop)
+        loadUser($.sysop)
         if (!getRuler()) {
             $.player.access = Object.keys(Access.name).slice($.player.sex == 'F' ? -2 : -1)[0]
             $.player.novice = false
@@ -257,7 +260,7 @@ module Logon {
             if ($.player.today <= $.access.calls && $.access.roleplay)
                 $.sysop.plays++
         }
-        PC.saveUser($.sysop)
+        saveUser($.sysop)
 
         $.access = Access.name[$.player.access]
         $.player.rows = process.stdout.rows
@@ -291,9 +294,9 @@ module Logon {
         $.player.lasttime = now().time
         $.player.expires = $.player.lastdate + $.sysop.expires
         PC.activate($.online, true)
-        PC.saveUser($.player)
+        saveUser($.player)
 
-        $.mydeeds = Deed.load($.player.pc)
+        $.mydeeds = loadDeed($.player.pc)
         welcome()
     }
 
@@ -358,7 +361,7 @@ module Logon {
 
             vt.outln(vt.cyan, '\nLast callers were: ')
             try {
-                $.callers = JSON.parse(fs.readFileSync(`${PATH}/users/callers.json`).toString())
+                $.callers = JSON.parse(fs.readFileSync(`${USERS}/callers.json`).toString())
                 for (let last in $.callers)
                     vt.outln('     ', vt.bright
                         , $.callers[last].who, vt.normal, ' (', $.callers[last].reason, ')')
@@ -396,7 +399,7 @@ module Logon {
                 let ring = Ring.power([], null, 'joust')
                 if (($.online.altered = Ring.wear($.player.rings, ring.name))) {
                     getRing('win', ring.name)
-                    Ring.save(ring.name, $.player.id, $.player.rings)
+                    saveRing(ring.name, $.player.id, $.player.rings)
                     vt.sound('promote', 22)
                 }
             }
@@ -406,7 +409,7 @@ module Logon {
             $.player.plays++
             $.player.status = ''
             $.player.xplevel = $.player.level
-            const play = JSON.parse(fs.readFileSync(`${PATH}/etc/play.json`).toString())
+            const play = JSON.parse(fs.readFileSync(`${pathTo('etc')}/play.json`).toString())
             Object.assign($, play)
             vt.music('logon')
 
@@ -427,7 +430,7 @@ module Logon {
             vt.outln(vt.bright, vt.black, '(', vt.yellow, 'VISITING', vt.black, ')')
             vt.sessionAllowed = 5 * 60
             $.access.roleplay = false
-            PC.saveUser($.player)
+            saveUser($.player)
             db.unlock($.player.id)
             news('', true)
 
@@ -435,7 +438,7 @@ module Logon {
 
             vt.out(vt.cyan, '\nLast callers were: ', vt.white)
             try {
-                $.callers = JSON.parse(fs.readFileSync(`${PATH}/users/callers.json`).toString())
+                $.callers = JSON.parse(fs.readFileSync(`${USERS}/callers.json`).toString())
                 for (let last in $.callers) {
                     vt.outln(vt.bright, $.callers[last].who, vt.normal, ' (', $.callers[last].reason, ')')
                     vt.out('                   ')
@@ -489,7 +492,7 @@ module Logon {
 
             'sysop': {
                 cb: () => {
-                    if (vt.entry) fs.writeFileSync(`${PATH}/files/announcement.txt`, vt.attr(
+                    if (vt.entry) fs.writeFileSync(`${pathTo('files')}/announcement.txt`, vt.attr(
                         vt.magenta, 'Date: ', vt.off, date2full($.player.lastdate), ' ', time($.player.lasttime) + '\n',
                         vt.magenta, 'From: ', vt.off, $.player.handle, '\n\n',
                         vt.bright, vt.entry))
@@ -518,7 +521,7 @@ module Logon {
                 cb: () => {
                     vt.outln()
                     if (vt.entry.length && !cuss(vt.entry)) {
-                        fs.writeFileSync(`${PATH}/files/auto-message.txt`, vt.attr(
+                        fs.writeFileSync(`${pathTo('files')}/auto-message.txt`, vt.attr(
                             vt.cyan, 'Date: ', vt.off, date2full($.player.lastdate), ' ', time($.player.lasttime), '\n',
                             vt.cyan, 'From: ', vt.off, $.player.handle + '\n\n',
                             vt.bright, vt.entry))
@@ -538,14 +541,14 @@ module Logon {
         let rs = <user[]>db.query(`SELECT id FROM Players WHERE access='${ruler}'`)
         if (rs.length) {
             $.king.id = rs[0].id
-            return db.loadUser($.king)
+            return loadUser($.king)
         }
         //  Queen
         ruler = Object.keys(Access.name).slice(-2)[0]
         rs = <user[]>db.query(`SELECT id FROM Players WHERE access='${ruler}'`)
         if (rs.length) {
             $.king.id = rs[0].id
-            return db.loadUser($.king)
+            return loadUser($.king)
         }
         return false
     }
@@ -568,101 +571,101 @@ module Logon {
         //  customize the Dank Domain waiting for its ruler (1st player to register)
         let npc = <user>{}
         let player = <user>{}
-        Object.assign(npc, JSON.parse(fs.readFileSync(`${PATH}/users/sysop.json`).toString()))
+        Object.assign(npc, JSON.parse(fs.readFileSync(`${USERS}/sysop.json`).toString()))
         let rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
         if (!rs.length) {
             process.stdout.write(`[${npc.handle}] `)
             Object.assign(player, npc)
             PC.newkeys(player)
-            reroll(player, player.pc, player.level)
+            PC.reroll(player, player.pc, player.level)
             player.level = npc.level
             player.xplevel = 0
-            PC.saveUser(player, true)
+            saveUser(player, true)
             npc = <user>{}
             player = <user>{}
         }
 
         //  customize the Master of Whisperers NPC
-        Object.assign(npc, JSON.parse(fs.readFileSync(`${PATH}/users/barkeep.json`).toString()))
+        Object.assign(npc, JSON.parse(fs.readFileSync(`${USERS}/barkeep.json`).toString()))
         rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
         if (!rs.length) {
             process.stdout.write(`[${npc.handle}] `)
             Object.assign(player, npc)
             PC.newkeys(player)
-            reroll(player, player.pc, player.level)
+            PC.reroll(player, player.pc, player.level)
             Object.assign(player, npc)
-            PC.saveUser(player, true)
+            saveUser(player, true)
             npc = <user>{}
             player = <user>{}
         }
 
         //  customize the Master at Arms NPC
-        Object.assign(npc, JSON.parse(fs.readFileSync(`${PATH}/users/merchant.json`).toString()))
+        Object.assign(npc, JSON.parse(fs.readFileSync(`${USERS}/merchant.json`).toString()))
         rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
         if (!rs.length) {
             process.stdout.write(`[${npc.handle}] `)
             Object.assign(player, npc)
             PC.newkeys(player)
-            reroll(player, player.pc, player.level)
+            PC.reroll(player, player.pc, player.level)
             Object.assign(player, npc)
-            PC.saveUser(player, true)
+            saveUser(player, true)
             npc = <user>{}
             player = <user>{}
         }
 
         //  customize the Big Kahuna NPC
-        Object.assign(npc, JSON.parse(fs.readFileSync(`${PATH}/users/neptune.json`).toString()))
+        Object.assign(npc, JSON.parse(fs.readFileSync(`${USERS}/neptune.json`).toString()))
         rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
         if (!rs.length) {
             process.stdout.write(`[${npc.handle}] `)
             Object.assign(player, npc)
             PC.newkeys(player)
-            reroll(player, player.pc, player.level)
+            PC.reroll(player, player.pc, player.level)
             Object.assign(player, npc)
-            PC.saveUser(player, true)
+            saveUser(player, true)
             npc = <user>{}
             player = <user>{}
         }
 
         //  customize the Queen B NPC
-        Object.assign(npc, JSON.parse(fs.readFileSync(`${PATH}/users/seahag.json`).toString()))
+        Object.assign(npc, JSON.parse(fs.readFileSync(`${USERS}/seahag.json`).toString()))
         rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
         if (!rs.length) {
             process.stdout.write(`[${npc.handle}] `)
             Object.assign(player, npc)
             PC.newkeys(player)
-            reroll(player, player.pc, player.level)
+            PC.reroll(player, player.pc, player.level)
             Object.assign(player, npc)
-            PC.saveUser(player, true)
+            saveUser(player, true)
             npc = <user>{}
             player = <user>{}
         }
 
         //  customize the Master of Coin NPC
         npc = <user>{}
-        Object.assign(npc, JSON.parse(fs.readFileSync(`${PATH}/users/taxman.json`).toString()))
+        Object.assign(npc, JSON.parse(fs.readFileSync(`${USERS}/taxman.json`).toString()))
         rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
         if (!rs.length) {
             process.stdout.write(`[${npc.handle}] `)
             Object.assign(player, npc)
             PC.newkeys(player)
-            reroll(player, player.pc, player.level)
+            PC.reroll(player, player.pc, player.level)
             Object.assign(player, npc)
-            PC.saveUser(player, true)
+            saveUser(player, true)
             npc = <user>{}
             player = <user>{}
         }
 
         //  customize the wicked witch
-        Object.assign(npc, JSON.parse(fs.readFileSync(`${PATH}/users/witch.json`).toString()))
+        Object.assign(npc, JSON.parse(fs.readFileSync(`${USERS}/witch.json`).toString()))
         rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
         if (!rs.length) {
             process.stdout.write(`[${npc.handle}] `)
             Object.assign(player, npc)
             PC.newkeys(player)
-            reroll(player, player.pc, player.level)
+            PC.reroll(player, player.pc, player.level)
             Object.assign(player, npc)
-            PC.saveUser(player, true)
+            saveUser(player, true)
             npc = <user>{}
             player = <user>{}
         }
@@ -673,15 +676,15 @@ module Logon {
             npc = <user>{}
             player = <user>{}
             try {
-                Object.assign(npc, JSON.parse(fs.readFileSync(`${PATH}/users/bot${i}.json`).toString()))
+                Object.assign(npc, JSON.parse(fs.readFileSync(`${USERS}/bot${i}.json`).toString()))
                 rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
                 if (!rs.length) {
                     process.stdout.write(`\r\nbot #${i} - ${npc.handle}`)
                     Object.assign(player, npc)
                     PC.newkeys(player)
-                    reroll(player, player.pc, player.level)
+                    PC.reroll(player, player.pc, player.level)
                     Object.assign(player, npc)
-                    PC.saveUser(player, true)
+                    saveUser(player, true)
                 }
             }
             catch (err) {
@@ -691,7 +694,7 @@ module Logon {
         //  fini
         process.stdout.write('\r')
 
-        db.loadUser($.sysop)
+        loadUser($.sysop)
         if ($.sysop.lastdate != now().date) {
             newDay()
             db.run(`UPDATE Players SET today=0 WHERE id NOT GLOB '_*'`)
@@ -711,7 +714,7 @@ module Logon {
         for (let row in rs) {
             let altered = false
             user.id = rs[row].id
-            db.loadUser(user)
+            loadUser(user)
             for (let item = 7; item < 15; item++) {
                 let cost = user.magic == 1 ? new Coin(Magic.spells[Magic.merchant[item]].wand)
                     : new Coin(Magic.spells[Magic.merchant[item]].cost)
@@ -721,7 +724,7 @@ module Logon {
                     altered = true
                 }
             }
-            if (altered) PC.saveUser(user)
+            if (altered) saveUser(user)
         }
         vt.out('=')
 
@@ -740,7 +743,7 @@ module Logon {
                     if (+rs[row].xplevel > 1) {
                         db.run(`UPDATE Players SET xplevel=1,remote='' WHERE id='${rs[row].id}'`)
                         let p: user = { id: rs[row].id }
-                        db.loadUser(p)
+                        loadUser(p)
                         require('./email').rejoin(p)
                         vt.out('_', -1000)
                         continue
@@ -756,11 +759,11 @@ module Logon {
 
             if ((now().date - rs[row].lastdate) > 180) {
                 if (rs[row].gang) {
-                    let g = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name='${rs[row].gang}'`)[0])
+                    let g = loadGang(db.query(`SELECT * FROM Gangs WHERE name='${rs[row].gang}'`)[0])
                     let i = g.members.indexOf(rs[row].id)
                     if (i > 0) {
                         g.members.splice(i, 1)
-                        PC.saveGang(g)
+                        saveGang(g)
                     }
                     else {
                         db.run(`UPDATE Players SET gang='' WHERE gang='${g.name}'`)
@@ -769,8 +772,8 @@ module Logon {
                     }
                 }
                 db.run(`DELETE FROM Players WHERE id='${rs[row].id}'`)
-                fs.unlink(`${PATH}/files/user/${rs[row].id}.txt`, () => { })
-                fs.unlink(`${PATH}/users/.${rs[row].id}.json`, () => { })
+                fs.unlink(`${pathTo('files/user')}/${rs[row].id}.txt`, () => { })
+                fs.unlink(`${USERS}/.${rs[row].id}.json`, () => { })
                 vt.out('x')
                 continue
             }
@@ -778,14 +781,14 @@ module Logon {
             if ((now().date - rs[row].lastdate) % 50 == 0) {
                 db.run(`UPDATE Players SET pc='${Object.keys(PC.name['player'])[0]}',level=1,xplevel=0,remote='' WHERE id='${rs[row].id}'`)
                 let p: user = { id: rs[row].id }
-                db.loadUser(p)
+                loadUser(p)
                 require('./email').rejoin(p)
                 vt.sleep(1000)
             }
         }
 
         try {
-            fs.renameSync(`${PATH}/files/tavern/today.txt`, `${PATH}/files/tavern/yesterday.txt`)
+            fs.renameSync(`${pathTo('files/tavern')}/today.txt`, `${pathTo('files/tavern')}/yesterday.txt`)
             vt.out('T')
         } catch (e) {
             vt.out('?')
@@ -794,8 +797,8 @@ module Logon {
 
         $.sysop.lastdate = now().date
         $.sysop.lasttime = now().time
-        PC.saveUser($.sysop)
-        vt.out(vt.bright, vt.yellow, '*')
+        saveUser($.sysop)
+        vt.outln(vt.yellow, vt.bright, '*')
         vt.beep()
         vt.outln('All set -- thank you!')
     }

@@ -3,11 +3,12 @@
  *  EMAIL authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import { dice, fs, vt } from './sys'
-import db = require('./db')
 import $ = require('./runtime')
+import db = require('./db')
+import { saveUser } from './io'
 import { Access } from './items'
-import { PC } from './pc'
+import { dice } from './lib'
+import { fs, vt } from './sys'
 
 import nodemailer = require('nodemailer')
 import smtpTransport = require('nodemailer-smtp-transport')
@@ -106,7 +107,7 @@ module Email {
             vt.outln(`...or its exported save file:`)
             vt.out(`$ grep password ./users/.${player.id}.json`)
             if ($.reason.length)
-                PC.saveUser(player, true)
+                saveUser(player, true)
         }
         vt.music('.')
         vt.outln(-1000)
@@ -121,7 +122,7 @@ module Email {
             if (echo) {
                 vt.outln(vt.red, vt.bright, './etc/smtp.json not configured for sending email')
                 player.password = 'local'
-                PC.saveUser(player, true)
+                saveUser(player, true)
                 vt.outln('\nYour user ID (', vt.bright, player.id, vt.normal, ') was saved, ', Access.name[player.access][player.gender], '.')
                 vt.outln('Your local password assigned: ', vt.bright, player.password)
             }
@@ -145,7 +146,7 @@ module Email {
                     vt.outln('📬')
                     vt.outln(msg.response)
                     if ($.reason.length) {
-                        PC.saveUser(player, true)
+                        saveUser(player, true)
                         vt.outln('\nYour user ID (', vt.bright, player.id, vt.normal, ') was saved, ', Access.name[player.access][player.gender], '.')
                         vt.sound('yahoo')
                     }

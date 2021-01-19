@@ -19,6 +19,7 @@ process.title = 'ddclient'
 process.chdir(__dirname)
 
 import { vt } from '../sys'
+
 vt.emulation = <EMULATION>(process.argv.length > 2 && process.argv[2]
     ? process.argv[2].toUpperCase() : (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM))
         ? 'dumb' : (/^linux|^lisa|^ncsa|^pcvt|^vt|^xt/i.test(process.env.TERM))
@@ -72,7 +73,7 @@ function logon() {
     vt.outln(vt.cyan, vt.bright, vt.emulation, vt.normal, ' emulation ', vt.faint, 'enabled')
 
     if (bot)
-        require('logon').startup(bot)
+        require('./logon').startup(bot)
     else
-        require('logon').user()
+        require('./logon').user()
 }

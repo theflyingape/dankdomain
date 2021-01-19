@@ -53,11 +53,6 @@ interface armor {
     dwarf?: boolean
 }
 
-interface award {
-    key: {}
-    medal: string[]
-}
-
 interface bot {
     backstab?: number
     brawl?: number
@@ -121,7 +116,7 @@ interface choices {
     [key: string]: choice
 }
 
-interface coins {
+interface coin {
     value: number
     amount: string
     carry?(number?, boolean?): string
@@ -283,7 +278,7 @@ interface user {
     blessed?: string
     cursed?: string
     coward?: boolean
-    bounty?: coins
+    bounty?: coin
     who?: string
     gang?: string
     keyseq?: string
@@ -307,9 +302,9 @@ interface user {
     maxcha?: number
 
     //  character materials
-    coin?: coins
-    bank?: coins
-    loan?: coins
+    coin?: coin
+    bank?: coin
+    loan?: coin
     weapon?: string | number
     toWC?: number
     armor?: string | number

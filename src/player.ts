@@ -5,9 +5,12 @@
 
 import $ = require('./runtime')
 import db = require('./db')
-import { Coin, Access, Deed, Ring, Award } from './items'
-import { PC } from './pc'
-import { PATH, an, beep, bracket, checkTime, cat, date2full, dice, fs, keyhint, int, news, now, sprintf, time, vt, whole, weapon } from './sys'
+import { Access } from './items'
+import { dice, now, int, date2full, time } from './lib'
+import { Coin, Deed, PC } from './pc'
+import { an, beep, bracket, cat, checkTime, fs, news, sprintf, vt, whole, weapon } from './sys'
+import pathTo from './path'
+import { loadDeed, loadUser, saveDeed, saveUser } from './io'
 
 module player {
 
@@ -96,7 +99,7 @@ module player {
                 bonus = true
                 vt.music('.')
                 if (rpc.user.novice) {
-                    reroll(rpc.user, $.sysop.pc, rpc.user.level)
+                    PC.reroll(rpc.user, $.sysop.pc, rpc.user.level)
                     rpc.user.novice = false
                     rpc.user.expert = true
                     vt.outln(vt.cyan, vt.bright, 'You are no longer a novice.  Welcome to the next level of play!')
@@ -140,12 +143,12 @@ module player {
         vt.wall($.player.handle, `is now a level ${$.player.level} ${$.player.pc}`)
 
         let deed = $.mydeeds.find((x) => { return x.deed == 'levels' })
-        if (!$.player.novice && !deed) deed = $.mydeeds[$.mydeeds.push(Deed.load($.player.pc, 'levels')[0]) - 1]
+        if (!$.player.novice && !deed) deed = $.mydeeds[$.mydeeds.push(loadDeed($.player.pc, 'levels')[0]) - 1]
         if ((deed && $.jumped >= deed.value)) {
             deed.value = $.jumped
             vt.outln(vt.cyan, ' + ', vt.bright, Deed.name[deed.deed].description, ' ', bracket(deed.value, false))
             beep()
-            Deed.save(deed)
+            saveDeed(deed, $.player)
         }
 
         if ($.player.level < $.sysop.level) {
@@ -177,7 +180,7 @@ module player {
     export function logoff() {
 
         if (!$.reason) {
-            db.loadUser($.sysop)
+            loadUser($.sysop)
             //  caught screwing around?
             if ($.sysop.dob <= now().date) {
                 if ($.access.roleplay) {
@@ -192,7 +195,7 @@ module player {
             }
             else {  //  game was won
                 $.access.roleplay = false
-                db.loadUser($.player)
+                loadUser($.player)
                 $.player.lasttime = now().time
                 news(`\tonline player dropped by ${$.sysop.who} ${time($.player.lasttime)} (${$.reason})\n`, true)
             }
@@ -216,17 +219,18 @@ module player {
                     $.player.today = 0
                 $.player.lasttime = now().time
                 $.player.remote = $.remote
-                PC.saveUser($.player, false, true)
+                saveUser($.player, false, true)
                 news(`\treturned to ${$.whereis} at ${time($.player.lasttime)} as a level ${$.player.level} ${$.player.pc}`)
                 news(`\t(${$.reason})\n`, true)
 
+                const callers = `${pathTo('users')}/callers.json`
                 try {
-                    $.callers = JSON.parse(fs.readFileSync(`${PATH}/users/callers.json`).toString())
+                    $.callers = JSON.parse(fs.readFileSync(callers).toString())
                 } catch (e) { }
                 while ($.callers.length > 7)
                     $.callers.pop()
                 $.callers = [<caller>{ who: $.player.handle, reason: $.reason }].concat($.callers)
-                fs.writeFileSync(`${PATH}/users/callers.json`, JSON.stringify($.callers))
+                fs.writeFileSync(callers, JSON.stringify($.callers))
             }
 
             vt.wall($.player.handle, `logged off: ${$.reason}`)
@@ -276,8 +280,8 @@ module player {
 
         if ($.player.novice) {
             let novice = <user>{ novice: true }
-            Object.assign(novice, JSON.parse(fs.readFileSync(`${PATH}/users/novice.json`).toString()))
-            reroll($.player, novice.pc)
+            Object.assign(novice, JSON.parse(fs.readFileSync(`${pathTo('users')}/novice.json`).toString()))
+            PC.reroll($.player, novice.pc)
             Object.assign($.player, novice)
             $.player.coin = new Coin(novice.coin.toString())
             $.player.bank = new Coin(novice.bank.toString())
@@ -373,7 +377,7 @@ module player {
                 vt.refocus()
                 return
             }
-            reroll($.player, classes[n])
+            PC.reroll($.player, classes[n])
             show()
             ability('str')
         }
@@ -441,7 +445,7 @@ module player {
                     if (left < 20 || left > 80) {
                         vt.beep()
                         vt.outln()
-                        reroll($.player, $.player.pc)
+                        PC.reroll($.player, $.player.pc)
                         ability('str')
                         return
                     }
@@ -462,7 +466,7 @@ module player {
                     left -= a.str + a.int + a.dex + n
                     if (left) {
                         vt.beep()
-                        reroll($.player, $.player.pc)
+                        PC.reroll($.player, $.player.pc)
                         ability('str')
                         return
                     }
@@ -475,7 +479,7 @@ module player {
                     PC.activate($.online)
 
                     vt.outln()
-                    PC.saveUser($.player)
+                    saveUser($.player)
                     news(`\trerolled as${an($.player.pc)}`)
                     if (immortal) {
                         $.online.hp = 0
@@ -702,200 +706,6 @@ module player {
         vt.focus = 'skill'
     }
 
-    export function reroll(user: user, dd?: string, level = 1) {
-        //  reset essential character attributes
-        level = level > 99 ? 99 : level < 1 ? 1 : level
-        user.level = level
-        user.pc = dd ? dd : Object.keys(PC.name['player'])[0]
-        user.status = ''
-
-        let rpc = PC.card(user.pc)
-        user.melee = rpc.melee
-        user.backstab = rpc.backstab
-        if (!(user.poison = rpc.poison)) user.poisons = []
-        if (!(user.magic = rpc.magic)) user.spells = []
-        user.steal = rpc.steal
-        user.str = rpc.baseStr
-        user.int = rpc.baseInt
-        user.dex = rpc.baseDex
-        user.cha = rpc.baseCha
-        user.maxstr = rpc.maxStr
-        user.maxint = rpc.maxInt
-        user.maxdex = rpc.maxDex
-        user.maxcha = rpc.maxCha
-        user.xp = 0
-        user.hp = 15
-        user.sp = user.magic > 1 ? 15 : 0
-
-        //  reset these prior experiences
-        user.jl = 0
-        user.jw = 0
-        user.steals = 0
-        user.tl = 0
-        user.tw = 0
-
-        //  reset for new or non player
-        if (!user.id || user.id[0] == '_') {
-            if (isNaN(user.dob)) user.dob = now().date
-            if (isNaN(user.joined)) user.joined = now().date
-            user.lastdate = now().date
-            user.lasttime = now().time
-            user.gender = user.sex || 'I'
-
-            user.emulation = vt.emulation
-            user.calls = 0
-            user.today = 0
-            user.expert = false
-            user.rows = process.stdout.rows || 24
-            user.remote = ''
-            user.novice = !user.id && user.gender !== 'I'
-            user.gang = user.gang || ''
-            user.wins = 0
-            user.immortal = 0
-
-            user.coin = new Coin(0)
-            user.bank = new Coin(0)
-            user.loan = new Coin(0)
-            user.bounty = new Coin(0)
-            user.who = ''
-            user.security = ''
-            user.realestate = ''
-            user.keyhints = []
-        }
-
-        if (level == 1) {
-            Object.assign(user, JSON.parse(fs.readFileSync(`${PATH}/users/reroll.json`).toString()))
-            user.gender = user.sex
-            user.coin = new Coin(user.coin.toString())
-            user.bank = new Coin(user.bank.toString())
-            user.loan = new Coin(0)
-            //  force a verify if their access allows it
-            // if (!user.novice && !Access.name[player.access].sysop) user.email = ''
-        }
-
-        if (level == 1 || !user.id || user.id[0] == '_') {
-            //  no extra free or augmented stuff
-            user.poisons = []
-            user.spells = []
-            if (user.rings) user.rings.forEach(ring => { Ring.save(ring) })
-            user.rings = []
-            user.toAC = 0
-            user.toWC = 0
-            user.hull = 0
-            user.cannon = 0
-            user.ram = false
-            user.blessed = ''
-            user.cursed = ''
-            user.coward = false
-            user.plays = 0
-            user.retreats = 0
-            user.killed = 0
-            user.kills = 0
-            user.bounty = new Coin(0)
-            user.who = ''
-        }
-
-        if (user.level > 1) user.xp = PC.experience(user.level - 1, 1, user.int)
-        user.xplevel = (user.pc == Object.keys(PC.name['player'])[0]) ? 0 : user.level
-
-        for (let n = 2; n <= level; n++) {
-            user.level = n
-            if (user.level == 50 && user.gender !== 'I' && user.id[0] !== '_' && !user.novice) {
-                vt.out(vt.reset, vt.bright, vt.yellow, '+', vt.reset, ' Bonus ')
-                let d: number = 0
-                while (!d) {
-                    d = dice(9)
-                    switch (d) {
-                        case 1:
-                            if (user.maxstr > 94) d = 0
-                            break
-                        case 2:
-                            if (user.maxint > 94) d = 0
-                            break
-                        case 3:
-                            if (user.maxdex > 94) d = 0
-                            break
-                        case 4:
-                            if (user.maxcha > 94) d = 0
-                            break
-                        case 5:
-                            if (user.melee > 2) d = 0
-                            break
-                        case 6:
-                            if (user.backstab > 2) d = 0
-                            break
-                        case 7:
-                            if (user.poison > 2) d = 0
-                            break
-                        case 8:
-                            if (user.magic > 2) d = 0
-                            break
-                        case 9:
-                            if (user.steal > 2) d = 0
-                            break
-                    }
-                }
-
-                switch (d) {
-                    case 1:
-                        if ((user.maxstr += 10) > 99)
-                            user.maxstr = 99
-                        vt.out('Strength')
-                        break
-                    case 2:
-                        if ((user.maxint += 10) > 99)
-                            user.maxint = 99
-                        vt.out('Intellect')
-                        break
-                    case 3:
-                        if ((user.maxdex += 10) > 99)
-                            user.maxdex = 99
-                        vt.out('Dexterity')
-                        break
-                    case 4:
-                        if ((user.maxcha += 10) > 99)
-                            user.maxcha = 99
-                        vt.out('Charisma')
-                        break
-                    case 5:
-                        user.melee++
-                        vt.out('Melee')
-                        break
-                    case 6:
-                        user.backstab++
-                        vt.out('Backstab')
-                        break
-                    case 7:
-                        user.poison++
-                        vt.out('Poison')
-                        break
-                    case 8:
-                        if (user.magic < 4)
-                            user.magic++
-                        vt.out('Spellcasting')
-                        break
-                    case 9:
-                        user.steal++
-                        vt.out('Stealing')
-                        break
-                }
-                vt.out(' added')
-                if (user != $.player) vt.out(' to ', user.handle)
-                vt.outln(' ', vt.bright, vt.yellow, '+')
-            }
-            if ((user.str += rpc.toStr) > user.maxstr)
-                user.str = user.maxstr
-            if ((user.int += rpc.toInt) > user.maxint)
-                user.int = user.maxint
-            if ((user.dex += rpc.toDex) > user.maxdex)
-                user.dex = user.maxdex
-            if ((user.cha += rpc.toCha) > user.maxcha)
-                user.cha = user.maxcha
-            user.hp += PC.hp(user)
-            user.sp += PC.sp(user)
-        }
-    }
-
     // the Ancient Riddle of the Keys
     export function riddle() {
 
@@ -914,27 +724,27 @@ module player {
         let deeds = ['plays', 'jl', 'jw', 'killed', 'kills', 'retreats', 'steals', 'tl', 'tw']
 
         if (!Access.name[$.player.access].sysop) {
-            $.mydeeds = Deed.load($.player.pc)
+            $.mydeeds = loadDeed($.player.pc)
             vt.outln('\nChecking your deeds for the ', vt.bright, $.player.pc, vt.normal, ' list ... ', -1000)
             for (let i in deeds) {
                 let deed = $.mydeeds.find((x) => { return x.deed == deeds[i] })
                 if (/jw|steals|tw/.test(deeds[i])) {
-                    if (!deed) deed = $.mydeeds[$.mydeeds.push(Deed.load($.player.pc, deeds[i])[0]) - 1]
+                    if (!deed) deed = $.mydeeds[$.mydeeds.push(loadDeed($.player.pc, deeds[i])[0]) - 1]
                     if ($.player[deeds[i]] >= deed.value) {
                         deed.value = $.player[deeds[i]]
-                        Deed.save(deed)
+                        saveDeed(deed, $.player)
                         bonus = 1
                         vt.outln(vt.cyan, ' + ', vt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
                         vt.sound('click', 5)
                     }
                 }
                 else {
-                    if (!deed) deed = $.mydeeds[$.mydeeds.push(Deed.load($.player.pc, deeds[i])[0]) - 1]
+                    if (!deed) deed = $.mydeeds[$.mydeeds.push(loadDeed($.player.pc, deeds[i])[0]) - 1]
                     if (deeds[i] == 'jl' && $.player.jl < 2 && $.player.jw < 5) continue
                     if (deeds[i] == 'tl' && $.player.tl < 2 && $.player.tw < 5) continue
                     if ($.player[deeds[i]] <= deed.value) {
                         deed.value = $.player[deeds[i]]
-                        Deed.save(deed)
+                        saveDeed(deed, $.player)
                         bonus = 1
                         vt.outln(vt.cyan, ' + ', vt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
                         vt.sound('click', 5)
@@ -942,27 +752,27 @@ module player {
                 }
             }
 
-            $.mydeeds = Deed.load('GOAT')
+            $.mydeeds = loadDeed('GOAT')
             vt.outln(vt.magenta, '\nChecking your deeds for the ', vt.bright, 'GOAT', vt.normal, ' list ... ', -1000)
             for (let i in deeds) {
                 let deed = $.mydeeds.find((x) => { return x.deed == deeds[i] })
                 if (/jw|steals|tw/.test(deeds[i])) {
-                    if (!deed) deed = $.mydeeds[$.mydeeds.push(Deed.load('GOAT', deeds[i])[0]) - 1]
+                    if (!deed) deed = $.mydeeds[$.mydeeds.push(loadDeed('GOAT', deeds[i])[0]) - 1]
                     if ($.player[deeds[i]] >= deed.value) {
                         deed.value = $.player[deeds[i]]
-                        Deed.save(deed)
+                        saveDeed(deed, $.player)
                         bonus = 2
                         vt.outln(vt.yellow, ' + ', vt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
                         vt.sound('click', 5)
                     }
                 }
                 else {
-                    if (!deed) deed = $.mydeeds[$.mydeeds.push(Deed.load('GOAT', deeds[i])[0]) - 1]
+                    if (!deed) deed = $.mydeeds[$.mydeeds.push(loadDeed('GOAT', deeds[i])[0]) - 1]
                     if (deeds[i] == 'jl' && $.player.jl < 2 && $.player.jw < 10) continue
                     if (deeds[i] == 'tl' && $.player.tl < 2 && $.player.tw < 10) continue
                     if ($.player[deeds[i]] <= deed.value) {
                         deed.value = $.player[deeds[i]]
-                        Deed.save(deed)
+                        saveDeed(deed, $.player)
                         bonus = 3
                         vt.outln(vt.yellow, ' + ', vt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
                         vt.sound('click', 5)
@@ -995,24 +805,24 @@ module player {
         else
             $.player.keyhints.push($.player.pc)
 
-        reroll($.player)
-        PC.saveUser($.player)
+        PC.reroll($.player)
+        saveUser($.player)
         vt.sessionAllowed += 300
         $.warning = 2
 
         if (max > 2) {
             vt.music('victory')
 
-            const log = `${PATH}/files/winners.txt`
+            const log = `${pathTo('files')}/winners.txt`
             fs.appendFileSync(log, sprintf(`%22s won on %s  -  game took %3d days\n`
                 , $.player.handle
                 , date2full(now().date)
                 , now().date - $.sysop.dob + 1))
-            db.loadUser($.sysop)
+            loadUser($.sysop)
             $.sysop.who = $.player.handle
             $.sysop.dob = now().date + 1
             $.sysop.plays = 0
-            PC.saveUser($.sysop)
+            saveUser($.sysop)
 
             $.player.wins++
             db.run(`UPDATE Players SET wins=${$.player.wins} WHERE id='${$.player.id}'`)
@@ -1045,12 +855,12 @@ module player {
             let user: user = { id: '' }
             for (let row in rs) {
                 user.id = rs[row].id
-                db.loadUser(user)
-                reroll(user)
+                loadUser(user)
+                PC.reroll(user)
                 PC.newkeys(user)
                 user.keyhints.splice(12)
-                PC.saveUser(user)
-                fs.unlink(`${PATH}/users/.${user.id}.json`, () => { })
+                saveUser(user)
+                fs.unlink(`${pathTo('users')}/.${user.id}.json`, () => { })
                 vt.out('.', -10)
             }
             db.run(`UPDATE Rings SET bearer=''`)   // should be cleared by rerolls
@@ -1059,13 +869,13 @@ module player {
             while (++i) {
                 try {
                     user = <user>{ id: '' }
-                    Object.assign(user, JSON.parse(fs.readFileSync(`${PATH}/users/bot${i}.json`).toString()))
+                    Object.assign(user, JSON.parse(fs.readFileSync(`${pathTo('users')}/bot${i}.json`).toString()))
                     let bot = <user>{}
                     Object.assign(bot, user)
                     PC.newkeys(bot)
-                    reroll(bot, bot.pc, bot.level)
+                    PC.reroll(bot, bot.pc, bot.level)
                     Object.assign(bot, user)
-                    PC.saveUser(bot)
+                    saveUser(bot)
                     vt.out('&', -10)
                 }
                 catch (err) {
@@ -1090,8 +900,8 @@ module player {
             , vt.faint, ' Ancient Riddle of the Keys '
             , vt.normal, 'and you will become\nan immortal being.')
 
-        for (let i = 0; i <= max + bonus; i++) keyhint($.online, false)
-        PC.saveUser($.player)
+        for (let i = 0; i <= max + bonus; i++) PC.keyhint($.online, false)
+        saveUser($.player)
 
         let prior: number = -1
         let slot: number
@@ -1102,7 +912,7 @@ module player {
                     prior = slot
                     vt.outln()
                 }
-                vt.outln('Key #', vt.bright, `${slot + 1}`, vt.normal, ' is not ', Award.key[$.player.keyhints[i]])
+                vt.outln('Key #', vt.bright, `${slot + 1}`, vt.normal, ' is not ', Deed.key[$.player.keyhints[i]])
             }
         }
 
@@ -1130,10 +940,10 @@ module player {
                         vt.out([vt.red, vt.blue, vt.magenta][slot]
                             , 'You ', ['advance to', 'succeed as', 'transcend into'][slot]
                             , vt.bright, an($.player.pc), vt.normal, '.')
-                        reroll($.player, $.player.pc)
+                        PC.reroll($.player, $.player.pc)
                         PC.newkeys($.player)
                         $.player.coward = true
-                        PC.saveUser($.player)
+                        saveUser($.player)
 
                         if (slot++ < max) {
                             vt.refocus(`Insert key #${slot + 1}? `)

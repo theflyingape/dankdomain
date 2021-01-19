@@ -5,10 +5,12 @@
 
 import $ = require('../runtime')
 import db = require('../db')
-import { Coin, Access, Weapon } from '../items'
-import { PC } from '../pc'
+import { loadUser, saveUser } from '../io'
+import { Access, Weapon } from '../items'
+import { dice, int } from '../lib'
+import { Coin, PC } from '../pc'
 import { checkXP } from '../player'
-import { bracket, cat, cuss, dice, display, fs, int, money, news, sprintf, vt, whole } from '../sys'
+import { bracket, cat, cuss, display, fs, money, news, sprintf, vt, whole } from '../sys'
 
 import Battle = require('../battle')
 import Taxman = require('./taxman')
@@ -27,11 +29,11 @@ module Tavern {
         'Y': { description: `Yesterday's news` }
     }
 
-    db.loadUser($.barkeep)
+    loadUser($.barkeep)
 
     export function menu(suppress = true) {
         if (checkXP($.online, menu)) return
-        if ($.online.altered) PC.saveUser($.online)
+        if ($.online.altered) saveUser($.online)
         Taxman.bar()
         if ($.reason) vt.hangup()
 
@@ -169,7 +171,7 @@ module Tavern {
                 let rs = db.query(`SELECT handle,bounty,who FROM Players WHERE bounty > 0 ORDER BY level DESC`)
                 for (let i in rs) {
                     let adversary = <active>{ user: { id: rs[i].who } }
-                    db.loadUser(adversary)
+                    loadUser(adversary)
                     let bounty = new Coin(rs[i].bounty)
                     vt.outln(`${rs[i].handle} has a ${bounty.carry()} bounty from ${adversary.user.handle}`)
                 }
@@ -221,7 +223,7 @@ module Tavern {
                                     vt.beep()
                                     vt.outln(`\nYour bounty is posted for all to see.`, -500)
                                     news(`\tposted a bounty on ${opponent.user.handle}`)
-                                    PC.saveUser(opponent)
+                                    saveUser(opponent)
                                 }
                                 menu(true)
                             }, max: 6
@@ -283,7 +285,7 @@ module Tavern {
                             `"I am getting too old for this."`,
                             `"Never rub another man\'s rhubarb!"`][dice(3) - 1], -3000)
 
-                        db.loadUser($.barkeep)
+                        loadUser($.barkeep)
                         let trophy = JSON.parse(fs.readFileSync(`./files/tavern/trophy.json`).toString())
                         $.barkeep.user.toWC = whole($.barkeep.weapon.wc / 5)
                         if ($.barkeep.weapon.wc < Weapon.merchant.length)
@@ -292,7 +294,7 @@ module Tavern {
                         vt.outln(`\n${$.barkeep.user.handle} towels ${PC.who($.barkeep).his}hands dry from washing the day\'s\nglasses, ${PC.who($.barkeep).he}warns,\n`)
                         vt.outln(vt.bright, vt.green, '"Another fool said something like that to me, once, and got all busted up."\n', -5000)
                         let fool = <active>{ user: { id: trophy.who, handle: 'a pirate', gender: 'M' } }
-                        db.loadUser(fool)
+                        loadUser(fool)
                         vt.outln(vt.bright, vt.green, `"I think it was ${fool.user.handle}, and it took me a week to clean up the blood!"\n`, -4000)
 
                         vt.music('tiny')
@@ -310,7 +312,7 @@ module Tavern {
                         vt.outln()
 
                         $.player.coward = true
-                        PC.saveUser($.online)
+                        saveUser($.online)
                         $.online.altered = true
                         Battle.engage('Tavern', $.online, $.barkeep, require('./main').menu)
                         return

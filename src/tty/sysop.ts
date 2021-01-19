@@ -5,9 +5,10 @@
 
 import $ = require('../runtime')
 import db = require('../db')
+import { loadUser, saveUser } from '../io'
+import { now } from '../lib'
 import { PC } from '../pc'
-import { reroll } from '../player'
-import { bracket, display, keyhint, now, sprintf, titlecase, vt } from '../sys'
+import { bracket, display, sprintf, titlecase, vt } from '../sys'
 
 import Battle = require('../battle')
 import Email = require('../email')
@@ -97,7 +98,7 @@ module Sysop {
                 rs = db.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
                 for (let row in rs) {
                     rpc.user.id = rs[row].id
-                    db.loadUser(rpc)
+                    loadUser(rpc)
                     Email.newsletter(rpc.user)
                     vt.out('.', -2500)
                 }
@@ -129,26 +130,26 @@ module Sysop {
                         cb: () => {
                             vt.outln()
                             if (/Y/i.test(vt.entry)) {
-                                db.loadUser($.sysop)
+                                loadUser($.sysop)
                                 $.sysop.dob = now().date + 1
                                 $.sysop.plays = 0
-                                PC.saveUser($.sysop)
+                                saveUser($.sysop)
                                 rs = db.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
                                 for (let row in rs) {
                                     rpc.user.id = rs[row].id
-                                    db.loadUser(rpc)
-                                    reroll(rpc.user, pc)
+                                    loadUser(rpc)
+                                    PC.reroll(rpc.user, pc)
                                     PC.newkeys(rpc.user)
                                     for (k = 0; k < kh; k++)
-                                        keyhint(rpc)
+                                        PC.keyhint(rpc)
                                     rpc.user.plays = 0
-                                    PC.saveUser(rpc)
+                                    saveUser(rpc)
                                     vt.out('.')
                                 }
-                                reroll($.player, pc)
+                                PC.reroll($.player, pc)
                                 PC.newkeys($.player)
                                 for (k = 0; k < kh; k++)
-                                    keyhint($.online)
+                                    PC.keyhint($.online)
                                 rpc.user.plays = 0
                                 vt.outln(vt.reset, '\nHappy hunting tomorrow!')
                                 $.reason = 'reroll'
@@ -166,14 +167,14 @@ module Sysop {
                 vt.form = {
                     'taxman': {
                         cb: () => {
-                            db.loadUser($.taxman)
+                            loadUser($.taxman)
                             PC.status($.taxman)
                             vt.focus = 'pause'
                         }, pause: true
                     },
                     'pause': { cb: menu, pause: true }
                 }
-                db.loadUser($.barkeep)
+                loadUser($.barkeep)
                 PC.status($.barkeep)
                 vt.focus = 'taxman'
                 return

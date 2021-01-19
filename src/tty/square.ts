@@ -5,9 +5,11 @@
 
 import $ = require('../runtime')
 import db = require('../db')
-import { Coin, Armor, Magic, Poison, Ring, RealEstate, Security, Weapon } from '../items'
-import { PC } from '../pc'
-import { armor, bracket, dice, display, int, log, money, news, sprintf, tradein, vt, weapon, whole } from '../sys'
+import { loadUser, saveUser } from '../io'
+import { Armor, Magic, Poison, Ring, RealEstate, Security, Weapon } from '../items'
+import { dice, int } from '../lib'
+import { Coin, PC } from '../pc'
+import { armor, bracket, display, log, money, news, sprintf, tradein, vt, weapon, whole } from '../sys'
 
 import Battle = require('../battle')
 
@@ -100,7 +102,7 @@ module Square {
                         vt.sound('oops', 8)
                         vt.outln(vt.reset, '  Your ', Magic.merchant[p - 1], ' magic has disappeared!')
                     }
-                    PC.saveUser(bump)
+                    saveUser(bump)
                     vt.sleep(800)
                 }
                 vt.sleep(1600)
@@ -413,7 +415,7 @@ module Square {
                 credit.value = dice(6 * money($.player.level) / dice(10))
                 let pocket = PC.encounter(`AND novice = 0 AND id NOT GLOB '_*'`).user
                 if (pocket.id) {
-                    db.loadUser(pocket)
+                    loadUser(pocket)
                     if (pocket.coin.value > 0)
                         credit.value += pocket.coin.value
                     else {
@@ -449,7 +451,7 @@ module Square {
                     if (pocket.id) {
                         $.online.altered = true
                         $.player.steals++
-                        PC.saveUser(pocket)
+                        saveUser(pocket)
                     }
                     suppress = true
                     break

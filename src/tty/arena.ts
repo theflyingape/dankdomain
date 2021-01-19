@@ -3,12 +3,14 @@
  *  ARENA authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import db = require('../db')
 import $ = require('../runtime')
-import { Coin, Access, Armor, Magic, Poison, Ring, Weapon } from '../items'
-import { PC } from '../pc'
-import { checkXP, reroll } from '../player'
-import { bracket, cat, dice, display, getRing, int, log, money, news, romanize, sprintf, tradein, vt, wearing } from '../sys'
+import db = require('../db')
+import { loadUser, saveRing, saveUser } from '../io'
+import { Access, Armor, Magic, Poison, Ring, Weapon } from '../items'
+import { dice, int } from '../lib'
+import { Coin, PC } from '../pc'
+import { checkXP } from '../player'
+import { bracket, cat, display, getRing, log, money, news, romanize, sprintf, tradein, vt } from '../sys'
 
 import Battle = require('../battle')
 
@@ -28,7 +30,7 @@ module Arena {
     export function menu(suppress = true) {
         $.from = 'Arena'
         if (checkXP($.online, menu)) return
-        if ($.online.altered) PC.saveUser($.online)
+        if ($.online.altered) saveUser($.online)
         if ($.reason) vt.hangup()
 
         vt.action('arena')
@@ -199,7 +201,7 @@ module Arena {
                                                 let ring = Ring.power([], null, 'joust')
                                                 if (Ring.wear($.player.rings, ring.name)) {
                                                     getRing('win', ring.name)
-                                                    Ring.save(ring.name, $.player.id, $.player.rings)
+                                                    saveRing(ring.name, $.player.id, $.player.rings)
                                                 }
                                             }
                                             menu()
@@ -325,7 +327,7 @@ module Arena {
                     if (opponent.user.status.length) {
                         vt.out('was defeated by ')
                         let rpc: active = { user: { id: opponent.user.status } }
-                        if (db.loadUser(rpc))
+                        if (loadUser(rpc))
                             vt.out(rpc.user.handle, vt.cyan, ' (', vt.bright, vt.white, opponent.user.xplevel.toString(), vt.normal, vt.cyan, ')')
                         else
                             vt.out(opponent.user.status)
@@ -369,7 +371,7 @@ module Arena {
                         return
                     }
 
-                    wearing(opponent)
+                    PC.wearing(opponent)
 
                     vt.action('ny')
                     vt.form = {
@@ -454,7 +456,7 @@ module Arena {
                             monster.user.armor = n + 2
                             cost.value += tradein(new Coin(Armor.name[Armor.merchant[n]].value).value, $.player.cha)
 
-                            reroll(monster.user
+                            PC.reroll(monster.user
                                 , (dice(($.online.int + $.online.cha) / 50) > 1) ? monster.user.pc : PC.random('monster')
                                 , monster.user.level)
 
@@ -489,7 +491,7 @@ module Arena {
                             cat('arena/' + monster.user.handle)
 
                             vt.outln(`The old necromancer summons you a level ${monster.user.level} creature.`)
-                            wearing(monster)
+                            PC.wearing(monster)
 
                             vt.action('ny')
                             vt.focus = 'fight'
@@ -521,7 +523,7 @@ module Arena {
             if (mon == monsters.length - 1) vt.sound('demogorgon')
             monster = <active>{}
             monster.user = <user>{ id: '', handle: monsters[mon].name, sex: 'I' }
-            reroll(monster.user, monsters[mon].pc, monsters[mon].level)
+            PC.reroll(monster.user, monsters[mon].pc, monsters[mon].level)
 
             monster.user.weapon = monsters[mon].weapon
             monster.user.armor = monsters[mon].armor
@@ -546,7 +548,7 @@ module Arena {
             vt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}`)
             if ($.player.emulation == 'XT') vt.out(' ', monster.pc.color || vt.white, monster.pc.unicode)
             vt.outln()
-            wearing(monster)
+            PC.wearing(monster)
 
             vt.action('ny')
             vt.form = {

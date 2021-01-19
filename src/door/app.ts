@@ -29,8 +29,8 @@ console.log(`cwd ${process.cwd()} → ${__dirname}`)
 process.chdir(__dirname)
 
 import db = require('../db')
-import { Coin } from '../items'
-import { PC } from '../pc'
+import { saveUser } from '../io'
+import { Coin } from '../pc'
 
 let passed = ''
 if (process.argv.length > 2 && process.argv[2]) {
@@ -594,7 +594,7 @@ chokidar.watch(`../users/save.json`)
             save.bank = new Coin(save.bank)
             save.loan = new Coin(save.loan)
             Object.assign(user, save)
-            PC.saveUser(user)
+            saveUser(user)
             console.log(`Player (${user.id}) updated`)
         }
         catch (err) {

@@ -4,9 +4,10 @@
 \*****************************************************************************/
 
 import $ = require('../runtime')
-import db = require('../db')
+import { loadUser } from '../io'
+import { date2days, date2full } from '../lib'
 import { Access } from '../items'
-import { bracket, cuss, date2days, date2full, titlecase, vt } from '../sys'
+import { bracket, cuss, titlecase, vt } from '../sys'
 
 module NewUser {
 
@@ -69,7 +70,7 @@ module NewUser {
 
         $.player.id = ''
         $.player.handle = vt.entry
-        if (db.loadUser($.player)) {
+        if (loadUser($.player)) {
             vt.beep()
             vt.refocus()
             return
@@ -161,7 +162,7 @@ module NewUser {
 
         let check: user = { id: $.player.id, handle: '' }
         let retry: number = 1
-        while (retry < 4 && db.loadUser(check)) {
+        while (retry < 4 && loadUser(check)) {
             retry++
             check.id = `${$.player.id}${retry}`
             check.handle = ''

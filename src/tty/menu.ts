@@ -5,10 +5,12 @@
 
 import $ = require('../runtime')
 import db = require('../db')
-import { Coin, Armor, Award, RealEstate, Ring, Security, Weapon } from '../items'
-import { PC } from '../pc'
-import { checkXP, playerPC, reroll } from '../player'
-import { an, cat, checkTime, cuss, dice, display, emulator, fs, input, int, log, money, news, sprintf, tradein, vt } from '../sys'
+import { saveUser } from '../io'
+import { Armor, RealEstate, Ring, Security, Weapon } from '../items'
+import { dice, int } from '../lib'
+import { Coin, Deed, PC } from '../pc'
+import { checkXP, playerPC } from '../player'
+import { an, cat, checkTime, cuss, display, emulator, fs, input, log, money, news, sprintf, tradein, vt } from '../sys'
 
 import Battle = require('../battle')
 
@@ -38,7 +40,7 @@ module Main {
 
     export function menu(suppress = true) {
         if (checkXP($.online, menu)) return
-        if ($.online.altered) PC.saveUser($.online)
+        if ($.online.altered) saveUser($.online)
         if ($.reason) vt.hangup()
 
         if (!suppress) vt.profile({ png: ['castle', 'joust', 'dragon'][dice(3) - 1], effect: 'pulse' })
@@ -113,7 +115,7 @@ module Main {
                     GROUP BY hero HAVING n > 0
                     ORDER BY n DESC LIMIT 3
                 `)
-                for (let n in rs) top3[rs[n].hero] = Award.medal[+n + 1]
+                for (let n in rs) top3[rs[n].hero] = Deed.medal[+n + 1]
 
                 rs = db.query(`
                     SELECT id, handle, pc, level, xplevel, status, gang, access FROM Players
@@ -303,7 +305,7 @@ module Main {
                                         if (opponent.user.cannon)
                                             opponent.user.cannon--
 
-                                        PC.saveUser(opponent)
+                                        saveUser(opponent)
                                         news(`\trobbed ${opponent.user.handle}`)
                                         log(opponent.user.id, `\n${$.player.handle} robbed you!`)
                                     }
@@ -374,7 +376,7 @@ module Main {
                         cb: () => {
                             if (vt.entry == newpassword) {
                                 $.player.password = newpassword
-                                PC.saveUser($.player)
+                                saveUser($.player)
                                 vt.out('...saved...')
                             }
                             else {
@@ -397,11 +399,11 @@ module Main {
                     'yn': {
                         cb: () => {
                             if (/Y/i.test(vt.entry)) {
-                                reroll($.player)
+                                PC.reroll($.player)
                                 PC.activate($.online)
                                 $.player.coward = true
                                 $.player.plays++
-                                PC.saveUser($.player)
+                                saveUser($.player)
                                 vt.outln()
                                 playerPC()
                                 return
