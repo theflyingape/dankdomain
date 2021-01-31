@@ -4,24 +4,22 @@
 \*****************************************************************************/
 
 import $ = require('../runtime')
-import { loadUser } from '../io'
-import { Armor, RealEstate, Ring, Security, Weapon } from '../items'
-import { dice, int } from '../lib'
-import { Coin, PC } from '../pc'
-import { an, input, money, news, tradein, vt, weapon, whole } from '../sys'
-
 import Battle = require('../battle')
+import { Armor, RealEstate, Ring, Security, Weapon } from '../items'
+import { Coin, input, news, tradein, vt, weapon } from '../lib'
+import { PC } from '../pc'
+import { an, dice, int, money, whole } from '../sys'
 
 module Taxman {
 
     let irs: active[]
     let tax = new Coin(0)
-    loadUser($.taxman)
+    PC.load($.taxman)
 
     function checkpoint(scratch: number): boolean {
 
         if (int(1000 * scratch / tax.value) / 1000 > 1) {
-            loadUser($.taxman)
+            PC.load($.taxman)
             vt.profile({
                 jpg: 'npc/taxman', handle: $.taxman.user.handle
                 , level: $.taxman.user.level, pc: $.taxman.user.pc, effect: 'fadeIn'
@@ -113,7 +111,7 @@ module Taxman {
                     vt.out(vt.yellow, vt.bright, $.taxman.user.handle, vt.normal, ' ')
                     if (dice(100) < ($.online.cha - 10)) {
                         vt.outln('nods approval while the guards stand down to let you pass.', -1200)
-                        require('./main').menu()
+                        require('./menu').menu()
                         return
                     }
                     Ring.remove($.player.rings, exempt.name)
@@ -139,7 +137,7 @@ module Taxman {
                                         $.player.bank.value = 0
                                     }
                                 }
-                                require('./main').menu()
+                                require('./menu').menu()
                                 return
                             }
 
@@ -187,7 +185,7 @@ module Taxman {
         else
             vt.music('visit')
 
-        require('./main').menu()
+        require('./menu').menu()
 
         function boss() {
             if ($.reason) vt.hangup()
@@ -203,7 +201,7 @@ module Taxman {
                         $.player.bank.value = 0
                     }
                 }
-                require('./main').menu()
+                require('./menu').menu()
                 return
             }
 
@@ -217,7 +215,7 @@ module Taxman {
             $.taxman.user.coin = tax
             PC.wearing($.taxman)
 
-            Battle.engage('Taxman', $.online, $.taxman, require('./main').menu)
+            Battle.engage('Taxman', $.online, $.taxman, require('./menu').menu)
         }
     }
 

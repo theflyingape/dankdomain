@@ -5,10 +5,9 @@
 
 import $ = require('../runtime')
 import db = require('../db')
-import { loadDeed } from '../io'
-import { date2full } from '../lib'
+import { cat, display, vt } from '../lib'
 import { Deed, PC } from '../pc'
-import { cat, display, sprintf, vt } from '../sys'
+import { date2full, sprintf } from '../sys'
 
 module Hall {
 
@@ -48,7 +47,7 @@ module Hall {
                 vt.outln(vt.faint, vt.Red, '-------------------------------------------------------------------------')
                 for (let type in PC.name)
                     for (let pc in PC.name[type]) {
-                        let deeds = loadDeed(pc)
+                        let deeds = Deed.load(pc)
                         if (deeds.length) {
                             vt.out(sprintf('%-9s  ', pc))
                             let keys = ['plays', 'retreats', 'killed', 'kills', 'jw', 'jl', 'tw', 'tl', 'steals']
@@ -88,7 +87,7 @@ module Hall {
                 vt.outln(vt.bright, vt.Magenta, '  HERO                      Date      GOAT        Deed      ')
                 vt.outln(vt.faint, vt.Magenta, '------------------------------------------------------------')
                 let type = 'GOAT'
-                let deeds = loadDeed(type)
+                let deeds = Deed.load(type)
                 if (deeds.length) {
                     let keys = ['plays', 'retreats', 'killed', 'kills', 'jw', 'jl', 'tw', 'tl', 'steals']
                     for (let goat in keys) {
@@ -140,7 +139,7 @@ module Hall {
                 vt.outln(vt.faint, vt.Blue, '----------------------------------------------------------------------')
                 for (let type in PC.name) {
                     for (let pc in PC.name[type]) {
-                        let deeds = loadDeed(pc)
+                        let deeds = Deed.load(pc)
                         if (deeds.length) {
                             vt.out(sprintf('%-9s  ', pc))
                             let keys = ['levels', 'melee', 'blast', 'big blast']
@@ -195,7 +194,7 @@ module Hall {
                 break
 
             case 'Q':
-                require('./main').menu($.player.expert)
+                require('./menu').menu($.player.expert)
                 return
 
             case 'W':

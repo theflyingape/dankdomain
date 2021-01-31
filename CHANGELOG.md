@@ -5,11 +5,13 @@
 🇺🇸 ©️1991 - 2021 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) on a **Chromebook** using Visual Code and TypeScript/html/css for the browser with [terminal emulator](https:/xtermjs.org) and telnet clients; and to run the resulting Node.js full stack [services and app](https://play.DDgame.us) on the **Google Cloud Platform** (us-central1) or in a **Docker** container.
 
-### **01-Jan-2021** `v3.0.0`
+### **01-Feb-2021** `v3.0.0`
 
 * Happy New Year! 🔔
 * major code refactoring
 * automated player bot integration begins
+* xterm.js v4.10 release
+* xvt v1.3.7 all-new package release
 
 #### **24-Dec-2020** `v2.9.3`
 

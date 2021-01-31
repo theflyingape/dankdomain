@@ -4,15 +4,13 @@
 \*****************************************************************************/
 
 import $ = require('../runtime')
-import db = require('../db')
-import { loadUser, saveRing, saveUser } from '../io'
-import { Armor, Magic, Poison, Ring, Security, Weapon } from '../items'
-import { dice, int } from '../lib'
-import { Coin, PC } from '../pc'
-import { checkXP, skillplus } from '../player'
-import { an, armor, bracket, cat, checkTime, death, getRing, log, money, news, romanize, sprintf, tradein, vt, weapon, whole } from '../sys'
-
 import Battle = require('../battle')
+import db = require('../db')
+import { Armor, Magic, Poison, Ring, Security, Weapon } from '../items'
+import { vt, Coin, death, armor, weapon, bracket, cat, log, news, tradein, getRing } from '../lib'
+import { PC } from '../pc'
+import { checkXP, skillplus } from '../player'
+import { dice, int, sprintf, whole, romanize, an, money } from '../sys'
 
 module Dungeon {
 
@@ -118,7 +116,7 @@ module Dungeon {
         containers.splice(c, 1)
     }
 
-    loadUser($.dwarf)
+    PC.load($.dwarf)
 
     //  entry point
     export function DeepDank(start: number, cb: Function) {
@@ -130,7 +128,7 @@ module Dungeon {
 
         party = []
         party.push($.online)
-        tl = checkTime() + 3
+        tl = vt.checkTime() + 3
 
         deep = 0
         hideep = 0
@@ -158,7 +156,7 @@ module Dungeon {
     export function menu(suppress = false) {
 
         //	check player status
-        if ($.online.altered) saveUser($.player)
+        if ($.online.altered) PC.save($.player)
         if ($.reason || vt.reason) {
             death(`failed to escape ${romanize(deep + 1)}.${Z + 1} - ${$.reason || vt.reason}`)
             DL.map = `Marauder's map`
@@ -892,7 +890,7 @@ module Dungeon {
                                                 vt.out(vt.faint, 'A dark cloud hovers over ', opponent.who.him, '.')
                                             }
                                             opponent.user.coward = true
-                                            saveUser(opponent)
+                                            PC.save(opponent)
                                             if (opponent.user.id == $.king.id) {
                                                 $.player.coward = true
                                                 $.online.altered = true
@@ -999,7 +997,7 @@ module Dungeon {
                                             $.player.coin.value += loot.value
                                             opponent.user.coin.value = 0
                                             opponent.user.bank.value = 0
-                                            saveUser(opponent)
+                                            PC.save(opponent)
                                             vt.sound('max')
                                         }
                                         menu()
@@ -1167,7 +1165,7 @@ module Dungeon {
                                         PC.reroll($.player, PC.random('monster'), $.player.level)
                                         PC.activate($.online)
                                         $.player.gender = ['F', 'M'][dice(2) - 1]
-                                        saveUser($.player)
+                                        PC.save($.player)
                                         news(`\t${$.player.handle} got morphed into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
                                         vt.outln(`You got morphed into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
                                         vt.sound('morph', 10)
@@ -1195,7 +1193,7 @@ module Dungeon {
 
                 if ($.taxboss && (Z + 1) >= $.taxman.user.level && $.player.level < $.taxman.user.level) {
                     $.taxboss--
-                    loadUser($.taxman)
+                    PC.load($.taxman)
                     vt.outln(vt.reset, PC.who($.taxman).He, 'is the '
                         , vt.cyan, vt.bright, 'Master of Coin'
                         , vt.reset, ' for '
@@ -1502,7 +1500,7 @@ module Dungeon {
                                         vt.outln('takes back his ring!')
                                         Ring.remove($.player.rings, ring)
                                     }
-                                    saveRing(ring, $.player.id)
+                                    PC.saveRing(ring, $.player.id)
                                     vt.sound('click', 8)
                                 }
                                 else {
@@ -1535,7 +1533,7 @@ module Dungeon {
                                         vt.outln('takes back his ring!')
                                         Ring.remove($.player.rings, ring)
                                     }
-                                    saveRing(ring, $.player.id)
+                                    PC.saveRing(ring, $.player.id)
                                     vt.sound('click', 8)
                                 }
                                 else {
@@ -1672,7 +1670,7 @@ module Dungeon {
                                     PC.reroll($.player, PC.random('monster'), $.player.level)
                                     PC.activate($.online)
                                     $.player.gender = ['F', 'M'][dice(2) - 1]
-                                    saveUser($.player)
+                                    PC.save($.player)
                                     vt.sound('crone', 21)
                                     vt.out(`me morphing you into a level ${$.player.level} ${$.player.pc} (${$.player.gender})`)
                                     news(`\tgot morphed by ${$.witch.user.handle} into a level ${$.player.level} ${$.player.pc} (${$.player.gender})!`)
@@ -1687,12 +1685,12 @@ module Dungeon {
                                         let rpc = <active>{ user: { id: '' } }
                                         for (let row in rs) {
                                             rpc.user.id = rs[row].bearer
-                                            loadUser(rpc)
+                                            PC.load(rpc)
                                             vt.outln(`You are given the ${rs[row].name} ring from ${rpc.user.handle}.`)
                                             Ring.remove(rpc.user.rings, rs[row].name)
-                                            saveUser(rpc)
+                                            PC.save(rpc)
                                             Ring.wear(rpc.user.rings, rs[row].name)
-                                            saveRing(rs[row].name, $.player.id, $.player.rings)
+                                            PC.saveRing(rs[row].name, $.player.id, $.player.rings)
                                             vt.sound('click', 8)
                                         }
                                         news(`\tgot ${rs.length} magical ring${rs.length > 1 ? 's' : ''} of power from ${$.witch.user.handle}!`)
@@ -1918,7 +1916,7 @@ module Dungeon {
                 if (!db.query(`SELECT bearer FROM Rings WHERE name='${ring}' AND bearer != ''`).length
                     && Ring.wear($.player.rings, ring)) {
                     getRing('find', ring)
-                    saveRing(ring, $.player.id, $.player.rings)
+                    PC.saveRing(ring, $.player.id, $.player.rings)
                     pause = true
                     ROOM.giftItem = ''
                 }
@@ -2658,7 +2656,7 @@ module Dungeon {
         }
 
         function renderMap() {
-            let min = checkTime()
+            let min = vt.checkTime()
             if (Z == 99 || Z - $.player.level > 8) {
                 tl = min
                 vt.music('tension' + dice(3))
@@ -3042,7 +3040,7 @@ module Dungeon {
     }
 
     function teleport() {
-        let min = checkTime()
+        let min = vt.checkTime()
 
         vt.action('teleport')
         vt.outln(vt.yellow, vt.bright, 'What do you wish to do?')

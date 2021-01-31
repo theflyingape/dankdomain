@@ -5,27 +5,24 @@
 
 import $ = require('../runtime')
 import db = require('../db')
-import { loadDeed, loadGang, loadUser, saveGang, saveRing, saveUser } from '../io'
 import { Access, Magic, Ring } from '../items'
-import { dice, int, date2full, now, pathTo, time } from '../lib'
-import { Coin, PC } from '../pc'
+import { bracket, cat, Coin, emulator, getRing, input, news, time, vt } from '../lib'
+import { Deed, PC } from '../pc'
 import { logoff, playerPC } from '../player'
-import { bracket, cat, cuss, fs, emulator, getRing, got, input, money, news, titlecase, vt, whole } from '../sys'
+import { cuss, dice, fs, int, date2full, now, pathTo, got, money, titlecase, USERS, whole } from '../sys'
 
 module Logon {
 
-    const USERS = pathTo('users')
-    //init()
+    init()
 
     export function user() {
         cat('logon')
         let retry = 3
 
         vt.form = {
-            'who': { cb: who, prompt: vt.attr('Who dares to enter my dank domain ', bracket('or NEW', false), '? '), max: 22, timeout: 40 },
+            0: { cb: who, prompt: vt.attr('Who dares to enter my dank domain ', bracket('or NEW', false), '? '), max: 22, timeout: 40 },
             'password': { cb: password, echo: false, max: 26, timeout: 20 },
         }
-        vt.focus = 'who'
 
         function guards(): boolean {
             vt.beep()
@@ -103,10 +100,10 @@ module Logon {
 
             $.player.id = titlecase(vt.entry)
 
-            if (!loadUser($.player)) {
+            if (!PC.load($.player)) {
                 $.player.id = ''
                 $.player.handle = vt.entry
-                if (!loadUser($.player)) {
+                if (!PC.load($.player)) {
                     if (guards())
                         vt.refocus()
                     return
@@ -117,7 +114,7 @@ module Logon {
             vt.emulation = $.player.emulation
             $.player.rows = process.stdout.rows || 24
 
-            vt.form['password'].prompt = $.player.handle + ', enter your password: '
+            vt.form['password'].prompt = vt.attr(vt.cyan, `${$.player.handle}, enter your password: `)
             vt.focus = 'password'
         }
 
@@ -149,7 +146,7 @@ module Logon {
 
         if (bot) {
             $.player.id = bot
-            if (!loadUser($.player)) {
+            if (!PC.load($.player)) {
                 vt.outln(`bot id: ${bot} not found`)
                 $.access.roleplay = false
                 vt.carrier = false
@@ -247,7 +244,7 @@ module Logon {
             }).catch(error => { $.whereis += ` ⚠️ ${error.message}` })
         } catch (e) { }
 
-        loadUser($.sysop)
+        PC.load($.sysop)
         if (!getRuler()) {
             $.player.access = Object.keys(Access.name).slice($.player.sex == 'F' ? -2 : -1)[0]
             $.player.novice = false
@@ -260,7 +257,7 @@ module Logon {
             if ($.player.today <= $.access.calls && $.access.roleplay)
                 $.sysop.plays++
         }
-        saveUser($.sysop)
+        PC.save($.sysop)
 
         $.access = Access.name[$.player.access]
         $.player.rows = process.stdout.rows
@@ -294,9 +291,9 @@ module Logon {
         $.player.lasttime = now().time
         $.player.expires = $.player.lastdate + $.sysop.expires
         PC.activate($.online, true)
-        saveUser($.player)
+        PC.save($.player)
 
-        $.mydeeds = loadDeed($.player.pc)
+        $.mydeeds = Deed.load($.player.pc)
         welcome()
     }
 
@@ -399,7 +396,7 @@ module Logon {
                 let ring = Ring.power([], null, 'joust')
                 if (($.online.altered = Ring.wear($.player.rings, ring.name))) {
                     getRing('win', ring.name)
-                    saveRing(ring.name, $.player.id, $.player.rings)
+                    PC.saveRing(ring.name, $.player.id, $.player.rings)
                     vt.sound('promote', 22)
                 }
             }
@@ -430,7 +427,7 @@ module Logon {
             vt.outln(vt.bright, vt.black, '(', vt.yellow, 'VISITING', vt.black, ')')
             vt.sessionAllowed = 5 * 60
             $.access.roleplay = false
-            saveUser($.player)
+            PC.save($.player)
             db.unlock($.player.id)
             news('', true)
 
@@ -453,7 +450,7 @@ module Logon {
             'pause': {
                 cb: () => {
                     if (cat(`user/${$.player.id}`)) {
-                        fs.unlink(`./files/user/${$.player.id}.txt`, () => { })
+                        fs.unlink(pathTo('files/user', `${$.player.id}.txt`), () => { })
                         input('pause')
                         return
                     }
@@ -541,33 +538,19 @@ module Logon {
         let rs = <user[]>db.query(`SELECT id FROM Players WHERE access='${ruler}'`)
         if (rs.length) {
             $.king.id = rs[0].id
-            return loadUser($.king)
+            return PC.load($.king)
         }
         //  Queen
         ruler = Object.keys(Access.name).slice(-2)[0]
         rs = <user[]>db.query(`SELECT id FROM Players WHERE access='${ruler}'`)
         if (rs.length) {
             $.king.id = rs[0].id
-            return loadUser($.king)
+            return PC.load($.king)
         }
         return false
     }
 
     function init() {
-        //  mode of operation
-        switch (vt.emulation) {
-            case 'PC':
-                vt.tty = 'rlogin'
-                break
-            case 'XT':
-                vt.tty = 'web'
-                vt.title(process.title)
-                break
-            default:
-                vt.emulation = 'VT'
-                vt.out('\f')
-        }
-
         //  customize the Dank Domain waiting for its ruler (1st player to register)
         let npc = <user>{}
         let player = <user>{}
@@ -580,7 +563,7 @@ module Logon {
             PC.reroll(player, player.pc, player.level)
             player.level = npc.level
             player.xplevel = 0
-            saveUser(player, true)
+            PC.save(player, true)
             npc = <user>{}
             player = <user>{}
         }
@@ -594,7 +577,7 @@ module Logon {
             PC.newkeys(player)
             PC.reroll(player, player.pc, player.level)
             Object.assign(player, npc)
-            saveUser(player, true)
+            PC.save(player, true)
             npc = <user>{}
             player = <user>{}
         }
@@ -608,7 +591,7 @@ module Logon {
             PC.newkeys(player)
             PC.reroll(player, player.pc, player.level)
             Object.assign(player, npc)
-            saveUser(player, true)
+            PC.save(player, true)
             npc = <user>{}
             player = <user>{}
         }
@@ -622,7 +605,7 @@ module Logon {
             PC.newkeys(player)
             PC.reroll(player, player.pc, player.level)
             Object.assign(player, npc)
-            saveUser(player, true)
+            PC.save(player, true)
             npc = <user>{}
             player = <user>{}
         }
@@ -636,7 +619,7 @@ module Logon {
             PC.newkeys(player)
             PC.reroll(player, player.pc, player.level)
             Object.assign(player, npc)
-            saveUser(player, true)
+            PC.save(player, true)
             npc = <user>{}
             player = <user>{}
         }
@@ -651,7 +634,7 @@ module Logon {
             PC.newkeys(player)
             PC.reroll(player, player.pc, player.level)
             Object.assign(player, npc)
-            saveUser(player, true)
+            PC.save(player, true)
             npc = <user>{}
             player = <user>{}
         }
@@ -665,7 +648,7 @@ module Logon {
             PC.newkeys(player)
             PC.reroll(player, player.pc, player.level)
             Object.assign(player, npc)
-            saveUser(player, true)
+            PC.save(player, true)
             npc = <user>{}
             player = <user>{}
         }
@@ -684,7 +667,7 @@ module Logon {
                     PC.newkeys(player)
                     PC.reroll(player, player.pc, player.level)
                     Object.assign(player, npc)
-                    saveUser(player, true)
+                    PC.save(player, true)
                 }
             }
             catch (err) {
@@ -694,7 +677,7 @@ module Logon {
         //  fini
         process.stdout.write('\r')
 
-        loadUser($.sysop)
+        PC.load($.sysop)
         if ($.sysop.lastdate != now().date) {
             newDay()
             db.run(`UPDATE Players SET today=0 WHERE id NOT GLOB '_*'`)
@@ -714,7 +697,7 @@ module Logon {
         for (let row in rs) {
             let altered = false
             user.id = rs[row].id
-            loadUser(user)
+            PC.load(user)
             for (let item = 7; item < 15; item++) {
                 let cost = user.magic == 1 ? new Coin(Magic.spells[Magic.merchant[item]].wand)
                     : new Coin(Magic.spells[Magic.merchant[item]].cost)
@@ -724,7 +707,7 @@ module Logon {
                     altered = true
                 }
             }
-            if (altered) saveUser(user)
+            if (altered) PC.save(user)
         }
         vt.out('=')
 
@@ -743,7 +726,7 @@ module Logon {
                     if (+rs[row].xplevel > 1) {
                         db.run(`UPDATE Players SET xplevel=1,remote='' WHERE id='${rs[row].id}'`)
                         let p: user = { id: rs[row].id }
-                        loadUser(p)
+                        PC.load(p)
                         require('./email').rejoin(p)
                         vt.out('_', -1000)
                         continue
@@ -759,11 +742,11 @@ module Logon {
 
             if ((now().date - rs[row].lastdate) > 180) {
                 if (rs[row].gang) {
-                    let g = loadGang(db.query(`SELECT * FROM Gangs WHERE name='${rs[row].gang}'`)[0])
+                    let g = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name='${rs[row].gang}'`)[0])
                     let i = g.members.indexOf(rs[row].id)
                     if (i > 0) {
                         g.members.splice(i, 1)
-                        saveGang(g)
+                        PC.saveGang(g)
                     }
                     else {
                         db.run(`UPDATE Players SET gang='' WHERE gang='${g.name}'`)
@@ -781,7 +764,7 @@ module Logon {
             if ((now().date - rs[row].lastdate) % 50 == 0) {
                 db.run(`UPDATE Players SET pc='${Object.keys(PC.name['player'])[0]}',level=1,xplevel=0,remote='' WHERE id='${rs[row].id}'`)
                 let p: user = { id: rs[row].id }
-                loadUser(p)
+                PC.load(p)
                 require('./email').rejoin(p)
                 vt.sleep(1000)
             }
@@ -797,7 +780,7 @@ module Logon {
 
         $.sysop.lastdate = now().date
         $.sysop.lasttime = now().time
-        saveUser($.sysop)
+        PC.save($.sysop)
         vt.outln(vt.yellow, vt.bright, '*')
         vt.beep()
         vt.outln('All set -- thank you!')

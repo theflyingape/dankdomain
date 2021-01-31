@@ -4,10 +4,10 @@
 \*****************************************************************************/
 
 import $ = require('../runtime')
-import { loadUser } from '../io'
-import { date2days, date2full } from '../lib'
 import { Access } from '../items'
-import { bracket, cuss, titlecase, vt } from '../sys'
+import { loadUser } from '../db'
+import { bracket, vt } from '../lib'
+import { cuss, date2days, date2full, titlecase } from '../sys'
 
 module NewUser {
 
@@ -177,7 +177,7 @@ module NewUser {
             return
         }
 
-        $.reason = 'new user registration'
+        $.from = 'newuser'
         require('../email').newuser()
     }
 

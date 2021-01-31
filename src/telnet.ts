@@ -3,7 +3,7 @@
  *  TELNET authored by: Robert Hurst <theflyingape@gmail.com>                *
  *                                                                           *
  *  ddterm (telnet)  <-->  websocket client interface                        *
- *  into ddgame (app)  <-->  ddclient (ttymain)                              *
+ *  into ddgame (app)  <-->  ddclient (tty/main)                             *
 \*****************************************************************************/
 
 import dns = require('dns')

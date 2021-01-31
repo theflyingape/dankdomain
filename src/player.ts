@@ -5,12 +5,10 @@
 
 import $ = require('./runtime')
 import db = require('./db')
-import { Access } from './items'
-import { dice, now, int, date2full, time } from './lib'
-import { Coin, Deed, PC } from './pc'
-import { an, beep, bracket, cat, checkTime, fs, news, sprintf, vt, whole, weapon } from './sys'
-import pathTo from './path'
-import { loadDeed, loadUser, saveDeed, saveUser } from './io'
+import { Access, Coin } from './items'
+import { beep, bracket, cat, news, time, vt, weapon, whole } from './lib'
+import { Deed, PC } from './pc'
+import { an, dice, sprintf, now, pathTo, fs, int, date2full } from './sys'
 
 module player {
 
@@ -18,7 +16,7 @@ module player {
 
         $.jumped = 0
 
-        let t = checkTime()
+        let t = vt.checkTime()
         if (t !== $.timeleft) {
             $.timeleft = t
             if ($.timeleft < 0) {
@@ -143,12 +141,12 @@ module player {
         vt.wall($.player.handle, `is now a level ${$.player.level} ${$.player.pc}`)
 
         let deed = $.mydeeds.find((x) => { return x.deed == 'levels' })
-        if (!$.player.novice && !deed) deed = $.mydeeds[$.mydeeds.push(loadDeed($.player.pc, 'levels')[0]) - 1]
+        if (!$.player.novice && !deed) deed = $.mydeeds[$.mydeeds.push(Deed.load($.player.pc, 'levels')[0]) - 1]
         if ((deed && $.jumped >= deed.value)) {
             deed.value = $.jumped
             vt.outln(vt.cyan, ' + ', vt.bright, Deed.name[deed.deed].description, ' ', bracket(deed.value, false))
             beep()
-            saveDeed(deed, $.player)
+            Deed.save(deed, $.player)
         }
 
         if ($.player.level < $.sysop.level) {
@@ -180,7 +178,7 @@ module player {
     export function logoff() {
 
         if (!$.reason) {
-            loadUser($.sysop)
+            db.loadUser($.sysop)
             //  caught screwing around?
             if ($.sysop.dob <= now().date) {
                 if ($.access.roleplay) {
@@ -195,7 +193,7 @@ module player {
             }
             else {  //  game was won
                 $.access.roleplay = false
-                loadUser($.player)
+                db.loadUser($.player)
                 $.player.lasttime = now().time
                 news(`\tonline player dropped by ${$.sysop.who} ${time($.player.lasttime)} (${$.reason})\n`, true)
             }
@@ -206,7 +204,7 @@ module player {
                 if ($.from == 'Dungeon' && $.online.hp > 0) {
                     PC.adjust('cha', -1, -1, -1)
                     $.player.coin = new Coin(0)
-                    if (checkTime() >= 0) {
+                    if (vt.checkTime() >= 0) {
                         if ($.player.coward && !$.player.cursed) {
                             $.player.blessed = ''
                             $.player.cursed = $.player.id
@@ -219,7 +217,7 @@ module player {
                     $.player.today = 0
                 $.player.lasttime = now().time
                 $.player.remote = $.remote
-                saveUser($.player, false, true)
+                PC.save($.player, false, true)
                 news(`\treturned to ${$.whereis} at ${time($.player.lasttime)} as a level ${$.player.level} ${$.player.pc}`)
                 news(`\t(${$.reason})\n`, true)
 
@@ -479,7 +477,7 @@ module player {
                     PC.activate($.online)
 
                     vt.outln()
-                    saveUser($.player)
+                    db.saveUser($.player)
                     news(`\trerolled as${an($.player.pc)}`)
                     if (immortal) {
                         $.online.hp = 0
@@ -724,27 +722,27 @@ module player {
         let deeds = ['plays', 'jl', 'jw', 'killed', 'kills', 'retreats', 'steals', 'tl', 'tw']
 
         if (!Access.name[$.player.access].sysop) {
-            $.mydeeds = loadDeed($.player.pc)
+            $.mydeeds = Deed.load($.player.pc)
             vt.outln('\nChecking your deeds for the ', vt.bright, $.player.pc, vt.normal, ' list ... ', -1000)
             for (let i in deeds) {
                 let deed = $.mydeeds.find((x) => { return x.deed == deeds[i] })
                 if (/jw|steals|tw/.test(deeds[i])) {
-                    if (!deed) deed = $.mydeeds[$.mydeeds.push(loadDeed($.player.pc, deeds[i])[0]) - 1]
+                    if (!deed) deed = $.mydeeds[$.mydeeds.push(Deed.load($.player.pc, deeds[i])[0]) - 1]
                     if ($.player[deeds[i]] >= deed.value) {
                         deed.value = $.player[deeds[i]]
-                        saveDeed(deed, $.player)
+                        Deed.save(deed, $.player)
                         bonus = 1
                         vt.outln(vt.cyan, ' + ', vt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
                         vt.sound('click', 5)
                     }
                 }
                 else {
-                    if (!deed) deed = $.mydeeds[$.mydeeds.push(loadDeed($.player.pc, deeds[i])[0]) - 1]
+                    if (!deed) deed = $.mydeeds[$.mydeeds.push(Deed.load($.player.pc, deeds[i])[0]) - 1]
                     if (deeds[i] == 'jl' && $.player.jl < 2 && $.player.jw < 5) continue
                     if (deeds[i] == 'tl' && $.player.tl < 2 && $.player.tw < 5) continue
                     if ($.player[deeds[i]] <= deed.value) {
                         deed.value = $.player[deeds[i]]
-                        saveDeed(deed, $.player)
+                        Deed.save(deed, $.player)
                         bonus = 1
                         vt.outln(vt.cyan, ' + ', vt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
                         vt.sound('click', 5)
@@ -752,27 +750,27 @@ module player {
                 }
             }
 
-            $.mydeeds = loadDeed('GOAT')
+            $.mydeeds = Deed.load('GOAT')
             vt.outln(vt.magenta, '\nChecking your deeds for the ', vt.bright, 'GOAT', vt.normal, ' list ... ', -1000)
             for (let i in deeds) {
                 let deed = $.mydeeds.find((x) => { return x.deed == deeds[i] })
                 if (/jw|steals|tw/.test(deeds[i])) {
-                    if (!deed) deed = $.mydeeds[$.mydeeds.push(loadDeed('GOAT', deeds[i])[0]) - 1]
+                    if (!deed) deed = $.mydeeds[$.mydeeds.push(Deed.load('GOAT', deeds[i])[0]) - 1]
                     if ($.player[deeds[i]] >= deed.value) {
                         deed.value = $.player[deeds[i]]
-                        saveDeed(deed, $.player)
+                        Deed.save(deed, $.player)
                         bonus = 2
                         vt.outln(vt.yellow, ' + ', vt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
                         vt.sound('click', 5)
                     }
                 }
                 else {
-                    if (!deed) deed = $.mydeeds[$.mydeeds.push(loadDeed('GOAT', deeds[i])[0]) - 1]
+                    if (!deed) deed = $.mydeeds[$.mydeeds.push(Deed.load('GOAT', deeds[i])[0]) - 1]
                     if (deeds[i] == 'jl' && $.player.jl < 2 && $.player.jw < 10) continue
                     if (deeds[i] == 'tl' && $.player.tl < 2 && $.player.tw < 10) continue
                     if ($.player[deeds[i]] <= deed.value) {
                         deed.value = $.player[deeds[i]]
-                        saveDeed(deed, $.player)
+                        Deed.save(deed, $.player)
                         bonus = 3
                         vt.outln(vt.yellow, ' + ', vt.bright, Deed.name[deeds[i]].description, ' ', bracket(deed.value, false))
                         vt.sound('click', 5)
@@ -806,7 +804,7 @@ module player {
             $.player.keyhints.push($.player.pc)
 
         PC.reroll($.player)
-        saveUser($.player)
+        db.saveUser($.player)
         vt.sessionAllowed += 300
         $.warning = 2
 
@@ -818,11 +816,11 @@ module player {
                 , $.player.handle
                 , date2full(now().date)
                 , now().date - $.sysop.dob + 1))
-            loadUser($.sysop)
+            db.loadUser($.sysop)
             $.sysop.who = $.player.handle
             $.sysop.dob = now().date + 1
             $.sysop.plays = 0
-            saveUser($.sysop)
+            db.saveUser($.sysop)
 
             $.player.wins++
             db.run(`UPDATE Players SET wins=${$.player.wins} WHERE id='${$.player.id}'`)
@@ -855,11 +853,11 @@ module player {
             let user: user = { id: '' }
             for (let row in rs) {
                 user.id = rs[row].id
-                loadUser(user)
+                db.loadUser(user)
                 PC.reroll(user)
                 PC.newkeys(user)
                 user.keyhints.splice(12)
-                saveUser(user)
+                db.saveUser(user)
                 fs.unlink(`${pathTo('users')}/.${user.id}.json`, () => { })
                 vt.out('.', -10)
             }
@@ -875,7 +873,7 @@ module player {
                     PC.newkeys(bot)
                     PC.reroll(bot, bot.pc, bot.level)
                     Object.assign(bot, user)
-                    saveUser(bot)
+                    db.saveUser(bot)
                     vt.out('&', -10)
                 }
                 catch (err) {
@@ -901,7 +899,7 @@ module player {
             , vt.normal, 'and you will become\nan immortal being.')
 
         for (let i = 0; i <= max + bonus; i++) PC.keyhint($.online, false)
-        saveUser($.player)
+        db.saveUser($.player)
 
         let prior: number = -1
         let slot: number
@@ -943,7 +941,7 @@ module player {
                         PC.reroll($.player, $.player.pc)
                         PC.newkeys($.player)
                         $.player.coward = true
-                        saveUser($.player)
+                        db.saveUser($.player)
 
                         if (slot++ < max) {
                             vt.refocus(`Insert key #${slot + 1}? `)

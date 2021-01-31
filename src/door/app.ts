@@ -28,9 +28,9 @@ process.on('SIGINT', () => {
 console.log(`cwd ${process.cwd()} → ${__dirname}`)
 process.chdir(__dirname)
 
+import { pathTo } from '../sys'
 import db = require('../db')
-import { saveUser } from '../io'
-import { Coin } from '../pc'
+import { Coin } from '../items'
 
 let passed = ''
 if (process.argv.length > 2 && process.argv[2]) {
@@ -582,7 +582,7 @@ dns.lookup(network.address, (err, addr, family) => {
     }
 })
 
-chokidar.watch(`../users/save.json`)
+chokidar.watch(pathTo('users', 'save.json'))
     .on('add', (path, stats) => {
         let save: any = {}
         let user: user
@@ -594,7 +594,7 @@ chokidar.watch(`../users/save.json`)
             save.bank = new Coin(save.bank)
             save.loan = new Coin(save.loan)
             Object.assign(user, save)
-            saveUser(user)
+            db.saveUser(user)
             console.log(`Player (${user.id}) updated`)
         }
         catch (err) {

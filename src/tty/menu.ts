@@ -4,15 +4,13 @@
 \*****************************************************************************/
 
 import $ = require('../runtime')
-import db = require('../db')
-import { saveUser } from '../io'
-import { Armor, RealEstate, Ring, Security, Weapon } from '../items'
-import { dice, int } from '../lib'
-import { Coin, Deed, PC } from '../pc'
-import { checkXP, playerPC } from '../player'
-import { an, cat, checkTime, cuss, display, emulator, fs, input, log, money, news, sprintf, tradein, vt } from '../sys'
-
 import Battle = require('../battle')
+import db = require('../db')
+import { Armor, RealEstate, Ring, Security, Weapon } from '../items'
+import { cat, Coin, display, emulator, input, log, news, tradein, vt } from '../lib'
+import { Deed, PC } from '../pc'
+import { checkXP, playerPC } from '../player'
+import { an, cuss, dice, fs, int, money, sprintf } from '../sys'
 
 module Main {
 
@@ -40,7 +38,7 @@ module Main {
 
     export function menu(suppress = true) {
         if (checkXP($.online, menu)) return
-        if ($.online.altered) saveUser($.online)
+        if ($.online.altered) PC.save($.online)
         if ($.reason) vt.hangup()
 
         if (!suppress) vt.profile({ png: ['castle', 'joust', 'dragon'][dice(3) - 1], effect: 'pulse' })
@@ -50,7 +48,7 @@ module Main {
         }
 
         vt.form['menu'].prompt =
-            vt.attr('Time Left: ', vt.white, vt.bright, checkTime().toString(), vt.normal, vt.cyan, ' min.\n', vt.reset)
+            vt.attr('Time Left: ', vt.white, vt.bright, vt.checkTime().toString(), vt.normal, vt.cyan, ' min.\n', vt.reset)
             + display('main', vt.Blue, vt.blue, suppress, mainmenu)
         input('menu', 'q')
     }
@@ -305,7 +303,7 @@ module Main {
                                         if (opponent.user.cannon)
                                             opponent.user.cannon--
 
-                                        saveUser(opponent)
+                                        PC.save(opponent)
                                         news(`\trobbed ${opponent.user.handle}`)
                                         log(opponent.user.id, `\n${$.player.handle} robbed you!`)
                                     }
@@ -376,7 +374,7 @@ module Main {
                         cb: () => {
                             if (vt.entry == newpassword) {
                                 $.player.password = newpassword
-                                saveUser($.player)
+                                db.saveUser($.player)
                                 vt.out('...saved...')
                             }
                             else {
@@ -403,7 +401,7 @@ module Main {
                                 PC.activate($.online)
                                 $.player.coward = true
                                 $.player.plays++
-                                saveUser($.player)
+                                db.saveUser($.player)
                                 vt.outln()
                                 playerPC()
                                 return

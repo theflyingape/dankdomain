@@ -5,113 +5,13 @@
 
 import $ = require('./runtime')
 import db = require('./db')
-import { loadUser, saveRing } from './io'
 import { ITEMS, Access, Armor, Magic, Ring, Weapon } from './items'
-import { date2full, dice, int, isActive, now } from './lib'
-import { armor, beep, fs, romanize, sprintf, titlecase, vt, weapon } from './sys'
-import pathTo from './path'
+import { armor, beep, Coin, vt, weapon } from './lib'
+import { date2full, dice, int, isActive, now, pathTo, fs, romanize, sprintf, titlecase, USERS } from './sys'
 
 module pc {
 
     export const Abilities: ABILITY[] = ['str', 'int', 'dex', 'cha']
-
-    export class Coin implements coin {
-
-        constructor(money: string | number) {
-            if (typeof money == 'number') {
-                this.value = money
-            }
-            else {
-                this.amount = money
-            }
-        }
-
-        private _value: number
-
-        get value(): number {
-            return this._value
-        }
-
-        set value(newValue: number) {
-            const MAX = (1e+18 - 1e+09)
-            this._value = newValue < MAX ? newValue
-                : newValue == Infinity ? 1 : MAX
-        }
-
-        //  top valued coin bag (+ any lesser)
-        get amount(): string {
-            return this.carry(2, true)
-        }
-
-        set amount(newAmount: string) {
-            this.value = 0
-            let coins = 0
-
-            for (var i = 0; i < newAmount.length; i++) {
-                let c = newAmount.charAt(i)
-                switch (c) {
-                    case 'c':
-                        coins *= 1
-                        break
-                    case 's':
-                        coins *= 1e+05
-                        break
-                    case 'g':
-                        coins *= 1e+09
-                        break
-                    case 'p':
-                        coins *= 1e+13
-                        break
-                }
-                if (c >= '0' && c <= '9') {
-                    coins *= 10
-                    coins += +c
-                }
-                else {
-                    this.value += coins
-                    coins = 0
-                }
-            }
-        }
-
-        _pouch(coins: number): string {
-            return (coins < 1e+05) ? 'c' : (coins < 1e+09) ? 's' : (coins < 1e+13) ? 'g' : 'p'
-        }
-
-        carry(max = 2, text = false): string {
-            let n = this.value
-            let bags: string[] = []
-
-            if (this._pouch(n) == 'p') {
-                n = int(n / 1e+13)
-                bags.push(text ? n + 'p' : vt.attr(vt.white, vt.bright, n.toString(), vt.magenta, 'p', vt.normal, vt.white))
-                n = this.value % 1e+13
-            }
-            if (this._pouch(n) == 'g') {
-                n = int(n / 1e+09)
-                bags.push(text ? n + 'g' : vt.attr(vt.white, vt.bright, n.toString(), vt.yellow, 'g', vt.normal, vt.white))
-                n = this.value % 1e+09
-            }
-            if (this._pouch(n) == 's') {
-                n = int(n / 1e+05)
-                bags.push(text ? n + 's' : vt.attr(vt.white, vt.bright, n.toString(), vt.cyan, 's', vt.normal, vt.white))
-                n = this.value % 1e+05
-            }
-            if ((n > 0 && this._pouch(n) == 'c') || bags.length == 0)
-                bags.push(text ? n + 'c' : vt.attr(vt.white, vt.bright, n.toString(), vt.red, 'c', vt.normal, vt.white))
-
-            return bags.slice(0, max).toString()
-        }
-
-        pieces(p = this._pouch(this.value), emoji = false): string {
-            return 'pouch of ' + (emoji ? '💰 ' : '') + {
-                'p': vt.attr(vt.magenta, vt.bright, 'platinum', vt.normal),
-                'g': vt.attr(vt.yellow, vt.bright, 'gold', vt.normal),
-                's': vt.attr(vt.cyan, vt.bright, 'silver', vt.normal),
-                'c': vt.attr(vt.red, vt.bright, 'copper', vt.normal)
-            }[p] + vt.attr(' pieces', vt.reset)
-        }
-    }
 
     class _deed {
 
@@ -137,6 +37,32 @@ module pc {
                 }
         }
 
+        load(pc: string, what?: string): deed[] {
+            let deed = []
+            let sql = `SELECT * FROM Deeds WHERE pc='${pc}'`
+            if (what) sql += ` AND deed='${what}'`
+            let rs = db.query(sql)
+
+            if (rs.length) {
+                for (let i = 0; i < rs.length; i++)
+                    deed.push({
+                        pc: rs[i].pc,
+                        deed: rs[i].deed,
+                        date: rs[i].date,
+                        hero: rs[i].hero,
+                        value: rs[i].value
+                    })
+            }
+            else if (what) {
+                let start = 0
+                if (Deed.name[what]) start = Deed.name[what].starting
+                db.run(`INSERT INTO Deeds VALUES ('${pc}', '${what}', ${now().date}, 'Nobody', ${start})`)
+                deed = this.load(pc, what)
+            }
+
+            return deed
+        }
+
         //  returns 2-character width
         get medal(): string[] {
             return vt.emulation == 'XT'
@@ -146,6 +72,14 @@ module pc {
                     vt.attr(vt.normal, vt.reverse, '2', vt.noreverse, ' '),
                     vt.attr(vt.faint, vt.reverse, '3', vt.noreverse, vt.normal, ' ')
                 ]
+        }
+
+        save(deed: deed, player: user) {
+            if (!player.novice) {
+                deed.date = now().date
+                deed.hero = player.handle
+                db.run(`UPDATE Deeds SET date=${deed.date},hero='${deed.hero}', value=${deed.value} WHERE pc='${deed.pc}' AND deed='${deed.deed}'`)
+            }
         }
     }
 
@@ -214,9 +148,10 @@ module pc {
             Armor.equip(one, one.user.armor, true)
             one.user.access = one.user.access || Object.keys(Access.name)[0]
 
-            if (!db.lock(one.user.id, one.user.id == $.player.id ? 1 : 2) && one.user.id !== $.player.id) {
+            if (keep && !db.lock(one.user.id, one.user.id == $.player.id ? 1 : 2) && one.user.id !== $.player.id) {
                 beep()
-                vt.outln(vt.cyan, vt.bright, `\n${one.user.handle} is engaged elsewhere.`)
+                vt.outln()
+                vt.outln(vt.cyan, vt.bright, `${one.user.handle} is engaged elsewhere.`)
                 one.altered = false
             }
             return one.altered
@@ -271,7 +206,7 @@ module pc {
             if (rs.length) {
                 let n = dice(rs.length) - 1
                 rpc.user.id = rs[n].id
-                loadUser(rpc)
+                this.load(rpc)
             }
             return rpc
         }
@@ -287,7 +222,7 @@ module pc {
         }
 
         expout(xp: number, awarded = true): string {
-            const gain = int(100 * xp / (PC.experience($.player.level) - PC.experience($.player.level - 1)))
+            const gain = int(100 * xp / (this.experience($.player.level) - this.experience($.player.level - 1)))
             let out = (xp < 1e+8 ? xp.toString() : sprintf('%.4e', xp)) + ' '
             if (awarded && gain && $.online.int >= 90) {
                 out += vt.attr(vt.off, vt.faint, '(', vt.bright
@@ -336,6 +271,84 @@ module pc {
                 vt.outln(vt.reset, 'There are no more key hints available to you.')
 
             rpc.altered = true
+        }
+
+        load(rpc: active | user): boolean {
+            let user: user = isActive(rpc) ? rpc.user : rpc
+            if (user.handle) user.handle = titlecase(user.handle)
+            if (db.loadUser(user)) {
+                if (isActive(rpc)) this.activate(rpc)
+                user.coin = new Coin(user.coin.value)
+                user.bank = new Coin(user.bank.value)
+                user.loan = new Coin(user.loan.value)
+                user.bounty = new Coin(user.bounty.value)
+
+                //  restore NPC to static state
+                if (user.id[0] == '_' && user.id !== "_SYS") {
+                    let npc = <user>{ id: user.id }
+                    try {
+                        const js = JSON.parse(fs.readFileSync(`${pathTo('users', { "_BAR": "barkeep", "_DM": "merchant", "_NEP": "neptune", "_OLD": "seahag", "_TAX": "taxman", "_WOW": "witch" }[npc.id] + '.json')}`).toString())
+                        if (js) {
+                            Object.assign(npc, js)
+                            Object.assign(user, npc)
+                            this.reroll(user, user.pc, user.level)
+                            Object.assign(user, npc)
+                            db.saveUser(user)
+                        }
+                    }
+                    catch (err) { }
+                }
+
+                return true
+            }
+            return false
+        }
+
+        loadGang(rs: any, me = ''): gang {
+            let gang: gang = {
+                name: rs.name,
+                members: rs.members.split(','),
+                handles: [],
+                genders: [],
+                melee: [],
+                status: [],
+                validated: [],
+                win: rs.win,
+                loss: rs.loss,
+                banner: int(rs.banner / 16),
+                trim: rs.banner % 8,
+                back: int(rs.color / 16),
+                fore: rs.color % 8
+            }
+
+            for (let n in gang.members) {
+                let who = db.query(`SELECT handle,gender,melee,status,gang FROM Players WHERE id='${gang.members[n]}'`)
+                if (who.length) {
+                    gang.handles.push(who[0].handle)
+                    gang.genders.push(who[0].gender)
+                    gang.melee.push(who[0].melee)
+                    if (gang.members[n] !== me && !who[0].status && !db.lock(gang.members[n]))
+                        who[0].status = 'locked'
+                    gang.status.push(who[0].status)
+                    gang.validated.push(who[0].gang ? who[0].gang == rs.name : undefined)
+                }
+                else if (gang.members[n][0] == '_') {
+                    gang.handles.push('')
+                    gang.genders.push('I')
+                    gang.melee.push(0)
+                    gang.status.push('')
+                    gang.validated.push(true)
+                }
+                else {
+                    gang.handles.push(`?unknown ${gang.members[n]}`)
+                    gang.genders.push('M')
+                    gang.melee.push(3)
+                    gang.status.push('?')
+                    gang.validated.push(false)
+                }
+            }
+
+            return gang
         }
 
         newkeys(user: user) {
@@ -420,7 +433,7 @@ module pc {
             user.tw = 0
 
             //  reset for new or non player
-            if (!user.id || user.id[0] == '_') {
+            if (!user.id || user.id[0] == '_' || user.bot) {
                 if (isNaN(user.dob)) user.dob = now().date
                 if (isNaN(user.joined)) user.joined = now().date
                 user.lastdate = now().date
@@ -462,7 +475,7 @@ module pc {
                 //  no extra free or augmented stuff
                 user.poisons = []
                 user.spells = []
-                if (user.rings) user.rings.forEach(ring => { saveRing(ring) })
+                if (user.rings) user.rings.forEach(ring => { this.saveRing(ring) })
                 user.rings = []
                 user.toAC = 0
                 user.toWC = 0
@@ -581,6 +594,61 @@ module pc {
             }
         }
 
+        save(rpc: active | user, insert = false, locked = false) {
+
+            let user: user = isActive(rpc) ? rpc.user : rpc
+
+            if (!user.id) return
+            if (insert || locked || user.id[0] == '_') {
+                let save = { coin: "", bank: "", loan: "", bounty: "" }
+                let trace = pathTo(USERS, `.${user.id}.json`)
+                Object.assign(save, user)
+                save.coin = user.coin.carry(4, true)
+                save.bank = user.bank.carry(4, true)
+                save.loan = user.loan.carry(4, true)
+                save.bounty = user.bounty.carry(4, true)
+                fs.writeFileSync(trace, JSON.stringify(save, null, 2))
+            }
+
+            db.saveUser(user, insert)
+            if (isActive(rpc)) rpc.altered = false
+            if (locked) db.unlock(user.id.toLowerCase())
+        }
+
+        saveGang(g: gang, insert = false) {
+            if (insert) {
+                try {
+                    db.run(`INSERT INTO Gangs (name,members,win,loss,banner,color)
+                    VALUES ('${g.name}', '${g.members.join()}', ${g.win}, ${g.loss},
+                    ${(g.banner << 4) + g.trim}, ${(g.back << 4) + g.fore})`)
+                }
+                catch (err) {
+                    if (err.code !== 'SQLITE_CONSTRAINT_PRIMARYKEY') {
+                        console.log(` ? Unexpected error: ${String(err)}`)
+                    }
+                }
+            }
+            else {
+                if (g.members.length > 4) g.members.splice(0, 4)
+                db.run(`UPDATE Gangs
+                SET members='${g.members.join()}',win=${g.win},loss=${g.loss},
+                banner=${(g.banner << 4) + g.trim},color=${(g.back << 4) + g.fore}
+                WHERE name='${g.name}'`)
+            }
+        }
+
+        saveRing(name: string, bearer = '', rings?: string[]) {
+            let theRing = { name: name, bearer: bearer[0] == '_' ? '' : bearer }
+
+            //  record active bearer to maintain as a rare 'ring of power'
+            if (Ring.name[name].unique) {
+                db.run(`UPDATE Rings SET bearer='${theRing.bearer}' WHERE name=?`, false, name)
+            }
+            if (theRing.bearer.length && rings) {
+                db.run(`UPDATE Players SET rings=? WHERE id=?`, false, rings.toString(), theRing.bearer)
+            }
+        }
+
         sp(user = $.player): number {
             return user.magic > 1 ? Math.round(user.level + dice(user.level) + user.int / 10) : 0
         }
@@ -667,7 +735,7 @@ module pc {
 
             if (profile.user.blessed) {
                 let who: user = { id: profile.user.blessed }
-                if (!loadUser(who)) {
+                if (!this.load(who)) {
                     if (profile.user.blessed == 'well')
                         who.handle = 'a wishing well'
                     else
@@ -680,7 +748,7 @@ module pc {
 
             if (profile.user.cursed) {
                 let who: user = { id: profile.user.cursed }
-                if (!loadUser(who)) {
+                if (!this.load(who)) {
                     if (profile.user.cursed == 'wiz!')
                         who.handle = 'a doppelganger!'
                     else
@@ -849,17 +917,17 @@ module pc {
 
         wearing(profile: active) {
             if (isNaN(+profile.user.weapon)) {
-                vt.outln('\n', PC.who(profile).He, profile.weapon.text, ' ', weapon(profile)
+                vt.outln('\n', this.who(profile).He, profile.weapon.text, ' ', weapon(profile)
                     , $.from == 'Dungeon' ? -300 : !profile.weapon.shoppe ? -500 : -100)
             }
             if (isNaN(+profile.user.armor)) {
-                vt.outln('\n', PC.who(profile).He, profile.armor.text, ' ', armor(profile)
+                vt.outln('\n', this.who(profile).He, profile.armor.text, ' ', armor(profile)
                     , $.from == 'Dungeon' ? -300 : !profile.armor.armoury ? -500 : -100)
             }
             if (!$.player.novice && $.from !== 'Dungeon' && profile.user.sex == 'I') for (let i in profile.user.rings) {
                 let ring = profile.user.rings[i]
                 if (!+i) vt.outln()
-                vt.out(PC.who(profile).He, 'has ', vt.cyan, vt.bright, ring, vt.normal)
+                vt.out(this.who(profile).He, 'has ', vt.cyan, vt.bright, ring, vt.normal)
                 if ($.player.emulation == 'XT') vt.out(' ', Ring.name[ring].emoji)
                 vt.outln(' powers ', vt.reset, 'that can ', Ring.name[ring].description, -100)
             }

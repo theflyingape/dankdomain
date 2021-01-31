@@ -4,14 +4,12 @@
 \*****************************************************************************/
 
 import $ = require('../runtime')
-import db = require('../db')
-import { loadUser, saveUser } from '../io'
-import { dice, int } from '../lib'
-import { Coin, PC } from '../pc'
-import { checkXP } from '../player'
-import { an, armor, bracket, cat, display, log, money, news, sprintf, tradein, vt, weapon, whole } from '../sys'
-
 import Battle = require('../battle')
+import db = require('../db')
+import { armor, bracket, cat, Coin, display, log, news, tradein, vt, weapon } from '../lib'
+import { PC } from '../pc'
+import { checkXP } from '../player'
+import { dice, int, money, sprintf, whole, an } from '../sys'
 
 module Naval {
 
@@ -30,7 +28,7 @@ module Naval {
     export function menu(suppress = true) {
         $.from = 'Naval'
         if (checkXP($.online, menu)) return
-        if ($.online.altered) saveUser($.online)
+        if ($.online.altered) PC.save($.online)
         if ($.reason) vt.hangup()
 
         vt.action('naval')
@@ -131,11 +129,11 @@ module Naval {
                     let floater = PC.encounter(`AND id NOT GLOB '_*'`)
                     if (floater.user.id && floater.user.status) {
                         let leftby = <user>{ id: floater.user.status }
-                        if (loadUser(leftby)) {
+                        if (PC.load(leftby)) {
                             PC.portrait(floater, 'fadeInUpBig')
                             vt.out(' floating carcass!')
                             vt.sleep(500)
-                            loadUser(floater)
+                            PC.load(floater)
                             vt.outln(`\nIt is ${floater.user.handle}'s body in the ocean left there by ${leftby.handle}, and`)
                             vt.outln(`you're able to bring the player back to an Alive! state.`)
                             db.run(`UPDATE Players set status='' WHERE id='${floater.user.id}'`)
@@ -145,7 +143,7 @@ module Naval {
                         }
                     }
                     if (dice($.player.level / 3 + 2) == 1) {
-                        loadUser($.seahag)
+                        PC.load($.seahag)
                         vt.outln(`n ${$.seahag.user.handle}!`)
                         cat(`naval/${$.seahag.user.handle}`.toLowerCase())
                         vt.outln(-600, vt.green, vt.bright, 'She cackles as you are sent spinning elsewhere ... ')
@@ -169,7 +167,7 @@ module Naval {
                         return
                     }
                     if (dice($.player.level / 3 + 2) == 1) {
-                        loadUser($.neptune)
+                        PC.load($.neptune)
                         vt.outln(` ${$.neptune.user.pc}: ${$.neptune.user.handle}!`)
                         cat(`naval/${$.neptune.user.handle}`.toLowerCase())
                         vt.sleep(600)
@@ -335,7 +333,7 @@ module Naval {
                 return
 
             case 'Q':
-                require('./main').menu($.player.expert)
+                require('./menu').menu($.player.expert)
                 return
 
             case 'Y':
@@ -632,7 +630,7 @@ module Naval {
                                 vt.outln(vt.bright, vt.cyan, 'You sail '
                                     , vt.normal, 'away safely '
                                     , vt.faint, 'out of range.')
-                                saveUser(nme, false, true)
+                                PC.save(nme, false, true)
                                 db.run(`UPDATE Players set hull=${$.player.hull},cannon=${$.player.cannon},ram=${+$.player.ram},retreats=${$.player.retreats} WHERE id='${$.player.id}'`)
                                 log(nme.user.id, `\n${$.player.handle}, the coward, sailed away from you.`)
                                 menu()
@@ -728,7 +726,7 @@ module Naval {
                 nme.user.coin.value = 0
             }
             booty.value += nme.user.coin.value
-            saveUser(nme, false, true)
+            PC.save(nme, false, true)
         }
 
         function you(): boolean {
@@ -760,7 +758,7 @@ module Naval {
                     return false
                 }
                 vt.outln('\nThey sail away over the horizon.')
-                saveUser(nme, false, true)
+                PC.save(nme, false, true)
                 vt.sleep(500)
                 return true
             }
@@ -786,7 +784,7 @@ module Naval {
                     nme.user.coin.value += booty.value
                     $.player.coin.value = 0
                 }
-                saveUser(nme, false, true)
+                PC.save(nme, false, true)
 
                 vt.sound('sunk', 30)
                 vt.outln(vt.faint, `\n${nme.user.handle} smiles as a shark approaches you.`)

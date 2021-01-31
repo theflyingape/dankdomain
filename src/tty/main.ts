@@ -18,7 +18,7 @@ process.on(`${process.title} uncaughtException`, (err, origin) => {
 process.title = 'ddclient'
 process.chdir(__dirname)
 
-import { vt } from '../sys'
+import { vt } from '../lib'
 
 vt.emulation = <EMULATION>(process.argv.length > 2 && process.argv[2]
     ? process.argv[2].toUpperCase() : (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM))
@@ -57,10 +57,10 @@ else
                     logon()
                 }
                 else
-                    vt.focus = 2
+                    vt.focus = 5
             }, prompt: '\x1B[6n', enq: true
         },
-        2: {
+        5: {
             cb: () => {
                 if (vt.entry.length) vt.emulation = 'VT'
                 logon()
@@ -70,6 +70,18 @@ else
 
 function logon() {
 
+    //  mode of operation
+    switch (vt.emulation) {
+        case 'PC':
+            vt.tty = 'rlogin'
+            break
+        case 'XT':
+            vt.tty = 'web'
+            vt.title(process.title)
+            break
+        default:
+            vt.emulation = 'VT'
+    }
     vt.outln(vt.cyan, vt.bright, vt.emulation, vt.normal, ' emulation ', vt.faint, 'enabled')
 
     if (bot)

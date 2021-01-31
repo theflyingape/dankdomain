@@ -5,12 +5,11 @@
 
 import $ = require('./runtime')
 import db = require('./db')
-import { loadDeed, loadGang, loadUser, saveDeed, saveGang, saveRing, saveUser } from './io'
 import { Access, Armor, Magic, Poison, Ring, Weapon } from './items'
-import { date2full, dice, int } from './lib'
+import { armor, bracket, buff, Coin, death, getRing, input, log, news, rings, tradein, vt, weapon } from './lib'
+import { Deed, PC } from './pc'
 import { checkXP } from './player'
-import { Coin, PC } from './pc'
-import { an, armor, bracket, buff, cuss, death, fs, getRing, input, log, money, news, rings, sprintf, tradein, vt, weapon, whole } from './sys'
+import { an, cuss, date2full, dice, fs, int, money, pathTo, sprintf, whole } from './sys'
 
 module Battle {
 
@@ -86,13 +85,13 @@ module Battle {
                 vt.out(`the cheering crowd. `, -1600, ` He struts toward the mantelpiece `, -600)
                 if ($.online.weapon.wc > $.barkeep.weapon.wc) {
                     let trophy = { who: $.player.id, weapon: $.player.weapon }
-                    fs.writeFileSync('./files/tavern/trophy.json', JSON.stringify(trophy))
+                    fs.writeFileSync(pathTo('files/tavern', 'trophy.json'), JSON.stringify(trophy))
                     vt.outln(`and hangs his new trophy.`)
                 }
                 else
                     vt.outln(`and burns it!`, -600, 'Heh.')
                 Weapon.equip($.online, Weapon.merchant[0])
-                saveUser($.player)
+                db.saveUser($.player)
                 $.reason = `schooled by ${$.barkeep.user.handle}`
                 //  go crazy!
                 vt.sound('winner', 32)
@@ -111,7 +110,7 @@ module Battle {
                 let result = Weapon.swap($.online, $.barkeep, credit)
                 if (typeof result == 'boolean' && result) {
                     vt.outln('You also take his trophy, ', weapon(), -600)
-                    fs.writeFileSync('./files/tavern/trophy.json', JSON.stringify({ "who": "_TAX", "weapon": "Needle" }))
+                    fs.writeFileSync(pathTo('files/tavern', 'trophy.json'), JSON.stringify({ "who": "_TAX", "weapon": "Needle" }))
                 }
                 //  no entertainment
                 vt.sound('ko', 12)
@@ -165,7 +164,7 @@ module Battle {
         if ($.from == 'User') {
             let opponent = parties[1][0]
             if (!(opponent.user.id[0] == '_' || opponent.user.gender == 'I')) {
-                saveUser(opponent, false, true)
+                PC.save(opponent, false, true)
                 if ($.player.hp > 0 && opponent.hp == 0) {
                     vt.action('ny')
                     vt.form = {
@@ -352,7 +351,7 @@ module Battle {
                                     vt.outln(vt.bright, vt.blue, '"You can never escape the taxman!"')
                                 vt.sound({ _BAR: 'growl', _DM: 'punk', _NEP: 'thunder', _OLD: 'crone', _TAX: 'thief2' }[enemy.user.id], 12)
                                 PC.adjust('cha', -2, -1)
-                                saveUser($.player)
+                                db.saveUser($.player)
                                 next()
                                 return
                             }
@@ -725,7 +724,7 @@ module Battle {
                     if (loser.user.coin.value)
                         log(loser.user.id, `You lost ${loser.user.coin.carry(2, true)} you were carrying.`)
                     loser.user.coin.value = 0
-                    saveUser(loser)
+                    PC.save(loser)
                 }
             }
 
@@ -755,7 +754,7 @@ module Battle {
                     log(parties[w][m].user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`)
                     log(parties[w][m].user.id, `You got ${PC.expout(xp, false)} and ${new Coin(award).carry(2, true)}.`)
                     parties[w][m].user.xp += xp
-                    saveUser(parties[w][m])
+                    PC.save(parties[w][m])
                 }
             }
 
@@ -764,11 +763,11 @@ module Battle {
             if (coin.value) {
                 vt.outln()
                 vt.beep()
-                loadUser($.taxman)
+                PC.load($.taxman)
                 $.taxman.user.bank.value += coin.value
                 db.run(`UPDATE Players
-                set bank = ${$.taxman.user.bank.value}
-                WHERE id='${$.taxman.user.id}'`).changes
+                    set bank=${$.taxman.user.bank.value}
+                    WHERE id='${$.taxman.user.id}'`).changes
                 vt.outln($.taxman.user.handle, ' took ', $.taxman.who.his, 'cut worth ', coin.carry(1), '.', -600)
             }
 
@@ -813,7 +812,7 @@ module Battle {
                         loser.user.rings.forEach(ring => {
                             if (Ring.wear(winner.user.rings, ring)) {
                                 getRing(['fondle', 'polish', 'slip on', 'wear', 'win'][dice(5) - 1], ring)
-                                saveRing(ring, winner.user.id)
+                                PC.saveRing(ring, winner.user.id)
                                 vt.sound('click', 8)
                                 log(loser.user.id, `... took your ${ring} ring.`)
                             }
@@ -884,13 +883,13 @@ module Battle {
                             log(loser.user.id, `... and took your blessedness.`)
                         }
                         if (loser.user.gang && loser.user.gang == $.player.gang) {
-                            gang = loadGang(db.query(`SELECT * FROM Gangs WHERE name='${$.player.gang}'`)[0], $.player.id)
+                            gang = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name='${$.player.gang}'`)[0], $.player.id)
                             let n = gang.members.indexOf(loser.user.id)
                             if (n == 0) {
                                 n = gang.members.indexOf($.player.id)
                                 gang.members[0] = $.player.id
                                 gang.members[n] = loser.user.id
-                                saveGang(gang)
+                                PC.saveGang(gang)
                                 vt.outln(`You take over as the leader of ${gang.name}.`, -600)
                             }
                             else {
@@ -949,7 +948,7 @@ module Battle {
             //  manage any asset upgrades for PC
             if (winner.user.id && winner.user.id[0] !== '_') {
                 $.player.coward = true
-                saveUser($.online)
+                PC.save($.online)
                 log(winner.user.id, `\nYou killed ${$.player.handle}!`)
                 winner.user.xp += PC.experience($.player.xplevel, 2)
 
@@ -976,7 +975,7 @@ module Battle {
                         vt.out(' ', bracket(ring, false), ' ')
                         vt.sound('click')
                         if (Ring.wear(winner.user.rings, ring))
-                            saveRing(ring, winner.user.id)
+                            PC.saveRing(ring, winner.user.id)
                     })
                     $.player.rings = []
                     vt.outln()
@@ -986,7 +985,7 @@ module Battle {
                 if (winner.user.gang && winner.user.gang == $.player.gang) {
                     PC.adjust('cha', -1, -1, -1)
                     vt.music('punk')
-                    gang = loadGang(db.query(`SELECT * FROM Gangs WHERE name='${$.player.gang}'`)[0], $.player.id)
+                    gang = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name='${$.player.gang}'`)[0], $.player.id)
                     let n = gang.members.indexOf(winner.user.id)
                     if (n == 0) {
                         vt.outln(vt.cyan, winner.who.He, 'says, ', vt.white, '"Let that be a lesson to you punk!"', -800)
@@ -995,11 +994,11 @@ module Battle {
                         PC.adjust('cha', -1, -1, -1)
                         gang.members[0] = winner.user.id
                         gang.members[n] = $.player.id
-                        saveGang(gang)
+                        PC.saveGang(gang)
                         vt.outln(winner.who.He, `takes over as the leader of ${gang.name}.\n`, -600)
                     }
                 }
-                saveUser(winner)
+                PC.save(winner)
                 $.player.coward = false
             }
         }
@@ -1242,7 +1241,7 @@ module Battle {
             if (rpc.user.magic < 2 && !summon && dice(100) < 50 + (spell.cast < 17 ? 2 * spell.cast : 2 * spell.cast - 16)) {
                 rpc.altered = true
                 Magic.remove(rpc.user.spells, spell.cast)
-                if (!(rpc.user.id[0] == '_' || rpc.user.gender == 'I')) saveUser(rpc)
+                if (!(rpc.user.id[0] == '_' || rpc.user.gender == 'I')) PC.save(rpc)
                 vt.outln(p1.His, 'wand smokes as ', p1.he, PC.what(rpc, 'cast'), 'the spell ... ', -33 * spell.cast)
             }
 
@@ -1250,7 +1249,7 @@ module Battle {
             if (rpc.user.magic == 2 && !summon && dice(+Access.name[rpc.user.access].sysop + 5) == 1) {
                 rpc.altered = true
                 Magic.remove(rpc.user.spells, spell.cast)
-                if (!(rpc.user.id[0] == '_' || rpc.user.gender == 'I')) saveUser(rpc)
+                if (!(rpc.user.id[0] == '_' || rpc.user.gender == 'I')) PC.save(rpc)
                 vt.outln(p1.His, 'scroll burns as ', p1.he, PC.what(rpc, 'cast'), 'the spell ... ', -44 * spell.cast)
             }
 
@@ -1498,10 +1497,10 @@ module Battle {
                     else {
                         if (rpc === $.online && !$.player.novice) {
                             let deed = $.mydeeds.find((x) => { return x.deed == 'blast' })
-                            if (!deed) deed = $.mydeeds[$.mydeeds.push(loadDeed($.player.pc, 'blast')[0]) - 1]
+                            if (!deed) deed = $.mydeeds[$.mydeeds.push(Deed.load($.player.pc, 'blast')[0]) - 1]
                             if (deed && br > deed.value) {
                                 deed.value = br
-                                saveDeed(deed, $.player)
+                                Deed.save(deed, $.player)
                                 vt.out(vt.yellow, '+', vt.white)
                             }
                         }
@@ -1555,7 +1554,7 @@ module Battle {
                                 PC.portrait(opponent, 'fadeInUpBig')
                                 vt.out(-200, vt.magenta, vt.bright, 'Now raising ', -300, vt.normal, opponent.user.handle, -400, vt.faint, ' from the dead ... ', -500)
                                 opponent.user.status = ''
-                                saveUser(opponent)
+                                PC.save(opponent)
                                 news(`\tresurrected ${opponent.user.handle}`)
                                 log(opponent.user.id, `\n${$.player.handle} resurrected you`)
                                 vt.outln()
@@ -1605,7 +1604,7 @@ module Battle {
                         else
                             rpc.user.weapon = Weapon.merchant[n]
                         Weapon.equip(rpc, rpc.user.weapon)
-                        saveUser(rpc)
+                        PC.save(rpc)
                         vt.outln(vt.bright, an(rpc.user.weapon.toString()), '!', -900)
                     }
                     else {
@@ -1620,7 +1619,7 @@ module Battle {
                         else
                             nme.user.weapon = Weapon.merchant[n]
                         Weapon.equip(nme, nme.user.weapon)
-                        saveUser(nme)
+                        PC.save(nme)
                         vt.outln(vt.bright, an(nme.user.weapon.toString()), '!', -600)
                     }
                     break
@@ -1691,7 +1690,7 @@ module Battle {
                         PC.activate(rpc)
                         rpc.altered = true
                         rpc.user.gender = ['F', 'M'][dice(2) - 1]
-                        saveUser(rpc)
+                        PC.save(rpc)
                         vt.out(Caster, PC.what(rpc, 'morph'), p1.self, `into a level ${rpc.user.level} ${rpc.user.pc}`)
                         if (rpc.user.gender !== 'I') {
                             news(`\t${rpc.user.handle} morphed into a level ${rpc.user.level} ${rpc.user.pc}!`)
@@ -1705,7 +1704,7 @@ module Battle {
                         nme.user.gender = ['F', 'M'][dice(2) - 1]
                         PC.activate(nme)
                         nme.altered = true
-                        saveUser(nme)
+                        PC.save(nme)
                         vt.out(Caster, PC.what(rpc, 'morph'), recipient, ` into a level ${nme.user.level} ${nme.user.pc}`)
                         if (nme.user.gender !== 'I') {
                             news(`\t${nme.user.handle} got morphed into a level ${nme.user.level} ${nme.user.pc}${rpc !== $.online ? ' by ' + rpc.user.handle : ''}!`)
@@ -1799,10 +1798,10 @@ module Battle {
                     else {
                         if (rpc === $.online && !$.player.novice) {
                             let deed = $.mydeeds.find((x) => { return x.deed == 'big blast' })
-                            if (!deed) deed = $.mydeeds[$.mydeeds.push(loadDeed($.player.pc, 'big blast')[0]) - 1]
+                            if (!deed) deed = $.mydeeds[$.mydeeds.push(Deed.load($.player.pc, 'big blast')[0]) - 1]
                             if (deed && bbr > deed.value) {
                                 deed.value = bbr
-                                saveDeed(deed, $.player)
+                                Deed.save(deed, $.player)
                                 vt.out(vt.yellow, '+', vt.white)
                             }
                         }
@@ -1992,7 +1991,7 @@ module Battle {
                 rpc.user.blessed = ''
                 rpc.user.coward = true
                 rpc.user.cursed = $.player.id
-                saveUser(rpc)
+                PC.save(rpc)
                 news(`\tcursed ${rpc.user.handle} for running away`)
                 log(rpc.user.id, `\n${enemy.user.handle} curses you for running away!\n`)
             }
@@ -2094,10 +2093,10 @@ module Battle {
             if (rpc === $.online) {
                 if (!$.player.novice) {
                     let deed = $.mydeeds.find((x) => { return x.deed == 'melee' })
-                    if (!deed) deed = $.mydeeds[$.mydeeds.push(loadDeed($.player.pc, 'melee')[0]) - 1]
+                    if (!deed) deed = $.mydeeds[$.mydeeds.push(Deed.load($.player.pc, 'melee')[0]) - 1]
                     if (hit > deed.value) {
                         deed.value = hit
-                        saveDeed(deed, $.player)
+                        Deed.save(deed, $.player)
                         vt.out(vt.yellow, '+', vt.white)
                     }
                 }
@@ -2259,10 +2258,10 @@ module Battle {
                     }
                     let rpc: active = { user: { id: vt.entry } }
                     if (/^[A-Z][A-Z23\s]*$/i.test(vt.entry)) {
-                        if (!loadUser(rpc)) {
+                        if (!PC.load(rpc)) {
                             rpc.user.id = ''
                             rpc.user.handle = vt.entry
-                            if (!loadUser(rpc)) {
+                            if (!PC.load(rpc)) {
                                 vt.beep()
                                 vt.out(' ?? ')
                             }

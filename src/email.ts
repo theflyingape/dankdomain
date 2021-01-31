@@ -5,10 +5,9 @@
 
 import $ = require('./runtime')
 import db = require('./db')
-import { saveUser } from './io'
 import { Access } from './items'
-import { dice } from './lib'
-import { fs, vt } from './sys'
+import { vt } from './lib'
+import { dice, fs, pathTo } from './sys'
 
 import nodemailer = require('nodemailer')
 import smtpTransport = require('nodemailer-smtp-transport')
@@ -56,14 +55,14 @@ module Email {
         if (rs.length && rs[0].n > 2) $.player.access = Object.keys(Access.name)[1]
 
         try {
-            let message = JSON.parse(fs.readFileSync('./etc/newuser.json').toString())
+            let message = JSON.parse(fs.readFileSync(pathTo('etc', 'newuser.json')).toString())
             Deliver($.player, 'a secret key for the City Gate', false, message)
         } catch (e) { }
     }
 
     export async function newsletter(player: user) {
         try {
-            let message = JSON.parse(fs.readFileSync('./etc/newsletter.json').toString())
+            let message = JSON.parse(fs.readFileSync(pathTo('etc', 'newsletter.json')).toString())
             await Message(player, message)
         } catch (e) { }
     }
@@ -71,7 +70,7 @@ module Email {
     export async function rejoin(player: user) {
         try {
             echo = false
-            let message = JSON.parse(fs.readFileSync('./etc/rejoin.json').toString())
+            let message = JSON.parse(fs.readFileSync(pathTo('etc', 'rejoin.json')).toString())
             await Message(player, message)
         } catch (e) { }
     }
@@ -85,7 +84,7 @@ module Email {
                 vt.hangup()
             }
             try {
-                let message = JSON.parse(fs.readFileSync('./etc/resend.json').toString())
+                let message = JSON.parse(fs.readFileSync(pathTo('etc', 'resend.json')).toString())
                 Deliver($.player, 'your key for the City Gate', true, message)
             } catch (e) { }
         }
@@ -102,29 +101,30 @@ module Email {
             await Message(player, mailOptions)
         else {
             vt.outln(' ...skipping delivery... \nCheck SQLite3 table for relevant information:')
-            vt.outln(`$ sqlite3 ./users/dankdomain.sql`)
+            vt.outln(`$ sqlite3 ${db.DD}`)
             vt.outln(`SELECT id,handle,access,password FROM Players WHERE id='${player.id}';`)
             vt.outln(`...or its exported save file:`)
-            vt.out(`$ grep password ./users/.${player.id}.json`)
-            if ($.reason.length)
-                saveUser(player, true)
+            vt.outln('$ grep password ', pathTo('users', `.${player.id}.json`))
+            if ($.from == 'newuser') {
+                db.saveUser(player, true)
+                $.reason = 'new user registration'
+            }
         }
-        vt.music('.')
         vt.outln(-1000)
         vt.hangup()
     }
 
     async function Message(player: user, mailOptions: nodemailer.SendMailOptions) {
-
+        const smtpConfig = pathTo('etc', 'smtp.json')
         let smtpOptions: smtpTransport.SmtpOptions
-        try { smtpOptions = require('./etc/smtp.json') }
+        try { smtpOptions = require(smtpConfig) }
         catch (err) {
             if (echo) {
-                vt.outln(vt.red, vt.bright, './etc/smtp.json not configured for sending email')
+                vt.outln(vt.red, vt.bright, `${smtpConfig} not configured for sending email`)
                 player.password = 'local'
-                saveUser(player, true)
+                db.saveUser(player, true)
                 vt.outln('\nYour user ID (', vt.bright, player.id, vt.normal, ') was saved, ', Access.name[player.access][player.gender], '.')
-                vt.outln('Your local password assigned: ', vt.bright, player.password)
+                vt.outln('Your password: "', vt.bright, player.password, vt.normal, '"')
             }
             return
         }
@@ -146,7 +146,7 @@ module Email {
                     vt.outln('📬')
                     vt.outln(msg.response)
                     if ($.reason.length) {
-                        saveUser(player, true)
+                        db.saveUser(player, true)
                         vt.outln('\nYour user ID (', vt.bright, player.id, vt.normal, ') was saved, ', Access.name[player.access][player.gender], '.')
                         vt.sound('yahoo')
                     }

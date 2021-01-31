@@ -4,11 +4,10 @@
 \*****************************************************************************/
 
 import $ = require('../runtime')
-import { saveUser } from '../io'
 import { RealEstate, Security } from '../items'
-import { dice, int } from '../lib'
-import { Coin } from '../pc'
-import { bracket, display, money, sprintf, tradein, vt, whole } from '../sys'
+import { bracket, Coin, display, tradein, vt } from '../lib'
+import { PC } from '../pc'
+import { dice, int, money, sprintf, whole } from '../sys'
 
 module Gambling {
 
@@ -91,7 +90,7 @@ module Gambling {
     ]
 
     export function menu(suppress = true) {
-        if ($.online.altered) saveUser($.online)
+        if ($.online.altered) PC.save($.online)
         if ($.reason) vt.hangup()
 
         vt.action('casino')
@@ -111,7 +110,7 @@ module Gambling {
     function choice() {
         if ((game = vt.entry.toUpperCase()) == 'Q') {
             vt.outln()
-            require('./main').menu($.player.expert)
+            require('./menu').menu($.player.expert)
             return
         }
 

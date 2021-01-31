@@ -4,15 +4,13 @@
 \*****************************************************************************/
 
 import $ = require('../runtime')
-import db = require('../db')
-import { loadUser, saveRing, saveUser } from '../io'
-import { Access, Armor, Magic, Poison, Ring, Weapon } from '../items'
-import { dice, int } from '../lib'
-import { Coin, PC } from '../pc'
-import { checkXP } from '../player'
-import { bracket, cat, display, getRing, log, money, news, romanize, sprintf, tradein, vt } from '../sys'
-
 import Battle = require('../battle')
+import db = require('../db')
+import { Access, Armor, Magic, Poison, Ring, Weapon } from '../items'
+import { checkXP } from '../player'
+import { bracket, cat, Coin, display, getRing, log, news, tradein, vt } from '../lib'
+import { PC } from '../pc'
+import { sprintf, dice, money, romanize, int } from '../sys'
 
 module Arena {
 
@@ -30,7 +28,7 @@ module Arena {
     export function menu(suppress = true) {
         $.from = 'Arena'
         if (checkXP($.online, menu)) return
-        if ($.online.altered) saveUser($.online)
+        if ($.online.altered) PC.save($.online)
         if ($.reason) vt.hangup()
 
         vt.action('arena')
@@ -201,7 +199,7 @@ module Arena {
                                                 let ring = Ring.power([], null, 'joust')
                                                 if (Ring.wear($.player.rings, ring.name)) {
                                                     getRing('win', ring.name)
-                                                    saveRing(ring.name, $.player.id, $.player.rings)
+                                                    PC.saveRing(ring.name, $.player.id, $.player.rings)
                                                 }
                                             }
                                             menu()
@@ -295,7 +293,7 @@ module Arena {
                 return
 
             case 'Q':
-                require('./main').menu($.player.expert)
+                require('./menu').menu($.player.expert)
                 return
 
             case 'U':
@@ -327,7 +325,7 @@ module Arena {
                     if (opponent.user.status.length) {
                         vt.out('was defeated by ')
                         let rpc: active = { user: { id: opponent.user.status } }
-                        if (loadUser(rpc))
+                        if (PC.load(rpc))
                             vt.out(rpc.user.handle, vt.cyan, ' (', vt.bright, vt.white, opponent.user.xplevel.toString(), vt.normal, vt.cyan, ')')
                         else
                             vt.out(opponent.user.status)
