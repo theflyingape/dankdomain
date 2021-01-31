@@ -1,12 +1,12 @@
 {
-    "id": "",
-    "handle": "summoned demon",
-    "sex": "I",
-    "access": "Inactive",
-    "password": "\n",
-  	"expires": 0,
-    "pc": "Demon",
-    "level": 50,
-    "poisons": [ 6, 7, 8, 9, 10 ],
-    "spells": [ "Heal", "Blast" ]
+  "id": "",
+  "handle": "summoned demon",
+  "sex": "I",
+  "access": "Inactive",
+  "password": null,
+  "expires": 0,
+  "pc": "Demon",
+  "level": 50,
+  "poisons": [ 6, 7, 8, 9, 10 ],
+  "spells": [ "Heal", "Blast" ]
 }

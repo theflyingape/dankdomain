@@ -8,7 +8,7 @@ import db = require('./db')
 import { Access, Coin } from './items'
 import { beep, bracket, cat, news, time, vt, weapon, whole } from './lib'
 import { Deed, PC } from './pc'
-import { an, dice, sprintf, now, pathTo, fs, int, date2full } from './sys'
+import { an, date2full, dice, fs, int, now, pathTo, sprintf } from './sys'
 
 module player {
 

@@ -4,10 +4,17 @@
 \*****************************************************************************/
 
 import Database = require('better-sqlite3')
-import { now, pathTo } from './sys'
+import { fs, now, path, pathTo, USERS } from './sys'
 import { Coin, Ring } from './items'
 
 module db {
+
+    export const NPC = require(pathTo('etc', 'npc.json'))
+    let defaults = require(path.resolve(USERS, 'defaults.json'))
+    defaults.bounty = new Coin(defaults.bounty)
+    defaults.coin = new Coin(defaults.coin)
+    defaults.bank = new Coin(defaults.bank)
+    defaults.loan = new Coin(defaults.loan)
 
     export const DD = pathTo('users', 'dankdomain.sql')
     let sqlite3: Database.Database
@@ -28,16 +35,6 @@ module db {
         )`)
     }
 
-    rs = query(`SELECT * FROM sqlite_master WHERE name='Gangs' AND type='table'`)
-    if (!rs.length) {
-        console.info('initializing Gangs')
-        run(`CREATE TABLE IF NOT EXISTS Gangs (
-            name text PRIMARY KEY, members text, win numeric, loss numeric, banner numeric, color numeric
-        )`)
-        run(`INSERT INTO Gangs VALUES ( 'AB Original', 'IMA,NOB,_DM,_WOW', 0, 0, 86, 99 )`)
-        run(`INSERT INTO Gangs VALUES ( 'Monster Mash', '_MM1,_MM2,_MM3,_MM4', 0, 0, 0, 0 )`)
-    }
-
     rs = query(`SELECT * FROM sqlite_master WHERE name='Online' AND type='table'`)
     if (!rs.length) {
         console.info('initializing Online')
@@ -48,8 +45,11 @@ module db {
     if (!rs.length) {
         console.info('initializing Rings (unique)')
         run(`CREATE TABLE IF NOT EXISTS Rings (name text PRIMARY KEY, bearer text)`)
-        for (let i in Ring.unique)
-            run(`INSERT INTO Rings (name,bearer) VALUES (?,'')`, true, Ring.name[Ring.unique[i]])
+        for (let i in Ring.unique) {
+            let ring = Ring.unique[i]
+            console.info(' + adding', Ring.name[ring].emoji, ring)
+            run(`INSERT INTO Rings (name,bearer) VALUES (?,'')`, true, ring)
+        }
     }
 
     rs = query(`SELECT * FROM sqlite_master WHERE name='Players' AND type='table'`)
@@ -71,6 +71,27 @@ module db {
             hull numeric, cannon numeric, ram integer, wins numeric, immortal numeric,
           	plays numeric, jl numeric, jw numeric, killed numeric, kills numeric,
             retreats numeric, steals numeric, tl numeric, tw numeric)`)
+
+        Object.keys(NPC).forEach((id) => {
+            try {
+                let npc: user = JSON.parse(fs.readFileSync(pathTo('users', `${NPC[id]}.json`)).toString())
+                if (npc) {
+                    console.info(' + adding', NPC[id], '-', npc.handle)
+                    saveUser(newUser(npc), true)
+                }
+            }
+            catch (err) { console.error(err) }
+        })
+    }
+
+    rs = query(`SELECT * FROM sqlite_master WHERE name='Gangs' AND type='table'`)
+    if (!rs.length) {
+        console.info('initializing Gangs')
+        run(`CREATE TABLE IF NOT EXISTS Gangs (
+            name text PRIMARY KEY, members text, win numeric, loss numeric, banner numeric, color numeric
+        )`)
+        run(`INSERT INTO Gangs VALUES ( 'AB Original', 'IMA,NOB,_DM,_WOW', 0, 0, 86, 99 )`)
+        run(`INSERT INTO Gangs VALUES ( 'Monster Mash', '_MM1,_MM2,_MM3,_MM4', 0, 0, 0, 0 )`)
     }
 
     export function loadUser(user: user): boolean {
@@ -140,6 +161,16 @@ module db {
             }
             return false
         }
+    }
+
+    //  normalize a new user object
+    export function newUser(user: user = { id: '' }): user {
+        let result = Object.assign({}, defaults)
+        if (typeof user.bounty == 'string') user.bounty = new Coin(user.bounty)
+        if (typeof user.coin == 'string') user.coin = new Coin(user.coin)
+        if (typeof user.bank == 'string') user.bank = new Coin(user.bank)
+        if (typeof user.loan == 'string') user.loan = new Coin(user.loan)
+        return Object.assign(result, user)
     }
 
     export function unlock(id: string, mine = false): number {

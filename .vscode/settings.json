@@ -1,36 +1,99 @@
 {
-    "editor.cursorBlinking": "smooth",
-    "editor.cursorSmoothCaretAnimation": true,
-    "editor.cursorStyle": "block",
-    "editor.fontFamily": "'Noto Sans Mono','Noto Color Emoji','Lucida Console',Consolas,monospace",
-    "editor.formatOnPaste": true,
-    "editor.formatOnSave": true,
-    "editor.minimap.enabled": false,
-    "editor.tabSize": 4,
-    "editor.wordWrap": "on",
-    "explorer.confirmDelete": false,
-    "files.exclude": {
-        "**/.DS_Store": true,
-        "**/.git": true,
-        "**/*.js": {
-            "when": "$(basename).ts"
-        },
-        "node_modules/": true
+  "editor.cursorBlinking": "smooth",
+  "editor.cursorSmoothCaretAnimation": true,
+  "editor.cursorStyle": "block",
+  "editor.fontFamily": "'Noto Sans Mono','Noto Color Emoji','Lucida Console',Consolas,monospace",
+  "editor.formatOnPaste": true,
+  "editor.formatOnSave": true,
+  "editor.minimap.enabled": false,
+  "editor.tabSize": 4,
+  "editor.wordWrap": "on",
+  "explorer.confirmDelete": false,
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "**/.git": true,
+    "**/*.js": {
+      "when": "$(basename).ts"
     },
-    "git.confirmSync": false,
-    "git.enableSmartCommit": true,
-    "git.autofetch": true,
-    "markdown.extension.preview.autoShowPreviewToSide": true,
-    "typescript.tsdk": "node_modules/typescript/lib",
-    "terminal.integrated.fontFamily": "'Noto Sans Mono','Noto Color Emoji','Lucida Console',Consolas,monospace",
-    "terminal.integrated.fontWeight": "400",
-    "terminal.integrated.fontWeightBold": "500",
-    "terminal.integrated.experimentalUseTitleEvent": true,
-    "terminal.integrated.experimentalLinkProvider": true,
-    "terminal.integrated.enableBell": true,
-    "terminal.integrated.cursorBlinking": true,
-    "terminal.integrated.cursorStyle": "block",
-    "terminal.integrated.copyOnSelection": true,
-    "window.titleSeparator": " :: ",
-    "workbench.colorTheme": "Default Light+"
+    "node_modules/": true
+  },
+  "git.autofetch": true,
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "markdown.extension.preview.autoShowPreviewToSide": true,
+  "terminal.integrated.copyOnSelection": true,
+  "terminal.integrated.cursorBlinking": true,
+  "terminal.integrated.cursorStyle": "block",
+  "terminal.integrated.enableBell": true,
+  "terminal.integrated.enableFileLinks": false,
+  "terminal.integrated.experimentalLinkProvider": true,
+  "terminal.integrated.experimentalUseTitleEvent": true,
+  "terminal.integrated.fontFamily": "'Noto Sans Mono','Noto Color Emoji','Lucida Console',Consolas,monospace",
+  "terminal.integrated.fontWeight": "400",
+  "terminal.integrated.fontWeightBold": "500",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "window.titleSeparator": " :: ",
+  "workbench.colorTheme": "Default Light+",
+  "workbench.editor.enablePreview": false,
+  "workbench.iconTheme": "vscode-icons",
+  "[json]": {
+    "editor.defaultFormatter": null,
+    "editor.formatOnSave": false,
+    "editor.formatOnSaveMode": "file",
+    "editor.suggest.insertMode": "replace",
+    "editor.tabSize": 2,
+    "editor.quickSuggestions": {
+      "strings": true
+    },
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true
+  },
+  "better-comments.multilineComments": true,
+  "better-comments.tags": [
+    {
+      "tag": "!",
+      "color": "#FF2D00",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "?",
+      "color": "#3498DB",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "//",
+      "color": "#474747",
+      "strikethrough": true,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "todo",
+      "color": "#FF8C00",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    },
+    {
+      "tag": "*",
+      "color": "#98C379",
+      "strikethrough": false,
+      "underline": false,
+      "backgroundColor": "transparent",
+      "bold": false,
+      "italic": false
+    }
+  ]
 }

@@ -118,12 +118,10 @@ module Items {
     export class Coin implements coin {
 
         constructor(money: string | number) {
-            if (typeof money == 'number') {
-                this.value = money
-            }
-            else {
+            if (typeof money == 'string')
                 this.amount = money
-            }
+            else
+                this.value = money
         }
 
         _pouch(coins: number): string {
@@ -137,6 +135,7 @@ module Items {
         }
 
         set value(newValue: number) {
+
             const MAX = (1e+18 - 1e+09)
             this._value = newValue < MAX ? newValue
                 : newValue == Infinity ? 1 : MAX
@@ -362,7 +361,7 @@ module Items {
     }
 
     class _ring {
-        name: ring[]
+        name: ring
         common: string[] = []
         unique: string[] = []
         theOne: string

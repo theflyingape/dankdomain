@@ -18,8 +18,9 @@ module pc {
         name: deeds[]
 
         constructor() {
-            this.name = require(`${ITEMS}/deed.json`)
+            this.name = require(pathTo(ITEMS, 'deed.json'))
         }
+
         //  coveted
         get key(): {} {
             const oldkey = '🗝️ '
@@ -283,13 +284,11 @@ module pc {
                 user.loan = new Coin(user.loan.value)
                 user.bounty = new Coin(user.bounty.value)
 
-                //  restore NPC to static state
+                //  restore NPC to its static state
                 if (user.id[0] == '_' && user.id !== "_SYS") {
-                    let npc = <user>{ id: user.id }
                     try {
-                        const js = JSON.parse(fs.readFileSync(`${pathTo('users', { "_BAR": "barkeep", "_DM": "merchant", "_NEP": "neptune", "_OLD": "seahag", "_TAX": "taxman", "_WOW": "witch" }[npc.id] + '.json')}`).toString())
-                        if (js) {
-                            Object.assign(npc, js)
+                        const npc: user = JSON.parse(fs.readFileSync(pathTo(`${USERS}/${db.NPC[user.id]}.json`)).toString())
+                        if (npc) {
                             Object.assign(user, npc)
                             this.reroll(user, user.pc, user.level)
                             Object.assign(user, npc)

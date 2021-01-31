@@ -70,6 +70,7 @@ else
 
 function logon() {
 
+    let prompt = 'Who dares to enter my dank domain'
     //  mode of operation
     switch (vt.emulation) {
         case 'PC':
@@ -78,6 +79,7 @@ function logon() {
         case 'XT':
             vt.tty = 'web'
             vt.title(process.title)
+            prompt = 'Ⱳꞕo ɗaɽeȿ ʈo eƞʈeɽ ɱy ɗaɳƙ ɗoɱaiɳ'
             break
         default:
             vt.emulation = 'VT'
@@ -87,5 +89,5 @@ function logon() {
     if (bot)
         require('./logon').startup(bot)
     else
-        require('./logon').user()
+        require('./logon').user(prompt)
 }

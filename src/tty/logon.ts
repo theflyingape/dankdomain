@@ -15,12 +15,12 @@ module Logon {
 
     init()
 
-    export function user() {
+    export function user(prompt: string) {
         cat('logon')
         let retry = 3
 
         vt.form = {
-            0: { cb: who, prompt: vt.attr('Who dares to enter my dank domain ', bracket('or NEW', false), '? '), max: 22, timeout: 40 },
+            0: { cb: who, prompt: `${prompt} ${bracket('or NEW', false)}? `, max: 22, timeout: 40 },
             'password': { cb: password, echo: false, max: 26, timeout: 20 },
         }
 
@@ -551,132 +551,6 @@ module Logon {
     }
 
     function init() {
-        //  customize the Dank Domain waiting for its ruler (1st player to register)
-        let npc = <user>{}
-        let player = <user>{}
-        Object.assign(npc, JSON.parse(fs.readFileSync(`${USERS}/sysop.json`).toString()))
-        let rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
-        if (!rs.length) {
-            process.stdout.write(`[${npc.handle}] `)
-            Object.assign(player, npc)
-            PC.newkeys(player)
-            PC.reroll(player, player.pc, player.level)
-            player.level = npc.level
-            player.xplevel = 0
-            PC.save(player, true)
-            npc = <user>{}
-            player = <user>{}
-        }
-
-        //  customize the Master of Whisperers NPC
-        Object.assign(npc, JSON.parse(fs.readFileSync(`${USERS}/barkeep.json`).toString()))
-        rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
-        if (!rs.length) {
-            process.stdout.write(`[${npc.handle}] `)
-            Object.assign(player, npc)
-            PC.newkeys(player)
-            PC.reroll(player, player.pc, player.level)
-            Object.assign(player, npc)
-            PC.save(player, true)
-            npc = <user>{}
-            player = <user>{}
-        }
-
-        //  customize the Master at Arms NPC
-        Object.assign(npc, JSON.parse(fs.readFileSync(`${USERS}/merchant.json`).toString()))
-        rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
-        if (!rs.length) {
-            process.stdout.write(`[${npc.handle}] `)
-            Object.assign(player, npc)
-            PC.newkeys(player)
-            PC.reroll(player, player.pc, player.level)
-            Object.assign(player, npc)
-            PC.save(player, true)
-            npc = <user>{}
-            player = <user>{}
-        }
-
-        //  customize the Big Kahuna NPC
-        Object.assign(npc, JSON.parse(fs.readFileSync(`${USERS}/neptune.json`).toString()))
-        rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
-        if (!rs.length) {
-            process.stdout.write(`[${npc.handle}] `)
-            Object.assign(player, npc)
-            PC.newkeys(player)
-            PC.reroll(player, player.pc, player.level)
-            Object.assign(player, npc)
-            PC.save(player, true)
-            npc = <user>{}
-            player = <user>{}
-        }
-
-        //  customize the Queen B NPC
-        Object.assign(npc, JSON.parse(fs.readFileSync(`${USERS}/seahag.json`).toString()))
-        rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
-        if (!rs.length) {
-            process.stdout.write(`[${npc.handle}] `)
-            Object.assign(player, npc)
-            PC.newkeys(player)
-            PC.reroll(player, player.pc, player.level)
-            Object.assign(player, npc)
-            PC.save(player, true)
-            npc = <user>{}
-            player = <user>{}
-        }
-
-        //  customize the Master of Coin NPC
-        npc = <user>{}
-        Object.assign(npc, JSON.parse(fs.readFileSync(`${USERS}/taxman.json`).toString()))
-        rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
-        if (!rs.length) {
-            process.stdout.write(`[${npc.handle}] `)
-            Object.assign(player, npc)
-            PC.newkeys(player)
-            PC.reroll(player, player.pc, player.level)
-            Object.assign(player, npc)
-            PC.save(player, true)
-            npc = <user>{}
-            player = <user>{}
-        }
-
-        //  customize the wicked witch
-        Object.assign(npc, JSON.parse(fs.readFileSync(`${USERS}/witch.json`).toString()))
-        rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
-        if (!rs.length) {
-            process.stdout.write(`[${npc.handle}] `)
-            Object.assign(player, npc)
-            PC.newkeys(player)
-            PC.reroll(player, player.pc, player.level)
-            Object.assign(player, npc)
-            PC.save(player, true)
-            npc = <user>{}
-            player = <user>{}
-        }
-
-        //  instantiate bot(s)
-        let i = 0
-        while (++i) {
-            npc = <user>{}
-            player = <user>{}
-            try {
-                Object.assign(npc, JSON.parse(fs.readFileSync(`${USERS}/bot${i}.json`).toString()))
-                rs = db.query(`SELECT id FROM Players WHERE id='${npc.id}'`)
-                if (!rs.length) {
-                    process.stdout.write(`\r\nbot #${i} - ${npc.handle}`)
-                    Object.assign(player, npc)
-                    PC.newkeys(player)
-                    PC.reroll(player, player.pc, player.level)
-                    Object.assign(player, npc)
-                    PC.save(player, true)
-                }
-            }
-            catch (err) {
-                break
-            }
-        }
-        //  fini
-        process.stdout.write('\r')
-
         PC.load($.sysop)
         if ($.sysop.lastdate != now().date) {
             newDay()

@@ -4,13 +4,8 @@
 	"description": "Ɗanƙ Ɗomaiƞ: the return of Hack & Slash",
 	"main": "tty/main",
 	"publisher": "theflyingape",
-	"os": [
-		"cros",
-		"linux"
-	],
-	"engines": {
-		"node": ">=14.15"
-	},
+	"os": [ "cros", "linux" ],
+	"engines": { "node": ">=14.15" },
 	"scripts": {
 		"build": "./build.sh",
 		"bundle": "./watchify build/door/client.js -v -o build/door/static/bundle.js",
@@ -25,6 +20,7 @@
 		"type": "git",
 		"url": "git+https://github.com/theflyingape/dankdomain.git"
 	},
+	"homepage": "https://www.ddgame.us",
 	"keywords": [
 		"bbs",
 		"dungeon",
@@ -34,19 +30,14 @@
 		"web",
 		"xterm"
 	],
-	"author": "Robert Hurst",
-	"contributors": [
-		{
-			"name": "Ronald Hurst",
-			"email": "ronhurst39@gmail.com",
-			"url": "https://robert.hurst-ri.us/ronald"
-		}
-	],
 	"license": "MIT",
+	"author": "Robert Hurst",
 	"bugs": {
 		"url": "https://github.com/theflyingape/dankdomain/issues"
 	},
-	"homepage": "https://www.ddgame.us",
+	"contributors": [
+		{ "name": "Ronald Hurst", "email": "ronhurst39@gmail.com", "url": "https://robert.hurst-ri.us/ronald" }
+	],
 	"dependencies": {
 		"@theflyingape/xvt": "^1.4.1",
 		"animate.css": "^4.1.1",
@@ -80,7 +71,7 @@
 		"@types/sprintf-js": "^1.1.2",
 		"@types/ws": "^7.4.0",
 		"browserify": "^17.0.0",
-		"eslint": "^7.18.0",
+		"eslint": "^7.19.0",
 		"typescript": "^4.1.3",
 		"watchify": "^4.0.0"
 	},

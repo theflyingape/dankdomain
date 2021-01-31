@@ -5,7 +5,7 @@
 	"sex": "I",
 	"access": "Inactive",
 	"email": "sysop@ddgame.us",
-	"password": "\n",
+	"password": null,
  	"expires": 100,
 	"pc": "Fighter",
 	"level": 100,
