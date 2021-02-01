@@ -1953,7 +1953,7 @@ module Dungeon {
 
     function doSpoils() {
         if ($.reason) {
-            $.reason = `failed to escape ${romanize(deep + 1)}.${Z + 1} - ${$.reason}`
+            $.reason = `${$.reason} on level ${romanize(deep + 1)}.${Z + 1}`
             DL.map = `Marauder's map`
             scroll()
             vt.hangup()

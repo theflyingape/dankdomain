@@ -56,7 +56,7 @@ module db {
     if (!rs.length) {
         console.info('initializing Players')
         run(`CREATE TABLE IF NOT EXISTS Players (
-            id text PRIMARY KEY, handle text UNIQUE NOT NULL, name text NOT NULL, email text, password text NOT NULL,
+            id text PRIMARY KEY, handle text UNIQUE NOT NULL, name text NOT NULL, email text, password text,
             dob numeric NOT NULL, sex text NOT NULL, joined numeric, expires numeric, lastdate numeric,
             lasttime numeric, calls numeric, today numeric, expert integer, emulation text NOT NULL,
             rows numeric, access text NOT NULL, remote text, pc text, gender text,
@@ -225,7 +225,7 @@ module db {
             , plays, jl, jw, killed, kills
             , retreats, steals, tl, tw
             ) VALUES
-            ('${user.id}', '${user.handle}', '${user.name}', '${user.email}', '${user.password}'
+            ('${user.id}', '${user.handle}', '${user.name}', '${user.email}', ?
             , ${user.dob}, '${user.sex}', ${user.joined}, ${user.expires}, ${user.lastdate}
             , ${user.lasttime}, ${user.calls}, ${user.today}, ${+user.expert}, '${user.emulation}'
             , ${user.rows}, '${user.access}', '${user.remote}', '${user.pc}', '${user.gender}'
@@ -242,7 +242,7 @@ module db {
             , ${user.retreats}, ${user.steals}, ${user.tl}, ${user.tw}
             )`
             : `UPDATE Players SET
-            handle='${user.handle}', name='${user.name}', email='${user.email}', password='${user.password}',
+            handle='${user.handle}', name='${user.name}', email='${user.email}', password=?,
             dob=${user.dob}, sex='${user.sex}', joined=${user.joined}, expires=${user.expires}, lastdate=${user.lastdate},
             lasttime=${user.lasttime}, calls=${user.calls}, today=${user.today}, expert=${+user.expert}, emulation='${user.emulation}',
             rows=${user.rows}, access='${user.access}', remote='${user.remote}', pc='${user.pc}', gender='${user.gender}',
@@ -259,7 +259,7 @@ module db {
             retreats=${user.retreats}, steals=${user.steals}, tl=${user.tl}, tw=${user.tw}
             WHERE id='${user.id}'`
 
-        run(sql, false, user.rings.toString())
+        run(sql, false, user.password, user.rings.toString())
     }
 }
 

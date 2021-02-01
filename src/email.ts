@@ -7,7 +7,8 @@ import $ = require('./runtime')
 import db = require('./db')
 import { Access } from './items'
 import { vt } from './lib'
-import { dice, fs, pathTo } from './sys'
+import { PC } from './pc'
+import { date2str, dice, fs, pathTo } from './sys'
 
 import nodemailer = require('nodemailer')
 import smtpTransport = require('nodemailer-smtp-transport')
@@ -18,8 +19,8 @@ module Email {
 
     vt.action('freetext')
     vt.form = {
-        'email': { cb: email, prompt: 'Enter your e-mail address now: ', min: 8 },
-        'check': { cb: check, prompt: 'Re-enter email to verify: ' }
+        'email': { cb: email, prompt: vt.attr(vt.cyan, 'Enter your email address: '), min: 8 },
+        'check': { cb: check, prompt: vt.attr(vt.blue, vt.bright, 'Re-enter email to verify: ') }
     }
 
     export function newuser() {
@@ -30,12 +31,13 @@ module Email {
 
     function email() {
         $.player.email = vt.entry.toLowerCase()
-        /*
+        /**
+         * todo: validate email pattern
         if (!isEmail($.player.email)) {
             vt.refocus()
             return
         }
-        */
+         */
         vt.form['check'].max = $.player.email.length
         vt.focus = 'check'
     }
@@ -49,7 +51,7 @@ module Email {
             return
         }
 
-        $.player.password = String.fromCharCode(64 + dice(26)) + String.fromCharCode(96 + dice(26)) + dice(999) + '!@#$%^&*'[dice(8) - 1]
+        $.player.password = $.player.name.split(' ')[0][0].toLowerCase() + $.player.name.split(' ')[1][0].toLowerCase() + date2str($.player.dob).substr(2, 2) + '!@#$%^&*'[dice(8) - 1]
 
         let rs = db.query(`SELECT COUNT(email) AS n FROM Players WHERE email='${$.player.email}' GROUP BY email`)
         if (rs.length && rs[0].n > 2) $.player.access = Object.keys(Access.name)[1]
@@ -106,7 +108,7 @@ module Email {
             vt.outln(`...or its exported save file:`)
             vt.outln('$ grep password ', pathTo('users', `.${player.id}.json`))
             if ($.from == 'newuser') {
-                db.saveUser(player, true)
+                PC.save(player, true)
                 $.reason = 'new user registration'
             }
         }
@@ -138,12 +140,12 @@ module Email {
 
         await smtp.verify().then(async () => {
             if (echo) {
-                vt.out('→ 📨 ')
+                if (vt.emulation == 'XT') vt.out('→ 📨 ')
                 vt.sound('click')
             }
             await smtp.sendMail(mailOptions).then((msg) => {
                 if (echo) {
-                    vt.outln('📬')
+                    if (vt.emulation == 'XT') vt.outln('📬')
                     vt.outln(msg.response)
                     if ($.reason.length) {
                         db.saveUser(player, true)
@@ -154,7 +156,7 @@ module Email {
                 result = true
             }).catch((err) => {
                 if (echo) {
-                    vt.outln('💣')
+                    if (vt.emulation == 'XT') vt.outln('💣')
                     vt.outln(err.response)
                     player.id = ''
                     player.email = ''

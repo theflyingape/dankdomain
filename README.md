@@ -74,7 +74,8 @@ files/            game, menu & player support files: ANSI and/or text formats
 ../arena          ASCII art & menu files
 ../casino         menu files
 ../dungeon        ASCII art
-../main           about system & menu files
+../main           game app - startup entry point
+../menu           about system & menu files
 ../naval          ASCII art & menu files
 ../party          instruction & menu files
 ../player         ASCII art
@@ -91,7 +92,6 @@ common.js         global support module for game
 email.js          support module for dispatching email notifications
 items.js          support module for loading artifacts
 telnet.js         telnet client - via web services
-ttymain.js        game app - startup entry point
 door-startup.sh   web services - systemctl startup script
 logins.sh         player - startup script into game app
 mame.sh           player - MAME VT240 terminal + solcat startup script
