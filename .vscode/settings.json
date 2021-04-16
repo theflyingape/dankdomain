@@ -1,14 +1,4 @@
 {
-  "editor.cursorBlinking": "smooth",
-  "editor.cursorSmoothCaretAnimation": true,
-  "editor.cursorStyle": "block",
-  "editor.fontFamily": "'Noto Sans Mono','Noto Color Emoji','Lucida Console',Consolas,monospace",
-  "editor.formatOnPaste": true,
-  "editor.formatOnSave": true,
-  "editor.minimap.enabled": false,
-  "editor.tabSize": 4,
-  "editor.wordWrap": "on",
-  "explorer.confirmDelete": false,
   "files.exclude": {
     "**/.DS_Store": true,
     "**/.git": true,
@@ -17,25 +7,30 @@
     },
     "node_modules/": true
   },
-  "git.autofetch": true,
-  "git.confirmSync": false,
-  "git.enableSmartCommit": true,
-  "markdown.extension.preview.autoShowPreviewToSide": true,
-  "terminal.integrated.copyOnSelection": true,
-  "terminal.integrated.cursorBlinking": true,
-  "terminal.integrated.cursorStyle": "block",
-  "terminal.integrated.enableBell": true,
-  "terminal.integrated.enableFileLinks": false,
-  "terminal.integrated.experimentalLinkProvider": true,
-  "terminal.integrated.experimentalUseTitleEvent": true,
-  "terminal.integrated.fontFamily": "'Noto Sans Mono','Noto Color Emoji','Lucida Console',Consolas,monospace",
-  "terminal.integrated.fontWeight": "400",
-  "terminal.integrated.fontWeightBold": "500",
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "workbench.colorCustomizations": {
+    "terminal.background": "#000000",
+    "terminal.foreground": "#C0C0C0",
+    "terminal.ansiBlack": "#000000",
+    "terminal.ansiRed": "#8B0000",
+    "terminal.ansiGreen": "#228B22",
+    "terminal.ansiYellow": "#F4A460",
+    "terminal.ansiBlue": "#0000CD",
+    "terminal.ansiMagenta": "#BA55D3",
+    "terminal.ansiCyan": "#008B8B",
+    "terminal.ansiWhite": "#C0C0C0",
+    "terminal.ansiBrightBlack": "#696969",
+    "terminal.ansiBrightRed": "#FF0000",
+    "terminal.ansiBrightGreen": "#90EE90",
+    "terminal.ansiBrightYellow": "#FFD700",
+    "terminal.ansiBrightBlue": "#4169E1",
+    "terminal.ansiBrightMagenta": "#EE82EE",
+    "terminal.ansiBrightCyan": "#00FFFF",
+    "terminal.ansiBrightWhite": "#FFFAFA",
+    "terminalCursor.foreground": "#B0E0E6"
+  },
   "typescript.tsdk": "node_modules/typescript/lib",
-  "window.titleSeparator": " :: ",
-  "workbench.colorTheme": "Default Light+",
-  "workbench.editor.enablePreview": false,
-  "workbench.iconTheme": "vscode-icons",
   "[json]": {
     "editor.defaultFormatter": null,
     "editor.formatOnSave": false,
@@ -44,8 +39,6 @@
     "editor.tabSize": 2,
     "editor.quickSuggestions": {
       "strings": true
-    },
-    "files.insertFinalNewline": true,
-    "files.trimTrailingWhitespace": true
+    }
   }
 }

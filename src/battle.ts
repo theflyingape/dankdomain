@@ -48,7 +48,7 @@ module Battle {
             if ($.online.hp < 1) {
                 $.player.coin.value = 0
                 death($.reason || `refused ${$.dwarf.user.handle}`)
-                vt.outln('  ', vt.bright, vt.yellow, '"Next time bring friends."')
+                vt.outln('  ', vt.yellow, vt.bright, `"Next time bring friends."`)
                 vt.sound('punk', 8)
             }
             else {
@@ -96,7 +96,7 @@ module Battle {
                 //  go crazy!
                 vt.sound('winner', 32)
                 $.player.coin.value = 0
-                vt.outln('\n  ', vt.bright, vt.green, '"Drinks are on the house!"', -2250)
+                vt.outln('\n  ', vt.green, vt.bright, `"Drinks are on the house!"`, -2250)
             }
             else {
                 vt.music('barkeep')
@@ -132,7 +132,7 @@ module Battle {
                 }
                 vt.beep()
                 death($.reason || 'tax evasion')
-                vt.outln('  ', vt.blue, vt.bright, '"Thanks for the taxes!"')
+                vt.outln('  ', vt.blue, vt.bright, `"Thanks for the taxes!"`)
                 vt.sound('thief2', 16)
             }
             else {
@@ -148,7 +148,7 @@ module Battle {
             if ($.online.hp < 1) {
                 $.player.coin.value = 0
                 death($.reason || `refused ${$.witch.user.handle}`)
-                vt.outln('  ', vt.bright, vt.green, '"Hell hath no fury like a woman scorned."')
+                vt.outln('  ', vt.green, vt.bright, `"Hell hath no fury like a woman scorned."`)
                 vt.sound('crone', 30)
             }
             else {
