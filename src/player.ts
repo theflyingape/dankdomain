@@ -290,7 +290,7 @@ module player {
             show()
             PC.activate($.online)
             news(`Welcome a ${$.player.pc} player, ${$.player.handle}`)
-            require('./tty/menu').menu(true)
+            require('./menu').menu(true)
             return
         }
         else {
@@ -487,7 +487,7 @@ module player {
                     else {
                         vt.outln()
                         vt.outln(vt.yellow, '... ', vt.bright, 'and you get to complete any remaining parts to this play.')
-                        require('./tty/main').menu(true)
+                        require('./menu').menu(true)
                     }
                     return
             }

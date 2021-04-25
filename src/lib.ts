@@ -200,15 +200,20 @@ module lib {
     }
 
     export function news(message: string, commit = false) {
-        const log = pathTo(LOG, `${$.player.id}.txt`)
-        if ($.access.roleplay) {
-            fs.appendFileSync(log, `${message}\n`)
-            if (message && commit) {
-                fs.appendFileSync(pathTo(NEWS, 'today.txt'), fs.readFileSync(log))
+        const log = pathTo(NEWS, `${$.player.id}.txt`)
+        try {
+            if ($.access.roleplay) {
+                fs.appendFileSync(log, `${message}\n`)
+                if (message && commit) {
+                    fs.appendFileSync(pathTo(NEWS, 'today.txt'), fs.readFileSync(log))
+                }
             }
+            if (commit)
+                fs.unlink(log, () => { })
         }
-        if (commit)
-            fs.unlink(log, () => { })
+        catch (err) {
+            vt.outln('news error:', err)
+        }
     }
 
     export function rings(profile = $.online) {
