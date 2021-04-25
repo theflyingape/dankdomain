@@ -30,6 +30,7 @@ const bot = process.argv.length > 3 && process.argv[3].toUpperCase() || ''
 
 //  init tty handler
 vt.sessionAllowed = 150
+vt.defaultPrompt = vt.cyan
 vt.defaultTimeout = 100
 vt.stdio(false)
 

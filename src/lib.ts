@@ -25,7 +25,7 @@ module lib {
 
     export function bracket(item: string | number, nl = true): string {
         const s = item.toString(), i = whole(item)
-        let framed = vt.attr(vt.reset, nl ? '\n' : '')
+        let framed = vt.attr(vt.off, nl ? '\n' : '')
         if (i > 0 && i < 10) framed += ' '
         framed += vt.attr(vt.faint, '<', vt.bright, s, vt.faint, '>', nl ? ' ' : '', vt.reset)
         return framed
@@ -55,20 +55,21 @@ module lib {
         let filename = file + (vt.emulation == 'PC' ? '.ibm' : vt.emulation == 'XT' ? '.ans' : '.txt')
         try {
             fs.accessSync(filename, fs.constants.F_OK)
-            vt.outln(fs.readFileSync(filename, vt.emulation == 'XT' ? 'utf8' : 'binary'), vt.off)
+            vt.out(fs.readFileSync(filename, vt.emulation == 'XT' ? 'utf8' : 'binary'))
             return true
         } catch (e) {
             if (vt.emulation.match('PC|XT')) {
                 filename = `${file}.txt`
                 try {
                     fs.accessSync(filename, fs.constants.F_OK)
-                    vt.outln(fs.readFileSync(filename))
+                    vt.out(fs.readFileSync(filename))
                     return true
                 } catch (e) {
                     return false
                 }
             }
         }
+        vt.outln(vt.off)
     }
 
     export function death(by: string, killed = false) {
@@ -250,7 +251,15 @@ module lib {
     }
 
     class _xvt extends xvt {
+        /*
+        get focus() {
+            return super.focus
+        }
 
+        set focus(name: string | number) {
+            super.focus = name
+        }
+        */
         tty: TTY = 'telnet'
 
         checkTime(): number {

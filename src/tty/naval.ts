@@ -493,7 +493,7 @@ module Naval {
                             }, max: 4
                         }
                     }
-                    vt.form['hp'].prompt = vt.attr('How many points [', vt.bright, vt.white, vt.uline, 'MAX', vt.reset, '=', max.toString(), vt.cyan, ']? ')
+                    vt.form['hp'].prompt = vt.attr('How many points [', vt.white, vt.bright, vt.uline, 'MAX', vt.reset, '=', max.toString(), vt.cyan, ']? ')
                     vt.focus = 'hp'
                     return
 
@@ -530,7 +530,7 @@ module Naval {
                             }, max: 4
                         }
                     }
-                    vt.form['cannon'].prompt = vt.attr('How many cannons [', vt.bright, vt.white, vt.uline, 'MAX', vt.reset, '=', max.toString(), vt.cyan, ']? ')
+                    vt.form['cannon'].prompt = vt.attr('How many cannons [', vt.white, vt.bright, vt.uline, 'MAX', vt.reset, '=', max.toString(), vt.cyan, ']? ')
                     vt.focus = 'cannon'
                     return
 

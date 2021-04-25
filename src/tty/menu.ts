@@ -33,6 +33,7 @@ module Main {
     }
 
     vt.profile({ png: 'castle', effect: 'pulse' })
+    vt.wall($.player.handle, `logged on as a level ${$.player.level} ${$.player.pc}`)
     vt.outln()
     cat('border')
 

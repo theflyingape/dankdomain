@@ -114,7 +114,7 @@ module Logon {
             vt.emulation = $.player.emulation
             $.player.rows = process.stdout.rows || 24
 
-            vt.form['password'].prompt = vt.attr(vt.cyan, `${$.player.handle}, enter your password: `)
+            vt.form['password'].prompt = `${$.player.handle}, enter your password: `
             vt.focus = 'password'
         }
 
@@ -353,8 +353,6 @@ module Logon {
                 , $.access.calls - $.player.today ? vt.cyan : vt.red
                 , `${$.access.calls - $.player.today}`, vt.reset, ' calls remaining')
             vt.sessionAllowed = $.access.minutes * 60
-
-            vt.wall($.player.handle, `logged on as a level ${$.player.level} ${$.player.pc}`)
 
             vt.outln(vt.cyan, '\nLast callers were: ')
             try {
