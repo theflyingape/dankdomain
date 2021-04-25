@@ -10,7 +10,7 @@ import { Armor, RealEstate, Ring, Security, Weapon } from '../items'
 import { cat, Coin, display, emulator, input, log, news, tradein, vt } from '../lib'
 import { Deed, PC } from '../pc'
 import { checkXP, playerPC } from '../player'
-import { an, cuss, dice, fs, int, money, sprintf } from '../sys'
+import { an, cuss, dice, fs, int, money, pathTo, sprintf } from '../sys'
 
 module Main {
 
@@ -481,7 +481,7 @@ module Main {
                                 vt.hangup()
                             }
                             if (vt.entry) {
-                                fs.writeFileSync('./files/border.txt', vt.entry)
+                                fs.writeFileSync(pathTo('files', 'border.txt'), vt.entry)
                                 news(`\tupdated the border to:\n${vt.entry}`)
                             }
                             menu(true)
