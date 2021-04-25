@@ -71,18 +71,19 @@ module db {
             hull numeric, cannon numeric, ram integer, wins numeric, immortal numeric,
           	plays numeric, jl numeric, jw numeric, killed numeric, kills numeric,
             retreats numeric, steals numeric, tl numeric, tw numeric)`)
-
-        Object.keys(NPC).forEach((id) => {
-            try {
-                let npc: user = JSON.parse(fs.readFileSync(pathTo('users', `${NPC[id]}.json`)).toString())
-                if (npc) {
-                    console.info(' + adding', NPC[id], '-', npc.handle)
-                    saveUser(newUser(npc), true)
-                }
-            }
-            catch (err) { console.error(err) }
-        })
     }
+
+    Object.keys(NPC).forEach((id) => {
+        try {
+            let npc: user = JSON.parse(fs.readFileSync(pathTo('users', `${NPC[id]}.json`)).toString())
+            if (npc && !loadUser(npc)) {
+                console.info(' + adding', NPC[id], '-', npc.handle)
+                npc.id = id
+                saveUser(newUser(npc), true)
+            }
+        }
+        catch (err) { console.error(err) }
+    })
 
     rs = query(`SELECT * FROM sqlite_master WHERE name='Gangs' AND type='table'`)
     if (!rs.length) {
