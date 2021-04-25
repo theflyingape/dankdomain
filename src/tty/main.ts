@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  👑 Ɗanƙ Ɗomaiƞ: the return of Hack & Slash    [ https://www.DDgame.us ]  *
+ *  👑 Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash    [ https://www.DDgame.us ]  *
  *  🖥 TTY MAIN authored by: Robert Hurst <theflyingape@gmail.com>           *
  *  💫 in memory of Ronald Hurst, aka, Imagination and Nobody [ 1939-2016 ]  *
  *                                                                           *
@@ -79,7 +79,7 @@ function logon() {
         case 'XT':
             vt.tty = 'web'
             vt.title(process.title)
-            prompt = 'Ⱳꞕo ɗaɽeȿ ʈo eƞʈeɽ ɱy ɗaɳƙ ɗoɱaiɳ'
+            prompt = 'Ⱳho ɗaɽes ʈo eɳʈeɽ ɱy ɗaɳƙ ɗoɱaiɳ'
             break
         default:
             vt.emulation = 'VT'

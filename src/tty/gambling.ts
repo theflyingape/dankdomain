@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  Ɗanƙ Ɗomaiƞ: the return of Hack & Slash                                  *
+ *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
  *  GAMBLING authored by: Robert Hurst <theflyingape@gmail.com>              *
 \*****************************************************************************/
 

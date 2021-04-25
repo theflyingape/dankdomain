@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  Ɗanƙ Ɗomaiƞ: the return of Hack & Slash                                  *
+ *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
  *  LOGON authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
@@ -343,7 +343,7 @@ module Logon {
         }
 
         if ($.player.today <= $.access.calls && $.access.roleplay && $.sysop.dob <= now().date) {
-            PC.portrait(<active>{ user: { id: '', pc: $.player.pc, gender: $.player.gender, handle: $.player.handle, level: $.player.level } }, 'fadeIn', ' - Ɗanƙ Ɗomaiƞ')
+            PC.portrait(<active>{ user: { id: '', pc: $.player.pc, gender: $.player.gender, handle: $.player.handle, level: $.player.level } }, 'fadeIn', ' - Ɗaɳƙ Ɗoɱaiɳ')
             vt.sound('welcome')
 
             vt.outln(vt.black, vt.bright, '(', vt.normal, vt.white, 'Welcome back, '

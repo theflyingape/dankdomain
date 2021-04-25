@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  Ɗanƙ Ɗomaiƞ: the return of Hack & Slash                                  *
+ *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
  *  CLIENT authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
@@ -323,7 +323,7 @@ function newSession(ev) {
         fetch(`${app}/assets/title.txt`, { method: 'GET' }).then((res) => {
             return res.text().then((data) => {
                 term.blur()
-                term.writeln('\t\t🔥 🌨\r\x1b[23C\x1b[1;36mW\x1b[22melcome to Ɗ \x1b[2manƙ \x1b[22mƊ \x1b[2momaiƞ \x1b[m🌙 💫')
+                term.writeln('\t\t🔥 🌨\r\x1b[23C\x1b[1;36mW\x1b[22melcome to Ɗ \x1b[2maɳƙ \x1b[22mƊ \x1b[2moɱaiɳ \x1b[m🌙 💫')
                 term.write(data)
                 fetch(`${app}/gallery/`, { method: 'POST' }).then((res) => {
                     res.json().then((knock) => {
@@ -713,7 +713,7 @@ function Logoff() {
 <tr><td><input type="button" class="slate" id="cancel" value="Disconnect" onclick="currentCMD = ''; send('\x1B');"></td><td><input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"></td></tr>
 </table>
 <hr>
-<span style="font-size:larger; font-family:mono; font-weight:600;">🤴 <a href="https://www.ddgame.us" target="_new"><span style="color:black">Ɗanƙ Ɗomaiƞ</span></a> 👸</span><br>
+<span style="font-size:larger; font-family:mono; font-weight:600;">🤴 <a href="https://www.ddgame.us" target="_new"><span style="color:black">Ɗaɳƙ Ɗoɱaiɳ</span></a> 👸</span><br>
 <span style="color:darkslategray;">the return of Hack &amp; Slash</span><br>
 <span style="color:brown; font-size:smaller;">🇺🇸 &copy; 2017 - 2021 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a> 🧙</span><br>
 <span style="color:black; font-family:VT323,tty;">⚡ Powered by <a href="https://xtermjs.org" target="_blank">Xterm.js</a> 🖥</span>`)

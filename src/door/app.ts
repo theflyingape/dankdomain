@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  Ɗanƙ Ɗomaiƞ: the return of Hack & Slash                                  *
+ *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
  *  DOOR authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
 import chokidar = require('chokidar')
@@ -13,7 +13,7 @@ import pty = require('node-pty')
 import ws = require('ws')
 
 process.title = 'ddgame'
-console.log(`Ɗanƙ Ɗomaiƞ (${process.title}) started on ${process.platform} #${process.pid}`)
+console.log(`Ɗaɳƙ Ɗoɱaiɳ (${process.title}) started on ${process.platform} #${process.pid}`)
 
 //  process signal traps
 process.on('uncaughtException', (err, origin) => {

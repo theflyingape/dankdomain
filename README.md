@@ -1,13 +1,13 @@
 <a href="https://robert.hurst-ri.us"><img src="https://avatars.githubusercontent.com/theflyingape" title="Robert Hurst" align="right"></a>
 
-# 👑 Ɗanƙ Ɗomaiƞ
+# 👑 Ɗaɳƙ Ɗoɱaiɳ
 
-## the return of Hack &amp; Slash
+## _the return of Hack &amp; Slash_
 
 ![screenshot](https://raw.githubusercontent.com/theflyingape/dankdomain/master/build/door/static/assets/title.jpg "Can you defeat the Demogorgon?")
-***Read*** *the* [Player's Manual](https://www.ddgame.us) *and* ***Play*** *the* [online game](https://play.ddgame.us)
+_Read the_ [Player's Manual](https://www.ddgame.us) _to play the_ [online game](https://play.ddgame.us)
 ---
->**Ɗanƙ Ɗomaiƞ** is basically a bulletin board built around a medieval role-playing atmosphere (or is it the other way around?). Instead, you _live_ the online game as you kill, steal, brawl, and joust the other members to gain levels and fortune. The success of this game is dependent upon the users that play it. Your involvment will not only provide you with entertainment, but also shares your activity with the other players.
+>**Ɗaɳƙ Ɗoɱaiɳ** is basically a bulletin board built around a medieval role-playing atmosphere (or is it the other way around?). Instead, you _live_ the online game as you kill, steal, brawl, and joust the other members to gain levels and fortune. The success of this game is dependent upon the users that play it. Your involvment will not only provide you with entertainment, but also shares your activity with the other players.
 
 *Original Amiga* **Hack & Slash** *enthusiasts can visit:*  [Absinthe BBS](https://www.telnetbbsguide.com/bbs/absinthe-bbs/) *by Anachronist*
 
@@ -98,11 +98,11 @@ mame.sh           player - MAME VT240 terminal + solcat startup script
 tty.sh            player - telnet.js wrapper
 ```
 
-**NOTE**: *in **`users`** folder, edit a hidden (dot) export file and save as **`save.json`**. The game app will consume it for a SQL update into the dankdomain.sql **`Players`** table.*
+**NOTE**: _in **`users`** folder, edit a hidden (dot) export file and save as **`save.json`**. The game app will consume it for a SQL update into the dankdomain.sql **`Players`** table._
 
  🇺🇸 ©️1991 - 2021 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
 
-#### Ɗanƙ Ɗomaiƞ image gallery
+#### Ɗaɳƙ Ɗoɱaiɳ image gallery
 
 + [Arena](https://photos.app.goo.gl/sZS7xx6rpyoG4CYBA)
 + [Connect](https://photos.app.goo.gl/AeZZXrC8VKnMFuqj8)

@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  Ɗanƙ Ɗomaiƞ: the return of Hack & Slash                                  *
+ *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
  *  DUNGEON authored by: Robert Hurst <theflyingape@gmail.com>               *
 \*****************************************************************************/
 
@@ -782,7 +782,7 @@ module Dungeon {
             case 'portal':
                 vt.action('ny')
                 vt.profile({ jpg: 'ddd', effect: 'fadeIn', level: romanize(deep + 2), pc: 'domain portal' })
-                vt.out(vt.bright, vt.blue, `You've found a portal to a deeper and more dank dungeon.`)
+                vt.out(vt.blue, vt.bright, `You've found a portal to a deeper and more dank dungeon.`)
                 vt.form = {
                     'deep': {
                         cb: () => {
@@ -791,7 +791,7 @@ module Dungeon {
                             if (/Y/i.test(vt.entry)) {
                                 vt.animated('fadeOutDown')
                                 vt.sound('portal')
-                                vt.out(vt.bright, vt.white, `You descend `, -400, vt.normal, `into domain `, -300, vt.faint, romanize(++deep + 1), ' ... ', -200)
+                                vt.out(vt.white, vt.bright, `You descend `, -400, vt.normal, `into domain `, -300, vt.faint, romanize(++deep + 1), ' ... ', -200)
                                 generateLevel()
                                 vt.drain()
                                 vt.outln()

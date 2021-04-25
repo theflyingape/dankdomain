@@ -1,4 +1,4 @@
-# 👑 Ɗanƙ Ɗomaiƞ: the return of Hack & Slash    [ https://www.DDgame.us ]
+# 👑 Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash    [ https://www.DDgame.us ]
 # Dockerfile authored by: Robert Hurst <theflyingape@gmail.com>
 #
 # docker build -t dankdomain .
@@ -7,7 +7,6 @@ FROM node:buster
 # set the working directory
 ENV TARGET=/usr/games/dankdomain
 WORKDIR ${TARGET}
-
 #
 # add package manifest
 COPY package.json ${TARGET}

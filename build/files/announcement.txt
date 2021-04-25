@@ -1,10 +1,10 @@
-[mDate: [1;33mWed 25-Nov-2020  12:00pm
+[mDate: [1;33mWed 25-Apr-2020  9:00am
 [mFrom: [1;33mMaester
 [1;37m
-Happy holidays!
+It's been 5 months since the last update ...
 
-There's been a lot of code refactoring with several UI annoyances addressed
-to deliver a more consistent user experience.  We hope you find the game's
-maturity and playability to your liking.
+The v2 code base underwent complete refactoring in order to ease future
+maintenance and add features. There may be some undetected regressions.
+If you encounter any, thank you for any feedback & your patience.
 
 Happy hunting!
