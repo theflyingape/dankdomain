@@ -6,7 +6,7 @@
 import $ = require('./runtime')
 import db = require('./db')
 import { Access, Coin } from './items'
-import { beep, bracket, cat, news, time, vt, weapon, whole } from './lib'
+import { bracket, cat, news, time, vt, weapon, whole } from './lib'
 import { Deed, PC } from './pc'
 import { an, date2full, dice, fs, int, now, pathTo, sprintf } from './sys'
 
@@ -26,7 +26,7 @@ module player {
             else if ($.timeleft <= $.warning) {
                 $.warning = $.timeleft
                 vt.outln()
-                beep()
+                vt.beep()
                 vt.outln(vt.bright, ` *** `, vt.faint, `${$.warning}-minute${$.warning !== 1 ? 's' : ''} remain${$.warning == 1 ? 's' : ''}`, vt.bright, ` *** `, -100)
                 vt.sound('hurry', 4)
             }
@@ -145,7 +145,7 @@ module player {
         if ((deed && $.jumped >= deed.value)) {
             deed.value = $.jumped
             vt.outln(vt.cyan, ' + ', vt.bright, Deed.name[deed.deed].description, ' ', bracket(deed.value, false))
-            beep()
+            vt.beep()
             Deed.save(deed, $.player)
         }
 
@@ -840,7 +840,7 @@ module player {
                     vt.out('x', -10)
                 }
                 catch {
-                    beep()
+                    vt.beep()
                     vt.out('?', -100)
                 }
                 db.unlock(rs[row].id)
@@ -877,7 +877,7 @@ module player {
                     vt.out('&', -10)
                 }
                 catch (err) {
-                    beep()
+                    vt.beep()
                     vt.out('?', -100)
                     break
                 }

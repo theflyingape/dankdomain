@@ -479,7 +479,7 @@ module Dungeon {
         if (/\[.*\]/.test(vt.terminator)) {
             if ((choice = 'NSEW'['UDRL'.indexOf(vt.terminator[1])])) {
                 suppress = true
-                vt.out(vt.bright, vt.white, choice, vt.normal)
+                vt.out(vt.white, vt.bright, choice, vt.normal)
             }
             else
                 choice = 'Y'
@@ -493,7 +493,7 @@ module Dungeon {
                 recovery(300)
         }
         else {
-            vt.beep()
+            vt.beep(true)
             vt.drain()
             menu()
             return
@@ -1057,7 +1057,7 @@ module Dungeon {
                                 for (let i = 0; i < 5; i++) {
                                     let n = int($.online.str / 5 - 5 * i + dice(5) + 1)
                                     for (let m = 0; m < n; m++) {
-                                        vt.beep()
+                                        vt.beep(true)
                                         vt.out('\r', '-\\|/'[m % 4])
                                     }
                                 }
@@ -1078,6 +1078,7 @@ module Dungeon {
                                     vt.sound('click')
                                 }
                                 vt.animated('rotateOut')
+                                vt.beep()
                                 vt.outln()
 
                                 switch (t % z) {

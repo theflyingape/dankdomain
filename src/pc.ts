@@ -6,7 +6,7 @@
 import $ = require('./runtime')
 import db = require('./db')
 import { ITEMS, Access, Armor, Magic, Ring, Weapon } from './items'
-import { armor, beep, Coin, vt, weapon } from './lib'
+import { armor, Coin, vt, weapon } from './lib'
 import { date2full, dice, int, isActive, now, pathTo, fs, romanize, sprintf, titlecase, USERS } from './sys'
 
 module pc {
@@ -150,7 +150,7 @@ module pc {
             one.user.access = one.user.access || Object.keys(Access.name)[0]
 
             if (keep && !db.lock(one.user.id, one.user.id == $.player.id ? 1 : 2) && one.user.id !== $.player.id) {
-                beep()
+                vt.beep()
                 vt.outln()
                 vt.outln(vt.cyan, vt.bright, `${one.user.handle} is engaged elsewhere.`)
                 one.altered = false

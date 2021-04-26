@@ -16,17 +16,10 @@ module lib {
                 , profile.user.armor, vt.white, buff(profile.user.toAC, profile.toAC))
     }
 
-    export function beep() {
-        if (vt.emulation == 'XT')
-            vt.sound('max')
-        else
-            vt.out('\x07', -100)
-    }
-
     export function bracket(item: string | number, nl = true): string {
         const s = item.toString(), i = whole(item)
         let framed = vt.attr(vt.off, nl ? '\n' : '')
-        if (i > 0 && i < 10) framed += ' '
+        if (nl && i >= 0 && i < 10) framed += ' '
         framed += vt.attr(vt.faint, '<', vt.bright, s, vt.faint, '>', nl ? ' ' : '', vt.reset)
         return framed
     }
@@ -146,8 +139,8 @@ module lib {
                         cb()
                         return
                     }
-                    vt.outln(-2200)
-                    beep()
+                    vt.outln(-2000)
+                    vt.beep()
                     if (process.stdout.rows && process.stdout.rows !== $.player.rows)
                         $.player.rows = process.stdout.rows
                     for (let rows = $.player.rows + 5; rows > 1; rows--)
@@ -261,6 +254,13 @@ module lib {
         }
         */
         tty: TTY = 'telnet'
+
+        beep(bell = false) {
+            if (bell || vt.emulation !== 'XT')
+                vt.out('\x07', -100)
+            else
+                vt.sound('max')
+        }
 
         checkTime(): number {
             return Math.round((this.sessionAllowed - ((new Date().getTime() - this.sessionStart.getTime()) / 1000)) / 60)
