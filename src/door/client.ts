@@ -323,13 +323,13 @@ function newSession(ev) {
         fetch(`${app}/assets/title.txt`, { method: 'GET' }).then((res) => {
             return res.text().then((data) => {
                 term.blur()
-                term.writeln('\t\t🔥 🌨\r\x1b[23C\x1b[1;36mW\x1b[22melcome to Ɗ \x1b[2maɳƙ \x1b[22mƊ \x1b[2moɱaiɳ \x1b[m🌙 💫')
+                term.writeln('\t\t🔥 🌨\r\x1b[23C\x1b[1;36mW\x1b[22melcome to D\x1b[2mank \x1b[22mD\x1b[2momain \x1b[m🌙 💫')
                 term.write(data)
                 fetch(`${app}/gallery/`, { method: 'POST' }).then((res) => {
                     res.json().then((knock) => {
                         let i = Math.trunc(4 * Math.random())
                         term.writeln(knock.wall || `\t\t\x1b[2;35mCan you defeat the Demogorgon${'?'.repeat(i + 1)}\x1b[m`)
-                        term.writeln('\x1b[1;36m \u00B7 \x1b[22;2mpress either \x1b[22mENTER\x1b[2m or \x1b[22mSPACE\x1b[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard\x1b[22m')
+                        term.write('\x1b[1;36m≫ \x1b[22;2m press either \x1b[22mENTER\x1b[2m or \x1b[22mSPACE\x1b[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard:\x1b[22m ')
                         doCommand({ data: { images: knock.list } })
                         XT(`@play(${['demon', 'demogorgon', 'portal', 'thief2'][i]})`)
                     }).finally(() => {

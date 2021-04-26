@@ -28,6 +28,7 @@ module Battle {
     let p1: who, p2: who
     let round: { party: number, member: number, react: number }[] = []
     let bs: number
+    let dodge: number
     let volley: number
 
     function end() {
@@ -235,6 +236,7 @@ module Battle {
         retreat = false
         teleported = false
         volley = 0
+        dodge = 0
 
         attack()
     }
@@ -297,11 +299,16 @@ module Battle {
         p2 = PC.who(enemy, alive[mob] > 1)
 
         //  a frozen treat?
-        //  by supernatural means
         if (!enemy.confused) {
+            let speed = 0
+            //  by supernatural means
             let skip = Ring.power(rpc.user.rings, enemy.user.rings, 'skip', 'pc', rpc.user.pc)
-            if (skip.power && dice(12 + 2 * rpc.user.magic) > dice(enemy.user.magic / 2 + 2))
+            if (skip.power && dice(12 + 2 * rpc.user.magic + dodge) > dice(enemy.user.magic / 2 + 2))
                 skip.power = 0  //  saving throw
+            else {
+                dodge += 2
+                speed = -250
+            }
             //  if not, by skillful escape means
             if (!skip.power
                 //  d[15-25] > 3-14, 73 to 46% diminishing win-rate, allow for the smallest 6% win for a lesser escaping a greater
@@ -311,8 +318,10 @@ module Battle {
                 //  d[0-8(+rings)] + 2 > 2d[6], true min 3%,
                 //  max chance to be true for lawful: 3%, desperate: 6%, trickster: 17%, adept: 67%, master: 92%
                 && dice(2 * (enemy.user.steal + Ring.power(rpc.user.rings, enemy.user.rings, 'steal').power))
-                > (dice(6) + dice(6) - 2))
+                > (dice(6) + dice(6) - 2)) {
                 skip.power = 1
+                speed = +100
+            }
             if (skip.power) {
                 let how = enemy.pc.skip || 'kiss', color = enemy.pc.color || vt.white
                 let w = how.split(' ')
@@ -320,7 +329,7 @@ module Battle {
                 vt.outln(vt.faint, color, `${$.player.emulation == 'XT' ? '≫' : '>>'} `, vt.normal
                     , p2.You, vt.bright, PC.what(enemy, w[0]), w.slice(1).join(' ')
                     , vt.normal, p1.you, vt.faint, color, ` ${$.player.emulation == 'XT' ? '≪' : '<<'}`
-                    , -400)
+                    , speed - 500)
                 next()
                 return
             }

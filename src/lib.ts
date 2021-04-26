@@ -55,21 +55,21 @@ module lib {
         let filename = file + (vt.emulation == 'PC' ? '.ibm' : vt.emulation == 'XT' ? '.ans' : '.txt')
         try {
             fs.accessSync(filename, fs.constants.F_OK)
-            vt.out(fs.readFileSync(filename, vt.emulation == 'XT' ? 'utf8' : 'binary'))
+            vt.outln(fs.readFileSync(filename, vt.emulation == 'XT' ? 'utf8' : 'binary'), vt.off)
             return true
         } catch (e) {
             if (vt.emulation.match('PC|XT')) {
                 filename = `${file}.txt`
                 try {
                     fs.accessSync(filename, fs.constants.F_OK)
-                    vt.out(fs.readFileSync(filename))
+                    vt.outln(fs.readFileSync(filename), vt.off)
                     return true
                 } catch (e) {
+                    vt.out(vt.off)
                     return false
                 }
             }
         }
-        vt.outln(vt.off)
     }
 
     export function death(by: string, killed = false) {

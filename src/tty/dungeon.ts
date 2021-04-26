@@ -1615,8 +1615,9 @@ module Dungeon {
                 scroll(1, false)
                 vt.music('.')
                 vt.profile({ jpg: 'npc/witch', effect: 'fadeIn' })
-                vt.outln(vt.green, 'You encounter the ', vt.bright, 'sorceress', vt.normal, ', ', $.witch.user.handle, '.')
+                vt.outln(vt.green, 'You encounter the ', vt.bright, 'sorceress', vt.normal, ', ', $.witch.user.handle)
                 cat(`dungeon/witch`)
+                PC.load($.witch)
                 PC.wearing($.witch)
                 vt.sound('steal', 10)
 

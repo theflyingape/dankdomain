@@ -158,7 +158,7 @@ module Logon {
         }
 
         vt.title($.player.emulation)
-        news(`${$.player.handle} ${$.access.emoji} arrived in ${$.whereis} at ${time(now().time)} as a level ${$.player.level} ${$.player.pc}:`)
+        news(`${$.player.handle} ${$.access.emoji} arrived from ${$.whereis} at ${time(now().time)} as a level ${$.player.level} ${$.player.pc}:`)
 
         let rs = db.query(`SELECT * FROM Online`)
         for (let row = 0; row < rs.length; row++) {
@@ -225,9 +225,8 @@ module Logon {
                 $.whereis += ' 🖥 '
         }
         else try {
-            const apikey = `./etc/ipstack.key`
-            fs.accessSync(apikey, fs.constants.F_OK)
-            let key = fs.readFileSync(apikey).toString()
+            const apikey = pathTo('etc', 'ipstack.key')
+            const key = fs.readFileSync(apikey).toString()
             got(`http://api.ipstack.com/${$.remote}?access_key=${key}`).then(response => {
                 $.whereis = ''
                 let result = ''
