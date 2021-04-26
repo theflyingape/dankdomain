@@ -25,7 +25,7 @@ module Logon {
         }
 
         function guards(): boolean {
-            vt.beep()
+            vt.beep(true)
             vt.outln(vt.reset, 'Invalid response.\n', -400)
             vt.drain()
 
@@ -198,7 +198,7 @@ module Logon {
             if (!$.access.sysop && $.player.novice && $.player.calls < 5 && t < 2) {
                 $.access.roleplay = false
                 news('', true)
-                vt.beep()
+                vt.beep(true)
                 vt.outln('\nYou were last on just ', t == 1 ? 'a minute' : t.toString() + ' minutes', ' ago.')
                 vt.outln('Please wait at least 2 minutes between visits (for now).')
                 vt.hangup()
@@ -210,7 +210,7 @@ module Logon {
             $.player.today = 0
 
         if ($.player.today > $.access.calls) {
-            vt.beep()
+            vt.beep(true)
             vt.outln(`\nYou played all ${$.access.calls} calls for today.  Please visit again after ${now().time < 1200 ? 'noon' : 'midnight'}!`)
             vt.sound('comeagain')
             news('', true)
@@ -653,7 +653,7 @@ module Logon {
         $.sysop.lasttime = now().time
         PC.save($.sysop)
         vt.outln(vt.yellow, vt.bright, '*')
-        vt.beep()
+        vt.beep(true)
         vt.outln('All set -- thank you!')
     }
 }

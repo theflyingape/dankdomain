@@ -712,11 +712,13 @@ function Logoff() {
     cmd(`<table>
 <tr><td><input type="button" class="slate" id="cancel" value="Disconnect" onclick="currentCMD = ''; send('\x1B');"></td><td><input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"></td></tr>
 </table>
+<div id="about">
 <hr>
 <span style="font-size:larger; font-family:mono; font-weight:600;">🤴 <a href="https://www.ddgame.us" target="_new"><span style="color:black">Ɗaɳƙ Ɗoɱaiɳ</span></a> 👸</span><br>
 <span style="color:darkslategray;">the return of Hack &amp; Slash</span><br>
 <span style="color:brown; font-size:smaller;">🇺🇸 &copy; 2017 - 2021 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a> 🧙</span><br>
-<span style="color:black; font-family:VT323,tty;">⚡ Powered by <a href="https://xtermjs.org" target="_blank">Xterm.js</a> 🖥</span>`)
+<span style="color:black; font-family:VT323,tty;">⚡ Powered by <a href="https://xtermjs.org" target="_blank">Xterm.js</a> 🖥</span>
+</div>`)
 }
 
 function rotateImage() {
@@ -732,7 +734,11 @@ function rotateImage() {
         if (banner.jpg) html += `<br><img src="images/${banner.jpg}.jpg" />`
         if (banner.png) html += `<br><img src="images/${banner.png}.png" style="filter:opacity(${/^connect/.test(banner.png) ? '45%' : '100%'});" />`
 
-        setTimeout(() => { nme(html, banner.effect) }, 1000)
+        setTimeout(() => {
+            const about = <HTMLDivElement>document.getElementById('about')
+            about.hidden = true
+            nme(html, banner.effect)
+        }, 1000)
     }
     else
         send('\x15')
