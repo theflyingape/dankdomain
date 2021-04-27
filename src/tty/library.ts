@@ -1,6 +1,6 @@
 /*****************************************************************************\
  *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
- *  HALL authored by: Robert Hurst <theflyingape@gmail.com>                  *
+ *  LIBRARY authored by: Robert Hurst <theflyingape@gmail.com>               *
 \*****************************************************************************/
 
 import $ = require('../runtime')
@@ -9,9 +9,9 @@ import { cat, display, vt } from '../lib'
 import { Deed, PC } from '../pc'
 import { date2full, sprintf } from '../sys'
 
-module Hall {
+module Library {
 
-    let hall: choices = {
+    let library: choices = {
         'C': { description: 'Class Champions' },
         'H': { description: 'Hall of Heroes' },
         'I': { description: 'Immortals' },
@@ -25,15 +25,15 @@ module Hall {
         vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
-        vt.form['menu'].prompt = display('hall', vt.Cyan, vt.cyan, suppress, hall)
+        vt.form['menu'].prompt = display('library', vt.Cyan, vt.cyan, suppress, library)
         vt.focus = 'menu'
     }
 
     function choice() {
         let suppress = false
         let choice = vt.entry.toUpperCase()
-        if (hall[choice]?.description) {
-            vt.out(' - ', hall[choice].description)
+        if (library[choice]?.description) {
+            vt.out(' - ', library[choice].description)
             suppress = $.player.expert
         }
         vt.outln()
@@ -208,4 +208,4 @@ module Hall {
 
 }
 
-export = Hall
+export = Library

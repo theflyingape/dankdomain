@@ -98,7 +98,7 @@ module Main {
 
             case 'L':
                 vt.animated('fadeOut')
-                require('./hall').menu($.player.expert)
+                require('./library').menu($.player.expert)
                 return
 
             case 'M':
