@@ -1,6 +1,6 @@
 {
 	"name": "@theflyingape/dankdomain",
-	"version": "3.0.1",
+	"version": "3.0.2",
 	"description": "Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash",
 	"author": "Robert Hurst",
 	"homepage": "https://www.ddgame.us",
@@ -67,7 +67,7 @@
 		"@types/better-sqlite3": "^5.4.1",
 		"@types/express": "^4.17.11",
 		"@types/fs-extra": "^9.0.6",
-		"@types/node": "^14.14.21",
+		"@types/node": "^15.0.0",
 		"@types/nodemailer": "^6.4.0",
 		"@types/nodemailer-smtp-transport": "^2.7.4",
 		"@types/sprintf-js": "^1.1.2",

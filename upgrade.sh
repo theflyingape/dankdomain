@@ -4,6 +4,7 @@
 TARGET="${TARGET}/`basename ${PWD}`"
 
 sudo systemctl stop dankdomain-door
+git pull
 
 cd ${TARGET}
 rm -fv package-lock.json
