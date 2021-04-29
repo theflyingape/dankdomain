@@ -598,7 +598,7 @@ module Logon {
                         db.run(`UPDATE Players SET xplevel=1,remote='' WHERE id='${rs[row].id}'`)
                         let p: user = { id: rs[row].id }
                         PC.load(p)
-                        require('./email').rejoin(p)
+                        require('../email').rejoin(p)
                         vt.out('_', -1000)
                         continue
                     }
@@ -636,7 +636,7 @@ module Logon {
                 db.run(`UPDATE Players SET pc='${Object.keys(PC.name['player'])[0]}',level=1,xplevel=0,remote='' WHERE id='${rs[row].id}'`)
                 let p: user = { id: rs[row].id }
                 PC.load(p)
-                require('./email').rejoin(p)
+                require('../email').rejoin(p)
                 vt.sleep(1000)
             }
         }
