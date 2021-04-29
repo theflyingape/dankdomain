@@ -144,8 +144,8 @@ module sys {
     }
 
     export function now(): { date: number, time: number } {
-        let today = date2days(new Date().toLocaleString('en-US').split(',')[0])
-        let now = new Date().toTimeString().slice(0, 5).replace(/:/g, '')
+        const today = date2days(new Date().toLocaleString('en-US').split(',')[0])
+        const now = new Date().toTimeString().slice(0, 5).replace(/:/g, '')
         return { date: +today, time: +now }
     }
 
@@ -155,7 +155,7 @@ module sys {
 
     //  non-negative integer
     export function whole(n: string | number) {
-        let i = int(n)
+        const i = int(n)
         return (i < 0) ? 0 : i
     }
 }
