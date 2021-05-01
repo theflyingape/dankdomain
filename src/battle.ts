@@ -1247,7 +1247,7 @@ module Battle {
                 }
             }
 
-            if (!summon && rpc.user.magic < 2 && dice(100) < 50 + (spell.cast < 17 ? 2 * spell.cast : 2 * spell.cast - 16)) {
+            if (!summon && rpc.user.magic < 2 && dice(100) < (50 + 2 * spell.cast - 16 * +(spell.cast > 16))) {
                 rpc.altered = true
                 Magic.remove(rpc.user.spells, spell.cast)
                 if (!(rpc.user.id[0] == '_' || rpc.user.gender == 'I')) PC.save(rpc)

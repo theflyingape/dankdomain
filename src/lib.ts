@@ -295,7 +295,7 @@ module lib {
             if (this.tty == 'web')
                 this.out(`@play(${effect})`, -100 * sync)
             else
-                this.beep()
+                this.beep(true)
         }
 
         title(name: string) {
