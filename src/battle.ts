@@ -1255,7 +1255,7 @@ module Battle {
             }
 
             //  Tigress prefers the Ranger (and Paladin) class, because it comes with a coupon and a better warranty
-            if (!summon && rpc.user.magic == 2 && dice(+Access.name[rpc.user.access].sysop + 5) == 1) {
+            if (!summon && rpc.user.magic == 2 && dice(+Access.name[rpc.user.access].sysop || 0 + 5) == 1) {
                 rpc.altered = true
                 Magic.remove(rpc.user.spells, spell.cast)
                 if (!(rpc.user.id[0] == '_' || rpc.user.gender == 'I')) PC.save(rpc)

@@ -5,15 +5,18 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "declaration": false,
-    "outDir": "../build",
+    "outDir": "build",
     "removeComments": true,
     "preserveConstEnums": true,
     "pretty": true,
     "sourceMap": true
   },
+  "include": [
+    "src/**/*"
+  ],
   "exclude": [
     "node_modules",
-    "playwright.ts",
+    "src/playwright.ts",
     "**/*.spec.ts"
   ]
 }

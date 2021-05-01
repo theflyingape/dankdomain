@@ -683,7 +683,7 @@ module Dungeon {
                         , ['awesomeness', 'elegance', 'presence', $.player.armor, $.player.weapon][dice(5) - 1])
                     ROOM.monster[n].user.gender = 'FM'[dice(2) - 1]
                     ROOM.monster[n].user.handle = vt.attr(ROOM.monster[n].pc.color || vt.white, vt.bright, 'charmed ', ROOM.monster[n].user.handle, vt.reset)
-                    const xp = dice(3 + $.online.adept + +$.access.sysop - +$.player.coward) - 2
+                    const xp = dice(3 + $.online.adept + +$.access.sysop || 0 - +$.player.coward) - 2
                     ROOM.monster[n].user.xplevel = xp > 1 ? 1 : xp
                     vt.outln(' to join ', ['you', 'your party'][+(party.length > 1)], ' in '
                         , [vt.white, vt.cyan, vt.red][ROOM.monster[n].user.xplevel + 1], vt.bright
@@ -2384,7 +2384,7 @@ module Dungeon {
                     }
                 },
                 events: dice(6 - int($.online.cha / 20)) + dice(deep / 3 + 1) + +$.player.coward
-                    - +$.player.novice - +$.access.sysop,
+                    - +$.player.novice - +$.access.sysop || 0,
                 exit: false,
                 map: '',
                 mob: (deep < 4 && Z < 4) ? 1 : (Z > 9 && Z < 50) || (deep > 7) ? 3 : 2,

@@ -36,8 +36,6 @@
       "outFiles": [
         "${workspaceFolder}/build"
       ],
-      "sourceMaps": true,
-      "stopOnEntry": true,
       "skipFiles": [
         "<node_internals>/**"
       ]

@@ -87,6 +87,6 @@
 		"start": "test -s door/app.js && node door/app || node build/door/app",
 		"test": "npm start test",
 		"tty": "./build/tty.sh",
-		"watch": "./tsc -b src -w"
+		"watch": "./tsc -w"
 	}
 }
