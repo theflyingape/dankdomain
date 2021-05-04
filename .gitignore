@@ -20,4 +20,5 @@ build/users/.*
 build/users/arguments.json
 build/users/callers.json
 build/users/dankdomain.sql*
+bot.txt
 package-lock.json

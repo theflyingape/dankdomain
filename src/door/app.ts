@@ -28,6 +28,7 @@ process.on('SIGINT', () => {
 console.log(`cwd ${process.cwd()} → ${__dirname}`)
 process.chdir(__dirname)
 
+//  load common
 import { pathTo } from '../sys'
 import db = require('../db')
 import { Coin } from '../items'
@@ -330,7 +331,7 @@ dns.lookup(network.address, (err, addr, family) => {
         //  REST services
         //  Player API
         app.post(`${network.path}gallery/`, (req, res) => {
-            let client = req.header('x-forwarded-for') || req.connection.remoteAddress
+            let client = req.header('x-forwarded-for') || req.socket.remoteAddress
             console.log(`City Gates knocked from remote host: ${client} (${req.hostname})`)
 
             let list = []
@@ -419,7 +420,7 @@ dns.lookup(network.address, (err, addr, family) => {
         })
 
         app.post(`${network.path}player`, function (req, res) {
-            let client = req.header('x-forwarded-for') || req.connection.remoteAddress
+            let client = req.header('x-forwarded-for') || req.socket.remoteAddress
             let cols = parseInt(req.query.cols ? req.query.cols.toString() : '80')
             let rows = parseInt(req.query.rows ? req.query.rows.toString() : '25')
             let tty = req.query.tty ? req.query.tty.toString() : 'XT'
@@ -461,11 +462,11 @@ dns.lookup(network.address, (err, addr, family) => {
                 if (sessions[pid]) {
                     if (sessions[pid].who)
                         player = ` (${sessions[pid].who})`
-                    console.log(`Create LURKER session ${pid}${player} request from remote host: ${req.header('x-forwarded-for') || req.connection.remoteAddress} → ${req.hostname}`)
+                    console.log(`Create LURKER session ${pid}${player} request from remote host: ${req.header('x-forwarded-for') || req.socket.remoteAddress} → ${req.hostname}`)
                     res.send((lurkers.push(pid) - 1).toString())
                 }
                 else {
-                    console.log(`?FATAL LURKER session ${pid} request from remote host: ${req.header('x-forwarded-for') || req.connection.remoteAddress} → ${req.hostname}`)
+                    console.log(`?FATAL LURKER session ${pid} request from remote host: ${req.header('x-forwarded-for') || req.socket.remoteAddress} → ${req.hostname}`)
                 }
             }
             else if (Object.keys(sessions).length) {

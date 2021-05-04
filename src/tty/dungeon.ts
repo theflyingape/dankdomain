@@ -257,11 +257,11 @@ module Dungeon {
             else
                 me = int(me / 2)
         }
-        me = (me < DL.width ? DL.width - (DL.moves >> 8) : int(me)) - +$.player.coward
+        me = (me < DL.width ? DL.width - (DL.moves >> 8) : int(me)) - (+$.player.coward || 0)
         if (me < DL.width) {
             DL.exit = $.player.coward
             if (me < 6) $.player.coward = true
-            me = DL.width + 3 - +$.player.coward
+            me = DL.width + 3 - (+$.player.coward || 0)
             if ($.player.novice) me <<= 1
         }
 
@@ -672,22 +672,22 @@ module Dungeon {
                     if (ROOM.monster[n].user.xplevel > 0)
                         vt.out(`and it doesn't look friendly.`, -50)
                     else
-                        vt.out('and it looks harmless', -100, ', for now.', -50)
+                        vt.out('and it looks harmless', -200, ', for now.', -50)
                     vt.outln(ROOM.monster.length < 4 ? -250 : -50)
                     if (ROOM.monster[n]) PC.wearing(ROOM.monster[n])
                 }
                 else {
-                    vt.outln(`and it's `, vt.yellow, vt.bright
-                        , ['bewitched', 'charmed', 'dazzled', 'impressed', 'seduced'][dice(5) - 1]
-                        , ' by your '
-                        , ['awesomeness', 'elegance', 'presence', $.player.armor, $.player.weapon][dice(5) - 1])
+                    vt.outln(`and it's `, vt.yellow, vt.bright, -250
+                        , ['bewitched', 'charmed', 'dazzled', 'impressed', 'seduced'][dice(5) - 1], -250
+                        , ' by your ', -250
+                        , ['awesomeness', 'elegance', 'presence', $.player.armor, $.player.weapon][dice(5) - 1], -250)
                     ROOM.monster[n].user.gender = 'FM'[dice(2) - 1]
                     ROOM.monster[n].user.handle = vt.attr(ROOM.monster[n].pc.color || vt.white, vt.bright, 'charmed ', ROOM.monster[n].user.handle, vt.reset)
-                    const xp = dice(3 + $.online.adept + +$.access.sysop || 0 - +$.player.coward) - 2
+                    const xp = dice(3 + $.online.adept + (+$.access.sysop || 0) - (+$.player.coward || 0)) - 2
                     ROOM.monster[n].user.xplevel = xp > 1 ? 1 : xp
-                    vt.outln(' to join ', ['you', 'your party'][+(party.length > 1)], ' in '
+                    vt.outln(' to join ', ['you', 'your party'][+(party.length > 1)], ' in ', -250
                         , [vt.white, vt.cyan, vt.red][ROOM.monster[n].user.xplevel + 1], vt.bright
-                        , ['spirit ... ', 'defense.', 'arms!'][ROOM.monster[n].user.xplevel + 1], -400)
+                        , ['spirit ... ', 'defense.', 'arms!'][ROOM.monster[n].user.xplevel + 1], -500)
                     party.push(ROOM.monster[n])
                     ROOM.monster.splice(n--, 1)
                 }
@@ -758,7 +758,7 @@ module Dungeon {
                     vt.profile({ png: 'npc/faery spirit', effect: 'fadeInRight' })
                     vt.out(vt.cyan, vt.bright, 'A faery spirit appears ', -600
                         , vt.normal, 'and passes ', -500)
-                    if ((!DL.events && DL.exit) || dice(50 + Z - deep) > ($.online.cha - 10 * +$.player.coward)) {
+                    if ((!DL.events && DL.exit) || dice(50 + Z - deep) > ($.online.cha - 10 * +($.player.coward || 0))) {
                         vt.animated('fadeOut')
                         vt.outln(vt.faint, 'by you.')
                         recovery()
@@ -1878,7 +1878,7 @@ module Dungeon {
                 }
 
                 if (id ||
-                    (dice(100 + 10 * +ROOM.giftValue * +$.player.coward) + dice(deep / 2) < (50 + int($.online.int / 2)) && dice(100) > 1)) {
+                    (dice(100 + 10 * +ROOM.giftValue * (+$.player.coward || 0)) + dice(deep / 2) < (50 + int($.online.int / 2)) && dice(100) > 1)) {
                     vt.action('potion')
                     vt.form = {
                         'quaff': {
@@ -2383,8 +2383,8 @@ module Dungeon {
                         , sex: 'I', weapon: 0, armor: 1, magic: 3, spells: [7, 8, 13]
                     }
                 },
-                events: dice(6 - int($.online.cha / 20)) + dice(deep / 3 + 1) + +$.player.coward
-                    - +$.player.novice - +$.access.sysop || 0,
+                events: dice(6 - int($.online.cha / 20)) + dice(deep / 3 + 1) + (+$.player.coward || 0)
+                    - +$.player.novice - (+$.access.sysop || 0),
                 exit: false,
                 map: '',
                 mob: (deep < 4 && Z < 4) ? 1 : (Z > 9 && Z < 50) || (deep > 7) ? 3 : 2,
@@ -2557,7 +2557,7 @@ module Dungeon {
             if (Ring.power([], $.player.rings, 'identify').power) DL.rooms[y][x].map = true
 
             //	magic potion
-            if (dice(111 - $.online.cha) > dice(dank) - +$.player.coward) {
+            if (dice(111 - $.online.cha) > dice(dank) - (+$.player.coward || 0)) {
                 DL.rooms[y][x].giftItem = 'potion'
                 DL.rooms[y][x].giftID = false
                 DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '≬' : Dot
@@ -2908,7 +2908,7 @@ module Dungeon {
                 for (let vials in dm.poisons)
                     Poison.add(m.user.poisons, dm.poisons[vials])
             for (n = 0; n < Object.keys(Poison.vials).length - (9 - deep); n++) {
-                if (dice(int($.player.cha / (deep + 1)) + (n << 2)) < (+$.player.coward + 2)) {
+                if (dice(int($.player.cha / (deep + 1)) + (n << 2)) < ((+$.player.coward || 0) + 2)) {
                     let vial = Poison.pick(n)
                     if (!Poison.have(m.user.poisons, vial))
                         Poison.add(m.user.poisons, n)
@@ -2988,8 +2988,8 @@ module Dungeon {
             PC.adjust('cha', deep - 2, 0, deep >> 2, m)
 
             let gold = new Coin(int(money(level) / (11 - deep)))
-            gold.value += tradein(new Coin(m.weapon.value).value, dice($.online.cha / 5) + dice(deep) - +$.player.coward)
-            gold.value += tradein(new Coin(m.armor.value).value, dice($.online.cha / 5) + dice(deep) - +$.player.coward)
+            gold.value += tradein(new Coin(m.weapon.value).value, dice($.online.cha / 5) + dice(deep) - (+$.player.coward || 0))
+            gold.value += tradein(new Coin(m.armor.value).value, dice($.online.cha / 5) + dice(deep) - (+$.player.coward || 0))
             gold.value *= dice(deep * 2 / 3)
             gold.value++
             m.user.coin = new Coin(gold.carry(1, true))
