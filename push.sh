@@ -4,7 +4,7 @@
 [ -n "$1" ] && TARGET="$1" || TARGET=play.ddgame.us:/usr/local/games/
 TARGET="${TARGET}/`basename ${PWD}`"
 
-rsync -av --exclude=*.map --exclude=files --exclude=users build/ ${TARGET} 2> /dev/null
+rsync -av --exclude=*.map --exclude=console --exclude=files --exclude=users build/ ${TARGET} 2> /dev/null
 rsync -av package.json ${TARGET}
 
 echo

@@ -467,7 +467,7 @@ module pc {
                 user.bank = new Coin(user.bank.toString())
                 user.loan = new Coin(0)
                 //  force a verify if their access allows it
-                // if (!user.novice && !Access.name[player.access].sysop) user.email = ''
+                // if (!user.novice && !$.access.sysop) user.email = ''
             }
 
             if (level == 1 || !user.id || user.id[0] == '_') {

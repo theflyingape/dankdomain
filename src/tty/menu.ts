@@ -166,7 +166,7 @@ module Main {
                         cb: () => {
                             vt.outln()
                             if (/Y/i.test(vt.entry)) {
-                                if (!$.reason.length) $.reason = 'logged off as a level ' + $.player.level + ' ' + $.player.pc
+                                if (!$.reason.length) $.reason = 'as a level ' + $.player.level + ' ' + $.player.pc
                                 vt.hangup()
                             }
                             menu()
