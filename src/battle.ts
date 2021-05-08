@@ -81,12 +81,13 @@ module Battle {
         }
 
         if ($.from == 'Tavern') {
+            const mantle = pathTo('files/tavern', 'trophy.json')
             if ($.online.hp < 1) {
                 vt.outln(`He picks up your ${weapon()} and triumphantly waves it around to`)
                 vt.out(`the cheering crowd. `, -1600, ` He struts toward the mantelpiece `, -600)
                 if ($.online.weapon.wc > $.barkeep.weapon.wc) {
                     let trophy = { who: $.player.id, weapon: $.player.weapon }
-                    fs.writeFileSync(pathTo('files/tavern', 'trophy.json'), JSON.stringify(trophy))
+                    fs.writeFileSync(pathTo(mantle), JSON.stringify(trophy))
                     vt.outln(`and hangs his new trophy.`)
                 }
                 else
@@ -104,7 +105,7 @@ module Battle {
                 news(`\tdefeated ${$.barkeep.user.handle}`)
                 vt.wall($.player.handle, `defeated ${$.barkeep.user.handle}`)
 
-                let trophy = JSON.parse(fs.readFileSync(`./files/tavern/trophy.json`).toString())
+                let trophy = JSON.parse(fs.readFileSync(mantle).toString())
                 Weapon.equip($.barkeep, trophy.weapon)
                 let credit = new Coin($.barkeep.weapon.value)
                 credit.value = tradein(credit.value, $.online.cha)

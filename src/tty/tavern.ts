@@ -29,6 +29,7 @@ module Tavern {
 
     PC.load($.barkeep)
     const file = pathTo('users', 'arguments.json')
+    const mantle = pathTo('files/tavern', 'trophy.json')
 
     export function menu(suppress = true) {
         if (checkXP($.online, menu)) return
@@ -285,7 +286,7 @@ module Tavern {
                             `"Never rub another man\'s rhubarb!"`][dice(3) - 1], -3000)
 
                         PC.load($.barkeep)
-                        let trophy = JSON.parse(fs.readFileSync(`./files/tavern/trophy.json`).toString())
+                        let trophy = JSON.parse(fs.readFileSync(mantle).toString())
                         $.barkeep.user.toWC = whole($.barkeep.weapon.wc / 5)
                         if ($.barkeep.weapon.wc < Weapon.merchant.length)
                             $.barkeep.toWC += int((Weapon.merchant.length - $.barkeep.weapon.wc) / 10) + 1
