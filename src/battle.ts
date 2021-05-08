@@ -1457,8 +1457,10 @@ module Battle {
                                 retreat = true
                                 rpc.user.retreats++
                             }
-                            else
+                            else {
                                 rpc.hp = -1
+                                vt.animated('zoomOutUp')
+                            }
                         }
                         vt.outln(-600, vt.normal, 'away from ', -400, vt.faint, 'the battle!', -200)
                         // The Conqueror was here, heh

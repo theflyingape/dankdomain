@@ -239,7 +239,7 @@ module lib {
 
     //  non-negative integer
     export function whole(n: string | number) {
-        let i = int(n)
+        const i = int(n)
         return (i < 0) ? 0 : i
     }
 
@@ -259,7 +259,7 @@ module lib {
             if (bell || vt.emulation !== 'XT')
                 vt.out('\x07', -100)
             else
-                vt.sound('max')
+                vt.sound('max', 1)
         }
 
         checkTime(): number {
