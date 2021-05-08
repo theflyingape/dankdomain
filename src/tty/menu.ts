@@ -186,6 +186,7 @@ module Main {
                     break
                 }
                 vt.music('steal')
+                vt.profile({ jpg: 'rob', effect: 'fadeInDown' })
                 vt.outln(vt.faint, 'It is a hot, moonless night.', -600)
                 vt.outln('A city guard walks down another street.', -600)
 
