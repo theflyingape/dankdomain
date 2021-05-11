@@ -57,11 +57,11 @@
 		"telnet-socket": "^0.2.3",
 		"title-case": "^3.0.3",
 		"ws": "^7.4.5",
-		"xterm": "^4.11.0",
+		"xterm": "^4.12.0",
 		"xterm-addon-fit": "^0.5.0",
 		"xterm-addon-unicode11": "^0.2.0",
 		"xterm-addon-web-links": "^0.4.0",
-		"xterm-addon-webgl": "^0.10.0"
+		"xterm-addon-webgl": "^0.11.0"
 	},
 	"devDependencies": {
 		"@types/better-sqlite3": "^5.4.1",
@@ -72,7 +72,7 @@
 		"@types/nodemailer": "^6.4.1",
 		"@types/nodemailer-smtp-transport": "^2.7.4",
 		"@types/sprintf-js": "^1.1.2",
-		"@types/ws": "^7.4.2",
+		"@types/ws": "^7.4.4",
 		"browserify": "^17.0.0",
 		"eslint": "^7.26.0",
 		"typescript": "^4.2.4",

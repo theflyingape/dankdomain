@@ -1736,8 +1736,8 @@ module Dungeon {
 
                                     case 'curse':
                                         vt.sound('resurrect')
-                                        db.run(`UPDATE Players SET status='' WHERE id NOT GLOB '_*' AND status!='jail'`)
-                                        db.run(`UPDATE Players SET blessed='',coward=1,cursed='${$.witch.user.id}' WHERE id NOT GLOB '_*' AND id != '${$.player.id}'`)
+                                        db.run(`UPDATE Players SET status='' WHERE id NOT GLOB '_*' AND status != 'jail'`)
+                                        db.run(`UPDATE Players SET blessed='',coward=1,cursed='${$.witch.user.id}' WHERE id NOT GLOB '_*' AND access != 'Elemental' AND id != '${$.player.id}'`)
                                         news(`\t${$.witch.user.handle} resurrected all the dead and cursed everyone!`)
                                         vt.outln(vt.faint, 'The deed is done.', -200)
                                         break
