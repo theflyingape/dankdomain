@@ -186,7 +186,6 @@ module Main {
                     break
                 }
                 vt.music('steal')
-                vt.profile({ jpg: 'rob', effect: 'fadeInDown' })
                 vt.outln(vt.faint, 'It is a hot, moonless night.', -600)
                 vt.outln('A city guard walks down another street.', -600)
 
@@ -220,7 +219,10 @@ module Main {
                         return
                     }
 
+                    vt.action('clear')
+                    vt.profile({ jpg: 'rob', effect: 'fadeInDown' })
                     vt.outln(vt.faint, `You case ${opponent.user.handle}'s joint out.`, -600)
+
                     let prize = tradein(new Coin(Armor.name[opponent.user.armor].value).value, $.online.cha)
                     prize += tradein(new Coin(Weapon.name[opponent.user.weapon].value).value, $.online.cha)
                     if ($.dungeon && opponent.user.cannon) prize += money(opponent.user.level)
@@ -233,13 +235,13 @@ module Main {
                         return
                     }
 
-                    vt.outln(vt.faint, vt.cyan, 'The goods are in'
-                        , vt.normal, an(opponent.user.realestate)
-                        , vt.faint, ' protected by'
+                    vt.outln(vt.faint, vt.cyan, 'The goods are in', -250
+                        , vt.normal, an(opponent.user.realestate), -500
+                        , vt.faint, ' protected by', -250
                         , vt.normal, an(opponent.user.security)
-                        , vt.faint, '.')
-
+                        , vt.faint, '.', -500)
                     vt.action('ny')
+
                     vt.form = {
                         'yn': {
                             cb: () => {
