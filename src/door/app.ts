@@ -148,7 +148,7 @@ interface network {
     path: string
 }
 let network: network = {
-    address: 'localhost',
+    address: '0.0.0.0',
     telnet: true, socket: 1986, limit: 2, emulator: 'VT', rows: 25,
     web: true, ws: 1939, path: '/'
 }

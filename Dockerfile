@@ -9,6 +9,7 @@ ENV TARGET=/usr/games/dankdomain
 WORKDIR ${TARGET}
 #
 # add package manifest
+COPY .npmrc ${TARGET}
 COPY package.json ${TARGET}
 # suppress superfluous NPM install messages
 ENV npm_config_loglevel warn

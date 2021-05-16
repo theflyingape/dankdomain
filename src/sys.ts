@@ -25,7 +25,7 @@ module sys {
 
     export const USERS = pathTo('users')
 
-    export function an(item: string, show = true) {
+    export function an(item: string, show = true): string {
         return ' ' + (/a|e|i|o|u/i.test(item[0]) ? 'an' : 'a') + ' ' + (show ? item : '')
     }
 
@@ -154,7 +154,7 @@ module sys {
     }
 
     //  non-negative integer
-    export function whole(n: string | number) {
+    export function whole(n: string | number): number {
         const i = int(n)
         return (i < 0) ? 0 : i
     }

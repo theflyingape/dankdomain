@@ -221,7 +221,7 @@ module Items {
             let fail: number
             let backfire: number
 
-            fail = rpc.int + Math.trunc(rpc.user.level / 10) - (this.spells[spell].cast < 17 ? this.spells[spell].cast : this.spells[spell].cast - 8) - (5 - skill) - +rpc.user.coward
+            fail = rpc.int + int(rpc.user.level / 10) - (this.spells[spell].cast < 17 ? this.spells[spell].cast : this.spells[spell].cast - 8) - (5 - skill) - (+rpc.user.coward || 0)
             //  is this an attack spell against an opponent?
             if (nme && [9, 11, 12, 14, 15, 16, 19, 20, 21, 22].indexOf(this.spells[spell].cast) >= 0) {
                 let m = rpc.int - nme.int
