@@ -28,7 +28,7 @@
 	"tan": { "text":"has a remarkable", "value":"1c", "ac":1 },
 	"Holy Mail": { "text":"wears", "value":"100c", "ac":5 },
 	"Giant Turtle Shell": { "text":"is covered by a", "value":"10000c", "ac":10 },
-	"Fleece of Gold": { "text":"glimmers in a", "value":"100g", "ac":15 },
+	"Fleece of Gold": { "text":"glimmers in a", "value":"15g", "ac":15 },
 	"Cloak of Wonder": { "text":"wears a shining", "value":"1000g", "ac":20 },
 	"Amulet of Protection": { "text":"wears a mysterious", "value":"1000g", "ac":21 },
 	"Ring of Invisibility": { "text":"is fashioned with a", "value":"25p", "ac":25 },

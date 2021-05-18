@@ -599,8 +599,7 @@ module pc {
 
             if (!user.id) return
             if (insert || locked || user.id[0] == '_') {
-                let save = {}
-                let trace = pathTo(USERS, `.${user.id}.json`)
+                let save: user = { id:'' }
                 Object.assign(save, user)
                 Object.assign(save, {
                     bounty: user.bounty.carry(4, true),
@@ -608,6 +607,7 @@ module pc {
                     bank: user.bank.carry(4, true),
                     loan: user.loan.carry(4, true)
                 })
+                const trace = pathTo(USERS, `.${user.id}.json`)
                 fs.writeFileSync(trace, JSON.stringify(save, null, 2))
             }
 

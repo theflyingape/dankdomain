@@ -177,7 +177,7 @@ module player {
 
     export function logoff() {
 
-        if (!$.reason) {
+        if (!$.reason || $.reason == 'hangup') {
             db.loadUser($.sysop)
             //  caught screwing around?
             if ($.sysop.dob <= now().date) {

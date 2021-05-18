@@ -3,6 +3,7 @@
 #
 # docker build -t dankdomain .
 FROM node:buster
+LABEL maintainer="theflyingape@gmail.com"
 
 # set the working directory
 ENV TARGET=/usr/games/dankdomain
@@ -13,6 +14,7 @@ COPY .npmrc ${TARGET}
 COPY package.json ${TARGET}
 # suppress superfluous NPM install messages
 ENV npm_config_loglevel warn
+ENV NODE_ENV production
 #ENV NODE_PTY_DEBUG 1
 # install dependencies
 RUN npm install
