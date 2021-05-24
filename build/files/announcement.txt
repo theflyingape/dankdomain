@@ -1,10 +1,10 @@
-[mDate: [1;33mWed 25-Apr-2020  9:00am
+[mDate: [1;33mWed 24-May-2021  9:30am
 [mFrom: [1;33mMaester
 [1;37m
-It's been 5 months since the last update ...
+Be advised that a rob user attempt is unchanged for success/fail, but
+attempts per play and its sequencing are in effect.
 
-The v2 code base underwent complete refactoring in order to ease future
-maintenance and add features. There may be some undetected regressions.
-If you encounter any, thank you for any feedback & your patience.
+An annoying code exception occurs after exhausting your session time in
+the dungeon continues to escape me. I can hear the thief laughing at me.
 
 Happy hunting!

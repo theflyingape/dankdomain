@@ -32,6 +32,7 @@ module runtime {
     export let naval: number = 0
     export let party: number = 0
     export let realestate: number = 0
+    export let rob: number = 0
     export let security: number = 0
     export let sorceress: number = 0
     export let steal: number = 0
