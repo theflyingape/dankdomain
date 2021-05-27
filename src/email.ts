@@ -146,7 +146,7 @@ module Email {
             await smtp.sendMail(mailOptions).then((msg) => {
                 if (echo) {
                     if (vt.emulation == 'XT') vt.outln('📬')
-                    vt.outln(msg.response)
+                    vt.outln(msg.messageId)
                     if ($.reason.length) {
                         db.saveUser(player, true)
                         vt.outln('\nYour user ID (', vt.bright, player.id, vt.normal, ') was saved, ', Access.name[player.access][player.gender], '.')
