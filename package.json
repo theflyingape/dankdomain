@@ -41,7 +41,7 @@
 		}
 	],
 	"dependencies": {
-		"@theflyingape/xvt": "^1.4.6",
+		"xvt": "^1.4.6",
 		"animate.css": "^4.1.1",
 		"better-sqlite3": "^7.4.0",
 		"chokidar": "^3.5.1",
