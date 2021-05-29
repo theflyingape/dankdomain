@@ -1732,6 +1732,7 @@ module Dungeon {
                                                     break
                                             }
                                         }
+                                        news(`\tgot special magicks from ${$.witch.user.handle}!`)
                                         break
 
                                     case 'curse':

@@ -107,10 +107,10 @@ module Email {
             vt.outln(`SELECT id,handle,access,password FROM Players WHERE id='${player.id}';`)
             vt.outln(`...or its exported save file:`)
             vt.outln('$ grep password ', pathTo('users', `.${player.id}.json`))
-            if ($.from == 'newuser') {
-                PC.save(player, true)
-                $.reason = 'new user registration'
-            }
+        }
+        if ($.from == 'newuser') {
+            PC.save(player, true)
+            $.reason = 'new user registration'
         }
         vt.outln(-1000)
         vt.hangup()
