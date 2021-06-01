@@ -403,7 +403,7 @@ module Logon {
             $.player.plays++
             $.player.status = ''
             $.player.xplevel = $.player.level
-            const play = JSON.parse(fs.readFileSync(`${pathTo('etc')}/play.json`).toString())
+            const play = JSON.parse(fs.readFileSync(pathTo('etc', 'play.json')))
             Object.assign($, play)
             vt.music('logon')
 
@@ -486,7 +486,7 @@ module Logon {
 
             'sysop': {
                 cb: () => {
-                    if (vt.entry) fs.writeFileSync(`${pathTo('files')}/announcement.txt`, vt.attr(
+                    if (vt.entry) fs.writeFileSync(pathTo('files', 'announcement.txt'), vt.attr(
                         vt.magenta, 'Date: ', vt.off, date2full($.player.lastdate), ' ', time($.player.lasttime) + '\n',
                         vt.magenta, 'From: ', vt.off, $.player.handle, '\n\n',
                         vt.bright, vt.entry))
@@ -515,7 +515,7 @@ module Logon {
                 cb: () => {
                     vt.outln()
                     if (vt.entry.length && !cuss(vt.entry)) {
-                        fs.writeFileSync(`${pathTo('files')}/auto-message.txt`, vt.attr(
+                        fs.writeFileSync(pathTo('files', 'auto-message.txt'), vt.attr(
                             vt.cyan, 'Date: ', vt.off, date2full($.player.lastdate), ' ', time($.player.lasttime), '\n',
                             vt.cyan, 'From: ', vt.off, $.player.handle + '\n\n',
                             vt.bright, vt.entry))
@@ -626,7 +626,7 @@ module Logon {
                     }
                 }
                 db.run(`DELETE FROM Players WHERE id='${rs[row].id}'`)
-                fs.unlink(`${pathTo('files/user')}/${rs[row].id}.txt`, () => { })
+                fs.unlink(pathTo('files/user', `${rs[row].id}.txt`), () => { })
                 fs.unlink(`${USERS}/.${rs[row].id}.json`, () => { })
                 vt.out('x')
                 continue
@@ -642,7 +642,7 @@ module Logon {
         }
 
         try {
-            fs.renameSync(`${pathTo('files/tavern')}/today.txt`, `${pathTo('files/tavern')}/yesterday.txt`)
+            fs.renameSync(pathTo('files/tavern', 'today.txt'), pathTo('files/tavern', 'yesterday.txt'))
             vt.out('T')
         } catch (e) {
             vt.out('?')

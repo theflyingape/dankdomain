@@ -41,7 +41,7 @@
 		}
 	],
 	"dependencies": {
-		"@theflyingape/xvt": "^1.4.6",
+		"@theflyingape/xvt": "^1.4.7",
 		"animate.css": "^4.1.1",
 		"better-sqlite3": "^7.4.0",
 		"chokidar": "^3.5.1",
@@ -81,12 +81,12 @@
 	"types": "src",
 	"scripts": {
 		"build": "./build.sh",
-		"bundle": "./watchify build/door/client.js -v -o build/door/static/bundle.js",
+		"bundle": "watchify build/door/client.js -v -o build/door/static/bundle.js",
 		"debug": "node build/door/app",
 		"mame": "./build/mame.sh",
 		"start": "test -s door/app.js && node door/app || node build/door/app",
 		"test": "npm start test",
 		"tty": "./build/tty.sh",
-		"watch": "./tsc -w"
+		"watch": "tsc -w"
 	}
 }

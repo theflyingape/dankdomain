@@ -93,7 +93,7 @@ module pc {
         winning: string
 
         constructor() {
-            this.name = require(`${pathTo('etc', 'dankdomain.json')}`)
+            this.name = require(pathTo('etc', 'dankdomain.json'))
             this.types = Object.keys(this.name).length
             this.classes = new Array()
             this.total = 0
@@ -461,7 +461,7 @@ module pc {
             }
 
             if (level == 1) {
-                Object.assign(user, JSON.parse(fs.readFileSync(`${pathTo('users')}/reroll.json`).toString()))
+                Object.assign(user, JSON.parse(fs.readFileSync(pathTo('users', 'reroll.json'))))
                 user.gender = user.sex
                 user.coin = new Coin(user.coin.toString())
                 user.bank = new Coin(user.bank.toString())
@@ -599,16 +599,19 @@ module pc {
 
             if (!user.id) return
             if (insert || locked || user.id[0] == '_') {
-                let save: user = { id:'' }
-                Object.assign(save, user)
-                Object.assign(save, {
-                    bounty: user.bounty.carry(4, true),
-                    coin: user.coin.carry(4, true),
-                    bank: user.bank.carry(4, true),
-                    loan: user.loan.carry(4, true)
-                })
-                const trace = pathTo(USERS, `.${user.id}.json`)
-                fs.writeFileSync(trace, JSON.stringify(save, null, 2))
+                try {
+                    let save: user = { id: '' }
+                    Object.assign(save, user)
+                    Object.assign(save, {
+                        bounty: user.bounty.carry(4, true),
+                        coin: user.coin.carry(4, true),
+                        bank: user.bank.carry(4, true),
+                        loan: user.loan.carry(4, true)
+                    })
+                    const trace = pathTo(USERS, `.${user.id}.json`)
+                    fs.writeFileSync(trace, JSON.stringify(save, null, 2))
+                }
+                catch { }
             }
 
             db.saveUser(user, insert)

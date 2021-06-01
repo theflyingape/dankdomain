@@ -93,12 +93,12 @@ module Main {
 
             case 'G':
                 vt.animated('fadeOut')
-                require('./gambling').menu($.player.expert)
+                require('./gambling').menu(false)
                 return
 
             case 'L':
                 vt.animated('fadeOut')
-                require('./library').menu($.player.expert)
+                require('./library').menu(false)
                 return
 
             case 'M':

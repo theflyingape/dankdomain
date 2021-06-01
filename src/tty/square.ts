@@ -358,6 +358,7 @@ module Square {
                                         db.run(`UPDATE Players set status='',xplevel=level WHERE id='${opponent.user.id}'`)
                                         log(opponent.user.id, `${$.player.handle} paid ${credit.carry()} to bail you out of jail.\n`)
                                         news(`\t${opponent.user.handle} made bail`)
+                                        PC.adjust('cha', -1, -1, -1)
                                         $.bail--
                                     }
                                     else
@@ -372,7 +373,7 @@ module Square {
                     })
                     return
                 }
-                vt.out(`The jail house is closed for the day.\n`)
+                vt.outln('The jail house is closed for the day.')
                 break
 
             case 'M':

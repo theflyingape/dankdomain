@@ -221,7 +221,7 @@ module player {
                 news(`\treturned to ${$.whereis} at ${time($.player.lasttime)} as a level ${$.player.level} ${$.player.pc}`)
                 news(`\t(${$.reason})\n`, true)
 
-                const callers = `${pathTo('users')}/callers.json`
+                const callers = pathTo('users', 'callers.json')
                 try {
                     $.callers = JSON.parse(fs.readFileSync(callers).toString())
                 } catch (e) { }
@@ -231,11 +231,12 @@ module player {
                 fs.writeFileSync(callers, JSON.stringify($.callers))
             }
 
-            vt.wall($.player.handle, `logged off: ${$.reason}`)
             db.unlock($.player.id, true)
             db.unlock($.player.id)
 
             //  logoff banner
+            vt.carrier = true
+            vt.wall($.player.handle, `logged off: ${$.reason}`)
             if ($.online.hp < 1)
                 vt.sound('goodbye')
             else {
@@ -264,6 +265,7 @@ module player {
                 , vt.faint, ' (', vt.cyan, process.platform, vt.white, vt.faint, ')', -1965)
             if ($.access.roleplay && $.player.today && $.player.level > 1)
                 vt.music($.online.hp > 0 ? 'logoff' : 'death')
+            vt.carrier = false
         }
         else
             vt.sound('invite')
@@ -278,7 +280,7 @@ module player {
 
         if ($.player.novice) {
             let novice = <user>{ novice: true }
-            Object.assign(novice, JSON.parse(fs.readFileSync(`${pathTo('users')}/novice.json`).toString()))
+            Object.assign(novice, JSON.parse(fs.readFileSync(pathTo('users', 'novice.json'))))
             PC.reroll($.player, novice.pc)
             Object.assign($.player, novice)
             $.player.coin = new Coin(novice.coin.toString())
@@ -811,7 +813,7 @@ module player {
         if (max > 2) {
             vt.music('victory')
 
-            const log = `${pathTo('files')}/winners.txt`
+            const log = pathTo('files', 'winners.txt')
             fs.appendFileSync(log, sprintf(`%22s won on %s  -  game took %3d days\n`
                 , $.player.handle
                 , date2full(now().date)
@@ -858,7 +860,7 @@ module player {
                 PC.newkeys(user)
                 user.keyhints.splice(12)
                 db.saveUser(user)
-                fs.unlink(`${pathTo('users')}/.${user.id}.json`, () => { })
+                fs.unlink(pathTo('users', '.${user.id}.json'), () => { })
                 vt.out('.', -10)
             }
             db.run(`UPDATE Rings SET bearer=''`)   // should be cleared by rerolls
@@ -867,7 +869,7 @@ module player {
             while (++i) {
                 try {
                     user = <user>{ id: '' }
-                    Object.assign(user, JSON.parse(fs.readFileSync(`${pathTo('users')}/bot${i}.json`).toString()))
+                    Object.assign(user, JSON.parse(fs.readFileSync(pathTo('users', 'bot${i}.json'))))
                     let bot = <user>{}
                     Object.assign(bot, user)
                     PC.newkeys(bot)
@@ -955,7 +957,7 @@ module player {
                     else {
                         vt.sound('thunder')
                         if ($.player.emulation == 'XT') vt.out('💀 ')
-                        vt.outln(vt.bright, vt.black, '^', vt.white, 'Boom!', vt.black, '^')
+                        vt.outln(vt.black, vt.bright, '^', vt.white, 'Boom!', vt.black, '^')
 
                         if (slot == 0) {
                             for (let i = 0; i < 3; i++) {
