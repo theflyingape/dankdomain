@@ -5,7 +5,7 @@
 
 import Database = require('better-sqlite3')
 import { fs, now, path, pathTo, USERS } from './sys'
-import { Coin, Ring } from './items'
+import { Access, Coin, Ring } from './items'
 
 module db {
 
@@ -135,6 +135,7 @@ module db {
         }
         else {
             user.id = ''
+            user.access = Object.keys(Access.name)[0]
             return false
         }
     }

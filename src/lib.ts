@@ -179,13 +179,18 @@ module lib {
     }
 
     export function input(focus: string | number, input = '', speed = 8) {
-        if ($.access.bot) {
-            const cr = (vt.form[focus].eol || vt.form[focus].lines)
-            vt.typeahead += input
-            if (cr || !input) vt.typeahead += '\r'
+        if ($.access.bot)
             vt.form[focus].delay = speed < 100 ? 125 * dice(speed) * dice(speed) : speed
-        }
         vt.focus = focus
+
+        //  queue up any input by the bot
+        if ($.access.bot)
+            setImmediate(() => {
+                const cr = (vt.form[focus].eol || vt.form[focus].lines)
+                vt.typeahead += input
+                if (cr || !input) vt.typeahead += '\r'
+                process.stdin.emit('data', '')
+            })
     }
 
     export function log(who: string, message: string) {
@@ -268,7 +273,7 @@ module lib {
 
         cls() {
             const rows = process.stdout.rows || 24
-            const scroll = (this.row < rows ? this.row : rows) - (this.col == 1 ? 2 : 1)
+            const scroll = whole((this.row < rows ? this.row : rows) - (this.col == 1 ? 2 : 1))
             this.plot(rows, 1)
             this.outln(this.off, '\n'.repeat(scroll), -10)  //  allow XTerm to flush
             this.out(this.clear, -10)

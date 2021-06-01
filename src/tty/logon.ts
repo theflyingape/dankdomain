@@ -148,13 +148,13 @@ module Logon {
             $.player.id = bot
             if (!PC.load($.player)) {
                 vt.outln(`bot id: ${bot} not found`)
-                $.access.roleplay = false
-                vt.carrier = false
-                vt.hangup()
+                PC.reroll($.player)
+                $.player.emulation = <EMULATION>vt.emulation
             }
             $.access = Access.name[$.player.access]
             vt.emulation = $.player.emulation
             $.player.rows = process.stdout.rows || 24
+            if (!$.player.id) vt.hangup()
         }
 
         vt.title($.player.emulation)
@@ -504,7 +504,7 @@ module Logon {
                     vt.outln()
                     if (/Y/i.test(vt.entry)) {
                         vt.action('freetext')
-                        input('user', `Where's my dough, Bert!\n`)
+                        input('user', `Where's my dough, Bert?!\n`)
                         return
                     }
                     require('./taxman').cityguards()

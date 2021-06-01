@@ -237,17 +237,17 @@ module player {
             //  logoff banner
             vt.carrier = true
             vt.wall($.player.handle, `logged off: ${$.reason}`)
+            vt.save()
+            vt.out(`\x1B[1;${$.player.rows}r`)
+            vt.restore()
+            vt.outln(-100, '\x06')
+
             if ($.online.hp < 1)
                 vt.sound('goodbye')
             else {
                 if ($.player.plays) vt.sound($.online.hull < 1 ? 'comeagain' : 'invite')
                 PC.portrait($.online)
             }
-
-            vt.save()
-            vt.out(`\x1B[1;${$.player.rows}r`)
-            vt.restore()
-            vt.outln(-100, '\x06')
 
             vt.outln(-200, 'Goodbye, please play again! Also visit: ', -300)
             vt.out(vt.cyan, '  ___                               ___  \n')
@@ -265,7 +265,6 @@ module player {
                 , vt.faint, ' (', vt.cyan, process.platform, vt.white, vt.faint, ')', -1965)
             if ($.access.roleplay && $.player.today && $.player.level > 1)
                 vt.music($.online.hp > 0 ? 'logoff' : 'death')
-            vt.carrier = false
         }
         else
             vt.sound('invite')
