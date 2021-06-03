@@ -9,7 +9,7 @@ import { Access, Armor, Magic, Poison, Ring, Weapon } from './items'
 import { armor, bracket, buff, Coin, death, getRing, input, log, news, rings, tradein, vt, weapon } from './lib'
 import { Deed, PC } from './pc'
 import { checkXP } from './player'
-import { an, cuss, date2full, dice, fs, int, money, pathTo, sprintf, whole } from './sys'
+import { an, cuss, date2full, dice, fs, int, money, pathTo, sprintf, titlecase, whole } from './sys'
 
 module Battle {
 
@@ -94,7 +94,7 @@ module Battle {
                 else
                     vt.outln(`and burns it!`, -600, 'Heh.')
                 Weapon.equip($.online, Weapon.merchant[0])
-                db.saveUser($.player)
+                PC.save($.player)
                 $.reason = `schooled by ${$.barkeep.user.handle}`
                 //  go crazy!
                 vt.sound('winner', 32)
@@ -362,7 +362,7 @@ module Battle {
                                     vt.outln(vt.bright, vt.blue, '"You can never escape the taxman!"')
                                 vt.sound({ _BAR: 'growl', _DM: 'punk', _NEP: 'thunder', _OLD: 'crone', _TAX: 'thief2' }[enemy.user.id], 12)
                                 PC.adjust('cha', -2, -1)
-                                db.saveUser($.player)
+                                PC.save($.player)
                                 next()
                                 return
                             }
@@ -2270,36 +2270,32 @@ module Battle {
                         input('start', '', 250)
                         return
                     }
-                    let rpc: active = { user: { id: vt.entry } }
-                    if (/^[A-Z][A-Z23\s]*$/i.test(vt.entry)) {
+                    let rpc: active = { user: { id: titlecase(vt.entry) } }
+                    if (!PC.load(rpc)) {
+                        rpc.user.id = ''
+                        rpc.user.handle = vt.entry
                         if (!PC.load(rpc)) {
-                            rpc.user.id = ''
-                            rpc.user.handle = vt.entry
-                            if (!PC.load(rpc)) {
-                                vt.beep()
-                                vt.out(' ?? ')
-                            }
-                        }
-                        //  paint profile
-                        if (rpc.user.id) {
-                            vt.action('clear')
-                            PC.portrait(rpc)
-                            //  the inert player does not fully participate in the fun ...
-                            if (/Bail|Brawl|Curse|Drop|Joust|Resurrect|Rob/.test(venue) && !rpc.user.xplevel) {
-                                rpc.user.id = ''
-                                vt.beep()
-                                vt.out(' ', bracket('inactive', false))
-                            }
-                            else if (/Brawl|Fight|Joust|Resurrect/.test(venue) && rpc.user.status == 'jail') {
-                                rpc.user.id = ''
-                                vt.beep()
-                                if ($.player.emulation == 'XT') vt.out(' 🔒')
-                                vt.out(' ', bracket(rpc.user.status, false))
-                            }
+                            vt.beep()
+                            vt.out(' ?? ')
                         }
                     }
-                    else
-                        rpc.user.id = ''
+                    //  paint profile
+                    if (rpc.user.id) {
+                        vt.action('clear')
+                        PC.portrait(rpc)
+                        //  the inert player does not fully participate in the fun ...
+                        if (/Bail|Brawl|Curse|Drop|Joust|Resurrect|Rob/.test(venue) && !rpc.user.xplevel) {
+                            rpc.user.id = ''
+                            vt.beep()
+                            vt.out(' ', bracket('inactive', false))
+                        }
+                        else if (/Brawl|Fight|Joust|Resurrect/.test(venue) && rpc.user.status == 'jail') {
+                            rpc.user.id = ''
+                            vt.beep()
+                            if ($.player.emulation == 'XT') vt.out(' 🔒')
+                            vt.out(' ', bracket(rpc.user.status, false))
+                        }
+                    }
                     vt.outln()
                     cb(rpc)
                 }, max: 22
