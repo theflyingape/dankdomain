@@ -14,9 +14,11 @@ import { cuss, dice, fs, int, date2full, now, pathTo, got, money, titlecase, USE
 module Logon {
 
     init()
+    cat('logon')
+    if (vt.tty == 'door')
+        vt.outln(-2000)
 
     export function user(prompt: string) {
-        cat('logon')
         let retry = 3
 
         vt.form = {
@@ -135,8 +137,8 @@ module Logon {
         }
     }
 
-    //  user (or bot) startup entry point
-    export function startup(bot = '') {
+    //  authenticated (password, bot, or BBS user) login startup entry point
+    export function startup(userID = '') {
         $.whereis = [
             'Braavos', 'Casterly Rock', 'Dorne', 'Dragonstone', 'Dreadfort',
             'The Eyrie', 'Harrenhal', 'Highgarden', 'Iron Island', `King's Landing`,
@@ -144,17 +146,39 @@ module Logon {
             'Riverrun', 'The Twins', 'The Wall', 'Winterfell', 'Volantis'
         ][dice(20) - 1]
 
-        if (bot) {
-            $.player.id = bot
+        //  auto-login?
+        if (userID) {
+            $.player.id = userID
             if (!PC.load($.player)) {
-                vt.outln(`bot id: ${bot} not found`)
                 PC.reroll($.player)
+                PC.newkeys($.player)
                 $.player.emulation = <EMULATION>vt.emulation
+                $.player.rows = process.stdout.rows || 24
             }
-            $.access = Access.name[$.player.access]
+
             vt.emulation = $.player.emulation
             $.player.rows = process.stdout.rows || 24
-            if (!$.player.id) vt.hangup()
+
+            if (!$.player.id) {
+                if (vt.tty == 'door' && $.door.length) {
+                    $.player.rows = whole($.door[20]) || 24
+                    emulator(() => {
+                        $.player.id = userID
+                        $.player.name = $.door[9]
+                        $.player.remote = $.door[10]
+                        $.player.emulation = <EMULATION>vt.emulation
+                        require('./newuser')
+                        vt.ondrop = logoff
+                    })
+                    return
+                }
+                else {
+                    vt.outln(`userID (${userID}) passed not found -- goodbye!`)
+                    vt.hangup()
+                }
+            }
+            //  authenticated
+            $.access = Access.name[$.player.access]
         }
 
         vt.title($.player.emulation)
@@ -191,8 +215,8 @@ module Logon {
                 $.access = Access.name[$.player.access]
             } while (!$.access[$.player.sex])
         }
+        /*  old school BBS tactic (usually 5 minutes) for Millennials to experience
         else {
-            //  old school BBS tactic (usually 5 minutes) for Millennials to experience
             let t = now().time
             t = 1440 * (now().date - $.player.lastdate) + 60 * int(t / 100) + (t % 100) - (60 * int($.player.lasttime / 100) + ($.player.lasttime % 100))
             if (!$.access.sysop && $.player.novice && $.player.calls < 5 && t < 2) {
@@ -204,7 +228,7 @@ module Logon {
                 vt.hangup()
             }
         }
-
+        */
         //  did midnight or noon cross since last visit?
         if ($.player.lastdate != now().date || ($.player.lasttime < 1200 && now().time >= 1200))
             $.player.today = 0

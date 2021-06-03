@@ -120,6 +120,15 @@ module lib {
             , vt.normal, vt.cyan, '(Q=Quit): ')
     }
 
+    export function door(user: string): string[] {
+        $.door = []
+        try {
+            $.door = fs.readFileSync(user).toString().split('\r\n')
+        }
+        catch { }
+        return $.door
+    }
+
     export function emulator(cb: Function) {
         vt.action('list')
         vt.form = {
@@ -188,7 +197,7 @@ module lib {
             setImmediate(() => {
                 const cr = (vt.form[focus].eol || vt.form[focus].lines)
                 vt.typeahead += input
-                if (cr || !input) vt.typeahead += '\r'
+                if (cr || !input) vt.typeahead += dice(100) > 1 ? '\r' : '\x1b'
                 process.stdin.emit('data', '')
             })
     }
@@ -309,7 +318,7 @@ module lib {
         }
 
         wall(who: string, msg: string) {
-            this.out(`@wall(${who} ${msg})`)
+            if (this.tty !== 'door') this.out(`@wall(${who} ${msg})`)
         }
     }
 

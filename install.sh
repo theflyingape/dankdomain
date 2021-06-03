@@ -7,9 +7,6 @@ if [ -n "${ID}" ]; then
     [ -n "${PRETTY_NAME}" ] && echo -e "\e[${ANSI_COLOR}m${PRETTY_NAME}\e[m" || echo "${NAME} ${VERSION}"
 fi
 
-# dnf package management?
-[ -n "`which dnf`" ] || exit
-
 # let's prompt for admin credentials now, if necessary
 [ -n "$1" ] && TARGET="$1" || TARGET=/usr/local/games
 echo "Install into ${TARGET} ?"
@@ -30,10 +27,15 @@ echo "Installing into ${TARGET}"
 [ -d "${TARGET}/users" ] || sudo mkdir -v "${TARGET}/users"
 
 # let's start with the services
-[ -n "`which node-gyp`" ] || sudo dnf install node-gyp nodejs-typescript rsync
-[ -n "`which resize`" ] || sudo dnf install xterm-resize
+if [ -n "`which dnf`" ]; then
+    [ -n "`which node`" ] || sudo dnf install nodejs
+    [ -n "`which resize`" ] || sudo dnf install xterm-resize
+    [ -n "`which rsync`" ] || sudo dnf install rsync
+fi
 
 # this.package install script
+echo "Nodejs `node -v`"
+echo "NPM `npm -v`"
 npm install
 
 # transpile
@@ -54,16 +56,25 @@ sudo chmod 660 "${TARGET}/users/*"
 echo -e "\n${PWD}"
 ls -lh "${TARGET}"
 
-if sudo service iptables status ; then
-	hole=`sudo iptables -L INPUT -n | grep -c 'dpt:23'`
-	if [ $hole -eq 0 ]; then
-        sudo iptables -A INPUT -p tcp --syn --dport 23 -m connlimit --connlimit-above 1 -j REJECT
-        sudo iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 23 -j ACCEPT
-        sudo service iptables save
-	fi
-else
-    firewall-cmd --permanent --direct --add-rule ipv4 nat OUTPUT 0 -p tcp -o lo --dport 23 -j REDIRECT --to-ports 1986
-    firewall-cmd --permanent --direct --add-rule ipv4 nat OUTPUT 0 -p tcp -o lo --dport 443 -j REDIRECT --to-ports 1939
+echo "Enable telnet/23 & https/443 redirect rules on this host ?"
+echo -n "Enter 'Y' to enable rules: "
+read cont
+
+if [ "${cont}" == "Y" ]; then
+    sudo -B -v || exit
+    if sudo service iptables status ; then
+        hole=`sudo iptables -L INPUT -n | grep -c 'dpt:23'`
+        if [ $hole -eq 0 ]; then
+            sudo iptables -A INPUT -p tcp --syn --dport 23 -m connlimit --connlimit-above 1 -j REJECT
+            sudo iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 23 -j ACCEPT
+            sudo service iptables save
+        fi
+    else
+        sudo firewall-cmd --permanent --direct --add-rule ipv4 nat OUTPUT 0 -p tcp -o lo --dport 23 -j REDIRECT --to-ports 1986
+        sudo firewall-cmd --permanent --direct --add-rule ipv4 nat OUTPUT 0 -p tcp -o lo --dport 443 -j REDIRECT --to-ports 1939
+        sudo firewall-cmd --reload
+        sudo firewall-cmd --direct --get-all-rules
+    fi
 fi
 
 sudo cp -v "${TARGET}/etc/dankdomain-door.service" /etc/systemd/system/
@@ -71,7 +82,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable dankdomain-door
 sudo systemctl status dankdomain-door -l
 
-echo -n "Press RETURN for an Apache proxy to a NodeJs app example: "
+echo -n "Press RETURN for an Apache proxy fronting a NodeJs app example: "
 read n
 
 echo

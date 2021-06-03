@@ -7,10 +7,12 @@ import $ = require('../runtime')
 import { Access } from '../items'
 import { loadUser } from '../db'
 import { bracket, vt } from '../lib'
+import { PC } from '../pc'
 import { cuss, date2days, date2full, titlecase } from '../sys'
 
 module NewUser {
 
+    $.from = 'newuser'
     let editmode: boolean = false
 
     vt.music('newuser')
@@ -18,20 +20,16 @@ module NewUser {
     vt.cls()
     vt.plot(1, 17)
 
-    if (vt.tty == 'rlogin') {
-        vt.outln(vt.blue, '--=:) ', vt.bright, 'New BBS Registration', vt.normal, ' (:=--')
-        vt.out(bracket(1), vt.cyan, 'This BBS Name.:')
-        vt.out(bracket(2), vt.cyan, 'The Sysop Name:')
-        vt.out(bracket(3), vt.cyan, 'BBS Start Date:')
-        vt.out(bracket(4), vt.cyan, 'NPC Gender (I):')
-    }
-    else {
+    if (vt.tty == 'door')
+        vt.outln(vt.blue, '--=:) ', vt.bright, 'BBS Door Registration', vt.normal, ' (:=--')
+    else
         vt.outln(vt.yellow, '--=:) ', vt.bright, 'New User Registration', vt.normal, ' (:=--')
-        vt.out(bracket(1), vt.cyan, `Player's Handle:`)
-        vt.out(bracket(2), vt.cyan, 'Your REAL Name.:')
-        vt.out(bracket(3), vt.cyan, 'Date of Birth..:')
-        vt.out(bracket(4), vt.cyan, 'Gender (M/F)...:')
-    }
+    vt.out(bracket(1), vt.cyan, `Player's Handle:`)
+    vt.out(bracket(2), vt.cyan, 'Your REAL Name.:')
+    if (vt.tty == 'door')
+        vt.out(' ', vt.blue, vt.bright, $.player.name)
+    vt.out(bracket(3), vt.cyan, 'Date of Birth..:')
+    vt.out(bracket(4), vt.cyan, 'Gender (M/F)...:')
 
     vt.form = {
         1: { cb: handle, row: 3, col: 23, min: 2, max: 22, match: /^[A-Z][A-Z\s]*$/i },
@@ -68,9 +66,9 @@ module NewUser {
                 return
             }
 
-        $.player.id = ''
         $.player.handle = vt.entry
-        if (loadUser($.player)) {
+        let check: user = { id: '', handle: $.player.handle }
+        if (loadUser(check)) {
             vt.beep()
             vt.refocus()
             return
@@ -80,7 +78,7 @@ module NewUser {
         vt.out(vt.cll, $.player.handle)
 
         vt.action(editmode ? 'list' : 'freetext')
-        vt.focus = editmode ? 'edit' : 2
+        vt.focus = editmode ? 'edit' : vt.tty == 'door' ? 3 : 2
     }
 
     function name() {
@@ -160,6 +158,17 @@ module NewUser {
             return
         }
 
+        if (vt.tty == 'door') {
+            $.player.id = $.door[25]
+            $.player.password = $.door[10]
+            $.player.email = $.door[11] || $.door[12] || 'nobody@localhost'
+            PC.save($.player, true)
+            vt.out('\nYour user ID (', vt.bright, $.player.id, vt.normal, ') was saved.')
+            vt.outln(-2000)
+            require('./logon').startup($.player.id)
+            return
+        }
+
         let check: user = { id: $.player.id, handle: '' }
         let retry: number = 1
         while (retry < 4 && loadUser(check)) {
@@ -177,7 +186,6 @@ module NewUser {
             return
         }
 
-        $.from = 'newuser'
         require('../email').newuser()
     }
 

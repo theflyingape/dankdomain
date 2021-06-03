@@ -5,6 +5,7 @@
 
 module runtime {
     //  player
+    export let door: string[]
     export let from: string
     export let online: active = { user: { id: '' } }
     export let player: user = online.user

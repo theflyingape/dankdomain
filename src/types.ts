@@ -13,4 +13,4 @@ type NPC = '' | 'cleric' | 'wizard' | 'trapdoor' | 'thief' | 'portal' | 'well' |
 type ROOM = '' | 'n-s' | 'w-e' | 'cavern'
 type EMULATION = 'dumb' | 'VT' | 'PC' | 'XT'
 type SUIT = '⚜' | '♠' | '♥' | '♣' | '♦'
-type TTY = 'rlogin' | 'telnet' | 'web'
+type TTY = 'door' | 'telnet' | 'web'

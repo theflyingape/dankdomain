@@ -16,17 +16,29 @@ process.on(`${process.title} uncaughtException`, (err, origin) => {
     console.error(`${origin} ${err}`)
 })
 process.title = 'ddclient'
+
+//  check for BBS node -> door startup for user
+const bbs = `${process.cwd()}/door.sys`
+
 process.chdir(__dirname)
 
-import { vt } from '../lib'
+import { door, vt, whole } from '../lib'
 
-vt.emulation = <EMULATION>(process.argv.length > 2 && process.argv[2]
-    ? process.argv[2].toUpperCase() : (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM))
-        ? 'dumb' : (/^linux|^lisa|^ncsa|^pcvt|^vt|^xt/i.test(process.env.TERM))
-            ? 'VT' : (/ansi|cygwin|^pc/i.test(process.env.TERM))
-                ? 'PC' : '')
+vt.emulation = <EMULATION>
+    (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM) ? 'dumb'
+        : /^linux|^lisa|^ncsa|^pcvt|^vt/i.test(process.env.TERM) ? 'VT'
+            : /ansi|cygwin|^pc/i.test(process.env.TERM) ? 'PC'
+                : '')
 
-const bot = process.argv.length > 3 && process.argv[3].toUpperCase() || ''
+//  check for passed bot or a BBS id for auto-login
+const userID = process.argv.length > 2 && process.argv[2].toUpperCase() || ''
+if (userID.length && userID == whole(userID).toString()) {
+    const user = door(bbs)
+    if (userID == user[25]) {
+        vt.emulation = user[19] == 'GR' ? 'PC' : 'VT'
+        vt.tty = 'door'
+    }
+}
 
 //  init tty handler
 vt.sessionAllowed = 150
@@ -63,7 +75,7 @@ else
         },
         5: {
             cb: () => {
-                if (vt.entry.length) vt.emulation = 'VT'
+                vt.emulation = vt.entry.length ? 'VT' : 'dumb'
                 logon()
             }, prompt: '\x05', enq: true
         }
@@ -73,22 +85,15 @@ function logon() {
 
     let prompt = 'Who dares to enter my dank domain'
     //  mode of operation
-    switch (vt.emulation) {
-        case 'PC':
-            vt.tty = 'rlogin'
-            break
-        case 'XT':
-            vt.tty = 'web'
-            vt.title(process.title)
-            prompt = 'Ⱳho ɗaɽes ʈo eɳʈeɽ ɱy ɗaɳƙ ɗoɱaiɳ'
-            break
-        default:
-            vt.emulation = 'VT'
+    if (vt.emulation == 'XT') {
+        vt.tty = 'web'
+        vt.title(process.title)
+        prompt = 'Ⱳho ɗaɽes ʈo eɳʈeɽ ɱy ɗaɳƙ ɗoɱaiɳ'
     }
     vt.outln(vt.cyan, vt.bright, vt.emulation, vt.normal, ' emulation ', vt.faint, 'enabled')
 
-    if (bot)
-        require('./logon').startup(bot)
+    if (userID)
+        require('./logon').startup(userID)
     else
         require('./logon').user(prompt)
 }

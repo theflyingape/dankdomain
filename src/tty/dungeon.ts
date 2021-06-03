@@ -53,7 +53,7 @@ module Dungeon {
 
     const Mask = ['   ', ' ѩ ', 'ѩ ѩ', 'ѩѩѩ', 'ѩӂѩ']
     const Monster = {
-        rlogin: ['   ', 'Mon', 'M+M', 'Mob', 'MOB'],
+        door: ['   ', 'Mon', 'M+M', 'Mob', 'MOB'],
         telnet: ['   ', 'Mon', 'M+M', 'Mob', 'MOB']
     }
 

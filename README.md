@@ -17,18 +17,30 @@ _Read the_ [Player's Manual](https://www.ddgame.us) _to play the_ [online game](
 
 Download packs: [images](https://drive.google.com/open?id=1jjLPtGf_zld416pxytZfbfCHREZTghkW) 📷 and [sounds](https://drive.google.com/open?id=1UvqQJbN61VbWVduONXgo1gm9yvGI0Qp8) 🔉
 
-With the packs loaded, the game + runtime files will need **440mb** storage.
+With the _optional_ packs loaded for the web portal, the game + runtime files will need roughly **500mb** storage.
 
 ## Installation
-Tested on `Linux`, `Chrome OS`, and `Docker`. To run a local game copy (requires the `Node.js` runtime):
+Tested on `Linux`, `Chrome OS`, and `Docker`. To [install](https://www.npmjs.com/package/dankdomain) and run a local game copy (requires the `Node.js` runtime):
 
 ```bash
 $ npm install dankdomain
-$ ./install.sh /usr/local/games
+$ cd node_modules/dankdomain
+$ ./install.sh /path/to/games
+$ cd /path/to/games/dankdomain
 $ npm start
 ```
 
-... or use Docker:
+**NOTE**: _my "public" access [packages](https://github.com/theflyingape?tab=packages&visibility=public) are published on GitHub, too, and it requires your `Personal Access Token` authentication to fetch/install them from this alternative `npm registry`:_
+
+```bash
+$ npm config set @theflyingape:registry https://npm.pkg.github.com
+$ npm login --scope=@theflyingape
+$ npm install @theflyingape/dankdomain
+```
+
+_Read GitHub's [Working with the npm registry](https://docs.github.com/en/enterprise-server@2.22/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-to-github-packages) to learn more details._
+
+... or use **Docker** _(convenient, but not always kept current)_:
 
 ```
 $ docker pull theflyingape/dankdomain

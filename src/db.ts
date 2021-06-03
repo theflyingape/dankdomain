@@ -98,7 +98,7 @@ module db {
     export function loadUser(user: user): boolean {
 
         let sql = 'SELECT * FROM Players WHERE '
-        sql += (user.id) ? `id ='${user.id.toUpperCase()}'` : `handle='${user.handle}'`
+        sql += user.id ? `id='${user.id.toUpperCase()}'` : `handle='${user.handle}'`
 
         let rs = query(sql)
         if (rs.length) {

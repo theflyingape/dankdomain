@@ -287,7 +287,7 @@ module pc {
                 //  restore NPC to its static state
                 if (user.id[0] == '_' && user.id !== "_SYS") {
                     try {
-                        const npc: user = JSON.parse(fs.readFileSync(pathTo(`${USERS}/${db.NPC[user.id]}.json`)).toString())
+                        const npc: user = JSON.parse(fs.readFileSync(pathTo(USERS, `${db.NPC[user.id]}.json`)).toString())
                         if (npc) {
                             Object.assign(user, npc)
                             this.reroll(user, user.pc, user.level)

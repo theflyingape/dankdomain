@@ -5,8 +5,8 @@
 
 import $ = require('./runtime')
 import db = require('./db')
-import { Access, Coin } from './items'
-import { bracket, cat, news, time, vt, weapon, whole } from './lib'
+import { Access } from './items'
+import { Coin, bracket, cat, news, time, vt, weapon, whole } from './lib'
 import { Deed, PC } from './pc'
 import { an, date2full, dice, fs, int, now, pathTo, sprintf } from './sys'
 
@@ -79,7 +79,7 @@ module player {
                 vt.outln(`The mob goes crazy`, -500, nme.user.id
                     ? `, except for ${nme.user.handle} seen buffing ${nme.who.his}${weapon(nme)}`
                     : `!!`, -2000)
-                vt.outln([`${$.taxman.user.handle} nods an approval.`, `${$.barkeep.user.handle} slaughters a pig for tonight's feast.`, `${$.king.handle} gives you a hug.`, `${Access.name[$.king.access][$.king.sex]}'s guard salute you.`, `${$.king.handle} orders ${PC.who($.king).his} Executioner to hang ${$.player.level} prisoners in your honor.`][dice(5) - 1], -2000)
+                vt.outln([`${$.taxman.user.handle} nods an approval.`, `${$.barkeep.user.handle} slaughters a pig for tonight's feast.`, `${$.king.handle} gives you a hug.`, `${Access.name[$.king.access][$.king.sex]}'s guard salute you.`, `${$.king.handle} orders ${PC.who($.king).his}Executioner to hang ${$.player.level} prisoners in your honor.`][dice(5) - 1], -2000)
                 news(`\tpromoted to ${rpc.user.access}`)
                 vt.wall($.player.handle, `promoted to ${rpc.user.access}`)
                 vt.sessionAllowed += 300
@@ -192,9 +192,9 @@ module player {
                 $.reason = vt.reason || 'mystery'
             }
             else {  //  game was won
-                $.access.roleplay = false
-                db.loadUser($.player)
+                PC.load($.player)
                 $.player.lasttime = now().time
+                $.access.roleplay = false
                 news(`\tonline player dropped by ${$.sysop.who} ${time($.player.lasttime)} (${$.reason})\n`, true)
             }
         }
@@ -871,8 +871,9 @@ module player {
                     Object.assign(user, JSON.parse(fs.readFileSync(pathTo('users', 'bot${i}.json'))))
                     let bot = <user>{}
                     Object.assign(bot, user)
-                    PC.newkeys(bot)
                     PC.reroll(bot, bot.pc, bot.level)
+                    PC.newkeys(bot)
+                    bot.keyhints.splice(12)
                     Object.assign(bot, user)
                     db.saveUser(bot)
                     vt.out('&', -10)

@@ -3,7 +3,7 @@
 ## *the return of Hack & Slash*
 
 🇺🇸 ©️1991 - 2021 [Robert Hurst](https://robert.hurst-ri.us)
-> [developed](https://github.com/theflyingape/dankdomain) on a **Chromebook** using Visual Code and TypeScript/html/css for the browser with [terminal emulator](https:/xtermjs.org) and telnet clients; and to run the resulting Node.js full stack [services and app](https://play.DDgame.us) on the **Google Cloud Platform** (us-central1) or in a **Docker** container.
+> [developed](https://github.com/theflyingape/dankdomain) on a **Chromebook** using Visual Code and TypeScript/html/css for the browser with [terminal emulator](https:/xtermjs.org) and classic telnet clients; and also to run the resulting Node.js full stack [services and app](https://play.DDgame.us) on the **Google Cloud Platform** (us-central1) or in a **Docker** container.
 
 ### **25-Apr-2021** `v3.0.0`
 
