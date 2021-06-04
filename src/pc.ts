@@ -593,7 +593,7 @@ module pc {
             }
         }
 
-        save(rpc: active | user, insert = false, locked = false) {
+        save(rpc: active | user = $.online, insert = false, locked = false) {
 
             let user: user = isActive(rpc) ? rpc.user : rpc
 

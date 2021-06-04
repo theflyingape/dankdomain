@@ -9,7 +9,7 @@ import db = require('../db')
 import { Armor, RealEstate, Ring, Security, Weapon } from '../items'
 import { cat, Coin, display, emulator, input, log, news, tradein, vt } from '../lib'
 import { Deed, PC } from '../pc'
-import { checkXP, playerPC } from '../player'
+import { checkXP, pickPC } from '../player'
 import { an, cuss, dice, fs, int, money, pathTo, sprintf } from '../sys'
 
 module Main {
@@ -39,7 +39,7 @@ module Main {
 
     export function menu(suppress = true) {
         if (checkXP($.online, menu)) return
-        if ($.online.altered) PC.save($.online)
+        if ($.online.altered) PC.save()
         if ($.reason) vt.hangup()
 
         if (!suppress) vt.profile({ png: ['castle', 'joust', 'dragon'][dice(3) - 1], effect: 'pulse' })
@@ -376,7 +376,7 @@ module Main {
                         cb: () => {
                             if (vt.entry == newpassword) {
                                 $.player.password = newpassword
-                                db.saveUser($.player)
+                                PC.save()
                                 vt.out('...saved...')
                             }
                             else {
@@ -403,9 +403,9 @@ module Main {
                                 PC.activate($.online)
                                 $.player.coward = true
                                 $.player.plays++
-                                db.saveUser($.player)
+                                PC.save()
                                 vt.outln()
-                                playerPC()
+                                pickPC()
                                 return
                             }
                             vt.outln()

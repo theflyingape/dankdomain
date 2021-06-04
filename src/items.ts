@@ -221,7 +221,7 @@ module Items {
             let fail: number
             let backfire: number
 
-            fail = rpc.int + int(rpc.user.level / 10) - (this.spells[spell].cast < 17 ? this.spells[spell].cast : this.spells[spell].cast - 8) - (5 - skill) - (+rpc.user.coward || 0)
+            fail = rpc.int + int(rpc.user.level / 10) - (this.spells[spell].cast < 17 ? this.spells[spell].cast : this.spells[spell].cast - 8) - (5 - skill) - int(rpc.user.coward)
             //  is this an attack spell against an opponent?
             if (nme && [9, 11, 12, 14, 15, 16, 19, 20, 21, 22].indexOf(this.spells[spell].cast) >= 0) {
                 let m = rpc.int - nme.int
@@ -400,10 +400,10 @@ module Items {
                         if (abilities[a].id == id) {
                             name = mine[f]
                             if (Object.keys(abilities[a]).length == 2)
-                                power = +abilities[a].power || 0
+                                power = int(abilities[a].power)
                             else if (match && abilities[a][match]) {
                                 if (value && abilities[a][match] == value)
-                                    power = +abilities[a].power || 0
+                                    power = int(abilities[a].power)
                             }
                             //  console.log(a, name, id, match || '', value || '', '->', power)
                         }

@@ -128,10 +128,11 @@ module Sysop {
                         cb: () => {
                             vt.outln()
                             if (/Y/i.test(vt.entry)) {
-                                db.loadUser($.sysop)
+                                PC.load($.sysop)
                                 $.sysop.dob = now().date + 1
                                 $.sysop.plays = 0
-                                db.saveUser($.sysop)
+                                PC.save($.sysop)
+
                                 rs = db.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
                                 for (let row in rs) {
                                     rpc.user.id = rs[row].id
@@ -149,6 +150,7 @@ module Sysop {
                                 for (k = 0; k < kh; k++)
                                     PC.keyhint($.online)
                                 rpc.user.plays = 0
+
                                 vt.outln(vt.reset, '\nHappy hunting tomorrow!')
                                 $.reason = 'reroll'
                                 vt.hangup()

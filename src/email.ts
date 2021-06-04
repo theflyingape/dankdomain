@@ -124,7 +124,7 @@ module Email {
             if (echo) {
                 vt.outln(vt.red, vt.bright, `${smtpConfig} not configured for sending email`)
                 player.password = 'local'
-                db.saveUser(player, true)
+                PC.save(player, true)
                 vt.outln('\nYour user ID (', vt.bright, player.id, vt.normal, ') was saved, ', Access.name[player.access][player.gender], '.')
                 vt.outln('Your password: "', vt.bright, player.password, vt.normal, '"')
             }
@@ -148,7 +148,7 @@ module Email {
                     if (vt.emulation == 'XT') vt.outln('📬')
                     vt.outln(msg.messageId)
                     if ($.reason.length) {
-                        db.saveUser(player, true)
+                        PC.save(player, true)
                         vt.outln('\nYour user ID (', vt.bright, player.id, vt.normal, ') was saved, ', Access.name[player.access][player.gender], '.')
                         vt.sound('yahoo')
                     }

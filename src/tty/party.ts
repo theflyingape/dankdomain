@@ -43,7 +43,7 @@ module Party {
 
     export function menu(suppress = true) {
         if (checkXP($.online, menu)) return
-        if ($.online.altered) PC.save($.online)
+        if ($.online.altered) PC.save()
         if (!$.reason && $.online.hp < 1) death('fought bravely?')
         if ($.reason) vt.hangup()
 

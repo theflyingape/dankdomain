@@ -8,10 +8,10 @@ import Battle = require('../battle')
 import db = require('../db')
 import Taxman = require('./taxman')
 import { Access, Weapon } from '../items'
-import { bracket, cat, Coin, display, news, vt, whole } from '../lib'
+import { bracket, cat, Coin, display, news, vt } from '../lib'
 import { PC } from '../pc'
 import { checkXP } from '../player'
-import { cuss, fs, money, int, dice, sprintf, pathTo } from '../sys'
+import { cuss, fs, money, int, dice, sprintf, pathTo, whole } from '../sys'
 
 module Tavern {
 
@@ -33,7 +33,7 @@ module Tavern {
 
     export function menu(suppress = true) {
         if (checkXP($.online, menu)) return
-        if ($.online.altered) PC.save($.online)
+        if ($.online.altered) PC.save()
         Taxman.bar()
         if ($.reason) vt.hangup()
 
@@ -312,7 +312,7 @@ module Tavern {
                         vt.outln()
 
                         $.player.coward = true
-                        PC.save($.online)
+                        PC.save()
                         $.online.altered = true
                         Battle.engage('Tavern', $.online, $.barkeep, require('./menu').menu)
                         return

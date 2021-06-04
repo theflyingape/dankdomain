@@ -90,7 +90,7 @@ module Gambling {
     ]
 
     export function menu(suppress = true) {
-        if ($.online.altered) PC.save($.online)
+        if ($.online.altered) PC.save()
         if ($.reason) vt.hangup()
 
         vt.action('casino')

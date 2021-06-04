@@ -28,7 +28,7 @@ module Arena {
     export function menu(suppress = true) {
         $.from = 'Arena'
         if (checkXP($.online, menu)) return
-        if ($.online.altered) PC.save($.online)
+        if ($.online.altered) PC.save()
         if ($.reason) vt.hangup()
 
         vt.action('arena')

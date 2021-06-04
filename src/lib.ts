@@ -178,13 +178,13 @@ module lib {
     }
 
     export function getRing(how: string, what: string) {
+        vt.profile({ jpg: `ring/${what}`, handle: `${what} ${Ring.name[what].emoji} 💍 ring`, effect: 'tada' })
         vt.outln()
         vt.out(vt.yellow, vt.bright, 'You ', how, an(what, false))
         vt.out(vt.cyan, what, vt.normal)
         if ($.player.emulation == 'XT') vt.out(' ', Ring.name[what].emoji, ' 💍')
         vt.out(' ring', vt.reset, ', which can\n'
-            , vt.bright, vt.yellow, Ring.name[what].description)
-        vt.profile({ jpg: `ring/${what}`, handle: `${what} ${Ring.name[what].emoji} 💍 ring`, effect: 'tada' })
+            , vt.yellow, vt.bright, Ring.name[what].description)
     }
 
     export function input(focus: string | number, input = '', speed = 8) {
@@ -195,9 +195,14 @@ module lib {
         //  queue up any input by the bot
         if ($.access.bot)
             setImmediate(() => {
-                const cr = (vt.form[focus].eol || vt.form[focus].lines)
-                vt.typeahead += input
-                if (cr || !input) vt.typeahead += dice(100) > 1 ? '\r' : '\x1b'
+                try {
+                    const cr = (typeof vt.form[focus].eol == 'undefined' || vt.form[focus].eol || vt.form[focus].lines)
+                    vt.typeahead += input
+                    if (cr || !input) vt.typeahead += dice(100) > 1 ? '\r' : '\x1b'
+                }
+                catch {
+                    vt.typeahead += dice(100) > 1 ? '\x1b' : '\r'
+                }
                 process.stdin.emit('data', '')
             })
     }
@@ -249,12 +254,6 @@ module lib {
         return text ? profile.user.weapon + buff(profile.user.toWC, profile.toWC, true)
             : vt.attr(profile.weapon.shoppe ? vt.white : profile.weapon.dwarf ? vt.yellow : vt.lcyan
                 , profile.user.weapon, vt.white, buff(profile.user.toWC, profile.toWC))
-    }
-
-    //  non-negative integer
-    export function whole(n: string | number) {
-        const i = int(n)
-        return (i < 0) ? 0 : i
     }
 
     class _xvt extends xvt {

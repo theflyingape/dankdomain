@@ -8,7 +8,7 @@ import db = require('../db')
 import { Access, Magic, Ring } from '../items'
 import { bracket, cat, Coin, emulator, getRing, input, news, time, vt } from '../lib'
 import { Deed, PC } from '../pc'
-import { logoff, playerPC } from '../player'
+import { logoff, pickPC } from '../player'
 import { cuss, dice, fs, int, date2full, now, pathTo, got, money, titlecase, USERS, whole } from '../sys'
 
 module Logon {
@@ -28,7 +28,8 @@ module Logon {
 
         function guards(): boolean {
             vt.beep(true)
-            vt.outln(vt.reset, 'Invalid response.\n', -400)
+            vt.outln('Invalid response.')
+            vt.outln(-400)
             vt.drain()
 
             switch (--retry) {
@@ -39,9 +40,9 @@ module Logon {
                     vt.outln('The guards aim their crossbows at you.')
                     break
                 default:
-                    vt.sound('stranger')
                     vt.profile({ handle: '💀 🏹 💘 🏹 💀', jpg: 'npc/stranger', effect: 'zoomIn' })
-                    vt.outln('The last thing you ever feel is several quarrels cutting deep into your chest.', -800)
+                    vt.outln('The last thing you ever feel is several quarrels cutting deep into your chest.')
+                    vt.sound('stranger', 8)
                     vt.form = {
                         'forgot': {
                             cb: () => {
@@ -76,7 +77,8 @@ module Logon {
         function who() {
             vt.outln()
 
-            if (! /^[A-Z][A-Z23\s]*$/i.test(vt.entry)) {
+            vt.entry = titlecase(vt.entry)
+            if (vt.entry[0] == '_') {
                 if (guards())
                     vt.refocus()
                 return
@@ -314,7 +316,7 @@ module Logon {
         $.player.lasttime = now().time
         $.player.expires = $.player.lastdate + $.sysop.expires
         PC.activate($.online, true)
-        PC.save($.player)
+        PC.save()
 
         $.mydeeds = Deed.load($.player.pc)
         welcome()
@@ -438,7 +440,7 @@ module Logon {
                     cat('intro')
                 }
                 vt.form = {
-                    'pause': { cb: playerPC, pause: true, timeout: 200 }
+                    'pause': { cb: pickPC, pause: true, timeout: 200 }
                 }
                 input('pause')
                 return
@@ -448,7 +450,7 @@ module Logon {
             vt.outln(vt.bright, vt.black, '(', vt.yellow, 'VISITING', vt.black, ')')
             vt.sessionAllowed = 5 * 60
             $.access.roleplay = false
-            PC.save($.player)
+            PC.save()
             db.unlock($.player.id)
             news('', true)
 

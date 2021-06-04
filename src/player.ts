@@ -6,9 +6,9 @@
 import $ = require('./runtime')
 import db = require('./db')
 import { Access } from './items'
-import { Coin, bracket, cat, news, time, vt, weapon, whole } from './lib'
+import { bracket, cat, Coin, input, news, time, vt, weapon } from './lib'
 import { Deed, PC } from './pc'
-import { an, date2full, dice, fs, int, now, pathTo, sprintf } from './sys'
+import { an, date2full, dice, fs, int, now, pathTo, sprintf, whole } from './sys'
 
 module player {
 
@@ -176,9 +176,8 @@ module player {
     }
 
     export function logoff() {
-
         if (!$.reason || $.reason == 'hangup') {
-            db.loadUser($.sysop)
+            PC.load($.sysop)
             //  caught screwing around?
             if ($.sysop.dob <= now().date) {
                 if ($.access.roleplay) {
@@ -270,7 +269,7 @@ module player {
             vt.sound('invite')
     }
 
-    export function playerPC(points = 200, immortal = false) {
+    export function pickPC(points = 200, immortal = false) {
 
         vt.music('reroll')
         if (points > 240) points = 240
@@ -287,7 +286,7 @@ module player {
             PC.newkeys($.player)
 
             vt.outln('Since you are a new user here, you are automatically assigned a character')
-            vt.out('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.')
+            vt.out('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.', -5000)
             show()
             PC.activate($.online)
             news(`Welcome a ${$.player.pc} player, ${$.player.handle}`)
@@ -320,7 +319,7 @@ module player {
 
         vt.outln(vt.cyan, '      Character                       ', vt.faint, '>> ', vt.normal, 'Ability bonus')
         vt.outln(vt.cyan, '        Class      Users  Difficulty  Str  Int  Dex  Cha     Notable Feature')
-        vt.out(vt.faint, vt.cyan, '      ---------     ---   ----------  ---  ---  ---  ---  ---------------------')
+        vt.out(vt.cyan, vt.faint, '      ---------     ---   ----------  ---  ---  ---  ---  ---------------------')
 
         let classes = ['']
         let n = 0
@@ -355,18 +354,18 @@ module player {
         vt.outln()
 
         vt.form['pc'].prompt = `Enter class (1-${(classes.length - 1)}): `
-        vt.focus = 'pc'
+        input('pc', dice(classes.length - 1).toString(), 5000)
 
         function show() {
             vt.profile({
                 png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : '')
                 , handle: $.player.handle, level: $.player.level, pc: $.player.pc, effect: 'zoomInDown'
             })
-            vt.outln()
+            vt.outln(-600)
             cat('player/' + $.player.pc.toLowerCase())
             let rpc = PC.card($.player.pc)
             for (let l = 0; l < rpc.description.length; l++)
-                vt.outln(vt.bright, vt.cyan, rpc.description[l])
+                vt.outln(vt.cyan, vt.bright, rpc.description[l], -600)
         }
 
         function pick() {
@@ -393,7 +392,7 @@ module player {
                 vt.form[field].enter = $.player.str.toString()
                 vt.form[field].cancel = vt.form[field].enter
                 vt.form[field].prompt = 'Enter your Strength  ' + bracket($.player.str, false) + ': '
-                vt.focus = field
+                input(field)
                 return
             }
 
@@ -478,7 +477,7 @@ module player {
                     PC.activate($.online)
 
                     vt.outln()
-                    db.saveUser($.player)
+                    PC.save()
                     news(`\trerolled as${an($.player.pc)}`)
                     if (immortal) {
                         $.online.hp = 0
@@ -486,16 +485,16 @@ module player {
                         vt.hangup()
                     }
                     else {
-                        vt.outln()
-                        vt.outln(vt.yellow, '... ', vt.bright, 'and you get to complete any remaining parts to this play.')
+                        vt.outln(-600)
+                        vt.outln(vt.yellow, '... ', vt.bright, 'and you get to complete any remaining parts to this play.', -600)
                         require('./tty/menu').menu(true)
                     }
                     return
             }
 
-            vt.outln('\n\nYou have ', vt.bright, left.toString(), vt.normal, ' ability points left.')
+            vt.outln('\n\nYou have ', vt.bright, left.toString(), vt.normal, ' ability points left.', -600)
             vt.form[p].prompt += ' ' + bracket(vt.form[p].enter, false) + ': '
-            vt.focus = p
+            input(p)
         }
     }
 
@@ -805,7 +804,7 @@ module player {
             $.player.keyhints.push($.player.pc)
 
         PC.reroll($.player)
-        db.saveUser($.player)
+        PC.save()
         vt.sessionAllowed += 300
         $.warning = 2
 
@@ -817,11 +816,11 @@ module player {
                 , $.player.handle
                 , date2full(now().date)
                 , now().date - $.sysop.dob + 1))
-            db.loadUser($.sysop)
+            PC.load($.sysop)
             $.sysop.who = $.player.handle
             $.sysop.dob = now().date + 1
             $.sysop.plays = 0
-            db.saveUser($.sysop)
+            PC.save($.sysop)
 
             $.player.wins++
             db.run(`UPDATE Players SET wins=${$.player.wins} WHERE id='${$.player.id}'`)
@@ -854,11 +853,11 @@ module player {
             let user: user = { id: '' }
             for (let row in rs) {
                 user.id = rs[row].id
-                db.loadUser(user)
+                PC.load(user)
                 PC.reroll(user)
                 PC.newkeys(user)
                 user.keyhints.splice(12)
-                db.saveUser(user)
+                PC.save(user)
                 fs.unlink(pathTo('users', '.${user.id}.json'), () => { })
                 vt.out('.', -10)
             }
@@ -875,7 +874,7 @@ module player {
                     PC.newkeys(bot)
                     bot.keyhints.splice(12)
                     Object.assign(bot, user)
-                    db.saveUser(bot)
+                    PC.save(bot)
                     vt.out('&', -10)
                 }
                 catch (err) {
@@ -901,7 +900,7 @@ module player {
             , vt.normal, 'and you will become\nan immortal being.')
 
         for (let i = 0; i <= max + bonus; i++) PC.keyhint($.online, false)
-        db.saveUser($.player)
+        PC.save()
 
         let prior: number = -1
         let slot: number
@@ -943,7 +942,7 @@ module player {
                         PC.reroll($.player, $.player.pc)
                         PC.newkeys($.player)
                         $.player.coward = true
-                        db.saveUser($.player)
+                        PC.save()
 
                         if (slot++ < max) {
                             vt.refocus(`Insert key #${slot + 1}? `)
@@ -951,7 +950,7 @@ module player {
                         }
 
                         $.player.coward = false
-                        playerPC([200, 210, 220, 240][slot], true)
+                        pickPC([200, 210, 220, 240][slot], true)
                         return
                     }
                     else {
@@ -968,10 +967,10 @@ module player {
                                     break
                                 }
                             }
-                            playerPC(200 + 4 * $.player.wins + int($.player.immortal / 3))
+                            pickPC(200 + 4 * $.player.wins + int($.player.immortal / 3))
                         }
                         else
-                            playerPC([200, 210, 220, 240][slot], true)
+                            pickPC([200, 210, 220, 240][slot], true)
                     }
                 }, cancel: '!', eol: false, match: /P|G|S|C/i
             }

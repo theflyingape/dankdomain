@@ -127,9 +127,8 @@ module sys {
     }
 
     //  normalize as an integer
-    export function int(n: string | number): number {
-        n = (+n).valueOf()
-        if (isNaN(n)) n = 0
+    export function int(n: any): number {
+        n = (+n || 0).valueOf()
         n = Math.trunc(n)   //  strip any fractional part
         if (n == 0) n = 0   //  strip any negative sign (really)
         return n

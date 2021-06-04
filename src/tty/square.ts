@@ -7,9 +7,9 @@ import $ = require('../runtime')
 import Battle = require('../battle')
 import db = require('../db')
 import { Armor, Magic, Poison, Ring, RealEstate, Security, Weapon } from '../items'
-import { armor, bracket, Coin, display, log, news, tradein, vt, weapon, whole } from '../lib'
+import { armor, bracket, Coin, display, log, news, tradein, vt, weapon } from '../lib'
 import { PC } from '../pc'
-import { dice, int, money, sprintf } from '../sys'
+import { dice, int, money, sprintf, whole } from '../sys'
 
 module Square {
 
@@ -408,13 +408,12 @@ module Square {
                     vt.out('\nNovice players cannot rob.\n')
                     break
                 }
-                vt.out(vt.faint, '\nYou attempt to pick a passerby\'s pocket... ', vt.reset)
-                vt.sleep(1000)
+                vt.out(vt.faint, '\nYou attempt to pick a passerby\'s pocket... ', -1000)
 
                 credit.value = dice(6 * money($.player.level) / dice(10))
                 let pocket = PC.encounter(`AND novice = 0 AND id NOT GLOB '_*'`).user
                 if (pocket.id) {
-                    db.loadUser(pocket)
+                    PC.load(pocket)
                     if (pocket.coin.value > 0)
                         credit.value += pocket.coin.value
                     else {
@@ -425,9 +424,10 @@ module Square {
                 }
                 else
                     pocket.handle = 'somebody'
+                vt.outln('\n')
+                vt.outln(`You pick ${pocket.handle}'s pocket and steal `, credit.carry(), '!')
+                vt.outln(-1000)
 
-                vt.outln('\n\nYou pick ', pocket.handle, '\'s pocket and steal ', credit.carry(), '!\n')
-                vt.sleep(1000)
                 let effort = 100 + $.steal
                 effort -= 8 * Ring.power([], $.player.rings, 'steal').power
                 if (int(16 * $.player.steal + $.player.level / 10 + $.online.dex / 10) < dice(effort)) {
@@ -437,8 +437,8 @@ module Square {
                     vt.profile({ png: 'npc/jailer', effect: 'fadeIn' })
                     vt.outln('A guard catches you and throws you into jail!')
                     vt.sound('arrested', 20)
-                    vt.outln('You might be released by your next call.\n')
-                    vt.sleep(1000)
+                    vt.outln('You might be released by your next call.')
+                    vt.outln(-1000)
                     vt.hangup()
                     return
                 }
@@ -450,7 +450,7 @@ module Square {
                     if (pocket.id) {
                         $.online.altered = true
                         $.player.steals++
-                        db.saveUser(pocket)
+                        PC.save(pocket)
                     }
                     suppress = true
                     break

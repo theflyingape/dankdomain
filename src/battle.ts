@@ -94,7 +94,7 @@ module Battle {
                 else
                     vt.outln(`and burns it!`, -600, 'Heh.')
                 Weapon.equip($.online, Weapon.merchant[0])
-                PC.save($.player)
+                PC.save()
                 $.reason = `schooled by ${$.barkeep.user.handle}`
                 //  go crazy!
                 vt.sound('winner', 32)
@@ -362,7 +362,7 @@ module Battle {
                                     vt.outln(vt.bright, vt.blue, '"You can never escape the taxman!"')
                                 vt.sound({ _BAR: 'growl', _DM: 'punk', _NEP: 'thunder', _OLD: 'crone', _TAX: 'thief2' }[enemy.user.id], 12)
                                 PC.adjust('cha', -2, -1)
-                                PC.save($.player)
+                                PC.save()
                                 next()
                                 return
                             }
@@ -959,7 +959,7 @@ module Battle {
             //  manage any asset upgrades for PC
             if (winner.user.id && winner.user.id[0] !== '_') {
                 $.player.coward = true
-                PC.save($.online)
+                PC.save()
                 log(winner.user.id, `\nYou killed ${$.player.handle}!`)
                 winner.user.xp += PC.experience($.player.xplevel, 2)
 
@@ -1257,7 +1257,7 @@ module Battle {
             }
 
             //  Tigress prefers the Ranger (and Paladin) class, because it comes with a coupon and a better warranty
-            if (!summon && rpc.user.magic == 2 && dice((+$.access.sysop || 0) + 5) == 1) {
+            if (!summon && rpc.user.magic == 2 && dice(int($.access.sysop) + 5) == 1) {
                 rpc.altered = true
                 Magic.remove(rpc.user.spells, spell.cast)
                 if (!(rpc.user.id[0] == '_' || rpc.user.gender == 'I')) PC.save(rpc)
@@ -2271,29 +2271,31 @@ module Battle {
                         return
                     }
                     let rpc: active = { user: { id: titlecase(vt.entry) } }
-                    if (!PC.load(rpc)) {
-                        rpc.user.id = ''
-                        rpc.user.handle = vt.entry
+                    if (rpc.user.id[0] !== '_') {
                         if (!PC.load(rpc)) {
-                            vt.beep()
-                            vt.out(' ?? ')
-                        }
-                    }
-                    //  paint profile
-                    if (rpc.user.id) {
-                        vt.action('clear')
-                        PC.portrait(rpc)
-                        //  the inert player does not fully participate in the fun ...
-                        if (/Bail|Brawl|Curse|Drop|Joust|Resurrect|Rob/.test(venue) && !rpc.user.xplevel) {
                             rpc.user.id = ''
-                            vt.beep()
-                            vt.out(' ', bracket('inactive', false))
+                            rpc.user.handle = vt.entry
+                            if (!PC.load(rpc)) {
+                                vt.beep()
+                                vt.out(' ?? ')
+                            }
                         }
-                        else if (/Brawl|Fight|Joust|Resurrect/.test(venue) && rpc.user.status == 'jail') {
-                            rpc.user.id = ''
-                            vt.beep()
-                            if ($.player.emulation == 'XT') vt.out(' 🔒')
-                            vt.out(' ', bracket(rpc.user.status, false))
+                        //  paint profile
+                        if (rpc.user.id) {
+                            vt.action('clear')
+                            PC.portrait(rpc)
+                            //  the inert player does not fully participate in the fun ...
+                            if (/Bail|Brawl|Curse|Drop|Joust|Resurrect|Rob/.test(venue) && !rpc.user.xplevel) {
+                                rpc.user.id = ''
+                                vt.beep()
+                                vt.out(' ', bracket('inactive', false))
+                            }
+                            else if (/Brawl|Fight|Joust|Resurrect/.test(venue) && rpc.user.status == 'jail') {
+                                rpc.user.id = ''
+                                vt.beep()
+                                if ($.player.emulation == 'XT') vt.out(' 🔒')
+                                vt.out(' ', bracket(rpc.user.status, false))
+                            }
                         }
                     }
                     vt.outln()
