@@ -46,6 +46,7 @@ dns.lookup(host, (err, addr, family) => {
         const app = new Promise<number>((resolve, reject) => {
             if (resolve)
                 try {
+                    //  optional startup emulation: tty = XT|PC|VT
                     got(`${URL}?rows=${rows}&tty=VT`, { method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME }, https: ssl })
                         .then(response => {
                             resolve(response.body)

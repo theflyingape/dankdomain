@@ -65,7 +65,7 @@ function broadcast(pid: number, msg: string) {
 function login(client: string, rows: number, cols: number, emulator: EMULATION): number {
     process.env.REMOTEHOST = client
     let term = pty.spawn('../logins.sh', [''], {
-        name: 'xterm-256color',
+        name: emulator == 'XT' ? 'xterm-256color' : emulator == 'PC' ? 'ansi' : emulator == 'VT' ? 'vt100' : 'linux',
         cols: cols,
         rows: rows,
         cwd: __dirname,
@@ -149,7 +149,7 @@ interface network {
 }
 let network: network = {
     address: '0.0.0.0',
-    telnet: true, socket: 1986, limit: 2, emulator: 'VT', rows: 25,
+    telnet: true, socket: 1986, limit: 2, emulator: 'PC', rows: 25,
     web: true, ws: 1939, path: '/'
 }
 try {

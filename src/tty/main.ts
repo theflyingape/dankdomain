@@ -25,14 +25,16 @@ process.chdir(__dirname)
 import { door, vt } from '../lib'
 import { whole } from '../sys'
 
-vt.emulation = <EMULATION>
-    (/ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM) ? 'dumb'
-        : /^linux|^lisa|^ncsa|^pcvt|^vt/i.test(process.env.TERM) ? 'VT'
+vt.emulation = <EMULATION>(
+    /ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM) ? 'dumb'
+        : /^lisa|^ncsa|^pcvt|^vt/i.test(process.env.TERM) ? 'VT'
             : /ansi|cygwin|^pc/i.test(process.env.TERM) ? 'PC'
-                : '')
+                : /^xt/i.test(process.env.TERM) ? 'XT'
+                    : ''
+)
 
 //  check for passed bot or a BBS id for auto-login
-const userID = process.argv.length > 2 && process.argv[2].toUpperCase() || ''
+const userID = process.argv.length > 2 ? process.argv[2].toUpperCase() : ''
 if (userID.length && userID == whole(userID).toString()) {
     const user = door(bbs)
     if (userID == user[25]) {
@@ -48,16 +50,9 @@ vt.defaultTimeout = 100
 vt.stdio(false)
 
 if ((vt.modem = process.env.REMOTEHOST ? true : false))
-    vt.outln(vt.off, vt.bright
-        , vt.red, 'C'
-        , vt.yellow, 'A'
-        , vt.green, 'R'
-        , vt.cyan, 'R'
-        , vt.blue, 'I'
-        , vt.magenta, 'E'
-        , vt.white, 'R'
-        , vt.normal, ' '
-        , vt.faint, 'DETECTED')
+    vt.outln(vt.off, vt.red, vt.bright
+        , 'C', vt.yellow, 'A', vt.green, 'R', vt.cyan, 'R', vt.blue, 'I', vt.magenta, 'E', vt.white, 'R'
+        , vt.normal, ' ', vt.faint, 'DETECTED')
 
 if (vt.emulation)
     logon()
@@ -66,13 +61,13 @@ else
     vt.form = {
         0: {
             cb: () => {
-                if (/^.*\[.*R$/i.test(vt.entry)) {
-                    vt.emulation = 'XT'
+                if (/^.*\[.*n$/i.test(vt.entry)) {
+                    vt.emulation = 'PC'
                     logon()
                 }
                 else
                     vt.focus = 5
-            }, prompt: '\x1B[6n', enq: true
+            }, prompt: '\x1B[5n', enq: true
         },
         5: {
             cb: () => {

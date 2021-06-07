@@ -20,6 +20,7 @@ Download packs: [images](https://drive.google.com/open?id=1jjLPtGf_zld416pxytZfb
 With the _optional_ packs loaded for the web portal, the game + runtime files will need roughly **500mb** storage.
 
 ## Installation
+
 Tested on `Linux`, `Chrome OS`, and `Docker`. To [install](https://www.npmjs.com/package/dankdomain) and run a local game copy (requires the `Node.js` runtime):
 
 ```bash
@@ -30,7 +31,7 @@ $ cd /path/to/games/dankdomain
 $ npm start
 ```
 
-**NOTE**: _my "public" access [packages](https://github.com/theflyingape?tab=packages&visibility=public) are published on GitHub, too, and it requires your `Personal Access Token` authentication to fetch/install them from this alternative `npm registry`:_
+**NOTE**: _my_ "public" _access [packages](https://github.com/theflyingape?tab=packages&visibility=public) are published on_ **GitHub** _and it requires your_ `Personal Access Token` authentication _to fetch/install them from this alternative_ `npm registry`. Read GitHub's [Working with the npm registry](https://docs.github.com/en/enterprise-server@2.22/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-to-github-packages) to learn more details.
 
 ```bash
 $ npm config set @theflyingape:registry https://npm.pkg.github.com
@@ -38,24 +39,52 @@ $ npm login --scope=@theflyingape
 $ npm install @theflyingape/dankdomain
 ```
 
-_Read GitHub's [Working with the npm registry](https://docs.github.com/en/enterprise-server@2.22/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-to-github-packages) to learn more details._
-
 ... or use **Docker** _(convenient, but not always kept current)_:
 
-```
+```bash
 $ docker pull theflyingape/dankdomain
+$ docker run --rm -it -p 1939:1939/tcp -p 1986:1986/tcp theflyingape/dankdomain
+
+Ɗaɳƙ Ɗoɱaiɳ (ddgame) started on linux #1
+cwd /usr/games/dankdomain → /usr/games/dankdomain/door
+initializing Deeds
+initializing Online
+initializing Rings (unique)
+ + adding ⚛️ Atomic
+ + adding ✝️ Faith
+ + adding ♾️ Infinity
+ + adding 🐍 Medusa's
+ + adding 🕳️ Mystic Portal
+ + adding 👹 Ogre
+ + adding 🖤 Undying
+ + adding ⚪ White Wizard
+initializing Players
+ + adding sysop - 👑 Sysop
+ + adding barkeep - Tiny, the Ogre barkeep
+ + adding merchant - Manu
+ + adding neptune - Neptune of the Sea
+ + adding seahag - old sea hag
+ + adding taxman - Ira Hess
+ + adding witch - Medea
+ + adding bot1 - Imagination
+ + adding bot2 - Nobody
+initializing Gangs
+ENOENT: no such file or directory, open '../etc/network.json'
+→ listening on telnet 0.0.0.0:1986
+→ listening on https://0.0.0.0:1939/
+↔ WebSocket endpoints enabled
 ```
 
 Connect into the game via portal or directly:
 
-```
+```bash
 $ google-chrome http://localhost:1939
 $ telnet localhost 1986
 ```
 
 Your game networking preferences:
 
-```
+```bash
 $ cd /path/to/dankdomain/etc
 $ cp network.json_inet network.json
 $ vim network.json
@@ -68,6 +97,13 @@ $ npm run tty
 $ npm run mame
 $ telnet play.ddgame.us
 ```
+
+You can choose to run it for _local_ users in a BBS door (as Amiga-only BBSes did for `Hack & Slash` in 1994) by authenticating a passed user ID paired with a compatible **Mystic** `door.sys` [file format](http://wiki.mysticbbs.com/doku.php?id=menu_commands#external_doors) out of its `BBS node` startup directory, i.e., what follows might be for the BBS sysop (`0`):
+```bash
+$ pwd; [ -s door.sys ] || exit 1
+$ node /path/to/dankdomain/tty/main 0
+```
+
 
 **Files directory structure**
 

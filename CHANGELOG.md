@@ -3,14 +3,21 @@
 ## *the return of Hack & Slash*
 
 🇺🇸 ©️1991 - 2021 [Robert Hurst](https://robert.hurst-ri.us)
-> [developed](https://github.com/theflyingape/dankdomain) on a **Chromebook** using Visual Code and TypeScript/html/css for the browser with [terminal emulator](https:/xtermjs.org) and classic telnet clients; and also to run the resulting Node.js full stack [services and app](https://play.DDgame.us) on the **Google Cloud Platform** (us-central1) or in a **Docker** container.
+> [developed](https://github.com/theflyingape/dankdomain) on a **Chromebook** using Visual Code and TypeScript/html/css for the browser with [terminal emulator](https:/xtermjs.org) and classic telnet clients; and also to run the resulting Node.js full stack [services and app](https://play.DDgame.us) on the **Google Cloud Platform** (us-central1) or in a **Docker** [container](https://hub.docker.com/repository/docker/theflyingape/dankdomain).
 
-### **25-Apr-2021** `v3.0.0`
+### **7-Jun-2021** `v3.0.7`
 
-* major code refactoring
+* debugged code refactoring that broke session expiry and some coin properties
+* build/run on latest Node 14 or 16 with xterm.js v4.12
+* can host as a _local_ **BBS door** by authenticating with a compatible **Mystic** `door.sys` format
+
+#### **25-Apr-2021** `v3.0.0`
+
+* major code refactoring for CI/CD
 * automated player bot integration begins
 * latest xterm.js v4.11 and node-pty 0.10.1
 * @theflyingape/xvt v1.4.3 all-new package release
+* renamed Ɗanƙ Ɗomaiƞ as Ɗaɳƙ Ɗoɱaiɳ
 
 #### **24-Dec-2020** `v2.9.3`
 
@@ -19,7 +26,6 @@
 * updated dungeon specials distribution pattern
 * Dockerfile to run app in a [container](https://hub.docker.com/repository/docker/theflyingape/dankdomain)
 * tweaks to cosmetics, final deeds
-* updated node package dependencies
 
 #### **11-Nov-2020** `v2.8.1` 🎖️
 
@@ -94,21 +100,18 @@
 #### **08-Feb-2020** `v2.3.1`
 
 * xterm.js v4.4 release with Unicode 11 support
-* other outdated package updates
 
 #### **01-Jan-2020** `v2.3.0`
 
 * Happy New Year! 🔔
 * re-instated telnet service
 * tweaks to cosmetics, final deeds
-* updated node package dependencies
 
 #### **27-Nov-2019** `v2.2.3`
 
 * Happy Thanksgiving! 🦃
 * moved into Google Cloud Platform (us-central1)
 * package requires Linux OS and Node 10.16
-* updated node package dependencies
 
 ---
 
@@ -788,7 +791,7 @@ SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
 
 ---
 
-#### 24-Dec-1991 until 01-May-1992 ####
+#### 24-Dec-1991 until 01-May-1992
 
 * BBS went online at Manton Avenue in Providence, Rhode Island
 * added blessed / cursed state on a player
