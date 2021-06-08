@@ -44,6 +44,51 @@ let broadcasts = {}
 let latest = { now: 0, msg: '' }
 let chalk = 0
 
+//  allow for elemental player(s) to roam regardless of real user activity
+let elemental: user = { id: '' }
+setInterval(bot, 60 * 60 * 1000)
+
+function bot() {
+    let sysop: user = { id: '_SYS' }
+    db.loadUser(sysop)
+    const i = sysop.immortal
+
+    while (!elemental.id) {
+        sysop.immortal++
+        try {
+            Object.assign(elemental, JSON.parse(fs.readFileSync(pathTo('users', `bot${sysop.immortal}.json`)).toString()))
+        }
+        catch (err) {
+            sysop.immortal = 0
+            break
+        }
+    }
+
+    if (sysop.immortal == i) return
+    db.saveUser(sysop)
+
+    const client = 'the cloud'
+    let pid = login(client, network.rows, 80, network.emulator, [elemental.id])
+    let term = sessions[pid]
+    term.spawn.dispose()
+    console.log(`Startup BOT #${sysop.immortal} (${elemental.id}) from ${client} → session ${pid} '${term.startup || ''}'`)
+
+    //  consume app output
+    term.onData((data) => {
+        message(term, data)
+    })
+
+    //  app shutdown
+    term.onExit(() => {
+        console.log(`Exit BOT #${sysop.immortal} (${elemental.id}) session ${pid}`)
+        // Clean things up
+        delete broadcasts[pid]
+        delete sessions[pid]
+        pid = 0
+        elemental.id = ''
+    })
+}
+
 function broadcast(pid: number, msg: string) {
     if (!sessions[pid].chalk) sessions[pid].chalk = [36, 33, 37, 32, 35, 31, 34][chalk++ % 7]
     const line = `\r\n\x1B[0;${sessions[pid].chalk}m~ \x1B[1m${msg}\x1B[m`
@@ -62,10 +107,11 @@ function broadcast(pid: number, msg: string) {
             broadcasts[o] += line
 }
 
-function login(client: string, rows: number, cols: number, emulator: EMULATION): number {
+function login(client: string, rows: number, cols: number, emulator: EMULATION, args = ['']): number {
     process.env.REMOTEHOST = client
-    let term = pty.spawn('../logins.sh', [''], {
-        name: emulator == 'XT' ? 'xterm-256color' : emulator == 'PC' ? 'ansi' : emulator == 'VT' ? 'vt100' : 'linux',
+    process.env.TERM = emulator == 'XT' ? 'xterm-256color' : emulator == 'PC' ? 'ansi' : emulator == 'VT' ? 'vt100' : 'linux'
+    let term = pty.spawn('../logins.sh', args, {
+        name: process.env.TERM,
         cols: cols,
         rows: rows,
         cwd: __dirname,
@@ -86,6 +132,8 @@ function login(client: string, rows: number, cols: number, emulator: EMULATION):
     })
 
     console.log(`Create PLAYER session ${pid} using ${emulator}/${encoding} from remote host: ${client}`)
+
+    if (!elemental.id) bot()
     return pid
 }
 

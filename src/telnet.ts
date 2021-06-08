@@ -17,6 +17,7 @@ process.chdir(__dirname)
 let host = process.argv.length > 2 ? process.argv[2] : 'play.ddgame.us'
 let port = process.argv.length > 3 ? parseInt(process.argv[3]) : 443
 let rows = process.argv.length > 4 ? parseInt(process.argv[4]) : 24
+let tty = process.argv.length > 5 ? process.argv[4] : 'VT'
 let URL, ssl
 
 try {
@@ -27,7 +28,7 @@ try {
     URL = `https://${host}:${port}/player/`
 }
 catch (err) {
-    console.error(err.message, `\n
+    console.info(err.message, `\n
 # you might consider generating a self-signed client key in HOME: ${process.env.HOME}
 $ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem \\
   -subj "/C=US/ST=Rhode Island/L=Providence/O=Dank Domain/OU=Game/CN=localhost"`)
@@ -47,7 +48,7 @@ dns.lookup(host, (err, addr, family) => {
             if (resolve)
                 try {
                     //  optional startup emulation: tty = XT|PC|VT
-                    got(`${URL}?rows=${rows}&tty=VT`, { method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME }, https: ssl })
+                    got(`${URL}?rows=${rows}&tty=${tty}`, { method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME }, https: ssl })
                         .then(response => {
                             resolve(response.body)
                         })
@@ -74,7 +75,7 @@ dns.lookup(host, (err, addr, family) => {
                 const wss = new ws(`${URL}?pid=${pid}`, ssl)
 
                 wss.onmessage = (ev) => {
-                    let data = ev.data.toString('ascii')
+                    let data = ev.data.toString(tty == 'XT' ? 'utf8' : 'latin1')
                     let copy = data + ''
                     // find any occurrences of @func(data), and for each: call func(data)
                     const re = '[@](?:(action|animated|profile|play|title|tune|wall)[(](.+?)[)])'
