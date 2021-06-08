@@ -5,8 +5,9 @@
 🇺🇸 ©️1991 - 2021 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) on a **Chromebook** using Visual Code and TypeScript/html/css for the browser with [terminal emulator](https:/xtermjs.org) and classic telnet clients; and also to run the resulting Node.js full stack [services and app](https://play.DDgame.us) on the **Google Cloud Platform** (us-central1) or in a **Docker** [container](https://hub.docker.com/repository/docker/theflyingape/dankdomain).
 
-### **7-Jun-2021** `v3.0.7`
+### **8-Jun-2021** `v3.1.0`
 
+* running framework for automated bot(s) as an Elemental in place
 * debugged code refactoring that broke session expiry and some coin properties
 * build/run on latest Node 14 or 16 with xterm.js v4.12
 * can host as a _local_ **BBS door** by authenticating with a compatible **Mystic** `door.sys` format
@@ -46,7 +47,7 @@
 
 * moved development onto a Samsung Galaxy Chromebook
 * general browser client improvements
-  * add Facebook Group URL: http://www.originalhackandslash.net
+  * add [Facebook Group](http://www.originalhackandslash.net)
   * web page "wall" zooms to fill 80% device window width
   * added Noto fonts for unicode 13 character support and renamed Dank Domain as Ɗanƙ Ɗomaiƞ
 * general terminal emulation improvements
@@ -115,7 +116,7 @@
 
 ---
 
-## **--=:)) `HISTORY` ((:=--**
+### **`--=:)) HISTORY ((:=--`**
 
 > [developed](https://github.com/theflyingape/dankdomain) on a **Linux Intel i7 workstation** using Visual Code and TypeScript/html/css for the web client with [terminal emulator](https:/xtermjs.org); and to run the Node.js [service and app](http://play.DDgame.us) behind an Apache SSL Proxy on an **Linux Intel Atom server** using a Verizon FiOS 400mb Internet service
 
@@ -781,7 +782,7 @@ SLOCCount is Open Source Software/Free Software, licensed under the GNU GPL.
 
 #### 19-Jun-1992 `v1.00`
 
-* Hack & Slash BBS goes online at Patricia Court in Warwick, Rhode Island: `(401) 787-1437` with Caller ID.
+* `Hack & Slash BBS` goes online at Patricia Court in Warwick, Rhode Island: `(401) 787-1437` with Caller ID.
 
 ---
 
