@@ -2353,13 +2353,13 @@ module Battle {
                         vt.outln('\n', vt.green, '> ', vt.bright, 'double-click (tap) the Player ID to pick your selection.')
 
                     vt.action('freetext')
-                    vt.focus = 'user'
+                    input('user', $.player.id)
                     return
                 }
             }
         }
         vt.form['user'].prompt = venue + ' what user (?=list): '
-        vt.focus = 'user'
+        input('user', '?')
     }
 
     export function yourstats(full = true) {

@@ -6,6 +6,7 @@
 import $ = require('../runtime')
 import Battle = require('../battle')
 import db = require('../db')
+import Elemental = require('../elemental')
 import { Armor, RealEstate, Ring, Security, Weapon } from '../items'
 import { cat, Coin, display, emulator, input, log, news, tradein, vt } from '../lib'
 import { Deed, PC } from '../pc'
@@ -36,8 +37,10 @@ module Main {
     vt.wall($.player.handle, `logged on as a level ${$.player.level} ${$.player.pc}`)
     vt.outln()
     cat('border')
+    $.next = 'y'
 
     export function menu(suppress = true) {
+        $.from = 'Menu'
         if (checkXP($.online, menu)) return
         if ($.online.altered) PC.save()
         if ($.reason) vt.hangup()
@@ -51,7 +54,17 @@ module Main {
         vt.form['menu'].prompt =
             vt.attr('Time Left: ', vt.white, vt.bright, vt.checkTime().toString(), vt.normal, vt.cyan, ' min.\n', vt.reset)
             + display('main', vt.Blue, vt.blue, suppress, mainmenu)
-        input('menu', 'q')
+
+        input('menu', $.next)
+
+        if ($.access.bot) {
+            Elemental.refresh()
+            if (dice(100) > 1) {
+                if (!$.access.roleplay) $.next = 'l'
+            }
+            else
+                $.next = ['g', 'l', 'm', 'r', 'u', 'x', 'y', 'z'][dice(8) - 1]
+        }
     }
 
     function choice() {
@@ -166,7 +179,7 @@ module Main {
                         cb: () => {
                             vt.outln()
                             if (/Y/i.test(vt.entry)) {
-                                if (!$.reason.length) $.reason = 'as a level ' + $.player.level + ' ' + $.player.pc
+                                if (!$.reason.length) $.reason = $.access.roleplay ? 'had something better to do' : 'caught lurking'
                                 vt.hangup()
                             }
                             menu()
@@ -175,9 +188,11 @@ module Main {
                 }
                 vt.sound('oops')
                 input('yn', 'y')
+                $.next = 'm'
                 return
 
             case 'R':
+                $.next = 'm'
                 if (!$.access.roleplay) break
                 vt.outln()
 
@@ -387,7 +402,8 @@ module Main {
                         }, prompt: 'Re-enter to verify: ', echo: false
                     }
                 }
-                vt.focus = 'yn'
+                input('yn')
+                $.next = 'y'
                 return
 
             case 'X':
@@ -413,7 +429,8 @@ module Main {
                         }, prompt: 'Reroll (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
                     }
                 }
-                vt.focus = 'yn'
+                input('yn')
+                $.next = 'y'
                 return
 
             case 'Y':
@@ -449,10 +466,12 @@ module Main {
                         }, cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
                     }
                 }
+
+                $.next = 'm'
                 if ($.access.roleplay) {
                     vt.action('ny')
                     vt.form['yn'].prompt = 'Scout other users for ' + cost.carry() + ' (Y/N)? '
-                    vt.focus = 'yn'
+                    input('yn', 'n', 2)
                     return
                 }
                 else
@@ -461,14 +480,36 @@ module Main {
                 break
 
             case 'Z':
-                vt.out(vt.bright, vt.green, '\n')
+                vt.outln()
+                vt.out(vt.green, vt.bright)
                 cat('main/system')
                 vt.action('ny')
                 vt.form = {
                     'yn': {
                         cb: () => {
-                            if (/Y/i.test(vt.entry))
-                                vt.focus = 'message'
+                            if (/Y/i.test(vt.entry)) {
+                                let razz = PC.encounter()
+                                input('message', [
+                                    `${$.player.handle} does it better`,
+                                    `Barbarians burn bright!`,
+                                    `Gone fishin' with Solcat`,
+                                    `Light it up!`,
+                                    `Stupid is as stupid does`,
+                                    `Where's my dough Bert??!`,
+                                    `You're cracked`,
+                                    `${razz.user.handle} ${[
+                                        `needs`, `can use`, `should buy`
+                                    ][dice(3) - 1]} ${[
+                                        `penicillin for ${razz.who['his']}partying`,
+                                        `a new lance`,
+                                        `polish for ${razz.who['his']}${razz.user.weapon}}`,
+                                        'a mask',
+                                        `a clue as ${an(razz.user.pc)}`,
+                                        'a friend',
+                                        'a lesson',
+                                        'a beer'][dice(8) - 1]
+                                    }`][dice(8) - 1])
+                            }
                             else {
                                 vt.outln()
                                 menu(true)
@@ -491,7 +532,8 @@ module Main {
                     }
                 }
                 vt.form['yn'].prompt = `Change border message (Y/N)? `
-                vt.focus = 'yn'
+                input('yn', 'y')
+                $.next = 'y'
                 return
         }
         menu(suppress)

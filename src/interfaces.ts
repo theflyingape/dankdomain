@@ -242,6 +242,16 @@ interface spell {
     wand?: string
 }
 
+interface target {
+    player: user
+    bail: boolean
+    jw: number
+    tw: number
+    kill: number
+    gang: number
+    steal: number
+}
+
 interface user {
     id: string
     handle?: string

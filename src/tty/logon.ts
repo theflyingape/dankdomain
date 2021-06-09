@@ -237,7 +237,7 @@ module Logon {
 
         if ($.player.today > $.access.calls) {
             vt.beep(true)
-            vt.outln(`\nYou played all ${$.access.calls} calls for today.  Please visit again after ${now().time < 1200 ? 'noon' : 'midnight'}!`)
+            vt.outln(`\nYou played all ${$.access.calls} calls for the ${now().time < 1200 ? 'morning' : now().time < 1600 ? 'afternoon' : now().time < 2000 ? 'evening' : 'night'}.  Please visit again after 12 ${now().time < 1200 ? 'noon' : 'midnight'}!`)
             vt.sound('comeagain')
             news('', true)
             vt.hangup()

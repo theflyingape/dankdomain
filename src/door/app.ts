@@ -60,14 +60,15 @@ function bot() {
         }
         catch (err) {
             sysop.immortal = 0
-            break
+            db.saveUser(sysop)
+            return
         }
     }
-
+    //  already logged in?
     if (sysop.immortal == i) return
     db.saveUser(sysop)
 
-    const client = 'the cloud'
+    const client = 'Riveredge'
     let pid = login(client, network.rows, 80, network.emulator, [elemental.id])
     let term = sessions[pid]
     term.spawn.dispose()

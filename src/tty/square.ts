@@ -7,7 +7,7 @@ import $ = require('../runtime')
 import Battle = require('../battle')
 import db = require('../db')
 import { Armor, Magic, Poison, Ring, RealEstate, Security, Weapon } from '../items'
-import { armor, bracket, Coin, display, log, news, tradein, vt, weapon } from '../lib'
+import { armor, bracket, Coin, display, input, log, news, tradein, vt, weapon } from '../lib'
 import { PC } from '../pc'
 import { dice, int, money, sprintf, whole } from '../sys'
 
@@ -41,6 +41,7 @@ module Square {
     let want = ''
 
     export function menu(suppress = true) {
+        $.from = 'Square'
         vt.action('square')
         vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
@@ -124,7 +125,7 @@ module Square {
         if (dice(100) == 1 && $.player.loan.value && $.player.ram && $.player.steal)
             hints += `> Try using your ram on the bank for big money.\n`
         vt.form['menu'].prompt = display('square', vt.White, vt.lblack, suppress, square, hints)
-        vt.focus = 'menu'
+        input('menu')
     }
 
     function choice() {

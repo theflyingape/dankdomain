@@ -8,7 +8,7 @@ import Battle = require('../battle')
 import db = require('../db')
 import { Access, Armor, Magic, Poison, Ring, Weapon } from '../items'
 import { checkXP } from '../player'
-import { bracket, cat, Coin, display, getRing, log, news, tradein, vt } from '../lib'
+import { bracket, cat, Coin, display, getRing, input, log, news, tradein, vt } from '../lib'
 import { PC } from '../pc'
 import { sprintf, dice, money, romanize, int } from '../sys'
 
@@ -48,7 +48,7 @@ module Arena {
                 hints += `> Carrying money around here is not a good idea.  Spend it in the Square\n  or deposit it in the Bank for safer keeping.\n`
         }
         vt.form['menu'].prompt = display('arena', vt.Red, vt.red, suppress, arena, hints)
-        vt.focus = 'menu'
+        input('menu')
     }
 
     function choice() {

@@ -7,7 +7,7 @@ import $ = require('./runtime')
 import db = require('./db')
 import { ITEMS, Access, Armor, Magic, Ring, Weapon } from './items'
 import { armor, Coin, vt, weapon } from './lib'
-import { date2full, dice, int, isActive, now, pathTo, fs, romanize, sprintf, titlecase, USERS } from './sys'
+import { date2full, dice, fs, int, isActive, now, pathTo, romanize, sprintf, titlecase, USERS } from './sys'
 
 module pc {
 

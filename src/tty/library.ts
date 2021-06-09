@@ -5,9 +5,9 @@
 
 import $ = require('../runtime')
 import db = require('../db')
-import { cat, display, vt } from '../lib'
+import { cat, display, input, vt } from '../lib'
 import { Deed, PC } from '../pc'
-import { date2full, sprintf } from '../sys'
+import { date2full, dice, sprintf } from '../sys'
 
 module Library {
 
@@ -19,6 +19,7 @@ module Library {
         'T': { description: 'Top Ten Tavern Thugs' },
         'W': { description: 'Winners' }
     }
+    $.next = 'c'
 
     export function menu(suppress = false) {
         vt.action('deeds')
@@ -26,7 +27,7 @@ module Library {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
         vt.form['menu'].prompt = display('library', vt.Cyan, vt.cyan, suppress, library)
-        vt.focus = 'menu'
+        input('menu', $.next, dice(10) * 2000)
     }
 
     function choice() {
@@ -79,6 +80,7 @@ module Library {
                             vt.outln()
                         }
                     }
+                $.next = 'h'
                 suppress = true
                 break
 
@@ -112,6 +114,7 @@ module Library {
                     vt.outln(sprintf('%-22.22s     %4d', rd[n].hero, rd[n].n), ' ', +n < 3 ? Deed.medal[+n + 1] : '')
                 }
 
+                $.next = 'i'
                 suppress = true
                 break
 
@@ -130,6 +133,7 @@ module Library {
                         , (100 * rh[n].immortal + rh[n].level) / rh[n].calls, rh[n].calls))
                 }
 
+                $.next = dice(10) > 1 ? 'm' : 't'
                 suppress = true
                 break
 
@@ -170,6 +174,8 @@ module Library {
                         }
                     }
                 }
+
+                $.next = dice(10) > 1 ? 't' : 'q'
                 suppress = true
                 break
 
@@ -190,6 +196,8 @@ module Library {
                         , rs[n].id[0] !== '_' ? rs[n].id : ' \u00B7 ', rs[n].handle
                         , rs[n].pc, rs[n].level, rs[n].tw))
                 }
+
+                $.next = dice(10) > 1 ? 'q' : 'w'
                 suppress = true
                 break
 
@@ -200,6 +208,8 @@ module Library {
             case 'W':
                 vt.outln(vt.green, '\n             --=:)) ', vt.bright, 'WINNERS', vt.normal, ' Only Noted ((:=--\n')
                 cat('winners')
+
+                $.next = 'q'
                 suppress = true
                 break
         }

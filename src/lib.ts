@@ -155,7 +155,7 @@ module lib {
                     for (let rows = $.player.rows + 5; rows > 1; rows--)
                         vt.out(bracket(rows >= 24 ? rows : '..'))
                     vt.form['rows'].prompt = vt.attr('Enter top visible row number ', vt.faint, '[', vt.reset, vt.bright, `${$.player.rows}`, vt.faint, vt.cyan, ']', vt.reset, ': ')
-                    vt.focus = 'rows'
+                    input('rows')
                 }, prompt: vt.attr('Select ', vt.faint, '[', vt.reset, vt.bright, `${$.player.emulation}`, vt.faint, vt.cyan, ']', vt.reset, ': ')
                 , enter: $.player.emulation, match: /VT|PC|XT/i, max: 2
             },
@@ -164,7 +164,7 @@ module lib {
                     const n = whole(vt.entry)
                     if (n > 23) $.player.rows = n
                     vt.outln()
-                    vt.focus = 'pause'
+                    input('pause')
                 }, enter: $.player.rows.toString(), max: 2, match: /^[2-9][0-9]$/
             },
             'pause': { cb: cb, pause: true }
@@ -174,7 +174,7 @@ module lib {
         vt.out(bracket('VT'), ' classic VT terminal with DEC drawing (telnet b&w)')
         vt.out(bracket('PC'), ' former ANSI color with Western IBM CP850 (telnet color)')
         vt.outln(bracket('XT'), ' modern ANSI color with UTF-8 & emojis (browser multimedia)')
-        vt.focus = 'term'
+        input('term')
     }
 
     export function getRing(how: string, what: string) {
