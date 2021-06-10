@@ -9,7 +9,7 @@ import db = require('../db')
 import { Armor, Magic, Poison, Weapon } from '../items'
 import { bracket, cat, Coin, death, display, log, vt, weapon } from '../lib'
 import { PC } from '../pc'
-import { checkXP } from '../player'
+import { checkXP, input } from '../player'
 import { cuss, dice, int, money, sprintf, titlecase } from '../sys'
 
 module Party {
@@ -57,7 +57,7 @@ module Party {
             hints += `> Join an existing gang or start a new one.\n`
 
         vt.form['menu'].prompt = display('party', vt.Magenta, vt.magenta, suppress, party, hints)
-        vt.focus = 'menu'
+        input('menu')
     }
 
     function choice() {

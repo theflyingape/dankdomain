@@ -6,8 +6,8 @@
 import $ = require('./runtime')
 import db = require('./db')
 import { Access } from './items'
-import { bracket, cat, Coin, input, news, time, vt, weapon } from './lib'
-import { Deed, PC } from './pc'
+import { bracket, cat, Coin, prompt, news, time, vt, weapon } from './lib'
+import { Deed, Elemental, PC } from './pc'
 import { an, date2full, dice, fs, int, now, pathTo, sprintf, whole } from './sys'
 
 module player {
@@ -173,6 +173,10 @@ module player {
         }
 
         return false
+    }
+
+    export function input(focus: string | number, input = Elemental.cmd, speed = 7) {
+        prompt(focus, input, speed)
     }
 
     export function logoff() {

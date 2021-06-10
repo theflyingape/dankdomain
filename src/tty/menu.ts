@@ -6,11 +6,10 @@
 import $ = require('../runtime')
 import Battle = require('../battle')
 import db = require('../db')
-import Elemental = require('../elemental')
 import { Armor, RealEstate, Ring, Security, Weapon } from '../items'
-import { cat, Coin, display, emulator, input, log, news, tradein, vt } from '../lib'
-import { Deed, PC } from '../pc'
-import { checkXP, pickPC } from '../player'
+import { cat, Coin, display, emulator, log, news, tradein, vt } from '../lib'
+import { Deed, Elemental, PC } from '../pc'
+import { checkXP, input, pickPC } from '../player'
 import { an, cuss, dice, fs, int, money, pathTo, sprintf } from '../sys'
 
 module Main {
@@ -37,7 +36,7 @@ module Main {
     vt.wall($.player.handle, `logged on as a level ${$.player.level} ${$.player.pc}`)
     vt.outln()
     cat('border')
-    $.next = 'y'
+    Elemental.flush('y')
 
     export function menu(suppress = true) {
         $.from = 'Menu'
@@ -48,23 +47,15 @@ module Main {
         if (!suppress) vt.profile({ png: ['castle', 'joust', 'dragon'][dice(3) - 1], effect: 'pulse' })
         vt.action('main')
         vt.form = {
-            'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
+            'menu': { cb: choice, cancel: 'Q', enter: '?', eol: false }
         }
 
         vt.form['menu'].prompt =
             vt.attr('Time Left: ', vt.white, vt.bright, vt.checkTime().toString(), vt.normal, vt.cyan, ' min.\n', vt.reset)
             + display('main', vt.Blue, vt.blue, suppress, mainmenu)
 
-        input('menu', $.next)
-
-        if ($.access.bot) {
-            Elemental.refresh()
-            if (dice(100) > 1) {
-                if (!$.access.roleplay) $.next = 'l'
-            }
-            else
-                $.next = ['g', 'l', 'm', 'r', 'u', 'x', 'y', 'z'][dice(8) - 1]
-        }
+        input('menu')
+        Elemental.refresh()
     }
 
     function choice() {
@@ -86,6 +77,7 @@ module Main {
 
             case 'A':
                 vt.animated('fadeOut')
+                Elemental.orders('Arena')
                 require('./arena').menu($.player.expert)
                 return
 
@@ -106,6 +98,7 @@ module Main {
 
             case 'G':
                 vt.animated('fadeOut')
+                Elemental.orders('Casino')
                 require('./gambling').menu(false)
                 return
 
@@ -163,16 +156,18 @@ module Main {
 
             case 'N':
                 vt.animated('fadeOut')
+                Elemental.orders('Naval')
                 require('./naval').menu($.player.expert)
                 return
 
             case 'P':
                 vt.animated('fadeOut')
+                Elemental.orders('Party')
                 require('./party').menu($.player.expert)
                 return
 
             case 'Q':
-                vt.beep()
+                vt.beep(true)
                 vt.action('ny')
                 vt.form = {
                     'yn': {
@@ -188,11 +183,10 @@ module Main {
                 }
                 vt.sound('oops')
                 input('yn', 'y')
-                $.next = 'm'
                 return
 
             case 'R':
-                $.next = 'm'
+                Elemental.cmd = 'm'
                 if (!$.access.roleplay) break
                 vt.outln()
 
@@ -346,6 +340,7 @@ module Main {
 
             case 'S':
                 vt.animated('fadeOut')
+                Elemental.orders('Square')
                 require('./square').menu($.player.expert)
                 return
 
@@ -357,6 +352,7 @@ module Main {
                 }
                 vt.animated('fadeOut')
                 vt.music('tavern' + dice(4))
+                Elemental.orders('Tavern')
                 require('./tavern').menu($.player.expert)
                 return
 
@@ -403,7 +399,7 @@ module Main {
                     }
                 }
                 input('yn')
-                $.next = 'y'
+                Elemental.cmd = 'y'
                 return
 
             case 'X':
@@ -430,7 +426,7 @@ module Main {
                     }
                 }
                 input('yn')
-                $.next = 'y'
+                Elemental.cmd = 'y'
                 return
 
             case 'Y':
@@ -467,7 +463,7 @@ module Main {
                     }
                 }
 
-                $.next = 'm'
+                Elemental.cmd = 'm'
                 if ($.access.roleplay) {
                     vt.action('ny')
                     vt.form['yn'].prompt = 'Scout other users for ' + cost.carry() + ' (Y/N)? '
@@ -533,7 +529,7 @@ module Main {
                 }
                 vt.form['yn'].prompt = `Change border message (Y/N)? `
                 input('yn', 'y')
-                $.next = 'y'
+                Elemental.cmd = 'y'
                 return
         }
         menu(suppress)

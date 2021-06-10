@@ -6,9 +6,9 @@
 import $ = require('./runtime')
 import db = require('./db')
 import { Access, Armor, Magic, Poison, Ring, Weapon } from './items'
-import { armor, bracket, buff, Coin, death, getRing, input, log, news, rings, tradein, vt, weapon } from './lib'
-import { Deed, PC } from './pc'
-import { checkXP } from './player'
+import { armor, bracket, buff, Coin, death, getRing, log, news, rings, tradein, vt, weapon } from './lib'
+import { Deed, Elemental, PC } from './pc'
+import { checkXP, input } from './player'
 import { an, cuss, date2full, dice, fs, int, money, pathTo, sprintf, titlecase, whole } from './sys'
 
 module Battle {
@@ -496,7 +496,13 @@ module Battle {
                     vt.form['attack'].prompt += vt.attr(bracket('C', false), vt.cyan, 'ast spell, ')
                 vt.form['attack'].prompt += vt.attr(bracket('R', false), vt.cyan, 'etreat, '
                     , bracket('Y', false), vt.cyan, 'our status: ')
-                vt.focus = 'attack'
+
+                Elemental.cmd = 'a'
+                if ($.access.bot) {
+                    if ($.online.hp < ($.from == 'Dungeon' ? int($.player.hp / 10) : int($.player.level / 3) + $.player.level))
+                        Elemental.flush('r')
+                }
+                input('attack')
                 return
             }
         }
@@ -1667,7 +1673,7 @@ module Battle {
                     let p = round[0].party
                     if (backfire) {
                         iou.user.handle = `image of ${nme.user.handle}`
-                        iou.hp = Math.trunc(nme.hp * (rpc.user.magic + 1) / 5)
+                        iou.hp = int(nme.hp * (rpc.user.magic + 1) / 5)
                         parties[p ^ 1].push(iou)
                         vt.out(recipient)
                     }
@@ -1998,7 +2004,7 @@ module Battle {
 
         if ($.from !== 'Party' && rpc !== $.online && rpc.user.coward && !rpc.user.cursed && rpc.hp < (rpc.user.hp / 5)) {
             rpc.hp = -1
-            vt.outln(vt.bright, vt.green
+            vt.outln(vt.green, vt.bright
                 , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle, -600
                 , vt.normal, ' runs away from ', -400, vt.faint, 'the battle!', -200)
             if ($.from == 'User') {

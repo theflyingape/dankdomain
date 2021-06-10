@@ -7,9 +7,9 @@ import $ = require('../runtime')
 import Battle = require('../battle')
 import db = require('../db')
 import { Access, Armor, Magic, Poison, Ring, Weapon } from '../items'
-import { checkXP } from '../player'
-import { bracket, cat, Coin, display, getRing, input, log, news, tradein, vt } from '../lib'
+import { bracket, cat, Coin, display, getRing, log, news, tradein, vt } from '../lib'
 import { PC } from '../pc'
+import { checkXP, input } from '../player'
 import { sprintf, dice, money, romanize, int } from '../sys'
 
 module Arena {
@@ -109,10 +109,10 @@ module Arena {
                     }
 
                     vt.outln('Jousting ability:\n')
-                    vt.out(vt.bright, vt.green, sprintf('%-25s', opponent.user.handle), vt.white, sprintf('%4d', versus))
+                    vt.out(vt.green, vt.bright, sprintf('%-25s', opponent.user.handle), vt.white, sprintf('%4d', versus))
                     if (opponent.user.id == $.king.id) vt.out(vt.normal, ' - ', vt.magenta, 'The Crown')
                     vt.outln()
-                    vt.outln(vt.bright, vt.green, sprintf('%-25s', $.player.handle), vt.white, sprintf('%4d', ability))
+                    vt.outln(vt.green, vt.bright, sprintf('%-25s', $.player.handle), vt.white, sprintf('%4d', ability))
                     vt.outln()
                     if ((ability + factor * $.player.level) < (versus + 1)) {
                         vt.outln(opponent.user.handle, ' laughs rudely in your face!\n')

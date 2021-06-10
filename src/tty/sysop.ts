@@ -9,6 +9,7 @@ import db = require('../db')
 import Email = require('../email')
 import { bracket, display, vt } from '../lib'
 import { PC } from '../pc'
+import { input } from '../player'
 import { now, sprintf, titlecase } from '../sys'
 
 module Sysop {
@@ -29,7 +30,7 @@ module Sysop {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
         vt.form['menu'].prompt = display('sysop', vt.Red, vt.red, suppress, sysop)
-        vt.focus = 'menu'
+        input('menu')
     }
 
     function choice() {

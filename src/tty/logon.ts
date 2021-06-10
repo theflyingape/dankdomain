@@ -6,10 +6,10 @@
 import $ = require('../runtime')
 import db = require('../db')
 import { Access, Magic, Ring } from '../items'
-import { bracket, cat, Coin, emulator, getRing, input, news, time, vt } from '../lib'
+import { bracket, cat, Coin, emulator, getRing, news, time, vt } from '../lib'
 import { Deed, PC } from '../pc'
-import { logoff, pickPC } from '../player'
-import { cuss, dice, fs, int, date2full, now, pathTo, got, money, titlecase, USERS, whole } from '../sys'
+import { input, logoff, pickPC } from '../player'
+import { cuss, date2full, dice, fs, got, money, now, pathTo, titlecase, USERS, whole } from '../sys'
 
 module Logon {
 

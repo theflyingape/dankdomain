@@ -3,6 +3,7 @@
  *  LIB authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
 
+import { nextTick } from 'process'
 import xvt from '@theflyingape/xvt'
 import $ = require('./runtime')
 import { Coin as _coin, Ring } from './items'
@@ -155,7 +156,7 @@ module lib {
                     for (let rows = $.player.rows + 5; rows > 1; rows--)
                         vt.out(bracket(rows >= 24 ? rows : '..'))
                     vt.form['rows'].prompt = vt.attr('Enter top visible row number ', vt.faint, '[', vt.reset, vt.bright, `${$.player.rows}`, vt.faint, vt.cyan, ']', vt.reset, ': ')
-                    input('rows')
+                    prompt('rows')
                 }, prompt: vt.attr('Select ', vt.faint, '[', vt.reset, vt.bright, `${$.player.emulation}`, vt.faint, vt.cyan, ']', vt.reset, ': ')
                 , enter: $.player.emulation, match: /VT|PC|XT/i, max: 2
             },
@@ -164,7 +165,7 @@ module lib {
                     const n = whole(vt.entry)
                     if (n > 23) $.player.rows = n
                     vt.outln()
-                    input('pause')
+                    prompt('pause')
                 }, enter: $.player.rows.toString(), max: 2, match: /^[2-9][0-9]$/
             },
             'pause': { cb: cb, pause: true }
@@ -174,7 +175,7 @@ module lib {
         vt.out(bracket('VT'), ' classic VT terminal with DEC drawing (telnet b&w)')
         vt.out(bracket('PC'), ' former ANSI color with Western IBM CP850 (telnet color)')
         vt.outln(bracket('XT'), ' modern ANSI color with UTF-8 & emojis (browser multimedia)')
-        input('term')
+        prompt('term')
     }
 
     export function getRing(how: string, what: string) {
@@ -185,26 +186,6 @@ module lib {
         if ($.player.emulation == 'XT') vt.out(' ', Ring.name[what].emoji, ' 💍')
         vt.out(' ring', vt.reset, ', which can\n'
             , vt.yellow, vt.bright, Ring.name[what].description)
-    }
-
-    export function input(focus: string | number, input = '', speed = 8) {
-        if ($.access.bot)
-            vt.form[focus].delay = speed < 100 ? 125 * dice(speed) * dice(speed) : speed
-        vt.focus = focus
-
-        //  queue up any input by the bot
-        if ($.access.bot)
-            setImmediate(() => {
-                try {
-                    const cr = (typeof vt.form[focus].eol == 'undefined' || vt.form[focus].eol || vt.form[focus].lines)
-                    vt.typeahead += input
-                    if (cr || !input) vt.typeahead += dice(100) > 1 ? '\r' : '\x1b'
-                }
-                catch {
-                    vt.typeahead += dice(100) > 1 ? '\x1b' : '\r'
-                }
-                process.stdin.emit('data', '')
-            })
     }
 
     export function log(who: string, message: string) {
@@ -227,6 +208,26 @@ module lib {
         catch (err) {
             vt.outln('news error:', err)
         }
+    }
+
+    export function prompt(focus: string | number, input = '', speed = 7) {
+        //console.log(`input = '${input}' `, input.split('').map((c) => { return c.charCodeAt(0) }))
+        if ($.access.bot)
+            vt.form[focus].delay = speed < 100 ? 125 * dice(speed) * dice(speed) : speed
+        vt.focus = focus
+
+        //  queue up any input by the bot
+        if ($.access.bot) setImmediate(() => {
+            try {
+                const cr = (typeof vt.form[focus].eol == 'undefined' || vt.form[focus].eol || vt.form[focus].lines)
+                vt.typeahead += input
+                if (cr || !input) vt.typeahead += dice(100) > 1 ? '\r' : '\x1B'
+            }
+            catch {
+                vt.typeahead += dice(100) > 1 ? '\x1B' : '\r'
+            }
+            process.stdin.emit('data', '')
+        })
     }
 
     export function rings(profile = $.online) {

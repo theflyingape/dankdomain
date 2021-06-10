@@ -6,8 +6,9 @@
 import $ = require('../runtime')
 import Battle = require('../battle')
 import { Armor, RealEstate, Ring, Security, Weapon } from '../items'
-import { Coin, input, news, tradein, vt, weapon } from '../lib'
+import { Coin, news, tradein, vt, weapon } from '../lib'
 import { PC } from '../pc'
+import { input } from '../player'
 import { an, dice, int, money, whole } from '../sys'
 
 module Taxman {
@@ -178,7 +179,7 @@ module Taxman {
                         }, prompt: 'Will you pay the tax (Y/N)? ', cancel: 'Y', enter: 'Y', eol: false, match: /Y|N/i, timeout: 20
                     }
                 }
-                input('tax')
+                input('tax', dice(101 - $.player.level) > 1 ? 'y' : 'n')
                 return
             }
         }

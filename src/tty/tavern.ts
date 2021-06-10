@@ -10,8 +10,8 @@ import Taxman = require('./taxman')
 import { Access, Weapon } from '../items'
 import { bracket, cat, Coin, display, news, vt } from '../lib'
 import { PC } from '../pc'
-import { checkXP } from '../player'
-import { cuss, fs, money, int, dice, sprintf, pathTo, whole } from '../sys'
+import { checkXP, input } from '../player'
+import { cuss, dice, fs, int, money, pathTo, sprintf, whole } from '../sys'
 
 module Tavern {
 
@@ -48,7 +48,7 @@ module Tavern {
                 hints += '> Carrying extra money around here is only good for posting a bounty\n  on someone or buying drinks & tips from the barkeep.\n'
         }
         vt.form['menu'].prompt = display('tavern', vt.Yellow, vt.yellow, suppress, tavern, hints)
-        vt.focus = 'menu'
+        input('menu')
     }
 
     function choice() {

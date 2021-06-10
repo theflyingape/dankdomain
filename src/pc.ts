@@ -7,7 +7,7 @@ import $ = require('./runtime')
 import db = require('./db')
 import { ITEMS, Access, Armor, Magic, Ring, Weapon } from './items'
 import { armor, Coin, vt, weapon } from './lib'
-import { date2full, dice, fs, int, isActive, now, pathTo, romanize, sprintf, titlecase, USERS } from './sys'
+import { date2full, dice, fs, int, isActive, now, pathTo, romanize, sprintf, titlecase, USERS, whole } from './sys'
 
 module pc {
 
@@ -80,6 +80,149 @@ module pc {
                 deed.date = now().date
                 deed.hero = player.handle
                 db.run(`UPDATE Deeds SET date=${deed.date},hero='${deed.hero}', value=${deed.value} WHERE pc='${deed.pc}' AND deed='${deed.deed}'`)
+            }
+        }
+    }
+
+    class _elemental {
+
+        targets: target[]
+
+        get cmd(): string {
+            return this._cmd.length ? this._cmd.splice(0, 1).toString() : ''
+        }
+
+        set cmd(input: string) {
+            this._cmd = this._cmd.concat(input)
+        }
+
+        private _cmd: string[] = []
+
+        flush(cmd?: string) {
+            this._cmd = []
+            if (cmd) this.cmd = cmd
+        }
+
+        orders(from: string) {
+            if ($.access.bot) {
+                if (!this.cmd.length) {
+                    switch (from) {
+                        case 'Square':
+                            if ($.player.magic > 1 || $.player.magic >= $.player.poison) {
+                                this.cmd = 'm'
+                                if ($.player.poison) this.cmd = 'v'
+                            }
+                            else {
+                                if ($.player.poison) this.cmd = 'v'
+                                if ($.player.magic) this.cmd = 'm'
+                            }
+                            if ($.player.coin.value > 0) this.cmd = 'b'
+                            if ($.online.hp < $.player.hp) this.cmd = 'h'
+                            this.cmd = 'g'
+                            break
+                    }
+                    this.cmd = 'q'
+                }
+            }
+        }
+
+        refresh() {
+            this.targets = []
+            if (!$.access.bot) return
+            $.access.sysop = true
+            $.player.coward = false
+            if (dice(100) > 1) {
+                if ($.access.roleplay) {
+                }
+                else
+                    this.cmd = 'l'
+            }
+            else
+                this.cmd = ['g', 'l', 'm', 'r', 'u', 'x', 'y', 'z'][dice(8) - 1]
+
+            let lo = $.player.level - 3
+            let hi = $.player.level +
+                $.player.level < 15 ? 3
+                : $.player.level < 30 ? dice(3) + 3
+                    : $.player.level < 60 ? dice(6) + 6
+                        : 30
+            lo = lo < 1 ? 1 : lo
+            hi = hi > 99 ? 99 : hi
+
+            //  gather potential targets
+            let rpc = <active>{ user: { id: '' } }
+            const rs = db.query(`SELECT id FROM Players
+            WHERE id != '${$.player.id}' AND id NOT GLOB '_*'
+            AND gang != '${$.player.gang}'
+            AND level BETWEEN ${lo} AND ${hi} AND xplevel > 0
+            ORDER BY level`)
+
+            //  evaluate targets for next actions
+            for (let i in rs) {
+                rpc.user.id = rs[i].id
+                const online = !PC.load(rpc)
+                if (!Access.name[rpc.user.access].roleplay) continue
+                if (!db.lock(rpc.user.id)) continue
+
+                this.targets = this.targets.concat({
+                    player: rpc.user,
+                    bail: false, jw: 0, tw: 0, kill: 0, gang: 0, steal: 0
+                })
+                const n = this.targets.length - 1
+                let target = this.targets[n]
+
+                const diff = whole($.player.level - rpc.user.level) + 1
+                const up = PC.experience($.player.level, 1, $.player.int)
+                const need = whole(100 - 2 * int(100 * whole(up - $.player.xp) / up))
+
+                if (rpc.user.status !== 'jail') {
+                    if (rpc.user.status) {
+                    }
+                    else {
+                        if ($.joust && !(rpc.user.level > 1 && (rpc.user.jw + 3 * rpc.user.level) < rpc.user.jl)) {
+                            const ability = PC.jousting($.online)
+                            const versus = PC.jousting(rpc)
+                            const factor = (100 - ($.player.level > rpc.user.level ? $.player.level : rpc.user.level)) / 10 + 3
+                            if ((ability + factor * $.player.level) > versus)
+                                target.jw += diff + whole(ability - versus) * (100 - $.player.level)
+                        }
+                        if ($.brawl) {
+                            target.tw += 10 + diff
+                            if (need < 16) target.tw += 10 * ($.player.melee + 1)
+                        }
+                        if ($.arena) {
+                            target.kill += 10 + diff
+                            if (need < 33 && diff > 1) target.tw += 10 * ($.player.melee + 1)
+                        }
+                        if ($.party && rpc.user.gang) {
+                            let gang = PC.loadGang(rpc.user.gang)
+                            if (need > 10) {
+                                let sum = 0, size = 0
+                                for (let i in gang.members) {
+                                    if (gang.validated[i]) {
+                                        let nme: active = { user: { id: gang.members[i] } }
+                                        if (PC.load(nme) && !nme.user.status) {
+                                            sum += nme.user.xplevel
+                                            size++
+                                        }
+                                    }
+                                }
+                                if (sum && size) target.gang += 100 - int(sum / size) + int($.player.level / 3) + diff
+                            }
+                        }
+                        if ($.rob) {
+                            target.steal += diff + $.player.steal
+                        }
+                    }
+                }
+                else {
+                    if ($.bail) {
+                        target.bail = true
+                    }
+                    if ($.rob) {
+                        target.steal += 2 * (diff + $.player.steal)
+                    }
+                }
             }
         }
     }
@@ -969,6 +1112,7 @@ module pc {
     }
 
     export const Deed = new _deed
+    export const Elemental = new _elemental
     export const PC = new _pc
 }
 

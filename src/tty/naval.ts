@@ -8,7 +8,7 @@ import Battle = require('../battle')
 import db = require('../db')
 import { armor, bracket, cat, Coin, display, log, news, tradein, vt, weapon } from '../lib'
 import { PC } from '../pc'
-import { checkXP } from '../player'
+import { checkXP, input } from '../player'
 import { dice, int, money, sprintf, whole, an } from '../sys'
 
 module Naval {
@@ -36,7 +36,7 @@ module Naval {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
         vt.form['menu'].prompt = display('naval', vt.Cyan, vt.cyan, suppress, naval)
-        vt.focus = 'menu'
+        input('menu')
     }
 
     function choice() {

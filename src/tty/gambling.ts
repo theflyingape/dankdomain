@@ -7,6 +7,7 @@ import $ = require('../runtime')
 import { RealEstate, Security } from '../items'
 import { bracket, Coin, display, tradein, vt } from '../lib'
 import { PC } from '../pc'
+import { input } from '../player'
 import { dice, int, money, sprintf, whole } from '../sys'
 
 module Gambling {
@@ -98,7 +99,8 @@ module Gambling {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
         vt.form['menu'].prompt = display('casino', vt.Green, vt.green, suppress, casino)
-        vt.focus = 'menu'
+        input('menu')
+
         max.value = tradein(new Coin(RealEstate.name[$.player.realestate].value).value)
         max.value += tradein(new Coin(Security.name[$.player.security].value).value)
         max.value = int(max.value / 10)
