@@ -108,15 +108,33 @@ module pc {
                 if (!this.cmd.length) {
                     switch (from) {
                         case 'Square':
-                            if ($.player.magic > 1 || $.player.magic >= $.player.poison) {
-                                this.cmd = 'm'
-                                if ($.player.poison) this.cmd = 'v'
+                            const rarity = whole(1000 / ($.player.steal + 1))
+                            if ($.player.bank.value > 0) {
+                                this.cmd = 'b'
+                                this.cmd = 'w'
+                                if ($.player.level > 1 && dice(rarity) == rarity) this.cmd = 'r'
+                                this.cmd = 'q'
                             }
-                            else {
-                                if ($.player.poison) this.cmd = 'v'
-                                if ($.player.magic) this.cmd = 'm'
+                            if ($.player.coin.value > 0) {
+                                if ($.player.magic > 1 || $.player.magic >= $.player.poison) {
+                                    this.cmd = 'm'
+                                    if ($.player.poison) this.cmd = 'v'
+                                }
+                                else {
+                                    if ($.player.poison) this.cmd = 'v'
+                                    if ($.player.magic) this.cmd = 'm'
+                                }
+                                this.cmd = 's'
+                                this.cmd = 'w'
+                                this.cmd = 'a'
+                                this.cmd = 'r'
                             }
-                            if ($.player.coin.value > 0) this.cmd = 'b'
+                            if ($.player.coin.value > 0) {
+                                this.cmd = 'b'
+                                this.cmd = 'd'
+                                if ($.player.level > 1 && dice(rarity) == rarity) this.cmd = 'r'
+                                this.cmd = 'q'
+                            }
                             if ($.online.hp < $.player.hp) this.cmd = 'h'
                             this.cmd = 'g'
                             break
@@ -127,18 +145,9 @@ module pc {
         }
 
         refresh() {
-            this.targets = []
             if (!$.access.bot) return
-            $.access.sysop = true
+            if (this._cmd.length) return
             $.player.coward = false
-            if (dice(100) > 1) {
-                if ($.access.roleplay) {
-                }
-                else
-                    this.cmd = 'l'
-            }
-            else
-                this.cmd = ['g', 'l', 'm', 'r', 'u', 'x', 'y', 'z'][dice(8) - 1]
 
             let lo = $.player.level - 3
             let hi = $.player.level +
@@ -150,6 +159,7 @@ module pc {
             hi = hi > 99 ? 99 : hi
 
             //  gather potential targets
+            this.targets = []
             let rpc = <active>{ user: { id: '' } }
             const rs = db.query(`SELECT id FROM Players
             WHERE id != '${$.player.id}' AND id NOT GLOB '_*'
@@ -224,6 +234,28 @@ module pc {
                     }
                 }
             }
+
+            if (dice(100) > 1) {
+                this.cmd = 'y'
+                this.cmd = 'm'
+                if ($.access.roleplay) {
+                    this.cmd = 's'
+                }
+                else {
+                    this.cmd = 'l'
+                    this.cmd = 'c'
+                    this.cmd = 'h'
+                    this.cmd = 'i'
+                    if (dice(10) == 1) {
+                        this.cmd = 'm'
+                        this.cmd = 't'
+                        this.cmd = 'w'
+                    }
+                    this.cmd = 'q'
+                }
+            }
+            else
+                this.cmd = ['g', 'l', 'm', 'r', 'u', 'x', 'y', 'z'][dice(8) - 1]
         }
     }
 

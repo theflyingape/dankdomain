@@ -36,7 +36,7 @@ module Main {
     vt.wall($.player.handle, `logged on as a level ${$.player.level} ${$.player.pc}`)
     vt.outln()
     cat('border')
-    Elemental.flush('y')
+    if ($.access.bot) $.access.sysop = true
 
     export function menu(suppress = true) {
         $.from = 'Menu'
@@ -54,8 +54,8 @@ module Main {
             vt.attr('Time Left: ', vt.white, vt.bright, vt.checkTime().toString(), vt.normal, vt.cyan, ' min.\n', vt.reset)
             + display('main', vt.Blue, vt.blue, suppress, mainmenu)
 
-        input('menu')
         Elemental.refresh()
+        input('menu')
     }
 
     function choice() {
@@ -186,7 +186,6 @@ module Main {
                 return
 
             case 'R':
-                Elemental.cmd = 'm'
                 if (!$.access.roleplay) break
                 vt.outln()
 
@@ -322,6 +321,7 @@ module Main {
                         PC.save(opponent)
                         news(`\trobbed ${opponent.user.handle}`)
                         log(opponent.user.id, `\n${$.player.handle} robbed you!`)
+                        Elemental.orders('Square')
                     }
                     else {
                         vt.beep()
@@ -399,7 +399,6 @@ module Main {
                     }
                 }
                 input('yn')
-                Elemental.cmd = 'y'
                 return
 
             case 'X':
@@ -426,7 +425,6 @@ module Main {
                     }
                 }
                 input('yn')
-                Elemental.cmd = 'y'
                 return
 
             case 'Y':
@@ -463,7 +461,6 @@ module Main {
                     }
                 }
 
-                Elemental.cmd = 'm'
                 if ($.access.roleplay) {
                     vt.action('ny')
                     vt.form['yn'].prompt = 'Scout other users for ' + cost.carry() + ' (Y/N)? '
@@ -529,7 +526,6 @@ module Main {
                 }
                 vt.form['yn'].prompt = `Change border message (Y/N)? `
                 input('yn', 'y')
-                Elemental.cmd = 'y'
                 return
         }
         menu(suppress)

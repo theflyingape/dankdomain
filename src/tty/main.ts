@@ -22,8 +22,8 @@ const bbs = `${process.cwd()}/door.sys`
 
 process.chdir(__dirname)
 
-import { door, vt } from '../lib'
 import { whole } from '../sys'
+import { door, vt } from '../lib'
 
 vt.emulation = <EMULATION>(
     /ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM) ? 'dumb'

@@ -3,7 +3,6 @@
  *  LIB authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
 
-import { nextTick } from 'process'
 import xvt from '@theflyingape/xvt'
 import $ = require('./runtime')
 import { Coin as _coin, Ring } from './items'
@@ -218,15 +217,16 @@ module lib {
 
         //  queue up any input by the bot
         if ($.access.bot) setImmediate(() => {
+            let data = ''
             try {
                 const cr = (typeof vt.form[focus].eol == 'undefined' || vt.form[focus].eol || vt.form[focus].lines)
-                vt.typeahead += input
-                if (cr || !input) vt.typeahead += dice(100) > 1 ? '\r' : '\x1B'
+                data += input
+                if (cr || !input) data += dice(100) > 1 ? '\r' : '\x1B'
             }
             catch {
-                vt.typeahead += dice(100) > 1 ? '\x1B' : '\r'
+                data += dice(100) > 1 ? '\x1B' : '\r'
             }
-            process.stdin.emit('data', '')
+            process.stdin.emit('data', data)
         })
     }
 

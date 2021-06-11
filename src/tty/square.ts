@@ -39,14 +39,13 @@ module Square {
     let credit = new Coin(0)
 
     let lo = 0, hi = 0, max = 0
-    let order = ''
     let want = ''
 
     export function menu(suppress = true) {
         $.from = 'Square'
         vt.action('square')
         vt.form = {
-            'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
+            'menu': { cb: choice, cancel: 'Q', enter: '?', eol: false }
         }
 
         if (!$.player.novice && $.player.level > 1 && ($.player.coin.value > 0 || $.player.poisons.length || ($.player.magic < 2 && $.player.spells.length))
@@ -189,7 +188,7 @@ module Square {
                     'menu': { cb: Bank, cancel: 'q', enter: '?', eol: false }
                 }
                 vt.form['menu'].prompt = display('Welcome to the Iron Bank', null, vt.green, false, bank)
-                vt.focus = 'menu'
+                input('menu')
                 return
 
             case 'G':
@@ -228,7 +227,7 @@ module Square {
                         }
                     }
                     vt.form['skin'].prompt = 'Heal your skin for ' + credit.carry() + ' (Y/N)? '
-                    vt.focus = 'skin'
+                    input('skin', 'y')
                     return
                 }
                 if (Weapon.name[$.player.weapon].wc == 0 && ($.online.toWC < 0 || $.player.toWC < 0)) {
@@ -260,12 +259,12 @@ module Square {
                         }
                     }
                     vt.form['hands'].prompt = 'Fix your hands for ' + credit.carry() + ' (Y/N)? '
-                    vt.focus = 'hands'
+                    input('hands', 'y')
                     return
                 }
                 hi = $.player.hp - $.online.hp
                 if (hi < 1) {
-                    vt.beep()
+                    vt.beep(true)
                     vt.outln(`\nYou don't need any hit points.`)
                     break
                 }
@@ -288,7 +287,7 @@ module Square {
                     'hp': {
                         cb: () => {
                             vt.outln()
-                            let buy = Math.abs(Math.trunc(/=|max/i.test(vt.entry) ? hi : +vt.entry))
+                            let buy = whole(/=|max/i.test(vt.entry) ? hi : vt.entry)
                             if (buy > 0 && buy <= hi) {
                                 $.player.coin.value -= buy * $.player.level
                                 if ($.player.coin.value < 0) {
@@ -311,15 +310,14 @@ module Square {
                 vt.form['hp'].prompt = vt.attr('How many do you want ['
                     , vt.white, vt.uline, 'MAX', vt.nouline, '=', vt.bright, hi.toString()
                     , vt.normal, vt.cyan, ']? ')
-                vt.focus = 'hp'
+                input('hp', '=')
                 return
 
             case 'J':
                 if ($.bail) {
                     vt.profile({ png: 'npc/jailer', effect: 'fadeIn' })
                     vt.outln('\nA deputy greets you in front of the County Jail.')
-                    vt.sleep(600)
-                    vt.outln(`"What `, ['cur', 'knave', 'scum', 'toad', 'villain'][dice(5) - 1]
+                    vt.outln(-600, vt.bright, `"What `, ['cur', 'knave', 'scum', 'toad', 'villain'][dice(5) - 1]
                         , ` do you come for, ${$.access[$.player.gender] || $.access[$.player.sex]}?"`)
                     Battle.user('Bail', (opponent: active) => {
                         if (opponent.user.id == '') {
@@ -373,7 +371,7 @@ module Square {
                                 , cancel: 'N', enter: 'N', max: 1, eol: false, match: /Y|N/i, timeout: 10
                             }
                         }
-                        vt.focus = 'pay'
+                        input('pay', 'y')
                     })
                     return
                 }
@@ -381,7 +379,7 @@ module Square {
                 break
 
             case 'M':
-                vt.out('\nThe ', vt.bright, vt.blue, 'old mage ', vt.reset)
+                vt.out('\nThe ', vt.blue, vt.bright, 'old mage ', vt.reset)
                 max = Magic.merchant.length
                 for (lo = 1; lo <= max; lo++)
                     if (!Magic.have($.player.spells, lo))
@@ -566,7 +564,7 @@ module Square {
         let suppress = $.player.expert
         let choice = vt.entry.toUpperCase()
         if (!bank[choice]) {
-            vt.beep()
+            vt.beep(true)
             vt.refocus()
             return
         }
@@ -580,19 +578,19 @@ module Square {
             case 'D':
                 vt.action('payment')
                 vt.form['coin'].prompt = vt.attr('Deposit ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=', $.player.coin.carry(), ']? ')
-                vt.focus = 'coin'
+                input('coin', '=')
                 break
 
             case 'L':
                 vt.action('payment')
                 vt.form['coin'].prompt = vt.attr('Loan ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=', credit.carry(), ']? ')
-                vt.focus = 'coin'
+                input('coin', '=')
                 break
 
             case 'W':
                 vt.action('payment')
                 vt.form['coin'].prompt = vt.attr('Withdraw ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=', $.player.bank.carry(), ']? ')
-                vt.focus = 'coin'
+                input('coin', '=')
                 break
 
             case 'R':
@@ -665,7 +663,7 @@ module Square {
             case 'T':
                 if ($.access.sysop) {
                     vt.form['coin'].prompt = vt.attr('Treasury ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=99999p]? ')
-                    vt.focus = 'coin'
+                    input('coin')
                     break
                 }
 
@@ -677,7 +675,7 @@ module Square {
     }
 
     function amount() {
-        if ((+vt.entry).toString() == vt.entry) vt.entry += 'c'
+        if (whole(vt.entry).toString() == vt.entry) vt.entry += 'c'
         let action = vt.form['coin'].prompt.split(' ')[0]
         let amount = new Coin(0)
 
@@ -759,7 +757,7 @@ module Square {
         vt.form['end'].prompt = vt.attr('  End list at ', bracket(hi, false), ': ')
 
         if (lo < hi)
-            vt.focus = 'start'
+            input('start', '')
         else
             listing()
     }
@@ -770,16 +768,16 @@ module Square {
             return
         }
 
-        let n = +vt.entry >> 0
+        let n = whole(vt.entry)
         if (n < 1) n = 1
         if ((/R|S/.test(want) && n < lo) || n > max) {
-            vt.beep()
+            vt.beep(true)
             vt.refocus()
             return
         }
 
         lo = n
-        vt.focus = 'end'
+        input('end', '')
     }
 
     function listEnd() {
@@ -788,7 +786,7 @@ module Square {
             return
         }
 
-        let n = +vt.entry >> 0
+        let n = whole(vt.entry)
         if (n < lo) n = lo
         if (n > max) n = max
         hi = n
@@ -842,7 +840,7 @@ module Square {
             }
         }
         vt.outln()
-        vt.focus = 'buy'
+        input('buy', '=')
     }
 
     function buy() {
@@ -857,7 +855,7 @@ module Square {
             return
         }
 
-        let buy = +vt.entry >> 0
+        let buy = whole(vt.entry)
         if (buy < lo || buy > hi) {
             vt.refocus()
             return

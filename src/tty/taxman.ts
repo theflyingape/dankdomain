@@ -19,7 +19,7 @@ module Taxman {
 
     function checkpoint(scratch: number): boolean {
 
-        if (int(1000 * scratch / tax.value) / 1000 > 1) {
+        if (int(1000 * scratch / tax.value) / 1000 > 1 && !$.access.sysop) {
             PC.load($.taxman)
             vt.profile({
                 jpg: 'npc/taxman', handle: $.taxman.user.handle

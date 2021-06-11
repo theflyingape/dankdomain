@@ -20,7 +20,6 @@ module Library {
         'T': { description: 'Top Ten Tavern Thugs' },
         'W': { description: 'Winners' }
     }
-    Elemental.cmd = 'c'
 
     export function menu(suppress = false) {
         vt.action('deeds')
@@ -81,7 +80,6 @@ module Library {
                             vt.outln()
                         }
                     }
-                Elemental.cmd = 'h'
                 suppress = true
                 break
 
@@ -114,8 +112,6 @@ module Library {
                 for (let n in rd) {
                     vt.outln(sprintf('%-22.22s     %4d', rd[n].hero, rd[n].n), ' ', +n < 3 ? Deed.medal[+n + 1] : '')
                 }
-
-                Elemental.cmd = 'i'
                 suppress = true
                 break
 
@@ -133,8 +129,6 @@ module Library {
                         , rh[n].handle, rh[n].wins, rh[n].immortal
                         , (100 * rh[n].immortal + rh[n].level) / rh[n].calls, rh[n].calls))
                 }
-
-                Elemental.cmd = dice(10) > 1 ? 'm' : 't'
                 suppress = true
                 break
 
@@ -175,8 +169,6 @@ module Library {
                         }
                     }
                 }
-
-                Elemental.cmd = dice(10) > 1 ? 'q' : 't'
                 suppress = true
                 break
 
@@ -198,7 +190,6 @@ module Library {
                         , rs[n].pc, rs[n].level, rs[n].tw))
                 }
 
-                Elemental.cmd = dice(10) > 1 ? 'q' : 'w'
                 suppress = true
                 break
 
