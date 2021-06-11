@@ -2172,7 +2172,8 @@ module Battle {
                             cb()
                             return
                         }
-                        if (!Poison.have(rpc.user.poisons, +vt.entry)) {
+                        if (!Poison.have(rpc.user.poisons, int(vt.entry))) {
+                            let okbyme = 0
                             for (let i in $.player.poisons) {
                                 let skill = $.player.poison || 1
                                 let vial = $.player.poisons[i]
@@ -2196,22 +2197,28 @@ module Battle {
 
                                 if (3 * (WC + toWC + 1) / skill > $.online.weapon.wc)
                                     vt.out(vt.yellow, ' ', $.player.emulation == 'XT' ? ' 💀' : 'XXX', ' ')
-                                else
+                                else {
                                     vt.out(vt.faint, ' -=> ', vt.normal)
+                                    okbyme = int(i)
+                                }
                                 vt.out(buff(toWC, WC))
                             }
                             vt.outln()
-                            vt.refocus()
-                            return
+                            if (/=|max/.test(vt.entry))
+                                apply(rpc, okbyme)
+                            else {
+                                vt.refocus()
+                                return
+                            }
                         }
                         else
-                            apply(rpc, +vt.entry)
+                            apply(rpc, int(vt.entry))
                         cb(true)
                         return
-                    }, prompt: ['Try vial', 'Make toxic', 'Apply poison', 'Use bane', 'Uti venenum'][$.player.poison] + ' (?=list): ', max: 2
+                    }, prompt: ['Try vial', 'Make toxic', 'Apply poison', 'Use bane', 'Uti venenum'][$.player.poison] + ' (?=list): ', max: 3
                 }
             }
-            vt.focus = 'poison'
+            input('poison', 'max')
             return
         }
 
@@ -2310,7 +2317,7 @@ module Battle {
             },
             'start': {
                 cb: () => {
-                    let n = +vt.entry
+                    let n = whole(vt.entry)
                     if (n > 0 && n < 100) start = n
                     vt.form['end'].prompt = '  Ending level ' + bracket(end, false) + ': '
                     input('end', '99', 500)
@@ -2320,7 +2327,7 @@ module Battle {
             },
             'end': {
                 cb: () => {
-                    let n = +vt.entry
+                    let n = whole(vt.entry)
                     if (n >= start && n < 100) end = n
 
                     vt.outln()
@@ -2359,7 +2366,7 @@ module Battle {
                         vt.outln('\n', vt.green, '> ', vt.bright, 'double-click (tap) the Player ID to pick your selection.')
 
                     vt.action('freetext')
-                    input('user', $.player.id)
+                    input('user', Elemental[venue] || $.player.id)
                     return
                 }
             }

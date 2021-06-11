@@ -36,7 +36,10 @@ module Main {
     vt.wall($.player.handle, `logged on as a level ${$.player.level} ${$.player.pc}`)
     vt.outln()
     cat('border')
-    if ($.access.bot) $.access.sysop = true
+    if ($.access.bot) {
+        if (dice(39) == 1) $.border = true
+        $.access.sysop = true
+    }
 
     export function menu(suppress = true) {
         $.from = 'Menu'
@@ -77,7 +80,6 @@ module Main {
 
             case 'A':
                 vt.animated('fadeOut')
-                Elemental.orders('Arena')
                 require('./arena').menu($.player.expert)
                 return
 
@@ -340,7 +342,6 @@ module Main {
 
             case 'S':
                 vt.animated('fadeOut')
-                Elemental.orders('Square')
                 require('./square').menu($.player.expert)
                 return
 
@@ -525,12 +526,12 @@ module Main {
                     }
                 }
                 vt.form['yn'].prompt = `Change border message (Y/N)? `
-                input('yn', 'y')
+                input('yn', 'ny'[int($.border)])
+                $.border = false
                 return
         }
         menu(suppress)
     }
-
 }
 
 export = Main

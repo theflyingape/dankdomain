@@ -35,11 +35,14 @@ vt.emulation = <EMULATION>(
 
 //  check for passed bot or a BBS id for auto-login
 const userID = process.argv.length > 2 ? process.argv[2].toUpperCase() : ''
-if (userID.length && userID == whole(userID).toString()) {
-    const user = door(bbs)
-    if (userID == user[25]) {
-        vt.emulation = user[19] == 'GR' ? 'PC' : 'VT'
-        vt.tty = 'door'
+if (userID.length) {
+    vt.emulation = 'VT'
+    if (userID == whole(userID).toString()) {
+        const user = door(bbs)
+        if (userID == user[25]) {
+            if (user[19] == 'GR') vt.emulation = 'PC'
+            vt.tty = 'door'
+        }
     }
 }
 

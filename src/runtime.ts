@@ -42,6 +42,9 @@ module runtime {
     export let timeleft: number = 0
     export let warning: number = 2
 
+    //  bot runtime features
+    export let border: boolean = false
+
     //  global features
     export let callers: caller[] = []
     export let mydeeds: deed[]

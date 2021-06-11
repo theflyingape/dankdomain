@@ -379,17 +379,7 @@ module Logon {
                 , `${$.access.calls - $.player.today}`, vt.reset, ' calls remaining')
             vt.sessionAllowed = $.access.minutes * 60
 
-            vt.outln(vt.cyan, '\nLast callers were: ')
-            try {
-                $.callers = JSON.parse(fs.readFileSync(`${USERS}/callers.json`).toString())
-                for (let last in $.callers)
-                    vt.outln('     ', vt.bright
-                        , $.callers[last].who, vt.normal, ' (', $.callers[last].reason, ')')
-            }
-            catch (err) {
-                vt.outln(vt.red, vt.bright, 'not available')
-                vt.outln(vt.faint, `(${err})`)
-            }
+            lastCallers()
 
             if ($.player.today < 2) {
                 if ($.player.blessed) {
@@ -429,6 +419,7 @@ module Logon {
             $.player.plays++
             $.player.status = ''
             $.player.xplevel = $.player.level
+            $.online.altered = true
             const play = JSON.parse(fs.readFileSync(pathTo('etc', 'play.json')))
             Object.assign($, play)
             vt.music('logon')
@@ -454,19 +445,8 @@ module Logon {
             db.unlock($.player.id)
             news('', true)
 
-            vt.wall($.player.handle, `logged on as a level ${$.player.level} ${$.player.pc}`)
-
-            vt.out(vt.cyan, '\nLast callers were: ', vt.white)
-            try {
-                $.callers = JSON.parse(fs.readFileSync(`${USERS}/callers.json`).toString())
-                for (let last in $.callers) {
-                    vt.outln(vt.bright, $.callers[last].who, vt.normal, ' (', $.callers[last].reason, ')')
-                    vt.out('                   ')
-                }
-            }
-            catch (err) {
-                vt.outln(`not available (${err})`)
-            }
+            lastCallers()
+            vt.wall($.player.handle, `is visiting`)
         }
 
         vt.form = {
@@ -553,6 +533,20 @@ module Logon {
         }
         vt.action('ny')
         input('pause')
+    }
+
+    function lastCallers() {
+        vt.out(vt.cyan, '\nLast callers were: ', vt.white)
+        try {
+            $.callers = JSON.parse(fs.readFileSync(`${USERS}/callers.json`).toString())
+            for (let last in $.callers) {
+                vt.outln(vt.bright, $.callers[last].who, vt.normal, ' (', $.callers[last].reason, ')')
+                vt.out(-125, '                   ')
+            }
+        }
+        catch (err) {
+            vt.outln(`not available (${err})`)
+        }
     }
 
     function getRuler(): boolean {

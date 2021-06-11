@@ -9,7 +9,7 @@ import db = require('../db')
 import Taxman = require('./taxman')
 import { Access, Weapon } from '../items'
 import { bracket, cat, Coin, display, news, vt } from '../lib'
-import { PC } from '../pc'
+import { Elemental, PC } from '../pc'
 import { checkXP, input } from '../player'
 import { cuss, dice, fs, int, money, pathTo, sprintf, whole } from '../sys'
 
@@ -37,7 +37,7 @@ module Tavern {
         Taxman.bar()
         if ($.reason) vt.hangup()
 
-        vt.action('tavern')
+        Elemental.orders('Tavern')
         vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
@@ -412,7 +412,7 @@ module Tavern {
                             , cancel: 'G', enter: 'P', eol: false, match: /P|G|Y/i, timeout: 30
                         }
                     }
-                    vt.focus = 'brawl'
+                    input('brawl', 'y')
                 })
                 return
 

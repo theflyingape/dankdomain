@@ -7,7 +7,7 @@ import $ = require('./runtime')
 import db = require('./db')
 import { ITEMS, Access, Armor, Magic, Ring, Weapon } from './items'
 import { armor, Coin, vt, weapon } from './lib'
-import { date2full, dice, fs, int, isActive, now, pathTo, romanize, sprintf, titlecase, USERS, whole } from './sys'
+import { date2full, dice, fs, int, isActive, money, now, pathTo, romanize, sprintf, titlecase, USERS, whole } from './sys'
 
 module pc {
 
@@ -87,6 +87,14 @@ module pc {
     class _elemental {
 
         targets: target[]
+        Bail: string = ''
+        Brawl: string = ''
+        Curse: string = ''
+        Fight: string = ''
+        Joust: string = ''
+        Party: string = ''
+        Resurrect: string = ''
+        Rob: string = ''
 
         get cmd(): string {
             return this._cmd.length ? this._cmd.splice(0, 1).toString() : ''
@@ -103,45 +111,84 @@ module pc {
             if (cmd) this.cmd = cmd
         }
 
-        orders(from: string) {
-            if ($.access.bot) {
-                if (!this.cmd.length) {
-                    switch (from) {
-                        case 'Square':
-                            const rarity = whole(1000 / ($.player.steal + 1))
-                            if ($.player.bank.value > 0) {
-                                this.cmd = 'b'
-                                this.cmd = 'w'
-                                if ($.player.level > 1 && dice(rarity) == rarity) this.cmd = 'r'
-                                this.cmd = 'q'
-                            }
-                            if ($.player.coin.value > 0) {
-                                if ($.player.magic > 1 || $.player.magic >= $.player.poison) {
-                                    this.cmd = 'm'
-                                    if ($.player.poison) this.cmd = 'v'
-                                }
-                                else {
-                                    if ($.player.poison) this.cmd = 'v'
-                                    if ($.player.magic) this.cmd = 'm'
-                                }
-                                this.cmd = 's'
-                                this.cmd = 'w'
-                                this.cmd = 'a'
-                                this.cmd = 'r'
-                            }
-                            if ($.player.coin.value > 0) {
-                                this.cmd = 'b'
-                                this.cmd = 'd'
-                                if ($.player.level > 1 && dice(rarity) == rarity) this.cmd = 'r'
-                                this.cmd = 'q'
-                            }
-                            if ($.online.hp < $.player.hp) this.cmd = 'h'
-                            this.cmd = 'g'
-                            break
-                    }
-                    this.cmd = 'q'
+        nme(venue: string) {
+            this[venue] = ''
+            this.targets.sort((n1, n2) => (n1[venue] < n2[venue] ? 1 : -1))
+            for (let i in this.targets) {
+                if (dice(this.targets[i][venue]) > 1) {
+                    this[venue] = this.targets[i].player.id
+                    break
                 }
             }
+        }
+
+        orders(from: string) {
+            vt.action(from.toLowerCase())
+            $.from = from
+            if (!$.access.bot || this.cmd.length) return
+            //  queue up bot's action(s) from this module
+            switch (from) {
+                case 'Arena':
+                    if ($.player.poison > 1 && $.player.toWC >= 0 && $.player.toWC < int($.player.poisons.length / 2) + 1)
+                        this.cmd = 'p'
+                    if ($.joust) {
+                        if (this.Joust) {
+                            this.cmd = 'j'
+                            return
+                        }
+                    }
+                    if ($.arena) {
+
+                    }
+                    if ($.online.hp < $.player.hp || $.player.coin.value)
+                        this.cmd = 'g'
+                    break
+
+                case 'Square':
+                    const rarity = whole(1000 / ($.player.steal + 1))
+                    if ($.player.bank.value > 0) {
+                        this.cmd = 'b'
+                        this.cmd = 'w'
+                        if ($.player.level > 1 && dice(rarity) == rarity) this.cmd = 'r'
+                        this.cmd = 'q'
+                    }
+                    if ($.player.coin.value > 0) {
+                        if ($.player.magic > 1 || $.player.magic >= $.player.poison) {
+                            this.cmd = 'm'
+                            if ($.player.poison) this.cmd = 'v'
+                        }
+                        else {
+                            if ($.player.poison) this.cmd = 'v'
+                            if ($.player.magic) this.cmd = 'm'
+                        }
+                        this.cmd = 's'
+                        this.cmd = 'w'
+                        this.cmd = 'a'
+                        this.cmd = 'r'
+                    }
+                    else {
+                        if (dice(rarity) == 1 || (!$.arena && !$.brawl && !$.dungeon && !$.joust && (!$.naval || !$.player.hull) && !$.party && dice($.player.steal) > 1))
+                            this.cmd = 'p'
+                    }
+                    if ($.player.coin.value > 0) {
+                        this.cmd = 'b'
+                        this.cmd = 'd'
+                        if ($.player.level > 1 && dice(rarity) == rarity) this.cmd = 'r'
+                        this.cmd = 'q'
+                    }
+                    if ($.online.hp < $.player.hp) this.cmd = 'h'
+                    if ($.arena || $.joust || ($.player.poison > 1 && $.player.toWC == 0))
+                        this.cmd = 'g'
+                    break
+
+                case 'Tavern':
+                    if ($.brawl && this.Brawl)
+                        this.cmd = 'b'
+                    else
+                        this.cmd = ['e', 's', 't', 'y'][dice(4) - 1]
+                    break
+            }
+            this.cmd = 'q'
         }
 
         refresh() {
@@ -176,12 +223,12 @@ module pc {
 
                 this.targets = this.targets.concat({
                     player: rpc.user,
-                    bail: false, jw: 0, tw: 0, kill: 0, gang: 0, steal: 0
+                    Bail: 0, Brawl: 0, Curse: 0, Fight: 0, Joust: 0, Party: 0, Resurrect: 0, Rob: 0
                 })
                 const n = this.targets.length - 1
                 let target = this.targets[n]
 
-                const diff = whole($.player.level - rpc.user.level) + 1
+                const diff = whole(hi - rpc.user.level) + 1
                 const up = PC.experience($.player.level, 1, $.player.int)
                 const need = whole(100 - 2 * int(100 * whole(up - $.player.xp) / up))
 
@@ -194,15 +241,14 @@ module pc {
                             const versus = PC.jousting(rpc)
                             const factor = (100 - ($.player.level > rpc.user.level ? $.player.level : rpc.user.level)) / 10 + 3
                             if ((ability + factor * $.player.level) > versus)
-                                target.jw += diff + whole(ability - versus) * (100 - $.player.level)
+                                target.Joust += diff + whole(ability - versus) * (100 - $.player.level)
                         }
                         if ($.brawl) {
-                            target.tw += 10 + diff
-                            if (need < 16) target.tw += 10 * ($.player.melee + 1)
+                            target.Brawl += diff + $.player.melee
                         }
                         if ($.arena) {
-                            target.kill += 10 + diff
-                            if (need < 33 && diff > 1) target.tw += 10 * ($.player.melee + 1)
+                            target.Fight += 10 + diff
+                            if (need < 33 && diff > 1) target.Brawl += 10 * ($.player.melee + 1)
                         }
                         if ($.party && rpc.user.gang) {
                             let gang = PC.loadGang(rpc.user.gang)
@@ -217,45 +263,59 @@ module pc {
                                         }
                                     }
                                 }
-                                if (sum && size) target.gang += 100 - int(sum / size) + int($.player.level / 3) + diff
+                                if (sum && size) target.Party += 100 - int(sum / size) + int($.player.level / 3) + diff
                             }
                         }
                         if ($.rob) {
-                            target.steal += diff + $.player.steal
+                            target.Rob += diff + $.player.steal
                         }
                     }
                 }
                 else {
                     if ($.bail) {
-                        target.bail = true
+                        target.Bail = 3 + diff
                     }
                     if ($.rob) {
-                        target.steal += 2 * (diff + $.player.steal)
+                        target.Rob += 2 * (diff + $.player.steal)
                     }
                 }
             }
 
-            if (dice(100) > 1) {
+            this.nme('Bail')
+            this.nme('Brawl')
+            this.nme('Curse')
+            this.nme('Fight')
+            this.nme('Joust')
+            this.nme('Party')
+            this.nme('Resurrect')
+            this.nme('Rob')
+
+            if (dice(77) > 1) {
                 this.cmd = 'y'
                 this.cmd = 'm'
                 if ($.access.roleplay) {
-                    this.cmd = 's'
+                    if ($.player.coin.value >= money($.player.level))
+                        this.cmd = 's'
+                    else if ($.timeleft > 4 && $.brawl && this.Brawl) {
+                        this.cmd = 't'
+                        this.cmd = 'b'
+                    }
+                    else if ($.joust && this.Joust) {
+                        this.cmd = 'a'
+                        this.cmd = 'j'
+                    }
+                    else if ($.arena && this.Fight) {
+                        this.cmd = 'a'
+                        this.cmd = 'u'
+                    }
                 }
                 else {
                     this.cmd = 'l'
-                    this.cmd = 'c'
-                    this.cmd = 'h'
-                    this.cmd = 'i'
-                    if (dice(10) == 1) {
-                        this.cmd = 'm'
-                        this.cmd = 't'
-                        this.cmd = 'w'
-                    }
-                    this.cmd = 'q'
                 }
             }
-            else
-                this.cmd = ['g', 'l', 'm', 'r', 'u', 'x', 'y', 'z'][dice(8) - 1]
+            //  look around
+            if (!this._cmd.length)
+                this.cmd = ['g', 'l', 'm', 'q', 'r', 'u', 'x', 'y', 'z'][dice(9) - 1]
         }
     }
 

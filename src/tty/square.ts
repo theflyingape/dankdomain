@@ -8,7 +8,7 @@ import Battle = require('../battle')
 import db = require('../db')
 import { Armor, Magic, Poison, Ring, RealEstate, Security, Weapon } from '../items'
 import { armor, bracket, Coin, display, log, news, tradein, vt, weapon } from '../lib'
-import { PC } from '../pc'
+import { Elemental, PC } from '../pc'
 import { input } from '../player'
 import { dice, int, money, sprintf, whole } from '../sys'
 
@@ -42,8 +42,7 @@ module Square {
     let want = ''
 
     export function menu(suppress = true) {
-        $.from = 'Square'
-        vt.action('square')
+        Elemental.orders('Square')
         vt.form = {
             'menu': { cb: choice, cancel: 'Q', enter: '?', eol: false }
         }

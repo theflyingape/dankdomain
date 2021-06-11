@@ -8,7 +8,7 @@ import Battle = require('../battle')
 import db = require('../db')
 import { Access, Armor, Magic, Poison, Ring, Weapon } from '../items'
 import { bracket, cat, Coin, display, getRing, log, news, tradein, vt } from '../lib'
-import { PC } from '../pc'
+import { Elemental, PC } from '../pc'
 import { checkXP, input } from '../player'
 import { sprintf, dice, money, romanize, int } from '../sys'
 
@@ -26,12 +26,11 @@ module Arena {
     }
 
     export function menu(suppress = true) {
-        $.from = 'Arena'
         if (checkXP($.online, menu)) return
         if ($.online.altered) PC.save()
         if ($.reason) vt.hangup()
 
-        vt.action('arena')
+        Elemental.orders('Arena')
         vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
@@ -139,7 +138,7 @@ module Arena {
                                     vt.action('joust')
 
                                     round()
-                                    vt.focus = 'joust'
+                                    input('joust', '')
                                     return
                                 }
                                 menu()
@@ -175,7 +174,7 @@ module Arena {
                                     if (result > 0) {
                                         vt.sound('wall')
                                         vt.animated(['flash', 'jello', 'rubberBand'][jw])
-                                        vt.outln(vt.green, '-*>', vt.bright, vt.white, ' Thud! ', vt.normal, vt.green, '<*-  ', vt.reset, 'A hit! ', -100, ' You win this pass!', -100)
+                                        vt.outln(vt.green, '-*>', vt.white, vt.bright, ' Thud! ', vt.normal, vt.green, '<*-  ', vt.reset, 'A hit! ', -100, ' You win this pass!', -100)
                                         if (++jw == 3) {
                                             vt.outln('\nYou have won the joust!')
                                             if (opponent.user.id == $.king.id) {
@@ -212,7 +211,7 @@ module Arena {
                                             vt.sound('swoosh')
                                             vt.out(vt.magenta, '^>', vt.white, ' SWOOSH ', vt.magenta, '<^  ', vt.reset
                                                 , PC.who(opponent).He, 'missed! ', -100, ' You both pass and try again!', -100)
-                                            vt.refocus()
+                                            input('joust', '')
                                             return
                                         }
 
@@ -238,15 +237,15 @@ module Arena {
                                     }
                                     round()
                                 }
-                                vt.refocus()
-                            }, prompt: vt.attr('        ', bracket('J', false), vt.bright, vt.yellow, ' Joust', vt.normal, vt.magenta, ' * ', bracket('F', false), vt.bright, vt.yellow, ' Forfeit: '), cancel: 'F', enter: 'J', eol: false, match: /F|J/i
+                                input('joust', '')
+                            }, prompt: vt.attr('        ', bracket('J', false), vt.yellow, vt.bright, ' Joust', vt.normal, vt.magenta, ' * ', bracket('F', false), vt.yellow, vt.bright, ' Forfeit: '), cancel: 'j', enter: 'J', eol: false, match: /F|J/i
                         }
                     }
                     vt.outln('You grab a horse and prepare yourself to joust.')
-                    vt.focus = 'compete'
+                    input('compete', 'y')
 
                     function round() {
-                        vt.out('\n', vt.green, '--=:)) Round ', romanize(++pass), ' of V: Won:', vt.bright, vt.white, jw.toString(), vt.normal, vt.magenta, ' ^', vt.green, ' Lost:', vt.bright, vt.white, jl.toString(), vt.normal, vt.green, ' ((:=--')
+                        vt.out('\n', vt.green, '--=:)) Round ', romanize(++pass), ' of V: Won:', vt.white, vt.bright, jw.toString(), vt.normal, vt.magenta, ' ^', vt.green, ' Lost:', vt.white, vt.bright, jl.toString(), vt.normal, vt.green, ' ((:=--')
                     }
                 })
                 return

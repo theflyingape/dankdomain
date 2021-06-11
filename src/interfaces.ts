@@ -244,12 +244,14 @@ interface spell {
 
 interface target {
     player: user
-    bail: boolean
-    jw: number
-    tw: number
-    kill: number
-    gang: number
-    steal: number
+    Bail: number
+    Brawl: number
+    Curse: number
+    Fight: number
+    Joust: number
+    Party: number
+    Resurrect: number
+    Rob: number
 }
 
 interface user {
