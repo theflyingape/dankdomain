@@ -377,7 +377,7 @@ module Tavern {
                                         Battle.brawl(opponent, $.online)
                                     if ($.online.bp > 0 && opponent.bp > 0) {
                                         vt.action('brawl')
-                                        input('punch', 'p')
+                                        input('punch', 2 * $.online.bp < opponent.bp ? 'p' : 'g')
                                     }
                                     else
                                         menu($.player.expert)

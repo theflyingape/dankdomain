@@ -191,8 +191,11 @@ module pc {
                 case 'Tavern':
                     if ($.brawl && this.Brawl)
                         this.cmd = 'b'
-                    else
+                    else {
                         this.cmd = ['e', 't', 'y'][dice(3) - 1]
+                        if ($.player.level > 66 && dice(10) == 1)
+                            this.cmd = 's'
+                    }
                     break
             }
             this.cmd = 'q'
