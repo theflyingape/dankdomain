@@ -125,11 +125,11 @@ module pc {
         orders(from: string) {
             vt.action(from.toLowerCase())
             $.from = from
-            if (!$.access.bot || this.cmd.length) return
+            if (!$.access.bot || this._cmd.length) return
             //  queue up bot's action(s) from this module
             switch (from) {
                 case 'Arena':
-                    if ($.player.poison > 1 && $.player.toWC >= 0 && $.player.toWC < int($.player.poisons.length / 2) + 1)
+                    if (dice($.player.poison) > 1 && $.player.toWC >= 0 && $.player.toWC < int($.player.poisons.length / 2) + 1)
                         this.cmd = 'p'
                     if ($.joust) {
                         if (this.Joust) {
@@ -138,7 +138,6 @@ module pc {
                         }
                     }
                     if ($.arena) {
-
                     }
                     if ($.online.hp < $.player.hp || $.player.coin.value)
                         this.cmd = 'g'
@@ -181,11 +180,19 @@ module pc {
                         this.cmd = 'g'
                     break
 
+                case 'Party':
+                    this.cmd = 'm'
+                    if ($.party && this.Party) {
+                        this.cmd = 'f'
+                        return
+                    }
+                    break
+
                 case 'Tavern':
                     if ($.brawl && this.Brawl)
                         this.cmd = 'b'
                     else
-                        this.cmd = ['e', 's', 't', 'y'][dice(4) - 1]
+                        this.cmd = ['e', 't', 'y'][dice(3) - 1]
                     break
             }
             this.cmd = 'q'
@@ -247,8 +254,8 @@ module pc {
                             target.Brawl += diff + $.player.melee
                         }
                         if ($.arena) {
-                            target.Fight += 10 + diff
-                            if (need < 33 && diff > 1) target.Brawl += 10 * ($.player.melee + 1)
+                            if (!rpc.user.novice)
+                                target.Fight += diff + $.player.melee + $.player.backstab
                         }
                         if ($.party && rpc.user.gang) {
                             let gang = PC.loadGang(rpc.user.gang)
@@ -296,17 +303,15 @@ module pc {
                 if ($.access.roleplay) {
                     if ($.player.coin.value >= money($.player.level))
                         this.cmd = 's'
-                    else if ($.timeleft > 4 && $.brawl && this.Brawl) {
+                    else if ($.timeleft > 4 && $.brawl && this.Brawl)
                         this.cmd = 't'
-                        this.cmd = 'b'
-                    }
-                    else if ($.joust && this.Joust) {
+                    else if ($.joust && this.Joust)
                         this.cmd = 'a'
-                        this.cmd = 'j'
-                    }
-                    else if ($.arena && this.Fight) {
+                    else if ($.arena && this.Fight)
                         this.cmd = 'a'
-                        this.cmd = 'u'
+                    else if ($.party) {
+                        this.Party = this.Party || 'M'
+                        this.cmd = 'p'
                     }
                 }
                 else {
@@ -315,7 +320,7 @@ module pc {
             }
             //  look around
             if (!this._cmd.length)
-                this.cmd = ['g', 'l', 'm', 'q', 'r', 'u', 'x', 'y', 'z'][dice(9) - 1]
+                this.cmd = ['g', 'l', 'n', 'p', 'q', 'r', 't', 'u', 'x', 'z'][dice(10) - 1]
         }
     }
 

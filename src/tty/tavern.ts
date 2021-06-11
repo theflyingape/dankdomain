@@ -83,7 +83,7 @@ module Tavern {
                         }, prompt: 'Enter your argument', lines: 6, timeout: 600
                     }
                 }
-                vt.focus = 'argue'
+                input('argue', '')
                 return
 
             case 'E':
@@ -163,7 +163,7 @@ module Tavern {
                         }, prompt: 'How much will you tip? ', max: 8
                     },
                 }
-                vt.focus = 'tip'
+                input('tip', dice(22).toString())
                 return
 
             case 'L':
@@ -178,7 +178,7 @@ module Tavern {
                 vt.form = {
                     'pause': { cb: menu, pause: true }
                 }
-                vt.focus = 'pause'
+                input('pause', '')
                 return
 
             case 'P':
@@ -230,7 +230,7 @@ module Tavern {
                         }
                     }
                     vt.form['coin'].prompt = `Bounty [MAX=${max.carry()}]? `
-                    vt.focus = 'coin'
+                    input('coin', '=')
                     return
                 })
                 return
@@ -377,7 +377,7 @@ module Tavern {
                                         Battle.brawl(opponent, $.online)
                                     if ($.online.bp > 0 && opponent.bp > 0) {
                                         vt.action('brawl')
-                                        vt.focus = 'punch'
+                                        input('punch', 'p')
                                     }
                                     else
                                         menu($.player.expert)

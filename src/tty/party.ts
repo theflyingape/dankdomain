@@ -8,9 +8,9 @@ import Battle = require('../battle')
 import db = require('../db')
 import { Armor, Magic, Poison, Weapon } from '../items'
 import { bracket, cat, Coin, death, display, log, vt, weapon } from '../lib'
-import { PC } from '../pc'
+import { Elemental, PC } from '../pc'
 import { checkXP, input } from '../player'
-import { cuss, dice, int, money, sprintf, titlecase } from '../sys'
+import { cuss, dice, int, money, sprintf, titlecase, whole } from '../sys'
 
 module Party {
 
@@ -47,7 +47,7 @@ module Party {
         if (!$.reason && $.online.hp < 1) death('fought bravely?')
         if ($.reason) vt.hangup()
 
-        vt.action('party')
+        Elemental.orders('Party')
         vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
@@ -445,10 +445,14 @@ module Party {
                     'gang': {
                         cb: () => {
                             vt.outln()
-                            let i = (+vt.entry >> 0) - 1
-                            if (/M/i.test(vt.entry)) {
+                            let i = whole(vt.entry) - 1
+                            if (/^M$/i.test(vt.entry)) {
                                 rs = [rs.find((x) => { return x.name == 'Monster Mash' })]
                                 i = 0
+                            }
+                            if (i < 0) {
+                                rs = [rs.find((x) => { return x.name == vt.entry })]
+                                i = rs[0] == 'undefined' ? -1 : 0
                             }
                             if (!rs[i]) {
                                 vt.beep()
@@ -537,8 +541,8 @@ module Party {
                             vt.action('ny')
                             showGang(g, o, true)
                             xtGang(o.name, o.genders[0], o.melee[0], o.banner, o.trim)
-                            vt.focus = 'fight'
-                        }, prompt: '\nFight which gang? ', max: 2
+                            input('fight', 'y')
+                        }, prompt: '\nFight which gang? ', max: 22
                     },
                     'fight': {
                         cb: () => {
@@ -562,7 +566,7 @@ module Party {
                         }, prompt: 'Fight this gang (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
                     }
                 }
-                vt.focus = 'gang'
+                input('gang', Elemental.Party)
                 return
 
             case 'Q':

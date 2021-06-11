@@ -2199,17 +2199,17 @@ module Battle {
                                     vt.out(vt.yellow, ' ', $.player.emulation == 'XT' ? ' 💀' : 'XXX', ' ')
                                 else {
                                     vt.out(vt.faint, ' -=> ', vt.normal)
-                                    okbyme = int(i)
+                                    okbyme = vial
                                 }
                                 vt.out(buff(toWC, WC))
                             }
                             vt.outln()
                             if (/=|max/.test(vt.entry))
-                                apply(rpc, okbyme)
-                            else {
-                                vt.refocus()
-                                return
-                            }
+                                if (okbyme) apply(rpc, okbyme)
+                                else {
+                                    vt.refocus()
+                                    return
+                                }
                         }
                         else
                             apply(rpc, int(vt.entry))
@@ -2245,7 +2245,7 @@ module Battle {
                     rpc.toWC = rpc.toWC >= 0 ? t : rpc.toWC + t
             }
 
-            if (!Poison.have(rpc.user.poisons, vial) || +rpc.user.weapon > 0) {
+            if (!Poison.have(rpc.user.poisons, vial) || whole(rpc.user.weapon) > 0) {
                 vt.sound('ooze')
                 vt.outln(vt.green, vt.bright, p1.He, PC.what(rpc, 'secrete'), 'a caustic ooze', vt.reset, buff(p, t), -400)
             }

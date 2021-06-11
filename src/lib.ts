@@ -209,7 +209,7 @@ module lib {
         }
     }
 
-    export function prompt(focus: string | number, input = '', speed = 7) {
+    export function prompt(focus: string | number, input = '', speed = 5) {
         //console.log(`input = '${input}' `, input.split('').map((c) => { return c.charCodeAt(0) }))
         if ($.access.bot)
             vt.form[focus].delay = speed < 100 ? 125 * dice(speed) * dice(speed) : speed
