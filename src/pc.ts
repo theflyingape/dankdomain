@@ -243,42 +243,38 @@ module pc {
                 const need = whole(100 - 2 * int(100 * whole(up - $.player.xp) / up))
 
                 if (rpc.user.status !== 'jail') {
-                    if (rpc.user.status) {
+                    if ($.joust && !(rpc.user.level > 1 && (rpc.user.jw + 3 * rpc.user.level) < rpc.user.jl)) {
+                        const ability = PC.jousting($.online)
+                        const versus = PC.jousting(rpc)
+                        const factor = (100 - ($.player.level > rpc.user.level ? $.player.level : rpc.user.level)) / 10 + 3
+                        if ((ability + factor * $.player.level) > versus)
+                            target.Joust += diff + whole(ability - versus) * (100 - $.player.level)
                     }
-                    else {
-                        if ($.joust && !(rpc.user.level > 1 && (rpc.user.jw + 3 * rpc.user.level) < rpc.user.jl)) {
-                            const ability = PC.jousting($.online)
-                            const versus = PC.jousting(rpc)
-                            const factor = (100 - ($.player.level > rpc.user.level ? $.player.level : rpc.user.level)) / 10 + 3
-                            if ((ability + factor * $.player.level) > versus)
-                                target.Joust += diff + whole(ability - versus) * (100 - $.player.level)
-                        }
-                        if ($.brawl) {
-                            target.Brawl += diff + $.player.melee
-                        }
-                        if ($.arena) {
-                            if (!rpc.user.novice)
-                                target.Fight += diff + $.player.melee + $.player.backstab
-                        }
-                        if ($.party && rpc.user.gang) {
-                            let gang = PC.loadGang(rpc.user.gang)
-                            if (need > 10) {
-                                let sum = 0, size = 0
-                                for (let i in gang.members) {
-                                    if (gang.validated[i]) {
-                                        let nme: active = { user: { id: gang.members[i] } }
-                                        if (PC.load(nme) && !nme.user.status) {
-                                            sum += nme.user.xplevel
-                                            size++
-                                        }
+                    if ($.brawl) {
+                        target.Brawl += diff + $.player.melee
+                    }
+                    if ($.arena) {
+                        if (!rpc.user.novice && !rpc.user.status)
+                            target.Fight += diff + $.player.melee + $.player.backstab
+                    }
+                    if ($.party && rpc.user.gang && !rpc.user.status) {
+                        let gang = PC.loadGang(rpc.user.gang)
+                        if (need > 10) {
+                            let sum = 0, size = 0
+                            for (let i in gang.members) {
+                                if (gang.validated[i]) {
+                                    let nme: active = { user: { id: gang.members[i] } }
+                                    if (PC.load(nme) && !nme.user.status) {
+                                        sum += nme.user.xplevel
+                                        size++
                                     }
                                 }
-                                if (sum && size) target.Party += 100 - int(sum / size) + int($.player.level / 3) + diff
                             }
+                            if (sum && size) target.Party += 100 - int(sum / size) + int($.player.level / 3) + diff
                         }
-                        if ($.rob) {
-                            target.Rob += diff + $.player.steal
-                        }
+                    }
+                    if ($.rob) {
+                        target.Rob += diff + $.player.steal
                     }
                 }
                 else {
