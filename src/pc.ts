@@ -673,7 +673,22 @@ module pc {
             //  reset for new or non player
             if (!user.id || user.id[0] == '_' || user.bot) {
                 if (isNaN(user.dob)) user.dob = now().date
-                if (isNaN(user.joined)) user.joined = now().date
+                if (isNaN(user.joined)) {
+                    user.joined = now().date
+                    //  init for new player
+                    if (user === $.player) {
+                        user.expires = user.joined + $.sysop.expires
+                        this.newkeys(user)
+                        user.novice = true
+                        for (let title in Access.name) {
+                            if (Access.name[title].roleplay && Access.name[title].verify)
+                                break
+                            user.access = title
+                        }
+                        $.access = Access.name[user.access]
+                        $.access.roleplay = false
+                    }
+                }
                 user.lastdate = now().date
                 user.lasttime = now().time
                 user.gender = user.sex || 'I'

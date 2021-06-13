@@ -136,7 +136,7 @@ module lib {
                 cb: () => {
                     if (vt.entry && vt.entry.length == 2) vt.emulation = <EMULATION>vt.entry.toUpperCase()
                     $.player.emulation = vt.emulation
-                    if (vt.tty == 'telnet') vt.outln(`@vt.title( ${$.player.emulation})`, -100)
+                    if (vt.tty == 'telnet') vt.outln(`@vt.title(${$.player.emulation})`, -100)
                     vt.outln('\n', vt.reset, vt.magenta, vt.LGradient, vt.reverse, 'BANNER', vt.noreverse, vt.RGradient)
                     vt.outln(vt.red, 'R', vt.green, 'G', vt.blue, 'B', vt.reset, vt.bright, ' bold ', vt.normal, 'normal', vt.blink, ' flash ', vt.noblink, vt.faint, 'dim')
                     vt.out(vt.yellow, 'Cleric: ', vt.bright, { VT: '\x1B(0\x7D\x1B(B', PC: '\x9C', XT: '✟', dumb: '$' }[$.player.emulation]
@@ -154,10 +154,10 @@ module lib {
                         $.player.rows = process.stdout.rows
                     for (let rows = $.player.rows + 5; rows > 1; rows--)
                         vt.out(bracket(rows >= 24 ? rows : '..'))
-                    vt.form['rows'].prompt = vt.attr('Enter top visible row number ', vt.faint, '[', vt.reset, vt.bright, `${$.player.rows}`, vt.faint, vt.cyan, ']', vt.reset, ': ')
+                    vt.form['rows'].prompt = vt.attr('Enter top visible row number ', vt.faint, '[', vt.reset, vt.bright, `${$.player.rows < 24 ? '24' : $.player.rows}`, vt.cyan, vt.faint, ']', vt.reset, ': ')
                     prompt('rows')
-                }, prompt: vt.attr('Select ', vt.faint, '[', vt.reset, vt.bright, `${$.player.emulation}`, vt.faint, vt.cyan, ']', vt.reset, ': ')
-                , enter: $.player.emulation, match: /VT|PC|XT/i, max: 2
+                }, prompt: vt.attr('Select ', vt.faint, '[', vt.reset, vt.bright, `${$.player.emulation}`, vt.cyan, vt.faint, ']', vt.reset, ': ')
+                , cancel: 'VT', enter: $.player.emulation, match: /VT|PC|XT/i, max: 2
             },
             'rows': {
                 cb: () => {
@@ -165,7 +165,7 @@ module lib {
                     if (n > 23) $.player.rows = n
                     vt.outln()
                     prompt('pause')
-                }, enter: $.player.rows.toString(), max: 2, match: /^[2-9][0-9]$/
+                }, enter: `${$.player.rows < 24 ? '24' : $.player.rows}`, max: 2, match: /^[2-9][0-9]$/
             },
             'pause': { cb: cb, pause: true }
         }
@@ -307,9 +307,10 @@ module lib {
 
         sound(effect: string, sync = 2) {
             if (this.tty == 'web')
-                this.out(`@play(${effect})`, -100 * sync)
+                this.out(`@play(${effect})`)
             else
                 this.beep(true)
+            this.sleep(100 * sync)
         }
 
         title(name: string) {

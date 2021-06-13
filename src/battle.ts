@@ -2204,12 +2204,13 @@ module Battle {
                                 vt.out(buff(toWC, WC))
                             }
                             vt.outln()
-                            if (/=|max/.test(vt.entry))
+                            if (/=|max/.test(vt.entry)) {
                                 if (okbyme) apply(rpc, okbyme)
-                                else {
-                                    vt.refocus()
-                                    return
-                                }
+                            }
+                            else {
+                                vt.refocus()
+                                return
+                            }
                         }
                         else
                             apply(rpc, int(vt.entry))

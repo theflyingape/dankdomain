@@ -65,14 +65,6 @@ module Gambling {
     let deck: number[]
     let pile: number
 
-    interface slot {
-        attr: number
-        color: number
-        uni: string
-    }
-    interface slots {
-        [key: string]: slot
-    }
     const slot: slots = {
         'CHERRY': { attr: vt.normal, color: vt.red, uni: '🍒' },
         'GRAPES': { attr: vt.normal, color: vt.magenta, uni: '🍇' },

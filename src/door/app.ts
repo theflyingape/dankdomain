@@ -12,16 +12,16 @@ import net = require('net')
 import pty = require('node-pty')
 import ws = require('ws')
 
-process.title = 'ddgame'
+process.title = 'ƊƊnet'
 console.log(`Ɗaɳƙ Ɗoɱaiɳ (${process.title}) started on ${process.platform} #${process.pid}`)
 
 //  process signal traps
 process.on('uncaughtException', (err, origin) => {
-    console.error(`DOOR ${origin} ${err}`)
+    console.error(`${process.title} ${origin} ${err}`)
 })
 
 process.on('SIGINT', () => {
-    console.log(` → signaled to interrupt: shutting down`)
+    console.info(` → signaled to interrupt: shutting down ${process.title}`)
     process.exit(0)
 })
 
@@ -111,7 +111,7 @@ function broadcast(pid: number, msg: string) {
 function login(client: string, rows: number, cols: number, emulator: EMULATION, args = ['']): number {
     process.env.REMOTEHOST = client
     process.env.TERM = emulator == 'XT' ? 'xterm-256color' : emulator == 'PC' ? 'ansi' : emulator == 'VT' ? 'vt100' : 'linux'
-    let term = pty.spawn('../logins.sh', args, {
+    let term = pty.spawn(`${pathTo()}/logins.sh`, args, {
         name: process.env.TERM,
         cols: cols,
         rows: rows,
@@ -185,17 +185,6 @@ function message(term: pty.IPty, msg: Uint8Array, classic = true): Uint8Array {
     return msg
 }
 
-interface network {
-    address: string
-    telnet: boolean
-    socket: number
-    limit: number
-    emulator: EMULATION
-    rows: number
-    web: boolean
-    ws: number
-    path: string
-}
 let network: network = {
     address: '0.0.0.0',
     telnet: true, socket: 1986, limit: 2, emulator: 'PC', rows: 25,

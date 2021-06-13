@@ -193,6 +193,18 @@ interface naval {
     money?: string | number
 }
 
+interface network {
+    address: string
+    telnet: boolean
+    socket: number
+    limit: number
+    emulator: EMULATION
+    rows: number
+    web: boolean
+    ws: number
+    path: string
+}
+
 interface poison {
     power: number
     cost: string
@@ -232,6 +244,15 @@ interface room {
 interface security {
     value: string
     protection: number
+}
+
+interface slot {
+    attr: number
+    color: number
+    uni: string
+}
+interface slots {
+    [key: string]: slot
 }
 
 interface spell {

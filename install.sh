@@ -29,6 +29,7 @@ echo "Installing into ${TARGET}"
 # let's start with the services
 if [ -n "`which dnf`" ]; then
     [ -n "`which node`" ] || sudo dnf install nodejs
+    [ -n "`which playmus`" ] || sudo dnf install SDL_mixer
     [ -n "`which resize`" ] || sudo dnf install xterm-resize
     [ -n "`which rsync`" ] || sudo dnf install rsync
 fi

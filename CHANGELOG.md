@@ -5,7 +5,14 @@
 🇺🇸 ©️1991 - 2021 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) on a **Chromebook** using Visual Code and TypeScript/html/css for the browser with [terminal emulator](https:/xtermjs.org) and classic telnet clients; and also to run the resulting Node.js full stack [services and app](https://play.DDgame.us) on the **Google Cloud Platform** (us-central1) or in a **Docker** [container](https://hub.docker.com/repository/docker/theflyingape/dankdomain).
 
-### **8-Jun-2021** `v3.1.0`
+### **18-Jun-2021** `v3.1.1`
+
+* door app runs as ƊƊnet and moved main to run as ƊƊplay
+* bot Elemental orders added for each menu
+* added SDLmixer in ƊƊterm to `playmus` music & sound events from CLI
+* xterm.js v4.13
+
+#### **8-Jun-2021** `v3.1.0`
 
 * running framework for automated bot(s) as an Elemental in place
 * debugged code refactoring that broke session expiry and some coin properties

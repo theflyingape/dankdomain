@@ -256,14 +256,14 @@ module player {
             vt.out(vt.cyan, '  ___                               ___  \n')
             vt.out('  \\_/   ', vt.red, vt.LGradient, vt.bright, vt.Red, vt.white, 'Never Program Mad', vt.reset, vt.red, vt.RGradient, vt.cyan, '   \\_/  \n')
             vt.out(' _(', vt.bright, '-', vt.normal, ')_     ', vt.reset, ' https://npmjs.com    ', vt.cyan, '  _(', vt.bright, '-', vt.normal, ')_ \n')
-            vt.out('(/ ', $.player.emulation == 'XT' ? vt.attr(vt.faint, '⚨', vt.normal) : ':', ' \\)                          ', vt.cyan, ' (/ ', $.player.emulation == 'XT' ? vt.attr(vt.faint, '⚨', vt.normal) : ':', ' \\)\n')
+            vt.out('(/ ', vt.emulation == 'XT' ? vt.attr(vt.faint, '⚨', vt.normal) : ':', ' \\)                          ', vt.cyan, ' (/ ', vt.emulation == 'XT' ? vt.attr(vt.faint, '⚨', vt.normal) : ':', ' \\)\n')
             vt.out('I\\___/I    ', vt.green, vt.LGradient, vt.bright, vt.Green, vt.white, `RAH-CoCo's`, vt.reset, vt.green, vt.RGradient, vt.cyan, '     I\\___/I\n')
             vt.out('\\/   \\/ ', vt.reset, '   http://rb.gy/bruelx  ', vt.cyan, '  \\/   \\/\n')
             vt.out(' \\ : /                           ', vt.cyan, '  \\ : / \n')
-            vt.out('  I:I     ', vt.blue, vt.LGradient, vt.bright, vt.Blue, vt.white, `${$.player.emulation == 'XT' ? 'ℝ' : 'R'}ober${$.player.emulation == 'XT' ? 'ƭ ℍ' : 't H'}urs${$.player.emulation == 'XT' ? 'ƭ' : 't'}`, vt.reset, vt.blue, vt.RGradient, vt.cyan, '      I:I  \n')
+            vt.out('  I:I     ', vt.blue, vt.LGradient, vt.bright, vt.Blue, vt.white, `${vt.emulation == 'XT' ? 'ℝ' : 'R'}ober${vt.emulation == 'XT' ? 'ƭ ℍ' : 't H'}urs${vt.emulation == 'XT' ? 'ƭ' : 't'}`, vt.reset, vt.blue, vt.RGradient, vt.cyan, '      I:I  \n')
             vt.outln(' .I:I. ', vt.reset, '   https://www.DDgame.us   ', vt.cyan, ' .I:I.')
             vt.outln(-400)
-            vt.outln(vt.black, vt.bright, process.title
+            vt.outln(vt.black, vt.bright, vt.emulation == 'XT' ? process.title : 'DDplay'
                 , ' running on ', vt.green, 'Node.js ', vt.normal, process.version, vt.reset
                 , vt.faint, ' (', vt.cyan, process.platform, vt.white, vt.faint, ')', -1965)
             if ($.access.roleplay && $.player.today && $.player.level > 1)

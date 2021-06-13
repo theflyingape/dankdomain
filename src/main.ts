@@ -15,15 +15,15 @@
 process.on(`${process.title} uncaughtException`, (err, origin) => {
     console.error(`${origin} ${err}`)
 })
-process.title = 'ddclient'
+process.title = 'ƊƊplay'
 
 //  check for BBS node -> door startup for user
 const bbs = `${process.cwd()}/door.sys`
 
 process.chdir(__dirname)
 
-import { whole } from '../sys'
-import { door, vt } from '../lib'
+import { whole } from './sys'
+import { door, vt } from './lib'
 
 vt.emulation = <EMULATION>(
     /ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM) ? 'dumb'
@@ -92,7 +92,7 @@ function logon() {
     vt.outln(vt.cyan, vt.bright, vt.emulation, vt.normal, ' emulation ', vt.faint, 'enabled')
 
     if (userID)
-        require('./logon').startup(userID)
+        require('./tty/logon').startup(userID)
     else
-        require('./logon').user(prompt)
+        require('./tty/logon').user(prompt)
 }

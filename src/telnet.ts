@@ -2,30 +2,32 @@
  *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
  *  TELNET authored by: Robert Hurst <theflyingape@gmail.com>                *
  *                                                                           *
- *  ddterm (telnet)  <-->  websocket client interface                        *
+ *  ƊƊterm (telnet)  <-->  websocket client interface                        *
  *  into ddgame (app)  <-->  ddclient (tty/main)                             *
 \*****************************************************************************/
 
+import child = require('child_process')
 import dns = require('dns')
-import fs = require('fs')
 import ws = require('ws')
-const got = require('got')
 
-process.title = 'ddterm'
+process.title = 'ƊƊterm'
 process.chdir(__dirname)
+import { fs, got, pathTo } from './sys'
 
 let host = process.argv.length > 2 ? process.argv[2] : 'play.ddgame.us'
 let port = process.argv.length > 3 ? parseInt(process.argv[3]) : 443
-let rows = process.argv.length > 4 ? parseInt(process.argv[4]) : 24
-let tty = process.argv.length > 5 ? process.argv[4] : 'VT'
+let rows = process.argv.length > 4 ? parseInt(process.argv[4]) : process.stdout.rows
+let tty = process.argv.length > 5 ? process.argv[5] : 'VT'
 let URL, ssl
+let mixer1: child.ChildProcess
+let mixer2: child.ChildProcess
 
 try {
     ssl = {
         key: fs.readFileSync(process.env.HOME + '/key.pem'), cert: fs.readFileSync(process.env.HOME + '/cert.pem'),
         requestCert: false, rejectUnauthorized: false
     }
-    URL = `https://${host}:${port}/player/`
+    URL = `https://${host}:${port}`
 }
 catch (err) {
     console.info(err.message, `\n
@@ -34,7 +36,7 @@ $ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.
   -subj "/C=US/ST=Rhode Island/L=Providence/O=Dank Domain/OU=Game/CN=localhost"`)
     host = 'localhost'
     port = 1939
-    URL = `http://${host}:${port}/player/`
+    URL = `http://${host}:${port}`
 }
 
 if (process.stdin.isTTY) process.stdin.setRawMode(true)
@@ -43,12 +45,12 @@ dns.lookup(host, (err, addr, family) => {
     if (err)
         console.error(err)
     else {
-        process.stdout.write(`\r\n\x1B[mRequesting ${URL}  →  startup ddclient ... `)
+        process.stdout.write(`\r\n\x1B[m→ ${URL} → startup ${process.title} → `)
         const app = new Promise<number>((resolve, reject) => {
             if (resolve)
                 try {
                     //  optional startup emulation: tty = XT|PC|VT
-                    got(`${URL}?rows=${rows}&tty=${tty}`, { method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME }, https: ssl })
+                    got(`${URL}/player?rows=${rows}&tty=${tty}`, { method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME }, https: ssl })
                         .then(response => {
                             resolve(response.body)
                         })
@@ -57,7 +59,7 @@ dns.lookup(host, (err, addr, family) => {
                                 console.error(err.statusCode, err.statusMessage)
                             else
                                 console.error(err.name, err.code)
-                            console.log(`Perhaps ddgame is not running, try: npm start`)
+                            console.log(`Perhaps ƊƊnet is not running, try: npm start`)
                             process.exit()
                         })
                 }
@@ -68,11 +70,12 @@ dns.lookup(host, (err, addr, family) => {
         })
 
         app.then(pid => {
-            process.stdout.write(`app ${pid} started\r\n`)
-            process.stdout.write(`\x1B[0;2mConnecting terminal WebSocket (${addr}:${port}) ... `)
+            require('child_process').exec(`playmus ${pathTo('door/static/sounds', 'dankdomain.ogg')}`, { stdio: 'ignore' })
+            process.stdout.write(`ƊƊplay (${pid}) started on ƊƊnet\r\n`)
+            process.stdout.write(`\x1B[0;2m→ terminal WebSocket (${addr}:${port}) ... `)
 
             try {
-                const wss = new ws(`${URL}?pid=${pid}`, ssl)
+                const wss = new ws(`${URL}/player/?pid=${pid}`, ssl)
 
                 wss.onmessage = (ev) => {
                     let data = ev.data.toString(tty == 'XT' ? 'utf8' : 'latin1')
@@ -91,13 +94,21 @@ dns.lookup(host, (err, addr, family) => {
 
                     function action(menu) { }
                     function animated(effect) { }
-                    function play(fileName) { }
+                    function play(fileName) {
+                        if (mixer1 && mixer1.exitCode == null) mixer1.kill()
+                        mixer1 = child.spawn('playmus', [fileName + '.ogg'], { cwd: pathTo('door/static/sounds'), stdio: 'ignore' })
+                    }
                     function profile(panel) { }
-                    function title(name) { }
-                    function tune(fileName) { }
+                    function title(name) {
+                        process.stdout.write(`\x1B]2;${name}\x07`)
+                    }
+                    function tune(fileName) {
+                        if (mixer2 && mixer2.exitCode == null) mixer2.kill()
+                        mixer2 = child.spawn('playmus', [fileName + '.ogg'], { cwd: pathTo('door/static/sounds'), stdio: 'ignore' })
+                    }
                     function wall(msg) {
                         try {
-                            got(`${URL}${pid}/wall?msg=${msg}`, Object.assign({ method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME } }, ssl))
+                            got(`${URL}/player/${pid}/wall?msg=${msg}`, Object.assign({ method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME } }, ssl))
                         }
                         catch (err) {
                             console.error(err.response)
@@ -120,6 +131,10 @@ dns.lookup(host, (err, addr, family) => {
                 }
 
                 process.stdin.on('data', function (key: Buffer) {
+                    if (rows !== process.stdout.rows) {
+                        rows = process.stdout.rows
+                        got(`${URL}/player/${pid}/size?rows=${rows}&cols=${process.stdout.columns}`, { method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME }, https: ssl })
+                    }
                     wss.send(key)
                 })
             }

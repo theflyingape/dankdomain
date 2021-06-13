@@ -86,24 +86,16 @@ module Logon {
 
             if (/new/i.test(vt.entry)) {
                 PC.reroll($.player)
-                PC.newkeys($.player)
-                $.player.emulation = <EMULATION>vt.emulation
-                $.player.rows = process.stdout.rows || 24
                 if (vt.tty == 'web') {
                     vt.sound('yahoo', 20)
                     require('./newuser')
                 }
-                else {
-                    emulator(() => {
-                        $.player.emulation = <EMULATION>vt.emulation
-                        require('./newuser')
-                    })
-                }
+                else
+                    emulator(() => { require('./newuser') })
                 return
             }
 
             $.player.id = titlecase(vt.entry)
-
             if (!PC.load($.player)) {
                 $.player.id = ''
                 $.player.handle = vt.entry
@@ -116,7 +108,7 @@ module Logon {
 
             $.access = Access.name[$.player.access]
             vt.emulation = $.player.emulation
-            $.player.rows = process.stdout.rows || 24
+            $.player.rows = process.stdout.rows || $.player.rows || 24
 
             vt.form['password'].prompt = `${$.player.handle}, enter your password: `
             vt.focus = 'password'
@@ -151,15 +143,7 @@ module Logon {
         //  auto-login?
         if (userID) {
             $.player.id = userID
-            if (!PC.load($.player)) {
-                PC.reroll($.player)
-                PC.newkeys($.player)
-                $.player.emulation = <EMULATION>vt.emulation
-                $.player.rows = process.stdout.rows || 24
-            }
-
-            vt.emulation = $.player.emulation
-            $.player.rows = process.stdout.rows || 24
+            if (!PC.load($.player)) PC.reroll($.player)
 
             if (!$.player.id) {
                 if (vt.tty == 'door' && $.door.length) {
@@ -168,7 +152,6 @@ module Logon {
                         $.player.id = userID
                         $.player.name = $.door[9]
                         $.player.remote = $.door[10]
-                        $.player.emulation = <EMULATION>vt.emulation
                         require('./newuser')
                         vt.ondrop = logoff
                     })

@@ -14,7 +14,7 @@
 		"telnet-bbs",
 		"xterm-js"
 	],
-	"main": "tty/main",
+	"main": "main",
 	"os": [
 		"cros",
 		"linux"
