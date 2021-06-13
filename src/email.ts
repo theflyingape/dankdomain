@@ -53,8 +53,10 @@ module Email {
 
         $.player.password = $.player.name.split(' ')[0][0].toLowerCase() + $.player.name.split(' ')[1][0].toLowerCase() + date2str($.player.dob).substr(2, 2) + '!@#$%^&*'[dice(8) - 1]
 
-        let rs = db.query(`SELECT COUNT(email) AS n FROM Players WHERE email='${$.player.email}' GROUP BY email`)
-        if (rs.length && rs[0].n > 2) $.player.access = Object.keys(Access.name)[1]
+        if ($.player.email !== $.sysop.email) {
+            let rs = db.query(`SELECT COUNT(email) AS n FROM Players WHERE email='${$.player.email}' GROUP BY email`)
+            if (rs.length && rs[0].n > 2) $.player.access = Object.keys(Access.name)[1]
+        }
 
         try {
             let message = JSON.parse(fs.readFileSync(pathTo('etc', 'newuser.json')).toString())

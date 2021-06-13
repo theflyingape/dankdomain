@@ -25,6 +25,7 @@
         "calls": 2,
         "minutes": 10,
         "promote": 1,
+        "message": "Your account is verified.",
         "verify": true,
         "roleplay": false,
         "emoji": "\uD83D\uDE35"
@@ -74,7 +75,7 @@
         "calls": 3,
         "minutes": 22,
         "promote": 20,
-        "message": "You like fine with your ${armor()}.",
+        "message": "Prepare for riches & glory!",
         "verify": false,
         "bulletin": false,
         "roleplay": true,
@@ -85,6 +86,7 @@
         "calls": 3,
         "minutes": 23,
         "promote": 50,
+        "message": "You look fine with your ${armor()}.",
         "verify": false,
         "roleplay": true,
         "emoji": "🌸"
@@ -94,6 +96,7 @@
         "calls": 3,
         "minutes": 23,
         "promote": 50,
+        "message": "You look battle-ready with your ${weapon()}.",
         "verify": false,
         "roleplay": true,
         "emoji": "🏳️"

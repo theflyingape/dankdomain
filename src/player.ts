@@ -289,8 +289,8 @@ module player {
             $.player.bank = new Coin(novice.bank.toString())
             PC.newkeys($.player)
 
-            vt.outln('Since you are a new user here, you are automatically assigned a character')
-            vt.out('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.', -5000)
+            vt.outln('Since you are a new user here, you are automatically assigned a character', -1000)
+            vt.out('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.', -1000)
             show()
             PC.activate($.online)
             news(`Welcome a ${$.player.pc} player, ${$.player.handle}`)
@@ -365,11 +365,12 @@ module player {
                 png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : '')
                 , handle: $.player.handle, level: $.player.level, pc: $.player.pc, effect: 'zoomInDown'
             })
-            vt.outln(-600)
+            vt.outln(-1000)
             cat('player/' + $.player.pc.toLowerCase())
+            vt.outln(-1000)
             let rpc = PC.card($.player.pc)
             for (let l = 0; l < rpc.description.length; l++)
-                vt.outln(vt.cyan, vt.bright, rpc.description[l], -600)
+                vt.outln(vt.cyan, vt.bright, rpc.description[l], -500)
         }
 
         function pick() {

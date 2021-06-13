@@ -672,46 +672,46 @@ module pc {
 
             //  reset for new or non player
             if (!user.id || user.id[0] == '_' || user.bot) {
+                user.calls = 0
+                user.emulation = vt.emulation
+                user.expert = false
+                user.gang = user.gang || ''
+                user.gender = user.sex || 'I'
+                user.immortal = 0
+                user.novice = !user.id && user.gender !== 'I'
+                user.remote = ''
+                user.rows = process.stdout.rows || 24
+                user.today = 0
+                user.wins = 0
+
+                user.lastdate = now().date
+                user.lasttime = now().time
                 if (isNaN(user.dob)) user.dob = now().date
                 if (isNaN(user.joined)) {
                     user.joined = now().date
-                    //  init for new player
+                    user.expires = user.joined + $.sysop.expires
+                    this.newkeys(user)
+                    //  init for new user registration
                     if (user === $.player) {
-                        user.expires = user.joined + $.sysop.expires
-                        this.newkeys(user)
                         user.novice = true
                         for (let title in Access.name) {
-                            if (Access.name[title].roleplay && Access.name[title].verify)
+                            if (!Access.name[title].roleplay && Access.name[title].verify) {
+                                user.access = title
+                                $.access = Access.name[user.access]
                                 break
-                            user.access = title
+                            }
                         }
-                        $.access = Access.name[user.access]
-                        $.access.roleplay = false
                     }
                 }
-                user.lastdate = now().date
-                user.lasttime = now().time
-                user.gender = user.sex || 'I'
 
-                user.emulation = vt.emulation
-                user.calls = 0
-                user.today = 0
-                user.expert = false
-                user.rows = process.stdout.rows || 24
-                user.remote = ''
-                user.novice = !user.id && user.gender !== 'I'
-                user.gang = user.gang || ''
-                user.wins = 0
-                user.immortal = 0
-
+                user.bounty = new Coin(0)
                 user.coin = new Coin(0)
                 user.bank = new Coin(0)
                 user.loan = new Coin(0)
-                user.bounty = new Coin(0)
-                user.who = ''
-                user.security = ''
                 user.realestate = ''
+                user.security = ''
                 user.keyhints = []
+                user.who = ''
             }
 
             if (level == 1) {

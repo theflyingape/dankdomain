@@ -9,7 +9,7 @@ import { Access, Magic, Ring } from '../items'
 import { bracket, cat, Coin, emulator, getRing, news, time, vt } from '../lib'
 import { Deed, PC } from '../pc'
 import { input, logoff, pickPC } from '../player'
-import { cuss, date2full, dice, fs, got, money, now, pathTo, titlecase, USERS, whole } from '../sys'
+import { an, cuss, date2full, dice, fs, got, money, now, pathTo, titlecase, USERS, whole } from '../sys'
 
 module Logon {
 
@@ -133,6 +133,8 @@ module Logon {
 
     //  authenticated (password, bot, or BBS user) login startup entry point
     export function startup(userID = '') {
+        PC.load($.sysop)
+
         $.whereis = [
             'Braavos', 'Casterly Rock', 'Dorne', 'Dragonstone', 'Dreadfort',
             'The Eyrie', 'Harrenhal', 'Highgarden', 'Iron Island', `King's Landing`,
@@ -194,11 +196,33 @@ module Logon {
         }
 
         if ($.access.promote > 0 && $.player.level >= $.access.promote) {
-            let title = Object.keys(Access.name).indexOf($.player.access)
-            do {
-                $.player.access = Object.keys(Access.name)[++title]
-                $.access = Access.name[$.player.access]
-            } while (!$.access[$.player.sex])
+            if ($.access.message) {
+                const message = $.access.message
+                let title = Object.keys(Access.name).indexOf($.player.access)
+                do {
+                    $.player.access = Object.keys(Access.name)[++title]
+                    $.access = Access.name[$.player.access]
+                } while (!$.access[$.player.sex])
+
+                vt.music('promote')
+                vt.outln(-500)
+                if (getRuler()) {
+                    vt.outln(vt.yellow
+                        , Access.name[$.king.access][$.king.sex], ' the ', $.king.access.toLowerCase()
+                        , ', ', vt.bright, $.king.handle, vt.normal
+                        , ', is pleased with your accomplishments\n'
+                        , `and ${PC.who($.king).he}promotes you to`, vt.bright, an($.player.access), vt.normal, '!', -2000)
+                    vt.outln(vt.yellow, `${PC.who($.king).He}exclaims, `, vt.bright, `"${eval('`' + message + '`')}"`)
+                }
+                else {
+                    $.player.access = Object.keys(Access.name).slice($.player.sex == 'F' ? -2 : -1)[0]
+                    $.player.novice = false
+                    $.sysop.email = $.player.email
+                    PC.save($.sysop)
+                    vt.outln(vt.yellow, 'You are made the ', $.player.access, ' to rule over this domain.')
+                }
+                vt.outln(-2000)
+            }
         }
         /*  old school BBS tactic (usually 5 minutes) for Millennials to experience
         else {
@@ -252,12 +276,6 @@ module Logon {
             }).catch(error => { $.whereis += ` ⚠️ ${error.message}` })
         } catch (e) { }
 
-        PC.load($.sysop)
-        if (!getRuler()) {
-            $.player.access = Object.keys(Access.name).slice($.player.sex == 'F' ? -2 : -1)[0]
-            $.player.novice = false
-            $.sysop.email = $.player.email
-        }
         if (now().date >= $.sysop.dob) {
             $.sysop.lasttime = now().time
             $.sysop.calls++
@@ -266,6 +284,7 @@ module Logon {
                 $.sysop.plays++
         }
         PC.save($.sysop)
+        getRuler()
 
         $.access = Access.name[$.player.access]
         $.player.rows = process.stdout.rows
