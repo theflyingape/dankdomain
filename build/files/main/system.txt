@@ -8,3 +8,4 @@ The telnet service allows for a classic, "old school" gaming experience.
 Source: https://github.com/theflyingape/dankdomain
 
 Happy hunting!
+Sysop@DDgame.us

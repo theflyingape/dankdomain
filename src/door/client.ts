@@ -779,7 +779,7 @@ function listmm() {
     cmd(`${keypad}<br><input class="platinum" type="button" value="Monster Mash" onclick="send('M', true);">`)
 }
 
-function main() {
+function mainmenu() {
     cmd(`<table>
 <tr><td colspan=2>${ByeBye}</td><td colspan=2><input class="Platinum" type="button" value="Most Wanted" onclick="send('M');"></td></tr>
 <tr><td colspan=4><hr></td></tr>
@@ -857,16 +857,6 @@ function craps() {
     cmd(`${money}<br><input class="slate" type="button" value="Roll!" onclick="send('', true);">`)
 }
 
-function deeds() {
-    cmd(`<table>
-<tr><td><input class="Silver" type="button" value="Champions" onclick="send('C');"></td><td><input class="Platinum" type="button" value="Heroes" onclick="send('H');"></td></tr>
-<tr><td colspan=2><input class="Gold" type="button" value="Memorable Hits" onclick="send('M');"></td></tr>
-<tr><td><input class="Tavern" type="button" value="Thugs" onclick="send('T');"></td><td><input class="Slate" type="button" value="Winners" onclick="send('W');"></td></tr>
-<tr><td></td><td>${quit}</td></tr>
-</table>`)
-    nme(`<img src="images/heroes.jpg" />`, 'bounceInUp')
-}
-
 function dungeon() {
     cmd(`<table>
 <tr><td><input class="Platinum" type="button" value="Cast" onclick="send('C');"></td><td><input class="Slate" type="button" value="North" onclick="send('N');"></td><td><input class="Copper" type="button" value="Poison" onclick="send('P');"></td></tr>
@@ -888,6 +878,16 @@ function joust() {
     cmd(`<table>
 <tr><td><input class="copper" id="cancel" type="button" value="Forfeit" onclick="send('F');"></td><td><input class="slate" id="default" type="button" value="Joust" onclick="send('J');"></td></tr>
 </table>`)
+}
+
+function library() {
+    cmd(`<table>
+<tr><td><input class="Silver" type="button" value="Champions" onclick="send('C');"></td><td><input class="Platinum" type="button" value="Heroes" onclick="send('H');"></td></tr>
+<tr><td colspan=2><input class="Gold" type="button" value="Memorable Hits" onclick="send('M');"></td></tr>
+<tr><td><input class="Tavern" type="button" value="Thugs" onclick="send('T');"></td><td><input class="Slate" type="button" value="Winners" onclick="send('W');"></td></tr>
+<tr><td></td><td>${quit}</td></tr>
+</table>`)
+    nme(`<img src="images/heroes.jpg" />`, 'bounceInUp')
 }
 
 function monster() {

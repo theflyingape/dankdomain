@@ -42,22 +42,18 @@ module Main {
     }
 
     export function menu(suppress = true) {
-        $.from = 'Menu'
         if (checkXP($.online, menu)) return
         if ($.online.altered) PC.save()
         if ($.reason) vt.hangup()
-
         if (!suppress) vt.profile({ png: ['castle', 'joust', 'dragon'][dice(3) - 1], effect: 'pulse' })
-        vt.action('main')
+
+        Elemental.orders('MainMenu')
         vt.form = {
             'menu': { cb: choice, cancel: 'Q', enter: '?', eol: false }
         }
-
         vt.form['menu'].prompt =
             vt.attr('Time Left: ', vt.white, vt.bright, vt.checkTime().toString(), vt.normal, vt.cyan, ' min.\n', vt.reset)
             + display('main', vt.Blue, vt.blue, suppress, mainmenu)
-
-        Elemental.refresh()
         input('menu')
     }
 

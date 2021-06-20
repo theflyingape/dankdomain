@@ -343,8 +343,10 @@ dns.lookup(network.address, (err, addr, family) => {
         const wsLurker = new ws.Server({ noServer: true, path: `${network.path}lurker/`, clientTracking: true })
         console.log(`↔ WebSocket endpoints enabled`)
 
-        if (passed == 'test' && process.kill(process.pid, 'SIGINT'))
+        if (passed == 'test') setImmediate(() => {
+            process.kill(process.pid, 'SIGINT')
             console.log(`self-interrupted ${passed}`)
+        })
 
         server.on('upgrade', (req, socket, head) => {
             const pathname = new URL(req.url, WEBROOT).pathname

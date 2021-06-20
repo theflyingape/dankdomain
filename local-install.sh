@@ -9,56 +9,58 @@ fi
 
 # let's prompt for admin credentials now, if necessary
 [ -n "$1" ] && TARGET="$1" || TARGET=/usr/local/games
-echo "Install into ${TARGET} ?"
-echo -n "Enter 'Y' to continue: "
+echo "Install dankdomain folder into ${TARGET} ?"
+echo -n "Enter shift 'Y' to continue: "
 read cont
-[ "${cont}" == "Y" ] || exit
+[ "${cont}" == "Y" ] || exit 0
 sudo -B -v || exit
 
+# let's default group ownership to games
 member=`sudo groupmems -g games -l | grep -c nobody`
 [ $member -eq 0 ] && sudo groupmems -g games -a nobody
 member=`sudo groupmems -g games -l | grep -c $USER`
 [ $member -eq 0 ] && sudo groupmems -g games -a $USER
 
-[ -d "${TARGET}" ] || sudo mkdir -v "${TARGET}"
-TARGET="${TARGET}/`basename ${PWD}`"
-echo "Installing into ${TARGET}"
-[ -d "${TARGET}" ] || sudo mkdir -v "${TARGET}"
-[ -d "${TARGET}/users" ] || sudo mkdir -v "${TARGET}/users"
-
-# let's start with the services
+# let's use these tools
 if [ -n "`which dnf`" ]; then
     [ -n "`which node`" ] || sudo dnf install nodejs
     [ -n "`which playmus`" ] || sudo dnf install SDL_mixer
-    [ -n "`which resize`" ] || sudo dnf install xterm-resize
-    [ -n "`which rsync`" ] || sudo dnf install rsync
+else
+    [ -n "`which node`" ] || echo "requires Node.js runtime package to run any parts locally"
+    [ -n "`which playmus`" ] || echo "install SDL mixer package for local media playing using playmus tool"
 fi
 
 # this.package install script
 echo "Nodejs `node -v`"
 echo "NPM `npm -v`"
-npm install
 
-# transpile
-npm run build
+umask 0002
+[ -d "${TARGET}" ] || sudo mkdir -v "${TARGET}"
+TARGET="${TARGET}/`basename ${PWD}`"
+echo "Installing into ${TARGET}"
+if [ ! -d "${TARGET}" ]; then
+    sudo mkdir -v "${TARGET}"
+    sudo chgrp games "${TARGET}"
+    sudo chmod u+rwx,g+rwxs,o-rwx "${TARGET}"
+fi
+[ -d "${TARGET}/users" ] || mkdir -v "${TARGET}/users"
 
 # copy over
-sudo cp node_modules/animate.css/animate.min.css build/door/static/
-sudo rsync -a --delete build/ "${TARGET}"
-sudo rsync -a --delete node_modules "${TARGET}/"
-sudo chown -R root.games "${TARGET}"
-sudo find "${TARGET}" -type d -exec chmod u+rwx,g+rwxs,o-rwx {} \;
+cp -v package.json "${TARGET}"
+cp -r build/* -t "${TARGET}"
+find "${TARGET}" -name '*.map' -exec rm -f {} \;
+find "${TARGET}" -name '*.sys' -exec rm -f {} \;
+find "${TARGET}" -name 'tsconfig.*' -exec rm -f {} \;
+rm -rf "${TARGET}/node_modules"
+cp -r node_modules "${TARGET}/"
 
 # initialize the game
 cd "${TARGET}"
-env REMOTEHOST=localhost ./logins.sh
-sudo chmod 660 "${TARGET}/users/*"
-
-echo -e "\n${PWD}"
-ls -lh "${TARGET}"
+npm test
+npm run play
 
 echo "Enable telnet/23 & https/443 redirect rules on this host ?"
-echo -n "Enter 'Y' to enable rules: "
+echo -n "Enter shift 'Y' to enable rules: "
 read cont
 
 if [ "${cont}" == "Y" ]; then
@@ -78,10 +80,17 @@ if [ "${cont}" == "Y" ]; then
     fi
 fi
 
-sudo cp -v "${TARGET}/etc/dankdomain-door.service" /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable dankdomain-door
-sudo systemctl status dankdomain-door -l
+echo "Enable SystemD service to startup on this host ?"
+echo -n "Enter shift 'Y' to enable dankdomain-door service: "
+read cont
+
+if [ "${cont}" == "Y" ]; then
+    sudo -B -v || exit
+    sudo cp -v "${TARGET}/etc/dankdomain-door.service" /etc/systemd/system/
+    sudo systemctl daemon-reload
+    sudo systemctl enable dankdomain-door
+    sudo systemctl status dankdomain-door -l
+fi
 
 echo -n "Press RETURN for an Apache proxy fronting a NodeJs app example: "
 read n

@@ -42,9 +42,9 @@ module Arena {
             if ($.joust)
                 hints += `> Try jousting another player to win money.\n`
             if ($.player.poisons.length && !$.online.toWC)
-                hints += `> Don\'t forget to poison your weapon.\n`
-            if ($.player.coin.value)
-                hints += `> Carrying money around here is not a good idea.  Spend it in the Square\n  or deposit it in the Bank for safer keeping.\n`
+                hints += `> Don't forget to poison your weapon.\n`
+            if ($.player.coin.value >= money($.player.level))
+                hints += `> Carrying too much money here is not a good idea.  Spend it in the Square\n  or deposit it in the Bank for safer keeping.\n`
         }
         vt.form['menu'].prompt = display('arena', vt.Red, vt.red, suppress, arena, hints)
         input('menu')

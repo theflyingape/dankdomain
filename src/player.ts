@@ -319,7 +319,8 @@ module player {
         }
 
         vt.profile({ jpg: 'classes', handle: 'Reroll!', effect: 'tada' })
-        vt.outln($.player.pc, ', you have been rerolled.  You must pick a class.\n', -1500)
+        vt.outln($.player.pc, ', you have been rerolled. ', -500, ' You must pick a class.')
+        vt.outln(-1000)
 
         vt.outln(vt.cyan, '      Character                       ', vt.faint, '>> ', vt.normal, 'Ability bonus')
         vt.outln(vt.cyan, '        Class      Users  Difficulty  Str  Int  Dex  Cha     Notable Feature')
@@ -374,12 +375,13 @@ module player {
         }
 
         function pick() {
-            let n: number = int(vt.entry)
+            let n: number = whole(vt.entry)
             if (n < 1 || n >= classes.length) {
                 vt.beep()
                 vt.refocus()
                 return
             }
+            vt.outln(' - ', classes[n])
             PC.reroll($.player, classes[n])
             show()
             ability('str')

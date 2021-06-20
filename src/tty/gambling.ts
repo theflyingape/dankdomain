@@ -6,7 +6,7 @@
 import $ = require('../runtime')
 import { RealEstate, Security } from '../items'
 import { bracket, Coin, display, tradein, vt } from '../lib'
-import { PC } from '../pc'
+import { Elemental, PC } from '../pc'
 import { input } from '../player'
 import { dice, int, money, sprintf, whole } from '../sys'
 
@@ -86,7 +86,7 @@ module Gambling {
         if ($.online.altered) PC.save()
         if ($.reason) vt.hangup()
 
-        vt.action('casino')
+        Elemental.orders('Casino')
         vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }

@@ -24,16 +24,37 @@ With the _optional_ packs loaded for the web portal, the game + runtime files wi
 Tested on `Linux`, `Chrome OS`, and `Docker`. To [install](https://www.npmjs.com/package/dankdomain) and run a local game copy (requires the `Node.js` runtime):
 
 ```bash
+# fetch this package source:
+$ git clone https://github.com/theflyingape/dankdomain
+# ... or via Node.js
 $ npm install dankdomain
-$ cd node_modules/dankdomain
-$ ./install.sh /path/to/games
-$ cd /path/to/games/dankdomain
+
+# cd into package source folder:
+$ npm install
+$ cd /usr/local/games/dankdomain
+
+# 1) play it as standalone:
+$ npm run play
+
+# modify for your server networking preferences:
+$ cp etc/network.json_inet etc/network.json
+$ vim etc/network.json
+
+# 2) run it as a local multiuser server:
+$ npm run serve &
 $ npm start
+$ npm stop
+
+# 3) other ways to play online:
+$ npm run mame
+$ node telnet
+$ telnet play.ddgame.us
 ```
 
 **NOTE**: _my_ "public" _access [packages](https://github.com/theflyingape?tab=packages&visibility=public) are published on_ **GitHub** _and it requires your_ `Personal Access Token` authentication _to fetch/install them from this alternative_ `npm registry`. Read GitHub's [Working with the npm registry](https://docs.github.com/en/enterprise-server@2.22/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-to-github-packages) to learn more details.
 
 ```bash
+# setup local Node.js package
 $ npm config set @theflyingape:registry https://npm.pkg.github.com
 $ npm login --scope=@theflyingape
 $ npm install @theflyingape/dankdomain
@@ -75,37 +96,15 @@ ENOENT: no such file or directory, open '../etc/network.json'
 ↔ WebSocket endpoints enabled
 ```
 
-Connect into the game via portal or directly:
-
-```bash
-$ google-chrome http://localhost:1939
-$ telnet localhost 1986
-```
-
-Your game networking preferences:
-
-```bash
-$ cd /path/to/dankdomain/etc
-$ cp network.json_inet network.json
-$ vim network.json
-```
-
-You can also play www.DDgame.us from the command-line:
-
-```bash
-$ npm run tty
-$ npm run mame
-$ telnet play.ddgame.us
-```
-
 You can choose to run it for _local_ users in a BBS door (as Amiga-only BBSes did for `Hack & Slash` in 1994) by authenticating a passed user ID paired with a compatible **Mystic** `door.sys` [file format](http://wiki.mysticbbs.com/doku.php?id=menu_commands#external_doors) out of its `BBS node` startup directory, i.e., what follows might be for the BBS sysop (`0`):
+
 ```bash
+#!/bin/sh
 $ pwd; [ -s door.sys ] || exit 1
 $ node /path/to/dankdomain/tty/main 0
 ```
 
-
-**Files directory structure**
+## Files directory structure
 
 ```linux
 $ pwd
@@ -150,7 +149,7 @@ tty.sh            player - telnet.js wrapper
 
  🇺🇸 ©️1991 - 2021 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
 
-#### Ɗaɳƙ Ɗoɱaiɳ image gallery
+### Ɗaɳƙ Ɗoɱaiɳ image gallery
 
 + [Arena](https://photos.app.goo.gl/sZS7xx6rpyoG4CYBA)
 + [Connect](https://photos.app.goo.gl/AeZZXrC8VKnMFuqj8)

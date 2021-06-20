@@ -22,7 +22,7 @@ module Library {
     }
 
     export function menu(suppress = false) {
-        vt.action('deeds')
+        Elemental.orders('Library')
         vt.form = {
             'menu': { cb: choice, cancel: 'Q', enter: '?', eol: false }
         }

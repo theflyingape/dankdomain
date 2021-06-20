@@ -25,7 +25,6 @@
         "calls": 2,
         "minutes": 10,
         "promote": 1,
-        "message": "Your account is verified.",
         "verify": true,
         "roleplay": false,
         "emoji": "\uD83D\uDE35"
@@ -36,6 +35,7 @@
         "calls": 3,
         "minutes": 20,
         "promote": 2,
+        "message": "Your account is verified.",
         "verify": true,
         "roleplay": true,
         "emoji": "\uD83C\uDF52"

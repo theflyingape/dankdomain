@@ -143,6 +143,49 @@ module pc {
                         this.cmd = 'g'
                     break
 
+                case 'Casino':
+                    break
+
+                case 'Library':
+                    break
+
+                case 'MainMenu':
+                    this.refresh()
+                    this.nme('Bail')
+                    this.nme('Brawl')
+                    this.nme('Curse')
+                    this.nme('Fight')
+                    this.nme('Joust')
+                    this.nme('Party')
+                    this.nme('Resurrect')
+                    this.nme('Rob')
+
+                    if (dice(77) > 1) {
+                        this.cmd = 'y'
+                        this.cmd = 'm'
+                        if ($.access.roleplay) {
+                            if ($.player.coin.value >= money($.player.level))
+                                this.cmd = 's'
+                            else if ($.timeleft > 4 && $.brawl && this.Brawl)
+                                this.cmd = 't'
+                            else if ($.joust && this.Joust)
+                                this.cmd = 'a'
+                            else if ($.arena && this.Fight)
+                                this.cmd = 'a'
+                            else if ($.party) {
+                                this.Party = this.Party || 'M'
+                                this.cmd = 'p'
+                            }
+                        }
+                        else {
+                            this.cmd = 'l'
+                        }
+                    }
+                    //  look around
+                    if (!this._cmd.length)
+                        this.cmd = ['g', 'l', 'n', 'p', 'q', 'r', 't', 'u', 'x', 'z'][dice(10) - 1]
+                    break
+
                 case 'Square':
                     const rarity = whole(1000 / ($.player.steal + 1))
                     if ($.player.bank.value > 0) {
@@ -202,8 +245,6 @@ module pc {
         }
 
         refresh() {
-            if (!$.access.bot) return
-            if (this._cmd.length) return
             $.player.coward = false
 
             let lo = $.player.level - 3
@@ -286,40 +327,6 @@ module pc {
                     }
                 }
             }
-
-            this.nme('Bail')
-            this.nme('Brawl')
-            this.nme('Curse')
-            this.nme('Fight')
-            this.nme('Joust')
-            this.nme('Party')
-            this.nme('Resurrect')
-            this.nme('Rob')
-
-            if (dice(77) > 1) {
-                this.cmd = 'y'
-                this.cmd = 'm'
-                if ($.access.roleplay) {
-                    if ($.player.coin.value >= money($.player.level))
-                        this.cmd = 's'
-                    else if ($.timeleft > 4 && $.brawl && this.Brawl)
-                        this.cmd = 't'
-                    else if ($.joust && this.Joust)
-                        this.cmd = 'a'
-                    else if ($.arena && this.Fight)
-                        this.cmd = 'a'
-                    else if ($.party) {
-                        this.Party = this.Party || 'M'
-                        this.cmd = 'p'
-                    }
-                }
-                else {
-                    this.cmd = 'l'
-                }
-            }
-            //  look around
-            if (!this._cmd.length)
-                this.cmd = ['g', 'l', 'n', 'p', 'q', 'r', 't', 'u', 'x', 'z'][dice(10) - 1]
         }
     }
 

@@ -196,33 +196,31 @@ module Logon {
         }
 
         if ($.access.promote > 0 && $.player.level >= $.access.promote) {
-            if ($.access.message) {
-                const message = $.access.message
-                let title = Object.keys(Access.name).indexOf($.player.access)
-                do {
-                    $.player.access = Object.keys(Access.name)[++title]
-                    $.access = Access.name[$.player.access]
-                } while (!$.access[$.player.sex])
+            let title = Object.keys(Access.name).indexOf($.player.access)
+            do {
+                $.player.access = Object.keys(Access.name)[++title]
+                $.access = Access.name[$.player.access]
+            } while (!$.access[$.player.sex])
 
-                vt.music('promote')
-                vt.outln(-500)
-                if (getRuler()) {
-                    vt.outln(vt.yellow
-                        , Access.name[$.king.access][$.king.sex], ' the ', $.king.access.toLowerCase()
-                        , ', ', vt.bright, $.king.handle, vt.normal
-                        , ', is pleased with your accomplishments\n'
-                        , `and ${PC.who($.king).he}promotes you to`, vt.bright, an($.player.access), vt.normal, '!', -2000)
-                    vt.outln(vt.yellow, `${PC.who($.king).He}exclaims, `, vt.bright, `"${eval('`' + message + '`')}"`)
-                }
-                else {
-                    $.player.access = Object.keys(Access.name).slice($.player.sex == 'F' ? -2 : -1)[0]
-                    $.player.novice = false
-                    $.sysop.email = $.player.email
-                    PC.save($.sysop)
-                    vt.outln(vt.yellow, 'You are made the ', $.player.access, ' to rule over this domain.')
-                }
-                vt.outln(-2000)
+            vt.music('promote', 10)
+            vt.outln()
+            if (getRuler()) {
+                vt.outln(vt.yellow
+                    , Access.name[$.king.access][$.king.sex], ' the ', $.king.access.toLowerCase()
+                    , ', ', vt.bright, $.king.handle, vt.normal
+                    , ', is pleased to see you return\n'
+                    , `and ${PC.who($.king).he}welcomes you as`, vt.bright, an($.player.access), vt.normal, '!')
+                if ($.access.message)
+                    vt.outln(vt.yellow, `${PC.who($.king).He}exclaims, `, vt.bright, `"${eval('`' + $.access.message + '`')}"`)
             }
+            else {
+                $.player.access = Object.keys(Access.name).slice($.player.sex == 'F' ? -2 : -1)[0]
+                $.player.novice = false
+                $.sysop.email = $.player.email
+                PC.save($.sysop)
+                vt.outln(vt.yellow, 'You are crowned as the ', vt.bright, $.player.access, vt.normal, ' to rule over this domain.')
+            }
+            vt.outln(-5000)
         }
         /*  old school BBS tactic (usually 5 minutes) for Millennials to experience
         else {
@@ -410,7 +408,7 @@ module Logon {
             if ($.access.sysop) {
                 let ring = Ring.power([], null, 'joust')
                 if (($.online.altered = Ring.wear($.player.rings, ring.name))) {
-                    getRing('win', ring.name)
+                    getRing('are Ruler and gifted', ring.name)
                     PC.saveRing(ring.name, $.player.id, $.player.rings)
                     vt.sound('promote', 22)
                 }

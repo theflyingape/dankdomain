@@ -59,7 +59,8 @@ dns.lookup(host, (err, addr, family) => {
                                 console.error(err.statusCode, err.statusMessage)
                             else
                                 console.error(err.name, err.code)
-                            console.log(`Perhaps ƊƊnet is not running, try: npm start`)
+                            console.log(`Perhaps ƊƊnet is not running, try: npm run serve &`)
+                            console.log(` or run ƊƊplay as standalone, try: npm run play`)
                             process.exit()
                         })
                 }

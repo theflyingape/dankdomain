@@ -76,10 +76,14 @@ module db {
     Object.keys(NPC).forEach((id) => {
         try {
             let npc: user = JSON.parse(fs.readFileSync(pathTo('users', `${NPC[id]}.json`)).toString())
-            if (npc && !loadUser(npc)) {
-                console.info(' + adding', NPC[id], '-', npc.handle)
-                npc.id = id
-                saveUser(newUser(npc), true)
+            if (npc) {
+                const access = npc.access
+                if (!loadUser(npc)) {
+                    console.info(' + adding', NPC[id], '-', npc.handle)
+                    npc.id = id
+                    npc.access = access
+                    saveUser(newUser(npc), true)
+                }
             }
         }
         catch (err) { console.error(err) }
