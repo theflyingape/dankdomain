@@ -5,7 +5,9 @@
 ## _the return of Hack &amp; Slash_
 
 ![screenshot](https://raw.githubusercontent.com/theflyingape/dankdomain/master/build/door/static/assets/title.jpg "Can you defeat the Demogorgon?")
-_Read the_ [Player's Manual](https://www.ddgame.us) _to play the_ [online game](https://play.ddgame.us)
+
+### _Read the_ [Player's Manual](https://www.ddgame.us) _to play the_ [online game](https://play.ddgame.us)
+
 ---
 >**Ɗaɳƙ Ɗoɱaiɳ** is basically a bulletin board built around a medieval role-playing atmosphere (or is it the other way around?). Instead, you _live_ the online game as you kill, steal, brawl, and joust the other members to gain levels and fortune. The success of this game is dependent upon the users that play it. Your involvment will not only provide you with entertainment, but also shares your activity with the other players.
 
@@ -101,7 +103,7 @@ You can choose to run it for _local_ users in a BBS door (as Amiga-only BBSes di
 ```bash
 #!/bin/sh
 $ pwd; [ -s door.sys ] || exit 1
-$ node /path/to/dankdomain/tty/main 0
+$ node /usr/local/games/dankdomain/main 0
 ```
 
 ## Files directory structure

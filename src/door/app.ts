@@ -111,7 +111,7 @@ function broadcast(pid: number, msg: string) {
 function login(client: string, rows: number, cols: number, emulator: EMULATION, args = ['']): number {
     process.env.REMOTEHOST = client
     process.env.TERM = emulator == 'XT' ? 'xterm-256color' : emulator == 'PC' ? 'ansi' : emulator == 'VT' ? 'vt100' : 'linux'
-    let term = pty.spawn(`${pathTo()}/logins.sh`, args, {
+    let term = pty.spawn(pathTo('.', 'logins.sh'), args, {
         name: process.env.TERM,
         cols: cols,
         rows: rows,
@@ -191,7 +191,7 @@ let network: network = {
     web: true, ws: 1939, path: '/'
 }
 try {
-    Object.assign(network, JSON.parse(fs.readFileSync('../etc/network.json').toString()))
+    Object.assign(network, JSON.parse(fs.readFileSync(pathTo('etc', 'network.json')).toString()))
 }
 catch (err) {
     console.log(err.message)
@@ -397,7 +397,7 @@ dns.lookup(network.address, (err, addr, family) => {
                 { handle: 'Shall we begin?', png: 'connect/yuriel_genasi_warlord_by_peachyco', effect: 'fadeInRight' }
             )
 
-            const Armor = require('../items/armor.json')
+            const Armor = JSON.parse(fs.readFileSync(pathTo('items', 'armor.json')).toString())
             for (let i in Armor) {
                 if (!Armor[i].armoury) {
                     let profile = { handle: `<span style="color:${Armor[i].dwarf ? 'black' : 'brown'};">${i}</span>`, level: Armor[i].ac, pc: (Armor[i].dwarf ? 'dwarven' : 'uncommon') + ' armor', effect: 'fadeInUpBig' }
@@ -406,7 +406,7 @@ dns.lookup(network.address, (err, addr, family) => {
                 }
             }
 
-            const Weapon = require('../items/weapon.json')
+            const Weapon = JSON.parse(fs.readFileSync(pathTo('items', 'weapon.json')).toString())
             for (let i in Weapon) {
                 if (!Weapon[i].shoppe) {
                     let profile = { handle: `<span style="color:${Weapon[i].dwarf ? 'black' : 'brown'};">${i}</span>`, level: Weapon[i].wc, pc: (Weapon[i].dwarf ? 'dwarven' : 'uncommon') + ' weapon', effect: 'fadeInUpBig' }
@@ -415,7 +415,7 @@ dns.lookup(network.address, (err, addr, family) => {
                 }
             }
 
-            const monsters = require('../etc/dungeon.json')
+            const monsters = JSON.parse(fs.readFileSync(pathTo('etc', 'dungeon.json')).toString())
             let level = 0
             for (let n in monsters) {
                 let pc = monsters[n].pc
@@ -448,7 +448,7 @@ dns.lookup(network.address, (err, addr, family) => {
                 }
             }
 
-            const Ring = require('../items/ring.json')
+            const Ring = JSON.parse(fs.readFileSync(pathTo('items', 'ring.json')).toString())
             for (let i in Ring) {
                 let profile = { handle: `${Ring[i].unique ? 'The <span style="color:black' : '<span style="color:darkslategray'}">${i}</span> ${Ring[i].emoji} ring<br>`, pc: Ring[i].description, effect: 'fadeInUpBig' }
                 profile['jpg'] = `ring/${i}`
