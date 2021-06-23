@@ -1,15 +1,13 @@
 <a href="https://robert.hurst-ri.us"><img src="https://avatars.githubusercontent.com/theflyingape" title="Robert Hurst" align="right"></a>
 
-# 👑 Ɗaɳƙ Ɗoɱaiɳ
-
-## _the return of Hack &amp; Slash_
+# Ɗaɳƙ Ɗoɱaiɳ :: _the return of Hack &amp; Slash_
 
 ![screenshot](https://raw.githubusercontent.com/theflyingape/dankdomain/master/build/door/static/assets/title.jpg "Can you defeat the Demogorgon?")
 
 ### _Read the_ [Player's Manual](https://www.ddgame.us) _to play the_ [online game](https://play.ddgame.us)
 
 ---
->**Ɗaɳƙ Ɗoɱaiɳ** is basically a bulletin board built around a medieval role-playing atmosphere (or is it the other way around?). Instead, you _live_ the online game as you kill, steal, brawl, and joust the other members to gain levels and fortune. The success of this game is dependent upon the users that play it. Your involvment will not only provide you with entertainment, but also shares your activity with the other players.
+>**Ɗaɳƙ Ɗoɱaiɳ** is the re-imagined classic Amiga bulletin board, [Hack & Slash](https://github.com/theflyingape/rpgbbs), built around a medieval role-playing atmosphere. Your character kills, steals, brawls, and jousts other PCs, NPCs, and BOTs to gain levels and fortune. Successful ventures into its deep dank dungeon are the keys to immortality.
 
 *Original Amiga* **Hack & Slash** *enthusiasts can visit:*  [Absinthe BBS](https://www.telnetbbsguide.com/bbs/absinthe-bbs/) *by Anachronist*
 
@@ -62,13 +60,13 @@ $ npm login --scope=@theflyingape
 $ npm install @theflyingape/dankdomain
 ```
 
-... or use **Docker** _(convenient, but not always kept current)_:
+... or use **Docker** _(convenient, but not maintained with the latest commits)_:
 
 ```bash
 $ docker pull theflyingape/dankdomain
 $ docker run --rm -it -p 1939:1939/tcp -p 1986:1986/tcp theflyingape/dankdomain
 
-Ɗaɳƙ Ɗoɱaiɳ (ddgame) started on linux #1
+Ɗaɳƙ Ɗoɱaiɳ (ƊƊnet) started on linux #1
 cwd /usr/games/dankdomain → /usr/games/dankdomain/door
 initializing Deeds
 initializing Online
@@ -98,7 +96,7 @@ ENOENT: no such file or directory, open '../etc/network.json'
 ↔ WebSocket endpoints enabled
 ```
 
-You can choose to run it for _local_ users in a BBS door (as Amiga-only BBSes did for `Hack & Slash` in 1994) by authenticating a passed user ID paired with a compatible **Mystic** `door.sys` [file format](http://wiki.mysticbbs.com/doku.php?id=menu_commands#external_doors) out of its `BBS node` startup directory, i.e., what follows might be for the BBS sysop (`0`):
+Supports running as a BBS door (as Amiga-only BBSes did for `Hack & Slash` in 1994) by allowing a passed user ID paired with a compatible **Mystic** `door.sys` [file format](http://wiki.mysticbbs.com/doku.php?id=menu_commands#external_doors) launched from its `BBS node` startup directory.  For example, what follows might be for the BBS sysop (`0`):
 
 ```bash
 #!/bin/sh
@@ -147,7 +145,7 @@ mame.sh           player - MAME VT240 terminal + solcat startup script
 tty.sh            player - telnet.js wrapper
 ```
 
-**NOTE**: _in **`users`** folder, edit a hidden (dot) export file and save as **`save.json`**. The game app will consume it for a SQL update into the dankdomain.sql **`Players`** table._
+**NOTE**: _in_ **`users`** _folder, edit a hidden (dot) export file and save as_ **`save.json`** _whereas the app will automatically consume and apply it to the dankdomain.sql_ **`Players`** _table._
 
  🇺🇸 ©️1991 - 2021 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
 
