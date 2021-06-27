@@ -25,7 +25,7 @@ module Sysop {
 
     export function menu(suppress = false) {
         if ($.reason) vt.hangup()
-        vt.music('.')
+        vt.music()
         vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }

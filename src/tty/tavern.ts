@@ -268,7 +268,7 @@ module Tavern {
 
                     default:
                         $.brawl = 0
-                        vt.music('.')
+                        vt.music()
                         vt.outln(`jest, "What you looking at, wart-face!"`, -1200)
                         vt.profile({
                             jpg: 'npc/barkeep', effect: 'shakeY'

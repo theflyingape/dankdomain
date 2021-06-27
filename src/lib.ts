@@ -43,26 +43,27 @@ module lib {
         return buff
     }
 
-    export function cat(name: string): boolean {
+    export function cat(name: string, delay = $.player.expert ? 5 : 50): boolean {
         const file = pathTo('files', name)
         let filename = file + (vt.emulation == 'PC' ? '.ibm' : vt.emulation == 'XT' ? '.ans' : '.txt')
+        let output = []
         try {
             fs.accessSync(filename, fs.constants.F_OK)
-            vt.outln(fs.readFileSync(filename, vt.emulation == 'XT' ? 'utf8' : 'binary'), vt.off)
-            return true
+            output = fs.readFileSync(filename, vt.emulation == 'XT' ? 'utf8' : 'binary').toString().split('\n')
         } catch (e) {
-            if (vt.emulation.match('PC|XT')) {
-                filename = `${file}.txt`
-                try {
-                    fs.accessSync(filename, fs.constants.F_OK)
-                    vt.outln(fs.readFileSync(filename), vt.off)
-                    return true
-                } catch (e) {
-                    vt.out(vt.off)
-                    return false
-                }
+            filename = file + (vt.emulation == 'PC' ? '.ans' : '.txt')
+            try {
+                fs.accessSync(filename, fs.constants.F_OK)
+                output = fs.readFileSync(filename, vt.emulation == 'XT' ? 'utf8' : 'binary').toString().split('\n')
+            } catch (e) {
+                vt.out(vt.off)
+                return false
             }
         }
+        for (let line in output)
+            vt.out(output[line], '\n', -delay)
+        vt.out(vt.off, -delay)
+        return true
     }
 
     export function death(by: string, killed = false) {
@@ -72,6 +73,7 @@ module lib {
             $.online.hp = 0
             $.online.sp = 0
             $.player.killed++
+            vt.music()
             vt.sound('killed', 11)
         }
         $.online.altered = true
@@ -98,7 +100,7 @@ module lib {
                 }
             }
             else {
-                if (title == 'main') cat('border')
+                if (title == 'main') cat('user/border')
             }
         }
 
@@ -297,7 +299,7 @@ module lib {
             if (this.tty == 'web') this.out(`@animated(${effect})`, -10 * sync)
         }
 
-        music(tune: string, sync = 2) {
+        music(tune = '.', sync = 2) {
             if (this.tty == 'web') this.out(`@tune(${tune})`, -10 * sync)
         }
 
@@ -305,7 +307,7 @@ module lib {
             if (this.tty == 'web') this.out(`@profile(${JSON.stringify(params)})`)
         }
 
-        sound(effect: string, sync = 2) {
+        sound(effect = '.', sync = 2) {
             if (this.tty == 'web')
                 this.out(`@play(${effect})`)
             else

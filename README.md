@@ -111,7 +111,7 @@ $ pwd
 /usr/local/games/dankdomain
 .vscode/          Visual Studio Code: settings & debug profiles
 console/          MAME support files
-door/             web services
+door/             web services: app server startup: ƊƊnet
 ../static         game portal
    ../assets      app install, fonts, etc.
    ../images      visual media for artifacts, creatures, and players
@@ -135,17 +135,25 @@ node_modules/     Node.js support libraries
 tty/              game modules for each main menu item
 package.json      Node.js manifest
 battle.js         support module for player engagements
-common.js         global support module for game
-email.js          support module for dispatching email notifications
-items.js          support module for loading artifacts
-telnet.js         telnet client - via web services
+db.js             app & client SQLite module for dankdomain.sql
+email.js          support module for (optional) dispatching email notifications
+interfaces.js     TypeScript object types
+items.js          support module for loading item artifacts
+lib.js            support module for common I/O functions
+main.js           client node startup: ƊƊplay
+pc.js             support classes for BOTs, NPCs and PCs with Deeds
+player.js         support module for common PC functions
+runtime.js        global runtime variables to govern play
+sys.js            support module with discrete functions to dependencies
+telnet.js         telnet client using websocket and XT emulator handling
+types.js          TypeScript template literals
 door-startup.sh   web services - systemctl startup script
 logins.sh         player - startup script into game app
-mame.sh           player - MAME VT240 terminal + solcat startup script
+mame.sh           player - MAME VT240 terminal + socat startup script
 tty.sh            player - telnet.js wrapper
 ```
 
-**NOTE**: _in_ **`users`** _folder, edit a hidden (dot) export file and save as_ **`save.json`** _whereas the app will automatically consume and apply it to the dankdomain.sql_ **`Players`** _table._
+**NOTE**: _in_ **`users`** _folder, edit a hidden (dot) export file and save as_ **`save.json`** _whereas_ **`app.js`** _will automatically consume and apply it to the dankdomain.sql_ **`Players`** _table._
 
  🇺🇸 ©️1991 - 2021 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
 

@@ -145,7 +145,7 @@ module Naval {
                     if (dice($.player.level / 3 + 2) == 1) {
                         PC.load($.seahag)
                         vt.outln(`n ${$.seahag.user.handle}!`)
-                        cat(`naval/${$.seahag.user.handle}`.toLowerCase())
+                        cat(`naval/${$.seahag.user.handle}`.toLowerCase(), 100)
                         vt.outln(-600, vt.green, vt.bright, 'She cackles as you are sent spinning elsewhere ... ')
                         vt.sound('crone', 24)
                         require('./dungeon').DeepDank($.player.level + 3 * dice($.player.level), () => {
@@ -158,7 +158,7 @@ module Naval {
                             vt.outln(vt.magenta, '\n"', vt.bright, vt.yellow
                                 , 'You have escaped my magic, mortal?  Now try me!'
                                 , vt.normal, vt.magenta, '"', -1200)
-                            cat(`naval/${$.seahag.user.handle}`.toLowerCase())
+                            cat(`naval/${$.seahag.user.handle}`.toLowerCase(), 100)
                             PC.wearing($.seahag)
                             $.seahag.user.cursed = $.player.id
                             Battle.engage('Naval', $.online, $.seahag, menu)
@@ -169,7 +169,7 @@ module Naval {
                     if (dice($.player.level / 3 + 2) == 1) {
                         PC.load($.neptune)
                         vt.outln(` ${$.neptune.user.pc}: ${$.neptune.user.handle}!`)
-                        cat(`naval/${$.neptune.user.handle}`.toLowerCase())
+                        cat(`naval/${$.neptune.user.handle}`.toLowerCase(), 100)
                         vt.sleep(600)
                         if ($.player.level > $.neptune.user.level) {
                             let keep = $.neptune.user.spells
@@ -248,18 +248,16 @@ module Naval {
                     break
                 }
                 if (hook < 100) {
-                    vt.outln(' tortoise and you let it go.')
-                    vt.sleep(600)
+                    vt.outln(' tortoise and you let it go.', -600)
                     $.player.toWC++
                     $.online.toWC += dice($.online.weapon.wc / 10 + 1)
                     vt.outln('The tortoise shows it gratitude by enchanting your ', weapon())
                     vt.sound('hone')
                     break
                 }
-                vt.outln(' mermaid!')
-                vt.sleep(600)
+                vt.outln(' mermaid!', -600)
                 vt.profile({ jpg: 'naval/mermaid', effect: 'bounceInUp' })
-                cat('naval/mermaid')
+                cat('naval/mermaid', 100)
                 if ($.player.today) {
                     vt.outln('She grants you an extra call for today!')
                     $.player.today--
@@ -617,8 +615,7 @@ module Naval {
                             vt.outln()
                             if (!outrun($.online.hull / nme.hull, $.online.int - nme.int)) {
                                 vt.sound('oops')
-                                vt.outln(`${PC.who(nme).He}outruns you and stops your retreat!`)
-                                vt.sleep(500)
+                                vt.outln(`${PC.who(nme).He}outruns you and stops your retreat!`, -500)
                                 if (him()) {
                                     menu()
                                     return
@@ -642,16 +639,14 @@ module Naval {
                             if ($.player.ram) {
                                 vt.outln()
                                 if (outmaneuvered(nme.int - $.online.int, nme.hull / $.online.hull)) {
-                                    vt.outln(`${PC.who(nme).He}quickly outmaneuvers your ship.`)
-                                    vt.sleep(400)
+                                    vt.outln(`${PC.who(nme).He}quickly outmaneuvers your ship.`, -400)
                                     vt.outln(vt.cyan, 'You yell at your helmsman, "', vt.reset,
                                         ['Your aim is going to kill us all!'
                                             , 'I said port, bastard, not starboard!'
                                             , 'Get me my brown pants!'
                                             , 'Someone throw this traitor overboard!'
                                             , 'She\'s turning onto US now!'][dice(5) - 1]
-                                        , vt.cyan, '"')
-                                    vt.sleep(600)
+                                        , vt.cyan, '"', -600)
                                 }
                                 else {
                                     damage = dice($.player.hull / 2) + dice($.online.hull / 2)
@@ -668,11 +663,9 @@ module Naval {
                             else {
                                 vt.sound('oops')
                                 vt.outln()
-                                vt.outln(`Your first mate cries back, "But we don't have a ram!"`)
-                                vt.sleep(2000)
+                                vt.outln(`Your first mate cries back, "But we don't have a ram!"`, -2000)
                                 vt.sound('fire', 8)
-                                vt.outln('You shoot your first mate.')
-                                vt.sleep(800)
+                                vt.outln('You shoot your first mate.', -800)
                             }
                             if (him()) {
                                 menu()
@@ -703,8 +696,7 @@ module Naval {
                 `You've made splinters out of ${nme.user.handle}\'s ship!`,
                 `${nme.user.handle} is now sleeping with the fishes!`,
                 `${nme.user.handle} is now chum for the sharks!`
-            ][dice(5) - 1], '!\n')
-            vt.sleep(500)
+            ][dice(5) - 1], '!\n', -500)
             log(nme.user.id, `\n${$.player.handle} sank your ship!`)
             news(`\tsank ${nme.user.handle}'s ship`)
 
@@ -712,18 +704,16 @@ module Naval {
             booty.value = int(booty.value * nme.user.cannon)
             if (nme.user.coin.value > booty.value) {
                 vt.sound('boo')
-                vt.outln(`${new Coin(nme.user.coin.value - booty.value).carry()} of the booty has settled on the ocean floor...`)
-                vt.sleep(500)
+                vt.outln(`${new Coin(nme.user.coin.value - booty.value).carry()} of the booty has settled on the ocean floor ... `, -500)
                 nme.user.coin.value = booty.value
             }
             booty.value += nme.user.coin.value
             if (booty.value) {
                 vt.sound('booty', 5)
-                vt.outln('You get ', booty.carry(), '.')
                 log(nme.user.id, `... and got ${booty.carry(2, true)}.\n`)
                 $.player.coin.value += booty.value
-                vt.sleep(500)
                 nme.user.coin.value = 0
+                vt.outln('You get ', booty.carry(), '.', -500)
             }
             booty.value += nme.user.coin.value
             PC.save(nme, false, true)
@@ -739,8 +729,7 @@ module Naval {
                             , `Look alive, or I'll kill you first!`
                             , 'Get me my red shirt!'
                             , `Y'all fight like the will-o-wisp!`][dice(5) - 1]
-                        , vt.cyan, '"')
-                    vt.sleep(600)
+                        , vt.cyan, '"', -600)
                 }
                 return false
             }
@@ -750,16 +739,13 @@ module Naval {
 
         function him(): boolean {
             if (!nme.user.cannon && !nme.user.ram) {
-                vt.out('They are defenseless and attempt to flee . . . ')
-                vt.sleep(1000)
+                vt.out('They are defenseless and attempt to flee . . . ', -1000)
                 if (!outrun(nme.hull / $.online.hull, nme.int - $.online.int)) {
-                    vt.outln(`\nYou outrun them and stop their retreat!`)
-                    vt.sleep(500)
+                    vt.outln(`\nYou outrun them and stop their retreat!`, -500)
                     return false
                 }
-                vt.outln('\nThey sail away over the horizon.')
                 PC.save(nme, false, true)
-                vt.sleep(500)
+                vt.outln('\nThey sail away over the horizon.', -500)
                 return true
             }
             if (!nme.user.ram || (nme.user.cannon && dice(2 * nme.hull / (nme.hull - $.online.hull) + 4) > 1))
@@ -787,8 +773,8 @@ module Naval {
                 PC.save(nme, false, true)
 
                 vt.sound('sunk', 30)
-                vt.outln(vt.faint, `\n${nme.user.handle} smiles as a shark approaches you.`)
-                vt.sleep(6000)
+                vt.outln(vt.bright, `\n${nme.user.handle} `, -600, vt.normal, 'smiles as a ', -400, vt.faint, 'shark approaches you ', -200
+                    , '. ', -2000, '. ', -1600, '. ', -1200)
                 vt.hangup()
             }
             return ($.online.hull < 1)

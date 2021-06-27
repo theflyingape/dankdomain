@@ -14,9 +14,7 @@ import { an, cuss, date2full, dice, fs, got, money, now, pathTo, titlecase, USER
 module Logon {
 
     init()
-    cat('logon')
-    if (vt.tty == 'door')
-        vt.outln(-2000)
+    cat('logon', vt.tty == 'door' ? 100 : 5)
 
     export function user(prompt: string) {
         let retry = 3
@@ -62,7 +60,7 @@ module Logon {
                             }, prompt: 'DOH!!  Re-send the password to your email account (Y/N)? ', cancel: 'N', enter: 'Y', eol: false, match: /Y|N/i, timeout: 10
                         }
                     }
-                    if ($.player.id && $.player.lastdate != now().date) {
+                    if (!Access.name[$.player.access].bot && $.player.id && $.player.lastdate != now().date) {
                         vt.action('yn')
                         vt.focus = 'forgot'
                     }
@@ -427,8 +425,7 @@ module Logon {
             if ($.player.pc == Object.keys(PC.name['player'])[0]) {
                 if ($.player.novice) {
                     vt.outln()
-                    vt.out(vt.bright)
-                    cat('intro')
+                    cat('intro', 1500)
                 }
                 vt.form = {
                     'pause': { cb: pickPC, pause: true, timeout: 200 }
@@ -438,7 +435,7 @@ module Logon {
             }
         }
         else {
-            vt.outln(vt.bright, vt.black, '(', vt.yellow, 'VISITING', vt.black, ')')
+            vt.outln(vt.black, vt.bright, '(', vt.yellow, 'VISITING', vt.black, ')')
             vt.sessionAllowed = 5 * 60
             $.access.roleplay = false
             PC.save()
@@ -468,7 +465,7 @@ module Logon {
                         vt.outln('\n', vt.cyan, '--=:))', vt.LGradient
                             , vt.Cyan, vt.white, vt.bright, 'Auto Message', vt.reset
                             , vt.cyan, vt.RGradient, '((:=--\n')
-                        cat('auto-message')
+                        cat('user/auto-message')
                         input('auto', dice(1000) == 1 ? 'y' : 'n', 3000)
                     }
                 }, pause: true
@@ -485,7 +482,7 @@ module Logon {
                     vt.outln('\n', vt.cyan, '--=:))', vt.LGradient
                         , vt.Cyan, vt.white, vt.bright, 'Auto Message', vt.reset
                         , vt.cyan, vt.RGradient, '((:=--\n')
-                    cat('auto-message')
+                    cat('user/auto-message')
                     input('auto')
                 }, prompt: 'Change (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i
             },
@@ -499,7 +496,7 @@ module Logon {
                     vt.outln('\n', vt.cyan, '--=:))', vt.LGradient
                         , vt.Cyan, vt.white, vt.bright, 'Auto Message', vt.reset
                         , vt.cyan, vt.RGradient, '((:=--\n')
-                    cat('auto-message')
+                    cat('user/auto-message')
                     vt.action('ny')
                     vt.focus = 'auto'
                 }, prompt: 'Enter your new announcement', lines: 12
@@ -521,7 +518,7 @@ module Logon {
                 cb: () => {
                     vt.outln()
                     if (vt.entry.length && !cuss(vt.entry)) {
-                        fs.writeFileSync(pathTo('files', 'auto-message.txt'), vt.attr(
+                        fs.writeFileSync(pathTo('files/user', 'auto-message.txt'), vt.attr(
                             vt.cyan, 'Date: ', vt.off, date2full($.player.lastdate), ' ', time($.player.lasttime), '\n',
                             vt.cyan, 'From: ', vt.off, $.player.handle + '\n\n',
                             vt.bright, vt.entry))

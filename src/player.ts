@@ -95,7 +95,7 @@ module player {
 
             if (eligible && rpc.user.level == 50) {
                 bonus = true
-                vt.music('.')
+                vt.music()
                 if (rpc.user.novice) {
                     PC.reroll(rpc.user, $.sysop.pc, rpc.user.level)
                     rpc.user.novice = false

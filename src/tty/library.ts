@@ -199,13 +199,12 @@ module Library {
 
             case 'W':
                 vt.outln(vt.green, '\n             --=:)) ', vt.bright, 'WINNERS', vt.normal, ' Only Noted ((:=--\n')
-                cat('winners')
+                cat('winners', 100)
                 suppress = true
                 break
         }
         menu(suppress)
     }
-
 }
 
 export = Library

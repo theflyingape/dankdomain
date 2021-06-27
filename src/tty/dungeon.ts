@@ -349,7 +349,7 @@ module Dungeon {
 
         if (DL.events > 0 && DL.moves > DL.width && dice(me) == 1) {
             DL.events--
-            vt.music('.')
+            vt.music()
             let rng = dice(16)
             if (rng > 8) {
                 if ($.player.emulation == 'XT') {
@@ -578,7 +578,7 @@ module Dungeon {
         if (!Battle.retreat && idle < 3) idle++
         if (($.online.hp -= dice(deep + Z + 1)) < 1) {
             vt.outln()
-            vt.music('.')
+            vt.music()
             vt.outln(vt.faint, 'You take too many hits and die!')
             if (Battle.retreat)
                 death('running into a wall', true)
@@ -1614,13 +1614,13 @@ module Dungeon {
 
             case 'witch':
                 scroll(1, false)
-                vt.music('.')
+                vt.music()
                 vt.profile({ jpg: 'npc/witch', effect: 'fadeIn' })
+                vt.sound('steal')
                 vt.outln(vt.green, 'You encounter the ', vt.bright, 'sorceress', vt.normal, ', ', $.witch.user.handle)
-                cat(`dungeon/witch`)
+                cat(`dungeon/witch`, 100)
                 PC.load($.witch)
                 PC.wearing($.witch)
-                vt.sound('steal', 10)
 
                 let choice: string
                 vt.form = {

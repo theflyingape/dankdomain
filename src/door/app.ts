@@ -72,7 +72,7 @@ function bot() {
     let pid = login(client, network.rows, 80, network.emulator, [elemental.id])
     let term = sessions[pid]
     term.spawn.dispose()
-    console.log(`Startup BOT #${sysop.immortal} (${elemental.id}) from ${client} → session ${pid} '${term.startup || ''}'`)
+    console.log(`Startup BOT #${sysop.immortal} (${elemental.id}) from ${client} → session ${pid}`)
 
     //  consume app output
     term.onData((data) => {

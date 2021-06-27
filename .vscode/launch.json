@@ -31,7 +31,7 @@
       "request": "launch",
       "name": "launch telnet client",
       "console": "integratedTerminal",
-      "program": "${workspaceFolder}/build/tty/main.js",
+      "program": "${workspaceFolder}/build/main.js",
       "cwd": "${workspaceFolder}",
       "outFiles": [
         "${workspaceFolder}/build"

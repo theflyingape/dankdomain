@@ -35,7 +35,7 @@ module Main {
     vt.profile({ png: 'castle', effect: 'pulse' })
     vt.wall($.player.handle, `logged on as a level ${$.player.level} ${$.player.pc}`)
     vt.outln()
-    cat('border')
+    cat('user/border')
     if ($.access.bot) {
         if (dice(39) == 1) $.border = true
         $.access.sysop = true
@@ -81,7 +81,7 @@ module Main {
 
             case 'D':
                 if ($.dungeon) {
-                    vt.music('.')
+                    vt.music()
                     PC.portrait($.online, 'backOutDown')
                     vt.sound(`dt${$.dungeon}`, 10)
                     $.dungeon--
@@ -354,7 +354,7 @@ module Main {
                 return
 
             case 'U':
-                vt.music('.')
+                vt.music()
                 vt.action('ny')
                 let newpassword: string = ''
                 vt.form = {
@@ -472,7 +472,7 @@ module Main {
             case 'Z':
                 vt.outln()
                 vt.out(vt.green, vt.bright)
-                cat('main/system')
+                cat('main/system', 100)
                 vt.action('ny')
                 vt.form = {
                     'yn': {

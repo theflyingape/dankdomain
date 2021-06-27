@@ -794,7 +794,7 @@ module Battle {
             }
             else if ($.online.hp == 0) {
                 death(`defeated by the gang, ${parties[w][0].user.gang}`)
-                vt.music('.')
+                vt.music()
                 vt.sound('effort', 15)
             }
             return
