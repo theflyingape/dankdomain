@@ -499,9 +499,10 @@ module Battle {
                     , bracket('Y', false), vt.cyan, 'our status: ')
 
                 if ($.access.bot) {
-                    Elemental.flush('a')
-                    if ($.online.hp < ($.from == 'Dungeon' ? int($.player.hp / 10) : int($.player.level / 3) + $.player.level))
+                    if ($.online.hp < int($.player.hp / 9) + $.player.level && dice($.player.melee / 2 + $.player.steal / 2) == 1)
                         Elemental.flush('r')
+                    else
+                        Elemental.flush('a')
                 }
                 input('attack')
                 return

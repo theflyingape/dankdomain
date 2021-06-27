@@ -132,6 +132,8 @@ module pc {
                 case 'Arena':
                     if (dice($.player.poison) > 1 && $.player.toWC >= 0 && $.player.toWC < int($.player.poisons.length / 2) + 1)
                         this.cmd = 'p'
+                    if ($.online.hp < $.player.hp || $.player.coin.value >= money($.player.level))
+                        this.cmd = 'g'
                     if ($.joust) {
                         if (this.Joust) {
                             this.cmd = 'j'
@@ -160,14 +162,11 @@ module pc {
                                     if (monster.user.level > ($.player.level + int($.player.melee / 2) + int($.player.backstab / 2)))
                                         break
                                 }
-                                this.cmd = (mon + 1).toString()
+                                this.cmd = mon.toString()
                             }
                         }
                     }
-                    if ($.online.hp < $.player.hp || $.player.coin.value)
-                        this.cmd = 'g'
-                    else
-                        this.cmd = 'q'
+                    this.cmd = 'q'
                     break
 
                 case 'Casino':
@@ -200,9 +199,9 @@ module pc {
                                 this.cmd = 't'
                             else if ($.joust && this.Joust)
                                 this.cmd = 'a'
-                            else if ($.arena && this.Fight)
+                            else if ($.arena && (this.Fight || dice(6) > 1))
                                 this.cmd = 'a'
-                            else if ($.party) {
+                            else if ($.party && (this.Party || dice(6) == 6)) {
                                 this.Party = this.Party || 'M'
                                 this.cmd = 'p'
                             }
@@ -248,7 +247,7 @@ module pc {
                         this.cmd = 'r'
                     }
                     else {
-                        if (dice(rarity) == 1 || (!$.arena && !$.brawl && !$.dungeon && !$.joust && (!$.naval || !$.player.hull) && !$.party && dice($.player.steal) > 1))
+                        if (dice(rarity) == 1 || (!$.arena && !$.brawl && !$.joust && (!$.naval || !$.player.hull) && !$.party && dice($.player.steal) > 1))
                             this.cmd = 'p'
                     }
                     if ($.player.coin.value > 0) {
@@ -281,9 +280,9 @@ module pc {
 
             let lo = $.player.level - 3
             let hi = $.player.level +
-                $.player.level < 15 ? 3
-                : $.player.level < 30 ? dice(3) + 3
-                    : $.player.level < 60 ? dice(6) + 6
+                $.player.level < 15 ? $.player.melee
+                : $.player.level < 30 ? dice(3) + $.player.melee
+                    : $.player.level < 60 ? dice(6) + $.player.melee
                         : 30
             lo = lo < 1 ? 1 : lo
             hi = hi > 99 ? 99 : hi
