@@ -6,7 +6,7 @@
 import $ = require('../runtime')
 import Battle = require('../battle')
 import db = require('../db')
-import { Access, Armor, Magic, Poison, Ring, Weapon } from '../items'
+import { Access, Armor, Magic, Poison, Ring, Weapon, monsters } from '../items'
 import { bracket, cat, Coin, display, getRing, log, news, tradein, vt } from '../lib'
 import { Elemental, PC } from '../pc'
 import { checkXP, input } from '../player'
@@ -14,7 +14,6 @@ import { sprintf, dice, money, romanize, int } from '../sys'
 
 module Arena {
 
-    let monsters: monster[] = require('../etc/arena.json')
     let arena: choices = {
         'U': { description: 'User fights' },
         'M': { description: 'Monster fights' },
@@ -283,7 +282,7 @@ module Arena {
                         , min: 0, max: 2
                     }
                 }
-                vt.focus = 'pick'
+                input('pick')
                 return
 
             case 'P':
@@ -390,7 +389,7 @@ module Arena {
                             }, prompt: `Will you fight ${PC.who(opponent).him}(Y/N)? `, cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
                         }
                     }
-                    vt.focus = 'fight'
+                    input('fight', 'y')
                 })
                 return
 
@@ -491,7 +490,7 @@ module Arena {
                             PC.wearing(monster)
 
                             vt.action('ny')
-                            vt.focus = 'fight'
+                            input('fight', 'y')
                             return
                         }
                         vt.outln(vt.cyan, 'His eyes glow ', vt.red, vt.bright, 'red', vt.normal
@@ -513,7 +512,7 @@ module Arena {
                     }, prompt: 'Fight this demon (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 30
                 }
             }
-            vt.focus = 'pay'
+            input('pay', 'y')
         }
         else {
             let mon = int(vt.entry) - 1
@@ -566,7 +565,7 @@ module Arena {
                     }, prompt: 'Will you fight it (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
                 }
             }
-            vt.focus = 'fight'
+            input('fight', 'y')
         }
 
         return true

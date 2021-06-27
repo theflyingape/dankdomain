@@ -545,6 +545,7 @@ module Items {
     export const RealEstate = new _realestate
     export const Security = new _security
     export const Weapon = new _weapon
+    export const monsters: monster[] = require(pathTo('etc', 'arena.json'))
 }
 
 export = Items

@@ -2389,7 +2389,7 @@ module Dungeon {
                 exit: false,
                 map: '',
                 mob: (deep < 4 && Z < 4) ? 1 : (Z > 9 && Z < 50) || (deep > 7) ? 3 : 2,
-                moves: -maxCol - (($.player.novice || $.access.sysop) ? maxRow + maxCol : $.player.wins),
+                moves: -(Z > $.player.level ? ($.player.novice || $.access.sysop ? maxRow + maxCol : $.player.wins) : maxCol),
                 rooms: new Array(maxRow),
                 spawn: int(deep / 3 + Z / 9 + maxRow / 3) + dice(Math.round($.online.cha / 20) + 1) + 3,
                 width: maxCol

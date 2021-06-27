@@ -5,9 +5,10 @@
 
 import $ = require('./runtime')
 import db = require('./db')
-import { ITEMS, Access, Armor, Magic, Ring, Weapon } from './items'
+import { ITEMS, Access, Armor, Magic, Ring, Weapon, monsters } from './items'
 import { armor, Coin, vt, weapon } from './lib'
 import { date2full, dice, fs, int, isActive, money, now, pathTo, romanize, sprintf, titlecase, USERS, whole } from './sys'
+import { threadId } from 'worker_threads'
 
 module pc {
 
@@ -138,15 +139,44 @@ module pc {
                         }
                     }
                     if ($.arena) {
+                        if (this.Fight) {
+                            this.cmd = 'u'
+                            let m = whole($.player.level / 2) + 1
+                            m = whole($.player.level / m) + 1
+                        }
+                        else {
+                            this.cmd = 'm'
+                            if ($.player.level > 51 && $.online.weapon.wc > 37)
+                                this.cmd = 'd'
+                            else {
+                                let mon = 0
+                                for (mon = 0; mon < 12; mon++) {
+                                    let monster = <active>{}
+                                    monster.user = <user>{ id: '', handle: monsters[mon].name, sex: 'I' }
+                                    PC.reroll(monster.user, monsters[mon].pc, monsters[mon].level)
+                                    monster.user.weapon = monsters[mon].weapon
+                                    monster.user.armor = monsters[mon].armor
+                                    PC.activate(monster)
+                                    if (monster.user.level > ($.player.level + int($.player.melee / 2) + int($.player.backstab / 2)))
+                                        break
+                                }
+                                this.cmd = (mon + 1).toString()
+                            }
+                        }
                     }
                     if ($.online.hp < $.player.hp || $.player.coin.value)
                         this.cmd = 'g'
+                    else
+                        this.cmd = 'q'
                     break
 
                 case 'Casino':
                     break
 
                 case 'Library':
+                    this.cmd = ['h', 'i'][dice(2) - 1]
+                    this.cmd = ['c', 'm', 't', 'w'][dice(4) - 1]
+                    this.cmd = 'q'
                     break
 
                 case 'MainMenu':
@@ -186,6 +216,15 @@ module pc {
                         this.cmd = ['g', 'l', 'n', 'p', 'q', 'r', 't', 'u', 'x', 'z'][dice(10) - 1]
                     break
 
+                case 'Party':
+                    this.cmd = 'm'
+                    if ($.party && this.Party) {
+                        this.cmd = 'f'
+                        return
+                    }
+                    this.cmd = 'q'
+                    break
+
                 case 'Square':
                     const rarity = whole(1000 / ($.player.steal + 1))
                     if ($.player.bank.value > 0) {
@@ -223,14 +262,6 @@ module pc {
                         this.cmd = 'g'
                     break
 
-                case 'Party':
-                    this.cmd = 'm'
-                    if ($.party && this.Party) {
-                        this.cmd = 'f'
-                        return
-                    }
-                    break
-
                 case 'Tavern':
                     if ($.brawl && this.Brawl)
                         this.cmd = 'b'
@@ -238,10 +269,11 @@ module pc {
                         this.cmd = ['e', 't', 'y'][dice(3) - 1]
                         if ($.player.level > 66 && dice(10) == 1)
                             this.cmd = 's'
+                        this.cmd = 'q'
                     }
                     break
             }
-            this.cmd = 'q'
+            if (!this._cmd.length) this.cmd = 'q'
         }
 
         refresh() {
@@ -300,7 +332,7 @@ module pc {
                     }
                     if ($.party && rpc.user.gang && !rpc.user.status) {
                         let gang = PC.loadGang(rpc.user.gang)
-                        if (need > 10) {
+                        if (need > 10 && need < 70) {
                             let sum = 0, size = 0
                             for (let i in gang.members) {
                                 if (gang.validated[i]) {

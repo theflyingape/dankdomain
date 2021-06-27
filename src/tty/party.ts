@@ -566,7 +566,7 @@ module Party {
                         }, prompt: 'Fight this gang (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
                     }
                 }
-                input('gang', Elemental.Party)
+                input('gang', Elemental.Party || (dice(2) == 1 ? 'M' : ''))
                 return
 
             case 'Q':

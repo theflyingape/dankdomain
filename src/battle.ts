@@ -175,7 +175,7 @@ module Battle {
                             cb: () => {
                                 if (/Y/i.test(vt.entry)) {
                                     vt.action('freetext')
-                                    vt.focus = 'message'
+                                    input('message', 'just passing gas...')
                                 }
                                 else {
                                     vt.outln()
@@ -199,7 +199,7 @@ module Battle {
                         }
                     }
                     vt.form['yn'].prompt = `Leave ${opponent.who.him}a message (Y/N)? `
-                    input('yn')
+                    input('yn', 'y')
                     return
                 }
             }
@@ -450,7 +450,7 @@ module Battle {
                     vt.form['backstab'].prompt = 'Attempt to backstab'
                         + (bs > 2 && bs != $.player.backstab ? ' for ' + vt.attr(vt.cyan, vt.bright, bs.toString(), vt.faint, 'x', vt.normal) : '')
                         + ' (Y/N)? '
-                    input('backstab', $.online.dex > (70 - $.player.melee) || enemy.hp > $.player.hp ? 'y' : 'n', 250)
+                    input('backstab', $.online.dex > (70 - $.player.melee) || enemy.hp > $.player.hp ? 'y' : 'n', 300)
                     return
                 }
                 else {
@@ -498,8 +498,8 @@ module Battle {
                 vt.form['attack'].prompt += vt.attr(bracket('R', false), vt.cyan, 'etreat, '
                     , bracket('Y', false), vt.cyan, 'our status: ')
 
-                Elemental.cmd = 'a'
                 if ($.access.bot) {
+                    Elemental.flush('a')
                     if ($.online.hp < ($.from == 'Dungeon' ? int($.player.hp / 10) : int($.player.level / 3) + $.player.level))
                         Elemental.flush('r')
                 }
