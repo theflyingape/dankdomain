@@ -436,6 +436,7 @@ module Battle {
 
             //  sneaking
             if (volley == 1) {
+                vt.drain()
                 bs = $.player.backstab
                 let roll = dice(100 + bs * $.player.level / (2 * ($.player.melee + 2)))
                 roll += 2 * Ring.power(enemy.user.rings, $.player.rings, 'initiate').power

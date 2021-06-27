@@ -265,12 +265,13 @@ module Square {
                 if (hi < 1) {
                     vt.beep(true)
                     vt.outln(`\nYou don't need any hit points.`)
+                    suppress = true
                     break
                 }
                 vt.outln('\nWelcome to Butler Hospital.\n')
                 vt.outln('Hit points cost ', vt.bright, $.player.level.toString(), vt.normal, ' each.')
                 vt.outln('You need ', vt.bright, hi.toString(), vt.normal, ' hit points.')
-                lo = Math.trunc($.player.coin.value / $.player.level)
+                lo = whole($.player.coin.value / $.player.level)
                 vt.outln('You can afford '
                     , vt.bright, lo < hi ? lo.toString() : 'all your', vt.normal, ' hit points.')
                 if (lo < hi) {
@@ -375,6 +376,7 @@ module Square {
                     return
                 }
                 vt.outln('The jail house is closed for the day.')
+                suppress = true
                 break
 
             case 'M':
@@ -407,6 +409,7 @@ module Square {
                 if (!$.access.roleplay) break
                 if ($.player.novice) {
                     vt.out('\nNovice players cannot rob.\n')
+                    suppress = true
                     break
                 }
                 vt.out(vt.faint, '\nYou attempt to pick a passerby\'s pocket... ', -1000)

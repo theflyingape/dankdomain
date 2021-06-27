@@ -39,6 +39,7 @@ module Dungeon {
     let hideep: number
     let hiZ: number
     let levels: number
+    let motif: number = -1
 
     //  £
     const Cleric = {
@@ -139,9 +140,7 @@ module Dungeon {
         if ($.access.sysop) crawling['M'] = { description: 'y liege' }
         generateLevel()
 
-        vt.profile({ jpg: `dungeon/level${sprintf('%x', whole((Z + 1) / 10))}`, handle: "Entering", level: $.player.level, pc: 'dungeon' })
         ROOM = DL.rooms[Y][X]
-        if (ROOM.occupant || ROOM.monster.length || ROOM.giftItem) vt.sleep(2800)
 
         menu()
     }
@@ -415,9 +414,9 @@ module Dungeon {
                 Armor.equip($.online, Armor.merchant[0])
             }
 
-            vt.drain()
             drawHero($.player.blessed ? true : false)
             vt.outln(-600)
+            vt.drain()
         }
 
         //  insert any wall messages here
@@ -516,9 +515,9 @@ module Dungeon {
                 return
 
             case 'Y':
-                vt.drain()
                 vt.outln()
                 Battle.yourstats(false)
+                vt.drain()
                 break
 
             case 'N':
@@ -575,6 +574,7 @@ module Dungeon {
         vt.sound('wall', 3)
         vt.outln(vt.normal, `There is a wall to the ${wall}.`, -300)
         vt.drain()
+
         if (!Battle.retreat && idle < 3) idle++
         if (($.online.hp -= dice(deep + Z + 1)) < 1) {
             vt.outln()
@@ -810,22 +810,22 @@ module Dungeon {
                 vt.music('well')
                 vt.outln(-500, vt.magenta, 'You have found a legendary ', vt.bright, 'Wishing Well', vt.normal, '.')
                 vt.outln(-500)
-                vt.outln(-500, vt.bright, vt.yellow, 'What do you wish to do?', -500)
+                vt.outln(-500, vt.yellow, vt.bright, 'What do you wish to do?', -500)
 
                 let wishes = 'BFORT'
-                vt.out(bracket('B'), 'Bless yourself', -25)
-                vt.out(bracket('F'), 'Fix all your damage', -25)
-                vt.out(bracket('O'), 'Teleport all the way out', -25)
-                vt.out(bracket('R'), 'Resurrect all the dead players', -25)
-                vt.out(bracket('T'), 'Teleport to another level', -25)
+                vt.out(bracket('B'), 'Bless yourself', -50)
+                vt.out(bracket('F'), 'Fix all your damage', -50)
+                vt.out(bracket('O'), 'Teleport all the way out', -50)
+                vt.out(bracket('R'), 'Resurrect all the dead players', -50)
+                vt.out(bracket('T'), 'Teleport to another level', -50)
                 if (!$.player.coward && deep) {
                     wishes += 'C'
-                    vt.out(bracket('C'), 'Curse another player', -50)
+                    vt.out(bracket('C'), 'Curse another player', -100)
                 }
-                if (deep > 1) { vt.out(bracket('L'), `Loot another player's money`, -75); wishes += 'L' }
-                if (deep > 3) { vt.out(bracket('G'), 'Grant another call', -100); wishes += 'G' }
-                if (deep > 5) { vt.out(bracket('K'), 'Key hint(s)', -200); wishes += 'K' }
-                if (deep > 7) { vt.out(bracket('D'), 'Destroy dungeon visit', -250); wishes += 'D' }
+                if (deep > 1) { vt.out(bracket('L'), `Loot another player's money`, -175); wishes += 'L' }
+                if (deep > 3) { vt.out(bracket('G'), 'Grant another call', -200); wishes += 'G' }
+                if (deep > 5) { vt.out(bracket('K'), 'Key hint(s)', -300); wishes += 'K' }
+                if (deep > 7) { vt.out(bracket('D'), 'Destroy dungeon visit', -400); wishes += 'D' }
                 vt.outln(-500)
                 vt.drain()
 
@@ -2640,6 +2640,16 @@ module Dungeon {
 
             }
             if (v) DL.rooms[y][x].giftValue = v
+        }
+
+        //  splash any new dungeon background for the adventurer
+        const pic = whole((Z + 1) / 10)
+        if (pic !== motif) {
+            motif = pic
+            vt.profile({ jpg: `dungeon/level${sprintf('%x', motif)}`, handle: "Entering", level: $.player.level, pc: 'dungeon' })
+            ROOM = DL.rooms[Y][X]
+            vt.sleep(ROOM.occupant || ROOM.monster.length || ROOM.giftItem ? 3000 : 1000)
+            vt.drain()
         }
 
         function spider(r: number, c: number) {

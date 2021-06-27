@@ -199,7 +199,7 @@ module Library {
 
             case 'W':
                 vt.outln(vt.green, '\n             --=:)) ', vt.bright, 'WINNERS', vt.normal, ' Only Noted ((:=--\n')
-                cat('winners', 100)
+                cat('user/winners')
                 suppress = true
                 break
         }
