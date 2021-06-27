@@ -514,17 +514,21 @@ module Main {
                                 vt.hangup()
                             }
                             if (vt.entry) {
-                                fs.writeFileSync(pathTo('files', 'border.txt'), vt.entry)
+                                fs.writeFileSync(pathTo('files/user', 'border.txt'), vt.entry)
                                 news(`\tupdated the border to:\n${vt.entry}`)
+                                $.border = false
                             }
                             menu(true)
                         }, prompt: '>', max: 78
                     }
                 }
-                vt.form['yn'].prompt = `Change border message (Y/N)? `
-                input('yn', 'ny'[int($.border)])
-                $.border = false
-                return
+                if ($.border) {
+                    vt.form['yn'].prompt = `Change border message (Y/N)? `
+                    input('yn', 'ny'[int($.border)])
+                    return
+                }
+                suppress = true
+                break
         }
         menu(suppress)
     }

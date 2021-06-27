@@ -16,6 +16,7 @@ module Taxman {
     let irs: active[]
     let tax = new Coin(0)
     PC.load($.taxman)
+    PC.load($.barkeep)
 
     function checkpoint(scratch: number): boolean {
 
