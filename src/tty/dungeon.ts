@@ -8,116 +8,38 @@ import Battle = require('../battle')
 import db = require('../db')
 import { Armor, Magic, Poison, Ring, Security, Weapon } from '../items'
 import { vt, Coin, death, armor, weapon, bracket, cat, log, news, tradein, getRing } from '../lib'
+import { dungeon, elemental } from '../npc'
 import { PC } from '../pc'
-import { checkXP, skillplus } from '../player'
+import { checkXP, input, skillplus } from '../player'
 import { dice, int, sprintf, whole, romanize, an, money } from '../sys'
 
 module Dungeon {
 
+    //  runtime
+    let b4: number
     let fini: Function
-    let monsters: monster = require('../etc/dungeon.json')
+    let hideep: number
+    let hiZ: number
+    let motif: number = -1
+    let paper: string[]
     let party: active[]
-    let potions: vial[] = []
     let tl: number
 
+    //  hero
+    let deep: number
+    let ROOM: room
+    let Z: number
+    let Y: number
+    let X: number
+    let levels: number
+
+    // events
     let idle: number
     let looked: boolean
     let pause: boolean
     let refresh: boolean
     let skillkill: boolean
     let well: boolean
-
-    let paper: string[]
-    let dd = new Array(10)
-    let deep: number
-    let DL: ddd
-    let ROOM: room
-    let Z: number
-    let Y: number
-    let X: number
-    let b4: number
-    let hideep: number
-    let hiZ: number
-    let levels: number
-    let motif: number = -1
-
-    //  £
-    const Cleric = {
-        VT: '\x1B(0\x7D\x1B(B',
-        PC: '\x9C',
-        XT: '✟',
-        dumb: '$'
-    }
-
-    //  ·
-    const Dot = vt.Empty
-
-    const Mask = ['   ', ' ѩ ', 'ѩ ѩ', 'ѩѩѩ', 'ѩӂѩ']
-    const Monster = {
-        door: ['   ', 'Mon', 'M+M', 'Mob', 'MOB'],
-        telnet: ['   ', 'Mon', 'M+M', 'Mob', 'MOB']
-    }
-
-    //  ±
-    const Teleport = {
-        VT: '\x1B(0\x67\x1B(B',
-        PC: '\xF1',
-        XT: '↨',
-        dumb: '%'
-    }
-
-    let crawling: choices = {
-        'N': { description: 'orth' },
-        'S': { description: 'outh' },
-        'E': { description: 'ast' },
-        'W': { description: 'est' },
-        'C': { description: 'ast' },
-        'P': { description: 'oison' },
-        'Y': { description: 'our status' }
-    }
-
-    const potion = [
-        'Potion of Cure Light Wounds',
-        'Vial of Weakness',
-        'Potion of Charm',
-        'Vial of Stupidity',
-        'Potion of Agility',
-        'Vial of Clumsiness',
-        'Potion of Wisdom',
-        'Vile Vial',
-        'Potion of Stamina',
-        'Vial of Slaad Secretions',
-        'Potion of Mana',
-        'Flask of Fire Water',
-        'Elixir of Restoration',
-        'Vial of Crack',
-        'Potion of Augment',
-        'Beaker of Death'
-    ]
-    //	make some magic brew & bottle it up . . .
-    let containers = ['beaker filled with', 'bottle containing', 'flask of', 'vial holding']
-    let v = 0
-    while (containers.length) {
-        let c = dice(containers.length) - 1
-        let liquids = ['bubbling', 'clear', 'milky', 'sparkling']
-        let colors = ['amber', 'sapphire', 'crimson', 'emerald', 'amethyst']
-        let coded = [vt.yellow, vt.blue, vt.red, vt.green, vt.magenta]
-        while (liquids.length) {
-            let l = dice(liquids.length) - 1
-            let i = dice(colors.length) - 1
-            potions.push({
-                potion: v++, identified: false
-                , image: 'potion/' + (containers[c].startsWith('beaker') ? 'beaker' : colors[i])
-                , description: vt.attr(vt.uline, containers[c], vt.nouline, ' a ', liquids[l], ' ', coded[i], colors[i])
-            })
-            liquids.splice(l, 1)
-            colors.splice(i, 1)
-            coded.splice(i, 1)
-        }
-        containers.splice(c, 1)
-    }
-
-    PC.load($.dwarf)
 
     //  entry point
     export function DeepDank(start: number, cb: Function) {
@@ -137,10 +59,10 @@ module Dungeon {
         hiZ = Z
         fini = cb
 
-        if ($.access.sysop) crawling['M'] = { description: 'y liege' }
+        if ($.access.sysop) dungeon.crawling['M'] = { description: 'y liege' }
         generateLevel()
 
-        ROOM = DL.rooms[Y][X]
+        ROOM = dungeon.level.rooms[Y][X]
 
         menu()
     }
@@ -158,7 +80,7 @@ module Dungeon {
         if ($.online.altered) PC.save()
         if ($.reason || vt.reason) {
             death(`failed to escape ${romanize(deep + 1)}.${Z + 1} - ${$.reason || vt.reason}`)
-            DL.map = `Marauder's map`
+            dungeon.level.map = `Marauder's map`
             scroll()
             if ($.online.hp > 0) {
                 $.online.hp = whole(idle)
@@ -168,8 +90,8 @@ module Dungeon {
         }
         if ($.player.level + 1 < $.sysop.level) {
             if (checkXP($.online, menu)) {
-                DL.exit = false
-                DL.moves -= DL.width
+                dungeon.level.exit = false
+                dungeon.level.moves -= dungeon.level.width
                 pause = true
                 return
             }
@@ -225,7 +147,7 @@ module Dungeon {
                     cb: () => { menu() }, pause: true, timeout: 20
                 }
             }
-            vt.focus = 'pause'
+            input('pause')
             return
         }
 
@@ -238,46 +160,46 @@ module Dungeon {
 
         //  keep it organic relative to class skill + luck with player asset protection
         let me = whole(
-            (Z / 3 + DL.rooms.length * DL.width + $.online.dex / 2 + $.online.cha) * (.6 + deep / 23)
-            - DL.moves)
+            (Z / 3 + dungeon.level.rooms.length * dungeon.level.width + $.online.dex / 2 + $.online.cha) * (.6 + deep / 23)
+            - dungeon.level.moves)
         me *= 1 + (Security.name[$.player.security].protection - $.player.level / 9) / 12
-        if (me < int(($.online.int + DL.width) / 2)) {
-            if (!DL.exit) {
+        if (me < int(($.online.int + dungeon.level.width) / 2)) {
+            if (!dungeon.level.exit) {
                 const t = $.player.expert ? 10 : 100
                 vt.out(-t, ' ', -2 * t, $.player.emulation == 'XT' ? '🏃' : '<<', ' ', -t)
-                if (DL.alert) vt.sound('exit')
+                if (dungeon.level.alert) vt.sound('exit')
                 vt.outln(vt.faint, 'find ', -5 * t, 'the ', -4 * t, 'exit', -8 * t, vt.normal, '!')
                 vt.drain()
-                DL.alert = false
-                DL.events++
-                DL.exit = true
+                dungeon.level.alert = false
+                dungeon.level.events++
+                dungeon.level.exit = true
                 me *= 2
             }
             else
                 me = int(me / 2)
         }
-        me = (me < DL.width ? DL.width - (DL.moves >> 8) : int(me)) - int($.player.coward)
-        if (me < DL.width) {
-            DL.exit = $.player.coward
+        me = (me < dungeon.level.width ? dungeon.level.width - (dungeon.level.moves >> 8) : int(me)) - int($.player.coward)
+        if (me < dungeon.level.width) {
+            dungeon.level.exit = $.player.coward
             if (me < 6) $.player.coward = true
-            me = DL.width + 3 - int($.player.coward)
+            me = dungeon.level.width + 3 - int($.player.coward)
             if ($.player.novice) me <<= 1
         }
 
         //	is a monster spawning needed?
-        let x = dice(DL.width) - 1, y = dice(DL.rooms.length) - 1
+        let x = dice(dungeon.level.width) - 1, y = dice(dungeon.level.rooms.length) - 1
         if (dice($.online.cha) < Z / (deep + 2)) {
             let d = Math.round($.online.cha / 19) + 2
             y = Y + (dice(d) - 1) - (dice(d) - 1)
-            if (y < 0 || y >= DL.rooms.length)
-                y = dice(DL.rooms.length) - 1
+            if (y < 0 || y >= dungeon.level.rooms.length)
+                y = dice(dungeon.level.rooms.length) - 1
             d++
             x = X + (dice(d) - 1) - (dice(d) - 1)
-            if (x < 0 || x >= DL.width)
-                x = dice(DL.width) - 1
+            if (x < 0 || x >= dungeon.level.width)
+                x = dice(dungeon.level.width) - 1
         }
-        ROOM = DL.rooms[y][x]
-        if (dice(DL.spawn * (!ROOM.type ? 2 : ROOM.type == 'cavern' ? 1 : 3)) == 1) {
+        ROOM = dungeon.level.rooms[y][x]
+        if (dice(dungeon.level.spawn * (!ROOM.type ? 2 : ROOM.type == 'cavern' ? 1 : 3)) == 1) {
             if (putMonster(y, x)) {
                 let s = dice(5) - 1
                 vt.outln()
@@ -315,20 +237,20 @@ module Dungeon {
                 else
                     vt.outln(' as a faint echo.', -300)
 
-                if (DL.map && DL.map !== 'map')
+                if (dungeon.level.map && dungeon.level.map !== 'map')
                     drawRoom(y, x)
-                if (ROOM.occupant == 'cleric' && DL.cleric.hp) {
+                if (ROOM.occupant == 'cleric' && dungeon.level.cleric.hp) {
                     vt.sound('agony', 10)
                     vt.out(vt.yellow, 'You hear a dying cry of agony !! ', -900)
-                    DL.cleric.hp = 0
-                    DL.cleric.sp = 0
-                    DL.cleric.user.status = 'dead'
-                    DL.exit = false
+                    dungeon.level.cleric.hp = 0
+                    dungeon.level.cleric.sp = 0
+                    dungeon.level.cleric.user.status = 'dead'
+                    dungeon.level.exit = false
                     ROOM.giftItem = 'chest'
-                    ROOM.giftIcon = $.player.emulation == 'XT' ? '⌂' : Dot
+                    ROOM.giftIcon = $.player.emulation == 'XT' ? '⌂' : dungeon.Dot
                     ROOM.giftValue = 0
-                    DL.cleric.user.coin.value = 0
-                    if (DL.map && DL.map !== 'map')
+                    dungeon.level.cleric.user.coin.value = 0
+                    if (dungeon.level.map && dungeon.level.map !== 'map')
                         drawRoom(y, x)
                     vt.outln(-900)
                     vt.beep()
@@ -346,8 +268,8 @@ module Dungeon {
         vt.action('dungeon')
         drawHero($.player.blessed ? true : false)
 
-        if (DL.events > 0 && DL.moves > DL.width && dice(me) == 1) {
-            DL.events--
+        if (dungeon.level.events > 0 && dungeon.level.moves > dungeon.level.width && dice(me) == 1) {
+            dungeon.level.events--
             vt.music()
             let rng = dice(16)
             if (rng > 8) {
@@ -422,7 +344,7 @@ module Dungeon {
         //  insert any wall messages here
         vt.out('\x06')
         if ($.reason) {
-            DL.map = `Marauder's map`
+            dungeon.level.map = `Marauder's map`
             drawHero()
             scroll()
             vt.hangup()
@@ -444,23 +366,23 @@ module Dungeon {
                 vt.form['command'].prompt += vt.attr(
                     bracket('P', false), vt.cyan, 'oison, '
                 )
-            if (Y > 0 && DL.rooms[Y][X].type !== 'w-e')
-                if (DL.rooms[Y - 1][X].type !== 'w-e')
+            if (Y > 0 && dungeon.level.rooms[Y][X].type !== 'w-e')
+                if (dungeon.level.rooms[Y - 1][X].type !== 'w-e')
                     vt.form['command'].prompt += vt.attr(
                         bracket('N', false), vt.cyan, 'orth, '
                     )
-            if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 'w-e')
-                if (DL.rooms[Y + 1][X].type !== 'w-e')
+            if (Y < dungeon.level.rooms.length - 1 && dungeon.level.rooms[Y][X].type !== 'w-e')
+                if (dungeon.level.rooms[Y + 1][X].type !== 'w-e')
                     vt.form['command'].prompt += vt.attr(
                         bracket('S', false), vt.cyan, 'outh, ',
                     )
-            if (X < DL.width - 1 && DL.rooms[Y][X].type !== 'n-s')
-                if (DL.rooms[Y][X + 1].type !== 'n-s')
+            if (X < dungeon.level.width - 1 && dungeon.level.rooms[Y][X].type !== 'n-s')
+                if (dungeon.level.rooms[Y][X + 1].type !== 'n-s')
                     vt.form['command'].prompt += vt.attr(
                         bracket('E', false), vt.cyan, 'ast, ',
                     )
-            if (X > 0 && DL.rooms[Y][X].type !== 'n-s')
-                if (DL.rooms[Y][X - 1].type !== 'n-s')
+            if (X > 0 && dungeon.level.rooms[Y][X].type !== 'n-s')
+                if (dungeon.level.rooms[Y][X - 1].type !== 'n-s')
                     vt.form['command'].prompt += vt.attr(
                         bracket('W', false), vt.cyan, 'est, ',
                     )
@@ -469,7 +391,7 @@ module Dungeon {
                 bracket('Y', false), vt.cyan, 'our status: '
             )
         }
-        vt.focus = 'command'
+        input('command')
     }
 
     function command() {
@@ -483,12 +405,12 @@ module Dungeon {
             else
                 choice = 'Y'
         }
-        if (crawling[choice]) {
-            vt.out(crawling[choice].description)
-            DL.moves++
-            if (DL.spawn > 2 && !(DL.moves % DL.width))
-                DL.spawn--
-            if (!DL.exit)
+        if (dungeon.crawling[choice]) {
+            vt.out(dungeon.crawling[choice].description)
+            dungeon.level.moves++
+            if (dungeon.level.spawn > 2 && !(dungeon.level.moves % dungeon.level.width))
+                dungeon.level.spawn--
+            if (!dungeon.level.exit)
                 recovery(300)
         }
         else {
@@ -501,13 +423,13 @@ module Dungeon {
 
         switch (choice) {
             case 'M':	//	#tbt
-                DL.map = `Marauder's map`
+                dungeon.level.map = `Marauder's map`
                 refresh = true
                 break
 
             case 'C':
                 Battle.retreat = false
-                Battle.cast($.online, menu, undefined, undefined, DL)
+                Battle.cast($.online, menu, undefined, undefined, dungeon.level)
                 return
 
             case 'P':
@@ -521,8 +443,8 @@ module Dungeon {
                 break
 
             case 'N':
-                if (Y > 0 && DL.rooms[Y][X].type !== 'w-e')
-                    if (DL.rooms[Y - 1][X].type !== 'w-e') {
+                if (Y > 0 && dungeon.level.rooms[Y][X].type !== 'w-e')
+                    if (dungeon.level.rooms[Y - 1][X].type !== 'w-e') {
                         eraseHero($.player.blessed ? true : false)
                         Y--
                         looked = false
@@ -532,8 +454,8 @@ module Dungeon {
                 break
 
             case 'S':
-                if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 'w-e')
-                    if (DL.rooms[Y + 1][X].type !== 'w-e') {
+                if (Y < dungeon.level.rooms.length - 1 && dungeon.level.rooms[Y][X].type !== 'w-e')
+                    if (dungeon.level.rooms[Y + 1][X].type !== 'w-e') {
                         eraseHero($.player.blessed ? true : false)
                         Y++
                         looked = false
@@ -543,8 +465,8 @@ module Dungeon {
                 break
 
             case 'E':
-                if (X < DL.width - 1 && DL.rooms[Y][X].type !== 'n-s')
-                    if (DL.rooms[Y][X + 1].type !== 'n-s') {
+                if (X < dungeon.level.width - 1 && dungeon.level.rooms[Y][X].type !== 'n-s')
+                    if (dungeon.level.rooms[Y][X + 1].type !== 'n-s') {
                         eraseHero($.player.blessed ? true : false)
                         X++
                         looked = false
@@ -554,8 +476,8 @@ module Dungeon {
                 break
 
             case 'W':
-                if (X > 0 && DL.rooms[Y][X].type !== 'n-s')
-                    if (DL.rooms[Y][X - 1].type !== 'n-s') {
+                if (X > 0 && dungeon.level.rooms[Y][X].type !== 'n-s')
+                    if (dungeon.level.rooms[Y][X - 1].type !== 'n-s') {
                         eraseHero($.player.blessed ? true : false)
                         X--
                         looked = false
@@ -591,7 +513,7 @@ module Dungeon {
 
     //	look around, return whether done or not
     function doMove(): boolean {
-        ROOM = DL.rooms[Y][X]
+        ROOM = dungeon.level.rooms[Y][X]
         if (!ROOM.map) {
             recovery(600)
             if (idle >= 0) idle--
@@ -599,9 +521,9 @@ module Dungeon {
                 ROOM.map = true
         }
         else {
-            DL.moves++	//	backtracking
-            if (DL.spawn > 2 && !(DL.moves % DL.width))
-                DL.spawn--
+            dungeon.level.moves++	//	backtracking
+            if (dungeon.level.spawn > 2 && !(dungeon.level.moves % dungeon.level.width))
+                dungeon.level.spawn--
         }
 
         //	nothing special in here, done
@@ -758,7 +680,7 @@ module Dungeon {
                     vt.profile({ png: 'npc/faery spirit', effect: 'fadeInRight' })
                     vt.out(vt.cyan, vt.bright, 'A faery spirit appears ', -600
                         , vt.normal, 'and passes ', -500)
-                    if ((!DL.events && DL.exit) || dice(50 + Z - deep) > ($.online.cha - 10 * int($.player.coward))) {
+                    if ((!dungeon.level.events && dungeon.level.exit) || dice(50 + Z - deep) > ($.online.cha - 10 * int($.player.coward))) {
                         vt.animated('fadeOut')
                         vt.outln(vt.faint, 'by you.')
                         recovery()
@@ -767,11 +689,11 @@ module Dungeon {
                         vt.animated('fadeOutLeft')
                         vt.outln(vt.faint, 'through you.')
                         for (let i = 0; i <= Z; i++)
-                            $.online.hp += dice(int(DL.cleric.user.level / 9)) + dice(int(Z / 9 + deep / 3))
+                            $.online.hp += dice(int(dungeon.level.cleric.user.level / 9)) + dice(int(Z / 9 + deep / 3))
                         if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
                         if ($.player.magic > 1) {
                             for (let i = 0; i <= Z; i++)
-                                $.online.sp += dice(int(DL.cleric.user.level / 9)) + dice(int(Z / 9 + deep / 3))
+                                $.online.sp += dice(int(dungeon.level.cleric.user.level / 9)) + dice(int(Z / 9 + deep / 3))
                             if ($.online.sp > $.player.sp) $.online.sp = $.player.sp
                         }
                         vt.sound('heal')
@@ -864,8 +786,8 @@ module Dungeon {
                                     PC.adjust('dex', 110)
                                     PC.adjust('cha', 110)
                                     vt.sound('shimmer')
-                                    DL.events = 0
-                                    DL.exit = false
+                                    dungeon.level.events = 0
+                                    dungeon.level.exit = false
                                     break
 
                                 case 'C':
@@ -935,8 +857,8 @@ module Dungeon {
                                 case 'D':
                                     vt.outln(vt.black, vt.bright, 'Your past time in this dungeon visit is eradicated and reset.')
                                     vt.sound('destroy', 32)
-                                    for (let i in dd)
-                                        delete dd[i]
+                                    for (let i in dungeon.domain)
+                                        delete dungeon.domain[i]
                                     $.dungeon++
                                     if (!$.sorceress) $.sorceress++
                                     if (!$.taxboss) $.taxboss++
@@ -1104,8 +1026,8 @@ module Dungeon {
                                         PC.adjust('dex', 110)
                                         PC.adjust('cha', 110)
                                         vt.sound('shimmer')
-                                        DL.events = 0
-                                        DL.exit = false
+                                        dungeon.level.events = 0
+                                        dungeon.level.exit = false
                                         break
                                     case 3:
                                         $.online.hp += int($.player.hp / 2) + dice($.player.hp / 2)
@@ -1132,7 +1054,7 @@ module Dungeon {
                                         PC.adjust('dex', -5 - dice(5))
                                         PC.adjust('cha', -5 - dice(5))
                                         vt.sound('crack')
-                                        DL.events += dice(Z) + deep
+                                        dungeon.level.events += dice(Z) + deep
                                         break
                                     case 5:
                                         loot.value = money(Z)
@@ -1216,13 +1138,13 @@ module Dungeon {
                     return
                 }
 
-                if (DL.map == `Marauder's map` || (Ring.power([], $.player.rings, 'identify').power > 0)) {
+                if (dungeon.level.map == `Marauder's map` || (Ring.power([], $.player.rings, 'identify').power > 0)) {
                     vt.outln('He does not surprise you', vt.cyan, '.')
                     break
                 }
 
-                let x = dice(DL.width) - 1, y = dice(DL.rooms.length) - 1
-                let escape = DL.rooms[y][x]
+                let x = dice(dungeon.level.width) - 1, y = dice(dungeon.level.rooms.length) - 1
+                let escape = dungeon.level.rooms[y][x]
                 if (escape.occupant || dice(Z * ($.player.steal / 2 + 1) - deep) > Z) {
                     if (!escape.occupant && $.player.pc !== $.taxman.user.pc) {
                         escape.occupant = 'thief'
@@ -1259,12 +1181,12 @@ module Dungeon {
                         vt.out(weapon(), -600)
                         Weapon.equip($.online, Weapon.merchant[0])
                         vt.sound('thief2')
-                        DL.exit = false
+                        dungeon.level.exit = false
                     }
-                    else if (DL.map && dice($.online.cha / 9) - 1 <= int(deep / 3)) {
+                    else if (dungeon.level.map && dice($.online.cha / 9) - 1 <= int(deep / 3)) {
                         vt.out(vt.yellow, vt.bright, 'map')
-                        DL.exit = false
-                        DL.map = ''
+                        dungeon.level.exit = false
+                        dungeon.level.map = ''
                         refresh = true
                     }
                     else if ($.player.magic < 3 && $.player.spells.length && dice($.online.cha / 10 + deep + 1) - 1 <= int(deep / 2)) {
@@ -1295,14 +1217,14 @@ module Dungeon {
                 break
 
             case 'cleric':
-                if (!DL.cleric.hp) {
+                if (!dungeon.level.cleric.hp) {
                     vt.profile({ jpg: 'npc/rip', effect: 'fadeInUp' })
                     vt.outln(vt.yellow, 'You find the ', vt.white, 'bones'
                         , vt.yellow, ' of an ', vt.faint, 'old cleric', vt.normal, '.', -600)
                     if ($.player.emulation == 'XT') vt.out(' 🪦 🕱 ')
                     vt.outln('You pray for him.')
-                    DL.alert = true
-                    DL.exit = false
+                    dungeon.level.alert = true
+                    dungeon.level.exit = false
                     break
                 }
 
@@ -1314,7 +1236,7 @@ module Dungeon {
                 let cost = new Coin(int(($.player.hp - $.online.hp) * money(Z) / mod / $.player.hp))
                 if (cost.value < 1) cost.value = 1
                 cost.value *= (int(deep / 3) + 1)
-                if (!$.player.coward && !$.player.steals && ($.player.pc == DL.cleric.user.pc || $.player.maxcha > 98))
+                if (!$.player.coward && !$.player.steals && ($.player.pc == dungeon.level.cleric.user.pc || $.player.maxcha > 98))
                     cost.value = 0
                 cost = new Coin(cost.carry(1, true))	//	just from 1-pouch
 
@@ -1323,28 +1245,28 @@ module Dungeon {
                     cost.value = 0	//	this one is free of charge
                 }
 
-                let power = int(100 * DL.cleric.sp / DL.cleric.user.sp)
+                let power = int(100 * dungeon.level.cleric.sp / dungeon.level.cleric.user.sp)
                 vt.outln(vt.yellow, 'There is an ', vt.faint, 'old cleric', vt.normal
                     , vt.normal, ' in this room with '
                     , power < 40 ? vt.faint : power < 80 ? vt.normal : vt.bright, `${power}`
                     , vt.normal, '% spell power.')
                 vt.out('He says, ')
 
-                if ($.online.hp >= $.player.hp || cost.value > $.player.coin.value || DL.cleric.sp < Magic.power(DL.cleric, cast)) {
+                if ($.online.hp >= $.player.hp || cost.value > $.player.coin.value || dungeon.level.cleric.sp < Magic.power(dungeon.level.cleric, cast)) {
                     vt.outln(vt.yellow, '"I will pray for you."')
                     if ($.online.hp < $.player.hp)
                         vt.profile({ jpg: 'npc/prayer', effect: 'fadeInUp' })
                     break
                 }
 
-                if (power > 95) vt.profile({ jpg: 'npc/old cleric', effect: 'zoomInUp', level: DL.cleric.user.level, pc: DL.cleric.user.pc })
-                if ($.online.hp > int($.player.hp / 3) || DL.cleric.sp < Magic.power(DL.cleric, 13)) {
-                    vt.out('"I can ', DL.cleric.sp < Magic.power(DL.cleric, 13) ? 'only' : 'surely'
+                if (power > 95) vt.profile({ jpg: 'npc/old cleric', effect: 'zoomInUp', level: dungeon.level.cleric.user.level, pc: dungeon.level.cleric.user.pc })
+                if ($.online.hp > int($.player.hp / 3) || dungeon.level.cleric.sp < Magic.power(dungeon.level.cleric, 13)) {
+                    vt.out('"I can ', dungeon.level.cleric.sp < Magic.power(dungeon.level.cleric, 13) ? 'only' : 'surely'
                         , ' cast a Heal spell on your wounds for '
                         , cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
                         , '."')
                 }
-                else if (DL.cleric.sp >= Magic.power(DL.cleric, 13)) {
+                else if (dungeon.level.cleric.sp >= Magic.power(dungeon.level.cleric, 13)) {
                     cast = 13
                     vt.out('"I can restore your health for '
                         , cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
@@ -1358,13 +1280,13 @@ module Dungeon {
                             vt.outln('\n')
                             if (/Y/i.test(vt.entry)) {
                                 $.player.coin.value -= cost.value
-                                DL.cleric.user.coin.value += cost.value
+                                dungeon.level.cleric.user.coin.value += cost.value
                                 vt.out(`He casts a ${Object.keys(Magic.spells)[cast - 1]} spell on you.`)
-                                DL.cleric.sp -= Magic.power(DL.cleric, cast)
+                                dungeon.level.cleric.sp -= Magic.power(dungeon.level.cleric, cast)
                                 if (cast == 7) {
                                     vt.sound('heal')
                                     for (let i = 0; i <= Z; i++)
-                                        $.online.hp += dice(DL.cleric.user.level / 9) + dice(Z / 9 + deep / 3)
+                                        $.online.hp += dice(dungeon.level.cleric.user.level / 9) + dice(Z / 9 + deep / 3)
                                     if ($.online.hp > $.player.hp) $.online.hp = $.player.hp
                                     vt.out('  Your hit points: '
                                         , vt.bright, $.online.hp == $.player.hp ? vt.white : $.online.hp > $.player.hp * 0.85 ? vt.yellow : vt.red, $.online.hp.toString()
@@ -1387,7 +1309,7 @@ module Dungeon {
                                     vt.outln(vt.lyellow, '"I need to rest. ', -300, ' Go in peace."', -300)
                                     looked = true
                                 }
-                                DL.exit = false
+                                dungeon.level.exit = false
                             }
                             menu()
                         }, prompt: `${cost.value ? 'Pay' : 'Receive'} (Y/N)? `, cancel: 'N', enter: 'Y', eol: false, match: /Y|N/i, max: 1, timeout: 20
@@ -1433,10 +1355,10 @@ module Dungeon {
                     ROOM.occupant = ''
                     let x: number, y: number
                     do {
-                        y = dice(DL.rooms.length) - 1
-                        x = dice(DL.width) - 1
-                    } while (DL.rooms[y][x].type == 'cavern' || DL.rooms[y][x].occupant)
-                    DL.rooms[y][x].occupant = 'wizard'
+                        y = dice(dungeon.level.rooms.length) - 1
+                        x = dice(dungeon.level.width) - 1
+                    } while (dungeon.level.rooms[y][x].type == 'cavern' || dungeon.level.rooms[y][x].occupant)
+                    dungeon.level.rooms[y][x].occupant = 'wizard'
                     $.player.coward = false
                     $.online.altered = true
                 }
@@ -1456,10 +1378,10 @@ module Dungeon {
                     ROOM.occupant = ''
                     let x: number, y: number
                     do {
-                        y = dice(DL.rooms.length) - 1
-                        x = dice(DL.width) - 1
-                    } while (DL.rooms[y][x].type == 'cavern' || DL.rooms[y][x].occupant)
-                    DL.rooms[y][x].occupant = 'wizard'
+                        y = dice(dungeon.level.rooms.length) - 1
+                        x = dice(dungeon.level.width) - 1
+                    } while (dungeon.level.rooms[y][x].type == 'cavern' || dungeon.level.rooms[y][x].occupant)
+                    dungeon.level.rooms[y][x].occupant = 'wizard'
                 }
                 else {
                     vt.profile({ jpg: 'npc/wizard', effect: 'backInLeft', handle: 'Pops', level: 77, pc: 'crackpot' })
@@ -1840,8 +1762,8 @@ module Dungeon {
                 break
 
             case 'map':
-                DL.map = `Marauder's map`
-                vt.outln(vt.bright, vt.yellow, `You find ${DL.map}!`)
+                dungeon.level.map = `Marauder's map`
+                vt.outln(vt.bright, vt.yellow, `You find ${dungeon.level.map}!`)
                 pause = true
                 refresh = true
                 ROOM.giftItem = ''
@@ -1859,28 +1781,28 @@ module Dungeon {
 
             case 'potion':
                 let id = false
-                if (DL.moves < DL.width && !ROOM.giftID)
+                if (dungeon.level.moves < dungeon.level.width && !ROOM.giftID)
                     ROOM.giftID = !$.player.novice
                         && dice(100 + +ROOM.giftValue) < ($.online.int / 20 * (1 << $.player.poison) + ($.online.int > 90 ? ($.online.int % 90) << 1 : 0))
 
                 vt.sound('bubbles')
                 vt.out(vt.cyan, 'On the ground, you find a ')
-                if (Ring.power([], $.player.rings, 'identify').power) potions[ROOM.giftValue].identified = true
-                if (potions[ROOM.giftValue].identified || ROOM.giftID || $.access.sysop) {
-                    vt.profile({ png: potions[ROOM.giftValue].image, handle: potion[ROOM.giftValue], effect: 'fadeInUp' })
-                    vt.out(vt.bright, potion[ROOM.giftValue], vt.normal, '.')
-                    if (!potions[ROOM.giftValue].identified)	//	recall seeing this before
-                        potions[ROOM.giftValue].identified = $.player.novice || $.online.int > (85 - 4 * $.player.poison)
+                if (Ring.power([], $.player.rings, 'identify').power) dungeon.potions[ROOM.giftValue].identified = true
+                if (dungeon.potions[ROOM.giftValue].identified || ROOM.giftID || $.access.sysop) {
+                    vt.profile({ png: dungeon.potions[ROOM.giftValue].image, handle: dungeon.potion[ROOM.giftValue], effect: 'fadeInUp' })
+                    vt.out(vt.bright, dungeon.potion[ROOM.giftValue], vt.normal, '.')
+                    if (!dungeon.potions[ROOM.giftValue].identified)	//	recall seeing this before
+                        dungeon.potions[ROOM.giftValue].identified = $.player.novice || $.online.int > (85 - 4 * $.player.poison)
                     id = true
                 }
                 else {
-                    vt.profile({ png: potions[ROOM.giftValue].image, handle: 'Is it ' + 'nt'[dice(2) - 1] + 'asty, precious?', effect: 'fadeInUp' })
-                    vt.out(potions[ROOM.giftValue].description, vt.cyan, vt.bright, ' potion', vt.normal, '.')
+                    vt.profile({ png: dungeon.potions[ROOM.giftValue].image, handle: 'Is it ' + 'nt'[dice(2) - 1] + 'asty, precious?', effect: 'fadeInUp' })
+                    vt.out(dungeon.potions[ROOM.giftValue].description, vt.cyan, vt.bright, ' dungeon.potion', vt.normal, '.')
                 }
 
                 if (id ||
                     (dice(100 + 10 * +ROOM.giftValue * int($.player.coward)) + dice(deep / 2) < (50 + int($.online.int / 2)) && dice(100) > 1)) {
-                    vt.action('potion')
+                    vt.action('dungeon.potion')
                     vt.form = {
                         'quaff': {
                             cb: () => {
@@ -1957,7 +1879,7 @@ module Dungeon {
     function doSpoils() {
         if ($.reason) {
             $.reason = `${$.reason} on level ${romanize(deep + 1)}.${Z + 1}`
-            DL.map = `Marauder's map`
+            dungeon.level.map = `Marauder's map`
             scroll()
             vt.hangup()
         }
@@ -1971,11 +1893,11 @@ module Dungeon {
                 Object.assign(mon, ROOM.monster[n])
                 //	teleported?
                 if (mon.hp < 0) {
-                    let y = dice(DL.rooms.length) - 1
-                    let x = dice(DL.width) - 1
+                    let y = dice(dungeon.level.rooms.length) - 1
+                    let x = dice(dungeon.level.width) - 1
                     mon.hp = Math.abs(mon.hp) + int(mon.user.hp / (dice(5) + 5))
                     mon.sp += int(mon.user.sp / (dice(5) + 5))
-                    DL.rooms[y][x].monster.push(mon)
+                    dungeon.level.rooms[y][x].monster.push(mon)
                 }
                 else {
                     //	defeated a significantly larger denizen on this level, check for any added bonus(es)
@@ -2010,14 +1932,14 @@ module Dungeon {
                         vt.outln('\n', -500)
                         Battle.yourstats(false)
                         vt.outln(-500)
-                        DL.moves >>= 1
+                        dungeon.level.moves >>= 1
                     }
                 }
                 //	activate this monster's avenge?
                 if (mon.user.xplevel == 0) {
                     vt.sound('oops')
                     ROOM.monster[n].monster.effect = 'flip'
-                    monsters[mon.user.handle].pc = '*'	//	chaos
+                    dungeon.monsters[mon.user.handle].pc = '*'	//	chaos
                     PC.activate(mon)
                     for (let i = 0; i < dice(3); i++) {
                         let avenger = <active>{ monster: { name: '', pc: '' }, user: { id: '' } }
@@ -2035,7 +1957,7 @@ module Dungeon {
                         avenger.int = 99
                         avenger.dex = 99
                         avenger.cha = 99
-                        Object.assign(avenger.monster, monsters[mon.user.handle])
+                        Object.assign(avenger.monster, dungeon.monsters[mon.user.handle])
                         avenger.monster.pc = avenger.user.pc
                         ROOM.monster.push(avenger)
                     }
@@ -2061,10 +1983,10 @@ module Dungeon {
         }
 
         if (!ROOM.monster.length) {
-            if ((!DL.map || DL.map == 'map') && dice((15 - $.online.cha / 10) / 2) == 1) {
+            if ((!dungeon.level.map || dungeon.level.map == 'map') && dice((15 - $.online.cha / 10) / 2) == 1) {
                 let m = <MAP>['', 'map', 'magic map'][(dice(Z / 33 + 2) > 1 ? 1 : 2)]
-                if (DL.map.length < m.length) {
-                    DL.map = m
+                if (dungeon.level.map.length < m.length) {
+                    dungeon.level.map = m
                     vt.sound('click')
                     vt.outln(vt.yellow, vt.bright, 'You find a ', m, '!')
                     pause = true
@@ -2080,15 +2002,15 @@ module Dungeon {
             }
             //	the wounded warrior just surviving any mob size
             //	and without a magic map nor any visit to the cleric yet ...
-            if ((b4 !== 0 && (!DL.map || DL.map !== 'map') && DL.cleric.sp == DL.cleric.user.sp)
+            if ((b4 !== 0 && (!dungeon.level.map || dungeon.level.map !== 'map') && dungeon.level.cleric.sp == dungeon.level.cleric.user.sp)
                 && ((b4 > 0 && b4 / $.player.hp < 0.67 && $.online.hp / $.player.hp < 0.067)
                     || ($.online.hp <= Z + deep + 1))) {
                 vt.outln(-100)
                 vt.sound('bravery', 20)
                 vt.outln(vt.red, vt.bright, '+ ', vt.normal, 'bonus strength', -600)
                 PC.adjust('str', deep + 2, deep + 1, 1)
-                DL.map = `Marauder's map`
-                vt.outln(vt.bright, vt.yellow, ' and ', DL.map, '!', -600)
+                dungeon.level.map = `Marauder's map`
+                vt.outln(vt.bright, vt.yellow, ' and ', dungeon.level.map, '!', -600)
                 pause = true
             }
         }
@@ -2109,8 +2031,8 @@ module Dungeon {
             }
             else {
                 PC.portrait($.online, 'lightSpeedOut', ` - Dungeon ${romanize(deep + 1)}.${Z + 1}`)
-                Y = dice(DL.rooms.length) - 1
-                X = dice(DL.width) - 1
+                Y = dice(dungeon.level.rooms.length) - 1
+                X = dice(dungeon.level.width) - 1
             }
             menu()
             return
@@ -2126,8 +2048,8 @@ module Dungeon {
             let i = dice(d.length) - 1
             switch (d[i]) {
                 case 'N':
-                    if (Y > 0 && DL.rooms[Y][X].type !== 'w-e')
-                        if (DL.rooms[Y - 1][X].type !== 'w-e') {
+                    if (Y > 0 && dungeon.level.rooms[Y][X].type !== 'w-e')
+                        if (dungeon.level.rooms[Y - 1][X].type !== 'w-e') {
                             Battle.retreat = false
                             Y--
                             looked = false
@@ -2138,8 +2060,8 @@ module Dungeon {
                     break
 
                 case 'S':
-                    if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 'w-e')
-                        if (DL.rooms[Y + 1][X].type !== 'w-e') {
+                    if (Y < dungeon.level.rooms.length - 1 && dungeon.level.rooms[Y][X].type !== 'w-e')
+                        if (dungeon.level.rooms[Y + 1][X].type !== 'w-e') {
                             Battle.retreat = false
                             Y++
                             looked = false
@@ -2150,8 +2072,8 @@ module Dungeon {
                     break
 
                 case 'E':
-                    if (X < DL.width - 1 && DL.rooms[Y][X].type !== 'n-s')
-                        if (DL.rooms[Y][X + 1].type !== 'n-s') {
+                    if (X < dungeon.level.width - 1 && dungeon.level.rooms[Y][X].type !== 'n-s')
+                        if (dungeon.level.rooms[Y][X + 1].type !== 'n-s') {
                             Battle.retreat = false
                             X++
                             looked = false
@@ -2162,8 +2084,8 @@ module Dungeon {
                     break
 
                 case 'W':
-                    if (X > 0 && DL.rooms[Y][X].type !== 'n-s')
-                        if (DL.rooms[Y][X - 1].type !== 'n-s') {
+                    if (X > 0 && dungeon.level.rooms[Y][X].type !== 'n-s')
+                        if (dungeon.level.rooms[Y][X - 1].type !== 'n-s') {
                             Battle.retreat = false
                             X--
                             looked = false
@@ -2183,22 +2105,22 @@ module Dungeon {
     function drawHero(peek = false) {
         vt.save()
 
-        ROOM = DL.rooms[Y][X]
-        if (!DL.map || peek) {
-            if (Y > 0 && DL.rooms[Y][X].type !== 'w-e')
-                if (DL.rooms[Y - 1][X].type !== 'w-e')
+        ROOM = dungeon.level.rooms[Y][X]
+        if (!dungeon.level.map || peek) {
+            if (Y > 0 && dungeon.level.rooms[Y][X].type !== 'w-e')
+                if (dungeon.level.rooms[Y - 1][X].type !== 'w-e')
                     drawRoom(Y - 1, X, false, peek)
-            if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 'w-e')
-                if (DL.rooms[Y + 1][X].type !== 'w-e')
+            if (Y < dungeon.level.rooms.length - 1 && dungeon.level.rooms[Y][X].type !== 'w-e')
+                if (dungeon.level.rooms[Y + 1][X].type !== 'w-e')
                     drawRoom(Y + 1, X, false, peek)
-            if (X < DL.width - 1 && DL.rooms[Y][X].type !== 'n-s')
-                if (DL.rooms[Y][X + 1].type !== 'n-s')
+            if (X < dungeon.level.width - 1 && dungeon.level.rooms[Y][X].type !== 'n-s')
+                if (dungeon.level.rooms[Y][X + 1].type !== 'n-s')
                     drawRoom(Y, X + 1, false, peek)
-            if (X > 0 && DL.rooms[Y][X].type !== 'n-s')
-                if (DL.rooms[Y][X - 1].type !== 'n-s')
+            if (X > 0 && dungeon.level.rooms[Y][X].type !== 'n-s')
+                if (dungeon.level.rooms[Y][X - 1].type !== 'n-s')
                     drawRoom(Y, X - 1, false, peek)
         }
-        if (!DL.map) drawRoom(Y, X, false, peek)
+        if (!dungeon.level.map) drawRoom(Y, X, false, peek)
 
         vt.plot(Y * 2 + 2, X * 6 + 2)
         if ($.online.hp > 0) {
@@ -2232,19 +2154,19 @@ module Dungeon {
     function eraseHero(peek = false) {
         vt.out(vt.reset)
         vt.save()
-        ROOM = DL.rooms[Y][X]
-        if (!DL.map || peek) {
-            if (Y > 0 && DL.rooms[Y][X].type !== 'w-e')
-                if (DL.rooms[Y - 1][X].type !== 'w-e')
+        ROOM = dungeon.level.rooms[Y][X]
+        if (!dungeon.level.map || peek) {
+            if (Y > 0 && dungeon.level.rooms[Y][X].type !== 'w-e')
+                if (dungeon.level.rooms[Y - 1][X].type !== 'w-e')
                     drawRoom(Y - 1, X, false)
-            if (Y < DL.rooms.length - 1 && DL.rooms[Y][X].type !== 'w-e')
-                if (DL.rooms[Y + 1][X].type !== 'w-e')
+            if (Y < dungeon.level.rooms.length - 1 && dungeon.level.rooms[Y][X].type !== 'w-e')
+                if (dungeon.level.rooms[Y + 1][X].type !== 'w-e')
                     drawRoom(Y + 1, X, false)
-            if (X < DL.width - 1 && DL.rooms[Y][X].type !== 'n-s')
-                if (DL.rooms[Y][X + 1].type !== 'n-s')
+            if (X < dungeon.level.width - 1 && dungeon.level.rooms[Y][X].type !== 'n-s')
+                if (dungeon.level.rooms[Y][X + 1].type !== 'n-s')
                     drawRoom(Y, X + 1, false)
-            if (X > 0 && DL.rooms[Y][X].type !== 'n-s')
-                if (DL.rooms[Y][X - 1].type !== 'n-s')
+            if (X > 0 && dungeon.level.rooms[Y][X].type !== 'n-s')
+                if (dungeon.level.rooms[Y][X - 1].type !== 'n-s')
                     drawRoom(Y, X - 1, false)
         }
         vt.restore()
@@ -2257,18 +2179,18 @@ module Dungeon {
 
         vt.cls()
 
-        if (DL.map) {
+        if (dungeon.level.map) {
             for (y = 0; y < paper.length; y++) {
                 if (y % 2) {
-                    for (x = 0; x < DL.width; x++) {
+                    for (x = 0; x < dungeon.level.width; x++) {
                         if ($.player.emulation == 'VT') vt.out('\x1B(0', vt.faint, paper[y].substr(6 * x, 1), '\x1B(B')
                         else vt.out(vt.black, vt.bright, paper[y].substr(6 * x, 1))
 
                         let r = int(y / 2)
-                        occupying(DL.rooms[r][x], vt.attr(vt.reset, vt.faint)
-                            , (DL.map && DL.map !== 'map')
-                            || (DL.rooms[r][x].map && Math.abs(Y - r) < int($.online.int / 15) && Math.abs(X - x) < int($.online.int / 15))
-                            , DL.map == `Marauder's map` || (Ring.power([], $.player.rings, 'identify').power > 0))
+                        occupying(dungeon.level.rooms[r][x], vt.attr(vt.reset, vt.faint)
+                            , (dungeon.level.map && dungeon.level.map !== 'map')
+                            || (dungeon.level.rooms[r][x].map && Math.abs(Y - r) < int($.online.int / 15) && Math.abs(X - x) < int($.online.int / 15))
+                            , dungeon.level.map == `Marauder's map` || (Ring.power([], $.player.rings, 'identify').power > 0))
                     }
                     if ($.player.emulation == 'VT') vt.out('\x1B(0', vt.faint, paper[y].substr(-1), '\x1B(B')
                     else vt.out(vt.black, vt.bright, paper[y].substr(-1))
@@ -2281,9 +2203,9 @@ module Dungeon {
             }
         }
         else {
-            for (y = 0; y < DL.rooms.length; y++)
-                for (x = 0; x < DL.width; x++)
-                    if (DL.rooms[y][x].map)
+            for (y = 0; y < dungeon.level.rooms.length; y++)
+                for (x = 0; x < dungeon.level.width; x++)
+                    if (dungeon.level.rooms[y][x].map)
                         drawRoom(y, x, false)
         }
 
@@ -2294,13 +2216,13 @@ module Dungeon {
 
     function drawRoom(r: number, c: number, keep = true, peek = false) {
         if (keep) vt.save()
-        ROOM = DL.rooms[r][c]
+        ROOM = dungeon.level.rooms[r][c]
         if (peek && !ROOM.map)
             if ($.online.int > 49)
                 ROOM.map = true
 
         let row = r * 2, col = c * 6
-        if (!DL.map) {
+        if (!dungeon.level.map) {
             vt.plot(row + 1, col + 1)
             if ($.player.emulation == 'VT') vt.out('\x1B(0', vt.faint, paper[row].substr(col, 7), '\x1B(B')
             else vt.out(vt.black, vt.bright, paper[row].substr(col, 7))
@@ -2311,14 +2233,14 @@ module Dungeon {
         if ($.player.emulation == 'VT') vt.out('\x1B(0', vt.faint, paper[row].substr(col, 1), '\x1B(B')
         else vt.out(vt.black, vt.bright, paper[row].substr(col, 1))
 
-        occupying(ROOM, peek ? vt.attr(vt.reset) : vt.attr(vt.reset, vt.faint), (DL.map && DL.map !== 'map')
+        occupying(ROOM, peek ? vt.attr(vt.reset) : vt.attr(vt.reset, vt.faint), (dungeon.level.map && dungeon.level.map !== 'map')
             || (ROOM.map && Math.abs(Y - r) < int($.online.int / 15) && Math.abs(X - c) < int($.online.int / 15)),
-            peek || DL.map == `Marauder's map` || (Ring.power([], $.player.rings, 'identify').power > 0))
+            peek || dungeon.level.map == `Marauder's map` || (Ring.power([], $.player.rings, 'identify').power > 0))
 
         if ($.player.emulation == 'VT') vt.out('\x1B(0', vt.faint, paper[row].substr(col + 6, 1), '\x1B(B')
         else vt.out(vt.black, vt.bright, paper[row].substr(col + 6, 1))
 
-        if (!DL.map) {
+        if (!dungeon.level.map) {
             row++
             vt.plot(row + 1, col + 1)
             if ($.player.emulation == 'VT') vt.out('\x1B(0', vt.faint, paper[row].substr(col, 7), '\x1B(B')
@@ -2335,27 +2257,27 @@ module Dungeon {
         looked = false
         refresh = true
 
-        if (!dd[deep])
-            dd[deep] = new Array($.sysop.level)
+        if (!dungeon.domain[deep])
+            dungeon.domain[deep] = new Array($.sysop.level)
 
         //  re-entry?
-        if (dd[deep][Z]) {
-            DL = dd[deep][Z]
+        if (dungeon.domain[deep][Z]) {
+            dungeon.level = dungeon.domain[deep][Z]
             renderMap()
 
             do {
-                Y = dice(DL.rooms.length) - 1
-                X = dice(DL.width) - 1
-                ROOM = DL.rooms[Y][X]
+                Y = dice(dungeon.level.rooms.length) - 1
+                X = dice(dungeon.level.width) - 1
+                ROOM = dungeon.level.rooms[Y][X]
             } while (ROOM.type) //  teleport into a chamber only
 
-            DL.alert = true
-            DL.exit = false
-            DL.events++
-            DL.moves = DL.moves > DL.rooms.length * DL.width
-                ? DL.rooms.length * DL.width
-                : DL.moves > DL.width
-                    ? DL.moves - DL.width
+            dungeon.level.alert = true
+            dungeon.level.exit = false
+            dungeon.level.events++
+            dungeon.level.moves = dungeon.level.moves > dungeon.level.rooms.length * dungeon.level.width
+                ? dungeon.level.rooms.length * dungeon.level.width
+                : dungeon.level.moves > dungeon.level.width
+                    ? dungeon.level.moves - dungeon.level.width
                     : 1
             recovery()
             return
@@ -2376,7 +2298,7 @@ module Dungeon {
                 maxCol++
 
             //  template level
-            dd[deep][Z] = <ddd>{
+            dungeon.domain[deep][Z] = <ddd>{
                 alert: true,
                 cleric: {
                     user: {
@@ -2396,18 +2318,18 @@ module Dungeon {
             }
 
             //  allocate level
-            DL = dd[deep][Z]
+            dungeon.level = dungeon.domain[deep][Z]
             for (y = 0; y < maxRow; y++) {
-                DL.rooms[y] = new Array(maxCol)
+                dungeon.level.rooms[y] = new Array(maxCol)
                 for (x = 0; x < maxCol; x++)
-                    DL.rooms[y][x] = <room>{ map: true, monster: [], occupant: '', type: '' }
+                    dungeon.level.rooms[y][x] = <room>{ map: true, monster: [], occupant: '', type: '' }
             }
 
             //  shape level
             for (y = 0; y < maxRow; y++) {
                 for (x = 0; x < maxCol; x++) {
                     let n: number
-                    ROOM = DL.rooms[y][x]
+                    ROOM = dungeon.level.rooms[y][x]
                     while ((n = int((dice(4) + dice(4)) / 2) - 1) == 3);
                     if (n == 1 && dice(10 - deep) == n) n += 2 - dice(3)
                     ROOM.type = (n == 0) ? 'cavern' : (n == 1) ? '' : dice(2) == 1 ? 'n-s' : 'w-e'
@@ -2420,24 +2342,24 @@ module Dungeon {
             spider(0, 0)
             for (y = 0; y < maxRow; y++)
                 for (x = 0; x < maxCol; x++)
-                    if (DL.rooms[y][x].map)
+                    if (dungeon.level.rooms[y][x].map)
                         result = true
 
         } while (result)
 
-        PC.reroll(DL.cleric.user, DL.cleric.user.pc, DL.cleric.user.level)
-        PC.activate(DL.cleric)
+        PC.reroll(dungeon.level.cleric.user, dungeon.level.cleric.user.pc, dungeon.level.cleric.user.level)
+        PC.activate(dungeon.level.cleric)
         vt.wall($.player.handle, `enters dungeon level ${romanize(deep + 1)}.${Z + 1}`)
 
         renderMap()
         do {
-            Y = dice(DL.rooms.length) - 1
-            X = dice(DL.width) - 1
-            ROOM = DL.rooms[Y][X]
+            Y = dice(dungeon.level.rooms.length) - 1
+            X = dice(dungeon.level.width) - 1
+            ROOM = dungeon.level.rooms[Y][X]
         } while (ROOM.type)
 
         //	populate this new floor with monsters ...
-        let n = int(DL.rooms.length * DL.width / 6) + dice(Z / 9) + dice(deep)
+        let n = int(dungeon.level.rooms.length * dungeon.level.width / 6) + dice(Z / 9) + dice(deep)
             + dice(Z < 50 && $.online.cha < 80 ? ((80 - $.online.cha) / 9) : ((100 - $.online.cha) / 3))
         while (n)
             if (putMonster())
@@ -2452,87 +2374,87 @@ module Dungeon {
         if (!$.player.novice) {
             //	dwarven merchant
             if (dice($.online.str - dank) <= dank) {
-                y = dice(DL.rooms.length) - 1
-                x = dice(DL.width) - 1
-                DL.rooms[y][x].occupant = 'dwarf'
+                y = dice(dungeon.level.rooms.length) - 1
+                x = dice(dungeon.level.width) - 1
+                dungeon.level.rooms[y][x].occupant = 'dwarf'
             }
             //	wheel of life
             if (dice(100 - level + dank) <= dank) {
-                y = dice(DL.rooms.length) - 1
-                x = dice(DL.width) - 1
-                DL.rooms[y][x].occupant = 'wheel'
+                y = dice(dungeon.level.rooms.length) - 1
+                x = dice(dungeon.level.width) - 1
+                dungeon.level.rooms[y][x].occupant = 'wheel'
             }
             //	wishing well
             if (well && dice((120 - level) / 3 - dank) == 1) {
-                y = dice(DL.rooms.length) - 1
-                x = dice(DL.width) - 1
-                DL.rooms[y][x].occupant = 'well'
+                y = dice(dungeon.level.rooms.length) - 1
+                x = dice(dungeon.level.width) - 1
+                dungeon.level.rooms[y][x].occupant = 'well'
             }
             //	wicked old witch
             if ($.sorceress && Z > 20 && dank > 4 && dice((120 - level) / 3 - dank) == 1) {
-                y = dice(DL.rooms.length) - 1
-                x = dice(DL.width) - 1
-                DL.rooms[y][x].occupant = 'witch'
+                y = dice(dungeon.level.rooms.length) - 1
+                x = dice(dungeon.level.width) - 1
+                dungeon.level.rooms[y][x].occupant = 'witch'
             }
             //	deep dank dungeon portal
             if (deep < 9 && deep < $.player.immortal && Z / 9 < $.player.immortal) {
-                y = dice(DL.rooms.length) - 1
-                x = dice(DL.width) - 1
-                DL.rooms[y][x].occupant = 'portal'
+                y = dice(dungeon.level.rooms.length) - 1
+                x = dice(dungeon.level.width) - 1
+                dungeon.level.rooms[y][x].occupant = 'portal'
             }
         }
         //	thief(s) in other spaces
         if (!$.player.novice && dice(100 / dank * level) <= dank)
-            wow = int(dice(DL.rooms.length) * dice(DL.width) / 2)
+            wow = int(dice(dungeon.level.rooms.length) * dice(dungeon.level.width) / 2)
         if (!$.player.coward) wow--
         n = dice(deep / 4) + wow
         for (let i = 0; i < n; i++) {
             do {
-                y = dice(DL.rooms.length) - 1
-                x = dice(DL.width) - 1
-            } while (DL.rooms[y][x].type == 'cavern')
-            DL.rooms[y][x].occupant = 'thief'
+                y = dice(dungeon.level.rooms.length) - 1
+                x = dice(dungeon.level.width) - 1
+            } while (dungeon.level.rooms[y][x].type == 'cavern')
+            dungeon.level.rooms[y][x].occupant = 'thief'
         }
 
         //	a cleric in another space
         do {
-            y = dice(DL.rooms.length) - 1
-            x = dice(DL.width) - 1
-        } while (DL.rooms[y][x].type == 'cavern' || DL.rooms[y][x].monster.length || DL.rooms[y][x].occupant)
-        DL.rooms[y][x].occupant = 'cleric'
+            y = dice(dungeon.level.rooms.length) - 1
+            x = dice(dungeon.level.width) - 1
+        } while (dungeon.level.rooms[y][x].type == 'cavern' || dungeon.level.rooms[y][x].monster.length || dungeon.level.rooms[y][x].occupant)
+        dungeon.level.rooms[y][x].occupant = 'cleric'
 
         //	a wizard in another space
         do {
-            y = dice(DL.rooms.length) - 1
-            x = dice(DL.width) - 1
-        } while (DL.rooms[y][x].type == 'cavern' || DL.rooms[y][x].monster.length || DL.rooms[y][x].occupant)
-        DL.rooms[y][x].occupant = 'wizard'
+            y = dice(dungeon.level.rooms.length) - 1
+            x = dice(dungeon.level.width) - 1
+        } while (dungeon.level.rooms[y][x].type == 'cavern' || dungeon.level.rooms[y][x].monster.length || dungeon.level.rooms[y][x].occupant)
+        dungeon.level.rooms[y][x].occupant = 'wizard'
 
         //	set some trapdoors
-        n = int(DL.rooms.length * DL.width / 10)
+        n = int(dungeon.level.rooms.length * dungeon.level.width / 10)
         if (dice(100 - Z) > (deep + 1))
             n += dice(Z / 16 + 2)
         while (n--) {
-            y = dice(DL.rooms.length) - 1
-            x = dice(DL.width) - 1
-            if (!DL.rooms[y][x].occupant)
-                DL.rooms[y][x].occupant = 'trapdoor'
+            y = dice(dungeon.level.rooms.length) - 1
+            x = dice(dungeon.level.width) - 1
+            if (!dungeon.level.rooms[y][x].occupant)
+                dungeon.level.rooms[y][x].occupant = 'trapdoor'
         }
 
         //	help will always be given at Hogwarts to those who deserve it
         if (!$.player.coward)
             if ($.player.novice || dice($.player.wins * dank + $.player.immortal + 1) >= (dank + level)) {
-                y = dice(DL.rooms.length) - 1
-                x = dice(DL.width) - 1
-                DL.rooms[y][x].giftItem = 'map'
-                DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⎅' : Dot
+                y = dice(dungeon.level.rooms.length) - 1
+                x = dice(dungeon.level.width) - 1
+                dungeon.level.rooms[y][x].giftItem = 'map'
+                dungeon.level.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⎅' : dungeon.Dot
             }
 
         //	populate treasure(s)
         wow = 1
         if (!$.player.novice && !$.player.coward)
             if (dice(100 / dank * level) <= dank)
-                wow += int(dice(DL.rooms.length) * dice(DL.width) / 2)
+                wow += int(dice(dungeon.level.rooms.length) * dice(dungeon.level.width) / 2)
         wow += dice(level / 33) + dice(dank / 3) - 2
 
         //  generate a roulette wheel of specials
@@ -2552,47 +2474,47 @@ module Dungeon {
 
         for (let i = 0; i < wow && gift.length; i++) {
             do {
-                y = dice(DL.rooms.length) - 1
-                x = dice(DL.width) - 1
-            } while (DL.rooms[y][x].giftItem || DL.rooms[y][x].occupant == 'wizard')
-            if (Ring.power([], $.player.rings, 'identify').power) DL.rooms[y][x].map = true
+                y = dice(dungeon.level.rooms.length) - 1
+                x = dice(dungeon.level.width) - 1
+            } while (dungeon.level.rooms[y][x].giftItem || dungeon.level.rooms[y][x].occupant == 'wizard')
+            if (Ring.power([], $.player.rings, 'identify').power) dungeon.level.rooms[y][x].map = true
 
-            //	magic potion
+            //	magic dungeon.potion
             if (dice(111 - $.online.cha) > dice(dank) - int($.player.coward)) {
-                DL.rooms[y][x].giftItem = 'potion'
-                DL.rooms[y][x].giftID = false
-                DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '≬' : Dot
+                dungeon.level.rooms[y][x].giftItem = 'potion'
+                dungeon.level.rooms[y][x].giftID = false
+                dungeon.level.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '≬' : dungeon.Dot
                 n = dice(130 - deep)
                 for (let j = 0; j < 16 && n > 0; j++) {
                     let v = 15 - j
-                    DL.rooms[y][x].giftValue = v
+                    dungeon.level.rooms[y][x].giftValue = v
                     if ($.player.magic < 2 && (v == 10 || v == 11))
-                        DL.rooms[y][x].giftValue = (v == 11) ? 9 : 0
+                        dungeon.level.rooms[y][x].giftValue = (v == 11) ? 9 : 0
                     n -= j + 1
                 }
                 continue
             }
 
             //	what else ya got?
-            v = dice(gift.length) - 1
-            DL.rooms[y][x].giftItem = gift.splice(v, 1)[0]
-            DL.rooms[y][x].giftValue = 0
+            let v = dice(gift.length) - 1
+            dungeon.level.rooms[y][x].giftItem = gift.splice(v, 1)[0]
+            dungeon.level.rooms[y][x].giftValue = 0
             v = 0
 
-            switch (DL.rooms[y][x].giftItem) {
+            switch (dungeon.level.rooms[y][x].giftItem) {
                 case 'armor':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⛨' : Dot
+                    dungeon.level.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⛨' : dungeon.Dot
                     n = Armor.special.length - 1
                     for (v = 0; v < n && $.online.armor.ac >= Armor.name[Armor.special[v]].ac; v++);
                     break
 
                 case 'chest':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⌂' : Dot
+                    dungeon.level.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⌂' : dungeon.Dot
                     v = dice(8 + 2 * (deep + $.player.steal)) - 1
                     break
 
                 case 'magic':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '∗' : Dot
+                    dungeon.level.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '∗' : dungeon.Dot
                     n = dice(Magic.merchant.length * 16)
                     for (let j = 0; j < Magic.merchant.length && n > 0; j++) {
                         v = Magic.merchant.length - j
@@ -2601,12 +2523,12 @@ module Dungeon {
                     break
 
                 case 'map':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⎅' : Dot
+                    dungeon.level.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⎅' : dungeon.Dot
                     v = 1
                     break
 
                 case 'poison':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⏽' : Dot
+                    dungeon.level.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⏽' : dungeon.Dot
                     n = dice(Poison.merchant.length * 16)
                     for (let j = 0; j < Poison.merchant.length && n > 0; j++) {
                         v = Poison.merchant.length - j
@@ -2615,31 +2537,31 @@ module Dungeon {
                     break
 
                 case 'ring':
-                    if (Ring.have($.player.rings, Ring.theOne)) DL.rooms[y][x].map = true
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⍤' : Dot
+                    if (Ring.have($.player.rings, Ring.theOne)) dungeon.level.rooms[y][x].map = true
+                    dungeon.level.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⍤' : dungeon.Dot
                     if (dice(6 - int(dank / 2)) > 1) {
                         let ring = Ring.common[dice(Ring.common.length) - 1]
-                        DL.rooms[y][x].giftValue = ring
+                        dungeon.level.rooms[y][x].giftValue = ring
                     }
                     else {
                         let ring = Ring.unique[dice(Ring.unique.length) - 1]
-                        DL.rooms[y][x].giftValue = ring
+                        dungeon.level.rooms[y][x].giftValue = ring
                     }
                     break
 
                 case 'weapon':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⚸' : Dot
+                    dungeon.level.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⚸' : dungeon.Dot
                     n = Weapon.special.length - 1
                     for (v = 0; v < n && $.online.weapon.wc >= Weapon.name[Weapon.special[v]].wc; v++);
                     break
 
                 case 'xmagic':
-                    DL.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⋇' : Dot
+                    dungeon.level.rooms[y][x].giftIcon = $.player.emulation == 'XT' ? '⋇' : dungeon.Dot
                     v = Magic.merchant.length + dice(Magic.special.length)
                     break
 
             }
-            if (v) DL.rooms[y][x].giftValue = v
+            if (v) dungeon.level.rooms[y][x].giftValue = v
         }
 
         //  splash any new dungeon background for the adventurer
@@ -2647,24 +2569,24 @@ module Dungeon {
         if (pic !== motif) {
             motif = pic
             vt.profile({ jpg: `dungeon/level${sprintf('%x', motif)}`, handle: "Entering", level: $.player.level, pc: 'dungeon' })
-            ROOM = DL.rooms[Y][X]
+            ROOM = dungeon.level.rooms[Y][X]
             vt.sleep(ROOM.occupant || ROOM.monster.length || ROOM.giftItem ? 3000 : 1000)
             vt.drain()
         }
 
         function spider(r: number, c: number) {
-            DL.rooms[r][c].map = false
-            if (c + 1 < DL.width)
-                if (DL.rooms[r][c + 1].map && DL.rooms[r][c].type !== 'n-s' && DL.rooms[r][c + 1].type !== 'n-s')
+            dungeon.level.rooms[r][c].map = false
+            if (c + 1 < dungeon.level.width)
+                if (dungeon.level.rooms[r][c + 1].map && dungeon.level.rooms[r][c].type !== 'n-s' && dungeon.level.rooms[r][c + 1].type !== 'n-s')
                     spider(r, c + 1)
-            if (r + 1 < DL.rooms.length)
-                if (DL.rooms[r + 1][c].map && DL.rooms[r][c].type !== 'w-e' && DL.rooms[r + 1][c].type !== 'w-e')
+            if (r + 1 < dungeon.level.rooms.length)
+                if (dungeon.level.rooms[r + 1][c].map && dungeon.level.rooms[r][c].type !== 'w-e' && dungeon.level.rooms[r + 1][c].type !== 'w-e')
                     spider(r + 1, c)
             if (c > 0)
-                if (DL.rooms[r][c - 1].map && DL.rooms[r][c].type !== 'n-s' && DL.rooms[r][c - 1].type !== 'n-s')
+                if (dungeon.level.rooms[r][c - 1].map && dungeon.level.rooms[r][c].type !== 'n-s' && dungeon.level.rooms[r][c - 1].type !== 'n-s')
                     spider(r, c - 1)
             if (r > 0)
-                if (DL.rooms[r - 1][c].map && DL.rooms[r][c].type !== 'w-e' && DL.rooms[r - 1][c].type !== 'w-e')
+                if (dungeon.level.rooms[r - 1][c].map && dungeon.level.rooms[r][c].type !== 'w-e' && dungeon.level.rooms[r - 1][c].type !== 'w-e')
                     spider(r - 1, c)
         }
 
@@ -2681,18 +2603,18 @@ module Dungeon {
 
             const box = vt.Draw
             let r: number, c: number
-            paper = new Array(2 * DL.rooms.length + 1)
+            paper = new Array(2 * dungeon.level.rooms.length + 1)
 
             //	draw level borders on an empty sheet of paper
-            paper[0] = '\x00' + box[0].repeat(6 * DL.width - 1) + '\x00'
-            for (r = 1; r < 2 * DL.rooms.length; r++)
-                paper[r] = box[10] + ' '.repeat(6 * DL.width - 1) + box[10]
-            paper[paper.length - 1] = '\x00' + box[0].repeat(6 * DL.width - 1) + '\x00'
+            paper[0] = '\x00' + box[0].repeat(6 * dungeon.level.width - 1) + '\x00'
+            for (r = 1; r < 2 * dungeon.level.rooms.length; r++)
+                paper[r] = box[10] + ' '.repeat(6 * dungeon.level.width - 1) + box[10]
+            paper[paper.length - 1] = '\x00' + box[0].repeat(6 * dungeon.level.width - 1) + '\x00'
 
             //	crawl each room to construct walls
-            for (r = 0; r < DL.rooms.length; r++) {
-                for (c = 0; c < DL.width; c++) {
-                    ROOM = DL.rooms[r][c]
+            for (r = 0; r < dungeon.level.rooms.length; r++) {
+                for (c = 0; c < dungeon.level.width; c++) {
+                    ROOM = dungeon.level.rooms[r][c]
                     let row = r * 2, col = c * 6
 
                     //	north-south corridor
@@ -2751,7 +2673,7 @@ module Dungeon {
 
                         row++
                         paper[row] = replaceAt(paper[row], col, box[
-                            row < 2 * DL.rooms.length ? 10 : 2])
+                            row < 2 * dungeon.level.rooms.length ? 10 : 2])
                     }
 
                     //	west-east corridor
@@ -2809,8 +2731,8 @@ module Dungeon {
                     }
                 }
             }
-            r = 2 * DL.rooms.length
-            c = 6 * DL.width
+            r = 2 * dungeon.level.rooms.length
+            c = 6 * dungeon.level.width
             paper[0] = replaceAt(paper[0], 0, box[7])
             paper[0] = replaceAt(paper[0], c, box[9])
             paper[r] = replaceAt(paper[r], 0, box[1])
@@ -2823,7 +2745,7 @@ module Dungeon {
     }
 
     //	generate a monster: relative to this dungeon level or as fodder
-    function genMonster(dm: monster, m: active, capacity = 0, level = 0) {
+    function genMonster(dm: dungeon, m: active, capacity = 0, level = 0) {
 
         let n: number
         if (!level) {
@@ -2864,10 +2786,10 @@ module Dungeon {
         }
         n = level + v - 1
 
-        m.user.handle = Object.keys(monsters)[n]
-        Object.assign(dm, monsters[m.user.handle])
+        m.user.handle = Object.keys(dungeon.monsters)[n]
+        Object.assign(dm, dungeon.monsters[m.user.handle])
         dm.level = 0
-        dm.size = monsters[m.user.handle].size || 1
+        dm.size = dungeon.monsters[m.user.handle].size || 1
         if (capacity && dm.size > capacity)
             return
 
@@ -2950,15 +2872,15 @@ module Dungeon {
         if (r < 0 && c < 0) {
             respawn = true
             do {
-                r = dice(DL.rooms.length) - 1
-                c = dice(DL.width) - 1
-                room = DL.rooms[r][c]
-            } while (room.monster.length >= DL.mob)
+                r = dice(dungeon.level.rooms.length) - 1
+                c = dice(dungeon.level.width) - 1
+                room = dungeon.level.rooms[r][c]
+            } while (room.monster.length >= dungeon.level.mob)
         }
         else {
             respawn = false
-            room = DL.rooms[r][c]
-            if (room.monster.length >= DL.mob)
+            room = dungeon.level.rooms[r][c]
+            if (room.monster.length >= dungeon.level.mob)
                 return false
         }
 
@@ -2969,7 +2891,7 @@ module Dungeon {
         if (j >= room.size)
             return false
 
-        let dm: monster = { name: '', pc: '' }
+        let dm: dungeon = { name: '', pc: '' }
         let m: active = { monster: { name: '', pc: '' }, user: { id: '', sex: 'I' } }
         let level = 0
         let sum = 0
@@ -2978,7 +2900,7 @@ module Dungeon {
         if (!dm.level) {
             if (respawn) return false
             //  regular capacity exceeded, let's squeeze in a lesser stray
-            level = dice(Z / DL.mob) + (Z <= 60 ? int(Z / 6) : 30) + dice(deep) - 1
+            level = dice(Z / dungeon.level.mob) + (Z <= 60 ? int(Z / 6) : 30) + dice(deep) - 1
             genMonster(dm, m, 0, level)
             if (room.monster.length) sum = room.monster[0].user.level
         }
@@ -3015,7 +2937,7 @@ module Dungeon {
             dm = { name: '', pc: '' }
             m = { monster: { name: '', pc: '' }, user: { id: '', sex: 'I' } }
             genMonster(dm, m, 0, level)
-        } while (room.monster.length < int(3 + DL.mob + deep / 3) && sum < (Z - 3 - room.monster.length))
+        } while (room.monster.length < int(3 + dungeon.level.mob + deep / 3) && sum < (Z - 3 - room.monster.length))
 
         return true
     }
@@ -3045,10 +2967,10 @@ module Dungeon {
     }
 
     //  old cleric mana recovery
-    function recovery(factor = DL.cleric.user.level) {
-        if (!DL.cleric.user.status) {
-            DL.cleric.sp += int(Magic.power(DL.cleric, 7) * DL.cleric.user.level / factor)
-            if (DL.cleric.sp > DL.cleric.user.sp) DL.cleric.sp = DL.cleric.user.sp
+    function recovery(factor = dungeon.level.cleric.user.level) {
+        if (!dungeon.level.cleric.user.status) {
+            dungeon.level.cleric.sp += int(Magic.power(dungeon.level.cleric, 7) * dungeon.level.cleric.user.level / factor)
+            if (dungeon.level.cleric.sp > dungeon.level.cleric.user.sp) dungeon.level.cleric.sp = dungeon.level.cleric.user.sp
         }
     }
 
@@ -3106,15 +3028,15 @@ module Dungeon {
                             }
                         case 'R':
                             PC.portrait($.online, 'flipOutY')
-                            DL.alert = true
-                            DL.events++
-                            DL.exit = false
+                            dungeon.level.alert = true
+                            dungeon.level.events++
+                            dungeon.level.exit = false
                             break
 
                         case 'U':
                             if (Z > 0) {
-                                DL.events++
-                                DL.exit = false
+                                dungeon.level.events++
+                                dungeon.level.exit = false
                                 Z--
                                 PC.portrait($.online, 'backOutUp')
                                 break
@@ -3144,17 +3066,17 @@ module Dungeon {
     }
 
     function quaff(v: number, it = true) {
-        if (!(v % 2) && !potions[v].identified) news(`\t${it ? 'quaffed' : 'tossed'}${an(potion[v])}`)
+        if (!(v % 2) && !dungeon.potions[v].identified) news(`\t${it ? 'quaffed' : 'tossed'}${an(dungeon.potion[v])}`)
         if (it) {
-            if (!potions[v].identified) {
-                potions[v].identified = $.online.int > (85 - 4 * $.player.poison)
+            if (!dungeon.potions[v].identified) {
+                dungeon.potions[v].identified = $.online.int > (85 - 4 * $.player.poison)
                 vt.out(v % 2 ? vt.red : vt.green, 'It was', vt.bright)
                 if ($.player.emulation == 'XT') vt.out(' ', v % 2 ? '🌡️ ' : '🧪')
-                vt.outln(an(potion[v]), vt.normal, '.')
+                vt.outln(an(dungeon.potion[v]), vt.normal, '.')
             }
             vt.sound('quaff', 5)
             switch (v) {
-                //	Potion of Cure Light Wounds
+                //	dungeon.potion of Cure Light Wounds
                 case 0:
                     $.online.hp += PC.hp() + dice($.player.hp - $.online.hp)
                     vt.sound('yum', 3)
@@ -3165,7 +3087,7 @@ module Dungeon {
                     PC.adjust('str', -dice(10), -PC.card($.player.pc).toStr)
                     break
 
-                //	Potion of Charm
+                //	dungeon.potion of Charm
                 case 2:
                     PC.adjust('cha', 100 + dice(10), PC.card($.player.pc).toCha, +($.player.cha == $.player.maxcha))
                     break
@@ -3175,7 +3097,7 @@ module Dungeon {
                     PC.adjust('int', -dice(10), -PC.card($.player.pc).toInt)
                     break
 
-                //	Potion of Agility
+                //	dungeon.potion of Agility
                 case 4:
                     PC.adjust('dex', 100 + dice(10), PC.card($.player.pc).toDex, +($.player.dex == $.player.maxdex))
                     break
@@ -3185,7 +3107,7 @@ module Dungeon {
                     PC.adjust('dex', -dice(10), -PC.card($.player.pc).toDex)
                     break
 
-                //	Potion of Wisdom
+                //	dungeon.potion of Wisdom
                 case 6:
                     PC.adjust('int', 100 + dice(10), PC.card($.player.pc).toInt, +($.player.int == $.player.maxint))
                     break
@@ -3195,7 +3117,7 @@ module Dungeon {
                     PC.adjust('cha', -dice(10), -PC.card($.player.pc).toCha)
                     break
 
-                //	Potion of Stamina
+                //	dungeon.potion of Stamina
                 case 8:
                     PC.adjust('str', 100 + dice(10), PC.card($.player.pc).toStr, +($.player.str == $.player.maxstr))
                     break
@@ -3205,10 +3127,10 @@ module Dungeon {
                     $.online.hp -= dice($.player.hp / 2)
                     vt.sound('hurt', 3)
                     if ($.online.hp < 1)
-                        death(`quaffed${an(potion[v])}`)
+                        death(`quaffed${an(dungeon.potion[v])}`)
                     break
 
-                //	Potion of Mana
+                //	dungeon.potion of Mana
                 case 10:
                     vt.sound('shimmer')
                     $.online.sp += PC.sp() + dice($.player.sp - $.online.sp)
@@ -3258,10 +3180,10 @@ module Dungeon {
                     $.online.hp -= PC.hp()
                     vt.music('crack', 6)
                     if ($.online.hp < 1)
-                        death(`quaffed${an(potion[v])}`)
+                        death(`quaffed${an(dungeon.potion[v])}`)
                     break
 
-                //	Potion of Augment
+                //	dungeon.potion of Augment
                 case 14:
                     vt.sound('hone', 11)
                     PC.adjust('str'
@@ -3288,7 +3210,7 @@ module Dungeon {
 
                 //	Beaker of Death
                 case 15:
-                    death(`quaffed${an(potion[v])}`, true)
+                    death(`quaffed${an(dungeon.potion[v])}`, true)
                     break
             }
         }
@@ -3300,23 +3222,23 @@ module Dungeon {
         if (reveal) {
             let m = room.monster.length > 4 ? 4 : room.monster.length
             if (m) {
-                if ($.player.emulation !== 'XT' && Monster[vt.tty])
-                    icon += Monster[vt.tty][m]
+                if ($.player.emulation !== 'XT' && dungeon.Monster[vt.tty])
+                    icon += dungeon.Monster[vt.tty][m]
                 else {
                     if (identify) {
-                        icon += Mask[m]
+                        icon += dungeon.Mask[m]
                         for (let i = 0; i < m; i++) {
                             let dm = PC.card(room.monster[i].user.pc)
                             icon = icon.replace('ѩ', vt.attr(dm.color || vt.white, dm.unicode))
                         }
                     }
                     else
-                        icon += Mask[m]
+                        icon += dungeon.Mask[m]
                 }
                 o += ` ${icon} `
             }
             else if (room.map) {
-                let tile = Dot
+                let tile = dungeon.Dot
                 if (!room.type || room.type == 'cavern') {
                     o += vt.attr(!room.type ? vt.yellow : vt.red)
                     if ($.player.emulation == 'XT')
@@ -3355,16 +3277,16 @@ module Dungeon {
                     break
 
                 case 'thief':
-                    if ((DL.map == `Marauder's map` || $.player.steal == 4) && !icon)
+                    if ((dungeon.level.map == `Marauder's map` || $.player.steal == 4) && !icon)
                         o = vt.attr(vt.off, vt.faint, `  ${$.player.emulation == 'XT' ? '∞' : $.player.emulation == 'PC' ? '\xA8' : '&'}  `)
                     break
 
                 case 'cleric':
                     o = a + vt.attr(vt.yellow)
                     if (!icon)
-                        icon = DL.cleric.user.status
-                            ? vt.attr(vt.off, vt.faint, vt.uline, $.player.emulation == 'XT' ? '⛼🕱⛼' : `_${Cleric[$.player.emulation]}_`, vt.nouline, vt.normal, vt.yellow)
-                            : vt.attr(vt.normal, vt.uline, '_', vt.faint, Cleric[$.player.emulation], vt.normal, '_', vt.nouline)
+                        icon = dungeon.level.cleric.user.status
+                            ? vt.attr(vt.off, vt.faint, vt.uline, $.player.emulation == 'XT' ? '🕱♱🕱' : `_${dungeon.Cleric[$.player.emulation]}_`, vt.nouline, vt.normal, vt.yellow)
+                            : vt.attr(vt.normal, vt.uline, '_', vt.faint, dungeon.Cleric[$.player.emulation], vt.normal, '_', vt.nouline)
                     else
                         icon += vt.attr(vt.yellow)
                     o += vt.attr(vt.faint, ':', vt.normal, icon, vt.faint, ':')
@@ -3373,7 +3295,7 @@ module Dungeon {
                 case 'wizard':
                     o = a + vt.attr(vt.magenta)
                     if (!icon)
-                        icon = vt.attr(vt.normal, vt.uline, '_', vt.bright, Teleport[$.player.emulation], vt.normal, '_', vt.nouline)
+                        icon = vt.attr(vt.normal, vt.uline, '_', vt.bright, dungeon.Teleport[$.player.emulation], vt.normal, '_', vt.nouline)
                     else
                         icon += vt.attr(vt.magenta)
                     o += vt.attr(vt.faint, '<', vt.normal, icon, vt.faint, '>')
@@ -3397,7 +3319,7 @@ module Dungeon {
 
         vt.out(o)
 
-        if (room.giftItem && (DL.map == `Marauder's map` || Ring.power([], $.player.rings, 'identify').power))
+        if (room.giftItem && (dungeon.level.map == `Marauder's map` || Ring.power([], $.player.rings, 'identify').power))
             vt.out('\x08', vt.reset, vt.faint, room.giftIcon)
     }
 

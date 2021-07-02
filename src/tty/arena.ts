@@ -6,15 +6,16 @@
 import $ = require('../runtime')
 import Battle = require('../battle')
 import db = require('../db')
-import { Access, Armor, Magic, Poison, Ring, Weapon, monsters } from '../items'
+import { Access, Armor, Magic, Poison, Ring, Weapon } from '../items'
 import { bracket, cat, Coin, display, getRing, log, news, tradein, vt } from '../lib'
-import { Elemental, PC } from '../pc'
+import { arena, elemental } from '../npc'
+import { PC } from '../pc'
 import { checkXP, input } from '../player'
 import { sprintf, dice, money, romanize, int } from '../sys'
 
 module Arena {
 
-    let arena: choices = {
+    let main: choices = {
         'U': { description: 'User fights' },
         'M': { description: 'Monster fights' },
         'J': { description: 'Joust users' },
@@ -29,7 +30,7 @@ module Arena {
         if ($.online.altered) PC.save()
         if ($.reason) vt.hangup()
 
-        Elemental.orders('Arena')
+        elemental.orders('Arena')
         vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
@@ -45,15 +46,15 @@ module Arena {
             if ($.player.coin.value >= money($.player.level))
                 hints += `> Carrying too much money here is not a good idea.  Spend it in the Square\n  or deposit it in the Bank for safer keeping.\n`
         }
-        vt.form['menu'].prompt = display('arena', vt.Red, vt.red, suppress, arena, hints)
+        vt.form['menu'].prompt = display('arena', vt.Red, vt.red, suppress, main, hints)
         input('menu')
     }
 
     function choice() {
         let suppress = false
         let choice = vt.entry.toUpperCase()
-        if (arena[choice]?.description) {
-            vt.out(' - ', arena[choice].description)
+        if (main[choice]?.description) {
+            vt.out(' - ', main[choice].description)
             suppress = $.player.expert
         }
         vt.outln()
@@ -262,7 +263,7 @@ module Arena {
                             if (vt.entry.length) {
                                 let mon = int(vt.entry)
                                 if (! /D/i.test(vt.entry)) {
-                                    if (mon < 1 || mon > monsters.length) {
+                                    if (mon < 1 || mon > arena.monsters.length) {
                                         vt.out(' ?? ')
                                         vt.refocus()
                                         return
@@ -278,7 +279,7 @@ module Arena {
                                 menu()
                             }
                         }
-                        , prompt: 'Fight what monster (' + vt.attr(vt.white, '1-' + monsters.length, vt.cyan, ', ', bracket('D', false), vt.cyan, 'emon)? ')
+                        , prompt: 'Fight what monster (' + vt.attr(vt.white, '1-' + arena.monsters.length, vt.cyan, ', ', bracket('D', false), vt.cyan, 'emon)? ')
                         , min: 0, max: 2
                     }
                 }
@@ -516,29 +517,29 @@ module Arena {
         }
         else {
             let mon = int(vt.entry) - 1
-            if (mon == monsters.length - 1) vt.sound('demogorgon')
+            if (mon == arena.monsters.length - 1) vt.sound('demogorgon')
             monster = <active>{}
-            monster.user = <user>{ id: '', handle: monsters[mon].name, sex: 'I' }
-            PC.reroll(monster.user, monsters[mon].pc, monsters[mon].level)
+            monster.user = <user>{ id: '', handle: arena.monsters[mon].name, sex: 'I' }
+            PC.reroll(monster.user, arena.monsters[mon].pc, arena.monsters[mon].level)
 
-            monster.user.weapon = monsters[mon].weapon
-            monster.user.armor = monsters[mon].armor
-            monster.user.rings = monsters[mon].rings || []
+            monster.user.weapon = arena.monsters[mon].weapon
+            monster.user.armor = arena.monsters[mon].armor
+            monster.user.rings = arena.monsters[mon].rings || []
             monster.user.spells = []
-            if (monsters[mon].spells)
-                for (let i = 0; i < monsters[mon].spells.length; i++)
-                    Magic.add(monster.user.spells, monsters[mon].spells[i])
+            if (arena.monsters[mon].spells)
+                for (let i = 0; i < arena.monsters[mon].spells.length; i++)
+                    Magic.add(monster.user.spells, arena.monsters[mon].spells[i])
 
             PC.activate(monster)
-            if (monsters[mon].adept) monster.adept = monsters[mon].adept
-            monster.user.coin.amount = monsters[mon].money.toString()
+            if (arena.monsters[mon].adept) monster.adept = int(arena.monsters[mon].adept)
+            monster.user.coin.amount = arena.monsters[mon].money.toString()
 
             cat('arena/' + monster.user.handle.toLowerCase())
             vt.profile({
                 jpg: 'arena/' + monster.user.handle.toLowerCase()
                 , handle: `#${mon + 1} - ${monster.user.handle}`
                 , level: monster.user.level, pc: monster.user.pc.toLowerCase()
-                , effect: monsters[mon].effect
+                , effect: arena.monsters[mon].effect || 'fadeIn'
             })
 
             vt.out(`The ${monster.user.handle} is a level ${monster.user.level} ${monster.user.pc}`)
@@ -552,7 +553,7 @@ module Arena {
                     cb: () => {
                         vt.outln()
                         if (/Y/i.test(vt.entry)) {
-                            if (mon == monsters.length - 1)
+                            if (mon == arena.monsters.length - 1)
                                 vt.music('boss' + $.arena--)
                             else
                                 vt.music('combat' + $.arena--)

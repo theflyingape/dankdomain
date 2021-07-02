@@ -6,7 +6,8 @@
 import $ = require('../runtime')
 import db = require('../db')
 import { cat, display, vt } from '../lib'
-import { Deed, Elemental, PC } from '../pc'
+import { elemental } from '../npc'
+import { Deed, PC } from '../pc'
 import { input } from '../player'
 import { date2full, dice, sprintf } from '../sys'
 
@@ -22,7 +23,7 @@ module Library {
     }
 
     export function menu(suppress = false) {
-        Elemental.orders('Library')
+        elemental.orders('Library')
         vt.form = {
             'menu': { cb: choice, cancel: 'Q', enter: '?', eol: false }
         }

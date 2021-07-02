@@ -36,7 +36,21 @@ interface active {
     hp?: number         //  <0=retreated, 0=killed, >0=alive
     sp?: number
     hull?: number
-    monster?: monster
+    monster?: dungeon
+    effect?: string
+}
+
+interface arena {
+    name: string
+    level: number
+    pc: string
+    weapon: string | number
+    armor: string | number
+    money: string
+    adept?: number
+    spells?: number[]
+    poisons?: number[]
+    rings?: string[]
     effect?: string
 }
 
@@ -150,23 +164,7 @@ interface deeds {
     starting: number
 }
 
-interface gang {
-    name: string
-    members: string[]
-    handles: string[]
-    genders: string[]
-    melee: number[]
-    status: string[]
-    validated: boolean[]
-    win: number
-    loss: number
-    banner: number
-    trim: number
-    back: number
-    fore: number
-}
-
-interface monster {
+interface dungeon {
     name: string
     pc: string
     adept?: number
@@ -181,6 +179,22 @@ interface monster {
     armor?: string | number
     money?: string | number
     effect?: string
+}
+
+interface gang {
+    name: string
+    members: string[]
+    handles: string[]
+    genders: string[]
+    melee: number[]
+    status: string[]
+    validated: boolean[]
+    win: number
+    loss: number
+    banner: number
+    trim: number
+    back: number
+    fore: number
 }
 
 interface naval {

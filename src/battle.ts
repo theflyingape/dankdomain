@@ -7,7 +7,8 @@ import $ = require('./runtime')
 import db = require('./db')
 import { Access, Armor, Magic, Poison, Ring, Weapon } from './items'
 import { armor, bracket, buff, Coin, death, getRing, log, news, rings, tradein, vt, weapon } from './lib'
-import { Deed, Elemental, PC } from './pc'
+import { elemental } from './npc'
+import { Deed, PC } from './pc'
 import { checkXP, input } from './player'
 import { an, cuss, date2full, dice, fs, int, money, pathTo, sprintf, titlecase, whole } from './sys'
 
@@ -500,9 +501,9 @@ module Battle {
 
                 if ($.access.bot) {
                     if ($.online.hp < int($.player.hp / 9) + $.player.level && dice($.player.melee / 2 + $.player.steal / 2) == 1)
-                        Elemental.flush('r')
+                        elemental.flush('r')
                     else
-                        Elemental.flush('a')
+                        elemental.flush('a')
                 }
                 input('attack')
                 return
@@ -2369,7 +2370,7 @@ module Battle {
                         vt.outln('\n', vt.green, '> ', vt.bright, 'double-click (tap) the Player ID to pick your selection.')
 
                     vt.action('freetext')
-                    input('user', Elemental[venue] || $.player.id)
+                    input('user', elemental[venue] || $.player.id)
                     return
                 }
             }

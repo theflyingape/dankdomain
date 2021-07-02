@@ -7,14 +7,12 @@ import { int, pathTo } from "./sys"
 
 module Items {
 
-    export const ITEMS = pathTo('items')
-
     class _access {
 
         name: access[]
 
         constructor() {
-            this.name = require(`${ITEMS}/access.json`)
+            this.name = require(pathTo('items', 'access.json'))
         }
     }
 
@@ -26,7 +24,7 @@ module Items {
         special: string[] = []
 
         constructor() {
-            this.name = require(`${ITEMS}/armor.json`)
+            this.name = require(pathTo('items', 'armor.json'))
             for (let i in this.name) {
                 if (this.name[i].armoury)
                     this.merchant.push(i)
@@ -207,7 +205,7 @@ module Items {
 
         constructor(ring: _ring) {
             this.ring = ring
-            this.spells = require(`${ITEMS}/magic.json`)
+            this.spells = require(pathTo('items', 'magic.json'))
             for (let i in this.spells) {
                 if (this.spells[i].cost)
                     this.merchant.push(i)
@@ -301,7 +299,7 @@ module Items {
         merchant: string[] = []
 
         constructor() {
-            this.vials = require(`${ITEMS}/poison.json`)
+            this.vials = require(pathTo('items', 'poison.json'))
             for (let i in this.vials) {
                 if (this.vials[i].cost)
                     this.merchant.push(i)
@@ -354,7 +352,7 @@ module Items {
         merchant: string[] = []
 
         constructor() {
-            this.name = require(`${ITEMS}/realestate.json`)
+            this.name = require(pathTo('items', 'realestate.json'))
             for (let i in this.name)
                 this.merchant.push(i)
         }
@@ -367,7 +365,7 @@ module Items {
         theOne: string
 
         constructor() {
-            this.name = require(`${ITEMS}/ring.json`)
+            this.name = require(pathTo('items', 'ring.json'))
             for (let i in this.name)
                 if (this.name[i].unique)
                     this.unique.push(i)
@@ -431,7 +429,7 @@ module Items {
         merchant: string[] = []
 
         constructor() {
-            this.name = require(`${ITEMS}/security.json`)
+            this.name = require(pathTo('items', 'security.json'))
             for (let i in this.name)
                 this.merchant.push(i)
         }
@@ -445,7 +443,7 @@ module Items {
         special: string[] = []
 
         constructor() {
-            this.name = require(`${ITEMS}/weapon.json`)
+            this.name = require(pathTo('items', 'weapon.json'))
             for (let i in this.name) {
                 if (this.name[i].shoppe)
                     this.merchant.push(i)
@@ -545,7 +543,6 @@ module Items {
     export const RealEstate = new _realestate
     export const Security = new _security
     export const Weapon = new _weapon
-    export const monsters: monster[] = require(pathTo('etc', 'arena.json'))
 }
 
 export = Items

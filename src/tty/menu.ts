@@ -8,7 +8,8 @@ import Battle = require('../battle')
 import db = require('../db')
 import { Armor, RealEstate, Ring, Security, Weapon } from '../items'
 import { cat, Coin, display, emulator, log, news, tradein, vt } from '../lib'
-import { Deed, Elemental, PC } from '../pc'
+import { elemental } from '../npc'
+import { Deed, PC } from '../pc'
 import { checkXP, input, pickPC } from '../player'
 import { an, cuss, dice, fs, int, money, pathTo, sprintf } from '../sys'
 
@@ -47,7 +48,7 @@ module Main {
         if ($.reason) vt.hangup()
         if (!suppress) vt.profile({ png: ['castle', 'joust', 'dragon'][dice(3) - 1], effect: 'pulse' })
 
-        Elemental.orders('MainMenu')
+        elemental.orders('MainMenu')
         vt.form = {
             'menu': { cb: choice, cancel: 'Q', enter: '?', eol: false }
         }
@@ -96,7 +97,7 @@ module Main {
 
             case 'G':
                 vt.animated('fadeOut')
-                Elemental.orders('Casino')
+                elemental.orders('Casino')
                 require('./gambling').menu(false)
                 return
 
@@ -154,13 +155,12 @@ module Main {
 
             case 'N':
                 vt.animated('fadeOut')
-                Elemental.orders('Naval')
+                elemental.orders('Naval')
                 require('./naval').menu($.player.expert)
                 return
 
             case 'P':
                 vt.animated('fadeOut')
-                Elemental.orders('Party')
                 require('./party').menu($.player.expert)
                 return
 
@@ -319,7 +319,6 @@ module Main {
                         PC.save(opponent)
                         news(`\trobbed ${opponent.user.handle}`)
                         log(opponent.user.id, `\n${$.player.handle} robbed you!`)
-                        Elemental.orders('Square')
                     }
                     else {
                         vt.beep()
@@ -349,7 +348,6 @@ module Main {
                 }
                 vt.animated('fadeOut')
                 vt.music('tavern' + dice(4))
-                Elemental.orders('Tavern')
                 require('./tavern').menu($.player.expert)
                 return
 

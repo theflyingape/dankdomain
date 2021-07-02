@@ -8,7 +8,8 @@ import Battle = require('../battle')
 import db = require('../db')
 import { Armor, Magic, Poison, Weapon } from '../items'
 import { bracket, cat, Coin, death, display, log, vt, weapon } from '../lib'
-import { Elemental, PC } from '../pc'
+import { dungeon, elemental } from '../npc'
+import { PC } from '../pc'
 import { checkXP, input } from '../player'
 import { cuss, dice, int, money, sprintf, titlecase, whole } from '../sys'
 
@@ -47,7 +48,7 @@ module Party {
         if (!$.reason && $.online.hp < 1) death('fought bravely?')
         if ($.reason) vt.hangup()
 
-        Elemental.orders('Party')
+        elemental.orders('Party')
         vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
@@ -481,7 +482,6 @@ module Party {
                                 }
                             }
 
-                            let monsters: monster = require('../etc/dungeon.json')
                             nme = new Array()
                             for (let i = 0; i < 4 && i < o.members.length; i++) {
                                 if (!/_MM.$/.test(o.members[i])) {
@@ -497,29 +497,29 @@ module Party {
                                     nme.push(<active>{})
                                     nme[i].user = <user>{ id: '' }
 
-                                    let mon = dice(3) - 2 + (posse[i] ? posse[i].user.level : dice(Object.keys(monsters).length / 2))
-                                    mon = mon < 0 ? 0 : mon >= Object.keys(monsters).length ? Object.keys(monsters).length - 1 : mon
-                                    let dm = Object.keys(monsters)[mon]
+                                    let mon = dice(3) - 2 + (posse[i] ? posse[i].user.level : dice(Object.keys(dungeon.monsters).length / 2))
+                                    mon = mon < 0 ? 0 : mon >= Object.keys(dungeon.monsters).length ? Object.keys(dungeon.monsters).length - 1 : mon
+                                    let dm = Object.keys(dungeon.monsters)[mon]
                                     let ml = mon + dice(3) - 2
                                     ml = ml < 1 ? 1 : ml > 99 ? 99 : ml
                                     nme[i].user.handle = dm
                                     nme[i].user.sex = 'I'
-                                    PC.reroll(nme[i].user, monsters[dm].pc ? monsters[dm].pc : $.player.pc, ml)
+                                    PC.reroll(nme[i].user, dungeon.monsters[dm].pc ? dungeon.monsters[dm].pc : $.player.pc, ml)
 
-                                    nme[i].user.weapon = monsters[dm].weapon ? monsters[dm].weapon : Weapon.merchant[int((Weapon.merchant.length - 1) * ml / 100) + 1]
-                                    nme[i].user.armor = monsters[dm].armor ? monsters[dm].armor : Armor.merchant[int((Armor.merchant.length - 1) * ml / 100) + 1]
+                                    nme[i].user.weapon = dungeon.monsters[dm].weapon ? dungeon.monsters[dm].weapon : Weapon.merchant[int((Weapon.merchant.length - 1) * ml / 100) + 1]
+                                    nme[i].user.armor = dungeon.monsters[dm].armor ? dungeon.monsters[dm].armor : Armor.merchant[int((Armor.merchant.length - 1) * ml / 100) + 1]
 
                                     nme[i].user.poisons = []
-                                    if (monsters[dm].poisons)
-                                        for (let vials in monsters[dm].poisons)
-                                            Poison.add(nme[i].user.poisons, monsters[dm].poisons[vials])
+                                    if (dungeon.monsters[dm].poisons)
+                                        for (let vials in dungeon.monsters[dm].poisons)
+                                            Poison.add(nme[i].user.poisons, dungeon.monsters[dm].poisons[vials])
 
-                                    nme[i].user.rings = monsters[dm].rings || []
+                                    nme[i].user.rings = dungeon.monsters[dm].rings || []
 
                                     nme[i].user.spells = []
-                                    if (monsters[dm].spells)
-                                        for (let magic in monsters[dm].spells)
-                                            Magic.add(nme[i].user.spells, monsters[dm].spells[magic])
+                                    if (dungeon.monsters[dm].spells)
+                                        for (let magic in dungeon.monsters[dm].spells)
+                                            Magic.add(nme[i].user.spells, dungeon.monsters[dm].spells[magic])
 
                                     PC.activate(nme[i])
                                     nme[i].user.toWC = int(nme[i].weapon.wc / 4) + 1
@@ -566,7 +566,7 @@ module Party {
                         }, prompt: 'Fight this gang (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
                     }
                 }
-                input('gang', Elemental.Party || (dice(2) == 1 ? 'M' : ''))
+                input('gang', elemental.Party || (dice(2) == 1 ? 'M' : ''))
                 return
 
             case 'Q':
