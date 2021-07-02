@@ -98,13 +98,13 @@ module player {
                 bonus = true
                 vt.music()
                 if (rpc.user.novice) {
+                    PC.portrait()
                     PC.reroll(rpc.user, $.sysop.pc, rpc.user.level)
                     rpc.user.novice = false
                     rpc.user.expert = true
                     vt.outln(vt.cyan, vt.bright, 'You are no longer a novice.  Welcome to the next level of play!')
                     vt.sound('welcome', 9)
-                    vt.outln('You morph into', vt.yellow, an(rpc.user.pc), vt.reset, '.', -250)
-                    PC.portrait()
+                    vt.outln('You morph into', vt.yellow, an(rpc.user.pc), vt.reset, '.', -600)
                     vt.sound('cheer', 21)
                 }
                 vt.sound('demon', 17)

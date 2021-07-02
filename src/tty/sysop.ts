@@ -10,7 +10,7 @@ import Email = require('../email')
 import { bracket, display, vt } from '../lib'
 import { PC } from '../pc'
 import { input } from '../player'
-import { now, sprintf, titlecase } from '../sys'
+import { fs, now, pathTo, sprintf, titlecase } from '../sys'
 
 module Sysop {
 
@@ -20,6 +20,7 @@ module Sysop {
         'N': { description: 'Newsletter' },
         'R': { description: 'Reroll' },
         'T': { description: 'Tavern/Taxman records' },
+        'X': { description: 'terminate: Reroll character' },
         'Y': { description: 'Your Scout' }
     }
 
@@ -46,10 +47,6 @@ module Sysop {
         let rs = []
 
         switch (choice) {
-            case 'Q':
-                require('./menu').menu($.player.expert)
-                return
-
             case 'B':
                 vt.outln()
                 vt.outln(vt.Blue, vt.white, ` ID   Player's Handle           Class    Lvl  `)
@@ -103,6 +100,10 @@ module Sysop {
                 }
                 vt.outln('done.', -1000)
                 break
+
+            case 'Q':
+                require('./menu').menu($.player.expert)
+                return
 
             case 'R':
                 let pc: string
@@ -178,6 +179,27 @@ module Sysop {
                 PC.load($.barkeep)
                 PC.status($.barkeep)
                 vt.focus = 'taxman'
+                return
+
+            case 'X':
+                vt.music('ddd')
+                Battle.user('Reroll', (opponent: active) => {
+                    if (opponent.user.id == $.player.id) {
+                        opponent.user.id = ''
+                        vt.outln(`You can't reroll yourself here.`)
+                        vt.refocus()
+                        return
+                    }
+                    if (opponent.user.id) {
+                        PC.reroll(opponent.user)
+                        PC.newkeys(opponent.user)
+                        opponent.user.keyhints.splice(12)
+                        PC.save(opponent)
+                        fs.unlink(pathTo('users', '.${user.id}.json'), () => { })
+                        return
+                    }
+                    menu()
+                })
                 return
 
             case 'Y':
