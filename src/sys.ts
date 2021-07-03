@@ -23,8 +23,6 @@ module sys {
     export const LOG = pathTo('files/user')
     if (!fs.existsSync(LOG)) fs.mkdirSync(LOG)
 
-    export const USERS = pathTo('users')
-
     export function an(item: string, show = true): string {
         return ' ' + (/a|e|i|o|u/i.test(item[0]) ? 'an' : 'a') + ' ' + (show ? item : '')
     }

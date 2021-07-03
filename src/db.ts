@@ -4,13 +4,13 @@
 \*****************************************************************************/
 
 import Database = require('better-sqlite3')
-import { fs, now, path, pathTo, USERS } from './sys'
+import { fs, now, pathTo } from './sys'
 import { Access, Coin, Ring } from './items'
 
 module db {
 
-    export const NPC = require(pathTo('etc', 'npc.json'))
-    let defaults = require(path.resolve(USERS, 'defaults.json'))
+    export const NPC = require(pathTo('npcs', 'id.json'))
+    let defaults = require(pathTo('users', 'defaults.json'))
     defaults.bounty = new Coin(defaults.bounty)
     defaults.coin = new Coin(defaults.coin)
     defaults.bank = new Coin(defaults.bank)

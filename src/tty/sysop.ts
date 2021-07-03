@@ -20,7 +20,7 @@ module Sysop {
         'N': { description: 'Newsletter' },
         'R': { description: 'Reroll' },
         'T': { description: 'Tavern/Taxman records' },
-        'X': { description: 'terminate: Reroll character' },
+        'X': { description: 'terminate: Reroll a player' },
         'Y': { description: 'Your Scout' }
     }
 

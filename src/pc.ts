@@ -7,7 +7,7 @@ import $ = require('./runtime')
 import db = require('./db')
 import { Access, Armor, Magic, Ring, Weapon } from './items'
 import { armor, Coin, vt, weapon } from './lib'
-import { date2full, dice, fs, int, isActive, money, now, pathTo, romanize, sprintf, titlecase, USERS, whole } from './sys'
+import { date2full, dice, fs, int, isActive, money, now, pathTo, romanize, sprintf, titlecase } from './sys'
 
 module pc {
 
@@ -287,7 +287,7 @@ module pc {
                 //  restore NPC to its static state
                 if (user.id[0] == '_' && user.id !== "_SYS") {
                     try {
-                        const npc: user = JSON.parse(fs.readFileSync(pathTo(USERS, `${db.NPC[user.id]}.json`)).toString())
+                        const npc: user = JSON.parse(fs.readFileSync(pathTo('npcs', `${db.NPC[user.id]}.json`)).toString())
                         if (npc) {
                             Object.assign(user, npc)
                             this.reroll(user, user.pc, user.level)
@@ -623,7 +623,7 @@ module pc {
                         bank: user.bank.carry(4, true),
                         loan: user.loan.carry(4, true)
                     })
-                    const trace = pathTo(USERS, `.${user.id}.json`)
+                    const trace = pathTo('users', `.${user.id}.json`)
                     fs.writeFileSync(trace, JSON.stringify(save, null, 2))
                 }
                 catch { }

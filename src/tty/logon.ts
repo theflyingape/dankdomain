@@ -9,7 +9,7 @@ import { Access, Magic, Ring } from '../items'
 import { bracket, cat, Coin, emulator, getRing, news, time, vt } from '../lib'
 import { Deed, PC } from '../pc'
 import { input, logoff, pickPC } from '../player'
-import { an, cuss, date2full, dice, fs, got, money, now, pathTo, titlecase, USERS, whole } from '../sys'
+import { an, cuss, date2full, dice, fs, got, money, now, pathTo, titlecase, whole } from '../sys'
 
 module Logon {
 
@@ -535,10 +535,10 @@ module Logon {
     function lastCallers() {
         vt.out(vt.cyan, '\nLast callers were: ', vt.white)
         try {
-            $.callers = JSON.parse(fs.readFileSync(`${USERS}/callers.json`).toString())
+            $.callers = JSON.parse(fs.readFileSync(pathTo('users', 'callers.json')).toString())
             for (let last in $.callers) {
                 vt.outln(vt.bright, $.callers[last].who, vt.normal, ' (', $.callers[last].reason, ')')
-                vt.out(-125, '                   ')
+                vt.out(-100, '                   ')
             }
         }
         catch (err) {
@@ -644,7 +644,7 @@ module Logon {
                 }
                 db.run(`DELETE FROM Players WHERE id='${rs[row].id}'`)
                 fs.unlink(pathTo('files/user', `${rs[row].id}.txt`), () => { })
-                fs.unlink(`${USERS}/.${rs[row].id}.json`, () => { })
+                fs.unlink(pathTo('users', `.${rs[row].id}.json`), () => { })
                 vt.out('x')
                 continue
             }
