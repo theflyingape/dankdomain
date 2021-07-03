@@ -75,7 +75,7 @@ module db {
 
     Object.keys(NPC).forEach((id) => {
         try {
-            let npc: user = JSON.parse(fs.readFileSync(pathTo('users', `${NPC[id]}.json`)).toString())
+            let npc: user = JSON.parse(fs.readFileSync(pathTo('npcs', `${NPC[id]}.json`)).toString())
             if (npc) {
                 const access = npc.access
                 if (!loadUser(npc)) {

@@ -93,7 +93,7 @@ module pc {
         winning: string
 
         constructor() {
-            this.name = require(pathTo('etc', 'dankdomain.json'))
+            this.name = require(pathTo('items', 'character.json'))
             this.types = Object.keys(this.name).length
             this.classes = new Array()
             this.total = 0
