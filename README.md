@@ -110,6 +110,7 @@ $ node /usr/local/games/dankdomain/main 0
 $ pwd
 /usr/local/games/dankdomain
 .vscode/          Visual Studio Code: settings & debug profiles
+characters        bot, player, and non-playing characters
 console/          MAME support files
 door/             web services: app server startup: ƊƊnet
 ../static         game portal
@@ -130,7 +131,7 @@ files/            game, menu & player support files: ANSI and/or text formats
 ../tavern         all player events logged for the day
 ../user           each player’s events logged since last visit
 items/            game artifacts
-users/            player data files
+users/            player runtime data files
 node_modules/     Node.js support libraries
 tty/              game modules for each main menu item
 package.json      Node.js manifest
