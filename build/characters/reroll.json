@@ -1,0 +1,11 @@
+{
+  "pc": "Spirit",
+  "blessed": "", "cursed": "", "coward": false,
+  "bounty": "0c", "who": "",
+	"coin": "1c",	"bank": "10c",
+	"weapon": "Dart", "toWC": 1,
+	"armor": "Wooden Shield", "toAC": 1,
+  "poisons": [], "rings": [], "spells": [],
+  "realestate": "Alley", "security": "Whiskey bottle",
+  "hull": 50, "cannon": 0, "ram": false
+}

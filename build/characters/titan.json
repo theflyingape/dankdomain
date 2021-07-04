@@ -1,0 +1,13 @@
+{
+  "pc": "Titan",
+  "backstab": 1, "melee": 3, "poison": 2, "steal": 1,
+  "magic": 3, "heal": 3, "blast": 3,
+  "str": 60, "maxstr": 98,
+  "int": 50, "maxint": 98,
+  "dex": 80, "maxdex": 98,
+  "cha": 30, "maxcha": 98,
+  "weapon": "Dagger",
+  "poisons": [ 1 ],
+  "rings": [ "Lucky" ],
+  "spells": [ 1,2,3,4 ]
+}

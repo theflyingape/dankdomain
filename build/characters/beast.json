@@ -1,0 +1,9 @@
+{
+  "pc": "Beast",
+  "backstab": 1, "melee": 2, "poison": 0, "steal": 1,
+  "magic": 2, "heal": 0, "blast": 0,
+  "str": 63, "maxstr": 90,
+  "int": 44, "maxint": 90,
+  "dex": 63, "maxdex": 90,
+  "cha": 30, "maxcha": 90
+}

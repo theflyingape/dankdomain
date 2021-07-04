@@ -1,0 +1,11 @@
+{
+  "pc": "Sage",
+  "backstab": 0, "melee": 0, "poison": 2, "steal": 2,
+  "magic": 4, "heal": 4, "blast": 2,
+  "str": 40, "maxstr": 80,
+  "int": 55, "maxint": 99,
+  "dex": 70, "maxdex": 90,
+  "cha": 35, "maxcha": 90,
+  "weapon": [ "Staff" ],
+  "spells": [ 1,2,3,4,5,6,11,17,18 ]
+}

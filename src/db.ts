@@ -10,11 +10,6 @@ import { Access, Coin, Ring } from './items'
 module db {
 
     export const NPC = require(pathTo('npcs', 'id.json'))
-    let defaults = require(pathTo('users', 'defaults.json'))
-    defaults.bounty = new Coin(defaults.bounty)
-    defaults.coin = new Coin(defaults.coin)
-    defaults.bank = new Coin(defaults.bank)
-    defaults.loan = new Coin(defaults.loan)
 
     export const DD = pathTo('users', 'dankdomain.sql')
     let sqlite3: Database.Database
@@ -63,7 +58,8 @@ module db {
             novice integer, level numeric, xp numeric, xplevel numeric, status text,
             blessed text, cursed text, coward integer, bounty numeric, who text,
             gang text, keyseq text, keyhints text, melee numeric, backstab numeric,
-            poison numeric, magic numeric, steal numeric, hp numeric, sp numeric,
+            poison numeric, steal numeric, magic numeric, heal numeric, blast numeric,
+            hp numeric, sp numeric,
             str numeric, maxstr numeric, int numeric, maxint numeric, dex numeric,
             maxdex numeric, cha numeric, maxcha numeric, coin numeric, bank numeric,
             loan numeric, weapon text, toWC numeric, armor text, toAC numeric,
@@ -82,7 +78,7 @@ module db {
                     console.info(' + adding', NPC[id], '-', npc.handle)
                     npc.id = id
                     npc.access = access
-                    saveUser(newUser(npc), true)
+                    saveUser(fillUser(npc), true)
                 }
             }
         }
@@ -97,6 +93,16 @@ module db {
         )`)
         run(`INSERT INTO Gangs VALUES ( 'AB Original', 'IMA,NOB,_DM,_WOW', 0, 0, 86, 99 )`)
         run(`INSERT INTO Gangs VALUES ( 'Monster Mash', '_MM1,_MM2,_MM3,_MM4', 0, 0, 0, 0 )`)
+    }
+
+    //  apply an external template file on a character
+    export function fillUser(user: user = { id: '' }, template = 'inituser'): user {
+        let tmp: user = Object.assign({}, JSON.parse(fs.readFileSync(pathTo('characters', `${template.toLowerCase()}.json`))))
+        tmp.bounty = new Coin(tmp.bounty.toString())
+        tmp.coin = new Coin(tmp.coin.toString())
+        tmp.bank = new Coin(tmp.bank.toString())
+        tmp.loan = new Coin(tmp.loan.toString())
+        return Object.assign(user, tmp)
     }
 
     export function loadUser(user: user): boolean {
@@ -169,16 +175,6 @@ module db {
         }
     }
 
-    //  normalize a new user object
-    export function newUser(user: user = { id: '' }): user {
-        let result = Object.assign({}, defaults)
-        if (typeof user.bounty == 'string') user.bounty = new Coin(user.bounty)
-        if (typeof user.coin == 'string') user.coin = new Coin(user.coin)
-        if (typeof user.bank == 'string') user.bank = new Coin(user.bank)
-        if (typeof user.loan == 'string') user.loan = new Coin(user.loan)
-        return Object.assign(result, user)
-    }
-
     export function unlock(id: string, mine = false): number {
         if (mine) return run(`DELETE FROM Online WHERE id!='${id}' AND pid=${process.pid}`).changes
         return run(`DELETE FROM Online WHERE id='${id}'`).changes
@@ -222,7 +218,8 @@ module db {
             , novice, level, xp, xplevel, status
             , blessed, cursed, coward, bounty, who
             , gang, keyseq, keyhints, melee, backstab
-            , poison, magic, steal, hp, sp
+            , poison, magic, heal, blast, steal
+            , hp, sp
             , str, maxstr, int, maxint, dex
             , maxdex, cha, maxcha, coin, bank
             , loan, weapon, toWC, armor, toAC
@@ -238,7 +235,8 @@ module db {
             , ${+user.novice}, ${user.level}, ${user.xp}, ${user.xplevel}, '${user.status}'
             ,'${user.blessed}', '${user.cursed}', ${+user.coward}, ${user.bounty.value}, '${user.who}'
             ,'${user.gang}', '${user.keyseq}', '${user.keyhints.toString()}', ${user.melee}, ${user.backstab}
-            , ${user.poison}, ${user.magic}, ${user.steal}, ${user.hp}, ${user.sp}
+            , ${user.poison}, ${user.magic}, ${user.steal}, ${user.heal}, ${user.blast}
+            , ${user.hp}, ${user.sp}
             , ${user.str}, ${user.maxstr}, ${user.int}, ${user.maxint}, ${user.dex}
             , ${user.maxdex}, ${user.cha}, ${user.maxcha}, ${user.coin.value}, ${user.bank.value}
             , ${user.loan.value}, '${user.weapon}', ${user.toWC}, '${user.armor}', ${user.toAC}
@@ -255,7 +253,8 @@ module db {
             novice=${+user.novice}, level=${user.level}, xp=${user.xp}, xplevel=${user.xplevel}, status='${user.status}',
             blessed='${user.blessed}', cursed='${user.cursed}', coward=${+user.coward}, bounty=${user.bounty.value}, who='${user.who}',
             gang='${user.gang}', keyseq='${user.keyseq}', keyhints='${user.keyhints.toString()}', melee=${user.melee}, backstab=${user.backstab},
-            poison=${user.poison}, magic=${user.magic}, steal=${user.steal}, hp=${user.hp}, sp=${user.sp},
+            poison=${user.poison}, magic=${user.magic}, heal=${user.heal}, blast=${user.blast}, steal=${user.steal}
+            , hp=${user.hp}, sp=${user.sp},
             str=${user.str}, maxstr=${user.maxstr}, int=${user.int}, maxint=${user.maxint}, dex=${user.dex},
             maxdex=${user.maxdex}, cha=${user.cha}, maxcha=${user.maxcha}, coin=${user.coin.value}, bank=${user.bank.value},
             loan=${user.loan.value}, weapon='${user.weapon}', toWC=${user.toWC}, armor='${user.armor}', toAC=${user.toAC},

@@ -1,0 +1,12 @@
+{
+  "pc": "Ranger",
+  "backstab": 2, "melee": 2, "poison": 0, "steal": 2,
+  "magic": 2, "heal": 3, "blast": 1,
+  "str": 65, "maxstr": 95,
+  "int": 35, "maxint": 90,
+  "dex": 65, "maxdex": 90,
+  "cha": 35, "maxcha": 90,
+  "toAC": 2,
+  "poisons": [ 1,2,3,4 ],
+  "spells": [ 5,6,7,23,24 ]
+}

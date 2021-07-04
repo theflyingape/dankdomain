@@ -1,0 +1,9 @@
+{
+  "pc": "Psionic",
+  "backstab": 1, "melee": 1, "poison": 1, "steal": 1,
+  "magic": 4, "heal": 2, "blast": 4,
+  "str": 40, "maxstr": 82,
+  "int": 60, "maxint": 96,
+  "dex": 40, "maxdex": 90,
+  "cha": 60, "maxcha": 90
+}

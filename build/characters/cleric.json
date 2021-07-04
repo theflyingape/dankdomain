@@ -1,0 +1,12 @@
+{
+  "pc": "Cleric",
+  "backstab": 1, "melee": 2, "poison": 1, "steal": 1,
+  "magic": 3, "heal": 3, "blast": 1,
+  "str": 50, "maxstr": 90,
+  "int": 55, "maxint": 90,
+  "dex": 60, "maxdex": 80,
+  "cha": 35, "maxcha": 95,
+  "poisons": [ 1 ],
+  "rings": [ "Nobility" ],
+  "spells": [ 7,13 ]
+}

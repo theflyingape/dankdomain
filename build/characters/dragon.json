@@ -1,0 +1,9 @@
+{
+  "pc": "Dragon",
+  "backstab": 0, "melee": 4, "poison": 0, "steal": 4,
+  "magic": 3, "heal": 0, "blast": 4,
+  "str": 45, "maxstr": 99,
+  "int": 45, "maxint": 90,
+  "dex": 55, "maxdex": 88,
+  "cha": 55, "maxcha": 85
+}

@@ -1,0 +1,9 @@
+{
+  "pc": "Lizard",
+  "backstab": 0, "melee": 1, "poison": 3, "steal": 3,
+  "magic": 1, "heal": 1, "blast": 1,
+  "str": 50, "maxstr": 92,
+  "int": 50, "maxint": 88,
+  "dex": 50, "maxdex": 92,
+  "cha": 50, "maxcha": 80
+}

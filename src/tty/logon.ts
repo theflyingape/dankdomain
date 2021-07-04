@@ -570,6 +570,7 @@ module Logon {
             newDay()
             db.run(`UPDATE Players SET today=0 WHERE id NOT GLOB '_*'`)
         }
+        $.player = db.fillUser()
     }
 
     function newDay() {

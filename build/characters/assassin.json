@@ -1,0 +1,11 @@
+{
+  "pc": "Assassin",
+  "backstab": 2, "melee": 1, "poison": 2, "steal": 2,
+  "magic": 1, "heal": 2, "blast": 2,
+  "str": 55, "maxstr": 90,
+  "int": 30, "maxint": 90,
+  "dex": 75, "maxdex": 95,
+  "cha": 40, "maxcha": 90,
+  "weapon": "Dagger",
+  "spells": [ 8,14,19 ]
+}

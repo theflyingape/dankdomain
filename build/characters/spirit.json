@@ -1,0 +1,9 @@
+{
+  "pc": "Spirit",
+  "backstab": 0, "melee": 0, "poison": 0, "steal": 0,
+  "magic": 0, "heal": 4, "blast": 0,
+  "str": 50, "maxstr": 50,
+  "int": 50, "maxint": 50,
+  "dex": 50, "maxdex": 50,
+  "cha": 50, "maxcha": 50
+}

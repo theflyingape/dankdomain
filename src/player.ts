@@ -282,13 +282,11 @@ module player {
         if (!Access.name[$.player.access].roleplay) return
 
         if ($.player.novice) {
-            let novice = <user>{ novice: true }
-            Object.assign(novice, JSON.parse(fs.readFileSync(pathTo('users', 'novice.json'))))
+            const novice: user = Object.assign({}, JSON.parse(fs.readFileSync(pathTo('characters', 'novice.json'))))
             PC.reroll($.player, novice.pc)
             Object.assign($.player, novice)
             $.player.coin = new Coin(novice.coin.toString())
             $.player.bank = new Coin(novice.bank.toString())
-            PC.newkeys($.player)
 
             vt.outln('Since you are a new user here, you are automatically assigned a character', -1000)
             vt.out('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.', -1000)

@@ -1,0 +1,11 @@
+{
+  "pc": "Barbarian",
+  "backstab": 1, "melee": 4, "poison": 1, "steal": 1,
+  "magic": 1, "heal": 1, "blast": 1,
+  "str": 75, "maxstr": 99,
+  "int": 25, "maxint": 80,
+  "dex": 65, "maxdex": 90,
+  "cha": 35, "maxcha": 90,
+  "armor": "Small Shield",
+  "poisons": [ 1 ]
+}

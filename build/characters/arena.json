@@ -1,5 +1,5 @@
 [
-  { "name":"Kobold", "level":1, "pc":"Lizard", "weapon":"Sling", "armor":"Wooden Shield", "money":"15c", "effect":"pulse" },
+  { "name":"Kobold", "level":1, "pc":"Lizard", "weapon":"Sling", "armor":0, "money":"15c", "effect":"pulse" },
   { "name":"Orc", "level":3, "pc":"Beast", "weapon":"Dagger", "armor":"Small Shield", "money":"45c", "effect":"bounce" },
   { "name":"Ogre", "level":5, "pc":"Ogre", "weapon":"Club", "armor":"Large Shield", "money":"100c", "effect":"bounceInDown" },
   { "name":"Gnoll", "level":7, "pc":"Beast", "weapon":"Mace", "armor":"Leather", "money":"500c", "effect":"bounceInLeft" },

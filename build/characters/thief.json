@@ -1,0 +1,11 @@
+{
+  "pc": "Thief",
+  "backstab": 3, "melee": 1, "poison": 0, "steal": 4,
+  "magic": 0, "heal": 0, "blast": 0,
+  "str": 66, "maxstr": 90,
+  "int": 33, "maxint": 90,
+  "dex": 71, "maxdex": 99,
+  "cha": 30, "maxcha": 80,
+  "weapon": [ "Dagger" ], "toWC": 2,
+  "poisons": [ 1,2 ]
+}

@@ -32,7 +32,7 @@
   },
   "typescript.tsdk": "node_modules/typescript/lib",
   "[json]": {
-    "editor.defaultFormatter": null,
+    "editor.defaultFormatter": "vscode.json-language-features",
     "editor.formatOnSave": false,
     "editor.formatOnSaveMode": "file",
     "editor.suggest.insertMode": "replace",

@@ -1,0 +1,9 @@
+{
+  "pc": "Undead",
+  "backstab": 0, "melee": 4, "poison": 1, "steal": 1,
+  "magic": 2, "heal": 2, "blast": 2,
+  "str": 62, "maxstr": 98,
+  "int": 38, "maxint": 90,
+  "dex": 62, "maxdex": 88,
+  "cha": 38, "maxcha": 70
+}

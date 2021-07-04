@@ -93,7 +93,7 @@ module pc {
         winning: string
 
         constructor() {
-            this.name = require(pathTo('items', 'character.json'))
+            this.name = require(pathTo('characters', 'class.json'))
             this.types = Object.keys(this.name).length
             this.classes = new Array()
             this.total = 0
@@ -350,7 +350,7 @@ module pc {
             return gang
         }
 
-        newkeys(user: user) {
+        newkeys(user = $.player) {
             let keys = ['P', 'G', 'S', 'C']
             let prior = user.keyhints || []
             user.keyhints = ['', '', '', '', '', '', '', '', '', '', '', '', ...prior.slice(12)]
@@ -404,205 +404,115 @@ module pc {
             level = level > 99 ? 99 : level < 1 ? 1 : level
             user.level = level
             user.pc = dd ? dd : Object.keys(this.name['player'])[0]
-            user.status = ''
-
-            let rpc = this.card(user.pc)
-            user.melee = rpc.melee
-            user.backstab = rpc.backstab
-            if (!(user.poison = rpc.poison)) user.poisons = []
-            if (!(user.magic = rpc.magic)) user.spells = []
-            user.steal = rpc.steal
-            user.str = rpc.baseStr
-            user.int = rpc.baseInt
-            user.dex = rpc.baseDex
-            user.cha = rpc.baseCha
-            user.maxstr = rpc.maxStr
-            user.maxint = rpc.maxInt
-            user.maxdex = rpc.maxDex
-            user.maxcha = rpc.maxCha
+            const rpc = this.card(user.pc)
+            //  reset any prior experience
             user.xp = 0
-            user.hp = 15
-            user.sp = user.magic > 1 ? 15 : 0
-
-            //  reset these prior experiences
             user.jl = 0
             user.jw = 0
             user.steals = 0
             user.tl = 0
             user.tw = 0
-
-            //  reset for new or non player
-            if (!user.id || user.id[0] == '_' || user.bot) {
-                user.calls = 0
-                user.emulation = vt.emulation
-                user.expert = false
-                user.gang = user.gang || ''
-                user.gender = user.sex || 'I'
-                user.immortal = 0
-                user.novice = !user.id && user.gender !== 'I'
-                user.remote = ''
-                user.rows = process.stdout.rows || 24
-                user.today = 0
-                user.wins = 0
-
-                user.lastdate = now().date
-                user.lasttime = now().time
-                if (isNaN(user.dob)) user.dob = now().date
-                if (isNaN(user.joined)) {
-                    user.joined = now().date
-                    user.expires = user.joined + $.sysop.expires
-                    this.newkeys(user)
-                    //  init for new user registration
-                    if (user === $.player) {
-                        user.novice = true
-                        for (let title in Access.name) {
-                            if (!Access.name[title].roleplay && Access.name[title].verify) {
-                                user.access = title
-                                $.access = Access.name[user.access]
-                                break
-                            }
-                        }
-                    }
-                }
-
-                user.bounty = new Coin(0)
-                user.coin = new Coin(0)
-                user.bank = new Coin(0)
-                user.loan = new Coin(0)
-                user.realestate = ''
-                user.security = ''
-                user.keyhints = []
-                user.who = ''
-            }
-
-            if (level == 1) {
-                Object.assign(user, JSON.parse(fs.readFileSync(pathTo('users', 'reroll.json'))))
-                user.gender = user.sex
-                user.coin = new Coin(user.coin.toString())
-                user.bank = new Coin(user.bank.toString())
-                user.loan = new Coin(0)
-                //  force a verify if their access allows it
-                // if (!user.novice && !$.access.sysop) user.email = ''
-            }
-
+            //  load character class template
+            db.fillUser(user, user.pc)
+            user.hp = 15
+            user.sp = user.magic > 1 ? 15 : 0
+            user.status = ''
+            //  reset pc, spawn or restore npc
             if (level == 1 || !user.id || user.id[0] == '_') {
-                //  no extra free or augmented stuff
-                user.poisons = []
-                user.spells = []
-                if (user.rings) user.rings.forEach(ring => { this.saveRing(ring) })
-                user.rings = []
-                user.toAC = 0
-                user.toWC = 0
-                user.hull = 0
-                user.cannon = 0
-                user.ram = false
-                user.blessed = ''
-                user.cursed = ''
-                user.coward = false
-                user.plays = 0
-                user.retreats = 0
-                user.killed = 0
-                user.kills = 0
-                user.bounty = new Coin(0)
-                user.who = ''
+                db.fillUser(user, 'reroll')
+                PC.newkeys(user)
+                user.gender = user.sex
             }
-
+            //  morph or spawn
             if (user.level > 1) user.xp = this.experience(user.level - 1, 1, user.int)
+            //  exists in spirit or for real
             user.xplevel = (user.pc == Object.keys(this.name['player'])[0]) ? 0 : user.level
-
+            //  level up
             for (let n = 2; n <= level; n++) {
                 user.level = n
                 if (user.level == 50 && user.gender !== 'I' && user.id[0] !== '_' && !user.novice) {
-                    vt.out(vt.reset, vt.bright, vt.yellow, '+', vt.reset, ' Bonus ')
-                    let d: number = 0
-                    while (!d) {
-                        d = dice(9)
+                    vt.out(vt.off, vt.yellow, vt.bright, '+', vt.reset, ' Bonus ', vt.faint)
+                    let d: number
+                    do {
+                        d = dice(10) - 1
                         switch (d) {
+                            case 0:
+                                if (user.maxstr < 97 || user.maxint < 97 || user.dex < 97 || user.maxcha < 97) break
                             case 1:
-                                if (user.maxstr > 94) d = 0
-                                break
+                                if (user.maxstr < 91) break
                             case 2:
-                                if (user.maxint > 94) d = 0
-                                break
+                                if (user.maxint < 91) break
                             case 3:
-                                if (user.maxdex > 94) d = 0
-                                break
+                                if (user.maxdex < 91) break
                             case 4:
-                                if (user.maxcha > 94) d = 0
-                                break
+                                if (user.maxcha > 91) break
                             case 5:
-                                if (user.melee > 2) d = 0
-                                break
+                                if (user.melee < 3) break
                             case 6:
-                                if (user.backstab > 2) d = 0
-                                break
+                                if (user.backstab < 3) break
                             case 7:
-                                if (user.poison > 2) d = 0
-                                break
+                                if (user.poison < 3) break
                             case 8:
-                                if (user.magic > 2) d = 0
-                                break
+                                if (user.magic < 3) break
                             case 9:
-                                if (user.steal > 2) d = 0
-                                break
+                                if (user.steal < 4) break
+                                d = -1
                         }
-                    }
+                    } while (d < 0)
 
                     switch (d) {
+                        case 0:
+                            vt.out('Ability')
+                            if ((user.maxstr += 3) > 99) user.maxstr = 99
+                            if ((user.maxint += 3) > 99) user.maxint = 99
+                            if ((user.maxdex += 3) > 99) user.maxdex = 99
+                            if ((user.maxcha += 3) > 99) user.maxcha = 99
+                            break
                         case 1:
-                            if ((user.maxstr += 10) > 99)
-                                user.maxstr = 99
                             vt.out('Strength')
+                            if ((user.maxstr += 10) > 99) user.maxstr = 99
                             break
                         case 2:
-                            if ((user.maxint += 10) > 99)
-                                user.maxint = 99
                             vt.out('Intellect')
+                            if ((user.maxint += 10) > 99) user.maxint = 99
                             break
                         case 3:
-                            if ((user.maxdex += 10) > 99)
-                                user.maxdex = 99
                             vt.out('Dexterity')
+                            if ((user.maxdex += 10) > 99) user.maxdex = 99
                             break
                         case 4:
-                            if ((user.maxcha += 10) > 99)
-                                user.maxcha = 99
                             vt.out('Charisma')
+                            if ((user.maxcha += 10) > 99) user.maxcha = 99
                             break
                         case 5:
-                            user.melee++
                             vt.out('Melee')
+                            user.melee++
                             break
                         case 6:
-                            user.backstab++
                             vt.out('Backstab')
+                            user.backstab++
                             break
                         case 7:
-                            user.poison++
                             vt.out('Poison')
+                            user.poison++
                             break
                         case 8:
-                            if (user.magic < 4)
-                                user.magic++
                             vt.out('Spellcasting')
+                            user.magic++
                             break
                         case 9:
-                            user.steal++
                             vt.out('Stealing')
+                            user.steal++
                             break
                     }
-                    vt.out(' added')
+                    vt.out(vt.normal, ' added')
                     if (user != $.player) vt.out(' to ', user.handle)
-                    vt.outln(' ', vt.bright, vt.yellow, '+')
+                    vt.outln(' ', vt.yellow, vt.bright, '+')
                 }
-                if ((user.str += rpc.toStr) > user.maxstr)
-                    user.str = user.maxstr
-                if ((user.int += rpc.toInt) > user.maxint)
-                    user.int = user.maxint
-                if ((user.dex += rpc.toDex) > user.maxdex)
-                    user.dex = user.maxdex
-                if ((user.cha += rpc.toCha) > user.maxcha)
-                    user.cha = user.maxcha
+                if ((user.str += rpc.toStr) > user.maxstr) user.str = user.maxstr
+                if ((user.int += rpc.toInt) > user.maxint) user.int = user.maxint
+                if ((user.dex += rpc.toDex) > user.maxdex) user.dex = user.maxdex
+                if ((user.cha += rpc.toCha) > user.maxcha) user.cha = user.maxcha
                 user.hp += this.hp(user)
                 user.sp += this.sp(user)
             }

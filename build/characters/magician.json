@@ -1,0 +1,12 @@
+{
+  "pc": "Magician",
+  "backstab": 1, "melee": 0, "poison": 2, "steal": 2,
+  "magic": 3, "heal": 3, "blast": 3,
+  "str": 40, "maxstr": 85,
+  "int": 65, "maxint": 98,
+  "dex": 65, "maxdex": 90,
+  "cha": 30, "maxcha": 90,
+  "rings": [ "Detection" ],
+  "spells": [ 8,14 ],
+  "weapon": "Staff"
+}

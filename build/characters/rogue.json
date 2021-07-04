@@ -1,0 +1,12 @@
+{
+  "pc": "Rogue",
+  "backstab": 1, "melee": 1, "poison": 1, "steal": 3,
+  "magic": 2, "heal": 2, "blast": 2,
+  "str": 45, "maxstr": 95,
+  "int": 45, "maxint": 95,
+  "dex": 75, "maxdex": 95,
+  "cha": 35, "maxcha": 95,
+  "weapon": "Dagger", "toWC": 2,
+  "poisons": [ 1 ],
+  "spells": [ 1,2,3,4 ]
+}

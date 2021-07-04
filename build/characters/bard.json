@@ -1,0 +1,12 @@
+{
+  "pc": "Bard",
+  "backstab": 2, "melee": 1, "poison": 1, "steal": 2,
+  "magic": 2, "heal": 2, "blast": 2,
+  "str": 50, "maxstr": 90,
+  "int": 50, "maxint": 90,
+  "dex": 65, "maxdex": 85,
+  "cha": 35, "maxcha": 98,
+  "poisons": [ 1 ],
+  "rings": [ "Lucky" ],
+  "spells": [ 1,2,3,4 ]
+}

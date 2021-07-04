@@ -1,0 +1,9 @@
+{
+  "backstab": 1, "melee": 1, "poison": 4, "steal": 2,
+  "magic": 0, "heal": 0, "blast": 0,
+  "str": 60, "maxstr": 90,
+  "int": 35, "maxint": 95,
+  "dex": 65, "maxdex": 90,
+  "cha": 40, "maxCha": 90,
+  "poisons": [ 1,2,3,4 ], "toWC": 2, "toAC": 2
+}

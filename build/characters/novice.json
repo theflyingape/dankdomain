@@ -1,0 +1,14 @@
+{
+	"pc": "Novice",	"novice": true,
+  "backstab": 1, "melee": 3, "poison": 2, "steal": 0,
+  "magic": 0, "heal": 0, "blast": 0,
+  "str": 52, "maxstr": 90,
+  "int": 48, "maxint": 90,
+  "dex": 70, "maxdex": 90,
+  "cha": 30, "maxcha": 90,
+	"coin": "1c",	"bank": "25c",
+	"weapon": "Sling", "toWC": 1,
+	"armor": "Small Shield", "toAC": 1,
+  "poisons": [ 1 ], "rings": [], "spells": [],
+	"realestate": "Cardboard box", "security": "Baseball bat"
+}

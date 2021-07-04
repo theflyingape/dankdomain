@@ -94,33 +94,20 @@ interface cards {
 }
 
 interface character {
-    melee: number       //  0-4
-    backstab: number    //  0-4
-    poison: number      //  0-4
-    magic: number       //  0-4
-    steal: number       //  0-4
-    baseStr: number     //  20-80
-    baseInt: number     //  20-80
-    baseDex: number     //  20-80
-    baseCha: number     //  20-80
     toStr: number       //  0-4
     toInt: number       //  0-4
     toDex: number       //  0-4
     toCha: number       //  0-4
-    maxStr: number      //  baseStr-99
-    maxInt: number      //  baseInt-99
-    maxDex: number      //  baseDex-99
-    maxCha: number      //  baseCha-99
+    bonusStr?: number   //  0-2
+    bonusInt?: number   //  0-2
+    bonusDex?: number   //  0-2
+    bonusCha?: number   //  0-2
     unicode: string     //  dungeon map symbol
     color?: number      //  symbol's color
     skip?: string       //  action
     difficulty?: string //  playing level
     specialty?: string  //  meta
     description?: string[]
-    bonusStr?: number    //  0-2
-    bonusInt?: number    //  0-2
-    bonusDex?: number    //  0-2
-    bonusCha?: number    //  0-2
 }
 
 interface choice {
@@ -347,6 +334,8 @@ interface user {
     maxdex?: number
     cha?: number
     maxcha?: number
+    heal?: number
+    blast?: number
 
     //  character materials
     coin?: coin

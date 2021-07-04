@@ -68,7 +68,7 @@ module Battle {
                 PC.adjust('dex', 102, 1, 1)
                 PC.adjust('cha', 102, 1, 1)
                 const msg = `survived ${$.online.who.his} chance encounter with ${parties[1][0].user.handle}`
-                news(`\t$msg}`)
+                news(`\t${msg}`)
                 vt.wall($.player.handle, msg)
             }
             else {

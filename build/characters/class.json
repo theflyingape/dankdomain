@@ -1,0 +1,290 @@
+{
+  "player": {
+    "Spirit": {
+      "toStr": 0, "toInt": 0, "toDex": 0, "toCha": 0,
+      "unicode": "⚨",
+      "difficulty": "n/a", "specialty": "npc",
+      "description": [
+        "An unassigned player that gets re-rolled upon next login."
+      ]
+    },
+    "Novice": {
+      "toStr": 1, "toInt": 1, "toDex": 1, "toCha": 1,
+      "bonusStr": 2, "bonusInt": 2, "bonusDex": 2, "bonusCha": 2,
+      "unicode": "☥",
+      "difficulty": "easiest", "specialty": "Newbie versus newbies",
+      "description": [
+        "You start off as a novice fighter.  A Novice class adventurer is quite",
+        "capable of defeating any of the toughest creatures, but you are not",
+        "eligible to engage other player classes yet.",
+        "",
+        "Upon reaching level 50, you will be given a new title, which grants you all",
+        "the rights & privileges worthy of a Fighter adventurer.",
+        "",
+        "Enjoy your stay here.  And please visit often enough to keep your character,",
+        "and the rest of the competition, alive and healthy.  If for whatever reason",
+        "you cannot play for a stretch of time, this system automatically deactivates",
+        "your character.  If this should ever happen, just sign on when you can",
+        "and your character will reactivate."
+      ]
+    },
+    "Alchemist": {
+      "toStr": 1, "toInt": 2, "toDex": 1, "toCha": 1,
+      "bonusStr": 0, "bonusInt": 1, "bonusDex": 1, "bonusCha": 1,
+      "unicode": "⍺", "skip": "elude",
+      "difficulty": "simple", "specialty": "Powerful Venenum",
+      "description": [
+        "The Alchemist depends greatly on the ability to use poisons.  This skill",
+        "enables applying 4x the poison value yielding the greatest effect on a",
+        "weapon.  Without that aid, the Alchemist leaves much to be desired as far",
+        "as natural fighting skills are concerned.  Being a creature of science,",
+        "this class does not buy any magical device.  The Alchemist may, however,",
+        "resist the effects of a spell or magical device.  Alchemists receive",
+        "an extra bonus in Intellect per experience level."
+      ]
+    },
+    "Assassin": {
+      "toStr": 1, "toInt": 1, "toDex": 2, "toCha": 1,
+      "bonusStr": 1, "bonusInt": 0, "bonusDex": 1, "bonusCha": 1,
+      "unicode": "⚳", "skip": "slip",
+      "difficulty": "basic", "specialty": "Backstab/Poison",
+      "description": [
+        "A ninja-style fighter, the Assassin has extra fighting ability making them",
+        "tough to defeat.  With the use of poisons and backstabs, the Assassin will",
+        "usually have enough firepower to defeat any fighting class.  Assassins",
+        "receive an extra bonus in Agility per experience level."
+      ]
+    },
+    "Barbarian": {
+      "toStr": 4, "toInt": 1, "toDex": 1, "toCha": 1,
+      "bonusStr": 1, "bonusInt": 2, "bonusDex": 0, "bonusCha": 0,
+      "unicode": "⚵", "skip": "thump",
+      "difficulty": "erratic", "specialty": "Brutal Combatant",
+      "description": [
+        "The strongest, combat-class fighter in the game, but the most susceptible",
+        "to the effects of magic.  As the Barbarian grows in experience, hitting",
+        "power augments.  There will be a point where a Barbarian's essence can",
+        "match the power of any crafted weapon.  Barbarians receive extra bonuses",
+        "in Stamina per experience level."
+      ]
+    },
+    "Bard": {
+      "toStr": 1, "toInt": 1, "toDex": 1, "toCha": 3,
+      "bonusStr": 0, "bonusInt": 0, "bonusDex": 2, "bonusCha": 1,
+      "difficulty": "moderate", "specialty": "Artisan Enchanter",
+      "unicode": "♭", "skip": "lose",
+      "description": [
+        "The Bard-class enjoys every aspect of the game: backstabbing, magic,",
+        "stealing, and fighting.  However, the Bard does not specialize in any",
+        "ability, thus the experiences can be either rewarding or frustrating.",
+        "An entertainer by trade, Bards receive extra bonuses in Charisma per",
+        "experience level."
+      ]
+    },
+    "Cleric": {
+      "toStr": 1, "toInt": 1, "toDex": 1, "toCha": 4,
+      "bonusStr": 0, "bonusInt": 0, "bonusDex": 2, "bonusCha": 1,
+      "unicode": "♱", "skip": "lecture",
+      "difficulty": "hard", "specialty": "Skillful Magic/Melee",
+      "description": [
+        "A Cleric has good combat and magic abilities, but honing skills are",
+        "typically less than average.  Clerics receive extra bonuses in Charisma",
+        "per experience level."
+      ]
+    },
+    "Fighter": {
+      "toStr": 3, "toInt": 1, "toDex": 1, "toCha": 1,
+      "bonusStr": 1, "bonusInt": 0, "bonusDex": 0, "bonusCha": 2,
+      "unicode": "⏧", "skip": "sidestep",
+      "difficulty": "easy", "specialty": "Warrior Combatant",
+      "description": [
+        "Fighters are excellent killers.  Their extra-ordinary combat ability makes",
+        "them difficult opponents.  Though their class has no extra abilities, there",
+        "are no extra penalties levied against them either.  Fighters receive extra",
+        "bonuses in Stamina per experience level."
+      ]
+    },
+    "Jester": {
+      "toStr": 1, "toInt": 1, "toDex": 3, "toCha": 1,
+      "bonusStr": 0, "bonusInt": 2, "bonusDex": 1, "bonusCha": 0,
+      "unicode": "⏈", "skip": "dodge",
+      "difficulty": "hardest", "specialty": "Evasive Trickster",
+      "description": [
+        "Jesters are annoying pests.  They lack serious hand-to-hand combat power,",
+        "but their acrobatic-like abilities gives them edge in dodging attacks.",
+        "Jesters also possess some magic, backstabbing, and thieving abilities.",
+        "Jesters receive extra bonuses in Dexterity per experience level."
+      ]
+    },
+    "Magician": {
+      "toStr": 1, "toInt": 3, "toDex": 1, "toCha": 1,
+      "bonusStr": 2, "bonusInt": 1, "bonusDex": 0, "bonusCha": 0,
+      "unicode": "⍣", "skip": "trick",
+      "difficulty": "vintage", "specialty": "Arcane Magic/Poison",
+      "description": [
+        "The Magician is the opposite of the Fighter; powerful magic opposed to",
+        "combat abilities.  Magicians can consistently cast spells effectively and",
+        "yield better results.  Magicians receive extra bonuses in Intellect per",
+        "experience level."
+      ]
+    },
+    "Ranger": {
+      "toStr": 2, "toInt": 1, "toDex": 1, "toCha": 1,
+      "bonusStr": 1, "bonusInt": 0, "bonusDex": 1, "bonusCha": 1,
+      "unicode":"⚦", "skip":"duck",
+      "difficulty":"painless", "specialty": "Skillful Melee/Scroll",
+      "description": [
+        "Rangers are great survivors, because they must depend on their ability to",
+        "live off the land.  Like Bards, they have many special abilities, though",
+        "they do not excel at any particular one.  Their fighting and healing powers",
+        "are among their best abilities.  Rangers receive an extra bonus in Strength",
+        "per experience level."
+      ]
+    },
+    "Rogue": {
+      "toStr": 2, "toInt": 2, "toDex": 2, "toCha": 2,
+      "bonusStr": 0, "bonusInt": 1, "bonusDex": 1, "bonusCha": 1,
+      "unicode": "☩", "skip": "cheat",
+      "difficulty": "standard", "specialty": "Advanced Ability",
+      "description": [
+        "A Rogue is similar to a Thief, but with some magic and backstab.",
+        "Their advantage lies within honed abilities and use of magic scrolls.",
+        "Rogues can achieve better than average abilities, as such, they",
+        "receive extra bonus in all abilities per experience level."
+      ]
+    },
+    "Sage": {
+      "toStr": 1, "toInt": 4, "toDex": 1, "toCha": 1,
+      "bonusStr": 2, "bonusInt": 1, "bonusDex": 0, "bonusCha": 0,
+      "unicode": "⎎", "skip": "avoid",
+      "difficulty": "complex", "specialty": "Divine Magicae",
+      "description": [
+        "The weakest combat-class is the Sage.  While hand-to-hand abilities leave",
+        "much to be desired, spell casting abilities can dominate any class,",
+        "mortal or divine, as the Sage grows in experience.  Sages receive extra",
+        "bonuses in Intellect per experience level."
+      ]
+    },
+    "Thief": {
+      "weapon": "Dagger", "toWC": 2,
+      "toStr": 1, "toInt": 1, "toDex": 4, "toCha": 1,
+      "bonusStr": 0, "bonusInt": 0, "bonusDex": 1, "bonusCha": 2,
+      "unicode": "⚷", "skip": "escape",
+      "difficulty": "classic", "specialty": "Master Steal/Backstab",
+      "description": [
+        "The Thief class relies on the ability to stealth approach an enemy and",
+        "deliver a powerful backstab.  Without it, the Thief is quite ordinary.",
+        "A thief picks pockets and robs other users most effectively.  Thieves",
+        "chief ability is Agility and therefore receive extra bonuses in Agility",
+        "per experience level."
+      ]
+    }
+  },
+  "immortal": {
+    "Paladin": {
+      "toStr": 2, "toInt": 2, "toDex": 2, "toCha": 2,
+      "bonusStr": 1, "bonusInt": 1, "bonusDex": 1, "bonusCha": 1,
+      "unicode": "♰", "color": 96, "skip": "evade",
+      "specialty": "Ranger/Rogue",
+      "description": [
+        "A Paladin class can only be achieved by becoming immortal (100th level) and",
+        "solving the Ancient Riddle of the Keys.  A Paladin is the lowest class of",
+        "the superbeings.  Paladins have good combat abilities coupled with the use",
+        "of magic scrolls.  Paladins receive an extra bonus in all abilities per",
+        "experience level."
+      ]
+    },
+    "Titan": {
+      "toStr": 2, "toInt": 2, "toDex": 2, "toCha": 2,
+      "bonusStr": 1, "bonusInt": 1, "bonusDex": 1, "bonusCha": 1,
+      "unicode": "♆", "color": 94, "skip": "taunt",
+      "specialty": "Fighter/Magician",
+      "description": [
+        "You can only ascend to a Titan class from immortalizing a Paladin class and",
+        "again solving the Ancient Riddle of the Keys.  A Titan is the second class",
+        "of the superbeings.  Titans have Fighter combat abilities coupled with a",
+        "Magician's use of spells.  A Titan receives an extra bonus in all abilities per",
+        "experience level."
+      ]
+    },
+    "God": {
+      "toStr": 2, "toInt": 2, "toDex": 2, "toCha": 2,
+      "bonusStr": 1, "bonusInt": 1, "bonusDex": 1, "bonusCha": 1,
+      "unicode": "♛", "color": 93, "skip": "stop",
+      "specialty": "Barbarian/Sage",
+      "description": [
+        "The highest superbeing of them all, you can only ascend to a God from a",
+        "Titan class.  Gods have what is best in a Barbarian's strength and the",
+        "spell-casting power of a Sage.  A God receives an extra bonus in all",
+        "abilities per experience level."
+      ]
+    }
+  },
+  "monster": {
+    "Beast": {
+      "toStr": 1, "toInt": 1, "toDex": 1, "toCha": 2,
+      "bonusStr": 0, "bonusInt": 0, "bonusDex": 0, "bonusCha": 1,
+      "unicode": "Ѫ", "color": 34, "skip": "corner",
+      "specialty": "Ranger",
+      "description": [
+        "A scary and vicious animal."
+      ]
+    },
+    "Demon": {
+      "toStr": 1, "toInt": 1, "toDex": 2, "toCha": 1,
+      "bonusStr": 1, "bonusInt": 1, "bonusDex": 0, "bonusCha": 0,
+      "unicode": "☿", "color": 31, "skip": "outmaneuver",
+      "specialty": "Fighter",
+      "description": [
+        "A supernatural and malevolent entity conjured or controlled."
+      ]
+    },
+    "Dragon": {
+      "toStr": 3, "toInt": 1, "toDex": 1, "toCha": 1,
+      "bonusStr": 2, "bonusInt": 0, "bonusDex": 0, "bonusCha": 0,
+      "unicode": "☫", "color": 32, "skip": "pin",
+      "specialty": "Barbarian/Magician",
+      "description": [
+        "A large, serpent-like creature possessing legendary powers."
+      ]
+    },
+    "Lizard": {
+      "toStr": 1, "toInt": 2, "toDex": 3, "toCha": 1,
+      "bonusStr": 0, "bonusInt": 0, "bonusDex": 2, "bonusCha": 0,
+      "unicode": "☡", "color": 36, "skip": "freeze",
+      "specialty": "Rogue",
+      "description": [
+        "A stealth predator with strong defenses."
+      ]
+    },
+    "Psionic": {
+      "toStr": 1, "toInt": 3, "toDex": 1, "toCha": 1,
+      "bonusStr": 0, "bonusInt": 2, "bonusDex": 0, "bonusCha": 0,
+      "unicode": "⚥", "color": 35, "skip": "paralyze",
+      "specialty": "Magus",
+      "description": [
+        "A lesser demon with supernatural abilities."
+      ]
+    },
+    "Undead": {
+     "toStr": 2, "toInt": 1, "toDex": 1, "toCha": 1,
+      "bonusStr": 1, "bonusInt": 0, "bonusDex": 0, "bonusCha": 1,
+      "unicode": "🕱", "color": 37, "skip": "hypnotize",
+      "specialty": "Barbarian/Ranger",
+      "description": [
+        "A corpse reanimated by supernatural forces."
+      ]
+    }
+},
+  "tavern": {
+    "Ogre": {
+      "toStr": 2, "toInt": 1, "toDex": 1, "toCha": 1,
+      "bonusStr": 0, "bonusInt": 0, "bonusDex": 0, "bonusCha": 2,
+      "unicode": "🜟", "color": 33, "skip": "grab",
+      "specialty": "Barbarian/Ranger",
+      "description": [
+        "A large, hideous, man-like being that eats players."
+      ]
+    }
+  }
+}

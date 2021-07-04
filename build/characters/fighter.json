@@ -1,0 +1,11 @@
+{
+  "pc": "Fighter",
+  "backstab": 2, "melee": 3, "poison": 1, "steal": 1,
+  "magic": 1, "heal": 1, "blast": 1,
+  "str": 65, "maxstr": 98,
+  "int": 30, "maxint": 90,
+  "dex": 70, "maxdex": 90,
+  "cha": 35, "maxcha": 85,
+  "poisons": [ 1 ],
+  "rings": [ "Champion" ]
+}
