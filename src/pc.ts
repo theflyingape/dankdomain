@@ -413,17 +413,17 @@ module pc {
             user.tl = 0
             user.tw = 0
             //  load character class template
-            db.fillUser(user, user.pc)
+            user = db.fillUser(user.pc, user)
             user.hp = 15
             user.sp = user.magic > 1 ? 15 : 0
             user.status = ''
             //  reset pc, spawn or restore npc
             if (level == 1 || !user.id || user.id[0] == '_') {
-                db.fillUser(user, 'reroll')
-                PC.newkeys(user)
+                user = db.fillUser('reroll', user)
                 user.gender = user.sex
             }
             //  morph or spawn
+            if (!user.keyseq) PC.newkeys(user)
             if (user.level > 1) user.xp = this.experience(user.level - 1, 1, user.int)
             //  exists in spirit or for real
             user.xplevel = (user.pc == Object.keys(this.name['player'])[0]) ? 0 : user.level

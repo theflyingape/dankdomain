@@ -9,9 +9,10 @@ import { Access, Coin, Ring } from './items'
 
 module db {
 
-    export const NPC = require(pathTo('npcs', 'id.json'))
-
+    export const NPC = require(pathTo('characters', 'npc.json'))
+    export const USER = require(pathTo('characters', 'user.json'))
     export const DD = pathTo('users', 'dankdomain.sql')
+
     let sqlite3: Database.Database
     try {
         sqlite3 = Database(DD, { timeout: 8000 })
@@ -71,15 +72,11 @@ module db {
 
     Object.keys(NPC).forEach((id) => {
         try {
-            let npc: user = JSON.parse(fs.readFileSync(pathTo('npcs', `${NPC[id]}.json`)).toString())
-            if (npc) {
-                const access = npc.access
-                if (!loadUser(npc)) {
-                    console.info(' + adding', NPC[id], '-', npc.handle)
-                    npc.id = id
-                    npc.access = access
-                    saveUser(fillUser(npc), true)
-                }
+            const template = NPC[id]
+            if (!loadUser({ id: id })) {
+                let npc = fillUser(template)
+                console.info(' + adding', template, 'as', npc.id, '-', npc.handle)
+                saveUser(npc, true)
             }
         }
         catch (err) { console.error(err) }
@@ -96,13 +93,14 @@ module db {
     }
 
     //  apply an external template file on a character
-    export function fillUser(user: user = { id: '' }, template = 'inituser'): user {
-        let tmp: user = Object.assign({}, JSON.parse(fs.readFileSync(pathTo('characters', `${template.toLowerCase()}.json`))))
-        tmp.bounty = new Coin(tmp.bounty.toString())
-        tmp.coin = new Coin(tmp.coin.toString())
-        tmp.bank = new Coin(tmp.bank.toString())
-        tmp.loan = new Coin(tmp.loan.toString())
-        return Object.assign(user, tmp)
+    export function fillUser(template?: string, user?: user): user {
+        let tmp = Object.assign({ id: '' }, user || USER)
+        if (template) Object.assign(tmp, JSON.parse(fs.readFileSync(pathTo('characters', `${template.toLowerCase()}.json`))))
+        if (typeof tmp.bounty == 'string') tmp.bounty = new Coin(tmp.bounty.toString())
+        if (typeof tmp.coin == 'string') tmp.coin = new Coin(tmp.coin.toString())
+        if (typeof tmp.bank == 'string') tmp.bank = new Coin(tmp.bank.toString())
+        if (typeof tmp.loan == 'string') tmp.loan = new Coin(tmp.loan.toString())
+        return Object.assign(user || USER, tmp)
     }
 
     export function loadUser(user: user): boolean {

@@ -1,6 +1,7 @@
 {
   "pc": "Spirit",
   "blessed": "", "cursed": "", "coward": false,
+  "keyseq": "",  "keyhints": [],
   "bounty": "0c", "who": "",
 	"coin": "1c",	"bank": "10c",
 	"weapon": "Dart", "toWC": 1,

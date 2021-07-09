@@ -324,6 +324,8 @@ interface user {
     poison?: number
     magic?: number
     steal?: number
+    heal?: number
+    blast?: number
     hp?: number
     sp?: number
     str?: number
@@ -334,8 +336,6 @@ interface user {
     maxdex?: number
     cha?: number
     maxcha?: number
-    heal?: number
-    blast?: number
 
     //  character materials
     coin?: coin
