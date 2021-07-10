@@ -415,7 +415,7 @@ dns.lookup(network.address, (err, addr, family) => {
                 }
             }
 
-            const monsters = JSON.parse(fs.readFileSync(pathTo('etc', 'dungeon.json')).toString())
+            const monsters = JSON.parse(fs.readFileSync(pathTo('characters', 'dungeon.json')).toString())
             let level = 0
             for (let n in monsters) {
                 let pc = monsters[n].pc
