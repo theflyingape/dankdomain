@@ -100,8 +100,8 @@ Supports running as a BBS door (as Amiga-only BBSes did for `Hack & Slash` in 19
 
 ```bash
 #!/bin/sh
-$ pwd; [ -s door.sys ] || exit 1
-$ node /usr/local/games/dankdomain/main 0
+pwd; [ -s door.sys ] || exit 1
+node /usr/local/games/dankdomain/main 0
 ```
 
 ## Files directory structure
@@ -112,18 +112,18 @@ $ pwd
 .vscode/          Visual Studio Code: settings & debug profiles
 characters        bot, player, and non-playing characters
 console/          MAME support files
-door/             web services: app server startup: ƊƊnet
-../static         game portal
+door/             ƊƊnet app.js server with browser client.js
+../static         game portal with browser bundle.js
    ../assets      app install, fonts, etc.
    ../images      visual media for artifacts, creatures, and players
    ../sounds      audio media for event notifications
-etc/              game app & system support files
+etc/              system support files
 files/            game, menu & player support files: ANSI and/or text formats
 ../arena          ASCII art & menu files
 ../casino         menu files
 ../dungeon        ASCII art
-../main           game app - startup entry point
-../menu           about system & menu files
+../library        menu files
+../main           about system & menu files
 ../naval          ASCII art & menu files
 ../party          instruction & menu files
 ../player         ASCII art
@@ -136,12 +136,12 @@ node_modules/     Node.js support libraries
 tty/              game modules for each main menu item
 package.json      Node.js manifest
 battle.js         support module for player engagements
-db.js             app & client SQLite module for dankdomain.sql
+db.js             net & play module for player runtime data files
 email.js          support module for (optional) dispatching email notifications
 interfaces.js     TypeScript object types
 items.js          support module for loading item artifacts
 lib.js            support module for common I/O functions
-main.js           client node startup: ƊƊplay
+main.js           ƊƊplay client node
 pc.js             support classes for BOTs, NPCs and PCs with Deeds
 player.js         support module for common PC functions
 runtime.js        global runtime variables to govern play
