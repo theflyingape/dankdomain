@@ -1423,7 +1423,7 @@ module Battle {
                     break
 
                 case 7:
-                    let ha = rpc.user.magic > 2 ? int(rpc.user.level / 16) + 13 : 16
+                    let ha = 10 + rpc.user.heal + int(rpc.user.level / (20 - rpc.user.magic))
                     let hr = 0
                     for (let i = 0; i < rpc.user.level; i++)
                         hr += dice(ha)
@@ -1491,11 +1491,12 @@ module Battle {
 
                 case 9:
                     vt.sound('blast', 3)
-                    let ba = rpc.user.magic > 2
-                        ? 17 + int(rpc.user.magic / 4) + int(rpc.user.level / 11) - (backfire
+                    let ba = 10 + rpc.user.blast
+                        + int(rpc.user.level / (20 - rpc.user.magic))
+                        - (backfire
                             ? int(whole(rpc.armor.ac + rpc.user.toAC + rpc.toWC) / 5)
                             : int(whole(nme.armor.ac + nme.user.toAC + nme.toWC) / 5)
-                        ) : 17
+                        )
                     if (nme.user.melee > 3) ba *= int(nme.user.melee / 2)
                     let br = int(rpc.int / 10)
                     while (dice(99 + rpc.user.magic) > 99) {
@@ -1793,18 +1794,19 @@ module Battle {
                 case 19:
                     vt.out('A ', vt.bright, vt.white, 'blinding flash', vt.normal, ' erupts... ')
                     vt.sound('bigblast', 10)
-                    let bba = 2 * (rpc.user.magic > 2
-                        ? 17 + int(rpc.user.magic / 4) + int(rpc.user.level / 11) - (backfire
+                    let bba = 12 + rpc.user.blast
+                        + int(rpc.user.level / (20 - rpc.user.magic))
+                        - (backfire
                             ? int(whole(rpc.armor.ac + rpc.user.toAC + rpc.toWC) / 5)
                             : int(whole(nme.armor.ac + nme.user.toAC + nme.toWC) / 5)
-                        ) : 17)
+                        )
                     if (nme.user.melee > 3) bba *= int(nme.user.melee / 2)
                     let bbr = int(rpc.int / 10)
-                    while (dice(99 + rpc.user.magic) > 99) {
+                    do {
                         bba += dice(rpc.user.magic)
                         for (let i = 0; i < bba; i++)
                             bbr += dice(bba)
-                    }
+                    } while (dice(99 + rpc.user.magic) > 99)
                     for (let i = 0; i < rpc.user.level; i++)
                         bbr += dice(bba)
 

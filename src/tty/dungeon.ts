@@ -2300,12 +2300,7 @@ module Dungeon {
             //  template level
             dungeon.domain[deep][Z] = <ddd>{
                 alert: true,
-                cleric: {
-                    user: {
-                        id: '_Clr', handle: 'old cleric', pc: 'Cleric', level: int(65 + Z / 4 + deep)
-                        , sex: 'I', weapon: 0, armor: 1, magic: 3, spells: [7, 8, 13]
-                    }
-                },
+                cleric: { user: db.fillUser('old cleric') },
                 events: dice(6 - int($.online.cha / 20)) + dice(deep / 3 + 1) + int($.player.coward)
                     - +$.player.novice - int($.access.sysop),
                 exit: false,
@@ -2347,7 +2342,7 @@ module Dungeon {
 
         } while (result)
 
-        PC.reroll(dungeon.level.cleric.user, dungeon.level.cleric.user.pc, dungeon.level.cleric.user.level)
+        PC.reroll(dungeon.level.cleric.user, dungeon.level.cleric.user.pc, int(65 + Z / 4 + deep))
         PC.activate(dungeon.level.cleric)
         vt.wall($.player.handle, `enters dungeon level ${romanize(deep + 1)}.${Z + 1}`)
 

@@ -4,7 +4,7 @@
 
 ![screenshot](https://raw.githubusercontent.com/theflyingape/dankdomain/master/build/door/static/assets/title.jpg "Can you defeat the Demogorgon?")
 
-### _Read the_ [Player's Manual](https://www.ddgame.us) _to play the_ [online game](https://play.ddgame.us)
+## _Read the_ [Player's Manual](https://www.ddgame.us) _to play the_ [online game](https://play.ddgame.us)
 
 ---
 >**Ɗaɳƙ Ɗoɱaiɳ** is the re-imagined classic Amiga bulletin board, [Hack & Slash](https://github.com/theflyingape/rpgbbs), built around a medieval role-playing atmosphere. Your character kills, steals, brawls, and jousts other PCs, NPCs, and BOTs to gain levels and fortune. Successful ventures into its deep dank dungeon are the keys to immortality.
@@ -21,7 +21,7 @@ With the _optional_ packs loaded for the web portal, the game + runtime files wi
 
 ## Installation
 
-Tested on `Linux`, `Chrome OS`, and `Docker`. To [install](https://www.npmjs.com/package/dankdomain) and run a local game copy (requires the `Node.js` runtime):
+Project development on `Chrome OS` and `Linux` with the `Node.js` runtime. To run a local game copy, click the `VS Code` icon above or manually [install](https://www.npmjs.com/package/dankdomain):
 
 ```bash
 # fetch this package source:
@@ -62,7 +62,7 @@ $ npm install @theflyingape/dankdomain
 
 ... or use **Docker** _(convenient, but not maintained with the latest commits)_:
 
-```bash
+```linux
 $ docker pull theflyingape/dankdomain
 $ docker run --rm -it -p 1939:1939/tcp -p 1986:1986/tcp theflyingape/dankdomain
 
@@ -110,7 +110,7 @@ node /usr/local/games/dankdomain/main 0
 $ pwd
 /usr/local/games/dankdomain
 .vscode/          Visual Studio Code: settings & debug profiles
-characters        bot, player, and non-playing characters
+characters/       user object type templates for BOTs, NPCs, and PCs
 console/          MAME support files
 door/             ƊƊnet app.js server with browser client.js
 ../static         game portal with browser bundle.js
