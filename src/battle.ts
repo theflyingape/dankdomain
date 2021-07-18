@@ -1722,6 +1722,23 @@ module Battle {
                         }
                     }
                     else {
+                        rpc.user.coward = true
+                        PC.adjust('str'
+                            , rpc.str > 40 ? -dice(6) - 4 : -3
+                            , rpc.user.str > 60 ? -dice(3) - 2 : -2
+                            , rpc.user.maxstr > 80 ? -2 : -1)
+                        PC.adjust('int'
+                            , rpc.int > 40 ? -dice(6) - 4 : -3
+                            , rpc.user.int > 60 ? -dice(3) - 2 : -2
+                            , rpc.user.maxint > 80 ? -2 : -1)
+                        PC.adjust('dex'
+                            , rpc.dex > 40 ? -dice(6) - 4 : -3
+                            , rpc.user.dex > 60 ? -dice(3) - 2 : -2
+                            , rpc.user.maxdex > 80 ? -2 : -1)
+                        PC.adjust('cha'
+                            , rpc.cha > 40 ? -dice(6) - 4 : -3
+                            , rpc.user.cha > 60 ? -dice(3) - 2 : -2
+                            , rpc.user.maxcha > 80 ? -2 : -1)
                         nme.user.level = dice(nme.user.level / 2) + dice(nme.user.level / 2) - 1
                         PC.reroll(nme.user, PC.random(), nme.user.level)
                         nme.user.gender = ['F', 'M'][dice(2) - 1]
@@ -1794,6 +1811,7 @@ module Battle {
                 case 19:
                     vt.out('A ', vt.bright, vt.white, 'blinding flash', vt.normal, ' erupts... ')
                     vt.sound('bigblast', 10)
+                    PC.adjust('int', -PC.card(rpc.user.pc).toInt, -1, 0, rpc)
                     let bba = 12 + rpc.user.blast
                         + int(rpc.user.level / (20 - rpc.user.magic))
                         - (backfire

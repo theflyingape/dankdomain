@@ -17,10 +17,10 @@
     "Morph": { "cast":16, "mana":7500, "enchanted":7000 },
     "Armor Rusting": { "cast":17, "mana":75, "enchanted":50 },
     "Weapon Decay": { "cast":18, "mana":100, "enchanted":75 },
-    "Big Blast": { "cast":19, "mana":300, "enchanted":200 },
-    "Mana Stealing": { "cast":20, "mana":400, "enchanted":300 },
-    "Life Stealing": { "cast":21, "mana":500, "enchanted":400 },
-    "Level Stealing": { "cast":22, "mana":750, "enchanted":500 },
+    "Big Blast": { "cast":19, "mana":400, "enchanted":250 },
+    "Mana Stealing": { "cast":20, "mana":500, "enchanted":400 },
+    "Life Stealing": { "cast":21, "mana":600, "enchanted":500 },
+    "Level Stealing": { "cast":22, "mana":750, "enchanted":600 },
     "Super Shield": { "cast":23, "mana":1000, "enchanted":750 },
     "Super Hone": { "cast":24, "mana":2000, "enchanted":1000 }
 }

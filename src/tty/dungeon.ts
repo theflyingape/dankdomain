@@ -1562,27 +1562,30 @@ module Dungeon {
                                     vt.sound('click', 13)
                                 }
                                 vt.out(vt.faint, '"', vt.normal, vt.green, "Your price is ")
+                                vt.sound('mana', 8)
+                                $.player.blessed = ''
+                                $.player.coward = true
 
                                 if ($.player.steal > 1) {
-                                    vt.sound('mana', 8)
                                     vt.out('your ability to steal diminishes')
                                     $.player.steal--
                                 }
                                 else if ($.player.magic > 3) {
-                                    vt.sound('mana', 8)
                                     vt.out('your divine spellcasting ability is mine')
                                     $.player.magic--
                                 }
                                 else if ($.player.melee > 3) {
-                                    vt.sound('mana', 8)
                                     vt.out('your barbaric powers are halved')
                                     $.player.melee = 2
                                     PC.adjust('str', -5 - dice(5), -2, -2)
                                 }
+                                else if ($.player.poison > 3) {
+                                    vt.out('your alchemy skill is halved')
+                                    $.player.melee = 2
+                                    PC.adjust('str', -5 - dice(5), -2, -2)
+                                }
                                 else if ($.player.str > 80 && $.player.int > 80 && $.player.dex > 80 && $.player.cha > 80) {
-                                    vt.sound('mana', 8)
                                     vt.out('allowing me to drain your overall ability')
-                                    $.player.blessed = ''
                                     PC.adjust('str', -5 - dice(5), -2, -2)
                                     PC.adjust('int', -5 - dice(5), -2, -2)
                                     PC.adjust('dex', -5 - dice(5), -2, -2)
