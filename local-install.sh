@@ -8,11 +8,11 @@ if [ -n "${ID}" ]; then
 fi
 
 # let's prompt for admin credentials now, if necessary
-[ -n "$1" ] && TARGET="$1" || TARGET=/usr/local/games
-echo "Install dankdomain folder into ${TARGET} ?"
-echo -n "Enter shift 'Y' to continue: "
-read cont
-[ "${cont}" == "Y" ] || exit 0
+[ -n "$1" ] && TARGET="$1" || TARGET=$PWD
+#echo "Install dankdomain folder into ${TARGET} ?"
+#echo -n "Enter shift 'Y' to continue: "
+#read cont
+#[ "${cont}" == "Y" ] || exit 0
 sudo -B -v || exit
 
 # let's default group ownership to games
@@ -35,24 +35,24 @@ echo "Nodejs `node -v`"
 echo "NPM `npm -v`"
 
 umask 0002
-[ -d "${TARGET}" ] || sudo mkdir -v "${TARGET}"
-TARGET="${TARGET}/`basename ${PWD}`"
-echo "Installing into ${TARGET}"
-if [ ! -d "${TARGET}" ]; then
-    sudo mkdir -v "${TARGET}"
-    sudo chgrp games "${TARGET}"
-    sudo chmod u+rwx,g+rwxs,o-rwx "${TARGET}"
-fi
-[ -d "${TARGET}/users" ] || mkdir -v "${TARGET}/users"
+#[ -d "${TARGET}" ] || sudo mkdir -v "${TARGET}"
+#TARGET="${TARGET}/`basename ${PWD}`"
+#echo "Installing into ${TARGET}"
+#if [ ! -d "${TARGET}" ]; then
+#    sudo mkdir -v "${TARGET}"
+#    sudo chgrp games "${TARGET}"
+#    sudo chmod u+rwx,g+rwxs,o-rwx "${TARGET}"
+#fi
+#[ -d "${TARGET}/users" ] || mkdir -v "${TARGET}/users"
 
 # copy over
-cp -v package.json "${TARGET}"
-cp -r build/* -t "${TARGET}"
-find "${TARGET}" -name '*.map' -exec rm -f {} \;
-find "${TARGET}" -name '*.sys' -exec rm -f {} \;
-find "${TARGET}" -name 'tsconfig.*' -exec rm -f {} \;
-rm -rf "${TARGET}/node_modules"
-cp -r node_modules "${TARGET}/"
+#cp -v package.json "${TARGET}"
+#cp -r . -t "${TARGET}"
+#find "${TARGET}" -name '*.map' -exec rm -f {} \;
+#find "${TARGET}" -name '*.sys' -exec rm -f {} \;
+#find "${TARGET}" -name 'tsconfig.*' -exec rm -f {} \;
+#rm -rf "${TARGET}/node_modules"
+#cp -r node_modules "${TARGET}/"
 
 # initialize the game
 cd "${TARGET}"

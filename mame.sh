@@ -15,7 +15,7 @@ rpm -q telnet > /dev/null || sudo dnf install telnet
 
 declare -i PTS
 
-cd console
+cd mame
 mame -inipath . vt240 -host pty &> /dev/null &
 cd - > /dev/null
 

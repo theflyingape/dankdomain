@@ -19,7 +19,7 @@ ENV NODE_ENV production
 # install dependencies
 RUN npm install
 # install code+files
-COPY build ${TARGET}
+COPY . ${TARGET}
 
 # cli tools
 RUN apt-get update && apt-get install -y rsync telnet

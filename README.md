@@ -108,32 +108,33 @@ node /usr/local/games/dankdomain/main 0
 
 ```linux
 $ pwd
-/usr/local/games/dankdomain
-.vscode/          Visual Studio Code: settings & debug profiles
-characters/       user object type templates for BOTs, NPCs, and PCs
-console/          MAME support files
-door/             ƊƊnet app.js server with browser client.js
-../static         game portal with browser bundle.js
-   ../assets      app install, fonts, etc.
-   ../images      visual media for artifacts, creatures, and players
-   ../sounds      audio media for event notifications
-etc/              system support files
-files/            game, menu & player support files: ANSI and/or text formats
-../arena          ASCII art & menu files
-../casino         menu files
-../dungeon        ASCII art
-../library        menu files
-../main           about system & menu files
-../naval          ASCII art & menu files
-../party          instruction & menu files
-../player         ASCII art
-../square         menu files
-../tavern         all player events logged for the day
-../user           each player’s events logged since last visit
-items/            game artifacts
-users/            player runtime data files
-node_modules/     Node.js support libraries
-tty/              game modules for each main menu item
+/usr/games/dankdomain
+.vscode           Visual Studio Code: settings & debug profiles
+game
+  characters      user object type templates for BOTs, NPCs, and PCs
+  etc             system support files
+  files           game, menu & player support files: ANSI and/or text formats
+    arena         ASCII art & menu files
+    casino        menu files
+    dungeon       ASCII art
+    items         game artifacts
+    library       menu files
+    main          about system & menu files
+    naval         ASCII art & menu files
+    party         instruction & menu files
+    player        ASCII art
+    square        menu files
+    tavern        all player events logged for the day
+    user          each player’s events logged since last visit
+  portal          ƊƊnet app.js server with browser client.js
+    static        game portal with browser bundle.js
+    assets        app install, fonts, etc.
+    images        visual media for artifacts, creatures, and players
+    sounds        audio media for event notifications
+  tty             game modules for each main menu item
+  users           player runtime data files
+mame              MAME support files
+node_modules      Node.js support libraries
 package.json      Node.js manifest
 battle.js         support module for player engagements
 db.js             net & play module for player runtime data files

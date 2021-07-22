@@ -13,7 +13,7 @@ import { PC } from '../pc'
 import { checkXP, input } from '../player'
 import { sprintf, dice, money, romanize, int } from '../sys'
 
-module Arena {
+export module Arena {
 
     let main: choices = {
         'U': { description: 'User fights' },
@@ -573,5 +573,3 @@ module Arena {
     }
 
 }
-
-export = Arena

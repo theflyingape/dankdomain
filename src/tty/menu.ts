@@ -98,7 +98,7 @@ module Main {
             case 'G':
                 vt.animated('fadeOut')
                 elemental.orders('Casino')
-                require('./gambling').menu(false)
+                require('./casino').menu(false)
                 return
 
             case 'L':

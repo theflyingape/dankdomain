@@ -18,7 +18,7 @@ module pc {
         name: deeds[]
 
         constructor() {
-            this.name = require(pathTo('items', 'deed.json'))
+            this.name = require(pathTo('files/library', 'deed.json'))
         }
 
         //  coveted
@@ -279,25 +279,11 @@ module pc {
             if (user.handle) user.handle = titlecase(user.handle)
             if (db.loadUser(user)) {
                 if (isActive(rpc)) this.activate(rpc)
-                user.coin = new Coin(user.coin.value)
-                user.bank = new Coin(user.bank.value)
-                user.loan = new Coin(user.loan.value)
-                user.bounty = new Coin(user.bounty.value)
-
-                //  restore NPC to its static state
-                if (user.id[0] == '_' && user.id !== "_SYS") {
-                    try {
-                        const npc: user = JSON.parse(fs.readFileSync(pathTo('npcs', `${db.NPC[user.id]}.json`)).toString())
-                        if (npc) {
-                            Object.assign(user, npc)
-                            this.reroll(user, user.pc, user.level)
-                            Object.assign(user, npc)
-                            db.saveUser(user)
-                        }
-                    }
-                    catch (err) { }
+                //  restore NPC with static fields
+                if (user.id[0] == '_' && user.id != "_SYS") {
+                    let npc = db.fillUser(db.NPC[user.id], user)
+                    db.saveUser(npc)
                 }
-
                 return true
             }
             return false
@@ -528,15 +514,17 @@ module pc {
                     let save: user = { id: '' }
                     Object.assign(save, user)
                     Object.assign(save, {
-                        bounty: user.bounty.carry(4, true),
-                        coin: user.coin.carry(4, true),
-                        bank: user.bank.carry(4, true),
-                        loan: user.loan.carry(4, true)
+                        bounty: user.bounty,
+                        coin: user.coin,
+                        bank: user.bank,
+                        loan: user.loan
                     })
                     const trace = pathTo('users', `.${user.id}.json`)
                     fs.writeFileSync(trace, JSON.stringify(save, null, 2))
                 }
-                catch { }
+                catch (err) {
+                    console.error(err)
+                }
             }
 
             db.saveUser(user, insert)

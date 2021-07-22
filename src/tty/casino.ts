@@ -1,6 +1,6 @@
 /*****************************************************************************\
  *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
- *  GAMBLING authored by: Robert Hurst <theflyingape@gmail.com>              *
+ *  CASINO authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
 import $ = require('../runtime')
@@ -11,7 +11,7 @@ import { PC } from '../pc'
 import { input } from '../player'
 import { dice, int, money, sprintf, whole } from '../sys'
 
-module Gambling {
+module Casino {
 
     let casino: choices = {
         'B': { description: 'Blackjack' },
@@ -950,4 +950,4 @@ module Gambling {
 
 }
 
-export = Gambling
+export = Casino

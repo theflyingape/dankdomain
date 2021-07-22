@@ -5,11 +5,11 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "declaration": false,
-    "outDir": "build",
+    "outDir": "game",
     "removeComments": true,
     "preserveConstEnums": true,
     "pretty": true,
-    "sourceMap": true
+    "sourceMap": false
   },
   "include": [
     "src/**/*"

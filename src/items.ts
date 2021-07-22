@@ -3,16 +3,18 @@
  *  ITEMS authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import { int, pathTo } from "./sys"
+import { int, path, pathTo } from "./sys"
 
 module Items {
+
+    const folder = pathTo('files/items')
 
     class _access {
 
         name: access[]
 
         constructor() {
-            this.name = require(pathTo('items', 'access.json'))
+            this.name = require(path.resolve(folder, 'access.json'))
         }
     }
 
@@ -24,7 +26,7 @@ module Items {
         special: string[] = []
 
         constructor() {
-            this.name = require(pathTo('items', 'armor.json'))
+            this.name = require(path.resolve(folder, 'armor.json'))
             for (let i in this.name) {
                 if (this.name[i].armoury)
                     this.merchant.push(i)
@@ -205,7 +207,7 @@ module Items {
 
         constructor(ring: _ring) {
             this.ring = ring
-            this.spells = require(pathTo('items', 'magic.json'))
+            this.spells = require(path.resolve(folder, 'magic.json'))
             for (let i in this.spells) {
                 if (this.spells[i].cost)
                     this.merchant.push(i)
@@ -299,7 +301,7 @@ module Items {
         merchant: string[] = []
 
         constructor() {
-            this.vials = require(pathTo('items', 'poison.json'))
+            this.vials = require(path.resolve(folder, 'poison.json'))
             for (let i in this.vials) {
                 if (this.vials[i].cost)
                     this.merchant.push(i)
@@ -352,20 +354,20 @@ module Items {
         merchant: string[] = []
 
         constructor() {
-            this.name = require(pathTo('items', 'realestate.json'))
+            this.name = require(path.resolve(folder, 'realestate.json'))
             for (let i in this.name)
                 this.merchant.push(i)
         }
     }
 
     class _ring {
-        name: ring
+        name: ring[]
         common: string[] = []
         unique: string[] = []
         theOne: string
 
         constructor() {
-            this.name = require(pathTo('items', 'ring.json'))
+            this.name = require(path.resolve(folder, 'ring.json'))
             for (let i in this.name)
                 if (this.name[i].unique)
                     this.unique.push(i)
@@ -429,7 +431,7 @@ module Items {
         merchant: string[] = []
 
         constructor() {
-            this.name = require(pathTo('items', 'security.json'))
+            this.name = require(path.resolve(folder, 'security.json'))
             for (let i in this.name)
                 this.merchant.push(i)
         }
@@ -443,7 +445,7 @@ module Items {
         special: string[] = []
 
         constructor() {
-            this.name = require(pathTo('items', 'weapon.json'))
+            this.name = require(path.resolve(folder, 'weapon.json'))
             for (let i in this.name) {
                 if (this.name[i].shoppe)
                     this.merchant.push(i)

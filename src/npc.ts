@@ -17,7 +17,7 @@ module npc {
         monsters: arena[]
 
         constructor() {
-            this.monsters = require(pathTo('npcs', 'arena.json'))
+            this.monsters = require(pathTo('characters', 'arena.json'))
         }
     }
 
@@ -83,7 +83,7 @@ module npc {
         }
 
         constructor() {
-            this.monsters = require(pathTo('npcs', 'dungeon.json'))
+            this.monsters = require(pathTo('characters', 'dungeon.json'))
             //	make some magic brew & bottle it up . . .
             let containers = ['beaker filled with', 'bottle containing', 'flask of', 'vial holding']
             let v = 0

@@ -52,7 +52,7 @@
 	"dependencies": {
 		"@theflyingape/xvt": "^1.4.8",
 		"animate.css": "^4.1.1",
-		"better-sqlite3": "^7.4.1",
+		"better-sqlite3": "^7.4.3",
 		"chokidar": "^3.5.2",
 		"express": "^4.17.1",
 		"fs-extra": "^10.0.0",
@@ -89,17 +89,17 @@
 	},
 	"types": "src",
 	"scripts": {
-		"build": "tsc && browserify build/door/client.js -o build/door/static/bundle.js",
-		"bundle": "watchify build/door/client.js -v -o build/door/static/bundle.js",
-		"debug": "node build/door/app",
-		"mame": "test -s mame.sh && ./mame.sh || ./build/mame.sh",
-		"play": "test -s main.js && env TERM=vt100 node . || env TERM=vt100 node build/main",
+		"build": "tsc && browserify game/portal/client.js -o game/portal/static/bundle.js",
+		"bundle": "watchify game/portal/client.js -v -o game/portal/static/bundle.js",
+		"debug": "node game/portal/app",
+		"mame": "./mame.sh",
+		"play": "env TERM=vt100 node game/main",
 		"postinstall": "npm run build",
 		"prepare": "./local-install.sh",
-		"serve": "test -s door/app.js && node door/app || node build/door/app",
-		"start": "test -s tty.sh && ./tty.sh || ./build/tty.sh",
+		"serve": "node game/portal/app",
+		"start": "./tty.sh",
 		"stop": "killall ƊƊnet",
-		"test": "test -s door/app.js && node door/app test || node build/door/app test",
+		"test": "node game/portal/app test",
 		"watch": "tsc -w"
 	}
 }

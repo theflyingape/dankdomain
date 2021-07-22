@@ -131,8 +131,6 @@ module Logon {
 
     //  authenticated (password, bot, or BBS user) login startup entry point
     export function startup(userID = '') {
-        PC.load($.sysop)
-
         $.whereis = [
             'Braavos', 'Casterly Rock', 'Dorne', 'Dragonstone', 'Dreadfort',
             'The Eyrie', 'Harrenhal', 'Highgarden', 'Iron Island', `King's Landing`,

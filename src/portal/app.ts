@@ -31,7 +31,7 @@ process.chdir(__dirname)
 //  load common
 import { pathTo } from '../sys'
 import db = require('../db')
-import { Coin } from '../items'
+import { Armor, Coin, Ring, Weapon } from '../items'
 
 let passed = ''
 if (process.argv.length > 2 && process.argv[2]) {
@@ -55,20 +55,17 @@ function bot() {
 
     while (!elemental.id) {
         sysop.immortal++
-        try {
-            Object.assign(elemental, JSON.parse(fs.readFileSync(pathTo('users', `bot${sysop.immortal}.json`)).toString()))
-        }
-        catch (err) {
+        elemental = db.fillUser(`bot${sysop.immortal}`)
+        if (!elemental.id) {
             sysop.immortal = 0
             db.saveUser(sysop)
-            return
+            break
         }
     }
-    //  already logged in?
-    if (sysop.immortal == i) return
+    if (!sysop.immortal || sysop.immortal == i) return
     db.saveUser(sysop)
 
-    const client = 'Riveredge'
+    const client = 'Rivendell'
     let pid = login(client, network.rows, 80, network.emulator, [elemental.id])
     let term = sessions[pid]
     term.spawn.dispose()
@@ -397,19 +394,19 @@ dns.lookup(network.address, (err, addr, family) => {
                 { handle: 'Shall we begin?', png: 'connect/yuriel_genasi_warlord_by_peachyco', effect: 'fadeInRight' }
             )
 
-            const Armor = JSON.parse(fs.readFileSync(pathTo('items', 'armor.json')).toString())
-            for (let i in Armor) {
-                if (!Armor[i].armoury) {
-                    let profile = { handle: `<span style="color:${Armor[i].dwarf ? 'black' : 'brown'};">${i}</span>`, level: Armor[i].ac, pc: (Armor[i].dwarf ? 'dwarven' : 'uncommon') + ' armor', effect: 'fadeInUpBig' }
+            for (let i in Armor.name) {
+                const armor = Armor.name[i]
+                if (!armor.armoury) {
+                    let profile = { handle: `<span style="color:${armor.dwarf ? 'black' : 'brown'};">${i}</span>`, level: armor.ac, pc: (armor.dwarf ? 'dwarven' : 'uncommon') + ' armor', effect: 'fadeInUpBig' }
                     profile['jpg'] = `specials/${i}`
                     list.push(profile)
                 }
             }
 
-            const Weapon = JSON.parse(fs.readFileSync(pathTo('items', 'weapon.json')).toString())
-            for (let i in Weapon) {
-                if (!Weapon[i].shoppe) {
-                    let profile = { handle: `<span style="color:${Weapon[i].dwarf ? 'black' : 'brown'};">${i}</span>`, level: Weapon[i].wc, pc: (Weapon[i].dwarf ? 'dwarven' : 'uncommon') + ' weapon', effect: 'fadeInUpBig' }
+            for (let i in Weapon.name) {
+                const weapon = Weapon.name[i]
+                if (!weapon.shoppe) {
+                    let profile = { handle: `<span style="color:${weapon.dwarf ? 'black' : 'brown'};">${i}</span>`, level: weapon.wc, pc: (weapon.dwarf ? 'dwarven' : 'uncommon') + ' weapon', effect: 'fadeInUpBig' }
                     profile['jpg'] = `specials/${i}`
                     list.push(profile)
                 }
@@ -448,9 +445,9 @@ dns.lookup(network.address, (err, addr, family) => {
                 }
             }
 
-            const Ring = JSON.parse(fs.readFileSync(pathTo('items', 'ring.json')).toString())
-            for (let i in Ring) {
-                let profile = { handle: `${Ring[i].unique ? 'The <span style="color:black' : '<span style="color:darkslategray'}">${i}</span> ${Ring[i].emoji} ring<br>`, pc: Ring[i].description, effect: 'fadeInUpBig' }
+            for (let i in Ring.name) {
+                const ring = Ring.name[i]
+                let profile = { handle: `${ring.unique ? 'The <span style="color:black' : '<span style="color:darkslategray'}">${i}</span> ${ring.emoji} ring<br>`, pc: ring.description, effect: 'fadeInUpBig' }
                 profile['jpg'] = `ring/${i}`
                 list.push(profile)
             }
