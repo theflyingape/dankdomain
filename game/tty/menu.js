@@ -184,8 +184,8 @@ var Main;
                 }
                 lib_1.vt.outln(lib_1.vt.faint, 'It is a hot, moonless night.', -600);
                 lib_1.vt.outln('A city guard walks down another street.', -600);
-                let self = lib_1.tradein(new lib_1.Coin($.online.armor.value).value, $.online.cha);
-                self += lib_1.tradein(new lib_1.Coin($.online.weapon.value).value, $.online.cha);
+                let self = lib_1.tradein(new items_1.Coin($.online.armor.value).value, $.online.cha);
+                self += lib_1.tradein(new items_1.Coin($.online.weapon.value).value, $.online.cha);
                 self += $.player.coin.value + $.player.bank.value - $.player.loan.value;
                 self = sys_1.int(self / (6 + $.player.steal));
                 Battle.user('Rob', (opponent) => {
@@ -214,8 +214,8 @@ var Main;
                     }
                     $.rob--;
                     lib_1.vt.outln(lib_1.vt.faint, `You case ${opponent.user.handle}'s joint out.`, -600);
-                    let prize = lib_1.tradein(new lib_1.Coin(items_1.Armor.name[opponent.user.armor].value).value, $.online.cha);
-                    prize += lib_1.tradein(new lib_1.Coin(items_1.Weapon.name[opponent.user.weapon].value).value, $.online.cha);
+                    let prize = lib_1.tradein(new items_1.Coin(items_1.Armor.name[opponent.user.armor].value).value, $.online.cha);
+                    prize += lib_1.tradein(new items_1.Coin(items_1.Weapon.name[opponent.user.weapon].value).value, $.online.cha);
                     if ($.dungeon && opponent.user.cannon)
                         prize += sys_1.money(opponent.user.level);
                     if ($.arena)
@@ -259,7 +259,7 @@ var Main;
                             $.steal++;
                         $.player.coin.value += prize;
                         $.player.steals++;
-                        lib_1.vt.outln('You break in and make off with ', new lib_1.Coin(prize).carry(), ' worth of stuff!');
+                        lib_1.vt.outln('You break in and make off with ', new items_1.Coin(prize).carry(), ' worth of stuff!');
                         lib_1.vt.sound('max', 12);
                         if ($.arena)
                             opponent.user.coin.value = 0;
@@ -386,7 +386,7 @@ var Main;
                 player_1.input('yn');
                 return;
             case 'Y':
-                let cost = new lib_1.Coin(new lib_1.Coin(sys_1.int(sys_1.money($.player.level) / 5)).carry(1, true));
+                const cost = new items_1.Coin(sys_1.int(sys_1.money($.player.level) / 5)).pick(1);
                 lib_1.vt.form = {
                     'yn': {
                         cb: () => {

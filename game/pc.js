@@ -98,6 +98,7 @@ var pc;
             one.int = one.user.int;
             one.dex = one.user.dex;
             one.cha = one.user.cha;
+            console.log('activate:', one, one.user);
             pc_1.Abilities.forEach(ability => {
                 const a = `to${sys_1.titlecase(ability)}`;
                 let rt = one.user.blessed ? 10 : 0;
@@ -485,10 +486,10 @@ var pc;
                     let save = { id: '' };
                     Object.assign(save, user);
                     Object.assign(save, {
-                        bounty: user.bounty,
-                        coin: user.coin,
-                        bank: user.bank,
-                        loan: user.loan
+                        bounty: user.bounty.amount,
+                        coin: user.coin.amount,
+                        bank: user.bank.amount,
+                        loan: user.loan.amount
                     });
                     const trace = sys_1.pathTo('users', `.${user.id}.json`);
                     sys_1.fs.writeFileSync(trace, JSON.stringify(save, null, 2));

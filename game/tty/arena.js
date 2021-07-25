@@ -181,12 +181,12 @@ var Arena;
                                                 lib_1.vt.animated('hinge');
                                                 lib_1.vt.outln('The crowd cheers!', -250);
                                             }
-                                            let reward = new lib_1.Coin(sys_1.money(opponent.user.level));
+                                            let reward = new items_1.Coin(sys_1.money(opponent.user.level));
                                             $.player.coin.value += reward.value;
                                             $.player.jw++;
                                             if (db.run(`UPDATE Players set jl=jl+1 WHERE id='${opponent.user.id}'`).changes)
-                                                lib_1.log(opponent.user.id, `\n${$.player.handle} beat you in a joust and got ${reward.carry(2, true)}.`);
-                                            lib_1.vt.outln('You win ', reward.carry(), '!', -250);
+                                                lib_1.log(opponent.user.id, `\n${$.player.handle} beat you in a joust and got ${reward.amount}.`);
+                                            lib_1.vt.outln('You win ', lib_1.carry(reward), '!', -250);
                                             if ($.player.jw > 14 && $.player.jw / ($.player.jw + $.player.jl) > 0.9) {
                                                 let ring = items_1.Ring.power([], null, 'joust');
                                                 if (items_1.Ring.wear($.player.rings, ring.name)) {
@@ -213,10 +213,10 @@ var Arena;
                                             lib_1.vt.outln('\nYou have lost the joust!');
                                             lib_1.vt.sound('boo');
                                             lib_1.vt.outln('The crowd boos you!', -200);
-                                            let reward = new lib_1.Coin(sys_1.money($.player.level));
+                                            let reward = new items_1.Coin(sys_1.money($.player.level));
                                             $.player.jl++;
-                                            if (db.run(`UPDATE Players set jw=jw+1, coin=coin+${reward.value} WHERE id='${opponent.user.id}'`).changes)
-                                                lib_1.log(opponent.user.id, `\n${$.player.handle} lost to you in a joust.  You got ${reward.carry(2, true)}.`);
+                                            if (db.run(`UPDATE Players set jw=jw+1,coin=coin+${reward.value} WHERE id='${opponent.user.id}'`).changes)
+                                                lib_1.log(opponent.user.id, `\n${$.player.handle} lost to you in a joust.  You got ${reward.amount}.`);
                                             lib_1.news(`\tlost to ${opponent.user.handle} in a joust`);
                                             lib_1.vt.wall($.player.handle, `lost to ${opponent.user.handle} in a joust`);
                                             lib_1.vt.animated('slideOutRight');
@@ -389,8 +389,8 @@ var Arena;
                 lib_1.vt.outln('\nYou are not powerful enough to fight demons yet.  Go fight some monsters.');
                 return;
             }
-            cost = new lib_1.Coin(new lib_1.Coin(sys_1.money($.player.level)).carry(1, true));
-            lib_1.vt.outln('\nThe ancient necromancer will summon you a demon for ', cost.carry());
+            cost = new items_1.Coin(sys_1.money($.player.level)).pick(1);
+            lib_1.vt.outln('\nThe ancient necromancer will summon you a demon for ', lib_1.carry(cost));
             if ($.player.coin.value < cost.value) {
                 lib_1.vt.outln(`You don't have enough!`);
                 return;
@@ -416,11 +416,11 @@ var Arena;
                             let n = sys_1.int(items_1.Weapon.merchant.length * $.player.level / 110);
                             n = n >= items_1.Weapon.merchant.length ? items_1.Weapon.merchant.length - 1 : n;
                             monster.user.weapon = n + 3;
-                            cost.value += lib_1.tradein(new lib_1.Coin(items_1.Weapon.name[items_1.Weapon.merchant[n]].value).value, $.player.cha);
+                            cost.value += lib_1.tradein(new items_1.Coin(items_1.Weapon.name[items_1.Weapon.merchant[n]].value).value, $.player.cha);
                             n = sys_1.int(items_1.Armor.merchant.length * $.player.level / 110);
                             n = n >= items_1.Armor.merchant.length ? items_1.Armor.merchant.length - 1 : n;
                             monster.user.armor = n + 2;
-                            cost.value += lib_1.tradein(new lib_1.Coin(items_1.Armor.name[items_1.Armor.merchant[n]].value).value, $.player.cha);
+                            cost.value += lib_1.tradein(new items_1.Coin(items_1.Armor.name[items_1.Armor.merchant[n]].value).value, $.player.cha);
                             pc_1.PC.reroll(monster.user, (sys_1.dice(($.online.int + $.online.cha) / 50) > 1) ? monster.user.pc : pc_1.PC.random('monster'), monster.user.level);
                             monster.user.spells = [7, 9];
                             if (monster.user.magic) {

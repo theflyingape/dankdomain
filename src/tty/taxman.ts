@@ -5,8 +5,8 @@
 
 import $ = require('../runtime')
 import Battle = require('../battle')
-import { Armor, RealEstate, Ring, Security, Weapon } from '../items'
-import { Coin, news, tradein, vt, weapon } from '../lib'
+import { Armor, Coin, RealEstate, Ring, Security, Weapon } from '../items'
+import { news, pieces, tradein, vt, weapon } from '../lib'
 import { PC } from '../pc'
 import { input } from '../player'
 import { an, dice, int, money, whole } from '../sys'
@@ -15,29 +15,24 @@ module Taxman {
 
     let irs: active[]
     let tax = new Coin(0)
-    PC.load($.taxman)
-    PC.load($.barkeep)
 
     function checkpoint(scratch: number): boolean {
-
         if (int(1000 * scratch / tax.value) / 1000 > 1 && !$.access.sysop) {
-            PC.load($.taxman)
             vt.profile({
                 jpg: 'npc/taxman', handle: $.taxman.user.handle
                 , level: $.taxman.user.level, pc: $.taxman.user.pc, effect: 'fadeIn'
             })
 
             vt.sound('oops', 4)
-            let pouch = new Coin(scratch).pieces()
 
             vt.out('\n\n', vt.yellow, vt.bright, $.taxman.user.handle, vt.normal, -400)
-            vt.outln(', our Master of Coin, looks at your bulging ', pouch, -1200)
+            vt.outln(', our Master of Coin, looks at your bulging ', pieces(), -1200)
             vt.out(vt.yellow, 'and says, ', vt.blue, vt.bright, '"Time to pay taxes!"', vt.normal, -800)
             vt.out(vt.yellow, '  You check out the burly guards who stand ready\n')
             vt.outln(`to enforce `, vt.bright, `${$.king.handle}'${$.king.handle.substr(-1) !== 's' ? 's' : ''}`, vt.normal, ` will.\n`, -1600)
 
             tax.value = scratch - tax.value
-            tax = new Coin(tax.carry(1, true))
+            tax = tax.pick(1)
             vt.outln(`The tax will cost you ${tax.carry()}`, -900)
 
             return true
@@ -172,8 +167,8 @@ module Taxman {
                                     l++
                             } while (xhp > 0)
 
-                            vt.outln(vt.yellow, `The Master of Coin points ${PC.who($.taxman).his}${$.taxman.user.weapon} at you,\n`, vt.bright, vt.blue, `  "Shall we begin?"`)
-                            vt.sound('ddd', 15)
+                            vt.sound('ddd')
+                            vt.outln(vt.yellow, `The Master of Coin points ${PC.who($.taxman).his}${$.taxman.user.weapon} at you,\n`, -1000, vt.bright, vt.blue, `  "Shall we begin?"`)
                             vt.music('taxman')
 
                             Battle.engage('Gates', $.online, irs, boss)

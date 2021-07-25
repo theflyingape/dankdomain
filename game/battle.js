@@ -96,7 +96,7 @@ var Battle;
                 lib_1.vt.wall($.player.handle, `defeated ${$.barkeep.user.handle}`);
                 let trophy = JSON.parse(sys_1.fs.readFileSync(mantle).toString());
                 items_1.Weapon.equip($.barkeep, trophy.weapon);
-                let credit = new lib_1.Coin($.barkeep.weapon.value);
+                let credit = new items_1.Coin($.barkeep.weapon.value);
                 credit.value = lib_1.tradein(credit.value, $.online.cha);
                 let result = items_1.Weapon.swap($.online, $.barkeep, credit);
                 if (typeof result == 'boolean' && result) {
@@ -645,7 +645,7 @@ var Battle;
             db.run(`UPDATE Gangs SET loss=loss+1 WHERE name='${parties[l][0].user.gang}'`);
             let tl = [1, 1];
             let take = 0;
-            let coin = new lib_1.Coin(0);
+            let coin = new items_1.Coin(0);
             for (let m in parties[w]) {
                 tl[w] += parties[w][m].user.xplevel;
                 take += sys_1.money(parties[w][m].user.xplevel + 1);
@@ -656,7 +656,7 @@ var Battle;
                     coin.value += loser.user.coin.value;
                     lib_1.log(loser.user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`);
                     if (loser.user.coin.value)
-                        lib_1.log(loser.user.id, `You lost ${loser.user.coin.carry(2, true)} you were carrying.`);
+                        lib_1.log(loser.user.id, `You lost ${loser.user.coin.amount} you were carrying.`);
                     loser.user.coin.value = 0;
                     pc_1.PC.save(loser);
                 }
@@ -677,12 +677,12 @@ var Battle;
                     if (xp)
                         lib_1.vt.outln('You get ', pc_1.PC.expout(xp), -400);
                     if (award)
-                        lib_1.vt.outln('You get your cut worth ', new lib_1.Coin(award).carry(), '.', 400);
+                        lib_1.vt.outln('You get your cut worth ', lib_1.carry(new items_1.Coin(award)), '.', 400);
                     $.player.xp += xp;
                 }
                 else {
                     lib_1.log(parties[w][m].user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`);
-                    lib_1.log(parties[w][m].user.id, `You got ${pc_1.PC.expout(xp, false)} and ${new lib_1.Coin(award).carry(2, true)}.`);
+                    lib_1.log(parties[w][m].user.id, `You got ${pc_1.PC.expout(xp, false)} and ${new items_1.Coin(award).carry()}.`);
                     parties[w][m].user.xp += xp;
                     pc_1.PC.save(parties[w][m]);
                 }
@@ -691,12 +691,8 @@ var Battle;
             if (coin.value) {
                 lib_1.vt.outln();
                 lib_1.vt.beep();
-                pc_1.PC.load($.taxman);
-                $.taxman.user.bank.value += coin.value;
-                db.run(`UPDATE Players
-                    set bank=${$.taxman.user.bank.value}
-                    WHERE id='${$.taxman.user.id}'`).changes;
-                lib_1.vt.outln($.taxman.user.handle, ' took ', $.taxman.who.his, 'cut worth ', coin.carry(1), '.', -600);
+                db.run(`UPDATE Players set bank=bank+${coin.value} WHERE id='${$.taxman.user.id}'`);
+                lib_1.vt.outln($.taxman.user.handle, ' took ', $.taxman.who.his, 'cut worth ', lib_1.carry(coin), '.', -600);
             }
             if (winner === $.online) {
                 lib_1.news(`\tdefeated the gang, ${parties[l][0].user.gang}`);
@@ -711,7 +707,7 @@ var Battle;
         }
         if (l) {
             let xp = 0;
-            let coin = new lib_1.Coin(0);
+            let coin = new items_1.Coin(0);
             for (let m in parties[l]) {
                 if ((loser = parties[l][m]).hp == 0) {
                     lib_1.log(loser.user.id, `\n${$.player.handle} killed you!`);
@@ -747,14 +743,14 @@ var Battle;
                         loser.altered = true;
                     }
                     if ($.from !== 'User') {
-                        let credit = new lib_1.Coin(loser.weapon.value);
+                        let credit = new items_1.Coin(loser.weapon.value);
                         credit.value = lib_1.tradein(credit.value, winner.cha);
                         let result = items_1.Weapon.swap(winner, loser, credit);
                         if (typeof result == 'boolean' && result)
                             lib_1.vt.outln(winner.who.He, pc_1.PC.what(winner, 'take'), loser.who.his, winner.user.weapon, '.');
                         else if ($.from == 'Monster' && result)
                             lib_1.vt.outln(winner.who.He, pc_1.PC.what(winner, 'get'), credit.carry(), ' for ', loser.who.his, loser.user.weapon, '.');
-                        credit = new lib_1.Coin(loser.armor.value);
+                        credit = new items_1.Coin(loser.armor.value);
                         credit.value = lib_1.tradein(credit.value, winner.cha);
                         result = items_1.Armor.swap(winner, loser, credit);
                         if (typeof result == 'boolean' && result) {
@@ -1507,7 +1503,7 @@ var Battle;
                     pc_1.PC.reroll(iou.user, undefined, rpc.user.level);
                     pc_1.PC.activate(iou);
                     iou.user.xplevel = -1;
-                    iou.user.coin = new lib_1.Coin(0);
+                    iou.user.coin = new items_1.Coin(0);
                     iou.user.sp = 0;
                     iou.sp = 0;
                     let p = round[0].party;
@@ -2188,7 +2184,7 @@ var Battle;
             lib_1.vt.out(lib_1.vt.cyan, '   Spell points: ', lib_1.vt.bright, $.online.sp > $.player.sp ? lib_1.vt.yellow : $.online.sp == $.player.sp ? lib_1.vt.white : lib_1.vt.red, $.online.sp.toString(), lib_1.vt.reset, '/', $.player.sp.toString());
         }
         if ($.player.coin.value)
-            lib_1.vt.out(lib_1.vt.cyan, '   Coin: ', $.player.coin.carry(4));
+            lib_1.vt.out(lib_1.vt.cyan, '   Coin: ', lib_1.carry());
         lib_1.vt.outln();
         lib_1.vt.outln(lib_1.vt.cyan, 'Weapon: ', lib_1.weapon(), lib_1.vt.cyan, '   Armor: ', lib_1.armor());
         if (full) {

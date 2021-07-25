@@ -5,7 +5,7 @@
 
 import xvt from '@theflyingape/xvt'
 import $ = require('./runtime')
-import { Coin as _coin, Ring } from './items'
+import { Coin, Ring } from './items'
 import { an, dice, fs, int, LOG, NEWS, pathTo, sprintf, titlecase, whole } from './sys'
 
 module lib {
@@ -41,6 +41,31 @@ module lib {
         }
         if (text) vt.emulation = keep
         return buff
+    }
+
+    export function carry(coin = $.player.coin, max = 2): string {
+        let n = this.value
+        let bags: string[] = []
+
+        if (coin.pouch(n) == 'p') {
+            n = int(n / 1e+13)
+            bags.push(vt.attr(vt.white, vt.bright, n.toString(), vt.magenta, 'p', vt.normal, vt.white))
+            n = this.value % 1e+13
+        }
+        if (coin.pouch(n) == 'g') {
+            n = int(n / 1e+09)
+            bags.push(vt.attr(vt.white, vt.bright, n.toString(), vt.yellow, 'g', vt.normal, vt.white))
+            n = this.value % 1e+09
+        }
+        if (coin.pouch(n) == 's') {
+            n = int(n / 1e+05)
+            bags.push(vt.attr(vt.white, vt.bright, n.toString(), vt.cyan, 's', vt.normal, vt.white))
+            n = this.value % 1e+05
+        }
+        if ((n > 0 && this._pouch(n) == 'c') || bags.length == 0)
+            bags.push(vt.attr(vt.white, vt.bright, n.toString(), vt.red, 'c', vt.normal, vt.white))
+
+        return bags.slice(0, max).toString()
     }
 
     export function cat(name: string, delay = $.player.expert ? 5 : 50): boolean {
@@ -211,6 +236,15 @@ module lib {
         }
     }
 
+    export function pieces(p = this.pouch($.player.coin)): string {
+        return 'pouch of ' + (vt.emulation == 'XT' ? '💰 ' : '') + {
+            'p': vt.attr(vt.magenta, vt.bright, 'platinum', vt.normal),
+            'g': vt.attr(vt.yellow, vt.bright, 'gold', vt.normal),
+            's': vt.attr(vt.cyan, vt.bright, 'silver', vt.normal),
+            'c': vt.attr(vt.red, vt.bright, 'copper', vt.normal)
+        }[p] + vt.attr(' pieces', vt.reset)
+    }
+
     export function prompt(focus: string | number, input = '', speed = 5) {
         //console.log(`input = '${input}' `, input.split('').map((c) => { return c.charCodeAt(0) }))
         if ($.access.bot)
@@ -248,9 +282,10 @@ module lib {
         return sprintf('%u:%02u%s', h, m, ap)
     }
 
-    export function tradein(retail: number, percentage = $.online.cha): number {
-        percentage--
-        return whole(retail * percentage / 100)
+    export function tradein(retail: string | number, percentage = $.online.cha): number {
+        const worth = new Coin(retail)
+        percentage -= 10    //  Obama-Biden adjustment
+        return whole(worth.value * percentage / 100)
     }
 
     export function weapon(profile = $.online, text = false): string {
@@ -322,52 +357,6 @@ module lib {
 
         wall(who: string, msg: string) {
             if (this.tty !== 'door') this.out(`@wall(${who} ${msg})`)
-        }
-    }
-
-    export class Coin extends _coin implements coin {
-
-        //  top valued coin bag (+ any lesser)
-        get amount(): string {
-            return this.carry(2, true)
-        }
-
-        set amount(newAmount: string) {
-            super.amount = newAmount
-        }
-
-        carry(max = 2, text = false): string {
-            let n = this.value
-            let bags: string[] = []
-
-            if (this._pouch(n) == 'p') {
-                n = int(n / 1e+13)
-                bags.push(text ? n + 'p' : vt.attr(vt.white, vt.bright, n.toString(), vt.magenta, 'p', vt.normal, vt.white))
-                n = this.value % 1e+13
-            }
-            if (this._pouch(n) == 'g') {
-                n = int(n / 1e+09)
-                bags.push(text ? n + 'g' : vt.attr(vt.white, vt.bright, n.toString(), vt.yellow, 'g', vt.normal, vt.white))
-                n = this.value % 1e+09
-            }
-            if (this._pouch(n) == 's') {
-                n = int(n / 1e+05)
-                bags.push(text ? n + 's' : vt.attr(vt.white, vt.bright, n.toString(), vt.cyan, 's', vt.normal, vt.white))
-                n = this.value % 1e+05
-            }
-            if ((n > 0 && this._pouch(n) == 'c') || bags.length == 0)
-                bags.push(text ? n + 'c' : vt.attr(vt.white, vt.bright, n.toString(), vt.red, 'c', vt.normal, vt.white))
-
-            return bags.slice(0, max).toString()
-        }
-
-        pieces(p = this._pouch(this.value), emoji = false): string {
-            return 'pouch of ' + (emoji ? '💰 ' : '') + {
-                'p': vt.attr(vt.magenta, vt.bright, 'platinum', vt.normal),
-                'g': vt.attr(vt.yellow, vt.bright, 'gold', vt.normal),
-                's': vt.attr(vt.cyan, vt.bright, 'silver', vt.normal),
-                'c': vt.attr(vt.red, vt.bright, 'copper', vt.normal)
-            }[p] + vt.attr(' pieces', vt.reset)
         }
     }
 

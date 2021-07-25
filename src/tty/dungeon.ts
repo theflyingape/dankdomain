@@ -6,12 +6,12 @@
 import $ = require('../runtime')
 import Battle = require('../battle')
 import db = require('../db')
-import { Armor, Magic, Poison, Ring, Security, Weapon } from '../items'
-import { vt, Coin, death, armor, weapon, bracket, cat, log, news, tradein, getRing } from '../lib'
-import { dungeon, elemental } from '../npc'
+import { Armor, Coin, Magic, Poison, Ring, Security, Weapon } from '../items'
+import { armor, bracket, cat, death, getRing, log, pieces, news, tradein, vt, weapon, carry } from '../lib'
+import { dungeon } from '../npc'
 import { PC } from '../pc'
 import { checkXP, input, skillplus } from '../player'
-import { dice, int, sprintf, whole, romanize, an, money } from '../sys'
+import { an, dice, int, money, romanize, sprintf, whole } from '../sys'
 
 module Dungeon {
 
@@ -914,12 +914,12 @@ module Dungeon {
                                         }
                                         if (opponent.user.id) {
                                             loot.value = opponent.user.coin.value + opponent.user.bank.value
-                                            log(opponent.user.id, `\n${$.player.handle} wished for your ${loot.carry(2, true)}`)
-                                            news(`\tlooted ${opponent.user.handle}`)
-                                            $.player.coin.value += loot.value
                                             opponent.user.coin.value = 0
                                             opponent.user.bank.value = 0
                                             PC.save(opponent)
+                                            $.player.coin.value += loot.value
+                                            log(opponent.user.id, `\n${$.player.handle} wished for your ${loot.amount}`)
+                                            news(`\tlooted ${opponent.user.handle}`)
                                             vt.sound('max')
                                         }
                                         menu()
@@ -1058,20 +1058,20 @@ module Dungeon {
                                         break
                                     case 5:
                                         loot.value = money(Z)
-                                        loot.value += tradein(new Coin($.online.weapon.value).value, $.online.cha)
-                                        loot.value += tradein(new Coin($.online.armor.value).value, $.online.cha)
+                                        loot.value += tradein($.online.weapon.value)
+                                        loot.value += tradein($.online.armor.value)
                                         loot.value *= (Z + 1)
-                                        $.player.coin.value += new Coin(loot.carry(1, true)).value
+                                        $.player.coin.value += loot.pick(1).value
                                         vt.sound('yahoo')
                                         break
                                     case 6:
                                         $.player.coin.value = 0
                                         $.player.bank.value = 0
                                         loot.value = money(Z)
-                                        loot.value += tradein(new Coin($.online.weapon.value).value, $.online.cha)
-                                        loot.value += tradein(new Coin($.online.armor.value).value, $.online.cha)
+                                        loot.value += tradein($.online.weapon.value)
+                                        loot.value += tradein($.online.armor.value)
                                         loot.value *= (Z + 1)
-                                        $.player.loan.value += new Coin(loot.carry(1, true)).value
+                                        $.player.loan.value += loot.pick(1).value
                                         vt.sound('thief2')
                                         break
                                     case 7:
@@ -1203,10 +1203,9 @@ module Dungeon {
                         Poison.remove($.player.poisons, y)
                     }
                     else if ($.player.coin.value) {
-                        let pouch = $.player.coin.amount.split(',')
-                        x = dice(pouch.length) - 1
-                        vt.out($.player.coin.pieces(pouch[x].substr(-1)))
-                        $.player.coin.value -= new Coin(pouch[x]).value
+                        const pick = $.player.coin.pick()
+                        vt.out(pieces(pick.amount.substr(-1)))
+                        $.player.coin.value -= pick.value
                     }
                     else
                         vt.out(vt.yellow, `Reese's pieces`)
@@ -1238,7 +1237,7 @@ module Dungeon {
                 cost.value *= (int(deep / 3) + 1)
                 if (!$.player.coward && !$.player.steals && ($.player.pc == dungeon.level.cleric.user.pc || $.player.maxcha > 98))
                     cost.value = 0
-                cost = new Coin(cost.carry(1, true))	//	just from 1-pouch
+                cost = cost.pick(1)	//	just from 1-pouch
 
                 if (ROOM.giftItem == 'chest') {
                     ROOM.giftValue = dice(6 - $.player.magic) - 1
@@ -1263,13 +1262,13 @@ module Dungeon {
                 if ($.online.hp > int($.player.hp / 3) || dungeon.level.cleric.sp < Magic.power(dungeon.level.cleric, 13)) {
                     vt.out('"I can ', dungeon.level.cleric.sp < Magic.power(dungeon.level.cleric, 13) ? 'only' : 'surely'
                         , ' cast a Heal spell on your wounds for '
-                        , cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
+                        , cost.value ? carry(cost) : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
                         , '."')
                 }
                 else if (dungeon.level.cleric.sp >= Magic.power(dungeon.level.cleric, 13)) {
                     cast = 13
                     vt.out('"I can restore your health for '
-                        , cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
+                        , cost.value ? carry(cost) : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`
                         , '."')
                 }
 
@@ -1483,11 +1482,11 @@ module Dungeon {
                     }
                     else
                         credit.value = 0
-                    vt.outln(' worth ', credit.carry(), -1000)
+                    vt.outln(' worth ', carry(credit), -1000)
 
                     for (hi = 0; hi < Armor.dwarf.length - 1 && ac >= Armor.name[Armor.dwarf[hi]].ac; hi++);
                     if (new Coin(Armor.name[Armor.dwarf[hi]].value).value <= credit.value + $.player.coin.value) {
-                        if ($.player.coin.value) vt.outln('  and all your coin worth ', $.player.coin.carry(), -1000)
+                        if ($.player.coin.value) vt.outln('  and all your coin worth ', carry(), -1000)
                         vt.out(`I'll trade you for my `, vt.bright
                             , ['exceptional', 'precious', 'remarkable', 'special', 'uncommon'][dice(5) - 1], ' '
                             , bracket(Armor.name[Armor.dwarf[hi]].ac, false), ' ')
@@ -1512,11 +1511,11 @@ module Dungeon {
                     }
                     else
                         credit.value = 0
-                    vt.outln(' worth ', credit.carry())
+                    vt.outln(' worth ', carry(credit))
 
                     for (hi = 0; hi < Weapon.dwarf.length - 1 && wc >= Weapon.name[Weapon.dwarf[hi]].wc; hi++);
                     if (new Coin(Weapon.name[Weapon.dwarf[hi]].value).value <= credit.value + $.player.coin.value) {
-                        if ($.player.coin.value) vt.outln('  and all your coin worth ', $.player.coin.carry(), -1000)
+                        if ($.player.coin.value) vt.outln('  and all your coin worth ', carry(), -1000)
                         vt.out(`I'll trade you for my `, vt.bright
                             , ['exquisite', 'fine', 'jeweled', 'rare', 'splendid'][dice(5) - 1], ' '
                             , bracket(Weapon.name[Weapon.dwarf[hi]].wc, false), ' ')
@@ -1732,17 +1731,17 @@ module Dungeon {
 
             case 'chest':
                 let gold = new Coin(money(Z))
-                gold.value += tradein(new Coin($.online.weapon.value).value, $.online.cha)
-                gold.value += tradein(new Coin($.online.armor.value).value, $.online.cha)
+                gold.value += tradein($.online.weapon.value)
+                gold.value += tradein($.online.armor.value)
                 gold.value *= +ROOM.giftValue
-                gold = new Coin(gold.carry(1, true))
+                gold = gold.pick(1)
                 if (gold.value) {
                     if (gold.value > 1e+17)
                         gold.value = 1e+17
                     vt.profile({ jpg: `specials/chest`, effect: 'fadeInUpBig' })
                     vt.sound('yahoo', 10)
                     vt.outln(vt.yellow, 'You find a ', vt.bright, 'treasure chest'
-                        , vt.normal, ' holding ', gold.carry(), '!')
+                        , vt.normal, ' holding ', carry(gold), '!')
                 }
                 else {
                     vt.outln(vt.faint, vt.yellow, 'You find an empty, treasure chest.')
@@ -2923,7 +2922,7 @@ module Dungeon {
             gold.value += tradein(new Coin(m.armor.value).value, dice($.online.cha / 5) + dice(deep) - int($.player.coward))
             gold.value *= dice(deep * 2 / 3)
             gold.value++
-            m.user.coin = new Coin(gold.carry(1, true))
+            m.user.coin = gold.pick(1)
 
             if (+m.user.weapon) {
                 if (dm.hit) m.weapon.hit = dm.hit
@@ -2982,7 +2981,7 @@ module Dungeon {
         vt.out(bracket('O'), `Teleport out of this ${deep ? 'dank' : ''} dungeon`)
         vt.out(bracket('R'), 'Random teleport')
         vt.out(vt.cyan, '\n\nTime Left: ', vt.bright, vt.white, min.toString(), vt.faint, vt.cyan, ' min.', vt.reset)
-        if ($.player.coin.value) vt.out(vt.cyan, '    Coin: ', $.player.coin.carry(4))
+        if ($.player.coin.value) vt.out(vt.cyan, '    Coin: ', carry())
         if ($.player.level / 9 - deep > Security.name[$.player.security].protection + 1)
             vt.out(vt.faint, '\nThe feeling of in', vt.normal, vt.uline, 'security', vt.nouline, vt.faint, ' overwhelms you.', vt.reset)
 

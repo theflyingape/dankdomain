@@ -97,7 +97,7 @@
 		"postinstall": "npm run build",
 		"prepare": "./local-install.sh",
 		"serve": "node game/portal/app",
-		"start": "./tty.sh",
+		"start": "./game/tty.sh",
 		"stop": "killall ƊƊnet",
 		"test": "node game/portal/app test",
 		"watch": "tsc -w"

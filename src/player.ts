@@ -5,8 +5,8 @@
 
 import $ = require('./runtime')
 import db = require('./db')
-import { Access } from './items'
-import { bracket, cat, Coin, prompt, news, time, vt, weapon } from './lib'
+import { Access, Coin } from './items'
+import { bracket, cat, prompt, news, time, vt, weapon } from './lib'
 import { elemental } from './npc'
 import { Deed, PC } from './pc'
 import { an, date2full, dice, fs, int, now, pathTo, sprintf, whole } from './sys'

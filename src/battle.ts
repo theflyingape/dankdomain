@@ -5,8 +5,8 @@
 
 import $ = require('./runtime')
 import db = require('./db')
-import { Access, Armor, Magic, Poison, Ring, Weapon } from './items'
-import { armor, bracket, buff, Coin, death, getRing, log, news, rings, tradein, vt, weapon } from './lib'
+import { Access, Armor, Coin, Magic, Poison, Ring, Weapon } from './items'
+import { armor, bracket, buff, carry, death, getRing, log, news, pieces, rings, tradein, vt, weapon } from './lib'
 import { elemental } from './npc'
 import { Deed, PC } from './pc'
 import { checkXP, input } from './player'
@@ -742,7 +742,7 @@ module Battle {
                     coin.value += loser.user.coin.value
                     log(loser.user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`)
                     if (loser.user.coin.value)
-                        log(loser.user.id, `You lost ${loser.user.coin.carry(2, true)} you were carrying.`)
+                        log(loser.user.id, `You lost ${loser.user.coin.amount} you were carrying.`)
                     loser.user.coin.value = 0
                     PC.save(loser)
                 }
@@ -767,12 +767,12 @@ module Battle {
                     if (xp)
                         vt.outln('You get ', PC.expout(xp), -400)
                     if (award)
-                        vt.outln('You get your cut worth ', new Coin(award).carry(), '.', 400)
+                        vt.outln('You get your cut worth ', carry(new Coin(award)), '.', 400)
                     $.player.xp += xp
                 }
                 else {
                     log(parties[w][m].user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`)
-                    log(parties[w][m].user.id, `You got ${PC.expout(xp, false)} and ${new Coin(award).carry(2, true)}.`)
+                    log(parties[w][m].user.id, `You got ${PC.expout(xp, false)} and ${new Coin(award).carry()}.`)
                     parties[w][m].user.xp += xp
                     PC.save(parties[w][m])
                 }
@@ -783,12 +783,8 @@ module Battle {
             if (coin.value) {
                 vt.outln()
                 vt.beep()
-                PC.load($.taxman)
-                $.taxman.user.bank.value += coin.value
-                db.run(`UPDATE Players
-                    set bank=${$.taxman.user.bank.value}
-                    WHERE id='${$.taxman.user.id}'`).changes
-                vt.outln($.taxman.user.handle, ' took ', $.taxman.who.his, 'cut worth ', coin.carry(1), '.', -600)
+                db.run(`UPDATE Players set bank=bank+${coin.value} WHERE id='${$.taxman.user.id}'`)
+                vt.outln($.taxman.user.handle, ' took ', $.taxman.who.his, 'cut worth ', carry(coin), '.', -600)
             }
 
             if (winner === $.online) {
@@ -2419,7 +2415,7 @@ module Battle {
                 , vt.reset, '/', $.player.sp.toString()
             )
         }
-        if ($.player.coin.value) vt.out(vt.cyan, '   Coin: ', $.player.coin.carry(4))
+        if ($.player.coin.value) vt.out(vt.cyan, '   Coin: ', carry())
         vt.outln()
         vt.outln(vt.cyan, 'Weapon: ', weapon(), vt.cyan, '   Armor: ', armor())
 
@@ -2428,7 +2424,6 @@ module Battle {
             rings()
         }
     }
-
 }
 
 export = Battle

@@ -42,6 +42,29 @@ var lib;
         return buff;
     }
     lib.buff = buff;
+    function carry(coin = $.player.coin, max = 2) {
+        let n = this.value;
+        let bags = [];
+        if (coin.pouch(n) == 'p') {
+            n = sys_1.int(n / 1e+13);
+            bags.push(lib.vt.attr(lib.vt.white, lib.vt.bright, n.toString(), lib.vt.magenta, 'p', lib.vt.normal, lib.vt.white));
+            n = this.value % 1e+13;
+        }
+        if (coin.pouch(n) == 'g') {
+            n = sys_1.int(n / 1e+09);
+            bags.push(lib.vt.attr(lib.vt.white, lib.vt.bright, n.toString(), lib.vt.yellow, 'g', lib.vt.normal, lib.vt.white));
+            n = this.value % 1e+09;
+        }
+        if (coin.pouch(n) == 's') {
+            n = sys_1.int(n / 1e+05);
+            bags.push(lib.vt.attr(lib.vt.white, lib.vt.bright, n.toString(), lib.vt.cyan, 's', lib.vt.normal, lib.vt.white));
+            n = this.value % 1e+05;
+        }
+        if ((n > 0 && this._pouch(n) == 'c') || bags.length == 0)
+            bags.push(lib.vt.attr(lib.vt.white, lib.vt.bright, n.toString(), lib.vt.red, 'c', lib.vt.normal, lib.vt.white));
+        return bags.slice(0, max).toString();
+    }
+    lib.carry = carry;
     function cat(name, delay = $.player.expert ? 5 : 50) {
         const file = sys_1.pathTo('files', name);
         let filename = file + (lib.vt.emulation == 'PC' ? '.ibm' : lib.vt.emulation == 'XT' ? '.ans' : '.txt');
@@ -202,6 +225,15 @@ var lib;
         }
     }
     lib.news = news;
+    function pieces(p = this.pouch($.player.coin)) {
+        return 'pouch of ' + (lib.vt.emulation == 'XT' ? '💰 ' : '') + {
+            'p': lib.vt.attr(lib.vt.magenta, lib.vt.bright, 'platinum', lib.vt.normal),
+            'g': lib.vt.attr(lib.vt.yellow, lib.vt.bright, 'gold', lib.vt.normal),
+            's': lib.vt.attr(lib.vt.cyan, lib.vt.bright, 'silver', lib.vt.normal),
+            'c': lib.vt.attr(lib.vt.red, lib.vt.bright, 'copper', lib.vt.normal)
+        }[p] + lib.vt.attr(' pieces', lib.vt.reset);
+    }
+    lib.pieces = pieces;
     function prompt(focus, input = '', speed = 5) {
         if ($.access.bot)
             lib.vt.form[focus].delay = speed < 100 ? 125 * sys_1.dice(speed) * sys_1.dice(speed) : speed;
@@ -240,8 +272,9 @@ var lib;
     }
     lib.time = time;
     function tradein(retail, percentage = $.online.cha) {
-        percentage--;
-        return sys_1.whole(retail * percentage / 100);
+        const worth = new items_1.Coin(retail);
+        percentage -= 10;
+        return sys_1.whole(worth.value * percentage / 100);
     }
     lib.tradein = tradein;
     function weapon(profile = $.online, text = false) {
@@ -304,45 +337,6 @@ var lib;
                 this.out(`@wall(${who} ${msg})`);
         }
     }
-    class Coin extends items_1.Coin {
-        get amount() {
-            return this.carry(2, true);
-        }
-        set amount(newAmount) {
-            super.amount = newAmount;
-        }
-        carry(max = 2, text = false) {
-            let n = this.value;
-            let bags = [];
-            if (this._pouch(n) == 'p') {
-                n = sys_1.int(n / 1e+13);
-                bags.push(text ? n + 'p' : lib.vt.attr(lib.vt.white, lib.vt.bright, n.toString(), lib.vt.magenta, 'p', lib.vt.normal, lib.vt.white));
-                n = this.value % 1e+13;
-            }
-            if (this._pouch(n) == 'g') {
-                n = sys_1.int(n / 1e+09);
-                bags.push(text ? n + 'g' : lib.vt.attr(lib.vt.white, lib.vt.bright, n.toString(), lib.vt.yellow, 'g', lib.vt.normal, lib.vt.white));
-                n = this.value % 1e+09;
-            }
-            if (this._pouch(n) == 's') {
-                n = sys_1.int(n / 1e+05);
-                bags.push(text ? n + 's' : lib.vt.attr(lib.vt.white, lib.vt.bright, n.toString(), lib.vt.cyan, 's', lib.vt.normal, lib.vt.white));
-                n = this.value % 1e+05;
-            }
-            if ((n > 0 && this._pouch(n) == 'c') || bags.length == 0)
-                bags.push(text ? n + 'c' : lib.vt.attr(lib.vt.white, lib.vt.bright, n.toString(), lib.vt.red, 'c', lib.vt.normal, lib.vt.white));
-            return bags.slice(0, max).toString();
-        }
-        pieces(p = this._pouch(this.value), emoji = false) {
-            return 'pouch of ' + (emoji ? '💰 ' : '') + {
-                'p': lib.vt.attr(lib.vt.magenta, lib.vt.bright, 'platinum', lib.vt.normal),
-                'g': lib.vt.attr(lib.vt.yellow, lib.vt.bright, 'gold', lib.vt.normal),
-                's': lib.vt.attr(lib.vt.cyan, lib.vt.bright, 'silver', lib.vt.normal),
-                'c': lib.vt.attr(lib.vt.red, lib.vt.bright, 'copper', lib.vt.normal)
-            }[p] + lib.vt.attr(' pieces', lib.vt.reset);
-        }
-    }
-    lib.Coin = Coin;
     lib.vt = new _xvt('VT', false);
 })(lib || (lib = {}));
 module.exports = lib;

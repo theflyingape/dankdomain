@@ -30,7 +30,7 @@ var Square;
         'R': { description: 'Rob the bank' },
         'T': {}
     };
-    let credit = new lib_1.Coin(0);
+    let credit = new items_1.Coin(0);
     let lo = 0, hi = 0, max = 0;
     let want = '';
     function menu(suppress = true) {
@@ -55,16 +55,13 @@ var Square;
                 else {
                     let p, i;
                     if ($.player.coin.value > 0) {
-                        let pouch = $.player.coin.amount.split(',');
-                        p = sys_1.dice(pouch.length) - 1;
-                        i = 'csgp'.indexOf(pouch[p].substr(-1));
-                        let v = new lib_1.Coin(pouch[p]);
+                        const v = $.player.coin.pick();
                         bump.user.coin.value += v.value;
-                        lib_1.log(bump.user.id, `\nYou picked ${$.player.handle}'s pouch holding ${v.carry()}!`);
+                        lib_1.log(bump.user.id, `\nYou picked ${$.player.handle}'s pouch holding ${v.amount}!`);
                         $.player.coin.value -= v.value;
                         lib_1.vt.outln(lib_1.vt.faint, '{sigh}');
                         lib_1.vt.sound('oops', 8);
-                        lib_1.vt.outln('Your ', v.pieces(), ' is gone!');
+                        lib_1.vt.outln('Your ', lib_1.pieces(v), ' is gone!');
                     }
                     else if ($.player.poisons.length) {
                         lib_1.vt.out(lib_1.vt.faint, '\nYou hear vials rattle.');
@@ -131,8 +128,8 @@ var Square;
                 let ac = items_1.Armor.name[$.player.armor].ac;
                 lib_1.vt.out('\nYou own a class ', lib_1.bracket(ac, false), ' ', lib_1.armor());
                 if (ac) {
-                    let cv = new lib_1.Coin(items_1.Armor.name[$.player.armor].value);
-                    credit.value = lib_1.tradein(cv.value, $.online.cha);
+                    let cv = new items_1.Coin(items_1.Armor.name[$.player.armor].value);
+                    credit.value = lib_1.tradein(cv.value);
                     if ($.player.toAC)
                         credit.value = sys_1.int(credit.value * (ac + $.player.toAC / ($.player.poison + 1)) / ac);
                     if ($.online.toAC < 0)
@@ -142,7 +139,7 @@ var Square;
                 }
                 else
                     credit.value = 0;
-                lib_1.vt.outln(' worth ', credit.carry());
+                lib_1.vt.outln(' worth ', lib_1.carry(credit));
                 if (ac == 0 && ($.player.toAC < 0 || $.online.toAC < 0)) {
                     lib_1.vt.outln(lib_1.vt.yellow, 'You look like a leper; go to the hospital for treatment.');
                     suppress = true;
@@ -151,7 +148,7 @@ var Square;
                 max = items_1.Armor.merchant.length - 1;
                 lo = $.online.armor.ac - 1;
                 lo = lo < 1 ? 1 : lo > max ? max - 1 : lo;
-                for (hi = lo; hi < max && $.player.coin.value + credit.value >= new lib_1.Coin(items_1.Armor.name[items_1.Armor.merchant[hi]].value).value; hi++)
+                for (hi = lo; hi < max && $.player.coin.value + credit.value >= new items_1.Coin(items_1.Armor.name[items_1.Armor.merchant[hi]].value).value; hi++)
                     ;
                 if (lo > 1 && lo == hi)
                     lo--;
@@ -160,15 +157,15 @@ var Square;
             case 'B':
                 if (!$.access.roleplay)
                     break;
-                credit.value = lib_1.tradein(new lib_1.Coin(items_1.RealEstate.name[$.player.realestate].value).value, $.online.cha);
-                credit.value += lib_1.tradein(new lib_1.Coin(items_1.Security.name[$.player.security].value).value, $.online.cha);
+                credit.value = lib_1.tradein(new items_1.Coin(items_1.RealEstate.name[$.player.realestate].value).value, $.online.cha);
+                credit.value += lib_1.tradein(new items_1.Coin(items_1.Security.name[$.player.security].value).value, $.online.cha);
                 credit.value -= $.player.loan.value;
                 if (credit.value < 1)
                     credit.value = 0;
                 lib_1.vt.action('bank');
-                bank['D'] = { description: 'Money in hand: ' + $.player.coin.carry(4) };
-                bank['W'] = { description: 'Money in bank: ' + $.player.bank.carry(4) };
-                bank['L'] = { description: 'Money on loan: ' + $.player.loan.carry(4) };
+                bank['D'] = { description: 'Money in hand: ' + lib_1.carry() };
+                bank['W'] = { description: 'Money in bank: ' + lib_1.carry($.player.bank) };
+                bank['L'] = { description: 'Money on loan: ' + lib_1.carry($.player.loan) };
                 lib_1.vt.form = {
                     'menu': { cb: Bank, cancel: 'q', enter: '?', eol: false }
                 };
@@ -183,7 +180,7 @@ var Square;
                 if (!$.access.roleplay)
                     break;
                 if (items_1.Armor.name[$.player.armor].ac == 0 && ($.online.toAC < 0 || $.player.toAC < 0)) {
-                    credit = new lib_1.Coin(Math.abs($.online.toAC + $.player.toAC) * sys_1.money($.player.level) + 1);
+                    credit = new items_1.Coin(Math.abs($.online.toAC + $.player.toAC) * sys_1.money($.player.level) + 1);
                     lib_1.vt.action('yn');
                     lib_1.vt.form = {
                         'skin': {
@@ -210,12 +207,12 @@ var Square;
                             }, cancel: 'Y', enter: 'Y', max: 1, eol: false, match: /Y|N/i, timeout: 10
                         }
                     };
-                    lib_1.vt.form['skin'].prompt = 'Heal your skin for ' + credit.carry() + ' (Y/N)? ';
+                    lib_1.vt.form['skin'].prompt = 'Heal your skin for ' + lib_1.carry(credit) + ' (Y/N)? ';
                     player_1.input('skin', 'y');
                     return;
                 }
                 if (items_1.Weapon.name[$.player.weapon].wc == 0 && ($.online.toWC < 0 || $.player.toWC < 0)) {
-                    credit = new lib_1.Coin(Math.abs($.online.toWC + $.player.toWC) * sys_1.money($.player.level) + 1);
+                    credit = new items_1.Coin(Math.abs($.online.toWC + $.player.toWC) * sys_1.money($.player.level) + 1);
                     lib_1.vt.action('yn');
                     lib_1.vt.form = {
                         'hands': {
@@ -242,7 +239,7 @@ var Square;
                             }, cancel: 'Y', enter: 'Y', max: 1, eol: false, match: /Y|N/i, timeout: 10
                         }
                     };
-                    lib_1.vt.form['hands'].prompt = 'Fix your hands for ' + credit.carry() + ' (Y/N)? ';
+                    lib_1.vt.form['hands'].prompt = 'Fix your hands for ' + lib_1.carry(credit) + ' (Y/N)? ';
                     player_1.input('hands', 'y');
                     return;
                 }
@@ -318,7 +315,7 @@ var Square;
                             return;
                         }
                         credit.value = sys_1.int(sys_1.money(opponent.user.level) * (100 - $.online.cha + 1) / 100 + 1);
-                        lib_1.vt.out(`It will cost you ${credit.carry()} to bail out ${opponent.user.handle}.\n`);
+                        lib_1.vt.out(`It will cost you ${lib_1.carry(credit)} to bail out ${opponent.user.handle}.\n`);
                         if ($.player.coin.value < credit.value) {
                             menu();
                             return;
@@ -336,7 +333,7 @@ var Square;
                                         opponent.user.status = '';
                                         opponent.user.xplevel = opponent.user.level;
                                         db.run(`UPDATE Players set status='',xplevel=level WHERE id='${opponent.user.id}'`);
-                                        lib_1.log(opponent.user.id, `${$.player.handle} paid ${credit.carry()} to bail you out of jail.\n`);
+                                        lib_1.log(opponent.user.id, `${$.player.handle} paid ${credit.amount} to bail you out of jail.\n`);
                                         lib_1.news(`\t${opponent.user.handle} made bail`);
                                         pc_1.PC.adjust('cha', -1, -1, -1);
                                         $.bail--;
@@ -369,8 +366,8 @@ var Square;
                 }
                 for (hi = max; hi > lo; hi--)
                     if (!items_1.Magic.have($.player.spells, hi)
-                        && $.player.coin.value >= ($.player.magic == 1 ? new lib_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[hi - 1]].wand).value
-                            : new lib_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[hi - 1]].cost).value))
+                        && $.player.coin.value >= ($.player.magic == 1 ? new items_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[hi - 1]].wand).value
+                            : new items_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[hi - 1]].cost).value))
                         break;
                 lib_1.vt.out(['offers to sell you a magic wand',
                     'offers to make you a scroll, for a price',
@@ -392,18 +389,19 @@ var Square;
                 let pocket = pc_1.PC.encounter(`AND novice = 0 AND id NOT GLOB '_*'`).user;
                 if (pocket.id) {
                     pc_1.PC.load(pocket);
+                    const v = pocket.coin.pick().value;
                     if (pocket.coin.value > 0)
-                        credit.value += pocket.coin.value;
+                        credit.value += v;
                     else {
                         pocket.id = '';
                         pocket.handle = 'somebody';
                     }
-                    pocket.coin.value = 0;
+                    pocket.coin.value -= v;
                 }
                 else
                     pocket.handle = 'somebody';
                 lib_1.vt.outln('\n');
-                lib_1.vt.outln(`You pick ${pocket.handle}'s pocket and steal `, credit.carry(), '!');
+                lib_1.vt.outln(`You pick ${pocket.handle}'s pocket and steal `, lib_1.pieces(credit), '!');
                 lib_1.vt.outln(-1000);
                 let effort = 100 + $.steal;
                 effort -= 8 * items_1.Ring.power([], $.player.rings, 'steal').power;
@@ -442,14 +440,14 @@ var Square;
                     break;
                 let re = items_1.RealEstate.name[$.player.realestate].protection;
                 lib_1.vt.out('\nYou live in a ', $.player.realestate);
-                credit.value = lib_1.tradein(new lib_1.Coin(items_1.RealEstate.name[$.player.realestate].value).value, $.online.cha);
-                lib_1.vt.outln(' worth ', credit.carry());
+                credit.value = lib_1.tradein(items_1.RealEstate.name[$.player.realestate].value);
+                lib_1.vt.outln(' worth ', lib_1.carry(credit));
                 max = items_1.RealEstate.merchant.length - 1;
                 lo = re - $.realestate;
                 if (lo < 1)
                     lo = 1;
                 hi = lo;
-                for (; hi < max && $.player.coin.value + credit.value >= new lib_1.Coin(items_1.RealEstate.name[items_1.RealEstate.merchant[hi]].value).value; hi++)
+                for (; hi < max && $.player.coin.value + credit.value >= new items_1.Coin(items_1.RealEstate.name[items_1.RealEstate.merchant[hi]].value).value; hi++)
                     ;
                 list(choice);
                 return;
@@ -458,20 +456,20 @@ var Square;
                     break;
                 let s = items_1.Security.name[$.player.security].protection;
                 lib_1.vt.out('\nYou are guarded by a ', $.player.security);
-                credit.value = lib_1.tradein(new lib_1.Coin(items_1.Security.name[$.player.security].value).value, $.online.cha);
-                lib_1.vt.outln(' worth ', credit.carry());
+                credit.value = lib_1.tradein(items_1.Security.name[$.player.security].value);
+                lib_1.vt.outln(' worth ', lib_1.carry(credit));
                 max = items_1.Security.merchant.length - 1;
                 lo = s - $.security;
                 if (lo < 1)
                     lo = 1;
                 hi = lo;
-                for (; hi < max && $.player.coin.value + credit.value >= new lib_1.Coin(items_1.Security.name[items_1.Security.merchant[hi]].value).value; hi++)
+                for (; hi < max && $.player.coin.value + credit.value >= new items_1.Coin(items_1.Security.name[items_1.Security.merchant[hi]].value).value; hi++)
                     ;
                 list(choice);
                 return;
             case 'V':
-                lib_1.vt.outln('\n', lib_1.vt.faint, '... you enter the back door of the shop ...');
-                lib_1.vt.out('The ', lib_1.vt.bright, lib_1.vt.magenta, 'apothecary ', lib_1.vt.reset);
+                lib_1.vt.outln('\n', lib_1.vt.faint, '... you enter the back door into the shop ...');
+                lib_1.vt.out('The ', lib_1.vt.magenta, lib_1.vt.bright, 'apothecary ', lib_1.vt.reset);
                 max = items_1.Poison.merchant.length;
                 for (lo = 1; lo <= max; lo++)
                     if (!items_1.Poison.have($.player.poisons, lo))
@@ -483,8 +481,8 @@ var Square;
                 }
                 for (hi = max; hi > lo; hi--)
                     if (!items_1.Poison.have($.player.poisons, hi)
-                        && $.player.coin.value >= ($.player.poison == 1 ? new lib_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[hi - 1]].vial).value
-                            : new lib_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[hi - 1]].cost).value))
+                        && $.player.coin.value >= ($.player.poison == 1 ? new items_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[hi - 1]].vial).value
+                            : new items_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[hi - 1]].cost).value))
                         break;
                 lib_1.vt.out(['scoffs at your apparent lack of skill',
                     'casts a suspicious look your way',
@@ -499,7 +497,7 @@ var Square;
                 let wc = items_1.Weapon.name[$.player.weapon].wc;
                 lib_1.vt.out('\nYou own a class ', lib_1.bracket(wc, false), ' ', lib_1.weapon());
                 if (wc) {
-                    let cv = new lib_1.Coin(items_1.Weapon.name[$.player.weapon].value);
+                    let cv = new items_1.Coin(items_1.Weapon.name[$.player.weapon].value);
                     credit.value = lib_1.tradein(cv.value, $.online.cha);
                     if ($.player.toWC)
                         credit.value = sys_1.int(credit.value * (wc + $.player.toWC / ($.player.poison + 1)) / wc);
@@ -510,7 +508,7 @@ var Square;
                 }
                 else
                     credit.value = 0;
-                lib_1.vt.outln(' worth ', credit.carry());
+                lib_1.vt.outln(' worth ', lib_1.carry(credit));
                 if (wc == 0 && ($.player.toWC < 0 || $.online.toWC < 0)) {
                     lib_1.vt.outln(lib_1.vt.yellow, 'Your hands are broken; go to the hospital for treatment.');
                     suppress = true;
@@ -519,7 +517,7 @@ var Square;
                 max = items_1.Weapon.merchant.length - 1;
                 lo = $.online.weapon.wc - 1;
                 lo = lo < 1 ? 1 : lo > max ? max - 1 : lo;
-                for (hi = lo; hi < max && $.player.coin.value + credit.value >= new lib_1.Coin(items_1.Weapon.name[items_1.Weapon.merchant[hi]].value).value; hi++)
+                for (hi = lo; hi < max && $.player.coin.value + credit.value >= new items_1.Coin(items_1.Weapon.name[items_1.Weapon.merchant[hi]].value).value; hi++)
                     ;
                 if (lo > 1 && lo == hi)
                     lo--;
@@ -543,17 +541,17 @@ var Square;
         switch (choice) {
             case 'D':
                 lib_1.vt.action('payment');
-                lib_1.vt.form['coin'].prompt = lib_1.vt.attr('Deposit ', lib_1.vt.white, '[', lib_1.vt.uline, 'MAX', lib_1.vt.nouline, '=', $.player.coin.carry(), ']? ');
+                lib_1.vt.form['coin'].prompt = lib_1.vt.attr('Deposit ', lib_1.vt.white, '[', lib_1.vt.uline, 'MAX', lib_1.vt.nouline, '=', lib_1.carry(), ']? ');
                 player_1.input('coin', '=');
                 break;
             case 'L':
                 lib_1.vt.action('payment');
-                lib_1.vt.form['coin'].prompt = lib_1.vt.attr('Loan ', lib_1.vt.white, '[', lib_1.vt.uline, 'MAX', lib_1.vt.nouline, '=', credit.carry(), ']? ');
+                lib_1.vt.form['coin'].prompt = lib_1.vt.attr('Loan ', lib_1.vt.white, '[', lib_1.vt.uline, 'MAX', lib_1.vt.nouline, '=', lib_1.carry(credit), ']? ');
                 player_1.input('coin', '=');
                 break;
             case 'W':
                 lib_1.vt.action('payment');
-                lib_1.vt.form['coin'].prompt = lib_1.vt.attr('Withdraw ', lib_1.vt.white, '[', lib_1.vt.uline, 'MAX', lib_1.vt.nouline, '=', $.player.bank.carry(), ']? ');
+                lib_1.vt.form['coin'].prompt = lib_1.vt.attr('Withdraw ', lib_1.vt.white, '[', lib_1.vt.uline, 'MAX', lib_1.vt.nouline, '=', lib_1.carry($.player.bank), ']? ');
                 player_1.input('coin', '=');
                 break;
             case 'R':
@@ -577,13 +575,14 @@ var Square;
                 }
                 let d = $.player.level + 1;
                 let vault = Math.pow(d, 7) * sys_1.dice(d / 3) * sys_1.dice(d / 11);
-                let carry = new lib_1.Coin(vault);
+                let loot = new items_1.Coin(vault);
                 lib_1.vt.sound('creak2', 12);
-                lib_1.vt.outln(lib_1.vt.yellow, ' you open a chest and find ', carry.carry(), lib_1.vt.bright, '!');
-                let deposits = new lib_1.Coin(sys_1.whole(db.query(`SELECT SUM(bank) AS bank FROM Players WHERE id NOT GLOB '_*' AND id <> '${$.player.id}'`)[0].bank));
+                lib_1.vt.outln(lib_1.vt.yellow, ' you open a chest and find ', lib_1.carry(loot), lib_1.vt.bright, '!');
+                let deposits = new items_1.Coin(sys_1.whole(db.query(`SELECT SUM(bank) AS bank FROM Players WHERE id NOT GLOB '_*' AND id <> '${$.player.id}'`)[0].bank));
                 if (deposits.value) {
                     lib_1.vt.sleep(1200);
-                    lib_1.vt.outln('And you grab ', deposits.carry(), ' more in deposits!');
+                    lib_1.vt.outln('And you grab ', lib_1.carry(deposits), ' more in deposits!');
+                    loot.value += deposits.value;
                 }
                 lib_1.vt.sound('yahoo', 12);
                 lib_1.vt.outln();
@@ -608,7 +607,7 @@ var Square;
                     lib_1.vt.hangup();
                     return;
                 }
-                $.player.coin.value += carry.value + deposits.value;
+                $.player.coin.value += loot.value;
                 $.player.steals++;
                 lib_1.vt.outln();
                 db.run(`UPDATE Players SET bank=0 WHERE id NOT GLOB '_*'`);
@@ -617,7 +616,7 @@ var Square;
                 break;
             case 'T':
                 if ($.access.sysop) {
-                    lib_1.vt.form['coin'].prompt = lib_1.vt.attr('Treasury ', lib_1.vt.white, '[', lib_1.vt.uline, 'MAX', lib_1.vt.nouline, '=99999p]? ');
+                    lib_1.vt.form['coin'].prompt = lib_1.vt.attr('Treasury ', lib_1.vt.white, '[', lib_1.vt.uline, 'MAX', lib_1.vt.nouline, '=10000p]? ');
                     player_1.input('coin');
                     break;
                 }
@@ -631,12 +630,10 @@ var Square;
         if (sys_1.whole(lib_1.vt.entry).toString() == lib_1.vt.entry)
             lib_1.vt.entry += 'c';
         let action = lib_1.vt.form['coin'].prompt.split(' ')[0];
-        let amount = new lib_1.Coin(0);
+        let amount = new items_1.Coin(0);
         switch (action) {
             case 'Deposit':
-                amount.value = sys_1.int((/=|max/i.test(lib_1.vt.entry))
-                    ? new lib_1.Coin($.player.coin.carry(2, true)).value
-                    : new lib_1.Coin(lib_1.vt.entry).value);
+                amount = new items_1.Coin(/=|max/i.test(lib_1.vt.entry) ? $.player.coin.carry() : lib_1.vt.entry);
                 if (amount.value > 0 && amount.value <= $.player.coin.value) {
                     $.player.coin.value -= amount.value;
                     if ($.player.loan.value > 0) {
@@ -654,9 +651,7 @@ var Square;
                 }
                 break;
             case 'Loan':
-                amount.value = sys_1.int((/=|max/i.test(lib_1.vt.entry))
-                    ? new lib_1.Coin(credit.carry(2, true)).value
-                    : new lib_1.Coin(lib_1.vt.entry).value);
+                amount = new items_1.Coin(/=|max/i.test(lib_1.vt.entry) ? credit.carry() : lib_1.vt.entry);
                 if (amount.value > 0 && amount.value <= credit.value) {
                     $.player.loan.value += amount.value;
                     $.player.coin.value += amount.value;
@@ -665,9 +660,7 @@ var Square;
                 }
                 break;
             case 'Withdraw':
-                amount.value = sys_1.int((/=|max/i.test(lib_1.vt.entry))
-                    ? new lib_1.Coin($.player.bank.carry(2, true)).value
-                    : new lib_1.Coin(lib_1.vt.entry).value);
+                amount = new items_1.Coin(/=|max/i.test(lib_1.vt.entry) ? $.player.bank.carry() : lib_1.vt.entry);
                 if (amount.value > 0 && amount.value <= $.player.bank.value) {
                     $.player.bank.value -= amount.value;
                     $.player.coin.value += amount.value;
@@ -676,10 +669,8 @@ var Square;
                 }
                 break;
             case 'Treasury':
-                amount.value = sys_1.int((/=|max/i.test(lib_1.vt.entry))
-                    ? (1e+18 - 1e+09)
-                    : new lib_1.Coin(lib_1.vt.entry).value);
-                if (amount.value > 0 && amount.value <= (1e+18 - 1e+09)) {
+                amount = new items_1.Coin(/=|max/i.test(lib_1.vt.entry) ? 1e+17 : lib_1.vt.entry);
+                if (amount.value > 0) {
                     $.player.coin.value += amount.value;
                     lib_1.vt.beep();
                 }
@@ -743,37 +734,37 @@ var Square;
             switch (want) {
                 case 'A':
                     lib_1.vt.out(lib_1.bracket(i), sys_1.sprintf('%-24s ', items_1.Armor.merchant[i]));
-                    lib_1.vt.out(new lib_1.Coin(items_1.Armor.name[items_1.Armor.merchant[i]].value).carry());
+                    lib_1.vt.out(new items_1.Coin(items_1.Armor.name[items_1.Armor.merchant[i]].value).carry());
                     break;
                 case 'M':
                     if (!items_1.Magic.have($.player.spells, i)) {
                         lib_1.vt.out(lib_1.bracket(i), sys_1.sprintf('%-24s ', items_1.Magic.merchant[i - 1]));
                         if ($.player.magic == 1)
-                            lib_1.vt.out(new lib_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[i - 1]].wand).carry());
+                            lib_1.vt.out(new items_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[i - 1]].wand).carry());
                         else
-                            lib_1.vt.out(new lib_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[i - 1]].cost).carry());
+                            lib_1.vt.out(new items_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[i - 1]].cost).carry());
                     }
                     break;
                 case 'R':
                     lib_1.vt.out(lib_1.bracket(i), sys_1.sprintf('%-24s ', items_1.RealEstate.merchant[i]));
-                    lib_1.vt.out(new lib_1.Coin(items_1.RealEstate.name[items_1.RealEstate.merchant[i]].value).carry());
+                    lib_1.vt.out(new items_1.Coin(items_1.RealEstate.name[items_1.RealEstate.merchant[i]].value).carry());
                     break;
                 case 'S':
                     lib_1.vt.out(lib_1.bracket(i), sys_1.sprintf('%-24s ', items_1.Security.merchant[i]));
-                    lib_1.vt.out(new lib_1.Coin(items_1.Security.name[items_1.Security.merchant[i]].value).carry());
+                    lib_1.vt.out(new items_1.Coin(items_1.Security.name[items_1.Security.merchant[i]].value).carry());
                     break;
                 case 'V':
                     if (!items_1.Poison.have($.player.poisons, i)) {
                         lib_1.vt.out(lib_1.bracket(i), sys_1.sprintf('%-24s ', items_1.Poison.merchant[i - 1]));
                         if ($.player.poison == 1)
-                            lib_1.vt.out(new lib_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[i - 1]].vial).carry());
+                            lib_1.vt.out(new items_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[i - 1]].vial).carry());
                         else
-                            lib_1.vt.out(new lib_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[i - 1]].cost).carry());
+                            lib_1.vt.out(new items_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[i - 1]].cost).carry());
                     }
                     break;
                 case 'W':
                     lib_1.vt.out(lib_1.bracket(i), sys_1.sprintf('%-24s ', items_1.Weapon.merchant[i]));
-                    lib_1.vt.out(new lib_1.Coin(items_1.Weapon.name[items_1.Weapon.merchant[i]].value).carry());
+                    lib_1.vt.out(new items_1.Coin(items_1.Weapon.name[items_1.Weapon.merchant[i]].value).carry());
                     break;
             }
         }
@@ -799,7 +790,7 @@ var Square;
         let item = buy;
         switch (want) {
             case 'A':
-                cost = new lib_1.Coin(items_1.Armor.name[items_1.Armor.merchant[item]].value);
+                cost = new items_1.Coin(items_1.Armor.name[items_1.Armor.merchant[item]].value);
                 if ($.player.coin.value + credit.value >= cost.value) {
                     lib_1.vt.profile({ png: 'payment', effect: 'tada' });
                     lib_1.vt.sound('click');
@@ -813,8 +804,8 @@ var Square;
                 break;
             case 'M':
                 item--;
-                cost = $.player.magic == 1 ? new lib_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[item]].wand)
-                    : new lib_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[item]].cost);
+                cost = $.player.magic == 1 ? new items_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[item]].wand)
+                    : new items_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[item]].cost);
                 if ($.player.coin.value >= cost.value && !items_1.Magic.have($.player.spells, buy)) {
                     lib_1.vt.profile({ png: 'payment', effect: 'tada' });
                     lib_1.vt.sound('click');
@@ -825,7 +816,7 @@ var Square;
                 }
                 break;
             case 'R':
-                cost = new lib_1.Coin(items_1.RealEstate.name[items_1.RealEstate.merchant[item]].value);
+                cost = new items_1.Coin(items_1.RealEstate.name[items_1.RealEstate.merchant[item]].value);
                 if ($.player.coin.value + credit.value >= cost.value) {
                     lib_1.vt.profile({ png: 'payment', effect: 'tada' });
                     lib_1.vt.sound('click');
@@ -838,7 +829,7 @@ var Square;
                 }
                 break;
             case 'S':
-                cost = new lib_1.Coin(items_1.Security.name[items_1.Security.merchant[item]].value);
+                cost = new items_1.Coin(items_1.Security.name[items_1.Security.merchant[item]].value);
                 if ($.player.coin.value + credit.value >= cost.value) {
                     lib_1.vt.profile({ png: 'payment', effect: 'tada' });
                     lib_1.vt.sound('click');
@@ -852,8 +843,8 @@ var Square;
                 break;
             case 'V':
                 item--;
-                cost = $.player.poison == 1 ? new lib_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[item]].vial)
-                    : new lib_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[item]].cost);
+                cost = $.player.poison == 1 ? new items_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[item]].vial)
+                    : new items_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[item]].cost);
                 if ($.player.coin.value >= cost.value && !items_1.Poison.have($.player.poisons, buy)) {
                     lib_1.vt.profile({ png: 'payment', effect: 'tada' });
                     lib_1.vt.sound('click');
@@ -864,7 +855,7 @@ var Square;
                 }
                 break;
             case 'W':
-                cost = new lib_1.Coin(items_1.Weapon.name[items_1.Weapon.merchant[buy]].value);
+                cost = new items_1.Coin(items_1.Weapon.name[items_1.Weapon.merchant[buy]].value);
                 if ($.player.coin.value + credit.value >= cost.value) {
                     lib_1.vt.profile({ png: 'payment', effect: 'tada' });
                     lib_1.vt.sound('click');
@@ -885,7 +876,7 @@ var Square;
         switch (want) {
             case 'A':
                 for (item = hi; item >= lo; item--) {
-                    cost = new lib_1.Coin(items_1.Armor.name[items_1.Armor.merchant[item]].value);
+                    cost = new items_1.Coin(items_1.Armor.name[items_1.Armor.merchant[item]].value);
                     if ($.player.coin.value + credit.value >= cost.value) {
                         if (items_1.Armor.name[items_1.Armor.merchant[item]].ac > $.online.armor.ac
                             || ($.online.armor.ac == items_1.Armor.name[items_1.Armor.merchant[item]].ac
@@ -901,8 +892,8 @@ var Square;
             case 'M':
                 for (let spell = lo; spell <= hi; spell++) {
                     item = spell - 1;
-                    cost = $.player.magic == 1 ? new lib_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[item]].wand)
-                        : new lib_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[item]].cost);
+                    cost = $.player.magic == 1 ? new items_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[item]].wand)
+                        : new items_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[item]].cost);
                     if ($.player.coin.value >= cost.value && !items_1.Magic.have($.player.spells, spell)) {
                         lib_1.vt.sound('click');
                         items_1.Magic.add($.player.spells, spell);
@@ -914,7 +905,7 @@ var Square;
                 break;
             case 'R':
                 for (item = hi; item >= lo; item--) {
-                    cost = new lib_1.Coin(items_1.RealEstate.name[items_1.RealEstate.merchant[item]].value);
+                    cost = new items_1.Coin(items_1.RealEstate.name[items_1.RealEstate.merchant[item]].value);
                     if ($.player.coin.value + credit.value >= cost.value) {
                         if (items_1.RealEstate.name[items_1.RealEstate.merchant[item]].protection > items_1.RealEstate.name[$.player.realestate].protection) {
                             lib_1.vt.entry = item.toString();
@@ -927,7 +918,7 @@ var Square;
                 break;
             case 'S':
                 for (item = hi; item >= lo; item--) {
-                    cost = new lib_1.Coin(items_1.Security.name[items_1.Security.merchant[item]].value);
+                    cost = new items_1.Coin(items_1.Security.name[items_1.Security.merchant[item]].value);
                     if ($.player.coin.value + credit.value >= cost.value) {
                         if (items_1.Security.name[items_1.Security.merchant[item]].protection > items_1.Security.name[$.player.security].protection) {
                             lib_1.vt.entry = item.toString();
@@ -941,8 +932,8 @@ var Square;
             case 'V':
                 for (let vial = lo; vial <= hi; vial++) {
                     item = vial - 1;
-                    cost = $.player.poison == 1 ? new lib_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[item]].vial)
-                        : new lib_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[item]].cost);
+                    cost = $.player.poison == 1 ? new items_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[item]].vial)
+                        : new items_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[item]].cost);
                     if ($.player.coin.value >= cost.value && !items_1.Poison.have($.player.poisons, vial)) {
                         lib_1.vt.sound('click');
                         items_1.Poison.add($.player.poisons, vial);
@@ -954,7 +945,7 @@ var Square;
                 break;
             case 'W':
                 for (item = hi; item >= lo; item--) {
-                    cost = new lib_1.Coin(items_1.Weapon.name[items_1.Weapon.merchant[item]].value);
+                    cost = new items_1.Coin(items_1.Weapon.name[items_1.Weapon.merchant[item]].value);
                     if ($.player.coin.value + credit.value >= cost.value) {
                         if (items_1.Weapon.name[items_1.Weapon.merchant[item]].wc > $.online.weapon.wc
                             || ($.online.weapon.wc == items_1.Weapon.name[items_1.Weapon.merchant[item]].wc

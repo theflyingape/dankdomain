@@ -6,10 +6,11 @@
 import $ = require('../runtime')
 import Battle = require('../battle')
 import db = require('../db')
-import { armor, bracket, cat, Coin, display, log, news, tradein, vt, weapon } from '../lib'
+import { Coin } from '../items'
+import { armor, bracket, carry, cat, death, display, log, news, tradein, vt, weapon } from '../lib'
 import { PC } from '../pc'
 import { checkXP, input } from '../player'
-import { dice, int, money, sprintf, whole, an } from '../sys'
+import { an, dice, int, money, sprintf, whole } from '../sys'
 
 module Naval {
 
@@ -710,10 +711,10 @@ module Naval {
             booty.value += nme.user.coin.value
             if (booty.value) {
                 vt.sound('booty', 5)
-                log(nme.user.id, `... and got ${booty.carry(2, true)}.\n`)
+                log(nme.user.id, `... and got ${booty.amount}.\n`)
                 $.player.coin.value += booty.value
                 nme.user.coin.value = 0
-                vt.outln('You get ', booty.carry(), '.', -500)
+                vt.outln('You get ', carry(booty), '.', -500)
             }
             booty.value += nme.user.coin.value
             PC.save(nme, false, true)
@@ -754,9 +755,7 @@ module Naval {
                 ram(nme, $.online)
 
             if ($.online.hull < 1) {
-                $.online.altered = true
                 log(nme.user.id, `\nYou sank ${$.player.handle}'s ship!`)
-                $.reason = `sunk by ${nme.user.handle}`
                 $.online.hp = 0
                 $.online.hull = 0
 
@@ -766,7 +765,7 @@ module Naval {
                     $.player.coin.value = booty.value
                 booty.value += $.player.coin.value
                 if (booty.value) {
-                    log(nme.user.id, `... and you got ${booty.carry(2, true)}.\n`)
+                    log(nme.user.id, `... and you got ${booty.amount}.\n`)
                     nme.user.coin.value += booty.value
                     $.player.coin.value = 0
                 }
@@ -775,7 +774,7 @@ module Naval {
                 vt.sound('sunk', 30)
                 vt.outln(vt.bright, `\n${nme.user.handle} `, -600, vt.normal, 'smiles as a ', -400, vt.faint, 'shark approaches you ', -200
                     , '. ', -2000, '. ', -1600, '. ', -1200)
-                vt.hangup()
+                death(`sunk by ${nme.user.handle}`)
             }
             return ($.online.hull < 1)
         }

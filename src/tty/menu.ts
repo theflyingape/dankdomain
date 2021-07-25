@@ -6,8 +6,8 @@
 import $ = require('../runtime')
 import Battle = require('../battle')
 import db = require('../db')
-import { Armor, RealEstate, Ring, Security, Weapon } from '../items'
-import { cat, Coin, display, emulator, log, news, tradein, vt } from '../lib'
+import { Armor, Coin, RealEstate, Ring, Security, Weapon } from '../items'
+import { cat, display, emulator, log, news, tradein, vt } from '../lib'
 import { elemental } from '../npc'
 import { Deed, PC } from '../pc'
 import { checkXP, input, pickPC } from '../player'
@@ -423,7 +423,7 @@ module Main {
                 return
 
             case 'Y':
-                let cost = new Coin(new Coin(int(money($.player.level) / 5)).carry(1, true))
+                const cost = new Coin(int(money($.player.level) / 5)).pick(1)
                 vt.form = {
                     'yn': {
                         cb: () => {

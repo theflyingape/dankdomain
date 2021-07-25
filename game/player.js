@@ -184,7 +184,7 @@ var player;
             if ($.access.roleplay) {
                 if ($.from == 'Dungeon' && $.online.hp > 0) {
                     pc_1.PC.adjust('cha', -1, -1, -1);
-                    $.player.coin = new lib_1.Coin(0);
+                    $.player.coin = new items_1.Coin(0);
                     if (lib_1.vt.checkTime() >= 0) {
                         if ($.player.coward && !$.player.cursed) {
                             $.player.blessed = '';
@@ -255,8 +255,8 @@ var player;
             const novice = Object.assign({}, JSON.parse(sys_1.fs.readFileSync(sys_1.pathTo('characters', 'novice.json'))));
             pc_1.PC.reroll($.player, novice.pc);
             Object.assign($.player, novice);
-            $.player.coin = new lib_1.Coin(novice.coin.toString());
-            $.player.bank = new lib_1.Coin(novice.bank.toString());
+            $.player.coin = new items_1.Coin(novice.coin.toString());
+            $.player.bank = new items_1.Coin(novice.bank.toString());
             lib_1.vt.outln('Since you are a new user here, you are automatically assigned a character', -1000);
             lib_1.vt.out('class.  At the Main Menu, press ', lib_1.bracket('Y', false), ' to see all your character information.', -1000);
             show();

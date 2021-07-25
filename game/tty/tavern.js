@@ -22,7 +22,6 @@ var Tavern;
         'T': { description: `Today's news` },
         'Y': { description: `Yesterday's news` }
     };
-    pc_1.PC.load($.barkeep);
     const file = sys_1.pathTo('users', 'arguments.json');
     const mantle = sys_1.pathTo('files/tavern', 'trophy.json');
     function menu(suppress = true) {
@@ -114,7 +113,7 @@ var Tavern;
                             lib_1.vt.outln('\n');
                             if ((+lib_1.vt.entry).toString() == lib_1.vt.entry)
                                 lib_1.vt.entry += 'c';
-                            let tip = (/=|max/i.test(lib_1.vt.entry)) ? $.player.coin.value : new lib_1.Coin(lib_1.vt.entry).value;
+                            let tip = (/=|max/i.test(lib_1.vt.entry)) ? $.player.coin.value : new items_1.Coin(lib_1.vt.entry).value;
                             if (tip < 1 || tip > $.player.coin.value) {
                                 lib_1.vt.sound('oops');
                                 lib_1.vt.outln(pc_1.PC.who($.barkeep).He, 'pours the beer on you and kicks you out of ', $.barkeep.who.his, 'bar.', -1000);
@@ -166,7 +165,7 @@ var Tavern;
                 for (let i in rs) {
                     let adversary = { user: { id: rs[i].who } };
                     pc_1.PC.load(adversary);
-                    let bounty = new lib_1.Coin(rs[i].bounty);
+                    let bounty = new items_1.Coin(rs[i].bounty);
                     lib_1.vt.outln(`${rs[i].handle} has a ${bounty.carry()} bounty from ${adversary.user.handle}`);
                 }
                 lib_1.vt.form = {
@@ -200,9 +199,9 @@ var Tavern;
                         menu();
                         return;
                     }
-                    let max = new lib_1.Coin(new lib_1.Coin(10 * sys_1.money(opponent.user.level)).carry(1, true));
+                    let max = new items_1.Coin(10 * sys_1.money(opponent.user.level)).pick(1);
                     if (max.value > $.player.coin.value)
-                        max = new lib_1.Coin($.player.coin.carry(1, true));
+                        max.value = $.player.coin.pick(1).value;
                     lib_1.vt.action('payment');
                     lib_1.vt.form = {
                         'coin': {
@@ -210,10 +209,10 @@ var Tavern;
                                 lib_1.vt.outln();
                                 if ((+lib_1.vt.entry).toString() == lib_1.vt.entry)
                                     lib_1.vt.entry += 'c';
-                                let post = sys_1.int((/=|max/i.test(lib_1.vt.entry)) ? max.value : new lib_1.Coin(lib_1.vt.entry).value);
+                                let post = /=|max/i.test(lib_1.vt.entry) ? max.value : new items_1.Coin(lib_1.vt.entry).value;
                                 if (post > 0 && post <= max.value) {
                                     $.player.coin.value -= post;
-                                    opponent.user.bounty = new lib_1.Coin(post);
+                                    opponent.user.bounty = new items_1.Coin(post);
                                     opponent.user.who = $.player.id;
                                     lib_1.vt.beep();
                                     lib_1.vt.outln(`\nYour bounty is posted for all to see.`, -500);
@@ -224,7 +223,7 @@ var Tavern;
                             }, max: 6
                         }
                     };
-                    lib_1.vt.form['coin'].prompt = `Bounty [MAX=${max.carry()}]? `;
+                    lib_1.vt.form['coin'].prompt = `Bounty [MAX=${lib_1.carry(max)}]? `;
                     player_1.input('coin', '=');
                     return;
                 });

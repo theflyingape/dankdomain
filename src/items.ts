@@ -3,7 +3,7 @@
  *  ITEMS authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import { int, path, pathTo } from "./sys"
+import { dice, int, path, pathTo, whole } from "./sys"
 
 module Items {
 
@@ -124,10 +124,6 @@ module Items {
                 this.value = money
         }
 
-        _pouch(coins: number): string {
-            return (coins < 1e+05) ? 'c' : (coins < 1e+09) ? 's' : (coins < 1e+13) ? 'g' : 'p'
-        }
-
         private _value: number
 
         get value(): number {
@@ -135,32 +131,33 @@ module Items {
         }
 
         set value(newValue: number) {
-
+            //  0 - 999999999000000000
             const MAX = (1e+18 - 1e+09)
-            this._value = newValue < MAX ? newValue
+            this._value = newValue < MAX ? whole(newValue)
                 : newValue == Infinity ? 1 : MAX
         }
 
         get amount(): string {
+            //  0c - 99999p,9999g
             let n = this.value
             let bags: string[] = []
 
-            if (this._pouch(n) == 'p') {
+            if (this.pouch(n) == 'p') {
                 n = int(n / 1e+13)
                 bags.push(`${n}p`)
                 n = this.value % 1e+13
             }
-            if (this._pouch(n) == 'g') {
+            if (this.pouch(n) == 'g') {
                 n = int(n / 1e+09)
                 bags.push(`${n}g`)
                 n = this.value % 1e+09
             }
-            if (this._pouch(n) == 's') {
+            if (this.pouch(n) == 's') {
                 n = int(n / 1e+05)
                 bags.push(`${n}s`)
                 n = this.value % 1e+05
             }
-            if ((n > 0 && this._pouch(n) == 'c') || bags.length == 0)
+            if ((n > 0 && this.pouch(n) == 'c') || bags.length == 0)
                 bags.push(`${n}c`)
 
             return bags.toString()
@@ -195,6 +192,19 @@ module Items {
                     coins = 0
                 }
             }
+        }
+
+        carry(coin = this, bags = 2): string {
+            return coin.amount.split(',').slice(0, bags).toString()
+        }
+
+        //  pick a money bag
+        pick(x = dice(this.amount.split(',').length)): Coin {
+            return new Coin(this.amount.split(',')[x - 1])
+        }
+
+        pouch(coins = this.value): string {
+            return (coins < 1e+05) ? 'c' : (coins < 1e+09) ? 's' : (coins < 1e+13) ? 'g' : 'p'
         }
     }
 

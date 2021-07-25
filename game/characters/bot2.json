@@ -34,18 +34,5 @@
   "maxcha": 90,
   "weapon": "Staff",
   "armor": "Small Shield",
-  "gang": "AB Original",
-  "bot": {
-    "backstab": 0,
-    "brawl": 0,
-    "dungeon": 0,
-    "gamble": 0,
-    "joust": 0,
-    "fish": 0,
-    "monster": 0,
-    "naval": 0,
-    "party": 0,
-    "steal": 0,
-    "user": 0
-  }
+  "gang": "AB Original"
 }

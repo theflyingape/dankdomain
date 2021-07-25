@@ -6,12 +6,12 @@
 import $ = require('../runtime')
 import Battle = require('../battle')
 import db = require('../db')
-import { Access, Armor, Magic, Poison, Ring, Weapon } from '../items'
-import { bracket, cat, Coin, display, getRing, log, news, tradein, vt } from '../lib'
+import { Access, Armor, Coin, Magic, Poison, Ring, Weapon } from '../items'
+import { bracket, carry, cat, display, getRing, log, news, tradein, vt } from '../lib'
 import { arena, elemental } from '../npc'
 import { PC } from '../pc'
 import { checkXP, input } from '../player'
-import { sprintf, dice, money, romanize, int } from '../sys'
+import { dice, int, money, romanize, sprintf } from '../sys'
 
 export module Arena {
 
@@ -192,8 +192,8 @@ export module Arena {
                                             $.player.coin.value += reward.value
                                             $.player.jw++
                                             if (db.run(`UPDATE Players set jl=jl+1 WHERE id='${opponent.user.id}'`).changes)
-                                                log(opponent.user.id, `\n${$.player.handle} beat you in a joust and got ${reward.carry(2, true)}.`)
-                                            vt.outln('You win ', reward.carry(), '!', -250)
+                                                log(opponent.user.id, `\n${$.player.handle} beat you in a joust and got ${reward.amount}.`)
+                                            vt.outln('You win ', carry(reward), '!', -250)
                                             if ($.player.jw > 14 && $.player.jw / ($.player.jw + $.player.jl) > 0.9) {
                                                 let ring = Ring.power([], null, 'joust')
                                                 if (Ring.wear($.player.rings, ring.name)) {
@@ -225,8 +225,8 @@ export module Arena {
                                             vt.outln('The crowd boos you!', -200)
                                             let reward = new Coin(money($.player.level))
                                             $.player.jl++
-                                            if (db.run(`UPDATE Players set jw=jw+1, coin=coin+${reward.value} WHERE id='${opponent.user.id}'`).changes)
-                                                log(opponent.user.id, `\n${$.player.handle} lost to you in a joust.  You got ${reward.carry(2, true)}.`)
+                                            if (db.run(`UPDATE Players set jw=jw+1,coin=coin+${reward.value} WHERE id='${opponent.user.id}'`).changes)
+                                                log(opponent.user.id, `\n${$.player.handle} lost to you in a joust.  You got ${reward.amount}.`)
                                             news(`\tlost to ${opponent.user.handle} in a joust`)
                                             vt.wall($.player.handle, `lost to ${opponent.user.handle} in a joust`)
                                             vt.animated('slideOutRight')
@@ -415,9 +415,9 @@ export module Arena {
                 return
             }
 
-            cost = new Coin(new Coin(money($.player.level)).carry(1, true))
+            cost = new Coin(money($.player.level)).pick(1)
 
-            vt.outln('\nThe ancient necromancer will summon you a demon for ', cost.carry())
+            vt.outln('\nThe ancient necromancer will summon you a demon for ', carry(cost))
             if ($.player.coin.value < cost.value) {
                 vt.outln(`You don't have enough!`)
                 return

@@ -99,36 +99,33 @@ var Items;
             else
                 this.value = money;
         }
-        _pouch(coins) {
-            return (coins < 1e+05) ? 'c' : (coins < 1e+09) ? 's' : (coins < 1e+13) ? 'g' : 'p';
-        }
         get value() {
             return this._value;
         }
         set value(newValue) {
             const MAX = (1e+18 - 1e+09);
-            this._value = newValue < MAX ? newValue
+            this._value = newValue < MAX ? sys_1.whole(newValue)
                 : newValue == Infinity ? 1 : MAX;
         }
         get amount() {
             let n = this.value;
             let bags = [];
-            if (this._pouch(n) == 'p') {
+            if (this.pouch(n) == 'p') {
                 n = sys_1.int(n / 1e+13);
                 bags.push(`${n}p`);
                 n = this.value % 1e+13;
             }
-            if (this._pouch(n) == 'g') {
+            if (this.pouch(n) == 'g') {
                 n = sys_1.int(n / 1e+09);
                 bags.push(`${n}g`);
                 n = this.value % 1e+09;
             }
-            if (this._pouch(n) == 's') {
+            if (this.pouch(n) == 's') {
                 n = sys_1.int(n / 1e+05);
                 bags.push(`${n}s`);
                 n = this.value % 1e+05;
             }
-            if ((n > 0 && this._pouch(n) == 'c') || bags.length == 0)
+            if ((n > 0 && this.pouch(n) == 'c') || bags.length == 0)
                 bags.push(`${n}c`);
             return bags.toString();
         }
@@ -160,6 +157,15 @@ var Items;
                     coins = 0;
                 }
             }
+        }
+        carry(coin = this, bags = 2) {
+            return coin.amount.split(',').slice(0, bags).toString();
+        }
+        pick(x = sys_1.dice(this.amount.split(',').length)) {
+            return new Coin(this.amount.split(',')[x - 1]);
+        }
+        pouch(coins = this.value) {
+            return (coins < 1e+05) ? 'c' : (coins < 1e+09) ? 's' : (coins < 1e+13) ? 'g' : 'p';
         }
     }
     Items.Coin = Coin;

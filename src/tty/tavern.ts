@@ -7,8 +7,8 @@ import $ = require('../runtime')
 import Battle = require('../battle')
 import db = require('../db')
 import Taxman = require('./taxman')
-import { Access, Weapon } from '../items'
-import { bracket, cat, Coin, display, news, vt } from '../lib'
+import { Access, Coin, Weapon } from '../items'
+import { bracket, carry, cat, display, news, vt } from '../lib'
 import { elemental } from '../npc'
 import { PC } from '../pc'
 import { checkXP, input } from '../player'
@@ -28,7 +28,6 @@ module Tavern {
         'Y': { description: `Yesterday's news` }
     }
 
-    PC.load($.barkeep)
     const file = pathTo('users', 'arguments.json')
     const mantle = pathTo('files/tavern', 'trophy.json')
 
@@ -207,8 +206,8 @@ module Tavern {
                         menu()
                         return
                     }
-                    let max = new Coin(new Coin(10 * money(opponent.user.level)).carry(1, true))
-                    if (max.value > $.player.coin.value) max = new Coin($.player.coin.carry(1, true))
+                    let max = new Coin(10 * money(opponent.user.level)).pick(1)
+                    if (max.value > $.player.coin.value) max.value = $.player.coin.pick(1).value
 
                     vt.action('payment')
                     vt.form = {
@@ -216,7 +215,7 @@ module Tavern {
                             cb: () => {
                                 vt.outln()
                                 if ((+vt.entry).toString() == vt.entry) vt.entry += 'c'
-                                let post = int((/=|max/i.test(vt.entry)) ? max.value : new Coin(vt.entry).value)
+                                let post = /=|max/i.test(vt.entry) ? max.value : new Coin(vt.entry).value
                                 if (post > 0 && post <= max.value) {
                                     $.player.coin.value -= post
                                     opponent.user.bounty = new Coin(post)
@@ -230,7 +229,7 @@ module Tavern {
                             }, max: 6
                         }
                     }
-                    vt.form['coin'].prompt = `Bounty [MAX=${max.carry()}]? `
+                    vt.form['coin'].prompt = `Bounty [MAX=${carry(max)}]? `
                     input('coin', '=')
                     return
                 })

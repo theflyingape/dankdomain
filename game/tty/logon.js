@@ -276,7 +276,7 @@ var Logon;
             lib_1.vt.outln(lib_1.vt.bright, lib_1.vt.black, '(', lib_1.vt.magenta, 'PRISONER', lib_1.vt.black, ')');
             lib_1.vt.outln(lib_1.vt.red, '\nYou are locked-up in jail.', -1200);
             if ($.access.roleplay && sys_1.dice(2 * $.online.cha) > (10 - 2 * $.player.steal)) {
-                let bail = new lib_1.Coin(Math.round(sys_1.money($.player.level) * (101 - $.online.cha) / 100));
+                let bail = new items_1.Coin(Math.round(sys_1.money($.player.level) * (101 - $.online.cha) / 100));
                 lib_1.vt.outln('\nIt will cost you ', bail.carry(), ' to get bailed-out and to continue play.');
                 lib_1.vt.form = {
                     'bail': {
@@ -481,6 +481,8 @@ var Logon;
             newDay();
             db.run(`UPDATE Players SET today=0 WHERE id NOT GLOB '_*'`);
         }
+        pc_1.PC.load($.barkeep);
+        pc_1.PC.load($.taxman);
         $.player = db.fillUser();
     }
     function newDay() {
@@ -496,8 +498,8 @@ var Logon;
             user.id = rs[row].id;
             pc_1.PC.load(user);
             for (let item = 7; item < 15; item++) {
-                let cost = user.magic == 1 ? new lib_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[item]].wand)
-                    : new lib_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[item]].cost);
+                let cost = user.magic == 1 ? new items_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[item]].wand)
+                    : new items_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[item]].cost);
                 if (user.bank.value >= cost.value && !items_1.Magic.have(user.spells, item)) {
                     items_1.Magic.add(user.spells, item);
                     user.bank.value -= cost.value;

@@ -2,6 +2,7 @@
 const $ = require("../runtime");
 const Battle = require("../battle");
 const db = require("../db");
+const items_1 = require("../items");
 const lib_1 = require("../lib");
 const pc_1 = require("../pc");
 const player_1 = require("../player");
@@ -212,7 +213,7 @@ var Naval;
                     if (n > cap)
                         n = cap;
                     lib_1.vt.sound('oof');
-                    lib_1.vt.outln(`Ouch!  You bit into a pearl and sell it for ${new lib_1.Coin(n).carry()}.`);
+                    lib_1.vt.outln(`Ouch!  You bit into a pearl and sell it for ${new items_1.Coin(n).carry()}.`);
                     $.player.coin.value += n;
                     break;
                 }
@@ -227,7 +228,7 @@ var Naval;
                     if (n > cap)
                         n = cap;
                     lib_1.vt.sound('oof');
-                    lib_1.vt.outln(`Ouch!  You bit into a diamond and sell it for ${new lib_1.Coin(n).carry()}.`);
+                    lib_1.vt.outln(`Ouch!  You bit into a diamond and sell it for ${new items_1.Coin(n).carry()}.`);
                     $.player.coin.value += n;
                     break;
                 }
@@ -371,7 +372,7 @@ var Naval;
                     }
                     if (!$.player.hull) {
                         if ($.player.coin.value < cost) {
-                            lib_1.vt.outln('You need at least ', new lib_1.Coin(cost).carry(), ' to buy a ship.');
+                            lib_1.vt.outln('You need at least ', new items_1.Coin(cost).carry(), ' to buy a ship.');
                             break;
                         }
                     }
@@ -381,7 +382,7 @@ var Naval;
                     max = $.player.hull + 50;
                     cost = Math.round(Math.pow(2, max / 150) * 7937);
                     while (max <= 8000 && cost < $.player.coin.value) {
-                        lib_1.vt.outln(sys_1.sprintf('Hull size: %-4d     Cost: ', max), new lib_1.Coin(cost).carry());
+                        lib_1.vt.outln(sys_1.sprintf('Hull size: %-4d     Cost: ', max), new items_1.Coin(cost).carry());
                         max += 50;
                         cost = Math.round(Math.pow(2, max / 150) * 7937);
                     }
@@ -447,7 +448,7 @@ var Naval;
                     lib_1.vt.outln(`You need ${max} hull points of repair.`);
                     cost = Math.round(Math.pow(2, $.player.hull / 150) * 7937);
                     cost = sys_1.int(cost / $.player.hull / 10);
-                    lib_1.vt.outln(`Each hull point costs ${new lib_1.Coin(cost).carry()} to repair.`);
+                    lib_1.vt.outln(`Each hull point costs ${new items_1.Coin(cost).carry()} to repair.`);
                     if (!max)
                         break;
                     afford = sys_1.int($.player.coin.value / cost);
@@ -484,7 +485,7 @@ var Naval;
                     lib_1.vt.outln(`You can mount up to ${max} more cannons.`);
                     cost = Math.round(Math.pow(2, $.player.hull / 150) * 7937);
                     cost = sys_1.int(cost / 250);
-                    lib_1.vt.outln(`Each cannon costs ${new lib_1.Coin(cost).carry()}.`);
+                    lib_1.vt.outln(`Each cannon costs ${new items_1.Coin(cost).carry()}.`);
                     afford = sys_1.int($.player.coin.value / cost);
                     if (afford < max)
                         max = afford;
@@ -522,7 +523,7 @@ var Naval;
                     }
                     cost = Math.round(Math.pow(2, $.player.hull / 150) * 7937);
                     cost = sys_1.int(cost / 10);
-                    lib_1.vt.outln(`We can equip your ship with a ram for ${new lib_1.Coin(cost).carry()}.`);
+                    lib_1.vt.outln(`We can equip your ship with a ram for ${new items_1.Coin(cost).carry()}.`);
                     afford = sys_1.int($.player.coin.value / cost);
                     if (!afford) {
                         lib_1.vt.outln(`You don't have enough money!`);
@@ -662,20 +663,20 @@ var Naval;
             ][sys_1.dice(5) - 1], '!\n', -500);
             lib_1.log(nme.user.id, `\n${$.player.handle} sank your ship!`);
             lib_1.news(`\tsank ${nme.user.handle}'s ship`);
-            let booty = new lib_1.Coin(Math.round(Math.pow(2, $.player.hull / 150) * 7937 / 250));
+            let booty = new items_1.Coin(Math.round(Math.pow(2, $.player.hull / 150) * 7937 / 250));
             booty.value = sys_1.int(booty.value * nme.user.cannon);
             if (nme.user.coin.value > booty.value) {
                 lib_1.vt.sound('boo');
-                lib_1.vt.outln(`${new lib_1.Coin(nme.user.coin.value - booty.value).carry()} of the booty has settled on the ocean floor ... `, -500);
+                lib_1.vt.outln(`${new items_1.Coin(nme.user.coin.value - booty.value).carry()} of the booty has settled on the ocean floor ... `, -500);
                 nme.user.coin.value = booty.value;
             }
             booty.value += nme.user.coin.value;
             if (booty.value) {
                 lib_1.vt.sound('booty', 5);
-                lib_1.log(nme.user.id, `... and got ${booty.carry(2, true)}.\n`);
+                lib_1.log(nme.user.id, `... and got ${booty.amount}.\n`);
                 $.player.coin.value += booty.value;
                 nme.user.coin.value = 0;
-                lib_1.vt.outln('You get ', booty.carry(), '.', -500);
+                lib_1.vt.outln('You get ', lib_1.carry(booty), '.', -500);
             }
             booty.value += nme.user.coin.value;
             pc_1.PC.save(nme, false, true);
@@ -711,25 +712,23 @@ var Naval;
             else
                 ram(nme, $.online);
             if ($.online.hull < 1) {
-                $.online.altered = true;
                 lib_1.log(nme.user.id, `\nYou sank ${$.player.handle}'s ship!`);
-                $.reason = `sunk by ${nme.user.handle}`;
                 $.online.hp = 0;
                 $.online.hull = 0;
-                let booty = new lib_1.Coin(Math.round(Math.pow(2, nme.user.hull / 150) * 7937 / 250));
+                let booty = new items_1.Coin(Math.round(Math.pow(2, nme.user.hull / 150) * 7937 / 250));
                 booty.value = sys_1.int(booty.value * $.player.cannon);
                 if ($.player.coin.value > booty.value)
                     $.player.coin.value = booty.value;
                 booty.value += $.player.coin.value;
                 if (booty.value) {
-                    lib_1.log(nme.user.id, `... and you got ${booty.carry(2, true)}.\n`);
+                    lib_1.log(nme.user.id, `... and you got ${booty.amount}.\n`);
                     nme.user.coin.value += booty.value;
                     $.player.coin.value = 0;
                 }
                 pc_1.PC.save(nme, false, true);
                 lib_1.vt.sound('sunk', 30);
                 lib_1.vt.outln(lib_1.vt.bright, `\n${nme.user.handle} `, -600, lib_1.vt.normal, 'smiles as a ', -400, lib_1.vt.faint, 'shark approaches you ', -200, '. ', -2000, '. ', -1600, '. ', -1200);
-                lib_1.vt.hangup();
+                lib_1.death(`sunk by ${nme.user.handle}`);
             }
             return ($.online.hull < 1);
         }
@@ -844,7 +843,7 @@ var Naval;
         function booty() {
             sm.hull = 0;
             lib_1.vt.sound('booty', 5);
-            let coin = new lib_1.Coin(sm.money);
+            let coin = new items_1.Coin(sm.money);
             coin.value = lib_1.tradein(coin.value, $.online.cha);
             lib_1.vt.outln('You get ', coin.carry(), ' for bringing home the carcass.');
             $.player.coin.value += coin.value;

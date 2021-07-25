@@ -67,20 +67,6 @@ interface armor {
     dwarf?: boolean
 }
 
-interface bot {
-    backstab?: number
-    brawl?: number
-    dungeon?: number
-    gamble?: number
-    joust?: number
-    fish?: number
-    monster?: number
-    naval?: number
-    party?: number
-    steal?: number
-    user?: number
-}
-
 interface caller {
     who?: string
     reason?: string
@@ -120,8 +106,9 @@ interface choices {
 interface coin {
     value: number
     amount: string
-    carry?(number?, boolean?): string
-    pieces?(string?): string
+    carry(coin?: coin, bags?: number)
+    pick(bag?: number): coin
+    pouch(coins?: number): string
 }
 
 interface ddd {
@@ -279,7 +266,6 @@ interface target {
 interface user {
     id: string
     handle?: string
-    bot?: bot
 
     //  real
     name?: string

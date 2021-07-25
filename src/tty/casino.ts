@@ -4,8 +4,8 @@
 \*****************************************************************************/
 
 import $ = require('../runtime')
-import { RealEstate, Security } from '../items'
-import { bracket, Coin, display, tradein, vt } from '../lib'
+import { Coin, RealEstate, Security } from '../items'
+import { bracket, display, tradein, vt } from '../lib'
 import { elemental } from '../npc'
 import { PC } from '../pc'
 import { input } from '../player'
@@ -94,12 +94,12 @@ module Casino {
         vt.form['menu'].prompt = display('casino', vt.Green, vt.green, suppress, casino)
         input('menu')
 
-        max.value = tradein(new Coin(RealEstate.name[$.player.realestate].value).value)
-        max.value += tradein(new Coin(Security.name[$.player.security].value).value)
+        max.value = tradein(RealEstate.name[$.player.realestate].value)
+        max.value += tradein(Security.name[$.player.security].value)
         max.value = int(max.value / 10)
-        max.value += tradein(($.player.level * money($.player.level)))
-        if (max.value > 1e+16) max.value = 1e+16
-        max = new Coin(max.carry(1, true))
+        max.value += $.player.level * money($.player.level)
+        if (max.value > 1e+15) max.value = 1e+15
+        max = max.pick(1)
     }
 
     function choice() {

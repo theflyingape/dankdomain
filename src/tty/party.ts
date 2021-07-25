@@ -6,8 +6,8 @@
 import $ = require('../runtime')
 import Battle = require('../battle')
 import db = require('../db')
-import { Armor, Magic, Poison, Weapon } from '../items'
-import { bracket, cat, Coin, death, display, log, vt, weapon } from '../lib'
+import { Armor, Coin, Magic, Poison, Weapon } from '../items'
+import { bracket, cat, death, display, log, vt, weapon } from '../lib'
 import { dungeon, elemental } from '../npc'
 import { PC } from '../pc'
 import { checkXP, input } from '../player'

@@ -6,8 +6,8 @@
 import $ = require('./runtime')
 import db = require('./db')
 import { Access, Armor, Magic, Ring, Weapon } from './items'
-import { armor, Coin, vt, weapon } from './lib'
-import { date2full, dice, fs, int, isActive, money, now, pathTo, romanize, sprintf, titlecase } from './sys'
+import { armor, vt, weapon } from './lib'
+import { date2full, dice, fs, int, isActive, now, pathTo, romanize, sprintf, titlecase } from './sys'
 
 module pc {
 
@@ -123,6 +123,7 @@ module pc {
             one.int = one.user.int
             one.dex = one.user.dex
             one.cha = one.user.cha
+            console.log('activate:', one, one.user)
             Abilities.forEach(ability => {
                 const a = `to${titlecase(ability)}`
                 let rt = one.user.blessed ? 10 : 0
@@ -514,10 +515,10 @@ module pc {
                     let save: user = { id: '' }
                     Object.assign(save, user)
                     Object.assign(save, {
-                        bounty: user.bounty,
-                        coin: user.coin,
-                        bank: user.bank,
-                        loan: user.loan
+                        bounty: user.bounty.amount,
+                        coin: user.coin.amount,
+                        bank: user.bank.amount,
+                        loan: user.loan.amount
                     })
                     const trace = pathTo('users', `.${user.id}.json`)
                     fs.writeFileSync(trace, JSON.stringify(save, null, 2))

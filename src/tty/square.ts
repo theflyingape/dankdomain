@@ -6,8 +6,8 @@
 import $ = require('../runtime')
 import Battle = require('../battle')
 import db = require('../db')
-import { Armor, Magic, Poison, Ring, RealEstate, Security, Weapon } from '../items'
-import { armor, bracket, Coin, display, log, news, tradein, vt, weapon } from '../lib'
+import { Armor, Coin, Magic, Poison, Ring, RealEstate, Security, Weapon } from '../items'
+import { armor, bracket, carry, display, log, news, pieces, tradein, vt, weapon } from '../lib'
 import { elemental } from '../npc'
 import { PC } from '../pc'
 import { input } from '../player'
@@ -69,16 +69,13 @@ module Square {
                 else {
                     let p: number, i: number
                     if ($.player.coin.value > 0) {
-                        let pouch = $.player.coin.amount.split(',')
-                        p = dice(pouch.length) - 1
-                        i = 'csgp'.indexOf(pouch[p].substr(-1))
-                        let v = new Coin(pouch[p])
+                        const v = $.player.coin.pick()
                         bump.user.coin.value += v.value
-                        log(bump.user.id, `\nYou picked ${$.player.handle}'s pouch holding ${v.carry()}!`)
+                        log(bump.user.id, `\nYou picked ${$.player.handle}'s pouch holding ${v.amount}!`)
                         $.player.coin.value -= v.value
                         vt.outln(vt.faint, '{sigh}')
                         vt.sound('oops', 8)
-                        vt.outln('Your ', v.pieces(), ' is gone!')
+                        vt.outln('Your ', pieces(v), ' is gone!')
                     }
                     else if ($.player.poisons.length) {
                         vt.out(vt.faint, '\nYou hear vials rattle.')
@@ -146,7 +143,7 @@ module Square {
                 vt.out('\nYou own a class ', bracket(ac, false), ' ', armor())
                 if (ac) {
                     let cv = new Coin(Armor.name[$.player.armor].value)
-                    credit.value = tradein(cv.value, $.online.cha)
+                    credit.value = tradein(cv.value)
                     if ($.player.toAC) credit.value = int(credit.value * (ac + $.player.toAC / ($.player.poison + 1)) / ac)
                     if ($.online.toAC < 0) credit.value = int(credit.value * (ac + $.online.toAC) / ac)
                     if (credit.value > cv.value)
@@ -154,7 +151,7 @@ module Square {
                 }
                 else
                     credit.value = 0
-                vt.outln(' worth ', credit.carry())
+                vt.outln(' worth ', carry(credit))
 
                 if (ac == 0 && ($.player.toAC < 0 || $.online.toAC < 0)) {
                     vt.outln(vt.yellow, 'You look like a leper; go to the hospital for treatment.')
@@ -180,9 +177,9 @@ module Square {
                 if (credit.value < 1) credit.value = 0
 
                 vt.action('bank')
-                bank['D'] = { description: 'Money in hand: ' + $.player.coin.carry(4) }
-                bank['W'] = { description: 'Money in bank: ' + $.player.bank.carry(4) }
-                bank['L'] = { description: 'Money on loan: ' + $.player.loan.carry(4) }
+                bank['D'] = { description: 'Money in hand: ' + carry() }
+                bank['W'] = { description: 'Money in bank: ' + carry($.player.bank) }
+                bank['L'] = { description: 'Money on loan: ' + carry($.player.loan) }
 
                 vt.form = {
                     'menu': { cb: Bank, cancel: 'q', enter: '?', eol: false }
@@ -226,7 +223,7 @@ module Square {
                             }, cancel: 'Y', enter: 'Y', max: 1, eol: false, match: /Y|N/i, timeout: 10
                         }
                     }
-                    vt.form['skin'].prompt = 'Heal your skin for ' + credit.carry() + ' (Y/N)? '
+                    vt.form['skin'].prompt = 'Heal your skin for ' + carry(credit) + ' (Y/N)? '
                     input('skin', 'y')
                     return
                 }
@@ -258,7 +255,7 @@ module Square {
                             }, cancel: 'Y', enter: 'Y', max: 1, eol: false, match: /Y|N/i, timeout: 10
                         }
                     }
-                    vt.form['hands'].prompt = 'Fix your hands for ' + credit.carry() + ' (Y/N)? '
+                    vt.form['hands'].prompt = 'Fix your hands for ' + carry(credit) + ' (Y/N)? '
                     input('hands', 'y')
                     return
                 }
@@ -340,7 +337,7 @@ module Square {
                         }
 
                         credit.value = int(money(opponent.user.level) * (100 - $.online.cha + 1) / 100 + 1)
-                        vt.out(`It will cost you ${credit.carry()} to bail out ${opponent.user.handle}.\n`)
+                        vt.out(`It will cost you ${carry(credit)} to bail out ${opponent.user.handle}.\n`)
                         if ($.player.coin.value < credit.value) {
                             menu()
                             return
@@ -359,7 +356,7 @@ module Square {
                                         opponent.user.status = ''
                                         opponent.user.xplevel = opponent.user.level
                                         db.run(`UPDATE Players set status='',xplevel=level WHERE id='${opponent.user.id}'`)
-                                        log(opponent.user.id, `${$.player.handle} paid ${credit.carry()} to bail you out of jail.\n`)
+                                        log(opponent.user.id, `${$.player.handle} paid ${credit.amount} to bail you out of jail.\n`)
                                         news(`\t${opponent.user.handle} made bail`)
                                         PC.adjust('cha', -1, -1, -1)
                                         $.bail--
@@ -419,18 +416,19 @@ module Square {
                 let pocket = PC.encounter(`AND novice = 0 AND id NOT GLOB '_*'`).user
                 if (pocket.id) {
                     PC.load(pocket)
+                    const v = pocket.coin.pick().value
                     if (pocket.coin.value > 0)
-                        credit.value += pocket.coin.value
+                        credit.value += v
                     else {
                         pocket.id = ''
                         pocket.handle = 'somebody'
                     }
-                    pocket.coin.value = 0
+                    pocket.coin.value -= v
                 }
                 else
                     pocket.handle = 'somebody'
                 vt.outln('\n')
-                vt.outln(`You pick ${pocket.handle}'s pocket and steal `, credit.carry(), '!')
+                vt.outln(`You pick ${pocket.handle}'s pocket and steal `, pieces(credit), '!')
                 vt.outln(-1000)
 
                 let effort = 100 + $.steal
@@ -469,8 +467,8 @@ module Square {
                 if (!$.access.roleplay) break
                 let re = RealEstate.name[$.player.realestate].protection
                 vt.out('\nYou live in a ', $.player.realestate)
-                credit.value = tradein(new Coin(RealEstate.name[$.player.realestate].value).value, $.online.cha)
-                vt.outln(' worth ', credit.carry())
+                credit.value = tradein(RealEstate.name[$.player.realestate].value)
+                vt.outln(' worth ', carry(credit))
 
                 max = RealEstate.merchant.length - 1
                 lo = re - $.realestate
@@ -487,8 +485,8 @@ module Square {
                 if (!$.access.roleplay) break
                 let s = Security.name[$.player.security].protection
                 vt.out('\nYou are guarded by a ', $.player.security)
-                credit.value = tradein(new Coin(Security.name[$.player.security].value).value, $.online.cha)
-                vt.outln(' worth ', credit.carry())
+                credit.value = tradein(Security.name[$.player.security].value)
+                vt.outln(' worth ', carry(credit))
 
                 max = Security.merchant.length - 1
                 lo = s - $.security
@@ -502,8 +500,8 @@ module Square {
                 return
 
             case 'V':
-                vt.outln('\n', vt.faint, '... you enter the back door of the shop ...')
-                vt.out('The ', vt.bright, vt.magenta, 'apothecary ', vt.reset)
+                vt.outln('\n', vt.faint, '... you enter the back door into the shop ...')
+                vt.out('The ', vt.magenta, vt.bright, 'apothecary ', vt.reset)
                 max = Poison.merchant.length
                 for (lo = 1; lo <= max; lo++)
                     if (!Poison.have($.player.poisons, lo))
@@ -542,7 +540,7 @@ module Square {
                 }
                 else
                     credit.value = 0
-                vt.outln(' worth ', credit.carry())
+                vt.outln(' worth ', carry(credit))
 
                 if (wc == 0 && ($.player.toWC < 0 || $.online.toWC < 0)) {
                     vt.outln(vt.yellow, 'Your hands are broken; go to the hospital for treatment.')
@@ -580,19 +578,19 @@ module Square {
         switch (choice) {
             case 'D':
                 vt.action('payment')
-                vt.form['coin'].prompt = vt.attr('Deposit ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=', $.player.coin.carry(), ']? ')
+                vt.form['coin'].prompt = vt.attr('Deposit ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=', carry(), ']? ')
                 input('coin', '=')
                 break
 
             case 'L':
                 vt.action('payment')
-                vt.form['coin'].prompt = vt.attr('Loan ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=', credit.carry(), ']? ')
+                vt.form['coin'].prompt = vt.attr('Loan ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=', carry(credit), ']? ')
                 input('coin', '=')
                 break
 
             case 'W':
                 vt.action('payment')
-                vt.form['coin'].prompt = vt.attr('Withdraw ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=', $.player.bank.carry(), ']? ')
+                vt.form['coin'].prompt = vt.attr('Withdraw ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=', carry($.player.bank), ']? ')
                 input('coin', '=')
                 break
 
@@ -619,15 +617,16 @@ module Square {
 
                 let d = $.player.level + 1
                 let vault = Math.pow(d, 7) * dice(d / 3) * dice(d / 11)
-                let carry = new Coin(vault)
+                let loot = new Coin(vault)
 
                 vt.sound('creak2', 12)
-                vt.outln(vt.yellow, ' you open a chest and find ', carry.carry(), vt.bright, '!')
+                vt.outln(vt.yellow, ' you open a chest and find ', carry(loot), vt.bright, '!')
 
                 let deposits = new Coin(whole(db.query(`SELECT SUM(bank) AS bank FROM Players WHERE id NOT GLOB '_*' AND id <> '${$.player.id}'`)[0].bank))
                 if (deposits.value) {
                     vt.sleep(1200)
-                    vt.outln('And you grab ', deposits.carry(), ' more in deposits!')
+                    vt.outln('And you grab ', carry(deposits), ' more in deposits!')
+                    loot.value += deposits.value
                 }
                 vt.sound('yahoo', 12)
 
@@ -655,7 +654,7 @@ module Square {
                     return
                 }
 
-                $.player.coin.value += carry.value + deposits.value
+                $.player.coin.value += loot.value
                 $.player.steals++
                 vt.outln()
                 db.run(`UPDATE Players SET bank=0 WHERE id NOT GLOB '_*'`)
@@ -665,7 +664,7 @@ module Square {
 
             case 'T':
                 if ($.access.sysop) {
-                    vt.form['coin'].prompt = vt.attr('Treasury ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=99999p]? ')
+                    vt.form['coin'].prompt = vt.attr('Treasury ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=10000p]? ')
                     input('coin')
                     break
                 }
@@ -684,9 +683,7 @@ module Square {
 
         switch (action) {
             case 'Deposit':
-                amount.value = int((/=|max/i.test(vt.entry))
-                    ? new Coin($.player.coin.carry(2, true)).value
-                    : new Coin(vt.entry).value)
+                amount = new Coin(/=|max/i.test(vt.entry) ? $.player.coin.carry() : vt.entry)
                 if (amount.value > 0 && amount.value <= $.player.coin.value) {
                     $.player.coin.value -= amount.value
                     if ($.player.loan.value > 0) {
@@ -705,9 +702,7 @@ module Square {
                 break
 
             case 'Loan':
-                amount.value = int((/=|max/i.test(vt.entry))
-                    ? new Coin(credit.carry(2, true)).value
-                    : new Coin(vt.entry).value)
+                amount = new Coin(/=|max/i.test(vt.entry) ? credit.carry() : vt.entry)
                 if (amount.value > 0 && amount.value <= credit.value) {
                     $.player.loan.value += amount.value
                     $.player.coin.value += amount.value
@@ -717,9 +712,7 @@ module Square {
                 break
 
             case 'Withdraw':
-                amount.value = int((/=|max/i.test(vt.entry))
-                    ? new Coin($.player.bank.carry(2, true)).value
-                    : new Coin(vt.entry).value)
+                amount = new Coin(/=|max/i.test(vt.entry) ? $.player.bank.carry() : vt.entry)
                 if (amount.value > 0 && amount.value <= $.player.bank.value) {
                     $.player.bank.value -= amount.value
                     $.player.coin.value += amount.value
@@ -729,10 +722,8 @@ module Square {
                 break
 
             case 'Treasury':
-                amount.value = int((/=|max/i.test(vt.entry))
-                    ? (1e+18 - 1e+09)
-                    : new Coin(vt.entry).value)
-                if (amount.value > 0 && amount.value <= (1e+18 - 1e+09)) {
+                amount = new Coin(/=|max/i.test(vt.entry) ? 1e+17 : vt.entry)
+                if (amount.value > 0) {
                     $.player.coin.value += amount.value
                     vt.beep()
                 }

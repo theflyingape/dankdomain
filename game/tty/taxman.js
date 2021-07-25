@@ -9,25 +9,21 @@ const sys_1 = require("../sys");
 var Taxman;
 (function (Taxman) {
     let irs;
-    let tax = new lib_1.Coin(0);
-    pc_1.PC.load($.taxman);
-    pc_1.PC.load($.barkeep);
+    let tax = new items_1.Coin(0);
     function checkpoint(scratch) {
         if (sys_1.int(1000 * scratch / tax.value) / 1000 > 1 && !$.access.sysop) {
-            pc_1.PC.load($.taxman);
             lib_1.vt.profile({
                 jpg: 'npc/taxman', handle: $.taxman.user.handle,
                 level: $.taxman.user.level, pc: $.taxman.user.pc, effect: 'fadeIn'
             });
             lib_1.vt.sound('oops', 4);
-            let pouch = new lib_1.Coin(scratch).pieces();
             lib_1.vt.out('\n\n', lib_1.vt.yellow, lib_1.vt.bright, $.taxman.user.handle, lib_1.vt.normal, -400);
-            lib_1.vt.outln(', our Master of Coin, looks at your bulging ', pouch, -1200);
+            lib_1.vt.outln(', our Master of Coin, looks at your bulging ', lib_1.pieces(), -1200);
             lib_1.vt.out(lib_1.vt.yellow, 'and says, ', lib_1.vt.blue, lib_1.vt.bright, '"Time to pay taxes!"', lib_1.vt.normal, -800);
             lib_1.vt.out(lib_1.vt.yellow, '  You check out the burly guards who stand ready\n');
             lib_1.vt.outln(`to enforce `, lib_1.vt.bright, `${$.king.handle}'${$.king.handle.substr(-1) !== 's' ? 's' : ''}`, lib_1.vt.normal, ` will.\n`, -1600);
             tax.value = scratch - tax.value;
-            tax = new lib_1.Coin(tax.carry(1, true));
+            tax = tax.pick(1);
             lib_1.vt.outln(`The tax will cost you ${tax.carry()}`, -900);
             return true;
         }
@@ -75,14 +71,14 @@ var Taxman;
             if ($.player.loan.value > 9) {
                 lib_1.vt.outln(lib_1.vt.green, '\nYour bank loan ', $.player.loan.carry(), lib_1.vt.red, ' is past due.', -1200);
                 lib_1.vt.beep();
-                let interest = new lib_1.Coin(sys_1.int($.player.loan.value * .05 + 1));
+                let interest = new items_1.Coin(sys_1.int($.player.loan.value * .05 + 1));
                 $.player.loan.value += interest.value;
                 $.online.altered = true;
                 lib_1.vt.outln('An interest charge of ', interest.carry(), ' was added.', -1200);
             }
             tax.value = 1000 * sys_1.money($.player.level)
-                + lib_1.tradein(new lib_1.Coin(items_1.RealEstate.name[$.player.realestate].value).value, 35)
-                + lib_1.tradein(new lib_1.Coin(items_1.Security.name[$.player.security].value).value, 15);
+                + lib_1.tradein(new items_1.Coin(items_1.RealEstate.name[$.player.realestate].value).value, 35)
+                + lib_1.tradein(new items_1.Coin(items_1.Security.name[$.player.security].value).value, 15);
             if (checkpoint($.player.coin.value + $.player.bank.value)) {
                 let exempt = items_1.Ring.power([], $.player.rings, 'taxes');
                 if (exempt.power) {
@@ -144,8 +140,8 @@ var Taxman;
                                 if (l < i && sys_1.dice(i) > 1)
                                     l++;
                             } while (xhp > 0);
-                            lib_1.vt.outln(lib_1.vt.yellow, `The Master of Coin points ${pc_1.PC.who($.taxman).his}${$.taxman.user.weapon} at you,\n`, lib_1.vt.bright, lib_1.vt.blue, `  "Shall we begin?"`);
-                            lib_1.vt.sound('ddd', 15);
+                            lib_1.vt.sound('ddd');
+                            lib_1.vt.outln(lib_1.vt.yellow, `The Master of Coin points ${pc_1.PC.who($.taxman).his}${$.taxman.user.weapon} at you,\n`, -1000, lib_1.vt.bright, lib_1.vt.blue, `  "Shall we begin?"`);
                             lib_1.vt.music('taxman');
                             Battle.engage('Gates', $.online, irs, boss);
                         }, prompt: 'Will you pay the tax (Y/N)? ', cancel: 'Y', enter: 'Y', eol: false, match: /Y|N/i, timeout: 20

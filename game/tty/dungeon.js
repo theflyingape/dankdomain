@@ -553,7 +553,7 @@ var Dungeon;
             pause = true;
             return true;
         }
-        let loot = new lib_1.Coin(0);
+        let loot = new items_1.Coin(0);
         if (ROOM.occupant && !refresh)
             drawRoom(Y, X);
         switch (ROOM.occupant) {
@@ -855,12 +855,12 @@ var Dungeon;
                                         }
                                         if (opponent.user.id) {
                                             loot.value = opponent.user.coin.value + opponent.user.bank.value;
-                                            lib_1.log(opponent.user.id, `\n${$.player.handle} wished for your ${loot.carry(2, true)}`);
-                                            lib_1.news(`\tlooted ${opponent.user.handle}`);
-                                            $.player.coin.value += loot.value;
                                             opponent.user.coin.value = 0;
                                             opponent.user.bank.value = 0;
                                             pc_1.PC.save(opponent);
+                                            $.player.coin.value += loot.value;
+                                            lib_1.log(opponent.user.id, `\n${$.player.handle} wished for your ${loot.amount}`);
+                                            lib_1.news(`\tlooted ${opponent.user.handle}`);
                                             lib_1.vt.sound('max');
                                         }
                                         menu();
@@ -993,20 +993,20 @@ var Dungeon;
                                         break;
                                     case 5:
                                         loot.value = sys_1.money(Z);
-                                        loot.value += lib_1.tradein(new lib_1.Coin($.online.weapon.value).value, $.online.cha);
-                                        loot.value += lib_1.tradein(new lib_1.Coin($.online.armor.value).value, $.online.cha);
+                                        loot.value += lib_1.tradein($.online.weapon.value);
+                                        loot.value += lib_1.tradein($.online.armor.value);
                                         loot.value *= (Z + 1);
-                                        $.player.coin.value += new lib_1.Coin(loot.carry(1, true)).value;
+                                        $.player.coin.value += loot.pick(1).value;
                                         lib_1.vt.sound('yahoo');
                                         break;
                                     case 6:
                                         $.player.coin.value = 0;
                                         $.player.bank.value = 0;
                                         loot.value = sys_1.money(Z);
-                                        loot.value += lib_1.tradein(new lib_1.Coin($.online.weapon.value).value, $.online.cha);
-                                        loot.value += lib_1.tradein(new lib_1.Coin($.online.armor.value).value, $.online.cha);
+                                        loot.value += lib_1.tradein($.online.weapon.value);
+                                        loot.value += lib_1.tradein($.online.armor.value);
                                         loot.value *= (Z + 1);
-                                        $.player.loan.value += new lib_1.Coin(loot.carry(1, true)).value;
+                                        $.player.loan.value += loot.pick(1).value;
                                         lib_1.vt.sound('thief2');
                                         break;
                                     case 7:
@@ -1131,10 +1131,9 @@ var Dungeon;
                         items_1.Poison.remove($.player.poisons, y);
                     }
                     else if ($.player.coin.value) {
-                        let pouch = $.player.coin.amount.split(',');
-                        x = sys_1.dice(pouch.length) - 1;
-                        lib_1.vt.out($.player.coin.pieces(pouch[x].substr(-1)));
-                        $.player.coin.value -= new lib_1.Coin(pouch[x]).value;
+                        const pick = $.player.coin.pick();
+                        lib_1.vt.out(lib_1.pieces(pick.amount.substr(-1)));
+                        $.player.coin.value -= pick.value;
                     }
                     else
                         lib_1.vt.out(lib_1.vt.yellow, `Reese's pieces`);
@@ -1162,13 +1161,13 @@ var Dungeon;
                     mod++;
                 if ($.player.coward)
                     mod--;
-                let cost = new lib_1.Coin(sys_1.int(($.player.hp - $.online.hp) * sys_1.money(Z) / mod / $.player.hp));
+                let cost = new items_1.Coin(sys_1.int(($.player.hp - $.online.hp) * sys_1.money(Z) / mod / $.player.hp));
                 if (cost.value < 1)
                     cost.value = 1;
                 cost.value *= (sys_1.int(deep / 3) + 1);
                 if (!$.player.coward && !$.player.steals && ($.player.pc == npc_1.dungeon.level.cleric.user.pc || $.player.maxcha > 98))
                     cost.value = 0;
-                cost = new lib_1.Coin(cost.carry(1, true));
+                cost = cost.pick(1);
                 if (ROOM.giftItem == 'chest') {
                     ROOM.giftValue = sys_1.dice(6 - $.player.magic) - 1;
                     cost.value = 0;
@@ -1185,11 +1184,11 @@ var Dungeon;
                 if (power > 95)
                     lib_1.vt.profile({ jpg: 'npc/old cleric', effect: 'zoomInUp', level: npc_1.dungeon.level.cleric.user.level, pc: npc_1.dungeon.level.cleric.user.pc });
                 if ($.online.hp > sys_1.int($.player.hp / 3) || npc_1.dungeon.level.cleric.sp < items_1.Magic.power(npc_1.dungeon.level.cleric, 13)) {
-                    lib_1.vt.out('"I can ', npc_1.dungeon.level.cleric.sp < items_1.Magic.power(npc_1.dungeon.level.cleric, 13) ? 'only' : 'surely', ' cast a Heal spell on your wounds for ', cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`, '."');
+                    lib_1.vt.out('"I can ', npc_1.dungeon.level.cleric.sp < items_1.Magic.power(npc_1.dungeon.level.cleric, 13) ? 'only' : 'surely', ' cast a Heal spell on your wounds for ', cost.value ? lib_1.carry(cost) : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`, '."');
                 }
                 else if (npc_1.dungeon.level.cleric.sp >= items_1.Magic.power(npc_1.dungeon.level.cleric, 13)) {
                     cast = 13;
-                    lib_1.vt.out('"I can restore your health for ', cost.value ? cost.carry() : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`, '."');
+                    lib_1.vt.out('"I can restore your health for ', cost.value ? lib_1.carry(cost) : `you, ${$.player.gender == 'F' ? 'sister' : 'brother'}`, '."');
                 }
                 lib_1.vt.action('yn');
                 lib_1.vt.form = {
@@ -1307,14 +1306,14 @@ var Dungeon;
                 lib_1.vt.profile({ jpg: 'npc/dwarf', effect: 'fadeIn' });
                 lib_1.vt.beep();
                 lib_1.vt.outln(lib_1.vt.yellow, 'You run into a ', lib_1.vt.bright, 'dwarven merchant', lib_1.vt.normal, ', ', $.dwarf.user.handle, '.', -1000);
-                let hi = 0, credit = new lib_1.Coin(0), ring = $.dwarf.user.rings[0];
+                let hi = 0, credit = new items_1.Coin(0), ring = $.dwarf.user.rings[0];
                 lib_1.vt.form = {
                     'armor': {
                         cb: () => {
                             lib_1.vt.outln();
                             ROOM.occupant = '';
                             if (/Y/i.test(lib_1.vt.entry)) {
-                                $.player.coin = new lib_1.Coin(0);
+                                $.player.coin = new items_1.Coin(0);
                                 items_1.Armor.equip($.online, items_1.Armor.dwarf[hi]);
                                 $.player.toAC = 2 - sys_1.dice(3);
                                 $.online.toAC = sys_1.dice($.online.armor.ac) - 2;
@@ -1347,7 +1346,7 @@ var Dungeon;
                             lib_1.vt.outln();
                             ROOM.occupant = '';
                             if (/Y/i.test(lib_1.vt.entry)) {
-                                $.player.coin = new lib_1.Coin(0);
+                                $.player.coin = new items_1.Coin(0);
                                 items_1.Weapon.equip($.online, items_1.Weapon.dwarf[hi]);
                                 $.player.toWC = 2 - sys_1.dice(3);
                                 $.online.toWC = sys_1.dice($.online.weapon.wc) - 2;
@@ -1381,7 +1380,7 @@ var Dungeon;
                     lib_1.vt.out('\nI see you have a class ', lib_1.bracket(ac, false), ' ', lib_1.armor());
                     ac += $.player.toAC;
                     if (ac) {
-                        let cv = new lib_1.Coin(items_1.Armor.name[$.player.armor].value);
+                        let cv = new items_1.Coin(items_1.Armor.name[$.player.armor].value);
                         credit.value = lib_1.tradein(cv.value, $.online.cha);
                         if ($.player.toAC)
                             credit.value = sys_1.int(credit.value * (ac + $.player.toAC / ($.player.poison + 1)) / ac);
@@ -1392,12 +1391,12 @@ var Dungeon;
                     }
                     else
                         credit.value = 0;
-                    lib_1.vt.outln(' worth ', credit.carry(), -1000);
+                    lib_1.vt.outln(' worth ', lib_1.carry(credit), -1000);
                     for (hi = 0; hi < items_1.Armor.dwarf.length - 1 && ac >= items_1.Armor.name[items_1.Armor.dwarf[hi]].ac; hi++)
                         ;
-                    if (new lib_1.Coin(items_1.Armor.name[items_1.Armor.dwarf[hi]].value).value <= credit.value + $.player.coin.value) {
+                    if (new items_1.Coin(items_1.Armor.name[items_1.Armor.dwarf[hi]].value).value <= credit.value + $.player.coin.value) {
                         if ($.player.coin.value)
-                            lib_1.vt.outln('  and all your coin worth ', $.player.coin.carry(), -1000);
+                            lib_1.vt.outln('  and all your coin worth ', lib_1.carry(), -1000);
                         lib_1.vt.out(`I'll trade you for my `, lib_1.vt.bright, ['exceptional', 'precious', 'remarkable', 'special', 'uncommon'][sys_1.dice(5) - 1], ' ', lib_1.bracket(items_1.Armor.name[items_1.Armor.dwarf[hi]].ac, false), ' ');
                         lib_1.vt.outln(lib_1.vt.bright, lib_1.vt.yellow, items_1.Armor.dwarf[hi], -1000);
                         lib_1.vt.action('yn');
@@ -1411,7 +1410,7 @@ var Dungeon;
                     lib_1.vt.out('\nI see you carrying a class ', lib_1.bracket(wc, false), ' ', lib_1.weapon());
                     wc += $.player.toWC;
                     if (wc) {
-                        let cv = new lib_1.Coin(items_1.Weapon.name[$.player.weapon].value);
+                        let cv = new items_1.Coin(items_1.Weapon.name[$.player.weapon].value);
                         credit.value = lib_1.tradein(cv.value, $.online.cha);
                         if ($.player.toWC)
                             credit.value = sys_1.int(credit.value * (wc + $.player.toWC / ($.player.poison + 1)) / wc);
@@ -1422,12 +1421,12 @@ var Dungeon;
                     }
                     else
                         credit.value = 0;
-                    lib_1.vt.outln(' worth ', credit.carry());
+                    lib_1.vt.outln(' worth ', lib_1.carry(credit));
                     for (hi = 0; hi < items_1.Weapon.dwarf.length - 1 && wc >= items_1.Weapon.name[items_1.Weapon.dwarf[hi]].wc; hi++)
                         ;
-                    if (new lib_1.Coin(items_1.Weapon.name[items_1.Weapon.dwarf[hi]].value).value <= credit.value + $.player.coin.value) {
+                    if (new items_1.Coin(items_1.Weapon.name[items_1.Weapon.dwarf[hi]].value).value <= credit.value + $.player.coin.value) {
                         if ($.player.coin.value)
-                            lib_1.vt.outln('  and all your coin worth ', $.player.coin.carry(), -1000);
+                            lib_1.vt.outln('  and all your coin worth ', lib_1.carry(), -1000);
                         lib_1.vt.out(`I'll trade you for my `, lib_1.vt.bright, ['exquisite', 'fine', 'jeweled', 'rare', 'splendid'][sys_1.dice(5) - 1], ' ', lib_1.bracket(items_1.Weapon.name[items_1.Weapon.dwarf[hi]].wc, false), ' ');
                         lib_1.vt.outln(lib_1.vt.bright, lib_1.vt.cyan, items_1.Weapon.dwarf[hi], -1000);
                         lib_1.vt.action('yn');
@@ -1622,17 +1621,17 @@ var Dungeon;
                 }
                 break;
             case 'chest':
-                let gold = new lib_1.Coin(sys_1.money(Z));
-                gold.value += lib_1.tradein(new lib_1.Coin($.online.weapon.value).value, $.online.cha);
-                gold.value += lib_1.tradein(new lib_1.Coin($.online.armor.value).value, $.online.cha);
+                let gold = new items_1.Coin(sys_1.money(Z));
+                gold.value += lib_1.tradein($.online.weapon.value);
+                gold.value += lib_1.tradein($.online.armor.value);
                 gold.value *= +ROOM.giftValue;
-                gold = new lib_1.Coin(gold.carry(1, true));
+                gold = gold.pick(1);
                 if (gold.value) {
                     if (gold.value > 1e+17)
                         gold.value = 1e+17;
                     lib_1.vt.profile({ jpg: `specials/chest`, effect: 'fadeInUpBig' });
                     lib_1.vt.sound('yahoo', 10);
-                    lib_1.vt.outln(lib_1.vt.yellow, 'You find a ', lib_1.vt.bright, 'treasure chest', lib_1.vt.normal, ' holding ', gold.carry(), '!');
+                    lib_1.vt.outln(lib_1.vt.yellow, 'You find a ', lib_1.vt.bright, 'treasure chest', lib_1.vt.normal, ' holding ', lib_1.carry(gold), '!');
                 }
                 else {
                     lib_1.vt.outln(lib_1.vt.faint, lib_1.vt.yellow, 'You find an empty, treasure chest.');
@@ -2647,12 +2646,12 @@ var Dungeon;
             pc_1.PC.adjust('int', deep - 2, 0, deep >> 2, m);
             pc_1.PC.adjust('dex', deep - 2, 0, deep >> 2, m);
             pc_1.PC.adjust('cha', deep - 2, 0, deep >> 2, m);
-            let gold = new lib_1.Coin(sys_1.int(sys_1.money(level) / (11 - deep)));
-            gold.value += lib_1.tradein(new lib_1.Coin(m.weapon.value).value, sys_1.dice($.online.cha / 5) + sys_1.dice(deep) - sys_1.int($.player.coward));
-            gold.value += lib_1.tradein(new lib_1.Coin(m.armor.value).value, sys_1.dice($.online.cha / 5) + sys_1.dice(deep) - sys_1.int($.player.coward));
+            let gold = new items_1.Coin(sys_1.int(sys_1.money(level) / (11 - deep)));
+            gold.value += lib_1.tradein(new items_1.Coin(m.weapon.value).value, sys_1.dice($.online.cha / 5) + sys_1.dice(deep) - sys_1.int($.player.coward));
+            gold.value += lib_1.tradein(new items_1.Coin(m.armor.value).value, sys_1.dice($.online.cha / 5) + sys_1.dice(deep) - sys_1.int($.player.coward));
             gold.value *= sys_1.dice(deep * 2 / 3);
             gold.value++;
-            m.user.coin = new lib_1.Coin(gold.carry(1, true));
+            m.user.coin = gold.pick(1);
             if (+m.user.weapon) {
                 if (dm.hit)
                     m.weapon.hit = dm.hit;
@@ -2705,7 +2704,7 @@ var Dungeon;
         lib_1.vt.out(lib_1.bracket('R'), 'Random teleport');
         lib_1.vt.out(lib_1.vt.cyan, '\n\nTime Left: ', lib_1.vt.bright, lib_1.vt.white, min.toString(), lib_1.vt.faint, lib_1.vt.cyan, ' min.', lib_1.vt.reset);
         if ($.player.coin.value)
-            lib_1.vt.out(lib_1.vt.cyan, '    Coin: ', $.player.coin.carry(4));
+            lib_1.vt.out(lib_1.vt.cyan, '    Coin: ', lib_1.carry());
         if ($.player.level / 9 - deep > items_1.Security.name[$.player.security].protection + 1)
             lib_1.vt.out(lib_1.vt.faint, '\nThe feeling of in', lib_1.vt.normal, lib_1.vt.uline, 'security', lib_1.vt.nouline, lib_1.vt.faint, ' overwhelms you.', lib_1.vt.reset);
         lib_1.vt.form = {

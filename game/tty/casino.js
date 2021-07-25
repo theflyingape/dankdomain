@@ -16,8 +16,8 @@ var Casino;
         'S': { description: 'Cherry Bomb Slots' }
     };
     let game;
-    let max = new lib_1.Coin(0);
-    let payoff = new lib_1.Coin(0);
+    let max = new items_1.Coin(0);
+    let payoff = new items_1.Coin(0);
     let point;
     let sting = true;
     const card = [
@@ -80,13 +80,13 @@ var Casino;
         };
         lib_1.vt.form['menu'].prompt = lib_1.display('casino', lib_1.vt.Green, lib_1.vt.green, suppress, casino);
         player_1.input('menu');
-        max.value = lib_1.tradein(new lib_1.Coin(items_1.RealEstate.name[$.player.realestate].value).value);
-        max.value += lib_1.tradein(new lib_1.Coin(items_1.Security.name[$.player.security].value).value);
+        max.value = lib_1.tradein(items_1.RealEstate.name[$.player.realestate].value);
+        max.value += lib_1.tradein(items_1.Security.name[$.player.security].value);
         max.value = sys_1.int(max.value / 10);
-        max.value += lib_1.tradein(($.player.level * sys_1.money($.player.level)));
-        if (max.value > 1e+16)
-            max.value = 1e+16;
-        max = new lib_1.Coin(max.carry(1, true));
+        max.value += $.player.level * sys_1.money($.player.level);
+        if (max.value > 1e+15)
+            max.value = 1e+15;
+        max = max.pick(1);
     }
     Casino.menu = menu;
     function choice() {
@@ -124,11 +124,11 @@ var Casino;
         lib_1.vt.outln();
         if ((+lib_1.vt.entry).toString() == lib_1.vt.entry)
             lib_1.vt.entry += 'c';
-        let amount = new lib_1.Coin(0);
+        let amount = new items_1.Coin(0);
         if (/=|max/i.test(lib_1.vt.entry))
             amount.value = max.value;
         else
-            amount.value = sys_1.int(new lib_1.Coin(lib_1.vt.entry).value);
+            amount.value = sys_1.int(new items_1.Coin(lib_1.vt.entry).value);
         if (amount.value < 1 || amount.value > $.player.coin.value || amount.value > max.value) {
             lib_1.vt.beep();
             menu($.player.expert);
@@ -282,11 +282,11 @@ var Casino;
                             lib_1.vt.out('\n', lib_1.vt.cll);
                             if ((+lib_1.vt.entry).toString() == lib_1.vt.entry)
                                 lib_1.vt.entry += 'c';
-                            let side = new lib_1.Coin(0);
+                            let side = new items_1.Coin(0);
                             if (/=|max/i.test(lib_1.vt.entry))
                                 side.value = max.value;
                             else
-                                side.value = sys_1.int(new lib_1.Coin(lib_1.vt.entry).value);
+                                side.value = sys_1.int(new items_1.Coin(lib_1.vt.entry).value);
                             if (side.value < 1 || side.value > $.player.coin.value || amount.value > max.value) {
                                 lib_1.vt.beep();
                                 side.value = 0;

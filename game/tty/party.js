@@ -486,7 +486,7 @@ var Party;
                                             items_1.Magic.add(nme[i].user.spells, npc_1.dungeon.monsters[dm].spells[magic]);
                                     pc_1.PC.activate(nme[i]);
                                     nme[i].user.toWC = sys_1.int(nme[i].weapon.wc / 4) + 1;
-                                    nme[i].user.coin = new lib_1.Coin(sys_1.money(ml));
+                                    nme[i].user.coin = new items_1.Coin(sys_1.money(ml));
                                     nme[i].user.handle = sys_1.titlecase(dm);
                                     nme[i].user.gang = o.name;
                                     o.handles[i] = nme[i].user.handle;

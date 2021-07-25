@@ -5,8 +5,8 @@
 
 import $ = require('../runtime')
 import db = require('../db')
-import { Access, Magic, Ring } from '../items'
-import { bracket, cat, Coin, emulator, getRing, news, time, vt } from '../lib'
+import { Access, Coin, Magic, Ring } from '../items'
+import { bracket, cat, emulator, getRing, news, time, vt } from '../lib'
 import { Deed, PC } from '../pc'
 import { input, logoff, pickPC } from '../player'
 import { an, cuss, date2full, dice, fs, got, money, now, pathTo, titlecase, whole } from '../sys'
@@ -568,6 +568,8 @@ module Logon {
             newDay()
             db.run(`UPDATE Players SET today=0 WHERE id NOT GLOB '_*'`)
         }
+        PC.load($.barkeep)
+        PC.load($.taxman)
         $.player = db.fillUser()
     }
 
