@@ -1,4 +1,5 @@
 {
+  "pc": "Alchemist",
   "backstab": 1, "melee": 1, "poison": 4, "steal": 2,
   "magic": 0, "heal": 0, "blast": 0,
   "str": 60, "maxstr": 90,

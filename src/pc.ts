@@ -387,7 +387,7 @@ module pc {
         }
 
         //  morph or spawn or a user re-roll
-        reroll(user: user, pc?: string, level = 1) {
+        reroll(user: user, pc?: string, level = 1): user {
             level = whole(level)
             level = level > 99 ? 99 : level < 1 ? 1 : level
             //  reset any prior experience
@@ -496,6 +496,7 @@ module pc {
                 user.hp += this.hp(user)
                 user.sp += this.sp(user)
             }
+            return user
         }
 
         save(rpc: active | user = $.online, insert = false, locked = false) {

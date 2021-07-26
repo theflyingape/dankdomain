@@ -68,7 +68,7 @@ module lib {
         return bags.slice(0, max).toString()
     }
 
-    export function cat(name: string, delay = $.player.expert ? 5 : 50): boolean {
+    export function cat(name: string, delay = $.player.expert ? 2 : 40): boolean {
         const file = pathTo('files', name)
         let filename = file + (vt.emulation == 'PC' ? '.ibm' : vt.emulation == 'XT' ? '.ans' : '.txt')
         let output = []

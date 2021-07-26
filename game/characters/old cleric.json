@@ -1,9 +1,9 @@
 {
   "id": "_dc",
   "handle": "old cleric",
-  "pc": "Cleric",
   "dob": 708447,
-  "sex": "I", "gender": "M",
+  "sex": "I",
+  "pc": "Cleric", "gender": "M",
   "weapon": "Dagger", "toWC": 1,
   "armor": "Holy Mail", "toAC": -1,
   "magic": 3, "heal": 4,

@@ -273,7 +273,7 @@ var Player;
             'dex': { cb: ability, min: 2, max: 2, match: /^[2-8][0-9]$/ },
             'cha': { cb: ability, min: 2, max: 2, match: /^[2-8][0-9]$/ }
         };
-        let a = { str: 20, int: 20, dex: 20, cha: 20 };
+        let a = { str: 50, int: 50, dex: 50, cha: 50 };
         if (immortal) {
             show();
             ability('str');
@@ -288,7 +288,7 @@ var Player;
         let classes = [''];
         let n = 0;
         for (let pc in pc_1.PC.name['player']) {
-            let rpc = pc_1.PC.card(pc);
+            const rpc = pc_1.PC.card(pc);
             if (++n > 2) {
                 if ($.player.keyhints.indexOf(pc, 12) < 0) {
                     lib_1.vt.out(lib_1.bracket(classes.length));
@@ -313,7 +313,7 @@ var Player;
                 handle: $.player.handle, level: $.player.level, pc: $.player.pc, effect: 'zoomInDown'
             });
             lib_1.cat('player/' + $.player.pc.toLowerCase());
-            let rpc = pc_1.PC.card($.player.pc);
+            const rpc = pc_1.PC.card($.player.pc);
             for (let l = 0; l < rpc.description.length; l++)
                 lib_1.vt.outln(lib_1.vt.cyan, lib_1.vt.bright, rpc.description[l], -1500);
         }
@@ -325,7 +325,7 @@ var Player;
                 return;
             }
             lib_1.vt.outln(' - ', classes[n]);
-            pc_1.PC.reroll($.player, classes[n]);
+            $.player = pc_1.PC.reroll($.player, classes[n]);
             show();
             ability('str');
         }
@@ -727,37 +727,30 @@ var Player;
             lib_1.vt.sound('winner');
             lib_1.vt.out(lib_1.vt.bright);
             rs = db.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`);
-            let user = { id: '' };
+            let user;
             for (let row in rs) {
-                user.id = rs[row].id;
-                pc_1.PC.load(user);
-                pc_1.PC.reroll(user);
-                pc_1.PC.newkeys(user);
-                user.keyhints.splice(12);
-                pc_1.PC.save(user);
-                sys_1.fs.unlink(sys_1.pathTo('users', '.${user.id}.json'), () => { });
+                user = { id: rs[row].id };
+                if (pc_1.PC.load(user)) {
+                    pc_1.PC.reroll(user);
+                    user.keyhints.splice(12);
+                    pc_1.PC.save(user);
+                    sys_1.fs.unlink(sys_1.pathTo('users', '.${user.id}.json'), () => { });
+                }
                 lib_1.vt.out('.', -10);
             }
             db.run(`UPDATE Rings SET bearer=''`);
             let i = 0;
             while (++i) {
-                try {
-                    user = { id: '' };
-                    Object.assign(user, JSON.parse(sys_1.fs.readFileSync(sys_1.pathTo('users', 'bot${i}.json'))));
-                    let bot = {};
-                    Object.assign(bot, user);
+                let bot = db.fillUser(`bot${i}`);
+                if (bot.id) {
                     pc_1.PC.reroll(bot, bot.pc, bot.level);
                     pc_1.PC.newkeys(bot);
                     bot.keyhints.splice(12);
-                    Object.assign(bot, user);
                     pc_1.PC.save(bot);
                     lib_1.vt.out('&', -10);
                 }
-                catch (err) {
-                    lib_1.vt.beep();
-                    lib_1.vt.out('?', -100);
+                else
                     break;
-                }
             }
             lib_1.vt.outln(-1250);
             lib_1.vt.outln('Happy hunting ', lib_1.vt.uline, 'tomorrow', lib_1.vt.nouline, '!');

@@ -471,6 +471,7 @@ var pc;
                 user.hp += this.hp(user);
                 user.sp += this.sp(user);
             }
+            return user;
         }
         save(rpc = $.online, insert = false, locked = false) {
             let user = "user" in rpc ? rpc.user : rpc;

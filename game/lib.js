@@ -65,7 +65,7 @@ var lib;
         return bags.slice(0, max).toString();
     }
     lib.carry = carry;
-    function cat(name, delay = $.player.expert ? 5 : 50) {
+    function cat(name, delay = $.player.expert ? 2 : 40) {
         const file = sys_1.pathTo('files', name);
         let filename = file + (lib.vt.emulation == 'PC' ? '.ibm' : lib.vt.emulation == 'XT' ? '.ans' : '.txt');
         let output = [];

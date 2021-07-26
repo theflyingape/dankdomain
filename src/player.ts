@@ -305,7 +305,7 @@ module Player {
             'dex': { cb: ability, min: 2, max: 2, match: /^[2-8][0-9]$/ },
             'cha': { cb: ability, min: 2, max: 2, match: /^[2-8][0-9]$/ }
         }
-        let a = { str: 20, int: 20, dex: 20, cha: 20 }
+        let a = { str: 50, int: 50, dex: 50, cha: 50 }
 
         if (immortal) {
             show()
@@ -324,7 +324,7 @@ module Player {
         let classes = ['']
         let n = 0
         for (let pc in PC.name['player']) {
-            let rpc = PC.card(pc)
+            const rpc = PC.card(pc)
             if (++n > 2) {
                 if ($.player.keyhints.indexOf(pc, 12) < 0) {
                     vt.out(bracket(classes.length))
@@ -362,20 +362,20 @@ module Player {
                 , handle: $.player.handle, level: $.player.level, pc: $.player.pc, effect: 'zoomInDown'
             })
             cat('player/' + $.player.pc.toLowerCase())
-            let rpc = PC.card($.player.pc)
+            const rpc = PC.card($.player.pc)
             for (let l = 0; l < rpc.description.length; l++)
                 vt.outln(vt.cyan, vt.bright, rpc.description[l], -1500)
         }
 
         function pick() {
-            let n: number = whole(vt.entry)
+            let n = whole(vt.entry)
             if (n < 1 || n >= classes.length) {
                 vt.beep()
                 vt.refocus()
                 return
             }
             vt.outln(' - ', classes[n])
-            PC.reroll($.player, classes[n])
+            $.player = PC.reroll($.player, classes[n])
             show()
             ability('str')
         }
