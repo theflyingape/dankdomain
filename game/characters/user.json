@@ -3,7 +3,7 @@
   "name": "", "email": "", "password": null,
   "dob": 717884, "sex": "I",
   "joined": 717884, "expires": 0,
-  "lastdate": 717884, "lasttime": 0,
+  "lastdate": 717884, "lasttime": 1234,
   "calls": 0, "today": 0,
   "expert": false, "novice": false,
   "emulation": "VT", "rows": 24,
@@ -32,7 +32,6 @@
   "plays": 0,
   "jl": 0, "jw": 0,
   "killed": 0, "kills": 0,
-  "retreats": 0,
-  "steals": 0,
+  "retreats": 0, "steals": 0,
   "tl": 0, "tw": 0
 }

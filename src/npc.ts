@@ -106,8 +106,6 @@ module npc {
                 }
                 containers.splice(c, 1)
             }
-
-            PC.load($.dwarf)
         }
     }
 
@@ -152,8 +150,13 @@ module npc {
         orders(from: string) {
             vt.action(from.toLowerCase())
             $.from = from
-            if (!$.access.bot || this._cmd.length) return
-            //  queue up bot's action(s) from this module
+            if (!$.access.bot) {
+                vt.title(`${$.sysop.name} :: ${from}`)
+                return
+            }
+            if (this._cmd.length) return
+
+            //  queue up bot's new action(s) from this module
             switch (from) {
                 case 'Arena':
                     if (dice($.player.poison) > 1 && $.player.toWC >= 0 && $.player.toWC < int($.player.poisons.length / 2) + 1)

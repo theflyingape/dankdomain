@@ -2,6 +2,7 @@
   "pc": "Cleric",
   "backstab": 1, "melee": 2, "poison": 1, "steal": 1,
   "magic": 3, "heal": 3, "blast": 1,
+  "sp": 15,
   "str": 50, "maxstr": 90,
   "int": 55, "maxint": 90,
   "dex": 60, "maxdex": 80,

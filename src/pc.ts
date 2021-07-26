@@ -6,8 +6,8 @@
 import $ = require('./runtime')
 import db = require('./db')
 import { Access, Armor, Magic, Ring, Weapon } from './items'
-import { armor, vt, weapon } from './lib'
-import { date2full, dice, fs, int, isActive, now, pathTo, romanize, sprintf, titlecase } from './sys'
+import { armor, carry, vt, weapon } from './lib'
+import { date2full, dice, fs, int, now, pathTo, romanize, sprintf, titlecase, whole } from './sys'
 
 module pc {
 
@@ -117,13 +117,13 @@ module pc {
         }
 
         activate(one: active, keep = false, confused = false): boolean {
+            if (one == $.online) $.online.user = $.player
             one.adept = one.user.wins ? 1 : 0
             one.pc = this.card(one.user.pc)
             one.str = one.user.str
             one.int = one.user.int
             one.dex = one.user.dex
             one.cha = one.user.cha
-            console.log('activate:', one, one.user)
             Abilities.forEach(ability => {
                 const a = `to${titlecase(ability)}`
                 let rt = one.user.blessed ? 10 : 0
@@ -276,10 +276,10 @@ module pc {
         }
 
         load(rpc: active | user): boolean {
-            let user: user = isActive(rpc) ? rpc.user : rpc
+            let user: user = "user" in rpc ? rpc.user : rpc
             if (user.handle) user.handle = titlecase(user.handle)
             if (db.loadUser(user)) {
-                if (isActive(rpc)) this.activate(rpc)
+                if ("user" in rpc) this.activate(rpc)
                 //  restore NPC with static fields
                 if (user.id[0] == '_' && user.id != "_SYS") {
                     let npc = db.fillUser(db.NPC[user.id], user)
@@ -386,33 +386,26 @@ module pc {
             return pc
         }
 
-        reroll(user: user, dd?: string, level = 1) {
-            //  reset essential character attributes
+        //  morph or spawn or a user re-roll
+        reroll(user: user, pc?: string, level = 1) {
+            level = whole(level)
             level = level > 99 ? 99 : level < 1 ? 1 : level
-            user.level = level
-            user.pc = dd ? dd : Object.keys(this.name['player'])[0]
-            const rpc = this.card(user.pc)
             //  reset any prior experience
-            user.xp = 0
-            user.jl = 0
-            user.jw = 0
-            user.steals = 0
-            user.tl = 0
-            user.tw = 0
-            //  load character class template
-            user = db.fillUser(user.pc, user)
-            user.hp = 15
-            user.sp = user.magic > 1 ? 15 : 0
-            user.status = ''
-            //  reset pc, spawn or restore npc
+            user = db.fillUser('reset', user)
+            //  reset to starting PC and base assets
             if (level == 1 || !user.id || user.id[0] == '_') {
                 user = db.fillUser('reroll', user)
                 user.gender = user.sex
             }
-            //  morph or spawn
-            if (!user.keyseq) PC.newkeys(user)
+            //  assign & fetch the playing class
+            if (pc) user.pc = pc
+            const rpc = this.card(user.pc)
+            //  apply character class attributes
+            user = db.fillUser(user.pc, user)
+            user.level = level
             if (user.level > 1) user.xp = this.experience(user.level - 1, 1, user.int)
-            //  exists in spirit or for real
+            if (!user.keyseq) PC.newkeys(user)
+            //  character exists in spirit or for real
             user.xplevel = (user.pc == Object.keys(this.name['player'])[0]) ? 0 : user.level
             //  level up
             for (let n = 2; n <= level; n++) {
@@ -507,7 +500,7 @@ module pc {
 
         save(rpc: active | user = $.online, insert = false, locked = false) {
 
-            let user: user = isActive(rpc) ? rpc.user : rpc
+            let user: user = "user" in rpc ? rpc.user : rpc
 
             if (!user.id) return
             if (insert || locked || user.id[0] == '_') {
@@ -529,7 +522,7 @@ module pc {
             }
 
             db.saveUser(user, insert)
-            if (isActive(rpc)) rpc.altered = false
+            if ("user" in rpc) rpc.altered = false
             if (locked) db.unlock(user.id.toLowerCase())
         }
 
@@ -542,7 +535,7 @@ module pc {
                 }
                 catch (err) {
                     if (err.code !== 'SQLITE_CONSTRAINT_PRIMARYKEY') {
-                        console.log(` ? Unexpected error: ${String(err)}`)
+                        console.error(` ? Unexpected error: ${String(err)}`)
                     }
                 }
             }
@@ -629,19 +622,19 @@ module pc {
             vt.out('      Str: ', vt.white)
             if ($.player.emulation == 'XT') vt.out('\r\x1B[2C💪\r\x1B[12C')
             vt.out(sprintf('%-20s', profile.str + ' (' + profile.user.str + ',' + profile.user.maxstr + ')'))
-            vt.out(vt.cyan, ' Hand: ', profile.user.coin.carry(), ' '.repeat(15 - profile.user.coin.amount.length))
+            vt.out(vt.cyan, ' Hand: ', carry(profile.user.coin), ' '.repeat(15 - profile.user.coin.amount.length))
             vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
             vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
             vt.out('      Int: ', vt.white)
             vt.out(sprintf('%-20s', profile.int + ' (' + profile.user.int + ',' + profile.user.maxint + ')'))
-            vt.out(vt.cyan, ' Bank: ', profile.user.bank.carry(), ' '.repeat(15 - profile.user.bank.amount.length))
+            vt.out(vt.cyan, ' Bank: ', carry(profile.user.bank), ' '.repeat(15 - profile.user.bank.amount.length))
             vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
             vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
             vt.out('      Dex: ', vt.white)
             vt.out(sprintf('%-20s', profile.dex + ' (' + profile.user.dex + ',' + profile.user.maxdex + ')'))
-            vt.out(vt.cyan, ' Loan: ', profile.user.loan.carry(), ' '.repeat(15 - profile.user.loan.amount.length))
+            vt.out(vt.cyan, ' Loan: ', carry(profile.user.loan), ' '.repeat(15 - profile.user.loan.amount.length))
             vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
             vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
@@ -856,7 +849,7 @@ module pc {
         }
 
         who(pc: active | user, mob = false): who {
-            let user: user = isActive(pc) ? pc.user : pc
+            let user: user = "user" in pc ? pc.user : pc
             const gender = pc === $.online ? 'U' : user.gender
             const Handle = `${gender == 'I' && $.from !== 'Party' ? 'The ' : ''}${user.handle}`
             const handle = `${gender == 'I' && $.from !== 'Party' ? 'the ' : ''}${user.handle}`

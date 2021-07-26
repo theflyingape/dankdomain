@@ -44,25 +44,25 @@ module lib {
     }
 
     export function carry(coin = $.player.coin, max = 2): string {
-        let n = this.value
+        let n = coin.value
         let bags: string[] = []
 
         if (coin.pouch(n) == 'p') {
             n = int(n / 1e+13)
             bags.push(vt.attr(vt.white, vt.bright, n.toString(), vt.magenta, 'p', vt.normal, vt.white))
-            n = this.value % 1e+13
+            n = coin.value % 1e+13
         }
         if (coin.pouch(n) == 'g') {
             n = int(n / 1e+09)
             bags.push(vt.attr(vt.white, vt.bright, n.toString(), vt.yellow, 'g', vt.normal, vt.white))
-            n = this.value % 1e+09
+            n = coin.value % 1e+09
         }
         if (coin.pouch(n) == 's') {
             n = int(n / 1e+05)
             bags.push(vt.attr(vt.white, vt.bright, n.toString(), vt.cyan, 's', vt.normal, vt.white))
-            n = this.value % 1e+05
+            n = coin.value % 1e+05
         }
-        if ((n > 0 && this._pouch(n) == 'c') || bags.length == 0)
+        if ((n > 0 && coin.pouch(n) == 'c') || bags.length == 0)
             bags.push(vt.attr(vt.white, vt.bright, n.toString(), vt.red, 'c', vt.normal, vt.white))
 
         return bags.slice(0, max).toString()
@@ -205,11 +205,11 @@ module lib {
     }
 
     export function getRing(how: string, what: string) {
-        vt.profile({ jpg: `ring/${what}`, handle: `${what} ${Ring.name[what].emoji} 💍 ring`, effect: 'tada' })
+        vt.profile({ jpg: `ring/${what}`, handle: `${what} ${Ring.name[what].emoji}💍 ring`, effect: 'tada' })
         vt.outln()
         vt.out(vt.yellow, vt.bright, 'You ', how, an(what, false))
         vt.out(vt.cyan, what, vt.normal)
-        if ($.player.emulation == 'XT') vt.out(' ', Ring.name[what].emoji, ' 💍')
+        if ($.player.emulation == 'XT') vt.out(' ', Ring.name[what].emoji, '💍')
         vt.out(' ring', vt.reset, ', which can\n'
             , vt.yellow, vt.bright, Ring.name[what].description)
     }

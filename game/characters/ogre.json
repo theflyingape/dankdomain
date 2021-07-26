@@ -2,6 +2,7 @@
   "pc": "Ogre",
   "backstab": 1, "melee": 4, "poison": 0, "steal": 1,
   "magic": 2, "heal": 2, "blast": 0,
+  "sp": 15,
   "str": 65, "maxstr": 99,
   "int": 55, "maxint": 88,
   "dex": 55, "maxdex": 77,

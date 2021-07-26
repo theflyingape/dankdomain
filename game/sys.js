@@ -110,10 +110,6 @@ var sys;
         return n;
     }
     sys.int = int;
-    function isActive(arg) {
-        return arg.user !== undefined;
-    }
-    sys.isActive = isActive;
     function money(level) {
         return int(Math.pow(2, (level - 1) / 2) * 10 * (101 - level) / 100);
     }

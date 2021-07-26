@@ -2,6 +2,7 @@
   "pc": "God",
   "backstab": 0, "melee": 4, "poison": 2, "steal": 0,
   "magic": 4, "heal": 4, "blast": 4,
+  "sp": 15,
   "str": 55, "maxstr": 99,
   "int": 55, "maxint": 99,
   "dex": 75, "maxdex": 99,

@@ -30,6 +30,8 @@ var Dungeon;
     let refresh;
     let skillkill;
     let well;
+    if ($.access.sysop)
+        npc_1.dungeon.crawling['M'] = { description: 'y liege' };
     function DeepDank(start, cb) {
         idle = -1;
         levels = $.player.level;
@@ -44,8 +46,6 @@ var Dungeon;
         Z = start < 0 ? 0 : start > 99 ? 99 : sys_1.int(start);
         hiZ = Z;
         fini = cb;
-        if ($.access.sysop)
-            npc_1.dungeon.crawling['M'] = { description: 'y liege' };
         generateLevel();
         ROOM = npc_1.dungeon.level.rooms[Y][X];
         menu();

@@ -13,7 +13,19 @@ import { an, cuss, date2full, dice, fs, got, money, now, pathTo, titlecase, whol
 
 module Logon {
 
-    init()
+    PC.load($.sysop)
+    PC.load($.barkeep)
+    PC.load($.dwarf)
+    PC.load($.neptune)
+    PC.load($.seahag)
+    PC.load($.taxman)
+    PC.load($.witch)
+    if ($.sysop.lastdate != now().date) {
+        newDay()
+        db.run(`UPDATE Players SET today=0 WHERE id NOT GLOB '_*'`)
+    }
+    $.player = db.fillUser()
+    $.player.emulation = vt.emulation
     cat('logon', vt.tty == 'door' ? 100 : 5)
 
     export function user(prompt: string) {
@@ -98,16 +110,22 @@ module Logon {
                 $.player.id = ''
                 $.player.handle = vt.entry
                 if (!PC.load($.player)) {
-                    if (guards())
-                        vt.refocus()
+                    if (guards()) vt.refocus()
                     return
                 }
             }
 
             $.access = Access.name[$.player.access]
-            vt.emulation = $.player.emulation
-            $.player.rows = process.stdout.rows || $.player.rows || 24
+            if ($.access.bot) {
+                $.player.emulation = vt.emulation
+                if (guards()) vt.refocus()
+                return
+            }
+            if (!$.access.roleplay)
+                vt.outln(vt.faint, '\n... two guards come from behind to escort you to the Great Hall ... ', -2000)
 
+            $.player.rows = process.stdout.rows || $.player.rows || 24
+            vt.emulation = $.player.emulation
             vt.form['password'].prompt = `${$.player.handle}, enter your password: `
             vt.focus = 'password'
         }
@@ -164,7 +182,6 @@ module Logon {
             $.access = Access.name[$.player.access]
         }
 
-        vt.title($.player.emulation)
         news(`${$.player.handle} ${$.access.emoji} arrived from ${$.whereis} at ${time(now().time)} as a level ${$.player.level} ${$.player.pc}:`)
 
         let rs = db.query(`SELECT * FROM Online`)
@@ -404,7 +421,7 @@ module Logon {
             if ($.access.sysop) {
                 let ring = Ring.power([], null, 'joust')
                 if (($.online.altered = Ring.wear($.player.rings, ring.name))) {
-                    getRing('are Ruler and gifted', ring.name)
+                    getRing('are the Ruler and gifted with', ring.name)
                     PC.saveRing(ring.name, $.player.id, $.player.rings)
                     vt.sound('promote', 22)
                 }
@@ -560,17 +577,6 @@ module Logon {
             return PC.load($.king)
         }
         return false
-    }
-
-    function init() {
-        PC.load($.sysop)
-        if ($.sysop.lastdate != now().date) {
-            newDay()
-            db.run(`UPDATE Players SET today=0 WHERE id NOT GLOB '_*'`)
-        }
-        PC.load($.barkeep)
-        PC.load($.taxman)
-        $.player = db.fillUser()
     }
 
     function newDay() {

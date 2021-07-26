@@ -10,8 +10,9 @@ import { bracket, cat, prompt, news, time, vt, weapon } from './lib'
 import { elemental } from './npc'
 import { Deed, PC } from './pc'
 import { an, date2full, dice, fs, int, now, pathTo, sprintf, whole } from './sys'
+import { ESTALE } from 'constants'
 
-module player {
+module Player {
 
     export function checkXP(rpc: active, cb: Function): boolean {
 
@@ -282,12 +283,7 @@ module player {
         if (!Access.name[$.player.access].roleplay) return
 
         if ($.player.novice) {
-            const novice: user = Object.assign({}, JSON.parse(fs.readFileSync(pathTo('characters', 'novice.json'))))
-            PC.reroll($.player, novice.pc)
-            Object.assign($.player, novice)
-            $.player.coin = new Coin(novice.coin.toString())
-            $.player.bank = new Coin(novice.bank.toString())
-
+            PC.reroll($.player, 'novice')
             vt.outln('Since you are a new user here, you are automatically assigned a character', -1000)
             vt.out('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.', -1000)
             show()
@@ -365,12 +361,10 @@ module player {
                 png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : '')
                 , handle: $.player.handle, level: $.player.level, pc: $.player.pc, effect: 'zoomInDown'
             })
-            vt.outln(-1000)
             cat('player/' + $.player.pc.toLowerCase())
-            vt.outln(-1000)
             let rpc = PC.card($.player.pc)
             for (let l = 0; l < rpc.description.length; l++)
-                vt.outln(vt.cyan, vt.bright, rpc.description[l], -500)
+                vt.outln(vt.cyan, vt.bright, rpc.description[l], -1500)
         }
 
         function pick() {
@@ -856,38 +850,31 @@ module player {
             vt.out(vt.bright)
 
             rs = db.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
-            let user: user = { id: '' }
+            let user: user
             for (let row in rs) {
-                user.id = rs[row].id
-                PC.load(user)
-                PC.reroll(user)
-                PC.newkeys(user)
-                user.keyhints.splice(12)
-                PC.save(user)
-                fs.unlink(pathTo('users', '.${user.id}.json'), () => { })
+                user = { id: rs[row].id }
+                if (PC.load(user)) {
+                    PC.reroll(user)
+                    user.keyhints.splice(12)
+                    PC.save(user)
+                    fs.unlink(pathTo('users', '.${user.id}.json'), () => { })
+                }
                 vt.out('.', -10)
             }
             db.run(`UPDATE Rings SET bearer=''`)   // should be cleared by rerolls
 
             let i = 0
             while (++i) {
-                try {
-                    user = <user>{ id: '' }
-                    Object.assign(user, JSON.parse(fs.readFileSync(pathTo('users', 'bot${i}.json'))))
-                    let bot = <user>{}
-                    Object.assign(bot, user)
+                let bot = db.fillUser(`bot${i}`)
+                if (bot.id) {
                     PC.reroll(bot, bot.pc, bot.level)
                     PC.newkeys(bot)
                     bot.keyhints.splice(12)
-                    Object.assign(bot, user)
                     PC.save(bot)
                     vt.out('&', -10)
                 }
-                catch (err) {
-                    vt.beep()
-                    vt.out('?', -100)
+                else
                     break
-                }
             }
 
             vt.outln(-1250)
@@ -986,7 +973,6 @@ module player {
         vt.form['key'].prompt = `Insert key #${slot + 1}? `
         vt.focus = 'key'
     }
-
 }
 
-export = player
+export = Player

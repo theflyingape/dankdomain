@@ -8,7 +8,19 @@ const player_1 = require("../player");
 const sys_1 = require("../sys");
 var Logon;
 (function (Logon) {
-    init();
+    pc_1.PC.load($.sysop);
+    pc_1.PC.load($.barkeep);
+    pc_1.PC.load($.dwarf);
+    pc_1.PC.load($.neptune);
+    pc_1.PC.load($.seahag);
+    pc_1.PC.load($.taxman);
+    pc_1.PC.load($.witch);
+    if ($.sysop.lastdate != sys_1.now().date) {
+        newDay();
+        db.run(`UPDATE Players SET today=0 WHERE id NOT GLOB '_*'`);
+    }
+    $.player = db.fillUser();
+    $.player.emulation = lib_1.vt.emulation;
     lib_1.cat('logon', lib_1.vt.tty == 'door' ? 100 : 5);
     function user(prompt) {
         let retry = 3;
@@ -91,8 +103,16 @@ var Logon;
                 }
             }
             $.access = items_1.Access.name[$.player.access];
-            lib_1.vt.emulation = $.player.emulation;
+            if ($.access.bot) {
+                $.player.emulation = lib_1.vt.emulation;
+                if (guards())
+                    lib_1.vt.refocus();
+                return;
+            }
+            if (!$.access.roleplay)
+                lib_1.vt.outln(lib_1.vt.faint, '\n... two guards come from behind to escort you to the Great Hall ... ', -2000);
             $.player.rows = process.stdout.rows || $.player.rows || 24;
+            lib_1.vt.emulation = $.player.emulation;
             lib_1.vt.form['password'].prompt = `${$.player.handle}, enter your password: `;
             lib_1.vt.focus = 'password';
         }
@@ -141,7 +161,6 @@ var Logon;
             }
             $.access = items_1.Access.name[$.player.access];
         }
-        lib_1.vt.title($.player.emulation);
         lib_1.news(`${$.player.handle} ${$.access.emoji} arrived from ${$.whereis} at ${lib_1.time(sys_1.now().time)} as a level ${$.player.level} ${$.player.pc}:`);
         let rs = db.query(`SELECT * FROM Online`);
         for (let row = 0; row < rs.length; row++) {
@@ -343,7 +362,7 @@ var Logon;
             if ($.access.sysop) {
                 let ring = items_1.Ring.power([], null, 'joust');
                 if (($.online.altered = items_1.Ring.wear($.player.rings, ring.name))) {
-                    lib_1.getRing('are Ruler and gifted', ring.name);
+                    lib_1.getRing('are the Ruler and gifted with', ring.name);
                     pc_1.PC.saveRing(ring.name, $.player.id, $.player.rings);
                     lib_1.vt.sound('promote', 22);
                 }
@@ -474,16 +493,6 @@ var Logon;
             return pc_1.PC.load($.king);
         }
         return false;
-    }
-    function init() {
-        pc_1.PC.load($.sysop);
-        if ($.sysop.lastdate != sys_1.now().date) {
-            newDay();
-            db.run(`UPDATE Players SET today=0 WHERE id NOT GLOB '_*'`);
-        }
-        pc_1.PC.load($.barkeep);
-        pc_1.PC.load($.taxman);
-        $.player = db.fillUser();
     }
     function newDay() {
         lib_1.vt.out('One moment: [');

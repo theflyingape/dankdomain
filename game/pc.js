@@ -92,13 +92,14 @@ var pc;
             return ability;
         }
         activate(one, keep = false, confused = false) {
+            if (one == $.online)
+                $.online.user = $.player;
             one.adept = one.user.wins ? 1 : 0;
             one.pc = this.card(one.user.pc);
             one.str = one.user.str;
             one.int = one.user.int;
             one.dex = one.user.dex;
             one.cha = one.user.cha;
-            console.log('activate:', one, one.user);
             pc_1.Abilities.forEach(ability => {
                 const a = `to${sys_1.titlecase(ability)}`;
                 let rt = one.user.blessed ? 10 : 0;
@@ -236,11 +237,11 @@ var pc;
             rpc.altered = true;
         }
         load(rpc) {
-            let user = sys_1.isActive(rpc) ? rpc.user : rpc;
+            let user = "user" in rpc ? rpc.user : rpc;
             if (user.handle)
                 user.handle = sys_1.titlecase(user.handle);
             if (db.loadUser(user)) {
-                if (sys_1.isActive(rpc))
+                if ("user" in rpc)
                     this.activate(rpc);
                 if (user.id[0] == '_' && user.id != "_SYS") {
                     let npc = db.fillUser(db.NPC[user.id], user);
@@ -342,29 +343,23 @@ var pc;
             }
             return pc;
         }
-        reroll(user, dd, level = 1) {
+        reroll(user, pc, level = 1) {
+            level = sys_1.whole(level);
             level = level > 99 ? 99 : level < 1 ? 1 : level;
-            user.level = level;
-            user.pc = dd ? dd : Object.keys(this.name['player'])[0];
-            const rpc = this.card(user.pc);
-            user.xp = 0;
-            user.jl = 0;
-            user.jw = 0;
-            user.steals = 0;
-            user.tl = 0;
-            user.tw = 0;
-            user = db.fillUser(user.pc, user);
-            user.hp = 15;
-            user.sp = user.magic > 1 ? 15 : 0;
-            user.status = '';
+            user = db.fillUser('reset', user);
             if (level == 1 || !user.id || user.id[0] == '_') {
                 user = db.fillUser('reroll', user);
                 user.gender = user.sex;
             }
-            if (!user.keyseq)
-                pc_1.PC.newkeys(user);
+            if (pc)
+                user.pc = pc;
+            const rpc = this.card(user.pc);
+            user = db.fillUser(user.pc, user);
+            user.level = level;
             if (user.level > 1)
                 user.xp = this.experience(user.level - 1, 1, user.int);
+            if (!user.keyseq)
+                pc_1.PC.newkeys(user);
             user.xplevel = (user.pc == Object.keys(this.name['player'])[0]) ? 0 : user.level;
             for (let n = 2; n <= level; n++) {
                 user.level = n;
@@ -478,7 +473,7 @@ var pc;
             }
         }
         save(rpc = $.online, insert = false, locked = false) {
-            let user = sys_1.isActive(rpc) ? rpc.user : rpc;
+            let user = "user" in rpc ? rpc.user : rpc;
             if (!user.id)
                 return;
             if (insert || locked || user.id[0] == '_') {
@@ -499,7 +494,7 @@ var pc;
                 }
             }
             db.saveUser(user, insert);
-            if (sys_1.isActive(rpc))
+            if ("user" in rpc)
                 rpc.altered = false;
             if (locked)
                 db.unlock(user.id.toLowerCase());
@@ -513,7 +508,7 @@ var pc;
                 }
                 catch (err) {
                     if (err.code !== 'SQLITE_CONSTRAINT_PRIMARYKEY') {
-                        console.log(` ? Unexpected error: ${String(err)}`);
+                        console.error(` ? Unexpected error: ${String(err)}`);
                     }
                 }
             }
@@ -592,17 +587,17 @@ var pc;
             if ($.player.emulation == 'XT')
                 lib_1.vt.out('\r\x1B[2C💪\r\x1B[12C');
             lib_1.vt.out(sys_1.sprintf('%-20s', profile.str + ' (' + profile.user.str + ',' + profile.user.maxstr + ')'));
-            lib_1.vt.out(lib_1.vt.cyan, ' Hand: ', profile.user.coin.carry(), ' '.repeat(15 - profile.user.coin.amount.length));
+            lib_1.vt.out(lib_1.vt.cyan, ' Hand: ', lib_1.carry(profile.user.coin), ' '.repeat(15 - profile.user.coin.amount.length));
             lib_1.vt.outln(' ', lib_1.vt.reset, lib_1.vt.blue, lib_1.vt.faint, '|');
             lib_1.vt.out(lib_1.vt.blue, lib_1.vt.faint, '|', lib_1.vt.Blue, lib_1.vt.cyan, lib_1.vt.bright);
             lib_1.vt.out('      Int: ', lib_1.vt.white);
             lib_1.vt.out(sys_1.sprintf('%-20s', profile.int + ' (' + profile.user.int + ',' + profile.user.maxint + ')'));
-            lib_1.vt.out(lib_1.vt.cyan, ' Bank: ', profile.user.bank.carry(), ' '.repeat(15 - profile.user.bank.amount.length));
+            lib_1.vt.out(lib_1.vt.cyan, ' Bank: ', lib_1.carry(profile.user.bank), ' '.repeat(15 - profile.user.bank.amount.length));
             lib_1.vt.outln(' ', lib_1.vt.reset, lib_1.vt.blue, lib_1.vt.faint, '|');
             lib_1.vt.out(lib_1.vt.blue, lib_1.vt.faint, '|', lib_1.vt.Blue, lib_1.vt.cyan, lib_1.vt.bright);
             lib_1.vt.out('      Dex: ', lib_1.vt.white);
             lib_1.vt.out(sys_1.sprintf('%-20s', profile.dex + ' (' + profile.user.dex + ',' + profile.user.maxdex + ')'));
-            lib_1.vt.out(lib_1.vt.cyan, ' Loan: ', profile.user.loan.carry(), ' '.repeat(15 - profile.user.loan.amount.length));
+            lib_1.vt.out(lib_1.vt.cyan, ' Loan: ', lib_1.carry(profile.user.loan), ' '.repeat(15 - profile.user.loan.amount.length));
             lib_1.vt.outln(' ', lib_1.vt.reset, lib_1.vt.blue, lib_1.vt.faint, '|');
             lib_1.vt.out(lib_1.vt.blue, lib_1.vt.faint, '|', lib_1.vt.Blue, lib_1.vt.cyan, lib_1.vt.bright);
             lib_1.vt.out('      Cha: ', lib_1.vt.white);
@@ -814,7 +809,7 @@ var pc;
             return action + (rpc !== $.online ? (/.*ch$|.*sh$|.*s$|.*z$/i.test(action) ? 'es ' : 's ') : ' ');
         }
         who(pc, mob = false) {
-            let user = sys_1.isActive(pc) ? pc.user : pc;
+            let user = "user" in pc ? pc.user : pc;
             const gender = pc === $.online ? 'U' : user.gender;
             const Handle = `${gender == 'I' && $.from !== 'Party' ? 'The ' : ''}${user.handle}`;
             const handle = `${gender == 'I' && $.from !== 'Party' ? 'the ' : ''}${user.handle}`;

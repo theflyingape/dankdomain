@@ -41,6 +41,8 @@ module Dungeon {
     let skillkill: boolean
     let well: boolean
 
+    if ($.access.sysop) dungeon.crawling['M'] = { description: 'y liege' }
+
     //  entry point
     export function DeepDank(start: number, cb: Function) {
         idle = -1
@@ -59,11 +61,8 @@ module Dungeon {
         hiZ = Z
         fini = cb
 
-        if ($.access.sysop) dungeon.crawling['M'] = { description: 'y liege' }
         generateLevel()
-
         ROOM = dungeon.level.rooms[Y][X]
-
         menu()
     }
 

@@ -34,6 +34,7 @@ var Email;
             lib_1.vt.focus = 'email';
             return;
         }
+        $.player = db.fillUser('newuser', $.player);
         $.player.password = $.player.name.split(' ')[0][0].toLowerCase() + $.player.name.split(' ')[1][0].toLowerCase() + sys_1.date2str($.player.dob).substr(2, 2) + '!@#$%^&*'[sys_1.dice(8) - 1];
         if ($.player.email !== $.sysop.email) {
             let rs = db.query(`SELECT COUNT(email) AS n FROM Players WHERE email='${$.player.email}' GROUP BY email`);

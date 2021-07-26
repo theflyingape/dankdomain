@@ -2,6 +2,7 @@
   "pc": "Rogue",
   "backstab": 1, "melee": 1, "poison": 1, "steal": 3,
   "magic": 2, "heal": 2, "blast": 2,
+  "sp": 15,
   "str": 45, "maxstr": 95,
   "int": 45, "maxint": 95,
   "dex": 75, "maxdex": 95,

@@ -2,6 +2,7 @@
   "pc": "Sage",
   "backstab": 0, "melee": 0, "poison": 2, "steal": 2,
   "magic": 4, "heal": 4, "blast": 2,
+  "sp": 15,
   "str": 40, "maxstr": 80,
   "int": 55, "maxint": 99,
   "dex": 70, "maxdex": 90,

@@ -43,24 +43,24 @@ var lib;
     }
     lib.buff = buff;
     function carry(coin = $.player.coin, max = 2) {
-        let n = this.value;
+        let n = coin.value;
         let bags = [];
         if (coin.pouch(n) == 'p') {
             n = sys_1.int(n / 1e+13);
             bags.push(lib.vt.attr(lib.vt.white, lib.vt.bright, n.toString(), lib.vt.magenta, 'p', lib.vt.normal, lib.vt.white));
-            n = this.value % 1e+13;
+            n = coin.value % 1e+13;
         }
         if (coin.pouch(n) == 'g') {
             n = sys_1.int(n / 1e+09);
             bags.push(lib.vt.attr(lib.vt.white, lib.vt.bright, n.toString(), lib.vt.yellow, 'g', lib.vt.normal, lib.vt.white));
-            n = this.value % 1e+09;
+            n = coin.value % 1e+09;
         }
         if (coin.pouch(n) == 's') {
             n = sys_1.int(n / 1e+05);
             bags.push(lib.vt.attr(lib.vt.white, lib.vt.bright, n.toString(), lib.vt.cyan, 's', lib.vt.normal, lib.vt.white));
-            n = this.value % 1e+05;
+            n = coin.value % 1e+05;
         }
-        if ((n > 0 && this._pouch(n) == 'c') || bags.length == 0)
+        if ((n > 0 && coin.pouch(n) == 'c') || bags.length == 0)
             bags.push(lib.vt.attr(lib.vt.white, lib.vt.bright, n.toString(), lib.vt.red, 'c', lib.vt.normal, lib.vt.white));
         return bags.slice(0, max).toString();
     }
@@ -194,12 +194,12 @@ var lib;
     }
     lib.emulator = emulator;
     function getRing(how, what) {
-        lib.vt.profile({ jpg: `ring/${what}`, handle: `${what} ${items_1.Ring.name[what].emoji} 💍 ring`, effect: 'tada' });
+        lib.vt.profile({ jpg: `ring/${what}`, handle: `${what} ${items_1.Ring.name[what].emoji}💍 ring`, effect: 'tada' });
         lib.vt.outln();
         lib.vt.out(lib.vt.yellow, lib.vt.bright, 'You ', how, sys_1.an(what, false));
         lib.vt.out(lib.vt.cyan, what, lib.vt.normal);
         if ($.player.emulation == 'XT')
-            lib.vt.out(' ', items_1.Ring.name[what].emoji, ' 💍');
+            lib.vt.out(' ', items_1.Ring.name[what].emoji, '💍');
         lib.vt.out(' ring', lib.vt.reset, ', which can\n', lib.vt.yellow, lib.vt.bright, items_1.Ring.name[what].description);
     }
     lib.getRing = getRing;

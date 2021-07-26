@@ -81,8 +81,9 @@ var db;
         run(`INSERT INTO Gangs VALUES ( 'AB Original', 'IMA,NOB,_DM,_WOW', 0, 0, 86, 99 )`);
         run(`INSERT INTO Gangs VALUES ( 'Monster Mash', '_MM1,_MM2,_MM3,_MM4', 0, 0, 0, 0 )`);
     }
-    function fillUser(template, user) {
-        let tmp = Object.assign({ id: '' }, user || db.USER);
+    function fillUser(template, user = db.USER) {
+        let copy = Object.assign({}, user);
+        let tmp = Object.assign({}, copy);
         if (template)
             try {
                 Object.assign(tmp, JSON.parse(sys_1.fs.readFileSync(sys_1.pathTo('characters', `${template.toLowerCase()}.json`))));
@@ -90,15 +91,15 @@ var db;
             catch (err) {
                 return tmp;
             }
-        if (typeof tmp.bounty == 'string')
-            tmp.bounty = new items_1.Coin(tmp.bounty.toString());
-        if (typeof tmp.coin == 'string')
-            tmp.coin = new items_1.Coin(tmp.coin.toString());
-        if (typeof tmp.bank == 'string')
-            tmp.bank = new items_1.Coin(tmp.bank.toString());
-        if (typeof tmp.loan == 'string')
-            tmp.loan = new items_1.Coin(tmp.loan.toString());
-        return Object.assign(user || db.USER, tmp);
+        if (typeof tmp.bounty !== 'object')
+            tmp.bounty = new items_1.Coin(tmp.bounty);
+        if (typeof tmp.coin !== 'object')
+            tmp.coin = new items_1.Coin(tmp.coin);
+        if (typeof tmp.bank !== 'object')
+            tmp.bank = new items_1.Coin(tmp.bank);
+        if (typeof tmp.loan !== 'object')
+            tmp.loan = new items_1.Coin(tmp.loan);
+        return Object.assign(copy, tmp);
     }
     db.fillUser = fillUser;
     function loadUser(user) {
@@ -132,8 +133,7 @@ var db;
             return true;
         }
         else {
-            user.id = '';
-            user.access = Object.keys(items_1.Access.name)[0];
+            user = fillUser();
             return false;
         }
     }

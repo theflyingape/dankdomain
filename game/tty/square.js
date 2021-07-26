@@ -734,37 +734,37 @@ var Square;
             switch (want) {
                 case 'A':
                     lib_1.vt.out(lib_1.bracket(i), sys_1.sprintf('%-24s ', items_1.Armor.merchant[i]));
-                    lib_1.vt.out(new items_1.Coin(items_1.Armor.name[items_1.Armor.merchant[i]].value).carry());
+                    lib_1.vt.out(lib_1.carry(new items_1.Coin(items_1.Armor.name[items_1.Armor.merchant[i]].value)));
                     break;
                 case 'M':
                     if (!items_1.Magic.have($.player.spells, i)) {
                         lib_1.vt.out(lib_1.bracket(i), sys_1.sprintf('%-24s ', items_1.Magic.merchant[i - 1]));
                         if ($.player.magic == 1)
-                            lib_1.vt.out(new items_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[i - 1]].wand).carry());
+                            lib_1.vt.out(lib_1.carry(new items_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[i - 1]].wand)));
                         else
-                            lib_1.vt.out(new items_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[i - 1]].cost).carry());
+                            lib_1.vt.out(lib_1.carry(new items_1.Coin(items_1.Magic.spells[items_1.Magic.merchant[i - 1]].cost)));
                     }
                     break;
                 case 'R':
                     lib_1.vt.out(lib_1.bracket(i), sys_1.sprintf('%-24s ', items_1.RealEstate.merchant[i]));
-                    lib_1.vt.out(new items_1.Coin(items_1.RealEstate.name[items_1.RealEstate.merchant[i]].value).carry());
+                    lib_1.vt.out(lib_1.carry(new items_1.Coin(items_1.RealEstate.name[items_1.RealEstate.merchant[i]].value)));
                     break;
                 case 'S':
                     lib_1.vt.out(lib_1.bracket(i), sys_1.sprintf('%-24s ', items_1.Security.merchant[i]));
-                    lib_1.vt.out(new items_1.Coin(items_1.Security.name[items_1.Security.merchant[i]].value).carry());
+                    lib_1.vt.out(lib_1.carry(new items_1.Coin(items_1.Security.name[items_1.Security.merchant[i]].value)));
                     break;
                 case 'V':
                     if (!items_1.Poison.have($.player.poisons, i)) {
                         lib_1.vt.out(lib_1.bracket(i), sys_1.sprintf('%-24s ', items_1.Poison.merchant[i - 1]));
                         if ($.player.poison == 1)
-                            lib_1.vt.out(new items_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[i - 1]].vial).carry());
+                            lib_1.vt.out(lib_1.carry(new items_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[i - 1]].vial)));
                         else
-                            lib_1.vt.out(new items_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[i - 1]].cost).carry());
+                            lib_1.vt.out(lib_1.carry(new items_1.Coin(items_1.Poison.vials[items_1.Poison.merchant[i - 1]].cost)));
                     }
                     break;
                 case 'W':
                     lib_1.vt.out(lib_1.bracket(i), sys_1.sprintf('%-24s ', items_1.Weapon.merchant[i]));
-                    lib_1.vt.out(new items_1.Coin(items_1.Weapon.name[items_1.Weapon.merchant[i]].value).carry());
+                    lib_1.vt.out(lib_1.carry(new items_1.Coin(items_1.Weapon.name[items_1.Weapon.merchant[i]].value)));
                     break;
             }
         }

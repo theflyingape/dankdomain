@@ -6,8 +6,8 @@ const lib_1 = require("./lib");
 const npc_1 = require("./npc");
 const pc_1 = require("./pc");
 const sys_1 = require("./sys");
-var player;
-(function (player) {
+var Player;
+(function (Player) {
     function checkXP(rpc, cb) {
         $.jumped = 0;
         let t = lib_1.vt.checkTime();
@@ -154,11 +154,11 @@ var player;
         }
         return false;
     }
-    player.checkXP = checkXP;
+    Player.checkXP = checkXP;
     function input(focus, input = npc_1.elemental.cmd, speed = 7) {
         lib_1.prompt(focus, input, speed);
     }
-    player.input = input;
+    Player.input = input;
     function logoff() {
         if (!$.reason || $.reason == 'hangup') {
             pc_1.PC.load($.sysop);
@@ -243,7 +243,7 @@ var player;
         else
             lib_1.vt.sound('invite');
     }
-    player.logoff = logoff;
+    Player.logoff = logoff;
     function pickPC(points = 200, immortal = false) {
         lib_1.vt.music('reroll');
         if (points > 240)
@@ -252,11 +252,7 @@ var player;
         if (!items_1.Access.name[$.player.access].roleplay)
             return;
         if ($.player.novice) {
-            const novice = Object.assign({}, JSON.parse(sys_1.fs.readFileSync(sys_1.pathTo('characters', 'novice.json'))));
-            pc_1.PC.reroll($.player, novice.pc);
-            Object.assign($.player, novice);
-            $.player.coin = new items_1.Coin(novice.coin.toString());
-            $.player.bank = new items_1.Coin(novice.bank.toString());
+            pc_1.PC.reroll($.player, 'novice');
             lib_1.vt.outln('Since you are a new user here, you are automatically assigned a character', -1000);
             lib_1.vt.out('class.  At the Main Menu, press ', lib_1.bracket('Y', false), ' to see all your character information.', -1000);
             show();
@@ -316,12 +312,10 @@ var player;
                 png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''),
                 handle: $.player.handle, level: $.player.level, pc: $.player.pc, effect: 'zoomInDown'
             });
-            lib_1.vt.outln(-1000);
             lib_1.cat('player/' + $.player.pc.toLowerCase());
-            lib_1.vt.outln(-1000);
             let rpc = pc_1.PC.card($.player.pc);
             for (let l = 0; l < rpc.description.length; l++)
-                lib_1.vt.outln(lib_1.vt.cyan, lib_1.vt.bright, rpc.description[l], -500);
+                lib_1.vt.outln(lib_1.vt.cyan, lib_1.vt.bright, rpc.description[l], -1500);
         }
         function pick() {
             let n = sys_1.whole(lib_1.vt.entry);
@@ -440,7 +434,7 @@ var player;
             input(p);
         }
     }
-    player.pickPC = pickPC;
+    Player.pickPC = pickPC;
     function skillplus(rpc, cb) {
         pc_1.PC.portrait($.online);
         rpc.user.expert = true;
@@ -600,7 +594,7 @@ var player;
         lib_1.vt.drain();
         lib_1.vt.focus = 'skill';
     }
-    player.skillplus = skillplus;
+    Player.skillplus = skillplus;
     function riddle() {
         lib_1.vt.action('clear');
         pc_1.PC.portrait($.online, 'tada');
@@ -848,6 +842,6 @@ var player;
         lib_1.vt.form['key'].prompt = `Insert key #${slot + 1}? `;
         lib_1.vt.focus = 'key';
     }
-    player.riddle = riddle;
-})(player || (player = {}));
-module.exports = player;
+    Player.riddle = riddle;
+})(Player || (Player = {}));
+module.exports = Player;

@@ -1,6 +1,4 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Arena = void 0;
 const $ = require("../runtime");
 const Battle = require("../battle");
 const db = require("../db");
@@ -528,4 +526,5 @@ var Arena;
         }
         return true;
     }
-})(Arena = exports.Arena || (exports.Arena = {}));
+})(Arena || (Arena = {}));
+module.exports = Arena;

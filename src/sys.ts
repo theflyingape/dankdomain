@@ -132,10 +132,6 @@ module sys {
         return n
     }
 
-    export function isActive(arg: any): arg is active {
-        return (<active>arg).user !== undefined
-    }
-
     export function money(level: number): number {
         return int(Math.pow(2, (level - 1) / 2) * 10 * (101 - level) / 100)
     }

@@ -83,7 +83,6 @@ var npc;
                 }
                 containers.splice(c, 1);
             }
-            pc_1.PC.load($.dwarf);
         }
     }
     class _elemental {
@@ -122,7 +121,11 @@ var npc;
         orders(from) {
             lib_1.vt.action(from.toLowerCase());
             $.from = from;
-            if (!$.access.bot || this._cmd.length)
+            if (!$.access.bot) {
+                lib_1.vt.title(`${$.sysop.name} :: ${from}`);
+                return;
+            }
+            if (this._cmd.length)
                 return;
             switch (from) {
                 case 'Arena':

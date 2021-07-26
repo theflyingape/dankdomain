@@ -93,8 +93,9 @@ module db {
     }
 
     //  apply an external template file on a character
-    export function fillUser(template?: string, user?: user): user {
-        let tmp = Object.assign({ id: '' }, user || USER)
+    export function fillUser(template?: string, user = USER): user {
+        let copy = Object.assign({}, user)
+        let tmp = Object.assign({}, copy)
         if (template)
             try {
                 Object.assign(tmp, JSON.parse(fs.readFileSync(pathTo('characters', `${template.toLowerCase()}.json`))))
@@ -102,15 +103,14 @@ module db {
             catch (err) {
                 return tmp
             }
-        if (typeof tmp.bounty == 'string') tmp.bounty = new Coin(tmp.bounty.toString())
-        if (typeof tmp.coin == 'string') tmp.coin = new Coin(tmp.coin.toString())
-        if (typeof tmp.bank == 'string') tmp.bank = new Coin(tmp.bank.toString())
-        if (typeof tmp.loan == 'string') tmp.loan = new Coin(tmp.loan.toString())
-        return Object.assign(user || USER, tmp)
+        if (typeof tmp.bounty !== 'object') tmp.bounty = new Coin(tmp.bounty)
+        if (typeof tmp.coin !== 'object') tmp.coin = new Coin(tmp.coin)
+        if (typeof tmp.bank !== 'object') tmp.bank = new Coin(tmp.bank)
+        if (typeof tmp.loan !== 'object') tmp.loan = new Coin(tmp.loan)
+        return Object.assign(copy, tmp)
     }
 
     export function loadUser(user: user): boolean {
-
         let sql = `SELECT * FROM Players WHERE ${user.id ? `id='${user.id.toUpperCase()}'` : `handle='${user.handle}'`}`
         let rs = query(sql)
         if (rs.length) {
@@ -146,8 +146,7 @@ module db {
             return true
         }
         else {
-            user.id = ''
-            user.access = Object.keys(Access.name)[0]
+            user = fillUser()
             return false
         }
     }

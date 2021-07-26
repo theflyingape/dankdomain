@@ -794,42 +794,42 @@ module Square {
             switch (want) {
                 case 'A':
                     vt.out(bracket(i), sprintf('%-24s ', Armor.merchant[i]))
-                    vt.out(new Coin(Armor.name[Armor.merchant[i]].value).carry())
+                    vt.out(carry(new Coin(Armor.name[Armor.merchant[i]].value)))
                     break
 
                 case 'M':
                     if (!Magic.have($.player.spells, i)) {
                         vt.out(bracket(i), sprintf('%-24s ', Magic.merchant[i - 1]))
                         if ($.player.magic == 1)
-                            vt.out(new Coin(Magic.spells[Magic.merchant[i - 1]].wand).carry())
+                            vt.out(carry(new Coin(Magic.spells[Magic.merchant[i - 1]].wand)))
                         else
-                            vt.out(new Coin(Magic.spells[Magic.merchant[i - 1]].cost).carry())
+                            vt.out(carry(new Coin(Magic.spells[Magic.merchant[i - 1]].cost)))
                     }
                     break
 
                 case 'R':
                     vt.out(bracket(i), sprintf('%-24s ', RealEstate.merchant[i]))
-                    vt.out(new Coin(RealEstate.name[RealEstate.merchant[i]].value).carry())
+                    vt.out(carry(new Coin(RealEstate.name[RealEstate.merchant[i]].value)))
                     break
 
                 case 'S':
                     vt.out(bracket(i), sprintf('%-24s ', Security.merchant[i]))
-                    vt.out(new Coin(Security.name[Security.merchant[i]].value).carry())
+                    vt.out(carry(new Coin(Security.name[Security.merchant[i]].value)))
                     break
 
                 case 'V':
                     if (!Poison.have($.player.poisons, i)) {
                         vt.out(bracket(i), sprintf('%-24s ', Poison.merchant[i - 1]))
                         if ($.player.poison == 1)
-                            vt.out(new Coin(Poison.vials[Poison.merchant[i - 1]].vial).carry())
+                            vt.out(carry(new Coin(Poison.vials[Poison.merchant[i - 1]].vial)))
                         else
-                            vt.out(new Coin(Poison.vials[Poison.merchant[i - 1]].cost).carry())
+                            vt.out(carry(new Coin(Poison.vials[Poison.merchant[i - 1]].cost)))
                     }
                     break
 
                 case 'W':
                     vt.out(bracket(i), sprintf('%-24s ', Weapon.merchant[i]))
-                    vt.out(new Coin(Weapon.name[Weapon.merchant[i]].value).carry())
+                    vt.out(carry(new Coin(Weapon.name[Weapon.merchant[i]].value)))
                     break
             }
         }

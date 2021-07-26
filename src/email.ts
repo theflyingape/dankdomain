@@ -51,6 +51,7 @@ module Email {
             return
         }
 
+        $.player = db.fillUser('newuser', $.player)
         $.player.password = $.player.name.split(' ')[0][0].toLowerCase() + $.player.name.split(' ')[1][0].toLowerCase() + date2str($.player.dob).substr(2, 2) + '!@#$%^&*'[dice(8) - 1]
 
         if ($.player.email !== $.sysop.email) {
