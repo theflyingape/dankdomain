@@ -33,7 +33,6 @@ $ npm install dankdomain
 
 # cd into package source folder:
 $ npm install
-$ cd /usr/local/games/dankdomain
 
 # 1) play it as standalone:
 $ npm run play
@@ -43,13 +42,12 @@ $ cp etc/network.json_inet etc/network.json
 $ vim etc/network.json
 
 # 2) run it as a local multiuser server:
-$ npm run serve &
-$ npm start
+$ npm run net &
+$ npm run term
 $ npm stop
 
 # 3) other ways to play online:
 $ npm run mame
-$ node telnet
 $ telnet play.ddgame.us
 ```
 

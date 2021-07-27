@@ -3,7 +3,7 @@
  *  LIB authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
 
-import xvt from '@theflyingape/xvt'
+import xvt from 'xvt'
 import $ = require('./runtime')
 import { Coin, Ring } from './items'
 import { an, dice, fs, int, LOG, NEWS, pathTo, sprintf, titlecase, whole } from './sys'

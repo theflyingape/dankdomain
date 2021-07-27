@@ -1,5 +1,5 @@
 {
-	"name": "@theflyingape/dankdomain",
+	"name": "dankdomain",
 	"version": "3.2.0",
 	"description": "Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash",
 	"author": "Robert Hurst",
@@ -50,7 +50,6 @@
 		}
 	],
 	"dependencies": {
-		"@theflyingape/xvt": "^1.4.8",
 		"animate.css": "^4.1.1",
 		"better-sqlite3": "^7.4.3",
 		"chokidar": "^3.5.2",
@@ -70,7 +69,8 @@
 		"xterm-addon-fit": "^0.5.0",
 		"xterm-addon-unicode11": "^0.2.0",
 		"xterm-addon-web-links": "^0.4.0",
-		"xterm-addon-webgl": "^0.11.1"
+		"xterm-addon-webgl": "^0.11.1",
+		"xvt": "^1.4.8"
 	},
 	"devDependencies": {
 		"@types/better-sqlite3": "^5.4.3",
@@ -92,14 +92,14 @@
 		"build": "tsc && browserify game/portal/client.js -o game/portal/static/bundle.js",
 		"bundle": "watchify game/portal/client.js -v -o game/portal/static/bundle.js",
 		"debug": "node game/portal/app",
-		"mame": "./mame.sh",
+		"test": "npm run net test",
+		"watch": "tsc -w",
+		"net": "./game/portal-startup.sh",
 		"play": "env TERM=vt100 node game/main",
+		"term": "./game/tty.sh",
+		"mame": "./mame.sh",
 		"postinstall": "npm run build",
 		"prepare": "./local-install.sh",
-		"serve": "./game/portal-startup.sh",
-		"start": "./game/tty.sh",
-		"stop": "killall ƊƊnet",
-		"test": "npm run serve test",
-		"watch": "tsc -w"
+		"stop": "killall ƊƊnet"
 	}
 }

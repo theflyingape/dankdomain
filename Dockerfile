@@ -34,4 +34,4 @@ EXPOSE 1986
 STOPSIGNAL SIGINT
 ENV LANG=C.UTF-8
 ENV TERM=xterm-256color
-CMD ["node", "door/app"]
+CMD ["node", "portal/app"]
