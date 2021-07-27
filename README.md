@@ -114,6 +114,7 @@ $ pwd
 .vscode           Visual Studio Code: settings & debug profiles
 game
   characters      user object type templates for BOTs, NPCs, and PCs
+  dd              game modules for each main menu item
   etc             system support files
   files           game, menu & player support files: ANSI and/or text formats
     arena         ASCII art & menu files
@@ -133,7 +134,6 @@ game
     assets        app install, fonts, etc.
     images        visual media for artifacts, creatures, and players
     sounds        audio media for event notifications
-  tty             game modules for each main menu item
   users           player runtime data files
 mame              MAME support files
 node_modules      Node.js support libraries
@@ -142,7 +142,7 @@ battle.js         support module for player engagements
 db.js             net & play module for player runtime data files
 email.js          support module for (optional) dispatching email notifications
 interfaces.js     TypeScript object types
-items.js          support module for loading item artifacts
+items.js          support module for loading item artifacts & coin
 lib.js            support module for common I/O functions
 main.js           ƊƊplay client node
 pc.js             support classes for BOTs, NPCs and PCs with Deeds
@@ -157,7 +157,7 @@ mame.sh           player - MAME VT240 terminal + socat startup script
 tty.sh            player - telnet.js wrapper
 ```
 
-**NOTE**: _in_ **`users`** _folder, edit a hidden (dot) export file and save as_ **`save.json`** _whereas_ **`app.js`** _will automatically consume and apply it to the dankdomain.sql_ **`Players`** _table._
+**NOTE**: _in_ **`users`** _folder, edit a hidden (dot) export file and save as_ **`save.json`** _whereas a running_ **`app.js`** _service will automatically consume and apply it to the dankdomain.sql_ **`Players`** _table._
 
  🇺🇸 ©️1991 - 2021 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
 
