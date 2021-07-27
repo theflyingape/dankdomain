@@ -8,6 +8,7 @@ if [ -n "${ID}" ]; then
 fi
 
 # let's prompt for admin credentials now, if necessary
+path=`dirname $0`; cd $path || exit 1
 [ -n "$1" ] && TARGET="$1" || TARGET=$PWD
 #echo "Install dankdomain folder into ${TARGET} ?"
 #echo -n "Enter shift 'Y' to continue: "
@@ -81,15 +82,15 @@ if [ "${cont}" == "Y" ]; then
 fi
 
 echo "Enable SystemD service to startup on this host ?"
-echo -n "Enter shift 'Y' to enable dankdomain-door service: "
+echo -n "Enter shift 'Y' to enable dankdomain-portal service: "
 read cont
 
 if [ "${cont}" == "Y" ]; then
     sudo -B -v || exit
-    sudo cp -v "${TARGET}/etc/dankdomain-door.service" /etc/systemd/system/
+    sudo cp -v "${TARGET}/etc/dankdomain-portal.service" /etc/systemd/system/
     sudo systemctl daemon-reload
-    sudo systemctl enable dankdomain-door
-    sudo systemctl status dankdomain-door -l
+    sudo systemctl enable dankdomain-portal
+    sudo systemctl status dankdomain-portal -l
 fi
 
 echo -n "Press RETURN for an Apache proxy fronting a NodeJs app example: "
@@ -100,8 +101,8 @@ echo ... an Apache configuration example follows:
 echo
 
 cat <<-EOD
-DOOR uses app: express + ws fronts node-pty
-   for client: browser uses xterm and bundle.js
+PORTAL uses app: express + ws fronts node-pty
+   for client: browser uses bundle.js (with xterm emulator)
 
 if https / wss is used, SSL Proxy works for me like this:
 
@@ -120,16 +121,16 @@ if https / wss is used, SSL Proxy works for me like this:
 
     RewriteEngine On
     RewriteCond %{HTTP:Upgrade} WebSocket [NC]
-    RewriteRule "^/xterm/door/(.*)" wss://localhost:1939/xterm/door/$1 [P,L]
+    RewriteRule "^/ddgame/(.*)" wss://localhost:1939/ddgame/$1 [P,L]
 
-    <Location "/xterm/door/">
+    <Location "/ddgame/">
         RequestHeader set X-Forwarded-Proto "https"
-        ProxyPass "https://localhost:1939/xterm/door/"
-        ProxyPassReverse "https://localhost:1939/xterm/door/"
+        ProxyPass "https://localhost:1939/ddgame/"
+        ProxyPassReverse "https://localhost:1939/ddgame/"
         ProxyPreserveHost On
         Order allow,deny
         Allow from all
-        Header edit Location ^https://localhost:1939/xterm/door/ https://robert.hurst-ri.us/xterm/door/
+        Header edit Location ^https://localhost:1939/ddgame/ https://robert.hurst-ri.us/ddgame/
     </Location>
 
 # generate a self-signed key
