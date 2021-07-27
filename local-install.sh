@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 #
 # workstation/server install script - consider using docker
 uname -on
-[ -s /etc/os-release ] && source /etc/os-release
+[ -s /etc/os-release ] && . /etc/os-release
 if [ -n "${ID}" ]; then
     [ -n "${PRETTY_NAME}" ] && echo -e "\e[${ANSI_COLOR}m${PRETTY_NAME}\e[m" || echo "${NAME} ${VERSION}"
 fi
@@ -14,13 +14,15 @@ path=`dirname $0`; cd $path || exit 1
 #echo -n "Enter shift 'Y' to continue: "
 #read cont
 #[ "${cont}" == "Y" ] || exit 0
-sudo -B -v || exit
+#sudo -B -v || exit
 
 # let's default group ownership to games
-member=`sudo groupmems -g games -l | grep -c nobody`
-[ $member -eq 0 ] && sudo groupmems -g games -a nobody
-member=`sudo groupmems -g games -l | grep -c $USER`
-[ $member -eq 0 ] && sudo groupmems -g games -a $USER
+member=`groups nobody | grep -c games`
+[ $member -eq 0 ] && sudo usermod -aG games nobody
+if [ -n "$USER" ]; then
+    member=`groups $USER | grep -c games`
+    [ $member -eq 0 ] && sudo usermod -aG games $USER
+fi
 
 # let's use these tools
 if [ -n "`which dnf`" ]; then
@@ -28,7 +30,7 @@ if [ -n "`which dnf`" ]; then
     [ -n "`which playmus`" ] || sudo dnf install SDL_mixer
 else
     [ -n "`which node`" ] || echo "requires Node.js runtime package to run any parts locally"
-    [ -n "`which playmus`" ] || echo "install SDL mixer package for local media playing using playmus tool"
+    [ -n "`which playmus`" ] || echo "install SDL mixer package for local media playing using the playmus example tool"
 fi
 
 # this.package install script
@@ -60,15 +62,16 @@ cd "${TARGET}"
 # generate a self-signed key
 openssl req -newkey rsa:2048 -nodes -keyout portal/key.pem -x509 -days 365 -out portal/cert.pem \
     -subj "/C=US/ST=Rhode Island/L=Providence/O=Dank Domain/OU=Game/CN=localhost"
-npm test
-npm run play
 
-clear
+npm test && echo "You can run it local without this portal service:" || echo "WTF??!"
+echo "npm run play"
+
+echo
 echo "Enable telnet/23 & https/443 redirect rules on this host for portal app ?"
 echo -n "Enter shift 'Y' to enable rules: "
-read cont
+read -t 5 cont
 
-if [ "${cont}" == "Y" ]; then
+if [ "$cont" == "Y" ]; then
     sudo -B -v || exit
     if sudo service iptables status ; then
         hole=`sudo iptables -L INPUT -n | grep -c 'dpt:23'`
@@ -85,11 +88,12 @@ if [ "${cont}" == "Y" ]; then
     fi
 fi
 
+echo
 echo "Enable SystemD service to startup on this host ?"
 echo -n "Enter shift 'Y' to enable dankdomain-portal service: "
-read cont
+read -t 5 cont
 
-if [ "${cont}" == "Y" ]; then
+if [ "$cont" == "Y" ]; then
     sudo -B -v || exit
     sudo cp -v "${TARGET}/etc/dankdomain-portal.service" /etc/systemd/system/
     sudo systemctl daemon-reload
@@ -97,11 +101,12 @@ if [ "${cont}" == "Y" ]; then
     sudo systemctl status dankdomain-portal -l
 fi
 
+echo
 echo "Show an Apache proxy fronting a NodeJs app example ?"
 echo -n "Enter shift 'Y' to show configuration: "
-read cont
+read -t 5 cont
 
-if [ "${cont}" == "Y" ]; then
+if [ "$cont" == "Y" ]; then
     cat <<EOD
 PORTAL uses app: express + ws fronts node-pty
    for client: browser uses bundle.js (with xterm emulator)

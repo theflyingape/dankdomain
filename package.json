@@ -89,7 +89,7 @@
 	},
 	"types": "src",
 	"scripts": {
-		"build": "tsc && browserify game/portal/client.js -o game/portal/static/bundle.js",
+		"build": "tsc --build tsconfig.json && browserify game/portal/client.js -o game/portal/static/bundle.js",
 		"bundle": "watchify game/portal/client.js -v -o game/portal/static/bundle.js",
 		"debug": "node game/portal/app",
 		"test": "npm run net test",

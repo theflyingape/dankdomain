@@ -8,25 +8,20 @@ LABEL maintainer="theflyingape@gmail.com"
 # set the working directory
 ENV TARGET=/usr/games/dankdomain
 WORKDIR ${TARGET}
+# install code+files
+COPY game ${TARGET}/game
+COPY src ${TARGET}/src
+COPY *.json ${TARGET}/
+COPY *.sh ${TARGET}/
+# cli tools
+RUN apt-get update && apt-get install -y rsync sudo telnet
 #
-# add package manifest
-COPY .npmrc ${TARGET}
-COPY package.json ${TARGET}
 # suppress superfluous NPM install messages
 ENV npm_config_loglevel warn
-ENV NODE_ENV production
+ENV NODE_ENV development
 #ENV NODE_PTY_DEBUG 1
 # install dependencies
 RUN npm install
-# install code+files
-COPY . ${TARGET}
-
-# cli tools
-RUN apt-get update && apt-get install -y rsync telnet
-
-# optional use: ./etc/network.json
-RUN openssl req -newkey rsa:2048 -nodes -keyout door/key.pem -x509 -days 365 -out door/cert.pem \
-    -subj "/C=US/ST=Rhode Island/L=Providence/O=Dank Domain/OU=Game/CN=localhost"
 
 # app runtime
 EXPOSE 1939
@@ -34,4 +29,4 @@ EXPOSE 1986
 STOPSIGNAL SIGINT
 ENV LANG=C.UTF-8
 ENV TERM=xterm-256color
-CMD ["node", "portal/app"]
+CMD ["node", "game/portal/app"]
