@@ -26,6 +26,7 @@ module Logon {
     }
     $.player = db.fillUser()
     $.player.emulation = vt.emulation
+    $.access = Access.name[$.player.access]
     cat('logon', vt.tty == 'door' ? 100 : 5)
 
     export function user(prompt: string) {

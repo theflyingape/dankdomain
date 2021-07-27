@@ -1,5 +1,6 @@
 **/*.js
 **/*.map
+**/*.pem
 **/node_modules/**
 **/tsconfig.tsbuildinfo
 game/portal/static/images/*

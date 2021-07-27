@@ -9,7 +9,7 @@ fi
 
 # let's prompt for admin credentials now, if necessary
 path=`dirname $0`; cd $path || exit 1
-[ -n "$1" ] && TARGET="$1" || TARGET=$PWD
+[ -n "$1" ] && TARGET="$1" || TARGET=$PWD/game
 #echo "Install dankdomain folder into ${TARGET} ?"
 #echo -n "Enter shift 'Y' to continue: "
 #read cont
@@ -57,6 +57,9 @@ umask 0002
 
 # initialize the game
 cd "${TARGET}"
+# generate a self-signed key
+openssl req -newkey rsa:2048 -nodes -keyout portal/key.pem -x509 -days 365 -out portal/cert.pem \
+    -subj "/C=US/ST=Rhode Island/L=Providence/O=Dank Domain/OU=Game/CN=localhost"
 npm test
 npm run play
 
@@ -132,9 +135,5 @@ if https / wss is used, SSL Proxy works for me like this:
         Allow from all
         Header edit Location ^https://localhost:1939/ddgame/ https://robert.hurst-ri.us/ddgame/
     </Location>
-
-# generate a self-signed key
-$ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem \
-    -subj "/C=US/ST=Rhode Island/L=Providence/O=Dank Domain/OU=Game/CN=localhost"
 EOD
 exit

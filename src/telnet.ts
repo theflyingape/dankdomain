@@ -1,9 +1,9 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                *
  *  TELNET authored by: Robert Hurst <theflyingape@gmail.com>                *
  *                                                                           *
- *  ƊƊterm (telnet)  <-->  websocket client interface                        *
- *  into ddgame (app)  <-->  ddclient (tty/main)                             *
+ *  ƊƊterm (telnet)  <-->  websocket client interface                       *
+ *  into ƊƊnet (app)  <-->  ƊƊplay (main)                                  *
 \*****************************************************************************/
 
 import child = require('child_process')
@@ -31,7 +31,9 @@ try {
 }
 catch (err) {
     console.info(err.message, `\n
-# you might consider generating a self-signed client key in HOME: ${process.env.HOME}
+# you might consider generating a self-signed client key in folder:
+    export HOME="${process.env.HOME}"
+
 $ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.pem \\
   -subj "/C=US/ST=Rhode Island/L=Providence/O=Dank Domain/OU=Game/CN=localhost"`)
     host = 'localhost'
@@ -45,7 +47,7 @@ dns.lookup(host, (err, addr, family) => {
     if (err)
         console.error(err)
     else {
-        process.stdout.write(`\r\n\x1B[m→ ${URL} → startup ${process.title} → `)
+        process.stdout.write(`\r\n\x1B[m→ startup ${process.title} → ${URL} → `)
         const app = new Promise<number>((resolve, reject) => {
             if (resolve)
                 try {
@@ -71,7 +73,7 @@ dns.lookup(host, (err, addr, family) => {
         })
 
         app.then(pid => {
-            require('child_process').exec(`playmus ${pathTo('door/static/sounds', 'dankdomain.ogg')}`, { stdio: 'ignore' })
+            mixer2 = child.spawn('playmus', ['dankdomain.ogg'], { cwd: pathTo('portal/static/sounds'), stdio: 'ignore' })
             process.stdout.write(`ƊƊplay (${pid}) started on ƊƊnet\r\n`)
             process.stdout.write(`\x1B[0;2m→ terminal WebSocket (${addr}:${port}) ... `)
 
@@ -97,7 +99,7 @@ dns.lookup(host, (err, addr, family) => {
                     function animated(effect) { }
                     function play(fileName) {
                         if (mixer1 && mixer1.exitCode == null) mixer1.kill()
-                        mixer1 = child.spawn('playmus', [fileName + '.ogg'], { cwd: pathTo('door/static/sounds'), stdio: 'ignore' })
+                        mixer1 = child.spawn('playmus', [fileName + '.ogg'], { cwd: pathTo('portal/static/sounds'), stdio: 'ignore' })
                     }
                     function profile(panel) { }
                     function title(name) {
@@ -105,7 +107,7 @@ dns.lookup(host, (err, addr, family) => {
                     }
                     function tune(fileName) {
                         if (mixer2 && mixer2.exitCode == null) mixer2.kill()
-                        mixer2 = child.spawn('playmus', [fileName + '.ogg'], { cwd: pathTo('door/static/sounds'), stdio: 'ignore' })
+                        mixer2 = child.spawn('playmus', [fileName + '.ogg'], { cwd: pathTo('portal/static/sounds'), stdio: 'ignore' })
                     }
                     function wall(msg) {
                         try {
