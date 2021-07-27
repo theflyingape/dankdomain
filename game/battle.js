@@ -1498,14 +1498,11 @@ var Battle;
                 case 14:
                     lib_1.vt.sound('illusion');
                     lib_1.vt.out(Caster, pc_1.PC.what(rpc, 'render'), 'an image of ');
-                    let iou = {};
-                    iou.user = { id: '', sex: 'I', armor: 0, weapon: 0 };
-                    pc_1.PC.reroll(iou.user, undefined, rpc.user.level);
-                    pc_1.PC.activate(iou);
+                    let iou = { user: pc_1.PC.reroll(db.fillUser(), undefined, rpc.user.level) };
                     iou.user.xplevel = -1;
                     iou.user.coin = new items_1.Coin(0);
                     iou.user.sp = 0;
-                    iou.sp = 0;
+                    pc_1.PC.activate(iou);
                     let p = round[0].party;
                     if (backfire) {
                         iou.user.handle = `image of ${nme.user.handle}`;
@@ -1540,7 +1537,7 @@ var Battle;
                     lib_1.vt.sound('morph', 10);
                     if (backfire) {
                         rpc.user.level = sys_1.dice(99);
-                        pc_1.PC.reroll(rpc.user, pc_1.PC.random('monster'), rpc.user.level);
+                        rpc.user = pc_1.PC.reroll(rpc.user, pc_1.PC.random('monster'), rpc.user.level);
                         pc_1.PC.activate(rpc);
                         rpc.altered = true;
                         rpc.user.gender = ['F', 'M'][sys_1.dice(2) - 1];
@@ -1558,17 +1555,16 @@ var Battle;
                         pc_1.PC.adjust('int', rpc.int > 40 ? -sys_1.dice(6) - 4 : -3, rpc.user.int > 60 ? -sys_1.dice(3) - 2 : -2, rpc.user.maxint > 80 ? -2 : -1);
                         pc_1.PC.adjust('dex', rpc.dex > 40 ? -sys_1.dice(6) - 4 : -3, rpc.user.dex > 60 ? -sys_1.dice(3) - 2 : -2, rpc.user.maxdex > 80 ? -2 : -1);
                         pc_1.PC.adjust('cha', rpc.cha > 40 ? -sys_1.dice(6) - 4 : -3, rpc.user.cha > 60 ? -sys_1.dice(3) - 2 : -2, rpc.user.maxcha > 80 ? -2 : -1);
+                        nme.altered = true;
                         nme.user.level = sys_1.dice(nme.user.level / 2) + sys_1.dice(nme.user.level / 2) - 1;
-                        pc_1.PC.reroll(nme.user, pc_1.PC.random(), nme.user.level);
+                        nme.user = pc_1.PC.reroll(nme.user, pc_1.PC.random(), nme.user.level);
                         nme.user.gender = ['F', 'M'][sys_1.dice(2) - 1];
                         pc_1.PC.activate(nme);
-                        nme.altered = true;
                         pc_1.PC.save(nme);
                         lib_1.vt.out(Caster, pc_1.PC.what(rpc, 'morph'), recipient, ` into a level ${nme.user.level} ${nme.user.pc}`);
                         if (nme.user.gender !== 'I') {
                             lib_1.news(`\t${nme.user.handle} got morphed into a level ${nme.user.level} ${nme.user.pc}${rpc !== $.online ? ' by ' + rpc.user.handle : ''}!`);
-                            if (nme !== $.online)
-                                lib_1.log(nme.user.id, `\nYou got morphed into a level ${nme.user.level} ${nme.user.pc} by ${rpc.user.handle}!\n`);
+                            lib_1.log(nme.user.id, `\nYou got morphed into a level ${nme.user.level} ${nme.user.pc} by ${rpc.user.handle}!\n`);
                         }
                     }
                     lib_1.vt.outln(-150, lib_1.vt.blue, lib_1.vt.bright, '!', -450, lib_1.vt.normal, '!', -450, lib_1.vt.faint, '!', -450);
@@ -1733,7 +1729,7 @@ var Battle;
                     lib_1.vt.outln(lib_1.vt.black, lib_1.vt.bright, 'A shroud of blackness engulfs ', backfire ? p1.him : p2.him, '... ', 750);
                     if (backfire) {
                         if (rpc.user.level < 2) {
-                            pc_1.PC.reroll(rpc.user);
+                            rpc.user = pc_1.PC.reroll(rpc.user);
                             break;
                         }
                         pc_1.PC.adjust('str', -pc_1.PC.card(rpc.user.pc).toStr, -1, 0, rpc);
@@ -1753,7 +1749,7 @@ var Battle;
                     }
                     else {
                         if (nme.user.level < 2) {
-                            pc_1.PC.reroll(nme.user);
+                            nme.user = pc_1.PC.reroll(nme.user);
                             break;
                         }
                         nme.user.xp = Math.round(nme.user.xp / 2);

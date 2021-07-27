@@ -1,6 +1,8 @@
 **/*.map
 **/node_modules/**
 **/tsconfig.tsbuildinfo
+game/*.js
+game/dd/*.js
 game/portal/static/images/*
 game/portal/static/sounds/*
 game/etc/ipstack.key

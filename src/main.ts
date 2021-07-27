@@ -92,7 +92,7 @@ function logon() {
     vt.outln(vt.cyan, vt.bright, vt.emulation, vt.normal, ' emulation ', vt.faint, 'enabled')
 
     if (userID)
-        require('./tty/logon').startup(userID)
+        require('./dd/logon').startup(userID)
     else
-        require('./tty/logon').user(prompt)
+        require('./dd/logon').user(prompt)
 }

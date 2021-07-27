@@ -100,7 +100,7 @@ module Player {
                 vt.music()
                 if (rpc.user.novice) {
                     PC.portrait()
-                    PC.reroll(rpc.user, $.sysop.pc, rpc.user.level)
+                    rpc.user = PC.reroll(rpc.user, $.sysop.pc, rpc.user.level)
                     rpc.user.novice = false
                     rpc.user.expert = true
                     vt.outln(vt.cyan, vt.bright, 'You are no longer a novice.  Welcome to the next level of play!')
@@ -283,13 +283,13 @@ module Player {
         if (!Access.name[$.player.access].roleplay) return
 
         if ($.player.novice) {
-            PC.reroll($.player, 'novice')
+            $.player = PC.reroll($.player, 'Novice')
+            PC.activate($.online)
             vt.outln('Since you are a new user here, you are automatically assigned a character', -1000)
             vt.out('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.', -1000)
             show()
-            PC.activate($.online)
             news(`Welcome a ${$.player.pc} player, ${$.player.handle}`)
-            require('./tty/menu').menu(true)
+            require('./dd/menu').menu(true)
             return
         }
         else {
@@ -443,7 +443,7 @@ module Player {
                     if (left < 20 || left > 80) {
                         vt.beep()
                         vt.outln()
-                        PC.reroll($.player, $.player.pc)
+                        $.player = PC.reroll($.player, $.player.pc)
                         ability('str')
                         return
                     }
@@ -464,7 +464,7 @@ module Player {
                     left -= a.str + a.int + a.dex + n
                     if (left) {
                         vt.beep()
-                        PC.reroll($.player, $.player.pc)
+                        $.player = PC.reroll($.player, $.player.pc)
                         ability('str')
                         return
                     }
@@ -487,7 +487,7 @@ module Player {
                     else {
                         vt.outln(-600)
                         vt.outln(vt.yellow, '... ', vt.bright, 'and you get to complete any remaining parts to this play.', -600)
-                        require('./tty/menu').menu(true)
+                        require('./dd/menu').menu(true)
                     }
                     return
             }
@@ -803,7 +803,7 @@ module Player {
         else
             $.player.keyhints.push($.player.pc)
 
-        PC.reroll($.player)
+        $.player = PC.reroll($.player)
         PC.save()
         vt.sessionAllowed += 300
         $.warning = 2
@@ -854,28 +854,14 @@ module Player {
             for (let row in rs) {
                 user = { id: rs[row].id }
                 if (PC.load(user)) {
-                    PC.reroll(user)
+                    user = PC.reroll(user)
                     user.keyhints.splice(12)
                     PC.save(user)
                     fs.unlink(pathTo('users', '.${user.id}.json'), () => { })
+                    vt.out(Access.name[user.access].bot ? '&' : '.', -10)
                 }
-                vt.out('.', -10)
             }
             db.run(`UPDATE Rings SET bearer=''`)   // should be cleared by rerolls
-
-            let i = 0
-            while (++i) {
-                let bot = db.fillUser(`bot${i}`)
-                if (bot.id) {
-                    PC.reroll(bot, bot.pc, bot.level)
-                    PC.newkeys(bot)
-                    bot.keyhints.splice(12)
-                    PC.save(bot)
-                    vt.out('&', -10)
-                }
-                else
-                    break
-            }
 
             vt.outln(-1250)
             vt.outln('Happy hunting ', vt.uline, 'tomorrow', vt.nouline, '!')
@@ -884,12 +870,10 @@ module Player {
         }
 
         $.player.today = 0
-        vt.out(vt.yellow, vt.bright, '\nYou are rewarded'
-            , vt.normal, ` ${$.access.calls} `, vt.bright, 'more calls today.\n', vt.reset)
+        vt.out(vt.yellow, vt.bright, '\nYou are rewarded', vt.normal, ` ${$.access.calls} `, vt.bright, 'more calls today.\n', vt.reset)
 
         vt.outln(vt.green, vt.bright, `\nOl' Mighty One!  `
-            , vt.normal, 'Solve the'
-            , vt.faint, ' Ancient Riddle of the Keys '
+            , vt.normal, 'Solve the', vt.faint, ' Ancient Riddle of the Keys '
             , vt.normal, 'and you will become\nan immortal being.')
 
         for (let i = 0; i <= max + bonus; i++) PC.keyhint($.online, false)
@@ -932,7 +916,7 @@ module Player {
                         vt.out([vt.red, vt.blue, vt.magenta][slot]
                             , 'You ', ['advance to', 'succeed as', 'transcend into'][slot]
                             , vt.bright, an($.player.pc), vt.normal, '.')
-                        PC.reroll($.player, $.player.pc)
+                        $.player = PC.reroll($.player, $.player.pc)
                         PC.newkeys($.player)
                         $.player.coward = true
                         PC.save()

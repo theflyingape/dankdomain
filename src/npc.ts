@@ -182,9 +182,8 @@ module npc {
                             else {
                                 let mon = 0
                                 for (mon = 0; mon < 12; mon++) {
-                                    let monster = <active>{}
-                                    monster.user = <user>{ id: '', handle: arena.monsters[mon].name, sex: 'I' }
-                                    PC.reroll(monster.user, arena.monsters[mon].pc, arena.monsters[mon].level)
+                                    let monster: active = { user: PC.reroll(db.fillUser(), arena.monsters[mon].pc, arena.monsters[mon].level) }
+                                    monster.user.handle = arena.monsters[mon].name
                                     monster.user.weapon = arena.monsters[mon].weapon
                                     monster.user.armor = arena.monsters[mon].armor
                                     PC.activate(monster)

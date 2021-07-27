@@ -61,7 +61,7 @@ function logon() {
     }
     lib_1.vt.outln(lib_1.vt.cyan, lib_1.vt.bright, lib_1.vt.emulation, lib_1.vt.normal, ' emulation ', lib_1.vt.faint, 'enabled');
     if (userID)
-        require('./tty/logon').startup(userID);
+        require('./dd/logon').startup(userID);
     else
-        require('./tty/logon').user(prompt);
+        require('./dd/logon').user(prompt);
 }

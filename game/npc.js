@@ -152,9 +152,8 @@ var npc;
                             else {
                                 let mon = 0;
                                 for (mon = 0; mon < 12; mon++) {
-                                    let monster = {};
-                                    monster.user = { id: '', handle: npc.arena.monsters[mon].name, sex: 'I' };
-                                    pc_1.PC.reroll(monster.user, npc.arena.monsters[mon].pc, npc.arena.monsters[mon].level);
+                                    let monster = { user: pc_1.PC.reroll(db.fillUser(), npc.arena.monsters[mon].pc, npc.arena.monsters[mon].level) };
+                                    monster.user.handle = npc.arena.monsters[mon].name;
                                     monster.user.weapon = npc.arena.monsters[mon].weapon;
                                     monster.user.armor = npc.arena.monsters[mon].armor;
                                     pc_1.PC.activate(monster);

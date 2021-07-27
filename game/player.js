@@ -81,7 +81,7 @@ var Player;
                 lib_1.vt.music();
                 if (rpc.user.novice) {
                     pc_1.PC.portrait();
-                    pc_1.PC.reroll(rpc.user, $.sysop.pc, rpc.user.level);
+                    rpc.user = pc_1.PC.reroll(rpc.user, $.sysop.pc, rpc.user.level);
                     rpc.user.novice = false;
                     rpc.user.expert = true;
                     lib_1.vt.outln(lib_1.vt.cyan, lib_1.vt.bright, 'You are no longer a novice.  Welcome to the next level of play!');
@@ -252,13 +252,13 @@ var Player;
         if (!items_1.Access.name[$.player.access].roleplay)
             return;
         if ($.player.novice) {
-            pc_1.PC.reroll($.player, 'novice');
+            $.player = pc_1.PC.reroll($.player, 'Novice');
+            pc_1.PC.activate($.online);
             lib_1.vt.outln('Since you are a new user here, you are automatically assigned a character', -1000);
             lib_1.vt.out('class.  At the Main Menu, press ', lib_1.bracket('Y', false), ' to see all your character information.', -1000);
             show();
-            pc_1.PC.activate($.online);
             lib_1.news(`Welcome a ${$.player.pc} player, ${$.player.handle}`);
-            require('./tty/menu').menu(true);
+            require('./dd/menu').menu(true);
             return;
         }
         else {
@@ -385,7 +385,7 @@ var Player;
                     if (left < 20 || left > 80) {
                         lib_1.vt.beep();
                         lib_1.vt.outln();
-                        pc_1.PC.reroll($.player, $.player.pc);
+                        $.player = pc_1.PC.reroll($.player, $.player.pc);
                         ability('str');
                         return;
                     }
@@ -404,7 +404,7 @@ var Player;
                     left -= a.str + a.int + a.dex + n;
                     if (left) {
                         lib_1.vt.beep();
-                        pc_1.PC.reroll($.player, $.player.pc);
+                        $.player = pc_1.PC.reroll($.player, $.player.pc);
                         ability('str');
                         return;
                     }
@@ -425,7 +425,7 @@ var Player;
                     else {
                         lib_1.vt.outln(-600);
                         lib_1.vt.outln(lib_1.vt.yellow, '... ', lib_1.vt.bright, 'and you get to complete any remaining parts to this play.', -600);
-                        require('./tty/menu').menu(true);
+                        require('./dd/menu').menu(true);
                     }
                     return;
             }
@@ -691,7 +691,7 @@ var Player;
             $.player.keyhints.splice(12, 1);
         else
             $.player.keyhints.push($.player.pc);
-        pc_1.PC.reroll($.player);
+        $.player = pc_1.PC.reroll($.player);
         pc_1.PC.save();
         lib_1.vt.sessionAllowed += 300;
         $.warning = 2;
@@ -731,27 +731,14 @@ var Player;
             for (let row in rs) {
                 user = { id: rs[row].id };
                 if (pc_1.PC.load(user)) {
-                    pc_1.PC.reroll(user);
+                    user = pc_1.PC.reroll(user);
                     user.keyhints.splice(12);
                     pc_1.PC.save(user);
                     sys_1.fs.unlink(sys_1.pathTo('users', '.${user.id}.json'), () => { });
+                    lib_1.vt.out(items_1.Access.name[user.access].bot ? '&' : '.', -10);
                 }
-                lib_1.vt.out('.', -10);
             }
             db.run(`UPDATE Rings SET bearer=''`);
-            let i = 0;
-            while (++i) {
-                let bot = db.fillUser(`bot${i}`);
-                if (bot.id) {
-                    pc_1.PC.reroll(bot, bot.pc, bot.level);
-                    pc_1.PC.newkeys(bot);
-                    bot.keyhints.splice(12);
-                    pc_1.PC.save(bot);
-                    lib_1.vt.out('&', -10);
-                }
-                else
-                    break;
-            }
             lib_1.vt.outln(-1250);
             lib_1.vt.outln('Happy hunting ', lib_1.vt.uline, 'tomorrow', lib_1.vt.nouline, '!');
             lib_1.vt.outln(-2500);
@@ -796,7 +783,7 @@ var Player;
                         $.player.pc = Object.keys(pc_1.PC.name['immortal'])[slot];
                         lib_1.vt.profile({ png: 'player/' + $.player.pc.toLowerCase() + ($.player.gender == 'F' ? '_f' : ''), pc: $.player.pc });
                         lib_1.vt.out([lib_1.vt.red, lib_1.vt.blue, lib_1.vt.magenta][slot], 'You ', ['advance to', 'succeed as', 'transcend into'][slot], lib_1.vt.bright, sys_1.an($.player.pc), lib_1.vt.normal, '.');
-                        pc_1.PC.reroll($.player, $.player.pc);
+                        $.player = pc_1.PC.reroll($.player, $.player.pc);
                         pc_1.PC.newkeys($.player);
                         $.player.coward = true;
                         pc_1.PC.save();

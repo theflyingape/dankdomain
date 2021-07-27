@@ -1662,14 +1662,11 @@ module Battle {
                 case 14:
                     vt.sound('illusion')
                     vt.out(Caster, PC.what(rpc, 'render'), 'an image of ')
-                    let iou = <active>{}
-                    iou.user = <user>{ id: '', sex: 'I', armor: 0, weapon: 0 }
-                    PC.reroll(iou.user, undefined, rpc.user.level)
-                    PC.activate(iou)
+                    let iou: active = { user: PC.reroll(db.fillUser(), undefined, rpc.user.level) }
                     iou.user.xplevel = -1
                     iou.user.coin = new Coin(0)
                     iou.user.sp = 0
-                    iou.sp = 0
+                    PC.activate(iou)
                     let p = round[0].party
                     if (backfire) {
                         iou.user.handle = `image of ${nme.user.handle}`
@@ -1705,7 +1702,7 @@ module Battle {
                     vt.sound('morph', 10)
                     if (backfire) {
                         rpc.user.level = dice(99)
-                        PC.reroll(rpc.user, PC.random('monster'), rpc.user.level)
+                        rpc.user = PC.reroll(rpc.user, PC.random('monster'), rpc.user.level)
                         PC.activate(rpc)
                         rpc.altered = true
                         rpc.user.gender = ['F', 'M'][dice(2) - 1]
@@ -1735,17 +1732,16 @@ module Battle {
                             , rpc.cha > 40 ? -dice(6) - 4 : -3
                             , rpc.user.cha > 60 ? -dice(3) - 2 : -2
                             , rpc.user.maxcha > 80 ? -2 : -1)
+                        nme.altered = true
                         nme.user.level = dice(nme.user.level / 2) + dice(nme.user.level / 2) - 1
-                        PC.reroll(nme.user, PC.random(), nme.user.level)
+                        nme.user = PC.reroll(nme.user, PC.random(), nme.user.level)
                         nme.user.gender = ['F', 'M'][dice(2) - 1]
                         PC.activate(nme)
-                        nme.altered = true
                         PC.save(nme)
                         vt.out(Caster, PC.what(rpc, 'morph'), recipient, ` into a level ${nme.user.level} ${nme.user.pc}`)
                         if (nme.user.gender !== 'I') {
                             news(`\t${nme.user.handle} got morphed into a level ${nme.user.level} ${nme.user.pc}${rpc !== $.online ? ' by ' + rpc.user.handle : ''}!`)
-                            if (nme !== $.online)
-                                log(nme.user.id, `\nYou got morphed into a level ${nme.user.level} ${nme.user.pc} by ${rpc.user.handle}!\n`)
+                            log(nme.user.id, `\nYou got morphed into a level ${nme.user.level} ${nme.user.pc} by ${rpc.user.handle}!\n`)
                         }
                     }
                     vt.outln(-150, vt.blue, vt.bright, '!', -450, vt.normal, '!', -450, vt.faint, '!', -450)
@@ -1931,7 +1927,7 @@ module Battle {
                     vt.outln(vt.black, vt.bright, 'A shroud of blackness engulfs ', backfire ? p1.him : p2.him, '... ', 750)
                     if (backfire) {
                         if (rpc.user.level < 2) {
-                            PC.reroll(rpc.user)
+                            rpc.user = PC.reroll(rpc.user)
                             break
                         }
                         PC.adjust('str', -PC.card(rpc.user.pc).toStr, -1, 0, rpc)
@@ -1950,7 +1946,7 @@ module Battle {
                     }
                     else {
                         if (nme.user.level < 2) {
-                            PC.reroll(nme.user)
+                            nme.user = PC.reroll(nme.user)
                             break
                         }
                         nme.user.xp = Math.round(nme.user.xp / 2)
