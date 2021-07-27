@@ -60,8 +60,10 @@ umask 0002
 # initialize the game
 cd "${TARGET}"
 # generate a self-signed key
-openssl req -newkey rsa:2048 -nodes -keyout portal/key.pem -x509 -days 365 -out portal/cert.pem \
+if [ ! -f portal/key.pem ]; then
+    openssl req -newkey rsa:2048 -nodes -keyout portal/key.pem -x509 -days 365 -out portal/cert.pem \
     -subj "/C=US/ST=Rhode Island/L=Providence/O=Dank Domain/OU=Game/CN=localhost"
+fi
 
 npm test && echo "You can run it local without this portal service:" || echo "WTF??!"
 echo "npm run play"
@@ -69,7 +71,7 @@ echo "npm run play"
 echo
 echo "Enable telnet/23 & https/443 redirect rules on this host for portal app ?"
 echo -n "Enter shift 'Y' to enable rules: "
-read -t 5 cont
+read -t 10 cont
 
 if [ "$cont" == "Y" ]; then
     sudo -B -v || exit
@@ -91,7 +93,7 @@ fi
 echo
 echo "Enable SystemD service to startup on this host ?"
 echo -n "Enter shift 'Y' to enable dankdomain-portal service: "
-read -t 5 cont
+read -t 10 cont
 
 if [ "$cont" == "Y" ]; then
     sudo -B -v || exit
@@ -104,7 +106,7 @@ fi
 echo
 echo "Show an Apache proxy fronting a NodeJs app example ?"
 echo -n "Enter shift 'Y' to show configuration: "
-read -t 5 cont
+read -t 10 cont
 
 if [ "$cont" == "Y" ]; then
     cat <<EOD

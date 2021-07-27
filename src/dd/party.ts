@@ -504,7 +504,7 @@ module Party {
                                     ml = ml < 1 ? 1 : ml > 99 ? 99 : ml
                                     nme[i].user.handle = dm
                                     nme[i].user.sex = 'I'
-                                    PC.reroll(nme[i].user, dungeon.monsters[dm].pc ? dungeon.monsters[dm].pc : $.player.pc, ml)
+                                    nme[i].user = PC.reroll(nme[i].user, dungeon.monsters[dm].pc ? dungeon.monsters[dm].pc : $.player.pc, ml)
 
                                     nme[i].user.weapon = dungeon.monsters[dm].weapon ? dungeon.monsters[dm].weapon : Weapon.merchant[int((Weapon.merchant.length - 1) * ml / 100) + 1]
                                     nme[i].user.armor = dungeon.monsters[dm].armor ? dungeon.monsters[dm].armor : Armor.merchant[int((Armor.merchant.length - 1) * ml / 100) + 1]

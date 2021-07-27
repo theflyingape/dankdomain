@@ -851,7 +851,7 @@ module Battle {
                         if (typeof result == 'boolean' && result)
                             vt.outln(winner.who.He, PC.what(winner, 'take'), loser.who.his, winner.user.weapon, '.')
                         else if ($.from == 'Monster' && result)
-                            vt.outln(winner.who.He, PC.what(winner, 'get'), credit.carry(), ' for ', loser.who.his, loser.user.weapon, '.')
+                            vt.outln(winner.who.He, PC.what(winner, 'get'), carry(credit), ' for ', loser.who.his, loser.user.weapon, '.')
 
                         credit = new Coin(loser.armor.value)
                         credit.value = tradein(credit.value, winner.cha)
@@ -861,7 +861,7 @@ module Battle {
                             if (/_DM|_NEP|_OLD|_TAX/.test(loser.user.id)) vt.sound('shield', 16)
                         }
                         else if ($.from == 'Monster' && result)
-                            vt.outln(winner.who.He, 'also ', PC.what(winner, 'get'), credit.carry(), ' for ', loser.who.his, loser.user.armor, '.')
+                            vt.outln(winner.who.He, 'also ', PC.what(winner, 'get'), carry(credit), ' for ', loser.who.his, loser.user.armor, '.')
                     }
                     else {
                         if (Weapon.swap(winner, loser)) {
@@ -914,7 +914,7 @@ module Battle {
                             }
                         }
                         if (loser.user.bounty.value) {
-                            vt.outln(`You get the ${loser.user.bounty.carry()} bounty posted by ${loser.user.who}, too.`)
+                            vt.outln(`You get the ${carry(loser.user.bounty)} bounty posted by ${loser.user.who}, too.`)
                             log(loser.user.id, `... and got paid the bounty posted by ${loser.user.who}.`)
                             winner.user.coin.value += loser.user.bounty.value
                             loser.user.bounty.value = 0
@@ -931,7 +931,7 @@ module Battle {
             }
             if (coin.value) {
                 vt.outln(-100, 'You get', parties[l].length > 1 ? ' a total of ' : ' '
-                    , coin.carry(), ' '
+                    , carry(coin), ' '
                     , parties[l].length > 1 ? 'they were ' : loser.who.he + 'was '
                     , 'carrying.')
                 winner.user.coin.value += coin.value
@@ -941,7 +941,7 @@ module Battle {
             //  accruing money is always eligible
             if ($.player.coin.value) {
                 winner.user.coin.value += $.player.coin.value
-                vt.outln(vt.reset, winner.who.He, 'gets ', $.player.coin.carry(), ' you were carrying.\n')
+                vt.outln(vt.reset, winner.who.He, 'gets ', carry($.player.coin), ' you were carrying.\n')
                 $.player.coin.value = 0
             }
             vt.sleep(600)
@@ -1061,7 +1061,7 @@ module Battle {
                 winner.user.xp += xp
             }
             if (loser.user.coin.value) {
-                vt.outln(`${loser.who.He}was carrying ${loser.user.coin.carry()}`, -600)
+                vt.outln(`${loser.who.He}was carrying ${carry(loser.user.coin)}`, -600)
                 winner.user.coin.value += loser.user.coin.value
                 loser.user.coin.value = 0
             }

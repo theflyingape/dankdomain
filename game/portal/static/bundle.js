@@ -19,7 +19,7 @@ const menu = document.getElementById('menu');
 const command = document.getElementById('command');
 let a = document.querySelector("#a2hs-button");
 let t;
-if (!/MSIE \d|Trident.*rv:/.test(navigator.userAgent)) {
+if ('userAgentData' in navigator) {
     terminal.hidden = false;
     info.hidden = false;
     desktop.hidden = true;
@@ -29,7 +29,7 @@ if (!/MSIE \d|Trident.*rv:/.test(navigator.userAgent)) {
             navigator.serviceWorker.register('sw.js').then(function (registration) {
                 console.log('ServiceWorker registration successful with scope: ', registration.scope);
             }, function (err) {
-                console.log('ServiceWorker registration failed: ', err);
+                console.error('ServiceWorker registration failed: ', err);
             });
         });
     }
@@ -619,6 +619,8 @@ function Logoff() {
 function rotateImage() {
     animated('fadeOutLeft');
     if (images.length) {
+        const about = document.getElementById('about');
+        about.hidden = true;
         const n = Math.trunc(Math.random() * images.length);
         const banner = images.splice(n, 1)[0];
         let html = '';
@@ -632,11 +634,7 @@ function rotateImage() {
             html += `<br><img src="images/${banner.jpg}.jpg" />`;
         if (banner.png)
             html += `<br><img src="images/${banner.png}.png" style="filter:opacity(${/^connect/.test(banner.png) ? '45%' : '100%'});" />`;
-        setTimeout(() => {
-            const about = document.getElementById('about');
-            about.hidden = true;
-            nme(html, banner.effect);
-        }, 1000);
+        setTimeout(() => { nme(html, banner.effect); }, 1000);
     }
     else
         send('\x15');

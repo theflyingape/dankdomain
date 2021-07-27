@@ -116,7 +116,7 @@ module pc {
             return ability
         }
 
-        activate(one: active, keep = false, confused = false): boolean {
+        activate(one = $.online, keep = false, confused = false): boolean {
             if (one == $.online) $.online.user = $.player
             one.adept = one.user.wins ? 1 : 0
             one.pc = this.card(one.user.pc)

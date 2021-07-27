@@ -405,7 +405,7 @@ module Main {
                     'yn': {
                         cb: () => {
                             if (/Y/i.test(vt.entry)) {
-                                PC.reroll($.player)
+                                $.player = PC.reroll($.player)
                                 PC.activate($.online)
                                 $.player.coward = true
                                 $.player.plays++

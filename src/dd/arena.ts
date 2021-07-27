@@ -433,9 +433,7 @@ module Arena {
                             $.online.altered = true
                             vt.outln('As you hand him the money, it disappears into thin air ... ', -1200, '\n')
 
-                            monster = <active>{}
-                            monster.user = <user>{ id: '' }
-                            Object.assign(monster.user, require('../etc/summoned demon.json'))
+                            monster = { user: db.fillUser('summoned demon') }
                             let l = $.player.level + 2
                             if (l >= $.sysop.level)
                                 l = $.sysop.level - 2
@@ -453,7 +451,7 @@ module Arena {
                             monster.user.armor = n + 2
                             cost.value += tradein(new Coin(Armor.name[Armor.merchant[n]].value).value, $.player.cha)
 
-                            PC.reroll(monster.user
+                            monster.user = PC.reroll(monster.user
                                 , (dice(($.online.int + $.online.cha) / 50) > 1) ? monster.user.pc : PC.random('monster')
                                 , monster.user.level)
 
@@ -518,10 +516,8 @@ module Arena {
         else {
             let mon = int(vt.entry) - 1
             if (mon == arena.monsters.length - 1) vt.sound('demogorgon')
-            monster = <active>{}
-            monster.user = <user>{ id: '', handle: arena.monsters[mon].name, sex: 'I' }
-            PC.reroll(monster.user, arena.monsters[mon].pc, arena.monsters[mon].level)
-
+            monster = { user: { id: '', handle: arena.monsters[mon].name, sex: 'I' } }
+            monster.user = PC.reroll(monster.user, arena.monsters[mon].pc, arena.monsters[mon].level)
             monster.user.weapon = arena.monsters[mon].weapon
             monster.user.armor = arena.monsters[mon].armor
             monster.user.rings = arena.monsters[mon].rings || []
@@ -532,7 +528,7 @@ module Arena {
 
             PC.activate(monster)
             if (arena.monsters[mon].adept) monster.adept = int(arena.monsters[mon].adept)
-            monster.user.coin.amount = arena.monsters[mon].money.toString()
+            monster.user.coin.amount = arena.monsters[mon].money
 
             cat('arena/' + monster.user.handle.toLowerCase())
             vt.profile({

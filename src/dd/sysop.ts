@@ -139,7 +139,7 @@ module Sysop {
                                 for (let row in rs) {
                                     rpc.user.id = rs[row].id
                                     PC.load(rpc)
-                                    PC.reroll(rpc.user, pc)
+                                    rpc.user = PC.reroll(rpc.user, pc)
                                     PC.newkeys(rpc.user)
                                     for (k = 0; k < kh; k++)
                                         PC.keyhint(rpc)
@@ -147,7 +147,7 @@ module Sysop {
                                     PC.save(rpc)
                                     vt.out('.')
                                 }
-                                PC.reroll($.player, pc)
+                                $.player = PC.reroll($.player, pc)
                                 PC.newkeys($.player)
                                 for (k = 0; k < kh; k++)
                                     PC.keyhint($.online)
@@ -191,8 +191,7 @@ module Sysop {
                         return
                     }
                     if (opponent.user.id) {
-                        PC.reroll(opponent.user)
-                        PC.newkeys(opponent.user)
+                        opponent.user = PC.reroll(opponent.user)
                         opponent.user.keyhints.splice(12)
                         PC.save(opponent)
                         fs.unlink(pathTo('users', '.${user.id}.json'), () => { })

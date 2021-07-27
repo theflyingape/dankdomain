@@ -146,7 +146,7 @@ module Taxman {
                                 let title = ['Reserve', 'Home', 'City', 'Foot', 'Infantry', 'Cavalry', 'Castle', 'Royal'][i < 7 ? i : 7]
                                 irs[i].user.handle = `${title} Guard`
                                 do {
-                                    PC.reroll(irs[i].user, PC.random('player'), irs[i].user.level)
+                                    irs[i].user = PC.reroll(irs[i].user, PC.random('player'), irs[i].user.level)
                                 } while (irs[i].user.melee < 1)
 
                                 let w = int(irs[i].user.level / 100 * (Weapon.merchant.length - 1))

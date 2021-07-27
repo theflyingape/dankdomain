@@ -285,8 +285,8 @@ module Player {
         if ($.player.novice) {
             $.player = PC.reroll($.player, 'Novice')
             PC.activate($.online)
-            vt.outln('Since you are a new user here, you are automatically assigned a character', -1000)
-            vt.out('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.', -1000)
+            vt.outln('Since you are a new user here, you are automatically assigned a character', -2200)
+            vt.outln('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.', -2200)
             show()
             news(`Welcome a ${$.player.pc} player, ${$.player.handle}`)
             require('./dd/menu').menu(true)
@@ -364,7 +364,7 @@ module Player {
             cat('player/' + $.player.pc.toLowerCase())
             const rpc = PC.card($.player.pc)
             for (let l = 0; l < rpc.description.length; l++)
-                vt.outln(vt.cyan, vt.bright, rpc.description[l], -1500)
+                vt.outln(vt.cyan, vt.bright, rpc.description[l], -2200)
         }
 
         function pick() {

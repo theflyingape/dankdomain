@@ -8,6 +8,7 @@ import Battle = require('../battle')
 import db = require('../db')
 import { Coin } from '../items'
 import { armor, bracket, carry, cat, death, display, log, news, tradein, vt, weapon } from '../lib'
+import { elemental, naval } from '../npc'
 import { PC } from '../pc'
 import { checkXP, input } from '../player'
 import { an, dice, int, money, sprintf, whole } from '../sys'
@@ -15,9 +16,8 @@ import { an, dice, int, money, sprintf, whole } from '../sys'
 module Naval {
 
     let mon: number
-    let monsters: naval[] = require('../etc/naval.json')
     let sm: naval
-    let naval: choices = {
+    let main: choices = {
         'S': { description: 'Shipyard' },
         'B': { description: 'Battle other users' },
         'H': { description: 'Hunt sea monsters' },
@@ -36,7 +36,7 @@ module Naval {
         vt.form = {
             'menu': { cb: choice, cancel: 'q', enter: '?', eol: false }
         }
-        vt.form['menu'].prompt = display('naval', vt.Cyan, vt.cyan, suppress, naval)
+        vt.form['menu'].prompt = display('naval', vt.Cyan, vt.cyan, suppress, main)
         input('menu')
     }
 
@@ -174,7 +174,7 @@ module Naval {
                         vt.sleep(600)
                         if ($.player.level > $.neptune.user.level) {
                             let keep = $.neptune.user.spells
-                            PC.reroll($.neptune.user, $.neptune.user.pc, $.player.level - 1)
+                            $.neptune.user = PC.reroll($.neptune.user, $.neptune.user.pc, $.player.level - 1)
                             PC.activate($.neptune)
                             $.neptune.user.spells = keep
                         }
@@ -286,8 +286,8 @@ module Naval {
                     break
                 }
 
-                for (let i in monsters)
-                    vt.out(bracket(+i + 1), vt.cyan, monsters[i].name)
+                for (let i in naval.monsters)
+                    vt.out(bracket(+i + 1), vt.cyan, naval.monsters[i].name)
                 vt.outln()
 
                 vt.action('list')
@@ -297,7 +297,7 @@ module Naval {
                             vt.outln()
                             if (vt.entry.length) {
                                 let mon = int(vt.entry)
-                                if (mon < 1 || mon > monsters.length) {
+                                if (mon < 1 || mon > naval.monsters.length) {
                                     vt.refocus()
                                     return
                                 }
@@ -307,7 +307,7 @@ module Naval {
                             else
                                 menu()
                         }
-                        , prompt: 'Hunt which monster (' + vt.attr(vt.white, '1-' + monsters.length, vt.cyan, ')? '), min: 0, max: 1
+                        , prompt: 'Hunt which monster (' + vt.attr(vt.white, '1-' + naval.monsters.length, vt.cyan, ')? '), min: 0, max: 1
                     }
                 }
                 vt.focus = 'pick'
@@ -783,7 +783,7 @@ module Naval {
     function MonsterHunt() {
 
         mon = +vt.entry - 1
-        sm = Object.assign({}, monsters[mon])
+        sm = Object.assign({}, naval.monsters[mon])
         let damage: number
 
         vt.profile({ jpg: `naval/${sm.name.toLowerCase()}`, handle: sm.name, effect: 'fadeInUp' })
@@ -912,7 +912,7 @@ module Naval {
         }
 
         function you(): boolean {
-            let result = fire($.online, <active>{ hull: sm.hull, user: { id: '', handle: monsters[mon].name, hull: monsters[mon].hull, cannon: 0, ram: monsters[mon].ram } })
+            let result = fire($.online, <active>{ hull: sm.hull, user: { id: '', handle: naval.monsters[mon].name, hull: naval.monsters[mon].hull, cannon: 0, ram: naval.monsters[mon].ram } })
             if ((sm.hull -= result.damage) > 0)
                 return false
 
@@ -931,7 +931,7 @@ module Naval {
                 vt.sleep(250)
             }
             else
-                ram(<active>{ hull: sm.hull, user: { id: '', handle: monsters[mon].name, hull: monsters[mon].hull, cannon: sm.shot, ram: sm.ram } }, $.online)
+                ram(<active>{ hull: sm.hull, user: { id: '', handle: naval.monsters[mon].name, hull: naval.monsters[mon].hull, cannon: sm.shot, ram: sm.ram } }, $.online)
 
             if (($.online.hull -= damage) < 1) {
                 $.online.altered = true

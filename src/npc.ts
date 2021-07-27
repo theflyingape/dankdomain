@@ -388,10 +388,19 @@ module npc {
             }
         }
     }
+    class _naval {
+
+        monsters: naval[]
+
+        constructor() {
+            this.monsters = require(pathTo('characters', 'naval.json'))
+        }
+    }
 
     export const arena = new _arena
     export const dungeon = new _dungeon
     export const elemental = new _elemental
+    export const naval = new _naval
 }
 
 export = npc

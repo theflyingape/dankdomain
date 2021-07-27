@@ -96,7 +96,7 @@ module Logon {
             }
 
             if (/new/i.test(vt.entry)) {
-                PC.reroll($.player)
+                $.player = PC.reroll($.player)
                 if (vt.tty == 'web') {
                     vt.sound('yahoo', 20)
                     require('./newuser')

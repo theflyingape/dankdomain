@@ -1084,7 +1084,7 @@ module Dungeon {
                                     case 9:
                                         $.player.level = dice(Z)
                                         if ($.online.adept) $.player.level += dice($.player.level)
-                                        PC.reroll($.player, PC.random('monster'), $.player.level)
+                                        $.player = PC.reroll($.player, PC.random('monster'), $.player.level)
                                         PC.activate($.online)
                                         $.player.gender = ['F', 'M'][dice(2) - 1]
                                         PC.save()
@@ -1592,7 +1592,7 @@ module Dungeon {
                                 else {
                                     $.player.level = dice(Z)
                                     if ($.online.adept) $.player.level += dice($.player.level)
-                                    PC.reroll($.player, PC.random('monster'), $.player.level)
+                                    $.player = PC.reroll($.player, PC.random('monster'), $.player.level)
                                     PC.activate($.online)
                                     $.player.gender = ['F', 'M'][dice(2) - 1]
                                     PC.save()
@@ -1715,13 +1715,12 @@ module Dungeon {
         //	items?
         switch (ROOM.giftItem) {
             case 'armor':
-                let xarmor = <active>{ user: Object.assign({}, $.player) }
-                PC.reroll(xarmor.user)
+                let xarmor = { user: db.fillUser('reset', $.player) }
                 xarmor.user.armor = Armor.special[ROOM.giftValue]
                 PC.activate(xarmor)
                 if (Armor.swap($.online, xarmor)) {
                     vt.profile({ jpg: `specials/${$.player.armor}`, effect: 'fadeInUpBig' })
-                    vt.outln(vt.faint, vt.yellow, 'You find', vt.normal, an($.player.armor.toString()), vt.bright, '!')
+                    vt.outln(vt.yellow, vt.faint, 'You find', vt.normal, an($.player.armor.toString()), vt.bright, '!')
                     vt.sound('max')
                     pause = true
                     ROOM.giftItem = ''
@@ -1849,8 +1848,7 @@ module Dungeon {
                 break
 
             case 'weapon':
-                let xweapon = <active>{ user: Object.assign({}, $.player) }
-                PC.reroll(xweapon.user)
+                let xweapon = { user: db.fillUser('reset', $.player) }
                 xweapon.user.weapon = Weapon.special[ROOM.giftValue]
                 PC.activate(xweapon)
                 if (Weapon.swap($.online, xweapon)) {
@@ -1947,7 +1945,7 @@ module Dungeon {
                         Object.assign(avenger.user, mon.user)
                         avenger.user.pc = PC.random('monster')
                         avenger.user.handle += vt.attr(' ', vt.uline, 'avenger', vt.nouline)
-                        PC.reroll(avenger.user, avenger.user.pc, int(avenger.user.level / 2))
+                        avenger.user = PC.reroll(avenger.user, avenger.user.pc, int(avenger.user.level / 2))
                         for (let magic in ROOM.monster[n].monster.spells)
                             Magic.add(avenger.user.spells, ROOM.monster[n].monster.spells[magic])
                         for (let poison in ROOM.monster[n].monster.poisons)
@@ -2343,7 +2341,7 @@ module Dungeon {
 
         } while (result)
 
-        PC.reroll(dungeon.level.cleric.user, dungeon.level.cleric.user.pc, int(65 + Z / 4 + deep))
+        dungeon.level.cleric.user = PC.reroll(dungeon.level.cleric.user, dungeon.level.cleric.user.pc, int(65 + Z / 4 + deep))
         PC.activate(dungeon.level.cleric)
         vt.wall($.player.handle, `enters dungeon level ${romanize(deep + 1)}.${Z + 1}`)
 
@@ -2797,7 +2795,7 @@ module Dungeon {
         }
         m.monster = dm
         m.effect = dm.effect || 'pulse'
-        PC.reroll(m.user, dm.pc ? dm.pc : $.player.pc, n)
+        m.user = PC.reroll(m.user, dm.pc ? dm.pc : $.player.pc, n)
         if (m.user.xplevel) m.user.xplevel = level
         if (!dm.pc) m.user.steal = $.player.steal + 1
 

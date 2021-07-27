@@ -37,7 +37,7 @@ const command = <HTMLDivElement>document.getElementById('command')
 let a = document.querySelector("#a2hs-button")
 let t
 
-if (! /MSIE \d|Trident.*rv:/.test(navigator.userAgent)) {
+if ('userAgentData' in navigator) {
     //  default startup
     terminal.hidden = false
     info.hidden = false
@@ -51,7 +51,7 @@ if (! /MSIE \d|Trident.*rv:/.test(navigator.userAgent)) {
                 console.log('ServiceWorker registration successful with scope: ', registration.scope)
             }, function (err) {
                 // registration failed :(
-                console.log('ServiceWorker registration failed: ', err)
+                console.error('ServiceWorker registration failed: ', err)
             })
         })
     }
@@ -724,6 +724,9 @@ function Logoff() {
 function rotateImage() {
     animated('fadeOutLeft')
     if (images.length) {
+        const about = <HTMLDivElement>document.getElementById('about')
+        about.hidden = true
+
         const n = Math.trunc(Math.random() * images.length)
         const banner = images.splice(n, 1)[0]
 
@@ -734,11 +737,7 @@ function rotateImage() {
         if (banner.jpg) html += `<br><img src="images/${banner.jpg}.jpg" />`
         if (banner.png) html += `<br><img src="images/${banner.png}.png" style="filter:opacity(${/^connect/.test(banner.png) ? '45%' : '100%'});" />`
 
-        setTimeout(() => {
-            const about = <HTMLDivElement>document.getElementById('about')
-            about.hidden = true
-            nme(html, banner.effect)
-        }, 1000)
+        setTimeout(() => { nme(html, banner.effect) }, 1000)
     }
     else
         send('\x15')
