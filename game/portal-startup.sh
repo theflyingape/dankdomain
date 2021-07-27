@@ -8,4 +8,6 @@ umask 0002
 
 sudo -v || exit 2
 sudo killall ƊƊnet 2> /dev/null
-sudo -b -u nobody /usr/bin/node $path/door/app &> door.log
+which node
+node $path/portal/app &
+#sudo -b -u nobody node $path/portal/app

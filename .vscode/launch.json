@@ -9,9 +9,9 @@
       "request": "launch",
       "name": "launch ƊƊnet app",
       "cwd": "${workspaceFolder}/game",
-      "program": "${workspaceFolder}/game/door/app.js",
+      "program": "${workspaceFolder}/game/portal/app.js",
       "outFiles": [
-        "${workspaceFolder}/game/door"
+        "${workspaceFolder}/game/portal"
       ],
       "sourceMaps": true,
       "stopOnEntry": false,
@@ -23,8 +23,8 @@
       "name": "Launch localhost",
       "type": "chrome",
       "request": "launch",
-      "url": "http://localhost:1939",
-      "webRoot": "${workspaceFolder}/game/door"
+      "url": "https://localhost:1939",
+      "webRoot": "${workspaceFolder}/game/portal"
     },
     {
       "type": "node",

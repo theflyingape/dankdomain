@@ -20,7 +20,7 @@
 		"linux"
 	],
 	"engines": {
-		"node": ">=14.17"
+		"node": ">=16.5"
 	},
 	"maintainers": [
 		{
@@ -96,10 +96,10 @@
 		"play": "env TERM=vt100 node game/main",
 		"postinstall": "npm run build",
 		"prepare": "./local-install.sh",
-		"serve": "node game/portal/app",
+		"serve": "./game/portal-startup.sh",
 		"start": "./game/tty.sh",
 		"stop": "killall ƊƊnet",
-		"test": "node game/portal/app test",
+		"test": "npm run serve test",
 		"watch": "tsc -w"
 	}
 }

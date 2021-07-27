@@ -63,7 +63,8 @@ openssl req -newkey rsa:2048 -nodes -keyout portal/key.pem -x509 -days 365 -out 
 npm test
 npm run play
 
-echo "Enable telnet/23 & https/443 redirect rules on this host ?"
+clear
+echo "Enable telnet/23 & https/443 redirect rules on this host for portal app ?"
 echo -n "Enter shift 'Y' to enable rules: "
 read cont
 
@@ -96,14 +97,12 @@ if [ "${cont}" == "Y" ]; then
     sudo systemctl status dankdomain-portal -l
 fi
 
-echo -n "Press RETURN for an Apache proxy fronting a NodeJs app example: "
-read n
+echo "Show an Apache proxy fronting a NodeJs app example ?"
+echo -n "Enter shift 'Y' to show configuration: "
+read cont
 
-echo
-echo ... an Apache configuration example follows:
-echo
-
-cat <<-EOD
+if [ "${cont}" == "Y" ]; then
+    cat <<EOD
 PORTAL uses app: express + ws fronts node-pty
    for client: browser uses bundle.js (with xterm emulator)
 
@@ -136,4 +135,5 @@ if https / wss is used, SSL Proxy works for me like this:
         Header edit Location ^https://localhost:1939/ddgame/ https://robert.hurst-ri.us/ddgame/
     </Location>
 EOD
+fi
 exit
