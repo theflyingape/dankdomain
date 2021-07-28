@@ -1,10 +1,4 @@
 {
-  "pc": "Spirit",
-  "backstab": 0, "melee": 0,
-  "poison": 0, "magic": 0, "steal": 0,
-  "heal": 0, "blast": 0,
-  "str": 50, "maxstr": 50,
-  "int": 50, "maxint": 50,
-  "dex": 50, "maxdex": 50,
-  "cha": 50, "maxcha": 50
+  "pc": "Spirit", "xplevel": 0,
+  "weapon": 0, "armor": 0
 }

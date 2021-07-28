@@ -970,8 +970,8 @@ module Naval {
                     if (d.user.ram) {
                         ram = true
                         d.user.ram = false
+                        vt.out(vt.magenta, '^', -50)
                         vt.beep()
-                        vt.out(vt.magenta, '^', -35)
                         break
                     }
                 case 2:
@@ -979,7 +979,7 @@ module Naval {
                         if (d.user.cannon) {
                             cannon++
                             d.user.cannon--
-                            vt.out(vt.green, '@', -30)
+                            vt.out(vt.green, '@', -50)
                             break
                         }
                     }
@@ -988,18 +988,18 @@ module Naval {
                     n = dice(50)
                     damage += n
                     d.hull -= n
-                    if (n < 50 || d.user.hull < 1 || !d.user.id) {
-                        vt.out(vt.red, '*', -25)
+                    if (n < 50 || d.user.hull < 100 || !d.user.id) {
+                        vt.out(vt.red, '*', -40)
                         break
                     }
                     else {
                         hull += 50
                         d.user.hull -= 50
-                        vt.out(vt.yellow, d.user.hull ? '#' : '&', -30)
+                        vt.out(vt.yellow, '#', -50)
                         break
                     }
                 default:
-                    vt.out(vt.blue, '~', -20)
+                    vt.out(vt.blue, '~', -30)
             }
         }
 

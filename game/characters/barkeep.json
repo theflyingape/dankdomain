@@ -1,15 +1,10 @@
 {
-  "id": "_BAR",
-  "handle": "Tiny, the Ogre barkeep",
-  "name": "Nobody",
-  "dob": 708447,
-  "sex": "I",
-  "access": "Inactive",
-  "email": "nobody@mail.com",
-  "password": null,
-  "remote": "Old Timers Tap",
-  "pc": "Ogre", "gender": "M",
-  "level": 80,
+  "id": "_BAR", "handle": "Tiny, the Ogre barkeep",
+  "name": "Nobody", "dob": 708447, "sex": "I",
+  "remote": "The Olde Tavern",
+  "pc": "Ogre", "gender": "M", "level": 80,
+  "bounty": "2c", "who": "_TAX",
+  "coin": "2s,1986c",
   "str": 99, "int": 88, "dex": 77, "cha": 66,
   "melee": 5, "steal": 2,
   "hp": 3583, "sp": 6000,
@@ -18,5 +13,6 @@
   "spells": [ 7, 11, 13 ],
   "rings": [ "Atomic", "Champion", "Ogre", "Magus" ],
   "realestate": "Room above tavern",
-  "security": "Shotgun"
+  "security": "Shotgun",
+  "hull": 0
 }

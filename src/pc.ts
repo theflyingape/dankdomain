@@ -404,9 +404,8 @@ module pc {
             user = db.fillUser(user.pc, user)
             user.level = level
             if (user.level > 1) user.xp = this.experience(user.level - 1, 1, user.int)
+            if (user.xplevel > user.level) user.xplevel = user.level
             if (!user.keyseq) PC.newkeys(user)
-            //  character exists in spirit or for real
-            user.xplevel = (user.pc == Object.keys(this.name['player'])[0]) ? 0 : user.level
             //  level up
             for (let n = 2; n <= level; n++) {
                 user.level = n
@@ -417,15 +416,15 @@ module pc {
                         d = dice(10) - 1
                         switch (d) {
                             case 0:
-                                if (user.maxstr < 97 || user.maxint < 97 || user.dex < 97 || user.maxcha < 97) break
+                                if (user.maxstr < 91 && user.maxint < 91 && user.maxdex < 91 && user.maxcha < 91) break
                             case 1:
-                                if (user.maxstr < 91) break
+                                if (user.maxstr < 80) break
                             case 2:
-                                if (user.maxint < 91) break
+                                if (user.maxint < 80) break
                             case 3:
-                                if (user.maxdex < 91) break
+                                if (user.maxdex < 80) break
                             case 4:
-                                if (user.maxcha > 91) break
+                                if (user.maxcha < 80) break
                             case 5:
                                 if (user.melee < 3) break
                             case 6:
@@ -433,7 +432,7 @@ module pc {
                             case 7:
                                 if (user.poison < 3) break
                             case 8:
-                                if (user.magic < 3) break
+                                if (user.magic < 2 || user.melee > 2) break
                             case 9:
                                 if (user.steal < 4) break
                                 d = -1
@@ -478,7 +477,10 @@ module pc {
                             break
                         case 8:
                             vt.out('Spellcasting')
-                            user.magic++
+                            if (user.magic < 2)
+                                user.magic++
+                            else
+                                user.sp += 511
                             break
                         case 9:
                             vt.out('Stealing')

@@ -1,13 +1,19 @@
 {
   "pc": "Spirit", "level": 1,
   "blessed": "", "coward": false, "cursed": "",
-  "keyseq": "",
+  "keyseq": "", "plays": 0,
   "bounty": "0c", "who": "",
 	"coin": "1c",	"bank": "10c", "loan": "0c",
-	"weapon": "Dart", "toWC": 1,
-	"armor": "Wooden Shield", "toAC": 1,
+  "melee": 0, "magic": 0,
+  "backstab": 0, "poison": 0, "steal": 0,
+  "heal": 0, "blast": 0,
+  "str": 50, "maxstr": 50,
+  "int": 50, "maxint": 50,
+  "dex": 50, "maxdex": 50,
+  "cha": 50, "maxcha": 50,
+	"weapon": "Dart", "toWC": 0,
+	"armor": "Wooden Shield", "toAC": 0,
   "poisons": [], "rings": [], "spells": [],
   "realestate": "Alley", "security": "Whiskey bottle",
-  "hull": 0, "cannon": 0, "ram": false,
-  "plays": 0
+  "hull": 50, "cannon": 0, "ram": false
 }

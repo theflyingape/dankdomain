@@ -522,7 +522,7 @@ module Player {
             , -125)
         vt.outln(bracket(2, false), vt.yellow, ' Increase Intellect ability from ', vt.reset
             , rpc.user.maxint.toString(), ' '
-            , rpc.user.maxint < 90 ? '[MORON]'
+            , rpc.user.maxint < 90 ? '[LEFT]'
                 : rpc.user.maxint < 95 ? '-Average-'
                     : rpc.user.maxint < 99 ? '=Smart='
                         : '#MAX#'
@@ -551,11 +551,11 @@ module Player {
             , -125)
         vt.outln(bracket(7, false), vt.yellow, ' Improve Poison skill from ', vt.reset
             , rpc.user.poison.toString(), 'x '
-            , ['[BAN]', '-Average-', '+Good+', '=Masterful=', '#MAX#'][rpc.user.poison]
+            , ['[RARE]', '-Average-', '+Good+', '=Masterful=', '#MAX#'][rpc.user.poison]
             , -125)
         if (rpc.user.magic < 2) {
             vt.out(bracket(8, false), vt.yellow, ' Improve Magic skill from ', vt.reset)
-            vt.out(['[BAN]', '-Wands-'][rpc.user.magic])
+            vt.out(['[RARE]', '-Wands-'][rpc.user.magic])
         }
         else {
             vt.out(bracket(8, false), vt.yellow, ' Increase Mana power for ', vt.reset)

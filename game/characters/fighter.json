@@ -2,6 +2,7 @@
   "pc": "Fighter",
   "backstab": 2, "melee": 3, "poison": 1, "steal": 1,
   "magic": 1, "heal": 1, "blast": 1,
+  "hp": 16,
   "str": 65, "maxstr": 98,
   "int": 30, "maxint": 90,
   "dex": 70, "maxdex": 90,

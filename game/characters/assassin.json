@@ -6,6 +6,6 @@
   "int": 30, "maxint": 90,
   "dex": 75, "maxdex": 95,
   "cha": 40, "maxcha": 90,
-  "weapon": "Dagger",
+  "weapon": "Dagger", "toWC": 1,
   "spells": [ 8,14,19 ]
 }

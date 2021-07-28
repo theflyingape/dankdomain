@@ -1,14 +1,11 @@
 {
-	"id": "_SYS",
-	"handle": "\uD83D\uDC51 Sysop",
-	"name": "Dank Domain",
-	"sex": "I",
-	"access": "Inactive",
+	"id": "_SYS", "handle": "\uD83D\uDC51 Sysop",
+	"name": "Dank Domain", "sex": "I",
 	"email": "sysop@ddgame.us",
-	"password": null,
- 	"expires": 100,
-	"pc": "Fighter",
-	"level": 100,
+	"expires": 100,
+	"pc": "Fighter", "level": 100, "xplevel": 0,
 	"weapon": 48,
-	"armor": 24
+	"armor": 24,
+  "rings": [ "Champion", "Nobility" ],
+	"hull": 0
 }
