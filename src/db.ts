@@ -5,11 +5,10 @@
 
 import Database = require('better-sqlite3')
 import { fs, now, pathTo, whole } from './sys'
-import { Access, Coin, Ring } from './items'
+import { Coin, Ring } from './items'
 
 module db {
 
-    export const NPC = require(pathTo('characters', 'npc.json'))
     export const USER = require(pathTo('characters', 'user.json'))
     export const DD = pathTo('users', 'dankdomain.sql')
 
@@ -69,18 +68,6 @@ module db {
           	plays numeric, jl numeric, jw numeric, killed numeric, kills numeric,
             retreats numeric, steals numeric, tl numeric, tw numeric)`)
     }
-
-    Object.keys(NPC).forEach((id) => {
-        try {
-            const template = NPC[id]
-            if (!loadUser({ id: id })) {
-                let npc = fillUser(template)
-                console.info(' + adding', template, 'as', npc.id, '-', npc.handle)
-                saveUser(npc, true)
-            }
-        }
-        catch (err) { console.error(err) }
-    })
 
     rs = query(`SELECT * FROM sqlite_master WHERE name='Gangs' AND type='table'`)
     if (!rs.length) {

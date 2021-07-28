@@ -282,7 +282,7 @@ module pc {
                 if ("user" in rpc) this.activate(rpc)
                 //  restore NPC with static fields
                 if (user.id[0] == '_' && user.id != "_SYS") {
-                    let npc = db.fillUser(db.NPC[user.id], user)
+                    let npc = db.fillUser(NPC[user.id], user)
                     db.saveUser(npc)
                 }
                 return true
@@ -337,7 +337,7 @@ module pc {
             return gang
         }
 
-        newkeys(user = $.player) {
+        newkeys(user: user) {
             let keys = ['P', 'G', 'S', 'C']
             let prior = user.keyhints || []
             user.keyhints = ['', '', '', '', '', '', '', '', '', '', '', '', ...prior.slice(12)]
@@ -880,6 +880,7 @@ module pc {
 
     export const Deed = new _deed
     export const PC = new _pc
+    export const NPC = require(pathTo('characters', 'npc.json'))
 }
 
 export = pc

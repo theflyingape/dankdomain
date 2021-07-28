@@ -50,41 +50,42 @@ setInterval(bot, 60 * 60 * 1000)
 
 function bot() {
     let sysop: user = { id: '_SYS' }
-    db.loadUser(sysop)
-    const i = sysop.immortal
+    if (db.loadUser(sysop)) {
+        const i = sysop.immortal
 
-    while (!elemental.id) {
-        sysop.immortal++
-        elemental = db.fillUser(`bot${sysop.immortal}`)
-        if (!elemental.id) {
-            sysop.immortal = 0
-            db.saveUser(sysop)
-            break
+        while (!elemental.id) {
+            sysop.immortal++
+            elemental = db.fillUser(`bot${sysop.immortal}`)
+            if (!elemental.id) {
+                sysop.immortal = 0
+                db.saveUser(sysop)
+                break
+            }
         }
+        if (!sysop.immortal || sysop.immortal == i) return
+        db.saveUser(sysop)
+
+        const client = 'Rivendell'
+        let pid = login(client, network.rows, 80, network.emulator, [elemental.id])
+        let term = sessions[pid]
+        term.spawn.dispose()
+        console.log(`Startup BOT #${sysop.immortal} (${elemental.id}) from ${client} → session ${pid}`)
+
+        //  consume app output
+        term.onData((data) => {
+            message(term, data)
+        })
+
+        //  app shutdown
+        term.onExit(() => {
+            console.log(`Exit BOT #${sysop.immortal} (${elemental.id}) session ${pid}`)
+            // Clean things up
+            delete broadcasts[pid]
+            delete sessions[pid]
+            pid = 0
+            elemental.id = ''
+        })
     }
-    if (!sysop.immortal || sysop.immortal == i) return
-    db.saveUser(sysop)
-
-    const client = 'Rivendell'
-    let pid = login(client, network.rows, 80, network.emulator, [elemental.id])
-    let term = sessions[pid]
-    term.spawn.dispose()
-    console.log(`Startup BOT #${sysop.immortal} (${elemental.id}) from ${client} → session ${pid}`)
-
-    //  consume app output
-    term.onData((data) => {
-        message(term, data)
-    })
-
-    //  app shutdown
-    term.onExit(() => {
-        console.log(`Exit BOT #${sysop.immortal} (${elemental.id}) session ${pid}`)
-        // Clean things up
-        delete broadcasts[pid]
-        delete sessions[pid]
-        pid = 0
-        elemental.id = ''
-    })
 }
 
 function broadcast(pid: number, msg: string) {

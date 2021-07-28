@@ -8,18 +8,12 @@ import db = require('../db')
 import { Access, Coin, Magic, Ring } from '../items'
 import { bracket, cat, emulator, getRing, news, time, vt } from '../lib'
 import { Deed, PC } from '../pc'
+import { } from '../npc'
 import { input, logoff, pickPC } from '../player'
 import { an, cuss, date2full, dice, fs, got, money, now, pathTo, titlecase, whole } from '../sys'
 
 module Logon {
 
-    PC.load($.sysop)
-    PC.load($.barkeep)
-    PC.load($.dwarf)
-    PC.load($.neptune)
-    PC.load($.seahag)
-    PC.load($.taxman)
-    PC.load($.witch)
     if ($.sysop.lastdate != now().date) {
         newDay()
         db.run(`UPDATE Players SET today=0 WHERE id NOT GLOB '_*'`)

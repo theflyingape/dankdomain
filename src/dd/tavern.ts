@@ -167,13 +167,13 @@ module Tavern {
                 return
 
             case 'L':
-                vt.outln(vt.green, '\n        --=:)) Tavern Bounty List ((:=--\n')
-                let rs = db.query(`SELECT handle,bounty,who FROM Players WHERE bounty > 0 ORDER BY level DESC`)
+                vt.outln(vt.green, '\n        --=:)) ', vt.bright, 'Tavern Bounty List', vt.normal, ' ((:=--\n')
+                let rs = db.query(`SELECT id,handle,bounty,who FROM Players WHERE bounty > 0 ORDER BY level DESC`)
                 for (let i in rs) {
                     let adversary = <active>{ user: { id: rs[i].who } }
                     PC.load(adversary)
                     let bounty = new Coin(rs[i].bounty)
-                    vt.outln(`${rs[i].handle} has a ${bounty.carry()} bounty from ${adversary.user.handle}`)
+                    vt.outln(rs[i].handle, ' has a ', carry(bounty), ' bounty posted by ', vt.bright, adversary.user.handle)
                 }
                 vt.form = {
                     'pause': { cb: menu, pause: true }

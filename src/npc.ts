@@ -7,10 +7,31 @@ import $ = require('./runtime')
 import db = require('./db')
 import { Access } from './items'
 import { vt } from './lib'
-import { PC } from './pc'
+import { NPC, PC } from './pc'
 import { dice, int, money, pathTo, whole } from './sys'
 
 module npc {
+
+    Object.keys(NPC).forEach((id) => {
+        try {
+            const template = NPC[id]
+            if (!db.loadUser({ id: id })) {
+                let npc = db.fillUser(template)
+                npc = PC.reroll(npc, npc.pc, npc.level)
+                npc = db.fillUser(template, npc)
+                db.saveUser(npc, true)
+            }
+        }
+        catch (err) { console.error(err) }
+    })
+
+    PC.load($.sysop)
+    PC.load($.barkeep)
+    PC.load($.dwarf)
+    PC.load($.neptune)
+    PC.load($.seahag)
+    PC.load($.taxman)
+    PC.load($.witch)
 
     class _arena {
 
@@ -327,7 +348,6 @@ module npc {
             //  evaluate targets for next actions
             for (let i in rs) {
                 rpc.user.id = rs[i].id
-                const online = !PC.load(rpc)
                 if (!Access.name[rpc.user.access].roleplay) continue
                 if (!db.lock(rpc.user.id)) continue
 
@@ -401,6 +421,7 @@ module npc {
     export const dungeon = new _dungeon
     export const elemental = new _elemental
     export const naval = new _naval
+
 }
 
 export = npc

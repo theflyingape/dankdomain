@@ -10,7 +10,6 @@ import { bracket, cat, prompt, news, time, vt, weapon } from './lib'
 import { elemental } from './npc'
 import { Deed, PC } from './pc'
 import { an, date2full, dice, fs, int, now, pathTo, sprintf, whole } from './sys'
-import { ESTALE } from 'constants'
 
 module Player {
 
@@ -273,6 +272,17 @@ module Player {
         }
         else
             vt.sound('invite')
+    }
+
+    export function newkeys(user: user) {
+        let keys = ['P', 'G', 'S', 'C']
+        let prior = user.keyhints || []
+        user.keyhints = ['', '', '', '', '', '', '', '', '', '', '', '', ...prior.slice(12)]
+        user.keyseq = ''
+        while (keys.length) {
+            let k = dice(keys.length)
+            user.keyseq += keys.splice(k - 1, 1)
+        }
     }
 
     export function pickPC(points = 200, immortal = false) {

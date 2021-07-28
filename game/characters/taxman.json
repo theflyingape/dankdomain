@@ -1,7 +1,7 @@
 {
   "id": "_TAX", "handle": "Ira Hess",
   "name": "Joe Mollicone", "dob": 708447, "sex": "M",
-  "pc": "Rogue", "level": 50,
+  "pc": "Rogue", "level": 50, "wins": 1,
   "bounty": "2g", "who": "_BAR",
   "coin": "2c",
   "cha": 80,
@@ -13,5 +13,5 @@
   "spells": [ 8, 19, 20, 21 ],
   "realestate": "Tower",
   "security": "Security guard",
-  "wins": 1
+  "hull": 0
 }
