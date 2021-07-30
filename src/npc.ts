@@ -338,7 +338,6 @@ module npc {
 
             //  gather potential targets
             this.targets = []
-            let rpc = <active>{ user: { id: '' } }
             const rs = db.query(`SELECT id FROM Players
             WHERE id != '${$.player.id}' AND id NOT GLOB '_*'
             AND gang != '${$.player.gang}'
@@ -347,9 +346,10 @@ module npc {
 
             //  evaluate targets for next actions
             for (let i in rs) {
-                rpc.user.id = rs[i].id
-                if (!Access.name[rpc.user.access].roleplay) continue
+                let rpc: active = { user: { id: rs[i].id } }
+                if (!db.loadUser(rpc.user)) continue
                 if (!db.lock(rpc.user.id)) continue
+                if (!Access.name[rpc.user.access].roleplay) continue
 
                 this.targets = this.targets.concat({
                     player: rpc.user,
