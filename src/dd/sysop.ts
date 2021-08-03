@@ -4,13 +4,13 @@
 \*****************************************************************************/
 
 import $ = require('../runtime')
-import Battle = require('../battle')
 import db = require('../db')
 import Email = require('../email')
 import { bracket, display, vt } from '../lib'
 import { PC } from '../pc'
 import { input } from '../player'
 import { fs, now, pathTo, sprintf, titlecase } from '../sys'
+import Battle = require('./battle')
 
 module Sysop {
 

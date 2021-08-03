@@ -4,14 +4,14 @@
 \*****************************************************************************/
 
 import $ = require('../runtime')
-import Battle = require('../battle')
 import db = require('../db')
 import { Armor, Coin, RealEstate, Ring, Security, Weapon } from '../items'
-import { cat, display, emulator, log, news, tradein, vt } from '../lib'
-import { elemental } from '../npc'
+import { carry, cat, display, emulator, log, news, tradein, vt } from '../lib'
 import { Deed, PC } from '../pc'
+import { elemental } from '../npc'
 import { checkXP, input, pickPC } from '../player'
 import { an, cuss, dice, fs, int, money, pathTo, sprintf } from '../sys'
+import Battle = require('./battle')
 
 module Main {
 
@@ -458,7 +458,7 @@ module Main {
 
                 if ($.access.roleplay) {
                     vt.action('ny')
-                    vt.form['yn'].prompt = 'Scout other users for ' + cost.carry() + ' (Y/N)? '
+                    vt.form['yn'].prompt = 'Scout other users for ' + carry(cost) + ' (Y/N)? '
                     input('yn', 'n', 2)
                     return
                 }

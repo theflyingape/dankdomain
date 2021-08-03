@@ -176,7 +176,7 @@ module Player {
         return false
     }
 
-    export function input(focus: string | number, input = elemental.cmd, speed = 7) {
+    export function input(focus: string | number, input = elemental.cmd, speed = 5) {
         prompt(focus, input, speed)
     }
 

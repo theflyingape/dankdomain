@@ -16,11 +16,11 @@ module lib {
                 , profile.user.armor, vt.white, buff(profile.user.toAC, profile.toAC))
     }
 
-    export function bracket(item: string | number, nl = true): string {
+    export function bracket(item: string | number, nl = true, ends = '<>'): string {
         const s = item.toString(), i = whole(item)
         let framed = vt.attr(vt.off, nl ? '\n' : '')
         if (nl && i >= 0 && i < 10) framed += ' '
-        framed += vt.attr(vt.faint, '<', vt.bright, s, vt.faint, '>', nl ? ' ' : '', vt.reset)
+        framed += vt.attr(vt.faint, ends[0], vt.bright, s, vt.faint, ends[1], nl ? ' ' : '', vt.reset)
         return framed
     }
 
@@ -248,7 +248,7 @@ module lib {
     export function prompt(focus: string | number, input = '', speed = 5) {
         //console.log(`input = '${input}' `, input.split('').map((c) => { return c.charCodeAt(0) }))
         if ($.access.bot)
-            vt.form[focus].delay = speed < 100 ? 125 * dice(speed) * dice(speed) : speed
+            vt.form[focus].delay = speed < 100 ? 120 * dice(speed) * dice(speed) : speed
         vt.focus = focus
 
         //  queue up any input by the bot

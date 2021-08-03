@@ -1,16 +1,16 @@
 /*****************************************************************************\
- *  : the return of Hack & Slash                                  *
+ *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
  *  BATTLE authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import $ = require('./runtime')
-import db = require('./db')
-import { Access, Armor, Coin, Magic, Poison, Ring, Weapon } from './items'
-import { armor, bracket, buff, carry, death, getRing, log, news, pieces, rings, tradein, vt, weapon } from './lib'
-import { elemental } from './npc'
-import { Deed, PC } from './pc'
-import { checkXP, input } from './player'
-import { an, cuss, date2full, dice, fs, int, money, pathTo, sprintf, titlecase, whole } from './sys'
+import $ = require('../runtime')
+import db = require('../db')
+import { Access, Armor, Coin, Magic, Poison, Ring, Weapon } from '../items'
+import { armor, bracket, buff, carry, death, getRing, log, news, pieces, rings, tradein, vt, weapon } from '../lib'
+import { Deed, PC } from '../pc'
+import { elemental } from '../npc'
+import { checkXP, input } from '../player'
+import { an, cuss, date2full, dice, fs, int, money, pathTo, sprintf, titlecase, whole } from '../sys'
 
 module Battle {
 
@@ -2285,7 +2285,7 @@ module Battle {
         }
     }
 
-    export function user(venue: string, cb: Function) {
+    export function user(venue: string, cb: Function, npc = false) {
         let start = $.player.level > 3 ? $.player.level - 3 : 1
         let end = $.player.level < 97 ? $.player.level + 3 : 99
 
@@ -2295,18 +2295,21 @@ module Battle {
                 cb: () => {
                     if (vt.entry == '?') {
                         vt.action('list')
-                        vt.form['start'].prompt = 'Starting level ' + bracket(start, false) + ': '
+                        vt.form['start'].prompt = 'Starting level ' + bracket(start, false, '[]') + ': '
                         input('start', '', 250)
                         return
                     }
                     let rpc: active = { user: { id: titlecase(vt.entry) } }
-                    if (rpc.user.id[0] !== '_') {
+                    if (!npc && rpc.user.id[0] == '_') {
+
+                    }
+                    else {
                         if (!PC.load(rpc)) {
                             rpc.user.id = ''
                             rpc.user.handle = vt.entry
                             if (!PC.load(rpc)) {
+                                vt.out(vt.red, vt.bright, ' ?', vt.normal, '?', vt.faint, '?')
                                 vt.beep()
-                                vt.out(' ?? ')
                             }
                         }
                         //  paint profile
@@ -2323,13 +2326,13 @@ module Battle {
                                 rpc.user.id = ''
                                 vt.beep()
                                 if ($.player.emulation == 'XT') vt.out(' 🔒')
-                                vt.out(' ', bracket(rpc.user.status, false))
+                                vt.out(' ', bracket(rpc.user.status, false), '##')
                             }
                         }
                     }
                     vt.outln()
                     cb(rpc)
-                }, max: 22
+                }, cancel: '?', max: 22
             },
             'start': {
                 cb: () => {

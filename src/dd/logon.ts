@@ -323,7 +323,7 @@ module Logon {
         $.player.lastdate = now().date
         $.player.lasttime = now().time
         $.player.expires = $.player.lastdate + $.sysop.expires
-        PC.activate($.online, true)
+        PC.activate($.online)
         PC.save()
 
         $.mydeeds = Deed.load($.player.pc)
@@ -428,6 +428,8 @@ module Logon {
             $.player.status = ''
             $.player.xplevel = $.player.level
             $.online.altered = true
+            PC.activate($.online)
+            PC.save()
             const play = JSON.parse(fs.readFileSync(pathTo('etc', 'play.json')))
             Object.assign($, play)
             vt.music('logon')

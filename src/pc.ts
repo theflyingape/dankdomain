@@ -141,7 +141,6 @@ module pc {
             if (confused) return true
 
             one.who = this.who(one)
-            one.altered = keep
             one.hp = one.user.hp
             one.sp = one.user.sp
             one.bp = int(one.user.hp / 10)
@@ -150,6 +149,7 @@ module pc {
             Armor.equip(one, one.user.armor, true)
             one.user.access = one.user.access || Object.keys(Access.name)[0]
 
+            one.altered = one.altered || keep
             if (keep && !db.lock(one.user.id, one.user.id == $.player.id ? 1 : 2) && one.user.id !== $.player.id) {
                 vt.beep()
                 vt.outln()
@@ -276,10 +276,10 @@ module pc {
         }
 
         load(rpc: active | user): boolean {
-            let user: user = "user" in rpc ? rpc.user : rpc
+            let user: user = 'user' in rpc ? rpc.user : rpc
             if (user.handle) user.handle = titlecase(user.handle)
             if (db.loadUser(user)) {
-                if ("user" in rpc) this.activate(rpc)
+                if ('altered' in rpc) this.activate(rpc)
                 //  restore NPC with static fields
                 if (user.id[0] == '_' && user.id != "_SYS") {
                     let npc = db.fillUser(NPC[user.id], user)
@@ -503,7 +503,7 @@ module pc {
 
         save(rpc: active | user = $.online, insert = false, locked = false) {
 
-            let user: user = "user" in rpc ? rpc.user : rpc
+            let user: user = 'user' in rpc ? rpc.user : rpc
 
             if (!user.id) return
             if (insert || locked || user.id[0] == '_') {
@@ -525,7 +525,7 @@ module pc {
             }
 
             db.saveUser(user, insert)
-            if ("user" in rpc) rpc.altered = false
+            if ('altered' in rpc) rpc.altered = false
             if (locked) db.unlock(user.id.toLowerCase())
         }
 
@@ -852,7 +852,7 @@ module pc {
         }
 
         who(pc: active | user, mob = false): who {
-            let user: user = "user" in pc ? pc.user : pc
+            let user: user = 'user' in pc ? pc.user : pc
             const gender = pc === $.online ? 'U' : user.gender
             const Handle = `${gender == 'I' && $.from !== 'Party' ? 'The ' : ''}${user.handle}`
             const handle = `${gender == 'I' && $.from !== 'Party' ? 'the ' : ''}${user.handle}`

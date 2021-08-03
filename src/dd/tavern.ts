@@ -4,15 +4,15 @@
 \*****************************************************************************/
 
 import $ = require('../runtime')
-import Battle = require('../battle')
 import db = require('../db')
-import Taxman = require('./taxman')
 import { Access, Coin, Weapon } from '../items'
 import { bracket, carry, cat, display, news, vt } from '../lib'
-import { elemental } from '../npc'
 import { PC } from '../pc'
+import { elemental } from '../npc'
 import { checkXP, input } from '../player'
 import { cuss, dice, fs, int, money, pathTo, sprintf, whole } from '../sys'
+import Battle = require('./battle')
+import Taxman = require('./taxman')
 
 module Tavern {
 

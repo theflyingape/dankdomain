@@ -4,13 +4,12 @@
 \*****************************************************************************/
 
 import $ = require('../runtime')
-import db = require('../db')
-import Battle = require('../battle')
 import { Armor, Coin, RealEstate, Ring, Security, Weapon } from '../items'
 import { news, pieces, tradein, vt, weapon } from '../lib'
 import { PC } from '../pc'
 import { input } from '../player'
 import { an, dice, int, money, whole } from '../sys'
+import Battle = require('./battle')
 
 module Taxman {
 

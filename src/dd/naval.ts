@@ -4,14 +4,14 @@
 \*****************************************************************************/
 
 import $ = require('../runtime')
-import Battle = require('../battle')
 import db = require('../db')
 import { Coin } from '../items'
 import { armor, bracket, carry, cat, death, display, log, news, tradein, vt, weapon } from '../lib'
-import { elemental, naval } from '../npc'
 import { PC } from '../pc'
+import { elemental, naval } from '../npc'
 import { checkXP, input } from '../player'
 import { an, dice, int, money, sprintf, whole } from '../sys'
+import Battle = require('./battle')
 
 module Naval {
 
