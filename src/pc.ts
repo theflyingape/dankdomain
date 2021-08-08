@@ -239,7 +239,7 @@ module pc {
         }
 
         hp(user = $.player): number {
-            return Math.round(user.level + dice(user.level) + user.str / 10)
+            return Math.round(user.level + dice(user.level + user.melee) + user.str / 10)
         }
 
         jousting(rpc: active): number {

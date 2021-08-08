@@ -6,7 +6,7 @@
 import $ = require('../runtime')
 import db = require('../db')
 import { Armor, Coin, Magic, Poison, Ring, Security, Weapon } from '../items'
-import { armor, bracket, cat, death, getRing, log, pieces, news, tradein, vt, weapon, carry } from '../lib'
+import { armor, bracket, carry, cat, death, getRing, log, pieces, news, tradein, vt, weapon } from '../lib'
 import { PC } from '../pc'
 import { dungeon } from '../npc'
 import { checkXP, input, skillplus } from '../player'
@@ -616,7 +616,6 @@ module Dungeon {
 
             if (ROOM.monster.length) {
                 $.from = 'Dungeon'
-                vt.action('battle')
                 b4 = ROOM.monster.length > 3 ? -ROOM.monster.length : ROOM.monster.length > 2 ? $.online.hp : 0
                 Battle.engage('Dungeon', party, ROOM.monster, doSpoils)
                 return false

@@ -41,6 +41,7 @@ module runtime {
     export let tiny: number = 0
     export let timeleft: number = 0
     export let warning: number = 2
+    export let xrate: number = 1
 
     //  bot runtime features
     export let border: boolean = false

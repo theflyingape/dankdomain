@@ -284,7 +284,7 @@ module lib {
 
     export function tradein(retail: string | number, percentage = $.online.cha): number {
         const worth = new Coin(retail)
-        percentage -= 10    //  Obama-Biden adjustment
+        percentage -= whole($.xrate)    //  Obama-Biden economics adjustment
         return whole(worth.value * percentage / 100)
     }
 
