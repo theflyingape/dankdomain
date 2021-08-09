@@ -767,23 +767,7 @@ module Dungeon {
 
                             switch (wish) {
                                 case 'B':
-                                    if ($.player.cursed) {
-                                        $.player.coward = false
-                                        $.player.cursed = ''
-                                        vt.out(vt.bright, vt.black, 'The dark cloud has left you.')
-                                        news(`\tlifted curse`)
-                                    }
-                                    else {
-                                        vt.sound('shimmer')
-                                        $.player.blessed = 'well'
-                                        vt.out(vt.yellow, 'You feel ', vt.bright, 'a shining aura', vt.normal, ' surround you.')
-                                        news(`\twished for a blessing`)
-                                    }
-                                    PC.adjust('str', 110)
-                                    PC.adjust('int', 110)
-                                    PC.adjust('dex', 110)
-                                    PC.adjust('cha', 110)
-                                    vt.sound('shimmer')
+                                    PC.bless('well', 'wished for a blessing')
                                     dungeon.level.events = 0
                                     dungeon.level.exit = false
                                     break
@@ -794,32 +778,13 @@ module Dungeon {
                                         if (opponent.user.id == $.player.id) {
                                             opponent.user.id = ''
                                             vt.outln(`You can't curse yourself.`)
-                                            vt.refocus()
+                                        }
+                                        else if (opponent.user.id) {
+                                            PC.curse($.player, '!', opponent)
+                                            menu()
                                             return
                                         }
-                                        if (opponent.user.id) {
-                                            news(`\tcursed ${opponent.user.handle}`)
-                                            if (opponent.user.blessed) {
-                                                log(opponent.user.id, `\n${$.player.handle} vanquished your blessedness!`)
-                                                opponent.user.blessed = ''
-                                                vt.out(vt.yellow, vt.bright, opponent.who.His, 'shining aura', vt.normal, ' fades ', vt.faint, 'away.')
-                                            }
-                                            else {
-                                                log(opponent.user.id, `\n${$.player.handle} cursed you!`)
-                                                opponent.user.cursed = $.player.id
-                                                vt.out(vt.faint, 'A dark cloud hovers over ', opponent.who.him, '.')
-                                            }
-                                            opponent.user.coward = true
-                                            PC.save(opponent)
-                                            if (opponent.user.id == $.king.id) {
-                                                $.player.coward = true
-                                                $.online.altered = true
-                                                vt.sound('boom', 6)
-                                            }
-                                            else
-                                                vt.sound('morph', 12)
-                                        }
-                                        menu()
+                                        vt.refocus()
                                         return
                                     })
                                     return
@@ -1005,9 +970,11 @@ module Dungeon {
                                     case 0:
                                         vt.sessionAllowed += 300
                                         break
+
                                     case 1:
                                         death('Wheel of Death', true)
                                         break
+
                                     case 2:
                                         if ($.player.cursed) {
                                             vt.out(vt.faint, 'The dark cloud has been lifted.', vt.reset)
@@ -1027,6 +994,7 @@ module Dungeon {
                                         dungeon.level.events = 0
                                         dungeon.level.exit = false
                                         break
+
                                     case 3:
                                         $.online.hp += int($.player.hp / 2) + dice($.player.hp / 2)
                                         if ($.player.magic > 1) $.online.sp += int($.player.sp / 2) + dice($.player.sp / 2)
@@ -1036,24 +1004,19 @@ module Dungeon {
                                         $.online.toAC += int($.online.armor.ac / 2) + 1
                                         vt.sound('hone')
                                         break
+
                                     case 4:
-                                        if ($.player.blessed) {
-                                            vt.out(vt.yellow, vt.bright, 'Your shining aura ', vt.normal, 'has left ', vt.faint, 'you.', vt.reset)
-                                            $.player.blessed = ''
-                                        }
+                                        if ($.player.blessed)
+                                            PC.curse(db.fillUser(), '!')
                                         else {
-                                            PC.adjust('str', 0, -2, -1)
-                                            PC.adjust('int', 0, -2, -1)
-                                            PC.adjust('dex', 0, -2, -1)
-                                            PC.adjust('cha', 0, -2, -1)
+                                            PC.adjust('str', -5, -2, -1)
+                                            PC.adjust('int', -5, -2, -1)
+                                            PC.adjust('dex', -5, -2, -1)
+                                            PC.adjust('cha', -5, -2, -1)
                                         }
-                                        PC.adjust('str', -5 - dice(5))
-                                        PC.adjust('int', -5 - dice(5))
-                                        PC.adjust('dex', -5 - dice(5))
-                                        PC.adjust('cha', -5 - dice(5))
-                                        vt.sound('crack')
                                         dungeon.level.events += dice(Z) + deep
                                         break
+
                                     case 5:
                                         loot.value = money(Z)
                                         loot.value += tradein($.online.weapon.value)
@@ -1062,6 +1025,7 @@ module Dungeon {
                                         $.player.coin.value += loot.pick(1).value
                                         vt.sound('yahoo')
                                         break
+
                                     case 6:
                                         $.player.coin.value = 0
                                         $.player.bank.value = 0
@@ -1072,14 +1036,17 @@ module Dungeon {
                                         $.player.loan.value += loot.pick(1).value
                                         vt.sound('thief2')
                                         break
+
                                     case 7:
                                         PC.keyhint($.online)
                                         vt.sound('click')
                                         break
+
                                     case 8:
                                         vt.sound('level')
                                         skillplus($.online, menu)
                                         return
+
                                     case 9:
                                         $.player.level = dice(Z)
                                         if ($.online.adept) $.player.level += dice($.player.level)
@@ -1562,6 +1529,7 @@ module Dungeon {
                                 vt.sound('mana', 8)
                                 $.player.blessed = ''
                                 $.player.coward = true
+                                PC.activate($.online)
 
                                 if ($.player.steal > 1) {
                                     vt.out('your ability to steal diminishes')
@@ -1592,8 +1560,8 @@ module Dungeon {
                                     $.player.level = dice(Z)
                                     if ($.online.adept) $.player.level += dice($.player.level)
                                     $.player = PC.reroll($.player, PC.random('monster'), $.player.level)
-                                    PC.activate($.online)
                                     $.player.gender = ['F', 'M'][dice(2) - 1]
+                                    PC.activate($.online)
                                     PC.save()
                                     vt.sound('crone', 21)
                                     vt.out(`me morphing you into a level ${$.player.level} ${$.player.pc} (${$.player.gender})`)

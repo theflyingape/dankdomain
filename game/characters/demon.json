@@ -2,6 +2,7 @@
   "pc": "Demon",
   "backstab": 1, "melee": 3, "poison": 1, "steal": 2,
   "magic": 1, "heal": 2, "blast": 2,
+  "hp": 16,
   "str": 65, "maxstr": 95,
   "int": 50, "maxint": 92,
   "dex": 65, "maxdex": 90,

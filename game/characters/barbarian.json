@@ -1,12 +1,12 @@
 {
   "pc": "Barbarian",
-  "melee": 4, "magic": 1,
-  "backstab": 1, "poison": 1, "steal": 1,
-  "hp": 16,
+  "backstab": 1, "melee": 4, "poison": 1, "steal": 1,
+  "magic": 1, "heal": 0, "blast": 0,
+  "hp": 18,
   "str": 75, "maxstr": 99,
   "int": 25, "maxint": 80,
-  "dex": 65, "maxdex": 90,
-  "cha": 35, "maxcha": 90,
+  "dex": 70, "maxdex": 90,
+  "cha": 30, "maxcha": 90,
   "weapon": "Club", "toWC": 1,
   "armor": "Small Shield",
   "poisons": [ 1 ], "spells": [ 10 ]

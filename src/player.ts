@@ -209,10 +209,8 @@ module Player {
                     PC.adjust('cha', -1, -1, -1)
                     $.player.coin = new Coin(0)
                     if (vt.checkTime() >= 0) {
-                        if ($.player.coward && !$.player.cursed) {
-                            $.player.blessed = ''
-                            $.player.cursed = $.player.id
-                        }
+                        if ($.player.coward && !$.player.cursed)
+                            PC.curse($.player, '!')
                         $.player.coward = true
                     }
                 }

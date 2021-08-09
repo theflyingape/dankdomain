@@ -209,7 +209,7 @@ interface ring {
     description: string
     emoji: string
     ability: [{
-        id: string
+        id: POWER
         power: boolean
         magic?: number
         pc?: string

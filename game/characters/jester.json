@@ -8,6 +8,6 @@
   "dex": 80, "maxdex": 98,
   "cha": 30, "maxcha": 90,
   "rings": [ "Cursed" ],
-  "spells": [ 1,2,3,4,19 ],
+  "spells": [ 1,2,3,4,11,19 ],
   "weapon": "Staff"
 }

@@ -389,13 +389,16 @@ module Battle {
                             retreat = true
                             $.player.retreats++
                             let who = $.player.gender == 'F' ? 'She' : 'He'
-                            vt.outln(vt.blue, vt.bright, [
-                                'You are successful in your attempt to retreat.',
-                                'You limp away from the battle.',
-                                `You decide this isn't worth the effort.`,
-                                `You listen to that voice in your head, ${vt.attr(vt.red)}"Run."`,
-                                `You shout back, ${vt.attr(vt.cyan)}"${who} who fights and runs away lives to fight another day!"`
-                            ][dice(5) - 1], -250)
+                            if (Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power)
+                                PC.curse(enemy.user, 'for running away')
+                            else
+                                vt.outln(vt.blue, vt.bright, [
+                                    'You are successful in your attempt to retreat.',
+                                    'You limp away from the battle.',
+                                    `You decide this isn't worth the effort.`,
+                                    `You listen to that voice in your head, ${vt.attr(vt.red)}"Run."`,
+                                    `You shout back, ${vt.attr(vt.cyan)}"${who} who fights and runs away lives to fight another day!"`
+                                ][dice(5) - 1], -250)
                             if ($.online.confused)
                                 PC.activate($.online, false, true)
                             if ($.from == 'Party' && $.player.gang) {
@@ -872,31 +875,11 @@ module Battle {
                             vt.outln(winner.who.He, 'also ', PC.what(winner, 'take'), loser.who.his, winner.user.armor, '.', -250)
                             log(loser.user.id, `... and took your ${winner.user.armor}.`)
                         }
-                        if (winner.user.cursed) {
-                            winner.user.cursed = ''
-                            PC.adjust('str', 10, 0, 0, winner)
-                            PC.adjust('int', 10, 0, 0, winner)
-                            PC.adjust('dex', 10, 0, 0, winner)
-                            PC.adjust('cha', 10, 0, 0, winner)
-                            loser.user.cursed = winner.user.id
-                            loser.altered = true
-                            vt.outln(vt.bright, vt.black, 'A dark cloud has lifted and shifted.', -600)
-                            log(loser.user.id, `... and left you with a dark cloud.`)
-                        }
+                        if (winner.user.cursed)
+                            PC.curse(winner.user, '!', loser)
                         if (loser.user.blessed) {
-                            loser.user.blessed = ''
-                            loser.altered = true
-                            if (winner.user.coward)
-                                winner.user.coward = false
-                            else {
-                                winner.user.blessed = loser.user.id
-                                PC.adjust('str', 10, 0, 0, winner)
-                                PC.adjust('int', 10, 0, 0, winner)
-                                PC.adjust('dex', 10, 0, 0, winner)
-                                PC.adjust('cha', 10, 0, 0, winner)
-                                vt.outln(vt.bright, vt.yellow, 'A shining aura ', vt.normal, 'surrounds you.', -600)
-                            }
-                            log(loser.user.id, `... and took your blessedness.`)
+                            PC.bless(loser.user.id, 'took your blessing', winner)
+                            log(loser.user.id, `... and took your blessing.`)
                         }
                         if (loser.user.gang && loser.user.gang == $.player.gang) {
                             gang = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name='${$.player.gang}'`)[0], $.player.id)
@@ -969,9 +952,8 @@ module Battle {
                 winner.user.xp += PC.experience($.player.xplevel, 2)
 
                 if ($.player.blessed) {
-                    winner.user.blessed = $.player.id
-                    $.player.blessed = ''
-                    vt.outln(vt.bright, vt.yellow, 'Your shining aura ', vt.normal, 'leaves ', vt.faint, 'you.\n', -600)
+                    PC.bless($.player.id, '!', winner)
+                    vt.outln(vt.yellow, vt.bright, 'Your shining aura ', vt.normal, 'leaves ', vt.faint, 'you.\n', -600)
                 }
 
                 if (Weapon.swap(winner, $.online)) {
@@ -2017,7 +1999,7 @@ module Battle {
         let action: string
         let hit = 0
 
-        if ($.from !== 'Party' && rpc !== $.online && rpc.user.coward && !rpc.user.cursed && rpc.hp < (rpc.user.hp / 5)) {
+        if ($.from !== 'Party' && rpc !== $.online && (rpc.user.coward || Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power) && !rpc.user.cursed && rpc.hp < (rpc.user.hp / 5)) {
             rpc.hp = -1
             vt.outln(vt.green, vt.bright
                 , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle, -600
@@ -2025,9 +2007,11 @@ module Battle {
             if ($.from == 'User') {
                 rpc.user.blessed = ''
                 rpc.user.coward = true
-                rpc.user.cursed = $.player.id
+                if (!Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power) {
+                    rpc.user.cursed = $.player.id
+                    news(`\tcursed ${rpc.user.handle} for running away`)
+                }
                 PC.save(rpc)
-                news(`\tcursed ${rpc.user.handle} for running away`)
                 log(rpc.user.id, `\n${enemy.user.handle} curses you for running away!\n`)
             }
             return

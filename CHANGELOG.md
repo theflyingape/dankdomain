@@ -5,11 +5,13 @@
 🇺🇸 ©️1991 - 2021 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) on a **Chromebook** using Visual Code and TypeScript/html/css for the browser with [terminal emulator](https:/xtermjs.org) and classic telnet clients; and also to run the resulting Node.js full stack [services and app](https://play.DDgame.us) on the **Google Cloud Platform** (us-central1) or in a **Docker** [container](https://hub.docker.com/repository/docker/theflyingape/dankdomain).
 
-### **31-Jul-2021** `v3.2.0`
+### **09-Aug-2021** `v3.2.0`
 
+* Victory Day (RI observed holday)
 * major code refactoring for CI/CD
 * separated each character class out of the dankdomain config to allow for customizable reroll templating of startup values, i.e., assets like weapon, spells, etc.
 * expanded the role of each NPC
+* added 'curse' power to Cursed ring
 
 #### **18-Jun-2021** `v3.1.1`
 

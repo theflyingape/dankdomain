@@ -6,7 +6,7 @@
   "coin": "1g",
   "weapon": "Trident of Titans",
   "armor": "Titanium Armor",
-  "rings":[ "Infinity" ],
+  "rings": [ "Infinity" ],
   "poisons": [ 11 ],
   "spells": [ 7, 9, 11, 13, 15 ],
   "realestate": "Castle",

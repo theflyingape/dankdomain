@@ -6,7 +6,7 @@
   "bounty": "2c", "who": "_TAX",
   "coin": "2s,1986c",
   "str": 99, "int": 88, "dex": 77, "cha": 66,
-  "melee": 5, "steal": 2,
+  "melee": 5, "steal": 2, "heal": 3,
   "hp": 3583, "sp": 6000,
   "weapon": "Gloves of Strength",
   "armor": "Padded Leather",
