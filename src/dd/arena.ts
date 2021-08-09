@@ -431,7 +431,7 @@ module Arena {
                         if (/Y/i.test(vt.entry)) {
                             $.player.coin.value -= cost.value
                             $.online.altered = true
-                            vt.outln('As you hand him the money, it disappears into thin air ... ', -1200, '\n')
+                            vt.outln('As you hand him the money, ', -200, 'it disappears into thin air ... ', -1000, '\n')
 
                             monster = { user: db.fillUser('summoned demon') }
                             let l = $.player.level + 2

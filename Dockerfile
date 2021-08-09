@@ -9,10 +9,10 @@ LABEL maintainer="theflyingape@gmail.com"
 ENV TARGET=/usr/games/dankdomain
 WORKDIR ${TARGET}
 # install code+files
-COPY game ${TARGET}/game
-COPY src ${TARGET}/src
-COPY *.json ${TARGET}/
-COPY *.sh ${TARGET}/
+COPY game game
+COPY src src
+COPY *.json ./
+COPY *.sh ./
 # cli tools
 RUN apt-get update && apt-get install -y rsync sudo telnet
 #

@@ -26,9 +26,9 @@ module pc {
             const oldkey = '🗝️ '
             return vt.emulation == 'XT'
                 ? {
-                    P: vt.attr(oldkey, vt.bright, vt.Magenta, ' Platinum ', vt.reset),
+                    P: vt.attr(oldkey, vt.lWhite, vt.Magenta, ' Platinum ', vt.reset),
                     G: vt.attr(oldkey, vt.black, vt.Yellow, ' = Gold = ', vt.reset),
-                    S: vt.attr(oldkey, vt.bright, vt.Cyan, '- Silver -', vt.reset),
+                    S: vt.attr(oldkey, vt.lWhite, vt.Cyan, '- Silver -', vt.reset),
                     C: vt.attr(oldkey, vt.black, vt.Red, vt.Empty, ' Copper ', vt.Empty, vt.reset)
                 } : {
                     P: vt.attr(vt.off, vt.magenta, vt.bright, vt.reverse, ' Platinum ', vt.reset),
@@ -404,7 +404,7 @@ module pc {
             user = db.fillUser(user.pc, user)
             user.level = level
             if (user.level > 1) user.xp = this.experience(user.level - 1, 1, user.int)
-            if (user.xplevel > user.level) user.xplevel = user.level
+            if (!user.xplevel || user.xplevel > user.level) user.xplevel = user.level
             if (!user.keyseq) PC.newkeys(user)
             //  level up
             for (let n = 2; n <= level; n++) {
