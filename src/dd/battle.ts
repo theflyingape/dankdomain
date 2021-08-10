@@ -360,7 +360,7 @@ module Battle {
                                 if ($.from == 'Tavern')
                                     vt.outln(vt.bright, vt.green, 'You try to escape, but the crowd throws you back to witness the slaughter!')
                                 if ($.from == 'Taxman')
-                                    vt.outln(vt.bright, vt.blue, '"You can never escape the taxman!"')
+                                    vt.outln(vt.blue, vt.bright, '"You can never escape the taxman!"')
                                 vt.sound({ _BAR: 'growl', _DM: 'punk', _NEP: 'thunder', _OLD: 'crone', _TAX: 'thief2' }[enemy.user.id], 12)
                                 PC.adjust('cha', -2, -1)
                                 PC.save()
@@ -374,13 +374,13 @@ module Battle {
                             trip = trip < 5 ? 5 : trip > 95 ? 95 : trip
                             if (dice(100) > trip) {
                                 vt.beep()
-                                let who = (enemy.user.gender == 'I' ? 'The ' : '') + enemy.user.handle
+                                const who = PC.who(enemy, true)
                                 vt.outln(vt.cyan, [
-                                    'You trip and fail in your attempt to retreat.',
-                                    `${who} pulls you back into the battle.`,
-                                    `${who} prevents your retreat and shouts,\n ${vt.attr(vt.cyan, vt.bright, '"I\'m not through with you yet!"')}`,
-                                    `${who} outmaneuvers you and says,\n ${vt.attr(vt.normal, '"You started this, I\'m finishing it."')}`,
-                                    `${who} blocks your path and whispers,\n ${vt.attr(vt.faint, '"Where do you want to go today?"')}`,
+                                    `You trip and fail in your attempt to retreat from ${who.him}.`,
+                                    `${who.He}pulls you back into the battle.`,
+                                    `${who.He}prevents your retreat and shouts,\n ${vt.attr(vt.cyan, vt.bright, '"I\'m not through with you yet!"')}`,
+                                    `The cunning ${enemy.user.pc} outmaneuvers you and says,\n ${vt.attr(vt.normal, '"You started this, I\'m finishing it."')}`,
+                                    `${who.He}blocks your path and whispers,\n ${vt.attr(vt.faint, '"Where do you want to go today?"')}`,
                                 ][dice(5) - 1], '\n', -250)
                                 next()
                                 return
@@ -390,7 +390,7 @@ module Battle {
                             $.player.retreats++
                             let who = $.player.gender == 'F' ? 'She' : 'He'
                             if (Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power)
-                                PC.curse(enemy.user, 'for running away')
+                                PC.curse(enemy.user.handle, 'for running away')
                             else
                                 vt.outln(vt.blue, vt.bright, [
                                     'You are successful in your attempt to retreat.',
@@ -518,7 +518,7 @@ module Battle {
 
             //  might or magic?
             let mm: number = 0
-            let odds: number = ($.from == 'Party' ? 6 : $.from == 'Dungeon' ? 5 : 4) - int(+enemy.user.coward)
+            let odds: number = ($.from == 'Party' ? 6 : $.from == 'Dungeon' ? 5 : 4) - int(enemy.user.coward)
             let roll: number = odds + int(rpc.user.magic / 2) + rpc.adept + 1
             if (rpc.user.level > enemy.user.level)
                 roll += Math.round((rpc.user.level - enemy.user.level) / 4)
@@ -875,10 +875,14 @@ module Battle {
                             vt.outln(winner.who.He, 'also ', PC.what(winner, 'take'), loser.who.his, winner.user.armor, '.', -250)
                             log(loser.user.id, `... and took your ${winner.user.armor}.`)
                         }
-                        if (winner.user.cursed)
-                            PC.curse(winner.user, '!', loser)
+                        if (winner.user.cursed) {
+                            winner.user.cursed = ''
+                            winner.user.coward = false
+                            PC.curse(winner.user.handle, 'in battle', loser)
+                        }
                         if (loser.user.blessed) {
-                            PC.bless(loser.user.id, 'took your blessing', winner)
+                            loser.user.blessed = ''
+                            PC.bless(loser.user.handle, 'took your blessing', winner)
                             log(loser.user.id, `... and took your blessing.`)
                         }
                         if (loser.user.gang && loser.user.gang == $.player.gang) {
@@ -946,14 +950,13 @@ module Battle {
 
             //  manage any asset upgrades for PC
             if (winner.user.id && winner.user.id[0] !== '_') {
-                $.player.coward = true
                 PC.save()
                 log(winner.user.id, `\nYou killed ${$.player.handle}!`)
                 winner.user.xp += PC.experience($.player.xplevel, 2)
 
                 if ($.player.blessed) {
-                    PC.bless($.player.id, '!', winner)
-                    vt.outln(vt.yellow, vt.bright, 'Your shining aura ', vt.normal, 'leaves ', vt.faint, 'you.\n', -600)
+                    vt.outln('Your ', vt.yellow, vt.bright, 'shining aura', vt.reset, ' leaves ', vt.faint, 'you.\n', -600)
+                    PC.bless($.player.handle, 'got blessed', winner)
                 }
 
                 if (Weapon.swap(winner, $.online)) {
@@ -997,7 +1000,6 @@ module Battle {
                     }
                 }
                 PC.save(winner)
-                $.player.coward = false
             }
         }
         $.online.altered = true
@@ -1692,28 +1694,14 @@ module Battle {
                         vt.out(Caster, PC.what(rpc, 'morph'), p1.self, `into a level ${rpc.user.level} ${rpc.user.pc}`)
                         if (rpc.user.gender !== 'I') {
                             news(`\t${rpc.user.handle} morphed into a level ${rpc.user.level} ${rpc.user.pc}!`)
-                            if (rpc !== $.online)
-                                log(rpc.user.id, `\nYou morphed yourself into a level ${rpc.user.level} ${rpc.user.pc}!\n`)
+                            log(rpc.user.id, `\nYou morphed yourself into a level ${rpc.user.level} ${rpc.user.pc}!\n`)
                         }
                     }
                     else {
-                        rpc.user.coward = true
-                        PC.adjust('str'
-                            , rpc.str > 40 ? -dice(6) - 4 : -3
-                            , rpc.user.str > 60 ? -dice(3) - 2 : -2
-                            , rpc.user.maxstr > 80 ? -2 : -1)
-                        PC.adjust('int'
-                            , rpc.int > 40 ? -dice(6) - 4 : -3
-                            , rpc.user.int > 60 ? -dice(3) - 2 : -2
-                            , rpc.user.maxint > 80 ? -2 : -1)
-                        PC.adjust('dex'
-                            , rpc.dex > 40 ? -dice(6) - 4 : -3
-                            , rpc.user.dex > 60 ? -dice(3) - 2 : -2
-                            , rpc.user.maxdex > 80 ? -2 : -1)
-                        PC.adjust('cha'
-                            , rpc.cha > 40 ? -dice(6) - 4 : -3
-                            , rpc.user.cha > 60 ? -dice(3) - 2 : -2
-                            , rpc.user.maxcha > 80 ? -2 : -1)
+                        PC.adjust('str', -3, -2, -1)
+                        PC.adjust('int', -3, -2, -1)
+                        PC.adjust('dex', -3, -2, -1)
+                        PC.adjust('cha', -3, -2, -1)
                         nme.altered = true
                         nme.user.level = dice(nme.user.level / 2) + dice(nme.user.level / 2) - 1
                         nme.user = PC.reroll(nme.user, PC.random(), nme.user.level)
@@ -2006,13 +1994,9 @@ module Battle {
                 , vt.normal, ' runs away from ', -400, vt.faint, 'the battle!', -200)
             if ($.from == 'User') {
                 rpc.user.blessed = ''
-                rpc.user.coward = true
-                if (!Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power) {
-                    rpc.user.cursed = $.player.id
-                    news(`\tcursed ${rpc.user.handle} for running away`)
-                }
+                if (!Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power)
+                    PC.curse($.player.handle, 'for running away', rpc)
                 PC.save(rpc)
-                log(rpc.user.id, `\n${enemy.user.handle} curses you for running away!\n`)
             }
             return
         }

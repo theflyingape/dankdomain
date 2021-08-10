@@ -196,79 +196,80 @@ module pc {
             return rpc
         }
 
-        bless(from: string, why: string, who = $.online) {
-            who.altered = true
-            who.user.coward = false
-            if (who.user.cursed) {
-                who.user.cursed = ''
-                if (who == $.online) {
-                    vt.outln('The ', vt.faint, 'dark cloud', vt.normal, ' has left you.', -1000)
-                    news(`\tlifted curse`)
-                }
-            }
-            else {
-                who.user.blessed = from
-                if (who == $.online) {
-                    vt.outln(vt.yellow, 'You feel ', -400,
-                        vt.bright, 'a shining aura', -500,
-                        vt.normal, ' surround you.', -600)
-                    news(`\t${who.user.handle} ${why}`)
-                }
-            }
-            if (who == $.online) {
+        bless(from: string, via: string, onto = $.online) {
+            if (onto == $.online) {
+                vt.sound('shimmer')
                 PC.adjust('str', 110)
                 PC.adjust('int', 110)
                 PC.adjust('dex', 110)
                 PC.adjust('cha', 110)
-                vt.sound('shimmer')
+                if (onto.user.cursed) {
+                    vt.outln('The ', vt.faint, 'dark cloud', vt.normal, ' has left you.', -1000)
+                    news(`\tlifted curse`)
+                }
+                else {
+                    onto.user.blessed = from
+                    onto.user.coward = false
+                    vt.outln(vt.yellow, 'You feel ', -400,
+                        vt.bright, 'a shining aura', -500,
+                        vt.normal, ' surround you.', -600)
+                    news(`\t${onto.user.handle} ${via}`)
+                }
             }
+            else {
+                if (!onto.user.cursed) onto.user.blessed = from
+            }
+            onto.altered = true
+            onto.user.cursed = ''
         }
 
-        curse(from: user, why: string, who = $.online) {
-            who.altered = true
-            who.user.coward = true
-            if (who == $.online) {
+        curse(from: string, via: string, onto = $.online) {
+            if (onto == $.online) {
                 vt.sound('crack')
                 PC.adjust('str', -10)
                 PC.adjust('int', -10)
                 PC.adjust('dex', -10)
                 PC.adjust('cha', -10)
-                if (who.user.blessed) {
-                    vt.outln(vt.yellow, vt.bright, 'Your shining aura ', -400,
-                        vt.normal, 'fades ', -500,
+                if (onto.user.blessed) {
+                    vt.outln('Your ', vt.yellow, vt.bright, 'shining aura ', -400,
+                        vt.reset, 'fades ', -500,
                         vt.faint, 'away.', -600)
                 }
                 else {
-                    who.user.cursed = from.id
-                    vt.outln(vt.magenta, vt.bright, from.handle, -400,
+                    onto.user.cursed = from
+                    vt.outln(vt.magenta, vt.bright, from, -400,
                         vt.normal, ' curses you ', -500,
-                        vt.faint, `${why}!`, -600)
-                    news(`\tcursed by ${from.handle} ${why}`)
+                        vt.faint, `${via}!`, -600)
+                    news(`\tdropped a curse onto ${onto.user.handle} ${via}`)
                 }
             }
             else {
-                if (from.id == $.player.id)
-                    PC.adjust('cha', -1, -1)
-                if (who.user.id == $.king.id) {
-                    from.coward = true
-                    vt.sound('boom')
+                if (from == $.player.handle) {
+                    PC.adjust('cha', -1, -1, -1)
+                    if (($.player.gang && onto.user.gang == $.player.gang) || onto.user.id == $.king.id) {
+                        PC.adjust('cha', -1, -1, -1)
+                        $.player.coward = true
+                        vt.sound('boom')
+                    }
                 }
                 else
                     vt.sound('morph')
-                news(`\t${from.handle} cursed ${who.user.handle}`)
-                if (who.user.blessed) {
-                    log(who.user.id, `\n${from.handle} vanquished your blessedness!`)
-                    vt.outln(vt.yellow, vt.bright, who.who.His, 'shining aura', -400,
-                        vt.normal, ' fades ', -500,
+                if (onto.user.blessed) {
+                    log(onto.user.id, `\n${from} vanquished your blessing!`)
+                    vt.outln(onto.who.His, vt.yellow, vt.bright, 'shining aura', -400,
+                        vt.reset, ' fades ', -500,
                         vt.faint, 'away.', -600)
                 }
                 else {
-                    log(who.user.id, `\n${$.player.handle} cursed you ${why}!`)
-                    who.user.cursed = $.player.id
-                    vt.outln(vt.faint, 'A dark cloud hovers over ', who.who.him, '.', -1000)
+                    onto.user.cursed = from
+                    log(onto.user.id, `\n${from} cursed you ${via}!`)
+                    news(`\t${from} cursed ${onto.user.handle} ${via}`)
+                    vt.outln('A ', vt.faint, 'dark cloud', ` hovers over ${onto.who.him}.`, -1200)
                 }
             }
-            who.user.blessed = ''
+            onto.altered = true
+            onto.user.coward = true
+            onto.user.blessed = ''
         }
 
         encounter(where = '', lo = 2, hi = 99): active {
@@ -723,28 +724,14 @@ module pc {
             vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
             if (profile.user.blessed) {
-                let who: user = { id: profile.user.blessed }
-                if (!PC.load(who)) {
-                    if (profile.user.blessed == 'well')
-                        who.handle = 'a wishing well'
-                    else
-                        who.handle = profile.user.blessed
-                }
                 vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.yellow, vt.bright)
-                vt.out(' +Blessed:', vt.white, vt.normal, ' by ', sprintf('%-39s', who.handle))
+                vt.out(' +Blessed:', vt.white, vt.normal, ' by ', sprintf('%-39s', profile.user.blessed))
                 vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
             }
 
             if (profile.user.cursed) {
-                let who: user = { id: profile.user.cursed }
-                if (!PC.load(who)) {
-                    if (profile.user.cursed == 'wiz!')
-                        who.handle = 'a doppelganger!'
-                    else
-                        who.handle = profile.user.cursed
-                }
                 vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.white)
-                vt.out('  -Cursed:', vt.normal, ' by ', sprintf('%-39s', who.handle))
+                vt.out('  -Cursed:', vt.normal, ' by ', sprintf('%-39s', profile.user.cursed))
                 vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
             }
 

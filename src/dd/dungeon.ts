@@ -767,7 +767,7 @@ module Dungeon {
 
                             switch (wish) {
                                 case 'B':
-                                    PC.bless('well', 'wished for a blessing')
+                                    PC.bless('a wish', 'wished for a blessing')
                                     dungeon.level.events = 0
                                     dungeon.level.exit = false
                                     break
@@ -780,7 +780,7 @@ module Dungeon {
                                             vt.outln(`You can't curse yourself.`)
                                         }
                                         else if (opponent.user.id) {
-                                            PC.curse($.player, '!', opponent)
+                                            PC.curse($.player.handle, 'using a wish', opponent)
                                             menu()
                                             return
                                         }
@@ -1007,7 +1007,7 @@ module Dungeon {
 
                                     case 4:
                                         if ($.player.blessed)
-                                            PC.curse(db.fillUser(), '!')
+                                            PC.curse('Wheel of Life', 'from a spin of the wheel')
                                         else {
                                             PC.adjust('str', -5, -2, -1)
                                             PC.adjust('int', -5, -2, -1)
