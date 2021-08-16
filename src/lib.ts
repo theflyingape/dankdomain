@@ -1,12 +1,12 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  LIB authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
 
 import xvt from 'xvt'
-import $ = require('./runtime')
+import $ = require('./play/runtime')
 import { Coin, Ring } from './items'
-import { an, dice, fs, int, LOG, NEWS, pathTo, sprintf, titlecase, whole } from './sys'
+import { an, dice, fs, int, LOG, NEWS, pathTo, sprintf, titlecase, uint, whole } from './sys'
 
 module lib {
 
@@ -17,7 +17,7 @@ module lib {
     }
 
     export function bracket(item: string | number, nl = true, ends = '<>'): string {
-        const s = item.toString(), i = whole(item)
+        const s = item.toString(), i = int(item)
         let framed = vt.attr(vt.off, nl ? '\n' : '')
         if (nl && i >= 0 && i < 10) framed += ' '
         framed += vt.attr(vt.faint, ends[0], vt.bright, s, vt.faint, ends[1], nl ? ' ' : '', vt.reset)
@@ -47,24 +47,28 @@ module lib {
         let n = coin.value
         let bags: string[] = []
 
+        vt.save()
+
+        vt.attr(vt.off)   //  force attribute reset
         if (coin.pouch(n) == 'p') {
-            n = int(n / 1e+13)
-            bags.push(vt.attr(vt.white, vt.bright, n.toString(), vt.magenta, 'p', vt.normal, vt.white))
-            n = coin.value % 1e+13
+            n = whole(n / coin.PLATINUM)
+            bags.push(vt.attr(vt.bright, n.toString(), vt.magenta, 'p', vt.normal, vt.white))
+            n = coin.value % coin.PLATINUM
         }
         if (coin.pouch(n) == 'g') {
-            n = int(n / 1e+09)
-            bags.push(vt.attr(vt.white, vt.bright, n.toString(), vt.yellow, 'g', vt.normal, vt.white))
-            n = coin.value % 1e+09
+            n = whole(n / coin.GOLD)
+            bags.push(vt.attr(vt.bright, n.toString(), vt.yellow, 'g', vt.normal, vt.white))
+            n = coin.value % coin.GOLD
         }
         if (coin.pouch(n) == 's') {
-            n = int(n / 1e+05)
-            bags.push(vt.attr(vt.white, vt.bright, n.toString(), vt.cyan, 's', vt.normal, vt.white))
-            n = coin.value % 1e+05
+            n = whole(n / coin.SILVER)
+            bags.push(vt.attr(vt.bright, n.toString(), vt.cyan, 's', vt.normal, vt.white))
+            n = coin.value % coin.SILVER
         }
         if ((n > 0 && coin.pouch(n) == 'c') || bags.length == 0)
-            bags.push(vt.attr(vt.white, vt.bright, n.toString(), vt.red, 'c', vt.normal, vt.white))
+            bags.push(vt.attr(vt.bright, n.toString(), vt.red, 'c', vt.normal, vt.white))
 
+        vt.restore()
         return bags.slice(0, max).toString()
     }
 
@@ -188,7 +192,7 @@ module lib {
             },
             'rows': {
                 cb: () => {
-                    const n = whole(vt.entry)
+                    const n = uint(vt.entry)
                     if (n > 23) $.player.rows = n
                     vt.outln()
                     prompt('pause')
@@ -282,10 +286,12 @@ module lib {
         return sprintf('%u:%02u%s', h, m, ap)
     }
 
-    export function tradein(retail: string | number, percentage = $.online.cha): number {
+    export function tradein(retail: string | bigint, percentage = $.online.cha): bigint {
         const worth = new Coin(retail)
-        percentage -= whole($.xrate)    //  Obama-Biden economics adjustment
-        return whole(worth.value * percentage / 100)
+        //  implement an Obama-Biden economy model
+        percentage -= int($.xrate)
+        percentage = percentage > 99 ? 99 : percentage < 2 ? 2 : percentage
+        return worth.value * BigInt(percentage) / 100n
     }
 
     export function weapon(profile = $.online, text = false): string {
@@ -319,10 +325,10 @@ module lib {
 
         cls() {
             const rows = process.stdout.rows || 24
-            const scroll = whole((this.row < rows ? this.row : rows) - (this.col == 1 ? 2 : 1))
+            const scroll = uint((this.row < rows ? this.row : rows) - (this.col == 1 ? 2 : 1))
             this.plot(rows, 1)
-            this.outln(this.off, '\n'.repeat(scroll), -10)  //  allow XTerm to flush
-            this.out(this.clear, -10)
+            this.outln(this.off, '\n'.repeat(scroll))
+            this.out(-10, this.clear)
         }
 
         //  web client extended commands in terminal emulator

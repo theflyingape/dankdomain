@@ -1,15 +1,16 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  CASINO authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import $ = require('../runtime')
+import $ = require('./runtime')
 import { Coin, RealEstate, Security } from '../items'
 import { bracket, display, tradein, vt } from '../lib'
 import { elemental } from '../npc'
 import { PC } from '../pc'
 import { input } from '../player'
-import { dice, int, money, sprintf, whole } from '../sys'
+import { dice, int, sprintf, whole } from '../sys'
+import { serialize } from 'v8'
 
 module Casino {
 
@@ -26,8 +27,8 @@ module Casino {
     */
 
     let game: string
-    let max = new Coin(0)
-    let payoff = new Coin(0)
+    let max = new Coin()
+    let payoff = new Coin()
     let point: number
     let sting: boolean = true
 
@@ -96,9 +97,9 @@ module Casino {
 
         max.value = tradein(RealEstate.name[$.player.realestate].value)
         max.value += tradein(Security.name[$.player.security].value)
-        max.value = int(max.value / 10)
-        max.value += $.player.level * money($.player.level)
-        if (max.value > 1e+15) max.value = 1e+15
+        max.value /= 10n
+        max.value += BigInt($.player.level) * PC.money($.player.level)
+        if (max.value > PC.money(100)) max.value = PC.money(100)
         max = max.pick(1)
     }
 
@@ -139,13 +140,12 @@ module Casino {
         let ace: number = 0
         vt.outln()
 
-        if ((+vt.entry).toString() == vt.entry) vt.entry += 'c'
-        let amount = new Coin(0)
+        let amount = new Coin()
         if (/=|max/i.test(vt.entry))
             amount.value = max.value
         else
-            amount.value = int(new Coin(vt.entry).value)
-        if (amount.value < 1 || amount.value > $.player.coin.value || amount.value > max.value) {
+            amount.value = new Coin(vt.entry).value
+        if (amount.value < amount.COPPER || amount.value > $.player.coin.value || amount.value > max.value) {
             vt.beep()
             menu($.player.expert)
             return
@@ -174,7 +174,7 @@ module Casino {
 
                 if (myhand == 21) {
                     vt.sound('cheer')
-                    payoff.value = 2 * amount.value
+                    payoff.value = 2n * amount.value
                     vt.outln(vt.bright, vt.cyan, '\nBlackjack!!', -1000)
 
                     value = ShowHand(0, dealer)
@@ -197,7 +197,7 @@ module Casino {
                             switch (vt.entry.toUpperCase()) {
                                 case 'D':
                                     $.player.coin.value -= amount.value
-                                    amount.value *= 2
+                                    amount.value *= 2n
                                     payoff.value = amount.value
                                     vt.entry = 'S'
 
@@ -207,11 +207,11 @@ module Casino {
                                     if (myhand > 21) {
                                         vt.outln('You bust!')
                                         vt.entry = 'S'
-                                        amount.value = 0
+                                        amount.value = 0n
                                     }
                                     else if (player.length == 5) {
                                         vt.sound('cheer')
-                                        payoff.value = 2 * amount.value
+                                        payoff.value = 2n * amount.value
                                         vt.outln('Five card charley!  You win ', payoff.carry(), '!')
                                         $.player.coin.value += payoff.value + amount.value
                                         menu()
@@ -290,7 +290,7 @@ module Casino {
                 vt.sleep(1000)
                 if (point == 7 || point == 11) {
                     vt.sound('cheer')
-                    payoff.value = 2 * amount.value
+                    payoff.value = 2n * amount.value
                     vt.outln('A natural!  You win ', payoff.carry(), '!')
                     $.player.coin.value += payoff.value + amount.value
                     vt.sleep(500)
@@ -321,15 +321,14 @@ module Casino {
                     'baby': {
                         cb: () => {
                             vt.out('\n', vt.cll)
-                            if ((+vt.entry).toString() == vt.entry) vt.entry += 'c'
-                            let side = new Coin(0)
+                            let side = new Coin()
                             if (/=|max/i.test(vt.entry))
                                 side.value = max.value
                             else
-                                side.value = int(new Coin(vt.entry).value)
-                            if (side.value < 1 || side.value > $.player.coin.value || amount.value > max.value) {
+                                side.value = new Coin(vt.entry).value
+                            if (side.value < side.COPPER || side.value > $.player.coin.value || amount.value > max.value) {
                                 vt.beep()
-                                side.value = 0
+                                side.value = 0n
                             }
                             $.player.coin.value -= side.value
                             if (RollDice(baby, side.value)) return
@@ -339,8 +338,8 @@ module Casino {
                     'roll': {
                         cb: () => {
                             vt.out('\n', vt.cll)
-                            baby = whole(vt.entry)
-                            if ($.player.coin.value > 0 && baby > 1 && baby < 13) {
+                            baby = int(vt.entry)
+                            if ($.player.coin.value > 0n && baby > 1 && baby < 13) {
                                 if (max.value > $.player.coin.value)
                                     max.value = $.player.coin.value
                                 vt.form['baby'].prompt = vt.attr('\x1B[JBet ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=', max.carry(), ']? ')
@@ -397,8 +396,8 @@ module Casino {
 
                             if (card[mine].value > card[house].value) {
                                 vt.sound('cheer')
-                                payoff.value = amount.value * int((11 - card[mine].value) / 4 + 1)
-                                if (card[house].value < 0) payoff.value *= 2
+                                payoff.value = amount.value * whole((11 - card[mine].value) / 4 + 1)
+                                if (card[house].value < 0) payoff.value *= 2n
                                 vt.outln('You win ', payoff.carry(), '!')
                                 $.player.coin.value += payoff.value + amount.value
                             }
@@ -419,7 +418,7 @@ module Casino {
                             else {
                                 vt.out('You match ... ', -500)
                                 if (card[house].value < 0) {
-                                    payoff.value = amount.value * 1000
+                                    payoff.value = amount.value * 1000n
                                     vt.outln('and win ', payoff.carry(), '!')
                                     vt.sound('cheer')
                                 }
@@ -542,7 +541,7 @@ module Casino {
 
                                 let balls: number[] = []
                                 let hits = 0
-                                payoff.value = 0
+                                payoff.value = 0n
 
                                 for (let i = 0; i < 20; i++) {
                                     if (i % 5 == 0) vt.out('\n')
@@ -567,98 +566,61 @@ module Casino {
                                 vt.out('\n')
                                 switch (point) {
                                     case 1:
-                                        if (hits == 1)
-                                            payoff.value = 2 * amount.value
+                                        if (hits == 1) payoff.value = 2n * amount.value
                                         break
                                     case 2:
-                                        if (hits == 2)
-                                            payoff.value = 9 * amount.value
+                                        if (hits == 2) payoff.value = 9n * amount.value
                                         break
                                     case 3:
-                                        if (hits == 3)
-                                            payoff.value = 20 * amount.value
-                                        if (hits == 2)
-                                            payoff.value = 2 * amount.value
+                                        if (hits == 3) payoff.value = 20n * amount.value
+                                        if (hits == 2) payoff.value = 2n * amount.value
                                         break
                                     case 4:
-                                        if (hits == 4)
-                                            payoff.value = 50 * amount.value
-                                        if (hits == 3)
-                                            payoff.value = 5 * amount.value
-                                        if (hits == 2)
-                                            payoff.value = 1 * amount.value
+                                        if (hits == 4) payoff.value = 50n * amount.value
+                                        if (hits == 3) payoff.value = 5n * amount.value
+                                        if (hits == 2) payoff.value = 1n * amount.value
                                         break
                                     case 5:
-                                        if (hits == 5)
-                                            payoff.value = 400 * amount.value
-                                        if (hits == 4)
-                                            payoff.value = 10 * amount.value
-                                        if (hits == 3)
-                                            payoff.value = 2 * amount.value
+                                        if (hits == 5) payoff.value = 400n * amount.value
+                                        if (hits == 4) payoff.value = 10n * amount.value
+                                        if (hits == 3) payoff.value = 2n * amount.value
                                         break
                                     case 6:
-                                        if (hits == 6)
-                                            payoff.value = 1000 * amount.value
-                                        if (hits == 5)
-                                            payoff.value = 50 * amount.value
-                                        if (hits == 4)
-                                            payoff.value = 5 * amount.value
-                                        if (hits == 3)
-                                            payoff.value = 1 * amount.value
+                                        if (hits == 6) payoff.value = 1000n * amount.value
+                                        if (hits == 5) payoff.value = 50n * amount.value
+                                        if (hits == 4) payoff.value = 5n * amount.value
+                                        if (hits == 3) payoff.value = 1n * amount.value
                                         break
                                     case 7:
-                                        if (hits == 7)
-                                            payoff.value = 4000 * amount.value
-                                        if (hits == 6)
-                                            payoff.value = 75 * amount.value
-                                        if (hits == 5)
-                                            payoff.value = 15 * amount.value
-                                        if (hits == 4)
-                                            payoff.value = 2 * amount.value
-                                        if (hits == 3)
-                                            payoff.value = 1 * amount.value
+                                        if (hits == 7) payoff.value = 4000n * amount.value
+                                        if (hits == 6) payoff.value = 75n * amount.value
+                                        if (hits == 5) payoff.value = 15n * amount.value
+                                        if (hits == 4) payoff.value = 2n * amount.value
+                                        if (hits == 3) payoff.value = 1n * amount.value
                                         break
                                     case 8:
-                                        if (hits == 8)
-                                            payoff.value = 10000 * amount.value
-                                        if (hits == 7)
-                                            payoff.value = 500 * amount.value
-                                        if (hits == 6)
-                                            payoff.value = 40 * amount.value
-                                        if (hits == 5)
-                                            payoff.value = 10 * amount.value
-                                        if (hits == 4)
-                                            payoff.value = 2 * amount.value
+                                        if (hits == 8) payoff.value = 10000n * amount.value
+                                        if (hits == 7) payoff.value = 500n * amount.value
+                                        if (hits == 6) payoff.value = 40n * amount.value
+                                        if (hits == 5) payoff.value = 10n * amount.value
+                                        if (hits == 4) payoff.value = 2n * amount.value
                                         break
                                     case 9:
-                                        if (hits == 9)
-                                            payoff.value = 25000 * amount.value
-                                        if (hits == 8)
-                                            payoff.value = 2500 * amount.value
-                                        if (hits == 7)
-                                            payoff.value = 100 * amount.value
-                                        if (hits == 6)
-                                            payoff.value = 20 * amount.value
-                                        if (hits == 5)
-                                            payoff.value = 5 * amount.value
-                                        if (hits == 4)
-                                            payoff.value = 1 * amount.value
+                                        if (hits == 9) payoff.value = 25000n * amount.value
+                                        if (hits == 8) payoff.value = 2500n * amount.value
+                                        if (hits == 7) payoff.value = 100n * amount.value
+                                        if (hits == 6) payoff.value = 20n * amount.value
+                                        if (hits == 5) payoff.value = 5n * amount.value
+                                        if (hits == 4) payoff.value = 1n * amount.value
                                         break
                                     case 10:
-                                        if (hits == 10)
-                                            payoff.value = 100000 * amount.value
-                                        if (hits == 9)
-                                            payoff.value = 4000 * amount.value
-                                        if (hits == 8)
-                                            payoff.value = 400 * amount.value
-                                        if (hits == 7)
-                                            payoff.value = 25 * amount.value
-                                        if (hits == 6)
-                                            payoff.value = 10 * amount.value
-                                        if (hits == 5)
-                                            payoff.value = 2 * amount.value
-                                        if (hits == 0)
-                                            payoff.value = 5 * amount.value
+                                        if (hits == 10) payoff.value = 100000n * amount.value
+                                        if (hits == 9) payoff.value = 4000n * amount.value
+                                        if (hits == 8) payoff.value = 400n * amount.value
+                                        if (hits == 7) payoff.value = 25n * amount.value
+                                        if (hits == 6) payoff.value = 10n * amount.value
+                                        if (hits == 5) payoff.value = 2n * amount.value
+                                        if (hits == 0) payoff.value = 5n * amount.value
                                         break
                                 }
                                 if (payoff.value) {
@@ -716,9 +678,9 @@ module Casino {
                 vt.out(vt.reset, '\n\n')
 
                 let face = [dial[0][bandit[0]], dial[1][bandit[1]], dial[2][bandit[2]]]
-                payoff.value = 0
+                payoff.value = 0n
                 if (face[0] == '*WILD*' && face[1] == '*WILD*' && face[2] == '*WILD*') {
-                    payoff.value = 500 * amount.value
+                    payoff.value = 500n * amount.value
                     for (let i = 0; i < 8; i++) {
                         vt.beep()
                         for (let j = 0; j < 8; j++) {
@@ -746,7 +708,7 @@ module Casino {
                 else if ((face[0] == '=LUCK=' || face[0] == '*WILD*')
                     && (face[1] == '=LUCK=' || face[1] == '*WILD*')
                     && (face[2] == '=LUCK=' || face[2] == '*WILD*')) {
-                    payoff.value = 400 * amount.value
+                    payoff.value = 400n * amount.value
                     for (let i = 0; i < 4; i++) {
                         vt.beep()
                         for (let j = 0; j < 8; j++) {
@@ -761,7 +723,7 @@ module Casino {
                 else if ((face[0] == '<BELL>' || face[0] == '*WILD*')
                     && (face[1] == '<BELL>' || face[1] == '*WILD*')
                     && (face[2] == '<BELL>' || face[2] == '*WILD*')) {
-                    payoff.value = 100 * amount.value
+                    payoff.value = 100n * amount.value
                     for (let i = 0; i < 8; i++) {
                         vt.beep()
                         vt.out(i % 8 + 30, 'YOU WIN! ')
@@ -773,34 +735,34 @@ module Casino {
                 else if ((face[0] == 'ORANGE' || face[0] == '*WILD*')
                     && (face[1] == 'ORANGE' || face[1] == '*WILD*')
                     && (face[2] == 'ORANGE' || face[2] == '*WILD*')) {
-                    payoff.value = 50 * amount.value
+                    payoff.value = 50n * amount.value
                     vt.beep()
                     vt.music('wild')
                     vt.sleep(2500)
                 }
                 else if (face[0] == 'CHERRY' && face[1] == 'CHERRY' && face[2] == '@BOMB@') {
-                    payoff.value = 25 * amount.value
+                    payoff.value = 25n * amount.value
                     CherryBomb()
                 }
                 else if ((face[0] == ':KIWI:' || face[0] == '*WILD*')
                     && (face[1] == ':KIWI:' || face[1] == '*WILD*')
                     && (face[2] == ':KIWI:' || face[2] == '*WILD*')) {
-                    payoff.value = 20 * amount.value
+                    payoff.value = 20n * amount.value
                 }
                 else if ((face[0] == 'GRAPES' || face[0] == '*WILD*')
                     && (face[1] == 'GRAPES' || face[1] == '*WILD*')
                     && (face[2] == 'GRAPES' || face[2] == '*WILD*')) {
-                    payoff.value = 10 * amount.value
+                    payoff.value = 10n * amount.value
                 }
                 else if ((face[0] == 'CHERRY' || face[0] == '*WILD*')
                     && (face[1] == 'CHERRY' || face[1] == '*WILD*')
                     && (face[2] == 'CHERRY' || face[2] == '*WILD*')) {
-                    payoff.value = 5 * amount.value
+                    payoff.value = 5n * amount.value
                 }
                 else if ((((face[0] == 'CHERRY' || face[0] == '*WILD*')
                     && ((face[1] == 'CHERRY' || face[1] == '*WILD*') || (face[2] == 'CHERRY' || face[2] == '*WILD*')))
                     || ((face[1] == 'CHERRY' || face[1] == '*WILD*') && (face[2] == 'CHERRY' || face[2] == '*WILD*')))) {
-                    payoff.value = 2 * amount.value
+                    payoff.value = 2n * amount.value
                     if (face[0] == '@BOMB@' || face[1] == '@BOMB@' || face[2] == '@BOMB@')
                         CherryBomb()
                 }
@@ -868,7 +830,7 @@ module Casino {
             return (value)
         }
 
-        function RollDice(baby = 0, side = 0): boolean {
+        function RollDice(baby = 0, side = 0n): boolean {
             let d1 = dice(6), d2 = dice(6), n = dice(2) + dice(2)
             vt.out('\x1B[J', vt.faint)
             for (let i = 0; i < n; i++) {
@@ -894,7 +856,7 @@ module Casino {
                                 : (baby == 6 || baby == 8) ? 6
                                     : 5
                 vt.sound('cheer')
-                payoff.value = side * baby
+                payoff.value = side * BigInt(baby)
                 vt.outln('You make your side bet!  You win ', payoff.carry(), '!')
                 $.player.coin.value += payoff.value
             }

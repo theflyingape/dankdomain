@@ -1,9 +1,9 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  EMAIL authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import $ = require('./runtime')
+import $ = require('./play/runtime')
 import db = require('./db')
 import { Access } from './items'
 import { vt } from './lib'

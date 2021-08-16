@@ -1,16 +1,16 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  SQUARE authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import $ = require('../runtime')
+import $ = require('./runtime')
 import db = require('../db')
 import { Armor, Coin, Magic, Poison, Ring, RealEstate, Security, Weapon } from '../items'
 import { armor, bracket, carry, display, log, news, pieces, tradein, vt, weapon } from '../lib'
 import { PC } from '../pc'
 import { elemental } from '../npc'
 import { input } from '../player'
-import { dice, int, money, sprintf, whole } from '../sys'
+import { dice, int, sprintf, uint, whole } from '../sys'
 import Battle = require('./battle')
 
 module Square {
@@ -37,7 +37,7 @@ module Square {
         'T': {}
     }
 
-    let credit = new Coin(0)
+    let credit = new Coin()
 
     let lo = 0, hi = 0, max = 0
     let want = ''
@@ -141,16 +141,7 @@ module Square {
                 if (!$.access.roleplay) break
                 let ac = Armor.name[$.player.armor].ac
                 vt.out('\nYou own a class ', bracket(ac, false), ' ', armor())
-                if (ac) {
-                    let cv = new Coin(Armor.name[$.player.armor].value)
-                    credit.value = tradein(cv.value)
-                    if ($.player.toAC) credit.value = int(credit.value * (ac + $.player.toAC / ($.player.poison + 1)) / ac)
-                    if ($.online.toAC < 0) credit.value = int(credit.value * (ac + $.online.toAC) / ac)
-                    if (credit.value > cv.value)
-                        credit.value = cv.value
-                }
-                else
-                    credit.value = 0
+                credit.value = ac ? tradein(new Coin(Armor.name[$.player.armor].value).value, $.online.cha + int($.xrate * ($.player.toAC + $.online.toAC) / ac)) : 0n
                 vt.outln(' worth ', carry(credit))
 
                 if (ac == 0 && ($.player.toAC < 0 || $.online.toAC < 0)) {
@@ -171,10 +162,10 @@ module Square {
 
             case 'B':
                 if (!$.access.roleplay) break
-                credit.value = tradein(new Coin(RealEstate.name[$.player.realestate].value).value, $.online.cha)
-                credit.value += tradein(new Coin(Security.name[$.player.security].value).value, $.online.cha)
+                credit.value = tradein(new Coin(RealEstate.name[$.player.realestate].value).value)
+                credit.value += tradein(new Coin(Security.name[$.player.security].value).value)
                 credit.value -= $.player.loan.value
-                if (credit.value < 1) credit.value = 0
+                if (credit.value < 1) credit.value = 0n
 
                 vt.action('bank')
                 bank['D'] = { description: 'Money in hand: ' + carry() }
@@ -196,7 +187,7 @@ module Square {
             case 'H':
                 if (!$.access.roleplay) break
                 if (Armor.name[$.player.armor].ac == 0 && ($.online.toAC < 0 || $.player.toAC < 0)) {
-                    credit = new Coin(Math.abs($.online.toAC + $.player.toAC) * money($.player.level) + 1)
+                    credit = new Coin(BigInt(Math.abs($.online.toAC + $.player.toAC)) * PC.money($.player.level) + 1n)
                     vt.action('yn')
                     vt.form = {
                         'skin': {
@@ -209,10 +200,10 @@ module Square {
                                     $.player.coin.value -= credit.value
                                     if ($.player.coin.value < 0) {
                                         $.player.bank.value += $.player.coin.value
-                                        $.player.coin.value = 0
+                                        $.player.coin.value = 0n
                                         if ($.player.bank.value < 0) {
                                             $.player.loan.value -= $.player.bank.value
-                                            $.player.bank.value = 0
+                                            $.player.bank.value = 0n
                                         }
                                     }
                                     $.online.altered = true
@@ -228,7 +219,7 @@ module Square {
                     return
                 }
                 if (Weapon.name[$.player.weapon].wc == 0 && ($.online.toWC < 0 || $.player.toWC < 0)) {
-                    credit = new Coin(Math.abs($.online.toWC + $.player.toWC) * money($.player.level) + 1)
+                    credit = new Coin(BigInt(Math.abs($.online.toWC + $.player.toWC)) * PC.money($.player.level) + 1n)
                     vt.action('yn')
                     vt.form = {
                         'hands': {
@@ -241,10 +232,10 @@ module Square {
                                     $.player.coin.value -= credit.value
                                     if ($.player.coin.value < 0) {
                                         $.player.bank.value += $.player.coin.value
-                                        $.player.coin.value = 0
+                                        $.player.coin.value = 0n
                                         if ($.player.bank.value < 0) {
                                             $.player.loan.value -= $.player.bank.value
-                                            $.player.bank.value = 0
+                                            $.player.bank.value = 0n
                                         }
                                     }
                                     $.online.altered = true
@@ -269,7 +260,7 @@ module Square {
                 vt.outln('\nWelcome to Butler Hospital.\n')
                 vt.outln('Hit points cost ', vt.bright, $.player.level.toString(), vt.normal, ' each.')
                 vt.outln('You need ', vt.bright, hi.toString(), vt.normal, ' hit points.')
-                lo = whole($.player.coin.value / $.player.level)
+                lo = int($.player.coin.value / BigInt($.player.level))
                 vt.outln('You can afford '
                     , vt.bright, lo < hi ? lo.toString() : 'all your', vt.normal, ' hit points.')
                 if (lo < hi) {
@@ -285,15 +276,15 @@ module Square {
                     'hp': {
                         cb: () => {
                             vt.outln()
-                            let buy = whole(/=|max/i.test(vt.entry) ? hi : vt.entry)
+                            let buy = int(/=|max/i.test(vt.entry) ? hi : vt.entry)
                             if (buy > 0 && buy <= hi) {
-                                $.player.coin.value -= buy * $.player.level
+                                $.player.coin.value -= BigInt(buy * $.player.level)
                                 if ($.player.coin.value < 0) {
                                     if (!$.player.novice) $.player.bank.value += $.player.coin.value
-                                    $.player.coin.value = 0
+                                    $.player.coin.value = 0n
                                     if ($.player.bank.value < 0) {
                                         $.player.loan.value -= $.player.bank.value
-                                        $.player.bank.value = 0
+                                        $.player.bank.value = 0n
                                     }
                                 }
                                 $.online.hp += buy
@@ -336,7 +327,7 @@ module Square {
                             return
                         }
 
-                        credit.value = int(money(opponent.user.level) * (100 - $.online.cha + 1) / 100 + 1)
+                        credit.value = PC.money(opponent.user.level) * 100n / BigInt($.online.cha)
                         vt.out(`It will cost you ${carry(credit)} to bail out ${opponent.user.handle}.\n`)
                         if ($.player.coin.value < credit.value) {
                             menu()
@@ -412,7 +403,7 @@ module Square {
                 }
                 vt.out(vt.faint, '\nYou attempt to pick a passerby\'s pocket... ', -1000)
 
-                credit.value = dice(6 * money($.player.level) / dice(10))
+                credit.value = whole(BigInt(dice(6)) * PC.money($.player.level) / BigInt(dice(10)))
                 let pocket = PC.encounter(`AND novice = 0 AND id NOT GLOB '_*'`).user
                 if (pocket.id) {
                     PC.load(pocket)
@@ -530,16 +521,7 @@ module Square {
                 if (!$.access.roleplay) break
                 let wc = Weapon.name[$.player.weapon].wc
                 vt.out('\nYou own a class ', bracket(wc, false), ' ', weapon())
-                if (wc) {
-                    let cv = new Coin(Weapon.name[$.player.weapon].value)
-                    credit.value = tradein(cv.value, $.online.cha)
-                    if ($.player.toWC) credit.value = int(credit.value * (wc + $.player.toWC / ($.player.poison + 1)) / wc)
-                    if ($.online.toWC < 0) credit.value = int(credit.value * (wc + $.online.toWC) / wc)
-                    if (credit.value > cv.value)
-                        credit.value = cv.value
-                }
-                else
-                    credit.value = 0
+                credit.value = wc ? tradein(new Coin(Weapon.name[$.player.weapon].value).value, $.online.cha + int($.xrate * ($.player.toWC + $.online.toWC) / wc)) : 0n
                 vt.outln(' worth ', carry(credit))
 
                 if (wc == 0 && ($.player.toWC < 0 || $.online.toWC < 0)) {
@@ -616,7 +598,7 @@ module Square {
                 }
 
                 let d = $.player.level + 1
-                let vault = Math.pow(d, 7) * dice(d / 3) * dice(d / 11)
+                let vault = BigInt(Math.pow(d, 7) * dice(d / 3) * dice(d / 11))
                 let loot = new Coin(vault)
 
                 vt.sound('creak2', 12)
@@ -679,7 +661,7 @@ module Square {
     function amount() {
         if (whole(vt.entry).toString() == vt.entry) vt.entry += 'c'
         let action = vt.form['coin'].prompt.split(' ')[0]
-        let amount = new Coin(0)
+        let amount = new Coin()
 
         switch (action) {
             case 'Deposit':
@@ -690,10 +672,10 @@ module Square {
                         $.player.loan.value -= amount.value
                         if ($.player.loan.value < 0) {
                             amount.value = -$.player.loan.value
-                            $.player.loan.value = 0
+                            $.player.loan.value = 0n
                         }
                         else
-                            amount.value = 0
+                            amount.value = 0n
                     }
                     $.player.bank.value += amount.value
                     $.online.altered = true
@@ -722,7 +704,7 @@ module Square {
                 break
 
             case 'Treasury':
-                amount = new Coin(/=|max/i.test(vt.entry) ? 1e+17 : vt.entry)
+                amount = new Coin(/=|max/i.test(vt.entry) ? '10000p' : vt.entry)
                 if (amount.value > 0) {
                     $.player.coin.value += amount.value
                     vt.beep()
@@ -762,7 +744,7 @@ module Square {
             return
         }
 
-        let n = whole(vt.entry)
+        let n = uint(vt.entry)
         if (n < 1) n = 1
         if ((/R|S/.test(want) && n < lo) || n > max) {
             vt.beep(true)
@@ -780,7 +762,7 @@ module Square {
             return
         }
 
-        let n = whole(vt.entry)
+        let n = uint(vt.entry)
         if (n < lo) n = lo
         if (n > max) n = max
         hi = n
@@ -849,7 +831,7 @@ module Square {
             return
         }
 
-        let buy = whole(vt.entry)
+        let buy = uint(vt.entry)
         if (buy < lo || buy > hi) {
             vt.refocus()
             return

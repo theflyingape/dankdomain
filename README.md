@@ -7,9 +7,9 @@
 ## _Read the_ [Player's Manual](https://www.ddgame.us) _to play the_ [online game](https://play.ddgame.us)
 
 ---
->**Ɗaɳƙ Ɗoɱaiɳ** is the re-imagined classic Amiga bulletin board, [Hack & Slash](https://github.com/theflyingape/rpgbbs), built around a medieval role-playing atmosphere. Your character kills, steals, brawls, and jousts other PCs, NPCs, and BOTs to gain levels and fortune. Successful ventures into its deep dank dungeon are the keys to immortality.
+>**Ɗaɳƙ Ɗoɱaiɳ** is the re-imagined classic Amiga bulletin board, [Hack & Slash](https://github.com/theflyingape/rpgbbs), built around a medieval role-playing atmosphere. Your character kills, steals, brawls, and jousts other PCs, NPCs, and BOTs to gain levels and fortune. Successful ventures into the deep dank dungeon are keys to immortality.
 
-*Original Amiga* **Hack & Slash** *enthusiasts can visit:*  [Absinthe BBS](https://www.telnetbbsguide.com/bbs/absinthe-bbs/) *by Anachronist*
+*Original Commodore Amiga* **Hack & Slash** *enthusiasts can visit:*  [Absinthe BBS](https://www.telnetbbsguide.com/bbs/absinthe-bbs/) *by Anachronist*
 
 ---
 
@@ -111,8 +111,6 @@ $ pwd
 /usr/games/dankdomain
 .vscode           Visual Studio Code: settings & debug profiles
 game
-  characters      user object type templates for BOTs, NPCs, and PCs
-  dd              game modules for each main menu item
   etc             system support files
   files           game, menu & player support files: ANSI and/or text formats
     arena         ASCII art & menu files
@@ -127,7 +125,9 @@ game
     square        menu files
     tavern        all player events logged for the day
     user          each player’s events logged since last visit
-  portal          ƊƊnet app.js server with browser client.js
+  pcs             user object type templates for BOTs, NPCs, and PCs
+  play            game modules for each main menu item
+  portal          DDnet app.js server with browser client.js
     static        game portal with browser bundle.js
     assets        app install, fonts, etc.
     images        visual media for artifacts, creatures, and players
@@ -142,7 +142,7 @@ email.js          support module for (optional) dispatching email notifications
 interfaces.js     TypeScript object types
 items.js          support module for loading item artifacts & coin
 lib.js            support module for common I/O functions
-main.js           ƊƊplay client node
+main.js           DDplay client node
 pc.js             support classes for BOTs, NPCs and PCs with Deeds
 player.js         support module for common PC functions
 runtime.js        global runtime variables to govern play

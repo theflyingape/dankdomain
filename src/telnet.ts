@@ -1,16 +1,16 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                *
+ *  Dank Domain: the return of Hack & Slash                                *
  *  TELNET authored by: Robert Hurst <theflyingape@gmail.com>                *
  *                                                                           *
- *  ƊƊterm (telnet)  <-->  websocket client interface                       *
- *  into ƊƊnet (app)  <-->  ƊƊplay (main)                                  *
+ *  DDterm (telnet)  <-->  websocket client interface                        *
+ *  into DDnet (app)  <-->  DDplay (main)                                    *
 \*****************************************************************************/
 
 import child = require('child_process')
 import dns = require('dns')
 import ws = require('ws')
 
-process.title = 'ƊƊterm'
+process.title = 'DDterm'
 process.chdir(__dirname)
 import { fs, got, pathTo } from './sys'
 
@@ -61,8 +61,8 @@ dns.lookup(host, (err, addr, family) => {
                                 console.error(err.statusCode, err.statusMessage)
                             else
                                 console.error(err.name, err.code)
-                            console.log(`Perhaps ƊƊnet is not running, try: npm run serve &`)
-                            console.log(` or run ƊƊplay as standalone, try: npm run play`)
+                            console.log(`Perhaps DDnet is not running, try: npm run serve &`)
+                            console.log(` or run DDplay as standalone, try: npm run play`)
                             process.exit()
                         })
                 }
@@ -74,7 +74,7 @@ dns.lookup(host, (err, addr, family) => {
 
         app.then(pid => {
             mixer2 = child.spawn('playmus', ['dankdomain.ogg'], { cwd: pathTo('portal/static/sounds'), stdio: 'ignore' })
-            process.stdout.write(`ƊƊplay (${pid}) started on ƊƊnet\r\n`)
+            process.stdout.write(`DDplay (${pid}) started on DDnet\r\n`)
             process.stdout.write(`\x1B[0;2m→ terminal WebSocket (${addr}:${port}) ... `)
 
             try {

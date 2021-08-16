@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  DOOR authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
 import chokidar = require('chokidar')
@@ -12,8 +12,8 @@ import net = require('net')
 import pty = require('node-pty')
 import ws = require('ws')
 
-process.title = 'ƊƊnet'
-console.log(`Ɗaɳƙ Ɗoɱaiɳ (${process.title}) started on ${process.platform} #${process.pid}`)
+process.title = 'DDnet'
+console.log(`Dank Domain (${process.title}) started on ${process.platform} #${process.pid}`)
 
 //  process signal traps
 process.on('uncaughtException', (err, origin) => {
@@ -65,11 +65,10 @@ function bot() {
         if (!sysop.immortal || sysop.immortal == i) return
         db.saveUser(sysop)
 
-        const client = 'Rivendell'
-        let pid = login(client, network.rows, 80, network.emulator, [elemental.id])
+        let pid = login(elemental.remote, network.rows, 80, network.emulator, [elemental.id])
         let term = sessions[pid]
         term.spawn.dispose()
-        console.log(`Startup BOT #${sysop.immortal} (${elemental.id}) from ${client} → session ${pid}`)
+        console.log(`Startup BOT #${sysop.immortal} (${elemental.id}) from ${elemental.remote} → session ${pid}`)
 
         //  consume app output
         term.onData((data) => {
@@ -413,7 +412,7 @@ dns.lookup(network.address, (err, addr, family) => {
                 }
             }
 
-            const monsters = JSON.parse(fs.readFileSync(pathTo('characters', 'dungeon.json')).toString())
+            const monsters = JSON.parse(fs.readFileSync(pathTo('pcs', 'dungeon.json')).toString())
             let level = 0
             for (let n in monsters) {
                 let pc = monsters[n].pc
@@ -434,13 +433,13 @@ dns.lookup(network.address, (err, addr, family) => {
                 else {
                     let userPNG = `user/${id}`
                     try {
-                        fs.accessSync(`./static/images/${userPNG}.png`, fs.constants.F_OK)
+                        fs.accessSync(`static/images/${userPNG}.png`, fs.constants.F_OK)
                     } catch (e) {
                         userPNG = 'player/' + pc.toLowerCase() + (gender == 'F' ? '_f' : '')
                     }
                     profile['png'] = userPNG
                     try {
-                        fs.accessSync(`./static/images/${userPNG}.png`, fs.constants.F_OK)
+                        fs.accessSync(`static/images/${userPNG}.png`, fs.constants.F_OK)
                         list.push(profile)
                     } catch (e) { }
                 }

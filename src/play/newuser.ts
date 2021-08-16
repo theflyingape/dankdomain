@@ -1,9 +1,9 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  NEWUSER authored by: Robert Hurst <theflyingape@gmail.com>               *
 \*****************************************************************************/
 
-import $ = require('../runtime')
+import $ = require('./runtime')
 import { Access } from '../items'
 import { loadUser } from '../db'
 import { bracket, vt } from '../lib'

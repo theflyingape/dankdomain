@@ -1,16 +1,16 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  TAVERN authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import $ = require('../runtime')
+import $ = require('./runtime')
 import db = require('../db')
 import { Access, Coin, Weapon } from '../items'
 import { bracket, carry, cat, display, news, vt } from '../lib'
 import { PC } from '../pc'
 import { elemental } from '../npc'
 import { checkXP, input } from '../player'
-import { cuss, dice, fs, int, money, pathTo, sprintf, whole } from '../sys'
+import { cuss, dice, fs, int, pathTo, sprintf, uint, whole } from '../sys'
 import Battle = require('./battle')
 import Taxman = require('./taxman')
 
@@ -119,7 +119,6 @@ module Tavern {
                     'tip': {
                         cb: () => {
                             vt.outln('\n')
-                            if ((+vt.entry).toString() == vt.entry) vt.entry += 'c'
                             let tip = (/=|max/i.test(vt.entry)) ? $.player.coin.value : new Coin(vt.entry).value
                             if (tip < 1 || tip > $.player.coin.value) {
                                 vt.sound('oops')
@@ -152,12 +151,12 @@ module Tavern {
                                 `Higher intellect calculates opponent's hit points more accurately`,
                                 `50+ Intellect points are needed to map where you've been walking`,
                                 'Resurrect works on ALL dead folk, not creatures',
-                                `Death challenge your gang's leader in the Arena`,
+                                `Death match if you take on your gang's leader in the Arena`,
                                 'Blessed/Cursed does not carry over to the next day',
                                 `Killing the town's barkeep will lose you favor with its folks`,
-                                'Deeper dungeon portals is a key to victory',
+                                'Deeper dungeon portals is the key to victory',
                                 `I'll have more hints tomorrow.  Maybe`
-                            ][tip % 22])
+                            ][uint(<unknown>(tip % 22n))])
                             vt.outln('."', -1000)
                             menu()
                         }, prompt: 'How much will you tip? ', max: 8
@@ -206,7 +205,7 @@ module Tavern {
                         menu()
                         return
                     }
-                    let max = new Coin(10 * money(opponent.user.level)).pick(1)
+                    let max = new Coin(10n * PC.money(opponent.user.level)).pick(1)
                     if (max.value > $.player.coin.value) max.value = $.player.coin.pick(1).value
 
                     vt.action('payment')
@@ -287,15 +286,15 @@ module Tavern {
 
                         PC.load($.barkeep)
                         let trophy = JSON.parse(fs.readFileSync(mantle).toString())
-                        $.barkeep.user.toWC = whole($.barkeep.weapon.wc / 5)
+                        $.barkeep.user.toWC = uint($.barkeep.weapon.wc / 5)
                         if ($.barkeep.weapon.wc < Weapon.merchant.length)
                             $.barkeep.toWC += int((Weapon.merchant.length - $.barkeep.weapon.wc) / 10) + 1
 
                         vt.outln(`\n${$.barkeep.user.handle} towels ${PC.who($.barkeep).his}hands dry from washing the day\'s\nglasses, ${PC.who($.barkeep).he}warns,\n`)
-                        vt.outln(vt.bright, vt.green, '"Another fool said something like that to me, once, and got all busted up."\n', -5000)
+                        vt.outln(vt.green, vt.bright, '"Another fool said something like that to me, once, and got all busted up."\n', -5000)
                         let fool = <active>{ user: { id: trophy.who, handle: 'a pirate', gender: 'M' } }
                         PC.load(fool)
-                        vt.outln(vt.bright, vt.green, `"I think it was ${fool.user.handle}, and it took me a week to clean up the blood!"\n`, -4000)
+                        vt.outln(vt.green, vt.bright, `"I think it was ${fool.user.handle}, and it took me a week to clean up the blood!"\n`, -4000)
 
                         vt.music('tiny')
                         vt.out(`${PC.who($.barkeep).He}points to a buffed weapon hanging over the mantlepiece and says, `

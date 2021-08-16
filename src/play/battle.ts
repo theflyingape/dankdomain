@@ -1,16 +1,16 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  BATTLE authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
-import $ = require('../runtime')
+import $ = require('./runtime')
 import db = require('../db')
 import { Access, Armor, Coin, Magic, Poison, Ring, Weapon } from '../items'
-import { armor, bracket, buff, carry, death, getRing, log, news, pieces, rings, tradein, vt, weapon } from '../lib'
+import { armor, bracket, buff, carry, death, getRing, log, news, rings, tradein, vt, weapon } from '../lib'
 import { Deed, PC } from '../pc'
 import { elemental } from '../npc'
 import { checkXP, input } from '../player'
-import { an, cuss, date2full, dice, fs, int, money, pathTo, sprintf, titlecase, whole } from '../sys'
+import { an, cuss, date2full, dice, fs, int, pathTo, sprintf, titlecase, uint, whole } from '../sys'
 
 module Battle {
 
@@ -48,7 +48,7 @@ module Battle {
 
         if ($.from == 'Merchant') {
             if ($.online.hp < 1) {
-                $.player.coin.value = 0
+                $.player.coin.value = 0n
                 death($.reason || `refused ${$.dwarf.user.handle}`)
                 vt.outln('  ', vt.yellow, vt.bright, `"Next time bring friends."`)
                 vt.sound('punk', 8)
@@ -77,7 +77,7 @@ module Battle {
                 PC.adjust('dex', -2, -1, -1)
                 PC.adjust('cha', -2, -1, -1)
             }
-            $.player.coin.value = 0
+            $.player.coin.value = 0n
             vt.beep()
             Battle.yourstats()
         }
@@ -99,7 +99,7 @@ module Battle {
                 $.reason = `schooled by ${$.barkeep.user.handle}`
                 //  go crazy!
                 vt.sound('winner', 32)
-                $.player.coin.value = 0
+                $.player.coin.value = 0n
                 vt.outln('\n  ', vt.green, vt.bright, `"Drinks are on the house!"`, -2250)
             }
             else {
@@ -125,15 +125,7 @@ module Battle {
 
         if (/Gates|Taxman/.test($.from)) {
             if ($.online.hp < 1) {
-                $.player.coin.value -= $.taxman.user.coin.value
-                if ($.player.coin.value < 0) {
-                    $.player.bank.value += $.player.coin.value
-                    $.player.coin.value = 0
-                    if ($.player.bank.value < 0) {
-                        $.player.loan.value -= $.player.bank.value
-                        $.player.bank.value = 0
-                    }
-                }
+                PC.payment($.taxman.user.coin.value)
                 vt.beep()
                 death($.reason || 'tax evasion')
                 vt.outln('  ', vt.blue, vt.bright, `"Thanks for the taxes!"`)
@@ -150,7 +142,7 @@ module Battle {
 
         if ($.from == 'Witch') {
             if ($.online.hp < 1) {
-                $.player.coin.value = 0
+                $.player.coin.value = 0n
                 death($.reason || `refused ${$.witch.user.handle}`)
                 vt.outln('  ', vt.green, vt.bright, `"Hell hath no fury like a woman scorned."`)
                 vt.sound('crone', 30)
@@ -730,12 +722,12 @@ module Battle {
 
             // player(s) can collect off each corpse
             let tl = [1, 1]
-            let take: number = 0
-            let coin = new Coin(0)
+            let coin = new Coin()
+            let take = coin.value
 
             for (let m in parties[w]) {
                 tl[w] += parties[w][m].user.xplevel
-                take += money(parties[w][m].user.xplevel + 1)
+                take += PC.money(parties[w][m].user.xplevel + 1)
             }
 
             for (let m in parties[l]) {
@@ -746,21 +738,21 @@ module Battle {
                     log(loser.user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`)
                     if (loser.user.coin.value)
                         log(loser.user.id, `You lost ${loser.user.coin.amount} you were carrying.`)
-                    loser.user.coin.value = 0
+                    loser.user.coin.value = 0n
                     PC.save(loser)
                 }
             }
 
             for (let m in parties[w]) {
                 //  dead member gets less of the booty, taxman always gets a cut
-                let cut = parties[w][m].hp > 0 ? 0.95 : 0.45
-                let max = int(((4 + parties[w].length - parties[l].length) / 2) * 1250 * money(parties[w][m].user.xplevel) * cut)
-                let award = int(coin.value * money(parties[w][m].user.xplevel) / take * cut)
+                let cut = parties[w][m].hp > 0 ? 95n : 45n
+                let max = whole(BigInt((4 + parties[w].length - parties[l].length) / 2) * 1250n * PC.money(parties[w][m].user.xplevel) * cut / 100n)
+                let award = whole(coin.value * PC.money(parties[w][m].user.xplevel) / take * cut / 100n)
                 award = award > coin.value ? coin.value : award
-                award = award < 1 ? 0 : award > max ? max : award
+                award = award > max ? max : award
                 parties[w][m].user.coin.value += award
                 coin.value -= award
-                take -= money(parties[w][m].user.xplevel)
+                take -= PC.money(parties[w][m].user.xplevel)
 
                 let xp = int(PC.experience(parties[w][m].user.xplevel)
                     * tl[l] / tl[w] / ((4 + parties[w].length - parties[l].length) / 2))
@@ -782,7 +774,7 @@ module Battle {
             }
 
             //  taxman takes any leftovers, but capped at 1p
-            coin.value = coin.value < 1 ? 0 : coin.value > 1e+13 ? 1e+13 : coin.value
+            if (coin.value > coin.PLATINUM) coin.value = coin.PLATINUM
             if (coin.value) {
                 vt.outln()
                 vt.beep()
@@ -806,7 +798,7 @@ module Battle {
         if (l) {
             // player can collect off each corpse
             let xp: number = 0
-            let coin = new Coin(0)
+            let coin = new Coin()
 
             for (let m in parties[l]) {
                 // defeated?
@@ -843,7 +835,7 @@ module Battle {
 
                     if (loser.user.coin.value) {
                         coin.value += loser.user.coin.value
-                        loser.user.coin.value = 0
+                        loser.user.coin.value = 0n
                         loser.altered = true
                     }
 
@@ -904,7 +896,7 @@ module Battle {
                             vt.outln(`You get the ${carry(loser.user.bounty)} bounty posted by ${loser.user.who}, too.`)
                             log(loser.user.id, `... and got paid the bounty posted by ${loser.user.who}.`)
                             winner.user.coin.value += loser.user.bounty.value
-                            loser.user.bounty.value = 0
+                            loser.user.bounty.value = 0n
                             loser.user.who = ''
                         }
                         vt.out(600)
@@ -929,7 +921,7 @@ module Battle {
             if ($.player.coin.value) {
                 winner.user.coin.value += $.player.coin.value
                 vt.outln(vt.reset, winner.who.He, 'gets ', carry($.player.coin), ' you were carrying.\n')
-                $.player.coin.value = 0
+                $.player.coin.value = 0n
             }
             vt.sleep(600)
 
@@ -1047,7 +1039,7 @@ module Battle {
             if (loser.user.coin.value) {
                 vt.outln(`${loser.who.He}was carrying ${carry(loser.user.coin)}`, -600)
                 winner.user.coin.value += loser.user.coin.value
-                loser.user.coin.value = 0
+                loser.user.coin.value = 0n
             }
             winner.user.tw++
 
@@ -1059,7 +1051,7 @@ module Battle {
                     m >>= 1
                 m++
                 let wtf = m > 5 ? 'f eht tahw' : 'z.Z.z'
-                vt.sessionAllowed = whole(vt.sessionAllowed - 60 * m) + 60
+                vt.sessionAllowed = uint(vt.sessionAllowed - 60 * m) + 60
                 vt.out(`\nYou are unconscious for ${m} minute`, m !== 1 ? 's' : '', '...'
                     , -600, vt.faint)
                 for (let i = 0; i < m; i++)
@@ -1104,14 +1096,14 @@ module Battle {
             return
         }
 
-        if (rpc === $.online) {
+        if (rpc == $.online) {
             p1 = PC.who(rpc)
             vt.action('list')
             vt.form = {
                 'magic': {
                     cb: () => {
                         vt.outln()
-                        const n = whole(vt.entry)
+                        const n = uint(vt.entry)
                         if (vt.entry !== '?' && !n) {
                             gb(true)
                             return
@@ -1460,7 +1452,7 @@ module Battle {
                     }
                     else {
                         if (rpc === $.online) {
-                            vt.sessionAllowed = whole(vt.sessionAllowed - 60) + 3 * $.dungeon + 1
+                            vt.sessionAllowed = uint(vt.sessionAllowed - 60) + 3 * $.dungeon + 1
                             teleported = true
                         }
                         else
@@ -1474,8 +1466,8 @@ module Battle {
                     let ba = 10 + rpc.user.blast
                         + int(rpc.user.level / (20 - rpc.user.magic))
                         - (backfire
-                            ? int(whole(rpc.armor.ac + rpc.user.toAC + rpc.toWC) / 5)
-                            : int(whole(nme.armor.ac + nme.user.toAC + nme.toWC) / 5)
+                            ? int((rpc.armor.ac + rpc.user.toAC + rpc.toWC) / 5)
+                            : int((nme.armor.ac + nme.user.toAC + nme.toWC) / 5)
                         )
                     if (nme.user.melee > 3) ba *= int(nme.user.melee / 2)
                     let br = int(rpc.int / 10)
@@ -1648,7 +1640,7 @@ module Battle {
                     vt.out(Caster, PC.what(rpc, 'render'), 'an image of ')
                     let iou: active = { user: PC.reroll(db.fillUser(), undefined, rpc.user.level) }
                     iou.user.xplevel = -1
-                    iou.user.coin = new Coin(0)
+                    iou.user.coin = new Coin()
                     iou.user.sp = 0
                     PC.activate(iou)
                     let p = round[0].party
@@ -1777,8 +1769,8 @@ module Battle {
                     let bba = 12 + rpc.user.blast
                         + int(rpc.user.level / (20 - rpc.user.magic))
                         - (backfire
-                            ? int(whole(rpc.armor.ac + rpc.user.toAC + rpc.toWC) / 5)
-                            : int(whole(nme.armor.ac + nme.user.toAC + nme.toWC) / 5)
+                            ? int((rpc.armor.ac + rpc.user.toAC + rpc.toWC) / 5)
+                            : int((nme.armor.ac + nme.user.toAC + nme.toWC) / 5)
                         )
                     if (nme.user.melee > 3) bba *= int(nme.user.melee / 2)
                     let bbr = int(rpc.int / 10)
@@ -2229,7 +2221,7 @@ module Battle {
                     rpc.toWC = rpc.toWC >= 0 ? t : rpc.toWC + t
             }
 
-            if (!Poison.have(rpc.user.poisons, vial) || whole(rpc.user.weapon) > 0) {
+            if (!Poison.have(rpc.user.poisons, vial) || int(rpc.user.weapon) > 0) {
                 vt.sound('ooze')
                 vt.outln(vt.green, vt.bright, p1.He, PC.what(rpc, 'secrete'), 'a caustic ooze', vt.reset, buff(p, t), -400)
             }
@@ -2304,7 +2296,7 @@ module Battle {
             },
             'start': {
                 cb: () => {
-                    let n = whole(vt.entry)
+                    const n = int(vt.entry)
                     if (n > 0 && n < 100) start = n
                     vt.form['end'].prompt = '  Ending level ' + bracket(end, false) + ': '
                     input('end', '99', 500)
@@ -2314,7 +2306,7 @@ module Battle {
             },
             'end': {
                 cb: () => {
-                    let n = whole(vt.entry)
+                    const n = int(vt.entry)
                     if (n >= start && n < 100) end = n
 
                     vt.outln()

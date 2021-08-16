@@ -1,9 +1,9 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  SYSOP authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import $ = require('../runtime')
+import $ = require('./runtime')
 import db = require('../db')
 import Email = require('../email')
 import { bracket, display, vt } from '../lib'

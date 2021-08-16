@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  INTERFACES authored by: Robert Hurst <theflyingape@gmail.com>            *
 \*****************************************************************************/
 
@@ -104,11 +104,16 @@ interface choices {
 }
 
 interface coin {
-    value: number
+    MAX: bigint
+    PLATINUM: bigint
+    GOLD: bigint
+    SILVER: bigint
+    COPPER: bigint
+    value: bigint
     amount: string
-    carry(coin?: coin, bags?: number)
+    carry(coins?: coin, bags?: number)
     pick(bag?: number): coin
-    pouch(coins?: number): string
+    pouch(coins?: bigint): string
 }
 
 interface ddd {
@@ -178,7 +183,7 @@ interface naval {
     shot: number
     powder: number
     ram: boolean
-    money?: string | number
+    money?: string | bigint
 }
 
 interface network {

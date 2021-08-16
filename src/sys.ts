@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  SYS authored by: Robert Hurst <theflyingape@gmail.com>                   *
 \*****************************************************************************/
 
@@ -53,30 +53,30 @@ module sys {
 
         if (date.search('/') > 0) {
             pieces = date.split('/')
-            month = whole(pieces[0])
-            day = whole(pieces[1])
-            year = whole(pieces[2])
+            month = int(pieces[0])
+            day = int(pieces[1])
+            year = int(pieces[2])
         }
         else if (date.search('-') > 0) {
             pieces = date.split('-')
-            month = whole(pieces[0])
-            day = whole(pieces[1])
+            month = int(pieces[0])
+            day = int(pieces[1])
             if (day == 0) {
                 day = month
                 for (month = 0; month < 12 && mon[month].toLowerCase() == pieces[1].substr(0, 3).toLowerCase(); month++) { }
                 month++
             }
-            year = whole(pieces[2])
+            year = int(pieces[2])
         }
-        else if (whole(date) > 18991231) {
-            year = whole(date.substr(0, 4))
-            month = whole(date.substr(4, 2))
-            day = whole(date.substr(6, 2))
+        else if (int(date) > 18991231) {
+            year = int(date.substr(0, 4))
+            month = int(date.substr(4, 2))
+            day = int(date.substr(6, 2))
         }
         else {
-            month = whole(date.substr(0, 2))
-            day = whole(date.substr(2, 2))
-            year = whole(date.substr(4, 4))
+            month = int(date.substr(0, 2))
+            day = int(date.substr(2, 2))
+            year = int(date.substr(4, 4))
         }
 
         month = (month < 1) ? 1 : (month > 12) ? 12 : month
@@ -121,7 +121,7 @@ module sys {
     }
 
     export function dice(faces: number): number {
-        return int(Math.random() * whole(faces)) + 1
+        return int(Math.random() * faces) + 1
     }
 
     //  normalize as an integer
@@ -130,10 +130,6 @@ module sys {
         n = Math.trunc(n)   //  strip any fractional part
         if (n == 0) n = 0   //  strip any negative sign (really)
         return n
-    }
-
-    export function money(level: number): number {
-        return int(Math.pow(2, (level - 1) / 2) * 10 * (101 - level) / 100)
     }
 
     export function now(): { date: number, time: number } {
@@ -146,10 +142,20 @@ module sys {
         return path.resolve(PATH, folder, file)
     }
 
-    //  non-negative integer
-    export function whole(n: string | number): number {
-        const i = int(n)
-        return (i < 0) ? 0 : i
+    //  normalize as a non-negative integer
+    export function uint(n: any): number {
+        n = int(n)
+        if (n < 0) n = 0
+        return n
+    }
+
+    //  normalize as a non-negative 64-bit integer
+    export function whole(n: any): bigint {
+        if (typeof n == 'bigint')
+            n = n <= 0 ? 0 : n
+        else
+            n = uint(n)
+        return BigInt(n)
     }
 }
 

@@ -1,6 +1,6 @@
 /*****************************************************************************\
- *  👑 Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash    [ https://www.DDgame.us ]  *
- *  🖥 TTY MAIN authored by: Robert Hurst <theflyingape@gmail.com>           *
+ *  👑 Dank Domain: the return of Hack & Slash    [ https://www.DDgame.us ]  *
+ *  🖥 MAIN authored by: Robert Hurst <theflyingape@gmail.com>               *
  *  💫 in memory of Ronald Hurst, aka, Imagination and Nobody [ 1939-2016 ]  *
  *                                                                           *
  *  Node.js dankdomain                          (C) 2017-2021 Robert Hurst   *
@@ -15,14 +15,14 @@
 process.on(`${process.title} uncaughtException`, (err, origin) => {
     console.error(`${origin} ${err}`)
 })
-process.title = 'ƊƊplay'
+process.title = 'DDplay'
 
 //  check for BBS node -> door startup for user
 const bbs = `${process.cwd()}/door.sys`
 
 process.chdir(__dirname)
 
-import { whole } from './sys'
+import { int } from './sys'
 import { door, vt } from './lib'
 
 vt.emulation = <EMULATION>(
@@ -37,7 +37,7 @@ vt.emulation = <EMULATION>(
 const userID = process.argv.length > 2 ? process.argv[2].toUpperCase() : ''
 if (userID.length) {
     vt.emulation = 'VT'
-    if (userID == whole(userID).toString()) {
+    if (userID == int(userID).toString()) {
         const user = door(bbs)
         if (userID == user[25]) {
             if (user[19] == 'GR') vt.emulation = 'PC'
@@ -92,7 +92,7 @@ function logon() {
     vt.outln(vt.cyan, vt.bright, vt.emulation, vt.normal, ' emulation ', vt.faint, 'enabled')
 
     if (userID)
-        require('./dd/logon').startup(userID)
+        require('./play/init').startup(userID)
     else
-        require('./dd/logon').user(prompt)
+        require('./play/init').user(prompt)
 }

@@ -1,18 +1,18 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
- *  LOGON authored by: Robert Hurst <theflyingape@gmail.com>                 *
+ *  Dank Domain: the return of Hack & Slash                                  *
+ *  INIT authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
 
-import $ = require('../runtime')
+import $ = require('./runtime')
 import db = require('../db')
 import { Access, Coin, Magic, Ring } from '../items'
 import { bracket, cat, emulator, getRing, news, time, vt } from '../lib'
 import { Deed, PC } from '../pc'
 import { } from '../npc'
 import { input, logoff, pickPC } from '../player'
-import { an, cuss, date2full, dice, fs, got, money, now, pathTo, titlecase, whole } from '../sys'
+import { an, cuss, date2full, dice, fs, got, int, now, pathTo, titlecase, whole } from '../sys'
 
-module Logon {
+module Init {
 
     if ($.sysop.lastdate != now().date) {
         newDay()
@@ -39,15 +39,15 @@ module Logon {
 
             switch (--retry) {
                 case 2:
-                    vt.outln('The guards eye you suspiciously.')
+                    vt.outln(vt.faint, 'The guards eye you suspiciously.')
                     break
                 case 1:
-                    vt.outln('The guards aim their crossbows at you.')
+                    vt.outln(vt.faint, 'The guards aim their crossbows at you.')
                     break
                 default:
                     vt.profile({ handle: '💀 🏹 💘 🏹 💀', jpg: 'npc/stranger', effect: 'zoomIn' })
-                    vt.outln('The last thing you ever feel is several quarrels cutting deep into your chest.')
-                    vt.sound('stranger', 8)
+                    vt.outln(vt.faint, 'The last thing you ever feel is several quarrels cutting deep into your chest.')
+                    vt.sound('stranger', 6)
                     vt.form = {
                         'forgot': {
                             cb: () => {
@@ -158,7 +158,7 @@ module Logon {
 
             if (!$.player.id) {
                 if (vt.tty == 'door' && $.door.length) {
-                    $.player.rows = whole($.door[20]) || 24
+                    $.player.rows = int($.door[20]) || 24
                     emulator(() => {
                         $.player.id = userID
                         $.player.name = $.door[9]
@@ -340,7 +340,7 @@ module Logon {
             vt.outln(vt.bright, vt.black, '(', vt.magenta, 'PRISONER', vt.black, ')')
             vt.outln(vt.red, '\nYou are locked-up in jail.', -1200)
             if ($.access.roleplay && dice(2 * $.online.cha) > (10 - 2 * $.player.steal)) {
-                let bail = new Coin(Math.round(money($.player.level) * (101 - $.online.cha) / 100))
+                let bail = new Coin(PC.money($.player.level) * BigInt(101 - $.online.cha) / 100n)
                 vt.outln('\nIt will cost you ', bail.carry(), ' to get bailed-out and to continue play.')
                 vt.form = {
                     'bail': {
@@ -348,16 +348,8 @@ module Logon {
                             vt.outln('\n')
                             if (/Y/i.test(vt.entry)) {
                                 vt.sound('click')
-                                $.player.coin.value -= bail.value
-                                if ($.player.coin.value < 0) {
-                                    $.player.bank.value += $.player.coin.value
-                                    $.player.coin.value = 0
-                                    if ($.player.bank.value < 0) {
-                                        $.player.loan.value -= $.player.bank.value
-                                        $.player.bank.value = 0
-                                    }
-                                }
-                                PC.adjust('cha', -(4 - $.player.steal), -whole((4 - $.player.steal) / 2))
+                                PC.payment(bail.value)
+                                PC.adjust('cha', -(4 - $.player.steal), -int((4 - $.player.steal) / 2))
                                 $.player.status = ''
                             }
                             else {
@@ -583,13 +575,13 @@ module Logon {
         db.run(`UPDATE Players SET coin=0`)
         vt.out('-')
 
-        let rs = db.query(`SELECT id FROM Players WHERE id NOT GLOB '_*' AND status='' AND (magic=1 OR magic=2) AND bank>9999999 AND level>15`)
-        let user: user = { id: '' }
+        let rs = db.query(`SELECT id FROM Players WHERE id NOT GLOB '_*' AND status='' AND (magic=1 OR magic=2) AND bank>9999999 AND level>20`)
+        let user = db.fillUser()
         for (let row in rs) {
             let altered = false
             user.id = rs[row].id
             PC.load(user)
-            for (let item = 7; item < 15; item++) {
+            for (let item = 7; item < 16; item++) {
                 let cost = user.magic == 1 ? new Coin(Magic.spells[Magic.merchant[item]].wand)
                     : new Coin(Magic.spells[Magic.merchant[item]].cost)
                 if (user.bank.value >= cost.value && !Magic.have(user.spells, item)) {
@@ -678,4 +670,4 @@ module Logon {
     }
 }
 
-export = Logon
+export = Init

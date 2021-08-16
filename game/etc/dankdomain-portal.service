@@ -9,7 +9,11 @@ WorkingDirectory=/usr/local/games/dankdomain
 Environment=TERM=xterm-256color
 ExecStart=/usr/bin/node game/portal/app
 KillMode=process
-SyslogIdentifier=ƊƊnet
+Restart=on-failure
+RestartSec=2s
+StartLimitIntervalSec=120
+StartLimitBurst=3
+SyslogIdentifier=DDnet
 TasksMax=200
 
 [Install]

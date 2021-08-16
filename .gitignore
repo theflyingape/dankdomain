@@ -9,7 +9,7 @@ game/etc/ipstack.key
 game/etc/network.json
 game/etc/smtp.json
 game/files/tavern/*.txt
-game/files/user
+game/files/user/*
 game/users/*
 !bundle.js
 !readme.txt

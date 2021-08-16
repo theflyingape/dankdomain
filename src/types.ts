@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  TYPES authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 

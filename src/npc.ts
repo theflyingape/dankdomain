@@ -1,14 +1,14 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  NPC authored by: Robert Hurst <theflyingape@gmail.com>                   *
 \*****************************************************************************/
 
-import $ = require('./runtime')
+import $ = require('./play/runtime')
 import db = require('./db')
 import { Access } from './items'
 import { vt } from './lib'
 import { NPC, PC } from './pc'
-import { dice, int, money, pathTo, whole } from './sys'
+import { dice, int, pathTo, whole } from './sys'
 
 module npc {
 
@@ -38,7 +38,7 @@ module npc {
         monsters: arena[]
 
         constructor() {
-            this.monsters = require(pathTo('characters', 'arena.json'))
+            this.monsters = require(pathTo('pcs', 'arena.json'))
         }
     }
 
@@ -104,7 +104,7 @@ module npc {
         }
 
         constructor() {
-            this.monsters = require(pathTo('characters', 'dungeon.json'))
+            this.monsters = require(pathTo('pcs', 'dungeon.json'))
             //	make some magic brew & bottle it up . . .
             let containers = ['beaker filled with', 'bottle containing', 'flask of', 'vial holding']
             let v = 0
@@ -182,7 +182,7 @@ module npc {
                 case 'Arena':
                     if (dice($.player.poison) > 1 && $.player.toWC >= 0 && $.player.toWC < int($.player.poisons.length / 2) + 1)
                         this.cmd = 'p'
-                    if ($.online.hp < $.player.hp || $.player.coin.value >= money($.player.level))
+                    if ($.online.hp < $.player.hp || $.player.coin.value >= PC.money($.player.level))
                         this.cmd = 'g'
                     if ($.joust) {
                         if (this.Joust) {
@@ -193,8 +193,8 @@ module npc {
                     if ($.arena) {
                         if (this.Fight) {
                             this.cmd = 'u'
-                            let m = whole($.player.level / 2) + 1
-                            m = whole($.player.level / m) + 1
+                            let m = int($.player.level / 2) + 1
+                            m = int($.player.level / m) + 1
                         }
                         else {
                             this.cmd = 'm'
@@ -242,7 +242,7 @@ module npc {
                         this.cmd = 'y'
                         this.cmd = 'm'
                         if ($.access.roleplay) {
-                            if ($.player.coin.value >= money($.player.level))
+                            if ($.player.coin.value >= PC.money($.player.level))
                                 this.cmd = 's'
                             else if ($.timeleft > 4 && $.brawl && this.Brawl)
                                 this.cmd = 't'
@@ -274,7 +274,7 @@ module npc {
                     break
 
                 case 'Square':
-                    const rarity = whole(1000 / ($.player.steal + 1))
+                    const rarity = int(1000 / ($.player.steal + 1))
                     if ($.player.bank.value > 0) {
                         this.cmd = 'b'
                         this.cmd = 'w'
@@ -358,9 +358,9 @@ module npc {
                 const n = this.targets.length - 1
                 let target = this.targets[n]
 
-                const diff = whole(hi - rpc.user.level) + 1
+                const diff = int(hi - rpc.user.level) + 1
                 const up = PC.experience($.player.level, 1, $.player.int)
-                const need = whole(100 - 2 * int(100 * whole(up - $.player.xp) / up))
+                const need = int(100 - 2 * int(100 * int(up - $.player.xp) / up))
 
                 if (rpc.user.status !== 'jail') {
                     if ($.joust && !(rpc.user.level > 1 && (rpc.user.jw + 3 * rpc.user.level) < rpc.user.jl)) {
@@ -368,7 +368,7 @@ module npc {
                         const versus = PC.jousting(rpc)
                         const factor = (100 - ($.player.level > rpc.user.level ? $.player.level : rpc.user.level)) / 10 + 3
                         if ((ability + factor * $.player.level) > versus)
-                            target.Joust += diff + whole(ability - versus) * (100 - $.player.level)
+                            target.Joust += diff + int(ability - versus) * (100 - $.player.level)
                     }
                     if ($.brawl) {
                         target.Brawl += diff + $.player.melee
@@ -413,7 +413,7 @@ module npc {
         monsters: naval[]
 
         constructor() {
-            this.monsters = require(pathTo('characters', 'naval.json'))
+            this.monsters = require(pathTo('pcs', 'naval.json'))
         }
     }
 

@@ -1,15 +1,14 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  DB authored by: Robert Hurst <theflyingape@gmail.com>                    *
 \*****************************************************************************/
 
 import Database = require('better-sqlite3')
-import { fs, now, pathTo, whole } from './sys'
+import { fs, int, now, pathTo } from './sys'
 import { Coin, Ring } from './items'
 
 module db {
 
-    export const USER = require(pathTo('characters', 'user.json'))
     export const DD = pathTo('users', 'dankdomain.sql')
 
     let sqlite3: Database.Database
@@ -79,13 +78,15 @@ module db {
         run(`INSERT INTO Gangs VALUES ( 'Monster Mash', '_MM1,_MM2,_MM3,_MM4', 0, 0, 0, 0 )`)
     }
 
-    //  apply an external template file on a character
-    export function fillUser(template?: string, user = USER): user {
+    const INIT: user = require(pathTo('pcs', 'defaults.json'))    //  inject user default values
+
+    //  apply an external template file on a PC
+    export function fillUser(template?: string, user = INIT): user {
         let copy = Object.assign({}, user)
         let tmp = Object.assign({}, copy)
         if (template)
             try {
-                Object.assign(tmp, JSON.parse(fs.readFileSync(pathTo('characters', `${template.toLowerCase()}.json`))))
+                Object.assign(tmp, JSON.parse(fs.readFileSync(pathTo('pcs', `${template.toLowerCase()}.json`))))
             }
             catch (err) {
                 return tmp
@@ -113,14 +114,14 @@ module db {
             if (rs[0].poisons.length) {
                 let vials = rs[0].poisons.split(',')
                 for (let i in vials)
-                    user.poisons[i] = whole(vials[i])
+                    user.poisons[i] = int(vials[i])
             }
 
             user.spells = []
             if (rs[0].spells.length) {
                 let spells = rs[0].spells.split(',')
                 for (let i in spells)
-                    user.spells[i] = whole(spells[i])
+                    user.spells[i] = int(spells[i])
             }
 
             user.rings = []

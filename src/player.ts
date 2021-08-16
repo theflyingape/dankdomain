@@ -1,9 +1,9 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  I/O authored by: Robert Hurst <theflyingape@gmail.com>                   *
 \*****************************************************************************/
 
-import $ = require('./runtime')
+import $ = require('./play/runtime')
 import db = require('./db')
 import { Access, Coin } from './items'
 import { bracket, cat, prompt, news, time, vt, weapon } from './lib'
@@ -207,7 +207,7 @@ module Player {
             if ($.access.roleplay) {
                 if ($.from == 'Dungeon' && $.online.hp > 0) {
                     PC.adjust('cha', -1, -1, -1)
-                    $.player.coin = new Coin(0)
+                    $.player.coin = new Coin()
                     if (vt.checkTime() >= 0) {
                         if ($.player.coward && !$.player.cursed)
                             PC.curse($.player.handle, 'by a panick attack in the Dungeon')
@@ -293,11 +293,12 @@ module Player {
         if ($.player.novice) {
             $.player = PC.reroll($.player, 'Novice')
             PC.activate($.online)
+            $.online.altered = true
             vt.outln('Since you are a new user here, you are automatically assigned a character', -2200)
             vt.outln('class.  At the Main Menu, press ', bracket('Y', false), ' to see all your character information.', -2200)
             show()
             news(`Welcome a ${$.player.pc} player, ${$.player.handle}`)
-            require('./dd/menu').menu(true)
+            require('./play/menu').menu(true)
             return
         }
         else {
@@ -376,7 +377,7 @@ module Player {
         }
 
         function pick() {
-            let n = whole(vt.entry)
+            const n = int(vt.entry)
             if (n < 1 || n >= classes.length) {
                 vt.beep()
                 vt.refocus()
@@ -399,12 +400,12 @@ module Player {
                 }
                 vt.form[field].enter = $.player.str.toString()
                 vt.form[field].cancel = vt.form[field].enter
-                vt.form[field].prompt = 'Enter your Strength  ' + bracket($.player.str, false) + ': '
+                vt.form[field].prompt = `Enter your Strength  ${bracket($.player.str, false)}: `
                 input(field)
                 return
             }
 
-            let n: number = whole(vt.entry)
+            const n = int(vt.entry)
             if (n < 20 || n > 80) {
                 vt.beep()
                 vt.refocus()
@@ -483,9 +484,9 @@ module Player {
                     $.player.dex = a.dex
                     $.player.cha = a.cha
                     PC.activate($.online)
+                    $.online.altered = true
 
                     vt.outln()
-                    PC.save()
                     news(`\trerolled as${an($.player.pc)}`)
                     if (immortal) {
                         $.online.hp = 0
@@ -495,13 +496,13 @@ module Player {
                     else {
                         vt.outln(-600)
                         vt.outln(vt.yellow, '... ', vt.bright, 'and you get to complete any remaining parts to this play.', -600)
-                        require('./dd/menu').menu(true)
+                        require('./play/menu').menu(true)
                     }
                     return
             }
 
             vt.outln('\n\nYou have ', vt.bright, left.toString(), vt.normal, ' ability points left.', -600)
-            vt.form[p].prompt += ' ' + bracket(vt.form[p].enter, false) + ': '
+            vt.form[p].prompt += ` ${bracket(vt.form[p].enter, false)}: `
             input(p)
         }
     }

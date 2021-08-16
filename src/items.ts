@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  ITEMS authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
@@ -117,45 +117,49 @@ module Items {
 
     export class Coin implements coin {
 
-        constructor(money: string | number) {
+        constructor(money: string | bigint = 0n) {
             if (typeof money == 'string')
                 this.amount = money
             else
                 this.value = money
         }
 
-        private _value: number
+        //  0c - 99999p,9999g,9999s,99999c
+        MAX: bigint = 999999999999999999n
+        PLATINUM: bigint = 10000000000000n
+        GOLD: bigint = 1000000000n
+        SILVER: bigint = 100000n
+        COPPER: bigint = 1n
 
-        get value(): number {
-            return this._value
+        private _value: bigint
+
+        get value(): bigint {
+            return BigInt.asIntN(64, this._value)
         }
 
-        set value(newValue: number) {
-            //  0 - 999999999000000000
-            const MAX = (1e+18 - 1e+09)
-            this._value = newValue < MAX ? whole(newValue)
-                : newValue == Infinity ? 1 : MAX
+        set value(newValue: bigint) {
+            this._value = newValue < this.MAX ? whole(newValue) : this.MAX
         }
 
         get amount(): string {
-            //  0c - 99999p,9999g
+            //  0c - 99999p,9999g,9999s,99999c
             let n = this.value
             let bags: string[] = []
 
             if (this.pouch(n) == 'p') {
-                n = int(n / 1e+13)
+                n = whole(n / this.PLATINUM)
                 bags.push(`${n}p`)
-                n = this.value % 1e+13
+                n = this.value % this.PLATINUM
             }
             if (this.pouch(n) == 'g') {
-                n = int(n / 1e+09)
+                n = whole(n / this.GOLD)
                 bags.push(`${n}g`)
-                n = this.value % 1e+09
+                n = this.value % this.GOLD
             }
             if (this.pouch(n) == 's') {
-                n = int(n / 1e+05)
+                n = whole(n / this.SILVER)
                 bags.push(`${n}s`)
-                n = this.value % 1e+05
+                n = this.value % this.SILVER
             }
             if ((n > 0 && this.pouch(n) == 'c') || bags.length == 0)
                 bags.push(`${n}c`)
@@ -164,32 +168,32 @@ module Items {
         }
 
         set amount(newAmount: string) {
-            this.value = 0
-            let coins = 0
+            this.value = 0n
+            let coins = 0n
 
             for (let i = 0; i < newAmount.length; i++) {
                 let c = newAmount.charAt(i)
                 switch (c) {
                     case 'c':
-                        coins *= 1
+                        coins *= this.COPPER
                         break
                     case 's':
-                        coins *= 1e+05
+                        coins *= this.SILVER
                         break
                     case 'g':
-                        coins *= 1e+09
+                        coins *= this.GOLD
                         break
                     case 'p':
-                        coins *= 1e+13
+                        coins *= this.PLATINUM
                         break
                 }
                 if (c >= '0' && c <= '9') {
-                    coins *= 10
-                    coins += +c
+                    coins *= 10n
+                    coins += whole(c)
                 }
                 else {
                     this.value += coins
-                    coins = 0
+                    coins = 0n
                 }
             }
         }
@@ -204,7 +208,7 @@ module Items {
         }
 
         pouch(coins = this.value): string {
-            return (coins < 1e+05) ? 'c' : (coins < 1e+09) ? 's' : (coins < 1e+13) ? 'g' : 'p'
+            return (coins < this.SILVER) ? 'c' : (coins < this.GOLD) ? 's' : (coins < this.PLATINUM) ? 'g' : 'p'
         }
     }
 

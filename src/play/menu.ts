@@ -1,16 +1,16 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  MAIN authored by: Robert Hurst <theflyingape@gmail.com>                  *
 \*****************************************************************************/
 
-import $ = require('../runtime')
+import $ = require('./runtime')
 import db = require('../db')
 import { Armor, Coin, RealEstate, Ring, Security, Weapon } from '../items'
 import { carry, cat, display, emulator, log, news, tradein, vt } from '../lib'
 import { Deed, PC } from '../pc'
 import { elemental } from '../npc'
 import { checkXP, input, pickPC } from '../player'
-import { an, cuss, dice, fs, int, money, pathTo, sprintf } from '../sys'
+import { an, cuss, dice, fs, int, pathTo, sprintf } from '../sys'
 import Battle = require('./battle')
 
 module Main {
@@ -204,7 +204,7 @@ module Main {
                 let self = tradein(new Coin($.online.armor.value).value, $.online.cha)
                 self += tradein(new Coin($.online.weapon.value).value, $.online.cha)
                 self += $.player.coin.value + $.player.bank.value - $.player.loan.value
-                self = int(self / (6 + $.player.steal))
+                self /= BigInt(6 + $.player.steal)
 
                 Battle.user('Rob', (opponent: active) => {
                     vt.outln()
@@ -236,9 +236,9 @@ module Main {
 
                     let prize = tradein(new Coin(Armor.name[opponent.user.armor].value).value, $.online.cha)
                     prize += tradein(new Coin(Weapon.name[opponent.user.weapon].value).value, $.online.cha)
-                    if ($.dungeon && opponent.user.cannon) prize += money(opponent.user.level)
+                    if ($.dungeon && opponent.user.cannon) prize += PC.money(opponent.user.level)
                     if ($.arena) prize += opponent.user.coin.value
-                    prize = int(prize / (6 - $.player.steal))
+                    prize /= BigInt(6 - $.player.steal)
 
                     if (dice($.online.int) > 5 && prize < self) {
                         vt.outln('But you decide it is not worth the effort.', -600)
@@ -291,7 +291,7 @@ module Main {
                         vt.outln('You break in and make off with ', new Coin(prize).carry(), ' worth of stuff!')
                         vt.sound('max', 12)
 
-                        if ($.arena) opponent.user.coin.value = 0
+                        if ($.arena) opponent.user.coin.value = 0n
 
                         if (opponent.armor.ac > 0) {
                             if (opponent.armor.ac > Armor.merchant.length)
@@ -423,7 +423,7 @@ module Main {
                 return
 
             case 'Y':
-                const cost = new Coin(int(money($.player.level) / 5)).pick(1)
+                const cost = new Coin(PC.money($.player.level) / 5n).pick(1)
                 vt.form = {
                     'yn': {
                         cb: () => {
@@ -431,10 +431,10 @@ module Main {
                                 $.player.coin.value -= cost.value
                                 if ($.player.coin.value < 0) {
                                     $.player.bank.value += $.player.coin.value
-                                    $.player.coin.value = 0
+                                    $.player.coin.value = 0n
                                     if ($.player.bank.value < 0) {
                                         $.player.loan.value -= $.player.bank.value
-                                        $.player.bank.value = 0
+                                        $.player.bank.value = 0n
                                     }
                                 }
                                 vt.outln()

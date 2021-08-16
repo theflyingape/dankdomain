@@ -1,16 +1,16 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  DUNGEON authored by: Robert Hurst <theflyingape@gmail.com>               *
 \*****************************************************************************/
 
-import $ = require('../runtime')
+import $ = require('./runtime')
 import db = require('../db')
 import { Armor, Coin, Magic, Poison, Ring, Security, Weapon } from '../items'
 import { armor, bracket, carry, cat, death, getRing, log, pieces, news, tradein, vt, weapon } from '../lib'
 import { PC } from '../pc'
 import { dungeon } from '../npc'
 import { checkXP, input, skillplus } from '../player'
-import { an, dice, int, money, romanize, sprintf, whole } from '../sys'
+import { an, dice, int, romanize, sprintf, uint, whole } from '../sys'
 import Battle = require('./battle')
 
 module Dungeon {
@@ -82,7 +82,7 @@ module Dungeon {
             dungeon.level.map = `Marauder's map`
             scroll()
             if ($.online.hp > 0) {
-                $.online.hp = whole(idle)
+                $.online.hp = uint(idle)
                 if ($.online.hp) vt.sound('thief2', 6)
             }
             vt.hangup()
@@ -158,7 +158,7 @@ module Dungeon {
         if (refresh) drawLevel()
 
         //  keep it organic relative to class skill + luck with player asset protection
-        let me = whole(
+        let me = uint(
             (Z / 3 + dungeon.level.rooms.length * dungeon.level.width + $.online.dex / 2 + $.online.cha) * (.6 + deep / 23)
             - dungeon.level.moves)
         me *= 1 + (Security.name[$.player.security].protection - $.player.level / 9) / 12
@@ -248,7 +248,7 @@ module Dungeon {
                     ROOM.giftItem = 'chest'
                     ROOM.giftIcon = $.player.emulation == 'XT' ? '⌂' : dungeon.Dot
                     ROOM.giftValue = 0
-                    dungeon.level.cleric.user.coin.value = 0
+                    dungeon.level.cleric.user.coin.value = 0n
                     if (dungeon.level.map && dungeon.level.map !== 'map')
                         drawRoom(y, x)
                     vt.outln(-900)
@@ -505,7 +505,7 @@ module Dungeon {
                 death('running into a wall', true)
             else {
                 death('banged head against a wall')
-                $.online.hp = whole(idle)
+                $.online.hp = uint(idle)
             }
         }
     }
@@ -626,7 +626,7 @@ module Dungeon {
         }
 
         //	npc?
-        let loot = new Coin(0)
+        let loot = new Coin()
         if (ROOM.occupant && !refresh) drawRoom(Y, X)
         switch (ROOM.occupant) {
             case 'trapdoor':
@@ -877,8 +877,8 @@ module Dungeon {
                                         }
                                         if (opponent.user.id) {
                                             loot.value = opponent.user.coin.value + opponent.user.bank.value
-                                            opponent.user.coin.value = 0
-                                            opponent.user.bank.value = 0
+                                            opponent.user.coin.value = 0n
+                                            opponent.user.bank.value = 0n
                                             PC.save(opponent)
                                             $.player.coin.value += loot.value
                                             log(opponent.user.id, `\n${$.player.handle} wished for your ${loot.amount}`)
@@ -1018,21 +1018,21 @@ module Dungeon {
                                         break
 
                                     case 5:
-                                        loot.value = money(Z)
+                                        loot.value = PC.money(Z)
                                         loot.value += tradein($.online.weapon.value)
                                         loot.value += tradein($.online.armor.value)
-                                        loot.value *= (Z + 1)
+                                        loot.value *= whole(Z + 1)
                                         $.player.coin.value += loot.pick(1).value
                                         vt.sound('yahoo')
                                         break
 
                                     case 6:
-                                        $.player.coin.value = 0
-                                        $.player.bank.value = 0
-                                        loot.value = money(Z)
+                                        $.player.coin.value = 0n
+                                        $.player.bank.value = 0n
+                                        loot.value = PC.money(Z)
                                         loot.value += tradein($.online.weapon.value)
                                         loot.value += tradein($.online.armor.value)
-                                        loot.value *= (Z + 1)
+                                        loot.value *= whole(Z + 1)
                                         $.player.loan.value += loot.pick(1).value
                                         vt.sound('thief2')
                                         break
@@ -1197,16 +1197,16 @@ module Dungeon {
                 if (Ring.power([], $.player.rings, 'taxes').power) mod++
                 if ($.access.sysop) mod++
                 if ($.player.coward) mod--
-                let cost = new Coin(int(($.player.hp - $.online.hp) * money(Z) / mod / $.player.hp))
-                if (cost.value < 1) cost.value = 1
-                cost.value *= (int(deep / 3) + 1)
+                let cost = new Coin(whole(($.player.hp - $.online.hp) / mod / $.player.hp) * PC.money(Z))
+                if (cost.value < cost.COPPER) cost.value = cost.COPPER
+                cost.value *= (whole(deep / 3) + cost.COPPER)
                 if (!$.player.coward && !$.player.steals && ($.player.pc == dungeon.level.cleric.user.pc || $.player.maxcha > 98))
-                    cost.value = 0
+                    cost.value = 0n
                 cost = cost.pick(1)	//	just from 1-pouch
 
                 if (ROOM.giftItem == 'chest') {
                     ROOM.giftValue = dice(6 - $.player.magic) - 1
-                    cost.value = 0	//	this one is free of charge
+                    cost.value = 0n	//	this one is free of charge
                 }
 
                 let power = int(100 * dungeon.level.cleric.sp / dungeon.level.cleric.user.sp)
@@ -1362,7 +1362,7 @@ module Dungeon {
                 vt.profile({ jpg: 'npc/dwarf', effect: 'fadeIn' })
                 vt.beep()
                 vt.outln(vt.yellow, 'You run into a ', vt.bright, 'dwarven merchant', vt.normal, ', ', $.dwarf.user.handle, '.', -1000)
-                let hi = 0, credit = new Coin(0), ring = $.dwarf.user.rings[0]
+                let hi = 0, credit = new Coin(), ring = $.dwarf.user.rings[0]
 
                 vt.form = {
                     'armor': {
@@ -1370,7 +1370,7 @@ module Dungeon {
                             vt.outln()
                             ROOM.occupant = ''
                             if (/Y/i.test(vt.entry)) {
-                                $.player.coin = new Coin(0)
+                                $.player.coin = new Coin()
                                 Armor.equip($.online, Armor.dwarf[hi])
                                 $.player.toAC = 2 - dice(3)
                                 $.online.toAC = dice($.online.armor.ac) - 2
@@ -1403,7 +1403,7 @@ module Dungeon {
                             vt.outln()
                             ROOM.occupant = ''
                             if (/Y/i.test(vt.entry)) {
-                                $.player.coin = new Coin(0)
+                                $.player.coin = new Coin()
                                 Weapon.equip($.online, Weapon.dwarf[hi])
                                 $.player.toWC = 2 - dice(3)
                                 $.online.toWC = dice($.online.weapon.wc) - 2
@@ -1440,13 +1440,13 @@ module Dungeon {
                     if (ac) {
                         let cv = new Coin(Armor.name[$.player.armor].value)
                         credit.value = tradein(cv.value, $.online.cha)
-                        if ($.player.toAC) credit.value = int(credit.value * (ac + $.player.toAC / ($.player.poison + 1)) / ac)
-                        if ($.online.toAC < 0) credit.value = int(credit.value * (ac + $.online.toAC) / ac)
+                        if ($.player.toAC) credit.value = whole(credit.value * (ac + $.player.toAC / ($.player.poison + 1)) / ac)
+                        if ($.online.toAC < 0) credit.value = whole(credit.value * (ac + $.online.toAC) / ac)
                         if (credit.value > cv.value)
                             credit.value = cv.value
                     }
                     else
-                        credit.value = 0
+                        credit.value = 0n
                     vt.outln(' worth ', carry(credit), -1000)
 
                     for (hi = 0; hi < Armor.dwarf.length - 1 && ac >= Armor.name[Armor.dwarf[hi]].ac; hi++);
@@ -1469,13 +1469,13 @@ module Dungeon {
                     if (wc) {
                         let cv = new Coin(Weapon.name[$.player.weapon].value)
                         credit.value = tradein(cv.value, $.online.cha)
-                        if ($.player.toWC) credit.value = int(credit.value * (wc + $.player.toWC / ($.player.poison + 1)) / wc)
-                        if ($.online.toWC < 0) credit.value = int(credit.value * (wc + $.online.toWC) / wc)
+                        if ($.player.toWC) credit.value = whole(credit.value * (wc + $.player.toWC / ($.player.poison + 1)) / wc)
+                        if ($.online.toWC < 0) credit.value = whole(credit.value * (wc + $.online.toWC) / wc)
                         if (credit.value > cv.value)
                             credit.value = cv.value
                     }
                     else
-                        credit.value = 0
+                        credit.value = 0n
                     vt.outln(' worth ', carry(credit))
 
                     for (hi = 0; hi < Weapon.dwarf.length - 1 && wc >= Weapon.name[Weapon.dwarf[hi]].wc; hi++);
@@ -1695,21 +1695,22 @@ module Dungeon {
                 break
 
             case 'chest':
-                let gold = new Coin(money(Z))
+                let gold = new Coin(PC.money(Z))
                 gold.value += tradein($.online.weapon.value)
                 gold.value += tradein($.online.armor.value)
-                gold.value *= +ROOM.giftValue
+                gold.value *= whole(ROOM.giftValue)
                 gold = gold.pick(1)
+                vt.out(vt.yellow)
                 if (gold.value) {
-                    if (gold.value > 1e+17)
-                        gold.value = 1e+17
+                    if (gold.value > 10000n * gold.PLATINUM)
+                        gold.value = 10000n * gold.PLATINUM
+                    vt.outln('You find a ', vt.bright, 'treasure chest'
+                        , vt.normal, ' holding ', carry(gold), '!')
                     vt.profile({ jpg: `specials/chest`, effect: 'fadeInUpBig' })
                     vt.sound('yahoo', 10)
-                    vt.outln(vt.yellow, 'You find a ', vt.bright, 'treasure chest'
-                        , vt.normal, ' holding ', carry(gold), '!')
                 }
                 else {
-                    vt.outln(vt.faint, vt.yellow, 'You find an empty, treasure chest.')
+                    vt.outln(vt.faint, 'You find an empty, treasure chest.')
                     vt.sound('boo')
                 }
                 $.player.coin.value += gold.value
@@ -2526,7 +2527,7 @@ module Dungeon {
         }
 
         //  splash any new dungeon background for the adventurer
-        const pic = whole((Z + 1) / 10)
+        const pic = int((Z + 1) / 10)
         if (pic !== motif) {
             motif = pic
             vt.profile({ jpg: `dungeon/level${sprintf('%x', motif)}`, handle: "Entering", level: $.player.level, pc: 'dungeon' })
@@ -2881,10 +2882,10 @@ module Dungeon {
             PC.adjust('dex', deep - 2, 0, deep >> 2, m)
             PC.adjust('cha', deep - 2, 0, deep >> 2, m)
 
-            let gold = new Coin(int(money(level) / (11 - deep)))
+            let gold = new Coin(whole(PC.money(level) / BigInt(11 - deep)))
             gold.value += tradein(new Coin(m.weapon.value).value, dice($.online.cha / 5) + dice(deep) - int($.player.coward))
             gold.value += tradein(new Coin(m.armor.value).value, dice($.online.cha / 5) + dice(deep) - int($.player.coward))
-            gold.value *= dice(deep * 2 / 3)
+            gold.value *= BigInt(dice(deep * 2 / 3))
             gold.value++
             m.user.coin = gold.pick(1)
 

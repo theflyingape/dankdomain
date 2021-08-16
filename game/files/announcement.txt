@@ -1,7 +1,7 @@
-Date: Wed 9-Jun-2021  9:00am
+Date: Sat 11-Sep-2021  8:45am
 From: Maester
 
-The elemental players, aka 'bot', are now in effect. They are not too smart
-(then & now), but like you, will "improve" over time.  ;)
+Welcome to a freshened edition of Dank Domain.  See its CHANGELOG online:
+    https:github.com//theflyingape/dankdomain/CHANGELOG.md
 
-Happy hunting!
+Never Forget. The North remembers.

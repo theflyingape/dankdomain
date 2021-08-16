@@ -5,19 +5,22 @@
 🇺🇸 ©️1991 - 2021 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) on a **Chromebook** using Visual Code and TypeScript/html/css for the browser with [terminal emulator](https:/xtermjs.org) and classic telnet clients; and also to run the resulting Node.js full stack [services and app](https://play.DDgame.us) on the **Google Cloud Platform** (us-central1) or in a **Docker** [container](https://hub.docker.com/repository/docker/theflyingape/dankdomain).
 
-### **09-Aug-2021** `v3.2.0`
+### **11-Sep-2021** `v3.2.0`
 
-* Victory Day (RI observed holday)
-* major code refactoring for CI/CD
-* separated each character class out of the dankdomain config to allow for customizable reroll templating of startup values, i.e., assets like weapon, spells, etc.
+* Never Forget. The North remembers. 🐺
+* major code & file refactoring for CI/CD
+* Coin uses ES2020 `BigInt` requiring 64-bit
+* separated each character class out of the dankdomain config to allow for reroll templating of startup values, i.e., assign differing assets like weapon, spells, etc.
+* added class modifiers to heal & blast spells
 * expanded the role of each NPC
-* added 'curse' power to Cursed ring
+* added 'curse' power to a Cursed ring -- retreats from a ring bearer will curse you
+* latest package dependencies for Node.js v16.6
 
 #### **18-Jun-2021** `v3.1.1`
 
-* door app runs as ƊƊnet and moved main to run as ƊƊplay
+* door app runs as DDnet and moved main to run as DDplay
 * bot Elemental orders added for each menu
-* added SDLmixer in ƊƊterm to `playmus` music & sound events from CLI
+* added SDLmixer in DDterm to `playmus` music & sound events from CLI
 * xterm.js v4.13
 
 #### **8-Jun-2021** `v3.1.0`

@@ -1,16 +1,16 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  ARENA authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import $ = require('../runtime')
+import $ = require('./runtime')
 import db = require('../db')
 import { Access, Armor, Coin, Magic, Poison, Ring, Weapon } from '../items'
 import { bracket, carry, cat, display, getRing, log, news, tradein, vt } from '../lib'
 import { PC } from '../pc'
 import { arena, elemental } from '../npc'
 import { checkXP, input } from '../player'
-import { dice, int, money, romanize, sprintf } from '../sys'
+import { dice, int, romanize, sprintf } from '../sys'
 import Battle = require('./battle')
 
 module Arena {
@@ -43,7 +43,7 @@ module Arena {
                 hints += `> Try jousting another player to win money.\n`
             if ($.player.poisons.length && !$.online.toWC)
                 hints += `> Don't forget to poison your weapon.\n`
-            if ($.player.coin.value >= money($.player.level))
+            if ($.player.coin.value >= PC.money($.player.level))
                 hints += `> Carrying too much money here is not a good idea.  Spend it in the Square\n  or deposit it in the Bank for safer keeping.\n`
         }
         vt.form['menu'].prompt = display('arena', vt.Red, vt.red, suppress, main, hints)
@@ -177,18 +177,19 @@ module Arena {
                                         vt.outln(vt.green, '-*>', vt.white, vt.bright, ' Thud! ', vt.normal, vt.green, '<*-  ', vt.reset, 'A hit! ', -100, ' You win this pass!', -100)
                                         if (++jw == 3) {
                                             vt.outln('\nYou have won the joust!')
+                                            let reward = new Coin(PC.money(opponent.user.level))
                                             if (opponent.user.id == $.king.id) {
                                                 vt.sound('boo')
                                                 vt.animated('fadeOut')
                                                 PC.adjust('cha', -2, -1)
                                                 vt.outln('The crowd is furious!', -250)
+                                                reward = reward.pick(1)
                                             }
                                             else {
                                                 vt.sound('cheer')
                                                 vt.animated('hinge')
                                                 vt.outln('The crowd cheers!', -250)
                                             }
-                                            let reward = new Coin(money(opponent.user.level))
                                             $.player.coin.value += reward.value
                                             $.player.jw++
                                             if (db.run(`UPDATE Players set jl=jl+1 WHERE id='${opponent.user.id}'`).changes)
@@ -223,7 +224,7 @@ module Arena {
                                             vt.outln('\nYou have lost the joust!')
                                             vt.sound('boo')
                                             vt.outln('The crowd boos you!', -200)
-                                            let reward = new Coin(money($.player.level))
+                                            let reward = new Coin(PC.money($.player.level))
                                             $.player.jl++
                                             if (db.run(`UPDATE Players set jw=jw+1,coin=coin+${reward.value} WHERE id='${opponent.user.id}'`).changes)
                                                 log(opponent.user.id, `\n${$.player.handle} lost to you in a joust.  You got ${reward.amount}.`)
@@ -415,7 +416,7 @@ module Arena {
                 return
             }
 
-            cost = new Coin(money($.player.level)).pick(1)
+            cost = new Coin(PC.money($.player.level)).pick(1)
 
             vt.outln('\nThe ancient necromancer will summon you a demon for ', carry(cost))
             if ($.player.coin.value < cost.value) {
@@ -439,17 +440,17 @@ module Arena {
                                 l = $.sysop.level - 2
                             if ((monster.user.level = l + dice(7) - 4) > 99)
                                 monster.user.level = 99
-                            cost.value += tradein(money(monster.user.level), $.player.cha)
+                            cost.value += tradein(PC.money(monster.user.level))
 
                             let n = int(Weapon.merchant.length * $.player.level / 110)
                             n = n >= Weapon.merchant.length ? Weapon.merchant.length - 1 : n
                             monster.user.weapon = n + 3
-                            cost.value += tradein(new Coin(Weapon.name[Weapon.merchant[n]].value).value, $.player.cha)
+                            cost.value += tradein(new Coin(Weapon.name[Weapon.merchant[n]].value).value)
 
                             n = int(Armor.merchant.length * $.player.level / 110)
                             n = n >= Armor.merchant.length ? Armor.merchant.length - 1 : n
                             monster.user.armor = n + 2
-                            cost.value += tradein(new Coin(Armor.name[Armor.merchant[n]].value).value, $.player.cha)
+                            cost.value += tradein(new Coin(Armor.name[Armor.merchant[n]].value).value)
 
                             monster.user = PC.reroll(monster.user
                                 , (dice(($.online.int + $.online.cha) / 50) > 1) ? monster.user.pc : PC.random('monster')

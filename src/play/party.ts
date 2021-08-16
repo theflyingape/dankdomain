@@ -1,16 +1,16 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  PARTY authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 
-import $ = require('../runtime')
+import $ = require('./runtime')
 import db = require('../db')
 import { Armor, Coin, Magic, Poison, Weapon } from '../items'
 import { bracket, cat, death, display, log, vt, weapon } from '../lib'
 import { PC } from '../pc'
 import { dungeon, elemental } from '../npc'
 import { checkXP, input } from '../player'
-import { cuss, dice, int, money, sprintf, titlecase, whole } from '../sys'
+import { cuss, dice, int, sprintf, titlecase, whole } from '../sys'
 import Battle = require('./battle')
 
 module Party {
@@ -446,7 +446,7 @@ module Party {
                     'gang': {
                         cb: () => {
                             vt.outln()
-                            let i = whole(vt.entry) - 1
+                            let i = int(vt.entry) - 1
                             if (/^M$/i.test(vt.entry)) {
                                 rs = [rs.find((x) => { return x.name == 'Monster Mash' })]
                                 i = 0
@@ -523,7 +523,7 @@ module Party {
 
                                     PC.activate(nme[i])
                                     nme[i].user.toWC = int(nme[i].weapon.wc / 4) + 1
-                                    nme[i].user.coin = new Coin(money(ml))
+                                    nme[i].user.coin = new Coin(PC.money(ml))
                                     nme[i].user.handle = titlecase(dm)
                                     nme[i].user.gang = o.name
                                     o.handles[i] = nme[i].user.handle
@@ -534,6 +534,7 @@ module Party {
 
                             if (!nme.length) {
                                 vt.outln('\nThat gang is not active!')
+                                db.unlock($.player.id, true)
                                 menu()
                                 return
                             }

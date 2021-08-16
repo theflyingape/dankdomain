@@ -1,13 +1,13 @@
 /*****************************************************************************\
- *  Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash                                  *
+ *  Dank Domain: the return of Hack & Slash                                  *
  *  PC authored by: Robert Hurst <theflyingape@gmail.com>                    *
 \*****************************************************************************/
 
-import $ = require('./runtime')
+import $ = require('./play/runtime')
 import db = require('./db')
 import { Access, Armor, Magic, Ring, Weapon } from './items'
 import { armor, carry, log, news, vt, weapon } from './lib'
-import { date2full, dice, fs, int, now, pathTo, romanize, sprintf, titlecase, whole } from './sys'
+import { date2full, dice, fs, int, now, pathTo, romanize, sprintf, titlecase, uint, whole } from './sys'
 
 module pc {
 
@@ -93,7 +93,7 @@ module pc {
         winning: string
 
         constructor() {
-            this.name = require(pathTo('characters', 'class.json'))
+            this.name = require(pathTo('pcs', 'class.json'))
             this.types = Object.keys(this.name).length
             this.classes = new Array()
             this.total = 0
@@ -294,9 +294,10 @@ module pc {
             // calculate need to accrue based off PC intellect capacity
             if (wisdom < 1000) wisdom = (1100 + level - 2 * wisdom)
 
-            return factor == 1
+            return uint(factor == 1
                 ? Math.round(wisdom * Math.pow(2, level - 1))
-                : int(wisdom * Math.pow(2, level - 2) / factor)
+                : wisdom * Math.pow(2, level - 2) / factor
+            )
         }
 
         expout(xp: number, awarded = true): string {
@@ -413,6 +414,10 @@ module pc {
             return gang
         }
 
+        money(level: number): bigint {
+            return whole(Math.pow(2, (level - 1) / 2) * 10 * (101 - level) / 100)
+        }
+
         newkeys(user: user) {
             let keys = ['P', 'G', 'S', 'C']
             let prior = user.keyhints || []
@@ -424,8 +429,18 @@ module pc {
             }
         }
 
+        payment(amount: bigint, user = $.player) {
+            let due = user.coin.value - amount
+            user.coin.value = due
+            if (due < 0) {
+                due += user.bank.value
+                user.bank.value = due
+                if (due < 0) user.loan.value -= due
+            }
+        }
+
         portrait(rpc = $.online, effect = 'fadeInLeft', meta = '') {
-            let userPNG = `door/static/images/user/${rpc.user.id}.png`
+            let userPNG = `portal/static/images/user/${rpc.user.id}.png`
             try {
                 fs.accessSync(userPNG, fs.constants.F_OK)
                 userPNG = `user/${rpc.user.id}`
@@ -464,7 +479,7 @@ module pc {
 
         //  morph or spawn or a user re-roll
         reroll(user: user, pc?: string, level = 1): user {
-            level = whole(level)
+            level = int(level)
             level = level > 99 ? 99 : level < 1 ? 1 : level
             //  reset any prior experience
             user = db.fillUser('reset', user)
@@ -942,7 +957,7 @@ module pc {
 
     export const Deed = new _deed
     export const PC = new _pc
-    export const NPC = require(pathTo('characters', 'npc.json'))
+    export const NPC = require(pathTo('pcs', 'npc.json'))
 }
 
 export = pc
