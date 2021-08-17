@@ -5,7 +5,7 @@
 
 import $ = require('./runtime')
 import { Armor, Coin, RealEstate, Ring, Security, Weapon } from '../items'
-import { news, pieces, tradein, vt, weapon } from '../lib'
+import { carry, news, pieces, tradein, vt, weapon } from '../lib'
 import { PC } from '../pc'
 import { input } from '../player'
 import { an, dice, int, uint, whole } from '../sys'
@@ -33,7 +33,7 @@ module Taxman {
 
             tax.value = scratch - tax.value
             tax = tax.pick(1)
-            vt.outln(`The tax will cost you ${tax.carry()}`, -900)
+            vt.outln(`The tax will cost you ${carry(tax)}`, -900)
 
             return true
         }
@@ -47,7 +47,6 @@ module Taxman {
 
         if (checkpoint($.player.coin.value)) {
             PC.payment(tax.value)
-            vt.beep()
             vt.outln('\nYou really want a drink, so you pay the shakedown.')
             vt.sound('thief', 22)
         }
@@ -81,12 +80,12 @@ module Taxman {
             $.player.loan.value = due
             //  a Lanister always pay his debt
             if ($.player.loan.value > 9n) {
-                vt.outln(vt.green, '\nYour bank loan ', $.player.loan.carry(), vt.red, ' is past due.', -1200)
+                vt.outln(vt.green, '\nYour bank loan ', carry($.player.loan, 4), ' is ', vt.red, 'past due', vt.reset, '.', -1200)
                 vt.beep()
                 let interest = new Coin($.player.loan.value * 100n / 5n + 1n)
                 $.player.loan.value += interest.value
                 $.online.altered = true
-                vt.outln('An interest charge of ', interest.carry(), ' was added.', -1200)
+                vt.outln('An interest charge of ', carry(interest, 4), ' was added.', -1200)
             }
             //  now tax if necessary
             tax.value = 1000n * PC.money($.player.level)
@@ -117,9 +116,9 @@ module Taxman {
                         cb: () => {
                             vt.outln('\n')
                             if (/Y/i.test(vt.entry)) {
+                                PC.payment(tax.value)
                                 vt.outln('You pay the tax.')
                                 vt.sound('thief2', 16)
-                                PC.payment(tax.value)
                                 require('./menu').menu()
                                 return
                             }

@@ -55,13 +55,13 @@ module db {
             lasttime numeric, calls numeric, today numeric, expert integer, emulation text NOT NULL,
             rows numeric, access text NOT NULL, remote text, pc text, gender text,
             novice integer, level numeric, xp numeric, xplevel numeric, status text,
-            blessed text, cursed text, coward integer, bounty numeric, who text,
+            blessed text, cursed text, coward integer, bounty text, who text,
             gang text, keyseq text, keyhints text, melee numeric, backstab numeric,
             poison numeric, steal numeric, magic numeric, heal numeric, blast numeric,
             hp numeric, sp numeric,
             str numeric, maxstr numeric, int numeric, maxint numeric, dex numeric,
-            maxdex numeric, cha numeric, maxcha numeric, coin numeric, bank numeric,
-            loan numeric, weapon text, toWC numeric, armor text, toAC numeric,
+            maxdex numeric, cha numeric, maxcha numeric, coin text, bank text,
+            loan text, weapon text, toWC numeric, armor text, toAC numeric,
             spells text, poisons text, rings text, realestate text, security text,
             hull numeric, cannon numeric, ram integer, wins numeric, immortal numeric,
           	plays numeric, jl numeric, jw numeric, killed numeric, kills numeric,
@@ -222,13 +222,13 @@ module db {
             , ${user.lasttime}, ${user.calls}, ${user.today}, ${+user.expert}, '${user.emulation}'
             , ${user.rows}, '${user.access}', '${user.remote}', '${user.pc}', '${user.gender}'
             , ${+user.novice}, ${user.level}, ${user.xp}, ${user.xplevel}, '${user.status}'
-            ,'${user.blessed}', '${user.cursed}', ${+user.coward}, ${user.bounty.value}, '${user.who}'
+            ,'${user.blessed}', '${user.cursed}', ${+user.coward}, '${user.bounty.amount}', '${user.who}'
             ,'${user.gang}', '${user.keyseq}', '${user.keyhints.toString()}', ${user.melee}, ${user.backstab}
             , ${user.poison}, ${user.magic}, ${user.steal}, ${user.heal}, ${user.blast}
             , ${user.hp}, ${user.sp}
             , ${user.str}, ${user.maxstr}, ${user.int}, ${user.maxint}, ${user.dex}
-            , ${user.maxdex}, ${user.cha}, ${user.maxcha}, ${user.coin.value}, ${user.bank.value}
-            , ${user.loan.value}, '${user.weapon}', ${user.toWC}, '${user.armor}', ${user.toAC}
+            , ${user.maxdex}, ${user.cha}, ${user.maxcha}, '${user.coin.amount}', '${user.bank.amount}'
+            , '${user.loan.amount}', '${user.weapon}', ${user.toWC}, '${user.armor}', ${user.toAC}
             ,'${user.spells.toString()}', '${user.poisons.toString()}', '${user.realestate}', ?, '${user.security}'
             , ${user.hull}, ${user.cannon}, ${+user.ram}, ${user.wins}, ${user.immortal}
             , ${user.plays}, ${user.jl}, ${user.jw}, ${user.killed}, ${user.kills}

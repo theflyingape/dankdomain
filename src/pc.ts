@@ -117,6 +117,7 @@ module pc {
         }
 
         activate(one = $.online, keep = false, confused = false): boolean {
+            console.log('activate', one.user.id)
             if (one == $.online) $.online.user = $.player
             one.adept = one.user.wins ? 1 : 0
             one.pc = PC.card(one.user.pc)
@@ -356,7 +357,7 @@ module pc {
             let user: user = 'user' in rpc ? rpc.user : rpc
             if (user.handle) user.handle = titlecase(user.handle)
             if (db.loadUser(user)) {
-                if ('altered' in rpc) PC.activate(rpc)
+                if ('user' in rpc) PC.activate(rpc)
                 //  restore NPC with static fields
                 if (user.id[0] == '_' && user.id != "_SYS") {
                     let npc = db.fillUser(NPC[user.id], user)
@@ -437,6 +438,7 @@ module pc {
                 user.bank.value = due
                 if (due < 0) user.loan.value -= due
             }
+            vt.sound('click', 5)
         }
 
         portrait(rpc = $.online, effect = 'fadeInLeft', meta = '') {

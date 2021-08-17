@@ -1,6 +1,6 @@
 /*****************************************************************************\
  *  Dank Domain: the return of Hack & Slash                                  *
- *  DOOR authored by: Robert Hurst <theflyingape@gmail.com>                  *
+ *  DDnet authored by: Robert Hurst <theflyingape@gmail.com>                 *
 \*****************************************************************************/
 import chokidar = require('chokidar')
 import dns = require('dns')
@@ -12,20 +12,19 @@ import net = require('net')
 import pty = require('node-pty')
 import ws = require('ws')
 
-process.title = 'DDnet'
-console.log(`Dank Domain (${process.title}) started on ${process.platform} #${process.pid}`)
-
-//  process signal traps
+//  process traps
 process.on('uncaughtException', (err, origin) => {
-    console.error(`${process.title} ${origin} ${err}`)
+    console.error(origin, err)
 })
 
 process.on('SIGINT', () => {
-    console.info(` → signaled to interrupt: shutting down ${process.title}`)
+    console.log(` → signaled to interrupt: shutting down ${process.title}`)
     process.exit(0)
 })
 
-console.log(`cwd ${process.cwd()} → ${__dirname}`)
+process.title = 'DDnet'
+console.log(`Dank Domain (${process.title}) started on ${process.platform} #${process.pid}`)
+console.info(`cwd ${process.cwd()} → ${__dirname}`)
 process.chdir(__dirname)
 
 //  load common
@@ -36,7 +35,7 @@ import { Armor, Coin, Ring, Weapon } from '../items'
 let passed = ''
 if (process.argv.length > 2 && process.argv[2]) {
     passed = process.argv[2].toLowerCase()
-    console.log(`parameter passed: '${passed}'`)
+    console.info(`parameter passed: '${passed}'`)
 }
 
 let sessions = {}
@@ -46,7 +45,7 @@ let chalk = 0
 
 //  allow for elemental player(s) to roam regardless of real user activity
 let elemental: user = { id: '' }
-setInterval(bot, 60 * 60 * 1000)
+setInterval(bot, 45 * 60 * 1000)
 
 function bot() {
     let sysop: user = { id: '_SYS' }
@@ -68,7 +67,7 @@ function bot() {
         let pid = login(elemental.remote, network.rows, 80, network.emulator, [elemental.id])
         let term = sessions[pid]
         term.spawn.dispose()
-        console.log(`Startup BOT #${sysop.immortal} (${elemental.id}) from ${elemental.remote} → session ${pid}`)
+        console.info(`Startup BOT #${sysop.immortal} (${elemental.id}) from ${elemental.remote} → session ${pid}`)
 
         //  consume app output
         term.onData((data) => {
@@ -77,7 +76,7 @@ function bot() {
 
         //  app shutdown
         term.onExit(() => {
-            console.log(`Exit BOT #${sysop.immortal} (${elemental.id}) session ${pid}`)
+            console.info(`Exit BOT #${sysop.immortal} (${elemental.id}) session ${pid}`)
             // Clean things up
             delete broadcasts[pid]
             delete sessions[pid]
@@ -129,7 +128,7 @@ function login(client: string, rows: number, cols: number, emulator: EMULATION, 
         sessions[pid].startup = (sessions[pid].startup || '') + data
     })
 
-    console.log(`Create PLAYER session ${pid} using ${emulator}/${encoding} from remote host: ${client}`)
+    console.info(`Create PLAYER session ${pid} using ${emulator}/${encoding} from remote host: ${client}`)
 
     if (!elemental.id) bot()
     return pid
@@ -171,7 +170,7 @@ function message(term: pty.IPty, msg: Uint8Array, classic = true): Uint8Array {
             let b4: BufferEncoding = sessions[pid].encoding || 'utf8'
             sessions[pid].encoding = <BufferEncoding>(name == 'XT' ? 'utf8' : 'latin1')
             if (sessions[pid].encoding !== b4)
-                console.log(`CLASSIC session ${pid} encoding switched from ${b4} to ${sessions[pid].encoding}`)
+                console.info(`CLASSIC session ${pid} encoding switched from ${b4} to ${sessions[pid].encoding}`)
         }
         function tune(fileName) { }
         function wall(notify) {
@@ -191,7 +190,7 @@ try {
     Object.assign(network, JSON.parse(fs.readFileSync(pathTo('etc', 'network.json')).toString()))
 }
 catch (err) {
-    console.log(err.message)
+    console.error(err.message)
 }
 
 dns.lookup(network.address, (err, addr, family) => {
@@ -205,32 +204,32 @@ dns.lookup(network.address, (err, addr, family) => {
         tty.maxConnections = network.limit
 
         tty.on('close', (c) => {
-            console.log('Classic Gate is closed →', c)
+            console.info('Classic Gate is closed →', c)
         })
 
         tty.on('connection', (socket) => {
             let client = socket.remoteAddress || 'scan'
             let pid = login(client, network.rows, 80, network.emulator)
             let term = sessions[pid]
-            console.log(`Classic Gate knock from remote host ${client} → session ${pid}`)
+            console.info(`Classic Gate knock from remote host ${client} → session ${pid}`)
 
             socket.setKeepAlive(true, 4000)
             nka.setKeepAliveInterval(socket, 21000)
             nka.setKeepAliveProbes(socket, 2)
 
             socket.setTimeout(150000, () => {
-                console.log(`Classic socket: timeout for session ${pid}`)
+                console.warn(`Classic socket: timeout for session ${pid}`)
             })
 
             socket.on('close', (err) => {
                 if (err) {
-                    console.log(`Classic error: on close for session ${pid}`)
+                    console.error(`Classic error: on close for session ${pid}`)
                     if (pid > 1) term.destroy()
                 }
             })
 
             socket.on('error', (err) => {
-                console.log(`Classic error: ${err.message} for session ${pid}`)
+                console.error(`Classic error: ${err.message} for session ${pid}`)
                 if (pid > 1) term.destroy()
             })
 
@@ -244,7 +243,7 @@ dns.lookup(network.address, (err, addr, family) => {
                 try {
                     socket.write(msg, <BufferEncoding>term.encoding)
                 } catch (err) {
-                    console.log(`${err.message} for session ${pid}`)
+                    console.error(`${err.message} for session ${pid}`)
                 }
             })
 
@@ -262,9 +261,9 @@ dns.lookup(network.address, (err, addr, family) => {
             socket.on('timeout', () => {
                 if (pid > 1) try {
                     term.destroy()   // process.kill(pid, 1)
-                    console.log(`Timeout CLASSIC session ${pid} from remote host: ${term.client}`)
+                    console.error(`Timeout CLASSIC session ${pid} from remote host: ${term.client}`)
                 } catch (err) {
-                    console.log(`?FATAL term destroy event ${pid}: ${err.message}`)
+                    console.error(`?FATAL term destroy event ${pid}: ${err.message}`)
                 }
                 socket.end()
             })
@@ -283,7 +282,7 @@ dns.lookup(network.address, (err, addr, family) => {
                     case 'NAWS':
                         let rows = command.optionData.height
                         let cols = command.optionData.width
-                        console.log(`Resize CLASSIC session ${pid} (${rows}x${cols})`)
+                        console.info(`Resize CLASSIC session ${pid} (${rows}x${cols})`)
                         term.resize(cols, rows)
                         break
                 }
@@ -296,7 +295,7 @@ dns.lookup(network.address, (err, addr, family) => {
                     term.write(data)
                 } catch (err) {
                     if (term.pid) {
-                        console.log(`?FATAL ACTIVE CLASSIC session ${term.pid} socket → pty error:`, err.message)
+                        console.error(`?FATAL ACTIVE CLASSIC session ${term.pid} socket → pty error:`, err.message)
                         db.unlock(term.pid)
                         socket.destroy()
                     }
@@ -305,7 +304,7 @@ dns.lookup(network.address, (err, addr, family) => {
         })
 
         tty.on('error', (err) => {
-            console.log('Classic Gate is blocked →', err.message)
+            console.error('Classic Gate is blocked →', err.message)
             tty.close()
         })
 
@@ -325,7 +324,7 @@ dns.lookup(network.address, (err, addr, family) => {
             server = https.createServer(ssl, app)
         }
         catch (e) {
-            console.log(e.message)
+            console.error(e.message)
             server = http.createServer(app)
         }
         let port = network.ws
@@ -342,7 +341,7 @@ dns.lookup(network.address, (err, addr, family) => {
 
         if (passed == 'test') setImmediate(() => {
             process.kill(process.pid, 'SIGINT')
-            console.log(`self-interrupted ${passed}`)
+            console.info(`self-interrupted ${passed}`)
         })
 
         server.on('upgrade', (req, socket, head) => {
@@ -357,7 +356,7 @@ dns.lookup(network.address, (err, addr, family) => {
                     wsLurker.emit('connection', ws, req)
                 })
             } else {
-                console.log(`?FATAL WebSocket request: ${pathname}`)
+                console.error(`?FATAL WebSocket request: ${pathname}`)
                 socket.destroy()
             }
         })
@@ -369,7 +368,7 @@ dns.lookup(network.address, (err, addr, family) => {
         //  Player API
         app.post(`${network.path}gallery/`, (req, res) => {
             let client = req.header('x-forwarded-for') || req.socket.remoteAddress
-            console.log(`City Gates knocked from remote host: ${client} (${req.hostname})`)
+            console.info(`City Gates knocked from remote host: ${client} (${req.hostname})`)
 
             let list = []
             list.push(
@@ -473,7 +472,7 @@ dns.lookup(network.address, (err, addr, family) => {
                 term = sessions[pid]
 
             if (!term) return
-            console.log(`Resize PLAYER session ${pid} (${rows}x${cols})`)
+            console.info(`Resize PLAYER session ${pid} (${rows}x${cols})`)
             term.resize(cols, rows)
             res.end()
         })
@@ -503,7 +502,7 @@ dns.lookup(network.address, (err, addr, family) => {
                     res.send((lurkers.push(pid) - 1).toString())
                 }
                 else {
-                    console.log(`?FATAL LURKER session ${pid} request from remote host: ${req.header('x-forwarded-for') || req.socket.remoteAddress} → ${req.hostname}`)
+                    console.error(`?FATAL LURKER session ${pid} request from remote host: ${req.header('x-forwarded-for') || req.socket.remoteAddress} → ${req.hostname}`)
                 }
             }
             else if (Object.keys(sessions).length) {
@@ -539,8 +538,8 @@ dns.lookup(network.address, (err, addr, family) => {
                     browser.send(new TextDecoder().decode(msg))
                 } catch (ex) {
                     if (term.pid) {
-                        console.log(`?FATAL ACTIVE app session ${term.pid} pty → ws error:`, ex.message)
-                        console.log(msg)
+                        console.error(`?FATAL ACTIVE app session ${term.pid} pty → ws error:`, ex.message)
+                        console.error(msg)
                         db.unlock(term.pid)
                         browser.close()
                     }
@@ -563,7 +562,7 @@ dns.lookup(network.address, (err, addr, family) => {
                     term.write(msg)
                 } catch (ex) {
                     if (term.pid) {
-                        console.log(`?FATAL ACTIVE browser session ${term.pid} ws → pty error:`, ex.message)
+                        console.error(`?FATAL ACTIVE browser session ${term.pid} ws → pty error:`, ex.message)
                         db.unlock(term.pid)
                         browser.close()
                     }
@@ -574,9 +573,9 @@ dns.lookup(network.address, (err, addr, family) => {
                 //  did user close browser with an open app?
                 if (pid > 1) try {
                     term.destroy()   // process.kill(pid, 1)
-                    console.log(`Forced close PLAYER session ${term.pid} from remote host: ${term.client}`)
+                    console.warn(`Forced close PLAYER session ${term.pid} from remote host: ${term.client}`)
                 } catch (ex) {
-                    console.log(`?FATAL browser close event ${term.pid}: ${ex}`)
+                    console.error(`?FATAL browser close event ${term.pid}: ${ex}`)
                 }
             })
         })
@@ -595,14 +594,14 @@ dns.lookup(network.address, (err, addr, family) => {
                     browser.send(new TextDecoder().decode(data))
                 } catch (ex) {
                     if (term.pid)
-                        console.log(`?FATAL session ${term.pid}${player} lurker/ws error: ${ex.message}`)
+                        console.error(`?FATAL session ${term.pid}${player} lurker/ws error: ${ex.message}`)
                 }
             })
             term.onExit(() => {
                 try {
                     browser.close()
                 } catch (ex) {
-                    console.log(`?FATAL browser session ${term.pid}${player} lurker/ws error: ${ex.message}`)
+                    console.error(`?FATAL browser session ${term.pid}${player} lurker/ws error: ${ex.message}`)
                 }
             })
 
@@ -633,7 +632,7 @@ chokidar.watch(pathTo('users', 'save.json'))
             save.loan = new Coin(save.loan)
             Object.assign(user, save)
             db.saveUser(user)
-            console.log(`Player (${user.id}) updated`)
+            console.info(`Player (${user.id}) updated`)
         }
         catch (err) {
             console.error(`Player file has an exception in ${path}:`)

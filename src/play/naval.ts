@@ -220,7 +220,7 @@ module Naval {
                     n = tradein(n)
                     if (n > cap) n = cap
                     vt.sound('oof')
-                    vt.outln(`Ouch!  You bit into a pearl and sell it for ${new Coin(n).carry()}.`)
+                    vt.outln(`Ouch!  You bit into a pearl and sell it for ${carry(new Coin(n))}.`)
                     $.player.coin.value += n
                     break
                 }
@@ -234,7 +234,7 @@ module Naval {
                     n = tradein(n)
                     if (n > cap) n = cap
                     vt.sound('oof')
-                    vt.outln(`Ouch!  You bit into a diamond and sell it for ${new Coin(n).carry()}.`)
+                    vt.outln(`Ouch!  You bit into a diamond and sell it for ${carry(new Coin(n))}.`)
                     $.player.coin.value += n
                     break
                 }
@@ -389,7 +389,7 @@ module Naval {
                     }
                     if (!$.player.hull) {
                         if ($.player.coin.value < cost) {
-                            vt.outln('You need at least ', new Coin(cost).carry(), ' to buy a ship.')
+                            vt.outln('You need at least ', carry(new Coin(cost)), ' to buy a ship.')
                             break
                         }
                     }
@@ -399,7 +399,7 @@ module Naval {
                     max = $.player.hull + 50
                     cost = BigInt(Math.round(Math.pow(2, max / 150) * 7937))
                     while (max <= 8000 && cost < $.player.coin.value) {
-                        vt.outln(sprintf('Hull size: %-4d     Cost: ', max), new Coin(cost).carry())
+                        vt.outln(sprintf('Hull size: %-4d     Cost: ', max), carry(new Coin(cost)))
                         max += 50
                         cost = BigInt(Math.round(Math.pow(2, max / 150) * 7937))
                     }
@@ -468,7 +468,7 @@ module Naval {
                     vt.outln(`You need ${max} hull points of repair.`)
                     cost = BigInt(Math.round(Math.pow(2, $.player.hull / 150) * 7937))
                     cost /= BigInt($.player.hull / 10)
-                    vt.outln(`Each hull point costs ${new Coin(cost).carry()} to repair.`)
+                    vt.outln(`Each hull point costs ${carry(new Coin(cost))} to repair.`)
                     if (!max) break
                     afford = int($.player.coin.value / cost)
                     if (afford < max)
@@ -505,7 +505,7 @@ module Naval {
                     vt.outln(`You can mount up to ${max} more cannons.`)
                     cost = BigInt(Math.round(Math.pow(2, $.player.hull / 150) * 7937))
                     cost /= 250n
-                    vt.outln(`Each cannon costs ${new Coin(cost).carry()}.`)
+                    vt.outln(`Each cannon costs ${carry(new Coin(cost))}.`)
                     afford = int($.player.coin.value / cost)
                     if (afford < max)
                         max = afford
@@ -544,7 +544,7 @@ module Naval {
                     }
                     cost = BigInt(Math.round(Math.pow(2, $.player.hull / 150) * 7937))
                     cost /= 10n
-                    vt.outln(`We can equip your ship with a ram for ${new Coin(cost).carry()}.`)
+                    vt.outln(`We can equip your ship with a ram for ${carry(new Coin(cost))}.`)
                     afford = int($.player.coin.value / cost)
                     if (!afford) {
                         vt.outln(`You don't have enough money!`)
@@ -705,7 +705,7 @@ module Naval {
             booty.value *= BigInt(nme.user.cannon)
             if (nme.user.coin.value > booty.value) {
                 vt.sound('boo')
-                vt.outln(`${new Coin(nme.user.coin.value - booty.value).carry()} of the booty has settled on the ocean floor ... `, -500)
+                vt.outln(`${carry(new Coin(nme.user.coin.value - booty.value), 4)} of the booty has settled on the ocean floor ... `, -500)
                 nme.user.coin.value = booty.value
             }
             booty.value += nme.user.coin.value
@@ -906,9 +906,8 @@ module Naval {
             vt.sound('booty', 5)
             let coin = new Coin(sm.money)
             coin.value = tradein(coin.value)
-            vt.outln('You get ', coin.carry(), ' for bringing home the carcass.')
             $.player.coin.value += coin.value
-            vt.sleep(500)
+            vt.outln('You get ', carry(coin), ' for bringing home the carcass.', -500)
         }
 
         function you(): boolean {

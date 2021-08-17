@@ -126,7 +126,6 @@ module Battle {
         if (/Gates|Taxman/.test($.from)) {
             if ($.online.hp < 1) {
                 PC.payment($.taxman.user.coin.value)
-                vt.beep()
                 death($.reason || 'tax evasion')
                 vt.outln('  ', vt.blue, vt.bright, `"Thanks for the taxes!"`)
                 vt.sound('thief2', 16)
@@ -767,7 +766,7 @@ module Battle {
                 }
                 else {
                     log(parties[w][m].user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`)
-                    log(parties[w][m].user.id, `You got ${PC.expout(xp, false)} and ${new Coin(award).carry()}.`)
+                    log(parties[w][m].user.id, `You got ${PC.expout(xp, false)} experience and ${new Coin(award).amount}`)
                     parties[w][m].user.xp += xp
                     PC.save(parties[w][m])
                 }

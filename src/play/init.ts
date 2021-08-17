@@ -10,7 +10,7 @@ import { bracket, cat, emulator, getRing, news, time, vt } from '../lib'
 import { Deed, PC } from '../pc'
 import { } from '../npc'
 import { input, logoff, pickPC } from '../player'
-import { an, cuss, date2full, dice, fs, got, int, now, pathTo, titlecase, whole } from '../sys'
+import { an, cuss, date2full, dice, fs, got, int, now, pathTo, titlecase } from '../sys'
 
 module Init {
 
@@ -347,7 +347,6 @@ module Init {
                         cb: () => {
                             vt.outln('\n')
                             if (/Y/i.test(vt.entry)) {
-                                vt.sound('click')
                                 PC.payment(bail.value)
                                 PC.adjust('cha', -(4 - $.player.steal), -int((4 - $.player.steal) / 2))
                                 $.player.status = ''

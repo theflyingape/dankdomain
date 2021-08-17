@@ -8,8 +8,8 @@
 ### **11-Sep-2021** `v3.2.0`
 
 * Never Forget. The North remembers. 🐺
-* major code & file refactoring for CI/CD
-* Coin uses ES2020 `BigInt` requiring 64-bit
+* major code & data refactoring for CI/CD
+* Coin uses ES2020 `BigInt`
 * separated each character class out of the dankdomain config to allow for reroll templating of startup values, i.e., assign differing assets like weapon, spells, etc.
 * added class modifiers to heal & blast spells
 * expanded the role of each NPC

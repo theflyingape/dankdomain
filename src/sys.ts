@@ -124,12 +124,12 @@ module sys {
         return int(Math.random() * faces) + 1
     }
 
-    //  normalize as an integer
+    //  normalize to an integer as a generic number
     export function int(n: any): number {
-        n = (+n || 0).valueOf()
-        n = Math.trunc(n)   //  strip any fractional part
-        if (n == 0) n = 0   //  strip any negative sign (really)
-        return n
+        let result = (+n.toString() || 0)
+        result = Math.trunc(result)   //  strip any fractional part
+        if (result == 0) result = 0   //  strip any negative sign (really)
+        return result
     }
 
     export function now(): { date: number, time: number } {
@@ -142,20 +142,18 @@ module sys {
         return path.resolve(PATH, folder, file)
     }
 
-    //  normalize as a non-negative integer
+    //  normalize to a non-negative integer as a general numeric
     export function uint(n: any): number {
-        n = int(n)
-        if (n < 0) n = 0
-        return n
+        let result = int(n)
+        if (result < 0) result = 0
+        return result
     }
 
-    //  normalize as a non-negative 64-bit integer
+    //  normalize to a whole number as an arbitrarily large integer
     export function whole(n: any): bigint {
-        if (typeof n == 'bigint')
-            n = n <= 0 ? 0 : n
-        else
-            n = uint(n)
-        return BigInt(n)
+        let result = BigInt(+n.toString() || 0n)
+        if (result < 0n) result = 0n
+        return result
     }
 }
 

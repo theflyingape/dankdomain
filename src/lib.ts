@@ -47,9 +47,6 @@ module lib {
         let n = coin.value
         let bags: string[] = []
 
-        vt.save()
-
-        vt.attr(vt.off)   //  force attribute reset
         if (coin.pouch(n) == 'p') {
             n = whole(n / coin.PLATINUM)
             bags.push(vt.attr(vt.bright, n.toString(), vt.magenta, 'p', vt.normal, vt.white))
@@ -68,7 +65,6 @@ module lib {
         if ((n > 0 && coin.pouch(n) == 'c') || bags.length == 0)
             bags.push(vt.attr(vt.bright, n.toString(), vt.red, 'c', vt.normal, vt.white))
 
-        vt.restore()
         return bags.slice(0, max).toString()
     }
 
@@ -167,7 +163,7 @@ module lib {
                 cb: () => {
                     if (vt.entry && vt.entry.length == 2) vt.emulation = <EMULATION>vt.entry.toUpperCase()
                     $.player.emulation = vt.emulation
-                    if (vt.tty == 'telnet') vt.outln(`@vt.title(${$.player.emulation})`, -100)
+                    vt.title($.player.emulation)
                     vt.outln('\n', vt.reset, vt.magenta, vt.LGradient, vt.reverse, 'BANNER', vt.noreverse, vt.RGradient)
                     vt.outln(vt.red, 'R', vt.green, 'G', vt.blue, 'B', vt.reset, vt.bright, ' bold ', vt.normal, 'normal', vt.blink, ' flash ', vt.noblink, vt.faint, 'dim')
                     vt.out(vt.yellow, 'Cleric: ', vt.bright, { VT: '\x1B(0\x7D\x1B(B', PC: '\x9C', XT: '✟', dumb: '$' }[$.player.emulation]

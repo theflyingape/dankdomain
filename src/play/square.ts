@@ -165,12 +165,12 @@ module Square {
                 credit.value = tradein(new Coin(RealEstate.name[$.player.realestate].value).value)
                 credit.value += tradein(new Coin(Security.name[$.player.security].value).value)
                 credit.value -= $.player.loan.value
-                if (credit.value < 1) credit.value = 0n
+                if (credit.value < credit.COPPER) credit.value = 0n
 
                 vt.action('bank')
-                bank['D'] = { description: 'Money in hand: ' + carry() }
-                bank['W'] = { description: 'Money in bank: ' + carry($.player.bank) }
-                bank['L'] = { description: 'Money on loan: ' + carry($.player.loan) }
+                bank['D'] = { description: 'Money in hand: ' + carry($.player.coin, 4) }
+                bank['W'] = { description: 'Money in bank: ' + carry($.player.bank, 4) }
+                bank['L'] = { description: 'Money on loan: ' + carry($.player.loan, 4) }
 
                 vt.form = {
                     'menu': { cb: Bank, cancel: 'q', enter: '?', eol: false }
@@ -194,19 +194,10 @@ module Square {
                             cb: () => {
                                 vt.outln('\n')
                                 if (/Y/i.test(vt.entry)) {
-                                    vt.sound('click')
+                                    PC.payment(credit.value)
+                                    $.online.altered = true
                                     $.online.toAC = 0
                                     $.player.toAC = 0
-                                    $.player.coin.value -= credit.value
-                                    if ($.player.coin.value < 0) {
-                                        $.player.bank.value += $.player.coin.value
-                                        $.player.coin.value = 0n
-                                        if ($.player.bank.value < 0) {
-                                            $.player.loan.value -= $.player.bank.value
-                                            $.player.bank.value = 0n
-                                        }
-                                    }
-                                    $.online.altered = true
                                 }
                                 Battle.yourstats()
                                 menu()
@@ -226,19 +217,10 @@ module Square {
                             cb: () => {
                                 vt.outln('\n')
                                 if (/Y/i.test(vt.entry)) {
-                                    vt.sound('click')
+                                    PC.payment(credit.value)
+                                    $.online.altered = true
                                     $.online.toWC = 0
                                     $.player.toWC = 0
-                                    $.player.coin.value -= credit.value
-                                    if ($.player.coin.value < 0) {
-                                        $.player.bank.value += $.player.coin.value
-                                        $.player.coin.value = 0n
-                                        if ($.player.bank.value < 0) {
-                                            $.player.loan.value -= $.player.bank.value
-                                            $.player.bank.value = 0n
-                                        }
-                                    }
-                                    $.online.altered = true
                                 }
                                 Battle.yourstats()
                                 menu()
@@ -278,17 +260,8 @@ module Square {
                             vt.outln()
                             let buy = int(/=|max/i.test(vt.entry) ? hi : vt.entry)
                             if (buy > 0 && buy <= hi) {
-                                $.player.coin.value -= BigInt(buy * $.player.level)
-                                if ($.player.coin.value < 0) {
-                                    if (!$.player.novice) $.player.bank.value += $.player.coin.value
-                                    $.player.coin.value = 0n
-                                    if ($.player.bank.value < 0) {
-                                        $.player.loan.value -= $.player.bank.value
-                                        $.player.bank.value = 0n
-                                    }
-                                }
+                                PC.payment(BigInt(buy * $.player.level))
                                 $.online.hp += buy
-                                vt.beep()
                                 vt.outln('\nHit points = ', $.online.hp.toString())
                             }
                             menu()

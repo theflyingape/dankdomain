@@ -5,12 +5,11 @@
 
 import $ = require('./runtime')
 import { Coin, RealEstate, Security } from '../items'
-import { bracket, display, tradein, vt } from '../lib'
+import { bracket, carry, display, tradein, vt } from '../lib'
 import { elemental } from '../npc'
 import { PC } from '../pc'
 import { input } from '../player'
 import { dice, int, sprintf, whole } from '../sys'
-import { serialize } from 'v8'
 
 module Casino {
 
@@ -132,7 +131,7 @@ module Casino {
         vt.form = {
             'coin': { cb: amount, max: 6 }
         }
-        vt.form['coin'].prompt = vt.attr('Bet ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=', max.carry(), ']? ')
+        vt.form['coin'].prompt = vt.attr('Bet ', bracket(vt.attr(vt.uline, 'MAX', vt.nouline, '=', carry(max))), '? ')
         vt.focus = 'coin'
     }
 
@@ -183,7 +182,7 @@ module Casino {
                         vt.outln(`\nDealer has Blackjack!  You're a loser.`, -1000)
                     }
                     else {
-                        vt.outln('\nYou win ', payoff.carry(), '!')
+                        vt.outln('\nYou win ', carry(payoff), '!')
                         $.player.coin.value += payoff.value + amount.value
                     }
                     break
@@ -212,7 +211,7 @@ module Casino {
                                     else if (player.length == 5) {
                                         vt.sound('cheer')
                                         payoff.value = 2n * amount.value
-                                        vt.outln('Five card charley!  You win ', payoff.carry(), '!')
+                                        vt.outln('Five card charley!  You win ', carry(payoff), '!')
                                         $.player.coin.value += payoff.value + amount.value
                                         menu()
                                         return
@@ -236,13 +235,13 @@ module Casino {
                                     if (value > 21) {
                                         vt.sound('cheer')
                                         payoff.value = amount.value
-                                        vt.outln('Dealer breaks!  You win ', payoff.carry(), '!')
+                                        vt.outln('Dealer breaks!  You win ', carry(payoff), '!')
                                         $.player.coin.value += payoff.value + amount.value
                                     }
                                     else if (myhand > value) {
                                         vt.sound('cheer')
                                         payoff.value = amount.value
-                                        vt.outln('You win ', payoff.carry(), '!')
+                                        vt.outln('You win ', carry(payoff), '!')
                                         $.player.coin.value += payoff.value + amount.value
                                     }
                                     else if (myhand < value) {
@@ -291,15 +290,13 @@ module Casino {
                 if (point == 7 || point == 11) {
                     vt.sound('cheer')
                     payoff.value = 2n * amount.value
-                    vt.outln('A natural!  You win ', payoff.carry(), '!')
                     $.player.coin.value += payoff.value + amount.value
-                    vt.sleep(500)
+                    vt.outln('A natural!  You win ', carry(payoff), '!', -500)
                     break
                 }
                 if (point == 2 || point == 3 || point == 12) {
                     vt.sound('boo')
-                    vt.out('Crapped out!  You lose.\n')
-                    vt.sleep(500)
+                    vt.outln('Crapped out!  You lose.', -500)
                     break
                 }
 
@@ -342,7 +339,7 @@ module Casino {
                             if ($.player.coin.value > 0n && baby > 1 && baby < 13) {
                                 if (max.value > $.player.coin.value)
                                     max.value = $.player.coin.value
-                                vt.form['baby'].prompt = vt.attr('\x1B[JBet ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=', max.carry(), ']? ')
+                                vt.form['baby'].prompt = vt.attr('\x1B[JBet ', bracket(vt.attr(vt.uline, 'MAX', vt.nouline, '=', carry(max))), '? ')
                                 vt.focus = 'baby'
                                 return
                             }
@@ -398,7 +395,7 @@ module Casino {
                                 vt.sound('cheer')
                                 payoff.value = amount.value * whole((11 - card[mine].value) / 4 + 1)
                                 if (card[house].value < 0) payoff.value *= 2n
-                                vt.outln('You win ', payoff.carry(), '!')
+                                vt.outln('You win ', carry(payoff), '!')
                                 $.player.coin.value += payoff.value + amount.value
                             }
                             else if (card[mine].value < card[house].value) {
@@ -419,7 +416,7 @@ module Casino {
                                 vt.out('You match ... ', -500)
                                 if (card[house].value < 0) {
                                     payoff.value = amount.value * 1000n
-                                    vt.outln('and win ', payoff.carry(), '!')
+                                    vt.outln('and win ', carry(payoff), '!')
                                     vt.sound('cheer')
                                 }
                                 else {
@@ -625,7 +622,7 @@ module Casino {
                                 }
                                 if (payoff.value) {
                                     vt.sound('cheer')
-                                    vt.outln('\nYou win ', payoff.carry(), '!')
+                                    vt.outln('\nYou win ', carry(payoff), '!')
                                     $.player.coin.value += payoff.value
                                     vt.sleep(500)
                                 }
@@ -769,7 +766,7 @@ module Casino {
 
                 if (payoff.value) {
                     vt.sound('cheer')
-                    vt.outln('You win ', payoff.carry(), '!')
+                    vt.outln('You win ', carry(payoff), '!')
                     $.player.coin.value += payoff.value
                     vt.sleep(500)
                 }
@@ -857,23 +854,21 @@ module Casino {
                                     : 5
                 vt.sound('cheer')
                 payoff.value = side * BigInt(baby)
-                vt.outln('You make your side bet!  You win ', payoff.carry(), '!')
                 $.player.coin.value += payoff.value
+                vt.outln('You make your side bet!  You win ', carry(payoff), '!')
             }
             vt.sleep(1000)
             if (d1 + d2 == 7) {
                 vt.sound('boo')
-                vt.out('Crapped out!  You lose on your point.\n')
-                vt.sleep(500)
+                vt.outln('Crapped out!  You lose on your point.', -500)
                 menu()
                 return true
             }
             if (d1 + d2 == point) {
                 vt.sound('cheer')
                 payoff.value = amount.value
-                vt.outln('You make your point!  You win ', payoff.carry(), '!')
                 $.player.coin.value += payoff.value + amount.value
-                vt.sleep(500)
+                vt.outln('You make your point!  You win ', carry(payoff), '!', -500)
                 menu()
                 return true
             }
