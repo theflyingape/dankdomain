@@ -208,7 +208,7 @@ function newSession(ev) {
     term.onSelectionChange(() => {
         if (carrier) {
             let word = term.getSelection();
-            if (word.length > 0 && word.length < 64) {
+            if (word.length > 0 && word.length < 23) {
                 socket.send(word + '\x0D');
                 term.clearSelection();
             }

@@ -117,7 +117,6 @@ module pc {
         }
 
         activate(one = $.online, keep = false, confused = false): boolean {
-            console.log('activate', one.user.id)
             if (one == $.online) $.online.user = $.player
             one.adept = one.user.wins ? 1 : 0
             one.pc = PC.card(one.user.pc)
