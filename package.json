@@ -64,7 +64,7 @@
 		"sprintf-js": "^1.1.2",
 		"telnet-socket": "^0.2.3",
 		"title-case": "^3.0.3",
-		"ws": "^8.1.0",
+		"ws": "^8.2.0",
 		"xterm": "^4.13.0",
 		"xterm-addon-fit": "^0.5.0",
 		"xterm-addon-unicode11": "^0.2.0",

@@ -66,8 +66,8 @@ $ npm install @theflyingape/dankdomain
 $ docker pull theflyingape/dankdomain
 $ docker run --rm -it -p 1939:1939/tcp -p 1986:1986/tcp theflyingape/dankdomain
 
-Ɗaɳƙ Ɗoɱaiɳ (ƊƊnet) started on linux #1
-cwd /usr/games/dankdomain → /usr/games/dankdomain/door
+Dank Domain (DDnet) started on linux #661
+cwd /usr/games/dankdomain/game → /usr/games/dankdomain/game/portal
 initializing Deeds
 initializing Online
 initializing Rings (unique)
@@ -80,23 +80,18 @@ initializing Rings (unique)
  + adding 🖤 Undying
  + adding ⚪ White Wizard
 initializing Players
- + adding sysop - 👑 Sysop
- + adding barkeep - Tiny, the Ogre barkeep
- + adding merchant - Manu
- + adding neptune - Neptune of the Sea
- + adding seahag - old sea hag
- + adding taxman - Ira Hess
- + adding witch - Medea
- + adding bot1 - Imagination
- + adding bot2 - Nobody
 initializing Gangs
-ENOENT: no such file or directory, open '../etc/network.json'
+ + adding AB Original with BOT+NPC members
+ + adding (the) Monster Mash
+ENOENT: no such file or directory, open '/usr/games/dankdomain/game/etc/network.json'
 → listening on telnet 0.0.0.0:1986
 → listening on https://0.0.0.0:1939/
 ↔ WebSocket endpoints enabled
 ```
 
-Supports running as a BBS door (as Amiga-only BBSes did for `Hack & Slash` in 1994) by allowing a passed user ID paired with a compatible **Mystic** `door.sys` [file format](http://wiki.mysticbbs.com/doku.php?id=menu_commands#external_doors) launched from its `BBS node` startup directory.  For example, what follows might be for the BBS sysop (`0`):
+Supports running as a BBS door (as Amiga-only BBSes did for `Hack & Slash` in 1994) by allowing a passed user numeric ID paired with a compatible **Mystic** `door.sys` [file format](http://wiki.mysticbbs.com/doku.php?id=menu_commands#external_doors) launched from its `BBS node` startup directory.
+
+For example, what follows might be for the BBS sysop (`0`):
 
 ```bash
 #!/bin/sh
@@ -132,12 +127,12 @@ game
     assets        app install, fonts, etc.
     images        visual media for artifacts, creatures, and players
     sounds        audio media for event notifications
-  users           player runtime data files
+  users           player runtime database & files
 mame              MAME support files
 node_modules      Node.js support libraries
 package.json      Node.js manifest
 battle.js         support module for player engagements
-db.js             net & play module for player runtime data files
+db.js             net & play module for player runtime database & files
 email.js          support module for (optional) dispatching email notifications
 interfaces.js     TypeScript object types
 items.js          support module for loading item artifacts & coin
@@ -155,7 +150,7 @@ mame.sh           player - MAME VT240 terminal + socat startup script
 tty.sh            player - telnet.js wrapper
 ```
 
-**NOTE**: _in_ **`users`** _folder, edit a hidden (dot) export file and save as_ **`save.json`** _whereas a running_ **`app.js`** _service will automatically consume and apply it to the dankdomain.sql_ **`Players`** _table._
+**NOTE**: _in_ **`users`** _folder, edit a hidden (dot) export file and save as_ **`save.json`** _whereas a running DDnet_ **`app.js`** _portal service will automatically consume and apply it to the dankdomain.sql_ **`Players`** _table._
 
  🇺🇸 ©️1991 - 2021 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
 

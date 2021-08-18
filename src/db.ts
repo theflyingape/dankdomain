@@ -74,7 +74,9 @@ module db {
         run(`CREATE TABLE IF NOT EXISTS Gangs (
             name text PRIMARY KEY, members text, win numeric, loss numeric, banner numeric, color numeric
         )`)
+        console.info(' + adding AB Original with BOT+NPC members')
         run(`INSERT INTO Gangs VALUES ( 'AB Original', 'IMA,NOB,_DM,_WOW', 0, 0, 86, 99 )`)
+        console.info(' + adding (the) Monster Mash')
         run(`INSERT INTO Gangs VALUES ( 'Monster Mash', '_MM1,_MM2,_MM3,_MM4', 0, 0, 0, 0 )`)
     }
 
