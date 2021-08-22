@@ -109,7 +109,7 @@ module Arena {
 
                     vt.outln('Jousting ability:\n')
                     vt.out(vt.green, vt.bright, sprintf('%-25s', opponent.user.handle), vt.white, sprintf('%4d', versus))
-                    if (opponent.user.id == $.king.id) vt.out(vt.normal, ' - ', vt.magenta, 'The Crown')
+                    if (opponent.user.id == $.ruler.id) vt.out(vt.normal, ' - ', vt.magenta, 'The Crown')
                     vt.outln()
                     vt.outln(vt.green, vt.bright, sprintf('%-25s', $.player.handle), vt.white, sprintf('%4d', ability))
                     vt.outln()
@@ -133,7 +133,7 @@ module Arena {
                                         , effect: 'slideInLeft'
                                     })
                                     vt.out('The trumpets blare! ', -400, 'You and your opponent ride into the arena. ', -400)
-                                    vt.outln(opponent.user.id == $.king.id ? '\nThe crowd goes silent.' : 'The crowd roars!', -400)
+                                    vt.outln(opponent.user.id == $.ruler.id ? '\nThe crowd goes silent.' : 'The crowd roars!', -400)
                                     $.online.altered = true
                                     vt.action('joust')
 
@@ -151,7 +151,7 @@ module Arena {
                                 if (/F/i.test(vt.entry)) {
                                     log(opponent.user.id, `\n${$.player.handle} forfeited to you in a joust.`)
                                     vt.animated('pulse')
-                                    if (opponent.user.id == $.king.id) {
+                                    if (opponent.user.id == $.ruler.id) {
                                         vt.sound('cheer')
                                         PC.adjust('cha', 101)
                                         vt.outln('The crowd is delighted by your show of respect to the Crown.', -300)
@@ -178,7 +178,7 @@ module Arena {
                                         if (++jw == 3) {
                                             vt.outln('\nYou have won the joust!')
                                             let reward = new Coin(PC.money(opponent.user.level))
-                                            if (opponent.user.id == $.king.id) {
+                                            if (opponent.user.id == $.ruler.id) {
                                                 vt.sound('boo')
                                                 vt.animated('fadeOut')
                                                 PC.adjust('cha', -2, -1)

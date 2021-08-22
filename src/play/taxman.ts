@@ -29,7 +29,7 @@ module Taxman {
             vt.outln(', our Master of Coin, looks at your bulging ', pieces(), -1200)
             vt.out(vt.yellow, 'and says, ', vt.blue, vt.bright, '"Time to pay taxes!"', vt.normal, -800)
             vt.out(vt.yellow, '  You check out the burly guards who stand ready\n')
-            vt.outln(`to enforce `, vt.bright, `${$.king.handle}'${$.king.handle.substr(-1) !== 's' ? 's' : ''}`, vt.normal, ` will.\n`, -1600)
+            vt.outln(`to enforce `, vt.bright, `${$.ruler.handle}'${$.ruler.handle.substr(-1) !== 's' ? 's' : ''}`, vt.normal, ` will.\n`, -1600)
 
             tax.value = scratch - tax.value
             tax = tax.pick(1)
@@ -78,14 +78,14 @@ module Taxman {
                     $.player.bank.value = 0n
             }
             $.player.loan.value = due
-            //  a Lanister always pay his debt
+            //  a Lannister always pays his debts
             if ($.player.loan.value > 9n) {
-                vt.outln(vt.green, '\nYour bank loan ', carry($.player.loan, 4), ' is ', vt.red, 'past due', vt.reset, '.', -1200)
+                vt.outln(vt.green, '\nThe Iron Bank will have its due on your loan: ', carry($.player.loan, 4), -1200)
                 vt.beep()
                 let interest = new Coin($.player.loan.value * 100n / 5n + 1n)
                 $.player.loan.value += interest.value
                 $.online.altered = true
-                vt.outln('An interest charge of ', carry(interest, 4), ' was added.', -1200)
+                vt.outln('They add an interest charge of ', carry(interest, 4), -1200)
             }
             //  now tax if necessary
             tax.value = 1000n * PC.money($.player.level)

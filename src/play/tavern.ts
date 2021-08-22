@@ -89,14 +89,14 @@ module Tavern {
             case 'E':
                 try {
                     js = JSON.parse(fs.readFileSync(file).toString())
-                    for (let argument in js) {
-                        vt.outln()
-                        vt.outln('    -=', bracket(js[argument].who, false), '=-')
-                        vt.outln(+argument % 2 ? vt.lyellow : vt.lcyan, js[argument].text)
-                    }
                 }
                 catch (err) {
-                    vt.outln(`not available (${err})`)
+                    js = [{ who: 'YOU', text: 'Feel free to jump in to post something!' }]
+                }
+                for (let argument in js) {
+                    vt.outln()
+                    vt.outln('    -=', bracket(js[argument].who, false), '=-')
+                    vt.outln(+argument % 2 ? vt.lyellow : vt.lcyan, js[argument].text)
                 }
                 suppress = true
                 break

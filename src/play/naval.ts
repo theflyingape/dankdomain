@@ -107,7 +107,7 @@ module Naval {
                         }
                     }
                     vt.focus = 'battle'
-                })
+                }, true)
                 return
 
             case 'G':

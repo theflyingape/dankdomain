@@ -70,17 +70,17 @@ module Player {
                 } while (!Access.name[rpc.user.access][rpc.user.sex])
                 vt.outln(-500)
                 vt.outln(vt.yellow
-                    , Access.name[$.king.access][$.king.sex], ' the ', $.king.access.toLowerCase()
-                    , ', ', vt.bright, $.king.handle, vt.normal
+                    , Access.name[$.ruler.access][$.ruler.sex], ' the ', $.ruler.access.toLowerCase()
+                    , ', ', vt.bright, $.ruler.handle, vt.normal
                     , ', is pleased with your accomplishments\n'
-                    , `and ${PC.who($.king).he}promotes you to`, vt.bright, an(rpc.user.access), vt.normal, '!', -2000)
+                    , `and ${PC.who($.ruler).he}promotes you to`, vt.bright, an(rpc.user.access), vt.normal, '!', -2000)
                 if (Access.name[rpc.user.access].message)
-                    vt.outln(vt.yellow, `${PC.who($.king).He}whispers, `, vt.reset, vt.faint, `"${eval('`' + Access.name[rpc.user.access].message + '`')}"`, -2000)
-                let nme = PC.encounter(`AND id NOT GLOB '_*' AND id != '${$.king.id}'`)
+                    vt.outln(vt.yellow, `${PC.who($.ruler).He}whispers, `, vt.reset, vt.faint, `"${eval('`' + Access.name[rpc.user.access].message + '`')}"`, -2000)
+                let nme = PC.encounter(`AND id NOT GLOB '_*' AND id != '${$.ruler.id}'`)
                 vt.outln(`The mob goes crazy`, -500, nme.user.id
                     ? `, except for ${nme.user.handle} seen buffing ${nme.who.his}${weapon(nme)}`
                     : `!!`, -2000)
-                vt.outln([`${$.taxman.user.handle} nods an approval.`, `${$.barkeep.user.handle} slaughters a pig for tonight's feast.`, `${$.king.handle} gives you a hug.`, `${Access.name[$.king.access][$.king.sex]}'s guard salute you.`, `${$.king.handle} orders ${PC.who($.king).his}Executioner to hang ${$.player.level} prisoners in your honor.`][dice(5) - 1], -2000)
+                vt.outln([`${$.taxman.user.handle} nods an approval.`, `${$.barkeep.user.handle} slaughters a pig for tonight's feast.`, `${$.ruler.handle} gives you a hug.`, `${Access.name[$.ruler.access][$.ruler.sex]}'s guard salute you.`, `${$.ruler.handle} orders ${PC.who($.ruler).his}Executioner to hang ${$.player.level} prisoners in your honor.`][dice(5) - 1], -2000)
                 news(`\tpromoted to ${rpc.user.access}`)
                 vt.wall($.player.handle, `promoted to ${rpc.user.access}`)
                 vt.sessionAllowed += 300

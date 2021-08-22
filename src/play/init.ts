@@ -215,12 +215,12 @@ module Init {
             vt.outln()
             if (getRuler()) {
                 vt.outln(vt.yellow
-                    , Access.name[$.king.access][$.king.sex], ' the ', $.king.access.toLowerCase()
-                    , ', ', vt.bright, $.king.handle, vt.normal
+                    , Access.name[$.ruler.access][$.ruler.sex], ' the ', $.ruler.access.toLowerCase()
+                    , ', ', vt.bright, $.ruler.handle, vt.normal
                     , ', is pleased to see you return\n'
-                    , `and ${PC.who($.king).he}welcomes you as`, vt.bright, an($.player.access), vt.normal, '!')
+                    , `and ${PC.who($.ruler).he}welcomes you as`, vt.bright, an($.player.access), vt.normal, '!')
                 if ($.access.message)
-                    vt.outln(vt.yellow, `${PC.who($.king).He}exclaims, `, vt.bright, `"${eval('`' + $.access.message + '`')}"`)
+                    vt.outln(vt.yellow, `${PC.who($.ruler).He}exclaims, `, vt.bright, `"${eval('`' + $.access.message + '`')}"`)
             }
             else {
                 $.player.access = Object.keys(Access.name).slice($.player.sex == 'F' ? -2 : -1)[0]
@@ -404,14 +404,6 @@ module Init {
                 $.player.jw = 0
                 vt.sound('shimmer', 22)
             }
-            if ($.access.sysop) {
-                let ring = Ring.power([], null, 'joust')
-                if (($.online.altered = Ring.wear($.player.rings, ring.name))) {
-                    getRing('are the Ruler and gifted with', ring.name)
-                    PC.saveRing(ring.name, $.player.id, $.player.rings)
-                    vt.sound('promote', 22)
-                }
-            }
             vt.outln()
 
             $.player.calls++
@@ -550,19 +542,20 @@ module Init {
     }
 
     function getRuler(): boolean {
+        $.ruler = db.fillUser()
         //  King
         let ruler = Object.keys(Access.name).slice(-1)[0]
-        let rs = <user[]>db.query(`SELECT id FROM Players WHERE access='${ruler}'`)
+        let rs = db.query(`SELECT id FROM Players WHERE access='${ruler}'`)
         if (rs.length) {
-            $.king.id = rs[0].id
-            return PC.load($.king)
+            $.ruler.id = rs[0].id
+            return PC.load($.ruler)
         }
         //  Queen
         ruler = Object.keys(Access.name).slice(-2)[0]
-        rs = <user[]>db.query(`SELECT id FROM Players WHERE access='${ruler}'`)
+        rs = db.query(`SELECT id FROM Players WHERE access='${ruler}'`)
         if (rs.length) {
-            $.king.id = rs[0].id
-            return PC.load($.king)
+            $.ruler.id = rs[0].id
+            return PC.load($.ruler)
         }
         return false
     }

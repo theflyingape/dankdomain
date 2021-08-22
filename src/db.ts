@@ -46,6 +46,18 @@ module db {
         }
     }
 
+    rs = query(`SELECT * FROM sqlite_master WHERE name='Gangs' AND type='table'`)
+    if (!rs.length) {
+        console.info('initializing Gangs')
+        run(`CREATE TABLE IF NOT EXISTS Gangs (
+            name text PRIMARY KEY, members text, win numeric, loss numeric, banner numeric, color numeric
+        )`)
+        console.info(' + adding AB Original with BOT+NPC members')
+        run(`INSERT INTO Gangs VALUES ( 'AB Original', 'IMA,NOB,_DM,_WOW', 0, 0, 86, 99 )`)
+        console.info(' + adding (the) Monster Mash')
+        run(`INSERT INTO Gangs VALUES ( 'Monster Mash', '_MM1,_MM2,_MM3,_MM4', 0, 0, 0, 0 )`)
+    }
+
     rs = query(`SELECT * FROM sqlite_master WHERE name='Players' AND type='table'`)
     if (!rs.length) {
         console.info('initializing Players')
@@ -66,18 +78,6 @@ module db {
             hull numeric, cannon numeric, ram integer, wins numeric, immortal numeric,
           	plays numeric, jl numeric, jw numeric, killed numeric, kills numeric,
             retreats numeric, steals numeric, tl numeric, tw numeric)`)
-    }
-
-    rs = query(`SELECT * FROM sqlite_master WHERE name='Gangs' AND type='table'`)
-    if (!rs.length) {
-        console.info('initializing Gangs')
-        run(`CREATE TABLE IF NOT EXISTS Gangs (
-            name text PRIMARY KEY, members text, win numeric, loss numeric, banner numeric, color numeric
-        )`)
-        console.info(' + adding AB Original with BOT+NPC members')
-        run(`INSERT INTO Gangs VALUES ( 'AB Original', 'IMA,NOB,_DM,_WOW', 0, 0, 86, 99 )`)
-        console.info(' + adding (the) Monster Mash')
-        run(`INSERT INTO Gangs VALUES ( 'Monster Mash', '_MM1,_MM2,_MM3,_MM4', 0, 0, 0, 0 )`)
     }
 
     const INIT: user = require(pathTo('pcs', 'defaults.json'))    //  inject user default values

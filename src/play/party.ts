@@ -148,7 +148,7 @@ module Party {
                                 $.online.altered = true
                                 vt.outln()
                                 PC.saveGang(g, true)
-                                cat('party/gang')
+                                cat('party/gang', 600)
                                 vt.sound('click', 20)
                                 menu()
                             }

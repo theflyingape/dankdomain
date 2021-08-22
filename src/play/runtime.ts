@@ -12,14 +12,14 @@ module runtime {
     export let reason: string = ''
 
     //  maintain usual suspects
-    export let barkeep: active = { user: { id: '_BAR' } }
-    export let dwarf: active = { user: { id: '_DM' } }
-    export let neptune: active = { user: { id: '_NEP' } }
-    export let seahag: active = { user: { id: '_OLD' } }
-    export let taxman: active = { user: { id: '_TAX' } }
-    export let witch: active = { user: { id: '_WOW' } }
-    export let king: user = { id: '' }
-    export let sysop: user = { id: '_SYS' }
+    export let barkeep: active
+    export let dwarf: active
+    export let neptune: active
+    export let seahag: active
+    export let taxman: active
+    export let witch: active
+    export let sysop: user
+    export let ruler: user
 
     //  player runtime features
     export let access: access

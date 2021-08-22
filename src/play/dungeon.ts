@@ -1085,7 +1085,7 @@ module Dungeon {
                     vt.outln(vt.reset, PC.who($.taxman).He, 'is the '
                         , vt.cyan, vt.bright, 'Master of Coin'
                         , vt.reset, ' for '
-                        , vt.magenta, vt.bright, $.king.handle
+                        , vt.magenta, vt.bright, $.ruler.handle
                         , vt.reset, '!')
                     vt.profile({ jpg: 'npc/taxman', handle: $.taxman.user.handle, level: $.taxman.user.level, pc: $.taxman.user.pc, effect: 'bounceInDown' })
                     vt.sound('oops', 16)

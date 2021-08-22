@@ -3,7 +3,7 @@
   "name": "Susan Clara Marcie", "dob": 716396, "sex": "I",
   "pc": "Psionic", "gender": "F", "level": 97, "xplevel": 90,
   "bounty": "1p", "who": "_DM",
-  "coin": "10c",
+  "coin": "1961c",
   "hp": 2020, "sp": 9005,
   "str": 77, "int": 97, "dex": 87, "cha": 67,
   "poison": 2,
@@ -12,5 +12,6 @@
   "rings": [ "Magus", "Medusa's" ],
   "poisons": [ 12 ],
   "spells": [ 11, 13, 19 ],
-  "realestate": "Hovel", "security": "Trip wire trap"
+  "realestate": "Hovel", "security": "Trip wire trap",
+  "ram": 1
 }

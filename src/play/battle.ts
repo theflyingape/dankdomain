@@ -2252,7 +2252,7 @@ module Battle {
         vt.form = {
             'user': {
                 cb: () => {
-                    let rpc: active = { user: { id: titlecase(vt.entry) } }
+                    let rpc: active = { user: { id: vt.entry } }
                     if (!npc && rpc.user.id[0] == '_') vt.entry = '?'
                     if (vt.entry == '?') {
                         vt.action('list')
@@ -2312,8 +2312,8 @@ module Battle {
 
                     let rs = db.query(`
                         SELECT id, handle, pc, level, xplevel, status, lastdate, access FROM Players
-                        WHERE AND xplevel > 0 AND level BETWEEN ${start} AND ${end}`
-                        + `${npc ? "" : " id NOT GLOB '_*'"} `
+                        WHERE xplevel > 0 AND level BETWEEN ${start} AND ${end}`
+                        + `${npc ? "" : " AND id NOT GLOB '_*'"} `
                         + `ORDER BY xplevel DESC, level DESC, wins DESC, immortal DESC`)
 
                     for (let i in rs) {

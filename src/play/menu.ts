@@ -6,7 +6,7 @@
 import $ = require('./runtime')
 import db = require('../db')
 import { Armor, Coin, RealEstate, Ring, Security, Weapon } from '../items'
-import { carry, cat, display, emulator, log, news, tradein, vt } from '../lib'
+import { carry, cat, display, emulator, getRing, log, news, tradein, vt } from '../lib'
 import { Deed, PC } from '../pc'
 import { elemental } from '../npc'
 import { checkXP, input, pickPC } from '../player'
@@ -37,6 +37,15 @@ module Main {
     vt.wall($.player.handle, `logged on as a level ${$.player.level} ${$.player.pc}`)
     vt.outln()
     cat('user/border')
+    if ($.access.sysop) {
+        let ring = Ring.power([], null, 'joust')
+        if (($.online.altered = Ring.wear($.player.rings, ring.name))) {
+            getRing('are the Ruler and gifted with', ring.name)
+            PC.saveRing(ring.name, $.player.id, $.player.rings)
+            vt.sound('promote', 22)
+            vt.outln()
+        }
+    }
     if ($.access.bot) {
         if (dice(39) == 1) $.border = true
         $.access.sysop = true

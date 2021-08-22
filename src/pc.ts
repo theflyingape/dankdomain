@@ -246,7 +246,7 @@ module pc {
             else {
                 if (from == $.player.handle) {
                     PC.adjust('cha', -1, -1, -1)
-                    if (($.player.gang && onto.user.gang == $.player.gang) || onto.user.id == $.king.id) {
+                    if (($.player.gang && onto.user.gang == $.player.gang) || onto.user.id == $.ruler.id) {
                         PC.adjust('cha', -1, -1, -1)
                         $.player.coward = true
                         vt.sound('boom')

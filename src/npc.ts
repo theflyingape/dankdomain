@@ -15,18 +15,25 @@ module npc {
     Object.keys(NPC).forEach((id) => {
         try {
             const template = NPC[id]
-            if (!db.loadUser({ id: id })) {
-                let npc = db.fillUser(template)
+            let npc: user = { id: id }
+
+            //  make NPC?
+            if (!db.loadUser(npc)) {
+                npc = db.fillUser(template)
                 npc = PC.reroll(npc, npc.pc, npc.level)
                 npc = db.fillUser(template, npc)
+                console.info(' + adding', npc.handle, 'as a level', npc.level, npc.pc)
                 db.saveUser(npc, true)
             }
+            //  pre-load NPC (not BOT) into runtime
+            if (!$[NPC[id]]) {
+                $[NPC[id]] = id == '_SYS' ? npc : { user: npc }
+                PC.load($[NPC[id]])
+            }
         }
-        catch (err) { console.error(err) }
-    })
-
-    Object.keys(NPC).forEach((id) => {
-        if ($[NPC[id]]) PC.load($[NPC[id]])
+        catch (err) {
+            if (id[0] == '_') console.error(id, NPC[id], err)
+        }
     })
 
     class _arena {
