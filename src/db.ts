@@ -101,7 +101,7 @@ module db {
     }
 
     export function loadUser(user: user): boolean {
-        let sql = `SELECT * FROM Players WHERE ${user.id ? `id='${user.id.toUpperCase()}'` : `handle='${user.handle}'`}`
+        let sql = `SELECT * FROM Players WHERE ${user.id ? `id='${user.id.toUpperCase()}'` : `handle='${user.handle}'`} COLLATE NOCASE`
         let rs = query(sql)
         if (rs.length) {
             Object.assign(user, rs[0])

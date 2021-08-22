@@ -487,10 +487,10 @@ module Battle {
                 bs = 1
 
                 vt.form['attack'].prompt = choices
-                vt.form['attack'].prompt += vt.attr(bracket('A', false), vt.cyan, 'ttack, ')
+                vt.form['attack'].prompt += vt.attr(bracket('A', false, '[]'), vt.cyan, 'ttack, ')
                 if ($.player.magic && $.player.spells.length)
-                    vt.form['attack'].prompt += vt.attr(bracket('C', false), vt.cyan, 'ast spell, ')
-                vt.form['attack'].prompt += vt.attr(bracket('R', false), vt.cyan, 'etreat, '
+                    vt.form['attack'].prompt += vt.attr(bracket('C', false, '{}'), vt.cyan, 'ast spell, ')
+                vt.form['attack'].prompt += vt.attr(bracket('R', false, '->'), vt.cyan, 'etreat, '
                     , bracket('Y', false), vt.cyan, 'our status: ')
 
                 if ($.access.bot) {
@@ -1113,9 +1113,9 @@ module Battle {
                                 const p = tricks[i]
                                 const spell = Object.keys(Magic.spells)[p - 1]
                                 if (rpc.user.magic < 2)
-                                    vt.out(bracket(p), sprintf('%-18s  (%d%%)', spell, Magic.ability(spell, rpc, nme).fail))
+                                    vt.out(bracket(p, true, '||'), sprintf('%-18s  (%d%%)', spell, Magic.ability(spell, rpc, nme).fail))
                                 else
-                                    vt.out(bracket(p), sprintf('%-18s  %4d  (%d%%)'
+                                    vt.out(bracket(p, true, '{}'), sprintf('%-18s  %4d  (%d%%)'
                                         , spell
                                         , Summons.includes(spell) ? 0
                                             : rpc.user.magic < 4 ? Magic.spells[spell].mana
@@ -2151,7 +2151,7 @@ module Battle {
                             for (let i in $.player.poisons) {
                                 let skill = $.player.poison || 1
                                 let vial = $.player.poisons[i]
-                                vt.out(bracket(vial), Poison.merchant[vial - 1], ' '.repeat(20 - Poison.merchant[vial - 1].length))
+                                vt.out(bracket(vial, true, '^^'), Poison.merchant[vial - 1], ' '.repeat(20 - Poison.merchant[vial - 1].length))
 
                                 let p = int(skill / 2)
                                 let t = skill - p
@@ -2252,21 +2252,19 @@ module Battle {
         vt.form = {
             'user': {
                 cb: () => {
+                    let rpc: active = { user: { id: titlecase(vt.entry) } }
+                    if (!npc && rpc.user.id[0] == '_') vt.entry = '?'
                     if (vt.entry == '?') {
                         vt.action('list')
                         vt.form['start'].prompt = 'Starting level ' + bracket(start, false, '[]') + ': '
                         input('start', '', 250)
                         return
                     }
-                    let rpc: active = { user: { id: titlecase(vt.entry) } }
-                    if (!npc && rpc.user.id[0] == '_') {
-
-                    }
                     else {
                         if (!PC.load(rpc)) {
                             rpc.user.id = ''
                             rpc.user.handle = vt.entry
-                            if (!PC.load(rpc)) {
+                            if (!npc || !PC.load(rpc)) {
                                 vt.out(vt.red, vt.bright, ' ?', vt.normal, '?', vt.faint, '?')
                                 vt.beep()
                             }
@@ -2297,7 +2295,7 @@ module Battle {
                 cb: () => {
                     const n = int(vt.entry)
                     if (n > 0 && n < 100) start = n
-                    vt.form['end'].prompt = '  Ending level ' + bracket(end, false) + ': '
+                    vt.form['end'].prompt = '  Ending level ' + bracket(end, false, '[]') + ': '
                     input('end', '99', 500)
                     return
 
@@ -2314,9 +2312,9 @@ module Battle {
 
                     let rs = db.query(`
                         SELECT id, handle, pc, level, xplevel, status, lastdate, access FROM Players
-                        WHERE id NOT GLOB '_*' AND xplevel > 0
-                        AND level BETWEEN ${start} AND ${end}
-                        ORDER BY xplevel DESC, level DESC, wins DESC, immortal DESC`)
+                        WHERE AND xplevel > 0 AND level BETWEEN ${start} AND ${end}`
+                        + `${npc ? "" : " id NOT GLOB '_*'"} `
+                        + `ORDER BY xplevel DESC, level DESC, wins DESC, immortal DESC`)
 
                     for (let i in rs) {
                         if (rs[i].id == $.player.id)

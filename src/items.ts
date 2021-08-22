@@ -14,7 +14,7 @@ module Items {
         name: access[]
 
         constructor() {
-            this.name = require(path.resolve(folder, 'access.json'))
+            this.name = require(path.resolve(folder, 'title.json'))
         }
     }
 

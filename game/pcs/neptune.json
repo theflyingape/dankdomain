@@ -10,6 +10,5 @@
   "poisons": [ 11 ],
   "spells": [ 7, 9, 11, 13, 15 ],
   "realestate": "Castle",
-  "security": "Moat",
   "hull": 8000, "cannon": 160, "ram": true
 }

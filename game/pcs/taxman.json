@@ -11,7 +11,6 @@
   "rings": [ "Lucky", "Nobility" ],
   "poisons": [ 7 ],
   "spells": [ 8, 19, 20, 21 ],
-  "realestate": "Tower",
-  "security": "Security guard",
+  "realestate": "Townhouse", "security": "Mercenary",
   "hull": 0
 }

@@ -1770,7 +1770,7 @@ module Dungeon {
 
                 if (id ||
                     (dice(100 + 10 * +ROOM.giftValue * int($.player.coward)) + dice(deep / 2) < (50 + int($.online.int / 2)) && dice(100) > 1)) {
-                    vt.action('dungeon.potion')
+                    vt.action('potion')
                     vt.form = {
                         'quaff': {
                             cb: () => {
@@ -2441,7 +2441,7 @@ module Dungeon {
             } while (dungeon.level.rooms[y][x].giftItem || dungeon.level.rooms[y][x].occupant == 'wizard')
             if (Ring.power([], $.player.rings, 'identify').power) dungeon.level.rooms[y][x].map = true
 
-            //	magic dungeon.potion
+            //	magic potion
             if (dice(111 - $.online.cha) > dice(dank) - int($.player.coward)) {
                 dungeon.level.rooms[y][x].giftItem = 'potion'
                 dungeon.level.rooms[y][x].giftID = false

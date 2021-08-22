@@ -7,13 +7,13 @@
 
 ### **11-Sep-2021** `v3.2.0`
 
-* **Never Forget.** *The North remembers.* 🐺
+* 🇺🇸 **Never Forget.** *The North remembers.* 🐺
 * major code & data refactoring for CI/CD with overall improvements to ease startup installations
 * added play `xrate` attribute to configure economy - Coin uses ES2020 `BigInt`
 * separated each character class out of the dankdomain config to allow for reroll templating of startup values, i.e., assign differing assets like weapon, spells, etc, and also expands the role for each NPC
 * player `hull` points can no longer reach `0` by cannon fire
 * added class modifiers that adds effectiveness to `heal` & `blast` spells
-* added 'curse' power to a Cursed ring -- retreats from a ring bearer puts a curse on you
+* added `curse` power to a Cursed ring - retreats from a ring bearer puts a curse on you
 * latest package dependencies tested with Node.js v16.6
 
 #### **18-Jun-2021** `v3.1.1`

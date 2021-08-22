@@ -8,7 +8,7 @@ import db = require('./db')
 import { Access } from './items'
 import { vt } from './lib'
 import { NPC, PC } from './pc'
-import { dice, int, pathTo, whole } from './sys'
+import { dice, int, pathTo } from './sys'
 
 module npc {
 
@@ -25,13 +25,9 @@ module npc {
         catch (err) { console.error(err) }
     })
 
-    PC.load($.sysop)
-    PC.load($.barkeep)
-    PC.load($.dwarf)
-    PC.load($.neptune)
-    PC.load($.seahag)
-    PC.load($.taxman)
-    PC.load($.witch)
+    Object.keys(NPC).forEach((id) => {
+        if ($[NPC[id]]) PC.load($[NPC[id]])
+    })
 
     class _arena {
 
@@ -59,24 +55,7 @@ module npc {
             'Y': { description: 'our status' }
         }
 
-        readonly potion = [
-            'Potion of Cure Light Wounds',
-            'Vial of Weakness',
-            'Potion of Charm',
-            'Vial of Stupidity',
-            'Potion of Agility',
-            'Vial of Clumsiness',
-            'Potion of Wisdom',
-            'Vile Vial',
-            'Potion of Stamina',
-            'Vial of Slaad Secretions',
-            'Potion of Mana',
-            'Flask of Fire Water',
-            'Elixir of Restoration',
-            'Vial of Crack',
-            'Potion of Augment',
-            'Beaker of Death'
-        ]
+        readonly potion = require(pathTo('files/dungeon', 'potion.json'))
 
         //  £
         readonly Cleric = {

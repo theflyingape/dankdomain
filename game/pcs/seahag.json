@@ -12,6 +12,5 @@
   "rings": [ "Magus", "Medusa's" ],
   "poisons": [ 12 ],
   "spells": [ 11, 13, 19 ],
-  "realestate": "Cabin",
-  "security": "Moat"
+  "realestate": "Hovel", "security": "Trip wire trap"
 }

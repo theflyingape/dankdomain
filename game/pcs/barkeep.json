@@ -12,7 +12,6 @@
   "armor": "Padded Leather",
   "spells": [ 7, 11, 13 ],
   "rings": [ "Atomic", "Champion", "Ogre", "Magus" ],
-  "realestate": "Room above tavern",
-  "security": "Shotgun",
+  "realestate": "Room above tavern", "security": "Dog",
   "hull": 0
 }

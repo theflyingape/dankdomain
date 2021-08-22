@@ -104,7 +104,8 @@ module Init {
             if (!PC.load($.player)) {
                 $.player.id = ''
                 $.player.handle = vt.entry
-                if (!PC.load($.player)) {
+                if (!PC.load($.player) || $.player.id[0] == '_') {
+                    $.player.id = ''
                     if (guards()) vt.refocus()
                     return
                 }
@@ -117,7 +118,7 @@ module Init {
                 return
             }
             if (!$.access.roleplay)
-                vt.outln(vt.faint, '\n... two guards come from behind to escort you to the Great Hall ... ', -2000)
+                vt.outln(vt.faint, '\n... two guards come from behind to escort you to the Great Hall ... ', -1000)
 
             $.player.rows = process.stdout.rows || $.player.rows || 24
             vt.emulation = $.player.emulation
