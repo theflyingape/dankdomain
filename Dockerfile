@@ -6,13 +6,12 @@ FROM node:buster
 LABEL maintainer="theflyingape@gmail.com"
 
 # set the working directory
-ENV TARGET=/usr/games/dankdomain
+ENV TARGET=/usr/games
 WORKDIR ${TARGET}
-# install code+files
-COPY game game
-COPY src src
-COPY *.json ./
-COPY *.sh ./
+RUN git clone https://github.com/theflyingape/dankdomain
+WORKDIR ${TARGET}/dankdomain
+# complement portal with any of my local files
+COPY game/portal game/portal
 # cli tools
 RUN apt-get update && apt-get install -y rsync sudo telnet
 #

@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  dankdomain:
+    image: dankdomain
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: development
+    ports:
+      - 1939:1939
+      - 1986:1986
+      - 9229:9229
+    command: ["node", "--inspect=0.0.0.0:9229", "main.js"]

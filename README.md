@@ -60,7 +60,7 @@ $ npm login --scope=@theflyingape
 $ npm install @theflyingape/dankdomain
 ```
 
-... or use **Docker** _(convenient, but not maintained with the latest commits)_:
+... or use **Docker** _(convenient and uses the latest commits)_:
 
 ```linux
 $ docker pull theflyingape/dankdomain

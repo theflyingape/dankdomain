@@ -68,6 +68,8 @@ fi
 npm test && echo "You can run it local without this portal service:" || echo "WTF??!"
 echo "npm run play"
 
+#rm -fv users/dankdomain.*
+
 echo
 echo "Enable telnet/23 & https/443 redirect rules on this host for portal app ?"
 echo -n "Enter shift 'Y' to enable rules: "

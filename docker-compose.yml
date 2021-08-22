@@ -1,0 +1,13 @@
+version: '3.4'
+
+services:
+  dankdomain:
+    image: dankdomain
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    ports:
+      - 1939:1939
+      - 1986:1986
