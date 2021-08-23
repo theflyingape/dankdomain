@@ -75,7 +75,7 @@ module Square {
                         $.player.coin.value -= v.value
                         vt.outln(vt.faint, '{sigh}')
                         vt.sound('oops', 8)
-                        vt.outln('Your ', pieces(v), ' is gone!')
+                        vt.outln('Your ', pieces(v.pouch()), ' is gone!')
                     }
                     else if ($.player.poisons.length) {
                         vt.out(vt.faint, '\nYou hear vials rattle.')
@@ -374,25 +374,26 @@ module Square {
                     suppress = true
                     break
                 }
-                vt.out(vt.faint, '\nYou attempt to pick a passerby\'s pocket... ', -1000)
+                vt.out(vt.faint, '\nYou attempt to pick a passerby\'s pocket ... ', -1000)
 
-                credit.value = whole(BigInt(dice(6)) * PC.money($.player.level) / BigInt(dice(10)))
+                credit.value = new Coin(BigInt(dice(6)) * PC.money($.player.level) / BigInt(10)).pick().value
                 let pocket = PC.encounter(`AND novice = 0 AND id NOT GLOB '_*'`).user
                 if (pocket.id) {
                     PC.load(pocket)
                     const v = pocket.coin.pick().value
-                    if (pocket.coin.value > 0)
-                        credit.value += v
+                    if (v) {
+                        credit.value = v
+                        pocket.coin.value -= v
+                    }
                     else {
                         pocket.id = ''
                         pocket.handle = 'somebody'
                     }
-                    pocket.coin.value -= v
                 }
                 else
                     pocket.handle = 'somebody'
                 vt.outln('\n')
-                vt.outln(`You pick ${pocket.handle}'s pocket and steal `, pieces(credit), '!')
+                vt.outln(`You pick ${pocket.handle}'s pocket and steal a `, pieces(credit.pouch()), '!')
                 vt.outln(-1000)
 
                 let effort = 100 + $.steal
@@ -552,7 +553,7 @@ module Square {
             case 'R':
                 vt.music('ddd')
                 let c = ($.player.level / 5) * ($.player.steal + 1)
-                vt.out(vt.faint, '\nYou attempt to sneak into the vault...', vt.reset)
+                vt.out(vt.faint, '\nYou attempt to sneak into the vault ...', vt.reset)
                 vt.sleep(2500)
 
                 let effort = 100 + $.steal
@@ -619,7 +620,7 @@ module Square {
 
             case 'T':
                 if ($.access.sysop) {
-                    vt.form['coin'].prompt = vt.attr('Treasury ', vt.white, '[', vt.uline, 'MAX', vt.nouline, '=10000p]? ')
+                    vt.form['coin'].prompt = vt.attr('Treasury ', bracket(vt.attr(vt.uline, 'MAX', vt.nouline, '=', vt.bright, '10000', vt.magenta, 'p'), false), '? ')
                     input('coin')
                     break
                 }

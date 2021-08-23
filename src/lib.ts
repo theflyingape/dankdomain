@@ -49,21 +49,21 @@ module lib {
 
         if (coin.pouch(n) == 'p') {
             n = whole(n / coin.PLATINUM)
-            bags.push(vt.attr(vt.bright, n.toString(), vt.magenta, 'p', vt.normal, vt.white))
+            bags.push(vt.attr(vt.white, vt.bright, n.toString(), vt.magenta, 'p', vt.normal, vt.white))
             n = coin.value % coin.PLATINUM
         }
         if (coin.pouch(n) == 'g') {
             n = whole(n / coin.GOLD)
-            bags.push(vt.attr(vt.bright, n.toString(), vt.yellow, 'g', vt.normal, vt.white))
+            bags.push(vt.attr(vt.white, vt.bright, n.toString(), vt.yellow, 'g', vt.normal, vt.white))
             n = coin.value % coin.GOLD
         }
         if (coin.pouch(n) == 's') {
             n = whole(n / coin.SILVER)
-            bags.push(vt.attr(vt.bright, n.toString(), vt.cyan, 's', vt.normal, vt.white))
+            bags.push(vt.attr(vt.white, vt.bright, n.toString(), vt.cyan, 's', vt.normal, vt.white))
             n = coin.value % coin.SILVER
         }
         if ((n > 0 && coin.pouch(n) == 'c') || bags.length == 0)
-            bags.push(vt.attr(vt.bright, n.toString(), vt.red, 'c', vt.normal, vt.white))
+            bags.push(vt.attr(vt.white, vt.bright, n.toString(), vt.red, 'c', vt.normal, vt.white))
 
         return bags.slice(0, max).toString()
     }
@@ -236,7 +236,7 @@ module lib {
         }
     }
 
-    export function pieces(p = this.pouch($.player.coin)): string {
+    export function pieces(p = $.player.coin.pouch()): string {
         return 'pouch of ' + (vt.emulation == 'XT' ? '💰 ' : '') + {
             'p': vt.attr(vt.magenta, vt.bright, 'platinum', vt.normal),
             'g': vt.attr(vt.yellow, vt.bright, 'gold', vt.normal),

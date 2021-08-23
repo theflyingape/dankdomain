@@ -621,22 +621,15 @@ dns.lookup(network.address, (err, addr, family) => {
 
 chokidar.watch(pathTo('users', 'save.json'))
     .on('add', (path, stats) => {
-        let save: any = {}
-        let user: user
         try {
-            Object.assign(save, JSON.parse(fs.readFileSync(path).toString()))
+            let user = db.fillUser(null, Object.assign({}, JSON.parse(fs.readFileSync(path).toString())))
             fs.unlink(path, () => { })
-            save.bounty = new Coin(save.bounty)
-            save.coin = new Coin(save.coin)
-            save.bank = new Coin(save.bank)
-            save.loan = new Coin(save.loan)
-            Object.assign(user, save)
             db.saveUser(user)
             console.info(`Player (${user.id}) updated`)
         }
         catch (err) {
             console.error(`Player file has an exception in ${path}:`)
-            console.error(err.message)
+            console.error(err)
         }
     })
 

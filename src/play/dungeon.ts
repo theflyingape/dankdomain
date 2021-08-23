@@ -2530,7 +2530,7 @@ module Dungeon {
         const pic = int((Z + 1) / 10)
         if (pic !== motif) {
             motif = pic
-            vt.profile({ jpg: `dungeon/level${sprintf('%x', motif)}`, handle: "Entering", level: $.player.level, pc: 'dungeon' })
+            vt.profile({ jpg: `dungeon/level${sprintf('%x', motif)}`, handle: "Entering", level: Z, pc: 'dungeon' })
             ROOM = dungeon.level.rooms[Y][X]
             vt.sleep(ROOM.occupant || ROOM.monster.length || ROOM.giftItem ? 3000 : 1000)
             vt.drain()

@@ -2366,12 +2366,12 @@ module Battle {
             , vt.reset, '/', $.player.hp.toString()
         )
         if ($.player.sp) {
-            vt.out(vt.cyan, '   Spell points: '
+            vt.out(vt.cyan, '   Mana power: '
                 , vt.bright, $.online.sp > $.player.sp ? vt.yellow : $.online.sp == $.player.sp ? vt.white : vt.red, $.online.sp.toString()
                 , vt.reset, '/', $.player.sp.toString()
             )
         }
-        if ($.player.coin.value) vt.out(vt.cyan, '   Coin: ', carry())
+        if ($.player.coin.value) vt.out(vt.cyan, '   Coin: ', carry($.player.coin, 4))
         vt.outln()
         vt.outln(vt.cyan, 'Weapon: ', weapon(), vt.cyan, '   Armor: ', armor())
 

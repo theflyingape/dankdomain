@@ -199,10 +199,10 @@ module pc {
         bless(from: string, via: string, onto = $.online) {
             if (onto == $.online) {
                 vt.sound('shimmer')
-                PC.adjust('str', 110)
-                PC.adjust('int', 110)
-                PC.adjust('dex', 110)
-                PC.adjust('cha', 110)
+                this.adjust('str', 110)
+                this.adjust('int', 110)
+                this.adjust('dex', 110)
+                this.adjust('cha', 110)
                 if (onto.user.cursed) {
                     vt.outln('The ', vt.faint, 'dark cloud', vt.normal, ' has left you.', -1000)
                     news(`\tlifted curse`)
@@ -247,7 +247,7 @@ module pc {
                 if (from == $.player.handle) {
                     PC.adjust('cha', -1, -1, -1)
                     if (($.player.gang && onto.user.gang == $.player.gang) || onto.user.id == $.ruler.id) {
-                        PC.adjust('cha', -1, -1, -1)
+                        PC.adjust('cha', -1, -1, -1, onto)
                         $.player.coward = true
                         vt.sound('boom')
                     }
@@ -717,19 +717,19 @@ module pc {
             vt.out('      Str: ', vt.white)
             if ($.player.emulation == 'XT') vt.out('\r\x1B[2C💪\r\x1B[12C')
             vt.out(sprintf('%-20s', profile.str + ' (' + profile.user.str + ',' + profile.user.maxstr + ')'))
-            vt.out(vt.cyan, ' Hand: ', carry(profile.user.coin), ' '.repeat(15 - profile.user.coin.amount.length))
+            vt.out(vt.cyan, ' Hand: ', carry(profile.user.coin), ' '.repeat(15 - profile.user.coin.carry().length))
             vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
             vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
             vt.out('      Int: ', vt.white)
             vt.out(sprintf('%-20s', profile.int + ' (' + profile.user.int + ',' + profile.user.maxint + ')'))
-            vt.out(vt.cyan, ' Bank: ', carry(profile.user.bank), ' '.repeat(15 - profile.user.bank.amount.length))
+            vt.out(vt.cyan, ' Bank: ', carry(profile.user.bank), ' '.repeat(15 - profile.user.bank.carry().length))
             vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
             vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
             vt.out('      Dex: ', vt.white)
             vt.out(sprintf('%-20s', profile.dex + ' (' + profile.user.dex + ',' + profile.user.maxdex + ')'))
-            vt.out(vt.cyan, ' Loan: ', carry(profile.user.loan), ' '.repeat(15 - profile.user.loan.amount.length))
+            vt.out(vt.cyan, ' Loan: ', carry(profile.user.loan), ' '.repeat(15 - profile.user.loan.carry().length))
             vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
             vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)

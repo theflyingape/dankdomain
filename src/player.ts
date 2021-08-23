@@ -6,7 +6,7 @@
 import $ = require('./play/runtime')
 import db = require('./db')
 import { Access, Coin } from './items'
-import { bracket, cat, prompt, news, time, vt, weapon } from './lib'
+import { bracket, cat, prompt, news, time, vt, weapon, buff } from './lib'
 import { elemental } from './npc'
 import { Deed, PC } from './pc'
 import { an, date2full, dice, fs, int, now, pathTo, sprintf, whole } from './sys'
@@ -581,8 +581,8 @@ module Player {
         vt.form = {
             'skill': {
                 cb: () => {
-                    vt.out('\n', vt.bright)
-                    switch (+vt.entry) {
+                    vt.out('\n\n', vt.bright)
+                    switch (int(vt.entry)) {
                         case 0:
                             news('\tgot generally better')
                             PC.adjust('str', 3, 3, 3)
@@ -650,10 +650,10 @@ module Player {
                             }
                             news('\tApothecary visits have more meaning')
                             vt.out([vt.green, vt.cyan, vt.red, vt.magenta][$.player.poison]
-                                , ['The Apothecary will sell you toxins now, bring money.'
-                                    , 'Your poisons can achieve (+1x,+1x) potency now.'
-                                    , 'Your banes will add (+1x,+2x) potency now.'
-                                    , 'Your venena now makes for (+2x,+2x) potency!'][$.player.poison++]
+                                , ['The Apothecary will sell you weak toxins... and bring money.'
+                                    , `Your poisons can achieve ${buff(1, 1)} potency now.`
+                                    , `Your banes will add ${buff(1, 2)} potency now.`
+                                    , `Your venena now makes for ${buff(2, 2)} potency!`][$.player.poison++]
                             )
                             break
 
@@ -665,15 +665,15 @@ module Player {
                             news('\tbecame more friendly with the old mage')
                             switch ($.player.magic) {
                                 case 0:
-                                    vt.out(vt.cyan, 'The old mage will see you now, bring money.')
+                                    vt.out(vt.cyan, 'The old mage will sell you wands... and bring money.')
                                     $.player.magic++
                                     $.player.spells = []
                                     break
                                 case 1:
-                                    vt.out(vt.cyan, 'You can no longer use wands.')
+                                    vt.out(vt.cyan, 'Wands will no longer work for you... buy scrolls.')
                                     $.player.magic++
                                     $.player.spells = []
-                                    $.player.sp += 15 + dice(511)
+                                    $.player.sp += 511 + dice(511)
                                     $.online.sp = $.player.sp
                                     break
                                 default:

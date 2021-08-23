@@ -6,7 +6,7 @@
 import $ = require('./runtime')
 import db = require('../db')
 import { Access, Coin, Magic, Ring } from '../items'
-import { bracket, cat, emulator, getRing, news, time, vt } from '../lib'
+import { bracket, carry, cat, emulator, getRing, news, time, vt } from '../lib'
 import { Deed, PC } from '../pc'
 import { } from '../npc'
 import { input, logoff, pickPC } from '../player'
@@ -341,8 +341,8 @@ module Init {
             vt.outln(vt.bright, vt.black, '(', vt.magenta, 'PRISONER', vt.black, ')')
             vt.outln(vt.red, '\nYou are locked-up in jail.', -1200)
             if ($.access.roleplay && dice(2 * $.online.cha) > (10 - 2 * $.player.steal)) {
-                let bail = new Coin(PC.money($.player.level) * BigInt(101 - $.online.cha) / 100n)
-                vt.outln('\nIt will cost you ', bail.carry(), ' to get bailed-out and to continue play.')
+                let bail = new Coin(PC.money($.player.level) * BigInt(101 - $.online.cha) / 100n).pick(1)
+                vt.outln('\nIt will cost you ', carry(bail), ' to get bailed-out and to continue play.')
                 vt.form = {
                     'bail': {
                         cb: () => {
