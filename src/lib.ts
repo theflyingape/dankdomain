@@ -86,7 +86,7 @@ module lib {
             }
         }
         for (let line in output)
-            vt.out(output[line], '\n', -delay)
+            vt.out('\n', output[line], -delay)
         vt.out(vt.off, -delay)
         return true
     }

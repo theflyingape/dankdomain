@@ -87,7 +87,7 @@ module Dungeon {
             }
             vt.hangup()
         }
-        if ($.player.level + 1 < $.sysop.level) {
+        if ($.player.level + 1 < $.sysop.immortal) {
             if (checkXP($.online, menu)) {
                 dungeon.level.exit = false
                 dungeon.level.moves -= dungeon.level.width
@@ -2225,7 +2225,7 @@ module Dungeon {
         refresh = true
 
         if (!dungeon.domain[deep])
-            dungeon.domain[deep] = new Array($.sysop.level)
+            dungeon.domain[deep] = new Array($.sysop.immortal)
 
         //  re-entry?
         if (dungeon.domain[deep][Z]) {
@@ -2426,7 +2426,7 @@ module Dungeon {
             gift.push(j % 2 ? 'map' : 'chest')
             //  relative to might & magic needs
             gift.push(j > $.player.melee ? 'weapon' : 'armor')
-            gift.push(dice(level + 11 * ($.player.magic + j)) > ($.sysop.level - dank - j)
+            gift.push(dice(level + 11 * ($.player.magic + j)) > ($.sysop.immortal - dank - j)
                 ? 'ring' : $.player.magic > 2 ? (j > $.player.melee ? 'armor' : 'chest')
                     : dice(10 + dank - 2 * $.player.magic) > dank
                         ? 'magic' : 'xmagic')
@@ -2770,7 +2770,7 @@ module Dungeon {
         if (dm.weapon)
             m.user.weapon = dm.weapon
         else {
-            m.user.weapon = int((level + deep) / 100 * int($.sysop.weapon))
+            m.user.weapon = int((level + deep) / 100 * Weapon.merchant.length)
             m.user.weapon = int((m.user.weapon + $.online.weapon.wc) / 2)
             if ($.player.level <= Z
                 && dice(12 + deep / 2 + $.player.level / 4 - $.online.cha / 10) <= dice(deep / 3 + 1)) {
@@ -2783,7 +2783,7 @@ module Dungeon {
         if (dm.armor)
             m.user.armor = dm.armor
         else {
-            m.user.armor = int((level + deep) / 100 * int($.sysop.armor))
+            m.user.armor = int((level + deep) / 100 * Armor.merchant.length)
             m.user.armor = int((m.user.armor + $.online.armor.ac) / 2)
             if ($.player.level <= Z
                 && dice(11 + deep / 3 + $.player.level / 3 - $.online.cha / 11) <= dice(deep / 3 + 1)) {

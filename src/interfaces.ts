@@ -160,6 +160,17 @@ interface dungeon {
     effect?: string
 }
 
+interface game {
+    created: number
+    calls: number
+    started: number
+    winner: string
+    plays: number
+    lastdate: number
+    lasttime: number
+    today: number
+}
+
 interface gang {
     name: string
     members: string[]
@@ -211,6 +222,7 @@ interface realestate {
 
 interface ring {
     unique: boolean
+    keep?: boolean
     description: string
     emoji: string
     ability: [{
@@ -254,6 +266,17 @@ interface spell {
     enchanted: number
     cost?: string
     wand?: string
+}
+
+interface sysop {
+    name: string
+    email: string
+    expire: number
+    immortal: number
+    newgame: string
+    newuser: string
+    pc: string
+    skill: number
 }
 
 interface target {

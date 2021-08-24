@@ -8,7 +8,7 @@ import { Armor, Coin, RealEstate, Ring, Security, Weapon } from '../items'
 import { carry, news, pieces, tradein, vt, weapon } from '../lib'
 import { PC } from '../pc'
 import { input } from '../player'
-import { an, dice, int, uint, whole } from '../sys'
+import { an, dice, int, uint } from '../sys'
 import Battle = require('./battle')
 import db = require('../db')
 
@@ -123,7 +123,7 @@ module Taxman {
                                 return
                             }
 
-                            let l = 0, xhp = uint($.player.hp * ($.player.level - 9) / $.sysop.level)
+                            let l = 0, xhp = uint($.player.hp * ($.player.level - 9) / $.sysop.immortal)
                             let irs: active[] = []
                             do {
                                 let i = irs.push({ user: db.fillUser() }) - 1

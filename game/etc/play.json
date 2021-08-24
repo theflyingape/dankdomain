@@ -1,4 +1,14 @@
 {
+	"sysop": {
+		"name": "Dank Domain",
+		"email": "sysop@ddgame.us",
+		"expire": 100,
+		"immortal": 100,
+		"newgame": "Spirit",
+		"newuser": "Novice",
+		"pc": "Fighter",
+		"skill": 50
+	},
 	"arena": 3,
 	"argue": 1,
 	"bail": 1,
@@ -14,5 +24,6 @@
 	"sorceress": 1,
 	"taxboss": 1,
 	"tiny": 3,
+	"warning": 2,
 	"xrate": 10
 }

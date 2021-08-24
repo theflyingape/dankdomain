@@ -436,8 +436,8 @@ module Arena {
 
                             monster = { user: db.fillUser('summoned demon') }
                             let l = $.player.level + 2
-                            if (l >= $.sysop.level)
-                                l = $.sysop.level - 2
+                            if (l >= $.sysop.immortal)
+                                l = $.sysop.immortal - 2
                             if ((monster.user.level = l + dice(7) - 4) > 99)
                                 monster.user.level = 99
                             cost.value += tradein(PC.money(monster.user.level))

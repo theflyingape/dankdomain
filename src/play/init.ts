@@ -6,7 +6,7 @@
 import $ = require('./runtime')
 import db = require('../db')
 import { Access, Coin, Magic, Ring } from '../items'
-import { bracket, carry, cat, emulator, getRing, news, time, vt } from '../lib'
+import { bracket, carry, cat, emulator, news, time, vt } from '../lib'
 import { Deed, PC } from '../pc'
 import { } from '../npc'
 import { input, logoff, pickPC } from '../player'
@@ -14,7 +14,7 @@ import { an, cuss, date2full, dice, fs, got, int, now, pathTo, titlecase } from 
 
 module Init {
 
-    if ($.sysop.lastdate != now().date) {
+    if ($.game.lastdate != now().date) {
         newDay()
         db.run(`UPDATE Players SET today=0 WHERE id NOT GLOB '_*'`)
     }
@@ -225,8 +225,6 @@ module Init {
             else {
                 $.player.access = Object.keys(Access.name).slice($.player.sex == 'F' ? -2 : -1)[0]
                 $.player.novice = false
-                $.sysop.email = $.player.email
-                PC.save($.sysop)
                 vt.outln(vt.yellow, 'You are crowned as the ', vt.bright, $.player.access, vt.normal, ' to rule over this domain.')
             }
             vt.outln(-5000)
@@ -283,14 +281,14 @@ module Init {
             }).catch(error => { $.whereis += ` ⚠️ ${error.message}` })
         } catch (e) { }
 
-        if (now().date >= $.sysop.dob) {
-            $.sysop.lasttime = now().time
-            $.sysop.calls++
-            $.sysop.today++
+        if (now().date >= $.game.started) {
+            $.game.lasttime = now().time
+            $.game.calls++
+            $.game.today++
             if ($.player.today <= $.access.calls && $.access.roleplay)
-                $.sysop.plays++
+                $.game.plays++
         }
-        PC.save($.sysop)
+        $.savegame(true)
         getRuler()
 
         $.access = Access.name[$.player.access]
@@ -300,18 +298,18 @@ module Init {
         vt.outln(vt.red, '--=:))', vt.LGradient
             , vt.Red, vt.white, vt.bright, $.sysop.name, vt.reset
             , vt.red, vt.RGradient, '((:=--\n')
-        vt.out(vt.cyan, 'Visitor: ', vt.white, vt.bright, $.sysop.calls.toString()
+        vt.out(vt.cyan, 'Visitor: ', vt.white, vt.bright, $.game.calls.toString()
             , vt.reset, '  -  ')
-        if (now().date >= $.sysop.dob) {
-            vt.out(vt.faint, $.sysop.plays.toString(), ' plays since ')
-            if ($.sysop.who)
-                vt.out($.sysop.who, ' won')
+        if (now().date >= $.game.started) {
+            vt.out(vt.faint, $.game.plays.toString(), ' plays since ')
+            if ($.game.winner)
+                vt.out($.game.winner, ' won')
             else
                 vt.out('this game started')
         }
         else
             vt.out(vt.bright, 'new game starts', vt.cyan)
-        vt.outln(' ', date2full($.sysop.dob))
+        vt.outln(' ', date2full($.game.started))
         vt.outln(vt.cyan, 'Last on: ', vt.white, vt.bright, date2full($.player.lastdate), ' ', time($.player.lasttime))
         vt.outln(vt.cyan, ' Online: ', vt.white, vt.bright, $.player.handle
             , vt.normal, '  -  ', $.whereis)
@@ -323,7 +321,7 @@ module Init {
         $.player.today++
         $.player.lastdate = now().date
         $.player.lasttime = now().time
-        $.player.expires = $.player.lastdate + $.sysop.expires
+        $.player.expires = $.player.lastdate + $.sysop.expire
         PC.activate($.online)
         PC.save()
 
@@ -367,7 +365,7 @@ module Init {
                 vt.sound('boo')
         }
 
-        if ($.player.today <= $.access.calls && $.access.roleplay && $.sysop.dob <= now().date) {
+        if ($.player.today <= $.access.calls && $.access.roleplay && $.game.started <= now().date) {
             PC.portrait(<active>{ user: { id: '', pc: $.player.pc, gender: $.player.gender, handle: $.player.handle, level: $.player.level } }, 'fadeIn', ' - Ɗaɳƙ Ɗoɱaiɳ')
             vt.sound('welcome')
 
@@ -413,8 +411,6 @@ module Init {
             $.online.altered = true
             PC.activate($.online)
             PC.save()
-            const play = JSON.parse(fs.readFileSync(pathTo('etc', 'play.json')))
-            Object.assign($, play)
             vt.music('logon')
 
             if ($.player.pc == Object.keys(PC.name['player'])[0]) {
@@ -654,9 +650,9 @@ module Init {
         }
         vt.out(']')
 
-        $.sysop.lastdate = now().date
-        $.sysop.lasttime = now().time
-        PC.save($.sysop)
+        $.game.lastdate = now().date
+        $.game.lasttime = now().time
+        $.savegame(true)
         vt.outln(vt.yellow, vt.bright, '*')
         vt.beep(true)
         vt.outln('All set -- thank you!')

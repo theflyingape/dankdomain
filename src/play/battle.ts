@@ -10,7 +10,7 @@ import { armor, bracket, buff, carry, death, getRing, log, news, rings, tradein,
 import { Deed, PC } from '../pc'
 import { elemental } from '../npc'
 import { checkXP, input } from '../player'
-import { an, cuss, date2full, dice, fs, int, pathTo, sprintf, titlecase, uint, whole } from '../sys'
+import { an, cuss, date2full, dice, fs, int, pathTo, sprintf, uint, whole } from '../sys'
 
 module Battle {
 
@@ -816,20 +816,19 @@ module Battle {
                     else
                         xp += PC.experience(loser.user.xplevel, 18 - (1.333 * loser.user.immortal))
 
-                    if (loser.user.sex !== 'I' && loser.user.rings.length) {
-                        vt.out('You start by removing ', loser.user.rings.length > 1 ? 'all of ' : '', loser.who.his, 'rings...')
-                        vt.sound('click', 8)
+                    //  creatures have are endowed with non-transferable power;
+                    //  but as a PC, it's wearable power ...
+                    if (loser.user.sex !== 'I') {
                         loser.user.rings.forEach(ring => {
-                            if (Ring.wear(winner.user.rings, ring)) {
+                            if (Ring.wear(winner.user.rings, ring) && !Ring.name[ring].keep) {
                                 getRing(['fondle', 'polish', 'slip on', 'wear', 'win'][dice(5) - 1], ring)
+                                Ring.remove(loser.user.rings, ring)
+                                loser.altered = true
+                                log(loser.user.id, `... took your ${ring} ring.`)
                                 PC.saveRing(ring, winner.user.id)
                                 vt.sound('click', 8)
-                                log(loser.user.id, `... took your ${ring} ring.`)
                             }
                         })
-                        loser.user.rings = []
-                        loser.altered = true
-                        vt.outln()
                     }
 
                     if (loser.user.coin.value) {
@@ -960,19 +959,17 @@ module Battle {
                     log(winner.user.id, `You upgraded to ${winner.user.armor}.`)
                 }
 
-                if ($.player.rings.length) {
-                    vt.outln(winner.who.He, 'also ', PC.what(winner, 'remove')
-                        , $.player.rings.length > 1 ? 'all of ' : '', $.online.who.his, 'rings...')
-                    $.player.rings.forEach(ring => {
-                        vt.out(' ', bracket(ring, false), ' ')
+                $.player.rings.forEach(ring => {
+                    if (Ring.wear(winner.user.rings, ring) && !Ring.name[ring].keep) {
+                        Ring.remove(loser.user.rings, ring)
+                        $.online.altered = true
+                        PC.saveRing(ring, winner.user.id)
+                        vt.outln(winner.who.He, 'also '
+                            , PC.what(winner, ['add', 'confiscate', 'remove', 'take', 'win'][dice(5) - 1])
+                            , 'your ', bracket(ring, false), 'ring')
                         vt.sound('click')
-                        if (Ring.wear(winner.user.rings, ring))
-                            PC.saveRing(ring, winner.user.id)
-                    })
-                    $.player.rings = []
-                    vt.outln()
-                    log(winner.user.id, `... and there were rings, too!`)
-                }
+                    }
+                })
 
                 if (winner.user.gang && winner.user.gang == $.player.gang) {
                     PC.adjust('cha', -1, -1, -1)
@@ -1903,7 +1900,7 @@ module Battle {
                             rpc.user.sp -= Math.round(rpc.user.level + dice(rpc.user.level) + rpc.user.int / 10 + (rpc.user.int > 90 ? rpc.user.int - 90 : 0))
                         nme.user.xp *= 2
                         vt.outln(Recipient, PC.what(nme, 'gain'), 'an experience level off ', caster, '.')
-                        if (nme !== $.online && nme.user.level + 1 < $.sysop.level && checkXP(nme, gb)) return
+                        if (nme !== $.online && nme.user.level + 1 < $.sysop.immortal && checkXP(nme, gb)) return
                     }
                     else {
                         if (nme.user.level < 2) {
@@ -1922,7 +1919,7 @@ module Battle {
                             nme.user.sp -= Math.round(nme.user.level + dice(nme.user.level) + nme.user.int / 10 + (nme.user.int > 90 ? nme.user.int - 90 : 0))
                         rpc.user.xp *= 2
                         vt.outln(Caster, PC.what(rpc, 'gain'), 'an experience level off ', recipient, '.')
-                        if (rpc !== $.online && rpc.user.level + 1 < $.sysop.level && checkXP(rpc, gb)) return
+                        if (rpc !== $.online && rpc.user.level + 1 < $.sysop.immortal && checkXP(rpc, gb)) return
                     }
                     break
 

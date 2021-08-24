@@ -1,6 +1,6 @@
 <a href="https://robert.hurst-ri.us"><img src="https://avatars.githubusercontent.com/theflyingape" title="Robert Hurst" align="right"></a>
 
-# Ɗaɳƙ Ɗoɱaiɳ :: _the return of Hack &amp; Slash_
+# 🏰 Ɗaɳƙ Ɗoɱaiɳ :: _the return of Hack &amp; Slash_
 
 ![screenshot](https://raw.githubusercontent.com/theflyingape/dankdomain/master/game/portal/static/assets/title.jpg "Can you defeat the Demogorgon?")
 
@@ -49,6 +49,33 @@ $ npm stop
 # 3) other ways to play online:
 $ npm run mame
 $ telnet play.ddgame.us
+Connected to play.ddgame.us.
+Escape character is '^]'.
+CARRIER DETECTED
+PC emulation enabled
+            ...........|\...................../|................. Welcome to
+             ........./  \..|\__  __/|......./  \............... Dank Domain
+            ........./ /  \.\ _ \/ _ /....../    \.............
+      _  .........../ / /  \.(-)\/(-)....../  / \ \.............
+     (_)  ..........| | | / \\/(oo)\/...../  // |\ \.............
+          ..........| | | |  \|v--v|\..../  / | || \|...........
+        ............| | | | / \_^^_/ \../  / || || ||.............
+           ......../ / /  | |   \/    \/  /| || || ||/\../\....
+            /\..../ / /  / /  |______/   /| \ \ || ||  \/  \    /\        /\
+ /\      /\/  \../ / /  / /  /\_____/  |/ /__\ \ \ \ \ /    \  /  \  /\  /  \
+/  \/\  / /    \.| | | / /  /\______/    \   \__| \ \ \      \/    \/  \/    \
+    \ \/        \| | | | | |\______       \_    \__|_| \     /      \  /
+     \/          | | ____ /\______ ____     \_       \  |   /         /
+      \          | |/    /\_____  /    \      \__     \ |
+       \         |/ |   |\______ |      |        \___  \|
+                    |   |\______ |      |            \_
+            _   ___/|   |\______ |      |          /\  \   ___
+           / \_/     \   \________\_    _\____/   /  \__\_|   \
+       ___/ __     __/   /       __/   /__    \__/      __     \__
+     _/    /  \   /  ___/       /  ___/   \            /  \       |__
+    |     |      |/|/          |/|/        \__    \        \         |
+
+Who dares to enter my dank domain <or NEW>?
 ```
 
 **NOTE**: _my_ "public" _access [packages](https://github.com/theflyingape?tab=packages&visibility=public) are published on_ **GitHub** _and it requires your_ `Personal Access Token` authentication _to fetch/install them from this alternative_ `npm registry`. Read GitHub's [Working with the npm registry](https://docs.github.com/en/enterprise-server@2.22/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-to-github-packages) to learn more details.

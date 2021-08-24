@@ -485,7 +485,6 @@ module Main {
                 break
 
             case 'Z':
-                vt.outln()
                 vt.out(vt.green, vt.bright)
                 cat('main/system', 100)
                 vt.action('ny')

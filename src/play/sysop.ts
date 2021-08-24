@@ -5,7 +5,6 @@
 
 import $ = require('./runtime')
 import db = require('../db')
-import Email = require('../email')
 import { bracket, display, vt } from '../lib'
 import { PC } from '../pc'
 import { input } from '../player'
@@ -95,7 +94,7 @@ module Sysop {
                 for (let row in rs) {
                     rpc.user.id = rs[row].id
                     PC.load(rpc)
-                    Email.newsletter(rpc.user)
+                    require('../email').newsletter(rpc.user)
                     vt.out('.', -2500)
                 }
                 vt.outln('done.', -1000)
@@ -130,10 +129,9 @@ module Sysop {
                         cb: () => {
                             vt.outln()
                             if (/Y/i.test(vt.entry)) {
-                                PC.load($.sysop)
-                                $.sysop.dob = now().date + 1
-                                $.sysop.plays = 0
-                                PC.save($.sysop)
+                                $.game.started = now().date + 1
+                                $.game.plays = 0
+                                $.savegame(true)
 
                                 rs = db.query(`SELECT id FROM Players WHERE id NOT GLOB '_*'`)
                                 for (let row in rs) {

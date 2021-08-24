@@ -23,7 +23,7 @@
         ]
     },
     "Champion": {
-        "unique": false,
+        "unique": false, "keep": true,
         "description":"enhance lance handling",
         "emoji":"🦄",
         "ability":[
@@ -164,7 +164,7 @@
         ]
     },
     "Nobility": {
-        "unique": false,
+        "unique": false, "keep": true,
         "description":"exempt bearer from paying taxes to the Crown",
         "emoji":"💸",
         "ability":[

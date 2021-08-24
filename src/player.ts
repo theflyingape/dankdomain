@@ -34,7 +34,7 @@ module Player {
         }
 
         if (!Access.name[rpc.user.access].roleplay) return false
-        if (rpc.user.level >= $.sysop.level) {
+        if (rpc.user.level >= $.sysop.immortal) {
             riddle()
             return true
         }
@@ -55,11 +55,11 @@ module Player {
             dex: rpc.user.dex,
             cha: rpc.user.cha
         }
-        let eligible = rpc.user.level < $.sysop.level / 2
+        let eligible = rpc.user.level < $.sysop.skill
         let bonus = false
         let started = rpc.user.xplevel || rpc.user.level
 
-        while (rpc.user.xp >= PC.experience(rpc.user.level, undefined, rpc.user.int) && rpc.user.level < $.sysop.level) {
+        while (rpc.user.xp >= PC.experience(rpc.user.level, undefined, rpc.user.int) && rpc.user.level < $.sysop.immortal) {
             rpc.user.level++
 
             if (rpc.user.level == Access.name[rpc.user.access].promote) {
@@ -94,7 +94,7 @@ module Player {
             PC.adjust('dex', 0, PC.card(rpc.user.pc).toDex, 0, rpc)
             PC.adjust('cha', 0, PC.card(rpc.user.pc).toCha, 0, rpc)
 
-            if (eligible && rpc.user.level == 50) {
+            if (eligible && rpc.user.level == $.sysop.skill) {
                 bonus = true
                 vt.music()
                 if (rpc.user.novice) {
@@ -150,7 +150,7 @@ module Player {
             Deed.save(deed, $.player)
         }
 
-        if ($.player.level < $.sysop.level) {
+        if ($.player.level < $.sysop.immortal) {
             vt.outln(vt.bright, sprintf('%+6d', award.hp), vt.reset, ' Hit points', -100)
             if (award.sp)
                 vt.outln(vt.bright, sprintf('%+6d', award.sp), vt.reset, ' Spell points', -100)
@@ -182,9 +182,9 @@ module Player {
 
     export function logoff() {
         if (!$.reason || $.reason == 'hangup') {
-            PC.load($.sysop)
+            //PC.load($.sysop)
             //  caught screwing around?
-            if ($.sysop.dob <= now().date) {
+            if ($.game.started <= now().date) {
                 if ($.access.roleplay) {
                     $.player.coward = true
                     $.player.lasttime = now().time
@@ -199,7 +199,7 @@ module Player {
                 PC.load($.player)
                 $.player.lasttime = now().time
                 $.access.roleplay = false
-                news(`\tonline player dropped by ${$.sysop.who} ${time($.player.lasttime)} (${$.reason})\n`, true)
+                news(`\tonline player dropped by ${$.game.winner} ${time($.player.lasttime)} (${$.reason})\n`, true)
             }
         }
 
@@ -824,12 +824,12 @@ module Player {
             fs.appendFileSync(log, sprintf(`%22s won on %s  -  game took %3d days\n`
                 , $.player.handle
                 , date2full(now().date)
-                , now().date - $.sysop.dob + 1))
-            PC.load($.sysop)
-            $.sysop.who = $.player.handle
-            $.sysop.dob = now().date + 1
-            $.sysop.plays = 0
-            PC.save($.sysop)
+                , now().date - $.game.started + 1))
+            $.savegame()
+            $.game.winner = $.player.handle
+            $.game.started = now().date + 1
+            $.game.plays = 0
+            $.savegame(true)
 
             $.player.wins++
             db.run(`UPDATE Players SET wins=${$.player.wins} WHERE id='${$.player.id}'`)

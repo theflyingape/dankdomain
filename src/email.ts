@@ -13,7 +13,7 @@ import { date2str, dice, fs, pathTo } from './sys'
 import nodemailer = require('nodemailer')
 import smtpTransport = require('nodemailer-smtp-transport')
 
-module Email {
+module email {
 
     let echo = true
 
@@ -136,7 +136,7 @@ module Email {
         }
 
         let smtp = nodemailer.createTransport(smtpTransport(smtpOptions))
-        mailOptions.from = `"${$.sysop.handle} @ ${$.sysop.name}" <${$.sysop.email}>`
+        mailOptions.from = `"${$.sysop.name}" <${$.sysop.email}>`
         mailOptions.to = `${player.name} <${player.email}>`
         mailOptions.text = eval('`' + mailOptions.text.toString() + '`')
 
@@ -177,4 +177,4 @@ module Email {
     }
 }
 
-export = Email
+export = email

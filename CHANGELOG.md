@@ -5,16 +5,17 @@
 🇺🇸 ©️1991 - 2021 [Robert Hurst](https://robert.hurst-ri.us)
 > [developed](https://github.com/theflyingape/dankdomain) on a **Chromebook** using Visual Code and TypeScript/html/css for the browser with [terminal emulator](https:/xtermjs.org) and classic telnet clients; and also to run the resulting Node.js full stack [services and app](https://play.DDgame.us) on the **Google Cloud Platform** (us-central1) or in a **Docker** [container](https://hub.docker.com/repository/docker/theflyingape/dankdomain).
 
-### **11-Sep-2021** `v3.2.0`
+### **11-Sep-2021** `v3.2.0` ✈💥🏢🏢
 
-* 🇺🇸 **Never Forget.** *The North remembers.* 🐺
+* 🇺🇸 **Never** Forget. *The North remembers.* 🐺
 * major code & data refactoring for CI/CD with overall improvements to ease startup installations
+* `sysop` config moved into `etc/play.json` and current `game` state in `users/game.json` files
 * added play `xrate` attribute to configure economy - Coin uses ES2020 `BigInt`
-* separated each character class out of the dankdomain config to allow for reroll templating of startup values, i.e., assign differing assets like weapon, spells, etc, and also expands the role for each NPC
+* separated each character class out of the dankdomain config to allow for reroll templating of startup values, i.e., assign differing assets like weapon, spells, etc, which also expands the rules of engagement with each NPC
 * player `hull` points can no longer reach `0` by cannon fire
 * added class modifiers that adds effectiveness to `heal` & `blast` spells
 * added `curse` power to a Cursed ring - retreats from a ring bearer puts a curse on you
-* latest package dependencies tested with Node.js v16.6
+* latest package dependencies tested with Node.js v16.7
 
 #### **18-Jun-2021** `v3.1.1`
 
