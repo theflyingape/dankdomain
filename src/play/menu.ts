@@ -463,7 +463,7 @@ module Main {
                                     }
                                     else
                                         menu(true)
-                                })
+                                }, $.access.sysop)
                                 return
                             }
                             PC.status($.online)

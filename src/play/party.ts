@@ -384,7 +384,7 @@ module Party {
                                         }
                                     }
                                     menu()
-                                })
+                                }, $.access.sysop)
                             }
                             else
                                 vt.focus = 'invite'
@@ -406,15 +406,23 @@ module Party {
                                                 g.handles.push(member.user.handle)
                                                 PC.saveGang(g)
                                                 showGang(g)
-                                                log(member.user.id, `\n${$.player.handle} invites you to join ${g.name}`)
                                                 vt.sound('click')
-                                                vt.outln()
-                                                vt.outln(vt.bright, member.user.handle, ' is invited to join ', g.name, '.')
+                                                if ($.access.sysop && member.user.id[0] == '_') {
+                                                    member.user.gang = g.name
+                                                    PC.save(member)
+                                                    vt.outln()
+                                                    vt.outln(vt.bright, member.user.handle, ' has joined ', g.name, '.')
+                                                }
+                                                else {
+                                                    log(member.user.id, `\n${$.player.handle} invites you to join ${g.name}`)
+                                                    vt.outln()
+                                                    vt.outln(vt.bright, member.user.handle, ' is invited to join ', g.name, '.')
+                                                }
                                             }
                                         }
                                     }
                                     menu()
-                                })
+                                }, $.access.sysop)
                             }
                             else
                                 menu()

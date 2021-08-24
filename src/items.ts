@@ -117,11 +117,12 @@ module Items {
 
     export class Coin implements coin {
 
-        constructor(money: string | bigint = 0n) {
-            if (typeof money == 'string')
-                this.amount = money
-            else
+        constructor(money?: string | bigint) {
+            if (!money) money = 0n
+            if (typeof money == 'bigint')
                 this.value = money
+            else
+                this.amount = money
         }
 
         //  0c - 99999p,9999g,9999s,99999c
@@ -196,6 +197,7 @@ module Items {
                     coins = 0n
                 }
             }
+            if (coins) this.value += coins
         }
 
         carry(coin = this, bags = 2): string {

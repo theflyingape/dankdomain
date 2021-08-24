@@ -133,7 +133,7 @@ $ pwd
 /usr/games/dankdomain
 .vscode           Visual Studio Code: settings & debug profiles
 game
-  etc             system support files
+  etc             sysop support files
   files           game, menu & player support files: ANSI and/or text formats
     arena         ASCII art & menu files
     casino        menu files
@@ -154,7 +154,7 @@ game
     assets        app install, fonts, etc.
     images        visual media for artifacts, creatures, and players
     sounds        audio media for event notifications
-  users           player runtime database & files
+  users           player runtime database & current game files
 mame              MAME support files
 node_modules      Node.js support libraries
 package.json      Node.js manifest

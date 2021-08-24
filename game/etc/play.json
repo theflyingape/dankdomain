@@ -4,8 +4,6 @@
 		"email": "sysop@ddgame.us",
 		"expire": 100,
 		"immortal": 100,
-		"newgame": "Spirit",
-		"newuser": "Novice",
 		"pc": "Fighter",
 		"skill": 50
 	},

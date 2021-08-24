@@ -208,7 +208,7 @@ module Sysop {
                     }
                     else
                         menu()
-                })
+                }, $.access.sysop)
                 return
         }
         menu(suppress)

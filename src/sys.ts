@@ -126,7 +126,7 @@ module sys {
 
     //  normalize to an integer as a generic number
     export function int(n: any): number {
-        let result = (+n.toString() || +n || 0)
+        let result = (typeof n == 'bigint') ? +n.toString() : +n || 0
         result = Math.trunc(result)   //  strip any fractional part
         if (result == 0) result = 0   //  strip any negative sign (really)
         return result

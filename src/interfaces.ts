@@ -273,8 +273,6 @@ interface sysop {
     email: string
     expire: number
     immortal: number
-    newgame: string
-    newuser: string
     pc: string
     skill: number
 }

@@ -379,7 +379,6 @@ module Battle {
 
                             retreat = true
                             $.player.retreats++
-                            let who = $.player.gender == 'F' ? 'She' : 'He'
                             if (Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power)
                                 PC.curse(enemy.user.handle, 'for running away')
                             else
@@ -388,7 +387,7 @@ module Battle {
                                     'You limp away from the battle.',
                                     `You decide this isn't worth the effort.`,
                                     `You listen to that voice in your head, ${vt.attr(vt.red)}"Run."`,
-                                    `You shout back, ${vt.attr(vt.cyan)}"${who} who fights and runs away lives to fight another day!"`
+                                    `You shout back, ${vt.attr(vt.cyan)}"${$.online.who.He}who fights and runs away lives to fight another day!"`
                                 ][dice(5) - 1], -250)
                             if ($.online.confused)
                                 PC.activate($.online, false, true)
@@ -745,7 +744,7 @@ module Battle {
             for (let m in parties[w]) {
                 //  dead member gets less of the booty, taxman always gets a cut
                 let cut = parties[w][m].hp > 0 ? 95n : 45n
-                let max = whole(BigInt((4 + parties[w].length - parties[l].length) / 2) * 1250n * PC.money(parties[w][m].user.xplevel) * cut / 100n)
+                let max = whole(BigInt(((4 + parties[w].length - parties[l].length) / 2) >> 0) * 1250n * PC.money(parties[w][m].user.xplevel) * cut / 100n)
                 let award = whole(coin.value * PC.money(parties[w][m].user.xplevel) / take * cut / 100n)
                 award = award > coin.value ? coin.value : award
                 award = award > max ? max : award
@@ -940,7 +939,6 @@ module Battle {
 
             //  manage any asset upgrades for PC
             if (winner.user.id && winner.user.id[0] !== '_') {
-                PC.save()
                 log(winner.user.id, `\nYou killed ${$.player.handle}!`)
                 winner.user.xp += PC.experience($.player.xplevel, 2)
 
@@ -961,8 +959,7 @@ module Battle {
 
                 $.player.rings.forEach(ring => {
                     if (Ring.wear(winner.user.rings, ring) && !Ring.name[ring].keep) {
-                        Ring.remove(loser.user.rings, ring)
-                        $.online.altered = true
+                        Ring.remove($.player.rings, ring)
                         PC.saveRing(ring, winner.user.id)
                         vt.outln(winner.who.He, 'also '
                             , PC.what(winner, ['add', 'confiscate', 'remove', 'take', 'win'][dice(5) - 1])
@@ -1868,13 +1865,13 @@ module Battle {
                     if (backfire) {
                         xp = int(rpc.user.xp / 2)
                         rpc.user.xp -= xp
-                        nme.user.xp += (nme.user.level > rpc.user.level) ? xp : Math.trunc(nme.user.xp / 2)
+                        nme.user.xp += (nme.user.level > rpc.user.level) ? xp : int(nme.user.xp / 2)
                         vt.out(Recipient, PC.what(nme, 'absorb'), 'some life experience from ', caster)
                     }
                     else {
                         xp = int(nme.user.xp / 2)
                         nme.user.xp -= xp
-                        rpc.user.xp += (rpc.user.level > nme.user.level) ? xp : Math.trunc(rpc.user.xp / 2)
+                        rpc.user.xp += (rpc.user.level > nme.user.level) ? xp : int(rpc.user.xp / 2)
                         vt.out(Caster, PC.what(rpc, 'absorb'), 'some life experience from ', recipient)
                     }
                     vt.outln('.')
@@ -1975,17 +1972,14 @@ module Battle {
         let action: string
         let hit = 0
 
-        if ($.from !== 'Party' && rpc !== $.online && (rpc.user.coward || Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power) && !rpc.user.cursed && rpc.hp < (rpc.user.hp / 5)) {
+        if ($.from == 'User' && rpc !== $.online && rpc.user.gender !== 'I'
+            && !rpc.user.cursed && rpc.hp < (rpc.user.hp / 5)
+            && (rpc.user.coward || Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power)) {
             rpc.hp = -1
-            vt.outln(vt.green, vt.bright
-                , rpc.user.gender == 'I' ? 'The ' : '', rpc.user.handle, -600
-                , vt.normal, ' runs away from ', -400, vt.faint, 'the battle!', -200)
-            if ($.from == 'User') {
-                rpc.user.blessed = ''
-                if (!Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power)
-                    PC.curse($.player.handle, 'for running away', rpc)
-                PC.save(rpc)
-            }
+            vt.outln(vt.green, vt.bright, rpc.who.He, -600, vt.normal, 'runs away from ', -400, vt.faint, 'the battle!', -200)
+            if (!Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power)
+                PC.curse(enemy.user.handle, 'for running away', rpc)
+            PC.save(rpc)
             return
         }
 

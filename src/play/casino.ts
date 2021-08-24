@@ -139,11 +139,11 @@ module Casino {
         let ace: number = 0
         vt.outln()
 
-        let amount = new Coin()
+        let amount: Coin
         if (/=|max/i.test(vt.entry))
-            amount.value = max.value
+            amount = new Coin(max.value)
         else
-            amount.value = new Coin(vt.entry).value
+            amount = new Coin(vt.entry)
         if (amount.value < amount.COPPER || amount.value > $.player.coin.value || amount.value > max.value) {
             vt.beep()
             menu($.player.expert)
