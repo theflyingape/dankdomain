@@ -119,7 +119,7 @@ module pc {
         activate(one = $.online, keep = false, confused = false): boolean {
             if (one == $.online) $.online.user = $.player
             one.adept = one.user.wins ? 1 : 0
-            one.pc = PC.card(one.user.pc)
+            one.pc = this.card(one.user.pc)
             one.str = one.user.str
             one.int = one.user.int
             one.dex = one.user.dex
@@ -132,15 +132,15 @@ module pc {
                 one.user.rings.forEach(ring => {
                     rt -= Ring.power(one.user.rings, [ring], 'degrade', 'ability', ability).power * 2
                     rt -= Ring.power(one.user.rings, [ring], 'degrade', 'pc', one.user.pc).power * 3
-                    rt += Ring.power([], [ring], 'upgrade', 'ability', ability).power * PC.card(one.user.pc)[a] * 2
-                    rt += Ring.power([], [ring], 'upgrade', 'pc', one.user.pc).power * PC.card(one.user.pc)[a] * 3
+                    rt += Ring.power([], [ring], 'upgrade', 'ability', ability).power * this.card(one.user.pc)[a] * 2
+                    rt += Ring.power([], [ring], 'upgrade', 'pc', one.user.pc).power * this.card(one.user.pc)[a] * 3
                 })
-                PC.adjust(ability, rt, 0, 0, one)
+                this.adjust(ability, rt, 0, 0, one)
             })
             one.confused = false
             if (confused) return true
 
-            one.who = PC.who(one)
+            one.who = this.who(one)
             one.hp = one.user.hp
             one.sp = one.user.sp
             one.bp = int(one.user.hp / 10)
@@ -161,11 +161,11 @@ module pc {
 
         adjust(ability: ABILITY, rt = 0, pc = 0, max = 0, rpc = $.online) {
             if (max) {
-                rpc.user[`max${ability}`] = PC.ability(rpc.user[`max${ability}`], max, 99)
+                rpc.user[`max${ability}`] = this.ability(rpc.user[`max${ability}`], max, 99)
                 rpc.altered = true
             }
             if (pc) {
-                rpc.user[ability] = PC.ability(rpc.user[ability], pc, rpc.user[`max${ability}`])
+                rpc.user[ability] = this.ability(rpc.user[ability], pc, rpc.user[`max${ability}`])
                 rpc.altered = true
             }
             const a = `to${titlecase(ability)}`
@@ -175,21 +175,21 @@ module pc {
             rpc.user.rings.forEach(ring => {
                 mod -= Ring.power(rpc.user.rings, [ring], 'degrade', 'ability', ability).power * 2
                 mod -= Ring.power(rpc.user.rings, [ring], 'degrade', 'pc', rpc.user.pc).power * 3
-                mod += Ring.power([], [ring], 'upgrade', 'ability', ability).power * PC.card(rpc.user.pc)[a] * 2
-                mod += Ring.power([], [ring], 'upgrade', 'pc', rpc.user.pc).power * PC.card(rpc.user.pc)[a] * 3
+                mod += Ring.power([], [ring], 'upgrade', 'ability', ability).power * this.card(rpc.user.pc)[a] * 2
+                mod += Ring.power([], [ring], 'upgrade', 'pc', rpc.user.pc).power * this.card(rpc.user.pc)[a] * 3
             })
             if (rt > 100) {
                 mod++
                 rt %= 100
             }
-            rpc[ability] = PC.ability(rpc[ability], rt, rpc.user[`max${ability}`], mod)
+            rpc[ability] = this.ability(rpc[ability], rt, rpc.user[`max${ability}`], mod)
         }
 
         card(dd = 'Spirit'): character {
             let rpc = <character>{}
-            for (let type in PC.name) {
-                if (PC.name[type][dd]) {
-                    rpc = PC.name[type][dd]
+            for (let type in this.name) {
+                if (this.name[type][dd]) {
+                    rpc = this.name[type][dd]
                     break
                 }
             }
@@ -226,10 +226,10 @@ module pc {
         curse(from: string, via: string, onto = $.online) {
             if (onto == $.online) {
                 vt.sound('crack')
-                PC.adjust('str', -10)
-                PC.adjust('int', -10)
-                PC.adjust('dex', -10)
-                PC.adjust('cha', -10)
+                this.adjust('str', -10)
+                this.adjust('int', -10)
+                this.adjust('dex', -10)
+                this.adjust('cha', -10)
                 if (onto.user.blessed) {
                     vt.outln('Your ', vt.yellow, vt.bright, 'shining aura ', -400,
                         vt.reset, 'fades ', -500,
@@ -245,9 +245,9 @@ module pc {
             }
             else {
                 if (from == $.player.handle) {
-                    PC.adjust('cha', -1, -1, -1)
+                    this.adjust('cha', -1, -1, -1)
                     if (($.player.gang && onto.user.gang == $.player.gang) || onto.user.id == $.ruler.id) {
-                        PC.adjust('cha', -1, -1, -1, onto)
+                        this.adjust('cha', -1, -1, -1, onto)
                         $.player.coward = true
                         vt.sound('boom')
                     }
@@ -284,7 +284,7 @@ module pc {
             if (rs.length) {
                 let n = dice(rs.length) - 1
                 rpc.user.id = rs[n].id
-                PC.load(rpc)
+                this.load(rpc)
             }
             return rpc
         }
@@ -301,7 +301,7 @@ module pc {
         }
 
         expout(xp: number, awarded = true): string {
-            const gain = int(100 * xp / (PC.experience($.player.level) - PC.experience($.player.level - 1)))
+            const gain = int(100 * xp / (this.experience($.player.level) - this.experience($.player.level - 1)))
             let out = (xp < 1e+8 ? xp.toString() : sprintf('%.4e', xp)) + ' '
             if (awarded && gain && $.online.int >= 90) {
                 out += vt.attr(vt.off, vt.faint, '(', vt.bright
@@ -356,7 +356,7 @@ module pc {
             let user: user = 'user' in rpc ? rpc.user : rpc
             if (user.handle) user.handle = titlecase(user.handle)
             if (db.loadUser(user)) {
-                if ('user' in rpc) PC.activate(rpc)
+                if ('user' in rpc) this.activate(rpc)
                 //  restore NPC with static fields
                 if (user.id[0] == '_' && user.id != "_SYS") {
                     let npc = db.fillUser(NPC[user.id], user)
@@ -446,7 +446,7 @@ module pc {
                 fs.accessSync(userPNG, fs.constants.F_OK)
                 userPNG = `user/${rpc.user.id}`
             } catch (e) {
-                userPNG = (PC.name['player'][rpc.user.pc] || PC.name['immortal'][rpc.user.pc] ? 'player' : 'monster') + '/' + rpc.user.pc.toLowerCase() + (rpc.user.gender == 'F' ? '_f' : '')
+                userPNG = (this.name['player'][rpc.user.pc] || this.name['immortal'][rpc.user.pc] ? 'player' : 'monster') + '/' + rpc.user.pc.toLowerCase() + (rpc.user.gender == 'F' ? '_f' : '')
             }
             vt.profile({ png: userPNG, handle: rpc.user.handle, level: rpc.user.level, pc: rpc.user.pc, effect: effect })
             vt.title(`${rpc.user.handle}: level ${rpc.user.level} ${rpc.user.pc} ${meta}`)
@@ -455,19 +455,19 @@ module pc {
         random(type?: string): string {
             let pc: string = ''
             if (type) {
-                let i = dice(Object.keys(PC.name[type]).length)
+                let i = dice(Object.keys(this.name[type]).length)
                 let n = i
-                for (let dd in PC.name[type])
+                for (let dd in this.name[type])
                     if (!--n) {
                         pc = dd
                         break
                     }
             }
             else {
-                let i = dice(PC.total - 2)    //  less Spirit and Novice
+                let i = dice(this.total - 2)    //  less Spirit and Novice
                 let n = i + 2
-                for (type in PC.name) {
-                    for (let dd in PC.name[type])
+                for (type in this.name) {
+                    for (let dd in this.name[type])
                         if (!--n) {
                             pc = dd
                             break
@@ -491,13 +491,13 @@ module pc {
             }
             //  assign & fetch the playing class
             if (pc) user.pc = pc
-            const rpc = PC.card(user.pc)
+            const rpc = this.card(user.pc)
             //  apply character class attributes
             user = db.fillUser(user.pc, user)
             user.level = level
-            if (user.level > 1) user.xp = PC.experience(user.level - 1, 1, user.int)
+            if (user.level > 1) user.xp = this.experience(user.level - 1, 1, user.int)
             if (!user.xplevel || user.xplevel > user.level) user.xplevel = user.level
-            if (!user.keyseq) PC.newkeys(user)
+            if (!user.keyseq) this.newkeys(user)
             //  level up
             for (let n = 2; n <= level; n++) {
                 user.level = n
@@ -587,8 +587,8 @@ module pc {
                 if ((user.int += rpc.toInt) > user.maxint) user.int = user.maxint
                 if ((user.dex += rpc.toDex) > user.maxdex) user.dex = user.maxdex
                 if ((user.cha += rpc.toCha) > user.maxcha) user.cha = user.maxcha
-                user.hp += PC.hp(user)
-                user.sp += PC.sp(user)
+                user.hp += this.hp(user)
+                user.sp += this.sp(user)
             }
             return user
         }
@@ -661,7 +661,7 @@ module pc {
 
         status(profile: active) {
             vt.action('clear')
-            PC.portrait(profile)
+            this.portrait(profile)
 
             const line = '------------------------------------------------------'
             const space = '                                                      '
@@ -707,10 +707,10 @@ module pc {
             vt.out(sprintf('%-20s', (profile.user.wins ? `${romanize(profile.user.wins)}.` : '')
                 + profile.user.immortal + '.' + profile.user.level + ` (${profile.user.calls})`))
             vt.out(vt.cyan, ' Need: ', vt.white)
-            if (PC.experience(profile.user.level, undefined, profile.user.int) < 1e+8)
-                vt.out(sprintf('%-15f', PC.experience(profile.user.level, undefined, profile.user.int)))
+            if (this.experience(profile.user.level, undefined, profile.user.int) < 1e+8)
+                vt.out(sprintf('%-15f', this.experience(profile.user.level, undefined, profile.user.int)))
             else
-                vt.out(sprintf('%-15.7e', PC.experience(profile.user.level, undefined, profile.user.int)))
+                vt.out(sprintf('%-15.7e', this.experience(profile.user.level, undefined, profile.user.int)))
             vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
             vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
@@ -893,7 +893,7 @@ module pc {
 
             vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
             vt.out(' Jousting: ', vt.white)
-            vt.out(sprintf('%-20s', profile.user.jw + ':' + profile.user.jl + ` (${PC.jousting(profile)})`))
+            vt.out(sprintf('%-20s', profile.user.jw + ':' + profile.user.jl + ` (${this.jousting(profile)})`))
             vt.out(vt.cyan, 'Plays: ', vt.white)
             vt.out(sprintf('%-15s', profile.user.plays))
             vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
@@ -909,17 +909,17 @@ module pc {
 
         wearing(profile: active) {
             if (isNaN(+profile.user.weapon)) {
-                vt.outln('\n', PC.who(profile).He, profile.weapon.text, ' ', weapon(profile)
+                vt.outln('\n', this.who(profile).He, profile.weapon.text, ' ', weapon(profile)
                     , $.from == 'Dungeon' ? -300 : !profile.weapon.shoppe ? -500 : -100)
             }
             if (isNaN(+profile.user.armor)) {
-                vt.outln('\n', PC.who(profile).He, profile.armor.text, ' ', armor(profile)
+                vt.outln('\n', this.who(profile).He, profile.armor.text, ' ', armor(profile)
                     , $.from == 'Dungeon' ? -300 : !profile.armor.armoury ? -500 : -100)
             }
             if (!$.player.novice && $.from !== 'Dungeon' && profile.user.sex == 'I') for (let i in profile.user.rings) {
                 let ring = profile.user.rings[i]
                 if (!+i) vt.outln()
-                vt.out(PC.who(profile).He, 'has ', vt.cyan, vt.bright, ring, vt.normal)
+                vt.out(this.who(profile).He, 'has ', vt.cyan, vt.bright, ring, vt.normal)
                 if ($.player.emulation == 'XT') vt.out(' ', Ring.name[ring].emoji)
                 vt.outln(' powers ', vt.reset, 'that can ', Ring.name[ring].description, -100)
             }

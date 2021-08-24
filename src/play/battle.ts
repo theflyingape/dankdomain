@@ -2253,7 +2253,6 @@ module Battle {
             'user': {
                 cb: () => {
                     let rpc: active = { user: { id: vt.entry } }
-                    if (!npc && rpc.user.id[0] == '_') vt.entry = '?'
                     if (vt.entry == '?') {
                         vt.action('list')
                         vt.form['start'].prompt = 'Starting level ' + bracket(start, false, '[]') + ': '
@@ -2273,6 +2272,11 @@ module Battle {
                         if (rpc.user.id) {
                             vt.action('clear')
                             PC.portrait(rpc)
+                            if (!npc && rpc.user.id[0] == '_') {
+                                rpc.user.id = ''
+                                vt.beep()
+                                vt.out(' ', bracket('exempt', false))
+                            }
                             //  the inert player does not fully participate in the fun ...
                             if (/Bail|Brawl|Curse|Drop|Joust|Resurrect|Rob/.test(venue) && !rpc.user.xplevel) {
                                 rpc.user.id = ''

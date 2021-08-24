@@ -125,6 +125,7 @@ module Email {
         try { smtpOptions = require(smtpConfig) }
         catch (err) {
             if (echo) {
+                vt.outln()
                 vt.outln(vt.red, vt.bright, `${smtpConfig} not configured for sending email`)
                 player.password = 'local'
                 PC.save(player, true)

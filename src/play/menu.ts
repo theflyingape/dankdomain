@@ -42,7 +42,15 @@ module Main {
         if (($.online.altered = Ring.wear($.player.rings, ring.name))) {
             getRing('are the Ruler and gifted with', ring.name)
             PC.saveRing(ring.name, $.player.id, $.player.rings)
+            PC.save()
             vt.sound('promote', 22)
+            vt.outln()
+        }
+        ring = Ring.power([], null, 'taxes')
+        if (($.online.altered = Ring.wear($.player.rings, ring.name))) {
+            getRing('are the Ruler and gifted with', ring.name)
+            PC.saveRing(ring.name, $.player.id, $.player.rings)
+            PC.save()
             vt.outln()
         }
     }

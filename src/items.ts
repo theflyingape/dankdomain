@@ -419,7 +419,7 @@ module Items {
                                 if (value && abilities[a][match] == value)
                                     power = int(abilities[a].power)
                             }
-                            //  console.log(a, name, id, match || '', value || '', '->', power)
+                            //console.log(a, name, id, match || '', value || '', '->', power)
                         }
                     }
                 }

@@ -30,7 +30,7 @@ process.chdir(__dirname)
 //  load common
 import { pathTo } from '../sys'
 import db = require('../db')
-import { Armor, Coin, Ring, Weapon } from '../items'
+import { Armor, Ring, Weapon } from '../items'
 
 let passed = ''
 if (process.argv.length > 2 && process.argv[2]) {
@@ -619,7 +619,7 @@ dns.lookup(network.address, (err, addr, family) => {
     }
 })
 
-chokidar.watch(pathTo('users', 'save.json'))
+chokidar.watch(pathTo('users', 'save.json'), { awaitWriteFinish: true })
     .on('add', (path, stats) => {
         try {
             let user = db.fillUser(null, Object.assign({}, JSON.parse(fs.readFileSync(path).toString())))
