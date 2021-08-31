@@ -1,15 +1,15 @@
 /*****************************************************************************\
  *  Dank Domain: the return of Hack & Slash                                  *
- *  I/O authored by: Robert Hurst <theflyingape@gmail.com>                   *
+ *  PLAYER authored by: Robert Hurst <theflyingape@gmail.com>                *
 \*****************************************************************************/
 
 import $ = require('./play/runtime')
 import db = require('./db')
 import { Access, Coin } from './items'
-import { bracket, cat, prompt, news, time, vt, weapon, buff } from './lib'
-import { elemental } from './npc'
+import { bracket, buff, cat, news, prompt, time, vt, weapon } from './lib'
 import { Deed, PC } from './pc'
-import { an, date2full, dice, fs, int, now, pathTo, sprintf, whole } from './sys'
+import { elemental } from './npc'
+import { an, date2full, dice, fs, int, now, pathTo, sprintf } from './sys'
 
 module Player {
 

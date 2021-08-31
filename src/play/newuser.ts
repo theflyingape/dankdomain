@@ -155,7 +155,7 @@ module NewUser {
             PC.save($.player, true)
             vt.out('\nYour user ID (', vt.bright, $.player.id, vt.normal, ') was saved.')
             vt.outln(-2000)
-            require('./logon').startup($.player.id)
+            require('./init').startup($.player.id)
             return
         }
 

@@ -185,17 +185,6 @@ module pc {
             rpc[ability] = this.ability(rpc[ability], rt, rpc.user[`max${ability}`], mod)
         }
 
-        card(dd = 'Spirit'): character {
-            let rpc = <character>{}
-            for (let type in this.name) {
-                if (this.name[type][dd]) {
-                    rpc = this.name[type][dd]
-                    break
-                }
-            }
-            return rpc
-        }
-
         bless(from: string, via: string, onto = $.online) {
             if (onto == $.online) {
                 vt.sound('shimmer')
@@ -221,6 +210,17 @@ module pc {
             }
             onto.altered = true
             onto.user.cursed = ''
+        }
+
+        card(dd: string): character {
+            let rpc = <character>{}
+            for (let type in this.name) {
+                if (this.name[type][dd]) {
+                    rpc = this.name[type][dd]
+                    break
+                }
+            }
+            return rpc
         }
 
         curse(from: string, via: string, onto = $.online) {
@@ -358,7 +358,7 @@ module pc {
             if (db.loadUser(user)) {
                 if ('user' in rpc) this.activate(rpc)
                 //  restore NPC with static fields
-                if (user.id[0] == '_' && user.id != "_SYS") {
+                if (user.id[0] == '_') {
                     let npc = db.fillUser(NPC[user.id], user)
                     db.saveUser(npc)
                 }
@@ -370,7 +370,7 @@ module pc {
         loadGang(rs: any, me = ''): gang {
             let gang: gang = {
                 name: rs.name,
-                members: rs.members.split(','),
+                members: rs.members ? rs.members.split(',') : '',
                 handles: [],
                 genders: [],
                 melee: [],

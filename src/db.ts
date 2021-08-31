@@ -141,6 +141,9 @@ module db {
         }
     }
 
+    //  lock table management
+    //  "ID" is a logged in player with role-playing access
+    //  "id" is an engaged player
     export function lock(id: string, owner = 0): boolean {
         if (owner == 1) {
             try {

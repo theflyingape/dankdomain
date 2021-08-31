@@ -322,7 +322,7 @@ module Init {
         $.player.lastdate = now().date
         $.player.lasttime = now().time
         $.player.expires = $.player.lastdate + $.sysop.expire
-        PC.activate($.online)
+        PC.activate($.online, true)
         PC.save()
 
         $.mydeeds = Deed.load($.player.pc)
@@ -393,7 +393,6 @@ module Init {
                     }
                 }
                 $.player.coward = false
-                PC.activate($.online)
             }
 
             if ($.player.level < 50 && 2 * $.player.jw < $.player.jl) {
@@ -408,7 +407,6 @@ module Init {
             $.player.plays++
             $.player.status = ''
             $.player.xplevel = $.player.level
-            $.online.altered = true
             PC.activate($.online)
             PC.save()
             vt.music('logon')

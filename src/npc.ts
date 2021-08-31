@@ -27,7 +27,7 @@ module npc {
             }
             //  pre-load NPC (not BOT) into runtime
             if (!$[NPC[id]]) {
-                $[NPC[id]] = id == '_SYS' ? npc : { user: npc }
+                $[NPC[id]] = { user: npc }
                 PC.load($[NPC[id]])
             }
         }

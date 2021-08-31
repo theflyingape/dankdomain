@@ -79,10 +79,10 @@ module Taxman {
             }
             $.player.loan.value = due
             //  a Lannister always pays his debts
-            if ($.player.loan.value > 9n) {
+            if ($.player.loan.value >= 15n) {
                 vt.outln(vt.green, '\nThe Iron Bank will have its due on your loan: ', carry($.player.loan, 4), -1200)
                 vt.beep()
-                let interest = new Coin($.player.loan.value * 100n / 5n + 1n)
+                let interest = new Coin($.player.loan.value * 5n / 100n + 1n)
                 $.player.loan.value += interest.value
                 $.online.altered = true
                 vt.outln('They add an interest charge of ', carry(interest, 4), -1200)

@@ -633,9 +633,8 @@ module Square {
     }
 
     function amount() {
-        if (whole(vt.entry).toString() == vt.entry) vt.entry += 'c'
         let action = vt.form['coin'].prompt.split(' ')[0]
-        let amount = new Coin()
+        let amount = new Coin(vt.entry)
 
         switch (action) {
             case 'Deposit':
@@ -643,15 +642,12 @@ module Square {
                 if (amount.value > 0 && amount.value <= $.player.coin.value) {
                     $.player.coin.value -= amount.value
                     if ($.player.loan.value > 0) {
-                        $.player.loan.value -= amount.value
-                        if ($.player.loan.value < 0) {
-                            amount.value = -$.player.loan.value
-                            $.player.loan.value = 0n
-                        }
-                        else
-                            amount.value = 0n
+                        let due = $.player.loan.value - amount.value
+                        $.player.loan.value = due
+                        if (due < 0) $.player.bank.value -= due
                     }
-                    $.player.bank.value += amount.value
+                    else
+                        $.player.bank.value += amount.value
                     $.online.altered = true
                     vt.beep()
                 }

@@ -120,8 +120,8 @@ module sys {
         return sprintf('%04d%02d%02d', year, month, day)
     }
 
-    export function dice(faces: number): number {
-        return int(Math.random() * faces) + 1
+    export function dice(faces: number, min = 1): number {
+        return int(Math.random() * faces) + min
     }
 
     //  normalize to an integer as a generic number

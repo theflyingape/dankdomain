@@ -7,8 +7,8 @@ import { fs, now, pathTo } from '../sys'
 
 module runtime {
     //  system operator
+    export let sysop: sysop = Object.assign({}, JSON.parse(fs.readFileSync(pathTo('etc', 'sysop.json'))))
     export let game: game
-    export let sysop: sysop
     export let ruler: user
 
     //  player
@@ -75,7 +75,7 @@ module runtime {
                     started: now().date, winner: 'nobody', plays: 0,
                     lastdate: now().date, lasttime: now().time, today: 0
                 }
-                update = true
+                savegame(true)
             }
         }
     }

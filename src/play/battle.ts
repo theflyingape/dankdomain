@@ -9,7 +9,7 @@ import { Access, Armor, Coin, Magic, Poison, Ring, Weapon } from '../items'
 import { armor, bracket, buff, carry, death, getRing, log, news, rings, tradein, vt, weapon } from '../lib'
 import { Deed, PC } from '../pc'
 import { elemental } from '../npc'
-import { checkXP, input } from '../player'
+import { input } from '../player'
 import { an, cuss, date2full, dice, fs, int, pathTo, sprintf, uint, whole } from '../sys'
 
 module Battle {
@@ -24,190 +24,20 @@ module Battle {
         members: [], handles: [], genders: [], melee: [], status: [], validated: [],
         win: 0, loss: 0, banner: 0, trim: 0, back: 0, fore: 0
     }
-    let parties: [active[], active[]]
     let alive: number[]
+    let parties: [active[], active[]]
+    let round: { party: number, member: number, react: number }[]
     let p1: who, p2: who
-    let round: { party: number, member: number, react: number }[] = []
-    let bs: number
-    let dodge: number
-    let volley: number
-
-    function end() {
-        round = []
-        db.unlock($.player.id, true)
-
-        if (Ring.power([], $.player.rings, 'buff').power) {
-            if ($.online.toAC < 0) $.online.toAC++
-            if ($.online.toWC < 0) $.online.toWC++
-        }
-        else {
-            //  diminish any temporary buff
-            if ($.online.toAC > 0) $.online.toAC--
-            if ($.online.toWC > 0) $.online.toWC--
-        }
-
-        if ($.from == 'Merchant') {
-            if ($.online.hp < 1) {
-                $.player.coin.value = 0n
-                death($.reason || `refused ${$.dwarf.user.handle}`)
-                vt.outln('  ', vt.yellow, vt.bright, `"Next time bring friends."`)
-                vt.sound('punk', 8)
-            }
-            else {
-                news(`\tdefeated ${$.dwarf.user.handle}`)
-                vt.wall($.player.handle, `defeated ${$.dwarf.user.handle}`)
-                $.player.coward = false
-            }
-        }
-
-        if ($.from == 'Naval') {
-            if ($.online.hp > 0) {
-                vt.sound('naval' + (parties[1][0].user.id == '_OLD' ? '_f' : ''), 32)
-                PC.adjust('str', 102, 1, 1)
-                PC.adjust('int', 102, 1, 1)
-                PC.adjust('dex', 102, 1, 1)
-                PC.adjust('cha', 102, 1, 1)
-                const msg = `survived ${$.online.who.his} chance encounter with ${parties[1][0].user.handle}`
-                news(`\t${msg}`)
-                vt.wall($.player.handle, msg)
-            }
-            else {
-                PC.adjust('str', -2, -1, -1)
-                PC.adjust('int', -2, -1, -1)
-                PC.adjust('dex', -2, -1, -1)
-                PC.adjust('cha', -2, -1, -1)
-            }
-            $.player.coin.value = 0n
-            vt.beep()
-            Battle.yourstats()
-        }
-
-        if ($.from == 'Tavern') {
-            const mantle = pathTo('files/tavern', 'trophy.json')
-            if ($.online.hp < 1) {
-                vt.outln(`He picks up your ${weapon()} and triumphantly waves it around to`)
-                vt.out(`the cheering crowd. `, -1600, ` He struts toward the mantelpiece `, -600)
-                if ($.online.weapon.wc > $.barkeep.weapon.wc) {
-                    let trophy = { who: $.player.id, weapon: $.player.weapon }
-                    fs.writeFileSync(pathTo(mantle), JSON.stringify(trophy))
-                    vt.outln(`and hangs his new trophy.`)
-                }
-                else
-                    vt.outln(`and burns it!`, -600, 'Heh.')
-                Weapon.equip($.online, Weapon.merchant[0])
-                PC.save()
-                $.reason = `schooled by ${$.barkeep.user.handle}`
-                //  go crazy!
-                vt.sound('winner', 32)
-                $.player.coin.value = 0n
-                vt.outln('\n  ', vt.green, vt.bright, `"Drinks are on the house!"`, -2250)
-            }
-            else {
-                vt.music('barkeep')
-                news(`\tdefeated ${$.barkeep.user.handle}`)
-                vt.wall($.player.handle, `defeated ${$.barkeep.user.handle}`)
-
-                let trophy = JSON.parse(fs.readFileSync(mantle).toString())
-                Weapon.equip($.barkeep, trophy.weapon)
-                let credit = new Coin($.barkeep.weapon.value)
-                credit.value = tradein(credit.value, $.online.cha)
-                let result = Weapon.swap($.online, $.barkeep, credit)
-                if (typeof result == 'boolean' && result) {
-                    vt.outln('You also take his trophy, ', weapon(), -600)
-                    fs.writeFileSync(pathTo('files/tavern', 'trophy.json'), JSON.stringify({ "who": "_TAX", "weapon": "Needle" }))
-                }
-                //  no entertainment
-                vt.sound('ko', 12)
-                if ($.player.cha > 49) PC.adjust('cha', -22, -20, -2)
-                $.player.coward = false
-            }
-        }
-
-        if (/Gates|Taxman/.test($.from)) {
-            if ($.online.hp < 1) {
-                PC.payment($.taxman.user.coin.value)
-                death($.reason || 'tax evasion')
-                vt.outln('  ', vt.blue, vt.bright, `"Thanks for the taxes!"`)
-                vt.sound('thief2', 16)
-            }
-            else {
-                if ($.from == 'Taxman') {
-                    news(`\tdefeated ${$.taxman.user.handle}`)
-                    vt.wall($.player.handle, `defeated ${$.taxman.user.handle}`)
-                }
-                $.player.coward = false
-            }
-        }
-
-        if ($.from == 'Witch') {
-            if ($.online.hp < 1) {
-                $.player.coin.value = 0n
-                death($.reason || `refused ${$.witch.user.handle}`)
-                vt.outln('  ', vt.green, vt.bright, `"Hell hath no fury like a woman scorned."`)
-                vt.sound('crone', 30)
-            }
-            else {
-                vt.animated('hinge')
-                vt.sound('naval_f', 25)
-                news(`\tdefeated ${$.witch.user.handle}`)
-                vt.wall($.player.handle, `defeated ${$.witch.user.handle}`)
-                $.player.coward = false
-                $.sorceress = 0
-            }
-        }
-
-        if ($.from == 'User') {
-            let opponent = parties[1][0]
-            if (!(opponent.user.id[0] == '_' || opponent.user.gender == 'I')) {
-                PC.save(opponent, false, true)
-                if ($.player.hp > 0 && opponent.hp == 0) {
-                    vt.action('ny')
-                    vt.form = {
-                        'yn': {
-                            cb: () => {
-                                if (/Y/i.test(vt.entry)) {
-                                    vt.action('freetext')
-                                    input('message', 'just passing gas...')
-                                }
-                                else {
-                                    vt.outln()
-                                    fini()
-                                }
-                            }, cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 20
-                        },
-                        'message': {
-                            cb: () => {
-                                vt.outln()
-                                if (cuss(vt.entry)) {
-                                    $.player.coward = true
-                                    vt.hangup()
-                                }
-                                if (vt.entry) {
-                                    log(opponent.user.id, `... and says,`)
-                                    log(opponent.user.id, `"${vt.entry}"`)
-                                }
-                                fini()
-                            }, prompt: '>', max: 78
-                        }
-                    }
-                    vt.form['yn'].prompt = `Leave ${opponent.who.him}a message (Y/N)? `
-                    input('yn', 'y')
-                    return
-                }
-            }
-        }
-
-        fini()
-    }
 
     //  start a new battle engagement:
     //    do rounds: attack() with possibly backstab or poison
-    //       per member: next() for cast, melee, or retreat
-    //    until spoils()
+    //       for each active member: next() for cast, melee, or retreat
+    //    until there are spoils(), then end()
     export function engage(menu: string, party: active | active[], mob: active | active[], cb: Function) {
 
         //  process parameters
         $.from = menu
+        fini = cb
 
         let a: active[], b: active[]
         if (Array.isArray(party))
@@ -219,416 +49,419 @@ module Battle {
             b = <active[]>mob
         else
             b = new Array(<active>mob)
-
         parties = [a, b]
-        fini = cb
 
         //  initialize for first encounter in engagement
-        alive = [parties[0].length, parties[1].length]
-        round = []
         expel = false
         retreat = false
         teleported = false
-        volley = 0
-        dodge = 0
+
+        alive = [parties[0].length, parties[1].length]
+        round = []
+
+        let rpc: active, enemy: active
+        let bs = 0
+        let dodge = 0
+        let volley = 0
 
         attack()
-    }
 
-    //  new round of volleys
-    export function attack(retry = false) {
-        //  no more attacking
-        if (retreat || teleported || ++volley > 12345) {
-            if (volley > 12345 && !retreat) {
+        //  stack each turn-based sequencing
+        function attack() {
+
+            //  no more attacking -- un-stack
+            if (++volley > 9999) {
                 retreat = true
                 $.player.coward = true
             }
-            if ($.online.confused)
-                PC.activate($.online, false, true)
-            end()
-            return
-        }
-
-        if (!round.length) {
-            if (volley > 1) {
-                vt.outln($.online.hp > 0 ? -80 : -800)
-                vt.outln('    -=', bracket('*', false), '=-')
+            if (retreat || teleported) {
+                end()
+                return
             }
 
-            for (let p in parties) {
-                for (let m in parties[p]) {
-                    if (parties[p][m].hp > 0) {
-                        let rpc = parties[p][m]
-                        let x = 11 - rpc.user.backstab - Ring.power([], rpc.user.rings, 'initiate').power
-                        x -= rpc.user.steal - Ring.power([], rpc.user.rings, 'steal').power
-                        let s = dice(rpc.user.level / x) + int(rpc.dex / 2) + dice(rpc.dex / 2)
-                        round.push({ party: +p, member: +m, react: +s })
+            if (!round.length) {
+                if (volley > 1) {
+                    vt.drain()
+                    vt.outln($.online.hp > 0 ? -100 : -600)
+                    vt.outln('    -=', bracket('*', false), '=-')
+                }
+
+                for (let p in parties) {
+                    for (let m in parties[p]) {
+                        if (parties[p][m].hp > 0) {
+                            let rpc = parties[p][m]
+                            let x = 11 - rpc.user.backstab - Ring.power([], rpc.user.rings, 'initiate').power
+                            x -= rpc.user.steal - Ring.power([], rpc.user.rings, 'steal').power
+                            let s = dice(rpc.user.level / x) + int(rpc.dex / 2) + dice(rpc.dex / 2)
+                            round.push({ party: +p, member: +m, react: +s })
+                        }
                     }
                 }
+                round.sort((n1, n2) => n2.react - n1.react)
             }
-            round.sort((n1, n2) => n2.react - n1.react)
-        }
 
-        let n = round[0]
-        let enemy: active
-        let rpc = parties[n.party][n.member]
-        if (rpc.hp < 1 || rpc.user.xplevel < 1) {
-            next()
-            return
-        }
+            let n = round[0]
+            rpc = parties[n.party][n.member]
 
-        //  recovery?
-        if (rpc.confused) {
-            PC.adjust('int', rpc.pc.toInt, 0, 0, rpc)
-            PC.adjust('dex', rpc.pc.toDex, 0, 0, rpc)
-        }
-
-        //  choose an opponent
-        let mob = n.party ^ 1
-        let nme: number
-        do { nme = dice(parties[mob].length) - 1 } while (parties[mob][nme].hp < 1)
-        enemy = parties[mob][nme]
-        if (volley == 1 && rpc !== $.online) vt.outln()
-        p1 = PC.who(rpc, alive[n.party] > 1)
-        p2 = PC.who(enemy, alive[mob] > 1)
-
-        //  a frozen treat?
-        if (!enemy.confused) {
-            let speed = 0
-            //  by supernatural means
-            let skip = Ring.power(rpc.user.rings, enemy.user.rings, 'skip', 'pc', rpc.user.pc)
-            if (skip.power && dice(12 + 2 * rpc.user.magic + dodge) > dice(enemy.user.magic / 2 + 2))
-                skip.power = 0  //  saving throw
-            else {
-                dodge += 2
-                speed = -250
-            }
-            //  if not, by skillful escape means
-            if (!skip.power
-                //  d[15-25] > 3-14, 73 to 46% diminishing win-rate, allow for the smallest 6% win for a lesser escaping a greater
-                && dice(enemy.user.level / 9 + 15) > int(rpc.user.level / 9 + 3)
-                //  d[22-32] > 11-21, coin-flip typical, true: 5% min - 66% max
-                && dice((enemy.dex > 90 ? enemy.dex - 89 : 1) + 21) > ((rpc.dex > 90 ? rpc.dex - 89 : 1) + 10)
-                //  d[0-8(+rings)] + 2 > 2d[6], true min 3%,
-                //  max chance to be true for lawful: 3%, desperate: 6%, trickster: 17%, adept: 67%, master: 92%
-                && dice(2 * (enemy.user.steal + Ring.power(rpc.user.rings, enemy.user.rings, 'steal').power))
-                > (dice(6) + dice(6) - 2)) {
-                skip.power = 1
-                speed = +100
-            }
-            if (skip.power) {
-                let how = enemy.pc.skip || 'kiss', color = enemy.pc.color || vt.white
-                let w = how.split(' ')
-                if (w.length > 1) w.push('')
-                vt.outln(vt.faint, color, `${$.player.emulation == 'XT' ? '≫' : '>>'} `, vt.normal
-                    , p2.You, vt.bright, PC.what(enemy, w[0]), w.slice(1).join(' ')
-                    , vt.normal, p1.you, vt.faint, color, ` ${$.player.emulation == 'XT' ? '≪' : '<<'}`
-                    , speed - 500)
+            //  not engaged -- un-stack
+            if (rpc.hp < 1 || rpc.user.xplevel < 1) {
                 next()
                 return
             }
-        }
 
-        if (rpc === $.online) {
-            vt.action('battle')
-            vt.form = {
-                'attack': {
-                    cb: () => {
-                        vt.outln()
-                        if (/C/i.test(vt.entry)) {
-                            cast($.online, next, enemy)
-                            return
-                        }
-
-                        vt.outln()
-                        if (/R/i.test(vt.entry)) {
-                            if (/Merchant|Naval|Tavern|Taxman/.test($.from)) {
-                                vt.out('  ')
-                                if ($.from == 'Merchant')
-                                    vt.outln(vt.bright, vt.yellow, `"You should've accepted my kind offer, ${$.player.pc}."`)
-                                if ($.from == 'Naval')
-                                    vt.outln(vt.bright, vt.cyan, '"You cannot escape me, mortal."')
-                                if ($.from == 'Tavern')
-                                    vt.outln(vt.bright, vt.green, 'You try to escape, but the crowd throws you back to witness the slaughter!')
-                                if ($.from == 'Taxman')
-                                    vt.outln(vt.blue, vt.bright, '"You can never escape the taxman!"')
-                                vt.sound({ _BAR: 'growl', _DM: 'punk', _NEP: 'thunder', _OLD: 'crone', _TAX: 'thief2' }[enemy.user.id], 12)
-                                PC.adjust('cha', -2, -1)
-                                PC.save()
-                                next()
-                                return
-                            }
-                            let trip = rpc.dex + dice(rpc.int) / 2
-                            trip += Math.round((rpc.dex - enemy.dex) / 2)
-                            trip = trip < 5 ? 5 : trip > 95 ? 95 : trip
-                            trip += 5 * (alive[0] - alive[1])
-                            trip = trip < 5 ? 5 : trip > 95 ? 95 : trip
-                            if (dice(100) > trip) {
-                                vt.beep()
-                                const who = PC.who(enemy, true)
-                                vt.outln(vt.cyan, [
-                                    `You trip and fail in your attempt to retreat from ${who.him}.`,
-                                    `${who.He}pulls you back into the battle.`,
-                                    `${who.He}prevents your retreat and shouts,\n ${vt.attr(vt.cyan, vt.bright, '"I\'m not through with you yet!"')}`,
-                                    `The cunning ${enemy.user.pc} outmaneuvers you and says,\n ${vt.attr(vt.normal, '"You started this, I\'m finishing it."')}`,
-                                    `${who.He}blocks your path and whispers,\n ${vt.attr(vt.faint, '"Where do you want to go today?"')}`,
-                                ][dice(5) - 1], '\n', -250)
-                                next()
-                                return
-                            }
-
-                            retreat = true
-                            $.player.retreats++
-                            if (Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power)
-                                PC.curse(enemy.user.handle, 'for running away')
-                            else
-                                vt.outln(vt.blue, vt.bright, [
-                                    'You are successful in your attempt to retreat.',
-                                    'You limp away from the battle.',
-                                    `You decide this isn't worth the effort.`,
-                                    `You listen to that voice in your head, ${vt.attr(vt.red)}"Run."`,
-                                    `You shout back, ${vt.attr(vt.cyan)}"${$.online.who.He}who fights and runs away lives to fight another day!"`
-                                ][dice(5) - 1], -250)
-                            if ($.online.confused)
-                                PC.activate($.online, false, true)
-                            if ($.from == 'Party' && $.player.gang) {
-                                if (enemy.user.gender !== 'I') $.player.coward = true
-                                db.run(`UPDATE Gangs SET loss=loss+1 WHERE name='${$.player.gang}'`)
-                            }
-                            if ($.from == 'User' && enemy.user.gender !== 'I') {
-                                PC.adjust('cha', -2, -1)
-                                log(enemy.user.id, `\n${$.player.handle}, the coward, retreated from you.`)
-                            }
-                            end()
-                            return
-                        }
-
-                        if (/Y/i.test(vt.entry)) {
-                            yourstats(false)
-                            volley += 500
-                            vt.refocus()
-                            return
-                        }
-
-                        vt.out(vt.bright)
-                        melee(rpc, enemy)
-                        next()
-                        return
-                    }, cancel: 'R', enter: 'A', eol: false, max: 1, match: /A|C|R|Y/i, timeout: 30
-                },
-                'backstab': {
-                    cb: () => {
-                        if (/N/i.test(vt.entry)) bs = 1
-                        vt.outln('\n')
-                        vt.out(vt.bright)
-                        melee(rpc, enemy, bs)
-                        next()
-                        return
-                    }, cancel: 'N', enter: 'Y', eol: false, match: /Y|N/i, max: 1, timeout: 30
-                },
+            //  diminish confusion effect
+            if (rpc.confused) {
+                if (rpc.int < rpc.user.int) PC.adjust('int', rpc.pc.toInt, 0, 0, rpc)
+                if (rpc.dex < rpc.user.dex) PC.adjust('dex', rpc.pc.toDex, 0, 0, rpc)
             }
 
-            //  sneaking
-            if (volley == 1) {
-                vt.drain()
-                bs = $.player.backstab
-                let roll = dice(100 + bs * $.player.level / (2 * ($.player.melee + 2)))
-                roll += 2 * Ring.power(enemy.user.rings, $.player.rings, 'initiate').power
-                bs += (roll < bs) ? -1 : (roll > 99) ? +1 : 0
-                do {
-                    roll = dice(100 + bs * $.player.backstab)
-                    bs += (roll == 1) ? -1 : (roll > 99) ? dice($.player.backstab) : 0
-                } while (roll == 1 || roll > 99)
-                if (bs > 1) {
-                    vt.action('yn')
-                    vt.form['backstab'].prompt = 'Attempt to backstab'
-                        + (bs > 2 && bs != $.player.backstab ? ' for ' + vt.attr(vt.cyan, vt.bright, bs.toString(), vt.faint, 'x', vt.normal) : '')
-                        + ' (Y/N)? '
-                    input('backstab', $.online.dex > (70 - $.player.melee) || enemy.hp > $.player.hp ? 'y' : 'n', 300)
+            //  choose an opponent
+            let mob = n.party ^ 1
+            let nme: number
+            do { nme = dice(parties[mob].length) - 1 } while (parties[mob][nme].hp < 1)
+            enemy = parties[mob][nme]
+            if (volley == 1 && rpc !== $.online) vt.outln()
+            p1 = PC.who(rpc, alive[n.party] > 1)
+            p2 = PC.who(enemy, alive[mob] > 1)
+
+            //  does opponent negate this turn?
+            if (!enemy.confused) {
+                let speed = 0
+                //  by supernatural means
+                let skip = Ring.power(rpc.user.rings, enemy.user.rings, 'skip', 'pc', rpc.user.pc)
+                if (skip.power && dice(12 + 2 * rpc.user.magic + dodge) > dice(enemy.user.magic / 2 + 2))
+                    skip.power = 0  //  saving throw
+                else {
+                    dodge += 2
+                    speed = -250
+                }
+                //  if not, by skillful escape means
+                if (!skip.power
+                    //  d[15-25] > 3-14, 73 to 46% diminishing win-rate, allow for the smallest 6% win for a lesser escaping a greater
+                    && dice(enemy.user.level / 9 + 15) > int(rpc.user.level / 9 + 3)
+                    //  d[22-32] > 11-21, coin-flip typical, true: 5% min - 66% max
+                    && dice((enemy.dex > 90 ? enemy.dex - 89 : 1) + 21) > ((rpc.dex > 90 ? rpc.dex - 89 : 1) + 10)
+                    //  d[0-8(+rings)] + 2 > 2d[6], true min 3%,
+                    //  max chance to be true for lawful: 3%, desperate: 6%, trickster: 17%, adept: 67%, master: 92%
+                    && dice(2 * (enemy.user.steal + Ring.power(rpc.user.rings, enemy.user.rings, 'steal').power))
+                    > (dice(6) + dice(6) - 2)) {
+                    skip.power = 1
+                    speed = +100
+                }
+                if (skip.power) {
+                    let how = enemy.pc.skip || 'kiss', color = enemy.pc.color || vt.white
+                    let w = how.split(' ')
+                    if (w.length > 1) w.push('')
+                    vt.outln(vt.faint, color, `${$.player.emulation == 'XT' ? '≫' : '>>'} `, vt.normal
+                        , p2.You, vt.bright, PC.what(enemy, w[0]), w.slice(1).join(' ')
+                        , vt.normal, p1.you, vt.faint, color, ` ${$.player.emulation == 'XT' ? '≪' : '<<'}`
+                        , speed - 500)
+                    next()
                     return
                 }
-                else {
-                    vt.outln()
-                    vt.out(vt.bright)
-                }
-                melee(rpc, enemy)
             }
-            else {
-                if ($.online.hp - 2 < 2 * $.player.level) {
-                    vt.sound('weak', 8)
+
+            if (rpc === $.online) {
+                vt.action('battle')
+                vt.form = {
+                    'attack': {
+                        cb: () => {
+                            vt.outln()
+                            if (/C/i.test(vt.entry)) {
+                                if (cast($.online, enemy))
+                                    next()
+                                else
+                                    attack()
+                                return
+                            }
+
+                            vt.outln()
+                            if (/R/i.test(vt.entry)) {
+                                if (/Merchant|Naval|Tavern|Taxman/.test($.from)) {
+                                    vt.out('  ')
+                                    if ($.from == 'Merchant')
+                                        vt.outln(vt.bright, vt.yellow, `"You should've accepted my kind offer, ${$.player.pc}."`)
+                                    if ($.from == 'Naval')
+                                        vt.outln(vt.bright, vt.cyan, '"You cannot escape me, mortal."')
+                                    if ($.from == 'Tavern')
+                                        vt.outln(vt.bright, vt.green, 'You try to escape, but the crowd throws you back to witness the slaughter!')
+                                    if ($.from == 'Taxman')
+                                        vt.outln(vt.blue, vt.bright, '"You can never escape the taxman!"')
+                                    vt.sound({ _BAR: 'growl', _DM: 'punk', _NEP: 'thunder', _OLD: 'crone', _TAX: 'thief2' }[enemy.user.id], 12)
+                                    PC.adjust('cha', -2, -1)
+                                    PC.save()
+                                    next()
+                                    return
+                                }
+
+                                let trip = rpc.dex + dice(rpc.int) / 2
+                                trip += Math.round((rpc.dex - enemy.dex) / 2)
+                                trip = trip < 18 ? 18 : trip > 93 ? 93 : trip
+                                trip += 3 * (alive[0] - alive[1])
+                                trip = trip < 12 ? 12 : trip > 96 ? 96 : trip
+                                if (dice(100) > trip) {
+                                    vt.beep()
+                                    const who = PC.who(enemy, true)
+                                    vt.outln(vt.cyan, [
+                                        `You trip and fail in your attempt to retreat from ${who.him}.`,
+                                        `${who.He}pulls you back into the battle.`,
+                                        `${who.He}prevents your retreat and shouts,\n ${vt.attr(vt.cyan, vt.bright, '"I\'m not through with you yet!"')}`,
+                                        `The cunning ${enemy.user.pc} outmaneuvers you and says,\n ${vt.attr(vt.normal, '"You started this, I\'m finishing it."')}`,
+                                        `${who.He}blocks your path and whispers,\n ${vt.attr(vt.faint, '"Where do you want to go today?"')}`,
+                                        `"Crying will not help you."`
+                                    ][dice(6, 0)], '\n', -250)
+                                    next()
+                                    return
+                                }
+
+                                //  engagement over
+                                retreat = true
+                                $.player.retreats++
+
+                                if (($.from == 'User' || dice(100) > trip) && Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power)
+                                    PC.curse(enemy.user.handle, enemy.user.gender == 'I' ? 'from its infliction' : 'for running away')
+                                else
+                                    vt.outln(vt.blue, vt.bright, [
+                                        'You are successful in your attempt to retreat.',
+                                        'You limp away from the battle.',
+                                        `You decide this isn't worth the effort.`,
+                                        `You listen to that voice in your head, ${vt.attr(vt.red)}"Run."`,
+                                        `You shout back, ${vt.attr(vt.cyan)}"${$.player.pc}s who fight and run away live to fight another day!"`
+                                    ][dice(5, 0)], -250)
+
+                                if ($.online.confused)
+                                    PC.activate($.online, false, true)
+
+                                if ($.from == 'Party' && $.player.gang) {
+                                    if (enemy.user.gender !== 'I') $.player.coward = true
+                                    db.run(`UPDATE Gangs SET loss=loss+1 WHERE name='${$.player.gang}'`)
+                                }
+
+                                if ($.from == 'User' && enemy.user.gender !== 'I') {
+                                    PC.adjust('cha', -2, -1)
+                                    log(enemy.user.id, `\n${$.player.handle}, the coward, retreated from you.`)
+                                }
+                                end()
+                                return
+                            }
+
+                            if (/Y/i.test(vt.entry)) {
+                                yourstats(false)
+                                volley += 500
+                                vt.refocus()
+                                return
+                            }
+
+                            vt.out(vt.bright)
+                            melee(rpc, enemy)
+                            next()
+                        }, cancel: 'R', enter: 'A', eol: false, max: 1, match: /A|C|R|Y/i, timeout: 30
+                    },
+                    'backstab': {
+                        cb: () => {
+                            if (/N/i.test(vt.entry)) bs = 1
+                            vt.outln('\n')
+                            vt.out(vt.bright)
+                            melee(rpc, enemy, bs)
+                            next()
+                        }, cancel: 'N', enter: 'Y', eol: false, match: /Y|N/i, max: 1, timeout: 30
+                    },
+                }
+
+                //  sneaking
+                if (volley == 1) {
                     vt.drain()
+                    bs = $.player.backstab
+                    let roll = dice(100 + bs * $.player.level / (2 * ($.player.melee + 2)))
+                    roll += 2 * Ring.power(enemy.user.rings, $.player.rings, 'initiate').power
+                    bs += (roll < bs) ? -1 : (roll > 99) ? +1 : 0
+                    do {
+                        roll = dice(100 + bs * $.player.backstab)
+                        bs += (roll == 1) ? -1 : (roll > 99) ? dice($.player.backstab) : 0
+                    } while (roll == 1 || roll > 99)
+                    if (bs > 1) {
+                        vt.action('yn')
+                        vt.form['backstab'].prompt = 'Attempt to backstab'
+                            + (bs > 2 && bs != $.player.backstab ? ' for ' + vt.attr(vt.cyan, vt.bright, bs.toString(), vt.faint, 'x', vt.normal) : '')
+                            + ' (Y/N)? '
+                        input('backstab', $.online.dex > (35 + 10 * $.player.melee + $.player.backstab) || enemy.hp > $.online.hp ? 'y' : 'n', 300)
+                        return
+                    }
+                    else {
+                        vt.outln()
+                        vt.out(vt.bright)
+                    }
+                    melee(rpc, enemy)
+                    next()
                 }
-                let choices = vt.attr(vt.reset, vt.blue, '[')
-                choices += vt.attr(vt.bright
-                    , $.online.hp > $.player.hp * 2 / 3 ? vt.green
-                        : $.online.hp > $.player.hp / 3 ? vt.yellow
-                            : vt.red
-                    , $.online.hp.toString()
-                    , vt.normal, vt.cyan, ',', vt.bright
-                    , enemy.hp > enemy.user.hp * 2 / 3 ? vt.green
-                        : enemy.hp > enemy.user.hp / 3 ? vt.yellow
-                            : vt.red
-                )
-                if ($.online.int < 100) {
-                    let i = (100 - $.online.int) + 1
-                    let est = Math.round(enemy.hp / i)
-                    est *= i
-                    if ($.online.int < 50 || est == 0)
-                        choices += enemy.hp > enemy.user.hp * 2 / 3 ? 'Healthy'
-                            : enemy.hp > enemy.user.hp / 3 ? 'Hurting'
-                                : 'Weak'
+                else {
+                    if ($.online.hp - 2 < 2 * $.player.level) {
+                        vt.sound('weak', 8)
+                        vt.drain()
+                    }
+                    let choices = vt.attr(vt.reset, vt.blue, '[')
+                    choices += vt.attr(vt.bright
+                        , $.online.hp > $.player.hp * 2 / 3 ? vt.green
+                            : $.online.hp > $.player.hp / 3 ? vt.yellow
+                                : vt.red
+                        , $.online.hp.toString()
+                        , vt.normal, vt.cyan, ',', vt.bright
+                        , enemy.hp > enemy.user.hp * 2 / 3 ? vt.green
+                            : enemy.hp > enemy.user.hp / 3 ? vt.yellow
+                                : vt.red
+                    )
+                    if ($.online.int < 100) {
+                        let i = (100 - $.online.int) + 1
+                        let est = Math.round(enemy.hp / i)
+                        est *= i
+                        if ($.online.int < 50 || est == 0)
+                            choices += enemy.hp > enemy.user.hp * 2 / 3 ? 'Healthy'
+                                : enemy.hp > enemy.user.hp / 3 ? 'Hurting'
+                                    : 'Weak'
+                        else
+                            choices += '~' + est.toString()
+                    }
                     else
-                        choices += '~' + est.toString()
-                }
-                else
-                    choices += enemy.hp.toString()
-                choices += vt.attr(vt.normal, vt.blue, '] ')
-                bs = 1
+                        choices += enemy.hp.toString()
+                    choices += vt.attr(vt.normal, vt.blue, '] ')
+                    bs = 1
 
-                vt.form['attack'].prompt = choices
-                vt.form['attack'].prompt += vt.attr(bracket('A', false, '[]'), vt.cyan, 'ttack, ')
-                if ($.player.magic && $.player.spells.length)
-                    vt.form['attack'].prompt += vt.attr(bracket('C', false, '{}'), vt.cyan, 'ast spell, ')
-                vt.form['attack'].prompt += vt.attr(bracket('R', false, '->'), vt.cyan, 'etreat, '
-                    , bracket('Y', false), vt.cyan, 'our status: ')
+                    vt.form['attack'].prompt = choices
+                    vt.form['attack'].prompt += vt.attr(bracket('A', false, '[]'), vt.cyan, 'ttack, ')
+                    if ($.player.magic && $.player.spells.length)
+                        vt.form['attack'].prompt += vt.attr(bracket('C', false, '{}'), vt.cyan, 'ast spell, ')
+                    vt.form['attack'].prompt += vt.attr(bracket('R', false, '->'), vt.cyan, 'etreat, '
+                        , bracket('Y', false), vt.cyan, 'our status: ')
 
-                if ($.access.bot) {
-                    if ($.online.hp < int($.player.hp / 9) + $.player.level && dice($.player.melee / 2 + $.player.steal / 2) == 1)
-                        elemental.flush('r')
-                    else
-                        elemental.flush('a')
-                }
-                input('attack')
-                return
-            }
-        }
-        else {  //  NPC
-            if (volley == 1 && dice((100 - rpc.user.level) / 12 + 6) < rpc.user.poison)
-                poison(rpc)
-
-            //  might or magic?
-            let mm: number = 0
-            let odds: number = ($.from == 'Party' ? 6 : $.from == 'Dungeon' ? 5 : 4) - int(enemy.user.coward)
-            let roll: number = odds + int(rpc.user.magic / 2) + rpc.adept + 1
-            if (rpc.user.level > enemy.user.level)
-                roll += Math.round((rpc.user.level - enemy.user.level) / 4)
-            if (roll / odds > odds) roll = odds * odds
-
-            if (rpc.user.magic == 1 && dice(roll) > odds) {
-                if ((Magic.have(rpc.user.spells, 8)
-                    && rpc.hp < rpc.user.hp / (rpc.user.level / (11 - rpc.adept) + 1)
-                    && (dice(6 - rpc.adept) == 1 || rpc.user.coward))
-                    || (Ring.power(enemy.user.rings, rpc.user.rings, 'teleport', 'pc', rpc.user.pc).power
-                        && rpc.hp < rpc.user.hp / 5))
-                    mm = 8
-                else if (Magic.have(rpc.user.spells, 7)
-                    && rpc.hp < int(rpc.user.hp / 2)
-                    && dice(enemy.user.melee + 2) > 1)
-                    mm = 7
-                else if (Magic.have(rpc.user.spells, 9)
-                    && (!rpc.user.id || rpc.hp < int(rpc.user.hp / 2))
-                    && dice(enemy.user.melee + 2) > 1)
-                    mm = 9
-                else if (Magic.have(rpc.user.spells, 13)
-                    && rpc.hp < (rpc.user.hp / 6)
-                    && dice((rpc.user.level - enemy.user.level) / 6 + odds - rpc.adept) == 1)
-                    mm = 13
-                else if (!rpc.confused && rpc.hp > int(rpc.user.hp / 2)) {
-                    if (Magic.have(rpc.user.spells, 11)
-                        && dice(enemy.user.magic + rpc.adept) > 1)
-                        mm = 11
-                    else if (Magic.have(rpc.user.spells, 12)
-                        && dice((rpc.user.level - enemy.user.level) / 6 + odds - rpc.adept) == 1)
-                        mm = 12
-                    else if (Magic.have(rpc.user.spells, 14)
-                        && dice((rpc.user.level - enemy.user.level) / 6 + odds - rpc.adept) == 1)
-                        mm = 14
-                    else if (Magic.have(rpc.user.spells, 15)
-                        && dice((rpc.user.level - enemy.user.level) / 6 + odds - rpc.adept) == 1)
-                        mm = 15
-                    else if (Magic.have(rpc.user.spells, 16)
-                        && rpc.hp == rpc.user.hp
-                        && dice((rpc.user.level - enemy.user.level) / 6 + odds - rpc.adept) == 1)
-                        mm = 16
+                    if ($.access.bot) {
+                        if ($.online.hp < int($.player.hp / 9) + $.player.level && dice($.player.melee / 2 + $.player.steal / 2) == 1)
+                            elemental.flush('r')
+                        else
+                            elemental.flush('a')
+                    }
+                    input('attack')
                 }
             }
-            if (rpc.user.magic > 1 && dice(roll) > odds) {
-                if (!rpc.confused || rpc.hp < (rpc.user.hp / 6)) {
-                    if (Magic.have(rpc.user.spells, 15)
-                        && rpc.sp >= Magic.power(rpc, 15)
-                        && dice((rpc.user.level - enemy.user.level) / 6 + odds - rpc.adept) == 1)
-                        mm = 15
-                    else if (Magic.have(rpc.user.spells, 16)
-                        && rpc.sp >= Magic.power(rpc, 16)
-                        && rpc.hp > int(rpc.user.hp / 2)
-                        && dice((rpc.user.level - enemy.user.level) / 6 + odds - rpc.adept) == 1)
-                        mm = 16
-                    else if (Magic.have(rpc.user.spells, 11)
-                        && rpc.sp >= Magic.power(rpc, 11)
-                        && dice(6 - enemy.user.magic) == 1)
-                        mm = 11
-                    else if (Magic.have(rpc.user.spells, 14)
-                        && rpc.sp >= Magic.power(rpc, 14)
-                        && dice((rpc.user.level - enemy.user.level) / 6 + odds) == 1)
-                        mm = 14
-                    else if (Magic.have(rpc.user.spells, 12)
-                        && rpc.sp >= Magic.power(rpc, 12)
-                        && dice((rpc.user.level - enemy.user.level) / 6 + odds) == 1)
-                        mm = 12
-                }
-                if (!rpc.confused || !mm) {
-                    if (Magic.have(rpc.user.spells, 13)
-                        && rpc.sp >= Magic.power(rpc, 13)
-                        && rpc.hp < (rpc.user.hp / 5))
-                        mm = 13
-                    else if ((Magic.have(rpc.user.spells, 8)
-                        && rpc.sp >= Magic.power(rpc, 8)
+            else {  //  NPC
+                if (volley == 1 && dice((100 - rpc.user.level) / 12 + 6) < rpc.user.poison)
+                    poison(rpc)
+
+                //  might or magic?
+                let mm: number = 0
+                let odds: number = ($.from == 'Party' ? 6 : $.from == 'Dungeon' ? 5 : 4) - int(enemy.user.coward)
+                let roll: number = odds + int(rpc.user.magic / 2) + rpc.adept + 1
+                if (rpc.user.level > enemy.user.level)
+                    roll += Math.round((rpc.user.level - enemy.user.level) / 4)
+                if (roll / odds > odds) roll = odds * odds
+
+                if (rpc.user.magic == 1 && dice(roll) > odds) {
+                    if ((Magic.have(rpc.user.spells, 8)
                         && rpc.hp < rpc.user.hp / (rpc.user.level / (11 - rpc.adept) + 1)
-                        && (dice(5 - rpc.adept) == 1 || rpc.user.coward))
+                        && (dice(6 - rpc.adept) == 1 || rpc.user.coward))
                         || (Ring.power(enemy.user.rings, rpc.user.rings, 'teleport', 'pc', rpc.user.pc).power
-                            && rpc.hp < rpc.user.hp / 4))
+                            && rpc.hp < rpc.user.hp / 5))
                         mm = 8
                     else if (Magic.have(rpc.user.spells, 7)
-                        && rpc.sp >= Magic.power(rpc, 7)
                         && rpc.hp < int(rpc.user.hp / 2)
-                        && (dice(enemy.user.melee + 2) == 1 || rpc.sp < Magic.power(rpc, 8)))
+                        && dice(enemy.user.melee + 2) > 1)
                         mm = 7
-                    else if (!rpc.confused && Magic.have(rpc.user.spells, 9)
-                        && rpc.sp >= Magic.power(rpc, 9)
+                    else if (Magic.have(rpc.user.spells, 9)
+                        && (!rpc.user.id || rpc.hp < int(rpc.user.hp / 2))
                         && dice(enemy.user.melee + 2) > 1)
                         mm = 9
+                    else if (Magic.have(rpc.user.spells, 13)
+                        && rpc.hp < (rpc.user.hp / 6)
+                        && dice((rpc.user.level - enemy.user.level) / 6 + odds - rpc.adept) == 1)
+                        mm = 13
+                    else if (!rpc.confused && rpc.hp > int(rpc.user.hp / 2)) {
+                        if (Magic.have(rpc.user.spells, 11)
+                            && dice(enemy.user.magic + rpc.adept) > 1)
+                            mm = 11
+                        else if (Magic.have(rpc.user.spells, 12)
+                            && dice((rpc.user.level - enemy.user.level) / 6 + odds - rpc.adept) == 1)
+                            mm = 12
+                        else if (Magic.have(rpc.user.spells, 14)
+                            && dice((rpc.user.level - enemy.user.level) / 6 + odds - rpc.adept) == 1)
+                            mm = 14
+                        else if (Magic.have(rpc.user.spells, 15)
+                            && dice((rpc.user.level - enemy.user.level) / 6 + odds - rpc.adept) == 1)
+                            mm = 15
+                        else if (Magic.have(rpc.user.spells, 16)
+                            && rpc.hp == rpc.user.hp
+                            && dice((rpc.user.level - enemy.user.level) / 6 + odds - rpc.adept) == 1)
+                            mm = 16
+                    }
                 }
-            }
-            //  if regular magic is not on the menu, perhaps an extended spell is warranted?
-            if (rpc.user.magic && !mm && dice(odds - rpc.adept) == 1) {
-                odds = dice(8) + 16
-                if (odds < 23 || volley < 5)
-                    if (Magic.have(rpc.user.spells, odds)
-                        && rpc.sp >= Magic.power(rpc, odds))
-                        mm = odds
-            }
+                if (rpc.user.magic > 1 && dice(roll) > odds) {
+                    if (!rpc.confused || rpc.hp < (rpc.user.hp / 6)) {
+                        if (Magic.have(rpc.user.spells, 15)
+                            && rpc.sp >= Magic.power(rpc, 15)
+                            && dice((rpc.user.level - enemy.user.level) / 6 + odds - rpc.adept) == 1)
+                            mm = 15
+                        else if (Magic.have(rpc.user.spells, 16)
+                            && rpc.sp >= Magic.power(rpc, 16)
+                            && rpc.hp > int(rpc.user.hp / 2)
+                            && dice((rpc.user.level - enemy.user.level) / 6 + odds - rpc.adept) == 1)
+                            mm = 16
+                        else if (Magic.have(rpc.user.spells, 11)
+                            && rpc.sp >= Magic.power(rpc, 11)
+                            && dice(6 - enemy.user.magic) == 1)
+                            mm = 11
+                        else if (Magic.have(rpc.user.spells, 14)
+                            && rpc.sp >= Magic.power(rpc, 14)
+                            && dice((rpc.user.level - enemy.user.level) / 6 + odds) == 1)
+                            mm = 14
+                        else if (Magic.have(rpc.user.spells, 12)
+                            && rpc.sp >= Magic.power(rpc, 12)
+                            && dice((rpc.user.level - enemy.user.level) / 6 + odds) == 1)
+                            mm = 12
+                    }
+                    if (!rpc.confused || !mm) {
+                        if (Magic.have(rpc.user.spells, 13)
+                            && rpc.sp >= Magic.power(rpc, 13)
+                            && rpc.hp < (rpc.user.hp / 5))
+                            mm = 13
+                        else if ((Magic.have(rpc.user.spells, 8)
+                            && rpc.sp >= Magic.power(rpc, 8)
+                            && rpc.hp < rpc.user.hp / (rpc.user.level / (11 - rpc.adept) + 1)
+                            && (dice(5 - rpc.adept) == 1 || rpc.user.coward))
+                            || (Ring.power(enemy.user.rings, rpc.user.rings, 'teleport', 'pc', rpc.user.pc).power
+                                && rpc.hp < rpc.user.hp / 4))
+                            mm = 8
+                        else if (Magic.have(rpc.user.spells, 7)
+                            && rpc.sp >= Magic.power(rpc, 7)
+                            && rpc.hp < int(rpc.user.hp / 2)
+                            && (dice(enemy.user.melee + 2) == 1 || rpc.sp < Magic.power(rpc, 8)))
+                            mm = 7
+                        else if (!rpc.confused && Magic.have(rpc.user.spells, 9)
+                            && rpc.sp >= Magic.power(rpc, 9)
+                            && dice(enemy.user.melee + 2) > 1)
+                            mm = 9
+                    }
+                }
+                //  if regular magic is not on the menu, perhaps an extended spell is warranted?
+                if (rpc.user.magic && !mm && dice(odds - rpc.adept) == 1) {
+                    odds = dice(8) + 16
+                    if (odds < 23 || volley < 5)
+                        if (Magic.have(rpc.user.spells, odds)
+                            && rpc.sp >= Magic.power(rpc, odds))
+                            mm = odds
+                }
 
-            vt.out(vt.reset)
+                vt.out(vt.reset)
 
-            if (mm) {
-                cast(rpc, next, enemy, mm)
-                return
+                if (mm && cast(rpc, enemy, mm)) { }
+                else
+                    melee(rpc, enemy)
+                next()
             }
-            else
-                melee(rpc, enemy)
         }
 
-        next()
-
-        function next(retry = false) {
-            if (retry) {
-                attack(retry)
-                return
-            }
-            round.shift()
+        function next() {
+            round.shift()   //  next up
 
             //  was opponent defeated?
-            if (typeof enemy !== 'undefined' && enemy.hp < 1) {
+            if (enemy && enemy.hp < 1) {
                 if (enemy === $.online) {
                     enemy.hp = 0    // killed
                     if ($.from !== 'Party') {
@@ -664,6 +497,7 @@ module Battle {
                 }
             }
 
+            //  who's left standing?
             alive = []
             for (let p in parties) {
                 alive.push(parties[p].length)
@@ -678,316 +512,483 @@ module Battle {
                 return
             }
 
+            //  engagement is over for its outcome
             spoils()
             end()
         }
-    }
 
-    export function spoils() {
-        let winner: active
-        let loser: active
-        let l: number
-        let w: number
+        function spoils() {
+            let winner: active
+            let loser: active
+            let l: number
+            let w: number
 
-        if ($.online.confused)
-            PC.activate($.online, false, true)
+            if ($.from == 'Gates')
+                return
 
-        if ($.from == 'Gates')
-            return
-
-        if (alive[0]) {
-            winner = $.online
-            l = 1
-        }
-        else {
-            winner = parties[1][0]
-            l = 0
-        }
-
-        w = l ^ 1
-        winner.altered = true
-
-        // remove any lingering illusion(s) first
-        for (let i in parties)
-            for (let j = 0; j < parties[i].length; j++)
-                if (parties[i][j].user.xplevel < 0)
-                    parties[i].splice(j--, 1)
-
-        // had a little help from my friends (maybe)
-        if ($.from == 'Party') {
-            db.run(`UPDATE Gangs SET win=win+1 WHERE name='${parties[w][0].user.gang}'`)
-            db.run(`UPDATE Gangs SET loss=loss+1 WHERE name='${parties[l][0].user.gang}'`)
-
-            // player(s) can collect off each corpse
-            let tl = [1, 1]
-            let coin = new Coin()
-            let take = coin.value
-
-            for (let m in parties[w]) {
-                tl[w] += parties[w][m].user.xplevel
-                take += PC.money(parties[w][m].user.xplevel + 1)
+            if (alive[0]) {
+                winner = $.online
+                l = 1
+            }
+            else {
+                winner = parties[1][0]
+                l = 0
             }
 
-            for (let m in parties[l]) {
-                // accrue benefits off of defeated players only
-                if ((loser = parties[l][m]).hp == 0) {
-                    tl[l] += loser.user.xplevel
-                    coin.value += loser.user.coin.value
-                    log(loser.user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`)
-                    if (loser.user.coin.value)
-                        log(loser.user.id, `You lost ${loser.user.coin.amount} you were carrying.`)
-                    loser.user.coin.value = 0n
-                    PC.save(loser)
+            w = l ^ 1
+            winner.altered = true
+
+            // remove any lingering illusion(s) first
+            for (let i in parties)
+                for (let j = 0; j < parties[i].length; j++)
+                    if (parties[i][j].user.xplevel < 0)
+                        parties[i].splice(j--, 1)
+
+            // had a little help from my friends (maybe)
+            if ($.from == 'Party') {
+                db.run(`UPDATE Gangs SET win=win+1 WHERE name='${parties[w][0].user.gang}'`)
+                db.run(`UPDATE Gangs SET loss=loss+1 WHERE name='${parties[l][0].user.gang}'`)
+
+                // player(s) can collect off each corpse
+                let tl = [1, 1]
+                let coin = new Coin()
+                let take = coin.value
+
+                for (let m in parties[w]) {
+                    tl[w] += parties[w][m].user.xplevel
+                    take += PC.money(parties[w][m].user.xplevel + 1)
                 }
-            }
 
-            for (let m in parties[w]) {
-                //  dead member gets less of the booty, taxman always gets a cut
-                let cut = parties[w][m].hp > 0 ? 95n : 45n
-                let max = whole(BigInt(((4 + parties[w].length - parties[l].length) / 2) >> 0) * 1250n * PC.money(parties[w][m].user.xplevel) * cut / 100n)
-                let award = whole(coin.value * PC.money(parties[w][m].user.xplevel) / take * cut / 100n)
-                award = award > coin.value ? coin.value : award
-                award = award > max ? max : award
-                parties[w][m].user.coin.value += award
-                coin.value -= award
-                take -= PC.money(parties[w][m].user.xplevel)
-
-                let xp = int(PC.experience(parties[w][m].user.xplevel)
-                    * tl[l] / tl[w] / ((4 + parties[w].length - parties[l].length) / 2))
-
-                if (parties[w][m] === $.online) {
-                    vt.outln(-200)
-                    if (xp)
-                        vt.outln('You get ', PC.expout(xp), -400)
-                    if (award)
-                        vt.outln('You get your cut worth ', carry(new Coin(award)), '.', 400)
-                    $.player.xp += xp
-                }
-                else {
-                    log(parties[w][m].user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`)
-                    log(parties[w][m].user.id, `You got ${PC.expout(xp, false)} experience and ${new Coin(award).amount}`)
-                    parties[w][m].user.xp += xp
-                    PC.save(parties[w][m])
-                }
-            }
-
-            //  taxman takes any leftovers, but capped at 1p
-            if (coin.value > coin.PLATINUM) coin.value = coin.PLATINUM
-            if (coin.value) {
-                vt.outln()
-                vt.beep()
-                db.run(`UPDATE Players set bank=bank+${coin.value} WHERE id='${$.taxman.user.id}'`)
-                vt.outln($.taxman.user.handle, ' took ', $.taxman.who.his, 'cut worth ', carry(coin), '.', -600)
-            }
-
-            if (winner === $.online) {
-                news(`\tdefeated the gang, ${parties[l][0].user.gang}`)
-                vt.wall($.player.handle, `defeated the gang, ${parties[l][0].user.gang}`)
-            }
-            else if ($.online.hp == 0) {
-                death(`defeated by the gang, ${parties[w][0].user.gang}`)
-                vt.music()
-                vt.sound('effort', 15)
-            }
-            return
-        }
-
-        //  the losers are them, not me
-        if (l) {
-            // player can collect off each corpse
-            let xp: number = 0
-            let coin = new Coin()
-
-            for (let m in parties[l]) {
-                // defeated?
-                if ((loser = parties[l][m]).hp == 0) {
-                    log(loser.user.id, `\n${$.player.handle} killed you!`)
-
-                    if (/Monster|User/.test($.from)) {
-                        vt.animated(loser.user.id ? 'hinge' : 'rotateOutDownRight')
-                        loser.altered = true
-                        loser.user.status = winner.user.id
-                        let x = loser.user.id ? 2 : 3
-                        xp += PC.experience(loser.user.xplevel, x)
-                        if (winner.user.level < loser.user.xplevel)
-                            loser.user.xplevel = winner.user.level
-                    }
-                    else
-                        xp += PC.experience(loser.user.xplevel, 18 - (1.333 * loser.user.immortal))
-
-                    //  creatures have are endowed with non-transferable power;
-                    //  but as a PC, it's wearable power ...
-                    if (loser.user.sex !== 'I') {
-                        loser.user.rings.forEach(ring => {
-                            if (Ring.wear(winner.user.rings, ring) && !Ring.name[ring].keep) {
-                                getRing(['fondle', 'polish', 'slip on', 'wear', 'win'][dice(5) - 1], ring)
-                                Ring.remove(loser.user.rings, ring)
-                                loser.altered = true
-                                log(loser.user.id, `... took your ${ring} ring.`)
-                                PC.saveRing(ring, winner.user.id)
-                                vt.sound('click', 8)
-                            }
-                        })
-                    }
-
-                    if (loser.user.coin.value) {
+                for (let m in parties[l]) {
+                    // accrue benefits off of defeated players only
+                    if ((loser = parties[l][m]).hp == 0) {
+                        tl[l] += loser.user.xplevel
                         coin.value += loser.user.coin.value
+                        log(loser.user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`)
+                        if (loser.user.coin.value)
+                            log(loser.user.id, `You lost ${loser.user.coin.amount} you were carrying.`)
                         loser.user.coin.value = 0n
-                        loser.altered = true
+                        PC.save(loser)
                     }
+                }
 
-                    if ($.from !== 'User') {
-                        let credit = new Coin(loser.weapon.value)
-                        credit.value = tradein(credit.value, winner.cha)
-                        let result = Weapon.swap(winner, loser, credit)
-                        if (typeof result == 'boolean' && result)
-                            vt.outln(winner.who.He, PC.what(winner, 'take'), loser.who.his, winner.user.weapon, '.')
-                        else if ($.from == 'Monster' && result)
-                            vt.outln(winner.who.He, PC.what(winner, 'get'), carry(credit), ' for ', loser.who.his, loser.user.weapon, '.')
+                for (let m in parties[w]) {
+                    //  dead member gets less of the booty, taxman always gets a cut
+                    let cut = parties[w][m].hp > 0 ? 95n : 45n
+                    let max = whole(BigInt(((4 + parties[w].length - parties[l].length) / 2) >> 0) * 1250n * PC.money(parties[w][m].user.xplevel) * cut / 100n)
+                    let award = whole(coin.value * PC.money(parties[w][m].user.xplevel) / take * cut / 100n)
+                    award = award > coin.value ? coin.value : award
+                    award = award > max ? max : award
+                    parties[w][m].user.coin.value += award
+                    coin.value -= award
+                    take -= PC.money(parties[w][m].user.xplevel)
 
-                        credit = new Coin(loser.armor.value)
-                        credit.value = tradein(credit.value, winner.cha)
-                        result = Armor.swap(winner, loser, credit)
-                        if (typeof result == 'boolean' && result) {
-                            vt.outln(winner.who.He, 'also ', PC.what(winner, 'take'), loser.who.his, winner.user.armor, '.')
-                            if (/_DM|_NEP|_OLD|_TAX/.test(loser.user.id)) vt.sound('shield', 16)
-                        }
-                        else if ($.from == 'Monster' && result)
-                            vt.outln(winner.who.He, 'also ', PC.what(winner, 'get'), carry(credit), ' for ', loser.who.his, loser.user.armor, '.')
+                    let xp = int(PC.experience(parties[w][m].user.xplevel)
+                        * tl[l] / tl[w] / ((4 + parties[w].length - parties[l].length) / 2))
+
+                    if (parties[w][m] === $.online) {
+                        vt.outln(-200)
+                        if (xp)
+                            vt.outln('You get ', PC.expout(xp), -400)
+                        if (award)
+                            vt.outln('You get your cut worth ', carry(new Coin(award)), '.', 400)
+                        $.player.xp += xp
                     }
                     else {
-                        if (Weapon.swap(winner, loser)) {
-                            vt.outln(winner.who.He, PC.what(winner, 'take'), loser.who.his, winner.user.weapon, '.', -250)
-                            log(loser.user.id, `... and took your ${winner.user.weapon}.`)
-                        }
-                        if (Armor.swap(winner, loser)) {
-                            vt.outln(winner.who.He, 'also ', PC.what(winner, 'take'), loser.who.his, winner.user.armor, '.', -250)
-                            log(loser.user.id, `... and took your ${winner.user.armor}.`)
-                        }
-                        if (winner.user.cursed) {
-                            winner.user.cursed = ''
-                            winner.user.coward = false
-                            PC.curse(winner.user.handle, 'in battle', loser)
-                        }
-                        if (loser.user.blessed) {
-                            loser.user.blessed = ''
-                            PC.bless(loser.user.handle, 'took your blessing', winner)
-                            log(loser.user.id, `... and took your blessing.`)
-                        }
-                        if (loser.user.gang && loser.user.gang == $.player.gang) {
-                            gang = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name='${$.player.gang}'`)[0], $.player.id)
-                            let n = gang.members.indexOf(loser.user.id)
-                            if (n == 0) {
-                                n = gang.members.indexOf($.player.id)
-                                gang.members[0] = $.player.id
-                                gang.members[n] = loser.user.id
-                                PC.saveGang(gang)
-                                vt.outln(`You take over as the leader of ${gang.name}.`, -600)
-                            }
-                            else {
-                                $.player.maxcha--
-                                $.player.cha--
-                            }
-                        }
-                        if (loser.user.bounty.value) {
-                            vt.outln(`You get the ${carry(loser.user.bounty)} bounty posted by ${loser.user.who}, too.`)
-                            log(loser.user.id, `... and got paid the bounty posted by ${loser.user.who}.`)
-                            winner.user.coin.value += loser.user.bounty.value
-                            loser.user.bounty.value = 0n
-                            loser.user.who = ''
-                        }
-                        vt.out(600)
+                        log(parties[w][m].user.id, `\n${winner.user.gang} defeated ${loser.user.gang}, started by ${$.player.handle}`)
+                        log(parties[w][m].user.id, `You got ${PC.expout(xp, false)} experience and ${new Coin(award).amount}`)
+                        parties[w][m].user.xp += xp
+                        PC.save(parties[w][m])
                     }
                 }
-            }
-            if (xp) {
-                vt.outln('You get', parties[l].length > 1 ? ' a total of ' : ' '
-                    , PC.expout(xp, winner === $.online), -100)
-                winner.user.xp += xp
-            }
-            if (coin.value) {
-                vt.outln(-100, 'You get', parties[l].length > 1 ? ' a total of ' : ' '
-                    , carry(coin), ' '
-                    , parties[l].length > 1 ? 'they were ' : loser.who.he + 'was '
-                    , 'carrying.')
-                winner.user.coin.value += coin.value
-            }
-        }
-        else {
-            //  accruing money is always eligible
-            if ($.player.coin.value) {
-                winner.user.coin.value += $.player.coin.value
-                vt.outln(vt.reset, winner.who.He, 'gets ', carry($.player.coin), ' you were carrying.\n')
-                $.player.coin.value = 0n
-            }
-            vt.sleep(600)
 
-            //  manage grace modifiers, but not sticky for NPC
-            if (winner.user.cursed) {
-                if ($.player.blessed) {
-                    $.player.blessed = ''
-                    vt.out(vt.yellow, vt.bright, 'Your shining aura ', vt.normal, 'leaves')
+                //  taxman takes any leftovers, but capped at 1p
+                if (coin.value > coin.PLATINUM) coin.value = coin.PLATINUM
+                if (coin.value) {
+                    vt.outln()
+                    vt.beep()
+                    db.run(`UPDATE Players set bank=bank+${coin.value} WHERE id='${$.taxman.user.id}'`)
+                    vt.outln($.taxman.user.handle, ' took ', $.taxman.who.his, 'cut worth ', carry(coin), '.', -600)
+                }
+
+                if (winner === $.online) {
+                    news(`\tdefeated the gang, ${parties[l][0].user.gang}`)
+                    vt.wall($.player.handle, `defeated the gang, ${parties[l][0].user.gang}`)
+                }
+                else if ($.online.hp == 0) {
+                    death(`defeated by the gang, ${parties[w][0].user.gang}`)
+                    vt.music()
+                    vt.sound('effort', 15)
+                }
+                return
+            }
+
+            //  the losers are them, not me
+            if (l) {
+                // player can collect off each corpse
+                let xp: number = 0
+                let coin = new Coin()
+
+                for (let m in parties[l]) {
+                    // defeated?
+                    if ((loser = parties[l][m]).hp == 0) {
+                        log(loser.user.id, `\n${$.player.handle} killed you!`)
+
+                        if (/Monster|User/.test($.from)) {
+                            vt.animated(loser.user.id ? 'hinge' : 'rotateOutDownRight')
+                            loser.altered = true
+                            loser.user.status = winner.user.id
+                            let x = loser.user.id ? 2 : 3
+                            xp += PC.experience(loser.user.xplevel, x)
+                            if (winner.user.level < loser.user.xplevel)
+                                loser.user.xplevel = winner.user.level
+                        }
+                        else
+                            xp += PC.experience(loser.user.xplevel, 18 - (1.333 * loser.user.immortal))
+
+                        //  creatures have are endowed with non-transferable power;
+                        //  but as a PC, it's wearable power ...
+                        if (loser.user.sex !== 'I') {
+                            loser.user.rings.forEach(ring => {
+                                if (Ring.wear(winner.user.rings, ring) && !Ring.name[ring].keep) {
+                                    getRing(['fondle', 'polish', 'slip on', 'wear', 'win'][dice(5) - 1], ring)
+                                    Ring.remove(loser.user.rings, ring)
+                                    loser.altered = true
+                                    log(loser.user.id, `... took your ${ring} ring.`)
+                                    PC.saveRing(ring, winner.user.id)
+                                    vt.sound('click', 8)
+                                }
+                            })
+                        }
+
+                        if (loser.user.coin.value) {
+                            coin.value += loser.user.coin.value
+                            loser.user.coin.value = 0n
+                            loser.altered = true
+                        }
+
+                        if ($.from !== 'User') {
+                            let credit = new Coin(loser.weapon.value)
+                            credit.value = tradein(credit.value, winner.cha)
+                            let result = Weapon.swap(winner, loser, credit)
+                            if (typeof result == 'boolean' && result)
+                                vt.outln(winner.who.He, PC.what(winner, 'take'), loser.who.his, winner.user.weapon, '.')
+                            else if ($.from == 'Monster' && result)
+                                vt.outln(winner.who.He, PC.what(winner, 'get'), carry(credit), ' for ', loser.who.his, loser.user.weapon, '.')
+
+                            credit = new Coin(loser.armor.value)
+                            credit.value = tradein(credit.value, winner.cha)
+                            result = Armor.swap(winner, loser, credit)
+                            if (typeof result == 'boolean' && result) {
+                                vt.outln(winner.who.He, 'also ', PC.what(winner, 'take'), loser.who.his, winner.user.armor, '.')
+                                if (/_DM|_NEP|_OLD|_TAX/.test(loser.user.id)) vt.sound('shield', 16)
+                            }
+                            else if ($.from == 'Monster' && result)
+                                vt.outln(winner.who.He, 'also ', PC.what(winner, 'get'), carry(credit), ' for ', loser.who.his, loser.user.armor, '.')
+                        }
+                        else {
+                            if (Weapon.swap(winner, loser)) {
+                                vt.outln(winner.who.He, PC.what(winner, 'take'), loser.who.his, winner.user.weapon, '.', -250)
+                                log(loser.user.id, `... and took your ${winner.user.weapon}.`)
+                            }
+                            if (Armor.swap(winner, loser)) {
+                                vt.outln(winner.who.He, 'also ', PC.what(winner, 'take'), loser.who.his, winner.user.armor, '.', -250)
+                                log(loser.user.id, `... and took your ${winner.user.armor}.`)
+                            }
+                            if (winner.user.cursed) {
+                                winner.user.cursed = ''
+                                winner.user.coward = false
+                                PC.curse(winner.user.handle, 'in battle', loser)
+                            }
+                            if (loser.user.blessed) {
+                                loser.user.blessed = ''
+                                PC.bless(loser.user.handle, 'took your blessing', winner)
+                                log(loser.user.id, `... and took your blessing.`)
+                            }
+                            if (loser.user.gang && loser.user.gang == $.player.gang) {
+                                gang = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name='${$.player.gang}'`)[0], $.player.id)
+                                let n = gang.members.indexOf(loser.user.id)
+                                if (n == 0) {
+                                    n = gang.members.indexOf($.player.id)
+                                    gang.members[0] = $.player.id
+                                    gang.members[n] = loser.user.id
+                                    PC.saveGang(gang)
+                                    vt.outln(`You take over as the leader of ${gang.name}.`, -600)
+                                }
+                                else {
+                                    $.player.maxcha--
+                                    $.player.cha--
+                                }
+                            }
+                            if (loser.user.bounty.value) {
+                                vt.outln(`You get the ${carry(loser.user.bounty)} bounty posted by ${loser.user.who}, too.`)
+                                log(loser.user.id, `... and got paid the bounty posted by ${loser.user.who}.`)
+                                winner.user.coin.value += loser.user.bounty.value
+                                loser.user.bounty.value = 0n
+                                loser.user.who = ''
+                            }
+                            vt.out(600)
+                        }
+                    }
+                }
+                if (xp) {
+                    vt.outln('You get', parties[l].length > 1 ? ' a total of ' : ' '
+                        , PC.expout(xp, winner === $.online), -100)
+                    winner.user.xp += xp
+                }
+                if (coin.value) {
+                    vt.outln(-100, 'You get', parties[l].length > 1 ? ' a total of ' : ' '
+                        , carry(coin), ' '
+                        , parties[l].length > 1 ? 'they were ' : loser.who.he + 'was '
+                        , 'carrying.')
+                    winner.user.coin.value += coin.value
+                }
+            }
+            else {
+                //  accruing money is always eligible
+                if ($.player.coin.value) {
+                    winner.user.coin.value += $.player.coin.value
+                    vt.outln(vt.reset, winner.who.He, 'gets ', carry($.player.coin), ' you were carrying.\n')
+                    $.player.coin.value = 0n
+                }
+                vt.sleep(600)
+
+                //  manage grace modifiers, but not sticky for NPC
+                if (winner.user.cursed) {
+                    if ($.player.blessed) {
+                        $.player.blessed = ''
+                        vt.out(vt.yellow, vt.bright, 'Your shining aura ', vt.normal, 'leaves')
+                    }
+                    else {
+                        $.player.coward = false
+                        $.player.cursed = winner.user.id
+                        winner.user.cursed = ''
+                        vt.out(vt.faint, 'A dark cloud hovers over', vt.reset)
+                    }
+                    vt.outln(vt.faint, ' you.\n', -600)
+                }
+
+                //  manage any asset upgrades for PC
+                if (winner.user.id && winner.user.id[0] !== '_') {
+                    log(winner.user.id, `\nYou killed ${$.player.handle}!`)
+                    winner.user.xp += PC.experience($.player.xplevel, 2)
+
+                    if ($.player.blessed) {
+                        vt.outln('Your ', vt.yellow, vt.bright, 'shining aura', vt.reset, ' leaves ', vt.faint, 'you.\n', -600)
+                        PC.bless($.player.handle, 'got blessed', winner)
+                    }
+
+                    if (Weapon.swap(winner, $.online)) {
+                        vt.outln(winner.who.He, PC.what(winner, 'take'), $.online.who.his, winner.user.weapon, '.')
+                        log(winner.user.id, `You upgraded to ${winner.user.weapon}.`)
+                    }
+
+                    if (Armor.swap(winner, $.online)) {
+                        vt.outln(winner.who.He, 'also ', PC.what(winner, 'take'), $.online.who.his, winner.user.armor, '.')
+                        log(winner.user.id, `You upgraded to ${winner.user.armor}.`)
+                    }
+
+                    $.player.rings.forEach(ring => {
+                        if (Ring.wear(winner.user.rings, ring) && !Ring.name[ring].keep) {
+                            Ring.remove($.player.rings, ring)
+                            PC.saveRing(ring, winner.user.id)
+                            vt.outln(winner.who.He, 'also '
+                                , PC.what(winner, ['add', 'confiscate', 'remove', 'take', 'win'][dice(5) - 1])
+                                , 'your ', bracket(ring, false), 'ring')
+                            vt.sound('click')
+                        }
+                    })
+
+                    if (winner.user.gang && winner.user.gang == $.player.gang) {
+                        PC.adjust('cha', -1, -1, -1)
+                        vt.music('punk')
+                        gang = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name='${$.player.gang}'`)[0], $.player.id)
+                        let n = gang.members.indexOf(winner.user.id)
+                        if (n == 0) {
+                            vt.outln(vt.cyan, winner.who.He, 'says, ', vt.white, '"Let that be a lesson to you punk!"', -800)
+                        }
+                        if (gang.members[0] == $.player.id) {
+                            PC.adjust('cha', -1, -1, -1)
+                            gang.members[0] = winner.user.id
+                            gang.members[n] = $.player.id
+                            PC.saveGang(gang)
+                            vt.outln(winner.who.He, `takes over as the leader of ${gang.name}.\n`, -600)
+                        }
+                    }
+                    PC.save(winner)
+                }
+            }
+            $.online.altered = true
+        }
+
+        function end() {
+            round = []
+            db.unlock($.player.id, true)
+            if ($.online.confused) PC.activate($.online, false, true)
+
+            if (Ring.power([], $.player.rings, 'buff').power) {
+                if ($.online.toAC < 0) $.online.toAC++
+                if ($.online.toWC < 0) $.online.toWC++
+            }
+            else {
+                //  diminish any temporary buff
+                if ($.online.toAC > 0) $.online.toAC--
+                if ($.online.toWC > 0) $.online.toWC--
+            }
+
+            if ($.from == 'Merchant') {
+                if ($.online.hp < 1) {
+                    $.player.coin.value = 0n
+                    death($.reason || `refused ${$.dwarf.user.handle}`)
+                    vt.outln('  ', vt.yellow, vt.bright, `"Next time bring friends."`)
+                    vt.sound('punk', 8)
                 }
                 else {
+                    news(`\tdefeated ${$.dwarf.user.handle}`)
+                    vt.wall($.player.handle, `defeated ${$.dwarf.user.handle}`)
                     $.player.coward = false
-                    $.player.cursed = winner.user.id
-                    winner.user.cursed = ''
-                    vt.out(vt.faint, 'A dark cloud hovers over', vt.reset)
                 }
-                vt.outln(vt.faint, ' you.\n', -600)
             }
 
-            //  manage any asset upgrades for PC
-            if (winner.user.id && winner.user.id[0] !== '_') {
-                log(winner.user.id, `\nYou killed ${$.player.handle}!`)
-                winner.user.xp += PC.experience($.player.xplevel, 2)
-
-                if ($.player.blessed) {
-                    vt.outln('Your ', vt.yellow, vt.bright, 'shining aura', vt.reset, ' leaves ', vt.faint, 'you.\n', -600)
-                    PC.bless($.player.handle, 'got blessed', winner)
+            if ($.from == 'Naval') {
+                if ($.online.hp > 0) {
+                    vt.sound('naval' + (parties[1][0].user.id == '_OLD' ? '_f' : ''), 32)
+                    PC.adjust('str', 102, 1, 1)
+                    PC.adjust('int', 102, 1, 1)
+                    PC.adjust('dex', 102, 1, 1)
+                    PC.adjust('cha', 102, 1, 1)
+                    const msg = `survived ${$.online.who.his} chance encounter with ${parties[1][0].user.handle}`
+                    news(`\t${msg}`)
+                    vt.wall($.player.handle, msg)
                 }
-
-                if (Weapon.swap(winner, $.online)) {
-                    vt.outln(winner.who.He, PC.what(winner, 'take'), $.online.who.his, winner.user.weapon, '.')
-                    log(winner.user.id, `You upgraded to ${winner.user.weapon}.`)
+                else {
+                    PC.adjust('str', -2, -1, -1)
+                    PC.adjust('int', -2, -1, -1)
+                    PC.adjust('dex', -2, -1, -1)
+                    PC.adjust('cha', -2, -1, -1)
                 }
-
-                if (Armor.swap(winner, $.online)) {
-                    vt.outln(winner.who.He, 'also ', PC.what(winner, 'take'), $.online.who.his, winner.user.armor, '.')
-                    log(winner.user.id, `You upgraded to ${winner.user.armor}.`)
-                }
-
-                $.player.rings.forEach(ring => {
-                    if (Ring.wear(winner.user.rings, ring) && !Ring.name[ring].keep) {
-                        Ring.remove($.player.rings, ring)
-                        PC.saveRing(ring, winner.user.id)
-                        vt.outln(winner.who.He, 'also '
-                            , PC.what(winner, ['add', 'confiscate', 'remove', 'take', 'win'][dice(5) - 1])
-                            , 'your ', bracket(ring, false), 'ring')
-                        vt.sound('click')
-                    }
-                })
-
-                if (winner.user.gang && winner.user.gang == $.player.gang) {
-                    PC.adjust('cha', -1, -1, -1)
-                    vt.music('punk')
-                    gang = PC.loadGang(db.query(`SELECT * FROM Gangs WHERE name='${$.player.gang}'`)[0], $.player.id)
-                    let n = gang.members.indexOf(winner.user.id)
-                    if (n == 0) {
-                        vt.outln(vt.cyan, winner.who.He, 'says, ', vt.white, '"Let that be a lesson to you punk!"', -800)
-                    }
-                    if (gang.members[0] == $.player.id) {
-                        PC.adjust('cha', -1, -1, -1)
-                        gang.members[0] = winner.user.id
-                        gang.members[n] = $.player.id
-                        PC.saveGang(gang)
-                        vt.outln(winner.who.He, `takes over as the leader of ${gang.name}.\n`, -600)
-                    }
-                }
-                PC.save(winner)
+                $.player.coin.value = 0n
+                vt.beep()
+                Battle.yourstats()
             }
+
+            if ($.from == 'Tavern') {
+                const mantle = pathTo('files/tavern', 'trophy.json')
+                if ($.online.hp < 1) {
+                    vt.outln(`He picks up your ${weapon()} and triumphantly waves it around to`)
+                    vt.out(`the cheering crowd. `, -1600, ` He struts toward the mantelpiece `, -600)
+                    if ($.online.weapon.wc > $.barkeep.weapon.wc) {
+                        let trophy = { who: $.player.id, weapon: $.player.weapon }
+                        fs.writeFileSync(pathTo(mantle), JSON.stringify(trophy))
+                        vt.outln(`and hangs his new trophy.`)
+                    }
+                    else
+                        vt.outln(`and burns it!`, -600, 'Heh.')
+                    Weapon.equip($.online, Weapon.merchant[0])
+                    PC.save()
+                    $.reason = `schooled by ${$.barkeep.user.handle}`
+                    //  go crazy!
+                    vt.sound('winner', 32)
+                    $.player.coin.value = 0n
+                    vt.outln('\n  ', vt.green, vt.bright, `"Drinks are on the house!"`, -2250)
+                }
+                else {
+                    vt.music('barkeep')
+                    news(`\tdefeated ${$.barkeep.user.handle}`)
+                    vt.wall($.player.handle, `defeated ${$.barkeep.user.handle}`)
+
+                    let trophy = JSON.parse(fs.readFileSync(mantle).toString())
+                    Weapon.equip($.barkeep, trophy.weapon)
+                    let credit = new Coin($.barkeep.weapon.value)
+                    credit.value = tradein(credit.value, $.online.cha)
+                    let result = Weapon.swap($.online, $.barkeep, credit)
+                    if (typeof result == 'boolean' && result) {
+                        vt.outln('You also take his trophy, ', weapon(), -600)
+                        fs.writeFileSync(pathTo('files/tavern', 'trophy.json'), JSON.stringify({ "who": "_TAX", "weapon": "Needle" }))
+                    }
+                    //  no entertainment
+                    vt.sound('ko', 12)
+                    if ($.player.cha > 49) PC.adjust('cha', -22, -20, -2)
+                    $.player.coward = false
+                }
+            }
+
+            if (/Gates|Taxman/.test($.from)) {
+                if ($.online.hp < 1) {
+                    PC.payment($.taxman.user.coin.value)
+                    death($.reason || 'tax evasion')
+                    vt.outln('  ', vt.blue, vt.bright, `"Thanks for the taxes!"`)
+                    vt.sound('thief2', 16)
+                }
+                else {
+                    if ($.from == 'Taxman') {
+                        news(`\tdefeated ${$.taxman.user.handle}`)
+                        vt.wall($.player.handle, `defeated ${$.taxman.user.handle}`)
+                    }
+                    $.player.coward = false
+                }
+            }
+
+            if ($.from == 'Witch') {
+                if ($.online.hp < 1) {
+                    $.player.coin.value = 0n
+                    death($.reason || `refused ${$.witch.user.handle}`)
+                    vt.outln('  ', vt.green, vt.bright, `"Hell hath no fury like a woman scorned."`)
+                    vt.sound('crone', 30)
+                }
+                else {
+                    vt.animated('hinge')
+                    vt.sound('naval_f', 25)
+                    news(`\tdefeated ${$.witch.user.handle}`)
+                    vt.wall($.player.handle, `defeated ${$.witch.user.handle}`)
+                    $.player.coward = false
+                    $.sorceress = 0
+                }
+            }
+
+            if ($.from == 'User') {
+                let opponent = parties[1][0]
+                if (!(opponent.user.id[0] == '_' || opponent.user.gender == 'I')) {
+                    PC.save(opponent, false, true)
+                    if ($.player.hp > 0 && opponent.hp == 0) {
+                        vt.action('ny')
+                        vt.form = {
+                            'yn': {
+                                cb: () => {
+                                    if (/Y/i.test(vt.entry)) {
+                                        vt.action('freetext')
+                                        input('message', 'just passing gas...')
+                                    }
+                                    else {
+                                        vt.outln()
+                                        fini()
+                                    }
+                                }, cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 20
+                            },
+                            'message': {
+                                cb: () => {
+                                    vt.outln()
+                                    if (cuss(vt.entry)) {
+                                        $.player.coward = true
+                                        vt.hangup()
+                                    }
+                                    if (vt.entry) {
+                                        log(opponent.user.id, `... and says,`)
+                                        log(opponent.user.id, `"${vt.entry}"`)
+                                    }
+                                    fini()
+                                }, prompt: '>', max: 78
+                            }
+                        }
+                        vt.form['yn'].prompt = `Leave ${opponent.who.him}a message (Y/N)? `
+                        input('yn', 'y')
+                        return
+                    }
+                }
+            }
+
+            fini()
         }
-        $.online.altered = true
     }
 
     export function brawl(rpc: active, nme: active, vs = false) {
@@ -1064,7 +1065,7 @@ module Battle {
         }
     }
 
-    export function cast(rpc: active, gb: Function, nme?: active, magic?: number, DL?: ddd) {
+    export function cast(rpc = $.online, nme?: active, magic?: number, DL?: ddd): boolean {
 
         let tricks = Object.assign([], rpc.user.spells)
         let Summons = ['Teleport', 'Resurrect']
@@ -1078,15 +1079,9 @@ module Battle {
         })
 
         if (!tricks.length) {
-            if (rpc === $.online) {
-                vt.outln(`\nYou don't have any magic.`)
-                gb(true)
-            }
-            else {
-                vt.out('cast() failure :: ', `${rpc.user.level} ${rpc.user.pc} ${rpc.user.handle} ${rpc.user.magic} ${rpc.sp} ${rpc.user.spells}`)
-                gb()
-            }
-            return
+            vt.outln('\n', rpc === $.online ? `\nYou don't have any magic.`
+                : `?cast() failure :: ${rpc.user.level} ${rpc.user.pc} ${rpc.user.handle} ${rpc.user.magic} ${rpc.sp} ${rpc.user.spells}`)
+            return false
         }
 
         if (rpc == $.online) {
@@ -1097,10 +1092,8 @@ module Battle {
                     cb: () => {
                         vt.outln()
                         const n = uint(vt.entry)
-                        if (vt.entry !== '?' && !n) {
-                            gb(true)
-                            return
-                        }
+                        if (vt.entry !== '?' && !n)
+                            return false
 
                         if (!Magic.have(tricks, n)) {
                             for (let i in tricks) {
@@ -1136,7 +1129,7 @@ module Battle {
             invoke(spell, Summons.includes(spell))
         }
 
-        function invoke(name: string, summon: boolean) {
+        function invoke(name: string, summon: boolean): boolean {
             const Caster = p1.You
             const caster = p1.you
             let Recipient = ''
@@ -1148,8 +1141,7 @@ module Battle {
                 if (rpc.sp < Magic.power(rpc, spell.cast)) {
                     if (rpc === $.online)
                         vt.outln(`You don't have enough power to cast that spell!`)
-                    gb(!rpc.confused)
-                    return
+                    return !rpc.confused
                 }
 
             //  some sensible ground rules to avoid known muling exploits, aka White Knights passing gas
@@ -1157,28 +1149,24 @@ module Battle {
                 if ([1, 2, 3, 4, 5, 6, 10].indexOf(spell.cast) >= 0) {
                     if (rpc === $.online)
                         vt.outln('You cannot cast that spell during a battle!')
-                    gb(!rpc.confused)
-                    return
+                    return !rpc.confused
                 }
                 if (nme.user.novice && [12, 15, 16, 20, 21, 22].indexOf(spell.cast) >= 0) {
                     if (rpc === $.online)
                         vt.outln('You cannot cast that spell on a novice player.')
-                    gb(!rpc.confused)
-                    return
+                    return !rpc.confused
                 }
                 if (/Merchant|Naval|Tavern|Taxman/.test($.from) && [8, 12, 17, 18, 22].indexOf(spell.cast) >= 0) {
                     if (spell.cast == 8 && rpc === $.online) {
                         vt.outln('You cannot cast that spell to retreat!')
-                        gb(!rpc.confused)
-                        return
+                        return !rpc.confused
                     }
                     if (spell.cast > 8) {
                         if (rpc === $.online) {
                             vt.sound('oops', 4)
                             vt.outln('You are too frantic to cast that spell!')
                         }
-                        gb(!rpc.confused)
-                        return
+                        return !rpc.confused
                     }
                 }
                 Recipient = p2.You
@@ -1188,8 +1176,7 @@ module Battle {
                 if ([9, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22].indexOf(spell.cast) >= 0) {
                     if (rpc === $.online)
                         vt.outln('You cannot cast that spell on yourself!')
-                    gb(!rpc.confused)
-                    return
+                    return !rpc.confused
                 }
             }
 
@@ -1247,8 +1234,7 @@ module Battle {
                         vt.out('   ', p2.his, vt.bright, vt.cyan, mod.name, vt.normal, -100)
                         if ($.player.emulation == 'XT' && nme.user.sex !== 'I') vt.out(' ', Ring.name[mod.name].emoji, ' 💍')
                         vt.outln(nme.user.sex == 'I' ? ' power' : ' ring', vt.reset, '!', vt.faint, ' <<')
-                        gb()
-                        return
+                        return true
                     }
                     else {
                         vt.out(vt.magenta, vt.faint, '>> ', vt.normal, p1.His, vt.bright, Ring.theOne, vt.normal, ' ring ', -300
@@ -1269,8 +1255,7 @@ module Battle {
                 else {
                     vt.outln('Fssst!  ', p1.His, 'attempt fails!')
                     vt.sound('fssst', 4)
-                    gb()
-                    return
+                    return true
                 }
             }
 
@@ -1530,8 +1515,7 @@ module Battle {
                                 PC.activate(DL.cleric)
                                 PC.adjust('cha', 104, 2, 1)
                                 vt.outln(-200, vt.faint, 'You raise ', -300, 'the ', vt.yellow, DL.cleric.user.handle, vt.reset, -400, ' from the dead!', -500)
-                                gb()
-                                return
+                                return true
                             }
                         }
                         user('Resurrect', (opponent: active) => {
@@ -1547,10 +1531,8 @@ module Battle {
                                 log(opponent.user.id, `\n${$.player.handle} resurrected you`)
                                 vt.outln()
                             }
-                            gb()
-                            return
                         })
-                        return
+                        return true
                     }
 
                 case 11:
@@ -1814,10 +1796,8 @@ module Battle {
                     break
 
                 case 20:
-                    if (nme.user.magic < 2) {
-                        gb(true)
-                        return
-                    }
+                    if (nme.user.magic < 2)
+                        return false
 
                     vt.out(vt.cyan, 'A glowing ', vt.faint
                         , '   ', vt.LGradient, vt.RGradient, '\b'.repeat(11), -450)
@@ -1895,9 +1875,9 @@ module Battle {
                         rpc.user.hp -= Math.round(rpc.user.level + dice(rpc.user.level) + rpc.user.str / 10 + (rpc.user.str > 90 ? rpc.user.str - 90 : 0))
                         if (rpc.user.magic > 1)
                             rpc.user.sp -= Math.round(rpc.user.level + dice(rpc.user.level) + rpc.user.int / 10 + (rpc.user.int > 90 ? rpc.user.int - 90 : 0))
-                        nme.user.xp *= 2
+                        nme.user.xp += int(PC.experience(nme.user.level, 1, nme.user.int) / 2)
                         vt.outln(Recipient, PC.what(nme, 'gain'), 'an experience level off ', caster, '.')
-                        if (nme !== $.online && nme.user.level + 1 < $.sysop.immortal && checkXP(nme, gb)) return
+                        //if (nme !== $.online && nme.user.level + 1 < $.sysop.immortal && checkXP(nme, gb)) return
                     }
                     else {
                         if (nme.user.level < 2) {
@@ -1914,9 +1894,9 @@ module Battle {
                         nme.user.hp -= Math.round(nme.user.level + dice(nme.user.level) + nme.user.str / 10 + (nme.user.str > 90 ? nme.user.str - 90 : 0))
                         if (nme.user.magic > 1)
                             nme.user.sp -= Math.round(nme.user.level + dice(nme.user.level) + nme.user.int / 10 + (nme.user.int > 90 ? nme.user.int - 90 : 0))
-                        rpc.user.xp *= 2
+                        rpc.user.xp += int(PC.experience(rpc.user.level, 1, rpc.user.int) / 2)
                         vt.outln(Caster, PC.what(rpc, 'gain'), 'an experience level off ', recipient, '.')
-                        if (rpc !== $.online && rpc.user.level + 1 < $.sysop.immortal && checkXP(rpc, gb)) return
+                        //if (rpc !== $.online && rpc.user.level + 1 < $.sysop.immortal && checkXP(rpc, gb)) return
                     }
                     break
 
@@ -1960,8 +1940,6 @@ module Battle {
                     rpc.altered = true
                     break
             }
-
-            gb()
         }
     }
 
@@ -1977,7 +1955,9 @@ module Battle {
             && (rpc.user.coward || Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power)) {
             rpc.hp = -1
             vt.outln(vt.green, vt.bright, rpc.who.He, -600, vt.normal, 'runs away from ', -400, vt.faint, 'the battle!', -200)
-            if (!Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power)
+            if (Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power)
+                rpc.user.coward = true
+            else
                 PC.curse(enemy.user.handle, 'for running away', rpc)
             PC.save(rpc)
             return
@@ -2067,7 +2047,7 @@ module Battle {
                     `easily ${PC.what(rpc, 'slay')}%s`,
                     `${PC.what(rpc, 'make')}minced-meat out of %s`,
                     `${PC.what(rpc, 'run')}%s through`
-                ][dice(6) - 1], enemy.user.handle), '.', -500)
+                ][dice(6, 0)], enemy.user.handle), '.', -500)
                 return
             }
 

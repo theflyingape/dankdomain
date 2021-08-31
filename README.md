@@ -2,6 +2,14 @@
 
 # 🏰 Ɗaɳƙ Ɗoɱaiɳ :: _the return of Hack &amp; Slash_
 
+- [DDgame Player's Manual](#read-the-players-manual-to-play-the-online-game)
+- [Installation](#installation)
+- [Files directory structure](#files-directory-structure)
+  - [Ɗaɳƙ Ɗoɱaiɳ image gallery](#ɗaɳƙ-ɗoɱaiɳ-image-gallery)
+  - [Node.js dependency tree](#nodejs-dependency-tree)
+
+---
+
 ![screenshot](https://raw.githubusercontent.com/theflyingape/dankdomain/master/game/portal/static/assets/title.jpg "Can you defeat the Demogorgon?")
 
 ## _Read the_ [Player's Manual](https://www.ddgame.us) _to play the_ [online game](https://play.ddgame.us)
@@ -195,3 +203,49 @@ tty.sh            player - telnet.js wrapper
 + [Ring](https://photos.app.goo.gl/SWQDdytqjdXNfT4m7)
 + [Specials](https://photos.app.goo.gl/Dn2g2BtdwtKSbudu7)
 + [User](https://photos.app.goo.gl/hfTJ8EstLPSp4Kry6)
+
+### Node.js dependency tree
+
+**DDnet** portal
+
+**`app`**
+
+- `chokidar`, `dns`, `express`, `fs`, `http`, `https`, `net`, `node-pty`, `ws`
+- `sys`: `fs`, `got`, `path`, `romanize`, `sprintf-js`, `title-case`
+- `items`: sys
+- `db`: `better-sqlite3`, items, sys
+- *network service options*
+  - telnet: `net-keepalive`, `telnet-socket`
+  - web: `url`
+
+**`client`**
+
+- `animate.css`, `browserify`, `xterm`, `xterm-addon-fit`, `xterm-addon-unicode11`
+
+**DDplay** game
+
+**`main`**
+
+- `sys`: `fs`, `got`, `path`, `romanize`, `sprintf-js`, `title-case`
+- `lib`: items, runtime, sys, `xvt`
+  - `items`: sys
+  - `runtime`: sys
+- `init`: db, items, lib, npc, pc, player, runtime, sys
+  - `db`: `better-sqlite3`, items, sys
+  - `pc`: db, items, lib, runtime, sys
+  - `npc`: db, items, lib, pc, runtime, sys
+  - `player`: db, items, lib, npc, pc, runtime, sys
+  - `email`: db, items, lib, `nodemailer`, `nodemailer-smtp-transport`, pc, runtime, sys
+  - `newuser`: db, email, init, items, lib, pc, runtime, sys
+  - `taxman`: db, items, lib, pc, player, runtime, sys
+    - `battle`: db, items, lib, npc, pc, player, runtime, sys
+    - `menu`: battle, db, items, lib, npc, pc, player, runtime, sys
+      - `arena`: battle, db, items, lib, npc, pc, player, runtime, sys
+      - `casino`: db, items, lib, npc, pc, player, runtime, sys
+      - `dungeon`: battle, db, items, lib, npc, pc, player, runtime, sys
+      - `library`: db, items, lib, npc, pc, runtime, sys
+      - `naval`: battle, db, items, lib, npc, pc, player, runtime, sys
+      - `party`: battle, db, items, lib, npc, pc, player, runtime, sys
+      - `square`: battle, db, items, lib, npc, pc, player, runtime, sys
+      - `sysop`: battle, db, dungeon, email, lib, pc, player, runtime, sys
+      - `tavern`: battle, db, items, lib, npc, pc, player, runtime, sys, taxman

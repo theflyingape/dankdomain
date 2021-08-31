@@ -105,8 +105,8 @@ let tbt = 1
 window.onresize = () => {
     //  check for idle client state
     if (!wall.hidden) {
-        if (!wall.style.zoom) setImmediate(() => window.dispatchEvent(new Event('resize')))
-        wall.style.zoom = `${90 / (splash.clientWidth / window.innerWidth)}%`
+        const zoom = Math.trunc(80 / (splash.clientWidth / window.innerWidth))
+        splash.style.transform = `scale(${zoom}%,${zoom}%) translate(0%,0%)`
     }
     if (!pid && !wpid) return
 
@@ -444,10 +444,11 @@ function XT(data) {
         audioTune.load()
         audioTune.play().catch(err => { })
     }
-
-    function wall(msg) {
-        if (pid) fetch(`${app}/player/${pid}/wall?msg=${msg}`, { method: 'POST' })
-    }
+    /*
+        function wall(msg) {
+            if (pid) fetch(`${app}/player/${pid}/wall?msg=${msg}`, { method: 'POST' })
+        }
+    */
 }
 
 function lurk() {
@@ -473,11 +474,13 @@ function lurk() {
                 }
                 watch.selectedIndex = -1
                 el.blur()
+                setImmediate(() => window.dispatchEvent(new Event('resize')))
 
                 el.onchange = (ev) => {
                     let watch: HTMLOptionsCollection = <any>ev.target
                     wpid = parseInt(watch[watch.selectedIndex].value)
 
+                    wall.hidden = true
                     terminal.hidden = false
                     term = new Terminal({
                         bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false, scrollback: 0,
@@ -520,6 +523,7 @@ function lurk() {
                                 term.dispose()
                                 wpid = 0
                                 terminal.hidden = true
+                                wall.hidden = false
                                 lurk()
                             }
 

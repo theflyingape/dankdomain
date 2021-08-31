@@ -62,8 +62,8 @@ module Arena {
         switch (choice) {
             case 'C':
                 if (!$.access.roleplay) break
-                Battle.cast($.online, menu)
-                return
+                suppress = Battle.cast()
+                break
 
             case 'G':
                 vt.action('clear')
@@ -71,6 +71,7 @@ module Arena {
                 return
 
             case 'J':
+                if (!$.access.roleplay) break
                 if (!$.joust) {
                     vt.outln('\nYou have run out of jousts.')
                     suppress = true
@@ -252,6 +253,7 @@ module Arena {
                 return
 
             case 'M':
+                if (!$.access.roleplay) break
                 if (!$.arena) {
                     vt.outln('\nYou have no more arena fights.')
                     suppress = true
@@ -297,6 +299,7 @@ module Arena {
                 return
 
             case 'U':
+                if (!$.access.roleplay) break
                 if (!$.arena) {
                     vt.outln('\nYou have no more arena fights.')
                     suppress = true

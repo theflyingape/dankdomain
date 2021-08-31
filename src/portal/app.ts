@@ -5,7 +5,6 @@
 import chokidar = require('chokidar')
 import dns = require('dns')
 import express = require('express')
-import fs = require('fs')
 import http = require('http')
 import https = require('https')
 import net = require('net')
@@ -28,9 +27,9 @@ console.info(`cwd ${process.cwd()} → ${__dirname}`)
 process.chdir(__dirname)
 
 //  load common
-import { pathTo } from '../sys'
-import db = require('../db')
+import { fs, pathTo } from '../sys'
 import { Armor, Ring, Weapon } from '../items'
+import db = require('../db')
 
 let passed = ''
 if (process.argv.length > 2 && process.argv[2]) {
@@ -48,42 +47,38 @@ let elemental: user = { id: '' }
 setInterval(bot, 45 * 60 * 1000)
 
 function bot() {
-    let sysop: user = { id: '_SYS' }
-    if (db.loadUser(sysop)) {
-        const i = sysop.immortal
+    if (elemental.id) return
 
-        while (!elemental.id) {
-            sysop.immortal++
-            elemental = db.fillUser(`bot${sysop.immortal}`)
-            if (!elemental.id) {
-                sysop.immortal = 0
-                db.saveUser(sysop)
-                break
-            }
-        }
-        if (!sysop.immortal || sysop.immortal == i) return
-        db.saveUser(sysop)
+    const file = pathTo('users', 'bot.json')
+    let npc = { id: 0 }
+    try { Object.assign(npc, JSON.parse(fs.readFileSync(file))) }
+    catch (err) { }
 
-        let pid = login(elemental.remote, network.rows, 80, network.emulator, [elemental.id])
-        let term = sessions[pid]
-        term.spawn.dispose()
-        console.info(`Startup BOT #${sysop.immortal} (${elemental.id}) from ${elemental.remote} → session ${pid}`)
+    npc.id++
+    elemental = db.fillUser(`bot${npc.id}`)
+    if (!elemental.id) npc.id = 0
+    fs.writeFileSync(file, JSON.stringify(npc))
+    if (!elemental.id) return
 
-        //  consume app output
-        term.onData((data) => {
-            message(term, data)
-        })
+    let pid = login(elemental.remote, network.rows, 80, network.emulator, [elemental.id])
+    let term = sessions[pid]
+    term.spawn.dispose()
+    console.info(`Startup BOT #${npc.id} (${elemental.id}) from ${elemental.remote} → session ${pid}`)
 
-        //  app shutdown
-        term.onExit(() => {
-            console.info(`Exit BOT #${sysop.immortal} (${elemental.id}) session ${pid}`)
-            // Clean things up
-            delete broadcasts[pid]
-            delete sessions[pid]
-            pid = 0
-            elemental.id = ''
-        })
-    }
+    //  consume app output
+    term.onData((data) => {
+        message(term, data)
+    })
+
+    //  app shutdown
+    term.onExit(() => {
+        console.info(`Exit BOT #${npc.id} (${elemental.id}) session ${pid}`)
+        // Clean things up
+        delete broadcasts[pid]
+        delete sessions[pid]
+        pid = 0
+        elemental.id = ''
+    })
 }
 
 function broadcast(pid: number, msg: string) {
@@ -150,32 +145,32 @@ function message(term: pty.IPty, msg: Uint8Array, classic = true): Uint8Array {
     }
 
     //  intercept client actions ...
-    if (classic) {
-        let copy = msg + ''
-        // find any occurrences of @func(data), and for each: call func(data)
-        const re = '[@](?:(action|animated|profile|play|title|tune|wall)[(](.+?)[)])'
-        let search = new RegExp(re, 'g'); let replace = new RegExp(re)
-        let match: RegExpMatchArray
-        while (match = search.exec(copy)) {
+    let copy = msg + ''
+    // find any occurrences of @func(data), and for each: call func(data)
+    const re = '[@](?:(action|animated|profile|play|title|tune|wall)[(](.+?)[)])'
+    let search = new RegExp(re, 'g'); let replace = new RegExp(re)
+    let match: RegExpMatchArray
+    while (match = search.exec(copy)) {
+        if (classic || match[1] == 'wall') {
             let x = replace.exec(msg.toString())
             let s = x.index, e = s + x[0].length
             msg = new Uint8Array([...msg.slice(0, s), ...msg.slice(e)])
             eval(`${match[1]}(match[2])`)
         }
-        function action(menu) { }
-        function animated(effect) { }
-        function play(fileName) { }
-        function profile(panel) { }
-        function title(name) {
-            let b4: BufferEncoding = sessions[pid].encoding || 'utf8'
-            sessions[pid].encoding = <BufferEncoding>(name == 'XT' ? 'utf8' : 'latin1')
-            if (sessions[pid].encoding !== b4)
-                console.info(`CLASSIC session ${pid} encoding switched from ${b4} to ${sessions[pid].encoding}`)
-        }
-        function tune(fileName) { }
-        function wall(notify) {
-            broadcast(pid, notify)
-        }
+    }
+    function action(menu) { }
+    function animated(effect) { }
+    function play(fileName) { }
+    function profile(panel) { }
+    function title(name) {
+        let b4: BufferEncoding = sessions[pid].encoding || 'utf8'
+        sessions[pid].encoding = <BufferEncoding>(name == 'XT' ? 'utf8' : 'latin1')
+        if (sessions[pid].encoding !== b4)
+            console.info(`CLASSIC session ${pid} encoding switched from ${b4} to ${sessions[pid].encoding}`)
+    }
+    function tune(fileName) { }
+    function wall(notify) {
+        broadcast(pid, notify)
     }
 
     return msg
@@ -476,17 +471,17 @@ dns.lookup(network.address, (err, addr, family) => {
             term.resize(cols, rows)
             res.end()
         })
+        /*
+                app.post(`${network.path}player/:pid/wall`, function (req, res) {
+                    let pid = parseInt(req.params.pid)
+                    let msg = req.query.msg + ''
+                    let term = sessions[pid]
+                    if (!term) return
+                    broadcast(pid, msg)
 
-        app.post(`${network.path}player/:pid/wall`, function (req, res) {
-            let pid = parseInt(req.params.pid)
-            let msg = req.query.msg + ''
-            let term = sessions[pid]
-            if (!term) return
-            broadcast(pid, msg)
-
-            res.end()
-        })
-
+                    res.end()
+                })
+        */
         //  Lurker API
         var lurkers = []
 

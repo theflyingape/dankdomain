@@ -2,49 +2,50 @@
 
 ## *the return of Hack & Slash*
 
-🇺🇸 ©️1991 - 2021 [Robert Hurst](https://robert.hurst-ri.us)
+🇺🇸 ©️1991 - 2021 [Robert Hurst](https://robert.hurst-ri.us) 🧙
 > [developed](https://github.com/theflyingape/dankdomain) on a **Chromebook** using Visual Code and TypeScript/html/css for the browser with [terminal emulator](https:/xtermjs.org) and classic telnet clients; and also to run the resulting Node.js full stack [services and app](https://play.DDgame.us) on the **Google Cloud Platform** (us-central1) or in a **Docker** [container](https://hub.docker.com/repository/docker/theflyingape/dankdomain).
 
 ### **11-Sep-2021** `v3.2.0` ✈💥🏢🏢
 
 * 🇺🇸 **Never** Forget. *The North remembers.* 🐺
-* major code & data refactoring for CI/CD with overall improvements to ease startup installations
-* `sysop` config moved into `etc/play.json` and current `game` state in `users/game.json` files
-* added play `xrate` attribute to configure economy - Coin uses ES2020 `BigInt`
-* separated each character class out of the dankdomain config to allow for reroll templating of startup values, i.e., assign differing assets like weapon, spells, etc, which also expands the rules of engagement with each NPC
-* player `hull` points can no longer reach `0` by cannon fire
-* added class modifiers that adds effectiveness to `heal` & `blast` spells
-* added `curse` power to a Cursed ring - retreats from a ring bearer puts a curse on you
-* latest package dependencies tested with Node.js v16.7
+* 📦 latest package [dependencies](https://github.com/theflyingape/dankdomain#nodejs-dependency-tree) tested with Node.js `v16.8` and TypeScript `v4.4.2`
+* 👍 improved UI `client` compatibility for modern browsers
+* 👨‍💻 major code & data refactoring for CI/CD with overall improvements to ease startup installations
+* 📋 `sysop` config moved into `etc/play.json` and current `game` state in `users/game.json` files
+* 📖 separated each character class out of the dankdomain config to allow for reroll templating of startup values, i.e., assign differing assets like weapon, spells, etc, which also expands the rules of engagement with each NPC
+* 🪙 added play `xrate` attribute to configure economy - Coin uses ES2020 `BigInt`
+* 🚣 player `hull` points can no longer reach `0` by cannon fire
+* 🪄 added class modifiers that adds effectiveness to `heal`, `blast`, and `big blast` spells
+* 😡 added `curse` power to a Cursed ring - retreats from this ring bearer puts a curse on you
 
 #### **18-Jun-2021** `v3.1.1`
 
-* door app runs as DDnet and moved main to run as DDplay
+* door app runs as **`DDnet`** and moved main to run as **`DDplay`**
 * bot Elemental orders added for each menu
-* added SDLmixer in DDterm to `playmus` music & sound events from CLI
-* xterm.js v4.13
+* added `SDLmixer` in **`DDterm`** to `playmus` music & sound events from a Linux shell
+* xterm.js `v4.13`
 
 #### **8-Jun-2021** `v3.1.0`
 
-* running framework for automated bot(s) as an Elemental in place
+* running framework for automated bot(s) as an Elemental in place 🤖
 * debugged code refactoring that broke session expiry and some coin properties
-* build/run on latest Node 14 or 16 with xterm.js v4.12
+* build/run on latest Node `14` or `16` with xterm.js `v4.12`
 * can host as a _local_ **BBS door** by authenticating with a compatible **Mystic** `door.sys` format
 
 #### **25-Apr-2021** `v3.0.0`
 
-* major code refactoring for CI/CD
+* major code refactoring for CI/CD 👨‍💻
 * automated player bot integration begins
-* latest xterm.js v4.11 and node-pty 0.10.1
-* @theflyingape/xvt v1.4.3 all-new package release
-* renamed Ɗanƙ Ɗomaiƞ as Ɗaɳƙ Ɗoɱaiɳ
+* latest xterm.js `v4.11` and node-pty `0.10.1`
+* `@theflyingape/xvt` v1.4.3 all-new package release
+* renamed Ɗanƙ Ɗomaiƞ as **`Ɗaɳƙ Ɗoɱaiɳ`**
 
 #### **24-Dec-2020** `v2.9.3`
 
 * Merry Christmas! 🎅 🎄
 * player fairness corrections
 * updated dungeon specials distribution pattern
-* Dockerfile to run app in a [container](https://hub.docker.com/repository/docker/theflyingape/dankdomain)
+* **`Dockerfile`** to run app in a [container](https://hub.docker.com/repository/docker/theflyingape/dankdomain)
 * tweaks to cosmetics, final deeds
 
 #### **11-Nov-2020** `v2.8.1` 🎖️
@@ -53,14 +54,14 @@
 * maintenance release: UI fixes and corrected limit to "boss" encounters in play.json
 * new boss encounter: *Medea*, an old witch/sorceress that can "help" adventurer (for a price):
   * any unique rings are taken away from other players and given to you; or
-  * if player does not possess Morph, provide advanced Magic (replaces wish from the well); or
+  * if player does not possess `Morph`, provide advanced Magic (replaces wish from the well); or
   * resurrect the dead & curse the land
 
 #### **20-Oct-2020** `v2.8.0` 🎉
 
-* UI and client code completely refactored
-  * removed iframes into a single page app
-  * rewrote an improved CSS layout
+* UI `app` and `client` code completely refactored
+  * removed `iframes` into a single page app
+  * rewrote an improved `CSS` layout
 
 #### **28-Sep-2020** `v2.7.0`
 
@@ -68,15 +69,15 @@
 * general browser client improvements
   * add [Facebook Group](http://www.originalhackandslash.net)
   * web page "wall" zooms to fill 80% device window width
-  * added Noto fonts for unicode 13 character support and renamed Dank Domain as Ɗanƙ Ɗomaiƞ
+  * added `Noto` fonts for unicode 13 character support and renamed Dank Domain as **`Ɗanƙ Ɗomaiƞ`**
 * general terminal emulation improvements
-  * pass Uint8Array in place of String for classic PC ANSI support
-  * optimize xvt input handling; added drain() to empty typeahead to critical spots
-  * added telnet-socket for an integrated telnet service
-  * added net-keepalive to address telnet hackers
-  * xterm.js v4.9 release
+  * pass Uint8Array in place of String for classic `PC ANSI` support
+  * optimize **`xvt`** input handling; added drain() to empty typeahead to critical spots
+  * added **`telnet-socket`** for an integrated telnet service
+  * added **`net-keepalive`** to address telnet hackers
+  * xterm.js `v4.9` release
 * general dungeon improvements
-  * added '🏃 find the exit' alert to prompt player that it's time to move on to another level
+  * added **`🏃 find the exit`** alert to prompt player that it's time to move on to another level
   * casting teleport consumes some online time to mitigate 'unlimited' teleporting with a magical ring
   * added +Time (5-minutes) to Wheel of Life
   * deeper dank dungeon mazes become increasingly more complex
@@ -88,38 +89,38 @@
 #### **3-Jun-2020** `v2.6.0`
 
 * dungeon map enhancements
-* xterm.js v4.6 release
-* xvt v1.2 release for scrollback enhancements
+* xterm.js `v4.6` release
+* xvt `v1.2` release for scrollback enhancements
 
 #### **8-May-2020** `v2.5.2` 😷
 
 * Rhode Island last day of its illegal sequestering of healthy residents (coined as "Stay At Home") order
-* refactor for animate.css v4
+* refactor for **`animate.css v4`**
 * changes to joust lost deed eligibility
 
 #### **12-Apr-2020** `v2.5.0`
 
 * [Easter](https://en.wikipedia.org/wiki/Easter) 🐣
 * refactor class 'None' as 'Spirit'
-* instantiate Imagination and Nobody as "Elemental" player bots 🤖 (coming soon?)
-* xterm.js v4.5 release
-* xvt word-wrap fix
+* instantiate **`Imagination`** and **`Nobody`** as "Elemental" player bots 🤖 (coming soon?)
+* xterm.js `v4.5` release
+* `xvt` word-wrap fix
 * add Visual Code debug launch ddgame & ddclient settings
 
 #### **01-Apr-2020** `v2.4.2`
 
 * [April Fools' Day](https://en.wikipedia.org/wiki/April_Fools%27_Day) 🃏
 * improved telnet client service to allow expanded use of the "XT" emulation mode and wall messages pass between concurrent players: both browsers and telnet
-* re-make `access.json` that's better aligned for midnight/noon resets on player visits -- gives COVID-19 quarantined players more opportunity to play
+* re-make `access.json` that's better aligned for midnight/noon resets on player visits -- gives COVID-19 illegally sequestered players more opportunity to play
 
 #### **21-Mar-2020** `v2.3.6`
 
-* bundled with Google Noto mono + emoji fonts for improved Unicode 11 support
+* bundled with **Google Noto** `mono` + `emoji` fonts for improved Unicode 11 support
 * user trace files can be edited and copied over as `save.json` file, which will auto-update the Players table
 
 #### **08-Feb-2020** `v2.3.1`
 
-* xterm.js v4.4 release with Unicode 11 support
+* xterm.js `v4.4` release with Unicode 11 support
 
 #### **01-Jan-2020** `v2.3.0`
 
@@ -130,8 +131,8 @@
 #### **27-Nov-2019** `v2.2.3`
 
 * Happy Thanksgiving! 🦃
-* moved into Google Cloud Platform (us-central1)
-* package requires Linux OS and Node 10.16
+* moved into **Google Cloud Platform** (`us-central1`)
+* package requires Linux OS and Node `10.16`
 
 ---
 
@@ -143,7 +144,7 @@
 
 * cursing a player sticks for their next play, regardless
 * more sound effects added
-* xterm.js v4 release with outdated package updates
+* xterm.js **`v4`** release with outdated package updates
 
 #### **30-May-2019** `v2.1`
 
@@ -151,7 +152,7 @@
 * large internal maintenance release: merge to master
 * web client rest call to show an expanded gallery
 * `node telnet` client error handling
-* xterm.js v3.13.2 release with outdated package updates
+* xterm.js `v3.13.2` release with outdated package updates
 
 #### **27-Apr-2019** `v2.0`
 
@@ -162,7 +163,7 @@
 * added Victory & Deed medals for gamification
 * bumping into a character in the square may incur any material loss
 * PC saving throw to avert an attacker's turn by supernatural or skillful means
-* xterm.js v3.12.2 release with outdated package updates
+* xterm.js `v3.12.2` release with outdated package updates
 
 #### **14-Feb-2019** `v1.8.2`
 
@@ -179,7 +180,7 @@
 * enhances to dungeon map and its mapping as it relates to player's blessed state
 * updated detection for Chrome add to homescreen (A2HS) option
 * improved error traps & handling
-* xterm.js v3.11.0 release with outdated package updates
+* xterm.js `v3.11.0` release with outdated package updates
 
 #### **01-Jan-2019** `v1.7.1`
 
@@ -190,16 +191,16 @@
 #### 24-Dec-2018 `v1.7.0`
 
 * Merry Christmas! 🎅 🎄
-* added twenty 💍 rings of power to wearable items, 8 are unique
+* added twenty 💍 rings of power to wearable items, `8` are unique
 * tax credit for real estate + security
 * lessen random event occurences when entering a dungeon level
-* xterm.js v3.9.1 release with outdated package updates
+* xterm.js `v3.9.1` release with outdated package updates
 * class code refactoring with minor bug fixes
 
 #### 22-Nov-2018 `v1.6.1`
 
 * Happy Thanksgiving! 🦃
-* UI app & client improvements with a new Google domain registered: [DDgame.us](https://ddgame.us)
+* UI `app` & `client` improvements with a new Google domain registered: [DDgame.us](https://ddgame.us)
 * dungeon potions are bottled consistently per call
 * temporary buff diminishes after every engagement
 * like hone, apply lower poisons to increase temporary buff
@@ -210,36 +211,36 @@
 #### 08-Oct-2018 `v1.5.0`
 
 * Columbus Day! ⛵️
-* package requires Linux OS and Node 10.10
-* xterm.js v3.8.0 release with outdated package updates
+* package requires Linux OS and Node `10.10`
+* xterm.js `v3.8.0` release with outdated package updates
 * plays (number of arena, brawl, dungeon, etc.) are now configurable
 * UI improvements, webLinks addon
 
 #### 12-Jul-2018 `v1.4.0`
 
-* xterm.js v3.5.0 release with outdated package updates
-* ipstack api support
+* xterm.js `v3.5.0` release with outdated package updates
+* `ipstack` api support
 * updated [media packs](https://github.com/theflyingape/dankdomain/blob/master/README.md)
 * minor bug fixes
 
 #### 07-Jun-2018 `v1.3.0`
 
-* Node.js 10 support
-* xterm.js v3.4.1 release, and other npmvet package updates
+* Node.js `10` support
+* xterm.js `v3.4.1` release with other package updates
 * removed express-ws (stale, security issue), re-wrote door for ws
 * minor bug fixes
 
 #### 28-May-2018 `v1.2.4`
 
 * Memorial Day! ⛪️
-* xterm.js v3.4.0 release
-* builds with gcc c++ v8.1 (Fedora 28)
+* xterm.js `v3.4.0` release
+* builds with gcc c++ `v8.1` (Fedora 28)
 * NPC jailer
 
 #### 16-Apr-2018 `v1.2.2`
 
 * Patriots' Day! 🇺🇸
-* xterm.js v3.3 release, and corrected TypeScript typings for ExpressWs transpiling strictness
+* xterm.js `v3.3` release, and corrected TypeScript typings for ExpressWs transpiling strictness
 * launched replacement game web site, but door hosting is still managed local (to me)
 * door client improvements
 * minor weakened monster tweaks and some bug fixes in battle
@@ -247,7 +248,7 @@
 #### 17-Mar-2018 `v1.1.4`
 
 * Happy St. Patrick's Day! 🍀
-* xterm.js v3.2 release with preferred Google font IBM Plex Mono
+* xterm.js `v3.2` release with preferred Google font IBM Plex Mono
 * an Arena summoned demon is a fair contest
 * dungeon: improved level rendering and a chance taxman boss encounter
 * improved 'inactive player' management, and auto-email reminders until account deletion
@@ -256,7 +257,7 @@
 
 #### 20-Jan-2018 `v1.0.0` 🏆
 
-* door: TypeScript app + client using **xterm.js v3** release
+* door: TypeScript `app` + `client` using **xterm.js `v3`** release
 * brawling can include NPC participation
 * minor dungeon spawning and the teleport avoids caverns
 * if you fail to reroll as an immortal, you must choose a different class
@@ -292,11 +293,11 @@
 
 * a monster set of ASCII art donated by [Johannes Pelzer](https://www.learn-sword-fighting.com/en/about-us.html)
 * reformatted legacy [ChangeLog](https://github.com/theflyingape/rpgd/blob/master/ChangeLog) file into this CHANGELOG.md
-* alpha 0.4 release using Node.js 8
+* alpha 0.4 release using Node.js `8`
 
 #### 11-Feb-2017
 
-* alpha development using Node.js 6
+* alpha development using **`Node.js 6`**
 
 ---
 
