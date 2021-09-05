@@ -107,6 +107,7 @@
         "description":"neutralize opponent's rings while enhancing\n   the power in your rings",
         "emoji":"♾️",
         "ability":[
+            { "id":"curse", "power":true },
             { "id":"resist", "power":true, "spell":"Teleport" },
             { "id":"resist", "power":true, "spell":"Level Stealing" },
             { "id":"ring", "power":true }

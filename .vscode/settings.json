@@ -9,6 +9,11 @@
   },
   "files.insertFinalNewline": true,
   "files.trimTrailingWhitespace": true,
+  "terminal.integrated.customGlyphs": true,
+  "terminal.integrated.gpuAcceleration": "on",
+  "terminal.integrated.scrollback": 1000,
+  "terminal.integrated.titleMode": "sequence",
+  "terminal.integrated.unicodeVersion": "11",
   "workbench.colorCustomizations": {
     "terminal.background": "#000000",
     "terminal.foreground": "#C0C0C0",
@@ -31,6 +36,11 @@
     "terminalCursor.foreground": "#B0E0E6"
   },
   "typescript.tsdk": "node_modules/typescript/lib",
+  "[ans]": {
+    "editor.formatOnSave": false,
+    "files.insertFinalNewline": false,
+    "files.trimTrailingWhitespace": false
+  },
   "[json]": {
     "editor.defaultFormatter": "vscode.json-language-features",
     "editor.formatOnSave": false,

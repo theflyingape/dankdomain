@@ -74,13 +74,15 @@ module Player {
                     , ', ', vt.bright, $.ruler.handle, vt.normal
                     , ', is pleased with your accomplishments\n'
                     , `and ${PC.who($.ruler).he}promotes you to`, vt.bright, an(rpc.user.access), vt.normal, '!', -2000)
+                //  celebrate
+                vt.sound('winner')
+                let nme = PC.encounter(`AND id NOT GLOB '_*' AND id != '${$.ruler.id}'`)
+                vt.outln(`The mob goes crazy`, -300, nme.user.id
+                    ? `, except for ${nme.user.handle} seen buffing ${nme.who.his}${weapon(nme)}`
+                    : '!', -200, '!')
                 if (Access.name[rpc.user.access].message)
                     vt.outln(vt.yellow, `${PC.who($.ruler).He}whispers, `, vt.reset, vt.faint, `"${eval('`' + Access.name[rpc.user.access].message + '`')}"`, -2000)
-                let nme = PC.encounter(`AND id NOT GLOB '_*' AND id != '${$.ruler.id}'`)
-                vt.outln(`The mob goes crazy`, -500, nme.user.id
-                    ? `, except for ${nme.user.handle} seen buffing ${nme.who.his}${weapon(nme)}`
-                    : `!!`, -2000)
-                vt.outln([`${$.taxman.user.handle} nods an approval.`, `${$.barkeep.user.handle} slaughters a pig for tonight's feast.`, `${$.ruler.handle} gives you a hug.`, `${Access.name[$.ruler.access][$.ruler.sex]}'s guard salute you.`, `${$.ruler.handle} orders ${PC.who($.ruler).his}Executioner to hang ${$.player.level} prisoners in your honor.`][dice(5) - 1], -2000)
+                vt.outln([`${$.taxman.user.handle} nods an approval.`, `${$.barkeep.user.handle} slaughters a pig for tonight's feast.`, `${$.ruler.handle} gives you a hug.`, `${Access.name[$.ruler.access][$.ruler.sex]}'s guard salute you.`, `${$.ruler.handle} orders ${PC.who($.ruler).his}Executioner to hang ${$.player.level} prisoners in your honor.`][dice(5, 0)], -2000)
                 news(`\tpromoted to ${rpc.user.access}`)
                 vt.wall($.player.handle, `promoted to ${rpc.user.access}`)
                 vt.sessionAllowed += 300
@@ -100,14 +102,15 @@ module Player {
                 if (rpc.user.novice) {
                     PC.portrait()
                     rpc.user = PC.reroll(rpc.user, $.sysop.pc, rpc.user.level)
-                    rpc.user.novice = false
                     rpc.user.expert = true
+                    rpc.user.novice = false
+                    rpc.user.rings = []
                     vt.outln(vt.cyan, vt.bright, 'You are no longer a novice.  Welcome to the next level of play!')
-                    vt.sound('welcome', 9)
-                    vt.outln('You morph into', vt.yellow, an(rpc.user.pc), vt.reset, '.', -600)
-                    vt.sound('cheer', 21)
+                    vt.sound('welcome', 12)
+                    vt.outln('You morph into', vt.yellow, an(rpc.user.pc), vt.reset, '.')
+                    vt.sound('cheer', 30)
                 }
-                vt.sound('demon', 17)
+                vt.sound('demon', 18)
                 break
             }
         }
