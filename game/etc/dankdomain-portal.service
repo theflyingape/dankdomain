@@ -1,5 +1,5 @@
 [Unit]
-Description=Ɗaɳƙ Ɗoɱaiɳ portal service
+Description=🏰 Ɗaɳƙ Ɗoɱaiɳ portal service
 After=local-fs.target network-online.target
 StartLimitBurst=3
 StartLimitIntervalSec=2m
