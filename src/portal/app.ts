@@ -44,7 +44,7 @@ let chalk = 0
 
 //  allow for elemental player(s) to roam regardless of real user activity
 let elemental: user = { id: '' }
-setInterval(bot, 45 * 60 * 1000)
+setInterval(bot, 50 * 60 * 1000)
 
 function bot() {
     if (elemental.id) return
