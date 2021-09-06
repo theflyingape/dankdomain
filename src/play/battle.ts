@@ -168,10 +168,7 @@ module Battle {
                         cb: () => {
                             vt.outln()
                             if (/C/i.test(vt.entry)) {
-                                if (cast($.online, enemy))
-                                    next()
-                                else
-                                    attack()
+                                cast(next, $.online, enemy)
                                 return
                             }
 
@@ -450,14 +447,19 @@ module Battle {
 
                 vt.out(vt.reset)
 
-                if (mm && cast(rpc, enemy, mm)) { }
+                if (mm)
+                    cast(next, rpc, enemy, mm)
                 else
                     melee(rpc, enemy)
                 next()
             }
         }
 
-        function next() {
+        function next(up = true) {
+            if (!up) {
+                attack()
+                return
+            }
             round.shift()   //  next up
 
             //  was opponent defeated?
@@ -1065,7 +1067,7 @@ module Battle {
         }
     }
 
-    export function cast(rpc = $.online, nme?: active, magic?: number, DL?: ddd): boolean {
+    export function cast(cb: Function, rpc = $.online, nme?: active, magic?: number, DL?: ddd) {
 
         let tricks = Object.assign([], rpc.user.spells)
         let Summons = ['Teleport', 'Resurrect']
@@ -1081,7 +1083,8 @@ module Battle {
         if (!tricks.length) {
             vt.outln('\n', rpc === $.online ? `\nYou don't have any magic.`
                 : `?cast() failure :: ${rpc.user.level} ${rpc.user.pc} ${rpc.user.handle} ${rpc.user.magic} ${rpc.sp} ${rpc.user.spells}`)
-            return false
+            cb(false)
+            return
         }
 
         if (rpc == $.online) {
@@ -1092,8 +1095,10 @@ module Battle {
                     cb: () => {
                         vt.outln()
                         const n = uint(vt.entry)
-                        if (vt.entry !== '?' && !n)
-                            return false
+                        if (vt.entry !== '?' && !n) {
+                            cb(false)
+                            return
+                        }
 
                         if (!Magic.have(tricks, n)) {
                             for (let i in tricks) {
@@ -1129,7 +1134,7 @@ module Battle {
             invoke(spell, Summons.includes(spell))
         }
 
-        function invoke(name: string, summon: boolean): boolean {
+        function invoke(name: string, summon: boolean) {
             const Caster = p1.You
             const caster = p1.you
             let Recipient = ''
@@ -1139,22 +1144,22 @@ module Battle {
 
             if (rpc.user.magic > 1 && !summon)
                 if (rpc.sp < Magic.power(rpc, spell.cast)) {
-                    if (rpc === $.online)
-                        vt.outln(`You don't have enough power to cast that spell!`)
-                    return !rpc.confused
+                    if (rpc === $.online) vt.outln(`You don't have enough power to cast that spell!`)
+                    cb(rpc.confused)
+                    return
                 }
 
             //  some sensible ground rules to avoid known muling exploits, aka White Knights passing gas
             if (nme) {
                 if ([1, 2, 3, 4, 5, 6, 10].indexOf(spell.cast) >= 0) {
-                    if (rpc === $.online)
-                        vt.outln('You cannot cast that spell during a battle!')
-                    return !rpc.confused
+                    if (rpc === $.online) vt.outln('You cannot cast that spell during a battle!')
+                    cb(rpc.confused)
+                    return
                 }
                 if (nme.user.novice && [12, 15, 16, 20, 21, 22].indexOf(spell.cast) >= 0) {
-                    if (rpc === $.online)
-                        vt.outln('You cannot cast that spell on a novice player.')
-                    return !rpc.confused
+                    if (rpc === $.online) vt.outln('You cannot cast that spell on a novice player.')
+                    cb(rpc.confused)
+                    return
                 }
                 if (/Merchant|Naval|Tavern|Taxman/.test($.from) && [8, 12, 17, 18, 22].indexOf(spell.cast) >= 0) {
                     if (spell.cast == 8 && rpc === $.online) {
@@ -1166,7 +1171,8 @@ module Battle {
                             vt.sound('oops', 4)
                             vt.outln('You are too frantic to cast that spell!')
                         }
-                        return !rpc.confused
+                        cb(rpc.confused)
+                        return
                     }
                 }
                 Recipient = p2.You
@@ -1174,9 +1180,9 @@ module Battle {
             }
             else {
                 if ([9, 11, 12, 14, 15, 16, 17, 18, 19, 20, 21, 22].indexOf(spell.cast) >= 0) {
-                    if (rpc === $.online)
-                        vt.outln('You cannot cast that spell on yourself!')
-                    return !rpc.confused
+                    if (rpc === $.online) vt.outln('You cannot cast that spell on yourself!')
+                    cb(rpc.confused)
+                    return
                 }
             }
 
@@ -1234,7 +1240,8 @@ module Battle {
                         vt.out('   ', p2.his, vt.bright, vt.cyan, mod.name, vt.normal, -100)
                         if ($.player.emulation == 'XT' && nme.user.sex !== 'I') vt.out(' ', Ring.name[mod.name].emoji, ' 💍')
                         vt.outln(nme.user.sex == 'I' ? ' power' : ' ring', vt.reset, '!', vt.faint, ' <<')
-                        return true
+                        cb(true)
+                        return
                     }
                     else {
                         vt.out(vt.magenta, vt.faint, '>> ', vt.normal, p1.His, vt.bright, Ring.theOne, vt.normal, ' ring ', -300
@@ -1249,13 +1256,16 @@ module Battle {
 
             if (dice(100) > Magic.ability(name, rpc, nme).fail) {
                 if ((backfire = dice(100) > Magic.ability(name, rpc, nme).backfire)) {
-                    vt.outln('Oops!  ', p1.His, ['try', 'wand', 'scroll', 'spell', 'magic'][rpc.user.magic], ' backfires!')
+                    vt.out('Oops! ')
                     vt.sound('oops', 4)
+                    vt.outln(' ', p1.His, ['try', 'wand', 'scroll', 'spell', 'magic'][rpc.user.magic], ' backfires!')
                 }
                 else {
-                    vt.outln('Fssst!  ', p1.His, 'attempt fails!')
+                    vt.out('Fssst! ')
                     vt.sound('fssst', 4)
-                    return true
+                    vt.outln(' ', p1.His, 'attempt fails!')
+                    cb(true)
+                    return
                 }
             }
 
@@ -1940,6 +1950,7 @@ module Battle {
                     rpc.altered = true
                     break
             }
+            cb(true)
         }
     }
 

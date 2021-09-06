@@ -428,8 +428,8 @@ module Dungeon {
 
             case 'C':
                 Battle.retreat = false
-                Battle.cast($.online, undefined, undefined, dungeon.level)
-                break
+                Battle.cast(menu, $.online, undefined, undefined, dungeon.level)
+                return
 
             case 'P':
                 Battle.poison($.online, menu)

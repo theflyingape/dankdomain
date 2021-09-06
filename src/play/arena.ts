@@ -62,8 +62,8 @@ module Arena {
         switch (choice) {
             case 'C':
                 if (!$.access.roleplay) break
-                suppress = Battle.cast()
-                break
+                Battle.cast(menu)
+                return
 
             case 'G':
                 vt.action('clear')
