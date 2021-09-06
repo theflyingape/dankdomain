@@ -5,7 +5,7 @@ After=local-fs.target network-online.target
 [Service]
 Type=simple
 User=nobody
-WorkingDirectory=/usr/local/games/dankdomain
+WorkingDirectory=/usr/games/dankdomain
 Environment=TERM=xterm-256color
 ExecStart=/usr/bin/node game/portal/app
 KillMode=process
