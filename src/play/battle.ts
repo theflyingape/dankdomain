@@ -26,7 +26,7 @@ module Battle {
     }
     let alive: number[]
     let parties: [active[], active[]]
-    let round: { party: number, member: number, react: number }[]
+    let round: { party: number, member: number, react: number }[] = []
     let p1: who, p2: who
 
     //  start a new battle engagement:
@@ -1270,8 +1270,7 @@ module Battle {
             }
 
             if (spell.cast < 17 && round.length > 1 && round[0].party)
-                if (alive[1] > 1)
-                    vt.out(vt.faint, vt.Empty, vt.normal, ' ')
+                if (alive[1] > 1) vt.out(vt.faint, vt.Empty, vt.normal, ' ')
 
             switch (spell.cast) {
                 case 1:
