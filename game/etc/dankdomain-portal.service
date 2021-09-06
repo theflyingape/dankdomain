@@ -1,6 +1,8 @@
 [Unit]
 Description=Ɗaɳƙ Ɗoɱaiɳ portal service
 After=local-fs.target network-online.target
+StartLimitBurst=3
+StartLimitIntervalSec=2m
 
 [Service]
 Type=simple
@@ -11,8 +13,6 @@ ExecStart=/usr/bin/node game/portal/app
 KillMode=process
 Restart=on-failure
 RestartSec=2s
-StartLimitIntervalSec=120
-StartLimitBurst=3
 SyslogIdentifier=DDnet
 TasksMax=200
 
