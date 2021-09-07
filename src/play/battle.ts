@@ -449,9 +449,10 @@ module Battle {
 
                 if (mm)
                     cast(next, rpc, enemy, mm)
-                else
+                else {
                     melee(rpc, enemy)
-                next()
+                    next()
+                }
             }
         }
 
@@ -996,7 +997,7 @@ module Battle {
     export function brawl(rpc: active, nme: active, vs = false) {
         const p1 = PC.who(rpc, vs), p2 = PC.who(nme, vs)
         if (dice(100) >= (50 + int(rpc.dex / 2))) {
-            vt.sound(rpc.user.id == $.player.id ? 'whoosh' : 'swoosh')
+            vt.sound(rpc === $.online ? 'whoosh' : 'swoosh')
             vt.outln(`\n${p2.He}${PC.what(nme, 'duck')}${p1.his}punch.`, -400)
             let patron = PC.encounter()
             if (patron.user.id && patron.user.id !== rpc.user.id && patron.user.id !== nme.user.id && !patron.user.status) {
@@ -1026,10 +1027,10 @@ module Battle {
             db.run(`UPDATE Players SET tw=tw+1,xp=xp+${xp},coin=coin+${loser.user.coin.value} WHERE id='${winner.user.id}'`)
             db.run(`UPDATE Players SET tl=tl+1,coin=0 WHERE id='${loser.user.id}'`)
 
-            vt.outln('\n', winner.user.id == $.player.id ? 'You' : winner.user.handle
+            vt.outln('\n', winner === $.online ? 'You' : winner.user.handle
                 , ` ${PC.what(winner, 'knock')}${loser.who.him}out!`, -600)
             if (xp) {
-                vt.outln(`\n${winner.who.He}${PC.what(winner, 'get')}`, PC.expout(xp, winner.user.id == $.player.id), -600)
+                vt.outln(`\n${winner.who.He}${PC.what(winner, 'get')}`, PC.expout(xp, winner === $.online), -600)
                 winner.user.xp += xp
             }
             if (loser.user.coin.value) {
@@ -1040,7 +1041,7 @@ module Battle {
             winner.user.tw++
 
             loser.user.tl++
-            if (loser.user.id == $.player.id) {
+            if (loser === $.online) {
                 vt.sound('ko')
                 let m = Math.abs($.online.bp)
                 while (m > 9)
@@ -1083,7 +1084,8 @@ module Battle {
         if (!tricks.length) {
             vt.outln('\n', rpc === $.online ? `\nYou don't have any magic.`
                 : `?cast() failure :: ${rpc.user.level} ${rpc.user.pc} ${rpc.user.handle} ${rpc.user.magic} ${rpc.sp} ${rpc.user.spells}`)
-            cb(false)
+            vt.beep(true)
+            cb(true)
             return
         }
 
@@ -1096,7 +1098,7 @@ module Battle {
                         vt.outln()
                         const n = uint(vt.entry)
                         if (vt.entry !== '?' && !n) {
-                            cb(false)
+                            cb(true)
                             return
                         }
 
@@ -1140,7 +1142,7 @@ module Battle {
             let Recipient = ''
             let recipient = ''
             let spell = Magic.spells[name]
-            if (rpc.user.id !== $.player.id) vt.sleep(150)
+            if (rpc !== $.online) vt.sleep(150)
 
             if (rpc.user.magic > 1 && !summon)
                 if (rpc.sp < Magic.power(rpc, spell.cast)) {
@@ -1240,7 +1242,7 @@ module Battle {
                         vt.out('   ', p2.his, vt.bright, vt.cyan, mod.name, vt.normal, -100)
                         if ($.player.emulation == 'XT' && nme.user.sex !== 'I') vt.out(' ', Ring.name[mod.name].emoji, ' 💍')
                         vt.outln(nme.user.sex == 'I' ? ' power' : ' ring', vt.reset, '!', vt.faint, ' <<')
-                        cb(true)
+                        cb(false)
                         return
                     }
                     else {
@@ -1257,14 +1259,14 @@ module Battle {
             if (dice(100) > Magic.ability(name, rpc, nme).fail) {
                 if ((backfire = dice(100) > Magic.ability(name, rpc, nme).backfire)) {
                     vt.out('Oops! ')
-                    vt.sound('oops', 4)
-                    vt.outln(' ', p1.His, ['try', 'wand', 'scroll', 'spell', 'magic'][rpc.user.magic], ' backfires!')
+                    vt.sound('oops')
+                    vt.outln(' ', p1.His, ['try', 'wand', 'scroll', 'spell', 'magic'][rpc.user.magic], ' backfires!', -200)
                 }
                 else {
                     vt.out('Fssst! ')
-                    vt.sound('fssst', 4)
-                    vt.outln(' ', p1.His, 'attempt fails!')
-                    cb(true)
+                    vt.sound('fssst')
+                    vt.outln(' ', p1.His, 'attempt fails!', -200)
+                    cb(false)
                     return
                 }
             }
@@ -1394,8 +1396,7 @@ module Battle {
                         if (rpc.hp < 1) {
                             vt.outln()
                             rpc.hp = 0
-                            if (rpc === $.online)
-                                $.reason = 'heal backfired'
+                            if (rpc === $.online) $.reason = 'heal backfired'
                         }
                     }
                     else {
@@ -1516,20 +1517,18 @@ module Battle {
                     }
                     else {
                         vt.sound('resurrect')
-                        if (DL) {
-                            if (DL.cleric.user.status) {
-                                vt.music('winner')
-                                vt.profile({ jpg: 'npc/resurrect', effect: 'fadeInUp' })
-                                DL.cleric.user.status = ''
-                                PC.activate(DL.cleric)
-                                PC.adjust('cha', 104, 2, 1)
-                                vt.outln(-200, vt.faint, 'You raise ', -300, 'the ', vt.yellow, DL.cleric.user.handle, vt.reset, -400, ' from the dead!', -500)
-                                return true
-                            }
+                        if (DL && DL.cleric.user.status) {
+                            vt.music('winner')
+                            vt.profile({ jpg: 'npc/resurrect', effect: 'fadeInUp' })
+                            DL.cleric.user.status = ''
+                            PC.activate(DL.cleric)
+                            PC.adjust('cha', 104, 2, 1)
+                            vt.outln(-200, vt.faint, 'You raise ', -300, 'the ', vt.yellow, DL.cleric.user.handle, vt.reset, -400, ' from the dead!', -500)
+                            break
                         }
                         user('Resurrect', (opponent: active) => {
-                            if (opponent.user.id == $.player.id || opponent.user.status == '' || opponent.user.id == '') {
-                                vt.outln(vt.bright, vt.black, '\nGo get some coffee.')
+                            if (opponent === $.online || opponent.user.status == '' || opponent.user.id == '') {
+                                vt.outln(vt.black, vt.bright, '\nGo have some coffee.')
                             }
                             else {
                                 PC.portrait(opponent, 'fadeInUpBig')
@@ -1540,8 +1539,9 @@ module Battle {
                                 log(opponent.user.id, `\n${$.player.handle} resurrected you`)
                                 vt.outln()
                             }
+                            cb(false)
                         })
-                        return true
+                        return
                     }
 
                 case 11:
@@ -1805,8 +1805,7 @@ module Battle {
                     break
 
                 case 20:
-                    if (nme.user.magic < 2)
-                        return false
+                    if (nme.user.magic < 2) break
 
                     vt.out(vt.cyan, 'A glowing ', vt.faint
                         , '   ', vt.LGradient, vt.RGradient, '\b'.repeat(11), -450)
@@ -1949,7 +1948,7 @@ module Battle {
                     rpc.altered = true
                     break
             }
-            cb(true)
+            cb(false)
         }
     }
 
@@ -2110,7 +2109,7 @@ module Battle {
     }
 
     export function poison(rpc: active, cb?: Function) {
-        if (rpc.user.id == $.player.id) {
+        if (rpc == $.online) {
             if (!$.player.poisons.length) {
                 vt.outln(`\nYou don't have any poisons.`)
                 vt.beep()
@@ -2127,7 +2126,7 @@ module Battle {
                             cb()
                             return
                         }
-                        if (!Poison.have(rpc.user.poisons, int(vt.entry))) {
+                        if (!Poison.have(rpc.user.poisons, uint(vt.entry))) {
                             let okbyme = 0
                             for (let i in $.player.poisons) {
                                 let skill = $.player.poison || 1
@@ -2168,8 +2167,8 @@ module Battle {
                             }
                         }
                         else
-                            apply(rpc, int(vt.entry))
-                        cb(true)
+                            apply(rpc, uint(vt.entry))
+                        cb(false)
                         return
                     }, prompt: ['Try vial', 'Make toxic', 'Apply poison', 'Use bane', 'Uti venenum'][$.player.poison] + ' (?=list): ', max: 3
                 }
@@ -2216,10 +2215,9 @@ module Battle {
                         Weapon.equip(rpc, Weapon.merchant[0])
                     }
                 }
-                if (rpc.user.id !== $.player.id || (dice(skill) == 1 && dice(105 - rpc.cha) > 1)) {
+                if (rpc !== $.online || (dice(skill) == 1 && dice(105 - rpc.cha) > 1)) {
                     Poison.remove(rpc.user.poisons, vial)
-                    if (rpc.user.id == $.player.id)
-                        vt.outln('You toss the empty vial aside.', -400)
+                    if (rpc === $.online) vt.outln('You toss the empty vial aside.', -400)
                 }
             }
         }
@@ -2368,3 +2366,7 @@ module Battle {
 }
 
 export = Battle
+function beep() {
+    throw new Error('Function not implemented.')
+}
+

@@ -421,24 +421,25 @@ module Dungeon {
         vt.outln()
 
         switch (choice) {
-            case 'M':	//	#tbt
-                dungeon.level.map = `Marauder's map`
-                refresh = true
-                break
-
             case 'C':
                 Battle.retreat = false
                 Battle.cast(menu, $.online, undefined, undefined, dungeon.level)
                 return
 
-            case 'P':
-                Battle.poison($.online, menu)
-                return
+            case 'E':
+                if (X < dungeon.level.width - 1 && dungeon.level.rooms[Y][X].type !== 'n-s')
+                    if (dungeon.level.rooms[Y][X + 1].type !== 'n-s') {
+                        eraseHero($.player.blessed ? true : false)
+                        X++
+                        looked = false
+                        break
+                    }
+                oof('east')
+                break
 
-            case 'Y':
-                vt.outln()
-                Battle.yourstats(false)
-                vt.drain()
+            case 'M':	//	#tbt
+                dungeon.level.map = `Marauder's map`
+                refresh = true
                 break
 
             case 'N':
@@ -452,6 +453,10 @@ module Dungeon {
                 oof('north')
                 break
 
+            case 'P':
+                Battle.poison($.online, menu)
+                return
+
             case 'S':
                 if (Y < dungeon.level.rooms.length - 1 && dungeon.level.rooms[Y][X].type !== 'w-e')
                     if (dungeon.level.rooms[Y + 1][X].type !== 'w-e') {
@@ -463,17 +468,6 @@ module Dungeon {
                 oof('south')
                 break
 
-            case 'E':
-                if (X < dungeon.level.width - 1 && dungeon.level.rooms[Y][X].type !== 'n-s')
-                    if (dungeon.level.rooms[Y][X + 1].type !== 'n-s') {
-                        eraseHero($.player.blessed ? true : false)
-                        X++
-                        looked = false
-                        break
-                    }
-                oof('east')
-                break
-
             case 'W':
                 if (X > 0 && dungeon.level.rooms[Y][X].type !== 'n-s')
                     if (dungeon.level.rooms[Y][X - 1].type !== 'n-s') {
@@ -483,6 +477,12 @@ module Dungeon {
                         break
                     }
                 oof('west')
+                break
+
+            case 'Y':
+                vt.outln()
+                Battle.yourstats(false)
+                vt.drain()
                 break
         }
 
