@@ -1081,11 +1081,12 @@ module Battle {
                 Summons.splice(i, 1)
         })
 
+        //  should not happen
         if (!tricks.length) {
             vt.outln('\n', rpc === $.online ? `\nYou don't have any magic.`
                 : `?cast() failure :: ${rpc.user.level} ${rpc.user.pc} ${rpc.user.handle} ${rpc.user.magic} ${rpc.sp} ${rpc.user.spells}`)
             vt.beep(true)
-            cb(true)
+            cb()
             return
         }
 
@@ -1098,7 +1099,7 @@ module Battle {
                         vt.outln()
                         const n = uint(vt.entry)
                         if (vt.entry !== '?' && !n) {
-                            cb(true)
+                            cb(false)
                             return
                         }
 
@@ -1164,18 +1165,15 @@ module Battle {
                     return
                 }
                 if (/Merchant|Naval|Tavern|Taxman/.test($.from) && [8, 12, 17, 18, 22].indexOf(spell.cast) >= 0) {
-                    if (spell.cast == 8 && rpc === $.online) {
-                        vt.outln('You cannot cast that spell to retreat!')
-                        return !rpc.confused
-                    }
-                    if (spell.cast > 8) {
-                        if (rpc === $.online) {
-                            vt.sound('oops', 4)
+                    if (rpc === $.online) {
+                        vt.sound('oops', 4)
+                        if (spell.cast == 8)
+                            vt.outln('You cannot cast that spell to retreat!')
+                        else
                             vt.outln('You are too frantic to cast that spell!')
-                        }
-                        cb(rpc.confused)
-                        return
                     }
+                    cb(rpc.confused)
+                    return
                 }
                 Recipient = p2.You
                 recipient = p2.you
@@ -1242,7 +1240,7 @@ module Battle {
                         vt.out('   ', p2.his, vt.bright, vt.cyan, mod.name, vt.normal, -100)
                         if ($.player.emulation == 'XT' && nme.user.sex !== 'I') vt.out(' ', Ring.name[mod.name].emoji, ' 💍')
                         vt.outln(nme.user.sex == 'I' ? ' power' : ' ring', vt.reset, '!', vt.faint, ' <<')
-                        cb(false)
+                        cb()
                         return
                     }
                     else {
@@ -1266,7 +1264,7 @@ module Battle {
                     vt.out('Fssst! ')
                     vt.sound('fssst')
                     vt.outln(' ', p1.His, 'attempt fails!', -200)
-                    cb(false)
+                    cb()
                     return
                 }
             }
@@ -1539,7 +1537,7 @@ module Battle {
                                 log(opponent.user.id, `\n${$.player.handle} resurrected you`)
                                 vt.outln()
                             }
-                            cb(false)
+                            cb()
                         })
                         return
                     }
@@ -1948,7 +1946,7 @@ module Battle {
                     rpc.altered = true
                     break
             }
-            cb(false)
+            cb()
         }
     }
 
