@@ -182,7 +182,7 @@ module Tavern {
 
             case 'P':
                 if (!$.access.roleplay) break
-                if ($.player.coin.value < 1) {
+                if ($.player.coin.value < $.player.coin.COPPER) {
                     vt.outln(`\nYou'll need some cash to post a bounty.`)
                     suppress = true
                     break
@@ -319,6 +319,7 @@ module Tavern {
                 break
 
             case 'B':
+                if (!$.access.roleplay) break
                 if (!$.brawl) {
                     vt.outln('\nYou have run out of brawls.')
                     break

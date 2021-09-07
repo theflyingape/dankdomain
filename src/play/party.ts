@@ -481,7 +481,7 @@ module Party {
                                 if (g.members[i] !== $.player.id
                                     && (g.validated[i] || typeof g.validated[i] == 'undefined')
                                     && !g.status[i]) {
-                                    let n = posse.push(<active>{ user: { id: g.members[i] } }) - 1
+                                    let n = posse.push(g.members[i] == $.taxman.user.id ? $.taxman : <active>{ user: { id: g.members[i] } }) - 1
                                     PC.load(posse[n])
                                     if (posse[n].user.gang !== g.name || posse[n].user.status)
                                         posse.pop()

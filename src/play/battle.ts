@@ -607,7 +607,7 @@ module Battle {
 
                 //  taxman takes any leftovers, but capped at 1p
                 if (coin.value > coin.PLATINUM) coin.value = coin.PLATINUM
-                if (coin.value) {
+                if (coin.value && $.taxman.hp > 0) {
                     vt.outln()
                     vt.beep()
                     db.run(`UPDATE Players set bank=bank+${coin.value} WHERE id='${$.taxman.user.id}'`)

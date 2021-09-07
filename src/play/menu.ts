@@ -98,6 +98,7 @@ module Main {
                 return
 
             case 'D':
+                if (!$.access.roleplay) break
                 if ($.dungeon) {
                     vt.music()
                     PC.portrait($.online, 'backOutDown')
