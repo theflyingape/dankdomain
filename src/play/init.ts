@@ -446,15 +446,18 @@ module Init {
                     vt.cls()
                     vt.outln(vt.blue, '--=:))', vt.LGradient
                         , vt.Blue, vt.cyan, vt.bright, 'Announcement', vt.reset
-                        , vt.blue, vt.RGradient, '((:=--\n')
+                        , vt.blue, vt.RGradient, '((:=--')
                     cat('announcement')
+
+                    vt.outln()
                     if ($.access.sysop)
                         vt.focus = 'announce'
                     else {
-                        vt.outln('\n', vt.cyan, '--=:))', vt.LGradient
+                        vt.outln(vt.cyan, '--=:))', vt.LGradient
                             , vt.Cyan, vt.white, vt.bright, 'Auto Message', vt.reset
-                            , vt.cyan, vt.RGradient, '((:=--\n')
+                            , vt.cyan, vt.RGradient, '((:=--')
                         cat('user/auto-message')
+                        vt.outln()
                         input('auto', dice(1000) == 1 ? 'y' : 'n', 3000)
                     }
                 }, pause: true
@@ -468,10 +471,12 @@ module Init {
                         vt.focus = 'sysop'
                         return
                     }
-                    vt.outln('\n', vt.cyan, '--=:))', vt.LGradient
+                    vt.outln(vt.cyan, '--=:))', vt.LGradient
                         , vt.Cyan, vt.white, vt.bright, 'Auto Message', vt.reset
-                        , vt.cyan, vt.RGradient, '((:=--\n')
+                        , vt.cyan, vt.RGradient, '((:=--')
                     cat('user/auto-message')
+
+                    vt.outln()
                     input('auto')
                 }, prompt: 'Change (Y/N)? ', cancel: 'N', enter: 'N', eol: false, match: /Y|N/i
             },
@@ -482,10 +487,12 @@ module Init {
                         vt.magenta, 'Date: ', vt.off, date2full($.player.lastdate), ' ', time($.player.lasttime) + '\n',
                         vt.magenta, 'From: ', vt.off, $.player.handle, '\n\n',
                         vt.bright, vt.entry))
-                    vt.outln('\n', vt.cyan, '--=:))', vt.LGradient
+                    vt.outln(vt.cyan, '--=:))', vt.LGradient
                         , vt.Cyan, vt.white, vt.bright, 'Auto Message', vt.reset
-                        , vt.cyan, vt.RGradient, '((:=--\n')
+                        , vt.cyan, vt.RGradient, '((:=--')
                     cat('user/auto-message')
+
+                    vt.outln()
                     vt.action('ny')
                     vt.focus = 'auto'
                 }, prompt: 'Enter your new announcement', lines: 12

@@ -2123,7 +2123,7 @@ module Battle {
                     cb: () => {
                         vt.outln()
                         if (vt.entry == '') {
-                            cb()
+                            cb(true)
                             return
                         }
                         if (!Poison.have(rpc.user.poisons, uint(vt.entry))) {
@@ -2168,7 +2168,7 @@ module Battle {
                         }
                         else
                             apply(rpc, uint(vt.entry))
-                        cb(false)
+                        cb(true)
                         return
                     }, prompt: ['Try vial', 'Make toxic', 'Apply poison', 'Use bane', 'Uti venenum'][$.player.poison] + ' (?=list): ', max: 3
                 }

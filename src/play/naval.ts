@@ -10,7 +10,7 @@ import { armor, bracket, carry, cat, death, display, log, news, tradein, vt, wea
 import { PC } from '../pc'
 import { elemental, naval } from '../npc'
 import { checkXP, input } from '../player'
-import { an, dice, int, sprintf, uint } from '../sys'
+import { an, dice, int, sprintf, uint, whole } from '../sys'
 import Battle = require('./battle')
 
 module Naval {
@@ -214,9 +214,9 @@ module Naval {
                     vt.outln('n oyster and you eat it.')
                     vt.sleep(600)
                     cap = PC.money($.player.level)
-                    n = BigInt(Math.round(Math.pow(2., $.player.hull / 150.) * 7937))
-                    n /= BigInt($.player.hull / 10 * dice($.online.hull))
-                    n *= BigInt(($.player.cannon + 1) / ($.player.hull / 50))
+                    n = whole(Math.round(Math.pow(2., $.player.hull / 150.) * 7937))
+                    n /= whole($.player.hull / 10 * dice($.online.hull))
+                    n *= whole(($.player.cannon + 1) / ($.player.hull / 50))
                     n = tradein(n)
                     if (n > cap) n = cap
                     vt.sound('oof')
@@ -228,9 +228,9 @@ module Naval {
                     vt.outln('n oyster and you eat it.')
                     vt.sleep(600)
                     cap = 3n * PC.money($.player.level)
-                    n = BigInt(Math.round(Math.pow(2., $.player.hull / 150.) * 7937))
-                    n /= BigInt($.player.hull * dice($.online.hull))
-                    n *= BigInt(($.player.cannon + 1) / ($.player.hull / 50))
+                    n = whole(Math.round(Math.pow(2., $.player.hull / 150.) * 7937))
+                    n /= whole($.player.hull * dice($.online.hull))
+                    n *= whole(($.player.cannon + 1) / ($.player.hull / 50))
                     n = tradein(n)
                     if (n > cap) n = cap
                     vt.sound('oof')
