@@ -86,7 +86,7 @@
         "calls": 3,
         "minutes": 23,
         "promote": 50,
-        "message": "You look fine with your ${armor()}.",
+        "message": "You look fine with your ${a()}.",
         "verify": false,
         "roleplay": true,
         "emoji": "🌸"
@@ -96,7 +96,7 @@
         "calls": 3,
         "minutes": 23,
         "promote": 50,
-        "message": "You look battle-ready with your ${weapon()}.",
+        "message": "You look battle-ready with your ${w()}.",
         "verify": false,
         "roleplay": true,
         "emoji": "🏳️"

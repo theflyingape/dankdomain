@@ -6,7 +6,7 @@
 import $ = require('./play/runtime')
 import db = require('./db')
 import { Access, Coin } from './items'
-import { bracket, buff, cat, news, prompt, time, vt, weapon } from './lib'
+import { armor, bracket, buff, cat, news, prompt, time, vt, weapon } from './lib'
 import { Deed, PC } from './pc'
 import { elemental } from './npc'
 import { an, date2full, dice, fs, int, now, pathTo, sprintf } from './sys'
@@ -76,10 +76,11 @@ module Player {
                     , `and ${PC.who($.ruler).he}promotes you to`, vt.bright, an(rpc.user.access), vt.normal, '!', -2000)
                 //  celebrate
                 vt.sound('winner')
+                const a = armor, w = weapon
                 let nme = PC.encounter(`AND id NOT GLOB '_*' AND id != '${$.ruler.id}'`)
                 vt.outln(`The mob goes crazy`, -300, nme.user.id
-                    ? `, except for ${nme.user.handle} seen buffing ${nme.who.his}${weapon(nme)}`
-                    : '!', -200, '!')
+                    ? `, except for ${nme.user.handle} seen buffing ${nme.who.his}${w(nme)}`
+                    : '!', -200, '!', -100)
                 if (Access.name[rpc.user.access].message)
                     vt.outln(vt.yellow, `${PC.who($.ruler).He}whispers, `, vt.reset, vt.faint, `"${eval('`' + Access.name[rpc.user.access].message + '`')}"`, -2000)
                 vt.outln([`${$.taxman.user.handle} nods an approval.`, `${$.barkeep.user.handle} slaughters a pig for tonight's feast.`, `${$.ruler.handle} gives you a hug.`, `${Access.name[$.ruler.access][$.ruler.sex]}'s guard salute you.`, `${$.ruler.handle} orders ${PC.who($.ruler).his}Executioner to hang ${$.player.level} prisoners in your honor.`][dice(5, 0)], -2000)
@@ -105,7 +106,7 @@ module Player {
                     rpc.user.expert = true
                     rpc.user.novice = false
                     rpc.user.rings = []
-                    vt.outln(vt.cyan, vt.bright, 'You are no longer a novice.  Welcome to the next level of play!')
+                    vt.outln(vt.cyan, 'You are no longer a novice. ', -600, vt.bright, ' Welcome to the next level of play!')
                     vt.sound('welcome', 12)
                     vt.outln('You morph into', vt.yellow, an(rpc.user.pc), vt.reset, '.')
                     vt.sound('cheer', 30)
@@ -140,7 +141,7 @@ module Player {
         vt.outln('      ', vt.magenta, '-=', vt.blue, '>', vt.bright, vt.yellow, '*', vt.normal
             , vt.blue, '<', vt.magenta, '=-', -125)
         vt.outln(-125)
-        vt.outln(vt.bright, vt.yellow, 'Welcome to level ', $.player.level.toString(), '!', -125)
+        vt.outln(vt.yellow, vt.bright, 'Welcome to level ', $.player.level.toString(), '!', -125)
         vt.outln(-125)
         vt.wall($.player.handle, `is now a level ${$.player.level} ${$.player.pc}`)
 
