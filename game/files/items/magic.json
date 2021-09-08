@@ -17,7 +17,7 @@
     "Morph": { "cast":16, "mana":7500, "enchanted":7000 },
     "Armor Rusting": { "cast":17, "mana":75, "enchanted":50 },
     "Weapon Decay": { "cast":18, "mana":100, "enchanted":75 },
-    "Big Blast": { "cast":19, "mana":400, "enchanted":250 },
+    "Big Blast": { "cast":19, "mana":400, "enchanted":300 },
     "Mana Stealing": { "cast":20, "mana":500, "enchanted":400 },
     "Life Stealing": { "cast":21, "mana":600, "enchanted":500 },
     "Level Stealing": { "cast":22, "mana":750, "enchanted":600 },

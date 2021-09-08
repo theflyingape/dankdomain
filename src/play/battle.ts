@@ -1457,7 +1457,7 @@ module Battle {
                         )
                     if (nme.user.melee > 3) ba *= int(nme.user.melee / 2)
                     let br = int(rpc.int / 10)
-                    while (dice(99 + rpc.user.magic) > 99) {
+                    while (dice(100, rpc.user.magic) > 99) {
                         ba += dice(rpc.user.magic)
                         for (let i = 0; i < ba; i++)
                             br += dice(ba)
@@ -1745,8 +1745,8 @@ module Battle {
                     break
 
                 case 19:
-                    vt.out('A ', vt.bright, vt.white, 'blinding flash', vt.normal, ' erupts... ')
-                    vt.sound('bigblast', 10)
+                    vt.out(vt.white, 'A ', vt.bright, 'blinding flash', vt.normal, ' erupts... ')
+                    vt.sound('bigblast', 9)
                     PC.adjust('int', -PC.card(rpc.user.pc).toInt, -1, 0, rpc)
                     let bba = 12 + rpc.user.blast
                         + int(rpc.user.level / (20 - rpc.user.magic))
@@ -1760,7 +1760,7 @@ module Battle {
                         bba += dice(rpc.user.magic)
                         for (let i = 0; i < bba; i++)
                             bbr += dice(bba)
-                    } while (dice(99 + rpc.user.magic) > 99)
+                    } while (dice(100, rpc.user.magic) > 99)
                     for (let i = 0; i < rpc.user.level; i++)
                         bbr += dice(bba)
 
