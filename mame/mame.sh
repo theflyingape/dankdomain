@@ -5,7 +5,6 @@
 # pty port into dankdomain ...
 
 # set this to override the default to my door
-DDGAME=localhost
 DDGAME=play.ddgame.us
 
 path=`dirname $0`; cd $path || exit 1
@@ -13,18 +12,14 @@ rpm -q mame > /dev/null || sudo dnf install mame
 rpm -q socat > /dev/null || sudo dnf install socat
 rpm -q telnet > /dev/null || sudo dnf install telnet
 
-declare -i PTS
-
-cd mame
 mame -inipath . vt240 -host pty &> /dev/null &
-cd - > /dev/null
 
 echo -e "  ****  Press a key to skip \x1B[7m WARNING \x1B[m message and \x1B[31m\x1B(0a\x1B(B Wait\x1B[m"
 sleep 5
 echo -e "  ****  After '\x1B[1mVT240 OK\x1B[m' shows, the terminal is ready (10-seconds)"
 sleep 10
 
-PTS=0
+declare -i PTS=0
 TTY=`ps -hq $$ -o tty`
 DEV=$( ls -lh /dev/pts/ | grep `whoami` | grep -ve .*${TTY#*/}$ )
 if [ -n "$DEV" ]; then

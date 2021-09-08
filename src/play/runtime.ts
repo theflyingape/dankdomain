@@ -55,7 +55,7 @@ module runtime {
     export let remote = process.env.REMOTEHOST || process.env.SSH_CLIENT || ''
     export let whereis: string
 
-    Object.assign(runtime, JSON.parse(fs.readFileSync(pathTo('etc', 'play.json'))))
+    Object.assign(runtime, JSON.parse(fs.readFileSync(pathTo('play', 'runtime.json'))))
     savegame()
 
     export function savegame(update = false) {

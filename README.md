@@ -147,7 +147,7 @@ game
     casino        menu files
     dungeon       ASCII art
     items         game artifacts
-    library       menu files
+    library       deeds & menu files
     main          about system & menu files
     naval         ASCII art & menu files
     party         instruction & menu files
@@ -157,32 +157,32 @@ game
     user          each player’s events logged since last visit
   pcs             user object type templates for BOTs, NPCs, and PCs
   play            game modules for each main menu item
-  portal          DDnet app.js server with browser client.js
-    static        game portal with browser bundle.js
-    assets        app install, fonts, etc.
-    images        visual media for artifacts, creatures, and players
-    sounds        audio media for event notifications
+    battle.js     support module for player engagements
+    init.js       support module for initial login
+    sysop.js      support module for the system operator - main menu "@" command
+  portal
+    static        UI html/css/js using bundle.js: client.js & xterm.js
+      assets      app install, fonts, etc.
+      images      visual media for artifacts, creatures, and players
+      sounds      audio media for event notifications
+    app.js        DDnet for optional web and/or telnet services to run DDplay remotely
   users           player runtime database & current game files
-mame              MAME support files
+  db.js           net & play module for player runtime database & files
+  email.js        support module for (optional) dispatching email notifications
+  interfaces.js   TypeScript object types
+  items.js        support module for loading item artifacts & coin
+  lib.js          support module for common I/O functions
+  main.js         DDplay client node
+  npc.js          support classes for BOTs & NPCs with arena, dungeon, and naval denizens
+  pc.js           support classes for PCs with Deeds
+  player.js       support module for common PC functions
+  runtime.js      global runtime variables to govern play
+  sys.js          support module with discrete functions to dependencies
+  telnet.js       telnet client using websocket and XT emulator handling
+  types.js        TypeScript template literals
+mame              player - MAME VT240 terminal + socat startup script
 node_modules      Node.js support libraries
 package.json      Node.js manifest
-battle.js         support module for player engagements
-db.js             net & play module for player runtime database & files
-email.js          support module for (optional) dispatching email notifications
-interfaces.js     TypeScript object types
-items.js          support module for loading item artifacts & coin
-lib.js            support module for common I/O functions
-main.js           DDplay client node
-pc.js             support classes for BOTs, NPCs and PCs with Deeds
-player.js         support module for common PC functions
-runtime.js        global runtime variables to govern play
-sys.js            support module with discrete functions to dependencies
-telnet.js         telnet client using websocket and XT emulator handling
-types.js          TypeScript template literals
-door-startup.sh   web services - systemctl startup script
-logins.sh         player - startup script into game app
-mame.sh           player - MAME VT240 terminal + socat startup script
-tty.sh            player - telnet.js wrapper
 ```
 
 **NOTE**: _in_ **`users`** _folder, edit a hidden (dot) export file and save as_ **`save.json`** _whereas a running DDnet_ **`app.js`** _portal service will automatically consume and apply it to the dankdomain.sql_ **`Players`** _table._
