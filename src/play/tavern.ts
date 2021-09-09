@@ -80,7 +80,7 @@ module Tavern {
                                 $.argue--
                             }
                             menu()
-                        }, prompt: 'Enter your argument', lines: 6, timeout: 600
+                        }, prompt: 'Enter your argument', lines: $.player.novice ? 2 : 6, timeout: 600
                     }
                 }
                 input('argue', '')

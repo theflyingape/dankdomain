@@ -99,20 +99,23 @@ module Player {
 
             if (eligible && rpc.user.level == $.sysop.skill) {
                 bonus = true
-                vt.music()
-                if (rpc.user.novice) {
-                    PC.portrait()
-                    rpc.altered = true
-                    rpc.user = PC.reroll(rpc.user, $.sysop.pc, rpc.user.level)
-                    rpc.user.expert = true
-                    rpc.user.novice = false
-                    vt.outln(vt.cyan, 'You are no longer a novice. ', -600, vt.bright, ' Welcome to the next level of play!')
-                    vt.sound('welcome', 12)
-                    vt.outln('You morph into', vt.yellow, an(rpc.user.pc), vt.reset, '.')
-                    vt.sound('cheer', 30)
+                if (rpc == $.online) {
+                    vt.music()
+                    if (rpc.user.novice) {
+                        $.online.altered = true
+                        $.player = PC.reroll($.player, $.sysop.pc, rpc.user.level)
+                        $.player.expert = true
+                        $.player.novice = false
+                        PC.activate()
+                        vt.outln()
+                        vt.outln(vt.cyan, 'You are no longer a novice. ', -600, vt.bright, ' Welcome to the next level of play!')
+                        vt.sound('welcome', 12)
+                        vt.outln('You morph into', vt.yellow, an(rpc.user.pc), vt.reset, '.')
+                        vt.sound('cheer', 30)
+                    }
+                    vt.sound('demon', 18)
+                    break
                 }
-                vt.sound('demon', 18)
-                break
             }
         }
 
