@@ -102,10 +102,10 @@ module Player {
                 vt.music()
                 if (rpc.user.novice) {
                     PC.portrait()
+                    rpc.altered = true
                     rpc.user = PC.reroll(rpc.user, $.sysop.pc, rpc.user.level)
                     rpc.user.expert = true
                     rpc.user.novice = false
-                    rpc.user.rings = []
                     vt.outln(vt.cyan, 'You are no longer a novice. ', -600, vt.bright, ' Welcome to the next level of play!')
                     vt.sound('welcome', 12)
                     vt.outln('You morph into', vt.yellow, an(rpc.user.pc), vt.reset, '.')
@@ -132,7 +132,7 @@ module Player {
         PC.adjust('dex', (award.dex < 1) ? $.jumped : award.dex, 0, 0, rpc)
         PC.adjust('cha', (award.cha < 1) ? $.jumped : award.cha, 0, 0, rpc)
 
-        if (rpc != $.online) return false
+        if (rpc !== $.online) return false
 
         vt.sound('level')
         $.access = Access.name[$.player.access]
@@ -171,6 +171,7 @@ module Player {
                 return true
             }
             $.player.xplevel = $.player.level
+            PC.save()
         }
         else {
             riddle()

@@ -10,6 +10,7 @@
 * 🇺🇸 **Never** Forget. *The North remembers.* 🐺
 * 📦 latest package [dependencies](https://github.com/theflyingape/dankdomain#nodejs-dependency-tree) tested with Node.js `v16.8` and TypeScript `v4.4.2`
 * 👍 improved UI `client` compatibility for modern browsers
+* xterm.js `v4.14` configured to use its [WebGL](https://get.webgl.org/) renderer
 * 👨‍💻 major code & data refactoring for CI/CD with overall improvements to ease startup installations
 * 📋 `sysop` config moved into `etc/play.json` and current `game` state in `users/game.json` files
 * 📖 separated each character class out of the dankdomain config to allow for reroll templating of startup values, i.e., assign differing assets like weapon, spells, etc, which also expands the rules of engagement with each NPC
