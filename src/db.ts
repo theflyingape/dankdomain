@@ -80,7 +80,7 @@ module db {
             retreats numeric, steals numeric, tl numeric, tw numeric)`)
     }
 
-    const INIT: user = require(pathTo('pcs', 'defaults.json'))    //  inject user default values
+    export const INIT: user = require(pathTo('pcs', 'defaults.json'))    //  inject user default values
 
     //  apply an external template file on a PC
     export function fillUser(template?: string, user = INIT): user {

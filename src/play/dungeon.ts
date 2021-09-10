@@ -12,6 +12,7 @@ import { dungeon } from '../npc'
 import { checkXP, input, skillplus } from '../player'
 import { an, dice, int, romanize, sprintf, uint, whole } from '../sys'
 import Battle = require('./battle')
+import pc = require('../pc')
 
 module Dungeon {
 
@@ -2764,6 +2765,7 @@ module Dungeon {
         m.monster = dm
         m.effect = dm.effect || 'pulse'
         m.user = PC.reroll(m.user, dm.pc ? dm.pc : $.player.pc, n)
+        if (dm.pc == db.INIT.pc) m.user.xplevel = db.INIT.xplevel
         if (m.user.xplevel) m.user.xplevel = level
         if (!dm.pc) m.user.steal = $.player.steal + 1
 
