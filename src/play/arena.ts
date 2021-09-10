@@ -435,7 +435,8 @@ module Arena {
                         if (/Y/i.test(vt.entry)) {
                             $.player.coin.value -= cost.value
                             $.online.altered = true
-                            vt.outln('As you hand him the money, ', -200, 'it disappears into thin air ... ', -1000, '\n')
+                            vt.outln('As you hand him the money, ', -300, 'it disappears into thin air ... ', -900)
+                            vt.outln()
 
                             monster = { user: db.fillUser('summoned demon') }
                             let l = $.player.level + 2
@@ -444,6 +445,10 @@ module Arena {
                             if ((monster.user.level = l + dice(7) - 4) > 99)
                                 monster.user.level = 99
                             cost.value += tradein(PC.money(monster.user.level))
+
+                            monster.user = PC.reroll(monster.user
+                                , (dice(($.online.int + $.online.cha) / 50) > 1) ? monster.user.pc : PC.random('monster')
+                                , monster.user.level)
 
                             let n = int(Weapon.merchant.length * $.player.level / 110)
                             n = n >= Weapon.merchant.length ? Weapon.merchant.length - 1 : n
@@ -454,10 +459,6 @@ module Arena {
                             n = n >= Armor.merchant.length ? Armor.merchant.length - 1 : n
                             monster.user.armor = n + 2
                             cost.value += tradein(new Coin(Armor.name[Armor.merchant[n]].value).value)
-
-                            monster.user = PC.reroll(monster.user
-                                , (dice(($.online.int + $.online.cha) / 50) > 1) ? monster.user.pc : PC.random('monster')
-                                , monster.user.level)
 
                             monster.user.spells = [7, 9]
                             if (monster.user.magic) {
