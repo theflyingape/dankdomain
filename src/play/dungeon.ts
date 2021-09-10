@@ -1441,8 +1441,8 @@ module Dungeon {
                     if (ac) {
                         let cv = new Coin(Armor.name[$.player.armor].value)
                         credit.value = tradein(cv.value, $.online.cha)
-                        if ($.player.toAC) credit.value = whole(credit.value * (ac + $.player.toAC / ($.player.poison + 1)) / ac)
-                        if ($.online.toAC < 0) credit.value = whole(credit.value * (ac + $.online.toAC) / ac)
+                        if ($.player.toAC) credit.value = credit.value * whole((ac + $.player.toAC / ($.player.poison + 1)) / ac)
+                        if ($.online.toAC < 0) credit.value = credit.value * whole((ac + $.online.toAC) / ac)
                         if (credit.value > cv.value)
                             credit.value = cv.value
                     }
@@ -1470,8 +1470,8 @@ module Dungeon {
                     if (wc) {
                         let cv = new Coin(Weapon.name[$.player.weapon].value)
                         credit.value = tradein(cv.value, $.online.cha)
-                        if ($.player.toWC) credit.value = whole(credit.value * (wc + $.player.toWC / ($.player.poison + 1)) / wc)
-                        if ($.online.toWC < 0) credit.value = whole(credit.value * (wc + $.online.toWC) / wc)
+                        if ($.player.toWC) credit.value = credit.value * whole((wc + $.player.toWC / ($.player.poison + 1)) / wc)
+                        if ($.online.toWC < 0) credit.value = credit.value * whole((wc + $.online.toWC) / wc)
                         if (credit.value > cv.value)
                             credit.value = cv.value
                     }
