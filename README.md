@@ -159,6 +159,7 @@ game
   play            game modules for each main menu item
     battle.js     support module for player engagements
     init.js       support module for initial login
+    runtime.json  game play runtime values
     sysop.js      support module for the system operator - main menu "@" command
   portal
     static        UI html/css/js using bundle.js: client.js & xterm.js

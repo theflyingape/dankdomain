@@ -728,7 +728,7 @@ module Player {
         PC.portrait($.online, 'tada')
         vt.outln()
 
-        //  should never occur
+        //  should never occur, but ...
         if ($.player.novice) {
             $.player.novice = false
             $.player.expert = true
@@ -798,8 +798,8 @@ module Player {
         else
             bonus = 2
 
+        //  sigh
         if ($.player.coward) {
-            $.player.coward = false
             vt.out('Welcome back to play with the rest of us ... ')
             if (bonus) {
                 bonus--
@@ -814,14 +814,18 @@ module Player {
         db.run(`UPDATE Players SET bank=bank+${$.player.bank.value + $.player.coin.value} WHERE id='${$.taxman.user.id}'`)
         vt.outln(vt.cyan, '    and you leave your worldly possessions behind.', -2000)
 
+        //  reset PC now, but preserve any prior key hints
+        let keyhints = $.player.keyhints
         let max = Object.keys(PC.name['immortal']).indexOf($.player.pc) + 1
-        if (max || $.player.keyhints.slice(12).length > int(Object.keys(PC.name['player']).length / 2))
-            $.player.keyhints.splice(12, 1)
+        if (max || keyhints.slice(12).length > int(Object.keys(PC.name['player']).length / 2))
+            keyhints.splice(12, 1)
         else
-            $.player.keyhints.push($.player.pc)
-
+            keyhints.push($.player.pc)
         $.player = PC.reroll($.player)
+        $.player.keyhints = keyhints
         PC.save()
+
+        //  gratuitous
         vt.sessionAllowed += 300
         $.warning = 2
 
@@ -872,7 +876,6 @@ module Player {
                 user = { id: rs[row].id }
                 if (PC.load(user)) {
                     user = PC.reroll(user)
-                    user.keyhints.splice(12)
                     PC.save(user)
                     fs.unlink(pathTo('users', '.${user.id}.json'), () => { })
                     vt.out(Access.name[user.access].bot ? '&' : '.', -10)

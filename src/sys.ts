@@ -143,15 +143,15 @@ module sys {
     }
 
     //  normalize to a non-negative integer as a general numeric
-    export function uint(n: any): number {
+    export function uint(n: any, min = 0): number {
         let result = int(n)
-        return result > 0 ? result : 0
+        return result > min ? result : min
     }
 
     //  normalize to a whole number as an arbitrarily large integer
-    export function whole(n: any): bigint {
+    export function whole(n: any, min = 0n): bigint {
         let result = (typeof n == 'bigint') ? n : BigInt(Math.trunc(+n || 0).toString())
-        return result > 0n ? result : 0n
+        return result > min ? result : min
     }
 }
 

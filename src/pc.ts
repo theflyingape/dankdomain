@@ -480,8 +480,8 @@ module pc {
 
         //  morph or spawn or a user re-roll
         reroll(user: user, pc?: string, level = 1): user {
-            level = int(level)
-            level = level > 99 ? 99 : level < 1 ? 1 : level
+            level = uint(level, 1)
+            level = level > 99 ? 99 : level
             //  reset any prior experience
             user = db.fillUser('reset', user)
             //  reset to starting PC and base assets

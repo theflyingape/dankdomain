@@ -31,10 +31,6 @@
 	],
 	"private": false,
 	"publisher": "theflyingape <theflyingape@gmail.com>",
-	"publishConfig": {
-		"access": "public",
-		"registry": "https://npm.pkg.github.com"
-	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/theflyingape/dankdomain.git"
@@ -84,7 +80,7 @@
 		"@types/ws": "^7.4.7",
 		"browserify": "^17.0.0",
 		"eslint": "^7.32.0",
-		"typescript": "^4.4.2",
+		"typescript": "^4.4.3",
 		"watchify": "^4.0.0"
 	},
 	"types": "src",

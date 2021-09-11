@@ -5,12 +5,12 @@
 🇺🇸 ©️1991 - 2021 [Robert Hurst](https://robert.hurst-ri.us) 🧙
 > [developed](https://github.com/theflyingape/dankdomain) on a **Chromebook** using Visual Code and TypeScript/html/css for the browser with [terminal emulator](https:/xtermjs.org) and classic telnet clients; and also to run the resulting Node.js full stack [services and app](https://play.DDgame.us) on the **Google Cloud Platform** (us-central1) or in a **Docker** [container](https://hub.docker.com/repository/docker/theflyingape/dankdomain).
 
-### **11-Sep-2021** `v3.2.0` ✈💥🏢🏢
+### **11-Sep-2021** `v3.2.1` ✈💥🏢🏢
 
 * 🇺🇸 **Never** Forget. *The North remembers.* 🐺
-* 📦 latest package [dependencies](https://github.com/theflyingape/dankdomain#nodejs-dependency-tree) tested with Node.js `v16.8` and TypeScript `v4.4.2`
+* 📦 latest package [dependencies](https://github.com/theflyingape/dankdomain#nodejs-dependency-tree) tested with Node.js `v16.9` and TypeScript `v4.4.3`
 * 👍 improved UI `client` compatibility for modern browsers
-* 📺 xterm.js `v4.14` configured to use its [WebGL](https://get.webgl.org/) renderer
+* 📺 xterm.js `v4.14.1` configured to use its [WebGL](https://get.webgl.org/) renderer
 * 👨‍💻 major code & data refactoring for CI/CD with overall improvements to ease startup installations
 * 📋 configurations moved into `etc/sysop.json` & `game/play/runtime.json` with current game state saved in `users/game.json` files
 * 📖 separated each character class out of the dankdomain config to allow for reroll templating of startup values, i.e., assign differing assets like weapon, spells, etc, which also expands the rules of engagement with each NPC
