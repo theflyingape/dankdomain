@@ -31,6 +31,10 @@
 	],
 	"private": false,
 	"publisher": "theflyingape <theflyingape@gmail.com>",
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://npm.pkg.github.com"
+	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/theflyingape/dankdomain.git"
@@ -93,7 +97,7 @@
 		"net": "./game/portal-startup.sh",
 		"play": "env TERM=vt100 ./game/logins.sh",
 		"term": "./game/tty.sh",
-		"mame": "./mame.sh",
+		"mame": "./mame/play.sh",
 		"postinstall": "npm run build",
 		"prepare": "./local-install.sh",
 		"stop": "killall DDnet"

@@ -4,7 +4,7 @@
 # its serial port bridges to a socat process'
 # pty port into dankdomain ...
 
-# set this to override the default to my door
+# set this to override the default to my VM instance
 DDGAME=play.ddgame.us
 
 path=`dirname $0`; cd $path || exit 1
@@ -35,17 +35,9 @@ while [ $PTS -lt 1 ]; do
 	socat /dev/pts/$PTS exec:/bin/true || PTS=0
 done
 
-#TELNET="telnet"
-#if [ `basename $PWD` = "build" ]; then
-#       cd ..
-#       TELNET="./build/telnet"
-#fi
-#EXEC="node $TELNET"
-#[ -n "$URL" ] && EXEC="$EXEC $URL"
-
 EXEC="telnet $DDGAME"
 INFO="printf \\\"\\r\\n$EXEC as VT240 using /dev/pts/$PTS ...\\r\\n\\n\\\""
-KB="printf \\\"\\r\\nPress Scroll Lock key to TOGGLE keyboard emulation OFF\\r\\nand then press ESCape key to exit MAME\\r\\n\\\""
+KB="printf \\\"\\r\\n-> Press Scroll Lock key to toggle MAME UI controls (TAB key)\\r\\n   and then press ESCape key to exit MAME VT240 emulator\\r\\n\\\""
 
 YN="Y"
 while [ "$YN" != "N" -a "$YN" != "n" ]; do
@@ -63,7 +55,7 @@ while [ "$YN" != "N" -a "$YN" != "n" ]; do
 	echo -e "  ****  Press \x1B[7m Scroll Lock \x1B[m key to TOGGLE keyboard emulation OFF"
 	echo -e "  ****  and then press \x1B[1mESC\x1B[mape key to exit MAME"
 	echo
-	echo -en "... or, attach to \x1B[2mD\x1B[mank \x1B[2mD\x1B[momain door again (y/N)? "
+	echo -en "... or, attach to \x1B[2mD\x1B[mank \x1B[2mD\x1B[momain game again (y/N)? "
 
 	read YN
 	[ -z "$YN" ] && YN="N"
