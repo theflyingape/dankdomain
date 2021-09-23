@@ -128,16 +128,19 @@ module npc {
         Resurrect: string = ''
         Rob: string = ''
 
+        //  pop BOT command off stack
         get cmd(): string {
             return this._cmd.length ? this._cmd.splice(0, 1).toString() : ''
         }
 
+        //  push BOT command on stack
         set cmd(input: string) {
             this._cmd = this._cmd.concat(input)
         }
 
         private _cmd: string[] = []
 
+        //  init or replace BOT command stack
         flush(cmd?: string) {
             this._cmd = []
             if (cmd) this.cmd = cmd
@@ -154,6 +157,7 @@ module npc {
             }
         }
 
+        //  build BOT command stack
         orders(from: string) {
             vt.action(from.toLowerCase())
             $.from = from

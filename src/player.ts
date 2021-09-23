@@ -184,6 +184,7 @@ module Player {
         return false
     }
 
+    //  wait for PC + BOT input
     export function input(focus: string | number, input = elemental.cmd, speed = 5) {
         prompt(focus, input, speed)
     }

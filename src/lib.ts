@@ -245,6 +245,7 @@ module lib {
         }[p] + vt.attr(' pieces', vt.reset)
     }
 
+    //  wait for PC + BOT input
     export function prompt(focus: string | number, input = '', speed = 5) {
         //console.log(`input = '${input}' `, input.split('').map((c) => { return c.charCodeAt(0) }))
         if ($.access.bot)

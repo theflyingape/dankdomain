@@ -616,19 +616,20 @@ function Logoff() {
     cmd(`<table>
 <tr><td><input type="button" class="slate" id="cancel" value="Disconnect" onclick="currentCMD = ''; send('\x1B');"></td><td><input class="platinum" id="default" value="CONNECT" onclick="send(' ');" type="submit"></td></tr>
 </table>
-<div id="about">
+<div id="about" style="line-height: 90%;">
 <hr>
 <span style="font-size:larger">🤴<span style="font-family:mono; font-weight:600;"> <a href="https://www.ddgame.us" target="_new"><span style="color:black">Ɗaɳƙ Ɗoɱaiɳ</span></a> </span>👸</span><br>
-<span style="color:darkslategray;">the return of Hack &amp; Slash</span><br>
-<span style="color:brown; font-size:smaller;">🇺🇸 &copy; 2017 - 2021 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a> 🧙</span><br>
+<span style="color:darkslategray;">the return of Hack &amp; Slash</span><br><br>
+<span style="color:brown; font-size:smaller;">🇺🇸 &copy; 2017 - 2021 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a> 🧙</span><br><br>
 ⚡<span style="color:black; font-family:VT323,tty;"> Powered by <a href="https://xtermjs.org" target="_blank">Xterm.js</a> </span>📺
+<hr>
 </div>`);
 }
 function rotateImage() {
     animated('fadeOutLeft');
     if (images.length) {
         const about = document.getElementById('about');
-        about.hidden = true;
+        about.hidden = images.length % 9 ? true : false;
         const n = Math.trunc(Math.random() * images.length);
         const banner = images.splice(n, 1)[0];
         let html = '';
