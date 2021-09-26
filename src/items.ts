@@ -200,8 +200,8 @@ module Items {
             if (coins) this.value += coins
         }
 
-        carry(coin = this, bags = 2): string {
-            return coin.amount.split(',').slice(0, bags).toString()
+        carry(bags = 2, coins = this): string {
+            return coins.amount.split(',').slice(0, bags).toString()
         }
 
         //  pick a money bag

@@ -213,12 +213,10 @@ module Naval {
                 if (hook < 75) {
                     vt.outln('n oyster and you eat it.')
                     vt.sleep(600)
-                    cap = PC.money($.player.level)
-                    n = whole(Math.round(Math.pow(2., $.player.hull / 150.) * 7937))
-                    n /= whole($.player.hull / 10 * dice($.online.hull))
-                    n *= whole(($.player.cannon + 1) / ($.player.hull / 50))
-                    n = tradein(n)
+                    cap = PC.money()
+                    n = tradein(PC.nautic(), dice(15 * $.online.hull / $.player.hull))
                     if (n > cap) n = cap
+                    n = new Coin(n).pick(1).value
                     vt.sound('oof')
                     vt.outln(`Ouch!  You bit into a pearl and sell it for ${carry(new Coin(n))}.`)
                     $.player.coin.value += n
@@ -227,12 +225,10 @@ module Naval {
                 if (hook < 90) {
                     vt.outln('n oyster and you eat it.')
                     vt.sleep(600)
-                    cap = 3n * PC.money($.player.level)
-                    n = whole(Math.round(Math.pow(2., $.player.hull / 150.) * 7937))
-                    n /= whole($.player.hull * dice($.online.hull))
-                    n *= whole(($.player.cannon + 1) / ($.player.hull / 50))
-                    n = tradein(n)
+                    cap = PC.money() * 3n
+                    n = tradein(PC.nautic(), dice(35 * $.online.hull / $.player.hull))
                     if (n > cap) n = cap
+                    n = new Coin(n).pick(1).value
                     vt.sound('oof')
                     vt.outln(`Ouch!  You bit into a diamond and sell it for ${carry(new Coin(n))}.`)
                     $.player.coin.value += n
@@ -376,7 +372,7 @@ module Naval {
             vt.outln('\n')
 
             let ship = 50
-            let cost = BigInt(Math.round(Math.pow(2, ship / 150) * 7937))
+            let cost = PC.nautic(ship)
             let max: number
             let afford: number
 
@@ -397,11 +393,11 @@ module Naval {
 
                     vt.outln('List of affordable ships:\n')
                     max = $.player.hull + 50
-                    cost = BigInt(Math.round(Math.pow(2, max / 150) * 7937))
+                    cost = PC.nautic(max)
                     while (max <= 8000 && cost < $.player.coin.value) {
                         vt.outln(sprintf('Hull size: %-4d     Cost: ', max), carry(new Coin(cost)))
                         max += 50
-                        cost = BigInt(Math.round(Math.pow(2, max / 150) * 7937))
+                        cost = PC.nautic(max)
                     }
 
                     vt.action('listbest')
@@ -442,7 +438,7 @@ module Naval {
 
                                     vt.profile({ png: 'payment', effect: 'tada' })
                                     vt.sound('click', 5)
-                                    cost = BigInt(Math.round(Math.pow(2, ship / 150) * 7937))
+                                    cost = PC.nautic(ship)
                                     $.player.coin.value -= cost
                                     $.player.hull = ship
                                     $.player.ram = false
@@ -466,13 +462,12 @@ module Naval {
                     }
                     max = $.player.hull - $.online.hull
                     vt.outln(`You need ${max} hull points of repair.`)
-                    cost = BigInt(Math.round(Math.pow(2, $.player.hull / 150) * 7937))
-                    cost /= BigInt($.player.hull / 10)
+                    cost = PC.nautic()
+                    cost /= whole($.player.hull / 10)
                     vt.outln(`Each hull point costs ${carry(new Coin(cost))} to repair.`)
                     if (!max) break
-                    afford = int($.player.coin.value / cost)
-                    if (afford < max)
-                        max = afford
+                    afford = uint($.player.coin.value / cost)
+                    if (afford < max) max = afford
                     vt.action('listall')
                     vt.form = {
                         'hp': {
@@ -503,7 +498,7 @@ module Naval {
                     }
                     max = int($.player.hull / 50) - $.player.cannon
                     vt.outln(`You can mount up to ${max} more cannons.`)
-                    cost = BigInt(Math.round(Math.pow(2, $.player.hull / 150) * 7937))
+                    cost = PC.nautic()
                     cost /= 250n
                     vt.outln(`Each cannon costs ${carry(new Coin(cost))}.`)
                     afford = int($.player.coin.value / cost)
@@ -542,7 +537,7 @@ module Naval {
                         vt.outln(`But your ship already has a ram!`)
                         break
                     }
-                    cost = BigInt(Math.round(Math.pow(2, $.player.hull / 150) * 7937))
+                    cost = PC.nautic()
                     cost /= 10n
                     vt.outln(`We can equip your ship with a ram for ${carry(new Coin(cost))}.`)
                     afford = int($.player.coin.value / cost)
@@ -701,7 +696,7 @@ module Naval {
             log(nme.user.id, `\n${$.player.handle} sank your ship!`)
             news(`\tsank ${nme.user.handle}'s ship`)
 
-            let booty = new Coin(BigInt(Math.round(Math.pow(2, $.player.hull / 150) * 7937 / 250)))
+            let booty = new Coin(PC.nautic() / 250n)
             booty.value *= BigInt(nme.user.cannon)
             if (nme.user.coin.value > booty.value) {
                 vt.sound('boo')
@@ -759,7 +754,7 @@ module Naval {
                 $.online.hp = 0
                 $.online.hull = 0
 
-                let booty = new Coin(BigInt(Math.round(Math.pow(2, nme.user.hull / 150) * 7937 / 250)))
+                let booty = new Coin(PC.nautic() / 250n)
                 booty.value *= BigInt($.player.cannon)
                 if ($.player.coin.value > booty.value)
                     $.player.coin.value = booty.value
@@ -1068,3 +1063,4 @@ module Naval {
 }
 
 export = Naval
+

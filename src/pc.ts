@@ -414,8 +414,12 @@ module pc {
             return gang
         }
 
-        money(level: number): bigint {
+        money(level = $.player.level): bigint {
             return whole(Math.pow(2, (level - 1) / 2) * 10 * (101 - level) / 100)
+        }
+
+        nautic(ship = $.player.hull): bigint {
+            return whole(Math.round(Math.pow(2, ship / 150) * 7937))
         }
 
         newkeys(user: user) {

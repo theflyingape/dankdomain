@@ -111,7 +111,7 @@ interface coin {
     COPPER: bigint
     value: bigint
     amount: string
-    carry(coins?: coin, bags?: number)
+    carry(bags?: number, coins?: coin)
     pick(bag?: number): coin
     pouch(coins?: bigint): string
 }

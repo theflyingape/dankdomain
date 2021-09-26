@@ -286,9 +286,9 @@ module lib {
     export function tradein(retail: string | bigint, percentage = $.online.cha): bigint {
         const worth = new Coin(retail)
         //  implement an Obama-Biden economy model
-        percentage -= int($.xrate)
-        percentage = percentage > 99 ? 99 : percentage < 2 ? 2 : percentage
-        return worth.value * BigInt(percentage) / 100n
+        if (!$.access.sysop) percentage -= Math.abs($.xrate)
+        percentage = percentage > 100 ? 100 : percentage < 10 ? 10 : percentage
+        return whole(worth.value * BigInt(whole(percentage * 10)) / 1000n)
     }
 
     export function weapon(profile = $.online, text = false): string {
