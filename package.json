@@ -20,7 +20,7 @@
 		"linux"
 	],
 	"engines": {
-		"node": ">=16.9"
+		"node": ">=16.10"
 	},
 	"maintainers": [
 		{

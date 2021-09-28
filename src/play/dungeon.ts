@@ -1766,7 +1766,7 @@ module Dungeon {
                 }
                 else {
                     vt.profile({ png: dungeon.potions[ROOM.giftValue].image, handle: 'Is it ' + 'nt'[dice(2) - 1] + 'asty, precious?', effect: 'fadeInUp' })
-                    vt.out(dungeon.potions[ROOM.giftValue].description, vt.cyan, vt.bright, ' dungeon.potion', vt.normal, '.')
+                    vt.out(dungeon.potions[ROOM.giftValue].description, vt.cyan, vt.bright, ` ${dungeon.potion}`, vt.normal, '.')
                 }
 
                 if (id ||
