@@ -1959,7 +1959,7 @@ module Battle {
 
         if ($.from == 'User' && rpc !== $.online && rpc.user.gender !== 'I'
             && (rpc.user.coward || Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power)
-            && rpc.hp < (rpc.user.coward ? rpc.user.hp / 5 : dice(rpc.user.hp / 5))) {
+            && rpc.hp < ((rpc.user.coward && !rpc.user.cursed) ? rpc.user.hp / 5 : dice(rpc.user.hp / 5))) {
             rpc.hp = -1
             vt.outln(vt.green, vt.bright, rpc.who.He, -600, vt.normal, 'runs away from ', -400, vt.faint, 'the battle!', -200)
             if (Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power)
