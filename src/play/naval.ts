@@ -464,6 +464,7 @@ module Naval {
                     vt.outln(`You need ${max} hull points of repair.`)
                     cost = PC.nautic()
                     cost /= whole($.player.hull / 10)
+                    cost = new Coin(cost).pick(1).value
                     vt.outln(`Each hull point costs ${carry(new Coin(cost))} to repair.`)
                     if (!max) break
                     afford = uint($.player.coin.value / cost)
@@ -472,15 +473,13 @@ module Naval {
                     vt.form = {
                         'hp': {
                             cb: () => {
-                                vt.outln('\n')
+                                vt.outln()
                                 let buy = uint(/=|max/i.test(vt.entry) ? max : vt.entry)
                                 if (buy > 0 && buy <= max) {
-                                    $.player.coin.value -= BigInt(buy) * cost
-                                    if ($.player.coin.value < 0)
-                                        $.player.coin.value = 0n
+                                    PC.payment(BigInt(buy) * cost)
                                     $.online.hull += buy
                                     vt.beep()
-                                    vt.outln(`Hull points = ${$.online.hull}`)
+                                    vt.outln(`\nHull points = ${$.online.hull}`)
                                 }
                                 Shipyard()
                                 return

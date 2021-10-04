@@ -301,7 +301,7 @@ module Square {
                         }
 
                         credit.value = PC.money(opponent.user.level) * 100n / BigInt($.online.cha)
-                        vt.out(`It will cost you ${carry(credit)} to bail out ${opponent.user.handle}.\n`)
+                        vt.outln(`It will cost you ${carry(credit)} to bail out ${opponent.user.handle}.`)
                         if ($.player.coin.value < credit.value) {
                             menu()
                             return

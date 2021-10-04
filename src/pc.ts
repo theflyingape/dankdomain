@@ -264,7 +264,7 @@ module pc {
                     onto.user.cursed = from
                     log(onto.user.id, `\n${from} cursed you ${via}!`)
                     news(`\t${from} cursed ${onto.user.handle} ${via}`)
-                    vt.outln('A ', vt.faint, 'dark cloud', ` hovers over ${onto.who.him}.`, -1200)
+                    vt.outln('A ', vt.faint, 'dark cloud', vt.normal, ` hovers over ${onto.who.him}.`, -1200)
                 }
             }
             onto.altered = true
