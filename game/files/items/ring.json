@@ -169,7 +169,6 @@
         "description":"exempt bearer from paying taxes to the Crown",
         "emoji":"💸",
         "ability":[
-            { "id":"curse", "power":true },
             { "id":"taxes", "power":true },
             { "id":"upgrade", "power":true, "ability":"cha" }
         ]
