@@ -12,6 +12,7 @@ import { elemental, naval } from '../npc'
 import { checkXP, input } from '../player'
 import { an, dice, int, sprintf, uint, whole } from '../sys'
 import Battle = require('./battle')
+import { normalize } from 'path/posix'
 
 module Naval {
 
@@ -189,23 +190,23 @@ module Naval {
                         return
                     }
                     vt.outln(' fish and you eat it.')
-                    vt.sound('quaff', 6)
-                    vt.outln('Ugh!  You feel sick and die!')
+                    vt.sound('quaff', 5)
+                    vt.outln(vt.green, vt.faint, 'Ugh! ', -200, vt.white, ' You feel sick and die!')
                     $.reason = `ate yesterday's catch of the day`
                     break
                 }
                 if (hook < 50) {
                     vt.outln(' fish and you eat it.')
-                    vt.sound('quaff', 6)
+                    vt.sound('quaff', 5)
                     vt.sound('yum')
-                    vt.outln('Yum!  You feel stronger and healthier.\n')
+                    vt.outln(vt.cyan, vt.bright, 'Yum! ', -200, vt.normal, ' You feel stronger and healthier.\n')
                     PC.adjust('str', 101)
                     vt.out(`Stamina = ${$.online.str}     `)
-                    $.online.hp += int(PC.hp() / 2) + dice(PC.hp() / 2)
+                    $.online.hp += uint(PC.hp() / 4) + dice(PC.hp() / 5)
                     vt.out(`Hit points = ${$.online.hp}     `)
                     if ($.player.sp) {
-                        $.online.sp += int(PC.sp() / 2) + dice(PC.sp() / 2)
-                        vt.out(`Spell points = ${$.online.sp}`)
+                        $.online.sp += uint(PC.sp() / 4) + dice(PC.sp() / 5)
+                        vt.out(`Mana power = ${$.online.sp}`)
                     }
                     vt.outln()
                     break
@@ -463,7 +464,7 @@ module Naval {
                     max = $.player.hull - $.online.hull
                     vt.outln(`You need ${max} hull points of repair.`)
                     cost = PC.nautic()
-                    cost /= whole($.player.hull / 10)
+                    cost /= whole($.player.hull * 8)
                     cost = new Coin(cost).pick(1).value
                     vt.outln(`Each hull point costs ${carry(new Coin(cost))} to repair.`)
                     if (!max) break
