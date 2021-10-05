@@ -5,8 +5,8 @@
 - [DDgame Player's Manual](#read-the-players-manual-to-play-the-online-game)
 - [Installation](#installation)
 - [Files directory structure](#files-directory-structure)
-  - [Ɗaɳƙ Ɗoɱaiɳ image gallery](#ɗaɳƙ-ɗoɱaiɳ-image-gallery)
-  - [Node.js dependency tree](#nodejs-dependency-tree)
+- [Gallery](#gallery)
+- [Node.js dependency tree](#nodejs-dependency-tree)
 
 ---
 
@@ -15,7 +15,7 @@
 ## _Read the_ [Player's Manual](https://www.ddgame.us) _to play the_ [online game](https://play.ddgame.us)
 
 ---
->**Ɗaɳƙ Ɗoɱaiɳ** is the re-imagined classic Amiga bulletin board, [Hack & Slash](https://github.com/theflyingape/rpgbbs), built around a medieval role-playing atmosphere. Your character kills, steals, brawls, and jousts other PCs, NPCs, and BOTs to gain levels and fortune. Successful ventures into the deep dank dungeon are keys to immortality.
+>**Ɗaɳƙ Ɗoɱaiɳ** is the re-imagined classic Amiga bulletin board, [Hack & Slash](https://github.com/theflyingape/rpgbbs), built around a medieval role-playing atmosphere. Your character kills, steals, brawls, and jousts other PCs, NPCs, and BOTs to gain levels and fortune. Successful ventures into the deep dank dungeon are key to immortality.
 
 *Original Commodore Amiga* **Hack & Slash** *enthusiasts can visit:*  [Absinthe BBS](https://www.telnetbbsguide.com/bbs/absinthe-bbs/) *by Anachronist*
 
@@ -24,10 +24,6 @@
 [![NPM](https://nodei.co/npm/dankdomain.png?compact=true)](https://nodei.co/npm/dankdomain/)
 
 [![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/organization/repository) ![npm version](https://img.shields.io/node/v/dankdomain) ![David](https://img.shields.io/david/dev/theflyingape/dankdomain) [![Issues](http://img.shields.io/github/issues/theflyingape/dankdomain.svg)](https://github.com/theflyingape/dankdomain/issues)
-
-Download packs: [images](https://drive.google.com/open?id=1jjLPtGf_zld416pxytZfbfCHREZTghkW) 📷 and [sounds](https://drive.google.com/open?id=1UvqQJbN61VbWVduONXgo1gm9yvGI0Qp8) 🔉
-
-With the _optional_ packs loaded for the web portal, the game + runtime files will need roughly **500mb** storage.
 
 ## Installation
 
@@ -134,6 +130,9 @@ pwd; [ -s door.sys ] || exit 1
 node /usr/local/games/dankdomain/main 0
 ```
 
+For the Portal, consider downloading media packs: 📷 [images](https://drive.google.com/open?id=1jjLPtGf_zld416pxytZfbfCHREZTghkW) and 🔉 [sounds](https://drive.google.com/open?id=1UvqQJbN61VbWVduONXgo1gm9yvGI0Qp8)
+
+
 ## Files directory structure
 
 ```linux
@@ -190,7 +189,7 @@ package.json      Node.js manifest
 
  🇺🇸 ©️1991 - 2021 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
 
-### Ɗaɳƙ Ɗoɱaiɳ image gallery
+## Gallery
 
 + [Arena](https://photos.app.goo.gl/sZS7xx6rpyoG4CYBA)
 + [Connect](https://photos.app.goo.gl/AeZZXrC8VKnMFuqj8)
@@ -205,7 +204,7 @@ package.json      Node.js manifest
 + [Specials](https://photos.app.goo.gl/Dn2g2BtdwtKSbudu7)
 + [User](https://photos.app.goo.gl/hfTJ8EstLPSp4Kry6)
 
-### Node.js dependency tree
+## Node.js dependency tree
 
 **DDnet** portal
 
