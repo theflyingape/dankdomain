@@ -705,7 +705,7 @@ module Battle {
                             }
                             if (loser.user.blessed) {
                                 loser.user.blessed = ''
-                                PC.bless(loser.user.handle, 'took your blessing', winner)
+                                PC.bless(loser.user.handle, `took ${loser.who.his}blessing`, winner)
                                 log(loser.user.id, `... and took your blessing.`)
                             }
                             if (loser.user.gang && loser.user.gang == $.player.gang) {
@@ -1959,7 +1959,7 @@ module Battle {
 
         if ($.from == 'User' && rpc !== $.online && rpc.user.gender !== 'I'
             && (rpc.user.coward || Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power)
-            && rpc.hp < ((rpc.user.coward && !rpc.user.cursed) ? rpc.user.hp / 5 : dice(rpc.user.hp / 5))) {
+            && rpc.hp < ((rpc.user.coward && !rpc.user.cursed) ? rpc.user.hp / 5 : dice(rpc.user.hp / 15, 2))) {
             rpc.hp = -1
             vt.outln(vt.green, vt.bright, rpc.who.He, -600, vt.normal, 'runs away from ', -400, vt.faint, 'the battle!', -200)
             if (Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power)

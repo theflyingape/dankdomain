@@ -500,6 +500,7 @@ module Naval {
                     vt.outln(`You can mount up to ${max} more cannons.`)
                     cost = PC.nautic()
                     cost /= 250n
+                    cost = new Coin(cost).pick(1).value
                     vt.outln(`Each cannon costs ${carry(new Coin(cost))}.`)
                     afford = int($.player.coin.value / cost)
                     if (afford < max)
@@ -539,6 +540,7 @@ module Naval {
                     }
                     cost = PC.nautic()
                     cost /= 10n
+                    cost = new Coin(cost).pick(1).value
                     vt.outln(`We can equip your ship with a ram for ${carry(new Coin(cost))}.`)
                     afford = int($.player.coin.value / cost)
                     if (!afford) {
