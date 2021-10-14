@@ -1957,9 +1957,10 @@ module Battle {
         let action: string
         let hit = 0
 
+        //  discourage bad actor
         if ($.from == 'User' && rpc !== $.online && rpc.user.gender !== 'I'
             && (rpc.user.coward || Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power)
-            && rpc.hp < ((rpc.user.coward && !rpc.user.cursed) ? rpc.user.hp / 5 : dice(rpc.user.hp / 15, 2))) {
+            && rpc.hp < dice(rpc.user.hp / (rpc.user.coward && !rpc.user.cursed ? 5 : 15), 2)) {
             rpc.hp = -1
             vt.outln(vt.green, vt.bright, rpc.who.He, -600, vt.normal, 'runs away from ', -400, vt.faint, 'the battle!', -200)
             if (Ring.power(rpc.user.rings, enemy.user.rings, 'curse').power)
@@ -2364,7 +2365,3 @@ module Battle {
 }
 
 export = Battle
-function beep() {
-    throw new Error('Function not implemented.')
-}
-
