@@ -13,7 +13,6 @@
   "terminal.integrated.gpuAcceleration": "on",
   "terminal.integrated.scrollback": 1000,
   "terminal.integrated.tabs.hideCondition": "singleGroup",
-  "terminal.integrated.titleMode": "sequence",
   "terminal.integrated.unicodeVersion": "11",
   "workbench.colorCustomizations": {
     "terminal.background": "#000000",

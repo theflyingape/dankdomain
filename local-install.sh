@@ -106,6 +106,16 @@ if [ "$cont" == "Y" ]; then
 fi
 
 echo
+echo "Install media (images & sounds) for game portal or local playing ?"
+echo -n "Enter shift 'Y' to download & unpack media archive files: "
+read -t 10 cont
+
+if [ "$cont" == "Y" ]; then
+    sudo -B -v || exit
+    sudo ./fetch-media.sh
+fi
+
+echo
 echo "Show an Apache proxy fronting a NodeJs app example ?"
 echo -n "Enter shift 'Y' to show configuration: "
 read -t 10 cont
