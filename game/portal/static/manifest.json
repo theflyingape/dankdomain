@@ -1,7 +1,10 @@
 {
+  "id": "dankdomain",
+  "platform": "webapp",
   "name": "🏰 DDgame.us",
   "short_name": "DDgame.us",
-  "start_url": "/",
+  "scope": "/",
+  "start_url": "/index.html",
   "icons": [
     {
       "src": "images/DDgame_144.png",
