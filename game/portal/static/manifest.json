@@ -4,7 +4,7 @@
   "name": "🏰 DDgame.us",
   "short_name": "DDgame.us",
   "scope": "/",
-  "start_url": "/index.html",
+  "start_url": "/",
   "icons": [
     {
       "src": "images/DDgame_144.png",
