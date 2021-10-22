@@ -5,7 +5,7 @@
 
 @font-face {
   font-family: emoji;
-  src: url("assets/notoemoji.woff2") format("woff2");
+  src: url("assets/NotoColorEmoji.ttf") format("ttf");
 }
 
 @font-face {
