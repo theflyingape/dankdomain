@@ -23,7 +23,7 @@
 
 [![NPM](https://nodei.co/npm/dankdomain.png?compact=true)](https://nodei.co/npm/dankdomain/)
 
-[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/organization/repository) ![npm version](https://img.shields.io/node/v/dankdomain) ![David](https://img.shields.io/david/dev/theflyingape/dankdomain) [![Issues](http://img.shields.io/github/issues/theflyingape/dankdomain.svg)](https://github.com/theflyingape/dankdomain/issues)
+[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/organization/repository) ![npm version](https://img.shields.io/node/v/dankdomain) ![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/npm/dankdomain?style=plastic) ![GitHub milestones](https://img.shields.io/github/milestones/closed/theflyingape/dankdomain)
 
 ## Installation
 
