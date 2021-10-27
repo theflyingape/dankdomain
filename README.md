@@ -1,8 +1,8 @@
-<a href="https://robert.hurst-ri.us"><img src="https://avatars.githubusercontent.com/theflyingape" title="Robert Hurst" align="right"></a>
-
 # 🏰 Ɗaɳƙ Ɗoɱaiɳ :: _the return of Hack &amp; Slash_
 
-- [DDgame Player's Manual](#read-the-players-manual-to-play-the-online-game)
+<a href="https://robert.hurst-ri.us"><img src="https://avatars.githubusercontent.com/theflyingape" title="Robert Hurst" align="right"></a>
+
+- [Player's Manual](#players-manual)
 - [Installation](#installation)
 - [Files directory structure](#files-directory-structure)
 - [Gallery](#gallery)
@@ -12,7 +12,9 @@
 
 ![screenshot](https://raw.githubusercontent.com/theflyingape/dankdomain/master/game/portal/static/assets/title.jpg "Can you defeat the Demogorgon?")
 
-## _Read the_ [Player's Manual](https://www.ddgame.us) _to play the_ [online game](https://play.ddgame.us)
+## Player's Manual
+
+_Read the_ [Manual](https://manual.ddgame.us) _to play the_ [online game](https://play.ddgame.us)
 
 ---
 >**Ɗaɳƙ Ɗoɱaiɳ** is the re-imagined classic Amiga bulletin board, [Hack & Slash](https://github.com/theflyingape/rpgbbs), built around a medieval role-playing atmosphere. Your character kills, steals, brawls, and jousts other PCs, NPCs, and BOTs to gain levels and fortune. Successful ventures into the deep dank dungeon are key to immortality.
