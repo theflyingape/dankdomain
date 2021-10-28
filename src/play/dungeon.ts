@@ -12,7 +12,6 @@ import { dungeon } from '../npc'
 import { checkXP, input, skillplus } from '../player'
 import { an, dice, int, romanize, sprintf, uint, whole } from '../sys'
 import Battle = require('./battle')
-import pc = require('../pc')
 
 module Dungeon {
 
