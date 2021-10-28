@@ -381,6 +381,14 @@ module Arena {
                                 vt.outln()
                                 if (/Y/i.test(vt.entry)) {
                                     if (PC.activate(opponent, true)) {
+                                        if ($.player.gang && $.player.gang == opponent.user.gang) {
+                                            vt.outln()
+                                            vt.outln(vt.magenta, opponent.who.He, 'says, ', vt.white, `'Arm yourself because no one else here will save you.'`)
+                                            vt.sound('ddd', 20)
+                                            vt.out(vt.green, 'You challenge back, ', -600, vt.white, `'The odds will betray you ... `)
+                                            vt.sound('laugh', 20)
+                                            vt.outln(`and I will replace you.'`, -1000)
+                                        }
                                         vt.music('combat' + $.arena--)
                                         Battle.engage('User', $.online, opponent, menu)
                                     }

@@ -216,8 +216,11 @@ module Main {
                     break
                 }
 
-                vt.outln(vt.faint, 'It is a hot, moonless night.', -600)
-                vt.outln('A city guard walks down another street.', -600)
+                vt.action('clear')
+                vt.profile({ jpg: 'alley', effect: 'fadeInDown' })
+                vt.outln(-600, vt.faint, 'It is a hot, moonless night.')
+                vt.out(-600, 'A city guard walks down another street.')
+                vt.outln(-600)
 
                 let self = tradein(new Coin($.online.armor.value).value, $.online.cha)
                 self += tradein(new Coin($.online.weapon.value).value, $.online.cha)
@@ -345,9 +348,11 @@ module Main {
                         $.player.status = 'jail'
                         vt.action('clear')
                         vt.profile({ png: 'npc/city_guard_2', effect: 'fadeIn' })
-                        vt.outln('A city guard catches you and throws you into jail!')
-                        vt.sound('arrested', 20)
-                        vt.outln('You might be released by your next call.\n', -1000)
+                        vt.sound('arrested', 10)
+                        vt.out(vt.cyan, vt.bright, 'A city guard catches you and throws you into jail!')
+                        vt.outln(-2000)
+                        vt.outln(vt.cyan, vt.faint, `You can't deny the prize it may never fulfill you.`)
+                        vt.outln(-1000)
                     }
                     menu()
                 })
