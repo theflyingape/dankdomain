@@ -399,7 +399,7 @@ module Arena {
                                 }
                                 else
                                     menu($.player.expert)
-                            }, prompt: `Will you fight ${PC.who(opponent).him}(Y/N)? `, cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 10
+                            }, prompt: `Will you fight ${PC.who(opponent).him}(Y/N)? `, cancel: 'N', enter: 'N', eol: false, match: /Y|N/i, max: 1, timeout: 6
                         }
                     }
                     input('fight', 'y')
