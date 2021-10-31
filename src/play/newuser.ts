@@ -24,12 +24,12 @@ module NewUser {
         vt.outln(vt.blue, '--=:) ', vt.bright, 'BBS Door Registration', vt.normal, ' (:=--')
     else
         vt.outln(vt.yellow, '--=:) ', vt.bright, 'New User Registration', vt.normal, ' (:=--')
-    vt.out(bracket(1), vt.cyan, `Player's Handle:`)
-    vt.out(bracket(2), vt.cyan, 'Your REAL Name.:')
+    vt.out(bracket(1, true, ' .'), vt.cyan, `Player's Handle:`)
+    vt.out(bracket(2, true, ' .'), vt.cyan, 'Your REAL Name.:')
     if (vt.tty == 'door')
         vt.out(' ', vt.blue, vt.bright, $.player.name)
-    vt.out(bracket(3), vt.cyan, 'Date of Birth..:')
-    vt.out(bracket(4), vt.cyan, 'Gender (M/F)...:')
+    vt.out(bracket(3, true, ' .'), vt.cyan, 'Date of Birth..:')
+    vt.out(bracket(4, true, ' .'), vt.cyan, 'Gender (M/F)...:')
 
     vt.form = {
         1: { cb: handle, row: 3, col: 23, min: 2, max: 22, match: /^[A-Z][A-Z\s]*$/i },

@@ -249,6 +249,7 @@ interface room {
 interface security {
     value: string
     protection: number
+    fail: string
 }
 
 interface slot {

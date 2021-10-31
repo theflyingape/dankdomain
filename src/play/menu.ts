@@ -10,7 +10,7 @@ import { carry, cat, display, emulator, getRing, log, news, tradein, vt } from '
 import { Deed, PC } from '../pc'
 import { elemental } from '../npc'
 import { checkXP, input, pickPC } from '../player'
-import { an, cuss, dice, fs, int, pathTo, sprintf } from '../sys'
+import { an, cuss, dice, fs, int, pathTo, sprintf, uint } from '../sys'
 import Battle = require('./battle')
 
 module Main {
@@ -261,7 +261,8 @@ module Main {
                     if ($.arena) prize += opponent.user.coin.value
                     prize /= BigInt(6 - $.player.steal)
 
-                    if (dice($.online.int) > 5 && prize < self) {
+                    if (!Ring.have($.player.rings, Ring.theOne)) $.steal++
+                    if (dice($.online.int, 0) > $.player.steal && prize < self) {
                         vt.outln('But you decide it is not worth the effort.', -600)
                         menu()
                         return
@@ -279,36 +280,36 @@ module Main {
 
                     vt.out(vt.cyan, '\nYou slide into ', -200
                         , vt.faint, 'the shadows and ', -400
-                        , vt.white, 'make your attempt ', vt.blue, -600)
+                        , vt.white, 'make your attempt ', vt.magenta, -600)
 
-                    let lock = 5 *
-                        (Security.name[opponent.user.security].protection + +(opponent.user.status !== 'jail'))
+                    const lock = Security.name[opponent.user.security].protection
                         + RealEstate.name[opponent.user.realestate].protection
-                        + opponent.user.steal + +!$.arena + +!$.dungeon
-                    let skill = Math.round($.player.steal * $.online.dex * $.online.int / 10000)
-                    let effort = 100
-                        - Ring.power(opponent.user.rings, $.player.rings, 'steal').power
+                        + Ring.power(opponent.user.rings, $.player.rings, 'steal').power
+                        + opponent.user.steal - +(opponent.user.status == 'jail')
+                        + +($.arena > 0) + +($.dungeon > 0)
+                        + $.steal
+                    const skill = int(
+                        ([0, 1, 5, 9, 12][$.player.steal] + $.player.level / 2)
+                        * ($.online.dex + $.online.int + $.online.cha) / 270)
                         + Ring.power($.player.rings, opponent.user.rings, 'steal').power
 
-                    for (let pick = 0; pick < $.player.steal; pick++) {
+                    //  tails never fails
+                    let effort = dice(3 * lock, 0)
+                    for (let pick = 0; effort > 0 && pick < $.player.steal; pick++) {
+                        effort = dice(uint(lock - skill) + $.steal + 1, 0)
                         vt.out('.')
-                        vt.sound('click', 6)
-                        skill += dice(100 + $.player.steal) < effort
-                            ? dice($.player.level + $.player.steal - $.steal)
-                            : lock
+                        vt.sound('click', dice(5, 3))
                     }
-                    vt.outln(-300)
+                    vt.outln(-250)
 
-                    if ($.player.email == opponent.user.email || !db.lock(opponent.user.id)) {
+                    if ($.player.email == opponent.user.email || $.player.remote == opponent.user.remote) {
                         $.player.coward = true
-                        skill = 0
+                        effort = dice(100, 0)
                     }
 
                     if (skill > lock) {
-                        if (!Ring.have($.player.rings, Ring.theOne)) $.steal++
                         if (!$.arena || !$.dungeon) $.steal++
                         $.player.coin.value += prize
-                        $.player.steals++
                         vt.outln('You break in and make off with ', new Coin(prize).carry(), ' worth of stuff!')
                         vt.sound('max', 12)
 
@@ -347,11 +348,11 @@ module Main {
                         $.reason = `caught robbing ${opponent.user.handle}`
                         $.player.status = 'jail'
                         vt.action('clear')
+                        vt.outln(vt.cyan, Security.name[opponent.user.security].fail, '!')
                         vt.profile({ png: 'npc/city_guard_2', effect: 'fadeIn' })
                         vt.sound('arrested', 10)
-                        vt.out(vt.cyan, vt.bright, 'A city guard catches you and throws you into jail!')
-                        vt.outln(-2000)
-                        vt.outln(vt.cyan, vt.faint, `You can't deny the prize it may never fulfill you.`)
+                        vt.outln(vt.cyan, vt.bright, 'A city guard catches you and throws you into jail!')
+                        vt.outln(-2000, vt.cyan, vt.faint, `You can't deny the prize it may never fulfill you.`)
                         vt.outln(-1000)
                     }
                     menu()
