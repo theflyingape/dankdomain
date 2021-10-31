@@ -366,13 +366,12 @@ module Items {
 
     class _realestate {
 
-        name: realestate[]
-        merchant: string[] = []
+        name: realestate
+        merchant: string[]
 
         constructor() {
             this.name = require(path.resolve(folder, 'realestate.json'))
-            for (let i in this.name)
-                this.merchant.push(i)
+            this.merchant = Object.keys(this.name)
         }
     }
 
@@ -443,13 +442,12 @@ module Items {
 
     class _security {
 
-        name: security[]
-        merchant: string[] = []
+        name: security
+        merchant: string[]
 
         constructor() {
             this.name = require(path.resolve(folder, 'security.json'))
-            for (let i in this.name)
-                this.merchant.push(i)
+            this.merchant = Object.keys(this.name)
         }
     }
 

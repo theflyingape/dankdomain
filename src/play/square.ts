@@ -430,7 +430,7 @@ module Square {
 
             case 'R':
                 if (!$.access.roleplay) break
-                let re = RealEstate.name[$.player.realestate].protection
+                let re = RealEstate.merchant.indexOf($.player.realestate)
                 vt.out('\nYou live in a ', $.player.realestate)
                 credit.value = tradein(RealEstate.name[$.player.realestate].value)
                 vt.outln(' worth ', carry(credit))
@@ -448,7 +448,7 @@ module Square {
 
             case 'S':
                 if (!$.access.roleplay) break
-                let s = Security.name[$.player.security].protection
+                let s = Security.merchant.indexOf($.player.security)
                 vt.out('\nYou are guarded by a ', $.player.security)
                 credit.value = tradein(Security.name[$.player.security].value)
                 vt.outln(' worth ', carry(credit))
