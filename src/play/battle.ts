@@ -649,7 +649,7 @@ module Battle {
                         else
                             xp += PC.experience(loser.user.xplevel, 18 - (1.333 * loser.user.immortal))
 
-                        //  creatures have are endowed with non-transferable power;
+                        //  what creatures have are non-transferable power;
                         //  but as a PC, it's wearable power ...
                         if (loser.user.sex !== 'I') {
                             loser.user.rings.forEach(ring => {
@@ -662,6 +662,7 @@ module Battle {
                                     vt.sound('click', 8)
                                 }
                             })
+                            if (vt.col) vt.outln()
                         }
 
                         if (loser.user.coin.value) {
@@ -801,6 +802,7 @@ module Battle {
                             vt.sound('click')
                         }
                     })
+                    if (vt.col) vt.outln()
 
                     if (winner.user.gang && winner.user.gang == $.player.gang) {
                         PC.adjust('cha', -1, -1, -1)

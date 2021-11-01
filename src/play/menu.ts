@@ -302,18 +302,14 @@ module Main {
                     }
                     vt.outln(-250)
 
-                    if ($.player.email == opponent.user.email || $.player.remote == opponent.user.remote) {
-                        $.player.coward = true
-                        effort = dice(100, 0)
-                    }
-
-                    if (skill > lock) {
+                    if (!effort) {
+                        if ($.player.email == opponent.user.email) $.player.coward = true
                         if (!$.arena || !$.dungeon) $.steal++
                         $.player.coin.value += prize
                         vt.outln('You break in and make off with ', new Coin(prize).carry(), ' worth of stuff!')
                         vt.sound('max', 12)
 
-                        if ($.arena) opponent.user.coin.value = 0n
+                        opponent.user.coin.value = 0n
 
                         if (opponent.armor.ac > 0) {
                             if (opponent.armor.ac > Armor.merchant.length)
