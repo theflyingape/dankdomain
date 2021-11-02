@@ -314,14 +314,11 @@ module Items {
     class _poison {
 
         vials: poison[]
-        merchant: string[] = []
+        merchant: string[]
 
         constructor() {
             this.vials = require(path.resolve(folder, 'poison.json'))
-            for (let i in this.vials) {
-                if (this.vials[i].cost)
-                    this.merchant.push(i)
-            }
+            this.merchant = Object.keys(this.vials)
         }
 
         add(vials: number[], n: number | string) {

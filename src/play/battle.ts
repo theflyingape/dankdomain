@@ -1737,7 +1737,7 @@ module Battle {
                         nme.toWC -= dice(nme.weapon.wc / 5 + 1)
                         nme.user.toWC -= dice(nme.weapon.wc / 10 + 1)
                         vt.outln(vt.bright, caster, ' ', PC.what(rpc, 'damage'), p2.his
-                            , isNaN(+nme.user.weapon) ? armor(nme) : 'attack', '!', -400)
+                            , isNaN(+nme.user.weapon) ? weapon(nme) : 'attack', '!', -400)
                         if (-nme.user.toWC >= nme.weapon.wc || -(nme.user.toWC + nme.toWC) >= nme.weapon.wc) {
                             vt.outln(p2.His, isNaN(+nme.user.weapon) ? nme.user.weapon : 'attack', ' crumbles!', -1000)
                             Weapon.equip(nme, Weapon.merchant[0])

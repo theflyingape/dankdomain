@@ -296,7 +296,7 @@ module Main {
                     //  tails never fails
                     let effort = dice(3 * lock, 0)
                     for (let pick = 0; effort > 0 && pick < $.player.steal; pick++) {
-                        effort = dice(uint(lock - skill) + $.steal + 1, 0)
+                        effort = dice(uint(lock - pick - skill) + $.steal + 1, 0)
                         vt.out('.')
                         vt.sound('click', dice(5, 3))
                     }
