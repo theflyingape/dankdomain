@@ -285,8 +285,8 @@ module Main {
                     const lock = Security.name[opponent.user.security].protection
                         + RealEstate.name[opponent.user.realestate].protection
                         + Ring.power(opponent.user.rings, $.player.rings, 'steal').power
-                        + opponent.user.steal - +(opponent.user.status == 'jail')
-                        + +($.arena > 0) + +($.dungeon > 0)
+                        + opponent.user.steal - int(opponent.user.status == 'jail')
+                        + int($.arena > 0) + int($.dungeon > 0)
                         + $.steal
                     const skill = int(
                         ([0, 1, 5, 9, 12][$.player.steal] + $.player.level / 2)
