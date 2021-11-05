@@ -65,11 +65,11 @@
 		"telnet-socket": "^0.2.3",
 		"title-case": "^3.0.3",
 		"ws": "^8.2.3",
-		"xterm": "^4.14.1",
+		"xterm": "^4.15.0",
 		"xterm-addon-fit": "^0.5.0",
 		"xterm-addon-unicode11": "^0.3.0",
 		"xterm-addon-web-links": "^0.4.0",
-		"xterm-addon-webgl": "^0.11.2",
+		"xterm-addon-webgl": "^0.11.3",
 		"xvt": "^1.4.8"
 	},
 	"devDependencies": {
