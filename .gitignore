@@ -13,3 +13,4 @@ game/files/user/*
 game/users/*
 !bundle.js
 !readme.txt
+!sw.js
