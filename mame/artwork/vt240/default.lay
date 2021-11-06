@@ -1,14 +1,14 @@
 <!-- vt240.lay -->
 
 <mamelayout version="2">
-	<element name="vt240">
+	<element name="bezel_monitor">
 		<image file="crt-bezel.png" />
 	</element>
 	<view name="CRT">
 		<screen index="0">
 			<bounds x="128" y="128" width="2280" height="1684" />
 		</screen>
-		<bezel element="vt240">
+		<bezel element="bezel_monitor">
 			<bounds x="0" y="0" width="2536" height="1940" />
 		</bezel>
 	</view>
