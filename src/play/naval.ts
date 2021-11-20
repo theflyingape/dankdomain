@@ -12,7 +12,6 @@ import { elemental, naval } from '../npc'
 import { checkXP, input } from '../player'
 import { an, dice, int, sprintf, uint, whole } from '../sys'
 import Battle = require('./battle')
-import { normalize } from 'path/posix'
 
 module Naval {
 
@@ -1065,4 +1064,3 @@ module Naval {
 }
 
 export = Naval
-

@@ -8,7 +8,7 @@ import db = require('./db')
 import { Access } from './items'
 import { vt } from './lib'
 import { NPC, PC } from './pc'
-import { dice, int, pathTo } from './sys'
+import { dice, fs, int, pathTo } from './sys'
 
 module npc {
 
@@ -124,6 +124,7 @@ module npc {
         Curse: string = ''
         Fight: string = ''
         Joust: string = ''
+        Naval: string = ''
         Party: string = ''
         Resurrect: string = ''
         Rob: string = ''
@@ -398,20 +399,15 @@ module npc {
             }
         }
     }
+
     class _naval {
-
-        monsters: naval[]
-
-        constructor() {
-            this.monsters = require(pathTo('pcs', 'naval.json'))
-        }
+        monsters: naval[] = JSON.parse(fs.readFileSync(pathTo('pcs', 'naval.json')).toString())
     }
 
     export const arena = new _arena
     export const dungeon = new _dungeon
     export const elemental = new _elemental
     export const naval = new _naval
-
 }
 
 export = npc
