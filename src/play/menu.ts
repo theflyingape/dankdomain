@@ -285,9 +285,8 @@ module Main {
                     const lock = Security.name[opponent.user.security].protection
                         + RealEstate.name[opponent.user.realestate].protection
                         + Ring.power(opponent.user.rings, $.player.rings, 'steal').power
-                        + opponent.user.steal - int(opponent.user.status == 'jail')
-                        + int($.arena > 0) + int($.dungeon > 0)
-                        + $.steal
+                        + opponent.user.steal + $.steal
+                        - int(opponent.user.status == 'jail') - int($.arena > 0) - int($.dungeon > 0)
                     const skill = int(
                         ([0, 1, 5, 9, 12][$.player.steal] + $.player.level / 2)
                         * ($.online.dex + $.online.int + $.online.cha) / 270)
@@ -296,19 +295,19 @@ module Main {
                     //  tails never fails
                     let effort = dice(3 * lock, 0)
                     for (let pick = 0; effort > 0 && pick < $.player.steal; pick++) {
-                        effort = dice(uint(lock - pick - skill) + $.steal + 1, 0)
+                        effort = dice(uint(lock - skill - pick) + 1, 0)
                         vt.out('.')
                         vt.sound('click', dice(5, 3))
                     }
-                    vt.outln(-250)
+                    vt.outln(-300)
 
                     if (!effort) {
-                        if ($.player.email == opponent.user.email) $.player.coward = true
-                        if (!$.arena || !$.dungeon) $.steal++
-                        $.player.coin.value += prize
                         vt.outln('You break in and make off with ', new Coin(prize).carry(), ' worth of stuff!')
                         vt.sound('max', 12)
+                        $.steal++
 
+                        $.player.coin.value += prize
+                        if ($.player.email == opponent.user.email) $.player.coward = true
                         opponent.user.coin.value = 0n
 
                         if (opponent.armor.ac > 0) {
@@ -339,7 +338,7 @@ module Main {
                         log(opponent.user.id, `\n${$.player.handle} robbed you!`)
                     }
                     else {
-                        vt.beep()
+                        vt.beep(true)
                         log(opponent.user.id, `\n${$.player.handle} was caught robbing you!`)
                         $.reason = `caught robbing ${opponent.user.handle}`
                         $.player.status = 'jail'
