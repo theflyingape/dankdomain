@@ -102,6 +102,12 @@ module email {
         let royalty = Object.keys(Access.name).slice($.player.gender == 'F' ? -2 : -1)[0]
         if ($.player.emulation == 'XT') vt.out('👑 ')
         vt.out(`The ${royalty} orders the royal scribe to dispatch ${what}\naddressed to ${$.player.handle} ` + (!repeat ? `<${$.player.email}> ` : ''), vt.reset)
+
+        if ($.from == 'newuser') {
+            PC.save(player, true)
+            $.reason = 'new user registration'
+        }
+
         if ($.player.email !== $.sysop.email)
             await Message(player, mailOptions)
         else {
@@ -110,10 +116,6 @@ module email {
             vt.outln(`SELECT id,handle,access,password FROM Players WHERE id='${player.id}';`)
             vt.outln(`...or its exported save file:`)
             vt.outln('$ grep password ', pathTo('users', `.${player.id}.json`))
-        }
-        if ($.from == 'newuser') {
-            PC.save(player, true)
-            $.reason = 'new user registration'
         }
         vt.outln(-1000)
         vt.hangup()
@@ -128,7 +130,7 @@ module email {
                 vt.outln()
                 vt.outln(vt.red, vt.bright, `${smtpConfig} not configured for sending email`)
                 player.password = 'local'
-                PC.save(player, true)
+                PC.save(player)
                 vt.outln('\nYour user ID (', vt.bright, player.id, vt.normal, ') was saved, ', Access.name[player.access][player.gender], '.')
                 vt.outln('Your password: "', vt.bright, player.password, vt.normal, '"')
             }

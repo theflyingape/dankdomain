@@ -55,7 +55,7 @@
 		"chokidar": "^3.5.2",
 		"express": "^4.17.2",
 		"fs-extra": "^10.0.0",
-		"got": "^12.0.0",
+		"got": "^11.8.3",
 		"net-keepalive": "^3.0.0",
 		"node-pty": "^0.10.1",
 		"nodemailer": "^6.7.1",
@@ -91,6 +91,7 @@
 	"scripts": {
 		"build": "tsc && browserify game/portal/client.js -o game/portal/static/bundle.js",
 		"bundle": "watchify game/portal/client.js -v -o game/portal/static/bundle.js",
+		"clean": "rm game/files/tavern/*.txt game/users/.*.json game/users/*.json game/users/*.sql* 2> /dev/null",
 		"debug": "node game/portal/app",
 		"test": "npm run net test",
 		"watch": "tsc -w",
