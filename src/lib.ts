@@ -150,7 +150,7 @@ module lib {
     export function door(user: string): string[] {
         $.door = []
         try {
-            $.door = fs.readFileSync(user).toString().split('\r\n')
+            $.door = fs.readFileSync(user).toString().replace(/\r/g, '').split('\n')
         }
         catch { }
         return $.door
