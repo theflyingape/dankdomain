@@ -151,7 +151,7 @@ _This file simply regulates some of the game features loaded at_ `runtime`_. The
 
 - What's the best way to modify Player time limits and timeouts throughout the game?
 
-_Refer to `files/items/title.json` for player runtime values based on their `access` role -- assigned or achieved by reaching the next `promote` level. There are no soft-coded values for the timeouts assigned to the various prompts. Those have been specially tweaked to keep turn-play moving along -- appropriately. That said, try modifying `vt.defaultTimeout` seconds in `main.js` to your liking._
+_Refer to_ `files/items/title.json` _for player runtime values based on their_ `access` _role -- assigned or achieved by reaching the next_ `promote` _level. There are no soft-coded values for the timeouts assigned to the various prompts. Those have been specially tweaked to keep turn-play moving along -- appropriately. That said, try modifying_ `vt.defaultTimeout` _seconds in_ `main.js` _to your liking._
 
 ## Files directory structure
 
