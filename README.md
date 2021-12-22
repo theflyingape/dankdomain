@@ -4,6 +4,7 @@
 
 - [Player's Manual](#players-manual)
 - [Installation](#installation)
+- [FAQ](#faq)
 - [Files directory structure](#files-directory-structure)
 - [Gallery](#gallery)
 - [Node.js dependency tree](#nodejs-dependency-tree)
@@ -122,20 +123,39 @@ ENOENT: no such file or directory, open '/usr/games/dankdomain/game/etc/network.
 ↔ WebSocket endpoints enabled
 ```
 
-Supports running as a BBS door (as Amiga-only BBSes did for `Hack & Slash` in 1994) by allowing a passed user numeric ID paired with a compatible **Mystic** `door.sys` [file format](http://wiki.mysticbbs.com/doku.php?id=menu_commands#external_doors) launched from its `BBS node` startup directory.
+Supports running as a BBS door (as Amiga-only BBSes did for `Hack & Slash` in 1994) by allowing a passed user numeric ID paired with a compatible **Mystic** `door.sys` [file format](http://wiki.mysticbbs.com/doku.php?id=menu_commands#external_doors) launched from its `BBS node` startup directory. Here is how to _freshly_ unit-test that app startup mode:
 
-For example, what follows might be for the BBS sysop (`0`):
+```bash
+$ npm run clean
+$ cd game
+$ cp door-example.sys door.sys
+$ node main 0
+```
+
+For example, configure to call-out to a script with two (2) parameters: `userId` and the path with filename to `door.sys`
 
 ```bash
 #!/bin/sh
-pwd; [ -s door.sys ] || exit 1
-node /usr/local/games/dankdomain/main 0
+pwd; [ -s "$2" ] || exit 1
+cp "$2" /usr/local/games/dankdomain/door.sys
+node /usr/local/games/dankdomain/main "$1"
 ```
 
-For the Portal, consider downloading media packs: 📷 [images](https://drive.google.com/open?id=1jjLPtGf_zld416pxytZfbfCHREZTghkW) and 🔉 [sounds](https://drive.google.com/open?id=1UvqQJbN61VbWVduONXgo1gm9yvGI0Qp8)
+## FAQ
 
+- What does `etc/sysop.json` do? How do you assign sysop privileges?
+
+_This file simply regulates some of the game features loaded at_ `runtime`_. The first Player (non-NPC) to register is automatically entitled as the Ruler off the last object entry in_ `files/items/title.json` _which is packaged here as either the_ (M) King _or_ (F) Queen `access` _role._
+
+**NOTE**: _in_ `users` _folder, edit a hidden (dot) export file to carefully modify any Player's record and save as_ **`save.json`** _whereas a running DDnet_ `app.js` _portal service_ (`npm run net`) _will automatically consume and apply it to the_ `dankdomain.sql` **`Players`** _table._
+
+- What's the best way to modify Player time limits and timeouts throughout the game?
+
+_Refer to `files/items/title.json` for player runtime values based on their `access` role -- assigned or achieved by reaching the next `promote` level. There are no soft-coded values for the timeouts assigned to the various prompts. Those have been specially tweaked to keep turn-play moving along -- appropriately. That said, try modifying `vt.defaultTimeout` seconds in `main.js` to your liking._
 
 ## Files directory structure
+
+For the Portal, consider downloading media packs: 📷 [images](https://drive.google.com/open?id=1jjLPtGf_zld416pxytZfbfCHREZTghkW) and 🔉 [sounds](https://drive.google.com/open?id=1UvqQJbN61VbWVduONXgo1gm9yvGI0Qp8) into the appropriate game/portal/static folder:
 
 ```linux
 $ pwd
@@ -186,8 +206,6 @@ mame              player - MAME VT240 terminal + socat startup script
 node_modules      Node.js support libraries
 package.json      Node.js manifest
 ```
-
-**NOTE**: _in_ **`users`** _folder, edit a hidden (dot) export file and save as_ **`save.json`** _whereas a running DDnet_ **`app.js`** _portal service will automatically consume and apply it to the dankdomain.sql_ **`Players`** _table._
 
  🇺🇸 ©️1991 - 2021 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
 
