@@ -22,7 +22,7 @@ const bbs = `${process.cwd()}/door.sys`
 
 process.chdir(__dirname)
 
-import { int } from './sys'
+import { whole } from './sys'
 import { door, vt } from './lib'
 
 vt.emulation = <EMULATION>(
@@ -37,7 +37,7 @@ vt.emulation = <EMULATION>(
 const userID = process.argv.length > 2 ? process.argv[2].toUpperCase() : ''
 if (userID.length) {
     vt.emulation = 'VT'
-    if (userID == int(userID).toString()) {
+    if (userID == whole(userID).toString()) {
         const user = door(bbs)
         if (userID == user[25]) {
             if (user[19] == 'GR') vt.emulation = 'PC'

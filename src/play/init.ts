@@ -155,8 +155,11 @@ module Init {
         //  auto-login?
         if (userID) {
             $.player.id = userID
-            if (!PC.load($.player)) PC.reroll($.player)
-
+            if (!PC.load($.player)) {
+                $.player = db.fillUser('newuser', $.player)
+                PC.reroll($.player)
+                $.player.id = ''
+            }
             if (!$.player.id) {
                 if (vt.tty == 'door' && $.door.length) {
                     $.player.rows = int($.door[20]) || 24
