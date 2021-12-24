@@ -126,10 +126,10 @@ ENOENT: no such file or directory, open '/usr/games/dankdomain/game/etc/network.
 Supports running as a BBS door (as Amiga-only BBSes did for `Hack & Slash` in 1994) by allowing a passed user numeric ID paired with a compatible **Mystic** `door.sys` [file format](http://wiki.mysticbbs.com/doku.php?id=menu_commands#external_doors) launched from its `BBS node` startup directory. Here is how to _freshly_ unit-test that app startup mode:
 
 ```bash
-$ npm run clean
-$ cd game
-$ cp door-example.sys door.sys
-$ node main 0
+[~/dankdomain]$ npm run clean
+[~/dankdomain]$ cd game
+[~/dankdomain/game]$ cp door-example.sys door.sys
+[~/dankdomain/game]$ node main 0
 ```
 
 For example, configure to call-out to a script with two (2) parameters: `userId` and the path with filename to `door.sys`
@@ -145,7 +145,7 @@ node /usr/local/games/dankdomain/main "$1"
 
 - What does `etc/sysop.json` do? How do you assign sysop privileges?
 
-_This file simply regulates some of the game features loaded at_ `runtime`_. The first Player (non-NPC) to register is automatically entitled as the Ruler off the last object entry in_ `files/items/title.json` _which is packaged here as either the_ (M) King _or_ (F) Queen `access` _role._
+_This file simply regulates some of the game features loaded at_ `runtime`_. The first Player (non-NPC) to register is automatically entitled as the Ruler off the last object entry in_ `files/items/title.json` _which is packaged here as either the_ (M) King _or_ (F) Queen `access` _role. The Ruler alone is granted with minor "favor" over their domain, but aligned with the game play & spirit if not abused. Other roles can have_ `sysop: true` _enabled to gain access to_ `"@"` _and some overlapping favor with the Ruler as you'd expect from a minion._
 
 **NOTE**: _in_ `users` _folder, edit a hidden (dot) export file to carefully modify any Player's record and save as_ **`save.json`** _whereas a running DDnet_ `app.js` _portal service_ (`npm run net`) _will automatically consume and apply it to the_ `dankdomain.sql` **`Players`** _table._
 
@@ -211,18 +211,18 @@ package.json      Node.js manifest
 
 ## Gallery
 
-+ [Arena](https://photos.app.goo.gl/sZS7xx6rpyoG4CYBA)
-+ [Connect](https://photos.app.goo.gl/AeZZXrC8VKnMFuqj8)
-+ [Dungeon](https://photos.app.goo.gl/XfQTJ2NrKdVWJext9)
-+ [Images](https://photos.app.goo.gl/wXpBUtrY2L64SrEH6)
-+ [Monster](https://photos.app.goo.gl/rTRm8xDbF2wGJDFZ7)
-+ [Naval](https://photos.app.goo.gl/w6v8Zk4GVBc3CbAA6)
-+ [NPC](https://photos.app.goo.gl/T4QQT87U1eZK6EHk8)
-+ [Player](https://photos.app.goo.gl/BCEAJjynqHZKxpaX9)
-+ [Potion](https://photos.app.goo.gl/Gj9HYSXQUDGVcviJ7)
-+ [Ring](https://photos.app.goo.gl/SWQDdytqjdXNfT4m7)
-+ [Specials](https://photos.app.goo.gl/Dn2g2BtdwtKSbudu7)
-+ [User](https://photos.app.goo.gl/hfTJ8EstLPSp4Kry6)
+- [Arena](https://photos.app.goo.gl/sZS7xx6rpyoG4CYBA)
+- [Connect](https://photos.app.goo.gl/AeZZXrC8VKnMFuqj8)
+- [Dungeon](https://photos.app.goo.gl/XfQTJ2NrKdVWJext9)
+- [Images](https://photos.app.goo.gl/wXpBUtrY2L64SrEH6)
+- [Monster](https://photos.app.goo.gl/rTRm8xDbF2wGJDFZ7)
+- [Naval](https://photos.app.goo.gl/w6v8Zk4GVBc3CbAA6)
+- [NPC](https://photos.app.goo.gl/T4QQT87U1eZK6EHk8)
+- [Player](https://photos.app.goo.gl/BCEAJjynqHZKxpaX9)
+- [Potion](https://photos.app.goo.gl/Gj9HYSXQUDGVcviJ7)
+- [Ring](https://photos.app.goo.gl/SWQDdytqjdXNfT4m7)
+- [Specials](https://photos.app.goo.gl/Dn2g2BtdwtKSbudu7)
+- [User](https://photos.app.goo.gl/hfTJ8EstLPSp4Kry6)
 
 ## Node.js dependency tree
 
