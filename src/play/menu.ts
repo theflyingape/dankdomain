@@ -366,7 +366,7 @@ module Main {
                     break
                 }
                 vt.animated('fadeOut')
-                vt.music('tavern' + dice(4))
+                if ($.access.roleplay) vt.music('tavern' + dice(4))
                 require('./tavern').menu($.player.expert)
                 return
 
