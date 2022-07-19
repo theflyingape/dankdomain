@@ -26,7 +26,9 @@ _Read the_ [Manual](https://manual.ddgame.us) _to play the_ [online game](https:
 
 [![NPM](https://nodei.co/npm/dankdomain.png?compact=true)](https://nodei.co/npm/dankdomain/)
 
-[![Open in Visual Studio Code](https://open.vscode.dev/badges/open-in-vscode.svg)](https://open.vscode.dev/organization/repository) ![npm version](https://img.shields.io/node/v/dankdomain) ![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/npm/dankdomain?style=plastic) ![GitHub milestones](https://img.shields.io/github/milestones/closed/theflyingape/dankdomain)
+[![Code Preview](https://badgen.net/badge/Preview/VS%20Code/blue?icon=github)](https://open.vscode.dev/organization/repository) _... or just press_ `dot (.)` _on your keyboard_
+
+![npm version](https://img.shields.io/node/v/dankdomain) ![Libraries.io dependency status for latest release](https://img.shields.io/librariesio/release/npm/dankdomain?style=plastic) ![GitHub milestones](https://img.shields.io/github/milestones/closed/theflyingape/dankdomain)
 
 ## Installation
 
@@ -207,7 +209,7 @@ node_modules      Node.js support libraries
 package.json      Node.js manifest
 ```
 
- 🇺🇸 ©️1991 - 2021 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
+ 🇺🇸 ©️1991 - 2022 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
 
 ## Gallery
 
