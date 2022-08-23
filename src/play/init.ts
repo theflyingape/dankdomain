@@ -91,8 +91,8 @@ module Init {
 
             if (/new/i.test(vt.entry)) {
                 $.player = PC.reroll($.player)
-                if (vt.tty == 'web') {
-                    vt.sound('yahoo', 20)
+                vt.sound('yahoo', 20)
+                if (vt.emulation == 'XT') {
                     require('./newuser')
                 }
                 else
