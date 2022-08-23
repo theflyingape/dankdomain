@@ -10,7 +10,7 @@ import { bracket, carry, cat, emulator, news, time, vt } from '../lib'
 import { Deed, PC } from '../pc'
 import { } from '../npc'
 import { input, logoff, pickPC } from '../player'
-import { an, cuss, date2full, dice, fs, got, int, now, pathTo, titlecase } from '../sys'
+import { an, cuss, date2full, dice, fs, int, now, pathTo, titlecase } from '../sys'
 
 module Init {
 
@@ -265,24 +265,6 @@ module Init {
             if ($.player.emulation == 'XT')
                 $.whereis += ' 🖥 '
         }
-        else try {
-            const apikey = pathTo('etc', 'ipstack.key')
-            const key = fs.readFileSync(apikey).toString()
-            got(`http://api.ipstack.com/${$.remote}?access_key=${key}`).then(response => {
-                $.whereis = ''
-                let result = ''
-                if (response.body) {
-                    let ipstack = JSON.parse(response.body)
-                    if (ipstack.ip) result = ipstack.ip
-                    if (ipstack.city) result = ipstack.city
-                    if (ipstack.region_code) result += (result ? ', ' : '') + ipstack.region_code
-                    if (ipstack.country_code) result += (result ? ' ' : '') + ipstack.country_code
-                    if (ipstack.location && ipstack.location.country_flag_emoji)
-                        result += ` ${ipstack.location.country_flag_emoji} `
-                }
-                $.whereis += result ? result : $.remote
-            }).catch(error => { $.whereis += ` ⚠️ ${error.message}` })
-        } catch (e) { }
 
         if (now().date >= $.game.started) {
             $.game.lasttime = now().time
