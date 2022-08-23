@@ -54,7 +54,7 @@ dns.lookup(host, (err, addr, family) => {
             if (resolve)
                 try {
                     //  optional startup emulation: tty = XT|PC|VT
-                    fetch(`${URL}/player?rows=${rows}&tty=${tty}`, { method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME }, https: ssl })
+                    fetch(`${URL}/player?rows=${rows}&tty=${tty}`, { method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME }, https: ssl, rejectUnauthorized: false })
                         .then(response => {
                             resolve(response.body)
                         })
@@ -113,7 +113,7 @@ dns.lookup(host, (err, addr, family) => {
                     }
                     function wall(msg) {
                         try {
-                            fetch(`${URL}/player/${pid}/wall?msg=${msg}`, Object.assign({ method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME } }, ssl))
+                            fetch(`${URL}/player/${pid}/wall?msg=${msg}`, { method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME }, https: ssl, rejectUnauthorized: false })
                         }
                         catch (err) {
                             console.error(err.response)
@@ -138,7 +138,7 @@ dns.lookup(host, (err, addr, family) => {
                 process.stdin.on('data', function (key: Buffer) {
                     if (rows !== process.stdout.rows) {
                         rows = process.stdout.rows
-                        fetch(`${URL}/player/${pid}/size?rows=${rows}&cols=${process.stdout.columns}`, { method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME }, https: ssl })
+                        fetch(`${URL}/player/${pid}/size?rows=${rows}&cols=${process.stdout.columns}`, { method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME }, https: ssl, rejectUnauthorized: false })
                     }
                     wss.send(key)
                 })
