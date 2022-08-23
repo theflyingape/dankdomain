@@ -31,10 +31,6 @@
 	],
 	"private": false,
 	"publisher": "theflyingape <theflyingape@gmail.com>",
-	"publishConfig": {
-		"access": "public",
-		"registry": "https://npm.pkg.github.com"
-	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/theflyingape/dankdomain.git"

@@ -3,6 +3,7 @@
 **/*.pem
 **/node_modules/**
 **/tsconfig.tsbuildinfo
+game/portal/.config/pulse/cookie
 game/portal/static/images/*
 game/portal/static/sounds/*
 game/etc/ipstack.key
@@ -14,4 +15,4 @@ game/users/*
 !bundle.js
 !readme.txt
 !sw.js
-game/portal/.config/pulse/cookie
+
