@@ -3185,8 +3185,8 @@ module Dungeon {
         if (reveal) {
             let m = room.monster.length > 4 ? 4 : room.monster.length
             if (m) {
-                if ($.player.emulation !== 'XT' && dungeon.Monster[vt.tty])
-                    icon += dungeon.Monster[vt.tty][m]
+                if ($.player.emulation !== 'XT' && dungeon.Monster)
+                    icon += dungeon.Monster[m]
                 else {
                     if (identify) {
                         icon += dungeon.Mask[m]

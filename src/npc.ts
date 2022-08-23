@@ -77,10 +77,7 @@ module npc {
         readonly Dot = vt.Empty
 
         readonly Mask = ['   ', ' ѩ ', 'ѩ ѩ', 'ѩѩѩ', 'ѩӂѩ']
-        readonly Monster = {
-            door: ['   ', 'Mon', 'M+M', 'Mob', 'MOB'],
-            telnet: ['   ', 'Mon', 'M+M', 'Mob', 'MOB']
-        }
+        readonly Monster = ['   ', 'Mon', 'M+M', 'Mob', 'MOB']
 
         //  ±
         readonly Teleport = {
