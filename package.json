@@ -1,5 +1,5 @@
 {
-	"name": "dankdomain",
+	"name": "@theflyingape/dankdomain",
 	"version": "3.2.3",
 	"description": "Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash",
 	"author": "Robert Hurst",
@@ -31,6 +31,10 @@
 	],
 	"private": false,
 	"publisher": "theflyingape <theflyingape@gmail.com>",
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://npm.pkg.github.com"
+	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/theflyingape/dankdomain.git"
