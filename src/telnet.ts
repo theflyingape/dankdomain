@@ -17,7 +17,7 @@ import { fs, got, pathTo } from './sys'
 let host = process.argv.length > 2 ? process.argv[2] : 'play.ddgame.us'
 let port = process.argv.length > 3 ? parseInt(process.argv[3]) : 443
 let rows = process.argv.length > 4 ? parseInt(process.argv[4]) : process.stdout.rows
-let tty = process.argv.length > 5 ? process.argv[5] : 'VT'
+let tty = process.argv.length > 5 ? process.argv[5] : process.env.TERM == 'linux' ? 'PI' : 'VT'
 let URL, ssl
 let mixer1: child.ChildProcess
 let mixer2: child.ChildProcess

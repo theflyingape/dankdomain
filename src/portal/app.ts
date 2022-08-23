@@ -111,7 +111,7 @@ function login(client: string, rows: number, cols: number, emulator: EMULATION, 
         encoding: null
     })
 
-    let encoding: BufferEncoding = emulator == 'XT' ? 'utf8' : 'latin1'
+    let encoding: BufferEncoding = (emulator == 'PI' || emulator == 'XT') ? 'utf8' : 'latin1'
     let pid: number = term.pid
     broadcasts[pid] = ''
     sessions[pid] = term
@@ -164,7 +164,7 @@ function message(term: pty.IPty, msg: Uint8Array, classic = true): Uint8Array {
     function profile(panel) { }
     function title(name) {
         let b4: BufferEncoding = sessions[pid].encoding || 'utf8'
-        sessions[pid].encoding = <BufferEncoding>(name == 'XT' ? 'utf8' : 'latin1')
+        sessions[pid].encoding = <BufferEncoding>(name == 'PI' || name == 'XT' ? 'utf8' : 'latin1')
         if (sessions[pid].encoding !== b4)
             console.info(`CLASSIC session ${pid} encoding switched from ${b4} to ${sessions[pid].encoding}`)
     }
@@ -205,6 +205,7 @@ dns.lookup(network.address, (err, addr, family) => {
         tty.on('connection', (socket) => {
             let client = socket.remoteAddress || 'scan'
             let pid = login(client, network.rows, 80, network.emulator)
+            sessions[pid].tty = 'telnet'
             let term = sessions[pid]
             console.info(`Classic Gate knock from remote host ${client} → session ${pid}`)
 
@@ -456,6 +457,7 @@ dns.lookup(network.address, (err, addr, family) => {
             let rows = parseInt(req.query.rows ? req.query.rows.toString() : '25')
             let tty = req.query.tty ? req.query.tty.toString() : 'XT'
             let pid = login(client, rows, cols, <EMULATION>tty)
+            sessions[pid].tty = 'web'
             res.send(pid.toString())
             res.end()
         })

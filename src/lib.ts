@@ -68,18 +68,18 @@ module lib {
         return bags.slice(0, max).toString()
     }
 
-    export function cat(name: string, delay = $.player.expert ? 2 : 40): boolean {
+    export function cat(name: string, delay = $.player.expert ? 2 : 40, emu = vt.emulation): boolean {
         const file = pathTo('files', name)
-        let filename = file + (vt.emulation == 'PC' ? '.ibm' : (vt.emulation == 'PI' || vt.emulation == 'XT') ? '.ans' : '.txt')
+        let filename = file + (emu == 'PC' ? '.ibm' : (emu == 'PI' || emu == 'XT') ? '.ans' : '.txt')
         let output = []
         try {
             fs.accessSync(filename, fs.constants.F_OK)
-            output = fs.readFileSync(filename, (vt.emulation == 'PI' || vt.emulation == 'XT') ? 'utf8' : 'binary').toString().split('\n')
+            output = fs.readFileSync(filename, (emu == 'PI' || emu == 'XT') ? 'utf8' : 'binary').toString().split('\n')
         } catch (e) {
-            filename = file + (vt.emulation == 'PC' ? '.ans' : '.txt')
+            filename = file + (emu == 'PC' ? '.ans' : '.txt')
             try {
                 fs.accessSync(filename, fs.constants.F_OK)
-                output = fs.readFileSync(filename, (vt.emulation == 'PI' || vt.emulation == 'XT') ? 'utf8' : 'binary').toString().split('\n')
+                output = fs.readFileSync(filename, (emu == 'PI' || emu == 'XT') ? 'utf8' : 'binary').toString().split('\n')
             } catch (e) {
                 vt.out(vt.off)
                 return false
@@ -200,6 +200,7 @@ module lib {
         vt.outln('\n', vt.cyan, 'Which emulation / character encoding are you using?')
         vt.out(bracket('VT'), ' classic VT terminal with DEC drawing (telnet b&w)')
         vt.out(bracket('PC'), ' former ANSI color with Western IBM CP850 (telnet color)')
+        vt.out(bracket('PI'), ' modern terminal only (Linux console)')
         vt.outln(bracket('XT'), ' modern ANSI color with UTF-8 & emojis (browser multimedia)')
         prompt('term')
     }

@@ -21,7 +21,7 @@ module Init {
     $.player = db.fillUser()
     $.player.emulation = vt.emulation
     $.access = Access.name[$.player.access]
-    cat('logon', vt.tty == 'door' ? 100 : 5)
+    cat('logon', vt.tty == 'door' ? 100 : 5, vt.emulation == 'PI' ? 'PC' : vt.emulation)
 
     export function user(prompt: string) {
         let retry = 3
