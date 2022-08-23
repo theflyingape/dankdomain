@@ -18,7 +18,7 @@ let host = process.argv.length > 2 ? process.argv[2] : 'play.ddgame.us'
 let port = process.argv.length > 3 ? parseInt(process.argv[3]) : 443
 let rows = process.argv.length > 4 ? parseInt(process.argv[4]) : process.stdout.rows
 let tty = process.argv.length > 5 ? process.argv[5] : process.env.TERM == 'linux' ? 'PI' : 'VT'
-let URL, ssl
+let URL, WS, ssl
 let mixer1: child.ChildProcess
 let mixer2: child.ChildProcess
 
@@ -28,6 +28,7 @@ try {
         requestCert: false, rejectUnauthorized: false
     }
     URL = `https://${host}:${port}`
+    WS = `wss://${host}:${port}`
 }
 catch (err) {
     console.info(err.message, `\n
@@ -39,6 +40,7 @@ $ openssl req -newkey rsa:2048 -nodes -keyout key.pem -x509 -days 365 -out cert.
     host = 'localhost'
     port = 1939
     URL = `http://${host}:${port}`
+    WS = `ws://${host}:${port}`
 }
 
 if (process.stdin.isTTY) process.stdin.setRawMode(true)
@@ -78,7 +80,7 @@ dns.lookup(host, (err, addr, family) => {
             process.stdout.write(`\x1B[0;2m→ terminal WebSocket (${addr}:${port}) ... `)
 
             try {
-                const wss = new ws(`${URL}/player/?pid=${pid}`, ssl)
+                const wss = new ws(`${WS}/player/?pid=${pid}`, ssl)
 
                 wss.onmessage = (ev) => {
                     let data = ev.data.toString(tty == 'XT' ? 'utf8' : 'latin1')
