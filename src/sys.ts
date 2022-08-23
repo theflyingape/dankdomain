@@ -6,8 +6,8 @@
 module sys {
 
     //  dependencies with nice aliases
+    export const fetch = require('node-fetch')
     export const fs = require('fs')
-    export const got = require('got')
     export const path = require('path')
     export const romanize = require('romanize')
     export const sprintf = require('sprintf-js').sprintf
