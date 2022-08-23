@@ -70,16 +70,16 @@ module lib {
 
     export function cat(name: string, delay = $.player.expert ? 2 : 40): boolean {
         const file = pathTo('files', name)
-        let filename = file + (vt.emulation == 'PC' ? '.ibm' : vt.emulation == 'XT' ? '.ans' : '.txt')
+        let filename = file + (vt.emulation == 'PC' ? '.ibm' : (vt.emulation == 'PI' || vt.emulation == 'XT') ? '.ans' : '.txt')
         let output = []
         try {
             fs.accessSync(filename, fs.constants.F_OK)
-            output = fs.readFileSync(filename, vt.emulation == 'XT' ? 'utf8' : 'binary').toString().split('\n')
+            output = fs.readFileSync(filename, (vt.emulation == 'PI' || vt.emulation == 'XT') ? 'utf8' : 'binary').toString().split('\n')
         } catch (e) {
             filename = file + (vt.emulation == 'PC' ? '.ans' : '.txt')
             try {
                 fs.accessSync(filename, fs.constants.F_OK)
-                output = fs.readFileSync(filename, vt.emulation == 'XT' ? 'utf8' : 'binary').toString().split('\n')
+                output = fs.readFileSync(filename, (vt.emulation == 'PI' || vt.emulation == 'XT') ? 'utf8' : 'binary').toString().split('\n')
             } catch (e) {
                 vt.out(vt.off)
                 return false
@@ -166,11 +166,11 @@ module lib {
                     vt.title($.player.emulation)
                     vt.outln('\n', vt.reset, vt.magenta, vt.LGradient, vt.reverse, 'BANNER', vt.noreverse, vt.RGradient)
                     vt.outln(vt.red, 'R', vt.green, 'G', vt.blue, 'B', vt.reset, vt.bright, ' bold ', vt.normal, 'normal', vt.blink, ' flash ', vt.noblink, vt.faint, 'dim')
-                    vt.out(vt.yellow, 'Cleric: ', vt.bright, { VT: '\x1B(0\x7D\x1B(B', PC: '\x9C', XT: '✟', dumb: '$' }[$.player.emulation]
-                        , vt.normal, vt.magenta, '  Teleport: ', vt.bright, { VT: '\x1B(0\x67\x1B(B', PC: '\xF1', XT: '↨', dumb: '%' }[$.player.emulation])
+                    vt.out(vt.yellow, 'Cleric: ', vt.bright, { VT: '\x1B(0\x7D\x1B(B', PC: '\x9C', PI: '\u00B1', XT: '✟', dumb: '$' }[$.player.emulation]
+                        , vt.normal, vt.magenta, '  Teleport: ', vt.bright, { VT: '\x1B(0\x67\x1B(B', PC: '\xF1', PI: '\u21A8', XT: '↨', dumb: '%' }[$.player.emulation])
                     $.online.altered = true
-                    if ($.player.emulation == 'XT') {
-                        vt.outln(vt.lblack, '  Bat: 🦇')
+                    if ($.player.emulation == 'PI' || $.player.emulation == 'XT') {
+                        vt.outln(vt.lblack, '  Bat: ', $.player.emulation == 'PI' ? '\u00A5' : '🦇')
                         vt.sound('yahoo', 22)
                         cb()
                         return
@@ -184,7 +184,7 @@ module lib {
                     vt.form['rows'].prompt = vt.attr('Enter top visible row number ', vt.faint, '[', vt.reset, vt.bright, `${$.player.rows < 24 ? '24' : $.player.rows}`, vt.cyan, vt.faint, ']', vt.reset, ': ')
                     prompt('rows')
                 }, prompt: vt.attr('Select ', vt.faint, '[', vt.reset, vt.bright, `${$.player.emulation}`, vt.cyan, vt.faint, ']', vt.reset, ': ')
-                , cancel: 'VT', enter: $.player.emulation, match: /VT|PC|XT/i, max: 2
+                , cancel: 'VT', enter: $.player.emulation, match: /VT|PC|PI|XT/i, max: 2
             },
             'rows': {
                 cb: () => {

@@ -1,6 +1,6 @@
 {
 	"name": "dankdomain",
-	"version": "3.2.2",
+	"version": "3.2.3",
 	"description": "Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash",
 	"author": "Robert Hurst",
 	"homepage": "https://www.ddgame.us",
@@ -20,7 +20,7 @@
 		"linux"
 	],
 	"engines": {
-		"node": ">=16.12"
+		"node": ">=16.17"
 	},
 	"maintainers": [
 		{

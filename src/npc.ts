@@ -68,6 +68,7 @@ module npc {
         readonly Cleric = {
             VT: '\x1B(0\x7D\x1B(B',
             PC: '\x9C',
+            PI: '\u00B1',
             XT: '✟',
             dumb: '+'
         }
@@ -85,6 +86,7 @@ module npc {
         readonly Teleport = {
             VT: '\x1B(0\x67\x1B(B',
             PC: '\xF1',
+            PI: '\u21A8',
             XT: '↨',
             dumb: '%'
         }

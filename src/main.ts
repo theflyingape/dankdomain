@@ -29,8 +29,9 @@ vt.emulation = <EMULATION>(
     /ansi77|dumb|^apple|^dw|vt52/i.test(process.env.TERM) ? 'dumb'
         : /^lisa|^ncsa|^pcvt|^vt/i.test(process.env.TERM) ? 'VT'
             : /ansi|cygwin|^pc/i.test(process.env.TERM) ? 'PC'
-                : /^xt/i.test(process.env.TERM) ? 'XT'
-                    : ''
+                : /linux/i.test(process.env.TERM) ? 'PI'
+                    : /^xt/i.test(process.env.TERM) ? 'XT'
+                        : ''
 )
 
 //  check for passed bot or a BBS id for auto-login

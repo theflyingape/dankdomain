@@ -11,6 +11,6 @@ type GIFT = '' | 'armor' | 'chest' | 'magic' | 'map' | 'poison' | 'potion' | 'ri
 type MAP = '' | 'map' | 'magic map' | `Marauder's map`
 type NPC = '' | 'cleric' | 'wizard' | 'trapdoor' | 'thief' | 'portal' | 'well' | 'wheel' | 'dwarf' | 'witch'
 type ROOM = '' | 'n-s' | 'w-e' | 'cavern'
-type EMULATION = 'dumb' | 'VT' | 'PC' | 'XT'
+type EMULATION = 'dumb' | 'VT' | 'PC' | 'PI' | 'XT'
 type SUIT = '⚜' | '♠' | '♥' | '♣' | '♦'
 type TTY = 'door' | 'telnet' | 'web'
