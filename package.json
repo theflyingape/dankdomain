@@ -96,7 +96,7 @@
 		"test": "npm run net test",
 		"watch": "tsc -w",
 		"net": "./game/portal-startup.sh",
-		"play": "env TERM=vt100 ./game/logins.sh",
+		"play": "./game/logins.sh -telnet",
 		"term": "./game/tty.sh",
 		"mame": "./mame/play.sh",
 		"postinstall": "npm run build",

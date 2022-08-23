@@ -204,7 +204,7 @@ dns.lookup(network.address, (err, addr, family) => {
 
         tty.on('connection', (socket) => {
             let client = socket.remoteAddress || 'scan'
-            let pid = login(client, network.rows, 80, network.emulator)
+            let pid = login(client, network.rows, 80, network.emulator, ['-telnet'])
             sessions[pid].tty = 'telnet'
             let term = sessions[pid]
             console.info(`Classic Gate knock from remote host ${client} → session ${pid}`)
@@ -456,7 +456,7 @@ dns.lookup(network.address, (err, addr, family) => {
             let cols = parseInt(req.query.cols ? req.query.cols.toString() : '80')
             let rows = parseInt(req.query.rows ? req.query.rows.toString() : '25')
             let tty = req.query.tty ? req.query.tty.toString() : 'XT'
-            let pid = login(client, rows, cols, <EMULATION>tty)
+            let pid = login(client, rows, cols, <EMULATION>tty, ['-web'])
             sessions[pid].tty = 'web'
             res.send(pid.toString())
             res.end()

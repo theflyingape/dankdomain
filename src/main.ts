@@ -35,14 +35,21 @@ vt.emulation = <EMULATION>(
 )
 
 //  check for passed bot or a BBS id for auto-login
-const userID = process.argv.length > 2 ? process.argv[2].toUpperCase() : ''
+let userID = process.argv.length > 2 ? process.argv[2].toUpperCase() : ''
 if (userID.length) {
-    vt.emulation = 'VT'
-    if (userID == whole(userID).toString()) {
-        const user = door(bbs)
-        if (userID == user[25]) {
-            if (user[19] == 'GR') vt.emulation = 'PC'
-            vt.tty = 'door'
+    if (userID.slice(0, 1) == '-') {
+        vt.tty = <TTY>userID.slice(1).toLowerCase()   //  passed argument: -telnet or -web
+        if (!vt.emulation && vt.tty == 'web') vt.emulation = 'XT'
+        userID = ''
+    }
+    else {
+        vt.emulation = 'VT'
+        if (userID == whole(userID).toString()) {
+            const user = door(bbs)
+            if (userID == user[25]) {
+                if (user[19] == 'GR') vt.emulation = 'PC'
+                vt.tty = 'door'
+            }
         }
     }
 }
@@ -86,7 +93,6 @@ function logon() {
     let prompt = 'Who dares to enter my dank domain'
     //  mode of operation
     if (vt.emulation == 'XT') {
-        vt.tty = 'web'
         vt.title(process.title)
         prompt = 'Ⱳho ɗaɽes ʈo eɳʈeɽ ɱy ɗaɳƙ ɗoɱaiɳ'
     }

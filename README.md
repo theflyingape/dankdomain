@@ -57,6 +57,7 @@ $ npm stop
 
 # 3) other ways to play online:
 $ npm run mame
+$ npm run term play.ddgame.us
 $ telnet play.ddgame.us
 Connected to play.ddgame.us.
 Escape character is '^]'.
