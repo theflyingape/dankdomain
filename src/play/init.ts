@@ -10,7 +10,7 @@ import { bracket, carry, cat, emulator, news, time, vt } from '../lib'
 import { Deed, PC } from '../pc'
 import { } from '../npc'
 import { input, logoff, pickPC } from '../player'
-import { an, cuss, date2full, dice, fetch, fs, int, now, pathTo, titlecase } from '../sys'
+import { an, cuss, date2full, dice, fs, got, int, now, pathTo, titlecase } from '../sys'
 
 module Init {
 
@@ -268,7 +268,7 @@ module Init {
         else try {
             const apikey = pathTo('etc', 'ipstack.key')
             const key = fs.readFileSync(apikey).toString()
-            fetch(`http://api.ipstack.com/${$.remote}?access_key=${key}`).then(response => {
+            got(`http://api.ipstack.com/${$.remote}?access_key=${key}`).then(response => {
                 $.whereis = ''
                 let result = ''
                 if (response.body) {
