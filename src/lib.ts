@@ -339,7 +339,7 @@ module lib {
         }
 
         music(tune = '.', sync = 2) {
-            if (this.tty == 'web') this.out(`@tune(${tune})`, -10 * sync)
+            if (this.tty == 'web' || this.emulation == 'PI') this.out(`@tune(${tune})`, -10 * sync)
         }
 
         profile(params) {
@@ -347,7 +347,7 @@ module lib {
         }
 
         sound(effect = '.', sync = 2) {
-            if (this.tty == 'web')
+            if (this.tty == 'web' || this.emulation == 'PI')
                 this.out(`@play(${effect})`)
             else
                 this.beep(true)

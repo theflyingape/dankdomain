@@ -3215,7 +3215,7 @@ module Dungeon {
             switch (room.occupant) {
                 case 'trapdoor':
                     if (identify && !icon)
-                        o = vt.attr(`  ${$.player.emulation == 'XT' ? vt.attr(vt.lblack, '⛋') : vt.attr(vt.reset, vt.faint, $.player.emulation == 'PC' ? '\xCF' : '?')}  `)
+                        o = vt.attr(`  ${$.player.emulation == 'XT' ? vt.attr(vt.lblack, '⛋') : vt.attr(vt.reset, vt.faint, $.player.emulation == 'PC' ? '\xCF' : $.player.emulation == 'PI' ? '\xA4' : '?')}  `)
                     break
 
                 case 'portal':
@@ -3229,19 +3229,19 @@ module Dungeon {
 
                 case 'well':
                     if (identify && !icon) {
-                        o = vt.attr(`  ${$.player.emulation == 'XT' ? vt.attr(vt.lblue, '⛃', vt.reset) : vt.attr(vt.blue, vt.bright, $.player.emulation == 'PC' ? '\xF5' : '*')}  `)
+                        o = vt.attr(`  ${$.player.emulation == 'XT' ? vt.attr(vt.lblue, '⛃', vt.reset) : vt.attr(vt.blue, vt.bright, $.player.emulation == 'PC' || $.player.emulation == 'PI' ? '\xF5' : '*')}  `)
                         well = false
                     }
                     break
 
                 case 'wheel':
                     if (identify && !icon)
-                        o = vt.attr(`  ${$.player.emulation == 'XT' ? vt.attr(vt.lmagenta, '࿋', vt.reset) : vt.attr(vt.magenta, vt.bright, $.player.emulation == 'PC' ? '\x9D' : '@')}  `)
+                        o = vt.attr(`  ${$.player.emulation == 'XT' ? vt.attr(vt.lmagenta, '࿋', vt.reset) : vt.attr(vt.magenta, vt.bright, $.player.emulation == 'PC' || $.player.emulation == 'PI' ? '\x9D' : '@')}  `)
                     break
 
                 case 'thief':
                     if ((dungeon.level.map == `Marauder's map` || $.player.steal == 4) && !icon)
-                        o = vt.attr(vt.off, vt.faint, `  ${$.player.emulation == 'XT' ? '∞' : $.player.emulation == 'PC' ? '\xA8' : '&'}  `)
+                        o = vt.attr(vt.off, vt.faint, `  ${$.player.emulation == 'XT' ? '∞' : $.player.emulation == 'PC' || $.player.emulation == 'PI' ? '\xA8' : '&'}  `)
                     break
 
                 case 'cleric':

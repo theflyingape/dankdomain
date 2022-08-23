@@ -85,8 +85,6 @@ function logon() {
 
     let prompt = 'Who dares to enter my dank domain'
     //  mode of operation
-    if (vt.emulation == 'PI')
-        vt.tty = 'web'
     if (vt.emulation == 'XT') {
         vt.tty = 'web'
         vt.title(process.title)
