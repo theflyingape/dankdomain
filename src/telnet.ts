@@ -114,6 +114,12 @@ dns.lookup(host, (err, addr, family) => {
                     function wall(msg) {
                         try {
                             got(`${URL}/player/${pid}/wall?msg=${msg}`, Object.assign({ method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME } }, ssl))
+                                .catch(err => {
+                                    if (err.statusCode)
+                                        console.error(err.statusCode, err.statusMessage)
+                                    else
+                                        console.error(err.name, err.code)
+                                })
                         }
                         catch (err) {
                             console.error(err.response)
@@ -138,7 +144,18 @@ dns.lookup(host, (err, addr, family) => {
                 process.stdin.on('data', function (key: Buffer) {
                     if (rows !== process.stdout.rows) {
                         rows = process.stdout.rows
-                        got(`${URL}/player/${pid}/size?rows=${rows}&cols=${process.stdout.columns}`, { method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME }, https: ssl })
+                        try {
+                            got(`${URL}/player/${pid}/size?rows=${rows}&cols=${process.stdout.columns}`, { method: 'POST', headers: { 'x-forwarded-for': process.env.REMOTEHOST || process.env.HOSTNAME }, https: ssl })
+                                .catch(err => {
+                                    if (err.statusCode)
+                                        console.error(err.statusCode, err.statusMessage)
+                                    else
+                                        console.error(err.name, err.code)
+                                })
+                        }
+                        catch (err) {
+                            console.error(err.response)
+                        }
                     }
                     wss.send(key)
                 })
