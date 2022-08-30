@@ -18,4 +18,3 @@ fi
 
 echo node telnet $SERVER $PORT $LINES $EMU
 exec node telnet $SERVER $PORT $LINES $EMU
-

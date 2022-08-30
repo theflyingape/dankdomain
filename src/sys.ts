@@ -6,7 +6,9 @@
 module sys {
 
     //  dependencies with nice aliases
+    export const flag = require('country-flag-emoji')
     export const fs = require('fs')
+    export const geoip = require('fast-geoip')
     export const got = require('got')
     export const path = require('path')
     export const romanize = require('romanize')

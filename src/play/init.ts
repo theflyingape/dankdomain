@@ -10,7 +10,7 @@ import { bracket, carry, cat, emulator, news, time, vt } from '../lib'
 import { Deed, PC } from '../pc'
 import { } from '../npc'
 import { input, logoff, pickPC } from '../player'
-import { an, cuss, date2full, dice, fs, int, now, pathTo, titlecase } from '../sys'
+import { an, cuss, date2full, dice, flag, fs, geoip, int, now, pathTo, titlecase } from '../sys'
 
 module Init {
 
@@ -265,6 +265,16 @@ module Init {
             if ($.player.emulation == 'XT')
                 $.whereis += ' 🖥 '
         }
+        else try {
+            const geo = geoip.lookup($.remote).then(response => {
+                $.whereis = ''
+                let result = ''
+                if (geo.city) $.whereis = geo.city
+                if (geo.region) $.whereis += ($.whereis ? ', ' : '') + geo.region
+                if (geo.country) $.whereis += ($.whereis ? ', ' : '') + geo.country + ' ' + flag.get(geo.country)
+                $.whereis += result ? result : $.remote
+            }).catch(error => { $.whereis += ` ⚠️ ${error.message}` })
+        } catch (e) { }
 
         if (now().date >= $.game.started) {
             $.game.lasttime = now().time

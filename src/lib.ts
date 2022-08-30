@@ -200,7 +200,7 @@ module lib {
         vt.outln('\n', vt.cyan, 'Which emulation / character encoding are you using?')
         vt.out(bracket('VT'), ' classic VT terminal with DEC drawing (telnet b&w)')
         vt.out(bracket('PC'), ' former ANSI color with Western IBM CP850 (telnet color)')
-        vt.out(bracket('PI'), ' Linux console running node telnet app (telnet multimedia)')
+        vt.out(bracket('PI'), ' Linux console running node telnet app (color & sound)')
         vt.outln(bracket('XT'), ' modern ANSI color with UTF-8 & emojis (browser multimedia)')
         prompt('term')
     }

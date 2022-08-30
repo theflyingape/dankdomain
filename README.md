@@ -237,7 +237,7 @@ package.json      Node.js manifest
 - `sys`: `fs`, `got`, `path`, `romanize`, `sprintf-js`, `title-case`
 - `items`: sys
 - `db`: `better-sqlite3`, items, sys
-- *network service options*
+- _network service options_
   - telnet: `net-keepalive`, `telnet-socket`
   - web: `url`
 
@@ -249,7 +249,7 @@ package.json      Node.js manifest
 
 **`main`**
 
-- `sys`: `fs`, `got`, `path`, `romanize`, `sprintf-js`, `title-case`
+- `sys`: `country-flag-emoji`, `fs`, `fast-geoip` `got`, `path`, `romanize`, `sprintf-js`, `title-case`
 - `lib`: items, runtime, sys, `xvt`
   - `items`: sys
   - `runtime`: sys
