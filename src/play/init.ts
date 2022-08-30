@@ -271,7 +271,7 @@ module Init {
                 let result = ''
                 if (geo.city) $.whereis = geo.city
                 if (geo.region) $.whereis += ($.whereis ? ', ' : '') + geo.region
-                if (geo.country) $.whereis += ($.whereis ? ', ' : '') + geo.country + ' ' + flag.get(geo.country)
+                if (geo.country) $.whereis += ($.whereis ? ', ' : '') + geo.country + ' ' + flag.get(geo.country).emoji
                 $.whereis += result ? result : $.remote
             }).catch(error => { $.whereis += ` ⚠️ ${error.message}` })
         } catch (e) { }
