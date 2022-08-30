@@ -266,7 +266,7 @@ module Init {
                 $.whereis += ' 🖥 '
         }
         else try {
-            const geo = geoip.lookup($.remote).then(response => {
+            geoip.lookup($.remote).then(geo => {
                 $.whereis = ''
                 let result = ''
                 if (geo.city) $.whereis = geo.city
