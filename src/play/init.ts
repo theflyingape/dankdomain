@@ -265,15 +265,16 @@ module Init {
             if ($.player.emulation == 'XT')
                 $.whereis += ' 🖥 '
         }
-        else try {
+        else
             geoip.lookup($.remote).then(geo => {
-                $.whereis = ''
-                if (geo.city) $.whereis = geo.city
-                if (geo.region) $.whereis += ($.whereis ? ', ' : '') + geo.region
-                if (geo.country) $.whereis += ($.whereis ? ', ' : '') + geo.country + ' ' + flag.get(geo.country).emoji
-                if ($.whereis == '') $.whereis = $.remote
+                if (!!geo)
+                    $.whereis = $.remote
+                else {
+                    if (geo.city) $.whereis = geo.city
+                    if (geo.region) $.whereis += ($.whereis ? ', ' : '') + geo.region
+                    if (geo.country) $.whereis += ($.whereis ? ', ' : '') + geo.country + ' ' + flag.get(geo.country).emoji
+                }
             }).catch(error => { $.whereis += ` ⚠️ ${error.message}` })
-        } catch (e) { }
 
         if (now().date >= $.game.started) {
             $.game.lasttime = now().time
