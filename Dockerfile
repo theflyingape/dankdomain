@@ -2,7 +2,7 @@
 # Dockerfile authored by: Robert Hurst <theflyingape@gmail.com>
 #
 # docker build -t dankdomain .
-FROM node:buster
+FROM node:lts-bullseye
 LABEL maintainer="theflyingape@gmail.com"
 
 # set the working directory
