@@ -17,7 +17,7 @@ import { Terminal, ITerminalOptions } from 'xterm'
 import { FitAddon } from 'xterm-addon-fit'
 import { Unicode11Addon } from 'xterm-addon-unicode11'
 import { WebglAddon } from 'xterm-addon-webgl'
-//import { WebLinksAddon } from 'xterm-addon-web-links'
+import { WebLinksAddon } from 'xterm-addon-web-links'
 
 //  document elements
 let audioPlay = <HTMLAudioElement>document.getElementById('play')
@@ -118,7 +118,7 @@ window.onresize = () => {
     info.style.width = '30%'
     terminal.style.top = '22px'
     terminal.style.bottom = '22px'
-    term.setOption('fontSize', 24)
+    term.options.fontSize = 24
     let xy = fit.proposeDimensions()
     let w = Math.trunc(parseInt(info.style.width) * (xy.cols || 80) / 80)
     w = w < 26 ? 26 : w > 34 ? 34 : w
@@ -126,7 +126,7 @@ window.onresize = () => {
     info.style.width = `${w}%`
     //	adjust font to fit for standard width
     xy = fit.proposeDimensions()
-    term.setOption('fontSize', Math.trunc((pid ? 24 : 16) * (xy.cols || 80) / 80))
+    term.options.fontSize = Math.trunc((pid ? 24 : 16) * (xy.cols || 80) / 80)
     //  and make it stick
     xy = fit.proposeDimensions()
     if (!info.hidden && xy.cols > 80) {
@@ -200,9 +200,9 @@ function doCommand(event) {
 
 function newSession(ev) {
     let options: ITerminalOptions = {
-        bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false, drawBoldTextInBrightColors: true,
-        cols: cols, rows: rows, scrollback: 500,
+        cursorBlink: false, drawBoldTextInBrightColors: true, scrollback: 500,
         fontFamily: 'tty,emoji', fontSize: 24, fontWeight: '400', fontWeightBold: '500',
+        smoothScrollDuration: 200,
         theme: {
             foreground: 'Silver', background: 'Black', cursor: 'PowderBlue',
             black: 'Black', red: 'DarkRed', green: 'ForestGreen', yellow: 'SandyBrown',
@@ -221,8 +221,9 @@ function newSession(ev) {
 
     if (carrier) options.fontFamily = 'mono,emoji'
     term = new Terminal(options)
+    term.resize(cols, rows)
     term.loadAddon(new Unicode11Addon())
-    //term.loadAddon(new WebLinksAddon())
+    term.loadAddon(new WebLinksAddon())
     term.loadAddon(fit)
 
     term.onData(data => {
@@ -289,9 +290,9 @@ function newSession(ev) {
                 socket.onopen = () => {
                     carrier = true
                     term.writeln('open\x1B[m')
-                    if (!term.getOption('cursorBlink')) {
+                    if (!term.options.cursorBlink) {
                         term.focus()
-                        term.setOption('cursorBlink', true)
+                        term.options.cursorBlink = true
                     }
                     if (!tty)
                         term.blur()
@@ -299,8 +300,8 @@ function newSession(ev) {
                 }
 
                 socket.onclose = (ev) => {
-                    if (term.getOption('cursorBlink'))
-                        term.setOption('cursorBlink', false)
+                    if (term.options.cursorBlink)
+                        term.options.cursorBlink = false
                     term.writeln('\x1B[0;2mWebSocket close\x1B[m')
                     XT('@action(Logoff)')
                     carrier = false
@@ -483,7 +484,7 @@ function lurk() {
                     wall.hidden = true
                     terminal.hidden = false
                     term = new Terminal({
-                        bellSound: BELL_SOUND, bellStyle: 'sound', cursorBlink: false, scrollback: 0,
+                        cursorBlink: false, scrollback: 0, smoothScrollDuration: 200,
                         fontFamily: 'tty,emoji', fontSize: 24, fontWeight: '400', fontWeightBold: '500',
                         theme: {
                             foreground: '#a3a7af', background: '#23272f', cursor: '#e0c8e0',
@@ -494,7 +495,7 @@ function lurk() {
                         }
                     })
                     term.loadAddon(new Unicode11Addon())
-                    //term.loadAddon(new WebLinksAddon())
+                    term.loadAddon(new WebLinksAddon())
                     term.loadAddon(fit)
                     term.unicode.activeVersion = '11'
                     term.open(document.getElementById('terminal'))
