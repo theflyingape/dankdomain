@@ -154,9 +154,9 @@ function doCommand(event) {
 }
 function newSession(ev) {
     let options = {
+        allowProposedApi: true, scrollSensitivity: 16, smoothScrollDuration: 220,
         cursorBlink: false, drawBoldTextInBrightColors: true, scrollback: 500,
         fontFamily: 'tty,emoji', fontSize: 24, fontWeight: '400', fontWeightBold: '500',
-        smoothScrollDuration: 200,
         theme: {
             foreground: 'Silver', background: 'Black', cursor: 'PowderBlue',
             black: 'Black', red: 'DarkRed', green: 'ForestGreen', yellow: 'SandyBrown',
@@ -409,7 +409,8 @@ function lurk() {
                     wall.hidden = true;
                     terminal.hidden = false;
                     term = new xterm_1.Terminal({
-                        cursorBlink: false, scrollback: 0, smoothScrollDuration: 200,
+                        allowProposedApi: true,
+                        cursorBlink: false, scrollback: 0,
                         fontFamily: 'tty,emoji', fontSize: 24, fontWeight: '400', fontWeightBold: '500',
                         theme: {
                             foreground: '#a3a7af', background: '#23272f', cursor: '#e0c8e0',

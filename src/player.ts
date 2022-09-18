@@ -269,7 +269,7 @@ module Player {
             vt.out('\\/   \\/ ', vt.reset, '   http://rb.gy/bruelx  ', vt.cyan, '  \\/   \\/\n')
             vt.out(' \\ : /                           ', vt.cyan, '  \\ : / \n')
             vt.out('  I:I     ', vt.blue, vt.LGradient, vt.bright, vt.Blue, vt.white, `${vt.emulation == 'XT' ? 'ℝ' : 'R'}ober${vt.emulation == 'XT' ? 'ƭ ℍ' : 't H'}urs${vt.emulation == 'XT' ? 'ƭ' : 't'}`, vt.reset, vt.blue, vt.RGradient, vt.cyan, '      I:I  \n')
-            vt.outln(' .I:I. ', vt.reset, '   https://www.DDgame.us   ', vt.cyan, ' .I:I.')
+            vt.outln(' .I:I. ', vt.reset, '   https://www.ddgame.us   ', vt.cyan, ' .I:I.')
             vt.outln(-400)
             vt.outln(vt.black, vt.bright, vt.emulation == 'XT' ? process.title : 'DDplay'
                 , ' running on ', vt.green, 'Node.js ', vt.normal, process.version, vt.reset

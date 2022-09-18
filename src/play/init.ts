@@ -267,7 +267,7 @@ module Init {
         }
         else
             geoip.lookup($.remote).then(geo => {
-                if (!!geo)
+                if (geo === null)
                     $.whereis = $.remote
                 else {
                     if (geo.city) $.whereis = geo.city
