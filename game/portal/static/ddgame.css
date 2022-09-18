@@ -4,16 +4,6 @@
 \*****************************************************************************/
 
 @font-face {
-  font-family: emoji;
-  src: url("assets/NotoColorEmoji.ttf") format("ttf");
-}
-
-@font-face {
-  font-family: mono;
-  src: url("assets/notomono.woff2") format("woff2");
-}
-
-@font-face {
   font-family: tty;
   src: url("assets/vt220.woff2") format("woff2");
 }
@@ -24,7 +14,7 @@ body {
   border: none;
   color: antiquewhite;
   font-display: swap;
-  font-family: mono, emoji;
+  font-family: 'Noto Sans Mono', 'Noto Color Emoji';
   height: 100%;
   margin: 0px;
   min-height: 300px;
@@ -77,7 +67,7 @@ td img {
   border-style: ridge;
   border-width: 4px;
   font-display: swap;
-  font-family: tty, emoji;
+  font-family: tty, 'Noto Emoji';
   position: absolute;
   top: 22px;
   bottom: 22px;

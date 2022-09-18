@@ -692,12 +692,12 @@ function animated(effect) {
     else {
         for (var i in img) {
             pic = img[i]
-            if (pic.style && !pic.style.display)
+            if (pic?.style && !pic.style.display)
                 break
         }
     }
 
-    if (pic) {
+    if (pic?.style) {
         pic.style.display = 'inline-block'
         pic.classList.add('animate__animated')
         var effects = effect.split(' ')
