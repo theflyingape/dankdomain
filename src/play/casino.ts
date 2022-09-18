@@ -657,13 +657,13 @@ module Casino {
                 }
 
                 vt.out('\nYou pull its arm and the wheels spin ... ')
-                vt.sound('click', 4)
+                vt.sound('click', 5)
 
                 let bandit = [dice(16) % 16, dice(16) % 16, dice(16) % 16]
                 for (let i = 0; i < 3; i++) {
                     for (let spin = dice(16) + 16; spin; spin--) {
                         vt.out('-\\|/'[spin % 4], '\x08')
-                        vt.sleep(20)
+                        vt.sleep(25)
                         bandit[i] = ++bandit[i] % 16
                     }
                     vt.beep()
@@ -768,10 +768,10 @@ module Casino {
                     vt.sound('cheer')
                     vt.outln('You win ', carry(payoff), '!')
                     $.player.coin.value += payoff.value
-                    vt.sleep(500)
+                    vt.sleep(1500)
                 }
                 else
-                    vt.sound('boo')
+                    vt.sound('boo', 15)
         }
 
         menu()
