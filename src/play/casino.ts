@@ -663,7 +663,7 @@ module Casino {
                 for (let i = 0; i < 3; i++) {
                     for (let spin = dice(16) + 16; spin; spin--) {
                         vt.out('-\\|/'[spin % 4], '\x08')
-                        vt.sleep(25)
+                        vt.sleep(45)
                         bandit[i] = ++bandit[i] % 16
                     }
                     vt.beep()
@@ -683,7 +683,7 @@ module Casino {
                         for (let j = 0; j < 8; j++) {
                             vt.out((i + j) % 2 ? vt.blink : vt.noblink)
                             vt.out((i + j) % 8 + 30, 'YOU WIN! ')
-                            vt.out(10)
+                            vt.out(20)
                         }
                         vt.outln()
                     }
@@ -710,7 +710,7 @@ module Casino {
                         vt.beep()
                         for (let j = 0; j < 8; j++) {
                             vt.out((i + j) % 8 + 30, 'YOU WIN! ')
-                            vt.out(15)
+                            vt.out(20)
                         }
                         vt.outln()
                     }
@@ -724,7 +724,7 @@ module Casino {
                     for (let i = 0; i < 8; i++) {
                         vt.beep()
                         vt.out(i % 8 + 30, 'YOU WIN! ')
-                        vt.out(20)
+                        vt.out(30)
                     }
                     vt.outln()
                     CherryBomb()
