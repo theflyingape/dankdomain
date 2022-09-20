@@ -302,7 +302,7 @@ module Main {
                     vt.outln(-300)
 
                     if (!effort) {
-                        vt.outln('You break in and make off with ', new Coin(prize).carry(), ' worth of stuff!')
+                        vt.outln('You break in ', -600, 'and make off with ', -600, carry(new Coin(prize)), ' worth of stuff!')
                         vt.sound('max', 12)
                         $.steal++
 
@@ -343,8 +343,8 @@ module Main {
                         $.reason = `caught robbing ${opponent.user.handle}`
                         $.player.status = 'jail'
                         vt.action('clear')
-                        vt.outln(vt.cyan, Security.name[opponent.user.security].fail, '!')
                         vt.profile({ png: 'npc/city_guard_2', effect: 'fadeIn' })
+                        vt.outln(vt.cyan, Security.name[opponent.user.security].fail, '!', -600)
                         vt.sound('arrested', 10)
                         vt.outln(vt.cyan, vt.bright, 'A city guard catches you and throws you into jail!')
                         vt.outln(-2000, vt.cyan, vt.faint, `You can't deny the prize it may never fulfill you.`)

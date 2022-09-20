@@ -660,9 +660,9 @@ module Player {
                             news('\tApothecary visits have more meaning')
                             vt.out([vt.green, vt.cyan, vt.red, vt.magenta][$.player.poison]
                                 , ['The Apothecary will sell you weak toxins... and bring money.'
-                                    , `Your poisons can achieve ${buff(1, 1)} potency now.`
-                                    , `Your banes will add ${buff(1, 2)} potency now.`
-                                    , `Your venena now makes for ${buff(2, 2)} potency!`][$.player.poison++]
+                                    , `Your poisons can achieve${buff(1, 1)} potency now.`
+                                    , `Your banes will add${buff(1, 2)} potency now.`
+                                    , `Your venena now makes for${buff(2, 2)} potency!`][$.player.poison++]
                             )
                             break
 
