@@ -642,18 +642,18 @@ module Casino {
             case 'S':
                 vt.outln(vt.bright, vt.blue, '\nSlot Machine Payout Line:\n')
                 if ($.player.emulation == 'XT') {
-                    vt.out(vt.red, ' any 2  ', vt.normal, ' 🍒🍒 ', vt.reset, '    2x     ', vt.yellow, 'Orange  ', vt.normal, '🍊🍊🍊', vt.reset, '    50x\n')
-                    vt.out(vt.red, 'Cherry  ', vt.normal, '🍒🍒🍒', vt.reset, '    5x     ', vt.bright, vt.yellow, '<Bell>  ', '🔔🔔🔔', vt.reset, '   100x\n')
-                    vt.out(vt.magenta, 'Grapes  ', vt.normal, '🍇🍇🍇', vt.reset, '   10x     ', vt.green, '=Luck=  ', vt.normal, '🍀🍀🍀', vt.reset, '   400x\n')
-                    vt.out(vt.bright, vt.green, ':Kiwi:  ', '🥝🥝🥝', vt.reset, '   20x     ', vt.cyan, '*Wild*  ', vt.normal, '💎💎💎', vt.reset, '   500x\n')
-                    vt.out(vt.bright, vt.uline, vt.red, 'Exacta', vt.nouline, '  ', vt.normal, '🍒🍒💣', vt.reset, '   25x     ', vt.faint, '@Bomb@  ', vt.normal, '💣💣💣', vt.reset, '    💀\n')
+                    vt.outln(vt.red, ' any 2  ', vt.normal, ' 🍒🍒 ', vt.reset, '    2x     ', vt.yellow, 'Orange  ', vt.normal, '🍊🍊🍊', vt.reset, '    50x')
+                    vt.outln(vt.red, 'Cherry  ', vt.normal, '🍒🍒🍒', vt.reset, '    5x     ', vt.bright, vt.yellow, '<Bell>  ', '🔔🔔🔔', vt.reset, '   100x')
+                    vt.outln(vt.magenta, 'Grapes  ', vt.normal, '🍇🍇🍇', vt.reset, '   10x     ', vt.green, '=Luck=  ', vt.normal, '🍀🍀🍀', vt.reset, '   400x')
+                    vt.outln(vt.bright, vt.green, ':Kiwi:  ', '🥝🥝🥝', vt.reset, '   20x     ', vt.cyan, '*Wild*  ', vt.normal, '💎💎💎', vt.reset, '   500x')
+                    vt.outln(vt.red, vt.bright, vt.uline, 'Exacta', vt.nouline, '  ', vt.normal, '🍒🍒💣', vt.reset, '   25x     ', vt.faint, '@Bomb@  ', vt.normal, '💣💣💣', vt.reset, '    💀')
                 }
                 else {
-                    vt.out('Any 2 ', vt.red, 'Cherry', vt.reset, '  2x     3 ', vt.yellow, 'Orange  ', vt.reset, '   50x\n')
-                    vt.out('3 ', vt.red, 'Cherry', vt.reset, '      5x     3 ', vt.bright, vt.yellow, '<Bell>  ', vt.reset, '  100x\n')
-                    vt.out('3 ', vt.magenta, 'Grapes', vt.reset, '     10x     3 ', vt.green, '=Luck=  ', vt.reset, '  400x\n')
-                    vt.out('3 ', vt.bright, vt.green, ':Kiwi:', vt.reset, '     20x     3 ', vt.cyan, '*Wild*  ', vt.reset, '  500x\n')
-                    vt.out('3 ', vt.faint, '@Bomb@', vt.reset, '     Die\n')
+                    vt.outln('Any 2 ', vt.red, 'Cherry', vt.reset, '  2x     3 ', vt.yellow, 'Orange  ', vt.reset, '   50x')
+                    vt.outln(' 3 ', vt.red, 'Cherry', vt.reset, '     5x     3 ', vt.bright, vt.yellow, '<Bell>  ', vt.reset, '  100x')
+                    vt.outln(' 3 ', vt.magenta, 'Grapes', vt.reset, '    10x     3 ', vt.green, '=Luck=  ', vt.reset, '  400x')
+                    vt.outln(' 3 ', vt.bright, vt.green, ':Kiwi:', vt.reset, '    20x     3 ', vt.cyan, '*Wild*  ', vt.reset, '  500x')
+                    vt.outln('an ', vt.red, vt.bright, vt.uline, 'Exacta', vt.reset, '    25x     3 ', vt.faint, '@BOMB@', vt.reset, '     Die')
                 }
 
                 vt.out('\nYou pull its arm and the wheels spin ... ')
@@ -672,7 +672,7 @@ module Casino {
                     if ($.player.emulation == 'XT') vt.out(` ${slot[face].uni}`)
                     vt.out(vt.reset, vt.blue, '] ')
                 }
-                vt.out(vt.reset, '\n\n')
+                vt.outln('\n')
 
                 let face = [dial[0][bandit[0]], dial[1][bandit[1]], dial[2][bandit[2]]]
                 payoff.value = 0n

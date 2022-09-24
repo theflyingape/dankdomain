@@ -653,7 +653,7 @@ module Battle {
                         //  but as a PC, it's wearable power ...
                         if (loser.user.sex !== 'I') {
                             loser.user.rings.forEach(ring => {
-                                if (Ring.wear(winner.user.rings, ring) && !Ring.name[ring].keep) {
+                                if (Ring.wear(winner.user.rings, ring) && (!Ring.name[ring].keep || Access.name[winner.user.access].sysop)) {
                                     getRing(['fondle', 'polish', 'slip on', 'wear', 'win'][dice(5) - 1], ring)
                                     Ring.remove(loser.user.rings, ring)
                                     loser.altered = true

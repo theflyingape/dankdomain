@@ -200,7 +200,7 @@ function doCommand(event) {
 
 function newSession(ev) {
     let options: ITerminalOptions = {
-        allowProposedApi: true, scrollSensitivity: 16, smoothScrollDuration: 220,
+        allowProposedApi: true, scrollSensitivity: 15, smoothScrollDuration: 200,
         cursorBlink: false, drawBoldTextInBrightColors: true, scrollback: 500,
         fontFamily: 'tty,emoji', fontSize: 24, fontWeight: '400', fontWeightBold: '500',
         theme: {

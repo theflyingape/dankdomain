@@ -813,6 +813,7 @@ module Player {
         $.player.immortal++
         vt.outln(vt.cyan, vt.bright, '\nYou have become so powerful that you are now immortal ', -3000)
         db.run(`UPDATE Players SET bank=bank+${$.player.bank.value + $.player.coin.value} WHERE id='${$.taxman.user.id}'`)
+        db.run(`UPDATE Rings SET bearer='' WHERE bearer='${$.player.id}'`)
         vt.outln(vt.cyan, '    and you leave your worldly possessions behind.', -2000)
 
         //  reset PC now, but preserve any prior key hints
