@@ -243,7 +243,7 @@ package.json      Node.js manifest
 
 **`client`**
 
-- `animate.css`, `browserify`, `xterm`, `xterm-addon-fit`, `xterm-addon-unicode11`
+- `animate.css`, `browserify`, `xterm`, `xterm-addon-fit`, `xterm-addon-unicode11`, `xterm-addon-web-links`, `xterm-addon-webgl`
 
 **DDplay** game
 
