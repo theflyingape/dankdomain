@@ -194,7 +194,7 @@ module Player {
             //PC.load($.sysop)
             //  caught screwing around?
             if ($.game.started <= now().date) {
-                if ($.access.roleplay) {
+                if ($.access.roleplay && !$.access.bot) {
                     $.player.coward = true
                     $.player.lasttime = now().time
                     PC.adjust('str', -1, -1, -1)
