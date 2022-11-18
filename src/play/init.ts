@@ -376,13 +376,13 @@ module Init {
 
             if ($.player.today < 2) {
                 if ($.player.blessed) {
-                    if (!Ring.have($.player.rings, Ring.theOne) && !$.access.sysop) {
+                    if (!Ring.have($.player.rings, Ring.theOne) && !$.access.bot && !$.access.sysop) {
                         $.player.blessed = ''
                         vt.out(vt.yellow, vt.bright, '\nYour shining aura ', vt.normal, 'fades ', vt.faint, 'away.')
                     }
                 }
                 if ($.player.cursed) {
-                    if (!$.player.coward || Ring.have($.player.rings, Ring.theOne) || $.access.sysop) {
+                    if (!$.player.coward || Ring.have($.player.rings, Ring.theOne) || $.access.bot || $.access.sysop) {
                         $.player.cursed = ''
                         vt.out(vt.black, vt.bright, '\nThe dark cloud has been lifted.')
                     }
