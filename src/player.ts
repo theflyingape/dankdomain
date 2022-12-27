@@ -816,15 +816,14 @@ module Player {
         db.run(`UPDATE Rings SET bearer='' WHERE bearer='${$.player.id}'`)
         vt.outln(vt.cyan, '    and you leave your worldly possessions behind.', -2000)
 
-        //  reset PC now, but preserve any prior key hints
-        let keyhints = $.player.keyhints
+        //  reset PC now, but preserve any keys toward ascension
+        let keyhints = $.player.keyhints, keyseq = $.player.keyseq
         let max = Object.keys(PC.name['immortal']).indexOf($.player.pc) + 1
         if (max || keyhints.slice(12).length > int(Object.keys(PC.name['player']).length / 2))
             keyhints.splice(12, 1)
         else
             keyhints.push($.player.pc)
         $.player = PC.reroll($.player)
-        $.player.keyhints = keyhints
         PC.save()
 
         //  gratuitous
@@ -898,6 +897,8 @@ module Player {
             , vt.normal, 'Solve the', vt.faint, ' Ancient Riddle of the Keys '
             , vt.normal, 'and you will become\nan immortal being.')
 
+        $.player.keyhints = keyhints
+        $.player.keyseq = keyseq
         for (let i = 0; i <= max + bonus; i++) PC.keyhint($.online, false)
         PC.save()
 
