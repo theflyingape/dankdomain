@@ -625,7 +625,7 @@ function Logoff() {
 <hr>
 <span style="font-size:larger">🤴<span style="font-family:mono; font-weight:600;"> <a href="https://www.ddgame.us" target="_new"><span style="color:black">Ɗaɳƙ Ɗoɱaiɳ</span></a> </span>👸</span><br>
 <span style="color:darkslategray;">the return of Hack &amp; Slash</span><br><br>
-<span style="color:brown; font-size:smaller;">🇺🇸 &copy; 2017 - 2022 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a> 🧙</span><br><br>
+<span style="color:brown; font-size:smaller;">🇺🇸 &copy; 2017 - 2023 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a> 🧙</span><br><br>
 ⚡<span style="color:black; font-family:VT323,tty;"> Powered by <a href="https://xtermjs.org" target="_blank">Xterm.js</a> </span>📺
 <hr>
 </div>`);

@@ -210,7 +210,7 @@ node_modules      Node.js support libraries
 package.json      Node.js manifest
 ```
 
- 🇺🇸 ©️1991 - 2022 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
+ 🇺🇸 ©️1991 - 2023 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
 
 ## Gallery
 
