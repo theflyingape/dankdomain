@@ -20,7 +20,7 @@
 		"linux"
 	],
 	"engines": {
-		"node": ">=16.18"
+		"node": ">=18.9"
 	},
 	"maintainers": [
 		{
@@ -60,13 +60,13 @@
 		"got": "^11.8.6",
 		"net-keepalive": "^3.0.0",
 		"node-pty": "^0.10.1",
-		"nodemailer": "^6.8.0",
+		"nodemailer": "^6.9.1",
 		"nodemailer-smtp-transport": "^2.7.4",
 		"romanize": "^1.1.1",
 		"sprintf-js": "^1.1.2",
 		"telnet-socket": "^0.2.4",
 		"title-case": "^3.0.3",
-		"ws": "^8.11.0",
+		"ws": "^8.12.0",
 		"xterm": "^5.1.0",
 		"xterm-addon-fit": "^0.7.0",
 		"xterm-addon-unicode11": "^0.5.0",
@@ -77,15 +77,15 @@
 	"devDependencies": {
 		"@types/better-sqlite3": "^7.6.3",
 		"@types/browserify": "^12.0.37",
-		"@types/express": "^4.17.15",
-		"@types/fs-extra": "^9.0.13",
+		"@types/express": "^4.17.16",
+		"@types/fs-extra": "^11.0.1",
 		"@types/node": "^18.11.18",
 		"@types/nodemailer": "^6.4.7",
 		"@types/nodemailer-smtp-transport": "^2.7.5",
 		"@types/sprintf-js": "^1.1.2",
 		"@types/ws": "^8.5.4",
 		"browserify": "^17.0.0",
-		"eslint": "^8.31.0",
+		"eslint": "^8.32.0",
 		"typescript": "^4.9.4",
 		"watchify": "^4.0.0"
 	},
