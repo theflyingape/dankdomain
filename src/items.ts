@@ -59,7 +59,7 @@ module Items {
                 armor = this.name[what]
             }
             else {
-                if (what >= this.merchant.length)
+                if (+what >= this.merchant.length)
                     what = this.merchant.length - 1
                 rpc.user.armor = +what
                 armor = <armor>{ ac: +what, value: this.merchant[+what] ? this.name[this.merchant[+what]].value : '0c' }
@@ -489,7 +489,7 @@ module Items {
                 weapon = this.name[what]
             }
             else {
-                if (what >= this.merchant.length)
+                if (+what >= this.merchant.length)
                     what = this.merchant.length - 1
                 rpc.user.weapon = +what
                 weapon = <weapon>{
