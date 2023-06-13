@@ -34,30 +34,33 @@ stateDiagram-v2
   Local --> main : npm run play
   Remote : Remote Players
   Remote --> Firewall : telnet
-  Remote --> app : https
+  Remote --> Apache : https
   Firewall --> tty : 1986
   state "Apache (optional)" as Apache {
     state "SSL Proxy (localhost:1939)" as proxy {
-      app --> tty : telnet-socket
-      app --> websocket : http/ws
-      app --> bot : timer
-      app --> rest : express
-      app --> static : express
-      fork: node-pty
-      tty --> fork
-      websocket --> fork
-      bot --> fork
-      fork --> main : fork
-    }
-    --
-    state static {
-      assets
-      images
-      sounds
+      state "Dank Domain portal service (DDnet)" as DDnet {
+        app --> tty : telnet-socket
+        app --> websocket : http/ws
+        app --> bot : timer
+        app --> rest : express
+        app --> static : express
+        fork: node-pty
+        tty --> fork
+        websocket --> fork
+        bot --> fork
+        fork --> main : fork
+      }
+      --
+      state static {
+        assets
+        images
+        sounds
+      }
     }
   }
 
-  state main {
+  state " " as DDgame {
+    main --> init
     state login <<choice>>
     init --> sys
     init --> lib
@@ -65,18 +68,18 @@ stateDiagram-v2
     init --> npc
     init --> pc
     init --> player
-    init --> login: login id?
+    init --> login : login id?
     lib --> items
     lib --> runtime
     lib --> xvt
     login --> newuser : new
-    login --> taxman: bot
-    login --> taxman: player
+    login --> taxman : bot
+    login --> taxman : player
     state newuser {
       email
     }
     state taxman {
-      state taxes <<choice>>
+      state "💰" as taxes
       taxes --> battle : refuse
       taxes --> menu : paid
       menu --> library
@@ -97,8 +100,8 @@ stateDiagram-v2
       square --> taxes
       tavern --> taxes
       state "🏦" as bank
-      casino --> bank
-      square --> bank
+      casino --> bank : atm
+      square --> bank : bank
     }
   }
 ```
