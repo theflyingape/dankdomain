@@ -60,21 +60,20 @@ stateDiagram-v2
   }
 
   state " " as DDgame {
-    main --> init
-    state login <<choice>>
-    init --> sys
-    init --> lib
-    init --> db
-    init --> npc
-    init --> pc
-    init --> player
-    init --> login : login id?
+    main --> lib
     lib --> items
     lib --> runtime
     lib --> xvt
-    login --> newuser : new
-    login --> taxman : bot
-    login --> taxman : player
+    main --> sys
+    main --> init
+    init --> db
+    init --> pc
+    init --> npc
+    init --> player
+    state login <<choice>>
+    init --> login : login id?
+    login --> taxman : bot or user
+    login --> newuser
     state newuser {
       email
     }
