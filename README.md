@@ -30,8 +30,11 @@ _Read the_ [Manual](https://manual.ddgame.us) _to play the_ [online game](https:
 %%{init: {'theme':'dark'}}%%
 stateDiagram-v2
   direction TB
-  Player --> Firewall : telnet
-  Player --> Firewall : https
+  Local : Local Player
+  Local --> main : npm run play
+  Remote : Remote Player
+  Remote --> Firewall : telnet
+  Remote --> Firewall : https
   Firewall --> proxy
   Firewall --> telnet : 1986
   state Apache {
@@ -47,33 +50,43 @@ stateDiagram-v2
     static --> sounds
   }
   state main {
+    state login <<choice>>
     init --> sys
     init --> lib
     init --> db
     init --> npc
     init --> pc
     init --> player
-    init --> newuser
-    init --> taxman
+    init --> login: login id?
     lib --> items
     lib --> runtime
     lib --> xvt
-    newuser --> email
-    --
+    login --> newuser
+    login --> taxman: bot
+    login --> taxman: player
+    state newuser {
+      email
+    }
     state taxman {
-      menu --> arena
-      menu --> casino
+      state taxes <<choice>>
+      taxes --> battle : refuse
+      taxes --> menu : paid
       menu --> library
       menu --> naval
-      menu --> square
       menu --> sysop
+      menu --> arena
+      menu --> dungeon
+      menu --> party
+      menu --> casino
+      menu --> square
       menu --> tavern
       arena --> battle
-      arena --> square
       dungeon --> battle
       party --> battle
-      square --> arena
-      square --> bank
+      casino --> taxes
+      party --> taxes
+      square --> taxes
+      tavern --> taxes
     }
   }
 ```
