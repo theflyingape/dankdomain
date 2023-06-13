@@ -34,21 +34,29 @@ stateDiagram-v2
   Local --> main : npm run play
   Remote : Remote Player
   Remote --> Firewall : telnet
-  Remote --> Firewall : https
-  Firewall --> proxy
-  Firewall --> telnet : 1986
+  Remote --> proxy : wss
+  Remote --> proxy : https
+  Firewall --> tty : 1986
   state Apache {
-    app --> rest : express
-    app --> telnet : telnet-socket
-    app --> websocket : express
-    telnet --> main : node-pty
-    websocket --> main : node-pty
+    state proxy {
+      state app : 1939
+      app --> tty : telnet-socket
+      app --> static : express
+      app --> websocket
+      app --> rest : express
+      join_state: node-pty
+        tty --> join_state
+        websocket --> join_state
+        join_state --> main : fork
+    }
     --
-    proxy --> app : 1939
-    static --> assets
-    static --> images
-    static --> sounds
+    state static {
+      assets
+      images
+      sounds
+    }
   }
+
   state main {
     state login <<choice>>
     init --> sys
