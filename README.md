@@ -23,6 +23,64 @@ _Read the_ [Manual](https://manual.ddgame.us) _to play the_ [online game](https:
 *Original Commodore Amiga* **Hack & Slash** *enthusiasts can visit:*  [Absinthe BBS](https://www.telnetbbsguide.com/bbs/absinthe-bbs/) *by Anachronist*
 
 ---
+<pre>sudo systemctl start dankdomain-portal</pre>
+---
+
+```mermaid
+%%{init: {'theme':'dark'}}%%
+stateDiagram-v2
+  direction TB
+  Player --> Firewall : telnet
+  Player --> Firewall : https
+  Firewall --> proxy
+  Firewall --> telnet : 1986
+  state Apache {
+    app --> rest : express
+    app --> telnet : telnet-socket
+    app --> websocket : express
+    telnet --> main : node-pty
+    websocket --> main : node-pty
+    --
+    proxy --> app : 1939
+    static --> assets
+    static --> images
+    static --> sounds
+  }
+  state main {
+    [*] --> init
+    [*] --> sys
+    [*] --> lib
+    lib --> items
+    lib --> runtime
+    lib --> xvt
+    lib --> init
+    init --> db
+    init --> npc
+    init --> pc
+    init --> player
+    init --> newuser
+    init --> taxman
+    newuser --> email
+    taxman --> menu
+    --
+    state menu {
+    casino
+    library
+    naval
+    sysop
+    tavern
+    square --> arena
+    square --> bank
+    arena --> battle
+    dungeon --> battle
+    party --> battle
+    taxman --> battle
+    arena --> square
+    square --> taxman
+    tavern --> taxman
+    }
+  }
+```
 
 [![NPM](https://nodei.co/npm/dankdomain.png?compact=true)](https://nodei.co/npm/dankdomain/)
 
