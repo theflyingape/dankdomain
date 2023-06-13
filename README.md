@@ -80,17 +80,19 @@ stateDiagram-v2
       taxes --> battle : refuse
       taxes --> menu : paid
       menu --> library
-      menu --> naval
       menu --> sysop
       menu --> arena
       menu --> dungeon
+      menu --> naval
       menu --> party
+      menu --> tavern
       menu --> casino
       menu --> square
-      menu --> tavern
       arena --> battle
       dungeon --> battle
+      naval --> battle
       party --> battle
+      tavern --> battle
       casino --> taxes
       party --> taxes
       square --> taxes
