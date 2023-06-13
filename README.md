@@ -32,22 +32,22 @@ stateDiagram-v2
   direction TB
   Local : Local Player
   Local --> main : npm run play
-  Remote : Remote Player
+  Remote : Remote Players
   Remote --> Firewall : telnet
-  Remote --> proxy : wss
   Remote --> proxy : https
   Firewall --> tty : 1986
   state Apache {
-    state proxy {
-      state app : 1939
+    state "SSL Proxy -> localhost:1939" as proxy {
       app --> tty : telnet-socket
-      app --> static : express
-      app --> websocket
+      app --> websocket : http/ws
+      app --> bot : timer
       app --> rest : express
-      join_state: node-pty
-        tty --> join_state
-        websocket --> join_state
-        join_state --> main : fork
+      app --> static : express
+      fork: node-pty
+      tty --> fork
+      websocket --> fork
+      bot --> fork
+      fork --> main : fork
     }
     --
     state static {
