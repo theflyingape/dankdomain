@@ -47,37 +47,33 @@ stateDiagram-v2
     static --> sounds
   }
   state main {
-    [*] --> init
-    [*] --> sys
-    [*] --> lib
-    lib --> items
-    lib --> runtime
-    lib --> xvt
-    lib --> init
+    init --> sys
+    init --> lib
     init --> db
     init --> npc
     init --> pc
     init --> player
     init --> newuser
     init --> taxman
+    lib --> items
+    lib --> runtime
+    lib --> xvt
     newuser --> email
-    taxman --> menu
     --
-    state menu {
-    casino
-    library
-    naval
-    sysop
-    tavern
-    square --> arena
-    square --> bank
-    arena --> battle
-    dungeon --> battle
-    party --> battle
-    taxman --> battle
-    arena --> square
-    square --> taxman
-    tavern --> taxman
+    state taxman {
+      menu --> arena
+      menu --> casino
+      menu --> library
+      menu --> naval
+      menu --> square
+      menu --> sysop
+      menu --> tavern
+      arena --> battle
+      arena --> square
+      dungeon --> battle
+      party --> battle
+      square --> arena
+      square --> bank
     }
   }
 ```
