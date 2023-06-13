@@ -34,10 +34,10 @@ stateDiagram-v2
   Local --> main : npm run play
   Remote : Remote Players
   Remote --> Firewall : telnet
-  Remote --> proxy : https
+  Remote --> app : https
   Firewall --> tty : 1986
-  state Apache {
-    state "SSL Proxy -> localhost:1939" as proxy {
+  state "Apache (optional)" as Apache {
+    state "SSL Proxy (localhost:1939)" as proxy {
       app --> tty : telnet-socket
       app --> websocket : http/ws
       app --> bot : timer
@@ -69,7 +69,7 @@ stateDiagram-v2
     lib --> items
     lib --> runtime
     lib --> xvt
-    login --> newuser
+    login --> newuser : new
     login --> taxman: bot
     login --> taxman: player
     state newuser {
@@ -94,9 +94,11 @@ stateDiagram-v2
       party --> battle
       tavern --> battle
       casino --> taxes
-      party --> taxes
       square --> taxes
       tavern --> taxes
+      state "🏦" as bank
+      casino --> bank
+      square --> bank
     }
   }
 ```
