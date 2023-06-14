@@ -1,8 +1,10 @@
-# 🤴 **[Ɗaɳƙ Ɗoɱaiɳ](https://www.DDgame.us)** 👸
+# 🏰 **[Ɗaɳƙ Ɗoɱaiɳ](https://www.DDgame.us)**
+`the return of Hack & Slash`
 
-## *the return of Hack & Slash*
+## 🇺🇸 ©️1991 - 2023 [Robert Hurst](https://robert.hurst-ri.us) 🧙
 
-🇺🇸 ©️1991 - 2023 [Robert Hurst](https://robert.hurst-ri.us) 🧙
+### 🏴󠁵󠁳󠁲󠁩󠁿 Hope - Rhode Island est. 1790 (and Providence Plantations est. 1636)
+
 > [developed](https://github.com/theflyingape/dankdomain) on a **Chromebook** using Visual Code and TypeScript/html/css for the browser with [terminal emulator](https:/xtermjs.org) and classic telnet clients; and also to run the resulting Node.js full stack [services and app](https://play.DDgame.us) on the **Google Cloud Platform** (us-central1) or in a **Docker** [container](https://hub.docker.com/repository/docker/theflyingape/dankdomain).
 
 ### **11-Sep-2021** `v3.2.1` ✈💥🏢🏢
@@ -51,7 +53,8 @@
 
 #### **11-Nov-2020** `v2.8.1` 🎖️
 
-* [Veterans Day](https://en.wikipedia.org/wiki/Veterans_Day) and [DJT #45](https://www.whitehouse.gov/people/donald-j-trump/) is still Alive!
+* [Veterans Day](https://en.wikipedia.org/wiki/Veterans_Day) and [DJT #45](https://www.whitehouse.gov/about-the-white-house/presidents/donald-j-trump/) is still Alive!
+* Providence Plantations was [dropped](https://ballotpedia.org/Rhode_Island_Question_1,_Name_Change_Amendment_(2020)) from the state of Rhode Island name
 * maintenance release: UI fixes and corrected limit to "boss" encounters in play.json
 * new boss encounter: *Medea*, an old witch/sorceress that can "help" adventurer (for a price):
   * any unique rings are taken away from other players and given to you; or

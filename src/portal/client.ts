@@ -200,8 +200,8 @@ function doCommand(event) {
 
 function newSession(ev) {
     let options: ITerminalOptions = {
-        allowProposedApi: true, scrollSensitivity: 15, smoothScrollDuration: 200,
-        cursorBlink: false, drawBoldTextInBrightColors: true, scrollback: 500,
+        allowProposedApi: true, scrollSensitivity: 12, smoothScrollDuration: 240,
+        cursorBlink: false, drawBoldTextInBrightColors: true, scrollback: 800,
         fontFamily: 'tty,emoji', fontSize: 24, fontWeight: '400', fontWeightBold: '500',
         theme: {
             foreground: 'Silver', background: 'Black', cursor: 'PowderBlue',
@@ -219,7 +219,7 @@ function newSession(ev) {
     pid = -1
     recheck = -1
 
-    if (carrier) options.fontFamily = 'mono,emoji'
+    if (carrier) options.fontFamily = '"Noto Sans Mono","Noto Color Emoji"'
     term = new Terminal(options)
     term.resize(cols, rows)
     term.loadAddon(new Unicode11Addon())
@@ -728,8 +728,8 @@ function Logoff() {
 </table>
 <div id="about" style="line-height: 90%;">
 <hr>
-<span style="font-size:larger">🤴<span style="font-family:mono; font-weight:600;"> <a href="https://www.ddgame.us" target="_new"><span style="color:black">Ɗaɳƙ Ɗoɱaiɳ</span></a> </span>👸</span><br>
-<span style="color:darkslategray;">the return of Hack &amp; Slash</span><br><br>
+<span style="font-size:larger">🤴<a href="https://www.ddgame.us" target="_new"><span style="color:black; font-weight:600;" class="font-effect-emboss">&nbsp;Ɗaɳƙ Ɗoɱaiɳ&nbsp;</a>👸</span><br>
+<span style="color:darkslategray; font-family:Sofia; font-size:75%;">the return of Hack &amp; Slash</span><br><br>
 <span style="color:brown; font-size:smaller;">🇺🇸 &copy; 2017 - 2023 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a> 🧙</span><br><br>
 ⚡<span style="color:black; font-family:VT323,tty;"> Powered by <a href="https://xtermjs.org" target="_blank">Xterm.js</a> </span>📺
 <hr>
