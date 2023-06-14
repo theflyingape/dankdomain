@@ -30,24 +30,25 @@ _Read the_ [Manual](https://manual.ddgame.us) _to play the_ [online game](https:
 %%{init: {'theme':'dark'}}%%
 stateDiagram-v2
   direction TB
-  Local : Local Player
+  Local : 👤 Local Player
   Local --> main : npm run play
-  Remote : Remote Players
+  Remote : 🌐 Remote Players
   Remote --> Firewall : telnet
   Remote --> Apache : https
+  Firewall : 🛡️ Firewall
   Firewall --> tty : 1986
-  state "Apache (optional)" as Apache {
+  state "🕸️ Apache (optional)" as Apache {
     state "SSL Proxy (localhost:1939)" as proxy {
-      state "Ɗaɳƙ Ɗoɱaiɳ portal service (DDnet)" as DDnet {
+      state "🖧 Ɗaɳƙ Ɗoɱaiɳ portal service (DDnet)" as DDnet {
         app --> tty : telnet-socket
-        app --> websocket : http/ws
         app --> bot : timer
+        app --> websocket : http/ws
         app --> rest : express
         app --> static : express
         fork: node-pty
         tty --> fork
-        websocket --> fork
         bot --> fork
+        websocket --> fork
         fork --> main : fork
       }
       --
