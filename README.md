@@ -38,7 +38,7 @@ stateDiagram-v2
   Firewall --> tty : 1986
   state "Apache (optional)" as Apache {
     state "SSL Proxy (localhost:1939)" as proxy {
-      state "Dank Domain portal service (DDnet)" as DDnet {
+      state "Ɗaɳƙ Ɗoɱaiɳ portal service (DDnet)" as DDnet {
         app --> tty : telnet-socket
         app --> websocket : http/ws
         app --> bot : timer
@@ -59,7 +59,7 @@ stateDiagram-v2
     }
   }
 
-  state " " as DDgame {
+  state "🏰 Ɗaɳƙ Ɗoɱaiɳ (DDplay)" as DDplay {
     main --> lib
     lib --> items
     lib --> runtime
