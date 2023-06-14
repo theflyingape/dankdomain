@@ -728,8 +728,8 @@ function Logoff() {
 </table>
 <div id="about" style="line-height: 90%;">
 <hr>
-<span style="font-size:larger">🤴<a href="https://www.ddgame.us" target="_new"><span style="color:black; font-weight:600;" class="font-effect-emboss">&nbsp;Ɗaɳƙ Ɗoɱaiɳ&nbsp;</a>👸</span><br>
-<span style="color:darkslategray; font-family:Sofia; font-size:75%;">the return of Hack &amp; Slash</span><br><br>
+<span style="font-size:larger;">🏰 <a href="https://www.ddgame.us" target="_new"><b  style="color:black; class="font-effect-emboss">&nbsp;Dank Domain&nbsp;</b></a></span><br>
+<span style="font-family:Sofia; font-size:75%;" class="font-effect-outline">the return of Hack &amp; Slash</span><br><br>
 <span style="color:brown; font-size:smaller;">🇺🇸 &copy; 2017 - 2023 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a> 🧙</span><br><br>
 ⚡<span style="color:black; font-family:VT323,tty;"> Powered by <a href="https://xtermjs.org" target="_blank">Xterm.js</a> </span>📺
 <hr>
