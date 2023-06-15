@@ -17,13 +17,16 @@
 
 _Read the_ [Manual](https://manual.ddgame.us) _to play the_ [online game](https://play.ddgame.us)
 
----
 >**Ɗaɳƙ Ɗoɱaiɳ** is the re-imagined classic Amiga bulletin board, [Hack & Slash](https://github.com/theflyingape/rpgbbs), built around a medieval role-playing atmosphere. Your character kills, steals, brawls, and jousts other PCs, NPCs, and BOTs to gain levels and fortune. Successful ventures into the deep dank dungeon are key to immortality.
 
-*Original Commodore Amiga* **Hack & Slash** *enthusiasts can visit:*  [Absinthe BBS](https://www.telnetbbsguide.com/bbs/absinthe-bbs/) *by Anachronist*
+Original Commodore Amiga `Hack & Slash` enthusiasts can visit  [Absinthe BBS](https://www.telnetbbsguide.com/bbs/absinthe-bbs/) _by Anachronist_.
 
 ---
-<pre>sudo systemctl start dankdomain-portal</pre>
+
+```bash
+sudo systemctl start dankdomain-portal
+```
+
 ---
 
 ```mermaid
