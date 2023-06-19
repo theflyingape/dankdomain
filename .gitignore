@@ -6,7 +6,6 @@
 game/portal/.config/pulse/cookie
 game/portal/static/images/*
 game/portal/static/sounds/*
-game/etc/ipstack.key
 game/etc/network.json
 game/etc/smtp.json
 game/files/tavern/*.txt
