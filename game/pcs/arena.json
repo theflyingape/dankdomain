@@ -11,5 +11,17 @@
   { "name":"Red Dragon", "level":40, "pc":"Dragon", "weapon":32, "armor":"Red Dragon Scale Mail", "money":"500g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"shakeX" },
   { "name":"Lich", "level":45, "pc":"Undead", "adept":1, "weapon":35, "armor":"Amulet of Protection", "money":"2500g", "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Cursed", "Undying" ], "effect":"rotateInDownRight" },
   { "name":"Beholder", "level":50, "pc":"Psionic", "adept":1, "weapon":40, "armor":22, "money":"1p", "spells":[ "Heal", "Teleport", "Blast", "Mana Stealing" ], "rings":[ "Medusa's" ], "effect":"flip" },
-  { "name":"Demogorgon", "level":99, "pc":"Demon", "adept":2, "weapon":"Staff of the Magi", "armor":"Ring of Invisibility", "money":"1000p", "spells":[ "Confusion", "Transmute", "Cure" ], "rings":[ "Cursed", "White Wizard" ], "effect":"zoomIn" }
+  { "name":"Demogorgon", "level":99, "pc":"Demon", "adept":2, "weapon":"Staff of the Magi", "armor":"Ring of Invisibility", "money":"1000p", "spells":[ "Confusion", "Transmute", "Cure" ], "rings":[ "Cursed", "White Wizard" ], "effect":"zoomIn", "description":[
+    "The Sibilant Beast and the self-styled Prince of Demons, Demogorgon yearns for",
+    "nothing less than undoing the order of the multiverse. An insane assemblage of",
+    "features and drives, the Prince of Demons inspires fear and hatred among other",
+    "demons and demon lords.",
+    "Demogorgon towers three times the height of a human, his body as sinuous as a",
+    "snake's and as powerful as a great ape's. Suckered tentacles take the place of",
+    "his arms. His saurian lower torso ends in webbed and clawed feet, and a forked",
+    "tail whose whip-like tips are armed with cruel blades. The Prince of Demons",
+    "has two baleful baboon heads, both of them mad. It is only the conflict",
+    "between the two halves of his dual nature that keeps the demon lord's",
+    "ambitions in check."
+  ]}
 ]
