@@ -8,7 +8,7 @@ import db = require('../db')
 import { Coin } from '../items'
 import { armor, bracket, carry, cat, death, display, log, news, tradein, vt, weapon } from '../lib'
 import { PC } from '../pc'
-import { elemental, naval } from '../npc'
+import { naval } from '../npc'
 import { checkXP, input } from '../player'
 import { an, dice, int, sprintf, uint, whole } from '../sys'
 import Battle = require('./battle')

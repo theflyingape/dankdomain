@@ -6,7 +6,7 @@
  *  Node.js dankdomain                          (C) 2017-2023 Robert Hurst   *
  *   Linux  rpgd                                (C) 1999-2014 Robert Hurst   *
  *   Amiga  RPGBBS Deluxe                       (C) 1994-1997 Robert Hurst   *
- *   🖱 🕹  Hack & Slash door                            with Mark Montminy  *
+ *          Hack & Slash door 🖀                         with Mark Montminy  *
  *   Amiga  RPGBBS                              (C) 1992-1993 Robert Hurst   *
  *  MS-DOS  The Rhode Warrior BBS               (C) 1991-1992 Robert Hurst   *
  *  Apple Ⅱ TproBBS                                written by Guy T. Rice    *

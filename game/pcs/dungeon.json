@@ -37,7 +37,12 @@
 	"firetoad": { "pc":"Lizard", "size":0.5, "hit":"claw", "smash":"burn", "poisons":[ 4,5,6,7 ], "effect":"rubberBand" },
 	"hellhound": { "pc":"Demon", "hit":"bite", "smash":"tear into", "rings":[ "Hell's Fury" ], "effect":"tada" },
 	"hook horror": { "pc":"Beast", "hit":"bite", "smash":"hook" },
-	"anhkheg": { "pc":"Lizard", "hit":"touch", "smash":"crawl all over", "poisons":[ 5,6,7,8 ], "effect":"rubberBand" },
+	"ankheg": { "pc":"Lizard", "hit":"touch", "smash":"crawl all over", "poisons":[ 5,6,7,8 ], "effect":"rubberBand", "description": [
+			"It resembles an enormous many-legged insect, its long antennae twitching in",
+			"response to any movement around it. Its legs end in sharp hooks adapted for",
+			"burrowing and grasping its prey, and its powerful mandibles can snap a small",
+			"tree in half."
+		]},
 	"githyanki": { "pc":"Psionic", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"heartBeat" },
 	"cave bear": { "pc":"Beast", "hit":"bite", "smash":"tear into" },
 	"cockatrice": { "pc":"Lizard", "hit":"peck", "smash":"bite", "poisons":[ 5,6,7,8 ], "effect":"rubberBand" },
@@ -49,7 +54,11 @@
 	"ice lizard": { "pc":"Lizard", "hit":"hit", "smash":"smash", "poisons":[ 6,7,8,9 ], "spells":[ "Transmute", "Super Shield", "Super Hone" ], "rings":[ "Elven" ], "weapon":"Long Sword" },
 	"svirfneblin": { "pc":"Beast", "hit":"pick", "smash":"hammer" },
 	"yeti": { "pc":"Beast", "hit":"hit", "smash":"smash" },
-	"carrion crawler": { "pc":"Lizard", "hit":"touch", "smash":"crawl all over", "poisons":[ 7,8,9,10 ], "spells":[ "Confusion" ], "effect":"rubberBand" },
+	"carrion crawler": { "pc":"Lizard", "hit":"touch", "smash":"crawl all over", "poisons":[ 7,8,9,10 ], "spells":[ "Confusion" ], "effect":"rubberBand", "description": [
+			"It scours putrid flesh from carcasses and gobble the slimy bones that remain.",
+			"They aggressively attack any creature that tresspasses on their territory or",
+			"disturbs their feasting."
+		]},
 	"manticore": { "pc":"Beast", "hit":"bite", "smash":"tear into" },
 	"troll": { "pc":"Ogre", "size":2, "spells":[ "Heal", "Teleport" ], "weapon":"Heavy Crossbow", "rings":[ "Ogre" ], "effect":"wobble" },
 	"wight": { "pc":"Undead", "hit":"touch", "smash":"overwhelm", "spells":[ "Mana Stealing", "Life Stealing" ], "rings":[ "Shade" ], "effect":"fadeIn" },

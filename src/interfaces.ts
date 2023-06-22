@@ -158,6 +158,7 @@ interface dungeon {
     armor?: string | number
     money?: string | number
     effect?: string
+    description?: string
 }
 
 interface game {

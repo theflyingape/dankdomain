@@ -10,7 +10,7 @@ import { bracket, carry, cat, display, news, vt } from '../lib'
 import { PC } from '../pc'
 import { elemental } from '../npc'
 import { checkXP, input } from '../player'
-import { cuss, dice, fs, int, pathTo, sprintf, uint, whole } from '../sys'
+import { cuss, dice, fs, int, pathTo, sprintf, uint } from '../sys'
 import Battle = require('./battle')
 import Taxman = require('./taxman')
 
