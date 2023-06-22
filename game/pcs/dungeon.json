@@ -1,9 +1,28 @@
 {
-	"goblin": { "pc":"Beast", "size":0.5, "hit":"hit", "smash":"smash" },
-	"orc": { "pc":"Beast", "hit":"hit", "smash":"smash" },
-	"kobold": { "pc":"Beast", "hit":"hit", "smash":"smash" },
+	"goblin": { "pc":"Beast", "size":0.5, "hit":"hit", "smash":"smash", "description":[
+		"A small, black-hearted, selfish humanoid that lair in caves, abandoned",
+		"mines, despoiled dungeons, and other dismal settings. Individually weak,",
+		"goblins gather in large - sometimes overwhelming - numbers. It craves power",
+		"and regularly abuses whatever authority it obtains."
+	]},
+	"orc": { "pc":"Beast", "hit":"hit", "smash":"smash", "description":[
+		"A savage raider and pillager with stooped posture, low forehead, and a",
+		"piggish face with prominent lower canines that resemble tusks."
+	]},
+	"kobold": { "pc":"Beast", "hit":"hit", "smash":"smash", "description":[
+		"Craven reptilian humanoids that worship evil dragons as demigods and serve",
+		"them as minions and toadies. It inhabits dragons' lairs when it can but more",
+		"commonly infest dungeons, gathering treasures and trinkets to add to their own",
+		"tiny hoards."
+	]},
 	"hobgoblin": { "pc":"Lizard", "hit":"hit", "smash":"smash", "poisons":[ 1 ], "effect":"rubberBand" },
-	"bullywug": { "pc":"Lizard", "hit":"claw", "smash":"bite", "poisons":[ 1,2 ], "effect":"rubberBand" },
+	"bullywug": { "pc":"Lizard", "hit":"claw", "smash":"bite", "poisons":[ 1,2 ], "effect":"rubberBand", "description":[
+		"Its life is nasty, brutish, and wet. These frog-headed amphibious humanoids",
+		"must stay constantly moist, dwelling in rainy forests, marshes, and damp",
+		"caves. Always hungry and thoroughly evil, bullywugs overwhelm opponents with",
+		"superior numbers when they can, but they flee from serious threats to search",
+		"for easier prey."
+	]},
 	"xvart": { "pc":"Beast", "hit":"hit", "smash":"punch",  "effect":"zoomInDown" },
 	"caveman": { "pc":"Ogre", "size":2, "hit":"bash", "smash":"smash", "effect":"wobble" },
 	"norker": { "pc":"Beast", "hit":"hit", "smash":"smash" },
@@ -19,7 +38,12 @@
 	"ogrillon": { "pc":"Ogre", "size":2, "hit":"bash", "smash":"smash", "spells":[ "Heal" ], "effect":"wobble" },
 	"githzerai": { "pc":"Psionic", "hit":"hit", "smash":"smash", "spells":[ "Heal" ], "effect":"tada" },
 	"kuo-toa": { "pc":"Lizard", "poisons":[ 1,2,3,4 ], "spells":[ "Heal", "Teleport" ], "effect":"rubberBand" },
-	"bugbear": { "pc":"Beast", "hit":"bite", "smash":"tear into", "spells":[ "Heal" ] },
+	"bugbear": { "pc":"Beast", "hit":"bite", "smash":"tear into", "spells":[ "Heal" ], "description":[
+		"It is born for battle and mayhem. Surviving by raiding and hunting,",
+		"they bully the weak and despise being bossed around, but their love of",
+		"carnage means they will fight for powerful masters if bloodshed and treasure",
+		"are assured."
+	]},
 	"ghoul": { "pc":"Undead", "size":2, "hit":"touch", "smash":"punch", "spells":[ "Heal", "Teleport", "Armor Rusting", "Weapon Decay" ], "effect":"fadeIn" },
 	"ogre": { "pc":"Ogre", "size":2, "armor":"Chain Mail", "weapon":"War Hammer", "poisons":[ 5 ], "spells":[ "Heal", "Teleport" ], "rings":[ "Ogre" ], "effect":"wobble" },
 	"firedrake": { "pc":"Dragon", "size":2, "hit":"claw", "smash":"burn", "spells":[ "Heal", "Teleport", "Big Blast" ], "effect":"shakeX" },
@@ -38,32 +62,52 @@
 	"hellhound": { "pc":"Demon", "hit":"bite", "smash":"tear into", "rings":[ "Hell's Fury" ], "effect":"tada" },
 	"hook horror": { "pc":"Beast", "hit":"bite", "smash":"hook" },
 	"ankheg": { "pc":"Lizard", "hit":"touch", "smash":"crawl all over", "poisons":[ 5,6,7,8 ], "effect":"rubberBand", "description": [
-			"It resembles an enormous many-legged insect, its long antennae twitching in",
-			"response to any movement around it. Its legs end in sharp hooks adapted for",
-			"burrowing and grasping its prey, and its powerful mandibles can snap a small",
-			"tree in half."
-		]},
+		"It resembles an enormous many-legged insect, its long antennae twitching in",
+		"response to any movement around it. Its legs end in sharp hooks adapted for",
+		"burrowing and grasping its prey, and its powerful mandibles can snap a small",
+		"tree in half."
+	]},
 	"githyanki": { "pc":"Psionic", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"heartBeat" },
 	"cave bear": { "pc":"Beast", "hit":"bite", "smash":"tear into" },
-	"cockatrice": { "pc":"Lizard", "hit":"peck", "smash":"bite", "poisons":[ 5,6,7,8 ], "effect":"rubberBand" },
+	"cockatrice": { "pc":"Lizard", "hit":"peck", "smash":"bite", "poisons":[ 5,6,7,8 ], "effect":"rubberBand", "description": [
+		"It looks like a hideous hybrid of lizard, bird, and bat, and it is infamous",
+		"for its ability to turn flesh to stone. These omnivores have a diet that",
+		"consists of berries, nuts, flowers, and small animals such as insects, mice,",
+		"and frogs -- things they can swallow whole. They would be no threat to",
+		"anything else if not for their fierce and frenzied response to even a hint of",
+		"danger. It flies into the face of any threat, squawking and madly beating its",
+		"wings as its head darts out to peck. The smallest scratch from its beak can",
+		"spell doom as its victim slowly turns to stone from the injury."
+	]},
 	"minotaur": { "pc":"Beast", "hit":"shoot", "smash":"charge into", "weapon":"Light Crossbow" },
 	"displacer beast": { "pc":"Beast", "hit":"hit", "smash":"smash", "armor":"Dancing Shield", "spells":[ "Teleport", "Super Shield" ] },
 	"doppelganger": { "pc":null, "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Faith", "Magus" ] },
 	"imp": { "pc":"Demon", "hit":"hit", "smash":"smash", "spells":[ "Heal", "Teleport", "Blast", "Big Blast" ], "rings":[ "Cursed" ], "effect":"zoomInDown" },
-	"quasit": { "pc":"Demon", "hit":"hit", "smash":"smash", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"tada" },
+	"quasit": { "pc":"Demon", "hit":"claw", "smash":"scare", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"tada", "description":[
+		"An insidious demon from the Abyss, it is often found serving chaotic evil",
+		"spellcasters as counselors and spies. Although it thirsts for victory and",
+		"power as other demons do, it is a coward at heart. It typically attacks from",
+		"ambush, using its alternate form ability and invisibility to get within reach,",
+		"then try to scuttle away."
+	]},
 	"ice lizard": { "pc":"Lizard", "hit":"hit", "smash":"smash", "poisons":[ 6,7,8,9 ], "spells":[ "Transmute", "Super Shield", "Super Hone" ], "rings":[ "Elven" ], "weapon":"Long Sword" },
 	"svirfneblin": { "pc":"Beast", "hit":"pick", "smash":"hammer" },
 	"yeti": { "pc":"Beast", "hit":"hit", "smash":"smash" },
 	"carrion crawler": { "pc":"Lizard", "hit":"touch", "smash":"crawl all over", "poisons":[ 7,8,9,10 ], "spells":[ "Confusion" ], "effect":"rubberBand", "description": [
-			"It scours putrid flesh from carcasses and gobble the slimy bones that remain.",
-			"They aggressively attack any creature that tresspasses on their territory or",
-			"disturbs their feasting."
-		]},
+		"It scours putrid flesh from carcasses and gobble the slimy bones that remain.",
+		"They aggressively attack any creature that tresspasses on their territory or",
+		"disturbs their feasting."
+	]},
 	"manticore": { "pc":"Beast", "hit":"bite", "smash":"tear into" },
 	"troll": { "pc":"Ogre", "size":2, "spells":[ "Heal", "Teleport" ], "weapon":"Heavy Crossbow", "rings":[ "Ogre" ], "effect":"wobble" },
 	"wight": { "pc":"Undead", "hit":"touch", "smash":"overwhelm", "spells":[ "Mana Stealing", "Life Stealing" ], "rings":[ "Shade" ], "effect":"fadeIn" },
 	"wraith": { "pc":"Undead", "hit":"touch", "smash":"overwhelm", "spells":[ "Teleport", "Blast", "Armor Rusting", "Weapon Decay", "Big Blast" ], "rings":[ "Undying" ], "effect":"fadeIn" },
-	"basilisk": { "pc":"Lizard", "hit":"bite", "smash":"squeeze", "poisons":[ 7,8,9,10 ], "effect":"rubberBand" },
+	"basilisk": { "pc":"Lizard", "hit":"bite", "smash":"petrifie", "poisons":[ 7,8,9,10 ], "effect":"rubberBand", "description":[
+		"Travelers sometimes find objects that look like pieces of remarkably lifelike",
+		"stone carvings of wildlife. Missing parts appear to have been bitten off.",
+		"Seasoned explorers regard such relics as warnings, knowing that the basilisk",
+		"that created them is likely to be nearby."
+	]},
 	"wyvern": { "pc":"Dragon", "size":2, "hit":"claw", "smash":"bite", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"shakeX" },
 	"medusa": { "pc":"Titan", "hit":"gaze upon", "smash":"petrifie", "spells":[ "Blast", "Life Stealing" ], "rings":[ "Medusa's" ], "effect":"fadeInUpBig" },
 	"drider": { "pc":"Beast", "hit":"hit", "smash":"smash" },
@@ -81,7 +125,12 @@
 	"pyrohydra": { "pc":"Dragon", "size":3, "hit":"claw", "smash":"burn", "spells":[ "Blast" ], "effect":"shakeX" },
 	"will-o-wisp": { "pc":"Spirit", "size":0.1, "hit":"flame", "smash":"torch" ,"poisons":[ 16 ], "spells":[ "Teleport", "Illusion", "Cure", "Disintegrate", "Morph", "Armor Rusting", "Weapon Decay", "Life Stealing", "Level Stealing", "Big Blast" ], "rings":[ "Shade" ] },
 	"vampire": { "pc":"Undead", "hit":"touch", "smash":"bite", "spells":[ "Heal", "Teleport", "Mana Stealing", "Life Stealing" ], "rings":[ "Undying" ], "effect":"fadeIn" },
-	"ghost": { "pc":"Undead", "size":0.25, "hit":"scare", "smash":"frighten", "spells":[ "Teleport", "Blast", "Mana Stealing", "Level Stealing" ], "effect":"fadeIn" },
+	"ghost": { "pc":"Undead", "size":0.25, "hit":"scare", "smash":"frighten", "spells":[ "Teleport", "Blast", "Mana Stealing", "Level Stealing" ], "effect":"fadeIn", "description":[
+		"The angry, unfettered spirit of a humanoid that has been prevented from",
+		"passing to the afterlife. It no longer possess connections to who or what it",
+		"was, yet are condemned to walk the world forever. Some are spawned when dark",
+		"magic or the touch of a wraith rips a soul from a living body."
+	]},
 	"dracolisk": { "pc":"Lizard", "size":2, "hit":"claw", "smash":"bite", "poisons":[ 8,9,10,11 ], "spells":[ "Heal", "Teleport" ], "effect":"rubberBand" },
 	"naga": { "pc":"Beast", "size":2, "hit":"drain", "smash":"gaze upon", "spells":[ "Teleport" ], "rings":[ "Medusa's" ] },
 	"xag-ya": { "pc":"Psionic", "size":0.5, "hit":"flick", "smash":"flog", "spells":[ "Teleport", "Super Shield", "Super Hone" ], "effect":"rotateIn" },
@@ -92,15 +141,44 @@
 	"stone golem": { "pc":"Ogre", "size":3, "hit":"pound", "smash":"crush", "rings":[ "Ogre" ], "effect":"wobble" },
 	"nycadaemon": { "pc":"Demon", "size":2, "hit":"claw", "smash":"bite", "spells":[ "Teleport", "Blast", "Illusion", "Cure" ], "effect":"heartBeat" },
 	"titan": { "pc":"Titan", "size":2, "hit":"pop", "smash":"smash", "spells":[ "Blast" ], "effect":"fadeInUpBig" },
-	"demilich": { "pc":"Undead", "hit":"touch", "smash":"overwhelm", "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Undying" ], "effect":"fadeIn" },
+	"demilich": { "pc":"Undead", "hit":"touch", "smash":"overwhelm", "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Undying" ], "effect":"fadeIn", "description":[
+		"It remains immortal only as long as it feeds mortal souls to its phylactery.",
+		"If it falters or fails in this task, its bones turn to dust until only its",
+		"skull remains. It contains only a fragment of the lich's malevolent life force",
+		"-- just enough so that if it is disturbed, these remains rise into the air",
+		"and assume a wraithlike form. The skull then emits a terrifying howl that can",
+		"slay the weak-hearted and leave others trembling with fear. Left alone, it",
+		"sinks back down and returns to the empty peace of its existence.",
+		"Few seek to become them, for it means an end to the existence they hoped to",
+		"preserve by becoming undead. However, time can erode its reason and memory,",
+		"causing it to retreat into its ancient tomb and forget to feed on souls.",
+		"The spells it once knew fade from its mind, and it no longer channels the",
+		"arcane energy it once wielded. However, even as a mere skull it remains a",
+		"deadly and vexing enemy."
+	]},
 	"pit fiend": { "pc":"Beast", "weapon":"Broad Sword", "spells":[ "Teleport" ] },
 	"lernaean hydra": { "pc":"Dragon", "size":3, "hit":"claw", "smash":"bite", "spells":[ "Big Blast" ], "effect":"shakeX" },
 	"major demon": { "pc":"Demon", "size":2, "hit":"hit", "smash":"smash", "spells":[ "Teleport", "Blast" ], "effect":"tada" },
 	"mist dragon": { "pc":"Dragon", "size":3, "hit":"claw", "smash":"drown", "spells":[ "Heal", "Teleport", "Armor Rusting", "Weapon Decay", "Super Shield" ], "effect":"shakeX" },
-	"grey slaad": { "pc":"Lizard", "weapon":"Dagger of Venom", "poisons":[ 9 ], "effect":"rubberBand" },
-	"beholder": { "pc":"Psionic", "size":3, "hit":"drain", "smash":"gaze upon", "spells":[ "Heal", "Teleport", "Blast", "Mana Stealing" ], "rings":[ "Medusa's" ], "effect":"rotateIn" },
+	"grey slaad": { "pc":"Lizard", "weapon":"Dagger of Venom", "poisons":[ 9 ], "effect":"rubberBand", "description":[
+			"It resembles a big, bipedal frog creature. Their skin is not entirely smooth,",
+			"and actually rather scaly. It has a big head with large maws, full of sharp",
+			"teeth."
+	]},
+	"beholder": { "pc":"Psionic", "size":3, "hit":"drain", "smash":"gaze upon", "spells":[ "Heal", "Teleport", "Blast", "Mana Stealing" ], "rings":[ "Medusa's" ], "effect":"rotateIn", "description":[
+		"One glance at a beholder is enough to assess its foul and otherworldly nature.",
+		"Aggressive, hateful, and greedy, these aberrations dismiss all other creatures",
+		"as lesser beings, toying with them or destroying them as they choose.",
+		"A beholder's spheroid body levitates at all times, and its great bulging eye",
+		"sits above a wide, toothy maw, while the smaller eyestalks that crown its body",
+		"twist and turn to keep its foes in sight. When a beholder sleeps, it closes",
+		"its central eye but leaves its smaller eyes open and alert."
+	]},
 	"iron golem": { "pc":"Ogre", "size":3, "hit":"gnaw", "smash":"wreck", "armor":"Mithril Chain Mail", "rings":[ "Ogre" ], "effect":"wobble" },
-	"death slaad": { "pc":"Lizard", "weapon":"Staff of RAH", "poisons":[ 10 ], "spells":[ "Heal", "Cure" ], "rings":[ "Shade" ], "effect":"rubberBand" },
+	"death slaad": { "pc":"Lizard", "weapon":"Staff of RAH", "poisons":[ 10 ], "spells":[ "Heal", "Cure" ], "rings":[ "Shade" ], "effect":"rubberBand", "description":[
+		"This slaadi is the most evil of all slaadkind, bent on perpetuating",
+		"destruction."
+	]},
 	"cloud dragon": { "pc":"Dragon", "size":3, "hit":"claw", "smash":"bite", "spells":[ "Teleport", "Big Blast", "Mana Stealing" ], "effect":"shakeX" },
 	"elder titan": { "pc":"Titan", "size":3, "hit":"hammer", "smash":"nail", "spells":[ "Blast" ], "effect":"fadeInUpBig" },
 	"lich": { "pc":"Undead", "hit":"touch", "smash":"overwhelm", "spells":[ "Teleport", "Armor Rusting", "Weapon Decay", "Big Blast", "Mana Stealing", "Level Stealing" ], "rings":[ "Shade", "Undying" ], "effect":"fadeInDown" },

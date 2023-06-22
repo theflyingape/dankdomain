@@ -52,6 +52,7 @@ interface arena {
     poisons?: number[]
     rings?: string[]
     effect?: string
+    description?: string
 }
 
 interface argument {
