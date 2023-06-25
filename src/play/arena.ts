@@ -542,6 +542,7 @@ module Arena {
             PC.activate(monster)
             if (arena.monsters[mon].adept) monster.adept = int(arena.monsters[mon].adept)
             monster.user.coin.amount = arena.monsters[mon].money
+            monster.description = arena.monsters[mon].description
 
             cat('arena/' + monster.user.handle.toLowerCase())
             vt.profile({

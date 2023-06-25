@@ -38,6 +38,7 @@ interface active {
     hull?: number
     monster?: dungeon
     effect?: string
+    description?: string
 }
 
 interface arena {

@@ -1,6 +1,6 @@
 {
 	"name": "@theflyingape/dankdomain",
-	"version": "3.2.6",
+	"version": "3.2.7",
 	"description": "Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash",
 	"author": "Robert Hurst",
 	"homepage": "https://www.ddgame.us",
@@ -98,7 +98,7 @@
 		"test": "npm run net test",
 		"watch": "tsc -w",
 		"net": "./game/portal-startup.sh",
-		"play": "./game/logins.sh -telnet",
+		"play": "./game/logins.sh -local",
 		"term": "./game/tty.sh",
 		"mame": "./mame/play.sh",
 		"postinstall": "npm run build",

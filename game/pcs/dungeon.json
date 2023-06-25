@@ -26,7 +26,12 @@
 	"xvart": { "pc":"Beast", "hit":"hit", "smash":"punch",  "effect":"zoomInDown" },
 	"caveman": { "pc":"Ogre", "size":2, "hit":"bash", "smash":"smash", "effect":"wobble" },
 	"norker": { "pc":"Beast", "hit":"hit", "smash":"smash" },
-	"skeleton": { "pc":"Undead", "weapon":"Spear", "effect":"fadeIn" },
+	"skeleton": { "pc":"Undead", "weapon":"Spear", "effect":"fadeIn", "description":[
+		"Arises when animated by dark magic. It heeds the summons of spellcasters who",
+		"call them from their stony tombs and ancient battlefields, or rise of their",
+		"own accord in places saturated with death and loss, awakened by stirrings of",
+		"nycromantic energy or the presence of corrupting evil."
+	]},
 	"zombie": { "pc":"Undead", "hit":"touch", "smash":"punch", "spells":[ "Armor Rusting", "Weapon Decay" ], "rings":[ "Augmenting" ], "effect":"fadeIn" },
 	"giant centipede": { "pc":"Beast", "size":2, "hit":"touch", "smash":"crawl all over" },
 	"gnoll": { "pc":"Beast", "hit":"bite", "smash":"smash", "armor":"Padded Leather" },
@@ -101,7 +106,13 @@
 	"manticore": { "pc":"Beast", "hit":"bite", "smash":"tear into" },
 	"troll": { "pc":"Ogre", "size":2, "spells":[ "Heal", "Teleport" ], "weapon":"Heavy Crossbow", "rings":[ "Ogre" ], "effect":"wobble" },
 	"wight": { "pc":"Undead", "hit":"touch", "smash":"overwhelm", "spells":[ "Mana Stealing", "Life Stealing" ], "rings":[ "Shade" ], "effect":"fadeIn" },
-	"wraith": { "pc":"Undead", "hit":"touch", "smash":"overwhelm", "spells":[ "Teleport", "Blast", "Armor Rusting", "Weapon Decay", "Big Blast" ], "rings":[ "Undying" ], "effect":"fadeIn" },
+	"wraith": { "pc":"Undead", "hit":"touch", "smash":"overwhelm", "spells":[ "Teleport", "Blast", "Armor Rusting", "Weapon Decay", "Big Blast" ], "rings":[ "Undying" ], "effect":"fadeIn", "description":[
+		"A malice incarnate, concentrated into an incorporeal form that seeks to",
+		"quench all life. The creature is suffused with negative energy, and its",
+		"mere passage through the world leaves nearby plants blackened and withered.",
+		"Animals flee from its presence. Even small fires can be extinguished by the",
+		"sucking oblivion of the wraith's horrifying existence."
+	]},
 	"basilisk": { "pc":"Lizard", "hit":"bite", "smash":"petrifie", "poisons":[ 7,8,9,10 ], "effect":"rubberBand", "description":[
 		"Travelers sometimes find objects that look like pieces of remarkably lifelike",
 		"stone carvings of wildlife. Missing parts appear to have been bitten off.",
@@ -123,7 +134,10 @@
 	"roper": { "pc":"Beast", "hit":"thrash", "smash":"whip" },
 	"umber hulk": { "pc":"Ogre", "size":3, "hit":"bash", "smash":"smash", "rings":[ "Ogre" ], "effect":"wobble" },
 	"pyrohydra": { "pc":"Dragon", "size":3, "hit":"claw", "smash":"burn", "spells":[ "Blast" ], "effect":"shakeX" },
-	"will-o-wisp": { "pc":"Spirit", "size":0.1, "hit":"flame", "smash":"torch" ,"poisons":[ 16 ], "spells":[ "Teleport", "Illusion", "Cure", "Disintegrate", "Morph", "Armor Rusting", "Weapon Decay", "Life Stealing", "Level Stealing", "Big Blast" ], "rings":[ "Shade" ] },
+	"will-o-wisp": { "pc":"Spirit", "size":0.1, "hit":"flame", "smash":"torch" ,"poisons":[ 16 ], "spells":[ "Teleport", "Illusion", "Cure", "Disintegrate", "Morph", "Armor Rusting", "Weapon Decay", "Life Stealing", "Level Stealing", "Big Blast" ], "rings":[ "Shade" ], "description":[
+		"Malevolent, wispy balls of light that haunt lonely places and battlefields,",
+		"bound by dark fate or dark magic to feed on fear and despair."
+	]},
 	"vampire": { "pc":"Undead", "hit":"touch", "smash":"bite", "spells":[ "Heal", "Teleport", "Mana Stealing", "Life Stealing" ], "rings":[ "Undying" ], "effect":"fadeIn" },
 	"ghost": { "pc":"Undead", "size":0.25, "hit":"scare", "smash":"frighten", "spells":[ "Teleport", "Blast", "Mana Stealing", "Level Stealing" ], "effect":"fadeIn", "description":[
 		"The angry, unfettered spirit of a humanoid that has been prevented from",
@@ -132,7 +146,17 @@
 		"magic or the touch of a wraith rips a soul from a living body."
 	]},
 	"dracolisk": { "pc":"Lizard", "size":2, "hit":"claw", "smash":"bite", "poisons":[ 8,9,10,11 ], "spells":[ "Heal", "Teleport" ], "effect":"rubberBand" },
-	"naga": { "pc":"Beast", "size":2, "hit":"drain", "smash":"gaze upon", "spells":[ "Teleport" ], "rings":[ "Medusa's" ] },
+	"naga": { "pc":"Beast", "size":2, "hit":"drain", "smash":"gaze upon", "spells":[ "Teleport" ], "rings":[ "Medusa's" ], "description":[
+		"An intelligent serpent that inhabits the ruins of the past, amassing arcane",
+		"treasures and knowledge. The first nagas were created as immortal guardians",
+		"by a humanoid race long lost to history. When this race died out, the nagas",
+		"deemed themselves the rightful inheritors of their masters' treasures and",
+		"magical lore. Industrious and driven, nagas occasionally venture out from",
+		"their lairs to track down magic items or rare spellbooks.",
+		"Nagas never feel the ravages of time or succumb to sickness. Even if it is",
+		"struck down, a naga's immortal spirit reforms in a new body in a matter of",
+		"days, ready to continue its eternal work."
+	]},
 	"xag-ya": { "pc":"Psionic", "size":0.5, "hit":"flick", "smash":"flog", "spells":[ "Teleport", "Super Shield", "Super Hone" ], "effect":"rotateIn" },
 	"xeg-yi": { "pc":"Psionic", "size":0.5, "hit":"whip", "smash":"whack into", "spells":[ "Teleport", "Super Shield", "Super Hone" ], "effect":"rotateIn" },
 	"minor demon": { "pc":"Demon", "weapon":"Pole Arm", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"tada" },

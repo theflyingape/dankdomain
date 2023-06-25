@@ -308,7 +308,7 @@ module lib {
             super.focus = name
         }
         */
-        tty: TTY = 'telnet'
+        tty: TTY = 'local'
 
         beep(bell = false) {
             if (bell || vt.emulation !== 'XT')
@@ -360,7 +360,7 @@ module lib {
         }
 
         wall(who: string, msg: string) {
-            if (this.tty !== 'door') this.out(`@wall(${who} ${msg})`)
+            if (this.tty !== 'door' && this.tty !== 'local') this.out(`@wall(${who} ${msg})`)
         }
     }
 

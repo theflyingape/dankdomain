@@ -920,12 +920,19 @@ module pc {
                 vt.outln('\n', this.who(profile).He, profile.armor.text, ' ', armor(profile)
                     , $.from == 'Dungeon' ? -300 : !profile.armor.armoury ? -500 : -100)
             }
-            if (!$.player.novice && $.from !== 'Dungeon' && profile.user.sex == 'I') for (let i in profile.user.rings) {
-                let ring = profile.user.rings[i]
-                if (!+i) vt.outln()
-                vt.out(this.who(profile).He, 'has ', vt.cyan, vt.bright, ring, vt.normal)
-                if ($.player.emulation == 'XT') vt.out(' ', Ring.name[ring].emoji)
-                vt.outln(' powers ', vt.reset, 'that can ', Ring.name[ring].description, -100)
+            if ($.from !== 'Dungeon' && profile.user.sex == 'I') {
+                for (let i in profile.user.rings) {
+                    let ring = profile.user.rings[i]
+                    if (!+i) vt.outln()
+                    vt.out(this.who(profile).He, 'has ', vt.cyan, vt.bright, ring, vt.normal)
+                    if ($.player.emulation == 'XT') vt.out(' ', Ring.name[ring].emoji)
+                    vt.outln(' powers ', vt.reset, 'that can ', Ring.name[ring].description, -100)
+                }
+                if (profile.description && $.from !== 'Dungeon' && profile.user.sex == 'I') {
+                    vt.outln(-200)
+                    for (let l = 0; l < profile.description.length; l++)
+                        vt.outln(vt.cyan, vt.bright, profile.description[l], $.player.novice ? -800 : -100)
+                }
             }
         }
 

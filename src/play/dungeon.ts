@@ -2763,6 +2763,7 @@ module Dungeon {
         }
         m.monster = dm
         m.effect = dm.effect || 'pulse'
+        m.description = dm.description
         m.user = PC.reroll(m.user, dm.pc ? dm.pc : $.player.pc, n)
         if (dm.pc == db.INIT.pc) m.user.xplevel = db.INIT.xplevel
         if (m.user.xplevel) m.user.xplevel = level
