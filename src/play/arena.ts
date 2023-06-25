@@ -434,7 +434,12 @@ module Arena {
                 vt.outln(`You don't have enough!`)
                 return
             }
-
+            if ($.arena > 2 && $.player.level < 60) {
+                vt.outln(vt.cyan, vt.bright, '\n Few acts are as dangerous as summoning a demon, and even mages who bargain')
+                vt.outln(vt.cyan, vt.bright, '  freely with devils fear the fiends of the Abyss. Though demons, yearn to ')
+                vt.outln(vt.cyan, vt.bright, ' sow chaos on the Material Plane, they show no gratitude when brought there,')
+                vt.outln(vt.cyan, vt.bright, '            raging against their prisons and demanding release.')
+            }
             vt.action('yn')
             vt.form = {
                 'pay': {

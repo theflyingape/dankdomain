@@ -34,7 +34,11 @@
 	]},
 	"zombie": { "pc":"Undead", "hit":"touch", "smash":"punch", "spells":[ "Armor Rusting", "Weapon Decay" ], "rings":[ "Augmenting" ], "effect":"fadeIn" },
 	"giant centipede": { "pc":"Beast", "size":2, "hit":"touch", "smash":"crawl all over" },
-	"gnoll": { "pc":"Beast", "hit":"bite", "smash":"smash", "armor":"Padded Leather" },
+	"gnoll": { "pc":"Beast", "hit":"bite", "smash":"smash", "armor":"Padded Leather", "description":[
+		"Feral humanoids that attack settlements along the frontiers and borderlands",
+		"of civilization without warning, slaughtering its victims and devouring",
+		"their flesh."
+	]},
 	"stirge": { "pc":"Beast", "hit":"hit", "smash":"smash" },
 	"troglodyte": { "pc":"Ogre", "size":2, "hit":"bash", "smash":"smash", "effect":"wobble" },
 	"lizard man": { "pc":"Lizard", "hit":"hit", "smash":"smash", "poisons":[ 1,2,3 ], "effect":"rubberBand" },
@@ -49,7 +53,9 @@
 		"carnage means they will fight for powerful masters if bloodshed and treasure",
 		"are assured."
 	]},
-	"ghoul": { "pc":"Undead", "size":2, "hit":"touch", "smash":"punch", "spells":[ "Heal", "Teleport", "Armor Rusting", "Weapon Decay" ], "effect":"fadeIn" },
+	"ghoul": { "pc":"Undead", "size":2, "hit":"touch", "smash":"punch", "spells":[ "Heal", "Teleport", "Armor Rusting", "Weapon Decay" ], "effect":"fadeIn", "description":[
+		"It roams the night in packs, driven by an insatiable hunger for humanoid flesh."
+	]},
 	"ogre": { "pc":"Ogre", "size":2, "armor":"Chain Mail", "weapon":"War Hammer", "poisons":[ 5 ], "spells":[ "Heal", "Teleport" ], "rings":[ "Ogre" ], "effect":"wobble" },
 	"firedrake": { "pc":"Dragon", "size":2, "hit":"claw", "smash":"burn", "spells":[ "Heal", "Teleport", "Big Blast" ], "effect":"shakeX" },
 	"drow": { "pc":"Demon", "hit":"hit", "smash":"smash", "spells":[ "Heal", "Teleport" ], "rings":[ "Elven" ], "effect":"heartBeat" },
@@ -58,9 +64,18 @@
 	"ophidian": { "pc":"Lizard", "hit":"bite", "smash":"squeeze", "poisons":[ 3,4,5,6 ], "effect":"rubberBand" },
 	"phantom": { "pc":"Undead", "size":0.5, "hit":"touch", "smash":"smother", "spells":[ "Heal", "Teleport", "Armor Rusting", "Weapon Decay", "Big Blast" ], "rings":[ "Shade" ], "effect":"fadeIn" },
 	"worg": { "pc":"Beast", "hit":"bite", "smash":"tear into" },
-	"gargoyle": { "pc":"Beast", "spells":[ "Teleport" ] },
+	"gargoyle": { "pc":"Beast", "spells":[ "Teleport" ], "description":[
+		"These malevolent creatures of elemental earth that resemble grotesque, fiendish",
+		"statues. It lurks among masonry and ruins, as still as any stone sculpture, and",
+		"delights in the terror it creates when it breaks from its suspended pose, as",
+		"well as the pain it inflicts on its victims."
+	]},
 	"rust monster": { "pc":"Beast", "spells":[ "Armor Rusting", "Super Shield" ] },
-	"ghast": { "pc":"Undead", "hit":"touch", "smash":"punch", "spells":[ "Heal", "Teleport", "Blast", "Armor Rusting", "Weapon Decay", "Big Blast" ], "effect":"fadeIn" },
+	"ghast": { "pc":"Undead", "hit":"touch", "smash":"punch", "spells":[ "Heal", "Teleport", "Blast", "Armor Rusting", "Weapon Decay", "Big Blast" ], "effect":"fadeIn", "description":[
+		"Orcus sometimes infuses a ghoul with a stronger dose of abyssal energy, whereas",
+		"ghouls are little more than savage beasts, a ghast is cunning and can inspire a",
+		"pack of ghouls to follow its commands."
+	]},
 	"werewolf": { "pc":"Undead", "hit":"bite", "smash":"tear into", "spells":[ "Heal", "Teleport" ], "effect":"fadeIn" },
 	"owlbear": { "pc":"Beast", "hit":"bite", "smash":"tear into" },
 	"firetoad": { "pc":"Lizard", "size":0.5, "hit":"claw", "smash":"burn", "poisons":[ 4,5,6,7 ], "effect":"rubberBand" },
@@ -85,8 +100,21 @@
 		"spell doom as its victim slowly turns to stone from the injury."
 	]},
 	"minotaur": { "pc":"Beast", "hit":"shoot", "smash":"charge into", "weapon":"Light Crossbow" },
-	"displacer beast": { "pc":"Beast", "hit":"hit", "smash":"smash", "armor":"Dancing Shield", "spells":[ "Teleport", "Super Shield" ] },
-	"doppelganger": { "pc":null, "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Faith", "Magus" ] },
+	"displacer beast": { "pc":"Beast", "hit":"hit", "smash":"smash", "armor":"Dancing Shield", "spells":[ "Teleport", "Super Shield" ], "description":[
+		"A monstrous predator takes its name from its ability to displace light so that",
+		"it appears to be several feet away from its actual location. It resembles a",
+		"sleek great cat covered in blue-black fur. However, its otherworldly origins",
+		"are clear in its six legs and the two tentacles sprouting from its shoulders,",
+		"both ending in pads tipped with spiky protrusions. Its eyes glow with an awful",
+		"malevolence that persists even in death."
+	]},
+	"doppelganger": { "pc":null, "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Faith", "Magus" ], "description":[
+		"Devious shapeshifters that take on the appearance of other humanoids, it",
+		"throws off pursuit or luring victims to their doom with misdirection and",
+		"disguise. Few creatures spread fear, suspicion, and deceit better than them.",
+		"Found in every land and culture, they can take on the guise of any individual",
+		"of any race."
+	]},
 	"imp": { "pc":"Demon", "hit":"hit", "smash":"smash", "spells":[ "Heal", "Teleport", "Blast", "Big Blast" ], "rings":[ "Cursed" ], "effect":"zoomInDown" },
 	"quasit": { "pc":"Demon", "hit":"claw", "smash":"scare", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"tada", "description":[
 		"An insidious demon from the Abyss, it is often found serving chaotic evil",
@@ -121,9 +149,18 @@
 	]},
 	"wyvern": { "pc":"Dragon", "size":2, "hit":"claw", "smash":"bite", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"shakeX" },
 	"medusa": { "pc":"Titan", "hit":"gaze upon", "smash":"petrifie", "spells":[ "Blast", "Life Stealing" ], "rings":[ "Medusa's" ], "effect":"fadeInUpBig" },
-	"drider": { "pc":"Beast", "hit":"hit", "smash":"smash" },
+	"drider": { "pc":"Beast", "hit":"hit", "smash":"smash", "description":[
+		"Drow transformed into twisted and debased creatures, driven by madness, it",
+		"disappears into the Underdark to become hermits and hunters, either wandering",
+		"alone or leading packs of giant spiders."
+	]},
 	"ogre mage": { "pc":"Ogre", "size":2, "hit":"bash", "smash":"smash", "spells":[ "Heal", "Teleport", "Mana Stealing" ], "rings":[ "Magus", "Ogre" ], "effect":"wobble" },
-	"hill giant": { "pc":"Ogre", "size":3, "hit":"bash", "smash":"smash", "rings":[ "Ogre"], "effect":"wobble" },
+	"hill giant": { "pc":"Ogre", "size":3, "hit":"bash", "smash":"smash", "rings":[ "Ogre"], "effect":"wobble", "description":[
+		"Selfish, dimwitted brutes that hunt, forage, and raid in constant search of",
+		"food. It blunders through hills and forests devouring what it can, bullying",
+		"smaller creatures into feeding them. Its laziness and dullness would long ago",
+		"have spelled their end if not for their formidable size and strength."
+	]},
 	"tunnel worm": { "pc":"Beast", "size":0.5, "hit":"bite", "smash":"squeeze" },
 	"hydra": { "pc":"Dragon", "size":3, "hit":"claw", "smash":"bite", "spells":[ "Heal" ], "effect":"shakeX" },
 	"mimic": { "pc":null, "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Faith", "White Wizard" ] },
@@ -160,8 +197,19 @@
 	"xag-ya": { "pc":"Psionic", "size":0.5, "hit":"flick", "smash":"flog", "spells":[ "Teleport", "Super Shield", "Super Hone" ], "effect":"rotateIn" },
 	"xeg-yi": { "pc":"Psionic", "size":0.5, "hit":"whip", "smash":"whack into", "spells":[ "Teleport", "Super Shield", "Super Hone" ], "effect":"rotateIn" },
 	"minor demon": { "pc":"Demon", "weapon":"Pole Arm", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"tada" },
-	"green dragon": { "pc":"Dragon", "size":3, "hit":"claw", "smash":"bite", "armor":"Dragon Scale Mail", "spells":[ "Heal", "Teleport", "Armor Rusting", "Mana Stealing", "Super Shield" ], "effect":"shakeX" },
-	"red dragon": { "pc":"Dragon", "size":3, "hit":"claw", "smash":"bite", "armor":"Red Dragon Scale Mail", "spells":[ "Teleport", "Weapon Decay" ], "rings":[ "Hell's Fury" ], "effect":"shakeX" },
+	"green dragon": { "pc":"Dragon", "size":3, "hit":"claw", "smash":"bite", "armor":"Dragon Scale Mail", "spells":[ "Heal", "Teleport", "Armor Rusting", "Mana Stealing", "Super Shield" ], "effect":"shakeX", "description":[
+		"The most cunning and treacherous of true dragons, it uses misdirection and",
+		"trickery to get the upper hand against their enemies. Nasty tempered and",
+		"thoroughly evil, they take special pleasure in subverting and corrupting the",
+		"good-hearted. Wherever it may roam, it demonstrates an aggression that is",
+		"often less about territory than it is about gaining power and wealth with as",
+		"little effort as possible."
+	]},
+	"red dragon": { "pc":"Dragon", "size":3, "hit":"claw", "smash":"bite", "armor":"Red Dragon Scale Mail", "spells":[ "Teleport", "Weapon Decay" ], "rings":[ "Hell's Fury" ], "effect":"shakeX", "description":[
+		"The most covetous of the true dragons, it tirelessly seeks to increase its",
+		"treasure hoards. It is exceptionally vain, even for dragons, and its conceit",
+		"is reflected in its proud bearing and its disdain for other creatures."
+	]},
 	"stone golem": { "pc":"Ogre", "size":3, "hit":"pound", "smash":"crush", "rings":[ "Ogre" ], "effect":"wobble" },
 	"nycadaemon": { "pc":"Demon", "size":2, "hit":"claw", "smash":"bite", "spells":[ "Teleport", "Blast", "Illusion", "Cure" ], "effect":"heartBeat" },
 	"titan": { "pc":"Titan", "size":2, "hit":"pop", "smash":"smash", "spells":[ "Blast" ], "effect":"fadeInUpBig" },
@@ -207,7 +255,19 @@
 	"elder titan": { "pc":"Titan", "size":3, "hit":"hammer", "smash":"nail", "spells":[ "Blast" ], "effect":"fadeInUpBig" },
 	"lich": { "pc":"Undead", "hit":"touch", "smash":"overwhelm", "spells":[ "Teleport", "Armor Rusting", "Weapon Decay", "Big Blast", "Mana Stealing", "Level Stealing" ], "rings":[ "Shade", "Undying" ], "effect":"fadeInDown" },
 	"slaad lord": { "pc":"Lizard", "armor":"Cloak of Elvenlords", "weapon":"Battle Axe of Lords", "poisons":[ 11,12,13 ], "spells":[ "Illusion", "Super Shield", "Super Hone" ], "rings":[ "Elven" ], "effect":"rubberBand" },
-	"demon prince": { "pc":"Demon", "hit":"hit", "smash":"smash", "spells":[ "Heal", "Super Shield" ], "effect":"tada" },
-	"archdevil": { "pc":"Demon", "size":3, "hit":"hit", "smash":"smash", "spells":[ "Blast", "Super Hone" ], "rings":[ "Hell's Fury" ], "effect":"tada" },
-	"elemental prince": { "pc":"God", "size":2, "hit":"strike", "smash":"smite", "spells":[ "Confusion", "Cure", "Armor Rusting", "Weapon Decay", "Mana Stealing" ], "rings":[ "White Wizard" ], "effect":"flipInX" }
+	"demon prince": { "pc":"Demon", "hit":"hit", "smash":"smash", "spells":[ "Heal", "Super Shield" ], "effect":"tada", "description":[
+			"Worshiped by the undead and by living creatures that channel the power of",
+			"undeath. A brooding and nihilistic entity, it yearns to make the multi",
+			"verse a place of death and darkness, forever unchanging except by his will."
+	]},
+	"archdevil": { "pc":"Demon", "size":3, "hit":"hit", "smash":"smash", "spells":[ "Blast", "Super Hone" ], "rings":[ "Hell's Fury" ], "effect":"tada", "description":[
+		"A unique being with an appearance that reflects its particular evil nature,",
+		"it personifies tyranny with a totalitarian society dedicated to the",
+		"domination of mortal life. A servant to Asmodeus, it must continually expand",
+		"into the mortal realm to corrupt the souls from which new devils are spawned."
+	]},
+	"elemental prince": { "pc":"God", "size":2, "hit":"strike", "smash":"smite", "spells":[ "Confusion", "Cure", "Armor Rusting", "Weapon Decay", "Mana Stealing" ], "rings":[ "White Wizard" ], "effect":"flipInX", "description": [
+		"A demigod over all incarnations of the elements that make up the universe:",
+		"air, earth, fire, and water."
+	]}
 }

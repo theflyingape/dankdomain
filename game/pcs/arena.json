@@ -1,16 +1,51 @@
 [
-  { "name":"Kobold", "level":1, "pc":"Lizard", "weapon":"Sling", "armor":0, "money":"15c", "effect":"pulse" },
-  { "name":"Orc", "level":3, "pc":"Beast", "weapon":"Dagger", "armor":"Small Shield", "money":"45c", "effect":"bounce" },
+  { "name":"Kobold", "level":1, "pc":"Lizard", "weapon":"Sling", "armor":0, "money":"15c", "effect":"pulse",
+    "description": [
+      "Craven reptilian humanoids that worship evil dragons as demigods and serve",
+      "them as minions and toadies. It inhabits dragons' lairs when it can but more",
+      "commonly infest dungeons, gathering treasures and trinkets to add to their own",
+      "tiny hoards."
+  ]},
+  { "name":"Orc", "level":3, "pc":"Beast", "weapon":"Dagger", "armor":"Small Shield", "money":"45c", "effect":"bounce",
+    "description": [
+      "A savage raider and pillager with stooped posture, low forehead, and a",
+      "piggish face with prominent lower canines that resemble tusks."
+    ]},
   { "name":"Ogre", "level":5, "pc":"Ogre", "weapon":"Club", "armor":"Large Shield", "money":"100c", "effect":"bounceInDown" },
-  { "name":"Gnoll", "level":7, "pc":"Beast", "weapon":"Mace", "armor":"Leather", "money":"500c", "effect":"bounceInLeft" },
+  { "name":"Gnoll", "level":7, "pc":"Beast", "weapon":"Mace", "armor":"Leather", "money":"500c", "effect":"bounceInLeft",
+    "description": [
+      "Feral humanoids that attack settlements along the frontiers and borderlands",
+      "of civilization without warning, slaughtering its victims and devouring",
+      "their flesh."
+    ]},
   { "name":"Troglodyte", "level":9, "pc":"Beast", "weapon":"Spear", "armor":"Padded Leather", "money":"1000c", "effect":"zoomInDown" },
-  { "name":"Gargoyle", "level":12, "pc":"Demon", "weapon":"Axe", "armor":6, "money":"10000c", "spells":[ "Teleport" ], "effect":"fadeInUp" },
+  { "name":"Gargoyle", "level":12, "pc":"Demon", "weapon":"Axe", "armor":6, "money":"10000c", "spells":[ "Teleport" ], "effect":"fadeInUp",
+    "description": [
+      "These malevolent creatures of elemental earth that resemble grotesque, fiendish",
+      "statues. It lurks among masonry and ruins, as still as any stone sculpture, and",
+      "delights in the terror it creates when it breaks from its suspended pose, as",
+      "well as the pain it inflicts on its victims."
+    ]},
   { "name":"Troll", "level":23, "pc":"Ogre", "weapon":"Heavy Crossbow", "armor":10, "money":"1s", "spells":[ "Heal" ], "rings":[ "Cursed", "Ogre" ], "effect":"rubberBand" },
   { "name":"Hydra", "level":32, "pc":"Dragon", "weapon":25, "armor":"Dragon Scale Mail", "money":"1000s", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"fadeInUpBig" },
   { "name":"Nycadaemon", "level":36, "pc":"Demon", "weapon":"Staff of Striking", "armor":18, "money":"10g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"heartBeat" },
-  { "name":"Red Dragon", "level":40, "pc":"Dragon", "weapon":32, "armor":"Red Dragon Scale Mail", "money":"500g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"shakeX" },
+  { "name":"Red Dragon", "level":40, "pc":"Dragon", "weapon":32, "armor":"Red Dragon Scale Mail", "money":"500g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"shakeX",
+    "description": [
+      "The most covetous of the true dragons, it tirelessly seeks to increase its",
+      "treasure hoards. It is exceptionally vain, even for dragons, and its conceit",
+      "is reflected in its proud bearing and its disdain for other creatures."
+    ]},
   { "name":"Lich", "level":45, "pc":"Undead", "adept":1, "weapon":35, "armor":"Amulet of Protection", "money":"2500g", "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Cursed", "Undying" ], "effect":"rotateInDownRight" },
-  { "name":"Beholder", "level":50, "pc":"Psionic", "adept":1, "weapon":40, "armor":22, "money":"1p", "spells":[ "Heal", "Teleport", "Blast", "Mana Stealing" ], "rings":[ "Medusa's" ], "effect":"flip" },
+  { "name":"Beholder", "level":50, "pc":"Psionic", "adept":1, "weapon":40, "armor":22, "money":"1p", "spells":[ "Heal", "Teleport", "Blast", "Mana Stealing" ], "rings":[ "Medusa's" ], "effect":"flip",
+    "description": [
+      "One glance at a beholder is enough to assess its foul and otherworldly nature.",
+      "Aggressive, hateful, and greedy, these aberrations dismiss all other creatures",
+      "as lesser beings, toying with them or destroying them as they choose.",
+      "A beholder's spheroid body levitates at all times, and its great bulging eye",
+      "sits above a wide, toothy maw, while the smaller eyestalks that crown its body",
+      "twist and turn to keep its foes in sight. When a beholder sleeps, it closes",
+      "its central eye but leaves its smaller eyes open and alert."
+    ]},
   { "name":"Demogorgon", "level":99, "pc":"Demon", "adept":2, "weapon":"Staff of the Magi", "armor":"Ring of Invisibility", "money":"1000p", "spells":[ "Confusion", "Transmute", "Cure" ], "rings":[ "Cursed", "White Wizard" ], "effect":"zoomIn", "description":[
     "The Sibilant Beast and the self-styled Prince of Demons, Demogorgon yearns for",
     "nothing less than undoing the order of the multiverse. An insane assemblage of",
