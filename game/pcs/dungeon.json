@@ -15,7 +15,17 @@
 		"commonly infest dungeons, gathering treasures and trinkets to add to their own",
 		"tiny hoards."
 	]},
-	"hobgoblin": { "pc":"Lizard", "hit":"hit", "smash":"smash", "poisons":[ 1 ], "effect":"rubberBand" },
+	"hobgoblin": { "pc":"Lizard", "hit":"hit", "smash":"smash", "poisons":[ 1 ], "effect":"rubberBand", "description":[
+		"War horns sound, stones fly from catapults, and the thunder of a thousand",
+		"booted feet echoes across the land as hobgoblins march to battle. Across the",
+		"borderlands of civilization, settlements and settlers must contend with these",
+		"aggressive humanoids, whose thirst for conquest is never satisfied.",
+		"It has dark orange or red-orange skin, and hair ranging from dark red-brown to",
+		"dark gray. Yellow or dark brown eyes peer out beneath its beetling brows, and",
+		"its wide mouth sport sharp and yellowed teeth. The male might have a large blue",
+		"or red nose, which symbolizes virility and power among goblinkin. It can live",
+		"as long as humans, though their love of warfare and battle means that few do."
+	]},
 	"bullywug": { "pc":"Lizard", "hit":"claw", "smash":"bite", "poisons":[ 1,2 ], "effect":"rubberBand", "description":[
 		"Its life is nasty, brutish, and wet. These frog-headed amphibious humanoids",
 		"must stay constantly moist, dwelling in rainy forests, marshes, and damp",
@@ -79,8 +89,22 @@
 	"werewolf": { "pc":"Undead", "hit":"bite", "smash":"tear into", "spells":[ "Heal", "Teleport" ], "effect":"fadeIn" },
 	"owlbear": { "pc":"Beast", "hit":"bite", "smash":"tear into" },
 	"firetoad": { "pc":"Lizard", "size":0.5, "hit":"claw", "smash":"burn", "poisons":[ 4,5,6,7 ], "effect":"rubberBand" },
-	"hellhound": { "pc":"Demon", "hit":"bite", "smash":"tear into", "rings":[ "Hell's Fury" ], "effect":"tada" },
-	"hook horror": { "pc":"Beast", "hit":"bite", "smash":"hook" },
+	"hell hound": { "pc":"Demon", "hit":"bite", "smash":"tear into", "rings":[ "Hell's Fury" ], "effect":"tada", "description":[
+		"Monstrous, fire-breathing fiends that take the form of powerful dogs, it is",
+		"found on the battlefieldsof Acheron and throughout the Lower Planes. On the",
+		"Material Plane, it is most commonly seen in service to devils, fire giants,",
+		"and other evil creatures that use them as guard animals and companions."
+	]},
+	"hook horror": { "pc":"Beast", "hit":"bite", "smash":"hook", "description":[
+		"A fierce predator of the Underdark, it aggressively defends its hunting",
+		"grounds. The subterranean caverns where these creatures dwell echo with the",
+		"constant clacking and scraping of its hooks as it winds their way up cliffs",
+		"and along cavern walls.",
+		"The monstrous beast has a head resembling a vulture's and the torso of an",
+		"enormous beetle, with an exoskeleton studded by sharp, bony protuberances.",
+		"It gains its name from its long, powerfully built arms and legs, which end",
+		"in wickedly curved hooked claws."
+	]},
 	"ankheg": { "pc":"Lizard", "hit":"touch", "smash":"crawl all over", "poisons":[ 5,6,7,8 ], "effect":"rubberBand", "description": [
 		"It resembles an enormous many-legged insect, its long antennae twitching in",
 		"response to any movement around it. Its legs end in sharp hooks adapted for",
@@ -162,7 +186,15 @@
 		"have spelled their end if not for their formidable size and strength."
 	]},
 	"tunnel worm": { "pc":"Beast", "size":0.5, "hit":"bite", "smash":"squeeze" },
-	"hydra": { "pc":"Dragon", "size":3, "hit":"claw", "smash":"bite", "spells":[ "Heal" ], "effect":"shakeX" },
+	"hydra": { "pc":"Dragon", "size":3, "hit":"claw", "smash":"bite", "spells":[ "Heal" ], "effect":"shakeX", "description":[
+		"A reptilian horror with a crocodilian body and multiple heads on long,",
+		"serpentine necks. Although its heads can be severed, it magically regrows them",
+		"in short order. A typical specimen has five heads.",
+		"At the dawn of time, an evil dragon slew a rival dragon god named Lernaea and",
+		"cast its blood across the multiverse. Each drop that fell upon a world spawned",
+		"a multi-headed hydra consumed by a hunger as great as the fallen god's hatred.",
+		"Great champions are known to test their mettle against these fearsome creatures."
+	]},
 	"mimic": { "pc":null, "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Faith", "White Wizard" ] },
 	"succubus": { "pc":"Psionic", "hit":"suck", "smash":"drain", "spells":[ "Mana Stealing", "Life Stealing" ], "effect":"heartBeat" },
 	"mind flayer": { "pc":"Psionic", "size":2, "hit":"gaze upon", "smash":"hypnotize", "spells":[ "Big Blast", "Mana Stealing" ], "rings":[ "Medusa's" ], "effect":"tada" },

@@ -27,7 +27,16 @@
       "well as the pain it inflicts on its victims."
     ]},
   { "name":"Troll", "level":23, "pc":"Ogre", "weapon":"Heavy Crossbow", "armor":10, "money":"1s", "spells":[ "Heal" ], "rings":[ "Cursed", "Ogre" ], "effect":"rubberBand" },
-  { "name":"Hydra", "level":32, "pc":"Dragon", "weapon":25, "armor":"Dragon Scale Mail", "money":"1000s", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"fadeInUpBig" },
+  { "name":"Hydra", "level":32, "pc":"Dragon", "weapon":25, "armor":"Dragon Scale Mail", "money":"1000s", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"fadeInUpBig",
+    "description": [
+      "A reptilian horror with a crocodilian body and multiple heads on long,",
+      "serpentine necks. Although its heads can be severed, it magically regrows them",
+      "in short order. A typical specimen has five heads.",
+      "At the dawn of time, an evil dragon slew a rival dragon god named Lernaea and",
+      "cast its blood across the multiverse. Each drop that fell upon a world spawned",
+      "a multi-headed hydra consumed by a hunger as great as the fallen god's hatred.",
+      "Great champions are known to test their mettle against these fearsome creatures."
+    ]},
   { "name":"Nycadaemon", "level":36, "pc":"Demon", "weapon":"Staff of Striking", "armor":18, "money":"10g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"heartBeat" },
   { "name":"Red Dragon", "level":40, "pc":"Dragon", "weapon":32, "armor":"Red Dragon Scale Mail", "money":"500g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"shakeX",
     "description": [
