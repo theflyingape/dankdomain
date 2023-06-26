@@ -931,7 +931,7 @@ module pc {
                 if (profile.description && profile.user.level >= $.player.level && $.from !== 'Dungeon' && profile.user.sex == 'I') {
                     vt.outln(-200)
                     for (let l = 0; l < profile.description.length; l++)
-                        vt.outln(vt.cyan, vt.bright, profile.description[l], $.player.novice ? -800 : -100)
+                        vt.outln(vt.cyan, vt.bright, profile.description[l], $.player.novice ? -900 : -400)
                 }
             }
         }

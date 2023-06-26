@@ -11,22 +11,43 @@
       "A savage raider and pillager with stooped posture, low forehead, and a",
       "piggish face with prominent lower canines that resemble tusks."
     ]},
-  { "name":"Ogre", "level":5, "pc":"Ogre", "weapon":"Club", "armor":"Large Shield", "money":"100c", "effect":"bounceInDown" },
+  { "name":"Ogre", "level":5, "pc":"Ogre", "weapon":"Club", "armor":"Large Shield", "money":"100c", "effect":"bounceInDown",
+    "description": [
+      "Lazy of mind as strong of body, it lives by raiding, scavenging, and killing",
+      "for food and pleasure. The average specimen stands between 9 and 10 feet tall",
+      "and weighs close to a thousand pounds."
+  ]},
   { "name":"Gnoll", "level":7, "pc":"Beast", "weapon":"Mace", "armor":"Leather", "money":"500c", "effect":"bounceInLeft",
     "description": [
       "Feral humanoids that attack settlements along the frontiers and borderlands",
       "of civilization without warning, slaughtering its victims and devouring",
       "their flesh."
-    ]},
-  { "name":"Troglodyte", "level":9, "pc":"Beast", "weapon":"Spear", "armor":"Padded Leather", "money":"1000c", "effect":"zoomInDown" },
+  ]},
+  { "name":"Troglodyte", "level":9, "pc":"Beast", "weapon":"Spear", "armor":"Padded Leather", "money":"1000c", "effect":"zoomInDown",
+    "description": [
+      "The savage, degenerate squats in the shallow depths of the Underdark in a",
+      "constant state of war against their neighbors and one another. It marks its",
+      "borders with cracked bones and skulls, or with pictographs painted in blood or",
+      "dung. Perhaps the most loathsome of all humanoids, it can eat anything it can",
+      "stomach. It dwells in filth. The walls of their cavern homes are smeared with",
+      "grime, oily secretions, and the debris of its foul feasting."
+  ]},
   { "name":"Gargoyle", "level":12, "pc":"Demon", "weapon":"Axe", "armor":6, "money":"10000c", "spells":[ "Teleport" ], "effect":"fadeInUp",
     "description": [
       "These malevolent creatures of elemental earth that resemble grotesque, fiendish",
       "statues. It lurks among masonry and ruins, as still as any stone sculpture, and",
       "delights in the terror it creates when it breaks from its suspended pose, as",
       "well as the pain it inflicts on its victims."
+  ]},
+  { "name":"Troll", "level":23, "pc":"Ogre", "weapon":"Heavy Crossbow", "armor":10, "money":"1s", "spells":[ "Heal" ], "rings":[ "Cursed", "Ogre" ], "effect":"rubberBand",
+    "description": [
+      "Born with horrific appetites, it can eat anything it catches to devour. It has",
+      "no society to speak of, but often serve as mercenaries to orcs, ogres, hags,",
+      "and giants. As payment, it demands food and treasure. It is difficult to",
+      "control, however, doing as it pleases even when working with more powerful",
+      "creatures.",
+      "Its wounds close quickly with its regenerative capabilities."
     ]},
-  { "name":"Troll", "level":23, "pc":"Ogre", "weapon":"Heavy Crossbow", "armor":10, "money":"1s", "spells":[ "Heal" ], "rings":[ "Cursed", "Ogre" ], "effect":"rubberBand" },
   { "name":"Hydra", "level":32, "pc":"Dragon", "weapon":25, "armor":"Dragon Scale Mail", "money":"1000s", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"fadeInUpBig",
     "description": [
       "A reptilian horror with a crocodilian body and multiple heads on long,",
@@ -36,15 +57,23 @@
       "cast its blood across the multiverse. Each drop that fell upon a world spawned",
       "a multi-headed hydra consumed by a hunger as great as the fallen god's hatred.",
       "Great champions are known to test their mettle against these fearsome creatures."
-    ]},
+  ]},
   { "name":"Nycadaemon", "level":36, "pc":"Demon", "weapon":"Staff of Striking", "armor":18, "money":"10g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"heartBeat" },
   { "name":"Red Dragon", "level":40, "pc":"Dragon", "weapon":32, "armor":"Red Dragon Scale Mail", "money":"500g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"shakeX",
     "description": [
       "The most covetous of the true dragons, it tirelessly seeks to increase its",
       "treasure hoards. It is exceptionally vain, even for dragons, and its conceit",
       "is reflected in its proud bearing and its disdain for other creatures."
-    ]},
-  { "name":"Lich", "level":45, "pc":"Undead", "adept":1, "weapon":35, "armor":"Amulet of Protection", "money":"2500g", "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Cursed", "Undying" ], "effect":"rotateInDownRight" },
+  ]},
+  { "name":"Lich", "level":45, "pc":"Undead", "adept":1, "weapon":35, "armor":"Amulet of Protection", "money":"2500g", "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Cursed", "Undying" ], "effect":"rotateInDownRight",
+    "description": [
+      "The remains of great wizards who embrace undeath as a means of preserving",
+      "itself. To further its own power at any cost, it has no interest in the affairs",
+      "of the living except where those affairs interfere with its own. Scheming and",
+      "insane, it hungers for long-forgotten knowledge and the most terrible secrets.",
+      "Because the shadow of death doesn't hang over it, it can conceive plans that",
+      "take years, decades, or centuries to come to fruition."
+  ]},
   { "name":"Beholder", "level":50, "pc":"Psionic", "adept":1, "weapon":40, "armor":22, "money":"1p", "spells":[ "Heal", "Teleport", "Blast", "Mana Stealing" ], "rings":[ "Medusa's" ], "effect":"flip",
     "description": [
       "One glance at a beholder is enough to assess its foul and otherworldly nature.",
@@ -54,18 +83,11 @@
       "sits above a wide, toothy maw, while the smaller eyestalks that crown its body",
       "twist and turn to keep its foes in sight. When a beholder sleeps, it closes",
       "its central eye but leaves its smaller eyes open and alert."
-    ]},
+  ]},
   { "name":"Demogorgon", "level":99, "pc":"Demon", "adept":2, "weapon":"Staff of the Magi", "armor":"Ring of Invisibility", "money":"1000p", "spells":[ "Confusion", "Transmute", "Cure" ], "rings":[ "Cursed", "White Wizard" ], "effect":"zoomIn", "description":[
     "The Sibilant Beast and the self-styled Prince of Demons, Demogorgon yearns for",
     "nothing less than undoing the order of the multiverse. An insane assemblage of",
     "features and drives, the Prince of Demons inspires fear and hatred among other",
-    "demons and demon lords.",
-    "Demogorgon towers three times the height of a human, his body as sinuous as a",
-    "snake's and as powerful as a great ape's. Suckered tentacles take the place of",
-    "his arms. His saurian lower torso ends in webbed and clawed feet, and a forked",
-    "tail whose whip-like tips are armed with cruel blades. The Prince of Demons",
-    "has two baleful baboon heads, both of them mad. It is only the conflict",
-    "between the two halves of his dual nature that keeps the demon lord's",
-    "ambitions in check."
+    "demons and demon lords."
   ]}
 ]
