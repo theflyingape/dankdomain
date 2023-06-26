@@ -58,7 +58,10 @@
       "a multi-headed hydra consumed by a hunger as great as the fallen god's hatred.",
       "Great champions are known to test their mettle against these fearsome creatures."
   ]},
-  { "name":"Nycadaemon", "level":36, "pc":"Demon", "weapon":"Staff of Striking", "armor":18, "money":"10g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"heartBeat" },
+  { "name":"Nycadaemon", "level":36, "pc":"Demon", "weapon":"Staff of Striking", "armor":18, "money":"10g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"heartBeat", "description":[
+		"Tall, arrogant creatures and possess four muscular arms, a doglike head and a",
+		"pair of vast, bat-like wings."
+	]},
   { "name":"Red Dragon", "level":40, "pc":"Dragon", "weapon":32, "armor":"Red Dragon Scale Mail", "money":"500g", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"shakeX",
     "description": [
       "The most covetous of the true dragons, it tirelessly seeks to increase its",

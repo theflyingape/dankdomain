@@ -33,9 +33,16 @@
 		"superior numbers when they can, but they flee from serious threats to search",
 		"for easier prey."
 	]},
-	"xvart": { "pc":"Beast", "hit":"hit", "smash":"punch",  "effect":"zoomInDown" },
-	"caveman": { "pc":"Ogre", "size":2, "hit":"bash", "smash":"smash", "effect":"wobble" },
-	"norker": { "pc":"Beast", "hit":"hit", "smash":"smash" },
+	"xvart": { "pc":"Beast", "size":0.5, "hit":"hit", "smash":"punch",  "effect":"zoomInDown", "description":[
+		"Cowardly and easily intimidated, it is a generally hateful creature. Its short,",
+		"miserable life leads it to despise most creatures and take out their angst on",
+		"anyone. They often attack in large groups."
+	]},
+	"caveman": { "pc":"Ogre", "size":1.5, "hit":"bash", "smash":"smash", "effect":"wobble" },
+	"norker": { "pc":"Beast", "hit":"hit", "smash":"smash", "description":[
+		"This goblin infused by the earth elemental makes for thicker natural armor and",
+		"strength. It is cruel, lazy, and vicious."
+	]},
 	"skeleton": { "pc":"Undead", "weapon":"Spear", "effect":"fadeIn", "description":[
 		"Arises when animated by dark magic. It heeds the summons of spellcasters who",
 		"call them from their stony tombs and ancient battlefields, or rise of their",
@@ -50,7 +57,7 @@
 		"When left without orders, it simply stands in place and rots unless something",
 		"comes along that it can kill."
 	]},
-	"giant centipede": { "pc":"Beast", "size":2, "hit":"touch", "smash":"crawl all over" },
+	"giant centipede": { "pc":"Beast", "hit":"touch", "smash":"crawl all over" },
 	"gnoll": { "pc":"Beast", "hit":"bite", "smash":"smash", "armor":"Padded Leather", "description":[
 		"Feral humanoids that attack settlements along the frontiers and borderlands",
 		"of civilization without warning, slaughtering its victims and devouring",
@@ -76,7 +83,11 @@
 	"crabman": { "pc":"Beast", "hit":"claw", "smash":"bite" },
 	"mongrelman": { "pc":"Beast", "hit":"hit", "smash":"smash" },
 	"ogrillon": { "pc":"Ogre", "size":2, "hit":"bash", "smash":"smash", "spells":[ "Heal" ], "effect":"wobble" },
-	"githzerai": { "pc":"Psionic", "hit":"hit", "smash":"smash", "spells":[ "Heal" ], "effect":"tada" },
+	"githzerai": { "pc":"Psionic", "hit":"hit", "smash":"smash", "spells":[ "Heal" ], "effect":"tada", "description":[
+		"Split from their ancestral cousins, githyanki, they cultivating their mental",
+		"powers and have imbued the ability to shape psionic energy to protect themselves",
+		"and probe minds."
+	]},
 	"kuo-toa": { "pc":"Lizard", "poisons":[ 1,2,3,4 ], "spells":[ "Heal", "Teleport" ], "effect":"rubberBand", "description":[
 		"Degenerate fishlike humanoids that once inhabited the shores and islands of the",
 		"surface world. Long ago humans and its ilk drove them underground, where they",
@@ -97,7 +108,10 @@
 		"and weighs close to a thousand pounds."
 	]},
 	"firedrake": { "pc":"Dragon", "size":2, "hit":"claw", "smash":"burn", "spells":[ "Heal", "Teleport", "Big Blast" ], "effect":"shakeX" },
-	"drow": { "pc":"Demon", "hit":"hit", "smash":"smash", "spells":[ "Heal", "Teleport" ], "rings":[ "Elven" ], "effect":"heartBeat" },
+	"drow": { "pc":"Demon", "hit":"hit", "smash":"smash", "spells":[ "Heal", "Teleport" ], "rings":[ "Elven" ], "effect":"heartBeat", "description":[
+		"A dark-skinned sub-race of elves that predominantly lived in the Underdark.",
+		"They were hated and feared due to their cruelty."
+	]},
 	"firenewt": { "pc":"Lizard", "size":0.5, "hit":"claw", "smash":"burn", "poisons":[ 2,3,4,5 ], "spells":[ "Heal", "Teleport" ], "effect":"rubberBand" },
 	"harpy": { "pc":"Beast", "spells":[ "Armor Rusting", "Weapon Decay" ] },
 	"ophidian": { "pc":"Lizard", "hit":"bite", "smash":"squeeze", "poisons":[ 3,4,5,6 ], "effect":"rubberBand" },
@@ -157,7 +171,9 @@
 		"burrowing and grasping its prey, and its powerful mandibles can snap a small",
 		"tree in half."
 	]},
-	"githyanki": { "pc":"Psionic", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"heartBeat" },
+	"githyanki": { "pc":"Psionic", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"heartBeat", "description":[
+		"It complements physical prowess with psionic might, instilled by mind flayers."
+	]},
 	"cave bear": { "pc":"Beast", "hit":"bite", "smash":"tear into" },
 	"cockatrice": { "pc":"Lizard", "hit":"peck", "smash":"bite", "poisons":[ 5,6,7,8 ], "effect":"rubberBand", "description": [
 		"It looks like a hideous hybrid of lizard, bird, and bat, and it is infamous",
@@ -190,7 +206,9 @@
 		"Found in every land and culture, they can take on the guise of any individual",
 		"of any race."
 	]},
-	"imp": { "pc":"Demon", "hit":"hit", "smash":"smash", "spells":[ "Heal", "Teleport", "Blast", "Big Blast" ], "rings":[ "Cursed" ], "effect":"zoomInDown" },
+	"imp": { "pc":"Demon", "size":0.5, "hit":"hit", "smash":"smash", "spells":[ "Heal", "Teleport", "Blast", "Big Blast" ], "rings":[ "Cursed" ], "effect":"zoomInDown", "description":[
+		"Vicious, manipulative fiends that are among the weakest beings in the infernal hierarchy."
+	]},
 	"quasit": { "pc":"Demon", "hit":"claw", "smash":"scare", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"tada", "description":[
 		"An insidious demon from the Abyss, it is often found serving chaotic evil",
 		"spellcasters as counselors and spies. Although it thirsts for victory and",
@@ -372,8 +390,12 @@
 		"struck down, a naga's immortal spirit reforms in a new body in a matter of",
 		"days, ready to continue its eternal work."
 	]},
-	"xag-ya": { "pc":"Psionic", "size":0.5, "hit":"flick", "smash":"flog", "spells":[ "Teleport", "Super Shield", "Super Hone" ], "effect":"rotateIn" },
-	"xeg-yi": { "pc":"Psionic", "size":0.5, "hit":"whip", "smash":"whack into", "spells":[ "Teleport", "Super Shield", "Super Hone" ], "effect":"rotateIn" },
+	"xag-ya": { "pc":"Psionic", "size":0.5, "hit":"whip", "smash":"jolt", "spells":[ "Teleport", "Big Blast" ], "effect":"rotateIn", "description":[
+		"A spherical being made up of positive, bolt energy."
+	]},
+	"xeg-yi": { "pc":"Psionic", "size":0.5, "hit":"whip", "smash":"drain", "spells":[ "Teleport", "Life Stealing" ], "effect":"rotateIn", "description": [
+		"A spherical being made up of negative, anti-life energy."
+	]},
 	"minor demon": { "pc":"Demon", "weapon":"Pole Arm", "spells":[ "Heal", "Teleport", "Blast" ], "effect":"tada" },
 	"green dragon": { "pc":"Dragon", "size":3, "hit":"claw", "smash":"bite", "armor":"Dragon Scale Mail", "spells":[ "Heal", "Teleport", "Armor Rusting", "Mana Stealing", "Super Shield" ], "effect":"shakeX", "description":[
 		"The most cunning and treacherous of true dragons, it uses misdirection and",
@@ -398,7 +420,10 @@
 		"Creatures that fight a stone golem can feel the ebb and flow of time slow down",
 		"around them, almost as though they were made of stone themselves."
 	]},
-	"nycadaemon": { "pc":"Demon", "size":2, "hit":"claw", "smash":"bite", "spells":[ "Teleport", "Blast", "Illusion", "Cure" ], "effect":"heartBeat" },
+	"nycadaemon": { "pc":"Demon", "size":2, "hit":"claw", "smash":"bite", "spells":[ "Teleport", "Blast", "Illusion", "Cure" ], "effect":"heartBeat", "description":[
+		"Tall, arrogant creatures and possess four muscular arms, a doglike head and a",
+		"pair of vast, bat-like wings."
+	]},
 	"titan": { "pc":"Titan", "size":2, "hit":"pop", "smash":"smash", "spells":[ "Blast" ], "effect":"fadeInUpBig" },
 	"demilich": { "pc":"Undead", "hit":"touch", "smash":"overwhelm", "spells":[ "Heal", "Teleport", "Blast" ], "rings":[ "Undying" ], "effect":"fadeIn", "description":[
 		"It remains immortal only as long as it feeds mortal souls to its phylactery.",
