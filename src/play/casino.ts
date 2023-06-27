@@ -132,7 +132,7 @@ module Casino {
             'coin': { cb: amount, max: 6 }
         }
         vt.form['coin'].prompt = vt.attr('Bet ', bracket(vt.attr(vt.uline, 'MAX', vt.nouline, '=', carry(max)), false), '? ')
-        vt.focus = 'coin'
+        input('coin', '=')
     }
 
     function amount() {

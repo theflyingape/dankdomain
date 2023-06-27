@@ -188,8 +188,8 @@ module npc {
                         }
                         else {
                             this.cmd = 'm'
-                            if ($.player.level > 51 && $.online.weapon.wc > 37)
-                                this.cmd = 'd'
+                            if ($.player.level > 50)
+                                this.cmd = $.online.weapon.wc > 36 ? 'd' : '12'
                             else {
                                 let mon = 0
                                 for (mon = 0; mon < 12; mon++) {
@@ -209,6 +209,8 @@ module npc {
                     break
 
                 case 'Casino':
+                    this.cmd = 's'
+                    this.cmd = 'q'
                     break
 
                 case 'Library':
