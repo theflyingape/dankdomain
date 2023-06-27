@@ -1540,13 +1540,13 @@ module Dungeon {
                                     $.player.magic--
                                 }
                                 else if ($.player.melee > 3) {
-                                    vt.out('your barbaric powers are halved')
-                                    $.player.melee = 2
+                                    vt.out('a drain in your barbaric power')
+                                    $.player.melee--
                                     PC.adjust('str', -5 - dice(5), -2, -2)
                                 }
                                 else if ($.player.poison > 3) {
-                                    vt.out('your alchemy skill is halved')
-                                    $.player.melee = 2
+                                    vt.out('a loss in your alchemy skills')
+                                    $.player.poison--
                                     PC.adjust('str', -5 - dice(5), -2, -2)
                                 }
                                 else if ($.player.str > 80 && $.player.int > 80 && $.player.dex > 80 && $.player.cha > 80) {
@@ -1578,10 +1578,10 @@ module Dungeon {
                                         for (let row in rs) {
                                             rpc.user.id = rs[row].bearer
                                             PC.load(rpc)
-                                            vt.outln(`You are given the ${rs[row].name} ring from ${rpc.user.handle}.`)
+                                            vt.outln(`The ${rs[row].name} ring from ${rpc.user.handle} appears and is given to you.`)
                                             Ring.remove(rpc.user.rings, rs[row].name)
                                             PC.save(rpc)
-                                            Ring.wear(rpc.user.rings, rs[row].name)
+                                            Ring.wear($.player.rings, rs[row].name)
                                             PC.saveRing(rs[row].name, $.player.id, $.player.rings)
                                             vt.sound('click', 8)
                                         }

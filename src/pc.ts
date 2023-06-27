@@ -255,7 +255,7 @@ module pc {
                 else
                     vt.sound('morph')
                 if (onto.user.blessed) {
-                    log(onto.user.id, `\n${from} vanquished your blessing!`)
+                    log(onto.user.id, `\n${from} vanquished your blessing ${via}!`)
                     vt.outln(onto.who.His, vt.yellow, vt.bright, 'shining aura', -400,
                         vt.reset, ' fades ', -500,
                         vt.faint, 'away.', -600)
