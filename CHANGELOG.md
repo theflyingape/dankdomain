@@ -3,11 +3,18 @@
 
 ## 🇺🇸 ©️1991 - 2023 [Robert Hurst](https://robert.hurst-ri.us) 🧙
 
-### 🏴󠁵󠁳󠁲󠁩󠁿 Hope - Rhode Island est. 1790 (and Providence Plantations est. 1636)
+### 🏴󠁵󠁳󠁲󠁩󠁿 _Hope_ - **Rhode Island** _est._ `1790` **and Providence Plantations** _est._ `1636`
 
 > [developed](https://github.com/theflyingape/dankdomain) on a **Chromebook** using Visual Code and TypeScript/html/css for the browser with [terminal emulator](https:/xtermjs.org) and classic telnet clients; and also to run the resulting Node.js full stack [services and app](https://play.DDgame.us) on the **Google Cloud Platform** (us-central1) or in a **Docker** [container](https://hub.docker.com/repository/docker/theflyingape/dankdomain).
 
-### **11-Sep-2021** `v3.2.1` ✈💥🏢🏢
+### **28-Jun-2023** `v3.2.7` 📦
+
+* 21-months of accumulated small fixes with [docs](<https://github.com/theflyingape/dankdomain#players-manual>)
+* latest package dependencies tested with Node.js `v18.9` and TypeScript `v5.1.5`
+* 📺 xterm.js `v5.2.1` with improved [WebGL](https://get.webgl.org/) renderer
+* occasional display of monster compendium `descriptions` added for better context
+
+#### **11-Sep-2021** `v3.2.1` ✈💥🏢🏢
 
 * 🇺🇸 **Never** Forget. *The North remembers.* 🐺
 * 📦 latest package [dependencies](https://github.com/theflyingape/dankdomain#nodejs-dependency-tree) tested with Node.js `v16.9` and TypeScript `v4.4.3`
