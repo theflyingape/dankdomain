@@ -824,6 +824,7 @@ module Player {
         else
             keyhints.push($.player.pc)
         $.player = PC.reroll($.player)
+        PC.activate($.online)
         PC.save()
 
         //  gratuitous
@@ -940,6 +941,7 @@ module Player {
                             , 'You ', ['advance to', 'succeed as', 'transcend into'][slot]
                             , vt.bright, an($.player.pc), vt.normal, '.')
                         $.player = PC.reroll($.player, $.player.pc)
+                        PC.activate($.online)
                         PC.newkeys($.player)
                         $.player.coward = true
                         PC.save()
