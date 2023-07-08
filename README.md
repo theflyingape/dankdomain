@@ -23,8 +23,20 @@ Original Commodore Amiga `Hack & Slash` enthusiasts can visit  [Absinthe BBS](ht
 
 ---
 
-```bash
-sudo systemctl start dankdomain-portal
+```linux
+[theflyingape@ddgame ~]$ sudo systemctl status dankdomain-portal
+● dankdomain-portal.service - 🏰 Ɗaɳƙ Ɗoɱaiɳ portal service
+   Loaded: loaded (/etc/systemd/system/dankdomain-portal.service; enabled; vendor preset: disabled)
+   Active: active (running) since Sat 2023-07-08 08:30:20 EDT; 25min ago
+ Main PID: 1029 (DDnet)
+    Tasks: 11 (limit: 200)
+   Memory: 71.8M
+   CGroup: /system.slice/dankdomain-portal.service
+           └─1029 DDnet
+
+Jul 08 08:41:18 ddgame DDnet[1029]: Startup BOT #1 (IMA) from Old Timers Tap → session 5668
+Jul 08 08:41:18 ddgame DDnet[1029]: Classic Gate knock from remote host 119.77.138.76 → session 5666
+Jul 08 08:52:26 ddgame DDnet[1029]: City Gates knocked from remote host: 100.40.9.157 (play.ddgame.us)
 ```
 
 ---
