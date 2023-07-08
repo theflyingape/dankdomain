@@ -200,7 +200,7 @@ module Library {
 
             case 'W':
                 vt.outln(vt.green, '\n             --=:)) ', vt.bright, 'WINNERS', vt.normal, ' Only Noted ((:=--\n')
-                cat('user/winners')
+                cat('files/winners')
                 suppress = true
                 break
         }
