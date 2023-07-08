@@ -726,18 +726,21 @@ module pc {
 
             vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
             vt.out('      Int: ', vt.white)
+            if ($.player.emulation == 'XT') vt.out('\r\x1B[2C🧠\r\x1B[12C')
             vt.out(sprintf('%-20s', profile.int + ' (' + profile.user.int + ',' + profile.user.maxint + ')'))
             vt.out(vt.cyan, ' Bank: ', carry(profile.user.bank), ' '.repeat(15 - profile.user.bank.carry().length))
             vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
             vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
             vt.out('      Dex: ', vt.white)
+            if ($.player.emulation == 'XT') vt.out('\r\x1B[2C⚡\r\x1B[12C')
             vt.out(sprintf('%-20s', profile.dex + ' (' + profile.user.dex + ',' + profile.user.maxdex + ')'))
             vt.out(vt.cyan, ' Loan: ', carry(profile.user.loan), ' '.repeat(15 - profile.user.loan.carry().length))
             vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
             vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
             vt.out('      Cha: ', vt.white)
+            if ($.player.emulation == 'XT') vt.out('\r\x1B[2C🍀\r\x1B[12C')
             vt.out(sprintf('%-19s', profile.cha + ' (' + profile.user.cha + ',' + profile.user.maxcha + ')'))
             vt.out(vt.faint, ' Steal: ', vt.normal)
             vt.out(sprintf('%-15s', ['lawful', 'desperate', 'trickster', 'adept', 'master'][profile.user.steal]))
@@ -766,6 +769,7 @@ module pc {
             if (profile.user.magic > 1) {
                 vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.magenta, vt.bright)
                 vt.out('       SP: ', vt.white)
+                if ($.player.emulation == 'XT') vt.out('\r\x1B[2C🌠\r\x1B[12C')
                 vt.out(sprintf('%-42s', profile.sp + '/' + profile.user.sp + ' (' + ['wizardry', 'arcane', 'divine'][profile.user.magic - 2] + ')'))
                 vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
             }
@@ -773,6 +777,7 @@ module pc {
             if (profile.user.spells.length) {
                 vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.magenta, vt.bright)
                 vt.out(sprintf(' %8s: ', ['Wands', 'Wands', 'Scrolls', 'Spells', 'Magus'][profile.user.magic]), vt.white)
+                if ($.player.emulation == 'XT') vt.out('\r\x1B[2C🪄\r\x1B[12C')
                 let text = ''
                 n = 0
                 for (let p = 0; p < profile.user.spells.length; p++) {
