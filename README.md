@@ -34,7 +34,7 @@ Original Commodore Amiga `Hack & Slash` enthusiasts can visit  [Absinthe BBS](ht
    CGroup: /system.slice/dankdomain-portal.service
            └─1029 DDnet
 
-Jul 08 08:41:18 ddgame DDnet[1029]: Startup BOT #1 (IMA) from Old Timers Tap → session 5668
+Jul 08 08:41:18 ddgame DDnet[1029]: Startup BOT #1 (IMA) from Old Timer's Tap → session 5668
 Jul 08 08:41:18 ddgame DDnet[1029]: Classic Gate knock from remote host 119.77.138.76 → session 5666
 Jul 08 08:52:26 ddgame DDnet[1029]: City Gates knocked from remote host: 100.40.9.157 (play.ddgame.us)
 ```
