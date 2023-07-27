@@ -70,7 +70,7 @@ module Battle {
         function attack() {
 
             //  no more attacking -- un-stack
-            if (++volley > 9999) {
+            if (++volley > 3583) {
                 retreat = true
                 $.player.coward = true
             }
@@ -244,7 +244,7 @@ module Battle {
 
                             if (/Y/i.test(vt.entry)) {
                                 yourstats(false)
-                                volley += 500
+                                volley += 128
                                 vt.refocus()
                                 return
                             }
@@ -252,7 +252,7 @@ module Battle {
                             vt.out(vt.bright)
                             melee(rpc, enemy)
                             next()
-                        }, cancel: 'R', enter: 'A', eol: false, max: 1, match: /A|C|R|Y/i, timeout: 30
+                        }, cancel: 'R', enter: 'A', eol: false, max: 1, match: /A|C|R|Y/i, timeout: volley == 1 ? 60 : 20
                     },
                     'backstab': {
                         cb: () => {
@@ -261,7 +261,7 @@ module Battle {
                             vt.out(vt.bright)
                             melee(rpc, enemy, bs)
                             next()
-                        }, cancel: 'N', enter: 'Y', eol: false, match: /Y|N/i, max: 1, timeout: 30
+                        }, cancel: 'N', enter: 'Y', eol: false, match: /Y|N/i, max: 1, timeout: 40
                     },
                 }
 

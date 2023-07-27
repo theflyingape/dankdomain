@@ -20,11 +20,8 @@
 		"booted feet echoes across the land as hobgoblins march to battle. Across the",
 		"borderlands of civilization, settlements and settlers must contend with these",
 		"aggressive humanoids, whose thirst for conquest is never satisfied.",
-		"It has dark orange or red-orange skin, and hair ranging from dark red-brown to",
-		"dark gray. Yellow or dark brown eyes peer out beneath its beetling brows, and",
-		"its wide mouth sport sharp and yellowed teeth. The male might have a large blue",
-		"or red nose, which symbolizes virility and power among goblinkin. It can live",
-		"as long as humans, though their love of warfare and battle means that few do."
+		"It can live as long as humans, though their love of warfare and battle means",
+		"that few do."
 	]},
 	"bullywug": { "pc":"Lizard", "hit":"claw", "smash":"bite", "poisons":[ 1,2 ], "effect":"rubberBand", "description":[
 		"Its life is nasty, brutish, and wet. These frog-headed amphibious humanoids",

@@ -219,7 +219,7 @@ module Player {
                     $.player.coin = new Coin()
                     if (vt.checkTime() >= 0) {
                         if ($.player.coward && !$.player.cursed)
-                            PC.curse($.player.handle, 'by a panick attack in the Dungeon')
+                            PC.curse($.player.handle, 'by a panic attack in the Dungeon')
                         $.player.coward = true
                     }
                 }

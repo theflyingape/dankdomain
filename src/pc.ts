@@ -268,7 +268,7 @@ module pc {
                 }
             }
             onto.altered = true
-            onto.user.coward = true
+            onto.user.coward = false
             onto.user.blessed = ''
         }
 
@@ -934,9 +934,8 @@ module pc {
                     vt.outln(' powers ', vt.reset, 'that can ', Ring.name[ring].description, -100)
                 }
                 if (profile.description && profile.user.level >= $.player.level && $.from !== 'Dungeon' && profile.user.sex == 'I') {
-                    vt.outln(-200)
                     for (let l = 0; l < profile.description.length; l++)
-                        vt.outln(vt.cyan, vt.bright, profile.description[l], $.player.novice ? -900 : -400)
+                        vt.outln(vt.cyan, vt.bright, profile.description[l], $.player.novice ? -750 : -150)
                 }
             }
         }

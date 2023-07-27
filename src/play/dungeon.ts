@@ -781,6 +781,7 @@ module Dungeon {
                                         }
                                         else if (opponent.user.id) {
                                             PC.curse($.player.handle, 'using a wish', opponent)
+                                            PC.save(opponent)
                                             menu()
                                             return
                                         }
