@@ -92,6 +92,8 @@ stateDiagram-v2
     login --> newuser
     state newuser {
       email
+      email --> nodemailer
+      nodemailer --> 📧
     }
     state taxman {
       state "💰" as taxes

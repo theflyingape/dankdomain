@@ -314,7 +314,7 @@ module Naval {
                 vt.outln()
                 vt.outln(vt.Blue, vt.bright, ' ID             Username            Hull     Cannons     Ram')
                 vt.outln(vt.Blue, vt.bright, '----     ----------------------     ----     -------     ---')
-                rs = db.query(`SELECT id,handle,hull,cannon,ram FROM Players WHERE hull > 0 ORDER BY hull DESC`)
+                rs = db.query(`SELECT id,handle,hull,cannon,ram FROM Players WHERE cannon > 0 OR ram IS TRUE ORDER BY hull DESC`)
                 for (let i in rs) {
                     vt.outln(sprintf('%-4s     %-22s     %4u     %5u        %s'
                         , rs[i].id, rs[i].handle, rs[i].hull, rs[i].cannon, rs[i].ram ? 'Y' : 'N')
