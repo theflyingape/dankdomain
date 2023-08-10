@@ -71,6 +71,10 @@ stateDiagram-v2
         assets
         images
         sounds
+        state bundle.js {
+          client --> animate.css
+          client --> xterm
+        }
       }
     }
   }
