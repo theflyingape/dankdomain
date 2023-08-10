@@ -68,13 +68,13 @@ stateDiagram-v2
       }
       --
       state static {
+        state bundle.js {
+          client --> animate.css
+          client --> xterm.js
+        }
         assets
         images
         sounds
-        state bundle.js {
-          client --> animate.css
-          client --> xterm
-        }
       }
     }
   }
