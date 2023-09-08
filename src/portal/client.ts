@@ -97,7 +97,7 @@ const socketURL = `${location.protocol == 'https:' ? 'wss://' : 'ws://'}${locati
 let pid = 0, wpid = 0, tty = false
 let socket: WebSocket
 let carrier = false, recheck = 0
-let idle: NodeJS.Timer, reconnect: NodeJS.Timer, lurking: NodeJS.Timer
+let idle: NodeJS.Timeout, reconnect: NodeJS.Timeout, lurking: NodeJS.Timeout
 let tbt = 1
 
 //  monitor with terminal
