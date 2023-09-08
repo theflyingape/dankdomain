@@ -268,7 +268,7 @@ function newSession(ev) {
     term.unicode.activeVersion = '11'
     term.open(document.getElementById('terminal'))
     //let's try something new when auto-detection is better suppported
-    term.loadAddon(new WebglAddon())
+    //term.loadAddon(new WebglAddon())
     fit.fit()
     term.blur()
     term.writeln('\x07')
