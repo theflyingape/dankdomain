@@ -280,7 +280,7 @@ function newSession(ev) {
                         if (new Date().getMonth() == 8) {
                             const date = new Date().getDate();
                             if (date >= 9 && date <= 13)
-                                term.write(`✈💥🏢🏢 \x1b[0;2;4mNever\x1b[24m forget.\x1b[m`);
+                                term.write(`✈ 💥🏢 🏢 \x1b[0;2;4mNever\x1b[24m forget.\x1b[m`);
                         }
                         term.writeln(`\t\x1b[1;34mThe North remembers.\x1b[m 🐺`);
                         term.write('\x1b[1;36m≫ \x1b[22;2m press either \x1b[22mENTER\x1b[2m or \x1b[22mSPACE\x1b[2m to \x1b[22;35mCONNECT\x1b[2;36m using a keyboard:\x1b[22m ');

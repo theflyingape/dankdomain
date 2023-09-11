@@ -777,7 +777,7 @@ module pc {
             if (profile.user.spells.length) {
                 vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.magenta, vt.bright)
                 vt.out(sprintf(' %8s: ', ['Wands', 'Wands', 'Scrolls', 'Spells', 'Magus'][profile.user.magic]), vt.white)
-                if ($.player.emulation == 'XT') vt.out('\r\x1B[2C🪄\r\x1B[12C')
+                if ($.player.emulation == 'XT') vt.out('\r\x1B[2C' + (profile.user.magic == 2 ? '📜' : '🪄') + '\r\x1B[12C')
                 let text = ''
                 n = 0
                 for (let p = 0; p < profile.user.spells.length; p++) {
