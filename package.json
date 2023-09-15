@@ -1,6 +1,6 @@
 {
 	"name": "@theflyingape/dankdomain",
-	"version": "3.2.8",
+	"version": "3.3",
 	"description": "Ɗaɳƙ Ɗoɱaiɳ: the return of Hack & Slash",
 	"author": "Robert Hurst",
 	"homepage": "https://www.ddgame.us",
@@ -20,7 +20,7 @@
 		"linux"
 	],
 	"engines": {
-		"node": ">=18.9"
+		"node": ">=18.17"
 	},
 	"maintainers": [
 		{
@@ -58,7 +58,7 @@
 		"fast-geoip": "^1.1.88",
 		"fs-extra": "^11.1.1",
 		"got": "^11.8.6",
-		"net-keepalive": "^3.0.0",
+		"net-keepalive": "^3.0.1",
 		"node-pty": "^1.0.0",
 		"nodemailer": "^6.9.5",
 		"nodemailer-smtp-transport": "^2.7.4",
@@ -78,8 +78,8 @@
 		"@types/better-sqlite3": "^7.6.4",
 		"@types/browserify": "^12.0.37",
 		"@types/express": "^4.17.17",
-		"@types/fs-extra": "^11.0.1",
-		"@types/node": "^20.6.0",
+		"@types/fs-extra": "^11.0.2",
+		"@types/node": "^20.6.1",
 		"@types/nodemailer": "^6.4.10",
 		"@types/nodemailer-smtp-transport": "^2.7.5",
 		"@types/sprintf-js": "^1.1.2",
@@ -91,7 +91,7 @@
 	},
 	"types": "src",
 	"scripts": {
-		"build": "tsc && browserify game/portal/client.js -o game/portal/static/bundle.js",
+		"build": "source ~/.bashrc && nvm use && tsc -b --verbose && browserify game/portal/client.js -o game/portal/static/bundle.js",
 		"bundle": "watchify game/portal/client.js -v -o game/portal/static/bundle.js",
 		"clean": "rm game/files/tavern/*.txt game/users/.*.json game/users/*.json game/users/*.sql* 2> /dev/null",
 		"debug": "node game/portal/app",
