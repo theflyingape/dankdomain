@@ -153,7 +153,7 @@ function doCommand(event) {
 }
 function newSession(ev) {
     let options = {
-        allowProposedApi: true, scrollSensitivity: 12, smoothScrollDuration: 240,
+        allowProposedApi: true, scrollSensitivity: 5, smoothScrollDuration: 250,
         cursorBlink: false, drawBoldTextInBrightColors: true, scrollback: 800,
         fontFamily: 'tty,emoji', fontSize: 24, fontWeight: '400', fontWeightBold: '500',
         theme: {
