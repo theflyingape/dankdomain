@@ -794,14 +794,14 @@ module pc {
                 while (n < profile.user.spells.length) {
                     text = ''
                     i = 0
-                    vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.white, vt.bright, '           ')
+                    vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.white, vt.bright, '            ')
                     for (let p = 0; p < profile.user.spells.length; p++) {
                         i++
                         if (i > n) {
                             let spell = profile.user.spells[p]
                             let name = Magic.pick(spell)
                             if (spell < 17 && name.length > 7) name = name.slice(0, 3)
-                            if (text.length + name.length > 41) break
+                            if (text.length + name.length > 42) break
                             if (text.length) text += ','
                             text += name
                             n++
@@ -820,7 +820,7 @@ module pc {
                 n = 0
                 for (let p = 0; p < profile.user.rings.length; p++) {
                     let name = profile.user.rings[p]
-                    if (text.length + name.length > 41) break
+                    if (text.length + name.length > 42) break
                     if (text.length) text += ','
                     text += name
                     n++
@@ -830,12 +830,12 @@ module pc {
                 while (n < profile.user.rings.length) {
                     text = ''
                     i = 0
-                    vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.white, vt.bright, '           ')
+                    vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.white, vt.bright, '            ')
                     for (let p = 0; p < profile.user.rings.length; p++) {
                         i++
                         if (i > n) {
                             let name = profile.user.rings[p]
-                            if (text.length + name.length > 41) break
+                            if (text.length + name.length > 42) break
                             if (text.length) text += ','
                             text += name
                             n++
