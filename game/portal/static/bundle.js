@@ -244,6 +244,7 @@ function newSession(ev) {
                     if (!tty)
                         term.blur();
                     XT('@action(Logon)');
+                    setImmediate(() => window.dispatchEvent(new Event('resize')));
                 };
                 socket.onclose = (ev) => {
                     if (term.options.cursorBlink)
@@ -289,11 +290,13 @@ function newSession(ev) {
                     }).finally(() => {
                         term.focus();
                         XT('@action(welcome)');
+                        setImmediate(() => window.dispatchEvent(new Event('resize')));
                     });
                 });
             });
         }).finally(() => {
             idle = setInterval(() => { XT(`@tune(throwback${tbt++})`); }, 300000);
+            setImmediate(() => window.dispatchEvent(new Event('resize')));
         });
     }
 }

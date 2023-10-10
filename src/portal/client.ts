@@ -297,6 +297,7 @@ function newSession(ev) {
                     if (!tty)
                         term.blur()
                     XT('@action(Logon)')
+                    setImmediate(() => window.dispatchEvent(new Event('resize')))
                 }
 
                 socket.onclose = (ev) => {
@@ -344,6 +345,7 @@ function newSession(ev) {
                     }).finally(() => {
                         term.focus()
                         XT('@action(welcome)')
+                        setImmediate(() => window.dispatchEvent(new Event('resize')))
                     })
                 })
             })
@@ -352,6 +354,7 @@ function newSession(ev) {
             //  demo mode "Sir Handsome" struck me as a flying ape, thus the handle
             //  ... added some more throwback tunes to rotate in
             idle = setInterval(() => { XT(`@tune(throwback${tbt++})`) }, 300000)
+            setImmediate(() => window.dispatchEvent(new Event('resize')))
         })
     }
 }
