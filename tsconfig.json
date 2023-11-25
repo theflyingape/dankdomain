@@ -11,12 +11,6 @@
     "pretty": true,
     "sourceMap": false
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "src/playwright.ts",
-    "**/*.spec.ts"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "src/playwright.ts", "**/*.spec.ts"]
 }
