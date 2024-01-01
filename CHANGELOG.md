@@ -1,7 +1,7 @@
 # 🏰 **[Ɗaɳƙ Ɗoɱaiɳ](https://www.DDgame.us)**
 `the return of Hack & Slash`
 
-## 🇺🇸 ©️1991 - 2023 [Robert Hurst](https://robert.hurst-ri.us) 🧙
+## 🇺🇸 ©️1991 - 2024 [Robert Hurst](https://robert.hurst-ri.us) 🧙
 
 ### 🏴󠁵󠁳󠁲󠁩󠁿 _Hope_ - **Rhode Island** _est._ `1790` **and Providence Plantations** _est._ `1636`
 
