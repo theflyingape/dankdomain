@@ -313,7 +313,7 @@ node_modules      Node.js support libraries
 package.json      Node.js manifest
 ```
 
- 🇺🇸 ©️1991 - 2024 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
+ 🇺🇸 ©️1991 - 2025 [Robert Hurst](https://www.linkedin.com/in/roberthurstrius/)
 
 ## Gallery
 
