@@ -58,7 +58,7 @@
 		"fast-geoip": "^1.1.88",
 		"fs-extra": "^11.3.0",
 		"got": "^11.8.6",
-		"net-keepalive": "^4.0.15",
+		"net-keepalive": "^4.0.16",
 		"node-pty": "^1.0.0",
 		"nodemailer": "^6.10.0",
 		"nodemailer-smtp-transport": "^2.7.4",
@@ -85,7 +85,7 @@
 		"@types/sprintf-js": "^1.1.4",
 		"@types/ws": "^8.5.14",
 		"browserify": "^17.0.1",
-		"eslint": "^9.19.0",
+		"eslint": "^9.20.0",
 		"typescript": "^5.7.3",
 		"watchify": "^4.0.0"
 	},

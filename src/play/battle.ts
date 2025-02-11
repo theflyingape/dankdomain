@@ -1450,7 +1450,17 @@ module Battle {
                     break
 
                 case 9:
-                    vt.sound('blast', 3)
+                    vt.sound('blast')
+                    if ($.player.emulation == 'XT') {
+                        for (let i = 0; i < 6; i++) {
+                            vt.out(' ', vt.faint)
+                            for (let j = 0; j < i; j++)
+                                vt.out('✨')
+                            vt.out(vt.normal)
+                            vt.out('✨\r', -40)
+                        }
+                        vt.out(vt.bright, '✨ ')
+                    }
                     let ba = 10 + rpc.user.blast
                         + int(rpc.user.level / (20 - rpc.user.magic))
                         - (backfire
@@ -1747,8 +1757,19 @@ module Battle {
                     break
 
                 case 19:
-                    vt.out(vt.white, 'A ', vt.bright, 'blinding flash', vt.normal, ' erupts... ')
-                    vt.sound('bigblast', 9)
+                    vt.sound('bigblast')
+                    if ($.player.emulation == 'XT') {
+                        for (let i = 0; i < 6; i++) {
+                            vt.out(' ', vt.faint)
+                            for (let j = 0; j < i; j++)
+                                vt.out('✨')
+                            vt.out(vt.normal)
+                            vt.out('✨\r', -40)
+                        }
+                        vt.out(vt.bright, '✨✨✨ ')
+                    }
+                    else
+                        vt.out(vt.white, 'A ', vt.bright, 'blinding flash', vt.normal, ' erupts... ', -800)
                     PC.adjust('int', -PC.card(rpc.user.pc).toInt, -1, 0, rpc)
                     let bba = 12 + rpc.user.blast
                         + int(rpc.user.level / (20 - rpc.user.magic))
