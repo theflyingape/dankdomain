@@ -1457,7 +1457,7 @@ module Battle {
                             for (let j = 0; j < i; j++)
                                 vt.out('✨')
                             vt.out(vt.normal)
-                            vt.out('✨\r', -40)
+                            vt.out('✨\r', -50)
                         }
                         vt.out(vt.bright, '✨ ')
                     }
@@ -1764,7 +1764,7 @@ module Battle {
                             for (let j = 0; j < i; j++)
                                 vt.out('✨')
                             vt.out(vt.normal)
-                            vt.out('✨\r', -40)
+                            vt.out('✨\r', -50)
                         }
                         vt.out(vt.bright, '✨✨✨ ')
                     }
