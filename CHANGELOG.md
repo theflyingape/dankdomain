@@ -78,7 +78,7 @@
 
 * moved development onto a Samsung Galaxy Chromebook
 * general browser client improvements
-  * add [Facebook Group](http://www.originalhackandslash.net)
+  * add [Facebook Group](https://www.facebook.com/groups/HackAndSlashAmiga)
   * web page "wall" zooms to fill 80% device window width
   * added `Noto` fonts for unicode 13 character support and renamed Dank Domain as **`Ɗanƙ Ɗomaiƞ`**
 * general terminal emulation improvements
