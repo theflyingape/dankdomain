@@ -760,7 +760,7 @@ module pc {
 
             vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
             vt.out('        HP: ', vt.white)
-            if ($.player.emulation == 'XT') vt.out('\r\x1B[5C🌡️\r\x1B[13C')
+            if ($.player.emulation == 'XT') vt.out('\r\x1B[5C🌡️ \r\x1B[13C')
             vt.out(sprintf('%-43s', profile.hp + '/' + profile.user.hp + ' ('
                 + ['weak', 'normal', 'adept', 'warrior', 'brute', 'hero'][profile.user.melee] + ', '
                 + ['a rare', 'occasional', 'deliberate', 'angry', 'murderous'][profile.user.backstab] + ' backstab)'))
@@ -777,7 +777,7 @@ module pc {
             if (profile.user.spells.length) {
                 vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.magenta, vt.bright)
                 vt.out(sprintf(' %9s: ', ['Wands', 'Wands', 'Scrolls', 'Spells', 'Magus'][profile.user.magic]), vt.white)
-                if ($.player.emulation == 'XT') vt.out('\r\x1B[2C' + (profile.user.magic == 2 ? '📜' : '🪄') + '\r\x1B[13C')
+                if ($.player.emulation == 'XT') vt.out('\r\x1B[2C' + (profile.user.magic == 2 ? '📜' : '🪄') + ' \r\x1B[13C')
                 let text = ''
                 n = 0
                 for (let p = 0; p < profile.user.spells.length; p++) {
@@ -861,13 +861,13 @@ module pc {
 
             vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
             vt.out('    Weapon: ')
-            if ($.player.emulation == 'XT') vt.out('\r\x1B[2C🗡️\r\x1B[13C')
+            if ($.player.emulation == 'XT') vt.out('\r\x1B[2C🗡️ \r\x1B[13C')
             vt.out(weapon(profile), ' '.repeat(43 - weapon(profile, true).length))
             vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
             vt.out(vt.blue, vt.faint, '|', vt.Blue, vt.cyan, vt.bright)
             vt.out('     Armor: ')
-            if ($.player.emulation == 'XT') vt.out('\r\x1B[2C🛡\r\x1B[13C')
+            if ($.player.emulation == 'XT') vt.out('\r\x1B[2C🛡 \r\x1B[13C')
             vt.out(armor(profile), ' '.repeat(43 - armor(profile, true).length))
             vt.outln(' ', vt.reset, vt.blue, vt.faint, '|')
 
