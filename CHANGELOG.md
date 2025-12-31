@@ -1,11 +1,16 @@
 # 🏰 **[Ɗaɳƙ Ɗoɱaiɳ](https://www.DDgame.us)**
 `the return of Hack & Slash`
 
-## 🇺🇸 ©️1991 - 2025 [Robert Hurst](https://robert.hurst-ri.us) 🧙
+## 🇺🇸 ©️1991 - 2026 [Robert Hurst](https://robert.hurst-ri.us) 🧙
 
 ### 🏴󠁵󠁳󠁲󠁩󠁿 _Hope_ - **Rhode Island** _est._ `1790` **and Providence Plantations** _est._ `1636`
 
 > [developed](https://github.com/theflyingape/dankdomain) on a **Chromebook** using Visual Code and TypeScript/html/css for the browser with [terminal emulator](https:/xtermjs.org) and classic telnet clients; and also to run the resulting Node.js full stack [services and app](https://play.DDgame.us) on the **Google Cloud Platform** (us-central1) or in a **Docker** [container](https://hub.docker.com/repository/docker/theflyingape/dankdomain).
+
+### **31-Dec-2025** `v3.3` 📦
+
+* updated to Node.js LTS/Jod
+* 📺 xterm.js `v6.0.0`
 
 ### **28-Jun-2023** `v3.2.7` 📦
 
