@@ -13,11 +13,17 @@
 //	https://webserver/lurker/
 //	https://webserver/lurker/?pid={XXX}
 
-import { Terminal, ITerminalOptions } from 'xterm'
-import { FitAddon } from 'xterm-addon-fit'
-import { Unicode11Addon } from 'xterm-addon-unicode11'
-//import { WebglAddon } from 'xterm-addon-webgl'
-import { WebLinksAddon } from 'xterm-addon-web-links'
+import { Terminal, ITerminalOptions } from '@xterm/xterm'
+import { FitAddon } from '@xterm/addon-fit'
+import { Unicode11Addon } from '@xterm/addon-unicode11'
+//import { WebglAddon } from '@xterm/addon-webgl'
+import { WebLinksAddon } from '@xterm/addon-web-links'
+
+/*
+if (typeof setImmediate === 'undefined') {
+  window.setImmediate = window.setTimeout
+}
+*/
 
 //  document elements
 let audioPlay = <HTMLAudioElement>document.getElementById('play')
@@ -375,7 +381,7 @@ function checkCarrier() {
         info.hidden = true
         monitor.style.width = '100%'
         wall.hidden = false
-        setImmediate(() => window.dispatchEvent(new Event('resize')))
+        setTimeout(() => window.dispatchEvent(new Event('resize')))
 
         lurk()
         lurking = setInterval(lurk, 20000)
@@ -475,7 +481,7 @@ function lurk() {
                 }
                 watch.selectedIndex = -1
                 el.blur()
-                setImmediate(() => window.dispatchEvent(new Event('resize')))
+                setTimeout(() => window.dispatchEvent(new Event('resize')))
 
                 el.onchange = (ev) => {
                     let watch: HTMLOptionsCollection = <any>ev.target
@@ -502,7 +508,7 @@ function lurk() {
                     term.open(document.getElementById('terminal'))
                     fit.fit()
 
-                    setImmediate(() => window.dispatchEvent(new Event('resize')))
+                    setTimeout(() => window.dispatchEvent(new Event('resize')))
                     term.write('\n\x1B[1;32mConnecting your terminal to ' + watch[watch.selectedIndex].text + ' WebSocket ... ')
 
                     //	any keystroke sent will signal for this WebSocket to close
@@ -624,7 +630,7 @@ function nme(html = '', effect?: string) {
 function nmeResize(effect: string, func = false) {
     if (recheck < 0) {
         recheck = 0
-        setImmediate(() => {
+        setTimeout(() => {
             window.dispatchEvent(new Event('resize'))
             nmeResize(effect)
         })
@@ -675,7 +681,7 @@ function cmd(html) {
         }
     }
 
-    setImmediate(() => cmdResize())
+    setTimeout(() => cmdResize())
 }
 
 function animated(effect) {
@@ -730,7 +736,7 @@ function Logoff() {
 <hr>
 <span style="font-size:larger;">🏰 <a href="https://www.ddgame.us" target="_new"><b  style="color:black; class="font-effect-emboss">&nbsp;Dank Domain&nbsp;</b></a></span><br>
 <span style="font-family:Sofia; font-size:75%;" class="font-effect-outline">the return of Hack &amp; Slash</span><br><br>
-<span style="color:brown; font-size:smaller;">🇺🇸 &copy; 2017 - 2025 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a> 🧙</span><br><br>
+<span style="color:brown; font-size:smaller;">🇺🇸 &copy; 2017 - 2026 <a href="https://robert.hurst-ri.us" target="_new">Robert Hurst</a> 🧙</span><br><br>
 ⚡<span style="color:black; font-family:VT323,tty;"> Powered by <a href="https://xtermjs.org" target="_blank">Xterm.js</a> </span>📺
 <hr>
 </div>`)

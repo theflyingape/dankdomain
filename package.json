@@ -20,13 +20,13 @@
 		"linux"
 	],
 	"engines": {
-		"node": ">=18.17"
+		"node": ">=22.21"
 	},
 	"maintainers": [
 		{
 			"name": "Robert Hurst",
 			"email": "theflyingape@gmail.com",
-			"url": "https://robert.hurst-ri.us"
+			"url": "https://robert.hurst-us.net"
 		}
 	],
 	"private": false,
@@ -46,7 +46,7 @@
 		{
 			"name": "Ronald Hurst",
 			"email": "ronhurst39@gmail.com",
-			"url": "https://robert.hurst-ri.us/ronald"
+			"url": "https://robert.hurst-us.net/ronald"
 		}
 	],
 	"dependencies": {
@@ -59,7 +59,7 @@
 		"better-sqlite3": "^12.5.0",
 		"chokidar": "^3.6.0",
 		"country-flag-emoji": "^1.0.3",
-		"express": "^4.22.1",
+		"express": "^5.2.1",
 		"fast-geoip": "^1.1.88",
 		"fs-extra": "^11.3.3",
 		"got": "^11.8.6",
@@ -71,12 +71,11 @@
 		"sprintf-js": "^1.1.3",
 		"telnet-socket": "^0.2.4",
 		"title-case": "^3.0.3",
-		"ws": "^8.18.3",
+		"ws": "^8.19.0",
 		"xvt": "^1.5.1"
 	},
 	"devDependencies": {
 		"@types/better-sqlite3": "^7.6.13",
-		"@types/browserify": "^12.0.40",
 		"@types/express": "^5.0.6",
 		"@types/fs-extra": "^11.0.4",
 		"@types/node": "^25.0.3",
@@ -84,14 +83,15 @@
 		"@types/nodemailer-smtp-transport": "^2.7.8",
 		"@types/sprintf-js": "^1.1.4",
 		"@types/ws": "^8.18.1",
-		"browserify": "^17.0.1",
 		"eslint": "^9.39.2",
 		"typescript": "^5.9.3",
-		"watchify": "^4.0.0"
+		"watchify": "^4.0.0",
+		"webpack": "^5.104.1",
+		"webpack-cli": "^6.0.1"
 	},
 	"types": "src",
 	"scripts": {
-		"build": "source ~/.bashrc && nvm use && tsc -b --verbose && browserify game/portal/client.js -o game/portal/static/bundle.js",
+		"build": "source ~/.bashrc && nvm use && tsc -b --verbose && webpack",
 		"bundle": "watchify game/portal/client.js -v -o game/portal/static/bundle.js",
 		"clean": "rm game/files/tavern/*.txt game/users/.*.json game/users/*.json game/users/*.sql* 2> /dev/null",
 		"debug": "node game/portal/app",
