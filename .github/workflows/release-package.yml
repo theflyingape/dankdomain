@@ -1,4 +1,4 @@
-name: Node.js packages
+name: Node.js Package
 
 on:
   release:
@@ -17,7 +17,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js ${{ matrix.node-version }}
-      # Use a specific version like v4, v5, or v6 of setup-node
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
