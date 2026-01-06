@@ -91,7 +91,7 @@
 	},
 	"types": "src",
 	"scripts": {
-		"build": "source ~/.bashrc && nvm use && tsc -b --verbose && webpack",
+		"build": "tsc -b --verbose && webpack",
 		"bundle": "watchify game/portal/client.js -v -o game/portal/static/bundle.js",
 		"clean": "rm game/files/tavern/*.txt game/users/.*.json game/users/*.json game/users/*.sql* 2> /dev/null",
 		"debug": "node game/portal/app",
