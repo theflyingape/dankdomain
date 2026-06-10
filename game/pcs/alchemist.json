@@ -5,7 +5,7 @@
   "str": 60, "maxstr": 90,
   "int": 35, "maxint": 95,
   "dex": 65, "maxdex": 90,
-  "cha": 40, "maxCha": 90,
+  "cha": 40, "maxcha": 90,
   "toWC": 2,
   "poisons": [ 1,2 ], "spells": [ 10,18,24 ]
 }
