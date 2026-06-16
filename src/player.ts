@@ -281,17 +281,6 @@ module Player {
             vt.sound('invite')
     }
 
-    export function newkeys(user: user) {
-        let keys = ['P', 'G', 'S', 'C']
-        let prior = user.keyhints || []
-        user.keyhints = ['', '', '', '', '', '', '', '', '', '', '', '', ...prior.slice(12)]
-        user.keyseq = ''
-        while (keys.length) {
-            let k = dice(keys.length)
-            user.keyseq += keys.splice(k - 1, 1)
-        }
-    }
-
     export function pickPC(points = 200, immortal = false) {
 
         vt.music('reroll')
@@ -817,13 +806,15 @@ module Player {
         vt.outln(vt.cyan, '    and you leave your worldly possessions behind.', -2000)
 
         //  reset PC now, but preserve any keys toward ascension
-        let keyhints = $.player.keyhints, keyseq = $.player.keyseq
+        let keyhints = [...$.player.keyhints], keyseq = $.player.keyseq
         let max = Object.keys(PC.name['immortal']).indexOf($.player.pc) + 1
-        if (max || keyhints.slice(12).length > int(Object.keys(PC.name['player']).length / 2))
+        if (!max) keyhints.push($.player.pc)
+        do {
             keyhints.splice(12, 1)
-        else
-            keyhints.push($.player.pc)
+        } while (keyhints.length > 18)
         $.player = PC.reroll($.player)
+        $.player.keyhints = keyhints
+        $.player.keyseq = keyseq
         PC.activate($.online)
         PC.save()
 
@@ -966,6 +957,7 @@ module Player {
                                     break
                                 if (!$.player.keyhints[i]) {
                                     $.player.keyhints[i] = attempt
+                                    keyhints[i] = attempt
                                     break
                                 }
                             }

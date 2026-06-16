@@ -1,7 +1,7 @@
 {
   "pc": "Spirit", "level": 1,
   "blessed": "", "coward": false, "cursed": "",
-  "keyseq": "", "plays": 0,
+  "plays": 0,
   "bounty": "0c", "who": "",
 	"coin": "1c",	"bank": "10c", "loan": "0c",
   "melee": 0, "magic": 0,
