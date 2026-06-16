@@ -424,7 +424,7 @@ module pc {
 
         newkeys(user: user) {
             let keys = ['P', 'G', 'S', 'C']
-            let prior = [...user.keyhints]
+            let prior = [...user.keyhints || []]
             while (prior.length < 18)
                 prior.push('')
             user.keyhints = ['', '', '', '', '', '', '', '', '', '', '', '', ...prior.slice(12)]
