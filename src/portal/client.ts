@@ -16,7 +16,7 @@
 import { Terminal, ITerminalOptions } from '@xterm/xterm'
 import { FitAddon } from '@xterm/addon-fit'
 import { Unicode11Addon } from '@xterm/addon-unicode11'
-//import { WebglAddon } from '@xterm/addon-webgl'
+import { WebglAddon } from '@xterm/addon-webgl'
 import { WebLinksAddon } from '@xterm/addon-web-links'
 
 /*
@@ -272,9 +272,9 @@ function newSession(ev) {
 
     //	light it up, Bert!
     term.unicode.activeVersion = '11'
-    term.open(document.getElementById('terminal'))
+    term.open(document.getElementById('terminal')!)
     //let's try something new when auto-detection is better suppported
-    //term.loadAddon(new WebglAddon())
+    term.loadAddon(new WebglAddon())
     fit.fit()
     term.blur()
     term.writeln('\x07')

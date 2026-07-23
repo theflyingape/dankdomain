@@ -327,6 +327,7 @@ module lib {
             this.plot(rows, 1)
             this.outln(this.off, '\n'.repeat(scroll))
             this.out(-10, this.clear)
+            if (this.tty == 'web') this.out('@action(reSize)')
         }
 
         //  web client extended commands in terminal emulator
