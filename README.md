@@ -1,6 +1,6 @@
 # 🏰 Ɗaɳƙ Ɗoɱaiɳ :: _the return of Hack &amp; Slash_
 
-<a href="https://robert.hurst-ri.us"><img src="https://avatars.githubusercontent.com/theflyingape" title="Robert Hurst" align="right"></a>
+<a href="https://robert.hurst-us.net"><img src="https://avatars.githubusercontent.com/theflyingape" title="Robert Hurst" align="right"></a>
 
 - [Player's Manual](#players-manual)
 - [Installation](#installation)
