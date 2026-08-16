@@ -16,9 +16,9 @@ COPY game/portal game/portal
 RUN apt-get update && apt-get install -y rsync sudo telnet
 #
 # suppress superfluous NPM install messages
-ENV npm_config_loglevel warn
-ENV NODE_ENV development
-#ENV NODE_PTY_DEBUG 1
+ENV npm_config_loglevel=warn
+ENV NODE_ENV=development
+#ENV NODE_PTY_DEBUG=1
 # install dependencies
 RUN npm install
 

@@ -5,8 +5,9 @@
     "eamodio.gitlens",
     "esbenp.prettier-vscode",
     "humao.rest-client",
-    "ms-azuretools.vscode-docker",
+    "ms-azuretools.vscode-containers",
     "ms-vscode.hexeditor",
+    "ms-vscode-remote.remote-containers",
     "pdconsec.vscode-print",
     "vscode-icons-team.vscode-icons",
     "yzhang.markdown-all-in-one"

@@ -4,6 +4,16 @@
   "version": "2.0.0",
   "tasks": [
     {
+      "type": "docker-build",
+      "label": "docker-build",
+      "platform": "node",
+      "dockerBuild": {
+        "tag": "theflyingape/dankdomain:latest",
+        "dockerfile": "${workspaceFolder}/Dockerfile",
+        "context": "${workspaceFolder}"
+      }
+    },
+    {
       "type": "npm",
       "script": "build",
       "group": "build",
